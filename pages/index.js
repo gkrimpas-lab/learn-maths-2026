@@ -1,0 +1,147 @@
+import Head from 'next/head';
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans scroll-smooth">
+      <Head>
+        <title>LearnMaths.gr - Τα Μαθηματικά Αλλιώς</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <meta name="description" content="Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο και τα Πρότυπα Σχολεία" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      {/* ΜΠΑΡΑ ΠΛΟΗΓΗΣΗΣ (NAVBAR) */}
+      <nav className="bg-white shadow-md sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="text-2xl font-black text-blue-600 tracking-tight">
+            LearnMaths<span className="text-indigo-600">.gr</span>
+          </div>
+          <div className="flex items-center gap-6 font-medium">
+            <a href="#demotiko" className="hover:text-blue-600 transition">Δημοτικό</a>
+            <a href="#gymnasio" className="hover:text-indigo-600 transition">Γυμνάσιο</a>
+            <a href="#protypa" className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition duration-300">
+              🎯 Εισαγωγή σε Πρότυπα
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* HERO SECTION */}
+      <header className="bg-gradient-to-r py-20 text-center text-white from-blue-600 to-indigo-700 shadow-lg">
+        <div className="max-w-4xl mx-auto px-4">
+          <h1 className="text-5xl font-extrabold tracking-tight mb-4">
+            LearnMaths.gr
+          </h1>
+          <p className="text-xl font-light opacity-90 mb-8">
+            Μάθε τα Μαθηματικά εύκολα, γρήγορα και διαδραστικά από το Δημοτικό έως το Γυμνάσιο!
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a href="#demotiko" className="bg-white text-blue-700 px-6 py-3 rounded-full font-bold shadow-md hover:bg-gray-100 transition duration-300">
+              Δημοτικό 🎒
+            </a>
+            <a href="#gymnasio" className="bg-indigo-500 text-white px-6 py-3 rounded-full font-bold shadow-md hover:bg-indigo-600 transition duration-300 border border-indigo-400">
+              Γυμνάσιο 📐
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* ΕΝΟΤΗΤΑ ΠΡΟΤΥΠΩΝ ΣΧΟΛΕΙΩΝ */}
+      <section id="protypa" className="py-16 bg-amber-50 border-b border-amber-200">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <div className="inline-block bg-amber-200 text-amber-800 font-bold px-4 py-1 rounded-full text-xs uppercase tracking-wide mb-3">
+            Ειδική Προετοιμασία
+          </div>
+          <h2 className="text-3xl font-black text-gray-900 mb-4">🎯 Εισαγωγή στα Πρότυπα Σχολεία</h2>
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-8">
+            Κάνε τη μετάβαση από την **ΣΤ' Δημοτικού στην Α' Γυμνασίου** με απόλυτη επιτυχία! Εξειδικευμένο υλικό, στρατηγικές και τεστ προσομοίωσης για τις εξετάσεις των Πρότυπων Γυμνασίων.
+          </p>
+          <div className="bg-white p-6 rounded-2xl shadow-md max-w-xl mx-auto border border-amber-200">
+            <h4 className="font-bold text-lg mb-4 text-amber-900">Τι περιλαμβάνει η προετοιμασία:</h4>
+            <ul className="text-left space-y-2 text-gray-600 text-sm mb-6">
+              <li>✅ Θέματα προηγούμενων ετών αναλυτικά λυμένα.</li>
+              <li>✅ Τεχνικές διαχείρισης χρόνου και ερωτήσεων πολλαπλής επιλογής.</li>
+              <li>✅ Online Quiz προσομοίωσης με το σύστημα των εξετάσεων.</li>
+            </ul>
+            <button className="w-full bg-amber-500 text-white py-3 rounded-xl font-bold hover:bg-amber-600 transition shadow-md">
+              Έναρξη Προετοιμασίας Προτύπων
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ΔΗΜΟΤΙΚΟ SECTION */}
+      <section id="demotiko" className="py-16 bg-white">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-2 text-blue-600">🎒 Μαθηματικά Δημοτικού</h2>
+          <p className="text-center text-gray-500 mb-10">Χτίζουμε γερές βάσεις για το μέλλον</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 border border-gray-200">
+              <div className="bg-teal-500 py-4 text-center text-white font-bold text-xl">Δ' Δημοτικού</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-600 mb-6 text-sm">Μεγάλοι αριθμοί, γεωμετρικά σχήματα & βασικές πράξεις.</p>
+                <button className="w-full bg-teal-500 text-white py-2 rounded-lg font-medium hover:bg-teal-600 transition">Είσοδος στην Τάξη</button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 border border-gray-200">
+              <div className="bg-cyan-500 py-4 text-center text-white font-bold text-xl">Ε' Δημοτικού</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-600 mb-6 text-sm">Κλάσματα, δεκαδικοί αριθμοί & εισαγωγή στα ποσοστά.</p>
+                <button className="w-full bg-cyan-500 text-white py-2 rounded-lg font-medium hover:bg-cyan-600 transition">Είσοδος στην Τάξη</button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 border border-gray-200">
+              <div className="bg-blue-500 py-4 text-center text-white font-bold text-xl">ΣΤ' Δημοτικού</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-600 mb-6 text-sm">Ανάλογα ποσά, εξισώσεις, κλίμακες & προετοιμασία για το Γυμνάσιο.</p>
+                <button className="w-full bg-blue-500 text-white py-2 rounded-lg font-medium hover:bg-blue-600 transition">Είσοδος στην Τάξη</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ΓΥΜΝΑΣΙΟΥ SECTION */}
+      <section id="gymnasio" className="py-16 bg-gray-100">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-2 text-indigo-600">📐 Μαθηματικά Γυμνασίου</h2>
+          <p className="text-center text-gray-500 mb-10">Εμβαθύνουμε στην άλγεβρα και τη γεωμετρία</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 border border-gray-200">
+              <div className="bg-indigo-500 py-4 text-center text-white font-bold text-xl">Α' Γυμνασίου</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-600 mb-6 text-sm">Κλάσματα, Εξισώσεις, Ποσοστά & βασική Γεωμετρία.</p>
+                <button className="w-full bg-indigo-500 text-white py-2 rounded-lg font-medium hover:bg-indigo-600 transition">Είσοδος στην Τάξη</button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 border border-gray-200">
+              <div className="bg-violet-500 py-4 text-center text-white font-bold text-xl">Β' Γυμνασίου</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-600 mb-6 text-sm">Ρητοί Αριθμοί, Συναρτήσεις, Πυθαγόρειο Θεώρημα.</p>
+                <button className="w-full bg-violet-500 text-white py-2 rounded-lg font-medium hover:bg-violet-600 transition">Είσοδος στην Τάξη</button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 border border-gray-200">
+              <div className="bg-purple-500 py-4 text-center text-white font-bold text-xl">Γ' Γυμνασίου</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-600 mb-6 text-sm">Αλγεβρικές Παραστάσεις, Μονώνυμα, Ταυτότητες & Ομοιότητα.</p>
+                <button className="w-full bg-purple-500 text-white py-2 rounded-lg font-medium hover:bg-purple-600 transition">Είσοδος στην Τάξη</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm">
+        <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές μας.</p>
+      </footer>
+    </div>
+  );
+}
