@@ -46,9 +46,9 @@ export default function Home() {
             </a>
           </div>
 
-          {/* GOOGLE PLAY STORE BADGE (ΔΙΟΡΘΩΜΕΝΟ) */}
+          {/* GOOGLE PLAY STORE BADGE */}
           <div className="flex flex-col items-center justify-center mt-4">
-            <p className="text-xs font-semibold opacity-75 mb-2 uppercase tracking-wider">Κατεβάστε την εφαρμογή</p>
+            <p className="text-xs font-semibold opacity-75 mb-2 uppercase tracking-wider">Каτεβάστε την εφαρμογή</p>
             <a 
               href="https://play.google.com/store/apps/details?id=com.gkrimpas.learn_maths&pcampaignid=web_share" 
               target="_blank" 
@@ -67,24 +67,66 @@ export default function Home() {
 
       {/* ΕΝΟΤΗΤΑ ΠΡΟΤΥΠΩΝ ΣΧΟΛΕΙΩΝ */}
       <section id="protypa" className="py-16 bg-amber-50 border-b border-amber-200">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+        <div className="max-w-5xl mx-auto px-4 text-center">
           <div className="inline-block bg-amber-200 text-amber-800 font-bold px-4 py-1 rounded-full text-xs uppercase tracking-wide mb-3">
             Ειδική Προετοιμασία
           </div>
-          <h2 className="text-3xl font-black text-gray-900 mb-4">🎯 Εισαγωγή στα Πρότυπα Σχολεία</h2>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-8">
-            Κάνε τη μετάβαση από την **ΣΤ' Δημοτικού στην Α' Γυμνασίου** με απόλυτη επιτυχία! Εξειδικευμένο υλικό, στρατηγικές και τεστ προσομοίωσης για τις εξετάσεις των Πρότυπων Γυμνασίων.
+          <h2 className="text-3xl font-black text-gray-900 mb-2">🎯 Εισαγωγή στα Πρότυπα Σχολεία</h2>
+          <p className="text-base text-gray-600 max-w-2xl mx-auto mb-12">
+            Κάνε τη μετάβαση από την **ΣΤ' Δημοτικού στην Α' Γυμνασίου** με απόλυτη επιτυχία! Κατέβασε συγκεντρωμένα όλα τα θέματα και τις επίσημες απαντήσεις προηγούμενων ετών.
           </p>
-          <div className="bg-white p-6 rounded-2xl shadow-md max-w-xl mx-auto border border-amber-200">
-            <h4 className="font-bold text-lg mb-4 text-amber-900">Τι περιλαμβάνει η προετοιμασία:</h4>
-            <ul className="text-left space-y-2 text-gray-600 text-sm mb-6">
-              <li>✅ Θέματα προηγούμενων ετών αναλυτικά λυμένα.</li>
-              <li>✅ Τεχνικές διαχείρισης χρόνου και ερωτήσεων πολλαπλής επιλογής.</li>
-              <li>✅ Online Quiz προσομοίωσης με το σύστημα των εξετάσεων.</li>
-            </ul>
-            <button className="w-full bg-amber-500 text-white py-3 rounded-xl font-bold hover:bg-amber-600 transition shadow-md">
-              Έναρξη Προετοιμασίας Προτύπων
-            </button>
+          
+          {/* ΟΙ 4 ΚΑΡΤΕΛΕΣ PDF */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+            
+            {/* ΚΑΡΤΑ 1 */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between hover:shadow-md transition">
+              <div>
+                <span className="text-2xl mb-3 block">📚</span>
+                <h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Μαθηματικά & Γλώσσα</h4>
+                <p className="text-gray-500 text-xs mb-4">Θέματα εξετάσεων μαζί για τα έτη 2020 έως και 2025.</p>
+              </div>
+              <a href="/protypa_2020_2025.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                📥 Λήψη Αρχείου (PDF)
+              </a>
+            </div>
+
+            {/* ΚΑΡΤΑ 2 */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between hover:shadow-md transition">
+              <div>
+                <span className="text-2xl mb-3 block">📐</span>
+                <h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Μαθηματικά</h4>
+                <p className="text-gray-500 text-xs mb-4">Ξεχωριστά όλα τα θέματα Μαθηματικών από το 2016 έως και το 2019.</p>
+              </div>
+              <a href="/maths_2016_2019.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                📥 Λήψη Αρχείου (PDF)
+              </a>
+            </div>
+
+            {/* ΚΑΡΤΑ 3 */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between hover:shadow-md transition">
+              <div>
+                <span className="text-2xl mb-3 block">✍️</span>
+                <h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Νεοελληνική Γλώσσα</h4>
+                <p className="text-gray-500 text-xs mb-4">Ξεχωριστά όλα τα θέματα της Γλώσσας από το 2016 έως και το 2019.</p>
+              </div>
+              <a href="/glossa_2016_2019.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                📥 Λήψη Αρχείου (PDF)
+              </a>
+            </div>
+
+            {/* ΚΑΡΤΑ 4 */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-emerald-400 bg-emerald-50/30 flex flex-col justify-between hover:shadow-md transition">
+              <div>
+                <span className="text-2xl mb-3 block">✅</span>
+                <h4 className="font-bold text-emerald-900 mb-2 text-base leading-tight">Απαντήσεις Θεμάτων</h4>
+                <p className="text-emerald-700 text-xs mb-4">Ένα ενιαίο αρχείο με τις απαντήσεις για όλα τα έτη (2016 έως 2025).</p>
+              </div>
+              <a href="/apanteseis_2016_2025.pdf" download className="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                📥 Λήψη Απαντήσεων
+              </a>
+            </div>
+
           </div>
         </div>
       </section>
