@@ -20,10 +20,10 @@ const LIMITS = {
   MULTIPLIER_MAX: 5,
 
   // 3ος Προσομοιωτής (Απλοποίηση κλασμάτων)
-  SIMPL_NUM_MIN: 2,
-  SIMPL_NUM_MAX: 24,
+  SIMPL_NUM_MIN: 0,
+  SIMPL_NUM_MAX: 30,
   SIMPL_DEN_MIN: 2,
-  SIMPL_DEN_MAX: 24,
+  SIMPL_DEN_MAX: 30,
 
   // 4ος Προσομοιωτής (Πολλαπλάσια Αριθμού)
   MULT_NUMBER_MIN: 2,
@@ -61,10 +61,9 @@ export default function EDimotikou() {
   const [den2, setDen2] = useState(3);
   const [multiplier, setMultiplier] = useState(2);
 
-  // Κατάσταση για τον 3ο προσομοιωτή (Απλοποίηση)
+  // Κατάσταση για τον 3ο προσομοιωτή (Απλοποίηση) - Ξεκινάει με 12/18
   const [num3, setNum3] = useState(12);
   const [den3, setDen3] = useState(18);
-  const [chosenDivisor, setChosenDivisor] = useState(2);
 
   // Κατάσταση για τον 4ο προσομοιωτή (Πολλαπλάσια)
   const [singleNumber, setSingleNumber] = useState(4);
@@ -87,21 +86,9 @@ export default function EDimotikou() {
   const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
   const lcm = (a, b) => (a * b) / gcd(a, b);
 
-  // Συναρτήσεις για Απλοποίηση
-  const getCommonDivisors = (a, b) => {
-    const common = [];
-    const max = Math.min(a, b);
-    for (let i = 2; i <= max; i++) {
-      if (a % i === 0 && b % i === 0) {
-        common.push(i);
-      }
-    }
-    return common;
-  };
-
-  const commonDivisors3 = getCommonDivisors(num3, den3);
-  const currentGcd3 = gcd(num3, den3);
-  const isIrreducible3 = currentGcd3 === 1;
+  // Αυτόματος υπολογισμός ΜΚΔ για την Απλοποίηση
+  const autoMkd3 = gcd(num3, den3);
+  const isIrreducible3 = autoMkd3 === 1;
 
   // Συναρτήσεις Διαχείρισης ΕΚΠ
   const updateEkpValue = (index, increment) => {
@@ -204,8 +191,7 @@ export default function EDimotikou() {
   const totalPies2Equivalent = Math.max(1, Math.ceil((num2 * multiplier) / (den2 * multiplier)));
 
   const totalPies3Initial = Math.max(1, Math.ceil(num3 / den3));
-  const validDivisor = commonDivisors3.includes(chosenDivisor) ? chosenDivisor : (commonDivisors3[0] || 1);
-  const totalPies3Simplified = Math.max(1, Math.ceil((num3 / validDivisor) / (den3 / validDivisor)));
+  const totalPies3Simplified = Math.max(1, Math.ceil((num3 / autoMkd3) / (den3 / autoMkd3)));
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
@@ -307,7 +293,7 @@ export default function EDimotikou() {
                     <button onClick={() => setDen1(Math.min(LIMITS.INTRO_DEN_MAX, den1 + 1))} className="bg-green-500 text-white w-8 h-8 rounded-full font-bold hover:bg-green-600 transition">+</button>
                   </div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-wrap justify-center gap-4 min-h-[160px] items-center">
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-wrap justify-center gap-4 min-h-[160px] p-4 items-center">
                   {Array.from({ length: totalPies1 }).map((_, i) => (
                     <svg key={i} width="110" height="110" className="drop-shadow-sm">{renderPieSlices(i, num1, den1)}</svg>
                   ))}
@@ -323,7 +309,7 @@ export default function EDimotikou() {
             <div className="space-y-4">
               <h2 className="text-2xl font-black text-gray-900">Τι είναι τα Ισοδύναμα Κλάσματα;</h2>
               <p className="text-gray-600 leading-relaxed text-sm">
-                Ισοδύναμα λέγονται τα κλάσματα που <strong>εκφράζουν το ίδιο μέρος μιας επιφάνειας</strong>, παρόλο που έχουν διαφορετικούς αριθμητές και παρονομαστές.
+                Ισοδύμαμα λέγονται τα κλάσματα που <strong>εκφράζουν το ίδιο μέρος μιας επιφάνειας</strong>, παρόλο που έχουν διαφορετικούς αριθμητές και παρονομαστές.
               </p>
             </div>
 
@@ -397,105 +383,88 @@ export default function EDimotikou() {
           </div>
         )}
 
-        {/* TAB 3: ΑΠΛΟΠΟΙΗΣΗ ΚΛΑΣΜΑΤΩΝ (NEW) */}
+        {/* TAB 3: ΑΠΛΟΠΟΙΗΣΗ ΚΛΑΣΜΑΤΩΝ (ΑΝΑΒΑΘΜΙΣΜΕΝΟ) */}
         {activeTab === 'simplification' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-4">
-              <h2 className="text-2xl font-black text-gray-900">✂️ Απλοποίηση Κλασμάτων & Ανάγωγα Κλάσματα</h2>
+              <h2 className="text-2xl font-black text-gray-900">✂️ Απλοποίηση Κλασμάτων</h2>
               <p className="text-gray-600 leading-relaxed text-sm">
-                <strong>Απλοποίηση</strong> είναι η διαδικασία στην οποία <strong>διαιρούμε</strong> και τον αριθμητή και τον παρονομαστή με τον <strong>ίδιο αριθμό</strong>. Το κλάσμα μικραίνει σε αριθμούς, αλλά η αξία του παραμένει ακριβώς η ίδια!
-              </p>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                Όταν ένα κλάσμα δεν μπορεί να απλοποιηθεί άλλο (δηλαδή ο αριθμητής και ο παρονομαστής δεν έχουν κανέναν κοινό διαιρέτη εκτός από το 1), τότε λέγεται <strong>Ανάγωγο Κλάσμα</strong> 🏆.
+                <strong>Απλοποίηση</strong> είναι η διαδικασία στην οποία <strong>διαιρούμε</strong> και τους δύο όρους του κλάσματος με τον ίδιο αριθμό, ώστε να φτάσουμε στο <strong>Ανάγωγο Κλάσμα</strong> (που δεν απλοποιείται άλλο).
               </p>
             </div>
 
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
-              <h3 className="text-lg font-bold text-center text-gray-800">✂️ Προσομοιωτής Απλοποίησης</h3>
+              <h3 className="text-lg font-bold text-center text-gray-800">✂️ Αυτόματος Προσομοιωτής Ανάγωγης Απλοποίησης</h3>
               
-              {/* ΡΥΘΜΙΣΗ ΑΡΧΙΚΟΥ ΚΛΑΣΜΑΤΟΣ */}
+              {/* ΧΕΙΡΙΣΤΗΡΙΑ ΡΥΘΜΙΣΗΣ ΑΡΧΙΚΟΥ ΚΛΑΣΜΑΤΟΣ */}
               <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-wrap justify-center items-center gap-6 text-sm max-w-2xl mx-auto">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-gray-600">Αρχικός Αριθμητής:</span>
-                  <button onClick={() => setNum3(Math.max(LIMITS.SIMPL_NUM_MIN, num3 - 2))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs">-2</button>
-                  <span className="font-black text-red-600 text-lg w-6 text-center">{num3}</span>
-                  <button onClick={() => setNum3(Math.min(LIMITS.SIMPL_NUM_MAX, num3 + 2))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs">+2</button>
+                  <span className="font-medium text-gray-600">Αριθμητής:</span>
+                  <button onClick={() => setNum3(Math.max(LIMITS.SIMPL_NUM_MIN, num3 - 1))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
+                  <span className="font-black text-slate-800 text-base w-4 text-center">{num3}</span>
+                  <button onClick={() => { if(num3 < den3) setNum3(num3 + 1) }} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">+</button>
                 </div>
-                <div className="w-[1px] h-6 bg-gray-200 hidden md:block"></div>
+                
+                <div className="w-[1px] h-6 bg-slate-300 hidden md:block"></div>
+
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-gray-600">Αρχικός Παρονομαστής:</span>
-                  <button onClick={() => setDen3(Math.max(LIMITS.SIMPL_DEN_MIN, den3 - 2))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs">-2</button>
-                  <span className="font-black text-blue-600 text-lg w-6 text-center">{den3}</span>
-                  <button onClick={() => setDen3(Math.min(LIMITS.SIMPL_DEN_MAX, den3 + 2))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs">+2</button>
+                  <span className="font-medium text-gray-600">Παρονομαστής:</span>
+                  <button onClick={() => { const d = Math.max(LIMITS.SIMPL_DEN_MIN, den3 - 1); setDen3(d); if(num3 > d) setNum3(d); }} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
+                  <span className="font-black text-slate-800 text-base w-4 text-center">{den3}</span>
+                  <button onClick={() => setDen3(Math.min(LIMITS.SIMPL_DEN_MAX, den3 + 1))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">+</button>
                 </div>
               </div>
 
-              {/* ΕΠΙΛΟΓΗ ΚΟΙΝΟΥ ΔΙΑΙΡΕΤΗ */}
-              <div className="bg-indigo-50 p-5 rounded-xl border border-indigo-100 flex flex-col items-center justify-center gap-3 max-w-xl mx-auto text-center">
-                {isIrreducible3 ? (
-                  <div className="text-emerald-700 font-black flex items-center gap-2 bg-emerald-100 p-2.5 px-5 rounded-xl border border-emerald-200 animate-pulse">
-                    🏆 Αυτό το κλάσμα είναι ήδη ΑΝΑΓΩΓΟ! Δεν απλοποιείται άλλο!
-                  </div>
-                ) : (
-                  <>
-                    <span className="font-bold text-indigo-950 text-sm">Διάλεξε έναν Κοινό Διαιρέτη για να κάνεις απλοποίηση:</span>
-                    <div className="flex flex-wrap gap-2 justify-center">
-                      {commonDivisors3.map((divi) => (
-                        <button
-                          key={divi}
-                          onClick={() => setChosenDivisor(divi)}
-                          className={`px-4 py-2 rounded-xl font-black text-sm border transition shadow-sm
-                            ${validDivisor === divi 
-                              ? 'bg-indigo-600 text-white border-indigo-700 scale-105' 
-                              : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-100/50'
-                            }`}
-                        >
-                          Διαίρεση με το {divi} {divi === currentGcd3 ? '⭐ (ΜΚΔ)' : ''}
-                        </button>
-                      ))}
-                    </div>
-                    <p className="text-[11px] text-indigo-500 font-medium">
-                      💡 Συμβουλή: Αν διαιρέσεις με τον <strong>Μέγιστο Κοινό Διαιρέτη ({currentGcd3})</strong>, το κλάσμα θα γίνει αμέσως ανάγωγο!
-                    </p>
-                  </>
-                )}
-              </div>
-
-              {/* ΟΠΤΙΚΟ ΑΠΟΤΕΛΕΣΜΑ */}
+              {/* ΠΛΑΙΣΙΟ ΟΠΤΙΚΗΣ ΣΥΓΚΡΙΣΗΣ (Σαν τα ισοδύναμα) */}
               <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100 pt-4">
+                
+                {isIrreducible3 && (
+                  <div className="text-center">
+                    <span className="inline-block bg-emerald-100 text-emerald-800 font-black px-4 py-2 rounded-xl text-sm border border-emerald-200 shadow-sm animate-pulse">
+                      🏆 Το κλάσμα είναι ήδη ΑΝΑΓΩΓΟ! Δεν μπορεί να απλοποιηθεί περισσότερο!
+                    </span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100 pt-2">
                   
-                  {/* ΑΡΧΙΚΟ ΜΕΓΑΛΟ ΚΛΑΣΜΑ */}
+                  {/* ΑΡΧΙΚΟ ΚΛΑΣΜΑ */}
                   <div className="flex flex-col items-center justify-start space-y-6 pb-6 md:pb-0 h-full">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full">Αρχικό Κλάσμα</span>
-                    <div className="flex flex-col items-center font-black text-3xl text-slate-700 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 min-w-[75px]">
+                    <span className="text-xs font-bold text-blue-500 uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full">Αρχικό Κλάσμα</span>
+                    
+                    <div className="flex flex-col items-center font-black text-3xl text-blue-600 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 min-w-[75px] shadow-sm">
                       <div>{num3}</div>
-                      <div className="w-10 h-[3px] bg-slate-600 rounded-full my-1"></div>
+                      <div className="w-10 h-[3px] bg-blue-600 rounded-full my-1"></div>
                       <div>{den3}</div>
                     </div>
+
                     <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 items-center bg-slate-50/50 rounded-xl w-full max-w-[240px]">
                       {Array.from({ length: totalPies3Initial }).map((_, i) => (
-                        <svg key={i} width="110" height="110" className="drop-shadow-sm">{renderPieSlices(i, num3, den3)}</svg>
+                        <svg key={i} width="110" height="110" className="drop-shadow-sm">
+                          {renderPieSlices(i, num3, den3)}
+                        </svg>
                       ))}
                     </div>
                   </div>
 
-                  {/* ΑΠΛΟΠΟΙΗΜΕΝΟ ΚΛΑΣΜΑ */}
+                  {/* ΑΠΛΟΠΟΙΗΜΕΝΟ ΑΝΑΓΩΓΟ ΚΛΑΣΜΑ */}
                   <div className="flex flex-col items-center justify-start space-y-6 pt-6 md:pt-0 md:pl-8 h-full">
-                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full">Νέο Απλοποιημένο Κλάσμα</span>
+                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full">Ανάγωγο Κλάσμα</span>
+                    
                     <div className="flex items-center gap-3 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 shadow-sm">
                       {!isIrreducible3 ? (
                         <>
-                          <div className="flex flex-col items-center font-bold text-sm text-rose-600 px-2">
-                            <div>{num3} ÷ {validDivisor}</div>
-                            <div className="w-16 h-[2px] bg-rose-400 my-1"></div>
-                            <div>{den3} ÷ {validDivisor}</div>
+                          {/* Δείχνει αυτόματα με τι διαιρέθηκε (τον ΜΚΔ) */}
+                          <div className="flex flex-col items-center font-bold text-xl text-rose-600 px-2">
+                            <div>{num3} ÷ {autoMkd3}</div>
+                            <div className="w-16 h-[2px] bg-rose-500 my-1"></div>
+                            <div>{den3} ÷ {autoMkd3}</div>
                           </div>
                           <span className="font-black text-3xl text-emerald-600 mx-1">=</span>
                           <div className="flex flex-col items-center font-black text-3xl text-emerald-600 min-w-[75px]">
-                            <div>{num3 / validDivisor}</div>
+                            <div>{num3 / autoMkd3}</div>
                             <div className="w-12 h-[3px] bg-emerald-600 rounded-full my-1"></div>
-                            <div>{den3 / validDivisor}</div>
+                            <div>{den3 / autoMkd3}</div>
                           </div>
                         </>
                       ) : (
@@ -506,23 +475,22 @@ export default function EDimotikou() {
                         </div>
                       )}
                     </div>
+
                     <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 items-center bg-slate-50/50 rounded-xl w-full max-w-[240px]">
                       {Array.from({ length: totalPies3Simplified }).map((_, i) => (
                         <svg key={i} width="110" height="110" className="drop-shadow-sm">
-                          {renderPieSlices(i, isIrreducible3 ? num3 : (num3 / validDivisor), isIrreducible3 ? den3 : (den3 / validDivisor))}
+                          {renderPieSlices(i, num3 / autoMkd3, den3 / autoMkd3)}
                         </svg>
                       ))}
                     </div>
-                    {( (!isIrreducible3) && (gcd(num3/validDivisor, den3/validDivisor) === 1) ) && (
-                      <span className="text-[11px] font-black bg-emerald-100 text-emerald-800 p-1 px-3 rounded-full shadow-sm">
-                        🎉 Φτάσαμε σε Ανάγωγο Κλάσμα!
-                      </span>
-                    )}
                   </div>
 
                 </div>
               </div>
 
+              <p className="text-center text-xs text-gray-500 font-medium">
+                👀 Παρατήρετε ότι και στην Απλοποίηση, το χρωματισμένο μέρος της πίτας παραμένει <strong>ακριβώς το ίδιο</strong>, αλλά το κλάσμα εκφράζεται πλέον με τα λιγότερα δυνατά κομμάτια!
+              </p>
             </div>
           </div>
         )}
@@ -648,7 +616,7 @@ export default function EDimotikou() {
               </div>
 
               <div className="bg-gradient-to-br from-amber-400 to-amber-500 text-white p-5 rounded-2xl text-center shadow-md max-w-md mx-auto border-b-4 border-amber-600">
-                <span className="text-xs uppercase font-black tracking-widest opacity-90 block mb-1">🎯 Το Ελάχιστο Κοινό Πολλαπλάσιο</span>
+                <span className="text-xs uppercase font-black tracking-widest opacity-90 block mb-1">🎯 Το Ελάχισσο Κοινό Πολλαπλάσιο</span>
                 <div className="text-3xl font-black tracking-tight mt-1 flex items-center justify-center gap-2">
                   <span>ΕΚΠ({ekpValues.slice(0, ekpCount).join(', ')}) =</span>
                   <span className="bg-white text-amber-600 p-1 px-4 rounded-xl shadow-inner text-4xl transform scale-105 border border-amber-200">
@@ -670,7 +638,7 @@ export default function EDimotikou() {
             <div className="space-y-4">
               <h2 className="text-2xl font-black text-gray-900">🛡️ Διαιρέτες ενός Αριθμού</h2>
               <p className="text-gray-600 leading-relaxed text-sm">
-                <strong>Διαιρέτες</strong> ενός φυσικού αριθμού είναι όλοι οι αριθμοί που τον <strong>διαιρούν ακριβώς</strong> (δηλαδή η διαίρεση αφήνει υπόλοιπο 0). Κάθε αριθμός έχει συγκεκριμένο (πεπερασμένο) πλήθος διαιρετών.
+                <strong>Διαιρέτες</strong> ενός φυσικού αριθμού είναι όλοι οι αριθμοί που τον <strong>διαιρούν ακριβώς</strong> (δηλαδή η διαίρεση αφήνει υπόλοιπο 0).
               </p>
             </div>
 
@@ -692,9 +660,6 @@ export default function EDimotikou() {
                       {divisor}
                     </div>
                   ))}
-                </div>
-                <div className="text-center text-xs text-gray-400 mt-4 font-medium">
-                  💡 Το <strong>1</strong> και ο <strong>ίδιος ο αριθμός ({divSingleNumber})</strong> είναι πάντα μέσα στους διαιρέτες!
                 </div>
               </div>
             </div>
@@ -743,10 +708,8 @@ export default function EDimotikou() {
                 </div>
               </div>
 
-              {/* ΠΙΝΑΚΑΣ ΔΙΑΙΡΕΤΩΝ ΜΚΔ */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 overflow-x-auto">
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Πίνακας Διαιρετών</span>
-                
                 <div className="space-y-4 min-w-[750px]">
                   {Array.from({ length: mkdCount }).map((_, arrIdx) => {
                     const currentNum = mkdValues[arrIdx];
@@ -785,7 +748,6 @@ export default function EDimotikou() {
                 </div>
               </div>
 
-              {/* ΤΕΛΙΚΟ ΠΛΑΙΣΙΟ ΜΚΔ */}
               <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white p-5 rounded-2xl text-center shadow-md max-w-md mx-auto border-b-4 border-emerald-700">
                 <span className="text-xs uppercase font-black tracking-widest opacity-90 block mb-1">🏆 Ο Μέγιστος Κοινός Διαιρέτης</span>
                 <div className="text-3xl font-black tracking-tight mt-1 flex items-center justify-center gap-2">
@@ -794,11 +756,7 @@ export default function EDimotikou() {
                     {finalMkd}
                   </span>
                 </div>
-                <p className="text-[11px] opacity-90 mt-3 font-medium">
-                  🌟 Το <strong>{finalMkd}</strong> είναι ο μεγαλύτερος αριθμός που μπορεί να διαιρέσει ακριβώς όλους τους επιλεγμένους αριθμούς!
-                </p>
               </div>
-
             </div>
           </div>
         )}
@@ -809,11 +767,10 @@ export default function EDimotikou() {
             <div className="space-y-4">
               <h2 className="text-2xl font-black text-gray-900">🔍 Κριτήρια Διαιρετότητας</h2>
               <p className="text-gray-600 leading-relaxed text-sm">
-                Τα <strong>Κριτήρια Διαιρετότητας</strong> είναι σύντομοι κανόνες (κόλπα) που μας βοηθούν να βρούμε αμέσως αν ένας αριθμός διαιρείται ακριβώς με έναν άλλον, <strong>χωρίς να κάνουμε τη διαίρεση</strong> στο χαρτί!
+                Τα <strong>Κριτήρια Διαιρετότητας</strong> είναι σύντομοι κανόνες (κόλπα) που μας βοηθούν να βρούμε αμέσως αν ένας αριθμός διαιρείται ακριβώς με έναν άλλον.
               </p>
             </div>
 
-            {/* ΠΑΝΕΛ ΕΠΙΛΟΓΗΣ ΑΡΙΘΜΟΥ */}
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 max-w-2xl mx-auto">
               <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border border-gray-200 shadow-sm gap-4">
                 <span className="font-bold text-gray-700 text-sm">Διάλεξε ή γράψε έναν αριθμό:</span>
@@ -824,133 +781,39 @@ export default function EDimotikou() {
                     value={criteriaNumber} 
                     onChange={(e) => {
                       const val = parseInt(e.target.value, 10);
-                      if (!isNaN(val)) {
-                        setCriteriaNumber(Math.max(LIMITS.CRITERIA_NUM_MIN, Math.min(LIMITS.CRITERIA_NUM_MAX, val)));
-                      }
+                      if (!isNaN(val)) setCriteriaNumber(Math.max(LIMITS.CRITERIA_NUM_MIN, Math.min(LIMITS.CRITERIA_NUM_MAX, val)));
                     }}
-                    className="w-20 text-center text-2xl font-black text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    className="w-20 text-center text-2xl font-black text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-1 focus:outline-none"
                   />
                   <button onClick={() => setCriteriaNumber(Math.min(LIMITS.CRITERIA_NUM_MAX, criteriaNumber + 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">+</button>
                 </div>
               </div>
-              
-              {/* SLIDER */}
               <div className="px-2 pt-2">
-                <input 
-                  type="range" 
-                  min={LIMITS.CRITERIA_NUM_MIN} 
-                  max={LIMITS.CRITERIA_NUM_MAX} 
-                  value={criteriaNumber}
-                  onChange={(e) => setCriteriaNumber(parseInt(e.target.value, 10))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                />
-                <div className="flex justify-between text-[10px] text-gray-400 font-bold mt-1">
-                  <span>{LIMITS.CRITERIA_NUM_MIN}</span>
-                  <span>500</span>
-                  <span>{LIMITS.CRITERIA_NUM_MAX}</span>
-                </div>
+                <input type="range" min={LIMITS.CRITERIA_NUM_MIN} max={LIMITS.CRITERIA_NUM_MAX} value={criteriaNumber} onChange={(e) => setCriteriaNumber(parseInt(e.target.value, 10))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-500" />
               </div>
             </div>
 
-            {/* ΠΙΝΑΚΑΣ ΕΛΕΓΧΟΥ ΚΡΙΤΗΡΙΩΝ */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              
-              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 2 */}
-              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 2 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
-                <div>
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 2;</h4>
-                    <span className="text-2xl">{criteriaNumber % 2 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2 font-medium">
-                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 2 όταν είναι <strong>άρτιος (ζυγός)</strong>, δηλαδή λήγει σε 0, 2, 4, 6, 8.
-                  </p>
-                </div>
-                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
-                  🔍 Ο αριθμός {criteriaNumber} λήγει σε <strong>{criteriaNumber % 10}</strong>, άρα {criteriaNumber % 2 === 0 ? 'είναι ζυγός!' : 'είναι μονός!'}
-                </div>
+              <div className={`p-5 rounded-2xl border ${criteriaNumber % 2 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div className="flex justify-between items-start"><h4 className="font-black text-lg text-slate-800">Διαιρείται με το 2;</h4><span className="text-2xl">{criteriaNumber % 2 === 0 ? '✅ Ναι' : '❌ Όχι'}</span></div>
+                <p className="text-xs text-gray-500 mt-2"><strong>Κανόνας:</strong> Είναι άρτιος (λήγει σε 0, 2, 4, 6, 8).</p>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold">🔍 Λήγει σε {criteriaNumber % 10}.</div>
               </div>
-
-              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 5 */}
-              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 5 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
-                <div>
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 5;</h4>
-                    <span className="text-2xl">{criteriaNumber % 5 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2 font-medium">
-                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 5 όταν το τελευταίο του ψηφίο είναι <strong>0 ή 5</strong>.
-                  </p>
-                </div>
-                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
-                  🔍 Το τελευταίο ψηφίο είναι το <strong>{criteriaNumber % 10}</strong>.
-                </div>
+              <div className={`p-5 rounded-2xl border ${criteriaNumber % 5 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div className="flex justify-between items-start"><h4 className="font-black text-lg text-slate-800">Διαιρείται με το 5;</h4><span className="text-2xl">{criteriaNumber % 5 === 0 ? '✅ Ναι' : '❌ Όχι'}</span></div>
+                <p className="text-xs text-gray-500 mt-2"><strong>Κανόνας:</strong> Λήγει σε 0 ή 5.</p>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold">🔍 Λήγει σε {criteriaNumber % 10}.</div>
               </div>
-
-              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 10 */}
-              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 10 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
-                <div>
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 10;</h4>
-                    <span className="text-2xl">{criteriaNumber % 10 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2 font-medium">
-                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 10 όταν το τελευταίο του ψηφίο είναι <strong>0</strong>.
-                  </p>
-                </div>
-                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
-                  🔍 Το τελευταίο ψηφίο είναι το <strong>{criteriaNumber % 10}</strong>.
-                </div>
+              <div className={`p-5 rounded-2xl border ${criteriaNumber % 10 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div className="flex justify-between items-start"><h4 className="font-black text-lg text-slate-800">Διαιρείται με το 10;</h4><span className="text-2xl">{criteriaNumber % 10 === 0 ? '✅ Ναι' : '❌ Όχι'}</span></div>
+                <p className="text-xs text-gray-500 mt-2"><strong>Κανόνας:</strong> Λήγει σε 0.</p>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold">🔍 Λήγει σε {criteriaNumber % 10}.</div>
               </div>
-
-              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 3 */}
-              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 3 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
-                <div>
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 3;</h4>
-                    <span className="text-2xl">{criteriaNumber % 3 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2 font-medium">
-                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 3 όταν το <strong>άθροισμα των ψηφίων του</strong> διαιρείται με το 3 (δηλ. είναι 3, 6, 9, 12, 15...).
-                  </p>
-                </div>
-                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
-                  🔍 Ψηφία: {String(criteriaNumber).split('').join(' + ')} = <strong>{getDigitsSum(criteriaNumber)}</strong> {getDigitsSum(criteriaNumber) % 3 === 0 ? '(διαιρείται με το 3!)' : '(δεν διαιρείται με το 3)'}
-                </div>
+              <div className={`p-5 rounded-2xl border ${criteriaNumber % 3 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div className="flex justify-between items-start"><h4 className="font-black text-lg text-slate-800">Διαιρείται με το 3;</h4><span className="text-2xl">{criteriaNumber % 3 === 0 ? '✅ Ναι' : '❌ Όχι'}</span></div>
+                <p className="text-xs text-gray-500 mt-2"><strong>Κανόνας:</strong> Το άθροισμα των ψηφίων του διαιρείται με το 3.</p>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold">🔍 Άθροισμα: {String(criteriaNumber).split('').join(' + ')} = {getDigitsSum(criteriaNumber)}.</div>
               </div>
-
-              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 9 */}
-              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 9 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
-                <div>
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 9;</h4>
-                    <span className="text-2xl">{criteriaNumber % 9 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2 font-medium">
-                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 9 όταν το <strong>άθροισμα των ψηφίων του</strong> διαιρείται με το 9 (δηλ. είναι 9, 18, 27...).
-                  </p>
-                </div>
-                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
-                  🔍 Ψηφία: {String(criteriaNumber).split('').join(' + ')} = <strong>{getDigitsSum(criteriaNumber)}</strong> {getDigitsSum(criteriaNumber) % 9 === 0 ? '(διαιρείται με το 9!)' : '(δεν διαιρείται με το 9)'}
-                </div>
-              </div>
-
-              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 4 */}
-              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 4 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
-                <div>
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 4;</h4>
-                    <span className="text-2xl">{criteriaNumber % 4 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2 font-medium">
-                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 4 όταν τα <strong>δύο τελευταία ψηφία του</strong> σχηματίζουν αριθμό που διαιρείται με το 4 (ή είναι 00).
-                  </p>
-                </div>
-                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
-                  🔍 Τα τελευταία δύο ψηφία σχηματίζουν το <strong>{criteriaNumber % 100}</strong> { (criteriaNumber % 100) % 4 === 0 ? '(διαιρείται με το 4!)' : '(δεν διαιρείται με το 4)'}.
-                </div>
-              </div>
-
             </div>
           </div>
         )}
