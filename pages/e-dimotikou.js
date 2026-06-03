@@ -22,14 +22,13 @@ const LIMITS = {
   // 3ος Προσομοιωτής (Πολλαπλάσια Αριθμού)
   MULT_NUMBER_MIN: 2,
   MULT_NUMBER_MAX: 15,
-  MULT_COUNT_TO_SHOW: 30, // ΑΥΞΗΘΗΚΕ ΣΕ 30 ΓΙΑ ΝΑ ΦΑΙΝΟΝΤΑΙ 3 ΓΡΑΜΜΕΣ
+  MULT_COUNT_TO_SHOW: 30, // 30 πολλαπλάσια (3 γραμμές των 10)
 
   // 4ος Προσομοιωτής (ΕΚΠ)
   EKP_NUMBERS_COUNT_MIN: 2,
   EKP_NUMBERS_COUNT_MAX: 4,
   EKP_VAL_MIN: 2,
-  EKP_VAL_MAX: 12,
-  EKP_MULT_COUNT: 40        // ΑΥΞΗΘΗΚΕ ΣΕ 40 ΓΙΑ ΝΑ ΕΧΟΥΜΕ ΤΟΥΛΑΧΙΣΤΟΝ 3 ΚΟΙΝΑ ΠΟΛΛΑΠΛΑΣΙΑ
+  EKP_VAL_MAX: 12
 };
 
 export default function EDimotikou() {
@@ -73,6 +72,13 @@ export default function EDimotikou() {
   };
 
   const finalEkp = calculateFinalEKP();
+
+  // ΔΥΝΑΜΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ: Πόσα στοιχεία πρέπει να παραχθούν για τον συγκεκριμένο αριθμό
+  // ώστε να φτάσουμε ακριβώς μέχρι το 3ο κοινό πολλαπλάσιο (δηλαδή 3 φορές το ΕΚΠ)
+  const getDynamicCountForNumber = (num) => {
+    const targetValue = finalEkp * 3; 
+    return Math.floor(targetValue / num) + 1;
+  };
 
   const renderPieSlices = (pieIndex, totalSlicesToColor, currentDen) => {
     const slices = [];
@@ -295,142 +301,4 @@ export default function EDimotikou() {
         {activeTab === 'multiples' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-4">
-              <h2 className="text-2xl font-black text-gray-900">Πολλαπλάσια ενός Αριθμού</h2>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                Πολλαπλάσια ενός φυσικού αριθμού είναι οι αριθμοί που προκύπτουν όταν <strong>πολλαπλασιάσουμε τον αριθμό αυτόν με όλους τους φυσικούς αριθμούς</strong> (0, 1, 2, 3, 4...).
-              </p>
-            </div>
-
-            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-6">
-              <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border border-gray-200 shadow-sm gap-4 max-w-xl mx-auto">
-                <span className="font-bold text-gray-700 text-sm">Διάλεξε έναν αριθμό:</span>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setSingleNumber(Math.max(LIMITS.MULT_NUMBER_MIN, singleNumber - 1))} className="bg-blue-500 text-white w-8 h-8 rounded-full font-bold hover:bg-blue-600 transition">-</button>
-                  <span className="text-2xl font-black text-blue-600 w-8 text-center">{singleNumber}</span>
-                  <button onClick={() => setSingleNumber(Math.min(LIMITS.MULT_NUMBER_MAX, singleNumber + 1))} className="bg-blue-500 text-white w-8 h-8 rounded-full font-bold hover:bg-blue-600 transition">+</button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Τα πρώτα {LIMITS.MULT_COUNT_TO_SHOW} Πολλαπλάσια του {singleNumber}:</span>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                  {Array.from({ length: LIMITS.MULT_COUNT_TO_SHOW }).map((_, i) => (
-                    <div key={i} className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm text-center flex flex-col justify-center transform hover:scale-105 transition duration-150">
-                      <span className="text-[10px] text-gray-400 font-medium block">{singleNumber} × {i}</span>
-                      <span className="text-lg font-black text-blue-600 mt-0.5">{singleNumber * i}</span>
-                    </div>
-                  ))}
-                  <div className="bg-blue-50 rounded-xl p-3 border border-blue-200 border-dashed text-center flex items-center justify-center font-black text-blue-400 text-xl">...</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 4: ΕΛΑΧΙΣΤΟ ΚΟΙΝΟ ΠΟΛΛΑΠΛΑΣΙΟ (ΕΚΠ) */}
-        {activeTab === 'ekp' && (
-          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
-            <div className="space-y-4">
-              <h2 className="text-2xl font-black text-gray-900">🎯 Ελάχιστο Κοινό Πολλαπλάσιο (ΕΚΠ)</h2>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                <strong>Κοινά Πολλαπλάσια</strong> είναι οι αριθμοί που είναι ίδιοι στις λίστες των αριθμών. Το <strong>ΕΚΠ</strong> είναι το μικρότερο από αυτά, εκτός του 0!
-              </p>
-            </div>
-
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
-              <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border border-gray-200 shadow-sm gap-4">
-                <span className="font-bold text-gray-700 text-sm">Πόσους αριθμούς θέλεις να συγκρίνεις;</span>
-                <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 gap-1">
-                  {[2, 3, 4].map((num) => (
-                    <button
-                      key={num}
-                      onClick={() => setEkpCount(num)}
-                      className={`px-4 py-1.5 rounded-md font-bold text-xs transition ${ekpCount === num ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
-                    >
-                      {num} Αριθμούς
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Ρύθμιση Αριθμών</span>
-                <div className="flex flex-wrap justify-center gap-6">
-                  {Array.from({ length: ekpCount }).map((_, index) => (
-                    <div key={index} className="flex flex-col items-center bg-slate-50 p-3 rounded-xl border border-slate-200 min-w-[120px]">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase">Αριθμός {index + 1}</span>
-                      <div className="flex items-center gap-2 mt-2">
-                        <button onClick={() => updateEkpValue(index, false)} className="bg-slate-200 w-6 h-6 rounded-full font-bold text-xs hover:bg-slate-300">-</button>
-                        <span className="font-black text-lg text-cyan-600 w-6 text-center">{ekpValues[index]}</span>
-                        <button onClick={() => updateEkpValue(index, true)} className="bg-slate-200 w-6 h-6 rounded-full font-bold text-xs hover:bg-slate-300">+</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 overflow-x-auto">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Πίνακας Αναζήτησης ({LIMITS.EKP_MULT_COUNT} Πολλαπλάσια ανά σειρά)</span>
-                
-                <div className="space-y-4 min-w-[750px]">
-                  {Array.from({ length: ekpCount }).map((_, arrIdx) => {
-                    const currentNum = ekpValues[arrIdx];
-                    return (
-                      <div key={arrIdx} className="flex items-center gap-4 bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                        <div className="w-16 font-black text-slate-700 text-sm border-r border-slate-200 pr-2">
-                          Π_{currentNum}:
-                        </div>
-                        <div className="flex flex-wrap gap-1.5 flex-1">
-                          {Array.from({ length: LIMITS.EKP_MULT_COUNT }).map((_, mIdx) => {
-                            const multipleValue = currentNum * mIdx;
-                            const isCommon = multipleValue > 0 && (multipleValue % finalEkp === 0);
-                            const isLcm = multipleValue === finalEkp;
-
-                            return (
-                              <div
-                                key={mIdx}
-                                className={`p-2 px-2 text-[11px] rounded-lg font-bold border transition duration-150 text-center min-w-[38px]
-                                  ${isLcm 
-                                    ? 'bg-gradient-to-br from-amber-400 to-amber-500 text-white border-amber-600 shadow-md ring-2 ring-amber-300 scale-110 relative' 
-                                    : isCommon 
-                                      ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-sm' 
-                                      : 'bg-white text-gray-600 border-gray-200'
-                                  }`}
-                              >
-                                {isLcm && <span className="absolute -top-2.5 left-1/2 transform -translate-x-1/2 text-[10px]">👑</span>}
-                                {multipleValue}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-amber-400 to-amber-500 text-white p-5 rounded-2xl text-center shadow-md max-w-md mx-auto border-b-4 border-amber-600">
-                <span className="text-xs uppercase font-black tracking-widest opacity-90 block mb-1">🎯 Το Ελάχιστο Κοινό Πολλαπλάσιο</span>
-                <div className="text-3xl font-black tracking-tight mt-1 flex items-center justify-center gap-2">
-                  <span>ΕΚΠ({ekpValues.slice(0, ekpCount).join(', ')}) =</span>
-                  <span className="bg-white text-amber-600 p-1 px-4 rounded-xl shadow-inner text-4xl transform scale-105 border border-amber-200">
-                    {finalEkp}
-                  </span>
-                </div>
-                <p className="text-[11px] opacity-90 mt-3 font-medium">
-                  🌟 Το <strong>{finalEkp}</strong> είναι το μικρότερο κοινό πολλαπλάσιο (εκτός του 0) που διαιρείται ακριβώς από όλους τους επιλεγμένους αριθμούς!
-                </p>
-              </div>
-
-            </div>
-          </div>
-        )}
-
-      </main>
-
-      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm mt-12">
-        <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές μας.</p>
-      </footer>
-    </div>
-  );
-}
+              <h2 className="text-2xl font-black text-gray-900">Πολλα
