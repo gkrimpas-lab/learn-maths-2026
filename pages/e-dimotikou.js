@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 export default function EDimotikou() {
-  // Κατάσταση για το ποιο Tab είναι ενεργό ('intro' ή 'equivalent')
+  // Κατάσταση για το ποιο Tab είναι ενεργό ('intro' or 'equivalent')
   const [activeTab, setActiveTab] = useState('intro');
 
   // Κατάσταση για τον 1ο προσομοιωτή (Τι είναι κλάσμα)
@@ -15,7 +15,7 @@ export default function EDimotikou() {
   const [den2, setDen2] = useState(3);
   const [multiplier, setMultiplier] = useState(2);
 
-  // Σχεδίαση πίτας για τον 1ο προσομοιωτή
+  // Σχεδίαση πίτας (SVG Paths)
   const renderPieSlices = (pieIndex, totalSlicesToColor, currentDen) => {
     const slices = [];
     const radius = 45;
@@ -174,7 +174,7 @@ export default function EDimotikou() {
             </div>
 
             {/* ΠΡΟΣΟΜΟΙΩΤΗΣ 2 */}
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-8">
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
               <h3 className="text-lg font-bold text-center text-gray-800">🔄 Προσομοιωτής Ισοδύναμων Κλασμάτων</h3>
               
               {/* ΕΠΙΛΟΓΕΑΣ ΠΟΛΛΑΠΛΑΣΙΑΣΤΗ */}
@@ -187,71 +187,83 @@ export default function EDimotikou() {
                 </div>
               </div>
 
-              {/* ΔΥΟ ΣΤΗΛΕΣ: ΑΡΧΙΚΟ ΚΑΙ ΙΣΟΔΥΝΑΜΟ */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* ΒΕΛΤΙΩΜΕΝΟ: ΚΑΙ ΤΑ ΔΥΟ ΚΛΑΣΜΑΤΑ ΣΤΟ ΙΔΙΟ ΛΕΥΚΟ ΠΛΑΙΣΙΟ */}
+              <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-8">
                 
-                {/* ΑΡΧΙΚΟ ΚΛΑΣΜΑ */}
-                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center space-y-4">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Αρχικό Κλάσμα</span>
+                {/* ΧΕΙΡΙΣΤΗΡΙΑ ΡΥΘΜΙΣΗΣ ΑΡΧΙΚΟΥ ΚΛΑΣΜΑΤΟΣ ΜΕ ΣΩΣΤΕΣ ΛΕΞΕΙΣ */}
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-wrap justify-center items-center gap-6 text-sm max-w-2xl mx-auto">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-gray-600">Αριθμητής:</span>
+                    <button onClick={() => setNum2(Math.max(1, num2 - 1))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
+                    <span className="font-black text-slate-800 text-base w-4 text-center">{num2}</span>
+                    <button onClick={() => { if(num2 < den2) setNum2(num2 + 1) }} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">+</button>
+                  </div>
                   
-                  {/* Ρύθμιση Αρχικού */}
-                  <div className="flex gap-2 items-center text-xs">
-                    <span>Κλάσμα:</span>
-                    <button onClick={() => setNum2(Math.max(1, num2 - 1))} className="bg-slate-200 px-2 py-0.5 rounded">-</button>
-                    <span className="font-bold text-slate-700">{num2}/{den2}</span>
-                    <button onClick={() => { if(num2 < den2) setNum2(num2 + 1) }} className="bg-slate-200 px-2 py-0.5 rounded">+</button>
-                    <span className="ml-2">Χώρισμα:</span>
-                    <button onClick={() => { const d=Math.max(2, den2-1); setDen2(d); if(num2>d)setNum2(d); }} className="bg-slate-200 px-2 py-0.5 rounded">-</button>
-                    <button onClick={() => setDen2(Math.min(6, den2 + 1))} className="bg-slate-200 px-2 py-0.5 rounded">+</button>
-                  </div>
+                  <div className="w-[1px] h-6 bg-slate-300 hidden md:block"></div>
 
-                  {/* Σύμβολο Κλάσματος */}
-                  <div className="flex flex-col items-center font-black text-2xl text-blue-600">
-                    <div>{num2}</div>
-                    <div className="w-12 h-[2px] bg-blue-600"></div>
-                    <div>{den2}</div>
-                  </div>
-
-                  {/* Πίτα Αρχικού */}
-                  <div className="flex flex-wrap justify-center gap-2 min-h-[110px] items-center">
-                    {Array.from({ length: totalPies2Initial }).map((_, i) => (
-                      <svg key={i} width="90" height="90">
-                        {renderPieSlices(i, num2, den2)}
-                      </svg>
-                    ))}
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-gray-600">Παρονομαστής:</span>
+                    <button onClick={() => { const d=Math.max(2, den2-1); setDen2(d); if(num2>d)setNum2(d); }} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
+                    <span className="font-black text-slate-800 text-base w-4 text-center">{den2}</span>
+                    <button onClick={() => setDen2(Math.min(6, den2 + 1))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">+</button>
                   </div>
                 </div>
 
-                {/* ΙΣΟΔΥΝΑΜΟ ΚΛΑΣΜΑ */}
-                <div className="bg-white p-6 rounded-xl border-2 border-emerald-400 bg-emerald-50/10 shadow-sm flex flex-col items-center space-y-4">
-                  <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Ισοδύναμο Κλάσμα</span>
+                {/* ΔΙΠΛΑ-ΔΙΠΛΑ Η ΟΠΤΙΚΗ ΣΥΓΚΡΙΣΗ */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100 pt-2">
                   
-                  {/* Μαθηματική Πράξη */}
-                  <div className="text-xs text-gray-500 font-medium text-center">
-                    ({num2} × {multiplier}) / ({den2} × {multiplier})
+                  {/* ΑΡΧΙΚΟ ΚΛΑΣΜΑ */}
+                  <div className="flex flex-col items-center space-y-4 pb-6 md:pb-0">
+                    <span className="text-xs font-bold text-blue-500 uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full">Αρχικό Κλάσμα</span>
+                    
+                    {/* Σύμβολο Κλάσματος */}
+                    <div className="flex flex-col items-center font-black text-3xl text-blue-600 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 min-w-[70px]">
+                      <div>{num2}</div>
+                      <div className="w-10 h-[3px] bg-blue-600 rounded-full my-0.5"></div>
+                      <div>{den2}</div>
+                    </div>
+
+                    {/* Πίτα Αρχικού */}
+                    <div className="flex flex-wrap justify-center gap-2 min-h-[110px] items-center">
+                      {Array.from({ length: totalPies2Initial }).map((_, i) => (
+                        <svg key={i} width="95" height="95" className="drop-shadow-sm">
+                          {renderPieSlices(i, num2, den2)}
+                        </svg>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Σύμβολο Νέου Κλάσματος */}
-                  <div className="flex flex-col items-center font-black text-2xl text-emerald-600">
-                    <div>{num2 * multiplier}</div>
-                    <div className="w-16 h-[2px] bg-emerald-600"></div>
-                    <div>{den2 * multiplier}</div>
+                  {/* ΙΣΟΔΥΝΑΜΟ ΚΛΑΣΜΑ */}
+                  <div className="flex flex-col items-center space-y-4 pt-6 md:pt-0 md:pl-8">
+                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full">Ισοδύναμο Κλάσμα</span>
+                    
+                    {/* Μαθηματική Πράξη */}
+                    <div className="text-[11px] text-slate-400 font-mono tracking-wide">
+                      ({num2} × {multiplier}) / ({den2} × {multiplier})
+                    </div>
+
+                    {/* Σύμβολο Νέου Κλάσματος */}
+                    <div className="flex flex-col items-center font-black text-3xl text-emerald-600 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 min-w-[70px]">
+                      <div>{num2 * multiplier}</div>
+                      <div className="w-12 h-[3px] bg-emerald-600 rounded-full my-0.5"></div>
+                      <div>{den2 * multiplier}</div>
+                    </div>
+
+                    {/* Πίτα Ισοδύναμου */}
+                    <div className="flex flex-wrap justify-center gap-2 min-h-[110px] items-center">
+                      {Array.from({ length: totalPies2Equivalent }).map((_, i) => (
+                        <svg key={i} width="95" height="95" className="drop-shadow-sm">
+                          {renderPieSlices(i, num2 * multiplier, den2 * multiplier)}
+                        </svg>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Πίτα Ισοδύναμου */}
-                  <div className="flex flex-wrap justify-center gap-2 min-h-[110px] items-center">
-                    {Array.from({ length: totalPies2Equivalent }).map((_, i) => (
-                      <svg key={i} width="90" height="90">
-                        {renderPieSlices(i, num2 * multiplier, den2 * multiplier)}
-                      </svg>
-                    ))}
-                  </div>
                 </div>
-
               </div>
 
               <p className="text-center text-xs text-gray-500 font-medium">
-                👀 Παρατήρησε ότι **το συνολικό πορτοκαλί βάψιμο των δύο πίτων παραμένει ακριβώς το ίδιο**, παρόλο που το δεύτερο κλάσμα κόπηκε σε περισσότερα και μικρότερα κομμάτια!
+                👀 Παρατήρησε ότι <strong>το συνολικό πορτοκαλί βάψιμο των δύο πίτων παραμένει ακριβώς το ίδιο</strong>, παρόλο που το δεύτερο κλάσμα κόπηκε σε περισσότερα και μικρότερα κομμάτια!
               </p>
             </div>
           </div>
