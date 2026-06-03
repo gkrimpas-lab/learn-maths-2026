@@ -2,14 +2,33 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
+// ==========================================
+// ΡΥΘΜΙΣΕΙΣ ΟΡΙΩΝ (ΜΕΤΑΒΛΗΤΕΣ CONFIGURATION)
+// ==========================================
+const LIMITS = {
+  // 1ος Προσομοιωτής (Τι είναι κλάσμα)
+  INTRO_NUM_MIN: 0,
+  INTRO_NUM_MAX: 20,
+  INTRO_DEN_MIN: 1,
+  INTRO_DEN_MAX: 12,
+
+  // 2ος Προσομοιωτής (Ισοδύναμα κλάσματα)
+  EQUIV_NUM_MIN: 0,
+  EQUIV_NUM_MAX: 6, // Ορίζεται δυναμικά ώστε να μην ξεπερνά τον παρονομαστή, αλλά έχει min το 0
+  EQUIV_DEN_MIN: 2,
+  EQUIV_DEN_MAX: 6,
+  MULTIPLIER_MIN: 2,
+  MULTIPLIER_MAX: 5
+};
+
 export default function EDimotikou() {
   const [activeTab, setActiveTab] = useState('intro');
 
-  // Κατάσταση για τον 1ο προσομοιωτή (Τι είναι κλάσμα)
+  // Κατάσταση για τον 1ο προσομοιωτή (Τι είναι κλάσμα) - Ξεκινάει με 3/4
   const [num1, setNum1] = useState(3);
   const [den1, setDen1] = useState(4);
 
-  // Κατάσταση για τον 2ο προσομοιωτή (Ισοδύναμα κλάσματα)
+  // Κατάσταση για τον 2ο προσομοιωτή (Ισοδύναμα κλάσματα) - Ξεκινάει με 2/3
   const [num2, setNum2] = useState(2);
   const [den2, setDen2] = useState(3);
   const [multiplier, setMultiplier] = useState(2);
@@ -21,6 +40,7 @@ export default function EDimotikou() {
     const cx = 55;
     const cy = 55;
 
+    // Αν ο αριθμητής είναι 0, σχεδιάζουμε απλώς μια άδεια/γκρι πίτα ανάλογα με τον παρονομαστή
     for (let i = 0; i < currentDen; i++) {
       const startAngle = (i * 360) / currentDen - 90;
       const endAngle = ((i + 1) * 360) / currentDen - 90;
@@ -135,16 +155,16 @@ export default function EDimotikou() {
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col items-center space-y-4">
                   <div className="flex items-center gap-4">
                     <span className="text-xs font-bold text-gray-500 w-24 text-right">Αριθμητής:</span>
-                    <button onClick={() => setNum1(Math.max(1, num1 - 1))} className="bg-red-500 text-white w-8 h-8 rounded-full font-bold hover:bg-red-600 transition">-</button>
+                    <button onClick={() => setNum1(Math.max(LIMITS.INTRO_NUM_MIN, num1 - 1))} className="bg-red-500 text-white w-8 h-8 rounded-full font-bold hover:bg-red-600 transition">-</button>
                     <span className="w-8 text-center text-xl font-black text-red-600">{num1}</span>
-                    <button onClick={() => setNum1(Math.min(20, num1 + 1))} className="bg-green-500 text-white w-8 h-8 rounded-full font-bold hover:bg-green-600 transition">+</button>
+                    <button onClick={() => setNum1(Math.min(LIMITS.INTRO_NUM_MAX, num1 + 1))} className="bg-green-500 text-white w-8 h-8 rounded-full font-bold hover:bg-green-600 transition">+</button>
                   </div>
                   <div className="w-40 h-[2px] bg-gray-200"></div>
                   <div className="flex items-center gap-4">
                     <span className="text-xs font-bold text-gray-500 w-24 text-right">Παρονομαστής:</span>
-                    <button onClick={() => setDen1(Math.max(1, den1 - 1))} className="bg-red-500 text-white w-8 h-8 rounded-full font-bold hover:bg-red-600 transition">-</button>
+                    <button onClick={() => setDen1(Math.max(LIMITS.INTRO_DEN_MIN, den1 - 1))} className="bg-red-500 text-white w-8 h-8 rounded-full font-bold hover:bg-red-600 transition">-</button>
                     <span className="w-8 text-center text-xl font-black text-blue-600">{den1}</span>
-                    <button onClick={() => setDen1(Math.min(12, den1 + 1))} className="bg-green-500 text-white w-8 h-8 rounded-full font-bold hover:bg-green-600 transition">+</button>
+                    <button onClick={() => setDen1(Math.min(LIMITS.INTRO_DEN_MAX, den1 + 1))} className="bg-green-500 text-white w-8 h-8 rounded-full font-bold hover:bg-green-600 transition">+</button>
                   </div>
                 </div>
 
@@ -180,20 +200,20 @@ export default function EDimotikou() {
               <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-xl mx-auto">
                 <span className="font-bold text-amber-900 text-sm">Διάλεξε Πολλαπλασιαστή (Φουσκώνω το κλάσμα):</span>
                 <div className="flex items-center gap-3">
-                  <button onClick={() => setMultiplier(Math.max(2, multiplier - 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">-</button>
+                  <button onClick={() => setMultiplier(Math.max(LIMITS.MULTIPLIER_MIN, multiplier - 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">-</button>
                   <span className="text-xl font-black text-amber-600 w-6 text-center">{multiplier}</span>
-                  <button onClick={() => setMultiplier(Math.min(5, multiplier + 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">+</button>
+                  <button onClick={() => setMultiplier(Math.min(LIMITS.MULTIPLIER_MAX, multiplier + 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">+</button>
                 </div>
               </div>
 
-              {/* ΜΕΓΑΛΩΜΕΝΟ & ΣΤΟΙΧΙΣΜΕΝΟ ΠΛΑΙΣΙΟ */}
+              {/* ΠΛΑΙΣΙΟ ΠΡΟΣΟΜΟΙΩΣΗΣ */}
               <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
                 
                 {/* ΧΕΙΡΙΣΤΗΡΙΑ ΡΥΘΜΙΣΗΣ ΑΡΧΙΚΟΥ ΚΛΑΣΜΑΤΟΣ */}
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-wrap justify-center items-center gap-6 text-sm max-w-2xl mx-auto">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-600">Αριθμητής:</span>
-                    <button onClick={() => setNum2(Math.max(1, num2 - 1))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
+                    <button onClick={() => setNum2(Math.max(LIMITS.EQUIV_NUM_MIN, num2 - 1))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
                     <span className="font-black text-slate-800 text-base w-4 text-center">{num2}</span>
                     <button onClick={() => { if(num2 < den2) setNum2(num2 + 1) }} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">+</button>
                   </div>
@@ -202,13 +222,13 @@ export default function EDimotikou() {
 
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-600">Παρονομαστής:</span>
-                    <button onClick={() => { const d=Math.max(2, den2-1); setDen2(d); if(num2>d)setNum2(d); }} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
+                    <button onClick={() => { const d = Math.max(LIMITS.EQUIV_DEN_MIN, den2 - 1); setDen2(d); if(num2 > d) setNum2(d); }} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
                     <span className="font-black text-slate-800 text-base w-4 text-center">{den2}</span>
-                    <button onClick={() => setDen2(Math.min(6, den2 + 1))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">+</button>
+                    <button onClick={() => setDen2(Math.min(LIMITS.EQUIV_DEN_MAX, den2 + 1))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">+</button>
                   </div>
                 </div>
 
-                {/* ΟΡΙΖΟΝΤΙΑ ΣΤΟΙΧΙΣΗ ΚΛΑΣΜΑΤΩΝ ΚΑΙ ΑΥΞΗΜΕΝΟ ΥΨΟΣ ΓΙΑ ΤΙΣ ΠΙΤΕΣ */}
+                {/* ΟΡΙΖΟΝΤΙΑ ΣΤΟΙΧΙΣΗ & ΜΑΘΗΜΑΤΙΚΗ ΑΝΑΠΤΥΞΗ (ΟΛΑ ΣΤΗΝ ΙΔΙΑ ΕΥΘΕΙΑ) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100 pt-4">
                   
                   {/* ΑΡΧΙΚΟ ΚΛΑΣΜΑ */}
@@ -221,7 +241,6 @@ export default function EDimotikou() {
                       <div>{den2}</div>
                     </div>
 
-                    {/* Μεγαλωμένο min-h και padding για να μην κόβεται η πίτα */}
                     <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 items-center bg-slate-50/50 rounded-xl w-full max-w-[240px]">
                       {Array.from({ length: totalPies2Initial }).map((_, i) => (
                         <svg key={i} width="110" height="110" className="drop-shadow-sm">
@@ -231,25 +250,31 @@ export default function EDimotikou() {
                     </div>
                   </div>
 
-                  {/* ΙΣΟΔΥΝΑΜΟ ΚΛΑΣΜΑ */}
+                  {/* ΜΑΘΗΜΑΤΙΚΗ ΠΡΑΞΗ ΚΑΙ ΤΕΛΙΚΟ ΙΣΟΔΥΝΑΜΟ */}
                   <div className="flex flex-col items-center justify-start space-y-6 pt-6 md:pt-0 md:pl-8 h-full">
                     <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full">Ισοδύναμο Κλάσμα</span>
                     
-                    {/* Προστεθηκε το = μπροστά από το κλάσμα */}
-                    <div className="flex items-center gap-3 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 shadow-sm">
-                      <span className="font-black text-3xl text-emerald-600">=</span>
-                      <div className="flex flex-col items-center font-black text-3xl text-emerald-600 min-w-[75px]">
+                    {/* ΝΕΑ ΜΑΘΗΜΑΤΙΚΗ ΡΟΗ: ΠΡΑΞΗ -> ΙΣΟΝ -> ΑΠΟΤΕΛΕΣΜΑ */}
+                    <div className="flex items-center gap-3 bg-slate-50 p-3 px-4 rounded-xl border border-slate-100 shadow-sm">
+                      
+                      {/* 1. Η Πράξη Πολλαπλασιασμού */}
+                      <div className="flex flex-col items-center font-bold text-xl text-amber-600 px-2">
+                        <div>{num2} × {multiplier}</div>
+                        <div className="w-16 h-[2px] bg-amber-500 my-1"></div>
+                        <div>{den2} × {multiplier}</div>
+                      </div>
+
+                      {/* 2. Το Σύμβολο του Ίσον */}
+                      <span className="font-black text-3xl text-emerald-600 mx-1">=</span>
+
+                      {/* 3. Το Τελικό Αποτέλεσμα */}
+                      <div className="flex flex-col items-center font-black text-3xl text-emerald-600 px-2">
                         <div>{num2 * multiplier}</div>
                         <div className="w-12 h-[3px] bg-emerald-600 rounded-full my-1"></div>
                         <div>{den2 * multiplier}</div>
                       </div>
                     </div>
 
-                    <div className="text-[11px] text-slate-400 font-mono tracking-wide bg-gray-100/70 px-2 py-0.5 rounded">
-                      Πράξη: ({num2} × {multiplier}) / ({den2} × {multiplier})
-                    </div>
-
-                    {/* Μεγαλωμένο min-h και padding για να μην κόβεται η πίτα */}
                     <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 items-center bg-slate-50/50 rounded-xl w-full max-w-[240px]">
                       {Array.from({ length: totalPies2Equivalent }).map((_, i) => (
                         <svg key={i} width="110" height="110" className="drop-shadow-sm">
