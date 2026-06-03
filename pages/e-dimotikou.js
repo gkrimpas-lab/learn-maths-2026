@@ -14,7 +14,9 @@ const LIMITS = {
   DIV_NUMBER_MIN: 2, DIV_NUMBER_MAX: 100,
   MKD_NUMBERS_COUNT_MIN: 2, MKD_NUMBERS_COUNT_MAX: 4, MKD_VAL_MIN: 4, MKD_VAL_MAX: 60,
   CRITERIA_NUM_MIN: 1, CRITERIA_NUM_MAX: 1000,
-  UNIT_NUM_MIN: 1, UNIT_NUM_MAX: 10, UNIT_DEN_MIN: 2, UNIT_DEN_MAX: 12, UNIT_VAL_MIN: 10, UNIT_VAL_MAX: 500
+  UNIT_NUM_MIN: 1, UNIT_NUM_MAX: 10, UNIT_DEN_MIN: 2, UNIT_DEN_MAX: 12, UNIT_VAL_MIN: 10, UNIT_VAL_MAX: 500,
+  // Όρια για τη Μέση Τιμή
+  MEAN_VAL_MIN: 1, MEAN_VAL_MAX: 10
 };
 
 export default function EDimotikou() {
@@ -34,6 +36,9 @@ export default function EDimotikou() {
   const [unitNum, setUnitNum] = useState(3);
   const [unitDen, setUnitDen] = useState(5);
   const [unitValue, setUnitValue] = useState(150);
+
+  // State για Μέση Τιμή (4 στήλες/ποσότητες)
+  const [meanItems, setMeanItems] = useState([8, 4, 9, 3]);
 
   // Math Core Functions
   const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
@@ -70,6 +75,16 @@ export default function EDimotikou() {
     return currentGcd;
   })();
   const getDigitsSum = (num) => String(num).split('').reduce((sum, digit) => sum + parseInt(digit || '0', 10), 0);
+
+  // Μέση Τιμή Helpers
+  const sumMean = meanItems.reduce((a, b) => a + b, 0);
+  const averageMean = (sumMean / meanItems.length).toFixed(1);
+
+  const updateMeanItem = (index, increment) => {
+    const newItems = [...meanItems];
+    newItems[index] = increment ? Math.min(LIMITS.MEAN_VAL_MAX, newItems[index] + 1) : Math.max(LIMITS.MEAN_VAL_MIN, newItems[index] - 1);
+    setMeanItems(newItems);
+  };
 
   // Σχεδίαση Πίτας (SVG)
   const renderPieSlices = (pieIndex, totalSlicesToColor, currentDen) => {
@@ -117,9 +132,9 @@ export default function EDimotikou() {
         <p className="text-cyan-100 opacity-90 font-medium">Διαδραστικά Εργαλεία Μάθησης</p>
       </header>
 
-      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (9 ΠΛΗΡΗ TABS) */}
+      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (10 ΠΛΗΡΗ TABS) */}
       <div className="max-w-6xl mx-auto px-4 mt-8">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-2 bg-white p-2 rounded-xl shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-2 bg-white p-2 rounded-xl shadow-sm">
           {[
             { id: 'intro', label: '🍕 Κλάσμα' },
             { id: 'equivalent', label: '🔄 Ισοδύναμα' },
@@ -130,6 +145,7 @@ export default function EDimotikou() {
             { id: 'divisors', label: '🛡️ Διαιρέτες' },
             { id: 'mkd', label: '🏆 ΜΚΔ' },
             { id: 'criteria', label: '🔍 Κριτήρια' },
+            { id: 'mean', label: '📊 Μέση Τιμή' },
           ].map((tab) => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`py-2 text-center rounded-lg font-bold transition duration-200 text-[11px] ${activeTab === tab.id ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
               {tab.label}
@@ -309,15 +325,13 @@ export default function EDimotikou() {
           </div>
         )}
 
-        {/* TAB 4: ΑΝΑΓΩΓΗ ΣΤΗ ΜΟΝΑΔΑ (ΔΙΟΡΘΩΜΕΝΟ UI ΧΩΡΙΣ ABSOLUTE OVERLAPS) */}
+        {/* TAB 4: ΑΝΑΓΩΓΗ ΣΤΗ ΜΟΝΑΔΑ */}
         {activeTab === 'reduction' && (
           <div className="space-y-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-2">
               <h2 className="text-2xl font-black text-gray-900">🔍 Αναγωγή στην Κλασματική Μονάδα</h2>
               <p className="text-gray-600 text-sm">Αν γνωρίζουμε την τιμή ενός μέρους, βρίσκουμε πρώτα το <strong>ένα κομμάτι</strong> (διαίρεση) και μετά το <strong>όλο σύνολο</strong> (πολλαπλασιασμός).</p>
             </div>
-
-            {/* Πάνελ Ρυθμίσεων */}
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white p-3 rounded-xl border shadow-sm text-center">
                 <span className="text-[10px] font-bold text-gray-400 uppercase block mb-1">1. Το Μέρος (Κλάσμα)</span>
@@ -339,39 +353,26 @@ export default function EDimotikou() {
                 📝 Πρόβλημα: Τα {unitNum}/{unitDen} ενός ποσού είναι {unitValue}. Πόσο είναι το όλο;
               </div>
             </div>
-
-            {/* ΝΕΑ ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΚΑΝΟΝΙΚΗ ΡΟΗ (FLEXBOX) */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-6">
-              
-              {/* Ετικέτα Γνωστού Μέρους (Πάνω από τη μπάρα) */}
               <div className="bg-blue-50 text-blue-800 border border-blue-200 rounded-xl p-2 px-4 text-center font-bold text-xs max-w-md mx-auto">
                 ℹ️ Ξέρουμε ότι τα <span className="text-blue-600 font-black">{unitNum} μπλε κουτάκια</span> αντιστοιχούν συνολικά στην τιμή <span className="text-blue-600 font-black">{unitValue}</span>.
               </div>
-
-              {/* Η Κλασματική Ράβδος */}
               <div className="flex w-full h-14 bg-gray-100 rounded-xl overflow-hidden border-2 border-slate-200 shadow-sm">
                 {Array.from({ length: unitDen }).map((_, i) => (
-                  <div 
-                    key={i} 
-                    className={`flex-1 border-r last:border-0 border-white/40 flex flex-col items-center justify-center font-black text-xs transition-all duration-300
-                    ${i < unitNum ? 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-inner' : 'bg-slate-200 text-slate-400'}`}
-                  >
+                  <div key={i} className={`flex-1 border-r last:border-0 border-white/40 flex flex-col items-center justify-center font-black text-xs transition-all duration-300 ${i < unitNum ? 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-inner' : 'bg-slate-200 text-slate-400'}`}>
                     <span>1/{unitDen}</span>
                     <span className="text-[10px] font-normal opacity-80">({unitValue / unitNum})</span>
                   </div>
                 ))}
               </div>
-
-              {/* Επεξηγηματικές Κάρτες Βημάτων */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                 <div className="p-4 bg-orange-50 rounded-xl border border-orange-200 flex items-center gap-4">
                   <div className="w-10 h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-black shrink-0 shadow-sm">1</div>
                   <div>
-                    <p className="text-[10px] font-bold text-orange-800 uppercase tracking-wide">Βήμα 1: Βρίσκω το 1 κομμάτι (1/{unitDen})</p>
+                    <p className="text-[10px] font-bold text-orange-800 uppercase tracking-wide">Βήμα 1: Βρίσκω το 1 κομμάαι (1/{unitDen})</p>
                     <p className="font-black text-base text-gray-800 mt-0.5">{unitValue} ÷ {unitNum} = <span className="text-orange-600 text-lg">{unitValue / unitNum}</span></p>
                   </div>
                 </div>
-
                 <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center gap-4">
                   <div className="w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center font-black shrink-0 shadow-sm">2</div>
                   <div>
@@ -380,8 +381,6 @@ export default function EDimotikou() {
                   </div>
                 </div>
               </div>
-
-              {/* Τελικό Συμπέρασμα */}
               <div className="bg-emerald-600 text-white p-4 rounded-xl text-center font-black text-sm shadow-md max-w-sm mx-auto">
                 🎉 Το συνολικό ποσό είναι: {(unitValue / unitNum) * unitDen}
               </div>
@@ -581,6 +580,97 @@ export default function EDimotikou() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* ΝΕΟ TAB 10: ΜΕΣΗ ΤΙΜΗ (ΜΕΣΟΣ ΟΡΟΣ) */}
+        {activeTab === 'mean' && (
+          <div className="space-y-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black text-gray-900">📊 Μέση Τιμή (Μέσος Όρος)</h2>
+              <p className="text-gray-600 text-sm">Μέση τιμή είναι ο αριθμός που προκύπτει αν προσθέσουμε όλες τις ποσότητες και **μοιράσουμε το άθροισμα εξίσου** (δίκαια) στον ίδιο αριθμό ομάδων.</p>
+            </div>
+
+            {/* Πάνελ Ελέγχου 4 Ποσοτήτων */}
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <span className="text-[10px] font-bold text-gray-400 uppercase block tracking-wider text-center sm:text-left">Άλλαξε το ύψος των 4 ομάδων:</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {meanItems.map((val, idx) => (
+                  <div key={idx} className="bg-white p-3 rounded-xl border shadow-sm flex flex-col items-center justify-center space-y-1">
+                    <span className="text-xs font-bold text-gray-500">Ομάδα {String.fromCharCode(65 + idx)}</span>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => updateMeanItem(idx, false)} className="bg-slate-100 font-bold px-2 rounded hover:bg-slate-200 text-sm">-</button>
+                      <span className="font-black text-lg text-indigo-600 w-6 text-center">{val}</span>
+                      <button onClick={() => updateMeanItem(idx, true)} className="bg-slate-100 font-bold px-2 rounded hover:bg-slate-200 text-sm">+</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΣΤΗΛΕΣ ΚΑΙ ΕΥΘΕΙΑ ΜΕΣΟΥ ΟΡΟΥ */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-8">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 text-center">📈 Γραφική Ισορροπία Στηλών (Η Δίκαιη Μοιρασιά)</h3>
+              
+              {/* Το Διάγραμμα */}
+              <div className="relative border-b-2 border-gray-300 h-48 flex items-end justify-around px-2 sm:px-12 bg-slate-50/50 rounded-xl pt-4">
+                
+                {/* Οριζόντια Διακεκομμένη Γραμμή Μέσου Όρου */}
+                <div 
+                  className="absolute left-0 right-0 border-t-2 border-dashed border-rose-500 z-10 transition-all duration-300"
+                  style={{ bottom: `${(parseFloat(averageMean) / LIMITS.MEAN_VAL_MAX) * 100}%` }}
+                >
+                  <span className="absolute right-2 -top-5 bg-rose-500 text-white text-[9px] font-black p-0.5 px-2 rounded shadow-sm">
+                    Μέση Τιμή: {averageMean}
+                  </span>
+                </div>
+
+                {/* Οι 4 Στήλες */}
+                {meanItems.map((val, idx) => (
+                  <div key={idx} className="flex flex-col items-center w-12 sm:w-16 z-0">
+                    <span className="text-xs font-black text-slate-700 mb-1">{val}</span>
+                    <div 
+                      className="w-full bg-gradient-to-t from-blue-600 to-cyan-400 rounded-t-md shadow-sm transition-all duration-300 relative flex flex-col justify-end"
+                      style={{ height: `${(val / LIMITS.MEAN_VAL_MAX) * 150}px` }}
+                    >
+                      {/* Εσωτερικά διαχωριστικά "τουβλάκια" */}
+                      {Array.from({ length: val }).map((_, bIdx) => (
+                        <div key={bIdx} className="border-b border-white/20 h-full w-full"></div>
+                      ))}
+                    </div>
+                    <span className="text-[10px] font-bold text-gray-400 mt-2">Ομ. {String.fromCharCode(65 + idx)}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΒΗΜΑ-ΒΗΜΑ */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 flex items-center gap-4">
+                  <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-black shrink-0 shadow-sm">1</div>
+                  <div>
+                    <p className="text-[10px] font-bold text-blue-800 uppercase tracking-wide">Βήμα 1: Βρίσκω το Συνολικό Άθροισμα</p>
+                    <p className="font-black text-sm text-gray-800 mt-0.5">
+                      {meanItems.join(' + ')} = <span className="text-blue-600 text-base">{sumMean}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center gap-4">
+                  <div className="w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center font-black shrink-0 shadow-sm">2</div>
+                  <div>
+                    <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide">Βήμα 2: Διαιρώ με το πλήθος των ομάδων ({meanItems.length})</p>
+                    <p className="font-black text-sm text-gray-800 mt-0.5">
+                      {sumMean} ÷ {meanItems.length} = <span className="text-emerald-600 text-base">{averageMean}</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Τελικό Συμπέρασμα */}
+              <div className="bg-gradient-to-r from-rose-500 to-orange-500 text-white p-4 rounded-xl text-center font-black text-sm shadow-md max-w-sm mx-auto">
+                📢 Αν μοιράζαμε δίκαια τα τουβλάκια, κάθε ομάδα θα είχε ακριβώς: {averageMean}
+              </div>
             </div>
           </div>
         )}
