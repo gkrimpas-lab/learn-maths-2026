@@ -19,26 +19,32 @@ const LIMITS = {
   MULTIPLIER_MIN: 2,
   MULTIPLIER_MAX: 5,
 
-  // 3ος Προσομοιωτής (Πολλαπλάσια Αριθμού)
+  // 3ος Προσομοιωτής (Απλοποίηση κλασμάτων)
+  SIMPL_NUM_MIN: 2,
+  SIMPL_NUM_MAX: 24,
+  SIMPL_DEN_MIN: 2,
+  SIMPL_DEN_MAX: 24,
+
+  // 4ος Προσομοιωτής (Πολλαπλάσια Αριθμού)
   MULT_NUMBER_MIN: 2,
   MULT_NUMBER_MAX: 15,
   MULT_COUNT_TO_SHOW: 30,
 
-  // 4ος Προσομοιωτής (ΕΚΠ)
+  // 5ος Προσομοιωτής (ΕΚΠ)
   EKP_NUMBERS_COUNT_MIN: 2,
   EKP_NUMBERS_COUNT_MAX: 4,
   EKP_VAL_MIN: 2,
   EKP_VAL_MAX: 12,
 
-  // 5ος & 6ος Προσομοιωτής (Διαιρέτες & ΜΚΔ)
+  // 6ος & 7ος Προσομοιωτής (Διαιρέτες & ΜΚΔ)
   DIV_NUMBER_MIN: 2,
   DIV_NUMBER_MAX: 100,
   MKD_NUMBERS_COUNT_MIN: 2,
   MKD_NUMBERS_COUNT_MAX: 4,
-  MKD_VAL_MIN: 1,
-  MKD_VAL_MAX: 100,
+  MKD_VAL_MIN: 4,
+  MKD_VAL_MAX: 60,
 
-  // 7ος Προσομοιωτής (Κριτήρια Διαιρετότητας)
+  // 8ος Προσομοιωτής (Κριτήρια Διαιρετότητας)
   CRITERIA_NUM_MIN: 1,
   CRITERIA_NUM_MAX: 1000
 };
@@ -55,22 +61,47 @@ export default function EDimotikou() {
   const [den2, setDen2] = useState(3);
   const [multiplier, setMultiplier] = useState(2);
 
-  // Κατάσταση για τον 3ο προσομοιωτή (Πολλαπλάσια)
+  // Κατάσταση για τον 3ο προσομοιωτή (Απλοποίηση)
+  const [num3, setNum3] = useState(12);
+  const [den3, setDen3] = useState(18);
+  const [chosenDivisor, setChosenDivisor] = useState(2);
+
+  // Κατάσταση για τον 4ο προσομοιωτή (Πολλαπλάσια)
   const [singleNumber, setSingleNumber] = useState(4);
 
-  // Κατάσταση για τον 4ο προσομοιωτή (ΕΚΠ)
+  // Κατάσταση για τον 5ο προσομοιωτή (ΕΚΠ)
   const [ekpCount, setEkpCount] = useState(2);
   const [ekpValues, setEkpValues] = useState([3, 4, 6, 8]);
 
-  // Κατάσταση για τον 5ο προσομοιωτή (Διαιρέτες)
+  // Κατάσταση για τον 6ο προσομοιωτή (Διαιρέτες)
   const [divSingleNumber, setDivSingleNumber] = useState(24);
 
-  // Κατάσταση για τον 6ο προσομοιωτή (ΜΚΔ)
+  // Κατάσταση για τον 7ο προσομοιωτή (ΜΚΔ)
   const [mkdCount, setMkdCount] = useState(2);
   const [mkdValues, setMkdValues] = useState([12, 18, 24, 36]);
 
-  // Κατάσταση για τον 7ο προσομοιωτή (Κριτήρια Διαιρετότητας)
+  // Κατάσταση για τον 8ο προσομοιωτή (Κριτήρια Διαιρετότητας)
   const [criteriaNumber, setCriteriaNumber] = useState(123);
+
+  // Κοινές Μαθηματικές Συναρτήσεις
+  const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+  const lcm = (a, b) => (a * b) / gcd(a, b);
+
+  // Συναρτήσεις για Απλοποίηση
+  const getCommonDivisors = (a, b) => {
+    const common = [];
+    const max = Math.min(a, b);
+    for (let i = 2; i <= max; i++) {
+      if (a % i === 0 && b % i === 0) {
+        common.push(i);
+      }
+    }
+    return common;
+  };
+
+  const commonDivisors3 = getCommonDivisors(num3, den3);
+  const currentGcd3 = gcd(num3, den3);
+  const isIrreducible3 = currentGcd3 === 1;
 
   // Συναρτήσεις Διαχείρισης ΕΚΠ
   const updateEkpValue = (index, increment) => {
@@ -82,9 +113,6 @@ export default function EDimotikou() {
     }
     setEkpValues(newValues);
   };
-
-  const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
-  const lcm = (a, b) => (a * b) / gcd(a, b);
   
   const calculateFinalEKP = () => {
     let currentLcm = ekpValues[0];
@@ -130,7 +158,7 @@ export default function EDimotikou() {
 
   const finalMkd = calculateFinalMKD();
 
-  // Βοηθητική συνάρτηση για άθροισμα ψηφίων (χρήσιμη για τα κριτήρια του 3 και του 9)
+  // Άθροισμα ψηφίων για κριτήρια διαιρετότητας
   const getDigitsSum = (num) => {
     return String(num).split('').reduce((sum, digit) => sum + parseInt(digit || '0', 10), 0);
   };
@@ -175,6 +203,10 @@ export default function EDimotikou() {
   const totalPies2Initial = Math.max(1, Math.ceil(num2 / den2));
   const totalPies2Equivalent = Math.max(1, Math.ceil((num2 * multiplier) / (den2 * multiplier)));
 
+  const totalPies3Initial = Math.max(1, Math.ceil(num3 / den3));
+  const validDivisor = commonDivisors3.includes(chosenDivisor) ? chosenDivisor : (commonDivisors3[0] || 1);
+  const totalPies3Simplified = Math.max(1, Math.ceil((num3 / validDivisor) / (den3 / validDivisor)));
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
       <Head>
@@ -197,32 +229,35 @@ export default function EDimotikou() {
       {/* HEADER ΤΑΞΗΣ */}
       <header className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-10 text-center shadow-inner">
         <h1 className="text-4xl font-black mb-2">🎒 Μαθηματικά Ε' Δημοτικού</h1>
-        <p className="text-cyan-100 opacity-90 font-medium">Ενότητες: Κλάσματα, Πολλαπλάσια, Διαιρέτες, ΕΚΠ, ΜΚΔ & Κριτήρια Διαιρετότητας</p>
+        <p className="text-cyan-100 opacity-90 font-medium">Ενότητες: Κλάσματα, Απλοποίηση, Πολλαπλάσια, Διαιρέτες, ΕΚΠ, ΜΚΔ & Κριτήρια</p>
       </header>
 
-      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (7 TABS) */}
+      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (8 TABS) */}
       <div className="max-w-6xl mx-auto px-4 mt-8">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2 bg-white p-2 rounded-xl shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 bg-white p-2 rounded-xl shadow-sm">
           <button onClick={() => setActiveTab('intro')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'intro' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
             🍕 1. Τι είναι κλάσμα;
           </button>
           <button onClick={() => setActiveTab('equivalent')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'equivalent' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
             🔄 2. Ισοδύναμα
           </button>
+          <button onClick={() => setActiveTab('simplification')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'simplification' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
+            ✂️ 3. Απλοποίηση
+          </button>
           <button onClick={() => setActiveTab('multiples')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'multiples' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
-            🔢 3. Πολλαπλάσια
+            🔢 4. Πολλαπλάσια
           </button>
           <button onClick={() => setActiveTab('ekp')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'ekp' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
-            🎯 4. ΕΚΠ
+            🎯 5. ΕΚΠ
           </button>
           <button onClick={() => setActiveTab('divisors')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'divisors' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
-            🛡️ 5. Διαιρέτες
+            🛡️ 6. Διαιρέτες
           </button>
           <button onClick={() => setActiveTab('mkd')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'mkd' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
-            🏆 6. ΜΚΔ
+            🏆 7. ΜΚΔ
           </button>
           <button onClick={() => setActiveTab('criteria')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'criteria' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
-            🔍 7. Κριτήρια
+            🔍 8. Κριτήρια
           </button>
         </div>
       </div>
@@ -362,7 +397,137 @@ export default function EDimotikou() {
           </div>
         )}
 
-        {/* TAB 3: ΠΟΛΛΑΠΛΑΣΙΑ ΑΡΙΘΜΟΥ */}
+        {/* TAB 3: ΑΠΛΟΠΟΙΗΣΗ ΚΛΑΣΜΑΤΩΝ (NEW) */}
+        {activeTab === 'simplification' && (
+          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+            <div className="space-y-4">
+              <h2 className="text-2xl font-black text-gray-900">✂️ Απλοποίηση Κλασμάτων & Ανάγωγα Κλάσματα</h2>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                <strong>Απλοποίηση</strong> είναι η διαδικασία στην οποία <strong>διαιρούμε</strong> και τον αριθμητή και τον παρονομαστή με τον <strong>ίδιο αριθμό</strong>. Το κλάσμα μικραίνει σε αριθμούς, αλλά η αξία του παραμένει ακριβώς η ίδια!
+              </p>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Όταν ένα κλάσμα δεν μπορεί να απλοποιηθεί άλλο (δηλαδή ο αριθμητής και ο παρονομαστής δεν έχουν κανέναν κοινό διαιρέτη εκτός από το 1), τότε λέγεται <strong>Ανάγωγο Κλάσμα</strong> 🏆.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
+              <h3 className="text-lg font-bold text-center text-gray-800">✂️ Προσομοιωτής Απλοποίησης</h3>
+              
+              {/* ΡΥΘΜΙΣΗ ΑΡΧΙΚΟΥ ΚΛΑΣΜΑΤΟΣ */}
+              <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-wrap justify-center items-center gap-6 text-sm max-w-2xl mx-auto">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-gray-600">Αρχικός Αριθμητής:</span>
+                  <button onClick={() => setNum3(Math.max(LIMITS.SIMPL_NUM_MIN, num3 - 2))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs">-2</button>
+                  <span className="font-black text-red-600 text-lg w-6 text-center">{num3}</span>
+                  <button onClick={() => setNum3(Math.min(LIMITS.SIMPL_NUM_MAX, num3 + 2))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs">+2</button>
+                </div>
+                <div className="w-[1px] h-6 bg-gray-200 hidden md:block"></div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-gray-600">Αρχικός Παρονομαστής:</span>
+                  <button onClick={() => setDen3(Math.max(LIMITS.SIMPL_DEN_MIN, den3 - 2))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs">-2</button>
+                  <span className="font-black text-blue-600 text-lg w-6 text-center">{den3}</span>
+                  <button onClick={() => setDen3(Math.min(LIMITS.SIMPL_DEN_MAX, den3 + 2))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs">+2</button>
+                </div>
+              </div>
+
+              {/* ΕΠΙΛΟΓΗ ΚΟΙΝΟΥ ΔΙΑΙΡΕΤΗ */}
+              <div className="bg-indigo-50 p-5 rounded-xl border border-indigo-100 flex flex-col items-center justify-center gap-3 max-w-xl mx-auto text-center">
+                {isIrreducible3 ? (
+                  <div className="text-emerald-700 font-black flex items-center gap-2 bg-emerald-100 p-2.5 px-5 rounded-xl border border-emerald-200 animate-pulse">
+                    🏆 Αυτό το κλάσμα είναι ήδη ΑΝΑΓΩΓΟ! Δεν απλοποιείται άλλο!
+                  </div>
+                ) : (
+                  <>
+                    <span className="font-bold text-indigo-950 text-sm">Διάλεξε έναν Κοινό Διαιρέτη για να κάνεις απλοποίηση:</span>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {commonDivisors3.map((divi) => (
+                        <button
+                          key={divi}
+                          onClick={() => setChosenDivisor(divi)}
+                          className={`px-4 py-2 rounded-xl font-black text-sm border transition shadow-sm
+                            ${validDivisor === divi 
+                              ? 'bg-indigo-600 text-white border-indigo-700 scale-105' 
+                              : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-100/50'
+                            }`}
+                        >
+                          Διαίρεση με το {divi} {divi === currentGcd3 ? '⭐ (ΜΚΔ)' : ''}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[11px] text-indigo-500 font-medium">
+                      💡 Συμβουλή: Αν διαιρέσεις με τον <strong>Μέγιστο Κοινό Διαιρέτη ({currentGcd3})</strong>, το κλάσμα θα γίνει αμέσως ανάγωγο!
+                    </p>
+                  </>
+                )}
+              </div>
+
+              {/* ΟΠΤΙΚΟ ΑΠΟΤΕΛΕΣΜΑ */}
+              <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100 pt-4">
+                  
+                  {/* ΑΡΧΙΚΟ ΜΕΓΑΛΟ ΚΛΑΣΜΑ */}
+                  <div className="flex flex-col items-center justify-start space-y-6 pb-6 md:pb-0 h-full">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full">Αρχικό Κλάσμα</span>
+                    <div className="flex flex-col items-center font-black text-3xl text-slate-700 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 min-w-[75px]">
+                      <div>{num3}</div>
+                      <div className="w-10 h-[3px] bg-slate-600 rounded-full my-1"></div>
+                      <div>{den3}</div>
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 items-center bg-slate-50/50 rounded-xl w-full max-w-[240px]">
+                      {Array.from({ length: totalPies3Initial }).map((_, i) => (
+                        <svg key={i} width="110" height="110" className="drop-shadow-sm">{renderPieSlices(i, num3, den3)}</svg>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* ΑΠΛΟΠΟΙΗΜΕΝΟ ΚΛΑΣΜΑ */}
+                  <div className="flex flex-col items-center justify-start space-y-6 pt-6 md:pt-0 md:pl-8 h-full">
+                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full">Νέο Απλοποιημένο Κλάσμα</span>
+                    <div className="flex items-center gap-3 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 shadow-sm">
+                      {!isIrreducible3 ? (
+                        <>
+                          <div className="flex flex-col items-center font-bold text-sm text-rose-600 px-2">
+                            <div>{num3} ÷ {validDivisor}</div>
+                            <div className="w-16 h-[2px] bg-rose-400 my-1"></div>
+                            <div>{den3} ÷ {validDivisor}</div>
+                          </div>
+                          <span className="font-black text-3xl text-emerald-600 mx-1">=</span>
+                          <div className="flex flex-col items-center font-black text-3xl text-emerald-600 min-w-[75px]">
+                            <div>{num3 / validDivisor}</div>
+                            <div className="w-12 h-[3px] bg-emerald-600 rounded-full my-1"></div>
+                            <div>{den3 / validDivisor}</div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="flex flex-col items-center font-black text-3xl text-emerald-600 min-w-[75px]">
+                          <div>{num3}</div>
+                          <div className="w-12 h-[3px] bg-emerald-600 rounded-full my-1"></div>
+                          <div>{den3}</div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 items-center bg-slate-50/50 rounded-xl w-full max-w-[240px]">
+                      {Array.from({ length: totalPies3Simplified }).map((_, i) => (
+                        <svg key={i} width="110" height="110" className="drop-shadow-sm">
+                          {renderPieSlices(i, isIrreducible3 ? num3 : (num3 / validDivisor), isIrreducible3 ? den3 : (den3 / validDivisor))}
+                        </svg>
+                      ))}
+                    </div>
+                    {( (!isIrreducible3) && (gcd(num3/validDivisor, den3/validDivisor) === 1) ) && (
+                      <span className="text-[11px] font-black bg-emerald-100 text-emerald-800 p-1 px-3 rounded-full shadow-sm">
+                        🎉 Φτάσαμε σε Ανάγωγο Κλάσμα!
+                      </span>
+                    )}
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: ΠΟΛΛΑΠΛΑΣΙΑ ΑΡΙΘΜΟΥ */}
         {activeTab === 'multiples' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-4">
@@ -398,7 +563,7 @@ export default function EDimotikou() {
           </div>
         )}
 
-        {/* TAB 4: ΕΛΑΧΙΣΤΟ ΚΟΙΝΟ ΠΟΛΛΑΠΛΑΣΙΟ (ΕΚΠ) */}
+        {/* TAB 5: ΕΛΑΧΙΣΤΟ ΚΟΙΝΟ ΠΟΛΛΑΠΛΑΣΙΟ (ΕΚΠ) */}
         {activeTab === 'ekp' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-4">
@@ -499,7 +664,7 @@ export default function EDimotikou() {
           </div>
         )}
 
-        {/* TAB 5: ΔΙΑΙΡΕΤΕΣ ΑΡΙΘΜΟΥ */}
+        {/* TAB 6: ΔΙΑΙΡΕΤΕΣ ΑΡΙΘΜΟΥ */}
         {activeTab === 'divisors' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-4">
@@ -536,7 +701,7 @@ export default function EDimotikou() {
           </div>
         )}
 
-        {/* TAB 6: ΜΕΓΙΣΤΟΣ ΚΟΙΝΟΣ ΔΙΑΙΡΕΤΗΣ (ΜΚΔ) */}
+        {/* TAB 7: ΜΕΓΙΣΤΟΣ ΚΟΙΝΟΣ ΔΙΑΙΡΕΤΗΣ (ΜΚΔ) */}
         {activeTab === 'mkd' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-4">
@@ -638,7 +803,7 @@ export default function EDimotikou() {
           </div>
         )}
 
-        {/* TAB 7: ΚΡΙΤΗΡΙΑ ΔΙΑΙΡΕΤΟΤΗΤΑΣ (ΝΕΟ) */}
+        {/* TAB 8: ΚΡΙΤΗΡΙΑ ΔΙΑΙΡΕΤΟΤΗΤΑΣ */}
         {activeTab === 'criteria' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-4">
@@ -669,7 +834,7 @@ export default function EDimotikou() {
                 </div>
               </div>
               
-              {/* SLIDER ΓΙΑ ΓΡΗΓΟΡΗ ΑΛΛΑΓΗ ΜΕΓΑΛΩΝ ΑΡΙΘΜΩΝ */}
+              {/* SLIDER */}
               <div className="px-2 pt-2">
                 <input 
                   type="range" 
