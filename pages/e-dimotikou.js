@@ -15,8 +15,9 @@ const LIMITS = {
   MKD_NUMBERS_COUNT_MIN: 2, MKD_NUMBERS_COUNT_MAX: 4, MKD_VAL_MIN: 4, MKD_VAL_MAX: 60,
   CRITERIA_NUM_MIN: 1, CRITERIA_NUM_MAX: 1000,
   UNIT_NUM_MIN: 1, UNIT_NUM_MAX: 10, UNIT_DEN_MIN: 2, UNIT_DEN_MAX: 12, UNIT_VAL_MIN: 10, UNIT_VAL_MAX: 500,
-  // Όρια για τη Μέση Τιμή
-  MEAN_VAL_MIN: 1, MEAN_VAL_MAX: 10
+  MEAN_VAL_MIN: 1, MEAN_VAL_MAX: 10,
+  // Όρια για τα Ποσοστά
+  PERCENT_MIN: 0, PERCENT_MAX: 100
 };
 
 export default function EDimotikou() {
@@ -37,8 +38,11 @@ export default function EDimotikou() {
   const [unitDen, setUnitDen] = useState(5);
   const [unitValue, setUnitValue] = useState(150);
 
-  // State για Μέση Τιμή (4 στήλες/ποσότητες)
+  // State για Μέση Τιμή
   const [meanItems, setMeanItems] = useState([8, 4, 9, 3]);
+
+  // State για Ποσοστά
+  const [percentVal, setPercentVal] = useState(25);
 
   // Math Core Functions
   const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
@@ -132,9 +136,9 @@ export default function EDimotikou() {
         <p className="text-cyan-100 opacity-90 font-medium">Διαδραστικά Εργαλεία Μάθησης</p>
       </header>
 
-      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (10 ΠΛΗΡΗ TABS) */}
+      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (11 ΠΛΗΡΗ TABS) */}
       <div className="max-w-6xl mx-auto px-4 mt-8">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-2 bg-white p-2 rounded-xl shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-11 gap-1.5 bg-white p-2 rounded-xl shadow-sm">
           {[
             { id: 'intro', label: '🍕 Κλάσμα' },
             { id: 'equivalent', label: '🔄 Ισοδύναμα' },
@@ -146,8 +150,9 @@ export default function EDimotikou() {
             { id: 'mkd', label: '🏆 ΜΚΔ' },
             { id: 'criteria', label: '🔍 Κριτήρια' },
             { id: 'mean', label: '📊 Μέση Τιμή' },
+            { id: 'percentage', label: '🏷️ Ποσοστά' },
           ].map((tab) => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`py-2 text-center rounded-lg font-bold transition duration-200 text-[11px] ${activeTab === tab.id ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`py-2 text-center rounded-lg font-bold transition duration-200 text-[10.5px] ${activeTab === tab.id ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
               {tab.label}
             </button>
           ))}
@@ -369,7 +374,7 @@ export default function EDimotikou() {
                 <div className="p-4 bg-orange-50 rounded-xl border border-orange-200 flex items-center gap-4">
                   <div className="w-10 h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-black shrink-0 shadow-sm">1</div>
                   <div>
-                    <p className="text-[10px] font-bold text-orange-800 uppercase tracking-wide">Βήμα 1: Βρίσκω το 1 κομμάαι (1/{unitDen})</p>
+                    <p className="text-[10px] font-bold text-orange-800 uppercase tracking-wide">Βήμα 1: Βρίσκω το 1 κομμάτι (1/{unitDen})</p>
                     <p className="font-black text-base text-gray-800 mt-0.5">{unitValue} ÷ {unitNum} = <span className="text-orange-600 text-lg">{unitValue / unitNum}</span></p>
                   </div>
                 </div>
@@ -584,15 +589,13 @@ export default function EDimotikou() {
           </div>
         )}
 
-        {/* ΝΕΟ TAB 10: ΜΕΣΗ ΤΙΜΗ (ΜΕΣΟΣ ΟΡΟΣ) */}
+        {/* TAB 10: ΜΕΣΗ ΤΙΜΗ */}
         {activeTab === 'mean' && (
           <div className="space-y-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-2">
               <h2 className="text-2xl font-black text-gray-900">📊 Μέση Τιμή (Μέσος Όρος)</h2>
-              <p className="text-gray-600 text-sm">Μέση τιμή είναι ο αριθμός που προκύπτει αν προσθέσουμε όλες τις ποσότητες και **μοιράσουμε το άθροισμα εξίσου** (δίκαια) στον ίδιο αριθμό ομάδων.</p>
+              <p className="text-gray-600 text-sm">Μέση τιμή είναι ο αριθμός που προκύπτει αν προσθέσουμε όλες τις ποσότητες και **μοιράσουμε το άθροισμα εξισμού** (δίκαια) στον ίδιο αριθμό ομάδων.</p>
             </div>
-
-            {/* Πάνελ Ελέγχου 4 Ποσοτήτων */}
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
               <span className="text-[10px] font-bold text-gray-400 uppercase block tracking-wider text-center sm:text-left">Άλλαξε το ύψος των 4 ομάδων:</span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -608,69 +611,133 @@ export default function EDimotikou() {
                 ))}
               </div>
             </div>
-
-            {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΣΤΗΛΕΣ ΚΑΙ ΕΥΘΕΙΑ ΜΕΣΟΥ ΟΡΟΥ */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 space-y-8">
               <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 text-center">📈 Γραφική Ισορροπία Στηλών (Η Δίκαιη Μοιρασιά)</h3>
-              
-              {/* Το Διάγραμμα */}
               <div className="relative border-b-2 border-gray-300 h-48 flex items-end justify-around px-2 sm:px-12 bg-slate-50/50 rounded-xl pt-4">
-                
-                {/* Οριζόντια Διακεκομμένη Γραμμή Μέσου Όρου */}
-                <div 
-                  className="absolute left-0 right-0 border-t-2 border-dashed border-rose-500 z-10 transition-all duration-300"
-                  style={{ bottom: `${(parseFloat(averageMean) / LIMITS.MEAN_VAL_MAX) * 100}%` }}
-                >
-                  <span className="absolute right-2 -top-5 bg-rose-500 text-white text-[9px] font-black p-0.5 px-2 rounded shadow-sm">
-                    Μέση Τιμή: {averageMean}
-                  </span>
+                <div className="absolute left-0 right-0 border-t-2 border-dashed border-rose-500 z-10 transition-all duration-300" style={{ bottom: `${(parseFloat(averageMean) / LIMITS.MEAN_VAL_MAX) * 100}%` }}>
+                  <span className="absolute right-2 -top-5 bg-rose-500 text-white text-[9px] font-black p-0.5 px-2 rounded shadow-sm">Μέση Τιμή: {averageMean}</span>
                 </div>
-
-                {/* Οι 4 Στήλες */}
                 {meanItems.map((val, idx) => (
                   <div key={idx} className="flex flex-col items-center w-12 sm:w-16 z-0">
                     <span className="text-xs font-black text-slate-700 mb-1">{val}</span>
-                    <div 
-                      className="w-full bg-gradient-to-t from-blue-600 to-cyan-400 rounded-t-md shadow-sm transition-all duration-300 relative flex flex-col justify-end"
-                      style={{ height: `${(val / LIMITS.MEAN_VAL_MAX) * 150}px` }}
-                    >
-                      {/* Εσωτερικά διαχωριστικά "τουβλάκια" */}
-                      {Array.from({ length: val }).map((_, bIdx) => (
-                        <div key={bIdx} className="border-b border-white/20 h-full w-full"></div>
-                      ))}
+                    <div className="w-full bg-gradient-to-t from-blue-600 to-cyan-400 rounded-t-md shadow-sm transition-all duration-300 relative flex flex-col justify-end" style={{ height: `${(val / LIMITS.MEAN_VAL_MAX) * 150}px` }}>
+                      {Array.from({ length: val }).map((_, bIdx) => (<div key={bIdx} className="border-b border-white/20 h-full w-full"></div>))}
                     </div>
                     <span className="text-[10px] font-bold text-gray-400 mt-2">Ομ. {String.fromCharCode(65 + idx)}</span>
                   </div>
                 ))}
               </div>
-
-              {/* ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΒΗΜΑ-ΒΗΜΑ */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 flex items-center gap-4">
                   <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-black shrink-0 shadow-sm">1</div>
                   <div>
                     <p className="text-[10px] font-bold text-blue-800 uppercase tracking-wide">Βήμα 1: Βρίσκω το Συνολικό Άθροισμα</p>
-                    <p className="font-black text-sm text-gray-800 mt-0.5">
-                      {meanItems.join(' + ')} = <span className="text-blue-600 text-base">{sumMean}</span>
-                    </p>
+                    <p className="font-black text-sm text-gray-800 mt-0.5">{meanItems.join(' + ')} = <span className="text-blue-600 text-base">{sumMean}</span></p>
                   </div>
                 </div>
-
                 <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center gap-4">
                   <div className="w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center font-black shrink-0 shadow-sm">2</div>
                   <div>
                     <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide">Βήμα 2: Διαιρώ με το πλήθος των ομάδων ({meanItems.length})</p>
-                    <p className="font-black text-sm text-gray-800 mt-0.5">
-                      {sumMean} ÷ {meanItems.length} = <span className="text-emerald-600 text-base">{averageMean}</span>
-                    </p>
+                    <p className="font-black text-sm text-gray-800 mt-0.5">{sumMean} ÷ {meanItems.length} = <span className="text-emerald-600 text-base">{averageMean}</span></p>
                   </div>
                 </div>
               </div>
-
-              {/* Τελικό Συμπέρασμα */}
               <div className="bg-gradient-to-r from-rose-500 to-orange-500 text-white p-4 rounded-xl text-center font-black text-sm shadow-md max-w-sm mx-auto">
                 📢 Αν μοιράζαμε δίκαια τα τουβλάκια, κάθε ομάδα θα είχε ακριβώς: {averageMean}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ΝΕΟ TAB 11: ΠΟΣΟΣΤΑ (🏷️) */}
+        {activeTab === 'percentage' && (
+          <div className="space-y-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black text-gray-900">🏷️ Τι είναι το Ποσοστό;</h2>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Ποσοστό είναι ένα **κλάσμα με παρονομαστή το 100**. Μας δείχνει πόσα κομμάτια παίρνουμε αν χωρίσουμε ολόκληρο το σύνολο σε **100 ίσα μέρη**. Το σύμβολο **%** διαβάζεται «τοις εκατό».
+              </p>
+            </div>
+
+            {/* Έλεγχος Ποσοστού */}
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 max-w-2xl mx-auto">
+              <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border shadow-sm gap-4">
+                <span className="font-bold text-gray-700 text-sm">Ρύθμισε το Ποσοστό:</span>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setPercentVal(Math.max(LIMITS.PERCENT_MIN, percentVal - 5))} className="bg-cyan-500 text-white w-10 h-8 rounded-lg font-black hover:bg-cyan-600 transition">-5</button>
+                  <button onClick={() => setPercentVal(Math.max(LIMITS.PERCENT_MIN, percentVal - 1))} className="bg-slate-200 text-gray-800 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition">-</button>
+                  <span className="w-16 text-center text-2xl font-black text-cyan-600">{percentVal}%</span>
+                  <button onClick={() => setPercentVal(Math.min(LIMITS.PERCENT_MAX, percentVal + 1))} className="bg-slate-200 text-gray-800 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition">+</button>
+                  <button onClick={() => setPercentVal(Math.min(LIMITS.PERCENT_MAX, percentVal + 5))} className="bg-cyan-500 text-white w-10 h-8 rounded-lg font-black hover:bg-cyan-600 transition">+5</button>
+                </div>
+              </div>
+              <div className="px-2">
+                <input type="range" min={LIMITS.PERCENT_MIN} max={LIMITS.PERCENT_MAX} value={percentVal} onChange={(e) => setPercentVal(parseInt(e.target.value, 10))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-500"/>
+              </div>
+            </div>
+
+            {/* ΟΙ 3 ΜΟΡΦΕΣ ΚΑΙ Η ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start pt-4">
+              
+              {/* Αριστερά: Οι 3 Μαθηματικές Μορφές */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 text-center lg:text-left">📝 Οι 3 μορφές του ίδιου ποσού</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  
+                  {/* 1. Ως Ποσοστό */}
+                  <div className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white p-4 rounded-xl text-center shadow-sm">
+                    <span className="text-[10px] font-bold block uppercase opacity-80 mb-1">Ως Ποσοστό</span>
+                    <span className="text-2xl font-black tracking-tight">{percentVal}%</span>
+                  </div>
+
+                  {/* 2. Ως Κλασματικό Ποσοστό */}
+                  <div className="bg-white p-3 border-2 border-slate-200 rounded-xl text-center shadow-sm flex flex-col items-center justify-center">
+                    <span className="text-[10px] font-bold block uppercase text-gray-400 mb-1">Ως Κλάσμα</span>
+                    <div className="flex flex-col items-center font-black text-xl text-slate-700">
+                      <div>{percentVal}</div>
+                      <div className="w-10 h-[2px] bg-slate-700 my-0.5"></div>
+                      <div>100</div>
+                    </div>
+                  </div>
+
+                  {/* 3. Ως Δεκαδικό Ποσοστό */}
+                  <div className="bg-white p-3 border-2 border-slate-200 rounded-xl text-center shadow-sm flex flex-col items-center justify-center">
+                    <span className="text-[10px] font-bold block uppercase text-gray-400 mb-2">Ως Δεκαδικός</span>
+                    <span className="text-2xl font-black text-slate-700">{(percentVal / 100).toFixed(2).replace('.', ',')}</span>
+                  </div>
+
+                </div>
+
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-950 leading-relaxed space-y-2">
+                  <p>💡 <strong>Τι παρατηρούμε;</strong></p>
+                  <p>Όταν το slider είναι στο <span className="font-bold">0%</span>, το πλέγμα είναι τελείως άδειο (τίποτα).</p>
+                  <p>Όταν φτάσει στο <span className="font-bold">100%</span>, χρωματίζονται και τα 100 τετραγωνάκια, δηλαδή έχουμε <span className="font-bold">ολόκληρη τη μονάδα (1)</span>.</p>
+                </div>
+              </div>
+
+              {/* Δεξιά: Γραφικό Πλέγμα 10x10 (Εκατοντάδα) */}
+              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 flex flex-col items-center space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">🎨 Πλέγμα Εκατοντάδας (10 × 10)</h3>
+                
+                <div className="grid grid-cols-10 gap-1 p-2 bg-white rounded-xl shadow-md border border-gray-200 w-full max-w-[280px]">
+                  {Array.from({ length: 100 }).map((_, index) => {
+                    const isColored = index < percentVal;
+                    return (
+                      <div 
+                        key={index} 
+                        className={`aspect-square rounded-[3px] transition-all duration-200 ${isColored ? 'bg-gradient-to-br from-cyan-400 to-blue-500 scale-95 shadow-sm' : 'bg-gray-100'}`}
+                        title={`Τετραγωνάκι ${index + 1}`}
+                      />
+                    );
+                  })}
+                </div>
+
+                <span className="text-[11px] font-bold text-gray-500">
+                  Χρωματισμένα κουτάκια: <span className="text-cyan-600 font-black text-xs">{percentVal}</span> από τα 100
+                </span>
+              </div>
+
             </div>
           </div>
         )}
