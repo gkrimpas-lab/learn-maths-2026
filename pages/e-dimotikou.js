@@ -32,7 +32,7 @@ const LIMITS = {
 
   // 5ος & 6ος Προσομοιωτής (Διαιρέτες & ΜΚΔ)
   DIV_NUMBER_MIN: 2,
-  DIV_NUMBER_MAX: 100, // Επιτρέπουμε μεγαλύτερους αριθμούς για διαιρέτες
+  DIV_NUMBER_MAX: 100,
   MKD_NUMBERS_COUNT_MIN: 2,
   MKD_NUMBERS_COUNT_MAX: 4,
   MKD_VAL_MIN: 4,
@@ -65,17 +65,17 @@ export default function EDimotikou() {
   const [mkdCount, setMkdCount] = useState(2);
   const [mkdValues, setMkdValues] = useState([12, 18, 24, 36]);
 
-// Συναρτήσεις Διαχείρισης ΜΚΔ & Διαιρετών
-  const updateMkdValue = (index, increment) => {
-    const newValues = [...mkdValues];
+  // Συναρτήσεις Διαχείρισης ΕΚΠ
+  const updateEkpValue = (index, increment) => {
+    const newValues = [...ekpValues];
     if (increment) {
-      newValues[index] = Math.min(LIMITS.MKD_VAL_MAX, newValues[index] + 1); // Διορθώθηκε σε +1
+      newValues[index] = Math.min(LIMITS.EKP_VAL_MAX, newValues[index] + 1);
     } else {
-      newValues[index] = Math.max(LIMITS.MKD_VAL_MIN, newValues[index] - 1); // Διορθώθηκε σε -1
+      newValues[index] = Math.max(LIMITS.EKP_VAL_MIN, newValues[index] - 1);
     }
-    setMkdValues(newValues);
+    setEkpValues(newValues);
   };
-  
+
   const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
   const lcm = (a, b) => (a * b) / gcd(a, b);
   
@@ -94,13 +94,13 @@ export default function EDimotikou() {
     return Math.floor(targetValue / num) + 1;
   };
 
-  // Συναρτήσεις Διαχείρισης ΜΚΔ & Διαιρετών
+  // Συναρτήσεις Διαχείρισης ΜΚΔ & Διαιρετών (ΔΙΟΡΘΩΜΕΝΟ)
   const updateMkdValue = (index, increment) => {
     const newValues = [...mkdValues];
     if (increment) {
-      newValues[index] = Math.min(LIMITS.MKD_VAL_MAX, newValues[index] + 2); // Βήμα 2 ή 1, ας βάλουμε +1 για ακρίβεια
+      newValues[index] = Math.min(LIMITS.MKD_VAL_MAX, newValues[index] + 1); // Σωστό +1
     } else {
-      newValues[index] = Math.max(LIMITS.MKD_VAL_MIN, newValues[index] - 1);
+      newValues[index] = Math.max(LIMITS.MKD_VAL_MIN, newValues[index] - 1); // Σωστό -1
     }
     setMkdValues(newValues);
   };
@@ -257,7 +257,7 @@ export default function EDimotikou() {
                     <button onClick={() => setDen1(Math.min(LIMITS.INTRO_DEN_MAX, den1 + 1))} className="bg-green-500 text-white w-8 h-8 rounded-full font-bold hover:bg-green-600 transition">+</button>
                   </div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-wrap justify-center gap-4 min-h-[160px] p-4 items-center">
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-wrap justify-center gap-4 min-h-[160px] items-center">
                   {Array.from({ length: totalPies1 }).map((_, i) => (
                     <svg key={i} width="110" height="110" className="drop-shadow-sm">{renderPieSlices(i, num1, den1)}</svg>
                   ))}
@@ -426,7 +426,7 @@ export default function EDimotikou() {
               </div>
 
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 overflow-x-auto">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Πίνακας Αναζήτησης (Δυναμική παραγωγή για εμφάνιση 3 Κοινών Πολλαπλασίων)</span>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Πίνακας Αναζήτησης</span>
                 
                 <div className="space-y-4 min-w-[750px]">
                   {Array.from({ length: ekpCount }).map((_, arrIdx) => {
@@ -565,7 +565,7 @@ export default function EDimotikou() {
 
               {/* ΠΙΝΑΚΑΣ ΔΙΑΙΡΕΤΩΝ ΜΚΔ */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 overflow-x-auto">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Πίνακας Διαιρετών (Αναζήτηση Κοινών & ΜΚΔ)</span>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Πίνακας Διαιρετών</span>
                 
                 <div className="space-y-4 min-w-[750px]">
                   {Array.from({ length: mkdCount }).map((_, arrIdx) => {
@@ -579,7 +579,6 @@ export default function EDimotikou() {
                         </div>
                         <div className="flex flex-wrap gap-2 flex-1">
                           {divisorsList.map((divValue) => {
-                            // Έλεγχος αν ο διαιρέτης είναι κοινός σε όλους τους επιλεγμένους αριθμούς
                             const isCommon = mkdValues.slice(0, mkdCount).every(v => v % divValue === 0);
                             const isMkd = divValue === finalMkd;
 
