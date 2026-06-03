@@ -74,7 +74,6 @@ export default function EDimotikou() {
   const finalEkp = calculateFinalEKP();
 
   // ΔΥΝΑΜΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ: Πόσα στοιχεία πρέπει να παραχθούν για τον συγκεκριμένο αριθμό
-  // ώστε να φτάσουμε ακριβώς μέχρι το 3ο κοινό πολλαπλάσιο (δηλαδή 3 φορές το ΕΚΠ)
   const getDynamicCountForNumber = (num) => {
     const targetValue = finalEkp * 3; 
     return Math.floor(targetValue / num) + 1;
@@ -223,82 +222,4 @@ export default function EDimotikou() {
             <div className="space-y-4">
               <h2 className="text-2xl font-black text-gray-900">Τι είναι τα Ισοδύναμα Κλάσματα;</h2>
               <p className="text-gray-600 leading-relaxed text-sm">
-                Ισοδύναμα λέγονται τα κλάσματα που <strong>εκφράζουν το ίδιο μέρος μιας επιφάνειας</strong>, παρόλο που έχουν διαφορετικούς αριθμητές και παρονομαστές.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
-              <h3 className="text-lg font-bold text-center text-gray-800">🔄 Προσομοιωτής Ισοδύναμων Κλασμάτων</h3>
-              <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-xl mx-auto">
-                <span className="font-bold text-amber-900 text-sm">Διάλεξε Πολλαπλασιαστή (Φουσκώνω το κλάσμα):</span>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setMultiplier(Math.max(LIMITS.MULTIPLIER_MIN, multiplier - 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">-</button>
-                  <span className="text-xl font-black text-amber-600 w-6 text-center">{multiplier}</span>
-                  <button onClick={() => setMultiplier(Math.min(LIMITS.MULTIPLIER_MAX, multiplier + 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">+</button>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-wrap justify-center items-center gap-6 text-sm max-w-2xl mx-auto">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-600">Αριθμητής:</span>
-                    <button onClick={() => setNum2(Math.max(LIMITS.EQUIV_NUM_MIN, num2 - 1))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
-                    <span className="font-black text-slate-800 text-base w-4 text-center">{num2}</span>
-                    <button onClick={() => { if(num2 < den2) setNum2(num2 + 1) }} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">+</button>
-                  </div>
-                  <div className="w-[1px] h-6 bg-slate-300 hidden md:block"></div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-600">Παρονομαστής:</span>
-                    <button onClick={() => { const d = Math.max(LIMITS.EQUIV_DEN_MIN, den2 - 1); setDen2(d); if(num2 > d) setNum2(d); }} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">-</button>
-                    <span className="font-black text-slate-800 text-base w-4 text-center">{den2}</span>
-                    <button onClick={() => setDen2(Math.min(LIMITS.EQUIV_DEN_MAX, den2 + 1))} className="bg-slate-200 px-2.5 py-1 rounded font-bold text-xs shadow-sm transition">+</button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100 pt-4">
-                  <div className="flex flex-col items-center justify-start space-y-6 pb-6 md:pb-0 h-full">
-                    <span className="text-xs font-bold text-blue-500 uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full">Αρχικό Κλάσμα</span>
-                    <div className="flex flex-col items-center font-black text-3xl text-blue-600 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 min-w-[75px]">
-                      <div>{num2}</div>
-                      <div className="w-10 h-[3px] bg-blue-600 rounded-full my-1"></div>
-                      <div>{den2}</div>
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 items-center bg-slate-50/50 rounded-xl w-full max-w-[240px]">
-                      {Array.from({ length: totalPies2Initial }).map((_, i) => (
-                        <svg key={i} width="110" height="110" className="drop-shadow-sm">{renderPieSlices(i, num2, den2)}</svg>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-center justify-start space-y-6 pt-6 md:pt-0 md:pl-8 h-full">
-                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full">Ισοδύναμο Κλάσμα</span>
-                    <div className="flex items-center gap-3 bg-slate-50 p-3 px-6 rounded-xl border border-slate-100 shadow-sm">
-                      <div className="flex flex-col items-center font-bold text-xl text-amber-600 px-2">
-                        <div>{num2} × {multiplier}</div>
-                        <div className="w-16 h-[2px] bg-amber-500 my-1"></div>
-                        <div>{den2} × {multiplier}</div>
-                      </div>
-                      <span className="font-black text-3xl text-emerald-600 mx-1">=</span>
-                      <div className="flex flex-col items-center font-black text-3xl text-emerald-600 min-w-[75px]">
-                        <div>{num2 * multiplier}</div>
-                        <div className="w-12 h-[3px] bg-emerald-600 rounded-full my-1"></div>
-                        <div>{den2 * multiplier}</div>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 items-center bg-slate-50/50 rounded-xl w-full max-w-[240px]">
-                      {Array.from({ length: totalPies2Equivalent }).map((_, i) => (
-                        <svg key={i} width="110" height="110" className="drop-shadow-sm">{renderPieSlices(i, num2 * multiplier, den2 * multiplier)}</svg>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: ΠΟΛΛΑΠΛΑΣΙΑ ΑΡΙΘΜΟΥ */}
-        {activeTab === 'multiples' && (
-          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
-            <div className="space-y-4">
-              <h2 className="text-2xl font-black text-gray-900">Πολλα
+                Ισοδύναμα λέγονται τα κλάσματα που <strong>εκφ
