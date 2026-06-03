@@ -35,8 +35,8 @@ const LIMITS = {
   DIV_NUMBER_MAX: 100,
   MKD_NUMBERS_COUNT_MIN: 2,
   MKD_NUMBERS_COUNT_MAX: 4,
-  MKD_VAL_MIN: 4,
-  MKD_VAL_MAX: 60
+  MKD_VAL_MIN: 1,
+  MKD_VAL_MAX: 100
 };
 
 export default function EDimotikou() {
