@@ -22,18 +22,17 @@ const LIMITS = {
   // 3ος Προσομοιωτής (Πολλαπλάσια Αριθμού)
   MULT_NUMBER_MIN: 2,
   MULT_NUMBER_MAX: 15,
-  MULT_COUNT_TO_SHOW: 12, // Πόσα πολλαπλάσια θα εμφανίζονται στη σειρά
+  MULT_COUNT_TO_SHOW: 30, // ΑΥΞΗΘΗΚΕ ΣΕ 30 ΓΙΑ ΝΑ ΦΑΙΝΟΝΤΑΙ 3 ΓΡΑΜΜΕΣ
 
   // 4ος Προσομοιωτής (ΕΚΠ)
-  EKP_NUMBERS_COUNT_MIN: 2, // Ελάχιστο πλήθος αριθμών για σύγκριση
-  EKP_NUMBERS_COUNT_MAX: 4, // Μέγιστο πλήθος αριθμών για σύγκριση
-  EKP_VAL_MIN: 2,           // Ελάχιστη τιμή κάθε αριθμού
-  EKP_VAL_MAX: 12,          // Μέγιστη τιμή κάθε αριθμού
-  EKP_MULT_COUNT: 15        // Πόσα πολλαπλάσια θα ψάχνει και θα τυπώνει για κάθε αριθμό
+  EKP_NUMBERS_COUNT_MIN: 2,
+  EKP_NUMBERS_COUNT_MAX: 4,
+  EKP_VAL_MIN: 2,
+  EKP_VAL_MAX: 12,
+  EKP_MULT_COUNT: 40        // ΑΥΞΗΘΗΚΕ ΣΕ 40 ΓΙΑ ΝΑ ΕΧΟΥΜΕ ΤΟΥΛΑΧΙΣΤΟΝ 3 ΚΟΙΝΑ ΠΟΛΛΑΠΛΑΣΙΑ
 };
 
 export default function EDimotikou() {
-  // Κατάσταση για το ποιο Tab είναι ενεργό ('intro', 'equivalent', 'multiples', 'ekp')
   const [activeTab, setActiveTab] = useState('intro');
 
   // Κατάσταση για τον 1ο προσομοιωτή
@@ -49,10 +48,9 @@ export default function EDimotikou() {
   const [singleNumber, setSingleNumber] = useState(4);
 
   // Κατάσταση για τον 4ο προσομοιωτή (ΕΚΠ)
-  const [ekpCount, setEkpCount] = useState(2); // Πλήθος επιλεγμένων αριθμών (2, 3 ή 4)
-  const [ekpValues, setEkpValues] = useState([3, 4, 6, 8]); // Αποθηκευμένες τιμές για έως 4 αριθμούς
+  const [ekpCount, setEkpCount] = useState(2);
+  const [ekpValues, setEkpValues] = useState([3, 4, 6, 8]);
 
-  // Βοηθητική συνάρτηση για αλλαγή τιμής στους αριθμούς του ΕΚΠ
   const updateEkpValue = (index, increment) => {
     const newValues = [...ekpValues];
     if (increment) {
@@ -63,11 +61,9 @@ export default function EDimotikou() {
     setEkpValues(newValues);
   };
 
-  // Συναρτήσεις υπολογισμού ΕΚΠ
   const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
   const lcm = (a, b) => (a * b) / gcd(a, b);
   
-  // Υπολογισμός του τελικού ΕΚΠ για τους επιλεγμένους αριθμούς
   const calculateFinalEKP = () => {
     let currentLcm = ekpValues[0];
     for (let i = 1; i < ekpCount; i++) {
@@ -78,7 +74,6 @@ export default function EDimotikou() {
 
   const finalEkp = calculateFinalEKP();
 
-  // Σχεδίαση πίτας (SVG Paths)
   const renderPieSlices = (pieIndex, totalSlicesToColor, currentDen) => {
     const slices = [];
     const radius = 45;
@@ -143,7 +138,7 @@ export default function EDimotikou() {
         <p className="text-cyan-100 opacity-90 font-medium">Ενότητες: Κλάσματα, Πολλαπλάσια & ΕΚΠ</p>
       </header>
 
-      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (TABS) - ΤΩΡΑ ΜΕ 4 ΚΑΡΤΕΛΕΣ */}
+      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (TABS) */}
       <div className="max-w-5xl mx-auto px-4 mt-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-white p-2 rounded-xl shadow-sm">
           <button onClick={() => setActiveTab('intro')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs md:text-sm ${activeTab === 'intro' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
@@ -208,9 +203,7 @@ export default function EDimotikou() {
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-wrap justify-center gap-4 min-h-[160px] p-4 items-center">
                   {Array.from({ length: totalPies1 }).map((_, i) => (
-                    <svg key={i} width="110" height="110" className="drop-shadow-sm">
-                      {renderPieSlices(i, num1, den1)}
-                    </svg>
+                    <svg key={i} width="110" height="110" className="drop-shadow-sm">{renderPieSlices(i, num1, den1)}</svg>
                   ))}
                 </div>
               </div>
@@ -304,13 +297,12 @@ export default function EDimotikou() {
             <div className="space-y-4">
               <h2 className="text-2xl font-black text-gray-900">Πολλαπλάσια ενός Αριθμού</h2>
               <p className="text-gray-600 leading-relaxed text-sm">
-                Πολλαπλάσια ενός φυσικού αριθμού είναι οι αριθμοί που προκύπτουν όταν <strong>πολλαπλασιάσουμε τον αριθμό αυτόν με όλους τους φυσικούς αριθμούς</strong> (0, 1, 2, 3, 4...). Τα πολλαπλάσια ενός αριθμού είναι άπειρα!
+                Πολλαπλάσια ενός φυσικού αριθμού είναι οι αριθμοί που προκύπτουν όταν <strong>πολλαπλασιάσουμε τον αριθμό αυτόν με όλους τους φυσικούς αριθμούς</strong> (0, 1, 2, 3, 4...).
               </p>
             </div>
 
-            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 max-w-3xl mx-auto space-y-6">
-              {/* Επιλογέας Αριθμού */}
-              <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border border-gray-200 shadow-sm gap-4">
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-6">
+              <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border border-gray-200 shadow-sm gap-4 max-w-xl mx-auto">
                 <span className="font-bold text-gray-700 text-sm">Διάλεξε έναν αριθμό:</span>
                 <div className="flex items-center gap-3">
                   <button onClick={() => setSingleNumber(Math.max(LIMITS.MULT_NUMBER_MIN, singleNumber - 1))} className="bg-blue-500 text-white w-8 h-8 rounded-full font-bold hover:bg-blue-600 transition">-</button>
@@ -319,9 +311,8 @@ export default function EDimotikou() {
                 </div>
               </div>
 
-              {/* Οπτική Παραγωγή Πολλαπλασίων */}
               <div className="space-y-2">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Τα Πολλαπλάσια του {singleNumber} (Π_{singleNumber}):</span>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Τα πρώτα {LIMITS.MULT_COUNT_TO_SHOW} Πολλαπλάσια του {singleNumber}:</span>
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
                   {Array.from({ length: LIMITS.MULT_COUNT_TO_SHOW }).map((_, i) => (
                     <div key={i} className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm text-center flex flex-col justify-center transform hover:scale-105 transition duration-150">
@@ -329,9 +320,7 @@ export default function EDimotikou() {
                       <span className="text-lg font-black text-blue-600 mt-0.5">{singleNumber * i}</span>
                     </div>
                   ))}
-                  <div className="bg-blue-50 rounded-xl p-3 border border-blue-200 border-dashed text-center flex items-center justify-center font-black text-blue-400 text-xl">
-                    ...
-                  </div>
+                  <div className="bg-blue-50 rounded-xl p-3 border border-blue-200 border-dashed text-center flex items-center justify-center font-black text-blue-400 text-xl">...</div>
                 </div>
               </div>
             </div>
@@ -344,15 +333,11 @@ export default function EDimotikou() {
             <div className="space-y-4">
               <h2 className="text-2xl font-black text-gray-900">🎯 Ελάχιστο Κοινό Πολλαπλάσιο (ΕΚΠ)</h2>
               <p className="text-gray-600 leading-relaxed text-sm">
-                <strong>Κοινά Πολλαπλάσια</strong> δύο ή περισσότερων αριθμών ονομάζονται τα πολλαπλάσια που είναι ίδια για όλους αυτούς τους αριθμούς. 
-                <br /><strong>ΕΚΠ</strong> είναι το μικρότερο από αυτά τα κοινά πολλαπλάσια (εκτός από το 0)!
+                <strong>Κοινά Πολλαπλάσια</strong> είναι οι αριθμοί που είναι ίδιοι στις λίστες των αριθμών. Το <strong>ΕΚΠ</strong> είναι το μικρότερο από αυτά, εκτός του 0!
               </p>
             </div>
 
-            {/* ΧΕΙΡΙΣΤΗΡΙΑ ΕΚΠ */}
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
-              
-              {/* 1. Επιλογή πλήθους αριθμών (2, 3 ή 4) */}
               <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border border-gray-200 shadow-sm gap-4">
                 <span className="font-bold text-gray-700 text-sm">Πόσους αριθμούς θέλεις να συγκρίνεις;</span>
                 <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 gap-1">
@@ -368,9 +353,8 @@ export default function EDimotikou() {
                 </div>
               </div>
 
-              {/* 2. Επιλογή τιμών των αριθμών */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Ρύθμιση Αριθμών εξετάσεων</span>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Ρύθμιση Αριθμών</span>
                 <div className="flex flex-wrap justify-center gap-6">
                   {Array.from({ length: ekpCount }).map((_, index) => (
                     <div key={index} className="flex flex-col items-center bg-slate-50 p-3 rounded-xl border border-slate-200 min-w-[120px]">
@@ -385,20 +369,17 @@ export default function EDimotikou() {
                 </div>
               </div>
 
-              {/* 3. ΛΙΣΤΕΣ ΠΟΛΛΑΠΛΑΣΙΩΝ & ΦΩΤΙΣΜΟΣ ΚΟΙΝΩΝ/ΕΚΠ */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 overflow-x-auto">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Πίνακας Αναζήτησης Πολλαπλασίων</span>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block text-center">Πίνακας Αναζήτησης ({LIMITS.EKP_MULT_COUNT} Πολλαπλάσια ανά σειρά)</span>
                 
-                <div className="space-y-4 min-w-[600px]">
+                <div className="space-y-4 min-w-[750px]">
                   {Array.from({ length: ekpCount }).map((_, arrIdx) => {
                     const currentNum = ekpValues[arrIdx];
                     return (
                       <div key={arrIdx} className="flex items-center gap-4 bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                        {/* Ετικέτα Αριθμού */}
                         <div className="w-16 font-black text-slate-700 text-sm border-r border-slate-200 pr-2">
                           Π_{currentNum}:
                         </div>
-                        {/* Οριζόντια λίστα πολλαπλασίων */}
                         <div className="flex flex-wrap gap-1.5 flex-1">
                           {Array.from({ length: LIMITS.EKP_MULT_COUNT }).map((_, mIdx) => {
                             const multipleValue = currentNum * mIdx;
@@ -408,7 +389,7 @@ export default function EDimotikou() {
                             return (
                               <div
                                 key={mIdx}
-                                className={`p-2 px-2.5 text-xs rounded-lg font-bold border transition duration-150 text-center min-w-[36px]
+                                className={`p-2 px-2 text-[11px] rounded-lg font-bold border transition duration-150 text-center min-w-[38px]
                                   ${isLcm 
                                     ? 'bg-gradient-to-br from-amber-400 to-amber-500 text-white border-amber-600 shadow-md ring-2 ring-amber-300 scale-110 relative' 
                                     : isCommon 
@@ -428,7 +409,6 @@ export default function EDimotikou() {
                 </div>
               </div>
 
-              {/* ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ ΕΚΠ */}
               <div className="bg-gradient-to-br from-amber-400 to-amber-500 text-white p-5 rounded-2xl text-center shadow-md max-w-md mx-auto border-b-4 border-amber-600">
                 <span className="text-xs uppercase font-black tracking-widest opacity-90 block mb-1">🎯 Το Ελάχιστο Κοινό Πολλαπλάσιο</span>
                 <div className="text-3xl font-black tracking-tight mt-1 flex items-center justify-center gap-2">
@@ -438,7 +418,7 @@ export default function EDimotikou() {
                   </span>
                 </div>
                 <p className="text-[11px] opacity-90 mt-3 font-medium">
-                  🌟 Το <strong>{finalEkp}</strong> είναι ο μικρότερος αριθμός (εκτός του 0) που διαιρείται ακριβώς από όλους τους παραπάνω αριθμούς!
+                  🌟 Το <strong>{finalEkp}</strong> είναι το μικρότερο κοινό πολλαπλάσιο (εκτός του 0) που διαιρείται ακριβώς από όλους τους επιλεγμένους αριθμούς!
                 </p>
               </div>
 
