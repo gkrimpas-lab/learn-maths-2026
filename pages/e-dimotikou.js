@@ -36,7 +36,11 @@ const LIMITS = {
   MKD_NUMBERS_COUNT_MIN: 2,
   MKD_NUMBERS_COUNT_MAX: 4,
   MKD_VAL_MIN: 1,
-  MKD_VAL_MAX: 100
+  MKD_VAL_MAX: 100,
+
+  // 7ος Προσομοιωτής (Κριτήρια Διαιρετότητας)
+  CRITERIA_NUM_MIN: 1,
+  CRITERIA_NUM_MAX: 1000
 };
 
 export default function EDimotikou() {
@@ -64,6 +68,9 @@ export default function EDimotikou() {
   // Κατάσταση για τον 6ο προσομοιωτή (ΜΚΔ)
   const [mkdCount, setMkdCount] = useState(2);
   const [mkdValues, setMkdValues] = useState([12, 18, 24, 36]);
+
+  // Κατάσταση για τον 7ο προσομοιωτή (Κριτήρια Διαιρετότητας)
+  const [criteriaNumber, setCriteriaNumber] = useState(123);
 
   // Συναρτήσεις Διαχείρισης ΕΚΠ
   const updateEkpValue = (index, increment) => {
@@ -94,13 +101,13 @@ export default function EDimotikou() {
     return Math.floor(targetValue / num) + 1;
   };
 
-  // Συναρτήσεις Διαχείρισης ΜΚΔ & Διαιρετών (ΔΙΟΡΘΩΜΕΝΟ)
+  // Συναρτήσεις Διαχείρισης ΜΚΔ & Διαιρετών
   const updateMkdValue = (index, increment) => {
     const newValues = [...mkdValues];
     if (increment) {
-      newValues[index] = Math.min(LIMITS.MKD_VAL_MAX, newValues[index] + 1); // Σωστό +1
+      newValues[index] = Math.min(LIMITS.MKD_VAL_MAX, newValues[index] + 1);
     } else {
-      newValues[index] = Math.max(LIMITS.MKD_VAL_MIN, newValues[index] - 1); // Σωστό -1
+      newValues[index] = Math.max(LIMITS.MKD_VAL_MIN, newValues[index] - 1);
     }
     setMkdValues(newValues);
   };
@@ -122,6 +129,11 @@ export default function EDimotikou() {
   };
 
   const finalMkd = calculateFinalMKD();
+
+  // Βοηθητική συνάρτηση για άθροισμα ψηφίων (χρήσιμη για τα κριτήρια του 3 και του 9)
+  const getDigitsSum = (num) => {
+    return String(num).split('').reduce((sum, digit) => sum + parseInt(digit || '0', 10), 0);
+  };
 
   // Σχεδίαση Πίτας
   const renderPieSlices = (pieIndex, totalSlicesToColor, currentDen) => {
@@ -185,12 +197,12 @@ export default function EDimotikou() {
       {/* HEADER ΤΑΞΗΣ */}
       <header className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-10 text-center shadow-inner">
         <h1 className="text-4xl font-black mb-2">🎒 Μαθηματικά Ε' Δημοτικού</h1>
-        <p className="text-cyan-100 opacity-90 font-medium">Ενότητες: Κλάσματα, Πολλαπλάσια, Διαιρέτες, ΕΚΠ & ΜΚΔ</p>
+        <p className="text-cyan-100 opacity-90 font-medium">Ενότητες: Κλάσματα, Πολλαπλάσια, Διαιρέτες, ΕΚΠ, ΜΚΔ & Κριτήρια Διαιρετότητας</p>
       </header>
 
-      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (6 TABS) */}
-      <div className="max-w-5xl mx-auto px-4 mt-8">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 bg-white p-2 rounded-xl shadow-sm">
+      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ (7 TABS) */}
+      <div className="max-w-6xl mx-auto px-4 mt-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2 bg-white p-2 rounded-xl shadow-sm">
           <button onClick={() => setActiveTab('intro')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'intro' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
             🍕 1. Τι είναι κλάσμα;
           </button>
@@ -209,11 +221,14 @@ export default function EDimotikou() {
           <button onClick={() => setActiveTab('mkd')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'mkd' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
             🏆 6. ΜΚΔ
           </button>
+          <button onClick={() => setActiveTab('criteria')} className={`py-3 text-center rounded-lg font-bold transition duration-200 text-xs ${activeTab === 'criteria' ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}>
+            🔍 7. Κριτήρια
+          </button>
         </div>
       </div>
 
       {/* ΠΕΡΙΕΧΟΜΕΝΟ ΣΕΛΙΔΑΣ */}
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8">
         
         {/* TAB 1: ΤΙ ΕΙΝΑΙ ΚΛΑΣΜΑ */}
         {activeTab === 'intro' && (
@@ -617,6 +632,158 @@ export default function EDimotikou() {
                 <p className="text-[11px] opacity-90 mt-3 font-medium">
                   🌟 Το <strong>{finalMkd}</strong> είναι ο μεγαλύτερος αριθμός που μπορεί να διαιρέσει ακριβώς όλους τους επιλεγμένους αριθμούς!
                 </p>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* TAB 7: ΚΡΙΤΗΡΙΑ ΔΙΑΙΡΕΤΟΤΗΤΑΣ (ΝΕΟ) */}
+        {activeTab === 'criteria' && (
+          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+            <div className="space-y-4">
+              <h2 className="text-2xl font-black text-gray-900">🔍 Κριτήρια Διαιρετότητας</h2>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Τα <strong>Κριτήρια Διαιρετότητας</strong> είναι σύντομοι κανόνες (κόλπα) που μας βοηθούν να βρούμε αμέσως αν ένας αριθμός διαιρείται ακριβώς με έναν άλλον, <strong>χωρίς να κάνουμε τη διαίρεση</strong> στο χαρτί!
+              </p>
+            </div>
+
+            {/* ΠΑΝΕΛ ΕΠΙΛΟΓΗΣ ΑΡΙΘΜΟΥ */}
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 max-w-2xl mx-auto">
+              <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border border-gray-200 shadow-sm gap-4">
+                <span className="font-bold text-gray-700 text-sm">Διάλεξε ή γράψε έναν αριθμό:</span>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setCriteriaNumber(Math.max(LIMITS.CRITERIA_NUM_MIN, criteriaNumber - 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">-</button>
+                  <input 
+                    type="number" 
+                    value={criteriaNumber} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (!isNaN(val)) {
+                        setCriteriaNumber(Math.max(LIMITS.CRITERIA_NUM_MIN, Math.min(LIMITS.CRITERIA_NUM_MAX, val)));
+                      }
+                    }}
+                    className="w-20 text-center text-2xl font-black text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  />
+                  <button onClick={() => setCriteriaNumber(Math.min(LIMITS.CRITERIA_NUM_MAX, criteriaNumber + 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">+</button>
+                </div>
+              </div>
+              
+              {/* SLIDER ΓΙΑ ΓΡΗΓΟΡΗ ΑΛΛΑΓΗ ΜΕΓΑΛΩΝ ΑΡΙΘΜΩΝ */}
+              <div className="px-2 pt-2">
+                <input 
+                  type="range" 
+                  min={LIMITS.CRITERIA_NUM_MIN} 
+                  max={LIMITS.CRITERIA_NUM_MAX} 
+                  value={criteriaNumber}
+                  onChange={(e) => setCriteriaNumber(parseInt(e.target.value, 10))}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                />
+                <div className="flex justify-between text-[10px] text-gray-400 font-bold mt-1">
+                  <span>{LIMITS.CRITERIA_NUM_MIN}</span>
+                  <span>500</span>
+                  <span>{LIMITS.CRITERIA_NUM_MAX}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ΠΙΝΑΚΑΣ ΕΛΕΓΧΟΥ ΚΡΙΤΗΡΙΩΝ */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 2 */}
+              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 2 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div>
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 2;</h4>
+                    <span className="text-2xl">{criteriaNumber % 2 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2 font-medium">
+                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 2 όταν είναι <strong>άρτιος (ζυγός)</strong>, δηλαδή λήγει σε 0, 2, 4, 6, 8.
+                  </p>
+                </div>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
+                  🔍 Ο αριθμός {criteriaNumber} λήγει σε <strong>{criteriaNumber % 10}</strong>, άρα {criteriaNumber % 2 === 0 ? 'είναι ζυγός!' : 'είναι μονός!'}
+                </div>
+              </div>
+
+              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 5 */}
+              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 5 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div>
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 5;</h4>
+                    <span className="text-2xl">{criteriaNumber % 5 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2 font-medium">
+                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 5 όταν το τελευταίο του ψηφίο είναι <strong>0 ή 5</strong>.
+                  </p>
+                </div>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
+                  🔍 Το τελευταίο ψηφίο είναι το <strong>{criteriaNumber % 10}</strong>.
+                </div>
+              </div>
+
+              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 10 */}
+              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 10 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div>
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 10;</h4>
+                    <span className="text-2xl">{criteriaNumber % 10 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2 font-medium">
+                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 10 όταν το τελευταίο του ψηφίο είναι <strong>0</strong>.
+                  </p>
+                </div>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
+                  🔍 Το τελευταίο ψηφίο είναι το <strong>{criteriaNumber % 10}</strong>.
+                </div>
+              </div>
+
+              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 3 */}
+              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 3 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div>
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 3;</h4>
+                    <span className="text-2xl">{criteriaNumber % 3 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2 font-medium">
+                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 3 όταν το <strong>άθροισμα των ψηφίων του</strong> διαιρείται με το 3 (δηλ. είναι 3, 6, 9, 12, 15...).
+                  </p>
+                </div>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
+                  🔍 Ψηφία: {String(criteriaNumber).split('').join(' + ')} = <strong>{getDigitsSum(criteriaNumber)}</strong> {getDigitsSum(criteriaNumber) % 3 === 0 ? '(διαιρείται με το 3!)' : '(δεν διαιρείται με το 3)'}
+                </div>
+              </div>
+
+              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 9 */}
+              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 9 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div>
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 9;</h4>
+                    <span className="text-2xl">{criteriaNumber % 9 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2 font-medium">
+                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 9 όταν το <strong>άθροισμα των ψηφίων του</strong> διαιρείται με το 9 (δηλ. είναι 9, 18, 27...).
+                  </p>
+                </div>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
+                  🔍 Ψηφία: {String(criteriaNumber).split('').join(' + ')} = <strong>{getDigitsSum(criteriaNumber)}</strong> {getDigitsSum(criteriaNumber) % 9 === 0 ? '(διαιρείται με το 9!)' : '(δεν διαιρείται με το 9)'}
+                </div>
+              </div>
+
+              {/* ΚΡΙΤΗΡΙΟ ΤΟΥ 4 */}
+              <div className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${criteriaNumber % 4 === 0 ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                <div>
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-black text-lg text-slate-800">Διαιρείται με το 4;</h4>
+                    <span className="text-2xl">{criteriaNumber % 4 === 0 ? '✅ Ναι' : '❌ Όχι'}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2 font-medium">
+                    <strong>Κανόνας:</strong> Ένας αριθμός διαιρείται με το 4 όταν τα <strong>δύο τελευταία ψηφία του</strong> σχηματίζουν αριθμό που διαιρείται με το 4 (ή είναι 00).
+                  </p>
+                </div>
+                <div className="mt-4 p-2.5 bg-white/80 rounded-xl border text-xs font-semibold text-slate-700">
+                  🔍 Τα τελευταία δύο ψηφία σχηματίζουν το <strong>{criteriaNumber % 100}</strong> { (criteriaNumber % 100) % 4 === 0 ? '(διαιρείται με το 4!)' : '(δεν διαιρείται με το 4)'}.
+                </div>
               </div>
 
             </div>
