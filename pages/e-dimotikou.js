@@ -65,17 +65,17 @@ export default function EDimotikou() {
   const [mkdCount, setMkdCount] = useState(2);
   const [mkdValues, setMkdValues] = useState([12, 18, 24, 36]);
 
-  // Συναρτήσεις Διαχείρισης ΕΚΠ
-  const updateEkpValue = (index, increment) => {
-    const newValues = [...ekpValues];
+// Συναρτήσεις Διαχείρισης ΜΚΔ & Διαιρετών
+  const updateMkdValue = (index, increment) => {
+    const newValues = [...mkdValues];
     if (increment) {
-      newValues[index] = Math.min(LIMITS.EKP_VAL_MAX, newValues[index] + 1);
+      newValues[index] = Math.min(LIMITS.MKD_VAL_MAX, newValues[index] + 1); // Διορθώθηκε σε +1
     } else {
-      newValues[index] = Math.max(LIMITS.EKP_VAL_MIN, newValues[index] - 1);
+      newValues[index] = Math.max(LIMITS.MKD_VAL_MIN, newValues[index] - 1); // Διορθώθηκε σε -1
     }
-    setEkpValues(newValues);
+    setMkdValues(newValues);
   };
-
+  
   const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
   const lcm = (a, b) => (a * b) / gcd(a, b);
   
