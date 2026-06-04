@@ -94,12 +94,12 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Ε' ΔΗΜΟΤΙΚΟΥ - ΣΥΝΔΕΣΗ ΜΕ ΤΗ ΝΕΑ ΣΕΛΙΔΑ */}
+            {/* Ε' ΔΗΜΟΤΙΚΟΥ */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-xl border-2 border-cyan-400 transform scale-105 duration-300">
               <div className="bg-cyan-500 py-4 text-center text-white font-bold text-xl">Ε' Δημοτικού ⭐</div>
               <div className="p-6 text-center">
-                <p className="text-gray-800 font-semibold mb-2 text-sm">Ενότητα: Κλάσματα</p>
-                <p className="text-gray-500 mb-6 text-xs">Μάθε για τα κλάσματα και τα ισοδύναμα με διαδραστικούς προσομοιωτές!</p>
+                <p className="text-gray-800 font-semibold mb-2 text-sm">Διαδραστικές Ενότητες</p>
+                <p className="text-gray-500 mb-6 text-xs">Κλάσματα, Απλοποίηση, ΕΚΠ, ΜΚΔ, Ποσοστά, Μέση Τιμή κ.α. με προσομοιωτές!</p>
                 <Link href="/e-dimotikou" className="block w-full text-center bg-cyan-500 text-white py-2 rounded-lg font-bold hover:bg-cyan-600 transition shadow-md">
                   🚀 Είσοδος στην Τάξη
                 </Link>
@@ -123,9 +123,33 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-2 text-indigo-600">📐 Μαθηματικά Γυμνασίου</h2>
           <p className="text-center text-gray-500 mb-10">Εμβαθύνουμε στην άλγεβρα και τη γεωμετρία</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200"><div className="bg-indigo-500 py-4 text-center text-white font-bold text-xl">Α' Γυμνασίου</div><div className="p-6 text-center"><p className="text-gray-600 mb-6 text-sm">Κλάσματα, Εξισώσεις, Ποσοστά & βασική Γεωμετρία.</p><button className="w-full bg-indigo-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">Σύντομα Διαθέσιμο</button></div></div>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200"><div className="bg-violet-500 py-4 text-center text-white font-bold text-xl">Β' Γυμνασίου</div><div className="p-6 text-center"><p className="text-gray-600 mb-6 text-sm">Ρητοί Αριθμοί, Συναρτήσεις, Πυθαγόρειο Θεώρημα.</p><button className="w-full bg-violet-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">Σύντομα Διαθέσιμο</button></div></div>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200"><div className="bg-purple-500 py-4 text-center text-white font-bold text-xl">Γ' Γυμνασίου</div><div className="p-6 text-center"><p className="text-gray-600 mb-6 text-sm">Αλγεβρικές Παραστάσεις, Μονώνυμα, Ταυτότητες & Ομοιότητα.</p><button className="w-full bg-purple-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">Σύντομα Διαθέσιμο</button></div></div>
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200">
+              <div className="bg-indigo-500 py-4 text-center text-white font-bold text-xl">Α' Γυμνασίου</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-600 mb-6 text-sm">Κλάσματα, Εξισώσεις, Ποσοστά & βασική Γεωμετρία.</p>
+                <button className="w-full bg-indigo-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">Σύντομα Διαθέσιμο</button>
+              </div>
+            </div>
+            
+            {/* Β' ΓΥΜΝΑΣΙΟΥ - ΣΥΝΔΕΘΗΚΕ ΚΑΙ ΕΙΝΑΙ ΕΝΕΡΓΗ */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-xl border-2 border-indigo-400 transform scale-105 duration-300">
+              <div className="bg-indigo-600 py-4 text-center text-white font-bold text-xl">Β' Γυμνασίου ⭐</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-800 font-semibold mb-2 text-sm">Ενότητα: Συναρτήσεις</p>
+                <p className="text-gray-500 mb-6 text-xs">Μελέτησε τη συνάρτηση y = αx και δες live τη γραφική παράσταση στο πλέγμα!</p>
+                <Link href="/b-gymnasiou" className="block w-full text-center bg-indigo-600 text-white py-2 rounded-lg font-bold hover:bg-indigo-700 transition shadow-md">
+                  🚀 Είσοδος στην Τάξη
+                </Link>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200">
+              <div className="bg-purple-500 py-4 text-center text-white font-bold text-xl">Γ' Γυμνασίου</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-600 mb-6 text-sm">Αλγεβρικές Παραστάσεις, Μονώνυμα, Ταυτότητες & Ομοιότητα.</p>
+                <button className="w-full bg-purple-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">Σύντομα Διαθέσιμο</button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
