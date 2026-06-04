@@ -6,14 +6,14 @@ export default function BGymnasiou() {
   const [activeTab, setActiveTab] = useState('functions');
 
   // State για την κλίση α της συνάρτησης y = ax
-  // Επιτρέπουμε τιμές από -5 έως 5 με βήμα 0.5
+  // ΔΙΟΡΘΩΘΗΚΕ: Ξεκινάει στο 1 και αλλάζει ανά 0.1
   const [slopeA, setSlopeA] = useState(1);
 
   // Συναρτήσεις υπολογισμού για το SVG (Μετατροπή μαθηματικών συντεταγμένων σε pixels)
-  // Έστω SVG viewbox 0 έως 200. Το κέντρο (0,0) είναι στο (100,100)
-  // Κλίμακα: 1 μονάδα = 15 pixels
-  const toSvgX = (mathX) => 100 + mathX * 15;
-  const toSvgY = (mathY) => 100 - mathY * 15; // Αντίστροφα στο SVG το Y πάει προς τα κάτω
+  // ΝΕΟ viewbox 0 έως 300. Το κέντρο (0,0) είναι στο (150,150)
+  // ΝΕΑ Κλίμακα: 1 μονάδα = 22 pixels (Μεγαλύτερο σχήμα)
+  const toSvgX = (mathX) => 150 + mathX * 22;
+  const toSvgY = (mathY) => 150 - mathY * 22;
 
   // Υπολογισμός δύο σημείων για τη σχεδίαση της γραμμής (για x = -6 και x = 6)
   const x1 = -6;
@@ -48,7 +48,6 @@ export default function BGymnasiou() {
           <button onClick={() => setActiveTab('functions')} className={`flex-1 py-2 text-center rounded-lg font-bold transition duration-200 text-sm ${activeTab === 'functions' ? 'bg-indigo-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
             📈 Συναρτήσεις
           </button>
-          {/* Μπορείς να προσθέσεις μελλοντικά και άλλες καρτέλες εδώ (π.χ. Εξισώσεις, Πυθαγόρειο) */}
         </div>
       </div>
 
@@ -92,63 +91,55 @@ export default function BGymnasiou() {
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
               <h3 className="text-base font-bold text-center text-gray-800">🎮 Πειραματίσου με την κλίση της ευθείας</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 
                 {/* ΧΕΙΡΙΣΤΗΡΙΑ & ΠΛΗΡΟΦΟΡΙΕΣ */}
-                <div className="space-y-6">
+                <div className="lg:col-span-5 space-y-6">
                   {/* Slider για το α */}
                   <div className="bg-white p-5 rounded-xl border shadow-sm space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-gray-700 text-sm">Μετάβαλλε την κλίση (α):</span>
-                      <span className={`text-xl font-mono font-black px-3 py-1 rounded-lg ${slopeA > 0 ? 'bg-emerald-100 text-emerald-700' : slopeA < 0 ? 'bg-rose-100 text-rose-700' : 'bg-gray-100 text-gray-600'}`}>
-                        α = {slopeA}
+                      <span className="font-bold text-gray-700 text-xs uppercase tracking-wide">Κλίση της ευθείας:</span>
+                      <span className={`text-lg font-mono font-black px-3 py-1 rounded-lg ${slopeA > 0 ? 'bg-emerald-100 text-emerald-700' : slopeA < 0 ? 'bg-rose-100 text-rose-700' : 'bg-gray-100 text-gray-600'}`}>
+                        α = {slopeA.toFixed(1)}
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <button onClick={() => setSlopeA(Math.max(-5, slopeA - 0.5))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded-lg font-black text-xs transition shadow-sm">-0.5</button>
-                      <input type="range" min="-5" max="5" step="0.5" value={slopeA} onChange={(e) => setSlopeA(parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-500"/>
-                      <button onClick={() => setSlopeA(Math.min(5, slopeA + 0.5))} className="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded-lg font-black text-xs transition shadow-sm">+0.5</button>
+                      {/* ΔΙΟΡΘΩΘΗΚΕ: Βήμα αλλαγής ανά 0.1 */}
+                      <button onClick={() => setSlopeA(Math.max(-5, parseFloat((slopeA - 0.1).toFixed(1))))} className="bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded-lg font-black text-xs transition shadow-sm">-0.1</button>
+                      <input type="range" min="-5" max="5" step="0.1" value={slopeA} onChange={(e) => setSlopeA(parseFloat(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-500"/>
+                      <button onClick={() => setSlopeA(Math.min(5, parseFloat((slopeA + 0.1).toFixed(1))))} className="bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded-lg font-black text-xs transition shadow-sm">+0.1</button>
                     </div>
-                    <div className="flex justify-between text-[10px] font-bold text-gray-400 font-mono px-1">
-                      <span>-5.0 (Έντονη Κατηφόρα)</span>
-                      <span>0 (Οριζόντια)</span>
-                      <span>+5.0 (Έντονη Ανηφόρα)</span>
+                    <div className="flex justify-between text-[9px] font-bold text-gray-400 font-mono px-1">
+                      <span>-5.0 (Κατηφόρα)</span>
+                      <span>0.0 (Οριζόντια)</span>
+                      <span>+5.0 (Ανηφόρα)</span>
                     </div>
                   </div>
 
                   {/* Τύπος & Πίνακας Τιμών */}
                   <div className="bg-white p-5 rounded-xl border shadow-sm space-y-4">
                     <div>
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Η τρέχουσα εξίσωση</span>
-                      <div className="text-2xl font-mono font-black text-indigo-600 mt-0.5">
-                        y = {slopeA === 0 ? '0' : slopeA === 1 ? 'x' : slopeA === -1 ? '-x' : `${slopeA}x`}
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Η εξίσωση της ευθείας:</span>
+                      <div className="text-xl font-mono font-black text-indigo-600 mt-0.5">
+                        y = {slopeA === 0 ? '0' : slopeA === 1 ? 'x' : slopeA === -1 ? '-x' : `${slopeA.toFixed(1)}x`}
                       </div>
                     </div>
 
                     <div className="border-t pt-3">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2">📋 Ενδεικτικά Σημεία (Πίνακας Τιμών)</span>
-                      <div className="grid grid-cols-4 gap-2 text-center text-xs font-mono">
-                        <div className="bg-slate-50 p-2 rounded-lg border font-bold text-gray-500">x</div>
-                        <div className="bg-slate-50 p-2 rounded-lg border font-bold text-gray-500">y = α · x</div>
-                        <div className="bg-slate-50 p-2 rounded-lg border font-bold text-gray-500">Σημείο</div>
-                        <div className="bg-slate-50 p-2 rounded-lg border font-bold text-gray-500">Τεταρτημόριο</div>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2">📋 Πίνακας Τιμών (x, y)</span>
+                      <div className="grid grid-cols-3 gap-1.5 text-center text-xs font-mono">
+                        <div className="bg-slate-50 p-2 rounded-md border font-bold text-gray-500">Τιμή x</div>
+                        <div className="bg-slate-50 p-2 rounded-md border font-bold text-gray-500">Πράξη (α · x)</div>
+                        <div className="bg-slate-50 p-2 rounded-md border font-bold text-gray-500">Σημείο (x, y)</div>
 
                         {[-1, 0, 2].map((xVal) => {
-                          const yVal = slopeA * xVal;
-                          let quadrant = 'Άξονας';
-                          if (xVal > 0 && yVal > 0) quadrant = '1ο';
-                          if (xVal < 0 && yVal > 0) quadrant = '2ο';
-                          if (xVal < 0 && yVal < 0) quadrant = '3ο';
-                          if (xVal > 0 && yVal < 0) quadrant = '4ο';
-                          if (xVal === 0 && yVal === 0) quadrant = 'Αρχή Ο';
-
+                          const yVal = parseFloat((slopeA * xVal).toFixed(1));
                           return (
-                            <>
+                            <g key={xVal}>
                               <div className="p-2 border-b font-semibold">{xVal}</div>
-                              <div className="p-2 border-b font-bold text-indigo-600">{slopeA} · ({xVal}) = {yVal}</div>
-                              <div className="p-2 border-b font-black text-slate-700">({xVal}, {yVal})</div>
-                              <div className="p-2 border-b font-semibold text-gray-500">{quadrant}</div>
-                            </>
+                              <div className="p-2 border-b text-[11px] text-gray-600">{slopeA.toFixed(1)} · ({xVal})</div>
+                              <div className="p-2 border-b font-black text-indigo-600">({xVal}, {yVal})</div>
+                            </g>
                           );
                         })}
                       </div>
@@ -157,57 +148,57 @@ export default function BGymnasiou() {
 
                 </div>
 
-                {/* ΖΩΓΡΑΦΙΑ ΣΥΝΑΡΤΗΣΗΣ (DYNAMIC SVG) */}
-                <div className="bg-white p-4 rounded-2xl shadow-md border flex flex-col items-center justify-center">
-                  <span className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">📉 Σύστημα Συντεταγμένων</span>
+                {/* ΖΩΓΡΑΦΙΑ ΣΥΝΑΡΤΗΣΗΣ (ΜΕΓΑΛΥΤΕΡΟ SVG) */}
+                <div className="lg:col-span-7 bg-white p-6 rounded-2xl shadow-md border flex flex-col items-center justify-center">
+                  <span className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">📉 Καρτεσιανό Σύστημα Συντεταγμένων</span>
                   
-                  <div className="relative w-full max-w-[280px] aspect-square bg-slate-50 rounded-xl border border-gray-200 p-1">
-                    <svg viewBox="0 0 200 200" className="w-full h-full">
-                      {/* Πλέγμα Φόντου (Grid Lines) */}
-                      {Array.from({ length: 13 }).map((_, i) => {
-                        const pos = i * 15 + 10; // 10, 25, 40... 190
+                  {/* ΑΥΞΗΘΗΚΕ ΤΟ ΜΕΓΕΘΟΣ: max-w-[420px] αντί για 280px */}
+                  <div className="relative w-full max-w-[420px] aspect-square bg-slate-50 rounded-xl border border-gray-200 p-2">
+                    <svg viewBox="0 0 300 300" className="w-full h-full">
+                      {/* Πλέγμα Φόντου (Grid Lines) - Προσαρμοσμένο στα 300px */}
+                      {Array.from({ length: 15 }).map((_, i) => {
+                        const pos = i * 22 + 18; // 18, 40, 62... 282
                         return (
                           <g key={i}>
-                            <line x1={pos} y1="0" x2={pos} y2="200" className="stroke-gray-200 stroke-[0.5]" />
-                            <line x1="0" y1={pos} x2="200" y2={pos} className="stroke-gray-200 stroke-[0.5]" />
+                            <line x1={pos} y1="0" x2={pos} y2="300" className="stroke-gray-200/80 stroke-[0.5]" />
+                            <line x1="0" y1={pos} x2="300" y2={pos} className="stroke-gray-200/80 stroke-[0.5]" />
                           </g>
                         );
                       })}
 
                       {/* Άξονας Χ */}
-                      <line x1="5" y1="100" x2="195" y2="100" className="stroke-slate-600 stroke-2" />
-                      <polygon points="195,97 200,100 195,103" className="fill-slate-600" />
-                      <text x="190" y="115" className="text-[10px] font-bold fill-slate-600 font-mono">x</text>
+                      <line x1="10" y1="150" x2="285" y2="150" className="stroke-slate-600 stroke-2" />
+                      <polygon points="285,146 292,150 285,154" className="fill-slate-600" />
+                      <text x="285" y="168" className="text-xs font-bold fill-slate-600 font-mono">x</text>
 
                       {/* Άξονας Υ */}
-                      <line x1="100" y1="195" x2="100" y2="5" className="stroke-slate-600 stroke-2" />
-                      <polygon points="97,5 100,0 103,5" className="fill-slate-600" />
-                      <text x="110" y="15" className="text-[10px] font-bold fill-slate-600 font-mono">y</text>
+                      <line x1="150" y1="290" x2="150" y2="15" className="stroke-slate-600 stroke-2" />
+                      <polygon points="146,15 150,8 154,15" className="fill-slate-600" />
+                      <text x="162" y="20" className="text-xs font-bold fill-slate-600 font-mono">y</text>
 
                       {/* Αρχή των αξόνων Ο */}
-                      <circle cx="100" cy="100" r="3" className="fill-slate-800" />
-                      <text x="90" y="112" className="text-[9px] font-bold fill-slate-800 font-mono">O</text>
+                      <circle cx="150" cy="150" r="3.5" className="fill-slate-800" />
+                      <text x="138" y="164" className="text-xs font-bold fill-slate-800 font-mono">O</text>
 
                       {/* Η ΔΥΝΑΜΙΚΗ ΕΥΘΕΙΑ ΓΡΑΜΜΗ (y = ax) */}
                       {slopeA !== 0 ? (
-                        <line x1={toSvgX(x1)} y1={toSvgY(y1)} x2={toSvgX(x2)} y2={toSvgY(y2)} className="stroke-indigo-600 stroke-[2.5] stroke-linecap-round drop-shadow-sm transition-all duration-150" />
+                        <line x1={toSvgX(x1)} y1={toSvgY(y1)} x2={toSvgX(x2)} y2={toSvgY(y2)} className="stroke-indigo-600 stroke-[3] stroke-linecap-round drop-shadow-sm transition-all duration-75" />
                       ) : (
-                        // Αν α = 0, η ευθεία συμπίπτει με τον άξονα x
-                        <line x1="0" y1="100" x2="200" y2="100" className="stroke-indigo-600 stroke-[2.5]" />
+                        <line x1="0" y1="150" x2="300" y2="150" className="stroke-indigo-600 stroke-[3]" />
                       )}
 
-                      {/* Ενδεικτικό Σημείο πάνω στην ευθεία (για x = 2) για οπτική βοήθεια */}
+                      {/* Ενδεικτικό Σημείο πάνω στην ευθεία (για x = 2) */}
                       {slopeA !== 0 && (
-                        <g className="transition-all duration-150">
-                          <circle cx={toSvgX(2)} cy={toSvgY(2 * slopeA)} r="3.5" className="fill-amber-500 stroke-white stroke-1" />
-                          <text x={toSvgX(2.3)} y={toSvgY(2 * slopeA - 0.5)} className="text-[8px] font-black fill-amber-600 font-mono">A(2, {2 * slopeA})</text>
+                        <g className="transition-all duration-75">
+                          <circle cx={toSvgX(2)} cy={toSvgY(2 * slopeA)} r="4" className="fill-amber-500 stroke-white stroke-1" />
+                          <text x={toSvgX(2.3)} y={toSvgY(2 * slopeA - 0.4)} className="text-[10px] font-black fill-amber-600 font-mono">A(2, {(2 * slopeA).toFixed(1)})</text>
                         </g>
                       )}
                     </svg>
                   </div>
 
                   <p className="text-[11px] text-gray-500 text-center mt-3 px-4 italic">
-                    Η ευθεία περνάει πάντα από το κέντρο O(0,0) και στρέφεται καθώς αλλάζεις το α.
+                    💡 Παρατήρησε πώς η ευθεία πλησιάζει τον κατακόρυφο άξονα y καθώς μεγαλώνεις το α, και πώς «ξαπλώνει» στον οριζόντιο άξονα x όταν το α πλησιάζει το 0.
                   </p>
                 </div>
 
