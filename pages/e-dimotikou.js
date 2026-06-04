@@ -16,8 +16,9 @@ const LIMITS = {
   CRITERIA_NUM_MIN: 1, CRITERIA_NUM_MAX: 1000,
   UNIT_NUM_MIN: 1, UNIT_NUM_MAX: 10, UNIT_DEN_MIN: 2, UNIT_DEN_MAX: 12, UNIT_VAL_MIN: 10, UNIT_VAL_MAX: 500,
   MEAN_VAL_MIN: 1, MEAN_VAL_MAX: 10,
-  // Όρια για τα Ποσοστά
-  PERCENT_MIN: 0, PERCENT_MAX: 100
+  PERCENT_MIN: 0, PERCENT_MAX: 100,
+  // Νέα όρια για το αρχικό ποσό στα Ποσοστά
+  AMOUNT_MIN: 10, AMOUNT_MAX: 1000
 };
 
 export default function EDimotikou() {
@@ -41,8 +42,9 @@ export default function EDimotikou() {
   // State για Μέση Τιμή
   const [meanItems, setMeanItems] = useState([8, 4, 9, 3]);
 
-  // State για Ποσοστά
+  // States για Ποσοστά (Πλέγμα & Υπολογισμός Ποσού)
   const [percentVal, setPercentVal] = useState(25);
+  const [totalAmount, setTotalAmount] = useState(280);
 
   // Math Core Functions
   const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
@@ -89,6 +91,9 @@ export default function EDimotikou() {
     newItems[index] = increment ? Math.min(LIMITS.MEAN_VAL_MAX, newItems[index] + 1) : Math.max(LIMITS.MEAN_VAL_MIN, newItems[index] - 1);
     setMeanItems(newItems);
   };
+
+  // Υπολογισμός τελικής τιμής ποσοστού
+  const calculatedPercentageResult = ((totalAmount * percentVal) / 100).toFixed(1);
 
   // Σχεδίαση Πίτας (SVG)
   const renderPieSlices = (pieIndex, totalSlicesToColor, currentDen) => {
@@ -167,7 +172,7 @@ export default function EDimotikou() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div className="space-y-4">
                 <h2 className="text-2xl font-black text-gray-900">Τι είναι το Κλάσμα;</h2>
-                <p className="text-gray-600 leading-relaxed text-sm">Κλάσμα είναι ένας αριθμός που μας δείχνει <strong>σε πόσα ίσα μέρη</strong> έχουμε χωρίσει μια μονάδα και <strong>πόσα από αυτά τα μέρη</strong> έχουμε πάρει.</p>
+                <p className="text-gray-600 leading-relaxed text-sm">Ref: Κλάσμα είναι ένας αριθμός που μας δείχνει <strong>σε πόσα ίσα μέρη</strong> έχουμε χωρίσει μια μονάδα και <strong>πόσα από αυτά τα μέρη</strong> έχουμε πάρει.</p>
                 <div className="bg-cyan-50 p-4 rounded-xl border border-cyan-100 text-xs text-cyan-900">
                   <p>☝️ <strong>Αριθμητής (πάνω):</strong> Πόσα κομμάτια πήραμε.</p>
                   <p className="mt-1">👇 <strong>Παρονομαστής (κάτω):</strong> Σε πόσα συνολικά κομμάτια κόψαμε τη μονάδα.</p>
@@ -251,7 +256,7 @@ export default function EDimotikou() {
                     <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full">Ισοδύναμο Κλάσμα</span>
                     <div className="flex items-center gap-3 bg-slate-50 p-2 px-4 rounded-xl border">
                       <div className="flex flex-col items-center font-bold text-sm text-amber-600">
-                        <div>{num2} × {multiplier}</div><div className="w-14 h-[2px] bg-amber-500 my-0.5"></div><div>{den2} × {multiplier}</div>
+                        <div>{num2} × {multiplier}</div><div className="w-14 h-[2px] bg-amber-500 my-0.5"></div><div>{den2 × multiplier}</div>
                       </div>
                       <span className="font-black text-2xl text-emerald-600">=</span>
                       <div className="flex flex-col items-center font-black text-3xl text-emerald-600">
@@ -311,12 +316,12 @@ export default function EDimotikou() {
                           </div>
                           <span className="font-black text-2xl text-emerald-600">=</span>
                           <div className="flex flex-col items-center font-black text-3xl text-emerald-600">
-                            <div>{num3 / autoMkd3}</div><div className="w-12 h-[3px] bg-emerald-600 my-1"></div><div>{den3 / autoMkd3}</div>
+                            <div>{num3 / autoMkd3}</div><div className="w-12 h-[3px] bg-emerald-600 rounded-full my-1"></div><div>{den3 / autoMkd3}</div>
                           </div>
                         </>
                       ) : (
                         <div className="flex flex-col items-center font-black text-3xl text-emerald-600">
-                          <div>{num3}</div><div className="w-12 h-[3px] bg-emerald-600 my-1"></div><div>{den3}</div>
+                          <div>{num3}</div><div className="w-12 h-[3px] bg-emerald-600 rounded-full my-1"></div><div>{den3}</div>
                         </div>
                       )}
                     </div>
@@ -650,92 +655,131 @@ export default function EDimotikou() {
           </div>
         )}
 
-        {/* ΝΕΟ TAB 11: ΠΟΣΟΣΤΑ (🏷️) */}
+        {/* TAB 11: ΠΟΣΟΣΤΑ (ΜΕ ΠΛΕΓΜΑ + ΔΙΑΔΡΑΣΤΙΚΟ ΥΠΟΛΟΓΙΣΤΗ ΠΟΣΟΥ) */}
         {activeTab === 'percentage' && (
-          <div className="space-y-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="space-y-2">
-              <h2 className="text-2xl font-black text-gray-900">🏷️ Τι είναι το Ποσοστό;</h2>
+              <h2 className="text-2xl font-black text-gray-900">🏷️ Εκμάθηση & Υπολογισμός Ποσοστών</h2>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Ποσοστό είναι ένα **κλάσμα με παρονομαστή το 100**. Μας δείχνει πόσα κομμάτια παίρνουμε αν χωρίσουμε ολόκληρο το σύνολο σε **100 ίσα μέρη**. Το σύμβολο **%** διαβάζεται «τοις εκατό».
+                Στο πρώτο μέρος βλέπουμε τι σημαίνει το ποσοστό πάνω στην εκατοντάδα. Στο δεύτερο μέρος μαθαίνουμε πώς να <strong>βρίσκουμε την τιμή του ποσοστού πάνω σε οποιοδήποτε ποσό</strong>!
               </p>
             </div>
 
-            {/* Έλεγχος Ποσοστού */}
-            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 max-w-2xl mx-auto">
-              <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border shadow-sm gap-4">
-                <span className="font-bold text-gray-700 text-sm">Ρύθμισε το Ποσοστό:</span>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setPercentVal(Math.max(LIMITS.PERCENT_MIN, percentVal - 5))} className="bg-cyan-500 text-white w-10 h-8 rounded-lg font-black hover:bg-cyan-600 transition">-5</button>
-                  <button onClick={() => setPercentVal(Math.max(LIMITS.PERCENT_MIN, percentVal - 1))} className="bg-slate-200 text-gray-800 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition">-</button>
-                  <span className="w-16 text-center text-2xl font-black text-cyan-600">{percentVal}%</span>
-                  <button onClick={() => setPercentVal(Math.min(LIMITS.PERCENT_MAX, percentVal + 1))} className="bg-slate-200 text-gray-800 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition">+</button>
-                  <button onClick={() => setPercentVal(Math.min(LIMITS.PERCENT_MAX, percentVal + 5))} className="bg-cyan-500 text-white w-10 h-8 rounded-lg font-black hover:bg-cyan-600 transition">+5</button>
+            {/* ΜΕΡΟΣ Α: ΕΝΝΟΙΑ & ΠΛΕΓΜΑ */}
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
+              <h3 className="text-base font-bold text-slate-800 text-center">🎨 Μέρος 1ο: Η Έννοια του Ποσοστού (Πλέγμα 100)</h3>
+              <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 max-w-xl mx-auto">
+                <span className="font-bold text-gray-700 text-sm">Άλλαξε το Ποσοστό (%):</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPercentVal(Math.max(LIMITS.PERCENT_MIN, percentVal - 5))} className="bg-cyan-500 text-white p-1 px-2.5 rounded font-bold text-xs shadow-sm">-5</button>
+                  <input type="range" min={LIMITS.PERCENT_MIN} max={LIMITS.PERCENT_MAX} value={percentVal} onChange={(e) => setPercentVal(parseInt(e.target.value, 10))} className="w-28 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-500"/>
+                  <button onClick={() => setPercentVal(Math.min(LIMITS.PERCENT_MAX, percentVal + 5))} className="bg-cyan-500 text-white p-1 px-2.5 rounded font-bold text-xs shadow-sm">+5</button>
+                  <span className="w-16 text-center text-xl font-black text-cyan-600 ml-1">{percentVal}%</span>
                 </div>
               </div>
-              <div className="px-2">
-                <input type="range" min={LIMITS.PERCENT_MIN} max={LIMITS.PERCENT_MAX} value={percentVal} onChange={(e) => setPercentVal(parseInt(e.target.value, 10))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-500"/>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+                <div className="grid grid-cols-10 gap-1 p-2 bg-white rounded-xl shadow-md border w-full max-w-[240px] mx-auto">
+                  {Array.from({ length: 100 }).map((_, index) => (
+                    <div key={index} className={`aspect-square rounded-[2px] transition-all duration-150 ${index < percentVal ? 'bg-gradient-to-br from-cyan-400 to-blue-500 scale-95' : 'bg-slate-100'}`}/>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="bg-slate-50 p-2.5 rounded-lg border"><span className="text-[10px] font-bold text-gray-400 block">ΣΥΜΒΟΛΟ</span><span className="text-xl font-black text-slate-800">{percentVal}%</span></div>
+                  <div className="bg-slate-50 p-2.5 rounded-lg border"><span className="text-[10px] font-bold text-gray-400 block">ΚΛΑΣΜΑ</span><div className="flex flex-col items-center font-black text-sm text-slate-800"><div>{percentVal}</div><div className="w-6 h-[1.5px] bg-slate-700 my-0.5"></div><div>100</div></div></div>
+                  <div className="bg-slate-50 p-2.5 rounded-lg border"><span className="text-[10px] font-bold text-gray-400 block">ΔΕΚΑΔΙΚΟΣ</span><span className="text-xl font-black text-slate-800">{(percentVal / 100).toFixed(2).replace('.', ',')}</span></div>
+                </div>
               </div>
             </div>
 
-            {/* ΟΙ 3 ΜΟΡΦΕΣ ΚΑΙ Η ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start pt-4">
+            {/* ΜΕΡΟΣ Β: ΥΠΟΛΟΓΙΣΜΟΣ ΠΟΣΟΥ (ΔΙΑΔΡΑΣΤΙΚΟ ΠΡΟΒΛΗΜΑ - ΝΕΟ) */}
+            <div className="bg-slate-100 p-6 rounded-2xl border border-slate-300 space-y-6">
+              <h3 className="text-base font-bold text-slate-800 text-center">🧮 Μέρος 2ο: Υπολογισμός Ποσοστού πάνω σε ένα Ποσό</h3>
               
-              {/* Αριστερά: Οι 3 Μαθηματικές Μορφές */}
-              <div className="space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 text-center lg:text-left">📝 Οι 3 μορφές του ίδιου ποσού</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  
-                  {/* 1. Ως Ποσοστό */}
-                  <div className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white p-4 rounded-xl text-center shadow-sm">
-                    <span className="text-[10px] font-bold block uppercase opacity-80 mb-1">Ως Ποσοστό</span>
-                    <span className="text-2xl font-black tracking-tight">{percentVal}%</span>
-                  </div>
-
-                  {/* 2. Ως Κλασματικό Ποσοστό */}
-                  <div className="bg-white p-3 border-2 border-slate-200 rounded-xl text-center shadow-sm flex flex-col items-center justify-center">
-                    <span className="text-[10px] font-bold block uppercase text-gray-400 mb-1">Ως Κλάσμα</span>
-                    <div className="flex flex-col items-center font-black text-xl text-slate-700">
-                      <div>{percentVal}</div>
-                      <div className="w-10 h-[2px] bg-slate-700 my-0.5"></div>
-                      <div>100</div>
-                    </div>
-                  </div>
-
-                  {/* 3. Ως Δεκαδικό Ποσοστό */}
-                  <div className="bg-white p-3 border-2 border-slate-200 rounded-xl text-center shadow-sm flex flex-col items-center justify-center">
-                    <span className="text-[10px] font-bold block uppercase text-gray-400 mb-2">Ως Δεκαδικός</span>
-                    <span className="text-2xl font-black text-slate-700">{(percentVal / 100).toFixed(2).replace('.', ',')}</span>
-                  </div>
-
-                </div>
-
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-950 leading-relaxed space-y-2">
-                  <p>💡 <strong>Τι παρατηρούμε;</strong></p>
-                  <p>Όταν το slider είναι στο <span className="font-bold">0%</span>, το πλέγμα είναι τελείως άδειο (τίποτα).</p>
-                  <p>Όταν φτάσει στο <span className="font-bold">100%</span>, χρωματίζονται και τα 100 τετραγωνάκια, δηλαδή έχουμε <span className="font-bold">ολόκληρη τη μονάδα (1)</span>.</p>
+              {/* Ρύθμιση Αρχικού Ποσού */}
+              <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 max-w-xl mx-auto">
+                <span className="font-bold text-gray-700 text-sm">Ρύθμισε το Συνολικό Ποσό:</span>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setTotalAmount(Math.max(LIMITS.AMOUNT_MIN, totalAmount - 20))} className="bg-slate-200 px-2 py-1 rounded font-black text-xs shadow-sm">-20</button>
+                  <input 
+                    type="number" 
+                    value={totalAmount} 
+                    onChange={(e) => setTotalAmount(Math.max(LIMITS.AMOUNT_MIN, Math.min(LIMITS.AMOUNT_MAX, parseInt(e.target.value, 10) || LIMITS.AMOUNT_MIN)))}
+                    className="w-20 text-center text-xl font-black text-indigo-600 bg-indigo-50/50 border rounded-lg p-0.5 focus:outline-none"
+                  />
+                  <button onClick={() => setTotalAmount(Math.min(LIMITS.AMOUNT_MAX, totalAmount + 20))} className="bg-slate-200 px-2 py-1 rounded font-black text-xs shadow-sm">+20</button>
                 </div>
               </div>
 
-              {/* Δεξιά: Γραφικό Πλέγμα 10x10 (Εκατοντάδα) */}
-              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 flex flex-col items-center space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">🎨 Πλέγμα Εκατοντάδας (10 × 10)</h3>
-                
-                <div className="grid grid-cols-10 gap-1 p-2 bg-white rounded-xl shadow-md border border-gray-200 w-full max-w-[280px]">
-                  {Array.from({ length: 100 }).map((_, index) => {
-                    const isColored = index < percentVal;
-                    return (
-                      <div 
-                        key={index} 
-                        className={`aspect-square rounded-[3px] transition-all duration-200 ${isColored ? 'bg-gradient-to-br from-cyan-400 to-blue-500 scale-95 shadow-sm' : 'bg-gray-100'}`}
-                        title={`Τετραγωνάκι ${index + 1}`}
-                      />
-                    );
-                  })}
+              {/* Γραφική Ράβδος Διπλής Κλίμακας */}
+              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-2 max-w-3xl mx-auto">
+                <div className="flex justify-between text-[10px] font-bold text-gray-400 px-1">
+                  <span>Κλίμακα %: 0%</span>
+                  <span style={{ marginLeft: `${percentVal}%`, transform: 'translateX(-50%)' }} className="text-cyan-600 font-black text-xs">{percentVal}%</span>
+                  <span className="ml-auto">100%</span>
                 </div>
 
-                <span className="text-[11px] font-bold text-gray-500">
-                  Χρωματισμένα κουτάκια: <span className="text-cyan-600 font-black text-xs">{percentVal}</span> από τα 100
-                </span>
+                {/* Μπάρα */}
+                <div className="w-full h-8 bg-slate-100 rounded-lg overflow-hidden border relative flex items-center">
+                  <div 
+                    className="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 shadow-inner transition-all duration-300"
+                    style={{ width: `${percentVal}%` }}
+                  />
+                </div>
+
+                <div className="flex justify-between text-[10px] font-bold text-gray-400 px-1">
+                  <span>Ποσό: 0</span>
+                  <span style={{ marginLeft: `${percentVal}%`, transform: 'translateX(-50%)' }} className="text-indigo-600 font-black text-xs">{calculatedPercentageResult}</span>
+                  <span className="ml-auto">{totalAmount}</span>
+                </div>
+              </div>
+
+              {/* ΜΑΘΗΜΑΤΙΚΟ ΚΟΥΤΙ ΠΡΑΞΗΣ */}
+              <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm max-w-2xl mx-auto space-y-4">
+                <div className="text-center text-xs font-bold text-slate-500 uppercase">Η Μαθηματική Επίλυση:</div>
+                
+                <div className="flex flex-wrap items-center justify-center gap-3 font-black text-xl text-slate-700 text-center">
+                  {/* Ποσό */}
+                  <span className="text-indigo-600">{totalAmount}</span>
+                  <span className="text-gray-400">×</span>
+                  
+                  {/* Κλάσμα Ποσοστού */}
+                  <div className="flex flex-col items-center font-bold text-lg text-cyan-600 px-1 bg-slate-50 border rounded-lg p-1">
+                    <div>{percentVal}</div>
+                    <div className="w-8 h-[2px] bg-cyan-500 my-0.5"></div>
+                    <div>100</div>
+                  </div>
+
+                  <span className="text-gray-400">=</span>
+
+                  {/* Ανάπτυξη Πράξης */}
+                  <div className="flex flex-col items-center font-bold text-lg text-slate-600 px-1">
+                    <div>{totalAmount} × {percentVal}</div>
+                    <div className="w-24 h-[2px] bg-slate-400 my-0.5"></div>
+                    <div>100</div>
+                  </div>
+
+                  <span className="text-gray-400">=</span>
+
+                  {/* Ενδιάμεσο Κλάσμα */}
+                  <div className="flex flex-col items-center font-bold text-lg text-slate-600 px-1">
+                    <div>{totalAmount * percentVal}</div>
+                    <div className="w-16 h-[2px] bg-slate-400 my-0.5"></div>
+                    <div>100</div>
+                  </div>
+
+                  <span className="text-emerald-500 text-2xl font-black">=</span>
+
+                  {/* Τελικό Αποτέλεσμα */}
+                  <span className="bg-emerald-600 text-white p-1 px-4 rounded-xl text-2xl shadow-md transform scale-105 border border-emerald-500">
+                    {calculatedPercentageResult.replace('.0', '')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Συμπέρασμα προβλήματος */}
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-xl text-center font-bold text-sm shadow-md max-w-xl mx-auto">
+                🎯 Το <span className="text-amber-300 font-black">{percentVal}%</span> του ποσού <span className="text-amber-300 font-black">{totalAmount}</span> είναι ίσο με: <span className="text-emerald-300 font-black text-lg">{calculatedPercentageResult.replace('.0', '')}</span>
               </div>
 
             </div>
