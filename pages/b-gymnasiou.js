@@ -18,7 +18,7 @@ const CONFIG = {
     aMax: 5,
     aDefault: 3,
     bMin: 1,
-    bMax: 10,
+    bMax: 20, // ΑΥΞΗΘΗΚΕ ΤΟ ΟΡΙΟ ΣΕ 20 ΜΠΑΛΑΚΙΑ
     bDefault: 8
   },
   functions: {
@@ -157,7 +157,7 @@ export default function BGymnasiou() {
           </div>
         )}
 
-        {/* TAB 1: Η ΕΝΝΟΙΑ ΤΗΣ ΕΞΙΣΩΣΗΣ (ΜΕ ANIMATION ΣΥΓΚΡΟΥΣΗΣ) */}
+        {/* TAB 1: Η ΕΝΝΟΙΑ ΤΗΣ ΕΞΙΣΩΣΗΣ */}
         {activeTab === 'equations' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -175,24 +175,24 @@ export default function BGymnasiou() {
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
               <h3 className="text-base font-bold text-center text-gray-800">⚖️ Προσομοιωτής Ζυγαριάς</h3>
               
-              {/* Ρύθμιση Παραμέτρων */}
+              {/* ΔΙΟΡΘΩΘΗΚΕ: Αφαιρέθηκαν οι επεξηγηματικές παρενθέσεις με τα min/max */}
               <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-wrap justify-center items-center gap-6 text-xs max-w-xl mx-auto">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-gray-600">Βάρος α ({CONFIG.equation.aMin}-{CONFIG.equation.aMax}):</span>
+                  <span className="font-bold text-gray-600">Βάρος α:</span>
                   <button onClick={() => { setEqA(Math.max(CONFIG.equation.aMin, eqA - 1)); setIsSolved(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">-</button>
                   <span className="font-black text-orange-600 text-sm w-4 text-center">{eqA}</span>
                   <button onClick={() => { if(eqA < eqB) setEqA(Math.min(CONFIG.equation.aMax, eqA + 1)); setIsSolved(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">+</button>
                 </div>
                 <div className="w-[1px] h-4 bg-gray-200"></div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-gray-600">Σύνολο β (α+1-{CONFIG.equation.bMax}):</span>
+                  <span className="font-bold text-gray-600">Σύνολο β:</span>
                   <button onClick={() => { setEqB(Math.max(eqA + 1, eqB - 1)); setIsSolved(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">-</button>
                   <span className="font-black text-blue-600 text-sm w-4 text-center">{eqB}</span>
                   <button onClick={() => { setEqB(Math.min(CONFIG.equation.bMax, eqB + 1)); setIsSolved(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">+</button>
                 </div>
               </div>
 
-              {/* ΓΡΑΦΙΚΟ SVG ΜΕ ANIMATED ΜΠΑΛΑΚΙΑ */}
+              {/* ΓΡΑΦΙΚΟ SVG ΜΕ ANIMATED ΜΠΑΛΑΚΙΑ (ΜΕΧΡΙ 20) */}
               <div className="bg-white p-6 rounded-2xl border flex flex-col items-center justify-center max-w-xl mx-auto shadow-sm space-y-4">
                 
                 <div className="text-lg font-mono font-black text-slate-700 bg-slate-50 p-2 px-6 rounded-lg border">
@@ -210,63 +210,64 @@ export default function BGymnasiou() {
                     <line x1="100" y1="90" x2="100" y2="40" className="stroke-slate-500 stroke-[3]" />
                     <line x1="40" y1="40" x2="160" y2="40" className="stroke-slate-500 stroke-2" />
 
-                    {/* ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ (x + a) */}
+                    {/* ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ */}
                     <g>
                       <line x1="40" y1="40" x2="20" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="40" y1="40" x2="60" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="15" y1="85" x2="65" y2="85" className="stroke-orange-500 stroke-2" />
                       
-                      {/* Κύβος x (Μένει σταθερός) */}
                       <rect x="22" y="67" width="16" height="16" className="fill-indigo-500 stroke-indigo-700 rounded" />
                       <text x="27" y="79" className="text-[10px] font-black fill-white font-mono">x</text>
                       
-                      {/* Πορτοκαλί Μπαλάκια (α) με κλάση animation όταν λύνεται */}
-                      {Array.from({ length: eqA }).map((_, i) => (
-                        <circle 
-                          key={i} 
-                          cx={45 + (i%2)*10} 
-                          cy={79 - Math.floor(i/2)*8} 
-                          r="3.5" 
-                          className={`fill-orange-500 stroke-orange-600 ${isSolved ? 'animate-lift-left' : ''}`} 
+                      {!isSolved && (
+                        <g>
+                          {Array.from({ length: eqA }).map((_, i) => (
+                            <circle 
+                              key={i} 
+                              cx={45 + (i%2)*10} 
+                              cy={79 - Math.floor(i/2)*8} 
+                              r="3.5" 
+                              className={`fill-orange-500 stroke-orange-600 ${isSolved ? 'animate-lift-left' : ''}`} 
                         />
-                      ))}
+                          ))}
+                        </g>
+                      )}
                     </g>
 
-                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ (b) */}
+                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ (Διορθώθηκε η στοίχιση σε 4 στήλες για να χωράνε άνετα έως 20 μπαλάκια) */}
                     <g>
                       <line x1="160" y1="40" x2="140" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="160" y1="40" x2="180" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="135" y1="85" x2="185" y2="85" className="stroke-blue-500 stroke-2" />
 
-                      {/* Μπλε Μπαλάκια που μένουν (το υπόλοιπο) */}
+                      {/* Μπλε Μπαλάκια που μένουν */}
                       {Array.from({ length: (eqB - eqA) }).map((_, i) => (
-                        <circle key={i} cx={145 + (i%3)*10} cy={79 - Math.floor(i/3)*8} r="3.5" className="fill-blue-500 stroke-blue-600" />
+                        <circle key={i} cx={142 + (i%4)*9} cy={79 - Math.floor(i/4)*7} r="3" className="fill-blue-500 stroke-blue-600" />
                       ))}
 
-                      {/* Μπλε Μπαλάκια που ΦΕΥΓΟΥΝ (ίσα με το α) */}
+                      {/* Μπλε Μπαλάκια που ΦΕΥΓΟΥΝ */}
                       {isSolved && Array.from({ length: eqA }).map((_, i) => {
                         const startIndex = (eqB - eqA) + i;
                         return (
                           <circle 
                             key={startIndex} 
-                            cx={145 + (startIndex%3)*10} 
-                            cy={79 - Math.floor(startIndex/3)*8} 
-                            r="3.5" 
+                            cx={142 + (startIndex%4)*9} 
+                            cy={79 - Math.floor(startIndex/4)*7} 
+                            r="3" 
                             className="fill-blue-500 stroke-blue-600 animate-lift-right" 
                           />
                         );
                       })}
                       
-                      {/* Αν δεν έχει πατηθεί η λύση, τα δείχνει κανονικά ακίνητα */}
                       {!isSolved && Array.from({ length: eqA }).map((_, i) => {
                         const startIndex = (eqB - eqA) + i;
                         return (
-                          <circle key={startIndex} cx={145 + (startIndex%3)*10} cy={79 - Math.floor(startIndex/3)*8} r="3.5" className="fill-blue-500 stroke-blue-600" />
+                          <circle key={startIndex} cx={142 + (startIndex%4)*9} cy={79 - Math.floor(startIndex/4)*7} r="3" className="fill-blue-500 stroke-blue-600" />
                         );
                       })}
                     </g>
 
-                    {/* Εφέ Έκρηξης/Σύγκρουσης στο Κέντρο (x=100, y=25) */}
+                    {/* Εφέ Έκρηξης στο Κέντρο */}
                     {isSolved && (
                       <g className="animate-burst">
                         <circle cx="100" cy="25" r="8" className="fill-amber-400/30 stroke-amber-500 stroke-[1.5]" />
@@ -376,41 +377,31 @@ export default function BGymnasiou() {
         <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές μας.</p>
       </footer>
       
-      {/* CSS ANIMATIONS ΓΙΑ ΤΗ ΣΥΓΚΡΟΥΣΗ ΚΑΙ ΤΗΝ ΕΚΡΗΞΗ */}
       <style jsx>{`
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
 
-        /* Κίνηση από αριστερά προς το κέντρο και σβήσιμο */
         @keyframes liftLeft {
           0% { transform: translate(0, 0); opacity: 1; }
           80% { transform: translate(50px, -45px); opacity: 1; }
           100% { transform: translate(55px, -50px); opacity: 0; }
         }
-        .animate-lift-left {
-          animation: liftLeft 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
+        .animate-lift-left { animation: liftLeft 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
-        /* Κίνηση από δεξιά προς το κέντρο και σβήσιμο */
         @keyframes liftRight {
           0% { transform: translate(0, 0); opacity: 1; }
           80% { transform: translate(-45px, -45px); opacity: 1; }
           100% { transform: translate(-50px, -50px); opacity: 0; }
         }
-        .animate-lift-right {
-          animation: liftRight 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
+        .animate-lift-right { animation: liftRight 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 
-        /* Εφέ στιγμιαίας έκρηξης στο σημείο συνάντησης */
         @keyframes burstEffect {
           0% { opacity: 0; transform: scale(0.3); transform-origin: 100px 25px; }
           75% { opacity: 0; }
           85% { opacity: 1; transform: scale(1.1); transform-origin: 100px 25px; }
           100% { opacity: 0; transform: scale(1.4); transform-origin: 100px 25px; }
         }
-        .animate-burst {
-          animation: burstEffect 1.1s ease-out forwards;
-        }
+        .animate-burst { animation: burstEffect 1.1s ease-out forwards; }
       `}</style>
     </div>
   );
