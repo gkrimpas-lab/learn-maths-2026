@@ -420,3 +420,204 @@ export default function BGymnasiou() {
 
                       {/* 3. ΔΙΟΡΘΩΘΗΚΕ: ΜΗ ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ (Live μεταμόρφωση σε πίτες κατά το animation) */}
                       {remainderPart > 0 && (
+                        <g>
+                          {Array.from({ length: eq2A }).map((_, i) => {
+                            const startX = 142 + (wholePart > 0 ? 25 : 0) + i * 8;
+                            const startY = 72;
+                            
+                            // Στόχος: Η 1η πίτα μένει κάτω δεξιά. Οι υπόλοιπες πετούν στο κέντρο
+                            const targetCenterX = 100 - startX;
+                            const targetCenterY = 25 - startY;
+
+                            return (
+                              <g 
+                                key={i} 
+                                transform={`translate(${startX}, ${startY})`}
+                                style={{ 
+                                  '--anim-dur': `${animDuration}s`, 
+                                  '--target-x': `${targetCenterX}px`, 
+                                  '--target-y': `${targetCenterY}px` 
+                                }}
+                                className={isSolved2 ? (i === 0 ? 'animate-keep-pie' : 'animate-fly-pie-to-center') : ''}
+                              >
+                                {/* ΠΡΙΝ ΤΗ ΛΥΣΗ: Φαίνεται σαν κανονικό ολόκληρο μπαλάκι (forceFull=true) */}
+                                {/* ΜΕΤΑ ΤΗ ΛΥΣΗ: Μεταμορφώνεται σε κλασματική πίτα (forceFull=false) */}
+                                {renderDotPie(0, 0, 3, eq2A, !isSolved2)}
+                              </g>
+                            );
+                          })}
+                        </g>
+                      )}
+                    </g>
+
+                    {/* Εφέ Έκρηξης στο Κέντρο */}
+                    {isSolved2 && (
+                      <g className="animate-burst">
+                        <circle cx="100" cy="25" r="12" className="fill-orange-400/10 stroke-orange-500 stroke-dashed stroke-[0.5]" />
+                      </g>
+                    )}
+                  </svg>
+                </div>
+
+                <button 
+                  onClick={() => setIsSolved2(!isSolved2)} 
+                  className={`w-full py-2.5 rounded-xl font-black text-xs text-white tracking-wide transition-all ${!isSolved2 ? 'bg-amber-600 hover:bg-amber-700' : 'bg-slate-600 hover:bg-slate-700'}`}
+                >
+                  {!isSolved2 ? `⚡ Χώρισε σε ${eq2A} ίσα μέρη (Διαίρεση)` : '🔄 Επαναφορά Ζυγαριάς'}
+                </button>
+              </div>
+
+              {/* Ανάλυση Βημάτων */}
+              <div className="bg-white p-5 rounded-xl border text-xs max-w-xl mx-auto space-y-3 shadow-sm">
+                <span className="font-bold text-gray-400 uppercase tracking-wide block text-center">Μαθηματικά Βήματα Επίλυσης:</span>
+                <div className="space-y-2 font-medium text-slate-700">
+                  <p className="flex items-center gap-2"><span className="w-4 h-4 rounded-full bg-slate-200 flex items-center justify-center font-bold text-[10px]">1</span> Αρχική κατάσταση: <span className="font-mono font-bold bg-slate-50 px-1 border rounded">{eq2A} · x = {eq2B}</span></p>
+                  <div className={`transition-all duration-300 space-y-2 ${isSolved2 ? 'opacity-100 max-h-40' : 'opacity-30 max-h-0 overflow-hidden'}`}>
+                    <p className="flex items-center gap-2"><span className="w-4 h-4 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-[10px]">2</span> Διαιρούμε με το {eq2A}: <span className="font-mono font-bold bg-amber-50 px-1 border rounded text-amber-700">({eq2A}·x)/{eq2A} = {eq2B}/{eq2A}</span></p>
+                    <p className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[10px]">3</span> 
+                      Το 1 κουτί x ισούται με: &nbsp;
+                      <span className="font-mono font-black bg-emerald-50 px-2 py-0.5 border border-emerald-300 rounded text-emerald-700 text-sm">
+                        x = {wholePart > 0 ? `${wholePart} ` : ''} 
+                        {remainderPart > 0 ? ` και 1/${eq2A}` : ''} 
+                        &nbsp;({(eq2B / eq2A).toFixed(2).replace('.00', '')})
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: y = ax */}
+        {activeTab === 'functions_ax' && (
+          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-4">
+                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2"><span>📈 Η Συνάρτηση</span> <span className="bg-indigo-50 text-indigo-600 px-3 py-0.5 rounded-xl font-mono text-xl border border-indigo-100">y = αx</span></h2>
+                <p className="text-gray-600 leading-relaxed text-sm">Εκφράζει ανάλογα ποσά. Η γραφική της παράσταση διέρχεται από το O(0,0).</p>
+              </div>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-5 space-y-6">
+                  <div className="bg-white p-5 rounded-xl border shadow-sm space-y-3">
+                    <div className="flex justify-between items-center"><span className="font-bold text-gray-700 text-xs uppercase tracking-wide">Κλίση (α):</span><span className="text-lg font-mono font-black text-indigo-600">{slopeA1.toFixed(1)}</span></div>
+                    <input type="range" min={CONFIG.functions.min} max={CONFIG.functions.max} step={CONFIG.functions.step} value={slopeA1} onChange={(e) => setSlopeA1(parseFloat(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg cursor-pointer accent-indigo-500"/>
+                  </div>
+                </div>
+                <div className="lg:col-span-7 bg-white p-6 rounded-2xl border flex flex-col items-center shadow-inner">
+                  <div className="relative w-full max-w-[400px] aspect-square bg-slate-50 rounded-xl border border-gray-200 p-2">
+                    <svg viewBox="0 0 300 300" className="w-full h-full">
+                      {Array.from({ length: 27 }).map((_, i) => (<line key={i} x1={i * 11 + 7} y1="0" x2={i * 11 + 7} y2="300" className="stroke-gray-200/70 stroke-[0.5]" />))}
+                      {Array.from({ length: 27 }).map((_, i) => (<line key={i} x1="0" y1={i * 11 + 7} x2="300" y2={i * 11 + 7} className="stroke-gray-200/70 stroke-[0.5]" />))}
+                      <line x1="10" y1="150" x2="290" y2="150" className="stroke-slate-600 stroke-2" />
+                      <line x1="150" y1="290" x2="150" y2="10" className="stroke-slate-600 stroke-2" />
+                      {renderLine(slopeA1, 0, "indigo")}
+                      <circle cx={toSvgX(1)} cy={toSvgY(slopeA1)} r="4.5" className="fill-amber-500 stroke-white" /><text x={toSvgX(1.3)} y={toSvgY(slopeA1 - 0.3)} className="text-[10px] font-black fill-amber-600 font-mono">A(1, {slopeA1.toFixed(1)})</text>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: y = ax + b */}
+        {activeTab === 'functions_axb' && (
+          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-4">
+                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2"><span>🚀 Η Συνάρτηση</span> <span className="bg-indigo-50 text-indigo-600 px-3 py-0.5 rounded-xl font-mono text-xl border border-indigo-100">y = αx + β</span></h2>
+                <p className="text-gray-600 leading-relaxed text-sm">Παράλληλη μετατόπιση της ευθείας y = αx κατά β μονάδες.</p>
+              </div>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-5 space-y-5">
+                  <div className="bg-white p-4 rounded-xl border shadow-sm space-y-2"><input type="range" min={CONFIG.functions.min} max={CONFIG.functions.max} step={CONFIG.functions.step} value={slopeA2} onChange={(e) => setSlopeA2(parseFloat(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg cursor-pointer accent-indigo-500"/></div>
+                  <div className="bg-white p-4 rounded-xl border shadow-sm space-y-2"><input type="range" min={CONFIG.functions.min} max={CONFIG.functions.max} step={CONFIG.functions.step} value={interceptB} onChange={(e) => setInterceptB(parseFloat(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg cursor-pointer accent-purple-500"/></div>
+                  <div className="flex items-center justify-between bg-indigo-50 p-4 rounded-xl border"><button onClick={() => setShowComparison(!showComparison)} className={`relative inline-flex h-6 w-11 items-center rounded-full ${showComparison ? 'bg-indigo-600' : 'bg-gray-300'}`}><span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${showComparison ? 'translate-x-6' : 'translate-x-1'}`} /></button></div>
+                </div>
+                <div className="lg:col-span-7 bg-white p-6 rounded-2xl border flex flex-col items-center shadow-inner">
+                  <div className="relative w-full max-w-[400px] aspect-square bg-slate-50 rounded-xl border border-gray-200 p-2">
+                    <svg viewBox="0 0 300 300" className="w-full h-full">
+                      {Array.from({ length: 27 }).map((_, i) => (<line key={i} x1={i * 11 + 7} y1="0" x2={i * 11 + 7} y2="300" className="stroke-gray-200/70 stroke-[0.5]" />))}
+                      {Array.from({ length: 27 }).map((_, i) => (<line key={i} x1="0" y1={i * 11 + 7} x2="300" y2={i * 11 + 7} className="stroke-gray-200/70 stroke-[0.5]" />))}
+                      <line x1="10" y1="150" x2="290" y2="150" className="stroke-slate-600 stroke-2" />
+                      <line x1="150" y1="290" x2="150" y2="10" className="stroke-slate-600 stroke-2" />
+                      {showComparison && renderLine(slopeA2, 0, "slate", true)}
+                      {renderLine(slopeA2, interceptB, "indigo")}
+                      <circle cx={toSvgX(0)} cy={toSvgY(interceptB)} r="4" className="fill-purple-500 stroke-white" /><text x={toSvgX(0.5)} y={toSvgY(interceptB + 0.5)} className="text-[9px] font-black fill-purple-700 font-mono">Β(0, {interceptB.toFixed(1)})</text>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm">
+        <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές μας.</p>
+      </footer>
+      
+      {/* CSS KEYFRAMES ΓΙΑ ΤΟ ΝΕΟ ΠΑΙΔΑΓΩΓΙΚΟ ΣΕΝΑΡΙΟ */}
+      <style jsx>{`
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+
+        /* 📦 1. Τα κουτιά x πετούν προς το κέντρο της ζυγαριάς (x=100, y=25) */
+        @keyframes flyBoxToCenter {
+          0% { transform: translate(0, 0); opacity: 1; }
+          40% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; }
+          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } /* Αναμονή 2'' */
+          100% { transform: translate(var(--target-x), var(--target-y)); opacity: 0; } /* Εξαφάνιση */
+        }
+        .animate-fly-box-to-center { 
+          animation: flyBoxToCenter calc(var(--anim-dur) + 2s) cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+        }
+
+        /* 🔵 2. Τα μπαλάκια πετούν προς το κέντρο της ζυγαριάς */
+        @keyframes flyDotToCenter {
+          0% { transform: translate(0, 0); opacity: 1; }
+          40% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; }
+          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } /* Αναμονή 2'' */
+          100% { transform: translate(var(--target-x), var(--target-y)); opacity: 0; } /* Εξαφάνιση */
+        }
+        .animate-fly-dot-to-center { 
+          animation: flyDotToCenter calc(var(--anim-dur) + 2s) cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+        }
+
+        /* 🍕 3. Οι κλασματικές πίτες πετούν προς το κέντρο της ζυγαριάς */
+        @keyframes flyPieToCenter {
+          0% { transform: translate(0, 0); opacity: 1; }
+          40% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; }
+          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } /* Αναμονή 2'' */
+          100% { transform: translate(var(--target-x), var(--target-y)); opacity: 0; } /* Εξαφάνιση */
+        }
+        .animate-fly-pie-to-center { 
+          animation: flyPieToCenter calc(var(--anim-dur) + 2s) cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+        }
+
+        /* 💎 4. Η 1η πίτα που αποτελεί την απάντηση μένει μόνιμα κάτω δεξιά */
+        @keyframes keepPie {
+          0% { opacity: 1; }
+          100% { opacity: 1; }
+        }
+        .animate-keep-pie { animation: keepPie calc(var(--anim-dur) + 2s) forwards; }
+
+        /* 🔥 5. Εφέ έκρηξης/εξαφάνισης στο κέντρο */
+        @keyframes burstEffect {
+          0% { opacity: 0; transform: scale(0.3); transform-origin: 100px 25px; }
+          78% { opacity: 0; }
+          85% { opacity: 1; transform: scale(1.1); transform-origin: 100px 25px; }
+          100% { opacity: 0; transform: scale(1.4); transform-origin: 100px 25px; }
+        }
+        .animate-burst { animation: burstEffect calc(var(--anim-dur) + 2s) ease-out forwards; }
+      `}</style>
+    </div>
+  );
+}
