@@ -7,8 +7,6 @@ export default function BGymnasiou() {
 
   // States για την 0η καρτέλα (Μεταβλητή)
   const [varX, setVarX] = useState(5);
-  const constantMultiplier = 3;
-  const constantAdd = 2;
 
   // States για την 1η καρτέλα (y = ax)
   const [slopeA1, setSlopeA1] = useState(1);
@@ -128,9 +126,14 @@ export default function BGymnasiou() {
                     <div className="space-y-4">
                       <div className="text-xs font-bold text-gray-400">Έκφραση: <span className="text-indigo-600 font-black">3 · x + 2</span></div>
                       
+                      {/* ΔΙΟΡΘΩΘΗΚΕ: Προσθήκη δυναμικής παρένθεσης όταν x < 0 */}
                       <div className="flex items-center justify-center gap-2 text-2xl font-black text-slate-800">
                         <span>3 ·</span>
-                        <span className="bg-amber-100 text-amber-600 px-3 py-1 rounded-lg border border-amber-200 animate-pulse">{varX}</span>
+                        <div className="flex items-center">
+                          {varX < 0 && <span className="text-indigo-600 mr-1 text-3xl font-light">(</span>}
+                          <span className="bg-amber-100 text-amber-600 px-3 py-1 rounded-lg border border-amber-200 transition-all duration-150">{varX}</span>
+                          {varX < 0 && <span className="text-indigo-600 ml-1 text-3xl font-light">)</span>}
+                        </div>
                         <span>+ 2 =</span>
                         <span className="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-lg border border-emerald-200">{(3 * varX) + 2}</span>
                       </div>
@@ -208,7 +211,7 @@ export default function BGymnasiou() {
                       <circle cx="150" cy="150" r="3.5" className="fill-slate-800" />
                       {renderLine(slopeA1, 0, "indigo")}
                       {slopeA1 !== 0 && (
-                        <g><circle cx={toSvgX(1)} cy={toSvgY(slopeA1)} r={4.5} className="fill-amber-500 stroke-white" /><text x={toSvgX(1.3)} y={toSvgY(slopeA1 - 0.3)} className="text-[10px] font-black fill-amber-600 font-mono">A(1, {slopeA1.toFixed(1)})</text></g>
+                        <g><circle cx={toSvgX(1)} cy={toSvgY(slopeA1)} r="4.5" className="fill-amber-500 stroke-white" /><text x={toSvgX(1.3)} y={toSvgY(slopeA1 - 0.3)} className="text-[10px] font-black fill-amber-600 font-mono">A(1, {slopeA1.toFixed(1)})</text></g>
                       )}
                     </svg>
                   </div>
@@ -275,7 +278,7 @@ export default function BGymnasiou() {
       </main>
 
       <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm mt-12">
-        <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη Β' Γυμνασίου.</p>
+        <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές μας.</p>
       </footer>
       
       <style jsx>{`
