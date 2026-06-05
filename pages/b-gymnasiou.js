@@ -18,7 +18,7 @@ const CONFIG = {
     aMax: 5,
     aDefault: 3,
     bMin: 1,
-    bMax: 20, // ΑΥΞΗΘΗΚΕ ΤΟ ΟΡΙΟ ΣΕ 20 ΜΠΑΛΑΚΙΑ
+    bMax: 20,
     bDefault: 8
   },
   functions: {
@@ -175,7 +175,6 @@ export default function BGymnasiou() {
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
               <h3 className="text-base font-bold text-center text-gray-800">⚖️ Προσομοιωτής Ζυγαριάς</h3>
               
-              {/* ΔΙΟΡΘΩΘΗΚΕ: Αφαιρέθηκαν οι επεξηγηματικές παρενθέσεις με τα min/max */}
               <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-wrap justify-center items-center gap-6 text-xs max-w-xl mx-auto">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-gray-600">Βάρος α:</span>
@@ -192,7 +191,7 @@ export default function BGymnasiou() {
                 </div>
               </div>
 
-              {/* ΓΡΑΦΙΚΟ SVG ΜΕ ANIMATED ΜΠΑΛΑΚΙΑ (ΜΕΧΡΙ 20) */}
+              {/* ΓΡΑΦΙΚΟ SVG */}
               <div className="bg-white p-6 rounded-2xl border flex flex-col items-center justify-center max-w-xl mx-auto shadow-sm space-y-4">
                 
                 <div className="text-lg font-mono font-black text-slate-700 bg-slate-50 p-2 px-6 rounded-lg border">
@@ -219,22 +218,19 @@ export default function BGymnasiou() {
                       <rect x="22" y="67" width="16" height="16" className="fill-indigo-500 stroke-indigo-700 rounded" />
                       <text x="27" y="79" className="text-[10px] font-black fill-white font-mono">x</text>
                       
-                      {!isSolved && (
-                        <g>
-                          {Array.from({ length: eqA }).map((_, i) => (
-                            <circle 
-                              key={i} 
-                              cx={45 + (i%2)*10} 
-                              cy={79 - Math.floor(i/2)*8} 
-                              r="3.5" 
-                              className={`fill-orange-500 stroke-orange-600 ${isSolved ? 'animate-lift-left' : ''}`} 
+                      {/* ΔΙΟΡΘΩΘΗΚΕ: Τα πορτοκαλί μπαλάκια σχεδιάζονται σωστά και εφαρμόζουν το animation */}
+                      {Array.from({ length: eqA }).map((_, i) => (
+                        <circle 
+                          key={i} 
+                          cx={45 + (i%2)*10} 
+                          cy={79 - Math.floor(i/2)*8} 
+                          r="3.5" 
+                          className={`fill-orange-500 stroke-orange-600 ${isSolved ? 'animate-lift-left' : ''}`} 
                         />
-                          ))}
-                        </g>
-                      )}
+                      ))}
                     </g>
 
-                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ (Διορθώθηκε η στοίχιση σε 4 στήλες για να χωράνε άνετα έως 20 μπαλάκια) */}
+                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ */}
                     <g>
                       <line x1="160" y1="40" x2="140" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="160" y1="40" x2="180" y2="85" className="stroke-slate-400 stroke-[0.5]" />
@@ -280,12 +276,13 @@ export default function BGymnasiou() {
                   </svg>
                 </div>
 
+                {/* ΔΙΟΡΘΩΘΗΚΕ: Αφαιρέθηκε η παρένθεση από το κείμενο */}
                 <button 
                   onClick={() => setIsSolved(!isSolved)}
                   className={`w-full py-2.5 rounded-xl font-black text-xs shadow transition-all duration-200 text-white
                     ${!isSolved ? 'bg-orange-500 hover:bg-orange-600' : 'bg-slate-600 hover:bg-slate-700'}`}
                 >
-                  {!isSolved ? `⚡ Αφαίρεσε το βάρος ${eqA} (Λύση με Animation)` : '🔄 Επαναφορά Ζυγαριάς'}
+                  {!isSolved ? `⚡ Αφαίρεσε το βάρος ${eqA}` : '🔄 Επαναφορά Ζυγαριάς'}
                 </button>
               </div>
 
