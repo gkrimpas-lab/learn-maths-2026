@@ -69,7 +69,7 @@ export default function BGymnasiou() {
   const toSvgY = (mathY) => 150 - mathY * 11;
 
   // Σχεδίαση κλασματικής πίτας-μπαλονιού
-  const renderDotPie = (cx, cy, r, totalSlices, forceFull = false) => {
+  const renderDotPie = (cx, cy, r, totalSlices) => {
     const slices = [];
     for (let i = 0; i < totalSlices; i++) {
       const startAngle = (i * 360) / totalSlices - 90;
@@ -79,12 +79,12 @@ export default function BGymnasiou() {
       const x2 = cx + r * Math.cos((endAngle * Math.PI) / 180);
       const y2 = cy + r * Math.sin((endAngle * Math.PI) / 180);
       
-      const isHighlighted = forceFull || (i === 0); 
+      const isFirstSlice = i === 0; // Φωτίζουμε μόνο το 1/α μέρος
       const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`;
       slices.push(
         <path 
           key={i} d={pathData} 
-          className={`${isHighlighted ? 'fill-blue-500 stroke-blue-600' : 'fill-slate-200 stroke-slate-400'} stroke-[0.3]`} 
+          className={`${isFirstSlice ? 'fill-blue-500 stroke-blue-600' : 'fill-slate-200 stroke-slate-400'} stroke-[0.3]`} 
         />
       );
     }
@@ -140,7 +140,7 @@ export default function BGymnasiou() {
             🎯 2. Εξίσωση α·x = β
           </button>
           <button onClick={() => setActiveTab('functions_ax')} className={`px-3 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'functions_ax' ? 'bg-indigo-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
-            📈 3. Συνάρτηση y = αx
+            🎒 3. Συνάρτηση y = αx
           </button>
           <button onClick={() => setActiveTab('functions_axb')} className={`px-3 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'functions_axb' ? 'bg-indigo-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
             🚀 4. Συνάρτηση y = αx + β
@@ -269,7 +269,7 @@ export default function BGymnasiou() {
           </div>
         )}
 
-        {/* TAB 2: ΕΞΙΣΩΣΗ ax = b (ΔΙΟΡΘΩΜΕΝΗ ΚΑΙ ΑΨΕΓΑΔΙΑΣΤΗ) */}
+        {/* TAB 2: ΕΞΙΣΩΣΗ ax = b (ΔΙΟΡΘΩΘΗΚΕ ΠΛΗΡΩΣ) */}
         {(activeTab === 'functions_mult' || activeTab === 'equations_mult') && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -279,7 +279,7 @@ export default function BGymnasiou() {
                   Διαιρούμε και τα δύο μέλη της εξίσωσης με τον συντελεστή «α» για να βρούμε την αξία του ενός άγνωστου.
                 </p>
                 <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-xs text-amber-900 leading-relaxed">
-                  <p>⚖️ Κάντε κλικ στο κουμπί: Τα επιπλέον κουτιά x ανεβαίνουν στο κέντρο και παρατάσσονται σε καθαρή σειρά. Ταυτόχρονα, τα δεξιά μπαλάκια «σπάνε» live σε κλασματικές πίτες και ταξιδεύουν προς τα πάνω για να μπουν μέσα στα κουτιά.</p>
+                  <p>⚖️ Κάντε κλικ στο κουμπί: Τα επιπλέον κουτιά x ανεβαίνουν στο κέντρο και παρατάσσονται σε σειρά. Ταυτόχρονα, τα δεξιά μπαλάκια που περισσεύουν «σπάνε» live σε κλασματικές πίτες και ταξιδεύουν προς τα πάνω.</p>
                 </div>
               </div>
               <div className="bg-gradient-to-br from-amber-600 to-orange-600 text-white p-5 rounded-2xl shadow-md flex flex-col justify-center">
@@ -338,25 +338,24 @@ export default function BGymnasiou() {
                     <line x1="100" y1="90" x2="100" y2="40" className="stroke-slate-500 stroke-[3]" />
                     <line x1="40" y1="40" x2="160" y2="40" className="stroke-slate-500 stroke-2" />
 
-                    {/* ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ (ΚΟΥΤΙΑ X) */}
+                    {/* ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ */}
                     <g>
                       <line x1="40" y1="40" x2="20" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="40" y1="40" x2="60" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="15" y1="85" x2="65" y2="85" className="stroke-amber-500 stroke-2" />
 
-                      {/* 1ο Κουτί x - Μένει πάντα άδειο και σταθερό κάτω αριστερά */}
+                      {/* 1ο Κουτί x - Μένει πάντα σταθερό κάτω αριστερά */}
                       <g>
                         <rect x="20" y="71" width="14" height="14" className="fill-indigo-600 stroke-indigo-800 rounded shadow-sm" />
                         <text x="24" y="81" className="text-[8px] font-black fill-white font-mono">x</text>
                       </g>
 
-                      {/* ΔΙΟΡΘΩΘΗΚΕ: Τα επιπλέον κουτιά x παρατάσσονται σε καθαρή σειρά στο κέντρο (Όχι επικάλυψη) */}
+                      {/* Τα υπόλοιπα κουτιά x παρατάσσονται οριζόντια στο κέντρο */}
                       {Array.from({ length: eq2A - 1 }).map((_, i) => {
                         const idx = i + 1;
                         const startGridX = 20 + (idx % 2) * 16;
                         const startGridY = 71 - Math.floor(idx / 2) * 15;
                         
-                        // Σειρική κατανομή στο κέντρο: x = 75, 92, 109, 126
                         const targetCenterX = (75 + i * 17) - startGridX;
                         const targetCenterY = 22 - startGridY;
 
@@ -377,13 +376,13 @@ export default function BGymnasiou() {
                       })}
                     </g>
 
-                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ (ΜΠΑΛΑΚΙΑ) */}
+                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ */}
                     <g>
                       <line x1="160" y1="40" x2="140" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="160" y1="40" x2="180" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="135" y1="85" x2="185" y2="85" className="stroke-blue-500 stroke-2" />
 
-                      {/* 1. Ολόκληρα μπαλάκια που μένουν πάντα κάτω δεξιά (Η τελική απάντηση) */}
+                      {/* 1. Ολόκληρα μπαλάκια που μένουν πάντα κάτω δεξιά */}
                       {Array.from({ length: wholePart }).map((_, i) => (
                         <circle key={i} cx={140 + (i % 5) * 5} cy="80" r="2" className="fill-blue-600 stroke-blue-700" />
                       ))}
@@ -399,7 +398,6 @@ export default function BGymnasiou() {
                         const startX = 140 + (globalIndex % 5) * 5;
                         const startY = 80 - Math.floor(globalIndex / 5) * 6;
                         
-                        // Στόχος: Η σειρά των κουτιών στο κέντρο
                         const targetBoxIdx = i % (eq2A - 1);
                         const targetCenterX = (75 + targetBoxIdx * 17 + 4) - startX;
                         const targetCenterY = 27 - startY;
@@ -416,14 +414,13 @@ export default function BGymnasiou() {
                         );
                       })}
 
-                      {/* 3. ΔΙΟΡΘΩΘΗΚΕ: ΜΗ ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ (Όλα ίδια μπλε κυκλάκια στην αρχή, γίνονται πίτες μόνο κατά τη λύση) */}
+                      {/* 3. ΔΙΟΡΘΩΘΗΚΕ: ΜΗ ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ (ΟΛΑ ΙΔΙΑ ΜΠΑΛΑΚΙΑ ΣΤΗΝ ΑΡΧΗ) */}
                       {remainderPart > 0 && (
                         <g>
                           {Array.from({ length: eq2A }).map((_, i) => {
                             const startX = 142 + (wholePart > 0 ? 23 : 0) + i * 8;
                             const startY = 72;
                             
-                            // Η 1η πίτα μένει κάτω δεξιά. Οι υπόλοιπες πετούν στην αντίστοιχη θέση της σειράς
                             const targetBoxIdx = Math.max(0, i - 1);
                             const targetCenterX = (75 + targetBoxIdx * 17 + 4) - startX;
                             const targetCenterY = 27 - startY;
@@ -439,8 +436,13 @@ export default function BGymnasiou() {
                                 }}
                                 className={isSolved2 ? (i === 0 ? 'animate-keep-pie' : 'animate-fly-pie-to-center') : ''}
                               >
-                                {/* forceFull = !isSolved2 (Αν δεν έχει λυθεί, σχεδιάζεται σαν κανονικό ολόκληρο μπαλάκι) */}
-                                {renderDotPie(0, 0, 2.5, eq2A, !isSolved2)}
+                                {/* ΔΙΟΡΘΩΘΗΚΕ: forceFull = !isSolved2 */}
+                                {/* Αν το isSolved2 είναι false, σχεδιάζει έναν απλό κύκλο. Αν είναι true, σχεδιάζει τις φέτες της πίτας! */}
+                                {!isSolved2 ? (
+                                  <circle cx="0" cy="0" r="2.5" className="fill-blue-400 stroke-blue-500" />
+                                ) : (
+                                  renderDotPie(0, 0, 2.5, eq2A)
+                                )}
                               </g>
                             );
                           })}
@@ -564,7 +566,7 @@ export default function BGymnasiou() {
         @keyframes flyBoxToCenter {
           0% { transform: translate(0, 0); opacity: 1; }
           40% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; }
-          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } /* Στάση 2 δευτερόλεπτα */
+          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } 
           100% { transform: translate(var(--target-x), var(--target-y)); opacity: 0; }
         }
         .animate-fly-box-to-center { 
@@ -575,7 +577,7 @@ export default function BGymnasiou() {
         @keyframes flyDotToCenter {
           0% { transform: translate(0, 0); opacity: 1; }
           40% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; }
-          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } /* Στάση 2 δευτερόλεπτα */
+          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } 
           100% { transform: translate(var(--target-x), var(--target-y)); opacity: 0; }
         }
         .animate-fly-dot-to-center { 
@@ -586,7 +588,7 @@ export default function BGymnasiou() {
         @keyframes flyPieToCenter {
           0% { transform: translate(0, 0); opacity: 1; }
           40% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; }
-          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } /* Στάση 2 δευτερόλεπτα */
+          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } 
           100% { transform: translate(var(--target-x), var(--target-y)); opacity: 0; }
         }
         .animate-fly-pie-to-center { 
