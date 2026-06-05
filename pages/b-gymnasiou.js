@@ -27,7 +27,7 @@ const CONFIG = {
     aDefault: 3,
     bMin: 2,
     bMax: 20,
-    bDefault: 8 // Παράδειγμα 3x = 8 (μη τέλεια διαίρεση)
+    bDefault: 8 // Παράδειγμα: 3x = 8
   },
   functions: {
     min: -10,
@@ -54,7 +54,7 @@ export default function BGymnasiou() {
   const [eq2A, setEq2A] = useState(CONFIG.equation2.aDefault);
   const [eq2B, setEq2B] = useState(CONFIG.equation2.bDefault);
   const [isSolved2, setIsSolved2] = useState(false);
-  const [animDuration, setAnimDuration] = useState(2.0); // Default στα 2 δευτερόλεπτα
+  const [animDuration, setAnimDuration] = useState(1.5); // Διάρκεια πρώτης κίνησης
 
   // States για την 3η καρτέλα (y = ax)
   const [slopeA1, setSlopeA1] = useState(CONFIG.functions.defaultA1);
@@ -68,8 +68,8 @@ export default function BGymnasiou() {
   const toSvgX = (mathX) => 150 + mathX * 11;
   const toSvgY = (mathY) => 150 - mathY * 11;
 
-  // Βοηθητική συνάρτηση για τη σχεδίαση κλασματικής πίτας-μπαλονιού μέσα στο SVG της ζυγαριάς
-  const renderDotPie = (cx, cy, r, totalSlices) => {
+  // Σχεδίαση κλασματικής πίτας-μπαλονιού
+  const renderDotPie = (cx, cy, r, totalSlices, forceFull = false) => {
     const slices = [];
     for (let i = 0; i < totalSlices; i++) {
       const startAngle = (i * 360) / totalSlices - 90;
@@ -78,12 +78,15 @@ export default function BGymnasiou() {
       const y1 = cy + r * Math.sin((startAngle * Math.PI) / 180);
       const x2 = cx + r * Math.cos((endAngle * Math.PI) / 180);
       const y2 = cy + r * Math.sin((endAngle * Math.PI) / 180);
-      const isFirstSlice = i === 0; // Φωτίζουμε μόνο το 1/α μέρος
+      
+      // Αν forceFull=true φωτίζονται όλα (ολόκληρο μπαλάκι), αλλιώς μόνο το 1/α κομμάτι
+      const isHighlighted = forceFull || (i === 0); 
+      
       const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`;
       slices.push(
         <path 
           key={i} d={pathData} 
-          className={`${isFirstSlice ? 'fill-amber-400 stroke-amber-600' : 'fill-slate-200 stroke-slate-400'} stroke-[0.5]`} 
+          className={`${isHighlighted ? 'fill-blue-500 stroke-blue-600' : 'fill-slate-200 stroke-slate-400'} stroke-[0.3]`} 
         />
       );
     }
@@ -104,8 +107,8 @@ export default function BGymnasiou() {
   };
 
   // Υπολογισμοί για τη διαίρεση ax = b
-  const wholePart = Math.floor(eq2B / eq2A); // Ολόκληρα μπαλάκια ανά κουτί
-  const remainderPart = eq2B % eq2A; // Υπόλοιπο (αν είναι > 0, χρειάζεται πίτα)
+  const wholePart = Math.floor(eq2B / eq2A); 
+  const remainderPart = eq2B % eq2A; 
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
@@ -215,7 +218,7 @@ export default function BGymnasiou() {
                 </div>
                 <div className="w-[1px] h-4 bg-gray-200"></div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-gray-700">Σύνολο β:</span>
+                  <span className="font-bold text-gray-600">Σύνολο β:</span>
                   <button onClick={() => { setEq1B(Math.max(eq1A + 1, eq1B - 1)); setIsSolved1(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">-</button>
                   <span className="font-black text-blue-600 text-sm w-4 text-center">{eq1B}</span>
                   <button onClick={() => { setEq1B(Math.min(CONFIG.equation1.bMax, eq1B + 1)); setIsSolved1(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">+</button>
@@ -269,17 +272,17 @@ export default function BGymnasiou() {
           </div>
         )}
 
-        {/* TAB 2: ΕΞΙΣΩΣΗ ax = b (ΜΕ ΚΛΑΣΜΑΤΙΚΕΣ ΠΙΤΕΣ ΚΑΙ ΔΥΝΑΜΙΚΟ GRID) */}
+        {/* TAB 2: ΕΞΙΣΩΣΗ ax = b (ΝΕΟ ΕΚΠΑΙΔΕΥΤΙΚΟ ΣΕΝΑΡΙΟ) */}
         {(activeTab === 'functions_mult' || activeTab === 'equations_mult') && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">🎯 Εξίσωση της μορφής α·x = β</h2>
                 <p className="text-gray-600 leading-relaxed text-sm">
-                  Όταν ο άγνωστος πολλαπλασιάζεται, διαιρούμε και τα δύο μέλη με τον συντελεστή «α».
+                  Διαιρούμε και τα δύο μέλη της εξίσωσης με τον συντελεστή «α» για να βρούμε την αξία του ενός άγνωστου.
                 </p>
                 <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-xs text-amber-900 leading-relaxed">
-                  <p>⚖️ <strong>Οπτική ομαδοποίηση:</strong> Χωρίζουμε τα βάρη της δεξιάς πλευράς σε «α» ίσα μέρη. Κάθε κουτί x αντιστοιχεί ακριβώς σε μία από αυτές τις ομάδες! Αν περισσέψει μπαλάκι, κόβεται σε κλασματική πίτα.</p>
+                  <p>⚖️ <strong>Τι θα δούμε στο animation:</strong> Τα επιπλέον κουτιά x και τα αντίστοιχα μπαλάκια δεξιά (αφού μεταμορφωθούν σε κλασματικές πίτες) ανεβαίνουν στο κέντρο, ενώ το 1ο κουτί x παραμένει σταθερό κάτω αριστερά χωρίς να γεμίζει, περιμένοντας να δει τι θα μείνει στον απέναντι δίσκο!</p>
                 </div>
               </div>
               <div className="bg-gradient-to-br from-amber-600 to-orange-600 text-white p-5 rounded-2xl shadow-md flex flex-col justify-center">
@@ -293,23 +296,23 @@ export default function BGymnasiou() {
               {/* Ρυθμίσεις Παραμέτρων */}
               <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-wrap justify-center items-center gap-6 text-xs max-w-xl mx-auto">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-gray-700">Πλήθος κουτιών (α):</span>
+                  <span className="font-bold text-gray-600">Πλήθος κουτιών (α):</span>
                   <button onClick={() => { setEq2A(Math.max(CONFIG.equation2.aMin, eq2A - 1)); setIsSolved2(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">-</button>
                   <span className="font-black text-amber-600 text-sm w-4 text-center">{eq2A}</span>
                   <button onClick={() => { setEq2A(Math.min(CONFIG.equation2.aMax, eq2A + 1)); setIsSolved2(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">+</button>
                 </div>
                 <div className="w-[1px] h-4 bg-gray-200"></div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-gray-700">Συνολικά μπαλάκια (β):</span>
+                  <span className="font-bold text-gray-600">Συνολικά μπαλάκια (β):</span>
                   <button onClick={() => { setEq2B(Math.max(CONFIG.equation2.bMin, eq2B - 1)); setIsSolved2(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">-</button>
                   <span className="font-black text-blue-600 text-sm w-4 text-center">{eq2B}</span>
                   <button onClick={() => { setEq2B(Math.min(CONFIG.equation2.bMax, eq2B + 1)); setIsSolved2(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">+</button>
                 </div>
               </div>
 
-              {/* Slider Ταχύτητας Animation */}
+              {/* Slider Ταχύτητας */}
               <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center justify-between gap-4 text-xs max-w-xl mx-auto">
-                <span className="font-bold text-gray-500 uppercase tracking-wider">⏱️ Ταχύτητα Επεξήγησης (Στάδιο 1):</span>
+                <span className="font-bold text-gray-500 uppercase tracking-wider">⏱️ Διάρκεια Κίνησης (Στάδιο 1):</span>
                 <div className="flex items-center gap-3 flex-1 max-w-xs">
                   <input 
                     type="range" min="0.5" max="3.0" step="0.1" value={animDuration} 
@@ -333,6 +336,7 @@ export default function BGymnasiou() {
 
                 <div className="w-full max-w-[340px] aspect-[4/3] bg-slate-50/50 rounded-xl border p-2">
                   <svg viewBox="0 0 200 150" className="w-full h-full">
+                    {/* Βάση */}
                     <path d="M 85 130 L 115 130 L 105 90 L 95 90 Z" className="fill-slate-400" />
                     <line x1="100" y1="90" x2="100" y2="40" className="stroke-slate-500 stroke-[3]" />
                     <line x1="40" y1="40" x2="160" y2="40" className="stroke-slate-500 stroke-2" />
@@ -343,55 +347,51 @@ export default function BGymnasiou() {
                       <line x1="40" y1="40" x2="60" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="15" y1="85" x2="65" y2="85" className="stroke-amber-500 stroke-2" />
 
-                      {/* 1ο Κουτί x - Μένει πάντα σταθερό. Αν λυθεί, αποκτά και το κλασματικό περιεχόμενο */}
-                      <g style={{ '--anim-dur': `${animDuration}s` }} className={isSolved2 ? 'animate-lift-up-box' : ''}>
+                      {/* 1ο Κουτί x - ΔΙΟΡΘΩΘΗΚΕ: Μένει πάντα άδειο και σταθερό κάτω, χωρίς να δέχεται μπαλάκια */}
+                      <g>
                         <rect x="20" y="71" width="14" height="14" className="fill-indigo-600 stroke-indigo-800 rounded shadow-sm" />
                         <text x="24" y="81" className="text-[8px] font-black fill-white font-mono">x</text>
-                        
-                        {/* Αν λυθεί, εμφανίζονται μέσα του τα μπαλάκια και το φωτισμένο κλάσμα-πίτα */}
-                        {isSolved2 && (
-                          <g className="animate-fade-in-content">
-                            {Array.from({ length: wholePart }).map((_, i) => (
-                              <circle key={i} cx={23 + (i%2)*4} cy={74 + Math.floor(i/2)*4} r="1.2" className="fill-blue-500" />
-                            ))}
-                            {remainderPart > 0 && (
-                              <g transform="translate(30,78)">{renderDotPie(0, 0, 2.5, eq2A)}</g>
-                            )}
-                          </g>
-                        )}
                       </g>
 
-                      {/* Τα υπόλοιπα κουτιά x σε καθαρό Grid 2 στηλών. Σηκώνονται και εξαφανίζονται μετά από 2'' */}
+                      {/* Τα υπόλοιπα (α-1) κουτιά x. Ανεβαίνουν προς το κέντρο της ζυγαριάς (x=100, y=25) και μετά σβήνουν */}
                       {Array.from({ length: eq2A - 1 }).map((_, i) => {
                         const idx = i + 1;
-                        const gridX = 20 + (idx % 2) * 16;
-                        const gridY = 71 - Math.floor(idx / 2) * 15;
+                        const startGridX = 20 + (idx % 2) * 16;
+                        const startGridY = 71 - Math.floor(idx / 2) * 15;
+                        
+                        // Υπολογισμός απόστασης για το κέντρο της ζυγαριάς
+                        const targetCenterX = 93 + i * 5 - startGridX;
+                        const targetCenterY = 20 - startGridY;
+
                         return (
                           <g 
                             key={i} 
-                            style={{ '--anim-dur': `${animDuration}s` }}
-                            className={isSolved2 ? 'animate-lift-and-fade-box' : ''}
+                            style={{ 
+                              '--anim-dur': `${animDuration}s`,
+                              '--target-x': `${targetCenterX}px`,
+                              '--target-y': `${targetCenterY}px`
+                            }}
+                            className={isSolved2 ? 'animate-fly-box-to-center' : ''}
                           >
-                            <rect x={gridX} y={gridY} width="14" height="14" className="fill-indigo-400 stroke-indigo-600 rounded" />
-                            <text x={gridX + 4} y={gridY + 10} className="text-[8px] font-bold fill-white font-mono">x</text>
+                            <rect x={startGridX} y={startGridY} width="14" height="14" className="fill-indigo-400 stroke-indigo-600 rounded" />
+                            <text x={startGridX + 4} y={startGridY + 10} className="text-[8px] font-bold fill-white font-mono">x</text>
                           </g>
                         );
                       })}
                     </g>
 
-                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ (ΜΠΑΛΑΚΙΑ & ΚΛΑΣΜΑΤΙΚΕΣ ΠΙΤΕΣ) */}
+                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ (ΜΠΑΛΑΚΙΑ) */}
                     <g>
                       <line x1="160" y1="40" x2="140" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="160" y1="40" x2="180" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="135" y1="85" x2="185" y2="85" className="stroke-blue-500 stroke-2" />
 
-                      {/* Α. ΟΛΟΚΛΗΡΑ ΜΠΑΛΑΚΙΑ */}
-                      {/* 1η ομάδα που αντιστοιχεί στο 1ο x και μένει πάντα κάτω */}
+                      {/* 1. Ολόκληρα μπαλάκια που μένουν πάντα κάτω δεξιά (Η τελική απάντηση ολόκληρων) */}
                       {Array.from({ length: wholePart }).map((_, i) => (
                         <circle key={i} cx={140 + (i % 5) * 5} cy="80" r="2" className="fill-blue-600 stroke-blue-700" />
                       ))}
 
-                      {/* Οι υπόλοιπες ομάδες που πετούν προς τα αριστερά κουτιά x */}
+                      {/* 2. Τα υπόλοιπα ολόκληρα μπαλάκια που πετούν προς το κέντρο */}
                       {!isSolved2 && Array.from({ length: eq2B - wholePart }).map((_, i) => {
                         const globalIndex = wholePart + i;
                         return <circle key={i} cx={140 + (globalIndex % 5) * 5} cy={80 - Math.floor(globalIndex / 5) * 6} r="2" className="fill-blue-400 stroke-blue-500" />
@@ -399,226 +399,24 @@ export default function BGymnasiou() {
 
                       {isSolved2 && Array.from({ length: eq2B - wholePart }).map((_, i) => {
                         const globalIndex = wholePart + i;
-                        const targetBoxIdx = Math.floor(globalIndex / wholePart) % eq2A;
-                        const targetX = 20 + (targetBoxIdx % 2) * 16 - 140; 
-                        const targetY = 71 - Math.floor(targetBoxIdx / 2) * 15 - 80;
+                        const startX = 140 + (globalIndex % 5) * 5;
+                        const startY = 80 - Math.floor(globalIndex / 5) * 6;
+                        
+                        // Στόχος: Το κέντρο της ζυγαριάς
+                        const targetCenterX = 100 - startX;
+                        const targetCenterY = 25 - startY;
 
                         return (
                           <circle 
                             key={i} 
-                            cx={140 + (globalIndex % 5) * 5} 
-                            cy={80 - Math.floor(globalIndex / 5) * 6} 
+                            cx={startX} 
+                            cy={startY} 
                             r="2" 
-                            style={{ '--anim-dur': `${animDuration}s`, '--target-x': `${targetX}px`, '--target-y': `${targetY}px` }}
-                            className="fill-blue-400 stroke-blue-500 animate-fly-to-box" 
+                            style={{ '--anim-dur': `${animDuration}s`, '--target-x': `${targetCenterX}px`, '--target-y': `${targetCenterY}px` }}
+                            className="fill-blue-400 stroke-blue-500 animate-fly-dot-to-center" 
                           />
                         );
                       })}
 
-                      {/* Β. ΜΗ ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ: ΚΛΑΣΜΑΤΙΚΕΣ ΠΙΤΕΣ */}
+                      {/* 3. ΔΙΟΡΘΩΘΗΚΕ: ΜΗ ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ (Live μεταμόρφωση σε πίτες κατά το animation) */}
                       {remainderPart > 0 && (
-                        <g>
-                          {/* Σχεδιάζουμε "eq2A" πίτες (μία για κάθε κουτί) */}
-                          {Array.from({ length: eq2A }).map((_, i) => {
-                            // Η 1η πίτα μένει στον δίσκο, οι υπόλοιπες πετούν προς τα κουτιά
-                            const startX = 142 + (wholePart > 0 ? 25 : 0) + i * 8;
-                            const startY = 72;
-                            const targetBoxIdx = i;
-                            const targetX = 20 + (targetBoxIdx % 2) * 16 - startX;
-                            const targetY = 71 - Math.floor(targetBoxIdx / 2) * 15 - startY;
-
-                            return (
-                              <g 
-                                key={i} 
-                                transform={`translate(${startX}, ${startY})`}
-                                style={{ 
-                                  '--anim-dur': `${animDuration}s`, 
-                                  '--target-x': `${targetX}px`, 
-                                  '--target-y': `${targetY}px` 
-                                }}
-                                className={isSolved2 ? (i === 0 ? 'animate-keep-pie' : 'animate-fly-pie-to-box') : ''}
-                              >
-                                {renderDotPie(0, 0, 3, eq2A)}
-                              </g>
-                            );
-                          })}
-                        </g>
-                      )}
-
-                    </g>
-                  </svg>
-                </div>
-
-                <button 
-                  onClick={() => setIsSolved2(!isSolved2)} 
-                  className={`w-full py-2.5 rounded-xl font-black text-xs text-white tracking-wide transition-all ${!isSolved2 ? 'bg-amber-600 hover:bg-amber-700' : 'bg-slate-600 hover:bg-slate-700'}`}
-                >
-                  {!isSolved2 ? `⚡ Χώρισε σε ${eq2A} ίσα μέρη (Διαίρεση)` : '🔄 Επαναφορά Ζυγαριάς'}
-                </button>
-              </div>
-
-              {/* Ανάλυση Βημάτων */}
-              <div className="bg-white p-5 rounded-xl border text-xs max-w-xl mx-auto space-y-3 shadow-sm">
-                <span className="font-bold text-gray-400 uppercase tracking-wide block text-center">Μαθηματικά Βήματα Επίλυσης:</span>
-                <div className="space-y-2 font-medium text-slate-700">
-                  <p className="flex items-center gap-2"><span className="w-4 h-4 rounded-full bg-slate-200 flex items-center justify-center font-bold text-[10px]">1</span> Αρχική κατάσταση: <span className="font-mono font-bold bg-slate-50 px-1 border rounded">{eq2A} · x = {eq2B}</span></p>
-                  <div className={`transition-all duration-300 space-y-2 ${isSolved2 ? 'opacity-100 max-h-40' : 'opacity-30 max-h-0 overflow-hidden'}`}>
-                    <p className="flex items-center gap-2"><span className="w-4 h-4 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-[10px]">2</span> Διαιρούμε με το {eq2A}: <span className="font-mono font-bold bg-amber-50 px-1 border rounded text-amber-700">({eq2A}·x)/{eq2A} = {eq2B}/{eq2A}</span></p>
-                    <p className="flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[10px]">3</span> 
-                      Το 1 κουτί x ισούται με: &nbsp;
-                      <span className="font-mono font-black bg-emerald-50 px-2 py-0.5 border border-emerald-300 rounded text-emerald-700 text-sm">
-                        x = {wholePart > 0 ? `${wholePart} ` : ''} 
-                        {remainderPart > 0 ? ` 1/${eq2A}` : ''} 
-                        &nbsp;({(eq2B / eq2A).toFixed(2).replace('.00', '')})
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: y = ax */}
-        {activeTab === 'functions_ax' && (
-          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-4">
-                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2"><span>📈 Η Συνάρτηση</span> <span className="bg-indigo-50 text-indigo-600 px-3 py-0.5 rounded-xl font-mono text-xl border border-indigo-100">y = αx</span></h2>
-                <p className="text-gray-600 leading-relaxed text-sm">Εκφράζει ανάλογα ποσά. Η γραφική της παράσταση διέρχεται από το O(0,0).</p>
-              </div>
-            </div>
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-5 space-y-6">
-                  <div className="bg-white p-5 rounded-xl border shadow-sm space-y-3">
-                    <div className="flex justify-between items-center"><span className="font-bold text-gray-700 text-xs uppercase tracking-wide">Κλίση (α):</span><span className="text-lg font-mono font-black text-indigo-600">{slopeA1.toFixed(1)}</span></div>
-                    <input type="range" min={CONFIG.functions.min} max={CONFIG.functions.max} step={CONFIG.functions.step} value={slopeA1} onChange={(e) => setSlopeA1(parseFloat(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg cursor-pointer accent-indigo-500"/>
-                  </div>
-                </div>
-                <div className="lg:col-span-7 bg-white p-6 rounded-2xl border flex flex-col items-center shadow-inner">
-                  <div className="relative w-full max-w-[400px] aspect-square bg-slate-50 rounded-xl border border-gray-200 p-2">
-                    <svg viewBox="0 0 300 300" className="w-full h-full">
-                      {Array.from({ length: 27 }).map((_, i) => (<line key={i} x1={i * 11 + 7} y1="0" x2={i * 11 + 7} y2="300" className="stroke-gray-200/70 stroke-[0.5]" />))}
-                      {Array.from({ length: 27 }).map((_, i) => (<line key={i} x1="0" y1={i * 11 + 7} x2="300" y2={i * 11 + 7} className="stroke-gray-200/70 stroke-[0.5]" />))}
-                      <line x1="10" y1="150" x2="290" y2="150" className="stroke-slate-600 stroke-2" />
-                      <line x1="150" y1="290" x2="150" y2="10" className="stroke-slate-600 stroke-2" />
-                      {renderLine(slopeA1, 0, "indigo")}
-                      <circle cx={toSvgX(1)} cy={toSvgY(slopeA1)} r="4.5" className="fill-amber-500 stroke-white" /><text x={toSvgX(1.3)} y={toSvgY(slopeA1 - 0.3)} className="text-[10px] font-black fill-amber-600 font-mono">A(1, {slopeA1.toFixed(1)})</text>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 4: y = ax + b */}
-        {activeTab === 'functions_axb' && (
-          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-4">
-                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2"><span>🚀 Η Συνάρτηση</span> <span className="bg-indigo-50 text-indigo-600 px-3 py-0.5 rounded-xl font-mono text-xl border border-indigo-100">y = αx + β</span></h2>
-                <p className="text-gray-600 leading-relaxed text-sm">Παράλληλη μετατόπιση της ευθείας y = αx κατά β μονάδες.</p>
-              </div>
-            </div>
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-5 space-y-5">
-                  <div className="bg-white p-4 rounded-xl border shadow-sm space-y-2"><input type="range" min={CONFIG.functions.min} max={CONFIG.functions.max} step={CONFIG.functions.step} value={slopeA2} onChange={(e) => setSlopeA2(parseFloat(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg cursor-pointer accent-indigo-500"/></div>
-                  <div className="bg-white p-4 rounded-xl border shadow-sm space-y-2"><input type="range" min={CONFIG.functions.min} max={CONFIG.functions.max} step={CONFIG.functions.step} value={interceptB} onChange={(e) => setInterceptB(parseFloat(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg cursor-pointer accent-purple-500"/></div>
-                  <div className="flex items-center justify-between bg-indigo-50 p-4 rounded-xl border"><button onClick={() => setShowComparison(!showComparison)} className={`relative inline-flex h-6 w-11 items-center rounded-full ${showComparison ? 'bg-indigo-600' : 'bg-gray-300'}`}><span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${showComparison ? 'translate-x-6' : 'translate-x-1'}`} /></button></div>
-                </div>
-                <div className="lg:col-span-7 bg-white p-6 rounded-2xl border flex flex-col items-center shadow-inner">
-                  <div className="relative w-full max-w-[400px] aspect-square bg-slate-50 rounded-xl border border-gray-200 p-2">
-                    <svg viewBox="0 0 300 300" className="w-full h-full">
-                      {Array.from({ length: 27 }).map((_, i) => (<line key={i} x1={i * 11 + 7} y1="0" x2={i * 11 + 7} y2="300" className="stroke-gray-200/70 stroke-[0.5]" />))}
-                      {Array.from({ length: 27 }).map((_, i) => (<line key={i} x1="0" y1={i * 11 + 7} x2="300" y2={i * 11 + 7} className="stroke-gray-200/70 stroke-[0.5]" />))}
-                      <line x1="10" y1="150" x2="290" y2="150" className="stroke-slate-600 stroke-2" />
-                      <line x1="150" y1="290" x2="150" y2="10" className="stroke-slate-600 stroke-2" />
-                      {showComparison && renderLine(slopeA2, 0, "slate", true)}
-                      {renderLine(slopeA2, interceptB, "indigo")}
-                      <circle cx={toSvgX(0)} cy={toSvgY(interceptB)} r="4" className="fill-purple-500 stroke-white" /><text x={toSvgX(0.5)} y={toSvgY(interceptB + 0.5)} className="text-[9px] font-black fill-purple-700 font-mono">Β(0, {interceptB.toFixed(1)})</text>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
-
-      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm">
-        <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές μας.</p>
-      </footer>
-      
-      {/* CSS KEYFRAMES ΓΙΑ ΤΟ ΣΥΝΘΕΤΟ ANIMATION 3 ΣΤΑΔΙΩΝ */}
-      <style jsx>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
-
-        /* 1. Τα ολόκληρα μπαλάκια πετούν προς τα κουτιά */
-        @keyframes flyToBox {
-          0% { transform: translate(0, 0); opacity: 1; }
-          40% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; }
-          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } /* Στάση 2'' */
-          100% { transform: translate(var(--target-x), var(--target-y)); opacity: 0; } /* Εξαφάνιση */
-        }
-        .animate-fly-to-box { animation: flyToBox calc(var(--anim-dur) + 2s) cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-
-        /* 2. Οι κλασματικές πίτες πετούν προς τα κουτιά */
-        @keyframes flyPieToBox {
-          0% { transform: translate(0, 0); opacity: 1; }
-          40% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; }
-          85% { transform: translate(var(--target-x), var(--target-y)); opacity: 1; } /* Στάση 2'' */
-          100% { transform: translate(var(--target-x), var(--target-y)); opacity: 0; } /* Εξαφάνιση */
-        }
-        .animate-fly-pie-to-box { animation: flyPieToBox calc(var(--anim-dur) + 2s) cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-
-        /* 3. Η 1η πίτα που ανήκει στο 1ο x μένει μόνιμα στον δεξιό δίσκο */
-        @keyframes keepPie {
-          0% { opacity: 1; }
-          40% { opacity: 1; }
-          85% { opacity: 1; }
-          100% { opacity: 1; }
-        }
-        .animate-keep-pie { animation: keepPie calc(var(--anim-dur) + 2s) forwards; }
-
-        /* 4. Το 1ο κουτί x ανυψώνεται ελαφρώς κατά το animation */
-        @keyframes liftUpBox {
-          0% { transform: translateY(0); }
-          30% { transform: translateY(-8px); }
-          85% { transform: translateY(-8px); }
-          100% { transform: translateY(0); }
-        }
-        .animate-lift-up-box { animation: liftUpBox calc(var(--anim-dur) + 2s) ease-in-out forwards; }
-
-        /* 5. Τα υπόλοιπα κουτιρά x ανυψώνονται και εξαφανίζονται μετά τη στάση των 2'' */
-        @keyframes liftAndFadeBox {
-          0% { transform: translateY(0); opacity: 1; }
-          30% { transform: translateY(-8px); opacity: 1; }
-          85% { transform: translateY(-8px); opacity: 1; }
-          100% { transform: translateY(-8px); opacity: 0; }
-        }
-        .animate-lift-and-fade-box { animation: liftAndFadeBox calc(var(--anim-dur) + 2s) ease-in-out forwards; }
-
-        /* 6. Εμφάνιση περιεχομένου μέσα στο 1ο κουτί x στο τέλος */
-        @keyframes fadeInContent {
-          0% { opacity: 0; }
-          85% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-        .animate-fade-in-content { animation: fadeInContent calc(var(--anim-dur) + 2s) ease-out forwards; }
-
-        @keyframes burstEffect {
-          0% { opacity: 0; transform: scale(0.3); transform-origin: 100px 25px; }
-          80% { opacity: 1; transform: scale(1.2); transform-origin: 100px 25px; }
-          100% { opacity: 0; transform: scale(1.5); transform-origin: 100px 25px; }
-        }
-        .animate-burst { animation: burstEffect 1.1s ease-out forwards; }
-      `}</style>
-    </div>
-  );
-}
