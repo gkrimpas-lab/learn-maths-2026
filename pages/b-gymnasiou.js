@@ -104,6 +104,7 @@ export default function BGymnasiou() {
     );
   };
 
+  // Υπολογισμοί για την ανάλυση της διαίρεσης
   const wholePart = Math.floor(eq2B / eq2A); 
   const remainderPart = eq2B % eq2A; 
 
@@ -269,7 +270,7 @@ export default function BGymnasiou() {
           </div>
         )}
 
-        {/* TAB 2: ΕΞΙΣΩΣΗ ax = b (ΔΙΟΡΘΩΘΗΚΕ ΠΛΗΡΩΣ) */}
+        {/* TAB 2: ΕΞΙΣΩΣΗ ax = b (ΠΛΗΡΩΣ ΔΙΟΡΘΩΜΕΝΗ ΚΑΙ ΟΜΟΙΟΜΟΡΦΗ) */}
         {(activeTab === 'functions_mult' || activeTab === 'equations_mult') && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -279,7 +280,7 @@ export default function BGymnasiou() {
                   Διαιρούμε και τα δύο μέλη της εξίσωσης με τον συντελεστή «α» για να βρούμε την αξία του ενός άγνωστου.
                 </p>
                 <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-xs text-amber-900 leading-relaxed">
-                  <p>⚖️ Κάντε κλικ στο κουμπί: Τα επιπλέον κουτιά x ανεβαίνουν στο κέντρο και παρατάσσονται σε σειρά. Ταυτόχρονα, τα δεξιά μπαλάκια που περισσεύουν «σπάνε» live σε κλασματικές πίτες και ταξιδεύουν προς τα πάνω.</p>
+                  <p>⚖️ Κάντε κλικ στο κουμπί: Τα επιπλέον κουτιά x ανεβαίνουν στο κέντρο και παρατάσσονται σε σειρά. Ταυτόχρονα, τα δεξιά μπαλάκια χωρίζονται και ταξιδεύουν live προς τα πάνω!</p>
                 </div>
               </div>
               <div className="bg-gradient-to-br from-amber-600 to-orange-600 text-white p-5 rounded-2xl shadow-md flex flex-col justify-center">
@@ -382,70 +383,83 @@ export default function BGymnasiou() {
                       <line x1="160" y1="40" x2="180" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="135" y1="85" x2="185" y2="85" className="stroke-blue-500 stroke-2" />
 
-                      {/* 1. Ολόκληρα μπαλάκια που μένουν πάντα κάτω δεξιά */}
-                      {Array.from({ length: wholePart }).map((_, i) => (
-                        <circle key={i} cx={140 + (i % 5) * 5} cy="80" r="2" className="fill-blue-600 stroke-blue-700" />
-                      ))}
-
-                      {/* 2. Τα υπόλοιπα ολόκληρα μπαλάκια που πετούν προς το κέντρο */}
-                      {!isSolved2 && Array.from({ length: eq2B - wholePart }).map((_, i) => {
-                        const globalIndex = wholePart + i;
-                        return <circle key={i} cx={140 + (globalIndex % 5) * 5} cy={80 - Math.floor(globalIndex / 5) * 6} r="2" className="fill-blue-400 stroke-blue-500" />
-                      })}
-
-                      {isSolved2 && Array.from({ length: eq2B - wholePart }).map((_, i) => {
-                        const globalIndex = wholePart + i;
-                        const startX = 140 + (globalIndex % 5) * 5;
-                        const startY = 80 - Math.floor(globalIndex / 5) * 6;
-                        
-                        const targetBoxIdx = i % (eq2A - 1);
-                        const targetCenterX = (75 + targetBoxIdx * 17 + 4) - startX;
-                        const targetCenterY = 27 - startY;
-
-                        return (
-                          <circle 
-                            key={i} 
-                            cx={startX} 
-                            cy={startY} 
-                            r="2" 
-                            style={{ '--anim-dur': `${animDuration}s`, '--target-x': `${targetCenterX}px`, '--target-y': `${targetCenterY}px` }}
-                            className="fill-blue-400 stroke-blue-500 animate-fly-dot-to-center" 
-                          />
-                        );
-                      })}
-
-                      {/* 3. ΔΙΟΡΘΩΘΗΚΕ: ΜΗ ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ (ΟΛΑ ΙΔΙΑ ΜΠΑΛΑΚΙΑ ΣΤΗΝ ΑΡΧΗ) */}
-                      {remainderPart > 0 && (
+                      {/* 🔴 ΑΠΟΛΥΤΗ ΔΙΟΡΘΩΣΗ: ΠΡΙΝ ΤΗΝ ΕΠΙΛΥΣΗ, ΟΛΑ ΤΑ ΜΠΑΛΑΚΙΑ ΕΙΝΑΙ ΟΛΟΙΔΙΑ ΣΕ ΕΝΑ ΚΟΙΝΟ ΠΛΕΓΜΑ */}
+                      {!isSolved2 ? (
                         <g>
-                          {Array.from({ length: eq2A }).map((_, i) => {
-                            const startX = 142 + (wholePart > 0 ? 23 : 0) + i * 8;
-                            const startY = 72;
+                          {Array.from({ length: eq2B }).map((_, i) => {
+                            const gridX = 140 + (i % 5) * 8;
+                            const gridY = 78 - Math.floor(i / 5) * 8;
+                            return (
+                              <circle 
+                                key={i} 
+                                cx={gridX} 
+                                cy={gridY} 
+                                r="3" 
+                                className="fill-blue-500 stroke-blue-600" 
+                              />
+                            );
+                          })}
+                        </g>
+                      ) : (
+                        /* ΜΟΝΟ ΟΤΑΝ ΠΑΤΗΘΕΙ Η ΕΠΙΛΥΣΗ, ΕΝΕΡΓΟΠΟΙΕΙΤΑΙ Η ΛΟΓΙΚΗ ΤΩΝ ΚΛΑΣΜΑΤΩΝ ΚΑΙ ΤΗΣ ΚΙΝΗΣΗΣ */
+                        <g>
+                          {/* 1. Ολόκληρα μπαλάκια που μένουν σταθερά κάτω δεξιά */}
+                          {Array.from({ length: wholePart }).map((_, i) => (
+                            <circle key={i} cx={140 + (i % 5) * 8} cy="78" r="3" className="fill-blue-600 stroke-blue-700" />
+                          ))}
+
+                          {/* 2. Ολόκληρα μπαλάκια που πετούν προς το κέντρο */}
+                          {Array.from({ length: eq2B - wholePart - remainderPart }).map((_, i) => {
+                            const globalIndex = wholePart + i;
+                            const startX = 140 + (globalIndex % 5) * 8;
+                            const startY = 78 - Math.floor(globalIndex / 5) * 8;
                             
-                            const targetBoxIdx = Math.max(0, i - 1);
+                            const targetBoxIdx = i % (eq2A - 1);
                             const targetCenterX = (75 + targetBoxIdx * 17 + 4) - startX;
                             const targetCenterY = 27 - startY;
 
                             return (
-                              <g 
+                              <circle 
                                 key={i} 
-                                transform={`translate(${startX}, ${startY})`}
-                                style={{ 
-                                  '--anim-dur': `${animDuration}s`, 
-                                  '--target-x': `${targetCenterX}px`, 
-                                  '--target-y': `${targetCenterY}px` 
-                                }}
-                                className={isSolved2 ? (i === 0 ? 'animate-keep-pie' : 'animate-fly-pie-to-center') : ''}
-                              >
-                                {/* ΔΙΟΡΘΩΘΗΚΕ: forceFull = !isSolved2 */}
-                                {/* Αν το isSolved2 είναι false, σχεδιάζει έναν απλό κύκλο. Αν είναι true, σχεδιάζει τις φέτες της πίτας! */}
-                                {!isSolved2 ? (
-                                  <circle cx="0" cy="0" r="2.5" className="fill-blue-400 stroke-blue-500" />
-                                ) : (
-                                  renderDotPie(0, 0, 2.5, eq2A)
-                                )}
-                              </g>
+                                cx={startX} 
+                                cy={startY} 
+                                r="3" 
+                                style={{ '--anim-dur': `${animDuration}s`, '--target-x': `${targetCenterX}px`, '--target-y': `${targetCenterY}px` }}
+                                className="fill-blue-400 stroke-blue-500 animate-fly-dot-to-center" 
+                              />
                             );
                           })}
+
+                          {/* 3. Μη τέλεια διαίρεση: Τα μπαλάκια που απομένουν σπάνε σε πίτες */}
+                          {remainderPart > 0 && (
+                            <g>
+                              {Array.from({ length: eq2A }).map((_, i) => {
+                                // Υπολογίζουμε τη θέση έναρξης ώστε να συμπίπτει ακριβώς με το αρχικό πλέγμα
+                                const baseIndex = eq2B - remainderPart + i;
+                                const startX = 140 + (baseIndex % 5) * 8;
+                                const startY = 78 - Math.floor(baseIndex / 5) * 8;
+                                
+                                const targetBoxIdx = Math.max(0, i - 1);
+                                const targetCenterX = (75 + targetBoxIdx * 17 + 4) - startX;
+                                const targetCenterY = 27 - startY;
+
+                                return (
+                                  <g 
+                                    key={i} 
+                                    transform={`translate(${startX}, ${startY})`}
+                                    style={{ 
+                                      '--anim-dur': `${animDuration}s`, 
+                                      '--target-x': `${targetCenterX}px`, 
+                                      '--target-y': `${targetCenterY}px` 
+                                    }}
+                                    className={i === 0 ? 'animate-keep-pie' : 'animate-fly-pie-to-center'}
+                                  >
+                                    {renderDotPie(0, 0, 3, eq2A)}
+                                  </g>
+                                );
+                              })}
+                            </g>
+                          )}
                         </g>
                       )}
                     </g>
