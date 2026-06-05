@@ -21,13 +21,13 @@ const CONFIG = {
     bMax: 20,
     bDefault: 8
   },
-  equation2: { // ax = b (ΝΕΟ)
+  equation2: { // ax = b
     aMin: 2,
     aMax: 5,
     aDefault: 3,
     bMin: 2,
     bMax: 20,
-    bDefault: 12 // Πρέπει το b να διαιρείται ιδανικά με το a για καθαρά μπαλάκια
+    bDefault: 12
   },
   functions: {
     min: -10,
@@ -50,10 +50,11 @@ export default function BGymnasiou() {
   const [eq1B, setEq1B] = useState(CONFIG.equation1.bDefault);
   const [isSolved1, setIsSolved1] = useState(false);
 
-  // States για τη νέα 2η καρτέλα (Εξισώσεις μορφής ax = b)
+  // States για τη 2η καρτέλα (Εξισώσεις μορφής ax = b)
   const [eq2A, setEq2A] = useState(CONFIG.equation2.aDefault);
   const [eq2B, setEq2B] = useState(CONFIG.equation2.bDefault);
   const [isSolved2, setIsSolved2] = useState(false);
+  const [animDuration, setAnimDuration] = useState(1.5); // Νέο state για την ταχύτητα (σε δευτερόλεπτα)
 
   // States για την 3η καρτέλα (y = ax)
   const [slopeA1, setSlopeA1] = useState(CONFIG.functions.defaultA1);
@@ -100,7 +101,7 @@ export default function BGymnasiou() {
         <p className="text-indigo-100 opacity-90 font-medium">Αλγεβρικές Έννοιες & Συναρτήσεις</p>
       </header>
 
-      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ ΚΑΡΤΕΛΩΝ (ΤΩΡΑ ΜΕ 5 ΠΛΗΡΕΙΣ ΚΑΡΤΕΛΕΣ) */}
+      {/* ΚΕΝΤΡΙΚΟ ΜΕΝΟΥ */}
       <div className="max-w-6xl mx-auto px-4 mt-8">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2 bg-white p-2 rounded-xl shadow-sm w-full lg:w-max">
           <button onClick={() => setActiveTab('variable')} className={`px-3 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'variable' ? 'bg-amber-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
@@ -113,7 +114,7 @@ export default function BGymnasiou() {
             🎯 2. Εξίσωση α·x = β
           </button>
           <button onClick={() => setActiveTab('functions_ax')} className={`px-3 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'functions_ax' ? 'bg-indigo-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
-             Pall 3. Συνάρτηση y = αx
+            📈 3. Συνάρτηση y = αx
           </button>
           <button onClick={() => setActiveTab('functions_axb')} className={`px-3 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'functions_axb' ? 'bg-indigo-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
             🚀 4. Συνάρτηση y = αx + β
@@ -231,13 +232,6 @@ export default function BGymnasiou() {
                         return <circle key={startIndex} cx={142 + (startIndex%4)*9} cy={79 - Math.floor(startIndex/4)*7} r="3" className="fill-blue-500 stroke-blue-600" />
                       })}
                     </g>
-                    {isSolved1 && (
-                      <g className="animate-burst">
-                        <circle cx="100" cy="25" r="8" className="fill-amber-400/30 stroke-amber-500" />
-                        <line x1="100" y1="13" x2="100" y2="7" className="stroke-amber-500 stroke-2" />
-                        <line x1="100" y1="37" x2="100" y2="43" className="stroke-amber-500 stroke-2" />
-                      </g>
-                    )}
                   </svg>
                 </div>
 
@@ -249,17 +243,18 @@ export default function BGymnasiou() {
           </div>
         )}
 
-        {/* TAB 2: ΕΞΙΣΩΣΗ ax = b (NEW FEATURE) */}
-        {activeTab === 'functions_mult' || activeTab === 'equations_mult' ? (
+        {/* TAB 2: ΕΞΙΣΩΣΗ ax = b (ΔΙΟΡΘΩΜΕΝΗ) */}
+        {(activeTab === 'functions_mult' || activeTab === 'equations_mult') && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">🎯 Εξίσωση της μορφής α·x = β</h2>
                 <p className="text-gray-600 leading-relaxed text-sm">
-                  Όταν ο άγνωστος πολλαπλασιάζεται με έναν αριθμό, για να τον απομονώσουμε κάνουμε την αντίστροφη πράξη. <strong>Διαιρούμε και τα δύο μέλη της εξίσωσης με τον συντελεστή «α»</strong>.
+                  Όταν ο άγνωστος πολλαπλασιάζεται με έναν αριθμό, για να τον απομονώσουμε διαιρούμε και τα δύο μέλη με τον συντελεστή «α».
                 </p>
+                {/* ΔΙΟΡΘΩΘΗΚΕ: Αφαιρέθηκαν τα $ από το x */}
                 <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-xs text-amber-900 leading-relaxed">
-                  <p>⚖️ <strong>Οπτική ομαδοποίηση:</strong> Χωρίζουμε τα βάρη της δεξιάς πλευράς σε «α» ίσα μέρη. Κάθε κουτί $x$ αντιστοιχεί ακριβώς σε μία από αυτές τις ομάδες!</p>
+                  <p>⚖px <strong>Οπτική ομαδοποίηση:</strong> Χωρίζουμε τα βάρη της δεξιάς πλευράς σε «α» ίσα μέρη. Κάθε κουτί x αντιστοιχεί ακριβώς σε μία από αυτές τις ομάδες!</p>
                 </div>
               </div>
               <div className="bg-gradient-to-br from-amber-600 to-orange-600 text-white p-5 rounded-2xl shadow-md flex flex-col justify-center">
@@ -270,7 +265,7 @@ export default function BGymnasiou() {
 
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
               
-              {/* Επιλογές Παραμέτρων */}
+              {/* Ρυθμίσεις Παραμέτρων */}
               <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-wrap justify-center items-center gap-6 text-xs max-w-xl mx-auto">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-gray-600">Πλήθος κουτιών (α):</span>
@@ -285,9 +280,23 @@ export default function BGymnasiou() {
                   <span className="font-black text-blue-600 text-sm w-4 text-center">{eq2B}</span>
                   <button onClick={() => { setEq2B(Math.min(CONFIG.equation2.bMax, eq2B + 1)); setIsSolved2(false); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold">+</button>
                 </div>
-                {eq2B % eq2A !== 0 && (
-                  <div className="w-full text-center text-[10px] text-amber-600 font-medium">⚠️ Προτίμησε αριθμό που διαιρείται ακριβώς με το {eq2A} (π.χ. {eq2A * 2}, {eq2A * 3}) για τέλεια μοιρασιά!</div>
-                )}
+              </div>
+
+              {/* ΔΙΟΡΘΩΘΗΚΕ: Slider Ταχύτητας Animation */}
+              <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center justify-between gap-4 text-xs max-w-xl mx-auto">
+                <span className="font-bold text-gray-500 uppercase tracking-wider">⏱️ Ταχύτητα Επεξήγησης:</span>
+                <div className="flex items-center gap-3 flex-1 max-w-xs">
+                  <input 
+                    type="range" 
+                    min="0.5" 
+                    max="3.0" 
+                    step="0.1" 
+                    value={animDuration} 
+                    onChange={(e) => setAnimDuration(parseFloat(e.target.value))}
+                    className="w-full h-1.5 bg-gray-200 rounded-lg cursor-pointer accent-indigo-600"
+                  />
+                  <span className="font-mono font-bold text-indigo-600 w-12 text-right">{animDuration}s</span>
+                </div>
               </div>
 
               {/* ΖΥΓΑΡΙΑ ΜΟΡΦΗΣ ax = b */}
@@ -297,74 +306,79 @@ export default function BGymnasiou() {
                   {!isSolved2 ? (
                     <span>{eq2A} · x = {eq2B}</span>
                   ) : (
-                    <span className="text-amber-600">
-                      ({eq2A} · x) ÷ {eq2A} = {eq2B} ÷ {eq2A}
-                    </span>
+                    <span className="text-amber-600">({eq2A} · x) ÷ {eq2A} = {eq2B} ÷ {eq2A}</span>
                   )}
                 </div>
 
                 <div className="w-full max-w-[340px] aspect-[4/3] bg-slate-50/50 rounded-xl border p-2">
                   <svg viewBox="0 0 200 150" className="w-full h-full">
-                    {/* Βάση */}
                     <path d="M 85 130 L 115 130 L 105 90 L 95 90 Z" className="fill-slate-400" />
                     <line x1="100" y1="90" x2="100" y2="40" className="stroke-slate-500 stroke-[3]" />
                     <line x1="40" y1="40" x2="160" y2="40" className="stroke-slate-500 stroke-2" />
 
-                    {/* ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: Πλήθος από "α" κουτιά x */}
+                    {/* ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΔΙΟΡΘΩΘΗΚΕ (Διάταξη Grid για αποφυγή επικάλυψης) */}
                     <g>
                       <line x1="40" y1="40" x2="20" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="40" y1="40" x2="60" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="15" y1="85" x2="65" y2="85" className="stroke-amber-500 stroke-2" />
 
-                      {/* Το 1ο κουτί x (Μένει πάντα) */}
-                      <rect x="18" y="67" width="14" height="14" className="fill-indigo-500 stroke-indigo-700 rounded" />
-                      <text x="23" y="78" className="text-[9px] font-black fill-white font-mono">x</text>
+                      {/* 1ο Κουτί x - Μένει πάντα σταθερό κάτω αριστερά */}
+                      <g className={isSolved2 ? 'animate-keep-x' : ''}>
+                        <rect x="20" y="71" width="13" height="13" className="fill-indigo-600 stroke-indigo-800 rounded shadow-sm" />
+                        <text x="24" y="81" className="text-[8px] font-black fill-white font-mono">x</text>
+                      </g>
 
-                      {/* Τα υπόλοιπα κουτιά x (Εξαφανίζονται στο animation της διαίρεσης) */}
-                      {Array.from({ length: eq2A - 1 }).map((_, i) => (
-                        <rect 
-                          key={i} 
-                          x={34 + i*11} 
-                          y="67" 
-                          width="14" 
-                          height="14" 
-                          className={`fill-indigo-400 stroke-indigo-600 rounded transition-all duration-300 ${isSolved2 ? 'animate-lift-left' : ''}`} 
-                        />
-                      ))}
+                      {/* Τα υπόλοιπα κουτιά x σε καθαρό Grid 2 στηλών για να μη κρύβονται */}
+                      {Array.from({ length: eq2A - 1 }).map((_, i) => {
+                        const idx = i + 1; // 1, 2, 3, 4
+                        const gridX = 20 + (idx % 2) * 15;
+                        const gridY = 71 - Math.floor(idx / 2) * 14;
+                        return (
+                          <g 
+                            key={i} 
+                            style={{ '--anim-dur': `${animDuration}s` }}
+                            className={isSolved2 ? 'animate-fade-out-delayed' : ''}
+                          >
+                            <rect x={gridX} y={gridY} width="13" height="13" className="fill-indigo-400 stroke-indigo-600 rounded" />
+                            <text x={gridX + 4} y={gridY + 10} className="text-[8px] font-bold fill-white font-mono">x</text>
+                          </g>
+                        );
+                      })}
                     </g>
 
-                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ: Συνολικά β μπαλάκια */}
+                    {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΔΙΟΡΘΩΘΗΚΕ (Σύνθετο animation 2 σταδίων) */}
                     <g>
                       <line x1="160" y1="40" x2="140" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="160" y1="40" x2="180" y2="85" className="stroke-slate-400 stroke-[0.5]" />
                       <line x1="135" y1="85" x2="185" y2="85" className="stroke-blue-500 stroke-2" />
 
-                      {/* Η 1η ομάδα που αντιστοιχεί στο 1ο x (Μένει πάντα) */}
+                      {/* Μπάρες/Ομάδες που μένουν πάντα (Αντιστοιχούν στο 1ο x) */}
                       {Array.from({ length: Math.floor(eq2B / eq2A) }).map((_, i) => (
-                        <circle key={i} cx={140 + i*6} cy="79" r="2.5" className="fill-blue-600 stroke-blue-700" />
+                        <circle key={i} cx={140 + (i % 5) * 5} cy="80" r="2" className="fill-blue-600 stroke-blue-700" />
                       ))}
 
-                      {/* Τα υπόλοιπα μπαλάκια (Χωρισμένα σε στρώματα/ομάδες - Φεύγουν στο animation) */}
+                      {/* Οι υπόλοιπες ομάδες που σηκώνονται, μπαίνουν στα κουτιά και σβήνουν */}
                       {Array.from({ length: eq2B - Math.floor(eq2B / eq2A) }).map((_, i) => {
                         const globalIndex = Math.floor(eq2B / eq2A) + i;
+                        // Υπολογισμός σε ποια ομάδα ανήκει το κάθε μπαλάκι για σωστή κατανομή ύψους
+                        const groupNo = Math.floor(globalIndex / Math.floor(eq2B / eq2A));
+                        const dotInGroup = globalIndex % Math.floor(eq2B / eq2A);
+                        
+                        const startX = 140 + dotInGroup * 5;
+                        const startY = 80 - groupNo * 6;
+
                         return (
                           <circle 
                             key={i} 
-                            cx={140 + (globalIndex % 6)*6} 
-                            cy={79 - Math.floor(globalIndex / 6)*6} 
-                            r="2.5" 
-                            className={`fill-blue-400 stroke-blue-500 ${isSolved2 ? 'animate-lift-right' : ''}`} 
+                            cx={startX} 
+                            cy={startY} 
+                            r="2" 
+                            style={{ '--anim-dur': `${animDuration}s` }}
+                            className={`fill-blue-400 stroke-blue-500 ${isSolved2 ? 'animate-divide-to-boxes' : ''}`} 
                           />
                         );
                       })}
                     </g>
-
-                    {/* Εφέ Σύγκρουσης/Διαγραφής στο Κέντρο */}
-                    {isSolved2 && (
-                      <g className="animate-burst">
-                        <circle cx="100" cy="25" r="10" className="fill-orange-400/20 stroke-orange-500 stroke-dashed" />
-                      </g>
-                    )}
                   </svg>
                 </div>
 
@@ -390,7 +404,7 @@ export default function BGymnasiou() {
 
             </div>
           </div>
-        ) : null}
+        )}
 
         {/* TAB 3: y = ax */}
         {activeTab === 'functions_ax' && (
@@ -469,24 +483,37 @@ export default function BGymnasiou() {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
 
-        @keyframes liftLeft {
+        /* ΣΤΑΔΙΟ 1 & 2: Κίνηση των δεξιών μπαλών προς τα αριστερά κουτιά και μετά fade-out */
+        @keyframes divideToBoxes {
           0% { transform: translate(0, 0); opacity: 1; }
-          100% { transform: translate(65px, -50px); opacity: 0; }
+          60% { transform: translate(-105px, -10px); opacity: 1; } /* Πτήση προς τα κουτιά */
+          85% { transform: translate(-105px, -10px); opacity: 1; } /* Μικρή στάση μέσα στα κουτιά */
+          100% { transform: translate(-105px, -10px); opacity: 0; } /* Εξαφανίζονται */
         }
-        .animate-lift-left { animation: liftLeft 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        .animate-divide-to-boxes { 
+          animation: divideToBoxes var(--anim-dur) cubic-bezier(0.4, 0, 0.2, 1) forwards; 
+        }
 
-        @keyframes liftRight {
-          0% { transform: translate(0, 0); opacity: 1; }
-          100% { transform: translate(-50px, -50px); opacity: 0; }
+        /* 🎬 Σβήσιμο των επιπλέον κουτιών αφού ολοκληρωθεί η «είσοδος» των μπαλών */
+        @keyframes fadeOutDelayed {
+          0% { opacity: 1; }
+          65% { opacity: 1; }
+          100% { opacity: 0; }
         }
-        .animate-lift-right { animation: liftRight 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        .animate-fade-out-delayed {
+          animation: fadeOutDelayed var(--anim-dur) ease-out forwards;
+        }
 
-        @keyframes burstEffect {
-          0% { opacity: 0; transform: scale(0.3); transform-origin: 100px 25px; }
-          80% { opacity: 1; transform: scale(1.2); transform-origin: 100px 25px; }
-          100% { opacity: 0; transform: scale(1.5); transform-origin: 100px 25px; }
+        /* Μικρό εφέ παλμού για το μοναδικό x που μένει, ως επιβεβαίωση */
+        @keyframes keepX {
+          0% { transform: scale(1); }
+          75% { transform: scale(1); }
+          88% { transform: scale(1.15); }
+          100% { transform: scale(1); }
         }
-        .animate-burst { animation: burstEffect 1.1s ease-out forwards; }
+        .animate-keep-x {
+          animation: keepX var(--anim-dur) ease-in-out forwards;
+        }
       `}</style>
     </div>
   );
