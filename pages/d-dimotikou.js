@@ -77,20 +77,24 @@ export default function DDimotikou() {
   const divIntervalRef = useRef(null);
 
   // --------------------------------------------------------------------------
-  // ΑΣΦΑΛΗΣ ΑΛΓΟΡΙΘΜΟΣ ΥΠΟΛΟΓΙΣΜΟΥ & ΠΡΟΕΤΟΙΜΑΣΙΑΣ ΨΗΦΙΩΝ ΓΙΑ ΤΟ ΣΧΗΜΑ
+  // ΑΛΓΟΡΙΘΜΟΣ ΥΠΟΛΟΓΙΣΜΟΥ ΨΗΦΙΩΝ
   // --------------------------------------------------------------------------
-  const divStr = dividend.toString();
-  const e_init = Math.floor(dividend / 100) % 10;
-  const d_init = Math.floor(dividend / 10) % 10;
-  const m_init = dividend % 10;
+  const divStr = dividend.toString().padStart(3, '0'); // Εξασφαλίζουμε 3 ψηφία για το UI
+  const e_init = divStr[0];
+  const d_init = divStr[1];
+  const m_init = divStr[2];
 
-  const e_holds = e_init >= divisor;
-  const first_work_num = e_holds ? e_init : (e_init * 10 + d_init);
+  const num_e = parseInt(e_init);
+  const num_d = parseInt(d_init);
+  const num_m = parseInt(m_init);
+
+  const e_holds = num_e >= divisor;
+  const first_work_num = e_holds ? num_e : (num_e * 10 + num_d);
   const first_quotient = Math.floor(first_work_num / divisor);
   const first_product = first_quotient * divisor;
   const first_remainder = first_work_num - first_product;
 
-  const second_work_num = first_remainder * 10 + m_init;
+  const second_work_num = first_remainder * 10 + num_m;
   const second_quotient = Math.floor(second_work_num / divisor);
   const second_product = second_quotient * divisor;
   const second_remainder = second_work_num - second_product;
@@ -98,21 +102,10 @@ export default function DDimotikou() {
   const final_q = Math.floor(dividend / divisor);
   const final_r = dividend % divisor;
 
-  // Μετατροπή των ενδιάμεσων αριθμών σε strings σταθερού μήκους 3 χαρακτήρων για τέλεια στοίχιση
-  // Γραμμή 1: Διαιρετέος (π.χ. "144")
-  const row1 = divStr.padStart(3, ' ');
-
-  // Γραμμή 2: Πρώτο γινόμενο αφαίρεσης. Πρέπει να στοιχιστεί αριστερά, κάτω από το "14" (π.χ. "12 ")
-  const row2 = first_product.toString().padEnd(3, ' ');
-
-  // Γραμμή 3: Πρώτο υπόλοιπο + κατεβασμένο ψηφίο (π.χ. " 24")
-  const row3 = (first_remainder.toString() + m_init.toString()).padStart(3, ' ');
-
-  // Γραμμή 4: Δεύτερο γινόμενο αφαίρεσης. Πρέπει να στοιχιστεί δεξιά, κάτω από το "24" (π.χ. " 24")
-  const row4 = second_product.toString().padStart(3, ' ');
-
-  // Γραμμή 5: Τελικό Υπόλοιπο (π.χ. "  0")
-  const row5 = final_r.toString().padStart(3, ' ');
+  // Απομόνωση ψηφίων των αφαιρέσεων για το πλέγμα των στηλών
+  const p1_str = first_product.toString().padStart(2, '0');
+  const p2_str = second_product.toString().padStart(2, '0');
+  const r1_str = first_remainder.toString();
 
   useEffect(() => {
     if (isDivPlaying) {
@@ -159,6 +152,10 @@ export default function DDimotikou() {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
+  // Σημαίες φωτισμού ανάλογα με τη φάση
+  const highlightFirstGroup = divTimeline >= 15 && divTimeline < 65;
+  const highlightSecondGroup = divTimeline >= 65;
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans scroll-smooth">
       <Head>
@@ -195,7 +192,7 @@ export default function DDimotikou() {
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         
-        {/* ΚΑΡΤΕΛΑ 1: ΜΕΓΑΛΟΙ ΑΡΙΘΜΟΙ */}
+        {/* ΚΑΡΤΕΛΑ 1 */}
         {activeTab === 'large_numbers' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -247,7 +244,7 @@ export default function DDimotikou() {
           </div>
         )}
 
-        {/* ΚΑΡΤΕΛΑ 2: ΔΥΝΑΜΙΚΗ ΚΑΘΕΤΗ ΔΙΑΙΡΕΣΗ (ΑΠΟΛΥΤΗ ΣΤΟΙΧΙΣΗ ΜΕ 3 ΣΤΗΛΕΣ ΨΗΦΙΩΝ) */}
+        {/* ΚΑΡΤΕΛΑ 2: ΔΥΝΑΜΙΚΗ ΚΑΘΕΤΗ ΔΙΑΙΡΕΣΗ (ΜΕ ΤΕΛΕΙΑ ΣΤΟΙΧΙΣΗ ΠΡΟΣΗΜΟΥ ΚΑΙ ΨΗΦΙΩΝ) */}
         {activeTab === 'long_division' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             
@@ -300,83 +297,94 @@ export default function DDimotikou() {
               </div>
             </div>
 
-            {/* ΚΥΡΙΩΣ ΠΛΕΓΜΑ */}
+            {/* ΠΛΕΓΜΑ */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-5xl mx-auto items-start">
               
-              {/* ΑΡΙΣΤΕΡΑ: ΟΠΤΙΚΟΣ ΑΒΑΚΑΣ */}
+              {/* ΑΡΙΣΤΕΡΑ: ΑΒΑΚΑΣ */}
               <div className="lg:col-span-5 bg-gray-50 p-6 rounded-3xl border border-gray-200 space-y-6">
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider text-center">📦 Αξία Θέσης Ψηφίων</h3>
                 <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-black bg-white p-4 rounded-xl border shadow-inner">
                   <div className="border-r border-dashed">
-                    <span className="text-red-500">Εκατοντάδες ({e_init})</span>
+                    <span className="text-red-500">Εκατοντάδες ({num_e})</span>
                     <div className="flex flex-wrap justify-center gap-1 mt-2 h-10 items-center">
-                      {divTimeline < 25 && Array.from({ length: e_init }).map((_, i) => <div key={i} className="w-3 h-3 rounded-full bg-red-500"></div>)}
+                      {divTimeline < 25 && Array.from({ length: num_e }).map((_, i) => <div key={i} className="w-3 h-3 rounded-full bg-red-500"></div>)}
                     </div>
                   </div>
                   <div className="border-r border-dashed">
-                    <span className="text-amber-500">Δεκάδες ({d_init})</span>
+                    <span className="text-amber-500">Δεκάδες ({num_d})</span>
                     <div className="flex flex-wrap justify-center gap-1 mt-2 h-10 items-center">
-                      {divTimeline < 60 && Array.from({ length: d_init }).map((_, i) => <div key={i} className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>)}
+                      {divTimeline < 60 && Array.from({ length: num_d }).map((_, i) => <div key={i} className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>)}
                     </div>
                   </div>
                   <div>
-                    <span className="text-cyan-500">Μονάδες ({m_init})</span>
+                    <span className="text-cyan-500">Μονάδες ({num_m})</span>
                     <div className="flex flex-wrap justify-center gap-1 mt-2 h-10 items-center">
-                      {divTimeline < 90 && Array.from({ length: m_init }).map((_, i) => <div key={i} className="w-2.5 h-2.5 rounded-full bg-cyan-400"></div>)}
+                      {divTimeline < 90 && Array.from({ length: num_m }).map((_, i) => <div key={i} className="w-2.5 h-2.5 rounded-full bg-cyan-400"></div>)}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* ΔΕΞΙΑ: ΤΕΛΕΙΑ ΣΤΟΙΧΙΣΜΕΝΟΣ ΠΙΝΑΚΑΣ ΜΕ 3 ΣΤΑΘΕΡΕΣ ΣΤΗΛΕΣ ΨΗΦΙΩΝ */}
+              {/* ΔΕΞΙΑ: ΤΕΛΕΙΑ ΣΤΟΙΧΙΣΜΕΝΟΣ ΠΙΝΑΚΑΣ 4 ΣΤΗΛΩΝ (ΠΡΟΣΗΜΟ + 3 ΨΗΦΙΑ) */}
               <div className="lg:col-span-7 bg-white p-6 rounded-3xl border border-gray-200 flex flex-col items-center min-h-[340px]">
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-6">✏️ Ο Αλγόριθμος στο τετράδιο</h3>
                 
                 <table className="font-mono text-2xl text-slate-800 font-bold border-collapse">
                   <tbody>
-                    {/* Γραμμή 1: Διαιρετέος (Σπασμένος σε 3 σταθερά κελιά των 30px) | Διαιρέτης */}
+                    {/* Γραμμή 1: Διαιρετέος (Φωτίζεται ολόκληρη η ομάδα εργασίας) */}
                     <tr>
-                      <td className="w-8 text-center tracking-normal">{row1[0] !== ' ' ? row1[0] : ''}</td>
-                      <td className={`w-8 text-center ${divTimeline >= 15 && divTimeline < 65 ? 'text-indigo-600 underline decoration-4 font-black' : ''}`}>{row1[1]}</td>
-                      <td className={`w-8 text-center ${divTimeline >= 65 ? 'text-teal-600 underline decoration-4 font-black' : ''}`}>{row1[2]}</td>
+                      <td className="w-6 text-center"></td> {/* Κενό για το πρόσημο */}
+                      <td className={`w-8 text-center ${highlightFirstGroup && !e_holds ? 'text-indigo-600 underline decoration-4 font-black bg-indigo-50/50 rounded-l' : (highlightFirstGroup && e_holds ? 'text-indigo-600 underline decoration-4 font-black bg-indigo-50/50 rounded' : '')}`}>
+                        {num_e > 0 ? num_e : ''}
+                      </td>
+                      <td className={`w-8 text-center ${highlightFirstGroup && !e_holds ? 'text-indigo-600 underline decoration-4 font-black bg-indigo-50/50 rounded-r' : ''} ${highlightSecondGroup ? 'text-teal-600' : ''}`}>
+                        {num_d}
+                      </td>
+                      <td className={`w-8 text-center ${highlightSecondGroup ? 'text-teal-600 underline decoration-4 font-black bg-teal-50/50 rounded' : ''}`}>
+                        {num_m}
+                      </td>
                       <td className="border-l-4 border-slate-700 border-b-4 px-6 text-emerald-600 font-black text-3xl min-w-[80px] text-center bg-emerald-50/50">
                         {divisor}
                       </td>
                     </tr>
                     
-                    {/* Γραμμή 2: Πρώτο Γινόμενο (Ευθυγραμμίζεται τέλεια κάτω από το 14) | Πηλίκο */}
+                    {/* Γραμμή 2: 1η Αφαίρεση (Το πρόσημο πάει αριστερά, το 12 κάτω από το 14) */}
                     <tr className={divTimeline >= 40 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
                       <td className="text-center text-slate-400 text-xl font-light">-</td>
-                      <td className="text-center text-slate-400">{row2[0] !== ' ' ? row2[0] : ''}</td>
-                      <td className="text-center text-slate-400">{row2[1] !== ' ' ? row2[1] : ''}</td>
+                      <td className="text-center text-slate-400">{e_holds ? p1_str[1] : p1_str[0]}</td>
+                      <td className="text-center text-slate-400">{e_holds ? '' : p1_str[1]}</td>
+                      <td></td> {/* Κενό κάτω από τις μονάδες */}
                       <td className="border-l-4 border-slate-700 px-6 text-left font-black tracking-wider">
                         <span className={`text-indigo-600 text-3xl ${divTimeline >= 30 ? 'opacity-100' : 'opacity-0'}`}>{first_quotient}</span>
                         <span className={`text-teal-600 text-3xl ${divTimeline >= 80 ? 'opacity-100' : 'opacity-0'}`}>{second_quotient}</span>
                       </td>
                     </tr>
 
-                    {/* Γραμμή 3: Πρώτο Υπόλοιπο & Κατέβασμα Ψηφίου */}
+                    {/* Γραμμή 3: 1ο Υπόλοιπο & Κατέβασμα Ψηφίου */}
                     <tr className={divTimeline >= 50 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
-                      <td className="border-t-2 border-slate-400 text-center text-slate-500"></td>
-                      <td className="border-t-2 border-slate-400 text-center text-slate-600">{row3[1]}</td>
-                      <td className={`border-t-2 border-slate-400 text-center text-cyan-600 font-black ${divTimeline >= 65 ? 'opacity-100' : 'opacity-0'}`}>{row3[2]}</td>
+                      <td></td>
+                      <td className="border-t-2 border-slate-300"></td>
+                      <td className="border-t-2 border-slate-300 text-center text-slate-600">{r1_str}</td>
+                      <td className={`border-t-2 border-slate-300 text-center text-cyan-600 font-black transition-opacity ${divTimeline >= 65 ? 'opacity-100' : 'opacity-0'}`}>{num_m}</td>
                       <td className="border-l-4 border-slate-700"></td>
                     </tr>
 
-                    {/* Γραμμή 4: Δεύτερο Γινόμενο Αφαίρεσης */}
+                    {/* Γραμμή 4: 2η Αφαίρεση (Στοιχισμένη δεξιά, κάτω από το 24) */}
                     <tr className={divTimeline >= 85 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
                       <td className="text-center text-slate-400 text-xl font-light">-</td>
-                      <td className="text-center text-slate-400">{row4[1]}</td>
-                      <td className="text-center text-slate-400">{row4[2]}</td>
+                      <td></td> {/* Κενό κάτω από τις εκατοντάδες */}
+                      <td className="text-center text-slate-400">{p2_str[0]}</td>
+                      <td className="text-center text-slate-400">{p2_str[1]}</td>
                       <td className="border-l-4 border-slate-700"></td>
                     </tr>
 
                     {/* Γραμμή 5: Τελικό Υπόλοιπο */}
                     <tr className={divTimeline >= 95 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
                       <td></td>
-                      <td className="border-t-2 border-slate-400"></td>
-                      <td className="border-t-2 border-slate-400 text-center text-emerald-600 font-black text-2xl border-b-4 border-double border-emerald-500">
-                        {row5.trim()}
+                      <td></td>
+                      <td className="border-t-2 border-slate-300"></td>
+                      <td className="border-t-2 border-slate-300 text-center text-emerald-600 font-black text-2xl border-b-4 border-double border-emerald-500">
+                        {final_r}
                       </td>
                       <td className="border-l-4 border-slate-700"></td>
                     </tr>
@@ -388,13 +396,13 @@ export default function DDimotikou() {
                   {divTimeline < 15 && `👋 Ας ξεκινήσουμε! Θέλουμε να διαιρέσουμε το ${dividend} με το ${divisor}.`}
                   {divTimeline >= 15 && divTimeline < 30 && (
                     e_holds 
-                      ? `1. Κοιτάζουμε την Εκατοντάδα (${e_init}). Το ${divisor} χωράει στο ${e_init}; Ναι!` 
-                      : `1. Κοιτάζουμε την Εκατοντάδα (${e_init}). Το ${divisor} δεν χωράει στο ${e_init}, οπότε εξετάζουμε μαζί και τις Δεκάδες, δηλαδή το ${first_work_num}.`
+                      ? `1. Κοιτάζουμε την Εκατοντάδα (${num_e}). Το ${divisor} χωράει στο ${num_e}; Ναι!` 
+                      : `1. Κοιτάζουμε την Εκατοντάδα (${num_e}). Το ${divisor} δεν χωράει στο ${num_e}, οπότε φωτίζουμε και τις Δεκάδες, και εξετάζουμε μαζί το ${first_work_num}.`
                   )}
                   {divTimeline >= 30 && divTimeline < 40 && `2. Διαιρούμε: Το ${divisor} στο ${first_work_num} χωράει ${first_quotient} φορές. Γράφουμε το ${first_quotient} στο Πηλίκο.`}
                   {divTimeline >= 40 && divTimeline < 50 && `3. Πολλαπλασιάζουμε: ${first_quotient} × ${divisor} = ${first_product}. Το γράφουμε ακριβώς κάτω από το ${first_work_num}.`}
                   {divTimeline >= 50 && divTimeline < 65 && `4. Αφαιρούμε: ${first_work_num} - ${first_product} = ${first_remainder}.`}
-                  {divTimeline >= 65 && divTimeline < 80 && `5. Κατεβάζουμε το επόμενο ψηφίο, το ${m_init}. Σχηματίζεται ο αριθμός ${second_work_num}.`}
+                  {divTimeline >= 65 && divTimeline < 80 && `5. Κατεβάζουμε το επόμενο ψηφίο, το ${num_m}. Σχηματίζεται ο αριθμός ${second_work_num}.`}
                   {divTimeline >= 80 && divTimeline < 85 && `6. Διαιρούμε: Το ${divisor} στο ${second_work_num} χωράει ${second_quotient} φορές. Το γράφουμε στο Πηλίκο.`}
                   {divTimeline >= 85 && divTimeline < 95 && `7. Πολλαπλασιάζουμε: ${second_quotient} × ${divisor} = ${second_product} και κάνουμε την τελική αφαίρεση.`}
                   {divTimeline >= 95 && (
