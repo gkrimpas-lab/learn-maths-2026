@@ -137,6 +137,9 @@ export default function DDimotikou() {
   const totalNumber = disks.EX * 100000 + disks.DX * 10000 + disks.X * 1000 + disks.E * 100 + disks.D * 10 + disks.M * 1;
   const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
+  const highlightFirstGroup = divTimeline >= 15 && divTimeline < 65;
+  const highlightSecondGroup = divTimeline >= 65;
+
   const maxSlices = decimalMode === 'tenths' ? 10 : 100;
   const numericDecimal = decimalValue / maxSlices;
 
@@ -171,7 +174,7 @@ export default function DDimotikou() {
         <p className="text-teal-100 opacity-90 font-medium">Εξερεύνηση των Αριθμών & των Σχημάτων</p>
       </header>
 
-      {/* ΚΑΡΤΕΛΕΣ */}
+      {/* ΚΑΡΤΕΛΕΣ ΠΛΟΗΓΗΣΗΣ */}
       <div className="max-w-6xl mx-auto px-4 mt-8">
         <div className="flex flex-wrap bg-white p-2 rounded-xl shadow-sm gap-2 w-full lg:w-max border">
           <button onClick={() => setActiveTab('large_numbers')} className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'large_numbers' ? 'bg-teal-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>💎 1. Μεγάλοι Αριθμοί</button>
@@ -185,10 +188,11 @@ export default function DDimotikou() {
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         
-        {/* ΚΑΡΤΕΛΑ 1 */}
+        {/* ΚΑΡΤΕΛΑ 1: ΜΕΓΑΛΟΙ ΑΡΙΘΜΟΙ */}
         {activeTab === 'large_numbers' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <h2 className="text-2xl font-black text-gray-900">💎 Η Αξία Θέσης στους Μεγάλους Αριθμούς</h2>
+            <p className="text-gray-600 text-sm">Στο δεκαδικό μας σύστημα, η αξία κάθε ψηφίου εξαρτάται από τη θέση του στον αριθμό.</p>
             <div className="bg-gray-50 p-6 rounded-3xl border border-gray-200 space-y-8">
               <div className="bg-white p-6 rounded-2xl border shadow-sm max-w-2xl mx-auto text-center space-y-2">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Ο Αριθμός σου</span>
@@ -213,13 +217,24 @@ export default function DDimotikou() {
                       </div>
                     ))}
                   </div>
+                  <div className="grid grid-cols-6 gap-4 text-center mt-4">
+                    {['EX', 'DX', 'X', 'E', 'D', 'M'].map((col) => (
+                      <div key={col} className="flex flex-col items-center gap-1 bg-white p-2 rounded-xl border shadow-sm">
+                        <div className="text-sm font-black font-mono text-slate-700">{disks[col]}</div>
+                        <div className="flex gap-1">
+                          <button onClick={() => updateDigits(col, -1)} className="bg-slate-100 font-bold px-2 py-0.5 rounded text-xs">-</button>
+                          <button onClick={() => updateDigits(col, 1)} className="bg-slate-100 font-bold px-2 py-0.5 rounded text-xs">+</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ΚΑΡΤΕΛΑ 2 */}
+        {/* ΚΑΡΤΕΛΑ 2: ΚΑΘΕΤΗ ΔΙΑΙΡΕΣΗ */}
         {activeTab === 'long_division' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-200">
@@ -240,17 +255,6 @@ export default function DDimotikou() {
               <button onClick={() => { if(divTimeline >= 100) setDivTimeline(0); setIsDivPlaying(!isDivPlaying); }} className={`w-full sm:w-auto px-6 py-2.5 rounded-xl font-black text-xs text-white transition-all ${isDivPlaying ? 'bg-amber-500' : 'bg-emerald-600'}`}>{isDivPlaying ? '⏸ Παύση' : '▶ Play'}</button>
               <div className="w-full space-y-1">
                 <input type="range" min="0" max="100" value={divTimeline} onChange={(e) => { setIsDivPlaying(false); setDivTimeline(parseInt(e.target.value)); }} className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
-              <div className={`p-4 rounded-2xl border transition-all duration-300 ${divTimeline === 100 && final_r === 0 ? 'bg-emerald-50 border-emerald-400 shadow-sm scale-102' : 'bg-white border-gray-200 opacity-60'}`}>
-                <h4 className="font-black text-xs text-emerald-800 flex items-center gap-2">🟢 Τέλεια Διαίρεση</h4>
-                <p className="text-gray-600 text-xs mt-1 leading-relaxed">Είναι η διαίρεση στην οποία το Υπόλοιπο είναι 0.</p>
-              </div>
-              <div className={`p-4 rounded-2xl border transition-all duration-300 ${divTimeline === 100 && final_r > 0 ? 'bg-amber-50 border-amber-400 shadow-sm scale-102' : 'bg-white border-gray-200 opacity-60'}`}>
-                <h4 className="font-black text-xs text-amber-800 flex items-center gap-2">🟡 Ατελής Διαίρεση</h4>
-                <p className="text-gray-600 text-xs mt-1 leading-relaxed">Είναι η διαίρεση στην οποία το Υπόλοιπο είναι μεγαλύτερο από το 0.</p>
               </div>
             </div>
 
@@ -299,12 +303,12 @@ export default function DDimotikou() {
           </div>
         )}
 
-        {/* ΚΑΡΤΕΛΑ 3 */}
+        {/* ΚΑΡΤΕΛΑ 3: ΔΕΚΑΔΙΚΟΙ */}
         {activeTab === 'decimals' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <h2 className="text-2xl font-black text-gray-900">🍰 Από τα Κλάσματα στους Δεκαδικούς</h2>
             <div className="bg-amber-50/60 p-5 rounded-2xl border max-w-2xl mx-auto">
-              <input type="range" min="0" max={maxSlices} value={decimalValue} onChange={(e) => setDecimalValue(parseInt(e.target.value))} className="w-full h-2.5 bg-slate-200 accent-amber-500 rounded-lg appearance-none" />
+              <input type="range" min="0" max={maxSlices} value={decimalValue} onChange={(e) => setDecimalValue(parseInt(e.target.value))} className="w-full h-2.5 bg-slate-200 accent-amber-500 rounded-lg appearance-none cursor-pointer" />
             </div>
             <div className="text-center text-3xl font-mono font-black text-amber-500 bg-slate-50 p-4 rounded-xl max-w-xs mx-auto border shadow-sm">
               {numericDecimal.toLocaleString('el-GR', { minimumFractionDigits: decimalMode === 'tenths' ? 1 : 2 })}
@@ -312,30 +316,65 @@ export default function DDimotikou() {
           </div>
         )}
 
-        {/* ΚΑΡΤΕΛΑ 4 */}
+        {/* ΚΑΡΤΕΛΑ 4: ΜΗΚΟΣ */}
         {activeTab === 'length_measurement' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <h2 className="text-2xl font-black text-gray-900">📏 Μετρώ και Εκφράζω το Μήκος</h2>
             <div className="bg-blue-50/60 p-5 rounded-2xl border max-w-2xl mx-auto">
-              <input type="range" min="0" max="200" step="1" value={lengthInCm} onChange={(e) => setLengthInCm(parseInt(e.target.value))} className="w-full h-2.5 bg-slate-200 accent-blue-500 rounded-lg appearance-none" />
+              <input type="range" min="0" max="200" step="1" value={lengthInCm} onChange={(e) => setLengthInCm(parseInt(e.target.value))} className="w-full h-2.5 bg-slate-200 accent-blue-500 rounded-lg appearance-none cursor-pointer" />
             </div>
-            <div className="text-center text-2xl font-mono font-black text-blue-600 bg-slate-50 p-4 rounded-xl max-w-xs mx-auto border shadow-sm">
+            
+            <div className="bg-gray-50 p-6 rounded-3xl border border-gray-200 flex flex-col items-center justify-center shadow-inner">
+              <div className="w-full max-w-3xl bg-white p-4 rounded-xl border border-amber-200 shadow overflow-visible">
+                <svg viewBox="0 0 220 40" className="w-full overflow-visible font-mono">
+                  <rect x="0" y="15" width="220" height="20" className="fill-yellow-50 stroke-amber-200 stroke-[0.5] rounded-sm" />
+                  {lengthInCm > 0 && <rect x="10" y="4" width={(lengthInCm / 200) * 200} height="8" className="fill-amber-400 stroke-orange-500 stroke-[0.5] rounded-t" />}
+                  {lengthInCm > 0 && <text x={10 + ((lengthInCm / 200) * 200) - 10} y="0" className="text-[4px] font-black fill-orange-700">{(lengthInCm / 100).toFixed(2)} m</text>}
+                  {Array.from({ length: 21 }).map((_, i) => {
+                    const xPos = 10 + i * 10;
+                    const isMeter = i % 10 === 0; const isHalfMeter = i % 5 === 0 && !isMeter;
+                    return (
+                      <g key={i}>
+                        <line x1={xPos} y1="15" x2={xPos} y2={isMeter ? "27" : (isHalfMeter ? "24" : "21")} className={isMeter ? "stroke-slate-800 stroke-[0.8]" : "stroke-slate-400 stroke-[0.4]"} />
+                        {isMeter && <text x={xPos - 3} y="33" className="text-[5px] font-black fill-slate-800">{i / 10}m</text>}
+                        {!isMeter && i % 2 === 0 && <text x={xPos - 4} y="32" className="text-[3.5px] font-bold fill-slate-400">{i * 10}</text>}
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
+            </div>
+
+            <div className="bg-slate-900 text-white p-4 rounded-xl text-center font-mono text-sm max-w-md mx-auto shadow">
               {lengthInCm} cm = {(lengthInCm/100).toFixed(2)} m
             </div>
           </div>
         )}
 
-        {/* ΚΑΡΤΕΛΑ 5 */}
+        {/* ΚΑΡΤΕΛΑ 5: ΒΑΡΟΣ */}
         {activeTab === 'weight_measurement' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <h2 className="text-2xl font-black text-gray-900">⚖️ Μετρώ το Βάρος: Τόνος, Κιλά & Γραμμάρια</h2>
-            <div className="bg-orange-50/60 p-5 rounded-2xl border max-w-2xl mx-auto flex items-center gap-3">
-              <button type="button" onClick={() => adjustWeight(-1)} className="bg-white border px-3 py-1 rounded-lg text-xs font-bold shadow-sm">-1g</button>
-              <input type="range" min="0" max="2500" step="1" value={weightInG} onChange={(e) => setWeightInG(parseInt(e.target.value))} className="flex-1 h-2.5 bg-slate-200 accent-orange-500 rounded-lg appearance-none" />
-              <button type="button" onClick={() => adjustWeight(1)} className="bg-white border px-3 py-1 rounded-lg text-xs font-bold shadow-sm">+1g</button>
+            <div className="bg-orange-50/60 p-5 rounded-2xl border max-w-2xl mx-auto flex items-center gap-3 shadow-inner">
+              <button type="button" onClick={() => adjustWeight(-1)} className="bg-white border hover:bg-slate-50 px-3 py-1 rounded-lg text-xs font-bold shadow-sm transition">-1g</button>
+              <input type="range" min="0" max="2500" step="1" value={weightInG} onChange={(e) => setWeightInG(parseInt(e.target.value))} className="flex-1 h-2.5 bg-slate-200 accent-orange-500 rounded-lg appearance-none cursor-pointer" />
+              <button type="button" onClick={() => adjustWeight(1)} className="bg-white border hover:bg-slate-50 px-3 py-1 rounded-lg text-xs font-bold shadow-sm transition">+1g</button>
             </div>
-            <div className="w-40 bg-slate-900 text-emerald-400 font-mono font-black text-2xl text-center py-3 rounded-xl mx-auto shadow-xl">
-              {weightInG} g
+            
+            <div className="md:col-span-5 bg-gray-50 p-6 rounded-3xl border flex flex-col items-center justify-center shadow-inner max-w-xs mx-auto">
+              <div className="w-48 bg-slate-300 h-8 rounded-t-xl border-b-4 border-slate-400 relative flex items-center justify-center mt-4">
+                <div className="absolute -top-12 text-5xl transition-all duration-150">
+                  {weightInG === 0 && '🪶'}
+                  {weightInG > 0 && weightInG <= 500 && '🍓'}
+                  {weightInG > 500 && weightInG <= 1000 && '📦'}
+                  {weightInG > 1000 && weightInG <= 2000 && '🍍'}
+                  {weightInG > 2000 && '🍉'}
+                </div>
+              </div>
+              <div className="w-40 bg-slate-900 text-emerald-400 font-mono font-black text-2xl text-center py-3 rounded-b-xl border-4 border-slate-700 shadow-xl">
+                {weightInG} <span className="text-xs text-emerald-500">g</span>
+              </div>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-4 block">📟 Ψηφιακή Ζυγαριά</span>
             </div>
           </div>
         )}
@@ -391,8 +430,62 @@ export default function DDimotikou() {
                 </svg>
               </div>
             </div>
-          </div>
 
+            {/* ΠΕΡΙΠΤΩΣΗ 2: ΥΠΟΔΙΑΣΤΟΛΗ */}
+            <div className="space-y-4">
+              <h3 className="text-base font-black text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg inline-block">⚠️ Περίπτωση 2: Όταν ο αριθμός ΔΕΝ έχει μηδενικά</h3>
+              <p className="text-slate-600 text-sm">Φανταζόμαστε την υποδιαστολή στο τέλος και τη μετακινούμε προς τα <strong>αριστερά</strong> τόσες θέσεις όσα τα μηδενικά.</p>
+              
+              <div className="bg-slate-50 p-4 rounded-2xl border overflow-x-auto">
+                <svg viewBox="0 0 540 110" className="min-w-[540px] h-auto overflow-visible font-sans select-none">
+                  
+                  {/* Πλαίσιο 1: ÷ 10 */}
+                  <g transform="translate(5, 5)">
+                    <rect x="0" y="0" width="170" height="95" rx="10" className="fill-amber-50/20 stroke-amber-400 stroke-[1]" />
+                    <text x="85" y="18" className="text-[8px] font-black fill-amber-900" textAnchor="middle">245 ÷ 10 (1 θέση αριστερά)</text>
+                    <text x="25" y="55" className="text-xl font-bold fill-slate-800 font-mono">2</text>
+                    <text x="40" y="55" className="text-xl font-bold fill-slate-800 font-mono">4</text>
+                    <text x="55" y="55" className="text-xl font-bold fill-slate-800 font-mono">5</text>
+                    <path d="M 62 58 Q 55 68 48 58" className="fill-none stroke-blue-500 stroke-[1.2] stroke-dasharray-[2]" />
+                    <text x="45" y="57" className="text-xl font-black fill-red-500 font-mono">,</text>
+                    <text x="80" y="52" className="text-base fill-slate-400">&rarr;</text>
+                    <text x="105" y="55" className="text-xl font-black fill-indigo-600 font-mono">24,5</text>
+                  </g>
+
+                  {/* Πλαίσιο 2: ÷ 100 */}
+                  <g transform="translate(185, 5)">
+                    <rect x="0" y="0" width="170" height="95" rx="10" className="fill-amber-50/20 stroke-amber-400 stroke-[1]" />
+                    <text x="85" y="18" className="text-[8px] font-black fill-amber-900" textAnchor="middle">245 ÷ 100 (2 θέσεις αριστερά)</text>
+                    <text x="25" y="55" className="text-xl font-bold fill-slate-800 font-mono">2</text>
+                    <text x="40" y="55" className="text-xl font-bold fill-slate-800 font-mono">4</text>
+                    <text x="55" y="55" className="text-xl font-bold fill-slate-800 font-mono">5</text>
+                    <path d="M 62 58 Q 55 68 48 58" className="fill-none stroke-blue-500 stroke-[1.2]" />
+                    <path d="M 48 58 Q 40 68 32 58" className="fill-none stroke-blue-500 stroke-[1.2]" />
+                    <text x="29" y="57" className="text-xl font-black fill-red-500 font-mono">,</text>
+                    <text x="80" y="52" className="text-base fill-slate-400">&rarr;</text>
+                    <text x="105" y="55" className="text-xl font-black fill-indigo-600 font-mono">2,45</text>
+                  </g>
+
+                  {/* Πλαίσιο 3: ÷ 1000 */}
+                  <g transform="translate(365, 5)">
+                    <rect x="0" y="0" width="170" height="95" rx="10" className="fill-amber-50/20 stroke-amber-400 stroke-[1]" />
+                    <text x="85" y="18" className="text-[8px] font-black fill-amber-900" textAnchor="middle">245 ÷ 1000 (3 θέσεις αριστερά)</text>
+                    <text x="25" y="55" className="text-xl font-bold fill-slate-800 font-mono">2</text>
+                    <text x="40" y="55" className="text-xl font-bold fill-slate-800 font-mono">4</text>
+                    <text x="55" y="55" className="text-xl font-bold fill-slate-800 font-mono">5</text>
+                    <path d="M 62 58 Q 55 68 48 58" className="fill-none stroke-blue-500 stroke-[1.2]" />
+                    <path d="M 48 58 Q 40 68 32 58" className="fill-none stroke-blue-500 stroke-[1.2]" />
+                    <path d="M 32 58 Q 23 68 15 58" className="fill-none stroke-blue-500 stroke-[1.2]" />
+                    <text x="12" y="57" className="text-xl font-black fill-red-500 font-mono-scale-up">,</text>
+                    <text x="75" y="52" className="text-base fill-slate-400">&rarr;</text>
+                    <text x="100" y="55" className="text-xl font-black fill-indigo-600 font-mono">0,245</text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+          </div>
+        )}
 
       </main>
 
