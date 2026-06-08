@@ -79,7 +79,6 @@ export default function DDimotikou() {
   const [decimalValue, setDecimalValue] = useState(4); 
 
   // 4η Καρτέλα: Μέτρηση Μήκους
-  // lengthInCm αποθηκεύεται σε εκατοστόμετρα. Τώρα με step=1 για μέγιστη ακρίβεια στην κίνηση.
   const [lengthInCm, setLengthInCm] = useState(125);
 
   // Υπολογισμοί Διαίρεσης
@@ -195,7 +194,7 @@ export default function DDimotikou() {
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         
-        {/* ΚΑΡΤΕΛΑ 1: ΜΕΓΑΛΟΙ ΑΡΙΘΜΟΙ */}
+        {/* ΚΑΡΤΕΛΑ 1 */}
         {activeTab === 'large_numbers' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -234,7 +233,7 @@ export default function DDimotikou() {
           </div>
         )}
 
-        {/* ΚΑΡΤΕΛΑ 2: ΚΑΘΕΤΗ ΔΙΑΙΡΕΣΗ */}
+        {/* ΚΑΡΤΕΛΑ 2 */}
         {activeTab === 'long_division' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-200">
@@ -300,7 +299,7 @@ export default function DDimotikou() {
           </div>
         )}
 
-        {/* ΚΑΡΤΕΛΑ 3: ΔΕΚΑΔΙΚΟΙ ΑΡΙΘΜΟΙ & ΔΕΚΑΔΙΚΑ ΚΛΑΣΜΑΤΑ */}
+        {/* ΚΑΡΤΕΛΑ 3 */}
         {activeTab === 'decimals' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -371,7 +370,7 @@ export default function DDimotikou() {
           </div>
         )}
 
-        {/* 📏 ΚΑΡΤΕΛΑ 4: ΜΕΤΡΩ ΚΑΙ ΕΚΦΡΑΖΩ ΤΟ ΜΗΚΟΣ */}
+        {/* 📐 ΚΑΡΤΕΛΑ 4: ΜΕΤΡΩ ΚΑΙ ΕΚΦΡΑΖΩ ΤΟ ΜΗΚΟΣ (ΔΙΟΡΘΩΘΗΚΕ ΟΛΟΚΛΗΡΩΤΙΚΑ) */}
         {activeTab === 'length_measurement' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             
@@ -396,7 +395,7 @@ export default function DDimotikou() {
               </div>
             </div>
 
-            {/* ΔΙΑΔΡΑΣΤΙΚΟ SLIDER ΜΗΚΟΥΣ ΜΕ ΥΨΗΛΗ ΑΚΡΙΒΕΙΑ (step="1") */}
+            {/* ΔΙΑΔΡΑΣΤΙΚΟ SLIDER ΜΗΚΟΥΣ */}
             <div className="bg-blue-50/60 p-5 rounded-2xl border border-blue-200 max-w-2xl mx-auto space-y-2 shadow-inner">
               <div className="flex justify-between items-center text-xs font-bold text-blue-900">
                 <span>📏 Σύρε με ακρίβεια εκατοστόμετρου (cm):</span>
@@ -409,28 +408,38 @@ export default function DDimotikou() {
               />
             </div>
 
-            {/* ΨΗΦΙΑΚΟΣ ΧΑΡΑΚΑΣ */}
+            {/* ΨΗΦΙΑΚΟΣ ΧΑΡΑΚΑΣ (🔴 ΔΙΟΡΘΩΘΗΚΕ: Η ΜΠΑΡΑ ΜΕΤΑΦΕΡΘΗΚΕ ΕΣΩΤΕΡΙΚΑ ΣΤΟ SVG ΓΙΑ ΑΠΟΛΥΤΟ ΣΥΓΧΡΟΝΙΣΜΟ) */}
             <div className="bg-gray-50 p-6 rounded-3xl border border-gray-200 flex flex-col items-center justify-center shadow-inner">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6">Ο Ψηφιακός σου Χάρακας (έως 2 Μέτρα)</span>
               
-              <div className="w-full max-w-3xl bg-white p-6 rounded-xl border border-amber-200 shadow relative overflow-visible">
-                {/* Αντικείμενο Μέτρησης */}
-                <div 
-                  style={{ width: `${(lengthInCm / 200) * 100}%` }}
-                  className="h-6 bg-gradient-to-r from-amber-400 to-orange-400 rounded-t-sm transition-all duration-150 border-b-2 border-orange-500 opacity-90 relative mb-1"
-                >
-                  {lengthInCm > 0 && (
-                    <span className="absolute right-2 top-0.5 text-[10px] font-black text-orange-950 font-mono">
-                      {(lengthInCm / 100).toFixed(2)} m
-                    </span>
-                  )}
-                </div>
-
-                {/* Σχέδιο SVG Χάρακα */}
-                <svg viewBox="0 0 220 30" className="w-full overflow-visible font-mono">
-                  <rect x="0" y="0" width="220" height="20" className="fill-yellow-50 stroke-amber-200 stroke-[0.5] rounded-b-sm" />
+              <div className="w-full max-w-3xl bg-white p-4 rounded-xl border border-amber-200 shadow overflow-visible">
+                <svg viewBox="0 0 220 40" className="w-full overflow-visible font-mono">
+                  {/* Φόντο Χάρακα */}
+                  <rect x="0" y="15" width="220" height="20" className="fill-yellow-50 stroke-amber-200 stroke-[0.5] rounded-sm" />
                   
-                  {/* Χαραγές */}
+                  {/* 🌟 Η ΠΟΡΤΟΚΑΛΙ ΜΠΑΡΑ ΜΕΤΡΗΣΗΣ (Κλειδωμένη στις ίδιες συντεταγμένες x1=10 έως x2=210) */}
+                  {lengthInCm > 0 && (
+                    <rect 
+                      x="10" 
+                      y="4" 
+                      width={(lengthInCm / 200) * 200} 
+                      height="8" 
+                      className="fill-gradient bg-gradient-to-r fill-amber-400 stroke-orange-500 stroke-[0.5] rounded-t transition-all duration-150" 
+                    />
+                  )}
+
+                  {/* Δυναμικό κείμενο μέτρησης πάνω από την μπάρα */}
+                  {lengthInCm > 0 && (
+                    <text 
+                      x={10 + ((lengthInCm / 200) * 200) - 10} 
+                      y="0" 
+                      className="text-[4px] font-black fill-orange-700 font-mono transition-all duration-150"
+                    >
+                      {(lengthInCm / 100).toFixed(2)} m
+                    </text>
+                  )}
+                  
+                  {/* Χαραγές ανά 10cm (Δεκατόμετρα) */}
                   {Array.from({ length: 21 }).map((_, i) => {
                     const xPos = 10 + i * 10;
                     const isMeter = i % 10 === 0;
@@ -439,17 +448,17 @@ export default function DDimotikou() {
                     return (
                       <g key={i}>
                         <line 
-                          x1={xPos} y1="0" 
-                          x2={xPos} y2={isMeter ? "12" : (isHalfMeter ? "9" : "6")} 
+                          x1={xPos} y1="15" 
+                          x2={xPos} y2={isMeter ? "27" : (isHalfMeter ? "24" : "21")} 
                           className={isMeter ? "stroke-slate-800 stroke-[0.8]" : "stroke-slate-400 stroke-[0.4]"} 
                         />
                         {isMeter && (
-                          <text x={xPos - 3} y="19" className="text-[5px] font-black fill-slate-800">
+                          <text x={xPos - 3} y="33" className="text-[5px] font-black fill-slate-800">
                             {i / 10}m
                           </text>
                         )}
                         {!isMeter && i % 2 === 0 && (
-                          <text x={xPos - 4} y="18" className="text-[3.5px] font-bold fill-slate-400">
+                          <text x={xPos - 4} y="32" className="text-[3.5px] font-bold fill-slate-400">
                             {i * 10}
                           </text>
                         )}
@@ -486,7 +495,7 @@ export default function DDimotikou() {
                 </div>
               </div>
 
-              {/* Φυσική Έκφραση (Συμμιγής Αριθμός) */}
+              {/* Φυσική Έκφραση */}
               <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center text-xs md:text-sm">
                 📢 <strong>Εκφράζουμε το μήκος:</strong> <span className="text-amber-400 font-black">{Math.floor(lengthInCm / 100)} μέτρο</span> και <span className="text-cyan-400 font-black">{lengthInCm % 100} εκατοστόμετρα</span>.
               </div>
