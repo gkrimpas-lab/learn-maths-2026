@@ -1,57 +1,92 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
 export default function DDimotikouExercises() {
-  // State για τις απαντήσεις και τα αποτελέσματα ελέγχου
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState({});
+  
+  // State για την αποθήκευση των 5 τυχαίων αριθμών της Άσκησης 5
+  const [randomData, setRandomData] = useState([]);
 
-  // Η βάση δεδομένων των ασκήσεων με τις σωστές απαντήσεις και τις επεξηγήσεις τους
+  // Στατικά δεδομένα για τις πρώτες 4 ασκήσεις
   const exercisesData = {
-    ex1_1: { q: "90 ÷ 10", ans: "9", type: "zero", explanation: "Διώχνουμε 1 μηδενικό από το τέλος του 90, άρα μένει 9." },
-    ex1_2: { q: "240 ÷ 10", ans: "24", type: "zero", explanation: "Διώχνουμε 1 μηδενικό από το τέλος του 240, άρα μένει 24." },
-    ex1_3: { q: "1.500 ÷ 10", ans: "150", type: "zero", explanation: "Σβήνουμε 1 μηδενικό από το τέλος, άρα το 1500 γίνεται 150." },
-    ex1_4: { q: "8.920 ÷ 10", ans: "892", type: "zero", explanation: "Σβήνουμε το τελευταίο μηδενικό, άρα μένει 892." },
+    ex1_1: { q: "90 ÷ 10", ans: "9", explanation: "Διώχνουμε 1 μηδενικό από το τέλος του 90, άρα μένει 9." },
+    ex1_2: { q: "240 ÷ 10", ans: "24", explanation: "Διώχνουμε 1 μηδενικό από το τέλος του 240, άρα μένει 24." },
+    ex1_3: { q: "1.500 ÷ 10", ans: "150", explanation: "Σβήνουμε 1 μηδενικό από το τέλος, άρα το 1500 γίνεται 150." },
+    ex1_4: { q: "8.920 ÷ 10", ans: "892", explanation: "Σβήνουμε το τελευταίο μηδενικό, άρα μένει 892." },
 
-    ex2_1: { q: "600 ÷ 100", ans: "6", type: "zero", explanation: "Το 100 έχει δύο μηδενικά, άρα σβήνουμε δύο μηδενικά από το 600 και μένει 6." },
-    ex2_2: { q: "1.400 ÷ 100", ans: "14", type: "zero", explanation: "Διώχνουμε και τα δύο μηδενικά από το τέλος, άρα μένει 14." },
-    ex2_3: { q: "5.000 ÷ 100", ans: "50", type: "zero", explanation: "Σβήνουμε δύο μηδενικά από το τέλος του 5000, άρα μένει 50." },
-    ex2_4: { q: "23.800 ÷ 100", ans: "238", type: "zero", explanation: "Σβήνουμε δύο μηδενικά από το τέλος, άρα μένει 238." },
+    ex2_1: { q: "600 ÷ 100", ans: "6", explanation: "Το 100 έχει δύο μηδενικά, άρα σβήνουμε δύο μηδενικά από το 600 και μένει 6." },
+    ex2_2: { q: "1.400 ÷ 100", ans: "14", explanation: "Διώχνουμε και τα δύο μηδενικά από το τέλος, άρα μένει 14." },
+    ex2_3: { q: "5.000 ÷ 100", ans: "50", explanation: "Σβήνουμε δύο μηδενικά από το τέλος του 5000, άρα μένει 50." },
+    ex2_4: { q: "23.800 ÷ 100", ans: "238", explanation: "Σβήνουμε δύο μηδενικά από το τέλος, άρα μένει 238." },
 
-    ex3_1: { q: "4.000 ÷ 1000", ans: "4", type: "zero", explanation: "Το 1000 έχει 3 μηδενικά. Σβήνουμε 3 μηδενικά από το 4000 και μένει 4." },
-    ex3_2: { q: "9.000 ÷ 1000", ans: "9", type: "zero", explanation: "Σβήνουμε και τα 3 μηδενικά από το τέλος, άρα μένει 9." },
-    ex3_3: { q: "15.000 ÷ 1000", ans: "15", type: "zero", explanation: "Σβήνουμε 3 μηδενικά από το τέλος του 15000, άρα μένει 15." },
-    ex3_4: { q: "70.000 ÷ 1000", ans: "70", type: "zero", explanation: "Σβήνουμε 3 μηδενικά από το τέλος, άρα το 70000 γίνεται 70." },
+    ex3_1: { q: "4.000 ÷ 1000", ans: "4", explanation: "Το 1000 έχει 3 μηδενικά. Σβήνουμε 3 μηδενικά από το 4000 και μένει 4." },
+    ex3_2: { q: "9.000 ÷ 1000", ans: "9", explanation: "Σβήνουμε και τα 3 μηδενικά από το τέλος, άρα μένει 9." },
+    ex3_3: { q: "15.000 ÷ 1000", ans: "15", explanation: "Σβήνουμε 3 μηδενικά από το τέλος του 15000, άρα μένει 15." },
+    ex3_4: { q: "70.000 ÷ 1000", ans: "70", explanation: "Σβήνουμε 3 μηδενικά από το τέλος, άρα το 70000 γίνεται 70." },
 
-    ex4_1: { q: "800 ÷ ... = 8", ans: "100", type: "missing", explanation: "Ο αριθμός 800 έχασε 2 μηδενικά για να γίνει 8, άρα διαιρέθηκε με το 100." },
-    ex4_2: { q: "3.200 ÷ ... = 320", ans: "10", type: "missing", explanation: "Ο αριθμός έχασε 1 μηδενικό, άρα διαιρέθηκε με το 10." },
-    ex4_3: { q: "6.000 ÷ ... = 6", ans: "1000", type: "missing", explanation: "Χάθηκαν 3 μηδενικά, άρα διαιρέθηκε με το 1000." },
-    ex4_4: { q: "... ÷ 100 = 14", ans: "1400", type: "missing", explanation: "Αφού διαιρέθηκε με το 100 και έβγαλε 14, πάει να πει ότι στην αρχή είχε δύο μηδενικά παραπάνω (14 × 100 = 1400)." },
+    ex4_1: { q: "800 ÷ ... = 8", ans: "100", explanation: "Ο αριθμός 800 έχασε 2 μηδενικά για να γίνει 8, άρα διαιρέθηκε με το 100." },
+    ex4_2: { q: "3.200 ÷ ... = 320", ans: "10", explanation: "Ο αριθμός έχασε 1 μηδενικό, άρα διαιρέθηκε με το 10." },
+    ex4_3: { q: "6.000 ÷ ... = 6", ans: "1000", explanation: "Χάθηκαν 3 μηδενικά, άρα διαιρέθηκε με το 1000." },
+    ex4_4: { q: "... ÷ 100 = 14", ans: "1400", explanation: "Αφού διαιρέθηκε με το 100 και έβγαλε 14, σημαίνει ότι στην αρχή είχε δύο μηδενικά παραπάνω (14 × 100 = 1400)." }
+  };
 
-    // 🔴 ΝΕΕΣ ΔΥΣΚΟΛΕΣ ΑΣΚΗΣΕΙΣ ΜΕ ΥΠΟΔΙΑΣΤΟΛΗ
-    ex5_1: { q: "135 ÷ 10", ans: "13,5", type: "comma", explanation: "Το 135 δεν έχει μηδενικά. Το 10 έχει 1 μηδενικό, άρα βάζουμε υποδιαστολή 1 θέση από το τέλος: 13,5." },
-    ex5_2: { q: "47 ÷ 10", ans: "4,7", type: "comma", explanation: "Το 10 έχει 1 μηδενικό, άρα η υποδιαστολή πηγαίνει 1 θέση αριστερά: 4,7." },
-    ex5_3: { q: "268 ÷ 100", ans: "2,68", type: "comma", explanation: "Το 100 έχει 2 μηδενικά, άρα βάζουμε την υποδιαστολή 2 θέσεις αριστερά: 2,68." },
-    ex5_4: { q: "9 ÷ 10", ans: "0,9", type: "comma", explanation: "Μετακινούμε την υποδιαστολή 1 θέση αριστερά. Επειδή δεν υπάρχει άλλος αριθμός μπροστά, βάζουμε μηδέν: 0,9." }
+  // 🔴 5η ΑΣΚΗΣΗ: ΔΗΜΙΟΥΡΓΙΑ 5 ΤΥΧΑΙΩΝ ΑΡΙΘΜΩΝ ΚΑΙ ΔΥΝΑΜΙΚΩΝ ΑΠΑΝΤΗΣΕΩΝ
+  useEffect(() => {
+    generateRandomExercises();
+  }, []);
+
+  const generateRandomExercises = () => {
+    const tempRandoms = [];
+    const operations = [10, 100, 1000, 10, 100]; // Διαφορετικοί διαιρέτες για ποικιλία
+    
+    for (let i = 0; i < 5; i++) {
+      const num = Math.floor(Math.random() * 9999) + 1; // Τυχαίος από 1 έως 9999
+      const divisor = operations[i];
+      
+      // Υπολογισμός σωστού αποτελέσματος σε μορφή string με ελληνικό κόμμα
+      let correctResult = (num / divisor).toString().replace('.', ',');
+      
+      // Δυναμική παραγωγή επεξήγησης ανάλογα με τον αν ο αριθμός έχει μηδενικά ή όχι
+      let expl = "";
+      if (num % divisor === 0) {
+        const zeros = divisor === 10 ? "1 μηδενικό" : (divisor === 100 ? "2 μηδενικά" : "3 μηδενικά");
+        expl = `Επειδή ο αριθμός τελειώνει σε μηδενικά, διώχνουμε ${zeros} από το τέλος του ${num}.`;
+      } else {
+        const positions = divisor === 10 ? "1 θέση" : (divisor === 100 ? "2 θέσεις" : "3 θέσεις");
+        expl = `Επειδή ο αριθμός δεν έχει μηδενικά, βάζουμε υποδιαστολή πηγαίνοντας ${positions} προς τα αριστερά.`;
+      }
+
+      tempRandoms.push({
+        id: `rand_${i}`,
+        q: `${num.toLocaleString('el-GR')} ÷ ${divisor}`,
+        ans: correctResult,
+        explanation: expl
+      });
+    }
+    setRandomData(tempRandoms);
+    // Καθαρισμός παλιών αποτελεσμάτων αν πατηθεί επαναφόρτωση
+    setAnswers({});
+    setResults({});
   };
 
   const handleInputChange = (id, val) => {
-    // Αντικαθιστούμε την τελεία με κόμμα για να είναι συμβατό με τη σχολική γραφή
     const formattedVal = val.replace('.', ',');
     setAnswers({ ...answers, [id]: formattedVal });
   };
 
-  const checkAnswer = (id) => {
+  const checkAnswer = (id, isRandom = false, randItem = null) => {
     const userAnswer = answers[id]?.trim();
-    const correctAnswer = exercisesData[id].ans;
+    const correctAnswer = isRandom ? randItem.ans : exercisesData[id].ans;
+    const explanation = isRandom ? randItem.explanation : exercisesData[id].explanation;
     
     if (!userAnswer) return;
 
     if (userAnswer === correctAnswer) {
-      setResults({ ...results, [id]: { status: 'correct' } });
+      setResults(prev => ({ ...prev, [id]: { status: 'correct' } }));
     } else {
-      setResults({ ...results, [id]: { status: 'wrong', msg: exercisesData[id].explanation } });
+      setResults(prev => ({ ...prev, [id]: { status: 'wrong', msg: explanation, correctVal: correctAnswer } }));
     }
   };
 
@@ -64,113 +99,117 @@ export default function DDimotikouExercises() {
 
       <div className="max-w-4xl mx-auto space-y-6">
         
-        {/* ΚΟΥΜΠΙ ΕΠΙΣΤΡΟΦΗΣ */}
         <Link href="/d-dimotikou" className="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:underline">
           &larr; Επιστροφή στο Μάθημα
         </Link>
 
-        <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-          <div className="border-b pb-4">
-            <h1 className="text-2xl font-black text-indigo-950">✍️ Ψηφιακό Τετράδιο Ασκήσεων</h1>
-            <p className="text-xs text-gray-500 mt-1">Λύσε τις πράξεις και πάτα «Έλεγχος» για να δεις αν τα κατάφερες!</p>
+        <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-8">
+          <div className="border-b pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-2xl font-black text-indigo-950">⚡ Ασκήσεις: Διαίρεση με 10, 100, 1000</h1>
+              <p className="text-xs text-gray-500 mt-1">Λύσε τις πράξεις και έλεγξε την απάντησή σου!</p>
+            </div>
+            <button onClick={generateRandomExercises} className="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-4 py-2 rounded-xl border border-indigo-200 transition active:scale-95">
+              🔀 Νέοι Τυχαίοι Αριθμοί
+            </button>
           </div>
 
-          {/* ΟΜΑΔΑ 1 */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-sm text-green-800 bg-green-50 px-3 py-1 rounded-lg inline-block">1. Διαιρέσεις με το 10 (Σβήνω 1 μηδενικό)</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {['ex1_1', 'ex1_2', 'ex1_3', 'ex1_4'].map((id) => (
-                <div key={id} className="p-3 bg-slate-50 rounded-xl border flex flex-col gap-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono font-bold">{exercisesData[id].q} =</span>
-                    <div className="flex gap-2">
-                      <input 
-                        type="text" 
-                        onChange={(e) => handleInputChange(id, e.target.value)}
-                        className="w-24 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                        placeholder="?" 
-                      />
-                      <button onClick={() => checkAnswer(id)} className="bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-indigo-700">Έλεγχος</button>
+          {/* ΑΣΚΗΣΕΙΣ 1-3 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* 10 */}
+            <div className="space-y-3 bg-green-50/30 p-4 rounded-2xl border border-green-100">
+              <h4 className="font-bold text-xs text-green-800 bg-green-100 px-2 py-1 rounded inline-block">1. Διαιρέσεις με το 10</h4>
+              <div className="space-y-4 pt-2">
+                {['ex1_1', 'ex1_2', 'ex1_3', 'ex1_4'].map(id => (
+                  <div key={id} className="text-sm font-bold flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between gap-1">
+                      <span>{exercisesData[id].q} =</span>
+                      <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded p-0.5 text-center font-mono text-indigo-600 bg-white" placeholder="?" />
+                      <button onClick={() => checkAnswer(id)} className="bg-green-700 text-white px-2 py-0.5 rounded text-[11px]">✔</button>
                     </div>
+                    {results[id]?.status === 'correct' && <div className="text-[11px] text-emerald-600">🎉 Σωστά!</div>}
+                    {results[id]?.status === 'wrong' && <div className="text-[11px] text-red-600 bg-white p-1.5 rounded border border-red-200 font-medium">Σωστό: {results[id].correctVal}. {results[id].msg}</div>}
                   </div>
-                  {results[id]?.status === 'correct' && <div className="text-xs font-bold text-emerald-600">🎉 Σωστά! Μπράβο.</div>}
-                  {results[id]?.status === 'wrong' && <div className="text-xs text-red-600 bg-red-50 p-2 rounded-lg font-medium">❌ {results[id].msg}</div>}
+                ))}
+              </div>
+            </div>
+
+            {/* 100 */}
+            <div className="space-y-3 bg-blue-50/30 p-4 rounded-2xl border border-blue-100">
+              <h4 className="font-bold text-xs text-blue-800 bg-blue-100 px-2 py-1 rounded inline-block">2. Διαιρέσεις με το 100</h4>
+              <div className="space-y-4 pt-2">
+                {['ex2_1', 'ex2_2', 'ex2_3', 'ex2_4'].map(id => (
+                  <div key={id} className="text-sm font-bold flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between gap-1">
+                      <span>{exercisesData[id].q} =</span>
+                      <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded p-0.5 text-center font-mono text-indigo-600 bg-white" placeholder="?" />
+                      <button onClick={() => checkAnswer(id)} className="bg-blue-700 text-white px-2 py-0.5 rounded text-[11px]">✔</button>
+                    </div>
+                    {results[id]?.status === 'correct' && <div className="text-[11px] text-emerald-600">🎉 Σωστά!</div>}
+                    {results[id]?.status === 'wrong' && <div className="text-[11px] text-red-600 bg-white p-1.5 rounded border border-red-200 font-medium">Σωστό: {results[id].correctVal}. {results[id].msg}</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 1000 */}
+            <div className="space-y-3 bg-orange-50/30 p-4 rounded-2xl border border-orange-100">
+              <h4 className="font-bold text-xs text-orange-800 bg-orange-100 px-2 py-1 rounded inline-block">3. Διαιρέσεις με το 1000</h4>
+              <div className="space-y-4 pt-2">
+                {['ex3_1', 'ex3_2', 'ex3_3', 'ex3_4'].map(id => (
+                  <div key={id} className="text-sm font-bold flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between gap-1">
+                      <span>{exercisesData[id].q} =</span>
+                      <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded p-0.5 text-center font-mono text-indigo-600 bg-white" placeholder="?" />
+                      <button onClick={() => checkAnswer(id)} className="bg-orange-700 text-white px-2 py-0.5 rounded text-[11px]">✔</button>
+                    </div>
+                    {results[id]?.status === 'correct' && <div className="text-[11px] text-emerald-600">🎉 Σωστά!</div>}
+                    {results[id]?.status === 'wrong' && <div className="text-[11px] text-red-600 bg-white p-1.5 rounded border border-red-200 font-medium">Σωστό: {results[id].correctVal}. {results[id].msg}</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ΑΣΚΗΣΗ 4 */}
+          <div className="bg-slate-50 p-5 rounded-2xl border">
+            <h4 className="font-bold text-xs text-slate-700 bg-slate-200 px-3 py-1 rounded-lg inline-block mb-3">4. Βρες τον αριθμό που λείπει</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {['ex4_1', 'ex4_2', 'ex4_3', 'ex4_4'].map(id => (
+                <div key={id} className="text-sm font-bold bg-white p-3 rounded-xl border flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono">{exercisesData[id].q.includes('...') ? exercisesData[id].q.split('...')[0] : ''} 
+                      {exercisesData[id].q.includes('...') ? <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded text-center text-indigo-600 bg-slate-50 mx-1" placeholder="..." /> : <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded text-center text-indigo-600 bg-slate-50 mx-1" placeholder="..." />}
+                      {exercisesData[id].q.includes('...') ? exercisesData[id].q.split('...')[1] : exercisesData[id].q}
+                    </span>
+                    <button onClick={() => checkAnswer(id)} className="bg-slate-700 text-white px-3 py-1 rounded-lg text-xs">Έλεγχος</button>
+                  </div>
+                  {results[id]?.status === 'correct' && <div className="text-[11px] text-emerald-600">🎉 Σωστά!</div>}
+                  {results[id]?.status === 'wrong' && <div className="text-[11px] text-red-600 bg-red-50/60 p-2 rounded border border-red-200 font-medium">Σωστό: {results[id].correctVal}. {results[id].msg}</div>}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* ΟΜΑΔΑ 2 */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-sm text-blue-800 bg-blue-50 px-3 py-1 rounded-lg inline-block">2. Διαιρέσεις με το 100 (Σβήνω 2 μηδενικά)</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {['ex2_1', 'ex2_2', 'ex2_3', 'ex2_4'].map((id) => (
-                <div key={id} className="p-3 bg-slate-50 rounded-xl border flex flex-col gap-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono font-bold">{exercisesData[id].q} =</span>
-                    <div className="flex gap-2">
-                      <input 
-                        type="text" 
-                        onChange={(e) => handleInputChange(id, e.target.value)}
-                        className="w-24 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                        placeholder="?" 
-                      />
-                      <button onClick={() => checkAnswer(id)} className="bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-indigo-700">Έλεγχος</button>
-                    </div>
-                  </div>
-                  {results[id]?.status === 'correct' && <div className="text-xs font-bold text-emerald-600">🎉 Σωστά! Μπράβο.</div>}
-                  {results[id]?.status === 'wrong' && <div className="text-xs text-red-600 bg-red-50 p-2 rounded-lg font-medium">❌ {results[id].msg}</div>}
-                </div>
-              ))}
+          {/* 🔴 5η ΑΣΚΗΣΗ: 5 ΤΥΧΑΙΟΙ ΑΡΙΘΜΟΙ ΑΠΟ 1 ΕΩΣ 9999 (ΠΡΟΣΤΕΘΗΚΕ!) */}
+          <div className="bg-indigo-50/40 p-5 rounded-2xl border border-indigo-200">
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="font-bold text-xs text-indigo-800 bg-indigo-100 px-3 py-1 rounded-lg inline-block">🚀 5. Δοκιμασία Προχωρημένων (Τυχαίοι Αριθμοί με Υποδιαστολή)</h4>
             </div>
-          </div>
-
-          {/* ΟΜΑΔΑ 3 */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-sm text-orange-800 bg-orange-50 px-3 py-1 rounded-lg inline-block">3. Διαιρέσεις με το 1000 (Σβήνω 3 μηδενικά)</h3>
+            <p className="text-xs text-slate-500 mb-4 font-medium">Κάθε φορά που πατάς «Νέοι Τυχαίοι Αριθμοί» στην κορυφή, εμφανίζονται 5 διαφορετικές προκλήσεις!</p>
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {['ex3_1', 'ex3_2', 'ex3_3', 'ex3_4'].map((id) => (
-                <div key={id} className="p-3 bg-slate-50 rounded-xl border flex flex-col gap-2">
+              {randomData.map((item) => (
+                <div key={item.id} className="text-sm font-bold bg-white p-3 rounded-xl border flex flex-col gap-1.5 shadow-sm">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono font-bold">{exercisesData[id].q} =</span>
-                    <div className="flex gap-2">
-                      <input 
-                        type="text" 
-                        onChange={(e) => handleInputChange(id, e.target.value)}
-                        className="w-24 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                        placeholder="?" 
-                      />
-                      <button onClick={() => checkAnswer(id)} className="bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-indigo-700">Έλεγχος</button>
+                    <span className="font-mono text-slate-800">{item.q} =</span>
+                    <div className="flex gap-1.5">
+                      <input type="text" value={answers[item.id] || ''} onChange={(e) => handleInputChange(item.id, e.target.value)} className="w-20 border rounded p-1 text-center font-mono text-indigo-600" placeholder="0,00" />
+                      <button onClick={() => checkAnswer(item.id, true, item)} className="bg-indigo-600 text-white px-2 py-1 rounded-lg text-xs">Έλεγχος</button>
                     </div>
                   </div>
-                  {results[id]?.status === 'correct' && <div className="text-xs font-bold text-emerald-600">🎉 Σωστά! Μπράβο.</div>}
-                  {results[id]?.status === 'wrong' && <div className="text-xs text-red-600 bg-red-50 p-2 rounded-lg font-medium">❌ {results[id].msg}</div>}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 🔴 ΟΜΑΔΑ 4: ΝΕΕΣ ΔΥΣKΟΛΕΣ ΑΣΚΗΣΕΙΣ ΜΕ ΥΠΟΔΙΑΣΤΟΛΗ (ΚΟΜΜΑ) */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-sm text-red-800 bg-red-50 px-3 py-1.5 rounded-lg inline-block">🚀 4. Προχωρημένες Ασκήσεις: Προσοχή στην Υποδιαστολή!</h3>
-            <p className="text-xs text-gray-500">Θυμήσου: Αν δεν υπάρχουν μηδενικά, βάζουμε κόμμα ( , ) πηγαίνοντας προς τα αριστερά!</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {['ex5_1', 'ex5_2', 'ex5_3', 'ex5_4'].map((id) => (
-                <div key={id} className="p-3 bg-amber-50/40 rounded-xl border border-amber-200 flex flex-col gap-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono font-bold text-slate-800">{exercisesData[id].q} =</span>
-                    <div className="flex gap-2">
-                      <input 
-                        type="text" 
-                        onChange={(e) => handleInputChange(id, e.target.value)}
-                        className="w-24 border rounded-lg p-1 text-center font-bold text-amber-900 bg-white border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500" 
-                        placeholder="0,0" 
-                      />
-                      <button onClick={() => checkAnswer(id)} className="bg-amber-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-amber-700">Έλεγχος</button>
-                    </div>
-                  </div>
-                  {results[id]?.status === 'correct' && <div className="text-xs font-bold text-emerald-600">🎉 Σωστά! Είσαι αστέρι!</div>}
-                  {results[id]?.status === 'wrong' && <div className="text-xs text-red-600 bg-red-50 p-2 rounded-lg font-medium">❌ {results[id].msg}</div>}
+                  {results[item.id]?.status === 'correct' && <div className="text-[11px] text-emerald-600">🎉 Εξαιρετικά! Σωστή απάντηση.</div>}
+                  {results[item.id]?.status === 'wrong' && <div className="text-[11px] text-red-600 bg-red-50 p-2 rounded-lg border border-red-200 font-medium">Σωστό: {results[item.id].correctVal}. {results[item.id].msg}</div>}
                 </div>
               ))}
             </div>
