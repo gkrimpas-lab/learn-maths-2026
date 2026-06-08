@@ -41,6 +41,7 @@ export default function DDimotikouExercises() {
     for (let i = 0; i < 5; i++) {
       const num = Math.floor(Math.random() * 9999) + 1;
       const divisor = operations[i];
+      
       let correctResult = (num / divisor).toString().replace('.', ',');
       
       let expl = "";
@@ -69,26 +70,33 @@ export default function DDimotikouExercises() {
     setAnswers(prev => ({ ...prev, [id]: formattedVal }));
   };
 
-  // 🔴 ΔΙΟΡΘΩΘΗΚΕ: Πλήρης και αυστηρός έλεγχος ισότητας χωρίς λογικά κενά
+  // 🔴 ΟΛΟΚΛΗΡΩΤΙΚΗ ΔΙΟΡΘΩΣΗ: Απόλυτα απομονωμένος έλεγχος για αποφυγή ψευδώς θετικών (false positives)
   const checkAnswer = (id, isRandom = false, randItem = null) => {
-    const userAnswer = answers[id] ? answers[id].trim() : "";
+    const currentInput = answers[id];
+    const userAnswer = currentInput ? currentInput.trim() : "";
     
-    // Αν το πεδίο είναι άδειο, μην κάνεις τίποτα
     if (userAnswer === "") return;
 
-    const correctAnswer = isRandom ? randItem.ans : exercisesData[id].ans;
-    const explanation = isRandom ? randItem.explanation : exercisesData[id].explanation;
+    // Καθαρός διαχωρισμός των πηγών δεδομένων ανάλογα με τον τύπο της άσκησης
+    const targetExercise = isRandom ? randItem : exercisesData[id];
+    
+    if (!targetExercise) return;
+
+    const correctAnswer = targetExercise.ans;
+    const explanation = targetExercise.explanation;
     
     if (userAnswer === correctAnswer) {
-      setResults(prev => ({
-        ...prev,
-        [id]: { status: 'correct' }
-      }));
+      setResults(prev => {
+        const updated = { ...prev };
+        updated[id] = { status: 'correct' };
+        return updated;
+      });
     } else {
-      setResults(prev => ({
-        ...prev,
-        [id]: { status: 'wrong', msg: explanation, correctVal: correctAnswer }
-      }));
+      setResults(prev => {
+        const updated = { ...prev };
+        updated[id] = { status: 'wrong', msg: explanation, correctVal: correctAnswer };
+        return updated;
+      });
     }
   };
 
@@ -117,7 +125,7 @@ export default function DDimotikouExercises() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* 10 */}
+            {/* 1. Διαίρεση με 10 */}
             <div className="space-y-3 bg-green-50/30 p-4 rounded-2xl border border-green-100">
               <h4 className="font-bold text-xs text-green-800 bg-green-100 px-2 py-1 rounded inline-block">1. Διαιρέσεις με το 10</h4>
               <div className="space-y-4 pt-2">
@@ -140,7 +148,7 @@ export default function DDimotikouExercises() {
               </div>
             </div>
 
-            {/* 100 */}
+            {/* 2. Διαίρεση με 100 */}
             <div className="space-y-3 bg-blue-50/30 p-4 rounded-2xl border border-blue-100">
               <h4 className="font-bold text-xs text-blue-800 bg-blue-100 px-2 py-1 rounded inline-block">2. Διαιρέσεις με το 100</h4>
               <div className="space-y-4 pt-2">
@@ -163,7 +171,7 @@ export default function DDimotikouExercises() {
               </div>
             </div>
 
-            {/* 1000 */}
+            {/* 3. Διαίρεση με 1000 */}
             <div className="space-y-3 bg-orange-50/30 p-4 rounded-2xl border border-orange-100">
               <h4 className="font-bold text-xs text-orange-800 bg-orange-100 px-2 py-1 rounded inline-block">3. Διαιρέσεις με το 1000</h4>
               <div className="space-y-4 pt-2">
@@ -187,7 +195,7 @@ export default function DDimotikouExercises() {
             </div>
           </div>
 
-          {/* ΑΣΚΗΣΗ 4 */}
+          {/* 4. Βρες τον αριθμό που λείπει */}
           <div className="bg-slate-50 p-5 rounded-2xl border">
             <h4 className="font-bold text-xs text-slate-700 bg-slate-200 px-3 py-1 rounded-lg inline-block mb-3">4. Βρες τον αριθμό που λείπει</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -197,7 +205,7 @@ export default function DDimotikouExercises() {
                     <span className="font-mono">
                       {exercisesData[id].q.includes('...') && exercisesData[id].q.split('...')[0]} 
                       <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded text-center text-indigo-600 bg-slate-50 mx-1 font-mono font-bold" placeholder="..." />
-                      {exercisesData[id].q.includes('...') && Math.abs(exercisesData[id].q.split('...').length) > 1 && exercisesData[id].q.split('...')[1]}
+                      {exercisesData[id].q.includes('...') && exercisesData[id].q.split('...').length > 1 && exercisesData[id].q.split('...')[1]}
                     </span>
                     <button onClick={() => checkAnswer(id)} className="bg-slate-700 text-white px-3 py-1 rounded-lg text-xs font-bold active:scale-95 transition shadow-sm">Έλεγχος</button>
                   </div>
@@ -213,7 +221,7 @@ export default function DDimotikouExercises() {
             </div>
           </div>
 
-          {/* 5η ΑΣΚΗΣΗ: ΤΥΧΑΙΟΙ ΑΡΙΘΜΟΙ ΑΠΟ 1 ΕΩΣ 9999 */}
+          {/* 5. Δοκιμασία Προχωρημένων */}
           <div className="bg-indigo-50/40 p-5 rounded-2xl border border-indigo-200">
             <div className="flex justify-between items-center mb-1">
               <h4 className="font-bold text-xs text-indigo-800 bg-indigo-100 px-3 py-1 rounded-lg inline-block">🚀 5. Δοκιμασία Προχωρημένων (Τυχαίοι Αριθμοί με Υποδιαστολή)</h4>
@@ -226,7 +234,7 @@ export default function DDimotikouExercises() {
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-mono text-slate-800">{item.q} =</span>
                     <div className="flex gap-1.5">
-                      <input type="text" value={answers[item.id] || ''} onChange={(e) => handleInputChange(item.id, e.target.value)} className="w-20 border rounded p-1 text-center font-mono font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-400" placeholder="0,0" />
+                      <input type="text" value={answers[item.id] || ''} transform="el" onChange={(e) => handleInputChange(item.id, e.target.value)} className="w-20 border rounded p-1 text-center font-mono font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-400" placeholder="0,0" />
                       <button onClick={() => checkAnswer(item.id, true, item)} className="bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold active:scale-95 transition shadow-sm">Έλεγχος</button>
                     </div>
                   </div>
