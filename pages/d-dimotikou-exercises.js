@@ -7,27 +7,23 @@ export default function DDimotikouExercises() {
   const [results, setResults] = useState({});
   const [randomData, setRandomData] = useState([]);
 
-  // 🔴 ΔΙΟΡΘΩΘΗΚΕ: Μοναδικά κλειδιά για κάθε μία άσκηση ξεχωριστά (ex1, ex2, ex3)
+  // Στατικά δεδομένα για τις πρώτες 4 ασκήσεις
   const exercisesData = {
-    // 1. Διαιρέσεις με το 10
     ex1_1: { q: "90 ÷ 10", ans: "9", explanation: "Το 10 έχει 1 μηδενικό, οπότε διώχνουμε 1 μηδενικό από το τέλος του 90 και μένει 9." },
-    ex1_2: { q: "240 ÷ 10", ans: "24", explanation: "Το 10 heeft 1 μηδενικό, οπότε σβήνουμε 1 μηδενικό από το τέλος του 240 και μένει 24." },
+    ex1_2: { q: "240 ÷ 10", ans: "24", explanation: "Το 10 έχει 1 μηδενικό, οπότε σβήνουμε 1 μηδενικό από το τέλος του 240 and μένει 24." },
     ex1_3: { q: "1.500 ÷ 10", ans: "150", explanation: "Διώχνουμε 1 μηδενικό από το τέλος του 1.500, οπότε ο αριθμός γίνεται 150." },
     ex1_4: { q: "8.920 ÷ 10", ans: "892", explanation: "Το 10 έχει 1 μηδενικό, άρα σβήνουμε το τελευταίο μηδενικό του αριθμού και μένει 892." },
 
-    // 2. Διαιρέσεις με το 100
     ex2_1: { q: "600 ÷ 100", ans: "6", explanation: "Το 100 έχει 2 μηδενικά, οπότε σβήνουμε 2 μηδενικά από το τέλος του 600 και μένει 6." },
     ex2_2: { q: "1.400 ÷ 100", ans: "14", explanation: "Το 100 έχει 2 μηδενικά, οπότε διώχνουμε 2 μηδενικά από το τέλος του 1.400 και μένει 14." },
     ex2_3: { q: "5.000 ÷ 100", ans: "50", explanation: "Το 100 έχει 2 μηδενικά, οπότε αφαιρούμε 2 μηδενικά από το τέλος του 5.000 και μένει 50." },
     ex2_4: { q: "23.800 ÷ 100", ans: "238", explanation: "Σβήνουμε τα 2 μηδενικά από το τέλος του αριθμού 23.800 και μένει 238." },
 
-    // 3. Διαιρέσεις με το 1000
     ex3_1: { q: "4.000 ÷ 1000", ans: "4", explanation: "Το 1.000 έχει 3 μηδενικά, οπότε διώχνουμε 3 μηδενικά από το τέλος του 4.000 και μένει 4." },
     ex3_2: { q: "9.000 ÷ 1000", ans: "9", explanation: "Το 1.000 έχει 3 μηδενικά, οπότε σβήνουμε και τα 3 μηδενικά από το τέλος και μένει 9." },
     ex3_3: { q: "15.000 ÷ 1000", ans: "15", explanation: "Αφαιρούμε 3 μηδενικά από το τέλος του 15.000, οπότε ο αριθμός γίνεται 15." },
     ex3_4: { q: "70.000 ÷ 1000", ans: "70", explanation: "Σβήνουμε 3 μηδενικά από το τέλος του αριθμού 70.000 και μένει 70." },
 
-    // 4. Βρες τον αριθμό που λείπει
     ex4_1: { q: "800 ÷ ... = 8", ans: "100", explanation: "Ο αριθμός 800 έχασε 2 μηδενικά για να γίνει 8, πράγμα που σημαίνει ότι διαιρέθηκε με το 100." },
     ex4_2: { q: "3.200 ÷ ... = 320", ans: "10", explanation: "Ο αριθμός 3.200 έχασε 1 μηδενικό για να γίνει 320, άρα διαιρέθηκε με το 10." },
     ex4_3: { q: "6.000 ÷ ... = 6", ans: "1000", explanation: "Ο αριθμός 6.000 έχασε και τα 3 μηδενικά του για να γίνει 6, άρα διαιρέθηκε με το 1.000." },
@@ -117,8 +113,7 @@ export default function DDimotikouExercises() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            {/* 1. Διαιρέσεις με το 10 (ex1_1 έως ex1_4) */}
+            {/* 1. Διαιρέσεις με το 10 */}
             <div className="space-y-3 bg-green-50/30 p-4 rounded-2xl border border-green-100">
               <h4 className="font-bold text-xs text-green-800 bg-green-100 px-2 py-1 rounded inline-block">1. Διαιρέσεις με το 10</h4>
               <div className="space-y-4 pt-2">
@@ -141,7 +136,7 @@ export default function DDimotikouExercises() {
               </div>
             </div>
 
-            {/* 2. Διαιρέσεις με το 100 (ex2_1 έως ex2_4) */}
+            {/* 2. Διαιρέσεις με το 100 */}
             <div className="space-y-3 bg-blue-50/30 p-4 rounded-2xl border border-blue-100">
               <h4 className="font-bold text-xs text-blue-800 bg-blue-100 px-2 py-1 rounded inline-block">2. Διαιρέσεις με το 100</h4>
               <div className="space-y-4 pt-2">
@@ -164,7 +159,7 @@ export default function DDimotikouExercises() {
               </div>
             </div>
 
-            {/* 3. Διαιρέσεις με το 1000 (ex3_1 έως ex3_4) */}
+            {/* 3. Διαιρέσεις με το 1000 */}
             <div className="space-y-3 bg-orange-50/30 p-4 rounded-2xl border border-orange-100">
               <h4 className="font-bold text-xs text-orange-800 bg-orange-100 px-2 py-1 rounded inline-block">3. Διαιρέσεις με το 1000</h4>
               <div className="space-y-4 pt-2">
@@ -234,8 +229,9 @@ export default function DDimotikouExercises() {
                   {results[item.id]?.status === 'correct' && <div className="text-[11px] text-emerald-600 font-black">🎉 Εξαιρετικά! Σωστή απάντηση.</div>}
                   {results[item.id]?.status === 'wrong' && (
                     <div className="text-[11px] text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200 font-medium leading-relaxed shadow-sm">
+                      {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Τώρα αντλεί σωστά το item.id για την 5η άσκηση */}
                       🧐 Σωστό: <span className="font-black text-sm text-red-700">{results[item.id].correctVal}</span>.<br />
-                      <span className="text-slate-500 font-normal">{results[id].msg}</span>
+                      <span className="text-slate-500 font-normal">{results[item.id].msg}</span>
                     </div>
                   )}
                 </div>
