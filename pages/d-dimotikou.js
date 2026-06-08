@@ -389,32 +389,33 @@ export default function DDimotikou() {
                   </div>
                 </div>
 
-                {/* Πίνακας Αξίας Θέσης Δεκαδικών */}
-                <div className="bg-slate-900 text-white p-5 rounded-2xl border shadow-lg space-y-3">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block text-center">Πίνακας Αξίας Θέσης</span>
-                  
-                  <div className="grid grid-cols-4 gap-1 text-center font-mono">
-                    {/* Τίτλοι */}
-                    <div className="text-[9px] font-bold text-slate-400 bg-slate-800 py-1 rounded">Ακέραιο Μέρος</div>
-                    <div className="text-[10px] font-bold text-red-400 flex items-center justify-center">,</div>
-                    <div className="text-[9px] font-bold text-amber-400 bg-slate-800 py-1 rounded">Δέκατα (δ)</div>
-                    <div className="text-[9px] font-bold text-yellow-400 bg-slate-800 py-1 rounded">Εκατοστά (ε)</div>
+{/* Πίνακας Αξίας Θέσης Δεκαδικών (ΔΙΟΡΘΩΘΗΚΕ: Το 10/10 και το 100/100 μεταφέρονται στις Μονάδες) */}
+<div className="bg-slate-900 text-white p-5 rounded-2xl border shadow-lg space-y-3">
+  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block text-center">Πίνακας Αξίας Θέσης</span>
+  
+  <div className="grid grid-cols-4 gap-1 text-center font-mono">
+    {/* Τίτλοι */}
+    <div className="text-[9px] font-bold text-slate-400 bg-slate-800 py-1 rounded">Μονάδες (Μ)</div>
+    <div className="text-[10px] font-bold text-red-400 flex items-center justify-center">,</div>
+    <div className="text-[9px] font-bold text-amber-400 bg-slate-800 py-1 rounded">Δέκατα (δ)</div>
+    <div className="text-[9px] font-bold text-yellow-400 bg-slate-800 py-1 rounded">Εκατοστά (ε)</div>
 
-                    {/* Ψηφία */}
-                    <div className="text-2xl font-black text-white p-2">0</div>
-                    <div className="text-3xl font-black text-red-500 flex items-center justify-center">,</div>
-                    <div className="text-2xl font-black text-amber-400 p-2">
-                      {decimalMode === 'tenths' ? decimalValue : Math.floor(decimalValue / 10)}
-                    </div>
-                    <div className="text-2xl font-black text-yellow-400 p-2">
-                      {decimalMode === 'tenths' ? '0' : decimalValue % 10}
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
+    {/* Ψηφία με σωστή μαθηματική μεταφορά */}
+    <div className="text-2xl font-black text-white p-2">
+      {/* Αν decimalValue === maxSlices (δηλ. 10/10 ή 100/100), έχουμε 1 Μονάδα, αλλιώς 0 */}
+      {decimalValue === maxSlices ? '1' : '0'}
+    </div>
+    <div className="text-3xl font-black text-red-500 flex items-center justify-center">,</div>
+    <div className="text-2xl font-black text-amber-400 p-2">
+      {/* Αν φτάσαμε στο 10/10 ή 100/100, τα δέκατα γίνονται 0 */}
+      {decimalValue === maxSlices ? '0' : (decimalMode === 'tenths' ? decimalValue : Math.floor(decimalValue / 10))}
+    </div>
+    <div className="text-2xl font-black text-yellow-400 p-2">
+      {/* Στα εκατοστά μένει πάντα το υπόλοιπο της διαίρεσης με το 10 */}
+      {decimalValue === maxSlices ? '0' : (decimalMode === 'tenths' ? '0' : decimalValue % 10)}
+    </div>
+  </div>
+</div>
             {/* ΑΡΙΘΜΗΤΙΚΗ ΓΡΑΜΜΗ (SVG) */}
             <div className="bg-gray-50 p-6 rounded-3xl border border-gray-200 space-y-4">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block text-center">Πάνω στην αριθμητική γραμμή (0 έως 1)</span>
