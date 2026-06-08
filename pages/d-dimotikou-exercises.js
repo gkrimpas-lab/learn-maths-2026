@@ -3,31 +3,36 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 export default function DDimotikouExercises() {
+  // Ξεχωριστά states για να μην υπάρχει καμία πιθανότητα collision
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState({});
   const [randomData, setRandomData] = useState([]);
 
-  // Στατικά δεδομένα για τις πρώτες 4 ασκήσεις
-  const exercisesData = {
-    ex1_1: { q: "90 ÷ 10", ans: "9", explanation: "Το 10 έχει 1 μηδενικό, οπότε διώχνουμε 1 μηδενικό από το τέλος του 90 και μένει 9." },
-    ex1_2: { q: "240 ÷ 10", ans: "24", explanation: "Το 10 έχει 1 μηδενικό, οπότε σβήνουμε 1 μηδενικό από το τέλος του 240 and μένει 24." },
-    ex1_3: { q: "1.500 ÷ 10", ans: "150", explanation: "Διώχνουμε 1 μηδενικό από το τέλος του 1.500, οπότε ο αριθμός γίνεται 150." },
-    ex1_4: { q: "8.920 ÷ 10", ans: "892", explanation: "Το 10 έχει 1 μηδενικό, άρα σβήνουμε το τελευταίο μηδενικό του αριθμού και μένει 892." },
+  // Η κεντρική βάση των στατικών ασκήσεων με 100% μοναδικά κλειδιά (ex1_, ex2_, ex3_, ex4_)
+  const staticExercises = {
+    // 1. Διαιρέσεις με το 10
+    ex1_1: { q: "90 ÷ 10", ans: "9", ext: "Το 10 έχει 1 μηδενικό, οπότε διώχνουμε 1 μηδενικό από το τέλος του 90 και μένει 9." },
+    ex1_2: { q: "240 ÷ 10", ans: "24", ext: "Το 10 έχει 1 μηδενικό, οπότε σβήνουμε 1 μηδενικό από το τέλος του 240 και μένει 24." },
+    ex1_3: { q: "1.500 ÷ 10", ans: "150", ext: "Διώχνουμε 1 μηδενικό από το τέλος του 1.500, οπότε ο αριθμός γίνεται 150." },
+    ex1_4: { q: "8.920 ÷ 10", ans: "892", ext: "Το 10 έχει 1 μηδενικό, άρα σβήνουμε το τελευταίο μηδενικό του αριθμού και μένει 892." },
 
-    ex2_1: { q: "600 ÷ 100", ans: "6", explanation: "Το 100 έχει 2 μηδενικά, οπότε σβήνουμε 2 μηδενικά από το τέλος του 600 και μένει 6." },
-    ex2_2: { q: "1.400 ÷ 100", ans: "14", explanation: "Το 100 έχει 2 μηδενικά, οπότε διώχνουμε 2 μηδενικά από το τέλος του 1.400 και μένει 14." },
-    ex2_3: { q: "5.000 ÷ 100", ans: "50", explanation: "Το 100 έχει 2 μηδενικά, οπότε αφαιρούμε 2 μηδενικά από το τέλος του 5.000 και μένει 50." },
-    ex2_4: { q: "23.800 ÷ 100", ans: "238", explanation: "Σβήνουμε τα 2 μηδενικά από το τέλος του αριθμού 23.800 και μένει 238." },
+    // 2. Διαιρέσεις με το 100
+    ex2_1: { q: "600 ÷ 100", ans: "6", ext: "Το 100 έχει 2 μηδενικά, οπότε σβήνουμε 2 μηδενικά από το τέλος του 600 και μένει 6." },
+    ex2_2: { q: "1.400 ÷ 100", ans: "14", ext: "Το 100 έχει 2 μηδενικά, οπότε διώχνουμε 2 μηδενικά από το τέλος του 1.400 και μένει 14." },
+    ex2_3: { q: "5.000 ÷ 100", ans: "50", ext: "Το 100 έχει 2 μηδενικά, οπότε αφαιρούμε 2 μηδενικά από το τέλος του 5.000 και μένει 50." },
+    ex2_4: { q: "23.800 ÷ 100", ans: "238", ext: "Σβήνουμε τα 2 μηδενικά από το τέλος του αριθμού 23.800 και μένει 238." },
 
-    ex3_1: { q: "4.000 ÷ 1000", ans: "4", explanation: "Το 1.000 έχει 3 μηδενικά, οπότε διώχνουμε 3 μηδενικά από το τέλος του 4.000 και μένει 4." },
-    ex3_2: { q: "9.000 ÷ 1000", ans: "9", explanation: "Το 1.000 έχει 3 μηδενικά, οπότε σβήνουμε και τα 3 μηδενικά από το τέλος και μένει 9." },
-    ex3_3: { q: "15.000 ÷ 1000", ans: "15", explanation: "Αφαιρούμε 3 μηδενικά από το τέλος του 15.000, οπότε ο αριθμός γίνεται 15." },
-    ex3_4: { q: "70.000 ÷ 1000", ans: "70", explanation: "Σβήνουμε 3 μηδενικά από το τέλος του αριθμού 70.000 και μένει 70." },
+    // 3. Διαιρέσεις με το 1000
+    ex3_1: { q: "4.000 ÷ 1000", ans: "4", ext: "Το 1.000 έχει 3 μηδενικά, οπότε διώχνουμε 3 μηδενικά από το τέλος του 4.000 και μένει 4." },
+    ex3_2: { q: "9.000 ÷ 1000", ans: "9", ext: "Το 1.000 έχει 3 μηδενικά, οπότε σβήνουμε και τα 3 μηδενικά από το τέλος και μένει 9." },
+    ex3_3: { q: "15.000 ÷ 1000", ans: "15", ext: "Αφαιρούμε 3 μηδενικά από το τέλος του 15.000, οπότε ο αριθμός γίνεται 15." },
+    ex3_4: { q: "70.000 ÷ 1000", ans: "70", ext: "Σβήνουμε 3 μηδενικά από το τέλος του αριθμού 70.000 και μένει 70." },
 
-    ex4_1: { q: "800 ÷ ... = 8", ans: "100", explanation: "Ο αριθμός 800 έχασε 2 μηδενικά για να γίνει 8, πράγμα που σημαίνει ότι διαιρέθηκε με το 100." },
-    ex4_2: { q: "3.200 ÷ ... = 320", ans: "10", explanation: "Ο αριθμός 3.200 έχασε 1 μηδενικό για να γίνει 320, άρα διαιρέθηκε με το 10." },
-    ex4_3: { q: "6.000 ÷ ... = 6", ans: "1000", explanation: "Ο αριθμός 6.000 έχασε και τα 3 μηδενικά του για να γίνει 6, άρα διαιρέθηκε με το 1.000." },
-    ex4_4: { q: "... ÷ 100 = 14", ans: "1400", explanation: "Αφού ο αριθμός διαιρέθηκε με το 100 και έδωσε 14, σημαίνει ότι στην αρχή είχε δύο μηδενικά παραπάνω στο τέλος (14 × 100 = 1.400)." }
+    // 4. Βρες τον αριθμό που λείπει
+    ex4_1: { q: "800 ÷ ... = 8", ans: "100", ext: "Ο αριθμός 800 έχασε 2 μηδενικά για να γίνει 8, πράγμα που σημαίνει ότι διαιρέθηκε με το 100." },
+    ex4_2: { q: "3.200 ÷ ... = 320", ans: "10", ext: "Ο αριθμός 3.200 έχασε 1 μηδενικό για να γίνει 320, άρα διαιρέθηκε με το 10." },
+    ex4_3: { q: "6.000 ÷ ... = 6", ans: "1000", ext: "Ο αριθμός 6.000 έχασε και τα 3 μηδενικά του για να γίνει 6, άρα διαιρέθηκε με το 1.000." },
+    ex4_4: { q: "... ÷ 100 = 14", ans: "1400", ext: "Αφού ο αριθμός διαιρέθηκε με το 100 και έδωσε 14, σημαίνει ότι στην αρχή είχε δύο μηδενικά παραπάνω στο τέλος (14 × 100 = 1.400)." }
   };
 
   useEffect(() => {
@@ -69,22 +74,23 @@ export default function DDimotikouExercises() {
     setAnswers(prev => ({ ...prev, [id]: formattedVal }));
   };
 
+  // 🔴 ΑΠΟΛΥΤΟΣ ΕΛΕΓΧΟΣ: Συγκρίνει αυστηρά το userAnswer με το πραγματικό αντικείμενο στόχο
   const checkAnswer = (id, isRandom = false, randItem = null) => {
-    const currentInput = answers[id];
-    const userAnswer = currentInput ? currentInput.trim() : "";
+    const userInput = answers[id];
+    const userAnswer = userInput ? userInput.trim() : "";
     
     if (userAnswer === "") return;
 
-    const targetExercise = isRandom ? randItem : exercisesData[id];
-    if (!targetExercise) return;
+    const target = isRandom ? randItem : staticExercises[id];
+    if (!target) return;
 
-    const correctAnswer = targetExercise.ans;
-    const explanation = targetExercise.explanation;
-    
+    const correctAnswer = target.ans;
+    const finalExplanation = isRandom ? target.explanation : target.ext;
+
     if (userAnswer === correctAnswer) {
       setResults(prev => ({ ...prev, [id]: { status: 'correct' } }));
     } else {
-      setResults(prev => ({ ...prev, [id]: { status: 'wrong', msg: explanation, correctVal: correctAnswer } }));
+      setResults(prev => ({ ...prev, [id]: { status: 'wrong', msg: finalExplanation, correctVal: correctAnswer } }));
     }
   };
 
@@ -112,7 +118,9 @@ export default function DDimotikouExercises() {
             </button>
           </div>
 
+          {/* ΑΣΚΗΣΕΙΣ 1-3 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
             {/* 1. Διαιρέσεις με το 10 */}
             <div className="space-y-3 bg-green-50/30 p-4 rounded-2xl border border-green-100">
               <h4 className="font-bold text-xs text-green-800 bg-green-100 px-2 py-1 rounded inline-block">1. Διαιρέσεις με το 10</h4>
@@ -120,7 +128,7 @@ export default function DDimotikouExercises() {
                 {['ex1_1', 'ex1_2', 'ex1_3', 'ex1_4'].map(id => (
                   <div key={id} className="text-sm font-bold flex flex-col gap-1.5">
                     <div className="flex items-center justify-between gap-1">
-                      <span>{exercisesData[id].q} =</span>
+                      <span>{staticExercises[id].q} =</span>
                       <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded p-0.5 text-center font-mono text-indigo-600 bg-white" placeholder="?" />
                       <button onClick={() => checkAnswer(id)} className="bg-green-700 text-white px-2 py-0.5 rounded text-[11px] shadow-sm font-black">✓</button>
                     </div>
@@ -143,7 +151,7 @@ export default function DDimotikouExercises() {
                 {['ex2_1', 'ex2_2', 'ex2_3', 'ex2_4'].map(id => (
                   <div key={id} className="text-sm font-bold flex flex-col gap-1.5">
                     <div className="flex items-center justify-between gap-1">
-                      <span>{exercisesData[id].q} =</span>
+                      <span>{staticExercises[id].q} =</span>
                       <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded p-0.5 text-center font-mono text-indigo-600 bg-white" placeholder="?" />
                       <button onClick={() => checkAnswer(id)} className="bg-blue-700 text-white px-2 py-0.5 rounded text-[11px] shadow-sm font-black">✓</button>
                     </div>
@@ -166,7 +174,7 @@ export default function DDimotikouExercises() {
                 {['ex3_1', 'ex3_2', 'ex3_3', 'ex3_4'].map(id => (
                   <div key={id} className="text-sm font-bold flex flex-col gap-1.5">
                     <div className="flex items-center justify-between gap-1">
-                      <span>{exercisesData[id].q} =</span>
+                      <span>{staticExercises[id].q} =</span>
                       <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded p-0.5 text-center font-mono text-indigo-600 bg-white" placeholder="?" />
                       <button onClick={() => checkAnswer(id)} className="bg-orange-700 text-white px-2 py-0.5 rounded text-[11px] shadow-sm font-black">✓</button>
                     </div>
@@ -191,9 +199,9 @@ export default function DDimotikouExercises() {
                 <div key={id} className="text-sm font-bold bg-white p-3 rounded-xl border flex flex-col gap-1.5 shadow-sm">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-mono">
-                      {exercisesData[id].q.includes('...') && exercisesData[id].q.split('...')[0]} 
+                      {staticExercises[id].q.includes('...') && staticExercises[id].q.split('...')[0]} 
                       <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded text-center text-indigo-600 bg-slate-50 mx-1 font-mono font-bold" placeholder="..." />
-                      {exercisesData[id].q.includes('...') && exercisesData[id].q.split('...').length > 1 && exercisesData[id].q.split('...')[1]}
+                      {staticExercises[id].q.includes('...') && staticExercises[id].q.split('...').length > 1 && staticExercises[id].q.split('...')[1]}
                     </span>
                     <button onClick={() => checkAnswer(id)} className="bg-slate-700 text-white px-3 py-1 rounded-lg text-xs font-bold active:scale-95 transition shadow-sm">Έλεγχος</button>
                   </div>
@@ -229,7 +237,6 @@ export default function DDimotikouExercises() {
                   {results[item.id]?.status === 'correct' && <div className="text-[11px] text-emerald-600 font-black">🎉 Εξαιρετικά! Σωστή απάντηση.</div>}
                   {results[item.id]?.status === 'wrong' && (
                     <div className="text-[11px] text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200 font-medium leading-relaxed shadow-sm">
-                      {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Τώρα αντλεί σωστά το item.id για την 5η άσκηση */}
                       🧐 Σωστό: <span className="font-black text-sm text-red-700">{results[item.id].correctVal}</span>.<br />
                       <span className="text-slate-500 font-normal">{results[item.id].msg}</span>
                     </div>
