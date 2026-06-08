@@ -15,7 +15,7 @@ const CONFIG = {
   weight: {
     min: 0,
     max: 2500,
-    step: 1 // 👈 Ακρίβεια ανά γραμμάριο
+    step: 1
   }
 };
 
@@ -143,7 +143,7 @@ export default function DDimotikou() {
       if (newValue > CONFIG.largeNumbers.maxDisksPerColumn) newValue = CONFIG.largeNumbers.maxDisksPerColumn;
       return { ...prev, [column]: newValue };
     });
-  });
+  };
 
   const totalNumber = disks.EX * 100000 + disks.DX * 10000 + disks.X * 1000 + disks.E * 100 + disks.D * 10 + disks.M * 1;
   const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -327,7 +327,7 @@ export default function DDimotikou() {
                       </td>
                     </tr>
                     <tr className={divTimeline >= 50 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
-                      <td></td><td className="border-t-2 border-slate-400"></td><td className="border-t-2 border-slate-400 text-center text-slate-600 px-1">{r1_str}</td><td className={`border-t-2 border-slate-400 text-center text-cyan-600 font-black px-1 transition-opacity ${divTimeline >= 65 ? 'opacity-100' : 'opacity-0'}`}>{num_m}</td><td className="border-t-2 border-slate-400 text-center text-cyan-600 font-black px-1 transition-opacity ${divTimeline >= 65 ? 'opacity-100' : 'opacity-0'}`}>{num_m}</td><td className="border-l-4 border-slate-700"></td>
+                      <td></td><td className="border-t-2 border-slate-400"></td><td className="border-t-2 border-slate-400 text-center text-slate-600 px-1">{r1_str}</td><td className={`border-t-2 border-slate-400 text-center text-cyan-600 font-black px-1 transition-opacity ${divTimeline >= 65 ? 'opacity-100' : 'opacity-0'}`}>{num_m}</td><td className="border-l-4 border-slate-700"></td>
                     </tr>
                     <tr className={divTimeline >= 85 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
                       <td className="text-center text-slate-400 text-xl font-light px-1">-</td><td className="w-8"></td><td className="text-center text-slate-400 px-1">{p2_str[0]}</td><td className="text-center text-slate-400 px-1">{p2_str[1]}</td><td className="border-l-4 border-slate-700"></td>
@@ -460,11 +460,10 @@ export default function DDimotikou() {
           </div>
         )}
 
-        {/* ⚖️ ΚΑΡΤΕΛΑ 5: ΜΕΤΡΗΣΗ ΒΑΡΟΥΣ (🔴 ΑΝΑ ΓΡΑΜΜΑΡΙΟ ΜΕ precision SLIDER & ΚΟΥΜΠΙΑ) */}
+        {/* ⚖️ ΚΑΡΤΕΛΑ 5: ΜΕΤΡΗΣΗ ΒΑΡΟΥΣ */}
         {activeTab === 'weight_measurement' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             
-            {/* ΘΕΩΡΙΑ */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">⚖️ Μετρώ το Βάρος: Τόνος, Κιλά & Γραμμάρια</h2>
@@ -481,7 +480,7 @@ export default function DDimotikou() {
               </div>
             </div>
 
-            {/* ΔΙΑΔΡΑΣΤΙΚΟ SLIDER ΒΑΡΟΥΣ (🔴 ΕΝΗΜΕΡΩΜΕΝΟ ΜΕ ΑΚΡΙΒΕΙΑ ΓΡΑΜΜΑΡΙΟΥ ΚΑΙ BUTTONS) */}
+            {/* ΔΙΑΔΡΑΣΤΙΚΟ SLIDER ΒΑΡΟΥΣ ΜΕ ΑΚΡΙΒΕΙΑ ΓΡΑΜΜΑΡΙΟΥ */}
             <div className="bg-orange-50/60 p-5 rounded-2xl border border-orange-200 max-w-2xl mx-auto space-y-3 shadow-inner">
               <div className="flex justify-between items-center text-xs font-bold text-orange-900">
                 <span>⚖️ Σύρε ή ρύθμισε με ακρίβεια γραμμαρίου (g):</span>
@@ -490,6 +489,7 @@ export default function DDimotikou() {
               
               <div className="flex items-center gap-3">
                 <button 
+                  type="button"
                   onClick={() => adjustWeight(-1)}
                   className="bg-white hover:bg-orange-100 border border-orange-300 active:scale-95 transition text-orange-700 font-black px-3 py-1 rounded-lg text-xs shadow-sm"
                   title="Μείωση κατά 1 γραμμάριο"
@@ -508,6 +508,7 @@ export default function DDimotikou() {
                 />
                 
                 <button 
+                  type="button"
                   onClick={() => adjustWeight(1)}
                   className="bg-white hover:bg-orange-100 border border-orange-300 active:scale-95 transition text-orange-700 font-black px-3 py-1 rounded-lg text-xs shadow-sm"
                   title="Αύξηση κατά 1 γραμμάριο"
@@ -541,8 +542,6 @@ export default function DDimotikou() {
 
             {/* ΟΠΤΙΚΗ ΨΗΦΙΑΚΗ ΖΥΓΑΡΙΑ ΚΑΙ ΠΙΝΑΚΕΣ */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 max-w-5xl mx-auto items-center">
-              
-              {/* ΑΡΙΣΤΕΡΑ: Η ΨΗΦΙΑΚΗ ΖΥΓΑΡΙΑ */}
               <div className="md:col-span-5 bg-gray-50 p-6 rounded-3xl border flex flex-col items-center justify-center shadow-inner min-h-[260px]">
                 <div className="w-48 bg-slate-300 h-8 rounded-t-xl border-b-4 border-slate-400 relative flex items-center justify-center mt-8">
                   <div className="absolute -top-12 text-5xl transition-all duration-150">
@@ -559,7 +558,6 @@ export default function DDimotikou() {
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-4 block">📟 Ψηφιακή Ζυγαριά</span>
               </div>
 
-              {/* ΔΕΞΙΑ: ΠΙΝΑΚΑΣ ΜΕΤΑΤΡΟΠΩΝ (🔴 ΔΕΙΧΝΕΙ ΤΗΝ ΥΨΗΛΗ ΑΚΡΙΒΕΙΑ) */}
               <div className="md:col-span-7 space-y-6">
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div className="bg-slate-900 text-white p-3 rounded-2xl border border-slate-800">
@@ -586,7 +584,6 @@ export default function DDimotikou() {
                   📢 <strong>Συμμιγής Αριθμός:</strong> <span className="text-orange-600 font-black">{Math.floor(weightInG / 1000)} κιλά</span> και <span className="text-amber-600 font-black">{weightInG % 1000} γραμμάρια</span>.
                 </div>
               </div>
-
             </div>
           </div>
         )}
