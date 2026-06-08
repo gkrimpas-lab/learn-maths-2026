@@ -77,38 +77,36 @@ export default function DDimotikou() {
   const divIntervalRef = useRef(null);
 
   // --------------------------------------------------------------------------
-  // ΑΛΓΟΡΙΘΜΟΣ ΥΠΟΛΟΓΙΣΜΟΥ ΨΗΦΙΩΝ
+  // ΑΣΦΑΛΗΣ ΥΠΟΛΟΓΙΣΜΟΣ ΨΗΦΙΩΝ (ΘΩΡΑΚΙΣΜΕΝΟΣ ΓΙΑ CLIENT-SIDE EXCEPTIONS)
   // --------------------------------------------------------------------------
-  const divStr = dividend.toString().padStart(3, '0'); 
+  const divStr = (dividend || 144).toString().padStart(3, '0'); 
   const e_init = divStr[0];
   const d_init = divStr[1];
   const m_init = divStr[2];
 
-  const num_e = parseInt(e_init);
-  const num_d = parseInt(d_init);
-  const num_m = parseInt(m_init);
+  const num_e = parseInt(e_init) || 0;
+  const num_d = parseInt(d_init) || 0;
+  const num_m = parseInt(m_init) || 0;
 
-  const e_holds = num_e >= divisor;
+  const currentDivisor = divisor || 4;
+  const e_holds = num_e >= currentDivisor;
   const first_work_num = e_holds ? num_e : (num_e * 10 + num_d);
-  const first_quotient = Math.floor(first_work_num / divisor);
-  const first_product = first_quotient * divisor;
+  const first_quotient = Math.floor(first_work_num / currentDivisor) || 0;
+  const first_product = first_quotient * currentDivisor;
   const first_remainder = first_work_num - first_product;
 
   const second_work_num = first_remainder * 10 + num_m;
-  const second_quotient = Math.floor(second_work_num / divisor);
-  const second_product = second_quotient * divisor;
+  const second_quotient = Math.floor(second_work_num / currentDivisor) || 0;
+  const second_product = second_quotient * currentDivisor;
   const second_remainder = second_work_num - second_product;
 
-  const final_q = Math.floor(dividend / divisor);
-  const final_r = dividend % divisor;
+  const final_q = Math.floor(dividend / currentDivisor) || 0;
+  const final_r = dividend % currentDivisor;
 
-  // Ανάλυση ψηφίων πρώτης αφαίρεσης
-  const p1_d = Math.floor(first_product / 10) % 10;
-  const p1_m = first_product % 10;
-
-  // Ανάλυση ψηφίων δεύτερης αφαίρεσης
-  const p2_d = Math.floor(second_product / 10) % 10;
-  const p2_m = second_product % 10;
+  // Μετατροπή με απόλυτη ασφάλεια (fallbacks με || '00') για να αποφευχθεί το NaN.toString()
+  const p1_str = (first_product ?? 0).toString().padStart(2, '0');
+  const p2_str = (second_product ?? 0).toString().padStart(2, '0');
+  const r1_str = (first_remainder ?? 0).toString();
 
   useEffect(() => {
     if (isDivPlaying) {
@@ -339,15 +337,15 @@ export default function DDimotikou() {
                 </div>
               </div>
 
-              {/* ΔΕΞΙΑ: ΠΙΝΑΚΑΣ ΜΑΘΗΜΑΤΙΚΟΥ ΣΧΗΜΑΤΟΣ (ΔΙΟΡΘΩΘΗΚΕ Η ΣΤΟΙΧΙΣΗ) */}
+              {/* ΔΕΞΙΑ: ΠΙΝΑΚΑΣ ΜΑΘΗΜΑΤΙΚΟΥ ΣΧΗΜΑΤΟΣ */}
               <div className="lg:col-span-7 bg-white p-6 rounded-3xl border border-gray-200 flex flex-col items-center min-h-[340px]">
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-6">✏️ Ο Αλγόριθμος στο τετράδιο</h3>
                 
                 <table className="font-mono text-2xl text-slate-800 font-bold border-collapse">
                   <tbody>
-                    {/* Γραμμή 1: Ψηφία Διαιρετέου (Φωτίζεται ολόκληρο το 14 ή το ψηφίο εργασίας) | Διαιρέτης */}
+                    {/* Γραμμή 1: Ψηφία Διαιρετέου */}
                     <tr>
-                      <td className="w-6 text-center text-slate-300"></td> {/* Στήλη για το πρόσημο */}
+                      <td className="w-6 text-center text-slate-300"></td> 
                       <td className={`w-8 text-center px-1 ${highlightFirstGroup ? 'text-indigo-600 underline decoration-4 font-black bg-indigo-50 py-0.5 rounded-l' : ''}`}>
                         {num_e > 0 ? num_e : ''}
                       </td>
@@ -358,23 +356,23 @@ export default function DDimotikou() {
                         {num_m}
                       </td>
                       <td className="border-l-4 border-slate-700 border-b-4 px-6 text-emerald-600 font-black text-3xl min-w-[80px] text-center bg-emerald-50/50">
-                        {divisor}
+                        {currentDivisor}
                       </td>
                     </tr>
                     
-                    {/* Γραμμή 2: 1η Αφαίρεση (Το - πάει αριστερά, το 12 στοιχίζεται ακριβώς κάτω από το 14) */}
+                    {/* Γραμμή 2: 1η Αφαίρεση */}
                     <tr className={divTimeline >= 40 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
                       <td className="text-center text-slate-400 text-xl font-light px-1">-</td>
                       <td className="text-center text-slate-400 px-1">{e_holds ? (p1_str[0] !== '0' ? p1_str[0] : '') : (p1_str[0] !== '0' ? p1_str[0] : '')}</td>
                       <td className="text-center text-slate-400 px-1">{e_holds ? p1_str[1] : p1_str[1]}</td>
-                      <td className="w-8"></td> {/* Κενό κάτω από τις μονάδες */}
+                      <td className="w-8"></td> 
                       <td className="border-l-4 border-slate-700 px-6 text-left font-black tracking-wider">
                         <span className={`text-indigo-600 text-3xl ${divTimeline >= 30 ? 'opacity-100' : 'opacity-0'}`}>{first_quotient}</span>
                         <span className={`text-teal-600 text-3xl ${divTimeline >= 80 ? 'opacity-100' : 'opacity-0'}`}>{second_quotient}</span>
                       </td>
                     </tr>
 
-                    {/* Γραμμή 3: 1ο Υπόλοιπο & Κατέβασμα Ψηφίου */}
+                    {/* Γραμμή 3: 1ο Υπόλοιπο & Κατέβασμα */}
                     <tr className={divTimeline >= 50 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
                       <td></td>
                       <td className="border-t-2 border-slate-400"></td>
@@ -383,10 +381,10 @@ export default function DDimotikou() {
                       <td className="border-l-4 border-slate-700"></td>
                     </tr>
 
-                    {/* Γραμμή 4: 2η Αφαίρεση (Στοιχισμένη δεξιά, κάτω από το υπόλοιπο) */}
+                    {/* Γραμμή 4: 2η Αφαίρεση */}
                     <tr className={divTimeline >= 85 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
                       <td className="text-center text-slate-400 text-xl font-light px-1">-</td>
-                      <td className="w-8"></td> {/* Κενό κάτω από τις εκατοντάδες */}
+                      <td className="w-8"></td> 
                       <td className="text-center text-slate-400 px-1">{p2_str[0] !== '0' ? p2_str[0] : ''}</td>
                       <td className="text-center text-slate-400 px-1">{p2_str[1]}</td>
                       <td className="border-l-4 border-slate-700"></td>
