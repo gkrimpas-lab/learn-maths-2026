@@ -21,7 +21,7 @@ function numberToGreekWords(num) {
   const tens = ['', 'δέκα', 'είκοσι', 'τριάντα', 'σαράντα', 'πενήντα', 'εξήντα', 'εβδομήντα', 'ογδόντα', 'εννενήντα'];
   const hundreds = ['', 'εκατό', 'διακόσια', 'τρακόσια', 'τετρακόσια', 'πεντακόσια', 'εξακόσια', 'επτακόσια', 'οκτακόσια', 'εννιακόσια'];
   const unitsFem = ['', 'μία', 'δύο', 'τρεις', 'τέσσερις', 'πέντε', 'έξι', 'επτά', 'οκτώ', 'εννέα'];
-  const hundredsFem = ['', 'εκατό', 'διακόσιες', 'τριακόσιες', 'τετρακόσιες', 'πεντακόσια', 'εξακόσιες', 'επτακόσιες', 'οκτακόσιες', 'εννιακόσιες'];
+  const hundredsFem = ['', 'εκατό', 'διακόσιες', 'τριακόσιες', 'τετρακόσιες', 'πεντακόσιες', 'εξακόσιες', 'επτακόσιες', 'οκτακόσιες', 'εννιακόσιες'];
 
   const getUnderTwenty = (t, u, isFem) => {
     if (t === 1 && u === 1) return 'έντεκα';
@@ -200,7 +200,7 @@ export default function DDimotikou() {
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         
-        {/* 💎 ΚΑΡΤΕΛΑ 1: ΜΕΓΑΛΟΙ ΑΡΙΘΜΟΙ */}
+        {/* ΚΑΡΤΕΛΑ 1: ΜΕΓΑΛΟΙ ΑΡΙΘΜΟΙ */}
         {activeTab === 'large_numbers' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -332,7 +332,7 @@ export default function DDimotikou() {
           </div>
         )}
 
-        {/* 🍰 ΚΑΡΤΕΛΑ 3: ΔΕΚΑΔΙΚΟΙ ΑΡΙΘΜΟΙ & ΔΕΚΑΔΙΚΑ ΚΛΑΣΜΑ... */}
+        {/* 🍰 ΚΑΡΤΕΛΑ 3: ΔΕΚΑΔΙΚΟΙ ΑΡΙΘΜΟΙ */}
         {activeTab === 'decimals' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -409,12 +409,9 @@ export default function DDimotikou() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">📏 Μετρώ και Εκφράζω το Μήκος</h2>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Βασική μονάδα μέτρησης του μήκους είναι το <strong>μέτρο (μ. ή m)</strong>.
-                </p>
+                <p className="text-gray-600 text-sm leading-relaxed">Βασική μονάδα μέτρησης του μήκους είναι το μέτρο (μ. ή m).</p>
               </div>
             </div>
-
             <div className="bg-blue-50/60 p-5 rounded-2xl border border-blue-200 max-w-2xl mx-auto space-y-2 shadow-inner">
               <div className="flex justify-between items-center text-xs font-bold text-blue-900">
                 <span>📏 Σύρε με ακρίβεια εκατοστόμετρου (cm):</span>
@@ -422,9 +419,8 @@ export default function DDimotikou() {
               </div>
               <input type="range" min="0" max="200" step="1" value={lengthInCm} onChange={(e) => setLengthInCm(parseInt(e.target.value))} className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-500" />
             </div>
-
             <div className="bg-gray-50 p-6 rounded-3xl border border-gray-200 flex flex-col items-center justify-center shadow-inner">
-              <div className="w-full max-w-3xl bg-white p-4 rounded-xl border border-amber-200 shadow overflow-visible">
+              <div className="w-full max-w-[500px] bg-white p-4 rounded-xl border border-amber-200 shadow overflow-visible">
                 <svg viewBox="0 0 220 40" className="w-full overflow-visible font-mono">
                   <rect x="0" y="15" width="220" height="20" className="fill-yellow-50 stroke-amber-200 stroke-[0.5] rounded-sm" />
                   {lengthInCm > 0 && <rect x="10" y="4" width={(lengthInCm / 200) * 200} height="8" className="fill-amber-400 stroke-orange-500 stroke-[0.5] rounded-t" />}
@@ -443,7 +439,6 @@ export default function DDimotikou() {
                 </svg>
               </div>
             </div>
-
             <div className="bg-slate-900 text-white p-6 rounded-3xl border shadow-xl space-y-4 max-w-4xl mx-auto">
               <div className="grid grid-cols-4 gap-2 text-center">
                 <div className="bg-slate-800 p-2 rounded-xl border border-slate-700"><span className="text-[10px] text-blue-400 font-bold block">μέτρα (m)</span><span className="text-xl md:text-2xl font-mono font-black">{(lengthInCm / 100).toLocaleString('el-GR', { minimumFractionDigits: 2 })}</span></div>
@@ -451,25 +446,32 @@ export default function DDimotikou() {
                 <div className="bg-slate-800 p-2 rounded-xl border border-slate-700"><span className="text-[10px] text-amber-400 font-bold block">εκατοστόμετρα (cm)</span><span className="text-xl md:text-2xl font-mono font-black">{lengthInCm}</span></div>
                 <div className="bg-slate-800 p-2 rounded-xl border border-slate-700"><span className="text-[10px] text-red-400 font-bold block">χιλιοστόμετρα (mm)</span><span className="text-xl md:text-2xl font-mono font-black">{lengthInCm * 10}</span></div>
               </div>
-              <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center text-xs md:text-sm">
-                📢 <strong>Εκφράζουμε το μήκος:</strong> <span className="text-amber-400 font-black">{Math.floor(lengthInCm / 100)} μέτρο</span> και <span className="text-cyan-400 font-black">{lengthInCm % 100} εκατοστόμετρα</span>.
-              </div>
             </div>
           </div>
         )}
 
-        {/* ⚖️ ΚΑΡΤΕΛΑ 5: ΜΕΤΡΗΣΗ ΒΑΡΟΥΣ */}
+        {/* ⚖️ ΚΑΡΤΕΛΑ 5: ΜΕΤΡΗΣΗ ΒΑΡΟΥΣ (🔴 ΔΙΟΡΘΩΘΗΚΕ Η ΣΤΟΙΧΙΣΗ ΚΑΙ ΠΡΟΣΤΕΘΗΚΑΝ ΟΙ ΜΕΤΑΤΡΟΠΕΣ) */}
         {activeTab === 'weight_measurement' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
+            
+            {/* ΘΕΩΡΙΑ */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">⚖️ Μετρώ το Βάρος: Τόνος, Κιλά & Γραμμάρια</h2>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Για να μετρήσουμε πόσο βαρύ είναι ένα σώμα, χρησιμοποιούμε το <strong>Κιλό (kg)</strong>, το <strong>Γραμμάριο (g)</strong> και τον <strong>Τόνο (t)</strong>.
+                  Στη μέτρηση του βάρους, για να μετατρέψουμε μια μονάδα σε μικρότερη ή μεγαλύτερη, <strong>πολλαπλασιάζουμε ή διαιρούμε με το 1.000</strong>.
                 </p>
+              </div>
+              <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white p-5 rounded-2xl shadow-md flex flex-col justify-center">
+                <h3 className="font-bold text-sm text-orange-100 mb-1">🔗 Βασικές Ισότητες</h3>
+                <ul className="text-xs space-y-1 opacity-95 font-mono">
+                  <li>• 1 t = 1.000 kg</li>
+                  <li>• 1 kg = 1.000 g</li>
+                </ul>
               </div>
             </div>
 
+            {/* ΔΙΑΔΡΑΣΤΙΚΟ SLIDER ΒΑΡΟΥΣ */}
             <div className="bg-orange-50/60 p-5 rounded-2xl border border-orange-200 max-w-2xl mx-auto space-y-2 shadow-inner">
               <div className="flex justify-between items-center text-xs font-bold text-orange-900">
                 <span>⚖️ Σύρε για να αλλάξεις το βάρος στη ζυγαριά:</span>
@@ -478,11 +480,54 @@ export default function DDimotikou() {
               <input type="range" min="0" max="2500" step="50" value={weightInG} onChange={(e) => setWeightInG(parseInt(e.target.value))} className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-orange-500" />
             </div>
 
+            {/* 🌟 ΝΕΟ ΠΑΙΔΑΓΩΓΙΚΟ ΔΙΑΓΡΑΜΜΑ: Η ΣΚΑΛΑ ΤΟΥ 1.000 (Φωτίζεται δυναμικά) */}
+            <div className="bg-white p-5 rounded-2xl border border-dashed border-orange-300 max-w-3xl mx-auto space-y-4">
+              <h3 className="text-xs font-black text-orange-800 uppercase tracking-widest text-center">🔄 Πώς κάνουμε τις μετατροπές στο βάρος:</h3>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-8 font-mono font-bold text-sm">
+                
+                {/* Τόνος */}
+                <div className="bg-slate-900 text-white px-4 py-2 rounded-xl text-center shadow min-w-[90px]">
+                  Τόνος (t)
+                </div>
+
+                {/* t -> kg (Πολλαπλασιάζω) */}
+                <div className="flex flex-col items-center text-xs">
+                  <span className="text-emerald-600 font-black animate-pulse">× 1.000 ➡️</span>
+                  <span className="text-slate-400">⬅️ ÷ 1.000</span>
+                </div>
+
+                {/* Κιλό */}
+                <div className="bg-amber-500 text-white px-4 py-2 rounded-xl text-center shadow min-w-[90px]">
+                  Κιλά (kg)
+                </div>
+
+                {/* kg -> g (Πολλαπλασιάζω) */}
+                <div className="flex flex-col items-center text-xs">
+                  <span className="text-emerald-600 font-black animate-pulse">× 1.000 ➡️</span>
+                  <span className="text-slate-400">⬅️ ÷ 1.000</span>
+                </div>
+
+                {/* Γραμμάριο */}
+                <div className="bg-slate-900 text-white px-4 py-2 rounded-xl text-center shadow min-w-[90px]">
+                  Γραμμάρια (g)
+                </div>
+
+              </div>
+              <p className="text-[11px] text-center text-slate-500 font-medium italic">
+                💡 Παράδειγμα: Για να πάμε από τα Κιλά στα Γραμμάρια, προχωράμε δεξιά άρα <strong>πολλαπλασιάζουμε με το 1.000</strong>. Για να πάμε από τα Κιλά στον Τόνο, πάμε αριστερά άρα <strong>διαιρούμε με το 1.000</strong>!
+              </p>
+            </div>
+
+            {/* ΟΠΤΙΚΗ ΨΗΦΙΑΚΗ ΖΥΓΑΡΙΑ ΚΑΙ ΠΙΝΑΚΕΣ */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 max-w-5xl mx-auto items-center">
+              
+              {/* ΑΡΙΣΤΕΡΑ: Η ΨΗΦΙΑΚΗ ΖΥΓΑΡΙΑ (🔴 ΤΙΤΛΟΣ ΚΑΤΩ ΑΠΟ ΤΗ ΖΥΓΑΡΙΑ) */}
               <div className="md:col-span-5 bg-gray-50 p-6 rounded-3xl border flex flex-col items-center justify-center shadow-inner min-h-[260px]">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Η Ψηφιακή Ζυγαριά</span>
-                <div className="w-48 bg-slate-300 h-8 rounded-t-xl border-b-4 border-slate-400 relative flex items-center justify-center">
-                  <div className="absolute -top-12 text-4xl animate-bounce">
+                
+                {/* Η βάση με το αντικείμενο */}
+                <div className="w-48 bg-slate-300 h-8 rounded-t-xl border-b-4 border-slate-400 relative flex items-center justify-center mt-8">
+                  <div className="absolute -top-12 text-5xl transition-all duration-150">
                     {weightInG === 0 && '🪶'}
                     {weightInG > 0 && weightInG <= 500 && '🍓'}
                     {weightInG > 500 && weightInG <= 1000 && '📦'}
@@ -490,14 +535,31 @@ export default function DDimotikou() {
                     {weightInG > 2000 && '🍉'}
                   </div>
                 </div>
-                <div className="w-40 bg-slate-900 text-emerald-400 font-mono font-black text-2xl text-center py-3 rounded-b-xl border-4 border-slate-700 shadow-xl">{weightInG} <span className="text-xs text-emerald-500">g</span></div>
+                
+                {/* Η πράσινη οθόνη */}
+                <div className="w-40 bg-slate-900 text-emerald-400 font-mono font-black text-2xl text-center py-3 rounded-b-xl border-4 border-slate-700 shadow-xl">
+                  {weightInG} <span className="text-xs text-emerald-500">g</span>
+                </div>
+
+                {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Ο τίτλος μπήκε χαμηλά για να μην κρύβεται από τα φρούτα */}
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-4 block">📟 Ψηφιακή Ζυγαριά</span>
               </div>
 
+              {/* ΔΕΞΙΑ: ΠΙΝΑΚΑΣ ΜΕΤΑΤΡΟΠΩΝ */}
               <div className="md:col-span-7 space-y-6">
                 <div className="grid grid-cols-3 gap-3 text-center">
-                  <div className="bg-slate-900 text-white p-3 rounded-2xl border border-slate-800"><span className="text-[10px] text-orange-400 font-bold block uppercase">Τόνοι (t)</span><span className="text-lg font-mono font-black">{(weightInG / 1000000).toFixed(6)}</span></div>
-                  <div className="bg-slate-900 text-white p-3 rounded-2xl border border-slate-800"><span className="text-[10px] text-amber-400 font-bold block uppercase">Κιλά (kg)</span><span className="text-lg font-mono font-black">{(weightInG / 1000).toFixed(3)}</span></div>
-                  <div className="bg-slate-900 text-white p-3 rounded-2xl border border-slate-800"><span className="text-[10px] text-yellow-400 font-bold block uppercase">Γραμμάρια (g)</span><span className="text-lg font-mono font-black">{weightInG}</span></div>
+                  <div className="bg-slate-900 text-white p-3 rounded-2xl border border-slate-800">
+                    <span className="text-[10px] text-orange-400 font-bold block uppercase">Τόνοι (t)</span>
+                    <span className="text-sm md:text-lg font-mono font-black">{(weightInG / 1000000).toFixed(6)}</span>
+                  </div>
+                  <div className="bg-slate-900 text-white p-3 rounded-2xl border border-slate-800">
+                    <span className="text-[10px] text-amber-400 font-bold block uppercase">Κιλά (kg)</span>
+                    <span className="text-sm md:text-lg font-mono font-black">{(weightInG / 1000).toFixed(3)}</span>
+                  </div>
+                  <div className="bg-slate-900 text-white p-3 rounded-2xl border border-slate-800">
+                    <span className="text-[10px] text-yellow-400 font-bold block uppercase">Γραμμάρια (g)</span>
+                    <span className="text-sm md:text-lg font-mono font-black">{weightInG}</span>
+                  </div>
                 </div>
 
                 <div className="bg-white p-4 rounded-xl border shadow-sm">
@@ -507,9 +569,10 @@ export default function DDimotikou() {
                 </div>
 
                 <div className="bg-orange-50 border border-orange-200 p-4 rounded-xl text-xs md:text-sm text-center font-semibold text-orange-950">
-                  📢 <strong>Συμμιγής Αριθμός:</strong> <span className="text-orange-600 font-black">{Math.floor(weightInG / 1000)} κιλά</span> και <span className="text-amber-600 font-black">{weightInG % 1000} γραμμάρια</span>.
+                  📢 <strong>Συμμιγής Αριθμός:</strong> <span className="text-orange-600 font-black">{Math.floor(weightInG / 1000)} κιλά</span>   και <span className="text-amber-600 font-black">{weightInG % 1000} γραμμάρια</span>.
                 </div>
               </div>
+
             </div>
           </div>
         )}
