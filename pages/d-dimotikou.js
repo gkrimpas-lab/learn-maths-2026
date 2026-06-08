@@ -205,12 +205,15 @@ export default function DDimotikou() {
           <button onClick={() => setActiveTab('weight_measurement')} className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'weight_measurement' ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
             ⚖️ 5. Μέτρηση Βάρους
           </button>
+          <button onClick={() => setActiveTab('shortcut_division')} className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'shortcut_division' ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
+            ⚡ 6. Διαίρεση με 10, 100, 1000
+          </button>
         </div>
       </div>
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         
-        {/* ΚΑΡΤΕΛΑ 1: ΜΕΓΑΛΟΙ ΑΡΙΘΜΟΙ */}
+        {/* 💎 ΚΑΡΤΕΛΑ 1: ΜΕΓΑΛΟΙ ΑΡΙΘΜΟΙ */}
         {activeTab === 'large_numbers' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -463,7 +466,6 @@ export default function DDimotikou() {
         {/* ⚖️ ΚΑΡΤΕΛΑ 5: ΜΕΤΡΗΣΗ ΒΑΡΟΥΣ */}
         {activeTab === 'weight_measurement' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
-            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">⚖️ Μετρώ το Βάρος: Τόνος, Κιλά & Γραμμάρια</h2>
@@ -480,7 +482,6 @@ export default function DDimotikou() {
               </div>
             </div>
 
-            {/* ΔΙΑΔΡΑΣΤΙΚΟ SLIDER ΒΑΡΟΥΣ ΜΕ ΑΚΡΙΒΕΙΑ ΓΡΑΜΜΑΡΙΟΥ */}
             <div className="bg-orange-50/60 p-5 rounded-2xl border border-orange-200 max-w-2xl mx-auto space-y-3 shadow-inner">
               <div className="flex justify-between items-center text-xs font-bold text-orange-900">
                 <span>⚖️ Σύρε ή ρύθμισε με ακρίβεια γραμμαρίου (g):</span>
@@ -518,7 +519,6 @@ export default function DDimotikou() {
               </div>
             </div>
 
-            {/* ΠΑΙΔΑΓΩΓΙΚΟ ΔΙΑΓΡΑΜΜΑ: Η ΣΚΑΛΑ ΤΟΥ 1.000 */}
             <div className="bg-white p-5 rounded-2xl border border-dashed border-orange-300 max-w-3xl mx-auto space-y-4">
               <h3 className="text-xs font-black text-orange-800 uppercase tracking-widest text-center">🔄 Πώς κάνουμε τις μετατροπές στο βάρος:</h3>
               
@@ -540,7 +540,6 @@ export default function DDimotikou() {
               </p>
             </div>
 
-            {/* ΟΠΤΙΚΗ ΨΗΦΙΑΚΗ ΖΥΓΑΡΙΑ ΚΑΙ ΠΙΝΑΚΕΣ */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 max-w-5xl mx-auto items-center">
               <div className="md:col-span-5 bg-gray-50 p-6 rounded-3xl border flex flex-col items-center justify-center shadow-inner min-h-[260px]">
                 <div className="w-48 bg-slate-300 h-8 rounded-t-xl border-b-4 border-slate-400 relative flex items-center justify-center mt-8">
@@ -585,6 +584,153 @@ export default function DDimotikou() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ⚡ ΚΑΡΤΕΛΑ 6: ΔΙΑΙREΣΗ ΜΕ 10, 100, 1000 (ΝΕΑ ΠΡΟΣΘΗΚΗ ΜΕ ΓΡΑΦΙΚΟ SVG) */}
+        {activeTab === 'shortcut_division' && (
+          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
+            
+            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-2xl border border-indigo-100 text-center">
+              <h2 className="text-2xl font-black text-indigo-900 mb-1">⚡ Καρτέλα Μαθήματος: Διαίρεση με 10, 100, 1000</h2>
+              <p className="text-sm text-indigo-700 font-medium">Μαθαίνω το πιο γρήγορο και έξυπνο κόλπο των Μαθηματικών!</p>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">💡 Μάθε το Μυστικό!</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Όταν θέλουμε να διαιρέσουμε έναν ακέραιο αριθμό που τελειώνει σε μηδενικά με το <strong>10</strong>, το <strong>100</strong> ή το <strong>1000</strong>, δεν χρειάζεται να κάνουμε κάθετη πράξη.
+              </p>
+              
+              <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-sm text-amber-900 font-semibold shadow-sm">
+                📌 Κανόνας: Διώχνουμε (σβήνουμε) από το τέλος του αριθμού τόσα μηδενικά, όσα έχει ο διαιρέτης μας (το 10, το 100 ή το 1000).
+              </div>
+            </div>
+
+            {/* 🎨 ΓΡΑΦΙΚΟ ΔΙΑΓΡΑΜΜΑ (SVG) ΜΕ ΧΡΩΜΑΤΙΚΗ ΚΩΔΙΚΟΠΟΙΗΣΗ ΚΑΙ STRIKE-THROUGH */}
+            <div className="bg-slate-50 p-4 md:p-6 rounded-3xl border border-slate-200 shadow-inner">
+              <svg viewBox="0 0 540 140" className="w-full h-auto overflow-visible font-sans selection:bg-transparent">
+                {/* 1ο Μπλοκ: Διαίρεση με το 10 */}
+                <g transform="translate(5, 10)">
+                  <rect x="0" y="0" width="165" height="120" rx="12" className="fill-green-50 stroke-green-600 stroke-[1.5] shadow-sm" />
+                  <text x="82" y="22" className="text-[10px] font-black fill-green-900 text-center" textAnchor="middle">Διαίρεση με το 10</text>
+                  <text x="82" y="38" className="text-[7.5px] font-medium fill-green-700" textAnchor="middle">1 μηδενικό &rarr; Διώχνω 1</text>
+                  
+                  <g transform="translate(20, 85)">
+                    <text x="0" y="0" className="text-3xl font-black fill-slate-800 font-mono">5</text>
+                    <text x="18" y="0" className="text-3xl font-black fill-slate-800 font-mono">4</text>
+                    <text x="36" y="0" className="text-3xl font-black fill-slate-300 font-mono">0</text>
+                    <line x1="33" y1="5" x2="51" y2="-25" className="stroke-red-500 stroke-[3.5] stroke-linecap-round opacity-90" />
+                    
+                    <text x="60" y="-8" className="text-xl font-bold fill-slate-400">&rarr;</text>
+                    <text x="88" y="0" className="text-3xl font-black fill-emerald-600 font-mono">54</text>
+                  </g>
+                </g>
+
+                {/* 2ο Μπλοκ: Διαίρεση με το 100 */}
+                <g transform="translate(187, 10)">
+                  <rect x="0" y="0" width="165" height="120" rx="12" className="fill-blue-50 stroke-blue-600 stroke-[1.5] shadow-sm" />
+                  <text x="82" y="22" className="text-[10px] font-black fill-blue-900 text-center" textAnchor="middle">Διαίρεση με το 100</text>
+                  <text x="82" y="38" className="text-[7.5px] font-medium fill-blue-700" textAnchor="middle">2 μηδενικά &rarr; Διώχνω 2</text>
+                  
+                  <g transform="translate(15, 85)">
+                    <text x="0" y="0" className="text-3xl font-black fill-slate-800 font-mono">3</text>
+                    <text x="18" y="0" className="text-3xl font-black fill-slate-800 font-mono">7</text>
+                    <text x="36" y="0" className="text-3xl font-black fill-slate-300 font-mono">0</text>
+                    <text x="54" y="0" className="text-3xl font-black fill-slate-300 font-mono">0</text>
+                    <line x1="32" y1="5" x2="69" y2="-25" className="stroke-red-500 stroke-[3.5] stroke-linecap-round opacity-90" />
+                    
+                    <text x="78" y="-8" className="text-xl font-bold fill-slate-400">&rarr;</text>
+                    <text x="104" y="0" className="text-3xl font-black fill-emerald-600 font-mono">37</text>
+                  </g>
+                </g>
+
+                {/* 3ο Μπλοκ: Διαίρεση με το 1000 */}
+                <g transform="translate(370, 10)">
+                  <rect x="0" y="0" width="165" height="120" rx="12" className="fill-orange-50 stroke-orange-600 stroke-[1.5] shadow-sm" />
+                  <text x="82" y="22" className="text-[10px] font-black fill-orange-900 text-center" textAnchor="middle">Διαίρεση με το 1000</text>
+                  <text x="82" y="38" className="text-[7.5px] font-medium fill-orange-700" textAnchor="middle">3 μηδενικά &rarr; Διώχνω 3</text>
+                  
+                  <g transform="translate(15, 85)">
+                    <text x="0" y="0" className="text-3xl font-black fill-slate-800 font-mono">8</text>
+                    <text x="18" y="0" className="text-3xl font-black fill-slate-300 font-mono">0</text>
+                    <text x="36" y="0" className="text-3xl font-black fill-slate-300 font-mono">0</text>
+                    <text x="54" y="0" className="text-3xl font-black fill-slate-300 font-mono">0</text>
+                    <line x1="14" y1="5" x2="69" y2="-25" className="stroke-red-500 stroke-[3.5] stroke-linecap-round opacity-90" />
+                    
+                    <text x="78" y="-8" className="text-xl font-bold fill-slate-400">&rarr;</text>
+                    <text x="104" y="0" className="text-3xl font-black fill-emerald-600 font-mono">8</text>
+                  </g>
+                </g>
+              </svg>
+            </div>
+
+            {/* ΨΗΦΙΑΚΕΣ ΑΣΚΗΣΕΙΣ ΕΜΠΕΔΩΣΗΣ */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-black text-slate-900 border-b-2 border-slate-100 pb-2 flex items-center gap-2">✍️ Παίξε και Εξασκήσου!</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* 1η Ομάδα */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 space-y-4 shadow-sm">
+                  <h4 className="font-bold text-sm text-green-800 bg-green-50 px-3 py-1 rounded-lg inline-block">1. Διαιρέσεις με το 10</h4>
+                  <div className="space-y-3 font-mono text-base font-bold text-slate-700">
+                    <div className="flex items-center justify-between"><span>90 ÷ 10 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                    <div className="flex items-center justify-between"><span>240 ÷ 10 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                    <div className="flex items-center justify-between"><span>1.500 ÷ 10 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                    <div className="flex items-center justify-between"><span>8.920 ÷ 10 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                  </div>
+                </div>
+
+                {/* 2η Ομάδα */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 space-y-4 shadow-sm">
+                  <h4 className="font-bold text-sm text-blue-800 bg-blue-50 px-3 py-1 rounded-lg inline-block">2. Διαιρέσεις με το 100</h4>
+                  <div className="space-y-3 font-mono text-base font-bold text-slate-700">
+                    <div className="flex items-center justify-between"><span>600 ÷ 100 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                    <div className="flex items-center justify-between"><span>1.400 ÷ 100 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                    <div className="flex items-center justify-between"><span>5.000 ÷ 100 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                    <div className="flex items-center justify-between"><span>23.800 ÷ 100 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                  </div>
+                </div>
+
+                {/* 3η Ομάδα */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 space-y-4 shadow-sm">
+                  <h4 className="font-bold text-sm text-orange-800 bg-orange-50 px-3 py-1 rounded-lg inline-block">3. Διαιρέσεις με το 1000</h4>
+                  <div className="space-y-3 font-mono text-base font-bold text-slate-700">
+                    <div className="flex items-center justify-between"><span>4.000 ÷ 1000 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                    <div className="flex items-center justify-between"><span>9.000 ÷ 1000 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                    <div className="flex items-center justify-between"><span>15.000 ÷ 1000 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                    <div className="flex items-center justify-between"><span>70.000 ÷ 1000 =</span> <input type="number" className="w-20 border rounded-lg p-1 text-center font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="?" /></div>
+                  </div>
+                </div>
+
+                {/* 4η Ομάδα: Παιχνίδι Σκέψης */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 space-y-4 shadow-sm">
+                  <h4 className="font-bold text-sm text-indigo-800 bg-indigo-50 px-3 py-1 rounded-lg inline-block">4. Βρες τον αριθμό που λείπει</h4>
+                  <div className="space-y-3 font-mono text-sm font-bold text-slate-700">
+                    <div className="flex items-center justify-between"><span>800 ÷ <input type="number" className="w-16 border rounded p-0.5 text-center text-indigo-600 border-indigo-200" placeholder="..." /> = 8</span></div>
+                    <div className="flex items-center justify-between"><span>3.200 ÷ <input type="number" className="w-16 border rounded p-0.5 text-center text-indigo-600 border-indigo-200" placeholder="..." /> = 320</span></div>
+                    <div className="flex items-center justify-between"><span>6.000 ÷ <input type="number" className="w-16 border rounded p-0.5 text-center text-indigo-600 border-indigo-200" placeholder="..." /> = 6</span></div>
+                    <div className="flex items-center justify-between"><span><input type="number" className="w-16 border rounded p-0.5 text-center text-indigo-600 border-indigo-200" placeholder="..." /> ÷ 100 = 14</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ΠΡΟΒΛΗΜΑΤΑ ΓΙΑ ΔΥΝΑΤΟΥΣ ΛΥΤΕΣ */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-black text-slate-900 border-b-2 border-slate-100 pb-2 flex items-center gap-2">🎯 Προβλήματα</h3>
+              
+              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-3 shadow-inner">
+                <p className="text-sm text-slate-700 leading-relaxed"><strong>Πρόβλημα 1:</strong> Ένας μελισσοκόμος μάζεψε <strong>5.000 γραμμάρια</strong> μέλι και θέλει να το μοιράσει εξίσου σε <strong>10 ίδια γυάλινα βαζάκια</strong>. Πόσα γραμμάρια μέλι θα βάλει σε κάθε βαζάκι;</p>
+                <textarea rows="2" className="w-full border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium" placeholder="Γράψε τη λύση σου εδώ..."></textarea>
+              </div>
+
+              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-3 shadow-inner">
+                <p className="text-sm text-slate-700 leading-relaxed"><strong>Πρόβλημα 2:</strong> Ένα εργοστάσιο παιχνιδιών συσκεύασε <strong>2.400 επιτραπέζια παιχνίδια</strong> σε <strong>100 μεγάλα χαρτοκιβώτια</strong>. Αν κάθε κουτί έχει τον ίδιο αριθμό παιχνιδιών, πόσα παιχνίδια έχει το καθένα;</p>
+                <textarea rows="2" className="w-full border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium" placeholder="Γράψε τη λύση σου εδώ..."></textarea>
+              </div>
+            </div>
+
           </div>
         )}
 
