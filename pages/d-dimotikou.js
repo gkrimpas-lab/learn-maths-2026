@@ -429,7 +429,7 @@ export default function DDimotikou() {
       </div>
     </div>
   )}
-</div>
+
       </main>
 
       <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm mt-12">
