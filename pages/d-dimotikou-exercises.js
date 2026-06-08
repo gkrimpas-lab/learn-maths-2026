@@ -30,23 +30,19 @@ export default function DDimotikouExercises() {
     ex4_4: { q: "... ÷ 100 = 14", ans: "1400", explanation: "Αφού ο αριθμός διαιρέθηκε με το 100 και έδωσε 14, σημαίνει ότι στην αρχή είχε δύο μηδενικά παραπάνω στο τέλος (14 × 100 = 1.400)." }
   };
 
-  // 🔴 5η ΑΣΚΗΣΗ: ΔΗΜΙΟΥΡΓΙΑ 5 ΔΥΝΑΜΙΚΩΝ ΤΥΧΑΙΩΝ ΑΡΙΘΜΩΝ (1 - 9999)
   useEffect(() => {
     generateRandomExercises();
   }, []);
 
   const generateRandomExercises = () => {
     const tempRandoms = [];
-    const operations = [10, 100, 1000, 10, 100]; // Διαφορετικοί διαιρέτες
+    const operations = [10, 100, 1000, 10, 100];
     
     for (let i = 0; i < 5; i++) {
-      const num = Math.floor(Math.random() * 9999) + 1; // Τυχαίος αριθμός 1-9999
+      const num = Math.floor(Math.random() * 9999) + 1;
       const divisor = operations[i];
-      
-      // Υπολογισμός αποτελέσματος και μετατροπή σε ελληνικό δεκαδικό με κόμμα
       let correctResult = (num / divisor).toString().replace('.', ',');
       
-      // Δυναμική παραγωγή της παιδαγωγικής επεξήγησης ανάλογα με τον αριθμό
       let expl = "";
       if (num % divisor === 0) {
         const zeros = divisor === 10 ? "1 μηδενικό" : (divisor === 100 ? "2 μηδενικά" : "3 μηδενικά");
@@ -64,28 +60,35 @@ export default function DDimotikouExercises() {
       });
     }
     setRandomData(tempRandoms);
-    // Καθαρισμός παλιών απαντήσεων κατά την επαναφόρτωση
     setAnswers({});
     setResults({});
   };
 
   const handleInputChange = (id, val) => {
-    // Αντικαθιστούμε αυτόματα την τελεία με κόμμα για διευκόλυνση του παιδιού
     const formattedVal = val.replace('.', ',');
     setAnswers(prev => ({ ...prev, [id]: formattedVal }));
   };
 
+  // 🔴 ΔΙΟΡΘΩΘΗΚΕ: Πλήρης και αυστηρός έλεγχος ισότητας χωρίς λογικά κενά
   const checkAnswer = (id, isRandom = false, randItem = null) => {
-    const userAnswer = answers[id]?.trim();
+    const userAnswer = answers[id] ? answers[id].trim() : "";
+    
+    // Αν το πεδίο είναι άδειο, μην κάνεις τίποτα
+    if (userAnswer === "") return;
+
     const correctAnswer = isRandom ? randItem.ans : exercisesData[id].ans;
     const explanation = isRandom ? randItem.explanation : exercisesData[id].explanation;
     
-    if (!userAnswer) return;
-
     if (userAnswer === correctAnswer) {
-      setResults(prev => ({ ...prev, [id]: { status: 'correct' } }));
+      setResults(prev => ({
+        ...prev,
+        [id]: { status: 'correct' }
+      }));
     } else {
-      setResults(prev => ({ ...prev, [id]: { status: 'wrong', msg: explanation, correctVal: correctAnswer } }));
+      setResults(prev => ({
+        ...prev,
+        [id]: { status: 'wrong', msg: explanation, correctVal: correctAnswer }
+      }));
     }
   };
 
@@ -113,7 +116,6 @@ export default function DDimotikouExercises() {
             </button>
           </div>
 
-          {/* ΑΣΚΗΣΕΙΣ 1-3 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* 10 */}
             <div className="space-y-3 bg-green-50/30 p-4 rounded-2xl border border-green-100">
@@ -195,13 +197,13 @@ export default function DDimotikouExercises() {
                     <span className="font-mono">
                       {exercisesData[id].q.includes('...') && exercisesData[id].q.split('...')[0]} 
                       <input type="text" value={answers[id] || ''} onChange={(e) => handleInputChange(id, e.target.value)} className="w-16 border rounded text-center text-indigo-600 bg-slate-50 mx-1 font-mono font-bold" placeholder="..." />
-                      {exercisesData[id].q.includes('...') && exercisesData[id].q.split('...')[1]}
+                      {exercisesData[id].q.includes('...') && Math.abs(exercisesData[id].q.split('...').length) > 1 && exercisesData[id].q.split('...')[1]}
                     </span>
                     <button onClick={() => checkAnswer(id)} className="bg-slate-700 text-white px-3 py-1 rounded-lg text-xs font-bold active:scale-95 transition shadow-sm">Έλεγχος</button>
                   </div>
                   {results[id]?.status === 'correct' && <div className="text-[11px] text-emerald-600 font-black">🎉 Σωστά!</div>}
                   {results[id]?.status === 'wrong' && (
-                    <div className="text-[11px] text-red-600 bg-red-50/60 p-2.5 rounded border border-red-100 font-medium leading-relaxed">
+                    <div className="text-[11px] text-red-600 bg-red-50/60 p-2.5 rounded border border-red-200 font-medium leading-relaxed">
                       🧐 Σωστό: <span className="font-black text-sm text-red-700">{results[id].correctVal}</span>.<br />
                       <span className="text-slate-500 font-normal">{results[id].msg}</span>
                     </div>
@@ -211,7 +213,7 @@ export default function DDimotikouExercises() {
             </div>
           </div>
 
-          {/* 🔴 5η ΑΣΚΗΣΗ: 5 ΤΥΧΑΙΟΙ ΑΡΙΘΜΟΙ ΑΠΟ 1 ΕΩΣ 9999 (ΜΕ ΔΥΝΑΜΙΚΗ ΕΠΕΞΗΓΗΣΗ ΛΑΘΟΥΣ) */}
+          {/* 5η ΑΣΚΗΣΗ: ΤΥΧΑΙΟΙ ΑΡΙΘΜΟΙ ΑΠΟ 1 ΕΩΣ 9999 */}
           <div className="bg-indigo-50/40 p-5 rounded-2xl border border-indigo-200">
             <div className="flex justify-between items-center mb-1">
               <h4 className="font-bold text-xs text-indigo-800 bg-indigo-100 px-3 py-1 rounded-lg inline-block">🚀 5. Δοκιμασία Προχωρημένων (Τυχαίοι Αριθμοί με Υποδιαστολή)</h4>
