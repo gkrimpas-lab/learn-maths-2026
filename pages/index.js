@@ -85,41 +85,43 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-2 text-blue-600">🎒 Μαθηματικά Δημοτικού</h2>
           <p className="text-center text-gray-500 mb-10">Χτίζουμε γερές βάσεις για το μέλλον</p>
 
-
-        {/* Δ' ΔΗΜΟΤΙΚΟΥ */}
-<div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 duration-300">
-  <div className="bg-teal-500 py-4 text-center text-white font-bold text-xl">Δ' Δημοτικού ⭐</div>
-  <div className="p-6 text-center">
-    <p className="text-gray-800 font-semibold mb-2 text-sm">Ενότητα: Μεγάλοι Αριθμοί</p>
-    <p className="text-gray-500 mb-6 text-xs">Εξερευνήστε τις κλάσεις και την αξία θέσης των ψηφίων με τον διαδραστικό άβακα!</p>
-    <Link href="/d-dimotikou" className="block w-full text-center bg-teal-500 text-white py-2 rounded-lg font-bold hover:bg-teal-600 transition shadow-md text-sm">
-      🚀 Είσοδος στην Τάξη
-    </Link>
-  </div>
-</div>
-
-{/* Ε' ΔΗΜΟΤΙΚΟΥ */}
-<div className="bg-white rounded-2xl overflow-hidden shadow-xl border-2 border-cyan-400 transform scale-105 duration-300">
-  <div className="bg-cyan-500 py-4 text-center text-white font-bold text-xl">Ε' Δημοτικού ⭐</div>
-  <div className="p-6 text-center">
-    <p className="text-gray-800 font-semibold mb-2 text-sm">Διαδραστικές Ενότητες</p>
-    <p className="text-gray-500 mb-6 text-xs">Κλάσματα, Απλοποίηση, ΕΚΠ, ΜΚΔ, Ποσοστά, Μέση Τιμή κ.α. με προσομοιωτές!</p>
-    <Link href="/e-dimotikou" className="block w-full text-center bg-cyan-500 text-white py-2 rounded-lg font-bold hover:bg-cyan-600 transition shadow-md">
-      🚀 Είσοδος στην Τάξη
-    </Link>
-  </div>
-</div>
-
-        
-
-            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200">
-              <div className="bg-blue-500 py-4 text-center text-white font-bold text-xl">ΣΤ' Δημοτικού</div>
+          {/* GRID ΤΡΙΩΝ ΣΤΗΛΩΝ ΓΙΑ ΤΟ ΔΗΜΟΤΙΚΟ (Διορθώθηκε η στοίχιση) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* Δ' ΔΗΜΟΤΙΚΟΥ */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 duration-300">
+              <div className="bg-teal-500 py-4 text-center text-white font-bold text-xl">Δ' Δημοτικού ⭐</div>
               <div className="p-6 text-center">
-                <p className="text-gray-600 mb-6 text-sm">Ανάλογα ποσά, εξισώσεις, κλίμακες & προετοιμασία για το Γυμνάσιο.</p>
-                <button className="w-full bg-blue-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">Σύντομα Διαθέσιμο</button>
+                <p className="text-gray-800 font-semibold mb-2 text-sm">Ενότητα: Μεγάλοι Αριθμοί</p>
+                <p className="text-gray-500 mb-6 text-xs">Εξερευνήστε τις κλάσεις και την αξία θέσης των ψηφίων με τον διαδραστικό άβακα!</p>
+                <Link href="/d-dimotikou" className="block w-full text-center bg-teal-500 text-white py-2 rounded-lg font-bold hover:bg-teal-600 transition shadow-md text-sm">
+                  🚀 Είσοδος στην Τάξη
+                </Link>
               </div>
             </div>
-          </div>
+
+            {/* Ε' ΔΗΜΟΤΙΚΟΥ */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-xl border-2 border-cyan-400 transform scale-105 duration-300">
+              <div className="bg-cyan-500 py-4 text-center text-white font-bold text-xl">Ε' Δημοτικού ⭐</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-800 font-semibold mb-2 text-sm">Διαδραστικές Ενότητες</p>
+                <p className="text-gray-500 mb-6 text-xs">Κλάσματα, Απλοποίηση, ΕΚΠ, ΜΚΔ, Ποσοστά, Μέση Τιμή κ.α. με προσομοιωτές!</p>
+                <Link href="/e-dimotikou" className="block w-full text-center bg-cyan-500 text-white py-2 rounded-lg font-bold hover:bg-cyan-600 transition shadow-md text-sm">
+                  🚀 Είσοδος στην Τάξη
+                </Link>
+              </div>
+            </div>
+
+            {/* ΣΤ' ΔΗΜΟΤΙΚΟΥ */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 duration-300">
+              <div className="bg-blue-500 py-4 text-center text-white font-bold text-xl">Στ' Δημοτικού</div>
+              <div className="p-6 text-center">
+                <p className="text-gray-600 mb-6 text-sm">Ανάλογα ποσά, εξισώσεις, κλίμακες & προετοιμασία για το Γυμνάσιο.</p>
+                <button className="w-full bg-blue-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed text-sm">Σύντομα Διαθέσιμο</button>
+              </div>
+            </div>
+
+          </div> {/* Τέλος του Grid Δημοτικού */}
         </div>
       </section>
 
@@ -128,38 +130,42 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-2 text-indigo-600">📐 Μαθηματικά Γυμνασίου</h2>
           <p className="text-center text-gray-500 mb-10">Εμβαθύνουμε στην άλγεβρα και τη γεωμετρία</p>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Α' ΓΥΜΝΑΣΙΟΥ */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200">
               <div className="bg-indigo-500 py-4 text-center text-white font-bold text-xl">Α' Γυμνασίου</div>
               <div className="p-6 text-center">
                 <p className="text-gray-600 mb-6 text-sm">Κλάσματα, Εξισώσεις, Ποσοστά & βασική Γεωμετρία.</p>
-                <button className="w-full bg-indigo-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">Σύντομα Διαθέσιμο</button>
+                <button className="w-full bg-indigo-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed text-sm">Σύντομα Διαθέσιμο</button>
               </div>
             </div>
             
-            {/* Β' ΓΥΜΝΑΣΙΟΥ - ΣΥΝΔΕΘΗΚΕ ΚΑΙ ΕΙΝΑΙ ΕΝΕΡΓΗ */}
+            {/* Β' ΓΥΜΝΑΣΙΟΥ */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-xl border-2 border-indigo-400 transform scale-105 duration-300">
               <div className="bg-indigo-600 py-4 text-center text-white font-bold text-xl">Β' Γυμνασίου ⭐</div>
               <div className="p-6 text-center">
                 <p className="text-gray-800 font-semibold mb-2 text-sm">Ενότητα: Συναρτήσεις</p>
                 <p className="text-gray-500 mb-6 text-xs">Μελέτησε τη συνάρτηση y = αx και δες live τη γραφική παράσταση στο πλέγμα!</p>
-                <Link href="/b-gymnasiou" className="block w-full text-center bg-indigo-600 text-white py-2 rounded-lg font-bold hover:bg-indigo-700 transition shadow-md">
+                <Link href="/b-gymnasiou" className="block w-full text-center bg-indigo-600 text-white py-2 rounded-lg font-bold hover:bg-indigo-700 transition shadow-md text-sm">
                   🚀 Είσοδος στην Τάξη
                 </Link>
               </div>
             </div>
 
+            {/* Γ' ΓΥΜΝΑΣΙΟΥ */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200">
               <div className="bg-purple-500 py-4 text-center text-white font-bold text-xl">Γ' Γυμνασίου</div>
               <div className="p-6 text-center">
                 <p className="text-gray-600 mb-6 text-sm">Αλγεβρικές Παραστάσεις, Μονώνυμα, Ταυτότητες & Ομοιότητα.</p>
-                <button className="w-full bg-purple-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed">Σύντομα Διαθέσιμο</button>
+                <button className="w-full bg-purple-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed text-sm">Σύντομα Διαθέσιμο</button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* FOOTER */}
       <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm">
         <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές μας.</p>
       </footer>
