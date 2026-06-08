@@ -391,6 +391,7 @@ export default function DDimotikou() {
                 </svg>
               </div>
             </div>
+          </div>
 
 
       </main>
