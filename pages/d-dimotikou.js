@@ -78,9 +78,9 @@ export default function DDimotikou() {
   const [decimalMode, setDecimalMode] = useState('tenths'); 
   const [decimalValue, setDecimalValue] = useState(4); 
 
-  // 4η Καρτέλα: Μέτρηση Μήκους (ΝΕΟ STATE)
-  // Αποθηκεύουμε την τιμή σε εκατοστά (cm) για ευκολία στους υπολογισμούς (π.χ. από 0 έως 200 cm)
-  const [lengthInCm, setLengthInCm] = useState(120);
+  // 4η Καρτέλα: Μέτρηση Μήκους
+  // lengthInCm αποθηκεύεται σε εκατοστόμετρα. Τώρα με step=1 για μέγιστη ακρίβεια στην κίνηση.
+  const [lengthInCm, setLengthInCm] = useState(125);
 
   // Υπολογισμοί Διαίρεσης
   const divStr = (dividend || 144).toString().padStart(3, '0'); 
@@ -175,7 +175,7 @@ export default function DDimotikou() {
         <p className="text-teal-100 opacity-90 font-medium">Εξερεύνηση των Αριθμών & των Σχημάτων</p>
       </header>
 
-      {/* ΚΑΡΤΕΛΕΣ (ΤΩΡΑ ΜΕ 4 ΚΑΡΤΕΛΕΣ) */}
+      {/* ΚΑΡΤΕΛΕΣ */}
       <div className="max-w-6xl mx-auto px-4 mt-8">
         <div className="flex flex-wrap bg-white p-2 rounded-xl shadow-sm gap-2 w-full lg:w-max border">
           <button onClick={() => setActiveTab('large_numbers')} className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'large_numbers' ? 'bg-teal-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
@@ -371,7 +371,7 @@ export default function DDimotikou() {
           </div>
         )}
 
-        {/* 📏 ΚΑΡΤΕΛΑ 4: ΜΕΤΡΩ ΚΑΙ ΕΚΦΡΑΖΩ ΤΟ ΜΗΚΟΣ (NEW FEATURE) */}
+        {/* 📏 ΚΑΡΤΕΛΑ 4: ΜΕΤΡΩ ΚΑΙ ΕΚΦΡΑΖΩ ΤΟ ΜΗΚΟΣ */}
         {activeTab === 'length_measurement' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             
@@ -380,58 +380,57 @@ export default function DDimotikou() {
               <div className="lg:col-span-2 space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">📏 Μετρώ και Εκφράζω το Μήκος</h2>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Βασική μονάδα μέτρησης του μήκους είναι το <strong>Μέτρο (μ. ή m)</strong>. Για να μετρήσουμε μικρότερα μήκη, χωρίζουμε το μέτρο σε 10, 100 ή 1.000 ίσα μέρη (Δεκάμετρα, Εκατοστά, Χιλιοστά).
+                  Βασική μονάδα μέτρησης του μήκους είναι το <strong>μέτρο (μ. ή m)</strong>. Για να μετρήσουμε μικρότερα μήκη με μεγαλύτερη ακρίβεια, χωρίζουμε το μέτρο σε 10, 100 ή 1.000 ίσα μέρη: τα <strong>δεκατόμετρα</strong>, τα <strong>εκατοστόμετρα</strong> και τα <strong>χιλιοστόμετρα</strong>.
                 </p>
                 <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-xs text-blue-900 leading-relaxed">
-                  <p>💡 <strong>Θυμήσου τον κανόνα:</strong> Όταν αλλάζουμε μονάδα μέτρησης και πάμε σε <strong>μικρότερη</strong> (δεξιά), πολλαπλασιάζουμε. Όταν πάμε σε <strong>μεγαλύτερη</strong> (αριστερά), διαιρούμε!</p>
+                  <p>💡 <strong>Θυμήσου τον κανόνα:</strong> Όταν αλλάζουμε μονάδα μέτρησης και πάμε σε <strong>μικρότερη</strong> μονάδα (προς τα δεξιά), πολλαπλασιάζουμε με το 10, το 100 ή το 1.000. Όταν πάμε σε <strong>μεγαλύτερη</strong> (προς τα αριστερά), διαιρούμε αντίστοιχα!</p>
                 </div>
               </div>
               <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-5 rounded-2xl shadow-md flex flex-col justify-center">
-                <h3 className="font-bold text-sm text-blue-100 mb-1">🔗 Σχέσεις Μονάδων</h3>
+                <h3 className="font-bold text-sm text-blue-100 mb-1">🔗 Σχέσεις Μονάδων Μήκους</h3>
                 <ul className="text-xs space-y-1 opacity-95 font-mono">
-                  <li>• 1 m = 10 dm (δεκάμετρα)</li>
-                  <li>• 1 m = 100 cm (εκατοστά)</li>
-                  <li>• 1 m = 1.000 am (χιλιοστά)</li>
+                  <li>• 1 m = 10 dm (δεκατόμετρα)</li>
+                  <li>• 1 m = 100 cm (εκατοστόμετρα)</li>
+                  <li>• 1 m = 1.000 mm (χιλιοστόμετρα)</li>
                 </ul>
               </div>
             </div>
 
-            {/* ΔΙΑΔΡΑΣΤΙΚΟ SLIDER ΜΗΚΟΥΣ */}
+            {/* ΔΙΑΔΡΑΣΤΙΚΟ SLIDER ΜΗΚΟΥΣ ΜΕ ΥΨΗΛΗ ΑΚΡΙΒΕΙΑ (step="1") */}
             <div className="bg-blue-50/60 p-5 rounded-2xl border border-blue-200 max-w-2xl mx-auto space-y-2 shadow-inner">
               <div className="flex justify-between items-center text-xs font-bold text-blue-900">
-                <span>📏 Άλλαξε το μήκος για να δεις τις μετατροπές:</span>
+                <span>📏 Σύρε με ακρίβεια εκατοστόμετρου (cm):</span>
                 <span className="font-mono bg-white px-2 py-0.5 border rounded-lg text-blue-600 text-sm">{lengthInCm} cm</span>
               </div>
               <input 
-                type="range" min="0" max="200" step="10" value={lengthInCm}
+                type="range" min="0" max="200" step="1" value={lengthInCm}
                 onChange={(e) => setLengthInCm(parseInt(e.target.value))}
                 className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
             </div>
 
-            {/* ΔΙΑΔΡΑΣΤΙΚΟΣ ΧΑΡΑΚΑΣ (SVG) */}
+            {/* ΨΗΦΙΑΚΟΣ ΧΑΡΑΚΑΣ */}
             <div className="bg-gray-50 p-6 rounded-3xl border border-gray-200 flex flex-col items-center justify-center shadow-inner">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6">Ο Ψηφιακός σου Χάρακας (έως 2 Μέτρα)</span>
               
               <div className="w-full max-w-3xl bg-white p-6 rounded-xl border border-amber-200 shadow relative overflow-visible">
-                {/* Η κορδέλα/αντικείμενο που μετράμε */}
+                {/* Αντικείμενο Μέτρησης */}
                 <div 
                   style={{ width: `${(lengthInCm / 200) * 100}%` }}
                   className="h-6 bg-gradient-to-r from-amber-400 to-orange-400 rounded-t-sm transition-all duration-150 border-b-2 border-orange-500 opacity-90 relative mb-1"
                 >
                   {lengthInCm > 0 && (
                     <span className="absolute right-2 top-0.5 text-[10px] font-black text-orange-950 font-mono">
-                      {(lengthInCm / 100).toFixed(1)} m
+                      {(lengthInCm / 100).toFixed(2)} m
                     </span>
                   )}
                 </div>
 
-                {/* Ο Χάρακας */}
+                {/* Σχέδιο SVG Χάρακα */}
                 <svg viewBox="0 0 220 30" className="w-full overflow-visible font-mono">
-                  {/* Βάση Χάρακα */}
                   <rect x="0" y="0" width="220" height="20" className="fill-yellow-50 stroke-amber-200 stroke-[0.5] rounded-b-sm" />
                   
-                  {/* Χαραγές ανά 10cm (Δεκάμετρα) */}
+                  {/* Χαραγές */}
                   {Array.from({ length: 21 }).map((_, i) => {
                     const xPos = 10 + i * 10;
                     const isMeter = i % 10 === 0;
@@ -461,36 +460,35 @@ export default function DDimotikou() {
               </div>
             </div>
 
-            {/* ΠΙΝΑΚΑΣ ΜΕΤΑΤΡΟΠΩΝ ΚΑΙ ΕΚΦΡΑΣΗΣ */}
+            {/* ΠΙΝΑΚΑΣ ΜΕΤΑΤΡΟΠΩΝ */}
             <div className="bg-slate-900 text-white p-6 rounded-3xl border shadow-xl space-y-4 max-w-4xl mx-auto">
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">📊 Πίνακας Συγχρονισμένων Μετατροπών</h3>
               
               <div className="grid grid-cols-4 gap-2 text-center">
-                {/* Επικεφαλίδες Μονάδων */}
                 <div className="bg-slate-800 p-2 rounded-xl border border-slate-700">
-                  <span className="text-[10px] text-blue-400 font-bold block">Μέτρα (m)</span>
-                  <span className="text-2xl font-mono font-black text-white">{(lengthInCm / 100).toFixed(2)}</span>
+                  <span className="text-[10px] text-blue-400 font-bold block">μέτρα (m)</span>
+                  <span className="text-xl md:text-2xl font-mono font-black text-white">{(lengthInCm / 100).toLocaleString('el-GR', { minimumFractionDigits: 2 })}</span>
                 </div>
                 
                 <div className="bg-slate-800 p-2 rounded-xl border border-slate-700">
-                  <span className="text-[10px] text-emerald-400 font-bold block">Δεκάμετρα (dm)</span>
-                  <span className="text-2xl font-mono font-black text-white">{(lengthInCm / 10).toFixed(1)}</span>
+                  <span className="text-[10px] text-emerald-400 font-bold block">δεκατόμετρα (dm)</span>
+                  <span className="text-xl md:text-2xl font-mono font-black text-white">{(lengthInCm / 10).toLocaleString('el-GR', { minimumFractionDigits: 1 })}</span>
                 </div>
 
                 <div className="bg-slate-800 p-2 rounded-xl border border-slate-700">
-                  <span className="text-[10px] text-amber-400 font-bold block">Εκατοστά (cm)</span>
-                  <span className="text-2xl font-mono font-black text-white">{lengthInCm}</span>
+                  <span className="text-[10px] text-amber-400 font-bold block">εκατοστόμετρα (cm)</span>
+                  <span className="text-xl md:text-2xl font-mono font-black text-white">{lengthInCm}</span>
                 </div>
 
                 <div className="bg-slate-800 p-2 rounded-xl border border-slate-700">
-                  <span className="text-[10px] text-red-400 font-bold block">Χιλιοστά (mm)</span>
-                  <span className="text-2xl font-mono font-black text-white">{lengthInCm * 10}</span>
+                  <span className="text-[10px] text-red-400 font-bold block">χιλιοστόμετρα (mm)</span>
+                  <span className="text-xl md:text-2xl font-mono font-black text-white">{lengthInCm * 10}</span>
                 </div>
               </div>
 
               {/* Φυσική Έκφραση (Συμμιγής Αριθμός) */}
               <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center text-xs md:text-sm">
-                📢 Εκφράζουμε το μήκος: <span className="text-amber-400 font-black">{Math.floor(lengthInCm / 100)} Μέτρο</span> και <span className="text-cyan-400 font-black">{lengthInCm % 100} Εκατοστά</span>.
+                📢 <strong>Εκφράζουμε το μήκος:</strong> <span className="text-amber-400 font-black">{Math.floor(lengthInCm / 100)} μέτρο</span> και <span className="text-cyan-400 font-black">{lengthInCm % 100} εκατοστόμετρα</span>.
               </div>
             </div>
 
