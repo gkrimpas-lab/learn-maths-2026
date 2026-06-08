@@ -68,10 +68,8 @@ export default function DDimotikou() {
   // 2η Καρτέλα: Δυναμική Κάθετη Διαίρεση
   const [inputDividend, setInputDividend] = useState('144');
   const [inputDivisor, setInputDivisor] = useState('4');
-  
   const [dividend, setDividend] = useState(144);
   const [divisor, setDivisor] = useState(4);
-  
   const [divTimeline, setDivTimeline] = useState(0);
   const [isDivPlaying, setIsDivPlaying] = useState(false);
   const divIntervalRef = useRef(null);
@@ -80,9 +78,11 @@ export default function DDimotikou() {
   const [decimalMode, setDecimalMode] = useState('tenths'); 
   const [decimalValue, setDecimalValue] = useState(4); 
 
-  // --------------------------------------------------------------------------
-  // ΑΣΦΑΛΗΣ ΥΠΟΛΟΓΙΣΜΟΣ ΨΗΦΙΩΝ ΔΙΑΙΡΕΣΗΣ
-  // --------------------------------------------------------------------------
+  // 4η Καρτέλα: Μέτρηση Μήκους (ΝΕΟ STATE)
+  // Αποθηκεύουμε την τιμή σε εκατοστά (cm) για ευκολία στους υπολογισμούς (π.χ. από 0 έως 200 cm)
+  const [lengthInCm, setLengthInCm] = useState(120);
+
+  // Υπολογισμοί Διαίρεσης
   const divStr = (dividend || 144).toString().padStart(3, '0'); 
   const e_init = divStr[0]; const d_init = divStr[1]; const m_init = divStr[2];
   const num_e = parseInt(e_init) || 0; const num_d = parseInt(d_init) || 0; const num_m = parseInt(m_init) || 0;
@@ -175,7 +175,7 @@ export default function DDimotikou() {
         <p className="text-teal-100 opacity-90 font-medium">Εξερεύνηση των Αριθμών & των Σχημάτων</p>
       </header>
 
-      {/* ΚΑΡΤΕΛΕΣ */}
+      {/* ΚΑΡΤΕΛΕΣ (ΤΩΡΑ ΜΕ 4 ΚΑΡΤΕΛΕΣ) */}
       <div className="max-w-6xl mx-auto px-4 mt-8">
         <div className="flex flex-wrap bg-white p-2 rounded-xl shadow-sm gap-2 w-full lg:w-max border">
           <button onClick={() => setActiveTab('large_numbers')} className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'large_numbers' ? 'bg-teal-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
@@ -186,6 +186,9 @@ export default function DDimotikou() {
           </button>
           <button onClick={() => setActiveTab('decimals')} className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'decimals' ? 'bg-amber-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
             🍰 3. Δεκαδικοί & Κλάσματα
+          </button>
+          <button onClick={() => setActiveTab('length_measurement')} className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'length_measurement' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}>
+            📏 4. Μέτρηση Μήκους
           </button>
         </div>
       </div>
@@ -225,31 +228,19 @@ export default function DDimotikou() {
                       </div>
                     ))}
                   </div>
-                  <div className="grid grid-cols-6 gap-4 text-center mt-4">
-                    {['EX', 'DX', 'X', 'E', 'D', 'M'].map((col) => (
-                      <div key={col} className="flex flex-col items-center gap-1 bg-white p-2 rounded-xl border shadow-sm">
-                        <div className="text-sm font-black font-mono text-slate-700">{disks[col]}</div>
-                        <div className="flex gap-1">
-                          <button onClick={() => updateDigits(col, -1)} className="bg-slate-100 font-bold px-2 py-0.5 rounded text-xs">-</button>
-                          <button onClick={() => updateDigits(col, 1)} className="bg-slate-100 font-bold px-2 py-0.5 rounded text-xs">+</button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ΚΑΡΤΕΛΑ 2: ΔΥΝΑΜΙΚΗ ΚΑΘΕΤΗ ΔΙΑΙΡΕΣΗ (ΔΙΟΡΘΩΘΗΚΕ Η ΣΤΟΙΧΙΣΗ) */}
+        {/* ΚΑΡΤΕΛΑ 2: ΚΑΘΕΤΗ ΔΙΑΙΡΕΣΗ */}
         {activeTab === 'long_division' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-200">
               <form onSubmit={handleApplyDivision} className="flex flex-wrap items-center justify-between gap-4">
                 <div className="space-y-1">
                   <h3 className="text-sm font-black text-emerald-900">✏️ Δοκίμασε τη δική σου Διαίρεση!</h3>
-                  <p className="text-xs text-emerald-700">Βάλε έναν αριθμό και δες αν θα βγει Τέλεια ή Ατελής.</p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <input type="number" min="1" max="999" value={inputDividend} onChange={(e) => setInputDividend(e.target.value)} className="w-28 px-3 py-2 border rounded-xl font-mono text-center font-bold text-slate-800" />
@@ -259,131 +250,62 @@ export default function DDimotikou() {
                 </div>
               </form>
             </div>
-            
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto flex flex-col sm:flex-row items-center gap-4">
               <button onClick={() => { if(divTimeline >= 100) setDivTimeline(0); setIsDivPlaying(!isDivPlaying); }} className={`w-full sm:w-auto px-6 py-2.5 rounded-xl font-black text-xs text-white transition-all ${isDivPlaying ? 'bg-amber-500' : 'bg-emerald-600'}`}>{isDivPlaying ? '⏸ Παύση' : '▶ Play'}</button>
               <div className="w-full space-y-1">
                 <input type="range" min="0" max="100" value={divTimeline} onChange={(e) => { setIsDivPlaying(false); setDivTimeline(parseInt(e.target.value)); }} className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
               </div>
             </div>
-
-            {/* ΠΛΑΙΣΙΑ ΘΕΩΡΙΑΣ */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
-              <div className={`p-4 rounded-2xl border transition-all duration-300 ${divTimeline === 100 && final_r === 0 ? 'bg-emerald-50 border-emerald-400 shadow-sm scale-102' : 'bg-white border-gray-200 opacity-60'}`}>
-                <h4 className="font-black text-xs text-emerald-800 flex items-center gap-2">🟢 Τέλεια Διαίρεση</h4>
-                <p className="text-gray-600 text-xs mt-1 leading-relaxed">Είναι η διαίρεση στην οποία το <strong>Υπόλοιπο είναι 0</strong>. Όλα τα αντικείμενα μοιράστηκαν ακριβώς και δεν περίσσεψε τίποτα!</p>
-              </div>
-              <div className={`p-4 rounded-2xl border transition-all duration-300 ${divTimeline === 100 && final_r > 0 ? 'bg-amber-50 border-amber-400 shadow-sm scale-102' : 'bg-white border-gray-200 opacity-60'}`}>
-                <h4 className="font-black text-xs text-amber-800 flex items-center gap-2">🟡 Ατελής Διαίρεση</h4>
-                <p className="text-gray-600 text-xs mt-1 leading-relaxed">Είναι η διαίρεση στην οποία το <strong>Υπόλοιπο είναι μεγαλύτερο από το 0</strong>.</p>
-              </div>
-            </div>
-
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-5xl mx-auto items-start">
               <div className="lg:col-span-5 bg-gray-50 p-6 rounded-3xl border border-gray-200 space-y-6">
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider text-center">📦 Αξία Θέσης Ψηφίων</h3>
                 <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-black bg-white p-4 rounded-xl border shadow-inner">
                   <div className="border-r border-dashed"><span className="text-red-500">Εκατοντάδες ({num_e})</span><div className="flex flex-wrap justify-center gap-1 mt-2 h-10 items-center">{divTimeline < 25 && Array.from({ length: num_e }).map((_, i) => <div key={i} className="w-3 h-3 rounded-full bg-red-500"></div>)}</div></div>
                   <div className="border-r border-dashed"><span className="text-amber-500">Δεκάδες ({num_d})</span><div className="flex flex-wrap justify-center gap-1 mt-2 h-10 items-center">{divTimeline < 60 && Array.from({ length: num_d }).map((_, i) => <div key={i} className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>)}</div></div>
                   <div><span className="text-cyan-500">Μονάδες ({num_m})</span><div className="flex flex-wrap justify-center gap-1 mt-2 h-10 items-center">{divTimeline < 90 && Array.from({ length: num_m }).map((_, i) => <div key={i} className="w-2.5 h-2.5 rounded-full bg-cyan-400"></div>)}</div></div>
                 </div>
               </div>
-
-              {/* ΠΙΝΑΚΑΣ ΜΑΘΗΜΑΤΙΚΟΥ ΣΧΗΜΑΤΟΣ (ΔΙΟΡΘΩΘΗΚΕ) */}
               <div className="lg:col-span-7 bg-white p-6 rounded-3xl border border-gray-200 flex flex-col items-center min-h-[340px]">
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-6">✏️ Ο Αλγόριθμος στο τετράδιο</h3>
-                
                 <table className="font-mono text-2xl text-slate-800 font-bold border-collapse">
                   <tbody>
                     <tr>
                       <td className="w-6 text-center text-slate-300"></td> 
-                      <td className={`w-8 text-center px-1 ${highlightFirstGroup ? 'text-indigo-600 underline decoration-4 font-black bg-indigo-50 py-0.5 rounded-l' : ''}`}>
-                        {num_e > 0 ? num_e : ''}
-                      </td>
-                      <td className={`w-8 text-center px-1 ${highlightFirstGroup && !e_holds ? 'text-indigo-600 underline decoration-4 font-black bg-indigo-50 py-0.5 rounded-r' : (highlightFirstGroup && e_holds ? 'text-indigo-600' : '')} ${highlightSecondGroup ? 'text-teal-600' : ''}`}>
-                        {num_d}
-                      </td>
-                      <td className={`w-8 text-center px-1 ${highlightSecondGroup ? 'text-teal-600 underline decoration-4 font-black bg-teal-50 py-0.5 rounded' : ''}`}>
-                        {num_m}
-                      </td>
-                      <td className="border-l-4 border-slate-700 border-b-4 px-6 text-emerald-600 font-black text-3xl min-w-[80px] text-center bg-emerald-50/50">
-                        {currentDivisor}
-                      </td>
+                      <td className={`w-8 text-center px-1 ${highlightFirstGroup ? 'text-indigo-600 underline decoration-4 font-black bg-indigo-50 py-0.5 rounded-l' : ''}`}>{num_e > 0 ? num_e : ''}</td>
+                      <td className={`w-8 text-center px-1 ${highlightFirstGroup && !e_holds ? 'text-indigo-600 underline decoration-4 font-black bg-indigo-50 py-0.5 rounded-r' : (highlightFirstGroup && e_holds ? 'text-indigo-600' : '')} ${highlightSecondGroup ? 'text-teal-600' : ''}`}>{num_d}</td>
+                      <td className={`w-8 text-center px-1 ${highlightSecondGroup ? 'text-teal-600 underline decoration-4 font-black bg-teal-50 py-0.5 rounded' : ''}`}>{num_m}</td>
+                      <td className="border-l-4 border-slate-700 border-b-4 px-6 text-emerald-600 font-black text-3xl min-w-[80px] text-center bg-emerald-50/50">{divisor}</td>
                     </tr>
-                    
                     <tr className={divTimeline >= 40 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
                       <td className="text-center text-slate-400 text-xl font-light px-1">-</td>
-                      <td className="text-center text-slate-400 px-1">{e_holds ? (p1_str[0] !== '0' ? p1_str[0] : '') : (p1_str[0] !== '0' ? p1_str[0] : '')}</td>
-                      <td className="text-center text-slate-400 px-1">{e_holds ? p1_str[1] : p1_str[1]}</td>
+                      <td className="text-center text-slate-400 px-1">{e_holds ? p1_str[0] : p1_str[0]}</td>
+                      <td className="text-center text-slate-400 px-1">{p1_str[1]}</td>
                       <td className="w-8"></td> 
                       <td className="border-l-4 border-slate-700 px-6 text-left font-black tracking-wider">
                         <span className={`text-indigo-600 text-3xl ${divTimeline >= 30 ? 'opacity-100' : 'opacity-0'}`}>{first_quotient}</span>
                         <span className={`text-teal-600 text-3xl ${divTimeline >= 80 ? 'opacity-100' : 'opacity-0'}`}>{second_quotient}</span>
                       </td>
                     </tr>
-
                     <tr className={divTimeline >= 50 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
-                      <td></td>
-                      <td className="border-t-2 border-slate-400"></td>
-                      <td className="border-t-2 border-slate-400 text-center text-slate-600 px-1">{r1_str}</td>
-                      <td className={`border-t-2 border-slate-400 text-center text-cyan-600 font-black px-1 transition-opacity ${divTimeline >= 65 ? 'opacity-100' : 'opacity-0'}`}>{num_m}</td>
-                      <td className="border-l-4 border-slate-700"></td>
+                      <td></td><td className="border-t-2 border-slate-400"></td><td className="border-t-2 border-slate-400 text-center text-slate-600 px-1">{r1_str}</td><td className={`border-t-2 border-slate-400 text-center text-cyan-600 font-black px-1 transition-opacity ${divTimeline >= 65 ? 'opacity-100' : 'opacity-0'}`}>{num_m}</td><td className="border-l-4 border-slate-700"></td>
                     </tr>
-
                     <tr className={divTimeline >= 85 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
-                      <td className="text-center text-slate-400 text-xl font-light px-1">-</td>
-                      <td className="w-8"></td> 
-                      <td className="text-center text-slate-400 px-1">{p2_str[0] !== '0' ? p2_str[0] : ''}</td>
-                      <td className="text-center text-slate-400 px-1">{p2_str[1]}</td>
-                      <td className="border-l-4 border-slate-700"></td>
+                      <td className="text-center text-slate-400 text-xl font-light px-1">-</td><td className="w-8"></td><td className="text-center text-slate-400 px-1">{p2_str[0]}</td><td className="text-center text-slate-400 px-1">{p2_str[1]}</td><td className="border-l-4 border-slate-700"></td>
                     </tr>
-
                     <tr className={divTimeline >= 95 ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
-                      <td></td>
-                      <td></td>
-                      <td className="border-t-2 border-slate-400"></td>
-                      <td className={`border-t-2 border-slate-400 text-center font-black text-2xl border-b-4 border-double px-1 ${final_r === 0 ? 'text-emerald-600 border-emerald-500' : 'text-amber-600 border-amber-500'}`}>
-                        {final_r}
-                      </td>
-                      <td className="border-l-4 border-slate-700"></td>
+                      <td></td><td></td><td className="border-t-2 border-slate-400"></td><td className={`border-t-2 border-slate-400 text-center font-black text-2xl border-b-4 border-double px-1 ${final_r === 0 ? 'text-emerald-600 border-emerald-500' : 'text-amber-600 border-amber-500'}`}>{final_r}</td><td className="border-l-4 border-slate-700"></td>
                     </tr>
                   </tbody>
                 </table>
-
-                {/* ΔΥΝΑΜΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
-                <div className="mt-8 bg-slate-50 p-4 rounded-xl border border-dashed text-xs text-slate-600 text-center leading-relaxed w-full min-h-[64px] flex items-center justify-center">
-                  {divTimeline < 15 && `👋 Ας ξεκινήσουμε! Θέλουμε να διαιρέσουμε το ${dividend} με το ${divisor}.`}
-                  {divTimeline >= 15 && divTimeline < 30 && (
-                    e_holds 
-                      ? `1. Κοιτάζουμε την Εκατοντάδα (${num_e}). Το ${divisor} χωράει στο ${num_e}; Ναι!` 
-                      : `1. Κοιτάζουμε την Εκατοντάδα (${num_e}). Το ${divisor} δεν χωράει στο ${num_e}, οπότε φωτίζουμε και τις Δεκάδες, και εξετάζουμε μαζί το ${first_work_num}.`
-                  )}
-                  {divTimeline >= 30 && divTimeline < 40 && `2. Διαιρούμε: Το ${divisor} στο ${first_work_num} χωράει ${first_quotient} φορές. Γράφουμε το ${first_quotient} στο Πηλίκο.`}
-                  {divTimeline >= 40 && divTimeline < 50 && `3. Πολλαπλασιάζουμε: ${first_quotient} × ${divisor} = ${first_product}. Το γράφουμε κάτω από το ${first_work_num}.`}
-                  {divTimeline >= 50 && divTimeline < 65 && `4. Αφαιρούμε: ${first_work_num} - ${first_product} = ${first_remainder}.`}
-                  {divTimeline >= 65 && divTimeline < 80 && `5. Κατεβάζουμε το επόμενο ψηφίο, το ${num_m}. Σχηματίζεται ο αριθμός ${second_work_num}.`}
-                  {divTimeline >= 80 && divTimeline < 85 && `6. Διαιρούμε: Το ${divisor} στο ${second_work_num} χωράει ${second_quotient} φορές. Το γράφουμε στο Πηλίκο.`}
-                  {divTimeline >= 85 && divTimeline < 95 && `7. Πολλαπλασιάζουμε: ${second_quotient} × ${divisor} = ${second_product} και κάνουμε την τελική αφαίρεση.`}
-                  {divTimeline >= 95 && (
-                    final_r === 0 
-                      ? `🎉 Η διαίρεση είναι Τέλεια (Υπόλοιπο 0)! Το αποτέλεσμα είναι ακριβώς ${final_q}!`
-                      : `🎉 Η διαίρεση ολοκληρώθηκε! Έχουμε Πηλίκο ${final_q} και Υπόλοιπο ${final_r}.`
-                  )}
-                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* 🍰 ΚΑΡΤΕΛΑ 3: ΔΕΚΑΔΙΚΟΙ ΑΡΙΘΜΟΙ & ΔΕΚΑΔΙΚΑ ΚΛΑΣΜΑΤΑ */}
+        {/* ΚΑΡΤΕΛΑ 3: ΔΕΚΑΔΙΚΟΙ ΑΡΙΘΜΟΙ & ΔΕΚΑΔΙΚΑ ΚΛΑΣΜΑΤΑ */}
         {activeTab === 'decimals' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-3">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">🍰 Από τα Κλάσματα στους Δεκαδικούς</h2>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Τα <strong>δεκαδικά κλάσματα</strong> (με παρονομαστή 10, 100...) μπορούν να γραφτούν με έναν νέο τρόπο, χρησιμοποιώντας ένα κόμμα. Αυτοί οι αριθμοί λέγονται <strong>δεκαδικοί αριθμοί</strong>.
-                </p>
               </div>
               <div className="bg-slate-50 p-3 rounded-2xl border flex flex-col justify-center gap-2">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block text-center">Διάλεξε Μορφή</span>
@@ -393,7 +315,6 @@ export default function DDimotikou() {
                 </div>
               </div>
             </div>
-
             <div className="bg-amber-50/60 p-5 rounded-2xl border border-amber-200 max-w-2xl mx-auto space-y-2 shadow-inner">
               <div className="flex justify-between items-center text-xs font-bold text-amber-900">
                 <span>🤏 Σύρε για να επιλέξεις κομμάτια:</span>
@@ -401,7 +322,6 @@ export default function DDimotikou() {
               </div>
               <input type="range" min="0" max={maxSlices} value={decimalValue} onChange={(e) => setDecimalValue(parseInt(e.target.value))} className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500" />
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 max-w-5xl mx-auto items-center">
               <div className="md:col-span-4 bg-gray-50 p-6 rounded-3xl border flex flex-col items-center justify-center shadow-inner">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Η Δεκαδική Μονάδα</span>
@@ -415,7 +335,6 @@ export default function DDimotikou() {
                   </div>
                 )}
               </div>
-
               <div className="md:col-span-8 space-y-6">
                 <div className="flex items-center justify-center gap-12 bg-white p-6 rounded-2xl border shadow-sm">
                   <div className="text-center">
@@ -434,8 +353,6 @@ export default function DDimotikou() {
                     </div>
                   </div>
                 </div>
-
-                {/* Πίνακας Αξίας Θέσης Δεκαδικών */}
                 <div className="bg-slate-900 text-white p-5 rounded-2xl border shadow-lg space-y-3">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block text-center">Πίνακας Αξίας Θέσης</span>
                   <div className="grid grid-cols-4 gap-1 text-center font-mono">
@@ -443,7 +360,6 @@ export default function DDimotikou() {
                     <div className="text-[10px] font-bold text-red-400 flex items-center justify-center">,</div>
                     <div className="text-[9px] font-bold text-amber-400 bg-slate-800 py-1 rounded">Δέκατα (δ)</div>
                     <div className="text-[9px] font-bold text-yellow-400 bg-slate-800 py-1 rounded">Εκατοστά (ε)</div>
-
                     <div className="text-2xl font-black text-white p-2">{decimalValue === maxSlices ? '1' : '0'}</div>
                     <div className="text-3xl font-black text-red-500 flex items-center justify-center">,</div>
                     <div className="text-2xl font-black text-amber-400 p-2">{decimalValue === maxSlices ? '0' : (decimalMode === 'tenths' ? decimalValue : Math.floor(decimalValue / 10))}</div>
@@ -452,36 +368,135 @@ export default function DDimotikou() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
 
-            {/* ΑΡΙΘΜΗΤΙΚΗ ΓΡΑΜΜΗ */}
-            <div className="bg-gray-50 p-6 rounded-3xl border border-gray-200 space-y-4">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block text-center">Πάνω στην αριθμητική γραμμή (0 έως 1)</span>
-              <div className="w-full bg-white p-4 rounded-xl border shadow-sm">
-                <svg viewBox="0 0 220 40" className="w-full h-full overflow-visible">
-                  <line x1="10" y1="20" x2="210" y2="20" className="stroke-slate-400 stroke-2" strokeLinecap="round" />
-                  <line x1="10" y1="12" x2="10" y2="28" className="stroke-slate-800 stroke-2" /><text x="8" y="38" className="text-[7px] font-black fill-slate-800 font-mono">0</text>
-                  <line x1="210" y1="12" x2="210" y2="28" className="stroke-slate-800 stroke-2" /><text x="208" y="38" className="text-[7px] font-black fill-slate-800 font-mono">1</text>
-                  {Array.from({ length: 9 }).map((_, i) => {
-                    const tickX = 10 + (i + 1) * 20;
+        {/* 📏 ΚΑΡΤΕΛΑ 4: ΜΕΤΡΩ ΚΑΙ ΕΚΦΡΑΖΩ ΤΟ ΜΗΚΟΣ (NEW FEATURE) */}
+        {activeTab === 'length_measurement' && (
+          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
+            
+            {/* ΘΕΩΡΙΑ */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-4">
+                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">📏 Μετρώ και Εκφράζω το Μήκος</h2>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Βασική μονάδα μέτρησης του μήκους είναι το <strong>Μέτρο (μ. ή m)</strong>. Για να μετρήσουμε μικρότερα μήκη, χωρίζουμε το μέτρο σε 10, 100 ή 1.000 ίσα μέρη (Δεκάμετρα, Εκατοστά, Χιλιοστά).
+                </p>
+                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-xs text-blue-900 leading-relaxed">
+                  <p>💡 <strong>Θυμήσου τον κανόνα:</strong> Όταν αλλάζουμε μονάδα μέτρησης και πάμε σε <strong>μικρότερη</strong> (δεξιά), πολλαπλασιάζουμε. Όταν πάμε σε <strong>μεγαλύτερη</strong> (αριστερά), διαιρούμε!</p>
+                </div>
+              </div>
+              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-5 rounded-2xl shadow-md flex flex-col justify-center">
+                <h3 className="font-bold text-sm text-blue-100 mb-1">🔗 Σχέσεις Μονάδων</h3>
+                <ul className="text-xs space-y-1 opacity-95 font-mono">
+                  <li>• 1 m = 10 dm (δεκάμετρα)</li>
+                  <li>• 1 m = 100 cm (εκατοστά)</li>
+                  <li>• 1 m = 1.000 am (χιλιοστά)</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* ΔΙΑΔΡΑΣΤΙΚΟ SLIDER ΜΗΚΟΥΣ */}
+            <div className="bg-blue-50/60 p-5 rounded-2xl border border-blue-200 max-w-2xl mx-auto space-y-2 shadow-inner">
+              <div className="flex justify-between items-center text-xs font-bold text-blue-900">
+                <span>📏 Άλλαξε το μήκος για να δεις τις μετατροπές:</span>
+                <span className="font-mono bg-white px-2 py-0.5 border rounded-lg text-blue-600 text-sm">{lengthInCm} cm</span>
+              </div>
+              <input 
+                type="range" min="0" max="200" step="10" value={lengthInCm}
+                onChange={(e) => setLengthInCm(parseInt(e.target.value))}
+                className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              />
+            </div>
+
+            {/* ΔΙΑΔΡΑΣΤΙΚΟΣ ΧΑΡΑΚΑΣ (SVG) */}
+            <div className="bg-gray-50 p-6 rounded-3xl border border-gray-200 flex flex-col items-center justify-center shadow-inner">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6">Ο Ψηφιακός σου Χάρακας (έως 2 Μέτρα)</span>
+              
+              <div className="w-full max-w-3xl bg-white p-6 rounded-xl border border-amber-200 shadow relative overflow-visible">
+                {/* Η κορδέλα/αντικείμενο που μετράμε */}
+                <div 
+                  style={{ width: `${(lengthInCm / 200) * 100}%` }}
+                  className="h-6 bg-gradient-to-r from-amber-400 to-orange-400 rounded-t-sm transition-all duration-150 border-b-2 border-orange-500 opacity-90 relative mb-1"
+                >
+                  {lengthInCm > 0 && (
+                    <span className="absolute right-2 top-0.5 text-[10px] font-black text-orange-950 font-mono">
+                      {(lengthInCm / 100).toFixed(1)} m
+                    </span>
+                  )}
+                </div>
+
+                {/* Ο Χάρακας */}
+                <svg viewBox="0 0 220 30" className="w-full overflow-visible font-mono">
+                  {/* Βάση Χάρακα */}
+                  <rect x="0" y="0" width="220" height="20" className="fill-yellow-50 stroke-amber-200 stroke-[0.5] rounded-b-sm" />
+                  
+                  {/* Χαραγές ανά 10cm (Δεκάμετρα) */}
+                  {Array.from({ length: 21 }).map((_, i) => {
+                    const xPos = 10 + i * 10;
+                    const isMeter = i % 10 === 0;
+                    const isHalfMeter = i % 5 === 0 && !isMeter;
+                    
                     return (
                       <g key={i}>
-                        <line x1={tickX} y1="15" x2={tickX} y2="25" className="stroke-slate-400 stroke-[0.7]" />
-                        <text x={tickX - 3} y="9" className="text-[4px] font-bold fill-slate-400 font-mono">0.{i+1}</text>
+                        <line 
+                          x1={xPos} y1="0" 
+                          x2={xPos} y2={isMeter ? "12" : (isHalfMeter ? "9" : "6")} 
+                          className={isMeter ? "stroke-slate-800 stroke-[0.8]" : "stroke-slate-400 stroke-[0.4]"} 
+                        />
+                        {isMeter && (
+                          <text x={xPos - 3} y="19" className="text-[5px] font-black fill-slate-800">
+                            {i / 10}m
+                          </text>
+                        )}
+                        {!isMeter && i % 2 === 0 && (
+                          <text x={xPos - 4} y="18" className="text-[3.5px] font-bold fill-slate-400">
+                            {i * 10}
+                          </text>
+                        )}
                       </g>
                     );
                   })}
-                  <g transform={`translate(${10 + numericDecimal * 200}, 20)`} className="transition-transform duration-150">
-                    <circle cx="0" cy="0" r="4" className="fill-amber-500 stroke-white stroke-2 shadow" />
-                    <path d="M 0 -4 L -4 -12 L 4 -12 Z" className="fill-slate-900" />
-                    <text x="-5" y="-15" className="text-[5px] font-mono font-black fill-slate-900">
-                      {numericDecimal.toLocaleString('el-GR', { minimumFractionDigits: decimalMode === 'tenths' ? 1 : 2 })}
-                    </text>
-                  </g>
                 </svg>
               </div>
             </div>
+
+            {/* ΠΙΝΑΚΑΣ ΜΕΤΑΤΡΟΠΩΝ ΚΑΙ ΕΚΦΡΑΣΗΣ */}
+            <div className="bg-slate-900 text-white p-6 rounded-3xl border shadow-xl space-y-4 max-w-4xl mx-auto">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">📊 Πίνακας Συγχρονισμένων Μετατροπών</h3>
+              
+              <div className="grid grid-cols-4 gap-2 text-center">
+                {/* Επικεφαλίδες Μονάδων */}
+                <div className="bg-slate-800 p-2 rounded-xl border border-slate-700">
+                  <span className="text-[10px] text-blue-400 font-bold block">Μέτρα (m)</span>
+                  <span className="text-2xl font-mono font-black text-white">{(lengthInCm / 100).toFixed(2)}</span>
+                </div>
+                
+                <div className="bg-slate-800 p-2 rounded-xl border border-slate-700">
+                  <span className="text-[10px] text-emerald-400 font-bold block">Δεκάμετρα (dm)</span>
+                  <span className="text-2xl font-mono font-black text-white">{(lengthInCm / 10).toFixed(1)}</span>
+                </div>
+
+                <div className="bg-slate-800 p-2 rounded-xl border border-slate-700">
+                  <span className="text-[10px] text-amber-400 font-bold block">Εκατοστά (cm)</span>
+                  <span className="text-2xl font-mono font-black text-white">{lengthInCm}</span>
+                </div>
+
+                <div className="bg-slate-800 p-2 rounded-xl border border-slate-700">
+                  <span className="text-[10px] text-red-400 font-bold block">Χιλιοστά (mm)</span>
+                  <span className="text-2xl font-mono font-black text-white">{lengthInCm * 10}</span>
+                </div>
+              </div>
+
+              {/* Φυσική Έκφραση (Συμμιγής Αριθμός) */}
+              <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center text-xs md:text-sm">
+                📢 Εκφράζουμε το μήκος: <span className="text-amber-400 font-black">{Math.floor(lengthInCm / 100)} Μέτρο</span> και <span className="text-cyan-400 font-black">{lengthInCm % 100} Εκατοστά</span>.
+              </div>
+            </div>
+
           </div>
         )}
+
       </main>
 
       <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm mt-12">
