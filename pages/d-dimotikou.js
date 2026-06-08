@@ -188,6 +188,7 @@ export default function DDimotikou() {
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         
+        {/* ΚΑΡΤΕΛΑ 1 */}
         {activeTab === 'large_numbers' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <h2 className="text-2xl font-black text-gray-900">💎 Η Αξία Θέσης στους Μεγάλους Αριθμούς</h2>
@@ -215,23 +216,13 @@ export default function DDimotikou() {
                       </div>
                     ))}
                   </div>
-                  <div className="grid grid-cols-6 gap-4 text-center mt-4">
-                    {['EX', 'DX', 'X', 'E', 'D', 'M'].map((col) => (
-                      <div key={col} className="flex flex-col items-center gap-1 bg-white p-2 rounded-xl border shadow-sm">
-                        <div className="text-sm font-black font-mono text-slate-700">{disks[col]}</div>
-                        <div className="flex gap-1">
-                          <button onClick={() => updateDigits(col, -1)} className="bg-slate-100 font-bold px-2 py-0.5 rounded text-xs">-</button>
-                          <button onClick={() => updateDigits(col, 1)} className="bg-slate-100 font-bold px-2 py-0.5 rounded text-xs">+</button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
           </div>
         )}
 
+        {/* ΚΑΡΤΕΛΑ 2 */}
         {activeTab === 'long_division' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-200">
@@ -247,12 +238,25 @@ export default function DDimotikou() {
                 </div>
               </form>
             </div>
+            
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto flex flex-col sm:flex-row items-center gap-4">
               <button onClick={() => { if(divTimeline >= 100) setDivTimeline(0); setIsDivPlaying(!isDivPlaying); }} className={`w-full sm:w-auto px-6 py-2.5 rounded-xl font-black text-xs text-white transition-all ${isDivPlaying ? 'bg-amber-500' : 'bg-emerald-600'}`}>{isDivPlaying ? '⏸ Παύση' : '▶ Play'}</button>
               <div className="w-full space-y-1">
                 <input type="range" min="0" max="100" value={divTimeline} onChange={(e) => { setIsDivPlaying(false); setDivTimeline(parseInt(e.target.value)); }} className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
               </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
+              <div className={`p-4 rounded-2xl border transition-all duration-300 ${divTimeline === 100 && final_r === 0 ? 'bg-emerald-50 border-emerald-400 shadow-sm scale-102' : 'bg-white border-gray-200 opacity-60'}`}>
+                <h4 className="font-black text-xs text-emerald-800 flex items-center gap-2">🟢 Τέλεια Διαίρεση</h4>
+                <p className="text-gray-600 text-xs mt-1 leading-relaxed">Είναι η διαίρεση στην οποία το Υπόλοιπο είναι 0.</p>
+              </div>
+              <div className={`p-4 rounded-2xl border transition-all duration-300 ${divTimeline === 100 && final_r > 0 ? 'bg-amber-50 border-amber-400 shadow-sm scale-102' : 'bg-white border-gray-200 opacity-60'}`}>
+                <h4 className="font-black text-xs text-amber-800 flex items-center gap-2">🟡 Ατελής Διαίρεση</h4>
+                <p className="text-gray-600 text-xs mt-1 leading-relaxed">Είναι η διαίρεση στην οποία το Υπόλοιπο είναι μεγαλύτερο από το 0.</p>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-5xl mx-auto items-start">
               <div className="lg:col-span-5 bg-gray-50 p-6 rounded-3xl border border-gray-200 space-y-6">
                 <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-black bg-white p-4 rounded-xl border shadow-inner">
@@ -261,6 +265,7 @@ export default function DDimotikou() {
                   <div><span className="text-cyan-500">Μονάδες ({num_m})</span><div className="flex flex-wrap justify-center gap-1 mt-2 h-10 items-center">{divTimeline < 90 && Array.from({ length: num_m }).map((_, i) => <div key={i} className="w-2.5 h-2.5 rounded-full bg-cyan-400"></div>)}</div></div>
                 </div>
               </div>
+
               <div className="lg:col-span-7 bg-white p-6 rounded-3xl border border-gray-200 flex flex-col items-center min-h-[340px]">
                 <table className="font-mono text-2xl text-slate-800 font-bold border-collapse">
                   <tbody>
@@ -292,163 +297,3 @@ export default function DDimotikou() {
                     </tr>
                   </tbody>
                 </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'decimals' && (
-          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
-            <h2 className="text-2xl font-black text-gray-900">🍰 Από τα Κλάσματα στους Δεκαδικούς</h2>
-            {/* ... Rest of decimals markup exactly as before ... */}
-            <div className="bg-amber-50/60 p-5 rounded-2xl border max-w-2xl mx-auto">
-              <input type="range" min="0" max={maxSlices} value={decimalValue} onChange={(e) => setDecimalValue(parseInt(e.target.value))} className="w-full h-2.5 bg-slate-200 accent-amber-500 rounded-lg appearance-none" />
-            </div>
-            <div className="text-center text-3xl font-mono font-black text-amber-500 bg-slate-50 p-4 rounded-xl max-w-xs mx-auto border shadow-sm">
-              {numericDecimal.toLocaleString('el-GR', { minimumFractionDigits: decimalMode === 'tenths' ? 1 : 2 })}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'length_measurement' && (
-          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
-            <h2 className="text-2xl font-black text-gray-900">📏 Μετρώ και Εκφράζω το Μήκος</h2>
-            <div className="bg-blue-50/60 p-5 rounded-2xl border max-w-2xl mx-auto">
-              <input type="range" min="0" max="200" step="1" value={lengthInCm} onChange={(e) => setLengthInCm(parseInt(e.target.value))} className="w-full h-2.5 bg-slate-200 accent-blue-500 rounded-lg appearance-none" />
-            </div>
-            <div className="text-center text-2xl font-mono font-black text-blue-600 bg-slate-50 p-4 rounded-xl max-w-xs mx-auto border shadow-sm">
-              {lengthInCm} cm = {(lengthInCm/100).toFixed(2)} m
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'weight_measurement' && (
-          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
-            <h2 className="text-2xl font-black text-gray-900">⚖️ Μετρώ το Βάρος: Τόνος, Κιλά & Γραμμάρια</h2>
-            <div className="bg-orange-50/60 p-5 rounded-2xl border max-w-2xl mx-auto flex items-center gap-3">
-              <button type="button" onClick={() => adjustWeight(-1)} className="bg-white border px-3 py-1 rounded-lg text-xs font-bold shadow-sm">-1g</button>
-              <input type="range" min="0" max="2500" step="1" value={weightInG} onChange={(e) => setWeightInG(parseInt(e.target.value))} className="flex-1 h-2.5 bg-slate-200 accent-orange-500 rounded-lg appearance-none" />
-              <button type="button" onClick={() => adjustWeight(1)} className="bg-white border px-3 py-1 rounded-lg text-xs font-bold shadow-sm">+1g</button>
-            </div>
-            <div className="w-40 bg-slate-900 text-emerald-400 font-mono font-black text-2xl text-center py-3 rounded-xl mx-auto shadow-xl">
-              {weightInG} g
-            </div>
-          </div>
-        )}
-
-        {/* ⚡ ΚΑΡΤΕΛΑ 6: ΔΙΑΙΡΕΣΗ ΜΕ 10, 100, 1000 (🔴 ΑΝΑΒΑΘΜΙΣΜΕΝΗ ΘΕΩΡΙΑ ΜΕ ΥΠΟΔΙΑΣΤΟΛΗ) */}
-        {activeTab === 'shortcut_division' && (
-          <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
-            
-            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-2xl border border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-center sm:text-left">
-                <h2 className="text-2xl font-black text-indigo-900 mb-1">⚡ Διαίρεση με 10, 100, 1000</h2>
-                <p className="text-xs text-indigo-700 font-medium">Μαθαίνω το πιο γρήγορο και έξυπνο κόλπο των Μαθηματικών!</p>
-              </div>
-              {/* 🔴 ΤΟ ΝΕΟ ΚΟΥΜΠΙ ΠΟΥ ΜΕΤΑΦΕΡΕΙ ΣΤΙΣ ΑΣΚΗΣΕΙΣ */}
-              <Link href="/d-dimotikou-exercises" className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs px-5 py-3 rounded-xl transition shadow-md flex items-center gap-2 active:scale-95">
-                📝 Εξάσκηση - Ασκήσεις
-              </Link>
-            </div>
-
-            {/* ΠΕΡΙΠΤΩΣΗ Α: Ο ΑΡΙΘΜΟΣ ΕΧΕΙ ΜΗΔΕΝΙΚΑ */}
-            <div className="space-y-4">
-              <h3 className="text-base font-black text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg inline-block">👍 Περίπτωση 1: Όταν ο αριθμός τελειώνει σε Μηδενικά</h3>
-              <p className="text-slate-600 text-sm">Διώχνουμε (σβήνουμε) από το τέλος του αριθμού τόσα μηδενικά, όσα έχει το 10, το 100 ή το 1000.</p>
-              
-              <div className="bg-slate-50 p-4 rounded-2xl border">
-                <svg viewBox="0 0 540 100" className="w-full h-auto overflow-visible font-sans">
-                  <g transform="translate(5, 5)">
-                    <rect x="0" y="0" width="165" height="85" rx="10" className="fill-green-50/50 stroke-green-500 stroke-[1]" />
-                    <text x="82" y="20" className="text-[9px] font-black fill-green-900" textAnchor="middle">÷ 10 (1 μηδενικό)</text>
-                    <text x="40" y="60" className="text-2xl font-black fill-slate-800 font-mono">54</text>
-                    <text x="68" y="60" className="text-2xl font-black fill-slate-300 font-mono">0</text>
-                    <line x1="65" y1="65" x2="78" y2="40" className="stroke-red-500 stroke-[3]" />
-                    <text x="90" y="58" className="text-lg fill-slate-400">&rarr;</text>
-                    <text x="115" y="60" className="text-2xl font-black fill-emerald-600 font-mono">54</text>
-                  </g>
-                  <g transform="translate(187, 5)">
-                    <rect x="0" y="0" width="165" height="85" rx="10" className="fill-blue-50/50 stroke-blue-500 stroke-[1]" />
-                    <text x="82" y="20" className="text-[9px] font-black fill-blue-900" textAnchor="middle">÷ 100 (2 μηδενικά)</text>
-                    <text x="35" y="60" className="text-2xl font-black fill-slate-800 font-mono">37</text>
-                    <text x="63" y="60" className="text-2xl font-black fill-slate-300 font-mono">00</text>
-                    <line x1="60" y1="65" x2="90" y2="40" className="stroke-red-500 stroke-[3]" />
-                    <text x="100" y="58" className="text-lg fill-slate-400">&rarr;</text>
-                    <text x="122" y="60" className="text-2xl font-black fill-emerald-600 font-mono">37</text>
-                  </g>
-                  <g transform="translate(370, 5)">
-                    <rect x="0" y="0" width="165" height="85" rx="10" className="fill-orange-50/50 stroke-orange-500 stroke-[1]" />
-                    <text x="82" y="20" className="text-[9px] font-black fill-orange-900" textAnchor="middle">÷ 1000 (3 μηδενικά)</text>
-                    <text x="30" y="60" className="text-2xl font-black fill-slate-800 font-mono">8</text>
-                    <text x="45" y="60" className="text-2xl font-black fill-slate-300 font-mono">000</text>
-                    <line x1="42" y1="65" x2="85" y2="40" className="stroke-red-500 stroke-[3]" />
-                    <text x="100" y="58" className="text-lg fill-slate-400">&rarr;</text>
-                    <text x="125" y="60" className="text-2xl font-black fill-emerald-600 font-mono">8</text>
-                  </g>
-                </svg>
-              </div>
-            </div>
-
-            {/* 🔴 ΠΕΡΙΠΤΩΣΗ Β: Ο ΑΡΙΘΜΟΣ ΔΕΝ ΕΧΕΙ ΜΗΔΕΝΙΚΑ (ΥΠΟΔΙΑΣΤΟΛΗ) */}
-            <div className="space-y-4">
-              <h3 className="text-base font-black text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg inline-block">⚠️ Περίπτωση 2: Όταν ο αριθμός ΔΕΝ έχει μηδενικά στο τέλος</h3>
-              <p className="text-slate-600 text-sm">
-                Τότε εμφανίζεται η <strong>υποδιαστολή (το κόμμα ,)</strong>! Φανταζόμαστε ότι η υποδιαστολή κρύβεται στο τέλος του αριθμού και τη <strong>μετακινούμε προς τα αριστερά</strong> τόσες θέσεις όσα είναι τα μηδενικά.
-              </p>
-              
-              <div className="bg-slate-50 p-4 rounded-2xl border">
-                <svg viewBox="0 0 540 100" className="w-full h-auto overflow-visible font-sans">
-                  {/* ÷ 10 χωρίς μηδενικό */}
-                  <g transform="translate(5, 5)">
-                    <rect x="0" y="0" width="250" height="85" rx="10" className="fill-amber-50/40 stroke-amber-500 stroke-[1]" />
-                    <text x="125" y="20" className="text-[9px] font-black fill-amber-900" textAnchor="middle">Παράδειγμα: 245 ÷ 10 (1 θέση αριστερά)</text>
-                    
-                    <text x="30" y="60" className="text-2xl font-black fill-slate-800 font-mono">2</text>
-                    <text x="48" y="60" className="text-2xl font-black fill-slate-800 font-mono">4</text>
-                    <text x="66" y="60" className="text-2xl font-black fill-slate-800 font-mono">5</text>
-                    
-                    {/* Κίνηση υποδιαστολής */}
-                    <path d="M 75 65 Q 65 75 57 65" className="fill-none stroke-blue-500 stroke-[1.5] stroke-dasharray-[2]" />
-                    <text x="53" y="62" className="text-2xl font-black fill-red-500 font-mono">,</text>
-                    
-                    <text x="110" y="58" className="text-lg fill-slate-400">&rarr;</text>
-                    <text x="140" y="60" className="text-2xl font-black fill-indigo-600 font-mono">24,5</text>
-                  </g>
-
-                  {/* ÷ 100 χωρίς μηδενικό */}
-                  <g transform="translate(285, 5)">
-                    <rect x="0" y="0" width="250" height="85" rx="10" className="fill-amber-50/40 stroke-amber-500 stroke-[1]" />
-                    <text x="125" y="20" className="text-[9px] font-black fill-amber-900" textAnchor="middle">Παράδειγμα: 245 ÷ 100 (2 θέσεις αριστερά)</text>
-                    
-                    <text x="30" y="60" className="text-2xl font-black fill-slate-800 font-mono">2</text>
-                    <text x="48" y="60" className="text-2xl font-black fill-slate-800 font-mono">4</text>
-                    <text x="66" y="60" className="text-2xl font-black fill-slate-800 font-mono">5</text>
-                    
-                    {/* Κίνηση υποδιαστολής 2 θέσεις */}
-                    <path d="M 75 65 Q 65 75 57 65" className="fill-none stroke-blue-500 stroke-[1.5]" />
-                    <path d="M 57 65 Q 48 75 39 65" className="fill-none stroke-blue-500 stroke-[1.5]" />
-                    <text x="35" y="62" className="text-2xl font-black fill-red-500 font-mono">,</text>
-                    
-                    <text x="110" y="58" className="text-lg fill-slate-400">&rarr;</text>
-                    <text x="140" y="60" className="text-2xl font-black fill-indigo-600 font-mono">2,45</text>
-                  </g>
-                </svg>
-              </div>
-            </div>
-
-          </div>
-        )}
-
-      </main>
-
-      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm mt-12">
-        <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη Δ' Δημοτικού.</p>
-      </footer>
-
-      <style jsx>{`
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-      `}</style>
-    </div>
-  );
-}
