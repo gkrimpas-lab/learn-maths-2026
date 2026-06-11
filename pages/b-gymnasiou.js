@@ -64,23 +64,47 @@ export default function BGymnasiou() {
       {/* ΚΥΡΙΩΣ ΠΕΡΙΕΧΟΜΕΝΟ */}
       <main className="max-w-6xl mx-auto px-4 py-8">
         
-        {/* ΚΑΡΤΕΛΑ 1: ΜΕΤΑΒΛΗΤΕΣ */}
+        {/* 📊 ΚΑΡΤΕΛΑ 1: ΜΕΤΑΒΛΗΤΕΣ (ΑΠΟΚΑΤΑΣΤΑΘΗΚΕ) */}
         {activeTab === 'variables' && (
           <div className="space-y-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
-            <h2 className="text-2xl font-black text-gray-900">📊 Έννοια της Μεταβλητής</h2>
+            <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">📊 Έννοια της Μεταβλητής</h2>
             <p className="text-slate-600 leading-relaxed text-sm">
-              Στα Μαθηματικά, χρησιμοποιούμε γράμματα (όπως το $x, y, t$) για να παραστήσουμε ποσότητες που μπορούν να αλλάξουν τιμές. Αυτά τα γράμματα ονομάζονται <strong>μεταβλητές</strong>.
+              Στα Μαθηματικά, χρησιμοποιούμε γράμματα (όπως το $x, y, z, t$) για να παραστήσουμε ποσότητες που είναι άγνωστες ή μπορούν να αλλάξουν τιμές. Αυτά τα γράμματα ονομάζονται <strong>μεταβλητές</strong>.
             </p>
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl">
+              <p className="text-xs text-blue-950 font-medium">
+                💡 <strong>Σταθερές vs Μεταβλητές:</strong> Μια ποσότητα που η τιμή της μένει πάντα η ίδια λέγεται <strong>σταθερά</strong> (π.χ. ο αριθμός των μηνών ενός έτους είναι πάντα 12). Μια ποσότητα που η τιμή της αλλάζει λέγεται <strong>μεταβλητή</strong> (π.χ. η θερμοκρασία κατά τη διάρκεια της ημέρας).
+              </p>
+            </div>
+            <div className="border border-slate-100 p-5 rounded-2xl space-y-2">
+              <h4 className="font-bold text-sm text-slate-800">📝 Αλγεβρικές Παραστάσεις</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Όταν ενώνουμε αριθμούς και μεταβλητές με τα σύμβολα των πράξεων, φτιάχνουμε μια <strong>αλγεβρική παράσταση</strong>. <br />
+                Για παράδειγμα, η παράσταση <span className="font-mono bg-slate-100 px-1 py-0.5 rounded font-bold text-indigo-600">2x + 5</span> σημαίνει: «Πολλαπλασιάζω έναν αριθμό $x$ με το 2 και στο αποτέλεσμα προσθέτω 5».
+              </p>
+            </div>
           </div>
         )}
 
-        {/* ΚΑΡΤΕΛΑ 2: ΣΥΝΤΕΤΑΓΜΕΝΕΣ */}
+        {/* 📍 ΚΑΡΤΕΛΑ 2: ΣΥΝΤΕΤΑΓΜΕΝΕΣ (ΑΠΟΚΑΤΑΣΤΑΘΗΚΕ) */}
         {activeTab === 'coordinates' && (
           <div className="space-y-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
-            <h2 className="text-2xl font-black text-gray-900">📍 Καρτεσιανό Σύστημα Συντεταγμένων</h2>
+            <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">📍 Καρτεσιανό Σύστημα Συντεταγμένων</h2>
             <p className="text-slate-600 leading-relaxed text-sm">
-              Το επίπεδο ορίζεται από δύο κάθετους άξονες: τον οριζόντιο άξονα των τετμημένων ($x'x$) και τον κατακόρυφο άξονα των τεταγμένων ($y'y$).
+              Για να εντοπίσουμε με ακρίβεια ένα σημείο πάνω σε μια επίπεδη επιφάνεια, χρησιμοποιούμε δύο κάθετους άξονες που τέμνονται σε ένα σημείο $O$, το οποίο ονομάζουμε <strong>αρχή των αξόνων</strong>.
             </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-slate-50 p-4 rounded-2xl border space-y-2 text-xs">
+                <p>➡️ <strong>Οριζόντιος Άξονας ($x'x$):</strong> Ονομάζεται άξονας των <strong>τετμημένων</strong>.</p>
+                <p>⬆️ <strong>Κατακόρυφος Άξονας ($y'y$):</strong> Ονομάζεται άξονας των <strong>τεταγμένων</strong>.</p>
+              </div>
+              <div className="bg-slate-50 p-4 rounded-2xl border space-y-2 text-xs">
+                <p>🎯 <strong>Συντεταγμένες Σημείου:</strong> Κάθε σημείο $M$ στο επίπεδο αντιστοιχεί σε ένα μοναδικό ζευγάρι αριθμών <strong>$(x, y)$</strong>.</p>
+                <p>• Το $x$ είναι η <strong>τετμημένη</strong> (πόσο δεξιά ή αριστερά βρίσκεται).</p>
+                <p>• Το $y$ είναι η <strong>τεταγμένη</strong> (πόσο πάνω ή κάτω βρίσκεται).</p>
+              </div>
+            </div>
           </div>
         )}
 
