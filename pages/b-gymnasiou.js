@@ -271,15 +271,15 @@ export default function BGymnasiou() {
               <div className="space-y-2 max-w-2xl">
                 <h2 className="text-2xl font-black text-slate-900">🚀 Η Σύνάρτηση y = αx + β</h2>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Προκύπτει από την <strong>παράλληλη μετατόπιση</strong> της ευθείας $y = \alpha x$ κατά $\beta$ μονάδες στον άξονα $y'y$.
+                  Προκύπτει από την <strong>παράλληλη μετατόπιση</strong> της ευθείας y = ax κατά b μονάδες στον άξονα y'y.
                 </p>
                 <div className="bg-amber-50 border border-amber-200 text-amber-950 text-xs p-3 rounded-xl font-semibold space-y-1">
-                  <div>📍 <strong>Σημείο Τομής:</strong> Τέμνει τον άξονα $y'y$ στο σημείο <strong>(0, β)</strong>.</div>
+                  <div>📍 <strong>Σημείο Τομής:</strong> Τέμνει τον άξονα y'y στο σημείο <strong>(0, β)</strong>.</div>
                   <div>📐 <strong>Κλίση:</strong> Η κλίση παραμένει <strong>α</strong>.</div>
                 </div>
               </div>
               <div className="bg-indigo-600 text-white p-4 rounded-2xl w-full md:w-72 shadow">
-                <h4 className="text-xs font-black uppercase opacity-75 tracking-wider">🔍 Τι κάνει το «β»;</h4>
+                <h4 className="text-xs font-black opacity-75 tracking-wider">🔍 Τι κάνει το «β»;</h4>
                 <p className="text-xs mt-1 leading-relaxed opacity-90">Αν <strong>β &gt; 0</strong>, η ευθεία ανεβαίνει. Αν <strong>β &lt; 0</strong>, κατεβαίνει. Οι ευθείες με το ίδιο α είναι <strong>παράλληλες</strong>!</p>
               </div>
             </div>
