@@ -38,18 +38,21 @@ export default function BGymnasiou() {
       <div className="max-w-6xl mx-auto px-4 mt-8">
         <div className="flex flex-wrap bg-white p-2 rounded-xl shadow-sm gap-2 w-full lg:w-max border">
           <button 
+            type="button"
             onClick={() => setActiveTab('variables')} 
             className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'variables' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
           >
             📊 1. Μεταβλητές
           </button>
           <button 
+            type="button"
             onClick={() => setActiveTab('coordinates')} 
             className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'coordinates' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
           >
             📍 2. Καρτεσιανές Συντεταγμένες
           </button>
           <button 
+            type="button"
             onClick={() => setActiveTab('function_linear')} 
             className={`px-4 py-2 text-center rounded-lg font-bold transition duration-200 text-xs sm:text-sm ${activeTab === 'function_linear' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
           >
@@ -81,7 +84,7 @@ export default function BGymnasiou() {
           </div>
         )}
 
-        {/* 📈 ΚΑΡΤΕΛΑ 3: Η ΣΥΝΑΡΤΗΣΗ y = αx (🔴 ΑΠΟΚΑΤΑΣΤΑΘΗΚΕ ΠΛΗΡΩΣ) */}
+        {/* 📈 ΚΑΡΤΕΛΑ 3: Η ΣΥΝΑΡΤΗΣΗ y = αx */}
         {activeTab === 'function_linear' && (
           <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 animate-fade-in">
             
@@ -122,11 +125,13 @@ export default function BGymnasiou() {
                   <div className="bg-slate-800/80 p-2 rounded border border-slate-700">
                     📍 Διέρχεται πάντα από την <strong>αρχή των αξόνων $O(0,0)$</strong>.
                   </div>
+                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Χρήση του &gt; αντί για σκέτο > */}
                   <div className="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    📈 Αν <strong>$\alpha > 0$</strong>, η ευθεία βρίσκεται στο 1ο και 3ο τεταρτημόριο (ανηφορική).
+                    📈 Αν <strong>$\alpha$ &gt; 0</strong>, η ευθεία βρίσκεται στο 1ο και 3ο τεταρτημόριο (ανηφορική).
                   </div>
+                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Χρήση του &lt; αντί για σκέτο < */}
                   <div className="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    📉 Αν <strong>$\alpha < 0$</strong>, η ευθεία βρίσκεται στο 2ο και 4ο τεταρτημόριο (κατηφορική).
+                    📉 Αν <strong>$\alpha$ &lt; 0</strong>, η ευθεία βρίσκεται στο 2ο και 4ο τεταρτημόριο (κατηφορική).
                   </div>
                 </div>
               </div>
@@ -155,7 +160,7 @@ export default function BGymnasiou() {
                 
                 {/* Εξίσωση */}
                 <div className="bg-white p-5 rounded-2xl border text-center space-y-2 shadow-sm">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Η Συνάρτησή σου</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Ο Τύπος σου</span>
                   <div className="text-3xl font-mono font-black text-indigo-600">
                     {alpha === 0 ? 'y = 0' : `y = ${alpha}x`}
                   </div>
@@ -191,7 +196,7 @@ export default function BGymnasiou() {
                     </tbody>
                   </table>
                   <div className="p-2 bg-slate-50 text-[10px] text-center text-slate-400 border-t font-sans">
-                    Κάθε ζευγάρι $(x, y)$ σχηματίζει ένα σημείο της ευθείας, π.χ. $(1, {alpha})$.
+                    Κάθε ζευγάρι (x, y) σχηματίζει ένα σημείο της ευθείας, π.χ. (1, {alpha}).
                   </div>
                 </div>
 
