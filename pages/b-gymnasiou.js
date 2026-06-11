@@ -9,7 +9,7 @@ const VAR_MACHINE_CONFIG = {
   minX: -20,
   maxX: 20,
   a: 3,    // Ο συντελεστής (πολλαπλασιαστής)
-  b: 2     // Η σταθερά (πρόσθεση)
+  b: 5     // Η σταθερά (πρόσθεση)
 };
 
 export default function BGymnasiou() {
