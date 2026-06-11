@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -13,16 +13,25 @@ const VAR_MACHINE_CONFIG = {
 };
 
 export default function BGymnasiou() {
-  // Tabs: variables, equation, func_ax, func_axb
+  // Κεντρικά Tabs: variables, equation, func_ax, func_axb
   const [activeTab, setActiveTab] = useState('variables');
   
+  // Υπο-Tabs για την Καρτέλα 1 (Εξισώσεις) ώστε να χωράνε και τα δύο μοντέλα των screenshots
+  const [eqSubTab, setEqSubTab] = useState('add');
+
   // States για Καρτέλα 0: Μεταβλητές
   const [inputX, setInputX] = useState(5);
 
-  // States για Καρτέλα 1: Εξισώσεις (Ζυγαριά)
+  // States για Καρτέλα 1 - Μοντέλο Α (x + a = b)
   const [weightA, setWeightA] = useState(3);
   const [totalB, setTotalB] = useState(8);
   const [isBalanced, setIsBalanced] = useState(true);
+
+  // States για Καρτέλα 1 - Μοντέλο Β (a * x = b)
+  const [multA, setMultA] = useState(3);
+  const [multB, setMultB] = useState(8);
+  const [multTimeline, setMultTimeline] = useState(100);
+  const [isMultPlaying, setIsMultPlaying] = useState(false);
 
   // States για Καρτέλα 2: Συνάρτηση y = ax
   const [alpha, setAlpha] = useState(1.0);
@@ -32,8 +41,25 @@ export default function BGymnasiou() {
   const [beta, setBeta] = useState(2.0);
   const [showReference, setShowReference] = useState(true);
 
-  // Βοηθητική συνάρτηση για εμφάνιση του x με παρενθέσεις αν είναι αρνητικός
+  // Βοηθητική συνάρτηση για εμφανιση του x με παρενθέσεις αν είναι αρνητικός (Καρτέλα 0)
   const formatX = (val) => val < 0 ? `(${val})` : val;
+
+  // Animation effect για το Μοντέλο Β της Ζυγαριάς (Πολλαπλασιασμός)
+  useEffect(() => {
+    let timer;
+    if (isMultPlaying) {
+      timer = setInterval(() => {
+        setMultTimeline((prev) => {
+          if (prev >= 100) {
+            setIsMultPlaying(false);
+            return 100;
+          }
+          return prev + 5;
+        });
+      }, 100);
+    }
+    return () => clearInterval(timer);
+  }, [isMultPlaying]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-gray-800 font-sans scroll-smooth">
@@ -64,10 +90,10 @@ export default function BGymnasiou() {
       {/* ΜΕΝΟΥ ΠΛΟΗΓΗΣΗΣ */}
       <div className="max-w-6xl mx-auto px-4 mt-8">
         <div className="flex flex-wrap bg-slate-200/60 p-1.5 rounded-xl gap-1 w-full md:w-max border border-slate-300/50 shadow-sm">
-          <button onClick={() => setActiveTab('variables')} className={`px-4 py-2 text-center rounded-lg font-bold text-xs sm:text-sm transition ${activeTab === 'variables' ? 'bg-amber-500 text-white shadow' : 'text-slate-600 hover:bg-white/50'}`}>📦 0. Η Μεταβλητή</button>
-          <button onClick={() => setActiveTab('equation')} className={`px-4 py-2 text-center rounded-lg font-bold text-xs sm:text-sm transition ${activeTab === 'equation' ? 'bg-amber-500 text-white shadow' : 'text-slate-600 hover:bg-white/50'}`}>⚖️ 1. Η Εξίσωση</button>
-          <button onClick={() => setActiveTab('func_ax')} className={`px-4 py-2 text-center rounded-lg font-bold text-xs sm:text-sm transition ${activeTab === 'func_ax' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 hover:bg-white/50'}`}>📊 2. Η συνάρτηση y = αx</button>
-          <button onClick={() => setActiveTab('func_axb')} className={`px-4 py-2 text-center rounded-lg font-bold text-xs sm:text-sm transition ${activeTab === 'func_axb' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 hover:bg-white/50'}`}>🚀 3. Η συνάρτηση y = αx + β</button>
+          <button type="button" onClick={() => setActiveTab('variables')} className={`px-4 py-2 text-center rounded-lg font-bold text-xs sm:text-sm transition ${activeTab === 'variables' ? 'bg-amber-500 text-white shadow' : 'text-slate-600 hover:bg-white/50'}`}>📦 0. Η Μεταβλητή</button>
+          <button type="button" onClick={() => setActiveTab('equation')} className={`px-4 py-2 text-center rounded-lg font-bold text-xs sm:text-sm transition ${activeTab === 'equation' ? 'bg-amber-500 text-white shadow' : 'text-slate-600 hover:bg-white/50'}`}>⚖️ 1. Η Εξίσωση</button>
+          <button type="button" onClick={() => setActiveTab('func_ax')} className={`px-4 py-2 text-center rounded-lg font-bold text-xs sm:text-sm transition ${activeTab === 'func_ax' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 hover:bg-white/50'}`}>📊 2. Η συνάρτηση y = αx</button>
+          <button type="button" onClick={() => setActiveTab('func_axb')} className={`px-4 py-2 text-center rounded-lg font-bold text-xs sm:text-sm transition ${activeTab === 'func_axb' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 hover:bg-white/50'}`}>🚀 3. Η συνάρτηση y = αx + β</button>
         </div>
       </div>
 
@@ -98,10 +124,10 @@ export default function BGymnasiou() {
 
             {/* ΤΟ ΜΗΧΑΝΗΜΑ ΤΩΝ ΜΑΘΗΜΑΤΙΚΩΝ */}
             <div className="bg-slate-50 p-6 rounded-2xl border text-center space-y-4">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">⚙️ Το Μηχάνημα των Μαθηματικών</h3>
+              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">⚙️ To Μηχάνημα των Μαθηματικών</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                {/* 1. Είσοδος */}
+                {/* 1. Είσοδος (🔴 ΔΙΟΡΘΩΘΗΚΕ: ΠΛΗΡΩΣ ΔΥΝΑΜΙΚΟ ΕΥΡΟΣ -20 ΕΩΣ 20) */}
                 <div className="bg-white p-4 rounded-xl border shadow-sm space-y-2">
                   <span className="text-[10px] font-bold text-slate-400 uppercase block">1. ΕΙΣΟΔΟΣ (X)</span>
                   <div className="text-3xl font-mono font-black text-amber-500">{inputX}</div>
@@ -113,13 +139,13 @@ export default function BGymnasiou() {
                     onChange={(e) => setInputX(parseInt(e.target.value))} 
                     className="w-full accent-amber-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" 
                   />
-                  <div className="flex justify-between text-[8px] font-bold text-slate-400 px-1">
+                  <div className="flex justify-between text-[8px] font-bold text-slate-400 px-1 font-mono">
                     <span>{VAR_MACHINE_CONFIG.minX}</span>
                     <span>{VAR_MACHINE_CONFIG.maxX}</span>
                   </div>
                 </div>
                 
-                {/* 2. Επεξεργασία */}
+                {/* 2. Επεξεργασία (🔴 ΔΙΟΡΘΩΘΗΚΕ: ΑΥΤΟΜΑΤΕΣ ΠΑΡΕΝΘΕΣΕΙΣ ΣΤΟΥΣ ΑΡΝΗΤΙΚΟΥΣ) */}
                 <div className="bg-white p-4 rounded-xl border-2 border-indigo-600 shadow-md">
                   <span className="text-[10px] font-bold text-indigo-600 uppercase block mb-2">2. ΕΠΕΞΕΡΓΑΣΙΑ (ΑΝΤΙΚΑΤΑΣΤΑΣΗ)</span>
                   <div className="text-xl font-mono font-bold text-slate-700">
@@ -137,76 +163,139 @@ export default function BGymnasiou() {
           </div>
         )}
 
-        {/* ⚖️ ΚΑΡΤΕΛΑ 1: Η ΕΞΙΣΩΣΗ */}
+        {/* ⚖️ ΚΑΡΤΕΛΑ 1: Η ΕΞΙΣΩΣΗ (🔴 ΕΝΣΩΜΑΤΩΘΗΚΑΝ ΚΑΙ ΤΑ ΔΥΟ ΜΟΝΤΕΛΑ ΖΥΓΑΡΙΑΣ) */}
         {activeTab === 'equation' && (
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6 animate-fade-in">
-            <div className="flex flex-col md:flex-row justify-between items-start gap-6">
-              <div className="space-y-2">
-                <h2 className="text-2xl font-black text-slate-900">⚖️ Τι είναι η Εξίσωση;</h2>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  Εξίσωση είναι μια μαθηματική ισότητα που περιέχει μια μεταβλητή (άγνωστο). <strong>Λύση</strong> της εξίσωσης είναι η τιμή που πρέπει να πάρει ο άγνωστος ώστε η ισότητα να είναι αληθινή.
-                </p>
-                <div className="bg-amber-50 text-amber-900 p-3 rounded-xl border border-amber-200 text-xs font-semibold">
-                  ⚖️ Σκέψου την εξίσωση σαν μια <strong>ζυγαριά που ισορροπεί</strong>. Ό,τι πράξη κάνουμε στην αριστερή πλευρά, πρέπει να κάνουμε ακριβώς την ίδια και στη δεξιά!
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-4 rounded-2xl w-full md:w-72 shadow text-center">
-                <span className="text-[10px] uppercase font-bold tracking-widest block opacity-75">Η Βασική μορφή</span>
-                <div className="text-2xl font-mono font-black my-1">x + α = β</div>
-                <p className="text-[10px] opacity-90 leading-relaxed">Για να απομονώσουμε το x, αφαιρούμε τον αριθμό «α» και από τα δύο μέλη της εξίσωσης.</p>
-              </div>
+            
+            {/* Εσωτερικός Επιλογέας Μορφής Εξίσωσης */}
+            <div className="flex border-b border-slate-200 pb-3 gap-4">
+              <button type="button" onClick={() => setEqSubTab('add')} className={`text-sm font-black pb-2 border-b-2 transition ${eqSubTab === 'add' ? 'border-amber-500 text-amber-600' : 'border-transparent text-slate-400'}`}>
+                ⚖️ Μορφή x + α = β (Πρόσθεση)
+              </button>
+              <button type="button" onClick={() => setEqSubTab('mult')} className={`text-sm font-black pb-2 border-b-2 transition ${eqSubTab === 'mult' ? 'border-amber-500 text-amber-600' : 'border-transparent text-slate-400'}`}>
+                ⚖️ Μορφή α &middot; x = β (Πολλαπλασιασμός)
+              </button>
             </div>
 
-            <div className="bg-slate-50 p-6 rounded-2xl border text-center space-y-4">
-              <h3 className="font-bold text-sm text-slate-700">🏆 Οπτική Επίλυση με τη Ζυγαριά των Μαθηματικών</h3>
-              
-              <div className="flex flex-wrap justify-center items-center gap-6 text-xs font-bold bg-white p-3 rounded-xl border shadow-sm max-w-2xl mx-auto">
-                <div className="flex items-center gap-2">
-                  <span>Βάρος α:</span>
-                  <button onClick={() => { setWeightA(Math.max(1, weightA - 1)); setIsBalanced(true); }} className="bg-slate-100 px-2 py-0.5 border rounded font-black">-</button>
-                  <span className="text-orange-600 font-mono text-sm">{weightA}</span>
-                  <button onClick={() => { setWeightA(Math.min(5, weightA + 1)); setIsBalanced(true); }} className="bg-slate-100 px-2 py-0.5 border rounded font-black">+</button>
+            {/* ΜΟΝΤΕΛΟ Α: ΠΡΟΣΘΕΣΗ (x + a = b) */}
+            {eqSubTab === 'add' && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+                  <div className="space-y-2">
+                    <h2 className="text-xl font-black text-slate-900">⚖️ Εξίσωση της μορφής x + α = β</h2>
+                    <p className="text-slate-600 text-sm leading-relaxed">
+                      Σκέψου την εξίσωση σαν μια ζυγαριά που ισορροπεί. Για να βρεις το άγνωστο <span className="font-bold text-indigo-600">x</span>, αφαιρείς το βάρος <span className="font-bold text-orange-600">α</span> και από τις δύο μεριές!
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-4 rounded-2xl w-full md:w-72 shadow text-center font-mono">
+                    <div className="text-lg font-black">x + {weightA} = {totalB}</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span>Σύνολο β:</span>
-                  <button onClick={() => { setTotalB(Math.max(weightA + 1, totalB - 1)); setIsBalanced(true); }} className="bg-slate-100 px-2 py-0.5 border rounded font-black">-</button>
-                  <span className="text-blue-600 font-mono text-sm">{totalB}</span>
-                  <button onClick={() => { setTotalB(Math.min(10, totalB + 1)); setIsBalanced(true); }} className="bg-slate-100 px-2 py-0.5 border rounded font-black">+</button>
+
+                <div className="bg-slate-50 p-6 rounded-2xl border text-center space-y-4">
+                  <div className="flex flex-wrap justify-center items-center gap-4 text-xs font-bold bg-white p-3 rounded-xl border max-w-xl mx-auto shadow-sm">
+                    <div>Βάρος α: <button onClick={() => { setWeightA(Math.max(1, weightA - 1)); setIsBalanced(true); }} className="bg-slate-100 px-2 rounded">-</button> <span className="text-orange-600 font-mono">{weightA}</span> <button onClick={() => { setWeightA(Math.min(5, weightA + 1)); setIsBalanced(true); }} className="bg-slate-100 px-2 rounded">+</button></div>
+                    <div>Σύνολο β: <button onClick={() => { setTotalB(Math.max(weightA + 1, totalB - 1)); setIsBalanced(true); }} className="bg-slate-100 px-2 rounded">-</button> <span className="text-blue-600 font-mono">{totalB}</span> <button onClick={() => { setTotalB(Math.min(10, totalB + 1)); setIsBalanced(true); }} className="bg-slate-100 px-2 rounded">+</button></div>
+                  </div>
+
+                  <div className="w-full max-w-md mx-auto bg-white p-6 rounded-2xl border shadow-sm relative">
+                    <svg viewBox="0 0 200 120" className="w-full h-auto overflow-visible">
+                      <line x1="100" y1="40" x2="100" y2="100" className="stroke-slate-400 stroke-[3]" />
+                      <polygon points="90,100 110,100 115,110 85,110" className="fill-slate-500" />
+                      <line x1="40" y1="40" x2="160" y2="40" className="stroke-slate-600 stroke-[2.5]" />
+                      <line x1="40" y1="40" x2="40" y2="75" className="stroke-slate-400 stroke-[0.8]" />
+                      <line x1="20" y1="75" x2="60" y2="75" className="stroke-blue-500 stroke-[2]" />
+                      <rect x="23" y="61" width="14" height="14" className="fill-indigo-600" />
+                      <text x="30" y="71" className="text-[8px] fill-white font-black" textAnchor="middle">x</text>
+                      {isBalanced && Array.from({ length: weightA }).map((_, i) => (
+                        <circle key={i} cx={43 + (i * 5)} cy="71" r="2.5" className="fill-orange-500" />
+                      ))}
+                      <line x1="160" y1="40" x2="160" y2="75" className="stroke-slate-400 stroke-[0.8]" />
+                      <line x1="140" y1="75" x2="180" y2="75" className="stroke-blue-500 stroke-[2]" />
+                      {Array.from({ length: isBalanced ? totalB : totalB - weightA }).map((_, i) => {
+                        const row = Math.floor(i / 4); const col = i % 4;
+                        return <circle key={i} cx={146 + (col * 5)} cy={71 - (row * 5)} r="2.5" className="fill-blue-600" />;
+                      })}
+                    </svg>
+                    {isBalanced && (
+                      <button type="button" onClick={() => setIsBalanced(false)} className="mt-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-black px-6 py-2 rounded-xl shadow w-full transition active:scale-95">
+                        ⚡ Αφαίρεσε το βάρος {weightA} (Λύση Εξίσωσης)
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
+            )}
 
-              <div className="text-xl font-mono font-black text-slate-700 bg-white border px-4 py-2 rounded-xl inline-block shadow-sm">
-                x + {weightA} = {isBalanced ? totalB : totalB - weightA}
-              </div>
+            {/* 🔴 ΜΟΝΤΕΛΟ Β: ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ (a * x = b) - ΑΠΟΚΑΤΑΣΤΑΘΗΚΕ ΠΛΗΡΩΣ ΑΠΟ ΤΟ SCREENSHOT */}
+            {eqSubTab === 'mult' && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                  <div className="space-y-1">
+                    <h2 className="text-xl font-black text-slate-900">🎯 Εξίσωση της μορφής α &middot; x = β</h2>
+                    <p className="text-slate-500 text-xs">Πίεσε το κουμπί ▶ Play για αυτόματη κίνηση, ή σύρε τη μπάρα για να ελέγξεις την ταχύτητα χειροκίνητα. Κάνοντας κλικ στη μπάρα το animation παγώνει!</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white p-3 rounded-xl shadow max-w-xs text-xs font-bold font-mono">
+                    <span className="block border-b border-white/20 pb-1 mb-1 text-[10px] tracking-widest text-orange-200">ΜΑΘΗΜΑΤΙΚΟΣ ΚΑΝΟΝΑΣ</span>
+                    α &middot; x = β &rarr; x = β / α
+                  </div>
+                </div>
 
-              <div className="w-full max-w-md mx-auto bg-white p-6 rounded-2xl border shadow-sm relative">
-                <svg viewBox="0 0 200 120" className="w-full h-auto overflow-visible">
-                  <line x1="100" y1="40" x2="100" y2="100" className="stroke-slate-400 stroke-[3]" />
-                  <polygon points="90,100 110,100 115,110 85,110" className="fill-slate-500" />
-                  <line x1="40" y1="40" x2="160" y2="40" className="stroke-slate-600 stroke-[2.5]" />
-                  <circle cx="100" cy="40" r="3" className="fill-slate-800" />
-                  <line x1="40" y1="40" x2="40" y2="75" className="stroke-slate-400 stroke-[0.8]" />
-                  <line x1="20" y1="75" x2="60" y2="75" className="stroke-blue-500 stroke-[2]" />
-                  <rect x="23" y="60" width="14" height="14" className="fill-indigo-600" />
-                  <text x="30" y="70" className="text-[8px] fill-white font-black text-center font-sans" textAnchor="middle">x</text>
-                  {isBalanced && Array.from({ length: weightA }).map((_, i) => (
-                    <circle key={i} cx={43 + (i * 6)} cy="71" r="2.5" className="fill-orange-500" />
-                  ))}
-                  <line x1="160" y1="40" x2="160" y2="75" className="stroke-slate-400 stroke-[0.8]" />
-                  <line x1="140" y1="75" x2="180" y2="75" className="stroke-blue-500 stroke-[2]" />
-                  {Array.from({ length: isBalanced ? totalB : totalB - weightA }).map((_, i) => {
-                    const row = Math.floor(i / 4);
-                    const col = i % 4;
-                    return <circle key={i} cx={146 + (col * 6)} cy={71 - (row * 6)} r="2.5" className="fill-blue-600" />;
-                  })}
-                </svg>
-                {isBalanced && (
-                  <button type="button" onClick={() => setIsBalanced(false)} className="mt-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-black px-6 py-2.5 rounded-xl shadow-md transition w-full">
-                    ⚡ Αφαίρεσε το βάρος {weightA} (Λύση Εξίσωσης)
-                  </button>
-                )}
+                <div className="bg-slate-50 p-5 rounded-2xl border text-center space-y-4">
+                  {/* Controls */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold bg-white p-3 rounded-xl border shadow-sm max-w-xl mx-auto">
+                    <div>Πλήθος κουτιών (α): <button onClick={() => { setMultA(Math.max(1, multA - 1)); setMultTimeline(0); }} className="bg-slate-100 px-2 rounded">-</button> <span className="text-orange-600 font-mono">{multA}</span> <button onClick={() => { setMultA(Math.min(4, multA + 1)); setMultTimeline(0); }} className="bg-slate-100 px-2 rounded">+</button></div>
+                    <div>Συνολικά μπαλάκια (β): <button onClick={() => { setMultB(Math.max(multA, multB - 1)); setMultTimeline(0); }} className="bg-slate-100 px-2 rounded">-</button> <span className="text-blue-600 font-mono">{multB}</span> <button onClick={() => { setMultB(Math.min(12, multB + 1)); setMultTimeline(0); }} className="bg-slate-100 px-2 rounded">+</button></div>
+                  </div>
+
+                  {/* Timeline Slider & Play Button */}
+                  <div className="bg-white p-3 rounded-xl border shadow-sm flex items-center gap-4 max-w-xl mx-auto text-xs font-bold">
+                    <button type="button" onClick={() => { if(multTimeline>=100) setMultTimeline(0); setIsMultPlaying(!isMultPlaying); }} className="bg-indigo-600 text-white px-4 py-1.5 rounded-lg font-black">{isMultPlaying ? '⏸ Παύση' : '▶ Αναπαραγωγή'}</button>
+                    <div className="flex-1 flex justify-between items-center gap-2 font-mono text-[10px] text-slate-400">
+                      <span>🎬 Αρχή</span>
+                      <input type="range" min="0" max="100" value={multTimeline} onChange={(e) => { setIsMultPlaying(false); setMultTimeline(parseInt(e.target.value)); }} className="flex-1 accent-indigo-600 h-1.5 bg-slate-200 rounded-lg cursor-pointer" />
+                      <span>Λύση (100%)</span>
+                    </div>
+                  </div>
+
+                  {/* Equation Display */}
+                  <div className="text-lg font-mono font-black text-orange-600 bg-white border border-dashed border-orange-200 px-4 py-1.5 rounded-xl inline-block shadow-sm">
+                    ({multA} &middot; x) ÷ {multA} = {multB} ÷ {multA}
+                  </div>
+
+                  {/* Ζυγαριά Πολλαπλασιασμού */}
+                  <div className="w-full max-w-md mx-auto bg-white p-4 rounded-2xl border shadow-sm">
+                    <svg viewBox="0 0 200 120" className="w-full h-auto overflow-visible">
+                      <line x1="100" y1="40" x2="100" y2="100" className="stroke-slate-400 stroke-[3]" />
+                      <polygon points="90,100 110,100 115,110 85,110" className="fill-slate-500" />
+                      <line x1="40" y1="55" x2="160" y2="55" className="stroke-slate-600 stroke-[2.5]" />
+                      
+                      {/* Αριστερή Πλευρά: Τα κουτιά x (Μειώνονται αν προχωράει το timeline) */}
+                      <line x1="40" y1="55" x2="40" y2="85" className="stroke-slate-300 stroke-[0.8]" />
+                      <line x1="20" y1="85" x2="60" y2="85" className="stroke-orange-400 stroke-[2]" />
+                      {Array.from({ length: multTimeline >= 50 ? 1 : multA }).map((_, i) => (
+                        <rect key={i} x={24 + (i * 8)} y="73" width="7" height="11" className="fill-indigo-600 border stroke-white stroke-[0.3]" />
+                      ))}
+
+                      {/* Δεξιά Πλευρά: Τα μπαλάκια β (Χωρίζονται αν το timeline είναι >= 50) */}
+                      <line x1="160" y1="55" x2="160" y2="85" className="stroke-slate-300 stroke-[0.8]" />
+                      <line x1="140" y1="85" x2="180" y2="85" className="stroke-blue-400 stroke-[2]" />
+                      {Array.from({ length: multTimeline >= 50 ? Math.floor(multB / multA) : multB }).map((_, i) => {
+                        const row = Math.floor(i / 4); const col = i % 4;
+                        return <circle key={i} cx={146 + (col * 5)} cy={81 - (row * 5)} r="2" className="fill-blue-600" />;
+                      })}
+                    </svg>
+                  </div>
+
+                  {/* Steps */}
+                  <div className="bg-white p-4 rounded-xl border text-left max-w-xl mx-auto text-xs font-bold font-mono space-y-2">
+                    <div className="flex items-center gap-2"><span className="bg-slate-100 font-sans w-4 h-4 rounded-full flex items-center justify-center font-bold text-[9px]">1</span> Αρχική κατάσταση: <span className="bg-slate-50 border px-1 rounded">{multA} &middot; x = {multB}</span></div>
+                    <div className={`flex items-center gap-2 transition ${multTimeline >= 50 ? 'opacity-100 text-orange-600' : 'opacity-30'}`}><span className="bg-slate-100 font-sans w-4 h-4 rounded-full flex items-center justify-center font-bold text-[9px]">2</span> Διαιρούμε με το {multA}: <span className="bg-slate-50 border px-1 rounded">({multA}&middot;x)/{multA} = {multB}/{multA}</span></div>
+                    <div className={`flex items-center gap-2 transition ${multTimeline === 100 ? 'opacity-100 text-emerald-600' : 'opacity-30'}`}><span className="bg-emerald-100 font-sans w-4 h-4 rounded-full flex items-center justify-center font-bold text-[9px] text-emerald-700">3</span> Το 1 κουτί x ισούται με: <span className="bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-sm text-emerald-700 font-black">x = {(multB / multA).toFixed(2).replace('.00', '')}</span></div>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -297,7 +386,7 @@ export default function BGymnasiou() {
                     </div>
                     <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center justify-between text-xs font-bold">
                       <span>ΕΜΦΑΝΙΣΗ ΤΗΣ Y = {alpha2.toFixed(1)}X:</span>
-                      <button onClick={() => setShowReference(!showReference)} className={`w-10 h-5 rounded-full p-0.5 transition-colors ${showReference ? 'bg-indigo-600' : 'bg-slate-300'}`}>
+                      <button type="button" onClick={() => setShowReference(!showReference)} className={`w-10 h-5 rounded-full p-0.5 transition-colors ${showReference ? 'bg-indigo-600' : 'bg-slate-300'}`}>
                         <div className={`bg-white w-4 h-4 rounded-full shadow transition-transform ${showReference ? 'translate-x-5' : 'translate-x-0'}`} />
                       </button>
                     </div>
@@ -334,22 +423,11 @@ export default function BGymnasiou() {
         <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη Β' Γυμνασίου.</p>
       </footer>
 
-      {/* 🔴 ΠΡΟΣΤΕΘΗΚΕ CSS ΓΙΑ ΝΑ ΦΑΙΝΟΝΤΑΙ ΟΙ ΜΠΑΡΕΣ (TRACK) ΣΕ ΟΛΟΥΣ ΤΟΥΣ BROWSERS */}
       <style jsx>{`
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
-        
-        /* Force rendering of track background on webkit browsers */
-        input[type="range"]::-webkit-slider-runnable-track {
-          background: #e2e8f0;
-          height: 8px;
-          border-radius: 8px;
-        }
-        input[type="range"]::-moz-range-track {
-          background: #e2e8f0;
-          height: 8px;
-          border-radius: 8px;
-        }
+        input[type="range"]::-webkit-slider-runnable-track { background: #e2e8f0; height: 8px; border-radius: 8px; }
+        input[type="range"]::-moz-range-track { background: #e2e8f0; height: 8px; border-radius: 8px; }
       `}</style>
     </div>
   );
