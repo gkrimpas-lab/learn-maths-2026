@@ -111,7 +111,7 @@ export default function BGymnasiou() {
                     max={VAR_MACHINE_CONFIG.maxX} 
                     value={inputX} 
                     onChange={(e) => setInputX(parseInt(e.target.value))} 
-                    className="w-full accent-amber-500 appearance-none h-1.5 bg-slate-200 rounded-lg cursor-pointer" 
+                    className="w-full accent-amber-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" 
                   />
                   <div className="flex justify-between text-[8px] font-bold text-slate-400 px-1">
                     <span>{VAR_MACHINE_CONFIG.minX}</span>
@@ -225,7 +225,7 @@ export default function BGymnasiou() {
                 </div>
               </div>
               <div className="bg-indigo-600 text-white p-4 rounded-2xl w-full md:w-72 shadow">
-                <h4 className="text-xs font-black opacity-75 tracking-wider">💡 Τι είναι το «α»;</h4>
+                <h4 className="text-xs font-black uppercase opacity-75 tracking-wider">💡 Τι είναι το «α»;</h4>
                 <p className="text-xs mt-1 leading-relaxed opacity-90">Είναι η <strong>κλίση</strong>. Όσο μεγαλύτερο το α, τόσο πιο &quot;απότομη&quot; η ευθεία.</p>
               </div>
             </div>
@@ -238,7 +238,7 @@ export default function BGymnasiou() {
                       <div className="flex items-center justify-between font-mono font-black text-sm text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">
                         <span>α =</span> <span>{alpha.toFixed(1)}</span>
                       </div>
-                      <input type="range" min="-5" max="5" step="0.5" value={alpha} onChange={(e) => setAlpha(parseFloat(e.target.value))} className="w-full accent-indigo-600 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer" />
+                      <input type="range" min="-5" max="5" step="0.5" value={alpha} onChange={(e) => setAlpha(parseFloat(e.target.value))} className="w-full accent-indigo-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" />
                     </div>
                     <div className="bg-white p-4 rounded-xl border shadow-sm text-center">
                       <div className="text-2xl font-mono font-black text-indigo-600 mt-1">y = {alpha.toFixed(1)}x</div>
@@ -271,15 +271,15 @@ export default function BGymnasiou() {
               <div className="space-y-2 max-w-2xl">
                 <h2 className="text-2xl font-black text-slate-900">🚀 Η Σύνάρτηση y = αx + β</h2>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Προκύπτει από την <strong>παράλληλη μετατόπιση</strong> της ευθείας y = ax κατά b μονάδες στον άξονα y'y.
+                  Προκύπτει από την <strong>παράλληλη μετατόπιση</strong> της ευθείας $y = \alpha x$ κατά $\beta$ μονάδες στον άξονα $y'y$.
                 </p>
                 <div className="bg-amber-50 border border-amber-200 text-amber-950 text-xs p-3 rounded-xl font-semibold space-y-1">
-                  <div>📍 <strong>Σημείο Τομής:</strong> Τέμνει τον άξονα y'y στο σημείο <strong>(0, β)</strong>.</div>
+                  <div>📍 <strong>Σημείο Τομής:</strong> Τέμνει τον άξονα $y'y$ στο σημείο <strong>(0, β)</strong>.</div>
                   <div>📐 <strong>Κλίση:</strong> Η κλίση παραμένει <strong>α</strong>.</div>
                 </div>
               </div>
               <div className="bg-indigo-600 text-white p-4 rounded-2xl w-full md:w-72 shadow">
-                <h4 className="text-xs font-black opacity-75 tracking-wider">🔍 Τι κάνει το «β»;</h4>
+                <h4 className="text-xs font-black uppercase opacity-75 tracking-wider">🔍 Τι κάνει το «β»;</h4>
                 <p className="text-xs mt-1 leading-relaxed opacity-90">Αν <strong>β &gt; 0</strong>, η ευθεία ανεβαίνει. Αν <strong>β &lt; 0</strong>, κατεβαίνει. Οι ευθείες με το ίδιο α είναι <strong>παράλληλες</strong>!</p>
               </div>
             </div>
@@ -289,11 +289,11 @@ export default function BGymnasiou() {
                   <div className="lg:col-span-5 space-y-4">
                     <div className="bg-white p-4 rounded-xl border shadow-sm space-y-1">
                       <div className="flex justify-between text-xs font-bold"><span>Κλίση (α):</span> <span className="font-mono text-indigo-600">{alpha2.toFixed(1)}</span></div>
-                      <input type="range" min="-3" max="3" step="0.5" value={alpha2} onChange={(e) => setAlpha2(parseFloat(e.target.value))} className="w-full accent-indigo-500 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer" />
+                      <input type="range" min="-3" max="3" step="0.5" value={alpha2} onChange={(e) => setAlpha2(parseFloat(e.target.value))} className="w-full accent-indigo-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" />
                     </div>
                     <div className="bg-white p-4 rounded-xl border shadow-sm space-y-1">
                       <div className="flex justify-between text-xs font-bold"><span>Μετατόπιση (β):</span> <span className="font-mono text-purple-600">{beta.toFixed(1)}</span></div>
-                      <input type="range" min="-4" max="4" step="0.5" value={beta} onChange={(e) => setBeta(parseFloat(e.target.value))} className="w-full accent-purple-500 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer" />
+                      <input type="range" min="-4" max="4" step="0.5" value={beta} onChange={(e) => setBeta(parseFloat(e.target.value))} className="w-full accent-purple-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" />
                     </div>
                     <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center justify-between text-xs font-bold">
                       <span>ΕΜΦΑΝΙΣΗ ΤΗΣ Y = {alpha2.toFixed(1)}X:</span>
@@ -334,9 +334,22 @@ export default function BGymnasiou() {
         <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη Β' Γυμνασίου.</p>
       </footer>
 
+      {/* 🔴 ΠΡΟΣΤΕΘΗΚΕ CSS ΓΙΑ ΝΑ ΦΑΙΝΟΝΤΑΙ ΟΙ ΜΠΑΡΕΣ (TRACK) ΣΕ ΟΛΟΥΣ ΤΟΥΣ BROWSERS */}
       <style jsx>{`
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+        
+        /* Force rendering of track background on webkit browsers */
+        input[type="range"]::-webkit-slider-runnable-track {
+          background: #e2e8f0;
+          height: 8px;
+          border-radius: 8px;
+        }
+        input[type="range"]::-moz-range-track {
+          background: #e2e8f0;
+          height: 8px;
+          border-radius: 8px;
+        }
       `}</style>
     </div>
   );
