@@ -217,7 +217,7 @@ export default function BGymnasiou() {
               <div className="space-y-2 max-w-2xl">
                 <h2 className="text-2xl font-black text-slate-900">📊 Η Σύνάρτηση y = αx</h2>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Η γραφική της παράσταση είναι πάντα μια <strong>ευθεία γραμμή</strong> η οποία διέρχεται από την αρχή των αξόνων $O(0,0)$.
+                  Η γραφική της παράσταση είναι πάντα μια <strong>ευθεία γραμμή</strong> η οποία διέρχεται από την αρχή των αξόνων O(0,0).
                 </p>
                 <div className="flex flex-wrap gap-2 pt-2">
                   <span className="bg-green-50 border border-green-200 text-green-800 text-xs px-3 py-1.5 rounded-xl font-medium">🍏 <strong>α &gt; 0:</strong> Ανεβαίνει από αριστερά προς τα δεξιά.</span>
@@ -225,7 +225,7 @@ export default function BGymnasiou() {
                 </div>
               </div>
               <div className="bg-indigo-600 text-white p-4 rounded-2xl w-full md:w-72 shadow">
-                <h4 className="text-xs font-black uppercase opacity-75 tracking-wider">💡 Τι είναι το «α»;</h4>
+                <h4 className="text-xs font-black opacity-75 tracking-wider">💡 Τι είναι το «α»;</h4>
                 <p className="text-xs mt-1 leading-relaxed opacity-90">Είναι η <strong>κλίση</strong>. Όσο μεγαλύτερο το α, τόσο πιο &quot;απότομη&quot; η ευθεία.</p>
               </div>
             </div>
