@@ -248,9 +248,8 @@ export default function BGymnasiouEquations() {
                     )}
                   </svg>
 
-                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Προστασία των συμβόλων με String Literals */}
                   <div className="mt-2 text-center text-xs font-mono font-bold text-slate-500">
-                    x + {weightA} <span className="text-orange-500 font-black">-{weightA}</span> {"="} {totalB} <span className="text-orange-500 font-black">-{weightA}</span>
+                    x + {weightA} <span className="text-orange-500 font-black">-{weightA}</span> = {totalB} <span className="text-orange-500 font-black">-{weightA}</span>
                   </div>
                 </div>
               </div>
@@ -265,10 +264,10 @@ export default function BGymnasiouEquations() {
                     <h2 className="text-xl font-black text-slate-900">🎯 Εξίσωση της μορφής α &middot; x = β</h2>
                     <p className="text-slate-500 text-xs">Πίεσε το κουμπί ▶ Play για αυτόματη κίνηση, ή σύρε τη μπάρα για να ελέγξεις την ταχύτητα χειροκίνητα.</p>
                   </div>
-                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Προστασία του / με String Literal */}
+                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Πλήρης αντικατάσταση του / με το κείμενο "διά" για αποφυγή RegEx errors */}
                   <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white p-3 rounded-xl shadow max-w-xs text-xs font-bold font-mono">
                     <span className="block border-b border-white/20 pb-1 mb-1 text-[10px] tracking-widest text-orange-200">ΜΑΘΗΜΑΤΙΚΟΣ ΚΑΝΟΝΑΣ</span>
-                    {"α · x = β \u2192 x = β / α"}
+                    α &middot; x = β  &rArr;  x = β ÷ α
                   </div>
                 </div>
 
@@ -287,9 +286,9 @@ export default function BGymnasiouEquations() {
                     </div>
                   </div>
 
-                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Προστασία του / με String Literal */}
+                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Χρήση του συμβόλου ÷ αντί για / */}
                   <div className="text-lg font-mono font-black text-orange-600 bg-white border border-dashed border-orange-200 px-4 py-1.5 rounded-xl inline-block shadow-sm">
-                    {"("}{multA} {"· x) ÷"} {multA} {"="} {multB} {"÷"} {multA}
+                    ({multA} &middot; x) ÷ {multA} = {multB} ÷ {multA}
                   </div>
 
                   <div className="w-full max-w-md mx-auto bg-white p-4 rounded-2xl border shadow-sm">
@@ -313,11 +312,11 @@ export default function BGymnasiouEquations() {
                     </svg>
                   </div>
 
-                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Προστασία όλων των πλαγίων καθέτων (/) στις επεξηγήσεις βημάτων */}
+                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Αντικατάσταση όλων των πλαγίων καθέτων (/) με το σύμβολο της διαίρεσης (÷) */}
                   <div className="bg-white p-4 rounded-xl border text-left max-w-xl mx-auto text-xs font-bold font-mono space-y-2">
                     <div className="flex items-center gap-2"><span>1</span> Αρχική κατάσταση: <span className="bg-slate-50 border px-1 rounded">{multA} &middot; x = {multB}</span></div>
                     <div className={`flex items-center gap-2 transition ${multTimeline >= 50 ? 'opacity-100 text-orange-600' : 'opacity-30'}`}>
-                      <span>2</span> Διαιρούμε με το {multA}: <span className="bg-slate-50 border px-1 rounded">{`(${multA}·x)/${multA} = ${multB}/${multA}`}</span>
+                      <span>2</span> Διαιρούμε με το {multA}: <span className="bg-slate-50 border px-1 rounded">({multA} &middot; x) ÷ {multA} = {multB} ÷ {multA}</span>
                     </div>
                     <div className={`flex items-center gap-2 transition ${multTimeline === 100 ? 'opacity-100 text-emerald-600' : 'opacity-30'}`}>
                       <span>3</span> Το 1 κουτί x ισούται με: <span className="bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-sm text-emerald-700 font-black">x = {(multB / multA).toFixed(2).replace('.00', '')}</span>
