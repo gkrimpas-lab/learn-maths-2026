@@ -60,37 +60,47 @@ export default function BGymnasiouMetabliti() {
           <div className="bg-slate-50 p-6 rounded-2xl border text-center space-y-4">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">⚙️ Το Μηχάνημα των Μαθηματικών</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
               {/* 1. Είσοδος */}
-              <div className="bg-white p-4 rounded-xl border shadow-sm space-y-2">
+              <div className="bg-white p-5 h-36 rounded-xl border shadow-sm flex flex-col justify-between">
                 <span className="text-[10px] font-bold text-slate-400 uppercase block">1. ΕΙΣΟΔΟΣ (X)</span>
                 <div className="text-3xl font-mono font-black text-amber-500">{inputX}</div>
-                <input 
-                  type="range" 
-                  min={VAR_MACHINE_CONFIG.minX} 
-                  max={VAR_MACHINE_CONFIG.maxX} 
-                  value={inputX} 
-                  onChange={(e) => setInputX(parseInt(e.target.value))} 
-                  className="w-full accent-amber-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" 
-                />
-                <div className="flex justify-between text-[8px] font-bold text-slate-400 px-1 font-mono">
-                  <span>{VAR_MACHINE_CONFIG.minX}</span>
-                  <span>{VAR_MACHINE_CONFIG.maxX}</span>
+                <div className="space-y-1">
+                  <input 
+                    type="range" 
+                    min={VAR_MACHINE_CONFIG.minX} 
+                    max={VAR_MACHINE_CONFIG.maxX} 
+                    value={inputX} 
+                    onChange={(e) => setInputX(parseInt(e.target.value))} 
+                    className="w-full accent-amber-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" 
+                  />
+                  <div className="flex justify-between text-[9px] font-bold text-slate-400 px-1 font-mono">
+                    <span>{VAR_MACHINE_CONFIG.minX}</span>
+                    <span>{VAR_MACHINE_CONFIG.maxX}</span>
+                  </div>
                 </div>
               </div>
               
-              {/* 2. Επεξεργασία */}
-              <div className="bg-white p-4 rounded-xl border-2 border-indigo-600 shadow-md">
-                <span className="text-[10px] font-bold text-indigo-600 uppercase block mb-2">2. ΕΠΕΞΕΡΓΑΣΙΑ (ΑΝΤΙΚΑΤΑΣΤΑΣΗ)</span>
-                <div className="text-xl font-mono font-bold text-slate-700">
-                  {VAR_MACHINE_CONFIG.a} &middot; <span className="bg-amber-100 px-2 py-0.5 rounded text-amber-700 font-black">{formatX(inputX)}</span> + {VAR_MACHINE_CONFIG.b} = <span className="bg-emerald-100 px-2 py-0.5 rounded text-emerald-700 font-black">{VAR_MACHINE_CONFIG.a * inputX + VAR_MACHINE_CONFIG.b}</span>
+              {/* 2. Επεξεργασία (ΔΙΟΡΘΩΘΗΚΕ: Μειώθηκε το padding και ήρθε σε 1 οριζόντια γραμμή) */}
+              <div className="bg-white px-2 py-5 h-36 rounded-xl border-2 border-indigo-600 shadow-md flex flex-col justify-between">
+                <span className="text-[10px] font-bold text-indigo-600 uppercase block">2. ΕΠΕΞΕΡΓΑΣΙΑ (ΑΝΤΙΚΑΤΑΣΤΑΣΗ)</span>
+                <div className="text-xl font-mono font-bold text-slate-700 flex items-center justify-center gap-1">
+                  <span>{VAR_MACHINE_CONFIG.a}</span>
+                  <span>&bull;</span>
+                  <span className="bg-amber-100 px-2 py-0.5 rounded text-amber-700 font-black min-w-[2.5rem] inline-block">{formatX(inputX)}</span>
+                  <span>+</span>
+                  <span>{VAR_MACHINE_CONFIG.b}</span>
+                  <span>=</span>
+                  <span className="bg-emerald-100 px-2 py-0.5 rounded text-emerald-700 font-black min-w-[2.5rem] inline-block">{VAR_MACHINE_CONFIG.a * inputX + VAR_MACHINE_CONFIG.b}</span>
                 </div>
+                <div className="text-[9px] text-slate-400 font-sans font-semibold">Αντικατάσταση του x στην παράσταση</div>
               </div>
 
               {/* 3. Έξοδος */}
-              <div className="bg-white p-4 rounded-xl border shadow-sm">
+              <div className="bg-white p-5 h-36 rounded-xl border shadow-sm flex flex-col justify-between">
                 <span className="text-[10px] font-bold text-slate-400 uppercase block">3. ΕΞΟΔΟΣ (Y)</span>
                 <div className="text-3xl font-mono font-black text-emerald-500">{VAR_MACHINE_CONFIG.a * inputX + VAR_MACHINE_CONFIG.b}</div>
+                <div className="text-[9px] text-slate-400 font-sans font-semibold">Το τελικό αποτέλεσμα</div>
               </div>
             </div>
           </div>
