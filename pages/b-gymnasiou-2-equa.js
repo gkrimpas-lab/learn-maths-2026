@@ -129,7 +129,7 @@ export default function BGymnasiouEquations() {
                 </div>
                 <div className="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-4 rounded-2xl w-full md:w-72 shadow text-center font-mono">
                   <div className="text-xs uppercase opacity-75 tracking-wider mb-1">Τρέχουσα Εξίσωση</div>
-                  <div className="text-xl font-black">x + {weightA} = {totalB}</div>
+                  <div className="text-xl font-black font-mono">x + {weightA} = {totalB}</div>
                 </div>
               </div>
 
@@ -248,9 +248,9 @@ export default function BGymnasiouEquations() {
                     )}
                   </svg>
 
-                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Όλα τα κείμενα και τα σύμβολα μπήκαν σε καθαρά JavaScript Strings */}
+                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ ΡΙΖΙΚΑ: Ολόκληρη η γραμμή μπήκε σε ΕΝΑ ενιαίο, 100% ασφαλές JavaScript string literal */}
                   <div className="mt-2 text-center text-xs font-mono font-bold text-slate-500">
-                    {"x + "}{weightA} <span className="text-orange-500 font-black">{"-"}{weightA}</span> {"="} {totalB} <span className="text-orange-500 font-black">{"-"}{weightA}</span>
+                    {"x + " + weightA + " - " + weightA + " = " + totalB + " - " + weightA}
                   </div>
                 </div>
               </div>
@@ -263,7 +263,7 @@ export default function BGymnasiouEquations() {
                 <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                   <div className="space-y-1">
                     <h2 className="text-xl font-black text-slate-900">🎯 Εξίσωση της μορφής α &middot; x = β</h2>
-                    <p className="text-slate-500 text-xs">Πίεσε το κουμπί ▶ Play για αυτόματη κίνηση, ή σύρε τη μπάρα για να ελέγξεις την ταχύτητα χειροκίνητα.</p>
+                    <p className="text-slate-500 text-xs">Πίεσε το κουμπί ▶ Play για automatic κίνηση, ή σύρε τη μπάρα για να ελέγξεις την ταχύτητα χειροκίνητα.</p>
                   </div>
                   <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white p-3 rounded-xl shadow max-w-xs text-xs font-bold font-mono">
                     <span className="block border-b border-white/20 pb-1 mb-1 text-[10px] tracking-widest text-orange-200">ΜΑΘΗΜΑΤΙΚΟΣ ΚΑΝΟΝΑΣ</span>
