@@ -51,27 +51,29 @@ export default function BGymnasiouDashboard() {
             </Link>
 
             {/* ΜΑΘΗΜΑ 2: Η ΕΞΙΣΩΣΗ */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm opacity-60 flex items-start gap-4">
-              <div className="bg-slate-100 text-slate-500 text-2xl p-4 rounded-2xl">
-                ⚖️
+            <Link href="/b-gymnasiou-2-equa" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm opacity-60 flex items-start gap-4">
+                <div className="bg-slate-100 text-slate-500 text-2xl p-4 rounded-2xl">
+                  ⚖️
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-black text-base text-slate-700">2. Η Εξίσωση (x+α=β &amp; α·x=β)</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">Η διαδραστική ζυγαριά επίλυσης εξισώσεων μεταφέρεται σε αυτόνομη σελίδα σύντομα.</p>
+                </div>
               </div>
-              <div className="space-y-1">
-                <h3 className="font-black text-base text-slate-700">2. Η Εξίσωση (x+α=β &amp; α·x=β)</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">Η διαδραστική ζυγαριά επίλυσης εξισώσεων μεταφέρεται σε αυτόνομη σελίδα σύντομα.</p>
-              </div>
-            </div>
-
+              </Link>
             {/* ΜΑΘΗΜΑ 3: y = ax */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm opacity-60 flex items-start gap-4">
-              <div className="bg-slate-100 text-slate-500 text-2xl p-4 rounded-2xl">
-                📈
+            <Link href="/b-gymnasiou-3-yax" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm opacity-60 flex items-start gap-4">
+                <div className="bg-slate-100 text-slate-500 text-2xl p-4 rounded-2xl">
+                  📈
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-black text-base text-slate-700">3. Η συνάρτηση y = αx</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">Μελέτη της κλίσης της ευθείας και του συντελεστή αναλογίας.</p>
+                </div>
               </div>
-              <div className="space-y-1">
-                <h3 className="font-black text-base text-slate-700">3. Η συνάρτηση y = αx</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">Μελέτη της κλίσης της ευθείας και του συντελεστή αναλογίας.</p>
-              </div>
-            </div>
-
+              </Link>
             {/* ΜΑΘΗΜΑ 4: y = ax + b */}
             <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm opacity-60 flex items-start gap-4">
               <div className="bg-slate-100 text-slate-500 text-2xl p-4 rounded-2xl">
