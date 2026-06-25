@@ -62,26 +62,27 @@ export default function BGymnasiouDashboard() {
             </div>
             </Link>
             {/* ΜΑΘΗΜΑ 3: y = ax */}
-<Link href="/b-gymnasiou-3-yax" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
+              <Link href="/b-gymnasiou-3-yax" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
+              <div className="bg-amber-100 text-amber-600 text-2xl p-4 rounded-2xl group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                📈
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-black text-base text-slate-900">3. Η συνάρτηση y = αx</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">Μελέτησε την κλίση της ευθείας και πειραματίσου με τον συντελεστή αναλογίας στο διαδραστικό εργαστήριο.</p>
+              <span className="text-[11px] font-bold text-amber-600 block pt-1">Έναρξη Μαθήματος &rarr;</span>
+              </div>
+            </Link>
+            {/* ΜΑΘΗΜΑ 4: y = ax + b */}
+<Link href="/b-gymnasiou-4-yaxb" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
   <div className="bg-amber-100 text-amber-600 text-2xl p-4 rounded-2xl group-hover:bg-amber-500 group-hover:text-white transition-colors">
-    📈
+    🚀
   </div>
   <div className="space-y-1">
-    <h3 className="font-black text-base text-slate-900">3. Η συνάρτηση y = αx</h3>
-    <p className="text-xs text-slate-500 leading-relaxed">Μελέτησε την κλίση της ευθείας και πειραματίσου με τον συντελεστή αναλογίας στο διαδραστικό εργαστήριο.</p>
+    <h3 className="font-black text-base text-slate-900">4. Η συνάρτηση y = αx + β</h3>
+    <p className="text-xs text-slate-500 leading-relaxed">Εξερεύνησε την παράλληλη μετατόπιση ευθειών στον άξονα y'y και δες πώς επηρεάζει το β τη γραφική παράσταση.</p>
     <span className="text-[11px] font-bold text-amber-600 block pt-1">Έναρξη Μαθήματος &rarr;</span>
   </div>
 </Link>
-            {/* ΜΑΘΗΜΑ 4: y = ax + b */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm opacity-60 flex items-start gap-4">
-              <div className="bg-slate-100 text-slate-500 text-2xl p-4 rounded-2xl">
-                🚀
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-black text-base text-slate-700">4. Η συνάρτηση y = αx + β</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">Εξερεύνηση της παράλληλης μετατόπισης ευθειών στον άξονα y'y.</p>
-              </div>
-            </div>
 
           </div>
         </div>
