@@ -124,7 +124,7 @@ export default function BGymnasiouEquations() {
                 <div className="space-y-2">
                   <h2 className="text-xl font-black text-slate-900">⚖️ Εξίσωση της μορφής x + α = β</h2>
                   <p className="text-slate-600 text-sm leading-relaxed">
-                    Για να απομονώσεις τον άγνωστο <span className="font-bold text-indigo-600">x</span>, αφαιρείς το βάρος <span className="font-bold text-orange-600">α</span> και από τα δύο μέρη της ζυγαριάς ώστε να διατηρηθεί η ισορροπία.
+                    Για να απομονώσεις τον άγνωστο <span className="font-bold text-indigo-600">x</span>, αφαιρείς το βάρος <span className="font-bold text-orange-600">α</span> iκαι από τα δύο μέρη της ζυγαριάς ώστε να διατηρηθεί η ισορροπία.
                   </p>
                 </div>
                 <div className="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-4 rounded-2xl w-full md:w-72 shadow text-center font-mono">
@@ -228,7 +228,7 @@ export default function BGymnasiouEquations() {
                         style={getAnimStyle(addTimeline, i, 'right')}
                       />
                     ))}
-                    {/* Σταθερά σφαιρίδια αποτελέσματος */}
+                    {/* Σταθερά σφαιρίδια αποτελέσματος (🔴 ΔΙΟΡΘΩΘΗΚΕ: Αφαίρεση του προβληματικού weightA > 0) */}
                     {Array.from({ length: totalB - weightA }).map((_, i) => {
                       const row = Math.floor(i / 6); const col = i % 6;
                       return (
@@ -248,7 +248,7 @@ export default function BGymnasiouEquations() {
                     )}
                   </svg>
 
-                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ ΡΙΖΙΚΑ: Ολόκληρη η γραμμή μπήκε σε ΕΝΑ ενιαίο, 100% ασφαλές JavaScript string literal */}
+                  {/* Καθαρό String χωρίς σκόρπια tags */}
                   <div className="mt-2 text-center text-xs font-mono font-bold text-slate-500">
                     {"x + " + weightA + " - " + weightA + " = " + totalB + " - " + weightA}
                   </div>
@@ -263,7 +263,7 @@ export default function BGymnasiouEquations() {
                 <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                   <div className="space-y-1">
                     <h2 className="text-xl font-black text-slate-900">🎯 Εξίσωση της μορφής α &middot; x = β</h2>
-                    <p className="text-slate-500 text-xs">Πίεσε το κουμπί ▶ Play για automatic κίνηση, ή σύρε τη μπάρα για να ελέγξεις την ταχύτητα χειροκίνητα.</p>
+                    <p className="text-slate-500 text-xs">Πίεσε το κουμπί ▶ Play για αυτόματη κίνηση, ή σύρε τη μπάρα για να ελέγξεις την ταχύτητα χειροκίνητα.</p>
                   </div>
                   <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white p-3 rounded-xl shadow max-w-xs text-xs font-bold font-mono">
                     <span className="block border-b border-white/20 pb-1 mb-1 text-[10px] tracking-widest text-orange-200">ΜΑΘΗΜΑΤΙΚΟΣ ΚΑΝΟΝΑΣ</span>
