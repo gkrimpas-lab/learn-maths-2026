@@ -51,28 +51,27 @@ export default function BGymnasiouDashboard() {
             </Link>
 
             {/* ΜΑΘΗΜΑ 2: Η ΕΞΙΣΩΣΗ */}
-<Link href="/b-gymnasiou-2-equa" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
+            <Link href="/b-gymnasiou-2-equa" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
+              <div className="bg-amber-100 text-amber-600 text-2xl p-4 rounded-2xl group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                ⚖️
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-black text-base text-slate-900">2. Η Εξίσωση</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">Μάθε τι είναι η εξίσωση και πειραματίσου με τη διαδραστική ζυγαριά επίλυσης εξισώσεων.</p>
+              <span className="text-[11px] font-bold text-amber-600 block pt-1">Έναρξη Μαθήματος &rarr;</span>
+            </div>
+            </Link>
+            {/* ΜΑΘΗΜΑ 3: y = ax */}
+<Link href="/b-gymnasiou-3-yax" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
   <div className="bg-amber-100 text-amber-600 text-2xl p-4 rounded-2xl group-hover:bg-amber-500 group-hover:text-white transition-colors">
-    ⚖️
+    📈
   </div>
   <div className="space-y-1">
-    <h3 className="font-black text-base text-slate-900">2. Η Εξίσωση</h3>
-    <p className="text-xs text-slate-500 leading-relaxed">Μάθε τι είναι η εξίσωση και πειραματίσου με τη διαδραστική ζυγαριά επίλυσης εξισώσεων.</p>
+    <h3 className="font-black text-base text-slate-900">3. Η συνάρτηση y = αx</h3>
+    <p className="text-xs text-slate-500 leading-relaxed">Μελέτησε την κλίση της ευθείας και πειραματίσου με τον συντελεστή αναλογίας στο διαδραστικό εργαστήριο.</p>
     <span className="text-[11px] font-bold text-amber-600 block pt-1">Έναρξη Μαθήματος &rarr;</span>
   </div>
 </Link>
-            {/* ΜΑΘΗΜΑ 3: y = ax */}
-            <Link href="/b-gymnasiou-3-yax" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm opacity-60 flex items-start gap-4">
-                <div className="bg-slate-100 text-slate-500 text-2xl p-4 rounded-2xl">
-                  📈
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-black text-base text-slate-700">3. Η συνάρτηση y = αx</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">Μελέτη της κλίσης της ευθείας και του συντελεστή αναλογίας.</p>
-                </div>
-              </div>
-              </Link>
             {/* ΜΑΘΗΜΑ 4: y = ax + b */}
             <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm opacity-60 flex items-start gap-4">
               <div className="bg-slate-100 text-slate-500 text-2xl p-4 rounded-2xl">
