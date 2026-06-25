@@ -195,7 +195,7 @@ export default function BGymnasiouEquations() {
                     {addTimeline === 0 ? '🎬 Αρχική Κατάσταση' : addTimeline < 40 ? '🔼 Αφαίρεση βαρών...' : addTimeline < 75 ? '🔄 Εξουδετέρωση...' : '✨ Λύση!'}
                   </div>
 
-                  <svg viewBox="0 0 240 140" className="w-full max-w-lg overflow-visible font-sans select-none">
+                  <svg viewBox="0 0 240 140" className="w-full max-w-[280px] overflow-visible font-sans select-none">
                     <rect x="116" y="45" width="8" height="65" className="fill-slate-400" />
                     <polygon points="100,110 140,110 148,122 92,122" className="fill-slate-600" />
                     <circle cx="120" cy="45" r="5" className="fill-slate-700" />
@@ -239,7 +239,7 @@ export default function BGymnasiouEquations() {
                       );
                     })}
 
-                    {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Αλλαγή του -&alpha; σε ασφαλές JavaScript String */}
+                    {/* Εφέ εξουδετέρωσης στο κέντρο */}
                     {addTimeline > 65 && addTimeline < 85 && (
                       <g style={{ opacity: (85 - addTimeline) / 20 }}>
                         <circle cx="120" cy="25" r="8" className="fill-amber-200/40 stroke-amber-400 stroke-[1] stroke-dasharray-[2]" />
@@ -248,8 +248,9 @@ export default function BGymnasiouEquations() {
                     )}
                   </svg>
 
+                  {/* 🔴 ΔΙΟΡΘΩΘΗΚΕ: Όλα τα κείμενα και τα σύμβολα μπήκαν σε καθαρά JavaScript Strings */}
                   <div className="mt-2 text-center text-xs font-mono font-bold text-slate-500">
-                    x + {weightA} <span className="text-orange-500 font-black">-{weightA}</span> = {totalB} <span className="text-orange-500 font-black">-{weightA}</span>
+                    {"x + "}{weightA} <span className="text-orange-500 font-black">{"-"}{weightA}</span> {"="} {totalB} <span className="text-orange-500 font-black">{"-"}{weightA}</span>
                   </div>
                 </div>
               </div>
@@ -266,7 +267,7 @@ export default function BGymnasiouEquations() {
                   </div>
                   <div className="bg-gradient-to-br from-orange-500 to-amber-600 text-white p-3 rounded-xl shadow max-w-xs text-xs font-bold font-mono">
                     <span className="block border-b border-white/20 pb-1 mb-1 text-[10px] tracking-widest text-orange-200">ΜΑΘΗΜΑΤΙΚΟΣ ΚΑΝΟΝΑΣ</span>
-                    α &middot; x = β  &rArr;  x = β ÷ α
+                    {"α · x = β  \u2192  x = β \u00F7 α"}
                   </div>
                 </div>
 
@@ -286,7 +287,7 @@ export default function BGymnasiouEquations() {
                   </div>
 
                   <div className="text-lg font-mono font-black text-orange-600 bg-white border border-dashed border-orange-200 px-4 py-1.5 rounded-xl inline-block shadow-sm">
-                    ({multA} &middot; x) ÷ {multA} = {multB} ÷ {multA}
+                    {"("}{multA} {"· x) \u00F7"} {multA} {"="} {multB} {"\u00F7"} {multA}
                   </div>
 
                   <div className="w-full max-w-md mx-auto bg-white p-4 rounded-2xl border shadow-sm">
@@ -311,12 +312,12 @@ export default function BGymnasiouEquations() {
                   </div>
 
                   <div className="bg-white p-4 rounded-xl border text-left max-w-xl mx-auto text-xs font-bold font-mono space-y-2">
-                    <div className="flex items-center gap-2"><span>1</span> Αρχική κατάσταση: <span className="bg-slate-50 border px-1 rounded">{multA} &middot; x = {multB}</span></div>
+                    <div className="flex items-center gap-2"><span>1</span> {"Αρχική κατάσταση: "}<span className="bg-slate-50 border px-1 rounded">{multA} {"\u00B7 x = "}{multB}</span></div>
                     <div className={`flex items-center gap-2 transition ${multTimeline >= 50 ? 'opacity-100 text-orange-600' : 'opacity-30'}`}>
-                      <span>2</span> Διαιρούμε με το {multA}: <span className="bg-slate-50 border px-1 rounded">({multA} &middot; x) ÷ {multA} = {multB} ÷ {multA}</span>
+                      <span>2</span> {"Διαιρούμε με το "}{multA}{": "}<span className="bg-slate-50 border px-1 rounded">{"("}{multA}{"\u00B7 x) \u00F7 "}{multA} {"= "}{multB} {"\u00F7 "}{multA}</span>
                     </div>
                     <div className={`flex items-center gap-2 transition ${multTimeline === 100 ? 'opacity-100 text-emerald-600' : 'opacity-30'}`}>
-                      <span>3</span> Το 1 κουτί x ισούται με: <span className="bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-sm text-emerald-700 font-black">x = {(multB / multA).toFixed(2).replace('.00', '')}</span>
+                      <span>3</span> {"Το 1 κουτί x ισούται με: "}<span className="bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-sm text-emerald-700 font-black">{"x = "}{(multB / multA).toFixed(2).replace('.00', '')}</span>
                     </div>
                   </div>
                 </div>
