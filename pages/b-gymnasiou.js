@@ -52,10 +52,9 @@ export default function BGymnasiouDashboard() {
 
             {/* ΜΑΘΗΜΑ 2: Η ΕΞΙΣΩΣΗ */}
             <Link href="/b-gymnasiou-2-equa" className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-amber-400 transition-all flex items-start gap-4 group">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm opacity-60 flex items-start gap-4">
-                <div className="bg-slate-100 text-slate-500 text-2xl p-4 rounded-2xl">
-                  ⚖️
-                </div>
+              <div className="bg-amber-100 text-amber-600 text-2xl p-4 rounded-2xl group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                ⚖️
+              </div>
                 <div className="space-y-1">
                   <h3 className="font-black text-base text-slate-700">2. Η Εξίσωση (x+α=β &amp; α·x=β)</h3>
                   <p className="text-xs text-slate-400 leading-relaxed">Η διαδραστική ζυγαριά επίλυσης εξισώσεων μεταφέρεται σε αυτόνομη σελίδα σύντομα.</p>
