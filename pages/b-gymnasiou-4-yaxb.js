@@ -3,10 +3,19 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 export default function BGymnasiouYAXB() {
-  // States για την κλίση (α) και τη μετατόπιση (β) όπως στο screenshot yaxkaib.png
+  // ⚙️ ΜΕΤΑΒΛΗΤΕΣ ΓΙΑ ΕΛΑΧΙΣΤΕΣ ΚΑΙ ΜΕΓΙΣΤΕΣ ΤΙΜΕΣ (ΣΤΗΝ ΑΡΧΗ)
+  const MIN_ALPHA = -5.0;
+  const MAX_ALPHA = 5.0;
+  const MIN_BETA = -5.0;
+  const MAX_BETA = 5.0;
+
+  // States για την κλίση (α) και τη μετατόπιση (β)
   const [alpha, setAlpha] = useState(1.0);
   const [beta, setBeta] = useState(2.0);
   const [showReference, setShowReference] = useState(true);
+
+  // Σταθερές τιμές x για τον Πίνακα Τιμών (ίδιες με το y=ax)
+  const xValues = [-1, 0, 2];
 
   // Υπολογισμοί εκτός JSX για την απόλυτη προστασία του compiler από RegEx errors
   const formattedAlpha = alpha.toFixed(1);
@@ -14,8 +23,7 @@ export default function BGymnasiouYAXB() {
   const absoluteBeta = Math.abs(beta).toFixed(1);
   const signBeta = beta >= 0 ? "+" : "-";
   
-  // Υπολογισμός των συντεταγμένων για τη γραμμή SVG της κύριας ευθείας y = ax + b
-  // Αντί για διαίρεση, πολλαπλασιάζουμε τις μονάδες μετατόπισης (β * 20 pixel ανά μονάδα)
+  // Υπολογισμός των συντεταγμένων για τη γραμμή SVG (β * 20 pixel ανά μονάδα)
   const yShift = beta * 20;
 
   return (
@@ -35,7 +43,7 @@ export default function BGymnasiouYAXB() {
         {/* ΚΥΡΙΩΣ ΠΛΑΙΣΙΟ ΜΑΘΗΜΑΤΟΣ */}
         <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
           
-          {/* ΤΙΤΛΟΣ & ΕΠΕΞΗΓΗΣΗ (Από το screenshot yaxkaib.png) */}
+          {/* ΤΙΤΛΟΣ & ΕΠΕΞΗΓΗΣΗ */}
           <div className="flex flex-col md:flex-row justify-between items-start gap-6">
             <div className="space-y-3 max-w-2xl">
               <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
@@ -70,40 +78,52 @@ export default function BGymnasiouYAXB() {
           {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ */}
           <div className="bg-slate-50 p-6 rounded-2xl border space-y-4">
             
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
               
-              {/* Αριστερή Στήλη: Χειριστήρια & Sliders */}
+              {/* Αριστερή Στήλη: Χειριστήρια & Πίνακας Τιμών */}
               <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
                 
-                {/* 1. Slider Κλίσης (α) */}
-                <div className="bg-white p-4 rounded-xl border shadow-sm space-y-1">
-                  <div className="flex justify-between items-center text-xs font-bold">
-                    <span>Κλίση (α):</span>
-                    <span className="font-mono text-indigo-600 font-black">{formattedAlpha}</span>
+                {/* 1. Χειριστήριο Κλίσης (α) με βήμα 0.1 */}
+                <div className="bg-white p-4 rounded-xl border shadow-sm space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-400 uppercase">ΚΛΙΣΗ (α):</span>
+                    <span className="font-mono bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-200 font-black text-xs">
+                      α = {formattedAlpha}
+                    </span>
                   </div>
-                  <input 
-                    type="range" min="-3" max="3" step="0.5" value={alpha} 
-                    onChange={(e) => setAlpha(parseFloat(e.target.value))} 
-                    className="w-full accent-indigo-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" 
-                  />
+                  <div className="flex items-center gap-2">
+                    <button type="button" onClick={() => setAlpha(parseFloat(Math.max(MIN_ALPHA, alpha - 0.1).toFixed(1)))} className="bg-slate-100 hover:bg-slate-200 font-mono font-black px-2 py-0.5 border rounded text-xs">-0.1</button>
+                    <input 
+                      type="range" min={MIN_ALPHA} max={MAX_ALPHA} step="0.1" value={alpha} 
+                      onChange={(e) => setAlpha(parseFloat(e.target.value))} 
+                      className="w-full accent-indigo-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" 
+                    />
+                    <button type="button" onClick={() => setAlpha(parseFloat(Math.min(MAX_ALPHA, alpha + 0.1).toFixed(1)))} className="bg-slate-100 hover:bg-slate-200 font-mono font-black px-2 py-0.5 border rounded text-xs">+0.1</button>
+                  </div>
                 </div>
 
-                {/* 2. Slider Μετατόπισης (β) */}
-                <div className="bg-white p-4 rounded-xl border shadow-sm space-y-1">
-                  <div className="flex justify-between items-center text-xs font-bold">
-                    <span>Μετατόπιση (β):</span>
-                    <span className="font-mono text-purple-600 font-black">{formattedBeta}</span>
+                {/* 2. Χειριστήριο Μετατόπισης (β) με βήμα 0.1 */}
+                <div className="bg-white p-4 rounded-xl border shadow-sm space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-400 uppercase">ΜΕΤΑΤΟΠΙΣΗ (β):</span>
+                    <span className="font-mono bg-purple-50 text-purple-700 px-2 py-0.5 rounded border border-purple-200 font-black text-xs">
+                      β = {formattedBeta}
+                    </span>
                   </div>
-                  <input 
-                    type="range" min="-4" max="4" step="0.5" value={beta} 
-                    onChange={(e) => setBeta(parseFloat(e.target.value))} 
-                    className="w-full accent-purple-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" 
-                  />
+                  <div className="flex items-center gap-2">
+                    <button type="button" onClick={() => setBeta(parseFloat(Math.max(MIN_BETA, beta - 0.1).toFixed(1)))} className="bg-slate-100 hover:bg-slate-200 font-mono font-black px-2 py-0.5 border rounded text-xs">-0.1</button>
+                    <input 
+                      type="range" min={MIN_BETA} max={MAX_BETA} step="0.1" value={beta} 
+                      onChange={(e) => setBeta(parseFloat(e.target.value))} 
+                      className="w-full accent-purple-500 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" 
+                    />
+                    <button type="button" onClick={() => setBeta(parseFloat(Math.min(MAX_BETA, beta + 0.1).toFixed(1)))} className="bg-slate-100 hover:bg-slate-200 font-mono font-black px-2 py-0.5 border rounded text-xs">+0.1</button>
+                  </div>
                 </div>
 
                 {/* 3. Διακόπτης Εμφάνισης Ευθείας Αναφοράς (y=αx) */}
-                <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center justify-between text-xs font-bold">
-                  <span className="uppercase text-slate-500 tracking-wider">Εμφάνιση της y = {formattedAlpha}x:</span>
+                <div className="bg-white p-3 rounded-xl border shadow-sm flex items-center justify-between text-xs font-bold">
+                  <span className="uppercase text-slate-400 text-[10px] tracking-wider">Εμφάνιση της y = {formattedAlpha}x:</span>
                   <button 
                     type="button" 
                     onClick={() => setShowReference(!showReference)} 
@@ -113,26 +133,54 @@ export default function BGymnasiouYAXB() {
                   </button>
                 </div>
 
-                {/* 4. Κουτί Εξισώσεων (Κύρια & Αναφοράς) */}
-                <div className="bg-white p-4 rounded-xl border shadow-sm space-y-3 font-mono text-xs">
-                  <div>
-                    <span className="text-[9px] font-bold text-slate-400 block uppercase mb-0.5">Κύρια Ευθεία:</span>
-                    <div className="text-base font-black text-indigo-600">
-                      {"y = "}{formattedAlpha}{"x "}{signBeta}{" "}{absoluteBeta}
-                    </div>
+                {/* 4. Κουτί Τρέχουσας Εξίσωσης */}
+                <div className="bg-white p-3 rounded-xl border shadow-sm font-mono text-xs">
+                  <span className="text-[9px] font-bold text-slate-400 block uppercase mb-0.5">Η ΕΞΙΣΩΣΗ ΜΑΣ:</span>
+                  <div className="text-base font-black text-indigo-600">
+                    {"y = "}{formattedAlpha}{"x "}{signBeta}{" "}{absoluteBeta}
                   </div>
-                  <div className="border-t border-dashed pt-2">
-                    <span className="text-[9px] font-bold text-slate-400 block uppercase mb-0.5">Ευθεία Αναφοράς:</span>
-                    <div className="text-xs font-bold text-slate-400">
-                      {"y = "}{formattedAlpha}{"x"}
-                    </div>
+                </div>
+
+                {/* 📋 ΝΕΟΣ ΠΙΝΑΚΑΣ ΤΙΜΩΝ (Όπως στο y=ax) */}
+                <div className="bg-white rounded-xl border shadow-sm overflow-hidden text-center">
+                  <div className="p-2 bg-slate-100 border-b text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                    📋 Πίνακας Τιμών (X, Y)
                   </div>
+                  <table className="w-full font-mono text-[11px] border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 text-slate-500 font-bold border-b text-[9px]">
+                        <th className="py-1.5 border-r">Τιμή x</th>
+                        <th className="py-1.5 border-r">Πράξη (α &middot; x + β)</th>
+                        <th className="py-1.5">Σημείο (x, y)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {xValues.map((x) => {
+                        const calculatedY = parseFloat((alpha * x + beta).toFixed(1));
+                        return (
+                          <tr key={x} className="border-b last:border-0 hover:bg-slate-50/50">
+                            <td className="py-1.5 border-r font-bold text-slate-600">{x}</td>
+                            <td className="py-1.5 border-r text-slate-400 text-[10px]">
+                              ({formattedAlpha} &middot; {x < 0 ? `(${x})` : x}) {signBeta} {absoluteBeta}
+                            </td>
+                            <td className="py-1.5 text-indigo-600 font-black">
+                              ({x}, {calculatedY})
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
 
               </div>
 
               {/* Δεξιά Στήλη: Γραφική Παράσταση SVG */}
               <div className="lg:col-span-7 bg-white p-4 rounded-2xl border shadow-sm flex flex-col justify-center items-center">
+                <span className="text-[10px] font-black text-slate-400 uppercase block mb-3 tracking-wider">
+                  📉 Καρτεσιανό Σύστημα Συντεταγμένων
+                </span>
+
                 <svg viewBox="0 0 200 200" className="w-full max-w-[280px] overflow-visible font-mono">
                   {/* Πλέγμα φόντου */}
                   {Array.from({ length: 11 }).map((_, i) => (
@@ -145,17 +193,20 @@ export default function BGymnasiouYAXB() {
                   {/* Άξονες */}
                   <line x1="0" y1="100" x2="200" y2="100" className="stroke-slate-400 stroke-[1]" />
                   <line x1="100" y1="0" x2="100" y2="200" className="stroke-slate-400 stroke-[1]" />
+                  <text x="192" y="111" className="text-[8px] font-bold fill-slate-500">x</text>
+                  <text x="106" y="10" className="text-[8px] font-bold fill-slate-500">y</text>
+                  <text x="94" y="111" className="text-[7px] fill-slate-400">O</text>
 
                   {/* Διακεκομμένη Ευθεία Αναφοράς y = αx */}
                   {showReference && (
                     <line 
                       x1="0" y1={100 + (100 * alpha)} 
                       x2="200" y2={100 - (100 * alpha)} 
-                      className="stroke-slate-300 stroke-[1.5] stroke-dasharray-[3]" 
+                      className="stroke-slate-200 stroke-[1.5] stroke-dasharray-[3]" 
                     />
                   )}
 
-                  {/* Κύρια Ευθεία y = αx + β (Μετατοπισμένη κατακόρυφα κατά yShift) */}
+                  {/* Κύρια Ευθεία y = αx + β */}
                   <line 
                     x1="0" y1={100 - yShift + (100 * alpha)} 
                     x2="200" y2={100 - yShift - (100 * alpha)} 
@@ -164,13 +215,13 @@ export default function BGymnasiouYAXB() {
 
                   {/* Σημείο Τομής Σ(0, β) */}
                   <circle cx="100" cy={100 - yShift} r="3" className="fill-purple-500 stroke-white stroke-[0.5]" />
-                  <text x="106" y={103 - yShift} className="text-[6.5px] font-black fill-purple-800">
+                  <text x="106" y={103 - yShift} className="text-[7px] font-black fill-purple-800">
                     Σ(0, {formattedBeta})
                   </text>
                 </svg>
 
                 <p className="mt-4 text-[10px] text-slate-400 font-medium text-center px-4">
-                  👋 <em>Σύρε το slider του β και δες την ευθεία να μετατοπίζεται πάνω-κάτω χωρίς να αλλάζει η γωνία (κλίση) της!</em>
+                  👋 <em>Σύρε το slider του β και δες την ευθεία να μετατοπίζεται πάνω-κάτω κατά 0.1 χωρίς να αλλάζει η κλίση της!</em>
                 </p>
               </div>
 
