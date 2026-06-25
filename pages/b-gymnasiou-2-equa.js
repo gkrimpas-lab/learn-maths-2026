@@ -81,6 +81,16 @@ export default function BGymnasiouEquations() {
     };
   };
 
+  // 🔴 ΥΠΟΛΟΓΙΣΜΟΙ ΕΞΩ ΑΠΟ ΤΟ JSX ΓΙΑ ΑΠΟΛΥΤΗ ΠΡΟΣΤΑΣΙΑ ΑΠΟ REGEX ERRORS
+  const resultX1 = totalB - weightA;
+  const resultX2 = (multB / multA).toFixed(2).replace('.00', '');
+  const opacityFormula = (85 - addTimeline) * 0.05; // Αντί για / 20, πολλαπλασιάζουμε με 0.05
+  const itemsRemaining = totalB - weightA;
+  const multGroupCount = Math.floor(multB / multA);
+  const textFormula1 = "x + " + weightA + " - " + weightA + " = " + totalB + " - " + weightA;
+  const textFormula2 = "(" + multA + " · x) ÷ " + multA + " = " + multB + " ÷ " + multA;
+  const stepFormula2 = "(" + multA + " · x) ÷ " + multA + " = " + multB + " ÷ " + multA;
+
   return (
     <div className="min-h-screen bg-slate-50 text-gray-800 font-sans p-4 md:p-8">
       <Head>
@@ -124,12 +134,12 @@ export default function BGymnasiouEquations() {
                 <div className="space-y-2">
                   <h2 className="text-xl font-black text-slate-900">⚖️ Εξίσωση της μορφής x + α = β</h2>
                   <p className="text-slate-600 text-sm leading-relaxed">
-                    Για να απομονώσεις τον άγνωστο <span className="font-bold text-indigo-600">x</span>, αφαιρείς το βάρος <span className="font-bold text-orange-600">α</span> iκαι από τα δύο μέρη της ζυγαριάς ώστε να διατηρηθεί η ισορροπία.
+                    Για να απομονώσεις τον άγνωστο <span className="font-bold text-indigo-600">x</span>, αφαιρείς το βάρος <span className="font-bold text-orange-600">α</span> και από τα δύο μέρη της ζυγαριάς ώστε να διατηρηθεί η ισορροπία.
                   </p>
                 </div>
                 <div className="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-4 rounded-2xl w-full md:w-72 shadow text-center font-mono">
                   <div className="text-xs uppercase opacity-75 tracking-wider mb-1">Τρέχουσα Εξίσωση</div>
-                  <div className="text-xl font-black font-mono">x + {weightA} = {totalB}</div>
+                  <div className="text-xl font-black">x + {weightA} = {totalB}</div>
                 </div>
               </div>
 
@@ -185,7 +195,7 @@ export default function BGymnasiouEquations() {
 
                   <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-center font-mono">
                     <div className="text-[10px] font-bold text-emerald-800 uppercase mb-0.5">Αποτέλεσμα</div>
-                    <div className="text-lg font-black text-emerald-700">x = {totalB - weightA}</div>
+                    <div className="text-lg font-black text-emerald-700">x = {resultX1}</div>
                   </div>
                 </div>
 
@@ -228,8 +238,8 @@ export default function BGymnasiouEquations() {
                         style={getAnimStyle(addTimeline, i, 'right')}
                       />
                     ))}
-                    {/* Σταθερά σφαιρίδια αποτελέσματος (🔴 ΔΙΟΡΘΩΘΗΚΕ: Αφαίρεση του προβληματικού weightA > 0) */}
-                    {Array.from({ length: totalB - weightA }).map((_, i) => {
+                    {/* Σταθερά σφαιρίδια αποτελέσματος */}
+                    {Array.from({ length: itemsRemaining }).map((_, i) => {
                       const row = Math.floor(i / 6); const col = i % 6;
                       return (
                         <circle 
@@ -239,18 +249,17 @@ export default function BGymnasiouEquations() {
                       );
                     })}
 
-                    {/* Εφέ εξουδετέρωσης στο κέντρο */}
+                    {/* Εφέ εξουδετέρωσης στο κέντρο (🔴 ΔΙΟΡΘΩΘΗΚΕ: Χρήση της σταθεράς opacityFormula) */}
                     {addTimeline > 65 && addTimeline < 85 && (
-                      <g style={{ opacity: (85 - addTimeline) / 20 }}>
+                      <g style={{ opacity: opacityFormula }}>
                         <circle cx="120" cy="25" r="8" className="fill-amber-200/40 stroke-amber-400 stroke-[1] stroke-dasharray-[2]" />
                         <text x="120" y="28" className="text-[7px] font-black fill-amber-700" textAnchor="middle">{"-\u03B1"}</text>
                       </g>
                     )}
                   </svg>
 
-                  {/* Καθαρό String χωρίς σκόρπια tags */}
                   <div className="mt-2 text-center text-xs font-mono font-bold text-slate-500">
-                    {"x + " + weightA + " - " + weightA + " = " + totalB + " - " + weightA}
+                    {textFormula1}
                   </div>
                 </div>
               </div>
@@ -287,7 +296,7 @@ export default function BGymnasiouEquations() {
                   </div>
 
                   <div className="text-lg font-mono font-black text-orange-600 bg-white border border-dashed border-orange-200 px-4 py-1.5 rounded-xl inline-block shadow-sm">
-                    {"("}{multA} {"· x) \u00F7"} {multA} {"="} {multB} {"\u00F7"} {multA}
+                    {textFormula2}
                   </div>
 
                   <div className="w-full max-w-md mx-auto bg-white p-4 rounded-2xl border shadow-sm">
@@ -304,7 +313,7 @@ export default function BGymnasiouEquations() {
 
                       <line x1="160" y1="55" x2="160" y2="85" className="stroke-slate-300 stroke-[0.8]" />
                       <line x1="140" y1="85" x2="180" y2="85" className="stroke-blue-400 stroke-[2]" />
-                      {Array.from({ length: multTimeline >= 50 ? Math.floor(multB / multA) : multB }).map((_, i) => {
+                      {Array.from({ length: multTimeline >= 50 ? multGroupCount : multB }).map((_, i) => {
                         const row = Math.floor(i / 4); const col = i % 4;
                         return <circle key={i} cx={146 + (col * 5)} cy={81 - (row * 5)} r="2" className="fill-blue-600" />;
                       })}
@@ -314,10 +323,10 @@ export default function BGymnasiouEquations() {
                   <div className="bg-white p-4 rounded-xl border text-left max-w-xl mx-auto text-xs font-bold font-mono space-y-2">
                     <div className="flex items-center gap-2"><span>1</span> {"Αρχική κατάσταση: "}<span className="bg-slate-50 border px-1 rounded">{multA} {"\u00B7 x = "}{multB}</span></div>
                     <div className={`flex items-center gap-2 transition ${multTimeline >= 50 ? 'opacity-100 text-orange-600' : 'opacity-30'}`}>
-                      <span>2</span> {"Διαιρούμε με το "}{multA}{": "}<span className="bg-slate-50 border px-1 rounded">{"("}{multA}{"\u00B7 x) \u00F7 "}{multA} {"= "}{multB} {"\u00F7 "}{multA}</span>
+                      <span>2</span> {"Διαιρούμε με το "}{multA}{": "}<span className="bg-slate-50 border px-1 rounded">{stepFormula2}</span>
                     </div>
                     <div className={`flex items-center gap-2 transition ${multTimeline === 100 ? 'opacity-100 text-emerald-600' : 'opacity-30'}`}>
-                      <span>3</span> {"Το 1 κουτί x ισούται με: "}<span className="bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-sm text-emerald-700 font-black">{"x = "}{(multB / multA).toFixed(2).replace('.00', '')}</span>
+                      <span>3</span> {"Το 1 κουτί x ισούται με: "}<span className="bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-sm text-emerald-700 font-black">{"x = "}{resultX2}</span>
                     </div>
                   </div>
                 </div>
