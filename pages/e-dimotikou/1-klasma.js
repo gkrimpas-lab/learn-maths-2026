@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { LAYOUT } from '../../shared/layout-config';
 
 const LIMITS = {
   INTRO_NUM_MIN: 0,
@@ -48,7 +49,7 @@ export default function KlasmaPage() {
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-4 py-12">
+      <main className={`${LAYOUT.LESSON_CONTAINER} py-12`}>
         <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
