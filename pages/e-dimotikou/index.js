@@ -1,6 +1,7 @@
 // pages/e-dimotikou/index.js
 import Head from 'next/head';
 import Link from 'next/link';
+import { LAYOUT } from '../../shared/layout-config';
 
 export default function EDimotikouMenu() {
   const modules = [
@@ -27,9 +28,9 @@ export default function EDimotikouMenu() {
       </Head>
 
       <div>
-        {/* NAVBAR - Άνοιγμα σε μεγάλο πλάτος */}
+        {/* NAVBAR - Fluid */}
         <nav className="bg-white shadow-md w-full">
-          <div className="max-w-[90%] 2xl:max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
             <Link href="/" className="text-2xl font-black text-blue-600 tracking-tight">
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
@@ -41,26 +42,26 @@ export default function EDimotikouMenu() {
 
         {/* HEADER */}
         <header className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-16 text-center shadow-inner w-full">
-          <div className="max-w-4xl mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl font-black mb-3 drop-shadow-sm flex items-center justify-center gap-3">
+          <div className="w-[90%] mx-auto px-4">
+            <h1 className="text-4xl md:text-5xl 2xl:text-6xl font-black mb-3 drop-shadow-sm">
               🎒 Μαθηματικά Ε' Δημοτικού
             </h1>
-            <p className="text-cyan-100 opacity-95 text-base md:text-lg font-medium tracking-wide">
+            <p className="text-cyan-100 opacity-95 text-base md:text-lg 2xl:text-xl font-medium tracking-wide">
               Επιλέξτε μια διαδραστική ενότητα για να ξεκινήσετε
             </p>
           </div>
         </header>
 
-        {/* ΚΕΝΤΡΙΚΟ ΠΛΕΓΜΑ ΕΝΟΤΗΤΩΝ - Πλέον προσαρμόζεται σε 2K/4K αναλύσεις */}
-        <main className="max-w-[90%] 2xl:max-w-7xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
+        {/* GRID ΕΝΟΤΗΤΩΝ - 4 στήλες στα μεγάλα monitor, 5 στήλες στα 2K/4K */}
+        <main className={`${LAYOUT.CONTAINER} py-12`}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {modules.map((mod) => (
               <Link key={mod.id} href={mod.href} passHref legacyBehavior>
-                <a className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group cursor-pointer min-h-[80px]">
-                  <span className="font-bold text-gray-700 group-hover:text-cyan-600 text-base md:text-lg transition-colors">
+                <a className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group cursor-pointer min-h-[90px] 2xl:p-8">
+                  <span className="font-bold text-gray-700 group-hover:text-cyan-600 text-base md:text-lg 2xl:text-xl transition-colors">
                     {mod.label}
                   </span>
-                  <span className="text-xl transform group-hover:translate-x-1 transition-transform opacity-70 group-hover:opacity-100">
+                  <span className="text-xl 2xl:text-2xl transform group-hover:translate-x-1 transition-transform opacity-70 group-hover:opacity-100">
                     🚀
                   </span>
                 </a>
@@ -70,9 +71,8 @@ export default function EDimotikouMenu() {
         </main>
       </div>
 
-      {/* FOOTER */}
-      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm w-full mt-12 border-t border-gray-700">
-        <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές της Ε' Δημοτικού.</p>
+      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm w-full border-t border-gray-700">
+        <p>© 2026 LearnMaths.gr. Με ❤️ για τους μαθητές της Ε' Δημοτικού.</p>
       </footer>
     </div>
   );
