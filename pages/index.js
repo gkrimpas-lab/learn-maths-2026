@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { LAYOUT } from '../shared/layout-config'; // Import από τον global φάκελο
 
 export default function Home() {
   return (
