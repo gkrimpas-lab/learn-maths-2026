@@ -20,46 +20,59 @@ export default function EDimotikouMenu() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
         <title>Ε' Δημοτικού: Μαθηματικά - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
-      {/* NAVBAR */}
-      <nav className="bg-white shadow-md">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-black text-blue-600 tracking-tight">LearnMaths<span className="text-indigo-600">.gr</span></Link>
-          <Link href="/" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold transition">🏠 Αρχική</Link>
-        </div>
-      </nav>
-
-      {/* HEADER */}
-      <header className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-12 text-center shadow-inner">
-        <h1 className="text-4xl font-black mb-2">🎒 Μαθηματικά Ε' Δημοτικού</h1>
-        <p className="text-cyan-100 opacity-90 font-medium">Επιλέξτε μια διαδραστική ενότητα για να ξεκινήσετε</p>
-      </header>
-
-      {/* ΚΕΝΤΡΙΚΟ ΠΛΕΓΜΑ ΕΝΟΤΗΤΩΝ */}
-      <main className="max-w-5xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {modules.map((mod) => (
-            <Link key={mod.id} href={mod.href} passHref legacyBehavior>
-              <a className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md transition duration-300 flex items-center justify-between group cursor-pointer">
-                <span className="font-bold text-gray-700 group-hover:text-cyan-600 transition">
-                  {mod.label}
-                </span>
-                <span className="text-gray-400 group-hover:text-cyan-500 group-hover:translate-x-1 transition transform">
-                  🚀
-                </span>
-              </a>
+      <div>
+        {/* NAVBAR - Άνοιγμα σε μεγάλο πλάτος */}
+        <nav className="bg-white shadow-md w-full">
+          <div className="max-w-[90%] 2xl:max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <Link href="/" className="text-2xl font-black text-blue-600 tracking-tight">
+              LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
-          ))}
-        </div>
-      </main>
+            <Link href="/" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
+              🏠 Αρχική
+            </Link>
+          </div>
+        </nav>
 
-      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm mt-12">
-        <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για την Ε' Δημοτικού.</p>
+        {/* HEADER */}
+        <header className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-16 text-center shadow-inner w-full">
+          <div className="max-w-4xl mx-auto px-4">
+            <h1 className="text-4xl md:text-5xl font-black mb-3 drop-shadow-sm flex items-center justify-center gap-3">
+              🎒 Μαθηματικά Ε' Δημοτικού
+            </h1>
+            <p className="text-cyan-100 opacity-95 text-base md:text-lg font-medium tracking-wide">
+              Επιλέξτε μια διαδραστική ενότητα για να ξεκινήσετε
+            </p>
+          </div>
+        </header>
+
+        {/* ΚΕΝΤΡΙΚΟ ΠΛΕΓΜΑ ΕΝΟΤΗΤΩΝ - Πλέον προσαρμόζεται σε 2K/4K αναλύσεις */}
+        <main className="max-w-[90%] 2xl:max-w-7xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6">
+            {modules.map((mod) => (
+              <Link key={mod.id} href={mod.href} passHref legacyBehavior>
+                <a className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group cursor-pointer min-h-[80px]">
+                  <span className="font-bold text-gray-700 group-hover:text-cyan-600 text-base md:text-lg transition-colors">
+                    {mod.label}
+                  </span>
+                  <span className="text-xl transform group-hover:translate-x-1 transition-transform opacity-70 group-hover:opacity-100">
+                    🚀
+                  </span>
+                </a>
+              </Link>
+            ))}
+          </div>
+        </main>
+      </div>
+
+      {/* FOOTER */}
+      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm w-full mt-12 border-t border-gray-700">
+        <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές της Ε' Δημοτικού.</p>
       </footer>
     </div>
   );
