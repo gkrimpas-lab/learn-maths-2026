@@ -2,8 +2,8 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
-// Εισαγωγή του νέου αυτόνομου αρχείου για το Κλάσμα
-import KlasmaSection from './d-dimotikou-1-klasma';
+// Σωστό import από το νέο αρχείο της Ε' Δημοτικού
+import { KlasmaSection } from './e-dimotikou-1-klasma';
 
 // ==========================================
 // ΡΥΘΜΙΣΕΙΣ ΟΡΙΩΝ (ΜΕΤΑΒΛΗΤΕΣ CONFIGURATION)
@@ -171,7 +171,7 @@ export default function EDimotikou() {
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         
-        {/* TAB 1: ΤΙ ΕΙΝΑΙ ΚΛΑΣΜΑ (Καλείται από το νέο αρχείο) */}
+        {/* TAB 1: ΤΙ ΕΙΝΑΙ ΚΛΑΣΜΑ (Καλείται από το νέο αρχείο της Ε') */}
         {activeTab === 'intro' && (
           <KlasmaSection 
             num1={num1}
