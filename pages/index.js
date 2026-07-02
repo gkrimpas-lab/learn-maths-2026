@@ -52,7 +52,7 @@ export default function Home() {
 
       {/* ΠΡΟΤΥΠΑ SECTION */}
       <section id="protypa" className="py-16 bg-amber-50 border-b border-amber-200">
-        <div className="max-w-5xl mx-auto px-4 text-center">
+        <div className={`${LAYOUT.CONTAINER} text-center`}>
           <div className="inline-block bg-amber-200 text-amber-800 font-bold px-4 py-1 rounded-full text-xs uppercase tracking-wide mb-3">Ειδική Προετοιμασία</div>
           <h2 className="text-3xl font-black text-gray-900 mb-2">🎯 Εισαγωγή στα Πρότυπα Σχολεία</h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto mb-12">
@@ -82,7 +82,7 @@ export default function Home() {
 
       {/* ΔΗΜΟΤΙΚΟ SECTION */}
       <section id="demotiko" className="py-16 bg-white">
-        <div className="max-w-5xl mx-auto px-4">
+        <div className={LAYOUT.CONTAINER}>
           <h2 className="text-3xl font-bold text-center mb-2 text-blue-600">🎒 Μαθηματικά Δημοτικού</h2>
           <p className="text-center text-gray-500 mb-10">Χτίζουμε γερές βάσεις για το μέλλον</p>
 
@@ -128,7 +128,7 @@ export default function Home() {
 
       {/* ΓΥΜΝΑΣΙΟΥ SECTION */}
       <section id="gymnasio" className="py-16 bg-gray-100">
-        <div className="max-w-5xl mx-auto px-4">
+        <div className={LAYOUT.CONTAINER}>
           <h2 className="text-3xl font-bold text-center mb-2 text-indigo-600">📐 Μαθηματικά Γυμνασίου</h2>
           <p className="text-center text-gray-500 mb-10">Εμβαθύνουμε στην άλγεβρα και τη γεωμετρία</p>
           
