@@ -1,8 +1,8 @@
+// pages/e-dimotikou/2-isodinama.js
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
-// Ρυθμίσεις ορίων αποκλειστικά για τα Ισοδύναμα
 const LIMITS = {
   EQUIV_NUM_MIN: 0,
   EQUIV_DEN_MIN: 2,
@@ -16,7 +16,6 @@ export default function IsodinamaPage() {
   const [den2, setDen2] = useState(3);
   const [multiplier, setMultiplier] = useState(2);
 
-  // Αυτόνομη συνάρτηση σχεδίασης πίτας SVG για τη συγκεκριμένη σελίδα
   const renderPieSlices = (pieIndex, totalSlicesToColor, currentDen) => {
     const slices = []; const radius = 45; const cx = 55; const cy = 55;
     for (let i = 0; i < currentDen; i++) {
@@ -45,7 +44,6 @@ export default function IsodinamaPage() {
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
-      {/* NAVBAR */}
       <nav className="bg-white shadow-md">
         <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">LearnMaths<span className="text-indigo-600">.gr</span></Link>
@@ -53,11 +51,9 @@ export default function IsodinamaPage() {
         </div>
       </nav>
 
-      {/* MAIN CONTENT */}
       <main className="max-w-4xl mx-auto px-4 py-12">
         <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
           <h2 className="text-2xl font-black text-gray-900">🔄 Ισοδύναμα Κλάσματα</h2>
-          
           <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
             <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-xl mx-auto">
               <span className="font-bold text-amber-900 text-sm">Διάλεξε Πολλαπλασιαστή:</span>
@@ -67,7 +63,6 @@ export default function IsodinamaPage() {
                 <button onClick={() => setMultiplier(Math.min(LIMITS.MULTIPLIER_MAX, multiplier + 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">+</button>
               </div>
             </div>
-
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-wrap justify-center items-center gap-6 text-sm max-w-2xl mx-auto">
                 <div className="flex items-center gap-2">
@@ -83,7 +78,6 @@ export default function IsodinamaPage() {
                   <button onClick={() => setDen2(Math.min(LIMITS.EQUIV_DEN_MAX, den2 + 1))} className="bg-slate-200 px-2 py-0.5 rounded font-bold text-xs shadow-sm">+</button>
                 </div>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
                 <div className="flex flex-col items-center justify-start space-y-4">
                   <span className="text-xs font-bold text-blue-500 uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full">Αρχικό Κλάσμα</span>
@@ -94,7 +88,6 @@ export default function IsodinamaPage() {
                     {Array.from({ length: totalPies2Initial }).map((_, i) => (<svg key={i} width="110" height="110">{renderPieSlices(i, num2, den2)}</svg>))}
                   </div>
                 </div>
-
                 <div className="flex flex-col items-center justify-start space-y-4">
                   <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full">Ισοδύναμο Κλάσμα</span>
                   <div className="flex items-center gap-3 bg-slate-50 p-2 px-4 rounded-xl border">
