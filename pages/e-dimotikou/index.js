@@ -3,17 +3,17 @@ import Link from 'next/link';
 
 export default function EDimotikouMenu() {
   const modules = [
-    { id: '1-klasma', label: '🍕 1. Κλάσμα', href: '/e-dimotikou-1-klasma' },
-    { id: '2-isodinama', label: '🔄 2. Ισοδύναμα', href: '/e-dimotikou-2-isodinama' },
-    { id: '3-aplopoiisi', label: '✂️ 3. Απλοποίηση', href: '/e-dimotikou-3-aplopoiisi' },
-    { id: '4-anagogi', label: '🔍 4. Αναγωγή', href: '/e-dimotikou-4-anagogi' },
-    { id: '5-pollaplasia', label: '🔢 5. Πολλαπλ.', href: '/e-dimotikou-5-pollaplasia' },
-    { id: '6-ekp', label: '🎯 6. ΕΚΠ', href: '/e-dimotikou-6-ekp' },
-    { id: '7-diairetes', label: '🛡️ 7. Διαιρέτες', href: '/e-dimotikou-7-diairetes' },
-    { id: '8-mkd', label: '🏆 8. ΜΚΔ', href: '/e-dimotikou-8-mkd' },
-    { id: '9-krit-diaret', label: '🔍 9. Κριτήρια', href: '/e-dimotikou-9-krit-diaret' },
-    { id: '10-mesitimi', label: '📊 10. Μέση Τιμή', href: '/e-dimotikou-10-mesitimi' },
-    { id: '11-pososta', label: '🏷️ 11. Ποσοστά', href: '/e-dimotikou-11-pososta' }
+    { id: '1-klasma', label: '🍕 1. Κλάσμα', href: '/e-dimotikou/1-klasma' },
+    { id: '2-isodinama', label: '🔄 2. Ισοδύναμα', href: '/e-dimotikou/2-isodinama' },
+    { id: '3-aplopoiisi', label: '✂️ 3. Απλοποίηση', href: '/e-dimotikou/3-aplopoiisi' },
+    { id: '4-anagogi', label: '🔍 4. Αναγωγή', href: '/e-dimotikou/4-anagogi' },
+    { id: '5-pollaplasia', label: '🔢 5. Πολλαπλ.', href: '/e-dimotikou/5-pollaplasia' },
+    { id: '6-ekp', label: '🎯 6. ΕΚΠ', href: '/e-dimotikou/6-ekp' },
+    { id: '7-diairetes', label: '🛡️ 7. Διαιρέτες', href: '/e-dimotikou/7-diairetes' },
+    { id: '8-mkd', label: '🏆 8. ΜΚΔ', href: '/e-dimotikou/8-mkd' },
+    { id: '9-krit-diaret', label: '🔍 9. Κριτήρια', href: '/e-dimotikou/9-krit-diaret' },
+    { id: '10-mesitimi', label: '📊 10. Μέση Τιμή', href: '/e-dimotikou/10-mesitimi' },
+    { id: '11-pososta', label: '🏷️ 11. Ποσοστά', href: '/e-dimotikou/11-pososta' }
   ];
 
   return (
@@ -54,6 +54,7 @@ export default function EDimotikouMenu() {
           ))}
         </div>
       </main>
+
       <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm mt-12">
         <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για την Ε' Δημοτικού.</p>
       </footer>
