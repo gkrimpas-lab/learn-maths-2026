@@ -1,7 +1,7 @@
 // pages/e-dimotikou/index.js
 import Head from 'next/head';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import { LAYOUT } from '../shared/layout-config';
 
 export default function EDimotikouMenu() {
   const modules = [
