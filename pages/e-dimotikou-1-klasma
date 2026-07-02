@@ -1,6 +1,6 @@
-// pages/d-dimotikou-1-klasma.js
+// pages/e-dimotikou-1-klasma.js
 
-export default function KlasmaSection({ num1, setNum1, den1, setDen1, LIMITS, renderPieSlices, totalPies1 }) {
+export const KlasmaSection = ({ num1, setNum1, den1, setDen1, LIMITS, renderPieSlices, totalPies1 }) => {
   return (
     <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -64,4 +64,4 @@ export default function KlasmaSection({ num1, setNum1, den1, setDen1, LIMITS, re
       </div>
     </div>
   );
-}
+};
