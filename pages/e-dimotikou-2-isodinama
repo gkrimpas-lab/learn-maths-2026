@@ -1,0 +1,120 @@
+import { useState } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+
+// Ρυθμίσεις ορίων αποκλειστικά για τα Ισοδύναμα
+const LIMITS = {
+  EQUIV_NUM_MIN: 0,
+  EQUIV_DEN_MIN: 2,
+  EQUIV_DEN_MAX: 6,
+  MULTIPLIER_MIN: 2,
+  MULTIPLIER_MAX: 5
+};
+
+export default function IsodinamaPage() {
+  const [num2, setNum2] = useState(2);
+  const [den2, setDen2] = useState(3);
+  const [multiplier, setMultiplier] = useState(2);
+
+  // Αυτόνομη συνάρτηση σχεδίασης πίτας SVG για τη συγκεκριμένη σελίδα
+  const renderPieSlices = (pieIndex, totalSlicesToColor, currentDen) => {
+    const slices = []; const radius = 45; const cx = 55; const cy = 55;
+    for (let i = 0; i < currentDen; i++) {
+      const startAngle = (i * 360) / currentDen - 90; const endAngle = ((i + 1) * 360) / currentDen - 90;
+      const x1 = cx + radius * Math.cos((startAngle * Math.PI) / 180); const y1 = cy + radius * Math.sin((startAngle * Math.PI) / 180);
+      const x2 = cx + radius * Math.cos((endAngle * Math.PI) / 180); const y2 = cy + radius * Math.sin((endAngle * Math.PI) / 180);
+      const currentSliceNumber = pieIndex * currentDen + i; const isColored = currentSliceNumber < totalSlicesToColor;
+      if (currentDen === 1) {
+        slices.push(<circle key={i} cx={cx} cy={cy} r={radius} className={`${isColored ? 'fill-orange-500' : 'fill-gray-200'} stroke-white stroke-2`} />);
+        continue;
+      }
+      const largeArcFlag = 360 / currentDen > 180 ? 1 : 0;
+      const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+      slices.push(<path key={i} d={pathData} className={`${isColored ? 'fill-orange-500' : 'fill-gray-100'} stroke-cyan-600 stroke-[1.5]`} />);
+    }
+    return slices;
+  };
+
+  const totalPies2Initial = Math.max(1, Math.ceil(num2 / den2));
+  const totalPies2Equivalent = Math.max(1, Math.ceil((num2 * multiplier) / (den2 * multiplier)));
+
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
+      <Head>
+        <title>🔄 Ισοδύναμα Κλάσματα - LearnMaths.gr</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+      </Head>
+
+      {/* NAVBAR */}
+      <nav className="bg-white shadow-md">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+          <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">LearnMaths<span className="text-indigo-600">.gr</span></Link>
+          <Link href="/e-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold transition">🔙 Επιστροφή</Link>
+        </div>
+      </nav>
+
+      {/* MAIN CONTENT */}
+      <main className="max-w-4xl mx-auto px-4 py-12">
+        <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+          <h2 className="text-2xl font-black text-gray-900">🔄 Ισοδύναμα Κλάσματα</h2>
+          
+          <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
+            <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-xl mx-auto">
+              <span className="font-bold text-amber-900 text-sm">Διάλεξε Πολλαπλασιαστή:</span>
+              <div className="flex items-center gap-3">
+                <button onClick={() => setMultiplier(Math.max(LIMITS.MULTIPLIER_MIN, multiplier - 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">-</button>
+                <span className="text-xl font-black text-amber-600 w-6 text-center">{multiplier}</span>
+                <button onClick={() => setMultiplier(Math.min(LIMITS.MULTIPLIER_MAX, multiplier + 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-bold hover:bg-amber-600 transition">+</button>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-wrap justify-center items-center gap-6 text-sm max-w-2xl mx-auto">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-gray-600">Αριθμητής:</span>
+                  <button onClick={() => setNum2(Math.max(LIMITS.EQUIV_NUM_MIN, num2 - 1))} className="bg-slate-200 px-2 py-0.5 rounded font-bold text-xs shadow-sm">-</button>
+                  <span className="font-black text-base w-4 text-center">{num2}</span>
+                  <button onClick={() => { if(num2 < den2) setNum2(num2 + 1) }} className="bg-slate-200 px-2 py-0.5 rounded font-bold text-xs shadow-sm">+</button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-gray-600">Παρονομαστής:</span>
+                  <button onClick={() => { const d = Math.max(LIMITS.EQUIV_DEN_MIN, den2 - 1); setDen2(d); if(num2 > d) setNum2(d); }} className="bg-slate-200 px-2 py-0.5 rounded font-bold text-xs shadow-sm">-</button>
+                  <span className="font-black text-base w-4 text-center">{den2}</span>
+                  <button onClick={() => setDen2(Math.min(LIMITS.EQUIV_DEN_MAX, den2 + 1))} className="bg-slate-200 px-2 py-0.5 rounded font-bold text-xs shadow-sm">+</button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                <div className="flex flex-col items-center justify-start space-y-4">
+                  <span className="text-xs font-bold text-blue-500 uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full">Αρχικό Κλάσμα</span>
+                  <div className="flex flex-col items-center font-black text-3xl text-blue-600">
+                    <div>{num2}</div><div className="w-10 h-[3px] bg-blue-600 my-1"></div><div>{den2}</div>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 bg-slate-50 rounded-xl w-full max-w-[240px] items-center">
+                    {Array.from({ length: totalPies2Initial }).map((_, i) => (<svg key={i} width="110" height="110">{renderPieSlices(i, num2, den2)}</svg>))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center justify-start space-y-4">
+                  <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full">Ισοδύναμο Κλάσμα</span>
+                  <div className="flex items-center gap-3 bg-slate-50 p-2 px-4 rounded-xl border">
+                    <div className="flex flex-col items-center font-bold text-sm text-amber-600">
+                      <div>{num2} * {multiplier}</div><div className="w-14 h-[2px] bg-amber-500 my-0.5"></div><div>{den2 * multiplier}</div>
+                    </div>
+                    <span className="font-black text-2xl text-emerald-600">=</span>
+                    <div className="flex flex-col items-center font-black text-3xl text-emerald-600">
+                      <div>{num2 * multiplier}</div><div className="w-12 h-[3px] bg-emerald-600 my-1"></div><div>{den2 * multiplier}</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-3 min-h-[140px] p-2 bg-slate-50 rounded-xl w-full max-w-[240px] items-center">
+                    {Array.from({ length: totalPies2Equivalent }).map((_, i) => (<svg key={i} width="110" height="110">{renderPieSlices(i, num2 * multiplier, den2 * multiplier)}</svg>))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
