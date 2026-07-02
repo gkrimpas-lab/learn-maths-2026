@@ -14,7 +14,7 @@ export default function EDimotikouMenu() {
     { id: '8-mkd', label: '🏆 8. ΜΚΔ', href: '/e-dimotikou/8-mkd' },
     { id: '9-krit-diaret', label: '🔍 9. Κριτήρια', href: '/e-dimotikou/9-krit-diaret' },
     { id: '10-mesitimi', label: '📊 10. Μέση Τιμή', href: '/e-dimotikou/10-mesitimi' },
-    { id: '11-pososta', label: '🏷️ 11. Ποσοστά', href: '/e-dimotikou/11-pososta' }
+    { id: '11-pososta', label: '🏷️ 11. Ποσοστά', href: '/e-dimotikou/11-pososta' },
     { id: '12-gonies', label: '📐 12. Γωνίες', href: '/e-dimotikou/12-gonies' }
   ];
 
