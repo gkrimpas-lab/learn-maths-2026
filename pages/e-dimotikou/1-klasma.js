@@ -1,3 +1,4 @@
+// pages/e-dimotikou/1-klasma.js
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -36,7 +37,7 @@ export default function KlasmaPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
       <Head>
-        <title>Τι είναι Κλάσμα; - LearnMaths.gr</title>
+        <title>🍕 Τι είναι Κλάσμα; - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
