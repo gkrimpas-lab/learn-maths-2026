@@ -41,22 +41,19 @@ export default function EDimotikouMenu() {
       <main className="max-w-5xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {modules.map((mod) => (
-            <Link 
-              key={mod.id} 
-              href={mod.href}
-              className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md transition duration-300 flex items-center justify-between group"
-            >
-              <span className="font-bold text-gray-700 group-hover:text-cyan-600 transition">
-                {mod.label}
-              </span>
-              <span className="text-gray-400 group-hover:text-cyan-500 group-hover:translate-x-1 transition transform">
-                🚀
-              </span>
+            <Link key={mod.id} href={mod.href} passHref legacyBehavior>
+              <a className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md transition duration-300 flex items-center justify-between group cursor-pointer">
+                <span className="font-bold text-gray-700 group-hover:text-cyan-600 transition">
+                  {mod.label}
+                </span>
+                <span className="text-gray-400 group-hover:text-cyan-500 group-hover:translate-x-1 transition transform">
+                  🚀
+                </span>
+              </a>
             </Link>
           ))}
         </div>
       </main>
-
       <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm mt-12">
         <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για την Ε' Δημοτικού.</p>
       </footer>
