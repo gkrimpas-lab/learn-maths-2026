@@ -20,22 +20,26 @@ export default function GwniesPage() {
   const angleType = getAngleType(degrees);
 
   // Μαθηματικός υπολογισμός της κινητής ακτίνας για το SVG
-  // Κέντρο (Κορυφή γωνίας): (140, 130), Μήκος ακτίνας: 80
-  const cx = 140;
+  // Κέντρο (Κορυφή γωνίας): (60, 130), Μήκος ακτίνας: 90
+  const cx = 60;
   const cy = 130;
-  const radius = 80;
+  const radius = 90;
   
-  // Μετατροπή μοιρών σε ακτίνια (μετατοπισμένο κατά 180 μοίρες για να ανοίγει προς τα αριστερά/πάνω όπως το πρότυπο)
-  const angleInRadians = ((180 - degrees) * Math.PI) / 180;
+  // Μετατροπή μοιρών σε ακτίνια (κίνηση προς τα αριστερά / πάνω)
+  const angleInRadians = (degrees * Math.PI) / 180;
+  
+  // Η σταθερή ακτίνα πάει δεξιά (cx + radius), η κινούμενη ανεβαίνει
   const x2 = cx + radius * Math.cos(angleInRadians);
   const y2 = cy - radius * Math.sin(angleInRadians);
 
-  // Υπολογισμός τόξου για τη γωνία (μικρό διακοσμητικό τόξο)
-  const arcRadius = 20;
+  // Υπολογισμός του διακοσμητικού τόξου της γωνίας (Arc)
+  const arcRadius = 25;
   const arcX = cx + arcRadius * Math.cos(angleInRadians);
   const arcY = cy - arcRadius * Math.sin(angleInRadians);
-  const largeArcFlag = degrees > 180 ? 1 : 0;
-  const arcPath = degrees > 0 ? `M ${cx - arcRadius} ${cy} A ${arcRadius} ${arcRadius} 0 0 0 ${arcX} ${arcY}` : '';
+  
+  const arcPath = degrees > 0 
+    ? `M ${cx + arcRadius} ${cy} A ${arcRadius} ${arcRadius} 0 0 0 ${arcX} ${arcY}` 
+    : '';
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -60,7 +64,7 @@ export default function GwniesPage() {
         {/* MAIN CONTENT */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-12`}>
           
-          {/* SECTION 1: ΘΕΩΡΙΑ - Ακριβώς όπως στην εικόνα_6 */}
+          {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
               📖 Θεωρία: Τα Είδη των Γωνιών
@@ -74,7 +78,7 @@ export default function GwniesPage() {
               <div className="bg-blue-50/40 p-5 rounded-2xl border border-blue-100 space-y-2">
                 <span className="font-black text-blue-600 flex items-center gap-1">📐 Οξεία Γωνία</span>
                 <p className="text-gray-600 text-xs md:text-sm leading-relaxed">
-                  Είναι κάθε γωνία που είναι <strong>μικρότερη από 180°C</strong> (και μεγαλύτερη από 0°).
+                  Είναι κάθε γωνία που είναι <strong>μικρότερη από 90°</strong> (και μεγαλύτερη από 0°).
                 </p>
                 <span className="inline-block bg-blue-100 text-blue-800 font-bold text-xs p-1 px-2 rounded-md">
                   0° &lt; Γωνία &lt; 90°
@@ -148,7 +152,7 @@ export default function GwniesPage() {
                 </div>
               </div>
 
-              {/* DISPLAY ΚΑΤΗΓΟΡΙΑΣ (Όπως στην εικόνα) */}
+              {/* DISPLAY ΚΑΤΗΓΟΡΙΑΣ */}
               <div className={`p-6 rounded-2xl border text-center ${angleType.bg} transition-all duration-300 max-w-md mx-auto space-y-1`}>
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΑΥΤΗ Η ΓΩΝΙΑ ΕΙΝΑΙ:</span>
                 <div className={`text-2xl sm:text-3xl font-black ${angleType.color}`}>
@@ -161,15 +165,15 @@ export default function GwniesPage() {
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[360px] relative">
               
               <svg viewBox="0 0 200 200" className="w-full max-w-[280px] sm:max-w-[320px] h-auto drop-shadow-sm">
-                {/* Οριζόντια Ακτίνα Βάσης */}
-                <line x1={cx} y1={cy} x2={cx - radius} y2={cy} className="stroke-slate-800 stroke-[4] stroke-linecap-round" />
+                {/* Σταθερή Ακτίνα Βάσης - Πηγαίνει προς τα ΔΕΞΙΑ */}
+                <line x1={cx} y1={cy} x2={cx + radius} y2={cy} className="stroke-slate-800 stroke-[4] stroke-linecap-round" />
                 
-                {/* Κινητή Ακτίνα */}
+                {/* Κινητή Ακτίνα - Ανοίγει προς τα ΑΡΙΣΤΕΡΑ */}
                 {degrees > 0 && (
                   <line x1={cx} y1={cy} x2={x2} y2={y2} className="stroke-cyan-600 stroke-[4] stroke-linecap-round transition-all duration-150" />
                 )}
 
-                {/* Διακοσμητικό τόξο γωνίας */}
+                {/* Διακοσμητικό πορτοκαλί τόξο γωνίας */}
                 {degrees > 0 && (
                   <path d={arcPath} fill="none" className="stroke-amber-500 stroke-2 transition-all duration-150" />
                 )}
