@@ -121,7 +121,7 @@ export default function DiairetesPage() {
 
           </div>
         </main>
-      </nav>
+      </div>
 
       <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
         <p>© 2026 LearnMaths.gr. Διαιρέτες Φυσικών Αριθμών.</p>
