@@ -15,30 +15,37 @@ export default function TrigwnaPage() {
   // Διασφάλιση ορίων
   const currentB = Math.max(ANGLE_MIN, Math.min(ANGLE_MAX, angleB));
 
-  // --- ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΓΩΝΙΩΝ ---
-  const angleA = Math.round((180 - currentB) / 2);
-  const angleΓ = 180 - currentB - angleA;
-
-  // --- ΣΤΑΘΕΡΗ ΜΕΓΑΛΗ ΒΑΣΗ ΣΕ ΕΥΡΥΧΩΡΟ ΚΑΜΒΑ ---
-  const baseSide = 240; 
+  // --- ΓΕΩΜΕΤΡΙΚΟΣ ΚΑΘΟΡΙΣΜΟΣ ΜΕ ΤΟ ΝΟΗΤΟ ΗΜΙΚΥΚΛΙΟ ---
+  // Κρατάμε τις δύο πλευρές του τριγώνου απόλυτα σταθερές (ΒΓ και ΑΒ)
+  // Έτσι το Α αναγκάζεται να διαγράψει ένα τέλειο ημικύκλιο γύρω από το Β!
+  const baseSide = 220;  // Σταθερό μήκος βάσης ΒΓ
+  const radius = 170;    // Σταθερό μήκος πλευράς ΑΒ (Η ακτίνα του ημικυκλίου)
   
-  // Κεντράρισμα του ΒΓ στον άξονα Χ (400 είναι το μέσο του 800)
-  const bx = 400 - baseSide / 2; 
-  const by = 280; 
-  const gx = 400 + baseSide / 2;
-  const gy = 280;
+  // Σταθερές συντεταγμένες για τη βάση ΒΓ στο κάτω μέρος
+  const bx = 240;        // Μετατοπισμένο δεξιά για να έχει χώρο το ημικύκλιο αριστερά (στις >90°)
+  const by = 290; 
+  const gx = bx + baseSide;
+  const gy = 290;
 
-  // Τριγωνομετρικός υπολογισμός της κορυφής Α με το Νόμο των Ημιτόνων
+  // Μετατροπή της γωνίας Β σε ακτίνια
   const radB = (currentB * Math.PI) / 180;
-  const radΓ = (angleΓ * Math.PI) / 180;
-  const radA = (angleA * Math.PI) / 180;
 
-  // Υπολογισμός της πλευράς c (ΑΒ)
-  const sidec = (baseSide * Math.sin(radΓ)) / Math.sin(radA);
+  // ΥΠΟΛΟΓΙΣΜΟΣ ΤΟΥ Α ΠΑΝΩ ΣΤΟ ΗΜΙΚΥΚΛΙΟ (Με Math.round για μηδενικό jitter)
+  const ax = Math.round(bx + radius * Math.cos(radB));
+  const ay = Math.round(by - radius * Math.sin(radB));
 
-  // Συντεταγμένες του σημείου Α με χρήση Math.round για εξάλειψη του τρεμοπαίγματος
-  const ax = Math.round(bx + sidec * Math.cos(radB));
-  const ay = Math.round(by - sidec * Math.sin(radB));
+  // --- ΥΠΟΛΟΓΙΣΜΟΣ ΤΩΝ ΥΠΟΛΟΙΠΩΝ ΓΩΝΙΩΝ ---
+  // Βρίσκουμε το μήκος της τρίτης πλευράς (ΑΓ) με τον Νόμο των Συνημιτόνων
+  const sideb = Math.sqrt(
+    radius * radius + baseSide * baseSide - 2 * radius * baseSide * Math.cos(radB)
+  );
+
+  // Βρίσκουμε τη γωνία Γ χρησιμοποιώντας το ύψος και τις αποστάσεις
+  const dy = by - ay;
+  const angleΓ = Math.round((Math.asin(dy / sideb) * 180) / Math.PI);
+  
+  // Η γωνία Α προκύπτει ώστε το άθροισμα να είναι πάντα 180°
+  const angleA = 180 - currentB - angleΓ;
 
   // Κατηγοριοποίηση του τριγώνου
   const getTriangleType = () => {
@@ -175,16 +182,23 @@ export default function TrigwnaPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ (Με Hardware Acceleration) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {/* Προσθήκη στυλ will-change-transform για απόλυτα ομαλό rendering από την GPU */}
+              {/* Ευρύ πλάτος 800x380 - Η κίνηση είναι πλέον βούτυρο στην GPU */}
               <svg 
                 viewBox="0 0 800 380" 
                 className="w-full h-auto drop-shadow-md my-auto px-2"
                 style={{ willChange: 'transform', transform: 'translateZ(0)' }}
               >
+                {/* Πίσω αχνό τόξο που δείχνει το νοητό ημικύκλιο (Εκπαιδευτικό Guideline) */}
+                <path 
+                  d={`M ${bx + radius} ${by} A ${radius} ${radius} 0 0 0 ${bx - radius} ${by}`} 
+                  fill="none" 
+                  className="stroke-slate-100 stroke-[2] stroke-dasharray-[4,4]" 
+                />
+
                 {/* Γέμισμα και περίγραμμα του τριγώνου ΑΒΓ */}
                 <polygon 
                   points={`${ax},${ay} ${bx},${by} ${gx},${gy}`} 
@@ -193,15 +207,15 @@ export default function TrigwnaPage() {
 
                 {/* Κορυφή Α */}
                 <circle cx={ax} cy={ay} r={5} className="fill-slate-800" />
-                <text x={ax} y={ay - 12} className="text-sm font-black fill-slate-800 text-anchor-middle">{`Α`}</text>
+                <text x={ax} y={ay - 12} className="text-sm font-black fill-slate-800 text-anchor-middle">Α</text>
 
                 {/* Κορυφή Β */}
                 <circle cx={bx} cy={by} r={5} className="fill-slate-800" />
-                <text x={bx - 15} y={by + 5} className="text-sm font-black fill-slate-800">{`Β`}</text>
+                <text x={bx - 15} y={by + 5} className="text-sm font-black fill-slate-800">Β</text>
 
                 {/* Κορυφή Γ */}
                 <circle cx={gx} cy={gy} r={5} className="fill-slate-800" />
-                <text x={gx + 15} y={gy + 5} className="text-sm font-black fill-slate-800">{`Γ`}</text>
+                <text x={gx + 15} y={gy + 5} className="text-sm font-black fill-slate-800">Γ</text>
               </svg>
 
               {/* Ετικέτα Αθροίσματος Γωνιών στο κάτω μέρος */}
