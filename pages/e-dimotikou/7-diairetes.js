@@ -64,26 +64,31 @@ export default function DiairetesPage() {
                 </div>
               </div>
 
-              {/* 2. ΟΛΟΙ ΟΙ ΠΙΘΑΝΟΙ ΕΛΕΓΧΟΙ ΔΙΑΙΡΕΣΗΣ */}
+              {/* 2. ΟΛΟΙ ΟΙ ΠΙΘΑΝΟΙ ΕΛΕΓΧΟΙ ΔΙΑΙΡΕΣΗΣ ΜΕ ΑΠΟΤΕΛΕΣΜΑ */}
               <div className="space-y-4">
                 <h3 className="text-sm font-black text-gray-400 uppercase tracking-wider text-center">Δοκιμάζουμε όλες τις διαιρέσεις από το 1 έως το {baseNum}:</h3>
                 
                 {/* Grid που απλώνεται τέλεια στην 2K οθόνη */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
                   {potentialDivisors.map((d) => {
                     const isDivisor = baseNum % d === 0;
                     return (
                       <div 
                         key={d} 
-                        className={`p-4 rounded-xl border flex flex-col items-center justify-center text-center space-y-1 transition duration-200 ${
+                        className={`p-4 rounded-xl border flex flex-col items-center justify-center text-center space-y-1.5 transition duration-200 min-h-[96px] ${
                           isDivisor 
-                            ? 'bg-emerald-500 text-white border-emerald-400 shadow-sm scale-105 font-bold' 
-                            : 'bg-white text-gray-400 border-gray-100 opacity-60'
+                            ? 'bg-emerald-500 text-white border-emerald-400 shadow-md scale-105 font-bold animate-fade-in' 
+                            : 'bg-white text-gray-400 border-gray-100 opacity-50'
                         }`}
                       >
-                        <span className="text-xs opacity-90">{baseNum} ÷ {d}</span>
+                        {/* Εμφάνιση αποτελέσματος αν είναι Διαιρέτης, όπως ακριβώς στην εικόνα_5 */}
+                        <span className="text-xs xl:text-sm opacity-95 tracking-wide">
+                          {baseNum} ÷ {d} {isDivisor && <span className="text-yellow-300 font-black text-sm xl:text-base"> = {baseNum / d}</span>}
+                        </span>
+                        
                         <div className={`w-full h-[1px] ${isDivisor ? 'bg-emerald-400/50' : 'bg-gray-100'}`}></div>
-                        <span className="text-lg font-black">
+                        
+                        <span className="text-base font-black flex items-center gap-1">
                           {isDivisor ? '✔ Ναι' : '✖ Όχι'}
                         </span>
                       </div>
