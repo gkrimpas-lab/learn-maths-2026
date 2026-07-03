@@ -170,12 +170,12 @@ export default function GwniesPage() {
                 
                 {/* Κινητή Ακτίνα - Ανοίγει προς τα ΑΡΙΣΤΕΡΑ */}
                 {degrees > 0 && (
-                  <line x1={cx} y1={cy} x2={x2} y2={y2} className="stroke-cyan-600 stroke-[4] stroke-linecap-round transition-all duration-150" />
+                  <line x1={cx} y1={cy} x2={x2} y2={y2} className="stroke-cyan-600 stroke-[4] stroke-linecap-round" />
                 )}
 
-                {/* Διακοσμητικό πορτοκαλί τόξο γωνίας */}
+                {/* Διακοσμητικό πορτοκαλί τόξο γωνίας - Αφαίρεση transition για ακαριαία κίνηση */}
                 {degrees > 0 && (
-                  <path d={arcPath} fill="none" className="stroke-amber-500 stroke-2 transition-all duration-150" />
+                  <path d={arcPath} fill="none" className="stroke-amber-500 stroke-2" />
                 )}
 
                 {/* Κέντρο/Κορυφή (Τελεία) */}
