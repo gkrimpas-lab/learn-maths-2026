@@ -20,10 +20,10 @@ export default function GwniesPage() {
   const angleType = getAngleType(degrees);
 
   // Μαθηματικός υπολογισμός της κινητής ακτίνας για το SVG
-  // Κέντρο (Κορυφή γωνίας): Το βάζουμε ακριβώς στο κέντρο ενός μεγαλύτερου καμβά (150, 130)
-  const cx = 150;
-  const cy = 130;
-  const radius = 80; // Κατάλληλο μήκος για να μην βρίσκει πουθενά
+  // Κέντρο (Κορυφή γωνίας): Στο κέντρο του διευρυμένου καμβά (200, 140)
+  const cx = 200;
+  const cy = 140;
+  const radius = 120; // Αυξημένη ακτίνα για πολύ μεγαλύτερο σχήμα
   
   // Μετατροπή μοιρών σε ακτίνια (κίνηση προς τα αριστερά / πάνω)
   const angleInRadians = (degrees * Math.PI) / 180;
@@ -33,7 +33,7 @@ export default function GwniesPage() {
   const y2 = cy - radius * Math.sin(angleInRadians);
 
   // Υπολογισμός του διακοσμητικού τόξου της γωνίας (Arc)
-  const arcRadius = 25;
+  const arcRadius = 35; // Μεγαλύτερο τόξο
   const arcX = cx + arcRadius * Math.cos(angleInRadians);
   const arcY = cy - arcRadius * Math.sin(angleInRadians);
   
@@ -109,28 +109,28 @@ export default function GwniesPage() {
             </div>
           </div>
 
-          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-6xl mx-auto">
+          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ ΜΕΓΕΘΥΜΕΝΟ ΓΙΑ ΟΛΗ ΤΗ ΣΕΛΙΔΑ */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ */}
-            <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ (Μεγαλωμένο πλαίσιο) */}
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[480px] w-full">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black text-gray-900 flex items-center gap-2">
                   🕹️ Ρύθμισε τη Γωνία
                 </h3>
-                <p className="text-gray-500 text-xs">
+                <p className="text-gray-500 text-sm">
                   Σύρε τον δρομέα για να μεγαλώσεις ή να μικρύνεις το άνοιγμα των ακτίνων.
                 </p>
               </div>
 
-              {/* Κουμπιά και Input */}
-              <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl max-w-md mx-auto space-y-4 shadow-inner">
+              {/* Κουμπιά και Input - Μεγαλύτερη κλίμακα */}
+              <div className="bg-slate-50 border border-slate-200 p-6 md:p-8 rounded-2xl w-full space-y-6 shadow-inner my-auto">
                 <div className="flex items-center justify-between px-2">
-                  <span className="font-black text-slate-700 text-sm sm:text-base">Μοίρες:</span>
-                  <div className="flex items-center gap-3">
-                    <button onClick={() => setDegrees(Math.max(0, degrees - 1))} className="bg-cyan-500 text-white font-black w-8 h-8 rounded-full text-lg hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">-</button>
-                    <span className="w-16 text-center font-black text-2xl text-slate-800">{degrees}°</span>
-                    <button onClick={() => setDegrees(Math.min(180, degrees + 1))} className="bg-cyan-500 text-white font-black w-8 h-8 rounded-full text-lg hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">+</button>
+                  <span className="font-black text-slate-700 text-base md:text-lg">Μοίρες:</span>
+                  <div className="flex items-center gap-4">
+                    <button onClick={() => setDegrees(Math.max(0, degrees - 1))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-full text-xl hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">-</button>
+                    <span className="w-24 text-center font-black text-3xl md:text-4xl text-slate-800 tabular-nums">{degrees}°</span>
+                    <button onClick={() => setDegrees(Math.min(180, degrees + 1))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-full text-xl hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">+</button>
                   </div>
                 </div>
 
@@ -142,9 +142,9 @@ export default function GwniesPage() {
                     max="180" 
                     value={degrees} 
                     onChange={(e) => setDegrees(parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                    className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-500"
                   />
-                  <div className="flex justify-between text-[10px] font-bold text-gray-400 pt-1.5">
+                  <div className="flex justify-between text-xs font-bold text-gray-400 pt-2 tracking-wide">
                     <span>0° (Μηδενική)</span>
                     <span>90° (Ορθή)</span>
                     <span>180° (Ευθεία)</span>
@@ -152,41 +152,42 @@ export default function GwniesPage() {
                 </div>
               </div>
 
-              {/* DISPLAY ΚΑΤΗΓΟΡΙΑΣ */}
-              <div className={`p-6 rounded-2xl border text-center ${angleType.bg} transition-all duration-300 max-w-md mx-auto space-y-1`}>
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΑΥΤΗ Η ΓΩΝΙΑ ΕΙΝΑΙ:</span>
-                <div className={`text-2xl sm:text-3xl font-black ${angleType.color}`}>
+              {/* DISPLAY ΚΑΤΗΓΟΡΙΑΣ - Μεγάλα Bold γράμματα */}
+              <div className={`p-6 md:p-8 rounded-2xl border text-center ${angleType.bg} transition-all duration-300 w-full space-y-1`}>
+                <span className="text-xs font-black text-gray-400 uppercase tracking-wider block">ΑΥΤΗ Η ΓΩΝΙΑ ΕΙΝΑΙ:</span>
+                <div className={`text-3xl md:text-4xl font-black ${angleType.color}`}>
                   {angleType.title}
                 </div>
               </div>
             </div>
 
-{/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - Μεγαλύτερο viewBox για να μην κόβεται το σχήμα */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[360px] relative">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ (Ίδιο μέγεθος πλαισίου με το αριστερό) */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative">
+              <div className="w-full"></div> {/* Spacer για σωστή κατανομή flex */}
               
-              {/* Αυξήσαμε το πλάτος του viewBox από 200 σε 300, κρατώντας το cx=150 στο κέντρο */}
-              <svg viewBox="0 0 300 200" className="w-full max-w-[280px] sm:max-w-[340px] h-auto drop-shadow-sm">
+              {/* Αυξήσαμε το viewBox σε 400x240 και το cx=200 για να κεντράρει απόλυτα το μεγάλο σχήμα */}
+              <svg viewBox="0 0 400 240" className="w-full max-w-[380px] sm:max-w-[440px] h-auto drop-shadow-md my-auto">
                 {/* Σταθερή Ακτίνα Βάσης - Πηγαίνει προς τα ΔΕΞΙΑ */}
-                <line x1={cx} y1={cy} x2={cx + radius} y2={cy} className="stroke-slate-800 stroke-[4] stroke-linecap-round" />
+                <line x1={cx} y1={cy} x2={cx + radius} y2={cy} className="stroke-slate-800 stroke-[5] stroke-linecap-round" />
                 
                 {/* Κινητή Ακτίνα - Ανοίγει προς τα ΑΡΙΣΤΕΡΑ */}
                 {degrees > 0 && (
-                  <line x1={cx} y1={cy} x2={x2} y2={y2} className="stroke-cyan-600 stroke-[4] stroke-linecap-round" />
+                  <line x1={cx} y1={cy} x2={x2} y2={y2} className="stroke-cyan-600 stroke-[5] stroke-linecap-round" />
                 )}
 
                 {/* Διακοσμητικό πορτοκαλί τόξο γωνίας */}
                 {degrees > 0 && (
-                  <path d={arcPath} fill="none" className="stroke-amber-500 stroke-2" />
+                  <path d={arcPath} fill="none" className="stroke-amber-500 stroke-[2.5]" />
                 )}
 
                 {/* Κέντρο/Κορυφή (Τελεία) */}
-                <circle cx={cx} cy={cy} r={5} className="fill-slate-800" />
+                <circle cx={cx} cy={cy} r={6} className="fill-slate-800" />
               </svg>
 
-              {/* Ετικέτες στο κάτω μέρος του καμβά */}
-              <div className="w-full flex justify-around text-[11px] font-bold text-slate-400 pt-4 border-t border-gray-50">
+              {/* Ετικέτες στο κάτω μέρος του καμβά - Μεγαλύτερο μέγεθος */}
+              <div className="w-full flex justify-around text-xs md:text-sm font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto">
                 <span>📍 Κορυφή</span>
-                <span>📐 Μοίρες: {degrees}°</span>
+                <span className="text-slate-500">📐 Μοίρες: {degrees}°</span>
               </div>
             </div>
 
