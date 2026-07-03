@@ -4,20 +4,36 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
+const LIMITS = {
+  NUM_MIN: 1,
+  NUM_MAX: 50,
+  DEN_MIN: 2,
+  DEN_MAX: 50
+};
+
 export default function AplopoiisiPage() {
-  // Αρχικό μεγάλο κλάσμα (π.χ. 4/8)
+  // Αρχικό κλάσμα που ορίζει ελεύθερα ο χρήστης
   const [num, setNum] = useState(4);
   const [den, setDen] = useState(8);
+
+  // Συναρτησούλα για την εύρεση του Μέγιστου Κοινού Διαιρέτη (ΜΚΔ)
+  const findGCD = (a, b) => {
+    while (b) {
+      let t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
+  };
+
+  const gcd = findGCD(num, den);
   
-  // Διαιρέτης
-  const [divisor, setDivisor] = useState(2);
-
-  // Έλεγχος αν ο επιλεγμένος διαιρέτης διαιρεί ακριβώς ΚΑΙ τον αριθμητή ΚΑΙ τον παρονομαστή
-  const isValidDivisor = num % divisor === 0 && den % divisor === 0;
-
-  // Υπολογισμός του νέου απλοποιημένου κλάσματος
-  const simpleNum = isValidDivisor ? num / divisor : num;
-  const simpleDen = isValidDivisor ? den / divisor : den;
+  // Αυτόματος υπολογισμός του απλοποιημένου κλάσματος
+  const simpleNum = num / gcd;
+  const simpleDen = den / gcd;
+  
+  // Έλεγχος αν το κλάσμα απλοποιήθηκε (αν ο ΜΚΔ είναι πάνω από 1)
+  const isSimplified = gcd > 1;
 
   // Σχεδίαση πίτας (Μεγάλη Ακτίνα 90, Κέντρο 100 - Απόλυτη ομοιομορφία με 1 και 2)
   const renderPieSlices = (currentNum, currentDen) => {
@@ -82,41 +98,31 @@ export default function AplopoiisiPage() {
             <div className="space-y-4">
               <h2 className="text-3xl font-black text-gray-900 2xl:text-4xl">✂️ Απλοποίηση Κλάσματος</h2>
               <p className="text-gray-600 leading-relaxed text-base xl:text-lg">
-                Απλοποίηση είναι η διαδικασία στην οποία <strong>διαιρούμε</strong> τον αριθμητή και τον παρονομαστή με τον <strong>ίδιο αριθμό</strong>. Έτσι, φτιάχνουμε ένα ισοδύναμο κλάσμα με μικρότερους όρους, που είναι πιο εύκολο στους υπολογισμούς!
+                Όταν διαιρούμε τον αριθμητή και τον παρονομαστή ενός κλάσματος με τον <strong>Μέγιστο Κοινό Διαιρέτη τους (ΜΚΔ)</strong>, το κλάσμα μικραίνει και μετατρέπεται στην πιο απλή του μορφή, η οποία ονομάζεται <strong>Ανάγωγο Κλάσμα</strong>!
               </p>
             </div>
 
             {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
             <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200 space-y-6">
               
-              {/* 1. ΡΥΘΜΙΣΗ ΑΡΧΙΚΟΥ ΜΕΓΑΛΟΥ ΚΛΑΣΜΑΤΟΣ */}
+              {/* 1. ΡΥΘΜΙΣΗ ΑΡΧΙΚΟΥ ΚΛΑΣΜΑΤΟΣ ΑΠΟ ΤΟΝ ΧΡΗΣΤΗ */}
               <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex flex-wrap justify-center items-center gap-6 max-w-2xl mx-auto text-sm font-semibold text-gray-600">
                 <div className="flex items-center gap-2">
-                  <span>Αρχικός Αριθμητής:</span>
-                  <button onClick={() => setNum(Math.max(1, num - 1))} className="bg-slate-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition">-</button>
+                  <span>Αριθμητής:</span>
+                  <button onClick={() => setNum(Math.max(LIMITS.NUM_MIN, num - 1))} className="bg-slate-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition shadow-sm">-</button>
                   <span className="w-6 text-center font-black text-base text-slate-800">{num}</span>
-                  <button onClick={() => setNum(Math.min(den, num + 1))} className="bg-slate-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition">+</button>
+                  <button onClick={() => setNum(Math.min(den, num + 1))} className="bg-slate-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition shadow-sm">+</button>
                 </div>
                 <div className="w-[1px] h-6 bg-gray-200 hidden sm:block"></div>
                 <div className="flex items-center gap-2">
-                  <span>Αρχικός Παρονομαστής:</span>
-                  <button onClick={() => { const newDen = Math.max(2, den - 1); setDen(newDen); if(num > newDen) setNum(newDen); }} className="bg-slate-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition">-</button>
+                  <span>Παρονομαστής:</span>
+                  <button onClick={() => { const newDen = Math.max(LIMITS.DEN_MIN, den - 1); setDen(newDen); if(num > newDen) setNum(newDen); }} className="bg-slate-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition shadow-sm">-</button>
                   <span className="w-6 text-center font-black text-base text-slate-800">{den}</span>
-                  <button onClick={() => setDen(Math.min(12, den + 1))} className="bg-slate-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition">+</button>
+                  <button onClick={() => setDen(Math.min(LIMITS.DEN_MAX, den + 1))} className="bg-slate-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-slate-300 transition shadow-sm">+</button>
                 </div>
               </div>
 
-              {/* 2. ΕΠΙΛΟΓΗ ΔΙΑΙΡΕΤΗ */}
-              <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between max-w-xl mx-auto gap-4">
-                <span className="font-bold text-amber-900 text-sm xl:text-base">Διάλεξε κοινό διαιρέτη (÷):</span>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setDivisor(Math.max(2, divisor - 1))} className="bg-amber-500 text-white w-9 h-9 rounded-full font-black text-lg hover:bg-amber-600 transition shadow-sm">-</button>
-                  <span className="w-8 text-center font-black text-xl text-amber-700">{divisor}</span>
-                  <button onClick={() => setDivisor(Math.min(12, divisor + 1))} className="bg-amber-500 text-white w-9 h-9 rounded-full font-black text-lg hover:bg-amber-600 transition shadow-sm">+</button>
-                </div>
-              </div>
-
-              {/* 3. ΔΥΟ ΠΛΕΥΡΕΣ (ΑΡΧΙΚΟ vs ΑΠΛΟΠΟΙΗΜΕΝΟ) */}
+              {/* 2. ΔΥΟ ΠΛΕΥΡΕΣ (ΑΡΧΙΚΟ vs ΑΥΤΟΜΑΤΑ ΑΠΛΟΠΟΙΗΜΕΝΟ) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
                 
                 {/* ΑΡΧΙΚΟ ΚΛΑΣΜΑ */}
@@ -138,14 +144,14 @@ export default function AplopoiisiPage() {
 
                 {/* ΑΠΛΟΠΟΙΗΜΕΝΟ ΚΛΑΣΜΑ */}
                 <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center space-y-6">
-                  <span className="text-xs uppercase font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full tracking-wider">Νέο Απλοποιημένο Κλάσμα</span>
+                  <span className="text-xs uppercase font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full tracking-wider">Απλοποιημένο (Ανάγωγο) Κλάσμα</span>
                   
-                  {isValidDivisor ? (
-                    <div className="flex items-center gap-4 bg-emerald-50/60 border border-emerald-200 p-3 px-6 rounded-xl font-black text-2xl text-slate-700 animate-fade-in">
+                  {isSimplified ? (
+                    <div className="flex items-center gap-4 bg-emerald-50/60 border border-emerald-200 p-3 px-6 rounded-xl font-black text-2xl text-slate-700">
                       <div className="flex flex-col items-center text-amber-600 text-base">
-                        <div>{num} ÷ {divisor}</div>
+                        <div>{num} ÷ {gcd}</div>
                         <div className="w-16 h-[2px] bg-amber-400 my-1"></div>
-                        <div>{den} ÷ {divisor}</div>
+                        <div>{den} ÷ {gcd}</div>
                       </div>
                       <span className="text-slate-400 text-xl">=</span>
                       <div className="flex flex-col items-center text-emerald-600 text-4xl">
@@ -155,9 +161,9 @@ export default function AplopoiisiPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center bg-rose-50 border border-rose-200 p-4 rounded-xl text-center text-rose-700 min-h-[86px] w-full max-w-xs">
-                      <span className="font-bold text-sm">❌ Αδύνατη Διαίρεση!</span>
-                      <span className="text-[11px] mt-0.5 opacity-90">Το {divisor} δεν διαιρεί ακριβώς το {num} ή το {den}.</span>
+                    <div className="flex flex-col items-center justify-center bg-indigo-50 border border-indigo-100 p-4 rounded-xl text-center text-indigo-800 min-h-[86px] w-full max-w-xs font-bold text-sm">
+                      ✨ Είναι ήδη Ανάγωγο!
+                      <span className="text-[11px] font-normal opacity-90 mt-0.5">Δεν έχει άλλους κοινούς διαιρέτες εκτός από το 1.</span>
                     </div>
                   )}
 
@@ -171,9 +177,9 @@ export default function AplopoiisiPage() {
               </div>
 
               {/* ΕΚΠΑΙΔΕΥΤΙΚΟ ΜΗΝΥΜΑ */}
-              {isValidDivisor && simpleNum === 1 && simpleDen === den / num && (
-                <div className="p-3 bg-indigo-600 text-white rounded-xl text-center font-black text-xs xl:text-sm shadow-md max-w-lg mx-auto">
-                  👑 Μπράβο! Φτάσαμε στο πιο απλό κλάσμα. Αυτό ονομάζεται Ανάγωγο Κλάσμα!
+              {isSimplified && (
+                <div className="p-4 bg-emerald-600 text-white rounded-xl text-center font-bold text-sm xl:text-base shadow-md max-w-xl mx-auto">
+                  📢 Η απλοποίηση έγινε διαιρώντας με το <span className="text-amber-300 font-black">÷ {gcd}</span> (τον ΜΚΔ). Οι δύο πίτες δείχνουν ακριβώς την ίδια ποσότητα!
                 </div>
               )}
 
@@ -184,7 +190,7 @@ export default function AplopoiisiPage() {
       </div>
 
       <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
-        <p>© 2026 LearnMaths.gr. Widescreen & Responsive Σχεδιασμός.</p>
+        <p>© 2026 LearnMaths.gr. Αυτόματη Ανάγωγη Μορφή.</p>
       </footer>
     </div>
   );
