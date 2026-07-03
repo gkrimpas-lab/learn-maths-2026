@@ -20,14 +20,14 @@ export default function TrigwnaPage() {
   const angleA = Math.round((180 - currentB) / 2);
   const angleΓ = 180 - currentB - angleA;
 
-  // --- ΣΤΑΘΕΡΗ ΜΕΓΑΛΗ ΒΑΣΗ ΓΙΑ ΝΑ ΠΙΑΝΕΙ ΟΛΟ ΤΟ ΠΛΑΙΣΙΟ ---
-  // Ορίζουμε τη βάση ΒΓ σταθερά μεγάλη (220 μονάδες) για να γεμίζει ο καμβάς
-  const baseSide = 220; 
+  // --- ΣΤΑΘΕΡΗ ΜΕΓΑΛΗ ΒΑΣΗ ΣΕ ΕΥΡΥΧΩΡΟ ΚΑΜΒΑ ---
+  // Κρατάμε μια σταθερή βάση 240 μονάδων
+  const baseSide = 240; 
   
-  // Κεντράρισμα της βάσης στο νέο διευρυμένο viewBox (440 x 380)
-  const bx = 110; 
-  const by = 280; // Κατεβάζουμε τη βάση χαμηλότερα για να έχει ύψος να αναπτυχθεί η κορυφή Α
-  const gx = 110 + baseSide;
+  // Χρησιμοποιούμε viewBox πλάτους 800 για να έχει άφθονο χώρο δεξιά-αριστερά όταν το τρίγωνο "ξαπλώνει" στις 1° ή 179°
+  const bx = 400 - baseSide / 2; // Κεντράρισμα του ΒΓ στον άξονα Χ (400 είναι το μέσο του 800)
+  const by = 280; 
+  const gx = 400 + baseSide / 2;
   const gy = 280;
 
   // Τριγωνομετρικός υπολογισμός της κορυφής Α με το Νόμο των Ημιτόνων
@@ -35,7 +35,7 @@ export default function TrigwnaPage() {
   const radΓ = (angleΓ * Math.PI) / 180;
   const radA = (angleA * Math.PI) / 180;
 
-  // Υπολογισμός της πλευράς c (ΑΒ) - η κίνηση είναι πλέον απόλυτα γραμμική και συνεχή
+  // Υπολογισμός της πλευράς c (ΑΒ)
   const sidec = (baseSide * Math.sin(radΓ)) / Math.sin(radA);
 
   // Συντεταγμένες του σημείου Α
@@ -177,12 +177,12 @@ export default function TrigwnaPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ (Μεγάλο & Σταθερό) */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ (Widescreen Καμβάς) */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {/* Διευρυμένο viewBox 440x380 για να χωράει άνετα η κίνηση σε όλο το εύρος 1-179 μοιρών */}
-              <svg viewBox="0 0 440 380" className="w-full max-w-[400px] sm:max-w-[440px] h-auto drop-shadow-md my-auto">
+              {/* Ευρύ πλάτος 800x380 ώστε να απλώνεται το σχήμα σε όλο το λευκό πλαίσιο χωρίς να κόβεται */}
+              <svg viewBox="0 0 800 380" className="w-full h-auto drop-shadow-md my-auto px-2">
                 {/* Γέμισμα και περίγραμμα του τριγώνου ΑΒΓ */}
                 <polygon 
                   points={`${ax},${ay} ${bx},${by} ${gx},${gy}`} 
