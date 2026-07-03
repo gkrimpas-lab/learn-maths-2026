@@ -5,37 +5,37 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 export default function TrigwnaPage() {
-  // Ο μαθητής μεταβάλλει τη γωνία Β (κάτω αριστερά)
+  // Ο μαθητής μεταβάλλει τη γωνία Β (κάτω αριστερά). Όρια: 20° έως 140°
   const [angleB, setAngleB] = useState(60);
 
-  // Ορίζουμε τις πλευρές σταθερές (Ισοσκελές ως αρχική κατάσταση) για φυσική κίνηση
-  // Μικραίνουμε το μήκος των πλευρών (c = 110) για να μην βγαίνει ΠΟΤΕ η κορυφή εκτός καμβά
-  const sidec = 110; 
-  const sidea = 110; 
-
-  // --- ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΟΛΩΝ ΤΩΝ ΓΩΝΙΩΝ & ΣΥΝΤΕΤΑΓΜΕΝΩΝ ---
-  // Σταθερή οριζόντια βάση ΒΓ στο κάτω μέρος του καμβά (viewBox 400x260)
-  const bx = 120; // Σημείο Β (κάτω αριστερά)
+  // --- ΣΤΑΘΕΡΗ ΚΑΙ ΑΣΦΑΛΗΣ ΓΕΩΜΕΤΡΙΑ ---
+  // 1. Σταθερή οριζόντια βάση ΒΓ στο κάτω μέρος του καμβά (viewBox 400x260)
+  const bx = 120; // Σημείο Β
   const by = 210;
-  
-  const radB = (angleB * Math.PI) / 180;
+  const gx = 280; // Σημείο Γ (Μήκος βάσης = 160 μονάδες)
+  const gy = 210;
 
-  // Υπολογισμός της πάνω κορυφής Α με βάση τη γωνία Β και την πλευρά c (ΑΒ)
+  // 2. Σταθερό μήκος για την αριστερή πλευρά ΒΑ (c = 110)
+  const sidec = 110;
+
+  // 3. Υπολογισμός της πάνω κορυφής Α με βάση τη γωνία Β που αλλάζει
+  const radB = (angleB * Math.PI) / 180;
   const ax = bx + sidec * Math.cos(radB);
   const ay = by - sidec * Math.sin(radB);
 
-  // Υπολογισμός του σημείου Γ (κάτω δεξιά) ώστε η βάση ΒΓ να μένει πάντα οριζόντια (στο ίδιο y=210)
-  // Χρησιμοποιούμε το Πυθαγόρειο/Τριγωνομετρία για να βρούμε το x του Γ βάσει της σταθερής πλευράς α (ΑΓ)
-  const dy = by - ay; // Κάθετη απόσταση
-  const dx = Math.sqrt(Math.max(0, sidea * sidea - dy * dy)); // Οριζόντια απόσταση από το Α στο Γ
-  const gx = ax + dx;
-  const gy = by;
+  // 4. Υπολογισμός των άλλων δύο πλευρών (με βάση τις αποστάσεις των σημείων)
+  const sidea = gx - bx; // Βάση ΒΓ = 160
+  const sideb = Math.sqrt((ax - gx) ** 2 + (ay - gy) ** 2); // Πλευρά ΑΓ
 
-  // Υπολογισμός των γωνιών Α και Γ σε μοίρες με βάση το σχήμα
-  const angleΓ = Math.round((Math.asin(dy / sidea) * 180) / Math.PI);
+  // 5. Υπολογισμός των γωνιών Α και Γ χρησιμοποιώντας το Νόμο των Συνημιτόνων
+  // cosΓ = (a^2 + b^2 - c^2) / (2 * a * b)
+  const cosΓ = (sidea ** 2 + sideb ** 2 - sidec ** 2) / (2 * sidea * sideb);
+  const angleΓ = Math.round((Math.acos(Math.max(-1, Math.min(1, cosΓ))) * 180) / Math.PI);
+  
+  // Η γωνία Α προκύπτει από το άθροισμα (180 - Β - Γ)
   const angleA = 180 - angleB - angleΓ;
 
-  // Κατηγοριοποίηση του τριγώνου με βάση τις 3 γωνίες του
+  // Κατηγοριοποίηση του τριγώνου
   const getTriangleType = () => {
     if (angleA === 90 || angleB === 90 || angleΓ === 90) {
       return { title: 'Ορθογώνιο Τρίγωνο', desc: 'Έχει μία ορθή γωνία (ακριβώς 90°).', color: 'text-emerald-600', bg: 'bg-emerald-50/50 border-emerald-200' };
@@ -108,7 +108,7 @@ export default function TrigwnaPage() {
             </div>
           </div>
 
-          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ - ΙΣΟΜΕΡΕΣ & ΜΕΓΑΛΟ */}
+          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
             {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ */}
@@ -118,7 +118,7 @@ export default function TrigwnaPage() {
                   🕹️ Μετάβαλλε τη Γωνία Β
                 </h3>
                 <p className="text-gray-500 text-sm">
-                  Άλλαξε το άνοιγμα της κάτω αριστερής γωνίας. Όλες οι γωνίες θα αλλάξουν αυτόματα!
+                  Άλλαξε το άνοιγμα της κάτω αριστερής γωνίας. Όλες οι γωνίες θα προσαρμοστούν αυτόματα!
                 </p>
               </div>
 
@@ -127,9 +127,9 @@ export default function TrigwnaPage() {
                 <div className="flex items-center justify-between px-2">
                   <span className="font-black text-slate-700 text-base md:text-lg">Γωνία Β:</span>
                   <div className="flex items-center gap-4">
-                    <button onClick={() => setAngleB(Math.max(25, angleB - 5))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-lg text-sm hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">-5</button>
+                    <button onClick={() => setAngleB(Math.max(20, angleB - 5))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-lg text-sm hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">-5</button>
                     <span className="w-24 text-center font-black text-3xl md:text-4xl text-cyan-600 tabular-nums">{angleB}°</span>
-                    <button onClick={() => setAngleB(Math.min(135, angleB + 5))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-lg text-sm hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">+5</button>
+                    <button onClick={() => setAngleB(Math.min(140, angleB + 5))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-lg text-sm hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">+5</button>
                   </div>
                 </div>
 
@@ -137,16 +137,16 @@ export default function TrigwnaPage() {
                 <div className="px-2 pt-2">
                   <input 
                     type="range" 
-                    min="25" 
-                    max="135" 
+                    min="20" 
+                    max="140" 
                     value={angleB} 
                     onChange={(e) => setAngleB(parseInt(e.target.value))}
                     className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-500"
                   />
                   <div className="flex justify-between text-[11px] font-bold text-gray-400 pt-2 tracking-wide">
-                    <span>25° (Οξείες)</span>
+                    <span>20° (Οξείες)</span>
                     <span>90° (Ορθή Β)</span>
-                    <span>135° (Αμβλεία Β)</span>
+                    <span>140° (Αμβλεία Β)</span>
                   </div>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export default function TrigwnaPage() {
                   <p className="text-xs text-gray-500 font-medium mt-0.5">{triType.desc}</p>
                 </div>
                 
-                {/* Δυναμική εμφάνιση των 3 γωνιών που αλλάζουν ταυτόχρονα */}
+                {/* Ανάλυση των 3 γωνιών */}
                 <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-200/50 text-center text-xs font-black text-slate-700">
                   <div className="bg-white/80 p-1.5 rounded-lg border">Α = {angleA}°</div>
                   <div className="bg-cyan-50 p-1.5 rounded-lg border border-cyan-100 text-cyan-700">Β = {angleB}°</div>
@@ -170,11 +170,11 @@ export default function TrigwnaPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ (Απόλυτα Σταθερή Βάση) */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[490px] w-full relative">
               <div className="w-full"></div>
 
-              {/* SVG Σχήμα 400x260 - Σταθερή οριζόντια βάση ΒΓ στο κάτω μέρος */}
+              {/* SVG Σχήμα 400x260 - Η βάση ΒΓ μένει βράχος στη θέση της */}
               <svg viewBox="0 0 400 260" className="w-full max-w-[380px] sm:max-w-[440px] h-auto drop-shadow-md my-auto">
                 {/* Γέμισμα και περίγραμμα του τριγώνου ΑΒΓ */}
                 <polygon 
@@ -182,15 +182,15 @@ export default function TrigwnaPage() {
                   className="fill-cyan-500/10 stroke-cyan-600 stroke-[4] stroke-linejoin-round"
                 />
 
-                {/* Κορυφή Α (Πάνω - Μεταβάλλεται ελεύθερα χωρίς να βγαίνει εκτός) */}
+                {/* Κορυφή Α (Πάνω - Περιστρέφεται γύρω από το Β) */}
                 <circle cx={ax} cy={ay} r={5} className="fill-slate-800" />
                 <text x={ax} y={ay - 12} className="text-sm font-black fill-slate-800 text-anchor-middle">Α</text>
 
-                {/* Κορυφή Β (Κάτω Αριστερά - Σταθερό σημείο, αλλάζει η γωνία) */}
+                {/* Κορυφή Β (Κάτω Αριστερά - Σταθερή) */}
                 <circle cx={bx} cy={by} r={5} className="fill-slate-800" />
                 <text x={bx - 15} y={by + 5} className="text-sm font-black fill-slate-800">Β</text>
 
-                {/* Κορυφή Γ (Κάτω Δεξιά - Κινείται οριζόντια για να κλείνει σωστά το τρίγωνο) */}
+                {/* Κορυφή Γ (Κάτω Δεξιά - Σταθερή) */}
                 <circle cx={gx} cy={gy} r={5} className="fill-slate-800" />
                 <text x={gx + 15} y={gy + 5} className="text-sm font-black fill-slate-800">Γ</text>
               </svg>
