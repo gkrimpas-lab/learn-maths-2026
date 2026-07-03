@@ -6,8 +6,8 @@ import { LAYOUT } from '../../shared/layout-config';
 
 const LIMITS = {
   NUM_MIN: 2,
-  NUM_MAX: 12,
-  COUNT_SHOW: 12
+  NUM_MAX: 30,
+  COUNT_SHOW: 40
 };
 
 export default function EkpPage() {
