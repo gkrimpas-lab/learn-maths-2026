@@ -6,24 +6,24 @@ import { LAYOUT } from '../../shared/layout-config';
 
 const LIMITS = {
   NUM_MIN: 1,
-  NUM_MAX: 9999
+  NUM_MAX: 1000
 };
 
 export default function KritiriaPage() {
-  // Ο αριθμός που εξετάζει ο μαθητής
-  const [num, setNum] = useState(135);
+  const [num, setNum] = useState(124);
 
-  // Μετατροπή του αριθμού σε string για την ανάλυση των ψηφίων
+  // Ανάλυση ψηφίων
   const numStr = num.toString();
   const lastDigit = parseInt(numStr[numStr.length - 1]);
+  const lastTwoDigits = numStr.length > 1 ? parseInt(numStr.slice(-2)) : num;
   
-  // Άθροισμα ψηφίων (χρειάζεται για το 3 και το 9)
   const digitsArray = numStr.split('').map(Number);
   const digitsSum = digitsArray.reduce((acc, curr) => acc + curr, 0);
 
   // Έλεγχοι κριτηρίων
   const divBy2 = num % 2 === 0;
   const divBy3 = num % 3 === 0;
+  const divBy4 = num % 4 === 0;
   const divBy5 = num % 5 === 0;
   const divBy9 = num % 9 === 0;
   const divBy10 = num % 10 === 0;
@@ -49,123 +49,188 @@ export default function KritiriaPage() {
         </nav>
 
         {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-12`}>
-          <div className="space-y-8 bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100">
+        <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-12`}>
+          
+          {/* SECTION 1: Η ΘΕΩΡΙΑ ΤΩΝ ΚΡΙΤΗΡΙΩΝ */}
+          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+              📖 Η Θεωρία των Κριτηρίων
+            </h2>
+            <p className="text-gray-500 text-sm md:text-base">
+              Με τους κανόνες αυτούς καταλαβαίνουμε αμέσως αν ένας αριθμός διαιρείται ακριβώς με έναν άλλον, χωρίς να κάνουμε τη διαίρεση:
+            </p>
             
-            {/* ΘΕΩΡΙΑ */}
-            <div className="space-y-4">
-              <h2 className="text-3xl font-black text-gray-900 2xl:text-4xl">🔍 Κριτήρια Διαιρετότητας</h2>
-              <p className="text-gray-600 leading-relaxed text-base xl:text-lg">
-                Κριτήρια διαιρετότητας είναι κάποιοι <strong>σύντομοι κανόνες</strong> που μας βοηθούν να καταλάβουμε αμέσως αν ένας αριθμός διαιρείται ακριβώς με έναν άλλον, εξετάζοντας μόνο το <strong>τελευταίο του ψηφίο</strong> ή το <strong>άθροισμα των ψηφίων του</strong>!
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-xs md:text-sm">
+                <span className="font-bold text-blue-600">🔢 Κριτήριο του 2</span>
+                <p className="text-gray-600 mt-1">Ένας αριθμός διαιρείται με το 2 αν είναι **άρτιος**, δηλαδή αν το τελευταίο του ψηφίο είναι **0, 2, 4, 6, 8**.</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-xs md:text-sm">
+                <span className="font-bold text-blue-600">🔢 Κριτήριο του 3</span>
+                <p className="text-gray-600 mt-1">Ένας αριθμός διαιρείται με το 3 αν το **άθροισμα των ψηφίων του** διαιρείται με το 3 (π.χ. 1 + 2 + 3 = 6).</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-xs md:text-sm">
+                <span className="font-bold text-purple-600">🔢 Κριτήριο του 4</span>
+                <p className="text-gray-600 mt-1">Ένας αριθμός διαιρείται με το 4 αν τα **δύο τελευταία ψηφία του** σχηματίζουν αριθμό που διαιρείται με το 4 ή είναι **00**.</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-xs md:text-sm">
+                <span className="font-bold text-emerald-600">🔢 Κριτήριο του 5</span>
+                <p className="text-gray-600 mt-1">Ένας αριθμός διαιρείται με το 5 αν το τελευταίο του ψηφίο είναι **0 ή 5**.</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-xs md:text-sm">
+                <span className="font-bold text-orange-600">🔢 Κριτήριο του 9</span>
+                <p className="text-gray-600 mt-1">Ένας αριθμός διαιρείται με το 9 αν το **άθροισμα των ψηφίων του** διαιρείται με το 9 (π.χ. 1 + 8 = 9).</p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-xs md:text-sm">
+                <span className="font-bold text-orange-600">🔢 Κριτήριο του 10</span>
+                <p className="text-gray-600 mt-1">Ένας αριθμός διαιρείται με το 10 αν το τελευταίο του ψηφίο είναι **0**.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 2: ΔΟΚΙΜΑΣΕ ΕΝΑΝ ΑΡΙΘΜΟ */}
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+                🔍 Δοκίμασε έναν Αριθμό
+              </h2>
+              <p className="text-gray-500 text-sm">
+                Άλλαξε τον αριθμό με τα κουμπιά, το range ή πληκτρολόγησε έναν δικό σου!
               </p>
             </div>
 
-            {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
-            <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200 space-y-8">
+            {/* ΧΕΙΡΙΣΤΗΡΙΟ ΕΠΙΛΟΓΗΣ (Όπως στην εικόνα_5) */}
+            <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 max-w-3xl mx-auto space-y-6">
+              <div className="flex items-center justify-center gap-4 bg-slate-50 border p-4 rounded-2xl max-w-xl mx-auto">
+                <span className="font-bold text-slate-700 text-sm sm:text-base w-36 text-right">Αριθμός για έλεγχο:</span>
+                <button onClick={() => setNum(Math.max(LIMITS.NUM_MIN, num - 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-black text-lg hover:bg-amber-600 transition shadow-sm">-</button>
+                <input 
+                  type="number" 
+                  value={num} 
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    if (!isNaN(val)) setNum(Math.max(LIMITS.NUM_MIN, Math.min(LIMITS.NUM_MAX, val)));
+                  }}
+                  className="w-24 text-center font-black text-xl text-amber-600 bg-amber-50/50 border border-amber-200 p-1 rounded-xl focus:outline-none"
+                />
+                <button onClick={() => setNum(Math.min(LIMITS.NUM_MAX, num + 1))} className="bg-amber-500 text-white w-8 h-8 rounded-full font-black text-lg hover:bg-amber-600 transition shadow-sm">+</button>
+              </div>
+
+              {/* SLIDER (RANGE) */}
+              <div className="max-w-xl mx-auto px-4">
+                <input 
+                  type="range" 
+                  min={LIMITS.NUM_MIN} 
+                  max={LIMITS.NUM_MAX} 
+                  value={num} 
+                  onChange={(e) => setNum(parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                />
+              </div>
+            </div>
+
+            {/* GRID ΑΠΟΤΕΛΕΣΜΑΤΩΝ (3 Στήλες στα μεγάλα monitor) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               
-              {/* ΕΠΙΛΟΓΗ ΑΡΙΘΜΟΥ ΜΕ ΜΕΓΑΛΑ ΧΕΙΡΙΣΤΗΡΙΑ */}
-              <div className="bg-blue-50/60 p-6 rounded-2xl border border-blue-200 flex flex-col md:flex-row items-center justify-between max-w-2xl mx-auto gap-4">
-                <div className="text-center md:text-left">
-                  <span className="font-black text-blue-950 text-base block">Διάλεξε έναν Αριθμό:</span>
-                  <span className="text-xs text-blue-600 font-semibold">Μπορείς να χρησιμοποιήσεις και τα βήματα των +100 / -100</span>
-                </div>
-                <div className="flex flex-wrap items-center justify-center bg-white p-2 px-4 rounded-2xl border border-blue-100 gap-2">
-                  <button onClick={() => setNum(Math.max(LIMITS.NUM_MIN, num - 100))} className="bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-xs hover:bg-slate-200 transition">-100</button>
-                  <button onClick={() => setNum(Math.max(LIMITS.NUM_MIN, num - 1))} className="bg-blue-100 text-blue-700 w-9 h-9 rounded-full font-black text-lg hover:bg-blue-200 transition shadow-sm">-</button>
-                  <span className="w-20 text-center font-black text-3xl text-blue-600 tracking-tight">{num}</span>
-                  <button onClick={() => setNum(Math.min(LIMITS.NUM_MAX, num + 1))} className="bg-blue-600 text-white w-9 h-9 rounded-full font-black text-lg hover:bg-blue-700 transition shadow-sm">+</button>
-                  <button onClick={() => setNum(Math.min(LIMITS.NUM_MAX, num + 100))} className="bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-xs hover:bg-slate-200 transition">+100</button>
-                </div>
-              </div>
-
-              {/* ΑΝΑΛΥΣΗ ΨΗΦΙΩΝ */}
-              <div className="bg-white p-5 rounded-2xl border shadow-sm max-w-xl mx-auto text-center space-y-2">
-                <span className="text-xs uppercase font-black text-gray-400 tracking-wider block">Ακτινογραφία του αριθμού {num}</span>
-                <div className="flex justify-center gap-6 text-sm font-bold text-slate-700 pt-1">
-                  <div className="bg-slate-50 p-3 rounded-xl border">
-                    <div>📌 Τελευταίο Ψηφίο:</div>
-                    <div className="text-xl font-black text-indigo-600 mt-1">{lastDigit}</div>
+              {/* Διαιρείται με το 2 */}
+              <div className={`p-5 rounded-2xl border bg-white flex flex-col justify-between min-h-[160px] shadow-sm transition-all ${divBy2 ? 'border-emerald-200 bg-emerald-50/10' : 'border-rose-100 bg-rose-50/10'}`}>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-black text-sm md:text-base text-slate-800">Διαιρείται με το 2;</span>
+                    <span className={`px-2.5 py-0.5 rounded-md font-black text-xs text-white flex items-center gap-1 ${divBy2 ? 'bg-emerald-500' : 'bg-rose-400'}`}>
+                      {divBy2 ? '✔ Ναι' : '✖ Όχι'}
+                    </span>
                   </div>
-                  <div className="bg-slate-50 p-3 rounded-xl border">
-                    <div>🧮 Άθροισμα Ψηφίων:</div>
-                    <div className="text-xl font-black text-purple-600 mt-1">
-                      {digitsArray.join(' + ')} = <span className="text-pink-600">{digitsSum}</span>
-                    </div>
-                  </div>
+                  <p className="text-[11px] text-gray-400 font-medium">Κανόνας: Είναι άρτιος.</p>
+                </div>
+                <div className="bg-white p-2 rounded-xl border text-xs font-bold text-gray-500 mt-4 flex items-center gap-1">
+                  🔍 Λήγει σε {lastDigit}.
                 </div>
               </div>
 
-              {/* ΠΙΝΑΚΑΣ ΕΛΕΓΧΟΥ ΚΡΙΤΗΡΙΩΝ */}
-              <div className="space-y-4 max-w-4xl mx-auto">
-                <h3 className="text-sm font-black text-gray-400 uppercase tracking-wider text-center">Έλεγχος Διαιρετότητας:</h3>
-                
-                <div className="space-y-3">
-                  {/* Κριτήριο για το 2 */}
-                  <div className={`p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition duration-200 bg-white ${divBy2 ? 'border-l-8 border-l-emerald-500 shadow-sm' : 'border-l-8 border-l-rose-400'}`}>
-                    <div>
-                      <span className="font-black text-base text-slate-800">Διαιρείται με το <span className="text-blue-600">2</span>;</span>
-                      <p className="text-xs text-gray-500 mt-0.5">Κανόνας: Πρέπει να λήγει σε ζυγό ψηφίο (0, 2, 4, 6, 8).</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-semibold text-gray-400">Λήγει σε {lastDigit}</span>
-                      <span className={`p-1.5 px-4 rounded-xl font-black text-sm text-white ${divBy2 ? 'bg-emerald-500' : 'bg-rose-400'}`}>{divBy2 ? '✔ Ναι' : '✖ Όχι'}</span>
-                    </div>
+              {/* Διαιρείται με το 3 */}
+              <div className={`p-5 rounded-2xl border bg-white flex flex-col justify-between min-h-[160px] shadow-sm transition-all ${divBy3 ? 'border-emerald-200 bg-emerald-50/10' : 'border-rose-100 bg-rose-50/10'}`}>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-black text-sm md:text-base text-slate-800">Διαιρείται με το 3;</span>
+                    <span className={`px-2.5 py-0.5 rounded-md font-black text-xs text-white flex items-center gap-1 ${divBy3 ? 'bg-emerald-500' : 'bg-rose-400'}`}>
+                      {divBy3 ? '✔ Ναι' : '✖ Όχι'}
+                    </span>
                   </div>
-
-                  {/* Κριτήριο για το 3 */}
-                  <div className={`p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition duration-200 bg-white ${divBy3 ? 'border-l-8 border-l-emerald-500 shadow-sm' : 'border-l-8 border-l-rose-400'}`}>
-                    <div>
-                      <span className="font-black text-base text-slate-800">Διαιρείται με το <span className="text-blue-600">3</span>;</span>
-                      <p className="text-xs text-gray-500 mt-0.5">Κανόνας: Το άθροισμα των ψηφίων του πρέπει να είναι πολλαπλάσιο του 3.</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-semibold text-gray-400">Άθροισμα = {digitsSum}</span>
-                      <span className={`p-1.5 px-4 rounded-xl font-black text-sm text-white ${divBy3 ? 'bg-emerald-500' : 'bg-rose-400'}`}>{divBy3 ? '✔ Ναι' : '✖ Όχι'}</span>
-                    </div>
-                  </div>
-
-                  {/* Κριτήριο για το 5 */}
-                  <div className={`p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition duration-200 bg-white ${divBy5 ? 'border-l-8 border-l-emerald-500 shadow-sm' : 'border-l-8 border-l-rose-400'}`}>
-                    <div>
-                      <span className="font-black text-base text-slate-800">Διαιρείται με το <span className="text-blue-600">5</span>;</span>
-                      <p className="text-xs text-gray-500 mt-0.5">Κανόνας: Πρέπει να λήγει σε 0 ή 5.</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-semibold text-gray-400">Λήγει σε {lastDigit}</span>
-                      <span className={`p-1.5 px-4 rounded-xl font-black text-sm text-white ${divBy5 ? 'bg-emerald-500' : 'bg-rose-400'}`}>{divBy5 ? '✔ Ναι' : '✖ Όχι'}</span>
-                    </div>
-                  </div>
-
-                  {/* Κριτήριο για το 9 */}
-                  <div className={`p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition duration-200 bg-white ${divBy9 ? 'border-l-8 border-l-emerald-500 shadow-sm' : 'border-l-8 border-l-rose-400'}`}>
-                    <div>
-                      <span className="font-black text-base text-slate-800">Διαιρείται με το <span className="text-blue-600">9</span>;</span>
-                      <p className="text-xs text-gray-500 mt-0.5">Κανόνας: Το άθροισμα των ψηφίων του πρέπει να είναι πολλαπλάσιο του 9.</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-semibold text-gray-400">Άθροισμα = {digitsSum}</span>
-                      <span className={`p-1.5 px-4 rounded-xl font-black text-sm text-white ${divBy9 ? 'bg-emerald-500' : 'bg-rose-400'}`}>{divBy9 ? '✔ Ναι' : '✖ Όχι'}</span>
-                    </div>
-                  </div>
-
-                  {/* Κριτήριο για το 10 */}
-                  <div className={`p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition duration-200 bg-white ${divBy10 ? 'border-l-8 border-l-emerald-500 shadow-sm' : 'border-l-8 border-l-rose-400'}`}>
-                    <div>
-                      <span className="font-black text-base text-slate-800">Διαιρείται με το <span className="text-blue-600">10</span>;</span>
-                      <p className="text-xs text-gray-500 mt-0.5">Κανόνας: Πρέπει να λήγει σε 0.</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-semibold text-gray-400">Λήγει σε {lastDigit}</span>
-                      <span className={`p-1.5 px-4 rounded-xl font-black text-sm text-white ${divBy10 ? 'bg-emerald-500' : 'bg-rose-400'}`}>{divBy10 ? '✔ Ναι' : '✖ Όχι'}</span>
-                    </div>
-                  </div>
+                  <p className="text-[11px] text-gray-400 font-medium">Κανόνας: Το άθροισμα των ψηφίων του διαιρείται με το 3.</p>
                 </div>
+                <div className="bg-white p-2 rounded-xl border text-xs font-bold text-gray-500 mt-4 flex items-center gap-1">
+                  🔍 Άθροισμα: {digitsArray.join(' + ')} = {digitsSum}.
+                </div>
+              </div>
 
+              {/* Διαιρείται με το 4 */}
+              <div className={`p-5 rounded-2xl border bg-white flex flex-col justify-between min-h-[160px] shadow-sm transition-all ${divBy4 ? 'border-emerald-200 bg-emerald-50/10' : 'border-rose-100 bg-rose-50/10'}`}>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-black text-sm md:text-base text-slate-800">Διαιρείται με το 4;</span>
+                    <span className={`px-2.5 py-0.5 rounded-md font-black text-xs text-white flex items-center gap-1 ${divBy4 ? 'bg-emerald-500' : 'bg-rose-400'}`}>
+                      {divBy4 ? '✔ Ναι' : '✖ Όχι'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 font-medium">Κανόνας: Τα δύο τελευταία ψηφία διαιρούνται με το 4.</p>
+                </div>
+                <div className="bg-white p-2 rounded-xl border text-xs font-bold text-gray-500 mt-4 flex items-center gap-1">
+                  🔍 Τελευταία δύο ψηφία: {lastTwoDigits} {divBy4 ? `(Έλεγχος: ${lastTwoDigits} ÷ 4 = ${lastTwoDigits / 4})` : '(Δεν διαιρείται ακριβώς)'}.
+                </div>
+              </div>
+
+              {/* Διαιρείται με το 5 */}
+              <div className={`p-5 rounded-2xl border bg-white flex flex-col justify-between min-h-[160px] shadow-sm transition-all ${divBy5 ? 'border-emerald-200 bg-emerald-50/10' : 'border-rose-100 bg-rose-50/10'}`}>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-black text-sm md:text-base text-slate-800">Διαιρείται με το 5;</span>
+                    <span className={`px-2.5 py-0.5 rounded-md font-black text-xs text-white flex items-center gap-1 ${divBy5 ? 'bg-emerald-500' : 'bg-rose-400'}`}>
+                      {divBy5 ? '✔ Ναι' : '✖ Όχι'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 font-medium">Κανόνας: Λήγει σε 0 ή 5.</p>
+                </div>
+                <div className="bg-white p-2 rounded-xl border text-xs font-bold text-gray-500 mt-4 flex items-center gap-1">
+                  🔍 Λήγει σε {lastDigit}.
+                </div>
+              </div>
+
+              {/* Διαιρείται με το 9 */}
+              <div className={`p-5 rounded-2xl border bg-white flex flex-col justify-between min-h-[160px] shadow-sm transition-all ${divBy9 ? 'border-emerald-200 bg-emerald-50/10' : 'border-rose-100 bg-rose-50/10'}`}>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-black text-sm md:text-base text-slate-800">Διαιρείται με το 9;</span>
+                    <span className={`px-2.5 py-0.5 rounded-md font-black text-xs text-white flex items-center gap-1 ${divBy9 ? 'bg-emerald-500' : 'bg-rose-400'}`}>
+                      {divBy9 ? '✔ Ναι' : '✖ Όχι'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 font-medium">Κανόνας: Το άθροισμα των ψηφίων του διαιρείται με το 9.</p>
+                </div>
+                <div className="bg-white p-2 rounded-xl border text-xs font-bold text-gray-500 mt-4 flex items-center gap-1">
+                  🔍 Άθροισμα: {digitsArray.join(' + ')} = {digitsSum}.
+                </div>
+              </div>
+
+              {/* Διαιρείται με το 10 */}
+              <div className={`p-5 rounded-2xl border bg-white flex flex-col justify-between min-h-[160px] shadow-sm transition-all ${divBy10 ? 'border-emerald-200 bg-emerald-50/10' : 'border-rose-100 bg-rose-50/10'}`}>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-black text-sm md:text-base text-slate-800">Διαιρείται με το 10;</span>
+                    <span className={`px-2.5 py-0.5 rounded-md font-black text-xs text-white flex items-center gap-1 ${divBy10 ? 'bg-emerald-500' : 'bg-rose-400'}`}>
+                      {divBy10 ? '✔ Ναι' : '✖ Όχι'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 font-medium">Κανόνας: Λήγει σε 0.</p>
+                </div>
+                <div className="bg-white p-2 rounded-xl border text-xs font-bold text-gray-500 mt-4 flex items-center gap-1">
+                  🔍 Λήγει σε {lastDigit}.
+                </div>
               </div>
 
             </div>
-
           </div>
+
         </main>
       </div>
 
