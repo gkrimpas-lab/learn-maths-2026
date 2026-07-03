@@ -2,139 +2,238 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { LAYOUT } from '../../shared/layout-config';
 
 const LIMITS = {
-  MKD_VAL_MIN: 4,
-  MKD_VAL_MAX: 60
+  NUM_MIN: 4,
+  NUM_MAX: 48
 };
 
 export default function MkdPage() {
-  const [mkdCount, setMkdCount] = useState(2);
-  const [mkdValues, setMkdValues] = useState([12, 18, 24, 36]);
+  // Πλήθος αριθμών προς εξέταση (2, 3 ή 4)
+  const [numCount, setNumCount] = useState(2);
 
-  // Math Helpers
-  const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+  // Οι τιμές για έως και 4 αριθμούς
+  const [n1, setN1] = useState(12);
+  const [n2, setN2] = useState(18);
+  const [n3, setN3] = useState(24);
+  const [n4, setN4] = useState(30);
 
-  const updateMkdValue = (index, increment) => {
-    const newValues = [...mkdValues];
-    newValues[index] = increment 
-      ? Math.min(LIMITS.MKD_VAL_MAX, newValues[index] + 1) 
-      : Math.max(LIMITS.MKD_VAL_MIN, newValues[index] - 1);
-    setMkdValues(newValues);
+  // Συναρτήσεις εύρεσης ΜΚΔ για δύο αριθμούς
+  const findGCDOfTwo = (a, b) => {
+    while (b) {
+      let t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
   };
 
+  // Υπολογισμός του τελικού ΜΚΔ δυναμικά βάσει του πλήθους των αριθμών
+  let mkdResult = findGCDOfTwo(n1, n2);
+  if (numCount >= 3) mkdResult = findGCDOfTwo(mkdResult, n3);
+  if (numCount === 4) mkdResult = findGCDOfTwo(mkdResult, n4);
+
+  // Παραγωγή λιστών με τους πραγματικούς διαιρέτες του κάθε αριθμού
   const getDivisors = (num) => {
-    const divisors = [];
+    const divs = [];
     for (let i = 1; i <= num; i++) {
-      if (num % i === 0) divisors.push(i);
+      if (num % i === 0) divs.push(i);
     }
-    return divisors;
+    return divs;
   };
 
-  const finalMkd = (() => {
-    let currentGcd = mkdValues[0];
-    for (let i = 1; i < mkdCount; i++) {
-      currentGcd = gcd(currentGcd, mkdValues[i]);
-    }
-    return currentGcd;
-  })();
+  const list1 = getDivisors(n1);
+  const list2 = getDivisors(n2);
+  const list3 = getDivisors(n3);
+  const list4 = getDivisors(n4);
+
+  // Συνάρτηση ελέγχου αν ένας αριθμός είναι κοινός διαιρέτης όλων των επιλεγμένων
+  const isCommonDivisor = (val) => {
+    if (numCount === 2) return n1 % val === 0 && n2 % val === 0;
+    if (numCount === 3) return n1 % val === 0 && n2 % val === 0 && n3 % val === 0;
+    return n1 % val === 0 && n2 % val === 0 && n3 % val === 0 && n4 % val === 0;
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
         <title>🏆 Μέγιστος Κοινός Διαιρέτης (ΜΚΔ) - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
-      {/* NAVBAR */}
-      <nav className="bg-white shadow-md">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">LearnMaths<span className="text-indigo-600">.gr</span></Link>
-          <Link href="/e-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold transition">🔙 Επιστροφή</Link>
-        </div>
-      </nav>
+      <div>
+        {/* NAVBAR */}
+        <nav className="bg-white shadow-md w-full">
+          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
+            <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
+              LearnMaths<span className="text-indigo-600">.gr</span>
+            </Link>
+            <Link href="/e-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
+              🔙 Επιστροφή
+            </Link>
+          </div>
+        </nav>
 
-      {/* MAIN CONTENT */}
-      <main className="max-w-5xl mx-auto px-4 py-12">
-        <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
-          <h2 className="text-2xl font-black text-gray-900">🏆 Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)</h2>
-          <p className="text-gray-600 text-sm leading-relaxed">
-            Μέγιστος Κοινός Διαιρέτης δύο ή περισσότερων φυσικών αριθμών λέγεται ο μεγαλύτερος από τους κοινούς διαιρέτες τους.
-          </p>
-
-          <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-xl border shadow-sm gap-4">
-              <span className="font-bold text-gray-700 text-sm">Πόσους αριθμούς θέλεις να συγκρίνεις;</span>
-              <div className="flex bg-slate-100 p-1 rounded-lg gap-1">
-                {[2, 3, 4].map((n) => (
-                  <button 
-                    key={n} 
-                    onClick={() => setMkdCount(n)} 
-                    className={`px-4 py-1.5 rounded-md font-bold text-xs transition ${mkdCount === n ? 'bg-cyan-500 text-white shadow-sm' : 'text-gray-600 hover:bg-white/50'}`}
-                  >
-                    {n} Αριθμούς
-                  </button>
-                ))}
-              </div>
+        {/* MAIN CONTENT */}
+        <main className={`${LAYOUT.LESSON_CONTAINER} py-12`}>
+          <div className="space-y-8 bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100">
+            
+            {/* ΘΕΩΡΙΑ */}
+            <div className="space-y-4">
+              <h2 className="text-3xl font-black text-gray-900 2xl:text-4xl">🏆 Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)</h2>
+              <p className="text-gray-600 leading-relaxed text-base xl:text-lg">
+                Μέγιστος Κοινός Διαιρέτης (ΜΚΔ) δύο ή περισσότερων φυσικών αριθμών ονομάζεται ο <strong>μεγαλύτερος από τους κοινούς διαιρέτες τους</strong>. Μας βοηθάει να κάνουμε γρήγορες απλοποιήσεις κλασμάτων!
+              </p>
             </div>
 
-            <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-wrap justify-center gap-6">
-              {Array.from({ length: mkdCount }).map((_, idx) => (
-                <div key={idx} className="flex flex-col items-center bg-slate-50 p-2.5 rounded-xl border min-w-[110px]">
-                  <span className="text-[10px] font-bold text-gray-400">Αριθμός {idx + 1}</span>
-                  <div className="flex items-center gap-2 mt-1">
-                    <button onClick={() => updateMkdValue(idx, false)} className="bg-slate-200 w-6 h-6 rounded-full font-bold text-xs hover:bg-slate-300 transition">-</button>
-                    <span className="font-black text-indigo-600 text-lg w-5 text-center">{mkdValues[idx]}</span>
-                    <button onClick={() => updateMkdValue(idx, true)} className="bg-slate-200 w-6 h-6 rounded-full font-bold text-xs hover:bg-slate-300 transition">+</button>
+            {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
+            <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200 space-y-8">
+              
+              {/* ΕΠΙΛΟΓΗ ΠΛΗΘΟΥΣ ΑΡΙΘΜΩΝ */}
+              <div className="flex flex-col items-center justify-center space-y-3">
+                <span className="text-xs uppercase font-black text-gray-400 tracking-wider">Πόσους αριθμούς θέλεις να εξετάσεις;</span>
+                <div className="inline-flex p-1.5 bg-slate-200 rounded-2xl shadow-inner gap-1">
+                  {[2, 3, 4].map((count) => (
+                    <button
+                      key={count}
+                      onClick={() => setNumCount(count)}
+                      className={`px-5 py-2 rounded-xl font-black text-sm transition shadow-sm ${numCount === count ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-300'}`}
+                    >
+                      {count} Αριθμούς
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* ΔΥΝΑΜΙΚΑ ΧΕΙΡΙΣΤΗΡΙΑ ΜΕ ΑΥΤΟΝΟΜΑ CARDS */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                {/* Αριθμός 1 */}
+                <div className="bg-blue-50/60 p-4 rounded-2xl border border-blue-200 flex flex-col items-center space-y-2 shadow-sm text-center">
+                  <span className="font-black text-blue-700 text-xs uppercase tracking-wide">1ος Αριθμός</span>
+                  <div className="flex items-center bg-white p-1.5 px-3 rounded-xl border border-blue-100 gap-3">
+                    <button onClick={() => setN1(Math.max(LIMITS.NUM_MIN, n1 - 1))} className="bg-blue-100 text-blue-700 w-8 h-8 rounded-full font-black hover:bg-blue-200 transition shadow-sm">-</button>
+                    <span className="w-6 text-center font-black text-xl text-blue-600">{n1}</span>
+                    <button onClick={() => setN1(Math.min(LIMITS.NUM_MAX, n1 + 1))} className="bg-blue-600 text-white w-8 h-8 rounded-full font-black hover:bg-blue-700 transition shadow-sm">+</button>
                   </div>
                 </div>
-              ))}
-            </div>
 
-            <div className="bg-white p-4 rounded-xl border shadow-sm overflow-x-auto">
-              <div className="space-y-3 min-w-[700px]">
-                {Array.from({ length: mkdCount }).map((_, arrIdx) => {
-                  const currentNum = mkdValues[arrIdx]; 
-                  const divisorsList = getDivisors(currentNum);
-                  return (
-                    <div key={arrIdx} className="flex items-center gap-4 bg-slate-50/50 p-2 rounded-xl">
-                      <div className="w-14 font-black text-slate-700 text-xs border-r pr-2">Δ_{currentNum}:</div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {divisorsList.map((divValue) => {
-                          const isCommon = mkdValues.slice(0, mkdCount).every(v => v % divValue === 0); 
-                          const isMkd = divValue === finalMkd;
-                          return (
-                            <div 
-                              key={divValue} 
-                              className={`p-1.5 px-3 text-[11px] rounded-md font-bold border text-center min-w-[36px] ${
-                                isMkd 
-                                  ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-emerald-700 ring-2 ring-emerald-200 relative scale-105' 
-                                  : isCommon 
-                                    ? 'bg-emerald-50 text-emerald-900 border-emerald-200' 
-                                    : 'bg-white border-gray-200 text-gray-600'
-                              }`}
-                            >
-                              {isMkd && <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px]">👑</span>}
-                              {divValue}
-                            </div>
-                          );
-                        })}
-                      </div>
+                {/* Αριθμός 2 */}
+                <div className="bg-indigo-50/60 p-4 rounded-2xl border border-indigo-200 flex flex-col items-center space-y-2 shadow-sm text-center">
+                  <span className="font-black text-indigo-700 text-xs uppercase tracking-wide">2ος Αριθμός</span>
+                  <div className="flex items-center bg-white p-1.5 px-3 rounded-xl border border-indigo-100 gap-3">
+                    <button onClick={() => setN2(Math.max(LIMITS.NUM_MIN, n2 - 1))} className="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full font-black hover:bg-indigo-200 transition shadow-sm">-</button>
+                    <span className="w-6 text-center font-black text-xl text-indigo-600">{n2}</span>
+                    <button onClick={() => setN2(Math.min(LIMITS.NUM_MAX, n2 + 1))} className="bg-indigo-600 text-white w-8 h-8 rounded-full font-black hover:bg-indigo-700 transition shadow-sm">+</button>
+                  </div>
+                </div>
+
+                {/* Αριθμός 3 */}
+                {numCount >= 3 ? (
+                  <div className="bg-purple-50/60 p-4 rounded-2xl border border-purple-200 flex flex-col items-center space-y-2 shadow-sm text-center animate-fade-in">
+                    <span className="font-black text-purple-700 text-xs uppercase tracking-wide">3ος Αριθμός</span>
+                    <div className="flex items-center bg-white p-1.5 px-3 rounded-xl border border-purple-100 gap-3">
+                      <button onClick={() => setN3(Math.max(LIMITS.NUM_MIN, n3 - 1))} className="bg-purple-100 text-purple-700 w-8 h-8 rounded-full font-black hover:bg-purple-200 transition shadow-sm">-</button>
+                      <span className="w-6 text-center font-black text-xl text-purple-600">{n3}</span>
+                      <button onClick={() => setN3(Math.min(LIMITS.NUM_MAX, n3 + 1))} className="bg-purple-600 text-white w-8 h-8 rounded-full font-black hover:bg-purple-700 transition shadow-sm">+</button>
                     </div>
-                  );
-                })}
+                  </div>
+                ) : (
+                  <div className="hidden md:flex bg-gray-50/40 p-4 rounded-2xl border border-dashed border-gray-200 flex-col items-center justify-center opacity-40 text-center">
+                    <span className="text-xs font-bold text-gray-400">Διαθέσιμο</span>
+                  </div>
+                )}
+
+                {/* Αριθμός 4 */}
+                {numCount === 4 ? (
+                  <div className="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200 flex flex-col items-center space-y-2 shadow-sm text-center animate-fade-in">
+                    <span className="font-black text-emerald-700 text-xs uppercase tracking-wide">4ος Αριθμός</span>
+                    <div className="flex items-center bg-white p-1.5 px-3 rounded-xl border border-emerald-100 gap-3">
+                      <button onClick={() => setN4(Math.max(LIMITS.NUM_MIN, n4 - 1))} className="bg-emerald-100 text-emerald-700 w-8 h-8 rounded-full font-black hover:bg-emerald-200 transition shadow-sm">-</button>
+                      <span className="w-6 text-center font-black text-xl text-emerald-600">{n4}</span>
+                      <button onClick={() => setN4(Math.min(LIMITS.NUM_MAX, n4 + 1))} className="bg-emerald-600 text-white w-8 h-8 rounded-full font-black hover:bg-emerald-700 transition shadow-sm">+</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="hidden md:flex bg-gray-50/40 p-4 rounded-2xl border border-dashed border-gray-200 flex-col items-center justify-center opacity-40 text-center">
+                    <span className="text-xs font-bold text-gray-400">Διαθέσιμο</span>
+                  </div>
+                )}
               </div>
+
+              {/* ΠΑΡΑΘΕΣΗ ΔΙΑΙΡΕΤΩΝ */}
+              <div className="space-y-4 max-w-5xl mx-auto">
+                {/* Λίστα 1 */}
+                <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-1">
+                  <span className="text-[11px] font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Διαιρέτες του {n1}</span>
+                  <div className="flex flex-wrap gap-1.5 pt-1.5 text-sm font-bold">
+                    {list1.map((v) => (
+                      <span key={v} className={`p-1.5 px-3 rounded-lg border ${v === mkdResult ? 'bg-emerald-500 text-white border-emerald-400 font-black scale-105 shadow ring-2 ring-emerald-300' : isCommonDivisor(v) ? 'bg-cyan-500 text-white border-cyan-400' : 'bg-slate-50 text-slate-700 border-slate-100'}`}>{v}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Λίστα 2 */}
+                <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-1">
+                  <span className="text-[11px] font-black text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Διαιρέτες του {n2}</span>
+                  <div className="flex flex-wrap gap-1.5 pt-1.5 text-sm font-bold">
+                    {list2.map((v) => (
+                      <span key={v} className={`p-1.5 px-3 rounded-lg border ${v === mkdResult ? 'bg-emerald-500 text-white border-emerald-400 font-black scale-105 shadow ring-2 ring-emerald-300' : isCommonDivisor(v) ? 'bg-cyan-500 text-white border-cyan-400' : 'bg-slate-50 text-slate-700 border-slate-100'}`}>{v}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Λίστα 3 */}
+                {numCount >= 3 && (
+                  <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-1 animate-fade-in">
+                    <span className="text-[11px] font-black text-purple-600 bg-purple-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Διαιρέτες του {n3}</span>
+                    <div className="flex flex-wrap gap-1.5 pt-1.5 text-sm font-bold">
+                      {list3.map((v) => (
+                        <span key={v} className={`p-1.5 px-3 rounded-lg border ${v === mkdResult ? 'bg-emerald-500 text-white border-emerald-400 font-black scale-105 shadow ring-2 ring-emerald-300' : isCommonDivisor(v) ? 'bg-cyan-500 text-white border-cyan-400' : 'bg-slate-50 text-slate-700 border-slate-100'}`}>{v}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Λίστα 4 */}
+                {numCount === 4 && (
+                  <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-1 animate-fade-in">
+                    <span className="text-[11px] font-black text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Διαιρέτες του {n4}</span>
+                    <div className="flex flex-wrap gap-1.5 pt-1.5 text-sm font-bold">
+                      {list4.map((v) => (
+                        <span key={v} className={`p-1.5 px-3 rounded-lg border ${v === mkdResult ? 'bg-emerald-500 text-white border-emerald-400 font-black scale-105 shadow ring-2 ring-emerald-300' : isCommonDivisor(v) ? 'bg-cyan-500 text-white border-cyan-400' : 'bg-slate-50 text-slate-700 border-slate-100'}`}>{v}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ΕΠΕΞΗΓΗΣΗ ΧΡΩΜΑΤΩΝ */}
+              <div className="flex flex-wrap gap-4 justify-center text-[11px] font-bold text-gray-500 pt-1">
+                <span className="flex items-center gap-1"><span className="w-3 h-3 bg-cyan-500 rounded-sm"></span> Κοινοί Διαιρέτες</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 bg-emerald-500 rounded-sm"></span> Ο Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)</span>
+              </div>
+
+              {/* ΑΠΟΤΕΛΕΣΜΑ */}
+              <div className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-6 rounded-2xl text-center shadow-lg max-w-xl mx-auto space-y-2">
+                <span className="text-xs uppercase font-black text-emerald-200 tracking-wider block">Το Αποτέλεσμα</span>
+                <div className="text-xl sm:text-2xl font-black">
+                  ΜΚΔ = <span className="text-yellow-300 text-3xl sm:text-4xl ml-1 inline-block animate-bounce">{mkdResult}</span>
+                </div>
+                <p className="text-xs text-emerald-100 opacity-90">
+                  Το {mkdResult} είναι ο μεγαλύτερος δυνατός αριθμός που μπορεί να διαιρέσει ταυτόχρονα και ακριβώς όλους τους επιλεγμένους αριθμούς!
+                </p>
+              </div>
+
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white p-4 rounded-2xl text-center shadow-md max-w-sm mx-auto">
-              <span className="text-[10px] uppercase font-black tracking-widest opacity-90 block">🏆 Μέγιστος Κοινός Διαιρέτης</span>
-              <div className="text-xl font-black mt-1">
-                ΜΚΔ({mkdValues.slice(0, mkdCount).join(', ')}) = <span className="bg-white text-emerald-600 px-3 py-0.5 rounded-lg text-2xl shadow-inner inline-block ml-1">{finalMkd}</span>
-              </div>
-            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
+
+      <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
+        <p>© 2026 LearnMaths.gr. Υπολογισμός ΜΚΔ Φυσικών Αριθμών.</p>
+      </footer>
     </div>
   );
 }
