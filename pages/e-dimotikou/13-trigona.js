@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// ⚙️ ΡΥΘΜΙΣΕΙΣ ΟΡΙΩΝ ΓΩΝΙΑΣ (Μπορείς να τις αλλάξεις εδώ)
+// ⚙️ ΡΥΘΜΙΣΕΙΣ ΟΡΙΩΝ ΓΩΝΙΑΣ
 const ANGLE_MIN = 1;
 const ANGLE_MAX = 179;
 
@@ -12,37 +12,30 @@ export default function TrigwnaPage() {
   // Αρχική τιμή γωνίας Β
   const [angleB, setAngleB] = useState(60);
 
-  // Διασφάλιση ότι η τιμή δεν ξεπερνάει τα εξωτερικά όρια αν αλλάξουν οι ρυθμίσεις
+  // Διασφάλιση ορίων
   const currentB = Math.max(ANGLE_MIN, Math.min(ANGLE_MAX, angleB));
 
   // --- ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΓΩΝΙΩΝ ---
-  // Για να είναι ελεύθερες όλες οι γωνίες και να μην κολλάει το τρίγωνο, 
-  // μοιράζουμε το υπόλοιπο των μοιρών (180 - Β) ισομερώς στις γωνίες Α και Γ
+  // Μοιράζουμε τις υπόλοιπες μοίρες εξίσου για μια ομαλή και ισορροπημένη γεωμετρική μεταμόρφωση
   const angleA = Math.round((180 - currentB) / 2);
   const angleΓ = 180 - currentB - angleA;
 
-  // --- ΔΥΝΑΜΙΚΟ SCALE ΓΙΑ ΝΑ ΜΗΝ ΒΓΑΙΝΕΙ ΠΟΤΕ ΕΚΤΟΣ ΚΑΜΒΑ ---
-  // Όσο πιο κοντά πάμε στο 1 ή στο 179, τόσο πιο πολύ μικραίνουμε το baseSide 
-  // για να χωράει το «μακρόστενο» τρίγωνο μέσα στο viewBox (400x260)
-  let baseSide = 120; 
-  if (currentB < 20 || currentB > 160) {
-    baseSide = 35; // Πολύ μικρό μέγεθος για τις ακραίες γωνίες
-  } else if (currentB < 45 || currentB > 135) {
-    baseSide = 70; // Μεσαίο μέγεθος
-  }
+  // --- ΣΤΑΘΕΡΗ ΜΕΓΑΛΗ ΒΑΣΗ ΓΙΑ ΝΑ ΠΙΑΝΕΙ ΟΛΟ ΤΟ ΠΛΑΙΣΙΟ ---
+  // Ορίζουμε τη βάση ΒΓ σταθερά μεγάλη (220 μονάδες) για να γεμίζει ο καμβάς
+  const baseSide = 220; 
+  
+  // Κεντράρισμα της βάσης στο νέο διευρυμένο viewBox (440 x 380)
+  const bx = 110; 
+  const by = 280; // Κατεβάζουμε τη βάση χαμηλότερα για να έχει ύψος να αναπτυχθεί η κορυφή Α
+  const gx = 110 + baseSide;
+  const gy = 280;
 
-  // Συντεταγμένες βάσης ΒΓ (Σταθερό y=200 στο κάτω μέρος)
-  const bx = 200 - baseSide / 2; // Κεντράρισμα του τριγώνου οριζόντια
-  const by = 210;
-  const gx = 200 + baseSide / 2;
-  const gy = 210;
-
-  // Τριγωνομετρικός υπολογισμός της πάνω κορυφής Α
+  // Τριγωνομετρικός υπολογισμός της κορυφής Α με το Νόμο των Ημιτόνων
   const radB = (currentB * Math.PI) / 180;
   const radΓ = (angleΓ * Math.PI) / 180;
   const radA = (angleA * Math.PI) / 180;
 
-  // Νόμος Ημιτόνων για την εύρεση της πλευράς c (ΑΒ)
+  // Υπολογισμός της πλευράς c (ΑΒ) - η κίνηση είναι πλέον απόλυτα γραμμική και συνεχή
   const sidec = (baseSide * Math.sin(radΓ)) / Math.sin(radA);
 
   // Συντεταγμένες του σημείου Α
@@ -126,7 +119,7 @@ export default function TrigwnaPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
             {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ */}
-            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[490px] w-full">
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[520px] w-full">
               <div className="space-y-2">
                 <h3 className="text-2xl font-black text-gray-900 flex items-center gap-2">
                   🕹️ Μετάβαλλε τη Γωνία Β
@@ -141,9 +134,9 @@ export default function TrigwnaPage() {
                 <div className="flex items-center justify-between px-2">
                   <span className="font-black text-slate-700 text-base md:text-lg">Γωνία Β:</span>
                   <div className="flex items-center gap-4">
-                    <button onClick={() => setAngleB(Math.max(ANGLE_MIN, currentB - 5))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-lg text-sm hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">-5</button>
+                    <button onClick={() => setAngleB(Math.max(ANGLE_MIN, currentB - 1))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-lg text-sm hover:bg-cyan-600 transition flex items-center justify-center">-1°</button>
                     <span className="w-24 text-center font-black text-3xl md:text-4xl text-cyan-600 tabular-nums">{currentB}°</span>
-                    <button onClick={() => setAngleB(Math.min(ANGLE_MAX, currentB + 5))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-lg text-sm hover:bg-cyan-600 transition shadow-sm flex items-center justify-center">+5</button>
+                    <button onClick={() => setAngleB(Math.min(ANGLE_MAX, currentB + 1))} className="bg-cyan-500 text-white font-black w-10 h-10 rounded-lg text-sm hover:bg-cyan-600 transition flex items-center justify-center">+1°</button>
                   </div>
                 </div>
 
@@ -184,12 +177,12 @@ export default function TrigwnaPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[490px] w-full relative">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ (Μεγάλο & Σταθερό) */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative">
               <div className="w-full"></div>
 
-              {/* SVG Σχήμα 400x260 - Απόλυτα responsive */}
-              <svg viewBox="0 0 400 260" className="w-full max-w-[380px] sm:max-w-[440px] h-auto drop-shadow-md my-auto">
+              {/* Διευρυμένο viewBox 440x380 για να χωράει άνετα η κίνηση σε όλο το εύρος 1-179 μοιρών */}
+              <svg viewBox="0 0 440 380" className="w-full max-w-[400px] sm:max-w-[440px] h-auto drop-shadow-md my-auto">
                 {/* Γέμισμα και περίγραμμα του τριγώνου ΑΒΓ */}
                 <polygon 
                   points={`${ax},${ay} ${bx},${by} ${gx},${gy}`} 
