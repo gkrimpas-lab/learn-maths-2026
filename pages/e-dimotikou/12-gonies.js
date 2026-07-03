@@ -20,15 +20,15 @@ export default function GwniesPage() {
   const angleType = getAngleType(degrees);
 
   // Μαθηματικός υπολογισμός της κινητής ακτίνας για το SVG
-  // Κέντρο (Κορυφή γωνίας): (60, 130), Μήκος ακτίνας: 90
-  const cx = 60;
+  // Κέντρο (Κορυφή γωνίας): Το βάζουμε ακριβώς στο κέντρο ενός μεγαλύτερου καμβά (150, 130)
+  const cx = 150;
   const cy = 130;
-  const radius = 90;
+  const radius = 80; // Κατάλληλο μήκος για να μην βρίσκει πουθενά
   
   // Μετατροπή μοιρών σε ακτίνια (κίνηση προς τα αριστερά / πάνω)
   const angleInRadians = (degrees * Math.PI) / 180;
   
-  // Η σταθερή ακτίνα πάει δεξιά (cx + radius), η κινούμενη ανεβαίνει
+  // Υπολογισμός τελικού σημείου της κινούμενης ακτίνας
   const x2 = cx + radius * Math.cos(angleInRadians);
   const y2 = cy - radius * Math.sin(angleInRadians);
 
@@ -161,10 +161,11 @@ export default function GwniesPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ */}
+{/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - Μεγαλύτερο viewBox για να μην κόβεται το σχήμα */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[360px] relative">
               
-              <svg viewBox="0 0 200 200" className="w-full max-w-[280px] sm:max-w-[320px] h-auto drop-shadow-sm">
+              {/* Αυξήσαμε το πλάτος του viewBox από 200 σε 300, κρατώντας το cx=150 στο κέντρο */}
+              <svg viewBox="0 0 300 200" className="w-full max-w-[280px] sm:max-w-[340px] h-auto drop-shadow-sm">
                 {/* Σταθερή Ακτίνα Βάσης - Πηγαίνει προς τα ΔΕΞΙΑ */}
                 <line x1={cx} y1={cy} x2={cx + radius} y2={cy} className="stroke-slate-800 stroke-[4] stroke-linecap-round" />
                 
@@ -173,7 +174,7 @@ export default function GwniesPage() {
                   <line x1={cx} y1={cy} x2={x2} y2={y2} className="stroke-cyan-600 stroke-[4] stroke-linecap-round" />
                 )}
 
-                {/* Διακοσμητικό πορτοκαλί τόξο γωνίας - Αφαίρεση transition για ακαριαία κίνηση */}
+                {/* Διακοσμητικό πορτοκαλί τόξο γωνίας */}
                 {degrees > 0 && (
                   <path d={arcPath} fill="none" className="stroke-amber-500 stroke-2" />
                 )}
