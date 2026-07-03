@@ -6,7 +6,7 @@ import { LAYOUT } from '../../shared/layout-config';
 
 // ⚙️ ΡΥΘΜΙΣΕΙΣ ΟΡΙΩΝ ΓΩΝΙΑΣ
 const ANGLE_MIN = 1;
-const ANGLE_MAX = 179;
+const ANGLE_MAX = 178;
 
 export default function TrigwnaPage() {
   // Αρχική τιμή γωνίας Β
