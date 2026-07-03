@@ -16,16 +16,14 @@ export default function TrigwnaPage() {
   const currentB = Math.max(ANGLE_MIN, Math.min(ANGLE_MAX, angleB));
 
   // --- ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΓΩΝΙΩΝ ---
-  // Μοιράζουμε τις υπόλοιπες μοίρες εξίσου για μια ομαλή και ισορροπημένη γεωμετρική μεταμόρφωση
   const angleA = Math.round((180 - currentB) / 2);
   const angleΓ = 180 - currentB - angleA;
 
   // --- ΣΤΑΘΕΡΗ ΜΕΓΑΛΗ ΒΑΣΗ ΣΕ ΕΥΡΥΧΩΡΟ ΚΑΜΒΑ ---
-  // Κρατάμε μια σταθερή βάση 240 μονάδων
   const baseSide = 240; 
   
-  // Χρησιμοποιούμε viewBox πλάτους 800 για να έχει άφθονο χώρο δεξιά-αριστερά όταν το τρίγωνο "ξαπλώνει" στις 1° ή 179°
-  const bx = 400 - baseSide / 2; // Κεντράρισμα του ΒΓ στον άξονα Χ (400 είναι το μέσο του 800)
+  // Κεντράρισμα του ΒΓ στον άξονα Χ (400 είναι το μέσο του 800)
+  const bx = 400 - baseSide / 2; 
   const by = 280; 
   const gx = 400 + baseSide / 2;
   const gy = 280;
@@ -38,9 +36,9 @@ export default function TrigwnaPage() {
   // Υπολογισμός της πλευράς c (ΑΒ)
   const sidec = (baseSide * Math.sin(radΓ)) / Math.sin(radA);
 
-  // Συντεταγμένες του σημείου Α
-  const ax = bx + sidec * Math.cos(radB);
-  const ay = by - sidec * Math.sin(radB);
+  // Συντεταγμένες του σημείου Α με χρήση Math.round για εξάλειψη του τρεμοπαίγματος
+  const ax = Math.round(bx + sidec * Math.cos(radB));
+  const ay = Math.round(by - sidec * Math.sin(radB));
 
   // Κατηγοριοποίηση του τριγώνου
   const getTriangleType = () => {
@@ -177,12 +175,16 @@ export default function TrigwnaPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ (Widescreen Καμβάς) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΡΙΓΩΝΟΥ (Με Hardware Acceleration) */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {/* Ευρύ πλάτος 800x380 ώστε να απλώνεται το σχήμα σε όλο το λευκό πλαίσιο χωρίς να κόβεται */}
-              <svg viewBox="0 0 800 380" className="w-full h-auto drop-shadow-md my-auto px-2">
+              {/* Προσθήκη στυλ will-change-transform για απόλυτα ομαλό rendering από την GPU */}
+              <svg 
+                viewBox="0 0 800 380" 
+                className="w-full h-auto drop-shadow-md my-auto px-2"
+                style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+              >
                 {/* Γέμισμα και περίγραμμα του τριγώνου ΑΒΓ */}
                 <polygon 
                   points={`${ax},${ay} ${bx},${by} ${gx},${gy}`} 
@@ -191,15 +193,15 @@ export default function TrigwnaPage() {
 
                 {/* Κορυφή Α */}
                 <circle cx={ax} cy={ay} r={5} className="fill-slate-800" />
-                <text x={ax} y={ay - 12} className="text-sm font-black fill-slate-800 text-anchor-middle">Α</text>
+                <text x={ax} y={ay - 12} className="text-sm font-black fill-slate-800 text-anchor-middle">{`Α`}</text>
 
                 {/* Κορυφή Β */}
                 <circle cx={bx} cy={by} r={5} className="fill-slate-800" />
-                <text x={bx - 15} y={by + 5} className="text-sm font-black fill-slate-800">Β</text>
+                <text x={bx - 15} y={by + 5} className="text-sm font-black fill-slate-800">{`Β`}</text>
 
                 {/* Κορυφή Γ */}
                 <circle cx={gx} cy={gy} r={5} className="fill-slate-800" />
-                <text x={gx + 15} y={gy + 5} className="text-sm font-black fill-slate-800">Γ</text>
+                <text x={gx + 15} y={gy + 5} className="text-sm font-black fill-slate-800">{`Γ`}</text>
               </svg>
 
               {/* Ετικέτα Αθροίσματος Γωνιών στο κάτω μέρος */}
