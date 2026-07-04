@@ -17,7 +17,8 @@ export default function EDimotikouMenu() {
     { id: '10-mesitimi', label: '📊 10. Μέση Τιμή', href: '/e-dimotikou/10-mesitimi' },
     { id: '11-pososta', label: '🏷️ 11. Ποσοστά', href: '/e-dimotikou/11-pososta' },
     { id: '12-gonies', label: '📐 12. Γωνίες', href: '/e-dimotikou/12-gonies' },
-    { id: '13-trigona', label: '🔺 13. Τρίγωνα', href: '/e-dimotikou/13-trigona' }
+    { id: '13-trigona', label: '🔺 13. Τρίγωνα - Γωνίες', href: '/e-dimotikou/13-trigona' },
+    { id: '14-trigona-pleures', label: '🔺 14. Τρίγωνα - Πλευρές', href: '/e-dimotikou/14-trigona-pleures' }
   ];
 
   return (
