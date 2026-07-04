@@ -20,7 +20,7 @@ export default function EDimotikouMenu() {
     { id: '13-trigona', label: '🔺 13. Τρίγωνα - Γωνίες', href: '/e-dimotikou/13-trigona' },
     { id: '14-trigona-pleures', label: '🔺 14. Τρίγωνα - Πλευρές', href: '/e-dimotikou/14-trigona-pleures' },
     { id: '15-kathetes-eutheies', label: '🔺 15. Κάθετες - Ευθείες', href: '/e-dimotikou/15-kathetes-eutheies' },
-    { id: '16-apostasi-simeiou-eutheias', label: '🔺 16. Απόσταση Σημείου από Ευθείας', href: '/e-dimotikou/16-apostasi-simeiou-eutheia' }
+    { id: '16-apostasi-simeiou-eutheias', label: '🔺 16. Απόσταση Σημείου από Ευθεία', href: '/e-dimotikou/16-apostasi-simeiou-eutheia' }
   ];
 
   return (
