@@ -7,22 +7,20 @@ import { LAYOUT } from '../../shared/layout-config';
 export default function MikosKiklouPage() {
   const [rollProgress, setRollProgress] = useState(0);
 
-  // --- ΓΕΩΜΕΤΡΙΚΕΣ ΣΤΑΘΕΡΕΣ (Προσαρμοσμένες για 1:1 καμβά 440x260) ---
-  const radius = 35; // Ιδανική ακτίνα για πεντακάθαρη vector σχεδίαση
+  // --- ΓΕΩΜΕΤΡΙΚΕΣ ΣΤΑΘΕΡΕΣ ---
+  const radius = 35; 
   const diametros = radius * 2; // 70
   const pi = 3.14159;
-  const totalLength = Math.round(2 * pi * radius); // ~220 pixels ιδανικά για το πλάτος 440
+  const totalLength = Math.round(2 * pi * radius); // ~220 pixels
 
-  const startCx = 60; // Ξεκινάει από αριστερά
+  const startCx = 60; 
   const startCy = 110;
   const groundY = startCy + radius; // 145 (Το επίπεδο του εδάφους)
 
-  // Υπολογισμοί κίνησης με απόλυτη ακρίβεια pixel
   const currentCx = Math.round(startCx + (rollProgress / 100) * totalLength);
   const rotationDeg = (rollProgress / 100) * 360;
   const unfoldedLength = Math.round((rollProgress / 100) * totalLength);
 
-  // Μετρικές για το UI
   const displayDiametrosCm = (diametros / 10).toFixed(1); // 7.0 cm
   const displayMikosCm = (totalLength / 10).toFixed(1); // 22.0 cm
   const displayCurrentCm = (unfoldedLength / 10).toFixed(1);
@@ -129,29 +127,27 @@ export default function MikosKiklouPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ (Pixel-Perfect 440x260) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ (Διορθωμένη) */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {/* Σχεδίαση χωρίς downscaling για απόλυτη vector καθαρότητα */}
               <svg 
                 viewBox="0 0 440 260" 
                 className="w-full h-auto my-auto"
                 shapeRendering="geometricPrecision"
               >
-                {/* 🛤️ Η κύρια γραμμή του εδάφους */}
+                {/* 🛤️ Η οριζόντια γραμμή του εδάφους */}
                 <line x1="20" y1={groundY} x2="420" y2={groundY} className="stroke-slate-300 stroke-[3]" />
                 
                 {/* Αφετηρία 0 */}
                 <line x1={startCx} y1={groundY} x2={startCx} y2={groundY + 8} className="stroke-slate-400 stroke-2" />
                 <text x={startCx} y={groundY + 22} className="fill-slate-400 text-[11px] font-black" textAnchor="middle">0</text>
 
-                {/* Τέρμα 3,14δ */}
-                <line x1={startCx + totalLength} y1={groundY} x2={startCx + totalLength} y2={8} className="stroke-emerald-500 stroke-[2] stroke-dasharray-[3,3]" />
-                <line x1={startCx + totalLength} y1={groundY} x2={startCx + totalLength} y2={groundY + 8} className="stroke-emerald-600 stroke-2" />
-                <text x={startCx + totalLength} y={groundY + 22} className="fill-emerald-600 text-[11px] font-black" textAnchor="middle">Μήκος (3,14δ)</text>
+                {/* 🏁 ΣΗΜΑΔΟΥΡΑ ΤΕΡΜΑΤΙΣΜΟΥ: Αντικατέστησε τη μεγάλη όρθια πράσινη γραμμή από την εικόνα_12 */}
+                <line x1={startCx + totalLength} y1={groundY - 8} x2={startCx + totalLength} y2={groundY + 8} className="stroke-red-500 stroke-[2.5]" />
+                <text x={startCx + totalLength} y={groundY + 22} className="fill-red-600 text-[11px] font-black animate-pulse" textAnchor="middle">Μήκος (3,14δ)</text>
 
-                {/* 🔵 Η μπλε/πράσινη γραμμή ξετυλίγματος - Πεντακάθαρη stroke-[6] */}
+                {/* 🔵 Η μπλε/πράσινη γραμμή ξετυλίγματος */}
                 {rollProgress > 0 && (
                   <line 
                     x1={startCx} y1={groundY} x2={startCx + unfoldedLength} y2={groundY} 
@@ -159,7 +155,7 @@ export default function MikosKiklouPage() {
                   />
                 )}
 
-                {/* ⭕ Ο ΚΥΚΛΟΣ */}
+                {/* ⭕ Ο ΚΙΝΟΥΜΕΝΟΣ ΚΥΚΛΟΣ */}
                 <g transform={`translate(${currentCx - startCx}, 0)`}>
                   <circle 
                     cx={startCx} 
@@ -181,10 +177,9 @@ export default function MikosKiklouPage() {
                   <text x={startCx} y={startCy - 6} className="text-[10px] font-black fill-slate-800 text-anchor-middle">δ = {displayDiametrosCm} cm</text>
                 </g>
 
-                {/* 📏 ΟΠΤΙΚΟΣ ΟΔΗΓΟΣ ΣΥΓΚΡΙΣΗΣ (Κάτω από τον άξονα) */}
+                {/* 📏 ΟΠΤΙΚΟΣ ΟΔΗΓΟΣ ΣΥΓΚΡΙΣΗΣ */}
                 {isComplete && (
                   <g transform="translate(0, 45)">
-                    {/* Σχεδιάζουμε ακριβώς το μέγεθος 1 Διάμετρου για να δει ο μαθητής τη σχέση */}
                     <line x1={startCx} y1={groundY} x2={startCx + diametros} y2={groundY} className="stroke-amber-500 stroke-[4] stroke-linecap-round" />
                     <text x={startCx + diametros / 2} y={groundY + 16} className="fill-amber-600 text-[10px] font-black" textAnchor="middle">1 Διάμετρος (δ)</text>
                     <text x={startCx + totalLength - 40} y={groundY + 16} className="fill-slate-400 text-[10px] font-bold"> χωράει ~3,14 φορές</text>
