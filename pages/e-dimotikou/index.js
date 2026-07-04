@@ -22,7 +22,8 @@ export default function EDimotikouMenu() {
     { id: '15-kathetes-eutheies', label: '🔺 15. Κάθετες - Ευθείες', href: '/e-dimotikou/15-kathetes-eutheies' },
     { id: '16-apostasi-simeiou-eutheias', label: '🔺 16. Απόσταση Σημείου από Ευθεία', href: '/e-dimotikou/16-apostasi-simeiou-eutheia' },
     { id: '17-ipsos-trigonou', label: '🔺 17. Ύψος Τριγώνου', href: '/e-dimotikou/17-ipsos-trigonou' },
-    { id: '18-aksonas-simmetrias', label: '🔺 18. Άξονας συμμετρίας', href: '/e-dimotikou/18-aksonas-simmetrias' }
+    { id: '18-aksonas-simmetrias', label: '🔺 18. Άξονας συμμετρίας', href: '/e-dimotikou/18-aksonas-simmetrias' },
+    { id: '19-mikos-kiklou', label: '🔺 19. Μήκος Κύκλου', href: '/e-dimotikou/19-mikos-kiklou' }
   ];
 
   return (
