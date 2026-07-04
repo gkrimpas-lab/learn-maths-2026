@@ -6,9 +6,9 @@ import { LAYOUT } from '../../shared/layout-config';
 
 const LIMITS = {
   INTRO_NUM_MIN: 0,
-  INTRO_NUM_MAX: 20,
+  INTRO_NUM_MAX: 50,
   LIMITS_INTRO_DEN_MIN: 1,
-  INTRO_DEN_MAX: 12
+  INTRO_DEN_MAX: 50
 };
 
 export default function KlasmaPage() {
