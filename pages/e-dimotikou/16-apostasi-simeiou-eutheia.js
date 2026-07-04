@@ -6,7 +6,6 @@ import { LAYOUT } from '../../shared/layout-config';
 
 export default function ApostasiSimeiouEutheiaPage() {
   // Η οριζόντια μετατόπιση του σημείου Μ πάνω στην ευθεία (από -150 έως +150 pixel από το κέντρο)
-  // Αρχική τιμή -70 για να μην ξεκινάει έτοιμο στην απόσταση
   const [offsetX, setOffsetX] = useState(-70);
 
   // Σταθερές συντεταγμένες για το σημείο Α (κεντραρισμένο ψηλά στο viewBox 600x340)
@@ -22,7 +21,7 @@ export default function ApostasiSimeiouEutheiaPage() {
 
   // Υπολογισμός της κάθετης απόστασης (σταθερή στα 160 pixels)
   const verticalDistancePx = ey - ay; // 160
-  // Μετατροπή σε "εκπαιδευτικά εκατοστά" (π.χ. διαίρεση με 20 για όμορφο νούμερο)
+  // Μετατροπή σε "εκπαιδευτικά εκατοστά"
   const realDistanceCm = (verticalDistancePx / 20).toFixed(1);
 
   // Υπολογισμός του τρέχοντος μήκους ΑΜ (Ευκλείδεια απόσταση)
@@ -139,7 +138,7 @@ export default function ApostasiSimeiouEutheiaPage() {
               <div className={`p-6 md:p-8 rounded-2xl border transition-all duration-300 w-full text-center ${isApostasi ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200'}`}>
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΙΔΙΟΤΗΤΑ ΤΟΥ ΤΜΗΜΑΤΟΣ:</span>
                 <div className={`text-2xl md:text-3xl font-black ${isApostasi ? 'text-emerald-600 animate-bounce' : 'text-slate-700'}`}>
-                  {isKathetes ? '🏆 Αυτή είναι η ΑΠΟΣΤΑΣΗ!' : '🛤️ Πλάγιο Τμήμα'}
+                  {isApostasi ? '🏆 Αυτή είναι η ΑΠΟΣΤΑΣΗ!' : '🛤️ Πλάγιο Τμήμα'}
                 </div>
                 <p className="text-xs text-gray-500 font-medium mt-1">
                   {isApostasi 
@@ -154,22 +153,20 @@ export default function ApostasiSimeiouEutheiaPage() {
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {/* Ευρύς καμβάς SVG 600x340 με GPU Acceleration */}
               <svg 
                 viewBox="0 0 600 340" 
                 className="w-full h-auto drop-shadow-sm my-auto px-2"
                 style={{ willChange: 'transform', transform: 'translateZ(0)' }}
               >
                 
-                {/* 🟥 Σχεδίαση του Τετραγώνου της Ορθής Γωνίας μόνο όταν Μ είναι ακριβώς κάτω από το Α */}
+                {/* 🟥 Σχεδίαση του Τετραγώνου της Ορθής Γωνίας */}
                 {isApostasi && (
                   <g className="stroke-emerald-500 stroke-2 fill-emerald-500/10">
-                    {/* Τετραγωνάκι στην ορθή γωνία τομής */}
                     <rect x={ax} y={ey - 20} width="20" height="20" />
                   </g>
                 )}
 
-                {/* Αχνή διακεκομμένη γραμμή που δείχνει την ιδανική κάθετη τροχιά αν το Μ βρίσκεται αλλού */}
+                {/* Αχνή διακεκομμένη γραμμή */}
                 {!isApostasi && (
                   <line 
                     x1={ax} y1={ay} x2={ax} y2={ey} 
@@ -177,30 +174,30 @@ export default function ApostasiSimeiouEutheiaPage() {
                   />
                 )}
 
-                {/* Η Σταθερή Οριζόντια Ευθεία (ε) στο κάτω μέρος */}
+                {/* Η Σταθερή Οριζόντια Ευθεία (ε) */}
                 <line 
                   x1="100" y1={ey} x2="500" y2={ey} 
                   className="stroke-slate-800 stroke-[4] stroke-linecap-round" 
                 />
                 <text x="515" y={ey + 5} className="text-xs font-black fill-slate-700">ευθεία (ε)</text>
 
-                {/* Το Ευθύγραμμο Τμήμα ΑΜ που ενώνει το σημείο με την ευθεία */}
+                {/* Το Ευθύγραμμο Τμήμα ΑΜ */}
                 <line 
                   x1={ax} y1={ay} x2={mx} y2={my} 
                   className={`stroke-[4] stroke-linecap-round ${isApostasi ? 'stroke-emerald-600' : 'stroke-blue-500'}`} 
                 />
 
-                {/* Σημείο Α (Σταθερό ψηλά) */}
+                {/* Σημείο Α */}
                 <circle cx={ax} cy={ay} r={6} className="fill-slate-800" />
                 <text x={ax} y={ay - 15} className="text-sm font-black fill-slate-800 text-anchor-middle">Σημείο Α</text>
 
-                {/* Σημείο Μ (Κινούμενο πάνω στην ευθεία) */}
+                {/* Σημείο Μ */}
                 <circle cx={mx} cy={my} r={6} className={isApostasi ? 'fill-emerald-600' : 'fill-blue-600'} />
                 <text x={mx} y={my + 22} className={`text-xs font-black text-anchor-middle ${isApostasi ? 'fill-emerald-700' : 'fill-blue-600'}`}>Μ</text>
 
-                {/* Ένδειξη τρέχοντος μήκους πάνω στη γραμμή ΑΜ */}
+                {/* Ένδειξη τρέχοντος μήκους */}
                 <g transform={`translate(${(ax + mx) / 2}, ${(ay + my) / 2 - 10})`}>
-                  <rect x="-30" y="-12" width="60" height="18" rx="4" className="fill-white shadow-sm stroke-gray-100 stroke animate-fade-in" />
+                  <rect x="-30" y="-12" width="60" height="18" rx="4" className="fill-white shadow-sm stroke-gray-100 stroke" />
                   <text x="0" y="2" className={`text-[10px] font-black text-anchor-middle ${isApostasi ? 'fill-emerald-700' : 'fill-blue-600'}`}>
                     {currentLengthCm} cm
                   </text>
