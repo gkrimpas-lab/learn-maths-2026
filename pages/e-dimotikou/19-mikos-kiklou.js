@@ -22,13 +22,13 @@ export default function MikosKiklouPage() {
   // Τρέχουσα οριζόντια θέση του κέντρου του κύκλου καθώς κυλάει
   const currentCx = startCx + (rollProgress / 100) * totalLength;
 
-  // Η τρέχουσα γωνία περιστροφής του κύκλου σε μοίρες (για να φαίνεται ότι γυρνάει η ακτίνα)
+  // Η τρέχουσα γωνία περιστροφής του κύκλου σε μοίρες
   const rotationDeg = (rollProgress / 100) * 360;
 
   // Το μήκος της γραμμής που έχει ξετυλιχθεί στο έδαφος
   const unfoldedLength = (rollProgress / 100) * totalLength;
 
-  // Εκπαιδευτικά εκατοστά (π.χ. διαίρεση με 8 για ρεαλιστικά νούμερα στο UI)
+  // Εκπαιδευτικά εκατοστά
   const displayDiametrosCm = (diametros / 10).toFixed(1); // 8.0 cm
   const displayMikosCm = ((2 * pi * radius) / 10).toFixed(1); // 25.1 cm
   const displayCurrentCm = (unfoldedLength / 10).toFixed(1);
@@ -161,44 +161,40 @@ export default function MikosKiklouPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ (ΞΕΤΥΛΙΓΜΑ ΤΡΟΧΟΥ) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - Διορθωμένη ευκρίνεια κειμένων */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {/* Ευρύς widescreen καμβάς 800x340 για να χωρέσει ολόκληρη η ανάπτυξη του μήκους (3.14 * διάμετρος) */}
-              <svg 
-                viewBox="0 0 800 340" 
-                className="w-full h-auto drop-shadow-md my-auto px-2"
-                style={{ willChange: 'transform', transform: 'translateZ(0)' }}
-              >
+              {/* Αφαιρέθηκε το drop-shadow και το hardware-acceleration στυλ για κρυστάλλινα vector γράμματα */}
+              <svg viewBox="0 0 800 340" className="w-full h-auto my-auto px-2">
                 
                 {/* 📏 Ο Οριζόντιος Χάρακας / Έδαφος */}
                 <line x1="50" y1={groundY} x2="750" y2={groundY} className="stroke-slate-300 stroke-[3] stroke-linecap-round" />
                 
-                {/* Κύριες διαγραμμίσεις στον χάρακα για οπτική σύγκριση (Βήματα 1δ, 2δ, 3δ, 3.14δ) */}
-                <g className="stroke-slate-300 stroke-2 fill-slate-400 text-[10px] font-bold">
+                {/* Διαγραμμίσεις στον χάρακα - Μεγαλύτερα και πεντακάθαρα κείμενα */}
+                <g className="stroke-slate-400 stroke-2 fill-slate-500 font-bold">
                   {/* Σημείο 0 */}
                   <line x1={startCx} y1={groundY} x2={startCx} y2={groundY + 8} />
-                  <text x={startCx} y={groundY + 22} textAnchor="middle">0</text>
+                  <text x={startCx} y={groundY + 24} textAnchor="middle" className="text-sm font-black border-none shadow-none">0</text>
 
                   {/* 1η Διάμετρος */}
                   <line x1={startCx + diametros} y1={groundY} x2={startCx + diametros} y2={groundY + 8} />
-                  <text x={startCx + diametros} y={groundY + 22} textAnchor="middle">1δ</text>
+                  <text x={startCx + diametros} y={groundY + 24} textAnchor="middle" className="text-sm font-black">1δ</text>
 
                   {/* 2η Διάμετρος */}
                   <line x1={startCx + 2 * diametros} y1={groundY} x2={startCx + 2 * diametros} y2={groundY + 8} />
-                  <text x={startCx + 2 * diametros} y={groundY + 22} textAnchor="middle">2δ</text>
+                  <text x={startCx + 2 * diametros} y={groundY + 24} textAnchor="middle" className="text-sm font-black">2δ</text>
 
                   {/* 3η Διάμετρος */}
                   <line x1={startCx + 3 * diametros} y1={groundY} x2={startCx + 3 * diametros} y2={groundY + 8} />
-                  <text x={startCx + 3 * diametros} y={groundY + 22} textAnchor="middle">3δ</text>
+                  <text x={startCx + 3 * diametros} y={groundY + 24} textAnchor="middle" className="text-sm font-black">3δ</text>
 
                   {/* Τελικό Σημείο 3.14δ (Μήκος) */}
                   <line x1={startCx + totalLength} y1={groundY} x2={startCx + totalLength} y2={groundY + 12} className="stroke-emerald-500 stroke-2" />
-                  <text x={startCx + totalLength} y={groundY + 25} textAnchor="middle" className="fill-emerald-600 font-black">3,14δ (Μήκος)</text>
+                  <text x={startCx + totalLength} y={groundY + 26} textAnchor="middle" className="fill-emerald-600 font-black text-base">3,14δ (Μήκος)</text>
                 </g>
 
-                {/* 🔵 Το έντονο αποτύπωμα/γραμμή που αφήνει ο κύκλος καθώς ξετυλίγεται στο έδαφος */}
+                {/* 🔵 Το αποτύπωμα στο έδαφος */}
                 {rollProgress > 0 && (
                   <line 
                     x1={startCx} y1={groundY} x2={startCx + unfoldedLength} y2={groundY} 
@@ -206,34 +202,30 @@ export default function MikosKiklouPage() {
                   />
                 )}
 
-                {/* ⭕ Ο ΚΙΝΟΥΜΕΝΟΣ ΚΥΚΛΟΣ / ΤΡΟΧΟΣ */}
-                {/* Εφαρμόζουμε οριζόντια μετατόπιση στο κέντρο και γωνιακή περιστροφή στο group */}
+                {/* ⭕ Ο ΚΙΝΟΥΜΕΝΟΣ ΚΥΚΛΟΣ */}
                 <g transform={`translate(${currentCx - startCx}, 0)`}>
                   
-                  {/* Ομόκεντρος εσωτερικός κύκλος με διακεκομμένη γραμμή για εφέ ρόδας */}
+                  {/* Κύκλος - Προσθήκη drop shadow ΜΟΝΟ στον ίδιο τον κύκλο και όχι στα γράμματα */}
                   <circle 
                     cx={startCx} 
                     cy={startCy} 
                     r={radius} 
-                    className={`fill-white stroke-[4] ${isComplete ? 'stroke-emerald-600 fill-emerald-50/10' : 'stroke-slate-800'}`} 
+                    className={`fill-white stroke-[4] filter drop-shadow-sm ${isComplete ? 'stroke-emerald-600 fill-emerald-50/10' : 'stroke-slate-800'}`} 
                   />
                   
-                  {/* Περιστρεφόμενα στοιχεία (ακτίνες) για να φαίνεται η κίνηση ξετυλίγματος */}
+                  {/* Περιστρεφόμενα στοιχεία (ακτίνες) */}
                   <g transform={`rotate(${rotationDeg}, ${startCx}, ${startCy})`}>
-                    {/* Η βασική ακτίνα που δείχνει το σημείο επαφής (ξεκινάει από το κάτω μέρος) */}
                     <line x1={startCx} y1={startCy} x2={startCx} y2={startCy + radius} className="stroke-indigo-600 stroke-[3] stroke-linecap-round" />
-                    {/* Μια δεύτερη βοηθητική οριζόντια ακτίνα */}
                     <line x1={startCx} y1={startCy} x2={startCx + radius} y2={startCy} className="stroke-slate-300 stroke-[1.5]" />
-                    {/* Ένα μικρό σημείο (κουκκίδα) στην άκρη της κύριας ακτίνας που ακουμπάει το έδαφος */}
                     <circle cx={startCx} cy={startCy + radius} r={4} className="fill-indigo-600" />
                   </g>
 
                   {/* Κέντρο του κύκλου */}
                   <circle cx={startCx} cy={startCy} r={4} className="fill-slate-800" />
                   
-                  {/* Διάμετρος (Ένδειξη με βέλη μέσα στον κύκλο οριζόντια) */}
+                  {/* Διάμετρος - Μετακινήθηκε το κείμενο πιο ψηλά (y={startCy - 12}) για να μην μπερδεύεται με τη γραμμή */}
                   <line x1={startCx - radius + 5} y1={startCy} x2={startCx + radius - 5} y2={startCy} className="stroke-slate-400 stroke stroke-dasharray-[2,2]" />
-                  <text x={startCx} y={startCy - 6} className="text-[9px] font-black fill-slate-400 text-anchor-middle">δ = {displayDiametrosCm} cm</text>
+                  <text x={startCx} y={startCy - 12} textAnchor="middle" className="text-xs font-black fill-slate-700">{`δ = ${displayDiametrosCm} cm`}</text>
                 </g>
 
               </svg>
