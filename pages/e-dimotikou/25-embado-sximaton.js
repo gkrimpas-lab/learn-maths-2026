@@ -66,15 +66,30 @@ export default function EmbadoSximaton() {
   return (
     <div className="w-full bg-slate-50 min-h-screen font-sans text-slate-800 flex flex-col justify-between">
       
-      {/* 1. HEADER (Προσαρμοσμένο με βάση το LearnMaths.gr στην εικόνα.png) */}
+      {/* 1. HEADER (Προσαρμοσμένο LearnMaths.gr) */}
       <nav className="w-full bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center shadow-sm">
         <div className="text-2xl font-black tracking-tight">
           <span className="text-blue-600">LearnMaths</span>
           <span className="text-slate-400">.gr</span>
         </div>
-        <button className="px-4 py-1.5 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition flex items-center gap-1">
-          <span>🔙</span> Επιστροφή
-        </button>
+        
+        {/* Responsive, Fluid Κουμπί Επιστροφής */}
+        <a 
+          href="https://www.learnmaths.gr/e-dimotikou"
+          className="inline-flex items-center justify-center transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500/20 rounded-xl"
+          aria-label="Επιστροφή στην Ε Δημοτικού"
+        >
+          <svg 
+            viewBox="0 0 160 50" 
+            className="w-32 h-auto lg:w-40 xl:w-44 font-medium"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="100%" height="100%" rx="10" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="2"/>
+            <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fill="#475569" fontSize="14" fontWeight="600">
+              « Επιστροφή
+            </text>
+          </svg>
+        </a>
       </nav>
 
       {/* ΚΥΡΙΟ ΠΕΡΙΕΧΟΜΕΝΟ */}
@@ -233,7 +248,7 @@ export default function EmbadoSximaton() {
         </div>
       </main>
 
-      {/* 3. FOOTER (Προσαρμοσμένο με βάση το LearnMaths.gr στην εικόνα.png) */}
+      {/* 3. FOOTER (Προσαρμοσμένο LearnMaths.gr) */}
       <footer className="w-full bg-[#1e293b] py-4 text-center border-t border-slate-800">
         <p className="text-xs text-slate-400 font-light tracking-wide">
           © 2026 LearnMaths.gr. Διαδραστική Γεωμετρία Εμβαδού.
