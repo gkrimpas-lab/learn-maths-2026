@@ -8,16 +8,14 @@ export default function EmbadoSximatonPage() {
   const [width, setWidth] = useState(5);
   const [height, setHeight] = useState(5);
 
-  const unitSize = 40; 
+  const unitSize = 35; // Ευθυγράμμιση με τα 35px του μαθήματος 24
   const maxUnits = 10; 
 
   const w = parseInt(width);
-  // Αν είναι τετράγωνο, το ύψος ακολουθεί αναγκαστικά τη βάση/πλευρά
   const h = shape === 'square' ? w : parseInt(height);
 
   const canvasGridSize = (maxUnits + 2) * unitSize; 
 
-  // Δυναμικός υπολογισμός των στυλ για το σχήμα
   const getShapeStyle = () => {
     const baseStyle = {
       position: 'absolute',
@@ -54,7 +52,6 @@ export default function EmbadoSximatonPage() {
     return baseStyle;
   };
 
-  // Στυλ για το "συμπληρωματικό" αχνό ορθογώνιο (χρησιμοποιείται μόνο στο τρίγωνο)
   const getGhostRectangleStyle = () => {
     return {
       position: 'absolute',
@@ -95,22 +92,22 @@ export default function EmbadoSximatonPage() {
           {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-4">
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-              📖 Θεωρία: Το Εμβαδόν των Βασικών Σχημάτων
+              <span className="text-xl">📖</span> Θεωρία: Το Εμβαδόν των Βασικών Σχημάτων
             </h2>
             <p className="text-gray-500 text-sm md:text-base leading-relaxed">
               Αλλάζοντας το μέγεθος των σχημάτων, παρατηρούμε πώς αλλάζει η επιφάνεια που καλύπτουν. Δες πώς συνδέεται το τρίγωνο με το ορθογώνιο!
             </p>
           </div>
 
-          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch w-full">
+          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ (2 Ίσες Στήλες όπως στο 24) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & ΕΠΙΛΟΓΕΣ (1 Column) */}
-            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[520px] w-full lg:col-span-1">
-              <div className="space-y-5">
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & ΚΑΤΑΜΕΤΡΗΣΗ */}
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[520px] w-full gap-6">
+              <div className="space-y-6">
                 <div>
-                  <h3 className="text-xl font-black text-gray-900 mb-3">
-                    1. Διάλεξε Σχήμα
+                  <h3 className="text-xl font-black text-gray-900 mb-3 flex items-center gap-2">
+                    <span>🕹️</span> 1. Διάλεξε Σχήμα
                   </h3>
                   <div className="flex flex-col gap-2.5">
                     <button
@@ -149,8 +146,8 @@ export default function EmbadoSximatonPage() {
                 <hr className="border-gray-100" />
 
                 <div>
-                  <h3 className="text-xl font-black text-gray-900 mb-3">
-                    2. Άλλαξε τις Διαστάσεις
+                  <h3 className="text-xl font-black text-gray-900 mb-3 flex items-center gap-2">
+                    <span>📏</span> 2. Άλλαξε τις Διαστάσεις
                   </h3>
                   <div className="space-y-4 bg-slate-50 border border-slate-200 p-5 rounded-2xl shadow-inner">
                     <div>
@@ -185,39 +182,17 @@ export default function EmbadoSximatonPage() {
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΕ ΣΤΑΘΕΡΟ ΠΛΕΓΜΑ & ΤΥΠΟΥΣ (2 Columns) */}
-            <div className="lg:col-span-2 flex flex-col gap-6">
-              
-              {/* Ο Καμβάς */}
-              <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[520px] w-full relative overflow-hidden">
-                <div
-                  className="border-2 border-slate-200 relative bg-slate-50/20 rounded-md shadow-inner"
-                  style={{
-                    width: `${canvasGridSize}px`,
-                    height: `${canvasGridSize}px`,
-                    backgroundImage:
-                      'linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
-                    backgroundSize: `${unitSize}px ${unitSize}px`,
-                  }}
-                >
-                  {shape === 'triangle' && <div style={getGhostRectangleStyle()} />}
-                  <div style={getShapeStyle()} />
-                </div>
-              </div>
-
-              {/* Επεξήγηση και Μαθηματικός Τύπος */}
-              <div className="bg-emerald-50 text-slate-900 p-6 rounded-3xl border border-emerald-100 space-y-3 shadow-sm">
+              {/* ΔΥΝΑΜΙΚΗ ΠΡΑΣΙΝΗ ΚΑΡΤΑ ΜΑΘΗΜΑΤΟΣ (Μεταφέρθηκε κάτω αριστερά) */}
+              <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-3 shadow-sm mt-auto">
                 {shape === 'square' && (
                   <>
-                    <h4 className="font-black text-xl text-emerald-900">🟩 Τετράγωνο</h4>
-                    <p className="text-slate-700 text-sm md:text-base leading-relaxed font-medium">
-                      Όλες οι πλευρές είναι ίσες! Πολλαπλασιάζουμε την πλευρά με τον εαυτό της για να βρούμε πόσα τετραγωνικά εκατοστά χωράνε μέσα.
-                      <br />
-                      <strong>Εμβαδόν = Πλευρά × Πλευρά</strong>
+                    <p className="font-bold text-emerald-900 flex items-center gap-2"><span>🟩</span> Τετράγωνο:</p>
+                    <p className="text-slate-700 text-sm leading-relaxed font-medium">
+                      Όλες οι πλευρές είναι ίσες! Πολλαπλασιάζουμε την πλευρά με τον εαυτό της.
+                      <br /><strong>Εμβαδόν = Πλευρά × Πλευρά</strong>
                     </p>
-                    <div className="p-3 bg-white rounded-xl border border-emerald-200 text-center font-black text-lg text-emerald-600 font-mono">
+                    <div className="p-3 bg-white rounded-xl border border-emerald-200 text-center font-black text-base text-emerald-600 font-mono">
                       {w} × {w} = {w * w} cm²
                     </div>
                   </>
@@ -225,13 +200,12 @@ export default function EmbadoSximatonPage() {
 
                 {shape === 'rectangle' && (
                   <>
-                    <h4 className="font-black text-xl text-emerald-900">🟧 Ορθογώνιο</h4>
-                    <p className="text-slate-700 text-sm md:text-base leading-relaxed font-medium">
-                      Έχει μήκος και πλάτος. Πολλαπλασιάζουμε το μήκος επί το πλάτος για να υπολογίσουμε ολόκληρη την επιφάνεια!
-                      <br />
-                      <strong>Εμβαδόν = Μήκος × Πλάτος</strong>
+                    <p className="font-bold text-emerald-900 flex items-center gap-2"><span>🟧</span> Ορθογώνιο:</p>
+                    <p className="text-slate-700 text-sm leading-relaxed font-medium">
+                      Έχει μήκος και πλάτος. Πολλαπλασιάζουμε το μήκος επί το πλάτος!
+                      <br /><strong>Εμβαδόν = Μήκος × Πλάτος</strong>
                     </p>
-                    <div className="p-3 bg-white rounded-xl border border-emerald-200 text-center font-black text-lg text-emerald-600 font-mono">
+                    <div className="p-3 bg-white rounded-xl border border-emerald-200 text-center font-black text-base text-emerald-600 font-mono">
                       {w} × {h} = {w * h} cm²
                     </div>
                   </>
@@ -239,19 +213,38 @@ export default function EmbadoSximatonPage() {
 
                 {shape === 'triangle' && (
                   <>
-                    <h4 className="font-black text-xl text-emerald-900">📐 Ορθογώνιο Τρίγωνο</h4>
-                    <p className="text-slate-700 text-sm md:text-base leading-relaxed font-medium">
-                      Κοίταξε το πλέγμα! Το χρωματιστό τρίγωνο μαζί με το αχνό γκρίζο σχήμα φτιάχνουν ένα ολόκληρο ορθογώνιο. Το τρίγωνο είναι <strong>ακριβώς το μισό</strong> του! Γι' αυτό υπολογίζουμε το ορθογώνιο και μετά το διαιρούμε με το 2.
-                      <br />
-                      <strong>Εμβαδόν = (Μήκος × Πλάτος) ÷ 2</strong>
+                    <p className="font-bold text-emerald-900 flex items-center gap-2"><span>📐</span> Ορθογώνιο Τρίγωνο:</p>
+                    <p className="text-slate-700 text-sm leading-relaxed font-medium">
+                      Το τρίγωνο είναι <strong>ακριβώς το μισό</strong> του ορθογωνίου! Γι' αυτό διαιρούμε με το 2.
+                      <br /><strong>Εμβαδόν = (Μήκος × Πλάτος) ÷ 2</strong>
                     </p>
-                    <div className="p-3 bg-white rounded-xl border border-emerald-200 text-center font-black text-lg text-emerald-600 font-mono">
-                      ({w} × {h}) ÷ 2 = {w * h} ÷ 2 = {(w * h) / 2} cm²
+                    <div className="p-3 bg-white rounded-xl border border-emerald-200 text-center font-black text-base text-emerald-600 font-mono">
+                      ({w} × {h}) ÷ 2 = {(w * h) / 2} cm²
                     </div>
                   </>
                 )}
               </div>
+            </div>
 
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΕ ΠΛΕΓΜΑ */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[520px] w-full relative overflow-hidden">
+              <div
+                className="border-2 border-slate-200 relative bg-slate-50/20 rounded-md shadow-inner"
+                style={{
+                  width: `${canvasGridSize}px`,
+                  height: `${canvasGridSize}px`,
+                  backgroundImage:
+                    'linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
+                  backgroundSize: `${unitSize}px ${unitSize}px`,
+                }}
+              >
+                {shape === 'triangle' && <div style={getGhostRectangleStyle()} />}
+                <div style={getShapeStyle()} />
+              </div>
+              
+              <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-6 text-center">
+                <span>🔍 Άλλαξε τα sliders για να δεις το εμβαδόν να μεγαλώνει στο πλέγμα.</span>
+              </div>
             </div>
 
           </div>
