@@ -9,22 +9,21 @@ export default function EmbadoSximaton() {
   const maxUnits = 10; // Το μέγιστο όριο στα sliders
 
   const w = parseInt(width);
-  // Αν είναι τετράγωνο, το ύψος ακολουθεί αναγκαστικά τη βάση/πλευρά
   const h = shape === 'square' ? w : parseInt(height);
 
-  // Σταθερές διαστάσεις πλαισίου (12 x 12 κουτάκια για να χωράει άνετα το 10x10 σχήμα με περιθώριο)
+  // Σταθερές διαστάσεις πλαισίου (12 x 12 κουτάκια)
   const canvasGridSize = (maxUnits + 2) * unitSize; 
 
-  // Δυναμικός υπολογισμός των στυλ για το σχήμα
+  // Στυλ για το κύριο γεωμετρικό σχήμα
   const getShapeStyle = () => {
     const baseStyle = {
       position: 'absolute',
-      // Το σχήμα ξεκινάει πάντα από το ίδιο σταθερό σημείο (offset 1 κουτάκι από πάνω αριστερά)
       left: `${unitSize}px`,
       top: `${unitSize}px`,
       width: `${w * unitSize}px`,
       height: `${h * unitSize}px`,
       transition: 'all 0.3s ease',
+      zIndex: 10, // Πάνω από το βοηθητικό αχνό σχήμα
     };
 
     if (shape === 'square') {
@@ -44,13 +43,27 @@ export default function EmbadoSximaton() {
     } else if (shape === 'triangle') {
       return {
         ...baseStyle,
-        backgroundColor: 'rgba(14, 165, 233, 0.25)',
+        backgroundColor: 'rgba(14, 165, 233, 0.35)', // Λίγο πιο έντονο γαλάζιο
         border: '3px solid rgb(14, 165, 233)',
-        // Δημιουργεί το ορθογώνιο τρίγωνο (κόβει το νοητό ορθογώνιο στη διαγώνιο)
-        clipPath: 'polygon(0 100%, 100% 100%, 0 0)',
+        clipPath: 'polygon(0 100%, 100% 100%, 0 0)', // Κάτω-αριστερά, Κάτω-δεξιά, Πάνω-αριστερά
       };
     }
     return baseStyle;
+  };
+
+  // Στυλ για το "συμπληρωματικό" αχνό ορθογώνιο (χρησιμοποιείται μόνο στο τρίγωνο)
+  const getGhostRectangleStyle = () => {
+    return {
+      position: 'absolute',
+      left: `${unitSize}px`,
+      top: `${unitSize}px`,
+      width: `${w * unitSize}px`,
+      height: `${h * unitSize}px`,
+      transition: 'all 0.3s ease',
+      backgroundColor: 'rgba(203, 213, 225, 0.2)', // Πολύ αχνό γκρι (slate-300 με opacity)
+      border: '2px dashed rgb(148, 163, 184)', // Διακεκομμένη γκρι γραμμή για να φαίνεται το νοητό σχήμα
+      zIndex: 5,
+    };
   };
 
   return (
@@ -145,7 +158,7 @@ export default function EmbadoSximaton() {
           {/* Δεξί Μέρος: Οπτικοποίηση & Παιδαγωγική Επεξήγηση */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Ο Καμβάς με το ΣΤΑΘΕΡΟ Πλέγμα */}
+            {/* Ο Καμβάς με το Σταθερό Πλέγμα */}
             <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 flex justify-center items-center min-h-[520px] relative overflow-hidden">
               <div
                 className="border-2 border-slate-300 relative bg-slate-50/50"
@@ -157,7 +170,10 @@ export default function EmbadoSximaton() {
                   backgroundSize: `${unitSize}px ${unitSize}px`,
                 }}
               >
-                {/* Το δυναμικό γεωμετρικό σχήμα που αλλάζει μέγεθος μέσα στο σταθερό πλέγμα */}
+                {/* Αν το σχήμα είναι τρίγωνο, εμφανίζεται ένα αχνό διακεκομμένο ορθογώνιο από κάτω */}
+                {shape === 'triangle' && <div style={getGhostRectangleStyle()} />}
+
+                {/* Το κύριο γεωμετρικό σχήμα */}
                 <div style={getShapeStyle()} />
               </div>
             </div>
@@ -200,8 +216,8 @@ export default function EmbadoSximaton() {
                 <>
                   <h3 className="text-2xl font-bold text-indigo-950 mb-3">📐 Ορθογώνιο Τρίγωνο</h3>
                   <p className="text-lg text-indigo-900 leading-relaxed">
-                    Παρατήρησε ότι το τρίγωνο είναι <strong>ακριβώς το μισό</strong> ενός ορθογωνίου με τις ίδιες διαστάσεις! 
-                    Γι' αυτό υπολογίζουμε πρώτα το ολόκληρο ορθογώνιο και μετά το διαιρούμε με το 2.
+                    Κοίταξε το πλέγμα! Το χρωματιστό τρίγωνο μαζί με το αχνό γκρίζο σχήμα σχηματίζουν ένα ολόκληρο ορθογώνιο. 
+                    Το τρίγωνο είναι <strong>ακριβώς το μισό</strong> του! Γι' αυτό υπολογίζουμε το ορθογώνιο (Βάση × Ύψος) και μετά το χωρίζουμε στα 2.
                     <br />
                     <strong>Εμβαδόν = (Βάση × Ύψος) ÷ 2</strong>
                   </p>
