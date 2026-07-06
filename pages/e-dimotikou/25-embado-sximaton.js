@@ -151,7 +151,7 @@ export default function EmbadoSximatonPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΜΕ ΤΕΛΕΙΑ ΓΚΡΙ ΔΙΑΚΕΚΟΜΜΕΝΗ ΓΡΑΜΜΗ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΠΛΗΡΩΣ ΕΝΑΡΜΟΝΙΣΜΕΝΟ ΠΛΕΓΜΑ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -173,7 +173,7 @@ export default function EmbadoSximatonPage() {
                   <text x={startX - 14} y={startY + (heightCm * squareSize) / 2 + 4} className="fill-rose-500" textAnchor="end">Ύψος = {heightCm} cm</text>
                 </g>
 
-                {/* 2. Σχέδιο Background: Γκρίζο πλέγμα αναφοράς */}
+                {/* 2. Σχέδιο Background: Συμπαγές γκρίζο πλέγμα αναφοράς (Αναβαθμίστηκε σε stroke-slate-200) */}
                 {gridSquares.map((sq, index) => {
                   if (sq.row >= heightCm || sq.col >= baseCm) return null;
                   return (
@@ -183,12 +183,12 @@ export default function EmbadoSximatonPage() {
                       y={sq.y}
                       width={squareSize}
                       height={squareSize}
-                      className="fill-none stroke-slate-100 stroke-[1.5]"
+                      className="fill-none stroke-slate-200 stroke-[1.5]"
                     />
                   );
                 })}
 
-                {/* 3. Χρωματισμένο Πλέγμα */}
+                {/* 3. Το Έντονο Χρωματισμένο Πλέγμα */}
                 {shapeIndex === 2 ? (
                   <g clipPath="url(#triangleClip)">
                     {gridSquares.map((sq, index) => {
@@ -224,17 +224,15 @@ export default function EmbadoSximatonPage() {
                   </g>
                 )}
 
-                {/* 4. Σωστή σχεδίαση ορίων και περιγραμμάτων */}
+                {/* 4. Κύρια Διαγώνιος & Περίγραμμα Τριγώνου */}
                 {shapeIndex === 2 ? (
                   <g>
-                    {/* ΔΙΟΡΘΩΣΗ: Σχεδιάζουμε το πάνω και δεξί κομμάτι του ορθογωνίου ως ανοιχτό path, 
-                        με το ίδιο ακριβώς πάχος [1.5] της γκρι εσωτερικής γραμμής και stroke-dasharray */}
-                    <path 
-                      d={`M ${startX} ${startY} L ${startX + currentWidthPx} ${startY} L ${startX + currentWidthPx} ${startY + currentHeightPx}`} 
-                      className="fill-none stroke-slate-100 stroke-[1.5] stroke-dasharray-[3,3] stroke-linejoin-miter"
+                    {/* ΔΙΟΡΘΩΣΗ: Το εξωτερικό γκρίζο περίγραμμα του ορθογωνίου είναι πλέον 100% συμπαγές, με το ίδιο ακριβώς πάχος και χρώμα με το υπόλοιπο πλέγμα */}
+                    <polygon 
+                      points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`}
+                      className="fill-none stroke-slate-200 stroke-[1.5] stroke-linejoin-miter"
                     />
-                    
-                    {/* Το παχύ πράσινο περίγραμμα του ορθογώνιου τριγώνου */}
+                    {/* Το παχύ περίγραμμα του Τριγώνου */}
                     <polygon 
                       points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
                       className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-miter"
