@@ -28,10 +28,10 @@ export default function EmbadoSximatonPage() {
   const baseCm = currentShape.b;
   const heightCm = currentShape.y;
 
-  // Δημιουργία των τετραγώνων του πλέγματος
+  // Δημιουργία των τετραγώνων του πλέγματος (πάντα για το μέγιστο μέγεθος 6x5 για σταθερότητα)
   const gridSquares = [];
-  for (let r = 0; r < heightCm; r++) {
-    for (let c = 0; c < baseCm; c++) {
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 6; c++) {
       gridSquares.push({
         x: startX + c * squareSize,
         y: startY + r * squareSize,
@@ -40,6 +40,10 @@ export default function EmbadoSximatonPage() {
       });
     }
   }
+
+  // Υπολογισμός των ορίων του τρέχοντος σχήματος σε pixels
+  const currentWidthPx = baseCm * squareSize;
+  const currentHeightPx = heightCm * squareSize;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -74,7 +78,7 @@ export default function EmbadoSximatonPage() {
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm font-medium">
-              <div className="bg-blue-50 border border-blue-100 p-4 rounded-2xl space-y-1">
+              <div className="bg-blue-50 border border-blue-100 p-4 dream-shadow rounded-2xl space-y-1">
                 <p className="font-bold text-blue-900">⏹️ Τετράγωνο</p>
                 <p className="text-slate-600">Επειδή έχει όλες τις πλευρές ίσες:</p>
                 <p className="font-black text-blue-600 bg-white p-1.5 rounded-lg text-center border">Ε = πλευρά × πλευρά</p>
@@ -147,7 +151,7 @@ export default function EmbadoSximatonPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΔΙΟΡΘΩΜΕΝΟ ΠΛΕΓΜΑ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΕ ΤΕΛΕΙΟ CLIP PATH */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -156,6 +160,13 @@ export default function EmbadoSximatonPage() {
                 className="w-full h-auto my-auto"
                 shapeRendering="geometricPrecision"
               >
+                <defs>
+                  {/* Ορισμός του Clip Path για το Τρίγωνο (Κάτω Αριστερά μισό) */}
+                  <clipPath id="triangleClip">
+                    <polygon points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} />
+                  </clipPath>
+                </defs>
+
                 {/* 1. Σταθερές ενδείξεις διαστάσεων έξω από το σχήμα */}
                 <g className="text-[12px] font-black fill-slate-500 text-anchor-middle">
                   {/* Βάση (Κάτω) */}
@@ -171,76 +182,89 @@ export default function EmbadoSximatonPage() {
                   </text>
                 </g>
 
-                {/* 2. Σχεδίαση των τετραγώνων του πλέγματος */}
+                {/* 2. Σχέδιο Background: Αχνά άδεια τετραγωνάκια για το πλήρες ορθογώνιο σχήμα αναφοράς */}
                 {gridSquares.map((sq, index) => {
-                  let fillClass = 'fill-blue-500/10 stroke-blue-500/30';
-                  if (shapeIndex === 0) fillClass = 'fill-blue-500/10 stroke-blue-500/30';
-                  if (shapeIndex === 1) fillClass = 'fill-indigo-500/10 stroke-indigo-500/30';
-                  
-                  if (shapeIndex === 2) {
-                    // ΔΙΟΡΘΩΣΗ: Σωστή μαθηματική σχέση κύριας διαγωνίου (από πάνω-αριστερά προς κάτω-δεξιά)
-                    // Ένα τετράγωνο ανήκει στο κάτω-αριστερά τρίγωνο αν: row * baseCm >= col * heightCm
-                    const isLowerLeft = (sq.row * baseCm) >= (sq.col * heightCm);
-                    fillClass = isLowerLeft 
-                      ? 'fill-emerald-500/20 stroke-emerald-500/40' 
-                      : 'fill-transparent stroke-slate-100';
-                  }
-
+                  if (sq.row >= heightCm || sq.col >= baseCm) return null;
                   return (
                     <rect
-                      key={index}
+                      key={`bg-${index}`}
                       x={sq.x}
                       y={sq.y}
                       width={squareSize}
                       height={squareSize}
-                      className={`transition-all duration-300 stroke-[1.5] ${fillClass}`}
+                      className="fill-none stroke-slate-100 stroke-[1.5]"
                     />
                   );
                 })}
 
-                {/* 3. Η σωστή Διαγώνιος Γραμμή και το "Σβησμένο Μισό" */}
-                {shapeIndex === 2 && (
-                  <g className="animate-fade-in">
-                    {/* Έντονο ορθογώνιο τρίγωνο (Κάτω-Αριστερά μισό) */}
-                    <polygon 
-                      points={`${startX},${startY} ${startX},${startY + heightCm * squareSize} ${startX + baseCm * squareSize},${startY + heightCm * squareSize}`} 
-                      className="fill-none stroke-emerald-600 stroke-[4] stroke-linejoin-round"
-                    />
-                    
-                    {/* Η κύρια διαγώνιος τομή από πάνω-αριστερά προς κάτω-δεξιά */}
-                    <line 
-                      x1={startX} 
-                      y1={startY} 
-                      x2={startX + baseCm * squareSize} 
-                      y2={startY + heightCm * squareSize} 
-                      className="stroke-emerald-600 stroke-[2] stroke-dasharray-[1,1]"
-                    />
-
-                    {/* Λέξη "ΣΒΗΣΜΕΝΟ ΜΙΣΟ" σωστά τοποθετημένη στο πάνω-δεξιά κομμάτι */}
-                    <text 
-                      x={startX + (baseCm * squareSize) * 0.7} 
-                      y={startY + (heightCm * squareSize) * 0.35} 
-                      className="fill-slate-400 text-[10px] font-black uppercase tracking-wider text-anchor-middle"
-                    >
-                      Σβησμένο Μισό
-                    </text>
+                {/* 3. Το Έντονο Χρωματισμένο Πλέγμα */}
+                {shapeIndex === 2 ? (
+                  // ΓΙΑ ΤΟ ΤΡΙΓΩΝΟ: Εφαρμόζουμε το clipPath ώστε τα τετραγωνάκια να κοπούν ακριβώς στη μέση!
+                  <g clipPath="url(#triangleClip)">
+                    {gridSquares.map((sq, index) => {
+                      if (sq.row >= heightCm || sq.col >= baseCm) return null;
+                      return (
+                        <rect
+                          key={`fg-tri-${index}`}
+                          x={sq.x}
+                          y={sq.y}
+                          width={squareSize}
+                          height={squareSize}
+                          className="fill-emerald-500/20 stroke-emerald-500/40 stroke-[1.5]"
+                        />
+                      );
+                    })}
+                  </g>
+                ) : (
+                  // ΓΙΑ ΤΕΤΡΑΓΩΝΟ/ΟΡΘΟΓΩΝΙΟ: Κανονικό γέμισμα χωρίς κλιπάρισμα
+                  <g>
+                    {gridSquares.map((sq, index) => {
+                      if (sq.row >= heightCm || sq.col >= baseCm) return null;
+                      const fillStyle = shapeIndex === 0 ? 'fill-blue-500/10 stroke-blue-500/30' : 'fill-indigo-500/10 stroke-indigo-500/30';
+                      return (
+                        <rect
+                          key={`fg-rect-${index}`}
+                          x={sq.x}
+                          y={sq.y}
+                          width={squareSize}
+                          height={squareSize}
+                          className={`stroke-[1.5] ${fillStyle}`}
+                        />
+                      );
+                    })}
                   </g>
                 )}
 
-                {/* 4. Το εξωτερικό περίγραμμα για το Τετράγωνο και το Ορθογώνιο */}
+                {/* 4. Κύρια Διαγώνιος & Περίγραμμα Τριγώνου (Μόνο στο τρίγωνο) */}
+                {shapeIndex === 2 && (
+                  <g>
+                    {/* Παχύ περίγραμμα τριγώνου */}
+                    <polygon 
+                      points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
+                      className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-round"
+                    />
+                    {/* Αχνό διακεκομμένο περίγραμμα του υπόλοιπου ορθογωνίου */}
+                    <path 
+                      d={`M ${startX} ${startY} L ${startX + currentWidthPx} ${startY} L ${startX + currentWidthPx} ${startY + currentHeightPx}`} 
+                      className="fill-none stroke-slate-300 stroke-[1.5] stroke-dasharray-[3,3]"
+                    />
+                  </g>
+                )}
+
+                {/* 5. Εξωτερικό παχύ περίγραμμα για το Τετράγωνο και το Ορθογώνιο */}
                 {shapeIndex !== 2 && (
                   <rect 
                     x={startX} 
                     y={startY} 
-                    width={baseCm * squareSize} 
-                    height={heightCm * squareSize} 
+                    width={currentWidthPx} 
+                    height={currentHeightPx} 
                     className={`fill-none stroke-[3.5] stroke-linejoin-round transition-colors duration-300 ${shapeIndex === 0 ? 'stroke-blue-600' : 'stroke-indigo-600'}`}
                   />
                 )}
               </svg>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>{shapeIndex === 2 ? '🔺 Δες πώς η διαγώνιος χωρίζει το ορθογώνιο ακριβώς στη μέση!' : '🟩 Το εμβαδόν μετράει πόσα τετραγωνάκια cm² χωράνε μέσα στο σχήμα.'}</span>
+                <span>{shapeIndex === 2 ? '🔺 Η διαγώνιος κόβει τα τετράγωνα με απόλυτη ακρίβεια στη μέση!' : '🟩 Το εμβαδόν μετράει πόσα τετραγωνάκια cm² χωράνε μέσα στο σχήμα.'}</span>
               </div>
             </div>
 
