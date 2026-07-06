@@ -24,7 +24,8 @@ export default function EDimotikouMenu() {
     { id: '17-ipsos-trigonou', label: '🔺 17. Ύψος Τριγώνου', href: '/e-dimotikou/17-ipsos-trigonou' },
     { id: '18-aksonas-simmetrias', label: '🔺 18. Άξονας συμμετρίας', href: '/e-dimotikou/18-aksonas-simmetrias' },
     { id: '19-mikos-kiklou', label: '🔺 19. Μήκος Κύκλου', href: '/e-dimotikou/19-mikos-kiklou' },
-    { id: '20-monades-mikous', label: '🔺 20. Μονάδες Μέτρησης Μήκους', href: '/e-dimotikou/20-monades-mikous' }
+    { id: '20-monades-mikous', label: '🔺 20. Μονάδες Μέτρησης Μήκους', href: '/e-dimotikou/20-monades-mikous' },
+    { id: '21-poligona', label: '🔺 21. Πολύγωνα', href: '/e-dimotikou/21-poligona' }
   ];
 
   return (
