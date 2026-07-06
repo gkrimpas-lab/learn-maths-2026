@@ -8,12 +8,12 @@ export default function EmbadoSximatonPage() {
   // 0: Τετράγωνο, 1: Ορθογώνιο, 2: Τρίγωνο
   const [shapeIndex, setShapeIndex] = useState(1);
 
-  // Σταθερές διαστάσεις για το πλέγμα (pixels)
+  // Σταθερές παραμέτροι πλέγματος (Pixel-Perfect)
   const squareSize = 35;
   const startX = 115;
   const startY = 60;
 
-  // Καθορισμός διαστάσεων βάσης (β) και ύψους (υ) ανά σχήμα
+  // Δεδομένα σχημάτων
   const getShapeData = () => {
     if (shapeIndex === 0) {
       return { title: 'Τετράγωνο', b: 5, y: 5, formula: 'Ε = πλευρά × πλευρά', calc: '5 × 5 = 25 cm²', desc: 'Όλες οι πλευρές είναι ίσες (5 cm), οπότε η βάση και το ύψος είναι ίδια.' };
@@ -28,22 +28,19 @@ export default function EmbadoSximatonPage() {
   const baseCm = currentShape.b;
   const heightCm = currentShape.y;
 
-  // Δημιουργία των τετραγώνων του πλέγματος (πάντα για το μέγιστο μέγεθος 6x5 για σταθερότητα)
-  const gridSquares = [];
-  for (let r = 0; r < 5; r++) {
-    for (let c = 0; c < 6; c++) {
-      gridSquares.push({
-        x: startX + c * squareSize,
-        y: startY + r * squareSize,
-        row: r,
-        col: c
-      });
-    }
-  }
-
-  // Υπολογισμός των ορίων του τρέχοντος σχήματος σε pixels
   const currentWidthPx = baseCm * squareSize;
   const currentHeightPx = heightCm * squareSize;
+
+  // Δημιουργία πλέγματος γραμμών
+  const verticalLines = [];
+  for (let i = 0; i <= baseCm; i++) {
+    verticalLines.push(startX + i * squareSize);
+  }
+
+  const horizontalLines = [];
+  for (let i = 0; i <= heightCm; i++) {
+    horizontalLines.push(startY + i * squareSize);
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -110,7 +107,7 @@ export default function EmbadoSximatonPage() {
                 </p>
               </div>
 
-              {/* Slider Επιλογής Σχήματος */}
+              {/* Slider */}
               <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full space-y-5 shadow-inner my-auto">
                 <div className="flex justify-between items-center font-black text-xs text-slate-500 uppercase tracking-wide px-1">
                   <span className={shapeIndex === 0 ? 'text-blue-600' : ''}>Τετράγωνο</span>
@@ -130,7 +127,6 @@ export default function EmbadoSximatonPage() {
                   />
                 </div>
 
-                {/* Quick-Click Buttons */}
                 <div className="flex justify-center gap-2 pt-1">
                   <button onClick={() => setShapeIndex(0)} className={`p-2 px-3 rounded-xl font-bold text-xs transition ${shapeIndex === 0 ? 'bg-blue-600 text-white' : 'bg-white border hover:bg-gray-50'}`}>⏹️ Τετράγωνο</button>
                   <button onClick={() => setShapeIndex(1)} className={`p-2 px-3 rounded-xl font-bold text-xs transition ${shapeIndex === 1 ? 'bg-indigo-600 text-white' : 'bg-white border hover:bg-gray-50'}`}>▱ Ορθογώνιο</button>
@@ -151,7 +147,7 @@ export default function EmbadoSximatonPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΠΛΗΡΩΣ ΕΝΑΡΜΟΝΙΣΜΕΝΟ ΠΛΕΓΜΑ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΝΕΑ ΣΧΕΔΙΑΣΗ ΑΠΟ ΤΗΝ ΑΡΧΗ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -160,91 +156,51 @@ export default function EmbadoSximatonPage() {
                 className="w-full h-auto my-auto"
                 shapeRendering="geometricPrecision"
               >
-                <defs>
-                  {/* Clip Path για το Τρίγωνο */}
-                  <clipPath id="triangleClip">
-                    <polygon points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} />
-                  </clipPath>
-                </defs>
-
-                {/* 1. Ενδείξεις διαστάσεων */}
-                <g className="text-[12px] font-black fill-slate-500 text-anchor-middle">
-                  <text x={startX + (baseCm * squareSize) / 2} y={startY + (heightCm * squareSize) + 18} className="fill-blue-600">Βάση = {baseCm} cm</text>
-                  <text x={startX - 14} y={startY + (heightCm * squareSize) / 2 + 4} className="fill-rose-500" textAnchor="end">Ύψος = {heightCm} cm</text>
-                </g>
-
-                {/* 2. Σχέδιο Background: Συμπαγές γκρίζο πλέγμα αναφοράς (Αναβαθμίστηκε σε stroke-slate-200) */}
-                {gridSquares.map((sq, index) => {
-                  if (sq.row >= heightCm || sq.col >= baseCm) return null;
-                  return (
-                    <rect
-                      key={`bg-${index}`}
-                      x={sq.x}
-                      y={sq.y}
-                      width={squareSize}
-                      height={squareSize}
-                      className="fill-none stroke-slate-200 stroke-[1.5]"
-                    />
-                  );
-                })}
-
-                {/* 3. Το Έντονο Χρωματισμένο Πλέγμα */}
-                {shapeIndex === 2 ? (
-                  <g clipPath="url(#triangleClip)">
-                    {gridSquares.map((sq, index) => {
-                      if (sq.row >= heightCm || sq.col >= baseCm) return null;
-                      return (
-                        <rect
-                          key={`fg-tri-${index}`}
-                          x={sq.x}
-                          y={sq.y}
-                          width={squareSize}
-                          height={squareSize}
-                          className="fill-emerald-500/20 stroke-emerald-500/30 stroke-[1.5]"
-                        />
-                      );
-                    })}
-                  </g>
-                ) : (
-                  <g>
-                    {gridSquares.map((sq, index) => {
-                      if (sq.row >= heightCm || sq.col >= baseCm) return null;
-                      const fillStyle = shapeIndex === 0 ? 'fill-blue-500/10 stroke-blue-500/20' : 'fill-indigo-500/10 stroke-indigo-500/20';
-                      return (
-                        <rect
-                          key={`fg-rect-${index}`}
-                          x={sq.x}
-                          y={sq.y}
-                          width={squareSize}
-                          height={squareSize}
-                          className={`stroke-[1.5] ${fillStyle}`}
-                        />
-                      );
-                    })}
-                  </g>
+                {/* ΕΠΙΠΕΔΟ 1: ΧΡΩΜΑΤΙΣΤΟ ΓΕΜΙΣΜΑ (Background του σχήματος) */}
+                {shapeIndex === 0 && (
+                  <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-blue-500/10" />
+                )}
+                {shapeIndex === 1 && (
+                  <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-indigo-500/10" />
+                )}
+                {shapeIndex === 2 && (
+                  /* Μόνο το κάτω αριστερά μισό γεμίζει με πράσινο */
+                  <polygon points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} className="fill-emerald-500/10" />
                 )}
 
-                {/* 4. Κύρια Διαγώνιος & Περίγραμμα Τριγώνου */}
+                {/* ΕΠΙΠΕΔΟ 2: ΕΝΙΑΙΟ ΓΚΡΙΖΟ ΠΛΕΓΜΑ (Explicit Lines για σταθερό πάχος) */}
+                <g className="stroke-slate-200 stroke-[1.5]">
+                  {/* Κάθετες γραμμές */}
+                  {verticalLines.map((x, idx) => (
+                    <line key={`v-${idx}`} x1={x} y1={startY} x2={x} y2={startY + currentHeightPx} />
+                  ))}
+                  {/* Οριζόντιες γραμμές */}
+                  {horizontalLines.map((y, idx) => (
+                    <line key={`h-${idx}`} x1={startX} y1={y} x2={startX + currentWidthPx} y2={y} />
+                  ))}
+                </g>
+
+                {/* ΕΠΙΠΕΔΟ 3: ΕΞΩΤΕΡΙΚΑ ΕΝΤΟΝΑ ΠΕΡΙΓΡΑΜΜΑΤΑ & ΔΙΑΓΩΝΙΟΣ */}
                 {shapeIndex === 2 ? (
                   <g>
-                    {/* ΔΙΟΡΘΩΣΗ: Το εξωτερικό γκρίζο περίγραμμα του ορθογωνίου είναι πλέον 100% συμπαγές, με το ίδιο ακριβώς πάχος και χρώμα με το υπόλοιπο πλέγμα */}
-                    <polygon 
-                      points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`}
-                      className="fill-none stroke-slate-200 stroke-[1.5] stroke-linejoin-miter"
-                    />
-                    {/* Το παχύ περίγραμμα του Τριγώνου */}
+                    {/* Έντονο περίγραμμα τριγώνου με miter join για τέλειες γωνίες */}
                     <polygon 
                       points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
                       className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-miter"
                     />
                   </g>
                 ) : (
-                  /* Για Τετράγωνο και Ορθογώνιο */
                   <polygon 
                     points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`}
                     className={`fill-none stroke-[3.5] stroke-linejoin-miter transition-colors duration-300 ${shapeIndex === 0 ? 'stroke-blue-600' : 'stroke-indigo-600'}`}
                   />
                 )}
+
+                {/* ΕΠΙΠΕΔΟ 4: ΚΕΙΜΕΝΑ / ΕΝΔΕΙΞΕΙΣ */}
+                <g className="text-[12px] font-black fill-slate-500 text-anchor-middle">
+                  <text x={startX + currentWidthPx / 2} y={startY + currentHeightPx + 18} className="fill-blue-600">Βάση = {baseCm} cm</text>
+                  <text x={startX - 14} y={startY + currentHeightPx / 2 + 4} className="fill-rose-500" textAnchor="end">Ύψος = {heightCm} cm</text>
+                </g>
               </svg>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
