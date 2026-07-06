@@ -147,7 +147,7 @@ export default function EmbadoSximatonPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ (Pixel-Perfect 440x260) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΔΙΟΡΘΩΜΕΝΟ ΠΛΕΓΜΑ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -173,18 +173,17 @@ export default function EmbadoSximatonPage() {
 
                 {/* 2. Σχεδίαση των τετραγώνων του πλέγματος */}
                 {gridSquares.map((sq, index) => {
-                  // Αν είμαστε στο τρίγωνο (shapeIndex === 2), χρωματίζουμε μόνο τα τετραγωνάκια 
-                  // που βρίσκονται κάτω από τη διαγώνιο (όπου η στήλη/βάση είναι μεγαλύτερη ή ίση από τη σειρά)
-                  // Για χάρη της απλότητας στο μάθημα, γεμίζουμε με διαφορετικό opacity το πάνω/κάτω μισό
-                  let isInsideTriangle = (sq.row + sq.col) < (baseCm + heightCm) / 2 + 1; 
-                  
-                  // Στο τρίγωνο, κάνουμε ένα όμορφο εφέ: Κόβουμε οπτικά με opacity το πάνω-δεξιά κομμάτι
-                  let fillClass = 'fill-blue-500/10 stroke-slate-200';
+                  let fillClass = 'fill-blue-500/10 stroke-blue-500/30';
                   if (shapeIndex === 0) fillClass = 'fill-blue-500/10 stroke-blue-500/30';
                   if (shapeIndex === 1) fillClass = 'fill-indigo-500/10 stroke-indigo-500/30';
+                  
                   if (shapeIndex === 2) {
-                    // Στο τρίγωνο, δείχνουμε το πλέγμα πιο απαλό στα τετράγωνα που κόβονται
-                    fillClass = sq.col >= (baseCm - sq.row - 1) ? 'fill-emerald-500/20 stroke-emerald-500/40' : 'fill-transparent stroke-slate-100';
+                    // ΔΙΟΡΘΩΣΗ: Σωστή μαθηματική σχέση κύριας διαγωνίου (από πάνω-αριστερά προς κάτω-δεξιά)
+                    // Ένα τετράγωνο ανήκει στο κάτω-αριστερά τρίγωνο αν: row * baseCm >= col * heightCm
+                    const isLowerLeft = (sq.row * baseCm) >= (sq.col * heightCm);
+                    fillClass = isLowerLeft 
+                      ? 'fill-emerald-500/20 stroke-emerald-500/40' 
+                      : 'fill-transparent stroke-slate-100';
                   }
 
                   return (
@@ -199,21 +198,32 @@ export default function EmbadoSximatonPage() {
                   );
                 })}
 
-                {/* 3. Η Διαγώνιος Γραμμή και το γέμισμα του Τριγώνου */}
+                {/* 3. Η σωστή Διαγώνιος Γραμμή και το "Σβησμένο Μισό" */}
                 {shapeIndex === 2 && (
                   <g className="animate-fade-in">
-                    {/* Έντονο χρωματιστό ημιδιαφανές τρίγωνο (Κάτω Αριστερά) */}
+                    {/* Έντονο ορθογώνιο τρίγωνο (Κάτω-Αριστερά μισό) */}
                     <polygon 
                       points={`${startX},${startY} ${startX},${startY + heightCm * squareSize} ${startX + baseCm * squareSize},${startY + heightCm * squareSize}`} 
-                      className="fill-emerald-500/20 stroke-emerald-600 stroke-[3.5] stroke-linejoin-round"
+                      className="fill-none stroke-emerald-600 stroke-[4] stroke-linejoin-round"
                     />
-                    {/* Το πάνω μισό ορθογώνιο που "σβήνει" (Διακεκομμένο) */}
-                    <polygon 
-                      points={`${startX},${startY} ${startX + baseCm * squareSize},${startY} ${startX + baseCm * squareSize},${startY + heightCm * squareSize}`} 
-                      className="fill-slate-400/5 stroke-slate-300 stroke-[2] stroke-dasharray-[4,3]"
+                    
+                    {/* Η κύρια διαγώνιος τομή από πάνω-αριστερά προς κάτω-δεξιά */}
+                    <line 
+                      x1={startX} 
+                      y1={startY} 
+                      x2={startX + baseCm * squareSize} 
+                      y2={startY + heightCm * squareSize} 
+                      className="stroke-emerald-600 stroke-[2] stroke-dasharray-[1,1]"
                     />
-                    {/* Λέξη "ΜΙΣΟ" στο σβησμένο κομμάτι */}
-                    <text x={startX + (baseCm * squareSize) * 0.7} y={startY + (heightCm * squareSize) * 0.35} className="fill-slate-400 text-[10px] font-black uppercase tracking-wider text-anchor-middle">Σβησμένο Μισό</text>
+
+                    {/* Λέξη "ΣΒΗΣΜΕΝΟ ΜΙΣΟ" σωστά τοποθετημένη στο πάνω-δεξιά κομμάτι */}
+                    <text 
+                      x={startX + (baseCm * squareSize) * 0.7} 
+                      y={startY + (heightCm * squareSize) * 0.35} 
+                      className="fill-slate-400 text-[10px] font-black uppercase tracking-wider text-anchor-middle"
+                    >
+                      Σβησμένο Μισό
+                    </text>
                   </g>
                 )}
 
