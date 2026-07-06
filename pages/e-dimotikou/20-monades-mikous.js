@@ -6,7 +6,7 @@ import { LAYOUT } from '../../shared/layout-config';
 
 export default function MonadesMikousPage() {
   const [selectedUnit, setSelectedUnit] = useState(3); // Αρχική επιλογή: Μέτρο (m)
-  const [inputValue, setInputValue] = useState(1); // Αρχική τιμή: 1
+  const [inputValue, setInputValue] = useState("150"); // Αρχική τιμή ως string για σωστή πληκτρολόγηση δεκαδικών
 
   const units = [
     { id: 0, name: 'χιλιοστό (mm)', short: 'mm', factorToMeters: 0.001, desc: 'Για πολύ μικρά πράγματα (π.χ. το πάχος ενός νομίσματος).' },
@@ -18,12 +18,18 @@ export default function MonadesMikousPage() {
 
   const currentUnit = units[selectedUnit];
 
+  // Μετατροπή και εμφάνιση με υψηλή ακρίβεια 6 δεκαδικών
   const convertValue = (targetUnitObj) => {
-    if (isNaN(inputValue) || inputValue <= 0) return 0;
-    const valueInMeters = inputValue * currentUnit.factorToMeters;
+    const numValue = parseFloat(inputValue);
+    if (isNaN(numValue) || numValue <= 0) return 0;
+    
+    const valueInMeters = numValue * currentUnit.factorToMeters;
     const finalValue = valueInMeters / targetUnitObj.factorToMeters;
+    
     if (finalValue % 1 === 0) return finalValue;
-    return finalValue.toLocaleString('el-GR', { maximumFractionDigits: 4 });
+    
+    // Αυξάνουμε τα maximumFractionDigits σε 6 για να μην κόβονται τιμές όπως το 0,00015
+    return finalValue.toLocaleString('el-GR', { maximumFractionDigits: 6 });
   };
 
   return (
@@ -78,16 +84,18 @@ export default function MonadesMikousPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <h3 className="text-2xl font-black text-gray-900">🕹️ Μετατροπέας Μονάδων</h3>
-                  <p className="text-gray-500 text-sm">Πληκτρολόγησε μια τιμή και επίλεξε τη μονάδα σου για να δεις τις μετατροπές.</p>
+                  <p className="text-gray-500 text-sm">Πληκτρολόγησε μια τιμή (ακέραια ή δεκαδική) και επίλεξε τη μονάδα σου.</p>
                 </div>
 
                 <div className="flex gap-4 bg-slate-50 p-4 rounded-2xl border">
                   <div className="flex-1">
                     <label className="text-[11px] font-black text-gray-400 block mb-1 uppercase">ΠΟΣΟΤΗΤΑ</label>
+                    {/* Προσθήκη step="any" για δεκαδικούς αριθμούς */}
                     <input 
                       type="number" 
+                      step="any"
                       value={inputValue} 
-                      onChange={(e) => setInputValue(parseFloat(e.target.value) || 0)}
+                      onChange={(e) => setInputValue(e.target.value)}
                       className="w-full bg-white border font-black text-xl p-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500"
                     />
                   </div>
@@ -131,7 +139,7 @@ export default function MonadesMikousPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΜΕΤΑΤΟΠΙΣΜΕΝΗ ΚΑΙ ΔΙΟΡΘΩΜΗ ΣΚΑΛΑ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[540px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -140,7 +148,6 @@ export default function MonadesMikousPage() {
                 className="w-full h-auto my-auto"
                 shapeRendering="geometricPrecision"
               >
-                {/* Μετατοπίσαμε το x κατά -45 pixels αριστερά και μειώσαμε το πλάτος σκαλιού σε 70 */}
                 {[
                   { id: 4, short: 'km', x: 15,  y: 50 },
                   { id: 3, short: 'm',  x: 85,  y: 90 },
@@ -149,19 +156,16 @@ export default function MonadesMikousPage() {
                   { id: 0, short: 'mm', x: 295, y: 210 }
                 ].map((step, idx, arr) => {
                   const isSelected = step.id === selectedUnit;
-                  const stepWidth = 70; // Συμπτυγμένο πλάτος σκαλοπατιού
+                  const stepWidth = 70;
                   
                   return (
                     <g key={step.id}>
-                      {/* Οριζόντιο πάτημα σκαλιού */}
                       <line x1={step.x} y1={step.y} x2={step.x + stepWidth} y2={step.y} className="stroke-slate-400 stroke-[3]" />
                       
-                      {/* Κάθετο κατέβασμα σκαλιού */}
                       {idx < arr.length - 1 && (
                         <line x1={step.x + stepWidth} y1={step.y} x2={step.x + stepWidth} y2={step.y + 40} className="stroke-slate-400 stroke-[3]" />
                       )}
 
-                      {/* Φωτεινό highlight επιλογής */}
                       {isSelected && (
                         <rect 
                           x={step.x + 2} 
@@ -173,7 +177,6 @@ export default function MonadesMikousPage() {
                         />
                       )}
 
-                      {/* Όνομα μονάδας */}
                       <text 
                         x={step.x + stepWidth / 2} 
                         y={step.y - 8} 
@@ -183,7 +186,6 @@ export default function MonadesMikousPage() {
                         {step.short}
                       </text>
 
-                      {/* Κινούμενος δείκτης */}
                       {isSelected && (
                         <circle cx={step.x + stepWidth / 2} cy={step.y - 32} r={6} className="fill-blue-600 animate-bounce" />
                       )}
@@ -191,8 +193,7 @@ export default function MonadesMikousPage() {
                   );
                 })}
 
-                {/* 🔽 Διορθωμένα Βέλη με απόλυτη ασφάλεια ορίων */}
-                {/* Κατηφόρα = Πολλαπλασιασμός */}
+                {/* Καθηφόρα = Πολλαπλασιασμός */}
                 <g transform="translate(290, 45)">
                   <path d="M 0 0 L 25 25 M 25 25 L 18 25 M 25 25 L 25 18" fill="none" className="stroke-blue-500 stroke-2 stroke-linecap-round" />
                   <text x="30" y="15" className="fill-blue-600 text-[10px] font-black">Κατεβαίνω: ×10</text>
