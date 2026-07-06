@@ -87,7 +87,7 @@ export default function PerimetrosPage() {
           {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-4">
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-              📖 Θεวρία: Τι είναι η Περίμετρος;
+              📖 Θεωρία: Τι είναι η Περίμετρος;
             </h2>
             <p className="text-gray-500 text-sm md:text-base leading-relaxed">
               Όταν θέλουμε να μετρήσουμε το μέγεθος ενός σχήματος «γύρω-γύρω», βρίσκουμε την <strong>Περίμετρό</strong> του.
@@ -169,7 +169,7 @@ export default function PerimetrosPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΜΟΝΙΜΗ ΕΜΦΑΝΙΣΗ ΕΚΑΤΟΣΤΩΝ (440x260) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΜΕΤΑΤΟΠΙΣΜΕΝΟ ΚΕΙΜΕΝΟ 4cm */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -193,18 +193,20 @@ export default function PerimetrosPage() {
                 <line x1={s2.x1} y1={s2.y1} x2={s2.x2} y2={s2.y2} className={`${sidesData[2].color} stroke-[5] stroke-linecap-round`} />
                 <line x1={s3.x1} y1={s3.y1} x2={s3.x2} y2={s3.y2} className={`${sidesData[3].color} stroke-[5] stroke-linecap-round`} />
 
-                {/* 4. ΜΟΝΙΜΑ ΓΡΑΜΜΑΤΑ ΚΟΡΥΦΩΝ ΚΑΙ ΜΗΚΗ ΠΛΕΥΡΩΝ (Δεν κρύβονται ποτέ!) */}
+                {/* 4. ΜΟΝΙΜΑ ΓΡΑΜΜΑΤΑ ΚΟΡΥΦΩΝ ΚΑΙ ΜΗΚΗ ΠΛΕΥΡΩΝ */}
                 <g className="text-[11px] font-black fill-slate-400">
                   <text x={pA.x - 12} y={pA.y - 4}>Α</text>
                   <text x={pB.x + 8}  y={pB.y - 4}>Β</text>
                   <text x={pΓ.x + 8}  y={pΓ.y + 4}>Γ</text>
                   <text x={pΔ.x - 14} y={pΔ.y + 4}>Δ</text>
 
-                  {/* Τα μήκη των πλευρών μένουν καρφωμένα στο σχήμα όπως στην εικόνα_15.png */}
+                  {/* Μήκη Πλευρών */}
                   <text x={(pA.x + pB.x)/2} y={pA.y - 6} className="fill-cyan-600 text-anchor-middle text-[12px]">6 cm</text>
                   <text x={(pB.x + pΓ.x)/2 + 10} y={(pB.y + pΓ.y)/2 + 2} className="fill-indigo-600 text-[12px]">5 cm</text>
                   <text x={(pΓ.x + pΔ.x)/2} y={pΓ.y + 14} className="fill-purple-600 text-anchor-middle text-[12px]">7 cm</text>
-                  <text x={(pΔ.x + pA.x)/2 - 16} y={(pΔ.y + pA.y)/2 + 2} className="fill-amber-600 text-[12px] text-anchor-end">4 cm</text>
+                  
+                  {/* ΔΙΟΡΘΩΣΗ: Μετατόπιση του 4 cm πιο αριστερά (-32) και αλλαγή σε text-anchor-middle για να μην επικαλύπτει τη γραμμή */}
+                  <text x={(pΔ.x + pA.x)/2 - 32} y={(pΔ.y + pA.y)/2 + 2} className="fill-amber-600 text-[12px] text-anchor-middle">4 cm</text>
                 </g>
 
                 {/* 5. ΣΤΑΔΙΑΚΗ ΕΜΦΑΝΙΣΗ ΔΙΑΓΡΑΜΜΙΣΕΩΝ ΧΑΡΑΚΑ */}
