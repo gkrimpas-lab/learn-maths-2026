@@ -28,23 +28,19 @@ export default function PerimetrosPage() {
   const pΔ = { x: 140, y: 120 };
 
   // Συναρτήσεις υπολογισμού της κίνησης για κάθε πλευρά ξεχωριστά
-  // Κάθε πλευρά έχει το δικό της "παράθυρο" στο slider (0-25, 25-50, 50-75, 75-100)
   const getSideCoords = (id) => {
-    // Αρχικές θέσεις στο σχήμα
     let origX1, origY1, origX2, origY2;
     if (id === 0) { origX1 = pA.x; origY1 = pA.y; origX2 = pB.x; origY2 = pB.y; }
     if (id === 1) { origX1 = pB.x; origY1 = pB.y; origX2 = pΓ.x; origY2 = pΓ.y; }
     if (id === 2) { origX1 = pΓ.x; origY1 = pΓ.y; origX2 = pΔ.x; origY2 = pΔ.y; }
     if (id === 3) { origX1 = pΔ.x; origY1 = pΔ.y; origX2 = pA.x; origY2 = pA.y; }
 
-    // Τελικές θέσεις στον χάρακα (κολλητά η μία μετά την άλλη)
     let targetX1 = startX;
     if (id > 0) targetX1 += sidesData[0].px;
     if (id > 1) targetX1 += sidesData[1].px;
     if (id > 2) targetX1 += sidesData[2].px;
     let targetX2 = targetX1 + sidesData[id].px;
 
-    // Υπολογισμός τοπικού factor για το συγκεκριμένο step
     const stepMin = id * 25;
     const stepMax = stepMin + 25;
     
@@ -56,8 +52,7 @@ export default function PerimetrosPage() {
       x1: Math.round(origX1 + (targetX1 - origX1) * localFactor),
       y1: Math.round(origY1 + (groundY - origY1) * localFactor),
       x2: Math.round(origX2 + (targetX2 - origX2) * localFactor),
-      y2: Math.round(origY2 + (groundY - origY2) * localFactor),
-      active: progress > stepMin
+      y2: Math.round(origY2 + (groundY - origY2) * localFactor)
     };
   };
 
@@ -92,7 +87,7 @@ export default function PerimetrosPage() {
           {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-4">
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-              📖 Θεωρία: Τι είναι η Περίμετρος;
+              📖 Θεวρία: Τι είναι η Περίμετρος;
             </h2>
             <p className="text-gray-500 text-sm md:text-base leading-relaxed">
               Όταν θέλουμε να μετρήσουμε το μέγεθος ενός σχήματος «γύρω-γύρω», βρίσκουμε την <strong>Περίμετρό</strong> του.
@@ -174,7 +169,7 @@ export default function PerimetrosPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - PIXEL-PERFECT ΣΤΑΔΙΑΚΗ ΜΕΤΑΦΟΡΑ (440x260) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΜΟΝΙΜΗ ΕΜΦΑΝΙΣΗ ΕΚΑΤΟΣΤΩΝ (440x260) */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -193,27 +188,26 @@ export default function PerimetrosPage() {
                 />
 
                 {/* 3. ΟΙ ΔΥΝΑΜΙΚΕΣ ΠΛΕΥΡΕΣ ΠΟΥ ΠΕΦΤΟΥΝ ΜΙΑ-ΜΙΑ ΣΤΗ ΣΕΙΡΑ */}
-                {/* Πλευρά α (ΑΒ) */}
                 <line x1={s0.x1} y1={s0.y1} x2={s0.x2} y2={s0.y2} className={`${sidesData[0].color} stroke-[5] stroke-linecap-round`} />
-                
-                {/* Πλευρά β (ΒΓ) */}
                 <line x1={s1.x1} y1={s1.y1} x2={s1.x2} y2={s1.y2} className={`${sidesData[1].color} stroke-[5] stroke-linecap-round`} />
-                
-                {/* Πλευρά γ (ΓΔ) */}
                 <line x1={s2.x1} y1={s2.y1} x2={s2.x2} y2={s2.y2} className={`${sidesData[2].color} stroke-[5] stroke-linecap-round`} />
-                
-                {/* Πλευρά δ (ΔΑ) */}
                 <line x1={s3.x1} y1={s3.y1} x2={s3.x2} y2={s3.y2} className={`${sidesData[3].color} stroke-[5] stroke-linecap-round`} />
 
-                {/* Γράμματα και σταθερές ενδείξεις στο αρχικό σχήμα */}
-                <g className="text-[10px] font-black fill-slate-400">
-                  <text x={pA.x - 10} y={pA.y - 4}>Α</text>
+                {/* 4. ΜΟΝΙΜΑ ΓΡΑΜΜΑΤΑ ΚΟΡΥΦΩΝ ΚΑΙ ΜΗΚΗ ΠΛΕΥΡΩΝ (Δεν κρύβονται ποτέ!) */}
+                <g className="text-[11px] font-black fill-slate-400">
+                  <text x={pA.x - 12} y={pA.y - 4}>Α</text>
                   <text x={pB.x + 8}  y={pB.y - 4}>Β</text>
                   <text x={pΓ.x + 8}  y={pΓ.y + 4}>Γ</text>
-                  <text x={pΔ.x - 12} y={pΔ.y + 4}>Δ</text>
+                  <text x={pΔ.x - 14} y={pΔ.y + 4}>Δ</text>
+
+                  {/* Τα μήκη των πλευρών μένουν καρφωμένα στο σχήμα όπως στην εικόνα_15.png */}
+                  <text x={(pA.x + pB.x)/2} y={pA.y - 6} className="fill-cyan-600 text-anchor-middle text-[12px]">6 cm</text>
+                  <text x={(pB.x + pΓ.x)/2 + 10} y={(pB.y + pΓ.y)/2 + 2} className="fill-indigo-600 text-[12px]">5 cm</text>
+                  <text x={(pΓ.x + pΔ.x)/2} y={pΓ.y + 14} className="fill-purple-600 text-anchor-middle text-[12px]">7 cm</text>
+                  <text x={(pΔ.x + pA.x)/2 - 16} y={(pΔ.y + pA.y)/2 + 2} className="fill-amber-600 text-[12px] text-anchor-end">4 cm</text>
                 </g>
 
-                {/* 4. ΣΤΑΔΙΑΚΗ ΕΜΦΑΝΙΣΗ ΔΙΑΓΡΑΜΜΙΣΕΩΝ ΧΑΡΑΚΑ */}
+                {/* 5. ΣΤΑΔΙΑΚΗ ΕΜΦΑΝΙΣΗ ΔΙΑΓΡΑΜΜΙΣΕΩΝ ΧΑΡΑΚΑ */}
                 <g className="fill-slate-400 text-[10px] font-black">
                   {/* Σημείο 0 */}
                   <line x1={startX} y1={groundY} x2={startX} y2={groundY + 6} className="stroke-slate-400 stroke-2" />
