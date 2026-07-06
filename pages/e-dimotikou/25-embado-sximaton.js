@@ -1,226 +1,215 @@
-// pages/e-dimotikou/25-embado-sximaton.js
-import { useState } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import React, { useState } from 'react';
 
-export default function EmbadoSximatonPage() {
-  // 0: Τετράγωνο, 1: Ορθογώνιο, 2: Τρίγωνο
-  const [shapeIndex, setShapeIndex] = useState(1);
+export default function EmbadoSximaton() {
+  const [shape, setShape] = useState('square');
+  const [width, setWidth] = useState(5);
+  const [height, setHeight] = useState(5);
 
-  // Σταθερές παραμέτροι πλέγματος (Pixel-Perfect)
-  const squareSize = 35;
-  const startX = 115;
-  const startY = 60;
+  const unitSize = 40; // Μέγεθος κάθε τετραγώνου σε pixels
+  const w = parseInt(width);
+  // Αν είναι τετράγωνο, το ύψος ακολουθεί αναγκαστικά τη βάση/πλευρά
+  const h = shape === 'square' ? w : parseInt(height);
 
-  // Σταθερές διαστάσεις πλέγματος (6 στήλες x 4 σειρές για το ορθογώνιο / 5x5 για το τετράγωνο)
-  const baseCm = shapeIndex === 0 ? 5 : 6;
-  const heightCm = shapeIndex === 0 ? 5 : 4;
-
-  const currentWidthPx = baseCm * squareSize;
-  const currentHeightPx = heightCm * squareSize;
-
-  // Δεδομένα σχημάτων και περιγραφών
-  const getShapeData = () => {
-    if (shapeIndex === 0) {
-      return { 
-        title: 'Τετράγωνο', 
-        formula: 'Ε = πλευρά × πλευρά', 
-        calc: '5 × 5 = 25 cm²', 
-        desc: 'Όλες οι πλευρές του τετράγωνου είναι ίσες (5 cm), οπότε η βάση και το ύψος του συμπίπτουν.' 
-      };
-    }
-    if (shapeIndex === 1) {
-      return { 
-        title: 'Ορθογώνιο', 
-        formula: 'Ε = βάση × ύψος', 
-        calc: '6 × 4 = 24 cm²', 
-        desc: 'Για να βρούμε πόσα τετραγωνικά εκατοστά χωράνε, πολλαπλασιάζουμε το μήκος της βάσης με το ύψος.' 
-      };
-    }
-    return { 
-      title: 'Ορθογώνιο Τρίγωνο', 
-      formula: 'Ε = (βάση × ύψος) : 2', 
-      calc: '(6 × 4) : 2 = 12 cm²', 
-      desc: 'Παρατήρησε τη γραφική αναπαράσταση: Το ορθογώνιο τρίγωνο είναι ακριβώς το μισό ενός ορθογωνίου με τις ίδιες διαστάσεις, γι\' αυτό και διαιρούμε το αποτέλεσμα διά 2!' 
+  // Δυναμικός υπολογισμός των στυλ για το σχήμα
+  const getShapeStyle = () => {
+    const baseStyle = {
+      position: 'absolute',
+      left: `${unitSize}px`,
+      top: `${unitSize}px`,
+      width: `${w * unitSize}px`,
+      height: `${h * unitSize}px`,
+      transition: 'all 0.3s ease',
     };
+
+    if (shape === 'square') {
+      return {
+        ...baseStyle,
+        backgroundColor: 'rgba(79, 70, 229, 0.25)',
+        border: '3px solid rgb(79, 70, 229)',
+        clipPath: 'none',
+      };
+    } else if (shape === 'rectangle') {
+      return {
+        ...baseStyle,
+        backgroundColor: 'rgba(249, 115, 22, 0.25)',
+        border: '3px solid rgb(249, 115, 22)',
+        clipPath: 'none',
+      };
+    } else if (shape === 'triangle') {
+      return {
+        ...baseStyle,
+        backgroundColor: 'rgba(14, 165, 233, 0.25)',
+        border: '3px solid rgb(14, 165, 233)',
+        // Δημιουργεί το ορθογώνιο τρίγωνο (κόβει το νοητό ορθογώνιο στη διαγώνιο)
+        clipPath: 'polygon(0 100%, 100% 100%, 0 0)',
+      };
+    }
+    return baseStyle;
   };
 
-  const currentShape = getShapeData();
-
-  // Υπολογισμός εσωτερικών γραμμών πλέγματος (χωρίς τις εξωτερικές που διπλασιάζουν το stroke)
-  const internalVerticals = [];
-  for (let i = 1; i < baseCm; i++) {
-    internalVerticals.push(startX + i * squareSize);
-  }
-
-  const internalHorizontals = [];
-  for (let i = 1; i < heightCm; i++) {
-    internalHorizontals.push(startY + i * squareSize);
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
-      <Head>
-        <title>📐 Εμβαδόν Σχημάτων - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
+    <div className="w-full bg-slate-50 min-h-screen font-sans text-slate-800 p-6 lg:p-12">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Τίτλος */}
+        <header className="text-center mb-10">
+          <h1 className="text-4xl lg:text-5xl font-bold text-indigo-600 mb-2">
+            Ανακαλύπτω το Εμβαδόν! 📐
+          </h1>
+          <p className="text-lg lg:text-xl text-slate-600">
+            Δες πώς μετράμε την επιφάνεια στα σχήματα
+          </p>
+        </header>
 
-      <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <Link href="/e-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
-              🔙 Επιστροφή
-            </Link>
-          </div>
-        </nav>
-
-        {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-12`}>
+        {/* Κύριο Πλέγμα Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
-          {/* SECTION 1: ΘΕΩΡΙΑ */}
-          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-4">
-            <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-              📖 Θεωρία: Εμβαδόν Τετραγώνου, Ορθογωνίου & Τριγώνου
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm font-medium">
-              <div className="bg-blue-50 border border-blue-100 p-4 rounded-2xl space-y-1">
-                <p className="font-bold text-blue-900">⏹️ Τετράγωνο</p>
-                <p className="font-black text-blue-600 bg-white p-1.5 rounded-lg text-center border">Ε = πλευρά × πλευρά</p>
-              </div>
-              <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl space-y-1">
-                <p className="font-bold text-indigo-900">▱ Ορθογώνιο</p>
-                <p className="font-black text-indigo-600 bg-white p-1.5 rounded-lg text-center border">Ε = βάση × ύψος</p>
-              </div>
-              <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl space-y-1">
-                <p className="font-bold text-emerald-900">🔺 Τρίγωνο</p>
-                <p className="font-black text-emerald-600 bg-white p-1.5 rounded-lg text-center border">Ε = (βάση × ύψος) : 2</p>
-              </div>
-            </div>
-          </div>
-
-          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
-            
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & ΚΕΙΜΕΝΑ ΠΟΥ ΕΠΕΣΤΡΕΨΑΝ */}
-            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[520px] w-full">
-              <div className="space-y-2">
-                <h3 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  🕹️ Διάλεξε Σχήμα
-                </h3>
-              </div>
-
-              {/* Slider */}
-              <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full space-y-5 shadow-inner my-4">
-                <div className="flex justify-between items-center font-black text-xs text-slate-500 uppercase tracking-wide px-1">
-                  <span className={shapeIndex === 0 ? 'text-blue-600 font-extrabold' : ''}>Τετράγωνο</span>
-                  <span className={shapeIndex === 1 ? 'text-indigo-600' : ''}>Ορθογώνιο</span>
-                  <span className={shapeIndex === 2 ? 'text-emerald-600' : ''}>Τρίγωνο</span>
-                </div>
-                <div className="px-2">
-                  <input 
-                    type="range" min="0" max="2" step="1" value={shapeIndex} 
-                    onChange={(e) => setShapeIndex(parseInt(e.target.value))}
-                    className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                  />
-                </div>
-              </div>
-
-              {/* ΕΠΕΞΗΓΗΜΑΤΙΚΟ ΚΕΙΜΕΝΟ (ΠΟΥ ΕΙΧΕ ΧΑΘΕΙ) */}
-              <div className="bg-blue-50/40 border border-blue-100 p-5 rounded-2xl text-sm text-gray-600 leading-relaxed my-auto font-medium">
-                <span className="font-black text-blue-700 block mb-1">💡 Επεξήγηση Σχήματος:</span>
-                {currentShape.desc}
-              </div>
-
-              {/* ΠΡΑΞΗ */}
-              <div className="p-6 rounded-2xl border border-gray-200 bg-gray-50 w-full space-y-2 mt-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-black text-slate-500">{currentShape.formula}</span>
-                  <span className="text-xl font-black text-slate-800 bg-white px-3 py-1 rounded-xl border shadow-sm tabular-nums">
-                    {currentShape.calc}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΜΕ ΣΤΑΘΕΡΟ ΠΛΕΓΜΑ ΓΡΑΜΜΩΝ */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
-              <div className="w-full"></div>
-
-              <svg 
-                viewBox="0 0 440 260" 
-                className="w-full h-auto my-auto"
-                shapeRendering="geometricPrecision"
+          {/* Αριστερό Μενού: Επιλογές & Sliders */}
+          <div className="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 lg:col-span-1">
+            <h2 className="text-xl font-bold mb-4 text-slate-700">1. Διάλεξε Σχήμα:</h2>
+            <div className="flex flex-col gap-3 mb-6">
+              <button
+                onClick={() => setShape('square')}
+                className={`px-4 py-3 rounded-xl font-semibold text-left transition ${
+                  shape === 'square'
+                    ? 'bg-indigo-600 text-white shadow-md'
+                    : 'bg-slate-100 hover:bg-slate-200'
+                }`}
               >
-                <defs>
-                  {/* Clip Path για το Τρίγωνο */}
-                  <clipPath id="triangleClip">
-                    <polygon points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} />
-                  </clipPath>
-                </defs>
+                🟩 Τετράγωνο
+              </button>
+              <button
+                onClick={() => setShape('rectangle')}
+                className={`px-4 py-3 rounded-xl font-semibold text-left transition ${
+                  shape === 'rectangle'
+                    ? 'bg-indigo-600 text-white shadow-md'
+                    : 'bg-slate-100 hover:bg-slate-200'
+                }`}
+              >
+                🟧 Ορθογώνιο
+              </button>
+              <button
+                onClick={() => setShape('triangle')}
+                className={`px-4 py-3 rounded-xl font-semibold text-left transition ${
+                  shape === 'triangle'
+                    ? 'bg-indigo-600 text-white shadow-md'
+                    : 'bg-slate-100 hover:bg-slate-200'
+                }`}
+              >
+                📐 Ορθογώνιο Τρίγωνο
+              </button>
+            </div>
 
-                {/* 1. ΧΡΩΜΑΤΙΣΤΟ ΓΕΜΙΣΜΑ */}
-                {shapeIndex === 0 && (
-                  <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-blue-500/10 pointer-events-none" />
-                )}
-                {shapeIndex === 1 && (
-                  <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-indigo-500/10 pointer-events-none" />
-                )}
-                {shapeIndex === 2 && (
-                  <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-emerald-500/10 pointer-events-none" clipPath="url(#triangleClip)" />
-                )}
+            <hr className="my-6 border-slate-200" />
 
-                {/* 2. ΣΧΕΔΙΑΣΗ ΤΟΥ ΠΛΕΓΜΑΤΟΣ */}
-                {/* Το εξωτερικό κουτί γίνεται με rect για να μην χάνει ποτέ το πάχος του στις άκρες */}
-                <rect 
-                  x={startX} 
-                  y={startY} 
-                  width={currentWidthPx} 
-                  height={currentHeightPx} 
-                  className="fill-none stroke-slate-200 stroke-[1.5]"
+            <h2 className="text-xl font-bold mb-4 text-slate-700">2. Άλλαξε τις Διαστάσεις:</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-600 mb-1">
+                  {shape === 'square' ? `Πλευρά: ${w} κουτάκια` : `Βάση (Μήκος): ${w} κουτάκια`}
+                </label>
+                <input
+                  type="range"
+                  min="2"
+                  max="10"
+                  value={width}
+                  onChange={(e) => setWidth(e.target.value)}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                 />
+              </div>
 
-                {/* Οι εσωτερικές μόνο γραμμές, με το ίδιο ακριβώς stroke */}
-                <g className="stroke-slate-200 stroke-[1.5]">
-                  {internalVerticals.map((x, idx) => (
-                    <line key={`v-${idx}`} x1={x} y1={startY} x2={x} y2={startY + currentHeightPx} />
-                  ))}
-                  {internalHorizontals.map((y, idx) => (
-                    <line key={`h-${idx}`} x1={startX} y1={y} x2={startX + currentWidthPx} y2={y} />
-                  ))}
-                </g>
-
-                {/* 3. ΤΟ ΕΝΤΟΝΟ ΠΡΑΣΙΝΟ Ή ΜΠΛΕ ΠΕΡΙΓΡΑΜΜΑ ΑΠΟ ΠΑΝΩ */}
-                {shapeIndex === 2 ? (
-                  <polygon 
-                    points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
-                    className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-miter"
+              {shape !== 'square' && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-600 mb-1">
+                    Ύψος (Πλάτος): {h} κουτάκια
+                  </label>
+                  <input
+                    type="range"
+                    min="2"
+                    max="10"
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                   />
-                ) : (
-                  <polygon 
-                    points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`}
-                    className={`fill-none stroke-[3.5] stroke-linejoin-miter transition-colors duration-300 ${shapeIndex === 0 ? 'stroke-blue-600' : 'stroke-indigo-600'}`}
-                  />
-                )}
+                </div>
+              )}
+            </div>
+          </div>
 
-                {/* 4. ΚΕΙΜΕΝΑ / ΕΝΔΕΙΞΕΙΣ */}
-                <g className="text-[12px] font-black fill-slate-500 text-anchor-middle">
-                  <text x={startX + currentWidthPx / 2} y={startY + currentHeightPx + 18} className="fill-blue-600">Βάση = {baseCm} cm</text>
-                  <text x={startX - 14} y={startY + currentHeightPx / 2 + 4} className="fill-rose-500" textAnchor="end">Ύψος = {heightCm} cm</text>
-                </g>
-              </svg>
-
-              <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>{shapeIndex === 2 ? '🔺 Το τρίγωνο είναι το μισό ενός ορθογωνίου!' : '🟩 Το εμβαδόν μετράει πόσα τετραγωνάκια cm² χωράνε μέσα.'}</span>
+          {/* Δεξί Μέρος: Οπτικοποίηση & Παιδαγωγική Επεξήγηση */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Ο Καμβάς με το Δυναμικό Πλέγμα */}
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 flex justify-center items-center min-h-[460px] relative overflow-hidden">
+              <div
+                className="border-2 border-slate-300 relative transition-all duration-300"
+                style={{
+                  width: `${(w + 2) * unitSize}px`,
+                  height: `${(h + 2) * unitSize}px`,
+                  backgroundImage:
+                    'linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
+                  backgroundSize: `${unitSize}px ${unitSize}px`,
+                }}
+              >
+                {/* Το δυναμικό γεωμετρικό σχήμα */}
+                <div style={getShapeStyle()} />
               </div>
             </div>
 
+            {/* Επεξήγηση και Μαθηματικός Τύπος */}
+            <div className="bg-indigo-50 border border-indigo-100 p-6 rounded-2xl">
+              {shape === 'square' && (
+                <>
+                  <h3 className="text-2xl font-bold text-indigo-950 mb-3">🟩 Τετράγωνο</h3>
+                  <p className="text-lg text-indigo-900 leading-relaxed">
+                    Όλες οι πλευρές είναι ίσες! Πολλαπλασιάζουμε την πλευρά με τον εαυτό της για να βρούμε πόσα κουτάκια χωράνε μέσα.
+                    <br />
+                    <strong>Εμβαδόν = Πλευρά × Πλευρά</strong>
+                  </p>
+                  <div className="mt-4 p-4 bg-white rounded-xl border border-indigo-200 inline-block">
+                    <span className="text-xl font-mono font-bold text-indigo-600">
+                      {w} × {w} = {w * w} τετραγωνικά κουτάκια
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {shape === 'rectangle' && (
+                <>
+                  <h3 className="text-2xl font-bold text-indigo-950 mb-3">🟧 Ορθογώνιο</h3>
+                  <p className="text-lg text-indigo-900 leading-relaxed">
+                    Έχει βάση (μήκος) και ύψος (πλάτος). Πολλαπλασιάζουμε τη βάση επί το ύψος για να γεμίσει η επιφάνεια!
+                    <br />
+                    <strong>Εμβαδόν = Βάση × Ύψος</strong>
+                  </p>
+                  <div className="mt-4 p-4 bg-white rounded-xl border border-indigo-200 inline-block">
+                    <span className="text-xl font-mono font-bold text-indigo-600">
+                      {w} × {h} = {w * h} τετραγωνικά κουτάκια
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {shape === 'triangle' && (
+                <>
+                  <h3 className="text-2xl font-bold text-indigo-950 mb-3">📐 Ορθογώνιο Τρίγωνο</h3>
+                  <p className="text-lg text-indigo-900 leading-relaxed">
+                    Παρατήρησε ότι το τρίγωνο είναι <strong>ακριβώς το μισό</strong> ενός ορθογωνίου με τις ίδιες διαστάσεις! 
+                    Γι' αυτό υπολογίζουμε πρώτα το ολόκληρο ορθογώνιο και μετά το διαιρούμε με το 2.
+                    <br />
+                    <strong>Εμβαδόν = (Βάση × Ύψος) ÷ 2</strong>
+                  </p>
+                  <div className="mt-4 p-4 bg-white rounded-xl border border-indigo-200 inline-block">
+                    <span className="text-xl font-mono font-bold text-indigo-600">
+                      ({w} × {h}) ÷ 2 = {w * h} ÷ 2 = {(w * h) / 2} τετραγωνικά κουτάκια
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
