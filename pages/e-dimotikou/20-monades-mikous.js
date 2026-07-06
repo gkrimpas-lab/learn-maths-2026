@@ -5,11 +5,9 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 export default function MonadesMikousPage() {
-  // Η τρέχουσα επιλεγμένη μονάδα βάσης (0: mm, 1: cm, 2: dm, 3: m, 4: km)
   const [selectedUnit, setSelectedUnit] = useState(3); // Αρχική επιλογή: Μέτρο (m)
   const [inputValue, setInputValue] = useState(1); // Αρχική τιμή: 1
 
-  // Λίστα με τις μονάδες μέτρησης
   const units = [
     { id: 0, name: 'χιλιοστό (mm)', short: 'mm', factorToMeters: 0.001, desc: 'Για πολύ μικρά πράγματα (π.χ. το πάχος ενός νομίσματος).' },
     { id: 1, name: 'εκατοστό (cm)', short: 'cm', factorToMeters: 0.01, desc: 'Για καθημερινά αντικείμενα (π.χ. ένα μολύβι ή ένα τετράδιο).' },
@@ -20,14 +18,10 @@ export default function MonadesMikousPage() {
 
   const currentUnit = units[selectedUnit];
 
-  // Συνάρτηση μετατροπής από την επιλεγμένη μονάδα στις υπόλοιπες
   const convertValue = (targetUnitObj) => {
     if (isNaN(inputValue) || inputValue <= 0) return 0;
-    // Μετατροπή πρώτα σε μέτρα και μετά στη μονάδα-στόχο
     const valueInMeters = inputValue * currentUnit.factorToMeters;
     const finalValue = valueInMeters / targetUnitObj.factorToMeters;
-    
-    // Όμορφη μορφοποίηση χωρίς άπειρα δεκαδικά
     if (finalValue % 1 === 0) return finalValue;
     return finalValue.toLocaleString('el-GR', { maximumFractionDigits: 4 });
   };
@@ -87,7 +81,6 @@ export default function MonadesMikousPage() {
                   <p className="text-gray-500 text-sm">Πληκτρολόγησε μια τιμή και επίλεξε τη μονάδα σου για να δεις τις μετατροπές.</p>
                 </div>
 
-                {/* Input Τιμής και Επιλογέας */}
                 <div className="flex gap-4 bg-slate-50 p-4 rounded-2xl border">
                   <div className="flex-1">
                     <label className="text-[11px] font-black text-gray-400 block mb-1 uppercase">ΠΟΣΟΤΗΤΑ</label>
@@ -113,7 +106,6 @@ export default function MonadesMikousPage() {
                 </div>
               </div>
 
-              {/* Πίνακας αποτελεσμάτων με καθαρή διάταξη */}
               <div className="space-y-2.5 my-auto py-4">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΙΣΟΔΥΝΑΜΑ ΜΗΚΗ:</span>
                 {units.map((u) => {
@@ -134,56 +126,56 @@ export default function MonadesMikousPage() {
                 })}
               </div>
 
-              {/* Μικρή περιγραφή της επιλεγμένης μονάδας */}
               <div className="p-3.5 bg-gray-50 rounded-xl border text-center text-xs text-gray-500 font-medium">
                 💡 {currentUnit.desc}
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - Η ΣΚΑΛΑ ΤΩΝ ΜΟΝΑΔΩΝ (Pixel-Perfect 440x260) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΜΕΤΑΤΟΠΙΣΜΕΝΗ ΚΑΙ ΔΙΟΡΘΩΜΗ ΣΚΑΛΑ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[540px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {/* Καμβάς 1:1 με το πλαίσιο για τέλεια vector ευκρίνεια */}
               <svg 
                 viewBox="0 0 440 260" 
                 className="w-full h-auto my-auto"
                 shapeRendering="geometricPrecision"
               >
-                {/* Ορισμός των σκαλοπατιών με συντεταγμένες (x, y) */}
-                {/* 5 σκαλιά: km (πάνω), m, dm, cm, mm (κάτω) */}
+                {/* Μετατοπίσαμε το x κατά -45 pixels αριστερά και μειώσαμε το πλάτος σκαλιού σε 70 */}
                 {[
-                  { id: 4, short: 'km', x: 50, y: 50 },
-                  { id: 3, short: 'm',  x: 130, y: 90 },
-                  { id: 2, short: 'dm', x: 210, y: 130 },
-                  { id: 1, short: 'cm', x: 290, y: 170 },
-                  { id: 0, short: 'mm', x: 370, y: 210 }
+                  { id: 4, short: 'km', x: 15,  y: 50 },
+                  { id: 3, short: 'm',  x: 85,  y: 90 },
+                  { id: 2, short: 'dm', x: 155, y: 130 },
+                  { id: 1, short: 'cm', x: 225, y: 170 },
+                  { id: 0, short: 'mm', x: 295, y: 210 }
                 ].map((step, idx, arr) => {
                   const isSelected = step.id === selectedUnit;
+                  const stepWidth = 70; // Συμπτυγμένο πλάτος σκαλοπατιού
                   
                   return (
                     <g key={step.id}>
-                      {/* Σχεδίαση της οριζόντιας και κάθετης γραμμής του σκαλοπατιού */}
-                      <line x1={step.x} y1={step.y} x2={step.x + 80} y2={step.y} className="stroke-slate-400 stroke-[3]" />
+                      {/* Οριζόντιο πάτημα σκαλιού */}
+                      <line x1={step.x} y1={step.y} x2={step.x + stepWidth} y2={step.y} className="stroke-slate-400 stroke-[3]" />
+                      
+                      {/* Κάθετο κατέβασμα σκαλιού */}
                       {idx < arr.length - 1 && (
-                        <line x1={step.x + 80} y1={step.y} x2={step.x + 80} y2={step.y + 40} className="stroke-slate-400 stroke-[3]" />
+                        <line x1={step.x + stepWidth} y1={step.y} x2={step.x + stepWidth} y2={step.y + 40} className="stroke-slate-400 stroke-[3]" />
                       )}
 
-                      {/* Φωτεινό highlight αν το σκαλί είναι επιλεγμένο */}
+                      {/* Φωτεινό highlight επιλογής */}
                       {isSelected && (
                         <rect 
-                          x={step.x + 5} 
+                          x={step.x + 2} 
                           y={step.y - 25} 
-                          width="70" 
+                          width={stepWidth - 4} 
                           height="24" 
                           rx="6" 
                           className="fill-blue-500/10 stroke-blue-500 stroke-[1.5] animate-pulse" 
                         />
                       )}
 
-                      {/* Κείμενο Μονάδας πάνω στο σκαλοπάτι */}
+                      {/* Όνομα μονάδας */}
                       <text 
-                        x={step.x + 40} 
+                        x={step.x + stepWidth / 2} 
                         y={step.y - 8} 
                         textAnchor="middle" 
                         className={`text-xs font-black ${isSelected ? 'fill-blue-600 text-[13px]' : 'fill-slate-700'}`}
@@ -191,25 +183,25 @@ export default function MonadesMikousPage() {
                         {step.short}
                       </text>
 
-                      {/* Δείκτης / Ανθρωπάκι (Κουκκίδα) πάνω στο επιλεγμένο σκαλί */}
+                      {/* Κινούμενος δείκτης */}
                       {isSelected && (
-                        <circle cx={step.x + 40} cy={step.y - 32} r={6} className="fill-blue-600 animate-bounce" />
+                        <circle cx={step.x + stepWidth / 2} cy={step.y - 32} r={6} className="fill-blue-600 animate-bounce" />
                       )}
                     </g>
                   );
                 })}
 
-                {/* 🔽 Επεξηγηματικά Βέλη Κατεύθυνσης στο πλάι της σκάλας */}
+                {/* 🔽 Διορθωμένα Βέλη με απόλυτη ασφάλεια ορίων */}
                 {/* Κατηφόρα = Πολλαπλασιασμός */}
-                <g transform="translate(320, 45)">
-                  <path d="M 0 0 L 30 30 M 30 30 L 22 30 M 30 30 L 30 22" fill="none" className="stroke-blue-500 stroke-2 stroke-linecap-round" />
-                  <text x="35" y="15" className="fill-blue-600 text-[10px] font-black">Κατεβαίνω: ×10</text>
+                <g transform="translate(290, 45)">
+                  <path d="M 0 0 L 25 25 M 25 25 L 18 25 M 25 25 L 25 18" fill="none" className="stroke-blue-500 stroke-2 stroke-linecap-round" />
+                  <text x="30" y="15" className="fill-blue-600 text-[10px] font-black">Κατεβαίνω: ×10</text>
                 </g>
 
                 {/* Ανηφόρα = Διαίρεση */}
-                <g transform="translate(60, 160)">
-                  <path d="M 30 30 L 0 0 M 0 0 L 8 0 M 0 0 L 0 8" fill="none" className="stroke-rose-500 stroke-2 stroke-linecap-round" />
-                  <text x="38" y="25" className="fill-rose-600 text-[10px] font-black">Ανεβαίνω: :10</text>
+                <g transform="translate(25, 175)">
+                  <path d="M 25 25 L 0 0 M 0 0 L 8 0 M 0 0 L 0 8" fill="none" className="stroke-rose-500 stroke-2 stroke-linecap-round" />
+                  <text x="32" y="20" className="fill-rose-600 text-[10px] font-black">Ανεβαίνω: :10</text>
                 </g>
               </svg>
 
