@@ -138,9 +138,9 @@ export default function EmbadoSximatonPage() {
                 </div>
               </div>
 
-              {/* MΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ */}
+              {/* ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ */}
               <div className="p-6 rounded-2xl border border-gray-200 bg-gray-50 w-full space-y-2">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΤΥΠΟΣ & ΠΡΑΞΗ:</span>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">TΥΠΟΣ & ΠΡΑΞΗ:</span>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <span className="text-sm font-black text-slate-500">{currentShape.formula}</span>
                   <span className="text-xl font-black text-slate-800 bg-white px-3 py-1 rounded-xl border shadow-sm tabular-nums">{currentShape.calc}</span>
@@ -151,7 +151,7 @@ export default function EmbadoSximatonPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΔΙΟΡΘΩΜΕΝΑ ΕΠΙΠΕΔΑ ΚΑΙ ΠΑΧΟΣ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΑΠΟΛΥΤΗ ΕΥΘΥΓΡΑΜΜΙΣΗ ΓΩΝΙΩΝ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -161,26 +161,19 @@ export default function EmbadoSximatonPage() {
                 shapeRendering="geometricPrecision"
               >
                 <defs>
-                  {/* Clip Path για το Τρίγωνο (Κάτω Αριστερά μισό) */}
+                  {/* Clip Path για το Τρίγωνο */}
                   <clipPath id="triangleClip">
                     <polygon points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} />
                   </clipPath>
                 </defs>
 
-                {/* 1. Σταθερές ενδείξεις διαστάσεων έξω από το σχήμα */}
+                {/* 1. Ενδείξεις διαστάσεων */}
                 <g className="text-[12px] font-black fill-slate-500 text-anchor-middle">
                   <text x={startX + (baseCm * squareSize) / 2} y={startY + (heightCm * squareSize) + 18} className="fill-blue-600">Βάση = {baseCm} cm</text>
-                  <text 
-                    x={startX - 14} 
-                    y={startY + (heightCm * squareSize) / 2 + 4} 
-                    className="fill-rose-500"
-                    textAnchor="end"
-                  >
-                    Ύψος = {heightCm} cm
-                  </text>
+                  <text x={startX - 14} y={startY + (heightCm * squareSize) / 2 + 4} className="fill-rose-500" textAnchor="end">Ύψος = {heightCm} cm</text>
                 </g>
 
-                {/* 2. Σχέδιο Background: Αχνά άδεια τετραγωνάκια */}
+                {/* 2. Σχέδιο Background: Γκρίζο πλέγμα αναφοράς */}
                 {gridSquares.map((sq, index) => {
                   if (sq.row >= heightCm || sq.col >= baseCm) return null;
                   return (
@@ -195,16 +188,7 @@ export default function EmbadoSximatonPage() {
                   );
                 })}
 
-                {/* 3. Το πάνω-δεξιά "σβησμένο" συμπληρωματικό ορθογώνιο πλαίσιο (Μόνο στο τρίγωνο) */}
-                {/* ΔΙΟΡΘΩΣΗ: Έχει ακριβώς το ίδιο πάχος stroke-[3.5] με το κανονικό περίγραμμα */}
-                {shapeIndex === 2 && (
-                  <polygon 
-                    points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
-                    className="fill-none stroke-slate-200 stroke-[3.5] stroke-linejoin-round"
-                  />
-                )}
-
-                {/* 4. Το Έντονο Χρωματισμένο Πλέγμα (Κλιπαρισμένο ή πλήρες) */}
+                {/* 3. Χρωματισμένο Πλέγμα με Clip Path ή κανονικό */}
                 {shapeIndex === 2 ? (
                   <g clipPath="url(#triangleClip)">
                     {gridSquares.map((sq, index) => {
@@ -216,7 +200,7 @@ export default function EmbadoSximatonPage() {
                           y={sq.y}
                           width={squareSize}
                           height={squareSize}
-                          className="fill-emerald-500/20 stroke-emerald-500/40 stroke-[1.5]"
+                          className="fill-emerald-500/20 stroke-emerald-500/30 stroke-[1.5]"
                         />
                       );
                     })}
@@ -225,7 +209,7 @@ export default function EmbadoSximatonPage() {
                   <g>
                     {gridSquares.map((sq, index) => {
                       if (sq.row >= heightCm || sq.col >= baseCm) return null;
-                      const fillStyle = shapeIndex === 0 ? 'fill-blue-500/10 stroke-blue-500/30' : 'fill-indigo-500/10 stroke-indigo-500/30';
+                      const fillStyle = shapeIndex === 0 ? 'fill-blue-500/10 stroke-blue-500/20' : 'fill-indigo-500/10 stroke-indigo-500/20';
                       return (
                         <rect
                           key={`fg-rect-${index}`}
@@ -240,23 +224,25 @@ export default function EmbadoSximatonPage() {
                   </g>
                 )}
 
-                {/* 5. Κύρια Διαγώνιος & Περίγραμμα Τριγώνου */}
-                {/* ΔΙΟΡΘΩΣΗ: Μεταφέρθηκε στο τέλος ώστε να σχεδιάζεται πάνω από το γκρι πλαίσιο και να το καλύπτει απόλυτα */}
-                {shapeIndex === 2 && (
+                {/* 4. ΔΙΟΡΘΩΣΗ: Σχεδίαση των εξωτερικών ορίων με ενιαίο stroke-linejoin="miter" για τέλειο κλείδωμα στις γωνίες */}
+                {shapeIndex === 2 ? (
+                  <g>
+                    {/* Το διακεκομμένο πλέγμα του ορθογωνίου που συμπληρώνει το σχήμα */}
+                    <polygon 
+                      points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`}
+                      className="fill-none stroke-slate-200 stroke-[1.5] stroke-dasharray-[3,3] stroke-linejoin-miter"
+                    />
+                    {/* Το παχύ περίγραμμα του Τριγώνου κλειδωμένο ακριβώς στα pixels */}
+                    <polygon 
+                      points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
+                      className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-miter"
+                    />
+                  </g>
+                ) : (
+                  /* Για Τετράγωνο και Ορθογώνιο χρησιμοποιούμε polygon για να έχει την ίδια miter συμπεριφορά στις γωνίες */
                   <polygon 
-                    points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
-                    className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-round"
-                  />
-                )}
-
-                {/* 6. Εξωτερικό παχύ περίγραμμα για το Τετράγωνο και το Ορθογώνιο */}
-                {shapeIndex !== 2 && (
-                  <rect 
-                    x={startX} 
-                    y={startY} 
-                    width={currentWidthPx} 
-                    height={currentHeightPx} 
-                    className={`fill-none stroke-[3.5] stroke-linejoin-round transition-colors duration-300 ${shapeIndex === 0 ? 'stroke-blue-600' : 'stroke-indigo-600'}`}
+                    points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`}
+                    className={`fill-none stroke-[3.5] stroke-linejoin-miter transition-colors duration-300 ${shapeIndex === 0 ? 'stroke-blue-600' : 'stroke-indigo-600'}`}
                   />
                 )}
               </svg>
@@ -267,7 +253,6 @@ export default function EmbadoSximatonPage() {
             </div>
 
           </div>
-
         </main>
       </div>
 
