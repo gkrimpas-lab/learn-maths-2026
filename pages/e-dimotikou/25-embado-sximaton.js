@@ -6,14 +6,20 @@ export default function EmbadoSximaton() {
   const [height, setHeight] = useState(5);
 
   const unitSize = 40; // Μέγεθος κάθε τετραγώνου σε pixels
+  const maxUnits = 10; // Το μέγιστο όριο στα sliders
+
   const w = parseInt(width);
   // Αν είναι τετράγωνο, το ύψος ακολουθεί αναγκαστικά τη βάση/πλευρά
   const h = shape === 'square' ? w : parseInt(height);
+
+  // Σταθερές διαστάσεις πλαισίου (12 x 12 κουτάκια για να χωράει άνετα το 10x10 σχήμα με περιθώριο)
+  const canvasGridSize = (maxUnits + 2) * unitSize; 
 
   // Δυναμικός υπολογισμός των στυλ για το σχήμα
   const getShapeStyle = () => {
     const baseStyle = {
       position: 'absolute',
+      // Το σχήμα ξεκινάει πάντα από το ίδιο σταθερό σημείο (offset 1 κουτάκι από πάνω αριστερά)
       left: `${unitSize}px`,
       top: `${unitSize}px`,
       width: `${w * unitSize}px`,
@@ -111,7 +117,7 @@ export default function EmbadoSximaton() {
                 <input
                   type="range"
                   min="2"
-                  max="10"
+                  max={maxUnits}
                   value={width}
                   onChange={(e) => setWidth(e.target.value)}
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
@@ -126,7 +132,7 @@ export default function EmbadoSximaton() {
                   <input
                     type="range"
                     min="2"
-                    max="10"
+                    max={maxUnits}
                     value={height}
                     onChange={(e) => setHeight(e.target.value)}
                     className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
@@ -139,19 +145,19 @@ export default function EmbadoSximaton() {
           {/* Δεξί Μέρος: Οπτικοποίηση & Παιδαγωγική Επεξήγηση */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Ο Καμβάς με το Δυναμικό Πλέγμα */}
-            <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 flex justify-center items-center min-h-[460px] relative overflow-hidden">
+            {/* Ο Καμβάς με το ΣΤΑΘΕΡΟ Πλέγμα */}
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 flex justify-center items-center min-h-[520px] relative overflow-hidden">
               <div
-                className="border-2 border-slate-300 relative transition-all duration-300"
+                className="border-2 border-slate-300 relative bg-slate-50/50"
                 style={{
-                  width: `${(w + 2) * unitSize}px`,
-                  height: `${(h + 2) * unitSize}px`,
+                  width: `${canvasGridSize}px`,
+                  height: `${canvasGridSize}px`,
                   backgroundImage:
                     'linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
                   backgroundSize: `${unitSize}px ${unitSize}px`,
                 }}
               >
-                {/* Το δυναμικό γεωμετρικό σχήμα */}
+                {/* Το δυναμικό γεωμετρικό σχήμα που αλλάζει μέγεθος μέσα στο σταθερό πλέγμα */}
                 <div style={getShapeStyle()} />
               </div>
             </div>
