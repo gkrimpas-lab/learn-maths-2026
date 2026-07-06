@@ -13,30 +13,20 @@ export default function EmbadoSximatonPage() {
   const startX = 115;
   const startY = 60;
 
-  // Δεδομένα σχημάτων
-  const getShapeData = () => {
-    if (shapeIndex === 0) {
-      return { title: 'Τετράγωνο', b: 5, y: 5, formula: 'Ε = πλευρά × πλευρά', calc: '5 × 5 = 25 cm²', desc: 'Όλες οι πλευρές είναι ίσες (5 cm), οπότε η βάση και το ύψος είναι ίδια.' };
-    }
-    if (shapeIndex === 1) {
-      return { title: 'Ορθογώνιο', b: 6, y: 4, formula: 'Ε = βάση × ύψος', calc: '6 × 4 = 24 cm²', desc: 'Πολλαπλασιάζουμε το μήκος της βάσης με το ύψος του σχήματος.' };
-    }
-    return { title: 'Ορθογώνιο Τρίγωνο', b: 6, y: 4, formula: 'Ε = (βάση × ύψος) : 2', calc: '(6 × 4) : 2 = 12 cm²', desc: 'Παρατήρησε ότι το τρίγωνο είναι ακριβώς το μισό ενός ορθογωνίου με βάση 6 cm και ύψος 4 cm!' };
-  };
-
-  const currentShape = getShapeData();
-  const baseCm = currentShape.b;
-  const heightCm = currentShape.y;
+  // Σταθερές διαστάσεις πλέγματος (6 στήλες x 4 σειρές για το ορθογώνιο / 5x5 για το τετράγωνο)
+  const baseCm = shapeIndex === 0 ? 5 : 6;
+  const heightCm = shapeIndex === 0 ? 5 : 4;
 
   const currentWidthPx = baseCm * squareSize;
   const currentHeightPx = heightCm * squareSize;
 
-  // Δημιουργία πλέγματος γραμμών
+  // Δημιουργία των συντεταγμένων για τις κάθετες γραμμές
   const verticalLines = [];
   for (let i = 0; i <= baseCm; i++) {
     verticalLines.push(startX + i * squareSize);
   }
 
+  // Δημιουργία των συντεταγμένων για τις οριζόντιες γραμμές
   const horizontalLines = [];
   for (let i = 0; i <= heightCm; i++) {
     horizontalLines.push(startY + i * squareSize);
@@ -70,24 +60,17 @@ export default function EmbadoSximatonPage() {
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
               📖 Θεωρία: Εμβαδόν Τετραγώνου, Ορθογωνίου & Τριγώνου
             </h2>
-            <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-              Κάθε γεωμετρικό σχήμα έχει τον δικό του τρόπο για να μετράμε την εσωτερική του επιφάνεια (Εμβαδόν).
-            </p>
-            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm font-medium">
               <div className="bg-blue-50 border border-blue-100 p-4 rounded-2xl space-y-1">
                 <p className="font-bold text-blue-900">⏹️ Τετράγωνο</p>
-                <p className="text-slate-600">Επειδή έχει όλες τις πλευρές ίσες:</p>
                 <p className="font-black text-blue-600 bg-white p-1.5 rounded-lg text-center border">Ε = πλευρά × πλευρά</p>
               </div>
               <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl space-y-1">
                 <p className="font-bold text-indigo-900">▱ Ορθογώνιο</p>
-                <p className="text-slate-600">Πολλαπλασιάζουμε τις δύο διαφορετικές πλευρές:</p>
                 <p className="font-black text-indigo-600 bg-white p-1.5 rounded-lg text-center border">Ε = βάση × ύψος</p>
               </div>
               <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl space-y-1">
                 <p className="font-bold text-emerald-900">🔺 Τρίγωνο</p>
-                <p className="text-slate-600">Κάθε ορθογώνιο τρίγωνο είναι το <strong>μισό</strong> ενός ορθογωνίου:</p>
                 <p className="font-black text-emerald-600 bg-white p-1.5 rounded-lg text-center border">Ε = (βάση × ύψος) : 2</p>
               </div>
             </div>
@@ -102,9 +85,6 @@ export default function EmbadoSximatonPage() {
                 <h3 className="text-2xl font-black text-gray-900 flex items-center gap-2">
                   🕹️ Διάλεξε Σχήμα
                 </h3>
-                <p className="text-gray-500 text-sm">
-                  Σύρε τον δρομέα για να αλλάξεις το σχήμα και να δεις πώς υπολογίζεται το εμβαδόν του.
-                </p>
               </div>
 
               {/* Slider */}
@@ -114,40 +94,27 @@ export default function EmbadoSximatonPage() {
                   <span className={shapeIndex === 1 ? 'text-indigo-600' : ''}>Ορθογώνιο</span>
                   <span className={shapeIndex === 2 ? 'text-emerald-600' : ''}>Τρίγωνο</span>
                 </div>
-                
                 <div className="px-2">
                   <input 
-                    type="range" 
-                    min="0" 
-                    max="2" 
-                    step="1"
-                    value={shapeIndex} 
+                    type="range" min="0" max="2" step="1" value={shapeIndex} 
                     onChange={(e) => setShapeIndex(parseInt(e.target.value))}
                     className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                   />
                 </div>
-
-                <div className="flex justify-center gap-2 pt-1">
-                  <button onClick={() => setShapeIndex(0)} className={`p-2 px-3 rounded-xl font-bold text-xs transition ${shapeIndex === 0 ? 'bg-blue-600 text-white' : 'bg-white border hover:bg-gray-50'}`}>⏹️ Τετράγωνο</button>
-                  <button onClick={() => setShapeIndex(1)} className={`p-2 px-3 rounded-xl font-bold text-xs transition ${shapeIndex === 1 ? 'bg-indigo-600 text-white' : 'bg-white border hover:bg-gray-50'}`}>▱ Ορθογώνιο</button>
-                  <button onClick={() => setShapeIndex(2)} className={`p-2 px-3 rounded-xl font-bold text-xs transition ${shapeIndex === 2 ? 'bg-emerald-600 text-white' : 'bg-white border hover:bg-gray-50'}`}>🔺 Τρίγωνο</button>
-                </div>
               </div>
 
-              {/* ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ */}
+              {/* ΠΡΑΞΗ */}
               <div className="p-6 rounded-2xl border border-gray-200 bg-gray-50 w-full space-y-2">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΤΥΠΟΣ & ΠΡΑΞΗ:</span>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                  <span className="text-sm font-black text-slate-500">{currentShape.formula}</span>
-                  <span className="text-xl font-black text-slate-800 bg-white px-3 py-1 rounded-xl border shadow-sm tabular-nums">{currentShape.calc}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-black text-slate-500">{shapeIndex === 0 ? 'Ε = 5 × 5' : shapeIndex === 1 ? 'Ε = 6 × 4' : 'Ε = (6 × 4) : 2'}</span>
+                  <span className="text-xl font-black text-slate-800 bg-white px-3 py-1 rounded-xl border shadow-sm tabular-nums">
+                    {shapeIndex === 0 ? '25 cm²' : shapeIndex === 1 ? '24 cm²' : '12 cm²'}
+                  </span>
                 </div>
-                <p className="text-xs text-gray-500 font-medium leading-relaxed pt-2 border-t border-gray-200/60">
-                  💡 {currentShape.desc}
-                </p>
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΝΕΑ ΣΧΕΔΙΑΣΗ ΑΠΟ ΤΗΝ ΑΡΧΗ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΠΡΩΤΑ ΤΟ ΠΛΕΓΜΑ, ΜΕΤΑ ΤΟ ΣΧΗΜΑ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -156,47 +123,53 @@ export default function EmbadoSximatonPage() {
                 className="w-full h-auto my-auto"
                 shapeRendering="geometricPrecision"
               >
-                {/* ΕΠΙΠΕΔΟ 1: ΧΡΩΜΑΤΙΣΤΟ ΓΕΜΙΣΜΑ (Background του σχήματος) */}
-                {shapeIndex === 0 && (
-                  <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-blue-500/10" />
-                )}
-                {shapeIndex === 1 && (
-                  <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-indigo-500/10" />
-                )}
-                {shapeIndex === 2 && (
-                  /* Μόνο το κάτω αριστερά μισό γεμίζει με πράσινο */
-                  <polygon points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} className="fill-emerald-500/10" />
-                )}
+                <defs>
+                  {/* Clip Path για το Τρίγωνο */}
+                  <clipPath id="triangleClip">
+                    <polygon points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} />
+                  </clipPath>
+                </defs>
 
-                {/* ΕΠΙΠΕΔΟ 2: ΕΝΙΑΙΟ ΓΚΡΙΖΟ ΠΛΕΓΜΑ (Explicit Lines για σταθερό πάχος) */}
+                {/* ΒΗΜΑ 1: ΣΧΕΔΙΑΣΗ ΟΛΩΝ ΤΩΝ ΓΡΑΜΜΩΝ ΤΟΥ ΠΛΕΓΜΑΤΟΣ (Με το ίδιο ακριβώς πάχος) */}
                 <g className="stroke-slate-200 stroke-[1.5]">
-                  {/* Κάθετες γραμμές */}
+                  {/* Όλες οι κάθετες γραμμές */}
                   {verticalLines.map((x, idx) => (
                     <line key={`v-${idx}`} x1={x} y1={startY} x2={x} y2={startY + currentHeightPx} />
                   ))}
-                  {/* Οριζόντιες γραμμές */}
+                  {/* Όλες οι οριζόντιες γραμμές */}
                   {horizontalLines.map((y, idx) => (
                     <line key={`h-${idx}`} x1={startX} y1={y} x2={startX + currentWidthPx} y2={y} />
                   ))}
                 </g>
 
-                {/* ΕΠΙΠΕΔΟ 3: ΕΞΩΤΕΡΙΚΑ ΕΝΤΟΝΑ ΠΕΡΙΓΡΑΜΜΑΤΑ & ΔΙΑΓΩΝΙΟΣ */}
-                {shapeIndex === 2 ? (
+                {/* ΒΗΜΑ 2: ΤΟ ΠΡΑΣΙΝΟ (Ή ΜΠΛΕ/ΙΝΔΙΓΟ) ΧΡΩΜΑ ΚΑΙ ΤΟ ΠΑΧΥ ΠΕΡΙΓΡΑΜΜΑ ΑΠΟ ΠΑΝΩ */}
+                {shapeIndex === 0 && (
                   <g>
-                    {/* Έντονο περίγραμμα τριγώνου με miter join για τέλειες γωνίες */}
+                    <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-blue-500/10 pointer-events-none" />
+                    <polygon points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`} className="fill-none stroke-blue-600 stroke-[3.5] stroke-linejoin-miter" />
+                  </g>
+                )}
+                
+                {shapeIndex === 1 && (
+                  <g>
+                    <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-indigo-500/10 pointer-events-none" />
+                    <polygon points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`} className="fill-none stroke-indigo-600 stroke-[3.5] stroke-linejoin-miter" />
+                  </g>
+                )}
+
+                {shapeIndex === 2 && (
+                  <g>
+                    {/* Το πράσινο ημιδιαφανές γέμισμα κλιπαρισμένο */}
+                    <rect x={startX} y={startY} width={currentWidthPx} height={currentHeightPx} className="fill-emerald-500/10 pointer-events-none" clipPath="url(#triangleClip)" />
+                    {/* Το παχύ περίγραμμα του τριγώνου ακριβώς από πάνω */}
                     <polygon 
                       points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
                       className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-miter"
                     />
                   </g>
-                ) : (
-                  <polygon 
-                    points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`}
-                    className={`fill-none stroke-[3.5] stroke-linejoin-miter transition-colors duration-300 ${shapeIndex === 0 ? 'stroke-blue-600' : 'stroke-indigo-600'}`}
-                  />
                 )}
 
-                {/* ΕΠΙΠΕΔΟ 4: ΚΕΙΜΕΝΑ / ΕΝΔΕΙΞΕΙΣ */}
+                {/* 3. ΚΕΙΜΕΝΑ / ΕΝΔΕΙΞΕΙΣ */}
                 <g className="text-[12px] font-black fill-slate-500 text-anchor-middle">
                   <text x={startX + currentWidthPx / 2} y={startY + currentHeightPx + 18} className="fill-blue-600">Βάση = {baseCm} cm</text>
                   <text x={startX - 14} y={startY + currentHeightPx / 2 + 4} className="fill-rose-500" textAnchor="end">Ύψος = {heightCm} cm</text>
@@ -204,17 +177,13 @@ export default function EmbadoSximatonPage() {
               </svg>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>{shapeIndex === 2 ? '🔺 Η διαγώνιος κόβει το ορθογώνιο ακριβώς στη μέση!' : '🟩 Το εμβαδόν μετράει πόσα τετραγωνάκια cm² χωράνε μέσα στο σχήμα.'}</span>
+                <span>{shapeIndex === 2 ? '🔺 Το τρίγωνο είναι το μισό ενός ορθογωνίου!' : '🟩 Το εμβαδόν μετράει πόσα τετραγωνάκια cm² χωράνε μέσα.'}</span>
               </div>
             </div>
 
           </div>
         </main>
       </div>
-
-      <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
-        <p>© 2026 LearnMaths.gr. Διαδραστική Γεωμετρία Εμβαδών.</p>
-      </footer>
     </div>
   );
 }
