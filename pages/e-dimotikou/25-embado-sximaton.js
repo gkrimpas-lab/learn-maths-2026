@@ -140,7 +140,7 @@ export default function EmbadoSximatonPage() {
 
               {/* ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ */}
               <div className="p-6 rounded-2xl border border-gray-200 bg-gray-50 w-full space-y-2">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">TΥΠΟΣ & ΠΡΑΞΗ:</span>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΤΥΠΟΣ & ΠΡΑΞΗ:</span>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <span className="text-sm font-black text-slate-500">{currentShape.formula}</span>
                   <span className="text-xl font-black text-slate-800 bg-white px-3 py-1 rounded-xl border shadow-sm tabular-nums">{currentShape.calc}</span>
@@ -151,7 +151,7 @@ export default function EmbadoSximatonPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΑΠΟΛΥΤΗ ΕΥΘΥΓΡΑΜΜΙΣΗ ΓΩΝΙΩΝ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΜΕ ΤΕΛΕΙΑ ΓΚΡΙ ΔΙΑΚΕΚΟΜΜΕΝΗ ΓΡΑΜΜΗ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -188,7 +188,7 @@ export default function EmbadoSximatonPage() {
                   );
                 })}
 
-                {/* 3. Χρωματισμένο Πλέγμα με Clip Path ή κανονικό */}
+                {/* 3. Χρωματισμένο Πλέγμα */}
                 {shapeIndex === 2 ? (
                   <g clipPath="url(#triangleClip)">
                     {gridSquares.map((sq, index) => {
@@ -224,22 +224,24 @@ export default function EmbadoSximatonPage() {
                   </g>
                 )}
 
-                {/* 4. ΔΙΟΡΘΩΣΗ: Σχεδίαση των εξωτερικών ορίων με ενιαίο stroke-linejoin="miter" για τέλειο κλείδωμα στις γωνίες */}
+                {/* 4. Σωστή σχεδίαση ορίων και περιγραμμάτων */}
                 {shapeIndex === 2 ? (
                   <g>
-                    {/* Το διακεκομμένο πλέγμα του ορθογωνίου που συμπληρώνει το σχήμα */}
-                    <polygon 
-                      points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`}
-                      className="fill-none stroke-slate-200 stroke-[1.5] stroke-dasharray-[3,3] stroke-linejoin-miter"
+                    {/* ΔΙΟΡΘΩΣΗ: Σχεδιάζουμε το πάνω και δεξί κομμάτι του ορθογωνίου ως ανοιχτό path, 
+                        με το ίδιο ακριβώς πάχος [1.5] της γκρι εσωτερικής γραμμής και stroke-dasharray */}
+                    <path 
+                      d={`M ${startX} ${startY} L ${startX + currentWidthPx} ${startY} L ${startX + currentWidthPx} ${startY + currentHeightPx}`} 
+                      className="fill-none stroke-slate-100 stroke-[1.5] stroke-dasharray-[3,3] stroke-linejoin-miter"
                     />
-                    {/* Το παχύ περίγραμμα του Τριγώνου κλειδωμένο ακριβώς στα pixels */}
+                    
+                    {/* Το παχύ πράσινο περίγραμμα του ορθογώνιου τριγώνου */}
                     <polygon 
                       points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
                       className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-miter"
                     />
                   </g>
                 ) : (
-                  /* Για Τετράγωνο και Ορθογώνιο χρησιμοποιούμε polygon για να έχει την ίδια miter συμπεριφορά στις γωνίες */
+                  /* Για Τετράγωνο και Ορθογώνιο */
                   <polygon 
                     points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx} ${startX},${startY + currentHeightPx}`}
                     className={`fill-none stroke-[3.5] stroke-linejoin-miter transition-colors duration-300 ${shapeIndex === 0 ? 'stroke-blue-600' : 'stroke-indigo-600'}`}
