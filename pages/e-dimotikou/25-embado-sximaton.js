@@ -78,7 +78,7 @@ export default function EmbadoSximatonPage() {
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm font-medium">
-              <div className="bg-blue-50 border border-blue-100 p-4 dream-shadow rounded-2xl space-y-1">
+              <div className="bg-blue-50 border border-blue-100 p-4 rounded-2xl space-y-1">
                 <p className="font-bold text-blue-900">⏹️ Τετράγωνο</p>
                 <p className="text-slate-600">Επειδή έχει όλες τις πλευρές ίσες:</p>
                 <p className="font-black text-blue-600 bg-white p-1.5 rounded-lg text-center border">Ε = πλευρά × πλευρά</p>
@@ -151,7 +151,7 @@ export default function EmbadoSximatonPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΕ ΤΕΛΕΙΟ CLIP PATH */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΕΥΘΥΓΡΑΜΜΙΣΜΕΝΟ ΤΡΙΓΩΝΟ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -161,7 +161,7 @@ export default function EmbadoSximatonPage() {
                 shapeRendering="geometricPrecision"
               >
                 <defs>
-                  {/* Ορισμός του Clip Path για το Τρίγωνο (Κάτω Αριστερά μισό) */}
+                  {/* ΔΙΟΡΘΩΣΗ: Απόλυτα ευθυγραμμισμένο Clip Path με τη διαγώνιο (Κάτω Αριστερά μισό) */}
                   <clipPath id="triangleClip">
                     <polygon points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} />
                   </clipPath>
@@ -199,7 +199,7 @@ export default function EmbadoSximatonPage() {
 
                 {/* 3. Το Έντονο Χρωματισμένο Πλέγμα */}
                 {shapeIndex === 2 ? (
-                  // ΓΙΑ ΤΟ ΤΡΙΓΩΝΟ: Εφαρμόζουμε το clipPath ώστε τα τετραγωνάκια να κοπούν ακριβώς στη μέση!
+                  // ΓΙΑ ΤΟ ΤΡΙΓΩΝΟ: Εφαρμόζουμε το σωστό clipPath
                   <g clipPath="url(#triangleClip)">
                     {gridSquares.map((sq, index) => {
                       if (sq.row >= heightCm || sq.col >= baseCm) return null;
@@ -216,7 +216,7 @@ export default function EmbadoSximatonPage() {
                     })}
                   </g>
                 ) : (
-                  // ΓΙΑ ΤΕΤΡΑΓΩΝΟ/ΟΡΘΟΓΩΝΙΟ: Κανονικό γέμισμα χωρίς κλιπάρισμα
+                  // ΓΙΑ ΤΕΤΡΑΓΩΝΟ/ΟΡΘΟΓΩΝΙΟ
                   <g>
                     {gridSquares.map((sq, index) => {
                       if (sq.row >= heightCm || sq.col >= baseCm) return null;
@@ -235,18 +235,18 @@ export default function EmbadoSximatonPage() {
                   </g>
                 )}
 
-                {/* 4. Κύρια Διαγώνιος & Περίγραμμα Τριγώνου (Μόνο στο τρίγωνο) */}
+                {/* 4. Κύρια Διαγώνιος & Περίγραμμα Τριγώνου */}
                 {shapeIndex === 2 && (
                   <g>
-                    {/* Παχύ περίγραμμα τριγώνου */}
+                    {/* Έντονο περίγραμμα κλιπαρισμένου τριγώνου */}
                     <polygon 
                       points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
                       className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-round"
                     />
-                    {/* Αχνό διακεκομμένο περίγραμμα του υπόλοιπου ορθογωνίου */}
-                    <path 
-                      d={`M ${startX} ${startY} L ${startX + currentWidthPx} ${startY} L ${startX + currentWidthPx} ${startY + currentHeightPx}`} 
-                      className="fill-none stroke-slate-300 stroke-[1.5] stroke-dasharray-[3,3]"
+                    {/* Αχνό διακεκομμένο περίγραμμα του "σβησμένου" ορθογωνίου (Πάνω Δεξιά) */}
+                    <polygon 
+                      points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
+                      className="fill-none stroke-slate-300 stroke-[1.5] stroke-dasharray-[3,3] stroke-linejoin-round"
                     />
                   </g>
                 )}
@@ -264,7 +264,7 @@ export default function EmbadoSximatonPage() {
               </svg>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>{shapeIndex === 2 ? '🔺 Η διαγώνιος κόβει τα τετράγωνα με απόλυτη ακρίβεια στη μέση!' : '🟩 Το εμβαδόν μετράει πόσα τετραγωνάκια cm² χωράνε μέσα στο σχήμα.'}</span>
+                <span>{shapeIndex === 2 ? '🔺 Η διαγώνιος κόβει το ορθογώνιο ακριβώς στη μέση!' : '🟩 Το εμβαδόν μετράει πόσα τετραγωνάκια cm² χωράνε μέσα στο σχήμα.'}</span>
               </div>
             </div>
 
