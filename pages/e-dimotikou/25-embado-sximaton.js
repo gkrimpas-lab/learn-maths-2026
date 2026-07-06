@@ -138,7 +138,7 @@ export default function EmbadoSximatonPage() {
                 </div>
               </div>
 
-              {/* ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ */}
+              {/* MΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ */}
               <div className="p-6 rounded-2xl border border-gray-200 bg-gray-50 w-full space-y-2">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΤΥΠΟΣ & ΠΡΑΞΗ:</span>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -151,7 +151,7 @@ export default function EmbadoSximatonPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΕΥΘΥΓΡΑΜΜΙΣΜΕΝΟ ΤΡΙΓΩΝΟ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: SVG ΟΠΤΙΚΟΠΟΙΗΣΗ - ΔΙΟΡΘΩΜΕΝΑ ΕΠΙΠΕΔΑ ΚΑΙ ΠΑΧΟΣ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -161,7 +161,7 @@ export default function EmbadoSximatonPage() {
                 shapeRendering="geometricPrecision"
               >
                 <defs>
-                  {/* ΔΙΟΡΘΩΣΗ: Απόλυτα ευθυγραμμισμένο Clip Path με τη διαγώνιο (Κάτω Αριστερά μισό) */}
+                  {/* Clip Path για το Τρίγωνο (Κάτω Αριστερά μισό) */}
                   <clipPath id="triangleClip">
                     <polygon points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} />
                   </clipPath>
@@ -169,9 +169,7 @@ export default function EmbadoSximatonPage() {
 
                 {/* 1. Σταθερές ενδείξεις διαστάσεων έξω από το σχήμα */}
                 <g className="text-[12px] font-black fill-slate-500 text-anchor-middle">
-                  {/* Βάση (Κάτω) */}
                   <text x={startX + (baseCm * squareSize) / 2} y={startY + (heightCm * squareSize) + 18} className="fill-blue-600">Βάση = {baseCm} cm</text>
-                  {/* Ύψος (Αριστερά) */}
                   <text 
                     x={startX - 14} 
                     y={startY + (heightCm * squareSize) / 2 + 4} 
@@ -182,7 +180,7 @@ export default function EmbadoSximatonPage() {
                   </text>
                 </g>
 
-                {/* 2. Σχέδιο Background: Αχνά άδεια τετραγωνάκια για το πλήρες ορθογώνιο σχήμα αναφοράς */}
+                {/* 2. Σχέδιο Background: Αχνά άδεια τετραγωνάκια */}
                 {gridSquares.map((sq, index) => {
                   if (sq.row >= heightCm || sq.col >= baseCm) return null;
                   return (
@@ -197,9 +195,17 @@ export default function EmbadoSximatonPage() {
                   );
                 })}
 
-                {/* 3. Το Έντονο Χρωματισμένο Πλέγμα */}
+                {/* 3. Το πάνω-δεξιά "σβησμένο" συμπληρωματικό ορθογώνιο πλαίσιο (Μόνο στο τρίγωνο) */}
+                {/* ΔΙΟΡΘΩΣΗ: Έχει ακριβώς το ίδιο πάχος stroke-[3.5] με το κανονικό περίγραμμα */}
+                {shapeIndex === 2 && (
+                  <polygon 
+                    points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
+                    className="fill-none stroke-slate-200 stroke-[3.5] stroke-linejoin-round"
+                  />
+                )}
+
+                {/* 4. Το Έντονο Χρωματισμένο Πλέγμα (Κλιπαρισμένο ή πλήρες) */}
                 {shapeIndex === 2 ? (
-                  // ΓΙΑ ΤΟ ΤΡΙΓΩΝΟ: Εφαρμόζουμε το σωστό clipPath
                   <g clipPath="url(#triangleClip)">
                     {gridSquares.map((sq, index) => {
                       if (sq.row >= heightCm || sq.col >= baseCm) return null;
@@ -216,7 +222,6 @@ export default function EmbadoSximatonPage() {
                     })}
                   </g>
                 ) : (
-                  // ΓΙΑ ΤΕΤΡΑΓΩΝΟ/ΟΡΘΟΓΩΝΙΟ
                   <g>
                     {gridSquares.map((sq, index) => {
                       if (sq.row >= heightCm || sq.col >= baseCm) return null;
@@ -235,23 +240,16 @@ export default function EmbadoSximatonPage() {
                   </g>
                 )}
 
-                {/* 4. Κύρια Διαγώνιος & Περίγραμμα Τριγώνου */}
+                {/* 5. Κύρια Διαγώνιος & Περίγραμμα Τριγώνου */}
+                {/* ΔΙΟΡΘΩΣΗ: Μεταφέρθηκε στο τέλος ώστε να σχεδιάζεται πάνω από το γκρι πλαίσιο και να το καλύπτει απόλυτα */}
                 {shapeIndex === 2 && (
-                  <g>
-                    {/* Έντονο περίγραμμα κλιπαρισμένου τριγώνου */}
-                    <polygon 
-                      points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
-                      className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-round"
-                    />
-                    {/* Αχνό διακεκομμένο περίγραμμα του "σβησμένου" ορθογωνίου (Πάνω Δεξιά) */}
-                    <polygon 
-                      points={`${startX},${startY} ${startX + currentWidthPx},${startY} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
-                      className="fill-none stroke-slate-300 stroke-[1.5] stroke-dasharray-[3,3] stroke-linejoin-round"
-                    />
-                  </g>
+                  <polygon 
+                    points={`${startX},${startY} ${startX},${startY + currentHeightPx} ${startX + currentWidthPx},${startY + currentHeightPx}`} 
+                    className="fill-none stroke-emerald-600 stroke-[3.5] stroke-linejoin-round"
+                  />
                 )}
 
-                {/* 5. Εξωτερικό παχύ περίγραμμα για το Τετράγωνο και το Ορθογώνιο */}
+                {/* 6. Εξωτερικό παχύ περίγραμμα για το Τετράγωνο και το Ορθογώνιο */}
                 {shapeIndex !== 2 && (
                   <rect 
                     x={startX} 
