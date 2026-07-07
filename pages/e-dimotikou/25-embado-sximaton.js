@@ -10,7 +10,7 @@ export default function EmbadoSximaton() {
 
   const unitSize = 40; 
   const maxUnits = 10; 
-
+  
   const w = parseInt(width);
   const h = shape === 'square' ? w : parseInt(height);
 
