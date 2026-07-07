@@ -8,7 +8,7 @@ export default function EmbadoSximaton() {
   const [width, setWidth] = useState(5);
   const [height, setHeight] = useState(5);
 
-  const unitSize = 35; // Ευθυγράμμιση με τα 35px του μαθήματος 24
+  const unitSize = 35; 
   const maxUnits = 10; 
   
   const w = parseInt(width);
@@ -74,15 +74,15 @@ export default function EmbadoSximaton() {
       </Head>
 
       <div>
-        {/* NAVBAR - ΠΛΗΡΩΣ ΠΡΟΣΑΡΜΟΣΜΕΝΟ ΜΕ ΤΗ ΦΩΤΟΓΡΑΦΙΑ */}
+        {/* NAVBAR - ΑΠΟΛΥΤΑ ΙΔΙΟ ΜΕ ΤΗΝ ΕΙΚΟΝΑ 1 (ΜΑΘΗΜΑΤΑ 1-24) */}
         <nav className="bg-white w-full border-b border-gray-100">
           <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            {/* Λογότυπο με σωστά χρώματα */}
+            {/* Ενιαίο μπλε λογότυπο */}
             <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
+              LearnMaths.gr
             </Link>
             
-            {/* Πιστό Κουμπί Επιστροφής (Απαλό γκρι οβάλ με BACK εικονίδιο) */}
+            {/* Κουμπί Επιστροφής με το εικονίδιο BACK */}
             <Link href="/e-dimotikou" className="bg-[#f1f1f4] hover:bg-[#e4e4e8] text-[#4a4a52] px-4 py-2 rounded-2xl text-xs font-black transition flex items-center gap-1.5 tracking-wide">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-indigo-600 stroke-[3] stroke-current">
                 <path d="M19 12H5M5 12L12 19M5 12L12 5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -105,7 +105,7 @@ export default function EmbadoSximaton() {
             </p>
           </div>
 
-          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ (2 Στήλες για έλεγχο μεγέθους οθόνης) */}
+          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ (2 Στήλες) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
             {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & ΚΑΤΑΜΕΤΡΗΣΗ */}
@@ -155,7 +155,7 @@ export default function EmbadoSximaton() {
                   <h3 className="text-xl font-black text-gray-900 mb-3 flex items-center gap-2">
                     <span>📏</span> 2. Άλλαξε τις Διαστάσεις
                   </h3>
-                  <div className="space-y-4 bg-slate-50 border border-slate-220 p-5 rounded-2xl shadow-inner">
+                  <div className="space-y-4 bg-slate-50 border border-slate-200 p-5 rounded-2xl shadow-inner">
                     <div>
                       <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-1">
                         {shape === 'square' ? `Πλευρά: ${w} cm` : `Μήκος (Βάση): ${w} cm`}
