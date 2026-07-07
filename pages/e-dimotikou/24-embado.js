@@ -8,7 +8,7 @@ export default function EmbadoSximatonPage() {
   const [width, setWidth] = useState(5);
   const [height, setHeight] = useState(5);
 
-  const unitSize = 35; // Ευθυγράμμιση με τα 35px του μαθήματος 24
+  const unitSize = 35; // 35px όπως στο μάθημα 24
   const maxUnits = 10; 
 
   const w = parseInt(width);
@@ -74,14 +74,20 @@ export default function EmbadoSximatonPage() {
       </Head>
 
       <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full">
+        {/* NAVBAR - ΠΛΗΡΩΣ ΠΡΟΣΑΡΜΟΣΜΕΝΟ ΜΕ ΤΗ ΦΩΤΟΓΡΑΦΙΑ */}
+        <nav className="bg-white w-full border-b border-gray-100">
           <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
+            {/* Λογότυπο με σωστά χρώματα */}
             <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
-            <Link href="/e-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
-              🔙 Επιστροφή
+            
+            {/* Πιστό Κουμπί Επιστροφής (Απαλό γκρι οβάλ με BACK εικονίδιο) */}
+            <Link href="/e-dimotikou" className="bg-[#f1f1f4] hover:bg-[#e4e4e8] text-[#4a4a52] px-4 py-2 rounded-2xl text-xs font-black transition flex items-center gap-1.5 tracking-wide">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-indigo-600 stroke-[3] stroke-current">
+                <path d="M19 12H5M5 12L12 19M5 12L12 5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Επιστροφή
             </Link>
           </div>
         </nav>
@@ -99,7 +105,7 @@ export default function EmbadoSximatonPage() {
             </p>
           </div>
 
-          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ (2 Ίσες Στήλες όπως στο 24) */}
+          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ (2 Στήλες για έλεγχο μεγέθους οθόνης) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
             {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & ΚΑΤΑΜΕΤΡΗΣΗ */}
@@ -183,7 +189,7 @@ export default function EmbadoSximatonPage() {
                 </div>
               </div>
 
-              {/* ΔΥΝΑΜΙΚΗ ΠΡΑΣΙΝΗ ΚΑΡΤΑ ΜΑΘΗΜΑΤΟΣ (Μεταφέρθηκε κάτω αριστερά) */}
+              {/* ΔΥΝΑΜΙΚΗ ΠΡΑΣΙΝΗ ΚΑΡΤΑ ΜΑΘΗΜΑΤΟΣ */}
               <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-3 shadow-sm mt-auto">
                 {shape === 'square' && (
                   <>
