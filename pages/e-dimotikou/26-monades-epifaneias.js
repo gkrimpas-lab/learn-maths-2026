@@ -17,10 +17,12 @@ export default function MonadesEpifaneias() {
         {/* NAVBAR - 100% ΙΔΙΟ ΜΕ ΤΑ ΥΠΟΛΟΙΠΑ ΜΑΘΗΜΑΤΑ */}
         <nav className="bg-white w-full border-b border-gray-100">
           <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
+            {/* Λογότυπο με το .gr σε text-indigo-600 όπως στο μάθημα 24 */}
             <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
             
+            {/* Κουμπί Επιστροφής */}
             <Link href="/e-dimotikou" className="bg-[#f1f1f4] hover:bg-[#e4e4e8] text-[#4a4a52] px-4 py-2 rounded-2xl text-xs font-black transition flex items-center gap-1.5 tracking-wide">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-indigo-600 stroke-[3] stroke-current">
                 <path d="M19 12H5M5 12L12 19M5 12L12 5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -33,17 +35,17 @@ export default function MonadesEpifaneias() {
         {/* MAIN CONTENT */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-12`}>
           
-          {/* ΘΕΩΡΙΑ */}
+          {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-4">
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
               <span className="text-xl">📖</span> Θεωρία: Γιατί αλλάζουμε ανά 100;
             </h2>
             <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-              Στο μήκος, $1 \text{ εκατοστό}$ έχει $10 \text{ χιλιοστά}$. Στην επιφάνεια όμως, επειδή πολλαπλασιάζουμε Μήκος × Πλάτος ($10 \times 10$), το **$1 \text{ τετραγωνικό εκατοστό}$ χωράει ακριβώς $100 \text{ τετραγωνικά χιλιοστά}$**! Δες το γραφικά παρακάτω:
+              Στο μήκος, 1 εκατοστό έχει 10 χιλιοστά. Στην επιφάνεια όμως, επειδή πολλαπλασιάζουμε Μήκος × Πλάτος (10 × 10), το <strong>1 τετραγωνικό εκατοστό χωράει ακριβώς 100 τετραγωνικά χιλιοστά</strong>! Δες το γραφικά παρακάτω:
             </p>
           </div>
 
-          {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
+          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
             {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & ΠΑΙΔΑΓΩΓΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
@@ -64,7 +66,7 @@ export default function MonadesEpifaneias() {
                           : 'bg-gray-50 border-gray-100 text-gray-700 hover:bg-gray-100'
                       }`}
                     >
-                      🔍 Από $1 \text{ cm}^2$ σε $100 \text{ mm}^2$ (Μικρά κουτάκια)
+                      🔍 Από 1 cm² σε 100 mm² (Μικρά κουτάκια)
                     </button>
                     <button
                       onClick={() => setViewMode('m_to_dm')}
@@ -74,7 +76,7 @@ export default function MonadesEpifaneias() {
                           : 'bg-gray-50 border-gray-100 text-gray-700 hover:bg-gray-100'
                       }`}
                     >
-                      🏠 Από $1 \text{ m}^2$ σε $100 \text{ dm}^2$ (Μεγαλύτερη Μονάδα)
+                      🏠 Από 1 m² σε 100 dm² (Μεγαλύτερη Μονάδα)
                     </button>
                   </div>
                 </div>
@@ -85,16 +87,16 @@ export default function MonadesEpifaneias() {
                 <div className="space-y-3">
                   {viewMode === 'cm_to_mm' ? (
                     <>
-                      <h4 className="text-lg font-black text-slate-800">🔍 Κάνοντας "Zουμ" στο $1 \text{ cm}^2$</h4>
+                      <h4 className="text-lg font-black text-slate-800">🔍 Κάνοντας &ldquo;Ζουμ&rdquo; στο 1 cm²</h4>
                       <p className="text-gray-500 text-sm leading-relaxed">
-                        Το μεγάλο τετράγωνο που βλέπεις δεξιά είναι **$1 \text{ τετραγωνικό εκατοστό}$**. Αν μετρήσεις τα μικροσκοπικά κουτάκια στο εσωτερικό του, θα δεις ότι είναι ακριβώς $100$! Το κάθε ένα από αυτά είναι **$1 \text{ τετραγωνικό χιλιοστό}$**.
+                        Το μεγάλο τετράγωνο που βλέπεις δεξιά είναι <strong>1 τετραγωνικό εκατοστό</strong>. Αν μετρήσεις τα μικροσκοπικά κουτάκια στο εσωτερικό του, θα δεις ότι είναι ακριβώς 100! Το κάθε ένα από αυτά είναι <strong>1 τετραγωνικό χιλιοστό</strong>.
                       </p>
                     </>
                   ) : (
                     <>
-                      <h4 className="text-lg font-black text-slate-800">🏠 Το $1 \text{ m}^2$ ως το "Όλο"</h4>
+                      <h4 className="text-lg font-black text-slate-800">🏠 Το 1 m² ως το &ldquo;Όλο&rdquo;</h4>
                       <p className="text-gray-500 text-sm leading-relaxed">
-                        Φαντάσου τώρα ότι ολόκληρο το μεγάλο τετράγωνο είναι **$1 \text{ τετραγωνικό μέτρο}$** (π.χ. ένας μεγάλος τοίχος). Κάθε ένα από τα $100$ τετράγωνα που τον γεμίζουν είναι ακριβώς **$1 \text{ τετραγωνικό δεκάμετρο}$** ($1 \text{ dm}^2$).
+                        Φαντάσου τώρα ότι ολόκληρο το μεγάλο τετράγωνο είναι <strong>1 τετραγωνικό μέτρο</strong> (π.χ. ένας μεγάλος τοίχος). Κάθε ένα από τα 100 τετράγωνα που τον γεμίζουν είναι ακριβώς <strong>1 τετραγωνικό δεκάμετρο</strong> (1 dm²).
                       </p>
                     </>
                   )}
@@ -107,12 +109,12 @@ export default function MonadesEpifaneias() {
                   <span>💡</span> Το μυστικό των Μαθηματικών:
                 </p>
                 <p className="text-slate-700 text-sm font-medium leading-relaxed">
-                  Επειδή η πλευρά μεγαλώνει $10$ φορές ($1 \text{ cm} = 10 \text{ mm}$), ολόκληρη η επιφάνεια μεγαλώνει $10 \times 10 = \mathbf{100}$ **φορές**!
+                  Επειδή η πλευρά μεγαλώνει 10 φορές (1 cm = 10 mm), ολόκληρη η επιφάνεια μεγαλώνει 10 × 10 = <strong>100 φορές</strong>!
                 </p>
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΥΠΟΔΙΑΙΡΕΣΗ (Zuum-In 10x10) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[520px] w-full relative overflow-hidden">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-6 block text-center">
                 {viewMode === 'cm_to_mm' 
@@ -139,9 +141,7 @@ export default function MonadesEpifaneias() {
                       color: viewMode === 'cm_to_mm' ? 'rgb(37, 99, 235)' : 'rgb(5, 150, 105)'
                     }}
                   >
-                    {/* Δείχνουμε το 1ο κουτάκι για να καταλάβει το παιδί τη μονάδα της υποδιαίρεσης */}
                     {i === 0 ? (viewMode === 'cm_to_mm' ? '1mm²' : '1dm²') : ''}
-                    {/* Δείχνουμε και το τελευταίο κουτάκι με την ένδειξη 100 για έμφαση στο πλήθος */}
                     {i === 99 ? '100' : ''}
                   </div>
                 ))}
