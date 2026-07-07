@@ -29,7 +29,8 @@ export default function EDimotikouMenu() {
     { id: '22-kanonika-poligona', label: '🔺 22. Κανονικά Πολύγωνα', href: '/e-dimotikou/22-kanonika-poligona' },
     { id: '23-perimetros', label: '🔺 23. Περίμετρος', href: '/e-dimotikou/23-perimetros' },
     { id: '24-embado', label: '🔺 24. Εμβαδό', href: '/e-dimotikou/24-embado' },
-    { id: '25-embado-sximaton', label: '🔺 25. Εμβαδό Σχημάτων', href: '/e-dimotikou/25-embado-sximaton' }
+    { id: '25-embado-sximaton', label: '🔺 25. Εμβαδό Σχημάτων', href: '/e-dimotikou/25-embado-sximaton' },
+    { id: '26-monades-epifaneias', label: '🔺 26. Μονάδες Μέτρησης Επιφάνειας', href: '/e-dimotikou/26-monades-epifaneias' }
   ];
 
   return (
