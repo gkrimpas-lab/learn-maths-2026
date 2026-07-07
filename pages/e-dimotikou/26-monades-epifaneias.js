@@ -5,48 +5,58 @@ import { LAYOUT } from '../../shared/layout-config';
 
 export default function MonadesEpifaneias() {
   const [selectedUnit, setSelectedUnit] = useState('cm2');
+  const [inputValue, setInputValue] = useState(1); // Η ποσότητα που αλλάζει ο μαθητής
 
-  // Δεδομένα θεωρίας και σχέσεων για κάθε μονάδα
   const unitsData = {
     mm2: {
       title: "📐 Τετραγωνικό Χιλιοστό (mm²)",
       emoji: "🔍",
-      desc: "Είναι η επιφάνεια ενός πολύ μικρού τετραγώνου με πλευρά 1 χιλιοστό (1 mm). Το χρησιμοποιούμε για να μετράμε πολύ μικρά πράγματα, όπως το μέγεθος ενός μυρμηγκιού ή το πάχος ενός νομίσματος.",
-      relation: "1 cm² = 100 mm² (Δηλαδή, ένα τετραγωνικό εκατοστό χωράει ακριβώς 100 τέτοια μικρά χιλιοστά!)",
-      color: "rgb(239, 68, 68)", // Κόκκινο
+      desc: "Είναι η επιφάνεια ενός πολύ μικρού τετραγώνου με πλευρά 1 χιλιοστό. Το χρησιμοποιούμε για πολύ μικρά αντικείμενα.",
+      color: "rgb(239, 68, 68)",
       bgAlpha: "rgba(239, 68, 68, 0.15)",
-      gridContent: "mm"
+      gridContent: "mm",
+      // Συντελεστές μετατροπής με βάση το mm2
+      toCm2: (val) => (val / 100).toFixed(2),
+      toDm2: (val) => (val / 10000).toFixed(4),
+      toM2: (val) => (val / 1000000).toFixed(6),
     },
     cm2: {
       title: "🟩 Τετραγωνικό Εκατοστό (cm²)",
       emoji: "📏",
-      desc: "Είναι η επιφάνεια ενός τετραγώνου με πλευρά 1 εκατοστό (1 cm). Είναι η βασική μονάδα που χρησιμοποιούμε στο τετράδιό μας! Με αυτό μετράμε την επιφάνεια μιας φωτογραφίας, ενός κινητού ή ενός βιβλίου.",
-      relation: "1 dm² = 100 cm²",
-      color: "rgb(59, 130, 246)", // Μπλε
+      desc: "Είναι η επιφάνεια ενός τετραγώνου με πλευρά 1 εκατοστό. Χρησιμοποιείται για να μετράμε πράγματα στο τετράδιό μας.",
+      color: "rgb(59, 130, 246)",
       bgAlpha: "rgba(59, 130, 246, 0.15)",
-      gridContent: "cm"
+      gridContent: "cm",
+      toMm2: (val) => val * 100,
+      toDm2: (val) => (val / 100).toFixed(2),
+      toM2: (val) => (val / 10000).toFixed(4),
     },
     dm2: {
       title: "🟧 Τετραγωνικό Δεκάμετρο (dm²)",
       emoji: "📦",
-      desc: "Είναι η επιφάνεια ενός τετραγώνου με πλευρά 1 δεκάμετρο (10 εκατοστά). Φαντάσου το σαν το μέγεθος που έχει το εξώφυλλο ενός μικρού τετραδίου ή ένα πλακάκι.",
-      relation: "1 dm² = 100 cm² = 10.000 mm²",
-      color: "rgb(249, 115, 22)", // Πορτοκαλί
+      desc: "Είναι η επιφάνεια ενός τετραγώνου με πλευρά 10 εκατοστά (1 δεκάμετρο). Σαν ένα μικρό πλακάκι.",
+      color: "rgb(249, 115, 22)",
       bgAlpha: "rgba(249, 115, 22, 0.15)",
-      gridContent: "dm"
+      gridContent: "dm",
+      toMm2: (val) => val * 10000,
+      toCm2: (val) => val * 100,
+      toM2: (val) => (val / 100).toFixed(2),
     },
     m2: {
       title: "🏠 Τετραγωνικό Μέτρο (m²)",
       emoji: "🏡",
-      desc: "Είναι η βασική μονάδα μέτρησης για μεγάλες επιφάνειες! Είναι ένα μεγάλο τετράγωνο με πλευρά 1 μέτρο (1 m). Με αυτό μετράμε το μέγεθος ενός δωματίου, ενός σπιτιού ή του σχολικού μας γηπέδου.",
-      relation: "1 m² = 100 dm² = 10.000 cm²",
-      color: "rgb(16, 185, 129)", // Πράσινο
+      desc: "Η βασική μονάδα για μεγάλες επιφάνειες, όπως ένα δωμάτιο. Είναι ένα μεγάλο τετράγωνο με πλευρά 1 μέτρο.",
+      color: "rgb(16, 185, 129)",
       bgAlpha: "rgba(16, 185, 129, 0.15)",
-      gridContent: "m"
+      gridContent: "m",
+      toMm2: (val) => val * 1000000,
+      toCm2: (val) => val * 10000,
+      toDm2: (val) => val * 100,
     }
   };
 
   const current = unitsData[selectedUnit];
+  const val = parseFloat(inputValue) || 0;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -56,7 +66,7 @@ export default function MonadesEpifaneias() {
       </Head>
 
       <div>
-        {/* NAVBAR - 100% ΙΔΙΟ ΜΕ ΤΑ ΥΠΟΛΟΙΠΑ ΜΑΘΗΜΑΤΑ */}
+        {/* NAVBAR */}
         <nav className="bg-white w-full border-b border-gray-100">
           <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
             <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
@@ -72,135 +82,147 @@ export default function MonadesEpifaneias() {
           </div>
         </nav>
 
-        {/* ΚΥΡΙΟ ΠΕΡΙΕΧΟΜΕΝΟ */}
+        {/* MAIN CONTENT */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-12`}>
           
-          {/* SECTION 1: ΘΕΩΡΙΑ */}
+          {/* ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-4">
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-              <span className="text-xl">📖</span> Θεωρία: Πώς μετράμε τις Επιφάνειες;
+              <span className="text-xl">📖</span> Θεωρία & Διάδραση: Οι Μονάδες Επιφάνειας
             </h2>
             <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-              Όπως για το μήκος έχουμε τα εκατοστά και τα μέτρα, έτσι και για το <strong>Εμβαδόν</strong> έχουμε ειδικές μονάδες μέτρησης. Επειδή μετράμε επιφάνειες, όλες οι μονάδες μας είναι <strong>τετράγωνα</strong>!
+              Άλλαξε τους αριθμούς στο εργαλείο για να δεις πώς όταν μεγαλώνει ή μικραίνει μια μονάδα επιφάνειας, οι υπόλοιπες αλλάζουν <strong>ανά 100</strong>!
             </p>
           </div>
 
-          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ (2 Στήλες) */}
+          {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΕΠΙΛΟΓΗ ΜΟΝΑΔΑΣ & ΠΛΗΡΟΦΟΡΙΕΣ */}
-            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[540px] w-full gap-6">
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & LIVE ΜΕΤΑΤΡΟΠΕΑΣ */}
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[560px] w-full gap-6">
               <div className="space-y-6">
                 <div>
                   <h3 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
-                    <span>🕹️</span> 1. Επίλεξε Μονάδα Μέτρησης
+                    <span>🕹️</span> 1. Επίλεξε Μονάδα και Ποσότητα
                   </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      onClick={() => setSelectedUnit('mm2')}
-                      className={`px-4 py-3 rounded-xl font-bold text-sm text-center transition shadow-sm border ${
-                        selectedUnit === 'mm2'
-                          ? 'bg-red-500 border-red-500 text-white'
-                          : 'bg-gray-50 border-gray-100 text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      📐 χιλιοστό (mm²)
-                    </button>
-                    <button
-                      onClick={() => setSelectedUnit('cm2')}
-                      className={`px-4 py-3 rounded-xl font-bold text-sm text-center transition shadow-sm border ${
-                        selectedUnit === 'cm2'
-                          ? 'bg-blue-600 border-blue-600 text-white'
-                          : 'bg-gray-50 border-gray-100 text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      🟩 εκατοστό (cm²)
-                    </button>
-                    <button
-                      onClick={() => setSelectedUnit('dm2')}
-                      className={`px-4 py-3 rounded-xl font-bold text-sm text-center transition shadow-sm border ${
-                        selectedUnit === 'dm2'
-                          ? 'bg-orange-500 border-orange-500 text-white'
-                          : 'bg-gray-50 border-gray-100 text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      🟧 δεκάμετρο (dm²)
-                    </button>
-                    <button
-                      onClick={() => setSelectedUnit('m2')}
-                      className={`px-4 py-3 rounded-xl font-bold text-sm text-center transition shadow-sm border ${
-                        selectedUnit === 'm2'
-                          ? 'bg-emerald-600 border-emerald-600 text-white'
-                          : 'bg-gray-50 border-gray-100 text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      🏠 μέτρο (m²)
-                    </button>
+                  
+                  {/* Buttons Επιλογής */}
+                  <div className="grid grid-cols-2 gap-2.5 mb-4">
+                    {Object.keys(unitsData).map((u) => (
+                      <button
+                        key={u}
+                        onClick={() => { setSelectedUnit(u); setInputValue(1); }}
+                        className={`px-3 py-2.5 rounded-xl font-bold text-xs text-center transition shadow-sm border ${
+                          selectedUnit === u
+                            ? 'bg-blue-600 border-blue-600 text-white'
+                            : 'bg-gray-50 border-gray-100 text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        {u === 'mm2' && '📐 mm²'}
+                        {u === 'cm2' && '🟩 cm²'}
+                        {u === 'dm2' && '🟧 dm²'}
+                        {u === 'm2' && '🏠 m²'}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Input / Slider Διάδρασης */}
+                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl shadow-inner space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-black text-slate-500 uppercase tracking-wider">Ποσότητα:</span>
+                      <span className="text-lg font-mono font-black text-blue-600">{val} {selectedUnit}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(parseInt(e.target.value))}
+                      className="w-full h-2.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    />
                   </div>
                 </div>
 
                 <hr className="border-gray-100" />
 
-                {/* Δυναμική Κάρτα Παρουσίασης Μονάδας */}
+                {/* LIVE ΣΧΕΣΕΙΣ ΜΕΤΑΤΡΟΠΗΣ (Πίνακας αποτελεσμάτων) */}
                 <div className="space-y-3">
-                  <h4 className="text-xl font-black text-gray-900 flex items-center gap-2">
-                    <span>{current.emoji}</span> {current.title}
+                  <h4 className="text-sm font-black text-gray-400 uppercase tracking-wider">
+                    🔄 Δυναμική Μετατροπή:
                   </h4>
-                  <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                    {current.desc}
-                  </p>
+                  <div className="grid grid-cols-1 gap-2 font-mono">
+                    {selectedUnit !== 'm2' && (
+                      <div className="p-2.5 bg-slate-50 rounded-xl border border-gray-100 flex justify-between text-sm">
+                        <span className="text-gray-500 font-sans font-medium">Σε Τετραγωνικά Μέτρα:</span>
+                        <span className="font-bold text-slate-800">{current.toM2 ? current.toM2(val) : '-'} m²</span>
+                      </div>
+                    )}
+                    {selectedUnit !== 'dm2' && (
+                      <div className="p-2.5 bg-slate-50 rounded-xl border border-gray-100 flex justify-between text-sm">
+                        <span className="text-gray-500 font-sans font-medium">Σε Τετραγωνικά Δεκάμετρα:</span>
+                        <span className="font-bold text-slate-800">{current.toDm2 ? current.toDm2(val) : '-'} dm²</span>
+                      </div>
+                    )}
+                    {selectedUnit !== 'cm2' && (
+                      <div className="p-2.5 bg-slate-50 rounded-xl border border-gray-100 flex justify-between text-sm">
+                        <span className="text-gray-500 font-sans font-medium">Σε Τετραγωνικά Εκατοστά:</span>
+                        <span className="font-bold text-slate-800">{current.toCm2 ? current.toCm2(val) : '-'} cm²</span>
+                      </div>
+                    )}
+                    {selectedUnit !== 'mm2' && (
+                      <div className="p-2.5 bg-slate-50 rounded-xl border border-gray-100 flex justify-between text-sm">
+                        <span className="text-gray-500 font-sans font-medium">Σε Τετραγωνικά Χιλιοστά:</span>
+                        <span className="font-bold text-slate-800">{current.toMm2 ? current.toMm2(val) : '-'} mm²</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* ΠΡΑΣΙΝΗ ΚΑΡΤΑ: ΣΧΕΣΗ ΜΕΤΑΞΥ ΜΟΝΑΔΩΝ */}
-              <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-2 shadow-sm mt-auto">
-                <p className="font-bold text-emerald-900 flex items-center gap-2">
-                  <span>🔄</span> Σχέση με άλλες μονάδες:
-                </p>
-                <div className="p-3 bg-white rounded-xl border border-emerald-200 text-center font-black text-sm md:text-base text-emerald-600 font-mono">
-                  {current.relation}
-                </div>
-                <p className="text-[11px] font-medium text-emerald-700/80 text-center">
-                  Θυμήσου: Στις μονάδες εμβαδού προχωράμε ανά 100!
-                </p>
+              {/* ΠΡΑΣΙΝΗ ΚΑΡΤΑ ΚΑΝΟΝΑ */}
+              <div className="bg-emerald-50 text-slate-900 p-4 rounded-2xl border border-emerald-100 text-center font-bold text-sm text-emerald-700 shadow-sm mt-auto">
+                👉 Όταν κατεβαίνουμε μονάδα (πάμε σε μικρότερη), ΠΟΛΛΑΠΛΑΣΙΑΖΟΥΜΕ με το 100. <br/>
+                👉 Όταν ανεβαίνουμε μονάδα (πάμε σε μεγαλύτερη), ΔΙΑΙΡΟΥΜΕ με το 100.
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ (ΣΤΑΘΕΡΟ ΠΛΕΓΜΑ 10x10) */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[540px] w-full relative overflow-hidden">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΔΥΝΑΜΙΚΟ ΓΡΑΦΙΚΟ ΠΛΕΓΜΑ */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[560px] w-full relative overflow-hidden">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4 block">
-                ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΟΝΑΔΑΣ (Υποδιαίρεση σε 100 μέρη)
+                Γραφική Αναπαράσταση Επιφάνειας ({val} Μονάδες)
               </span>
 
-              {/* Το πλέγμα αναπαριστά πώς 1 μεγαλύτερη μονάδα χωρίζεται σε 100 μικρότερες (10x10) */}
-              <div 
-                className="grid grid-cols-10 grid-rows-10 border-4 rounded-xl overflow-hidden shadow-md transition-all duration-300"
-                style={{ 
-                  width: '320px', 
-                  height: '320px',
-                  borderColor: current.color 
-                }}
-              >
-                {[...Array(100)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="border border-gray-200/60 flex items-center justify-center text-[9px] font-bold transition-all duration-300 select-none"
-                    style={{ 
-                      backgroundColor: current.bgAlpha,
-                      color: current.color
-                    }}
+              {/* Δυναμικό Grid που χρωματίζει τόσα 10x10 πλέγματα όσα λέει το Slider */}
+              <div className="grid grid-cols-2 gap-4 max-w-[340px] justify-center items-center">
+                {[...Array(Math.min(val, 4))].map((_, gridIdx) => (
+                  <div 
+                    key={gridIdx}
+                    className="grid grid-cols-5 grid-rows-5 border-2 rounded-lg overflow-hidden transition-all duration-300"
+                    style={{ width: '130px', height: '130px', borderColor: current.color }}
                   >
-                    {/* Εμφάνιση κειμένου μόνο στο πρώτο κουτάκι για να είναι καθαρό οπτικά */}
-                    {i === 0 ? `1 ${current.gridContent}²` : ''}
+                    {[...Array(25)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="border-[0.5px] border-gray-200/40 flex items-center justify-center text-[7px] font-bold"
+                        style={{ backgroundColor: current.bgAlpha, color: current.color }}
+                      >
+                        {i === 0 && gridIdx === 0 ? `1${current.gridContent}²` : ''}
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
 
-              {/* Παιδαγωγικό συμπέρασμα κάτω από το γράφημα */}
+              {val > 4 && (
+                <p className="text-xs font-bold text-blue-500 mt-3">
+                  + άλλα {val - 4} τετράγωνα στην επιφάνεια!
+                </p>
+              )}
+
               <div className="w-full flex flex-col items-center justify-center text-xs font-bold text-slate-500 pt-4 border-t border-gray-50 mt-6 text-center space-y-1">
-                <p>💡 Βλέπεις τα 100 κουτάκια;</p>
+                <p>💡 Παρατήρησε τα νούμερα αριστερά!</p>
                 <p className="font-medium text-slate-400 max-w-sm">
-                  Κάθε φορά που ανεβαίνουμε μια μονάδα εμβαδού, η νέα επιφάνεια είναι ακριβώς 100 φορές μεγαλύτερη από την προηγούμενη!
+                  Κάθε φορά που αυξάνεις την ποσότητα, βλέπεις αμέσως πόσα εκατοστά, χιλιοστά ή μέτρα γεμίζουν ταυτόχρονα.
                 </p>
               </div>
             </div>
