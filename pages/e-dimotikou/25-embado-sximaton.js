@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { LAYOUT } from '../../shared/layout-config';
 
 export default function EmbadoSximaton() {
   const [shape, setShape] = useState('square');
