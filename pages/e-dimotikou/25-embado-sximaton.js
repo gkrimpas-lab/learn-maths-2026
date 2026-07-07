@@ -67,33 +67,31 @@ export default function EmbadoSximaton() {
   };
 
   return (
-    <div className="w-full bg-slate-50 min-h-screen font-sans text-slate-800 flex flex-col justify-between">
-      
-      {/* 1. HEADER (Προσαρμοσμένο LearnMaths.gr) */}
-      <nav className="w-full bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center shadow-sm">
-        <div className="text-2xl font-black tracking-tight">
-          <span className="text-blue-600">LearnMaths</span>
-          <span className="text-slate-400">.gr</span>
-        </div>
-        
-        {/* Responsive, Fluid Κουμπί Επιστροφής */}
-        <a 
-          href="https://www.learnmaths.gr/e-dimotikou"
-          className="inline-flex items-center justify-center transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500/20 rounded-xl"
-          aria-label="Επιστροφή στην Ε Δημοτικού"
-        >
-          <svg 
-            viewBox="0 0 160 50" 
-            className="w-32 h-auto lg:w-40 xl:w-44 font-medium"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect width="100%" height="100%" rx="10" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="2"/>
-            <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fill="#475569" fontSize="14" fontWeight="600">
-              « Επιστροφή
-            </text>
-          </svg>
-        </a>
-      </nav>
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
+      <Head>
+        <title>📐 Εμβαδόν Σχημάτων - LearnMaths.gr</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+      </Head>
+
+      <div>
+        {/* NAVBAR - ΠΛΗΡΩΣ ΠΡΟΣΑΡΜΟΣΜΕΝΟ ΜΕ ΤΗ ΦΩΤΟΓΡΑΦΙΑ */}
+        <nav className="bg-white w-full border-b border-gray-100">
+          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
+            {/* Λογότυπο με σωστά χρώματα */}
+            <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
+              LearnMaths<span className="text-indigo-600">.gr</span>
+            </Link>
+            
+            {/* Πιστό Κουμπί Επιστροφής (Απαλό γκρι οβάλ με BACK εικονίδιο) */}
+            <Link href="/e-dimotikou" className="bg-[#f1f1f4] hover:bg-[#e4e4e8] text-[#4a4a52] px-4 py-2 rounded-2xl text-xs font-black transition flex items-center gap-1.5 tracking-wide">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-indigo-600 stroke-[3] stroke-current">
+                <path d="M19 12H5M5 12L12 19M5 12L12 5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Επιστροφή
+            </Link>
+          </div>
+        </nav>
+
 
       {/* ΚΥΡΙΟ ΠΕΡΙΕΧΟΜΕΝΟ */}
       <main className="max-w-7xl w-full mx-auto p-6 lg:p-12 flex-grow">
