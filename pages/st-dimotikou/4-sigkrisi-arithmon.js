@@ -61,7 +61,7 @@ export default function SigkrisiArithmonPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div className="space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <li>📖</li> Θεωρία: Σύγκριση Φυσικών & Δεκαδικών
+                  <span>📖</span> Θεωρία: Σύγκριση Φυσικών & Δεκαδικών
                 </h2>
                 <p className="text-gray-500 text-sm md:text-base leading-relaxed">
                   Για να συγκρίνουμε δύο αριθμούς, τους κοιτάζουμε πάντα **από αριστερά προς τα δεξιά**, συγκρίνοντας τα ψηφία που βρίσκονται στην ίδια θέση.
@@ -77,7 +77,7 @@ export default function SigkrisiArithmonPage() {
                 <div className="bg-white/10 p-4 rounded-xl space-y-1 text-xs md:text-sm font-medium">
                   <p>Ας συγκρίνουμε τον <span className="font-bold text-amber-200">45,5</span> και τον <span className="font-bold text-amber-200">45,12</span>:</p>
                   <p>• Το ακέραιο μέρος είναι ίδιο (45 = 45).</p>
-                  <p>• Συγκρίνουμε τα δέκατα: Το 5 είναι μεγαλύτερο από το 1 ($5 > 1$).</p>
+                  <p>• Συγκρίνουμε τα δέκατα: Το 5 είναι μεγαλύτερο από το 1 ($5 &gt; 1$).</p>
                   <p className="font-black text-center pt-2 text-sm text-amber-200">Άρα: 45,5 ＞ 45,12</p>
                 </div>
                 <p className="text-[11px] text-center text-teal-100">Tip: Αν συμπληρώσεις ένα μηδενικό στο τέλος, το βλέπεις ως 45,50 ＞ 45,12!</p>
@@ -88,7 +88,7 @@ export default function SigkrisiArithmonPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUTS (min-h-[480px]) */}
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUTS */}
             <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[480px] w-full gap-6">
               <div className="space-y-2">
                 <h3 className="text-2xl font-black text-gray-900 flex items-center gap-2">
@@ -126,7 +126,7 @@ export default function SigkrisiArithmonPage() {
                     value={numB}
                     onChange={(e) => setNumB(e.target.value.replace(/[^0-9.]/g, ''))}
                     className="text-2xl font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm focus:border-blue-500 outline-none transition-all w-full tracking-wide text-blue-600"
-                    placeholder="π.w. 45.12"
+                    placeholder="π.χ. 45.12"
                   />
                 </div>
               </div>
@@ -145,7 +145,7 @@ export default function SigkrisiArithmonPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΖΥΓΑΡΙΑ (min-h-[480px]) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΖΥΓΑΡΙΑ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -162,7 +162,7 @@ export default function SigkrisiArithmonPage() {
                   <rect x="110" y="140" width="80" height="12" rx="4" className="fill-slate-500" />
                   <circle cx="150" cy="85" r="5" className="fill-slate-600" />
 
-                  {/* Κινούμενο Μέρος Ζυγαριάς (Οριζόντιος Δοκός + Δίσκοι) */}
+                  {/* Κινούμενο Μέρος Ζυγαριάς */}
                   <g className={`transition-transform duration-500 origin-[150px_85px] ${tiltClass}`}>
                     {/* Οριζόντιος Δοκός */}
                     <line x1="50" y1="85" x2="250" y2="85" className="stroke-slate-600 stroke-[4] stroke-linecap-round" />
