@@ -8,8 +8,6 @@ export default function STDimotikouMenu() {
     { id: '1-fisikoi-arithmoi', label: '🍕 1. Φυσικοί Αριθμοί', href: '/st-dimotikou/1-fisikoi-arithmoi' },
     { id: '2-dekadikoi', label: '🍕 2. Δεκαδικοί Αριθμοί', href: '/st-dimotikou/2-dekadikoi' },
     { id: '3-arithmoi-dekadika-klasmata', label: '🍕 3. Δεκαδικοί Αριθμοί σε Δεκαδικά Κλάσματα', href: '/st-dimotikou/3-arithmoi-dekadika-klasmata' }
-
-,
   ];
 
   return (
