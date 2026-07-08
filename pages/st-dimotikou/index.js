@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-export default function EDimotikouMenu() {
+export default function STDimotikouMenu() {
   const modules = [
     { id: '1-fisikoi-arithmoi', label: '🍕 1. Φυσικοί Αριθμοί', href: '/e-dimotikou/1-fisikoi-arithmoi' }
 
