@@ -97,18 +97,20 @@ export default function FysikoiArithmoiPage() {
               </div>
 
               {/* Μαθηματική Καταγραφή / Ανάλυση */}
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl max-h-[140px] overflow-y-auto font-mono text-xs md:text-sm text-left space-y-1">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block font-sans mb-1">Ανάλυση σε δυνάμεις του 10:</span>
+              <div className="p-5 bg-gray-50 border border-gray-200 rounded-2xl min-h-[180px] font-mono text-xs md:text-sm text-left space-y-1.5 shadow-inner">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block font-sans mb-2">
+                  🧬 Ανάλυση σε δυνάμεις του 10:
+                </span>
                 {digits.map((digit, i) => {
                   if (digit === '0') return null;
                   const power = 11 - i;
                   const multiplier = Math.pow(10, power).toLocaleString('el-GR');
                   return (
-                    <div key={i} className="flex items-center gap-1.5 text-slate-600">
-                      <span className="text-emerald-600 font-bold">{digit}</span>
+                    <div key={i} className="flex items-center gap-1.5 text-slate-600 border-b border-gray-100 pb-1 last:border-0 last:pb-0">
+                      <span className="text-emerald-600 font-black text-sm">{digit}</span>
                       <span className="text-slate-400">×</span>
-                      <span>{multiplier}</span>
-                      <span className="text-slate-400 text-[11px]">(10^{power})</span>
+                      <span className="font-bold text-slate-700">{multiplier}</span>
+                      <span className="text-slate-400 text-[10px] md:text-[11px]">(10^{power})</span>
                     </div>
                   );
                 })}
@@ -135,9 +137,9 @@ export default function FysikoiArithmoiPage() {
                   <div className="grid grid-cols-12 text-[9px] font-black text-slate-400 text-center border-b bg-slate-50 uppercase py-1.5">
                     {[...Array(4)].map((_, i) => (
                       <span key={i} className="contents">
-                        <div className="border-r">Ε</div>
+                        <div className="border-r">E</div>
                         <div className="border-r">Δ</div>
-                        <div className="border-r">Μ</div>
+                        <div className="border-r">M</div>
                       </span>
                     ))}
                   </div>
