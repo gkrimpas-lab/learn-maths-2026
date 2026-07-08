@@ -9,7 +9,7 @@ export default function DekadikoiArithmoiPage() {
 
   // Διαχωρισμός σε ακέραιο και δεκαδικό μέρος
   const parts = number.split('.');
-  const integerPart = parts[0] || "0";
+  const integerPart = parts[0] || "";
   const decimalPart = parts[1] || "";
 
   // Γέμισμα με μηδενικά για σταθερό πλέγμα (3 ψηφία ακέραιο, 3 δεκαδικό)
@@ -86,36 +86,45 @@ export default function DekadikoiArithmoiPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUT */}
-            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[420px] w-full">
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUT (Σταθερό h-[450px]) */}
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between h-[450px] w-full">
               <div className="space-y-2">
                 <h3 className="text-2xl font-black text-gray-900 flex items-center gap-2">
                   🕹️ Πίνακας Δεκαδικών
                 </h3>
                 <p className="text-gray-500 text-sm">
-                  Γράψε έναν δεκαδικό αριθμό χρησιμοποιώντας τελεία (π.χ. 12.34) για να τον αναλύσεις.
+                  Γράψε έως 3 ακέραια και 3 δεκαδικά ψηφία με τελεία (π.χ. 123.45).
                 </p>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full flex flex-col items-center justify-center shadow-inner my-auto">
+              <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col items-center justify-center shadow-inner my-auto">
                 <input 
                   type="text" 
                   value={number}
                   onChange={(e) => {
-                    // Επιτρέπουμε μόνο αριθμούς και μία τελεία
-                    const val = e.target.value.replace(/[^0-9.]/g, '');
-                    if ((val.match(/\./g) || []).length <= 1) {
-                      setNumber(val);
+                    let val = e.target.value.replace(/[^0-9.]/g, '');
+                    
+                    // Έλεγχος για ύπαρξη μίας μόνο τελείας
+                    const dotCount = (val.match(/\./g) || []).length;
+                    if (dotCount <= 1) {
+                      const inputParts = val.split('.');
+                      const inputInt = inputParts[0] || "";
+                      const inputDec = inputParts[1] || "";
+                      
+                      // Επιβολή ορίου: max 3 ψηφία στο ακέραιο και max 3 στο δεκαδικό
+                      if (inputInt.length <= 3 && inputDec.length <= 3) {
+                        setNumber(val);
+                      }
                     }
                   }}
                   className="text-3xl font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm focus:border-blue-500 outline-none transition-all w-full max-w-sm tracking-wider text-blue-600"
-                  placeholder="π.χ. 345.67"
+                  placeholder="π.χ. 345.672"
                 />
               </div>
 
-              {/* Μαθηματική Καταγραφή / Ανάλυση */}
-              <div className="p-5 bg-gray-50 border border-gray-200 rounded-2xl min-h-[180px] font-mono text-xs md:text-sm text-left space-y-1.5 shadow-inner">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block font-sans mb-2">
+              {/* Μαθηματική Καταγραφή / Ανάλυση (Σταθερό ύψος h-[180px], χωρίς scroll) */}
+              <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl h-[180px] font-mono text-xs md:text-sm text-left space-y-1 shadow-inner overflow-hidden">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block font-sans mb-1.5">
                   🧬 Ανάλυση σε Δεκαδικά Κλάσματα:
                 </span>
                 
@@ -125,7 +134,7 @@ export default function DekadikoiArithmoiPage() {
                   const value = Math.pow(10, 2 - i);
                   if (digit === '0' && value !== 1) return null;
                   return (
-                    <div key={`int-${i}`} className="flex items-center gap-1.5 text-slate-600 border-b border-gray-100 pb-1 last:border-0">
+                    <div key={`int-${i}`} className="flex items-center gap-1.5 text-slate-600 border-b border-gray-100/70 pb-0.5 last:border-0">
                       <span className="text-emerald-600 font-black text-sm">{digit}</span>
                       <span className="text-slate-400">×</span>
                       <span className="font-bold text-slate-700">{value}</span>
@@ -138,27 +147,27 @@ export default function DekadikoiArithmoiPage() {
                   if (digit === '0') return null;
                   const den = Math.pow(10, i + 1);
                   return (
-                    <div key={`dec-${i}`} className="flex items-center gap-1.5 text-slate-600 border-b border-gray-100 pb-1 last:border-0">
+                    <div key={`dec-${i}`} className="flex items-center gap-1.5 text-slate-600 border-b border-gray-100/70 pb-0.5 last:border-0">
                       <span className="text-blue-600 font-black text-sm">{digit}</span>
                       <span className="text-slate-400">×</span>
-                      <div className="inline-flex flex-col items-center text-xs font-bold text-slate-700">
+                      <div className="inline-flex flex-col items-center text-[10px] font-bold text-slate-700 leading-none">
                         <span>1</span>
-                        <div className="w-4 h-[1px] bg-slate-700"></div>
+                        <div className="w-3 h-[1px] bg-slate-700 my-0.5"></div>
                         <span>{den}</span>
                       </div>
-                      <span className="text-slate-400 text-[11px]">({digit / den})</span>
+                      <span className="text-slate-400 text-[10px]">({digit / den})</span>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΠΙΝΑΚΑ */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[420px] w-full relative overflow-hidden">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΠΙΝΑΚΑ (Σταθερό h-[450px]) */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between h-[450px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
               <div className="w-full overflow-x-auto pb-2 my-auto">
-                <div className="min-w-[540px] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mx-auto">
+                <div className="min-w-[500px] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mx-auto">
                   
                   {/* Header Μεγάλων Κατηγοριών */}
                   <div className="grid grid-cols-7 text-white text-center font-black text-[11px] uppercase tracking-wide">
@@ -181,21 +190,22 @@ export default function DekadikoiArithmoiPage() {
                     {intDigits.map((digit, i) => {
                       const isLeadingZero = digit === '0' && i < intDigits.findIndex(d => d !== '0');
                       return (
-                        <div key={`id-${i}`} className={`py-6 border-r bg-emerald-50/40 ${isLeadingZero ? 'text-slate-200' : 'text-slate-800'}`}>
+                        <div key={`id-${i}`} className={`py-6 border-r bg-emerald-50/40 transition-colors duration-200 ${isLeadingZero ? 'text-slate-200' : 'text-slate-800'}`}>
                           {digit}
                         </div>
                       );
                     })}
 
                     {/* Υποδιαστολή */}
-                    <div className="py-6 border-r bg-amber-50 text-amber-500 animate-pulse">
+                    <div className="py-6 border-r bg-amber-50 text-amber-500">
                       ,
                     </div>
 
                     {/* Δεκαδικά Ψηφία */}
                     {decDigits.map((digit, i) => {
+                      const isTrailingZero = digit === '0' && i > decimalPart.length - 1;
                       return (
-                        <div key={`dd-${i}`} className="py-6 border-r last:border-0 bg-blue-50/40 text-slate-800">
+                        <div key={`dd-${i}`} className={`py-6 border-r last:border-0 bg-blue-50/40 transition-colors duration-200 ${isTrailingZero ? 'text-slate-200' : 'text-slate-800'}`}>
                           {digit}
                         </div>
                       );
