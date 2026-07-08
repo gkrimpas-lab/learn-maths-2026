@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
@@ -8,16 +8,30 @@ function formatGreekNumber(num) {
 }
 
 export default function EnnoiaOgkouPage() {
-  // Σταθερές διαστάσεις του νοητού κουτιού (π.χ. Μήκος=4, Πλάτος=3, Ύψος=3)
+  // Σταθερές διαστάσεις του κουτιού
   const length = 4;
   const width = 3;
   const height = 3;
-  const totalCubes = length * width * height; // 36 κυβάκια συνολικά
+  const totalCubes = length * width * height; // 36 κυβάκια
 
-  // Ο μαθητής γεμίζει το κουτί με κυβάκια από 0 έως 36
+  // Slider από 0 έως 36
   const [cubesCount, setCubesCount] = useState(12);
 
   const isComplete = cubesCount === totalCubes;
+
+  // Γεωμετρικές σταθερές για τέλεια ισομετρική στοίχιση κουτιού
+  const size = 30; // Το μέγεθος της ακμής κάθε κύβου
+  const startX = 110; // Κεντράρισμα στον οριζόντιο άξονα
+  const startY = 160; // Κεντράρισμα στον κατακόρυφο άξονα
+
+  // Συνάρτηση που επιστρέφει τις 2D (x, y) συντεταγμένες στον SVG καμβά για κάθε 3D (x, y, z) θέση
+  const getIsoCoords = (x, y, z) => {
+    // Σωστή ισομετρική προβολή: 
+    // Ο άξονας X πάει κάτω-δεξιά, ο Y πάει κάτω-αριστερά, ο Z πάει κατακόρυφα πάνω
+    const isoX = startX + (x * size * 0.866) - (y * size * 0.866);
+    const isoY = startY + (x * size * 0.5) + (y * size * 0.5) - (z * size);
+    return { x: isoX, y: isoY };
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -27,7 +41,7 @@ export default function EnnoiaOgkouPage() {
       </Head>
 
       <div>
-        {/* NAVBAR - 100% ΙΔΙΟ ΜΕ ΤΑ ΥΠΟΛΟΙΠΑ ΜΑΘΗΜΑΤΑ */}
+        {/* NAVBAR */}
         <nav className="bg-white w-full border-b border-gray-100">
           <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
             <Link href="/e-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
@@ -52,28 +66,25 @@ export default function EnnoiaOgkouPage() {
               <span className="text-xl">📖</span> Θεωρία: Τι είναι ο Όγκος;
             </h2>
             <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-              Μέχρι τώρα μετρούσαμε επίπεδες επιφάνειες (Εμβαδόν). Όμως, τα αντικείμενα γύρω μας έχουν και πάχος ή ύψος! <strong>Όγκος</strong> είναι ο χώρος που πιάνει ένα σώμα. Για να τον μετρήσουμε, χρησιμοποιούμε μικρούς <strong>κύβους</strong> (π.χ. κυβικά εκατοστά - cm³).
+              <strong>Όγκος</strong> είναι ο χώρος που πιάνει ένα τρισδιάστατο αντικείμενο (όπως ένα κουτί, μια μπάλα ή ένα δωμάτιο). Για να τον μετρήσουμε, κοιτάμε <strong>πόσα ομοιόμορφα κυβάκια</strong> χωράνε ακριβώς στο εσωτερικό του!
             </p>
           </div>
 
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & ΚΑΡΤΕΣ */}
-            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[520px] w-full gap-6">
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ */}
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[540px] w-full gap-6">
               <div className="space-y-6">
                 <div>
                   <h3 className="text-xl font-black text-gray-900 mb-3 flex items-center gap-2">
                     <span>🕹️</span> 1. Γέμισε το Κουτί
                   </h3>
-                  <p className="text-gray-500 text-xs mb-3">
-                    Σύρε τον δρομέα για να βάζεις ένα-ένα τα κυβάκια μέσα στο κουτί και να δεις πώς γεμίζει ο χώρος.
-                  </p>
                   
-                  {/* Slider Ελέγχου */}
+                  {/* Slider */}
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl shadow-inner space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-bold text-slate-700">Κυβάκια στο κουτί:</span>
+                      <span className="text-sm font-bold text-slate-700">Κυβάκια μέσα στο κουτί:</span>
                       <span className={`text-2xl font-mono font-black ${isComplete ? 'text-emerald-600' : 'text-blue-600'}`}>
                         {cubesCount} / {totalCubes}
                       </span>
@@ -87,10 +98,6 @@ export default function EnnoiaOgkouPage() {
                       onChange={(e) => setCubesCount(parseInt(e.target.value))}
                       className="w-full h-2.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                     />
-                    <div className="flex justify-between text-[11px] font-bold text-gray-400 pt-1">
-                      <span>⚪ Άδειο κουτί</span>
-                      <span className={isComplete ? 'text-emerald-600 font-black' : ''}>📦 Γεμάτο (36 κυβάκια)</span>
-                    </div>
                   </div>
                 </div>
 
@@ -100,85 +107,108 @@ export default function EnnoiaOgkouPage() {
                 </div>
               </div>
 
-              {/* ΜΑΘΗΜΑΤΙΚΟ ΜΟΝΤΕΛΟ */}
+              {/* ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ */}
               <div className={`p-5 rounded-2xl border transition-all duration-300 w-full text-center shadow-sm ${isComplete ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200'}`}>
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΥΠΟΛΟΓΙΣΜΟΣ ΟΓΚΟΥ:</span>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">ΜΑΘΗΜΑΤΙΚΟΣ ΤΥΠΟΣ:</span>
                 <div className={`text-lg md:text-xl font-black mt-1 ${isComplete ? 'text-emerald-600' : 'text-slate-700'}`}>
                   {isComplete 
-                    ? `🏆 Όγκος = 4 × 3 × 3 = ${totalCubes} κυβικά εκατοστά!` 
-                    : `📦 Μέσα στο κουτί χωράνε: ${cubesCount} κυβάκια`
+                    ? `🏆 Όγκος = 4 &times; 3 &times; 3 = ${totalCubes} κυβικά εκατοστά!` 
+                    : `🟩 Έχεις τοποθετήσει: ${cubesCount} κύβους`
                   }
                 </div>
                 <p className="text-xs font-medium text-slate-400 mt-2 leading-relaxed">
-                  Για να βρούμε τον όγκο, πολλαπλασιάζουμε τις 3 διαστάσεις:<br />
-                  <strong>Μήκος &times; Πλάτος &times; Ύψος</strong>
+                  Αντί να τους μετράμε έναν-έναν, πολλαπλασιάζουμε τις 3 διαστάσεις:<br />
+                  <strong>Μήκος (4) &times; Πλάτος (3) &times; Ύψος (3)</strong>
                 </p>
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: 3D-LIKE SVG ΟΠΤΙΚΟΠΟΙΗΣΗ */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[520px] w-full relative overflow-hidden">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΕΥΘΥΓΡΑΜΜΙΣΜΕΝΟ SVG ΚΟΥΤΙ */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[540px] w-full relative overflow-hidden">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4 block text-center">
-                Τρισδιάστατη Αναπαράσταση Κουτιού (Μήκος: 4, Πλάτος: 3, Ύψος: 3)
+                Τρισδιάστατη Αναπαράσταση Στερεού
               </span>
 
-              {/* SVG Καμβάς με Isometric προβολή για ψευδαίσθηση 3D */}
-              <div className="relative bg-slate-50/50 p-4 rounded-2xl border border-slate-100 shadow-inner">
-                <svg width="340" height="300" viewBox="0 0 340 300" className="overflow-visible">
+              {/* Καμβάς */}
+              <div className="relative bg-slate-50/40 p-4 rounded-2xl border border-slate-100 shadow-inner flex items-center justify-center w-full max-w-[360px] h-[320px]">
+                <svg width="340" height="300" viewBox="-40 -10 380 300" className="overflow-visible" shapeRendering="geometricPrecision">
                   
-                  {/* Σχεδίαση των κύβων με βάση το cubesCount */}
+                  {/* Σχέδιαση των κύβων (με σωστή σειρά από πίσω προς τα μπρος για να μην κρύβονται λάθος) */}
                   {[...Array(totalCubes)].map((_, i) => {
-                    // Υπολογισμός θέσης x, y, z στον τρισδιάστατο χώρο
-                    const z = Math.floor(i / (length * width)); // Ύψος (layer)
+                    // Δομή διάταξης: στρώση ανά στρώση (z), σειρά ανά σειρά (y), κύβος ανά κύβος (x)
+                    const z = Math.floor(i / (length * width)); 
                     const rem = i % (length * width);
-                    const y = Math.floor(rem / length); // Πλάτος
-                    const x = rem % length; // Μήκος
+                    const y = Math.floor(rem / length); 
+                    const x = rem % length; 
 
-                    // Μετατροπή Isometric συντεταγμένων για το SVG
-                    const startX = 70;
-                    const startY = 200;
-                    const size = 32;
-
-                    // Μαθηματικός τύπος isometric προβολής
-                    const isoX = startX + (x * size) + (y * size * 0.5);
-                    const isoY = startY + (y * size * 0.25) - (z * size * 0.85);
-
+                    const pt = getIsoCoords(x, y, z);
                     const isActive = i < cubesCount;
 
                     return (
-                      <g key={i} className="transition-all duration-300" opacity={isActive ? 1 : 0.08}>
-                        {/* Μπροστινή Έδρα Κύβου */}
+                      <g key={i} className="transition-all duration-300" opacity={isActive ? 1 : 0.04}>
+                        {/* Πάνω Έδρα (Top) */}
                         <path
-                          d={`M ${isoX} ${isoY} L ${isoX + size} ${isoY + size*0.25} L ${isoX + size} ${isoY + size*1.1} L ${isoX} ${isoY + size*0.85} Z`}
-                          fill="#3b82f6"
-                          stroke="#1d4ed8"
-                          strokeWidth="1"
-                        />
-                        {/* Πλάγια Έδρα Κύβου */}
-                        <path
-                          d={`M ${isoX + size} ${isoY + size*0.25} L ${isoX + size * 1.5} ${isoY - size*0.1} L ${isoX + size * 1.5} ${isoY + size*0.75} L ${isoX + size} ${isoY + size*1.1} Z`}
-                          fill="#1d4ed8"
-                          stroke="#1e40af"
-                          strokeWidth="1"
-                        />
-                        {/* Πάνω Έδρα Κύβου */}
-                        <path
-                          d={`M ${isoX} ${isoY} L ${isoX + size*0.5} ${isoY - size*0.35} L ${isoX + size * 1.5} ${isoY - size*0.1} L ${isoX + size} ${isoY + size*0.25} Z`}
+                          d={`M ${pt.x} ${pt.y} L ${pt.x + size * 0.866} ${pt.y + size * 0.5} L ${pt.x} ${pt.y + size} L ${pt.x - size * 0.866} ${pt.y + size * 0.5} Z`}
                           fill="#60a5fa"
                           stroke="#2563eb"
-                          strokeWidth="1"
+                          strokeWidth="0.75"
                         />
+                        {/* Αριστερή Έδρα (Left) */}
+                        <path
+                          d={`M ${pt.x - size * 0.866} ${pt.y + size * 0.5} L ${pt.x} ${pt.y + size} L ${pt.x} ${pt.y + size + size} L ${pt.x - size * 0.866} ${pt.y + size * 0.5 + size} Z`}
+                          fill="#1d4ed8"
+                          stroke="#1e40af"
+                          strokeWidth="0.75"
+                        />
+                        {/* Δεξιά Έδρα (Right) */}
+                        <path
+                          d={`M ${pt.x} ${pt.y + size} L ${pt.x + size * 0.866} ${pt.y + size * 0.5} L ${pt.x + size * 0.866} ${pt.y + size * 0.5 + size} L ${pt.x} ${pt.y + size + size} Z`}
+                          fill="#3b82f6"
+                          stroke="#1d4ed8"
+                          strokeWidth="0.75"
+                        />
+                        
+                        {/* Μικρή ένδειξη 1 cm³ στον πρώτο κύβο */}
+                        {i === 0 && isActive && (
+                          <text x={pt.x - 10} y={pt.y + 25} fill="#ffffff" fontSize="7" fontWeight="bold" className="font-sans pointer-events-none">1 cm³</text>
+                        )}
                       </g>
                     );
                   })}
+
+                  {/* ΔΙΑΦΑΝΕΣ ΕΞΩΤΕΡΙΚΟ ΠΛΑΙΣΙΟ (Το γυάλινο κουτί που δείχνει το "Όλο") */}
+                  {(() => {
+                    const p000 = getIsoCoords(0, 0, 0);
+                    const p400 = getIsoCoords(length, 0, 0);
+                    const p030 = getIsoCoords(0, width, 0);
+                    const p430 = getIsoCoords(length, width, 0);
+                    const p003 = getIsoCoords(0, 0, height);
+                    const p4003 = getIsoCoords(length, 0, height);
+                    const p033 = getIsoCoords(0, width, height);
+                    const p433 = getIsoCoords(length, width, height);
+
+                    return (
+                      <g fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.6" className="pointer-events-none">
+                        {/* Βάση κουτιού */}
+                        <path d={`M ${p000.x} ${p000.y + size} L ${p400.x} ${p400.y + size} L ${p430.x} ${p430.y + size} L ${p030.x} ${p030.y + size} Z`} />
+                        {/* Οροφή κουτιού */}
+                        <path d={`M ${p003.x} ${p003.y + size} L ${p4003.x} ${p4003.y + size} L ${p433.x} ${p433.y + size} L ${p033.x} ${p033.y + size} Z`} fill="rgba(148,163,184,0.02)" />
+                        {/* Κατακόρυφες ακμές */}
+                        <line x1={p000.x} y1={p000.y + size} x2={p003.x} y2={p003.y + size} />
+                        <line x1={p400.x} y1={p400.y + size} x2={p4003.x} y2={p4003.y + size} />
+                        <line x1={p030.x} y1={p030.y + size} x2={p033.x} y2={p033.y + size} />
+                        <line x1={p430.x} y1={p430.y + size} x2={p433.x} y2={p433.y + size} />
+                      </g>
+                    );
+                  })()}
                 </svg>
               </div>
 
-              {/* Βοηθητικές ενδείξεις διαστάσεων */}
-              <div className="w-full flex justify-center gap-4 text-xs font-black text-slate-400 mt-6 pt-4 border-t border-gray-50 text-center">
-                <span className="text-blue-600">↔️ Μήκος: 4</span>
-                <span className="text-indigo-700">↗️ Πλάτος: 3</span>
-                <span className="text-sky-500">⬆️ Ύψος: 3</span>
+              {/* Ετικέτες Διαστάσεων */}
+              <div className="w-full flex justify-center gap-5 text-xs font-black text-slate-400 mt-6 pt-4 border-t border-gray-50 text-center">
+                <span className="text-blue-600">↔️ Μήκος: 4 cm</span>
+                <span className="text-indigo-600">↗️ Πλάτος: 3 cm</span>
+                <span className="text-sky-500">⬆️ Ύψος: 3 cm</span>
               </div>
             </div>
 
