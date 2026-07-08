@@ -37,7 +37,7 @@ export default function FysikoiArithmoiPage() {
             LearnMaths<span className="text-indigo-600">.gr</span>
           </Link>
           {/* Πιστό Κουμπί Επιστροφής (Απαλό γκρι οβάλ με BACK εικονίδιο) */}
-            <Link href="/e-dimotikou" className="bg-[#f1f1f4] hover:bg-[#e4e4e8] text-[#4a4a52] px-4 py-2 rounded-2xl text-xs font-black transition flex items-center gap-1.5 tracking-wide">
+            <Link href="/st-dimotikou" className="bg-[#f1f1f4] hover:bg-[#e4e4e8] text-[#4a4a52] px-4 py-2 rounded-2xl text-xs font-black transition flex items-center gap-1.5 tracking-wide">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-indigo-600 stroke-[3] stroke-current">
                 <path d="M19 12H5M5 12L12 19M5 12L12 5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
