@@ -117,8 +117,11 @@ export default function Home() {
             <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 duration-300">
               <div className="bg-blue-500 py-4 text-center text-white font-bold text-xl">Στ' Δημοτικού</div>
               <div className="p-6 text-center">
+                <p className="text-gray-800 font-semibold mb-2 text-sm">Διαδραστικές Ενότητες</p>
                 <p className="text-gray-600 mb-6 text-sm">Ανάλογα ποσά, εξισώσεις, κλίμακες & προετοιμασία για το Γυμνάσιο.</p>
-                <button className="w-full bg-blue-500 text-white py-2 rounded-lg font-medium opacity-60 cursor-not-allowed text-sm">Σύντομα Διαθέσιμο</button>
+                <Link href="/st-dimotikou" className="block w-full text-center bg-cyan-500 text-white py-2 rounded-lg font-bold hover:bg-cyan-600 transition shadow-md text-sm">
+                  🚀 Είσοδος στην Τάξη
+                </Link>
               </div>
             </div>
 
