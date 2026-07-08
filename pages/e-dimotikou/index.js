@@ -31,7 +31,8 @@ export default function EDimotikouMenu() {
     { id: '24-embado', label: '🔺 24. Εμβαδό', href: '/e-dimotikou/24-embado' },
     { id: '25-embado-sximaton', label: '🔺 25. Εμβαδό Σχημάτων', href: '/e-dimotikou/25-embado-sximaton' },
     { id: '26-monades-epifaneias', label: '🔺 26. Μονάδες Μέτρησης Επιφάνειας', href: '/e-dimotikou/26-monades-epifaneias' },
-    { id: '27-ennoia-ogkou', label: '🔺 27. Όγκος', href: '/e-dimotikou/27-ennoia-ogkou' }
+    { id: '27-ennoia-ogkou', label: '🔺 27. Όγκος', href: '/e-dimotikou/27-ennoia-ogkou' },
+    { id: '28-ogkoi-sximaton', label: '🔺 28. Όγκοι Σχημάτων', href: '/e-dimotikou/28-ogkoi-sximaton' }
   ];
 
   return (
