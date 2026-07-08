@@ -86,8 +86,8 @@ export default function DekadikoiArithmoiPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUT (Μεγαλώσαμε σε h-[480px]) */}
-            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between h-[480px] w-full">
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUT (Μετατροπή σε min-h-[480px]) */}
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[480px] w-full gap-6">
               <div className="space-y-2">
                 <h3 className="text-2xl font-black text-gray-900 flex items-center gap-2">
                   🕹️ Πίνακας Δεκαδικών
@@ -97,7 +97,7 @@ export default function DekadikoiArithmoiPage() {
                 </p>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col items-center justify-center shadow-inner my-auto">
+              <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col items-center justify-center shadow-inner">
                 <input 
                   type="text" 
                   value={number}
@@ -122,9 +122,9 @@ export default function DekadikoiArithmoiPage() {
                 />
               </div>
 
-              {/* Μαθηματική Καταγραφή / Ανάλυση (Μεγαλώσαμε σε h-[210px] με pb-6 για τέλειο αέρα) */}
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl h-[210px] pb-6 font-mono text-xs md:text-sm text-left space-y-1 shadow-inner overflow-hidden flex flex-col justify-start">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block font-sans mb-2">
+              {/* Μαθηματική Καταγραφή / Ανάλυση (Δυναμικό ύψος με flex-1, pb-4 για αέρα) */}
+              <div className="p-5 bg-gray-50 border border-gray-200 rounded-2xl flex-1 pb-5 font-mono text-xs md:text-sm text-left space-y-2 shadow-inner">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block font-sans mb-1">
                   🧬 Ανάλυση σε Δεκαδικά Κλάσματα:
                 </span>
                 
@@ -134,7 +134,7 @@ export default function DekadikoiArithmoiPage() {
                   const value = Math.pow(10, 2 - i);
                   if (digit === '0' && value !== 1) return null;
                   return (
-                    <div key={`int-${i}`} className="flex items-center gap-1.5 text-slate-600 border-b border-gray-100/70 py-0.5 last:border-0">
+                    <div key={`int-${i}`} className="flex items-center gap-1.5 text-slate-600 border-b border-gray-100 pb-1 last:border-0">
                       <span className="text-emerald-600 font-black text-sm">{digit}</span>
                       <span className="text-slate-400">×</span>
                       <span className="font-bold text-slate-700">{value}</span>
@@ -147,7 +147,7 @@ export default function DekadikoiArithmoiPage() {
                   if (digit === '0') return null;
                   const den = Math.pow(10, i + 1);
                   return (
-                    <div key={`dec-${i}`} className="flex items-center gap-1.5 text-slate-600 border-b border-gray-100/70 py-0.5 last:border-0">
+                    <div key={`dec-${i}`} className="flex items-center gap-1.5 text-slate-600 border-b border-gray-100 pb-1 last:border-0">
                       <span className="text-blue-600 font-black text-sm">{digit}</span>
                       <span className="text-slate-400">×</span>
                       <div className="inline-flex flex-col items-center text-[10px] font-bold text-slate-700 leading-none">
@@ -162,8 +162,8 @@ export default function DekadikoiArithmoiPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΠΙΝΑΚΑ (Μεγαλώσαμε σε h-[480px]) */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between h-[480px] w-full relative overflow-hidden">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΠΙΝΑΚΑ (Μετατροπή σε min-h-[480px]) */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
               <div className="w-full overflow-x-auto pb-2 my-auto">
