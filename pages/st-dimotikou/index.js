@@ -1,4 +1,4 @@
-// pages/e-dimotikou/index.js
+// pages/st-dimotikou/index.js
 import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
