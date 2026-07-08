@@ -1,4 +1,4 @@
-// pages/st-dimotikou/1-fysikoi.js
+// pages/st-dimotikou/1-fisikoi.js
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
