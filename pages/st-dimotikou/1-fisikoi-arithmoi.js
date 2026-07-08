@@ -51,7 +51,7 @@ export default function FysikoiArithmoiPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
-                <strong>Φυσικοί αριθμοί</strong> είναι οι αριθμοί $0, 1, 2, 3, \dots$ και συνεχίζουν χωρίς τέλος. Τους χρησιμοποιούμε για να μετράμε πλήθος αντικειμένων.
+                <strong>Φυσικοί αριθμοί</strong> είναι οι αριθμοί 0, 1, 2, 3, 4, ... και συνεχίζουν χωρίς τέλος. Τους χρησιμοποιούμε για να μετράμε πλήθος αντικειμένων.
               </p>
               <div className="bg-blue-50 p-4 rounded-2xl border-l-4 border-blue-500">
                 <p className="text-sm">
