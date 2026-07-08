@@ -11,8 +11,8 @@ export default function MetatropiPage() {
   const [dekadikos, setDekadikos] = useState("0.45");
   
   // Κατάσταση για τη μετατροπή Κλάσματος -> Δεκαδικού
-  const [arithmitis, setArithmitis] = useState(7);
-  const [paronomastis, setParonomastis] = useState(10); // 10, 100, 1000
+  const [arithmitis, setArithmitis] = useState(21);
+  const [paronomastis, setParonomastis] = useState(1000); // 10, 100, 1000
 
   // Υπολογισμοί για Δεκαδικό -> Κλάσμα
   const cleanDekadikos = parseFloat(dekadikos) || 0;
@@ -22,17 +22,83 @@ export default function MetatropiPage() {
   const dynamicDen = Math.pow(10, numDigits);
   const dynamicNum = Math.round(cleanDekadikos * dynamicDen);
 
-  // Πλήθος τετραγώνων για το γράφημα (με βάση τα εκατοστά για βέλτιστη οπτικοποίηση)
-  const getFilledSquares = () => {
-    if (activeTab === 'toKlasma') {
-      return Math.min(Math.round(cleanDekadikos * 100), 100);
-    } else {
-      const ratio = arithmitis / paronomastis;
-      return Math.min(Math.round(ratio * 100), 100);
+  // Καθορισμός του τρέχοντος παρονομαστή βάσει του Tab για τη σχεδίαση του πλέγματος
+  const currentDenominator = activeTab === 'toKlasma' ? dynamicDen : paronomastis;
+  const currentNumerator = activeTab === 'toKlasma' ? dynamicNum : arithmitis;
+
+  // Σχεδίαση των δυναμικών κουτιών μέσω SVG (Σταθερή διάσταση 300x300)
+  const renderGridSquares = () => {
+    const squares = [];
+    const size = 300;
+
+    if (currentDenominator === 10) {
+      // 10 Οριζόντιες Λωρίδες (Δέκατα)
+      const height = size / 10;
+      for (let i = 0; i < 10; i++) {
+        const isFilled = i < currentNumerator;
+        squares.push(
+          <rect
+            key={i}
+            x="0"
+            y={i * height}
+            width={size}
+            height={height}
+            className={`transition-all duration-300 stroke-slate-300 stroke-[1.5] ${isFilled ? 'fill-orange-500' : 'fill-white'}`}
+          />
+        );
+      }
+    } else if (currentDenominator === 100) {
+      // Пλέγμα 10x10 (Εκατοστά)
+      const boxSize = size / 10;
+      let count = 0;
+      for (let r = 0; r < 10; r++) {
+        for (let c = 0; c < 10; c++) {
+          const isFilled = count < currentNumerator;
+          squares.push(
+            <rect
+              key={count}
+              x={c * boxSize}
+              y={r * boxSize}
+              width={boxSize}
+              height={boxSize}
+              className={`transition-all duration-200 stroke-slate-200 stroke-[1] ${isFilled ? 'fill-orange-500' : 'fill-white'}`}
+            />
+          );
+          count++;
+        }
+      }
+    } else if (currentDenominator === 1000) {
+      // Πλέγμα 25x40 = 1000 (Χιλιοστά)
+      const rows = 25;
+      const cols = 40;
+      const boxW = size / cols;
+      const boxH = size / rows;
+      let count = 0;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const isFilled = count < currentNumerator;
+          squares.push(
+            <rect
+              key={count}
+              x={c * boxW}
+              y={r * boxH}
+              width={boxW}
+              height={boxH}
+              className={`transition-colors duration-100 stroke-slate-100/50 stroke-[0.3] ${isFilled ? 'fill-orange-500' : 'fill-white'}`}
+            />
+          );
+          count++;
+        }
+      }
     }
+    return squares;
   };
 
-  const filledSquares = getFilledSquares();
+  const getGridLabel = () => {
+    if (currentDenominator === 10) return "δέκατα";
+    if (currentDenominator === 100) return "εκατοστά";
+    return "χιλιοστά";
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -108,14 +174,14 @@ export default function MetatropiPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUTS (min-h-[480px]) */}
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUTS */}
             <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[480px] w-full gap-6">
               
               {activeTab === 'toKlasma' ? (
                 <>
                   <div className="space-y-2">
                     <h3 className="text-2xl font-black text-gray-900">Μετατροπή σε Κλάσμα</h3>
-                    <p className="text-gray-500 text-sm">Γράψε έναν δεκαδικό αριθμό (έως 3 δεκαδικά ψηφία με τελεία, π.χ. 0.75 ή 0.005).</p>
+                    <p className="text-gray-500 text-sm">Γράψε έναν δεκαδικό αριθμό (έως 3 δεκαδικά ψηφία με τελεία, π.χ. 0.4, 0.45 ή 0.456).</p>
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl flex flex-col items-center justify-center shadow-inner my-auto">
@@ -124,9 +190,12 @@ export default function MetatropiPage() {
                       value={dekadikos}
                       onChange={(e) => {
                         let val = e.target.value.replace(/[^0-9.]/g, '');
+                        if (val.startsWith('.')) val = '0' + val;
                         const dotParts = val.split('.');
                         if ((val.match(/\./g) || []).length <= 1 && (!dotParts[1] || dotParts[1].length <= 3)) {
-                          setDekadikos(val);
+                          if (!dotParts[0] || parseFloat(val) <= 1) {
+                            setDekadikos(val);
+                          }
                         }
                       }}
                       className="text-3xl font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm focus:border-blue-500 outline-none transition-all w-full max-w-sm tracking-wider text-blue-600"
@@ -155,18 +224,40 @@ export default function MetatropiPage() {
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
-                    {/* Έλεγχος Αριθμητή */}
-                    <div className="flex items-center justify-between w-full max-w-xs mx-auto">
+                    {/* Έλεγχος Αριθμητή (Με Πληκτρολόγηση) */}
+                    <div className="flex items-center justify-between w-full max-w-sm mx-auto">
                       <span className="font-bold text-sm text-gray-600">Αριθμητής:</span>
-                      <div className="flex items-center gap-3">
-                        <button onClick={() => setArithmitis(Math.max(1, arithmitis - 1))} className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-gray-300">-</button>
-                        <span className="w-10 text-center font-black text-xl text-emerald-600">{arithmitis}</span>
-                        <button onClick={() => setArithmitis(Math.min(1000, arithmitis + 1))} className="bg-gray-200 text-gray-700 w-8 h-8 rounded-full font-bold hover:bg-gray-300">+</button>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => setArithmitis(Math.max(0, arithmitis - 1))} 
+                          className="bg-white border border-gray-300 text-gray-700 w-9 h-9 rounded-xl font-black hover:bg-gray-100 shadow-sm flex items-center justify-center text-lg transition-all"
+                        >
+                          -
+                        </button>
+                        <input 
+                          type="number"
+                          value={arithmitis}
+                          onChange={(e) => {
+                            let val = parseInt(e.target.value);
+                            if (isNaN(val)) val = 0;
+                            // Έλεγχος ώστε ο αριθμητής να μην ξεπερνάει τον παρονομαστή
+                            if (val >= 0 && val <= paronomastis) {
+                              setArithmitis(val);
+                            }
+                          }}
+                          className="w-20 text-center font-black text-xl text-emerald-600 bg-white border border-gray-300 rounded-xl py-1 focus:border-emerald-500 outline-none shadow-sm"
+                        />
+                        <button 
+                          onClick={() => setArithmitis(Math.min(paronomastis, arithmitis + 1))} 
+                          className="bg-white border border-gray-300 text-gray-700 w-9 h-9 rounded-xl font-black hover:bg-gray-100 shadow-sm flex items-center justify-center text-lg transition-all"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
 
                     {/* Επιλογή Παρονομαστή */}
-                    <div className="flex items-center justify-between w-full max-w-xs mx-auto">
+                    <div className="flex items-center justify-between w-full max-w-sm mx-auto pt-2">
                       <span className="font-bold text-sm text-gray-600">Παρονομαστής:</span>
                       <div className="flex gap-2">
                         {[10, 100, 1000].map((den) => (
@@ -174,7 +265,7 @@ export default function MetatropiPage() {
                             key={den}
                             onClick={() => {
                               setParonomastis(den);
-                              if(arithmitis > den) setArithmitis(den); // keep within limits for visualization
+                              if(arithmitis > den) setArithmitis(den);
                             }}
                             className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${paronomastis === den ? 'bg-blue-600 text-white shadow-sm' : 'bg-white border text-gray-500 hover:bg-gray-100'}`}
                           >
@@ -204,28 +295,31 @@ export default function MetatropiPage() {
               )}
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΟΝΑΔΑΣ (min-h-[480px]) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΔΥΝΑΜΙΚΟ SVG ΠΛΕΓΜΑ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {/* Πλέγμα 10x10 που αναπαριστά τα εκατοστά (100/100 = 1 Μονάδα) */}
-              <div className="my-auto flex flex-col items-center gap-3">
+              <div className="my-auto flex flex-col items-center gap-4 w-full">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτική Αναπαράσταση στη Μονάδα:</span>
-                <div className="grid grid-cols-10 gap-[2px] p-2 bg-slate-100 rounded-xl border border-slate-200">
-                  {[...Array(100)].map((_, i) => (
-                    <div 
-                      key={i} 
-                      className={`w-6 h-6 md:w-7 md:h-7 rounded-sm transition-all duration-300 ${i < filledSquares ? 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-sm' : 'bg-white'}`}
-                    />
-                  ))}
+                
+                <div className="bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-inner">
+                  <svg 
+                    width="280" 
+                    height="280" 
+                    viewBox="0 0 300 300" 
+                    className="bg-white drop-shadow-sm rounded"
+                  >
+                    {renderGridSquares()}
+                  </svg>
                 </div>
+
                 <span className="text-sm font-black text-slate-700 tabular-nums">
-                  Καλύφθηκαν: {filledSquares} / 100 εκατοστά του σχήματος
+                  Καλύφθηκαν: <span className="text-orange-500">{currentNumerator}</span> / {currentDenominator} {getGridLabel()}
                 </span>
               </div>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>🔍 Το πλέγμα δείχνει πώς το κλάσμα ή ο δεκαδικός χρωματίζουν ένα μέρος της ίδιας ακέραιης επιφάνειας.</span>
+                <span>🔍 Παρατήρησε πώς αλλάζει το μέγεθος των κουτιών ανάλογα με τον παρονομαστή.</span>
               </div>
             </div>
 
@@ -237,6 +331,18 @@ export default function MetatropiPage() {
       <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
         <p>© 2026 LearnMaths.gr. Μετατροπές Δεκαδικών Μορφών ΣΤ' Δημοτικού.</p>
       </footer>
+
+      {/* CSS για εξαφάνιση default arrows στα inputs */}
+      <style jsx global>{`
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+      `}</style>
     </div>
   );
 }
