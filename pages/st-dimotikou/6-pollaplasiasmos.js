@@ -332,58 +332,49 @@ export default function PollaplasiasmosPage() {
                     <p className="text-gray-500 text-sm">Συμπλήρωσε τους αριθμούς στην οριζόντια μαθηματική δομή και δες πώς μοιράζεται ο πολλαπλασιασμός.</p>
                   </div>
 
-                  {/* ΜΕΓΑΛΩΜΕΝΟ ΚΑΙ ΕΥΘΥΓΡΑΜΜΙΣΜΕΝΟ ΠΛΑΙΣΙΟ ΠΡΑΞΕΩΝ ΓΙΑ ΜΙΑ ΓΡΑΜΜΗ (w-full max-w-2xl) */}
-                  <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full max-w-2xl flex flex-col gap-5 shadow-inner my-auto items-center justify-center">
-                    <div className="flex flex-wrap md:flex-nowrap whitespace-nowrap items-center justify-center gap-2 font-mono font-black text-xl md:text-2xl text-slate-700">
+                  {/* ΠΛΗΡΩΣ ΕΥΘΥΓΡΑΜΜΙΣΜΕΝΟ ΚΑΙ ΕΥΡΥΧΩΡΟ ΠΛΑΙΣΙΟ ΠΡΑΞΕΩΝ */}
+                  <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full max-w-2xl flex flex-col gap-6 shadow-inner my-auto items-center justify-center">
+                    <div className="flex flex-nowrap items-center justify-center gap-2 font-mono font-black text-xl md:text-2xl text-slate-700 whitespace-nowrap">
                       
-                      {/* Input α */}
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">α</span>
-                        <input 
-                          type="text" 
-                          value={distA} 
-                          onChange={(e) => handleInputChange(e.target.value, setPropA)} 
-                          className="w-14 h-12 border-2 border-blue-200 rounded-xl text-center font-black text-blue-600 bg-white outline-none focus:border-blue-500 text-lg shadow-sm" 
-                        />
-                      </div>
+                      {/* Input 1 */}
+                      <input 
+                        type="text" 
+                        value={distA} 
+                        onChange={(e) => handleInputChange(e.target.value, setPropA)} 
+                        className="w-14 h-12 border-2 border-blue-200 rounded-xl text-center font-black text-blue-600 bg-white outline-none focus:border-blue-500 text-lg shadow-sm" 
+                      />
 
-                      {/* Σύμβολο × με τέλεια ευθυγράμμιση ύψους */}
-                      <span className="text-slate-400 px-1 self-center flex items-center h-12 mt-4 md:mt-0">×</span>
+                      {/* Σύμβολο × */}
+                      <span className="text-slate-400 px-0.5 select-none font-light">×</span>
                       
                       {/* Αριστερή Παρένθεση */}
-                      <span className="text-gray-400 text-3xl font-light self-center flex items-center h-12 mt-4 md:mt-0">(</span>
+                      <span className="text-gray-400 text-3xl font-light select-none -mr-0.5">(</span>
 
-                      {/* Input β */}
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">β</span>
-                        <input 
-                          type="text" 
-                          value={distB} 
-                          onChange={(e) => handleInputChange(e.target.value, setPropB)} 
-                          className="w-14 h-12 border-2 border-emerald-200 rounded-xl text-center font-black text-emerald-500 bg-white outline-none focus:border-emerald-400 text-lg shadow-sm" 
-                        />
-                      </div>
+                      {/* Input 2 */}
+                      <input 
+                        type="text" 
+                        value={distB} 
+                        onChange={(e) => handleInputChange(e.target.value, setPropB)} 
+                        className="w-14 h-12 border-2 border-emerald-200 rounded-xl text-center font-black text-emerald-500 bg-white outline-none focus:border-emerald-400 text-lg shadow-sm" 
+                      />
 
-                      {/* Σύμβολο + με τέλεια ευθυγράμμιση ύψους */}
-                      <span className="text-slate-400 px-1 self-center flex items-center h-12 mt-4 md:mt-0">+</span>
+                      {/* Σύμβολο + */}
+                      <span className="text-slate-400 px-0.5 select-none font-light">+</span>
 
-                      {/* Input γ */}
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">γ</span>
-                        <input 
-                          type="text" 
-                          value={distC} 
-                          onChange={(e) => handleInputChange(e.target.value, setPropC)} 
-                          className="w-14 h-12 border-2 border-cyan-200 rounded-xl text-center font-black text-cyan-600 bg-white outline-none focus:border-cyan-500 text-lg shadow-sm" 
-                        />
-                      </div>
+                      {/* Input 3 */}
+                      <input 
+                        type="text" 
+                        value={distC} 
+                        onChange={(e) => handleInputChange(e.target.value, setPropC)} 
+                        className="w-14 h-12 border-2 border-cyan-200 rounded-xl text-center font-black text-cyan-600 bg-white outline-none focus:border-cyan-500 text-lg shadow-sm" 
+                      />
 
                       {/* Δεξιά Παρένθεση */}
-                      <span className="text-gray-400 text-3xl font-light self-center flex items-center h-12 mt-4 md:mt-0">)</span>
+                      <span className="text-gray-400 text-3xl font-light select-none -ml-0.5">)</span>
                     </div>
 
                     {/* Αναλυτικά Αποτελέσματα */}
-                    <div className="bg-white p-3 rounded-xl border shadow-sm font-mono text-xs md:text-sm text-center w-full max-w-sm space-y-1.5 text-slate-700">
+                    <div className="bg-white p-4 rounded-xl border shadow-sm font-mono text-xs md:text-sm text-center w-full max-w-sm space-y-1.5 text-slate-700">
                       <div>Oλόκληρο: {valA} × ({valB} + {valC}) = {valA} × {valB + valC} = <strong>{valA * (valB + valC)}</strong></div>
                       <div className="text-slate-200 border-t border-dashed my-1"></div>
                       <div>Επιμερισμένα: ({valA} × {valB}) + ({valA} × {valC}) = {valA * valB} + {valA * valC} = <strong>{valA * valB + valA * valC}</strong></div>
