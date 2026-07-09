@@ -238,57 +238,63 @@ export default function ProsthesiAfairesiPage() {
               )}
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
-              <div className="w-full"></div>
+{/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΜΕ ΤΕΛΕΙΑ ΣΤΟΙΧΙΣΗ ΓΡΑΜΜΗΣ */}
+<div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
+  <div className="w-full"></div>
 
-              <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[340px]">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
-                
-                <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none">
-                  
-                  {/* Σήμα Πράξης */}
-                  <div className="absolute left-4 top-[54px] text-amber-400 font-black">
-                    {isAddition ? "+" : "-"}
-                  </div>
+  <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[340px]">
+    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
+    
+    {/* Τοποθετούμε το relative στο εξωτερικό κουτί */}
+    <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none overflow-hidden">
+      
+      {/* Σήμα Πράξης */}
+      <div className="absolute left-4 top-[54px] text-amber-400 font-black z-10">
+        {isAddition ? "+" : "-"}
+      </div>
 
-                  {/* 3-Column Grid - tracking-normal για εξοικονόμηση χώρου */}
-                  <div className="grid grid-cols-[1fr_auto_1fr] items-center text-right font-black tracking-normal gap-y-2">
-                    
-                    {/* Γραμμή 1: Αριθμός Α */}
-                    <div className="text-blue-400 truncate">{partA.intPart}</div>
-                    <div className="text-rose-500 font-bold px-[2px]">,</div>
-                    <div className="text-blue-400 text-left">{partA.decPart}</div>
+      {/* 3-Column Grid */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center text-right font-black tracking-normal gap-y-2 relative z-10">
+        
+        {/* Γραμμή 1: Αριθμός Α */}
+        <div className="text-blue-400 truncate">{partA.intPart}</div>
+        <div className="text-rose-500 font-bold px-[4px] text-center">,</div>
+        <div className="text-blue-400 text-left">{partA.decPart}</div>
 
-                    {/* Γραμμή 2: Αριθμός Β */}
-                    <div className="text-emerald-400 truncate">{partB.intPart}</div>
-                    <div className="text-rose-500 font-bold px-[2px]">,</div>
-                    <div className="text-emerald-400 text-left">{partB.decPart}</div>
+        {/* Γραμμή 2: Αριθμός Β */}
+        <div className="text-emerald-400 truncate">{partB.intPart}</div>
+        <div className="text-rose-500 font-bold px-[4px] text-center">,</div>
+        <div className="text-emerald-400 text-left">{partB.decPart}</div>
 
-                    {/* Οριζόντια Γραμμή */}
-                    <div className="col-span-3 h-[2px] bg-slate-700 my-1"></div>
+        {/* Οριζόντια Γραμμή */}
+        <div className="col-span-3 h-[2px] bg-slate-700 my-1"></div>
 
-                    {/* Γραμμή 3: Αποτέλεσμα */}
-                    <div className="text-purple-400 text-2xl truncate">{partResult.intPart}</div>
-                    <div className="text-rose-500 font-bold px-[2px] text-2xl">,</div>
-                    <div className="text-purple-400 text-left text-2xl">{partResult.decPart}</div>
-                  </div>
+        {/* Γραμμή 3: Αποτέλεσμα */}
+        <div className="text-purple-400 text-2xl truncate">{partResult.intPart}</div>
+        <div className="text-rose-500 font-bold px-[4px] text-3xl text-center">,</div>
+        <div className="text-purple-400 text-left text-2xl">{partResult.decPart}</div>
 
-                  {/* Κάθετη Διακεκομμένη Γραμμή κλειδωμένη στο Κόμμα */}
-                  <div className="absolute top-4 bottom-4 left-[calc(50%_-_11px)] w-[1px] border-r-2 border-dashed border-rose-500/50 pointer-events-none"></div>
-                </div>
+        {/* Η ΚΟΚΚΙΝΗ ΓΡΑΜΜΗ ΩΣ COL-START-2:
+          Καταλαμβάνει τη μεσαία στήλη (εκεί που είναι τα κόμματα), απλώνεται από πάνω μέχρι κάτω (row-span)
+          και με το absolute/h-full/w-0 κλειδώνει ακριβώς στο κέντρο των υποδιαστολών!
+        */}
+        <div className="col-start-2 row-start-1 row-end-5 justify-self-center relative h-full w-0 pointer-events-none">
+          <div className="absolute top-[-10px] bottom-[-10px] left-1/2 -translate-x-1/2 w-0 border-r-2 border-dashed border-rose-500/60 z-0"></div>
+        </div>
 
-                <span className="text-xs font-bold text-rose-500 flex items-center gap-1 text-center">
-                  📍 Η κόκκινη διακεκομμένη γραμμή περνάει ακριβώς από την υποδιαστολή!
-                </span>
-              </div>
+      </div>
 
-              <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>🔍 Οι αριθμοί μετατρέπονται αυτόματα ώστε να έχουν ίσο πλήθος δεκαδικών ψηφίων (έως 3).</span>
-              </div>
-            </div>
+    </div>
 
-          </div>
+    <span className="text-xs font-bold text-rose-500 flex items-center gap-1 text-center">
+      📍 Η κόκκινη διακεκομμένη γραμμή περνάει ακριβώς από την υποδιαστολή!
+    </span>
+  </div>
+
+  <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
+    <span>🔍 Οι αριθμοί μετατρέπονται αυτόματα ώστε να έχουν ίσο πλήθος δεκαδικών ψηφίων (έως 3).</span>
+  </div>
+</div>
         </main>
       </div>
 
