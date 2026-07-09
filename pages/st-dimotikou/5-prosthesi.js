@@ -9,7 +9,7 @@ export default function ProsthesiAfairesiPage() {
   
   // Κατάσταση για Κάθετη Πράξη
   const [numA, setNumA] = useState("142.5");
-  const [numB, setNumB] = useState("38.74");
+  const [numB, setNumB] = useState("15.123");
   const [isAddition, setIsAddition] = useState(true);
 
   // Κατάσταση για Αντιμεταθετική (Ιδιότητες)
@@ -19,6 +19,26 @@ export default function ProsthesiAfairesiPage() {
   const valA = parseFloat(numA) || 0;
   const valB = parseFloat(numB) || 0;
   const result = isAddition ? valA + valB : valA - valB;
+
+  // Βρίσκουμε δυναμικά πόσα δεκαδικά ψηφία χρειάζεται να εμφανίσουμε (Max 3)
+  const getDecimalPlaces = () => {
+    const digitsA = (numA.split('.')[1] || "").length;
+    const digitsB = (numB.split('.')[1] || "").length;
+    return Math.min(Math.max(digitsA, digitsB, 1), 3); // Τουλάχιστον 1, το πολύ 3
+  };
+
+  const decimalPlaces = getDecimalPlaces();
+
+  // Διαχωρισμός των αριθμών σε Ακέραιο και Δεκαδικό για την απόλυτη στοίχιση στον πίνακα
+  const formatForGrid = (value) => {
+    const str = value.toFixed(decimalPlaces);
+    const [intPart, decPart] = str.split('.');
+    return { intPart, decPart };
+  };
+
+  const partA = formatForGrid(valA);
+  const partB = formatForGrid(valB);
+  const partResult = formatForGrid(result);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -64,17 +84,20 @@ export default function ProsthesiAfairesiPage() {
                 <p className="text-xs md:text-sm leading-relaxed text-indigo-50 font-medium">
                   Όταν γράφουμε κάθετα δεκαδικούς αριθμούς, το πιο σημαντικό βήμα είναι να τοποθετούμε τις **υποδιαστολές ακριβώς τη μία κάτω από την άλλη**. Αν κάποιος αριθμός έχει λιγότερα ψηφία, συμπληρώνουμε μηδενικά στο τέλος!
                 </p>
-                <div className="bg-white/10 p-2.5 rounded-xl text-center font-mono text-xs md:text-sm tracking-widest text-amber-200">
-                  142,50<br/>
-                  +&nbsp;&nbsp;38,74<br/>
-                  <div className="w-full h-[1px] bg-white/30 my-1"></div>
-                  181,24
+                {/* ΔΙΟΡΘΩΜΕΝΗ ΣΤΟΙΧΙΣΗ ΠΑΡΑΔΕΙΓΜΑΤΟΣ ΘΕΩΡΙΑΣ */}
+                <div className="flex justify-center">
+                  <div className="bg-white/10 p-3 rounded-xl font-mono text-sm tracking-widest text-amber-200 w-32 text-right relative">
+                    <span className="absolute left-2 top-7 text-white">+</span>
+                    <div>142,50</div>
+                    <div className="border-b border-white/30 my-1 pb-1">38,74</div>
+                    <div className="font-bold text-white">181,24</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* TABS ΕΝΑΛΛΑΓΗΣ ΕΚΠΑΙΔΕΥΤΙΚΩΝ ΕΝΟΤΗΤΩΝ */}
+          {/* TABS ΕΝΑΛΛΑΓΗΣ */}
           <div className="flex flex-wrap justify-center bg-gray-200/60 p-1.5 rounded-2xl max-w-xl mx-auto shadow-inner gap-1">
             <button 
               onClick={() => setActiveTab('katheti')}
@@ -99,7 +122,7 @@ export default function ProsthesiAfairesiPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUTS */}
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ */}
             <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[480px] w-full gap-6">
               
               {activeTab === 'katheti' && (
@@ -114,16 +137,18 @@ export default function ProsthesiAfairesiPage() {
                       <input 
                         type="text" 
                         value={numA}
-                        onChange={(e) => setNumA(e.target.value.replace(/[^0-9.]/g, ''))}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9.]/g, '');
+                          const decs = val.split('.')[1] || "";
+                          if (decs.length <= 3) setNumA(val);
+                        }}
                         className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[140px] text-blue-600 outline-none focus:border-blue-500"
                         placeholder="Αριθμός Α"
                       />
                       
-                      {/* Επιλογέας Πράξης */}
                       <button 
                         onClick={() => setIsAddition(!isAddition)}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-black text-xl w-10 h-10 rounded-full flex items-center justify-center shadow transition-colors"
-                        title="Αλλαγή Πράξης"
                       >
                         {isAddition ? "+" : "-"}
                       </button>
@@ -131,7 +156,11 @@ export default function ProsthesiAfairesiPage() {
                       <input 
                         type="text" 
                         value={numB}
-                        onChange={(e) => setNumB(e.target.value.replace(/[^0-9.]/g, ''))}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9.]/g, '');
+                          const decs = val.split('.')[1] || "";
+                          if (decs.length <= 3) setNumB(val);
+                        }}
                         className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[140px] text-blue-600 outline-none focus:border-blue-500"
                         placeholder="Αριθμός Β"
                       />
@@ -154,14 +183,14 @@ export default function ProsthesiAfairesiPage() {
                   <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full flex flex-col items-center justify-center gap-6 shadow-inner my-auto">
                     <div className="flex items-center gap-4 text-xl font-black font-mono bg-white p-4 rounded-xl border shadow-sm">
                       <span className={`transition-all duration-300 ${isSwapped ? 'text-blue-600 transform translate-x-16' : 'text-emerald-600'}`}>
-                        {isSwapped ? "38.74" : "142.5"}
+                        {isSwapped ? "15.123" : "142.5"}
                       </span>
                       <span className="text-slate-400">+</span>
                       <span className={`transition-all duration-300 ${isSwapped ? 'text-emerald-600 transform -translate-x-16' : 'text-blue-600'}`}>
-                        {isSwapped ? "142.5" : "38.74"}
+                        {isSwapped ? "142.5" : "15.123"}
                       </span>
                       <span className="text-slate-400">=</span>
-                      <span className="text-purple-600 bg-purple-50 px-3 py-1 rounded-lg">181.24</span>
+                      <span className="text-purple-600 bg-purple-50 px-3 py-1 rounded-lg">157.623</span>
                     </div>
 
                     <button 
@@ -204,51 +233,53 @@ export default function ProsthesiAfairesiPage() {
               )}
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ (min-h-[480px]) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΠΟΛΥΤΗ ΣΤΟΙΧΙΣΗ ΠΙΝΑΚΑ ΜΕ CSS GRID */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {/* ΔΥΝΑΜΙΚΗ ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΣΤΟΙΧΙΣΗΣ ΜΕΣΩ SVG */}
-              <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[320px]">
+              <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[340px]">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
                 
-                <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-right text-white relative overflow-visible">
+                <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none">
+                  
                   {/* Σήμα Πράξης */}
-                  <div className="absolute left-4 top-16 text-amber-400 font-black">
+                  <div className="absolute left-6 top-[54px] text-amber-400 font-black">
                     {isAddition ? "+" : "-"}
                   </div>
 
-                  <div className="space-y-2 tracking-widest font-black select-none">
-                    {/* Πρώτος Αριθμός (Formatted) */}
-                    <div className="text-blue-400">
-                      {valA.toFixed(2).replace('.', ',')}
-                    </div>
+                  {/* 3-Column Grid για Απόλυτη Ευθυγράμμιση γύρω από το Κόμμα */}
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-center text-right font-black tracking-widest gap-y-2">
                     
-                    {/* Δεύτερος Αριθμός (Formatted) */}
-                    <div className="text-emerald-400">
-                      {valB.toFixed(2).replace('.', ',')}
-                    </div>
-                    
-                    {/* Διαχωριστική Γραμμή Πράξης */}
-                    <div className="w-full h-1 bg-slate-600 rounded-full my-2"></div>
-                    
-                    {/* Αποτέλεσμα */}
-                    <div className="text-purple-400 drop-shadow-sm text-3xl font-black">
-                      {result.toFixed(2).replace('.', ',')}
-                    </div>
+                    {/* Γραμμή 1: Αριθμός Α */}
+                    <div className="text-blue-400">{partA.intPart}</div>
+                    <div className="text-rose-500 font-bold px-[1px]">,</div>
+                    <div className="text-blue-400 text-left">{partA.decPart}</div>
+
+                    {/* Γραμμή 2: Αριθμός Β */}
+                    <div className="text-emerald-400">{partB.intPart}</div>
+                    <div className="text-rose-500 font-bold px-[1px]">,</div>
+                    <div className="text-emerald-400 text-left">{partB.decPart}</div>
+
+                    {/* Οριζόντια Γραμμή Πράξης */}
+                    <div className="col-span-3 h-[2px] bg-slate-700 my-1"></div>
+
+                    {/* Γραμμή 3: Αποτέλεσμα */}
+                    <div className="text-purple-400 text-3xl">{partResult.intPart}</div>
+                    <div className="text-rose-500 font-bold px-[1px] text-3xl">,</div>
+                    <div className="text-purple-400 text-left text-3xl">{partResult.decPart}</div>
                   </div>
 
-                  {/* Οδηγός Υποδιαστολής (Κάθετη Κόκκινη Γραμμή για να βλέπουν τη στοίχιση) */}
-                  <div className="absolute right-[52px] top-4 bottom-4 w-[2px] bg-rose-500/40 border-dashed border-r border-rose-400 pointer-events-none" title="Άξονας Υποδιαστολής"></div>
+                  {/* Κάθετη Διακεκομμένη Γραμμή (Πλέον Κλειδωμένη 100% πάνω στο Κόμμα) */}
+                  <div className="absolute top-4 bottom-4 left-[calc(50%_-_11px)] w-[1px] border-r-2 border-dashed border-rose-500/50 pointer-events-none"></div>
                 </div>
 
-                <span className="text-xs font-bold text-rose-500 flex items-center gap-1">
-                  📍 Η κόκκινη διακεκομμένη γραμμή δείχνει την απόλυτη στοίχιση της υποδιαστολής!
+                <span className="text-xs font-bold text-rose-500 flex items-center gap-1 text-center">
+                  📍 Η κόκκινη διακεκομμένη γραμμή περνάει ακριβώς από την υποδιαστολή!
                 </span>
               </div>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>🔍 Οι αριθμοί μετατρέπονται αυτόματα ώστε να έχουν ίσο πλήθος δεκαδικών ψηφίων.</span>
+                <span>🔍 Οι αριθμοί μετατρέπονται αυτόματα ώστε να έχουν ίσο πλήθος δεκαδικών ψηφίων (έως 3).</span>
               </div>
             </div>
 
