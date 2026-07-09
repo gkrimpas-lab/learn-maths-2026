@@ -7,8 +7,8 @@ import { LAYOUT } from '../../shared/layout-config';
 // ΜΕΤΑΒΛΗΤΕΣ ΟΡΙΩΝ
 const LIMITS = {
   MIN_VALUE: 0,
-  MAX_VALUE: 1000,
-  MAX_VISUAL_DOTS: 100 // Μέγιστο πλήθος γινομένου για την οπτική εμφάνιση των κουκκίδων
+  MAX_VALUE: 10000,
+  MAX_VISUAL_DOTS: 10000 // Πλέον η οπτικοποίηση υποστηρίζει έως και 10.000 τετραγωνάκια
 };
 
 export default function PollaplasiasmosPage() {
@@ -37,7 +37,7 @@ export default function PollaplasiasmosPage() {
   const valB = parseFloat(distB) || 0;
   const valC = parseFloat(distC) || 0;
 
-  // Έλεγχος ορίων για τα inputs της Αντιμεταθετικής (0 έως 1000)
+  // Έλεγχος ορίων για τα inputs της Αντιμεταθετικής (0 έως 10.000)
   const handleAntimetathetikiChange = (val, setter) => {
     const cleanVal = val.replace(/[^0-9]/g, ''); // Μόνο ακέραιοι
     if (cleanVal === "") {
@@ -60,40 +60,38 @@ export default function PollaplasiasmosPage() {
     }
   };
 
-  // Δυναμική σχεδίαση των κύκλων με απόλυτο μαθηματικό έλεγχο θέσης (SVG)
-  const renderVisualDots = () => {
-    const dots = [];
-    const containerSize = 260; // Σταθερό μέγεθος SVG box
+  // Δυναμική σχεδίαση εφαπτόμενων τετραγώνων (Grid Tiles) με SVG
+  const renderVisualTiles = () => {
+    const tiles = [];
+    const containerSize = 340; // Αυξημένο μέγεθος ωφέλιμου πλαισίου
 
-    // Υπολογισμός δυναμικού μεγέθους ακτίνας και αποστάσεων με βάση τις στήλες/σειρές
+    // Υπολογισμός ακριβούς μεγέθους κάθε τετραγώνου ώστε να εφάπτονται τέλεια
     const cellW = containerSize / currentCols;
     const cellH = containerSize / currentRows;
     const cellSize = Math.min(cellW, cellH);
     
-    // Η ακτίνα ορίζεται στο 40% του διαθέσιμου κελιού για να υπάρχει πάντα κενό (padding) μεταξύ τους
-    const radius = cellSize * 0.4; 
-
-    // Κεντράρισμα του πλέγματος μέσα στο SVG container
+    // Κεντράρισμα ολόκληρου του πλέγματος μέσα στο μεγάλο SVG container
     const offsetX = (containerSize - (currentCols * cellSize)) / 2;
     const offsetY = (containerSize - (currentRows * cellSize)) / 2;
 
     for (let r = 0; r < currentRows; r++) {
       for (let c = 0; c < currentCols; c++) {
-        const cx = offsetX + (c * cellSize) + (cellSize / 2);
-        const cy = offsetY + (r * cellSize) + (cellSize / 2);
+        const x = offsetX + (c * cellSize);
+        const y = offsetY + (r * cellSize);
         
-        dots.push(
-          <circle
+        tiles.push(
+          <rect
             key={`${r}-${c}`}
-            cx={cx}
-            cy={cy}
-            r={radius}
-            className="fill-gradient-to-br from-amber-400 to-orange-500 stroke-orange-600 stroke-[1] drop-shadow-sm transition-all duration-300"
+            x={x}
+            y={y}
+            width={cellSize}
+            height={cellSize}
+            className="fill-amber-400 stroke-amber-500 stroke-[0.5] transition-all duration-200"
           />
         );
       }
     }
-    return dots;
+    return tiles;
   };
 
   return (
@@ -177,7 +175,7 @@ export default function PollaplasiasmosPage() {
                 <>
                   <div className="space-y-2">
                     <h3 className="text-2xl font-black text-gray-900">Δυναμική Αντιμεταθετική Ιδιότητα</h3>
-                    <p className="text-gray-500 text-sm">Γράψε δύο αριθμούς (από {LIMITS.MIN_VALUE} έως {LIMITS.MAX_VALUE}) και πάτα το κουμπί της περιστροφής.</p>
+                    <p className="text-gray-500 text-sm">Γράψε δύο αριθμούς (από {LIMITS.MIN_VALUE} έως {LIMITS.MAX_VALUE}) και δες το πλέγμα των τετραγώνων να προσαρμόζεται.</p>
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
@@ -296,26 +294,26 @@ export default function PollaplasiasmosPage() {
               {activeTab === 'antimetathetiki' && (
                 <div className="my-auto flex flex-col items-center gap-4 w-full px-4 text-center">
                   {antimetathetikiResult <= LIMITS.MAX_VISUAL_DOTS && currentRows > 0 && currentCols > 0 ? (
-                    /* ΔΙΟΡΘΩΜΕΝΟ SVG ΠΛΕΓΜΑ ΓΙΑ ΑΠΟΛΥΤΗ ΑΠΟΣΤΑΣΗ ΚΑΙ ΜΕΓΕΘΟΣ ΜΠΑΛΩΝ */
+                    /* ΜΕΓΑΛΩΜΕΝΟ ΩΦΕΛΙΜΟ ΠΛΑΙΣΙΟ ΜΕ ΕΦΑΠΤΟΜΕΝΑ ΤΕΤΡΑΓΩΝΑΚΙΑ */
                     <div className="flex flex-col items-center gap-3">
-                      <div className="bg-slate-50 p-3 rounded-2xl border shadow-inner">
+                      <div className="bg-slate-50 p-4 rounded-2xl border shadow-inner">
                         <svg 
-                          width="260" 
-                          height="260" 
-                          viewBox="0 0 260 260" 
+                          width="340" 
+                          height="340" 
+                          viewBox="0 0 340 340" 
                           className="bg-white rounded-xl overflow-hidden"
                         >
-                          {renderVisualDots()}
+                          {renderVisualTiles()}
                         </svg>
                       </div>
                       <span className="text-xs font-bold text-slate-400">Διάταξη: {currentRows} γραμμές × {currentCols} στήλες</span>
                     </div>
                   ) : (
-                    /* MHΝΥΜΑ ΓΙΑ ΜΕΓΑΛΟΥΣ ΑΡΙΘΜΟΥΣ */
+                    /* MHΝΥΜΑ ΓΙΑ ΠΑΡΑ ΠΟΛΥ ΜΕΓΑΛΟΥΣ ΑΡΙΘΜΟΥΣ */
                     <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl max-w-xs mx-auto text-slate-500 text-sm font-medium space-y-2 shadow-inner">
-                      <p>📏 <strong>Μεγάλοι Αριθμοί!</strong></p>
+                      <p>📏 <strong>Πάρα πολύ μεγάλο γινόμενο!</strong></p>
                       <p className="text-xs text-slate-400 leading-relaxed">
-                        Το γινόμενο ({antimetathetikiResult.toLocaleString('el-GR')}) είναι μεγάλο για να σχεδιαστεί με κουκκίδες στην οθόνη, αλλά η ιδιότητα παραμένει σε ισχύ!
+                        Το γινόμενο ({antimetathetikiResult.toLocaleString('el-GR')}) ξεπερνάει το όριο οπτικοποίησης, αλλά η μαθηματική σχέση παραμένει απόλυτα σωστή!
                       </p>
                     </div>
                   )}
