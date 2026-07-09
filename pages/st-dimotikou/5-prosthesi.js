@@ -112,19 +112,19 @@ export default function ProsthesiAfairesiPage() {
 
           {/* TABS ΕΝΑΛΛΑΓΗΣ */}
           <div className="flex flex-wrap justify-center bg-gray-200/60 p-1.5 rounded-2xl max-w-xl mx-auto shadow-inner gap-1">
-            <button 
+            <button  
               onClick={() => setActiveTab('katheti')}
               className={`flex-1 min-w-[140px] py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all duration-200 ${activeTab === 'katheti' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
             >
               📊 Κάθετη Στοίχιση
             </button>
-            <button 
+            <button  
               onClick={() => setActiveTab('idiotites')}
               className={`flex-1 min-w-[140px] py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all duration-200 ${activeTab === 'idiotites' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
             >
               🔄 Ιδιότητες Πράξεων
             </button>
-            <button 
+            <button  
               onClick={() => setActiveTab('antitheti')}
               className={`flex-1 min-w-[140px] py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all duration-200 ${activeTab === 'antitheti' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
             >
@@ -147,23 +147,23 @@ export default function ProsthesiAfairesiPage() {
 
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                      <input 
-                        type="text" 
+                      <input  
+                        type="text"  
                         value={numA}
                         onChange={(e) => handleInputChange(e.target.value, setNumA)}
                         className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[160px] text-blue-600 outline-none focus:border-blue-500"
                         placeholder="Αριθμός Α"
                       />
                       
-                      <button 
+                      <button  
                         onClick={() => setIsAddition(!isAddition)}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-black text-xl w-10 h-10 rounded-full flex items-center justify-center shadow transition-colors"
                       >
                         {isAddition ? "+" : "-"}
                       </button>
 
-                      <input 
-                        type="text" 
+                      <input  
+                        type="text"  
                         value={numB}
                         onChange={(e) => handleInputChange(e.target.value, setNumB)}
                         className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[160px] text-blue-600 outline-none focus:border-blue-500"
@@ -198,7 +198,7 @@ export default function ProsthesiAfairesiPage() {
                       <span className="text-purple-600 bg-purple-50 px-3 py-1 rounded-lg">157.623</span>
                     </div>
 
-                    <button 
+                    <button  
                       onClick={() => setIsSwapped(!isSwapped)}
                       className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow transition-all flex items-center gap-2"
                     >
@@ -238,63 +238,62 @@ export default function ProsthesiAfairesiPage() {
               )}
             </div>
 
-{/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΜΕ ΤΕΛΕΙΑ ΣΤΟΙΧΙΣΗ ΓΡΑΜΜΗΣ */}
-<div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
-  <div className="w-full"></div>
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΜΕ ΑΠΟΛΥΤΗ PIXEL-PERFECT ΣΤΟΙΧΙΣΗ */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
+              <div className="w-full"></div>
 
-  <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[340px]">
-    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
-    
-    {/* Τοποθετούμε το relative στο εξωτερικό κουτί */}
-    <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none overflow-hidden">
-      
-      {/* Σήμα Πράξης */}
-      <div className="absolute left-4 top-[54px] text-amber-400 font-black z-10">
-        {isAddition ? "+" : "-"}
-      </div>
+              <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[340px]">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
+                
+                <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none overflow-hidden">
+                  
+                  {/* Σήμα Πράξης */}
+                  <div className="absolute left-4 top-[54px] text-amber-400 font-black z-20">
+                    {isAddition ? "+" : "-"}
+                  </div>
 
-      {/* 3-Column Grid */}
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center text-right font-black tracking-normal gap-y-2 relative z-10">
-        
-        {/* Γραμμή 1: Αριθμός Α */}
-        <div className="text-blue-400 truncate">{partA.intPart}</div>
-        <div className="text-rose-500 font-bold px-[4px] text-center">,</div>
-        <div className="text-blue-400 text-left">{partA.decPart}</div>
+                  {/* 3-Column Grid: w-4 σταθερό πλάτος στη μεσαία στήλη για απόλυτο άξονα */}
+                  <div className="grid grid-cols-[1fr_1rem_1fr] items-center font-black tracking-normal gap-y-2 relative z-10">
+                    
+                    {/* Γραμμή 1: Αριθμός Α */}
+                    <div className="text-blue-400 text-right truncate">{partA.intPart}</div>
+                    <div className="text-rose-500 text-center select-none">,</div>
+                    <div className="text-blue-400 text-left">{partA.decPart}</div>
 
-        {/* Γραμμή 2: Αριθμός Β */}
-        <div className="text-emerald-400 truncate">{partB.intPart}</div>
-        <div className="text-rose-500 font-bold px-[4px] text-center">,</div>
-        <div className="text-emerald-400 text-left">{partB.decPart}</div>
+                    {/* Γραμμή 2: Αριθμός Β */}
+                    <div className="text-emerald-400 text-right truncate">{partB.intPart}</div>
+                    <div className="text-rose-500 text-center select-none">,</div>
+                    <div className="text-emerald-400 text-left">{partB.decPart}</div>
 
-        {/* Οριζόντια Γραμμή */}
-        <div className="col-span-3 h-[2px] bg-slate-700 my-1"></div>
+                    {/* Οριζόντια Γραμμή */}
+                    <div className="col-span-3 h-[2px] bg-slate-700 my-1"></div>
 
-        {/* Γραμμή 3: Αποτέλεσμα */}
-        <div className="text-purple-400 text-2xl truncate">{partResult.intPart}</div>
-        <div className="text-rose-500 font-bold px-[4px] text-3xl text-center">,</div>
-        <div className="text-purple-400 text-left text-2xl">{partResult.decPart}</div>
+                    {/* Γραμμή 3: Αποτέλεσμα */}
+                    <div className="text-purple-400 text-right text-2xl truncate">{partResult.intPart}</div>
+                    <div className="text-rose-500 text-center text-2xl select-none">,</div>
+                    <div className="text-purple-400 text-left text-2xl">{partResult.decPart}</div>
 
-        {/* Η ΚΟΚΚΙΝΗ ΓΡΑΜΜΗ ΩΣ COL-START-2:
-          Καταλαμβάνει τη μεσαία στήλη (εκεί που είναι τα κόμματα), απλώνεται από πάνω μέχρι κάτω (row-span)
-          και με το absolute/h-full/w-0 κλειδώνει ακριβώς στο κέντρο των υποδιαστολών!
-        */}
-        <div className="col-start-2 row-start-1 row-end-5 justify-self-center relative h-full w-0 pointer-events-none">
-          <div className="absolute top-[-10px] bottom-[-10px] left-1/2 -translate-x-1/2 w-0 border-r-2 border-dashed border-rose-500/60 z-0"></div>
-        </div>
+                    {/* Η ΚΟΚΚΙΝΗ ΓΡΑΜΜΗ: Κλειδώνει στη μεσαία στήλη (col-start-2) και 
+                        απλώνεται από την 1η έως την τελευταία σειρά (row-end-6) */}
+                    <div className="col-start-2 row-start-1 row-end-6 justify-self-center relative h-full w-0 pointer-events-none z-0">
+                      <div className="absolute top-[-20px] bottom-[-20px] left-1/2 -translate-x-1/2 w-0 border-r-2 border-dashed border-rose-500/70"></div>
+                    </div>
 
-      </div>
+                  </div>
 
-    </div>
+                </div>
 
-    <span className="text-xs font-bold text-rose-500 flex items-center gap-1 text-center">
-      📍 Η κόκκινη διακεκομμένη γραμμή περνάει ακριβώς από την υποδιαστολή!
-    </span>
-  </div>
+                <span className="text-xs font-bold text-rose-500 flex items-center gap-1 text-center">
+                  📍 Η κόκκινη διακεκομμένη γραμμή περνάει ακριβώς από την υποδιαστολή!
+                </span>
+              </div>
 
-  <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-    <span>🔍 Οι αριθμοί μετατρέπονται αυτόματα ώστε να έχουν ίσο πλήθος δεκαδικών ψηφίων (έως 3).</span>
-  </div>
-</div>
+              <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
+                <span>🔍 Οι αριθμοί μετατρέπονται αυτόματα ώστε να έχουν ίσο πλήθος δεκαδικών ψηφίων (έως 3).</span>
+              </div>
+            </div>
+
+          </div>
         </main>
       </div>
 
