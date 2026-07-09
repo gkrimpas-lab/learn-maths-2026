@@ -101,7 +101,7 @@ export default function PollaplasiasmosPage() {
               </div>
               
               <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-md text-center py-10 flex flex-col justify-center items-center gap-3">
-                <span className="text-amber-300 font-black text-lg">✨ Το «Ένα» and το «Μηδέν»</span>
+                <span className="text-amber-300 font-black text-lg">✨ Το «Ένα» και το «Μηδέν»</span>
                 <p className="text-xs md:text-sm text-indigo-50 leading-relaxed font-medium max-w-sm">
                   • Το <strong>1</strong> είναι το ουδέτερο στοιχείο: Κάθε αριθμός που πολλαπλασιάζεται με το 1 παραμένει ο ίδιος (5 × 1 = 5).<br/>
                   • Το <strong>0</strong> είναι το απορροφητικό στοιχείο: Κάθε αριθμός που πολλαπλασιάζεται με το 0 γίνεται μηδέν (5 × 0 = 0).</p>
@@ -313,4 +313,19 @@ export default function PollaplasiasmosPage() {
                 </div>
               )}
 
-              <div className="w-full flex justify-center text-xs font-bold text-slate-40
+              <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
+                <span>🔍 Οι ιδιότητες μάς βοηθούν να σπάμε μεγάλους αριθμούς σε πιο απλά γινόμενα με το μυαλό!</span>
+              </div>
+            </div>
+
+          </div>
+        </main>
+      </div>
+
+      {/* FOOTER */}
+      <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
+        <p>© 2026 LearnMaths.gr. Διαδραστικός Πολλαπλασιασμός ΣΤ' Δημοτικού.</p>
+      </footer>
+    </div>
+  );
+}
