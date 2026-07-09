@@ -9,7 +9,8 @@ const LIMITS = {
   MIN_VALUE: 0,
   MAX_VALUE: 10000,
   MAX_VISUAL_DOTS: 10000,
-  MAX_3D_FACTOR: 5 // Όριο για τις 3D διαστάσεις ώστε να σχεδιάζονται καθαρά
+  MIN_3D: 1,
+  MAX_3D: 5 // Όριο για τις 3D διαστάσεις ώστε να παραμένει καθαρό το σχήμα
 };
 
 export default function PollaplasiasmosPage() {
@@ -26,15 +27,15 @@ export default function PollaplasiasmosPage() {
   const currentCols = rotated ? valRows : valCols;
   const antimetathetikiResult = valRows * valCols;
 
-  // Κατάσταση για Προσεταιριστική (Δυναμικά Inputs)
-  const [prosA, setPropProsA] = useState("2");
-  const [prosB, setPropProsB] = useState("3");
-  const [prosC, setPropProsC] = useState("2");
+  // Κατάσταση για Προσεταιριστική (Νέα Δυναμικά Inputs)
+  const [prosW, setProsW] = useState("4"); // Πλάτος (X)
+  const [prosD, setProsD] = useState("3"); // Βάθος (Y)
+  const [prosH, setProsH] = useState("2"); // Ύψος (Z)
 
-  const valProsA = parseInt(prosA) || 0;
-  const valProsB = parseInt(prosB) || 0;
-  const valProsC = parseInt(prosC) || 0;
-  const prosResult = valProsA * valProsB * valProsC;
+  const valW = Math.max(LIMITS.MIN_3D, Math.min(parseInt(prosW) || 1, LIMITS.MAX_3D));
+  const valD = Math.max(LIMITS.MIN_3D, Math.min(parseInt(prosD) || 1, LIMITS.MAX_3D));
+  const valH = Math.max(LIMITS.MIN_3D, Math.min(parseInt(prosH) || 1, LIMITS.MAX_3D));
+  const totalVolume = valW * valD * valH;
 
   // Κατάσταση για Επιμεριστική
   const [distA, setPropA] = useState("4");
@@ -45,7 +46,7 @@ export default function PollaplasiasmosPage() {
   const valB = parseFloat(distB) || 0;
   const valC = parseFloat(distC) || 0;
 
-  // Έλεγχος ορίων για τα inputs της Αντιμεταθετικής
+  // Έλεγχος εισαγωγής για Αντιμεταθετική
   const handleAntimetathetikiChange = (val, setter) => {
     const cleanVal = val.replace(/[^0-9]/g, '');
     if (cleanVal === "") {
@@ -60,7 +61,7 @@ export default function PollaplasiasmosPage() {
     }
   };
 
-  // Έλεγχος ορίων για την Προσεταιριστική (Μέχρι 5 για καθαρό 3D)
+  // Έλεγχος εισαγωγής για Προσεταιριστική (1 έως 5)
   const handleProsetairistikiChange = (val, setter) => {
     const cleanVal = val.replace(/[^0-9]/g, '');
     if (cleanVal === "") {
@@ -68,12 +69,12 @@ export default function PollaplasiasmosPage() {
       return;
     }
     const num = parseInt(cleanVal);
-    if (num >= 1 && num <= LIMITS.MAX_3D_FACTOR) {
+    if (num >= LIMITS.MIN_3D && num <= LIMITS.MAX_3D) {
       setter(cleanVal);
     }
   };
 
-  // Έλεγχος ορίων για την Επιμεριστική
+  // Έλεγχος εισαγωγής για Επιμεριστική
   const handleInputChange = (val, setter) => {
     const cleanVal = val.replace(/[^0-9.]/g, '');
     if (cleanVal.length <= 2) {
@@ -81,7 +82,7 @@ export default function PollaplasiasmosPage() {
     }
   };
 
-  // Δυναμική σχεδίαση εφαπτόμενων τετραγώνων (Grid Tiles) με SVG
+  // Σχεδίαση εφαπτόμενων τετραγώνων (Tab 1)
   const renderVisualTiles = () => {
     const tiles = [];
     const containerSize = 340;
@@ -93,13 +94,11 @@ export default function PollaplasiasmosPage() {
 
     for (let r = 0; r < currentRows; r++) {
       for (let c = 0; c < currentCols; c++) {
-        const x = offsetX + (c * cellSize);
-        const y = offsetY + (r * cellSize);
         tiles.push(
           <rect
             key={`${r}-${c}`}
-            x={x}
-            y={y}
+            x={offsetX + (c * cellSize)}
+            y={offsetY + (r * cellSize)}
             width={cellSize}
             height={cellSize}
             className="fill-amber-400 stroke-amber-500 stroke-[0.5] transition-all duration-200"
@@ -110,47 +109,55 @@ export default function PollaplasiasmosPage() {
     return tiles;
   };
 
-  // Συναρτήσεις Σχεδίασης 3D Κύβων (Isometric SVG blocks)
-  const render3DGrid = (highlightMode) => {
-    const blocks = [];
-    const size = 18; // μέγεθος κάθε ακμής block
+  // Σχεδίαση 3D Ισομετρικού Κύβου (Tab 2) με επιλεκτικό highlight
+  const renderIsometricCube = (highlightMode) => {
+    const cubes = [];
+    const size = 16; // Μέγεθος ακμής κάθε μικρού κύβου
     
-    // Isometric προβολή μετασχηματισμού
-    const isoX = (x, y) => 80 + (x - y) * size * 0.8;
-    const isoY = (x, y, z) => 90 + (x + y) * size * 0.4 - z * size;
+    // Μαθηματική ισομετρική προβολή προσαρμοσμένη για κεντράρισμα
+    const isoX = (x, y, z) => 100 + (x - y) * size * 0.866;
+    const isoY = (x, y, z) => 90 + (x + y) * size * 0.5 - z * size;
 
-    for (let z = 0; z < valProsC; z++) {
-      for (let y = 0; y < valProsB; y++) {
-        for (let x = 0; x < valProsA; x++) {
-          const cx = isoX(x, y);
-          const cy = isoY(x, y, z);
-
-          // Καθορισμός χρώματος βάσει του ποια πράξη προηγείται
+    // Σχεδιάζουμε από πίσω προς τα εμπρός για σωστό 3D layering (Z -> Y -> X)
+    for (let z = 0; z < valH; z++) {
+      for (let y = 0; y < valD; y++) {
+        for (let x = 0; x < valW; x++) {
+          
+          // Καθορισμός αν το συγκεκριμένο block ανήκει στην ομάδα που υπολογίζεται πρώτη
           let isHighlighted = false;
-          if (highlightMode === 'mode1' && z === 0) {
-            isHighlighted = true; // Φωτίζεται ολόκληρο το 1ο πάτωμα (Α x Β)
-          } else if (highlightMode === 'mode2' && x === 0) {
-            isHighlighted = true; // Φωτίζεται ολόκληρη η μπροστινή πλευρά (Β x Γ)
+          if (highlightMode === 'base') {
+            // Τρόπος 1ος: Υπολογισμός βάσης (Z = 0)
+            isHighlighted = (z === 0);
+          } else if (highlightMode === 'slice') {
+            // Τρόπος 2ος: Υπολογισμός μπροστινής «φέτας» (X = 0)
+            isHighlighted = (x === 0);
           }
 
-          const fillClass = isHighlighted 
-            ? "fill-amber-400 stroke-amber-600" 
-            : "fill-blue-500/30 stroke-blue-600/40";
+          const cx = isoX(x, y, z);
+          const cy = isoY(x, y, z);
 
-          blocks.push(
+          // Σημεία για τις 3 ορατές έδρες του μικρού κύβου
+          const topFace = `${cx},${cy} ${cx + size*0.866},${cy + size*0.5} ${cx},${cy + size} ${cx - size*0.866},${cy + size*0.5}`;
+          const leftFace = `${cx - size*0.866},${cy + size*0.5} ${cx},${cy + size} ${cx},${cy + size + size} ${cx - size*0.866},${cy + size*0.5 + size}`;
+          const rightFace = `${cx},${cy + size} ${cx + size*0.866},${cy + size*0.5} ${cx + size*0.866},${cy + size*0.5 + size} ${cx},${cy + size + size}`;
+
+          // Επιλογή χρωμάτων με βάση το highlight
+          const fillTop = isHighlighted ? 'fill-amber-300' : 'fill-slate-300';
+          const fillLeft = isHighlighted ? 'fill-amber-400' : 'fill-slate-400';
+          const fillRight = isHighlighted ? 'fill-amber-500' : 'fill-slate-500';
+          const strokeColor = isHighlighted ? 'stroke-amber-600' : 'stroke-slate-600';
+
+          cubes.push(
             <g key={`${x}-${y}-${z}`} className="transition-all duration-300">
-              {/* Επάνω Έδρα */}
-              <polygon points={`${cx},${cy} ${cx + size*0.8},${cy + size*0.4} ${cx},${cy + size*0.8} ${cx - size*0.8},${cy + size*0.4}`} className={fillClass} />
-              {/* Αριστερή Έδρα */}
-              <polygon points={`${cx - size*0.8},${cy + size*0.4} ${cx},${cy + size*0.8} ${cx},${cy + size*0.8 + size} ${cx - size*0.8},${cy + size*0.4 + size}`} className={fillClass} />
-              {/* Δεξιά Έδρα */}
-              <polygon points={`${cx},${cy} + size*0.8 ${cx + size*0.8},${cy + size*0.4} ${cx + size*0.8},${cy + size*0.4 + size} ${cx},${cy + size*0.8 + size}`} className={fillClass} />
+              <polygon points={topFace} className={`${fillTop} ${strokeColor} stroke-[0.5]`} />
+              <polygon points={leftFace} className={`${fillLeft} ${strokeColor} stroke-[0.5]`} />
+              <polygon points={rightFace} className={`${fillRight} ${strokeColor} stroke-[0.5]`} />
             </g>
           );
         }
       }
     }
-    return blocks;
+    return cubes;
   };
 
   return (
@@ -184,7 +191,7 @@ export default function PollaplasiasmosPage() {
                   <span>📖</span> Θεωρία: Ιδιότητες Πολλαπλασιασμού
                 </h2>
                 <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                  O πολλαπλασιασμός είναι μια σύντομη πρόσθεση ίσων προσθετέων. Για να κάνουμε πιο γρήγορα τις πράξεις, χρησιμοποιούμε τρεις βασικές ιδιότητες.
+                  Ο πολλαπλασιασμός είναι μια σύντομη πρόσθεση ίσων προσθετέων. Για να κάνουμε πιο γρήγορα τις πράξεις, χρησιμοποιούμε τρεις βασικές ιδιότητες.
                 </p>
                 <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-2 text-sm md:text-base font-medium">
                   <p>🔄 <strong>Αντιμεταθετική:</strong> Μπορούμε να αλλάξουμε τη σειρά των παραγόντων (α × β = β × α).</p>
@@ -246,6 +253,7 @@ export default function PollaplasiasmosPage() {
                           value={inputRows}
                           onChange={(e) => handleAntimetathetikiChange(e.target.value, setInputRows)}
                           className="text-lg font-black text-center p-2 bg-white border-2 border-emerald-200 rounded-xl shadow-sm w-full text-emerald-600 outline-none focus:border-emerald-500 tracking-normal"
+                          placeholder="Σειρές"
                         />
                       </div>
                       <span className="text-xl font-black text-slate-400 mt-4 flex-shrink-0">×</span>
@@ -256,6 +264,7 @@ export default function PollaplasiasmosPage() {
                           value={inputCols}
                           onChange={(e) => handleAntimetathetikiChange(e.target.value, setInputCols)}
                           className="text-lg font-black text-center p-2 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full text-blue-600 outline-none focus:border-blue-500 tracking-normal"
+                          placeholder="Στήλες"
                         />
                       </div>
                     </div>
@@ -288,43 +297,41 @@ export default function PollaplasiasmosPage() {
                 <>
                   <div className="space-y-2">
                     <h3 className="text-2xl font-black text-gray-900">Δυναμική Προσεταιριστική Ιδιότητα</h3>
-                    <p className="text-gray-500 text-sm">Άλλαξε τις 3 διαστάσεις (τιμές 1 έως {LIMITS.MAX_3D_FACTOR}) για να δεις τους δύο τρόπους ομαδοποίησης.</p>
+                    <p className="text-gray-500 text-sm">Άλλαξε τις 3 διαστάσεις (από {LIMITS.MIN_3D} έως {LIMITS.MAX_3D}) για να δεις τους δύο τρόπους υπολογισμού του όγκου.</p>
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
-                    {/* Τρία Δυναμικά Inputs */}
-                    <div className="flex justify-center gap-3 text-center">
-                      <div className="flex flex-col items-center w-16">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase">Πλάτος (α)</span>
-                        <input type="text" value={prosA} onChange={(e) => handleProsetairistikiChange(e.target.value, setPropProsA)} className="w-full p-1.5 border border-gray-300 rounded-xl text-center font-black text-blue-600" />
+                    {/* Τριπλά Inputs για Διαστάσεις */}
+                    <div className="grid grid-cols-3 gap-3 text-center">
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Πλάτος (α)</span>
+                        <input type="text" value={prosW} onChange={(e) => handleProsetairistikiChange(e.target.value, setProsW)} className="w-full max-w-[70px] p-2 border-2 border-slate-200 rounded-xl text-center font-black text-indigo-600 outline-none focus:border-indigo-500" />
                       </div>
-                      <span className="mt-5 font-bold text-slate-400">×</span>
-                      <div className="flex flex-col items-center w-16">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase">Βάθος (β)</span>
-                        <input type="text" value={prosB} onChange={(e) => handleProsetairistikiChange(e.target.value, setPropProsB)} className="w-full p-1.5 border border-gray-300 rounded-xl text-center font-black text-emerald-500" />
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Βάθος (β)</span>
+                        <input type="text" value={prosD} onChange={(e) => handleProsetairistikiChange(e.target.value, setProsD)} className="w-full max-w-[70px] p-2 border-2 border-slate-200 rounded-xl text-center font-black text-blue-600" />
                       </div>
-                      <span className="mt-5 font-bold text-slate-400">×</span>
-                      <div className="flex flex-col items-center w-16">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase">Ύψος (γ)</span>
-                        <input type="text" value={prosC} onChange={(e) => handleProsetairistikiChange(e.target.value, setPropProsC)} className="w-full p-1.5 border border-gray-300 rounded-xl text-center font-black text-indigo-500" />
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Ύψος (γ)</span>
+                        <input type="text" value={prosH} onChange={(e) => handleProsetairistikiChange(e.target.value, setProsH)} className="w-full max-w-[70px] p-2 border-2 border-slate-200 rounded-xl text-center font-black text-amber-500" />
                       </div>
                     </div>
 
-                    {/* Εμφάνιση των 2 Τρόπων */}
-                    <div className="bg-white p-3 rounded-xl border shadow-sm font-mono text-xs md:text-sm space-y-2 text-slate-700">
-                      <div className="flex justify-between items-center bg-amber-50/50 p-2 rounded-lg border border-amber-100">
-                        <span className="font-sans font-bold text-slate-500 text-xs">1ος Τρόπος (Βάση × Ύψος):</span>
-                        <span>({valProsA} × {valProsB}) × {valProsC} = {valProsA * valProsB} × {valProsC} = <strong className="text-purple-600">{prosResult}</strong></span>
+                    {/* Εμφάνιση των Δύο Τρόπων */}
+                    <div className="bg-white p-3 rounded-xl border shadow-sm font-mono text-xs md:text-sm text-left space-y-2 text-slate-700">
+                      <div className="p-2 bg-amber-50/50 border border-amber-100 rounded-lg">
+                        📌 <strong className="text-amber-600">1ος Τρόπος (Βάση × Ύψος):</strong><br/>
+                        ({valW} × {valD}) × {valH} = {valW * valD} × {valH} = <strong className="text-purple-600">{totalVolume}</strong>
                       </div>
-                      <div className="flex justify-between items-center bg-blue-50/30 p-2 rounded-lg border border-blue-100">
-                        <span className="font-sans font-bold text-slate-500 text-xs">2ος Τρόπος (Πλάτος × Φέτα):</span>
-                        <span>{valProsA} × ({valProsB} × {valProsC}) = {valProsA} × {valProsB * valProsC} = <strong className="text-purple-600">{prosResult}</strong></span>
+                      <div className="p-2 bg-blue-50/40 border border-blue-100 rounded-lg">
+                        📌 <strong className="text-blue-600">2ος Τρόπος (Πλάτος × Φέτα):</strong><br/>
+                        {valW} × ({valD} × {valH}) = {valW} × {valD * valH} = <strong className="text-purple-600">{totalVolume}</strong>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-blue-50 border border-blue-100 rounded-2xl text-xs text-blue-900 shadow-inner font-medium">
-                    💡 Στον 1ο τρόπο υπολογίζουμε πρώτα το «πάτωμα» (κίτρινο). Στον 2ο τρόπο υπολογίζουμε την πλαϊνή «φέτα» (κίτρινο).
+                  <div className="p-3 bg-blue-50 border border-blue-100 rounded-2xl text-xs text-blue-900 font-medium">
+                    💡 Παρατήρησε στα δεξιά πώς φωτίζεται με κίτρινο χρώμα η ομάδα των κύβων που πολλαπλασιάζουμε κάθε φορά πρώτα!
                   </div>
                 </>
               )}
@@ -389,26 +396,25 @@ export default function PollaplasiasmosPage() {
               )}
 
               {activeTab === 'prosetairistiki' && (
-                /* ΔΥΟ ΤΡΙΣΔΙΑΣΤΑΤΑ ΑΝΤΙΚΕΙΜΕΝΑ ΔΙΠΛΑ-ΔΙΠΛΑ ΜΕ ΔΙΑΦΟΡΕΤΙΚΟ ΦΩΤΙΣΜΟ */
-                <div className="my-auto flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-xl">
+                /* ΔΥΟ ΤΡΙΣΔΙΑΣΤΑΤΑ ΑΝΤΙΚΕΙΜΕΝΑ ΔΙΠΛΑ-ΔΙΠΛΑ ΜΕ ΦΩΤΙΣΜΟ */
+                <div className="my-auto flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-xl">
                   
-                  {/* Κύβος 1ος Τρόπος */}
-                  <div className="flex flex-col items-center bg-slate-50 p-3 rounded-2xl border w-full max-w-[200px] shadow-sm">
-                    <span className="text-[10px] font-black text-amber-500 mb-2 uppercase">1ος Τρόπος: (α × β)</span>
-                    <svg viewBox="0 0 160 160" width="150" height="150" className="overflow-visible">
-                      {render3DGrid('mode1')}
+                  {/* Κύβος 1: Φωτισμός Βάσης */}
+                  <div className="flex flex-col items-center gap-1 bg-slate-50 p-3 rounded-2xl border w-full max-w-[210px] shadow-sm">
+                    <span className="text-[10px] font-black text-amber-500 bg-amber-50 px-2 py-0.5 rounded uppercase">1ος Τρόπος (Βάση)</span>
+                    <svg viewBox="0 0 200 180" className="w-full h-auto overflow-visible">
+                      {renderIsometricCube('base')}
                     </svg>
+                    <span className="text-[11px] font-mono text-slate-500 font-bold">({valW} × {valD}) × {valH}</span>
                   </div>
 
-                  {/* Βέλος */}
-                  <span className="text-xl text-slate-300 font-black hidden sm:inline">＝</span>
-
-                  {/* Κύβος 2ος Τρόπος */}
-                  <div className="flex flex-col items-center bg-slate-50 p-3 rounded-2xl border w-full max-w-[200px] shadow-sm">
-                    <span className="text-[10px] font-black text-indigo-500 mb-2 uppercase">2ος Τρόπος: (β × γ)</span>
-                    <svg viewBox="0 0 160 160" width="150" height="150" className="overflow-visible">
-                      {render3DGrid('mode2')}
+                  {/* Κύβος 2: Φωτισμός Φέτας */}
+                  <div className="flex flex-col items-center gap-1 bg-slate-50 p-3 rounded-2xl border w-full max-w-[210px] shadow-sm">
+                    <span className="text-[10px] font-black text-blue-500 bg-blue-50 px-2 py-0.5 rounded uppercase">2ος Τρόπος (Φέτα)</span>
+                    <svg viewBox="0 0 200 180" className="w-full h-auto overflow-visible">
+                      {renderIsometricCube('slice')}
                     </svg>
+                    <span className="text-[11px] font-mono text-slate-500 font-bold">{valW} × ({valD} × {valH})</span>
                   </div>
 
                 </div>
