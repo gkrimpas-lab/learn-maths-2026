@@ -231,7 +231,7 @@ export default function PollaplasiasmosPage() {
               {activeTab === 'antimetathetiki' && (
                 <>
                   <div className="space-y-2">
-                    <h3 className="text-2xl font-black text-gray-900">Δυναμική Αντιμεταθετική Ιδιότητα</h3>
+                    <h3 className="text-2xl font-black text-gray-900">Αντιμεταθετική Ιδιότητα</h3>
                     <p className="text-gray-500 text-sm">Γράψε δύο αριθμούς (από {LIMITS.MIN_VALUE} έως {LIMITS.MAX_VALUE}) και δες το πλέγμα των τετραγώνων να προσαρμόζεται.</p>
                   </div>
 
@@ -271,7 +271,7 @@ export default function PollaplasiasmosPage() {
                     <div className="flex justify-center">
                       <button
                         onClick={() => setRotated(!rotated)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow transition-all flex items-center gap-2"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs tracking-wider px-5 py-2.5 rounded-xl shadow transition-all flex items-center gap-2"
                       >
                         🔄 Περιστροφή Παραγόντων
                       </button>
@@ -287,7 +287,7 @@ export default function PollaplasiasmosPage() {
               {activeTab === 'prosetairistiki' && (
                 <>
                   <div className="space-y-2">
-                    <h3 className="text-2xl font-black text-gray-900">Δυναμική Προσεταιριστική Ιδιότητα</h3>
+                    <h3 className="text-2xl font-black text-gray-900">Προσεταιριστική Ιδιότητα</h3>
                     <p className="text-gray-500 text-sm">Άλλαξε τις 3 διαστάσεις (από {LIMITS.MIN_3D} έως {LIMITS.MAX_3D}) για να δεις τους δύο τρόπους υπολογισμού του όγκου.</p>
                   </div>
 
@@ -425,7 +425,7 @@ export default function PollaplasiasmosPage() {
               {activeTab === 'prosetairistiki' && (
                 <div className="my-auto flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-xl">
                   <div className="flex flex-col items-center gap-1 bg-slate-50 p-3 rounded-2xl border w-full max-w-[210px] shadow-sm">
-                    <span className="text-[10px] font-black text-amber-500 bg-amber-50 px-2 py-0.5 rounded uppercase">1ος Τρόπος (Βάση)</span>
+                    <span className="text-[10px] font-black text-amber-500 bg-amber-50 px-2 py-0.5 rounded">1ος Τρόπος (Βάση)</span>
                     <svg viewBox="0 0 200 180" className="w-full h-auto overflow-visible">
                       {renderIsometricCube('base')}
                     </svg>
@@ -433,7 +433,7 @@ export default function PollaplasiasmosPage() {
                   </div>
 
                   <div className="flex flex-col items-center gap-1 bg-slate-50 p-3 rounded-2xl border w-full max-w-[210px] shadow-sm">
-                    <span className="text-[10px] font-black text-blue-500 bg-blue-50 px-2 py-0.5 rounded uppercase">2ος Τρόπος (Φέτα)</span>
+                    <span className="text-[10px] font-black text-blue-500 bg-blue-50 px-2 py-0.5 rounded">2ος Τρόπος (Φέτα)</span>
                     <svg viewBox="0 0 200 180" className="w-full h-auto overflow-visible">
                       {renderIsometricCube('slice')}
                     </svg>
@@ -447,7 +447,7 @@ export default function PollaplasiasmosPage() {
                   
                   {/* Σχήμα 1: Ολόκληρο */}
                   <div className="flex flex-col items-center gap-2 bg-slate-50 p-3.5 rounded-2xl border w-full max-w-[220px] shadow-sm">
-                    <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase">Ολόκληρο Σχήμα</span>
+                    <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">Ολόκληρο Σχήμα</span>
                     <div className="border-2 border-indigo-700 rounded-xl overflow-hidden flex w-full h-32 text-white font-mono font-black text-sm shadow-sm">
                       <div className="bg-indigo-500 flex flex-col justify-center items-center w-full transition-all duration-300">
                         <span>{valA} × ({valB + valC})</span>
@@ -459,7 +459,7 @@ export default function PollaplasiasmosPage() {
 
                   {/* Σχήμα 2: Επιμερισμένο */}
                   <div className="flex flex-col items-center gap-2 bg-slate-50 p-3.5 rounded-2xl border w-full max-w-[220px] shadow-sm">
-                    <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded uppercase">Επιμερισμένο Σχήμα</span>
+                    <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Επιμερισμένο Σχήμα</span>
                     <div className="border-2 border-slate-700 rounded-xl overflow-hidden flex w-full h-32 text-white font-mono font-black text-sm shadow-sm">
                       <div className="bg-emerald-500 flex flex-col justify-center items-center transition-all duration-300" style={{ flexGrow: Math.max(valB, 1) }}>
                         <span>{valA} × {valB}</span>
