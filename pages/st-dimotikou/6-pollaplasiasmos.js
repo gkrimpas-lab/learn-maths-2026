@@ -74,7 +74,7 @@ export default function PollaplasiasmosPage() {
     }
   };
 
-  // Έλεγχος εισαγωγής για Επιμεριστική (Μέχρι 2 ψηφία ή δεκαδικό)
+  // Έλεγχος εισαγωγής για Επιμεριστική
   const handleInputChange = (val, setter) => {
     const cleanVal = val.replace(/[^0-9.]/g, '');
     if (cleanVal.length <= 3) {
@@ -332,9 +332,9 @@ export default function PollaplasiasmosPage() {
                     <p className="text-gray-500 text-sm">Συμπλήρωσε τους αριθμούς στην οριζόντια μαθηματική δομή και δες πώς μοιράζεται ο πολλαπλασιασμός.</p>
                   </div>
 
-                  {/* ΑΝΑΒΑΘΜΙΣΜΕΝΟ ΜΑΘΗΜΑΤΙΚΟ ΠΛΑΙΣΙΟ ΜΕ ΣΥΜΒΟΛΑ, ΠΑΡΕΝΘΕΣΕΙΣ ΚΑΙ ΠΡΟΣΘΕΣΗ */}
-                  <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full flex flex-col gap-5 shadow-inner my-auto items-center justify-center">
-                    <div className="flex items-center gap-2 font-mono font-black text-xl md:text-2xl text-slate-700 flex-wrap justify-center">
+                  {/* ΜΕΓΑΛΩΜΕΝΟ ΚΑΙ ΕΥΘΥΓΡΑΜΜΙΣΜΕΝΟ ΠΛΑΙΣΙΟ ΠΡΑΞΕΩΝ ΓΙΑ ΜΙΑ ΓΡΑΜΜΗ (w-full max-w-2xl) */}
+                  <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full max-w-2xl flex flex-col gap-5 shadow-inner my-auto items-center justify-center">
+                    <div className="flex flex-wrap md:flex-nowrap whitespace-nowrap items-center justify-center gap-2 font-mono font-black text-xl md:text-2xl text-slate-700">
                       
                       {/* Input α */}
                       <div className="flex flex-col items-center gap-1">
@@ -343,12 +343,15 @@ export default function PollaplasiasmosPage() {
                           type="text" 
                           value={distA} 
                           onChange={(e) => handleInputChange(e.target.value, setPropA)} 
-                          className="w-14 p-2 border-2 border-blue-200 rounded-xl text-center font-black text-blue-600 bg-white outline-none focus:border-blue-500 text-lg shadow-sm" 
+                          className="w-14 h-12 border-2 border-blue-200 rounded-xl text-center font-black text-blue-600 bg-white outline-none focus:border-blue-500 text-lg shadow-sm" 
                         />
                       </div>
 
-                      <span className="text-slate-400 mx-0.5">×</span>
-                      <span className="text-gray-400 text-2xl font-light">(</span>
+                      {/* Σύμβολο × με τέλεια ευθυγράμμιση ύψους */}
+                      <span className="text-slate-400 px-1 self-center flex items-center h-12 mt-4 md:mt-0">×</span>
+                      
+                      {/* Αριστερή Παρένθεση */}
+                      <span className="text-gray-400 text-3xl font-light self-center flex items-center h-12 mt-4 md:mt-0">(</span>
 
                       {/* Input β */}
                       <div className="flex flex-col items-center gap-1">
@@ -357,11 +360,12 @@ export default function PollaplasiasmosPage() {
                           type="text" 
                           value={distB} 
                           onChange={(e) => handleInputChange(e.target.value, setPropB)} 
-                          className="w-14 p-2 border-2 border-emerald-200 rounded-xl text-center font-black text-emerald-500 bg-white outline-none focus:border-emerald-400 text-lg shadow-sm" 
+                          className="w-14 h-12 border-2 border-emerald-200 rounded-xl text-center font-black text-emerald-500 bg-white outline-none focus:border-emerald-400 text-lg shadow-sm" 
                         />
                       </div>
 
-                      <span className="text-slate-400 mx-0.5">+</span>
+                      {/* Σύμβολο + με τέλεια ευθυγράμμιση ύψους */}
+                      <span className="text-slate-400 px-1 self-center flex items-center h-12 mt-4 md:mt-0">+</span>
 
                       {/* Input γ */}
                       <div className="flex flex-col items-center gap-1">
@@ -370,11 +374,12 @@ export default function PollaplasiasmosPage() {
                           type="text" 
                           value={distC} 
                           onChange={(e) => handleInputChange(e.target.value, setPropC)} 
-                          className="w-14 p-2 border-2 border-cyan-200 rounded-xl text-center font-black text-cyan-600 bg-white outline-none focus:border-cyan-500 text-lg shadow-sm" 
+                          className="w-14 h-12 border-2 border-cyan-200 rounded-xl text-center font-black text-cyan-600 bg-white outline-none focus:border-cyan-500 text-lg shadow-sm" 
                         />
                       </div>
 
-                      <span className="text-gray-400 text-2xl font-light">)</span>
+                      {/* Δεξιά Παρένθεση */}
+                      <span className="text-gray-400 text-3xl font-light self-center flex items-center h-12 mt-4 md:mt-0">)</span>
                     </div>
 
                     {/* Αναλυτικά Αποτελέσματα */}
@@ -439,7 +444,6 @@ export default function PollaplasiasmosPage() {
               )}
 
               {activeTab === 'epimeristiki' && (
-                /* ΔΥΟ ΣΧΗΜΑΤΑ ΔΙΠΛΑ-ΔΙΠΛΑ: ΟΛΟΚΛΗΡΟ ΚΑΙ ΕΠΙΜΕΡΙΣΜΕΝΟ */
                 <div className="my-auto flex flex-col sm:flex-row items-center justify-center gap-6 w-full px-2 max-w-xl">
                   
                   {/* Σχήμα 1: Ολόκληρο */}
