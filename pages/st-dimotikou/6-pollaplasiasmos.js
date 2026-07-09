@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// ΜΕΤΑΒΛΗΤΕΣ ΟΡΙΩΝ (Μπορείτε να τις αλλάξετε εύκολα εδώ)
+// ΜΕΤΑΒΛΗΤΕΣ ΟΡΙΩΝ
 const LIMITS = {
   MIN_VALUE: 0,
   MAX_VALUE: 1000,
@@ -58,6 +58,42 @@ export default function PollaplasiasmosPage() {
     if (cleanVal.length <= 2) {
       setter(cleanVal);
     }
+  };
+
+  // Δυναμική σχεδίαση των κύκλων με απόλυτο μαθηματικό έλεγχο θέσης (SVG)
+  const renderVisualDots = () => {
+    const dots = [];
+    const containerSize = 260; // Σταθερό μέγεθος SVG box
+
+    // Υπολογισμός δυναμικού μεγέθους ακτίνας και αποστάσεων με βάση τις στήλες/σειρές
+    const cellW = containerSize / currentCols;
+    const cellH = containerSize / currentRows;
+    const cellSize = Math.min(cellW, cellH);
+    
+    // Η ακτίνα ορίζεται στο 40% του διαθέσιμου κελιού για να υπάρχει πάντα κενό (padding) μεταξύ τους
+    const radius = cellSize * 0.4; 
+
+    // Κεντράρισμα του πλέγματος μέσα στο SVG container
+    const offsetX = (containerSize - (currentCols * cellSize)) / 2;
+    const offsetY = (containerSize - (currentRows * cellSize)) / 2;
+
+    for (let r = 0; r < currentRows; r++) {
+      for (let c = 0; c < currentCols; c++) {
+        const cx = offsetX + (c * cellSize) + (cellSize / 2);
+        const cy = offsetY + (r * cellSize) + (cellSize / 2);
+        
+        dots.push(
+          <circle
+            key={`${r}-${c}`}
+            cx={cx}
+            cy={cy}
+            r={radius}
+            className="fill-gradient-to-br from-amber-400 to-orange-500 stroke-orange-600 stroke-[1] drop-shadow-sm transition-all duration-300"
+          />
+        );
+      }
+    }
+    return dots;
   };
 
   return (
@@ -260,12 +296,17 @@ export default function PollaplasiasmosPage() {
               {activeTab === 'antimetathetiki' && (
                 <div className="my-auto flex flex-col items-center gap-4 w-full px-4 text-center">
                   {antimetathetikiResult <= LIMITS.MAX_VISUAL_DOTS && currentRows > 0 && currentCols > 0 ? (
-                    /* ΕΜΦΑΝΙΣΗ ΠΛΕΓΜΑΤΟΣ ΜΟΝΟ ΑΝ ΕΙΝΑΙ ΜΙΚΡΟΣ Ο ΑΡΙΘΜΟΣ */
+                    /* ΔΙΟΡΘΩΜΕΝΟ SVG ΠΛΕΓΜΑ ΓΙΑ ΑΠΟΛΥΤΗ ΑΠΟΣΤΑΣΗ ΚΑΙ ΜΕΓΕΘΟΣ ΜΠΑΛΩΝ */
                     <div className="flex flex-col items-center gap-3">
-                      <div className="grid gap-2 p-4 bg-slate-50 rounded-2xl border shadow-inner max-w-xs mx-auto justify-center" style={{ gridTemplateColumns: `repeat(${currentCols}, minmax(0, 1fr))` }}>
-                        {[...Array(currentRows * currentCols)].map((_, i) => (
-                          <div key={i} className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 shadow-sm animate-fade-in" />
-                        ))}
+                      <div className="bg-slate-50 p-3 rounded-2xl border shadow-inner">
+                        <svg 
+                          width="260" 
+                          height="260" 
+                          viewBox="0 0 260 260" 
+                          className="bg-white rounded-xl overflow-hidden"
+                        >
+                          {renderVisualDots()}
+                        </svg>
                       </div>
                       <span className="text-xs font-bold text-slate-400">Διάταξη: {currentRows} γραμμές × {currentCols} στήλες</span>
                     </div>
@@ -274,7 +315,7 @@ export default function PollaplasiasmosPage() {
                     <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl max-w-xs mx-auto text-slate-500 text-sm font-medium space-y-2 shadow-inner">
                       <p>📏 <strong>Μεγάλοι Αριθμοί!</strong></p>
                       <p className="text-xs text-slate-400 leading-relaxed">
-                        Το γινόμενο ({antimetathetikiResult.toLocaleString('el-GR')}) είναι πολύ μεγάλο για να σχεδιαστεί με κουκκίδες στην οθόνη, αλλά η ιδιότητα παραμένει σε ισχύ!
+                        Το γινόμενο ({antimetathetikiResult.toLocaleString('el-GR')}) είναι μεγάλο για να σχεδιαστεί με κουκκίδες στην οθόνη, αλλά η ιδιότητα παραμένει σε ισχύ!
                       </p>
                     </div>
                   )}
