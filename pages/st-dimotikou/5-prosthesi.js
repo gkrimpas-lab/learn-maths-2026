@@ -40,6 +40,20 @@ export default function ProsthesiAfairesiPage() {
   const partB = formatForGrid(valB);
   const partResult = formatForGrid(result);
 
+  // Βοηθητική συνάρτηση για τον έλεγχο των ορίων κατά την πληκτρολόγηση (Max 6 ακέραια, Max 3 δεκαδικά)
+  const handleInputChange = (val, setter) => {
+    const cleanVal = val.replace(/[^0-9.]/g, '');
+    const parts = cleanVal.split('.');
+    const intPart = parts[0] || "";
+    const decPart = parts[1] || "";
+
+    if ((cleanVal.match(/\./g) || []).length <= 1) {
+      if (intPart.length <= 6 && decPart.length <= 3) {
+        setter(cleanVal);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
@@ -84,7 +98,6 @@ export default function ProsthesiAfairesiPage() {
                 <p className="text-xs md:text-sm leading-relaxed text-indigo-50 font-medium">
                   Όταν γράφουμε κάθετα δεκαδικούς αριθμούς, το πιο σημαντικό βήμα είναι να τοποθετούμε τις **υποδιαστολές ακριβώς τη μία κάτω από την άλλη**. Αν κάποιος αριθμός έχει λιγότερα ψηφία, συμπληρώνουμε μηδενικά στο τέλος!
                 </p>
-                {/* ΔΙΟΡΘΩΜΕΝΗ ΣΤΟΙΧΙΣΗ ΠΑΡΑΔΕΙΓΜΑΤΟΣ ΘΕΩΡΙΑΣ */}
                 <div className="flex justify-center">
                   <div className="bg-white/10 p-3 rounded-xl font-mono text-sm tracking-widest text-amber-200 w-32 text-right relative">
                     <span className="absolute left-2 top-7 text-white">+</span>
@@ -129,7 +142,7 @@ export default function ProsthesiAfairesiPage() {
                 <>
                   <div className="space-y-2">
                     <h3 className="text-2xl font-black text-gray-900">Διαδραστική Κάθετη Πράξη</h3>
-                    <p className="text-gray-500 text-sm">Άλλαξε τους αριθμούς και δες πώς στοιχίζονται αυτόματα με βάση την υποδιαστολή.</p>
+                    <p className="text-gray-500 text-sm">Γράψε αριθμούς (έως 6 ακέραια και 3 δεκαδικά ψηφία) για να δεις τη στοίχιση.</p>
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
@@ -137,12 +150,8 @@ export default function ProsthesiAfairesiPage() {
                       <input 
                         type="text" 
                         value={numA}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/[^0-9.]/g, '');
-                          const decs = val.split('.')[1] || "";
-                          if (decs.length <= 3) setNumA(val);
-                        }}
-                        className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[140px] text-blue-600 outline-none focus:border-blue-500"
+                        onChange={(e) => handleInputChange(e.target.value, setNumA)}
+                        className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[160px] text-blue-600 outline-none focus:border-blue-500"
                         placeholder="Αριθμός Α"
                       />
                       
@@ -156,12 +165,8 @@ export default function ProsthesiAfairesiPage() {
                       <input 
                         type="text" 
                         value={numB}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/[^0-9.]/g, '');
-                          const decs = val.split('.')[1] || "";
-                          if (decs.length <= 3) setNumB(val);
-                        }}
-                        className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[140px] text-blue-600 outline-none focus:border-blue-500"
+                        onChange={(e) => handleInputChange(e.target.value, setNumB)}
+                        className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[160px] text-blue-600 outline-none focus:border-blue-500"
                         placeholder="Αριθμός Β"
                       />
                     </div>
@@ -181,12 +186,12 @@ export default function ProsthesiAfairesiPage() {
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full flex flex-col items-center justify-center gap-6 shadow-inner my-auto">
-                    <div className="flex items-center gap-4 text-xl font-black font-mono bg-white p-4 rounded-xl border shadow-sm">
-                      <span className={`transition-all duration-300 ${isSwapped ? 'text-blue-600 transform translate-x-16' : 'text-emerald-600'}`}>
+                    <div className="flex flex-wrap items-center justify-center gap-4 text-xl font-black font-mono bg-white p-4 rounded-xl border shadow-sm">
+                      <span className={`transition-all duration-300 ${isSwapped ? 'text-blue-600' : 'text-emerald-600'}`}>
                         {isSwapped ? "15.123" : "142.5"}
                       </span>
                       <span className="text-slate-400">+</span>
-                      <span className={`transition-all duration-300 ${isSwapped ? 'text-emerald-600 transform -translate-x-16' : 'text-blue-600'}`}>
+                      <span className={`transition-all duration-300 ${isSwapped ? 'text-emerald-600' : 'text-blue-600'}`}>
                         {isSwapped ? "142.5" : "15.123"}
                       </span>
                       <span className="text-slate-400">=</span>
@@ -233,7 +238,7 @@ export default function ProsthesiAfairesiPage() {
               )}
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΠΟΛΥΤΗ ΣΤΟΙΧΙΣΗ ΠΙΝΑΚΑ ΜΕ CSS GRID */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -243,33 +248,33 @@ export default function ProsthesiAfairesiPage() {
                 <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none">
                   
                   {/* Σήμα Πράξης */}
-                  <div className="absolute left-6 top-[54px] text-amber-400 font-black">
+                  <div className="absolute left-4 top-[54px] text-amber-400 font-black">
                     {isAddition ? "+" : "-"}
                   </div>
 
-                  {/* 3-Column Grid για Απόλυτη Ευθυγράμμιση γύρω από το Κόμμα */}
-                  <div className="grid grid-cols-[1fr_auto_1fr] items-center text-right font-black tracking-widest gap-y-2">
+                  {/* 3-Column Grid - tracking-normal για εξοικονόμηση χώρου */}
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-center text-right font-black tracking-normal gap-y-2">
                     
                     {/* Γραμμή 1: Αριθμός Α */}
-                    <div className="text-blue-400">{partA.intPart}</div>
-                    <div className="text-rose-500 font-bold px-[1px]">,</div>
+                    <div className="text-blue-400 truncate">{partA.intPart}</div>
+                    <div className="text-rose-500 font-bold px-[2px]">,</div>
                     <div className="text-blue-400 text-left">{partA.decPart}</div>
 
                     {/* Γραμμή 2: Αριθμός Β */}
-                    <div className="text-emerald-400">{partB.intPart}</div>
-                    <div className="text-rose-500 font-bold px-[1px]">,</div>
+                    <div className="text-emerald-400 truncate">{partB.intPart}</div>
+                    <div className="text-rose-500 font-bold px-[2px]">,</div>
                     <div className="text-emerald-400 text-left">{partB.decPart}</div>
 
-                    {/* Οριζόντια Γραμμή Πράξης */}
+                    {/* Οριζόντια Γραμμή */}
                     <div className="col-span-3 h-[2px] bg-slate-700 my-1"></div>
 
                     {/* Γραμμή 3: Αποτέλεσμα */}
-                    <div className="text-purple-400 text-3xl">{partResult.intPart}</div>
-                    <div className="text-rose-500 font-bold px-[1px] text-3xl">,</div>
-                    <div className="text-purple-400 text-left text-3xl">{partResult.decPart}</div>
+                    <div className="text-purple-400 text-2xl truncate">{partResult.intPart}</div>
+                    <div className="text-rose-500 font-bold px-[2px] text-2xl">,</div>
+                    <div className="text-purple-400 text-left text-2xl">{partResult.decPart}</div>
                   </div>
 
-                  {/* Κάθετη Διακεκομμένη Γραμμή (Πλέον Κλειδωμένη 100% πάνω στο Κόμμα) */}
+                  {/* Κάθετη Διακεκομμένη Γραμμή κλειδωμένη στο Κόμμα */}
                   <div className="absolute top-4 bottom-4 left-[calc(50%_-_11px)] w-[1px] border-r-2 border-dashed border-rose-500/50 pointer-events-none"></div>
                 </div>
 
