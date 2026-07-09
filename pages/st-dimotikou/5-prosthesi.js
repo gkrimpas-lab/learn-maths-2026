@@ -238,65 +238,60 @@ export default function ProsthesiAfairesiPage() {
               )}
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΜΕ ΑΠΟΛΥΤΗ ΣΤΑΘΕΡΗ ΣΤΟΙΧΙΣΗ FLEX */}
-<div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
-  <div className="w-full"></div>
+            {{/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΜΕ ΕΞΥΠΝΗ ΣΤΟΙΧΙΣΗ GRID & ΥΠΟΒΑΘΡΟ ΓΡΑΜΜΗΣ */}}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
+              <div className="w-full"></div>
 
-  <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[340px]">
-    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
-    
-    <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none overflow-hidden py-8">
-      
-      {/* Σήμα Πράξης */}
-      <div className="absolute left-6 top-[62px] text-amber-400 font-black z-20">
-        {isAddition ? "+" : "-"}
-      </div>
+              <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[340px]">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
+                
+                <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none overflow-hidden py-6 flex justify-center">
+                  
+                  {/* Σήμα Πράξης */}
+                  <div className="absolute left-4 top-[50px] text-amber-400 font-black z-20">
+                    {isAddition ? "+" : "-"}
+                  </div>
 
-      {/* Κάθετη Διακεκομμένη Γραμμή - Απόλυτα κεντραρισμένη στο container */}
-      <div className="absolute top-0 bottom-0 left-1/2 w-0 border-r-2 border-dashed border-rose-500/60 z-0"></div>
+                  {/* 3-Column Grid με relative στη μεσαία στήλη για τη γραμμή */}
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-center font-black tracking-wider gap-y-2 relative z-10 w-full px-4">
+                    
+                    {/* Γραμμή 1: Αριθμός Α */}
+                    <div className="text-blue-400 text-right truncate">{partA.intPart}</div>
+                    <div className="text-rose-500 px-1 text-center relative">
+                      ,
+                      {/* Η κόκκινη γραμμή σχεδιάζεται ΑΚΡΙΒΩΣ πίσω από το πρώτο κόμμα και εκτείνεται κατακόρυφα */}
+                      <div className="absolute top-[-30px] bottom-[-130px] left-1/2 -translate-x-1/2 w-0 border-r-2 border-dashed border-rose-500/50 pointer-events-none z-0"></div>
+                    </div>
+                    <div className="text-blue-400 text-left">{partA.decPart}</div>
 
-      {/* Κάθετη Δομή Πράξης */}
-      <div className="flex flex-col gap-3 relative z-10 w-full">
-        
-        {/* Γραμμή 1: Αριθμός Α */}
-        <div className="flex justify-center items-center">
-          <div className="w-32 text-right text-blue-400 truncate">{partA.intPart}</div>
-          <div className="w-5 text-center text-rose-500 font-bold">,</div>
-          <div className="w-32 text-left text-blue-400 truncate">{partA.decPart}</div>
-        </div>
+                    {/* Γραμμή 2: Αριθμός Β */}
+                    <div className="text-emerald-400 text-right truncate">{partB.intPart}</div>
+                    <div className="text-rose-500 px-1 text-center">,</div>
+                    <div className="text-emerald-400 text-left">{partB.decPart}</div>
 
-        {/* Γραμμή 2: Αριθμός Β */}
-        <div className="flex justify-center items-center">
-          <div className="w-32 text-right text-emerald-400 truncate">{partB.intPart}</div>
-          <div className="w-5 text-center text-rose-500 font-bold">,</div>
-          <div className="w-32 text-left text-emerald-400 truncate">{partB.decPart}</div>
-        </div>
+                    {/* Οριζόντια Γραμμή */}
+                    <div className="col-span-3 h-[2px] bg-slate-700 my-1 z-10"></div>
 
-        {/* Οριζόντια Γραμμή Πράξης */}
-        <div className="flex justify-center my-1">
-          <div className="w-full h-[2px] bg-slate-700"></div>
-        </div>
+                    {/* Γραμμή 3: Αποτέλεσμα */}
+                    <div className="text-purple-400 text-right text-2xl truncate">{partResult.intPart}</div>
+                    <div className="text-rose-500 px-1 text-center text-2xl">,</div>
+                    <div className="text-purple-400 text-left text-2xl">{partResult.decPart}</div>
 
-        {/* Γραμμή 3: Αποτέλεσμα */}
-        <div className="flex justify-center items-center">
-          <div className="w-32 text-right text-purple-400 text-2xl truncate">{partResult.intPart}</div>
-          <div className="w-5 text-center text-rose-500 font-bold text-2xl">,</div>
-          <div className="w-32 text-left text-purple-400 text-2xl truncate">{partResult.decPart}</div>
-        </div>
+                  </div>
 
-      </div>
+                </div>
 
-    </div>
+                <span className="text-xs font-bold text-rose-500 flex items-center gap-1 text-center">
+                  📍 Η κόκκινη διακεκομμένη γραμμή περνάει ακριβώς από την υποδιαστολή!
+                </span>
+              </div>
 
-    <span className="text-xs font-bold text-rose-500 flex items-center gap-1 text-center">
-      📍 Η κόκκινη διακεκομμένη γραμμή περνάει ακριβώς από την υποδιαστολή!
-    </span>
-  </div>
+              <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
+                <span>🔍 Οι αριθμοί μετατρέπονται αυτόματα ώστε να έχουν ίσο πλήθος δεκαδικών ψηφίων (έως 3).</span>
+              </div>
+            </div>
 
-  <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-    <span>🔍 Οι αριθμοί μετατρέπονται αυτόματα ώστε να έχουν ίσο πλήθος δεκαδικών ψηφίων (έως 3).</span>
-  </div>
-</div>
+          </div>
         </main>
       </div>
 
