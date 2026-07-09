@@ -64,11 +64,11 @@ export default function SigkrisiArithmonPage() {
                   <span>📖</span> Θεωρία: Σύγκριση Φυσικών & Δεκαδικών
                 </h2>
                 <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                  Για να συγκρίνουμε δύο αριθμούς, τους κοιτάζουμε πάντα **από αριστερά προς τα δεξιά**, συγκρίνοντας τα ψηφία που βρίσκονται στην ίδια θέση.
+                  Για να συγκρίνουμε δύο αριθμούς, τους κοιτάζουμε πάντα "από αριστερά προς τα δεξιά", συγκρίνοντας τα ψηφία που βρίσκονται στην ίδια θέση.
                 </p>
                 <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-2 text-sm md:text-base font-medium">
                   <p>🔹 <strong>Στους Φυσικούς:</strong> Μεγαλύτερος είναι εκείνος που έχει τα περισσότερα ψηφία. Αν έχουν ίδια ψηφία, συγκρίνουμε ένα-ένα τα ψηφία από αριστερά.</p>
-                  <p>🔸 <strong>Στους Δεκαδικούς:</strong> Συγκρίνουμε πρώτα το **ακέραιο μέρος**. Αν είναι ίδιο, συγκρίνουμε το δεκαδικό μέρος ξεκινώντας από τα **δέκατα**, μετά τα εκατοστά κ.ο.κ.</p>
+                  <p>🔸 <strong>Στους Δεκαδικούς:</strong> Συγκρίνουμε πρώτα το "ακέραιο μέρος". Αν είναι ίδιο, συγκρίνουμε το δεκαδικό μέρος ξεκινώντας από τα "δέκατα", μετά τα "εκατοστά" κ.ο.κ.</p>
                 </div>
               </div>
               
@@ -77,7 +77,7 @@ export default function SigkrisiArithmonPage() {
                 <div className="bg-white/10 p-4 rounded-xl space-y-1 text-xs md:text-sm font-medium">
                   <p>Ας συγκρίνουμε τον <span className="font-bold text-amber-200">45,5</span> και τον <span className="font-bold text-amber-200">45,12</span>:</p>
                   <p>• Το ακέραιο μέρος είναι ίδιο (45 = 45).</p>
-                  <p>• Συγκρίνουμε τα δέκατα: Το 5 είναι μεγαλύτερο από το 1 ($5 &gt; 1$).</p>
+                  <p>• Συγκρίνουμε τα δέκατα: Το 5 είναι μεγαλύτερο από το 1 (5 &gt; 1).</p>
                   <p className="font-black text-center pt-2 text-sm text-amber-200">Άρα: 45,5 ＞ 45,12</p>
                 </div>
                 <p className="text-[11px] text-center text-teal-100">Tip: Αν συμπληρώσεις ένα μηδενικό στο τέλος, το βλέπεις ως 45,50 ＞ 45,12!</p>
