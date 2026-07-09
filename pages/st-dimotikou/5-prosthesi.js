@@ -17,7 +17,11 @@ export default function ProsthesiAfairesiPage() {
   const [propB, setPropB] = useState("38.74");
   const [isSwapped, setIsSwapped] = useState(false);
 
-  // Καθορισμός των τελικών τιμών προς εμφάνιση με βάση το ποιο Tab είναι ενεργό και αν έχει γίνει αντιμετάθεση
+  // Κατάσταση για Αντίθετη Πράξη (Tab 3) - Νέα Δυναμικά Inputs
+  const [revA, setRevA] = useState("120.4");
+  const [revB, setRevB] = useState("45.25");
+
+  // Καθορισμός των τελικών τιμών προς εμφάνιση με βάση το ποιο Tab είναι ενεργό
   const getActiveNumbers = () => {
     if (activeTab === 'katheti') {
       return { currentA: parseFloat(numA) || 0, currentB: parseFloat(numB) || 0, showAddition: isAddition };
@@ -30,17 +34,26 @@ export default function ProsthesiAfairesiPage() {
         showAddition: true
       };
     } else {
-      return { currentA: 100, currentB: 45, showAddition: true };
+      // Tab 3: Για τον πρώτο πίνακα (Πρόσθεση)
+      return { currentA: parseFloat(revA) || 0, currentB: parseFloat(revB) || 0, showAddition: true };
     }
   };
 
   const { currentA, currentB, showAddition } = getActiveNumbers();
+  
+  // Υπολογισμοί για Tab 1 & Tab 2
   const result = showAddition ? currentA + currentB : currentA - currentB;
+
+  // Ειδικοί υπολογισμοί αποκλειστικά για τον 2ο πίνακα του Tab 3 (Αφαίρεση)
+  const valRevA = parseFloat(revA) || 0;
+  const valRevB = parseFloat(revB) || 0;
+  const revSum = valRevA + valRevB;
+  const revFinal = revSum - valRevB; // Επιστρέφει στο revA
 
   // Βρίσκουμε δυναμικά πόσα δεκαδικά ψηφία χρειάζεται να εμφανίσουμε (Max 3)
   const getDecimalPlaces = () => {
-    const activeStrA = activeTab === 'katheti' ? numA : propA;
-    const activeStrB = activeTab === 'katheti' ? numB : propB;
+    const activeStrA = activeTab === 'katheti' ? numA : activeTab === 'idiotites' ? propA : revA;
+    const activeStrB = activeTab === 'katheti' ? numB : activeTab === 'idiotites' ? propB : revB;
     const digitsA = (activeStrA.split('.')[1] || "").length;
     const digitsB = (activeStrB.split('.')[1] || "").length;
     return Math.min(Math.max(digitsA, digitsB, 1), 3);
@@ -48,7 +61,7 @@ export default function ProsthesiAfairesiPage() {
 
   const decimalPlaces = getDecimalPlaces();
 
-  // Διαχωρισμός των αριθμών σε Ακέραιο και Δεκαδικό για την απόλυτη στοίχιση στον πίνακα
+  // Διαχωρισμός των αριθμών σε Ακέραιο και Δεκαδικό για την απόλυτη στοίχιση
   const formatForGrid = (value) => {
     const str = value.toFixed(decimalPlaces);
     const [intPart, decPart] = str.split('.');
@@ -58,6 +71,12 @@ export default function ProsthesiAfairesiPage() {
   const partA = formatForGrid(currentA);
   const partB = formatForGrid(currentB);
   const partResult = formatForGrid(result);
+
+  // Μορφοποίηση ειδικά για τους δύο πίνακες του Tab 3
+  const tab3_A = formatForGrid(valRevA);
+  const tab3_B = formatForGrid(valRevB);
+  const tab3_Sum = formatForGrid(revSum);
+  const tab3_Final = formatForGrid(revFinal);
 
   // Βοηθητική συνάρτηση για τον έλεγχο των ορίων κατά την πληκτρολόγηση (Max 6 ακέραια, Max 3 δεκαδικά)
   const handleInputChange = (val, setter) => {
@@ -166,7 +185,6 @@ export default function ProsthesiAfairesiPage() {
 
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
-                      {/* ΜΕΓΑΛΥΤΕΡΟ ΠΛΑΙΣΙΟ INPUT A */}
                       <input  
                         type="text"  
                         value={numA}
@@ -182,7 +200,6 @@ export default function ProsthesiAfairesiPage() {
                         {isAddition ? "+" : "-"}
                       </button>
 
-                      {/* ΜΕΓΑΛΥΤΕΡΟ ΠΛΑΙΣΙΟ INPUT B */}
                       <input  
                         type="text"  
                         value={numB}
@@ -207,7 +224,6 @@ export default function ProsthesiAfairesiPage() {
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
-                    {/* ΜΕΓΑΛΥΤΕΡΑ ΚΟΥΤΑΚΙΑ INPUT ΣΤΙΣ ΙΔΙΟΤΗΤΕΣ */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
                       <div className="flex flex-col items-center gap-1 w-full sm:max-w-[176px]">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμός Α</span>
@@ -236,7 +252,6 @@ export default function ProsthesiAfairesiPage() {
                       </div>
                     </div>
 
-                    {/* Οριζόντια Εμφάνιση της Ιδιότητας */}
                     <div className="flex flex-wrap items-center justify-center gap-2 text-sm md:text-base font-black font-mono bg-white p-3 rounded-xl border shadow-sm mt-2 max-w-full overflow-hidden break-all">
                       <span className={isSwapped ? 'text-blue-600' : 'text-emerald-600'}>
                         {isSwapped ? propB || "0" : propA || "0"}
@@ -270,24 +285,37 @@ export default function ProsthesiAfairesiPage() {
               {activeTab === 'antitheti' && (
                 <>
                   <div className="space-y-2">
-                    <h3 className="text-2xl font-black text-gray-900">Αφαίρεση: Η Αντίθετη Πράξη</h3>
-                    <p className="text-gray-500 text-sm">Δες πώς η αφαίρεση ξεκάθαρα «ξεκάνει» και ακυρώνει την πρόσθεση, γυρνώντας μας στην αρχή.</p>
+                    <h3 className="text-2xl font-black text-gray-900">Αντίθετη Πράξη (Δυναμική)</h3>
+                    <p className="text-gray-500 text-sm">Γράψε δύο αριθμούς για να δεις πώς η αφαίρεση αναιρεί αυτόματα την πρόσθεσή τους.</p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto font-mono text-sm md:text-base">
-                    <div className="bg-white p-3 rounded-xl border shadow-sm flex items-center justify-between">
-                      <span className="font-bold text-slate-500 font-sans">1. Πρόσθεση:</span>
-                      <span>100 + 45 = <strong className="text-emerald-600">145</strong></span>
-                    </div>
-                    <div className="text-center text-blue-500 font-black text-xl">👇 Αντίστροφα 👇</div>
-                    <div className="bg-white p-3 rounded-xl border shadow-sm flex items-center justify-between">
-                      <span className="font-bold text-slate-500 font-sans">2. Αφαίρεση:</span>
-                      <span><strong className="text-emerald-600">145</strong> - 45 = <strong>100</strong></span>
+                  <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
+                    {/* Inputs για Δυναμικό Tab Αντίθετης Πράξης */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
+                      <div className="flex flex-col items-center gap-1 w-full sm:max-w-[176px]">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αρχικός Αριθμός</span>
+                        <input  
+                          type="text"  
+                          value={revA}
+                          onChange={(e) => handleInputChange(e.target.value, setRevA)}
+                          className="text-base font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full text-blue-600 outline-none focus:border-blue-500 tracking-normal"
+                        />
+                      </div>
+                      <span className="text-xl font-black text-slate-400 mt-4 flex-shrink-0">+</span>
+                      <div className="flex flex-col items-center gap-1 w-full sm:max-w-[176px]">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Ποσότητα Πρόσθεσης</span>
+                        <input  
+                          type="text"  
+                          value={revB}
+                          onChange={(e) => handleInputChange(e.target.value, setRevB)}
+                          className="text-base font-black text-center p-2.5 bg-white border-2 border-emerald-200 rounded-xl shadow-sm w-full text-emerald-600 outline-none focus:border-emerald-500 tracking-normal"
+                        />
+                      </div>
                     </div>
                   </div>
 
                   <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-xs md:text-sm font-bold text-emerald-900 text-center shadow-inner">
-                    🎯 Ξεκινήσαμε από το 100, προσθέσαμε 45, αφαιρέσαμε 45 και γυρίσαμε ακριβώς στο 100!
+                    🎯 Η αφαίρεση δεξιά παίρνει το Άθροισμα, βγάζει την ίδια ποσότητα και μας επιστρέφει στον αρχικό αριθμό!
                   </div>
                 </>
               )}
@@ -297,51 +325,90 @@ export default function ProsthesiAfairesiPage() {
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[340px]">
+              <div className="my-auto flex flex-col items-center gap-4 w-full max-w-full px-2">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
                 
-                <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none overflow-hidden py-8">
-                  
-                  {/* Σήμα Πράξης */}
-                  <div className="absolute left-4 top-[62px] text-amber-400 font-black z-20">
-                    {showAddition ? "+" : "-"}
+                {activeTab !== 'antitheti' ? (
+                  /* ΜΟΝΟΣ ΠΙΝΑΚΑΣ ΓΙΑ ΤΑ TABS 1 & 2 */
+                  <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full max-w-[340px] font-mono text-xl md:text-2xl text-white relative select-none overflow-hidden py-8">
+                    <div className="absolute left-4 top-[62px] text-amber-400 font-black z-20">{showAddition ? "+" : "-"}</div>
+                    <div className="absolute top-0 bottom-0 left-1/2 w-0 border-r-2 border-dashed border-rose-500/60 z-0"></div>
+                    <div className="flex flex-col gap-3 relative z-10 w-full">
+                      <div className="flex justify-center items-center">
+                        <div className="w-[110px] text-right text-blue-400 truncate">{partA.intPart}</div>
+                        <div className="w-6 text-center text-rose-500 font-bold">,</div>
+                        <div className="w-[110px] text-left text-blue-400 truncate">{partA.decPart}</div>
+                      </div>
+                      <div className="flex justify-center items-center">
+                        <div className="w-[110px] text-right text-emerald-400 truncate">{partB.intPart}</div>
+                        <div className="w-6 text-center text-rose-500 font-bold">,</div>
+                        <div className="w-[110px] text-left text-emerald-400 truncate">{partB.decPart}</div>
+                      </div>
+                      <div className="flex justify-center my-1 px-2"><div className="w-full h-[2px] bg-slate-700"></div></div>
+                      <div className="flex justify-center items-center">
+                        <div className="w-[110px] text-right text-purple-400 text-2xl truncate">{partResult.intPart}</div>
+                        <div className="w-6 text-center text-rose-500 font-bold text-2xl">,</div>
+                        <div className="w-[110px] text-left text-purple-400 text-2xl truncate">{partResult.decPart}</div>
+                      </div>
+                    </div>
                   </div>
-
-                  {/* Κάθετη Διακεκομμένη Γραμμή - Απόλυτα κεντραρισμένη στο container ως φόντο */}
-                  <div className="absolute top-0 bottom-0 left-1/2 w-0 border-r-2 border-dashed border-rose-500/60 z-0"></div>
-
-                  {/* Κάθετη Δομή Πράξης με 3 στήλες Flex */}
-                  <div className="flex flex-col gap-3 relative z-10 w-full">
+                ) : (
+                  /* ΔΥΟ ΠΙΝΑΚΕΣ ΔΙΠΛΑ-ΔΙΠΛΑ ΓΙΑ ΤΟ TAB 3 (ΠΡΟΣΘΕΣΗ & ΑΦΑΙΡΕΣΗ) */
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-xl">
                     
-                    {/* Γραμμή 1: Αριθμός Α */}
-                    <div className="flex justify-center items-center">
-                      <div className="w-[110px] text-right text-blue-400 truncate">{partA.intPart}</div>
-                      <div className="w-6 text-center text-rose-500 font-bold">,</div>
-                      <div className="w-[110px] text-left text-blue-400 truncate">{partA.decPart}</div>
+                    {/* ΠΙΝΑΚΑΣ Α: ΠΡΟΣΘΕΣΗ */}
+                    <div className="bg-slate-900 p-4 rounded-2xl shadow-xl border-2 border-slate-700 w-full max-w-[240px] font-mono text-base md:text-lg text-white relative select-none overflow-hidden py-6">
+                      <div className="absolute left-2.5 top-[44px] text-amber-400 font-black z-20">+</div>
+                      <div className="absolute top-0 bottom-0 left-1/2 w-0 border-r border-dashed border-rose-500/40 z-0"></div>
+                      <div className="flex flex-col gap-2 relative z-10 w-full">
+                        <div className="flex justify-center items-center">
+                          <div className="w-[75px] text-right text-blue-400 truncate">{tab3_A.intPart}</div>
+                          <div className="w-4 text-center text-rose-500 font-bold">,</div>
+                          <div className="w-[75px] text-left text-blue-400 truncate">{tab3_A.decPart}</div>
+                        </div>
+                        <div className="flex justify-center items-center">
+                          <div className="w-[75px] text-right text-emerald-400 truncate">{tab3_B.intPart}</div>
+                          <div className="w-4 text-center text-rose-500 font-bold">,</div>
+                          <div className="w-[75px] text-left text-emerald-400 truncate">{tab3_B.decPart}</div>
+                        </div>
+                        <div className="flex justify-center my-0.5 px-1"><div className="w-full h-[1px] bg-slate-700"></div></div>
+                        <div className="flex justify-center items-center">
+                          <div className="w-[75px] text-right text-purple-400 font-bold truncate">{tab3_Sum.intPart}</div>
+                          <div className="w-4 text-center text-rose-500 font-bold">,</div>
+                          <div className="w-[75px] text-left text-purple-400 font-bold truncate">{tab3_Sum.decPart}</div>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Γραμμή 2: Αριθμός Β */}
-                    <div className="flex justify-center items-center">
-                      <div className="w-[110px] text-right text-emerald-400 truncate">{partB.intPart}</div>
-                      <div className="w-6 text-center text-rose-500 font-bold">,</div>
-                      <div className="w-[110px] text-left text-emerald-400 truncate">{partB.decPart}</div>
-                    </div>
+                    {/* ΒΕΛΟΣ ΑΝΤΙΣΤΡΟΦΗΣ */}
+                    <span className="text-2xl text-blue-500 font-black transform rotate-90 sm:rotate-0 flex-shrink-0">➔</span>
 
-                    {/* Οριζόντια Γραμμή Πράξης */}
-                    <div className="flex justify-center my-1 px-2">
-                      <div className="w-full h-[2px] bg-slate-700"></div>
-                    </div>
-
-                    {/* Γραμμή 3: Αποτέλεσμα */}
-                    <div className="flex justify-center items-center">
-                      <div className="w-[110px] text-right text-purple-400 text-2xl truncate">{partResult.intPart}</div>
-                      <div className="w-6 text-center text-rose-500 font-bold text-2xl">,</div>
-                      <div className="w-[110px] text-left text-purple-400 text-2xl truncate">{partResult.decPart}</div>
+                    {/* ΠΙΝΑΚΑΣ Β: ΑΦΑΙΡΕΣΗ */}
+                    <div className="bg-slate-900 p-4 rounded-2xl shadow-xl border-2 border-slate-700 w-full max-w-[240px] font-mono text-base md:text-lg text-white relative select-none overflow-hidden py-6">
+                      <div className="absolute left-2.5 top-[44px] text-amber-400 font-black z-20">-</div>
+                      <div className="absolute top-0 bottom-0 left-1/2 w-0 border-r border-dashed border-rose-500/40 z-0"></div>
+                      <div className="flex flex-col gap-2 relative z-10 w-full">
+                        <div className="flex justify-center items-center">
+                          <div className="w-[75px] text-right text-purple-400 font-bold truncate">{tab3_Sum.intPart}</div>
+                          <div className="w-4 text-center text-rose-500 font-bold">,</div>
+                          <div className="w-[75px] text-left text-purple-400 font-bold truncate">{tab3_Sum.decPart}</div>
+                        </div>
+                        <div className="flex justify-center items-center">
+                          <div className="w-[75px] text-right text-emerald-400 truncate">{tab3_B.intPart}</div>
+                          <div className="w-4 text-center text-rose-500 font-bold">,</div>
+                          <div className="w-[75px] text-left text-emerald-400 truncate">{tab3_B.decPart}</div>
+                        </div>
+                        <div className="flex justify-center my-0.5 px-1"><div className="w-full h-[1px] bg-slate-700"></div></div>
+                        <div className="flex justify-center items-center">
+                          <div className="w-[75px] text-right text-blue-400 truncate">{tab3_Final.intPart}</div>
+                          <div className="w-4 text-center text-rose-500 font-bold">,</div>
+                          <div className="w-[75px] text-left text-blue-400 truncate">{tab3_Final.decPart}</div>
+                        </div>
+                      </div>
                     </div>
 
                   </div>
-
-                </div>
+                )}
 
                 <span className="text-xs font-bold text-rose-500 flex items-center gap-1 text-center">
                   📍 Η κόκκινη διακεκομμένη γραμμή περνάει ακριβώς από την υποδιαστολή!
