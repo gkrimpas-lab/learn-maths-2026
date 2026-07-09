@@ -127,7 +127,7 @@ export default function ProsthesiAfairesiPage() {
                   <span>📖</span> Θεωρία: Πρόσθεση & Αφαίρεση
                 </h2>
                 <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                  Η **πρόσθεση** ενώνει ποσότητες, ενώ η **αφαίρεση** βγάζει μια ποσότητα από μια άλλη. Η αφαίρεση είναι η **αντίθετη πράξη** της πρόσθεσης επειδή «αναιρεί» αυτό που έκανε η πρόσθεση.
+                  Η "πρόσθεση" ενώνει ποσότητες, ενώ η "αφαίρεση" βγάζει μια ποσότητα από μια άλλη. Η αφαίρεση είναι η "αντίθετη πράξη" της πρόσθεσης επειδή «αναιρεί» αυτό που έκανε η πρόσθεση.
                 </p>
                 <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-2 text-sm md:text-base font-medium">
                   <p>🔄 <strong>Αντιμεταθετική Ιδιότητα:</strong> Στην πρόσθεση μπορούμε να αλλάξουμε τη σειρά των αριθμών χωρίς να αλλάξει το αποτέλεσμα (α + β = β + α).</p>
@@ -138,7 +138,7 @@ export default function ProsthesiAfairesiPage() {
               <div className="bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-6 rounded-2xl shadow-md space-y-3">
                 <p className="font-bold text-amber-300 text-sm md:text-base text-center">⚠️ Ο χρυσός κανόνας των Δεκαδικών!</p>
                 <p className="text-xs md:text-sm leading-relaxed text-indigo-50 font-medium">
-                  Όταν γράφουμε κάθετα δεκαδικούς αριθμούς, το πιο σημαντικό βήμα είναι να τοποθετούμε τις **υποδιαστολές ακριβώς τη μία κάτω από την άλλη**. Αν κάποιος αριθμός έχει λιγότερα ψηφία, συμπληρώνουμε μηδενικά στο τέλος!
+                  Όταν γράφουμε κάθετα δεκαδικούς αριθμούς, το πιο σημαντικό βήμα είναι να τοποθετούμε τις "υποδιαστολές ακριβώς τη μία κάτω από την άλλη". Αν κάποιος αριθμός έχει λιγότερα ψηφία, συμπληρώνουμε μηδενικά στο τέλος!
                 </p>
                 <div className="flex justify-center">
                   <div className="bg-white/10 p-3 rounded-xl font-mono text-sm tracking-widest text-amber-200 w-32 text-right relative">
@@ -273,7 +273,7 @@ export default function ProsthesiAfairesiPage() {
                     <div className="flex justify-center mt-1">
                       <button  
                         onClick={() => setIsSwapped(!isSwapped)}
-                        className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow transition-all flex items-center gap-2"
+                        className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs tracking-wider px-5 py-2.5 rounded-xl shadow transition-all flex items-center gap-2"
                       >
                         🔄 Αντιμετάθεση Προσθετέων
                       </button>
