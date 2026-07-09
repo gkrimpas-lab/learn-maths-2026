@@ -394,7 +394,15 @@ export default function PollaplasiasmosPage() {
 
               {activeTab === 'antimetathetiki' && (
                 <div className="my-auto flex flex-col items-center gap-4 w-full px-4 text-center">
-                  {antimetathetikiResult <= LIMITS.MAX_VISUAL_DOTS && currentRows > 0 && currentCols > 0 ? (
+                  {/* Διορθωμένος έλεγχος: Αν κάποιος αριθμός είναι 0, δείξε το μήνυμα του απορροφητικού στοιχείου */}
+                  {currentRows === 0 || currentCols === 0 ? (
+                    <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl max-w-xs mx-auto text-amber-900 text-sm font-medium space-y-2 shadow-inner">
+                      <p className="text-base">🍩 <strong>Απορροφητικό Στοιχείο!</strong></p>
+                      <p className="text-xs text-amber-700 leading-relaxed font-normal">
+                        Όταν πολλαπλασιάζουμε έναν αριθμό με το <strong>0</strong>, το αποτέλεσμα γίνεται πάντα <strong>0</strong>. Δεν υπάρχουν κουτάκια για να σχεδιαστούν στο πλέγμα!
+                      </p>
+                    </div>
+                  ) : antimetathetikiResult <= LIMITS.MAX_VISUAL_DOTS ? (
                     <div className="flex flex-col items-center gap-3">
                       <div className="bg-slate-50 p-4 rounded-2xl border shadow-inner">
                         <svg width="340" height="340" viewBox="0 0 340 340" className="bg-white rounded-xl overflow-hidden">
