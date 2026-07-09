@@ -289,7 +289,7 @@ export default function ProsthesiAfairesiPage() {
               {activeTab === 'antitheti' && (
                 <>
                   <div className="space-y-2">
-                    <h3 className="text-2xl font-black text-gray-900">Αντίθετη Πράξη (Δυναμική)</h3>
+                    <h3 className="text-2xl font-black text-gray-900">Αντίθετη Πράξη</h3>
                     <p className="text-gray-500 text-sm">Γράψε δύο αριθμούς για να παράξεις αυτόματα τις δύο αντίστροφες οριζόντιες ισότητες.</p>
                   </div>
 
@@ -350,7 +350,7 @@ export default function ProsthesiAfairesiPage() {
               <div className="w-full"></div>
 
               <div className="my-auto flex flex-col items-center gap-4 w-full max-w-full px-2">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
+                <span className="text-xs font-bold text-slate-500 tracking-wider">Οπτικός Πίνακας Στοίχισης</span>
                 
                 {activeTab !== 'antitheti' ? (
                   /* ΜΟΝΟΣ ΠΙΝΑΚΑΣ ΓΙΑ ΤΑ TABS 1 & 2 */
