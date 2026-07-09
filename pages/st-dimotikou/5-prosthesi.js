@@ -17,9 +17,9 @@ export default function ProsthesiAfairesiPage() {
   const [propB, setPropB] = useState("38.74");
   const [isSwapped, setIsSwapped] = useState(false);
 
-  // Κατάσταση για Αντίθετη Πράξη (Tab 3) - Νέα Δυναμικά Inputs
-  const [revA, setRevA] = useState("120.4");
-  const [revB, setRevB] = useState("45.25");
+  // Κατάσταση για Αντίθετη Πράξη (Tab 3)
+  const [revA, setRevA] = useState("15");
+  const [revB, setRevB] = useState("10");
 
   // Καθορισμός των τελικών τιμών προς εμφάνιση με βάση το ποιο Tab είναι ενεργό
   const getActiveNumbers = () => {
@@ -34,7 +34,6 @@ export default function ProsthesiAfairesiPage() {
         showAddition: true
       };
     } else {
-      // Tab 3: Για τον πρώτο πίνακα (Πρόσθεση)
       return { currentA: parseFloat(revA) || 0, currentB: parseFloat(revB) || 0, showAddition: true };
     }
   };
@@ -44,11 +43,11 @@ export default function ProsthesiAfairesiPage() {
   // Υπολογισμοί για Tab 1 & Tab 2
   const result = showAddition ? currentA + currentB : currentA - currentB;
 
-  // Ειδικοί υπολογισμοί αποκλειστικά για τον 2ο πίνακα του Tab 3 (Αφαίρεση)
+  // Ειδικοί υπολογισμοί αποκλειστικά για την Αντίθετη Πράξη (Tab 3)
   const valRevA = parseFloat(revA) || 0;
   const valRevB = parseFloat(revB) || 0;
   const revSum = valRevA + valRevB;
-  const revFinal = revSum - valRevB; // Επιστρέφει στο revA
+  const revFinal = revSum - valRevB;
 
   // Βρίσκουμε δυναμικά πόσα δεκαδικά ψηφία χρειάζεται να εμφανίσουμε (Max 3)
   const getDecimalPlaces = () => {
@@ -61,7 +60,7 @@ export default function ProsthesiAfairesiPage() {
 
   const decimalPlaces = getDecimalPlaces();
 
-  // Διαχωρισμός των αριθμών σε Ακέραιο και Δεκαδικό για την απόλυτη στοίχιση
+  // Διαχωρισμός των αριθμών σε Ακέραιο και Δεκαδικό για τη στοίχιση
   const formatForGrid = (value) => {
     const str = value.toFixed(decimalPlaces);
     const [intPart, decPart] = str.split('.');
@@ -72,13 +71,13 @@ export default function ProsthesiAfairesiPage() {
   const partB = formatForGrid(currentB);
   const partResult = formatForGrid(result);
 
-  // Μορφοποίηση ειδικά για τους δύο πίνακες του Tab 3
+  // Μορφοποίηση για τους δύο πίνακες του Tab 3
   const tab3_A = formatForGrid(valRevA);
   const tab3_B = formatForGrid(valRevB);
   const tab3_Sum = formatForGrid(revSum);
   const tab3_Final = formatForGrid(revFinal);
 
-  // Βοηθητική συνάρτηση για τον έλεγχο των ορίων κατά την πληκτρολόγηση (Max 6 ακέραια, Max 3 δεκαδικά)
+  // Βοηθητική συνάρτηση ελέγχου ορίων (Max 6 ακέραια, Max 3 δεκαδικά)
   const handleInputChange = (val, setter) => {
     const cleanVal = val.replace(/[^0-9.]/g, '');
     const parts = cleanVal.split('.');
@@ -90,6 +89,11 @@ export default function ProsthesiAfairesiPage() {
         setter(cleanVal);
       }
     }
+  };
+
+  // Βοηθητική συνάρτηση εμφάνισης αριθμών με ελληνικό κόμμα στην οριζόντια θεωρία
+  const formatGreek = (val) => {
+    return val.toFixed(decimalPlaces).replace('.', ',');
   };
 
   return (
@@ -262,7 +266,7 @@ export default function ProsthesiAfairesiPage() {
                       </span>
                       <span className="text-slate-400">=</span>
                       <span className="text-purple-600 bg-purple-50 px-2.5 py-0.5 rounded-lg">
-                        {result.toFixed(decimalPlaces).replace('.', ',')}
+                        {formatGreek(result)}
                       </span>
                     </div>
 
@@ -286,35 +290,55 @@ export default function ProsthesiAfairesiPage() {
                 <>
                   <div className="space-y-2">
                     <h3 className="text-2xl font-black text-gray-900">Αντίθετη Πράξη (Δυναμική)</h3>
-                    <p className="text-gray-500 text-sm">Γράψε δύο αριθμούς για να δεις πώς η αφαίρεση αναιρεί αυτόματα την πρόσθεσή τους.</p>
+                    <p className="text-gray-500 text-sm">Γράψε δύο αριθμούς για να παράξεις αυτόματα τις δύο αντίστροφες οριζόντιες ισότητες.</p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
-                    {/* Inputs για Δυναμικό Tab Αντίθετης Πράξης */}
+                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
+                    {/* Inputs */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
-                      <div className="flex flex-col items-center gap-1 w-full sm:max-w-[176px]">
+                      <div className="flex flex-col items-center gap-1 w-full sm:max-w-[160px]">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Αρχικός Αριθμός</span>
                         <input  
                           type="text"  
                           value={revA}
                           onChange={(e) => handleInputChange(e.target.value, setRevA)}
-                          className="text-base font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full text-blue-600 outline-none focus:border-blue-500 tracking-normal"
+                          className="text-base font-black text-center p-2 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full text-blue-600 outline-none focus:border-blue-500 tracking-normal"
                         />
                       </div>
                       <span className="text-xl font-black text-slate-400 mt-4 flex-shrink-0">+</span>
-                      <div className="flex flex-col items-center gap-1 w-full sm:max-w-[176px]">
+                      <div className="flex flex-col items-center gap-1 w-full sm:max-w-[160px]">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Ποσότητα Πρόσθεσης</span>
                         <input  
                           type="text"  
                           value={revB}
                           onChange={(e) => handleInputChange(e.target.value, setRevB)}
-                          className="text-base font-black text-center p-2.5 bg-white border-2 border-emerald-200 rounded-xl shadow-sm w-full text-emerald-600 outline-none focus:border-emerald-500 tracking-normal"
+                          className="text-base font-black text-center p-2 bg-white border-2 border-emerald-200 rounded-xl shadow-sm w-full text-emerald-600 outline-none focus:border-emerald-500 tracking-normal"
                         />
+                      </div>
+                    </div>
+
+                    {/* ΝΕΕΣ ΟΡΙΖΟΝΤΙΕΣ ΕΜΦΑΝΙΣΕΙΣ ΠΡΑΞΕΩΝ (ΣΤΑΘΕΡΕΣ ΧΩΡΙΣ EDIT) */}
+                    <div className="bg-white p-3 border border-gray-100 rounded-xl shadow-sm space-y-2 font-mono font-black text-base md:text-lg text-center">
+                      {/* Πράξη 1: Πρόσθεση */}
+                      <div className="flex justify-center items-center gap-2 text-slate-700">
+                        <span className="text-blue-600">{revA || "0"}</span>
+                        <span className="text-slate-400">+</span>
+                        <span className="text-emerald-600">{revB || "0"}</span>
+                        <span className="text-slate-400">=</span>
+                        <span className="text-red-500">{formatGreek(revSum)}</span>
+                      </div>
+                      {/* Πράξη 2: Αφαίρεση */}
+                      <div className="flex justify-center items-center gap-2 text-slate-700 border-t border-slate-100 pt-2">
+                        <span className="text-red-500">{formatGreek(revSum)}</span>
+                        <span className="text-slate-400">-</span>
+                        <span className="text-emerald-600">{revB || "0"}</span>
+                        <span className="text-slate-400">=</span>
+                        <span className="text-blue-600">{formatGreek(revFinal)}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-xs md:text-sm font-bold text-emerald-900 text-center shadow-inner">
+                  <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-2xl text-xs md:text-sm font-bold text-emerald-900 text-center shadow-inner">
                     🎯 Η αφαίρεση δεξιά παίρνει το Άθροισμα, βγάζει την ίδια ποσότητα και μας επιστρέφει στον αρχικό αριθμό!
                   </div>
                 </>
