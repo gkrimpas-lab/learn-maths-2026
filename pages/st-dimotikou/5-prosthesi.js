@@ -12,7 +12,7 @@ export default function ProsthesiAfairesiPage() {
   const [numB, setNumB] = useState("15.123");
   const [isAddition, setIsAddition] = useState(true);
 
-  // Κατάσταση για Ιδιότητες (Tab 2) - Τώρα με inputs για δυναμικές αλλαγές
+  // Κατάσταση για Ιδιότητες (Tab 2)
   const [propA, setPropA] = useState("142.5");
   const [propB, setPropB] = useState("38.74");
   const [isSwapped, setIsSwapped] = useState(false);
@@ -24,14 +24,12 @@ export default function ProsthesiAfairesiPage() {
     } else if (activeTab === 'idiotites') {
       const valPropA = parseFloat(propA) || 0;
       const valPropB = parseFloat(propB) || 0;
-      // Αν γίνει Swap, αλλάζουν σειρά στην κάθετη πράξη δεξιά
       return {
         currentA: isSwapped ? valPropB : valPropA,
         currentB: isSwapped ? valPropA : valPropB,
-        showAddition: true // Η αντιμεταθετική ισχύει μόνο στην πρόσθεση
+        showAddition: true
       };
     } else {
-      // Tab 3: Αντίθετη πράξη (Σταθερό παράδειγμα θεωρίας)
       return { currentA: 100, currentB: 45, showAddition: true };
     }
   };
@@ -167,27 +165,29 @@ export default function ProsthesiAfairesiPage() {
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
+                      {/* ΜΕΓΑΛΥΤΕΡΟ ΠΛΑΙΣΙΟ INPUT A */}
                       <input  
                         type="text"  
                         value={numA}
                         onChange={(e) => handleInputChange(e.target.value, setNumA)}
-                        className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[160px] text-blue-600 outline-none focus:border-blue-500"
+                        className="text-lg font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full sm:max-w-[210px] text-blue-600 outline-none focus:border-blue-500 tracking-normal"
                         placeholder="Αριθμός Α"
                       />
                       
                       <button  
                         onClick={() => setIsAddition(!isAddition)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-black text-xl w-10 h-10 rounded-full flex items-center justify-center shadow transition-colors"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-black text-xl w-10 h-10 rounded-full flex items-center justify-center shadow transition-colors flex-shrink-0"
                       >
                         {isAddition ? "+" : "-"}
                       </button>
 
+                      {/* ΜΕΓΑΛΥΤΕΡΟ ΠΛΑΙΣΙΟ INPUT B */}
                       <input  
                         type="text"  
                         value={numB}
                         onChange={(e) => handleInputChange(e.target.value, setNumB)}
-                        className="text-xl font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full max-w-[160px] text-blue-600 outline-none focus:border-blue-500"
+                        className="text-lg font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full sm:max-w-[210px] text-blue-600 outline-none focus:border-blue-500 tracking-normal"
                         placeholder="Αριθμός Β"
                       />
                     </div>
@@ -207,22 +207,22 @@ export default function ProsthesiAfairesiPage() {
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
-                    {/* Inputs για Δυναμική Αντιμεταθετική */}
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                      <div className="flex flex-col items-center gap-1">
+                    {/* ΜΕΓΑΛΥΤΕΡΑ ΚΟΥΤΑΚΙΑ INPUT ΣΤΙΣ ΙΔΙΟΤΗΤΕΣ */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
+                      <div className="flex flex-col items-center gap-1 w-full sm:max-w-[176px]">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμός Α</span>
                         <input  
                           type="text"  
                           value={propA}
                           onChange={(e) => {
-                            setIsSwapped(false); // Reset το swap αν αλλάξει ο αριθμός
+                            setIsSwapped(false);
                             handleInputChange(e.target.value, setPropA);
                           }}
-                          className="text-lg font-black text-center p-2 bg-white border-2 border-emerald-200 rounded-xl shadow-sm w-28 text-emerald-600 outline-none focus:border-emerald-500"
+                          className="text-base font-black text-center p-2.5 bg-white border-2 border-emerald-200 rounded-xl shadow-sm w-full text-emerald-600 outline-none focus:border-emerald-500 tracking-normal"
                         />
                       </div>
-                      <span className="text-xl font-black text-slate-400 mt-4">+</span>
-                      <div className="flex flex-col items-center gap-1">
+                      <span className="text-xl font-black text-slate-400 mt-4 flex-shrink-0">+</span>
+                      <div className="flex flex-col items-center gap-1 w-full sm:max-w-[176px]">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμός Β</span>
                         <input  
                           type="text"  
@@ -231,13 +231,13 @@ export default function ProsthesiAfairesiPage() {
                             setIsSwapped(false);
                             handleInputChange(e.target.value, setPropB);
                           }}
-                          className="text-lg font-black text-center p-2 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-28 text-blue-600 outline-none focus:border-blue-500"
+                          className="text-base font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full text-blue-600 outline-none focus:border-blue-500 tracking-normal"
                         />
                       </div>
                     </div>
 
                     {/* Οριζόντια Εμφάνιση της Ιδιότητας */}
-                    <div className="flex flex-wrap items-center justify-center gap-3 text-base md:text-lg font-black font-mono bg-white p-3 rounded-xl border shadow-sm mt-2">
+                    <div className="flex flex-wrap items-center justify-center gap-2 text-sm md:text-base font-black font-mono bg-white p-3 rounded-xl border shadow-sm mt-2 max-w-full overflow-hidden break-all">
                       <span className={isSwapped ? 'text-blue-600' : 'text-emerald-600'}>
                         {isSwapped ? propB || "0" : propA || "0"}
                       </span>
@@ -246,7 +246,7 @@ export default function ProsthesiAfairesiPage() {
                         {isSwapped ? propA || "0" : propB || "0"}
                       </span>
                       <span className="text-slate-400">=</span>
-                      <span className="text-purple-600 bg-purple-50 px-2.5 py-0.5 rounded-lg text-base">
+                      <span className="text-purple-600 bg-purple-50 px-2.5 py-0.5 rounded-lg">
                         {result.toFixed(decimalPlaces).replace('.', ',')}
                       </span>
                     </div>
@@ -293,52 +293,51 @@ export default function ProsthesiAfairesiPage() {
               )}
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΜΕ ΑΠΟΛΥΤΗ ΣΤΑΘΕΡΗ ΣΤΟΙΧΙΣΗ GRID & ΥΠΟΒΑΘΡΟ ΓΡΑΜΜΗΣ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΜΕ ΑΠΟΛΥΤΗ ΣΤΑΘΕΡΗ ΣΤΟΙΧΙΣΗ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
               <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[340px]">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικός Πίνακας Στοίχισης:</span>
                 
-                <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none overflow-hidden py-6 flex justify-center">
+                <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-xl md:text-2xl text-white relative select-none overflow-hidden py-8">
                   
                   {/* Σήμα Πράξης */}
-                  <div className="absolute left-4 top-[50px] text-amber-400 font-black z-20">
+                  <div className="absolute left-4 top-[62px] text-amber-400 font-black z-20">
                     {showAddition ? "+" : "-"}
                   </div>
 
-                  {/* 3-Column Grid με relative στη μεσαία στήλη για τη γραμμή */}
-                  <div className="grid grid-cols-[1fr_auto_1fr] items-center font-black tracking-wider gap-y-2 relative z-10 w-full px-4">
+                  {/* Κάθετη Διακεκομμένη Γραμμή - Απόλυτα κεντραρισμένη στο container ως φόντο */}
+                  <div className="absolute top-0 bottom-0 left-1/2 w-0 border-r-2 border-dashed border-rose-500/60 z-0"></div>
+
+                  {/* Κάθετη Δομή Πράξης με 3 στήλες Flex */}
+                  <div className="flex flex-col gap-3 relative z-10 w-full">
                     
                     {/* Γραμμή 1: Αριθμός Α */}
-                    <div className={`${activeTab === 'idiotites' && isSwapped ? 'text-blue-400' : 'text-blue-400'} text-right truncate`}>
-                      {partA.intPart}
-                    </div>
-                    <div className="text-rose-500 px-1 text-center relative">
-                      ,
-                      {/* Η κόκκινη γραμμή σχεδιάζεται ΑΚΡΙΒΩΣ πίσω από το πρώτο κόμμα και εκτείνεται κατακόρυφα */}
-                      <div className="absolute top-[-30px] bottom-[-130px] left-1/2 -translate-x-1/2 w-0 border-r-2 border-dashed border-rose-500/50 pointer-events-none z-0"></div>
-                    </div>
-                    <div className={`${activeTab === 'idiotites' && isSwapped ? 'text-blue-400' : 'text-blue-400'} text-left`}>
-                      {partA.decPart}
+                    <div className="flex justify-center items-center">
+                      <div className="w-[110px] text-right text-blue-400 truncate">{partA.intPart}</div>
+                      <div className="w-6 text-center text-rose-500 font-bold">,</div>
+                      <div className="w-[110px] text-left text-blue-400 truncate">{partA.decPart}</div>
                     </div>
 
                     {/* Γραμμή 2: Αριθμός Β */}
-                    <div className={`${activeTab === 'idiotites' && isSwapped ? 'text-emerald-400' : 'text-emerald-400'} text-right truncate`}>
-                      {partB.intPart}
-                    </div>
-                    <div className="text-rose-500 px-1 text-center">,</div>
-                    <div className={`${activeTab === 'idiotites' && isSwapped ? 'text-emerald-400' : 'text-emerald-400'} text-left`}>
-                      {partB.decPart}
+                    <div className="flex justify-center items-center">
+                      <div className="w-[110px] text-right text-emerald-400 truncate">{partB.intPart}</div>
+                      <div className="w-6 text-center text-rose-500 font-bold">,</div>
+                      <div className="w-[110px] text-left text-emerald-400 truncate">{partB.decPart}</div>
                     </div>
 
-                    {/* Οριζόντια Γραμμή */}
-                    <div className="col-span-3 h-[2px] bg-slate-700 my-1 z-10"></div>
+                    {/* Οριζόντια Γραμμή Πράξης */}
+                    <div className="flex justify-center my-1 px-2">
+                      <div className="w-full h-[2px] bg-slate-700"></div>
+                    </div>
 
                     {/* Γραμμή 3: Αποτέλεσμα */}
-                    <div className="text-purple-400 text-right text-2xl truncate">{partResult.intPart}</div>
-                    <div className="text-rose-500 px-1 text-center text-2xl">,</div>
-                    <div className="text-purple-400 text-left text-2xl">{partResult.decPart}</div>
+                    <div className="flex justify-center items-center">
+                      <div className="w-[110px] text-right text-purple-400 text-2xl truncate">{partResult.intPart}</div>
+                      <div className="w-6 text-center text-rose-500 font-bold text-2xl">,</div>
+                      <div className="w-[110px] text-left text-purple-400 text-2xl truncate">{partResult.decPart}</div>
+                    </div>
 
                   </div>
 
