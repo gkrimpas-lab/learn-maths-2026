@@ -10,7 +10,7 @@ const LIMITS = {
   MAX_VALUE: 10000,
   MAX_VISUAL_DOTS: 10000,
   MIN_3D: 1,
-  MAX_3D: 5 // Όριο για τις 3D διαστάσεις ώστε να παραμένει καθαρό το σχήμα
+  MAX_3D: 5
 };
 
 export default function PollaplasiasmosPage() {
@@ -27,10 +27,10 @@ export default function PollaplasiasmosPage() {
   const currentCols = rotated ? valRows : valCols;
   const antimetathetikiResult = valRows * valCols;
 
-  // Κατάσταση για Προσεταιριστική (Νέα Δυναμικά Inputs)
-  const [prosW, setProsW] = useState("4"); // Πλάτος (X)
-  const [prosD, setProsD] = useState("3"); // Βάθος (Y)
-  const [prosH, setProsH] = useState("2"); // Ύψος (Z)
+  // Κατάσταση για Προσεταιριστική
+  const [prosW, setProsW] = useState("4"); 
+  const [prosD, setProsD] = useState("3"); 
+  const [prosH, setProsH] = useState("2"); 
 
   const valW = Math.max(LIMITS.MIN_3D, Math.min(parseInt(prosW) || 1, LIMITS.MAX_3D));
   const valD = Math.max(LIMITS.MIN_3D, Math.min(parseInt(prosD) || 1, LIMITS.MAX_3D));
@@ -61,7 +61,7 @@ export default function PollaplasiasmosPage() {
     }
   };
 
-  // Έλεγχος εισαγωγής για Προσεταιριστική (1 έως 5)
+  // Έλεγχος εισαγωγής για Προσεταιριστική
   const handleProsetairistikiChange = (val, setter) => {
     const cleanVal = val.replace(/[^0-9]/g, '');
     if (cleanVal === "") {
@@ -74,10 +74,10 @@ export default function PollaplasiasmosPage() {
     }
   };
 
-  // Έλεγχος εισαγωγής για Επιμεριστική
+  // Έλεγχος εισαγωγής για Επιμεριστική (Μέχρι 2 ψηφία ή δεκαδικό)
   const handleInputChange = (val, setter) => {
     const cleanVal = val.replace(/[^0-9.]/g, '');
-    if (cleanVal.length <= 2) {
+    if (cleanVal.length <= 3) {
       setter(cleanVal);
     }
   };
@@ -109,39 +109,30 @@ export default function PollaplasiasmosPage() {
     return tiles;
   };
 
-  // Σχεδίαση 3D Ισομετρικού Κύβου (Tab 2) με επιλεκτικό highlight
+  // Σχεδίαση 3D Ισομετρικού Κύβου (Tab 2)
   const renderIsometricCube = (highlightMode) => {
     const cubes = [];
-    const size = 16; // Μέγεθος ακμής κάθε μικρού κύβου
-    
-    // Μαθηματική ισομετρική προβολή προσαρμοσμένη για κεντράρισμα
+    const size = 16;
     const isoX = (x, y, z) => 100 + (x - y) * size * 0.866;
     const isoY = (x, y, z) => 90 + (x + y) * size * 0.5 - z * size;
 
-    // Σχεδιάζουμε από πίσω προς τα εμπρός για σωστό 3D layering (Z -> Y -> X)
     for (let z = 0; z < valH; z++) {
       for (let y = 0; y < valD; y++) {
         for (let x = 0; x < valW; x++) {
-          
-          // Καθορισμός αν το συγκεκριμένο block ανήκει στην ομάδα που υπολογίζεται πρώτη
           let isHighlighted = false;
           if (highlightMode === 'base') {
-            // Τρόπος 1ος: Υπολογισμός βάσης (Z = 0)
             isHighlighted = (z === 0);
           } else if (highlightMode === 'slice') {
-            // Τρόπος 2ος: Υπολογισμός μπροστινής «φέτας» (X = 0)
             isHighlighted = (x === 0);
           }
 
           const cx = isoX(x, y, z);
           const cy = isoY(x, y, z);
 
-          // Σημεία για τις 3 ορατές έδρες του μικρού κύβου
           const topFace = `${cx},${cy} ${cx + size*0.866},${cy + size*0.5} ${cx},${cy + size} ${cx - size*0.866},${cy + size*0.5}`;
           const leftFace = `${cx - size*0.866},${cy + size*0.5} ${cx},${cy + size} ${cx},${cy + size + size} ${cx - size*0.866},${cy + size*0.5 + size}`;
           const rightFace = `${cx},${cy + size} ${cx + size*0.866},${cy + size*0.5} ${cx + size*0.866},${cy + size*0.5 + size} ${cx},${cy + size + size}`;
 
-          // Επιλογή χρωμάτων με βάση το highlight
           const fillTop = isHighlighted ? 'fill-amber-300' : 'fill-slate-300';
           const fillLeft = isHighlighted ? 'fill-amber-400' : 'fill-slate-400';
           const fillRight = isHighlighted ? 'fill-amber-500' : 'fill-slate-500';
@@ -301,7 +292,6 @@ export default function PollaplasiasmosPage() {
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
-                    {/* Τριπλά Inputs για Διαστάσεις */}
                     <div className="grid grid-cols-3 gap-3 text-center">
                       <div className="flex flex-col items-center">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Πλάτος (α)</span>
@@ -317,7 +307,6 @@ export default function PollaplasiasmosPage() {
                       </div>
                     </div>
 
-                    {/* Εμφάνιση των Δύο Τρόπων */}
                     <div className="bg-white p-3 rounded-xl border shadow-sm font-mono text-xs md:text-sm text-left space-y-2 text-slate-700">
                       <div className="p-2 bg-amber-50/50 border border-amber-100 rounded-lg">
                         📌 <strong className="text-amber-600">1ος Τρόπος (Βάση × Ύψος):</strong><br/>
@@ -340,30 +329,64 @@ export default function PollaplasiasmosPage() {
                 <>
                   <div className="space-y-2">
                     <h3 className="text-2xl font-black text-gray-900">Επιμεριστική Ιδιότητα</h3>
-                    <p className="text-gray-500 text-sm">Άλλαξε τις διαστάσεις του σχήματος για να δεις πώς ο πολλαπλασιασμός «επιμερίζεται» (μοιράζεται) στο άθροισμα.</p>
+                    <p className="text-gray-500 text-sm">Συμπλήρωσε τους αριθμούς στην οριζόντια μαθηματική δομή και δες πώς μοιράζεται ο πολλαπλασιασμός.</p>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
-                    <div className="flex justify-center gap-4 text-center">
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Ύψος (α)</span>
-                        <input type="text" value={distA} onChange={(e) => handleInputChange(e.target.value, setPropA)} className="w-16 p-1.5 border border-gray-300 rounded-xl text-center font-black text-blue-600" />
+                  {/* ΑΝΑΒΑΘΜΙΣΜΕΝΟ ΜΑΘΗΜΑΤΙΚΟ ΠΛΑΙΣΙΟ ΜΕ ΣΥΜΒΟΛΑ, ΠΑΡΕΝΘΕΣΕΙΣ ΚΑΙ ΠΡΟΣΘΕΣΗ */}
+                  <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl w-full flex flex-col gap-5 shadow-inner my-auto items-center justify-center">
+                    <div className="flex items-center gap-2 font-mono font-black text-xl md:text-2xl text-slate-700 flex-wrap justify-center">
+                      
+                      {/* Input α */}
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">α</span>
+                        <input 
+                          type="text" 
+                          value={distA} 
+                          onChange={(e) => handleInputChange(e.target.value, setPropA)} 
+                          className="w-14 p-2 border-2 border-blue-200 rounded-xl text-center font-black text-blue-600 bg-white outline-none focus:border-blue-500 text-lg shadow-sm" 
+                        />
                       </div>
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Πράσινο (β)</span>
-                        <input type="text" value={distB} onChange={(e) => handleInputChange(e.target.value, setPropB)} className="w-16 p-1.5 border border-gray-300 rounded-xl text-center font-black text-emerald-500" />
+
+                      <span className="text-slate-400 mx-0.5">×</span>
+                      <span className="text-gray-400 text-2xl font-light">(</span>
+
+                      {/* Input β */}
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">β</span>
+                        <input 
+                          type="text" 
+                          value={distB} 
+                          onChange={(e) => handleInputChange(e.target.value, setPropB)} 
+                          className="w-14 p-2 border-2 border-emerald-200 rounded-xl text-center font-black text-emerald-500 bg-white outline-none focus:border-emerald-400 text-lg shadow-sm" 
+                        />
                       </div>
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπλε (γ)</span>
-                        <input type="text" value={distC} onChange={(e) => handleInputChange(e.target.value, setPropC)} className="w-16 p-1.5 border border-gray-300 rounded-xl text-center font-black text-cyan-600" />
+
+                      <span className="text-slate-400 mx-0.5">+</span>
+
+                      {/* Input γ */}
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">γ</span>
+                        <input 
+                          type="text" 
+                          value={distC} 
+                          onChange={(e) => handleInputChange(e.target.value, setPropC)} 
+                          className="w-14 p-2 border-2 border-cyan-200 rounded-xl text-center font-black text-cyan-600 bg-white outline-none focus:border-cyan-500 text-lg shadow-sm" 
+                        />
                       </div>
+
+                      <span className="text-gray-400 text-2xl font-light">)</span>
                     </div>
 
-                    <div className="bg-white p-3 rounded-xl border shadow-sm font-mono text-xs md:text-sm text-center space-y-1 text-slate-700">
+                    {/* Αναλυτικά Αποτελέσματα */}
+                    <div className="bg-white p-3 rounded-xl border shadow-sm font-mono text-xs md:text-sm text-center w-full max-w-sm space-y-1.5 text-slate-700">
                       <div>Oλόκληρο: {valA} × ({valB} + {valC}) = {valA} × {valB + valC} = <strong>{valA * (valB + valC)}</strong></div>
-                      <div className="text-slate-300">───────────────</div>
+                      <div className="text-slate-200 border-t border-dashed my-1"></div>
                       <div>Επιμερισμένα: ({valA} × {valB}) + ({valA} × {valC}) = {valA * valB} + {valA * valC} = <strong>{valA * valB + valA * valC}</strong></div>
                     </div>
+                  </div>
+
+                  <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-2xl text-xs text-emerald-900 font-medium text-center shadow-inner">
+                    📐 Παρατήρησε στα δεξιά τη σύγκριση ανάμεσα στο ενιαίο και στο μοιρασμένο σχήμα!
                   </div>
                 </>
               )}
@@ -396,10 +419,7 @@ export default function PollaplasiasmosPage() {
               )}
 
               {activeTab === 'prosetairistiki' && (
-                /* ΔΥΟ ΤΡΙΣΔΙΑΣΤΑΤΑ ΑΝΤΙΚΕΙΜΕΝΑ ΔΙΠΛΑ-ΔΙΠΛΑ ΜΕ ΦΩΤΙΣΜΟ */
                 <div className="my-auto flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-xl">
-                  
-                  {/* Κύβος 1: Φωτισμός Βάσης */}
                   <div className="flex flex-col items-center gap-1 bg-slate-50 p-3 rounded-2xl border w-full max-w-[210px] shadow-sm">
                     <span className="text-[10px] font-black text-amber-500 bg-amber-50 px-2 py-0.5 rounded uppercase">1ος Τρόπος (Βάση)</span>
                     <svg viewBox="0 0 200 180" className="w-full h-auto overflow-visible">
@@ -408,7 +428,6 @@ export default function PollaplasiasmosPage() {
                     <span className="text-[11px] font-mono text-slate-500 font-bold">({valW} × {valD}) × {valH}</span>
                   </div>
 
-                  {/* Κύβος 2: Φωτισμός Φέτας */}
                   <div className="flex flex-col items-center gap-1 bg-slate-50 p-3 rounded-2xl border w-full max-w-[210px] shadow-sm">
                     <span className="text-[10px] font-black text-blue-500 bg-blue-50 px-2 py-0.5 rounded uppercase">2ος Τρόπος (Φέτα)</span>
                     <svg viewBox="0 0 200 180" className="w-full h-auto overflow-visible">
@@ -416,23 +435,41 @@ export default function PollaplasiasmosPage() {
                     </svg>
                     <span className="text-[11px] font-mono text-slate-500 font-bold">{valW} × ({valD} × {valH})</span>
                   </div>
-
                 </div>
               )}
 
               {activeTab === 'epimeristiki' && (
-                <div className="my-auto flex flex-col items-center gap-4 w-full px-4">
-                  <div className="border-2 border-slate-700 rounded-xl overflow-hidden flex w-full h-32 text-white font-mono font-black text-base md:text-lg shadow-md">
-                    <div className="bg-emerald-500 flex flex-col justify-center items-center transition-all duration-300" style={{ flexGrow: Math.max(valB, 1) }}>
-                      <span>{valA} × {valB}</span>
-                      <span className="text-xs font-normal opacity-85">({valA * valB})</span>
+                /* ΔΥΟ ΣΧΗΜΑΤΑ ΔΙΠΛΑ-ΔΙΠΛΑ: ΟΛΟΚΛΗΡΟ ΚΑΙ ΕΠΙΜΕΡΙΣΜΕΝΟ */
+                <div className="my-auto flex flex-col sm:flex-row items-center justify-center gap-6 w-full px-2 max-w-xl">
+                  
+                  {/* Σχήμα 1: Ολόκληρο */}
+                  <div className="flex flex-col items-center gap-2 bg-slate-50 p-3.5 rounded-2xl border w-full max-w-[220px] shadow-sm">
+                    <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase">Ολόκληρο Σχήμα</span>
+                    <div className="border-2 border-indigo-700 rounded-xl overflow-hidden flex w-full h-32 text-white font-mono font-black text-sm shadow-sm">
+                      <div className="bg-indigo-500 flex flex-col justify-center items-center w-full transition-all duration-300">
+                        <span>{valA} × ({valB + valC})</span>
+                        <span className="text-xs font-normal opacity-85">({valA * (valB + valC)})</span>
+                      </div>
                     </div>
-                    <div className="bg-cyan-500 flex flex-col justify-center items-center transition-all duration-300 border-l-2 border-dashed border-white/50" style={{ flexGrow: Math.max(valC, 1) }}>
-                      <span>{valA} × {valC}</span>
-                      <span className="text-xs font-normal opacity-85">({valA * valC})</span>
-                    </div>
+                    <span className="text-[11px] font-mono text-slate-400 font-bold">Εμβαδόν = {valA * (valB + valC)}</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-400">Συνολικό Εμβαδόν Επιφάνειας = {valA * valB + valA * valC}</span>
+
+                  {/* Σχήμα 2: Επιμερισμένο */}
+                  <div className="flex flex-col items-center gap-2 bg-slate-50 p-3.5 rounded-2xl border w-full max-w-[220px] shadow-sm">
+                    <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded uppercase">Επιμερισμένο Σχήμα</span>
+                    <div className="border-2 border-slate-700 rounded-xl overflow-hidden flex w-full h-32 text-white font-mono font-black text-sm shadow-sm">
+                      <div className="bg-emerald-500 flex flex-col justify-center items-center transition-all duration-300" style={{ flexGrow: Math.max(valB, 1) }}>
+                        <span>{valA} × {valB}</span>
+                        <span className="text-[11px] font-normal opacity-85">({valA * valB})</span>
+                      </div>
+                      <div className="bg-cyan-500 flex flex-col justify-center items-center transition-all duration-300 border-l-2 border-dashed border-white/50" style={{ flexGrow: Math.max(valC, 1) }}>
+                        <span>{valA} × {valC}</span>
+                        <span className="text-[11px] font-normal opacity-85">({valA * valC})</span>
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-mono text-slate-400 font-bold">Εμβαδόν = {valA * valB + valA * valC}</span>
+                  </div>
+
                 </div>
               )}
 
