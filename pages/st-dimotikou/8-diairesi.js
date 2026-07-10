@@ -76,7 +76,6 @@ export default function DiairesiPage() {
     const numStr = num.toString();
     const digits = new Array(maxDigits).fill('');
     
-    // Τοποθετούμε τα ψηφία έτσι ώστε το τελευταίο ψηφίο να κάθεται στο endIndex
     let numIdx = numStr.length - 1;
     for (let i = endIndex; i >= 0 && numIdx >= 0; i--) {
       digits[i] = numStr[numIdx];
@@ -214,7 +213,7 @@ export default function DiairesiPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΠΟΛΥΤΑ ΣΤΟΙΧΙΣΜΕΝΟΣ ΠΙΝΑΚΑΣ ΜΕ ΔΥΝΑΜΙΚΟ ΨΗΦΙΑΚΟ GRID */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΠΙΝΑΚΑΣ ΜΕ ΑΠΟΛΥΤΗ ΠΡΟΣΤΑΣΙΑ ΑΠΟΣΤΑΣΗΣ ΓΙΑ ΤΟ ΜΕΙΟΝ (-) */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
@@ -229,15 +228,18 @@ export default function DiairesiPage() {
                     {/* ΑΡΙΣΤΕΡΟ ΜΕΡΟΣ: ΔΙAIPETEOΣ & ΚΑΘΕΤΕΣ ΑΦΑΙΡΕΣΕΙΣ */}
                     <div className="flex flex-col items-end pr-4 text-right">
                       
-                      {/* 1. Αρχικός Διαιρετέος */}
+                      {/* 1. Αρχικός Διαιρετέος (με dummy στήλη αριστερά για συμμετρία) */}
                       <div className="flex justify-end text-blue-400 font-bold mb-3 h-8 items-center">
-                        {divDigits.map((char, i) => (
-                          <span key={i} className="w-5 text-center">{char}</span>
-                        ))}
+                        <div className="w-6"></div> {/* Χώρος για ευθυγράμμιση με τις κάτω σειρές */}
+                        <div className="flex justify-end">
+                          {divDigits.map((char, i) => (
+                            <span key={i} className="w-5 text-center">{char}</span>
+                          ))}
+                        </div>
                       </div>
                       
                       {/* 2. Δυναμικά Στοιχισμένα Βήματα */}
-                      <div className="flex flex-col items-end space-y-2">
+                      <div className="flex flex-col items-end space-y-2 w-full">
                         {schoolSteps.map((step, idx) => {
                           const productDigits = getPaddedDigits(step.product, step.digitIndex);
                           const remainderDigits = getPaddedDigits(step.remainder, step.digitIndex);
@@ -245,9 +247,9 @@ export default function DiairesiPage() {
                           return (
                             <div key={idx} className="flex flex-col items-end w-full">
                               
-                              {/* Σειρά Αφαίρεσης: Το πλην (-) μένει σταθερά αριστερά έξω από τα ψηφία */}
-                              <div className="flex items-center justify-end w-full relative h-7">
-                                <span className="absolute left-0 text-red-500 font-medium text-base md:text-lg">-</span>
+                              {/* Σειρά Αφαίρεσης: Καθαρή 2-column διάταξη (Μείον + Ψηφία) */}
+                              <div className="flex items-center justify-end w-full h-7">
+                                <span className="w-6 text-left text-red-500 font-semibold text-base md:text-lg select-none">-</span>
                                 <div className="flex justify-end text-red-400 font-medium">
                                   {productDigits.map((char, i) => (
                                     <span key={i} className="w-5 text-center">{char}</span>
@@ -257,6 +259,7 @@ export default function DiairesiPage() {
 
                               {/* Οριζόντια Γραμμή Αφαίρεσης */}
                               <div className="w-full flex justify-end h-[2px] my-1">
+                                <div className="w-6"></div> {/* bypass τη στήλη του μείον */}
                                 <div className="flex justify-end">
                                   {productDigits.map((char, i) => (
                                     <div key={i} className={`w-5 h-full ${char !== '' ? 'bg-slate-700' : ''}`}></div>
@@ -265,16 +268,19 @@ export default function DiairesiPage() {
                               </div>
 
                               {/* Σειρά Αποτελέσματος / Επόμενου Αριθμού Εργασίας */}
-                              <div className="flex justify-end text-slate-300 font-extrabold h-7 items-center">
-                                {idx === schoolSteps.length - 1 ? (
-                                  remainderDigits.map((char, i) => (
-                                    <span key={i} className="w-5 text-center">{char}</span>
-                                  ))
-                                ) : (
-                                  getPaddedDigits(schoolSteps[idx + 1].workNum, schoolSteps[idx + 1].digitIndex).map((char, i) => (
-                                    <span key={i} className="w-5 text-center">{char}</span>
-                                  ))
-                                )}
+                              <div className="flex justify-end w-full h-7 items-center">
+                                <div className="w-6"></div> {/* bypass τη στήλη του μείον */}
+                                <div className="flex justify-end text-slate-300 font-extrabold">
+                                  {idx === schoolSteps.length - 1 ? (
+                                    remainderDigits.map((char, i) => (
+                                      <span key={i} className="w-5 text-center">{char}</span>
+                                    ))
+                                  ) : (
+                                    getPaddedDigits(schoolSteps[idx + 1].workNum, schoolSteps[idx + 1].digitIndex).map((char, i) => (
+                                      <span key={i} className="w-5 text-center">{char}</span>
+                                    ))
+                                  )}
+                                </div>
                               </div>
 
                             </div>
