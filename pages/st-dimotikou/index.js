@@ -10,7 +10,8 @@ export default function STDimotikouMenu() {
     { id: '3-arithmoi-dekadika-klasmata', label: '🍕 3. Δεκαδικοί Αριθμοί σε Δεκαδικά Κλάσματα', href: '/st-dimotikou/3-arithmoi-dekadika-klasmata' },
     { id: '4-sigkrisi-arithmon', label: '🍕 4. Σύγκριση Δεκαδικών Αριθμών', href: '/st-dimotikou/4-sigkrisi-arithmon' },
     { id: '5-prosthesi', label: '🍕 5. Πρόσθεση Φυσικών Αριθμών', href: '/st-dimotikou/5-prosthesi' },
-    { id: '6-pollaplasiasmos', label: '🍕 6. Πολλαπλασιασμός Φυσικών Αριθμών', href: '/st-dimotikou/6-pollaplasiasmos' }
+    { id: '6-pollaplasiasmos', label: '🍕 6. Πολλαπλασιασμός Φυσικών Αριθμών', href: '/st-dimotikou/6-pollaplasiasmos' },
+    { id: '7-pollaplasiasmos-dinameis-deka', label: '🍕 7. Πολλαπλασιασμός Δυνάμεις του 10', href: '/st-dimotikou/7-pollaplasiasmos-dinameis-deka' }
   ];
 
   return (
