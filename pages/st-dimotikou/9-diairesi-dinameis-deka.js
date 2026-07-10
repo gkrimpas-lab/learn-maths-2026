@@ -27,11 +27,17 @@ export default function DiairesiDinameisDekaPage() {
 
   const shift = getShiftInfo();
 
-  // Ασφαλής έλεγχος εισαγωγής αριθμού
+  // Ασφαλής έλεγχος εισαγωγής αριθμού (Μαξ 6 ακέραια, Μαξ 3 δεκαδικά)
   const handleNumberChange = (val) => {
     const cleanVal = val.replace(/[^0-9.]/g, '');
-    if ((cleanVal.match(/\./g) || []).length <= 1 && cleanVal.length <= 8) {
-      setInputNum(cleanVal);
+    const parts = cleanVal.split('.');
+    const intPart = parts[0] || "";
+    const decPart = parts[1] || "";
+
+    if ((cleanVal.match(/\./g) || []).length <= 1) {
+      if (intPart.length <= 6 && decPart.length <= 3) {
+        setInputNum(cleanVal);
+      }
     }
   };
 
@@ -119,7 +125,7 @@ export default function DiairesiDinameisDekaPage() {
                 <h3 className="text-2xl font-black text-gray-900">
                   {activeTab === 'megaloi' ? "Διαίρεση που Μικραίνει τον Αριθμό" : "Διαίρεση που Μεγαλώνει τον Αριθμό"}
                 </h3>
-                <p className="text-gray-500 text-sm">Πληκτρολόγησε έναν αριθμό και επίλεξε τον διαιρέτη για να παρατηρήσεις την κίνηση.</p>
+                <p className="text-gray-500 text-sm">Γράψε έως 6 ακέραια και 3 δεκαδικά ψηφία για να παρατηρήσεις την κίνηση.</p>
               </div>
 
               <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-5 shadow-inner my-auto">
@@ -164,7 +170,7 @@ export default function DiairesiDinameisDekaPage() {
                 </div>
               </div>
 
-              {/* Οριζόντιο Αποτέλεσμα */}
+              {/* Οριζόντιο Αποτέλεσμα (Μέγιστη ακρίβεια 6 δεκαδικών) */}
               <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl font-mono text-base md:text-lg text-center font-black text-slate-700 shadow-inner">
                 {inputNum || "0"} ÷ {divisor.toString().replace('.', ',')} = <span className="text-purple-600 bg-purple-50 px-3 py-1 rounded-xl border border-purple-100">{result.toLocaleString('el-GR', { maximumFractionDigits: 6 })}</span>
               </div>
