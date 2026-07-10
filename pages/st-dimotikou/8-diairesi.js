@@ -4,49 +4,70 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// ΜΕΤΑΒΛΗΤΕΣ ΟΡΙΩΝ ΓΙΑ ΑΣΦΑΛΕΣ UI
 const LIMITS = {
   MIN_DIVISOR: 1,
   MAX_DIVIDEND: 999999, // Έως 6 ψηφία
   MAX_DIVISOR_INPUT: 999,
-  MAX_VISUAL_BOXES: 120 // Όριο για την οπτικοποίηση του μοιράσματος
+  MAX_VISUAL_BOXES: 120
 };
 
 export default function DiairesiPage() {
   const [activeTab, setActiveTab] = useState('katheti'); // 'katheti' ή 'moirasma'
   
   // Κατάσταση για την πράξη
-  const [dividendInput, setDividendInput] = useState("145");
-  const [divisorInput, setDivisorInput] = useState("12");
+  const [dividendInput, setDividendInput] = useState("1569");
+  const [divisorInput, setDivisorInput] = useState("8");
 
-  const D = parseFloat(dividendInput) || 0;
-  const d = parseFloat(divisorInput) || LIMITS.MIN_DIVISOR;
+  const D = Math.floor(parseFloat(dividendInput)) || 0;
+  const d = Math.floor(parseFloat(divisorInput)) || LIMITS.MIN_DIVISOR;
 
-  // Υπολογισμοί Πηλίκου και Υπολοίπου (για φυσικούς/δεκαδικούς)
-  const isDecimalOperation = dividendInput.includes('.') || divisorInput.includes('.');
-  
-  let q = 0; // Πηλίκο
-  let r = 0; // Υπόλοιπο
+  // Υπολογισμός τελικών τιμών
+  const q = Math.floor(D / d);
+  const r = D % d;
+  const isPerfect = r === 0;
 
-  if (isDecimalOperation) {
-    q = D / d;
-    r = 0; 
-  } else {
-    q = Math.floor(D / d);
-    r = D % d;
-  }
+  // Αλγόριθμος παραγωγής ενδιάμεσων βημάτων κάθετης διαίρεσης
+  const generateDivisionSteps = () => {
+    if (D === 0 || d === 0 || d > D) return [];
+    
+    const steps = [];
+    const divStr = D.toString();
+    let currentRemainder = 0;
+    let currentWorkNum = 0;
 
-  const isPerfect = isDecimalOperation ? (D % d === 0) : (r === 0);
+    for (let i = 0; i < divStr.length; i++) {
+      // «Κατεβάζουμε» το επόμενο ψηφίο
+      currentWorkNum = currentRemainder * 10 + parseInt(divStr[i]);
+      
+      if (currentWorkNum >= d || i === divStr.length - 1 || currentRemainder > 0) {
+        const times = Math.floor(currentWorkNum / d);
+        const product = times * d;
+        const nextRemainder = currentWorkNum - product;
 
-  // Ασφαλής έλεγχος inputs
-  const handleInputChange = (val, setter, isDivisor = false) => {
-    const cleanVal = val.replace(/[^0-9.]/g, '');
-    if ((cleanVal.match(/\./g) || []).length <= 1) {
-      const parts = cleanVal.split('.');
-      if (!parts[0] || parts[0].length <= (isDivisor ? 3 : 6)) {
-        if (isDivisor && parseFloat(cleanVal) === 0) return; 
-        setter(cleanVal);
+        steps.push({
+          digitPulled: divStr[i],
+          workNum: currentWorkNum,
+          productSubtract: product,
+          remainder: nextRemainder,
+          stepIndex: i
+        });
+
+        currentRemainder = nextRemainder;
+      } else {
+        currentRemainder = currentWorkNum;
       }
+    }
+    return steps;
+  };
+
+  const divisionSteps = generateDivisionSteps();
+
+  // Ασφαλής έλεγχος inputs (Μόνο ακέραιοι για τα βήματα)
+  const handleInputChange = (val, setter, isDivisor = false) => {
+    const cleanVal = val.replace(/[^0-9]/g, ''); // Μόνο ακέραιοι φυσικοί αριθμοί
+    if (cleanVal.length <= (isDivisor ? 3 : 6)) {
+      if (isDivisor && parseInt(cleanVal) === 0) return;
+      setter(cleanVal);
     }
   };
 
@@ -85,7 +106,7 @@ export default function DiairesiPage() {
                 </p>
                 <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-2 text-sm md:text-base font-medium">
                   <p>🎯 <strong>Τέλεια Διαίρεση:</strong> Είναι η διαίρεση στην οποία το υπόλοιπο είναι ακριβώς **0** (π.χ. 12 : 3 = 4).</p>
-                  <p>🔍 <strong>Ατελής Διαίρεση:</strong> Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο **διαφορετικό του μηδενός** (π.χ. 14 : 3 = 4 και υπόλοιπο 2).</p>
+                  <p>🔍 <strong>Αντελής Διαίρεση:</strong> Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο **διαφορετικό του μηδενός** (π.χ. 14 : 3 = 4 και υπόλοιπο 2).</p>
                 </div>
               </div>
               
@@ -108,7 +129,7 @@ export default function DiairesiPage() {
               onClick={() => setActiveTab('katheti')}
               className={`flex-1 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all duration-200 ${activeTab === 'katheti' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
             >
-              📊 Κάθετη Πράξη (Τ)
+              📊 Κάθετη Πράξη με Βήματα
             </button>
             <button  
               onClick={() => setActiveTab('moirasma')}
@@ -126,12 +147,12 @@ export default function DiairesiPage() {
               
               <div className="space-y-2">
                 <h3 className="text-2xl font-black text-gray-900">
-                  {activeTab === 'katheti' ? "Διαδραστική Κάθετη Διαίρεση" : "Μοντέλο Οπτικής Κατανομής"}
+                  {activeTab === 'katheti' ? "Διαδραστική Διαίρεση με Αναλυτικά Βήματα" : "Μοντέλο Οπτικής Κατανομής"}
                 </h3>
                 <p className="text-gray-500 text-sm">
                   {activeTab === 'moirasma' && D > LIMITS.MAX_VISUAL_BOXES 
                     ? `Βάλε Διαιρετέο έως ${LIMITS.MAX_VISUAL_BOXES} για να δεις το οπτικό μοίρασμα.` 
-                    : "Γράψε τον Διαιρετέο και τον Διαιρέτη για να εκτελεστεί η πράξη."}
+                    : "Γράψε φυσικούς αριθμούς για να παραχθούν αυτόματα όλα τα ενδιάμεσα βήματα της πράξης."}
                 </p>
               </div>
 
@@ -146,7 +167,7 @@ export default function DiairesiPage() {
                       value={dividendInput}
                       onChange={(e) => handleInputChange(e.target.value, setDividendInput)}
                       className="text-lg font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full text-blue-600 outline-none focus:border-blue-500 tracking-normal font-mono"
-                      placeholder="π.χ. 145"
+                      placeholder="π.χ. 1569"
                     />
                   </div>
 
@@ -160,12 +181,11 @@ export default function DiairesiPage() {
                       value={divisorInput}
                       onChange={(e) => handleInputChange(e.target.value, setDivisorInput, true)}
                       className="text-lg font-black text-center p-2.5 bg-white border-2 border-emerald-200 rounded-xl shadow-sm w-full text-emerald-600 outline-none focus:border-emerald-500 tracking-normal font-mono"
-                      placeholder="π.χ. 12"
+                      placeholder="π.χ. 8"
                     />
                   </div>
                 </div>
 
-                {/* Οριζόντια Ισότητα & Τύπος Διαίρεσης */}
                 <div className="bg-white p-3 rounded-xl border shadow-sm text-center flex flex-col gap-1.5 font-sans">
                   <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Κατάσταση Πράξης:</div>
                   <div className={`text-base font-black px-4 py-1 rounded-full inline-block mx-auto ${isPerfect ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>
@@ -176,48 +196,62 @@ export default function DiairesiPage() {
 
               {/* Πλαίσιο Μαθηματικής Επαλήθευσης */}
               <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl text-center text-xs md:text-sm font-mono font-bold text-slate-600 shadow-inner">
-                ✨ Επαλήθευση: {q.toLocaleString('el-GR', { maximumFractionDigits: 3 })} × {d} + {isDecimalOperation ? "0" : r} = <strong>{D.toLocaleString('el-GR')}</strong>
+                ✨ Επαλήθευση: {q.toLocaleString('el-GR')} × {d} + {r} = <strong>{D.toLocaleString('el-GR')}</strong>
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΝΑΛΥΤΙΚΗ ΚΑΘΕΤΗ ΔΙΑΤΑΞΗ Η ΟΠΤΙΚΟ ΜΟΙΡΑΣΜΑ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
               {activeTab === 'katheti' ? (
-                /* ΚΑΘΕΤΟ ΣΧΗΜΑ ΔΙΑΙΡΕΣΗΣ (Τ) */
-                <div className="my-auto flex flex-col items-center gap-4 w-full max-w-[280px]">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Σχολική Κάθετη Διάταξη:</span>
+                /* ΑΝΑΒΑΘΜΙΣΜΕΝΗ ΚΑΘΕΤΗ ΔΙΑΤΑΞΗ ΜΕ ΕΝΔΙΑΜΕΣΕΣ ΑΦΑΙΡΕΣΕΙΣ */
+                <div className="my-auto flex flex-col items-center gap-2 w-full max-w-[320px] px-2">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Πλήρης Ανάλυση Πράξης:</span>
                   
-                  <div className="w-full font-mono text-2xl font-black text-slate-800 relative py-4 select-none px-6">
-                    <div className="grid grid-cols-2 gap-x-6 relative">
+                  <div className="w-full bg-slate-900 text-white p-6 rounded-2xl shadow-xl border-4 border-slate-700 font-mono text-xl font-black relative min-h-[280px] flex justify-center">
+                    
+                    <div className="grid grid-cols-[1fr_auto_1fr] w-full relative z-10 items-start">
                       
-                      {/* Πάνω Αριστερά: Διαιρετέος */}
-                      <div className="text-right text-blue-600 pb-3 pr-2 truncate">
-                        {dividendInput || "0"}
-                      </div>
-                      
-                      {/* Πάνω Δεξιά: Διαιρέτης */}
-                      <div className="text-left text-emerald-600 pb-3 pl-4 border-l-4 border-b-4 border-slate-700 truncate">
-                        {divisorInput || "1"}
+                      {/* Στήλη 1: Διαιρετέος + Ενδιάμεσα Βήματα Αφαίρεσης */}
+                      <div className="text-right pr-4 space-y-1 text-blue-400">
+                        <div className="text-blue-500 text-2xl">{D}</div>
+                        {divisionSteps.map((step, idx) => (
+                          <div key={idx} className="text-right text-sm md:text-base font-normal tracking-wide space-y-0.5 opacity-95">
+                            <div className="text-red-400">-{step.productSubtract}</div>
+                            <div className="border-t border-slate-700 w-full my-0.5"></div>
+                            <div className="text-slate-300 font-bold">{step.remainder}</div>
+                          </div>
+                        ))}
                       </div>
 
-                      {/* Κάτω Αριστερά: Υπόλοιπο */}
-                      <div className="text-right text-rose-500 pt-3 pr-2 truncate">
-                        {isDecimalOperation ? "0" : r}
-                      </div>
+                      {/* Στήλη 2: Κάθετη Γραμμή του Σχήματος Τ */}
+                      <div className="w-[3px] bg-slate-600 self-stretch min-h-[200px]"></div>
 
-                      {/* Κάτω Δεξιά: Πηλίκο */}
-                      <div className="text-left text-purple-600 pt-3 pl-4 border-l-4 border-slate-700 truncate">
-                        {q.toLocaleString('el-GR', { maximumFractionDigits: 3 })}
+                      {/* Στήλη 3: Διαιρέτης και Πηλίκο */}
+                      <div className="text-left pl-4 flex flex-col h-full justify-start">
+                        {/* Διαιρέτης */}
+                        <div className="text-emerald-400 text-2xl border-b-4 border-slate-600 pb-2 w-full">
+                          {d}
+                        </div>
+                        {/* Τελικό Πηλίκο */}
+                        <div className="text-purple-400 text-2xl pt-3 font-black">
+                          {q}
+                        </div>
+                        
+                        {/* Επεξήγηση τελικού υπολοίπου */}
+                        <div className="mt-auto pt-8 text-[11px] font-sans font-bold text-rose-400 tracking-tight">
+                          🏁 Τελικό Υπόλοιπο: {r}
+                        </div>
                       </div>
 
                     </div>
                   </div>
-                  
-                  <div className="flex justify-between w-full text-[10px] font-bold text-slate-400 border-t pt-3 uppercase px-2 tracking-tight">
+
+                  <div className="flex justify-between w-full text-[10px] font-bold text-slate-400 border-t pt-2 uppercase px-1 tracking-tight mt-1">
                     <span>🔵 Δ = Διαιρετέος</span>
                     <span>🟢 δ = Διαιρέτης</span>
+                    <span>🟣 π = Πηλίκο</span>
                   </div>
                 </div>
               ) : (
@@ -237,8 +271,7 @@ export default function DiairesiPage() {
                         ))}
                       </div>
 
-                      {/* Εμφάνιση Υπολοίπου */}
-                      {!isDecimalOperation && r > 0 && (
+                      {r > 0 && (
                         <div className="flex flex-col items-center gap-1.5 mt-1 animate-pulse">
                           <span className="text-xs font-bold text-rose-500 uppercase tracking-wide">📦 Περίσσεψαν (Υπόλοιπο):</span>
                           <div className="flex gap-1 bg-rose-50 border border-rose-200 p-2 rounded-lg">
@@ -253,9 +286,7 @@ export default function DiairesiPage() {
                     <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl max-w-xs mx-auto text-slate-500 text-sm font-medium space-y-2 shadow-inner">
                       <p>📊 <strong>Αριθμητική Απεικόνιση</strong></p>
                       <p className="text-xs text-slate-400 leading-relaxed">
-                        {isDecimalOperation 
-                          ? "Η οπτική κατανομή σε κουτάκια υποστηρίζει μόνο ακέραιες διαιρέσεις, αλλά η κάθετη διάταξη λειτουργεί κανονικά με δεκαδικά ψηφία!"
-                          : `Βάλε Διαιρετέο μικρότερο από ${LIMITS.MAX_VISUAL_BOXES} για να δεις τα κουτάκια να μοιράζονται αυτόματα στις ομάδες.`}
+                        Βάλε έναν Διαιρετέο μικρότερο από {LIMITS.MAX_VISUAL_BOXES} για να δεις τα κουτάκια να μοιράζονται αυτόματα στις ομάδες.
                       </p>
                     </div>
                   )}
