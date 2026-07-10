@@ -69,8 +69,8 @@ export default function DinameisDekaPage() {
                   Όταν πολλαπλασιάζουμε έναν αριθμό με δυνάμεις του 10, δεν κάνουμε κάθετη πράξη. Απλά μετακινούμε την υποδιαστολή!
                 </p>
                 <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-2 text-sm md:text-base font-medium">
-                  <p>🚀 <strong>Με 10, 100, 1000:</strong> Ο αριθμός μεγαλώνει. Μετακινούμε την υποδιαστολή **δεξιά** τόσες θέσεις όσα είναι τα μηδενικά.</p>
-                  <p>📉 <strong>Με 0.1, 0.01, 0.001:</strong> Ο αριθμός μικραίνει (είναι σαν διαίρεση). Μετακινούμε την υποδιαστολή **αριστερά** τόσες θέσεις όσα είναι τα δεκαδικά ψηφία.</p>
+                  <p>🚀 <strong>Με 10, 100, 1000:</strong> Ο αριθμός μεγαλώνει. Μετακινούμε την υποδιαστολή "δεξιά" τόσες θέσεις όσα είναι τα μηδενικά.</p>
+                  <p>📉 <strong>Με 0.1, 0.01, 0.001:</strong> Ο αριθμός μικραίνει (είναι σαν διαίρεση). Μετακινούμε την υποδιαστολή "αριστερά" τόσες θέσεις όσα είναι τα δεκαδικά ψηφία.</p>
                 </div>
               </div>
               
@@ -125,7 +125,7 @@ export default function DinameisDekaPage() {
               <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-5 shadow-inner my-auto">
                 {/* Input Αριθμού */}
                 <div className="flex flex-col items-center gap-1.5 w-full">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Γράψε τον Αριθμό σου</span>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Γραψε τον Αριθμο σου</span>
                   <input 
                     type="text" 
                     value={inputNum}
@@ -137,7 +137,7 @@ export default function DinameisDekaPage() {
 
                 {/* Επιλογέας Πολλαπλασιαστή */}
                 <div className="flex flex-col items-center gap-2">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Επίλεξε Πολλαπλασιαστή</span>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Επιλεξε Πολλαπλασιαστη</span>
                   <div className="flex gap-2">
                     {activeTab === 'megaloi' ? (
                       [10, 100, 1000].map((m) => (
@@ -175,7 +175,7 @@ export default function DinameisDekaPage() {
               <div className="w-full"></div>
 
               <div className="my-auto flex flex-col items-center gap-6 w-full max-w-sm text-center">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οδηγός Υποδιαστολής:</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οδηγος Υποδιαστολης:</span>
                 
                 {/* Κουτί Οπτικής Αναπαράστασης */}
                 <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl border-4 border-slate-700 w-full font-mono text-2xl md:text-3xl font-black tracking-widest relative py-12 flex flex-col items-center justify-center min-h-[140px]">
@@ -190,13 +190,13 @@ export default function DinameisDekaPage() {
 
                   {/* Έξυπνο Σύμβολο Κίνησης */}
                   <div className="absolute bottom-2 font-sans text-[11px] font-black uppercase text-amber-400 tracking-wider">
-                    {shift.steps} {shift.steps === 1 ? "θέση" : "θέσεις"} προς τα {shift.direction}
+                    {shift.steps} {shift.steps === 1 ? "θεση" : "θεσεις"} προς τα {shift.direction}
                   </div>
                 </div>
 
                 {/* Επεξηγηματικό Κείμενο */}
                 <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs md:text-sm text-blue-900 font-medium leading-relaxed">
-                  💡 <strong>Τι συνέβη:</strong> Πολλαπλασιάζοντας με το <span className="font-bold">{multiplier.toString().replace('.', ',')}</span>, η υποδιαστολή μετακινήθηκε **{shift.steps} {shift.steps === 1 ? "θέση" : "θέσεις"}** προς τα **{shift.direction}**. 
+                  💡 <strong>Τι συνέβη:</strong> Πολλαπλασιάζοντας με το <span className="font-bold">{multiplier.toString().replace('.', ',')}</span>, η υποδιαστολή μετακινήθηκε "{shift.steps} {shift.steps === 1 ? "θέση" : "θέσεις"}" προς τα "{shift.direction}". 
                   {activeTab === 'megaloi' ? " Αν τελειώσουν τα ψηφία, προσθέτουμε μηδενικά!" : " Αν τελειώσουν τα ψηφία, βάζουμε 0, στην αρχή!"}
                 </div>
               </div>
