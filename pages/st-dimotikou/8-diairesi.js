@@ -6,7 +6,7 @@ import { LAYOUT } from '../../shared/layout-config';
 
 const LIMITS = {
   MIN_DIVISOR: 1,
-  MAX_DIVIDEND: 9999, // Έως 4 ψηφία για απόλυτη ακρίβεια στη σχολική στοίχιση
+  MAX_DIVIDEND: 9999, // Έως 4 ψηφία για απόλυτη σχολική στοίχιση
   MAX_DIVISOR_INPUT: 99,
   MAX_VISUAL_BOXES: 120
 };
@@ -26,7 +26,7 @@ export default function DiairesiPage() {
   const r = D % d;
   const isPerfect = r === 0;
 
-  // Παραγωγή των αναλυτικών σχολικών βημάτων
+  // Παραγωγή των αναλυτικών σχολικών βημάτων με ακριβείς θέσεις ψηφίων
   const generateSchoolSteps = () => {
     if (D === 0 || d === 0) return [];
     
@@ -36,21 +36,21 @@ export default function DiairesiPage() {
     
     for (let i = 0; i < divStr.length; i++) {
       const nextDigit = parseInt(divStr[i]);
-      const prevVal = currentVal;
       currentVal = currentVal * 10 + nextDigit;
       
-      if (currentVal >= d || (i === divStr.length - 1 && steps.length === 0) || (prevVal > 0 && currentVal < d)) {
+      if (currentVal >= d || i === divStr.length - 1) {
         const times = Math.floor(currentVal / d);
         const product = times * d;
         const remainder = currentVal - product;
         
-        steps.push({
-          workNum: currentVal,
-          product: product,
-          remainder: remainder,
-          digitIndex: i, // Δείκτης για την οριζόντια στοίχιση των ψηφίων
-          digitPulled: nextDigit
-        });
+        if (times > 0 || steps.length > 0 || i === divStr.length - 1) {
+          steps.push({
+            workNum: currentVal,
+            product: product,
+            remainder: remainder,
+            digitIndex: i // Το index του ψηφίου που μόλις κατέβηκε
+          });
+        }
         
         currentVal = remainder;
       }
@@ -59,7 +59,8 @@ export default function DiairesiPage() {
   };
 
   const schoolSteps = generateSchoolSteps();
-  const maxDigits = D.toString().length;
+  const divDigits = D.toString().split('');
+  const maxDigits = divDigits.length;
 
   // Ασφαλής έλεγχος των inputs
   const handleInputChange = (val, setter, isDivisor = false) => {
@@ -68,6 +69,20 @@ export default function DiairesiPage() {
       if (isDivisor && parseInt(cleanVal) === 0) return;
       setter(cleanVal);
     }
+  };
+
+  // Βοηθητική συνάρτηση για τη μετατροπή αριθμού σε πίνακα ψηφίων με padding στα αριστερά
+  const getPaddedDigits = (num, endIndex) => {
+    const numStr = num.toString();
+    const digits = new Array(maxDigits).fill('');
+    
+    // Τοποθετούμε τα ψηφία έτσι ώστε το τελευταίο ψηφίο να κάθεται στο endIndex
+    let numIdx = numStr.length - 1;
+    for (let i = endIndex; i >= 0 && numIdx >= 0; i--) {
+      digits[i] = numStr[numIdx];
+      numIdx--;
+    }
+    return digits;
   };
 
   return (
@@ -186,7 +201,7 @@ export default function DiairesiPage() {
                 </div>
 
                 <div className="bg-white p-3 rounded-xl border shadow-sm text-center flex flex-col gap-1.5 font-sans">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Κατάσταση Πξης:</div>
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Κατάσταση Πράξης:</div>
                   <div className={`text-base font-black px-4 py-1 rounded-full inline-block mx-auto ${isPerfect ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>
                     {isPerfect ? "🎯 ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ" : "🔍 ΑΤΕΛΗΣ ΔΙΑΙΡΕΣΗ"}
                   </div>
@@ -199,56 +214,67 @@ export default function DiairesiPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΠΟΛΥΤΑ ΣΤΟΙΧΙΣΜΕΝΟΣ ΠΙΝΑΚΑΣ ΜΕ ΑΠΟΜΟΝΩΜΕΝΟ ΤΟ ΜΕΙΟΝ (-) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΠΟΛΥΤΑ ΣΤΟΙΧΙΣΜΕΝΟΣ ΠΙΝΑΚΑΣ ΜΕ ΔΥΝΑΜΙΚΟ ΨΗΦΙΑΚΟ GRID */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              <div className="my-auto flex flex-col items-center gap-2 w-full max-w-[350px] px-1">
+              <div className="my-auto flex flex-col items-center gap-2 w-full max-w-[360px] px-1">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Πλήρης Ανάλυση Πράξης:</span>
                 
-                <div className="w-full bg-slate-900 text-white p-6 rounded-2xl shadow-xl border-4 border-slate-700 font-mono text-xl md:text-2xl font-black relative min-h-[340px] flex justify-center py-8 select-none">
+                <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl border-4 border-slate-700 font-mono text-xl md:text-2xl font-black relative min-h-[340px] flex py-8 select-none w-full justify-center">
                   
-                  {/* Σχολικό Σχήμα Διαίρεσης (3 Στήλες) */}
-                  <div className="grid grid-cols-[1.3fr_auto_1fr] w-full relative z-10 items-start">
+                  {/* Σχολικό Σχήμα Διαίρεσης (3 Στήλες Flex-Layout) */}
+                  <div className="flex w-full items-start justify-center">
                     
-                    {/* Στήλη 1: Διαιρετέος και Αναλυτικές Αφαιρέσεις */}
-                    <div className="flex flex-col items-end pr-4 text-blue-400">
+                    {/* ΑΡΙΣΤΕΡΟ ΜΕΡΟΣ: ΔΙAIPETEOΣ & ΚΑΘΕΤΕΣ ΑΦΑΙΡΕΣΕΙΣ */}
+                    <div className="flex flex-col items-end pr-4 text-right">
                       
-                      {/* Αρχικός Διαιρετέος (Σπασμένος σε ψηφία για απόλυτο alignment) */}
-                      <div className="flex justify-end font-bold mb-3 tracking-normal h-8 items-center">
-                        {D.toString().split('').map((char, index) => (
-                          <span key={index} className="w-5 text-center">{char}</span>
+                      {/* 1. Αρχικός Διαιρετέος */}
+                      <div className="flex justify-end text-blue-400 font-bold mb-3 h-8 items-center">
+                        {divDigits.map((char, i) => (
+                          <span key={i} className="w-5 text-center">{char}</span>
                         ))}
                       </div>
                       
-                      {/* Σώμα Βημάτων */}
-                      <div className="w-full flex flex-col items-end space-y-2">
+                      {/* 2. Δυναμικά Στοιχισμένα Βήματα */}
+                      <div className="flex flex-col items-end space-y-2">
                         {schoolSteps.map((step, idx) => {
-                          const shiftCount = maxDigits - 1 - step.digitIndex;
-                          
+                          const productDigits = getPaddedDigits(step.product, step.digitIndex);
+                          const remainderDigits = getPaddedDigits(step.remainder, step.digitIndex);
+
                           return (
                             <div key={idx} className="flex flex-col items-end w-full">
                               
-                              {/* Σειρά Αφαίρεσης: Το πλην (-) μπαίνει σε απόλυτη θέση αριστερά, χωρίς να σπρώχνει τα ψηφία */}
+                              {/* Σειρά Αφαίρεσης: Το πλην (-) μένει σταθερά αριστερά έξω από τα ψηφία */}
                               <div className="flex items-center justify-end w-full relative h-7">
-                                <span className="absolute left-0 text-red-500 text-sm md:text-base font-medium">-</span>
-                                <div className="flex justify-end text-red-400 font-medium" style={{ marginRight: `${shiftCount * 20}px` }}>
-                                  {step.product.toString().split('').map((char, i) => (
+                                <span className="absolute left-0 text-red-500 font-medium text-base md:text-lg">-</span>
+                                <div className="flex justify-end text-red-400 font-medium">
+                                  {productDigits.map((char, i) => (
                                     <span key={i} className="w-5 text-center">{char}</span>
                                   ))}
                                 </div>
                               </div>
 
-                              {/* Οριζόντια Γραμμή Αφαίρεσης Σχολικού Τύπου */}
-                              <div className="w-full flex justify-end h-[2px] my-1" style={{ marginRight: `${shiftCount * 20}px` }}>
-                                <div className="w-14 bg-slate-700 h-full"></div>
+                              {/* Οριζόντια Γραμμή Αφαίρεσης */}
+                              <div className="w-full flex justify-end h-[2px] my-1">
+                                <div className="flex justify-end">
+                                  {productDigits.map((char, i) => (
+                                    <div key={i} className={`w-5 h-full ${char !== '' ? 'bg-slate-700' : ''}`}></div>
+                                  ))}
+                                </div>
                               </div>
 
-                              {/* Σειρά Αποτελέσματος / Επόμενου Αριθμού */}
-                              <div className="flex justify-end text-slate-300 font-extrabold h-7 items-center" style={{ marginRight: `${shiftCount * 20}px` }}>
-                                {(idx === schoolSteps.length - 1 ? step.remainder : schoolSteps[idx + 1]?.workNum).toString().split('').map((char, i) => (
-                                  <span key={i} className="w-5 text-center">{char}</span>
-                                ))}
+                              {/* Σειρά Αποτελέσματος / Επόμενου Αριθμού Εργασίας */}
+                              <div className="flex justify-end text-slate-300 font-extrabold h-7 items-center">
+                                {idx === schoolSteps.length - 1 ? (
+                                  remainderDigits.map((char, i) => (
+                                    <span key={i} className="w-5 text-center">{char}</span>
+                                  ))
+                                ) : (
+                                  getPaddedDigits(schoolSteps[idx + 1].workNum, schoolSteps[idx + 1].digitIndex).map((char, i) => (
+                                    <span key={i} className="w-5 text-center">{char}</span>
+                                  ))
+                                )}
                               </div>
 
                             </div>
@@ -257,20 +283,20 @@ export default function DiairesiPage() {
                       </div>
                     </div>
 
-                    {/* Στήλη 2: Η Κάθετη Μαύρη Γραμμή του Τ */}
+                    {/* ΜΕΣΑΙΟ ΜΕΡΟΣ: Η ΚΑΘΕΤΗ ΓΡΑΜΜΗ ΤΟΥ Τ */}
                     <div className="w-[3px] bg-slate-600 self-stretch min-h-[240px]"></div>
 
-                    {/* Στήλη 3: Διαιρέτης και Τελικό Πηλίκο */}
+                    {/* ΔΕΞΙ ΜΕΡΟΣ: ΔΙΑΙΡΕΤΗΣ & ΠΗΛΙΚΟ */}
                     <div className="text-left pl-5 flex flex-col h-full justify-start">
-                      {/* Διαιρέτης (με την οριζόντια σχολική γραμμή) */}
-                      <div className="text-emerald-400 font-bold border-b-4 border-slate-600 pb-2 w-full tracking-wider flex">
-                        {d.toString().split('').map((char, i) => (
+                      {/* Διαιρέτης */}
+                      <div className="text-emerald-400 font-bold border-b-4 border-slate-600 pb-2 tracking-wider flex w-full">
+                        {divisorInput.split('').map((char, i) => (
                           <span key={i} className="w-5 text-center">{char}</span>
                         ))}
                       </div>
                       
                       {/* Τελικό Πηλίκο */}
-                      <div className="text-purple-400 pt-3 font-black tracking-wider flex">
+                      <div className="text-purple-400 pt-3 font-black tracking-wider flex w-full">
                         {q.toString().split('').map((char, i) => (
                           <span key={i} className="w-5 text-center">{char}</span>
                         ))}
