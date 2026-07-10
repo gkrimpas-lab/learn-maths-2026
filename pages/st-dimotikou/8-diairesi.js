@@ -6,8 +6,8 @@ import { LAYOUT } from '../../shared/layout-config';
 
 const LIMITS = {
   MIN_DIVISOR: 1,
-  MAX_DIVIDEND: 999999, // Έως 6 ψηφία
-  MAX_DIVISOR_INPUT: 999,
+  MAX_DIVIDEND: 9999, // Περιορίζουμε έως 4 ψηφία για τέλεια σχολική στοίχιση χωρίς να κρύβεται κείμενο
+  MAX_DIVISOR_INPUT: 99,
   MAX_VISUAL_BOXES: 120
 };
 
@@ -21,51 +21,50 @@ export default function DiairesiPage() {
   const D = Math.floor(parseFloat(dividendInput)) || 0;
   const d = Math.floor(parseFloat(divisorInput)) || LIMITS.MIN_DIVISOR;
 
-  // Υπολογισμός τελικών τιμών
+  // Βασικοί υπολογισμοί
   const q = Math.floor(D / d);
   const r = D % d;
   const isPerfect = r === 0;
 
-  // Αλγόριθμος παραγωγής ενδιάμεσων βημάτων κάθετης διαίρεσης
-  const generateDivisionSteps = () => {
-    if (D === 0 || d === 0 || d > D) return [];
+  // Παραγωγή των αναλυτικών σχολικών βημάτων με κατάλληλο indentation (spaces)
+  const generateSchoolSteps = () => {
+    if (D === 0 || d === 0) return [];
     
     const steps = [];
     const divStr = D.toString();
-    let currentRemainder = 0;
-    let currentWorkNum = 0;
-
+    let currentVal = 0;
+    
     for (let i = 0; i < divStr.length; i++) {
-      // «Κατεβάζουμε» το επόμενο ψηφίο
-      currentWorkNum = currentRemainder * 10 + parseInt(divStr[i]);
+      const nextDigit = parseInt(divStr[i]);
+      const prevVal = currentVal;
+      currentVal = currentVal * 10 + nextDigit;
       
-      if (currentWorkNum >= d || i === divStr.length - 1 || currentRemainder > 0) {
-        const times = Math.floor(currentWorkNum / d);
+      // Αν ο διαιρέτης χωράει ή αν είμαστε στο τελευταίο ψηφίο
+      if (currentVal >= d || (i === divStr.length - 1 && steps.length === 0) || (prevVal > 0 && currentVal < d)) {
+        const times = Math.floor(currentVal / d);
         const product = times * d;
-        const nextRemainder = currentWorkNum - product;
-
+        const remainder = currentVal - product;
+        
         steps.push({
-          digitPulled: divStr[i],
-          workNum: currentWorkNum,
-          productSubtract: product,
-          remainder: nextRemainder,
-          stepIndex: i
+          workNum: currentVal,
+          product: product,
+          remainder: remainder,
+          digitIndex: i, // Για τον υπολογισμό της στοίχισης (οπτικά κενά)
+          digitPulled: nextDigit
         });
-
-        currentRemainder = nextRemainder;
-      } else {
-        currentRemainder = currentWorkNum;
+        
+        currentVal = remainder;
       }
     }
     return steps;
   };
 
-  const divisionSteps = generateDivisionSteps();
+  const schoolSteps = generateSchoolSteps();
 
-  // Ασφαλής έλεγχος inputs (Μόνο ακέραιοι για τα βήματα)
+  // Ασφαλής έλεγχος των inputs
   const handleInputChange = (val, setter, isDivisor = false) => {
     const cleanVal = val.replace(/[^0-9]/g, ''); // Μόνο ακέραιοι φυσικοί αριθμοί
-    if (cleanVal.length <= (isDivisor ? 3 : 6)) {
+    if (cleanVal.length <= (isDivisor ? 2 : 4)) {
       if (isDivisor && parseInt(cleanVal) === 0) return;
       setter(cleanVal);
     }
@@ -106,7 +105,7 @@ export default function DiairesiPage() {
                 </p>
                 <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-2 text-sm md:text-base font-medium">
                   <p>🎯 <strong>Τέλεια Διαίρεση:</strong> Είναι η διαίρεση στην οποία το υπόλοιπο είναι ακριβώς **0** (π.χ. 12 : 3 = 4).</p>
-                  <p>🔍 <strong>Αντελής Διαίρεση:</strong> Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο **διαφορετικό του μηδενός** (π.χ. 14 : 3 = 4 και υπόλοιπο 2).</p>
+                  <p>🔍 <strong>Ατελής Διαίρεση:</strong> Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο **διάφορο του μηδενός** (π.χ. 14 : 3 = 4 και υπόλοιπο 2).</p>
                 </div>
               </div>
               
@@ -143,11 +142,11 @@ export default function DiairesiPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
             
             {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ */}
-            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[480px] w-full gap-6">
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[500px] w-full gap-6">
               
               <div className="space-y-2">
                 <h3 className="text-2xl font-black text-gray-900">
-                  {activeTab === 'katheti' ? "Διαδραστική Διαίρεση με Αναλυτικά Βήματα" : "Μοντέλο Οπτικής Κατανομής"}
+                  {activeTab === 'katheti' ? "Διαδραστική Διαίρεση με Σχολικά Βήματα" : "Μοντέλο Οπτικής Κατανομής"}
                 </h3>
                 <p className="text-gray-500 text-sm">
                   {activeTab === 'moirasma' && D > LIMITS.MAX_VISUAL_BOXES 
@@ -200,98 +199,74 @@ export default function DiairesiPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΝΑΛΥΤΙΚΗ ΚΑΘΕΤΗ ΔΙΑΤΑΞΗ Η ΟΠΤΙΚΟ ΜΟΙΡΑΣΜΑ */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[480px] w-full relative overflow-hidden">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΠΟΛΥΤΑ ΣΤΟΙΧΙΣΜΕΝΟΣ ΠΙΝΑΚΑΣ LONG DIVISION */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[500px] w-full relative overflow-hidden">
               <div className="w-full"></div>
 
-              {activeTab === 'katheti' ? (
-                /* ΑΝΑΒΑΘΜΙΣΜΕΝΗ ΚΑΘΕΤΗ ΔΙΑΤΑΞΗ ΜΕ ΕΝΔΙΑΜΕΣΕΣ ΑΦΑΙΡΕΣΕΙΣ */
-                <div className="my-auto flex flex-col items-center gap-2 w-full max-w-[320px] px-2">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Πλήρης Ανάλυση Πράξης:</span>
+              <div className="my-auto flex flex-col items-center gap-2 w-full max-w-[340px] px-1">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Πλήρης Ανάλυση Πράξης:</span>
+                
+                <div className="w-full bg-slate-900 text-white p-6 rounded-2xl shadow-xl border-4 border-slate-700 font-mono text-xl md:text-2xl font-black relative min-h-[320px] flex justify-center py-8">
                   
-                  <div className="w-full bg-slate-900 text-white p-6 rounded-2xl shadow-xl border-4 border-slate-700 font-mono text-xl font-black relative min-h-[280px] flex justify-center">
+                  {/* Σχολικό Σχήμα Διαίρεσης (3-Column Layout) */}
+                  <div className="grid grid-cols-[1.2fr_auto_1fr] w-full relative z-10 items-start">
                     
-                    <div className="grid grid-cols-[1fr_auto_1fr] w-full relative z-10 items-start">
+                    {/* Στήλη 1: Διαιρετέος και Στοιχισμένα Βήματα Αφαίρεσης */}
+                    <div className="flex flex-col items-end pr-4 text-blue-500 tracking-widest selection:bg-transparent">
+                      {/* Αρχικός Διαιρετέος */}
+                      <div className="mb-2 text-blue-400 font-bold tracking-widest">{D}</div>
                       
-                      {/* Στήλη 1: Διαιρετέος + Ενδιάμεσα Βήματα Αφαίρεσης */}
-                      <div className="text-right pr-4 space-y-1 text-blue-400">
-                        <div className="text-blue-500 text-2xl">{D}</div>
-                        {divisionSteps.map((step, idx) => (
-                          <div key={idx} className="text-right text-sm md:text-base font-normal tracking-wide space-y-0.5 opacity-95">
-                            <div className="text-red-400">-{step.productSubtract}</div>
-                            <div className="border-t border-slate-700 w-full my-0.5"></div>
-                            <div className="text-slate-300 font-bold">{step.remainder}</div>
-                          </div>
-                        ))}
+                      {/* Ενδιάμεσα Σχολικά Βήματα */}
+                      <div className="w-full flex flex-col items-end space-y-1">
+                        {schoolSteps.map((step, idx) => {
+                          // Υπολογισμός δυναμικού indentation (οπτικού padding) με βάση τη θέση του ψηφίου
+                          const padStyle = { marginRight: `${(dividendInput.length - 1 - step.digitIndex) * 14}px` };
+                          
+                          return (
+                            <div key={idx} style={padStyle} className="flex flex-col items-end text-right text-base md:text-lg font-bold">
+                              {/* Αφαιρέτης (Γινόμενο) */}
+                              <div className="text-red-400 font-medium">-{step.product}</div>
+                              {/* Οριζόντια γραμμή αφαίρεσης */}
+                              <div className="w-16 h-[2px] bg-slate-700 my-0.5"></div>
+                              {/* Ενδιάμεσο Υπόλοιπο / Επόμενο νούμερο εργασίας */}
+                              <div className="text-slate-300 font-extrabold">
+                                {idx === schoolSteps.length - 1 ? step.remainder : schoolSteps[idx+1]?.workNum}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-
-                      {/* Στήλη 2: Κάθετη Γραμμή του Σχήματος Τ */}
-                      <div className="w-[3px] bg-slate-600 self-stretch min-h-[200px]"></div>
-
-                      {/* Στήλη 3: Διαιρέτης και Πηλίκο */}
-                      <div className="text-left pl-4 flex flex-col h-full justify-start">
-                        {/* Διαιρέτης */}
-                        <div className="text-emerald-400 text-2xl border-b-4 border-slate-600 pb-2 w-full">
-                          {d}
-                        </div>
-                        {/* Τελικό Πηλίκο */}
-                        <div className="text-purple-400 text-2xl pt-3 font-black">
-                          {q}
-                        </div>
-                        
-                        {/* Επεξήγηση τελικού υπολοίπου */}
-                        <div className="mt-auto pt-8 text-[11px] font-sans font-bold text-rose-400 tracking-tight">
-                          🏁 Τελικό Υπόλοιπο: {r}
-                        </div>
-                      </div>
-
                     </div>
-                  </div>
 
-                  <div className="flex justify-between w-full text-[10px] font-bold text-slate-400 border-t pt-2 uppercase px-1 tracking-tight mt-1">
-                    <span>🔵 Δ = Διαιρετέος</span>
-                    <span>🟢 δ = Διαιρέτης</span>
-                    <span>🟣 π = Πηλίκο</span>
+                    {/* Στήλη 2: Η Κάθετη Μαύρη Γραμμή του Τ */}
+                    <div className="w-[3px] bg-slate-600 self-stretch min-h-[220px]"></div>
+
+                    {/* Στήλη 3: Διαιρέτης και Τελικό Πηλίκο */}
+                    <div className="text-left pl-4 flex flex-col h-full justify-start select-none">
+                      {/* Διαιρέτης (με την οριζόντια σχολική γραμμή από κάτω) */}
+                      <div className="text-emerald-400 font-bold border-b-4 border-slate-600 pb-2 w-full tracking-widest">
+                        {d}
+                      </div>
+                      {/* Τελικό Πηλίκο */}
+                      <div className="text-purple-400 pt-3 font-black tracking-widest">
+                        {q}
+                      </div>
+                      
+                      {/* Ένδειξη Τελικού Υπολοίπου στο κάτω μέρος */}
+                      <div className="mt-auto pt-10 text-[10px] font-sans font-black uppercase text-rose-400 tracking-wider">
+                        🏁 Υπόλοιπο: {r}
+                      </div>
+                    </div>
+
                   </div>
                 </div>
-              ) : (
-                /* ΟΠΤΙΚΟ ΜΟΙΡΑΣΜΑ ΣΕ ΟΜΑΔΕΣ */
-                <div className="my-auto flex flex-col items-center gap-4 w-full px-2 text-center">
-                  {D <= LIMITS.MAX_VISUAL_BOXES && D > 0 && d > 0 ? (
-                    <div className="flex flex-col items-center gap-4 w-full">
-                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Μοίρασμα σε {Math.floor(d)} ίσες ομάδες:</span>
-                      
-                      <div className="flex flex-wrap gap-2 justify-center max-h-[260px] overflow-y-auto p-2 border rounded-xl bg-slate-50 w-full shadow-inner">
-                        {[...Array(Math.min(Math.floor(d), 30))].map((_, groupIdx) => (
-                          <div key={groupIdx} className="bg-white border-2 border-emerald-300 p-2 rounded-xl flex flex-wrap gap-1 items-center justify-center min-w-[50px] min-h-[50px]">
-                            {[...Array(q)].map((_, boxIdx) => (
-                              <div key={boxIdx} className="w-3 h-3 bg-blue-500 rounded-sm" />
-                            ))}
-                          </div>
-                        ))}
-                      </div>
 
-                      {r > 0 && (
-                        <div className="flex flex-col items-center gap-1.5 mt-1 animate-pulse">
-                          <span className="text-xs font-bold text-rose-500 uppercase tracking-wide">📦 Περίσσεψαν (Υπόλοιπο):</span>
-                          <div className="flex gap-1 bg-rose-50 border border-rose-200 p-2 rounded-lg">
-                            {[...Array(r)].map((_, i) => (
-                              <div key={i} className="w-3 h-3 bg-rose-500 rounded-sm" />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl max-w-xs mx-auto text-slate-500 text-sm font-medium space-y-2 shadow-inner">
-                      <p>📊 <strong>Αριθμητική Απεικόνιση</strong></p>
-                      <p className="text-xs text-slate-400 leading-relaxed">
-                        Βάλε έναν Διαιρετέο μικρότερο από {LIMITS.MAX_VISUAL_BOXES} για να δεις τα κουτάκια να μοιράζονται αυτόματα στις ομάδες.
-                      </p>
-                    </div>
-                  )}
+                <div className="flex justify-between w-full text-[10px] font-bold text-slate-400 border-t pt-2 uppercase px-1 tracking-tight mt-1">
+                  <span>🔵 Δ = Διαιρετέος</span>
+                  <span>🟢 δ = Διαιρέτης</span>
+                  <span>🟣 π = Πηλίκο</span>
                 </div>
-              )}
+              </div>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
                 <span>🔍 Το υπόλοιπο (υ) μιας ακέραιης διαίρεσης είναι πάντα μικρότερο από τον διαιρέτη (δ).</span>
