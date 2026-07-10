@@ -23,8 +23,6 @@ export default function DiairesiPage() {
   const d = parseFloat(divisorInput) || LIMITS.MIN_DIVISOR;
 
   // Υπολογισμοί Πηλίκου και Υπολοίπου (για φυσικούς/δεκαδικούς)
-  // Στο δημοτικό, αν έχουμε δεκαδικούς, προχωράμε τη διαίρεση στο πηλίκο.
-  // Αν είναι ακέραιοι, δείχνουμε την ευκλείδεια έκδοση με ακέραιο πηλίκο και υπόλοιπο.
   const isDecimalOperation = dividendInput.includes('.') || divisorInput.includes('.');
   
   let q = 0; // Πηλίκο
@@ -32,7 +30,7 @@ export default function DiairesiPage() {
 
   if (isDecimalOperation) {
     q = D / d;
-    r = 0; // Στη δεκαδική διαίρεση συνεχίζουμε μέχρι το υπόλοιπο να μηδενιστεί ή να επαναλαμβάνεται
+    r = 0; 
   } else {
     q = Math.floor(D / d);
     r = D % d;
@@ -46,7 +44,7 @@ export default function DiairesiPage() {
     if ((cleanVal.match(/\./g) || []).length <= 1) {
       const parts = cleanVal.split('.');
       if (!parts[0] || parts[0].length <= (isDivisor ? 3 : 6)) {
-        if (isDivisor && parseFloat(cleanVal) === 0) return; // Όχι διαίρεση με το 0
+        if (isDivisor && parseFloat(cleanVal) === 0) return; 
         setter(cleanVal);
       }
     }
@@ -86,8 +84,8 @@ export default function DiairesiPage() {
                   **Διαίρεση** είναι η πράξη με την οποία μοιράζουμε έναν αριθμό σε ίσα μέρη. Είναι η αντίστροφη πράξη του πολλαπλασιασμού.
                 </p>
                 <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-2 text-sm md:text-base font-medium">
-                  <p>🎯 <strong>Τέλεια Διαίρεση:</strong> Είναι η διαίρεση στην οποία το υπόλοιπο είναι ακριβώς **$0$** (π.χ. $12 : 3 = 4$).</p>
-                  <p>🔍 <strong>Ατελής Διαίρεση:</strong> Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο **διαφορετικό του μηδενός** (π.χ. $14 : 3 = 4$ και υπόλοιπο $2$).</p>
+                  <p>🎯 <strong>Τέλεια Διαίρεση:</strong> Είναι η διαίρεση στην οποία το υπόλοιπο είναι ακριβώς **0** (π.χ. 12 : 3 = 4).</p>
+                  <p>🔍 <strong>Ατελής Διαίρεση:</strong> Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο **διαφορετικό του μηδενός** (π.χ. 14 : 3 = 4 και υπόλοιπο 2).</p>
                 </div>
               </div>
               
@@ -95,10 +93,10 @@ export default function DiairesiPage() {
                 <span className="text-amber-300 font-black text-lg">🧪 Η Μαθηματική Επαλήθευση</span>
                 <div className="bg-white/10 p-4 rounded-xl font-mono text-sm md:text-base tracking-wide inline-block text-left">
                   <div className="font-bold text-center text-amber-200 text-lg mb-2">Δ ＝ δ × π ＋ υ</div>
-                  <div>• <strong>Δ</strong> (Διαιρετέος): Ο αριθμός που μοιράζουμε</div>
+                  <div>• <strong>Δ</strong> (Διαιρετέος): O αριθμός που μοιράζουμε</div>
                   <div>• <strong>δ</strong> (διαιρέτης): Σε πόσα μέρη μοιράζουμε</div>
                   <div>• <strong>π</strong> (πηλίκο): Το αποτέλεσμα της διαίρεσης</div>
-                  <div>• <strong>υ</strong> (υπόλοιπο): Αυτό που περισσεύει (πάντα $υ < δ$)</div>
+                  <div>• <strong>υ</strong> (υπόλοιπο): Αυτό που περισσεύει (πάντα μικρότερο από το δ)</div>
                 </div>
               </div>
             </div>
@@ -192,7 +190,6 @@ export default function DiairesiPage() {
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Σχολική Κάθετη Διάταξη:</span>
                   
                   <div className="w-full font-mono text-2xl font-black text-slate-800 relative py-4 select-none px-6">
-                    {/* Grid δομή για το σχήμα Τ */}
                     <div className="grid grid-cols-2 gap-x-6 relative">
                       
                       {/* Πάνω Αριστερά: Διαιρετέος */}
@@ -230,11 +227,9 @@ export default function DiairesiPage() {
                     <div className="flex flex-col items-center gap-4 w-full">
                       <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Μοίρασμα σε {Math.floor(d)} ίσες ομάδες:</span>
                       
-                      {/* Δημιουργία των ομάδων */}
                       <div className="flex flex-wrap gap-2 justify-center max-h-[260px] overflow-y-auto p-2 border rounded-xl bg-slate-50 w-full shadow-inner">
                         {[...Array(Math.min(Math.floor(d), 30))].map((_, groupIdx) => (
                           <div key={groupIdx} className="bg-white border-2 border-emerald-300 p-2 rounded-xl flex flex-wrap gap-1 items-center justify-center min-w-[50px] min-h-[50px]">
-                            {/* Τετραγωνάκια ανά ομάδα (ίσα με το πηλίκο q) */}
                             {[...Array(q)].map((_, boxIdx) => (
                               <div key={boxIdx} className="w-3 h-3 bg-blue-500 rounded-sm" />
                             ))}
@@ -242,7 +237,7 @@ export default function DiairesiPage() {
                         ))}
                       </div>
 
-                      {/* Εμφάνιση Υπολοίπου που περίσσεψε εκτός ομάδων */}
+                      {/* Εμφάνιση Υπολοίπου */}
                       {!isDecimalOperation && r > 0 && (
                         <div className="flex flex-col items-center gap-1.5 mt-1 animate-pulse">
                           <span className="text-xs font-bold text-rose-500 uppercase tracking-wide">📦 Περίσσεψαν (Υπόλοιπο):</span>
@@ -255,7 +250,6 @@ export default function DiairesiPage() {
                       )}
                     </div>
                   ) : (
-                    /* ΜΗΝΥΜΑ ΓΙΑ ΜΕΓΑΛΟΥΣ ΑΡΙΘΜΟΥΣ Ή ΔΕΚΑΔΙΚΟΥΣ */
                     <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl max-w-xs mx-auto text-slate-500 text-sm font-medium space-y-2 shadow-inner">
                       <p>📊 <strong>Αριθμητική Απεικόνιση</strong></p>
                       <p className="text-xs text-slate-400 leading-relaxed">
@@ -269,7 +263,7 @@ export default function DiairesiPage() {
               )}
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>🔍 Το υπόλοιπο ($υ$) μιας ακέραιης διαίρεσης είναι πάντα μικρότερο από τον διαιρέτη ($δ$).</span>
+                <span>🔍 Το υπόλοιπο (υ) μιας ακέραιης διαίρεσης είναι πάντα μικρότερο από τον διαιρέτη (δ).</span>
               </div>
             </div>
 
