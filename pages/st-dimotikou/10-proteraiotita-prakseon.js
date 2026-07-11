@@ -18,15 +18,21 @@ export default function ProteraiotitaPrakseonPage() {
     setCustomExpr(clean);
   };
 
-  // Μετατροπή των tokens σε καθαρό κείμενο με αυτόματες παρενθέσεις στους αρνητικούς αριθμούς
+  // Μετατροπή των tokens σε καθαρό κείμενο με σωστή διαχείριση παρενθέσεων
   const tokensToString = (tokens) => {
-    return tokens.map(t => {
+    return tokens.map((t, idx) => {
       if (t.type === 'OPERATOR') {
         if (t.value === '*') return '×';
         if (t.value === '/') return '÷';
         return t.value;
       }
       if (t.type === 'NUMBER' && t.value < 0) {
+        // Έλεγχος αν ο αρνητικός αριθμός είναι ήδη κλεισμένος σε παρένθεση για να μην διπλασιάζεται
+        const hasOpen = idx > 0 && tokens[idx - 1].type === 'PAREN' && tokens[idx - 1].value === '(';
+        const hasClose = idx < tokens.length - 1 && tokens[idx + 1].type === 'PAREN' && tokens[idx + 1].value === ')';
+        if (hasOpen && hasClose) {
+          return t.value;
+        }
         return `(${t.value})`;
       }
       return t.value;
@@ -104,7 +110,7 @@ export default function ProteraiotitaPrakseonPage() {
       }
 
       if (openParenIdx !== -1 && closeParenIdx !== -1) {
-        // Αν η παρένθεση περιέχει απλώς έναν μεμονωμένο αριθμό, π.χ. ( -39 ), βγάζουμε τις παρενθέσεις
+        // Αν η παρένθεση περιέχει απλώς έναν μεμονωμένο αριθμό, βγάζουμε τις εξωτερικές παρενθέσεις
         if (closeParenIdx === openParenIdx + 2) {
           tokens.splice(closeParenIdx, 1);
           tokens.splice(openParenIdx, 1);
@@ -256,7 +262,7 @@ export default function ProteraiotitaPrakseonPage() {
                   ΠΑ.ΠΟ.ΔΙ.ΠΡ.Α.
                 </div>
                 <p className="text-xs text-indigo-100 font-medium px-2 leading-relaxed">
-                  <strong>Πα</strong>ρένθεση • <strong>Πο</strong>λλαπλασιασμός • <strong>Δι</strong>αίρεση • <strong>Πρ</strong>όσθεση • <strong>Α</strong>φαίρεση!
+                  <strong>Πα</strong>ρένθεση • <strong>Πo</strong>λλαπλασιασμός • <strong>Δι</strong>αίρεση • <strong>Πρ</strong>όσθεση • <strong>Α</strong>φαίρεση!
                 </p>
               </div>
             </div>
@@ -300,11 +306,11 @@ export default function ProteraiotitaPrakseonPage() {
               </div>
 
               <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-medium leading-relaxed">
-                💡 <strong>Ασφαλής Έλεγχος:</strong> Το σύστημα εμφανίζει αυτόματα σε παρένθεση κάθε αρνητικό αριθμό που προκύπτει, εξασφαλίζοντας απόλυτη μαθηματική εγκυρότητα.
+                💡 <strong>Καθαρή Εμφάνιση:</strong> Οι παρενθέσεις στους αρνητικούς αριθμούς εφαρμόζονται έξυπνα χωρίς να διπλασιάζονται ποτέ οπτικά στην πορεία των βημάτων.
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΖΩΝΤΑΝΗ ΑΝΑΛΥΣΗ ΜΕ ΠΑΡΕΝΘΕΣΕΙΣ ΣΤΟΥΣ ΑΡΝΗΤΙΚΟΥΣ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΖΩΝΤΑΝΗ ΑΝΑΛΥΣΗ ΜΕ ΜΟΝΗ ΠΑΡΕΝΘΕΣΗ ΣΤΟΥΣ ΑΡΝΗΤΙΚΟΥΣ */}
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[460px]">
               
               <div className="w-full text-center mb-6">
