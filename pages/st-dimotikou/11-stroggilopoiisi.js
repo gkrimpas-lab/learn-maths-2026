@@ -9,12 +9,16 @@ export default function StroggilopoiisiPage() {
   const [inputValue, setInputValue] = useState("432.6583");
   const [roundPlace, setRoundPlace] = useState("units"); // hundreds, tens, units, tenths, hundredths, thousandths
 
-  // Ασφαλής έλεγχος εισαγωγής αριθμού (Έως 4 δεκαδικά ψηφία)
+  // Ασφαλής έλεγχος εισαγωγής αριθμού (Μάξ 6 ακέραια και μάξ 4 δεκαδικά ψηφία)
   const handleInputChange = (val) => {
     const clean = val.replace(/[^0-9.]/g, '');
     const parts = clean.split('.');
+    const intPart = parts[0] || "";
+    const decPart = parts[1] || "";
+
     if ((clean.match(/\./g) || []).length <= 1) {
-      if (!parts[1] || parts[1].length <= 4) {
+      // Αυστηρός περιορισμός: έως 6 ψηφία στο ακέραιο μέρος και έως 4 στο δεκαδικό
+      if (intPart.length <= 6 && (!parts.hasOwnProperty(1) || decPart.length <= 4)) {
         setInputValue(clean);
       }
     }
@@ -51,7 +55,7 @@ export default function StroggilopoiisiPage() {
     case "units":
       placeName = "Μονάδες";
       lowerBound = Math.floor(num);
-      upperBound = lowerBound + 100 / 100; // safe numeric addition
+      upperBound = lowerBound + 1;
       roundedValue = Math.round(num);
       keyDigit = Math.floor((num * 10) % 10); // Δέκατα
       precisionDigits = 0;
@@ -84,7 +88,7 @@ export default function StroggilopoiisiPage() {
       break;
   }
 
-  // Διασφάλιση θετικού/σωστού ψηφίου-κλειδιού σε περίπτωση σφαλμάτων στρογγυλοποίησης JS
+  // Διασφάλιση θετικού/σωστού ψηφίου-κλειδιού
   keyDigit = Math.abs(keyDigit);
 
   // Υπολογισμός θέσης πάνω στην αριθμογραμμή (0% έως 100%)
@@ -165,7 +169,7 @@ export default function StroggilopoiisiPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <h3 className="text-xl font-black text-gray-900">Δοκίμασε έναν Αριθμό!</h3>
-                  <p className="text-gray-500 text-xs">Γράψε έως 4 δεκαδικά ψηφία για να δεις πώς στρογγυλοποιείται σε οποιαδήποτε τάξη.</p>
+                  <p className="text-gray-500 text-xs">Γράψε έως 6 ακέραια και 4 δεκαδικά ψηφία για να δεις τη στρογγυλοποίηση.</p>
                 </div>
 
                 <div>
@@ -228,7 +232,7 @@ export default function StroggilopoiisiPage() {
 
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΔΥΝΑΜΙΚΗ ΑΡΙΘΜΟΓΡΑΜΜΗ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΔΙΟΡΘΩΜΕΝΗ ΑΡΙΘΜΟΓΡΑΜΜΗ */}
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[460px]">
               
               <div className="w-full text-center mb-4">
@@ -239,18 +243,24 @@ export default function StroggilopoiisiPage() {
               </div>
 
               {/* ΓΡΑΦΙΚΗ ΑΡΙΘΜΟΓΡΑΜΜΗ */}
-              <div className="w-full max-w-xl mx-auto my-auto py-10 px-6">
+              <div className="w-full max-w-xl mx-auto my-auto py-12 px-6">
                 <div className="h-2 bg-gradient-to-r from-red-200 via-amber-200 to-emerald-200 rounded-full relative shadow-inner">
                   
-                  {/* Αριστερό Όριο (Κάτω) */}
+                  {/* Αριστερό Όριο (Πάνω από τη γραμμή) */}
                   <div className="absolute left-0 -top-8 text-center -translate-x-1/2">
                     <span className="block font-mono font-black text-slate-700 text-xs md:text-sm">{lowerBound.toFixed(precisionDigits)}</span>
+                  </div>
+                  {/* Ετικέτα Κάτω Ορίου (Μετακινήθηκε καθαρά κάτω από τη γραμμή) */}
+                  <div className="absolute left-0 top-4 text-center -translate-x-1/2 mt-1">
                     <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Κάτω Όριο</span>
                   </div>
 
-                  {/* Δεξί Όριο (Πάνω) */}
+                  {/* Δεξί Όριο (Πάνω από τη γραμμή) */}
                   <div className="absolute right-0 -top-8 text-center translate-x-1/2">
                     <span className="block font-mono font-black text-slate-700 text-xs md:text-sm">{upperBound.toFixed(precisionDigits)}</span>
+                  </div>
+                  {/* Ετικέτα Πάνω Ορίου (Μετακινήθηκε καθαρά κάτω από τη γραμμή) */}
+                  <div className="absolute right-0 top-4 text-center translate-x-1/2 mt-1">
                     <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Πάνω Όριο</span>
                   </div>
 
@@ -275,10 +285,10 @@ export default function StroggilopoiisiPage() {
                 </div>
 
                 {/* Μπάρα Πληροφοριών Στρογγυλοποίησης */}
-                <div className="mt-14 flex justify-between items-center w-full bg-slate-50 rounded-2xl p-4 border border-slate-100 font-medium">
+                <div className="mt-16 flex justify-between items-center w-full bg-slate-50 rounded-2xl p-4 border border-slate-100 font-medium">
                   <div className="text-left space-y-1">
                     <span className="text-[10px] uppercase text-slate-400 font-black block">Ψηφίο-Κλειδί:</span>
-                    <span className={`text-base font-black font-mono ${isUp ? 'text-slate-400' : 'text-red-500 bg-red-50 px-2.5 py-0.5 rounded-lg'}`}>
+                    <span className={`text-base font-black font-mono ${isUp ? 'text-slate-400' : 'text-red-500 bg-red-50 px-2 py-0.5 rounded-lg'}`}>
                       {isNaN(keyDigit) ? 0 : keyDigit}
                     </span>
                   </div>
