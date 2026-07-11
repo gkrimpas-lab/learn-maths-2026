@@ -14,7 +14,8 @@ export default function STDimotikouMenu() {
     { id: '7-pollaplasiasmos-dinameis-deka', label: '🍕 7. Πολλαπλασιασμός Δυνάμεις του 10', href: '/st-dimotikou/7-pollaplasiasmos-dinameis-deka' },
     { id: '8-diairesi', label: '🍕 8. Διαίρεση Φυσικών', href: '/st-dimotikou/8-diairesi' },
     { id: '9-diairesi-dinameis-deka', label: '🍕 9. Διαίρεση Δυνάμεις του 10', href: '/st-dimotikou/9-diairesi-dinameis-deka' },
-    { id: '10-proteraiotita-prakseon', label: '🍕 10. Προτεραιότητα Πράξεων', href: '/st-dimotikou/10-proteraiotita-prakseon' }
+    { id: '10-proteraiotita-prakseon', label: '🍕 10. Προτεραιότητα Πράξεων', href: '/st-dimotikou/10-proteraiotita-prakseon' },
+    { id: '11-stroggilopoiisi', label: '🍕 11. Στρογγυλοποίηση Αριθμών', href: '/st-dimotikou/11-stroggilopoiisi' }
   ];
 
   return (
