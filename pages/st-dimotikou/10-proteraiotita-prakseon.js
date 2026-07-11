@@ -4,45 +4,127 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Προκαθορισμένα εκπαιδευτικά παραδείγματα με την ανάλυσή τους σε βήματα
-const EXAMPLES = {
-  EX1: {
-    title: "1. Απλή Έκφραση (Χωρίς Παρένθεση)",
-    expression: "10 - 2 × 4",
-    steps: [
-      { level: "Επίπεδο 1: Πολλαπλασιασμοί / Διαιρέσεις", text: "Ο πολλαπλασιασμός κερδίζει την αφαίρεση!", calculation: "2 × 4 = 8", currentForm: "10 - 8" },
-      { level: "Επίπεδο 2: Προσθέσεις / Αφαιρέσεις", text: "Τώρα κάνουμε την αφαίρεση κανονικά.", calculation: "10 - 8 = 2", currentForm: "2" }
-    ],
-    final: "2",
-    wrongText: "Αν κάναμε πρώτα την αφαίρεση (10 - 2 = 8) και μετά τον πολλαπλασιασμό (8 × 4), θα βγάζαμε λάθος αποτέλεσμα: 32!"
-  },
-  EX2: {
-    title: "2. Με Παρένθεση (Αλλαγή Προτεραιότητας)",
-    expression: "5 + 3 × (4 + 2)",
-    steps: [
-      { level: "Επίπεδο 1: Παρενθέσεις ( )", text: "Η παρένθεση έχει πάντα την απόλυτη προτεραιότητα!", calculation: "4 + 2 = 6", currentForm: "5 + 3 × 6" },
-      { level: "Επίπεδο 2: Πολλαπλασιασμοί / Διαιρέσεις", text: "Ο πολλαπλασιασμός προηγείται της πρόσθεσης.", calculation: "3 × 6 = 18", currentForm: "5 + 18" },
-      { level: "Επίπεδο 3: Προσθέσεις / Αφαιρέσεις", text: "Τέλος, κάνουμε την πρόσθεση.", calculation: "5 + 18 = 23", currentForm: "23" }
-    ],
-    final: "23",
-    wrongText: "Χωρίς την παρένθεση, θα κάναμε πρώτα το 3 × 4 = 12, αλλά η παρένθεση «κλειδώνει» και μας αναγκάζει να προσθέσουμε πρώτα το 4 + 2."
-  },
-  EX3: {
-    title: "3. Σύνθετη Έκφραση (Από αριστερά προς τα δεξιά)",
-    expression: "12 ÷ 3 × 2 + 4",
-    steps: [
-      { level: "Επίπεδο 1: Πολλαπλασιασμοί / Διαιρέσεις", text: "Διαίρεση και πολλαπλασιασμός είναι ισοδύναμα! Ξεκινάμε με όποιο βρίσκουμε πρώτο από αριστερά.", calculation: "12 ÷ 3 = 4", currentForm: "4 × 2 + 4" },
-      { level: "Επίπεδο 2: Επόμενος Πολλαπλασιασμός", text: "Συνεχίζουμε με τον πολλαπλασιασμό πριν πάμε στην πρόσθεση.", calculation: "4 × 2 = 8", currentForm: "8 + 4" },
-      { level: "Επίπεδο 3: Προσθέσεις / Αφαιρέσεις", text: "Η πρόσθεση μένει για το τέλος.", calculation: "8 + 4 = 12", currentForm: "12" }
-    ],
-    final: "12",
-    wrongText: "Προσοχή! Μην κάνετε πρώτα τον πολλαπλασιασμό 3 × 2 = 6, γιατί η διαίρεση (12 ÷) βρίσκεται πιο αριστερά και προηγείται στη σειρά!"
-  }
+// Έτοιμα παραδείγματα
+const PRESETS = {
+  EX1: { title: "10 - 2 × 4", expr: "10 - 2 * 4" },
+  EX2: { title: "5 + 3 × (4 + 2)", expr: "5 + 3 * (4 + 2)" },
+  EX3: { title: "12 ÷ 3 × 2 + 4", expr: "12 / 3 * 2 + 4" }
 };
 
 export default function ProteraiotitaPrakseonPage() {
-  const [selectedKey, setSelectedKey] = useState('EX1');
-  const currentEx = EXAMPLES[selectedKey];
+  const [customExpr, setCustomExpr] = useState("5 + 3 * (4 + 2)");
+
+  // Καθαρισμός εισαγωγής του χρήστη για ασφάλεια
+  const handleInputChange = (val) => {
+    const clean = val.replace(/[^0-9+\-*/(). ]/g, '');
+    setCustomExpr(clean);
+  };
+
+  // Custom ασφαλής μηχανισμός ανάλυσης της παράστασης σε εκπαιδευτικά βήματα
+  const generateSteps = (exprStr) => {
+    const steps = [];
+    let current = exprStr.replace(/\s+/g, ''); // αφαίρεση κενών
+    if (!current) return { steps: [], final: "0" };
+
+    let safetyCounter = 0;
+
+    while (safetyCounter < 10) {
+      safetyCounter++;
+      
+      // 1. Έλεγχος για παρενθέσεις
+      const parenRegex = /\(([^()]+)\)/;
+      const parenMatch = current.match(parenRegex);
+      
+      if (parenMatch) {
+        const subExpr = parenMatch[1];
+        const res = solveSimpleExpr(subExpr);
+        if (res === null) break;
+        
+        steps.push({
+          level: `Βήμα ${steps.length + 1}: Παρενθέσεις ( )`,
+          text: `Λύνουμε την πράξη μέσα στην παρένθεση: (${subExpr})`,
+          calculation: `${subExpr.replace(/\*/g, '×').replace(/\//g, '÷')} = ${res}`,
+          currentForm: current.replace(parenMatch[0], res).replace(/\*/g, '×').replace(/\//g, '÷')
+        });
+        current = current.replace(parenMatch[0], res);
+        continue;
+      }
+
+      // 2. Έλεγχος για Πολλαπλασιασμό / Διαίρεση (από αριστερά προς τα δεξιά)
+      const mdRegex = /(\d+(?:\.\d+)?)([*/])(\d+(?:\.\d+)?)/;
+      const mdMatch = current.match(mdRegex);
+      
+      if (mdMatch) {
+        const num1 = parseFloat(mdMatch[1]);
+        const op = mdMatch[2];
+        const num2 = parseFloat(mdMatch[3]);
+        const res = op === '*' ? num1 * num2 : (num2 !== 0 ? num1 / num2 : 0);
+        
+        steps.push({
+          level: `Βήμα ${steps.length + 1}: Πολλαπλασιασμοί / Διαιρέσεις`,
+          text: op === '*' ? "Ο πολλαπλασιασμός έχει προτεραιότητα." : "Η διαίρεση έχει προτεραιότητα.",
+          calculation: `${mdMatch[1]} ${op === '*' ? '×' : '÷'} ${mdMatch[3]} = ${parseFloat(res.toFixed(2))}`,
+          currentForm: current.replace(mdMatch[0], parseFloat(res.toFixed(2))).replace(/\*/g, '×').replace(/\//g, '÷')
+        });
+        current = current.replace(mdMatch[0], parseFloat(res.toFixed(2)));
+        continue;
+      }
+
+      // 3. Έλεγχος για Πρόσθεση / Αφαίρεση (από αριστερά προς τα δεξιά)
+      const asRegex = /(\d+(?:\.\d+)?)([+\-])(\d+(?:\.\d+)?)/;
+      const asMatch = current.match(asRegex);
+      
+      if (asMatch) {
+        const num1 = parseFloat(asMatch[1]);
+        const op = asMatch[2];
+        const num2 = parseFloat(asMatch[3]);
+        const res = op === '+' ? num1 + num2 : num1 - num2;
+        
+        steps.push({
+          level: `Βήμα ${steps.length + 1}: Προσθέσεις / Αφαιρέσεις`,
+          text: "Κάνουμε τις προσθέσεις και τις αφαιρέσεις τελευταίες.",
+          calculation: `${asMatch[1]} ${op} ${asMatch[3]} = ${parseFloat(res.toFixed(2))}`,
+          currentForm: current.replace(asMatch[0], parseFloat(res.toFixed(2))).replace(/\*/g, '×').replace(/\//g, '÷')
+        });
+        current = current.replace(asMatch[0], parseFloat(res.toFixed(2)));
+        continue;
+      }
+
+      // Αν δεν υπάρχει άλλη πράξη, σταματάμε
+      break;
+    }
+
+    return {
+      steps: steps,
+      final: current.replace(/\*/g, '×').replace(/\//g, '÷')
+    };
+  };
+
+  // Βοηθητική συνάρτηση για την επίλυση απλής έκφρασης εντός παρένθεσης
+  const solveSimpleExpr = (sub) => {
+    let temp = sub;
+    // Πρώτα πολλαπλασιασμοί/διαιρέσεις στην παρένθεση
+    let mdMatch;
+    while ((mdMatch = temp.match(/(\d+(?:\.\d+)?)([*/])(\d+(?:\.\d+)?)/))) {
+      const n1 = parseFloat(mdMatch[1]);
+      const op = mdMatch[2];
+      const n2 = parseFloat(mdMatch[3]);
+      const r = op === '*' ? n1 * n2 : (n2 !== 0 ? n1 / n2 : 0);
+      temp = temp.replace(mdMatch[0], r);
+    }
+    // Μετά προσθέσεις/αφαιρέσεις στην παρένθεση
+    let asMatch;
+    while ((asMatch = temp.match(/(\d+(?:\.\d+)?)([+\-])(\d+(?:\.\d+)?)/))) {
+      const n1 = parseFloat(asMatch[1]);
+      const op = asMatch[2];
+      const n2 = parseFloat(asMatch[3]);
+      const r = op === '+' ? n1 + n2 : n1 - n2;
+      temp = temp.replace(asMatch[0], r);
+    }
+    return parseFloat(temp) || 0;
+  };
+
+  const analysis = generateSteps(customExpr);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -67,7 +149,7 @@ export default function ProteraiotitaPrakseonPage() {
         {/* MAIN CONTENT */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-12`}>
           
-          {/* SECTION 1: ΘΕΩΡΙΑ (Η ΣΚΑΛΑ ΤΩΝ ΠΡΑΞΕΩΝ) */}
+          {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div className="space-y-4">
@@ -75,7 +157,7 @@ export default function ProteraiotitaPrakseonPage() {
                   <span>📖</span> Θεωρία: Ποιος έχει Προτεραιότητα;
                 </h2>
                 <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                  Όταν σε μια μαθηματική έκφραση συνυπάρχουν πολλές πράξεις μαζί, ακολουθούμε πάντα τον κανόνα της <strong>Προτεραιότητας των Πράξεων</strong> (από πάνω προς τα κάτω), σαρώνοντας την έκφραση από <strong>αριστερά προς τα δεξιά</strong>.
+                  Όταν σε μια μαθηματική έκφραση συνυπάρχουν πολλές πράξεις μαζί, ακολουθούμε πάντα τον κανόνα της <strong>Προτεραιότητας των Πράξεων</strong>, σαρώνοντας την έκφραση από <strong>αριστερά προς τα δεξιά</strong>.
                 </p>
                 
                 {/* Η Σκάλα των Πράξεων */}
@@ -108,83 +190,105 @@ export default function ProteraiotitaPrakseonPage() {
             </div>
           </div>
 
-          {/* SECTION 2: ΔIΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΟ - ΑΝΑΛΥΣΗ ΕΚΦΡΑΣΗΣ */}
+          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΕΠΙΛΟΓΗ ΠΑΡΑΔΕΙΓΜΑΤΟΣ (4 στήλες) */}
-            <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col gap-4">
-              <div className="space-y-1">
-                <h3 className="text-xl font-black text-gray-900">Διαδραστικά Παραδείγματα</h3>
-                <p className="text-gray-500 text-xs">Επίλεξε μια μαθηματική έκφραση για να δεις το δέντρο ανάλυσής της.</p>
-              </div>
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUT (4 στήλες) */}
+            <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col gap-5 justify-between">
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <h3 className="text-xl font-black text-gray-900">Γράψε τη δική σου Παράσταση!</h3>
+                  <p className="text-gray-500 text-xs">Χρησιμοποίησε αριθμούς και τα σύμβολα: <code className="bg-gray-100 px-1 py-0.5 rounded font-mono font-bold text-blue-600">+ - * / ( )</code></p>
+                </div>
 
-              <div className="flex flex-col gap-3 my-auto">
-                {Object.keys(EXAMPLES).map((key) => (
-                  <button
-                    key={key}
-                    onClick={() => setSelectedKey(key)}
-                    className={`w-full text-left p-4 rounded-xl border-2 font-bold transition-all flex flex-col gap-1 ${selectedKey === key ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm' : 'bg-gray-50 border-gray-100 text-gray-700 hover:bg-gray-100'}`}
-                  >
-                    <span className="text-xs uppercase tracking-wider text-slate-400 font-black">{EXAMPLES[key].title}</span>
-                    <span className="text-lg font-mono font-black tracking-normal">{EXAMPLES[key].expression}</span>
-                  </button>
-                ))}
-              </div>
+                {/* Live Input */}
+                <div className="flex flex-col gap-1">
+                  <input
+                    type="text"
+                    value={customExpr}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    className="w-full text-lg font-mono font-black text-center p-3 bg-slate-50 border-2 border-blue-200 rounded-xl shadow-inner text-blue-600 outline-none focus:border-blue-500 tracking-wide"
+                    placeholder="π.χ. 2 + 3 * 4"
+                  />
+                </div>
 
-              {/* Προειδοποίηση για το συχνό λάθος */}
-              <div className="p-4 bg-rose-50 border border-rose-100 text-rose-900 rounded-xl text-xs font-medium leading-relaxed mt-auto">
-                ⚠️ <strong>Προσοχή στο Λάθος:</strong> {currentEx.wrongText}
-              </div>
-            </div>
-
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ / ΔΕΝΤΡΟ ΠΡΑΞΕΩΝ (8 στήλες) */}
-            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[460px]">
-              
-              <div className="w-full text-center mb-4">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Βήμα-Βήμα Ανάλυση (Διάγραμμα Ροής):</span>
-                <div className="text-2xl font-mono font-black text-blue-600 mt-2 bg-blue-50 inline-block px-6 py-2 rounded-2xl border border-blue-100">
-                  {currentEx.expression}
+                {/* Γρήγορα Έτοιμα Παραδείγματα */}
+                <div className="space-y-2 pt-2">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Ή επίλεξε ένα έτοιμο:</span>
+                  <div className="flex flex-col gap-2">
+                    {Object.keys(PRESETS).map((key) => (
+                      <button
+                        key={key}
+                        onClick={() => setCustomExpr(PRESETS[key].expr)}
+                        className={`w-full text-left px-4 py-2.5 rounded-xl border font-mono font-bold text-sm transition-all ${customExpr === PRESETS[key].expr ? 'bg-blue-50 border-blue-400 text-blue-600 shadow-sm' : 'bg-gray-50 hover:bg-gray-100 text-gray-600'}`}
+                      >
+                        {PRESETS[key].title}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Το «Δέντρο» των βημάτων */}
+              {/* Εκπαιδευτική Υπενθύμιση */}
+              <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-medium leading-relaxed">
+                💡 <strong>Πειραματίσου:</strong> Δοκίμασε να γράψεις την ίδια πράξη με και χωρίς παρένθεση (π.χ. <code className="font-bold">2+3*4</code> και <code className="font-bold">(2+3)*4</code>) για να δεις πόσο αλλάζει το αποτέλεσμα!
+              </div>
+            </div>
+
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΔΥΝΑΜΙΚΟ ΔΕΝΤΡΟ / ΔΙΑΓΡΑΜΜΑ ΑΝΑΛΥΣΗΣ (8 στήλες) */}
+            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[460px]">
+              
+              <div className="w-full text-center mb-6">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ζωντανή Ανάλυση Βημάτων:</span>
+                <div className="text-xl md:text-2xl font-mono font-black text-blue-600 mt-2 bg-blue-50 inline-block px-6 py-2 rounded-2xl border border-blue-100">
+                  {customExpr.replace(/\*/g, '×').replace(/\//g, '÷') || "—"}
+                </div>
+              </div>
+
+              {/* Δυναμικό Δέντρο Βημάτων */}
               <div className="w-full max-w-md mx-auto flex flex-col gap-4 my-auto relative">
-                {currentEx.steps.map((step, index) => (
-                  <div key={index} className="flex flex-col items-center w-full">
-                    
-                    {/* Κάρτα Βήματος */}
-                    <div className="bg-slate-900 text-white p-4 rounded-xl border-2 border-slate-700 w-full shadow-md flex justify-between items-center font-mono gap-4">
-                      <div className="space-y-0.5 text-left flex-1">
-                        <div className="text-[10px] font-sans font-black uppercase text-amber-400 tracking-wider">{step.level}</div>
-                        <div className="text-xs text-slate-400 font-sans leading-snug">{step.text}</div>
-                      </div>
+                {analysis.steps.length > 0 ? (
+                  analysis.steps.map((step, index) => (
+                    <div key={index} className="flex flex-col items-center w-full">
                       
-                      <div className="text-right flex-shrink-0">
-                        <div className="text-emerald-400 font-black text-sm bg-emerald-950/50 px-2.5 py-1 rounded-lg border border-emerald-900/50">{step.calculation}</div>
+                      {/* Κάρτα Επιμέρους Πράξης */}
+                      <div className="bg-slate-900 text-white p-4 rounded-xl border-2 border-slate-700 w-full shadow-md flex justify-between items-center font-mono gap-4">
+                        <div className="space-y-0.5 text-left flex-1">
+                          <div className="text-[10px] font-sans font-black uppercase text-amber-400 tracking-wider">{step.level}</div>
+                          <div className="text-xs text-slate-400 font-sans leading-snug">{step.text}</div>
+                        </div>
+                        
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-emerald-400 font-black text-sm bg-emerald-950/50 px-2.5 py-1 rounded-lg border border-emerald-900/50">{step.calculation}</div>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Βέλος σύνδεσης / Επόμενη μορφή έκφρασης */}
-                    <div className="flex flex-col items-center my-1 text-slate-400">
-                      <span className="text-sm font-black animate-pulse">↓</span>
-                      <span className="text-xs font-mono font-bold tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-100">
-                        Νέα Μορφή: {step.currentForm}
-                      </span>
-                    </div>
+                      {/* Βέλος και Επόμενη Μορφή */}
+                      <div className="flex flex-col items-center my-1 text-slate-400">
+                        <span className="text-sm font-black">↓</span>
+                        <span className="text-xs font-mono font-bold tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-100">
+                          Επόμενη μορφή: {step.currentForm}
+                        </span>
+                      </div>
 
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-6 text-sm text-slate-400 font-medium">
+                    Γράψε μια έγκυρη παράσταση στα αριστερά για να ξεκινήσει η ανάλυση.
                   </div>
-                ))}
+                )}
 
                 {/* Τελικό Αποτέλεσμα */}
                 <div className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-4 rounded-xl text-center shadow-lg font-mono font-black flex items-center justify-center gap-3">
                   <span className="text-xl">🏁</span>
-                  <span className="text-sm font-sans uppercase tracking-wider">Τελικό Αποτέλεσμα:</span>
-                  <span className="text-2xl bg-white/20 px-4 py-1 rounded-lg shadow-inner">{currentEx.final}</span>
+                  <span className="text-sm font-sans uppercase tracking-wider">Αποτέλεσμα:</span>
+                  <span className="text-2xl bg-white/20 px-4 py-1 rounded-lg shadow-inner">{analysis.final}</span>
                 </div>
               </div>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-6 text-center">
-                <span>🔍 Αν δύο πράξεις έχουν την ίδια προτεραιότητα (π.χ. πολλαπλασιασμός και διαίρεση), γίνονται πάντα από αριστερά προς τα δεξιά!</span>
+                <span>🔍 Αν δύο πράξεις έχουν την ίδια προτεραιότητα, γίνονται πάντα από αριστερά προς τα δεξιά!</span>
               </div>
             </div>
 
