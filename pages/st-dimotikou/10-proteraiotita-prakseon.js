@@ -281,7 +281,7 @@ export default function ProteraiotitaPrakseonPage() {
                   {/* ΣΗΜΕΙΩΣΗ ΓΙΑ ΣΥΜΒΟΛΑ Η/Υ */}
                   <div className="text-[11px] text-slate-400 mt-1.5 bg-slate-50 p-2 rounded-lg border border-dashed border-slate-200 flex items-start gap-1.5 leading-snug">
                     <span>💻</span>
-                    <span><strong>Σημείωση Πληκτρολογίου:</strong> Στους υπολογιστές, για τον πολλαπλασιασμό πατάμε το αστεράκι <strong>`*`</strong> και για τη διαίρεση την κάθετη γραμμή <strong>`/`</strong>.</span>
+                    <span><strong>Σημείωση Πληκτρολογίου:</strong> Στους υπολογιστές, για τον πολλαπλασιασμό πατάμε το αστεράκι <strong> * </strong> και για τη διαίρεση την κάθετη γραμμή <strong> / </strong>.</span>
                   </div>
                 </div>
 
