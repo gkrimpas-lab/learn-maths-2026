@@ -4,7 +4,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Έτοιμα παραδείγματα
 const PRESETS = {
   EX1: { title: "10 - 2 × 4", expr: "10 - 2 * 4" },
   EX2: { title: "5 + 3 × (4 + 2)", expr: "5 + 3 * (4 + 2)" },
@@ -12,32 +11,33 @@ const PRESETS = {
 };
 
 export default function ProteraiotitaPrakseonPage() {
-  const [customExpr, setCustomExpr] = useState("5 + 3 * (4 + 2)");
+  const [customExpr, setCustomExpr] = useState("15 + 3 - (6 - 45) * 3");
 
-  // Καθαρισμός εισαγωγής του χρήστη για ασφάλεια
   const handleInputChange = (val) => {
     const clean = val.replace(/[^0-9+\-*/(). ]/g, '');
     setCustomExpr(clean);
   };
 
-  // Μετατροπή των tokens σε κείμενο προς εμφάνιση
+  // Μετατροπή των tokens σε καθαρό κείμενο με αυτόματες παρενθέσεις στους αρνητικούς αριθμούς
   const tokensToString = (tokens) => {
     return tokens.map(t => {
       if (t.type === 'OPERATOR') {
         if (t.value === '*') return '×';
         if (t.value === '/') return '÷';
+        return t.value;
+      }
+      if (t.type === 'NUMBER' && t.value < 0) {
+        return `(${t.value})`;
       }
       return t.value;
     }).join(' ');
   };
 
-  // Εύρωστος μηχανισμός ανάλυσης βήμα-βήμα (Token-based) με υποστήριξη αρνητικών αριθμών
   const generateSteps = (exprStr) => {
     const steps = [];
     let currentStr = exprStr.trim();
     if (!currentStr) return { steps: [], final: "0" };
 
-    // 1. Tokenizer που καταλαβαίνει αριθμούς (και αρνητικούς), τελεστές και παρενθέσεις
     const tokenize = (str) => {
       const res = [];
       let i = 0;
@@ -52,11 +52,9 @@ export default function ProteraiotitaPrakseonPage() {
         }
         
         if (ch === '+' || ch === '-' || ch === '*' || ch === '/') {
-          // Διάκριση αν το '-' είναι πρόσημο αρνητικού αριθμού ή τελεστής αφαίρεσης
           if (ch === '-') {
             const prev = res[res.length - 1];
             if (!prev || (prev.type === 'OPERATOR') || (prev.type === 'PAREN' && prev.value === '(')) {
-              // Είναι αρνητικό πρόσημο αριθμού: Διαβάζουμε τον αριθμό που ακολουθεί
               let numStr = '-';
               i++;
               while (i < str.length && /[0-9.]/.test(str[i])) {
@@ -81,7 +79,7 @@ export default function ProteraiotitaPrakseonPage() {
           res.push({ type: 'NUMBER', value: parseFloat(numStr) });
           continue;
         }
-        i++; // fallback
+        i++;
       }
       return res;
     };
@@ -89,14 +87,12 @@ export default function ProteraiotitaPrakseonPage() {
     let tokens = tokenize(currentStr);
     let safetyCounter = 0;
 
-    // 2. Εκτέλεση μίας πράξης ανά επανάληψη βάσει της απόλυτης προτεραιότητας
     while (safetyCounter < 15 && tokens.length > 1) {
       safetyCounter++;
       let targetIdx = -1;
       let reasonType = '';
       let reasonText = '';
 
-      // Α. Αναζήτηση εσωτερικής παρένθεσης που περιέχει μόνο αριθμούς και τελεστές
       let openParenIdx = -1;
       let closeParenIdx = -1;
       for (let i = 0; i < tokens.length; i++) {
@@ -108,25 +104,22 @@ export default function ProteraiotitaPrakseonPage() {
       }
 
       if (openParenIdx !== -1 && closeParenIdx !== -1) {
-        // Αν η παρένθεση περιέχει απλώς έναν μόνο αριθμό (π.χ. έναν αρνητικό που προέκυψε), την αφαιρούμε
+        // Αν η παρένθεση περιέχει απλώς έναν μεμονωμένο αριθμό, π.χ. ( -39 ), βγάζουμε τις παρενθέσεις
         if (closeParenIdx === openParenIdx + 2) {
           tokens.splice(closeParenIdx, 1);
           tokens.splice(openParenIdx, 1);
           continue;
         }
 
-        // Βρίσκουμε την πρώτη πράξη μέσα σε αυτή την παρένθεση
         let subTokens = tokens.slice(openParenIdx + 1, closeParenIdx);
         let subTarget = -1;
 
-        // Πρώτα πολλαπλασιασμοί/διαιρέσεις στην παρένθεση
         for (let j = 0; j < subTokens.length; j++) {
           if (subTokens[j].type === 'OPERATOR' && (subTokens[j].value === '*' || subTokens[j].value === '/')) {
             subTarget = j;
             break;
           }
         }
-        // Μετά προσθέσεις/αφαιρέσεις στην παρένθεση
         if (subTarget === -1) {
           for (let j = 0; j < subTokens.length; j++) {
             if (subTokens[j].type === 'OPERATOR' && (subTokens[j].value === '+' || subTokens[j].value === '-')) {
@@ -143,7 +136,6 @@ export default function ProteraiotitaPrakseonPage() {
         }
       }
 
-      // Β. Αν δεν βρέθηκε πράξη σε παρένθεση, ψάχνουμε πολλαπλασιασμό/διαίρεση στην κύρια έκφραση
       if (targetIdx === -1) {
         for (let i = 0; i < tokens.length; i++) {
           if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '*' || tokens[i].value === '/')) {
@@ -155,7 +147,6 @@ export default function ProteraiotitaPrakseonPage() {
         }
       }
 
-      // Γ. Αν δεν βρέθηκε τίποτα, ψάχνουμε πρόσθεση/αφαίρεση στην κύρια έκφραση
       if (targetIdx === -1) {
         for (let i = 0; i < tokens.length; i++) {
           if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '+' || tokens[i].value === '-')) {
@@ -167,7 +158,6 @@ export default function ProteraiotitaPrakseonPage() {
         }
       }
 
-      // Αν βρέθηκε έγκυρη πράξη προς εκτέλεση
       if (targetIdx !== -1 && targetIdx > 0 && targetIdx < tokens.length - 1) {
         const num1 = tokens[targetIdx - 1].value;
         const op = tokens[targetIdx].value;
@@ -182,15 +172,15 @@ export default function ProteraiotitaPrakseonPage() {
         const formattedRes = parseFloat(res.toFixed(2));
         const opChar = op === '*' ? '×' : (op === '/' ? '÷' : op);
 
-        // Καταγραφή του βήματος
+        const formatCalcNum = (val) => val < 0 ? `(${val})` : val;
+
         steps.push({
           level: `Βήμα ${steps.length + 1}: ${reasonType}`,
           text: reasonText,
-          calculation: `${num1 < 0 ? `(${num1})` : num1} ${opChar} ${num2 < 0 ? `(${num2})` : num2} = ${formattedRes}`,
-          currentForm: '' // θα υπολογιστεί αμέσως μετά την αντικατάσταση
+          calculation: `${formatCalcNum(num1)} ${opChar} ${formatCalcNum(num2)} = ${formatCalcNum(formattedRes)}`,
+          currentForm: ''
         });
 
-        // Αντικατάσταση των 3 tokens (num1, op, num2) με το νέο token του αποτελέσματος
         tokens.splice(targetIdx - 1, 3, { type: 'NUMBER', value: formattedRes });
         steps[steps.length - 1].currentForm = tokensToString(tokens);
       } else {
@@ -198,14 +188,13 @@ export default function ProteraiotitaPrakseonPage() {
       }
     }
 
-    // Καθαρισμός τελικού αποτελέσματος αν έχουν απομείνει περιττές εξωτερικές παρενθέσεις
     if (tokens.length === 3 && tokens[0].value === '(' && tokens[2].value === ')') {
       tokens = [tokens[1]];
     }
 
     return {
       steps: steps,
-      final: tokens.map(t => t.value).join('')
+      final: tokens.map(t => t.value < 0 ? `(${t.value})` : t.value).join('')
     };
   };
 
@@ -245,7 +234,6 @@ export default function ProteraiotitaPrakseonPage() {
                   Όταν σε μια μαθηματική έκφραση συνυπάρχουν πολλές πράξεις μαζί, ακολουθούμε πάντα τον κανόνα της <strong>Προτεραιότητας των Πράξεων</strong>, σαρώνοντας την έκφραση από <strong>αριστερά προς τα δεξιά</strong>.
                 </p>
                 
-                {/* Η Σκάλα των Πράξεων */}
                 <div className="space-y-2 font-medium text-sm">
                   <div className="flex items-center gap-3 bg-red-50 text-red-900 p-3 rounded-xl border border-red-100">
                     <span className="bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-black">1</span>
@@ -262,14 +250,13 @@ export default function ProteraiotitaPrakseonPage() {
                 </div>
               </div>
               
-              {/* Μνημονικός Κανόνας */}
               <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-6 rounded-2xl shadow-md text-center py-8 space-y-4">
                 <span className="text-amber-300 font-black text-xs md:text-sm uppercase tracking-wider block">🧠 Μνημονικός Κανόνας</span>
                 <div className="text-3xl md:text-4xl font-black tracking-widest bg-white/10 py-3 rounded-xl">
                   ΠΑ.ΠΟ.ΔΙ.ΠΡ.Α.
                 </div>
                 <p className="text-xs text-indigo-100 font-medium px-2 leading-relaxed">
-                  <strong>Πα</strong>ρένθεση • <strong>Πo</strong>λλαπλασιασμός • <strong>Δι</strong>αίρεση • <strong>Πρ</strong>όσθεση • <strong>Α</strong>φαίρεση!
+                  <strong>Πα</strong>ρένθεση • <strong>Πο</strong>λλαπλασιασμός • <strong>Δι</strong>αίρεση • <strong>Πρ</strong>όσθεση • <strong>Α</strong>φαίρεση!
                 </p>
               </div>
             </div>
@@ -278,7 +265,7 @@ export default function ProteraiotitaPrakseonPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ & INPUT (4 στήλες) */}
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: INPUT & PRESETS */}
             <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col gap-5 justify-between">
               <div className="space-y-4">
                 <div className="space-y-1">
@@ -286,7 +273,6 @@ export default function ProteraiotitaPrakseonPage() {
                   <p className="text-gray-500 text-xs">Χρησιμοποίησε αριθμούς και τα σύμβολα: <code className="bg-gray-100 px-1 py-0.5 rounded font-mono font-bold text-blue-600">+ - * / ( )</code></p>
                 </div>
 
-                {/* Live Input */}
                 <div className="flex flex-col gap-1">
                   <input
                     type="text"
@@ -297,7 +283,6 @@ export default function ProteraiotitaPrakseonPage() {
                   />
                 </div>
 
-                {/* Γρήγορα Έτοιμα Παραδείγματα */}
                 <div className="space-y-2 pt-2">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Ή επίλεξε ένα έτοιμο:</span>
                   <div className="flex flex-col gap-2">
@@ -314,13 +299,12 @@ export default function ProteraiotitaPrakseonPage() {
                 </div>
               </div>
 
-              {/* Εκπαιδευτική Υπενθύμιση */}
               <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-medium leading-relaxed">
-                💡 <strong>Ασφαλής Έλεγχος:</strong> Το σύστημα υποστηρίζει πλέον σωστά όλες τις μαθηματικές προτεραιότητες, ακόμα και αν κάποιες ενδιάμεσες αφαιρέσεις καταλήξουν σε αρνητικό αποτέλεσμα.
+                💡 <strong>Ασφαλής Έλεγχος:</strong> Το σύστημα εμφανίζει αυτόματα σε παρένθεση κάθε αρνητικό αριθμό που προκύπτει, εξασφαλίζοντας απόλυτη μαθηματική εγκυρότητα.
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΔΥΝΑΜΙΚΟ ΔΕΝΤΡΟ / ΔΙΑΓΡΑΜΜΑ ΑΝΑΛΥΣΗΣ (8 στήλες) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΖΩΝΤΑΝΗ ΑΝΑΛΥΣΗ ΜΕ ΠΑΡΕΝΘΕΣΕΙΣ ΣΤΟΥΣ ΑΡΝΗΤΙΚΟΥΣ */}
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[460px]">
               
               <div className="w-full text-center mb-6">
@@ -330,13 +314,11 @@ export default function ProteraiotitaPrakseonPage() {
                 </div>
               </div>
 
-              {/* Δυναμικό Δέντρο Βημάτων */}
               <div className="w-full max-w-md mx-auto flex flex-col gap-4 my-auto relative">
                 {analysis.steps.length > 0 ? (
                   analysis.steps.map((step, index) => (
                     <div key={index} className="flex flex-col items-center w-full">
                       
-                      {/* Κάρτα Επιμέρους Πράξης */}
                       <div className="bg-slate-900 text-white p-4 rounded-xl border-2 border-slate-700 w-full shadow-md flex justify-between items-center font-mono gap-4">
                         <div className="space-y-0.5 text-left flex-1">
                           <div className="text-[10px] font-sans font-black uppercase text-amber-400 tracking-wider">{step.level}</div>
@@ -348,7 +330,6 @@ export default function ProteraiotitaPrakseonPage() {
                         </div>
                       </div>
 
-                      {/* Βέλος και Επόμενη Μορφή */}
                       <div className="flex flex-col items-center my-1 text-slate-400">
                         <span className="text-sm font-black">↓</span>
                         <span className="text-xs font-mono font-bold tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-100">
