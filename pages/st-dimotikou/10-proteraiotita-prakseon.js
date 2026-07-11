@@ -227,7 +227,7 @@ export default function ProteraiotitaPrakseonPage() {
         {/* MAIN CONTENT */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-12`}>
           
-          {/* SECTION 1: ΘΕΩΡΙΑ (ΜΕ ΤΗΝ ΕΝΝΟΙΑ ΤΗΣ ΑΡΙΘΜΗΤΙΚΗΣ ΠΑΡΑΣΤΑΣΗΣ) */}
+          {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
               <div className="space-y-4 flex flex-col justify-between">
@@ -277,6 +277,12 @@ export default function ProteraiotitaPrakseonPage() {
                     className="w-full text-lg font-mono font-black text-center p-3 bg-slate-50 border-2 border-blue-200 rounded-xl shadow-inner text-blue-600 outline-none focus:border-blue-500 tracking-wide"
                     placeholder="π.χ. 2 + 3 * 4"
                   />
+                  
+                  {/* ΣΗΜΕΙΩΣΗ ΓΙΑ ΣΥΜΒΟΛΑ Η/Υ */}
+                  <div className="text-[11px] text-slate-400 mt-1.5 bg-slate-50 p-2 rounded-lg border border-dashed border-slate-200 flex items-start gap-1.5 leading-snug">
+                    <span>💻</span>
+                    <span><strong>Σημείωση Πληκτρολογίου:</strong> Στους υπολογιστές, για τον πολλαπλασιασμό πατάμε το αστεράκι <strong>`*`</strong> και για τη διαίρεση την κάθετο <strong>`/`</strong>.</span>
+                  </div>
                 </div>
 
                 <div className="space-y-2 pt-2">
