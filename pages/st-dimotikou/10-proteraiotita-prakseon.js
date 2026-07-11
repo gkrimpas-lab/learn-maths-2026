@@ -20,108 +20,193 @@ export default function ProteraiotitaPrakseonPage() {
     setCustomExpr(clean);
   };
 
-  // Custom ασφαλής μηχανισμός ανάλυσης της παράστασης σε εκπαιδευτικά βήματα
+  // Μετατροπή των tokens σε κείμενο προς εμφάνιση
+  const tokensToString = (tokens) => {
+    return tokens.map(t => {
+      if (t.type === 'OPERATOR') {
+        if (t.value === '*') return '×';
+        if (t.value === '/') return '÷';
+      }
+      return t.value;
+    }).join(' ');
+  };
+
+  // Εύρωστος μηχανισμός ανάλυσης βήμα-βήμα (Token-based) με υποστήριξη αρνητικών αριθμών
   const generateSteps = (exprStr) => {
     const steps = [];
-    let current = exprStr.replace(/\s+/g, ''); // αφαίρεση κενών
-    if (!current) return { steps: [], final: "0" };
+    let currentStr = exprStr.trim();
+    if (!currentStr) return { steps: [], final: "0" };
 
+    // 1. Tokenizer που καταλαβαίνει αριθμούς (και αρνητικούς), τελεστές και παρενθέσεις
+    const tokenize = (str) => {
+      const res = [];
+      let i = 0;
+      while (i < str.length) {
+        const ch = str[i];
+        if (/\s/.test(ch)) { i++; continue; }
+        
+        if (ch === '(' || ch === ')') {
+          res.push({ type: 'PAREN', value: ch });
+          i++;
+          continue;
+        }
+        
+        if (ch === '+' || ch === '-' || ch === '*' || ch === '/') {
+          // Διάκριση αν το '-' είναι πρόσημο αρνητικού αριθμού ή τελεστής αφαίρεσης
+          if (ch === '-') {
+            const prev = res[res.length - 1];
+            if (!prev || (prev.type === 'OPERATOR') || (prev.type === 'PAREN' && prev.value === '(')) {
+              // Είναι αρνητικό πρόσημο αριθμού: Διαβάζουμε τον αριθμό που ακολουθεί
+              let numStr = '-';
+              i++;
+              while (i < str.length && /[0-9.]/.test(str[i])) {
+                numStr += str[i];
+                i++;
+              }
+              res.push({ type: 'NUMBER', value: parseFloat(numStr) });
+              continue;
+            }
+          }
+          res.push({ type: 'OPERATOR', value: ch });
+          i++;
+          continue;
+        }
+        
+        if (/[0-9.]/.test(ch)) {
+          let numStr = '';
+          while (i < str.length && /[0-9.]/.test(str[i])) {
+            numStr += str[i];
+            i++;
+          }
+          res.push({ type: 'NUMBER', value: parseFloat(numStr) });
+          continue;
+        }
+        i++; // fallback
+      }
+      return res;
+    };
+
+    let tokens = tokenize(currentStr);
     let safetyCounter = 0;
 
-    while (safetyCounter < 10) {
+    // 2. Εκτέλεση μίας πράξης ανά επανάληψη βάσει της απόλυτης προτεραιότητας
+    while (safetyCounter < 15 && tokens.length > 1) {
       safetyCounter++;
-      
-      // 1. Έλεγχος για παρενθέσεις
-      const parenRegex = /\(([^()]+)\)/;
-      const parenMatch = current.match(parenRegex);
-      
-      if (parenMatch) {
-        const subExpr = parenMatch[1];
-        const res = solveSimpleExpr(subExpr);
-        if (res === null) break;
-        
-        steps.push({
-          level: `Βήμα ${steps.length + 1}: Παρενθέσεις ( )`,
-          text: `Λύνουμε την πράξη μέσα στην παρένθεση: (${subExpr})`,
-          calculation: `${subExpr.replace(/\*/g, '×').replace(/\//g, '÷')} = ${res}`,
-          currentForm: current.replace(parenMatch[0], res).replace(/\*/g, '×').replace(/\//g, '÷')
-        });
-        current = current.replace(parenMatch[0], res);
-        continue;
+      let targetIdx = -1;
+      let reasonType = '';
+      let reasonText = '';
+
+      // Α. Αναζήτηση εσωτερικής παρένθεσης που περιέχει μόνο αριθμούς και τελεστές
+      let openParenIdx = -1;
+      let closeParenIdx = -1;
+      for (let i = 0; i < tokens.length; i++) {
+        if (tokens[i].type === 'PAREN' && tokens[i].value === '(') openParenIdx = i;
+        if (tokens[i].type === 'PAREN' && tokens[i].value === ')') {
+          closeParenIdx = i;
+          break;
+        }
       }
 
-      // 2. Έλεγχος για Πολλαπλασιασμό / Διαίρεση (από αριστερά προς τα δεξιά)
-      const mdRegex = /(\d+(?:\.\d+)?)([*/])(\d+(?:\.\d+)?)/;
-      const mdMatch = current.match(mdRegex);
-      
-      if (mdMatch) {
-        const num1 = parseFloat(mdMatch[1]);
-        const op = mdMatch[2];
-        const num2 = parseFloat(mdMatch[3]);
-        const res = op === '*' ? num1 * num2 : (num2 !== 0 ? num1 / num2 : 0);
-        
-        steps.push({
-          level: `Βήμα ${steps.length + 1}: Πολλαπλασιασμοί / Διαιρέσεις`,
-          text: op === '*' ? "Ο πολλαπλασιασμός έχει προτεραιότητα." : "Η διαίρεση έχει προτεραιότητα.",
-          calculation: `${mdMatch[1]} ${op === '*' ? '×' : '÷'} ${mdMatch[3]} = ${parseFloat(res.toFixed(2))}`,
-          currentForm: current.replace(mdMatch[0], parseFloat(res.toFixed(2))).replace(/\*/g, '×').replace(/\//g, '÷')
-        });
-        current = current.replace(mdMatch[0], parseFloat(res.toFixed(2)));
-        continue;
+      if (openParenIdx !== -1 && closeParenIdx !== -1) {
+        // Αν η παρένθεση περιέχει απλώς έναν μόνο αριθμό (π.χ. έναν αρνητικό που προέκυψε), την αφαιρούμε
+        if (closeParenIdx === openParenIdx + 2) {
+          tokens.splice(closeParenIdx, 1);
+          tokens.splice(openParenIdx, 1);
+          continue;
+        }
+
+        // Βρίσκουμε την πρώτη πράξη μέσα σε αυτή την παρένθεση
+        let subTokens = tokens.slice(openParenIdx + 1, closeParenIdx);
+        let subTarget = -1;
+
+        // Πρώτα πολλαπλασιασμοί/διαιρέσεις στην παρένθεση
+        for (let j = 0; j < subTokens.length; j++) {
+          if (subTokens[j].type === 'OPERATOR' && (subTokens[j].value === '*' || subTokens[j].value === '/')) {
+            subTarget = j;
+            break;
+          }
+        }
+        // Μετά προσθέσεις/αφαιρέσεις στην παρένθεση
+        if (subTarget === -1) {
+          for (let j = 0; j < subTokens.length; j++) {
+            if (subTokens[j].type === 'OPERATOR' && (subTokens[j].value === '+' || subTokens[j].value === '-')) {
+              subTarget = j;
+              break;
+            }
+          }
+        }
+
+        if (subTarget !== -1) {
+          targetIdx = openParenIdx + 1 + subTarget;
+          reasonType = 'Παρενθέσεις ( )';
+          reasonText = 'Λύνουμε κατά προτεραιότητα την πράξη μέσα στην παρένθεση.';
+        }
       }
 
-      // 3. Έλεγχος για Πρόσθεση / Αφαίρεση (από αριστερά προς τα δεξιά)
-      const asRegex = /(\d+(?:\.\d+)?)([+\-])(\d+(?:\.\d+)?)/;
-      const asMatch = current.match(asRegex);
-      
-      if (asMatch) {
-        const num1 = parseFloat(asMatch[1]);
-        const op = asMatch[2];
-        const num2 = parseFloat(asMatch[3]);
-        const res = op === '+' ? num1 + num2 : num1 - num2;
-        
-        steps.push({
-          level: `Βήμα ${steps.length + 1}: Προσθέσεις / Αφαιρέσεις`,
-          text: "Κάνουμε τις προσθέσεις και τις αφαιρέσεις τελευταίες.",
-          calculation: `${asMatch[1]} ${op} ${asMatch[3]} = ${parseFloat(res.toFixed(2))}`,
-          currentForm: current.replace(asMatch[0], parseFloat(res.toFixed(2))).replace(/\*/g, '×').replace(/\//g, '÷')
-        });
-        current = current.replace(asMatch[0], parseFloat(res.toFixed(2)));
-        continue;
+      // Β. Αν δεν βρέθηκε πράξη σε παρένθεση, ψάχνουμε πολλαπλασιασμό/διαίρεση στην κύρια έκφραση
+      if (targetIdx === -1) {
+        for (let i = 0; i < tokens.length; i++) {
+          if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '*' || tokens[i].value === '/')) {
+            targetIdx = i;
+            reasonType = 'Πολλαπλασιασμοί / Διαιρέσεις';
+            reasonText = tokens[i].value === '*' ? 'Ο πολλαπλασιασμός προηγείται.' : 'Η διαίρεση προηγείται.';
+            break;
+          }
+        }
       }
 
-      // Αν δεν υπάρχει άλλη πράξη, σταματάμε
-      break;
+      // Γ. Αν δεν βρέθηκε τίποτα, ψάχνουμε πρόσθεση/αφαίρεση στην κύρια έκφραση
+      if (targetIdx === -1) {
+        for (let i = 0; i < tokens.length; i++) {
+          if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '+' || tokens[i].value === '-')) {
+            targetIdx = i;
+            reasonType = 'Προσθέσεις / Αφαιρέσεις';
+            reasonText = 'Κάνουμε τις προσθέσεις και τις αφαιρέσεις από αριστερά προς τα δεξιά.';
+            break;
+          }
+        }
+      }
+
+      // Αν βρέθηκε έγκυρη πράξη προς εκτέλεση
+      if (targetIdx !== -1 && targetIdx > 0 && targetIdx < tokens.length - 1) {
+        const num1 = tokens[targetIdx - 1].value;
+        const op = tokens[targetIdx].value;
+        const num2 = tokens[targetIdx + 1].value;
+        
+        let res = 0;
+        if (op === '+') res = num1 + num2;
+        else if (op === '-') res = num1 - num2;
+        else if (op === '*') res = num1 * num2;
+        else if (op === '/') res = num2 !== 0 ? num1 / num2 : 0;
+
+        const formattedRes = parseFloat(res.toFixed(2));
+        const opChar = op === '*' ? '×' : (op === '/' ? '÷' : op);
+
+        // Καταγραφή του βήματος
+        steps.push({
+          level: `Βήμα ${steps.length + 1}: ${reasonType}`,
+          text: reasonText,
+          calculation: `${num1 < 0 ? `(${num1})` : num1} ${opChar} ${num2 < 0 ? `(${num2})` : num2} = ${formattedRes}`,
+          currentForm: '' // θα υπολογιστεί αμέσως μετά την αντικατάσταση
+        });
+
+        // Αντικατάσταση των 3 tokens (num1, op, num2) με το νέο token του αποτελέσματος
+        tokens.splice(targetIdx - 1, 3, { type: 'NUMBER', value: formattedRes });
+        steps[steps.length - 1].currentForm = tokensToString(tokens);
+      } else {
+        break;
+      }
+    }
+
+    // Καθαρισμός τελικού αποτελέσματος αν έχουν απομείνει περιττές εξωτερικές παρενθέσεις
+    if (tokens.length === 3 && tokens[0].value === '(' && tokens[2].value === ')') {
+      tokens = [tokens[1]];
     }
 
     return {
       steps: steps,
-      final: current.replace(/\*/g, '×').replace(/\//g, '÷')
+      final: tokens.map(t => t.value).join('')
     };
-  };
-
-  // Βοηθητική συνάρτηση για την επίλυση απλής έκφρασης εντός παρένθεσης
-  const solveSimpleExpr = (sub) => {
-    let temp = sub;
-    // Πρώτα πολλαπλασιασμοί/διαιρέσεις στην παρένθεση
-    let mdMatch;
-    while ((mdMatch = temp.match(/(\d+(?:\.\d+)?)([*/])(\d+(?:\.\d+)?)/))) {
-      const n1 = parseFloat(mdMatch[1]);
-      const op = mdMatch[2];
-      const n2 = parseFloat(mdMatch[3]);
-      const r = op === '*' ? n1 * n2 : (n2 !== 0 ? n1 / n2 : 0);
-      temp = temp.replace(mdMatch[0], r);
-    }
-    // Μετά προσθέσεις/αφαιρέσεις στην παρένθεση
-    let asMatch;
-    while ((asMatch = temp.match(/(\d+(?:\.\d+)?)([+\-])(\d+(?:\.\d+)?)/))) {
-      const n1 = parseFloat(asMatch[1]);
-      const op = asMatch[2];
-      const n2 = parseFloat(asMatch[3]);
-      const r = op === '+' ? n1 + n2 : n1 - n2;
-      temp = temp.replace(asMatch[0], r);
-    }
-    return parseFloat(temp) || 0;
   };
 
   const analysis = generateSteps(customExpr);
@@ -184,7 +269,7 @@ export default function ProteraiotitaPrakseonPage() {
                   ΠΑ.ΠΟ.ΔΙ.ΠΡ.Α.
                 </div>
                 <p className="text-xs text-indigo-100 font-medium px-2 leading-relaxed">
-                  <strong>Πα</strong>ρένθεση • <strong>Πο</strong>λλαπλασιασμός • <strong>Δι</strong>αίρεση • <strong>Πρ</strong>όσθεση • <strong>Α</strong>φαίρεση!
+                  <strong>Πα</strong>ρένθεση • <strong>Πo</strong>λλαπλασιασμός • <strong>Δι</strong>αίρεση • <strong>Πρ</strong>όσθεση • <strong>Α</strong>φαίρεση!
                 </p>
               </div>
             </div>
@@ -231,7 +316,7 @@ export default function ProteraiotitaPrakseonPage() {
 
               {/* Εκπαιδευτική Υπενθύμιση */}
               <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-medium leading-relaxed">
-                💡 <strong>Πειραματίσου:</strong> Δοκίμασε να γράψεις την ίδια πράξη με και χωρίς παρένθεση (π.χ. <code className="font-bold">2+3*4</code> και <code className="font-bold">(2+3)*4</code>) για να δεις πόσο αλλάζει το αποτέλεσμα!
+                💡 <strong>Ασφαλής Έλεγχος:</strong> Το σύστημα υποστηρίζει πλέον σωστά όλες τις μαθηματικές προτεραιότητες, ακόμα και αν κάποιες ενδιάμεσες αφαιρέσεις καταλήξουν σε αρνητικό αποτέλεσμα.
               </div>
             </div>
 
@@ -267,7 +352,7 @@ export default function ProteraiotitaPrakseonPage() {
                       <div className="flex flex-col items-center my-1 text-slate-400">
                         <span className="text-sm font-black">↓</span>
                         <span className="text-xs font-mono font-bold tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-100">
-                          Επόμενη μορφή: {step.currentForm}
+                          Επόμενη μορφή: {step.currentForm || "🏁"}
                         </span>
                       </div>
 
