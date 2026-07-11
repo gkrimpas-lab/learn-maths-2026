@@ -135,7 +135,7 @@ export default function ProteraiotitaPrakseonPage() {
 
         if (subTarget !== -1) {
           targetIdx = openParenIdx + 1 + subTarget;
-          reasonType = 'Παρενθέσεις ( )';
+          reasonType = 'Παρενθεσεις ( )';
           reasonText = 'Λύνουμε κατά προτεραιότητα την πράξη μέσα στην παρένθεση.';
         }
       }
@@ -144,7 +144,7 @@ export default function ProteraiotitaPrakseonPage() {
         for (let i = 0; i < tokens.length; i++) {
           if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '*' || tokens[i].value === '/')) {
             targetIdx = i;
-            reasonType = 'Πολλαπλασιασμοί / Διαιρέσεις';
+            reasonType = 'Πολλαπλασιασμοι / Διαιρεσεις';
             reasonText = tokens[i].value === '*' ? 'Ο πολλαπλασιασμός προηγείται.' : 'Η διαίρεση προηγείται.';
             break;
           }
@@ -155,7 +155,7 @@ export default function ProteraiotitaPrakseonPage() {
         for (let i = 0; i < tokens.length; i++) {
           if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '+' || tokens[i].value === '-')) {
             targetIdx = i;
-            reasonType = 'Προσθέσεις / Αφαιρέσεις';
+            reasonType = 'Προσθεσεις / Αφαιρεσεις';
             reasonText = 'Κάνουμε τις προσθέσεις και τις αφαιρέσεις από αριστερά προς τα δεξιά.';
             break;
           }
@@ -251,8 +251,8 @@ export default function ProteraiotitaPrakseonPage() {
                 </p>
                 <div className="space-y-1.5 font-mono text-xs md:text-sm pt-1">
                   <div>1. <strong className="text-amber-200">Παρενθέσεις ( )</strong></div>
-                  <div>2. <strong className="text-amber-200">Πολλαπλασιασμοί (×) & Διαιρέσεις (÷)</strong></div>
-                  <div>3. <strong className="text-amber-200">Προσθέσεις (+) & Αφαιρέσεις (-)</strong></div>
+                  <div>2. <strong className="text-amber-200">Πολλαπλασιασμοί (×) και Διαιρέσεις (÷)</strong></div>
+                  <div>3. <strong className="text-amber-200">Προσθέσεις (+) και Αφαιρέσεις (-)</strong></div>
                 </div>
               </div>
             </div>
@@ -281,12 +281,12 @@ export default function ProteraiotitaPrakseonPage() {
                   {/* ΣΗΜΕΙΩΣΗ ΓΙΑ ΣΥΜΒΟΛΑ Η/Υ */}
                   <div className="text-[11px] text-slate-400 mt-1.5 bg-slate-50 p-2 rounded-lg border border-dashed border-slate-200 flex items-start gap-1.5 leading-snug">
                     <span>💻</span>
-                    <span><strong>Σημείωση Πληκτρολογίου:</strong> Στους υπολογιστές, για τον πολλαπλασιασμό πατάμε το αστεράκι <strong>`*`</strong> και για τη διαίρεση την κάθετο <strong>`/`</strong>.</span>
+                    <span><strong>Σημείωση Πληκτρολογίου:</strong> Στους υπολογιστές, για τον πολλαπλασιασμό πατάμε το αστεράκι <strong>`*`</strong> και για τη διαίρεση την κάθετη γραμμή <strong>`/`</strong>.</span>
                   </div>
                 </div>
 
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Ή επίλεξε ένα έτοιμο:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Η επιλεξε ενα ετοιμο:</span>
                   <div className="flex flex-col gap-2">
                     {Object.keys(PRESETS).map((key) => (
                       <button
@@ -301,16 +301,13 @@ export default function ProteraiotitaPrakseonPage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-blue-50 border border-blue-100 text-blue-900 rounded-xl text-xs font-medium leading-relaxed">
-                💡 <strong>Καθαρή Εμφάνιση:</strong> Οι παρενθέσεις στους αρνητικούς αριθμούς εφαρμόζονται έξυπνα χωρίς να διπλασιάζονται ποτέ οπτικά στην πορεία των βημάτων.
-              </div>
             </div>
 
             {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΖΩΝΤΑΝΗ ΑΝΑΛΥΣΗ ΜΕ ΜΟΝΗ ΠΑΡΕΝΘΕΣΗ ΣΤΟΥΣ ΑΡΝΗΤΙΚΟΥΣ */}
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[460px]">
               
               <div className="w-full text-center mb-6">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ζωντανή Ανάλυση Βημάτων:</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ζωντανη Αναλυση Βηματων:</span>
                 <div className="text-xl md:text-2xl font-mono font-black text-blue-600 mt-2 bg-blue-50 inline-block px-6 py-2 rounded-2xl border border-blue-100">
                   {customExpr.replace(/\*/g, '×').replace(/\//g, '÷') || "—"}
                 </div>
@@ -350,7 +347,7 @@ export default function ProteraiotitaPrakseonPage() {
                 {/* Τελικό Αποτέλεσμα */}
                 <div className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-4 rounded-xl text-center shadow-lg font-mono font-black flex items-center justify-center gap-3">
                   <span className="text-xl">🏁</span>
-                  <span className="text-sm font-sans uppercase tracking-wider">Τιμή Παράστασης:</span>
+                  <span className="text-sm font-sans uppercase tracking-wider">Τιμη Παραστασης:</span>
                   <span className="text-2xl bg-white/20 px-4 py-1 rounded-lg shadow-inner">{analysis.final}</span>
                 </div>
               </div>
