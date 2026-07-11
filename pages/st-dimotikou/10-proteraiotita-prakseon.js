@@ -27,7 +27,6 @@ export default function ProteraiotitaPrakseonPage() {
         return t.value;
       }
       if (t.type === 'NUMBER' && t.value < 0) {
-        // Έλεγχος αν ο αρνητικός αριθμός είναι ήδη κλεισμένος σε παρένθεση για να μην διπλασιάζεται
         const hasOpen = idx > 0 && tokens[idx - 1].type === 'PAREN' && tokens[idx - 1].value === '(';
         const hasClose = idx < tokens.length - 1 && tokens[idx + 1].type === 'PAREN' && tokens[idx + 1].value === ')';
         if (hasOpen && hasClose) {
@@ -110,7 +109,6 @@ export default function ProteraiotitaPrakseonPage() {
       }
 
       if (openParenIdx !== -1 && closeParenIdx !== -1) {
-        // Αν η παρένθεση περιέχει απλώς έναν μεμονωμένο αριθμό, βγάζουμε τις εξωτερικές παρενθέσεις
         if (closeParenIdx === openParenIdx + 2) {
           tokens.splice(closeParenIdx, 1);
           tokens.splice(openParenIdx, 1);
@@ -229,41 +227,33 @@ export default function ProteraiotitaPrakseonPage() {
         {/* MAIN CONTENT */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-12`}>
           
-          {/* SECTION 1: ΘΕΩΡΙΑ */}
+          {/* SECTION 1: ΘΕΩΡΙΑ (ΜΕ ΤΗΝ ΕΝΝΟΙΑ ΤΗΣ ΑΡΙΘΜΗΤΙΚΗΣ ΠΑΡΑΣΤΑΣΗΣ) */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              <div className="space-y-4">
-                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>📖</span> Θεωρία: Ποιος έχει Προτεραιότητα;
-                </h2>
-                <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                  Όταν σε μια μαθηματική έκφραση συνυπάρχουν πολλές πράξεις μαζί, ακολουθούμε πάντα τον κανόνα της <strong>Προτεραιότητας των Πράξεων</strong>, σαρώνοντας την έκφραση από <strong>αριστερά προς τα δεξιά</strong>.
-                </p>
-                
-                <div className="space-y-2 font-medium text-sm">
-                  <div className="flex items-center gap-3 bg-red-50 text-red-900 p-3 rounded-xl border border-red-100">
-                    <span className="bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-black">1</span>
-                    <div><strong>🥇 Παρενθέσεις ( ):</strong> Λύνονται πάντα πρώτες απ' όλα!</div>
-                  </div>
-                  <div className="flex items-center gap-3 bg-amber-50 text-amber-900 p-3 rounded-xl border border-amber-100">
-                    <span className="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-black">2</span>
-                    <div><strong>🥈 Πολλαπλασιασμοί (×) & Διαιρέσεις (÷):</strong> Έπονται, με τη σειρά που τις συναντάμε.</div>
-                  </div>
-                  <div className="flex items-center gap-3 bg-blue-50 text-blue-900 p-3 rounded-xl border border-blue-100">
-                    <span className="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-black">3</span>
-                    <div><strong>🥉 Προσθέσεις (+) & Αφαιρέσεις (-):</strong> Γίνονται πάντα τελευταίες!</div>
-                  </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+              <div className="space-y-4 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+                    <span>📖</span> Τι είναι Αριθμητική Παράσταση;
+                  </h2>
+                  <p className="text-gray-500 text-sm md:text-base leading-relaxed">
+                    <strong>Αριθμητική παράσταση</strong> ονομάζεται κάθε σειρά από αριθμούς που συνδέονται μεταξύ τους με τα σύμβολα των μαθηματικών πράξεων (<span className="font-mono font-bold text-blue-600">+ , - , × , ÷</span>) και μπορεί να περιέχει παρενθέσεις. 
+                  </p>
+                  <p className="text-gray-500 text-sm md:text-base leading-relaxed">
+                    Το τελικό αποτέλεσμα που βρίσκουμε όταν κάνουμε όλες τις πράξεις μιας αριθμητικής παράστασης, λέγεται <strong>τιμή της αριθμητικής παράστασης</strong>.
+                  </p>
                 </div>
               </div>
               
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-6 rounded-2xl shadow-md text-center py-8 space-y-4">
-                <span className="text-amber-300 font-black text-xs md:text-sm uppercase tracking-wider block">🧠 Μνημονικός Κανόνας</span>
-                <div className="text-3xl md:text-4xl font-black tracking-widest bg-white/10 py-3 rounded-xl">
-                  ΠΑ.ΠΟ.ΔΙ.ΠΡ.Α.
-                </div>
-                <p className="text-xs text-indigo-100 font-medium px-2 leading-relaxed">
-                  <strong>Πα</strong>ρένθεση • <strong>Πo</strong>λλαπλασιασμός • <strong>Δι</strong>αίρεση • <strong>Πρ</strong>όσθεση • <strong>Α</strong>φαίρεση!
+              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-md space-y-3">
+                <span className="text-amber-300 font-black text-lg block border-b border-white/20 pb-1">⚡ Η Σκάλα της Προτεραιότητας</span>
+                <p className="text-xs md:text-sm text-indigo-50 leading-relaxed font-normal">
+                  Για να βρούμε σωστά την τιμή μιας παράστασης, ακολουθούμε πάντα την ίδια αυστηρή σειρά από αριστερά προς τα δεξιά:
                 </p>
+                <div className="space-y-1.5 font-mono text-xs md:text-sm pt-1">
+                  <div>1. <strong className="text-amber-200">Παρενθέσεις ( )</strong></div>
+                  <div>2. <strong className="text-amber-200">Πολλαπλασιασμοί (×) & Διαιρέσεις (÷)</strong></div>
+                  <div>3. <strong className="text-amber-200">Προσθέσεις (+) & Αφαιρέσεις (-)</strong></div>
+                </div>
               </div>
             </div>
           </div>
@@ -305,7 +295,7 @@ export default function ProteraiotitaPrakseonPage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-medium leading-relaxed">
+              <div className="p-4 bg-blue-50 border border-blue-100 text-blue-900 rounded-xl text-xs font-medium leading-relaxed">
                 💡 <strong>Καθαρή Εμφάνιση:</strong> Οι παρενθέσεις στους αρνητικούς αριθμούς εφαρμόζονται έξυπνα χωρίς να διπλασιάζονται ποτέ οπτικά στην πορεία των βημάτων.
               </div>
             </div>
@@ -354,7 +344,7 @@ export default function ProteraiotitaPrakseonPage() {
                 {/* Τελικό Αποτέλεσμα */}
                 <div className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-4 rounded-xl text-center shadow-lg font-mono font-black flex items-center justify-center gap-3">
                   <span className="text-xl">🏁</span>
-                  <span className="text-sm font-sans uppercase tracking-wider">Αποτέλεσμα:</span>
+                  <span className="text-sm font-sans uppercase tracking-wider">Τιμή Παράστασης:</span>
                   <span className="text-2xl bg-white/20 px-4 py-1 rounded-lg shadow-inner">{analysis.final}</span>
                 </div>
               </div>
