@@ -183,7 +183,7 @@ export default function StroggilopoiisiPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Επίλεξε Θέση Στρογγυλοποίησης:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Επιλεξε Θεση Στρογγυλοποιησης:</span>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => setRoundPlace("hundreds")}
@@ -236,7 +236,7 @@ export default function StroggilopoiisiPage() {
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[460px]">
               
               <div className="w-full text-center mb-4">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτική Αριθμογραμμή:</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Οπτικη Αριθμογραμμη:</span>
                 <div className="text-lg md:text-xl font-bold text-slate-700 mt-1">
                   Πού βρίσκεται ο αριθμός <span className="font-mono font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-xl border border-blue-100">{num}</span>;
                 </div>
@@ -252,7 +252,7 @@ export default function StroggilopoiisiPage() {
                   </div>
                   {/* Ετικέτα Κάτω Ορίου (Μετακινήθηκε καθαρά κάτω από τη γραμμή) */}
                   <div className="absolute left-0 top-4 text-center -translate-x-1/2 mt-1">
-                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Κάτω Όριο</span>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Κατω Οριο</span>
                   </div>
 
                   {/* Δεξί Όριο (Πάνω από τη γραμμή) */}
@@ -261,7 +261,7 @@ export default function StroggilopoiisiPage() {
                   </div>
                   {/* Ετικέτα Πάνω Ορίου (Μετακινήθηκε καθαρά κάτω από τη γραμμή) */}
                   <div className="absolute right-0 top-4 text-center translate-x-1/2 mt-1">
-                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Πάνω Όριο</span>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Πανω Οριο</span>
                   </div>
 
                   {/* Μέσος Όρος (Το όριο του 5) */}
@@ -287,7 +287,7 @@ export default function StroggilopoiisiPage() {
                 {/* Μπάρα Πληροφοριών Στρογγυλοποίησης */}
                 <div className="mt-16 flex justify-between items-center w-full bg-slate-50 rounded-2xl p-4 border border-slate-100 font-medium">
                   <div className="text-left space-y-1">
-                    <span className="text-[10px] uppercase text-slate-400 font-black block">Ψηφίο-Κλειδί:</span>
+                    <span className="text-[10px] uppercase text-slate-400 font-black block">Ψηφιο-Κλειδι:</span>
                     <span className={`text-base font-black font-mono ${isUp ? 'text-slate-400' : 'text-red-500 bg-red-50 px-2 py-0.5 rounded-lg'}`}>
                       {isNaN(keyDigit) ? 0 : keyDigit}
                     </span>
@@ -295,7 +295,7 @@ export default function StroggilopoiisiPage() {
                   
                   <div className="flex-1 flex flex-col items-center mx-4">
                     <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider ${isUp ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>
-                      {isUp ? "Στρογγυλοποίηση Πάνω ➔" : "⮨ Στρογγυλοποίηση Κάτω"}
+                      {isUp ? "Στρογγυλοποιηση Πανω ➔" : "⮨ Στρογγυλοποιηση Κατω"}
                     </span>
                     <span className="text-[10px] text-slate-400 mt-1 text-center">
                       Επειδή το αμέσως επόμενο ψηφίο είναι {isUp ? "≥ 5" : "< 5"}
@@ -315,7 +315,7 @@ export default function StroggilopoiisiPage() {
               {/* Τελική Κάρτα Αποτελέσματος */}
               <div className="w-full max-w-md mx-auto bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-xl text-center shadow-lg font-mono font-black flex items-center justify-center gap-3">
                 <span className="text-xl">🎯</span>
-                <span className="text-sm font-sans uppercase tracking-wider">Τελική Τιμή:</span>
+                <span className="text-sm font-sans uppercase tracking-wider">Τελικη Τιμη:</span>
                 <span className="text-2xl bg-white/20 px-4 py-1 rounded-lg shadow-inner">
                   {roundedValue.toFixed(precisionDigits)}
                 </span>
