@@ -18,16 +18,18 @@ export default function KritiriaDiairetotitasPage() {
     if (clean === '') {
       setNumberStr('');
     } else {
-      const parsed = parseInt(clean, 10);
-      if (parsed > MAX_ALLOWED_NUMBER) {
+      // Κρατάμε αυστηρά μόνο τα πρώτα 10 ψηφία που πληκτρολογήθηκαν
+      const sliced = clean.slice(0, 10);
+      
+      // Έλεγχος αν η τιμή ξεπερνάει το αριθμητικό όριο (αν χρειάζεται)
+      if (BigInt(sliced) > BigInt(MAX_ALLOWED_NUMBER)) {
         setNumberStr(MAX_ALLOWED_NUMBER.toString());
       } else {
-        // Περιορισμός στα 10 ψηφία ως string για αποφυγή overflow
-        setNumberStr(clean.slice(0, 10));
+        setNumberStr(sliced);
       }
     }
   };
-
+  
   // Χρήση BigInt για ασφαλή υπολογισμό υπολοίπων σε αριθμούς με πολλά ψηφία
   const currentBigInt = numberStr ? BigInt(numberStr) : 0n;
   const digits = numberStr.split('').map(Number);
