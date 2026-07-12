@@ -6,10 +6,9 @@ import { LAYOUT } from '../../shared/layout-config';
 const PRESETS = [24, 135, 450, 1236, 7525];
 
 export default function KritiriaDiairetotitasPage() {
-  const [numberStr, setNumberStr] = useState("135");
+  const [numberStr, setNumberStr] = useState("7525");
 
   const handleInputChange = (val) => {
-    // Μόνο θετικοί ακέραιοι αριθμοί έως το 10000 για να είναι ευανάγνωστη η οπτικοποίηση
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
       setNumberStr('');
@@ -27,7 +26,6 @@ export default function KritiriaDiairetotitasPage() {
   const lastTwoDigits = parseInt(lastTwoDigitsStr, 10) || 0;
   const sumOfDigits = digits.reduce((a, b) => a + b, 0);
 
-  // Ορισμός των κανόνων και των ελέγχων
   const criteria = [
     {
       check: 2,
@@ -194,7 +192,7 @@ export default function KritiriaDiairetotitasPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             
             {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: INPUT & PRESETS */}
-            <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col gap-6 justify-between">
+            <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col gap-6 justify-between lg:h-fit">
               <div className="space-y-4">
                 <div className="space-y-1">
                   <h3 className="text-xl font-black text-gray-900">Δοκίμασε έναν Αριθμό!</h3>
@@ -207,7 +205,7 @@ export default function KritiriaDiairetotitasPage() {
                     value={numberStr}
                     onChange={(e) => handleInputChange(e.target.value)}
                     className="w-full text-3xl font-mono font-black text-center p-3 bg-slate-50 border-2 border-blue-200 rounded-xl shadow-inner text-blue-600 outline-none focus:border-blue-500 tracking-widest"
-                    placeholder="π.χ. 135"
+                    placeholder="π.χ. 7525"
                   />
                 </div>
 
@@ -228,21 +226,21 @@ export default function KritiriaDiairetotitasPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΖΩΝΤΑΝΟΣ ΕΛΕΓΧΟΣ ΚΡΙΤΗΡΙΩΝ ΚΑΙ ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
-            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[460px]">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΝΟΙΧΤΟ ΠΛΑΙΣΙΟ ΧΩΡΙΣ SCROLLBAR */}
+            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[600px]">
               
-              <div className="w-full text-center mb-4">
+              <div className="w-full text-center mb-6">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Έλεγχος Ψηφίων για τον Αριθμό:</span>
                 <div className="text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-xl border border-indigo-100 inline-block mt-2 tracking-widest">
                   {numberStr || "—"}
                 </div>
               </div>
 
-              {/* ΛΙΣΤΑ ΚΡΙΤΗΡΙΩΝ & ΟΠΤΙΚΟΠΟΙΗΣΗΣ */}
-              <div className="w-full space-y-4 my-auto max-h-[400px] overflow-y-auto pr-2">
+              {/* Αφαιρέθηκε το max-h-[400px] και το overflow-y-auto για να ανοίγει όλο το περιεχόμενο φυσικά στην οθόνη */}
+              <div className="w-full space-y-4 my-auto pr-1">
                 {numberStr ? (
                   criteria.map((c) => (
-                    <div key={c.check} className="p-4 rounded-2xl border border-slate-100 bg-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div key={c.check} className="p-4 rounded-2xl border border-slate-100 bg-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:border-slate-200">
                       
                       {/* Κείμενο Κανόνα */}
                       <div className="space-y-1 md:max-w-[45%]">
@@ -255,7 +253,7 @@ export default function KritiriaDiairetotitasPage() {
                         <p className="text-slate-400 text-[11px] leading-tight font-medium">{c.rule}</p>
                       </div>
 
-                      {/* Γραφική / Μαθηματική Αναπαράσταση (Visual Tool) */}
+                      {/* Γραφική / Μαθηματική Αναπαράσταση */}
                       <div className="flex-1 md:max-w-[50%]">
                         {c.visual()}
                       </div>
@@ -263,13 +261,13 @@ export default function KritiriaDiairetotitasPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-6 text-sm text-slate-400 font-medium">
+                  <div className="text-center py-12 text-sm text-slate-400 font-medium">
                     Πληκτρολόγησε έναν αριθμό στα αριστερά για να ξεκινήσει η οπτική ανάλυση.
                   </div>
                 )}
               </div>
 
-              <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-6 text-center">
+              <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-6 border-t border-gray-50 mt-6 text-center">
                 <span>🔍 Μπορείς να βρεις έναν αριθμό που να διαιρείται ταυτόχρονα με το 2, το 5 και το 10; (Σκέψου σε τι πρέπει να τελειώνει!)</span>
               </div>
             </div>
