@@ -113,7 +113,7 @@ export default function DiairetesPage() {
                 </div>
 
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Ή επίλεξε ένα έτοιμο:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Η επιλεξε ενα ετοιμο:</span>
                   <div className="grid grid-cols-2 gap-2">
                     {PRESETS.map((preset) => (
                       <button
@@ -133,7 +133,7 @@ export default function DiairetesPage() {
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[460px]">
               
               <div className="w-full text-center mb-6">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Διαιρέτες του αριθμού {number || "—"}:</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Διαιρετες του αριθμου {number || "—"}:</span>
                 <div className="flex flex-wrap justify-center gap-2 mt-3">
                   {divisors.length > 0 ? (
                     divisors.map((div) => (
@@ -151,7 +151,7 @@ export default function DiairetesPage() {
               <div className="w-full space-y-6 my-auto">
                 {number && divisors.length > 0 ? (
                   <div className="space-y-4">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block text-center">💻 Γραφική Αναπαράσταση (Πώς χωρίζεται το {number}):</span>
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block text-center">💻 Γραφικη Αναπαρασταση (Πως χωριζεται το {number}):</span>
                     
                     <div className="max-h-[280px] overflow-y-auto space-y-4 pr-2">
                       {divisors.map((div) => {
