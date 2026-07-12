@@ -159,7 +159,7 @@ export default function MkdPage() {
                 {/* Δυναμικά Inputs με βάση το Tab */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">1ος Αριθμός</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">1ος Αριθμος</span>
                     <input
                       type="text"
                       value={num1}
@@ -168,7 +168,7 @@ export default function MkdPage() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">2ος Αριθμός</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">2ος Αριθμος</span>
                     <input
                       type="text"
                       value={num2}
@@ -178,7 +178,7 @@ export default function MkdPage() {
                   </div>
                   {activeTab >= 3 && (
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">3ος Αριθμός</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">3ος Αριθμος</span>
                       <input
                         type="text"
                         value={num3}
@@ -189,7 +189,7 @@ export default function MkdPage() {
                   )}
                   {activeTab === 4 && (
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">4ος Αριθμός</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">4ος Αριθμος</span>
                       <input
                         type="text"
                         value={num4}
@@ -202,7 +202,7 @@ export default function MkdPage() {
 
                 {/* Δυναμικά Presets */}
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Γρήγορα Παραδείγματα:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Γρηγορα Παραδειγματα:</span>
                   <div className="grid grid-cols-1 gap-2">
                     {activeTab === 2 && PRESETS_2.map((p, idx) => (
                       <button key={idx} onClick={() => { setNum1(p.n1); setNum2(p.n2); }} className="text-left px-3 py-2 rounded-xl border font-mono font-bold text-xs bg-gray-50 hover:bg-gray-100 text-gray-600 transition-all">{p.label}</button>
@@ -246,7 +246,7 @@ export default function MkdPage() {
               {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΚΔ */}
               <div className="w-full bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-4">
                 <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                  💻 Γραφική Αναπαράσταση: Πώς μετράει ο Μ.Κ.Δ. ({mkd}) τους αριθμούς
+                  💻 Γραφικη Αναπαρασταση: Πως μετραει ο Μ.Κ.Δ. ({mkd}) τους αριθμους
                 </span>
                 
                 <div className="space-y-4 font-mono text-xs max-h-[220px] overflow-y-auto pr-1">
@@ -279,7 +279,7 @@ export default function MkdPage() {
               {/* ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ ΜΚΔ */}
               <div className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white p-4 rounded-xl text-center shadow-lg font-mono font-black flex items-center justify-center gap-3">
                 <span className="text-xl">🏆</span>
-                <span className="text-sm font-sans uppercase tracking-wider">Μέγιστος Κοινός Διαιρέτης:</span>
+                <span className="text-sm font-sans uppercase tracking-wider">Μεγιστος Κοινος Διαιρετης:</span>
                 <span className="text-xl md:text-2xl bg-white/20 px-4 py-1 rounded-lg shadow-inner">
                   Μ.Κ.Δ.({currentNumbersString}) = {mkd}
                 </span>
