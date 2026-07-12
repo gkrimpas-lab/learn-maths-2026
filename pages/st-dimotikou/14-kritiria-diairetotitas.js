@@ -242,7 +242,7 @@ export default function KritiriaDiairetotitasPage() {
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[600px]">
               
               <div className="w-full text-center mb-6">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Έλεγχος Ψηφίων για τον Αριθμό:</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Ελεγχος Ψηφιων για τον Αριθμο:</span>
                 <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-xl border border-indigo-100 inline-block mt-2 tracking-widest max-w-full break-all">
                   {numberStr || "—"}
                 </div>
