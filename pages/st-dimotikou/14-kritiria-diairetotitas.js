@@ -3,23 +3,33 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
+// Μέγιστος επιτρεπόμενος αριθμός - Μπορείτε να τον αλλάξετε εδώ αν χρειαστεί
+const MAX_ALLOWED_NUMBER = 9999999999; 
+
 const PRESETS = [24, 135, 450, 1236, 7525];
 
 export default function KritiriaDiairetotitasPage() {
   const [numberStr, setNumberStr] = useState("7525");
 
   const handleInputChange = (val) => {
+    // Επιτρέπουμε μόνο ψηφία
     const clean = val.replace(/[^0-9]/g, '');
+    
     if (clean === '') {
       setNumberStr('');
-    } else if (parseInt(clean, 10) > 10000) {
-      setNumberStr("10000");
     } else {
-      setNumberStr(clean);
+      const parsed = parseInt(clean, 10);
+      if (parsed > MAX_ALLOWED_NUMBER) {
+        setNumberStr(MAX_ALLOWED_NUMBER.toString());
+      } else {
+        // Περιορισμός στα 10 ψηφία ως string για αποφυγή overflow
+        setNumberStr(clean.slice(0, 10));
+      }
     }
   };
 
-  const num = parseInt(numberStr, 10) || 0;
+  // Χρήση BigInt για ασφαλή υπολογισμό υπολοίπων σε αριθμούς με πολλά ψηφία
+  const currentBigInt = numberStr ? BigInt(numberStr) : 0n;
   const digits = numberStr.split('').map(Number);
   const lastDigit = digits.length > 0 ? digits[digits.length - 1] : null;
   const lastTwoDigitsStr = digits.length > 1 ? numberStr.slice(-2) : numberStr;
@@ -31,16 +41,16 @@ export default function KritiriaDiairetotitasPage() {
       check: 2,
       title: "Διαιρείται με το 2;",
       rule: "Πρέπει το τελευταίο ψηφίο να είναι ζυγό (0, 2, 4, 6, 8).",
-      isTrue: num % 2 === 0,
+      isTrue: currentBigInt % 2n === 0n,
       visual: () => (
-        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700">
+        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700 break-all">
           Τελευταίο ψηφίο: {digits.length > 0 ? (
             <span>
               {numberStr.slice(0, -1)}
               <span className="text-yellow-400 font-black underline text-sm">{lastDigit}</span>
             </span>
           ) : "—"} 
-          {num % 2 === 0 ? " (Είναι ζυγό! ✅)" : " (Δεν είναι ζυγό! ❌)"}
+          {currentBigInt % 2n === 0n ? " (Είναι ζυγό! ✅)" : " (Δεν είναι ζυγό! ❌)"}
         </div>
       )
     },
@@ -48,11 +58,11 @@ export default function KritiriaDiairetotitasPage() {
       check: 3,
       title: "Διαιρείται με το 3;",
       rule: "Πρέπει το άθροισμα των ψηφίων του να διαιρείται με το 3.",
-      isTrue: num % 3 === 0,
+      isTrue: sumOfDigits % 3 === 0,
       visual: () => (
         <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700">
           Άθροισμα: {digits.join(' + ')} = <span className="text-yellow-400 font-black text-sm">{sumOfDigits}</span>
-          {num % 3 === 0 ? ` (Το ${sumOfDigits} διαιρείται με το 3! ✅)` : ` (Το ${sumOfDigits} δεν διαιρείται με το 3! ❌)`}
+          {sumOfDigits % 3 === 0 ? ` (Το ${sumOfDigits} διαιρείται με το 3! ✅)` : ` (Το ${sumOfDigits} δεν διαιρείται με το 3! ❌)`}
         </div>
       )
     },
@@ -60,16 +70,16 @@ export default function KritiriaDiairetotitasPage() {
       check: 4,
       title: "Διαιρείται με το 4;",
       rule: "Πρέπει τα δύο τελευταία ψηφία να σχηματίζουν αριθμό που διαιρείται με το 4 (ή να είναι 00).",
-      isTrue: num % 4 === 0,
+      isTrue: lastTwoDigits % 4 === 0,
       visual: () => (
-        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700">
+        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700 break-all">
           Δύο τελευταία ψηφία: {digits.length > 1 ? (
             <span>
               {numberStr.slice(0, -2)}
               <span className="text-yellow-400 font-black underline text-sm">{lastTwoDigitsStr}</span>
             </span>
           ) : <span className="text-yellow-400 font-black underline text-sm">{numberStr}</span>}
-          {num % 4 === 0 ? ` (Το ${lastTwoDigits} διαιρείται με το 4! ✅)` : ` (Το ${lastTwoDigits} δεν διαιρείται με το 4! ❌)`}
+          {lastTwoDigits % 4 === 0 ? ` (Το ${lastTwoDigits} διαιρείται με το 4! ✅)` : ` (Το ${lastTwoDigits} δεν διαιρείται με το 4! ❌)`}
         </div>
       )
     },
@@ -77,16 +87,16 @@ export default function KritiriaDiairetotitasPage() {
       check: 5,
       title: "Διαιρείται με το 5;",
       rule: "Πρέπει το τελευταίο ψηφίο να είναι 0 ή 5.",
-      isTrue: num % 5 === 0,
+      isTrue: currentBigInt % 5n === 0n,
       visual: () => (
-        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700">
+        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700 break-all">
           Τελευταίο ψηφίο: {digits.length > 0 ? (
             <span>
               {numberStr.slice(0, -1)}
               <span className="text-yellow-400 font-black underline text-sm">{lastDigit}</span>
             </span>
           ) : "—"} 
-          {num % 5 === 0 ? " (Είναι 0 ή 5! ✅)" : " (Δεν είναι 0 ή 5! ❌)"}
+          {currentBigInt % 5n === 0n ? " (Είναι 0 ή 5! ✅)" : " (Δεν είναι 0 ή 5! ❌)"}
         </div>
       )
     },
@@ -94,11 +104,11 @@ export default function KritiriaDiairetotitasPage() {
       check: 9,
       title: "Διαιρείται με το 9;",
       rule: "Πρέπει το άθροισμα των ψηφίων του να διαιρείται με το 9.",
-      isTrue: num % 9 === 0,
+      isTrue: sumOfDigits % 9 === 0,
       visual: () => (
         <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700">
           Άθροισμα: {digits.join(' + ')} = <span className="text-yellow-400 font-black text-sm">{sumOfDigits}</span>
-          {num % 9 === 0 ? ` (Το ${sumOfDigits} διαιρείται με το 9! ✅)` : ` (Το ${sumOfDigits} δεν διαιρείται με το 9! ❌)`}
+          {sumOfDigits % 9 === 0 ? ` (Το ${sumOfDigits} διαιρείται με το 9! ✅)` : ` (Το ${sumOfDigits} δεν διαιρείται με το 9! ❌)`}
         </div>
       )
     },
@@ -106,16 +116,16 @@ export default function KritiriaDiairetotitasPage() {
       check: 10,
       title: "Διαιρείται με το 10;",
       rule: "Πρέπει το τελευταίο ψηφίο να είναι 0.",
-      isTrue: num % 10 === 0,
+      isTrue: currentBigInt % 10n === 0n,
       visual: () => (
-        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700">
+        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700 break-all">
           Τελευταίο ψηφίο: {digits.length > 0 ? (
             <span>
               {numberStr.slice(0, -1)}
               <span className="text-yellow-400 font-black underline text-sm">{lastDigit}</span>
             </span>
           ) : "—"} 
-          {num % 10 === 0 ? " (Είναι 0! ✅)" : " (Δεν είναι 0! ❌)"}
+          {currentBigInt % 10n === 0n ? " (Είναι 0! ✅)" : " (Δεν είναι 0! ❌)"}
         </div>
       )
     },
@@ -123,16 +133,16 @@ export default function KritiriaDiairetotitasPage() {
       check: 25,
       title: "Διαιρείται με το 25;",
       rule: "Πρέπει τα δύο τελευταία ψηφία να είναι 00, 25, 50, ή 75.",
-      isTrue: num % 25 === 0,
+      isTrue: lastTwoDigits % 25 === 0,
       visual: () => (
-        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700">
+        <div className="text-xs font-mono bg-slate-800 text-slate-300 p-2.5 rounded-lg border border-slate-700 break-all">
           Δύο τελευταία ψηφία: {digits.length > 1 ? (
             <span>
               {numberStr.slice(0, -2)}
               <span className="text-yellow-400 font-black underline text-sm">{lastTwoDigitsStr}</span>
             </span>
           ) : <span className="text-yellow-400 font-black underline text-sm">{numberStr}</span>}
-          {num % 25 === 0 ? " (Είναι στις επιλογές 00, 25, 50, 75! ✅)" : " (Δεν είναι 00, 25, 50, 75! ❌)"}
+          {lastTwoDigits % 25 === 0 ? " (Είναι στις επιλογές 00, 25, 50, 75! ✅)" : " (Δεν είναι 00, 25, 50, 75! ❌)"}
         </div>
       )
     }
@@ -196,7 +206,7 @@ export default function KritiriaDiairetotitasPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <h3 className="text-xl font-black text-gray-900">Δοκίμασε έναν Αριθμό!</h3>
-                  <p className="text-gray-500 text-xs">Γράψε έναν αριθμό έως το 10.000 για να ελέγξεις τα κριτήρια.</p>
+                  <p className="text-gray-500 text-xs">Γράψε έναν αριθμό (έως 10 ψηφία) για να ελέγξεις τα κριτήρια.</p>
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -204,7 +214,7 @@ export default function KritiriaDiairetotitasPage() {
                     type="text"
                     value={numberStr}
                     onChange={(e) => handleInputChange(e.target.value)}
-                    className="w-full text-3xl font-mono font-black text-center p-3 bg-slate-50 border-2 border-blue-200 rounded-xl shadow-inner text-blue-600 outline-none focus:border-blue-500 tracking-widest"
+                    className="w-full text-2xl font-mono font-black text-center p-3 bg-slate-50 border-2 border-blue-200 rounded-xl shadow-inner text-blue-600 outline-none focus:border-blue-500 tracking-widest break-all"
                     placeholder="π.χ. 7525"
                   />
                 </div>
@@ -231,21 +241,20 @@ export default function KritiriaDiairetotitasPage() {
               
               <div className="w-full text-center mb-6">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Έλεγχος Ψηφίων για τον Αριθμό:</span>
-                <div className="text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-xl border border-indigo-100 inline-block mt-2 tracking-widest">
+                <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-xl border border-indigo-100 inline-block mt-2 tracking-widest max-w-full break-all">
                   {numberStr || "—"}
                 </div>
               </div>
 
-              {/* Αφαιρέθηκε το max-h-[400px] και το overflow-y-auto για να ανοίγει όλο το περιεχόμενο φυσικά στην οθόνη */}
               <div className="w-full space-y-4 my-auto pr-1">
                 {numberStr ? (
                   criteria.map((c) => (
                     <div key={c.check} className="p-4 rounded-2xl border border-slate-100 bg-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:border-slate-200">
                       
                       {/* Κείμενο Κανόνα */}
-                      <div className="space-y-1 md:max-w-[45%]">
+                      <div className="space-y-1 md:max-w-[45%] w-full">
                         <div className="flex items-center gap-2">
-                          <span className={`text-xs font-black px-2.5 py-0.5 rounded-md text-white ${c.isTrue ? 'bg-emerald-500' : 'bg-rose-500'}`}>
+                          <span className={`text-xs font-black px-2.5 py-0.5 rounded-md text-white shrink-0 ${c.isTrue ? 'bg-emerald-500' : 'bg-rose-500'}`}>
                             {c.isTrue ? '✓ Ναι' : '✕ Όχι'}
                           </span>
                           <h4 className="text-sm font-black text-slate-800">{c.title}</h4>
@@ -254,7 +263,7 @@ export default function KritiriaDiairetotitasPage() {
                       </div>
 
                       {/* Γραφική / Μαθηματική Αναπαράσταση */}
-                      <div className="flex-1 md:max-w-[50%]">
+                      <div className="flex-1 md:max-w-[50%] w-full">
                         {c.visual()}
                       </div>
 
