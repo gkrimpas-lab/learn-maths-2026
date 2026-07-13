@@ -3,10 +3,12 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Μέγιστος επιτρεπόμενος αριθμός (έως 10 ψηφία)
+// Μέγιστος επιτρεπόμενος αριθμός εισαγωγής (έως 10 ψηφία)
 const MAX_ALLOWED_NUMBER = 9999999999; 
+// Νέο αυξημένο όριο για την οπτικοποίηση του δεντροδιαγράμματος
+const MAX_VISUAL_NUMBER = 10000;
 
-const PRESETS = [12, 24, 36, 45, 60];
+const PRESETS = [24, 60, 120, 500, 1000];
 
 export default function ParagontopoiisiPage() {
   const [numberStr, setNumberStr] = useState("24");
@@ -27,7 +29,8 @@ export default function ParagontopoiisiPage() {
   };
 
   const currentBigInt = numberStr ? BigInt(numberStr) : 0n;
-  const numForVisual = (currentBigInt <= 100n && currentBigInt > 0n) ? Number(currentBigInt) : 0;
+  // Επιτρέπουμε την οπτικοποίηση έως το 10000
+  const numForVisual = (currentBigInt <= BigInt(MAX_VISUAL_NUMBER) && currentBigInt > 0n) ? Number(currentBigInt) : 0;
 
   // Εύρεση Πρώτων Παραγόντων (Ανάλυση) για οποιονδήποτε μεγάλο αριθμό BigInt
   const getPrimeFactors = (nStr) => {
@@ -56,11 +59,11 @@ export default function ParagontopoiisiPage() {
 
   // ΔΥΝΑΜΙΚΗ ΠΑΡΑΓΩΓΗ ΕΠΙΠΕΔΩΝ ΔΕΝΤΡΟΥ (Κατεβάζει τους πρώτους αριθμούς προς τα κάτω όπως στη ζωγραφιά)
   const generateTreeSteps = (n) => {
-    if (n <= 1 || n > 100) return [];
+    if (n <= 1 || n > MAX_VISUAL_NUMBER) return [];
     
     const steps = [];
     let currentComposite = n;
-    let accumulatedPrimes = []; // Εδώ αποθηκεύονται οι πρώτοι που έχουν ήδη «κλειδώσει»
+    let accumulatedPrimes = [];
     
     while (currentComposite > 1) {
       let divisor = 2;
@@ -70,19 +73,16 @@ export default function ParagontopoiisiPage() {
       const next = currentComposite / divisor;
       
       if (next === 1) {
-        // Αν το επόμενο είναι 1, σημαίνει ότι ο τρέχων αριθμός ήταν ήδη πρώτος στο τελευταίο επίπεδο
         break;
       }
 
-      // Δημιουργούμε το τρέχον επίπεδο
       steps.push({
-        parentValue: currentComposite, // Ποιος αριθμός σπάει σε αυτό το επίπεδο
-        pastPrimes: [...accumulatedPrimes], // Οι πρώτοι που απλά κατεβαίνουν
-        newPrime: divisor, // Ο νέος πρώτος (αριστερό κλαδί)
-        newComposite: next // Ο νέος σύνθετος (δεξί κλαδί)
+        parentValue: currentComposite,
+        pastPrimes: [...accumulatedPrimes],
+        newPrime: divisor,
+        newComposite: next
       });
 
-      // Αποθηκεύουμε τον νέο πρώτο για τα επόμενα επίπεδα
       accumulatedPrimes.push(divisor);
       currentComposite = next;
     }
@@ -214,7 +214,7 @@ export default function ParagontopoiisiPage() {
                   <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                     📊 Όλοι οι Πρώτοι Παράγοντες:
                   </div>
-                  <div className="flex flex-wrap gap-2 pt-1">
+                  <div className="flex flex-wrap gap-2 pt-1 max-h-[100px] overflow-y-auto">
                     {factors.map((f, idx) => (
                       <span key={idx} className="font-mono font-black px-3 py-1.5 bg-white border border-emerald-200 text-emerald-700 text-sm rounded-lg shadow-sm">
                         {f}
@@ -224,7 +224,7 @@ export default function ParagontopoiisiPage() {
                 </div>
               )}
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ: ΠΙΣΤΗ ΑΠΟΔΟΣΗ ΖΩΓΡΑΦΙΑΣ */}
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ: ΔΕΝΤΡΟ ΕΩΣ 10.000 */}
               <div className="w-full flex-1 bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
@@ -232,27 +232,27 @@ export default function ParagontopoiisiPage() {
                   </span>
                 </div>
 
-                <div className="space-y-4 my-auto overflow-y-auto max-h-[380px] pr-2 py-4 w-full flex flex-col items-center justify-center font-mono">
+                <div className="space-y-4 my-auto overflow-y-auto max-h-[450px] pr-2 py-4 w-full flex flex-col items-center justify-start font-mono">
                   {isOneOrZero ? (
-                    <div className="text-center py-6 text-xs text-slate-500">
+                    <div className="text-center py-6 text-xs text-slate-500 m-auto">
                       Δεν υπάρχει δεντροδιάγραμμα για τους αριθμούς 0 και 1.
                     </div>
-                  ) : currentBigInt > 100n ? (
-                    <div className="text-center py-8 px-4 max-w-md mx-auto space-y-2">
+                  ) : currentBigInt > BigInt(MAX_VISUAL_NUMBER) ? (
+                    <div className="text-center py-8 px-4 max-w-md mx-auto space-y-2 m-auto">
                       <div className="text-3xl">🌳</div>
-                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Το δέντρο θα μεγάλωνε υπερβολικά!</h4>
+                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμός ξεπερνάει το 10.000!</h4>
                       <p className="text-xs text-slate-400 leading-relaxed">
-                        Η οπτική αναπαράσταση σε μορφή δέντρου εμφανίζεται για αριθμούς <strong>έως το 100</strong>. 
-                        Για μεγαλύτερους αριθμούς, τα κλαδιά θα μπερδεύονταν στην οθόνη, αλλά μπορείς να δεις την πλήρη ανάλυση στο πράσινο πλαίσιο πιο πάνω!
+                        Η οπτική αναπαράσταση σε μορφή δέντρου εμφανίζεται για αριθμούς <strong>έως το 10.000</strong>. 
+                        Για ακόμα μεγαλύτερους αριθμούς, μπορείς να δεις την πλήρη ανάλυση στο πράσινο πλαίσιο πιο πάνω!
                       </p>
                     </div>
                   ) : isPrime ? (
-                    <div className="text-center py-6 text-xs text-slate-400 bg-slate-800/40 p-4 rounded-xl border border-slate-800 max-w-xs">
+                    <div className="text-center py-6 text-xs text-slate-400 bg-slate-800/40 p-4 rounded-xl border border-slate-800 max-w-xs m-auto">
                       ⭐ Επειδή ο αριθμός <strong>{numberStr}</strong> είναι πρώτος, αποτελεί ήδη το τελικό «κλαδί» και δεν χωρίζεται σε άλλους φυσικούς αριθμούς!
                     </div>
                   ) : treeSteps.length > 0 ? (
                     /* Εμφάνιση του Δέντρου με κατέβασμα των παραγόντων */
-                    <div className="flex flex-col items-center space-y-2 w-full">
+                    <div className="flex flex-col items-center space-y-2 w-full py-2">
                       
                       {/* ΓΡΑΜΜΗ 0: Η Κορυφή του Δέντρου */}
                       <div className="bg-slate-800 border-2 border-amber-400 px-5 py-2 rounded-xl font-black text-base shadow-md">
@@ -298,7 +298,7 @@ export default function ParagontopoiisiPage() {
 
                               {/* 3. Το δεξί μέρος της διακλάδωσης */}
                               {isLastStep ? (
-                                /* Στο τελευταίο επίπεδο, και το δεξί κομμάτι είναι πλέον πρώτος (Πράσινο Κυκλάκι) */
+                                /* Στο τελευταίο επίπεδο, και το δεξί κομμάτι είναι πλέον πρώτος (Πράσινο Κυκλάκι) */}
                                 <div className="bg-emerald-600 text-white font-black text-sm w-9 h-9 rounded-full flex items-center justify-center shadow-md border border-emerald-400 transform hover:scale-110 transition-transform">
                                   {step.newComposite}
                                 </div>
@@ -315,13 +315,13 @@ export default function ParagontopoiisiPage() {
                       })}
                     </div>
                   ) : (
-                    <div className="text-center py-6 text-xs text-slate-500">
+                    <div className="text-center py-6 text-xs text-slate-500 m-auto">
                       Γράψε έναν αριθμό για να ξεκινήσει η οπτικοποίηση.
                     </div>
                   )}
                 </div>
 
-                {!isOneOrZero && currentBigInt <= 100n && !isPrime && (
+                {!isOneOrZero && currentBigInt <= BigInt(MAX_VISUAL_NUMBER) && !isPrime && (
                   <div className="text-center text-[11px] font-medium text-slate-400 border-t border-slate-800 pt-3">
                     <span>💡 Κοίταξε την τελευταία γραμμή! Όλα τα **πράσινα κυκλάκια** μαζί σχηματίζουν ακριβώς την τελική ανάλυση: {cleanExpression} = {numberStr}!</span>
                   </div>
