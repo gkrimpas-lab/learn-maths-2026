@@ -129,7 +129,7 @@ export default function ParagontopoiisiPage() {
                     • <strong>Παραγοντοποίηση</strong> είναι η διαδικασία κατά την οποία γράφουμε έναν σύνθετο αριθμό ως <strong>γινόμενο πρώτων αριθμών</strong>.
                   </p>
                   <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                    • <strong>Ανάλυση σε γινόμενο πρώτων παραγόντων</strong> σημαίνει ότι «σπάμε» συνεχώς τον αριθμό σε μικρότερα κλαδιά, μέχρι όλα τα τελειώματα να είναι πρώτοι αριθμοί (2, 3, 5, 7...).
+                    • <strong>Ανάλυση σε γινόμενο πρώτων παραγόντων</strong> σημαίνει ότι «σπάμε» συνεχώς τον αριθμό σε μικρότερα κλαδιά, μέχρις ώτου όλα τα φύλλα να είναι πρώτοι αριθμοί (2, 3, 5, 7...).
                   </p>
                 </div>
               </div>
@@ -138,8 +138,8 @@ export default function ParagontopoiisiPage() {
                 <span className="text-amber-300 font-black text-base block border-b border-white/20 pb-1">💡 Η Μέθοδος με το Δεντροδιάγραμμα:</span>
                 <ul className="space-y-1.5 text-xs md:text-sm text-emerald-50 list-disc pl-4 font-medium">
                   <li>Γράφουμε τον αριθμό στην κορυφή του δέντρου.</li>
-                  <li>Σε κάθε βήμα, τον χωρίζουμε σε δύο νέα κλαδιά: έναν **πρώτο αριθμό** (αριστερά) και το **υπόλοιπο πηλίκο** (δεξιά).</li>
-                  <li>Οι πρώτοι αριθμοί που βρίσκουμε **κατεβαίνουν αυτούσιοι** σε κάθε επόμενη γραμμή, μέχρι να φτάσουμε στο τελικό γινόμενο!</li>
+                  <li>Σε κάθε βήμα, τον χωρίζουμε σε δύο νέα κλαδιά: έναν "πρώτο αριθμό" (αριστερά) και το "υπόλοιπο πηλίκο" (δεξιά).</li>
+                  <li>Οι πρώτοι αριθμοί που βρίσκουμε "κατεβαίνουν αυτούσιοι" σε κάθε επόμενη γραμμή, μέχρι να φτάσουμε στο τελικό γινόμενο!</li>
                 </ul>
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function ParagontopoiisiPage() {
                 </div>
 
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Γρήγορα Παραδείγματα:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Γρηγορα Παραδειγματα:</span>
                   <div className="flex flex-wrap gap-2">
                     {PRESETS.map((preset) => (
                       <button
@@ -188,7 +188,7 @@ export default function ParagontopoiisiPage() {
               
               {/* ΑΠΟΤΕΛΕΣΜΑ ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗΣ */}
               <div className="w-full text-center mb-6">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Γινόμενο Πρώτων Παραγόντων:</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Γινομενο Πρωτων Παραγοντων:</span>
                 
                 {isOneOrZero ? (
                   <div className="text-xl font-mono font-black text-gray-400 bg-gray-50 px-8 py-4 rounded-xl border border-gray-100 inline-block mt-2">
@@ -212,7 +212,7 @@ export default function ParagontopoiisiPage() {
               {!isOneOrZero && numberStr && (
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2 mb-6">
                   <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    📊 Όλοι οι Πρώτοι Παράγοντες:
+                    📊 Ολοι οι Πρωτοι Παραγοντες:
                   </div>
                   <div className="flex flex-wrap gap-2 pt-1 max-h-[100px] overflow-y-auto">
                     {factors.map((f, idx) => (
@@ -228,7 +228,7 @@ export default function ParagontopoiisiPage() {
               <div className="w-full flex-1 bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                    🌿 Γραφική Αναπαράσταση: Δεντροδιάγραμμα Ανάλυσης
+                    🌿 Γραφικη Αναπαρασταση: Δεντροδιαγραμμα Αναλυσης
                   </span>
                 </div>
 
