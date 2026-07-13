@@ -42,8 +42,8 @@ export default function EkpPage() {
     }
   };
 
-  // Εύρεση των πρώτων 15 πολλαπλασίων ενός αριθμού (εκτός του 0 για εύρεση ΕΚΠ)
-  const getMultiples = (num, count = 15) => {
+  // Αυξήσαμε το count σε 40 για να εμφανίζονται περισσότερα πολλαπλάσια και να προκύπτουν κοινά
+  const getMultiples = (num, count = 40) => {
     if (!num || num < 1) return [];
     const arr = [];
     for (let i = 1; i <= count; i++) {
@@ -65,7 +65,7 @@ export default function EkpPage() {
       a = t;
     }
     return a;
-  };
+  }
 
   const lcmBigInt = (a, b) => {
     if (a === 0n || b === 0n) return 0n;
@@ -271,7 +271,7 @@ export default function EkpPage() {
                     <div className="text-xs font-bold text-slate-700">
                       🔍 Πολλαπλάσια του <span className={`${numObj.color} font-black`}>{numObj.val || "—"}</span> ({numObj.label}):
                     </div>
-                    <div className="flex flex-wrap gap-1.5 max-h-[100px] overflow-y-auto pr-1">
+                    <div className="flex flex-wrap gap-1.5 max-h-[120px] overflow-y-auto pr-1">
                       {numObj.mult.map(m => {
                         const isEkp = m === ekp;
                         // Έλεγχος αν είναι κοινό πολλαπλάσιο (διαιρείται ακριβώς με όλους τους επιλεγμένους αριθμούς)
