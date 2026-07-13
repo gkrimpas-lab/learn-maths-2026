@@ -244,7 +244,7 @@ export default function ProtoiPage() {
                   ) : currentBigInt > 100n ? (
                     <div className="text-center py-8 px-4 max-w-md mx-auto space-y-2">
                       <div className="text-3xl">📐</div>
-                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμός είναι πολύ μεγάλος για κουτάκια!</h4>
+                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμος ειναι πολυ μεγαλος για κουτακια!</h4>
                       <p className="text-xs text-slate-400 leading-relaxed">
                         Η γραφική αναπαράσταση με κουτάκια λειτουργεί για αριθμούς <strong>έως το 100</strong>. 
                         Για μεγαλύτερους αριθμούς, τα κουτάκια θα γίνονταν τόσο μικρά που δεν θα μπορούσες να τα μετρήσεις εύκολα!
