@@ -103,7 +103,7 @@ export default function PollaplasiaPage() {
 
                 {/* Γρήγορα Κουμπιά */}
                 <div className="space-y-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Βασικοί Αριθμοί:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Βασικοι Αριθμοι:</span>
                   <div className="flex flex-wrap gap-2">
                     {PRESETS.map((num) => (
                       <button
@@ -119,7 +119,7 @@ export default function PollaplasiaPage() {
 
                 {/* Custom Input (Έως 10 ψηφία) */}
                 <div className="space-y-2 pt-2 border-t border-gray-100">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Ή γράψε έναν δικό σου (έως 10 ψηφία):</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Η γραψε εναν δικο σου (έως 10 ψηφια):</span>
                   <input
                     type="text"
                     value={customNumStr}
@@ -134,7 +134,7 @@ export default function PollaplasiaPage() {
               {selectedNum > 0 && (
                 <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-3 mt-4 lg:mt-0 flex-1">
                   <span className="text-xs font-black text-blue-700 uppercase tracking-wider block border-b border-blue-100 pb-1.5">
-                    📈 Η Προπαίδεια του {selectedNum}:
+                    📈 Η Προπαιδεια του {selectedNum}:
                   </span>
                   <div className="text-xs font-mono text-slate-600 leading-relaxed space-y-1">
                     {multipleSteps.slice(0, 11).map((m, idx) => (
@@ -153,7 +153,7 @@ export default function PollaplasiaPage() {
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[600px]">
               
               <div className="w-full text-center mb-6">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Οπτικό Μοτίβο Πολλαπλασίων:</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Οπτικο Μοτιβο Πολλαπλασιων:</span>
                 <div className="text-base md:text-xl font-black text-indigo-600 mt-1.5 px-4 py-2.5 bg-indigo-50 border border-indigo-100 rounded-xl inline-block max-w-full break-all tracking-wide">
                   Π({selectedNum}) = {'{'} {multipleSteps.join(', ')}... {'}'}
                 </div>
@@ -163,7 +163,7 @@ export default function PollaplasiaPage() {
               <div className="w-full flex-1 bg-slate-900 text-white p-4 md:p-6 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4">
                 <div className="text-center">
                   <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">
-                    📊 Πίνακας Αριθμών 1 έως 100
+                    📊 Πινακας Αριθμων 1 έως 100
                   </span>
                   <p className="text-[10px] text-slate-400">Όλα τα χρωματισμένα κουτάκια είναι πολλαπλάσια του {selectedNum}!</p>
                 </div>
