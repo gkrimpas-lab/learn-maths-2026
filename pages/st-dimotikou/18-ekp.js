@@ -79,23 +79,35 @@ export default function EkpPage() {
   const b4 = BigInt(num4 || 1);
 
   let ekpBig = 1n;
-  let numbersList = [];
+  let activeNumbers = [];
 
   if (activeTab === 2) {
     ekpBig = lcmBigInt(b1, b2);
+    activeNumbers = [num1 || 1, num2 || 1];
+  } else if (activeTab === 3) {
+    ekpBig = lcmBigInt(lcmBigInt(b1, b2), b3);
+    activeNumbers = [num1 || 1, num2 || 1, num3 || 1];
+  } else if (activeTab === 4) {
+    ekpBig = lcmBigInt(lcmBigInt(lcmBigInt(b1, b2), b3), b4);
+    activeNumbers = [num1 || 1, num2 || 1, num3 || 1, num4 || 1];
+  }
+
+  const ekp = Number(ekpBig);
+
+  // Δημιουργία της λίστας για την εμφάνιση των αριθμών
+  let numbersList = [];
+  if (activeTab === 2) {
     numbersList = [
       { val: num1, mult: mult1, color: 'text-blue-600', gridBg: 'bg-blue-600', label: '1ος Αριθμός' },
       { val: num2, mult: mult2, color: 'text-indigo-600', gridBg: 'bg-indigo-600', label: '2ος Αριθμός' }
     ];
   } else if (activeTab === 3) {
-    ekpBig = lcmBigInt(lcmBigInt(b1, b2), b3);
     numbersList = [
       { val: num1, mult: mult1, color: 'text-blue-600', gridBg: 'bg-blue-600', label: '1ος Αριθμός' },
       { val: num2, mult: mult2, color: 'text-indigo-600', gridBg: 'bg-indigo-600', label: '2ος Αριθμός' },
       { val: num3, mult: mult3, color: 'text-purple-600', gridBg: 'bg-purple-600', label: '3ος Αριθμός' }
     ];
   } else if (activeTab === 4) {
-    ekpBig = lcmBigInt(lcmBigInt(lcmBigInt(b1, b2), b3), b4);
     numbersList = [
       { val: num1, mult: mult1, color: 'text-blue-600', gridBg: 'bg-blue-600', label: '1ος Αριθμός' },
       { val: num2, mult: mult2, color: 'text-indigo-600', gridBg: 'bg-indigo-600', label: '2ος Αριθμός' },
@@ -103,8 +115,6 @@ export default function EkpPage() {
       { val: num4, mult: mult4, color: 'text-pink-600', gridBg: 'bg-pink-600', label: '4ος Αριθμός' }
     ];
   }
-
-  const ekp = Number(ekpBig);
 
   // Παραγωγή τουλάχιστον 3 κοινών πολλαπλασίων (ΕΚΠ * 1, ΕΚΠ * 2, ΕΚΠ * 3)
   const commonMultiples = [ekpBig, ekpBig * 2n, ekpBig * 3n];
@@ -264,8 +274,8 @@ export default function EkpPage() {
                     <div className="flex flex-wrap gap-1.5 max-h-[100px] overflow-y-auto pr-1">
                       {numObj.mult.map(m => {
                         const isEkp = m === ekp;
-                        // Έλεγχος αν είναι οποιοδήποτε άλλο κοινό πολλαπλάσιο (m % ekp === 0)
-                        const isCommonMultiple = m % ekp === 0;
+                        // Έλεγχος αν είναι κοινό πολλαπλάσιο (διαιρείται ακριβώς με όλους τους επιλεγμένους αριθμούς)
+                        const isCommonMultiple = activeNumbers.every(num => m % num === 0);
 
                         return (
                           <span 
@@ -274,7 +284,7 @@ export default function EkpPage() {
                               isEkp 
                                 ? 'bg-amber-400 border-amber-500 text-slate-900 shadow-sm scale-105' 
                                 : isCommonMultiple 
-                                  ? 'bg-amber-100/70 border-amber-300 text-amber-800 shadow-sm' // Αχνό κίτρινο για τα υπόλοιπα κοινά πολλαπλάσια
+                                  ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-sm' // Πεντακάθαρο απαλό κίτρινο για όλα τα υπόλοιπα κοινά πολλαπλάσια
                                   : 'bg-white border-slate-200 text-slate-500'
                             }`}
                           >
@@ -306,7 +316,7 @@ export default function EkpPage() {
                 ) : (
                   <div className="grid grid-cols-10 gap-1 md:gap-1.5 max-w-sm mx-auto w-full font-mono text-[9px] md:text-xs select-none p-1 bg-slate-950 rounded-xl border border-slate-800">
                     {gridNumbers.map((num) => {
-                      const isMultipleOfAll = numbersList.every(nObj => num % nObj.val === 0);
+                      const isMultipleOfAll = activeNumbers.every(nVal => num % nVal === 0);
                       const isEkp = num === ekp;
                       
                       // Υπολογισμός χρωμάτων αν είναι πολλαπλάσιο κάποιου
@@ -348,7 +358,7 @@ export default function EkpPage() {
                   </div>
                 </div>
 
-                {/* Εμφάνιση των 3 πρώτων κοινών πολλαπλασίων με αυτόματο σπάσιμο γραμμής (break-all / flex-wrap) */}
+                {/* Εμφάνιση των 3 πρώτων κοινών πολλαπλασίων με αυτόματο σπάσιμο γραμμής */}
                 <div className="text-center md:text-right border-t border-white/20 md:border-t-0 pt-3 md:pt-0 w-full md:w-auto">
                   <span className="text-[10px] font-sans uppercase tracking-wider text-amber-100 block mb-1">
                     ⭐ Τα 3 πρώτα Κοινά Πολλαπλάσια:
