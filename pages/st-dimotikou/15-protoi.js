@@ -50,25 +50,31 @@ export default function ProtoiPage() {
     return true;
   };
 
-  // Εύρεση διαιρετών ΜΟΝΟ αν ο αριθμός είναι μικρός (έως 10.000) για να μην κολλήσει ο browser
+  // ΒΕΛΤΙΣΤΟΠΟΙΗΜΕΝΟΣ ΑΛΓΟΡΙΘΜΟΣ: Βρίσκει όλους τους διαιρέτες ακαριαία ακόμα και για 10 ψηφία!
   const getDivisors = (nStr) => {
     if (!nStr) return [];
     const n = BigInt(nStr);
-    if (n < 1n || n > 10000n) return [];
+    if (n < 1n) return [];
     
-    const divs = [];
-    const target = Number(n);
-    for (let i = 1; i <= target; i++) {
-      if (target % i === 0) divs.push(i);
+    const divsSet = new Set();
+    
+    // Ψάχνουμε μόνο μέχρι τη ρίζα του αριθμού
+    for (let i = 1n; i * i <= n; i++) {
+      if (n % i === 0n) {
+        divsSet.add(Number(i));
+        divsSet.add(Number(n / i));
+      }
     }
-    return divs;
+    
+    // Μετατροπή σε πίνακα και ταξινόμηση σε αύξουσα σειρά
+    return Array.from(divsSet).sort((a, b) => a - b);
   };
 
   const isPrime = checkIsPrime(numberStr);
   const isOneOrZero = numberStr === "0" || numberStr === "1" || numberStr === "";
   
-  const showDivisorsList = currentBigInt > 0n && currentBigInt <= 10000n;
-  const divisors = showDivisorsList ? getDivisors(numberStr) : [];
+  // Πλέον εμφανίζουμε ΠΑΝΤΑ τους διαιρέτες, αφού ο αλγόριθμος είναι ταχύτατος
+  const divisors = (!isOneOrZero && numberStr) ? getDivisors(numberStr) : [];
 
   // Εύρεση όλων των ζευγαριών για τη γραφική αναπαράσταση (ΜΟΝΟ για τιμές έως 100)
   const getRectangles = (n) => {
@@ -119,7 +125,7 @@ export default function ProtoiPage() {
                     • <strong>Πρώτοι αριθμοί</strong> ονομάζονται οι φυσικοί αριθμοί που είναι μεγαλύτεροι από το 1 και έχουν <strong>μόνο δύο διαιρέτες</strong>: το 1 και τον εαυτό τους (π.χ. 2, 3, 5, 7, 11...).
                   </p>
                   <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                    • <strong>Σύνθετοι αριθμοί</strong> ονομάζονται οι αριθμοί που έχουν <strong>περισσότερους από δύο διαιρέτες</strong> (π.χ. 4, 6, 8, 9, 10...).
+                    • <strong>Σύνθετοι αριθμοί</strong> ονομά?ονται οι αριθμοί που έχουν <strong>περισσότερους από δύο διαιρέτες</strong> (π.χ. 4, 6, 8, 9, 10...).
                   </p>
                 </div>
               </div>
@@ -201,34 +207,24 @@ export default function ProtoiPage() {
                 )}
               </div>
 
-              {/* ΔΙAΙΡΕΤΕΣ */}
+              {/* ΔΙAΙΡΕΤΕΣ (Εμφανίζονται πάντα σωστά και γρήγορα!) */}
               {numberStr && !isOneOrZero && (
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2 mb-6">
                   <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                     🔍 Πληροφορίες Διαιρετών:
                   </div>
-                  {showDivisorsList ? (
-                    <>
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        {divisors.map(d => (
-                          <span key={d} className="font-mono font-black px-3 py-1.5 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg shadow-sm">
-                            {d}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="text-[11px] text-slate-400 pt-1">
-                        {isPrime 
-                          ? `Ο αριθμός ${numberStr} έχει ακριβώς 2 διαιρέτες, γι' αυτό είναι Πρώτος!` 
-                          : `Ο αριθμός ${numberStr} έχει ${divisors.length} διαιρέτες, γι' αυτό είναι Σύνθετος!`}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-xs text-slate-600 font-medium py-1">
-                      {isPrime 
-                        ? "Αυτός ο πολύ μεγάλος αριθμός διαιρείται μόνο με το 1 και τον εαυτό του! (Πρώτος)" 
-                        : "Αυτός ο πολύ μεγάλος αριθμός έχει και άλλους διαιρέτες εκτός από το 1 και τον εαυτό του! (Σύνθετος)"}
-                    </p>
-                  )}
+                  <div className="flex flex-wrap gap-2 pt-1 max-h-[120px] overflow-y-auto pr-1">
+                    {divisors.map(d => (
+                      <span key={d} className="font-mono font-black px-3 py-1.5 bg-white border border-slate-200 text-slate-700 text-sm rounded-lg shadow-sm">
+                        {d}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-slate-400 pt-1">
+                    {isPrime 
+                      ? `Ο αριθμός ${numberStr} έχει ακριβώς 2 διαιρέτες, γι' αυτό είναι Πρώτος!` 
+                      : `Ο αριθμός ${numberStr} έχει ${divisors.length} διαιρέτες, γι' αυτό είναι Σύνθετος!`}
+                  </p>
                 </div>
               )}
 
@@ -240,7 +236,6 @@ export default function ProtoiPage() {
                   </span>
                 </div>
 
-                {/* Διορθωμένο container με overflow-y-auto για να φαίνονται όλοι οι συνδυασμοί */}
                 <div className="space-y-8 my-auto overflow-y-auto max-h-[360px] pr-2 py-4 w-full">
                   {isOneOrZero ? (
                     <div className="text-center py-6 text-xs text-slate-500">
@@ -262,7 +257,6 @@ export default function ProtoiPage() {
                           Διάταξη: <span className="text-yellow-400 font-bold">{rect.rows} γραμμές</span> × <span className="text-blue-400 font-bold">{rect.cols} στήλες</span> = {numForGrid}
                         </div>
                         
-                        {/* Διορθώθηκε το inline στυλ για να υπολογίζει σωστά τις στήλες ανά διάταξη */}
                         <div 
                           className="grid gap-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800 justify-center shadow-inner"
                           style={{ 
