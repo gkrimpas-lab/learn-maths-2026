@@ -170,7 +170,7 @@ export default function ProtoiPage() {
               
               {/* ΤΑΥΤΟΤΗΤΑ ΑΡΙΘΜΟΥ */}
               <div className="w-full text-center mb-6">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Ανάλυση για τον Αριθμό:</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Αναλυση για τον Αριθμο:</span>
                 <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-8 py-2 rounded-xl border border-indigo-100 inline-block mt-2 tracking-widest max-w-full break-all">
                   {numberStr || "—"}
                 </div>
@@ -229,7 +229,7 @@ export default function ProtoiPage() {
               <div className="w-full flex-1 bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                    💻 Γραφική Αναπαράσταση: Ορθογώνιοι Σχηματισμοί
+                    💻 Γραφικη Αναπαρασταση: Ορθογωνιοι Σχηματισμοι
                   </span>
                 </div>
 
@@ -242,7 +242,7 @@ export default function ProtoiPage() {
                     /* Το κατάλληλο μήνυμα για αριθμούς πάνω από 100 */
                     <div className="text-center py-8 px-4 max-w-md mx-auto space-y-2">
                       <div className="text-3xl">📐</div>
-                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμός είναι πολύ μεγάλος για κουτάκια!</h4>
+                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμος ειναι πολυ μεγσλος για κουτακια!</h4>
                       <p className="text-xs text-slate-400 leading-relaxed">
                         Η γραφική αναπαράσταση με κουτάκια λειτουργεί για αριθμούς <strong>έως το 100</strong>. 
                         Για μεγαλύτερους αριθμούς, τα κουτάκια θα γίνονταν τόσο μικρά που δεν θα μπορούσες να τα μετρήσεις εύκολα!
