@@ -42,21 +42,6 @@ export default function EkpPage() {
     }
   };
 
-  // Αυξήσαμε το count σε 40 για να εμφανίζονται περισσότερα πολλαπλάσια και να προκύπτουν κοινά
-  const getMultiples = (num, count = 40) => {
-    if (!num || num < 1) return [];
-    const arr = [];
-    for (let i = 1; i <= count; i++) {
-      arr.push(num * i);
-    }
-    return arr;
-  };
-
-  const mult1 = getMultiples(num1);
-  const mult2 = getMultiples(num2);
-  const mult3 = getMultiples(num3);
-  const mult4 = getMultiples(num4);
-
   // Υπολογισμός ΕΚΠ χρησιμοποιώντας BigInt για ασφάλεια με μεγάλους αριθμούς
   const gcdBigInt = (a, b) => {
     while (b > 0n) {
@@ -65,7 +50,7 @@ export default function EkpPage() {
       a = t;
     }
     return a;
-  }
+  };
 
   const lcmBigInt = (a, b) => {
     if (a === 0n || b === 0n) return 0n;
@@ -93,6 +78,34 @@ export default function EkpPage() {
   }
 
   const ekp = Number(ekpBig);
+
+  // Δυναμική παραγωγή πολλαπλασίων με βάση τους κανόνες:
+  // 1. Ελάχιστο 20 πολλαπλάσια
+  // 2. Μέγιστη τιμή: ένα παραπάνω από το 3ο κοινό πολλαπλάσιο (3 * ΕΚΠ + 1)
+  const getDynamicMultiples = (num) => {
+    if (!num || num < 1) return [];
+    const arr = [];
+    const targetLimit = Number(ekpBig * 3n) + 1;
+    
+    let i = 1;
+    while (true) {
+      const multiple = num * i;
+      // Σταματάμε αν ξεπεράσουμε το όριο (3 * ΕΚΠ + 1) ΚΑΙ έχουμε ήδη τουλάχιστον 20 στοιχεία
+      if (multiple > targetLimit && i > 20) {
+        break;
+      }
+      arr.push(multiple);
+      i++;
+      // Ασφάλεια για να μην κολλήσει ο browser σε ακραίες περιπτώσεις
+      if (i > 1000) break;
+    }
+    return arr;
+  };
+
+  const mult1 = getDynamicMultiples(num1);
+  const mult2 = getDynamicMultiples(num2);
+  const mult3 = getDynamicMultiples(num3);
+  const mult4 = getDynamicMultiples(num4);
 
   // Δημιουργία της λίστας για την εμφάνιση των αριθμών
   let numbersList = [];
@@ -271,7 +284,7 @@ export default function EkpPage() {
                     <div className="text-xs font-bold text-slate-700">
                       🔍 Πολλαπλάσια του <span className={`${numObj.color} font-black`}>{numObj.val || "—"}</span> ({numObj.label}):
                     </div>
-                    <div className="flex flex-wrap gap-1.5 max-h-[120px] overflow-y-auto pr-1">
+                    <div className="flex flex-wrap gap-1.5 max-h-[140px] overflow-y-auto pr-1">
                       {numObj.mult.map(m => {
                         const isEkp = m === ekp;
                         // Έλεγχος αν είναι κοινό πολλαπλάσιο (διαιρείται ακριβώς με όλους τους επιλεγμένους αριθμούς)
