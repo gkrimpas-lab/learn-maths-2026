@@ -54,8 +54,8 @@ export default function ParagontopoiisiPage() {
   const factors = getPrimeFactors(numberStr);
   const cleanExpression = factors.join(' × ');
 
-  // Παραγωγή των βημάτων για την κατακόρυφη μέθοδο (Μόνο για n <= 100)
-  const generateVerticalSteps = (n) => {
+  // Παραγωγή των βημάτων για το Δεντροδιάγραμμα ακριβώς όπως στη ζωγραφιά (Μόνο για n <= 100)
+  const generateTreeSteps = (n) => {
     if (n <= 1 || n > 100) return [];
     const steps = [];
     let current = n;
@@ -65,15 +65,18 @@ export default function ParagontopoiisiPage() {
       while (current % divisor !== 0) {
         divisor++;
       }
-      steps.push({ current, divisor });
-      current = current / divisor;
+      const next = current / divisor;
+      
+      // Αν ο επόμενος αριθμός (next) είναι 1, σημαίνει ότι φτάσαμε στο τέλος και δεν χρειάζεται άλλο κλαδί
+      if (next === 1) break;
+
+      steps.push({ current, divisor, next });
+      current = next;
     }
-    // Προσθέτουμε το τελικό 1 στο τέλος της αριστερής στήλης
-    steps.push({ current: 1, divisor: null });
     return steps;
   };
 
-  const verticalSteps = generateVerticalSteps(numForVisual);
+  const treeSteps = generateTreeSteps(numForVisual);
   const isOneOrZero = numberStr === "0" || numberStr === "1" || numberStr === "";
   const isPrime = factors.length === 1 && numberStr !== "1" && numberStr !== "0";
 
@@ -112,17 +115,17 @@ export default function ParagontopoiisiPage() {
                     • <strong>Παραγοντοποίηση</strong> είναι η διαδικασία κατά την οποία γράφουμε έναν σύνθετο αριθμό ως <strong>γινόμενο πρώτων αριθμών</strong>.
                   </p>
                   <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                    • <strong>Ανάλυση σε γινόμενο πρώτων παραγόντων</strong> σημαίνει ότι διαιρούμε συνεχώς τον αριθμό με τον μικρότερο δυνατό πρώτο αριθμό (2, 3, 5, 7...) μέχρι να φτάσουμε στο 1.
+                    • <strong>Ανάλυση σε γινόμενο πρώτων παραγόντων</strong> σημαίνει ότι «σπάμε» συνεχώς τον αριθμό σε μικρότερα κλαδιά, μέχρι όλα τα τελειώματα να είναι πρώτοι αριθμοί (2, 3, 5, 7...).
                   </p>
                 </div>
               </div>
               
               <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-6 rounded-2xl shadow-md space-y-2 flex flex-col justify-center">
-                <span className="text-amber-300 font-black text-base block border-b border-white/20 pb-1">💡 Η Μέθοδος της Κατακόρυφης Γραμμής:</span>
+                <span className="text-amber-300 font-black text-base block border-b border-white/20 pb-1">💡 Η Μέθοδος με το Δεντροδιάγραμμα:</span>
                 <ul className="space-y-1.5 text-xs md:text-sm text-emerald-50 list-disc pl-4 font-medium">
-                  <li>Γράφουμε τον αριθμό στα αριστερά και τραβάμε μια κατακόρυφη γραμμή.</li>
-                  <li>Δεξιά βάζουμε τον μικρότερο πρώτο αριθμό που τον διαιρεί ακριβώς.</li>
-                  <li>Κάτω από τον αριθμό γράφουμε το αποτέλεσμα της διαίρεσης και επαναλαμβάνουμε, μέχρι να φτάσουμε στο <strong>1</strong>!</li>
+                  <li>Γράφουμε τον αριθμό στην κορυφή του δέντρου.</li>
+                  <li>Σε κάθε βήμα, τον χωρίζουμε σε δύο νέα κλαδιά: έναν **πρώτο αριθμό** (αριστερά) και το **υπόλοιπο πηλίκο** (δεξιά).</li>
+                  <li>Συνεχίζουμε να «σπάμε» το δεξί κλαδί μέχρι να μην μπορεί να χωριστεί άλλο!</li>
                 </ul>
               </div>
             </div>
@@ -184,7 +187,7 @@ export default function ParagontopoiisiPage() {
                     </div>
                     {isPrime && (
                       <div className="text-xs text-amber-600 font-bold">
-                        ℹ️ Ο αριθμός είναι ήδη Πρώτος, οπότε διαιρείται μόνο με τον εαυτό του!
+                        ℹ️ Ο αριθμός είναι ήδη Πρώτος, οπότε δεν μπορεί να «σπάσει» σε μικρότερα κλαδιά!
                       </div>
                     )}
                   </div>
@@ -207,46 +210,76 @@ export default function ParagontopoiisiPage() {
                 </div>
               )}
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ: ΚΑΤΑΚΟΡΥΦΗ ΓΡΑΜΜΗ */}
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ: ΔΕΝΤΡΟ ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗΣ */}
               <div className="w-full flex-1 bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                    💻 Γραφική Αναπαράσταση: Μέθοδος Διαδοχικών Διαιρέσεων
+                    🌿 Γραφική Αναπαράσταση: Δεντροδιάγραμμα Ανάλυσης
                   </span>
                 </div>
 
                 <div className="space-y-6 my-auto overflow-y-auto max-h-[380px] pr-2 py-4 w-full flex flex-col items-center justify-center">
                   {isOneOrZero ? (
                     <div className="text-center py-6 text-xs text-slate-500">
-                      Δεν υπάρχει κατακόρυφη ανάλυση για τους αριθμούς 0 και 1.
+                      Δεν υπάρχει δεντροδιάγραμμα για τους αριθμούς 0 και 1.
                     </div>
                   ) : currentBigInt > 100n ? (
-                    /* Μήνυμα για αριθμούς πάνω από 100 */
                     <div className="text-center py-8 px-4 max-w-md mx-auto space-y-2">
-                      <div className="text-3xl">📐</div>
-                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμός είναι πολύ μεγάλος για κατακόρυφη εμφάνιση!</h4>
+                      <div className="text-3xl">🌳</div>
+                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Το δέντρο θα μεγάλωνε υπερβολικά!</h4>
                       <p className="text-xs text-slate-400 leading-relaxed">
-                        Η κατακόρυφη οπτικοποίηση των διαιρέσεων λειτουργεί για αριθμούς <strong>έως το 100</strong>. 
-                        Για μεγαλύτερους αριθμούς η λίστα θα γινόταν υπερβολικά μεγάλη στην οθόνη, αλλά μπορείς να δεις όλη την ανάλυση στο πράσινο πλαίσιο πιο πάνω!
+                        Η οπτική αναπαράσταση σε μορφή δέντρου εμφανίζεται για αριθμούς <strong>έως το 100</strong>. 
+                        Για μεγαλύτερους αριθμούς, τα κλαδιά θα μπερδεύονταν στην οθόνη, αλλά μπορείς να δεις την πλήρη ανάλυση στο πράσινο πλαίσιο πιο πάνω!
                       </p>
                     </div>
-                  ) : verticalSteps.length > 0 ? (
-                    /* Νέα Κατακόρυφη Διάταξη (Σαν το τετράδιο των μαθητών) */
-                    <div className="relative flex flex-col items-center font-mono text-base md:text-lg">
-                      {verticalSteps.map((step, idx) => (
-                        <div key={idx} className="flex items-center w-40 justify-between py-1.5 relative">
-                          {/* Αριστερή πλευρά: Ο αριθμός ή το πηλίκο */}
-                          <div className="w-1/2 text-right pr-4 font-black text-slate-200">
-                            {step.current}
+                  ) : isPrime ? (
+                    <div className="text-center py-6 text-xs text-slate-400 bg-slate-800/40 p-4 rounded-xl border border-slate-800 max-w-xs">
+                      ⭐ Επειδή ο αριθμός <strong>{numberStr}</strong> είναι πρώτος, αποτελεί ήδη το τελικό «κλαδί» και δεν χωρίζεται σε άλλους φυσικούς αριθμούς!
+                    </div>
+                  ) : treeSteps.length > 0 ? (
+                    /* Καθαρή και ευθυγραμμισμένη σχεδίαση δέντρου, ακριβώς όπως στη ζωγραφιά */
+                    <div className="flex flex-col items-center w-full max-w-sm font-mono">
+                      {treeSteps.map((step, idx) => (
+                        <div key={idx} className="flex flex-col items-center w-full">
+                          
+                          {/* Ο αριθμός-στόχος στην κορυφή του τρέχοντος επιπέδου */}
+                          {idx === 0 && (
+                            <div className="bg-slate-800 border-2 border-amber-400 px-5 py-2 rounded-xl font-black text-base shadow-md mb-1 z-10 min-w-[50px] text-center">
+                              {step.current}
+                            </div>
+                          )}
+                          
+                          {/* Τα κλαδιά (Βέλη / Γραμμές) */}
+                          <div className="flex justify-between w-28 text-slate-500 font-light text-sm tracking-widest h-5 select-none pointer-events-none">
+                            <span>/</span>
+                            <span>\</span>
                           </div>
 
-                          {/* Η Κατακόρυφη Γραμμή (Σχεδιάζεται κεντρικά ανάμεσα στα στοιχεία) */}
-                          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-slate-700 transform -translate-x-1/2"></div>
-
-                          {/* Δεξιά πλευρά: Ο Πρώτος Διαιρέτης */}
-                          <div className="w-1/2 text-left pl-4 font-black text-emerald-400">
-                            {step.divisor !== null ? step.divisor : ""}
+                          {/* Οι δύο νέοι κόμβοι/αριθμοί */}
+                          <div className="flex justify-between w-44 items-center">
+                            {/* Αριστερό κλαδί: Ο Πρώτος αριθμός (Κυκλάκι) */}
+                            <div className="bg-emerald-600 text-white font-black text-sm w-9 h-9 rounded-full flex items-center justify-center shadow-md border border-emerald-400 transform hover:scale-110 transition-transform">
+                              {step.divisor}
+                            </div>
+                            
+                            {/* Δεξί κλαδί: Το πηλίκο που συνεχίζει στο επόμενο επίπεδο */}
+                            {idx === treeSteps.length - 1 ? (
+                              /* Αν είναι το τελευταίο βήμα, το δεξί κλαδί γίνεται και αυτό πράσινο κυκλάκι (αφού είναι πλέον πρώτος αριθμός) */
+                              <div className="bg-emerald-600 text-white font-black text-sm w-9 h-9 rounded-full flex items-center justify-center shadow-md border border-emerald-400 transform hover:scale-110 transition-transform">
+                                {step.next}
+                              </div>
+                            ) : (
+                              /* Αν έχει κι άλλο επίπεδο, παραμένει κουτάκι που θα «σπάσει» παρακάτω */
+                              <div className="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl font-black text-sm text-slate-300 min-w-[40px] text-center">
+                                {step.next}
+                              </div>
+                            )}
                           </div>
+
+                          {/* Μικρή απόσταση πριν το επόμενο «σπάσιμο» (εφόσον δεν είναι το τελευταίο επίπεδο) */}
+                          {idx < treeSteps.length - 1 && (
+                            <div className="h-2 w-[2px] bg-transparent"></div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -257,9 +290,9 @@ export default function ParagontopoiisiPage() {
                   )}
                 </div>
 
-                {!isOneOrZero && currentBigInt <= 100n && (
+                {!isOneOrZero && currentBigInt <= 100n && !isPrime && (
                   <div className="text-center text-[11px] font-medium text-slate-400 border-t border-slate-800 pt-3">
-                    <span>💡 Παρατήρησε ότι οι αριθμοί στη **δεξιά πλευρά** της γραμμής είναι οι πρώτοι παράγοντες του {numberStr}!</span>
+                    <span>💡 Παρατήρησε ότι όλα τα **πράσινα κυκλάκια** (τα τελειώματα των κλαδιών) είναι οι πρώτοι αριθμοί της ανάλυσης!</span>
                   </div>
                 )}
               </div>
