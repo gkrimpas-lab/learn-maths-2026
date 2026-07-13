@@ -10,7 +10,6 @@ export default function PollaplasiaPage() {
   const [customNumStr, setCustomNumStr] = useState("");
 
   const handleCustomInputChange = (val) => {
-    // Μόνο αριθμοί
     const clean = val.replace(/[^0-9]/g, '');
     setCustomNumStr(clean);
     
@@ -27,10 +26,10 @@ export default function PollaplasiaPage() {
   // Δημιουργία πίνακα 1 έως 100 για τη γραφική αναπαράσταση
   const gridNumbers = Array.from({ length: 100 }, (_, i) => i + 1);
 
-  // Παραγωγή των πρώτων 10 πολλαπλασίων για το επεξηγηματικό πλαίσιο
-  const firstTenMultiples = [];
-  for (let i = 0; i <= 10; i++) {
-    firstTenMultiples.push(selectedNum * i);
+  // Παραγωγή των πρώτων 20 πολλαπλασίων (0 έως 20) για την πλήρη λίστα προπαίδειας
+  const multipleSteps = [];
+  for (let i = 0; i <= 20; i++) {
+    multipleSteps.push(selectedNum * i);
   }
 
   return (
@@ -90,7 +89,7 @@ export default function PollaplasiaPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ ΚΑΙ ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΕΠΙΛΟΓΗ ΑΡΙΘΜΟΥ */}
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΕΠΙΛΟΓΗ ΑΡΙΘΜΟΥ & ΠΛΗΡΗΣ ΠΡΟΠΑΙΔΕΙΑ */}
             <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col gap-6 justify-between lg:h-fit">
               <div className="space-y-4">
                 <div className="space-y-1">
@@ -127,32 +126,34 @@ export default function PollaplasiaPage() {
                 </div>
               </div>
 
-              {/* Παρουσίαση Προπαίδειας / Λίστας */}
+              {/* Παρουσίαση Πλήρους Δεκάδας και παραπάνω, χωρίς περιοριστικό max-height */}
               {selectedNum > 0 && (
-                <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-2 mt-4 lg:mt-0">
-                  <span className="text-xs font-black text-blue-700 uppercase tracking-wider block">
-                    📈 Τα πρώτα πολλαπλάσια του {selectedNum}:
+                <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-3 mt-4 lg:mt-0 flex-1">
+                  <span className="text-xs font-black text-blue-700 uppercase tracking-wider block border-b border-blue-100 pb-1.5">
+                    📈 Η Προπαίδεια του {selectedNum}:
                   </span>
-                  <div className="text-xs font-mono text-slate-600 leading-relaxed max-h-[120px] overflow-y-auto pr-1">
-                    {firstTenMultiples.map((m, idx) => (
-                      <div key={idx} className="py-0.5 border-b border-blue-100/50 last:border-0 flex justify-between">
+                  <div className="text-xs font-mono text-slate-600 leading-relaxed space-y-1">
+                    {/* Εμφανίζουμε όλη την πρώτη δεκάδα (0 έως 10) άνετα στην οθόνη */}
+                    {multipleSteps.slice(0, 11).map((m, idx) => (
+                      <div key={idx} className="py-0.5 border-b border-blue-100/30 last:border-0 flex justify-between">
                         <span className="text-slate-400">{selectedNum} × {idx} =</span>
-                        <span className="font-black text-slate-800">{m}</span>
+                        <span className="font-black text-slate-800 text-sm">{m}</span>
                       </div>
                     ))}
-                    <div className="text-center text-[10px] text-blue-500 font-bold pt-1">...και συνεχίζεται στο άπειρο!</div>
+                    <div className="text-center text-[10px] text-blue-500 font-bold pt-2">...και συνεχίζεται στο άπειρο!</div>
                   </div>
                 </div>
               )}
             </div>
 
             {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ (ΕΚΑΤΟΝΤΑΔΑ) */}
-            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[550px]">
+            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[600px]">
               
-              <div className="w-full text-center mb-4">
+              {/* Δείχνουμε μέχρι και 20 πολλαπλάσια στη σειρά */}
+              <div className="w-full text-center mb-6">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Οπτικό Μοτίβο Πολλαπλασίων:</span>
-                <div className="text-xl md:text-2xl font-black text-indigo-600 mt-1">
-                  Π({selectedNum}) = {'{'} 0, {selectedNum}, {selectedNum * 2}, {selectedNum * 3}, {selectedNum * 4}... {'}'}
+                <div className="text-base md:text-xl font-black text-indigo-600 mt-1.5 px-4 py-2.5 bg-indigo-50 border border-indigo-100 rounded-xl inline-block max-w-full break-all tracking-wide">
+                  Π({selectedNum}) = {'{'} {multipleSteps.join(', ')}... {'}'}
                 </div>
               </div>
 
