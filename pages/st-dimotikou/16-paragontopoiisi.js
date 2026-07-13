@@ -240,7 +240,7 @@ export default function ParagontopoiisiPage() {
                   ) : currentBigInt > BigInt(MAX_VISUAL_NUMBER) ? (
                     <div className="text-center py-8 px-4 max-w-md mx-auto space-y-2 m-auto">
                       <div className="text-3xl">🌳</div>
-                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμός ξεπερνάει το 10.000!</h4>
+                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμος ξεπερναει το 10.000!</h4>
                       <p className="text-xs text-slate-400 leading-relaxed">
                         Η οπτική αναπαράσταση σε μορφή δέντρου εμφανίζεται για αριθμούς <strong>έως το 10.000</strong>. 
                         Για ακόμα μεγαλύτερους αριθμούς, μπορείς να δεις την πλήρη ανάλυση στο πράσινο πλαίσιο πιο πάνω!
@@ -318,7 +318,7 @@ export default function ParagontopoiisiPage() {
 
                 {!isOneOrZero && currentBigInt <= BigInt(MAX_VISUAL_NUMBER) && !isPrime && (
                   <div className="text-center text-[11px] font-medium text-slate-400 border-t border-slate-800 pt-3">
-                    <span>💡 Κοίταξε την τελευταία γραμμή! Όλα τα **πράσινα κυκλάκια** μαζί σχηματίζουν ακριβώς την τελική ανάλυση: {cleanExpression} = {numberStr}!</span>
+                    <span>💡 Κοίταξε την τελευταία γραμμή! Όλα τα "πράσινα κυκλάκια" μαζί σχηματίζουν ακριβώς την τελική ανάλυση: {cleanExpression} = {numberStr}!</span>
                   </div>
                 )}
               </div>
