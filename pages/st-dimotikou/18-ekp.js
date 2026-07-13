@@ -57,9 +57,9 @@ export default function EkpPage() {
   const mult3 = getMultiples(num3);
   const mult4 = getMultiples(num4);
 
-  // Υπολογισμός ΕΚΠ με βάση το Tab χρησιμοποιώντας τον αλγόριθμο ΜΚΔ (LCM(a,b) = a*b / GCD(a,b))
-  const gcd = (a, b) => {
-    while (b) {
+  // Υπολογισμός ΕΚΠ χρησιμοποιώντας BigInt για ασφάλεια με μεγάλους αριθμούς
+  const gcdBigInt = (a, b) => {
+    while (b > 0n) {
       let t = b;
       b = a % b;
       a = t;
@@ -67,29 +67,35 @@ export default function EkpPage() {
     return a;
   };
 
-  const lcm = (a, b) => {
-    if (a === 0 || b === 0) return 0;
-    return (a * b) / gcd(a, b);
+  const lcmBigInt = (a, b) => {
+    if (a === 0n || b === 0n) return 0n;
+    return (a * b) / gcdBigInt(a, b);
   };
 
-  let ekp = 1;
+  // Μετατροπή των τρεχόντων τιμών σε BigInt
+  const b1 = BigInt(num1 || 1);
+  const b2 = BigInt(num2 || 1);
+  const b3 = BigInt(num3 || 1);
+  const b4 = BigInt(num4 || 1);
+
+  let ekpBig = 1n;
   let numbersList = [];
 
   if (activeTab === 2) {
-    ekp = lcm(num1 || 1, num2 || 1);
+    ekpBig = lcmBigInt(b1, b2);
     numbersList = [
       { val: num1, mult: mult1, color: 'text-blue-600', gridBg: 'bg-blue-600', label: '1ος Αριθμός' },
       { val: num2, mult: mult2, color: 'text-indigo-600', gridBg: 'bg-indigo-600', label: '2ος Αριθμός' }
     ];
   } else if (activeTab === 3) {
-    ekp = lcm(lcm(num1 || 1, num2 || 1), num3 || 1);
+    ekpBig = lcmBigInt(lcmBigInt(b1, b2), b3);
     numbersList = [
       { val: num1, mult: mult1, color: 'text-blue-600', gridBg: 'bg-blue-600', label: '1ος Αριθμός' },
       { val: num2, mult: mult2, color: 'text-indigo-600', gridBg: 'bg-indigo-600', label: '2ος Αριθμός' },
       { val: num3, mult: mult3, color: 'text-purple-600', gridBg: 'bg-purple-600', label: '3ος Αριθμός' }
     ];
   } else if (activeTab === 4) {
-    ekp = lcm(lcm(lcm(num1 || 1, num2 || 1), num3 || 1), num4 || 1);
+    ekpBig = lcmBigInt(lcmBigInt(lcmBigInt(b1, b2), b3), b4);
     numbersList = [
       { val: num1, mult: mult1, color: 'text-blue-600', gridBg: 'bg-blue-600', label: '1ος Αριθμός' },
       { val: num2, mult: mult2, color: 'text-indigo-600', gridBg: 'bg-indigo-600', label: '2ος Αριθμός' },
@@ -97,6 +103,11 @@ export default function EkpPage() {
       { val: num4, mult: mult4, color: 'text-pink-600', gridBg: 'bg-pink-600', label: '4ος Αριθμός' }
     ];
   }
+
+  const ekp = Number(ekpBig);
+
+  // Παραγωγή τουλάχιστον 3 κοινών πολλαπλασίων (ΕΚΠ * 1, ΕΚΠ * 2, ΕΚΠ * 3)
+  const commonMultiples = [ekpBig, ekpBig * 2n, ekpBig * 3n];
 
   // Δημιουργία πίνακα 1-100 για τη γραφική αναπαράσταση
   const gridNumbers = Array.from({ length: 100 }, (_, i) => i + 1);
@@ -252,10 +263,22 @@ export default function EkpPage() {
                     </div>
                     <div className="flex flex-wrap gap-1.5 max-h-[100px] overflow-y-auto pr-1">
                       {numObj.mult.map(m => {
-                        const isMkd = m === ekp;
+                        const isEkp = m === ekp;
+                        // Έλεγχος αν είναι οποιοδήποτε άλλο κοινό πολλαπλάσιο (m % ekp === 0)
+                        const isCommonMultiple = m % ekp === 0;
+
                         return (
-                          <span key={m} className={`font-mono font-black px-2.5 py-1 text-xs rounded-lg border transition-all ${isMkd ? 'bg-amber-400 border-amber-500 text-slate-900 shadow-sm scale-105' : 'bg-white border-slate-200 text-slate-500'}`}>
-                            {m} {isMkd && '🏆'}
+                          <span 
+                            key={m} 
+                            className={`font-mono font-black px-2.5 py-1 text-xs rounded-lg border transition-all ${
+                              isEkp 
+                                ? 'bg-amber-400 border-amber-500 text-slate-900 shadow-sm scale-105' 
+                                : isCommonMultiple 
+                                  ? 'bg-amber-100/70 border-amber-300 text-amber-800 shadow-sm' // Αχνό κίτρινο για τα υπόλοιπα κοινά πολλαπλάσια
+                                  : 'bg-white border-slate-200 text-slate-500'
+                            }`}
+                          >
+                            {m} {isEkp && '🏆'} {isCommonMultiple && !isEkp && '⭐'}
                           </span>
                         );
                       })}
@@ -291,7 +314,7 @@ export default function EkpPage() {
                       if (isEkp) {
                         tileStyle = "bg-amber-400 text-slate-950 border border-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.4)] scale-110 z-10 font-black";
                       } else if (isMultipleOfAll) {
-                        tileStyle = "bg-amber-100 text-amber-900 border border-amber-300 font-bold";
+                        tileStyle = "bg-amber-100/50 text-amber-800 border border-amber-300/40 font-bold"; // Αχνό κίτρινο στον πίνακα για κοινά πολλαπλάσια
                       } else {
                         // Αν είναι πολλαπλάσιο τουλάχιστον ενός αριθμού
                         const activeMultiples = numbersList.filter(nObj => num % nObj.val === 0);
@@ -313,13 +336,31 @@ export default function EkpPage() {
                 )}
               </div>
 
-              {/* ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ ΕΚΠ */}
-              <div className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white p-4 rounded-xl text-center shadow-lg font-mono font-black flex items-center justify-center gap-3">
-                <span className="text-xl font-sans">🏆</span>
-                <span className="text-sm font-sans uppercase tracking-wider">Ελάχιστο Κοινό Πολλαπλάσιο:</span>
-                <span className="text-xl md:text-2xl bg-white/20 px-4 py-1 rounded-lg shadow-inner">
-                  Ε.Κ.Π.({currentNumbersString}) = {ekp}
-                </span>
+              {/* ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ ΕΚΠ & ΚΟΙΝΑ ΠΟΛΛΑΠΛΑΣΙΑ */}
+              <div className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white p-5 rounded-2xl text-center shadow-lg font-mono flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-sans">🏆</span>
+                  <div className="text-left">
+                    <span className="text-xs font-sans uppercase tracking-wider text-amber-100 block">Ελάχιστο Κοινό Πολλαπλάσιο:</span>
+                    <span className="text-lg md:text-xl font-black bg-white/20 px-3 py-0.5 rounded-lg shadow-inner inline-block mt-0.5">
+                      Ε.Κ.Π.({currentNumbersString}) = {ekp}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Εμφάνιση των 3 πρώτων κοινών πολλαπλασίων με αυτόματο σπάσιμο γραμμής (break-all / flex-wrap) */}
+                <div className="text-center md:text-right border-t border-white/20 md:border-t-0 pt-3 md:pt-0 w-full md:w-auto">
+                  <span className="text-[10px] font-sans uppercase tracking-wider text-amber-100 block mb-1">
+                    ⭐ Τα 3 πρώτα Κοινά Πολλαπλάσια:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5 justify-center md:justify-end max-w-full break-all">
+                    {commonMultiples.map((cm, idx) => (
+                      <span key={idx} className="bg-white/10 text-white font-black px-2.5 py-1 rounded-lg text-xs border border-white/20">
+                        {cm.toString()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
 
             </div>
