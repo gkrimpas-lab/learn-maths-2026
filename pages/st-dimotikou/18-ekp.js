@@ -258,7 +258,7 @@ export default function EkpPage() {
 
                 {/* Δυναμικά Presets */}
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Γρήγορα Παραδείγματα:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Γρηγορα Παραδειγματα:</span>
                   <div className="grid grid-cols-1 gap-2">
                     {activeTab === 2 && PRESETS_2.map((p, idx) => (
                       <button key={idx} onClick={() => { setNum1(p.n1); setNum2(p.n2); }} className="text-left px-3 py-2 rounded-xl border font-mono font-bold text-xs bg-gray-50 hover:bg-gray-100 text-gray-600 transition-all">{p.label}</button>
@@ -315,7 +315,7 @@ export default function EkpPage() {
               <div className="w-full bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-4">
                 <div className="text-center">
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">
-                    💻 Γραφική Αναπαράσταση: Πίνακας Εκατοντάδας (1-100)
+                    💻 Γραφικη Αναπαρασταση: Πινακας Εκατονταδας (1-100)
                   </span>
                   <p className="text-[10px] text-slate-400 mt-1 leading-normal">
                     Παρατήρησε ποια νούμερα χρωματίζονται. Το **Ε.Κ.Π.** είναι το **πρώτο χρυσό κουτάκι** όπου συναντιούνται όλοι οι αριθμοί!
@@ -364,7 +364,7 @@ export default function EkpPage() {
                 <div className="flex items-center gap-3">
                   <span className="text-2xl font-sans">🏆</span>
                   <div className="text-left">
-                    <span className="text-xs font-sans uppercase tracking-wider text-amber-100 block">Ελάχιστο Κοινό Πολλαπλάσιο:</span>
+                    <span className="text-xs font-sans uppercase tracking-wider text-amber-100 block">Ελαχιστο Κοινο Πολλαπλασιο:</span>
                     <span className="text-lg md:text-xl font-black bg-white/20 px-3 py-0.5 rounded-lg shadow-inner inline-block mt-0.5">
                       Ε.Κ.Π.({currentNumbersString}) = {ekp}
                     </span>
@@ -374,7 +374,7 @@ export default function EkpPage() {
                 {/* Εμφάνιση των 3 πρώτων κοινών πολλαπλασίων με αυτόματο σπάσιμο γραμμής */}
                 <div className="text-center md:text-right border-t border-white/20 md:border-t-0 pt-3 md:pt-0 w-full md:w-auto">
                   <span className="text-[10px] font-sans uppercase tracking-wider text-amber-100 block mb-1">
-                    ⭐ Τα 3 πρώτα Κοινά Πολλαπλάσια:
+                    ⭐ Τα 3 πρωτα Κοινα Πολλαπλασια:
                   </span>
                   <div className="flex flex-wrap gap-1.5 justify-center md:justify-end max-w-full break-all">
                     {commonMultiples.map((cm, idx) => (
