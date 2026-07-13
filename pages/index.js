@@ -13,20 +13,26 @@ export default function Home() {
       </Head>
 
       {/* NAVBAR */}
-      <nav className="bg-white shadow-md sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="text-2xl font-black text-blue-600 tracking-tight">
-            LearnMaths<span className="text-indigo-600">.gr</span>
-          </div>
-          <div className="flex items-center gap-6 font-medium">
-            <a href="#demotiko" className="hover:text-blue-600 transition">Δημοτικό</a>
-            <a href="#gymnasio" className="hover:text-indigo-600 transition">Γυμνάσιο</a>
-            <a href="#protypa" className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition duration-300">
-              🎯 Εισαγωγή σε Πρότυπα
-            </a>
-          </div>
-        </div>
-      </nav>
+<nav className="bg-white shadow-md sticky top-0 z-50">
+  <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div className="text-2xl font-black text-blue-600 tracking-tight">
+      <Link href="/">
+        <span className="cursor-pointer">LearnMaths<span className="text-indigo-600">.gr</span></span>
+      </Link>
+    </div>
+    <div className="flex items-center gap-6 font-medium">
+      <a href="#demotiko" className="hover:text-blue-600 transition">Δημοτικό</a>
+      <a href="#gymnasio" className="hover:text-indigo-600 transition">Γυμνάσιο</a>
+      <a href="#protypa" className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition duration-300">
+        🎯 Εισαγωγή σε Πρότυπα
+      </a>
+      {/* Νέο Link για την Επικοινωνία */}
+      <Link href="/epikoinonia" className="text-gray-600 hover:text-blue-600 font-semibold transition border-l pl-4 border-gray-200">
+        ✉️ Επικοινωνία
+      </Link>
+    </div>
+  </div>
+</nav>
 
       {/* HERO SECTION */}
       <header className="bg-gradient-to-r py-16 text-center text-white from-blue-600 to-indigo-700 shadow-lg">
