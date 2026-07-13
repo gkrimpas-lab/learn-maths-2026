@@ -10,11 +10,15 @@ export default function PollaplasiaPage() {
   const [customNumStr, setCustomNumStr] = useState("");
 
   const handleCustomInputChange = (val) => {
+    // Κρατάμε μόνο ψηφία
     const clean = val.replace(/[^0-9]/g, '');
-    setCustomNumStr(clean);
     
-    if (clean !== '' && Number(clean) > 0) {
-      setSelectedNum(Number(clean));
+    // Περιορισμός αυστηρά έως 10 ψηφία
+    const sliced = clean.slice(0, 10);
+    setCustomNumStr(sliced);
+    
+    if (sliced !== '' && Number(sliced) > 0) {
+      setSelectedNum(Number(sliced));
     }
   };
 
@@ -113,9 +117,9 @@ export default function PollaplasiaPage() {
                   </div>
                 </div>
 
-                {/* Custom Input */}
+                {/* Custom Input (Έως 10 ψηφία) */}
                 <div className="space-y-2 pt-2 border-t border-gray-100">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Ή γράψε έναν δικό σου:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">Ή γράψε έναν δικό σου (έως 10 ψηφία):</span>
                   <input
                     type="text"
                     value={customNumStr}
@@ -126,14 +130,13 @@ export default function PollaplasiaPage() {
                 </div>
               </div>
 
-              {/* Παρουσίαση Πλήρους Δεκάδας και παραπάνω, χωρίς περιοριστικό max-height */}
+              {/* Παρουσίαση Πλήρους Δεκάδας */}
               {selectedNum > 0 && (
                 <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-3 mt-4 lg:mt-0 flex-1">
                   <span className="text-xs font-black text-blue-700 uppercase tracking-wider block border-b border-blue-100 pb-1.5">
                     📈 Η Προπαίδεια του {selectedNum}:
                   </span>
                   <div className="text-xs font-mono text-slate-600 leading-relaxed space-y-1">
-                    {/* Εμφανίζουμε όλη την πρώτη δεκάδα (0 έως 10) άνετα στην οθόνη */}
                     {multipleSteps.slice(0, 11).map((m, idx) => (
                       <div key={idx} className="py-0.5 border-b border-blue-100/30 last:border-0 flex justify-between">
                         <span className="text-slate-400">{selectedNum} × {idx} =</span>
@@ -149,7 +152,6 @@ export default function PollaplasiaPage() {
             {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ (ΕΚΑΤΟΝΤΑΔΑ) */}
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[600px]">
               
-              {/* Δείχνουμε μέχρι και 20 πολλαπλάσια στη σειρά */}
               <div className="w-full text-center mb-6">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Οπτικό Μοτίβο Πολλαπλασίων:</span>
                 <div className="text-base md:text-xl font-black text-indigo-600 mt-1.5 px-4 py-2.5 bg-indigo-50 border border-indigo-100 rounded-xl inline-block max-w-full break-all tracking-wide">
