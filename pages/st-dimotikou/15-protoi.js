@@ -29,9 +29,14 @@ export default function ProtoiPage() {
     }
   };
 
-  const num = parseInt(numberStr, 10) || 0;
+  // Ασφαλής έλεγχος αν ο αριθμός είναι μικρότερος ή ίσος του 100 χρησιμοποιώντας BigInt
+  const currentBigInt = numberStr ? BigInt(numberStr) : 0n;
+  const isUnderOneHundred = currentBigInt <= 100n && currentBigInt > 0n;
+  
+  // Μετατρέπουμε σε κανονικό αριθμό ΜΟΝΟ αν είναι ασφαλές (έως 100) για τη γραφική αναπαράσταση
+  const numForGrid = isUnderOneHundred ? Number(currentBigInt) : 0;
 
-  // Έλεγχος αν ο αριθμός είναι πρώτος (λειτουργεί γρήγορα ακόμα και για μεγάλα BigInt)
+  // Έλεγχος αν ο αριθμός είναι πρώτος (λειτουργεί αστραπιαία για μεγάλα BigInt)
   const checkIsPrime = (nStr) => {
     if (!nStr) return false;
     const n = BigInt(nStr);
@@ -39,19 +44,22 @@ export default function ProtoiPage() {
     if (n === 2n || n === 3n) return true;
     if (n % 2n === 0n || n % 3n === 0n) return false;
     
-    // Έλεγχος μέχρι τη ρίζα του αριθμού (βελτιστοποιημένος αλγόριθμος)
     for (let i = 5n; i * i <= n; i += 6n) {
       if (n % i === 0n || n % (i + 2n) === 0n) return false;
     }
     return true;
   };
 
-  // Εύρεση διαιρετών ΜΟΝΟ αν ο αριθμός είναι μικρός (για αποφυγή crash του browser)
-  const getDivisors = (n) => {
-    if (n < 1 || n > 10000) return [];
+  // Εύρεση διαιρετών ΜΟΝΟ αν ο αριθμός είναι μικρός (έως 10.000) για να μην κολλήσει ο browser
+  const getDivisors = (nStr) => {
+    if (!nStr) return [];
+    const n = BigInt(nStr);
+    if (n < 1n || n > 10000n) return [];
+    
     const divs = [];
-    for (let i = 1; i <= n; i++) {
-      if (n % i === 0) divs.push(i);
+    const target = Number(n);
+    for (let i = 1; i <= target; i++) {
+      if (target % i === 0) divs.push(i);
     }
     return divs;
   };
@@ -59,11 +67,10 @@ export default function ProtoiPage() {
   const isPrime = checkIsPrime(numberStr);
   const isOneOrZero = numberStr === "0" || numberStr === "1" || numberStr === "";
   
-  // Οι διαιρέτες υπολογίζονται και εμφανίζονται μόνο για αριθμούς έως 10.000
-  const showDivisorsList = num > 0 && num <= 10000;
-  const divisors = showDivisorsList ? getDivisors(num) : [];
+  const showDivisorsList = currentBigInt > 0n && currentBigInt <= 10000n;
+  const divisors = showDivisorsList ? getDivisors(numberStr) : [];
 
-  // Εύρεση όλων των ζευγαριών για τη γραφική αναπαράσταση (ΜΟΝΟ έως το 100)
+  // Εύρεση όλων των ζευγαριών για τη γραφική αναπαράσταση (ΜΟΝΟ για τιμές έως 100)
   const getRectangles = (n) => {
     if (n < 1 || n > 100) return [];
     const rects = [];
@@ -75,7 +82,7 @@ export default function ProtoiPage() {
     return rects;
   };
 
-  const rectangles = getRectangles(num);
+  const rectangles = getRectangles(numForGrid);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -109,7 +116,7 @@ export default function ProtoiPage() {
                     <span>📖</span> Πρώτοι και Σύνθετοι Αριθμοί
                   </h2>
                   <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                    • <strong>Πρώτοι αριθμοί</strong> ονομάζονται οι φυσικοί αριθμοί που είναι μεγαλύτεροι από το 1 και έχουν <strong>μόνο δύο διαιρέτες</strong>: το 1 και τον εαυτό τους (π.χ. 2, 3, 5, 7, 11...).
+                    • <strong>Πρώτοι αριθμοί</strong> ονομάζονται οι φυσικοί αριθμοί που είναι μεγαλύτεροι από το 1 και έχουν <strong>μόνοpack δύο διαιρέτες</strong>: το 1 και τον εαυτό τους (π.χ. 2, 3, 5, 7, 11...).
                   </p>
                   <p className="text-gray-500 text-sm md:text-base leading-relaxed">
                     • <strong>Σύνθετοι αριθμοί</strong> ονομάζονται οι αριθμοί που έχουν <strong>περισσότερους από δύο διαιρέτες</strong> (π.χ. 4, 6, 8, 9, 10...).
@@ -170,7 +177,7 @@ export default function ProtoiPage() {
               
               {/* ΤΑΥΤΟΤΗΤΑ ΑΡΙΘΜΟΥ */}
               <div className="w-full text-center mb-6">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Αναλυση για τον Αριθμο:</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Ανάλυση για τον Αριθμό:</span>
                 <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-8 py-2 rounded-xl border border-indigo-100 inline-block mt-2 tracking-widest max-w-full break-all">
                   {numberStr || "—"}
                 </div>
@@ -194,7 +201,7 @@ export default function ProtoiPage() {
                 )}
               </div>
 
-              {/* ΔΙAΙΡΕΤΕΣ (Μόνο για αριθμούς έως 10.000) */}
+              {/* ΔΙAΙΡΕΤΕΣ */}
               {numberStr && !isOneOrZero && (
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2 mb-6">
                   <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -211,8 +218,8 @@ export default function ProtoiPage() {
                       </div>
                       <p className="text-[11px] text-slate-400 pt-1">
                         {isPrime 
-                          ? `Ο αριθμός ${num} έχει ακριβώς 2 διαιρέτες, γι' αυτό είναι Πρώτος!` 
-                          : `Ο αριθμός ${num} έχει ${divisors.length} διαιρέτες, γι' αυτό είναι Σύνθετος!`}
+                          ? `Ο αριθμός ${numberStr} έχει ακριβώς 2 διαιρέτες, γι' αυτό είναι Πρώτος!` 
+                          : `Ο αριθμός ${numberStr} έχει ${divisors.length} διαιρέτες, γι' αυτό είναι Σύνθετος!`}
                       </p>
                     </>
                   ) : (
@@ -229,7 +236,7 @@ export default function ProtoiPage() {
               <div className="w-full flex-1 bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                    💻 Γραφικη Αναπαρασταση: Ορθογωνιοι Σχηματισμοι
+                    💻 Γραφική Αναπαράσταση: Ορθογώνιοι Σχηματισμοί
                   </span>
                 </div>
 
@@ -238,21 +245,21 @@ export default function ProtoiPage() {
                     <div className="text-center py-6 text-xs text-slate-500">
                       Οι αριθμοί 0 και 1 δεν μπορούν να σχηματίσουν ορθογώνια πλέγματα.
                     </div>
-                  ) : num > 100 ? (
-                    /* Το κατάλληλο μήνυμα για αριθμούς πάνω από 100 */
+                  ) : currentBigInt > 100n ? (
+                    /* Μήνυμα για αριθμούς πάνω από 100 */
                     <div className="text-center py-8 px-4 max-w-md mx-auto space-y-2">
                       <div className="text-3xl">📐</div>
-                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμος ειναι πολυ μεγσλος για κουτακια!</h4>
+                      <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμός είναι πολύ μεγάλος για κουτάκια!</h4>
                       <p className="text-xs text-slate-400 leading-relaxed">
                         Η γραφική αναπαράσταση με κουτάκια λειτουργεί για αριθμούς <strong>έως το 100</strong>. 
                         Για μεγαλύτερους αριθμούς, τα κουτάκια θα γίνονταν τόσο μικρά που δεν θα μπορούσες να τα μετρήσεις εύκολα!
                       </p>
                     </div>
-                  ) : num > 0 && rectangles.length > 0 ? (
+                  ) : numForGrid > 0 && rectangles.length > 0 ? (
                     rectangles.map((rect, idx) => (
                       <div key={idx} className="space-y-2 border-b border-slate-800 pb-6 last:border-0 last:pb-0 flex flex-col items-center">
                         <div className="text-xs font-mono text-slate-400">
-                          Διάταξη: <span className="text-yellow-400 font-bold">{rect.rows} γραμμές</span> × <span className="text-blue-400 font-bold">{rect.cols} στήλες</span> = {num}
+                          Διάταξη: <span className="text-yellow-400 font-bold">{rect.rows} γραμμές</span> × <span className="text-blue-400 font-bold">{rect.cols} στήλες</span> = {numForGrid}
                         </div>
                         
                         <div 
@@ -262,7 +269,7 @@ export default function ProtoiPage() {
                             width: `${Math.min(rect.cols * 24, 280)}px` 
                           }}
                         >
-                          {Array.from({ length: num }).map((_, i) => (
+                          {Array.from({ length: numForGrid }).map((_, i) => (
                             <div 
                               key={i} 
                               className={`h-4 rounded-sm transition-all ${isPrime ? 'bg-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)]' : 'bg-amber-500/80 shadow-[0_0_8px_rgba(245,158,11,0.3)]'}`}
@@ -278,7 +285,7 @@ export default function ProtoiPage() {
                   )}
                 </div>
 
-                {num > 1 && num <= 100 && (
+                {numForGrid > 1 && numForGrid <= 100 && (
                   <div className="text-center text-[11px] font-medium text-slate-400 border-t border-slate-800 pt-3">
                     {isPrime ? (
                       <span>💡 Παρατήρησε ότι στους <strong>Πρώτους</strong> αριθμούς μπορείς να φτιάξεις μόνο <strong>2 σχήματα</strong> (μια μεγάλη γραμμή ή μια μεγάλη στήλη)!</span>
