@@ -18,8 +18,9 @@ export default function STDimotikouMenu() {
     { id: '11-stroggilopoiisi', label: '🍕 11. Στρογγυλοποίηση Αριθμών', href: '/st-dimotikou/11-stroggilopoiisi' },
     { id: '12-diairetes', label: '🍕 12. Διαιρέτες Αριθμού', href: '/st-dimotikou/12-diairetes' },
     { id: '13-mkd', label: '🍕 13. Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)', href: '/st-dimotikou/13-mkd' },
-    { id: '14-kritiria-diairetotitas.js', label: '🍕 14. Κριτήρια Διαιρετότητας', href: '/st-dimotikou/14-kritiria-diairetotitas' },
-    { id: '15-protoi.js', label: '🍕 15. Πρώτοι - Σύνθετοι Αριθμοί', href: '/st-dimotikou/15-protoi' }
+    { id: '14-kritiria-diairetotitas', label: '🍕 14. Κριτήρια Διαιρετότητας', href: '/st-dimotikou/14-kritiria-diairetotitas' },
+    { id: '15-protoi', label: '🍕 15. Πρώτοι - Σύνθετοι Αριθμοί', href: '/st-dimotikou/15-protoi' },
+    { id: '16-paragontopoiisi', label: '🍕 16. Παραγοντοποίηση Φυσικών Αριθμών', href: '/st-dimotikou/16-paragontopoiisi' }
   ];
 
   return (
