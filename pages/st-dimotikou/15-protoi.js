@@ -116,7 +116,7 @@ export default function ProtoiPage() {
                     <span>📖</span> Πρώτοι και Σύνθετοι Αριθμοί
                   </h2>
                   <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                    • <strong>Πρώτοι αριθμοί</strong> ονομάζονται οι φυσικοί αριθμοί που είναι μεγαλύτεροι από το 1 και έχουν <strong>μόνοpack δύο διαιρέτες</strong>: το 1 και τον εαυτό τους (π.χ. 2, 3, 5, 7, 11...).
+                    • <strong>Πρώτοι αριθμοί</strong> ονομάζονται οι φυσικοί αριθμοί που είναι μεγαλύτεροι από το 1 και έχουν <strong>μόνο δύο διαιρέτες</strong>: το 1 και τον εαυτό τους (π.χ. 2, 3, 5, 7, 11...).
                   </p>
                   <p className="text-gray-500 text-sm md:text-base leading-relaxed">
                     • <strong>Σύνθετοι αριθμοί</strong> ονομάζονται οι αριθμοί που έχουν <strong>περισσότερους από δύο διαιρέτες</strong> (π.χ. 4, 6, 8, 9, 10...).
@@ -232,7 +232,7 @@ export default function ProtoiPage() {
                 </div>
               )}
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ (Έως το 100) */}
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
               <div className="w-full flex-1 bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
@@ -240,13 +240,13 @@ export default function ProtoiPage() {
                   </span>
                 </div>
 
-                <div className="space-y-8 my-auto overflow-y-auto max-h-[320px] pr-2 py-4 flex flex-col justify-center">
+                {/* Διορθωμένο container με overflow-y-auto για να φαίνονται όλοι οι συνδυασμοί */}
+                <div className="space-y-8 my-auto overflow-y-auto max-h-[360px] pr-2 py-4 w-full">
                   {isOneOrZero ? (
                     <div className="text-center py-6 text-xs text-slate-500">
                       Οι αριθμοί 0 και 1 δεν μπορούν να σχηματίσουν ορθογώνια πλέγματα.
                     </div>
                   ) : currentBigInt > 100n ? (
-                    /* Μήνυμα για αριθμούς πάνω από 100 */
                     <div className="text-center py-8 px-4 max-w-md mx-auto space-y-2">
                       <div className="text-3xl">📐</div>
                       <h4 className="text-sm font-black text-amber-400 uppercase tracking-wide">Ο αριθμός είναι πολύ μεγάλος για κουτάκια!</h4>
@@ -257,22 +257,25 @@ export default function ProtoiPage() {
                     </div>
                   ) : numForGrid > 0 && rectangles.length > 0 ? (
                     rectangles.map((rect, idx) => (
-                      <div key={idx} className="space-y-2 border-b border-slate-800 pb-6 last:border-0 last:pb-0 flex flex-col items-center">
-                        <div className="text-xs font-mono text-slate-400">
+                      <div key={idx} className="space-y-3 border-b border-slate-800 pb-6 last:border-0 last:pb-0 flex flex-col items-center w-full">
+                        <div className="text-xs font-mono text-slate-400 bg-slate-800/50 px-3 py-1 rounded-full border border-slate-800">
                           Διάταξη: <span className="text-yellow-400 font-bold">{rect.rows} γραμμές</span> × <span className="text-blue-400 font-bold">{rect.cols} στήλες</span> = {numForGrid}
                         </div>
                         
+                        {/* Διορθώθηκε το inline στυλ για να υπολογίζει σωστά τις στήλες ανά διάταξη */}
                         <div 
-                          className="grid gap-1 bg-slate-800 p-2 rounded-lg border border-slate-700"
+                          className="grid gap-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800 justify-center shadow-inner"
                           style={{ 
                             gridTemplateColumns: `repeat(${rect.cols}, minmax(0, 1fr))`,
-                            width: `${Math.min(rect.cols * 24, 280)}px` 
+                            width: '100%',
+                            maxWidth: `${Math.min(rect.cols * 20 + (rect.cols - 1) * 4 + 20, 450)}px`
                           }}
                         >
                           {Array.from({ length: numForGrid }).map((_, i) => (
                             <div 
                               key={i} 
-                              className={`h-4 rounded-sm transition-all ${isPrime ? 'bg-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)]' : 'bg-amber-500/80 shadow-[0_0_8px_rgba(245,158,11,0.3)]'}`}
+                              className={`h-3.5 rounded-sm transition-all ${isPrime ? 'bg-emerald-500/80 shadow-[0_0_6px_rgba(16,185,129,0.2)]' : 'bg-amber-500/80 shadow-[0_0_6px_rgba(245,158,11,0.2)]'}`}
+                              style={{ minWidth: '8px' }}
                             />
                           ))}
                         </div>
