@@ -183,7 +183,7 @@ export default function ProtoiPage() {
               
               {/* ΤΑΥΤΟΤΗΤΑ ΑΡΙΘΜΟΥ */}
               <div className="w-full text-center mb-6">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Ανάλυση για τον Αριθμό:</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Αναλυση για τον Αριθμο:</span>
                 <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-8 py-2 rounded-xl border border-indigo-100 inline-block mt-2 tracking-widest max-w-full break-all">
                   {numberStr || "—"}
                 </div>
@@ -211,7 +211,7 @@ export default function ProtoiPage() {
               {numberStr && !isOneOrZero && (
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2 mb-6">
                   <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    🔍 Πληροφορίες Διαιρετών:
+                    🔍 Πληροφοριες Διαιρετων:
                   </div>
                   <div className="flex flex-wrap gap-2 pt-1 max-h-[120px] overflow-y-auto pr-1">
                     {divisors.map(d => (
@@ -232,7 +232,7 @@ export default function ProtoiPage() {
               <div className="w-full flex-1 bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                    💻 Γραφική Αναπαράσταση: Ορθογώνιοι Σχηματισμοί
+                    💻 Γραφικη Αναπαρασταση: Ορθογωνιοι Σχηματισμοι
                   </span>
                 </div>
 
