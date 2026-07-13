@@ -21,7 +21,8 @@ export default function STDimotikouMenu() {
     { id: '14-kritiria-diairetotitas', label: '🍕 14. Κριτήρια Διαιρετότητας', href: '/st-dimotikou/14-kritiria-diairetotitas' },
     { id: '15-protoi', label: '🍕 15. Πρώτοι - Σύνθετοι Αριθμοί', href: '/st-dimotikou/15-protoi' },
     { id: '16-paragontopoiisi', label: '🍕 16. Παραγοντοποίηση Φυσικών Αριθμών', href: '/st-dimotikou/16-paragontopoiisi' },
-    { id: '17-pollaplasia', label: '🍕 17. Πολλαπλάσια Αριθμού', href: '/st-dimotikou/17-pollaplasia' }
+    { id: '17-pollaplasia', label: '🍕 17. Πολλαπλάσια Αριθμού', href: '/st-dimotikou/17-pollaplasia' },
+    { id: '18-ekp', label: '🍕 18. Ελάχιστο Κοινό Πολλαπλάσιο (ΕΚΠ)', href: '/st-dimotikou/18-ekp' }
   ];
 
   return (
