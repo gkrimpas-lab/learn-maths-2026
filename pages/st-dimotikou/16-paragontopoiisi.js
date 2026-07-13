@@ -54,25 +54,39 @@ export default function ParagontopoiisiPage() {
   const factors = getPrimeFactors(numberStr);
   const cleanExpression = factors.join(' × ');
 
-  // Παραγωγή των βημάτων για το Δεντροδιάγραμμα ακριβώς όπως στη ζωγραφιά (Μόνο για n <= 100)
+  // ΔΥΝΑΜΙΚΗ ΠΑΡΑΓΩΓΗ ΕΠΙΠΕΔΩΝ ΔΕΝΤΡΟΥ (Κατεβάζει τους πρώτους αριθμούς προς τα κάτω όπως στη ζωγραφιά)
   const generateTreeSteps = (n) => {
     if (n <= 1 || n > 100) return [];
-    const steps = [];
-    let current = n;
     
-    while (current > 1) {
+    const steps = [];
+    let currentComposite = n;
+    let accumulatedPrimes = []; // Εδώ αποθηκεύονται οι πρώτοι που έχουν ήδη «κλειδώσει»
+    
+    while (currentComposite > 1) {
       let divisor = 2;
-      while (current % divisor !== 0) {
+      while (currentComposite % divisor !== 0) {
         divisor++;
       }
-      const next = current / divisor;
+      const next = currentComposite / divisor;
       
-      // Αν ο επόμενος αριθμός (next) είναι 1, σημαίνει ότι φτάσαμε στο τέλος και δεν χρειάζεται άλλο κλαδί
-      if (next === 1) break;
+      if (next === 1) {
+        // Αν το επόμενο είναι 1, σημαίνει ότι ο τρέχων αριθμός ήταν ήδη πρώτος στο τελευταίο επίπεδο
+        break;
+      }
 
-      steps.push({ current, divisor, next });
-      current = next;
+      // Δημιουργούμε το τρέχον επίπεδο
+      steps.push({
+        parentValue: currentComposite, // Ποιος αριθμός σπάει σε αυτό το επίπεδο
+        pastPrimes: [...accumulatedPrimes], // Οι πρώτοι που απλά κατεβαίνουν
+        newPrime: divisor, // Ο νέος πρώτος (αριστερό κλαδί)
+        newComposite: next // Ο νέος σύνθετος (δεξί κλαδί)
+      });
+
+      // Αποθηκεύουμε τον νέο πρώτο για τα επόμενα επίπεδα
+      accumulatedPrimes.push(divisor);
+      currentComposite = next;
     }
+    
     return steps;
   };
 
@@ -125,7 +139,7 @@ export default function ParagontopoiisiPage() {
                 <ul className="space-y-1.5 text-xs md:text-sm text-emerald-50 list-disc pl-4 font-medium">
                   <li>Γράφουμε τον αριθμό στην κορυφή του δέντρου.</li>
                   <li>Σε κάθε βήμα, τον χωρίζουμε σε δύο νέα κλαδιά: έναν **πρώτο αριθμό** (αριστερά) και το **υπόλοιπο πηλίκο** (δεξιά).</li>
-                  <li>Συνεχίζουμε να «σπάμε» το δεξί κλαδί μέχρι να μην μπορεί να χωριστεί άλλο!</li>
+                  <li>Οι πρώτοι αριθμοί που βρίσκουμε **κατεβαίνουν αυτούσιοι** σε κάθε επόμενη γραμμή, μέχρι να φτάσουμε στο τελικό γινόμενο!</li>
                 </ul>
               </div>
             </div>
@@ -210,7 +224,7 @@ export default function ParagontopoiisiPage() {
                 </div>
               )}
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ: ΔΕΝΤΡΟ ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗΣ */}
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ: ΠΙΣΤΗ ΑΠΟΔΟΣΗ ΖΩΓΡΑΦΙΑΣ */}
               <div className="w-full flex-1 bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
@@ -218,7 +232,7 @@ export default function ParagontopoiisiPage() {
                   </span>
                 </div>
 
-                <div className="space-y-6 my-auto overflow-y-auto max-h-[380px] pr-2 py-4 w-full flex flex-col items-center justify-center">
+                <div className="space-y-4 my-auto overflow-y-auto max-h-[380px] pr-2 py-4 w-full flex flex-col items-center justify-center font-mono">
                   {isOneOrZero ? (
                     <div className="text-center py-6 text-xs text-slate-500">
                       Δεν υπάρχει δεντροδιάγραμμα για τους αριθμούς 0 και 1.
@@ -237,51 +251,68 @@ export default function ParagontopoiisiPage() {
                       ⭐ Επειδή ο αριθμός <strong>{numberStr}</strong> είναι πρώτος, αποτελεί ήδη το τελικό «κλαδί» και δεν χωρίζεται σε άλλους φυσικούς αριθμούς!
                     </div>
                   ) : treeSteps.length > 0 ? (
-                    /* Καθαρή και ευθυγραμμισμένη σχεδίαση δέντρου, ακριβώς όπως στη ζωγραφιά */
-                    <div className="flex flex-col items-center w-full max-w-sm font-mono">
-                      {treeSteps.map((step, idx) => (
-                        <div key={idx} className="flex flex-col items-center w-full">
-                          
-                          {/* Ο αριθμός-στόχος στην κορυφή του τρέχοντος επιπέδου */}
-                          {idx === 0 && (
-                            <div className="bg-slate-800 border-2 border-amber-400 px-5 py-2 rounded-xl font-black text-base shadow-md mb-1 z-10 min-w-[50px] text-center">
-                              {step.current}
-                            </div>
-                          )}
-                          
-                          {/* Τα κλαδιά (Βέλη / Γραμμές) */}
-                          <div className="flex justify-between w-28 text-slate-500 font-light text-sm tracking-widest h-5 select-none pointer-events-none">
-                            <span>/</span>
-                            <span>\</span>
-                          </div>
+                    /* Εμφάνιση του Δέντρου με κατέβασμα των παραγόντων */
+                    <div className="flex flex-col items-center space-y-2 w-full">
+                      
+                      {/* ΓΡΑΜΜΗ 0: Η Κορυφή του Δέντρου */}
+                      <div className="bg-slate-800 border-2 border-amber-400 px-5 py-2 rounded-xl font-black text-base shadow-md">
+                        {numForVisual}
+                      </div>
 
-                          {/* Οι δύο νέοι κόμβοι/αριθμοί */}
-                          <div className="flex justify-between w-44 items-center">
-                            {/* Αριστερό κλαδί: Ο Πρώτος αριθμός (Κυκλάκι) */}
-                            <div className="bg-emerald-600 text-white font-black text-sm w-9 h-9 rounded-full flex items-center justify-center shadow-md border border-emerald-400 transform hover:scale-110 transition-transform">
-                              {step.divisor}
-                            </div>
+                      {/* Δυναμική σχεδίαση των επόμενων επιπέδων */}
+                      {treeSteps.map((step, idx) => {
+                        const isLastStep = idx === treeSteps.length - 1;
+                        
+                        return (
+                          <div key={idx} className="flex flex-col items-center w-full">
                             
-                            {/* Δεξί κλαδί: Το πηλίκο που συνεχίζει στο επόμενο επίπεδο */}
-                            {idx === treeSteps.length - 1 ? (
-                              /* Αν είναι το τελευταίο βήμα, το δεξί κλαδί γίνεται και αυτό πράσινο κυκλάκι (αφού είναι πλέον πρώτος αριθμός) */
-                              <div className="bg-emerald-600 text-white font-black text-sm w-9 h-9 rounded-full flex items-center justify-center shadow-md border border-emerald-400 transform hover:scale-110 transition-transform">
-                                {step.next}
+                            {/* Σχεδίαση των βελών/κλαδιών ΜΟΝΟ για το κομμάτι που σπάει */}
+                            <div className="flex justify-center w-full select-none pointer-events-none text-slate-600 text-sm tracking-widest h-4">
+                              {/* Κενό για τους παλιούς πρώτους που απλά κατεβαίνουν κάθετα */}
+                              <div className="flex gap-4 pr-6">
+                                {step.pastPrimes.map((_, pIdx) => (
+                                  <div key={pIdx} className="w-9 text-center text-slate-700">|</div>
+                                ))}
                               </div>
-                            ) : (
-                              /* Αν έχει κι άλλο επίπεδο, παραμένει κουτάκι που θα «σπάσει» παρακάτω */
-                              <div className="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl font-black text-sm text-slate-300 min-w-[40px] text-center">
-                                {step.next}
+                              {/* Τα κλαδιά / \ για το τρέχον σπάσιμο */}
+                              <div className="w-24 flex justify-between">
+                                <span>/</span>
+                                <span>\</span>
                               </div>
-                            )}
-                          </div>
+                            </div>
 
-                          {/* Μικρή απόσταση πριν το επόμενο «σπάσιμο» (εφόσον δεν είναι το τελευταίο επίπεδο) */}
-                          {idx < treeSteps.length - 1 && (
-                            <div className="h-2 w-[2px] bg-transparent"></div>
-                          )}
-                        </div>
-                      ))}
+                            {/* Τα στοιχεία της τρέχουσας οριζόντιας γραμμής */}
+                            <div className="flex items-center justify-center gap-4 w-full">
+                              
+                              {/* 1. Οι παλιοί πρώτοι αριθμοί που κατεβαίνουν αυτούσιοι (Κυκλάκια) */}
+                              {step.pastPrimes.map((pVal, pIdx) => (
+                                <div key={pIdx} className="bg-emerald-600/50 text-white/70 font-black text-sm w-9 h-9 rounded-full flex items-center justify-center border border-emerald-500/30">
+                                  {pVal}
+                                </div>
+                              ))}
+
+                              {/* 2. Ο νέος πρώτος αριθμός από το τρέχον σπάσιμο (Πράσινο Κυκλάκι) */}
+                              <div className="bg-emerald-600 text-white font-black text-sm w-9 h-9 rounded-full flex items-center justify-center shadow-md border border-emerald-400 transform hover:scale-110 transition-transform">
+                                {step.newPrime}
+                              </div>
+
+                              {/* 3. Το δεξί μέρος της διακλάδωσης */}
+                              {isLastStep ? (
+                                /* Στο τελευταίο επίπεδο, και το δεξί κομμάτι είναι πλέον πρώτος (Πράσινο Κυκλάκι) */
+                                <div className="bg-emerald-600 text-white font-black text-sm w-9 h-9 rounded-full flex items-center justify-center shadow-md border border-emerald-400 transform hover:scale-110 transition-transform">
+                                  {step.newComposite}
+                                </div>
+                              ) : (
+                                /* Στα ενδιάμεσα επίπεδα, είναι σύνθετος αριθμός (Κουτάκι) που θα σπάσει παρακάτω */
+                                <div className="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl font-black text-sm text-slate-300 min-w-[40px] text-center">
+                                  {step.newComposite}
+                                </div>
+                              )}
+
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="text-center py-6 text-xs text-slate-500">
@@ -292,7 +323,7 @@ export default function ParagontopoiisiPage() {
 
                 {!isOneOrZero && currentBigInt <= 100n && !isPrime && (
                   <div className="text-center text-[11px] font-medium text-slate-400 border-t border-slate-800 pt-3">
-                    <span>💡 Παρατήρησε ότι όλα τα **πράσινα κυκλάκια** (τα τελειώματα των κλαδιών) είναι οι πρώτοι αριθμοί της ανάλυσης!</span>
+                    <span>💡 Κοίταξε την τελευταία γραμμή! Όλα τα **πράσινα κυκλάκια** μαζί σχηματίζουν ακριβώς την τελική ανάλυση: {cleanExpression} = {numberStr}!</span>
                   </div>
                 )}
               </div>
