@@ -224,7 +224,7 @@ export default function ParagontopoiisiPage() {
                 </div>
               )}
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ: ΔΕΝΤΡΟ ΕΩΣ 10.000 */}
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
               <div className="w-full flex-1 bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
@@ -251,7 +251,6 @@ export default function ParagontopoiisiPage() {
                       ⭐ Επειδή ο αριθμός <strong>{numberStr}</strong> είναι πρώτος, αποτελεί ήδη το τελικό «κλαδί» και δεν χωρίζεται σε άλλους φυσικούς αριθμούς!
                     </div>
                   ) : treeSteps.length > 0 ? (
-                    /* Εμφάνιση του Δέντρου με κατέβασμα των παραγόντων */
                     <div className="flex flex-col items-center space-y-2 w-full py-2">
                       
                       {/* ΓΡΑΜΜΗ 0: Η Κορυφή του Δέντρου */}
@@ -266,15 +265,13 @@ export default function ParagontopoiisiPage() {
                         return (
                           <div key={idx} className="flex flex-col items-center w-full">
                             
-                            {/* Σχεδίαση των βελών/κλαδιών ΜΟΝΟ για το κομμάτι που σπάει */}
+                            {/* Σχεδίαση των βελών/κλαδιών */}
                             <div className="flex justify-center w-full select-none pointer-events-none text-slate-600 text-sm tracking-widest h-4">
-                              {/* Κενό για τους παλιούς πρώτους που απλά κατεβαίνουν κάθετα */}
                               <div className="flex gap-4 pr-6">
                                 {step.pastPrimes.map((_, pIdx) => (
                                   <div key={pIdx} className="w-9 text-center text-slate-700">|</div>
                                 ))}
                               </div>
-                              {/* Τα κλαδιά / \ για το τρέχον σπάσιμο */}
                               <div className="w-24 flex justify-between">
                                 <span>/</span>
                                 <span>\</span>
@@ -284,26 +281,24 @@ export default function ParagontopoiisiPage() {
                             {/* Τα στοιχεία της τρέχουσας οριζόντιας γραμμής */}
                             <div className="flex items-center justify-center gap-4 w-full">
                               
-                              {/* 1. Οι παλιοί πρώτοι αριθμοί που κατεβαίνουν αυτούσιοι (Κυκλάκια) */}
+                              {/* 1. Οι παλιοί πρώτοι αριθμοί που κατεβαίνουν αυτούσιοι */}
                               {step.pastPrimes.map((pVal, pIdx) => (
                                 <div key={pIdx} className="bg-emerald-600/50 text-white/70 font-black text-sm w-9 h-9 rounded-full flex items-center justify-center border border-emerald-500/30">
                                   {pVal}
                                 </div>
                               ))}
 
-                              {/* 2. Ο νέος πρώτος αριθμός από το τρέχον σπάσιμο (Πράσινο Κυκλάκι) */}
+                              {/* 2. Ο νέος πρώτος αριθμός */}
                               <div className="bg-emerald-600 text-white font-black text-sm w-9 h-9 rounded-full flex items-center justify-center shadow-md border border-emerald-400 transform hover:scale-110 transition-transform">
                                 {step.newPrime}
                               </div>
 
                               {/* 3. Το δεξί μέρος της διακλάδωσης */}
                               {isLastStep ? (
-                                /* Στο τελευταίο επίπεδο, και το δεξί κομμάτι είναι πλέον πρώτος (Πράσινο Κυκλάκι) */}
                                 <div className="bg-emerald-600 text-white font-black text-sm w-9 h-9 rounded-full flex items-center justify-center shadow-md border border-emerald-400 transform hover:scale-110 transition-transform">
                                   {step.newComposite}
                                 </div>
                               ) : (
-                                /* Στα ενδιάμεσα επίπεδα, είναι σύνθετος αριθμός (Κουτάκι) που θα σπάσει παρακάτω */
                                 <div className="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl font-black text-sm text-slate-300 min-w-[40px] text-center">
                                   {step.newComposite}
                                 </div>
