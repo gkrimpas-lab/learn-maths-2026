@@ -273,7 +273,7 @@ export default function EkpProtoiPage() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center bg-slate-50 p-6 rounded-2xl border border-slate-100">
                 {numbersList.map((numObj, index) => (
                   <div key={index} className="flex flex-col items-center space-y-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm w-full max-w-[160px]">
-                    <span className={`text-xs font-black uppercase ${numObj.color}`}>{numObj.label}</span>
+                    <span className={`text-xs font-black ${numObj.color}`}>{numObj.label}</span>
                     
                     {/* Η Κλασική Κάθετη Γραμμή */}
                     <div className="font-mono text-base md:text-lg">
