@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Μέγιστος αριθμός για εισαγωγή (όριο το 1000 για να είναι εύκολα αναγνώσιμη η ανάλυση)
+// Μέγιστος αριθμός για εισαγωγή (όριο το 1000)
 const MAX_ALLOWED_NUMBER = 1000;
 
 const PRESETS_2 = [
@@ -53,18 +53,22 @@ export default function EkpProtoiPage() {
   const [num2, setNum2] = useState(18);
   const [num3, setNum3] = useState(15);
 
-  const handleInputChange = (setter, val) => {
+  const handleInputChange = (setter, currentVal, val) => {
     const clean = val.replace(/[^0-9]/g, '');
+    
     if (clean === '') {
       setter('');
-    } else {
-      const n = Number(clean);
-      if (n > MAX_ALLOWED_NUMBER) {
-        setter(MAX_ALLOWED_NUMBER);
-      } else {
-        setter(n);
-      }
+      return;
     }
+    
+    const n = Number(clean);
+    // ΑΛΛΑΓΗ ΕΔΩ: Αν η νέα τιμή ξεπερνάει το 1000, αγνοούμε την αλλαγή 
+    // και κρατάμε την προηγούμενη (τρέχουσα) τιμή.
+    if (n > MAX_ALLOWED_NUMBER) {
+      return; 
+    }
+    
+    setter(n);
   };
 
   const f1 = factorize(num1);
@@ -222,7 +226,7 @@ export default function EkpProtoiPage() {
                     <input
                       type="text"
                       value={num1}
-                      onChange={(e) => handleInputChange(setNum1, e.target.value)}
+                      onChange={(e) => handleInputChange(setNum1, num1, e.target.value)}
                       className="w-24 text-lg font-mono font-black text-center p-1.5 bg-white border-2 border-blue-200 rounded-lg text-blue-600 outline-none focus:border-blue-500"
                     />
                   </div>
@@ -231,7 +235,7 @@ export default function EkpProtoiPage() {
                     <input
                       type="text"
                       value={num2}
-                      onChange={(e) => handleInputChange(setNum2, e.target.value)}
+                      onChange={(e) => handleInputChange(setNum2, num2, e.target.value)}
                       className="w-24 text-lg font-mono font-black text-center p-1.5 bg-white border-2 border-indigo-200 rounded-lg text-indigo-600 outline-none focus:border-indigo-500"
                     />
                   </div>
@@ -241,7 +245,7 @@ export default function EkpProtoiPage() {
                       <input
                         type="text"
                         value={num3}
-                        onChange={(e) => handleInputChange(setNum3, e.target.value)}
+                        onChange={(e) => handleInputChange(setNum3, num3, e.target.value)}
                         className="w-24 text-lg font-mono font-black text-center p-1.5 bg-white border-2 border-purple-200 rounded-lg text-purple-600 outline-none focus:border-purple-500"
                       />
                     </div>
