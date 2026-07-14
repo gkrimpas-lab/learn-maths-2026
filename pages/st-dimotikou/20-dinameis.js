@@ -101,98 +101,74 @@ export default function DinameisPage() {
       );
     }
 
-    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3) - ΠΙΣΤΗ ΙΣΟΜΕΤΡΙΚΗ ΑΠΟΔΟΣΗ
+    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3) - ΠΕΝΤΑΚΑΘΑΡΟ, ΔΥΝΑΜΙΚΟ VECTOR SVG
     if (activeExponent === 3) {
-      const size = Math.min(activeBase, 5); // Όριο εμφάνισης τα 5 κυβάκια για να χωράει στην οθόνη
+      const N = activeBase;
       
-      // Σταθερές διαστάσεις ισομετρικού σχεδιασμού (ακριβώς όπως στη φωτογραφία σου)
-      const w = 24;  // πλάτος
-      const h = 24;  // ύψος
-      const isoX = 20; // οριζόντια μετατόπιση (w * cos(30°))
-      const isoY = 12; // κατακόρυφη μετατόπιση (h * sin(30°))
+      // Διαστάσεις ισομετρικού projection για κάθε κυβάκι (λόγος 2:1 για τέλεια ευθυγράμμιση)
+      const dx = 16; 
+      const dy = 9;  
+      const h = 18;  
 
-      // Υπολογισμός συνολικού μεγέθους container
-      const containerWidth = (size * 2) * isoX + 40;
-      const containerHeight = (size * 2) * isoY + (size * h) + 40;
+      // Δυναμικός υπολογισμός ορίων SVG με βάση την επιλεγμένη βάση
+      const pad = 20;
+      const svgW = (N * 2) * dx + pad * 2;
+      const svgH = N * h + (N * 2) * dy + pad * 2;
+
+      // Το κεντρικό σημείο αναφοράς (κάτω κέντρο του SVG)
+      const originX = svgW / 2;
+      const originY = svgH - pad - (N * dy);
+
+      // Δημιουργία των κύβων με σειρά από πίσω προς τα εμπρός (Painter's Algorithm)
+      const cubes = [];
+      for (let y = 0; y < N; y++) {
+        for (let z = 0; z < N; z++) {
+          for (let x = 0; x < N; x++) {
+            const cx = originX + (x - z) * dx;
+            const cy = originY - y * h + (x + z) * dy;
+            cubes.push({ cx, cy, key: `${x}-${y}-${z}` });
+          }
+        }
+      }
 
       return (
-        <div className="space-y-4 py-4 w-full overflow-x-auto">
+        <div className="space-y-4 py-4 w-full">
           <span className="text-xs font-bold text-purple-400 uppercase tracking-wider block">📦 Όγκος Κύβου ({activeBase} × {activeBase} × {activeBase} = {result} κυβάκια):</span>
           
-          <div 
-            className="relative bg-slate-950 rounded-2xl border border-slate-800 mx-auto flex items-center justify-center shadow-inner overflow-hidden"
-            style={{ width: '100%', maxWidth: '450px', height: `${Math.min(containerHeight, 350)}px` }}
-          >
-            {/* Ισομετρικό Σύστημα Συντεταγμένων */}
-            <div 
-              className="absolute"
-              style={{
-                width: `${containerWidth}px`,
-                height: `${containerHeight}px`,
-                top: '55%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)'
-              }}
+          <div className="bg-slate-950 rounded-2xl border border-slate-800 p-6 flex items-center justify-center shadow-inner overflow-hidden">
+            <svg 
+              viewBox={`0 0 ${svgW} ${svgH}`} 
+              width="100%" 
+              style={{ maxWidth: '340px', height: 'auto' }}
+              className="overflow-visible"
             >
-              {/* Σχεδιάζουμε από πίσω προς τα εμπρός (z, y, x) για σωστό overlap */}
-              {Array.from({ length: size }).map((_, z) =>
-                Array.from({ length: size }).map((_, y) =>
-                  Array.from({ length: size }).map((_, x) => {
-                    
-                    // Μαθηματικός μετασχηματισμός Isometric προβολής των x, y, z σε 2D Pixel Offsets
-                    const left = (size - 1 - x) * isoX + (z * isoX);
-                    const top = (x * isoY) + (z * isoY) + ((size - 1 - y) * h) + 20;
-
-                    return (
-                      <div
-                        key={`${x}-${y}-${z}`}
-                        className="absolute"
-                        style={{
-                          left: `${left}px`,
-                          top: `${top}px`,
-                          width: `${w}px`,
-                          height: `${h}px`,
-                        }}
-                      >
-                        {/* 1. Μπροστινή/Αριστερή Έδρα */}
-                        <div 
-                          className="absolute w-[14px] h-[24px] bg-purple-600 border border-purple-500/30 shadow-sm"
-                          style={{
-                            transform: 'skewY(30deg)',
-                            left: '0px',
-                            top: '4px'
-                          }}
-                        />
-                        {/* 2. Μπροστινή/Δεξιά Έδρα */}
-                        <div 
-                          className="absolute w-[14px] h-[24px] bg-purple-700 border border-purple-600/30 shadow-sm"
-                          style={{
-                            transform: 'skewY(-30deg)',
-                            left: '14px',
-                            top: '4px'
-                          }}
-                        />
-                        {/* 3. Πάνω Έδρα (Ρόμβος) */}
-                        <div 
-                          className="absolute w-[20px] h-[20px] bg-purple-400 border border-purple-300/40 shadow-sm"
-                          style={{
-                            transform: 'rotate(45deg) scale(1, 0.58)',
-                            left: '4px',
-                            top: '-3px'
-                          }}
-                        />
-                      </div>
-                    );
-                  })
-                )
-              )}
-            </div>
+              {cubes.map(({ cx, cy, key }) => (
+                <g key={key}>
+                  {/* 1. Αριστερή Έδρα */}
+                  <path 
+                    d={`M ${cx - dx} ${cy} L ${cx} ${cy + dy} L ${cx} ${cy + dy - h} L ${cx - dx} ${cy - h} Z`}
+                    fill="#7c3aed"
+                    stroke="#5b21b6"
+                    strokeWidth="0.5"
+                  />
+                  {/* 2. Δεξιά Έδρα */}
+                  <path 
+                    d={`M ${cx} ${cy + dy} L ${cx + dx} ${cy} L ${cx + dx} ${cy - h} L ${cx} ${cy + dy - h} Z`}
+                    fill="#6d28d9"
+                    stroke="#5b21b6"
+                    strokeWidth="0.5"
+                  />
+                  {/* 3. Πάνω Έδρα */}
+                  <path 
+                    d={`M ${cx} ${cy + dy - h} L ${cx + dx} ${cy - h} L ${cx} ${cy - dy - h} L ${cx - dx} ${cy - h} Z`}
+                    fill="#a78bfa"
+                    stroke="#5b21b6"
+                    strokeWidth="0.5"
+                  />
+                </g>
+              ))}
+            </svg>
           </div>
-          {activeBase > 5 && (
-            <p className="text-[10px] text-amber-500 italic max-w-xs mx-auto">
-              * Για λόγους καθαρής εμφάνισης στην οθόνη, απεικονίζεται ένας κύβος 5×5×5, αλλά το μαθηματικό σου αποτέλεσμα υπολογίζεται σωστά για {activeBase}³!
-            </p>
-          )}
         </div>
       );
     }
