@@ -5,7 +5,7 @@ import { LAYOUT } from '../../shared/layout-config';
 
 // Όρια εισαγωγής για να είναι εφικτή η οπτική/γραφική αναπαράσταση
 const MAX_BASE = 10;
-const MAX_EXPONENT = 5;
+const MAX_EXPONENT = 10;
 
 export default function DinameisPage() {
   const [base, setBase] = useState(3);
