@@ -23,7 +23,8 @@ export default function STDimotikouMenu() {
     { id: '16-paragontopoiisi', label: '🍕 16. Παραγοντοποίηση Φυσικών Αριθμών', href: '/st-dimotikou/16-paragontopoiisi' },
     { id: '17-pollaplasia', label: '🍕 17. Πολλαπλάσια Αριθμού', href: '/st-dimotikou/17-pollaplasia' },
     { id: '18-ekp', label: '🍕 18. Ελάχιστο Κοινό Πολλαπλάσιο (ΕΚΠ)', href: '/st-dimotikou/18-ekp' },
-    { id: '19-ekp-protoi', label: '🍕 19. ΕΚΠ - Αλγόριθμος Πρώτοι Αριθμοί', href: '/st-dimotikou/19-ekp-protoi' }
+    { id: '19-ekp-protoi', label: '🍕 19. ΕΚΠ - Αλγόριθμος Πρώτοι Αριθμοί', href: '/st-dimotikou/19-ekp-protoi' },
+    { id: '20-dinameis', label: '🍕 20. Δύναμη φυσικού Αριθμού', href: '/st-dimotikou/20-dinameis' }
   ];
 
   return (
