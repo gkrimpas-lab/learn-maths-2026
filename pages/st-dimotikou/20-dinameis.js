@@ -55,12 +55,12 @@ export default function DinameisPage() {
   // Παραγωγή των στοιχείων για τη γραφική αναπαράσταση
   const renderVisualRepresentation = () => {
     if (activeBase === 0) {
-      return <div className="text-slate-400 italic">Το αποτέλεσμα είναι 0.</div>;
+      return <div className="text-slate-400 italic py-8">Το αποτέλεσμα είναι 0.</div>;
     }
     if (activeExponent === 0) {
       return (
         <div className="flex items-center justify-center h-32">
-          <div className="w-12 h-12 bg-amber-400 text-slate-900 rounded-xl flex items-center justify-center font-black text-xl shadow-md">
+          <div className="w-16 h-16 bg-amber-400 text-slate-900 rounded-2xl flex items-center justify-center font-black text-2xl shadow-md border-2 border-amber-300">
             1
           </div>
         </div>
@@ -70,11 +70,16 @@ export default function DinameisPage() {
     // 1D Αναπαράσταση (Εκθέτης = 1)
     if (activeExponent === 1) {
       return (
-        <div className="space-y-3">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Γραμμική Αναπαράσταση ({activeBase} στοιχείο/α):</span>
-          <div className="flex flex-wrap gap-2 justify-center">
+        <div className="space-y-4 py-4">
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Μονοδιάστατη γραμμή ({activeBase} μονάδες):</span>
+          <div className="flex flex-wrap gap-2 justify-center max-w-md mx-auto">
             {Array.from({ length: activeBase }).map((_, i) => (
-              <div key={i} className="w-8 h-8 bg-blue-500 rounded-lg shadow-sm border border-blue-400 flex items-center justify-center text-white font-bold text-xs" />
+              <div 
+                key={i} 
+                className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-sm border border-blue-400 flex items-center justify-center text-white font-mono text-[10px] font-bold"
+              >
+                {i + 1}
+              </div>
             ))}
           </div>
         </div>
@@ -84,19 +89,19 @@ export default function DinameisPage() {
     // 2D Αναπαράσταση (Τετράγωνο - Εκθέτης = 2)
     if (activeExponent === 2) {
       return (
-        <div className="space-y-3">
-          <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">Γεωμετρικό Τετράγωνο ({activeBase} επί {activeBase} = {result} κουτάκια):</span>
+        <div className="space-y-4 py-4">
+          <span className="text-xs font-bold text-blue-500 uppercase tracking-wider block">📐 Εμβαδόν Τετραγώνου ({activeBase} × {activeBase} = {result} τετραγωνάκια):</span>
           <div 
-            className="grid gap-1.5 p-3 bg-slate-950 rounded-2xl border border-slate-800 mx-auto"
+            className="grid gap-1 p-2 bg-slate-900 rounded-2xl border-4 border-slate-950 mx-auto"
             style={{ 
               gridTemplateColumns: `repeat(${activeBase}, minmax(0, 1fr))`,
-              maxWidth: `${Math.min(activeBase * 45, 320)}px`
+              width: `${Math.min(activeBase * 42, 350)}px`
             }}
           >
             {Array.from({ length: result }).map((_, i) => (
               <div 
                 key={i} 
-                className="aspect-square bg-gradient-to-br from-blue-500 to-indigo-600 rounded-md shadow-sm border border-blue-400 flex items-center justify-center text-[10px] text-white/80 font-mono font-bold"
+                className="aspect-square bg-gradient-to-br from-blue-500 to-indigo-600 rounded-md border border-blue-400/30 flex items-center justify-center text-[10px] text-white font-mono font-bold hover:scale-105 transition-all"
               >
                 {i + 1}
               </div>
@@ -108,45 +113,122 @@ export default function DinameisPage() {
 
     // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3)
     if (activeExponent === 3) {
+      // Περιορισμός μεγέθους για να μην "σπάσει" η 3D απόδοση σε μεγάλους αριθμούς
+      const sizeLimit = Math.min(activeBase, 6); 
+      const boxSize = sizeLimit > 4 ? 24 : 32; // δυναμικό μέγεθος για να χωράνε
+      
       return (
-        <div className="space-y-3">
-          <span className="text-xs font-bold text-purple-400 uppercase tracking-wider block">Γεωμετρικός Κύβος ({activeBase} × {activeBase} × {activeBase} = {result} κυβάκια):</span>
-          <div className="flex flex-col items-center justify-center p-4 bg-slate-950 rounded-2xl border border-slate-800 min-h-[220px]">
-            {/* Layer-by-Layer visualizer για να είναι εύκολη η κατανόηση της τρίτης διάστασης στην οθόνη */}
-            <div className="flex flex-wrap gap-4 justify-center w-full">
-              {Array.from({ length: activeBase }).map((_, layerIdx) => (
-                <div key={layerIdx} className="bg-slate-900 p-2 rounded-xl border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block font-bold mb-1 text-center">Επίπεδο {layerIdx + 1}</span>
-                  <div 
-                    className="grid gap-1"
-                    style={{ 
-                      gridTemplateColumns: `repeat(${activeBase}, minmax(0, 1fr))`,
-                      width: `${activeBase * 20}px`
-                    }}
-                  >
-                    {Array.from({ length: activeBase * activeBase }).map((_, blockIdx) => (
-                      <div key={blockIdx} className="w-4 h-4 bg-purple-500 rounded-sm shadow-sm border border-purple-400" />
-                    ))}
-                  </div>
-                </div>
-              ))}
+        <div className="space-y-4 py-6">
+          <span className="text-xs font-bold text-purple-500 uppercase tracking-wider block">📦 Όγκος Κύβου ({activeBase} × {activeBase} × {activeBase} = {result} κυβάκια):</span>
+          
+          <div className="flex items-center justify-center overflow-visible py-12">
+            {/* 3D Container */}
+            <div 
+              className="relative overflow-visible"
+              style={{
+                perspective: '1000px',
+                width: `${sizeLimit * boxSize}px`,
+                height: `${sizeLimit * boxSize}px`,
+              }}
+            >
+              {/* Ολόκληρη η στοίβα του Κύβου */}
+              <div 
+                className="relative w-full h-full"
+                style={{
+                  transformStyle: 'preserve-3d',
+                  transform: 'rotateX(-25deg) rotateY(45deg)',
+                }}
+              >
+                {Array.from({ length: sizeLimit }).map((_, z) => 
+                  Array.from({ length: sizeLimit }).map((_, y) => 
+                    Array.from({ length: sizeLimit }).map((_, x) => {
+                      const xOffset = x * boxSize;
+                      const yOffset = y * boxSize;
+                      const zOffset = z * boxSize;
+
+                      return (
+                        <div 
+                          key={`${x}-${y}-${z}`}
+                          className="absolute"
+                          style={{
+                            width: `${boxSize}px`,
+                            height: `${boxSize}px`,
+                            transformStyle: 'preserve-3d',
+                            transform: `translate3d(${xOffset}px, ${-yOffset}px, ${-zOffset}px)`,
+                          }}
+                        >
+                          {/* Μπροστινή Έδρα */}
+                          <div 
+                            className="absolute inset-0 bg-purple-600 border border-purple-500/50"
+                            style={{ transform: 'translateZ(16px)' }}
+                          />
+                          {/* Πίσω Έδρα */}
+                          <div 
+                            className="absolute inset-0 bg-purple-800 border border-purple-500/50"
+                            style={{ transform: 'rotateY(180deg) translateZ(16px)' }}
+                          />
+                          {/* Πάνω Έδρα */}
+                          <div 
+                            className="absolute inset-0 bg-purple-400 border border-purple-300/50"
+                            style={{ transform: 'rotateX(90deg) translateZ(16px)' }}
+                          />
+                          {/* Κάτω Έδρα */}
+                          <div 
+                            className="absolute inset-0 bg-purple-900 border border-purple-800/50"
+                            style={{ transform: 'rotateX(-90deg) translateZ(16px)' }}
+                          />
+                          {/* Αριστερή Έδρα */}
+                          <div 
+                            className="absolute inset-0 bg-purple-700 border border-purple-600/50"
+                            style={{ transform: 'rotateY(-90deg) translateZ(16px)' }}
+                          />
+                          {/* Δεξιά Έδρα */}
+                          <div 
+                            className="absolute inset-0 bg-purple-500 border border-purple-400/50"
+                            style={{ transform: 'rotateY(90deg) translateZ(16px)' }}
+                          />
+                        </div>
+                      );
+                    })
+                  )
+                )}
+              </div>
             </div>
-            <p className="text-[10px] text-slate-400 mt-3 italic text-center">
-              💡 Φαντάσου {activeBase} στρώσεις (επίπεδα), όπου το κάθε επίπεδο έχει ένα τετράγωνο {activeBase}x{activeBase}!
-            </p>
           </div>
+          {activeBase > 6 && (
+            <p className="text-[10px] text-amber-500 italic max-w-xs mx-auto">
+              * Για λόγους καθαρής εμφάνισης στην οθόνη, απεικονίζεται ένας κύβος 6×6×6, αλλά το μαθηματικό σου αποτέλεσμα υπολογίζεται σωστά για {activeBase}³!
+            </p>
+          )}
         </div>
       );
     }
 
-    // Μεγαλύτεροι εκθέτες (4, 5) -> Ομαδοποιημένη Αναπαράσταση
+    // 4η και 5η Δύναμη -> Αλυσίδα Εκθετικής Μεγέθυνσης (Multiplication Chain)
     return (
-      <div className="space-y-3">
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Ομαδοποίηση ({result} στοιχεία):</span>
-        <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 max-h-[180px] overflow-y-auto flex flex-wrap gap-1 justify-center">
-          {Array.from({ length: result }).map((_, i) => (
-            <div key={i} className="w-3 h-3 bg-pink-500 rounded-full" />
-          ))}
+      <div className="space-y-4 py-4">
+        <span className="text-xs font-bold text-pink-500 uppercase tracking-wider block">📈 Εκθετική Μεγέθυνση (Αλυσίδα Πολλαπλασιασμού):</span>
+        <div className="flex flex-col items-center justify-center p-6 bg-slate-950 rounded-2xl border border-slate-800 space-y-4">
+          <div className="flex items-center gap-2 md:gap-4 flex-wrap justify-center font-mono">
+            {Array.from({ length: activeExponent }).map((_, i) => {
+              const currentPower = Math.pow(activeBase, i + 1);
+              return (
+                <div key={i} className="flex items-center gap-2">
+                  <div className="flex flex-col items-center bg-slate-900 p-3 rounded-xl border border-slate-800 shadow-inner">
+                    <span className="text-[10px] text-slate-400 font-bold">Βήμα {i + 1}</span>
+                    <span className="text-sm font-black text-pink-500">{activeBase}<sup>{i + 1}</sup></span>
+                    <span className="text-xs text-white font-black mt-1">({currentPower})</span>
+                  </div>
+                  {i < activeExponent - 1 && (
+                    <span className="text-slate-500 font-bold">× {activeBase} ➔</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-[11px] text-slate-400 italic text-center max-w-md">
+            💡 Δες πώς κάθε φορά που μεγαλώνει ο εκθέτης κατά 1, ολόκληρο το προηγούμενο αποτέλεσμα πολλαπλασιάζεται ξανά με τη βάση ({activeBase})!
+          </p>
         </div>
       </div>
     );
