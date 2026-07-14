@@ -101,32 +101,42 @@ export default function DinameisPage() {
       );
     }
 
-    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3) - ΠΕΝΤΑΚΑΘΑΡΟ, ΔΥΝΑΜΙΚΟ VECTOR SVG
+    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3) - ΠΛΗΡΩΣ ΔΥΝΑΜΙΚΟΣ & ΚΕΝΤΡΑΡΙΣΜΕΝΟΣ ΜΕ ΤΟΝ ΔΙΚΟ ΣΟΥ ΚΩΔΙΚΑ
     if (activeExponent === 3) {
+      const size = 16;
       const N = activeBase;
-      
-      // Διαστάσεις ισομετρικού projection για κάθε κυβάκι (λόγος 2:1 για τέλεια ευθυγράμμιση)
-      const dx = 16; 
-      const dy = 9;  
-      const h = 18;  
 
-      // Δυναμικός υπολογισμός ορίων SVG με βάση την επιλεγμένη βάση
-      const pad = 20;
-      const svgW = (N * 2) * dx + pad * 2;
-      const svgH = N * h + (N * 2) * dy + pad * 2;
+      // Δυναμικός υπολογισμός των ορίων του SVG ώστε να χωράει πάντα ο κύβος
+      const svgW = (N * 2) * size * 0.866 + 60;
+      const svgH = N * size + (N * 2) * size * 0.5 + 60;
 
-      // Το κεντρικό σημείο αναφοράς (κάτω κέντρο του SVG)
+      // Δυναμικά κεντραρισμένο σημείο αναφοράς (origin)
       const originX = svgW / 2;
-      const originY = svgH - pad - (N * dy);
+      const originY = svgH - 30 - (N * size * 0.5);
 
-      // Δημιουργία των κύβων με σειρά από πίσω προς τα εμπρός (Painter's Algorithm)
+      const isoX = (x, y, z) => originX + (x - y) * size * 0.866;
+      const isoY = (x, y, z) => originY + (x + y) * size * 0.5 - z * size;
+
       const cubes = [];
-      for (let y = 0; y < N; y++) {
-        for (let z = 0; z < N; z++) {
+      // Σχεδιάζουμε με σωστή σειρά overlap (Painter's Algorithm)
+      for (let z = 0; z < N; z++) {
+        for (let y = 0; y < N; y++) {
           for (let x = 0; x < N; x++) {
-            const cx = originX + (x - z) * dx;
-            const cy = originY - y * h + (x + z) * dy;
-            cubes.push({ cx, cy, key: `${x}-${y}-${z}` });
+            const cx = isoX(x, y, z);
+            const cy = isoY(x, y, z);
+
+            // Υπολογισμός των 3 εδρών βάσει των δικών σου μαθηματικών τύπων
+            const topFace = `${cx},${cy} ${cx + size * 0.866},${cy + size * 0.5} ${cx},${cy + size} ${cx - size * 0.866},${cy + size * 0.5}`;
+            const leftFace = `${cx - size * 0.866},${cy + size * 0.5} ${cx},${cy + size} ${cx},${cy + size + size} ${cx - size * 0.866},${cy + size * 0.5 + size}`;
+            const rightFace = `${cx},${cy + size} ${cx + size * 0.866},${cy + size * 0.5} ${cx + size * 0.866},${cy + size * 0.5 + size} ${cx},${cy + size + size}`;
+
+            cubes.push(
+              <g key={`${x}-${y}-${z}`} className="transition-all duration-300">
+                <polygon points={topFace} className="fill-purple-300 stroke-purple-600 stroke-[0.5]" />
+                <polygon points={leftFace} className="fill-purple-400 stroke-purple-600 stroke-[0.5]" />
+                <polygon points={rightFace} className="fill-purple-500 stroke-purple-600 stroke-[0.5]" />
+              </g>
+            );
           }
         }
       }
@@ -142,31 +152,7 @@ export default function DinameisPage() {
               style={{ maxWidth: '340px', height: 'auto' }}
               className="overflow-visible"
             >
-              {cubes.map(({ cx, cy, key }) => (
-                <g key={key}>
-                  {/* 1. Αριστερή Έδρα */}
-                  <path 
-                    d={`M ${cx - dx} ${cy} L ${cx} ${cy + dy} L ${cx} ${cy + dy - h} L ${cx - dx} ${cy - h} Z`}
-                    fill="#7c3aed"
-                    stroke="#5b21b6"
-                    strokeWidth="0.5"
-                  />
-                  {/* 2. Δεξιά Έδρα */}
-                  <path 
-                    d={`M ${cx} ${cy + dy} L ${cx + dx} ${cy} L ${cx + dx} ${cy - h} L ${cx} ${cy + dy - h} Z`}
-                    fill="#6d28d9"
-                    stroke="#5b21b6"
-                    strokeWidth="0.5"
-                  />
-                  {/* 3. Πάνω Έδρα */}
-                  <path 
-                    d={`M ${cx} ${cy + dy - h} L ${cx + dx} ${cy - h} L ${cx} ${cy - dy - h} L ${cx - dx} ${cy - h} Z`}
-                    fill="#a78bfa"
-                    stroke="#5b21b6"
-                    strokeWidth="0.5"
-                  />
-                </g>
-              ))}
+              {cubes}
             </svg>
           </div>
         </div>
