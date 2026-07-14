@@ -101,53 +101,76 @@ export default function DinameisPage() {
       );
     }
 
-    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3) - ΠΛΗΡΩΣ ΔΥΝΑΜΙΚΟΣ, ΚΕΝΤΡΑΡΙΣΜΕΝΟΣ ΚΑΙ ΠΡΟΣΑΡΜΟΣΜΕΝΟΣ ΣΤΑ ΟΡΙΑ
+    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3) - ΑΥΤΟΜΑΤΑ ΚΕΝΤΡΑΡΙΣΜΕΝΟ ΚΑΙ ΠΕΡΙΟΡΙΣΜΕΝΟ ΣΤΑ ΟΡΙΑ SVG
     if (activeExponent === 3) {
       const N = activeBase;
+      const size = 16;
 
-      // ΔΥΝΑΜΙΚΟ ΜΕΓΕΘΟΣ: Μικραίνουμε το μέγεθος (size) όσο μεγαλώνει η βάση (N) για να μη βγαίνει ποτέ εκτός!
-      let size = 16;
-      if (N > 4) size = 12;
-      if (N > 7) size = 9;
+      // 1. Υπολογίζουμε τις σχετικές isometric συντεταγμένες για κάθε κύβο
+      // isoX = (x - y) * size * cos(30)
+      // isoY = (x + y) * size * sin(30) - z * size
+      const rawCubes = [];
+      const cos30 = 0.866;
+      const sin30 = 0.5;
 
-      // Υπολογισμός ορίων SVG με βάση το δυναμικό size
-      const svgW = (N * 2) * size * 0.866 + 40;
-      const svgH = N * size + (N * 2) * size * 0.5 + 40;
-
-      // Υπολογισμός του origin για τέλεια τοποθέτηση στο κέντρο του SVG
-      const originX = svgW / 2;
-      const originY = svgH - 20 - (N * size * 0.5);
-
-      const isoX = (x, y, z) => originX + (x - y) * size * 0.866;
-      const isoY = (x, y, z) => originY + (x + y) * size * 0.5 - z * size;
-
-      const cubes = [];
       for (let z = 0; z < N; z++) {
         for (let y = 0; y < N; y++) {
           for (let x = 0; x < N; x++) {
-            const cx = isoX(x, y, z);
-            const cy = isoY(x, y, z);
-
-            const topFace = `${cx},${cy} ${cx + size * 0.866},${cy + size * 0.5} ${cx},${cy + size} ${cx - size * 0.866},${cy + size * 0.5}`;
-            const leftFace = `${cx - size * 0.866},${cy + size * 0.5} ${cx},${cy + size} ${cx},${cy + size + size} ${cx - size * 0.866},${cy + size * 0.5 + size}`;
-            const rightFace = `${cx},${cy + size} ${cx + size * 0.866},${cy + size * 0.5} ${cx + size * 0.866},${cy + size * 0.5 + size} ${cx},${cy + size + size}`;
-
-            cubes.push(
-              <g key={`${x}-${y}-${z}`}>
-                <polygon points={topFace} className="fill-purple-300 stroke-purple-600/60 stroke-[0.5]" />
-                <polygon points={leftFace} className="fill-purple-400 stroke-purple-600/60 stroke-[0.5]" />
-                <polygon points={rightFace} className="fill-purple-500 stroke-purple-600/60 stroke-[0.5]" />
-              </g>
-            );
+            const rx = (x - y) * size * cos30;
+            const ry = (x + y) * size * sin30 - z * size;
+            rawCubes.push({ x, y, z, rx, ry });
           }
         }
       }
+
+      // 2. Βρίσκουμε το Bounding Box ολόκληρου του σχήματος
+      let minX = Infinity, maxX = -Infinity;
+      let minY = Infinity, maxY = -Infinity;
+
+      rawCubes.forEach(({ rx, ry }) => {
+        // Ελέγχουμε τις ακραίες κορυφές των εδρών γύρω από το κέντρο (cx, cy)
+        const leftPoint = rx - size * cos30;
+        const rightPoint = rx + size * cos30;
+        const topPoint = ry - size;
+        const bottomPoint = ry + size + size * sin30; // συμπεριλαμβάνει το ύψος της έδρας
+
+        if (leftPoint < minX) minX = leftPoint;
+        if (rightPoint > maxX) maxX = rightPoint;
+        if (topPoint < minY) minY = topPoint;
+        if (bottomPoint > maxY) maxY = bottomPoint;
+      });
+
+      // 3. Ορίζουμε τις διαστάσεις του SVG και ένα ασφαλές padding
+      const padding = 20;
+      const svgW = (maxX - minX) + padding * 2;
+      const svgH = (maxY - minY) + padding * 2;
+
+      // 4. Μετατοπίζουμε όλα τα κυβάκια ώστε να κεντραριστούν τέλεια μέσα στο ViewBox του SVG
+      const shiftX = -minX + padding;
+      const shiftY = -minY + padding;
+
+      const cubes = rawCubes.map(({ x, y, z, rx, ry }) => {
+        const cx = rx + shiftX;
+        const cy = ry + shiftY;
+
+        const topFace = `${cx},${cy} ${cx + size * cos30},${cy + size * sin30} ${cx},${cy + size} ${cx - size * cos30},${cy + size * sin30}`;
+        const leftFace = `${cx - size * cos30},${cy + size * sin30} ${cx},${cy + size} ${cx},${cy + size + size} ${cx - size * cos30},${cy + size * sin30 + size}`;
+        const rightFace = `${cx},${cy + size} ${cx + size * cos30},${cy + size * sin30} ${cx + size * cos30},${cy + size * sin30 + size} ${cx},${cy + size + size}`;
+
+        return (
+          <g key={`${x}-${y}-${z}`}>
+            <polygon points={topFace} className="fill-purple-300 stroke-purple-600/60 stroke-[0.5]" />
+            <polygon points={leftFace} className="fill-purple-400 stroke-purple-600/60 stroke-[0.5]" />
+            <polygon points={rightFace} className="fill-purple-500 stroke-purple-600/60 stroke-[0.5]" />
+          </g>
+        );
+      });
 
       return (
         <div className="space-y-4 py-4 w-full">
           <span className="text-xs font-bold text-purple-400 uppercase tracking-wider block">📦 Όγκος Κύβου ({activeBase} × {activeBase} × {activeBase} = {result} κυβάκια):</span>
           
-          <div className="bg-slate-950 rounded-2xl border border-slate-800 p-4 flex items-center justify-center shadow-inner min-h-[260px]">
+          <div className="bg-slate-950 rounded-2xl border border-slate-800 p-4 flex items-center justify-center shadow-inner min-h-[300px]">
             <svg 
               viewBox={`0 0 ${svgW} ${svgH}`} 
               width="100%" 
