@@ -187,7 +187,7 @@ export default function DinameisPage() {
     // 4η και 5η Δύναμη -> Αλυσίδα Εκθετικής Μεγέθυνσης
     return (
       <div className="space-y-4 py-4">
-        <span className="text-xs font-bold text-pink-500 uppercase tracking-wider block">📈 Εκθετική Μεγέθυνση (Αλυσίδα Πολλαπλασιασμού):</span>
+        <span className="text-xs font-bold text-pink-500 uppercase tracking-wider block">📈 Εκθετικη Μεγεθυνση (Αλυσιδα Πολλαπλασιασμου):</span>
         <div className="flex flex-col items-center justify-center p-6 bg-slate-950 rounded-2xl border border-slate-800 space-y-4">
           <div className="flex items-center gap-2 md:gap-4 flex-wrap justify-center font-mono">
             {Array.from({ length: activeExponent }).map((_, i) => {
@@ -246,7 +246,7 @@ export default function DinameisPage() {
                     <span>📖</span> Τι είναι η Δύναμη ενός αριθμού;
                   </h2>
                   <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                    Στα μαθηματικά, όταν θέλουμε να γράψουμε ένα **γινόμενο με πολλούς ίδιους παράγοντες**, χρησιμοποιούμε μια σύντομη γραφή που λέγεται <strong>Δύναμη</strong>.
+                    Στα μαθηματικά, όταν θέλουμε να γράψουμε ένα "γινόμενο με πολλούς ίδιους παράγοντες", χρησιμοποιούμε μια σύντομη γραφή που λέγεται <strong>Δύναμη</strong>.
                   </p>
                   <p className="text-gray-500 text-sm md:text-base leading-relaxed">
                     Μια δύναμη αποτελείται από δύο αριθμούς:
@@ -287,7 +287,7 @@ export default function DinameisPage() {
                   {/* INPUT ΓΙΑ ΤΗ ΒΑΣΗ */}
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-slate-500 uppercase">Βάση (αριθμός)</span>
+                      <span className="text-xs font-black text-slate-500 uppercase">Βαση (αριθμος)</span>
                       <span className="text-xs font-bold text-blue-600">Έως {MAX_BASE}</span>
                     </div>
                     <div className="flex items-center gap-3">
@@ -315,7 +315,7 @@ export default function DinameisPage() {
                   {/* INPUT ΓΙΑ ΤΟΝ ΕΚΘΕΤΗ */}
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-slate-500 uppercase">Εκθέτης (δύναμη)</span>
+                      <span className="text-xs font-black text-slate-500 uppercase">Εκθετης (δυναμη)</span>
                       <span className="text-xs font-bold text-indigo-600">Έως {MAX_EXPONENT}</span>
                     </div>
                     <div className="flex items-center gap-3">
@@ -343,7 +343,7 @@ export default function DinameisPage() {
 
                 {/* ΓΡΗΓΟΡΑ ΚΟΥΜΠΙΑ - PRESETS */}
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 block">Γρήγορα Παραδείγματα:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 block">Γρηγορα Παραδειγματα:</span>
                   <div className="grid grid-cols-2 gap-2">
                     <button onClick={() => { setBase(3); setExponent(2); }} className="px-3 py-2 rounded-xl border font-mono font-bold text-xs bg-gray-50 hover:bg-gray-100 text-gray-600 transition-all text-center">3 στο τετράγωνο (3²)</button>
                     <button onClick={() => { setBase(4); setExponent(3); }} className="px-3 py-2 rounded-xl border font-mono font-bold text-xs bg-gray-50 hover:bg-gray-100 text-gray-600 transition-all text-center">4 στον κύβο (4³)</button>
@@ -379,7 +379,7 @@ export default function DinameisPage() {
               {/* ΑΝΑΛΥΣΗ ΤΗΣ ΠΡΑΞΗΣ */}
               <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-2 font-mono">
                 <div className="text-xs font-sans text-slate-400 font-bold uppercase tracking-wider">
-                  📝 Ανάλυση Πράξης ως Γινόμενο:
+                  📝 Αναλυση Πραξης ως Γινομενο:
                 </div>
                 <div className="text-base md:text-lg font-black text-slate-100 flex items-center gap-2 flex-wrap">
                   {activeBase}<sup>{activeExponent}</sup> = {multiplicationSteps()} = <span className="text-amber-400 font-black">{result}</span>
@@ -389,7 +389,7 @@ export default function DinameisPage() {
               {/* TΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-lg font-mono flex items-center justify-between">
                 <div className="text-left">
-                  <span className="text-xs font-sans uppercase tracking-wider text-blue-100 block">Τελικό Αποτέλεσμα:</span>
+                  <span className="text-xs font-sans uppercase tracking-wider text-blue-100 block">Τελικο Αποτελεσμα:</span>
                   <span className="text-xl md:text-2xl font-black">
                     {activeBase}<sup>{activeExponent}</sup> = {result}
                   </span>
