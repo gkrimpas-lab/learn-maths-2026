@@ -254,7 +254,7 @@ export default function EkpProtoiPage() {
 
                 {/* Γρήγορα Παραδείγματα */}
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 block">Παραδείγματα σχολικού βιβλίου:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 block">Παραδειγματα σχολικου βιβλιου:</span>
                   <div className="grid grid-cols-1 gap-2">
                     {activeTab === 2 ? PRESETS_2.map((p, idx) => (
                       <button key={idx} onClick={() => { setNum1(p.n1); setNum2(p.n2); }} className="text-left px-3 py-2 rounded-xl border font-mono font-bold text-xs bg-gray-50 hover:bg-gray-100 text-gray-600 transition-all">{p.label}</button>
@@ -300,7 +300,7 @@ export default function EkpProtoiPage() {
 
               {/* ΔΥΝΑΜΙΚΗ ΟΡΙΖΟΝΤΙΑ ΛΙΣΤΑ ΕΠΑΛΗΘΕΥΣΗΣ ΠΟΛΛΑΠΛΑΣΙΩΝ */}
               <div className="w-full space-y-2.5">
-                <span className="text-xs font-bold text-slate-400 block uppercase tracking-wider">🔬 Οριζόντια Επαλήθευση (Λίστα Πολλαπλασίων):</span>
+                <span className="text-xs font-bold text-slate-400 block uppercase tracking-wider">🔬 Οριζοντια Επαληθευση (Λιστα Πολλαπλασιων):</span>
                 {numbersList.map((numObj, index) => (
                   <div key={index} className="bg-slate-50 px-3 py-2 rounded-xl border border-slate-100 flex flex-col space-y-1">
                     <div className="text-[11px] font-bold text-slate-500">Πολλαπλάσια του {numObj.val}:</div>
@@ -332,7 +332,7 @@ export default function EkpProtoiPage() {
               {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ: ΠΙΝΑΚΑΣ ΕΚΑΤΟΝΤΑΔΑΣ */}
               <div className="w-full bg-slate-900 text-white p-4 rounded-2xl border border-slate-800 space-y-3">
                 <div className="text-center">
-                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">💻 Πίνακας Εκατοντάδας (1-100)</span>
+                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">💻 Πινακας Εκατονταδας (1-100)</span>
                 </div>
                 {ekp > 100 ? (
                   <div className="text-center py-4 text-xs text-slate-400 border border-dashed border-slate-800 rounded-xl bg-slate-950/40">
@@ -367,7 +367,7 @@ export default function EkpProtoiPage() {
               {/* ΤΕΛΙΚΟ Ε.Κ.Π. ΜΕ ΕΞΗΓΗΣΗ ΠΑΡΑΓΟΝΤΩΝ */}
               <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-lg font-mono flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="text-left space-y-1">
-                  <span className="text-xs font-sans uppercase tracking-wider text-indigo-200 block">Εξαγωγή βάσει Κανόνα (Μέγιστοι Εκθέτες):</span>
+                  <span className="text-xs font-sans uppercase tracking-wider text-indigo-200 block">Εξαγωγη βασει Κανονα (Μεγιστοι Εκθετες):</span>
                   <div className="text-sm md:text-base font-black flex items-center gap-1.5 flex-wrap">
                     Ε.Κ.Π. = 
                     <span className="bg-white/20 px-2 py-0.5 rounded" dangerouslySetInnerHTML={{ __html: calculationExplanation.join(" · ") }}></span>
