@@ -101,40 +101,42 @@ export default function DinameisPage() {
       );
     }
 
-    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3) - ΠΛΗΡΩΣ ΔΥΝΑΜΙΚΟΣ & ΚΕΝΤΡΑΡΙΣΜΕΝΟΣ ΜΕ ΤΟΝ ΔΙΚΟ ΣΟΥ ΚΩΔΙΚΑ
+    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3) - ΠΛΗΡΩΣ ΔΥΝΑΜΙΚΟΣ, ΚΕΝΤΡΑΡΙΣΜΕΝΟΣ ΚΑΙ ΠΡΟΣΑΡΜΟΣΜΕΝΟΣ ΣΤΑ ΟΡΙΑ
     if (activeExponent === 3) {
-      const size = 16;
       const N = activeBase;
 
-      // Δυναμικός υπολογισμός των ορίων του SVG ώστε να χωράει πάντα ο κύβος
-      const svgW = (N * 2) * size * 0.866 + 60;
-      const svgH = N * size + (N * 2) * size * 0.5 + 60;
+      // ΔΥΝΑΜΙΚΟ ΜΕΓΕΘΟΣ: Μικραίνουμε το μέγεθος (size) όσο μεγαλώνει η βάση (N) για να μη βγαίνει ποτέ εκτός!
+      let size = 16;
+      if (N > 4) size = 12;
+      if (N > 7) size = 9;
 
-      // Δυναμικά κεντραρισμένο σημείο αναφοράς (origin)
+      // Υπολογισμός ορίων SVG με βάση το δυναμικό size
+      const svgW = (N * 2) * size * 0.866 + 40;
+      const svgH = N * size + (N * 2) * size * 0.5 + 40;
+
+      // Υπολογισμός του origin για τέλεια τοποθέτηση στο κέντρο του SVG
       const originX = svgW / 2;
-      const originY = svgH - 30 - (N * size * 0.5);
+      const originY = svgH - 20 - (N * size * 0.5);
 
       const isoX = (x, y, z) => originX + (x - y) * size * 0.866;
       const isoY = (x, y, z) => originY + (x + y) * size * 0.5 - z * size;
 
       const cubes = [];
-      // Σχεδιάζουμε με σωστή σειρά overlap (Painter's Algorithm)
       for (let z = 0; z < N; z++) {
         for (let y = 0; y < N; y++) {
           for (let x = 0; x < N; x++) {
             const cx = isoX(x, y, z);
             const cy = isoY(x, y, z);
 
-            // Υπολογισμός των 3 εδρών βάσει των δικών σου μαθηματικών τύπων
             const topFace = `${cx},${cy} ${cx + size * 0.866},${cy + size * 0.5} ${cx},${cy + size} ${cx - size * 0.866},${cy + size * 0.5}`;
             const leftFace = `${cx - size * 0.866},${cy + size * 0.5} ${cx},${cy + size} ${cx},${cy + size + size} ${cx - size * 0.866},${cy + size * 0.5 + size}`;
             const rightFace = `${cx},${cy + size} ${cx + size * 0.866},${cy + size * 0.5} ${cx + size * 0.866},${cy + size * 0.5 + size} ${cx},${cy + size + size}`;
 
             cubes.push(
-              <g key={`${x}-${y}-${z}`} className="transition-all duration-300">
-                <polygon points={topFace} className="fill-purple-300 stroke-purple-600 stroke-[0.5]" />
-                <polygon points={leftFace} className="fill-purple-400 stroke-purple-600 stroke-[0.5]" />
-                <polygon points={rightFace} className="fill-purple-500 stroke-purple-600 stroke-[0.5]" />
+              <g key={`${x}-${y}-${z}`}>
+                <polygon points={topFace} className="fill-purple-300 stroke-purple-600/60 stroke-[0.5]" />
+                <polygon points={leftFace} className="fill-purple-400 stroke-purple-600/60 stroke-[0.5]" />
+                <polygon points={rightFace} className="fill-purple-500 stroke-purple-600/60 stroke-[0.5]" />
               </g>
             );
           }
@@ -145,11 +147,11 @@ export default function DinameisPage() {
         <div className="space-y-4 py-4 w-full">
           <span className="text-xs font-bold text-purple-400 uppercase tracking-wider block">📦 Όγκος Κύβου ({activeBase} × {activeBase} × {activeBase} = {result} κυβάκια):</span>
           
-          <div className="bg-slate-950 rounded-2xl border border-slate-800 p-6 flex items-center justify-center shadow-inner overflow-hidden">
+          <div className="bg-slate-950 rounded-2xl border border-slate-800 p-4 flex items-center justify-center shadow-inner min-h-[260px]">
             <svg 
               viewBox={`0 0 ${svgW} ${svgH}`} 
               width="100%" 
-              style={{ maxWidth: '340px', height: 'auto' }}
+              style={{ maxWidth: '300px', height: 'auto' }}
               className="overflow-visible"
             >
               {cubes}
