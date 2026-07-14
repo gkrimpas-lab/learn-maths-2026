@@ -18,10 +18,7 @@ export default function DinameisPage() {
       return;
     }
     const n = Number(clean);
-    // Κλείδωμα εισόδου: Αν ξεπερνά το μέγιστο όριο, αγνοείται το νέο ψηφίο
-    if (n > MAX_BASE) {
-      return;
-    }
+    if (n > MAX_BASE) return; // Κλείδωμα εισόδου
     setBase(n);
   };
 
@@ -32,27 +29,20 @@ export default function DinameisPage() {
       return;
     }
     const n = Number(clean);
-    // Κλείδωμα εισόδου: Αν ξεπερνά το μέγιστο όριο, αγνοείται το νέο ψηφίο
-    if (n > MAX_EXPONENT) {
-      return;
-    }
+    if (n > MAX_EXPONENT) return; // Κλείδωμα εισόδου
     setExponent(n);
   };
 
   const activeBase = base || 0;
   const activeExponent = exponent === '' ? 0 : exponent;
-
-  // Υπολογισμός της δύναμης
   const result = Math.pow(activeBase, activeExponent);
 
-  // Δημιουργία της επεξήγησης της πράξης (π.χ. 3 * 3 * 3)
   const multiplicationSteps = () => {
     if (activeExponent === 0) return "1 (Κάθε αριθμός υψωμένος στο 0 ισούται με 1)";
     if (activeExponent === 1) return `${activeBase}`;
     return Array(activeExponent).fill(activeBase).join(" · ");
   };
 
-  // Παραγωγή των στοιχείων για τη γραφική αναπαράσταση
   const renderVisualRepresentation = () => {
     if (activeBase === 0) {
       return <div className="text-slate-400 italic py-8">Το αποτέλεσμα είναι 0.</div>;
@@ -86,22 +76,22 @@ export default function DinameisPage() {
       );
     }
 
-    // 2D Αναπαράσταση (Τετράγωνο - Εκθέτης = 2)
+    // 2D Αναπαράσταση (Τετράγωνο - Εκθέτης = 2) - ΠΛΕΓΜΑ ΕΜΒΑΔΟΥ
     if (activeExponent === 2) {
       return (
         <div className="space-y-4 py-4">
-          <span className="text-xs font-bold text-blue-500 uppercase tracking-wider block">📐 Εμβαδόν Τετραγώνου ({activeBase} × {activeBase} = {result} τετραγωνάκια):</span>
+          <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block">📐 Εμβαδόν Τετραγώνου ({activeBase} × {activeBase} = {result} τετραγωνάκια):</span>
           <div 
-            className="grid gap-1 p-2 bg-slate-900 rounded-2xl border-4 border-slate-950 mx-auto"
+            className="grid gap-1 p-2 bg-slate-900 rounded-2xl border-4 border-slate-950 mx-auto shadow-inner"
             style={{ 
               gridTemplateColumns: `repeat(${activeBase}, minmax(0, 1fr))`,
-              width: `${Math.min(activeBase * 42, 350)}px`
+              width: `${Math.min(activeBase * 38, 340)}px`
             }}
           >
             {Array.from({ length: result }).map((_, i) => (
               <div 
                 key={i} 
-                className="aspect-square bg-gradient-to-br from-blue-500 to-indigo-600 rounded-md border border-blue-400/30 flex items-center justify-center text-[10px] text-white font-mono font-bold hover:scale-105 transition-all"
+                className="aspect-square bg-gradient-to-br from-blue-500 to-indigo-600 rounded-md border border-blue-400/30 flex items-center justify-center text-[10px] text-white font-mono font-bold"
               >
                 {i + 1}
               </div>
@@ -111,100 +101,103 @@ export default function DinameisPage() {
       );
     }
 
-    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3)
+    // 3D Αναπαράσταση (Κύβος - Εκθέτης = 3) - ΠΙΣΤΗ ΙΣΟΜΕΤΡΙΚΗ ΑΠΟΔΟΣΗ
     if (activeExponent === 3) {
-      // Περιορισμός μεγέθους για να μην "σπάσει" η 3D απόδοση σε μεγάλους αριθμούς
-      const sizeLimit = Math.min(activeBase, 6); 
-      const boxSize = sizeLimit > 4 ? 24 : 32; // δυναμικό μέγεθος για να χωράνε
+      const size = Math.min(activeBase, 5); // Όριο εμφάνισης τα 5 κυβάκια για να χωράει στην οθόνη
       
+      // Σταθερές διαστάσεις ισομετρικού σχεδιασμού (ακριβώς όπως στη φωτογραφία σου)
+      const w = 24;  // πλάτος
+      const h = 24;  // ύψος
+      const isoX = 20; // οριζόντια μετατόπιση (w * cos(30°))
+      const isoY = 12; // κατακόρυφη μετατόπιση (h * sin(30°))
+
+      // Υπολογισμός συνολικού μεγέθους container
+      const containerWidth = (size * 2) * isoX + 40;
+      const containerHeight = (size * 2) * isoY + (size * h) + 40;
+
       return (
-        <div className="space-y-4 py-6">
-          <span className="text-xs font-bold text-purple-500 uppercase tracking-wider block">📦 Όγκος Κύβου ({activeBase} × {activeBase} × {activeBase} = {result} κυβάκια):</span>
+        <div className="space-y-4 py-4 w-full overflow-x-auto">
+          <span className="text-xs font-bold text-purple-400 uppercase tracking-wider block">📦 Όγκος Κύβου ({activeBase} × {activeBase} × {activeBase} = {result} κυβάκια):</span>
           
-          <div className="flex items-center justify-center overflow-visible py-12">
-            {/* 3D Container */}
+          <div 
+            className="relative bg-slate-950 rounded-2xl border border-slate-800 mx-auto flex items-center justify-center shadow-inner overflow-hidden"
+            style={{ width: '100%', maxWidth: '450px', height: `${Math.min(containerHeight, 350)}px` }}
+          >
+            {/* Ισομετρικό Σύστημα Συντεταγμένων */}
             <div 
-              className="relative overflow-visible"
+              className="absolute"
               style={{
-                perspective: '1000px',
-                width: `${sizeLimit * boxSize}px`,
-                height: `${sizeLimit * boxSize}px`,
+                width: `${containerWidth}px`,
+                height: `${containerHeight}px`,
+                top: '55%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
               }}
             >
-              {/* Ολόκληρη η στοίβα του Κύβου */}
-              <div 
-                className="relative w-full h-full"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  transform: 'rotateX(-25deg) rotateY(45deg)',
-                }}
-              >
-                {Array.from({ length: sizeLimit }).map((_, z) => 
-                  Array.from({ length: sizeLimit }).map((_, y) => 
-                    Array.from({ length: sizeLimit }).map((_, x) => {
-                      const xOffset = x * boxSize;
-                      const yOffset = y * boxSize;
-                      const zOffset = z * boxSize;
+              {/* Σχεδιάζουμε από πίσω προς τα εμπρός (z, y, x) για σωστό overlap */}
+              {Array.from({ length: size }).map((_, z) =>
+                Array.from({ length: size }).map((_, y) =>
+                  Array.from({ length: size }).map((_, x) => {
+                    
+                    // Μαθηματικός μετασχηματισμός Isometric προβολής των x, y, z σε 2D Pixel Offsets
+                    const left = (size - 1 - x) * isoX + (z * isoX);
+                    const top = (x * isoY) + (z * isoY) + ((size - 1 - y) * h) + 20;
 
-                      return (
+                    return (
+                      <div
+                        key={`${x}-${y}-${z}`}
+                        className="absolute"
+                        style={{
+                          left: `${left}px`,
+                          top: `${top}px`,
+                          width: `${w}px`,
+                          height: `${h}px`,
+                        }}
+                      >
+                        {/* 1. Μπροστινή/Αριστερή Έδρα */}
                         <div 
-                          key={`${x}-${y}-${z}`}
-                          className="absolute"
+                          className="absolute w-[14px] h-[24px] bg-purple-600 border border-purple-500/30 shadow-sm"
                           style={{
-                            width: `${boxSize}px`,
-                            height: `${boxSize}px`,
-                            transformStyle: 'preserve-3d',
-                            transform: `translate3d(${xOffset}px, ${-yOffset}px, ${-zOffset}px)`,
+                            transform: 'skewY(30deg)',
+                            left: '0px',
+                            top: '4px'
                           }}
-                        >
-                          {/* Μπροστινή Έδρα */}
-                          <div 
-                            className="absolute inset-0 bg-purple-600 border border-purple-500/50"
-                            style={{ transform: 'translateZ(16px)' }}
-                          />
-                          {/* Πίσω Έδρα */}
-                          <div 
-                            className="absolute inset-0 bg-purple-800 border border-purple-500/50"
-                            style={{ transform: 'rotateY(180deg) translateZ(16px)' }}
-                          />
-                          {/* Πάνω Έδρα */}
-                          <div 
-                            className="absolute inset-0 bg-purple-400 border border-purple-300/50"
-                            style={{ transform: 'rotateX(90deg) translateZ(16px)' }}
-                          />
-                          {/* Κάτω Έδρα */}
-                          <div 
-                            className="absolute inset-0 bg-purple-900 border border-purple-800/50"
-                            style={{ transform: 'rotateX(-90deg) translateZ(16px)' }}
-                          />
-                          {/* Αριστερή Έδρα */}
-                          <div 
-                            className="absolute inset-0 bg-purple-700 border border-purple-600/50"
-                            style={{ transform: 'rotateY(-90deg) translateZ(16px)' }}
-                          />
-                          {/* Δεξιά Έδρα */}
-                          <div 
-                            className="absolute inset-0 bg-purple-500 border border-purple-400/50"
-                            style={{ transform: 'rotateY(90deg) translateZ(16px)' }}
-                          />
-                        </div>
-                      );
-                    })
-                  )
-                )}
-              </div>
+                        />
+                        {/* 2. Μπροστινή/Δεξιά Έδρα */}
+                        <div 
+                          className="absolute w-[14px] h-[24px] bg-purple-700 border border-purple-600/30 shadow-sm"
+                          style={{
+                            transform: 'skewY(-30deg)',
+                            left: '14px',
+                            top: '4px'
+                          }}
+                        />
+                        {/* 3. Πάνω Έδρα (Ρόμβος) */}
+                        <div 
+                          className="absolute w-[20px] h-[20px] bg-purple-400 border border-purple-300/40 shadow-sm"
+                          style={{
+                            transform: 'rotate(45deg) scale(1, 0.58)',
+                            left: '4px',
+                            top: '-3px'
+                          }}
+                        />
+                      </div>
+                    );
+                  })
+                )
+              )}
             </div>
           </div>
-          {activeBase > 6 && (
+          {activeBase > 5 && (
             <p className="text-[10px] text-amber-500 italic max-w-xs mx-auto">
-              * Για λόγους καθαρής εμφάνισης στην οθόνη, απεικονίζεται ένας κύβος 6×6×6, αλλά το μαθηματικό σου αποτέλεσμα υπολογίζεται σωστά για {activeBase}³!
+              * Για λόγους καθαρής εμφάνισης στην οθόνη, απεικονίζεται ένας κύβος 5×5×5, αλλά το μαθηματικό σου αποτέλεσμα υπολογίζεται σωστά για {activeBase}³!
             </p>
           )}
         </div>
       );
     }
 
-    // 4η και 5η Δύναμη -> Αλυσίδα Εκθετικής Μεγέθυνσης (Multiplication Chain)
+    // 4η και 5η Δύναμη -> Αλυσίδα Εκθετικής Μεγέθυνσης
     return (
       <div className="space-y-4 py-4">
         <span className="text-xs font-bold text-pink-500 uppercase tracking-wider block">📈 Εκθετική Μεγέθυνση (Αλυσίδα Πολλαπλασιασμού):</span>
@@ -406,7 +399,7 @@ export default function DinameisPage() {
                 </div>
               </div>
 
-              {/* ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ */}
+              {/* TΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-lg font-mono flex items-center justify-between">
                 <div className="text-left">
                   <span className="text-xs font-sans uppercase tracking-wider text-blue-100 block">Τελικό Αποτέλεσμα:</span>
