@@ -176,10 +176,10 @@ export default function DinameisDekaPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
               <div className="space-y-4 text-gray-500 text-sm md:text-base leading-relaxed">
                 <p>
-                  Οι δυνάμεις με βάση το 10 είναι εξαιρετικά χρήσιμες στα Μαθηματικά και την Επιστήμη, γιατί μας βοηθούν να γράφουμε **πολύ μεγάλους αριθμούς** εύκολα και γρήγορα!
+                  Οι δυνάμεις με βάση το 10 είναι εξαιρετικά χρήσιμες στα Μαθηματικά και την Επιστήμη, γιατί μας βοηθούν να γράφουμε "πολύ μεγάλους αριθμούς" εύκολα και γρήγορα!
                 </p>
                 <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 space-y-2">
-                  <span className="text-xs font-black text-blue-800 block uppercase">💡 Ο Χρυσός Κανόνας:</span>
+                  <span className="text-xs font-black text-blue-800 block uppercase">💡 Ο Χρυσος Κανονας:</span>
                   <p className="text-xs md:text-sm text-blue-900 leading-relaxed">
                     Κάθε δύναμη του 10 ισούται με το <strong>1</strong> ακολουθούμενο από <strong>τόσα μηδενικά όσα δείχνει ο εκθέτης</strong>!
                   </p>
@@ -213,7 +213,7 @@ export default function DinameisDekaPage() {
                 {/* SLIDER ΓΙΑ ΤΟΝ ΕΚΘΕΤΗ */}
                 <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-black text-slate-500 uppercase">Εκθέτης</span>
+                    <span className="text-xs font-black text-slate-500 uppercase">Εκθετης</span>
                     <span className="text-lg font-black text-blue-600 font-mono">10<sup>{activeExponent}</sup></span>
                   </div>
                   <input
@@ -236,7 +236,7 @@ export default function DinameisDekaPage() {
 
                 {/* ΓΡΗΓΟΡΑ ΚΟΥΜΠΙΑ (Προστέθηκαν το 7 και το 8 που έλειπαν) */}
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 block">Γρήγορη Μετάβαση:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 block">Γρηγορη Μεταβαση:</span>
                   <div className="grid grid-cols-3 gap-2">
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <button 
@@ -262,14 +262,14 @@ export default function DinameisDekaPage() {
               {/* ΟΝΟΜΑΣΙΑ ΚΑΙ ΜΑΘΗΜΑΤΙΚΗ ΣΥΜΒΟΛΗ */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex justify-between items-center px-6">
                 <div className="text-left font-mono">
-                  <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase">Σύμβολο:</span>
+                  <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase">Συμβολο:</span>
                   <div className="inline-flex items-baseline">
                     <span className="text-4xl font-black text-blue-600">10</span>
                     <span className="text-2xl font-black text-indigo-600 self-start -mt-2">{activeExponent}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Λεκτική Ονομασία:</span>
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Λεκτικη Ονομασια:</span>
                   <span className="text-base font-black text-slate-800">{getFriendlyName()}</span>
                 </div>
               </div>
@@ -277,7 +277,7 @@ export default function DinameisDekaPage() {
               {/* ΜΕΓΑΛΟ ΣΤΑΘΕΡΟ ΠΛΑΙΣΙΟ ΜΕ ΤΕΛΙΤΣΕΣ */}
               <div className="flex flex-col space-y-2">
                 <div className="flex justify-between items-center w-full px-1">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">🌌 Οπτικό Γέμισμα Χώρου:</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">🌌 Οπτικο Γεμισμα Χωρου:</span>
                   <span className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-mono">
                     {result.toLocaleString('el-GR')} {result === 1 ? 'τελίτσα' : 'τελίτσες'}
                   </span>
@@ -320,7 +320,7 @@ export default function DinameisDekaPage() {
               {/* ΑΝΑΛΥΣΗ ΠΡΑΞΗΣ (Πλέον εμφανίζεται 100% αναλυτικά) */}
               <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-2 font-mono">
                 <div className="text-xs font-sans text-slate-400 font-bold uppercase tracking-wider">
-                  📝 Ανάλυση ως Γινόμενο:
+                  📝 Αναλυση ως Γινομενο:
                 </div>
                 <div className="text-base md:text-lg font-black text-slate-100 flex items-center gap-2 flex-wrap max-h-[120px] overflow-y-auto pr-1">
                   10<sup>{activeExponent}</sup> = {getMultiplicationSteps()} = <span className="text-amber-400 font-black">{result.toLocaleString('el-GR')}</span>
@@ -330,13 +330,13 @@ export default function DinameisDekaPage() {
               {/* ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-lg font-mono flex items-center justify-between">
                 <div className="text-left">
-                  <span className="text-xs font-sans uppercase tracking-wider text-blue-100 block">Τελική Αξία:</span>
+                  <span className="text-xs font-sans uppercase tracking-wider text-blue-100 block">Τελικη Αξια:</span>
                   <span className="text-xl md:text-2xl font-black">
                     10<sup>{activeExponent}</sup> = {result.toLocaleString('el-GR')}
                   </span>
                 </div>
                 <div className="text-right hidden sm:block">
-                  <span className="text-[10px] font-sans uppercase tracking-wider text-amber-300 block">💡 Πλήθος Μηδενικών:</span>
+                  <span className="text-[10px] font-sans uppercase tracking-wider text-amber-300 block">💡 Πληθος Μηδενικων:</span>
                   <span className="text-xs font-sans text-slate-200">
                     Το 1 ακολουθείται από <strong className="text-white">{activeExponent}</strong> {activeExponent === 1 ? 'μηδενικό' : 'μηδενικά'}.
                   </span>
