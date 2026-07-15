@@ -262,7 +262,7 @@ export default function KlasmaPage() {
 
                 {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
                 <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-3">
-                  <span className="text-xs font-black text-blue-800 uppercase block">Αριθμητης (Πάνω)</span>
+                  <span className="text-xs font-black text-blue-800 uppercase block">Αριθμητης (Πανω)</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleNumeratorChange(-1)}
