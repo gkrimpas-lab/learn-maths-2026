@@ -236,7 +236,7 @@ export default function KlasmaPage() {
 
               {/* Οπτική Επεξήγηση Όρων */}
               <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center space-y-4">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Ονομασία Όρων</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Ονομασια Ορων</span>
                 <div className="flex flex-col items-center font-mono select-none">
                   <span className="text-5xl font-black text-blue-400">Αριθμητής</span>
                   <div className="w-48 h-1.5 bg-white rounded-full my-3" />
@@ -262,7 +262,7 @@ export default function KlasmaPage() {
 
                 {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
                 <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-3">
-                  <span className="text-xs font-black text-blue-800 uppercase block">Αριθμητής (Πάνω)</span>
+                  <span className="text-xs font-black text-blue-800 uppercase block">Αριθμητης (Πάνω)</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleNumeratorChange(-1)}
@@ -287,7 +287,7 @@ export default function KlasmaPage() {
 
                 {/* ΕΛΕΓΧΟΣ ΠΑΡΟΝΟΜΑΣΤΗ */}
                 <div className="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100 space-y-3">
-                  <span className="text-xs font-black text-emerald-800 uppercase block">Παρονομαστής (Κάτω)</span>
+                  <span className="text-xs font-black text-emerald-800 uppercase block">Παρονομαστης (Κατω)</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleDenominatorChange(-1)}
@@ -313,7 +313,7 @@ export default function KlasmaPage() {
 
               {/* Επεξηγηματικό Box Τύπου Κλάσματος */}
               <div className={`p-4 rounded-2xl border ${typeInfo.color} space-y-1 transition-all`}>
-                <span className="text-xs font-black uppercase tracking-wider">Κατηγορία:</span>
+                <span className="text-xs font-black uppercase tracking-wider">Κατηγορια:</span>
                 <h4 className="text-sm font-bold">{typeInfo.title}</h4>
                 <p className="text-xs leading-relaxed opacity-90">{typeInfo.desc}</p>
               </div>
@@ -334,7 +334,7 @@ export default function KlasmaPage() {
                   <span className="text-3xl font-light text-slate-300">=</span>
 
                   <div className="text-center font-mono">
-                    <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase tracking-wider">Δεκαδική Αξία</span>
+                    <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase tracking-wider">Δεκαδικη Αξια</span>
                     <span className="text-3xl md:text-4xl font-black text-slate-800">
                       {Number(fractionValue.toFixed(3))}
                     </span>
@@ -344,12 +344,12 @@ export default function KlasmaPage() {
 
               {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ 1: ΠΙΤΣΑ */}
               <div className="space-y-4">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍕 Μοντέλο Πίτσας (Κυκλικό)</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍕 Μοντελο Πιτσας (Κυκλικο)</span>
                 <div className="flex flex-wrap items-center justify-center gap-6 py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 max-h-[300px] overflow-y-auto">
                   {Array.from({ length: neededVisuals }).map((_, i) => (
                     <div key={i} className="flex flex-col items-center space-y-2 scale-[0.9]">
                       {renderPizza(i)}
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Μονάδα {i + 1}</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Μοναδα {i + 1}</span>
                     </div>
                   ))}
                 </div>
@@ -357,7 +357,7 @@ export default function KlasmaPage() {
 
               {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ 2: ΣΟΚΟΛΑΤΑ */}
               <div className="space-y-4">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍫 Μοντέλο Σοκολάτας (Γραμμικό)</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍫 Μοντελο Σοκολατας (Γραμμικο)</span>
                 <div className="space-y-4 p-5 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 max-h-[250px] overflow-y-auto">
                   {Array.from({ length: neededVisuals }).map((_, i) => (
                     <div key={i} className="space-y-1">
