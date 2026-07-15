@@ -3,22 +3,22 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
+// ΜΕΓΙΣΤΕΣ ΤΙΜΕΣ (Ορίστηκαν στο 40)
+const MAX_NUMERATOR = 40;
+const MAX_DENOMINATOR = 40;
+
 export default function KlasmaPage() {
   const [numerator, setNumerator] = useState(3);
   const [denominator, setDenominator] = useState(4);
 
-  // Αλλαγή αριθμητή με όρια [0, 12]
+  // Αλλαγή αριθμητή με δυναμικά όρια [0, MAX_NUMERATOR]
   const handleNumeratorChange = (amount) => {
-    setNumerator(prev => Math.max(0, Math.min(12, prev + amount)));
+    setNumerator(prev => Math.max(0, Math.min(MAX_NUMERATOR, prev + amount)));
   };
 
-  // Αλλαγή παρονομαστή με όρια [1, 12]
+  // Αλλαγή παρονομαστή με δυναμικά όρια [1, MAX_DENOMINATOR]
   const handleDenominatorChange = (amount) => {
-    setDenominator(prev => {
-      const newVal = Math.max(1, Math.min(12, prev + amount));
-      // Αν ο παρονομαστής γίνει μικρότερος, κρατάμε τον αριθμητή σε λογικά πλαίσια αν χρειάζεται
-      return newVal;
-    });
+    setDenominator(prev => Math.max(1, Math.min(MAX_DENOMINATOR, prev + amount)));
   };
 
   const fractionValue = numerator / denominator;
@@ -68,7 +68,7 @@ export default function KlasmaPage() {
             isFilled 
               ? 'fill-amber-400 stroke-amber-600 hover:fill-amber-300' 
               : 'fill-slate-100 stroke-slate-300 hover:fill-slate-50'
-          } transition-colors duration-200 stroke-[1.5] cursor-pointer`}
+          } transition-colors duration-200 stroke-[1] cursor-pointer`}
         />
       );
     }
@@ -76,7 +76,6 @@ export default function KlasmaPage() {
     return (
       <svg width="180" height="180" className="drop-shadow-md">
         {slices}
-        {/* Κεντρικό σημείο για ομορφιά */}
         <circle cx={cx} cy={cy} r="3" className="fill-slate-700" />
       </svg>
     );
@@ -96,7 +95,7 @@ export default function KlasmaPage() {
       blocks.push(
         <div
           key={i}
-          className={`flex-1 h-12 border border-amber-800/20 first:rounded-l-lg last:rounded-r-lg transition-all duration-300 ${
+          className={`flex-1 h-12 border border-amber-800/10 first:rounded-l-lg last:rounded-r-lg transition-all duration-300 ${
             isFilled
               ? 'bg-amber-700 shadow-inner scale-[0.98]'
               : 'bg-amber-100/40'
@@ -106,7 +105,7 @@ export default function KlasmaPage() {
     }
 
     return (
-      <div className="w-full bg-amber-900/10 p-2 rounded-2xl border border-amber-900/20 flex gap-1 shadow-sm">
+      <div className="w-full bg-amber-900/10 p-2 rounded-2xl border border-amber-900/20 flex gap-0.5 shadow-sm overflow-hidden">
         {blocks}
       </div>
     );
@@ -234,7 +233,7 @@ export default function KlasmaPage() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-xl font-black text-gray-900">Φτιάξε το Κλάσμα σου</h3>
-                  <p className="text-gray-500 text-xs">Άλλαξε τις τιμές για να δεις τη γραφική αναπαράσταση.</p>
+                  <p className="text-gray-500 text-xs">Μέγιστο όριο όρων: {MAX_NUMERATOR}</p>
                 </div>
 
                 {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
@@ -296,7 +295,6 @@ export default function KlasmaPage() {
               {/* ΤΟ ΚΛΑΣΜΑ ΣΕ ΜΕΓΑΛΟ ΜΕΓΕΘΟΣ */}
               <div className="flex items-center justify-center py-6 bg-slate-50 rounded-2xl border border-slate-100">
                 <div className="flex items-center gap-6">
-                  {/* Σύμβολο Κλάσματος */}
                   <div className="flex flex-col items-center font-mono select-none">
                     <span className="text-5xl md:text-6xl font-black text-blue-600">{numerator}</span>
                     <div className="w-16 md:w-20 h-1.5 bg-slate-800 rounded-full my-2" />
@@ -305,7 +303,6 @@ export default function KlasmaPage() {
                   
                   <span className="text-3xl font-light text-slate-300">=</span>
 
-                  {/* Δεκαδική Τιμή */}
                   <div className="text-center font-mono">
                     <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase tracking-wider">Δεκαδική Αξία</span>
                     <span className="text-3xl md:text-4xl font-black text-slate-800">
@@ -315,12 +312,12 @@ export default function KlasmaPage() {
                 </div>
               </div>
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ 1: ΠΙΤΣΑ (ΚΥΚΛΙΚΟ) */}
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ 1: ΠΙΤΣΑ */}
               <div className="space-y-4">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍕 Μοντέλο Πίτσας (Κυκλικό)</span>
-                <div className="flex flex-wrap items-center justify-center gap-6 py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                <div className="flex flex-wrap items-center justify-center gap-6 py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 max-h-[300px] overflow-y-auto">
                   {Array.from({ length: neededVisuals }).map((_, i) => (
-                    <div key={i} className="flex flex-col items-center space-y-2">
+                    <div key={i} className="flex flex-col items-center space-y-2 scale-[0.9]">
                       {renderPizza(i)}
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Μονάδα {i + 1}</span>
                     </div>
@@ -328,10 +325,10 @@ export default function KlasmaPage() {
                 </div>
               </div>
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ 2: ΣΟΚΟΛΑΤΑ (ΓΡΑΜΜΙΚΟ/ΟΡΘΟΓΩΝΙΟ) */}
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ 2: ΣΟΚΟΛΑΤΑ */}
               <div className="space-y-4">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍫 Μοντέλο Σοκολάτας (Γραμμικό)</span>
-                <div className="space-y-4 p-5 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                <div className="space-y-4 p-5 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 max-h-[250px] overflow-y-auto">
                   {Array.from({ length: neededVisuals }).map((_, i) => (
                     <div key={i} className="space-y-1">
                       <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase">
