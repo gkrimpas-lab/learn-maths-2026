@@ -103,7 +103,6 @@ export default function DinameisDekaPage() {
     } 
     else {
       // Για εκθέτες 5 έως 10, αυξάνουμε σταδιακά τον πληθυσμό της «σκόνης»
-      // Χρησιμοποιούμε rect 1x1 για μέγιστη απόδοση
       let dotLimit = 25000; // 10^5
       if (activeExponent === 6) dotLimit = 45000;   // 10^6
       if (activeExponent === 7) dotLimit = 65000;   // 10^7
@@ -111,7 +110,6 @@ export default function DinameisDekaPage() {
       if (activeExponent === 9) dotLimit = 105000;  // 10^9
       if (activeExponent === 10) dotLimit = 125000; // 10^10 (σχεδόν πλήρες γέμισμα)
 
-      // Αλλαγή άλφα ανάλογα με την πυκνότητα για να μην καίγεται το λευκό
       ctx.fillStyle = activeExponent >= 8 ? 'rgba(56, 189, 248, 0.7)' : 'rgba(56, 189, 248, 0.9)';
       
       const margin = 8;
@@ -124,13 +122,10 @@ export default function DinameisDekaPage() {
 
   }, [activeExponent]);
 
+  // Διορθώθηκε: Εμφανίζει ΠΑΝΤΑ αναλυτικά όλο τον πολλαπλασιοιασμό (π.χ. 10 · 10 · 10...) χωρίς συντομεύσεις
   const getMultiplicationSteps = () => {
-    if (activeExponent === 0) return "1";
+    if (activeExponent === 0) return "1 (Κάθε αριθμός με εκθέτη 0 ισούται με 1)";
     if (activeExponent === 1) return "10";
-    if (activeExponent > 5) {
-      // Για να μην γεμίζει η οθόνη με "· 10", βάζουμε σύντομη γραφή στα μεγάλα
-      return `10 · 10 · ... (συνολικά ${activeExponent} φορές)`;
-    }
     return Array(activeExponent).fill(10).join(" · ");
   };
 
@@ -212,7 +207,7 @@ export default function DinameisDekaPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <h3 className="text-xl font-black text-gray-900">Δες τις Δυνάμεις</h3>
-                  <p className="text-gray-500 text-xs">Σύρε τον κέρσορα από το 0 έως το 10 για να δεις το εκρηκτικό εκθετικό γέμισμα του χώρου!</p>
+                  <p className="text-gray-500 text-xs">Σύρε τον κέρσορα από το 0 έως το 10 για να δεις το εκθετικό γέμισμα του χώρου!</p>
                 </div>
 
                 {/* SLIDER ΓΙΑ ΤΟΝ ΕΚΘΕΤΗ */}
@@ -239,11 +234,11 @@ export default function DinameisDekaPage() {
                   </div>
                 </div>
 
-                {/* ΓΡΗΓΟΡΑ ΚΟΥΜΠΙΑ */}
+                {/* ΓΡΗΓΟΡΑ ΚΟΥΜΠΙΑ (Προστέθηκαν το 7 και το 8 που έλειπαν) */}
                 <div className="space-y-2 pt-2">
                   <span className="text-[10px] font-black uppercase text-slate-400 block">Γρήγορη Μετάβαση:</span>
                   <div className="grid grid-cols-3 gap-2">
-                    {[0, 2, 3, 4, 6, 9, 10].map((num) => (
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <button 
                         key={num}
                         onClick={() => setExponent(num)}
@@ -261,8 +256,8 @@ export default function DinameisDekaPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: CANVAS & ΕΝΤΥΠΩΣΙΑΚΗ ΟΠΤΙΚΟΠΟΙΗΣΗ */}
-            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[580px] space-y-6">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: CANVAS & ΟΠΤΙΚΟΠΟΙΗΣΗ */}
+            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[550px] space-y-6">
               
               {/* ΟΝΟΜΑΣΙΑ ΚΑΙ ΜΑΘΗΜΑΤΙΚΗ ΣΥΜΒΟΛΗ */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex justify-between items-center px-6">
@@ -288,7 +283,6 @@ export default function DinameisDekaPage() {
                   </span>
                 </div>
                 
-                {/* Canvas Container */}
                 <div className="w-full bg-slate-950 rounded-2xl border-4 border-slate-900 overflow-hidden shadow-2xl p-1">
                   <canvas 
                     ref={canvasRef} 
@@ -296,7 +290,7 @@ export default function DinameisDekaPage() {
                   />
                 </div>
 
-                {/* Μπάρα Πυκνότητας / Πληρότητας Χώρου */}
+                {/* Μπάρα Πυκνότητας */}
                 <div className="space-y-1 pt-2">
                   <div className="flex justify-between text-[10px] font-bold text-slate-400">
                     <span>ΠΟΣΟΣΤΟ ΚΑΛΥΨΗΣ ΧΩΡΟΥ</span>
@@ -323,12 +317,12 @@ export default function DinameisDekaPage() {
                 </p>
               </div>
 
-              {/* ΑΝΑΛΥΣΗ ΠΡΑΞΗΣ */}
+              {/* ΑΝΑΛΥΣΗ ΠΡΑΞΗΣ (Πλέον εμφανίζεται 100% αναλυτικά) */}
               <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-2 font-mono">
                 <div className="text-xs font-sans text-slate-400 font-bold uppercase tracking-wider">
                   📝 Ανάλυση ως Γινόμενο:
                 </div>
-                <div className="text-base md:text-lg font-black text-slate-100 flex items-center gap-2 flex-wrap">
+                <div className="text-base md:text-lg font-black text-slate-100 flex items-center gap-2 flex-wrap max-h-[120px] overflow-y-auto pr-1">
                   10<sup>{activeExponent}</sup> = {getMultiplicationSteps()} = <span className="text-amber-400 font-black">{result.toLocaleString('el-GR')}</span>
                 </div>
               </div>
