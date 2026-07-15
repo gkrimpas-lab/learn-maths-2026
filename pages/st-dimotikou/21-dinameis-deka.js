@@ -10,7 +10,7 @@ export default function DinameisDekaPage() {
   const activeExponent = exponent === '' ? 0 : Number(exponent);
   const result = Math.pow(10, activeExponent);
 
-  // Σχεδίαση των κουκίδων (τελίτσες) στο Canvas ανάλογα με τον εκθέτη
+  // Σχεδίαση των κουκίδων (τελίτσες) στο Canvas ανάλογα με τον εκθέτη (έως 10^10)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -25,21 +25,28 @@ export default function DinameisDekaPage() {
     const width = rect.width;
     const height = rect.height;
 
-    // Σκούρο background για να κάνουν αντίθεση οι φωτεινές τελίτσες
+    // Σκούρο background (διάστημα)
     ctx.fillStyle = '#0f172a'; // slate-900
     ctx.fillRect(0, 0, width, height);
 
-    // Χρώμα τελίτσας (έντονο κυανό/γαλάζιο για να εντυπωσιάζει)
-    ctx.fillStyle = '#38bdf8'; // sky-400
+    // Χρώμα τελίτσας (neon sky blue)
+    ctx.fillStyle = '#38bdf8'; 
+
+    // Ψευδοτυχαία γεννήτρια με σταθερό seed για να μην τρεμοπαίζουν οι κουκκίδες
+    let lcgSeed = 42;
+    const pseudoRandom = () => {
+      lcgSeed = (lcgSeed * 1664525 + 1013904223) % 4294967296;
+      return lcgSeed / 4294967296;
+    };
 
     if (activeExponent === 0) {
-      // 1 τελίτσα ακριβώς στο κέντρο (μεγαλύτερη για να φαίνεται)
+      // 10^0 = 1 τελίτσα στο κέντρο
       ctx.beginPath();
       ctx.arc(width / 2, height / 2, 6, 0, Math.PI * 2);
       ctx.fill();
     } 
     else if (activeExponent === 1) {
-      // 10 τελίτσες σε μια οριζόντια σειρά στο κέντρο
+      // 10^1 = 10 τελίτσες σε σειρά
       const dotCount = 10;
       const spacing = 20;
       const startX = (width - (dotCount - 1) * spacing) / 2;
@@ -50,7 +57,7 @@ export default function DinameisDekaPage() {
       }
     } 
     else if (activeExponent === 2) {
-      // 100 τελίτσες σε πλέγμα 10x10 στο κέντρο
+      // 10^2 = 100 τελίτσες σε πλέγμα 10x10
       const rows = 10;
       const cols = 10;
       const spacingX = 16;
@@ -67,7 +74,7 @@ export default function DinameisDekaPage() {
       }
     } 
     else if (activeExponent === 3) {
-      // 1.000 τελίτσες (πυκνό πλέγμα 50x20)
+      // 10^3 = 1.000 τελίτσες σε πλέγμα 50x20
       const cols = 50;
       const rows = 20;
       const spacingX = 6;
@@ -84,14 +91,7 @@ export default function DinameisDekaPage() {
       }
     } 
     else if (activeExponent === 4) {
-      // 10.000 τελίτσες (πολύ πυκνό «νέφος» σε όλο το πλαίσιο, με τυχαία αλλά ομοιόμορφη κατανομή)
-      // Χρησιμοποιούμε σταθερό seed για να μην αναβοσβήνουν οι τελείες
-      let lcgSeed = 42;
-      const pseudoRandom = () => {
-        lcgSeed = (lcgSeed * 1664525 + 1013904223) % 4294967296;
-        return lcgSeed / 4294967296;
-      };
-
+      // 10^4 = 10.000 τελίτσες
       const margin = 15;
       for (let i = 0; i < 10000; i++) {
         const x = margin + pseudoRandom() * (width - margin * 2);
@@ -101,32 +101,52 @@ export default function DinameisDekaPage() {
         ctx.fill();
       }
     } 
-    else if (activeExponent >= 5) {
-      // 100.000+ τελίτσες (το πλαίσιο γεμίζει σχεδόν ολοκληρωτικά, σαν κοσμική σκόνη)
-      let lcgSeed = 1337;
-      const pseudoRandom = () => {
-        lcgSeed = (lcgSeed * 1664525 + 1013904223) % 4294967296;
-        return lcgSeed / 4294967296;
-      };
+    else {
+      // Για εκθέτες 5 έως 10, αυξάνουμε σταδιακά τον πληθυσμό της «σκόνης»
+      // Χρησιμοποιούμε rect 1x1 για μέγιστη απόδοση
+      let dotLimit = 25000; // 10^5
+      if (activeExponent === 6) dotLimit = 45000;   // 10^6
+      if (activeExponent === 7) dotLimit = 65000;   // 10^7
+      if (activeExponent === 8) dotLimit = 85000;   // 10^8
+      if (activeExponent === 9) dotLimit = 105000;  // 10^9
+      if (activeExponent === 10) dotLimit = 125000; // 10^10 (σχεδόν πλήρες γέμισμα)
 
-      const totalDots = activeExponent === 5 ? 40000 : 85000; // Προσαρμογή πυκνότητας για visual εφέ
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.85)'; // Ελαφρώς διάφανο για εφέ πυκνότητας
+      // Αλλαγή άλφα ανάλογα με την πυκνότητα για να μην καίγεται το λευκό
+      ctx.fillStyle = activeExponent >= 8 ? 'rgba(56, 189, 248, 0.7)' : 'rgba(56, 189, 248, 0.9)';
       
-      const margin = 10;
-      for (let i = 0; i < totalDots; i++) {
+      const margin = 8;
+      for (let i = 0; i < dotLimit; i++) {
         const x = margin + pseudoRandom() * (width - margin * 2);
         const y = margin + pseudoRandom() * (height - margin * 2);
-        ctx.fillRect(x, y, 1, 1); // Χρήση rect για μέγιστη ταχύτητα σχεδίασης
+        ctx.fillRect(x, y, 1, 1);
       }
     }
 
   }, [activeExponent]);
 
-  // Δημιουργία των βημάτων πολλαπλασιασμού (π.χ. 10 · 10 · 10)
   const getMultiplicationSteps = () => {
-    if (activeExponent === 0) return "1 (Κάθε αριθμός με εκθέτη 0 ισούται με 1)";
+    if (activeExponent === 0) return "1";
     if (activeExponent === 1) return "10";
+    if (activeExponent > 5) {
+      // Για να μην γεμίζει η οθόνη με "· 10", βάζουμε σύντομη γραφή στα μεγάλα
+      return `10 · 10 · ... (συνολικά ${activeExponent} φορές)`;
+    }
     return Array(activeExponent).fill(10).join(" · ");
+  };
+
+  const getFriendlyName = () => {
+    if (result === 1) return "Μία Μονάδα";
+    if (result === 10) return "Δέκα";
+    if (result === 100) return "Εκατό";
+    if (result === 1000) return "Χίλια";
+    if (result === 10000) return "Δέκα Χιλιάδες";
+    if (result === 100000) return "Εκατό Χιλιάδες";
+    if (result === 1000000) return "Ένα Εκατομμύριο";
+    if (result === 10000000) return "Δέκα Εκατομμύρια";
+    if (result === 100000000) return "Εκατό Εκατομμύρια";
+    if (result === 1000000000) return "Ένα Δισεκατομμύριο";
+    if (result === 10000000000) return "Δέκα Δισεκατομμύρια";
+    return "";
   };
 
   return (
@@ -152,7 +172,7 @@ export default function DinameisDekaPage() {
         {/* MAIN CONTENT */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-8`}>
           
-          {/* SECTION 1: ΘΕΩΡΙΑ ΔΥΝΑΜΕΩΝ ΤΟΥ 10 */}
+          {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
               <span>📖</span> Οι Δυνάμεις με βάση το 10
@@ -178,6 +198,7 @@ export default function DinameisDekaPage() {
                   <p>🔹 10<sup>2</sup> = 100 <span className="text-slate-300 text-[11px]">(2 μηδενικά - Εκατό)</span></p>
                   <p>🔹 10<sup>3</sup> = 1.000 <span className="text-slate-300 text-[11px]">(3 μηδενικά - Χίλια)</span></p>
                   <p>🔹 10<sup>6</sup> = 1.000.000 <span className="text-slate-300 text-[11px]">(6 μηδενικά - Ένα εκατομμύριο)</span></p>
+                  <p>🔹 10<sup>9</sup> = 1.000.000.000 <span className="text-slate-300 text-[11px]">(9 μηδενικά - Ένα δισεκατομμύριο)</span></p>
                 </div>
               </div>
             </div>
@@ -186,16 +207,16 @@ export default function DinameisDekaPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΕΠΙΛΟΓΕΑΣ ΕΚΘΕΤΗ */}
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: SLIDER ΕΩΣ 10^10 */}
             <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col gap-6 justify-between">
               <div className="space-y-4">
                 <div className="space-y-1">
                   <h3 className="text-xl font-black text-gray-900">Δες τις Δυνάμεις</h3>
-                  <p className="text-gray-500 text-xs">Επίλεξε εκθέτη από το 0 έως το 6 για να δεις το εκθετικό γέμισμα.</p>
+                  <p className="text-gray-500 text-xs">Σύρε τον κέρσορα από το 0 έως το 10 για να δεις το εκρηκτικό εκθετικό γέμισμα του χώρου!</p>
                 </div>
 
                 {/* SLIDER ΓΙΑ ΤΟΝ ΕΚΘΕΤΗ */}
-                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-black text-slate-500 uppercase">Εκθέτης</span>
                     <span className="text-lg font-black text-blue-600 font-mono">10<sup>{activeExponent}</sup></span>
@@ -203,33 +224,32 @@ export default function DinameisDekaPage() {
                   <input
                     type="range"
                     min="0"
-                    max="6"
+                    max="10"
                     value={activeExponent}
                     onChange={(e) => setExponent(e.target.value)}
                     className="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg appearance-none"
                   />
-                  <div className="flex justify-between text-[10px] text-slate-400 font-bold font-mono">
+                  <div className="flex justify-between text-[9px] text-slate-400 font-bold font-mono">
                     <span>10⁰</span>
-                    <span>10¹</span>
                     <span>10²</span>
-                    <span>10³</span>
                     <span>10⁴</span>
-                    <span>10⁵</span>
                     <span>10⁶</span>
+                    <span>10⁸</span>
+                    <span>10¹⁰</span>
                   </div>
                 </div>
 
                 {/* ΓΡΗΓΟΡΑ ΚΟΥΜΠΙΑ */}
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-black uppercase text-slate-400 block">Άμεση Επιλογή:</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 block">Γρήγορη Μετάβαση:</span>
                   <div className="grid grid-cols-3 gap-2">
-                    {[0, 1, 2, 3, 4, 5, 6].map((num) => (
+                    {[0, 2, 3, 4, 6, 9, 10].map((num) => (
                       <button 
                         key={num}
                         onClick={() => setExponent(num)}
                         className={`py-2 rounded-xl border font-mono font-bold text-xs transition-all ${
                           activeExponent === num 
-                            ? 'bg-blue-600 text-white border-blue-600' 
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
                             : 'bg-gray-50 hover:bg-gray-100 text-gray-600'
                         }`}
                       >
@@ -241,43 +261,65 @@ export default function DinameisDekaPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ & ΑΠΟΤΕΛΕΣΜΑ */}
-            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[550px] space-y-6">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: CANVAS & ΕΝΤΥΠΩΣΙΑΚΗ ΟΠΤΙΚΟΠΟΙΗΣΗ */}
+            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[580px] space-y-6">
               
-              {/* ΜΑΘΗΜΑΤΙΚΗ ΣΥΜΒΟΛΗ */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-center">
-                <div className="text-center font-mono">
-                  <span className="text-xs font-sans text-slate-400 block mb-1 font-bold uppercase">Μαθηματικός Συμβολισμός:</span>
-                  <div className="inline-flex items-baseline justify-center">
-                    <span className="text-5xl font-black text-blue-600">10</span>
+              {/* ΟΝΟΜΑΣΙΑ ΚΑΙ ΜΑΘΗΜΑΤΙΚΗ ΣΥΜΒΟΛΗ */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex justify-between items-center px-6">
+                <div className="text-left font-mono">
+                  <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase">Σύμβολο:</span>
+                  <div className="inline-flex items-baseline">
+                    <span className="text-4xl font-black text-blue-600">10</span>
                     <span className="text-2xl font-black text-indigo-600 self-start -mt-2">{activeExponent}</span>
                   </div>
                 </div>
+                <div className="text-right">
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Λεκτική Ονομασία:</span>
+                  <span className="text-base font-black text-slate-800">{getFriendlyName()}</span>
+                </div>
               </div>
 
-              {/* ΜΕΓΑΛΟ ΣΤΑΘΕΡΟ ΠΛΑΙΣΙΟ ΜΕ ΤΕΛΙΤΣΕΣ (CANVAS) */}
-              <div className="flex flex-col items-center space-y-2">
+              {/* ΜΕΓΑΛΟ ΣΤΑΘΕΡΟ ΠΛΑΙΣΙΟ ΜΕ ΤΕΛΙΤΣΕΣ */}
+              <div className="flex flex-col space-y-2">
                 <div className="flex justify-between items-center w-full px-1">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">🌌 Εκθετικό γέμισμα του χώρου:</span>
-                  <span className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">🌌 Οπτικό Γέμισμα Χώρου:</span>
+                  <span className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-mono">
                     {result.toLocaleString('el-GR')} {result === 1 ? 'τελίτσα' : 'τελίτσες'}
                   </span>
                 </div>
                 
-                {/* Το σταθερό μαύρο πλαίσιο */}
+                {/* Canvas Container */}
                 <div className="w-full bg-slate-950 rounded-2xl border-4 border-slate-900 overflow-hidden shadow-2xl p-1">
                   <canvas 
                     ref={canvasRef} 
                     className="w-full h-[280px] block rounded-xl"
                   />
                 </div>
-                <p className="text-[11px] text-slate-400 italic text-center">
-                  {activeExponent === 0 && "Μόλις 1 κουκκίδα. Ο χώρος είναι σχεδόν άδειος!"}
-                  {activeExponent === 1 && "10 κουκκίδες στη σειρά."}
-                  {activeExponent === 2 && "100 κουκκίδες. Το πλέγμα αρχίζει να γεμίζει ομοιόμορφα."}
-                  {activeExponent === 3 && "1.000 κουκκίδες! Ο χώρος αρχίζει και μικραίνει."}
-                  {activeExponent === 4 && "10.000 κουκκίδες! Το πλαίσιο γεμίζει με ένα πυκνό σύννεφο."}
-                  {activeExponent >= 5 && `Εκπληκτικό! ${result.toLocaleString('el-GR')} κουκκίδες γεμίζουν ασφυκτικά την οθόνη!`}
+
+                {/* Μπάρα Πυκνότητας / Πληρότητας Χώρου */}
+                <div className="space-y-1 pt-2">
+                  <div className="flex justify-between text-[10px] font-bold text-slate-400">
+                    <span>ΠΟΣΟΣΤΟ ΚΑΛΥΨΗΣ ΧΩΡΟΥ</span>
+                    <span className="font-mono">{activeExponent * 10}%</span>
+                  </div>
+                  <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-sky-400 to-blue-600 h-full transition-all duration-300"
+                      style={{ width: `${activeExponent * 10}%` }}
+                    />
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-slate-400 italic text-center pt-1">
+                  {activeExponent === 0 && "Μόλις 1 κουκκίδα. Ο χώρος είναι άδειος!"}
+                  {activeExponent === 1 && "10 κουκκίδες. Μια απλή γραμμή."}
+                  {activeExponent === 2 && "100 κουκκίδες. Το πλέγμα αρχίζει να σχηματίζεται."}
+                  {activeExponent === 3 && "1.000 κουκκίδες. Ο χώρος πυκνώνει!"}
+                  {activeExponent === 4 && "10.000 κουκκίδες. Σαν ένα όμορφο σύννεφο."}
+                  {activeExponent === 5 && "100.000 κουκκίδες. Η κοσμική σκόνη αρχίζει να καταλαμβάνει τον χώρο."}
+                  {activeExponent === 6 && "1.000.000 (1 εκατομμύριο) κουκκίδες! Ο χώρος γεμίζει εντυπωσιακά."}
+                  {activeExponent >= 7 && activeExponent <= 9 && `Απίστευτη πυκνότητα! ${result.toLocaleString('el-GR')} κουκκίδες γεμίζουν σχεδόν όλο το πλαίσιο.`}
+                  {activeExponent === 10 && "Φανταστικό! 10.000.000.000 (10 δισεκατομμύρια) κουκκίδες καλύπτουν πλήρως ολόκληρο το σύμπαν του πλαισίου!"}
                 </p>
               </div>
 
@@ -300,7 +342,7 @@ export default function DinameisDekaPage() {
                   </span>
                 </div>
                 <div className="text-right hidden sm:block">
-                  <span className="text-[10px] font-sans uppercase tracking-wider text-amber-300 block">💡 Μηδενικά:</span>
+                  <span className="text-[10px] font-sans uppercase tracking-wider text-amber-300 block">💡 Πλήθος Μηδενικών:</span>
                   <span className="text-xs font-sans text-slate-200">
                     Το 1 ακολουθείται από <strong className="text-white">{activeExponent}</strong> {activeExponent === 1 ? 'μηδενικό' : 'μηδενικά'}.
                   </span>
