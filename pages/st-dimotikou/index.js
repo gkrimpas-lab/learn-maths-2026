@@ -26,7 +26,8 @@ export default function STDimotikouMenu() {
     { id: '19-ekp-protoi', label: '🍕 19. ΕΚΠ - Αλγόριθμος Πρώτοι Αριθμοί', href: '/st-dimotikou/19-ekp-protoi' },
     { id: '20-dinameis', label: '🍕 20. Δύναμη φυσικού Αριθμού', href: '/st-dimotikou/20-dinameis' },
     { id: '21-dinameis-deka', label: '🍕 21. Δυνάμεις του 10', href: '/st-dimotikou/21-dinameis-deka' },
-    { id: '22-klasma', label: '🍕 22. Κλάσματα', href: '/st-dimotikou/22-klasma' }
+    { id: '22-klasma', label: '🍕 22. Κλάσματα', href: '/st-dimotikou/22-klasma' },
+    { id: '23-klasma-se-dekadiko', label: '🍕 23. Κλάσματα σε Δεκαδικό', href: '/st-dimotikou/23-klasma-se-dekadiko' }
   ];
 
   return (
