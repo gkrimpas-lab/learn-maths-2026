@@ -24,7 +24,8 @@ export default function STDimotikouMenu() {
     { id: '17-pollaplasia', label: '🍕 17. Πολλαπλάσια Αριθμού', href: '/st-dimotikou/17-pollaplasia' },
     { id: '18-ekp', label: '🍕 18. Ελάχιστο Κοινό Πολλαπλάσιο (ΕΚΠ)', href: '/st-dimotikou/18-ekp' },
     { id: '19-ekp-protoi', label: '🍕 19. ΕΚΠ - Αλγόριθμος Πρώτοι Αριθμοί', href: '/st-dimotikou/19-ekp-protoi' },
-    { id: '20-dinameis', label: '🍕 20. Δύναμη φυσικού Αριθμού', href: '/st-dimotikou/20-dinameis' }
+    { id: '20-dinameis', label: '🍕 20. Δύναμη φυσικού Αριθμού', href: '/st-dimotikou/20-dinameis' },
+    { id: '21-dinameis-deka', label: '🍕 21. Δυνάμεις του 10', href: '/st-dimotikou/21-dinameis-deka' }
   ];
 
   return (
