@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// ΜΕΓΙΣΤΕΣ ΤΙΜΕΣ (Ορίστηκαν στο 40)
+// ΜΕΓΙΣΤΕΣ ΤΙΜΕΣ (Όριο στο 40)
 const MAX_NUMERATOR = 40;
 const MAX_DENOMINATOR = 40;
 
@@ -11,17 +11,46 @@ export default function KlasmaPage() {
   const [numerator, setNumerator] = useState(3);
   const [denominator, setDenominator] = useState(4);
 
-  // Αλλαγή αριθμητή με δυναμικά όρια [0, MAX_NUMERATOR]
+  // Διαχείριση πληκτρολόγησης και αλλαγής για τον Αριθμητή
+  const handleNumeratorInputChange = (val) => {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') {
+      setNumerator('');
+      return;
+    }
+    const n = Number(clean);
+    // Κλείδωμα: Αν η νέα τιμή ξεπερνά το 40, αγνοούμε το πάτημα
+    if (n > MAX_NUMERATOR) return;
+    setNumerator(n);
+  };
+
+  // Διαχείριση πληκτρολόγησης και αλλαγής για τον Παρονομαστή
+  const handleDenominatorInputChange = (val) => {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') {
+      setDenominator('');
+      return;
+    }
+    const n = Number(clean);
+    // Κλείδωμα: Αν η νέα τιμή ξεπερνά το 40, αγνοούμε το πάτημα
+    if (n > MAX_DENOMINATOR) return;
+    setDenominator(n);
+  };
+
+  // Αλλαγή αριθμητή με κουμπιά (+1 / -1)
   const handleNumeratorChange = (amount) => {
-    setNumerator(prev => Math.max(0, Math.min(MAX_NUMERATOR, prev + amount)));
+    setNumerator(prev => Math.max(0, Math.min(MAX_NUMERATOR, (Number(prev) || 0) + amount)));
   };
 
-  // Αλλαγή παρονομαστή με δυναμικά όρια [1, MAX_DENOMINATOR]
+  // Αλλαγή παρονομαστή με κουμπιά (+1 / -1)
   const handleDenominatorChange = (amount) => {
-    setDenominator(prev => Math.max(1, Math.min(MAX_DENOMINATOR, prev + amount)));
+    setDenominator(prev => Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount)));
   };
 
-  const fractionValue = numerator / denominator;
+  // Ασφαλείς τιμές για τους υπολογισμούς των γραφικών
+  const activeNumerator = numerator === '' ? 0 : numerator;
+  const activeDenominator = denominator === '' || denominator === 0 ? 1 : denominator;
+  const fractionValue = activeNumerator / activeDenominator;
 
   // Δημιουργία των κομματιών της πίτσας (κύκλος SVG)
   const renderPizza = (pizzaIndex = 0) => {
@@ -30,19 +59,17 @@ export default function KlasmaPage() {
     const cx = 90;
     const cy = 90;
 
-    // Πόσα κομμάτια πρέπει να χρωματιστούν σε αυτή τη συγκεκριμένη πίτσα
-    const startingNumeratorForPizza = pizzaIndex * denominator;
+    const startingNumeratorForPizza = pizzaIndex * activeDenominator;
     const activeSlicesForThisPizza = Math.max(
       0,
-      Math.min(denominator, numerator - startingNumeratorForPizza)
+      Math.min(activeDenominator, activeNumerator - startingNumeratorForPizza)
     );
 
-    for (let i = 0; i < denominator; i++) {
-      const angleStep = 360 / denominator;
-      const startAngle = i * angleStep - 90; // Ξεκινάμε από την κορυφή (-90 μοίρες)
+    for (let i = 0; i < activeDenominator; i++) {
+      const angleStep = 360 / activeDenominator;
+      const startAngle = i * angleStep - 90;
       const endAngle = (i + 1) * angleStep - 90;
 
-      // Μετατροπή μοιρών σε ακτίνια
       const rad1 = (startAngle * Math.PI) / 180;
       const rad2 = (endAngle * Math.PI) / 180;
 
@@ -53,8 +80,7 @@ export default function KlasmaPage() {
 
       const largeArcFlag = angleStep > 180 ? 1 : 0;
 
-      // Αν ο παρονομαστής είναι 1, σχεδιάζουμε έναν ολόκληρο κύκλο
-      const d = denominator === 1
+      const d = activeDenominator === 1
         ? `M ${cx} ${cy} m -${radius}, 0 a ${radius},${radius} 0 1,0 ${radius * 2},0 a ${radius},${radius} 0 1,0 -${radius * 2},0`
         : `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
 
@@ -84,13 +110,13 @@ export default function KlasmaPage() {
   // Δημιουργία των κομματιών της σοκολάτας (ορθογώνιο)
   const renderChocolate = (chocoIndex = 0) => {
     const blocks = [];
-    const startingNumeratorForChoco = chocoIndex * denominator;
+    const startingNumeratorForChoco = chocoIndex * activeDenominator;
     const activeBlocksForThisChoco = Math.max(
       0,
-      Math.min(denominator, numerator - startingNumeratorForChoco)
+      Math.min(activeDenominator, activeNumerator - startingNumeratorForChoco)
     );
 
-    for (let i = 0; i < denominator; i++) {
+    for (let i = 0; i < activeDenominator; i++) {
       const isFilled = i < activeBlocksForThisChoco;
       blocks.push(
         <div
@@ -111,38 +137,36 @@ export default function KlasmaPage() {
     );
   };
 
-  // Πόσες ακέραιες μονάδες (πίτσες/σοκολάτες) χρειαζόμαστε για να δείξουμε το κλάσμα
-  const neededVisuals = Math.max(1, Math.ceil(numerator / denominator));
+  const neededVisuals = Math.max(1, Math.ceil(activeNumerator / activeDenominator));
 
-  // Εύρεση του τύπου του κλάσματος
   const getFractionTypeMessage = () => {
-    if (numerator === 0) {
+    if (activeNumerator === 0) {
       return {
         title: "Μηδενικό Κλάσμα",
         desc: "Όταν ο αριθμητής είναι 0, το κλάσμα ισούται με 0.",
         color: "text-slate-500 bg-slate-50 border-slate-200"
       };
     }
-    if (numerator === denominator) {
+    if (activeNumerator === activeDenominator) {
       return {
         title: "Ίσο με τη Μονάδα (1 ολόκληρο)",
         desc: "Ο αριθμητής είναι ίσος με τον παρονομαστή. Έχουμε πάρει όλα τα κομμάτια!",
         color: "text-emerald-800 bg-emerald-50 border-emerald-200"
       };
     }
-    if (numerator < denominator) {
+    if (activeNumerator < activeDenominator) {
       return {
         title: "Γνήσιο Κλάσμα",
         desc: "Ο αριθμητής είναι μικρότερος από τον παρονομαστή. Είναι μικρότερο από 1 ολόκληρο.",
         color: "text-blue-800 bg-blue-50 border-blue-200"
       };
     }
-    if (numerator > denominator) {
-      const isInteger = numerator % denominator === 0;
+    if (activeNumerator > activeDenominator) {
+      const isInteger = activeNumerator % activeDenominator === 0;
       return {
         title: isInteger ? "Ακέραιος Αριθμός" : "Καταχρηστικό (Μη Γνήσιο) Κλάσμα",
         desc: isInteger 
-          ? `Ο αριθμητής διαιρείται ακριβώς με τον παρονομαστή και μας δίνει ακριβώς ${numerator / denominator} ολόκληρες μονάδες!`
+          ? `Ο αριθμητής διαιρείται ακριβώς με τον παρονομαστή και μας δίνει ακριβώς ${activeNumerator / activeDenominator} ολόκληρες μονάδες!`
           : "Ο αριθμητής είναι μεγαλύτερος από τον παρονομαστή. Χρειαζόμαστε πάνω από 1 ολόκληρη μονάδα!",
         color: "text-purple-800 bg-purple-50 border-purple-200"
       };
@@ -228,54 +252,60 @@ export default function KlasmaPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ */}
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ ΜΕ ΠΛΗΚΤΡΟΛΟΓΗΣΗ */}
             <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between gap-6">
               <div className="space-y-6">
                 <div>
                   <h3 className="text-xl font-black text-gray-900">Φτιάξε το Κλάσμα σου</h3>
-                  <p className="text-gray-500 text-xs">Μέγιστο όριο όρων: {MAX_NUMERATOR}</p>
+                  <p className="text-gray-500 text-xs">Γράψε απευθείας ή χρησιμοποίησε τα κουμπιά (Όριο: 40).</p>
                 </div>
 
                 {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
                 <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-black text-blue-800 uppercase">Αριθμητής (Πάνω)</span>
-                    <span className="text-lg font-mono font-black text-blue-600 bg-white px-3 py-1 rounded-lg border border-blue-100">{numerator}</span>
-                  </div>
-                  <div className="flex gap-2">
+                  <span className="text-xs font-black text-blue-800 uppercase block">Αριθμητής (Πάνω)</span>
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleNumeratorChange(-1)}
-                      className="flex-1 py-2.5 bg-white hover:bg-gray-100 text-blue-600 border border-blue-200 rounded-xl font-bold transition shadow-sm"
+                      className="w-12 py-2 bg-white hover:bg-gray-100 text-blue-600 border border-blue-200 rounded-xl font-black transition shadow-sm text-lg"
                     >
-                      -1
+                      -
                     </button>
+                    <input
+                      type="text"
+                      value={numerator}
+                      onChange={(e) => handleNumeratorInputChange(e.target.value)}
+                      className="flex-1 text-center font-mono font-black text-xl text-blue-600 bg-white border-2 border-blue-200 rounded-xl p-1.5 focus:border-blue-500 outline-none shadow-inner"
+                    />
                     <button
                       onClick={() => handleNumeratorChange(1)}
-                      className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition shadow-md"
+                      className="w-12 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black transition shadow-md text-lg"
                     >
-                      +1
+                      +
                     </button>
                   </div>
                 </div>
 
                 {/* ΕΛΕΓΧΟΣ ΠΑΡΟΝΟΜΑΣΤΗ */}
                 <div className="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100 space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-black text-emerald-800 uppercase">Παρονομαστής (Κάτω)</span>
-                    <span className="text-lg font-mono font-black text-emerald-600 bg-white px-3 py-1 rounded-lg border border-emerald-100">{denominator}</span>
-                  </div>
-                  <div className="flex gap-2">
+                  <span className="text-xs font-black text-emerald-800 uppercase block">Παρονομαστής (Κάτω)</span>
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleDenominatorChange(-1)}
-                      className="flex-1 py-2.5 bg-white hover:bg-gray-100 text-emerald-600 border border-emerald-200 rounded-xl font-bold transition shadow-sm"
+                      className="w-12 py-2 bg-white hover:bg-gray-100 text-emerald-600 border border-emerald-200 rounded-xl font-black transition shadow-sm text-lg"
                     >
-                      -1
+                      -
                     </button>
+                    <input
+                      type="text"
+                      value={denominator}
+                      onChange={(e) => handleDenominatorInputChange(e.target.value)}
+                      className="flex-1 text-center font-mono font-black text-xl text-emerald-600 bg-white border-2 border-emerald-200 rounded-xl p-1.5 focus:border-emerald-500 outline-none shadow-inner"
+                    />
                     <button
                       onClick={() => handleDenominatorChange(1)}
-                      className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition shadow-md"
+                      className="w-12 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black transition shadow-md text-lg"
                     >
-                      +1
+                      +
                     </button>
                   </div>
                 </div>
@@ -296,9 +326,9 @@ export default function KlasmaPage() {
               <div className="flex items-center justify-center py-6 bg-slate-50 rounded-2xl border border-slate-100">
                 <div className="flex items-center gap-6">
                   <div className="flex flex-col items-center font-mono select-none">
-                    <span className="text-5xl md:text-6xl font-black text-blue-600">{numerator}</span>
+                    <span className="text-5xl md:text-6xl font-black text-blue-600">{activeNumerator}</span>
                     <div className="w-16 md:w-20 h-1.5 bg-slate-800 rounded-full my-2" />
-                    <span className="text-5xl md:text-6xl font-black text-emerald-600">{denominator}</span>
+                    <span className="text-5xl md:text-6xl font-black text-emerald-600">{activeDenominator}</span>
                   </div>
                   
                   <span className="text-3xl font-light text-slate-300">=</span>
@@ -333,7 +363,7 @@ export default function KlasmaPage() {
                     <div key={i} className="space-y-1">
                       <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase">
                         <span>Σοκολάτα {i + 1}</span>
-                        <span>{Math.max(0, Math.min(denominator, numerator - i * denominator))} / {denominator}</span>
+                        <span>{Math.max(0, Math.min(activeDenominator, activeNumerator - i * activeDenominator))} / {activeDenominator}</span>
                       </div>
                       {renderChocolate(i)}
                     </div>
