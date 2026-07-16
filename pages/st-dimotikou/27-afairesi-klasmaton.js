@@ -1,0 +1,509 @@
+import { useState } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { LAYOUT } from '../../shared/layout-config';
+
+// ΕΞΩΤΕΡΙΚΕΣ ΜΕΤΑΒΛΗΤΕΣ ΡΥΘΜΙΣΗΣ
+const MAX_DENOMINATOR = 100;
+const MAX_NUMERATOR_MULTIPLIER = 3; // Ο αριθμητής μπορεί να γίνει έως 3 φορές ο παρονομαστής
+
+// Βοηθητική συνάρτηση για εύρεση Μέγιστου Κοινού Διαιρέτη (ΜΚΔ)
+const findGCD = (a, b) => {
+  const absA = Math.abs(a);
+  const absB = Math.abs(b);
+  return absB === 0 ? absA : findGCD(absB, absA % absB);
+};
+
+// Βοηθητική συνάρτηση για εύρεση Ελάχιστου Κοινού Πολλαπλάσιου (ΕΚΠ)
+const findLCM = (a, b) => {
+  return (a * b) / findGCD(a, b);
+};
+
+export default function AfairesiKlasmatonPage() {
+  // Κλάσμα Α (Αριστερά)
+  const [numA, setNumA] = useState(3);
+  const [denA, setDenA] = useState(4);
+
+  // Κλάσμα B (Δεξιά)
+  const [numB, setNumB] = useState(1);
+  const [denB, setDenB] = useState(2);
+
+  // Μέγιστος επιτρεπτός αριθμητής βάσει του παρονομαστή
+  const getMaxNumerator = (denominator) => {
+    const activeDen = Number(denominator) || 1;
+    return Math.min(activeDen * MAX_NUMERATOR_MULTIPLIER, MAX_DENOMINATOR * MAX_NUMERATOR_MULTIPLIER);
+  };
+
+  // Ασφαλής έλεγχος εισαγωγής κειμένου
+  const handleInputChange = (setter, val, currentDen, isDenominator = false) => {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') {
+      setter('');
+      return;
+    }
+    const n = Number(clean);
+    
+    if (isDenominator) {
+      if (n === 0 || n > MAX_DENOMINATOR) return;
+      setter(n);
+      const maxNumForNewDen = n * MAX_NUMERATOR_MULTIPLIER;
+      if (setter === setDenA && numA > maxNumForNewDen) setNumA(maxNumForNewDen);
+      if (setter === setDenB && numB > maxNumForNewDen) setNumB(maxNumForNewDen);
+    } else {
+      const maxAllowedNum = getMaxNumerator(currentDen);
+      if (n > maxAllowedNum) return;
+      setter(n);
+    }
+  };
+
+  // Αυξομείωση με κουμπιά για το Κλάσμα Α
+  const adjustValueA = (type, amount) => {
+    if (type === 'num') {
+      const maxNum = getMaxNumerator(denA);
+      setNumA(prev => Math.max(0, Math.min(maxNum, (Number(prev) || 0) + amount)));
+    } else {
+      setDenA(prev => {
+        const nextDen = Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount));
+        const maxNum = getMaxNumerator(nextDen);
+        if (numA > maxNum) setNumA(maxNum);
+        return nextDen;
+      });
+    }
+  };
+
+  // Αυξομείωση με κουμπιά για το Κλάσμα Β
+  const adjustValueB = (type, amount) => {
+    if (type === 'num') {
+      const maxNum = getMaxNumerator(denB);
+      setNumB(prev => Math.max(0, Math.min(maxNum, (Number(prev) || 0) + amount)));
+    } else {
+      setDenB(prev => {
+        const nextDen = Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount));
+        const maxNum = getMaxNumerator(nextDen);
+        if (numB > maxNum) setNumB(maxNum);
+        return nextDen;
+      });
+    }
+  };
+
+  // Ενεργές τιμές για υπολογισμούς
+  const activeNumA = numA === '' ? 0 : Number(numA);
+  const activeDenA = denA === '' || denA === 0 ? 1 : Number(denA);
+  const activeNumB = numB === '' ? 0 : Number(numB);
+  const activeDenB = denB === '' || denB === 0 ? 1 : Number(denB);
+
+  // Υπολογισμός Ε.Κ.Π. και ομώνυμων κλασμάτων
+  const lcm = findLCM(activeDenA, activeDenB);
+  const multiplierA = lcm / activeDenA;
+  const multiplierB = lcm / activeDenB;
+
+  const equivalentNumA = activeNumA * multiplierA;
+  const equivalentNumB = activeNumB * multiplierB;
+
+  // Υπολογισμός Αφαιρέσεως με βάση το Ε.Κ.Π.
+  const lcmResultNumRaw = equivalentNumA - equivalentNumB;
+  const lcmResultDen = lcm;
+
+  // Έλεγχος αν το αποτέλεσμα είναι αρνητικό
+  const isNegative = lcmResultNumRaw < 0;
+  const lcmResultNum = Math.abs(lcmResultNumRaw); // Κρατάμε το απόλυτο για τη σχεδίαση
+
+  // Απλοποίηση Αποτελέσματος
+  const gcdResult = findGCD(lcmResultNum, lcmResultDen);
+  const simplifiedNum = lcmResultNum / gcdResult;
+  const simplifiedDen = lcmResultDen / gcdResult;
+  const isSimplified = gcdResult > 1 && lcmResultNum !== 0;
+
+  const isOriginallyOmonima = activeDenA === activeDenB;
+
+  // Έξυπνη σχεδίαση πολλαπλών κυκλικών διαγραμμάτων
+  const renderFractionVisual = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
+    const totalPizzasNeeded = Math.max(1, Math.ceil(num / den));
+    const pizzas = [];
+
+    const radius = 45;
+    const cx = 55;
+    const cy = 55;
+
+    for (let p = 0; p < totalPizzasNeeded; p++) {
+      const slices = [];
+      const remainingNumForThisPizza = Math.max(0, Math.min(den, num - p * den));
+
+      for (let i = 0; i < den; i++) {
+        const angleStep = 360 / den;
+        const startAngle = i * angleStep - 90;
+        const endAngle = (i + 1) * angleStep - 90;
+
+        const rad1 = (startAngle * Math.PI) / 180;
+        const rad2 = (endAngle * Math.PI) / 180;
+
+        const x1 = cx + radius * Math.cos(rad1);
+        const y1 = cy + radius * Math.sin(rad1);
+        const x2 = cx + radius * Math.cos(rad2);
+        const y2 = cy + radius * Math.sin(rad2);
+
+        const largeArcFlag = angleStep > 180 ? 1 : 0;
+
+        const d = den === 1
+          ? `M ${cx} ${cy} m -${radius}, 0 a ${radius},${radius} 0 1,0 ${radius * 2},0 a ${radius},${radius} 0 1,0 -${radius * 2},0`
+          : `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+
+        const isFilled = i < remainingNumForThisPizza;
+
+        slices.push(
+          <path
+            key={i}
+            d={d}
+            className={`${
+              isFilled ? `${fillColor} ${strokeColor}` : 'fill-slate-100 stroke-slate-300'
+            } transition-colors duration-200 stroke-[0.7]`}
+          />
+        );
+      }
+
+      pizzas.push(
+        <div key={p} className="relative">
+          <svg width="110" height="110" className="drop-shadow-sm overflow-visible">
+            {slices}
+            <circle cx={cx} cy={cy} r="2" className="fill-slate-800" />
+          </svg>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-wrap justify-center gap-2 max-w-[240px] p-2 bg-white rounded-xl border border-slate-100 shadow-inner">
+        {pizzas}
+      </div>
+    );
+  };
+
+  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (Αριστερό Κάτω Πλαίσιο)
+  const getStepByStepExplanation = () => {
+    let typeHeader = isOriginallyOmonima 
+      ? `🔵 Τα κλάσματα είναι ομώνυμα (ίδιος παρονομαστής: ${activeDenA})`
+      : `🟣 Τα κλάσματα είναι ετερώνυμα (διαφορετικοί παρονομαστές: ${activeDenA} ≠ {activeDenB})`;
+
+    return (
+      <div className="space-y-3">
+        <p className={`font-bold ${isOriginallyOmonima ? 'text-blue-800' : 'text-indigo-800'}`}>{typeHeader}</p>
+        <div className="text-slate-600 space-y-1.5 text-xs md:text-sm">
+          {!isOriginallyOmonima && (
+            <>
+              <p>1. Το <strong>Ε.Κ.Π.</strong> των παρονομαστών είναι το <strong>{lcm}</strong>.</p>
+              <p>2. Μετατρέπουμε σε ομώνυμα: <strong>{equivalentNumA}/{lcm}</strong> και <strong>{equivalentNumB}/{lcm}</strong>.</p>
+            </>
+          )}
+          <p>{isOriginallyOmonima ? 'Αφαιρούμε' : '3. Αφαιρούμε'} τους αριθμητές:</p>
+        </div>
+        
+        <div className="bg-white p-3 rounded-xl border border-slate-200 font-mono text-xs md:text-sm">
+          {isOriginallyOmonima ? (
+            `${activeNumA}/${activeDenA} - ${activeNumB}/${activeDenB} = (${activeNumA} - ${activeNumB})/${activeDenA} = `
+          ) : (
+            `${equivalentNumA}/${lcm} - ${equivalentNumB}/${lcm} = (${equivalentNumA} - ${equivalentNumB})/${lcm} = `
+          )}
+          <strong>{isNegative ? '-' : ''}{lcmResultNum}/{lcmResultDen}</strong>
+        </div>
+
+        {isNegative && (
+          <p className="text-red-600 text-xs font-bold bg-red-50 p-2 rounded-lg border border-red-100">
+            ⚠️ Προσοχή: Το 2ο κλάσμα είναι μεγαλύτερο, οπότε το αποτέλεσμα είναι αρνητικός αριθμός (κάτω από το μηδέν)!
+          </p>
+        )}
+
+        {isSimplified && (
+          <p className="text-emerald-700 text-xs font-bold">
+            ✨ Απλοποιώντας με το {gcdResult}, το τελικό κλάσμα γίνεται: {isNegative ? '-' : ''}{simplifiedNum}/{simplifiedDen}
+          </p>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
+      <Head>
+        <title>➖ Αφαίρεση Κλασμάτων - LearnMaths.gr</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+      </Head>
+
+      <div>
+        {/* NAVBAR */}
+        <nav className="bg-white shadow-md w-full">
+          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
+            <Link href="/st-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
+              LearnMaths<span className="text-indigo-600">.gr</span>
+            </Link>
+            <Link href="/st-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
+              🔙 Επιστροφή
+            </Link>
+          </div>
+        </nav>
+
+        {/* MAIN CONTENT */}
+        <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-8`}>
+          
+          {/* SECTION 1: ΘΕΩΡΙΑ */}
+          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+              <span>📖</span> Πώς αφαιρούμε Κλάσματα;
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch text-xs md:text-sm">
+              <div className="bg-blue-50/60 p-5 rounded-xl border border-blue-100 space-y-3">
+                <span className="font-black text-blue-800 block text-sm">1. Ομώνυμα Κλάσματα (Ίδιοι Παρονομαστές)</span>
+                <p className="text-slate-600 leading-relaxed">
+                  Όταν οι παρονομαστές είναι ίδιοι, <strong>αφαιρούμε μόνο τους αριθμητές</strong> μεταξύ τους και αφήνουμε τον <strong>ίδιο παρονομαστή</strong> στο αποτέλεσμα.
+                </p>
+                <span className="font-mono text-xs font-bold text-blue-700 bg-white px-3 py-1 rounded border inline-block">5/7 - 2/7 = (5-2)/7 = 3/7</span>
+              </div>
+
+              <div className="bg-indigo-50/60 p-5 rounded-xl border border-indigo-100 space-y-3 flex flex-col justify-between">
+                <div>
+                  <span className="font-black text-indigo-800 block text-sm">2. Ετερώνυμα Κλάσματα (Διαφορετικοί Παρονομαστές)</span>
+                  <p className="text-slate-600 leading-relaxed">
+                    Όπως και στην πρόσθεση, πρέπει πρώτα να τα κάνουμε <strong>ομώνυμα</strong> βρίσκοντας το <strong>Ε.Κ.Π.</strong> των παρονομαστών τους και μετά να κάνουμε την αφαίρεση.
+                  </p>
+                </div>
+                <span className="font-mono text-xs font-bold text-indigo-700 bg-white px-3 py-1 rounded border inline-block mt-2">Ε.Κ.Π.(3, 4) = 12</span>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
+            
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ */}
+            <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between gap-6">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-black text-gray-900">Διάλεξε Κλάσματα</h3>
+                  <p className="text-gray-500 text-xs">Όριο παρονομαστή: {MAX_DENOMINATOR}.</p>
+                </div>
+
+                {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
+                <div className="bg-blue-50/40 p-4 rounded-2xl border border-blue-100 space-y-3">
+                  <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">🔵 Κλάσμα Α (Αριστερό)</span>
+                  <div className="grid grid-cols-2 gap-2 text-center">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
+                        <button onClick={() => adjustValueA('num', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
+                        <input
+                          type="text"
+                          value={numA}
+                          onChange={(e) => handleInputChange(setNumA, e.target.value, denA, false)}
+                          className="w-full text-center font-mono font-black text-sm outline-none text-blue-600"
+                        />
+                        <button onClick={() => adjustValueA('num', 1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">+</button>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
+                        <button onClick={() => adjustValueA('den', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
+                        <input
+                          type="text"
+                          value={denA}
+                          onChange={(e) => handleInputChange(setDenA, e.target.value, denA, true)}
+                          className="w-full text-center font-mono font-black text-sm outline-none text-blue-600"
+                        />
+                        <button onClick={() => adjustValueA('den', 1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">+</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Β (ΠΟΡΤΟΚΑΛΙ) */}
+                <div className="bg-orange-50/40 p-4 rounded-2xl border border-orange-100 space-y-3">
+                  <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">🟠 Κλάσμα Β (Δεξί)</span>
+                  <div className="grid grid-cols-2 gap-2 text-center">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
+                        <button onClick={() => adjustValueB('num', -1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
+                        <input
+                          type="text"
+                          value={numB}
+                          onChange={(e) => handleInputChange(setNumB, e.target.value, denB, false)}
+                          className="w-full text-center font-mono font-black text-sm outline-none text-orange-600"
+                        />
+                        <button onClick={() => adjustValueB('num', 1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">+</button>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
+                        <button onClick={() => adjustValueB('den', -1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
+                        <input
+                          type="text"
+                          value={denB}
+                          onChange={(e) => handleInputChange(setDenB, e.target.value, denB, true)}
+                          className="w-full text-center font-mono font-black text-sm outline-none text-orange-600"
+                        />
+                        <button onClick={() => adjustValueB('den', 1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">+</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Βήμα-Βήμα Επεξήγηση */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-slate-600 leading-relaxed font-medium">
+                {getStepByStepExplanation()}
+              </div>
+            </div>
+
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ & ΠΙΤΣΕΣ */}
+            <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[550px] space-y-8">
+              
+              {/* ΜΕΓΑΛΗ ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ */}
+              <div className="flex items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="flex items-center gap-3 sm:gap-4 font-mono font-black text-xl md:text-3xl select-none flex-wrap justify-center">
+                  
+                  {/* 1. Αρχικό Κλάσμα Α */}
+                  <div className="flex flex-col items-center">
+                    <span className="text-blue-600">{activeNumA}</span>
+                    <div className="w-8 h-1 bg-slate-800 my-1 rounded-full" />
+                    <span className="text-blue-600">{activeDenA}</span>
+                  </div>
+
+                  {/* Σύμβολο - */}
+                  <div className="text-slate-400 font-light">-</div>
+
+                  {/* 2. Αρχικό Κλάσμα Β */}
+                  <div className="flex flex-col items-center">
+                    <span className="text-orange-600">{activeNumB}</span>
+                    <div className="w-8 h-1 bg-slate-800 my-1 rounded-full" />
+                    <span className="text-orange-600">{activeDenB}</span>
+                  </div>
+
+                  {/* ΕΝΔΙΑΜΕΣΟ ΒΗΜΑ ΟΜΩΝΥΜΩΝ */}
+                  {!isOriginallyOmonima && (
+                    <>
+                      <div className="text-slate-400 font-light">=</div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-blue-600/80">{equivalentNumA}</span>
+                        <div className="w-8 h-0.5 bg-slate-400 my-1 rounded-full" />
+                        <span className="text-slate-700">{lcm}</span>
+                      </div>
+                      <div className="text-slate-400 font-light">-</div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-orange-600/80">{equivalentNumB}</span>
+                        <div className="w-8 h-0.5 bg-slate-400 my-1 rounded-full" />
+                        <span className="text-slate-700">{lcm}</span>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="text-slate-500 font-bold">=</div>
+
+                  {/* 3. Αποτέλεσμα (με ή χωρίς μείον) */}
+                  <div className="flex items-center font-mono">
+                    {isNegative && <span className="text-red-600 text-3xl font-black mr-1">-</span>}
+                    <div className={`flex flex-col items-center ${isNegative ? 'bg-red-50 border-red-100' : 'bg-emerald-50 border-emerald-100'} px-2.5 py-1.5 rounded-xl border`}>
+                      <span className={isNegative ? 'text-red-600' : 'text-emerald-600'}>{lcmResultNum}</span>
+                      <div className="w-8 h-1 bg-slate-800 my-1 rounded-full" />
+                      <span className={isNegative ? 'text-red-600' : 'text-emerald-600'}>{lcmResultDen}</span>
+                    </div>
+                  </div>
+
+                  {/* 4. Τελικό Απλοποιημένο Κλάσμα */}
+                  {isSimplified && (
+                    <>
+                      <div className={isNegative ? 'text-red-600 font-bold' : 'text-emerald-600 font-bold'}>=</div>
+                      <div className="flex items-center font-mono">
+                        {isNegative && <span className="text-red-600 text-3xl font-black mr-1">-</span>}
+                        <div className={`flex flex-col items-center ${isNegative ? 'bg-red-100 border-red-200' : 'bg-emerald-100 border-emerald-200'} px-2.5 py-1.5 rounded-xl border`}>
+                          <span className={isNegative ? 'text-red-700' : 'text-emerald-700'}>{simplifiedNum}</span>
+                          <div className="w-8 h-1 bg-slate-800 my-1 rounded-full" />
+                          <span className={isNegative ? 'text-red-700' : 'text-emerald-700'}>{simplifiedDen}</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
+              <div className="space-y-4 flex-1 flex flex-col justify-center">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτική Αφαίρεση (Μοντέλο Πίτσας)</span>
+                
+                <div className="flex flex-wrap items-center justify-center gap-4 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 p-4 min-h-[180px]">
+                  
+                  {/* 1. Πίτσα Α */}
+                  <div className="flex flex-col items-center space-y-1.5">
+                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider text-center">Πίτσα Α ({activeNumA}/{activeDenA})</span>
+                    {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
+                  </div>
+
+                  {/* Σύμβολο - */}
+                  <div className="text-xl text-slate-400 font-black px-1">-</div>
+
+                  {/* 2. Πίτσα Β */}
+                  <div className="flex flex-col items-center space-y-1.5">
+                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider text-center">Πίτσα Β ({activeNumB}/{activeDenB})</span>
+                    {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
+                  </div>
+
+                  {/* ΕΝΔΙΑΜΕΣΟΙ ΚΥΚΛΟΙ ΟΜΩΝΥΜΩΝ */}
+                  {!isOriginallyOmonima && (
+                    <>
+                      <div className="text-xl text-slate-400 font-black px-1">=</div>
+                      <div className="flex flex-col items-center space-y-1.5 opacity-90">
+                        <span className="text-[10px] font-bold text-blue-600/80 uppercase tracking-wider text-center">Ομώνυμη Α ({equivalentNumA}/{lcm})</span>
+                        {renderFractionVisual(equivalentNumA, lcm, 'fill-blue-500/90', 'stroke-blue-600')}
+                      </div>
+                      <div className="text-xl text-slate-400 font-black px-1">-</div>
+                      <div className="flex flex-col items-center space-y-1.5 opacity-90">
+                        <span className="text-[10px] font-bold text-orange-600/80 uppercase tracking-wider text-center">Ομώνυμη Β ({equivalentNumB}/{lcm})</span>
+                        {renderFractionVisual(equivalentNumB, lcm, 'fill-orange-500/90', 'stroke-orange-600')}
+                      </div>
+                    </>
+                  )}
+
+                  <div className="text-xl text-slate-500 font-black px-1">=</div>
+
+                  {/* 3. Πίτσα Αποτελέσματος (Αν είναι αρνητική, γίνεται κόκκινη για να δείξει έλλειμμα/χρέος) */}
+                  <div className={`flex flex-col items-center space-y-1.5 p-2 rounded-xl border ${isNegative ? 'bg-red-50 border-red-100' : 'bg-emerald-50 border-emerald-100'}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${isNegative ? 'text-red-600' : 'text-emerald-600'}`}>
+                      {isNegative ? 'Έλλειμμα' : 'Υπόλοιπο'} ({isNegative ? '-' : ''}{lcmResultNum}/{lcmResultDen})
+                    </span>
+                    {renderFractionVisual(lcmResultNum, lcmResultDen, isNegative ? 'fill-red-500' : 'fill-emerald-500', isNegative ? 'stroke-red-700' : 'stroke-emerald-700')}
+                  </div>
+
+                  {/* 4. Πίτσα Απλοποιημένου Αποτελέσματος */}
+                  {isSimplified && (
+                    <>
+                      <div className={`text-xl font-black px-1 ${isNegative ? 'text-red-600' : 'text-emerald-600'}`}>＝</div>
+                      <div className={`flex flex-col items-center space-y-1.5 p-2 rounded-xl border ${isNegative ? 'bg-red-100 border-red-200' : 'bg-emerald-100 border-emerald-200'}`}>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${isNegative ? 'text-red-700' : 'text-emerald-700'}`}>
+                          Ανάγωγο ({isNegative ? '-' : ''}{simplifiedNum}/{simplifiedDen})
+                        </span>
+                        {renderFractionVisual(simplifiedNum, simplifiedDen, isNegative ? 'fill-red-600' : 'fill-emerald-600', isNegative ? 'stroke-red-800' : 'stroke-emerald-800')}
+                      </div>
+                    </>
+                  )}
+
+                </div>
+              </div>
+
+              {/* Τελικό Συμπέρασμα */}
+              <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-slate-700 text-white p-4 rounded-xl text-center font-mono font-black text-xs md:text-sm shadow-md">
+                💡 Παρατήρησε ότι αν αφαιρέσουμε ένα μεγαλύτερο κομμάτι από ένα μικρότερο, το αποτέλεσμα βγαίνει αρνητικό!
+              </div>
+
+            </div>
+
+          </div>
+        </main>
+      </div>
+
+      {/* FOOTER */}
+      <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
+        <p>© 2026 LearnMaths.gr. Αφαίρεση Κλασμάτων - ΣΤ' Δημοτικού.</p>
+      </footer>
+    </div>
+  );
+}
