@@ -167,7 +167,7 @@ export default function KlasmaSeDekadikoPage() {
 
               {/* Μετατροπή σε Δεκαδικό */}
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 space-y-3">
-                <span className="bg-amber-600 text-white text-xs font-black px-2.5 py-1 rounded-md uppercase tracking-wider">Έννοια 2</span>
+                
                 <h3 className="text-lg font-bold text-amber-900">Μετατροπή Κλάσματος σε Δεκαδικό</h3>
                 <p className="text-sm text-amber-950 leading-relaxed">
                   Κάθε κλάσμα είναι μια <strong>διαίρεση</strong>! Για να βρούμε τον δεκαδικό αριθμό που κρύβει ένα κλάσμα, κάνουμε τη διαίρεση: <strong className="text-amber-800">Αριθμητής ÷ Παρονομαστής</strong>.
@@ -195,12 +195,12 @@ export default function KlasmaSeDekadikoPage() {
                   onClick={makeFractionalUnit}
                   className="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-black transition uppercase tracking-wider flex items-center justify-center gap-2"
                 >
-                  ⚡ Μετατροπή σε Κλασματική Μονάδα (1/{activeDenominator})
+                  ⚡ Μετατροπη σε Κλασματικη Μοναδα (1/{activeDenominator})
                 </button>
 
                 {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
                 <div className="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100 space-y-3">
-                  <span className="text-xs font-black text-indigo-800 uppercase block">Αριθμητής</span>
+                  <span className="text-xs font-black text-indigo-800 uppercase block">Αριθμητης</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleNumeratorChange(-1)}
@@ -225,7 +225,7 @@ export default function KlasmaSeDekadikoPage() {
 
                 {/* ΕΛΕΓΧΟΣ ΠΑΡΟΝΟΜΑΣΤΗ */}
                 <div className="bg-amber-50/50 p-4 rounded-2xl border border-amber-100 space-y-3">
-                  <span className="text-xs font-black text-amber-800 uppercase block">Παρονομαστής</span>
+                  <span className="text-xs font-black text-amber-800 uppercase block">Παρονομαστης</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleDenominatorChange(-1)}
@@ -256,7 +256,7 @@ export default function KlasmaSeDekadikoPage() {
                   : 'bg-slate-50 border-slate-200 text-slate-600'
               }`}>
                 <h4 className="font-bold uppercase tracking-wider">
-                  {activeNumerator === 1 ? '✨ Είσαι σε Κλασματική Μονάδα!' : 'ℹ️ Πληροφορία'}
+                  {activeNumerator === 1 ? '✨ Εισαι σε Κλασματικη Μοναδα!' : 'ℹ️ Πληροφορία'}
                 </h4>
                 <p>
                   {activeNumerator === 1 
@@ -280,7 +280,7 @@ export default function KlasmaSeDekadikoPage() {
 
                 {/* Πράξη */}
                 <div className="text-center space-y-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Η Πράξη</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Η Πραξη</span>
                   <div className="font-mono text-xl font-bold text-slate-700">
                     {activeNumerator} ÷ {activeDenominator}
                   </div>
@@ -288,19 +288,19 @@ export default function KlasmaSeDekadikoPage() {
 
                 {/* Δεκαδικός */}
                 <div className="text-center space-y-0.5">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Δεκαδικός Αριθμός</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Δεκαδικος Αριθμος</span>
                   <div className="font-mono text-3xl font-black text-emerald-600">
                     {isPeriodic() ? `${decimalValue.toFixed(4)}...` : decimalValue}
                   </div>
                   {isPeriodic() && (
-                    <span className="text-[10px] text-red-500 font-bold uppercase tracking-wider block">⚠️ Περιοδικός αριθμός</span>
+                    <span className="text-[10px] text-red-500 font-bold uppercase tracking-wider block">⚠️ Περιοδικος αριθμος</span>
                   )}
                 </div>
               </div>
 
               {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ 1: ΑΡΙΘΜΗΤΙΚΗ ΓΡΑΜΜΗ (NUMBER LINE) */}
               <div className="space-y-4">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">📍 Θέση στην Αριθμητική Γραμμή</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">📍 Θεση στην Αριθμητικη Γραμμη</span>
                 <div className="bg-slate-50 p-6 rounded-2xl border border-dashed border-slate-200 relative pt-12">
                   
                   {/* Η Αριθμητική Γραμμή */}
@@ -344,12 +344,12 @@ export default function KlasmaSeDekadikoPage() {
 
               {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ 2: ΚΥΚΛΙΚΟ ΜΟΝΤΕΛΟ (ΠΙΤΣΑ) */}
               <div className="space-y-4">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍕 Οπτικοποίηση Μονάδων (Κυκλική)</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍕 Οπτικοποιηση Μοναδων (Κυκλικη)</span>
                 <div className="flex flex-wrap items-center justify-center gap-6 py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 max-h-[220px] overflow-y-auto">
                   {Array.from({ length: neededVisuals }).map((_, i) => (
                     <div key={i} className="flex flex-col items-center space-y-1.5 scale-[0.9]">
                       {renderPizza(i)}
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Μονάδα {i + 1}</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Μοναδα {i + 1}</span>
                     </div>
                   ))}
                 </div>
