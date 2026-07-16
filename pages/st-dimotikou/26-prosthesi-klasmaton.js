@@ -441,7 +441,7 @@ export default function ProsthesiKlasmatonPage() {
                   
                   {/* 1. Πίτσα Α (Αρχική) */}
                   <div className="flex flex-col items-center space-y-1.5">
-                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider text-center">1ο Κλασμα ({activeNumA}/{activeDenA})</span>
+                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider text-center">1 Κλασμα ({activeNumA}/{activeDenA})</span>
                     {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                   </div>
 
@@ -450,7 +450,7 @@ export default function ProsthesiKlasmatonPage() {
 
                   {/* 2. Πίτσα Β (Αρχική) */}
                   <div className="flex flex-col items-center space-y-1.5">
-                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider text-center">2ο Κλασμα ({activeNumB}/{activeDenB})</span>
+                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider text-center">2 Κλασμα ({activeNumB}/{activeDenB})</span>
                     {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                   </div>
 
@@ -462,7 +462,7 @@ export default function ProsthesiKlasmatonPage() {
 
                       {/* Ομώνυμη Πίτσα Α */}
                       <div className="flex flex-col items-center space-y-1.5 opacity-90">
-                        <span className="text-[10px] font-bold text-blue-600/80 uppercase tracking-wider text-center">Ομωνυμο 1ο ({equivalentNumA}/{lcm})</span>
+                        <span className="text-[10px] font-bold text-blue-600/80 uppercase tracking-wider text-center">Ομωνυμο 1 ({equivalentNumA}/{lcm})</span>
                         {renderFractionVisual(equivalentNumA, lcm, 'fill-blue-500/90', 'stroke-blue-600')}
                       </div>
 
@@ -471,7 +471,7 @@ export default function ProsthesiKlasmatonPage() {
 
                       {/* Ομώνυμη Πίτσα Β */}
                       <div className="flex flex-col items-center space-y-1.5 opacity-90">
-                        <span className="text-[10px] font-bold text-orange-600/80 uppercase tracking-wider text-center">Ομωνυμο 2ο ({equivalentNumB}/{lcm})</span>
+                        <span className="text-[10px] font-bold text-orange-600/80 uppercase tracking-wider text-center">Ομωνυμο 2 ({equivalentNumB}/{lcm})</span>
                         {renderFractionVisual(equivalentNumB, lcm, 'fill-orange-500/90', 'stroke-orange-600')}
                       </div>
                     </>
