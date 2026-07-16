@@ -253,7 +253,7 @@ export default function SigkrisiKlasmatonPage() {
                 </div>
                 <div className="text-[11px] bg-white/90 p-2 rounded border border-amber-200/60 space-y-1 text-slate-700 font-semibold mt-2">
                   <p>• Αν αριστερό γινόμενο &lt; δεξί γινόμενο, τότε <strong>μικρότερο είναι το 1ο κλάσμα</strong>.</p>
-                  <p>• Αν αριστερό γινόμενο &gt; δεξί γινόμενο, τότε <strong>μεγαλύτερο είναι το 2ο κλάσμα</strong>.</p>
+                  <p>• Αν αριστερό γινόμενο &gt; δεξί γινόμενο, τότε <strong>μεγαλύτερο είναι το 1ο κλάσμα</strong>.</p>
                   <p>• Αν είναι ίσα, τότε είναι <strong>ισοδύναμα</strong>.</p>
                 </div>
               </div>
