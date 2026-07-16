@@ -147,13 +147,13 @@ export default function KlasmaSeDekadikoPage() {
           {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-              <span>📖</span> Κλασματική Μονάδα & Δεκαδικά Κλάσματα
+              <span>📖</span> Κλασματική Μονάδα και Δεκαδικά Κλάσματα
             </h2>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
               {/* Κλασματική Μονάδα */}
               <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-2xl border border-indigo-100 space-y-3">
-                <span className="bg-indigo-600 text-white text-xs font-black px-2.5 py-1 rounded-md uppercase tracking-wider">Έννοια 1</span>
+                
                 <h3 className="text-lg font-bold text-indigo-900">Τι είναι η Κλασματική Μονάδα;</h3>
                 <p className="text-sm text-indigo-950 leading-relaxed">
                   <strong>Κλασματική μονάδα</strong> λέγεται κάθε κλάσμα που έχει ως <strong>αριθμητή το 1</strong>. Μας δείχνει το <strong>ένα μόνο μέρος</strong> από τα ίσα μέρη στα οποία χωρίσαμε τη μονάδα.
