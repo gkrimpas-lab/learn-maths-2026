@@ -284,10 +284,10 @@ export default function AfairesiKlasmatonPage() {
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
                 <div className="bg-blue-50/40 p-4 rounded-2xl border border-blue-100 space-y-3">
-                  <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">🔵 Κλάσμα Α (Αριστερό)</span>
+                  <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">🔵 Κλασμα Α (Αριστερο)</span>
                   <div className="grid grid-cols-2 gap-2 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueA('num', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -300,7 +300,7 @@ export default function AfairesiKlasmatonPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueA('den', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -317,10 +317,10 @@ export default function AfairesiKlasmatonPage() {
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Β (ΠΟΡΤΟΚΑΛΙ) */}
                 <div className="bg-orange-50/40 p-4 rounded-2xl border border-orange-100 space-y-3">
-                  <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">🟠 Κλάσμα Β (Δεξί)</span>
+                  <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">🟠 Κλασμα Β (Δεξι)</span>
                   <div className="grid grid-cols-2 gap-2 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueB('num', -1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -333,7 +333,7 @@ export default function AfairesiKlasmatonPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueB('den', -1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -428,13 +428,13 @@ export default function AfairesiKlasmatonPage() {
 
               {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΠΛΗΡΗ ΓΡΑΦΙΚΗ ΣΥΝΕΠΕΙΑ */}
               <div className="space-y-4 flex-1 flex flex-col justify-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτική Αφαίρεση (Μοντέλο Πίτσας)</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτικη Αφαιρεση</span>
                 
                 <div className="flex flex-wrap items-center justify-center gap-4 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 p-4 min-h-[180px]">
                   
                   {/* 1. Πίτσα Α */}
                   <div className="flex flex-col items-center space-y-1.5">
-                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider text-center">Πίτσα Α ({activeNumA}/{activeDenA})</span>
+                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider text-center">1 Κλασμα ({activeNumA}/{activeDenA})</span>
                     {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                   </div>
 
@@ -443,7 +443,7 @@ export default function AfairesiKlasmatonPage() {
 
                   {/* 2. Πίτσα Β */}
                   <div className="flex flex-col items-center space-y-1.5">
-                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider text-center">Πίτσα Β ({activeNumB}/{activeDenB})</span>
+                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider text-center">2 Κλασμα ({activeNumB}/{activeDenB})</span>
                     {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                   </div>
 
@@ -454,7 +454,7 @@ export default function AfairesiKlasmatonPage() {
 
                       {/* Ομώνυμη Πίτσα Α */}
                       <div className="flex flex-col items-center space-y-1.5 opacity-90">
-                        <span className="text-[10px] font-bold text-blue-600/80 uppercase tracking-wider text-center">Ομώνυμη Α ({equivalentNumA}/{lcm})</span>
+                        <span className="text-[10px] font-bold text-blue-600/80 uppercase tracking-wider text-center">Ομωνυμα 1 ({equivalentNumA}/{lcm})</span>
                         {renderFractionVisual(equivalentNumA, lcm, 'fill-blue-500/90', 'stroke-blue-600')}
                       </div>
 
@@ -463,7 +463,7 @@ export default function AfairesiKlasmatonPage() {
 
                       {/* Ομώνυμη Πίτσα Β */}
                       <div className="flex flex-col items-center space-y-1.5 opacity-90">
-                        <span className="text-[10px] font-bold text-orange-600/80 uppercase tracking-wider text-center">Ομώνυμη Β ({equivalentNumB}/{lcm})</span>
+                        <span className="text-[10px] font-bold text-orange-600/80 uppercase tracking-wider text-center">Ομωνυμα 2 ({equivalentNumB}/{lcm})</span>
                         {renderFractionVisual(equivalentNumB, lcm, 'fill-orange-500/90', 'stroke-orange-600')}
                       </div>
                     </>
