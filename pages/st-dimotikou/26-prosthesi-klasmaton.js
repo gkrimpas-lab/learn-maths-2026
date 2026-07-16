@@ -7,7 +7,7 @@ import { LAYOUT } from '../../shared/layout-config';
 const MAX_DENOMINATOR = 100;
 const MAX_NUMERATOR_MULTIPLIER = 3; // Ο αριθμητής μπορεί να γίνει έως 3 φορές ο παρονομαστής
 
-// Βοηθητική συνάρτηση για εύρεση Μέγιστου Κοινού Διαιρέτη (ΜΚΔ) για την απλοποίηση
+// Βοηθητική συνάρτηση για εύρεση Μέγιστου Κοινού Διαιρέτη (ΜΚΔ)
 const findGCD = (a, b) => {
   return b === 0 ? a : findGCD(b, a % b);
 };
@@ -90,15 +90,23 @@ export default function ProsthesiKlasmatonPage() {
   const activeNumB = numB === '' ? 0 : Number(numB);
   const activeDenB = denB === '' || denB === 0 ? 1 : Number(denB);
 
-  // Υπολογισμός Αθροίσματος
-  // α/β + γ/δ = (α·δ + γ·β) / (β·δ)
-  const rawResultNum = activeNumA * activeDenB + activeNumB * activeDenA;
-  const rawResultDen = activeDenA * activeDenB;
+  // Υπολογισμός Ε.Κ.Π. και ομώνυμων κλασμάτων
+  const lcm = findLCM(activeDenA, activeDenB);
+  const multiplierA = lcm / activeDenA;
+  const multiplierB = lcm / activeDenB;
+
+  const equivalentNumA = activeNumA * multiplierA;
+  const equivalentNumB = activeNumB * multiplierB;
+
+  // Το άθροισμα εκφρασμένο με βάση το Ε.Κ.Π.
+  const lcmResultNum = equivalentNumA + equivalentNumB;
+  const lcmResultDen = lcm;
 
   // Απλοποίηση Αποτελέσματος
-  const gcdResult = findGCD(rawResultNum, rawResultDen);
-  const simplifiedNum = rawResultNum / gcdResult;
-  const simplifiedDen = rawResultDen / gcdResult;
+  const gcdResult = findGCD(lcmResultNum, lcmResultDen);
+  const simplifiedNum = lcmResultNum / gcdResult;
+  const simplifiedDen = lcmResultDen / gcdResult;
+  const isSimplified = gcdResult > 1;
 
   // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα
   const getStepByStepExplanation = () => {
@@ -110,9 +118,9 @@ export default function ProsthesiKlasmatonPage() {
             Προσθέτουμε μόνο τους αριθμητές και αφήνουμε τον ίδιο παρονομαστή:
           </p>
           <div className="bg-white p-3 rounded-xl border border-blue-100 font-mono text-xs md:text-sm">
-            <span className="text-blue-600">{activeNumA}</span>/{activeDenA} + <span className="text-orange-600">{activeNumB}</span>/{activeDenB} = ({activeNumA} + {activeNumB})/{activeDenA} = <strong>{rawResultNum}/{activeDenA}</strong>
+            <span className="text-blue-600">{activeNumA}</span>/{activeDenA} + <span className="text-orange-600">{activeNumB}</span>/{activeDenB} = ({activeNumA} + {activeNumB})/{activeDenA} = <strong>{lcmResultNum}/{activeDenA}</strong>
           </div>
-          {gcdResult > 1 && (
+          {isSimplified && (
             <p className="text-emerald-700 text-xs font-bold">
               ✨ Απλοποιώντας με το {gcdResult}, το τελικό κλάσμα γίνεται: {simplifiedNum}/{simplifiedDen}
             </p>
@@ -120,13 +128,6 @@ export default function ProsthesiKlasmatonPage() {
         </div>
       );
     }
-
-    // Ετερώνυμα
-    const lcm = findLCM(activeDenA, activeDenB);
-    const multiplierA = lcm / activeDenA;
-    const multiplierB = lcm / activeDenB;
-    const equivalentNumA = activeNumA * multiplierA;
-    const equivalentNumB = activeNumB * multiplierB;
 
     return (
       <div className="space-y-3">
@@ -147,9 +148,9 @@ export default function ProsthesiKlasmatonPage() {
           </p>
         </div>
         <div className="bg-white p-3 rounded-xl border border-indigo-100 font-mono text-xs md:text-sm">
-          {equivalentNumA}/{lcm} + {equivalentNumB}/{lcm} = ({equivalentNumA} + {equivalentNumB})/{lcm} = <strong>{rawResultNum}/{lcm}</strong>
+          {equivalentNumA}/{lcm} + {equivalentNumB}/{lcm} = ({equivalentNumA} + {equivalentNumB})/{lcm} = <strong>{lcmResultNum}/{lcm}</strong>
         </div>
-        {gcdResult > 1 && (
+        {isSimplified && (
           <p className="text-emerald-700 text-xs font-bold">
             ✨ Απλοποιώντας με το {gcdResult}, το τελικό κλάσμα γίνεται: {simplifiedNum}/{simplifiedDen}
           </p>
@@ -352,7 +353,7 @@ export default function ProsthesiKlasmatonPage() {
               </div>
 
               {/* Βήμα-Βήμα Επεξήγηση */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-slate-600 leading-relaxed">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-slate-600 leading-relaxed font-medium">
                 {getStepByStepExplanation()}
               </div>
             </div>
@@ -360,9 +361,9 @@ export default function ProsthesiKlasmatonPage() {
             {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ & ΠΙΤΣΕΣ */}
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[550px] space-y-8">
               
-              {/* ΜΕΓΑΛΗ ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ */}
+              {/* ΜΕΓΑΛΗ ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΜΕ ΒΑΣΗ ΤΟ ΕΚΠ ΚΑΙ ΑΠΛΟΠΟΙΗΣΗ ΜΕ ΙΣΟΝ */}
               <div className="flex items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                <div className="flex items-center gap-4 sm:gap-6 font-mono font-black text-2xl md:text-4xl select-none">
+                <div className="flex items-center gap-4 sm:gap-6 font-mono font-black text-2xl md:text-4xl select-none flex-wrap justify-center">
                   {/* Κλάσμα Α */}
                   <div className="flex flex-col items-center">
                     <span className="text-blue-600">{activeNumA}</span>
@@ -383,25 +384,24 @@ export default function ProsthesiKlasmatonPage() {
                   {/* Σύμβολο = */}
                   <div className="text-2xl md:text-3xl text-indigo-500">=</div>
 
-                  {/* Αποτέλεσμα (Αρχικό/Απλοποιημένο) */}
-                  <div className="flex items-center gap-2">
-                    <div className="flex flex-col items-center bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100">
-                      <span className="text-emerald-600">{rawResultNum}</span>
-                      <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
-                      <span className="text-emerald-600">{activeDenA * activeDenB}</span>
-                    </div>
-
-                    {gcdResult > 1 && (
-                      <>
-                        <div className="text-xs text-slate-400 font-bold">ή</div>
-                        <div className="flex flex-col items-center bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200">
-                          <span className="text-emerald-700">{simplifiedNum}</span>
-                          <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
-                          <span className="text-emerald-700">{simplifiedDen}</span>
-                        </div>
-                      </>
-                    )}
+                  {/* Αποτέλεσμα (με βάση το Ε.Κ.Π.) */}
+                  <div className="flex flex-col items-center bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100">
+                    <span className="text-emerald-600">{lcmResultNum}</span>
+                    <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                    <span className="text-emerald-600">{lcmResultDen}</span>
                   </div>
+
+                  {/* Σύνδεση με Ίσον (=) για την απλοποίηση αν υπάρχει */}
+                  {isSimplified && (
+                    <>
+                      <div className="text-2xl md:text-3xl text-emerald-600">=</div>
+                      <div className="flex flex-col items-center bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200">
+                        <span className="text-emerald-700">{simplifiedNum}</span>
+                        <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                        <span className="text-emerald-700">{simplifiedDen}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -409,10 +409,10 @@ export default function ProsthesiKlasmatonPage() {
               <div className="space-y-4 flex-1 flex flex-col justify-center">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτική Πρόσθεση (Μοντέλο Πίτσας)</span>
                 
-                <div className="flex flex-col lg:flex-row items-center justify-around gap-6 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 min-h-[180px]">
+                <div className="flex flex-col xl:flex-row items-center justify-around gap-6 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 min-h-[180px] p-4">
                   {/* Πίτσα Α */}
                   <div className="flex flex-col items-center space-y-2">
-                    <span className="text-xs font-bold text-blue-500 uppercase tracking-wider">Πίτσα Α ({activeNumA}/{activeDenA})</span>
+                    <span className="text-xs font-bold text-blue-500 uppercase tracking-wider text-center">Πίτσα Α ({activeNumA}/{activeDenA})</span>
                     {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                   </div>
 
@@ -421,24 +421,39 @@ export default function ProsthesiKlasmatonPage() {
 
                   {/* Πίτσα Β */}
                   <div className="flex flex-col items-center space-y-2">
-                    <span className="text-xs font-bold text-orange-500 uppercase tracking-wider">Πίτσα Β ({activeNumB}/{activeDenB})</span>
+                    <span className="text-xs font-bold text-orange-500 uppercase tracking-wider text-center">Πίτσα Β ({activeNumB}/{activeDenB})</span>
                     {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                   </div>
 
                   {/* Σύμβολο Ίσον στο γραφικό */}
                   <div className="text-2xl text-slate-400 font-black">=</div>
 
-                  {/* Πίτσα Αποτέλεσμα */}
-                  <div className="flex flex-col items-center space-y-2">
-                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Αποτέλεσμα ({rawResultNum}/{activeDenA * activeDenB})</span>
-                    {renderFractionVisual(rawResultNum, activeDenA * activeDenB, 'fill-emerald-500', 'stroke-emerald-700')}
+                  {/* Πλαίσιο Αποτελέσματος (Κανονικό ή Διπλό αν υπάρχει απλοποίηση) */}
+                  <div className="flex flex-col sm:flex-row gap-6 items-center">
+                    {/* Κανονικό Αποτέλεσμα */}
+                    <div className="flex flex-col items-center space-y-2 bg-emerald-50/40 p-3 rounded-2xl border border-emerald-100">
+                      <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider text-center">Αποτέλεσμα ({lcmResultNum}/{lcmResultDen})</span>
+                      {renderFractionVisual(lcmResultNum, lcmResultDen, 'fill-emerald-500', 'stroke-emerald-700')}
+                    </div>
+
+                    {/* Απλοποιημένο Αποτέλεσμα (Εμφανίζεται μόνο αν γίνεται απλοποίηση) */}
+                    {isSimplified && (
+                      <>
+                        <div className="text-xl text-emerald-600 font-black">＝</div>
+                        <div className="flex flex-col items-center space-y-2 bg-emerald-100/40 p-3 rounded-2xl border border-emerald-200">
+                          <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider text-center">Απλοποιημένο ({simplifiedNum}/{simplifiedDen})</span>
+                          {renderFractionVisual(simplifiedNum, simplifiedDen, 'fill-emerald-600', 'stroke-emerald-800')}
+                        </div>
+                      </>
+                    )}
                   </div>
+
                 </div>
               </div>
 
               {/* Τελικό Συμπέρασμα */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-4 rounded-xl text-center font-mono font-black text-xs md:text-sm shadow-md">
-                💡 Αν το αποτέλεσμα είναι μεγαλύτερο από 1 (καταχρηστικό κλάσμα), χρειαζόμαστε περισσότερες από μία πίτσες!
+                💡 Παρατήρησε ότι η χρωματισμένη επιφάνεια του αποτελέσματος και του απλοποιημένου κλάσματος είναι ακριβώς η ίδια!
               </div>
 
             </div>
