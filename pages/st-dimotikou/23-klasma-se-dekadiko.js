@@ -256,7 +256,7 @@ export default function KlasmaSeDekadikoPage() {
                   : 'bg-slate-50 border-slate-200 text-slate-600'
               }`}>
                 <h4 className="font-bold uppercase tracking-wider">
-                  {activeNumerator === 1 ? '✨ Εισαι σε Κλασματικη Μοναδα!' : 'ℹ️ Πληροφορία'}
+                  {activeNumerator === 1 ? '✨ Εισαι σε Κλασματικη Μοναδα!' : 'ℹ️ Πληροφορια'}
                 </h4>
                 <p>
                   {activeNumerator === 1 
