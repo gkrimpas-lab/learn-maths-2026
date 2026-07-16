@@ -108,59 +108,7 @@ export default function ProsthesiKlasmatonPage() {
   const simplifiedDen = lcmResultDen / gcdResult;
   const isSimplified = gcdResult > 1;
 
-  // Ελέγχουμε αν τα αρχικά κλάσματα είναι ήδη ομώνυμα
   const isOriginallyOmonima = activeDenA === activeDenB;
-
-  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (Αριστερό Κάτω Πλαίσιο)
-  const getStepByStepExplanation = () => {
-    if (isOriginallyOmonima) {
-      return (
-        <div className="space-y-2">
-          <p className="text-blue-800 font-bold">🔵 Τα κλάσματα είναι ομώνυμα (ίδιος παρονομαστής: {activeDenA})</p>
-          <p className="text-slate-600">
-            Προσθέτουμε μόνο τους αριθμητές και αφήνουμε τον ίδιο παρονομαστή:
-          </p>
-          <div className="bg-white p-3 rounded-xl border border-blue-100 font-mono text-xs md:text-sm">
-            <span className="text-blue-600">{activeNumA}</span>/{activeDenA} + <span className="text-orange-600">{activeNumB}</span>/{activeDenB} = ({activeNumA} + {activeNumB})/{activeDenA} = <strong>{lcmResultNum}/{activeDenA}</strong>
-          </div>
-          {isSimplified && (
-            <p className="text-emerald-700 text-xs font-bold">
-              ✨ Απλοποιώντας με το {gcdResult}, το τελικό κλάσμα γίνεται: {simplifiedNum}/{simplifiedDen}
-            </p>
-          )}
-        </div>
-      );
-    }
-
-    return (
-      <div className="space-y-3">
-        <p className="text-indigo-800 font-bold">🟣 Τα κλάσματα είναι ετερώνυμα (διαφορετικοί παρονομαστές: {activeDenA} ≠ {activeDenB})</p>
-        <div className="text-slate-600 space-y-1.5 text-xs md:text-sm">
-          <p>
-            1. Βρίσκουμε το <strong>Ε.Κ.Π.</strong> των παρονομαστών {activeDenA} και {activeDenB}, το οποίο είναι το <strong>{lcm}</strong>.
-          </p>
-          <p>
-            2. Βάζουμε «καπελάκια» και κάνουμε τα κλάσματα ομώνυμα:
-            <br />
-            • Πολλαπλασιάζουμε το 1ο κλάσμα με το <strong>({multiplierA})</strong>: ({activeNumA} × {multiplierA}) / ({activeDenA} × {multiplierA}) = <strong>{equivalentNumA}/{lcm}</strong>
-            <br />
-            • Πολλαπλασιάζουμε το 2ο κλάσμα με το <strong>({multiplierB})</strong>: ({activeNumB} × {multiplierB}) / ({activeDenB} × {multiplierB}) = <strong>{equivalentNumB}/{lcm}</strong>
-          </p>
-          <p>
-            3. Τώρα που έγιναν ομώνυμα, τα προσθέτουμε:
-          </p>
-        </div>
-        <div className="bg-white p-3 rounded-xl border border-indigo-100 font-mono text-xs md:text-sm">
-          {equivalentNumA}/{lcm} + {equivalentNumB}/{lcm} = ({equivalentNumA} + {equivalentNumB})/{lcm} = <strong>{lcmResultNum}/{lcm}</strong>
-        </div>
-        {isSimplified && (
-          <p className="text-emerald-700 text-xs font-bold">
-            ✨ Απλοποιώντας με το {gcdResult}, το τελικό κλάσμα γίνεται: {simplifiedNum}/{simplifiedDen}
-          </p>
-        )}
-      </div>
-    );
-  };
 
   // Έξυπνη σχεδίαση πολλαπλών κυκλικών διαγραμμάτων
   const renderFractionVisual = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
@@ -220,6 +168,57 @@ export default function ProsthesiKlasmatonPage() {
     return (
       <div className="flex flex-wrap justify-center gap-2 max-w-[240px] p-2 bg-white rounded-xl border border-slate-100 shadow-inner">
         {pizzas}
+      </div>
+    );
+  };
+
+  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (Αριστερό Κάτω Πλαίσιο)
+  const getStepByStepExplanation = () => {
+    if (isOriginallyOmonima) {
+      return (
+        <div className="space-y-2">
+          <p className="text-blue-800 font-bold">🔵 Τα κλάσματα είναι ομώνυμα (ίδιος παρονομαστής: {activeDenA})</p>
+          <p className="text-slate-600">
+            Προσθέτουμε μόνο τους αριθμητές και αφήνουμε τον ίδιο παρονομαστή:
+          </p>
+          <div className="bg-white p-3 rounded-xl border border-blue-100 font-mono text-xs md:text-sm">
+            <span className="text-blue-600">{activeNumA}</span>/{activeDenA} + <span className="text-orange-600">{activeNumB}</span>/{activeDenB} = ({activeNumA} + {activeNumB})/{activeDenA} = <strong>{lcmResultNum}/{activeDenA}</strong>
+          </div>
+          {isSimplified && (
+            <p className="text-emerald-700 text-xs font-bold">
+              ✨ Απλοποιώντας με το {gcdResult}, το τελικό κλάσμα γίνεται: {simplifiedNum}/{simplifiedDen}
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-3">
+        <p className="text-indigo-800 font-bold">🟣 Τα κλάσματα είναι ετερώνυμα (διαφορετικοί παρονομαστές: {activeDenA} ≠ {activeDenB})</p>
+        <div className="text-slate-600 space-y-1.5 text-xs md:text-sm">
+          <p>
+            1. Βρίσκουμε το <strong>Ε.Κ.Π.</strong> των παρονομαστών {activeDenA} και {activeDenB}, το οποίο είναι το <strong>{lcm}</strong>.
+          </p>
+          <p>
+            2. Βάζουμε «καπελάκια» και κάνουμε τα κλάσματα ομώνυμα:
+            <br />
+            • Πολλαπλασιάζουμε το 1ο κλάσμα με το <strong>({multiplierA})</strong>: ({activeNumA} × {multiplierA}) / ({activeDenA} × {multiplierA}) = <strong>{equivalentNumA}/{lcm}</strong>
+            <br />
+            • Πολλαπλασιάζουμε το 2ο κλάσμα με το <strong>({multiplierB})</strong>: ({activeNumB} × {multiplierB}) / ({activeDenB} × {multiplierB}) = <strong>{equivalentNumB}/{lcm}</strong>
+          </p>
+          <p>
+            3. Τώρα που έγιναν ομώνυμα, τα προσθέτουμε:
+          </p>
+        </div>
+        <div className="bg-white p-3 rounded-xl border border-indigo-100 font-mono text-xs md:text-sm">
+          {equivalentNumA}/{lcm} + {equivalentNumB}/{lcm} = ({equivalentNumA} + {equivalentNumB})/{lcm} = <strong>{lcmResultNum}/{lcm}</strong>
+        </div>
+        {isSimplified && (
+          <p className="text-emerald-700 text-xs font-bold">
+            ✨ Απλοποιώντας με το {gcdResult}, το τελικό κλάσμα γίνεται: {simplifiedNum}/{simplifiedDen}
+          </p>
+        )}
       </div>
     );
   };
@@ -285,7 +284,7 @@ export default function ProsthesiKlasmatonPage() {
                 <div>
                   <h3 className="text-xl font-black text-gray-900">Διάλεξε Κλάσματα</h3>
                   <p className="text-gray-500 text-xs">Όριο παρονομαστή: {MAX_DENOMINATOR}.</p>
-                  <p className="text-gray-400 text-[10px]">O αριθμητής μπορεί να φτάσει έως και {MAX_NUMERATOR_MULTIPLIER} φορές τον παρονομαστή.</p>
+                  <p className="text-gray-400 text-[10px]">Ο αριθμητής μπορεί να φτάσει έως και {MAX_NUMERATOR_MULTIPLIER} φορές τον παρονομαστή.</p>
                 </div>
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
@@ -364,7 +363,7 @@ export default function ProsthesiKlasmatonPage() {
             {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ & ΠΙΤΣΕΣ */}
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[550px] space-y-8">
               
-              {/* ΔΙΟΡΘΩΘΗΚΕ: ΜΕΓΑΛΗ ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΜΕ ΤΟ ΕΝΔΙΑΜΕΣΟ ΒΗΜΑ ΟΜΩΝΥΜΩΝ */}
+              {/* ΜΕΓΑΛΗ ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ */}
               <div className="flex items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100">
                 <div className="flex items-center gap-3 sm:gap-4 font-mono font-black text-xl md:text-3xl select-none flex-wrap justify-center">
                   
@@ -434,48 +433,70 @@ export default function ProsthesiKlasmatonPage() {
                 </div>
               </div>
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ (ΚΥΚΛΙΚΑ ΣΧΗΜΑΤΑ) */}
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΠΛΗΡΗ ΓΡΑΦΙΚΗ ΣΥΝΕΠΕΙΑ ΒΗΜΑ-ΒΗΜΑ */}
               <div className="space-y-4 flex-1 flex flex-col justify-center">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτική Πρόσθεση (Μοντέλο Πίτσας)</span>
                 
-                <div className="flex flex-col xl:flex-row items-center justify-around gap-6 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 min-h-[180px] p-4">
-                  {/* Πίτσα Α */}
-                  <div className="flex flex-col items-center space-y-2">
-                    <span className="text-xs font-bold text-blue-500 uppercase tracking-wider text-center">Πίτσα Α ({activeNumA}/{activeDenA})</span>
+                <div className="flex flex-wrap items-center justify-center gap-4 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 p-4 min-h-[180px]">
+                  
+                  {/* 1. Πίτσα Α (Αρχική) */}
+                  <div className="flex flex-col items-center space-y-1.5">
+                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider text-center">Πίτσα Α ({activeNumA}/{activeDenA})</span>
                     {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                   </div>
 
-                  {/* Σύμβολο Συν στο γραφικό */}
-                  <div className="text-2xl text-slate-400 font-black">+</div>
+                  {/* Σύμβολο + */}
+                  <div className="text-xl text-slate-400 font-black px-1">+</div>
 
-                  {/* Πίτσα Β */}
-                  <div className="flex flex-col items-center space-y-2">
-                    <span className="text-xs font-bold text-orange-500 uppercase tracking-wider text-center">Πίτσα Β ({activeNumB}/{activeDenB})</span>
+                  {/* 2. Πίτσα Β (Αρχική) */}
+                  <div className="flex flex-col items-center space-y-1.5">
+                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider text-center">Πίτσα Β ({activeNumB}/{activeDenB})</span>
                     {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                   </div>
 
-                  {/* Σύμβολο Ίσον στο γραφικό */}
-                  <div className="text-2xl text-slate-400 font-black">=</div>
+                  {/* ΕΝΔΙΑΜΕΣΟΙ ΚΥΚΛΟΙ ΟΜΩΝΥΜΩΝ: Εμφανίζονται μόνο αν τα κλάσματα ήταν ετερώνυμα */}
+                  {!isOriginallyOmonima && (
+                    <>
+                      {/* Σύμβολο = */}
+                      <div className="text-xl text-slate-400 font-black px-1">=</div>
 
-                  {/* Πλαίσιο Αποτελέσματος */}
-                  <div className="flex flex-col sm:flex-row gap-6 items-center">
-                    {/* Κανονικό Αποτέλεσμα */}
-                    <div className="flex flex-col items-center space-y-2 bg-emerald-50/40 p-3 rounded-2xl border border-emerald-100">
-                      <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider text-center">Αποτέλεσμα ({lcmResultNum}/{lcmResultDen})</span>
-                      {renderFractionVisual(lcmResultNum, lcmResultDen, 'fill-emerald-500', 'stroke-emerald-700')}
-                    </div>
+                      {/* Ομώνυμη Πίτσα Α */}
+                      <div className="flex flex-col items-center space-y-1.5 opacity-90">
+                        <span className="text-[10px] font-bold text-blue-600/80 uppercase tracking-wider text-center">Ομώνυμη Α ({equivalentNumA}/{lcm})</span>
+                        {renderFractionVisual(equivalentNumA, lcm, 'fill-blue-500/90', 'stroke-blue-600')}
+                      </div>
 
-                    {/* Απλοποιημένο Αποτέλεσμα */}
-                    {isSimplified && (
-                      <>
-                        <div className="text-xl text-emerald-600 font-black">＝</div>
-                        <div className="flex flex-col items-center space-y-2 bg-emerald-100/40 p-3 rounded-2xl border border-emerald-200">
-                          <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider text-center">Απλοποιημένο ({simplifiedNum}/{simplifiedDen})</span>
-                          {renderFractionVisual(simplifiedNum, simplifiedDen, 'fill-emerald-600', 'stroke-emerald-800')}
-                        </div>
-                      </>
-                    )}
+                      {/* Σύμβολο + */}
+                      <div className="text-xl text-slate-400 font-black px-1">+</div>
+
+                      {/* Ομώνυμη Πίτσα Β */}
+                      <div className="flex flex-col items-center space-y-1.5 opacity-90">
+                        <span className="text-[10px] font-bold text-orange-600/80 uppercase tracking-wider text-center">Ομώνυμη Β ({equivalentNumB}/{lcm})</span>
+                        {renderFractionVisual(equivalentNumB, lcm, 'fill-orange-500/90', 'stroke-orange-600')}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Σύμβολο = */}
+                  <div className="text-xl text-slate-500 font-black px-1">=</div>
+
+                  {/* 3. Πίτσα Αποτελέσματος (Βάσει Ε.Κ.Π.) */}
+                  <div className="flex flex-col items-center space-y-1.5 bg-emerald-50/60 p-2 rounded-xl border border-emerald-100">
+                    <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider text-center">Αποτέλεσμα ({lcmResultNum}/{lcmResultDen})</span>
+                    {renderFractionVisual(lcmResultNum, lcmResultDen, 'fill-emerald-500', 'stroke-emerald-700')}
                   </div>
+
+                  {/* 4. Πίτσα Απλοποιημένου Αποτελέσματος */}
+                  {isSimplified && (
+                    <>
+                      {/* Σύμβολο = */}
+                      <div className="text-xl text-emerald-600 font-black px-1">＝</div>
+                      <div className="flex flex-col items-center space-y-1.5 bg-emerald-100/60 p-2 rounded-xl border border-emerald-200">
+                        <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider text-center">Ανάγωγο ({simplifiedNum}/{simplifiedDen})</span>
+                        {renderFractionVisual(simplifiedNum, simplifiedDen, 'fill-emerald-600', 'stroke-emerald-800')}
+                      </div>
+                    </>
+                  )}
 
                 </div>
               </div>
