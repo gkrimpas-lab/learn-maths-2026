@@ -30,7 +30,8 @@ export default function STDimotikouMenu() {
     { id: '23-klasma-se-dekadiko', label: '🍕 23. Κλάσματα σε Δεκαδικό', href: '/st-dimotikou/23-klasma-se-dekadiko' },
     { id: '24-isodinama-klasmata', label: '🍕 24. Ισοδύναμα Κλάσματα', href: '/st-dimotikou/24-isodinama-klasmata' },
     { id: '25-sigkrisi-klasmaton', label: '🍕 25. Σύγκριση Κλασμάτων', href: '/st-dimotikou/25-sigkrisi-klasmaton' },
-    { id: '26-prosthesi-klasmaton', label: '🍕 26. Πρόσθεση Κλασμάτων', href: '/st-dimotikou/26-prosthesi-klasmaton' }
+    { id: '26-prosthesi-klasmaton', label: '🍕 26. Πρόσθεση Κλασμάτων', href: '/st-dimotikou/26-prosthesi-klasmaton' },
+    { id: '27-afairesi-klasmaton', label: '🍕 27. Αφαίρεση Κλασμάτων', href: '/st-dimotikou/27-afairesi-klasmaton' }
   ];
 
   return (
