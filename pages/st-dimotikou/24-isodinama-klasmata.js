@@ -170,7 +170,7 @@ export default function IsodinamaKlasmataPage() {
           {/* SECTION 1: ΘΕΩΡΙΑ */}
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-              <span>📖</span> Ισοδύναμα κλάσματα & Απλοποίηση
+              <span>📖</span> Ισοδύναμα κλάσματα και Απλοποίηση
             </h2>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
@@ -184,7 +184,7 @@ export default function IsodinamaKlasmataPage() {
               </div>
 
               <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-md flex flex-col justify-center space-y-2">
-                <h3 className="text-amber-300 font-black text-sm uppercase tracking-wider">💡 Τι είναι το Ανάγωγο Κλάσμα;</h3>
+                <h3 className="text-amber-300 font-black text-sm uppercase tracking-wider">💡 Τι ειναι το Αναγωγο Κλασμα;</h3>
                 <p className="text-xs text-indigo-50 leading-relaxed">
                   Όταν διαιρούμε συνεχώς τους όρους ενός κλάσματος με τον Μ.Κ.Δ. τους, το κλάσμα μικραίνει (απλοποιείται). Όταν φτάσει σε σημείο που <strong>δεν μπορεί να απλοποιηθεί άλλο</strong>, ονομάζεται <strong>Ανάγωγο</strong>!
                 </p>
@@ -219,7 +219,7 @@ export default function IsodinamaKlasmataPage() {
                 <div className="space-y-5">
                   <div>
                     <h3 className="text-lg font-black text-gray-900">1. Δώσε Αρχικό Κλάσμα</h3>
-                    <p className="text-gray-500 text-xs">Αριθμητής αριστερά, Παρονομαστής δεξιά (Όριο: {MAX_VALUE}).</p>
+                    <p className="text-gray-500 text-xs">  (Μέγιστη Τιμή Παρονομαστή: {MAX_VALUE}).</p>
                   </div>
 
                   {/* Διορθωμένα Inputs: Αριθμητής Αριστερά, Παρονομαστής Δεξιά με κουμπιά αυξομείωσης */}
@@ -278,7 +278,7 @@ export default function IsodinamaKlasmataPage() {
                 <div className="space-y-5">
                   <div>
                     <h3 className="text-lg font-black text-gray-900">Δώσε Κλάσμα για Απλοποίηση</h3>
-                    <p className="text-gray-500 text-xs">Αριθμητής αριστερά, Παρονομαστής δεξιά (Όριο: {MAX_VALUE}).</p>
+                    <p className="text-gray-500 text-xs">(Μέγιστη Τιμή Παρονομαστή: {MAX_VALUE}).</p>
                   </div>
 
                   {/* Διορθωμένα Inputs: Αριθμητής Αριστερά, Παρονομαστής Δεξιά με κουμπιά αυξομείωσης */}
@@ -400,11 +400,11 @@ export default function IsodinamaKlasmataPage() {
                   {/* Γραφική Αναπαράσταση (Κυκλικά Σχήματα) */}
                   <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
                     <div className="flex flex-col items-center space-y-2">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Αρχικό Κλάσμα ({activeNum2}/{activeDen2})</span>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Αρχικο Κλασμα ({activeNum2}/{activeDen2})</span>
                       {renderPizzaDiagram(activeNum2, activeDen2, 'fill-emerald-500', 'stroke-emerald-700')}
                     </div>
                     <div className="flex flex-col items-center space-y-2">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ανάγωγο Κλάσμα ({reducedNum}/{reducedDen})</span>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Αναγωγο Κλασμα ({reducedNum}/{reducedDen})</span>
                       {renderPizzaDiagram(reducedNum, reducedDen, 'fill-teal-500', 'stroke-teal-700')}
                     </div>
                   </div>
