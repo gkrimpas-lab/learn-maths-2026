@@ -24,7 +24,7 @@ export default function ProsthesiKlasmatonPage() {
 
   // Κλάσμα Β (Δεξιά)
   const [numB, setNumB] = useState(1);
-  const [denB, setDenB] = useState(2);
+  const [denB, setDenB] = useState(6);
 
   // Μέγιστος επιτρεπτός αριθμητής βάσει του παρονομαστή
   const getMaxNumerator = (denominator) => {
@@ -108,9 +108,12 @@ export default function ProsthesiKlasmatonPage() {
   const simplifiedDen = lcmResultDen / gcdResult;
   const isSimplified = gcdResult > 1;
 
-  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα
+  // Ελέγχουμε αν τα αρχικά κλάσματα είναι ήδη ομώνυμα
+  const isOriginallyOmonima = activeDenA === activeDenB;
+
+  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (Αριστερό Κάτω Πλαίσιο)
   const getStepByStepExplanation = () => {
-    if (activeDenA === activeDenB) {
+    if (isOriginallyOmonima) {
       return (
         <div className="space-y-2">
           <p className="text-blue-800 font-bold">🔵 Τα κλάσματα είναι ομώνυμα (ίδιος παρονομαστής: {activeDenA})</p>
@@ -282,7 +285,7 @@ export default function ProsthesiKlasmatonPage() {
                 <div>
                   <h3 className="text-xl font-black text-gray-900">Διάλεξε Κλάσματα</h3>
                   <p className="text-gray-500 text-xs">Όριο παρονομαστή: {MAX_DENOMINATOR}.</p>
-                  <p className="text-gray-400 text-[10px]">Ο αριθμητής μπορεί να φτάσει έως και {MAX_NUMERATOR_MULTIPLIER} φορές τον παρονομαστή.</p>
+                  <p className="text-gray-400 text-[10px]">O αριθμητής μπορεί να φτάσει έως και {MAX_NUMERATOR_MULTIPLIER} φορές τον παρονομαστή.</p>
                 </div>
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
@@ -361,43 +364,69 @@ export default function ProsthesiKlasmatonPage() {
             {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ & ΠΙΤΣΕΣ */}
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[550px] space-y-8">
               
-              {/* ΜΕΓΑΛΗ ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΜΕ ΒΑΣΗ ΤΟ ΕΚΠ ΚΑΙ ΑΠΛΟΠΟΙΗΣΗ ΜΕ ΙΣΟΝ */}
+              {/* ΔΙΟΡΘΩΘΗΚΕ: ΜΕΓΑΛΗ ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΜΕ ΤΟ ΕΝΔΙΑΜΕΣΟ ΒΗΜΑ ΟΜΩΝΥΜΩΝ */}
               <div className="flex items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                <div className="flex items-center gap-4 sm:gap-6 font-mono font-black text-2xl md:text-4xl select-none flex-wrap justify-center">
-                  {/* Κλάσμα Α */}
+                <div className="flex items-center gap-3 sm:gap-4 font-mono font-black text-xl md:text-3xl select-none flex-wrap justify-center">
+                  
+                  {/* 1. Αρχικό Κλάσμα Α */}
                   <div className="flex flex-col items-center">
                     <span className="text-blue-600">{activeNumA}</span>
-                    <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                    <div className="w-8 h-1 bg-slate-800 my-1 rounded-full" />
                     <span className="text-blue-600">{activeDenA}</span>
                   </div>
 
                   {/* Σύμβολο + */}
-                  <div className="text-2xl md:text-3xl text-indigo-500">+</div>
+                  <div className="text-slate-400 font-light">+</div>
 
-                  {/* Κλάσμα Β */}
+                  {/* 2. Αρχικό Κλάσμα Β */}
                   <div className="flex flex-col items-center">
                     <span className="text-orange-600">{activeNumB}</span>
-                    <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                    <div className="w-8 h-1 bg-slate-800 my-1 rounded-full" />
                     <span className="text-orange-600">{activeDenB}</span>
                   </div>
 
-                  {/* Σύμβολο = */}
-                  <div className="text-2xl md:text-3xl text-indigo-500">=</div>
+                  {/* ΕΝΔΙΑΜΕΣΟ ΒΗΜΑ: Εμφανίζεται ΜΟΝΟ αν τα αρχικά κλάσματα είναι ετερώνυμα */}
+                  {!isOriginallyOmonima && (
+                    <>
+                      {/* Σύμβολο = */}
+                      <div className="text-slate-400 font-light">=</div>
 
-                  {/* Αποτέλεσμα (με βάση το Ε.Κ.Π.) */}
-                  <div className="flex flex-col items-center bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100">
+                      {/* Ομώνυμο Κλάσμα Α */}
+                      <div className="flex flex-col items-center">
+                        <span className="text-blue-600/80">{equivalentNumA}</span>
+                        <div className="w-8 h-0.5 bg-slate-400 my-1 rounded-full" />
+                        <span className="text-slate-700">{lcm}</span>
+                      </div>
+
+                      {/* Σύμβολο + */}
+                      <div className="text-slate-400 font-light">+</div>
+
+                      {/* Ομώνυμο Κλάσμα Β */}
+                      <div className="flex flex-col items-center">
+                        <span className="text-orange-600/80">{equivalentNumB}</span>
+                        <div className="w-8 h-0.5 bg-slate-400 my-1 rounded-full" />
+                        <span className="text-slate-700">{lcm}</span>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Σύμβολο = */}
+                  <div className="text-slate-500 font-bold">=</div>
+
+                  {/* 3. Άθροισμα (με βάση το Ε.Κ.Π.) */}
+                  <div className="flex flex-col items-center bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-100">
                     <span className="text-emerald-600">{lcmResultNum}</span>
-                    <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                    <div className="w-8 h-1 bg-slate-800 my-1 rounded-full" />
                     <span className="text-emerald-600">{lcmResultDen}</span>
                   </div>
 
-                  {/* Σύνδεση με Ίσον (=) για την απλοποίηση αν υπάρχει */}
+                  {/* 4. Τελικό Απλοποιημένο Κλάσμα */}
                   {isSimplified && (
                     <>
-                      <div className="text-2xl md:text-3xl text-emerald-600">=</div>
-                      <div className="flex flex-col items-center bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200">
+                      <div className="text-emerald-600 font-bold">=</div>
+                      <div className="flex flex-col items-center bg-emerald-100 px-2.5 py-1.5 rounded-xl border border-emerald-200">
                         <span className="text-emerald-700">{simplifiedNum}</span>
-                        <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                        <div className="w-8 h-1 bg-slate-800 my-1 rounded-full" />
                         <span className="text-emerald-700">{simplifiedDen}</span>
                       </div>
                     </>
@@ -428,7 +457,7 @@ export default function ProsthesiKlasmatonPage() {
                   {/* Σύμβολο Ίσον στο γραφικό */}
                   <div className="text-2xl text-slate-400 font-black">=</div>
 
-                  {/* Πλαίσιο Αποτελέσματος (Κανονικό ή Διπλό αν υπάρχει απλοποίηση) */}
+                  {/* Πλαίσιο Αποτελέσματος */}
                   <div className="flex flex-col sm:flex-row gap-6 items-center">
                     {/* Κανονικό Αποτέλεσμα */}
                     <div className="flex flex-col items-center space-y-2 bg-emerald-50/40 p-3 rounded-2xl border border-emerald-100">
@@ -436,7 +465,7 @@ export default function ProsthesiKlasmatonPage() {
                       {renderFractionVisual(lcmResultNum, lcmResultDen, 'fill-emerald-500', 'stroke-emerald-700')}
                     </div>
 
-                    {/* Απλοποιημένο Αποτέλεσμα (Εμφανίζεται μόνο αν γίνεται απλοποίηση) */}
+                    {/* Απλοποιημένο Αποτέλεσμα */}
                     {isSimplified && (
                       <>
                         <div className="text-xl text-emerald-600 font-black">＝</div>
