@@ -3,8 +3,9 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// ΜΕΓΙΣΤΗ ΤΙΜΗ ΠΑΡΟΝΟΜΑΣΤΗ (Ορίστηκε στο 100)
+// ΕΞΩΤΕΡΙΚΕΣ ΜΕΤΑΒΛΗΤΕΣ ΡΥΘΜΙΣΗΣ
 const MAX_DENOMINATOR = 100;
+const MAX_NUMERATOR_MULTIPLIER = 3; // Ο αριθμητής μπορεί να γίνει έως 3 φορές ο παρονομαστής
 
 export default function SigkrisiKlasmatonPage() {
   // Κλάσμα Α (Αριστερά)
@@ -15,7 +16,13 @@ export default function SigkrisiKlasmatonPage() {
   const [numB, setNumB] = useState(3);
   const [denB, setDenB] = useState(4);
 
-  // Ασφαλής έλεγχος εισαγωγής κειμένου με βάση το MAX_DENOMINATOR
+  // Μέγιστος επιτρεπτός αριθμητής βάσει του τρέχοντος παρονομαστή
+  const getMaxNumerator = (denominator) => {
+    const activeDen = Number(denominator) || 1;
+    return Math.min(activeDen * MAX_NUMERATOR_MULTIPLIER, MAX_DENOMINATOR * MAX_NUMERATOR_MULTIPLIER);
+  };
+
+  // Ασφαλής έλεγχος εισαγωγής κειμένου
   const handleInputChange = (setter, val, currentDen, isDenominator = false) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
@@ -25,10 +32,15 @@ export default function SigkrisiKlasmatonPage() {
     const n = Number(clean);
     
     if (isDenominator) {
-      if (n === 0 || n > MAX_DENOMINATOR) return; // Κλείδωμα στο 100
+      if (n === 0 || n > MAX_DENOMINATOR) return;
       setter(n);
+      // Αν ο τρέχων αριθμητής ξεπερνάει το νέο μέγιστο όριο αριθμητή, τον χαμηλώνουμε
+      const maxNumForNewDen = n * MAX_NUMERATOR_MULTIPLIER;
+      if (setter === setDenA && numA > maxNumForNewDen) setNumA(maxNumForNewDen);
+      if (setter === setDenB && numB > maxNumForNewDen) setNumB(maxNumForNewDen);
     } else {
-      if (n > currentDen || n > MAX_DENOMINATOR) return;
+      const maxAllowedNum = getMaxNumerator(currentDen);
+      if (n > maxAllowedNum) return;
       setter(n);
     }
   };
@@ -36,11 +48,13 @@ export default function SigkrisiKlasmatonPage() {
   // Αυξομείωση με κουμπιά για το Κλάσμα Α
   const adjustValueA = (type, amount) => {
     if (type === 'num') {
-      setNumA(prev => Math.max(0, Math.min(Number(denA) || MAX_DENOMINATOR, (Number(prev) || 0) + amount)));
+      const maxNum = getMaxNumerator(denA);
+      setNumA(prev => Math.max(0, Math.min(maxNum, (Number(prev) || 0) + amount)));
     } else {
       setDenA(prev => {
         const nextDen = Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount));
-        if (numA > nextDen) setNumA(nextDen);
+        const maxNum = getMaxNumerator(nextDen);
+        if (numA > maxNum) setNumA(maxNum);
         return nextDen;
       });
     }
@@ -49,11 +63,13 @@ export default function SigkrisiKlasmatonPage() {
   // Αυξομείωση με κουμπιά για το Κλάσμα Β
   const adjustValueB = (type, amount) => {
     if (type === 'num') {
-      setNumB(prev => Math.max(0, Math.min(Number(denB) || MAX_DENOMINATOR, (Number(prev) || 0) + amount)));
+      const maxNum = getMaxNumerator(denB);
+      setNumB(prev => Math.max(0, Math.min(maxNum, (Number(prev) || 0) + amount)));
     } else {
       setDenB(prev => {
         const nextDen = Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount));
-        if (numB > nextDen) setNumB(nextDen);
+        const maxNum = getMaxNumerator(nextDen);
+        if (numB > maxNum) setNumB(maxNum);
         return nextDen;
       });
     }
@@ -75,13 +91,13 @@ export default function SigkrisiKlasmatonPage() {
     return '=';
   };
 
-  // Επεξηγηματικό παιδαγωγικό μήνυμα βάσει της περίπτωσης
+  // Επεξηγηματικό παιδαγωγικό μήνυμα
   const getExplanationMessage = () => {
     if (activeDenA === activeDenB) {
       return `💡 Συγκρίνουμε τα κλάσματα ${activeNumA}/${activeDenA} και ${activeNumB}/${activeDenB}. Είναι ομώνυμα (έχουν ίδιο παρονομαστή). Μεγαλύτερο είναι εκείνο που έχει τον μεγαλύτερο αριθμητή!`;
     }
     if (activeNumA === activeNumB && activeNumA !== 0) {
-      return `💡 Συγκρίνουμε τα κλάσματα ${activeNumA}/${activeDenA} και ${activeNumB}/${activeDenB}. Έχουν ίδιο αριθμητή. Μεγαλύτερο είναι εκείνο που έχει τον μικρότερο παρονομαστή, γιατί η πίτσα χωρίστηκε σε λιγότερα (και άρα μεγαλύτερα) κομμάτια!`;
+      return `💡 Συγκρίνουμε τα κλάσματα ${activeNumA}/${activeDenA} και ${activeNumB}/${activeDenB}. Έχουν ίδιο αριθμητή. Μεγαλύτερο είναι εκείνο που έχει τον μικρότερο παρονομαστή, γιατί η μονάδα χωρίστηκε σε λιγότερα (και άρα μεγαλύτερα) κομμάτια!`;
     }
     
     // Ετερώνυμα - Μέθοδος Χιαστί
@@ -116,50 +132,66 @@ export default function SigkrisiKlasmatonPage() {
     );
   };
 
-  // Σχεδίαση Κυκλικού Διαγράμματος (Πίτσα SVG)
-  const renderPizzaDiagram = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
-    const slices = [];
-    const radius = 65;
-    const cx = 80;
-    const cy = 80;
+  // Έξυπνη σχεδίαση πολλαπλών κυκλικών διαγραμμάτων για καταχρηστικά κλάσματα (π.χ. 5/3 -> 2 πίτσες)
+  const renderFractionVisual = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
+    const totalPizzasNeeded = Math.max(1, Math.ceil(num / den));
+    const pizzas = [];
 
-    for (let i = 0; i < den; i++) {
-      const angleStep = 360 / den;
-      const startAngle = i * angleStep - 90;
-      const endAngle = (i + 1) * angleStep - 90;
+    const radius = 45;
+    const cx = 55;
+    const cy = 55;
 
-      const rad1 = (startAngle * Math.PI) / 180;
-      const rad2 = (endAngle * Math.PI) / 180;
+    for (let p = 0; p < totalPizzasNeeded; p++) {
+      const slices = [];
+      // Πόσα κομμάτια πρέπει να χρωματιστούν σε αυτήν την πίτσα
+      const remainingNumForThisPizza = Math.max(0, Math.min(den, num - p * den));
 
-      const x1 = cx + radius * Math.cos(rad1);
-      const y1 = cy + radius * Math.sin(rad1);
-      const x2 = cx + radius * Math.cos(rad2);
-      const y2 = cy + radius * Math.sin(rad2);
+      for (let i = 0; i < den; i++) {
+        const angleStep = 360 / den;
+        const startAngle = i * angleStep - 90;
+        const endAngle = (i + 1) * angleStep - 90;
 
-      const largeArcFlag = angleStep > 180 ? 1 : 0;
+        const rad1 = (startAngle * Math.PI) / 180;
+        const rad2 = (endAngle * Math.PI) / 180;
 
-      const d = den === 1
-        ? `M ${cx} ${cy} m -${radius}, 0 a ${radius},${radius} 0 1,0 ${radius * 2},0 a ${radius},${radius} 0 1,0 -${radius * 2},0`
-        : `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+        const x1 = cx + radius * Math.cos(rad1);
+        const y1 = cy + radius * Math.sin(rad1);
+        const x2 = cx + radius * Math.cos(rad2);
+        const y2 = cy + radius * Math.sin(rad2);
 
-      const isFilled = i < num;
+        const largeArcFlag = angleStep > 180 ? 1 : 0;
 
-      slices.push(
-        <path
-          key={i}
-          d={d}
-          className={`${
-            isFilled ? `${fillColor} ${strokeColor}` : 'fill-slate-100 stroke-slate-300'
-          } transition-colors duration-200 stroke-[0.7]`}
-        />
+        const d = den === 1
+          ? `M ${cx} ${cy} m -${radius}, 0 a ${radius},${radius} 0 1,0 ${radius * 2},0 a ${radius},${radius} 0 1,0 -${radius * 2},0`
+          : `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+
+        const isFilled = i < remainingNumForThisPizza;
+
+        slices.push(
+          <path
+            key={i}
+            d={d}
+            className={`${
+              isFilled ? `${fillColor} ${strokeColor}` : 'fill-slate-100 stroke-slate-300'
+            } transition-colors duration-200 stroke-[0.7]`}
+          />
+        );
+      }
+
+      pizzas.push(
+        <div key={p} className="relative">
+          <svg width="110" height="110" className="drop-shadow-sm overflow-visible">
+            {slices}
+            <circle cx={cx} cy={cy} r="2" className="fill-slate-800" />
+          </svg>
+        </div>
       );
     }
 
     return (
-      <svg width="160" height="160" className="drop-shadow-md overflow-visible">
-        {slices}
-        <circle cx={cx} cy={cy} r="2.5" className="fill-slate-800" />
-      </svg>
+      <div className="flex flex-wrap justify-center gap-3 max-w-[260px] p-2 bg-white rounded-xl border border-slate-100 shadow-inner">
+        {pizzas}
+      </div>
     );
   };
 
@@ -211,19 +243,19 @@ export default function SigkrisiKlasmatonPage() {
                 <span className="font-mono text-xs font-bold text-purple-700 bg-white px-2 py-0.5 rounded border inline-block">2/3 &gt; 2/5</span>
               </div>
 
-              {/* Περίπτωση 3 (Ενημερώθηκε αναλυτικά βάσει των οδηγιών σου) */}
-              <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-100 space-y-2">
-                <span className="font-black text-amber-800 block">3. Ετερώνυμα (Μέθοδος Χιαστί)</span>
-                <p className="text-slate-600 leading-relaxed">
-                  Πολλαπλασιάζουμε τον αριθμητή του 1ου με τον παρονομαστή του 2ου (αριστερό γινόμενο) και τον αριθμητή του 2ου με τον παρονομαστή του 1ου (δεξί γινόμενο). 
-                </p>
-                <p className="text-slate-700 font-medium text-[11px] bg-white/80 p-2 rounded border border-amber-200/60">
-                  • Αν το αριστερό γινόμενο είναι <strong>μικρότερο</strong>, τότε <strong>μικρότερο είναι το πρώτο κλάσμα</strong>.
-                  <br />
-                  • Αν είναι <strong>μεγαλύτερο</strong>, τότε <strong>μεγαλύτερο είναι το πρώτο κλάσμα</strong>.
-                  <br />
-                  • Αν είναι <strong>ίσα</strong>, τότε είναι <strong>ισοδύναμα</strong>.
-                </p>
+              {/* Περίπτωση 3 */}
+              <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-100 space-y-2 flex flex-col justify-between">
+                <div>
+                  <span className="font-black text-amber-800 block">3. Ετερώνυμα (Μέθοδος Χιαστί)</span>
+                  <p className="text-slate-600 leading-relaxed text-xs">
+                    Πολλαπλασιάζουμε τον αριθμητή του 1ου με τον παρονομαστή του 2ου (αριστερό γινόμενο) και τον αριθμητή του 2ου με τον παρονομαστή του 1ου (δεξί γινόμενο).
+                  </p>
+                </div>
+                <div className="text-[11px] bg-white/90 p-2 rounded border border-amber-200/60 space-y-1 text-slate-700 font-semibold mt-2">
+                  <p>• Αν αριστερό γινόμενο &lt; δεξί γινόμενο, τότε <strong>μικρότερο είναι το 1ο κλάσμα</strong>.</p>
+                  <p>• Αν αριστερό γινόμενο &gt; δεξί γινόμενο, τότε <strong>μεγαλύτερο είναι το 1ο κλάσμα</strong>.</p>
+                  <p>• Αν είναι ίσα, τότε είναι <strong>ισοδύναμα</strong>.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -236,7 +268,8 @@ export default function SigkrisiKlasmatonPage() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-xl font-black text-gray-900">Διάλεξε Κλάσματα</h3>
-                  <p className="text-gray-500 text-xs">Όριο παρονομαστή: {MAX_DENOMINATOR} (Αριθμητής &le; Παρονομαστής).</p>
+                  <p className="text-gray-500 text-xs">Όριο παρονομαστή: {MAX_DENOMINATOR}.</p>
+                  <p className="text-gray-400 text-[10px]">Ο αριθμητής μπορεί να φτάσει έως και {MAX_NUMERATOR_MULTIPLIER} φορές τον παρονομαστή.</p>
                 </div>
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
@@ -343,18 +376,18 @@ export default function SigkrisiKlasmatonPage() {
               <div className="space-y-4 flex-1 flex flex-col justify-center">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτική Σύγκριση Επιφάνειας (Μοντέλο Πίτσας)</span>
                 
-                <div className="flex flex-col sm:flex-row items-center justify-around gap-8 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                <div className="flex flex-col md:flex-row items-center justify-around gap-8 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 min-h-[180px]">
                   {/* Πίτσα Α */}
                   <div className="flex flex-col items-center space-y-2">
                     <span className="text-xs font-bold text-blue-500 uppercase tracking-wider">Πίτσα Α ({activeNumA}/{activeDenA})</span>
-                    {renderPizzaDiagram(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
+                    {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                     <span className="font-mono text-xs text-slate-400 font-bold">({valA.toFixed(2)})</span>
                   </div>
 
                   {/* Πίτσα Β */}
                   <div className="flex flex-col items-center space-y-2">
                     <span className="text-xs font-bold text-orange-500 uppercase tracking-wider">Πίτσα Β ({activeNumB}/{activeDenB})</span>
-                    {renderPizzaDiagram(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
+                    {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                     <span className="font-mono text-xs text-slate-400 font-bold">({valB.toFixed(2)})</span>
                   </div>
                 </div>
