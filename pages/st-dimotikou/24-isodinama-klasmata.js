@@ -3,8 +3,9 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// ΜΕΓΙΣΤΗ ΤΙΜΗ ΠΑΡΟΝΟΜΑΣΤΗ (Ορίστηκε στο 100)
-const MAX_DENOMINATOR = 100;
+// ΜΕΓΙΣΤΕΣ ΤΙΜΕΣ (Όλα κλειδωμένα αυστηρά στο 10)
+const MAX_VALUE = 100;
+const MAX_MULTIPLIER = 10;
 
 export default function IsodinamaKlasmataPage() {
   const [activeTab, setActiveTab] = useState('create'); // 'create' ή 'reduce'
@@ -15,10 +16,10 @@ export default function IsodinamaKlasmataPage() {
   const [multiplier, setMultiplier] = useState(3);
 
   // Κατάσταση για τη Λειτουργία 2 (Μετατροπή σε Ανάγωγο)
-  const [num2, setNum2] = useState(12);
-  const [den2, setDenominator2] = useState(16);
+  const [num2, setNum2] = useState(6);
+  const [den2, setDenominator2] = useState(8);
 
-  // Συναρτήσεις ασφαλούς εισαγωγής κειμένου (Κλείδωμα στο 100 και έλεγχος αριθμητή <= παρονομαστή)
+  // Συναρτήσεις ασφαλούς εισαγωγής (Κλείδωμα στο 10 και έλεγχος αριθμητή <= παρονομαστή)
   const handleInputChange = (setter, val, currentPair, isDenominator = false) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
@@ -28,16 +29,40 @@ export default function IsodinamaKlasmataPage() {
     const n = Number(clean);
     
     if (isDenominator) {
-      if (n === 0 || n > MAX_DENOMINATOR) return; // Κλείδωμα στο MAX_DENOMINATOR
+      if (n === 0 || n > MAX_VALUE) return; // Κλείδωμα στο 10
       setter(n);
-      // Αν ο νέος παρονομαστής γίνει μικρότερος από τον τρέχοντα αριθμητή, μαζεύουμε τον αριθμητή
       if (currentPair.num > n) {
         currentPair.setNum(n);
       }
     } else {
-      // Ο αριθμητής δεν μπορεί να είναι μεγαλύτερος από τον παρονομαστή
-      if (n > (currentPair.den || MAX_DENOMINATOR)) return;
+      if (n > (currentPair.den || MAX_VALUE) || n > MAX_VALUE) return; // Κλείδωμα στο 10 και έλεγχος παρονομαστή
       setter(n);
+    }
+  };
+
+  // Αυξομείωση με κουμπιά για τη Λειτουργία 1
+  const adjustValue1 = (type, amount) => {
+    if (type === 'num') {
+      setNum1(prev => Math.max(0, Math.min(Number(den1) || MAX_VALUE, (Number(prev) || 0) + amount)));
+    } else {
+      setDenominator1(prev => {
+        const nextDen = Math.max(1, Math.min(MAX_VALUE, (Number(prev) || 1) + amount));
+        if (num1 > nextDen) setNum1(nextDen);
+        return nextDen;
+      });
+    }
+  };
+
+  // Αυξομείωση με κουμπιά για τη Λειτουργία 2
+  const adjustValue2 = (type, amount) => {
+    if (type === 'num') {
+      setNum2(prev => Math.max(0, Math.min(Number(den2) || MAX_VALUE, (Number(prev) || 0) + amount)));
+    } else {
+      setDenominator2(prev => {
+        const nextDen = Math.max(1, Math.min(MAX_VALUE, (Number(prev) || 1) + amount));
+        if (num2 > nextDen) setNum2(nextDen);
+        return nextDen;
+      });
     }
   };
 
@@ -55,11 +80,8 @@ export default function IsodinamaKlasmataPage() {
   const activeNum1 = num1 === '' ? 0 : Number(num1);
   const activeDen1 = den1 === '' || den1 === 0 ? 1 : Number(den1);
   
-  // Έλεγχος ώστε το ισοδύναμο να μην ξεπεράσει το MAX_DENOMINATOR στον παρονομαστή του
-  const safeMultiplier = Math.min(
-    multiplier, 
-    Math.floor(MAX_DENOMINATOR / activeDen1)
-  ) || 1;
+  // Δυναμικός περιορισμός multiplier ώστε οι νέοι όροι να μην ξεπερνούν τους κανόνες αν χρειαστεί
+  const safeMultiplier = Math.min(multiplier, MAX_MULTIPLIER);
 
   const isoNum = activeNum1 * safeMultiplier;
   const isoDen = activeDen1 * safeMultiplier;
@@ -109,7 +131,7 @@ export default function IsodinamaKlasmataPage() {
             isFilled 
               ? `${fillColor} ${strokeColor}` 
               : 'fill-slate-100 stroke-slate-300'
-          } transition-colors duration-200 stroke-[0.7]`}
+          } transition-colors duration-200 stroke-[1.2]`}
         />
       );
     }
@@ -197,27 +219,39 @@ export default function IsodinamaKlasmataPage() {
                 <div className="space-y-5">
                   <div>
                     <h3 className="text-lg font-black text-gray-900">1. Δώσε Αρχικό Κλάσμα</h3>
-                    <p className="text-gray-500 text-xs">Όριο παρονομαστή: {MAX_DENOMINATOR} (Αριθμητής &le; Παρονομαστής)</p>
+                    <p className="text-gray-500 text-xs">Αριθμητής αριστερά, Παρονομαστής δεξιά (Όριο: {MAX_VALUE}).</p>
                   </div>
 
+                  {/* Διορθωμένα Inputs: Αριθμητής Αριστερά, Παρονομαστής Δεξιά με κουμπιά αυξομείωσης */}
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
-                      <input
-                        type="text"
-                        value={den1}
-                        onChange={(e) => handleInputChange(setDenominator1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, true)}
-                        className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-blue-200 rounded-lg text-blue-600 outline-none"
-                      />
-                    </div>
-                    <div className="space-y-1">
+                    {/* ΑΡΙΘΜΗΤΗΣ (ΑΡΙΣΤΕΡΑ) */}
+                    <div className="space-y-1 text-center">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
-                      <input
-                        type="text"
-                        value={num1}
-                        onChange={(e) => handleInputChange(setNum1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, false)}
-                        className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-blue-200 rounded-lg text-blue-600 outline-none"
-                      />
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
+                        <button onClick={() => adjustValue1('num', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
+                        <input
+                          type="text"
+                          value={num1}
+                          onChange={(e) => handleInputChange(setNum1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, false)}
+                          className="w-full text-center font-mono font-black text-sm outline-none text-blue-600"
+                        />
+                        <button onClick={() => adjustValue1('num', 1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">+</button>
+                      </div>
+                    </div>
+                    
+                    {/* ΠΑΡΟΝΟΜΑΣΤΗΣ (ΔΕΞΙΑ) */}
+                    <div className="space-y-1 text-center">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
+                        <button onClick={() => adjustValue1('den', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
+                        <input
+                          type="text"
+                          value={den1}
+                          onChange={(e) => handleInputChange(setDenominator1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, true)}
+                          className="w-full text-center font-mono font-black text-sm outline-none text-blue-600"
+                        />
+                        <button onClick={() => adjustValue1('den', 1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">+</button>
+                      </div>
                     </div>
                   </div>
 
@@ -231,7 +265,7 @@ export default function IsodinamaKlasmataPage() {
                       <input
                         type="range"
                         min="2"
-                        max="10"
+                        max={MAX_MULTIPLIER}
                         value={safeMultiplier}
                         onChange={(e) => setMultiplier(Number(e.target.value))}
                         className="w-full accent-blue-600 cursor-pointer"
@@ -244,27 +278,39 @@ export default function IsodinamaKlasmataPage() {
                 <div className="space-y-5">
                   <div>
                     <h3 className="text-lg font-black text-gray-900">Δώσε Κλάσμα για Απλοποίηση</h3>
-                    <p className="text-gray-500 text-xs">Γράψε τους όρους (Όριο: {MAX_DENOMINATOR}).</p>
+                    <p className="text-gray-500 text-xs">Αριθμητής αριστερά, Παρονομαστής δεξιά (Όριο: {MAX_VALUE}).</p>
                   </div>
 
+                  {/* Διορθωμένα Inputs: Αριθμητής Αριστερά, Παρονομαστής Δεξιά με κουμπιά αυξομείωσης */}
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
-                      <input
-                        type="text"
-                        value={den2}
-                        onChange={(e) => handleInputChange(setDenominator2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, true)}
-                        className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-emerald-200 rounded-lg text-emerald-600 outline-none"
-                      />
-                    </div>
-                    <div className="space-y-1">
+                    {/* ΑΡΙΘΜΗΤΗΣ (ΑΡΙΣΤΕΡΑ) */}
+                    <div className="space-y-1 text-center">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
-                      <input
-                        type="text"
-                        value={num2}
-                        onChange={(e) => handleInputChange(setNum2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, false)}
-                        className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-emerald-200 rounded-lg text-emerald-600 outline-none"
-                      />
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
+                        <button onClick={() => adjustValue2('num', -1)} className="px-1.5 font-bold text-emerald-600 hover:bg-slate-50 rounded">-</button>
+                        <input
+                          type="text"
+                          value={num2}
+                          onChange={(e) => handleInputChange(setNum2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, false)}
+                          className="w-full text-center font-mono font-black text-sm outline-none text-emerald-600"
+                        />
+                        <button onClick={() => adjustValue2('num', 1)} className="px-1.5 font-bold text-emerald-600 hover:bg-slate-50 rounded">+</button>
+                      </div>
+                    </div>
+
+                    {/* ΠΑΡΟΝΟΜΑΣΤΗΣ (ΔΕΞΙΑ) */}
+                    <div className="space-y-1 text-center">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
+                        <button onClick={() => adjustValue2('den', -1)} className="px-1.5 font-bold text-emerald-600 hover:bg-slate-50 rounded">-</button>
+                        <input
+                          type="text"
+                          value={den2}
+                          onChange={(e) => handleInputChange(setDenominator2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, true)}
+                          className="w-full text-center font-mono font-black text-sm outline-none text-emerald-600"
+                        />
+                        <button onClick={() => adjustValue2('den', 1)} className="px-1.5 font-bold text-emerald-600 hover:bg-slate-50 rounded">+</button>
+                      </div>
                     </div>
                   </div>
 
