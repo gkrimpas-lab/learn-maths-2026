@@ -3,8 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Μέγιστο όριο εισαγωγής για να μην σπάει η οπτικοποίηση
-const MAX_VAL = 40;
+// ΜΕΓΙΣΤΗ ΤΙΜΗ ΠΑΡΟΝΟΜΑΣΤΗ (Ορίστηκε στο 100)
+const MAX_DENOMINATOR = 100;
 
 export default function IsodinamaKlasmataPage() {
   const [activeTab, setActiveTab] = useState('create'); // 'create' ή 'reduce'
@@ -18,20 +18,30 @@ export default function IsodinamaKlasmataPage() {
   const [num2, setNum2] = useState(12);
   const [den2, setDenominator2] = useState(16);
 
-  // Συναρτήσεις ασφαλούς εισαγωγής κειμένου (Κλείδωμα στο 40)
-  const handleInputChange = (setter, val, isDenominator = false) => {
+  // Συναρτήσεις ασφαλούς εισαγωγής κειμένου (Κλείδωμα στο 100 και έλεγχος αριθμητή <= παρονομαστή)
+  const handleInputChange = (setter, val, currentPair, isDenominator = false) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
       setter('');
       return;
     }
     const n = Number(clean);
-    if (isDenominator && n === 0) return;
-    if (n > MAX_VAL) return; // Αυστηρό κλείδωμα
-    setter(n);
+    
+    if (isDenominator) {
+      if (n === 0 || n > MAX_DENOMINATOR) return; // Κλείδωμα στο MAX_DENOMINATOR
+      setter(n);
+      // Αν ο νέος παρονομαστής γίνει μικρότερος από τον τρέχοντα αριθμητή, μαζεύουμε τον αριθμητή
+      if (currentPair.num > n) {
+        currentPair.setNum(n);
+      }
+    } else {
+      // Ο αριθμητής δεν μπορεί να είναι μεγαλύτερος από τον παρονομαστή
+      if (n > (currentPair.den || MAX_DENOMINATOR)) return;
+      setter(n);
+    }
   };
 
-  // Αλγόριθμος Ευκλείδη για εύρεση ΜΚΔ (χρήσιμος για το ανάγωγο)
+  // Αλγόριθμος Ευκλείδη για εύρεση ΜΚΔ
   const findGcd = (a, b) => {
     while (b) {
       let t = b;
@@ -45,10 +55,10 @@ export default function IsodinamaKlasmataPage() {
   const activeNum1 = num1 === '' ? 0 : Number(num1);
   const activeDen1 = den1 === '' || den1 === 0 ? 1 : Number(den1);
   
-  // Έλεγχος ώστε το ισοδύναμο να μην ξεπεράσει το 40 στους όρους του
+  // Έλεγχος ώστε το ισοδύναμο να μην ξεπεράσει το MAX_DENOMINATOR στον παρονομαστή του
   const safeMultiplier = Math.min(
     multiplier, 
-    Math.floor(MAX_VAL / Math.max(activeNum1 || 1, activeDen1))
+    Math.floor(MAX_DENOMINATOR / activeDen1)
   ) || 1;
 
   const isoNum = activeNum1 * safeMultiplier;
@@ -62,27 +72,53 @@ export default function IsodinamaKlasmataPage() {
   const reducedNum = activeNum2 / gcd;
   const reducedDen = activeDen2 / gcd;
 
-  // Συναρτήση σχεδίασης της μπάρας σοκολάτας (ορθογώνιο)
-  const renderChocolateBar = (num, den, colorClass = 'bg-amber-700') => {
-    const blocks = [];
-    const activeBlocks = Math.max(0, Math.min(den, num));
+  // Συναρτήση σχεδίασης της πίτσας (Κυκλικό Σχήμα SVG)
+  const renderPizzaDiagram = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
+    const slices = [];
+    const radius = 65;
+    const cx = 80;
+    const cy = 80;
+    const activeSlices = Math.max(0, Math.min(den, num));
 
     for (let i = 0; i < den; i++) {
-      const isFilled = i < activeBlocks;
-      blocks.push(
-        <div
+      const angleStep = 360 / den;
+      const startAngle = i * angleStep - 90;
+      const endAngle = (i + 1) * angleStep - 90;
+
+      const rad1 = (startAngle * Math.PI) / 180;
+      const rad2 = (endAngle * Math.PI) / 180;
+
+      const x1 = cx + radius * Math.cos(rad1);
+      const y1 = cy + radius * Math.sin(rad1);
+      const x2 = cx + radius * Math.cos(rad2);
+      const y2 = cy + radius * Math.sin(rad2);
+
+      const largeArcFlag = angleStep > 180 ? 1 : 0;
+
+      const d = den === 1
+        ? `M ${cx} ${cy} m -${radius}, 0 a ${radius},${radius} 0 1,0 ${radius * 2},0 a ${radius},${radius} 0 1,0 -${radius * 2},0`
+        : `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+
+      const isFilled = i < activeSlices;
+
+      slices.push(
+        <path
           key={i}
-          className={`flex-1 h-10 border border-amber-900/10 first:rounded-l-lg last:rounded-r-lg transition-all duration-300 ${
-            isFilled ? `${colorClass} shadow-inner scale-[0.98]` : 'bg-amber-100/30'
-          }`}
+          d={d}
+          className={`${
+            isFilled 
+              ? `${fillColor} ${strokeColor}` 
+              : 'fill-slate-100 stroke-slate-300'
+          } transition-colors duration-200 stroke-[0.7]`}
         />
       );
     }
 
     return (
-      <div className="w-full bg-amber-900/5 p-1.5 rounded-xl border border-amber-900/10 flex gap-0.5 shadow-sm overflow-hidden">
-        {blocks}
-      </div>
+      <svg width="160" height="160" className="drop-shadow-md overflow-visible">
+        {slices}
+        <circle cx={cx} cy={cy} r="2.5" className="fill-slate-800" />
+      </svg>
     );
   };
 
@@ -153,7 +189,7 @@ export default function IsodinamaKlasmataPage() {
           {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             
-            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ ΑΝΑΛΟΓΑ ΜΕ ΤΟ TAB */}
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ */}
             <div className="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between gap-6">
               
               {activeTab === 'create' ? (
@@ -161,25 +197,25 @@ export default function IsodinamaKlasmataPage() {
                 <div className="space-y-5">
                   <div>
                     <h3 className="text-lg font-black text-gray-900">1. Δώσε Αρχικό Κλάσμα</h3>
-                    <p className="text-gray-500 text-xs">Πληκτρολόγησε τους όρους (Έως 40).</p>
+                    <p className="text-gray-500 text-xs">Όριο παρονομαστή: {MAX_DENOMINATOR} (Αριθμητής &le; Παρονομαστής)</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
-                      <input
-                        type="text"
-                        value={num1}
-                        onChange={(e) => handleInputChange(setNum1, e.target.value)}
-                        className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-blue-200 rounded-lg text-blue-600 outline-none"
-                      />
-                    </div>
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
                       <input
                         type="text"
                         value={den1}
-                        onChange={(e) => handleInputChange(setDenominator1, e.target.value, true)}
+                        onChange={(e) => handleInputChange(setDenominator1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, true)}
+                        className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-blue-200 rounded-lg text-blue-600 outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <input
+                        type="text"
+                        value={num1}
+                        onChange={(e) => handleInputChange(setNum1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, false)}
                         className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-blue-200 rounded-lg text-blue-600 outline-none"
                       />
                     </div>
@@ -207,26 +243,26 @@ export default function IsodinamaKlasmataPage() {
                 /* TAB 2: ΜΕΤΑΤΡΟΠΗ ΣΕ ΑΝΑΓΩΓΟ */
                 <div className="space-y-5">
                   <div>
-                    <h3 className="text-lg font-black text-gray-900">Δώσε Μεγάλο Κλάσμα</h3>
-                    <p className="text-gray-500 text-xs">Γράψε ένα κλάσμα για να απλοποιηθεί αυτόματα.</p>
+                    <h3 className="text-lg font-black text-gray-900">Δώσε Κλάσμα για Απλοποίηση</h3>
+                    <p className="text-gray-500 text-xs">Γράψε τους όρους (Όριο: {MAX_DENOMINATOR}).</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
-                      <input
-                        type="text"
-                        value={num2}
-                        onChange={(e) => handleInputChange(setNum2, e.target.value)}
-                        className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-emerald-200 rounded-lg text-emerald-600 outline-none"
-                      />
-                    </div>
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
                       <input
                         type="text"
                         value={den2}
-                        onChange={(e) => handleInputChange(setDenominator2, e.target.value, true)}
+                        onChange={(e) => handleInputChange(setDenominator2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, true)}
+                        className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-emerald-200 rounded-lg text-emerald-600 outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <input
+                        type="text"
+                        value={num2}
+                        onChange={(e) => handleInputChange(setNum2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, false)}
                         className="w-full text-center font-mono font-black text-lg p-1.5 border-2 border-emerald-200 rounded-lg text-emerald-600 outline-none"
                       />
                     </div>
@@ -239,13 +275,12 @@ export default function IsodinamaKlasmataPage() {
                 </div>
               )}
 
-              {/* Σταθερή Υπενθύμιση */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-slate-500 leading-relaxed">
-                ℹ️ <strong>Θυμήσου:</strong> Τα ισοδύναμα κλάσματα όταν γίνουν δεκαδικοί, δίνουν <strong>ακριβώς το ίδιο αποτέλεσμα</strong>!
+                ℹ️ <strong>Θυμήσου:</strong> Τα ισοδύναμα κλάσματα καταλαμβάνουν την ίδια ακριβώς επιφάνεια πάνω στο κυκλικό σχήμα!
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ & ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ (ΣΟΚΟΛΑΤΕΣ) */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΕ ΚΥΚΛΙΚΟ ΣΧΗΜΑ (ΠΙΤΣΑ) */}
             <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[550px] space-y-8">
               
               {activeTab === 'create' ? (
@@ -254,7 +289,6 @@ export default function IsodinamaKlasmataPage() {
                   {/* Μαθηματική Πράξη */}
                   <div className="flex items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100">
                     <div className="flex items-center gap-4 font-mono text-xl md:text-2xl font-black">
-                      {/* Αρχικό */}
                       <div className="flex flex-col items-center">
                         <span className="text-blue-600">{activeNum1}</span>
                         <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
@@ -269,7 +303,6 @@ export default function IsodinamaKlasmataPage() {
 
                       <span className="text-slate-400 font-light">=</span>
 
-                      {/* Ισοδύναμο */}
                       <div className="flex flex-col items-center">
                         <span className="text-indigo-600">{isoNum}</span>
                         <div className="w-12 h-1 bg-slate-800 my-1 rounded-full" />
@@ -278,15 +311,15 @@ export default function IsodinamaKlasmataPage() {
                     </div>
                   </div>
 
-                  {/* Γραφική Αναπαράσταση (Σοκολάτες) */}
-                  <div className="space-y-5">
-                    <div className="space-y-1">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍫 Αρχική Σοκολάτα ({activeNum1}/{activeDen1}):</span>
-                      {renderChocolateBar(activeNum1, activeDen1, 'bg-blue-500')}
+                  {/* Γραφική Αναπαράσταση (Κυκλικά Σχήματα) */}
+                  <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                    <div className="flex flex-col items-center space-y-2">
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Αρχικό Κλάσμα ({activeNum1}/{activeDen1})</span>
+                      {renderPizzaDiagram(activeNum1, activeDen1, 'fill-blue-500', 'stroke-blue-700')}
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍫 Ισοδύναμη Σοκολάτα ({isoNum}/{isoDen}):</span>
-                      {renderChocolateBar(isoNum, isoDen, 'bg-indigo-500')}
+                    <div className="flex flex-col items-center space-y-2">
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ισοδύναμο Κλάσμα ({isoNum}/{isoDen})</span>
+                      {renderPizzaDiagram(isoNum, isoDen, 'fill-indigo-500', 'stroke-indigo-700')}
                     </div>
                   </div>
                 </div>
@@ -296,7 +329,6 @@ export default function IsodinamaKlasmataPage() {
                   {/* Μαθηματική Πράξη */}
                   <div className="flex items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100">
                     <div className="flex items-center gap-4 font-mono text-xl md:text-2xl font-black">
-                      {/* Αρχικό */}
                       <div className="flex flex-col items-center">
                         <span className="text-emerald-600">{activeNum2}</span>
                         <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
@@ -311,7 +343,6 @@ export default function IsodinamaKlasmataPage() {
 
                       <span className="text-slate-400 font-light">=</span>
 
-                      {/* Ανάγωγο */}
                       <div className="flex flex-col items-center">
                         <span className="text-teal-600">{reducedNum}</span>
                         <div className="w-10 h-1 bg-slate-800 my-1 rounded-full" />
@@ -320,15 +351,15 @@ export default function IsodinamaKlasmataPage() {
                     </div>
                   </div>
 
-                  {/* Γραφική Αναπαράσταση (Σοκολάτες) */}
-                  <div className="space-y-5">
-                    <div className="space-y-1">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍫 Αρχικό Κλάσμα ({activeNum2}/{activeDen2}):</span>
-                      {renderChocolateBar(activeNum2, activeDen2, 'bg-emerald-500')}
+                  {/* Γραφική Αναπαράσταση (Κυκλικά Σχήματα) */}
+                  <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                    <div className="flex flex-col items-center space-y-2">
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Αρχικό Κλάσμα ({activeNum2}/{activeDen2})</span>
+                      {renderPizzaDiagram(activeNum2, activeDen2, 'fill-emerald-500', 'stroke-emerald-700')}
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block">🍫 Ανάγωγο Κλάσμα ({reducedNum}/{reducedDen}):</span>
-                      {renderChocolateBar(reducedNum, reducedDen, 'bg-teal-500')}
+                    <div className="flex flex-col items-center space-y-2">
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ανάγωγο Κλάσμα ({reducedNum}/{reducedDen})</span>
+                      {renderPizzaDiagram(reducedNum, reducedDen, 'fill-teal-500', 'stroke-teal-700')}
                     </div>
                   </div>
                 </div>
@@ -336,7 +367,7 @@ export default function IsodinamaKlasmataPage() {
 
               {/* Τελική Επιβεβαίωση Αξίας */}
               <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-xl text-center font-mono font-black text-xs md:text-sm">
-                ⚖️ Οπτική Επιβεβαίωση: Παρατήρησε ότι και οι δύο σοκολάτες είναι γεμάτες ακριβώς μέχρι το ίδιο σημείο!
+                ⚖️ Οπτική Επιβεβαίωση: Παρατήρησε ότι οι χρωματισμένες επιφάνειες στους δύο κύκλους είναι ακριβώς ίδιες σε μέγεθος!
               </div>
 
             </div>
