@@ -289,10 +289,10 @@ export default function ProsthesiKlasmatonPage() {
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
                 <div className="bg-blue-50/40 p-4 rounded-2xl border border-blue-100 space-y-3">
-                  <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">🔵 Κλάσμα Α (Αριστερό)</span>
+                  <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">🔵 Κλασμα Α (Αριστερο)</span>
                   <div className="grid grid-cols-2 gap-2 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueA('num', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -305,7 +305,7 @@ export default function ProsthesiKlasmatonPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueA('den', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -322,10 +322,10 @@ export default function ProsthesiKlasmatonPage() {
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Β (ΠΟΡΤΟΚΑΛΙ) */}
                 <div className="bg-orange-50/40 p-4 rounded-2xl border border-orange-100 space-y-3">
-                  <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">🟠 Κλάσμα Β (Δεξί)</span>
+                  <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">🟠 Κλασμα Β (Δεξι)</span>
                   <div className="grid grid-cols-2 gap-2 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueB('num', -1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -338,7 +338,7 @@ export default function ProsthesiKlasmatonPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueB('den', -1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -435,13 +435,13 @@ export default function ProsthesiKlasmatonPage() {
 
               {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΠΛΗΡΗ ΓΡΑΦΙΚΗ ΣΥΝΕΠΕΙΑ ΒΗΜΑ-ΒΗΜΑ */}
               <div className="space-y-4 flex-1 flex flex-col justify-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτική Πρόσθεση (Μοντέλο Πίτσας)</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτικη Προσθεση</span>
                 
                 <div className="flex flex-wrap items-center justify-center gap-4 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 p-4 min-h-[180px]">
                   
                   {/* 1. Πίτσα Α (Αρχική) */}
                   <div className="flex flex-col items-center space-y-1.5">
-                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider text-center">Πίτσα Α ({activeNumA}/{activeDenA})</span>
+                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider text-center">1ο Κλασμα ({activeNumA}/{activeDenA})</span>
                     {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                   </div>
 
@@ -450,7 +450,7 @@ export default function ProsthesiKlasmatonPage() {
 
                   {/* 2. Πίτσα Β (Αρχική) */}
                   <div className="flex flex-col items-center space-y-1.5">
-                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider text-center">Πίτσα Β ({activeNumB}/{activeDenB})</span>
+                    <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider text-center">2ο Κλασμα ({activeNumB}/{activeDenB})</span>
                     {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                   </div>
 
@@ -462,7 +462,7 @@ export default function ProsthesiKlasmatonPage() {
 
                       {/* Ομώνυμη Πίτσα Α */}
                       <div className="flex flex-col items-center space-y-1.5 opacity-90">
-                        <span className="text-[10px] font-bold text-blue-600/80 uppercase tracking-wider text-center">Ομώνυμη Α ({equivalentNumA}/{lcm})</span>
+                        <span className="text-[10px] font-bold text-blue-600/80 uppercase tracking-wider text-center">Ομωνυμο 1ο ({equivalentNumA}/{lcm})</span>
                         {renderFractionVisual(equivalentNumA, lcm, 'fill-blue-500/90', 'stroke-blue-600')}
                       </div>
 
@@ -471,7 +471,7 @@ export default function ProsthesiKlasmatonPage() {
 
                       {/* Ομώνυμη Πίτσα Β */}
                       <div className="flex flex-col items-center space-y-1.5 opacity-90">
-                        <span className="text-[10px] font-bold text-orange-600/80 uppercase tracking-wider text-center">Ομώνυμη Β ({equivalentNumB}/{lcm})</span>
+                        <span className="text-[10px] font-bold text-orange-600/80 uppercase tracking-wider text-center">Ομωνυμο 2ο ({equivalentNumB}/{lcm})</span>
                         {renderFractionVisual(equivalentNumB, lcm, 'fill-orange-500/90', 'stroke-orange-600')}
                       </div>
                     </>
@@ -482,7 +482,7 @@ export default function ProsthesiKlasmatonPage() {
 
                   {/* 3. Πίτσα Αποτελέσματος (Βάσει Ε.Κ.Π.) */}
                   <div className="flex flex-col items-center space-y-1.5 bg-emerald-50/60 p-2 rounded-xl border border-emerald-100">
-                    <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider text-center">Αποτέλεσμα ({lcmResultNum}/{lcmResultDen})</span>
+                    <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider text-center">Αποτελεσμα ({lcmResultNum}/{lcmResultDen})</span>
                     {renderFractionVisual(lcmResultNum, lcmResultDen, 'fill-emerald-500', 'stroke-emerald-700')}
                   </div>
 
@@ -492,7 +492,7 @@ export default function ProsthesiKlasmatonPage() {
                       {/* Σύμβολο = */}
                       <div className="text-xl text-emerald-600 font-black px-1">＝</div>
                       <div className="flex flex-col items-center space-y-1.5 bg-emerald-100/60 p-2 rounded-xl border border-emerald-200">
-                        <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider text-center">Ανάγωγο ({simplifiedNum}/{simplifiedDen})</span>
+                        <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider text-center">Αναγωγο ({simplifiedNum}/{simplifiedDen})</span>
                         {renderFractionVisual(simplifiedNum, simplifiedDen, 'fill-emerald-600', 'stroke-emerald-800')}
                       </div>
                     </>
