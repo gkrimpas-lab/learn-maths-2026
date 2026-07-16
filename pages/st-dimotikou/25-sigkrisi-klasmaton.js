@@ -3,8 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// ΜΕΓΙΣΤΗ ΤΙΜΗ (Όλα κλειδωμένα στο 10 για καθαρή σύγκριση και οπτικοποίηση)
-const MAX_VALUE = 10;
+// ΜΕΓΙΣΤΗ ΤΙΜΗ ΠΑΡΟΝΟΜΑΣΤΗ (Ορίστηκε στο 100)
+const MAX_DENOMINATOR = 100;
 
 export default function SigkrisiKlasmatonPage() {
   // Κλάσμα Α (Αριστερά)
@@ -15,7 +15,7 @@ export default function SigkrisiKlasmatonPage() {
   const [numB, setNumB] = useState(3);
   const [denB, setDenB] = useState(4);
 
-  // Ασφαλής έλεγχος εισαγωγής κειμένου
+  // Ασφαλής έλεγχος εισαγωγής κειμένου με βάση το MAX_DENOMINATOR
   const handleInputChange = (setter, val, currentDen, isDenominator = false) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
@@ -25,10 +25,10 @@ export default function SigkrisiKlasmatonPage() {
     const n = Number(clean);
     
     if (isDenominator) {
-      if (n === 0 || n > MAX_VALUE) return;
+      if (n === 0 || n > MAX_DENOMINATOR) return; // Κλείδωμα στο 100
       setter(n);
     } else {
-      if (n > currentDen || n > MAX_VALUE) return;
+      if (n > currentDen || n > MAX_DENOMINATOR) return;
       setter(n);
     }
   };
@@ -36,10 +36,10 @@ export default function SigkrisiKlasmatonPage() {
   // Αυξομείωση με κουμπιά για το Κλάσμα Α
   const adjustValueA = (type, amount) => {
     if (type === 'num') {
-      setNumA(prev => Math.max(0, Math.min(Number(denA) || MAX_VALUE, (Number(prev) || 0) + amount)));
+      setNumA(prev => Math.max(0, Math.min(Number(denA) || MAX_DENOMINATOR, (Number(prev) || 0) + amount)));
     } else {
       setDenA(prev => {
-        const nextDen = Math.max(1, Math.min(MAX_VALUE, (Number(prev) || 1) + amount));
+        const nextDen = Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount));
         if (numA > nextDen) setNumA(nextDen);
         return nextDen;
       });
@@ -49,10 +49,10 @@ export default function SigkrisiKlasmatonPage() {
   // Αυξομείωση με κουμπιά για το Κλάσμα Β
   const adjustValueB = (type, amount) => {
     if (type === 'num') {
-      setNumB(prev => Math.max(0, Math.min(Number(denB) || MAX_VALUE, (Number(prev) || 0) + amount)));
+      setNumB(prev => Math.max(0, Math.min(Number(denB) || MAX_DENOMINATOR, (Number(prev) || 0) + amount)));
     } else {
       setDenB(prev => {
-        const nextDen = Math.max(1, Math.min(MAX_VALUE, (Number(prev) || 1) + amount));
+        const nextDen = Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount));
         if (numB > nextDen) setNumB(nextDen);
         return nextDen;
       });
@@ -84,7 +84,7 @@ export default function SigkrisiKlasmatonPage() {
       return `💡 Συγκρίνουμε τα κλάσματα ${activeNumA}/${activeDenA} και ${activeNumB}/${activeDenB}. Έχουν ίδιο αριθμητή. Μεγαλύτερο είναι εκείνο που έχει τον μικρότερο παρονομαστή, γιατί η πίτσα χωρίστηκε σε λιγότερα (και άρα μεγαλύτερα) κομμάτια!`;
     }
     
-    // Ετερώνυμα - Μέθοδος Χιαστί με βάση τις νέες οδηγίες
+    // Ετερώνυμα - Μέθοδος Χιαστί
     const crossA = activeNumA * activeDenB;
     const crossB = activeNumB * activeDenA;
     
@@ -150,7 +150,7 @@ export default function SigkrisiKlasmatonPage() {
           d={d}
           className={`${
             isFilled ? `${fillColor} ${strokeColor}` : 'fill-slate-100 stroke-slate-300'
-          } transition-colors duration-200 stroke-[1.2]`}
+          } transition-colors duration-200 stroke-[0.7]`}
         />
       );
     }
@@ -211,13 +211,19 @@ export default function SigkrisiKlasmatonPage() {
                 <span className="font-mono text-xs font-bold text-purple-700 bg-white px-2 py-0.5 rounded border inline-block">2/3 &gt; 2/5</span>
               </div>
 
-              {/* Περίπτωση 3 */}
+              {/* Περίπτωση 3 (Ενημερώθηκε αναλυτικά βάσει των οδηγιών σου) */}
               <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-100 space-y-2">
                 <span className="font-black text-amber-800 block">3. Ετερώνυμα (Μέθοδος Χιαστί)</span>
                 <p className="text-slate-600 leading-relaxed">
-                  Πολλαπλασιάζουμε τον αριθμητή του πρώτου με τον παρονομαστή του δεύτερου, και τον αριθμητή του δεύτερου με τον παρονομαστή του πρώτου!
+                  Πολλαπλασιάζουμε τον αριθμητή του 1ου με τον παρονομαστή του 2ου (αριστερό γινόμενο) και τον αριθμητή του 2ου με τον παρονομαστή του 1ου (δεξί γινόμενο). 
                 </p>
-                <span className="font-mono text-xs font-bold text-amber-700 bg-white px-2 py-0.5 rounded border inline-block">Χιαστί: α·δ vs β·γ</span>
+                <p className="text-slate-700 font-medium text-[11px] bg-white/80 p-2 rounded border border-amber-200/60">
+                  • Αν το αριστερό γινόμενο είναι <strong>μικρότερο</strong>, τότε <strong>μικρότερο είναι το πρώτο κλάσμα</strong>.
+                  <br />
+                  • Αν είναι <strong>μεγαλύτερο</strong>, τότε <strong>μεγαλύτερο είναι το πρώτο κλάσμα</strong>.
+                  <br />
+                  • Αν είναι <strong>ίσα</strong>, τότε είναι <strong>ισοδύναμα</strong>.
+                </p>
               </div>
             </div>
           </div>
@@ -230,7 +236,7 @@ export default function SigkrisiKlasmatonPage() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-xl font-black text-gray-900">Διάλεξε Κλάσματα</h3>
-                  <p className="text-gray-500 text-xs">Όριο όρων: {MAX_VALUE} (Αριθμητής &le; Παρονομαστής).</p>
+                  <p className="text-gray-500 text-xs">Όριο παρονομαστή: {MAX_DENOMINATOR} (Αριθμητής &le; Παρονομαστής).</p>
                 </div>
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
