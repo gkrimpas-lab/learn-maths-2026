@@ -474,7 +474,7 @@ export default function AfairesiKlasmatonPage() {
                   {/* 3. Πίτσα Αποτελέσματος */}
                   <div className={`flex flex-col items-center space-y-1.5 p-2 rounded-xl border ${isNegative ? 'bg-red-50 border-red-100' : 'bg-emerald-50 border-emerald-100'}`}>
                     <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${isNegative ? 'text-red-600' : 'text-emerald-600'}`}>
-                      {isNegative ? 'Έλλειμμα' : 'Υπόλοιπο'} ({isNegative ? '-' : ''}{lcmResultNum}/{lcmResultDen})
+                      {isNegative ? 'Ελλειμμα' : 'Υπολοιπο'} ({isNegative ? '-' : ''}{lcmResultNum}/{lcmResultDen})
                     </span>
                     {renderFractionVisual(lcmResultNum, lcmResultDen, isNegative ? 'fill-red-500' : 'fill-emerald-500', isNegative ? 'stroke-red-700' : 'stroke-emerald-700')}
                   </div>
@@ -485,7 +485,7 @@ export default function AfairesiKlasmatonPage() {
                       <div className={`text-xl font-black px-1 ${isNegative ? 'text-red-600' : 'text-emerald-600'}`}>＝</div>
                       <div className={`flex flex-col items-center space-y-1.5 p-2 rounded-xl border ${isNegative ? 'bg-red-100 border-red-200' : 'bg-emerald-100 border-emerald-200'}`}>
                         <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${isNegative ? 'text-red-700' : 'text-emerald-700'}`}>
-                          Ανάγωγο ({isNegative ? '-' : ''}{simplifiedNum}/{simplifiedDen})
+                          Αναγωγο ({isNegative ? '-' : ''}{simplifiedNum}/{simplifiedDen})
                         </span>
                         {renderFractionVisual(simplifiedNum, simplifiedDen, isNegative ? 'fill-red-600' : 'fill-emerald-600', isNegative ? 'stroke-red-800' : 'stroke-emerald-800')}
                       </div>
