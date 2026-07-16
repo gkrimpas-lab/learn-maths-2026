@@ -253,7 +253,7 @@ export default function SigkrisiKlasmatonPage() {
                 </div>
                 <div className="text-[11px] bg-white/90 p-2 rounded border border-amber-200/60 space-y-1 text-slate-700 font-semibold mt-2">
                   <p>• Αν αριστερό γινόμενο &lt; δεξί γινόμενο, τότε <strong>μικρότερο είναι το 1ο κλάσμα</strong>.</p>
-                  <p>• Αν αριστερό γινόμενο &gt; δεξί γινόμενο, τότε <strong>μεγαλύτερο είναι το 1ο κλάσμα</strong>.</p>
+                  <p>• Αν αριστερό γινόμενο &gt; δεξί γινόμενο, τότε <strong>μεγαλύτερο είναι το 2ο κλάσμα</strong>.</p>
                   <p>• Αν είναι ίσα, τότε είναι <strong>ισοδύναμα</strong>.</p>
                 </div>
               </div>
@@ -274,10 +274,10 @@ export default function SigkrisiKlasmatonPage() {
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
                 <div className="bg-blue-50/40 p-4 rounded-2xl border border-blue-100 space-y-3">
-                  <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">🔵 Κλάσμα Α (Αριστερό)</span>
+                  <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">🔵 Κλασμα Α (Αριστερο)</span>
                   <div className="grid grid-cols-2 gap-2 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueA('num', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -290,7 +290,7 @@ export default function SigkrisiKlasmatonPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueA('den', -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -307,10 +307,10 @@ export default function SigkrisiKlasmatonPage() {
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Β (ΠΟΡΤΟΚΑΛΙ) */}
                 <div className="bg-orange-50/40 p-4 rounded-2xl border border-orange-100 space-y-3">
-                  <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">🟠 Κλάσμα Β (Δεξί)</span>
+                  <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">🟠 Κλασμα Β (Δεξι)</span>
                   <div className="grid grid-cols-2 gap-2 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueB('num', -1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -323,7 +323,7 @@ export default function SigkrisiKlasmatonPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValueB('den', -1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -374,19 +374,19 @@ export default function SigkrisiKlasmatonPage() {
 
               {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ (ΚΥΚΛΙΚΑ ΣΧΗΜΑΤΑ ΔΙΠΛΑ-ΔΙΠΛΑ) */}
               <div className="space-y-4 flex-1 flex flex-col justify-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτική Σύγκριση Επιφάνειας (Μοντέλο Πίτσας)</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτικη Συγκριση Επιφανειας (Μοντελο Πιτσας)</span>
                 
                 <div className="flex flex-col md:flex-row items-center justify-around gap-8 py-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 min-h-[180px]">
                   {/* Πίτσα Α */}
                   <div className="flex flex-col items-center space-y-2">
-                    <span className="text-xs font-bold text-blue-500 uppercase tracking-wider">Πίτσα Α ({activeNumA}/{activeDenA})</span>
+                    <span className="text-xs font-bold text-blue-500 uppercase tracking-wider">Πιτσα Α ({activeNumA}/{activeDenA})</span>
                     {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                     <span className="font-mono text-xs text-slate-400 font-bold">({valA.toFixed(2)})</span>
                   </div>
 
                   {/* Πίτσα Β */}
                   <div className="flex flex-col items-center space-y-2">
-                    <span className="text-xs font-bold text-orange-500 uppercase tracking-wider">Πίτσα Β ({activeNumB}/{activeDenB})</span>
+                    <span className="text-xs font-bold text-orange-500 uppercase tracking-wider">Πιτσα Β ({activeNumB}/{activeDenB})</span>
                     {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                     <span className="font-mono text-xs text-slate-400 font-bold">({valB.toFixed(2)})</span>
                   </div>
