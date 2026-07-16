@@ -315,7 +315,7 @@ export default function IsodinamaKlasmataPage() {
                   </div>
 
                   <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 text-xs text-emerald-800 space-y-1">
-                    <span className="font-black uppercase tracking-wider block">🔍 Εύρεση Διαιρέτη:</span>
+                    <span className="font-black uppercase tracking-wider block">🔍 Ευρεση Διαιρετη:</span>
                     <p>Ο Μέγιστος Κοινός Διαιρέτης του {activeNum2} και του {activeDen2} είναι το <strong>{gcd}</strong>.</p>
                   </div>
                 </div>
@@ -360,11 +360,11 @@ export default function IsodinamaKlasmataPage() {
                   {/* Γραφική Αναπαράσταση (Κυκλικά Σχήματα) */}
                   <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
                     <div className="flex flex-col items-center space-y-2">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Αρχικό Κλάσμα ({activeNum1}/{activeDen1})</span>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Αρχικο Κλασμα ({activeNum1}/{activeDen1})</span>
                       {renderPizzaDiagram(activeNum1, activeDen1, 'fill-blue-500', 'stroke-blue-700')}
                     </div>
                     <div className="flex flex-col items-center space-y-2">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ισοδύναμο Κλάσμα ({isoNum}/{isoDen})</span>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ισοδυναμο Κλασμα ({isoNum}/{isoDen})</span>
                       {renderPizzaDiagram(isoNum, isoDen, 'fill-indigo-500', 'stroke-indigo-700')}
                     </div>
                   </div>
