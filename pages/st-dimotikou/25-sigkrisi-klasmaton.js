@@ -78,15 +78,42 @@ export default function SigkrisiKlasmatonPage() {
   // Επεξηγηματικό παιδαγωγικό μήνυμα βάσει της περίπτωσης
   const getExplanationMessage = () => {
     if (activeDenA === activeDenB) {
-      return "💡 Τα κλάσματα είναι ομώνυμα (έχουν ίδιο παρονομαστή). Μεγαλύτερο είναι εκείνο που έχει τον μεγαλύτερο αριθμητή!";
+      return `💡 Συγκρίνουμε τα κλάσματα ${activeNumA}/${activeDenA} και ${activeNumB}/${activeDenB}. Είναι ομώνυμα (έχουν ίδιο παρονομαστή). Μεγαλύτερο είναι εκείνο που έχει τον μεγαλύτερο αριθμητή!`;
     }
     if (activeNumA === activeNumB && activeNumA !== 0) {
-      return "💡 Τα κλάσματα έχουν ίδιο αριθμητή. Μεγαλύτερο είναι εκείνο που έχει τον μικρότερο παρονομαστή (γιατί η πίτσα χωρίστηκε σε λιγότερα και άρα μεγαλύτερα κομμάτια)!";
+      return `💡 Συγκρίνουμε τα κλάσματα ${activeNumA}/${activeDenA} και ${activeNumB}/${activeDenB}. Έχουν ίδιο αριθμητή. Μεγαλύτερο είναι εκείνο που έχει τον μικρότερο παρονομαστή, γιατί η πίτσα χωρίστηκε σε λιγότερα (και άρα μεγαλύτερα) κομμάτια!`;
     }
-    // Ετερώνυμα - Μέθοδος Χιαστί
+    
+    // Ετερώνυμα - Μέθοδος Χιαστί με βάση τις νέες οδηγίες
     const crossA = activeNumA * activeDenB;
     const crossB = activeNumB * activeDenA;
-    return `💡 Τα κλάσματα είναι ετερώνυμα. Κάνουμε χιαστί πολλαπλασισμό: ${activeNumA} × ${activeDenB} = ${crossA} και ${activeNumB} × ${activeDenA} = ${crossB}. Επειδή το ${crossA} είναι ${getComparisonSymbol()} από το ${crossB}, το ίδιο ισχύει και για τα κλάσματα!`;
+    
+    let resultText = "";
+    if (crossA < crossB) {
+      resultText = `Επειδή το αριστερό γινόμενο (${crossA}) είναι μικρότερο από το δεξί (${crossB}), τότε μικρότερο είναι το πρώτο κλάσμα (${activeNumA}/${activeDenA} < ${activeNumB}/${activeDenB}).`;
+    } else if (crossA > crossB) {
+      resultText = `Επειδή το αριστερό γινόμενο (${crossA}) είναι μεγαλύτερο από το δεξί (${crossB}), τότε μεγαλύτερο είναι το πρώτο κλάσμα (${activeNumA}/${activeDenA} > ${activeNumB}/${activeDenB}).`;
+    } else {
+      resultText = `Επειδή τα γινόμενα είναι ίσα (${crossA} = ${crossB}), τότε τα κλάσματα είναι ισοδύναμα (${activeNumA}/${activeDenA} = ${activeNumB}/${activeDenB}).`;
+    }
+
+    return (
+      <div className="space-y-2">
+        <p>
+          💡 Συγκρίνουμε τα αρχικά κλάσματα <strong>{activeNumA}/{activeDenA}</strong> και <strong>{activeNumB}/{activeDenB}</strong>.
+        </p>
+        <p>
+          Κάνουμε <strong>χιαστί πολλαπλασιασμό</strong>: 
+          <br />
+          • Αριστερό μέλος: {activeNumA} × {activeDenB} = <strong>{crossA}</strong>
+          <br />
+          • Δεξί μέλος: {activeNumB} × {activeDenA} = <strong>{crossB}</strong>
+        </p>
+        <p className="border-t border-slate-200 pt-2 font-bold text-slate-800">
+          {resultText}
+        </p>
+      </div>
+    );
   };
 
   // Σχεδίαση Κυκλικού Διαγράμματος (Πίτσα SVG)
