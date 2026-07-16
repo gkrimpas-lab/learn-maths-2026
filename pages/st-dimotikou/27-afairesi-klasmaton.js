@@ -178,11 +178,11 @@ export default function AfairesiKlasmatonPage() {
     );
   };
 
-  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (Αριστερό Κάτω Πλαίσιο)
+  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (ΔΙΟΡΘΩΘΗΚΕ ΤΟ ΤΥΠΟΓΡΑΦΙΚΟ ΣΦΑΛΜΑ)
   const getStepByStepExplanation = () => {
     let typeHeader = isOriginallyOmonima 
       ? `🔵 Τα κλάσματα είναι ομώνυμα (ίδιος παρονομαστής: ${activeDenA})`
-      : `🟣 Τα κλάσματα είναι ετερώνυμα (διαφορετικοί παρονομαστές: ${activeDenA} ≠ {activeDenB})`;
+      : `🟣 Τα κλάσματα είναι ετερώνυμα (διαφορετικοί παρονομαστές: ${activeDenA} ≠ ${activeDenB})`;
 
     return (
       <div className="space-y-3">
@@ -399,7 +399,7 @@ export default function AfairesiKlasmatonPage() {
 
                   <div className="text-slate-500 font-bold">=</div>
 
-                  {/* 3. Αποτέλεσμα (με ή χωρίς μείον) */}
+                  {/* 3. Αποτέλεσμα */}
                   <div className="flex items-center font-mono">
                     {isNegative && <span className="text-red-600 text-3xl font-black mr-1">-</span>}
                     <div className={`flex flex-col items-center ${isNegative ? 'bg-red-50 border-red-100' : 'bg-emerald-50 border-emerald-100'} px-2.5 py-1.5 rounded-xl border`}>
@@ -426,7 +426,7 @@ export default function AfairesiKlasmatonPage() {
                 </div>
               </div>
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
+              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΠΛΗΡΗ ΓΡΑΦΙΚΗ ΣΥΝΕΠΕΙΑ */}
               <div className="space-y-4 flex-1 flex flex-col justify-center">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center sm:text-left">🍕 Οπτική Αφαίρεση (Μοντέλο Πίτσας)</span>
                 
@@ -451,11 +451,17 @@ export default function AfairesiKlasmatonPage() {
                   {!isOriginallyOmonima && (
                     <>
                       <div className="text-xl text-slate-400 font-black px-1">=</div>
+
+                      {/* Ομώνυμη Πίτσα Α */}
                       <div className="flex flex-col items-center space-y-1.5 opacity-90">
                         <span className="text-[10px] font-bold text-blue-600/80 uppercase tracking-wider text-center">Ομώνυμη Α ({equivalentNumA}/{lcm})</span>
                         {renderFractionVisual(equivalentNumA, lcm, 'fill-blue-500/90', 'stroke-blue-600')}
                       </div>
+
+                      {/* Σύμβολο - */}
                       <div className="text-xl text-slate-400 font-black px-1">-</div>
+
+                      {/* Ομώνυμη Πίτσα Β */}
                       <div className="flex flex-col items-center space-y-1.5 opacity-90">
                         <span className="text-[10px] font-bold text-orange-600/80 uppercase tracking-wider text-center">Ομώνυμη Β ({equivalentNumB}/{lcm})</span>
                         {renderFractionVisual(equivalentNumB, lcm, 'fill-orange-500/90', 'stroke-orange-600')}
@@ -465,7 +471,7 @@ export default function AfairesiKlasmatonPage() {
 
                   <div className="text-xl text-slate-500 font-black px-1">=</div>
 
-                  {/* 3. Πίτσα Αποτελέσματος (Αν είναι αρνητική, γίνεται κόκκινη για να δείξει έλλειμμα/χρέος) */}
+                  {/* 3. Πίτσα Αποτελέσματος */}
                   <div className={`flex flex-col items-center space-y-1.5 p-2 rounded-xl border ${isNegative ? 'bg-red-50 border-red-100' : 'bg-emerald-50 border-emerald-100'}`}>
                     <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${isNegative ? 'text-red-600' : 'text-emerald-600'}`}>
                       {isNegative ? 'Έλλειμμα' : 'Υπόλοιπο'} ({isNegative ? '-' : ''}{lcmResultNum}/{lcmResultDen})
@@ -491,7 +497,7 @@ export default function AfairesiKlasmatonPage() {
 
               {/* Τελικό Συμπέρασμα */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-slate-700 text-white p-4 rounded-xl text-center font-mono font-black text-xs md:text-sm shadow-md">
-                💡 Παρατήρησε ότι αν αφαιρέσουμε ένα μεγαλύτερο κομμάτι από ένα μικρότερο, το αποτέλεσμα βγαίνει αρνητικό!
+                💡 Παρατήρησε ότι η χρωματισμένη επιφάνεια του αποτελέσματος και του απλοποιημένου κλάσματος είναι ακριβώς η ίδια!
               </div>
 
             </div>
