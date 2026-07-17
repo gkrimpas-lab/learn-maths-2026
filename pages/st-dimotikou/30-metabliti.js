@@ -111,7 +111,7 @@ export default function MetablitiPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ - ΕΝΗΜΕΡΩΜΕΝΗ ΓΙΑ ΔΙΟΡΘΩΣΕΙΣ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ - ΝΕΟ ΣΤΥΛ ΕΞΙΣΩΣΗΣ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[440px] w-full relative overflow-hidden">
               <div className="w-full text-left">
                 <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
@@ -122,52 +122,62 @@ export default function MetablitiPage() {
                 </p>
               </div>
 
-              {/* Περιοχή Γραφήματος */}
-              <div className="w-full flex items-end justify-center gap-12 h-64 bg-slate-50 rounded-2xl border border-gray-100 p-6 shadow-inner my-auto">
+              {/* Περιοχή Γραφήματος και Μαθηματικών Συμβόλων */}
+              <div className="w-full flex items-end justify-center gap-4 md:gap-6 h-64 bg-slate-50 rounded-2xl border border-gray-100 p-6 shadow-inner my-auto">
                 
-                {/* Μπάρα Μεταβλητής x */}
-                <div className="flex flex-col items-center gap-2 w-20">
-                  <span className="text-sm font-black text-indigo-600 font-mono">{x}</span>
-                  {/* ΔΙΟΡΘΩΣΗ: Αλλαγή συντελεστή από 8 σε 6. Προσθήκη min-h-3 (12px) */}
+                {/* 1. Μπάρα Μεταβλητής x */}
+                <div className="flex flex-col items-center w-20">
+                  {/* Αριθμός πάνω από τη μπάρα */}
+                  <span className="text-sm font-black text-indigo-600 font-mono mb-1">{x}</span>
                   <div 
                     style={{ height: `${x * 6}px` }} 
-                    className="w-full bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-xl transition-all duration-300 shadow-md flex items-end justify-center pb-2 min-h-[12px]"
-                  >
-                    <span className="text-white font-black text-xl">x</span>
-                  </div>
-                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Μεταβλητή</span>
+                    className="w-full bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-xl transition-all duration-300 shadow-md min-h-[14px]"
+                  ></div>
+                  {/* Ταμπέλα και Σύμβολο x από κάτω */}
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-2">Μεταβλητή</span>
+                  <span className="text-3xl font-black text-indigo-600 font-sans mt-1">x</span>
                 </div>
 
-                {/* Μπάρα Σταθεράς 5 */}
-                <div className="flex flex-col items-center gap-2 w-20">
-                  <span className="text-sm font-black text-emerald-600 font-mono">5</span>
-                  {/* ΔΙΟΡΘΩΣΗ: Αλλαγή σταθερού ύψους σε 5 * 6px = 30px */}
+                {/* Σύμβολο ΣΥΝ (+) ανάμεσα στις μπάρες */}
+                <div className="h-full flex items-end pb-1.5 justify-center">
+                  <span className="text-4xl font-black text-red-500 font-sans">+</span>
+                </div>
+
+                {/* 2. Μπάρα Σταθεράς 5 */}
+                <div className="flex flex-col items-center w-20">
+                  {/* Αριθμός πάνω από τη μπάρα */}
+                  <span className="text-sm font-black text-emerald-600 font-mono mb-1">5</span>
                   <div 
                     style={{ height: '30px' }} 
-                    className="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-xl shadow-md flex items-end justify-center pb-2"
-                  >
-                    <span className="text-white font-black text-xl">5</span>
-                  </div>
-                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Σταθερά</span>
+                    className="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-xl shadow-md"
+                  ></div>
+                  {/* Ταμπέλα και Σύμβολο 5 από κάτω */}
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-2">Σταθερά</span>
+                  <span className="text-3xl font-black text-emerald-600 font-sans mt-1">5</span>
                 </div>
 
-                {/* Μπάρα Αποτελέσματος (x + 5) */}
-                <div className="flex flex-col items-center gap-2 w-20">
-                  <span className="text-sm font-black text-purple-600 font-mono">{ekfrasiResult}</span>
-                  {/* ΔΙΟΡΘΩΣΗ: Αλλαγή συντελεστή από 8 σε 6. Μέγιστο: 25 * 6 = 150px, χωράει στο h-64 (256px) */}
+                {/* Σύμβολο ΙΣΟΝ (=) ανάμεσα στις μπάρες */}
+                <div className="h-full flex items-end pb-1.5 justify-center">
+                  <span className="text-4xl font-black text-red-500 font-sans">=</span>
+                </div>
+
+                {/* 3. Μπάρα Αποτελέσματος (x + 5) */}
+                <div className="flex flex-col items-center w-24">
+                  {/* Αριθμός πάνω από τη μπάρα */}
+                  <span className="text-sm font-black text-purple-600 font-mono mb-1">{ekfrasiResult}</span>
                   <div 
                     style={{ height: `${ekfrasiResult * 6}px` }} 
-                    className="w-full bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-xl transition-all duration-300 shadow-lg border-2 border-purple-300 border-b-0 flex items-end justify-center pb-2"
-                  >
-                    <span className="text-white font-black text-sm">x + 5</span>
-                  </div>
-                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Σύνολο</span>
+                    className="w-full bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-xl transition-all duration-300 shadow-lg border border-purple-300 border-b-0"
+                  ></div>
+                  {/* Ταμπέλα και Έκφραση από κάτω */}
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-2">Σύνολο</span>
+                  <span className="text-2xl font-black text-purple-600 font-mono mt-1 whitespace-nowrap">x + 5</span>
                 </div>
 
               </div>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>🔍 Παρατήρησε: Μόνο οι μπάρες που περιέχουν το <span className="text-indigo-600">x</span> αλλάζουν ύψος!</span>
+                <span>🔍 Παρατήρησε: Μόνο η μπάρα και η τιμή του <span className="text-indigo-600">x</span> αλλάζουν!</span>
               </div>
             </div>
 
