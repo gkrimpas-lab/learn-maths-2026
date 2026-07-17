@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Όρια ρυθμίσεων
-const MAX_VAL = 12; // Όριο για να παραμένει καθαρή η γραφική αναπαράσταση
+const MAX_VAL = 12; 
 
 // Βοηθητική συνάρτηση για εύρεση Μέγιστου Κοινού Διαιρέτη (ΜΚΔ)
 const findGCD = (a, b) => {
@@ -16,7 +16,7 @@ export default function PollaplasiasmosKlasmatonPage() {
   const [mode, setMode] = useState('fraction-fraction');
 
   // Κατάσταση για Κλάσμα Α (ή Ακέραιο Α)
-  const [numA, setNumA] = useState(2); // Χρησιμοποιείται και ως ο Ακέραιος στο number-fraction mode
+  const [numA, setNumA] = useState(2); 
   const [denA, setDenA] = useState(3);
 
   // Κατάσταση για Κλάσμα Β
@@ -59,7 +59,6 @@ export default function PollaplasiasmosKlasmatonPage() {
     resultNum = activeNumA * activeNumB;
     resultDen = activeDenA * activeDenB;
   } else {
-    // Ακέραιος * Κλάσμα (ο activeNumA παίζει το ρόλο του ακεραίου)
     resultNum = activeNumA * activeNumB;
     resultDen = activeDenB;
   }
@@ -69,7 +68,7 @@ export default function PollaplasiasmosKlasmatonPage() {
   const simplifiedDen = resultDen / gcd;
   const isSimplified = gcd > 1 && resultNum !== 0;
 
-  // Σχεδίαση Πλέγματος (Grid) για Κλάσμα x Κλάσμα
+  // ΔΙΟΡΘΩΘΗΚΕ: Σχεδίαση Πλέγματος με απόλυτα ισομεγεθή τετραγωνάκια
   const renderGridVisual = () => {
     const rows = activeDenA;
     const cols = activeDenB;
@@ -80,47 +79,40 @@ export default function PollaplasiasmosKlasmatonPage() {
     const cells = [];
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        const isSelectedA = r < filledRows; // Οριζόντιο γέμισμα (Κλάσμα Α)
-        const isSelectedB = c < filledCols; // Κάθετο γέμισμα (Κλάσμα Β)
-        const isOverlap = isSelectedA && isSelectedB; // Επικάλυψη (Αποτέλεσμα)
+        const isSelectedA = r < filledRows; 
+        const isSelectedB = c < filledCols; 
+        const isOverlap = isSelectedA && isSelectedB; 
 
-        let cellBg = 'bg-white';
-        let stripeStyle = {};
+        let cellBg = 'bg-white border-slate-200';
 
         if (isOverlap) {
-          // Μωβ χρώμα επικάλυψης (Μπλε + Ροζ/Κόκκινο)
-          cellBg = 'bg-violet-500 border-violet-600';
+          cellBg = 'bg-violet-500 border-violet-600 shadow-sm';
         } else if (isSelectedA) {
-          // Μπλε για το 1ο κλάσμα
-          cellBg = 'bg-blue-300/80 border-blue-400';
+          cellBg = 'bg-blue-300 border-blue-400';
         } else if (isSelectedB) {
-          // Πορτοκαλί για το 2ο κλάσμα
-          cellBg = 'bg-orange-300/80 border-orange-400';
+          cellBg = 'bg-orange-300 border-orange-400';
         }
 
         cells.push(
           <div
             key={`${r}-${c}`}
-            className={`border flex items-center justify-center text-[10px] font-mono font-bold transition-all duration-300 ${cellBg} ${
-              isOverlap ? 'text-white scale-[1.02] shadow-sm z-10' : 'text-slate-500'
-            }`}
+            className={`border w-full h-full transition-colors duration-300 ${cellBg}`}
             style={{ aspectRatio: '1/1' }}
-          >
-            {isOverlap && '✓'}
-          </div>
+          />
         );
       }
     }
 
     return (
-      <div className="flex flex-col items-center space-y-4 w-full max-w-xs mx-auto">
+      <div className="flex flex-col items-center space-y-4 w-full max-w-sm mx-auto p-2">
+        {/* Χρήση inline στυλ για δυναμικό grid-template-columns ώστε να κλειδώνει η γεωμετρία */}
         <div 
-          className="grid gap-1 border-2 border-slate-300 p-2 rounded-xl bg-slate-50 shadow-inner w-full"
+          className="grid gap-0.5 border-2 border-slate-300 p-1.5 rounded-xl bg-slate-100 shadow-inner w-full"
           style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
         >
           {cells}
         </div>
-        <div className="flex flex-wrap justify-center gap-3 text-xs font-semibold">
+        <div className="flex flex-wrap justify-center gap-3 text-xs font-bold pt-2">
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-blue-300 rounded border border-blue-400" /> Κλάσμα Α ({activeNumA}/{activeDenA})</span>
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-orange-300 rounded border border-orange-400" /> Κλάσμα Β ({activeNumB}/{activeDenB})</span>
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-violet-500 rounded border border-violet-600" /> Κοινή Περιοχή ({resultNum}/{resultDen})</span>
