@@ -33,7 +33,8 @@ export default function STDimotikouMenu() {
     { id: '26-prosthesi-klasmaton', label: '🍕 26. Πρόσθεση Κλασμάτων', href: '/st-dimotikou/26-prosthesi-klasmaton' },
     { id: '27-afairesi-klasmaton', label: '🍕 27. Αφαίρεση Κλασμάτων', href: '/st-dimotikou/27-afairesi-klasmaton' },
     { id: '28-pollaplasiasmos-klasmaton', label: '🍕 28. Πολλαπλασιασμός Κλασμάτων', href: '/st-dimotikou/28-pollaplasiasmos-klasmaton' },
-    { id: '29-diairesi-klasmaton', label: '🍕 29. Διαίρεση Κλασμάτων', href: '/st-dimotikou/29-diairesi-klasmaton' }
+    { id: '29-diairesi-klasmaton', label: '🍕 29. Διαίρεση Κλασμάτων', href: '/st-dimotikou/29-diairesi-klasmaton' },
+    { id: '30-metabliti', label: '🍕 30. Μεταβλητή', href: '/st-dimotikou/30-metabliti' }
   ];
 
   return (
