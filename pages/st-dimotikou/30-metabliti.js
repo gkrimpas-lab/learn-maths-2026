@@ -128,10 +128,10 @@ export default function MetablitiPage() {
                 {/* Μπάρα Μεταβλητής x */}
                 <div className="flex flex-col items-center gap-2 w-20">
                   <span className="text-sm font-black text-indigo-600 font-mono">{x}</span>
-                  {/* ΔΙΟΡΘΩΣΗ: Προσθήκη ελάχιστου ύψους h-2 και χρήση συντελεστή 8 για x=0 (min-h-2) */}
+                  {/* ΔΙΟΡΘΩΣΗ: Αλλαγή συντελεστή από 8 σε 6. Προσθήκη min-h-3 (12px) */}
                   <div 
-                    style={{ height: `${x * 8}px` }} 
-                    className="w-full bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-xl transition-all duration-300 shadow-md flex items-end justify-center pb-2 min-h-[16px]"
+                    style={{ height: `${x * 6}px` }} 
+                    className="w-full bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-xl transition-all duration-300 shadow-md flex items-end justify-center pb-2 min-h-[12px]"
                   >
                     <span className="text-white font-black text-xl">x</span>
                   </div>
@@ -141,9 +141,9 @@ export default function MetablitiPage() {
                 {/* Μπάρα Σταθεράς 5 */}
                 <div className="flex flex-col items-center gap-2 w-20">
                   <span className="text-sm font-black text-emerald-600 font-mono">5</span>
-                  {/* ΔΙΟΡΘΩΣΗ: Σταθερό ύψος 5 * 8px = 40px */}
+                  {/* ΔΙΟΡΘΩΣΗ: Αλλαγή σταθερού ύψους σε 5 * 6px = 30px */}
                   <div 
-                    style={{ height: '40px' }} 
+                    style={{ height: '30px' }} 
                     className="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-xl shadow-md flex items-end justify-center pb-2"
                   >
                     <span className="text-white font-black text-xl">5</span>
@@ -154,9 +154,9 @@ export default function MetablitiPage() {
                 {/* Μπάρα Αποτελέσματος (x + 5) */}
                 <div className="flex flex-col items-center gap-2 w-20">
                   <span className="text-sm font-black text-purple-600 font-mono">{ekfrasiResult}</span>
-                  {/* ΔΙΟΡΘΩΣΗ: Χρήση συντελεστή 8px. Μέγιστο ύψος 25 * 8px = 200px, που χωράει στο h-64 (256px) */}
+                  {/* ΔΙΟΡΘΩΣΗ: Αλλαγή συντελεστή από 8 σε 6. Μέγιστο: 25 * 6 = 150px, χωράει στο h-64 (256px) */}
                   <div 
-                    style={{ height: `${ekfrasiResult * 8}px` }} 
+                    style={{ height: `${ekfrasiResult * 6}px` }} 
                     className="w-full bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-xl transition-all duration-300 shadow-lg border-2 border-purple-300 border-b-0 flex items-end justify-center pb-2"
                   >
                     <span className="text-white font-black text-sm">x + 5</span>
