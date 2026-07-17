@@ -65,15 +65,13 @@ export default function DiairesiKlasmatonPage() {
 
   const decimalResult = resultNum / resultDen;
 
-  // ΕΞΥΠΝΟΣ ΤΡΟΠΟΣ ΑΝΑΠΑΡΑΣΤΑΣΗΣ: Αυτοπροσαρμοζόμενη δυναμική κλίμακα (Dynamic Scaling)
+  // Αυτοπροσαρμοζόμενη δυναμική κλίμακα (Dynamic Scaling)
   const renderBarVisual = () => {
     const valA = activeNumA / activeDenA;
     const valB = activeNumB / activeDenB;
 
-    // Βρίσκουμε τη μέγιστη τιμή για να αποτελέσει το 100% του οπτικού πλάτους
     const maxVal = Math.max(valA, valB);
     
-    // Υπολογισμός αναλογικού πλάτους % (αν το maxVal είναι 0, βάζουμε 0)
     const widthA = maxVal > 0 ? (valA / maxVal) * 100 : 0;
     const widthB = maxVal > 0 ? (valB / maxVal) * 100 : 0;
 
@@ -130,10 +128,10 @@ export default function DiairesiKlasmatonPage() {
     );
   };
 
-  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (Αριστερό Κάτω Πλαίσιο)
+  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (ΔΙΟΡΘΩΘΗΚΕ: gcd αντί gcdResult)
   const getStepByStepExplanation = () => {
     let typeHeader = activeDenA === activeDenB 
-      ? `🔵 Τα κλάσματα είναι ομώνυμα (ίδιος παρονομαστής: ${activeDenA})`
+      ? `🔵 Τα κλάσματα είναι ομώνυμα (ίδιος παρονομαστης: ${activeDenA})`
       : `🟣 Τα κλάσματα είναι ετερώνυμα (διαφορετικοί παρονομαστές: ${activeDenA} ≠ ${activeDenB})`;
 
     return (
@@ -152,7 +150,7 @@ export default function DiairesiKlasmatonPage() {
 
         {isSimplified && (
           <p className="text-emerald-700 text-xs font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-100">
-            ✨ Απλοποιώντας με το {gcdResult}, το τελικό ανάγωγο κλάσμα είναι: <strong>{simplifiedNum}/{simplifiedDen}</strong>
+            ✨ Απλοποιώντας με το {gcd}, το τελικό ανάγωγο κλάσμα είναι: <strong>{simplifiedNum}/{simplifiedDen}</strong>
           </p>
         )}
       </div>
@@ -417,7 +415,7 @@ export default function DiairesiKlasmatonPage() {
                 {activeNumB > 0 ? renderBarVisual() : <div className="text-center text-xs text-slate-400 italic">Διαλέξτε έναν διαιρέτη μεγαλύτερο του 0.</div>}
               </div>
 
-              {/* ΠΑΙΔΑΓΩΓΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
+              {/* ПΑΙΔΑΓΩΓΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-slate-700 text-white p-4 rounded-xl text-center font-mono font-black text-xs md:text-sm shadow-md">
                 💡 Θυμήσου: Όταν διαιρούμε με ένα κλάσμα μικρότερο της μονάδας, το αποτέλεσμα μεγαλώνει, γιατί το μικρό κομμάτι χωράει πολλές φορές μέσα στο μεγάλο!
               </div>
