@@ -3,12 +3,11 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Όριο ρυθμίσεων για καθαρή οπτικοποίηση
-const MAX_VAL = 12;
-
 // Βοηθητική συνάρτηση για εύρεση Μέγιστου Κοινού Διαιρέτη (ΜΚΔ)
 const findGCD = (a, b) => {
-  return b === 0 ? a : findGCD(b, a % b);
+  const absA = Math.abs(a);
+  const absB = Math.abs(b);
+  return absB === 0 ? absA : findGCD(absB, absA % absB);
 };
 
 export default function DiairesiKlasmatonPage() {
@@ -21,17 +20,17 @@ export default function DiairesiKlasmatonPage() {
 
   // Κατάσταση για Κλάσμα Β (Διαιρέτης) - Ή Ακέραιο Β
   const [numB, setNumB] = useState(1);
-  const [denB, setDenB] = useState(4); // Αν είναι ακέραιος, αυτός ο παρονομαστής θα θεωρείται 1
+  const [denB, setDenB] = useState(4);
 
-  // Έλεγχος εισαγωγής κειμένου
+  // Έλεγχος εισαγωγής κειμένου - Επιτρέπει έως 7 ψηφία χωρίς άνω όριο τιμής
   const handleInputChange = (setter, val, isDenominator = false) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
       setter('');
       return;
     }
+    if (clean.length > 7) return; // Περιορισμός στα 7 ψηφία
     const n = Number(clean);
-    if (n > MAX_VAL) return;
     if (isDenominator && n === 0) return;
     setter(n);
   };
@@ -40,24 +39,22 @@ export default function DiairesiKlasmatonPage() {
   const adjustValue = (setter, currentVal, amount, isDenominator = false) => {
     const next = (Number(currentVal) || 0) + amount;
     const min = isDenominator ? 1 : 0;
-    if (next >= min && next <= MAX_VAL) {
+    if (next >= min && next.toString().length <= 7) {
       setter(next);
     }
   };
 
-  // Ενεργές τιμές
+  // Ενεργές τιμές για τους υπολογισμούς
   const activeNumA = numA === '' ? 0 : Number(numA);
   const activeDenA = denA === '' || denA === 0 ? 1 : Number(denA);
   const activeNumB = numB === '' ? 0 : Number(numB);
   const activeDenB = mode === 'fraction-fraction' ? (denB === '' || denB === 0 ? 1 : Number(denB)) : 1;
 
   // Υπολογισμός Αντίστροφου Κλάσματος Διαιρέτη
-  // Ο αντίστροφος του numB/denB είναι ο denB/numB
   const inverseNum = activeDenB;
   const inverseDen = activeNumB;
 
-  // Υπολογισμός Διαίρεσης (Πολλαπλασιάζουμε με τον αντίστροφο)
-  // (numA/denA) : (numB/denB) = (numA/denA) * (denB/numB)
+  // Υπολογισμός Διαίρεσης
   const resultNum = activeNumA * inverseNum;
   const resultDen = activeDenA * inverseDen;
 
@@ -68,14 +65,17 @@ export default function DiairesiKlasmatonPage() {
 
   const decimalResult = resultNum / resultDen;
 
-  // Σχεδίαση Γραμμικού Μοντέλου Μπάρας (Σύγκριση Μεγεθών)
+  // ΕΞΥΠΝΟΣ ΤΡΟΠΟΣ ΑΝΑΠΑΡΑΣΤΑΣΗΣ: Αυτοπροσαρμοζόμενη δυναμική κλίμακα (Dynamic Scaling)
   const renderBarVisual = () => {
     const valA = activeNumA / activeDenA;
     const valB = activeNumB / activeDenB;
 
-    // Ποσοστά επί τοις εκατό για το πλάτος των bars (με μέγιστο το 300% της μονάδας αν χρειαστεί)
-    const widthA = Math.min(100, (valA / 3) * 100);
-    const widthB = Math.min(100, (valB / 3) * 100);
+    // Βρίσκουμε τη μέγιστη τιμή για να αποτελέσει το 100% του οπτικού πλάτους
+    const maxVal = Math.max(valA, valB);
+    
+    // Υπολογισμός αναλογικού πλάτους % (αν το maxVal είναι 0, βάζουμε 0)
+    const widthA = maxVal > 0 ? (valA / maxVal) * 100 : 0;
+    const widthB = maxVal > 0 ? (valB / maxVal) * 100 : 0;
 
     return (
       <div className="w-full bg-slate-50 p-6 rounded-2xl border border-dashed border-slate-200 space-y-6">
@@ -83,19 +83,19 @@ export default function DiairesiKlasmatonPage() {
           💡 <strong>Τι σημαίνει η διαίρεση;</strong> Σημαίνει να βρούμε πόσες φορές χωράει η κάτω μπάρα (Κλάσμα Β) μέσα στην πάνω μπάρα (Κλάσμα Α)!
         </div>
 
-        <div className="space-y-4 max-w-xl mx-auto">
+        <div className="space-y-5 max-w-xl mx-auto">
           {/* Μπάρα Α */}
           <div className="space-y-1">
             <div className="flex justify-between text-[11px] font-bold text-blue-600 uppercase">
               <span>📏 Κλάσμα Α (Διαιρετέος)</span>
-              <span>{activeNumA}/{activeDenA}</span>
+              <span className="font-mono">{activeNumA}/{activeDenA} ≈ {Number(valA.toFixed(3))}</span>
             </div>
-            <div className="w-full bg-slate-200 h-8 rounded-lg overflow-hidden flex shadow-inner">
+            <div className="w-full bg-slate-200/70 h-9 rounded-xl p-0.5 border border-slate-300/50 shadow-inner flex">
               <div 
-                className="bg-blue-500 h-full transition-all duration-500 flex items-center justify-center text-white font-mono font-bold text-xs shadow-md"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-lg transition-all duration-500 flex items-center pl-3 text-white font-mono font-black text-xs shadow-md truncate"
                 style={{ width: `${widthA}%` }}
               >
-                {valA > 0.15 && `${activeNumA}/${activeDenA}`}
+                {widthA > 15 && `${activeNumA}/${activeDenA}`}
               </div>
             </div>
           </div>
@@ -104,22 +104,57 @@ export default function DiairesiKlasmatonPage() {
           <div className="space-y-1">
             <div className="flex justify-between text-[11px] font-bold text-orange-600 uppercase">
               <span>📐 Κλάσμα Β (Διαιρέτης)</span>
-              <span>{mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB}</span>
+              <span className="font-mono">
+                {mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB} ≈ {Number(valB.toFixed(3))}
+              </span>
             </div>
-            <div className="w-full bg-slate-200 h-8 rounded-lg overflow-hidden flex shadow-inner">
+            <div className="w-full bg-slate-200/70 h-9 rounded-xl p-0.5 border border-slate-300/50 shadow-inner flex">
               <div 
-                className="bg-orange-500 h-full transition-all duration-500 flex items-center justify-center text-white font-mono font-bold text-xs shadow-md"
+                className="bg-gradient-to-r from-orange-500 to-orange-600 h-full rounded-lg transition-all duration-500 flex items-center pl-3 text-white font-mono font-black text-xs shadow-md truncate"
                 style={{ width: `${widthB}%` }}
               >
-                {valB > 0.15 && (mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB)}
+                {widthB > 15 && (mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB)}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="text-center text-xs font-bold font-mono text-slate-700 bg-white border p-2 rounded-xl max-w-xs mx-auto shadow-sm">
-          🎯 Χωράει ακριβώς: <span className="text-emerald-600 text-sm">{Number(decimalResult.toFixed(2))} φορές!</span>
+        {/* Αποτέλεσμα Σύγκρισης */}
+        <div className="text-center text-xs font-bold font-mono text-slate-700 bg-white border p-3 rounded-xl max-w-xs mx-auto shadow-sm space-y-1">
+          <div className="text-slate-400 font-sans text-[10px] uppercase tracking-wider">Πόσες φορές χωράει:</div>
+          <div className="text-emerald-600 text-base font-black">
+            {Number.isInteger(decimalResult) ? decimalResult : Number(decimalResult.toFixed(4))} φορές!
+          </div>
         </div>
+      </div>
+    );
+  };
+
+  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (Αριστερό Κάτω Πλαίσιο)
+  const getStepByStepExplanation = () => {
+    let typeHeader = activeDenA === activeDenB 
+      ? `🔵 Τα κλάσματα είναι ομώνυμα (ίδιος παρονομαστής: ${activeDenA})`
+      : `🟣 Τα κλάσματα είναι ετερώνυμα (διαφορετικοί παρονομαστές: ${activeDenA} ≠ ${activeDenB})`;
+
+    return (
+      <div className="space-y-3">
+        <p className={`font-bold ${activeDenA === activeDenB ? 'text-blue-800' : 'text-indigo-800'}`}>{typeHeader}</p>
+        <div className="text-slate-600 space-y-1.5 text-xs md:text-sm">
+          <p>1. Κρατάμε το 1ο κλάσμα αμετάβλητο: <span className="font-mono font-bold text-blue-600">{activeNumA}/{activeDenA}</span></p>
+          <p>2. Αντιστρέφουμε τους όρους του 2ου κλάσματος:</p>
+          <p className="font-mono text-orange-600 pl-2">➡️ Το <strong>{activeNumB}/{activeDenB}</strong> γίνεται <strong>{inverseNum}/{inverseDen}</strong></p>
+          <p>3. Μετατρέπουμε την πράξη σε πολλαπλασιασμό:</p>
+        </div>
+        
+        <div className="bg-white p-3 rounded-xl border border-slate-200 font-mono text-xs md:text-sm">
+          {activeNumA}/{activeDenA} : {activeNumB}/{activeDenB} = {activeNumA}/{activeDenA} × {inverseNum}/{inverseDen} = <strong>{resultNum}/{resultDen}</strong>
+        </div>
+
+        {isSimplified && (
+          <p className="text-emerald-700 text-xs font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-100">
+            ✨ Απλοποιώντας με το {gcdResult}, το τελικό ανάγωγο κλάσμα είναι: <strong>{simplifiedNum}/{simplifiedDen}</strong>
+          </p>
+        )}
       </div>
     );
   };
@@ -210,7 +245,7 @@ export default function DiairesiKlasmatonPage() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-xl font-black text-gray-900">Όρισε τους όρους</h3>
-                  <p className="text-gray-500 text-xs">Μέγιστη τιμή ορίων: {MAX_VAL}.</p>
+                  <p className="text-gray-500 text-xs">Ελεύθερη πληκτρολόγηση έως 7 ψηφία.</p>
                 </div>
 
                 {/* ΚΛΑΣΜΑ Α (ΔΙAΙΡΕΤΕΟΣ) */}
@@ -260,7 +295,7 @@ export default function DiairesiKlasmatonPage() {
                             value={numB}
                             onChange={(e) => handleInputChange(setNumB, e.target.value, false)}
                             className="w-full text-center font-mono font-black text-sm outline-none text-orange-600"
-                          />
+                        />
                           <button onClick={() => adjustValue(setNumB, numB, 1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">+</button>
                         </div>
                       </div>
@@ -273,7 +308,7 @@ export default function DiairesiKlasmatonPage() {
                             value={denB}
                             onChange={(e) => handleInputChange(setDenB, e.target.value, true)}
                             className="w-full text-center font-mono font-black text-sm outline-none text-orange-600"
-                          />
+                        />
                           <button onClick={() => adjustValue(setDenB, denB, 1, true)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">+</button>
                         </div>
                       </div>
@@ -299,25 +334,9 @@ export default function DiairesiKlasmatonPage() {
                 )}
               </div>
 
-              {/* Παιδαγωγική Ανάλυση Βήμα-Βήμα */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-slate-600 leading-relaxed font-medium space-y-2">
-                <p className="font-bold text-slate-800">📝 Ανάλυση Πράξης:</p>
-                {activeNumB === 0 ? (
-                  <p className="text-red-500 font-bold">⚠️ Δεν μπορούμε να διαιρέσουμε με το μηδέν!</p>
-                ) : (
-                  <div className="space-y-1.5">
-                    <p>1. Κρατάμε το 1ο κλάσμα: <span className="font-mono font-bold text-blue-600">{activeNumA}/{activeDenA}</span></p>
-                    <p>2. Αντιστρέφουμε το 2ο κλάσμα:</p>
-                    <p className="font-mono text-orange-600 pl-2">➡️ Το <strong>{activeNumB}/{activeDenB}</strong> γίνεται <strong>{inverseNum}/{inverseDen}</strong></p>
-                    <p>3. Μετατρέπουμε σε πολλαπλασιασμό:</p>
-                    <p className="font-mono text-emerald-600 pl-2">➡️ ({activeNumA} × {inverseNum}) / ({activeDenA} × {inverseDen})</p>
-                  </div>
-                )}
-                {isSimplified && (
-                  <p className="text-emerald-700 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-100 mt-2">
-                    ✨ Απλοποίηση: {resultNum}/{resultDen} = <strong>{simplifiedNum}/{simplifiedDen}</strong>
-                  </p>
-                )}
+              {/* Παιδαγωγική Ανάλυση */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-slate-600 leading-relaxed font-medium">
+                {getStepByStepExplanation()}
               </div>
             </div>
 
@@ -392,15 +411,15 @@ export default function DiairesiKlasmatonPage() {
                 )}
               </div>
 
-              {/* ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΜΠΑΡΕΣ ΜΕΓΕΘΟΥΣ */}
+              {/* ΑΝΑΒΑΘΜΙΣΜΕΝΗ ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΔΥΝΑΜΙΚΗ ΚΛΙΜΑΚΑ */}
               <div className="space-y-2 flex-1 flex flex-col justify-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center">📏 Γραφική Αναπαράσταση Μεγεθών (Μοντέλο Μπάρας)</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center">📏 Γραφική Αναπαράσταση Μεγεθών (Αυτοπροσαρμοζόμενο Μοντέλο Μπάρας)</span>
                 {activeNumB > 0 ? renderBarVisual() : <div className="text-center text-xs text-slate-400 italic">Διαλέξτε έναν διαιρέτη μεγαλύτερο του 0.</div>}
               </div>
 
               {/* ΠΑΙΔΑΓΩΓΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-slate-700 text-white p-4 rounded-xl text-center font-mono font-black text-xs md:text-sm shadow-md">
-                💡 Θυμήσου: Όταν διαιρούμε με ένα κλάσμα μικρότερο της μονάδας (π.χ. 1/4), το αποτέλεσμα μεγαλώνει, γιατί το μικρό κομμάτι χωράει πολλές φορές μέσα στο μεγάλο!
+                💡 Θυμήσου: Όταν διαιρούμε με ένα κλάσμα μικρότερο της μονάδας, το αποτέλεσμα μεγαλώνει, γιατί το μικρό κομμάτι χωράει πολλές φορές μέσα στο μεγάλο!
               </div>
 
             </div>
