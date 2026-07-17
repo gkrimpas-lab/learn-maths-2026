@@ -96,7 +96,7 @@ export default function MetablitiPage() {
               {/* Μαθηματική Καταγραφή / Ανάλυση */}
               <div className="p-5 bg-gray-50 border border-gray-200 rounded-2xl min-h-[140px] flex flex-col justify-center font-sans space-y-3 shadow-inner">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">
-                  🧬 Μαθηματική Έκφραση: x + 5
+                  🧬 Μαθηματικη Εκφραση: x + 5
                 </span>
                 <div className="text-lg md:text-xl text-slate-700 font-medium space-y-1">
                   <div>Αντικαθιστούμε το <span className="text-indigo-600 font-bold">x</span> με το <span className="text-amber-500 font-bold">{x}</span>:</div>
@@ -168,7 +168,7 @@ export default function MetablitiPage() {
                   
                   {/* Στοιχεία κάτω από τη Μεταβλητή */}
                   <div className="flex flex-col items-center w-20">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Μεταβλητή</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Μεταβλητη</span>
                     <span className="text-3xl font-black text-indigo-600 font-sans mt-1">x</span>
                   </div>
 
@@ -179,7 +179,7 @@ export default function MetablitiPage() {
 
                   {/* Στοιχεία κάτω από τη Σταθερά */}
                   <div className="flex flex-col items-center w-20">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Σταθερά</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Σταθερα</span>
                     <span className="text-3xl font-black text-emerald-600 font-sans mt-1">5</span>
                   </div>
 
@@ -190,7 +190,7 @@ export default function MetablitiPage() {
 
                   {/* Στοιχεία κάτω από το Σύνολο */}
                   <div className="flex flex-col items-center w-24">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Σύνολο</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Συνολο</span>
                     <span className="text-2xl font-black text-purple-600 font-mono mt-1.5 whitespace-nowrap">x + 5</span>
                   </div>
 
