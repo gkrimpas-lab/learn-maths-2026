@@ -483,7 +483,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                       <div className="flex flex-wrap items-center justify-center gap-3">
                         {Array.from({ length: activeNumA }).map((_, i) => (
                           <div key={i} className="flex flex-col items-center p-2 bg-white rounded-xl border border-slate-100 shadow-sm">
-                            <span className="text-[9px] font-bold text-slate-400 mb-1">Φορά #{i+1}</span>
+                            <span className="text-[9px] font-bold text-slate-400 mb-1">Φορά {i+1}</span>
                             {renderPizzasVisual(activeNumB, activeDenB, 'fill-orange-400', 'stroke-orange-600')}
                           </div>
                         ))}
