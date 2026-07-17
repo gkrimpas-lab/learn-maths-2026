@@ -78,14 +78,14 @@ export default function DiairesiKlasmatonPage() {
     return (
       <div className="w-full bg-slate-50 p-6 rounded-2xl border border-dashed border-slate-200 space-y-6">
         <div className="text-center text-xs text-slate-500 max-w-md mx-auto">
-          💡 <strong>Τι σημαίνει η διαίρεση;</strong> Σημαίνει να βρούμε πόσες φορές χωράει η κάτω μπάρα (Κλάσμα Β) μέσα στην πάνω μπάρα (Κλάσμα Α)!
+          💡 <strong>Τι σημαίνει η διαίρεση;</strong> Σημαίνει να βρούμε πόσες φορές χωράει η κάτω μπάρα (Κλάσμα 2) μέσα στην πάνω μπάρα (Κλάσμα 1)!
         </div>
 
         <div className="space-y-5 max-w-xl mx-auto">
           {/* Μπάρα Α */}
           <div className="space-y-1">
             <div className="flex justify-between text-[11px] font-bold text-blue-600 uppercase">
-              <span>📏 Κλάσμα Α (Διαιρετέος)</span>
+              <span>📏 Κλασμα 1 (Διαιρετεος)</span>
               <span className="font-mono">{activeNumA}/{activeDenA} ≈ {Number(valA.toFixed(3))}</span>
             </div>
             <div className="w-full bg-slate-200/70 h-9 rounded-xl p-0.5 border border-slate-300/50 shadow-inner flex">
@@ -101,7 +101,7 @@ export default function DiairesiKlasmatonPage() {
           {/* Μπάρα Β */}
           <div className="space-y-1">
             <div className="flex justify-between text-[11px] font-bold text-orange-600 uppercase">
-              <span>📐 Κλάσμα Β (Διαιρέτης)</span>
+              <span>📐 Κλασμα 2 (Διαιρετης)</span>
               <span className="font-mono">
                 {mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB} ≈ {Number(valB.toFixed(3))}
               </span>
@@ -119,7 +119,7 @@ export default function DiairesiKlasmatonPage() {
 
         {/* Αποτέλεσμα Σύγκρισης */}
         <div className="text-center text-xs font-bold font-mono text-slate-700 bg-white border p-3 rounded-xl max-w-xs mx-auto shadow-sm space-y-1">
-          <div className="text-slate-400 font-sans text-[10px] uppercase tracking-wider">Πόσες φορές χωράει:</div>
+          <div className="text-slate-400 font-sans text-[10px] uppercase tracking-wider">Ποσες φορες χωραει:</div>
           <div className="text-emerald-600 text-base font-black">
             {Number.isInteger(decimalResult) ? decimalResult : Number(decimalResult.toFixed(4))} φορές!
           </div>
