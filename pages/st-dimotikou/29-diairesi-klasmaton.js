@@ -191,7 +191,7 @@ export default function DiairesiKlasmatonPage() {
                 <div>
                   <span className="font-black text-blue-800 block text-sm">1. Ο Χρυσός Κανόνας</span>
                   <p className="text-slate-600 leading-relaxed">
-                    Στη διαίρεση κλασμάτων δεν κάνουμε ποτέ πραγματική διαίρεση! <strong>Αντιστρέφουμε τους όρους του δεύτερου κλάσματος</strong> (φέρνουμε τα πάνω κάτω) και μετά κάνουμε <strong>πολλαπλασιάσμο</strong>.
+                    Στη διαίρεση κλασμάτων δεν κάνουμε ποτέ πραγματική διαίρεση! <strong>Αντιστρέφουμε τους όρους του δεύτερου κλάσματος</strong> (φέρνουμε τα πάνω κάτω) και μετά κάνουμε <strong>πολλαπλασιασμό</strong>.
                   </p>
                 </div>
                 <span className="font-mono text-xs font-bold text-blue-700 bg-white px-3 py-1.5 rounded border inline-block mt-2 self-start">
@@ -248,10 +248,10 @@ export default function DiairesiKlasmatonPage() {
 
                 {/* ΚΛΑΣΜΑ Α (ΔΙAΙΡΕΤΕΟΣ) */}
                 <div className="bg-blue-50/40 p-4 rounded-2xl border border-blue-100 space-y-3">
-                  <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">🔵 Κλάσμα Α (Διαιρετέος)</span>
+                  <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">🔵 Κλασμα 1 (Διαιρετεος)</span>
                   <div className="grid grid-cols-2 gap-2 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValue(setNumA, numA, -1)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -264,7 +264,7 @@ export default function DiairesiKlasmatonPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button onClick={() => adjustValue(setDenA, denA, -1, true)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-50 rounded">-</button>
                         <input
@@ -282,10 +282,10 @@ export default function DiairesiKlasmatonPage() {
                 {/* ΚΛΑΣΜΑ Β Η ΑΚΕΡΑΙΟΣ (ΔΙAΙΡΕΤΗΣ) */}
                 {mode === 'fraction-fraction' ? (
                   <div className="bg-orange-50/40 p-4 rounded-2xl border border-orange-100 space-y-3">
-                    <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">🟠 Κλάσμα Β (Διαιρέτης)</span>
+                    <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">🟠 Κλασμα 2 (Διαιρετης)</span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                           <button onClick={() => adjustValue(setNumB, numB, -1)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
                           <input
@@ -298,7 +298,7 @@ export default function DiairesiKlasmatonPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                           <button onClick={() => adjustValue(setDenB, denB, -1, true)} className="px-1.5 font-bold text-orange-600 hover:bg-slate-50 rounded">-</button>
                           <input
@@ -314,7 +314,7 @@ export default function DiairesiKlasmatonPage() {
                   </div>
                 ) : (
                   <div className="bg-indigo-50/40 p-4 rounded-2xl border border-indigo-100 space-y-3">
-                    <span className="text-xs font-black text-indigo-800 uppercase block tracking-wider">🔢 Ακέραιος Αριθμός (Διαιρέτης)</span>
+                    <span className="text-xs font-black text-indigo-800 uppercase block tracking-wider">🔢 Ακεραιος Αριθμος (Διαιρετης)</span>
                     <div className="space-y-1 text-center">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Τιμή</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200 max-w-[140px] mx-auto">
@@ -411,7 +411,7 @@ export default function DiairesiKlasmatonPage() {
 
               {/* ΑΝΑΒΑΘΜΙΣΜΕΝΗ ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕ ΔΥΝΑΜΙΚΗ ΚΛΙΜΑΚΑ */}
               <div className="space-y-2 flex-1 flex flex-col justify-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center">📏 Γραφική Αναπαράσταση Μεγεθών (Αυτοπροσαρμοζόμενο Μοντέλο Μπάρας)</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block text-center">📏 Γραφικη Αναπαρασταση Μεγεθων</span>
                 {activeNumB > 0 ? renderBarVisual() : <div className="text-center text-xs text-slate-400 italic">Διαλέξτε έναν διαιρέτη μεγαλύτερο του 0.</div>}
               </div>
 
