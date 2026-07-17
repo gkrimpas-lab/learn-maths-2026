@@ -308,7 +308,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                   </div>
                 ) : (
                   <div className="bg-indigo-50/40 p-4 rounded-2xl border border-indigo-100 space-y-3">
-                    <span className="text-xs font-black text-indigo-800 uppercase block tracking-wider">🔢 Φυσικος Αριθμος (Ακέραιος)</span>
+                    <span className="text-xs font-black text-indigo-800 uppercase block tracking-wider">🔢 Φυσικος Αριθμος (Ακεραιος)</span>
                     <div className="space-y-1 text-center">
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Τιμή</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200 max-w-[160px] mx-auto">
