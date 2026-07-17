@@ -111,8 +111,8 @@ export default function MetablitiPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ - ΝΕΟ ΣΤΥΛ ΕΞΙΣΩΣΗΣ */}
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[440px] w-full relative overflow-hidden">
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ - ΟΡΙΣΤΙΚΗ ΔΙΟΡΘΩΣΗ ΚΑΤΩ ΠΛΑΙΣΙΟΥ */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[440px] w-full relative overflow-hidden">
               <div className="w-full text-left">
                 <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
                   📊 Γραφική Αναπαράσταση
@@ -122,56 +122,78 @@ export default function MetablitiPage() {
                 </p>
               </div>
 
-              {/* Περιοχή Γραφήματος και Μαθηματικών Συμβόλων */}
-              <div className="w-full flex items-end justify-center gap-4 md:gap-6 h-64 bg-slate-50 rounded-2xl border border-gray-100 p-6 shadow-inner my-auto">
+              {/* Περιοχή Γραφήματος με τις μπάρες και την εξίσωση στο κάτω μέρος */}
+              <div className="w-full bg-slate-50 rounded-2xl border border-gray-100 p-6 shadow-inner my-auto flex flex-col justify-end h-72">
                 
-                {/* 1. Μπάρα Μεταβλητής x */}
-                <div className="flex flex-col items-center w-20">
-                  {/* Αριθμός πάνω από τη μπάρα */}
-                  <span className="text-sm font-black text-indigo-600 font-mono mb-1">{x}</span>
-                  <div 
-                    style={{ height: `${x * 6}px` }} 
-                    className="w-full bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-xl transition-all duration-300 shadow-md min-h-[14px]"
-                  ></div>
-                  {/* Ταμπέλα και Σύμβολο x από κάτω */}
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-2">Μεταβλητή</span>
-                  <span className="text-3xl font-black text-indigo-600 font-sans mt-1">x</span>
+                {/* 1. Το κομμάτι των ορθογώνιων μπαρών */}
+                <div className="flex items-end justify-center gap-4 md:gap-6 w-full border-b border-gray-200 pb-2">
+                  
+                  {/* Μπάρα x */}
+                  <div className="flex flex-col items-center w-20">
+                    <span className="text-sm font-black text-indigo-600 font-mono mb-1">{x}</span>
+                    <div 
+                      style={{ height: `${x * 5}px` }} 
+                      className="w-full bg-gradient-to-t from-indigo-500 to-indigo-400 transition-all duration-300 shadow-md"
+                    ></div>
+                  </div>
+
+                  {/* Κενό για το σύμβολο + */}
+                  <div className="w-8"></div>
+
+                  {/* Μπάρα 5 */}
+                  <div className="flex flex-col items-center w-20">
+                    <span className="text-sm font-black text-emerald-600 font-mono mb-1">5</span>
+                    <div 
+                      style={{ height: '25px' }} // 5 * 5px = 25px
+                      className="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 shadow-md"
+                    ></div>
+                  </div>
+
+                  {/* Κενό για το σύμβολο = */}
+                  <div className="w-8"></div>
+
+                  {/* Μπάρα x + 5 */}
+                  <div className="flex flex-col items-center w-24">
+                    <span className="text-sm font-black text-purple-600 font-mono mb-1">{ekfrasiResult}</span>
+                    <div 
+                      style={{ height: `${ekfrasiResult * 5}px` }} 
+                      className="w-full bg-gradient-to-t from-purple-500 to-purple-400 transition-all duration-300 shadow-lg border border-purple-300 border-b-0"
+                    ></div>
+                  </div>
+
                 </div>
 
-                {/* Σύμβολο ΣΥΝ (+) ανάμεσα στις μπάρες */}
-                <div className="h-full flex items-end pb-1.5 justify-center">
-                  <span className="text-4xl font-black text-red-500 font-sans">+</span>
-                </div>
+                {/* 2. Το κάτω πλαίσιο: Ταμπέλες, Μεταβλητές και Σύμβολα (Κατέβηκε όλο εδώ!) */}
+                <div className="flex items-start justify-center gap-4 md:gap-6 pt-3 text-center w-full">
+                  
+                  {/* Στοιχεία κάτω από τη Μεταβλητή */}
+                  <div className="flex flex-col items-center w-20">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Μεταβλητή</span>
+                    <span className="text-3xl font-black text-indigo-600 font-sans mt-1">x</span>
+                  </div>
 
-                {/* 2. Μπάρα Σταθεράς 5 */}
-                <div className="flex flex-col items-center w-20">
-                  {/* Αριθμός πάνω από τη μπάρα */}
-                  <span className="text-sm font-black text-emerald-600 font-mono mb-1">5</span>
-                  <div 
-                    style={{ height: '30px' }} 
-                    className="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-xl shadow-md"
-                  ></div>
-                  {/* Ταμπέλα και Σύμβολο 5 από κάτω */}
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-2">Σταθερά</span>
-                  <span className="text-3xl font-black text-emerald-600 font-sans mt-1">5</span>
-                </div>
+                  {/* Σύμβολο ΣΥΝ */}
+                  <div className="w-8 text-center pt-3">
+                    <span className="text-4xl font-black text-red-500 font-sans">+</span>
+                  </div>
 
-                {/* Σύμβολο ΙΣΟΝ (=) ανάμεσα στις μπάρες */}
-                <div className="h-full flex items-end pb-1.5 justify-center">
-                  <span className="text-4xl font-black text-red-500 font-sans">=</span>
-                </div>
+                  {/* Στοιχεία κάτω από τη Σταθερά */}
+                  <div className="flex flex-col items-center w-20">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Σταθερά</span>
+                    <span className="text-3xl font-black text-emerald-600 font-sans mt-1">5</span>
+                  </div>
 
-                {/* 3. Μπάρα Αποτελέσματος (x + 5) */}
-                <div className="flex flex-col items-center w-24">
-                  {/* Αριθμός πάνω από τη μπάρα */}
-                  <span className="text-sm font-black text-purple-600 font-mono mb-1">{ekfrasiResult}</span>
-                  <div 
-                    style={{ height: `${ekfrasiResult * 6}px` }} 
-                    className="w-full bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-xl transition-all duration-300 shadow-lg border border-purple-300 border-b-0"
-                  ></div>
-                  {/* Ταμπέλα και Έκφραση από κάτω */}
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-2">Σύνολο</span>
-                  <span className="text-2xl font-black text-purple-600 font-mono mt-1 whitespace-nowrap">x + 5</span>
+                  {/* Σύμβολο ΙΣΟΝ */}
+                  <div className="w-8 text-center pt-3">
+                    <span className="text-4xl font-black text-red-500 font-sans">=</span>
+                  </div>
+
+                  {/* Στοιχεία κάτω από το Σύνολο */}
+                  <div className="flex flex-col items-center w-24">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Σύνολο</span>
+                    <span className="text-2xl font-black text-purple-600 font-mono mt-1.5 whitespace-nowrap">x + 5</span>
+                  </div>
+
                 </div>
 
               </div>
