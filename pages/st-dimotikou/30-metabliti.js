@@ -111,7 +111,7 @@ export default function MetablitiPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ - ΕΝΗΜΕΡΩΜΕΝΗ ΓΙΑ ΔΙΟΡΘΩΣΕΙΣ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[440px] w-full relative overflow-hidden">
               <div className="w-full text-left">
                 <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
@@ -128,9 +128,10 @@ export default function MetablitiPage() {
                 {/* Μπάρα Μεταβλητής x */}
                 <div className="flex flex-col items-center gap-2 w-20">
                   <span className="text-sm font-black text-indigo-600 font-mono">{x}</span>
+                  {/* ΔΙΟΡΘΩΣΗ: Προσθήκη ελάχιστου ύψους h-2 και χρήση συντελεστή 8 για x=0 (min-h-2) */}
                   <div 
-                    style={{ height: `${Math.max(x * 8, 8)}px` }} 
-                    className="w-full bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-xl transition-all duration-300 shadow-md flex items-end justify-center pb-2"
+                    style={{ height: `${x * 8}px` }} 
+                    className="w-full bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-xl transition-all duration-300 shadow-md flex items-end justify-center pb-2 min-h-[16px]"
                   >
                     <span className="text-white font-black text-xl">x</span>
                   </div>
@@ -140,8 +141,9 @@ export default function MetablitiPage() {
                 {/* Μπάρα Σταθεράς 5 */}
                 <div className="flex flex-col items-center gap-2 w-20">
                   <span className="text-sm font-black text-emerald-600 font-mono">5</span>
+                  {/* ΔΙΟΡΘΩΣΗ: Σταθερό ύψος 5 * 8px = 40px */}
                   <div 
-                    style={{ height: '40px' }} // 5 * 8px = 40px σταθερό ύψος
+                    style={{ height: '40px' }} 
                     className="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-xl shadow-md flex items-end justify-center pb-2"
                   >
                     <span className="text-white font-black text-xl">5</span>
@@ -152,6 +154,7 @@ export default function MetablitiPage() {
                 {/* Μπάρα Αποτελέσματος (x + 5) */}
                 <div className="flex flex-col items-center gap-2 w-20">
                   <span className="text-sm font-black text-purple-600 font-mono">{ekfrasiResult}</span>
+                  {/* ΔΙΟΡΘΩΣΗ: Χρήση συντελεστή 8px. Μέγιστο ύψος 25 * 8px = 200px, που χωράει στο h-64 (256px) */}
                   <div 
                     style={{ height: `${ekfrasiResult * 8}px` }} 
                     className="w-full bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-xl transition-all duration-300 shadow-lg border-2 border-purple-300 border-b-0 flex items-end justify-center pb-2"
