@@ -48,7 +48,7 @@ export default function AgnostosProsthesiPage() {
                   📖 Θεωρία: Η Εξίσωση ως Ζυγαριά
                 </h2>
                 <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                  Μια <strong>εξίσωση</strong> μοιάζει με μια <strong>ζυγαριά που ισορροπεί</strong>. Για να βρούμε πόσο ζυγίζει ο άγνωστος ($x$), πρέπει να βγάλουμε από τους δύο δίσκους το ίδιο βάρος (τον γνωστό αριθμό $α$).
+                  Μια <strong>εξίσωση</strong> μοιάζει με μια <strong>ζυγαριά που ισορροπεί</strong>. Για να βρούμε πόσο ζυγίζει ο άγνωστος (x), πρέπει να βγάλουμε από τους δύο δίσκους το ίδιο βάρος (τον γνωστό αριθμό α).
                 </p>
                 <div className="bg-amber-50 text-slate-900 p-5 rounded-2xl border border-amber-100 space-y-2 text-sm md:text-base font-medium">
                   <p>⚖️ <strong className="text-amber-900">Κανόνας Ισορροπίας:</strong> Ό,τι αφαιρούμε από τον έναν δίσκο της ζυγαριάς, πρέπει να το αφαιρούμε και από τον άλλο για να μη χάσει την ισορροπία της!</p>
@@ -130,7 +130,7 @@ export default function AgnostosProsthesiPage() {
               {/* Κουμπιά Επιλογής Βήματος */}
               <div className="space-y-2">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">
-                  🎬 Βήματα Επίλυσης στη Ζυγαριά:
+                  🎬 Βηματα Επιλυσης στη Ζυγαρια:
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   <button 
@@ -217,7 +217,7 @@ export default function AgnostosProsthesiPage() {
                 {/* Δείκτης Ισορροπίας (Gauge Meter) στο κέντρο πάνω */}
                 <div className="absolute top-4 bg-white/90 backdrop-blur border border-slate-200 px-3 py-1 rounded-full shadow-sm flex items-center gap-1.5 z-10">
                   <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                  <span className="text-[10px] font-black text-slate-600 tracking-wider uppercase">Ισορροπία 100%</span>
+                  <span className="text-[10px] font-black text-slate-600 tracking-wider uppercase">Ισορροπια 100%</span>
                 </div>
 
                 {/* ΣΧΕΔΙΑΣΜΟΣ ΖΥΓΑΡΙΑΣ */}
@@ -323,8 +323,8 @@ export default function AgnostosProsthesiPage() {
 
                 {/* Ταμπέλες κάτω από τη ζυγαριά */}
                 <div className="w-full flex justify-between px-6 pt-3 text-center border-t border-slate-200/60 mt-2">
-                  <span className="text-xs font-black text-slate-600 uppercase tracking-wider">1ο Μέλος (x + {a})</span>
-                  <span className="text-xs font-black text-slate-600 uppercase tracking-wider">2ο Μέλος ({validB})</span>
+                  <span className="text-xs font-black text-slate-600 tracking-wider">1ο Μέλος (x + {a})</span>
+                  <span className="text-xs font-black text-slate-600 tracking-wider">2ο Μέλος ({validB})</span>
                 </div>
 
               </div>
