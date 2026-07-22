@@ -87,10 +87,10 @@ export default function MegaloiArithmoiPage() {
       </Head>
 
       <div>
-        {/* NAVBAR */}
+      {/* NAVBAR */}
         <nav className="bg-white shadow-md w-full">
           <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/d-dimotikou" className="text-2xl font-black text-teal-600 tracking-tight">
+            <Link href="/d-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
             <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
