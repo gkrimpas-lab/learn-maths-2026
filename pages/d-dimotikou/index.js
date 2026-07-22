@@ -5,7 +5,7 @@ import { LAYOUT } from '../../shared/layout-config';
 
 export default function EDimotikouMenu() {
   const modules = [
-    { id: '1-megaloi-arithmoi', label: '🍕 1. Μεγάλοι Αριθμοί', href: '/e-dimotikou/1-klasma' },
+    { id: '1-megaloi-arithmoi', label: '🍕 1. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
     { id: '2-katheti-diairesi', label: '🔄 2. Κάθετη Διαίρεση', href: '/e-dimotikou/2-isodinama' },
     { id: '3-dekadikoi', label: '✂️ 3. Δεκαδικοί', href: '/e-dimotikou/3-aplopoiisi' },
     { id: '4-mikos', label: '🔍 4. Μήκος', href: '/e-dimotikou/4-anagogi' },
