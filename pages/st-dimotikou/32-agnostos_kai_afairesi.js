@@ -43,13 +43,13 @@ export default function AgnostosAfairesiPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div className="space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  📖 Θεωρία: Η Εξίσωση $x - α = β$
+                  📖 Θεωρία: Η Εξίσωση x - α = β
                 </h2>
                 <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                   Έχουμε μια άγνωστη ποσότητα από μπάλες στο κλειστό κουτί <strong>x</strong>. Αν αφαιρέσουμε <strong>α</strong> μπάλες, η ζυγαριά ισορροπεί με τις <strong>β</strong> μπάλες του δεξιού δίσκου.
                 </p>
                 <div className="bg-amber-50 text-slate-900 p-5 rounded-2xl border border-amber-100 space-y-2 text-sm md:text-base font-medium">
-                  <p>⚖️ <strong className="text-amber-900">Πώς βρίσκουμε το x;</strong> Προσθέτουμε τις <strong>α</strong> μπάλες που αφαιρέθηκαν <strong>και στα δύο μέλη</strong> της ζυγαριάς. Έτσι το κουτί $x$ ανοίγει και αποκαλύπτει όλη την αρχική ποσότητα!</p>
+                  <p>⚖️ <strong className="text-amber-900">Πώς βρίσκουμε το x;</strong> Προσθέτουμε τις <strong>α</strong> μπάλες που αφαιρέθηκαν <strong>και στα δύο μέλη</strong> της ζυγαριάς. Έτσι το κουτί x ανοίγει και αποκαλύπτει όλη την αρχική ποσότητα!</p>
                   <p>📐 <strong className="text-blue-900">Τύπος:</strong> <span className="font-mono bg-white px-2.5 py-1 rounded-lg border border-amber-200 font-bold text-amber-900">x = β + α</span></p>
                 </div>
               </div>
