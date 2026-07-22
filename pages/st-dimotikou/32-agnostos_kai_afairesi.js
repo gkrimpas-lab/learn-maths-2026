@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 export default function AgnostosAfairesiPage() {
-  // Ο αφαιρετέος (a)
-  const [a, setA] = useState(5);
-  // Το υπόλοιπο/διαφορά (b)
-  const [b, setB] = useState(7);
-  // Το βήμα της οπτικοποίησης (1: Αρχικό, 2: Προσθήκη a, 3: Αποτέλεσμα x = b + a)
+  // Ο αφαιρετέος (a) - π.χ. 3
+  const [a, setA] = useState(3);
+  // Το υπόλοιπο/διαφορά (b) - π.χ. 9
+  const [b, setB] = useState(9);
+  // Το βήμα της οπτικοποίησης (1: Αρχικό x - a = b, 2: Προσθήκη +a, 3: Αποκάλυψη x = b + a)
   const [step, setStep] = useState(1);
 
   // Ο άγνωστος x (μειωτέος) υπολογίζεται αυτόματα: x = b + a
@@ -46,10 +46,10 @@ export default function AgnostosAfairesiPage() {
                   📖 Θεωρία: Η Εξίσωση $x - α = β$
                 </h2>
                 <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                  Όταν ο άγνωστος $x$ είναι ο <strong>μειωτέος</strong> (δηλαδή το αρχικό δοχείο/σύνολο από το οποίο αφαιρέσαμε πράγματα), για να βρούμε ολόκληρο το $x$ κάνουμε την αντίθετη πράξη: <strong>προσθέτουμε</strong> τον αφαιρετέο ($α$) στο υπόλοιπο ($β$).
+                  Έχουμε μια άγνωστη ποσότητα από μπάλες στο κλειστό κουτί <strong>x</strong>. Αν αφαιρέσουμε <strong>α</strong> μπάλες, η ζυγαριά ισορροπεί με τις <strong>β</strong> μπάλες του δεξιού δίσκου.
                 </p>
                 <div className="bg-amber-50 text-slate-900 p-5 rounded-2xl border border-amber-100 space-y-2 text-sm md:text-base font-medium">
-                  <p>⚖️ <strong className="text-amber-900">Κανόνας Ισορροπίας:</strong> Για να συμπληρώσουμε το κουτί $x$, προσθέτουμε τις $α$ μπάλες που λείπουν **μέσα** στο $x$ και άλλες τόσοες στον δεξιό δίσκο!</p>
+                  <p>⚖️ <strong className="text-amber-900">Πώς βρίσκουμε το x;</strong> Προσθέτουμε τις <strong>α</strong> μπάλες που αφαιρέθηκαν <strong>και στα δύο μέλη</strong> της ζυγαριάς. Έτσι το κουτί $x$ ανοίγει και αποκαλύπτει όλη την αρχική ποσότητα!</p>
                   <p>📐 <strong className="text-blue-900">Τύπος:</strong> <span className="font-mono bg-white px-2.5 py-1 rounded-lg border border-amber-200 font-bold text-amber-900">x = β + α</span></p>
                 </div>
               </div>
@@ -75,10 +75,10 @@ export default function AgnostosAfairesiPage() {
             <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[500px] w-full">
               <div className="space-y-2">
                 <h3 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  🕹️ Ρύθμισε τη Ζυγαριά
+                  🕹️ Ρύθμισε την Εξίσωση
                 </h3>
                 <p className="text-gray-500 text-sm">
-                  Επίλεξε τις τιμές των αριθμών και πάτα τα βήματα για να δεις πώς συμπληρώνεται το κουτί x.
+                  Επίλεξε πόσες μπάλες αφαιρέθηκαν (α) και πόσες έμειναν στη ζυγαριά (β).
                 </p>
               </div>
 
@@ -88,13 +88,13 @@ export default function AgnostosAfairesiPage() {
                 {/* Χειριστήριο για τον Αφαιρετέο (α) */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-bold text-gray-600">
-                    <span>Μπάλες που λείπουν από το x (α): <strong className="text-rose-600 text-sm">{a}</strong></span>
-                    <span>Όριο: 1 - 8</span>
+                    <span>Μπάλες που αφαιρέθηκαν (α): <strong className="text-rose-600 text-sm">{a}</strong></span>
+                    <span>Όριο: 1 - 6</span>
                   </div>
                   <input 
                     type="range" 
                     min="1" 
-                    max="8" 
+                    max="6" 
                     value={a}
                     onChange={(e) => {
                       setA(Number(e.target.value));
@@ -107,13 +107,13 @@ export default function AgnostosAfairesiPage() {
                 {/* Χειριστήριο για το Υπόλοιπο (β) */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-bold text-gray-600">
-                    <span>Μπάλες που υπάρχουν ήδη στο x (β): <strong className="text-purple-600 text-sm">{b}</strong></span>
-                    <span>Όριο: 1 - 10</span>
+                    <span>Μπάλες στο 2ο μέλος (β): <strong className="text-purple-600 text-sm">{b}</strong></span>
+                    <span>Όριο: 1 - 12</span>
                   </div>
                   <input 
                     type="range" 
                     min="1" 
-                    max="10" 
+                    max="12" 
                     value={b}
                     onChange={(e) => {
                       setB(Number(e.target.value));
@@ -139,7 +139,7 @@ export default function AgnostosAfairesiPage() {
                         : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                     }`}
                   >
-                    1. Αρχική Εξίσωση
+                    1. Αρχική (x - {a} = {b})
                   </button>
                   <button 
                     onClick={() => setStep(2)}
@@ -149,7 +149,7 @@ export default function AgnostosAfairesiPage() {
                         : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                     }`}
                   >
-                    2. Γέμισμα +{a}
+                    2. Προσθήκη +{a}
                   </button>
                   <button 
                     onClick={() => setStep(3)}
@@ -159,7 +159,7 @@ export default function AgnostosAfairesiPage() {
                         : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                     }`}
                   >
-                    3. Ολόκληρο το x
+                    3. Αποκάλυψη (x = {x})
                   </button>
                 </div>
               </div>
@@ -170,7 +170,7 @@ export default function AgnostosAfairesiPage() {
                   <div>
                     <span className="text-xs font-bold text-amber-900 block">📌 Βήμα 1: Αρχική Εξίσωση</span>
                     <p className="text-xs text-slate-700 mt-1">
-                      Το κουτί <strong className="text-amber-700">x</strong> έχει μέσα <strong className="text-purple-600">{b}</strong> μπάλες, αλλά του λείπουν ακόμα <strong className="text-rose-600">{a}</strong> για να γεμίσει!
+                      Στο κλειστό κουτί <strong className="text-amber-700">x</strong> υπάρχουν πολλές μπάλες. Αφαιρέσαμε <strong className="text-rose-600">{a}</strong> μπάλες. Η ζυγαριά ισορροπεί με τις <strong className="text-purple-600">{b}</strong> μπάλες!
                     </p>
                     <div className="font-mono font-black text-sm text-amber-900 mt-1">x - {a} = {b}</div>
                   </div>
@@ -178,9 +178,9 @@ export default function AgnostosAfairesiPage() {
 
                 {step === 2 && (
                   <div>
-                    <span className="text-xs font-bold text-amber-900 block">🔍 Βήμα 2: Προσθέτουμε {a} μπάλες ΜΕΣΑ στο κουτί x</span>
+                    <span className="text-xs font-bold text-amber-900 block">🔍 Βήμα 2: Προσθέτουμε {a} μπάλες και στα δύο μέλη</span>
                     <p className="text-xs text-slate-700 mt-1">
-                      Βάζουμε <strong className="text-emerald-600">{a}</strong> πράσινες μπάλες **μέσα** στο κουτί $x$ για να το γεμίσουμε, και άλλες <strong className="text-emerald-600">{a}</strong> στον δεξιό δίσκο!
+                      Προσθέτουμε <strong className="text-emerald-600">{a}</strong> πράσινες μπάλες αριστερά (για να αναιρέσουμε την αφαίρεση) και άλλες <strong className="text-emerald-600">{a}</strong> δεξιά!
                     </p>
                     <div className="font-mono font-black text-sm text-amber-900 mt-1">(x - {a}) + {a} = {b} + {a}</div>
                   </div>
@@ -188,9 +188,9 @@ export default function AgnostosAfairesiPage() {
 
                 {step === 3 && (
                   <div>
-                    <span className="text-xs font-bold text-emerald-900 block">🎉 Βήμα 3: Ολόκληρο το x = {x}</span>
+                    <span className="text-xs font-bold text-emerald-900 block">🎉 Βήμα 3: Το κουτί x ΑΝΟΙΓΕΙ!</span>
                     <p className="text-xs text-slate-700 mt-1">
-                      Τώρα το κουτί <strong className="text-amber-700">x</strong> είναι 100% γεμάτο και περιέχει συνολικά <strong className="text-emerald-700">{x}</strong> μπάλες!
+                      Το κουτί <strong className="text-amber-700">x</strong> ανοίγει και μας δείχνει ότι περιείχε εξαρχής <strong className="text-emerald-700">{x}</strong> μπάλες (<strong className="text-purple-600">{b}</strong> + <strong className="text-emerald-600">{a}</strong>)!
                     </p>
                     <div className="font-mono font-black text-base text-emerald-700 mt-1">x = {b} + {a} ➔ x = {x}</div>
                   </div>
@@ -198,14 +198,14 @@ export default function AgnostosAfairesiPage() {
               </div>
             </div>
 
-            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΝΕΑ ΖΥΓΑΡΙΑ ΜΕ ΕΝΣΩΜΑΤΩΜΕΝΕΣ ΜΠΑΛΕΣ ΜΕΣΑ ΣΤΟ X */}
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΖΥΓΑΡΙΑ ΜΕ ΚΛΕΙΣΤΟ ΚΟΥΤΙ ΠΟΥ ΑΝΟΙΓΕΙ */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[500px] w-full relative overflow-hidden">
               <div className="w-full text-left">
                 <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
                   ⚖️ Η Διαδραστική Ζυγαριά
                 </h3>
                 <p className="text-gray-400 text-xs mt-1">
-                  Δες πώς οι μπάλες συμπληρώνουν το εσωτερικό του κουτιού x.
+                  Δες πώς η προσθήκη των μπαλών ανοίγει το κλειστό κουτί x.
                 </p>
               </div>
 
@@ -224,50 +224,72 @@ export default function AgnostosAfairesiPage() {
                   {/* ΔΙΣΚΟΙ ΠΑΝΩ ΑΠΟ ΤΟΝ ΒΡΑΧΙΟΝΑ */}
                   <div className="w-full flex justify-between items-end px-2 z-10 mb-[-2px]">
                     
-                    {/* 1. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ (Δοχείο X) */}
+                    {/* 1. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ (1ο Μέλος) */}
                     <div className="flex flex-col items-center w-48">
                       
-                      {/* ΜΕΓΑΛΟ ΚΟΥΤΙ/ΔΟΧΕΙΟ X ΠΟΥ ΠΕΡΙΕΧΕΙ ΤΙΣ ΜΠΑΛΕΣ */}
-                      <div className="relative bg-amber-500/10 border-2 border-amber-500 rounded-2xl p-2.5 min-h-[110px] w-full flex flex-col items-center justify-between shadow-md backdrop-blur-sm">
+                      <div className="w-full min-h-[110px] flex items-end justify-center gap-2 p-2">
                         
-                        {/* Ετικέτα X στο πάνω μέρος του δοχείου */}
-                        <div className="bg-amber-500 text-white font-black text-xs px-2.5 py-0.5 rounded-full shadow-sm -mt-5 border border-amber-300">
-                          Δοχείο X {step === 3 ? `(= ${x})` : ''}
-                        </div>
-
-                        {/* Μπάλες ΜΕΣΑ στο Δοχείο X */}
-                        <div className="flex flex-wrap items-center justify-center gap-1.5 my-auto w-full">
-                          
-                          {/* 1. Οι υπάρχουσες 'b' μωβ μπάλες */}
-                          {Array.from({ length: b }).map((_, i) => (
-                            <div 
-                              key={`in-x-b-${i}`} 
-                              className="w-6 h-6 rounded-full shadow bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-300 via-purple-500 to-purple-800 border border-purple-300/40"
-                            >
+                        {/* ΣΤΑ ΒΗΜΑΤΑ 1 & 2: ΚΛΕΙΣΤΟ ΚΟΥΤΙ X + ΕΝΔΕΙΞΗ -a / +a */}
+                        {step !== 3 && (
+                          <div className="flex flex-col items-center gap-1">
+                            
+                            {/* Κλειστό Μυστικό Κουτί x */}
+                            <div className="relative bg-gradient-to-tr from-amber-600 via-amber-500 to-amber-400 text-white font-black text-2xl w-16 h-16 rounded-2xl shadow-xl border-2 border-amber-200 flex flex-col items-center justify-center transform hover:scale-105 transition">
+                              <span className="drop-shadow-md">x</span>
+                              <span className="text-[9px] font-bold text-amber-100 uppercase tracking-tighter">Κλειστό</span>
                             </div>
-                          ))}
 
-                          {/* 2. Στο Βήμα 1: 'a' ΚΕΝΕΣ (διάτρητες) υποδοχές που δείχνουν ότι λείπουν */}
-                          {step === 1 && Array.from({ length: a }).map((_, i) => (
-                            <div 
-                              key={`empty-${i}`} 
-                              className="w-6 h-6 rounded-full border-2 border-dashed border-rose-400/70 bg-rose-50/50 flex items-center justify-center text-[8px] font-black text-rose-400"
-                              title="Λείπει"
-                            >
-                              ?
+                            {/* Δείκτης Αφαίρεσης/Προσθήκης κάτω ή δίπλα */}
+                            {step === 1 && (
+                              <span className="text-xs font-black text-rose-600 bg-rose-100 px-2.5 py-0.5 rounded-full border border-rose-300 shadow-sm animate-pulse">
+                                - {a}
+                              </span>
+                            )}
+
+                            {step === 2 && (
+                              <div className="flex items-center gap-1 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full shadow-sm">
+                                <span className="text-xs font-black text-rose-600 font-mono">- {a}</span>
+                                <span className="text-xs font-black text-emerald-600 font-mono">+ {a}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* ΣΤΟ ΒΗΜΑ 3: ΤΟ ΚΟΥΤΙ X ΑΝΟΙΓΕΙ ΚΑΙ ΑΠΟΚΑΛΥΠΤΕΙ ΟΛΕΣ ΤΙΣ X ΜΠΑΛΕΣ! */}
+                        {step === 3 && (
+                          <div className="relative bg-amber-500/10 border-2 border-amber-500 rounded-2xl p-2 min-h-[105px] w-full flex flex-col items-center justify-between shadow-md backdrop-blur-sm animate-fade-in">
+                            <div className="bg-amber-500 text-white font-black text-xs px-2.5 py-0.5 rounded-full shadow-sm -mt-4 border border-amber-300">
+                              x = {x} (Ανοιχτό!)
                             </div>
-                          ))}
-
-                          {/* 3. Στο Βήμα 2 & 3: Οι 'a' πράσινες μπάλες μπήκαν ΜΕΣΑ στο X! */}
-                          {step !== 1 && Array.from({ length: a }).map((_, i) => (
-                            <div 
-                              key={`in-x-a-${i}`} 
-                              className={`w-6 h-6 rounded-full shadow-md bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-emerald-300 via-emerald-500 to-emerald-800 ring-2 ring-emerald-300 border border-emerald-200 ${step === 2 ? 'animate-pulse scale-105' : ''}`}
-                            >
+                            
+                            <div className="flex flex-wrap items-center justify-center gap-1.5 my-auto w-full">
+                              {Array.from({ length: x }).map((_, i) => (
+                                <div 
+                                  key={`opened-x-${i}`} 
+                                  className="w-6 h-6 rounded-full shadow-md bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-indigo-300 via-indigo-500 to-indigo-800 border border-indigo-200 animate-bounce"
+                                >
+                                </div>
+                              ))}
                             </div>
-                          ))}
+                          </div>
+                        )}
 
-                        </div>
+                        {/* Στο Βήμα 2: Φαίνονται οι 'a' πράσινες μπάλες που προσθέσαμε στο 1ο μέλος */}
+                        {step === 2 && (
+                          <div className="flex flex-col items-center gap-1 pl-2 border-l-2 border-dashed border-emerald-400">
+                            <span className="text-[9px] font-black text-emerald-600 uppercase">Προσθήκη</span>
+                            <div className="flex flex-wrap max-w-[60px] gap-1 justify-center">
+                              {Array.from({ length: a }).map((_, i) => (
+                                <div 
+                                  key={`add-left-${i}`} 
+                                  className="w-6 h-6 rounded-full shadow-md bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-emerald-300 via-emerald-500 to-emerald-800 ring-2 ring-emerald-300 border border-emerald-200 animate-pulse"
+                                >
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                       </div>
 
                       {/* Ο Δίσκος (Πιάτο) */}
@@ -325,7 +347,7 @@ export default function AgnostosAfairesiPage() {
                 {/* Ταμπέλες κάτω από τη ζυγαριά */}
                 <div className="w-full flex justify-between px-4 pt-3 text-center border-t border-slate-200/60 mt-2">
                   <span className="text-xs font-black text-slate-600 uppercase tracking-wider">
-                    1ο Μέλος {step === 1 ? `(x - ${a})` : `(x = ${x})`}
+                    1ο Μέλος {step === 1 ? `(x - ${a})` : step === 2 ? `(x)` : `(x = ${x})`}
                   </span>
                   <span className="text-xs font-black text-slate-600 uppercase tracking-wider">
                     2ο Μέλος {step === 1 ? `(${b})` : `(${b} + ${a} = ${x})`}
@@ -335,7 +357,7 @@ export default function AgnostosAfairesiPage() {
               </div>
 
               <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
-                <span>💡 Γεμίζοντας το δοχείο x, αποκαλύπτεται ότι x = {x}!</span>
+                <span>💡 Προσθέτοντας {a} μπάλες ακυρώνουμε το -{a}, το κουτί x ανοίγει και αποκαλύπτει x = {x}!</span>
               </div>
             </div>
 
