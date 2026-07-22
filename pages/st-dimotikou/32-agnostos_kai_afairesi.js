@@ -259,7 +259,7 @@ export default function AgnostosAfairesiPage() {
                         {step === 3 && (
                           <div className="relative bg-amber-500/10 border-2 border-amber-500 rounded-2xl p-2 min-h-[105px] w-full flex flex-col items-center justify-between shadow-md backdrop-blur-sm animate-fade-in">
                             <div className="bg-amber-500 text-white font-black text-xs px-2.5 py-0.5 rounded-full shadow-sm -mt-4 border border-amber-300">
-                              x = {x})
+                              x = {x}
                             </div>
                             
                             <div className="flex flex-wrap items-center justify-center gap-1.5 my-auto w-full">
@@ -277,7 +277,7 @@ export default function AgnostosAfairesiPage() {
                         {/* Στο Βήμα 2: Φαίνονται οι 'a' πράσινες μπάλες που προσθέσαμε στο 1ο μέλος */}
                         {step === 2 && (
                           <div className="flex flex-col items-center gap-1 pl-2 border-l-2 border-dashed border-emerald-400">
-                            <span className="text-[9px] font-black text-emerald-600 uppercase">Προσθήκη</span>
+                            <span className="text-[9px] font-black text-emerald-600 uppercase">Προσθηκη</span>
                             <div className="flex flex-wrap max-w-[60px] gap-1 justify-center">
                               {Array.from({ length: a }).map((_, i) => (
                                 <div 
