@@ -7,7 +7,7 @@ export default function EDimotikouMenu() {
   const modules = [
     { id: '1-megaloi-arithmoi', label: '🍕 1. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
     { id: '2-katheti-diairesi', label: '🔄 2. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' },
-    { id: '3-dekadikoi', label: '✂️ 3. Δεκαδικοί', href: '/e-dimotikou/3-aplopoiisi' },
+    { id: '3-dekadikoi', label: '✂️ 3. Δεκαδικοί', href: '/d-dimotikou/3-dekadikoi' },
     { id: '4-mikos', label: '🔍 4. Μήκος', href: '/e-dimotikou/4-anagogi' },
     { id: '5-baros', label: '🔢 5. Βάρος', href: '/e-dimotikou/5-pollaplasia' },
     { id: '6-diairesi-deka-ekato-xilia', label: '🎯 6. Διαίρεση με 10, 100, 1000', href: '/e-dimotikou/6-ekp' }
