@@ -99,8 +99,8 @@ export default function Home() {
             <div className="bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 duration-300">
               <div className="bg-teal-500 py-4 text-center text-white font-bold text-xl">Δ' Δημοτικού ⭐</div>
               <div className="p-6 text-center">
-                <p className="text-gray-800 font-semibold mb-2 text-sm">Ενότητα: Μεγάλοι Αριθμοί</p>
-                <p className="text-gray-500 mb-6 text-xs">Εξερευνήστε τις κλάσεις και την αξία θέσης των ψηφίων με τον διαδραστικό άβακα!</p>
+                <p className="text-gray-800 font-semibold mb-2 text-sm">Διαδραστικές Ενότητες</p>
+                <p className="text-gray-500 mb-6 text-xs">Μεγάλοι Αριθμοί, Διαίρεση, Κλάσματα, Μήκος, Βάρος κ.α.</p>
                 <Link href="/d-dimotikou" className="block w-full text-center bg-teal-500 text-white py-2 rounded-lg font-bold hover:bg-teal-600 transition shadow-md text-sm">
                   🚀 Είσοδος στην Τάξη
                 </Link>
