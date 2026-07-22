@@ -128,7 +128,7 @@ export default function AgnostosAfairesiPage() {
               {/* Κουμπιά Επιλογής Βήματος */}
               <div className="space-y-2">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">
-                  🎬 Βήματα Επίλυσης στη Ζυγαριά:
+                  🎬 Βηματα Επιλυσης στη Ζυγαρια:
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   <button 
@@ -215,7 +215,7 @@ export default function AgnostosAfairesiPage() {
                 {/* Δείκτης Ισορροπίας */}
                 <div className="absolute top-4 bg-white/90 backdrop-blur border border-slate-200 px-3 py-1 rounded-full shadow-sm flex items-center gap-1.5 z-10">
                   <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                  <span className="text-[10px] font-black text-slate-600 tracking-wider uppercase">Ισορροπία 100%</span>
+                  <span className="text-[10px] font-black text-slate-600 tracking-wider uppercase">Ισορροπια 100%</span>
                 </div>
 
                 {/* ΣΧΕΔΙΑΣΜΟΣ ΖΥΓΑΡΙΑΣ */}
@@ -236,7 +236,7 @@ export default function AgnostosAfairesiPage() {
                             {/* Κλειστό Μυστικό Κουτί x */}
                             <div className="relative bg-gradient-to-tr from-amber-600 via-amber-500 to-amber-400 text-white font-black text-2xl w-16 h-16 rounded-2xl shadow-xl border-2 border-amber-200 flex flex-col items-center justify-center transform hover:scale-105 transition">
                               <span className="drop-shadow-md">x</span>
-                              <span className="text-[9px] font-bold text-amber-100 uppercase tracking-tighter">Κλειστό</span>
+                              
                             </div>
 
                             {/* Δείκτης Αφαίρεσης/Προσθήκης κάτω ή δίπλα */}
