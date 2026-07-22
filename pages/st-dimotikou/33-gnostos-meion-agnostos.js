@@ -45,13 +45,13 @@ export default function GnostosMeionAgnostosPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div className="space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  📖 Θεωρία: Η Εξίσωση $α - x = β$
+                  📖 Θεωρία: Η Εξίσωση α - x = β
                 </h2>
                 <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                  Όταν ξέρουμε την αρχική ποσότητα <strong>$α$</strong> και το υπόλοιπο <strong>$β$</strong>, ψάχνουμε να βρούμε πόσο είναι το <strong>$x$</strong> (δηλαδή πόσο αφαιρέθηκε).
+                  Όταν ξέρουμε την αρχική ποσότητα <strong>α</strong> και το υπόλοιπο <strong>β</strong>, ψάχνουμε να βρούμε πόσο είναι το <strong>x</strong> (δηλαδή πόσο αφαιρέθηκε).
                 </p>
                 <div className="bg-amber-50 text-slate-900 p-5 rounded-2xl border border-amber-100 space-y-2 text-sm md:text-base font-medium">
-                  <p>🧩 <strong className="text-amber-900">Οπτική Σύγκριση:</strong> Η διαφορά ανάμεσα στην αρχική ποσότητα $α$ και στο υπόλοιπο $β$ είναι ακριβώς ο άγνωστος $x$!</p>
+                  <p>🧩 <strong className="text-amber-900">Οπτική Σύγκριση:</strong> Η διαφορά ανάμεσα στην αρχική ποσότητα α και στο υπόλοιπο β είναι ακριβώς ο άγνωστος x!</p>
                   <p>📐 <strong className="text-blue-900">Τύπος:</strong> <span className="font-mono bg-white px-2.5 py-1 rounded-lg border border-amber-200 font-bold text-amber-900">x = α - β</span></p>
                 </div>
               </div>
@@ -130,7 +130,7 @@ export default function GnostosMeionAgnostosPage() {
               {/* Κουμπιά Επιλογής Βήματος */}
               <div className="space-y-2">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">
-                  🎬 Βήματα Επίλυσης στο Μοντέλο:
+                  🎬 Βηματα Επιλυσης στο Μοντελο:
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   <button 
