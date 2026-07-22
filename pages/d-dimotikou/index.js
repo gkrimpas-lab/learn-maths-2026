@@ -5,12 +5,12 @@ import { LAYOUT } from '../../shared/layout-config';
 
 export default function EDimotikouMenu() {
   const modules = [
-    { id: '1-klasma', label: '🍕 1. Κλάσμα', href: '/e-dimotikou/1-klasma' },
-    { id: '2-isodinama', label: '🔄 2. Ισοδύναμα Κλάσματα', href: '/e-dimotikou/2-isodinama' },
-    { id: '3-aplopoiisi', label: '✂️ 3. Απλοποίηση Κλασμάτων', href: '/e-dimotikou/3-aplopoiisi' },
-    { id: '4-anagogi', label: '🔍 4. Αναγωγή στην Κλασματική Μονάδα', href: '/e-dimotikou/4-anagogi' },
-    { id: '5-pollaplasia', label: '🔢 5. Πολλαπλάσια Αριθμού', href: '/e-dimotikou/5-pollaplasia' },
-    { id: '6-ekp', label: '🎯 6. ΕΚΠ', href: '/e-dimotikou/6-ekp' }
+    { id: '1-megaloi-arithmoi', label: '🍕 1. Μεγάλοι Αριθμοί', href: '/e-dimotikou/1-klasma' },
+    { id: '2-katheti-diairesi', label: '🔄 2. Κάθετη Διαίρεση', href: '/e-dimotikou/2-isodinama' },
+    { id: '3-dekadikoi', label: '✂️ 3. Δεκαδικοί', href: '/e-dimotikou/3-aplopoiisi' },
+    { id: '4-mikos', label: '🔍 4. Μήκος', href: '/e-dimotikou/4-anagogi' },
+    { id: '5-baros', label: '🔢 5. Βάρος', href: '/e-dimotikou/5-pollaplasia' },
+    { id: '6-diairesi-deka-ekato-xilia', label: '🎯 6. Διαίρεση με 10, 100, 1000', href: '/e-dimotikou/6-ekp' }
     
   ];
 
