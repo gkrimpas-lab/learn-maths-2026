@@ -259,7 +259,7 @@ export default function AgnostosAfairesiPage() {
                         {step === 3 && (
                           <div className="relative bg-amber-500/10 border-2 border-amber-500 rounded-2xl p-2 min-h-[105px] w-full flex flex-col items-center justify-between shadow-md backdrop-blur-sm animate-fade-in">
                             <div className="bg-amber-500 text-white font-black text-xs px-2.5 py-0.5 rounded-full shadow-sm -mt-4 border border-amber-300">
-                              x = {x} (Ανοιχτό!)
+                              x = {x})
                             </div>
                             
                             <div className="flex flex-wrap items-center justify-center gap-1.5 my-auto w-full">
@@ -346,10 +346,10 @@ export default function AgnostosAfairesiPage() {
 
                 {/* Ταμπέλες κάτω από τη ζυγαριά */}
                 <div className="w-full flex justify-between px-4 pt-3 text-center border-t border-slate-200/60 mt-2">
-                  <span className="text-xs font-black text-slate-600 uppercase tracking-wider">
+                  <span className="text-xs font-black text-slate-600 tracking-wider">
                     1ο Μέλος {step === 1 ? `(x - ${a})` : step === 2 ? `(x)` : `(x = ${x})`}
                   </span>
-                  <span className="text-xs font-black text-slate-600 uppercase tracking-wider">
+                  <span className="text-xs font-black text-slate-600 tracking-wider">
                     2ο Μέλος {step === 1 ? `(${b})` : `(${b} + ${a} = ${x})`}
                   </span>
                 </div>
