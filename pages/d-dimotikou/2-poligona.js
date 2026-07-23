@@ -71,10 +71,10 @@ export default function PoligonaTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 2 (ΓΕΩΜΕΤΡΙΑ)
+                  Δ' ΔΗΜΟΤΙΚΟΥ (ΓΕΩΜΕΤΡΙΑ)
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  📐 Τα Πολύγωνα & τα Στοιχεία τους
+                  📐 Τα Πολύγωνα και τα Στοιχεία τους
                 </h1>
                 <p className="text-teal-100 text-base lg:text-lg leading-relaxed">
                   Ανακαλύπτουμε τα επίπεδα γεωμετρικά σχήματα, τις πλευρές, τις κορυφές, τις γωνίες και την περίμετρό τους!
@@ -148,7 +148,7 @@ export default function PoligonaTheoryPage() {
                 🏷️ Πώς ονομάζουμε τα Πολύγωνα;
               </h3>
               <p className="text-sm text-gray-600">
-                Ονομάζουμε τα πολύγωνα ανάλογα με το **πλήθος των πλευρών** (ή των γωνιών) που έχουν:
+                Ονομάζουμε τα πολύγωνα ανάλογα με το "πλήθος των πλευρών" (ή των γωνιών) που έχουν:
               </p>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
@@ -191,7 +191,7 @@ export default function PoligonaTheoryPage() {
                 <span>📏</span> Περίμετρος Πολυγώνου
               </h3>
               <p className="text-sm md:text-base text-gray-700">
-                <strong>Περίμετρος ($Π$)</strong> ενός πολυγώνου είναι το <strong>συνολικό μήκος όλων των πλευρών του</strong>.
+                <strong>Περίμετρος (Π)</strong> ενός πολυγώνου είναι το <strong>συνολικό μήκος όλων των πλευρών του</strong>.
               </p>
               <div className="p-3 bg-white rounded-xl border border-amber-200 font-mono font-bold text-amber-900 text-sm">
                 Περίμετρος = Πλευρά 1 + Πλευρά 2 + ... + Πλευρά ν
@@ -223,7 +223,7 @@ export default function PoligonaTheoryPage() {
               <div className="space-y-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
                 <div>
                   <label className="block text-xs font-black uppercase text-gray-500 mb-2">
-                    Επιλογή Πλευρών ({sides}):
+                    Επιλογη Πλευρων ({sides}):
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {[3, 4, 5, 6, 7, 8].map((s) => (
@@ -286,7 +286,7 @@ export default function PoligonaTheoryPage() {
                     <span className="font-bold text-amber-400">{sides}</span>
                   </div>
                   <div className="border-t border-indigo-700 pt-2 flex justify-between text-sm">
-                    <span className="text-indigo-200 font-bold">Περίμετρος ($Π$):</span>
+                    <span className="text-indigo-200 font-bold">Περίμετρος (Π):</span>
                     <span className="font-bold text-emerald-400">{perimeter} εκ.</span>
                   </div>
                 </div>
@@ -296,7 +296,7 @@ export default function PoligonaTheoryPage() {
               {/* GRAPHICAL CANVAS (SVG) */}
               <div className="lg:col-span-2 bg-slate-900 rounded-3xl p-6 flex flex-col items-center justify-center min-h-[360px] shadow-inner relative overflow-hidden">
                 <span className="absolute top-4 left-4 text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">
-                  Γραφική Αναπαράσταση SVG
+                  Γραφικη Αναπαρασταση
                 </span>
 
                 <svg className="w-full max-w-[320px] h-[280px]" viewBox="0 0 300 280">
