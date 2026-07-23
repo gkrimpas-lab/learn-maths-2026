@@ -27,7 +27,7 @@ export default function ProsthesiAfairesiTheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>➕➖ Πρόσθεση & Αφαίρεση (Αντίστροφες Πράξεις) - LearnMaths.gr</title>
+        <title>➕➖ Πρόσθεση και Αφαίρεση (Αντίστροφες Πράξεις) - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -57,10 +57,10 @@ export default function ProsthesiAfairesiTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 3
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  ➕➖ Πρόσθεση & Αφαίρεση: Αντίστροφες Πράξεις
+                  ➕➖ Πρόσθεση και Αφαίρεση: Αντίστροφες Πράξεις
                 </h1>
                 <p className="text-blue-100 text-base lg:text-lg leading-relaxed">
                   Μαθαίνουμε πώς συνδέονται η πρόσθεση με την αφαίρεση και πώς χρησιμοποιούμε τη μία για να ελέγξουμε την άλλη!
@@ -86,7 +86,7 @@ export default function ProsthesiAfairesiTheoryPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία & Ορισμοί
+                <span>📖</span> Αναλυτική Θεωρία και Ορισμοί
               </h2>
             </div>
 
@@ -103,7 +103,7 @@ export default function ProsthesiAfairesiTheoryPage() {
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-center gap-2">
                     <span className="text-indigo-600 font-bold">•</span>
-                    <span>Αν σε έναν αριθμό <strong>προσθέσουμε</strong> $5$ και μετά <strong>αφαιρέσουμε</strong> $5$, γυρνάμε στον ίδιο αριθμό!</span>
+                    <span>Αν σε έναν αριθμό <strong>προσθέσουμε</strong> 5 και μετά <strong>αφαιρέσουμε</strong> 5, γυρνάμε στον ίδιο αρχικό αριθμό!</span>
                   </li>
                 </ul>
               </div>
@@ -177,8 +177,8 @@ export default function ProsthesiAfairesiTheoryPage() {
             {/* SLIDERS XΕΙΡΙΣΜΟΥ */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
               <div>
-                <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  1ος Αριθμός ($Α$): <span className="text-blue-600 font-mono text-base font-black">{formatNumber(numA)}</span>
+                <label className="block text-xs font-black text-gray-500 mb-1">
+                  1ος Αριθμός (α): <span className="text-blue-600 font-mono text-base font-black">{formatNumber(numA)}</span>
                 </label>
                 <input 
                   type="range" 
@@ -192,8 +192,8 @@ export default function ProsthesiAfairesiTheoryPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  2ος Αριθμός ($Β$): <span className="text-indigo-600 font-mono text-base font-black">{formatNumber(numB)}</span>
+                <label className="block text-xs font-black text-gray-500 mb-1">
+                  2ος Αριθμός (β): <span className="text-indigo-600 font-mono text-base font-black">{formatNumber(numB)}</span>
                 </label>
                 <input 
                   type="range" 
@@ -213,7 +213,7 @@ export default function ProsthesiAfairesiTheoryPage() {
               {/* Κάρτα 1: Πρόσθεση */}
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-200 space-y-3 text-center">
                 <span className="bg-blue-600 text-white text-xs font-black uppercase px-3 py-1 rounded-full">
-                  1. Αρχική Πρόσθεση
+                  1. Αρχικη Προσθεση
                 </span>
                 <div className="text-2xl md:text-3xl font-mono font-black text-gray-800 pt-2">
                   <span className="text-blue-600">{formatNumber(numA)}</span> + <span className="text-indigo-600">{formatNumber(numB)}</span>
@@ -227,7 +227,7 @@ export default function ProsthesiAfairesiTheoryPage() {
               {/* Κάρτα 2: 1η Αντίστροφη Αφαίρεση */}
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-200 space-y-3 text-center">
                 <span className="bg-purple-600 text-white text-xs font-black uppercase px-3 py-1 rounded-full">
-                  2. Αντίστροφη (1)
+                  2. Αντιστροφη (1)
                 </span>
                 <div className="text-2xl md:text-3xl font-mono font-black text-gray-800 pt-2">
                   <span className="text-emerald-600">{formatNumber(sum)}</span> - <span className="text-indigo-600">{formatNumber(numB)}</span>
@@ -241,7 +241,7 @@ export default function ProsthesiAfairesiTheoryPage() {
               {/* Κάρτα 3: 2η Αντίστροφη Αφαίρεση */}
               <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-200 space-y-3 text-center">
                 <span className="bg-emerald-600 text-white text-xs font-black uppercase px-3 py-1 rounded-full">
-                  3. Αντίστροφη (2)
+                  3. Αντιστροφη (2)
                 </span>
                 <div className="text-2xl md:text-3xl font-mono font-black text-gray-800 pt-2">
                   <span className="text-emerald-600">{formatNumber(sum)}</span> - <span className="text-blue-600">{formatNumber(numA)}</span>
