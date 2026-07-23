@@ -125,7 +125,7 @@ export default function ArithmoiEos20XiliadesPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 1
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   🔢 Αριθμοί έως το 20.000
@@ -154,7 +154,7 @@ export default function ArithmoiEos20XiliadesPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία & Κανόνες
+                <span>📖</span> Αναλυτική Θεωρία και Κανόνες
               </h2>
             </div>
 
@@ -187,12 +187,12 @@ export default function ArithmoiEos20XiliadesPage() {
               {/* Κάρτα 2: Πώς τους γράφουμε & διαβάζουμε */}
               <div className="bg-amber-50/60 p-6 rounded-2xl border border-amber-100 space-y-3">
                 <h3 className="text-lg font-bold text-amber-900 flex items-center gap-2">
-                  <span>✍️</span> Γραφή & Ανάγνωση
+                  <span>✍️</span> Γραφή και Ανάγνωση
                 </h3>
                 <ul className="space-y-2 text-sm md:text-base text-gray-700 leading-relaxed">
                   <li className="flex items-start gap-2">
                     <span className="text-amber-500 font-bold">•</span>
-                    <span>Χωρίζουμε τις χιλιάδες από τις εκατοντάδες βάζοντας **τελεία** (π.χ. <strong>14.325</strong>).</span>
+                    <span>Χωρίζουμε τις χιλιάδες από τις εκατοντάδες βάζοντας "τελεία" (π.χ. <strong>14.325</strong>).</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-amber-500 font-bold">•</span>
@@ -200,7 +200,7 @@ export default function ArithmoiEos20XiliadesPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-amber-500 font-bold">•</span>
-                    <span>Προσοχή: Λέμε *«εκατόν πέντε»* (105) όταν ακολουθούν άλλοι αριθμοί, αλλά *«εκατό»* (100) όταν είναι μόνο του.</span>
+                    <span>Προσοχή: Λέμε «εκατόν πέντε» (105) όταν ακολουθούν άλλοι αριθμοί, αλλά «εκατό» (100) όταν είναι μόνο του.</span>
                   </li>
                 </ul>
               </div>
@@ -244,7 +244,7 @@ export default function ArithmoiEos20XiliadesPage() {
 
               {/* ΑΝΑΛΥΣΗ ΠΑΡΑΔΕΙΓΜΑΤΟΣ */}
               <div className="bg-white p-4 rounded-xl border border-gray-200 text-sm md:text-base space-y-1">
-                <span className="text-gray-500 font-bold uppercase text-xs">Παράδειγμα Ανάλυσης</span>
+                <span className="text-gray-500 font-bold uppercase text-xs">Παραδειγμα Αναλυσης</span>
                 <p className="font-mono text-gray-800 font-bold">
                   14.325 = (1 × 10.000) + (4 × 1.000) + (3 × 100) + (2 × 10) + (5 × 1)
                 </p>
@@ -263,7 +263,7 @@ export default function ArithmoiEos20XiliadesPage() {
                   <span>🧮</span> Διαδραστικός Άβακας Αξίας Θέσης
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Πάτα τα κουμπιά **+** και **-** για να αλλάξεις τις χάντρες και να φτιάξεις τον αριθμό σου!
+                  Πάτα τα κουμπιά "+" και "-" για να αλλάξεις τις χάντρες και να φτιάξεις τον αριθμό σου!
                 </p>
               </div>
 
@@ -275,7 +275,7 @@ export default function ArithmoiEos20XiliadesPage() {
             {/* ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ & ΟΝΟΜΑΣΙΑΣ */}
             <div className="bg-gradient-to-br from-indigo-900 via-slate-900 to-blue-900 text-white p-6 md:p-8 rounded-2xl shadow-md text-center space-y-4">
               <span className="text-xs font-black uppercase tracking-widest text-indigo-300">
-                Ο Αριθμός σου
+                Ο Αριθμος σου
               </span>
               <div className="text-4xl md:text-6xl font-mono font-black tracking-tight text-amber-400">
                 {formatNumber(totalNumber)}
@@ -353,7 +353,7 @@ export default function ArithmoiEos20XiliadesPage() {
             {/* ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ ΤΟΥ ΑΡΙΘΜΟΥ ΣΤΟΝ ΑΒΑΚΑ */}
             <div className="bg-slate-100 p-5 rounded-2xl border border-slate-200 space-y-2">
               <span className="text-xs font-black uppercase tracking-wider text-slate-500">
-                Αναλυτική Μορφή του Αριθμού:
+                Αναλυτικη Μορφη του Αριθμου:
               </span>
               <div className="flex flex-wrap items-center gap-2 font-mono text-sm md:text-base font-bold text-slate-800">
                 <span className="bg-purple-100 text-purple-900 px-3 py-1 rounded-lg border border-purple-200">
