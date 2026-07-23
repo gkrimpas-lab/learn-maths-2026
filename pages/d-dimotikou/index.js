@@ -6,11 +6,12 @@ import { LAYOUT } from '../../shared/layout-config';
 export default function DDimotikouMenu() {
   const modules = [
     { id: '1-arithmoi-eos-20-xiliades', label: '🍕 1. Αριθμοί έως 20.000', href: '/d-dimotikou/1-arithmoi-eos-20-xiliades' },
-    { id: '1-megaloi-arithmoi', label: '🍕 1. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
-    { id: '2-katheti-diairesi', label: '🔄 2. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' },
-    { id: '3-dekadikoi', label: '✂️ 3. Δεκαδικοί', href: '/d-dimotikou/3-dekadikoi' },
-    { id: '4-mikos', label: '🔍 4. Μήκος', href: '/d-dimotikou/4-mikos' },
-    { id: '5-baros', label: '🔢 5. Βάρος', href: '/d-dimotikou/5-baros' },
+    { id: '2-poligona', label: '🍕 2. Πολύγωνα', href: '/d-dimotikou/2-poligona' },
+    { id: '1-megaloi-arithmoi', label: '🍕 10. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
+    { id: '2-katheti-diairesi', label: '🔄 20. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' },
+    { id: '3-dekadikoi', label: '✂️ 30. Δεκαδικοί', href: '/d-dimotikou/3-dekadikoi' },
+    { id: '4-mikos', label: '🔍 40. Μήκος', href: '/d-dimotikou/4-mikos' },
+    { id: '5-baros', label: '🔢 50. Βάρος', href: '/d-dimotikou/5-baros' },
     { id: '6-diairesi-deka-ekato-xilia', label: '🎯 6. Διαίρεση με 10, 100, 1000', href: '/d-dimotikou/6-diairesi-deka-ekato-xilia' }
     
   ];
