@@ -5,6 +5,7 @@ import { LAYOUT } from '../../shared/layout-config';
 
 export default function DDimotikouMenu() {
   const modules = [
+    { id: '1-arithmoi-eos-20-xiliades', label: '🍕 1. Αριθμοί έως 20.000', href: '/d-dimotikou/1-arithmoi-eos-20-xiliades' },
     { id: '1-megaloi-arithmoi', label: '🍕 1. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
     { id: '2-katheti-diairesi', label: '🔄 2. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' },
     { id: '3-dekadikoi', label: '✂️ 3. Δεκαδικοί', href: '/d-dimotikou/3-dekadikoi' },
