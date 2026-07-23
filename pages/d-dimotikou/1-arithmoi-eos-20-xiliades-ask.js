@@ -521,7 +521,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
                 📝 Ασκήσεις: Αριθμοί έως το 20.000
               </h1>
               <p className="text-amber-100 text-sm md:text-base mt-1">
-                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι αριθμοί αλλάζουν αυτόματα.
+                Πατώντας «Νέες Ασκήσεις» οι αριθμοί αλλάζουν αυτόματα.
               </p>
             </div>
 
