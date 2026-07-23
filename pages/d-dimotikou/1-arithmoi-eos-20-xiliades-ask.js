@@ -15,7 +15,7 @@ function formatNumber(num) {
 
 function numberToGreekWords(num) {
   if (num === 0) return 'μηδέν';
-  if (num === 20000) return 'είκοσι χιλιάδες';
+  if (num >= 20000) return 'είκοσι χιλιάδες';
 
   const units = ['', 'ένα', 'δύο', 'τρία', 'τέσσερα', 'πέντε', 'έξι', 'επτά', 'οκτώ', 'εννέα'];
   const tens = ['', 'δέκα', 'είκοσι', 'τριάντα', 'σαράντα', 'πενήντα', 'εξήντα', 'εβδομήντα', 'ογδόντα', 'εννενήντα'];
@@ -33,7 +33,9 @@ function numberToGreekWords(num) {
   const rem = num % 1000;
 
   let res = '';
-  if (th > 0) res += thousandWords[th] + ' ';
+  if (th > 0 && th <= 20) {
+    res += thousandWords[th] + ' ';
+  }
 
   if (rem > 0) {
     const e = Math.floor(rem / 100);
@@ -61,12 +63,20 @@ function numberToGreekWords(num) {
   return res.trim().replace(/\s+/g, ' ');
 }
 
-// Παραγωγή 1 Ερώτησης Πολλαπλής Επιλογής
+// Παραγωγή 1 Ερώτησης Πολλαπλής Επιλογής (με ασφάλεια ορίων)
 function makeMCQQuestion() {
-  const num = getRandomInt(1000, 20000);
+  const num = getRandomInt(1000, 19999);
   const correctText = numberToGreekWords(num);
-  let wrongA = numberToGreekWords(num + (getRandomInt(1, 3) * 1000));
-  let wrongB = numberToGreekWords(num + getRandomInt(1, 9) * 10);
+
+  // Δημιουργία λανθασμένων επιλογών που δεν ξεπερνούν το 20.000
+  let wrongNumA = num > 10000 ? num - getRandomInt(1, 3) * 1000 : num + getRandomInt(1, 3) * 1000;
+  let wrongNumB = (num % 100 >= 50) ? num - 30 : num + 30;
+
+  if (wrongNumA === num) wrongNumA -= 1000;
+  if (wrongNumB === num) wrongNumB += 50;
+
+  const wrongA = numberToGreekWords(Math.max(1000, Math.min(20000, wrongNumA)));
+  const wrongB = numberToGreekWords(Math.max(1000, Math.min(20000, wrongNumB)));
 
   const options = [
     { text: correctText, isCorrect: true },
