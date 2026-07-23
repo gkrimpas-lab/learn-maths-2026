@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// --- BOHΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
+// --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -61,22 +61,24 @@ function numberToGreekWords(num) {
   return res.trim().replace(/\s+/g, ' ');
 }
 
-// Παραγωγή Τυχαίων Ασκήσεων
-function generateQuestions() {
-  // 1. Πώς διαβάζεται ο αριθμός (Πολλαπλής Επιλογής)
-  const num1 = getRandomInt(1000, 20000);
-  const correctText1 = numberToGreekWords(num1);
-  let wrongTextA = numberToGreekWords(num1 + (getRandomInt(1, 3) * 1000));
-  let wrongTextB = numberToGreekWords(num1 + getRandomInt(1, 9) * 10);
-  
-  const options1 = [
-    { text: correctText1, isCorrect: true },
-    { text: wrongTextA, isCorrect: false },
-    { text: wrongTextB, isCorrect: false }
+// Παραγωγή 1 Ερώτησης Πολλαπλής Επιλογής
+function makeMCQQuestion() {
+  const num = getRandomInt(1000, 20000);
+  const correctText = numberToGreekWords(num);
+  let wrongA = numberToGreekWords(num + (getRandomInt(1, 3) * 1000));
+  let wrongB = numberToGreekWords(num + getRandomInt(1, 9) * 10);
+
+  const options = [
+    { text: correctText, isCorrect: true },
+    { text: wrongA, isCorrect: false },
+    { text: wrongB, isCorrect: false }
   ].sort(() => Math.random() - 0.5);
 
-  // 2. Αξία θέσης ψηφίου
-  const num2 = getRandomInt(1000, 19999);
+  return { number: num, options, correct: correctText };
+}
+
+// Παραγωγή 1 Ερώτησης Αξίας Θέσης (με μοναδικότητα ψηφίου)
+function makePlaceValueQuestion() {
   const places = [
     { name: 'Δεκάδων Χιλιάδων', multiplier: 10000 },
     { name: 'Μονάδων Χιλιάδων', multiplier: 1000 },
@@ -84,59 +86,94 @@ function generateQuestions() {
     { name: 'Δεκάδων', multiplier: 10 },
     { name: 'Μονάδων', multiplier: 1 }
   ];
-  
-  // Επιλέγουμε μια θέση που να μην έχει μηδέν αν είναι δυνατόν
-  const validPlaces = places.filter(p => Math.floor(num2 / p.multiplier) % 10 > 0);
-  const chosenPlace = validPlaces.length > 0 ? validPlaces[getRandomInt(0, validPlaces.length - 1)] : places[1];
-  const digit2 = Math.floor(num2 / chosenPlace.multiplier) % 10;
-  const correctVal2 = digit2 * chosenPlace.multiplier;
 
-  // 3. Συμπλήρωση Κενού στην Ανάλυση
-  const num3 = getRandomInt(5000, 19999);
-  const dx3 = Math.floor(num3 / 10000) * 10000;
-  const x3 = Math.floor((num3 % 10000) / 1000) * 1000;
-  const e3 = Math.floor((num3 % 1000) / 100) * 100;
-  const d3 = Math.floor((num3 % 100) / 10) * 10;
-  const m3 = num3 % 10;
+  let num = 0;
+  let chosenPlace = places[1];
+  let digit = 0;
 
-  // Επιλέγουμε τυχαία ποιο τμήμα θα λείπει
-  const components3 = [
-    { name: 'dx', val: dx3 },
-    { name: 'x', val: x3 },
-    { name: 'e', val: e3 },
-    { name: 'd', val: d3 },
-    { name: 'm', val: m3 }
-  ].filter(c => c.val > 0);
+  // Επαναλαμβάνουμε τη δημιουργία αριθμού μέχρι το επιλεγμένο ψηφίο να εμφανίζεται ακριβώς 1 φορά!
+  while (true) {
+    num = getRandomInt(1000, 19999);
+    const validPlaces = places.filter(p => Math.floor(num / p.multiplier) % 10 > 0);
+    chosenPlace = validPlaces[getRandomInt(0, validPlaces.length - 1)];
+    digit = Math.floor(num / chosenPlace.multiplier) % 10;
 
-  const missingComp = components3[getRandomInt(0, components3.length - 1)];
-
-  // 4. Σύγκριση Αριθμών
-  const num4A = getRandomInt(1000, 20000);
-  let num4B = getRandomInt(1000, 20000);
-  if (Math.random() > 0.7) num4B = num4A; // 30% πιθανότητα να είναι ίσα
-
-  let correctSym4 = '=';
-  if (num4A > num4B) correctSym4 = '>';
-  if (num4A < num4B) correctSym4 = '<';
+    // Μετράμε πόσες φορές εμφανίζεται το digit στον αριθμό
+    const digitCount = num.toString().split('').filter(ch => ch === digit.toString()).length;
+    if (digitCount === 1) break; // Εξασφάλιση μοναδικότητας!
+  }
 
   return {
-    q1: { number: num1, options: options1, correct: correctText1 },
-    q2: { number: num2, digit: digit2, placeName: chosenPlace.name, correct: correctVal2 },
-    q3: { number: num3, parts: { dx: dx3, x: x3, e: e3, d: d3, m: m3 }, missingKey: missingComp.name, correct: missingComp.val },
-    q4: { numA: num4A, numB: num4B, correct: correctSym4 }
+    number: num,
+    digit,
+    placeName: chosenPlace.name,
+    correct: digit * chosenPlace.multiplier
+  };
+}
+
+// Παραγωγή 1 Ερώτησης Συμπλήρωσης Κενού Ανάλυσης
+function makeDecompositionQuestion() {
+  const num = getRandomInt(3000, 19999);
+  const dx = Math.floor(num / 10000) * 10000;
+  const x = Math.floor((num % 10000) / 1000) * 1000;
+  const e = Math.floor((num % 1000) / 100) * 100;
+  const d = Math.floor((num % 100) / 10) * 10;
+  const m = num % 10;
+
+  const components = [
+    { name: 'dx', val: dx },
+    { name: 'x', val: x },
+    { name: 'e', val: e },
+    { name: 'd', val: d },
+    { name: 'm', val: m }
+  ].filter(c => c.val > 0);
+
+  const missingComp = components[getRandomInt(0, components.length - 1)];
+
+  return {
+    number: num,
+    parts: { dx, x, e, d, m },
+    missingKey: missingComp.name,
+    correct: missingComp.val
+  };
+}
+
+// Παραγωγή 1 Ερώτησης Σύγκρισης
+function makeComparisonQuestion() {
+  const numA = getRandomInt(1000, 20000);
+  let numB = getRandomInt(1000, 20000);
+  if (Math.random() > 0.75) numB = numA; // 25% πιθανότητα για ίσα
+
+  let correctSym = '=';
+  if (numA > numB) correctSym = '>';
+  if (numA < numB) correctSym = '<';
+
+  return { numA, numB, correct: correctSym };
+}
+
+// Δημιουργία 8 Ερωτήσεων
+function generateQuestions() {
+  return {
+    q1: makeMCQQuestion(),
+    q2: makeMCQQuestion(),
+    q3: makePlaceValueQuestion(),
+    q4: makePlaceValueQuestion(),
+    q5: makeDecompositionQuestion(),
+    q6: makeDecompositionQuestion(),
+    q7: makeComparisonQuestion(),
+    q8: makeComparisonQuestion()
   };
 }
 
 export default function ArithmoiEos20XiliadesAskPage() {
   const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '' });
+  const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Αρχικοποίηση ερωτήσεων
   const loadNewQuestions = () => {
     setQuestions(generateQuestions());
-    setAnswers({ q1: '', q2: '', q3: '', q4: '' });
+    setAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
     setSubmitted(false);
     setScore(0);
   };
@@ -158,21 +195,280 @@ export default function ArithmoiEos20XiliadesAskPage() {
 
     let currentScore = 0;
 
-    // Έλεγχος Q1
     if (answers.q1 === questions.q1.correct) currentScore += 1;
-
-    // Έλεγχος Q2
-    if (parseInt(answers.q2, 10) === questions.q2.correct) currentScore += 1;
-
-    // Έλεγχος Q3
+    if (answers.q2 === questions.q2.correct) currentScore += 1;
     if (parseInt(answers.q3, 10) === questions.q3.correct) currentScore += 1;
-
-    // Έλεγχος Q4
-    if (answers.q4 === questions.q4.correct) currentScore += 1;
+    if (parseInt(answers.q4, 10) === questions.q4.correct) currentScore += 1;
+    if (parseInt(answers.q5, 10) === questions.q5.correct) currentScore += 1;
+    if (parseInt(answers.q6, 10) === questions.q6.correct) currentScore += 1;
+    if (answers.q7 === questions.q7.correct) currentScore += 1;
+    if (answers.q8 === questions.q8.correct) currentScore += 1;
 
     setScore(currentScore);
     setSubmitted(true);
   };
+
+  // Component για Ασκήσεις MCQ (1 & 2)
+  const renderMCQ = (qKey, qData, numLabel) => (
+    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
+      submitted 
+        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
+        : 'border-gray-100'
+    }`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="bg-blue-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
+        <h3 className="text-lg font-bold text-gray-900">
+          Πώς διαβάζεται ο αριθμός <span className="text-blue-600 font-mono font-black text-xl">{formatNumber(qData.number)}</span>;
+        </h3>
+      </div>
+
+      <div className="space-y-3 pl-0 md:pl-11">
+        {qData.options.map((opt, idx) => (
+          <label 
+            key={idx} 
+            className={`flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition ${
+              answers[qKey] === opt.text 
+                ? 'border-blue-600 bg-blue-50/80 font-bold' 
+                : 'border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            <input 
+              type="radio" 
+              name={qKey} 
+              value={opt.text}
+              checked={answers[qKey] === opt.text}
+              onChange={() => handleInputChange(qKey, opt.text)}
+              disabled={submitted}
+              className="w-5 h-5 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-gray-800 capitalize text-sm md:text-base">{opt.text}</span>
+          </label>
+        ))}
+      </div>
+
+      {submitted && (
+        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
+          {answers[qKey] === qData.correct ? (
+            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
+          ) : (
+            <p className="text-red-600">❌ Λάθος. Η σωστή απάντηση είναι: <span className="capitalize font-black">{qData.correct}</span></p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // Component για Ασκήσεις Αξίας Θέσης (3 & 4)
+  const renderPlaceValue = (qKey, qData, numLabel) => (
+    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
+      submitted 
+        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
+        : 'border-gray-100'
+    }`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="bg-indigo-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
+        <h3 className="text-lg font-bold text-gray-900">
+          Ποια είναι η πραγματική αξία του ψηφίου <span className="text-indigo-600 font-mono font-black text-xl">{qData.digit}</span> στον αριθμό <span className="text-indigo-600 font-mono font-black text-xl">{formatNumber(qData.number)}</span>;
+        </h3>
+      </div>
+
+      <div className="pl-0 md:pl-11 space-y-3">
+        <p className="text-xs text-gray-500">(Βρίσκεται στη θέση των {qData.placeName})</p>
+        <input 
+          type="number"
+          placeholder="Γράψε την αξία (π.χ. 4000)"
+          value={answers[qKey]}
+          onChange={(e) => handleInputChange(qKey, e.target.value)}
+          disabled={submitted}
+          className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none placeholder:text-sm placeholder:font-normal placeholder:text-gray-400"
+        />
+      </div>
+
+      {submitted && (
+        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
+          {parseInt(answers[qKey], 10) === qData.correct ? (
+            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
+          ) : (
+            <p className="text-red-600">❌ Λάθος. Η σωστή απάντηση είναι: <span className="font-mono font-black">{formatNumber(qData.correct)}</span></p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // Component για Ασκήσεις Ανάλυσης (5 & 6)
+  const renderDecomposition = (qKey, qData, numLabel) => (
+    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
+      submitted 
+        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
+        : 'border-gray-100'
+    }`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="bg-teal-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
+        <h3 className="text-lg font-bold text-gray-900">
+          Συμπλήρωσε τον αριθμό που λείπει στην ανάλυση:
+        </h3>
+      </div>
+
+      <div className="pl-0 md:pl-11 space-y-4">
+        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 font-mono text-sm md:text-lg font-bold flex flex-wrap items-center gap-2 text-gray-800">
+          <span className="text-teal-700 font-black">{formatNumber(qData.number)}</span>
+          <span>=</span>
+
+          {qData.parts.dx > 0 && (
+            <>
+              {qData.missingKey === 'dx' ? (
+                <input 
+                  type="number" 
+                  value={answers[qKey]}
+                  onChange={(e) => handleInputChange(qKey, e.target.value)}
+                  disabled={submitted}
+                  className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
+                  placeholder="?"
+                />
+              ) : (
+                <span>{formatNumber(qData.parts.dx)}</span>
+              )}
+              <span>+</span>
+            </>
+          )}
+
+          {qData.parts.x > 0 && (
+            <>
+              {qData.missingKey === 'x' ? (
+                <input 
+                  type="number" 
+                  value={answers[qKey]}
+                  onChange={(e) => handleInputChange(qKey, e.target.value)}
+                  disabled={submitted}
+                  className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
+                  placeholder="?"
+                />
+              ) : (
+                <span>{formatNumber(qData.parts.x)}</span>
+              )}
+              <span>+</span>
+            </>
+          )}
+
+          {qData.parts.e > 0 && (
+            <>
+              {qData.missingKey === 'e' ? (
+                <input 
+                  type="number" 
+                  value={answers[qKey]}
+                  onChange={(e) => handleInputChange(qKey, e.target.value)}
+                  disabled={submitted}
+                  className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
+                  placeholder="?"
+                />
+              ) : (
+                <span>{qData.parts.e}</span>
+              )}
+              <span>+</span>
+            </>
+          )}
+
+          {qData.parts.d > 0 && (
+            <>
+              {qData.missingKey === 'd' ? (
+                <input 
+                  type="number" 
+                  value={answers[qKey]}
+                  onChange={(e) => handleInputChange(qKey, e.target.value)}
+                  disabled={submitted}
+                  className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
+                  placeholder="?"
+                />
+              ) : (
+                <span>{qData.parts.d}</span>
+              )}
+              <span>+</span>
+            </>
+          )}
+
+          {qData.parts.m > 0 && (
+            <>
+              {qData.missingKey === 'm' ? (
+                <input 
+                  type="number" 
+                  value={answers[qKey]}
+                  onChange={(e) => handleInputChange(qKey, e.target.value)}
+                  disabled={submitted}
+                  className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
+                  placeholder="?"
+                />
+              ) : (
+                <span>{qData.parts.m}</span>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      {submitted && (
+        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
+          {parseInt(answers[qKey], 10) === qData.correct ? (
+            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
+          ) : (
+            <p className="text-red-600">❌ Λάθος. Ο αριθμός που έλειπε είναι ο: <span className="font-mono font-black">{formatNumber(qData.correct)}</span></p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // Component για Ασκήσεις Σύγκρισης (7 & 8)
+  const renderComparison = (qKey, qData, numLabel) => (
+    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
+      submitted 
+        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
+        : 'border-gray-100'
+    }`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
+        <h3 className="text-lg font-bold text-gray-900">
+          Επίλεξε το σωστό σύμβολο σύγκρισης ( &lt; , &gt; , = ):
+        </h3>
+      </div>
+
+      <div className="pl-0 md:pl-11 space-y-4">
+        <div className="flex items-center gap-4 text-xl md:text-2xl font-mono font-black text-gray-800">
+          <span>{formatNumber(qData.numA)}</span>
+          
+          <div className="flex gap-2">
+            {['<', '=', '>'].map((sym) => (
+              <button
+                type="button"
+                key={sym}
+                onClick={() => handleInputChange(qKey, sym)}
+                disabled={submitted}
+                className={`w-12 h-12 rounded-xl text-xl font-black border transition ${
+                  answers[qKey] === sym 
+                    ? 'bg-purple-600 text-white border-purple-700 shadow-md' 
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
+                }`}
+              >
+                {sym}
+              </button>
+            ))}
+          </div>
+
+          <span>{formatNumber(qData.numB)}</span>
+        </div>
+      </div>
+
+      {submitted && (
+        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
+          {answers[qKey] === qData.correct ? (
+            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
+          ) : (
+            <p className="text-red-600">❌ Λάθος. Το σωστό σύμβολο είναι το: <span className="font-mono font-black text-lg">{qData.correct}</span></p>
+          )}
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between pb-24">
@@ -215,7 +511,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
                 📝 Ασκήσεις: Αριθμοί έως το 20.000
               </h1>
               <p className="text-amber-100 text-sm md:text-base mt-1">
-                Λύσε τις παρακάτω ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι αριθμοί αλλάζουν αυτόματα.
+                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι αριθμοί αλλάζουν αυτόματα.
               </p>
             </div>
 
@@ -229,259 +525,17 @@ export default function ArithmoiEos20XiliadesAskPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
 
-            {/* ΑΣΚΗΣΗ 1: Πολλαπλής Επιλογής - Ονομασία */}
-            <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-              submitted 
-                ? (answers.q1 === questions.q1.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-                : 'border-gray-100'
-            }`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-blue-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">1</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Πώς διαβάζεται ο αριθμός <span className="text-blue-600 font-mono font-black text-xl">{formatNumber(questions.q1.number)}</span>;
-                </h3>
-              </div>
+            {renderMCQ('q1', questions.q1, 1)}
+            {renderMCQ('q2', questions.q2, 2)}
 
-              <div className="space-y-3 pl-0 md:pl-11">
-                {questions.q1.options.map((opt, idx) => (
-                  <label 
-                    key={idx} 
-                    className={`flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition ${
-                      answers.q1 === opt.text 
-                        ? 'border-blue-600 bg-blue-50/80 font-bold' 
-                        : 'border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    <input 
-                      type="radio" 
-                      name="q1" 
-                      value={opt.text}
-                      checked={answers.q1 === opt.text}
-                      onChange={() => handleInputChange('q1', opt.text)}
-                      disabled={submitted}
-                      className="w-5 h-5 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-gray-800 capitalize text-sm md:text-base">{opt.text}</span>
-                  </label>
-                ))}
-              </div>
+            {renderPlaceValue('q3', questions.q3, 3)}
+            {renderPlaceValue('q4', questions.q4, 4)}
 
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {answers.q1 === questions.q1.correct ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. Η σωστή απάντηση είναι: <span className="capitalize font-black">{questions.q1.correct}</span></p>
-                  )}
-                </div>
-              )}
-            </div>
+            {renderDecomposition('q5', questions.q5, 5)}
+            {renderDecomposition('q6', questions.q6, 6)}
 
-            {/* ΑΣΚΗΣΗ 2: Αξία Θέσης Ψηφίου */}
-            <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-              submitted 
-                ? (parseInt(answers.q2, 10) === questions.q2.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-                : 'border-gray-100'
-            }`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-indigo-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">2</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Ποια είναι η πραγματική αξία του ψηφίου <span className="text-indigo-600 font-mono font-black text-xl">{questions.q2.digit}</span> στον αριθμό <span className="text-indigo-600 font-mono font-black text-xl">{formatNumber(questions.q2.number)}</span>;
-                </h3>
-              </div>
-
-              <div className="pl-0 md:pl-11 space-y-3">
-                <p className="text-xs text-gray-500">(Βρίσκεται στη θέση των {questions.q2.placeName})</p>
-                <input 
-                  type="number"
-                  placeholder="Γράψε την αξία (π.χ. 4000)"
-                  value={answers.q2}
-                  onChange={(e) => handleInputChange('q2', e.target.value)}
-                  disabled={submitted}
-                  className="w-full md:w-72 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                />
-              </div>
-
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {parseInt(answers.q2, 10) === questions.q2.correct ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. Η σωστή απάντηση είναι: <span className="font-mono font-black">{formatNumber(questions.q2.correct)}</span></p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* ΑΣΚΗΣΗ 3: Συμπλήρωση Κενού στην Ανάλυση */}
-            <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-              submitted 
-                ? (parseInt(answers.q3, 10) === questions.q3.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-                : 'border-gray-100'
-            }`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-teal-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">3</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Συμπλήρωσε τον αριθμό που λείπει στην ανάλυση:
-                </h3>
-              </div>
-
-              <div className="pl-0 md:pl-11 space-y-4">
-                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 font-mono text-sm md:text-lg font-bold flex flex-wrap items-center gap-2 text-gray-800">
-                  <span className="text-teal-700 font-black">{formatNumber(questions.q3.number)}</span>
-                  <span>=</span>
-
-                  {questions.q3.parts.dx > 0 && (
-                    <>
-                      {questions.q3.missingKey === 'dx' ? (
-                        <input 
-                          type="number" 
-                          value={answers.q3}
-                          onChange={(e) => handleInputChange('q3', e.target.value)}
-                          disabled={submitted}
-                          className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
-                          placeholder="?"
-                        />
-                      ) : (
-                        <span>{formatNumber(questions.q3.parts.dx)}</span>
-                      )}
-                      <span>+</span>
-                    </>
-                  )}
-
-                  {questions.q3.parts.x > 0 && (
-                    <>
-                      {questions.q3.missingKey === 'x' ? (
-                        <input 
-                          type="number" 
-                          value={answers.q3}
-                          onChange={(e) => handleInputChange('q3', e.target.value)}
-                          disabled={submitted}
-                          className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
-                          placeholder="?"
-                        />
-                      ) : (
-                        <span>{formatNumber(questions.q3.parts.x)}</span>
-                      )}
-                      <span>+</span>
-                    </>
-                  )}
-
-                  {questions.q3.parts.e > 0 && (
-                    <>
-                      {questions.q3.missingKey === 'e' ? (
-                        <input 
-                          type="number" 
-                          value={answers.q3}
-                          onChange={(e) => handleInputChange('q3', e.target.value)}
-                          disabled={submitted}
-                          className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
-                          placeholder="?"
-                        />
-                      ) : (
-                        <span>{questions.q3.parts.e}</span>
-                      )}
-                      <span>+</span>
-                    </>
-                  )}
-
-                  {questions.q3.parts.d > 0 && (
-                    <>
-                      {questions.q3.missingKey === 'd' ? (
-                        <input 
-                          type="number" 
-                          value={answers.q3}
-                          onChange={(e) => handleInputChange('q3', e.target.value)}
-                          disabled={submitted}
-                          className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
-                          placeholder="?"
-                        />
-                      ) : (
-                        <span>{questions.q3.parts.d}</span>
-                      )}
-                      <span>+</span>
-                    </>
-                  )}
-
-                  {questions.q3.parts.m > 0 && (
-                    <>
-                      {questions.q3.missingKey === 'm' ? (
-                        <input 
-                          type="number" 
-                          value={answers.q3}
-                          onChange={(e) => handleInputChange('q3', e.target.value)}
-                          disabled={submitted}
-                          className="w-28 p-1.5 bg-amber-100 border-2 border-amber-400 rounded-lg text-center text-amber-900 focus:outline-none"
-                          placeholder="?"
-                        />
-                      ) : (
-                        <span>{questions.q3.parts.m}</span>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {parseInt(answers.q3, 10) === questions.q3.correct ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. Ο αριθμός που έλειπε είναι ο: <span className="font-mono font-black">{formatNumber(questions.q3.correct)}</span></p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* ΑΣΚΗΣΗ 4: Σύγκριση Αριθμών */}
-            <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-              submitted 
-                ? (answers.q4 === questions.q4.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-                : 'border-gray-100'
-            }`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">4</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Επίλεξε το σωστό σύμβολο σύγκρισης ( &lt; , &gt; , = ):
-                </h3>
-              </div>
-
-              <div className="pl-0 md:pl-11 space-y-4">
-                <div className="flex items-center gap-4 text-xl md:text-2xl font-mono font-black text-gray-800">
-                  <span>{formatNumber(questions.q4.numA)}</span>
-                  
-                  <div className="flex gap-2">
-                    {['<', '=', '>'].map((sym) => (
-                      <button
-                        type="button"
-                        key={sym}
-                        onClick={() => handleInputChange('q4', sym)}
-                        disabled={submitted}
-                        className={`w-12 h-12 rounded-xl text-xl font-black border transition ${
-                          answers.q4 === sym 
-                            ? 'bg-purple-600 text-white border-purple-700 shadow-md' 
-                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
-                        }`}
-                      >
-                        {sym}
-                      </button>
-                    ))}
-                  </div>
-
-                  <span>{formatNumber(questions.q4.numB)}</span>
-                </div>
-              </div>
-
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {answers.q4 === questions.q4.correct ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. Το σωστό σύμβολο είναι το: <span className="font-mono font-black text-lg">{questions.q4.correct}</span></p>
-                  )}
-                </div>
-              )}
-            </div>
+            {renderComparison('q7', questions.q7, 7)}
+            {renderComparison('q8', questions.q8, 8)}
 
             {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
             {!submitted && (
@@ -507,11 +561,11 @@ export default function ArithmoiEos20XiliadesAskPage() {
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-lg flex items-center gap-2 shadow-sm">
               <span>🏆 Σκορ:</span>
-              <span className="text-2xl font-mono">{score} / 4</span>
+              <span className="text-2xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
               <span className="text-sm font-bold text-slate-300">
-                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 4) * 100)}%</span>
+                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
