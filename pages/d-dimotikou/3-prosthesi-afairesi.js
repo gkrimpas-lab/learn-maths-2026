@@ -1,33 +1,381 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+// --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
+
+// Παραγωγή τυχαίου πολλαπλάσιου του 10 (ώστε να τελειώνει πάντα σε 0)
+function getRandomIntEndingInZero(min, max) {
+  const raw = Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.round(raw / 10) * 10;
 }
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export default function ProsthesiAfairesiTheoryPage() {
-  const [numA, setNumA] = useState(12450);
-  const [numB, setNumB] = useState(3200);
+function formatNumber(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
 
-  const sum = numA + numB;
+// 1. Ασκηση: Επαλήθευση Πρόσθεσης με Αφαίρεση
+function makeAdditionCheckQuestion() {
+  const a = getRandomIntEndingInZero(1000, 10000);
+  const b = getRandomIntEndingInZero(500, 5000);
+  const sum = a + b;
 
-  const handleRandomize = () => {
-    const a = getRandomInt(1000, 15000);
-    const b = getRandomInt(1000, 5000);
-    setNumA(a);
-    setNumB(b);
+  // Επιλέγουμε τυχαία ποιος προσθετέος θα αφαιρεθεί
+  const subtractA = Math.random() > 0.5;
+  const subNum = subtractA ? a : b;
+  const correctResult = subtractA ? b : a;
+
+  return {
+    a,
+    b,
+    sum,
+    subNum,
+    correct: correctResult
+  };
+}
+
+// 2. Ασκηση: Επαλήθευση Αφαίρεσης με Πρόσθεση (Δοκιμή)
+function makeSubtractionCheckQuestion() {
+  const diff = getRandomIntEndingInZero(1000, 8000);
+  const sub = getRandomIntEndingInZero(500, 5000);
+  const min = diff + sub;
+
+  return {
+    min,
+    sub,
+    diff,
+    correct: min
+  };
+}
+
+// 3. Ασκηση: Εύρεση Άγνωστου Αριθμού
+function makeMissingNumberQuestion() {
+  const isAddition = Math.random() > 0.5;
+  const a = getRandomIntEndingInZero(1000, 8000);
+  const b = getRandomIntEndingInZero(500, 4000);
+
+  if (isAddition) {
+    const sum = a + b;
+    return {
+      type: 'add',
+      known: a,
+      target: sum,
+      correct: b
+    };
+  } else {
+    const min = a + b;
+    return {
+      type: 'sub',
+      known: b,
+      target: min,
+      correct: a
+    };
+  }
+}
+
+// 4. Ασκηση: Ορολογία (MCQ)
+function makeTerminologyQuestion() {
+  const terms = [
+    {
+      q: 'Πώς ονομάζεται το αποτέλεσμα της αφαίρεσης;',
+      correct: 'Διαφορά',
+      wrongs: ['Άθροισμα', 'Προσθετέος']
+    },
+    {
+      q: 'Πώς ονομάζονται οι αριθμοί που προσθέτουμε;',
+      correct: 'Προσθετέοι',
+      wrongs: ['Αφαιρετέοι', 'Διαφορές']
+    },
+    {
+      q: 'Πώς ονομάζεται το αποτέλεσμα της πρόσθεσης;',
+      correct: 'Άθροισμα',
+      wrongs: ['Διαφορά', 'Μειωτέος']
+    },
+    {
+      q: 'Στην αφαίρεση 5.000 - 1.200 = 3.800, ο αριθμός 5.000 λέγεται:',
+      correct: 'Μειωτέος',
+      wrongs: ['Αφαιρετέος', 'Άθροισμα']
+    }
+  ];
+
+  const selected = terms[getRandomInt(0, terms.length - 1)];
+  const options = [
+    { text: selected.correct, isCorrect: true },
+    { text: selected.wrongs[0], isCorrect: false },
+    { text: selected.wrongs[1], isCorrect: false }
+  ].sort(() => Math.random() - 0.5);
+
+  return {
+    questionText: selected.q,
+    options,
+    correct: selected.correct
+  };
+}
+
+// Δημιουργία 8 Ερωτήσεων
+function generateQuestions() {
+  return {
+    q1: makeAdditionCheckQuestion(),
+    q2: makeAdditionCheckQuestion(),
+    q3: makeSubtractionCheckQuestion(),
+    q4: makeSubtractionCheckQuestion(),
+    q5: makeMissingNumberQuestion(),
+    q6: makeMissingNumberQuestion(),
+    q7: makeTerminologyQuestion(),
+    q8: makeTerminologyQuestion()
+  };
+}
+
+export default function ProsthesiAfairesiAskPage() {
+  const [questions, setQuestions] = useState(null);
+  const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
+  const [submitted, setSubmitted] = useState(false);
+  const [score, setScore] = useState(0);
+
+  const loadNewQuestions = () => {
+    setQuestions(generateQuestions());
+    setAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
+    setSubmitted(false);
+    setScore(0);
   };
 
+  useEffect(() => {
+    loadNewQuestions();
+  }, []);
+
+  if (!questions) return null;
+
+  const handleInputChange = (key, val) => {
+    if (submitted) return;
+    setAnswers(prev => ({ ...prev, [key]: val }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (submitted) return;
+
+    let currentScore = 0;
+
+    if (parseInt(answers.q1, 10) === questions.q1.correct) currentScore += 1;
+    if (parseInt(answers.q2, 10) === questions.q2.correct) currentScore += 1;
+    if (parseInt(answers.q3, 10) === questions.q3.correct) currentScore += 1;
+    if (parseInt(answers.q4, 10) === questions.q4.correct) currentScore += 1;
+    if (parseInt(answers.q5, 10) === questions.q5.correct) currentScore += 1;
+    if (parseInt(answers.q6, 10) === questions.q6.correct) currentScore += 1;
+    if (answers.q7 === questions.q7.correct) currentScore += 1;
+    if (answers.q8 === questions.q8.correct) currentScore += 1;
+
+    setScore(currentScore);
+    setSubmitted(true);
+  };
+
+  // Render Q1 & Q2: Επαλήθευση Πρόσθεσης
+  const renderAdditionCheck = (qKey, qData, numLabel) => (
+    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
+      submitted 
+        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
+        : 'border-gray-100'
+    }`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="bg-blue-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
+        <h3 className="text-lg font-bold text-gray-900">
+          Ξέρουμε ότι <span className="text-blue-600 font-mono font-black">{formatNumber(qData.a)} + {formatNumber(qData.b)} = {formatNumber(qData.sum)}</span>. Συμπλήρωσε την αφαίρεση:
+        </h3>
+      </div>
+
+      <div className="pl-0 md:pl-11 space-y-3">
+        <div className="flex items-center gap-2 font-mono text-lg font-bold text-gray-800 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <span>{formatNumber(qData.sum)}</span>
+          <span>-</span>
+          <span>{formatNumber(qData.subNum)}</span>
+          <span>=</span>
+          <input 
+            type="number"
+            placeholder="?"
+            value={answers[qKey]}
+            onChange={(e) => handleInputChange(qKey, e.target.value)}
+            disabled={submitted}
+            className="w-36 p-2 rounded-xl border border-gray-300 font-mono text-lg font-bold text-center focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      {submitted && (
+        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
+          {parseInt(answers[qKey], 10) === qData.correct ? (
+            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
+          ) : (
+            <p className="text-red-600">❌ Λάθος. Το αποτέλεσμα είναι: <span className="font-mono font-black">{formatNumber(qData.correct)}</span></p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // Render Q3 & Q4: Επαλήθευση Αφαίρεσης (Δοκιμή)
+  const renderSubtractionCheck = (qKey, qData, numLabel) => (
+    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
+      submitted 
+        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
+        : 'border-gray-100'
+    }`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
+        <h3 className="text-lg font-bold text-gray-900">
+          Κάνε τη δοκιμή της αφαίρεσης <span className="text-purple-600 font-mono font-black">{formatNumber(qData.min)} - {formatNumber(qData.sub)} = {formatNumber(qData.diff)}</span>:
+        </h3>
+      </div>
+
+      <div className="pl-0 md:pl-11 space-y-3">
+        <div className="flex items-center gap-2 font-mono text-lg font-bold text-gray-800 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <span>{formatNumber(qData.diff)}</span>
+          <span>+</span>
+          <span>{formatNumber(qData.sub)}</span>
+          <span>=</span>
+          <input 
+            type="number"
+            placeholder="?"
+            value={answers[qKey]}
+            onChange={(e) => handleInputChange(qKey, e.target.value)}
+            disabled={submitted}
+            className="w-36 p-2 rounded-xl border border-gray-300 font-mono text-lg font-bold text-center focus:ring-2 focus:ring-purple-500 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      {submitted && (
+        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
+          {parseInt(answers[qKey], 10) === qData.correct ? (
+            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
+          ) : (
+            <p className="text-red-600">❌ Λάθος. Το άθροισμα στη δοκιμή πρέπει να ισούται με τον μειωτέο: <span className="font-mono font-black">{formatNumber(qData.correct)}</span></p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // Render Q5 & Q6: Άγνωστος Αριθμός
+  const renderMissingNumber = (qKey, qData, numLabel) => (
+    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
+      submitted 
+        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
+        : 'border-gray-100'
+    }`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="bg-teal-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
+        <h3 className="text-lg font-bold text-gray-900">
+          Βρες τον αριθμό που λείπει χρησιμοποιώντας την αντίστροφη πράξη:
+        </h3>
+      </div>
+
+      <div className="pl-0 md:pl-11 space-y-3">
+        <div className="flex items-center gap-2 font-mono text-lg font-bold text-gray-800 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          {qData.type === 'add' ? (
+            <>
+              <span>{formatNumber(qData.known)}</span>
+              <span>+</span>
+              <input 
+                type="number"
+                placeholder="?"
+                value={answers[qKey]}
+                onChange={(e) => handleInputChange(qKey, e.target.value)}
+                disabled={submitted}
+                className="w-36 p-2 rounded-xl border border-amber-400 bg-amber-50 text-amber-900 font-mono text-lg font-bold text-center focus:ring-2 focus:ring-teal-500 focus:outline-none"
+              />
+              <span>=</span>
+              <span>{formatNumber(qData.target)}</span>
+            </>
+          ) : (
+            <>
+              <input 
+                type="number"
+                placeholder="?"
+                value={answers[qKey]}
+                onChange={(e) => handleInputChange(qKey, e.target.value)}
+                disabled={submitted}
+                className="w-36 p-2 rounded-xl border border-amber-400 bg-amber-50 text-amber-900 font-mono text-lg font-bold text-center focus:ring-2 focus:ring-teal-500 focus:outline-none"
+              />
+              <span>-</span>
+              <span>{formatNumber(qData.known)}</span>
+              <span>=</span>
+              <span>{formatNumber(qData.target - qData.known)}</span>
+            </>
+          )}
+        </div>
+      </div>
+
+      {submitted && (
+        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
+          {parseInt(answers[qKey], 10) === qData.correct ? (
+            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
+          ) : (
+            <p className="text-red-600">❌ Λάθος. Ο αριθμός που λείπει είναι ο: <span className="font-mono font-black">{formatNumber(qData.correct)}</span></p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // Render Q7 & Q8: Ορολογία
+  const renderTerminology = (qKey, qData, numLabel) => (
+    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
+      submitted 
+        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
+        : 'border-gray-100'
+    }`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="bg-amber-500 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
+        <h3 className="text-lg font-bold text-gray-900">
+          {qData.questionText}
+        </h3>
+      </div>
+
+      <div className="space-y-3 pl-0 md:pl-11">
+        {qData.options.map((opt, idx) => (
+          <label 
+            key={idx} 
+            className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${
+              answers[qKey] === opt.text 
+                ? 'border-amber-500 bg-amber-50/80 font-bold' 
+                : 'border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            <input 
+              type="radio" 
+              name={qKey} 
+              value={opt.text}
+              checked={answers[qKey] === opt.text}
+              onChange={() => handleInputChange(qKey, opt.text)}
+              disabled={submitted}
+              className="w-5 h-5 text-amber-600 focus:ring-amber-500"
+            />
+            <span className="text-gray-800 text-sm md:text-base">{opt.text}</span>
+          </label>
+        ))}
+      </div>
+
+      {submitted && (
+        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
+          {answers[qKey] === qData.correct ? (
+            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
+          ) : (
+            <p className="text-red-600">❌ Λάθος. Η σωστή απάντηση είναι: <span className="font-black">{qData.correct}</span></p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between pb-24">
       <Head>
-        <title>➕➖ Πρόσθεση και Αφαίρεση (Αντίστροφες Πράξεις) - LearnMaths.gr</title>
+        <title>➕➖ Ασκήσεις: Πρόσθεση & Αφαίρεση - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -39,12 +387,15 @@ export default function ProsthesiAfairesiTheoryPage() {
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
             <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/3-prosthesi-afairesi-ask" className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
-                <span>📝</span> Ασκήσεις
+              <Link href="/d-dimotikou/3-prosthesi-afairesi" className="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
+                <span>📖</span> Θεωρία
               </Link>
-              <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
-                🔙 Επιστροφή
-              </Link>
+              <button 
+                onClick={loadNewQuestions}
+                className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2"
+              >
+                <span>🔄</span> Νέες Ασκήσεις
+              </button>
             </div>
           </div>
         </nav>
@@ -52,233 +403,93 @@ export default function ProsthesiAfairesiTheoryPage() {
         {/* MAIN CONTENT */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
           
-          {/* HEADER & EXERCISES PROMO CARD */}
-          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-8 rounded-3xl shadow-md relative overflow-hidden">
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-              <div className="md:col-span-2 space-y-3">
-                <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ
-                </span>
-                <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  ➕➖ Πρόσθεση και Αφαίρεση: Αντίστροφες Πράξεις
-                </h1>
-                <p className="text-blue-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε πώς συνδέονται η πρόσθεση με την αφαίρεση και πώς χρησιμοποιούμε τη μία για να ελέγξουμε την άλλη!
-                </p>
-              </div>
-
-              {/* ΠΛΑΙΣΙΟ ΠΑΡΑΠΟΜΠΗΣ ΣΤΙΣ ΑΣΚΗΣΕΙΣ */}
-              <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
-                <div className="text-3xl">🚀</div>
-                <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
-                <p className="text-xs text-blue-100">Δοκίμασε τις ασκήσεις στις αντίστροφες πράξεις για να σιγουρευτείς ότι τα κατάλαβες όλα!</p>
-                <Link 
-                  href="/d-dimotikou/3-prosthesi-afairesi-ask"
-                  className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
-                >
-                  🎯 Μετάβαση στις Ασκήσεις
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* ΘΕΩΡΙΑ - SECTION 1 */}
-          <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
-            <div className="border-b pb-4 border-gray-100">
-              <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία και Ορισμοί
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* Αντίστροφες Πράξεις */}
-              <div className="bg-indigo-50/70 p-6 rounded-2xl border border-indigo-100 space-y-3">
-                <h3 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
-                  <span>🔄</span> Τι σημαίνει «Αντίστροφες Πράξεις»;
-                </h3>
-                <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-                  Η <strong>πρόσθεση</strong> και η <strong>αφαίρεση</strong> είναι αντίστροφες πράξεις επειδή η μία «ακυρώνει» το αποτέλεσμα της άλλης:
-                </p>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-center gap-2">
-                    <span className="text-indigo-600 font-bold">•</span>
-                    <span>Αν σε έναν αριθμό <strong>προσθέσουμε</strong> 5 και μετά <strong>αφαιρέσουμε</strong> 5, γυρνάμε στον ίδιο αρχικό αριθμό!</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Ορολογία */}
-              <div className="bg-emerald-50/70 p-6 rounded-2xl border border-emerald-100 space-y-3">
-                <h3 className="text-lg font-bold text-emerald-900 flex items-center gap-2">
-                  <span>🏷️</span> Οι Όροι των Πράξεων
-                </h3>
-                <div className="space-y-2 text-xs md:text-sm text-gray-800 font-mono">
-                  <div className="p-2 bg-white rounded-lg border border-emerald-200">
-                    <span className="text-blue-600 font-bold">Προσθετέος</span> + <span className="text-blue-600 font-bold">Προσθετέος</span> = <span className="text-emerald-700 font-black">Άθροισμα</span>
-                  </div>
-                  <div className="p-2 bg-white rounded-lg border border-emerald-200">
-                    <span className="text-purple-600 font-bold">Μειωτέος</span> - <span className="text-rose-600 font-bold">Αφαιρετέος</span> = <span className="text-amber-700 font-black">Διαφορά</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* ΔΟΚΙΜΗ ΠΡΟΣΘΕΣΗΣ ΚΑΙ ΑΦΑΙΡΕΣΗΣ */}
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4">
-              <h3 className="text-lg font-extrabold text-gray-800">
-                ✅ Πώς κάνουμε Δοκιμή στις πράξεις;
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                
-                <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-2">
-                  <h4 className="font-bold text-blue-700 border-b pb-1">1. Δοκιμή Πρόσθεσης (με Αφαίρεση)</h4>
-                  <p className="text-gray-600">Για να ελέγξουμε αν μια πρόσθεση είναι σωστή, αφαιρούμε έναν προσθετέο από το άθροισμα:</p>
-                  <p className="font-mono font-bold text-gray-800 bg-blue-50 p-2 rounded-lg text-center">
-                    Άθροισμα - Προσθετέος = Άλλος Προσθετέος
-                  </p>
-                </div>
-
-                <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-2">
-                  <h4 className="font-bold text-purple-700 border-b pb-1">2. Δοκιμή Αφαίρεσης (με Πρόσθεση)</h4>
-                  <p className="text-gray-600">Για να ελέγξουμε αν μια αφαίρεση είναι σωστή, προσθέτουμε τη διαφορά στον αφαιρετέο:</p>
-                  <p className="font-mono font-bold text-gray-800 bg-purple-50 p-2 rounded-lg text-center">
-                    Διαφορά + Αφαιρετέος = Μειωτέος
-                  </p>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-
-          {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ - SECTION 2 */}
-          <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
-              <div>
-                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εργαστήριο Αντίστροφων Πράξεων
-                </h2>
-                <p className="text-gray-500 text-sm">
-                  Άλλαξε τους αριθμούς και δες πώς η πρόσθεση μετατρέπεται αυτόματα σε αφαίρεση!
-                </p>
-              </div>
-
-              <button
-                onClick={handleRandomize}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2"
-              >
-                <span>🎲</span> Τυχαίοι Αριθμοί
-              </button>
-            </div>
-
-            {/* SLIDERS XΕΙΡΙΣΜΟΥ */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
-              <div>
-                <label className="block text-xs font-black text-gray-500 mb-1">
-                  1ος Αριθμός (α): <span className="text-blue-600 font-mono text-base font-black">{formatNumber(numA)}</span>
-                </label>
-                <input 
-                  type="range" 
-                  min="1000" 
-                  max="15000" 
-                  step="50"
-                  value={numA} 
-                  onChange={(e) => setNumA(Number(e.target.value))}
-                  className="w-full accent-blue-600 cursor-pointer"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black text-gray-500 mb-1">
-                  2ος Αριθμός (β): <span className="text-indigo-600 font-mono text-base font-black">{formatNumber(numB)}</span>
-                </label>
-                <input 
-                  type="range" 
-                  min="100" 
-                  max="5000" 
-                  step="50"
-                  value={numB} 
-                  onChange={(e) => setNumB(Number(e.target.value))}
-                  className="w-full accent-indigo-600 cursor-pointer"
-                />
-              </div>
-            </div>
-
-            {/* ΠΡΟΒΟΛΗ ΑΝΤΙΣΤΡΟΦΩΝ ΠΡΑΞΕΩΝ */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
-              {/* Κάρτα 1: Πρόσθεση */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-200 space-y-3 text-center">
-                <span className="bg-blue-600 text-white text-xs font-black uppercase px-3 py-1 rounded-full">
-                  1. Αρχικη Προσθεση
-                </span>
-                <div className="text-2xl md:text-3xl font-mono font-black text-gray-800 pt-2">
-                  <span className="text-blue-600">{formatNumber(numA)}</span> + <span className="text-indigo-600">{formatNumber(numB)}</span>
-                </div>
-                <div className="text-3xl md:text-4xl font-mono font-black text-emerald-600 border-t pt-2 border-blue-200">
-                  = {formatNumber(sum)}
-                </div>
-                <p className="text-xs text-gray-500">Προσθέσαμε τους δύο αριθμούς</p>
-              </div>
-
-              {/* Κάρτα 2: 1η Αντίστροφη Αφαίρεση */}
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-200 space-y-3 text-center">
-                <span className="bg-purple-600 text-white text-xs font-black uppercase px-3 py-1 rounded-full">
-                  2. Αντιστροφη (1)
-                </span>
-                <div className="text-2xl md:text-3xl font-mono font-black text-gray-800 pt-2">
-                  <span className="text-emerald-600">{formatNumber(sum)}</span> - <span className="text-indigo-600">{formatNumber(numB)}</span>
-                </div>
-                <div className="text-3xl md:text-4xl font-mono font-black text-blue-600 border-t pt-2 border-purple-200">
-                  = {formatNumber(numA)}
-                </div>
-                <p className="text-xs text-gray-500">Αφαιρέσαμε τον 2ο αριθμό και βρήκαμε τον 1ο!</p>
-              </div>
-
-              {/* Κάρτα 3: 2η Αντίστροφη Αφαίρεση */}
-              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-200 space-y-3 text-center">
-                <span className="bg-emerald-600 text-white text-xs font-black uppercase px-3 py-1 rounded-full">
-                  3. Αντιστροφη (2)
-                </span>
-                <div className="text-2xl md:text-3xl font-mono font-black text-gray-800 pt-2">
-                  <span className="text-emerald-600">{formatNumber(sum)}</span> - <span className="text-blue-600">{formatNumber(numA)}</span>
-                </div>
-                <div className="text-3xl md:text-4xl font-mono font-black text-indigo-600 border-t pt-2 border-emerald-200">
-                  = {formatNumber(numB)}
-                </div>
-                <p className="text-xs text-gray-500">Αφαιρέσαμε τον 1ο αριθμό και βρήκαμε τον 2ο!</p>
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* BOTTOM EXERCISES CALLOUT BANNER */}
-          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="space-y-1 text-center md:text-left">
-              <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-              <p className="text-gray-800 text-sm md:text-base">
-                Κατάλαβες πώς η πρόσθεση και η αφαίρεση είναι αντίστροφες πράξεις; Κάνε τις διαδραστικές ασκήσεις!
+          {/* HEADER BANNER */}
+          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-8 rounded-3xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+                Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              </span>
+              <h1 className="text-3xl lg:text-4xl font-black tracking-tight mt-2">
+                📝 Ασκήσεις: Πρόσθεση & Αφαίρεση
+              </h1>
+              <p className="text-blue-100 text-sm md:text-base mt-1">
+                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι αριθμοί αλλάζουν αυτόματα.
               </p>
             </div>
-            <Link
-              href="/d-dimotikou/3-prosthesi-afairesi-ask"
-              className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+
+            <button
+              onClick={loadNewQuestions}
+              className="bg-white text-gray-900 font-black px-5 py-3 rounded-2xl shadow-lg hover:bg-amber-50 transition transform active:scale-95 text-sm whitespace-nowrap"
             >
-              Ξεκίνα τις Ασκήσεις ➔
-            </Link>
+              🔄 Αλλαγή Αριθμών
+            </button>
           </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+
+            {renderAdditionCheck('q1', questions.q1, 1)}
+            {renderAdditionCheck('q2', questions.q2, 2)}
+
+            {renderSubtractionCheck('q3', questions.q3, 3)}
+            {renderSubtractionCheck('q4', questions.q4, 4)}
+
+            {renderMissingNumber('q5', questions.q5, 5)}
+            {renderMissingNumber('q6', questions.q6, 6)}
+
+            {renderTerminology('q7', questions.q7, 7)}
+            {renderTerminology('q8', questions.q8, 8)}
+
+            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+            {!submitted && (
+              <div className="text-center pt-4">
+                <button
+                  type="submit"
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
+                >
+                  🎯 Έλεγχος Απαντήσεων
+                </button>
+              </div>
+            )}
+
+          </form>
 
         </main>
       </div>
 
-      {/* FOOTER */}
-      <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
-        <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη Δ' Δημοτικού.</p>
-      </footer>
+      {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
+          
+          <div className="flex items-center gap-4">
+            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆 Σκορ:</span>
+              <span className="text-2xl font-mono">{score} / 8</span>
+            </div>
+            {submitted && (
+              <span className="text-sm font-bold text-slate-300">
+                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3">
+            {submitted ? (
+              <button
+                onClick={loadNewQuestions}
+                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
+              >
+                <span>🔄</span> Παίξε ξανά με νέους αριθμούς!
+              </button>
+            ) : (
+              <p className="text-xs text-slate-400 hidden md:block">
+                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+              </p>
+            )}
+          </div>
+
+        </div>
+      </div>
+
     </div>
   );
 }
