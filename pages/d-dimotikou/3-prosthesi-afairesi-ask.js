@@ -5,6 +5,12 @@ import { LAYOUT } from '../../shared/layout-config';
 
 // --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
 
+// Παραγωγή τυχαίου πολλαπλάσιου του 10 (ώστε να τελειώνει πάντα σε 0)
+function getRandomIntEndingInZero(min, max) {
+  const raw = Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.round(raw / 10) * 10;
+}
+
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -15,8 +21,8 @@ function formatNumber(num) {
 
 // 1. Ασκηση: Επαλήθευση Πρόσθεσης με Αφαίρεση
 function makeAdditionCheckQuestion() {
-  const a = getRandomInt(1000, 10000);
-  const b = getRandomInt(500, 5000);
+  const a = getRandomIntEndingInZero(1000, 10000);
+  const b = getRandomIntEndingInZero(500, 5000);
   const sum = a + b;
 
   // Επιλέγουμε τυχαία ποιος προσθετέος θα αφαιρεθεί
@@ -35,8 +41,8 @@ function makeAdditionCheckQuestion() {
 
 // 2. Ασκηση: Επαλήθευση Αφαίρεσης με Πρόσθεση (Δοκιμή)
 function makeSubtractionCheckQuestion() {
-  const diff = getRandomInt(1000, 8000);
-  const sub = getRandomInt(500, 5000);
+  const diff = getRandomIntEndingInZero(1000, 8000);
+  const sub = getRandomIntEndingInZero(500, 5000);
   const min = diff + sub;
 
   return {
@@ -50,8 +56,8 @@ function makeSubtractionCheckQuestion() {
 // 3. Ασκηση: Εύρεση Άγνωστου Αριθμού
 function makeMissingNumberQuestion() {
   const isAddition = Math.random() > 0.5;
-  const a = getRandomInt(1000, 8000);
-  const b = getRandomInt(500, 4000);
+  const a = getRandomIntEndingInZero(1000, 8000);
+  const b = getRandomIntEndingInZero(500, 4000);
 
   if (isAddition) {
     const sum = a + b;
