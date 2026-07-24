@@ -8,6 +8,7 @@ export default function DDimotikouMenu() {
     { id: '1-arithmoi-eos-20-xiliades', label: '🍕 1. Αριθμοί έως 20.000', href: '/d-dimotikou/1-arithmoi-eos-20-xiliades' },
     { id: '2-poligona', label: '🍕 2. Πολύγωνα', href: '/d-dimotikou/2-poligona' },
     { id: '3-prosthesi-afairesi', label: '🍕 3. Πρόσθεση - Αφαίρεση Αντίστροφες', href: '/d-dimotikou/3-prosthesi-afairesi' },
+    { id: '4-pollaplasiasmos', label: '🍕 4. Πολλαπλασιασμός', href: '/d-dimotikou/4-pollaplasiasmos' },
     { id: '1-megaloi-arithmoi', label: '🍕 10. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
     { id: '2-katheti-diairesi', label: '🔄 20. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' },
     { id: '3-dekadikoi', label: '✂️ 30. Δεκαδικοί', href: '/d-dimotikou/3-dekadikoi' },
