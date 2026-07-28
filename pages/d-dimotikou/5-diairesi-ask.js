@@ -188,7 +188,7 @@ export default function DiairesiAskPage() {
       <div className="flex items-center gap-3 mb-4">
         <span className="bg-amber-500 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
         <h3 className="text-lg font-bold text-gray-900">
-          Πόσο είναι το <span className="text-amber-600 font-bold">υπόλοιπο ($υ$)</span> της διαίρεσης <span className="text-amber-600 font-mono font-black">{formatNumber(qData.dividend)} : {qData.divisor}</span>;
+          Πόσο είναι το <span className="text-amber-600 font-bold">υπόλοιπο (υ)</span> της διαίρεσης <span className="text-amber-600 font-mono font-black">{formatNumber(qData.dividend)} : {qData.divisor}</span>;
         </h3>
       </div>
 
@@ -275,7 +275,7 @@ export default function DiairesiAskPage() {
       <div className="flex items-center gap-3 mb-4">
         <span className="bg-teal-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
         <h3 className="text-lg font-bold text-gray-900">
-          Ένας αριθμός όταν διαιρεθεί με το <span className="text-teal-600 font-mono font-black">{qData.divisor}</span> δίνει πηλίκο <span className="text-teal-600 font-mono font-black">{qData.quotient}</span> και υπόλοιπο <span className="text-teal-600 font-mono font-black">{qData.remainder}</span>. Ποιος είναι ο αρχικός αριθμός ($Δ$);
+          Ένας αριθμός όταν διαιρεθεί με το <span className="text-teal-600 font-mono font-black">{qData.divisor}</span> δίνει πηλίκο <span className="text-teal-600 font-mono font-black">{qData.quotient}</span> και υπόλοιπο <span className="text-teal-600 font-mono font-black">{qData.remainder}</span>. Ποιος είναι ο αρχικός αριθμός (Δ);
         </h3>
       </div>
 
@@ -343,7 +343,7 @@ export default function DiairesiAskPage() {
                 📝 Ασκήσεις: Η Διαίρεση
               </h1>
               <p className="text-purple-100 text-sm md:text-base mt-1">
-                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι αριθμοί αλλάζουν αυτόματα.
+                Πατώντας «Νέες Ασκήσεις» οι αριθμοί αλλάζουν αυτόματα.
               </p>
             </div>
 
