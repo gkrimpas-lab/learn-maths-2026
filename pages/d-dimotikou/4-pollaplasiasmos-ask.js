@@ -18,7 +18,7 @@ function formatNumber(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-// 1. Ασκηση: Πολλαπλασιασμός με πολλαπλάσια του 10
+// 1. Ασκηση: Πολλαπλασιασμός με πολλαπλάσια του 10 (Input)
 function makeRoundMultiplicationQuestion() {
   const a = getRandomInt(12, 45);
   const b = getRandomIntEndingInZero(10, 50);
@@ -29,14 +29,14 @@ function makeRoundMultiplicationQuestion() {
   };
 }
 
-// 2. Ασκηση: Εύρεση Μερικού Γινομένου (1ο ή 2ο)
+// 2. Ασκηση: Εύρεση Μερικού Γινομένου (Input)
 function makePartialProductQuestion() {
   const a = getRandomInt(14, 45);
   const unitsB = getRandomInt(2, 9);
   const tensB = getRandomInt(1, 4);
   const b = tensB * 10 + unitsB;
 
-  const isFirstPartial = Math.random() > 0.5; // 1ο (μονάδες) ή 2ο (δεκάδες)
+  const isFirstPartial = Math.random() > 0.5;
 
   if (isFirstPartial) {
     return {
@@ -55,7 +55,53 @@ function makePartialProductQuestion() {
   }
 }
 
-// 3. Ασκηση: Τελικός Πολλαπλασιασμός Διψήφιων
+// 3. Ασκηση: Πολλαπλασιασμός Διψήφιων με Πολλαπλή Επιλογή (4 επιλογές)
+function makeMCQMultiplicationQuestion() {
+  const a = getRandomInt(14, 38);
+  const b = getRandomInt(12, 28);
+  const correct = a * b;
+
+  // Παραγωγή 3 λανθασμένων απαντήσεων (με συχνά λάθη)
+  const wrong1 = correct + 10;
+  const wrong2 = correct - 10;
+  const wrong3 = (a * Math.floor(b / 10) * 10) + (a * (b % 10)); // πιθανό υπολογιστικό λάθος
+
+  let choices = [
+    { text: formatNumber(correct), isCorrect: true },
+    { text: formatNumber(wrong1), isCorrect: false },
+    { text: formatNumber(wrong2), isCorrect: false },
+    { text: formatNumber(wrong3 !== correct ? wrong3 : correct + 20), isCorrect: false }
+  ];
+
+  // Αφαίρεση τυχόν διπλότυπων αν προκύψουν
+  const uniqueChoices = [];
+  const map = new Map();
+  for (const item of choices) {
+    if (!map.has(item.text)) {
+      map.set(item.text, true);
+      uniqueChoices.push(item);
+    }
+  }
+
+  // Αν λείπουν επιλογές λόγω διπλότυπων, συμπληρώνουμε
+  while (uniqueChoices.length < 4) {
+    const dummy = correct + getRandomInt(5, 30);
+    const dummyText = formatNumber(dummy);
+    if (!map.has(dummyText)) {
+      map.set(dummyText, true);
+      uniqueChoices.push({ text: dummyText, isCorrect: false });
+    }
+  }
+
+  return {
+    a,
+    b,
+    options: uniqueChoices.sort(() => Math.random() - 0.5),
+    correct: formatNumber(correct)
+  };
+}
+
+// 4. Ασκηση: Τελικός Πολλαπλασιασμός Διψήφιων (Input)
 function makeFullMultiplicationQuestion() {
   const a = getRandomInt(12, 35);
   const b = getRandomInt(12, 28);
@@ -66,58 +112,6 @@ function makeFullMultiplicationQuestion() {
   };
 }
 
-// 4. Ασκηση: Πρόβλημα / Ορολογία (MCQ)
-function makeProblemOrTerminologyQuestion() {
-  const isProblem = Math.random() > 0.5;
-
-  if (isProblem) {
-    const items = getRandomInt(12, 25);
-    const costPerItem = getRandomIntEndingInZero(10, 40);
-    const correct = items * costPerItem;
-
-    const wrong1 = items * (costPerItem + 10);
-    const wrong2 = (items + 5) * costPerItem;
-
-    const options = [
-      { text: `${formatNumber(correct)} €`, isCorrect: true },
-      { text: `${formatNumber(wrong1)} €`, isCorrect: false },
-      { text: `${formatNumber(wrong2)} €`, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    return {
-      qText: `Ένα κατάστημα πουλάει ${items} βιβλία. Αν το κάθε βιβλίο κοστίζει ${costPerItem} €, πόσο κοστίζουν όλα μαζί;`,
-      options,
-      correct: `${formatNumber(correct)} €`
-    };
-  } else {
-    const terms = [
-      {
-        q: 'Στον πολλαπλασιασμό 15 × 20 = 300, ο αριθμός 300 ονομάζεται:',
-        correct: 'Γινόμενο',
-        wrongs: ['Άθροισμα', 'Διαφορά']
-      },
-      {
-        q: 'Οι αριθμοί που πολλαπλασιάζουμε μεταξύ τους ονομάζονται:',
-        correct: 'Παράγοντες',
-        wrongs: ['Προσθετέοι', 'Διαφορές']
-      }
-    ];
-
-    const selected = terms[getRandomInt(0, terms.length - 1)];
-    const options = [
-      { text: selected.correct, isCorrect: true },
-      { text: selected.wrongs[0], isCorrect: false },
-      { text: selected.wrongs[1], isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    return {
-      qText: selected.q,
-      options,
-      correct: selected.correct
-    };
-  }
-}
-
 // Δημιουργία 8 Ερωτήσεων
 function generateQuestions() {
   return {
@@ -125,10 +119,10 @@ function generateQuestions() {
     q2: makeRoundMultiplicationQuestion(),
     q3: makePartialProductQuestion(),
     q4: makePartialProductQuestion(),
-    q5: makeFullMultiplicationQuestion(),
-    q6: makeFullMultiplicationQuestion(),
-    q7: makeProblemOrTerminologyQuestion(),
-    q8: makeProblemOrTerminologyQuestion()
+    q5: makeMCQMultiplicationQuestion(),
+    q6: makeMCQMultiplicationQuestion(),
+    q7: makeFullMultiplicationQuestion(),
+    q8: makeFullMultiplicationQuestion()
   };
 }
 
@@ -166,16 +160,16 @@ export default function PollaplasiasmosAskPage() {
     if (parseInt(answers.q2, 10) === questions.q2.correct) currentScore += 1;
     if (parseInt(answers.q3, 10) === questions.q3.correct) currentScore += 1;
     if (parseInt(answers.q4, 10) === questions.q4.correct) currentScore += 1;
-    if (parseInt(answers.q5, 10) === questions.q5.correct) currentScore += 1;
-    if (parseInt(answers.q6, 10) === questions.q6.correct) currentScore += 1;
-    if (answers.q7 === questions.q7.correct) currentScore += 1;
-    if (answers.q8 === questions.q8.correct) currentScore += 1;
+    if (answers.q5 === questions.q5.correct) currentScore += 1;
+    if (answers.q6 === questions.q6.correct) currentScore += 1;
+    if (parseInt(answers.q7, 10) === questions.q7.correct) currentScore += 1;
+    if (parseInt(answers.q8, 10) === questions.q8.correct) currentScore += 1;
 
     setScore(currentScore);
     setSubmitted(true);
   };
 
-  // Render Q1 & Q2: Στρογγυλοί Αριθμοί
+  // Render Q1 & Q2: Στρογγυλοί Αριθμοί (Input)
   const renderRoundMultiplication = (qKey, qData, numLabel) => (
     <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
       submitted 
@@ -212,7 +206,7 @@ export default function PollaplasiasmosAskPage() {
     </div>
   );
 
-  // Render Q3 & Q4: Μερικά Γινόμενα
+  // Render Q3 & Q4: Μερικά Γινόμενα (Input)
   const renderPartialProduct = (qKey, qData, numLabel) => (
     <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
       submitted 
@@ -249,7 +243,57 @@ export default function PollaplasiasmosAskPage() {
     </div>
   );
 
-  // Render Q5 & Q6: Τελικός Πολλαπλασιασμός
+  // Render Q5 & Q6: Πολλαπλή Επιλογή με 4 επιλογές (MCQ)
+  const renderMCQMultiplication = (qKey, qData, numLabel) => (
+    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
+      submitted 
+        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
+        : 'border-gray-100'
+    }`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
+        <h3 className="text-lg font-bold text-gray-900">
+          Επίλεξε το σωστό γινόμενο: <span className="text-purple-600 font-mono font-black text-xl">{qData.a} × {qData.b}</span>
+        </h3>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-0 md:pl-11">
+        {qData.options.map((opt, idx) => (
+          <label 
+            key={idx} 
+            className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${
+              answers[qKey] === opt.text 
+                ? 'border-purple-600 bg-purple-50/80 font-bold' 
+                : 'border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            <input 
+              type="radio" 
+              name={qKey} 
+              value={opt.text}
+              checked={answers[qKey] === opt.text}
+              onChange={() => handleInputChange(qKey, opt.text)}
+              disabled={submitted}
+              className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+            />
+            <span className="text-gray-800 font-mono text-base">{opt.text}</span>
+          </label>
+        ))}
+      </div>
+
+      {submitted && (
+        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
+          {answers[qKey] === qData.correct ? (
+            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
+          ) : (
+            <p className="text-red-600">❌ Λάθος. Το σωστό αποτέλεσμα είναι: <span className="font-mono font-black">{qData.correct}</span></p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // Render Q7 & Q8: Τελικός Πολλαπλασιασμός (Input)
   const renderFullMultiplication = (qKey, qData, numLabel) => (
     <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
       submitted 
@@ -280,56 +324,6 @@ export default function PollaplasiasmosAskPage() {
             <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
           ) : (
             <p className="text-red-600">❌ Λάθος. Το τελικό γινόμενο είναι: <span className="font-mono font-black">{formatNumber(qData.correct)}</span></p>
-          )}
-        </div>
-      )}
-    </div>
-  );
-
-  // Render Q7 & Q8: Πρόβλημα / Ορολογία
-  const renderProblemOrTerminology = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900">
-          {qData.qText}
-        </h3>
-      </div>
-
-      <div className="space-y-3 pl-0 md:pl-11">
-        {qData.options.map((opt, idx) => (
-          <label 
-            key={idx} 
-            className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${
-              answers[qKey] === opt.text 
-                ? 'border-purple-600 bg-purple-50/80 font-bold' 
-                : 'border-gray-200 hover:bg-gray-50'
-            }`}
-          >
-            <input 
-              type="radio" 
-              name={qKey} 
-              value={opt.text}
-              checked={answers[qKey] === opt.text}
-              onChange={() => handleInputChange(qKey, opt.text)}
-              disabled={submitted}
-              className="w-5 h-5 text-purple-600 focus:ring-purple-500"
-            />
-            <span className="text-gray-800 text-sm md:text-base">{opt.text}</span>
-          </label>
-        ))}
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {answers[qKey] === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. Η σωστή απάντηση είναι: <span className="font-black">{qData.correct}</span></p>
           )}
         </div>
       )}
@@ -397,11 +391,11 @@ export default function PollaplasiasmosAskPage() {
             {renderPartialProduct('q3', questions.q3, 3)}
             {renderPartialProduct('q4', questions.q4, 4)}
 
-            {renderFullMultiplication('q5', questions.q5, 5)}
-            {renderFullMultiplication('q6', questions.q6, 6)}
+            {renderMCQMultiplication('q5', questions.q5, 5)}
+            {renderMCQMultiplication('q6', questions.q6, 6)}
 
-            {renderProblemOrTerminology('q7', questions.q7, 7)}
-            {renderProblemOrTerminology('q8', questions.q8, 8)}
+            {renderFullMultiplication('q7', questions.q7, 7)}
+            {renderFullMultiplication('q8', questions.q8, 8)}
 
             {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
             {!submitted && (
