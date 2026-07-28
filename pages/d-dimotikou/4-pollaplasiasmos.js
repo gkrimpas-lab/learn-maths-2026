@@ -61,7 +61,7 @@ export default function PollaplasiasmosTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 4
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   ✖️ Πολλαπλασιασμός με Διψήφιο Αριθμό
@@ -137,7 +137,7 @@ export default function PollaplasiasmosTheoryPage() {
               <p className="font-mono bg-white p-3 rounded-xl border border-gray-200">
                 <span className="text-emerald-600 font-bold">43 (Πολλαπλασιαστέος)</span> × <span className="text-indigo-600 font-bold">25 (Πολλαπλασιαστής)</span> = <span className="text-purple-700 font-black">1.075 (Γινόμενο)</span>
               </p>
-              <p className="text-gray-500 italic">Οι δύο αριθμοί που πολλαπλασιάζουμε λέγονται και **Παράγοντες του Γινομένου**.</p>
+              <p className="text-gray-500 italic">Οι δύο αριθμοί που πολλαπλασιάζουμε λέγονται και "Παράγοντες του Γινομένου".</p>
             </div>
 
           </div>
@@ -165,7 +165,7 @@ export default function PollaplasiasmosTheoryPage() {
             {/* INPUTS / SLIDERS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
               <div>
-                <label className="block text-xs font-black uppercase text-gray-500 mb-1">
+                <label className="block text-xs font-black text-gray-500 mb-1">
                   1ος Αριθμός (Πάνω): <span className="text-emerald-600 font-mono text-base font-black">{numA}</span>
                 </label>
                 <input 
@@ -179,7 +179,7 @@ export default function PollaplasiasmosTheoryPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase text-gray-500 mb-1">
+                <label className="block text-xs font-black text-gray-500 mb-1">
                   2ος Αριθμός (Κάτω): <span className="text-indigo-600 font-mono text-base font-black">{numB}</span>
                 </label>
                 <input 
@@ -234,7 +234,7 @@ export default function PollaplasiasmosTheoryPage() {
                 <div className="space-y-3 text-sm">
                   
                   <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 space-y-1">
-                    <span className="text-xs font-black uppercase text-amber-800">Βήμα 1: Μονάδες ({unitsB})</span>
+                    <span className="text-xs font-black text-amber-800">Βήμα 1: Μονάδες ({unitsB})</span>
                     <p className="font-mono text-gray-800 font-bold">
                       {numA} × {unitsB} = <span className="text-amber-600 font-black">{formatNumber(partial1)}</span>
                     </p>
@@ -242,7 +242,7 @@ export default function PollaplasiasmosTheoryPage() {
                   </div>
 
                   <div className="p-4 bg-teal-50 rounded-2xl border border-teal-200 space-y-1">
-                    <span className="text-xs font-black uppercase text-teal-800">Βήμα 2: Δεκάδες ({tensB}0)</span>
+                    <span className="text-xs font-black text-teal-800">Βήμα 2: Δεκάδες ({tensB}0)</span>
                     <p className="font-mono text-gray-800 font-bold">
                       {numA} × {tensB * 10} = <span className="text-teal-600 font-black">{formatNumber(partial2)}</span>
                     </p>
@@ -250,7 +250,7 @@ export default function PollaplasiasmosTheoryPage() {
                   </div>
 
                   <div className="p-4 bg-purple-50 rounded-2xl border border-purple-200 space-y-1">
-                    <span className="text-xs font-black uppercase text-purple-800">Βήμα 3: Τελικό Άθροισμα</span>
+                    <span className="text-xs font-black text-purple-800">Βήμα 3: Τελικό Άθροισμα</span>
                     <p className="font-mono text-gray-800 font-bold">
                       {formatNumber(partial1)} + {formatNumber(partial2)} = <span className="text-purple-700 font-black">{formatNumber(total)}</span>
                     </p>
