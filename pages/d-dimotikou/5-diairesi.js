@@ -3,31 +3,82 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+const LIMITS = {
+  MIN_DIVISOR: 1,
+  MAX_VISUAL_BOXES: 120
+};
 
 export default function DiairesiTheoryPage() {
-  const [dividend, setDividend] = useState(145); // Διαιρετέος (Δ)
-  const [divisor, setDivisor] = useState(4);    // Διαιρέτης (δ)
+  const [activeTab, setActiveTab] = useState('katheti'); // 'katheti' ή 'moirasma'
+  
+  // Κατάσταση για την πράξη
+  const [dividendInput, setDividendInput] = useState("1569");
+  const [divisorInput, setDivisorInput] = useState("8");
 
-  // Υπολογισμοί διαίρεσης
-  const quotient = Math.floor(dividend / divisor); // Πηλίκο (π)
-  const remainder = dividend % divisor;            // Υπόλοιπο (υ)
-  const isExact = remainder === 0;
+  const D = Math.floor(parseFloat(dividendInput)) || 0;
+  const d = Math.floor(parseFloat(divisorInput)) || LIMITS.MIN_DIVISOR;
 
-  const handleRandomize2Digit = () => {
-    setDividend(getRandomInt(10, 99));
-    setDivisor(getRandomInt(2, 9));
+  // Βασικοί υπολογισμοί
+  const q = Math.floor(D / d);
+  const r = D % d;
+  const isPerfect = r === 0;
+
+  // Παραγωγή των αναλυτικών σχολικών βημάτων με ακριβείς θέσεις ψηφίων
+  const generateSchoolSteps = () => {
+    if (D === 0 || d === 0) return [];
+    
+    const steps = [];
+    const divStr = D.toString();
+    let currentVal = 0;
+    
+    for (let i = 0; i < divStr.length; i++) {
+      const nextDigit = parseInt(divStr[i]);
+      currentVal = currentVal * 10 + nextDigit;
+      
+      if (currentVal >= d || i === divStr.length - 1) {
+        const times = Math.floor(currentVal / d);
+        const product = times * d;
+        const remainder = currentVal - product;
+        
+        if (times > 0 || steps.length > 0 || i === divStr.length - 1) {
+          steps.push({
+            workNum: currentVal,
+            product: product,
+            remainder: remainder,
+            digitIndex: i // Το index του ψηφίου που μόλις κατέβηκε
+          });
+        }
+        
+        currentVal = remainder;
+      }
+    }
+    return steps;
   };
 
-  const handleRandomize3Digit = () => {
-    setDividend(getRandomInt(100, 999));
-    setDivisor(getRandomInt(2, 9));
+  const schoolSteps = generateSchoolSteps();
+  const divDigits = D.toString().split('');
+  const maxDigits = divDigits.length;
+
+  // Ασφαλής έλεγχος των inputs (έως 3-4 ψηφία για τον Διαιρετέο και 1 ψηφίο για τον Διαιρέτη)
+  const handleInputChange = (val, setter, isDivisor = false) => {
+    const cleanVal = val.replace(/[^0-9]/g, '');
+    if (cleanVal.length <= (isDivisor ? 1 : 4)) {
+      if (isDivisor && parseInt(cleanVal) === 0) return;
+      setter(cleanVal);
+    }
+  };
+
+  // Βοηθητική συνάρτηση για τη μετατροπή αριθμού σε πίνακα ψηφίων με padding στα αριστερά
+  const getPaddedDigits = (num, endIndex) => {
+    const numStr = num.toString();
+    const digits = new Array(maxDigits).fill('');
+    
+    let numIdx = numStr.length - 1;
+    for (let i = endIndex; i >= 0 && numIdx >= 0; i--) {
+      digits[i] = numStr[numIdx];
+      numIdx--;
+    }
+    return digits;
   };
 
   return (
@@ -89,193 +140,261 @@ export default function DiairesiTheoryPage() {
           </div>
 
           {/* ΘΕΩΡΙΑ - SECTION 1 */}
-          <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
-            <div className="border-b pb-4 border-gray-100">
-              <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία & Ορισμοί
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* Τι είναι η Διαίρεση */}
-              <div className="bg-indigo-50/70 p-6 rounded-2xl border border-indigo-100 space-y-3">
-                <h3 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
-                  <span>🔹</span> Τι είναι η Διαίρεση;
-                </h3>
-                <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-                  <strong>Διαίρεση</strong> είναι η πράξη με την οποία <strong>μοιράζουμε</strong> έναν αριθμό σε ίσα μέρη ή υπολογίζουμε πόσες φορές χωράει ένας αριθμός μέσα σε έναν άλλο.
+          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div className="space-y-4">
+                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+                  <span>📖</span> Θεωρία: Τέλεια και Ατελής Διαίρεση
+                </h2>
+                <p className="text-gray-500 text-sm md:text-base leading-relaxed">
+                  «Διαίρεση» είναι η πράξη με την οποία μοιράζουμε έναν αριθμό σε ίσα μέρη. Είναι η αντίστροφη πράξη του πολλαπλασιασμού.
                 </p>
-                <div className="bg-white p-3 rounded-xl border border-indigo-100 text-xs text-indigo-950 font-medium">
-                  💡 <i>Η Διαίρεση είναι η **αντίστροφη πράξη του Πολλαπλασιασμού**!</i>
+                <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-100 space-y-2 text-sm md:text-base font-medium">
+                  <p>🎯 <strong>Τέλεια Διαίρεση:</strong> Είναι η διαίρεση στην οποία το υπόλοιπο είναι ακριβώς «0» (π.χ. 12 : 3 = 4).</p>
+                  <p>🔍 <strong>Ατελής Διαίρεση:</strong> Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο «διάφορο του μηδενός» (π.χ. 14 : 3 = 4 και υπόλοιπο 2).</p>
                 </div>
               </div>
-
-              {/* Τέλεια vs Ατελής */}
-              <div className="bg-purple-50/70 p-6 rounded-2xl border border-purple-100 space-y-3">
-                <h3 className="text-lg font-bold text-purple-900 flex items-center gap-2">
-                  <span>⚖️</span> Τέλεια & Ατελής Διαίρεση
-                </h3>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start gap-2">
-                    <span className="text-emerald-600 font-bold">•</span>
-                    <span><strong>Τέλεια Διαίρεση:</strong> Όταν δεν περισσεύει τίποτα, δηλαδή το **Υπόλοιπο είναι 0 ($υ = 0$)**.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-amber-600 font-bold">•</span>
-                    <span><strong>Ατελής Διαίρεση:</strong> Όταν περισσεύει κάτι, δηλαδή το **Υπόλοιπο είναι μεγαλύτερο του 0 ($υ &gt; 0$)**.</span>
-                  </li>
-                </ul>
-              </div>
-
-            </div>
-
-            {/* ΟΡΟΛΟΓΙΑ & ΕΠΑΛΗΘΕΥΣΗ */}
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4">
-              <h3 className="text-lg font-extrabold text-gray-800">
-                🏷️ Οι Όροι της Διαίρεσης & η Επαλήθευση
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                
-                <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-2">
-                  <h4 className="font-bold text-purple-700 border-b pb-1">1. Τα 4 στοιχεία της διαίρεσης:</h4>
-                  <ul className="space-y-1 text-xs md:text-sm text-gray-700 font-mono">
-                    <li><strong className="text-indigo-600">Διαιρετέος (Δ):</strong> Ο αριθμός που μοιράζουμε.</li>
-                    <li><strong className="text-blue-600">Διαιρέτης (δ):</strong> Σε πόσα μέρη μοιράζουμε.</li>
-                    <li><strong className="text-emerald-600">Πηλίκο (π):</strong> Πόσο παίρνει το κάθε μέρος.</li>
-                    <li><strong className="text-amber-600">Υπόλοιπο (υ):</strong> Πόσο περισσεύει ($υ &lt; δ$).</li>
-                  </ul>
+              
+              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-md space-y-3 text-center py-8">
+                <span className="text-amber-300 font-black text-lg">🧪 Η Μαθηματική Επαλήθευση</span>
+                <div className="bg-white/10 p-4 rounded-xl font-mono text-sm md:text-base tracking-wide inline-block text-left">
+                  <div className="font-bold text-center text-amber-200 text-lg mb-2">Δ ＝ δ × π ＋ υ</div>
+                  <div>• <strong>Δ</strong> (Διαιρετέος): O αριθμός που μοιράζουμε</div>
+                  <div>• <strong>δ</strong> (διαιρέτης): Σε πόσα μέρη μοιράζουμε</div>
+                  <div>• <strong>π</strong> (πηλίκο): Το αποτέλεσμα της διαίρεσης</div>
+                  <div>• <strong>υ</strong> (υπόλοιπο): Αυτό που περισσεύει (πάντα μικρότερο από το δ)</div>
                 </div>
-
-                <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-2">
-                  <h4 className="font-bold text-emerald-700 border-b pb-1">2. Τύπος Επαλήθευσης (με Πολλαπλασιασμό)</h4>
-                  <p className="text-xs text-gray-600">Για να ελέγξουμε αν η διαίρεση είναι σωστή, κάνουμε τον πολλαπλασιασμό:</p>
-                  <p className="font-mono font-bold text-gray-800 bg-emerald-50 p-3 rounded-lg text-center text-sm md:text-base border border-emerald-200">
-                    Διαιρετέος = (Διαιρέτης × Πηλίκο) + Υπόλοιπο
-                    <span className="block text-xs font-normal text-emerald-800 mt-1">Δ = (δ × π) + υ</span>
-                  </p>
-                </div>
-
               </div>
             </div>
-
           </div>
 
-          {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ - SECTION 2 */}
-          <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
-              <div>
-                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εργαστήριο Διαίρεσης & Επαλήθευσης
-                </h2>
-                <p className="text-gray-500 text-sm">
-                  Άλλαξε τους αριθμούς και δες αυτόματα τη διαίρεση, τους όρους της και την επαλήθευση!
-                </p>
-              </div>
+          {/* TABS ΕΝΑΛΛΑΓΗΣ */}
+          <div className="flex justify-center bg-gray-200/60 p-1.5 rounded-2xl max-w-md mx-auto shadow-inner">
+            <button  
+              onClick={() => setActiveTab('katheti')}
+              className={`flex-1 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all duration-200 ${activeTab === 'katheti' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+            >
+              📊 Κάθετη Πράξη με Βήματα
+            </button>
+            <button  
+              onClick={() => setActiveTab('moirasma')}
+              className={`flex-1 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all duration-200 ${activeTab === 'moirasma' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+            >
+              🍕 Οπτικό Μείρασμα
+            </button>
+          </div>
 
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={handleRandomize2Digit}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-4 py-2.5 rounded-xl text-xs md:text-sm transition shadow-sm flex items-center gap-1.5"
-                >
-                  <span>🎲</span> Τυχαίος Διψήφιος
-                </button>
-                <button
-                  onClick={handleRandomize3Digit}
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-black px-4 py-2.5 rounded-xl text-xs md:text-sm transition shadow-sm flex items-center gap-1.5"
-                >
-                  <span>🎲</span> Τυχαίος Τριψήφιος
-                </button>
-              </div>
-            </div>
-
-            {/* SLIDERS XΕΙΡΙΣΜΟΥ */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
-              <div>
-                <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Διαιρετέος ($Δ$): <span className="text-indigo-600 font-mono text-base font-black">{formatNumber(dividend)}</span>
-                </label>
-                <input 
-                  type="range" 
-                  min="10" 
-                  max="999" 
-                  value={dividend} 
-                  onChange={(e) => setDividend(Number(e.target.value))}
-                  className="w-full accent-indigo-600 cursor-pointer"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Διαιρέτης ($δ$): <span className="text-blue-600 font-mono text-base font-black">{divisor}</span>
-                </label>
-                <input 
-                  type="range" 
-                  min="2" 
-                  max="9" 
-                  value={divisor} 
-                  onChange={(e) => setDivisor(Number(e.target.value))}
-                  className="w-full accent-blue-600 cursor-pointer"
-                />
-              </div>
-            </div>
-
-            {/* ΑΠΟΤΕΛΕΣΜΑΤΑ & ΕΠΑΛΗΘΕΥΣΗ */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          {/* SECTION 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch w-full">
+            
+            {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ΧΕΙΡΙΣΤΗΡΙΑ */}
+            <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[520px] w-full gap-6">
               
-              {/* ΑΡΙΣΤΕΡΑ: ΑΠΟΤΕΛΕΣΜΑ ΔΙΑΙΡΕΣΗΣ */}
-              <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl space-y-4 text-center">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-black uppercase ${
-                  isExact ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                }`}>
-                  {isExact ? '✨ Τέλεια Διαίρεση' : '⚠️ Ατελής Διαίρεση'}
-                </span>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black text-gray-900">
+                  {activeTab === 'katheti' ? "Διαδραστική Διαίρεση με Σχολικά Βήματα" : "Μοντέλο Οπτικής Κατανομής"}
+                </h3>
+                <p className="text-gray-500 text-sm">
+                  {activeTab === 'moirasma' && D > LIMITS.MAX_VISUAL_BOXES 
+                    ? `Βάλε Διαιρετέο έως ${LIMITS.MAX_VISUAL_BOXES} για να δεις το οπτικό μοίρασμα.` 
+                    : "Γράψε φυσικούς αριθμούς για να παραχθούν αυτόματα όλα τα ενδιάμεσα βήματα της πράξης."}
+                </p>
+              </div>
 
-                <div className="text-3xl md:text-4xl font-mono font-black text-white">
-                  <span className="text-indigo-400">{formatNumber(dividend)}</span> : <span className="text-blue-400">{divisor}</span> = <span className="text-emerald-400">{formatNumber(quotient)}</span>
+              <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full flex flex-col gap-4 shadow-inner my-auto">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
+                  
+                  {/* Input Διαιρετέος */}
+                  <div className="flex flex-col items-center gap-1 w-full sm:max-w-[160px]">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">Διαιρετεος (Δ)</span>
+                    <input  
+                      type="text"  
+                      value={dividendInput}
+                      onChange={(e) => handleInputChange(e.target.value, setDividendInput)}
+                      className="text-lg font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-sm w-full text-blue-600 outline-none focus:border-blue-500 tracking-normal font-mono"
+                      placeholder="π.χ. 1569"
+                    />
+                  </div>
+
+                  <span className="text-xl font-black text-slate-400 mt-4 flex-shrink-0">÷</span>
+
+                  {/* Input Διαιρέτης */}
+                  <div className="flex flex-col items-center gap-1 w-full sm:max-w-[140px]">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">Διαιρετης (δ)</span>
+                    <input  
+                      type="text"  
+                      value={divisorInput}
+                      onChange={(e) => handleInputChange(e.target.value, setDivisorInput, true)}
+                      className="text-lg font-black text-center p-2.5 bg-white border-2 border-emerald-200 rounded-xl shadow-sm w-full text-emerald-600 outline-none focus:border-emerald-500 tracking-normal font-mono"
+                      placeholder="π.χ. 8"
+                    />
+                  </div>
                 </div>
 
-                <div className="flex justify-center gap-4 text-sm font-mono pt-2 border-t border-slate-800">
-                  <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-                    <span className="text-slate-400 block text-xs">Πηλίκο ($π$)</span>
-                    <span className="text-emerald-400 font-black text-xl">{formatNumber(quotient)}</span>
-                  </div>
-                  <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-                    <span className="text-slate-400 block text-xs">Υπόλοιπο ($υ$)</span>
-                    <span className="text-amber-400 font-black text-xl">{remainder}</span>
+                <div className="bg-white p-3 rounded-xl border shadow-sm text-center flex flex-col gap-1.5 font-sans">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Κατασταση Πραξης:</div>
+                  <div className={`text-base font-black px-4 py-1 rounded-full inline-block mx-auto ${isPerfect ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>
+                    {isPerfect ? "🎯 TΕΛΕΙΑ ΔΙΑΙΡΕΣΗ" : "🔍 ΑΤΕΛΗΣ ΔΙΑΙΡΕΣΗ"}
                   </div>
                 </div>
               </div>
 
-              {/* ΔΕΞΙΑ: ΑΝΑΛΥΤΙΚΗ ΕΠΑΛΗΘΕΥΣΗ ΜΕ ΠΟΛΛΑΠΛΑΣΙΑΣΜΟ */}
-              <div className="bg-emerald-50/70 p-6 md:p-8 rounded-3xl border border-emerald-200 space-y-4">
-                <div className="flex items-center gap-2 border-b border-emerald-200 pb-3">
-                  <span className="text-2xl">✅</span>
-                  <h3 className="font-extrabold text-emerald-950 text-lg">Επαλήθευση με Πολλαπλασιασμό</h3>
-                </div>
-
-                <p className="text-xs md:text-sm text-gray-700">
-                  Δείχνουμε ότι ο πολλαπλασιασμός είναι η αντίστροφη πράξη της διαίρεσης:
-                </p>
-
-                <div className="bg-white p-4 rounded-2xl border border-emerald-200 font-mono text-base md:text-lg space-y-2 text-center shadow-sm">
-                  <div className="text-gray-800 font-bold">
-                    (<span className="text-blue-600">{divisor}</span> × <span className="text-emerald-600">{formatNumber(quotient)}</span>) + <span className="text-amber-600">{remainder}</span>
-                  </div>
-                  <div className="text-sm text-gray-500 font-sans">
-                    = {formatNumber(divisor * quotient)} + {remainder}
-                  </div>
-                  <div className="text-2xl font-black text-indigo-600 border-t pt-2 border-gray-100">
-                    = {formatNumber(dividend)} <span className="text-xs text-gray-500 font-normal font-sans">(Διαιρετέος)</span>
-                  </div>
-                </div>
-
-                <p className="text-xs text-emerald-900 font-medium">
-                  💡 *Πολλαπλασιάσαμε το πηλίκο με τον διαιρέτη, προσθέσαμε το υπόλοιπο και βρήκαμε ακριβώς τον αρχικό αριθμό!*
-                </p>
+              {/* Πλαίσιο Μαθηματικής Επαλήθευσης */}
+              <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl text-center text-xs md:text-sm font-mono font-bold text-slate-600 shadow-inner">
+                ✨ Επαλήθευση: {q.toLocaleString('el-GR')} × {d} + {r} = <strong>{D.toLocaleString('el-GR')}</strong>
               </div>
+            </div>
 
+            {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΑΝΑΛΥΤΙΚΗ ΚΑΘΕΤΗ ΔΙΑΤΑΞΗ Ή ΟΠΤΙΚΟ ΜΟΙΡΑΣΜΑ */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center justify-between min-h-[520px] w-full relative overflow-hidden">
+              <div className="w-full"></div>
+
+              {activeTab === 'katheti' ? (
+                /* ΑΠΟΛΥΤΑ ΣТОΙΧΙΣΜΕΝΟΣ ΠΙΝΑΚΑΣ ΜΕ ΑΠΟΜΟΝΩΜΕΝΟ ΤΟ ΜΕΙΟΝ (-) */
+                <div className="my-auto flex flex-col items-center gap-2 w-full max-w-[360px] px-1">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Πληρης Αναλυση Πραξης:</span>
+                  
+                  <div className="w-full bg-slate-900 text-white p-6 rounded-2xl shadow-xl border-4 border-slate-700 font-mono text-xl md:text-2xl font-black relative min-h-[340px] flex py-8 select-none w-full justify-center">
+                    <div className="flex w-full items-start justify-center">
+                      
+                      {/* ΑΡΙΣΤΕΡΟ ΜΕΡΟΣ: ΔΙAIPETEOΣ & ΚΑΘΕΤΕΣ ΑΦΑΙΡΕΣΕΙΣ */}
+                      <div className="flex flex-col items-end pr-4 text-right">
+                        {/* Αρχικός Διαιρετέος */}
+                        <div className="flex justify-end text-blue-400 font-bold mb-3 h-8 items-center">
+                          <div className="w-6"></div>
+                          <div className="flex justify-end">
+                            {divDigits.map((char, i) => (
+                              <span key={i} className="w-5 text-center">{char}</span>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* Σώμα Βημάτων */}
+                        <div className="flex flex-col items-end space-y-2 w-full">
+                          {schoolSteps.map((step, idx) => {
+                            const productDigits = getPaddedDigits(step.product, step.digitIndex);
+                            const remainderDigits = getPaddedDigits(step.remainder, step.digitIndex);
+
+                            return (
+                              <div key={idx} className="flex flex-col items-end w-full">
+                                {/* Σειρά Αφαίρεσης: Καθαρή 2-column διάταξη (Μείον + Ψηφία) */}
+                                <div className="flex items-center justify-end w-full h-7">
+                                  <span className="w-6 text-left text-red-500 font-semibold text-base md:text-lg select-none">-</span>
+                                  <div className="flex justify-end text-red-400 font-medium">
+                                    {productDigits.map((char, i) => (
+                                      <span key={i} className="w-5 text-center">{char}</span>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Οριζόντια Γραμμή Αφαίρεσης */}
+                                <div className="w-full flex justify-end h-[2px] my-1">
+                                  <div className="w-6"></div>
+                                  <div className="flex justify-end">
+                                    {productDigits.map((char, i) => (
+                                      <div key={i} className={`w-5 h-full ${char !== '' ? 'bg-slate-700' : ''}`}></div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Σειρά Αποτελέσματος / Επόμενου Αριθμού */}
+                                <div className="flex justify-end w-full h-7 items-center">
+                                  <div className="w-6"></div>
+                                  <div className="flex justify-end text-slate-300 font-extrabold">
+                                    {idx === schoolSteps.length - 1 ? (
+                                      remainderDigits.map((char, i) => (
+                                        <span key={i} className="w-5 text-center">{char}</span>
+                                      ))
+                                    ) : (
+                                      getPaddedDigits(schoolSteps[idx + 1].workNum, schoolSteps[idx + 1].digitIndex).map((char, i) => (
+                                        <span key={i} className="w-5 text-center">{char}</span>
+                                      ))
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* ΜΕΣΑΙΟ ΜΕΡΟΣ: Η ΚΑΘΕΤΗ ΓΡΑΜΜΗ ΤΟΥ Τ */}
+                      <div className="w-[3px] bg-slate-600 self-stretch min-h-[240px]"></div>
+
+                      {/* ΔΕΞΙ ΜΕΡΟΣ: ΔΙΑΙΡΕΤΗΣ & ΠΗΛΙΚΟ */}
+                      <div className="text-left pl-5 flex flex-col h-full justify-start">
+                        {/* Διαιρέτης */}
+                        <div className="text-emerald-400 font-bold border-b-4 border-slate-600 pb-2 tracking-wider flex w-full">
+                          {divisorInput.split('').map((char, i) => (
+                            <span key={i} className="w-5 text-center">{char}</span>
+                          ))}
+                        </div>
+                        
+                        {/* Τελικό Πηλίκο */}
+                        <div className="text-purple-400 pt-3 font-black tracking-wider flex w-full">
+                          {q.toString().split('').map((char, i) => (
+                            <span key={i} className="w-5 text-center">{char}</span>
+                          ))}
+                        </div>
+                        
+                        {/* Ένδειξη Τελικού Υπολοίπου */}
+                        <div className="mt-auto pt-12 text-[10px] font-sans font-black uppercase text-rose-400 tracking-wider">
+                          🏁 Υπολοιπο: {r}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between w-full text-[10px] font-bold text-slate-400 border-t pt-2 uppercase px-1 tracking-tight mt-1">
+                    <span>🔵 Δ = Διαιρετεος</span>
+                    <span>🟢 δ = Διαιρετης</span>  
+                    <span>🟣 π = Πηλικο</span>
+                  </div>
+                </div>
+              ) : (
+                /* ΟΠΤΙΚΟ ΜΟΙΡΑΣΜΑ ΣΕ ΟΜΑΔΕΣ */
+                <div className="my-auto flex flex-col items-center gap-4 w-full px-2 text-center">
+                  {D <= LIMITS.MAX_VISUAL_BOXES && D > 0 && d > 0 ? (
+                    <div className="flex flex-col items-center gap-4 w-full">
+                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Μοιρασμα σε {Math.floor(d)} ισες ομαδες:</span>
+                      
+                      <div className="flex flex-wrap gap-2 justify-center max-h-[260px] overflow-y-auto p-2 border rounded-xl bg-slate-50 w-full shadow-inner">
+                        {[...Array(Math.min(Math.floor(d), 30))].map((_, groupIdx) => (
+                          <div key={groupIdx} className="bg-white border-2 border-emerald-300 p-2 rounded-xl flex flex-wrap gap-1 items-center justify-center min-w-[50px] min-h-[50px]">
+                            {/* Τετραγωνάκια ανά ομάδα */}
+                            {[...Array(q)].map((_, boxIdx) => (
+                              <div key={boxIdx} className="w-3 h-3 bg-blue-500 rounded-sm" />
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Υπόλοιπο που περίσσεψε */}
+                      {r > 0 && (
+                        <div className="flex flex-col items-center gap-1.5 mt-1 animate-pulse">
+                          <span className="text-xs font-bold text-rose-500 uppercase tracking-wide">📦 Περισσεψαν (Υπολοιπο):</span>
+                          <div className="flex gap-1 bg-rose-50 border border-rose-200 p-2 rounded-lg">
+                            {[...Array(r)].map((_, i) => (
+                              <div key={i} className="w-3 h-3 bg-rose-500 rounded-sm" />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl max-w-xs mx-auto text-slate-500 text-sm font-medium space-y-2 shadow-inner">
+                      <p>📊 <strong>Αριθμητική Απεικόνιση</strong></p>
+                      <p className="text-xs text-slate-400 leading-relaxed">
+                        Βάλε έναν Διαιρετέο μικρότερο από {LIMITS.MAX_VISUAL_BOXES} για να δεις τα κουτάκια να μοιράζονται αυτόματα στις ομάδες.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-gray-50 mt-auto text-center">
+                <span>🔍 Το υπόλοιπο (υ) μιας ακέραιης διαίρεσης είναι πάντα μικρότερο από τον διαιρέτη (δ).</span>
+              </div>
             </div>
 
           </div>
