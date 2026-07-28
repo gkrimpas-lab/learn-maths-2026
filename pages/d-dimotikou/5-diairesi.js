@@ -123,7 +123,7 @@ export default function DiairesiTheoryPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-amber-600 font-bold">•</span>
-                    <span><strong>Ατελής Διαίρεση:</strong> Όταν περισσεύει κάτι, δηλαδή το **Υπόλοιπο είναι μεγαλύτερο του 0 ($υ > 0$)**.</span>
+                    <span><strong>Ατελής Διαίρεση:</strong> Όταν περισσεύει κάτι, δηλαδή το **Υπόλοιπο είναι μεγαλύτερο του 0 ($υ &gt; 0$)**.</span>
                   </li>
                 </ul>
               </div>
@@ -142,9 +142,9 @@ export default function DiairesiTheoryPage() {
                   <h4 className="font-bold text-purple-700 border-b pb-1">1. Τα 4 στοιχεία της διαίρεσης:</h4>
                   <ul className="space-y-1 text-xs md:text-sm text-gray-700 font-mono">
                     <li><strong className="text-indigo-600">Διαιρετέος (Δ):</strong> Ο αριθμός που μοιράζουμε.</li>
-                    <li><strong className="text-blue-600">Διαιρετής (δ):</strong> Σε πόσα μέρη μοιράζουμε.</li>
+                    <li><strong className="text-blue-600">Διαιρέτης (δ):</strong> Σε πόσα μέρη μοιράζουμε.</li>
                     <li><strong className="text-emerald-600">Πηλίκο (π):</strong> Πόσο παίρνει το κάθε μέρος.</li>
-                    <li><strong className="text-amber-600">Υπόλοιπο (υ):</strong> Πόσο περισσεύει ($υ < δ$).</li>
+                    <li><strong className="text-amber-600">Υπόλοιπο (υ):</strong> Πόσο περισσεύει ($υ &lt; δ$).</li>
                   </ul>
                 </div>
 
