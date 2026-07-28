@@ -117,7 +117,7 @@ export default function DiairesiTheoryPage() {
                   Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  ➗ Η Διαίρεση με 1-ψήφιο Διαιρέτη
+                  ➗ Η Διαίρεση με Διαιρέτη ενός ψηφίου
                 </h1>
                 <p className="text-purple-100 text-base lg:text-lg leading-relaxed">
                   Μαθαίνουμε τη διαίρεση διψήφιων και τριψήφιων αριθμών, τους όρους της και πώς κάνουμε επαλήθευση με τον πολλαπλασιασμό!
