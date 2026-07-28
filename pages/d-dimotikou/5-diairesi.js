@@ -84,7 +84,7 @@ export default function DiairesiTheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>➗ Η Διαίρεση με 1-ψήφιο Διαιρέτη - LearnMaths.gr</title>
+        <title>➗ Η Διαίρεση με Διαιρέτη ενός ψηφίου - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
