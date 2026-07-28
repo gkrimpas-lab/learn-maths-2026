@@ -114,7 +114,7 @@ export default function DiairesiTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 5
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   ➗ Η Διαίρεση με 1-ψήφιο Διαιρέτη
@@ -143,7 +143,7 @@ export default function DiairesiTheoryPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία & Ορισμοί
+                <span>📖</span> Αναλυτική Θεωρία και Ορισμοί
               </h2>
             </div>
 
@@ -158,7 +158,7 @@ export default function DiairesiTheoryPage() {
                   <strong>Διαίρεση</strong> είναι η πράξη με την οποία <strong>μοιράζουμε</strong> έναν αριθμό σε ίσα μέρη ή υπολογίζουμε πόσες φορές χωράει ένας αριθμός μέσα σε έναν άλλο.
                 </p>
                 <div className="bg-white p-3 rounded-xl border border-indigo-100 text-xs text-indigo-950 font-medium">
-                  💡 <i>Η Διαίρεση είναι η **αντίστροφη πράξη του Πολλαπλασιασμού**!</i>
+                  💡 <i>Η Διαίρεση είναι η "αντίστροφη πράξη του Πολλαπλασιασμού"!</i>
                 </div>
               </div>
 
@@ -170,11 +170,11 @@ export default function DiairesiTheoryPage() {
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-600 font-bold">•</span>
-                    <span><strong>Τέλεια Διαίρεση:</strong> Όταν δεν περισσεύει τίποτα, δηλαδή το **Υπόλοιπο είναι 0 ($υ = 0$)**.</span>
+                    <span><strong>Τέλεια Διαίρεση:</strong> Όταν δεν περισσεύει τίποτα, δηλαδή το "Υπόλοιπο είναι 0 (υ = 0)".</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-amber-600 font-bold">•</span>
-                    <span><strong>Ατελής Διαίρεση:</strong> Όταν περισσεύει κάτι, δηλαδή το **Υπόλοιπο είναι μεγαλύτερο του 0 ($υ &gt; 0$)**.</span>
+                    <span><strong>Ατελής Διαίρεση:</strong> Όταν περισσεύει κάτι, δηλαδή το "Υπόλοιπο είναι μεγαλύτερο του 0 (υ &gt; 0).</span>
                   </li>
                 </ul>
               </div>
@@ -184,7 +184,7 @@ export default function DiairesiTheoryPage() {
             {/* ΟΡΟΛΟΓΙΑ & ΕΠΑΛΗΘΕΥΣΗ */}
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4">
               <h3 className="text-lg font-extrabold text-gray-800">
-                🏷️ Οι Όροι της Διαίρεσης & η Επαλήθευση
+                🏷️ Οι Όροι της Διαίρεσης και η Επαλήθευση
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -195,7 +195,7 @@ export default function DiairesiTheoryPage() {
                     <li><strong className="text-indigo-600">Διαιρετέος (Δ):</strong> Ο αριθμός που μοιράζουμε.</li>
                     <li><strong className="text-blue-600">Διαιρέτης (δ):</strong> Σε πόσα μέρη μοιράζουμε.</li>
                     <li><strong className="text-emerald-600">Πηλίκο (π):</strong> Πόσο παίρνει το κάθε μέρος.</li>
-                    <li><strong className="text-amber-600">Υπόλοιπο (υ):</strong> Πόσο περισσεύει ($υ &lt; δ$).</li>
+                    <li><strong className="text-amber-600">Υπόλοιπο (υ):</strong> Πόσο περισσεύει (υ &lt; δ).</li>
                   </ul>
                 </div>
 
@@ -218,7 +218,7 @@ export default function DiairesiTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εργαστήριο Διαίρεσης & Επαλήθευσης
+                  <span>🧮</span> Διαδραστικό Εργαστήριο Διαίρεσης και Επαλήθευσης
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Άλλαξε τους αριθμούς και δες αυτόματα την κάθετη πράξη και την επαλήθευση!
@@ -245,7 +245,7 @@ export default function DiairesiTheoryPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Διαιρετέος ($Δ$): <span className="text-indigo-600 font-mono text-base font-black">{formatNumber(D)}</span>
+                  Διαιρετεος (Δ): <span className="text-indigo-600 font-mono text-base font-black">{formatNumber(D)}</span>
                 </label>
                 <input 
                   type="range" 
@@ -259,7 +259,7 @@ export default function DiairesiTheoryPage() {
 
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Διαιρέτης ($δ$): <span className="text-blue-600 font-mono text-base font-black">{d}</span>
+                  Διαιρετης (δ): <span className="text-blue-600 font-mono text-base font-black">{d}</span>
                 </label>
                 <input 
                   type="range" 
@@ -403,7 +403,7 @@ export default function DiairesiTheoryPage() {
                 </div>
 
                 <p className="text-xs text-emerald-900 font-medium">
-                  💡 *Πολλαπλασιάσαμε το πηλίκο με τον διαιρέτη, προσθέσαμε το υπόλοιπο και βρήκαμε ακριβώς τον αρχικό αριθμό!*
+                  💡 Πολλαπλασιάσαμε το πηλίκο με τον διαιρέτη, προσθέσαμε το υπόλοιπο και βρήκαμε ακριβώς τον αρχικό αριθμό!
                 </p>
 
                 <div className="text-xs text-slate-500 font-bold border-t pt-3 border-emerald-200">
