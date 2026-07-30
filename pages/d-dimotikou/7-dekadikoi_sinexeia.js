@@ -54,7 +54,7 @@ export default function DekadikoiTheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>🔢 Δεκαδικοί Αριθμοί & Δεκαδικά Κλάσματα - LearnMaths.gr</title>
+        <title>🔢 Δεκαδικοί Αριθμοί και Δεκαδικά Κλάσματα - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -66,7 +66,7 @@ export default function DekadikoiTheoryPage() {
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
             <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/6-dekadikoi-ask" className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
+              <Link href="/d-dimotikou/7-dekadikoi-sinexeia" className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
                 <span>📝</span> Ασκήσεις
               </Link>
               <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
@@ -84,10 +84,10 @@ export default function DekadikoiTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 6
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  🔢 Δεκαδικοί Αριθμοί & Δεκαδικά Κλάσματα
+                  🔢 Δεκαδικοί Αριθμοί και Δεκαδικά Κλάσματα
                 </h1>
                 <p className="text-teal-100 text-base lg:text-lg leading-relaxed">
                   Μαθαίνουμε τα δέκατα, τα εκατοστά, την υποδιαστολή και πώς μετατρέπουμε τα δεκαδικά κλάσματα σε δεκαδικούς αριθμούς!
@@ -100,7 +100,7 @@ export default function DekadikoiTheoryPage() {
                 <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
                 <p className="text-xs text-teal-100">Δοκίμασε τις ασκήσεις στους δεκαδικούς αριθμούς για να σιγουρευτείς ότι τους έμαθες!</p>
                 <Link 
-                  href="/d-dimotikou/6-dekadikoi-ask"
+                  href="/d-dimotikou/7-dekadikoi-sinexeia-ask"
                   className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
                 >
                   🎯 Μετάβαση στις Ασκήσεις
