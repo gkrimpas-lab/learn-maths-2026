@@ -20,24 +20,17 @@ function makeBigToSmallQuestion(prevQuestion = null) {
   
   let chosen, val, correct;
 
-  // Βρόχος ελέγχου μοναδικότητας
   while (true) {
     chosen = types[getRandomInt(0, types.length - 1)];
     val = getRandomInt(chosen.min, chosen.max);
     correct = val * chosen.factor;
 
-    // Αν δεν υπάρχει προηγούμενη ερώτηση ή αν είναι διαφορετική, προχωράμε
     if (!prevQuestion || prevQuestion.from !== chosen.from || prevQuestion.val !== val) {
       break;
     }
   }
 
-  return {
-    val,
-    from: chosen.from,
-    to: chosen.to,
-    correct
-  };
+  return { val, from: chosen.from, to: chosen.to, correct };
 }
 
 // 2. Ασκηση: Μετατροπή από Μικρή σε Μεγαλύτερη Μονάδα (Input)
@@ -60,27 +53,47 @@ function makeSmallToBigQuestion(prevQuestion = null) {
     }
   }
 
-  return {
-    val,
-    from: chosen.from,
-    to: chosen.to,
-    correct
-  };
+  return { val, from: chosen.from, to: chosen.to, correct };
 }
 
-// 3. Ασκηση: Επιλογή Κατάλληλης Μονάδας (MCQ)
-function makeSuitableUnitQuestion(prevQuestion = null) {
-  const scenarios = [
-    { q: 'Την απόσταση μεταξύ δύο πόλεων (π.χ. Αθήνα - Πάτρα)', correct: 'Χιλιόμετρα (km)', wrongs: ['Μέτρα (m)', 'Εκατοστά (cm)', 'Χιλιοστά (mm)'] },
-    { q: 'Το ύψος μιας πόρτας ή ενός δωματίου', correct: 'Μέτρα (m)', wrongs: ['Χιλιόμετρα (km)', 'Χιλιοστά (mm)', 'Δεκατόμετρα (dm)'] },
-    { q: 'Το μήκος ενός μολυβιού ή ενός τετραδίου', correct: 'Εκατοστά (cm)', wrongs: ['Χιλιόμετρα (km)', 'Μέτρα (m)', 'Χιλιοστά (mm)'] },
-    { q: 'Το πάχος ενός νομίσματος ή μιας κάρτας', correct: 'Χιλιοστά (mm)', wrongs: ['Μέτρα (m)', 'Χιλιόμετρα (km)', 'Εκατοστά (cm)'] }
-  ];
+// 3. Ασκηση: Επιλογή Κατάλληλης Μονάδας (MCQ) - 22 ΔΙΑΦΟΡΕΤΙΚΕΣ ΕΡΩΤΗΣΕΙΣ
+const SUITABLE_UNITS_POOL = [
+  // ΧΙΛΙΟΜΕΤΡΑ (km)
+  { q: 'Την απόσταση μεταξύ δύο πόλεων (π.χ. Αθήνα - Θεσσαλονίκη)', correct: 'Χιλιόμετρα (km)', wrongs: ['Μέτρα (m)', 'Εκατοστά (cm)', 'Χιλιοστά (mm)'] },
+  { q: 'Το συνολικό μήκος ενός αυτοκινητοδρόμου', correct: 'Χιλιόμετρα (km)', wrongs: ['Μέτρα (m)', 'Δεκατόμετρα (dm)', 'Εκατοστά (cm)'] },
+  { q: 'Την απόσταση που διανύει ένα αεροπλάνο σε μια πτήση', correct: 'Χιλιόμετρα (km)', wrongs: ['Μέτρα (m)', 'Εκατοστά (cm)', 'Χιλιοστά (mm)'] },
+  { q: 'Το μήκος μιας διαδρομής μαραθωνίου δρόμου', correct: 'Χιλιόμετρα (km)', wrongs: ['Μέτρα (m)', 'Δεκατόμετρα (dm)', 'Εκατοστά (cm)'] },
+  { q: 'Την απόσταση του σπιτιού σου από το διπλανό χωριό', correct: 'Χιλιόμετρα (km)', wrongs: ['Μέτρα (m)', 'Εκατοστά (cm)', 'Χιλιοστά (mm)'] },
 
+  // ΜΕΤΡΑ (m)
+  { q: 'Το μήκος μιας πισίνας ολυμπιακών διαστάσεων', correct: 'Μέτρα (m)', wrongs: ['Χιλιόμετρα (km)', 'Εκατοστά (cm)', 'Χιλιοστά (mm)'] },
+  { q: 'Το ύψος ενός πολυώροφου κτιρίου', correct: 'Μέτρα (m)', wrongs: ['Χιλιόμετρα (km)', 'Χιλιοστά (mm)', 'Δεκατόμετρα (dm)'] },
+  { q: 'Το μήκος ενός γηπέδου ποδοσφαίρου', correct: 'Μέτρα (m)', wrongs: ['Χιλιόμετρα (km)', 'Εκατοστά (cm)', 'Χιλιοστά (mm)'] },
+  { q: 'Το ύψος μιας σχολικής αίθουσας', correct: 'Μέτρα (m)', wrongs: ['Χιλιόμετρα (km)', 'Χιλιοστά (mm)', 'Εκατοστά (cm)'] },
+  { q: 'Το μήκος ενός λεωφορείου', correct: 'Μέτρα (m)', wrongs: ['Χιλιόμετρα (km)', 'Χιλιοστά (mm)', 'Δεκατόμετρα (dm)'] },
+
+  // ΕΚΑΤΟΣΤΑ (cm)
+  { q: 'Το μήκος ενός μολυβιού ή ενός στυλό', correct: 'Εκατοστά (cm)', wrongs: ['Χιλιόμετρα (km)', 'Μέτρα (m)', 'Χιλιοστά (mm)'] },
+  { q: 'Το πλάτος ενός βιβλίου ή τετραδίου', correct: 'Εκατοστά (cm)', wrongs: ['Χιλιόμετρα (km)', 'Μέτρα (m)', 'Χιλιοστά (mm)'] },
+  { q: 'Το μήκος μιας οθόνης κινητού τηλεφώνου', correct: 'Εκατοστά (cm)', wrongs: ['Χιλιόμετρα (km)', 'Μέτρα (m)', 'Χιλιοστά (mm)'] },
+  { q: 'Το μήκος του πέλματος ενός παπουτσιού', correct: 'Εκατοστά (cm)', wrongs: ['Χιλιόμετρα (km)', 'Μέτρα (m)', 'Χιλιοστά (mm)'] },
+  { q: 'Το μήκος ενός συνηθισμένου χάρακα', correct: 'Εκατοστά (cm)', wrongs: ['Χιλιόμετρα (km)', 'Μέτρα (m)', 'Χιλιοστά (mm)'] },
+  { q: 'Το πλάτος μιας πιστωτικής κάρτας', correct: 'Εκατοστά (cm)', wrongs: ['Χιλιόμετρα (km)', 'Μέτρα (m)', 'Χιλιοστά (mm)'] },
+
+  // ΧΙΛΙΟΣΤΑ (mm)
+  { q: 'Το πάχος ενός κέρματος των 2 ευρώ', correct: 'Χιλιοστά (mm)', wrongs: ['Μέτρα (m)', 'Χιλιόμετρα (km)', 'Εκατοστά (cm)'] },
+  { q: 'Το πάχος μιας γόμας ή μιας πιστωτικής κάρτας', correct: 'Χιλιοστά (mm)', wrongs: ['Μέτρα (m)', 'Χιλιόμετρα (km)', 'Δεκατόμετρα (dm)'] },
+  { q: 'Το μήκος μιας μυρμηγκοφωλιάς ή ενός μυρμηγκιού', correct: 'Χιλιοστά (mm)', wrongs: ['Μέτρα (m)', 'Χιλιόμετρα (km)', 'Εκατοστά (cm)'] },
+  { q: 'Το πάχος του γυαλιού ενός παραθύρου', correct: 'Χιλιοστά (mm)', wrongs: ['Μέτρα (m)', 'Χιλιόμετρα (km)', 'Δεκατόμετρα (dm)'] },
+  { q: 'Τη διάμετρο της μύτης ενός μηχανικού μολυβιού (π.χ. 0,5)', correct: 'Χιλιοστά (mm)', wrongs: ['Μέτρα (m)', 'Χιλιόμετρα (km)', 'Εκατοστά (cm)'] },
+  { q: 'Το πάχος ενός φύλλου χαρτιού σχεδίασης', correct: 'Χιλιοστά (mm)', wrongs: ['Μέτρα (m)', 'Χιλιόμετρα (km)', 'Εκατοστά (cm)'] }
+];
+
+function makeSuitableUnitQuestion(prevQuestion = null) {
   let selected;
 
   while (true) {
-    selected = scenarios[getRandomInt(0, scenarios.length - 1)];
+    selected = SUITABLE_UNITS_POOL[getRandomInt(0, SUITABLE_UNITS_POOL.length - 1)];
     if (!prevQuestion || prevQuestion.qText !== selected.q) {
       break;
     }
