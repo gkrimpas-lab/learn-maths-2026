@@ -10,10 +10,10 @@ export default function DDimotikouMenu() {
     { id: '3-prosthesi-afairesi', label: '🍕 3. Πρόσθεση - Αφαίρεση Αντίστροφες', href: '/d-dimotikou/3-prosthesi-afairesi' },
     { id: '4-pollaplasiasmos', label: '🍕 4. Πολλαπλασιασμός', href: '/d-dimotikou/4-pollaplasiasmos' },
     { id: '5-diairesi', label: '🍕 5. Διαίρεση με 1 ψηφίο', href: '/d-dimotikou/5-diairesi' },
+    { id: '6-dekadikoi', label: '✂️ 6. Δεκαδικά Κλάσματα', href: '/d-dimotikou/6-dekadikoi' },
     { id: '7-dekadikoi-sinexeia', label: '✂️ 7. Δεκαδικά Κλάσματα και Δεκαδικοί', href: '/d-dimotikou/7-dekadikoi-sinexeia' },
     { id: '1-megaloi-arithmoi', label: '🍕 10. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
     { id: '2-katheti-diairesi', label: '🔄 20. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' },
-    { id: '3-dekadikoi', label: '✂️ 30. Δεκαδικοί', href: '/d-dimotikou/3-dekadikoi' },
     { id: '4-mikos', label: '🔍 40. Μήκος', href: '/d-dimotikou/4-mikos' },
     { id: '5-baros', label: '🔢 50. Βάρος', href: '/d-dimotikou/5-baros' },
     { id: '6-diairesi-deka-ekato-xilia', label: '🎯 6. Διαίρεση με 10, 100, 1000', href: '/d-dimotikou/6-diairesi-deka-ekato-xilia' }
