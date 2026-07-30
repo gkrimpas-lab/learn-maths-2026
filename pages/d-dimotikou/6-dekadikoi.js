@@ -22,6 +22,10 @@ export default function DekadikoiTheoryPage() {
   const tenthsDigit = parseInt(decimalPartString[0] || '0', 10);
   const hundredthsDigit = mode === 'hundredths' ? parseInt(decimalPartString[1] || '0', 10) : 0;
 
+  // Υπολογισμός ενεργών κουτιών για το πλέγμα (Grid)
+  // Παίρνουμε το δεκαδικό μέρος ή το υπόλοιπο του 100/10 αν ο αριθμητής είναι μεγάλος
+  const visualFilledBoxes = mode === 'tenths' ? (numerator % 10) : (numerator % 100);
+
   const handleRandomize = () => {
     if (mode === 'tenths') {
       setNumerator(getRandomInt(1, 99));
@@ -106,9 +110,29 @@ export default function DekadikoiTheoryPage() {
                 <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                   <strong>Δεκαδικά κλάσματα</strong> λέγονται τα κλάσματα που έχουν παρανομαστή το <strong>10</strong> ή το <strong>100</strong> (ή το 1000):
                 </p>
-                <ul className="space-y-1 text-sm text-gray-700 font-mono">
-                  <li>• $\frac{1}{10}$ = 1 Δέκατο</li>
-                  <li>• $\frac{1}{100}$ = 1 Εκατοστό</li>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li className="flex items-center gap-2">
+                    <span>•</span>
+                    <span className="inline-flex items-center gap-1 font-mono font-bold">
+                      <span className="inline-flex flex-col items-center leading-none text-xs">
+                        <span>1</span>
+                        <span className="border-b border-gray-800 w-full"></span>
+                        <span>10</span>
+                      </span>
+                      <span>= 1 Δέκατο</span>
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span>•</span>
+                    <span className="inline-flex items-center gap-1 font-mono font-bold">
+                      <span className="inline-flex flex-col items-center leading-none text-xs">
+                        <span>1</span>
+                        <span className="border-b border-gray-800 w-full"></span>
+                        <span>100</span>
+                      </span>
+                      <span>= 1 Εκατοστό</span>
+                    </span>
+                  </li>
                 </ul>
               </div>
 
@@ -120,9 +144,29 @@ export default function DekadikoiTheoryPage() {
                 <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                   Κάθε δεκαδικό κλάσμα γράφεται και ως <strong>δεκαδικός αριθμός</strong> χρησιμοποιώντας την <strong>υποδιαστολή ( κόμμα «,» )</strong>:
                 </p>
-                <ul className="space-y-1 text-sm text-gray-700 font-mono">
-                  <li>• $\frac{3}{10} = \mathbf{0,3}$ (1 δεκαδικό ψηφίο)</li>
-                  <li>• $\frac{25}{100} = \mathbf{0,25}$ (2 δεκαδικά ψηφία)</li>
+                <ul className="space-y-2 text-sm text-gray-700 font-mono">
+                  <li className="flex items-center gap-2">
+                    <span>•</span>
+                    <span className="inline-flex items-center gap-1">
+                      <span className="inline-flex flex-col items-center leading-none text-xs">
+                        <span>3</span>
+                        <span className="border-b border-gray-800 w-full"></span>
+                        <span>10</span>
+                      </span>
+                      <span>= <strong>0,3</strong> (1 δεκαδικό ψηφίο)</span>
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span>•</span>
+                    <span className="inline-flex items-center gap-1">
+                      <span className="inline-flex flex-col items-center leading-none text-xs">
+                        <span>25</span>
+                        <span className="border-b border-gray-800 w-full"></span>
+                        <span>100</span>
+                      </span>
+                      <span>= <strong>0,25</strong> (2 δεκαδικά ψηφία)</span>
+                    </span>
+                  </li>
                 </ul>
               </div>
 
@@ -266,6 +310,54 @@ export default function DekadikoiTheoryPage() {
               <p className="text-base md:text-lg font-bold text-emerald-950">
                 « <span className="text-blue-700">{integerPart}</span> ακέραιος και <span className="text-purple-700">{decimalPartString}</span> {mode === 'tenths' ? 'δέκατα' : 'εκατοστά'} »
               </p>
+            </div>
+
+            {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΟΝΑΔΑΣ (GRID 10 / GRID 100) */}
+            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 space-y-3 text-center">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-500 block">
+                🎨 Οπτικοποίηση Μονάδας (Πλέγμα {denominator} Τμημάτων)
+              </span>
+              <p className="text-xs text-gray-500">
+                {integerPart > 0 && `(Εμφανίζονται τα ${visualFilledBoxes} τμήματα της τελευταίας μονάδας — ${integerPart} ολόκληρες μονάδες είναι συμπληρωμένες)`}
+              </p>
+
+              <div className="max-w-xl mx-auto bg-white p-4 rounded-2xl border border-slate-200 shadow-inner">
+                {mode === 'tenths' ? (
+                  /* GRID 10 (1x10) */
+                  <div className="grid grid-cols-10 gap-1.5 h-16">
+                    {Array.from({ length: 10 }).map((_, idx) => {
+                      const isFilled = idx < (visualFilledBoxes === 0 && numerator > 0 ? 10 : visualFilledBoxes);
+                      return (
+                        <div
+                          key={idx}
+                          className={`rounded-lg border transition-all duration-300 ${
+                            isFilled
+                              ? 'bg-amber-500 border-amber-600 shadow-sm'
+                              : 'bg-slate-100 border-slate-200'
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                ) : (
+                  /* GRID 100 (10x10) - Όπως η Εικόνα 2 */
+                  <div className="grid grid-cols-10 gap-1 h-64">
+                    {Array.from({ length: 100 }).map((_, idx) => {
+                      const isFilled = idx < (visualFilledBoxes === 0 && numerator > 0 ? 100 : visualFilledBoxes);
+                      return (
+                        <div
+                          key={idx}
+                          className={`rounded-sm border transition-all duration-200 ${
+                            isFilled
+                              ? 'bg-amber-500 border-amber-600 shadow-xs'
+                              : 'bg-slate-50 border-slate-200'
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
 
           </div>
