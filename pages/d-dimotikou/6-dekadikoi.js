@@ -22,9 +22,19 @@ export default function DekadikoiTheoryPage() {
   const tenthsDigit = parseInt(decimalPartString[0] || '0', 10);
   const hundredthsDigit = mode === 'hundredths' ? parseInt(decimalPartString[1] || '0', 10) : 0;
 
-  // Υπολογισμός ενεργών κουτιών για το πλέγμα (Grid)
-  // Παίρνουμε το δεκαδικό μέρος ή το υπόλοιπο του 100/10 αν ο αριθμητής είναι μεγάλος
-  const visualFilledBoxes = mode === 'tenths' ? (numerator % 10) : (numerator % 100);
+  // Δημιουργία ολόγραφης ανάγνωσης (2 τρόποι)
+  const decimalPartName = mode === 'tenths' ? 'δέκατα' : 'εκατοστά';
+  
+  // Τρόπος 1: "3 και 5 δέκατα" ή "6 δέκατα" (αν το ακέραιο μέρος είναι 0)
+  let way1 = '';
+  if (integerPart === 0) {
+    way1 = `${decimalPartString} ${decimalPartName}`;
+  } else {
+    way1 = `${integerPart} και ${decimalPartString} ${decimalPartName}`;
+  }
+
+  // Τρόπος 2: "3 κόμμα 5" ή "μηδέν κόμμα 6"
+  const way2 = `${integerPart === 0 ? 'μηδέν' : integerPart} κόμμα ${decimalPartString}`;
 
   const handleRandomize = () => {
     if (mode === 'tenths') {
@@ -304,59 +314,17 @@ export default function DekadikoiTheoryPage() {
 
             </div>
 
-            {/* ΟΛΟΓΡΑΦΗ ΕΞΗΓΗΣΗ */}
-            <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-200 text-center space-y-1">
-              <span className="text-xs font-black uppercase text-emerald-800">🗣️ Πώς το διαβάζουμε:</span>
-              <p className="text-base md:text-lg font-bold text-emerald-950">
-                « <span className="text-blue-700">{integerPart}</span> ακέραιος και <span className="text-purple-700">{decimalPartString}</span> {mode === 'tenths' ? 'δέκατα' : 'εκατοστά'} »
-              </p>
-            </div>
-
-            {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΟΝΑΔΑΣ (GRID 10 / GRID 100) */}
-            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 space-y-3 text-center">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-500 block">
-                🎨 Οπτικοποίηση Μονάδας (Πλέγμα {denominator} Τμημάτων)
-              </span>
-              <p className="text-xs text-gray-500">
-                {integerPart > 0 && `(Εμφανίζονται τα ${visualFilledBoxes} τμήματα της τελευταίας μονάδας — ${integerPart} ολόκληρες μονάδες είναι συμπληρωμένες)`}
-              </p>
-
-              <div className="max-w-xl mx-auto bg-white p-4 rounded-2xl border border-slate-200 shadow-inner">
-                {mode === 'tenths' ? (
-                  /* GRID 10 (1x10) */
-                  <div className="grid grid-cols-10 gap-1.5 h-16">
-                    {Array.from({ length: 10 }).map((_, idx) => {
-                      const isFilled = idx < (visualFilledBoxes === 0 && numerator > 0 ? 10 : visualFilledBoxes);
-                      return (
-                        <div
-                          key={idx}
-                          className={`rounded-lg border transition-all duration-300 ${
-                            isFilled
-                              ? 'bg-amber-500 border-amber-600 shadow-sm'
-                              : 'bg-slate-100 border-slate-200'
-                          }`}
-                        />
-                      );
-                    })}
-                  </div>
-                ) : (
-                  /* GRID 100 (10x10) - Όπως η Εικόνα 2 */
-                  <div className="grid grid-cols-10 gap-1 h-64">
-                    {Array.from({ length: 100 }).map((_, idx) => {
-                      const isFilled = idx < (visualFilledBoxes === 0 && numerator > 0 ? 100 : visualFilledBoxes);
-                      return (
-                        <div
-                          key={idx}
-                          className={`rounded-sm border transition-all duration-200 ${
-                            isFilled
-                              ? 'bg-amber-500 border-amber-600 shadow-xs'
-                              : 'bg-slate-50 border-slate-200'
-                          }`}
-                        />
-                      );
-                    })}
-                  </div>
-                )}
+            {/* ΟΛΟΓΡΑΦΗ ΕΞΗΓΗΣΗ (2 ΤΡΟΠΟΙ ΑΝΑΓΝΩΣΗΣ) */}
+            <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-200 text-center space-y-2">
+              <span className="text-xs font-black uppercase text-emerald-800 block">🗣️ Πώς το διαβάζουμε:</span>
+              <div className="flex flex-col md:flex-row justify-center items-center gap-3 text-base md:text-lg font-bold text-emerald-950">
+                <span className="bg-white px-4 py-2 rounded-xl border border-emerald-200 shadow-sm">
+                  « <span className="text-indigo-700">{way1}</span> »
+                </span>
+                <span className="text-xs font-black text-emerald-600 uppercase">ή</span>
+                <span className="bg-white px-4 py-2 rounded-xl border border-emerald-200 shadow-sm">
+                  « <span className="text-purple-700">{way2}</span> »
+                </span>
               </div>
             </div>
 
