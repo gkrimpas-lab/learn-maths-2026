@@ -16,8 +16,6 @@ export default function DDimotikouMenu() {
     { id: '9-baros', label: '🔢 9. Βάρος', href: '/d-dimotikou/9-baros' },
     { id: '1-megaloi-arithmoi', label: '🍕 10. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
     { id: '2-katheti-diairesi', label: '🔄 20. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' },
-    { id: '4-mikos', label: '🔍 40. Μήκος', href: '/d-dimotikou/4-mikos' },
-    { id: '5-baros', label: '🔢 50. Βάρος', href: '/d-dimotikou/5-baros' },
     { id: '6-diairesi-deka-ekato-xilia', label: '🎯 6. Διαίρεση με 10, 100, 1000', href: '/d-dimotikou/6-diairesi-deka-ekato-xilia' }
     
   ];
