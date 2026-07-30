@@ -65,10 +65,10 @@ export default function BarosTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 9
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  ⚖️ Μέτρηση Βάρους & Μετατροπές
+                  ⚖️ Μέτρηση Βάρους και Μετατροπές
                 </h1>
                 <p className="text-emerald-100 text-base lg:text-lg leading-relaxed">
                   Μαθαίνουμε το κιλό (kg), το γραμμάριο (g), τον τόνο (t) και πώς μετατρέπουμε εύκολα τη μία μονάδα στην άλλη!
@@ -94,7 +94,7 @@ export default function BarosTheoryPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία & Σχέσεις Μονάδων
+                <span>📖</span> Αναλυτική Θεωρία και Σχέσεις Μονάδων
               </h2>
             </div>
 
@@ -151,17 +151,17 @@ export default function BarosTheoryPage() {
                 <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-1">
                   <span className="text-emerald-600 font-bold">⬇️ Από Μεγαλύτερη σε Μικρότερη μονάδα:</span>
                   <p className="text-gray-600">
-                    <strong>Πολλαπλασιάζουμε με το 1.000</strong> ($\times 1.000$).
+                    <strong>Πολλαπλασιάζουμε με το 1.000</strong> (x 1.000).
                   </p>
-                  <p className="font-mono text-xs text-gray-500">Π.χ. 2 kg ➔ g: 2 × 1.000 = 2.000 g.</p>
+                  <p className="font-mono text-xs text-gray-500">Π.χ. Κιλά σε Γραμμάρια: 2 kg = 2 × 1.000 g = 2.000 g</p>
                 </div>
 
                 <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-1">
                   <span className="text-sky-600 font-bold">⬆️ Από Μικρότερη σε Μεγαλύτερη μονάδα:</span>
                   <p className="text-gray-600">
-                    <strong>Διαιρούμε με το 1.000</strong> ($: 1.000$).
+                    <strong>Διαιρούμε με το 1.000</strong> (: 1.000).
                   </p>
-                  <p className="font-mono text-xs text-gray-500">Π.χ. 5.000 g ➔ kg: 5.000 : 1.000 = 5 kg.</p>
+                  <p className="font-mono text-xs text-gray-500">Π.χ. Γραμμάρια σε Κιλά: 5.000 g = 5.000 : 1.000 kg = 5 kg</p>
                 </div>
               </div>
             </div>
@@ -192,7 +192,7 @@ export default function BarosTheoryPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200">
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Τιμή Βάρους:
+                  Τιμη Βαρους:
                 </label>
                 <input 
                   type="text" 
@@ -205,7 +205,7 @@ export default function BarosTheoryPage() {
 
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Αρχική Μονάδα Μέτρησης:
+                  Αρχικη Μοναδα Μετρησης:
                 </label>
                 <select
                   value={baseUnit}
