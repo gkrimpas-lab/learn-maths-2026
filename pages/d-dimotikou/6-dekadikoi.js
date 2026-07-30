@@ -126,7 +126,7 @@ export default function DekadikoiPage() {
                 {/* ΟΠΤΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΟΝΑΔΑΣ */}
                 <div className="pt-4 border-t border-gray-100">
                   <p className="text-xs font-bold text-gray-400 text-center uppercase tracking-wider mb-3">
-                    Οπτικοποίηση Μονάδας
+                    Οπτικοποιηση Μοναδας
                   </p>
                   <div className="grid grid-cols-10 gap-1 bg-slate-100 p-2 rounded-xl border border-slate-200">
                     {Array.from({ length: maxSlices }).map((_, i) => (
