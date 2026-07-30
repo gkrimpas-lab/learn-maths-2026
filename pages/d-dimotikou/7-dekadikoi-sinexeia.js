@@ -66,7 +66,7 @@ export default function DekadikoiTheoryPage() {
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
             <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/7-dekadikoi-sinexeia" className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
+              <Link href="/d-dimotikou/7-dekadikoi-sinexeia-ask" className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
                 <span>📝</span> Ασκήσεις
               </Link>
               <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
@@ -113,7 +113,7 @@ export default function DekadikoiTheoryPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία & Ορισμοί
+                <span>📖</span> Αναλυτική Θεωρία και Ορισμοί
               </h2>
             </div>
 
@@ -227,7 +227,7 @@ export default function DekadikoiTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικός Μετατροπέας Κλασμάτων & Δεκαδικών
+                  <span>🧮</span> Διαδραστικός Μετατροπέας Κλασμάτων και Δεκαδικών
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Άλλαξε τον αριθμητή και δες πώς μετατρέπεται το δεκαδικό κλάσμα σε δεκαδικό αριθμό!
@@ -262,7 +262,7 @@ export default function DekadikoiTheoryPage() {
 
             {/* SLIDER ΧΕΙΡΙΣΜΟΥ */}
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-2">
-              <label className="block text-xs font-black uppercase text-gray-500">
+              <label className="block text-xs font-black text-gray-500">
                 Αριθμητής Κλάσματος: <span className="text-indigo-600 font-mono text-lg font-black">{numerator}</span>
               </label>
               <input 
@@ -281,7 +281,7 @@ export default function DekadikoiTheoryPage() {
               {/* 1. Δεκαδικό Κλάσμα */}
               <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-3xl border border-indigo-200 text-center space-y-2">
                 <span className="text-xs font-black uppercase tracking-wider text-indigo-500 block">
-                  1. Δεκαδικό Κλάσμα
+                  1. Δεκαδικο Κλασμα
                 </span>
                 <div className="inline-flex flex-col items-center font-mono font-black text-3xl md:text-4xl text-indigo-900 py-2">
                   <span>{numerator}</span>
@@ -293,7 +293,7 @@ export default function DekadikoiTheoryPage() {
               {/* 2. Δεκαδικός Αριθμός */}
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-3xl border border-purple-200 text-center space-y-2">
                 <span className="text-xs font-black uppercase tracking-wider text-purple-500 block">
-                  2. Δεκαδικός Αριθμός
+                  2. Δεκαδικος Αριθμος
                 </span>
                 <div className="font-mono font-black text-4xl md:text-5xl text-purple-900 py-4">
                   {decimalVal.toString().replace('.', ',')}
@@ -303,7 +303,7 @@ export default function DekadikoiTheoryPage() {
               {/* 3. Πίνακας Αξίας Θέσης */}
               <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl space-y-3 text-center">
                 <span className="text-xs font-black uppercase tracking-wider text-slate-400 block">
-                  3. Πίνακας Αξίας Θέσης
+                  3. Πινακας Αξιας Θεσης
                 </span>
                 
                 <div className="grid grid-cols-4 gap-1 text-center font-mono text-xs">
@@ -323,7 +323,7 @@ export default function DekadikoiTheoryPage() {
 
             {/* ΟΛΟΓΡΑΦΗ ΕΞΗΓΗΣΗ (2 ΤΡΟΠΟΙ ΑΝΑΓΝΩΣΗΣ) */}
             <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-200 text-center space-y-2">
-              <span className="text-xs font-black uppercase text-emerald-800 block">🗣️ Πώς το διαβάζουμε:</span>
+              <span className="text-xs font-black uppercase text-emerald-800 block">🗣️ Πως το διαβαζουμε:</span>
               
               {isDecimalZero ? (
                 <div className="bg-white px-6 py-3 rounded-xl border border-emerald-200 shadow-sm inline-block text-lg font-black text-emerald-950">
@@ -353,7 +353,7 @@ export default function DekadikoiTheoryPage() {
               </p>
             </div>
             <Link
-              href="/d-dimotikou/6-dekadikoi-ask"
+              href="/d-dimotikou/7-dekadikoi-sinexeia-ask"
               className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
             >
               Ξεκίνα τις Ασκήσεις ➔
