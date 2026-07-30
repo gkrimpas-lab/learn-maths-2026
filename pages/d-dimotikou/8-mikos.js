@@ -152,7 +152,7 @@ export default function MikosTheoryPage() {
                 <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-1">
                   <span className="text-emerald-600 font-bold">⬇️ Από Μεγαλύτερη σε Μικρότερη μονάδα:</span>
                   <p className="text-gray-600">
-                    <strong>Πολλαπλασιάζουμε</strong> (x 10, x 100, x 1000$).
+                    <strong>Πολλαπλασιάζουμε</strong> (x 10, x 100, x 1000).
                   </p>
                   <p className="font-mono text-xs text-gray-500">Π.χ. μέτρα σε εκατοστά: 3 m = 3 × 100 cm = 300 cm.</p>
                 </div>
