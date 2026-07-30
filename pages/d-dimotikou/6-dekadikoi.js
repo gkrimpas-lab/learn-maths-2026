@@ -22,19 +22,26 @@ export default function DekadikoiTheoryPage() {
   const tenthsDigit = parseInt(decimalPartString[0] || '0', 10);
   const hundredthsDigit = mode === 'hundredths' ? parseInt(decimalPartString[1] || '0', 10) : 0;
 
-  // Δημιουργία ολόγραφης ανάγνωσης (2 τρόποι)
+  // Δημιουργία ολόγραφης ανάγνωσης (με έλεγχο για μηδενικό δεκαδικό μέρος)
   const decimalPartName = mode === 'tenths' ? 'δέκατα' : 'εκατοστά';
-  
-  // Τρόπος 1: "3 και 5 δέκατα" ή "6 δέκατα" (αν το ακέραιο μέρος είναι 0)
-  let way1 = '';
-  if (integerPart === 0) {
-    way1 = `${decimalPartString} ${decimalPartName}`;
-  } else {
-    way1 = `${integerPart} και ${decimalPartString} ${decimalPartName}`;
-  }
+  const isDecimalZero = parseInt(decimalPartString, 10) === 0;
 
-  // Τρόπος 2: "3 κόμμα 5" ή "μηδέν κόμμα 6"
-  const way2 = `${integerPart === 0 ? 'μηδέν' : integerPart} κόμμα ${decimalPartString}`;
+  let way1 = '';
+  let way2 = '';
+
+  if (isDecimalZero) {
+    // Αν το δεκαδικό μέρος είναι 0 (π.χ. 2,00 -> "2")
+    way1 = `${integerPart}`;
+    way2 = `${integerPart}`;
+  } else if (integerPart === 0) {
+    // Αν το ακέραιο μέρος είναι 0 (π.χ. 0,6 -> "6 δέκατα" / "μηδέν κόμμα 6")
+    way1 = `${parseInt(decimalPartString, 10)} ${decimalPartName}`;
+    way2 = `μηδέν κόμμα ${decimalPartString}`;
+  } else {
+    // Κανονική περίπτωση (π.χ. 3,5 -> "3 και 5 δέκατα" / "3 κόμμα 5")
+    way1 = `${integerPart} και ${parseInt(decimalPartString, 10)} ${decimalPartName}`;
+    way2 = `${integerPart} κόμμα ${decimalPartString}`;
+  }
 
   const handleRandomize = () => {
     if (mode === 'tenths') {
@@ -317,15 +324,22 @@ export default function DekadikoiTheoryPage() {
             {/* ΟΛΟΓΡΑΦΗ ΕΞΗΓΗΣΗ (2 ΤΡΟΠΟΙ ΑΝΑΓΝΩΣΗΣ) */}
             <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-200 text-center space-y-2">
               <span className="text-xs font-black uppercase text-emerald-800 block">🗣️ Πώς το διαβάζουμε:</span>
-              <div className="flex flex-col md:flex-row justify-center items-center gap-3 text-base md:text-lg font-bold text-emerald-950">
-                <span className="bg-white px-4 py-2 rounded-xl border border-emerald-200 shadow-sm">
+              
+              {isDecimalZero ? (
+                <div className="bg-white px-6 py-3 rounded-xl border border-emerald-200 shadow-sm inline-block text-lg font-black text-emerald-950">
                   « <span className="text-indigo-700">{way1}</span> »
-                </span>
-                <span className="text-xs font-black text-emerald-600 uppercase">ή</span>
-                <span className="bg-white px-4 py-2 rounded-xl border border-emerald-200 shadow-sm">
-                  « <span className="text-purple-700">{way2}</span> »
-                </span>
-              </div>
+                </div>
+              ) : (
+                <div className="flex flex-col md:flex-row justify-center items-center gap-3 text-base md:text-lg font-bold text-emerald-950">
+                  <span className="bg-white px-4 py-2 rounded-xl border border-emerald-200 shadow-sm">
+                    « <span className="text-indigo-700">{way1}</span> »
+                  </span>
+                  <span className="text-xs font-black text-emerald-600 uppercase">ή</span>
+                  <span className="bg-white px-4 py-2 rounded-xl border border-emerald-200 shadow-sm">
+                    « <span className="text-purple-700">{way2}</span> »
+                  </span>
+                </div>
+              )}
             </div>
 
           </div>
