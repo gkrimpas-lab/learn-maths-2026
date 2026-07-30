@@ -67,10 +67,10 @@ export default function MikosTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 8
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  📏 Μέτρηση Μήκους & Μετατροπές
+                  📏 Μέτρηση Μήκους και Μετατροπές
                 </h1>
                 <p className="text-cyan-100 text-base lg:text-lg leading-relaxed">
                   Μαθαίνουμε το μέτρο, τα υποπολλαπλάσιά του (δεκατόμετρο, εκατοστόμετρο, χιλιοστόμετρο), το χιλιόμετρο και πώς μετατρέπουμε τη μία μονάδα στην άλλη!
@@ -96,7 +96,7 @@ export default function MikosTheoryPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία & Σχέσεις Μονάδων
+                <span>📖</span> Αναλυτική Θεωρία και Σχέσεις Μονάδων
               </h2>
             </div>
 
@@ -105,7 +105,7 @@ export default function MikosTheoryPage() {
               {/* 1. Πολλαπλάσιο */}
               <div className="bg-indigo-50/70 p-6 rounded-2xl border border-indigo-100 space-y-3">
                 <h3 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
-                  <span>🚗</span> Πολλαπλάσιο (Χιλιόμετρο)
+                  <span>🚗</span> Πολλαπλάσιο του μέτρου (Χιλιόμετρο)
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
                   Για να μετρήσουμε μεγάλες αποστάσεις χρησιμοποιούμε το <strong>Χιλιόμετρο (km)</strong>.
@@ -118,7 +118,7 @@ export default function MikosTheoryPage() {
               {/* 2. Βασική Μονάδα */}
               <div className="bg-cyan-50/70 p-6 rounded-2xl border border-cyan-100 space-y-3">
                 <h3 className="text-lg font-bold text-cyan-900 flex items-center gap-2">
-                  <span>📏</span> Βασική Μονάδα (Μέτρο)
+                  <span>📏</span> Βασική Μονάδα Μέτρησης (Μέτρο)
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
                   Η θεμελιώδης μονάδα μέτρησης μήκους είναι το <strong>Μέτρο (m)</strong>.
@@ -145,24 +145,24 @@ export default function MikosTheoryPage() {
             {/* ΣΚΑΛΑ ΜΕΤΑΤΡΟΠΩΝ */}
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4">
               <h3 className="text-lg font-extrabold text-gray-800 text-center md:text-left">
-                🪜 Πώς κάνουμε μετατροπές (Η Σκάλα του Μήκους);
+                🪜 Πώς κάνουμε μετατροπές;
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
                 <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-1">
                   <span className="text-emerald-600 font-bold">⬇️ Από Μεγαλύτερη σε Μικρότερη μονάδα:</span>
                   <p className="text-gray-600">
-                    <strong>Πολλαπλασιάζουμε</strong> ($\times 10, \times 100, \times 1000$).
+                    <strong>Πολλαπλασιάζουμε</strong> (x 10, x 100, x 1000$).
                   </p>
-                  <p className="font-mono text-xs text-gray-500">Π.χ. 3 m ➔ cm: 3 × 100 = 300 cm.</p>
+                  <p className="font-mono text-xs text-gray-500">Π.χ. μέτρα σε εκατοστά: 3 m = 3 × 100 cm = 300 cm.</p>
                 </div>
 
                 <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-1">
                   <span className="text-amber-600 font-bold">⬆️ Από Μικρότερη σε Μεγαλύτερη μονάδα:</span>
                   <p className="text-gray-600">
-                    <strong>Διαιρούμε</strong> ($: 10, : 100, : 1000$).
+                    <strong>Διαιρούμε</strong> (: 10, : 100, : 1000).
                   </p>
-                  <p className="font-mono text-xs text-gray-500">Π.χ. 500 cm ➔ m: 500 : 100 = 5 m.</p>
+                  <p className="font-mono text-xs text-gray-500">Π.χ. εκατοστά σε μέτρα: 500 cm = 500 : 100 m = 5 m.</p>
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@ export default function MikosTheoryPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200">
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Τιμή Μήκους:
+                  Τιμη Μηκους:
                 </label>
                 <input 
                   type="text" 
@@ -206,7 +206,7 @@ export default function MikosTheoryPage() {
 
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Αρχική Μονάδα Μέτρησης:
+                  Αρχικη Μοναδα Μετρησης:
                 </label>
                 <select
                   value={baseUnit}
@@ -237,7 +237,7 @@ export default function MikosTheoryPage() {
                         : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    <span className={`text-[10px] font-black uppercase tracking-wider block ${isSelected ? 'text-cyan-200' : 'text-gray-400'}`}>
+                    <span className={`text-[10px] font-black tracking-wider block ${isSelected ? 'text-cyan-200' : 'text-gray-400'}`}>
                       {UNITS[uKey].name}
                     </span>
                     
