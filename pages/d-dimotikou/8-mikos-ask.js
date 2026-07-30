@@ -10,7 +10,7 @@ function getRandomInt(min, max) {
 }
 
 // 1. Ασκηση: Μετατροπή από Μεγάλη σε Μικρότερη Μονάδα (Input)
-function makeBigToSmallQuestion() {
+function makeBigToSmallQuestion(prevQuestion = null) {
   const types = [
     { from: 'm', to: 'cm', factor: 100, min: 1, max: 15 },
     { from: 'km', to: 'm', factor: 1000, min: 1, max: 10 },
@@ -18,9 +18,19 @@ function makeBigToSmallQuestion() {
     { from: 'dm', to: 'cm', factor: 10, min: 2, max: 30 }
   ];
   
-  const chosen = types[getRandomInt(0, types.length - 1)];
-  const val = getRandomInt(chosen.min, chosen.max);
-  const correct = val * chosen.factor;
+  let chosen, val, correct;
+
+  // Βρόχος ελέγχου μοναδικότητας
+  while (true) {
+    chosen = types[getRandomInt(0, types.length - 1)];
+    val = getRandomInt(chosen.min, chosen.max);
+    correct = val * chosen.factor;
+
+    // Αν δεν υπάρχει προηγούμενη ερώτηση ή αν είναι διαφορετική, προχωράμε
+    if (!prevQuestion || prevQuestion.from !== chosen.from || prevQuestion.val !== val) {
+      break;
+    }
+  }
 
   return {
     val,
@@ -31,16 +41,24 @@ function makeBigToSmallQuestion() {
 }
 
 // 2. Ασκηση: Μετατροπή από Μικρή σε Μεγαλύτερη Μονάδα (Input)
-function makeSmallToBigQuestion() {
+function makeSmallToBigQuestion(prevQuestion = null) {
   const types = [
     { from: 'cm', to: 'm', factor: 100, min: 1, max: 12 },
     { from: 'm', to: 'km', factor: 1000, min: 1, max: 9 },
     { from: 'mm', to: 'cm', factor: 10, min: 2, max: 20 }
   ];
 
-  const chosen = types[getRandomInt(0, types.length - 1)];
-  const correct = getRandomInt(chosen.min, chosen.max);
-  const val = correct * chosen.factor;
+  let chosen, correct, val;
+
+  while (true) {
+    chosen = types[getRandomInt(0, types.length - 1)];
+    correct = getRandomInt(chosen.min, chosen.max);
+    val = correct * chosen.factor;
+
+    if (!prevQuestion || prevQuestion.from !== chosen.from || prevQuestion.val !== val) {
+      break;
+    }
+  }
 
   return {
     val,
@@ -51,7 +69,7 @@ function makeSmallToBigQuestion() {
 }
 
 // 3. Ασκηση: Επιλογή Κατάλληλης Μονάδας (MCQ)
-function makeSuitableUnitQuestion() {
+function makeSuitableUnitQuestion(prevQuestion = null) {
   const scenarios = [
     { q: 'Την απόσταση μεταξύ δύο πόλεων (π.χ. Αθήνα - Πάτρα)', correct: 'Χιλιόμετρα (km)', wrongs: ['Μέτρα (m)', 'Εκατοστά (cm)', 'Χιλιοστά (mm)'] },
     { q: 'Το ύψος μιας πόρτας ή ενός δωματίου', correct: 'Μέτρα (m)', wrongs: ['Χιλιόμετρα (km)', 'Χιλιοστά (mm)', 'Δεκατόμετρα (dm)'] },
@@ -59,7 +77,15 @@ function makeSuitableUnitQuestion() {
     { q: 'Το πάχος ενός νομίσματος ή μιας κάρτας', correct: 'Χιλιοστά (mm)', wrongs: ['Μέτρα (m)', 'Χιλιόμετρα (km)', 'Εκατοστά (cm)'] }
   ];
 
-  const selected = scenarios[getRandomInt(0, scenarios.length - 1)];
+  let selected;
+
+  while (true) {
+    selected = scenarios[getRandomInt(0, scenarios.length - 1)];
+    if (!prevQuestion || prevQuestion.qText !== selected.q) {
+      break;
+    }
+  }
+
   const options = [
     { text: selected.correct, isCorrect: true },
     { text: selected.wrongs[0], isCorrect: false },
@@ -75,27 +101,34 @@ function makeSuitableUnitQuestion() {
 }
 
 // 4. Ασκηση: Σύγκριση Μηκών (<, =, >)
-function makeComparisonQuestion() {
+function makeComparisonQuestion(prevQuestion = null) {
   const pairs = [
     { unitA: 'm', unitB: 'cm', factorA: 100 },
     { unitA: 'km', unitB: 'm', factorA: 1000 },
     { unitA: 'dm', unitB: 'cm', factorA: 10 }
   ];
 
-  const pair = pairs[getRandomInt(0, pairs.length - 1)];
-  const valA = getRandomInt(2, 10);
-  
-  // 30% πιθανότητα να είναι ίσα
-  let valB = valA * pair.factorA;
-  if (Math.random() > 0.3) {
-    valB = (valA + getRandomInt(-1, 2)) * pair.factorA;
-    if (valB <= 0) valB = valA * pair.factorA + 50;
-  }
+  let pair, valA, valB, correctSym;
 
-  const realBInAUnit = valB / pair.factorA;
-  let correctSym = '=';
-  if (valA > realBInAUnit) correctSym = '>';
-  if (valA < realBInAUnit) correctSym = '<';
+  while (true) {
+    pair = pairs[getRandomInt(0, pairs.length - 1)];
+    valA = getRandomInt(2, 10);
+    
+    valB = valA * pair.factorA;
+    if (Math.random() > 0.3) {
+      valB = (valA + getRandomInt(-1, 2)) * pair.factorA;
+      if (valB <= 0) valB = valA * pair.factorA + 50;
+    }
+
+    const realBInAUnit = valB / pair.factorA;
+    correctSym = '=';
+    if (valA > realBInAUnit) correctSym = '>';
+    if (valA < realBInAUnit) correctSym = '<';
+
+    if (!prevQuestion || prevQuestion.valA !== valA || prevQuestion.valB !== valB || prevQuestion.unitA !== pair.unitA) {
+      break;
+    }
+  }
 
   return {
     valA,
@@ -106,18 +139,21 @@ function makeComparisonQuestion() {
   };
 }
 
-// Δημιουργία 8 Ερωτήσεων
+// Δημιουργία 8 Ερωτήσεων με Εγγυημένη Μοναδικότητα
 function generateQuestions() {
-  return {
-    q1: makeBigToSmallQuestion(),
-    q2: makeBigToSmallQuestion(),
-    q3: makeSmallToBigQuestion(),
-    q4: makeSmallToBigQuestion(),
-    q5: makeSuitableUnitQuestion(),
-    q6: makeSuitableUnitQuestion(),
-    q7: makeComparisonQuestion(),
-    q8: makeComparisonQuestion()
-  };
+  const q1 = makeBigToSmallQuestion();
+  const q2 = makeBigToSmallQuestion(q1);
+
+  const q3 = makeSmallToBigQuestion();
+  const q4 = makeSmallToBigQuestion(q3);
+
+  const q5 = makeSuitableUnitQuestion();
+  const q6 = makeSuitableUnitQuestion(q5);
+
+  const q7 = makeComparisonQuestion();
+  const q8 = makeComparisonQuestion(q7);
+
+  return { q1, q2, q3, q4, q5, q6, q7, q8 };
 }
 
 export default function MikosAskPage() {
