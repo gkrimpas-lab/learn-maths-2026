@@ -3,44 +3,41 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Συντελεστές μετατροπής ως προς το μέτρο (m)
+// Μονάδες μέτρησης και οι συντελεστές τους σε σχέση με το μέτρο (m)
 const UNITS = {
-  km: { name: 'Χιλιόμετρο', symbol: 'km', factorToMeter: 1000, color: 'bg-purple-500 text-purple-900 border-purple-300' },
-  m:  { name: 'Μέτρο', symbol: 'm', factorToMeter: 1, color: 'bg-blue-500 text-blue-900 border-blue-300' },
-  dm: { name: 'Δεκατόμετρο', symbol: 'dm', factorToMeter: 0.1, color: 'bg-teal-500 text-teal-900 border-teal-300' },
-  cm: { name: 'Εκατοστόμετρο', symbol: 'cm', factorToMeter: 0.01, color: 'bg-amber-500 text-amber-900 border-amber-300' },
-  mm: { name: 'Χιλιοστόμετρο', symbol: 'mm', factorToMeter: 0.001, color: 'bg-rose-500 text-rose-900 border-rose-300' }
+  km: { name: 'Χιλιόμετρο', symbol: 'km', factor: 1000, desc: 'Μεγάλες αποστάσεις (δρόμοι, πόλεις)' },
+  m: { name: 'Μέτρο', symbol: 'm', factor: 1, desc: 'Βασική μονάδα (ύψος, δωμάτιο)' },
+  dm: { name: 'Δεκατόμετρο', symbol: 'dm', factor: 0.1, desc: '1/10 του μέτρου (χάρακας)' },
+  cm: { name: 'Εκατοστόμετρο', symbol: 'cm', factor: 0.01, desc: '1/100 του μέτρου (τετράδιο)' },
+  mm: { name: 'Χιλιοστόμετρο', symbol: 'mm', factor: 0.001, desc: '1/1000 του μέτρου (μικρά αντικείμενα)' }
 };
 
-function formatNumber(num) {
-  if (Number.isInteger(num)) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
-  const parts = num.toFixed(3).replace(/\.?0+$/, "").split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  return parts.join(',');
+function formatNum(num) {
+  if (Number.isInteger(num)) return num.toLocaleString('el-GR');
+  return Number(num.toFixed(3)).toString().replace('.', ',');
 }
 
 export default function MikosTheoryPage() {
-  const [amount, setAmount] = useState(5);
-  const [selectedUnit, setSelectedAmountUnit] = useState('m');
+  const [valInput, setValInput] = useState('2.5');
+  const [baseUnit, setBaseUnit] = useState('m');
 
-  // Υπολογισμός μέτρων
-  const meters = amount * UNITS[selectedUnit].factorToMeter;
+  const numericVal = parseFloat(valInput.replace(',', '.')) || 0;
+  
+  // Μετατροπή της τιμής εισαγωγής σε μέτρα (m)
+  const valInMeters = numericVal * UNITS[baseUnit].factor;
 
-  // Μετατροπές σε όλες τις μονάδες
-  const converted = {
-    km: meters / UNITS.km.factorToMeter,
-    m: meters,
-    dm: meters / UNITS.dm.factorToMeter,
-    cm: meters / UNITS.cm.factorToMeter,
-    mm: meters / UNITS.mm.factorToMeter
+  const handleRandomize = () => {
+    const unitsKeys = Object.keys(UNITS);
+    const randomUnit = unitsKeys[Math.floor(Math.random() * unitsKeys.length)];
+    const randomVal = (Math.random() * 50 + 1).toFixed(1);
+    setBaseUnit(randomUnit);
+    setValInput(randomVal.replace('.', ','));
   };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>📏 Μέτρηση Μήκους - LearnMaths.gr</title>
+        <title>📏 Μονάδες Μέτρησης Μήκους - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -66,7 +63,7 @@ export default function MikosTheoryPage() {
         <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
           
           {/* HEADER & EXERCISES PROMO CARD */}
-          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-8 rounded-3xl shadow-md relative overflow-hidden">
+          <div className="bg-gradient-to-r from-cyan-600 via-teal-600 to-indigo-600 text-white p-8 rounded-3xl shadow-md relative overflow-hidden">
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
@@ -75,8 +72,8 @@ export default function MikosTheoryPage() {
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   📏 Μέτρηση Μήκους & Μετατροπές
                 </h1>
-                <p className="text-blue-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε τις μονάδες μέτρησης μήκους (χιλιόμετρο, μέτρο, δεκατόμετρο, εκατοστόμετρο, χιλιοστόμετρο) και πώς τις μετατρέπουμε!
+                <p className="text-cyan-100 text-base lg:text-lg leading-relaxed">
+                  Μαθαίνουμε το μέτρο, τα υποπολλαπλάσιά του (δεκατόμετρο, εκατοστόμετρο, χιλιοστόμετρο), το χιλιόμετρο και πώς μετατρέπουμε τη μία μονάδα στην άλλη!
                 </p>
               </div>
 
@@ -84,7 +81,7 @@ export default function MikosTheoryPage() {
               <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
                 <div className="text-3xl">🚀</div>
                 <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
-                <p className="text-xs text-blue-100">Δοκίμασε τις ασκήσεις στις μετατροπές μήκους για να σιγουρευτείς ότι τις έμαθες!</p>
+                <p className="text-xs text-cyan-100">Δοκίμασε τις ασκήσεις στις μετατροπές μήκους για να σιγουρευτείς ότι τις έμαθες!</p>
                 <Link 
                   href="/d-dimotikou/8-mikos-ask"
                   className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
@@ -99,88 +96,80 @@ export default function MikosTheoryPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Οι Μονάδες Μέτρησης Μήκους
+                <span>📖</span> Αναλυτική Θεωρία & Σχέσεις Μονάδων
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
-              {/* Βασική Μονάδα & Πολλαπλάσια */}
-              <div className="bg-blue-50/70 p-6 rounded-2xl border border-blue-100 space-y-3">
-                <h3 className="text-lg font-bold text-blue-900 flex items-center gap-2">
-                  <span>🏛️</span> Βασική Μονάδα & Χιλιόμετρο
+              {/* 1. Πολλαπλάσιο */}
+              <div className="bg-indigo-50/70 p-6 rounded-2xl border border-indigo-100 space-y-3">
+                <h3 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
+                  <span>🚗</span> Πολλαπλάσιο (Χιλιόμετρο)
                 </h3>
-                <ul className="space-y-2 text-sm md:text-base text-gray-700 leading-relaxed">
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600 font-bold">•</span>
-                    <span><strong>Μέτρο (m):</strong> Η θεμελιώδης μονάδα μέτρησης μήκους.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-600 font-bold">•</span>
-                    <span><strong>Χιλιόμετρο (km):</strong> Το χρησιμοποιούμε για μεγάλες αποστάσεις.
-                      <span className="block font-mono font-black text-purple-900 mt-0.5">1 km = 1.000 m</span>
-                    </span>
-                  </li>
-                </ul>
+                <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
+                  Για να μετρήσουμε μεγάλες αποστάσεις χρησιμοποιούμε το <strong>Χιλιόμετρο (km)</strong>.
+                </p>
+                <div className="bg-white p-3 rounded-xl border border-indigo-100 text-xs font-mono font-bold text-indigo-900">
+                  1 km = 1.000 m
+                </div>
               </div>
 
-              {/* Υποπολλαπλάσια */}
+              {/* 2. Βασική Μονάδα */}
+              <div className="bg-cyan-50/70 p-6 rounded-2xl border border-cyan-100 space-y-3">
+                <h3 className="text-lg font-bold text-cyan-900 flex items-center gap-2">
+                  <span>📏</span> Βασική Μονάδα (Μέτρο)
+                </h3>
+                <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
+                  Η θεμελιώδης μονάδα μέτρησης μήκους είναι το <strong>Μέτρο (m)</strong>.
+                </p>
+                <div className="bg-white p-3 rounded-xl border border-cyan-100 text-xs font-mono font-bold text-cyan-900">
+                  1 m = 10 dm = 100 cm = 1.000 mm
+                </div>
+              </div>
+
+              {/* 3. Υποπολλαπλάσια */}
               <div className="bg-teal-50/70 p-6 rounded-2xl border border-teal-100 space-y-3">
                 <h3 className="text-lg font-bold text-teal-900 flex items-center gap-2">
-                  <span>✂️</span> Υποπολλαπλάσια του Μέτρου
+                  <span>🔍</span> Υποπολλαπλάσια του Μέτρου
                 </h3>
-                <p className="text-xs text-gray-600">
-                  Μικρότερες μονάδες για τη μέτρηση μικρότερων αντικειμένων:
-                </p>
-                <ul className="space-y-1.5 text-xs md:text-sm text-gray-800 font-mono">
-                  <li className="p-2 bg-white rounded-lg border border-teal-200">
-                    <strong>1 Δεκατόμετρο (dm)</strong> = 0,1 m  (1 m = 10 dm)
-                  </li>
-                  <li className="p-2 bg-white rounded-lg border border-teal-200">
-                    <strong>1 Εκατοστόμετρο (cm)</strong> = 0,01 m (1 m = 100 cm)
-                  </li>
-                  <li className="p-2 bg-white rounded-lg border border-teal-200">
-                    <strong>1 Χιλιοστόμετρο (mm)</strong> = 0,001 m (1 m = 1.000 mm)
-                  </li>
+                <ul className="space-y-1 text-xs text-gray-700 font-mono">
+                  <li>• <strong>1 dm (Δεκατόμετρο)</strong> = 1/10 m = 0,1 m</li>
+                  <li>• <strong>1 cm (Εκατοστόμετρο)</strong> = 1/100 m = 0,01 m</li>
+                  <li>• <strong>1 mm (Χιλιοστόμετρο)</strong> = 1/1000 m = 0,001 m</li>
                 </ul>
               </div>
 
             </div>
 
-            {/* ΣΚΑΛΟΠΑΤΙΑ / ΚΛΙΜΑΚΑ ΜΕΤΑΤΡΟΠΩΝ */}
+            {/* ΣΚΑΛΑ ΜΕΤΑΤΡΟΠΩΝ */}
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4">
-              <h3 className="text-lg font-extrabold text-gray-800">
-                🪜 Πώς κάνουμε τις Μετατροπές; (Ο Κανόνας του 10)
+              <h3 className="text-lg font-extrabold text-gray-800 text-center md:text-left">
+                🪜 Πώς κάνουμε μετατροπές (Η Σκάλα του Μήκους);
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                
-                <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-2">
-                  <h4 className="font-bold text-emerald-700 border-b pb-1">⬇️ Από Μεγάλη σε Μικρότερη μονάδα:</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+                <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-1">
+                  <span className="text-emerald-600 font-bold">⬇️ Από Μεγαλύτερη σε Μικρότερη μονάδα:</span>
                   <p className="text-gray-600">
-                    <strong>Πολλαπλασιάζουμε</strong> με το $10$, $100$ ή $1.000$ σε κάθε βήμα.
+                    <strong>Πολλαπλασιάζουμε</strong> ($\times 10, \times 100, \times 1000$).
                   </p>
-                  <p className="font-mono font-bold text-gray-800 bg-emerald-50 p-2 rounded-lg text-center text-xs md:text-sm">
-                    1 m = 10 dm = 100 cm = 1.000 mm
-                  </p>
+                  <p className="font-mono text-xs text-gray-500">Π.χ. 3 m ➔ cm: 3 × 100 = 300 cm.</p>
                 </div>
 
-                <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-2">
-                  <h4 className="font-bold text-indigo-700 border-b pb-1">⬆️ Από Μικρή σε Μεγαλύτερη μονάδα:</h4>
+                <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-1">
+                  <span className="text-amber-600 font-bold">⬆️ Από Μικρότερη σε Μεγαλύτερη μονάδα:</span>
                   <p className="text-gray-600">
-                    <strong>Διαιρούμε</strong> με το $10$, $100$ ή $1.000$ σε κάθε βήμα.
+                    <strong>Διαιρούμε</strong> ($: 10, : 100, : 1000$).
                   </p>
-                  <p className="font-mono font-bold text-gray-800 bg-indigo-50 p-2 rounded-lg text-center text-xs md:text-sm">
-                    1.000 mm = 100 cm = 10 dm = 1 m
-                  </p>
+                  <p className="font-mono text-xs text-gray-500">Π.χ. 500 cm ➔ m: 500 : 100 = 5 m.</p>
                 </div>
-
               </div>
             </div>
 
           </div>
 
-          {/* ΔΙΑΔΡΑΣΤΙΚΟΣ ΜΕΤΑΤΡΟΠΕΑΣ - SECTION 2 */}
+          {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ - SECTION 2 */}
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
@@ -188,84 +177,80 @@ export default function MikosTheoryPage() {
                   <span>🧮</span> Διαδραστικός Μετατροπέας Μονάδων Μήκους
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Επίλεξε τιμή και αρχική μονάδα για να δεις αυτόματα την ισοδυναμία σε όλες τις μονάδες!
+                  Γράψε μια τιμή, επίλεξε αρχική μονάδα και δες αμέσως τη μετατροπή σε όλες τις υπόλοιπες!
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {Object.keys(UNITS).map((uKey) => (
-                  <button
-                    key={uKey}
-                    onClick={() => setSelectedAmountUnit(uKey)}
-                    className={`px-3 py-2 rounded-xl font-mono font-black text-xs md:text-sm border transition ${
-                      selectedUnit === uKey
-                        ? 'bg-indigo-600 text-white border-indigo-700 shadow-md scale-105'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200'
-                    }`}
-                  >
-                    {UNITS[uKey].symbol}
-                  </button>
-                ))}
-              </div>
+              <button
+                onClick={handleRandomize}
+                className="bg-cyan-600 hover:bg-cyan-700 text-white font-black px-4 py-2.5 rounded-xl text-xs md:text-sm transition shadow-sm flex items-center gap-1.5"
+              >
+                <span>🎲</span> Τυχαία Τιμή
+              </button>
             </div>
 
-            {/* INPUT / SLIDER ΧΕΙΡΙΣΜΟΥ */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200 items-center">
+            {/* INPUTS / ΕΠΙΛΟΓΕΣ */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200">
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Τιμή Μήκους: <span className="text-indigo-600 font-mono text-lg font-black">{amount} {UNITS[selectedUnit].symbol}</span>
+                  Τιμή Μήκους:
                 </label>
                 <input 
-                  type="range" 
-                  min="1" 
-                  max="100" 
-                  value={amount} 
-                  onChange={(e) => setAmount(Number(e.target.value))}
-                  className="w-full accent-indigo-600 cursor-pointer"
+                  type="text" 
+                  value={valInput} 
+                  onChange={(e) => setValInput(e.target.value)}
+                  className="w-full p-3 rounded-xl border border-gray-300 font-mono text-lg font-black focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                  placeholder="π.χ. 2,5"
                 />
               </div>
 
-              <div className="flex items-center gap-3">
-                <input 
-                  type="number"
-                  min="0"
-                  value={amount}
-                  onChange={(e) => setAmount(Math.max(0, Number(e.target.value)))}
-                  className="p-3 rounded-xl border border-gray-300 font-mono font-black text-lg text-center w-36 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                />
-                <span className="font-mono font-black text-lg text-indigo-700">{UNITS[selectedUnit].name} ({UNITS[selectedUnit].symbol})</span>
+              <div>
+                <label className="block text-xs font-black uppercase text-gray-500 mb-1">
+                  Αρχική Μονάδα Μέτρησης:
+                </label>
+                <select
+                  value={baseUnit}
+                  onChange={(e) => setBaseUnit(e.target.value)}
+                  className="w-full p-3 rounded-xl border border-gray-300 font-bold text-gray-800 bg-white focus:ring-2 focus:ring-cyan-500 focus:outline-none cursor-pointer"
+                >
+                  {Object.keys(UNITS).map((uKey) => (
+                    <option key={uKey} value={uKey}>
+                      {UNITS[uKey].name} ({UNITS[uKey].symbol})
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
-            {/* ΠΡΟΒΟΛΗ ΟΛΩΝ ΤΩΝ ΜΕΤΑΤΡΟΠΩΝ */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              
+            {/* ΠΙΝΑΚΑΣ ΑΥΤΟΜΑΤΩΝ ΜΕΤΑΤΡΟΠΩΝ */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
               {Object.keys(UNITS).map((uKey) => {
-                const u = UNITS[uKey];
-                const isCurrent = uKey === selectedUnit;
+                const isSelected = uKey === baseUnit;
+                const convertedValue = valInMeters / UNITS[uKey].factor;
 
                 return (
                   <div 
                     key={uKey}
-                    className={`p-5 rounded-2xl border text-center space-y-2 transition-all ${
-                      isCurrent 
-                        ? 'bg-slate-900 text-white border-slate-900 shadow-xl scale-105' 
-                        : 'bg-white text-gray-800 border-gray-200 shadow-sm'
+                    className={`p-5 rounded-2xl border text-center transition-all ${
+                      isSelected 
+                        ? 'bg-cyan-600 text-white border-cyan-700 shadow-lg scale-105' 
+                        : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    <span className={`text-[10px] font-black uppercase tracking-wider block ${isCurrent ? 'text-amber-400' : 'text-gray-400'}`}>
-                      {u.name}
+                    <span className={`text-[10px] font-black uppercase tracking-wider block ${isSelected ? 'text-cyan-200' : 'text-gray-400'}`}>
+                      {UNITS[uKey].name}
                     </span>
-                    <div className="text-xl md:text-2xl font-mono font-black tracking-tight">
-                      {formatNumber(converted[uKey])}
+                    
+                    <div className="text-xl md:text-2xl font-mono font-black my-2 break-words">
+                      {formatNum(convertedValue)} <span className="text-sm font-bold">{UNITS[uKey].symbol}</span>
                     </div>
-                    <span className={`text-xs font-mono font-bold block ${isCurrent ? 'text-indigo-300' : 'text-indigo-600'}`}>
-                      {u.symbol}
-                    </span>
+
+                    <p className={`text-[11px] leading-tight ${isSelected ? 'text-cyan-100' : 'text-gray-500'}`}>
+                      {UNITS[uKey].desc}
+                    </p>
                   </div>
                 );
               })}
-
             </div>
 
           </div>
@@ -275,7 +260,7 @@ export default function MikosTheoryPage() {
             <div className="space-y-1 text-center md:text-left">
               <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
               <p className="text-gray-800 text-sm md:text-base">
-                Έμαθες τις μονάδες μέτρησης μήκους και τις μετατροπές τους; Δοκίμασε τις διαδραστικές ασκήσεις!
+                Έμαθες τις μονάδες μήκους και τις μετατροπές; Δοκίμασε τις διαδραστικές ασκήσεις!
               </p>
             </div>
             <Link
