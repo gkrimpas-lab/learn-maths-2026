@@ -353,7 +353,7 @@ export default function DekadikoiAskPage() {
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
             <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/6-dekadikoi" className="bg-teal-100 hover:bg-teal-200 text-teal-800 font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
+              <Link href="/d-dimotikou/7-dekadikoi-sinexeia" className="bg-teal-100 hover:bg-teal-200 text-teal-800 font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
                 <span>📖</span> Θεωρία
               </Link>
               <button 
