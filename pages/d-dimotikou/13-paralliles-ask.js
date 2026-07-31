@@ -304,10 +304,10 @@ export default function ParallilesAskPage() {
                 Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
               </span>
               <h1 className="text-3xl lg:text-4xl font-black tracking-tight mt-2">
-                📝 Ασκήσεις: Παράλληλες & Τεμνόμενες Ευθείες
+                📝 Ασκήσεις: Παράλληλες και Τεμνόμενες Ευθείες
               </h1>
               <p className="text-blue-100 text-sm md:text-base mt-1">
-                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι ερωτήσεις αλλάζουν από τη δεξαμενή.
+                Πατώντας «Νέες Ασκήσεις» οι ερωτήσεις αλλάζουν αυτόματα.
               </p>
             </div>
 
