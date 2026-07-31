@@ -26,10 +26,10 @@ function genNumbersQuestion(type) {
 
     return {
       category: '🔢 Αριθμοί έως το 20.000',
-      question: `Ποιο ψηφίο βρίσκεται στη θέση των **${actualPosName}** στον αριθμό **${formatNumber(num)}**;`,
+      question: `Ποιο ψηφίο βρίσκεται στη θέση **${actualPosName}** στον αριθμό **${formatNumber(num)}**;`,
       inputType: 'number',
       correct: digit,
-      explain: `Στον αριθμό ${formatNumber(num)}, στη θέση των ${actualPosName} είναι το ${digit}.`
+      explain: `Στον αριθμό ${formatNumber(num)}, στη θέση ${actualPosName} είναι το ${digit}.`
     };
   } else if (type === 2) {
     // Σύγκριση αριθμών
@@ -161,7 +161,7 @@ function genDivisionQuestion() {
     const dividend = (divisor * quotient) + remainder;
     return {
       category: '➗ Διαίρεση',
-      question: `Πόσο είναι το **υπόλοιπο** ($υ$) της διαίρεσης **${formatNumber(dividend)} : ${divisor}**;`,
+      question: `Πόσο είναι το **υπόλοιπο** (υ) της διαίρεσης **${formatNumber(dividend)} : ${divisor}**;`,
       inputType: 'number',
       correct: remainder,
       explain: `${formatNumber(dividend)} : ${divisor} = ${formatNumber(quotient)} με υπόλοιπο ${remainder}.`
@@ -332,7 +332,7 @@ export default function EpanalipsiPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between pb-28">
       <Head>
-        <title>🏆 Μεγάλη Επανάληψη (30 Ασκήσεις) - LearnMaths.gr</title>
+        <title>🏆 Επανάληψη Ενοτήτων 1 έως 9 (30 Ερωτήσεις) - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -348,7 +348,7 @@ export default function EpanalipsiPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2"
               >
-                <span>🔄</span> Νέες 30 Ασκήσεις
+                <span>🔄</span> Νέες 30 Ερωτήσεις
               </button>
               <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
                 🔙 Επιστροφή
@@ -364,10 +364,10 @@ export default function EpanalipsiPage() {
           <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white p-8 rounded-3xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div className="space-y-2">
               <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                Δ' ΔΗΜΟΤΙΚΟΥ • ΤΕΛΙΚΗ ΕΠΑΝΑΛΗΨΗ
+                Δ' ΔΗΜΟΤΙΚΟΥ • ΕΠΑΝΑΛΗΨΗ 1 ΕΩΣ 9
               </span>
               <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                🏆 Μεγάλη Επανάληψη (30 Ασκήσεις)
+                🏆 Επανάληψη Ενοτήτων 1 έως 9 (30 Ερωτήσεις)
               </h1>
               <p className="text-blue-100 text-sm md:text-base max-w-2xl">
                 Δοκίμασε τις γνώσεις σου σε όλα όσα μάθαμε: Αριθμοί έως 20.000, πολύγωνα, πράξεις, διαίρεση, δεκαδικά κλάσματα, μήκος & βάρος!
@@ -378,7 +378,7 @@ export default function EpanalipsiPage() {
               onClick={loadNewQuestions}
               className="bg-white text-gray-900 font-black px-6 py-3.5 rounded-2xl shadow-xl hover:bg-amber-50 transition transform active:scale-95 text-sm whitespace-nowrap"
             >
-              🔄 Αλλαγή Όλων των Ασκήσεων
+              🔄 Αλλαγή Όλων των Ερωτήσεων
             </button>
           </div>
 
@@ -500,7 +500,7 @@ export default function EpanalipsiPage() {
                   type="submit"
                   className="bg-emerald-500 hover:bg-emerald-600 text-white text-xl font-black px-12 py-5 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95"
                 >
-                  🎯 Έλεγχος Απαντήσεων (30 Ασκήσεις)
+                  🎯 Έλεγχος Απαντήσεων (30 Ερωτήσεις)
                 </button>
               </div>
             )}
@@ -532,7 +532,7 @@ export default function EpanalipsiPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Παίξε ξανά με νέες 30 ασκήσεις!
+                <span>🔄</span> Παίξε ξανά με νέες 30 Ερωτήσεις!
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden md:block">
