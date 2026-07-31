@@ -41,7 +41,7 @@ export default function ParallilesTheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>📐 Παράλληλες & Τεμνόμενες Ευθείες - LearnMaths.gr</title>
+        <title>📐 Παράλληλες και Τεμνόμενες Ευθείες - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -71,13 +71,13 @@ export default function ParallilesTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 13
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  📐 Παράλληλες & Τεμνόμενες Ευθείες
+                  📐 Παράλληλες και Τεμνόμενες Ευθείες
                 </h1>
                 <p className="text-blue-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε πότε δύο ευθείες είναι **παράλληλες** (δεν συναντιούνται ποτέ), πότε είναι **τεμνόμενες** (συναντιούνται σε ένα σημείο) και πότε είναι **κάθετες**!
+                  Μαθαίνουμε πότε δύο ευθείες είναι "παράλληλες" (δεν συναντιούνται ποτέ), πότε είναι "τεμνόμενες" (συναντιούνται σε ένα σημείο) και πότε είναι "κάθετες"!
                 </p>
               </div>
 
@@ -85,7 +85,7 @@ export default function ParallilesTheoryPage() {
               <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
                 <div className="text-3xl">🚀</div>
                 <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
-                <p className="text-xs text-blue-100">Δοκίμασε τις ασκήσεις στις παράλληλες & τεμνόμενες ευθείες για να σιγουρευτείς ότι τις έμαθες!</p>
+                <p className="text-xs text-blue-100">Δοκίμασε τις ασκήσεις στις παράλληλες και τεμνόμενες ευθείες για να σιγουρευτείς ότι τις έμαθες!</p>
                 <Link 
                   href="/d-dimotikou/13-paralliles-ask"
                   className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
@@ -112,7 +112,7 @@ export default function ParallilesTheoryPage() {
                   <span>||</span> Παράλληλες Ευθείες
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Δύο ευθείες λέγονται <strong>παράλληλες ($\varepsilon_1 \parallel \varepsilon_2$)</strong> όταν διατηρούν πάντα την ίδια απόσταση και <strong>δεν συναντιούνται (δεν τέμνονται) ποτέ</strong>, όσο κι αν τις προεκτείνουμε!
+                  Δύο ευθείες λέγονται <strong>παράλληλες (||)</strong> όταν διατηρούν πάντα την ίδια απόσταση και <strong>δεν συναντιούνται (δεν τέμνονται) ποτέ</strong>, όσο κι αν τις προεκτείνουμε!
                 </p>
                 <div className="bg-white p-2.5 rounded-xl border border-blue-100 text-xs font-mono font-bold text-blue-800 text-center">
                   Παράδειγμα: Οι γραμμές του τρένου 🚂
@@ -125,7 +125,7 @@ export default function ParallilesTheoryPage() {
                   <span>✂️</span> Τεμνόμενες Ευθείες
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Δύο ευθείες λέγονται <strong>τεμνόμενες</strong> όταν διασταυρώνονται και συναντιούνται σε <strong>ένα ακριβώς κοινό σημείο</strong> (σημείο τομής $Σ$).
+                  Δύο ευθείες λέγονται <strong>τεμνόμενες</strong> όταν διασταυρώνονται και συναντιούνται σε <strong>ένα ακριβώς κοινό σημείο</strong> (σημείο τομής Σ).
                 </p>
                 <div className="bg-white p-2.5 rounded-xl border border-purple-100 text-xs font-mono font-bold text-purple-800 text-center">
                   Παράδειγμα: Ένα σταυροδρόμι ✖️
@@ -138,7 +138,7 @@ export default function ParallilesTheoryPage() {
                   <span>📐</span> Κάθετες Ευθείες
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Όταν δύο τεμνόμενες ευθείες σχηματίζουν στο σημείο τομής τους <strong>ορθή γωνία ($90^\circ$)</strong>, λέγονται <strong>κάθετες ($\varepsilon_1 \perp \varepsilon_2$)</strong>.
+                  Όταν δύο τεμνόμενες ευθείες σχηματίζουν στο σημείο τομής τους <strong>ορθή γωνία (90°)</strong>, λέγονται <strong>κάθετες (ε₁ ⊥ ε₂)</strong>.
                 </p>
                 <div className="bg-white p-2.5 rounded-xl border border-emerald-100 text-xs font-mono font-bold text-emerald-800 text-center">
                   Έλεγχος με τον γνώμονα 📐
@@ -196,7 +196,7 @@ export default function ParallilesTheoryPage() {
                 <>
                   <div>
                     <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                      Απόσταση Ευθειών: <span className="text-blue-600 font-mono text-base font-black">{distance} px</span>
+                      Αποσταση Ευθειων: <span className="text-blue-600 font-mono text-base font-black">{distance} px</span>
                     </label>
                     <input 
                       type="range" 
@@ -209,7 +209,7 @@ export default function ParallilesTheoryPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                      Γωνία Κλίσης: <span className="text-blue-600 font-mono text-base font-black">{angle}°</span>
+                      Γωνια Κλισης: <span className="text-blue-600 font-mono text-base font-black">{angle}°</span>
                     </label>
                     <input 
                       type="range" 
@@ -224,7 +224,7 @@ export default function ParallilesTheoryPage() {
               ) : lineType === 'intersecting' ? (
                 <div className="md:col-span-2">
                   <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                    Γωνία Διασταύρωσης: <span className="text-purple-600 font-mono text-base font-black">{angle}°</span>
+                    Γωνια Διασταυρωσης: <span className="text-purple-600 font-mono text-base font-black">{angle}°</span>
                   </label>
                   <input 
                     type="range" 
@@ -338,7 +338,7 @@ export default function ParallilesTheoryPage() {
               {/* ΕΠΕΞΗΓΗΣΗ ΣΤΗΝ ΟΘΟΝΗ */}
               <div className="text-center space-y-1">
                 <span className="text-xs font-black uppercase text-slate-400 block">
-                  {lineType === 'parallel' ? 'Παράλληλες Ευθείες (ε₁ ∥ ε₂)' : lineType === 'intersecting' ? 'Τεμνόμενες Ευθείες' : 'Κάθετες Ευθείες (ε₁ ⊥ ε₂)'}
+                  {lineType === 'parallel' ? 'Παραλληλες Ευθειες (ε₁ ∥ ε₂)' : lineType === 'intersecting' ? 'Τεμνομενες Ευθειες' : 'Καθετες Ευθειες (ε₁ ⊥ ε₂)'}
                 </span>
                 <p className="text-sm font-bold text-white">
                   {lineType === 'parallel' 
