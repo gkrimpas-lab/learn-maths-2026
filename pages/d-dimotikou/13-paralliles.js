@@ -3,9 +3,39 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
+// Βοηθητική συνάρτηση για clipping γραμμής μέσα στα όρια [minX, maxX, minY, maxY]
+function clipLine(x0, y0, angleDeg, minX, maxX, minY, maxY) {
+  const rad = (angleDeg * Math.PI) / 180;
+  const dx = Math.cos(rad);
+  const dy = Math.sin(rad);
+
+  let tMin = -1000;
+  let tMax = 1000;
+
+  if (Math.abs(dx) > 0.0001) {
+    const t1 = (minX - x0) / dx;
+    const t2 = (maxX - x0) / dx;
+    tMin = Math.max(tMin, Math.min(t1, t2));
+    tMax = Math.min(tMax, Math.max(t1, t2));
+  }
+  if (Math.abs(dy) > 0.0001) {
+    const t1 = (minY - y0) / dy;
+    const t2 = (maxY - y0) / dy;
+    tMin = Math.max(tMin, Math.min(t1, t2));
+    tMax = Math.min(tMax, Math.max(t1, t2));
+  }
+
+  return {
+    x1: x0 + tMin * dx,
+    y1: y0 + tMin * dy,
+    x2: x0 + tMax * dx,
+    y2: y0 + tMax * dy
+  };
+}
+
 export default function ParallilesTheoryPage() {
   const [lineType, setLineType] = useState('parallel'); // 'parallel', 'intersecting', 'perpendicular'
-  const [angle, setAngle] = useState(45); // Γωνία κλίσης / διασταύρωσης
+  const [angle, setAngle] = useState(65); // Γωνία κλίσης / διασταύρωσης
   const [distance, setDistance] = useState(60); // Απόσταση για παράλληλες
 
   return (
@@ -171,7 +201,7 @@ export default function ParallilesTheoryPage() {
                     <input 
                       type="range" 
                       min="30" 
-                      max="120" 
+                      max="110" 
                       value={distance} 
                       onChange={(e) => setDistance(Number(e.target.value))}
                       className="w-full accent-blue-600 cursor-pointer"
@@ -183,8 +213,8 @@ export default function ParallilesTheoryPage() {
                     </label>
                     <input 
                       type="range" 
-                      min="0" 
-                      max="180" 
+                      min="10" 
+                      max="170" 
                       value={angle} 
                       onChange={(e) => setAngle(Number(e.target.value))}
                       className="w-full accent-blue-600 cursor-pointer"
@@ -212,59 +242,68 @@ export default function ParallilesTheoryPage() {
               )}
             </div>
 
-            {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG - ΑΥΞΗΜΕΝΟ ΥΨΟΣ) */}
-            <div className="bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-4">
+            {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG ME ΕΝΣΩΜΑΤΩΜΕΝΟ CLIPPING) */}
+            <div className="bg-slate-900 p-6 md:p-10 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-6">
               
-              <div className="w-full max-w-2xl h-[450px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
+              <div className="w-full max-w-2xl h-[420px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                 <svg className="w-full h-full" viewBox="0 0 500 450">
                   
                   {lineType === 'parallel' && (() => {
                     const rad = (angle * Math.PI) / 180;
-                    const len = 240; // Μεγαλύτερο μήκος ευθειών
-                    const dx = Math.cos(rad) * len;
-                    const dy = Math.sin(rad) * len;
                     const nx = -Math.sin(rad) * (distance / 2);
                     const ny = Math.cos(rad) * (distance / 2);
+
+                    // Κέντρα των δύο παράλληλων
+                    const x01 = 250 + nx;
+                    const y01 = 225 + ny;
+                    const x02 = 250 - nx;
+                    const y02 = 225 - ny;
+
+                    // Clipping στα όρια του SVG [30, 470, 30, 420]
+                    const line1 = clipLine(x01, y01, angle, 30, 470, 30, 420);
+                    const line2 = clipLine(x02, y02, angle, 30, 470, 30, 420);
+
+                    // Βρίσκουμε το πάνω σημείο για να βάλουμε την ετικέτα
+                    const label1X = line1.y1 < line1.y2 ? line1.x1 : line1.x2;
+                    const label1Y = line1.y1 < line1.y2 ? line1.y1 : line1.y2;
+
+                    const label2X = line2.y1 < line2.y2 ? line2.x1 : line2.x2;
+                    const label2Y = line2.y1 < line2.y2 ? line2.y1 : line2.y2;
 
                     return (
                       <g>
                         {/* Ευθεία ε1 */}
                         <line 
-                          x1={250 + nx - dx} y1={225 + ny - dy} 
-                          x2={250 + nx + dx} y2={225 + ny + dy} 
+                          x1={line1.x1} y1={line1.y1} 
+                          x2={line1.x2} y2={line1.y2} 
                           stroke="#3b82f6" strokeWidth="5" strokeLinecap="round" 
                         />
-                        <text x={250 + nx + dx - 15} y={225 + ny + dy - 15} fill="#60a5fa" fontWeight="black" fontSize="18">ε₁</text>
+                        <text x={label1X + 10} y={label1Y + 20} fill="#60a5fa" fontWeight="black" fontSize="18">ε₁</text>
 
                         {/* Ευθεία ε2 */}
                         <line 
-                          x1={250 - nx - dx} y1={225 - ny - dy} 
-                          x2={250 - nx + dx} y2={225 - ny + dy} 
+                          x1={line2.x1} y1={line2.y1} 
+                          x2={line2.x2} y2={line2.y2} 
                           stroke="#60a5fa" strokeWidth="5" strokeLinecap="round" 
                         />
-                        <text x={250 - nx + dx - 15} y={225 - ny + dy - 15} fill="#93c5fd" fontWeight="black" fontSize="18">ε₂</text>
+                        <text x={label2X + 10} y={label2Y + 20} fill="#93c5fd" fontWeight="black" fontSize="18">ε₂</text>
                       </g>
                     );
                   })()}
 
                   {lineType === 'intersecting' && (() => {
-                    const rad = (angle * Math.PI) / 180;
-                    const len = 220;
-                    const dx1 = Math.cos(0) * len;
-                    const dy1 = Math.sin(0) * len;
-
-                    const dx2 = Math.cos(rad) * len;
-                    const dy2 = Math.sin(rad) * len;
+                    const line1 = clipLine(250, 225, 0, 30, 470, 30, 420);
+                    const line2 = clipLine(250, 225, angle, 30, 470, 30, 420);
 
                     return (
                       <g>
                         {/* Ευθεία ε1 */}
-                        <line x1={250 - dx1} y1={225 - dy1} x2={250 + dx1} y2={225 + dy1} stroke="#a855f7" strokeWidth="5" strokeLinecap="round" />
-                        <text x={250 + dx1 - 25} y={225 + dy1 - 15} fill="#c084fc" fontWeight="black" fontSize="18">ε₁</text>
+                        <line x1={line1.x1} y1={line1.y1} x2={line1.x2} y2={line1.y2} stroke="#a855f7" strokeWidth="5" strokeLinecap="round" />
+                        <text x={line1.x2 - 30} y={line1.y2 - 12} fill="#c084fc" fontWeight="black" fontSize="18">ε₁</text>
 
                         {/* Ευθεία ε2 */}
-                        <line x1={250 - dx2} y1={225 - dy2} x2={250 + dx2} y2={225 + dy2} stroke="#e879f9" strokeWidth="5" strokeLinecap="round" />
-                        <text x={250 + dx2 - 25} y={225 + dy2 - 15} fill="#f0abfc" fontWeight="black" fontSize="18">ε₂</text>
+                        <line x1={line2.x1} y1={line2.y1} x2={line2.x2} y2={line2.y2} stroke="#e879f9" strokeWidth="5" strokeLinecap="round" />
+                        <text x={line2.x2 - 15} y={line2.y2 + 20} fill="#f0abfc" fontWeight="black" fontSize="18">ε₂</text>
 
                         {/* Σημείο Τομής Σ */}
                         <circle cx="250" cy="225" r="7" fill="#f43f5e" />
@@ -276,12 +315,12 @@ export default function ParallilesTheoryPage() {
                   {lineType === 'perpendicular' && (
                     <g>
                       {/* Ευθεία ε1 (Οριζόντια) */}
-                      <line x1="50" y1="225" x2="450" y2="225" stroke="#10b981" strokeWidth="5" strokeLinecap="round" />
-                      <text x="430" y="210" fill="#34d399" fontWeight="black" fontSize="18">ε₁</text>
+                      <line x1="40" y1="225" x2="460" y2="225" stroke="#10b981" strokeWidth="5" strokeLinecap="round" />
+                      <text x="440" y="210" fill="#34d399" fontWeight="black" fontSize="18">ε₁</text>
 
                       {/* Ευθεία ε2 (Κάθετη) */}
-                      <line x1="250" y1="30" x2="250" y2="420" stroke="#059669" strokeWidth="5" strokeLinecap="round" />
-                      <text x="265" y="55" fill="#6ee7b7" fontWeight="black" fontSize="18">ε₂</text>
+                      <line x1="250" y1="40" x2="250" y2="410" stroke="#059669" strokeWidth="5" strokeLinecap="round" />
+                      <text x="265" y="65" fill="#6ee7b7" fontWeight="black" fontSize="18">ε₂</text>
 
                       {/* Σημείο Τομής Σ */}
                       <circle cx="250" cy="225" r="7" fill="#f43f5e" />
