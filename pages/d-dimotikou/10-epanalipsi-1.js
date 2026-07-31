@@ -404,7 +404,7 @@ export default function EpanalipsiPage() {
                       <span className="bg-blue-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center shrink-0">
                         {idx + 1}
                       </span>
-                      <span className="text-xs font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-100">
+                      <span className="text-xs font-black tracking-wider text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-100">
                         {q.category}
                       </span>
                     </div>
