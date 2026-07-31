@@ -6,7 +6,7 @@ import { LAYOUT } from '../../shared/layout-config';
 export default function ParallilesTheoryPage() {
   const [lineType, setLineType] = useState('parallel'); // 'parallel', 'intersecting', 'perpendicular'
   const [angle, setAngle] = useState(45); // Γωνία κλίσης / διασταύρωσης
-  const [distance, setDistance] = useState(50); // Απόσταση για παράλληλες
+  const [distance, setDistance] = useState(60); // Απόσταση για παράλληλες
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -98,7 +98,7 @@ export default function ParallilesTheoryPage() {
                   Δύο ευθείες λέγονται <strong>τεμνόμενες</strong> όταν διασταυρώνονται και συναντιούνται σε <strong>ένα ακριβώς κοινό σημείο</strong> (σημείο τομής $Σ$).
                 </p>
                 <div className="bg-white p-2.5 rounded-xl border border-purple-100 text-xs font-mono font-bold text-purple-800 text-center">
-                  Παράδειγμα: Ένας σταυροδρόμι ✖️
+                  Παράδειγμα: Ένα σταυροδρόμι ✖️
                 </div>
               </div>
 
@@ -170,8 +170,8 @@ export default function ParallilesTheoryPage() {
                     </label>
                     <input 
                       type="range" 
-                      min="20" 
-                      max="90" 
+                      min="30" 
+                      max="120" 
                       value={distance} 
                       onChange={(e) => setDistance(Number(e.target.value))}
                       className="w-full accent-blue-600 cursor-pointer"
@@ -212,16 +212,17 @@ export default function ParallilesTheoryPage() {
               )}
             </div>
 
-            {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG) */}
+            {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG - ΑΥΞΗΜΕΝΟ ΥΨΟΣ) */}
             <div className="bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-4">
               
-              <div className="w-full max-w-lg h-64 bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
-                <svg className="w-full h-full" viewBox="0 0 400 250">
+              <div className="w-full max-w-2xl h-[450px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
+                <svg className="w-full h-full" viewBox="0 0 500 450">
                   
                   {lineType === 'parallel' && (() => {
                     const rad = (angle * Math.PI) / 180;
-                    const dx = Math.cos(rad) * 160;
-                    const dy = Math.sin(rad) * 160;
+                    const len = 240; // Μεγαλύτερο μήκος ευθειών
+                    const dx = Math.cos(rad) * len;
+                    const dy = Math.sin(rad) * len;
                     const nx = -Math.sin(rad) * (distance / 2);
                     const ny = Math.cos(rad) * (distance / 2);
 
@@ -229,44 +230,45 @@ export default function ParallilesTheoryPage() {
                       <g>
                         {/* Ευθεία ε1 */}
                         <line 
-                          x1={200 + nx - dx} y1={125 + ny - dy} 
-                          x2={200 + nx + dx} y2={125 + ny + dy} 
-                          stroke="#3b82f6" strokeWidth="4" strokeLinecap="round" 
+                          x1={250 + nx - dx} y1={225 + ny - dy} 
+                          x2={250 + nx + dx} y2={225 + ny + dy} 
+                          stroke="#3b82f6" strokeWidth="5" strokeLinecap="round" 
                         />
-                        <text x={200 + nx + dx - 10} y={125 + ny + dy - 10} fill="#60a5fa" fontWeight="bold" fontSize="16">ε₁</text>
+                        <text x={250 + nx + dx - 15} y={225 + ny + dy - 15} fill="#60a5fa" fontWeight="black" fontSize="18">ε₁</text>
 
                         {/* Ευθεία ε2 */}
                         <line 
-                          x1={200 - nx - dx} y1={125 - ny - dy} 
-                          x2={200 - nx + dx} y2={125 - ny + dy} 
-                          stroke="#60a5fa" strokeWidth="4" strokeLinecap="round" 
+                          x1={250 - nx - dx} y1={225 - ny - dy} 
+                          x2={250 - nx + dx} y2={225 - ny + dy} 
+                          stroke="#60a5fa" strokeWidth="5" strokeLinecap="round" 
                         />
-                        <text x={200 - nx + dx - 10} y={125 - ny + dy - 10} fill="#93c5fd" fontWeight="bold" fontSize="16">ε₂</text>
+                        <text x={250 - nx + dx - 15} y={225 - ny + dy - 15} fill="#93c5fd" fontWeight="black" fontSize="18">ε₂</text>
                       </g>
                     );
                   })()}
 
                   {lineType === 'intersecting' && (() => {
                     const rad = (angle * Math.PI) / 180;
-                    const dx1 = Math.cos(0) * 160;
-                    const dy1 = Math.sin(0) * 160;
+                    const len = 220;
+                    const dx1 = Math.cos(0) * len;
+                    const dy1 = Math.sin(0) * len;
 
-                    const dx2 = Math.cos(rad) * 160;
-                    const dy2 = Math.sin(rad) * 160;
+                    const dx2 = Math.cos(rad) * len;
+                    const dy2 = Math.sin(rad) * len;
 
                     return (
                       <g>
                         {/* Ευθεία ε1 */}
-                        <line x1={200 - dx1} y1={125 - dy1} x2={200 + dx1} y2={125 + dy1} stroke="#a855f7" strokeWidth="4" strokeLinecap="round" />
-                        <text x={200 + dx1 - 20} y={125 + dy1 - 10} fill="#c084fc" fontWeight="bold" fontSize="16">ε₁</text>
+                        <line x1={250 - dx1} y1={225 - dy1} x2={250 + dx1} y2={225 + dy1} stroke="#a855f7" strokeWidth="5" strokeLinecap="round" />
+                        <text x={250 + dx1 - 25} y={225 + dy1 - 15} fill="#c084fc" fontWeight="black" fontSize="18">ε₁</text>
 
                         {/* Ευθεία ε2 */}
-                        <line x1={200 - dx2} y1={125 - dy2} x2={200 + dx2} y2={125 + dy2} stroke="#e879f9" strokeWidth="4" strokeLinecap="round" />
-                        <text x={200 + dx2 - 20} y={125 + dy2 - 10} fill="#f0abfc" fontWeight="bold" fontSize="16">ε₂</text>
+                        <line x1={250 - dx2} y1={225 - dy2} x2={250 + dx2} y2={225 + dy2} stroke="#e879f9" strokeWidth="5" strokeLinecap="round" />
+                        <text x={250 + dx2 - 25} y={225 + dy2 - 15} fill="#f0abfc" fontWeight="black" fontSize="18">ε₂</text>
 
                         {/* Σημείο Τομής Σ */}
-                        <circle cx="200" cy="125" r="6" fill="#f43f5e" />
-                        <text x="210" y="120" fill="#f43f5e" fontWeight="black" fontSize="18">Σ</text>
+                        <circle cx="250" cy="225" r="7" fill="#f43f5e" />
+                        <text x="262" y="215" fill="#f43f5e" fontWeight="black" fontSize="20">Σ</text>
                       </g>
                     );
                   })()}
@@ -274,20 +276,20 @@ export default function ParallilesTheoryPage() {
                   {lineType === 'perpendicular' && (
                     <g>
                       {/* Ευθεία ε1 (Οριζόντια) */}
-                      <line x1="50" y1="125" x2="350" y2="125" stroke="#10b981" strokeWidth="4" strokeLinecap="round" />
-                      <text x="340" y="115" fill="#34d399" fontWeight="bold" fontSize="16">ε₁</text>
+                      <line x1="50" y1="225" x2="450" y2="225" stroke="#10b981" strokeWidth="5" strokeLinecap="round" />
+                      <text x="430" y="210" fill="#34d399" fontWeight="black" fontSize="18">ε₁</text>
 
                       {/* Ευθεία ε2 (Κάθετη) */}
-                      <line x1="200" y1="25" x2="200" y2="225" stroke="#059669" strokeWidth="4" strokeLinecap="round" />
-                      <text x="210" y="45" fill="#6ee7b7" fontWeight="bold" fontSize="16">ε₂</text>
+                      <line x1="250" y1="30" x2="250" y2="420" stroke="#059669" strokeWidth="5" strokeLinecap="round" />
+                      <text x="265" y="55" fill="#6ee7b7" fontWeight="black" fontSize="18">ε₂</text>
 
                       {/* Σημείο Τομής Σ */}
-                      <circle cx="200" cy="125" r="6" fill="#f43f5e" />
-                      <text x="212" y="115" fill="#f43f5e" fontWeight="black" fontSize="18">Σ</text>
+                      <circle cx="250" cy="225" r="7" fill="#f43f5e" />
+                      <text x="265" y="215" fill="#f43f5e" fontWeight="black" fontSize="20">Σ</text>
 
                       {/* Σύμβολο Ορθής Γωνίας (90°) */}
-                      <rect x="200" y="105" width="20" height="20" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                      <circle cx="210" cy="115" r="2" fill="#f59e0b" />
+                      <rect x="250" y="195" width="30" height="30" fill="none" stroke="#f59e0b" strokeWidth="3" />
+                      <circle cx="265" cy="210" r="3" fill="#f59e0b" />
                     </g>
                   )}
 
