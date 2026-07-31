@@ -16,6 +16,7 @@ export default function DDimotikouMenu() {
     { id: '9-baros', label: '🔢 9. Βάρος', href: '/d-dimotikou/9-baros' },
     { id: '10-epanalipsi-1', label: '🎯 10. Επαναληπτικές Ασκήσεις 1 - 9', href: '/d-dimotikou/10-epanalipsi-1' },
     { id: '11-dekadikoi-3-psifia', label: '✂️ 11. Δεκαδικοί με 3 ψηφία', href: '/d-dimotikou/11-dekadikoi-3-psifia' },
+    { id: '12-diairesi-deka-ekato-xilia', label: '🎯 12. Διαίρεση με 10, 100, 1000', href: '/d-dimotikou/12-diairesi-deka-ekato-xilia' },
     { id: '1-megaloi-arithmoi', label: '🍕 100. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
     { id: '2-katheti-diairesi', label: '🔄 200. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' },
     { id: '6-diairesi-deka-ekato-xilia', label: '🎯 300. Διαίρεση με 10, 100, 1000', href: '/d-dimotikou/6-diairesi-deka-ekato-xilia' }
