@@ -282,7 +282,7 @@ export default function Dekadikoi3PsifiaAskPage() {
       <div className="flex items-center gap-3 mb-4">
         <span className="bg-teal-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
         <h3 className="text-lg font-bold text-gray-900">
-          Ποιο ψηφίο βρίσκεται στη θέση των <span className="text-teal-600 font-extrabold">{qData.placeType}</span> στον αριθμό <span className="text-teal-600 font-mono font-black text-xl">{qData.decStr}</span>;
+          Ποιο ψηφίο βρίσκεται στη θέση <span className="text-teal-600 font-extrabold">{qData.placeType}</span> στον αριθμό <span className="text-teal-600 font-mono font-black text-xl">{qData.decStr}</span>;
         </h3>
       </div>
 
@@ -402,7 +402,7 @@ export default function Dekadikoi3PsifiaAskPage() {
                 📝 Ασκήσεις: Δεκαδικοί με 3 Ψηφία
               </h1>
               <p className="text-purple-100 text-sm md:text-base mt-1">
-                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι αριθμοί αλλάζουν αυτόματα.
+                Πατώντας «Νέες Ασκήσεις» οι αριθμοί αλλάζουν αυτόματα.
               </p>
             </div>
 
