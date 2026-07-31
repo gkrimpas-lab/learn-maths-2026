@@ -75,13 +75,13 @@ export default function Dekadikoi3PsifiaTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 11
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   🔢 Δεκαδικοί Αριθμοί με 3 Δεκαδικά Ψηφία
                 </h1>
                 <p className="text-purple-100 text-base lg:text-lg leading-relaxed">
-                  Γνωρίζουμε τα **χιλιοστά (χ)**, τη θέση τους μετά την υποδιαστολή και τη μετατροπή δεκαδικών κλασμάτων με παρανομαστή 1.000!
+                  Γνωρίζουμε τα χιλιοστά (χ), τη θέση τους μετά την υποδιαστολή και τη μετατροπή δεκαδικών κλασμάτων με παρανομαστή 1.000!
                 </p>
               </div>
 
@@ -113,7 +113,7 @@ export default function Dekadikoi3PsifiaTheoryPage() {
               {/* Χιλιοστά & Κλάσματα */}
               <div className="bg-indigo-50/70 p-6 rounded-2xl border border-indigo-100 space-y-3">
                 <h3 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
-                  <span>🍰</span> Δεκαδικά Κλάσματα με /1.000
+                  <span>🍰</span> Δεκαδικά Κλάσματα με παρονομαστή το 1.000
                 </h3>
                 <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                   Όταν χωρίζουμε τη μονάδα σε <strong>1.000 ίσα μέρη</strong>, το κάθε μέρος λέγεται <strong>1 χιλιοστό</strong>:
@@ -180,7 +180,7 @@ export default function Dekadikoi3PsifiaTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικός Μετατροπέας Χιλιοστών (/1.000)
+                  <span>🧮</span> Διαδραστικός Μετατροπέας Χιλιοστών (Κλάσμα με παρονομαστή το 1.000)
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Άλλαξε τον αριθμητή και δες αμέσως τη μετατροπή σε δεκαδικό αριθμό με 3 ψηφία!
@@ -198,7 +198,7 @@ export default function Dekadikoi3PsifiaTheoryPage() {
             {/* SLIDER ΧΕΙΡΙΣΜΟΥ */}
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-2">
               <label className="block text-xs font-black uppercase text-gray-500">
-                Αριθμητής Κλάσματος: <span className="text-indigo-600 font-mono text-lg font-black">{numerator}</span>
+                Αριθμητης Κλασματος: <span className="text-indigo-600 font-mono text-lg font-black">{numerator}</span>
               </label>
               <input 
                 type="range" 
@@ -216,7 +216,7 @@ export default function Dekadikoi3PsifiaTheoryPage() {
               {/* 1. Δεκαδικό Κλάσμα */}
               <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-3xl border border-indigo-200 text-center space-y-2">
                 <span className="text-xs font-black uppercase tracking-wider text-indigo-500 block">
-                  1. Δεκαδικό Κλάσμα
+                  1. Δεκαδικο Κλασμα
                 </span>
                 <div className="inline-flex flex-col items-center font-mono font-black text-3xl md:text-4xl text-indigo-900 py-2">
                   <span>{numerator}</span>
@@ -228,7 +228,7 @@ export default function Dekadikoi3PsifiaTheoryPage() {
               {/* 2. Δεκαδικός Αριθμός */}
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-3xl border border-purple-200 text-center space-y-2">
                 <span className="text-xs font-black uppercase tracking-wider text-purple-500 block">
-                  2. Δεκαδικός Αριθμός
+                  2. Δεκαδικος Αριθμος
                 </span>
                 <div className="font-mono font-black text-4xl md:text-5xl text-purple-900 py-4">
                   {decimalVal.toString().replace('.', ',')}
@@ -238,7 +238,7 @@ export default function Dekadikoi3PsifiaTheoryPage() {
               {/* 3. Πίνακας Αξίας Θέσης */}
               <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl space-y-3 text-center">
                 <span className="text-xs font-black uppercase tracking-wider text-slate-400 block">
-                  3. Πίνακας Αξίας Θέσης
+                  3. Πινακας Αξιας Θεσης
                 </span>
                 
                 <div className="grid grid-cols-5 gap-1 text-center font-mono text-[10px] md:text-xs">
@@ -260,7 +260,7 @@ export default function Dekadikoi3PsifiaTheoryPage() {
 
             {/* ΟΛΟΓΡΑΦΗ ΕΞΗΓΗΣΗ (2 ΤΡΟΠΟΙ ΑΝΑΓΝΩΣΗΣ) */}
             <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-200 text-center space-y-2">
-              <span className="text-xs font-black uppercase text-emerald-800 block">🗣️ Πώς το διαβάζουμε:</span>
+              <span className="text-xs font-black uppercase text-emerald-800 block">🗣️ Πως το διαβαζουμε:</span>
               
               {isDecimalZero ? (
                 <div className="bg-white px-6 py-3 rounded-xl border border-emerald-200 shadow-sm inline-block text-lg font-black text-emerald-950">
