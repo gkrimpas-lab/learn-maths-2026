@@ -55,7 +55,7 @@ export default function Diairesi101001000TheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>➗ Διαίρεση & Πολλαπλασιασμός με 10, 100, 1.000 - LearnMaths.gr</title>
+        <title>➗ Διαίρεση και Πολλαπλασιασμός με 10, 100, 1.000 - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -85,10 +85,10 @@ export default function Diairesi101001000TheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 12
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  ⚡ Διαίρεση & Πολλαπλασιασμός με 10, 100, 1.000
+                  ⚡ Διαίρεση και Πολλαπλασιασμός με 10, 100, 1.000
                 </h1>
                 <p className="text-blue-100 text-base lg:text-lg leading-relaxed">
                   Μαθαίνουμε τον χρυσό κανόνα της μετακίνησης της υποδιαστολής (αριστερά στη διαίρεση, δεξιά στον πολλαπλασιασμό)!
@@ -99,7 +99,7 @@ export default function Diairesi101001000TheoryPage() {
               <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
                 <div className="text-3xl">🚀</div>
                 <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
-                <p className="text-xs text-blue-100">Δοκίμασε τις ασκήσεις στη διαίρεση & πολλαπλασιασμό με 10, 100, 1.000!</p>
+                <p className="text-xs text-blue-100">Δοκίμασε τις ασκήσεις στη διαίρεση και τον πολλαπλασιασμό με 10, 100, 1.000!</p>
                 <Link 
                   href="/d-dimotikou/12-diairesi-deka-ekato-xilia-ask"
                   className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
@@ -123,7 +123,7 @@ export default function Diairesi101001000TheoryPage() {
               {/* 1. ΔΙΑΙΡΕΣΗ (: 10, : 100, : 1000) */}
               <div className="bg-rose-50/70 p-6 rounded-2xl border border-rose-100 space-y-3">
                 <h3 className="text-lg font-bold text-rose-900 flex items-center gap-2">
-                  <span>⬅️</span> Διαίρεση (: 10, : 100, : 1.000)
+                  <span>⬅️</span> Διαίρεση ( 10,  100,  1.000)
                 </h3>
                 <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                   Στη διαίρεση ο αριθμός <strong>μικραίνει</strong>, οπότε μετακινούμε την υποδιαστολή προς τα <strong>ΑΡΙΣΤΕΡΑ</strong>:
@@ -138,7 +138,7 @@ export default function Diairesi101001000TheoryPage() {
               {/* 2. ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ (x 10, x 100, x 1000) */}
               <div className="bg-emerald-50/70 p-6 rounded-2xl border border-emerald-100 space-y-3">
                 <h3 className="text-lg font-bold text-emerald-900 flex items-center gap-2">
-                  <span>➡️</span> Πολλαπλασιασμός (× 10, × 100, × 1.000)
+                  <span>➡️</span> Πολλαπλασιασμός ( 10,  100,  1.000)
                 </h3>
                 <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                   Στον πολλαπλασιασμό ο αριθμός <strong>μεγαλώνει</strong>, οπότε μετακινούμε την υποδιαστολή προς τα <strong>ΔΕΞΙΑ</strong>:
@@ -154,9 +154,9 @@ export default function Diairesi101001000TheoryPage() {
 
             {/* ΣΥΝΤΟΜΟ TIP ΓΙΑ ΑΚΕΡΑΙΟΥΣ */}
             <div className="bg-amber-50 p-5 rounded-2xl border border-amber-200 text-xs md:text-sm font-medium text-amber-950 space-y-1">
-              <span className="font-black uppercase text-amber-800">💡 Τι κάνουμε όταν ο αριθμός είναι Ακέραιος;</span>
+              <span className="font-black uppercase text-amber-800">💡 Τι κανουμε οταν ο αριθμος είναι Ακεραιος;</span>
               <p>
-                Στους ακεραίους αριθμούς (π.χ. $450$), η υποδιαστολή κρύβεται πάντα στο τέλος ($450,$). Όταν διαιρούμε με το $10$ ή το $100$, η υποδιαστολή εμφανίζεται και κινείται προς τα αριστερά!
+                Στους ακεραίους αριθμούς (π.χ. 450), η υποδιαστολή κρύβεται πάντα στο τέλος (450,) και δεν τη γράφουμε. Όταν διαιρούμε με το 10 ή το 100, ή το 1000 η υποδιαστολή εμφανίζεται και κινείται προς τα αριστερά!
               </p>
             </div>
 
@@ -188,7 +188,7 @@ export default function Diairesi101001000TheoryPage() {
               {/* 1. Αριθμός (με όριο 10 ψηφία) */}
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Αριθμός (έως 10 ψηφία):
+                  Αριθμος (έως 10 ψηφια):
                 </label>
                 <input 
                   type="text" 
@@ -202,7 +202,7 @@ export default function Diairesi101001000TheoryPage() {
               {/* 2. Πράξη */}
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Πράξη:
+                  Πραξη:
                 </label>
                 <div className="flex gap-2">
                   <button
@@ -227,7 +227,7 @@ export default function Diairesi101001000TheoryPage() {
               {/* 3. Παράγοντας (10, 100, 1000) */}
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Με πόσο;
+                  Με ποσο;
                 </label>
                 <div className="flex gap-2">
                   {[10, 100, 1000].map((f) => (
@@ -250,7 +250,7 @@ export default function Diairesi101001000TheoryPage() {
             <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl text-center space-y-4">
               
               <div className="text-xs font-black uppercase tracking-wider text-slate-400">
-                Η Πράξη σου:
+                Η Πραξη σου:
               </div>
 
               <div className="font-mono font-black text-3xl md:text-5xl text-amber-400 py-2 break-all">
