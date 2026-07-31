@@ -12,6 +12,17 @@ export default function Diairesi101001000TheoryPage() {
   const [operation, setModeOperation] = useState("div"); // 'div' (:) ή 'mul' (x)
   const [factor, setFactor] = useState(10); // 10, 100, 1000
 
+  // Χειρισμός εισαγωγής με περιορισμό έως 10 ψηφία
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    // Καθαρίζουμε τα ψηφία (χωρίς το κόμμα/τελεία) για να μετρήσουμε το μήκος
+    const digitsOnly = val.replace(/[^0-9]/g, '');
+    
+    if (digitsOnly.length <= 10) {
+      setNumInput(val);
+    }
+  };
+
   const numericVal = parseFloat(numInput.replace(',', '.')) || 0;
 
   // Υπολογισμός αποτελέσματος
@@ -156,10 +167,10 @@ export default function Diairesi101001000TheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εργαστήριο Υποδιαστολής
+                  <span>🧮</span> Διαδραστικό Εεργαστήριο Υποδιαστολής
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Γράψε έναν αριθμό, επίλεξε πράξη και δες ζωντανά πώς μετακινείται η υποδιαστολή!
+                  Γράψε έναν αριθμό (έως 10 ψηφία), επίλεξε πράξη και δες ζωντανά πώς μετακινείται η υποδιαστολή!
                 </p>
               </div>
 
@@ -174,17 +185,17 @@ export default function Diairesi101001000TheoryPage() {
             {/* INPUTS / ΕΠΙΛΟΓΕΣ */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200">
               
-              {/* 1. Αριθμός */}
+              {/* 1. Αριθμός (με όριο 10 ψηφία) */}
               <div>
                 <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Αριθμός:
+                  Αριθμός (έως 10 ψηφία):
                 </label>
                 <input 
                   type="text" 
                   value={numInput} 
-                  onChange={(e) => setNumInput(e.target.value)}
+                  onChange={handleInputChange}
                   className="w-full p-3 rounded-xl border border-gray-300 font-mono text-lg font-black focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                  placeholder="π.χ. 450 ή 3,5"
+                  placeholder="π.χ. 450"
                 />
               </div>
 
@@ -242,7 +253,7 @@ export default function Diairesi101001000TheoryPage() {
                 Η Πράξη σου:
               </div>
 
-              <div className="font-mono font-black text-3xl md:text-5xl text-amber-400 py-2">
+              <div className="font-mono font-black text-3xl md:text-5xl text-amber-400 py-2 break-all">
                 {numInput} {operation === 'div' ? ':' : '×'} {factor} = <span className="text-emerald-400">{result.toString().replace('.', ',')}</span>
               </div>
 
