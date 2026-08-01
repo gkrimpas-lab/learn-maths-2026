@@ -7,6 +7,17 @@ export default function EmbadonTheoryPage() {
   const [valInput, setValInput] = useState('1');
   const [zoomLevel, setZoomLevel] = useState('m'); // 'm' (1 τ.μ.), 'dm' (100 τ.δ.), 'cm' (10.000 τ.εκ.)
 
+  // Χειρισμός εισαγωγής με περιορισμό έως 10 ψηφία
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    // Καθαρίζουμε τα ψηφία (αγνοώντας κόμμα/τελεία) για να μετρήσουμε το μήκος
+    const digitsOnly = val.replace(/[^0-9]/g, '');
+    
+    if (digitsOnly.length <= 10) {
+      setValInput(val);
+    }
+  };
+
   const numericVal = parseFloat(valInput.replace(',', '.')) || 0;
 
   // Υπολογισμός τιμών με βάση τον κανόνα του 100
@@ -157,7 +168,7 @@ export default function EmbadonTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εργαστήριο Zoom & Μετατροπών
+                  <span>🧮</span> Διαδραστικό Εεργαστήριο Zoom & Μετατροπών
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Δες πώς το 1 τ.μ. «σπάει» οπτικά σε 100 τ.δ. και σε 10.000 τ.εκ.!
@@ -253,12 +264,12 @@ export default function EmbadonTheoryPage() {
 
                 <div>
                   <label className="block text-xs font-black uppercase text-gray-500 mb-2">
-                    Γράψε μια τιμή σε {zoomLevel === 'm' ? 'τετραγωνικά μέτρα (τ.μ.)' : zoomLevel === 'dm' ? 'τετραγωνικά δεκατόμετρα (τ.δ.)' : 'τετραγωνικά εκατοστά (τ.εκ.)'}:
+                    Γράψε μια τιμή (έως 10 ψηφία) σε {zoomLevel === 'm' ? 'τετραγωνικά μέτρα (τ.μ.)' : zoomLevel === 'dm' ? 'τετραγωνικά δεκατόμετρα (τ.δ.)' : 'τετραγωνικά εκατοστά (τ.εκ.)'}:
                   </label>
                   <input 
                     type="text" 
                     value={valInput} 
-                    onChange={(e) => setValInput(e.target.value)}
+                    onChange={handleInputChange}
                     className="w-full p-4 rounded-2xl border border-gray-300 font-mono text-xl font-black text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white shadow-sm"
                     placeholder="π.χ. 1"
                   />
