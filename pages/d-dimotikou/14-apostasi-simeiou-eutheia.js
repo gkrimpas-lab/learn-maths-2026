@@ -98,13 +98,13 @@ export default function ApostasiTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 14
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   📏 Απόσταση Σημείου από Ευθεία
                 </h1>
                 <p className="text-teal-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε ότι η απόσταση ενός σημείου από μια ευθεία είναι το **κάθετο ευθύγραμμο τμήμα** (η πιο σύντομη διαδρομή)!
+                  Μαθαίνουμε ότι η απόσταση ενός σημείου από μια ευθεία είναι το "κάθετο ευθύγραμμο τμήμα" (η πιο σύντομη διαδρομή)!
                 </p>
               </div>
 
@@ -139,7 +139,7 @@ export default function ApostasiTheoryPage() {
                   <span>📐</span> Τι είναι η Απόσταση;
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Απόσταση ενός σημείου $Α$ από μια ευθεία $\varepsilon$ λέγεται το μήκος του <strong>κάθετου ευθύγραμμου τμήματος (ΑΗ)</strong> που φέρνουμε από το σημείο προς την ευθεία.
+                  Απόσταση ενός σημείου Α από μια ευθεία (ε) λέγεται το μήκος του <strong>κάθετου ευθύγραμμου τμήματος (ΑΗ)</strong> που φέρνουμε από το σημείο προς την ευθεία.
                 </p>
               </div>
 
@@ -181,7 +181,7 @@ export default function ApostasiTheoryPage() {
 
               {/* CONTROL SLIDER ΓΙΑ ΤΗ ΓΩΝΙΑ ΤΗΣ ΕΥΘΕΙΑΣ */}
               <div className="w-full md:w-64 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                <label className="block text-xs font-black uppercase text-gray-500 mb-1">
+                <label className="block text-xs font-black text-gray-500 mb-1">
                   Γωνία Ευθείας (ε): <span className="text-indigo-600 font-mono font-black">{lineAngle}°</span>
                 </label>
                 <input 
@@ -271,7 +271,7 @@ export default function ApostasiTheoryPage() {
                 
                 <div className="bg-emerald-950/80 p-4 rounded-2xl border border-emerald-600/50 text-emerald-200">
                   <span className="text-xs uppercase font-black tracking-wider block text-emerald-400">
-                    🟢 Κάθετη Απόσταση (ΑΗ)
+                    🟢 Καθετη Αποσταση (ΑΗ)
                   </span>
                   <div className="text-2xl font-mono font-black text-emerald-300 my-1">
                     {distCm} cm
@@ -283,7 +283,7 @@ export default function ApostasiTheoryPage() {
 
                 <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700 text-slate-300">
                   <span className="text-xs uppercase font-black tracking-wider block text-slate-400">
-                    ⚪ Πλάγια Διαδρομή
+                    ⚪ Πλαγια Διαδρομη
                   </span>
                   <div className="text-2xl font-mono font-black text-slate-200 my-1">
                     {distPlagiaCm} cm
