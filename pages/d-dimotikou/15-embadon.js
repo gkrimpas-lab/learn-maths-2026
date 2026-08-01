@@ -107,7 +107,7 @@ export default function EmbadonTheoryPage() {
                   <span>🟩</span> Το Τετραγωνικό Μέτρο
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Βασική μονάδα μέτρησης εμβαδού είναι το <strong>τετραγωνικό μέτρο (1 τ.μ. ή 1 m²)</strong>. Είναι ένα τετράγωνο με πλευρά $1\text{m}$.
+                  Βασική μονάδα μέτρησης εμβαδού είναι το <strong>τετραγωνικό μέτρο (1 τ.μ.)</strong>. Είναι ένα τετράγωνο με πλευρά 1 m.
                 </p>
               </div>
 
@@ -117,7 +117,7 @@ export default function EmbadonTheoryPage() {
                   <span>🔢</span> Ο Κανόνας του 100
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Στο εμβαδόν <strong>κάθε μονάδα είναι 100 φορές μεγαλύτερη</strong> από την αμέσως μικρότερη, γιατί $10 \times 10 = 100$!
+                  Στο εμβαδόν <strong>κάθε μονάδα είναι 100 φορές μεγαλύτερη</strong> από την αμέσως μικρότερη, γιατί 10 × 10 = 100!
                 </p>
               </div>
 
