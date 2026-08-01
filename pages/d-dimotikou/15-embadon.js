@@ -37,7 +37,7 @@ export default function EmbadonTheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>🟩 Εμβαδόν & Μονάδες Μέτρησης - LearnMaths.gr</title>
+        <title>🟩 Εμβαδόν και Μονάδες Μέτρησης - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -67,13 +67,13 @@ export default function EmbadonTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 15
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  🟩 Η Έννοια του Εμβαδού & Μετατροπές
+                  🟩 Η Έννοια του Εμβαδού και Μετατροπές
                 </h1>
                 <p className="text-emerald-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε τι είναι εμβαδόν και πώς **1 τετραγωνικό μέτρο (τ.μ.)** χωρίζεται σε **100 τ.δ.** και σε **10.000 τ.εκ.**!
+                  Μαθαίνουμε τι είναι εμβαδόν και πώς "1 τετραγωνικό μέτρο (τ.μ.)" χωρίζεται σε "100 τ.δ." και σε "10.000 τ.εκ."!
                 </p>
               </div>
 
@@ -264,7 +264,7 @@ export default function EmbadonTheoryPage() {
 
                 <div>
                   <label className="block text-xs font-black uppercase text-gray-500 mb-2">
-                    Γράψε μια τιμή (έως 10 ψηφία) σε {zoomLevel === 'm' ? 'τετραγωνικά μέτρα (τ.μ.)' : zoomLevel === 'dm' ? 'τετραγωνικά δεκατόμετρα (τ.δ.)' : 'τετραγωνικά εκατοστά (τ.εκ.)'}:
+                    Γραψε μια τιμη (έως 10 ψηφια) σε {zoomLevel === 'm' ? 'τετραγωνικα μετρα (τ.μ.)' : zoomLevel === 'dm' ? 'τετραγωνικα δεκατομετρα (τ.δ.)' : 'τετραγωνικα εκατοστα (τ.εκ.)'}:
                   </label>
                   <input 
                     type="text" 
