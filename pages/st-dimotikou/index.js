@@ -35,9 +35,9 @@ export default function STDimotikouMenu() {
     { id: '28-pollaplasiasmos-klasmaton', label: '🍕 28. Πολλαπλασιασμός Κλασμάτων', href: '/st-dimotikou/28-pollaplasiasmos-klasmaton' },
     { id: '29-diairesi-klasmaton', label: '🍕 29. Διαίρεση Κλασμάτων', href: '/st-dimotikou/29-diairesi-klasmaton' },
     { id: '30-metabliti', label: '🍕 30. Μεταβλητή', href: '/st-dimotikou/30-metabliti' },
-    { id: '31-agnostos_kai_prosthesi', label: '🍕 31. Εξίσωση με πρόσθεση', href: '/st-dimotikou/31-agnostos_kai_prosthesi' },
-    { id: '32-agnostos_kai_afairesi', label: '🍕 32. Εξίσωση με αφαίρεση', href: '/st-dimotikou/32-agnostos_kai_afairesi' },
-    { id: '33-gnostos-meion-agnostos', label: '🍕 32. Εξίσωση με αφαίρεση 2', href: '/st-dimotikou/33-gnostos-meion-agnostos' }
+    { id: '31-agnostos_kai_prosthesi', label: '🍕 31. Εξίσωση x + α = β', href: '/st-dimotikou/31-agnostos_kai_prosthesi' },
+    { id: '32-agnostos_kai_afairesi', label: '🍕 32. Εξίσωση x - α = β', href: '/st-dimotikou/32-agnostos_kai_afairesi' },
+    { id: '33-gnostos-meion-agnostos', label: '🍕 32. Εξίσωση α - x = β', href: '/st-dimotikou/33-gnostos-meion-agnostos' }
   ];
 
   return (
