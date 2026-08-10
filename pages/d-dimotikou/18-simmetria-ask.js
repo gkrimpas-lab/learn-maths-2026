@@ -8,7 +8,7 @@ function getRandomInt(min, max) {
 }
 
 // ----------------------------------------------------
-// ΔΕΞΑΜΕΝΗ 1: ΣΧΗΜΑΤΑ ΘΕΩΡΙΑΣ ΜΕ SVG ΟΠΤΙΚΟΠΟΙΗΣΗ
+// ΔΕΞΑΜΕΝΗ 1: ΣΧΗΜΑΤΑ ΘΕΩΡΙΑΣ ΜΕ ΚΑΘΑΡΑ SVG (ΧΩΡΙΣ ΑΞΟΝΕΣ)
 // ----------------------------------------------------
 const THEORY_SHAPES_POOL = [
   {
@@ -18,11 +18,6 @@ const THEORY_SHAPES_POOL = [
     svg: (
       <svg className="w-48 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 120">
         <rect x="65" y="25" width="70" height="70" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
-        {/* Διακεκομμένοι Άξονες */}
-        <line x1="100" y1="15" x2="100" y2="105" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
-        <line x1="55" y1="60" x2="145" y2="60" stroke="#10b981" strokeWidth="1.5" strokeDasharray="4,4" />
-        <line x1="65" y1="25" x2="135" y2="95" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" />
-        <line x1="135" y1="25" x2="65" y2="95" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" />
       </svg>
     )
   },
@@ -33,9 +28,6 @@ const THEORY_SHAPES_POOL = [
     svg: (
       <svg className="w-52 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 220 120">
         <rect x="40" y="30" width="140" height="60" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
-        {/* Άξονες */}
-        <line x1="110" y1="15" x2="110" y2="105" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
-        <line x1="25" y1="60" x2="195" y2="60" stroke="#10b981" strokeWidth="1.5" strokeDasharray="4,4" />
       </svg>
     )
   },
@@ -46,8 +38,6 @@ const THEORY_SHAPES_POOL = [
     svg: (
       <svg className="w-48 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 120">
         <polygon points="100,20 45,95 155,95" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
-        {/* Άξονας */}
-        <line x1="100" y1="10" x2="100" y2="105" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
       </svg>
     )
   },
@@ -58,9 +48,6 @@ const THEORY_SHAPES_POOL = [
     svg: (
       <svg className="w-48 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 120">
         <polygon points="100,15 155,60 100,105 45,60" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
-        {/* Άξονες */}
-        <line x1="100" y1="5" x2="100" y2="115" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
-        <line x1="30" y1="60" x2="170" y2="60" stroke="#10b981" strokeWidth="1.5" strokeDasharray="4,4" />
       </svg>
     )
   },
@@ -71,9 +58,6 @@ const THEORY_SHAPES_POOL = [
     svg: (
       <svg className="w-48 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 120">
         <polygon points="100,20 50,100 150,100" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
-        <line x1="100" y1="10" x2="100" y2="105" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
-        <line x1="50" y1="100" x2="125" y2="60" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" />
-        <line x1="150" y1="100" x2="75" y2="60" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" />
       </svg>
     )
   },
@@ -148,10 +132,10 @@ const TRUE_FALSE_POOL = [
 ];
 
 // ----------------------------------------------------
-// ΔΗΜΙΟΥΡΓΙΑ 8 ΑΣΚΗΣΕΙΣ
+// ΔΗΜΙΟΥΡΓΙΑ 8 ΑΣΚΗΣΕΩΝ
 // ----------------------------------------------------
 function generateQuestions() {
-  // Q1 & Q2: Πλήθος αξόνων με SVG Σχήμα
+  // Q1 & Q2: Πλήθος αξόνων με SVG Σχήμα (Χωρίς άξονες)
   let item1 = THEORY_SHAPES_POOL[getRandomInt(0, THEORY_SHAPES_POOL.length - 1)];
   let item2;
   while (true) {
@@ -179,7 +163,7 @@ function generateQuestions() {
   const q3 = makeMathSymmetryQuestion(true);
   const q4 = makeMathSymmetryQuestion(false);
 
-  // Q5 & Q6: MCQ Αναγνώριση & Ιδιότητες
+  // Q5 & Q6: MCQ Αναγνώριση & Ιδιότητες (Καθαρά ονόματα χωρίς αριθμούς)
   const mcqOptions1 = [
     { text: 'Έχουν ίδια περίμετρο και ίδιο εμβαδόν', isCorrect: true },
     { text: 'Έχουν διαφορετική περίμετρο', isCorrect: false },
@@ -194,15 +178,15 @@ function generateQuestions() {
   };
 
   const mcqOptions2 = [
-    { text: 'Το Τετράγωνο (4)', isCorrect: true },
-    { text: 'Το Ορθογώνιο (2)', isCorrect: false },
-    { text: 'Το Ισοσκελές Τρίγωνο (1)', isCorrect: false },
-    { text: 'Το Σκαληνό Τρίγωνο (0)', isCorrect: false }
+    { text: 'Το Τετράγωνο', isCorrect: true },
+    { text: 'Το Ορθογώνιο', isCorrect: false },
+    { text: 'Το Ισοσκελές Τρίγωνο', isCorrect: false },
+    { text: 'Το Σκαληνό Τρίγωνο', isCorrect: false }
   ].sort(() => Math.random() - 0.5);
 
   const q6 = {
     q: 'Ποιο από τα παρακάτω γεωμετρικά σχήματα έχει τους ΠΕΡΙΣΣΟΤΕΡΟΥΣ άξονες συμμετρίας;',
-    correct: 'Το Τετράγωνο (4)',
+    correct: 'Το Τετράγωνο',
     options: mcqOptions2
   };
 
