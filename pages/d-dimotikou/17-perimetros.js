@@ -6,28 +6,28 @@ import { LAYOUT } from '../../shared/layout-config';
 // Βοηθητικό εξάρτημα για Ενιαίο Στυλ Ετικέτας Πλευράς με ασφαλή όρια
 function SideLabel({ x, y, text }) {
   // Περιορισμός συντεταγμένων εντός του viewBox 450x360
-  const safeX = Math.max(50, Math.min(400, x));
+  const safeX = Math.max(45, Math.min(405, x));
   const safeY = Math.max(25, Math.min(335, y));
 
   return (
     <g transform={`translate(${safeX}, ${safeY})`}>
       <rect 
-        x="-38" 
-        y="-13" 
-        width="76" 
+        x="-34" 
+        y="-12" 
+        width="68" 
         height="24" 
-        rx="7" 
+        rx="8" 
         fill="#0f172a" 
-        fillOpacity="0.9" 
+        fillOpacity="0.95" 
         stroke="#f59e0b" 
         strokeWidth="1.5" 
       />
       <text 
         x="0" 
-        y="4" 
+        y="1" 
         fill="#fbbf24" 
         fontWeight="black" 
-        fontSize="13" 
+        fontSize="12" 
         textAnchor="middle" 
         dominantBaseline="middle"
       >
@@ -41,9 +41,9 @@ export default function PerimetrosTheoryPage() {
   const [shape, setShape] = useState('triangle'); // 'triangle', 'square', 'rectangle', 'polygon', 'hexagon'
   
   // Διαστάσεις πλευρών (σε cm) - Όρια sliders: 2 έως 18
-  const [sideA, setSideA] = useState(10);
-  const [sideB, setSideB] = useState(8);
-  const [sideC, setSideC] = useState(6);
+  const [sideA, setSideA] = useState(9);
+  const [sideB, setSideB] = useState(6);
+  const [sideC, setSideC] = useState(8);
   const [sideD, setSideD] = useState(7);
   const [sideE, setSideE] = useState(6);
   const [sideF, setSideF] = useState(8);
@@ -246,7 +246,7 @@ export default function PerimetrosTheoryPage() {
                 <div className="w-full max-w-md h-[380px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                   <svg className="w-full h-full" viewBox="0 0 450 360">
                     
-                    {/* 1. ΤΡΙΓΩΝΟ */}
+                    {/* 1. ΤΡΙΓΩΝΟ - Μεγάλη απόσταση ετικετών προς τα έξω */}
                     {shape === 'triangle' && (() => {
                       let A = sideA;
                       let B = sideB;
@@ -273,18 +273,37 @@ export default function PerimetrosTheoryPage() {
                       const p2 = { x: ox + scC, y: oy };
                       const p3 = { x: ox + x3, y: oy - y3 };
 
+                      // Υπολογισμός εξωτερικών offsets
+                      // Πλευρά A (p1 -> p3)
+                      const midAx = (p1.x + p3.x) / 2;
+                      const midAy = (p1.y + p3.y) / 2;
+                      const dxA = p3.x - p1.x;
+                      const dyA = p3.y - p1.y;
+                      const lenA = Math.hypot(dxA, dyA) || 1;
+                      const normAx = -dyA / lenA; // Κάθετο διανυσματικό offset
+                      const normAy = dxA / lenA;
+
+                      // Πλευρά B (p3 -> p2)
+                      const midBx = (p3.x + p2.x) / 2;
+                      const midBy = (p3.y + p2.y) / 2;
+                      const dxB = p2.x - p3.x;
+                      const dyB = p2.y - p3.y;
+                      const lenB = Math.hypot(dxB, dyB) || 1;
+                      const normBx = -dyB / lenB;
+                      const normBy = dxB / lenB;
+
                       return (
                         <g>
                           <polygon points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
                           
-                          {/* Label A (Αριστερή πλευρά -> Offset αριστερά) */}
-                          <SideLabel x={(p1.x + p3.x) / 2 - 35} y={(p1.y + p3.y) / 2} text={`a = ${sideA} cm`} />
+                          {/* Label A */}
+                          <SideLabel x={midAx - Math.abs(normAx) * 45} y={midAy - Math.abs(normAy) * 20} text={`a = ${sideA} cm`} />
 
-                          {/* Label B (Δεξιά πλευρά -> Offset δεξιά) */}
-                          <SideLabel x={(p2.x + p3.x) / 2 + 35} y={(p2.y + p3.y) / 2} text={`b = ${sideB} cm`} />
+                          {/* Label B */}
+                          <SideLabel x={midBx + Math.abs(normBx) * 45} y={midBy - Math.abs(normBy) * 20} text={`b = ${sideB} cm`} />
 
-                          {/* Label C (Βάση -> Offset κάτω) */}
-                          <SideLabel x={(p1.x + p2.x) / 2} y={p1.y + 28} text={`c = ${sideC} cm`} />
+                          {/* Label C (Βάση) */}
+                          <SideLabel x={(p1.x + p2.x) / 2} y={p1.y + 35} text={`c = ${sideC} cm`} />
                         </g>
                       );
                     })()}
@@ -299,13 +318,13 @@ export default function PerimetrosTheoryPage() {
                           <rect x={x} y={y} width={size} height={size} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" />
                           
                           {/* Πάνω */}
-                          <SideLabel x={225} y={y - 22} text={`a = ${sideA} cm`} />
+                          <SideLabel x={225} y={y - 30} text={`a = ${sideA} cm`} />
                           {/* Δεξιά */}
-                          <SideLabel x={x + size + 42} y={180} text={`a = ${sideA} cm`} />
+                          <SideLabel x={x + size + 50} y={180} text={`a = ${sideA} cm`} />
                           {/* Κάτω */}
-                          <SideLabel x={225} y={y + size + 22} text={`a = ${sideA} cm`} />
+                          <SideLabel x={225} y={y + size + 30} text={`a = ${sideA} cm`} />
                           {/* Αριστερά */}
-                          <SideLabel x={x - 42} y={180} text={`a = ${sideA} cm`} />
+                          <SideLabel x={x - 50} y={180} text={`a = ${sideA} cm`} />
                         </g>
                       );
                     })()}
@@ -321,13 +340,13 @@ export default function PerimetrosTheoryPage() {
                           <rect x={x} y={y} width={w} height={h} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" />
                           
                           {/* Πάνω (a) */}
-                          <SideLabel x={225} y={y - 22} text={`a = ${sideA} cm`} />
+                          <SideLabel x={225} y={y - 30} text={`a = ${sideA} cm`} />
                           {/* Δεξιά (b) */}
-                          <SideLabel x={x + w + 42} y={180} text={`b = ${sideB} cm`} />
+                          <SideLabel x={x + w + 50} y={180} text={`b = ${sideB} cm`} />
                           {/* Κάτω (a) */}
-                          <SideLabel x={225} y={y + h + 22} text={`a = ${sideA} cm`} />
+                          <SideLabel x={225} y={y + h + 30} text={`a = ${sideA} cm`} />
                           {/* Αριστερά (b) */}
-                          <SideLabel x={x - 42} y={180} text={`b = ${sideB} cm`} />
+                          <SideLabel x={x - 50} y={180} text={`b = ${sideB} cm`} />
                         </g>
                       );
                     })()}
@@ -348,18 +367,16 @@ export default function PerimetrosTheoryPage() {
 
                       const ptsStr = pts.map(p => `${p.x},${p.y}`).join(' ');
 
-                      // Υπολογισμός εξωτερικών σημείων για ετικέτες
                       const labels = pts.map((p, i) => {
                         const nextP = pts[(i + 1) % pts.length];
                         const midX = (p.x + nextP.x) / 2;
                         const midY = (p.y + nextP.y) / 2;
 
-                        // Δάνυσμα έξω από το κέντρο (225, 180)
                         const dirX = midX - 225;
                         const dirY = midY - 180;
                         const len = Math.hypot(dirX, dirY) || 1;
 
-                        const offset = 28;
+                        const offset = 38;
                         return {
                           x: midX + (dirX / len) * offset,
                           y: midY + (dirY / len) * offset
@@ -403,7 +420,7 @@ export default function PerimetrosTheoryPage() {
                         const dirY = midY - 180;
                         const len = Math.hypot(dirX, dirY) || 1;
 
-                        const offset = 26;
+                        const offset = 36;
                         return {
                           x: midX + (dirX / len) * offset,
                           y: midY + (dirY / len) * offset
