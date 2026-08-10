@@ -5,56 +5,48 @@ import { LAYOUT } from '../../shared/layout-config';
 
 export default function SimmetriaTheoryPage() {
   const [shape, setShape] = useState('square'); // 'square', 'rectangle', 'triangle', 'rhombus', 'circle'
-  const [showVertical, setShowVertical] = useState(true);
-  const [showHorizontal, setShowHorizontal] = useState(false);
-  const [showDiag1, setShowDiag1] = useState(false);
-  const [showDiag2, setShowDiag2] = useState(false);
-  const [foldProgress, setFoldProgress] = useState(0); // 0 (ανοιχτό) έως 100 (διπλωμένο)
+  const [activeAxis, setActiveAxis] = useState('vertical'); // 'vertical', 'horizontal', 'diag1', 'diag2'
+  const [foldProgress, setFoldProgress] = useState(0); // 0 έως 100
 
   // Στοιχεία ανά σχήμα
   const shapeData = {
     square: {
       name: 'Τετράγωνο',
       totalAxes: 4,
+      allowedAxes: ['vertical', 'horizontal', 'diag1', 'diag2'],
       desc: 'Το τετράγωνο έχει 4 άξονες συμμετρίας (1 κατακόρυφο, 1 οριζόντιο και 2 διαγώνιους).',
-      getPerimeter: () => 40,
-      getArea: () => 100,
       halfPerimeter: 25,
       halfArea: 50
     },
     rectangle: {
       name: 'Ορθογώνιο',
       totalAxes: 2,
+      allowedAxes: ['vertical', 'horizontal'],
       desc: 'Το ορθογώνιο έχει 2 άξονες συμμετρίας (1 κατακόρυφο και 1 οριζόντιο). Οι διαγώνιοί του ΔΕΝ είναι άξονες συμμετρίας!',
-      getPerimeter: () => 36,
-      getArea: () => 80,
       halfPerimeter: 22,
       halfArea: 40
     },
     triangle: {
       name: 'Ισοσκελές Τρίγωνο',
       totalAxes: 1,
+      allowedAxes: ['vertical'],
       desc: 'Το ισοσκελές τρίγωνο έχει μόνο 1 κατακόρυφο άξονα συμμετρίας.',
-      getPerimeter: () => 24,
-      getArea: () => 24,
       halfPerimeter: 16,
       halfArea: 12
     },
     rhombus: {
       name: 'Ρόμβος',
       totalAxes: 2,
+      allowedAxes: ['diag1', 'diag2'],
       desc: 'Ο ρόμβος έχει 2 άξονες συμμετρίας (τις δύο διαγώνιους του).',
-      getPerimeter: () => 32,
-      getArea: () => 48,
       halfPerimeter: 20,
       halfArea: 24
     },
     circle: {
       name: 'Κύκλος',
       totalAxes: 'Απεριόριστοι',
+      allowedAxes: ['vertical', 'horizontal', 'diag1', 'diag2'],
       desc: 'Ο κύκλος έχει αμέτρητους (άπειρους) άξονες συμμετρίας! Κάθε ευθεία που περνάει από το κέντρο του είναι άξονας συμμετρίας.',
-      getPerimeter: () => '31,4',
-      getArea: () => '78,5',
       halfPerimeter: '18,7',
       halfArea: '39,25'
     }
@@ -66,14 +58,9 @@ export default function SimmetriaTheoryPage() {
   const handleShapeChange = (newShape) => {
     setShape(newShape);
     setFoldProgress(0);
-    if (newShape === 'square') {
-      setShowVertical(true); setShowHorizontal(false); setShowDiag1(false); setShowDiag2(false);
-    } else if (newShape === 'rectangle' || newShape === 'triangle') {
-      setShowVertical(true); setShowHorizontal(false); setShowDiag1(false); setShowDiag2(false);
-    } else if (newShape === 'rhombus') {
-      setShowVertical(true); setShowHorizontal(false); setShowDiag1(false); setShowDiag2(false);
-    } else if (newShape === 'circle') {
-      setShowVertical(true); setShowHorizontal(true); setShowDiag1(true); setShowDiag2(true);
+    const available = shapeData[newShape].allowedAxes;
+    if (!available.includes(activeAxis)) {
+      setActiveAxis(available[0]);
     }
   };
 
@@ -187,7 +174,7 @@ export default function SimmetriaTheoryPage() {
                   <span>🧮</span> Διαδραστικό Εργαστήριο Συμμετρίας & Αναδίπλωσης
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Επίλεξε σχήμα, ενεργοποίησε άξονες συμμετρίας και σύρε το slider για να διπλώσεις το σχήμα!
+                  Επίλεξε σχήμα, διάλεξε **ποιον άξονα συμμετρίας** θέλεις και σύρε το slider για να δεις το δίπλωμα!
                 </p>
               </div>
 
@@ -252,134 +239,177 @@ export default function SimmetriaTheoryPage() {
                 <div className="w-full max-w-md h-[360px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                   <svg className="w-full h-full" viewBox="0 0 400 320">
                     
-                    {/* Yπολογισμός Folding Transformation */}
+                    {/* Yπολογισμός Folding Transformation ανάλογα με τον ACTIVE AXIS */}
                     {(() => {
                       const scaleFold = (100 - foldProgress) / 100;
 
                       return (
                         <g transform="translate(200, 160)">
                           
-                          {/* 1. ΤΕΤΡΑΓΩΝΟ */}
-                          {shape === 'square' && (
+                          {/* ------------------------------------------- */}
+                          {/* 1. ΚΑΤΑΚΟΡΥΦΟΣ ΑΞΟΝΑΣ (VERTICAL FOLD) */}
+                          {/* ------------------------------------------- */}
+                          {activeAxis === 'vertical' && (
                             <g>
-                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ (GHOST TRAIL - ΔΙΑΚΕΚΟΜΜΕΝΟ) */}
+                              {/* Ίχνος Αρχικής Θέσης */}
                               {foldProgress > 0 && (
-                                <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
+                                <g opacity="0.6">
+                                  {shape === 'square' && <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'rectangle' && <path d="M 0,-70 L 120,-70 L 120,70 L 0,70 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'triangle' && <path d="M 0,-100 L 100,80 L 0,80 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                </g>
                               )}
-                              {/* Σταθερό Αριστερό Μισό */}
-                              <path d="M -90,-90 L 0,-90 L 0,90 L -90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                              {/* Αναδιπλούμενο Δεξί Μισό */}
+
+                              {/* Αριστερό Μισό (Σταθερό) */}
+                              {shape === 'square' && <path d="M -90,-90 L 0,-90 L 0,90 L -90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'rectangle' && <path d="M -120,-70 L 0,-70 L 0,70 L -120,70 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'triangle' && <path d="M 0,-100 L -100,80 L 0,80 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,0 0,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+
+                              {/* Δεξί Μισό (Διπλώνει οριζόντια -> αριστερά) */}
                               <g transform={`scale(${scaleFold}, 1)`}>
-                                <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />
+                                {shape === 'square' && <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'rectangle' && <path d="M 0,-70 L 120,-70 L 120,70 L 0,70 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'triangle' && <path d="M 0,-100 L 100,80 L 0,80 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                               </g>
+
+                              {/* Βέλος Κατεύθυνσης */}
+                              {foldProgress > 0 && foldProgress < 100 && (
+                                <g transform="translate(0, -115)">
+                                  <path d="M 50,-10 Q 25,-25 0,-10" fill="none" stroke="#f59e0b" strokeWidth="3" />
+                                  <polygon points="-5,-12 3,-10 -2,-2" fill="#f59e0b" />
+                                  <text x="25" y="-30" fill="#f59e0b" fontWeight="black" fontSize="11" textAnchor="middle">Δίπλωμα ⇦</text>
+                                </g>
+                              )}
                             </g>
                           )}
 
-                          {/* 2. ΟΡΘΟΓΩΝΙΟ */}
-                          {shape === 'rectangle' && (
+                          {/* ------------------------------------------- */}
+                          {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΑΞΟΝΑΣ (HORIZONTAL FOLD) */}
+                          {/* ------------------------------------------- */}
+                          {activeAxis === 'horizontal' && (
                             <g>
-                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ */}
+                              {/* Ίχνος Αρχικής Θέσης (Κάτω Μισό) */}
                               {foldProgress > 0 && (
-                                <path d="M 0,-70 L 120,-70 L 120,70 L 0,70 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
+                                <g opacity="0.6">
+                                  {shape === 'square' && <path d="M -90,0 L 90,0 L 90,90 L -90,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'rectangle' && <path d="M -120,0 L 120,0 L 120,70 L -120,70 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'circle' && <path d="M -90,0 A 90,90 0 0,0 90,0 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                </g>
                               )}
-                              {/* Αριστερό Μισό */}
-                              <path d="M -120,-70 L 0,-70 L 0,70 L -120,70 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                              {/* Δεξί Μισό */}
-                              <g transform={`scale(${scaleFold}, 1)`}>
-                                <path d="M 0,-70 L 120,-70 L 120,70 L 0,70 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />
+
+                              {/* Πάνω Μισό (Σταθερό) */}
+                              {shape === 'square' && <path d="M -90,-90 L 90,-90 L 90,0 L -90,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'rectangle' && <path d="M -120,-70 L 120,-70 L 120,0 L -120,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'circle' && <path d="M -90,0 A 90,90 0 0,1 90,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+
+                              {/* Κάτω Μισό (Διπλώνει κατακόρυφα -> πάνω) */}
+                              <g transform={`scale(1, ${scaleFold})`}>
+                                {shape === 'square' && <path d="M -90,0 L 90,0 L 90,90 L -90,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'rectangle' && <path d="M -120,0 L 120,0 L 120,70 L -120,70 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'circle' && <path d="M -90,0 A 90,90 0 0,0 90,0 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                               </g>
+
+                              {/* Βέλος Κατεύθυνσης */}
+                              {foldProgress > 0 && foldProgress < 100 && (
+                                <g transform="translate(130, 0)">
+                                  <path d="M 10,40 Q 25,20 10,0" fill="none" stroke="#10b981" strokeWidth="3" />
+                                  <polygon points="12,-5 2,2 18,2" fill="#10b981" />
+                                  <text x="35" y="20" fill="#10b981" fontWeight="black" fontSize="11" textAnchor="start">Δίπλωμα ⇧</text>
+                                </g>
+                              )}
                             </g>
                           )}
 
-                          {/* 3. ΙΣΟΣΚΕΛΕΣ ΤΡΙΓΩΝΟ */}
-                          {shape === 'triangle' && (
+                          {/* ------------------------------------------- */}
+                          {/* 3. ΔΙΑΓΩΝΙΟΣ 1 (DIAG1 FOLD: 45 deg) */}
+                          {/* ------------------------------------------- */}
+                          {activeAxis === 'diag1' && (
                             <g>
-                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ */}
+                              {/* Ίχνος Αρχικής Θέσης */}
                               {foldProgress > 0 && (
-                                <path d="M 0,-100 L 100,80 L 0,80 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
+                                <g opacity="0.6">
+                                  {shape === 'square' && <path d="M -90,-90 L 90,-90 L 90,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'rhombus' && <path d="M 0,-100 L 110,0 L 0,100 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'circle' && <path d="M -63.6,-63.6 A 90,90 0 0,1 63.6,63.6 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                </g>
                               )}
-                              {/* Αριστερό Μισό */}
-                              <path d="M 0,-100 L -100,80 L 0,80 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                              {/* Δεξί Μισό */}
-                              <g transform={`scale(${scaleFold}, 1)`}>
-                                <path d="M 0,-100 L 100,80 L 0,80 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />
-                              </g>
-                            </g>
-                          )}
 
-                          {/* 4. ΡΟΜΒΟΣ */}
-                          {shape === 'rhombus' && (
-                            <g>
-                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ */}
-                              {foldProgress > 0 && (
-                                <path d="M 0,-100 L 110,0 L 0,100 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
-                              )}
-                              {/* Αριστερό Μισό */}
-                              <path d="M 0,-100 L -110,0 L 0,100 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                              {/* Δεξί Μισό */}
-                              <g transform={`scale(${scaleFold}, 1)`}>
-                                <path d="M 0,-100 L 110,0 L 0,100 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />
-                              </g>
-                            </g>
-                          )}
+                              {/* Κάτω-Αριστερό Μισό (Σταθερό) */}
+                              {shape === 'square' && <path d="M -90,-90 L -90,90 L 90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'rhombus' && <path d="M 0,-100 L -110,0 L 0,100 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'circle' && <circle cx="0" cy="0" r="90" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                          {/* 5. ΚΥΚΛΟΣ */}
-                          {shape === 'circle' && (
-                            <g>
-                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ */}
-                              {foldProgress > 0 && (
-                                <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
-                              )}
-                              {/* Αριστερό Ημικύκλιο */}
-                              <path d="M 0,-90 A 90,90 0 0,0 0,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                              {/* Δεξί Ημικύκλιο */}
-                              <g transform={`scale(${scaleFold}, 1)`}>
-                                <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />
+                              {/* Πάνω-Δεξί Μισό (Διπλώνει διαγώνια) */}
+                              <g transform={`rotate(45) scale(${scaleFold}, 1) rotate(-45)`}>
+                                {shape === 'square' && <path d="M -90,-90 L 90,-90 L 90,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'rhombus' && <path d="M 0,-100 L 110,0 L 0,100 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                               </g>
                             </g>
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* ΒΕΛΟΣ ΔΕΙΞΗΣ ΚΑΤΕΥΘΥΝΣΗΣ ΔΙΠΛΩΜΑΤΟΣ (ARROW) */}
+                          {/* 4. ΔΙΑΓΩΝΙΟΣ 2 (DIAG2 FOLD: -45 deg) */}
                           {/* ------------------------------------------- */}
-                          {foldProgress > 0 && foldProgress < 100 && (
-                            <g transform="translate(0, -115)">
-                              <path d="M 50,-10 Q 25,-25 0,-10" fill="none" stroke="#f59e0b" strokeWidth="3" />
-                              <polygon points="-5,-12 3,-10 -2,-2" fill="#f59e0b" />
-                              <text x="25" y="-30" fill="#f59e0b" fontWeight="black" fontSize="11" textAnchor="middle">Δίπλωμα ⇦</text>
+                          {activeAxis === 'diag2' && (
+                            <g>
+                              {/* Ίχνος Αρχικής Θέσης */}
+                              {foldProgress > 0 && (
+                                <g opacity="0.6">
+                                  {shape === 'square' && <path d="M -90,-90 L 90,-90 L -90,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'rhombus' && <path d="M -110,0 L 0,-100 L 110,0 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                </g>
+                              )}
+
+                              {/* Κάτω-Δεξί Μισό (Σταθερό) */}
+                              {shape === 'square' && <path d="M 90,-90 L 90,90 L -90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'rhombus' && <path d="M -110,0 L 0,100 L 110,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'circle' && <circle cx="0" cy="0" r="90" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+
+                              {/* Πάνω-Αριστερό Μισό (Διπλώνει διαγώνια) */}
+                              <g transform={`rotate(-45) scale(${scaleFold}, 1) rotate(45)`}>
+                                {shape === 'square' && <path d="M -90,-90 L 90,-90 L -90,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'rhombus' && <path d="M -110,0 L 0,-100 L 110,0 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                              </g>
                             </g>
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ (ΔΙΑΚΕΚΟΜΜΕΝΕΣ ΓΡΑΜΜΕΣ) */}
+                          {/* ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ (Ο ΕΝΕΡΓΟΣ ΕΙΝΑΙ ΕΝΤΟΝΟΣ) */}
                           {/* ------------------------------------------- */}
                           
                           {/* Κατακόρυφος Άξονας */}
-                          {showVertical && (
-                            <g>
-                              <line x1="0" y1="-140" x2="0" y2="140" stroke="#f59e0b" strokeWidth="3" strokeDasharray="6,6" />
+                          {activeData.allowedAxes.includes('vertical') && (
+                            <g opacity={activeAxis === 'vertical' ? 1 : 0.25}>
+                              <line x1="0" y1="-140" x2="0" y2="140" stroke="#f59e0b" strokeWidth={activeAxis === 'vertical' ? "4" : "2"} strokeDasharray="6,6" />
                               <circle cx="0" cy="-135" r="4" fill="#f59e0b" />
                               <circle cx="0" cy="135" r="4" fill="#f59e0b" />
                             </g>
                           )}
 
                           {/* Οριζόντιος Άξονας */}
-                          {showHorizontal && (shape === 'square' || shape === 'rectangle' || shape === 'circle') && (
-                            <g>
-                              <line x1="-160" y1="0" x2="160" y2="0" stroke="#10b981" strokeWidth="3" strokeDasharray="6,6" />
+                          {activeData.allowedAxes.includes('horizontal') && (
+                            <g opacity={activeAxis === 'horizontal' ? 1 : 0.25}>
+                              <line x1="-160" y1="0" x2="160" y2="0" stroke="#10b981" strokeWidth={activeAxis === 'horizontal' ? "4" : "2"} strokeDasharray="6,6" />
                               <circle cx="-155" cy="0" r="4" fill="#10b981" />
                               <circle cx="155" cy="0" r="4" fill="#10b981" />
                             </g>
                           )}
 
-                          {/* Διαγώνιος 1 (Top-Left -> Bottom-Right) */}
-                          {showDiag1 && (shape === 'square' || shape === 'rhombus' || shape === 'circle') && (
-                            <line x1="-120" y1="-120" x2="120" y2="120" stroke="#3b82f6" strokeWidth="3" strokeDasharray="6,6" />
+                          {/* Διαγώνιος 1 */}
+                          {activeData.allowedAxes.includes('diag1') && (
+                            <g opacity={activeAxis === 'diag1' ? 1 : 0.25}>
+                              <line x1="-130" y1="-130" x2="130" y2="130" stroke="#3b82f6" strokeWidth={activeAxis === 'diag1' ? "4" : "2"} strokeDasharray="6,6" />
+                            </g>
                           )}
 
-                          {/* Διαγώνιος 2 (Top-Right -> Bottom-Left) */}
-                          {showDiag2 && (shape === 'square' || shape === 'rhombus' || shape === 'circle') && (
-                            <line x1="120" y1="-120" x2="-120" y2="120" stroke="#3b82f6" strokeWidth="3" strokeDasharray="6,6" />
+                          {/* Διαγώνιος 2 */}
+                          {activeData.allowedAxes.includes('diag2') && (
+                            <g opacity={activeAxis === 'diag2' ? 1 : 0.25}>
+                              <line x1="130" y1="-130" x2="-130" y2="130" stroke="#3b82f6" strokeWidth={activeAxis === 'diag2' ? "4" : "2"} strokeDasharray="6,6" />
+                            </g>
                           )}
 
                         </g>
@@ -395,13 +425,70 @@ export default function SimmetriaTheoryPage() {
 
               </div>
 
-              {/* CONTROLS SLIDERS & AXES TOGGLES */}
+              {/* CONTROLS SLIDERS & AXES SELECTION */}
               <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 space-y-6">
                 
-                {/* 1. SLIDER ΑΝΑΔΙΠΛΩΣΗΣ */}
+                {/* 1. ΕΠΙΛΟΓΗ ΕΝΕΡΓΟΥ ΑΞΟΝΑ ΑΝΑΔΙΠΛΩΣΗΣ */}
+                <div className="space-y-3">
+                  <h4 className="text-xs font-black uppercase text-gray-700 flex items-center gap-1.5">
+                    <span>🎯</span> Επίλεξε Άξονα για Δίπλωμα:
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {activeData.allowedAxes.includes('vertical') && (
+                      <button
+                        onClick={() => { setActiveAxis('vertical'); setFoldProgress(0); }}
+                        className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                          activeAxis === 'vertical' ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                        }`}
+                      >
+                        <span>🟡 Κατακόρυφος</span>
+                        <span>{activeAxis === 'vertical' ? '🔘' : '⚪'}</span>
+                      </button>
+                    )}
+
+                    {activeData.allowedAxes.includes('horizontal') && (
+                      <button
+                        onClick={() => { setActiveAxis('horizontal'); setFoldProgress(0); }}
+                        className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                          activeAxis === 'horizontal' ? 'bg-emerald-600 text-white border-emerald-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                        }`}
+                      >
+                        <span>🟢 Οριζόντιος</span>
+                        <span>{activeAxis === 'horizontal' ? '🔘' : '⚪'}</span>
+                      </button>
+                    )}
+
+                    {activeData.allowedAxes.includes('diag1') && (
+                      <button
+                        onClick={() => { setActiveAxis('diag1'); setFoldProgress(0); }}
+                        className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                          activeAxis === 'diag1' ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                        }`}
+                      >
+                        <span>🔵 Διαγώνιος 1</span>
+                        <span>{activeAxis === 'diag1' ? '🔘' : '⚪'}</span>
+                      </button>
+                    )}
+
+                    {activeData.allowedAxes.includes('diag2') && (
+                      <button
+                        onClick={() => { setActiveAxis('diag2'); setFoldProgress(0); }}
+                        className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                          activeAxis === 'diag2' ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                        }`}
+                      >
+                        <span>🔵 Διαγώνιος 2</span>
+                        <span>{activeAxis === 'diag2' ? '🔘' : '⚪'}</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 2. SLIDER ΑΝΑΔΙΠΛΩΣΗΣ */}
                 <div className="space-y-2 bg-purple-50 p-4 rounded-2xl border border-purple-200">
                   <div className="flex justify-between items-center text-xs font-black uppercase text-purple-900">
-                    <span>📄 Αναδίπλωση (Δίπλωμα) Σχήματος:</span>
+                    <span>📄 Δίπλωμα πάνω στον επιλεγμένο άξονα:</span>
                     <span className="text-purple-700 font-mono text-base font-black">{foldProgress}%</span>
                   </div>
                   <input 
@@ -413,61 +500,8 @@ export default function SimmetriaTheoryPage() {
                     className="w-full accent-purple-600 cursor-pointer"
                   />
                   <p className="text-[11px] text-purple-800 font-medium">
-                    Σύρε το slider στο 100% για να δεις το δεξί μέρος να διπλώνει πάνω στο αριστερό (ακολουθώντας το βέλος ⇦)!
+                    Σύρε το slider στο 100% για να δεις το σχήμα να διπλώνει πάνω στον άξονα που επέλεξες!
                   </p>
-                </div>
-
-                {/* 2. ΚΟΥΜΠΙΑ ΕΝΕΡΓΟΠΟΙΗΣΗΣ ΑΞΟΝΩΝ */}
-                <div className="space-y-3">
-                  <h4 className="text-xs font-black uppercase text-gray-500">Εμφάνιση Αξόνων Συμμετρίας:</h4>
-                  
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => setShowVertical(!showVertical)}
-                      className={`p-3 rounded-xl text-xs font-black border transition flex items-center justify-between ${
-                        showVertical ? 'bg-amber-100 text-amber-900 border-amber-400' : 'bg-white text-gray-500 border-gray-200'
-                      }`}
-                    >
-                      <span>🟡 Κατακόρυφος</span>
-                      <span>{showVertical ? '✅' : '⚪'}</span>
-                    </button>
-
-                    {(shape === 'square' || shape === 'rectangle' || shape === 'circle') && (
-                      <button
-                        onClick={() => setShowHorizontal(!showHorizontal)}
-                        className={`p-3 rounded-xl text-xs font-black border transition flex items-center justify-between ${
-                          showHorizontal ? 'bg-emerald-100 text-emerald-900 border-emerald-400' : 'bg-white text-gray-500 border-gray-200'
-                        }`}
-                      >
-                        <span>🟢 Οριζόντιος</span>
-                        <span>{showHorizontal ? '✅' : '⚪'}</span>
-                      </button>
-                    )}
-
-                    {(shape === 'square' || shape === 'rhombus' || shape === 'circle') && (
-                      <>
-                        <button
-                          onClick={() => setShowDiag1(!showDiag1)}
-                          className={`p-3 rounded-xl text-xs font-black border transition flex items-center justify-between ${
-                            showDiag1 ? 'bg-blue-100 text-blue-900 border-blue-400' : 'bg-white text-gray-500 border-gray-200'
-                          }`}
-                        >
-                          <span>🔵 Διαγώνιος 1</span>
-                          <span>{showDiag1 ? '✅' : '⚪'}</span>
-                        </button>
-
-                        <button
-                          onClick={() => setShowDiag2(!showDiag2)}
-                          className={`p-3 rounded-xl text-xs font-black border transition flex items-center justify-between ${
-                            showDiag2 ? 'bg-blue-100 text-blue-900 border-blue-400' : 'bg-white text-gray-500 border-gray-200'
-                          }`}
-                        >
-                          <span>🔵 Διαγώνιος 2</span>
-                          <span>{showDiag2 ? '✅' : '⚪'}</span>
-                        </button>
-                      </>
-                    )}
-                  </div>
                 </div>
 
                 {/* 3. ΠΙΝΑΚΑΣ ΙΣΟΤΗΤΑΣ ΠΕΡΙΜΕΤΡΟΥ & ΕΜΒΑΔΟΥ */}
@@ -478,13 +512,13 @@ export default function SimmetriaTheoryPage() {
 
                   <div className="grid grid-cols-2 gap-3 text-center text-xs font-bold">
                     <div className="bg-purple-50 p-3 rounded-xl border border-purple-100">
-                      <span className="text-purple-900 block text-[11px]">🟣 Αριστερό Μισό</span>
+                      <span className="text-purple-900 block text-[11px]">🟣 1o Μέρος</span>
                       <p className="text-purple-700 font-mono text-sm mt-1">Περίμετρος: {activeData.halfPerimeter} cm</p>
                       <p className="text-purple-700 font-mono text-sm">Εμβαδόν: {activeData.halfArea} cm²</p>
                     </div>
 
                     <div className="bg-pink-50 p-3 rounded-xl border border-pink-100">
-                      <span className="text-pink-900 block text-[11px]">🌸 Δεξί Μισό</span>
+                      <span className="text-pink-900 block text-[11px]">🌸 2o Μέρος</span>
                       <p className="text-pink-700 font-mono text-sm mt-1">Περίμετρος: {activeData.halfPerimeter} cm</p>
                       <p className="text-pink-700 font-mono text-sm">Εμβαδόν: {activeData.halfArea} cm²</p>
                     </div>
