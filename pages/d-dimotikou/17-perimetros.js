@@ -6,13 +6,13 @@ import { LAYOUT } from '../../shared/layout-config';
 export default function PerimetrosTheoryPage() {
   const [shape, setShape] = useState('triangle'); // 'triangle', 'square', 'rectangle', 'polygon', 'hexagon'
   
-  // Διαστάσεις πλευρών (σε cm)
-  const [sideA, setSideA] = useState(7);
-  const [sideB, setSideB] = useState(5);
-  const [sideC, setSideC] = useState(3);
-  const [sideD, setSideD] = useState(5);
+  // Διαστάσεις πλευρών (σε cm) - Όρια sliders: 2 έως 18
+  const [sideA, setSideA] = useState(10);
+  const [sideB, setSideB] = useState(8);
+  const [sideC, setSideC] = useState(6);
+  const [sideD, setSideD] = useState(7);
   const [sideE, setSideE] = useState(6);
-  const [sideF, setSideF] = useState(7);
+  const [sideF, setSideF] = useState(8);
 
   // Υπολογισμός περιμέτρου & βήμα-βήμα πράξης
   let perimeter = 0;
@@ -34,6 +34,9 @@ export default function PerimetrosTheoryPage() {
     perimeter = sideA + sideB + sideC + sideD + sideE + sideF;
     formulaText = `${sideA} + ${sideB} + ${sideC} + ${sideD} + ${sideE} + ${sideF} = ${perimeter} cm`;
   }
+
+  // Σταθερή Κλίμακα: 1 cm = 13 pixels (στο max=18 δίνει 234px, ιδανικό για το πλαίσιο 450x360)
+  const PX_PER_CM = 13;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -146,7 +149,7 @@ export default function PerimetrosTheoryPage() {
                   <span>🧮</span> Διαδραστικό Εεργαστήριο Περιμέτρου
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Επίλεξε σχήμα, άνοιξε τα sliders για να αλλάξεις τις πλευρές και δες τη ζωγραφιά να προσαρμόζεται ζωντανά!
+                  Επίλεξε σχήμα, άλλαξε τις πλευρές και δες τη ζωγραφιά να μικραίνει ή να μεγαλώνει άμεσα!
                 </p>
               </div>
 
@@ -197,7 +200,7 @@ export default function PerimetrosTheoryPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               
-              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ */}
+              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (450x360 VIEWBOX) */}
               <div className="bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-4">
                 
                 {/* DISPLAY RESULT BANNER */}
@@ -209,131 +212,123 @@ export default function PerimetrosTheoryPage() {
                 <div className="w-full max-w-md h-[380px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                   <svg className="w-full h-full" viewBox="0 0 450 360">
                     
-                    {/* 1. ΤΡΙΓΩΝΟ */}
+                    {/* 1. ΤΡΙΓΩΝΟ: Άμεση γραμμική εξάρτηση από a, b, c */}
                     {shape === 'triangle' && (() => {
                       let A = sideA;
                       let B = sideB;
                       let C = sideC;
 
+                      // Εξασφάλιση τριγωνικής ανισότητας
                       if (A + B <= C) C = A + B - 0.5;
                       if (A + C <= B) B = A + C - 0.5;
                       if (B + C <= A) A = B + C - 0.5;
 
-                      const x3 = (C * C + A * A - B * B) / (2 * C);
-                      const y3 = Math.sqrt(Math.max(0.1, A * A - x3 * x3));
+                      const scC = C * PX_PER_CM;
+                      const scA = A * PX_PER_CM;
+                      const scB = B * PX_PER_CM;
 
-                      const minX = Math.min(0, x3);
-                      const maxX = Math.max(C, x3);
-                      const shapeW = maxX - minX;
-                      const shapeH = y3;
+                      const x3 = (scC * scC + scA * scA - scB * scB) / (2 * scC);
+                      const y3 = Math.sqrt(Math.max(1, scA * scA - x3 * x3));
 
-                      const scale = Math.min(280 / Math.max(shapeW, 1), 220 / Math.max(shapeH, 1));
-
-                      const scC = C * scale;
-                      const scX3 = x3 * scale;
-                      const scY3 = y3 * scale;
-
-                      const cx = (scC + scX3) / 3;
-                      const cy = scY3 / 3;
+                      const cx = (scC + x3) / 3;
+                      const cy = y3 / 3;
 
                       const ox = 225 - cx;
                       const oy = 190 + cy;
 
                       const p1 = { x: ox, y: oy };
                       const p2 = { x: ox + scC, y: oy };
-                      const p3 = { x: ox + scX3, y: oy - scY3 };
+                      const p3 = { x: ox + x3, y: oy - y3 };
 
                       return (
                         <g>
-                          <polygon points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="5" strokeLinejoin="round" />
+                          <polygon points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
                           
+                          {/* Label A */}
                           <g transform={`translate(${(p1.x + p3.x) / 2 - 25}, ${(p1.y + p3.y) / 2 - 10})`}>
                             <rect x="-5" y="-14" width="70" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="30" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
+                            <text x="30" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
                           </g>
 
+                          {/* Label B */}
                           <g transform={`translate(${(p2.x + p3.x) / 2 + 25}, ${(p2.y + p3.y) / 2 - 10})`}>
                             <rect x="-35" y="-14" width="70" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">b = {sideB} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">b = {sideB} cm</text>
                           </g>
 
+                          {/* Label C */}
                           <g transform={`translate(${(p1.x + p2.x) / 2}, ${p1.y + 25})`}>
                             <rect x="-35" y="-14" width="70" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">c = {sideC} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">c = {sideC} cm</text>
                           </g>
                         </g>
                       );
                     })()}
 
-                    {/* 2. ΤΕΤΡΑΓΩΝΟ - Πλήρως Δυναμική Αλλαγή Μεγέθους */}
+                    {/* 2. ΤΕΤΡΑΓΩΝΟ: Άμεση αναλογία με sideA */}
                     {shape === 'square' && (() => {
-                      // Το μέγεθος σε pixels αλλάζει άμεσα με βάση την τιμή sideA (από 40px έως 260px)
-                      const size = Math.min(260, Math.max(40, sideA * 14.5));
+                      const size = sideA * PX_PER_CM;
                       const x = 225 - size / 2;
                       const y = 180 - size / 2;
                       return (
                         <g>
-                          <rect x={x} y={y} width={size} height={size} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="5" />
+                          <rect x={x} y={y} width={size} height={size} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" />
                           <g transform={`translate(225, ${y - 15})`}>
                             <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
                           </g>
                           <g transform={`translate(${x + size + 35}, 180)`}>
                             <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
                           </g>
                           <g transform={`translate(225, ${y + size + 20})`}>
                             <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
                           </g>
                           <g transform={`translate(${x - 35}, 180)`}>
                             <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
                           </g>
                         </g>
                       );
                     })()}
 
-                    {/* 3. ΟΡΘΟΓΩΝΙΟ */}
+                    {/* 3. ΟΡΘΟΓΩΝΙΟ: Άμεση αναλογία με sideA (μήκος) & sideB (πλάτος) */}
                     {shape === 'rectangle' && (() => {
-                      const maxDim = Math.max(sideA, sideB);
-                      const scale = 220 / maxDim;
-                      const w = Math.max(60, sideA * scale);
-                      const h = Math.max(60, sideB * scale);
+                      const w = sideA * PX_PER_CM;
+                      const h = sideB * PX_PER_CM;
                       const x = 225 - w / 2;
                       const y = 180 - h / 2;
                       return (
                         <g>
-                          <rect x={x} y={y} width={w} height={h} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="5" />
+                          <rect x={x} y={y} width={w} height={h} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" />
                           <g transform={`translate(225, ${y - 15})`}>
                             <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
                           </g>
                           <g transform={`translate(${x + w + 35}, 180)`}>
                             <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">b = {sideB} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">b = {sideB} cm</text>
                           </g>
                           <g transform={`translate(225, ${y + h + 20})`}>
                             <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
                           </g>
                           <g transform={`translate(${x - 35}, 180)`}>
                             <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">b = {sideB} cm</text>
+                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">b = {sideB} cm</text>
                           </g>
                         </g>
                       );
                     })()}
 
-                    {/* 4. ΠΕΝΤΑΓΩΝΟ */}
+                    {/* 4. ΠΕΝΤΑΓΩΝΟ: Άμεση αναλογία ακτινών */}
                     {shape === 'polygon' && (() => {
                       const angles = [-90, -18, 54, 126, 198];
-                      const maxS = Math.max(sideA, sideB, sideC, sideD, sideE);
-                      const scale = 120 / maxS;
                       const sidesList = [sideA, sideB, sideC, sideD, sideE];
                       
                       const pts = angles.map((a, idx) => {
-                        const r = Math.max(45, sidesList[idx] * scale);
+                        const r = sidesList[idx] * (PX_PER_CM * 0.7);
                         const rad = (a * Math.PI) / 180;
                         return {
                           x: 225 + r * Math.cos(rad),
@@ -345,25 +340,23 @@ export default function PerimetrosTheoryPage() {
 
                       return (
                         <g>
-                          <polygon points={ptsStr} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="5" strokeLinejoin="round" />
-                          <text x="300" y="90" fill="#fbbf24" fontWeight="black" fontSize="13">a = {sideA} cm</text>
-                          <text x="320" y="220" fill="#fbbf24" fontWeight="black" fontSize="13">b = {sideB} cm</text>
-                          <text x="225" y="315" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">c = {sideC} cm</text>
-                          <text x="100" y="220" fill="#fbbf24" fontWeight="black" fontSize="13">d = {sideD} cm</text>
-                          <text x="110" y="90" fill="#fbbf24" fontWeight="black" fontSize="13">e = {sideE} cm</text>
+                          <polygon points={ptsStr} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
+                          <text x="290" y="90" fill="#fbbf24" fontWeight="black" fontSize="12">a = {sideA} cm</text>
+                          <text x="300" y="210" fill="#fbbf24" fontWeight="black" fontSize="12">b = {sideB} cm</text>
+                          <text x="225" y="310" fill="#fbbf24" fontWeight="black" fontSize="12" textAnchor="middle">c = {sideC} cm</text>
+                          <text x="110" y="210" fill="#fbbf24" fontWeight="black" fontSize="12">d = {sideD} cm</text>
+                          <text x="120" y="90" fill="#fbbf24" fontWeight="black" fontSize="12">e = {sideE} cm</text>
                         </g>
                       );
                     })()}
 
-                    {/* 5. ΚΥΡΤΟ ΕΞΑΓΩΝΟ */}
+                    {/* 5. ΚΥΡΤΟ ΕΞΑΓΩΝΟ: Άμεση αναλογία ακτινών */}
                     {shape === 'hexagon' && (() => {
                       const angles = [0, 55, 115, 180, 245, 305];
-                      const maxS = Math.max(sideA, sideB, sideC, sideD, sideE, sideF);
-                      const scale = 120 / maxS;
                       const sidesList = [sideA, sideB, sideC, sideD, sideE, sideF];
                       
                       const pts = angles.map((a, idx) => {
-                        const r = Math.max(45, sidesList[idx] * scale);
+                        const r = sidesList[idx] * (PX_PER_CM * 0.7);
                         const rad = (a * Math.PI) / 180;
                         return {
                           x: 225 + r * Math.cos(rad),
@@ -375,13 +368,13 @@ export default function PerimetrosTheoryPage() {
 
                       return (
                         <g>
-                          <polygon points={ptsStr} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="5" strokeLinejoin="round" />
-                          <text x="330" y="140" fill="#fbbf24" fontWeight="black" fontSize="12">a = {sideA} cm</text>
-                          <text x="280" y="65" fill="#fbbf24" fontWeight="black" fontSize="12">b = {sideB} cm</text>
-                          <text x="130" y="65" fill="#fbbf24" fontWeight="black" fontSize="12">c = {sideC} cm</text>
-                          <text x="70" y="180" fill="#fbbf24" fontWeight="black" fontSize="12">d = {sideD} cm</text>
-                          <text x="130" y="300" fill="#fbbf24" fontWeight="black" fontSize="12">e = {sideE} cm</text>
-                          <text x="280" y="300" fill="#fbbf24" fontWeight="black" fontSize="12">f = {sideF} cm</text>
+                          <polygon points={ptsStr} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
+                          <text x="320" y="140" fill="#fbbf24" fontWeight="black" fontSize="12">a = {sideA} cm</text>
+                          <text x="270" y="70" fill="#fbbf24" fontWeight="black" fontSize="12">b = {sideB} cm</text>
+                          <text x="140" y="70" fill="#fbbf24" fontWeight="black" fontSize="12">c = {sideC} cm</text>
+                          <text x="80" y="180" fill="#fbbf24" fontWeight="black" fontSize="12">d = {sideD} cm</text>
+                          <text x="140" y="295" fill="#fbbf24" fontWeight="black" fontSize="12">e = {sideE} cm</text>
+                          <text x="270" y="295" fill="#fbbf24" fontWeight="black" fontSize="12">f = {sideF} cm</text>
                         </g>
                       );
                     })()}
