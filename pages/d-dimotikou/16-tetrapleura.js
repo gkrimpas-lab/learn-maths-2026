@@ -3,55 +3,89 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Δεδομένα Τετραπλεύρων & Ιδιοτήτων
-const SHAPES_DATA = {
-  rectangle: {
-    name: 'Ορθογώνιο Παραλληλόγραμμο',
-    icon: '▭',
-    equalSides: 'Απέναντι πλευρές ίσες',
-    parallelSides: 'Απέναντι πλευρές παράλληλες',
-    angles: '4 Ορθές γωνίες (90°)',
-    has4EqualSides: false,
-    hasRightAngles: true,
-    desc: 'Έχει τις απέναντι πλευρές παράλληλες και ίσες ανά δύο, και όλες τις γωνίες του ορθές!'
-  },
-  square: {
-    name: 'Τετράγωνο',
-    icon: '❏',
-    equalSides: 'Όλες οι 4 πλευρές ίσες',
-    parallelSides: 'Απέναντι πλευρές παράλληλες',
-    angles: '4 Ορθές γωνίες (90°)',
-    has4EqualSides: true,
-    hasRightAngles: true,
-    desc: 'Το πιο «τέλειο» τετράπλευρο! Συνδυάζει τις ιδιότητες του ορθογωνίου και του ρόμβου (4 ίσες πλευρές & 4 ορθές γωνίες).'
-  },
-  rhombus: {
-    name: 'Ρόμβος',
-    icon: '◇',
-    equalSides: 'Όλες οι 4 πλευρές ίσες',
-    parallelSides: 'Απέναντι πλευρές παράλληλες',
-    angles: 'Απέναντι γωνίες ίσες (όχι ορθές)',
-    has4EqualSides: true,
-    hasRightAngles: false,
-    desc: 'Έχει όλες τις πλευρές του ίσες σαν το τετράγωνο, αλλά οι γωνίες του δεν είναι ορθές.'
-  },
-  parallelogram: {
-    name: 'Πλάγιο Παραλληλόγραμμο',
-    icon: '▱',
-    equalSides: 'Απέναντι πλευρές ίσες',
-    parallelSides: 'Απέναντι πλευρές παράλληλες',
-    angles: 'Απέναντι γωνίες ίσες (όχι ορθές)',
-    has4EqualSides: false,
-    hasRightAngles: false,
-    desc: 'Έχει τις απέναντι πλευρές παράλληλες και ίσες ανά δύο, αλλά οι γωνίες του είναι «πλάγιες» (όχι ορθές).'
-  }
-};
+// Βοηθητική συνάρτηση υπολογισμού κεντραρισμένων κορυφών τετραπλεύρου
+function getCenteredQuad(baseWidth, sideLength, angleDeg, centerX = 150, centerY = 150) {
+  const rad = (angleDeg * Math.PI) / 180;
+  const dx = sideLength * Math.cos(rad);
+  const dy = sideLength * Math.sin(rad);
+
+  // Κέντρο βάρους του παραλληλογράμμου
+  const cx = (baseWidth + dx) / 2;
+  const cy = dy / 2;
+
+  // Μετατόπιση ώστε το κέντρο να πάει στο (centerX, centerY)
+  const offsetX = centerX - cx;
+  const offsetY = centerY + cy; // Στο SVG το Y αυξάνεται προς τα κάτω
+
+  const p1 = { x: offsetX, y: offsetY };
+  const p2 = { x: offsetX + baseWidth, y: offsetY };
+  const p3 = { x: offsetX + baseWidth + dx, y: offsetY - dy };
+  const p4 = { x: offsetX + dx, y: offsetY - dy };
+
+  return { p1, p2, p3, p4, dx, dy };
+}
 
 export default function TetrapleuraTheoryPage() {
-  const [selectedShape, setSelectedShape] = useState('square');
-  const [skewLevel, setSkewLevel] = useState(30); // Κλίση για πλάγια σχήματα
+  // Κατάσταση διαδραστικού σχήματος
+  const [baseWidth, setBaseWidth] = useState(130);
+  const [sideLength, setSideLength] = useState(130);
+  const [angleDeg, setAngleDeg] = useState(60);
 
-  const activeData = SHAPES_DATA[selectedShape];
+  // Αυτόματος προσδιορισμός είδους σχήματος
+  const isRightAngle = angleDeg === 90;
+  const areSidesEqual = Math.abs(baseWidth - sideLength) < 5;
+
+  let shapeType = '';
+  let shapeIcon = '';
+  let shapeBadgeColor = '';
+  let shapeDesc = '';
+
+  if (isRightAngle && areSidesEqual) {
+    shapeType = 'Τετράγωνο';
+    shapeIcon = '❏';
+    shapeBadgeColor = 'bg-indigo-600 text-white';
+    shapeDesc = 'Όλες οι πλευρές είναι ίσες και όλες οι γωνίες είναι ορθές (90°)!';
+  } else if (isRightAngle && !areSidesEqual) {
+    shapeType = 'Ορθογώνιο Παραλληλόγραμμο';
+    shapeIcon = '▭';
+    shapeBadgeColor = 'bg-blue-600 text-white';
+    shapeDesc = 'Οι απέναντι πλευρές είναι ίσες και όλες οι γωνίες είναι ορθές (90°)!';
+  } else if (!isRightAngle && areSidesEqual) {
+    shapeType = 'Ρόμβος';
+    shapeIcon = '◇';
+    shapeBadgeColor = 'bg-purple-600 text-white';
+    shapeDesc = 'Όλες οι 4 πλευρές είναι ίσες, αλλά οι γωνίες του είναι πλάγιες (όχι 90°)!';
+  } else {
+    shapeType = 'Πλάγιο Παραλληλόγραμμο';
+    shapeIcon = '▱';
+    shapeBadgeColor = 'bg-teal-600 text-white';
+    shapeDesc = 'Οι απέναντι πλευρές είναι ίσες & παράλληλες, αλλά οι γωνίες δεν είναι ορθές!';
+  }
+
+  // Υπολογισμός σημείων για το SVG
+  const { p1, p2, p3, p4 } = getCenteredQuad(baseWidth, sideLength, angleDeg, 150, 150);
+  const pointsString = `${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y} ${p4.x},${p4.y}`;
+
+  // Προεπιλογές για γρήγορο κλικάρισμα
+  const setPreset = (type) => {
+    if (type === 'square') {
+      setBaseWidth(130);
+      setSideLength(130);
+      setAngleDeg(90);
+    } else if (type === 'rectangle') {
+      setBaseWidth(170);
+      setSideLength(100);
+      setAngleDeg(90);
+    } else if (type === 'rhombus') {
+      setBaseWidth(130);
+      setSideLength(130);
+      setAngleDeg(60);
+    } else if (type === 'parallelogram') {
+      setBaseWidth(170);
+      setSideLength(110);
+      setAngleDeg(65);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -92,7 +126,7 @@ export default function TetrapleuraTheoryPage() {
                   🔷 Ομοιότητες & Διαφορές Τετραπλεύρων
                 </h1>
                 <p className="text-blue-100 text-base lg:text-lg leading-relaxed">
-                  Συγκρίνουμε το **ορθογώνιο**, το **τετράγωνο**, τον **ρόμβο** και το **πλάγιο παραλληλόγραμμο** ως προς τις πλευρές και τις γωνίες τους!
+                  Συγκρίνουμε το **ορθογώνιο**, το **τετράγωνο**, τον **ρόμβο** και το **πλάγιο παραλληλόγραμμο** αλλάζοντας τις πλευρές και τις γωνίες τους!
                 </p>
               </div>
 
@@ -224,138 +258,142 @@ export default function TetrapleuraTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εργαστήριο Τετραπλεύρων
+                  <span>🧮</span> Διαδραστικό Εργαστήριο Αναγνώρισης Σχήματος
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Επίλεξε ένα σχήμα για να δεις τη ζωντανή γεωμετρική του αναπαράσταση!
+                  Άλλαξε τις πλευρές και τις γωνίες και δες τον αυτόματο υπολογιστή να αναγνωρίζει το σχήμα!
                 </p>
               </div>
 
-              {/* ΚΟΥΜΠΙΑ ΕΠΙΛΟΓΗΣ ΣΧΗΜΑΤΟΣ */}
+              {/* PRESET BUTTONS */}
               <div className="flex flex-wrap gap-2">
-                {Object.keys(SHAPES_DATA).map((sKey) => (
-                  <button
-                    key={sKey}
-                    onClick={() => setSelectedShape(sKey)}
-                    className={`px-4 py-2.5 rounded-xl text-xs md:text-sm font-black transition ${
-                      selectedShape === sKey 
-                        ? 'bg-indigo-600 text-white shadow-md scale-105' 
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {SHAPES_DATA[sKey].icon} {SHAPES_DATA[sKey].name}
-                  </button>
-                ))}
+                <button onClick={() => setPreset('square')} className="px-3 py-2 rounded-xl text-xs font-black bg-indigo-100 hover:bg-indigo-200 text-indigo-900 transition">
+                  ❏ Τετράγωνο
+                </button>
+                <button onClick={() => setPreset('rectangle')} className="px-3 py-2 rounded-xl text-xs font-black bg-blue-100 hover:bg-blue-200 text-blue-900 transition">
+                  ▭ Ορθογώνιο
+                </button>
+                <button onClick={() => setPreset('rhombus')} className="px-3 py-2 rounded-xl text-xs font-black bg-purple-100 hover:bg-purple-200 text-purple-900 transition">
+                  ◇ Ρόμβος
+                </button>
+                <button onClick={() => setPreset('parallelogram')} className="px-3 py-2 rounded-xl text-xs font-black bg-teal-100 hover:bg-teal-200 text-teal-900 transition">
+                  ▱ Πλάγιο Παραλλ.
+                </button>
               </div>
             </div>
 
-            {/* CONTROLS SLIDER (Για πλάγια σχήματα) */}
-            {(selectedShape === 'rhombus' || selectedShape === 'parallelogram') && (
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <label className="block text-xs font-black uppercase text-gray-500 mb-1">
-                  Γωνία Κλίσης Πλαγίου: <span className="text-indigo-600 font-mono font-black">{skewLevel}°</span>
-                </label>
-                <input 
-                  type="range" 
-                  min="15" 
-                  max="50" 
-                  value={skewLevel} 
-                  onChange={(e) => setSkewLevel(Number(e.target.value))}
-                  className="w-full accent-indigo-600 cursor-pointer"
-                />
-              </div>
-            )}
-
-            {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               
+              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG - ΑΠΟΛΥΤΑ ΚΕΝΤΡΑΡΙΣΜΕΝΟ) */}
               <div className="bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-4">
+                
+                {/* DYNAMIC SHAPE BADGE */}
+                <div className={`px-5 py-2.5 rounded-2xl font-black text-base shadow-lg flex items-center gap-2 transition-all ${shapeBadgeColor}`}>
+                  <span className="text-2xl">{shapeIcon}</span>
+                  <span>{shapeType}</span>
+                </div>
+
                 <div className="w-full max-w-[320px] h-[320px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                   <svg className="w-full h-full" viewBox="0 0 300 300">
                     
-                    {/* 1. ΟΡΘΟΓΩΝΙΟ */}
-                    {selectedShape === 'rectangle' && (
+                    {/* Τετράπλευρο Polygon */}
+                    <polygon 
+                      points={pointsString} 
+                      fill="#818cf8" 
+                      fillOpacity="0.2" 
+                      stroke="#818cf8" 
+                      strokeWidth="4" 
+                      strokeLinejoin="round" 
+                    />
+
+                    {/* Ορθές γωνίες (αν είναι 90 μοίρες) */}
+                    {isRightAngle && (
                       <g>
-                        <rect x="50" y="90" width="200" height="120" fill="#3b82f6" fillOpacity="0.2" stroke="#3b82f6" strokeWidth="4" />
-                        {/* Ορθές γωνίες */}
-                        <rect x="50" y="90" width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                        <rect x="235" y="90" width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                        <rect x="50" y="195" width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                        <rect x="235" y="195" width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
+                        <rect x={p1.x} y={p1.y - 15} width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
+                        <rect x={p2.x - 15} y={p2.y - 15} width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
+                        <rect x={p3.x - 15} y={p3.y} width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
+                        <rect x={p4.x} y={p4.y} width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
                       </g>
                     )}
 
-                    {/* 2. ΤΕΤΡΑΓΩΝΟ */}
-                    {selectedShape === 'square' && (
-                      <g>
-                        <rect x="75" y="75" width="150" height="150" fill="#6366f1" fillOpacity="0.2" stroke="#6366f1" strokeWidth="4" />
-                        {/* Ορθές γωνίες */}
-                        <rect x="75" y="75" width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                        <rect x="210" y="75" width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                        <rect x="75" y="210" width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                        <rect x="210" y="210" width="15" height="15" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                      </g>
-                    )}
-
-                    {/* 3. ΡΟΜΒΟΣ */}
-                    {selectedShape === 'rhombus' && (() => {
-                      const skew = skewLevel;
-                      const p1 = `${150 - skew},75`;
-                      const p2 = `${250 - skew},75`;
-                      const p3 = `${250 + skew},225`;
-                      const p4 = `${150 + skew},225`;
-                      return (
-                        <polygon points={`${p1} ${p2} ${p3} ${p4}`} fill="#a855f7" fillOpacity="0.2" stroke="#a855f7" strokeWidth="4" />
-                      );
-                    })()}
-
-                    {/* 4. ΠΛΑΓΙΟ ΠΑΡΑΛΛΗΛΟΓΡΑΜΜΟ */}
-                    {selectedShape === 'parallelogram' && (() => {
-                      const skew = skewLevel;
-                      const p1 = `${80 - skew},100`;
-                      const p2 = `${240 - skew},100`;
-                      const p3 = `${240 + skew},200`;
-                      const p4 = `${80 + skew},200`;
-                      return (
-                        <polygon points={`${p1} ${p2} ${p3} ${p4}`} fill="#14b8a6" fillOpacity="0.2" stroke="#14b8a6" strokeWidth="4" />
-                      );
-                    })()}
+                    {/* Ετικέτες Πλευρών */}
+                    <text x={(p1.x + p2.x) / 2} y={p1.y + 20} fill="#a5b4fc" fontWeight="bold" fontSize="12" textAnchor="middle">
+                      {baseWidth} px
+                    </text>
+                    <text x={(p1.x + p4.x) / 2 - 15} y={(p1.y + p4.y) / 2} fill="#a5b4fc" fontWeight="bold" fontSize="12" textAnchor="end">
+                      {sideLength} px
+                    </text>
 
                   </svg>
                 </div>
 
-                <span className="text-xs font-black uppercase text-slate-400 block">
-                  {activeData.name}
-                </span>
+                <p className="text-center text-xs font-bold text-slate-300 max-w-xs leading-relaxed">
+                  {shapeDesc}
+                </p>
               </div>
 
-              {/* ΕΠΕΞΗΓΗΣΗ ΙΔΙΟΤΗΤΩΝ ΣΧΗΜΑΤΟΣ */}
-              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl">{activeData.icon}</span>
-                  <h3 className="text-2xl font-black text-gray-900">{activeData.name}</h3>
+              {/* SLIDERS ΧΕΙΡΙΣΜΟΥ */}
+              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 space-y-6">
+                <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
+                  <span>🎛️</span> Ρύθμιση Πλευρών & Γωνιών
+                </h3>
+
+                {/* 1. Γωνία Κλίσης */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
+                    <span>Γωνία Κλίσης:</span>
+                    <span className="text-indigo-600 font-mono text-base font-black">{angleDeg}° {isRightAngle ? '(Ορθή 90°)' : ''}</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="30" 
+                    max="90" 
+                    value={angleDeg} 
+                    onChange={(e) => setAngleDeg(Number(e.target.value))}
+                    className="w-full accent-indigo-600 cursor-pointer"
+                  />
                 </div>
 
-                <p className="text-sm text-gray-700 leading-relaxed font-medium">
-                  {activeData.desc}
-                </p>
-
-                <div className="space-y-2 pt-2">
-                  <div className="bg-white p-3 rounded-xl border border-gray-200 flex items-center gap-3 text-xs md:text-sm font-bold text-gray-800">
-                    <span>📏</span>
-                    <span>{activeData.equalSides}</span>
+                {/* 2. Μήκος Βάσης */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
+                    <span>Μήκος Βάσης (Οριζόντια):</span>
+                    <span className="text-indigo-600 font-mono text-base font-black">{baseWidth} px</span>
                   </div>
-
-                  <div className="bg-white p-3 rounded-xl border border-gray-200 flex items-center gap-3 text-xs md:text-sm font-bold text-gray-800">
-                    <span>∥</span>
-                    <span>{activeData.parallelSides}</span>
-                  </div>
-
-                  <div className="bg-white p-3 rounded-xl border border-gray-200 flex items-center gap-3 text-xs md:text-sm font-bold text-gray-800">
-                    <span>📐</span>
-                    <span>{activeData.angles}</span>
-                  </div>
+                  <input 
+                    type="range" 
+                    min="80" 
+                    max="180" 
+                    value={baseWidth} 
+                    onChange={(e) => setBaseWidth(Number(e.target.value))}
+                    className="w-full accent-indigo-600 cursor-pointer"
+                  />
                 </div>
+
+                {/* 3. Μήκος Πλάγιας Πλευράς */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
+                    <span>Μήκος Πλάγιας Πλευράς:</span>
+                    <span className="text-indigo-600 font-mono text-base font-black">{sideLength} px</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="80" 
+                    max="180" 
+                    value={sideLength} 
+                    onChange={(e) => setSideLength(Number(e.target.value))}
+                    className="w-full accent-indigo-600 cursor-pointer"
+                  />
+                </div>
+
+                {/* Κουμπί εξίσωσης πλευρών */}
+                <button
+                  onClick={() => setSideLength(baseWidth)}
+                  className="w-full py-3 rounded-2xl font-black text-xs uppercase tracking-wider bg-slate-200 hover:bg-slate-300 text-slate-800 transition"
+                >
+                  ⚖️ Κάνε όλες τις πλευρές ίσες ({baseWidth} px)
+                </button>
+
               </div>
 
             </div>
