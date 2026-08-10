@@ -3,6 +3,40 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
+// Βοηθητικό εξάρτημα για Ενιαίο Στυλ Ετικέτας Πλευράς με ασφαλή όρια
+function SideLabel({ x, y, text }) {
+  // Περιορισμός συντεταγμένων εντός του viewBox 450x360
+  const safeX = Math.max(50, Math.min(400, x));
+  const safeY = Math.max(25, Math.min(335, y));
+
+  return (
+    <g transform={`translate(${safeX}, ${safeY})`}>
+      <rect 
+        x="-38" 
+        y="-13" 
+        width="76" 
+        height="24" 
+        rx="7" 
+        fill="#0f172a" 
+        fillOpacity="0.9" 
+        stroke="#f59e0b" 
+        strokeWidth="1.5" 
+      />
+      <text 
+        x="0" 
+        y="4" 
+        fill="#fbbf24" 
+        fontWeight="black" 
+        fontSize="13" 
+        textAnchor="middle" 
+        dominantBaseline="middle"
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
+
 export default function PerimetrosTheoryPage() {
   const [shape, setShape] = useState('triangle'); // 'triangle', 'square', 'rectangle', 'polygon', 'hexagon'
   
@@ -35,7 +69,7 @@ export default function PerimetrosTheoryPage() {
     formulaText = `${sideA} + ${sideB} + ${sideC} + ${sideD} + ${sideE} + ${sideF} = ${perimeter} cm`;
   }
 
-  // Σταθερή Κλίμακα: 1 cm = 13 pixels (στο max=18 δίνει 234px, ιδανικό για το πλαίσιο 450x360)
+  // Σταθερή Κλίμακα: 1 cm = 13 pixels
   const PX_PER_CM = 13;
 
   return (
@@ -146,10 +180,10 @@ export default function PerimetrosTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εεργαστήριο Περιμέτρου
+                  <span>🧮</span> Διαδραστικό Εργαστήριο Περιμέτρου
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Επίλεξε σχήμα, άλλαξε τις πλευρές και δες τη ζωγραφιά να μικραίνει ή να μεγαλώνει άμεσα!
+                  Επίλεξε σχήμα, άνοιξε τα sliders για να αλλάξεις τις πλευρές και δες τη ζωγραφιά να προσαρμόζεται ζωντανά!
                 </p>
               </div>
 
@@ -212,13 +246,12 @@ export default function PerimetrosTheoryPage() {
                 <div className="w-full max-w-md h-[380px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                   <svg className="w-full h-full" viewBox="0 0 450 360">
                     
-                    {/* 1. ΤΡΙΓΩΝΟ: Άμεση γραμμική εξάρτηση από a, b, c */}
+                    {/* 1. ΤΡΙΓΩΝΟ */}
                     {shape === 'triangle' && (() => {
                       let A = sideA;
                       let B = sideB;
                       let C = sideC;
 
-                      // Εξασφάλιση τριγωνικής ανισότητας
                       if (A + B <= C) C = A + B - 0.5;
                       if (A + C <= B) B = A + C - 0.5;
                       if (B + C <= A) A = B + C - 0.5;
@@ -244,28 +277,19 @@ export default function PerimetrosTheoryPage() {
                         <g>
                           <polygon points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
                           
-                          {/* Label A */}
-                          <g transform={`translate(${(p1.x + p3.x) / 2 - 25}, ${(p1.y + p3.y) / 2 - 10})`}>
-                            <rect x="-5" y="-14" width="70" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="30" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
-                          </g>
+                          {/* Label A (Αριστερή πλευρά -> Offset αριστερά) */}
+                          <SideLabel x={(p1.x + p3.x) / 2 - 35} y={(p1.y + p3.y) / 2} text={`a = ${sideA} cm`} />
 
-                          {/* Label B */}
-                          <g transform={`translate(${(p2.x + p3.x) / 2 + 25}, ${(p2.y + p3.y) / 2 - 10})`}>
-                            <rect x="-35" y="-14" width="70" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">b = {sideB} cm</text>
-                          </g>
+                          {/* Label B (Δεξιά πλευρά -> Offset δεξιά) */}
+                          <SideLabel x={(p2.x + p3.x) / 2 + 35} y={(p2.y + p3.y) / 2} text={`b = ${sideB} cm`} />
 
-                          {/* Label C */}
-                          <g transform={`translate(${(p1.x + p2.x) / 2}, ${p1.y + 25})`}>
-                            <rect x="-35" y="-14" width="70" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">c = {sideC} cm</text>
-                          </g>
+                          {/* Label C (Βάση -> Offset κάτω) */}
+                          <SideLabel x={(p1.x + p2.x) / 2} y={p1.y + 28} text={`c = ${sideC} cm`} />
                         </g>
                       );
                     })()}
 
-                    {/* 2. ΤΕΤΡΑΓΩΝΟ: Άμεση αναλογία με sideA */}
+                    {/* 2. ΤΕΤΡΑΓΩΝΟ */}
                     {shape === 'square' && (() => {
                       const size = sideA * PX_PER_CM;
                       const x = 225 - size / 2;
@@ -273,27 +297,20 @@ export default function PerimetrosTheoryPage() {
                       return (
                         <g>
                           <rect x={x} y={y} width={size} height={size} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" />
-                          <g transform={`translate(225, ${y - 15})`}>
-                            <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
-                          </g>
-                          <g transform={`translate(${x + size + 35}, 180)`}>
-                            <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
-                          </g>
-                          <g transform={`translate(225, ${y + size + 20})`}>
-                            <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
-                          </g>
-                          <g transform={`translate(${x - 35}, 180)`}>
-                            <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
-                          </g>
+                          
+                          {/* Πάνω */}
+                          <SideLabel x={225} y={y - 22} text={`a = ${sideA} cm`} />
+                          {/* Δεξιά */}
+                          <SideLabel x={x + size + 42} y={180} text={`a = ${sideA} cm`} />
+                          {/* Κάτω */}
+                          <SideLabel x={225} y={y + size + 22} text={`a = ${sideA} cm`} />
+                          {/* Αριστερά */}
+                          <SideLabel x={x - 42} y={180} text={`a = ${sideA} cm`} />
                         </g>
                       );
                     })()}
 
-                    {/* 3. ΟΡΘΟΓΩΝΙΟ: Άμεση αναλογία με sideA (μήκος) & sideB (πλάτος) */}
+                    {/* 3. ΟΡΘΟΓΩΝΙΟ */}
                     {shape === 'rectangle' && (() => {
                       const w = sideA * PX_PER_CM;
                       const h = sideB * PX_PER_CM;
@@ -302,27 +319,20 @@ export default function PerimetrosTheoryPage() {
                       return (
                         <g>
                           <rect x={x} y={y} width={w} height={h} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" />
-                          <g transform={`translate(225, ${y - 15})`}>
-                            <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
-                          </g>
-                          <g transform={`translate(${x + w + 35}, 180)`}>
-                            <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">b = {sideB} cm</text>
-                          </g>
-                          <g transform={`translate(225, ${y + h + 20})`}>
-                            <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
-                          </g>
-                          <g transform={`translate(${x - 35}, 180)`}>
-                            <rect x="-40" y="-14" width="80" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
-                            <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">b = {sideB} cm</text>
-                          </g>
+                          
+                          {/* Πάνω (a) */}
+                          <SideLabel x={225} y={y - 22} text={`a = ${sideA} cm`} />
+                          {/* Δεξιά (b) */}
+                          <SideLabel x={x + w + 42} y={180} text={`b = ${sideB} cm`} />
+                          {/* Κάτω (a) */}
+                          <SideLabel x={225} y={y + h + 22} text={`a = ${sideA} cm`} />
+                          {/* Αριστερά (b) */}
+                          <SideLabel x={x - 42} y={180} text={`b = ${sideB} cm`} />
                         </g>
                       );
                     })()}
 
-                    {/* 4. ΠΕΝΤΑΓΩΝΟ: Άμεση αναλογία ακτινών */}
+                    {/* 4. ΠΕΝΤΑΓΩΝΟ */}
                     {shape === 'polygon' && (() => {
                       const angles = [-90, -18, 54, 126, 198];
                       const sidesList = [sideA, sideB, sideC, sideD, sideE];
@@ -338,19 +348,37 @@ export default function PerimetrosTheoryPage() {
 
                       const ptsStr = pts.map(p => `${p.x},${p.y}`).join(' ');
 
+                      // Υπολογισμός εξωτερικών σημείων για ετικέτες
+                      const labels = pts.map((p, i) => {
+                        const nextP = pts[(i + 1) % pts.length];
+                        const midX = (p.x + nextP.x) / 2;
+                        const midY = (p.y + nextP.y) / 2;
+
+                        // Δάνυσμα έξω από το κέντρο (225, 180)
+                        const dirX = midX - 225;
+                        const dirY = midY - 180;
+                        const len = Math.hypot(dirX, dirY) || 1;
+
+                        const offset = 28;
+                        return {
+                          x: midX + (dirX / len) * offset,
+                          y: midY + (dirY / len) * offset
+                        };
+                      });
+
                       return (
                         <g>
                           <polygon points={ptsStr} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
-                          <text x="290" y="90" fill="#fbbf24" fontWeight="black" fontSize="12">a = {sideA} cm</text>
-                          <text x="300" y="210" fill="#fbbf24" fontWeight="black" fontSize="12">b = {sideB} cm</text>
-                          <text x="225" y="310" fill="#fbbf24" fontWeight="black" fontSize="12" textAnchor="middle">c = {sideC} cm</text>
-                          <text x="110" y="210" fill="#fbbf24" fontWeight="black" fontSize="12">d = {sideD} cm</text>
-                          <text x="120" y="90" fill="#fbbf24" fontWeight="black" fontSize="12">e = {sideE} cm</text>
+                          <SideLabel x={labels[0].x} y={labels[0].y} text={`a = ${sideA} cm`} />
+                          <SideLabel x={labels[1].x} y={labels[1].y} text={`b = ${sideB} cm`} />
+                          <SideLabel x={labels[2].x} y={labels[2].y} text={`c = ${sideC} cm`} />
+                          <SideLabel x={labels[3].x} y={labels[3].y} text={`d = ${sideD} cm`} />
+                          <SideLabel x={labels[4].x} y={labels[4].y} text={`e = ${sideE} cm`} />
                         </g>
                       );
                     })()}
 
-                    {/* 5. ΚΥΡΤΟ ΕΞΑΓΩΝΟ: Άμεση αναλογία ακτινών */}
+                    {/* 5. ΚΥΡΤΟ ΕΞΑΓΩΝΟ */}
                     {shape === 'hexagon' && (() => {
                       const angles = [0, 55, 115, 180, 245, 305];
                       const sidesList = [sideA, sideB, sideC, sideD, sideE, sideF];
@@ -366,15 +394,31 @@ export default function PerimetrosTheoryPage() {
 
                       const ptsStr = pts.map(p => `${p.x},${p.y}`).join(' ');
 
+                      const labels = pts.map((p, i) => {
+                        const nextP = pts[(i + 1) % pts.length];
+                        const midX = (p.x + nextP.x) / 2;
+                        const midY = (p.y + nextP.y) / 2;
+
+                        const dirX = midX - 225;
+                        const dirY = midY - 180;
+                        const len = Math.hypot(dirX, dirY) || 1;
+
+                        const offset = 26;
+                        return {
+                          x: midX + (dirX / len) * offset,
+                          y: midY + (dirY / len) * offset
+                        };
+                      });
+
                       return (
                         <g>
                           <polygon points={ptsStr} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
-                          <text x="320" y="140" fill="#fbbf24" fontWeight="black" fontSize="12">a = {sideA} cm</text>
-                          <text x="270" y="70" fill="#fbbf24" fontWeight="black" fontSize="12">b = {sideB} cm</text>
-                          <text x="140" y="70" fill="#fbbf24" fontWeight="black" fontSize="12">c = {sideC} cm</text>
-                          <text x="80" y="180" fill="#fbbf24" fontWeight="black" fontSize="12">d = {sideD} cm</text>
-                          <text x="140" y="295" fill="#fbbf24" fontWeight="black" fontSize="12">e = {sideE} cm</text>
-                          <text x="270" y="295" fill="#fbbf24" fontWeight="black" fontSize="12">f = {sideF} cm</text>
+                          <SideLabel x={labels[0].x} y={labels[0].y} text={`a = ${sideA} cm`} />
+                          <SideLabel x={labels[1].x} y={labels[1].y} text={`b = ${sideB} cm`} />
+                          <SideLabel x={labels[2].x} y={labels[2].y} text={`c = ${sideC} cm`} />
+                          <SideLabel x={labels[3].x} y={labels[3].y} text={`d = ${sideD} cm`} />
+                          <SideLabel x={labels[4].x} y={labels[4].y} text={`e = ${sideE} cm`} />
+                          <SideLabel x={labels[5].x} y={labels[5].y} text={`f = ${sideF} cm`} />
                         </g>
                       );
                     })()}
