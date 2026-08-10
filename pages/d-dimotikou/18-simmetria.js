@@ -17,7 +17,6 @@ export default function SimmetriaTheoryPage() {
       name: 'Τετράγωνο',
       totalAxes: 4,
       desc: 'Το τετράγωνο έχει 4 άξονες συμμετρίας (1 κατακόρυφο, 1 οριζόντιο και 2 διαγώνιους).',
-      side: 10, // cm
       getPerimeter: () => 40,
       getArea: () => 100,
       halfPerimeter: 25,
@@ -53,7 +52,7 @@ export default function SimmetriaTheoryPage() {
     circle: {
       name: 'Κύκλος',
       totalAxes: 'Απεριόριστοι',
-      desc: 'Ο κύκλος έχει αμέτρητους (απειρους) άξονες συμμετρίας! Κάθε ευθεία που περνάει από το κέντρο του είναι άξονας συμμετρίας.',
+      desc: 'Ο κύκλος έχει αμέτρητους (άπειρους) άξονες συμμετρίας! Κάθε ευθεία που περνάει από το κέντρο του είναι άξονας συμμετρίας.',
       getPerimeter: () => '31,4',
       getArea: () => '78,5',
       halfPerimeter: '18,7',
@@ -263,6 +262,10 @@ export default function SimmetriaTheoryPage() {
                           {/* 1. ΤΕΤΡΑΓΩΝΟ */}
                           {shape === 'square' && (
                             <g>
+                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ (GHOST TRAIL - ΔΙΑΚΕΚΟΜΜΕΝΟ) */}
+                              {foldProgress > 0 && (
+                                <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
+                              )}
                               {/* Σταθερό Αριστερό Μισό */}
                               <path d="M -90,-90 L 0,-90 L 0,90 L -90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
                               {/* Αναδιπλούμενο Δεξί Μισό */}
@@ -275,6 +278,10 @@ export default function SimmetriaTheoryPage() {
                           {/* 2. ΟΡΘΟΓΩΝΙΟ */}
                           {shape === 'rectangle' && (
                             <g>
+                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ */}
+                              {foldProgress > 0 && (
+                                <path d="M 0,-70 L 120,-70 L 120,70 L 0,70 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
+                              )}
                               {/* Αριστερό Μισό */}
                               <path d="M -120,-70 L 0,-70 L 0,70 L -120,70 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
                               {/* Δεξί Μισό */}
@@ -287,6 +294,10 @@ export default function SimmetriaTheoryPage() {
                           {/* 3. ΙΣΟΣΚΕΛΕΣ ΤΡΙΓΩΝΟ */}
                           {shape === 'triangle' && (
                             <g>
+                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ */}
+                              {foldProgress > 0 && (
+                                <path d="M 0,-100 L 100,80 L 0,80 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
+                              )}
                               {/* Αριστερό Μισό */}
                               <path d="M 0,-100 L -100,80 L 0,80 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
                               {/* Δεξί Μισό */}
@@ -299,6 +310,10 @@ export default function SimmetriaTheoryPage() {
                           {/* 4. ΡΟΜΒΟΣ */}
                           {shape === 'rhombus' && (
                             <g>
+                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ */}
+                              {foldProgress > 0 && (
+                                <path d="M 0,-100 L 110,0 L 0,100 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
+                              )}
                               {/* Αριστερό Μισό */}
                               <path d="M 0,-100 L -110,0 L 0,100 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
                               {/* Δεξί Μισό */}
@@ -311,12 +326,27 @@ export default function SimmetriaTheoryPage() {
                           {/* 5. ΚΥΚΛΟΣ */}
                           {shape === 'circle' && (
                             <g>
+                              {/* ΙΧΝΟΣ ΑΡΧΙΚΗΣ ΘΕΣΗΣ */}
+                              {foldProgress > 0 && (
+                                <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
+                              )}
                               {/* Αριστερό Ημικύκλιο */}
                               <path d="M 0,-90 A 90,90 0 0,0 0,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
                               {/* Δεξί Ημικύκλιο */}
                               <g transform={`scale(${scaleFold}, 1)`}>
                                 <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />
                               </g>
+                            </g>
+                          )}
+
+                          {/* ------------------------------------------- */}
+                          {/* ΒΕΛΟΣ ΔΕΙΞΗΣ ΚΑΤΕΥΘΥΝΣΗΣ ΔΙΠΛΩΜΑΤΟΣ (ARROW) */}
+                          {/* ------------------------------------------- */}
+                          {foldProgress > 0 && foldProgress < 100 && (
+                            <g transform="translate(0, -115)">
+                              <path d="M 50,-10 Q 25,-25 0,-10" fill="none" stroke="#f59e0b" strokeWidth="3" />
+                              <polygon points="-5,-12 3,-10 -2,-2" fill="#f59e0b" />
+                              <text x="25" y="-30" fill="#f59e0b" fontWeight="black" fontSize="11" textAnchor="middle">Δίπλωμα ⇦</text>
                             </g>
                           )}
 
@@ -383,7 +413,7 @@ export default function SimmetriaTheoryPage() {
                     className="w-full accent-purple-600 cursor-pointer"
                   />
                   <p className="text-[11px] text-purple-800 font-medium">
-                    Σύρε το slider στο 100% για να δεις το δεξί μέρος να διπλώνει πάνω στο αριστερό!
+                    Σύρε το slider στο 100% για να δεις το δεξί μέρος να διπλώνει πάνω στο αριστερό (ακολουθώντας το βέλος ⇦)!
                   </p>
                 </div>
 
