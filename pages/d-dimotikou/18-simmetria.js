@@ -389,66 +389,29 @@ export default function SimmetriaTheoryPage() {
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* 4. ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ - ΑΠΟΛΥΤΑ ΑΚΡΙΒΕΙΣ ΑΝΑΚΛΑΣΕΙΣ */}
+                          {/* 4. ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ - ΑΠΟΛΥΤΩΣ ΚΑΘΑΡΗ ΑΝΑΔΙΠΛΩΣΗ */}
                           {/* ------------------------------------------- */}
                           {shape === 'equilateralTriangle' && (() => {
-                            // Κορυφές Ισόπλευρου Τριγώνου: A=(0, -80), B=(86.6, 70), C=(-86.6, 70)
-                            // Βαρύκεντρο (Κέντρο) = (0, 20)
+                            // Γωνία περιστροφής συστήματος ώστε ο επιλεγμένος άξονας να είναι ΠΑΝΤΑ ΚΑΤΑΚΟΡΥΦΟΣ
+                            let rotDeg = 0;
+                            if (activeAxis === 'axisA') rotDeg = 0;       // Πάνω Κορυφή
+                            if (activeAxis === 'axisB') rotDeg = -120;    // Δεξιά Κορυφή
+                            if (activeAxis === 'axisC') rotDeg = 120;     // Αριστερή Κορυφή
+
                             return (
-                              <g>
-                                {/* ΑΞΟΝΑΣ 1: Πάνω Κορυφή A (0, -80) -> Κατακόρυφος Άξονας x = 0 */}
-                                {activeAxis === 'axisA' && (
-                                  <g>
-                                    {foldProgress > 0 && (
-                                      <polygon points="0,-80 86.6,70 0,70" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />
-                                    )}
-                                    {/* Σταθερό Αριστερό Μισό */}
-                                    <polygon points="0,-80 -86.6,70 0,70" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                                    {/* Αναδιπλούμενο Δεξί Μισό */}
-                                    <g transform={`scale(${scaleFold}, 1)`}>
-                                      <polygon points="0,-80 86.6,70 0,70" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
-                                    </g>
-                                  </g>
+                              <g transform={`translate(0, 20) rotate(${rotDeg})`}>
+                                {/* Ίχνος Αρχικής Θέσης Δεξιού Μισού */}
+                                {foldProgress > 0 && (
+                                  <polygon points="0,-100 86.6,50 0,50" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />
                                 )}
-
-                                {/* ΑΞΟΝΑΣ 2: Δεξιά Κορυφή B (86.6, 70) -> Άξονας υπό γωνία -30 deg από το (0, 20) */}
-                                {activeAxis === 'axisB' && (
-                                  <g>
-                                    {foldProgress > 0 && (
-                                      <g opacity="0.5">
-                                        <polygon points="0,-80 86.6,70 -86.6,70" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />
-                                      </g>
-                                    )}
-                                    {/* Μετατοπιζόμαστε στο κέντρο (0, 20) για σωστή τοπική περιστροφή */}
-                                    <g transform="translate(0, 20)">
-                                      {/* Σταθερό Μισό */}
-                                      <polygon points="0,-100 86.6,50 -86.6,50" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                                      {/* Αναδίπλωση ακριβώς πάνω στον άξονα B (-30 deg) */}
-                                      <g transform={`rotate(-30) scale(${scaleFold}, 1) rotate(30)`}>
-                                        <polygon points="0,-100 86.6,50 0,50" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
-                                      </g>
-                                    </g>
-                                  </g>
-                                )}
-
-                                {/* ΑΞΟΝΑΣ 3: Αριστερή Κορυφή C (-86.6, 70) -> Άξονας υπό γωνία +30 deg από το (0, 20) */}
-                                {activeAxis === 'axisC' && (
-                                  <g>
-                                    {foldProgress > 0 && (
-                                      <g opacity="0.5">
-                                        <polygon points="0,-80 -86.6,70 86.6,70" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />
-                                      </g>
-                                    )}
-                                    <g transform="translate(0, 20)">
-                                      {/* Σταθερό Μισό */}
-                                      <polygon points="0,-100 -86.6,50 86.6,50" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                                      {/* Αναδίπλωση ακριβώς πάνω στον άξονα C (+30 deg) */}
-                                      <g transform={`rotate(30) scale(${scaleFold}, 1) rotate(-30)`}>
-                                        <polygon points="0,-100 -86.6,50 0,50" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
-                                      </g>
-                                    </g>
-                                  </g>
-                                )}
+                                
+                                {/* Σταθερό Αριστερό Μισό (Μωβ) */}
+                                <polygon points="0,-100 -86.6,50 0,50" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                                
+                                {/* Δεξί Μισό που ΔΙΠΛΩΝΕΙ ΜΠΡΟΣΤΑ (Ροζ) */}
+                                <g transform={`scale(${scaleFold}, 1)`}>
+                                  <polygon points="0,-100 86.6,50 0,50" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
+                                </g>
                               </g>
                             );
                           })()}
