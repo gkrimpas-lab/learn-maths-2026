@@ -35,9 +35,6 @@ export default function PerimetrosTheoryPage() {
     formulaText = `${sideA} + ${sideB} + ${sideC} + ${sideD} + ${sideE} + ${sideF} = ${perimeter} cm`;
   }
 
-  // Συντελεστής κλίμακας για το SVG (Pixel scaling)
-  const scale = 7; 
-
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
@@ -149,7 +146,7 @@ export default function PerimetrosTheoryPage() {
                   <span>🧮</span> Διαδραστικό Εργαστήριο Περιμέτρου
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Επίλεξε σχήμα, άνοιξε τα sliders για να αλλάξεις τις πλευρές και δες τη ζωγραφιά να αλλάζει ζωντανά!
+                  Επίλεξε σχήμα, άνοιξε τα sliders για να αλλάξεις τις πλευρές και δες τη ζωγραφιά να προσαρμόζεται ζωντανά!
                 </p>
               </div>
 
@@ -200,7 +197,7 @@ export default function PerimetrosTheoryPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               
-              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG - ΔΥΝΑΜΙΚΗ ΑΛΛΑΓΗ ΜΕΓΕΘΟΥΣ) */}
+              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG - ΠΛΗΡΩΣ ΔΥΝΑΜΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ) */}
               <div className="bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-4">
                 
                 {/* DISPLAY RESULT BANNER */}
@@ -212,44 +209,59 @@ export default function PerimetrosTheoryPage() {
                 <div className="w-full max-w-[320px] h-[300px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                   <svg className="w-full h-full" viewBox="0 0 300 300">
                     
-                    {/* 1. ΤΡΙΓΩΝΟ */}
+                    {/* 1. ΤΡΙΓΩΝΟ - Δυναμική κατασκευή βάσει τριγωνομετρίας */}
                     {shape === 'triangle' && (() => {
-                      const w = sideC * scale;
-                      const h = sideA * scale;
-                      const x1 = 150 - w / 2;
-                      const x2 = 150 + w / 2;
-                      const yBase = 220;
-                      const yTop = Math.max(40, yBase - h);
+                      const scale = 8;
+                      const A = Math.min(sideA * scale, 130);
+                      const B = Math.min(sideB * scale, 130);
+                      let C = Math.min(sideC * scale, 140);
+                      
+                      // Διόρθωση για να ισχύει πάντα η τριγωνική ανισότητα
+                      if (A + B <= C) C = A + B - 5;
+
+                      const x3 = (C * C + A * A - B * B) / (2 * C);
+                      const y3 = Math.sqrt(Math.max(10, A * A - x3 * x3));
+
+                      const cx = (C + x3) / 3;
+                      const cy = y3 / 3;
+
+                      const ox = 150 - cx;
+                      const oy = 150 + cy;
+
+                      const p1 = { x: ox, y: oy };
+                      const p2 = { x: ox + C, y: oy };
+                      const p3 = { x: ox + x3, y: oy - y3 };
+
                       return (
                         <g>
-                          <polygon points={`${150},${yTop} ${x1},${yBase} ${x2},${yBase}`} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
-                          <text x={(150 + x1) / 2 - 10} y={(yTop + yBase) / 2} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="end">a = {sideA} cm</text>
-                          <text x={(150 + x2) / 2 + 10} y={(yTop + yBase) / 2} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="start">b = {sideB} cm</text>
-                          <text x="150" y={yBase + 20} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">c = {sideC} cm</text>
+                          <polygon points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
+                          <text x={(p1.x + p3.x) / 2 - 10} y={(p1.y + p3.y) / 2} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="end">a = {sideA} cm</text>
+                          <text x={(p2.x + p3.x) / 2 + 10} y={(p2.y + p3.y) / 2} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="start">b = {sideB} cm</text>
+                          <text x={(p1.x + p2.x) / 2} y={p1.y + 20} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">c = {sideC} cm</text>
                         </g>
                       );
                     })()}
 
-                    {/* 2. ΤΕΤΡΑΓΩΝΟ */}
+                    {/* 2. ΤΕΤΡΑΓΩΝΟ - Δυναμική αλλαγή μεγέθους */}
                     {shape === 'square' && (() => {
-                      const w = Math.min(220, sideA * 10);
-                      const x = 150 - w / 2;
-                      const y = 150 - w / 2;
+                      const size = Math.min(220, Math.max(40, sideA * 11));
+                      const x = 150 - size / 2;
+                      const y = 150 - size / 2;
                       return (
                         <g>
-                          <rect x={x} y={y} width={w} height={w} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" />
+                          <rect x={x} y={y} width={size} height={size} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" />
                           <text x="150" y={y - 10} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
-                          <text x={x + w + 15} y="155" fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="start">a = {sideA} cm</text>
-                          <text x="150" y={y + w + 20} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
+                          <text x={x + size + 15} y="155" fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="start">a = {sideA} cm</text>
+                          <text x="150" y={y + size + 20} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
                           <text x={x - 15} y="155" fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="end">a = {sideA} cm</text>
                         </g>
                       );
                     })()}
 
-                    {/* 3. ΟΡΘΟΓΩΝΙΟ */}
+                    {/* 3. ΟΡΘΟΓΩΝΙΟ - Δυναμική αλλαγή μήκους & πλάτους */}
                     {shape === 'rectangle' && (() => {
-                      const w = Math.min(230, sideA * 11);
-                      const h = Math.min(180, sideB * 11);
+                      const w = Math.min(230, Math.max(50, sideA * 11));
+                      const h = Math.min(190, Math.max(40, sideB * 11));
                       const x = 150 - w / 2;
                       const y = 150 - h / 2;
                       return (
@@ -263,40 +275,41 @@ export default function PerimetrosTheoryPage() {
                       );
                     })()}
 
-                    {/* 4. ΠΕΝΤΑΓΩΝΟ */}
+                    {/* 4. ΠΕΝΤΑΓΩΝΟ - Δυναμικές ακτίνες κορυφών */}
                     {shape === 'polygon' && (() => {
-                      const rA = sideA * 8;
-                      const rB = sideB * 8;
-                      const rC = sideC * 8;
-                      const rD = sideD * 8;
-                      const rE = sideE * 8;
+                      const angles = [-90, -18, 54, 126, 198];
+                      const sidesList = [sideA, sideB, sideC, sideD, sideE];
+                      
+                      const pts = angles.map((a, idx) => {
+                        const r = Math.min(110, Math.max(30, sidesList[idx] * 8));
+                        const rad = (a * Math.PI) / 180;
+                        return {
+                          x: 150 + r * Math.cos(rad),
+                          y: 150 + r * Math.sin(rad)
+                        };
+                      });
 
-                      const p1 = `${150},${150 - rA}`;
-                      const p2 = `${150 + rB},${150 - rB / 2}`;
-                      const p3 = `${150 + rC * 0.7},${150 + rC * 0.8}`;
-                      const p4 = `${150 - rD * 0.7},${150 + rD * 0.8}`;
-                      const p5 = `${150 - rE},${150 - rE / 2}`;
+                      const ptsStr = pts.map(p => `${p.x},${p.y}`).join(' ');
 
                       return (
                         <g>
-                          <polygon points={`${p1} ${p2} ${p3} ${p4} ${p5}`} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
+                          <polygon points={ptsStr} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
                           <text x="210" y="80" fill="#fbbf24" fontWeight="bold" fontSize="11">a = {sideA} cm</text>
                           <text x="220" y="190" fill="#fbbf24" fontWeight="bold" fontSize="11">b = {sideB} cm</text>
-                          <text x="150" y="260" fill="#fbbf24" fontWeight="bold" fontSize="11" textAnchor="middle">c = {sideC} cm</text>
+                          <text x="150" y={260" fill="#fbbf24" fontWeight="bold" fontSize="11" textAnchor="middle">c = {sideC} cm</text>
                           <text x="70" y="190" fill="#fbbf24" fontWeight="bold" fontSize="11">d = {sideD} cm</text>
                           <text x="80" y="80" fill="#fbbf24" fontWeight="bold" fontSize="11">e = {sideE} cm</text>
                         </g>
                       );
                     })()}
 
-                    {/* 5. ΚΥΡΤΟ ΕΞΑΓΩΝΟ (6 ΠΛΕΥΡΕΣ) */}
+                    {/* 5. ΚΥΡΤΟ ΕΞΑΓΩΝΟ - Δυναμικές ακτίνες κορυφών */}
                     {shape === 'hexagon' && (() => {
-                      // Υπολογισμός 6 ακτινών βάσει των πλευρών
                       const angles = [0, 55, 115, 180, 245, 305];
                       const sidesList = [sideA, sideB, sideC, sideD, sideE, sideF];
                       
                       const pts = angles.map((a, idx) => {
-                        const r = Math.min(110, sidesList[idx] * 8);
+                        const r = Math.min(110, Math.max(30, sidesList[idx] * 8));
                         const rad = (a * Math.PI) / 180;
                         return {
                           x: 150 + r * Math.cos(rad),
@@ -313,8 +326,8 @@ export default function PerimetrosTheoryPage() {
                           <text x="190" y="60" fill="#fbbf24" fontWeight="bold" fontSize="11">b = {sideB} cm</text>
                           <text x="90" y="60" fill="#fbbf24" fontWeight="bold" fontSize="11">c = {sideC} cm</text>
                           <text x="50" y="150" fill="#fbbf24" fontWeight="bold" fontSize="11">d = {sideD} cm</text>
-                          <text x="90" y="240" fill="#fbbf24" fontWeight="bold" fontSize="11">e = {sideE} cm</text>
-                          <text x="200" y="240" fill="#fbbf24" fontWeight="bold" fontSize="11">f = {sideF} cm</text>
+                          <text x="90" y={240} fill="#fbbf24" fontWeight="bold" fontSize="11">e = {sideE} cm</text>
+                          <text x="200" y={240} fill="#fbbf24" fontWeight="bold" fontSize="11">f = {sideF} cm</text>
                         </g>
                       );
                     })()}
