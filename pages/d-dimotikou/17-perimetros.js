@@ -246,19 +246,30 @@ export default function PerimetrosTheoryPage() {
                 <div className="w-full max-w-md h-[380px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                   <svg className="w-full h-full" viewBox="0 0 450 360">
                     
-                    {/* 1. ΤΡΙΓΩΝΟ - Μεγάλη απόσταση ετικετών προς τα έξω */}
+                    {/* 1. ΤΡΙΓΩΝΟ - Ομαλή προσαρμογή γωνιών & σχηματισμού */}
                     {shape === 'triangle' && (() => {
-                      let A = sideA;
-                      let B = sideB;
-                      let C = sideC;
+                      const total = sideA + sideB + sideC;
+                      let rA = sideA / total;
+                      let rB = sideB / total;
+                      let rC = sideC / total;
 
-                      if (A + B <= C) C = A + B - 0.5;
-                      if (A + C <= B) B = A + C - 0.5;
-                      if (B + C <= A) A = B + C - 0.5;
+                      // Ομαλός περιορισμός ώστε το άθροισμα των 2 πλευρών να υπερέχει πάντα ελαφρώς της 3ης
+                      const rList = [rA, rB, rC];
+                      for (let i = 0; i < 3; i++) {
+                        if (rList[i] >= 0.46) {
+                          const overflow = rList[i] - 0.46;
+                          rList[i] = 0.46 + overflow * 0.25;
+                        }
+                      }
+                      const sumR = rList[0] + rList[1] + rList[2];
+                      rA = rList[0] / sumR;
+                      rB = rList[1] / sumR;
+                      rC = rList[2] / sumR;
 
-                      const scC = C * PX_PER_CM;
-                      const scA = A * PX_PER_CM;
-                      const scB = B * PX_PER_CM;
+                      const sc = total * PX_PER_CM;
+                      const scA = rA * sc;
+                      const scB = rB * sc;
+                      const scC = rC * sc;
 
                       const x3 = (scC * scC + scA * scA - scB * scB) / (2 * scC);
                       const y3 = Math.sqrt(Math.max(1, scA * scA - x3 * x3));
@@ -273,37 +284,18 @@ export default function PerimetrosTheoryPage() {
                       const p2 = { x: ox + scC, y: oy };
                       const p3 = { x: ox + x3, y: oy - y3 };
 
-                      // Υπολογισμός εξωτερικών offsets
-                      // Πλευρά A (p1 -> p3)
-                      const midAx = (p1.x + p3.x) / 2;
-                      const midAy = (p1.y + p3.y) / 2;
-                      const dxA = p3.x - p1.x;
-                      const dyA = p3.y - p1.y;
-                      const lenA = Math.hypot(dxA, dyA) || 1;
-                      const normAx = -dyA / lenA; // Κάθετο διανυσματικό offset
-                      const normAy = dxA / lenA;
-
-                      // Πλευρά B (p3 -> p2)
-                      const midBx = (p3.x + p2.x) / 2;
-                      const midBy = (p3.y + p2.y) / 2;
-                      const dxB = p2.x - p3.x;
-                      const dyB = p2.y - p3.y;
-                      const lenB = Math.hypot(dxB, dyB) || 1;
-                      const normBx = -dyB / lenB;
-                      const normBy = dxB / lenB;
-
                       return (
                         <g>
                           <polygon points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
                           
                           {/* Label A */}
-                          <SideLabel x={midAx - Math.abs(normAx) * 45} y={midAy - Math.abs(normAy) * 20} text={`a = ${sideA} cm`} />
+                          <SideLabel x={(p1.x + p3.x) / 2 - 40} y={(p1.y + p3.y) / 2 - 10} text={`a = ${sideA} cm`} />
 
                           {/* Label B */}
-                          <SideLabel x={midBx + Math.abs(normBx) * 45} y={midBy - Math.abs(normBy) * 20} text={`b = ${sideB} cm`} />
+                          <SideLabel x={(p2.x + p3.x) / 2 + 40} y={(p2.y + p3.y) / 2 - 10} text={`b = ${sideB} cm`} />
 
-                          {/* Label C (Βάση) */}
-                          <SideLabel x={(p1.x + p2.x) / 2} y={p1.y + 35} text={`c = ${sideC} cm`} />
+                          {/* Label C */}
+                          <SideLabel x={(p1.x + p2.x) / 2} y={p1.y + 32} text={`c = ${sideC} cm`} />
                         </g>
                       );
                     })()}
@@ -317,14 +309,10 @@ export default function PerimetrosTheoryPage() {
                         <g>
                           <rect x={x} y={y} width={size} height={size} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" />
                           
-                          {/* Πάνω */}
-                          <SideLabel x={225} y={y - 30} text={`a = ${sideA} cm`} />
-                          {/* Δεξιά */}
-                          <SideLabel x={x + size + 50} y={180} text={`a = ${sideA} cm`} />
-                          {/* Κάτω */}
-                          <SideLabel x={225} y={y + size + 30} text={`a = ${sideA} cm`} />
-                          {/* Αριστερά */}
-                          <SideLabel x={x - 50} y={180} text={`a = ${sideA} cm`} />
+                          <SideLabel x={225} y={y - 28} text={`a = ${sideA} cm`} />
+                          <SideLabel x={x + size + 46} y={180} text={`a = ${sideA} cm`} />
+                          <SideLabel x={225} y={y + size + 28} text={`a = ${sideA} cm`} />
+                          <SideLabel x={x - 46} y={180} text={`a = ${sideA} cm`} />
                         </g>
                       );
                     })()}
@@ -339,14 +327,10 @@ export default function PerimetrosTheoryPage() {
                         <g>
                           <rect x={x} y={y} width={w} height={h} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="4" />
                           
-                          {/* Πάνω (a) */}
-                          <SideLabel x={225} y={y - 30} text={`a = ${sideA} cm`} />
-                          {/* Δεξιά (b) */}
-                          <SideLabel x={x + w + 50} y={180} text={`b = ${sideB} cm`} />
-                          {/* Κάτω (a) */}
-                          <SideLabel x={225} y={y + h + 30} text={`a = ${sideA} cm`} />
-                          {/* Αριστερά (b) */}
-                          <SideLabel x={x - 50} y={180} text={`b = ${sideB} cm`} />
+                          <SideLabel x={225} y={y - 28} text={`a = ${sideA} cm`} />
+                          <SideLabel x={x + w + 46} y={180} text={`b = ${sideB} cm`} />
+                          <SideLabel x={225} y={y + h + 28} text={`a = ${sideA} cm`} />
+                          <SideLabel x={x - 46} y={180} text={`b = ${sideB} cm`} />
                         </g>
                       );
                     })()}
