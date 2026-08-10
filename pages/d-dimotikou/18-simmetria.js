@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 export default function SimmetriaTheoryPage() {
-  const [shape, setShape] = useState('square'); // 'square', 'rectangle', 'triangle', 'rhombus', 'circle'
-  const [activeAxis, setActiveAxis] = useState('vertical'); // 'vertical', 'horizontal', 'diag1', 'diag2'
+  const [shape, setShape] = useState('square'); // 'square', 'rectangle', 'isoscelesTriangle', 'equilateralTriangle', 'scaleneTriangle', 'rhombus', 'circle'
+  const [activeAxis, setActiveAxis] = useState('vertical'); // 'vertical', 'horizontal', 'diag1', 'diag2', 'axisA', 'axisB', 'axisC'
   const [foldProgress, setFoldProgress] = useState(0); // 0 έως 100
 
   // Στοιχεία ανά σχήμα
@@ -26,13 +26,29 @@ export default function SimmetriaTheoryPage() {
       halfPerimeter: 22,
       halfArea: 40
     },
-    triangle: {
+    isoscelesTriangle: {
       name: 'Ισοσκελές Τρίγωνο',
       totalAxes: 1,
       allowedAxes: ['vertical'],
-      desc: 'Το ισοσκελές τρίγωνο έχει μόνο 1 κατακόρυφο άξονα συμμετρίας.',
+      desc: 'Το ισοσκελές τρίγωνο (με 2 ίσες πλευρές) έχει μόνο 1 κατακόρυφο άξονα συμμετρίας.',
       halfPerimeter: 16,
       halfArea: 12
+    },
+    equilateralTriangle: {
+      name: 'Ισόπλευρο Τρίγωνο',
+      totalAxes: 3,
+      allowedAxes: ['axisA', 'axisB', 'axisC'],
+      desc: 'Το ισόπλευρο τρίγωνο (με 3 ίσες πλευρές) έχει 3 άξονες συμμετρίας (έναν από κάθε κορυφή).',
+      halfPerimeter: 18,
+      halfArea: 15.5
+    },
+    scaleneTriangle: {
+      name: 'Σκαληνό Τρίγωνο',
+      totalAxes: 0,
+      allowedAxes: [],
+      desc: 'Το σκαληνό τρίγωνο (με όλες τις πλευρές άνισες) ΔΕΝ έχει κανέναν άξονα συμμετρίας (0).',
+      halfPerimeter: '-',
+      halfArea: '-'
     },
     rhombus: {
       name: 'Ρόμβος',
@@ -59,7 +75,7 @@ export default function SimmetriaTheoryPage() {
     setShape(newShape);
     setFoldProgress(0);
     const available = shapeData[newShape].allowedAxes;
-    if (!available.includes(activeAxis)) {
+    if (available.length > 0 && !available.includes(activeAxis)) {
       setActiveAxis(available[0]);
     }
   };
@@ -148,7 +164,7 @@ export default function SimmetriaTheoryPage() {
                   <span>🔢</span> Πλήθος Αξόνων
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Ένα σχήμα μπορεί να έχει <strong>έναν</strong> άξονα (π.χ. ισοσκελές τρίγωνο), <strong>περισσότερους</strong> (π.χ. τετράγωνο = 4, κύκλος = άπειρους) ή και <strong>κανέναν</strong> άξονα συμμετρίας!
+                  Ένα σχήμα μπορεί να έχει <strong>έναν</strong> άξονα (π.χ. ισοσκελές τρίγωνο), <strong>περισσότερους</strong> (π.χ. τετράγωνο = 4, ισόπλευρο τρίγωνο = 3, κύκλος = άπειρους) ή και <strong>κανέναν</strong> άξονα συμμετρίας (π.χ. σκαληνό τρίγωνο)!
                 </p>
               </div>
 
@@ -197,12 +213,28 @@ export default function SimmetriaTheoryPage() {
                   ▭ Ορθογώνιο (2)
                 </button>
                 <button
-                  onClick={() => handleShapeChange('triangle')}
+                  onClick={() => handleShapeChange('isoscelesTriangle')}
                   className={`px-3 py-2 rounded-xl text-xs md:text-sm font-black transition ${
-                    shape === 'triangle' ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    shape === 'isoscelesTriangle' ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  ▲ Τρίγωνο (1)
+                  ▲ Ισοσκελές Τρίγωνο (1)
+                </button>
+                <button
+                  onClick={() => handleShapeChange('equilateralTriangle')}
+                  className={`px-3 py-2 rounded-xl text-xs md:text-sm font-black transition ${
+                    shape === 'equilateralTriangle' ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  ▲ Ισόπλευρο Τρίγωνο (3)
+                </button>
+                <button
+                  onClick={() => handleShapeChange('scaleneTriangle')}
+                  className={`px-3 py-2 rounded-xl text-xs md:text-sm font-black transition ${
+                    shape === 'scaleneTriangle' ? 'bg-rose-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  ▲ Σκαληνό Τρίγωνο (0)
                 </button>
                 <button
                   onClick={() => handleShapeChange('rhombus')}
@@ -240,62 +272,60 @@ export default function SimmetriaTheoryPage() {
                   <svg className="w-full h-full" viewBox="0 0 400 320">
                     
                     {(() => {
-                      // Υπολογισμός 3D γωνίας περιστροφής: 0% -> 0 deg, 50% -> 90 deg (κατακόρυφο), 100% -> 180 deg (ανακλασμένο)
                       const rad = (foldProgress * 1.8 * Math.PI) / 180;
-                      const scaleFold = Math.cos(rad); // 1 στις 0 deg, 0 στις 90 deg (50%), -1 στις 180 deg (100%)
+                      const scaleFold = Math.cos(rad);
 
                       return (
                         <g transform="translate(200, 160)">
                           
                           {/* ------------------------------------------- */}
+                          {/* ΣΚΑΛΗΝΟ ΤΡΙΓΩΝΟ (0 ΑΞΟΝΕΣ - ΚΑΜΙΑ ΑΝΑΔΙΠΛΩΣΗ) */}
+                          {/* ------------------------------------------- */}
+                          {shape === 'scaleneTriangle' && (
+                            <g>
+                              <polygon points="-40,-70 -90,70 100,70" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                              <text x="0" y="0" fill="#f43f5e" fontWeight="black" fontSize="14" textAnchor="middle">
+                                ❌ Κανένας Άξονας Συμμετρίας
+                              </text>
+                            </g>
+                          )}
+
+                          {/* ------------------------------------------- */}
                           {/* 1. ΚΑΤΑΚΟΡΥΦΟΣ ΑΞΟΝΑΣ (VERTICAL FOLD) */}
                           {/* ------------------------------------------- */}
-                          {activeAxis === 'vertical' && (
+                          {activeAxis === 'vertical' && shape !== 'scaleneTriangle' && (
                             <g>
-                              {/* Ίχνος Αρχικής Θέσης (Δεξί Μισό) */}
                               {foldProgress > 0 && (
                                 <g opacity="0.5">
                                   {shape === 'square' && <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                   {shape === 'rectangle' && <path d="M 0,-70 L 120,-70 L 120,70 L 0,70 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
-                                  {shape === 'triangle' && <path d="M 0,-100 L 100,80 L 0,80 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'isoscelesTriangle' && <path d="M 0,-100 L 100,80 L 0,80 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                   {shape === 'rhombus' && <path d="M 0,-100 L 110,0 L 0,100 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                   {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                 </g>
                               )}
 
-                              {/* Σταθερό Αριστερό Μισό (Μωβ) */}
                               {shape === 'square' && <path d="M -90,-90 L 0,-90 L 0,90 L -90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'rectangle' && <path d="M -120,-70 L 0,-70 L 0,70 L -120,70 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
-                              {shape === 'triangle' && <path d="M 0,-100 L -100,80 L 0,80 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'isoscelesTriangle' && <path d="M 0,-100 L -100,80 L 0,80 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'rhombus' && <path d="M 0,-100 L -110,0 L 0,100 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,0 0,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Δεξί Μισό που ΔΙΠΛΩΝΕΙ ΜΠΡΟΣΤΑ (3D Rotation cos(rad)) */}
                               <g transform={`scale(${scaleFold}, 1)`}>
                                 {shape === 'square' && <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                                 {shape === 'rectangle' && <path d="M 0,-70 L 120,-70 L 120,70 L 0,70 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
-                                {shape === 'triangle' && <path d="M 0,-100 L 100,80 L 0,80 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'isoscelesTriangle' && <path d="M 0,-100 L 100,80 L 0,80 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                                 {shape === 'rhombus' && <path d="M 0,-100 L 110,0 L 0,100 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                                 {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                               </g>
-
-                              {/* Βέλος Κατεύθυνσης */}
-                              {foldProgress > 0 && foldProgress < 100 && (
-                                <g transform="translate(0, -115)">
-                                  <path d="M 50,-10 Q 25,-25 0,-10" fill="none" stroke="#f59e0b" strokeWidth="3" />
-                                  <polygon points="-5,-12 3,-10 -2,-2" fill="#f59e0b" />
-                                  <text x="25" y="-30" fill="#f59e0b" fontWeight="black" fontSize="11" textAnchor="middle">Δίπλωμα ⇦</text>
-                                </g>
-                              )}
                             </g>
                           )}
 
                           {/* ------------------------------------------- */}
                           {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΑΞΟΝΑΣ (HORIZONTAL FOLD) */}
                           {/* ------------------------------------------- */}
-                          {activeAxis === 'horizontal' && (
+                          {activeAxis === 'horizontal' && shape !== 'scaleneTriangle' && (
                             <g>
-                              {/* Ίχνος Αρχικής Θέσης */}
                               {foldProgress > 0 && (
                                 <g opacity="0.5">
                                   {shape === 'square' && <path d="M -90,0 L 90,0 L 90,90 L -90,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
@@ -305,49 +335,34 @@ export default function SimmetriaTheoryPage() {
                                 </g>
                               )}
 
-                              {/* Πάνω Μισό (Σταθερό) */}
                               {shape === 'square' && <path d="M -90,-90 L 90,-90 L 90,0 L -90,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'rectangle' && <path d="M -120,-70 L 120,-70 L 120,0 L -120,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'rhombus' && <path d="M -110,0 L 0,-100 L 110,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'circle' && <path d="M -90,0 A 90,90 0 0,1 90,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Κάτω Μισό που ΔΙΠΛΩΝΕΙ ΜΠΡΟΣΤΑ (3D Rotation cos(rad)) */}
                               <g transform={`scale(1, ${scaleFold})`}>
                                 {shape === 'square' && <path d="M -90,0 L 90,0 L 90,90 L -90,90 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                                 {shape === 'rectangle' && <path d="M -120,0 L 120,0 L 120,70 L -120,70 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                                 {shape === 'rhombus' && <path d="M -110,0 L 0,100 L 110,0 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                                 {shape === 'circle' && <path d="M -90,0 A 90,90 0 0,0 90,0 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                               </g>
-
-                              {/* Βέλος Κατεύθυνσης */}
-                              {foldProgress > 0 && foldProgress < 100 && (
-                                <g transform="translate(130, 0)">
-                                  <path d="M 10,40 Q 25,20 10,0" fill="none" stroke="#10b981" strokeWidth="3" />
-                                  <polygon points="12,-5 2,2 18,2" fill="#10b981" />
-                                  <text x="35" y="20" fill="#10b981" fontWeight="black" fontSize="11" textAnchor="start">Δίπλωμα ⇧</text>
-                                </g>
-                              )}
                             </g>
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* 3. ΔΙΑΓΩΝΙΟΣ 1 (Top-Left -> Bottom-Right Line: y = -x) */}
+                          {/* 3. ΔΙΑΓΩΝΙΟΣ 1 / ΔΙΑΓΩΝΙΟΣ 2 */}
                           {/* ------------------------------------------- */}
-                          {activeAxis === 'diag1' && (
+                          {activeAxis === 'diag1' && shape !== 'scaleneTriangle' && (
                             <g>
-                              {/* Ίχνος Αρχικής Θέσης */}
                               {foldProgress > 0 && (
                                 <g opacity="0.5">
                                   {shape === 'square' && <path d="M -90,-90 L 90,-90 L 90,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                   {shape === 'circle' && <path d="M -63.6,-63.6 A 90,90 0 0,1 63.6,63.6 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                 </g>
                               )}
-
-                              {/* Κάτω-Αριστερό Μισό (Σταθερό) */}
                               {shape === 'square' && <path d="M -90,-90 L -90,90 L 90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'circle' && <path d="M -63.6,-63.6 A 90,90 0 0,0 63.6,63.6 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Πάνω-Δεξί Μισό που ΔΙΠΛΩΝΕΙ ΜΠΡΟΣΤΑ (3D Rotation cos(rad)) */}
                               <g transform={`rotate(-45) scale(${scaleFold}, 1) rotate(45)`}>
                                 {shape === 'square' && <path d="M -90,-90 L 90,-90 L 90,90 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                                 {shape === 'circle' && <path d="M -63.6,-63.6 A 90,90 0 0,1 63.6,63.6 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
@@ -355,24 +370,17 @@ export default function SimmetriaTheoryPage() {
                             </g>
                           )}
 
-                          {/* ------------------------------------------- */}
-                          {/* 4. ΔΙΑΓΩΝΙΟΣ 2 (Bottom-Left -> Top-Right Line: y = x) */}
-                          {/* ------------------------------------------- */}
-                          {activeAxis === 'diag2' && (
+                          {activeAxis === 'diag2' && shape !== 'scaleneTriangle' && (
                             <g>
-                              {/* Ίχνος Αρχικής Θέσης */}
                               {foldProgress > 0 && (
                                 <g opacity="0.5">
                                   {shape === 'square' && <path d="M -90,-90 L 90,-90 L -90,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                   {shape === 'circle' && <path d="M -63.6,63.6 A 90,90 0 0,1 63.6,-63.6 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                 </g>
                               )}
-
-                              {/* Κάτω-Δεξί Μισό (Σταθερό) */}
                               {shape === 'square' && <path d="M -90,90 L 90,90 L 90,-90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'circle' && <path d="M -63.6,63.6 A 90,90 0 0,0 63.6,-63.6 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Πάνω-Αριστερό Μισό που ΔΙΠΛΩΝΕΙ ΜΠΡΟΣΤΑ (3D Rotation cos(rad)) */}
                               <g transform={`rotate(45) scale(${scaleFold}, 1) rotate(-45)`}>
                                 {shape === 'square' && <path d="M -90,-90 L 90,-90 L -90,90 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
                                 {shape === 'circle' && <path d="M -63.6,63.6 A 90,90 0 0,1 63.6,-63.6 Z" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />}
@@ -381,38 +389,73 @@ export default function SimmetriaTheoryPage() {
                           )}
 
                           {/* ------------------------------------------- */}
+                          {/* 4. ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ (3 ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ) */}
+                          {/* ------------------------------------------- */}
+                          {shape === 'equilateralTriangle' && (
+                            <g>
+                              {activeAxis === 'axisA' && (
+                                <g>
+                                  {foldProgress > 0 && <polygon points="0,-90 90,65 0,65" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />}
+                                  <polygon points="0,-90 -90,65 0,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                                  <g transform={`scale(${scaleFold}, 1)`}>
+                                    <polygon points="0,-90 90,65 0,65" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
+                                  </g>
+                                </g>
+                              )}
+
+                              {activeAxis === 'axisB' && (
+                                <g>
+                                  <polygon points="0,-90 -90,65 90,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                                  <g transform={`rotate(120) scale(${scaleFold}, 1) rotate(-120)`}>
+                                    <polygon points="0,-90 90,65 0,65" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
+                                  </g>
+                                </g>
+                              )}
+
+                              {activeAxis === 'axisC' && (
+                                <g>
+                                  <polygon points="0,-90 -90,65 90,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                                  <g transform={`rotate(-120) scale(${scaleFold}, 1) rotate(120)`}>
+                                    <polygon points="0,-90 90,65 0,65" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
+                                  </g>
+                                </g>
+                              )}
+                            </g>
+                          )}
+
+                          {/* ------------------------------------------- */}
                           {/* ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ (Ο ΕΝΕΡΓΟΣ ΕΙΝΑΙ ΕΝΤΟΝΟΣ) */}
                           {/* ------------------------------------------- */}
-                          
-                          {/* Κατακόρυφος Άξονας */}
                           {activeData.allowedAxes.includes('vertical') && (
                             <g opacity={activeAxis === 'vertical' ? 1 : 0.25}>
                               <line x1="0" y1="-140" x2="0" y2="140" stroke="#f59e0b" strokeWidth={activeAxis === 'vertical' ? "4" : "2"} strokeDasharray="6,6" />
-                              <circle cx="0" cy="-135" r="4" fill="#f59e0b" />
-                              <circle cx="0" cy="135" r="4" fill="#f59e0b" />
                             </g>
                           )}
 
-                          {/* Οριζόντιος Άξονας */}
                           {activeData.allowedAxes.includes('horizontal') && (
                             <g opacity={activeAxis === 'horizontal' ? 1 : 0.25}>
                               <line x1="-160" y1="0" x2="160" y2="0" stroke="#10b981" strokeWidth={activeAxis === 'horizontal' ? "4" : "2"} strokeDasharray="6,6" />
-                              <circle cx="-155" cy="0" r="4" fill="#10b981" />
-                              <circle cx="155" cy="0" r="4" fill="#10b981" />
                             </g>
                           )}
 
-                          {/* Διαγώνιος 1 */}
                           {activeData.allowedAxes.includes('diag1') && (
                             <g opacity={activeAxis === 'diag1' ? 1 : 0.25}>
                               <line x1="-130" y1="-130" x2="130" y2="130" stroke="#3b82f6" strokeWidth={activeAxis === 'diag1' ? "4" : "2"} strokeDasharray="6,6" />
                             </g>
                           )}
 
-                          {/* Διαγώνιος 2 */}
                           {activeData.allowedAxes.includes('diag2') && (
                             <g opacity={activeAxis === 'diag2' ? 1 : 0.25}>
                               <line x1="130" y1="-130" x2="-130" y2="130" stroke="#3b82f6" strokeWidth={activeAxis === 'diag2' ? "4" : "2"} strokeDasharray="6,6" />
+                            </g>
+                          )}
+
+                          {/* ΑΞΟΝΕΣ ΙΣΟΠΛΕΥΡΟΥ ΤΡΙΓΩΝΟΥ */}
+                          {shape === 'equilateralTriangle' && (
+                            <g>
+                              <line x1="0" y1="-120" x2="0" y2="100" stroke="#f59e0b" strokeWidth={activeAxis === 'axisA' ? "4" : "2"} strokeDasharray="6,6" opacity={activeAxis === 'axisA' ? 1 : 0.3} />
+                              <line x1="-110" y1="80" x2="70" y2="-40" stroke="#10b981" strokeWidth={activeAxis === 'axisB' ? "4" : "2"} strokeDasharray="6,6" opacity={activeAxis === 'axisB' ? 1 : 0.3} />
+                              <line x1="110" y1="80" x2="-70" y2="-40" stroke="#3b82f6" strokeWidth={activeAxis === 'axisC' ? "4" : "2"} strokeDasharray="6,6" opacity={activeAxis === 'axisC' ? 1 : 0.3} />
                             </g>
                           )}
 
@@ -433,80 +476,125 @@ export default function SimmetriaTheoryPage() {
               <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 space-y-6">
                 
                 {/* 1. ΕΠΙΛΟΓΗ ΕΝΕΡΓΟΥ ΑΞΟΝΑ ΑΝΑΔΙΠΛΩΣΗΣ */}
-                <div className="space-y-3">
-                  <h4 className="text-xs font-black uppercase text-gray-700 flex items-center gap-1.5">
-                    <span>🎯</span> Επίλεξε Άξονα για Δίπλωμα:
-                  </h4>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {activeData.allowedAxes.includes('vertical') && (
-                      <button
-                        onClick={() => { setActiveAxis('vertical'); setFoldProgress(0); }}
-                        className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
-                          activeAxis === 'vertical' ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
-                        }`}
-                      >
-                        <span>🟡 Κατακόρυφος</span>
-                        <span>{activeAxis === 'vertical' ? '🔘' : '⚪'}</span>
-                      </button>
-                    )}
+                {activeData.allowedAxes.length > 0 ? (
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-black uppercase text-gray-700 flex items-center gap-1.5">
+                      <span>🎯</span> Επίλεξε Άξονα για Δίπλωμα:
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {activeData.allowedAxes.includes('vertical') && (
+                        <button
+                          onClick={() => { setActiveAxis('vertical'); setFoldProgress(0); }}
+                          className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                            activeAxis === 'vertical' ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span>🟡 Κατακόρυφος</span>
+                          <span>{activeAxis === 'vertical' ? '🔘' : '⚪'}</span>
+                        </button>
+                      )}
 
-                    {activeData.allowedAxes.includes('horizontal') && (
-                      <button
-                        onClick={() => { setActiveAxis('horizontal'); setFoldProgress(0); }}
-                        className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
-                          activeAxis === 'horizontal' ? 'bg-emerald-600 text-white border-emerald-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
-                        }`}
-                      >
-                        <span>🟢 Οριζόντιος</span>
-                        <span>{activeAxis === 'horizontal' ? '🔘' : '⚪'}</span>
-                      </button>
-                    )}
+                      {activeData.allowedAxes.includes('horizontal') && (
+                        <button
+                          onClick={() => { setActiveAxis('horizontal'); setFoldProgress(0); }}
+                          className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                            activeAxis === 'horizontal' ? 'bg-emerald-600 text-white border-emerald-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span>🟢 Οριζόντιος</span>
+                          <span>{activeAxis === 'horizontal' ? '🔘' : '⚪'}</span>
+                        </button>
+                      )}
 
-                    {activeData.allowedAxes.includes('diag1') && (
-                      <button
-                        onClick={() => { setActiveAxis('diag1'); setFoldProgress(0); }}
-                        className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
-                          activeAxis === 'diag1' ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
-                        }`}
-                      >
-                        <span>🔵 Διαγώνιος 1</span>
-                        <span>{activeAxis === 'diag1' ? '🔘' : '⚪'}</span>
-                      </button>
-                    )}
+                      {activeData.allowedAxes.includes('diag1') && (
+                        <button
+                          onClick={() => { setActiveAxis('diag1'); setFoldProgress(0); }}
+                          className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                            activeAxis === 'diag1' ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span>🔵 Διαγώνιος 1</span>
+                          <span>{activeAxis === 'diag1' ? '🔘' : '⚪'}</span>
+                        </button>
+                      )}
 
-                    {activeData.allowedAxes.includes('diag2') && (
-                      <button
-                        onClick={() => { setActiveAxis('diag2'); setFoldProgress(0); }}
-                        className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
-                          activeAxis === 'diag2' ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
-                        }`}
-                      >
-                        <span>🔵 Διαγώνιος 2</span>
-                        <span>{activeAxis === 'diag2' ? '🔘' : '⚪'}</span>
-                      </button>
-                    )}
+                      {activeData.allowedAxes.includes('diag2') && (
+                        <button
+                          onClick={() => { setActiveAxis('diag2'); setFoldProgress(0); }}
+                          className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                            activeAxis === 'diag2' ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span>🔵 Διαγώνιος 2</span>
+                          <span>{activeAxis === 'diag2' ? '🔘' : '⚪'}</span>
+                        </button>
+                      )}
+
+                      {/* ΑΞΟΝΕΣ ΙΣΟΠΛΕΥΡΟΥ ΤΡΙΓΩΝΟΥ */}
+                      {activeData.allowedAxes.includes('axisA') && (
+                        <button
+                          onClick={() => { setActiveAxis('axisA'); setFoldProgress(0); }}
+                          className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                            activeAxis === 'axisA' ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span>🟡 Άξονας 1 (Πάνω Κορυφή)</span>
+                          <span>{activeAxis === 'axisA' ? '🔘' : '⚪'}</span>
+                        </button>
+                      )}
+
+                      {activeData.allowedAxes.includes('axisB') && (
+                        <button
+                          onClick={() => { setActiveAxis('axisB'); setFoldProgress(0); }}
+                          className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                            activeAxis === 'axisB' ? 'bg-emerald-600 text-white border-emerald-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span>🟢 Άξονας 2 (Δεξιά Κορυφή)</span>
+                          <span>{activeAxis === 'axisB' ? '🔘' : '⚪'}</span>
+                        </button>
+                      )}
+
+                      {activeData.allowedAxes.includes('axisC') && (
+                        <button
+                          onClick={() => { setActiveAxis('axisC'); setFoldProgress(0); }}
+                          className={`p-3 rounded-2xl text-xs font-black border transition flex items-center justify-between ${
+                            activeAxis === 'axisC' ? 'bg-blue-600 text-white border-blue-700 shadow-md scale-105' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                          }`}
+                        >
+                          <span>🔵 Άξονας 3 (Αριστερή Κορυφή)</span>
+                          <span>{activeAxis === 'axisC' ? '🔘' : '⚪'}</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="bg-rose-50 p-4 rounded-2xl border border-rose-200 text-rose-800 text-xs font-bold text-center">
+                    ⚠️ Το Σκαληνό Τρίγωνο δεν έχει κανέναν άξονα συμμετρίας, επομένως δεν μπορεί να διπλωθεί σε δύο ίσα μέρη.
+                  </div>
+                )}
 
                 {/* 2. SLIDER ΑΝΑΔΙΠΛΩΣΗΣ */}
-                <div className="space-y-2 bg-purple-50 p-4 rounded-2xl border border-purple-200">
-                  <div className="flex justify-between items-center text-xs font-black uppercase text-purple-900">
-                    <span>📄 Δίπλωμα πάνω στον επιλεγμένο άξονα:</span>
-                    <span className="text-purple-700 font-mono text-base font-black">{foldProgress}%</span>
+                {activeData.allowedAxes.length > 0 && (
+                  <div className="space-y-2 bg-purple-50 p-4 rounded-2xl border border-purple-200">
+                    <div className="flex justify-between items-center text-xs font-black uppercase text-purple-900">
+                      <span>📄 Δίπλωμα πάνω στον επιλεγμένο άξονα:</span>
+                      <span className="text-purple-700 font-mono text-base font-black">{foldProgress}%</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="100" 
+                      value={foldProgress} 
+                      onChange={(e) => setFoldProgress(Number(e.target.value))}
+                      className="w-full accent-purple-600 cursor-pointer"
+                    />
+                    <p className="text-[11px] text-purple-800 font-medium">
+                      Στο 50% το σχήμα γίνεται μια λεπτή γραμμή πάνω στον άξονα, και στο 100% ταυτίζεται απόλυτα με το απέναντι μέρος!
+                    </p>
                   </div>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={foldProgress} 
-                    onChange={(e) => setFoldProgress(Number(e.target.value))}
-                    className="w-full accent-purple-600 cursor-pointer"
-                  />
-                  <p className="text-[11px] text-purple-800 font-medium">
-                    Στο 50% το σχήμα γίνεται μια λεπτή γραμμή πάνω στον άξονα (κάθετο στην οθόνη), και στο 100% ταυτίζεται απόλυτα με το απέναντι μέρος!
-                  </p>
-                </div>
+                )}
 
                 {/* 3. ΠΙΝΑΚΑΣ ΙΣΟΤΗΤΑΣ ΠΕΡΙΜΕΤΡΟΥ & ΕΜΒΑΔΟΥ */}
                 <div className="bg-white p-4 rounded-2xl border border-gray-200 space-y-3 shadow-sm">
@@ -517,20 +605,26 @@ export default function SimmetriaTheoryPage() {
                   <div className="grid grid-cols-2 gap-3 text-center text-xs font-bold">
                     <div className="bg-purple-50 p-3 rounded-xl border border-purple-100">
                       <span className="text-purple-900 block text-[11px]">🟣 1o Μέρος</span>
-                      <p className="text-purple-700 font-mono text-sm mt-1">Περίμετρος: {activeData.halfPerimeter} cm</p>
-                      <p className="text-purple-700 font-mono text-sm">Εμβαδόν: {activeData.halfArea} cm²</p>
+                      <p className="text-purple-700 font-mono text-sm mt-1">Περίμετρος: {activeData.halfPerimeter} {activeData.halfPerimeter !== '-' ? 'cm' : ''}</p>
+                      <p className="text-purple-700 font-mono text-sm">Εμβαδόν: {activeData.halfArea} {activeData.halfArea !== '-' ? 'cm²' : ''}</p>
                     </div>
 
                     <div className="bg-pink-50 p-3 rounded-xl border border-pink-100">
                       <span className="text-pink-900 block text-[11px]">🌸 2o Μέρος</span>
-                      <p className="text-pink-700 font-mono text-sm mt-1">Περίμετρος: {activeData.halfPerimeter} cm</p>
-                      <p className="text-pink-700 font-mono text-sm">Εμβαδόν: {activeData.halfArea} cm²</p>
+                      <p className="text-pink-700 font-mono text-sm mt-1">Περίμετρος: {activeData.halfPerimeter} {activeData.halfPerimeter !== '-' ? 'cm' : ''}</p>
+                      <p className="text-pink-700 font-mono text-sm">Εμβαδόν: {activeData.halfArea} {activeData.halfArea !== '-' ? 'cm²' : ''}</p>
                     </div>
                   </div>
 
-                  <p className="text-[11px] font-bold text-center text-emerald-700 bg-emerald-50 p-2 rounded-lg border border-emerald-200">
-                    ✅ Τα δύο συμμετρικά μέρη έχουν ακριβώς την ίδια περίμετρο και το ίδιο εμβαδόν!
-                  </p>
+                  {activeData.totalAxes !== 0 ? (
+                    <p className="text-[11px] font-bold text-center text-emerald-700 bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                      ✅ Τα δύο συμμετρικά μέρη έχουν ακριβώς την ίδια περίμετρο και το ίδιο εμβαδόν!
+                    </p>
+                  ) : (
+                    <p className="text-[11px] font-bold text-center text-rose-700 bg-rose-50 p-2 rounded-lg border border-rose-200">
+                      ❌ Δεν υπάρχουν συμμετρικά μέρη σε αυτό το σχήμα.
+                    </p>
+                  )}
                 </div>
 
               </div>
