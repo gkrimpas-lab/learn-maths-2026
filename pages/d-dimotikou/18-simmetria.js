@@ -279,7 +279,7 @@ export default function SimmetriaTheoryPage() {
                         <g transform="translate(200, 160)">
                           
                           {/* ------------------------------------------- */}
-                          {/* ΣΚΑΛΗΝΟ ΤΡΙΓΩΝΟ (0 ΑΞΟΝΕΣ - ΚΑΜΙΑ ΑΝΑΔΙΠΛΩΣΗ) */}
+                          {/* ΣΚΑΛΗΝΟ ΤΡΙΓΩΝΟ (0 ΑΞΟΝΕΣ) */}
                           {/* ------------------------------------------- */}
                           {shape === 'scaleneTriangle' && (
                             <g>
@@ -291,7 +291,7 @@ export default function SimmetriaTheoryPage() {
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* 1. ΚΑΤΑΚΟΡΥΦΟΣ ΑΞΟΝΑΣ (VERTICAL FOLD) */}
+                          {/* 1. ΚΑΤΑΚΟΡΥΦΟΣ ΑΞΟΝΑΣ */}
                           {/* ------------------------------------------- */}
                           {activeAxis === 'vertical' && shape !== 'scaleneTriangle' && shape !== 'equilateralTriangle' && (
                             <g>
@@ -322,7 +322,7 @@ export default function SimmetriaTheoryPage() {
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΑΞΟΝΑΣ (HORIZONTAL FOLD) */}
+                          {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΑΞΟΝΑΣ */}
                           {/* ------------------------------------------- */}
                           {activeAxis === 'horizontal' && shape !== 'scaleneTriangle' && shape !== 'equilateralTriangle' && (
                             <g>
@@ -389,58 +389,69 @@ export default function SimmetriaTheoryPage() {
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* 4. ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ - ΑΚΡΙΒΕΙΣ ΑΝΑΚΛΑΣΕΙΣ (3 ΑΞΟΝΕΣ) */}
+                          {/* 4. ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ - ΑΠΟΛΥΤΑ ΑΚΡΙΒΕΙΣ ΑΝΑΚΛΑΣΕΙΣ */}
                           {/* ------------------------------------------- */}
-                          {shape === 'equilateralTriangle' && (
-                            <g>
-                              {/* ΑΞΟΝΑΣ 1: Πάνω Κορυφή (Κατακόρυφος Άξονας) */}
-                              {activeAxis === 'axisA' && (
-                                <g>
-                                  {foldProgress > 0 && <polygon points="0,-90 90,65 0,65" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />}
-                                  {/* Σταθερό Αριστερό Μισό */}
-                                  <polygon points="0,-90 -90,65 0,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                                  {/* Αναδιπλούμενο Δεξί Μισό */}
-                                  <g transform={`scale(${scaleFold}, 1)`}>
-                                    <polygon points="0,-90 90,65 0,65" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
-                                  </g>
-                                </g>
-                              )}
-
-                              {/* ΑΞΟΝΑΣ 2: Δεξιά Κορυφή (Άξονας στις -30 μοίρες) */}
-                              {activeAxis === 'axisB' && (
-                                <g>
-                                  {foldProgress > 0 && (
-                                    <g opacity="0.5">
-                                      <polygon points="0,-90 90,65 -90,65" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />
+                          {shape === 'equilateralTriangle' && (() => {
+                            // Κορυφές Ισόπλευρου Τριγώνου: A=(0, -80), B=(86.6, 70), C=(-86.6, 70)
+                            // Βαρύκεντρο (Κέντρο) = (0, 20)
+                            return (
+                              <g>
+                                {/* ΑΞΟΝΑΣ 1: Πάνω Κορυφή A (0, -80) -> Κατακόρυφος Άξονας x = 0 */}
+                                {activeAxis === 'axisA' && (
+                                  <g>
+                                    {foldProgress > 0 && (
+                                      <polygon points="0,-80 86.6,70 0,70" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />
+                                    )}
+                                    {/* Σταθερό Αριστερό Μισό */}
+                                    <polygon points="0,-80 -86.6,70 0,70" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                                    {/* Αναδιπλούμενο Δεξί Μισό */}
+                                    <g transform={`scale(${scaleFold}, 1)`}>
+                                      <polygon points="0,-80 86.6,70 0,70" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
                                     </g>
-                                  )}
-                                  {/* Σταθερό Μισό */}
-                                  <polygon points="0,-90 90,65 -90,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                                  {/* Αναδιπλούμενο Μισό με σωστή περιστροφή άξονα (-30 deg) */}
-                                  <g transform={`rotate(-30) scale(${scaleFold}, 1) rotate(30)`}>
-                                    <polygon points="0,-90 90,65 0,-90" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
                                   </g>
-                                </g>
-                              )}
+                                )}
 
-                              {/* ΑΞΟΝΑΣ 3: Αριστερή Κορυφή (Άξονας στις +30 μοίρες) */}
-                              {activeAxis === 'axisC' && (
-                                <g>
-                                  {foldProgress > 0 && (
-                                    <g opacity="0.5">
-                                      <polygon points="0,-90 -90,65 90,65" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />
+                                {/* ΑΞΟΝΑΣ 2: Δεξιά Κορυφή B (86.6, 70) -> Άξονας υπό γωνία -30 deg από το (0, 20) */}
+                                {activeAxis === 'axisB' && (
+                                  <g>
+                                    {foldProgress > 0 && (
+                                      <g opacity="0.5">
+                                        <polygon points="0,-80 86.6,70 -86.6,70" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />
+                                      </g>
+                                    )}
+                                    {/* Μετατοπιζόμαστε στο κέντρο (0, 20) για σωστή τοπική περιστροφή */}
+                                    <g transform="translate(0, 20)">
+                                      {/* Σταθερό Μισό */}
+                                      <polygon points="0,-100 86.6,50 -86.6,50" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                                      {/* Αναδίπλωση ακριβώς πάνω στον άξονα B (-30 deg) */}
+                                      <g transform={`rotate(-30) scale(${scaleFold}, 1) rotate(30)`}>
+                                        <polygon points="0,-100 86.6,50 0,50" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
+                                      </g>
                                     </g>
-                                  )}
-                                  {/* Σταθερό Μισό */}
-                                  <polygon points="0,-90 -90,65 90,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                                  {/* Αναδιπλούμενο Μισό με σωστή περιστροφή άξονα (+30 deg) */}
-                                  <g transform={`rotate(30) scale(${scaleFold}, 1) rotate(-30)`}>
-                                    <polygon points="0,-90 -90,65 0,-90" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
                                   </g>
-                                </g>
-                              )}
-                            </g>
-                          )}
+                                )}
+
+                                {/* ΑΞΟΝΑΣ 3: Αριστερή Κορυφή C (-86.6, 70) -> Άξονας υπό γωνία +30 deg από το (0, 20) */}
+                                {activeAxis === 'axisC' && (
+                                  <g>
+                                    {foldProgress > 0 && (
+                                      <g opacity="0.5">
+                                        <polygon points="0,-80 -86.6,70 86.6,70" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />
+                                      </g>
+                                    )}
+                                    <g transform="translate(0, 20)">
+                                      {/* Σταθερό Μισό */}
+                                      <polygon points="0,-100 -86.6,50 86.6,50" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                                      {/* Αναδίπλωση ακριβώς πάνω στον άξονα C (+30 deg) */}
+                                      <g transform={`rotate(30) scale(${scaleFold}, 1) rotate(-30)`}>
+                                        <polygon points="0,-100 -86.6,50 0,50" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
+                                      </g>
+                                    </g>
+                                  </g>
+                                )}
+                              </g>
+                            );
+                          })()}
 
                           {/* ------------------------------------------- */}
                           {/* ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ (Ο ΕΝΕΡΓΟΣ ΕΙΝΑΙ ΕΝΤΟΝΟΣ) */}
@@ -473,8 +484,8 @@ export default function SimmetriaTheoryPage() {
                           {shape === 'equilateralTriangle' && (
                             <g>
                               <line x1="0" y1="-120" x2="0" y2="100" stroke="#f59e0b" strokeWidth={activeAxis === 'axisA' ? "4" : "2"} strokeDasharray="6,6" opacity={activeAxis === 'axisA' ? 1 : 0.3} />
-                              <line x1="-110" y1="80" x2="70" y2="-40" stroke="#10b981" strokeWidth={activeAxis === 'axisB' ? "4" : "2"} strokeDasharray="6,6" opacity={activeAxis === 'axisB' ? 1 : 0.3} />
-                              <line x1="110" y1="80" x2="-70" y2="-40" stroke="#3b82f6" strokeWidth={activeAxis === 'axisC' ? "4" : "2"} strokeDasharray="6,6" opacity={activeAxis === 'axisC' ? 1 : 0.3} />
+                              <line x1="-110" y1="83.3" x2="70" y2="-20.7" stroke="#10b981" strokeWidth={activeAxis === 'axisB' ? "4" : "2"} strokeDasharray="6,6" opacity={activeAxis === 'axisB' ? 1 : 0.3} />
+                              <line x1="110" y1="83.3" x2="-70" y2="-20.7" stroke="#3b82f6" strokeWidth={activeAxis === 'axisC' ? "4" : "2"} strokeDasharray="6,6" opacity={activeAxis === 'axisC' ? 1 : 0.3} />
                             </g>
                           )}
 
