@@ -125,8 +125,8 @@ export default function PerimetrosTheoryPage() {
                   <span>⚡</span> Γρήγοροι Τύποι
                 </h3>
                 <ul className="text-xs text-gray-700 space-y-1 font-medium">
-                  <li>• <strong>Τετράγωνο:</strong> $4 \times \text{πλευρά}$</li>
-                  <li>• <strong>Ορθογώνιο:</strong> $(2 \times \mu) + (2 \times \pi)$</li>
+                  <li>• <strong>Τετράγωνο:</strong> 4 × πλευρά</li>
+                  <li>• <strong>Ορθογώνιο:</strong> (2 × μήκος) + (2 × πλάτος)</li>
                 </ul>
               </div>
 
