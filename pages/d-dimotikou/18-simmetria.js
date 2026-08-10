@@ -293,7 +293,7 @@ export default function SimmetriaTheoryPage() {
                           {/* ------------------------------------------- */}
                           {/* 1. ΚΑΤΑΚΟΡΥΦΟΣ ΑΞΟΝΑΣ (VERTICAL FOLD) */}
                           {/* ------------------------------------------- */}
-                          {activeAxis === 'vertical' && shape !== 'scaleneTriangle' && (
+                          {activeAxis === 'vertical' && shape !== 'scaleneTriangle' && shape !== 'equilateralTriangle' && (
                             <g>
                               {foldProgress > 0 && (
                                 <g opacity="0.5">
@@ -324,7 +324,7 @@ export default function SimmetriaTheoryPage() {
                           {/* ------------------------------------------- */}
                           {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΑΞΟΝΑΣ (HORIZONTAL FOLD) */}
                           {/* ------------------------------------------- */}
-                          {activeAxis === 'horizontal' && shape !== 'scaleneTriangle' && (
+                          {activeAxis === 'horizontal' && shape !== 'scaleneTriangle' && shape !== 'equilateralTriangle' && (
                             <g>
                               {foldProgress > 0 && (
                                 <g opacity="0.5">
@@ -352,7 +352,7 @@ export default function SimmetriaTheoryPage() {
                           {/* ------------------------------------------- */}
                           {/* 3. ΔΙΑΓΩΝΙΟΣ 1 / ΔΙΑΓΩΝΙΟΣ 2 */}
                           {/* ------------------------------------------- */}
-                          {activeAxis === 'diag1' && shape !== 'scaleneTriangle' && (
+                          {activeAxis === 'diag1' && shape !== 'scaleneTriangle' && shape !== 'equilateralTriangle' && (
                             <g>
                               {foldProgress > 0 && (
                                 <g opacity="0.5">
@@ -370,7 +370,7 @@ export default function SimmetriaTheoryPage() {
                             </g>
                           )}
 
-                          {activeAxis === 'diag2' && shape !== 'scaleneTriangle' && (
+                          {activeAxis === 'diag2' && shape !== 'scaleneTriangle' && shape !== 'equilateralTriangle' && (
                             <g>
                               {foldProgress > 0 && (
                                 <g opacity="0.5">
@@ -389,34 +389,53 @@ export default function SimmetriaTheoryPage() {
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* 4. ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ (3 ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ) */}
+                          {/* 4. ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ - ΑΚΡΙΒΕΙΣ ΑΝΑΚΛΑΣΕΙΣ (3 ΑΞΟΝΕΣ) */}
                           {/* ------------------------------------------- */}
                           {shape === 'equilateralTriangle' && (
                             <g>
+                              {/* ΑΞΟΝΑΣ 1: Πάνω Κορυφή (Κατακόρυφος Άξονας) */}
                               {activeAxis === 'axisA' && (
                                 <g>
                                   {foldProgress > 0 && <polygon points="0,-90 90,65 0,65" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />}
+                                  {/* Σταθερό Αριστερό Μισό */}
                                   <polygon points="0,-90 -90,65 0,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                                  {/* Αναδιπλούμενο Δεξί Μισό */}
                                   <g transform={`scale(${scaleFold}, 1)`}>
                                     <polygon points="0,-90 90,65 0,65" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
                                   </g>
                                 </g>
                               )}
 
+                              {/* ΑΞΟΝΑΣ 2: Δεξιά Κορυφή (Άξονας στις -30 μοίρες) */}
                               {activeAxis === 'axisB' && (
                                 <g>
-                                  <polygon points="0,-90 -90,65 90,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                                  <g transform={`rotate(120) scale(${scaleFold}, 1) rotate(-120)`}>
-                                    <polygon points="0,-90 90,65 0,65" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
+                                  {foldProgress > 0 && (
+                                    <g opacity="0.5">
+                                      <polygon points="0,-90 90,65 -90,65" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />
+                                    </g>
+                                  )}
+                                  {/* Σταθερό Μισό */}
+                                  <polygon points="0,-90 90,65 -90,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
+                                  {/* Αναδιπλούμενο Μισό με σωστή περιστροφή άξονα (-30 deg) */}
+                                  <g transform={`rotate(-30) scale(${scaleFold}, 1) rotate(30)`}>
+                                    <polygon points="0,-90 90,65 0,-90" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
                                   </g>
                                 </g>
                               )}
 
+                              {/* ΑΞΟΝΑΣ 3: Αριστερή Κορυφή (Άξονας στις +30 μοίρες) */}
                               {activeAxis === 'axisC' && (
                                 <g>
+                                  {foldProgress > 0 && (
+                                    <g opacity="0.5">
+                                      <polygon points="0,-90 -90,65 90,65" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />
+                                    </g>
+                                  )}
+                                  {/* Σταθερό Μισό */}
                                   <polygon points="0,-90 -90,65 90,65" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />
-                                  <g transform={`rotate(-120) scale(${scaleFold}, 1) rotate(120)`}>
-                                    <polygon points="0,-90 90,65 0,65" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
+                                  {/* Αναδιπλούμενο Μισό με σωστή περιστροφή άξονα (+30 deg) */}
+                                  <g transform={`rotate(30) scale(${scaleFold}, 1) rotate(-30)`}>
+                                    <polygon points="0,-90 -90,65 0,-90" fill="#ec4899" fillOpacity="0.8" stroke="#f472b6" strokeWidth="3.5" />
                                   </g>
                                 </g>
                               )}
