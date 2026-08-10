@@ -35,6 +35,9 @@ export default function PerimetrosTheoryPage() {
     formulaText = `${sideA} + ${sideB} + ${sideC} + ${sideD} + ${sideE} + ${sideF} = ${perimeter} cm`;
   }
 
+  // Συντελεστής κλίμακας για το SVG (Pixel scaling)
+  const scale = 8; 
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
@@ -197,7 +200,7 @@ export default function PerimetrosTheoryPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               
-              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG - ΠΛΗΡΩΣ ΔΥΝΑΜΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ) */}
+              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG) */}
               <div className="bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-4">
                 
                 {/* DISPLAY RESULT BANNER */}
@@ -211,12 +214,10 @@ export default function PerimetrosTheoryPage() {
                     
                     {/* 1. ΤΡΙΓΩΝΟ - Δυναμική κατασκευή βάσει τριγωνομετρίας */}
                     {shape === 'triangle' && (() => {
-                      const scale = 8;
                       const A = Math.min(sideA * scale, 130);
                       const B = Math.min(sideB * scale, 130);
                       let C = Math.min(sideC * scale, 140);
                       
-                      // Διόρθωση για να ισχύει πάντα η τριγωνική ανισότητα
                       if (A + B <= C) C = A + B - 5;
 
                       const x3 = (C * C + A * A - B * B) / (2 * C);
@@ -242,7 +243,7 @@ export default function PerimetrosTheoryPage() {
                       );
                     })()}
 
-                    {/* 2. ΤΕΤΡΑΓΩΝΟ - Δυναμική αλλαγή μεγέθους */}
+                    {/* 2. ΤΕΤΡΑΓΩΝΟ */}
                     {shape === 'square' && (() => {
                       const size = Math.min(220, Math.max(40, sideA * 11));
                       const x = 150 - size / 2;
@@ -258,7 +259,7 @@ export default function PerimetrosTheoryPage() {
                       );
                     })()}
 
-                    {/* 3. ΟΡΘΟΓΩΝΙΟ - Δυναμική αλλαγή μήκους & πλάτους */}
+                    {/* 3. ΟΡΘΟΓΩΝΙΟ */}
                     {shape === 'rectangle' && (() => {
                       const w = Math.min(230, Math.max(50, sideA * 11));
                       const h = Math.min(190, Math.max(40, sideB * 11));
@@ -275,7 +276,7 @@ export default function PerimetrosTheoryPage() {
                       );
                     })()}
 
-                    {/* 4. ΠΕΝΤΑΓΩΝΟ - Δυναμικές ακτίνες κορυφών */}
+                    {/* 4. ΠΕΝΤΑΓΩΝΟ */}
                     {shape === 'polygon' && (() => {
                       const angles = [-90, -18, 54, 126, 198];
                       const sidesList = [sideA, sideB, sideC, sideD, sideE];
@@ -296,14 +297,14 @@ export default function PerimetrosTheoryPage() {
                           <polygon points={ptsStr} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
                           <text x="210" y="80" fill="#fbbf24" fontWeight="bold" fontSize="11">a = {sideA} cm</text>
                           <text x="220" y="190" fill="#fbbf24" fontWeight="bold" fontSize="11">b = {sideB} cm</text>
-                          <text x="150" y={260" fill="#fbbf24" fontWeight="bold" fontSize="11" textAnchor="middle">c = {sideC} cm</text>
+                          <text x="150" y="260" fill="#fbbf24" fontWeight="bold" fontSize="11" textAnchor="middle">c = {sideC} cm</text>
                           <text x="70" y="190" fill="#fbbf24" fontWeight="bold" fontSize="11">d = {sideD} cm</text>
                           <text x="80" y="80" fill="#fbbf24" fontWeight="bold" fontSize="11">e = {sideE} cm</text>
                         </g>
                       );
                     })()}
 
-                    {/* 5. ΚΥΡΤΟ ΕΞΑΓΩΝΟ - Δυναμικές ακτίνες κορυφών */}
+                    {/* 5. ΚΥΡΤΟ ΕΞΑΓΩΝΟ */}
                     {shape === 'hexagon' && (() => {
                       const angles = [0, 55, 115, 180, 245, 305];
                       const sidesList = [sideA, sideB, sideC, sideD, sideE, sideF];
@@ -326,8 +327,8 @@ export default function PerimetrosTheoryPage() {
                           <text x="190" y="60" fill="#fbbf24" fontWeight="bold" fontSize="11">b = {sideB} cm</text>
                           <text x="90" y="60" fill="#fbbf24" fontWeight="bold" fontSize="11">c = {sideC} cm</text>
                           <text x="50" y="150" fill="#fbbf24" fontWeight="bold" fontSize="11">d = {sideD} cm</text>
-                          <text x="90" y={240} fill="#fbbf24" fontWeight="bold" fontSize="11">e = {sideE} cm</text>
-                          <text x="200" y={240} fill="#fbbf24" fontWeight="bold" fontSize="11">f = {sideF} cm</text>
+                          <text x="90" y="240" fill="#fbbf24" fontWeight="bold" fontSize="11">e = {sideE} cm</text>
+                          <text x="200" y="240" fill="#fbbf24" fontWeight="bold" fontSize="11">f = {sideF} cm</text>
                         </g>
                       );
                     })()}
