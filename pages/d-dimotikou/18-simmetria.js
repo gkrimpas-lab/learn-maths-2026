@@ -239,7 +239,6 @@ export default function SimmetriaTheoryPage() {
                 <div className="w-full max-w-md h-[360px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                   <svg className="w-full h-full" viewBox="0 0 400 320">
                     
-                    {/* Yπολογισμός Folding Transformation ανάλογα με τον ACTIVE AXIS */}
                     {(() => {
                       const scaleFold = (100 - foldProgress) / 100;
 
@@ -261,7 +260,7 @@ export default function SimmetriaTheoryPage() {
                                 </g>
                               )}
 
-                              {/* Αριστερό Μισό (Σταθερό) */}
+                              {/* Σταθερό Αριστερό Μισό */}
                               {shape === 'square' && <path d="M -90,-90 L 0,-90 L 0,90 L -90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'rectangle' && <path d="M -120,-70 L 0,-70 L 0,70 L -120,70 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'triangle' && <path d="M 0,-100 L -100,80 L 0,80 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
@@ -274,15 +273,6 @@ export default function SimmetriaTheoryPage() {
                                 {shape === 'triangle' && <path d="M 0,-100 L 100,80 L 0,80 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                                 {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                               </g>
-
-                              {/* Βέλος Κατεύθυνσης */}
-                              {foldProgress > 0 && foldProgress < 100 && (
-                                <g transform="translate(0, -115)">
-                                  <path d="M 50,-10 Q 25,-25 0,-10" fill="none" stroke="#f59e0b" strokeWidth="3" />
-                                  <polygon points="-5,-12 3,-10 -2,-2" fill="#f59e0b" />
-                                  <text x="25" y="-30" fill="#f59e0b" fontWeight="black" fontSize="11" textAnchor="middle">Δίπλωμα ⇦</text>
-                                </g>
-                              )}
                             </g>
                           )}
 
@@ -291,7 +281,7 @@ export default function SimmetriaTheoryPage() {
                           {/* ------------------------------------------- */}
                           {activeAxis === 'horizontal' && (
                             <g>
-                              {/* Ίχνος Αρχικής Θέσης (Κάτω Μισό) */}
+                              {/* Ίχνος Αρχικής Θέσης */}
                               {foldProgress > 0 && (
                                 <g opacity="0.6">
                                   {shape === 'square' && <path d="M -90,0 L 90,0 L 90,90 L -90,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
@@ -311,20 +301,11 @@ export default function SimmetriaTheoryPage() {
                                 {shape === 'rectangle' && <path d="M -120,0 L 120,0 L 120,70 L -120,70 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                                 {shape === 'circle' && <path d="M -90,0 A 90,90 0 0,0 90,0 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                               </g>
-
-                              {/* Βέλος Κατεύθυνσης */}
-                              {foldProgress > 0 && foldProgress < 100 && (
-                                <g transform="translate(130, 0)">
-                                  <path d="M 10,40 Q 25,20 10,0" fill="none" stroke="#10b981" strokeWidth="3" />
-                                  <polygon points="12,-5 2,2 18,2" fill="#10b981" />
-                                  <text x="35" y="20" fill="#10b981" fontWeight="black" fontSize="11" textAnchor="start">Δίπλωμα ⇧</text>
-                                </g>
-                              )}
                             </g>
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* 3. ΔΙΑΓΩΝΙΟΣ 1 (DIAG1 FOLD: 45 deg) */}
+                          {/* 3. ΔΙΑΓΩΝΙΟΣ 1 (Top-Left -> Bottom-Right Line: y = -x) */}
                           {/* ------------------------------------------- */}
                           {activeAxis === 'diag1' && (
                             <g>
@@ -340,18 +321,19 @@ export default function SimmetriaTheoryPage() {
                               {/* Κάτω-Αριστερό Μισό (Σταθερό) */}
                               {shape === 'square' && <path d="M -90,-90 L -90,90 L 90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'rhombus' && <path d="M 0,-100 L -110,0 L 0,100 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
-                              {shape === 'circle' && <circle cx="0" cy="0" r="90" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'circle' && <path d="M -63.6,-63.6 A 90,90 0 0,0 63.6,63.6 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Πάνω-Δεξί Μισό (Διπλώνει διαγώνια) */}
-                              <g transform={`rotate(45) scale(${scaleFold}, 1) rotate(-45)`}>
+                              {/* Πάνω-Δεξί Μισό (Ακριβής Αναδίπλωση πάνω στη Διαγώνιο 135°) */}
+                              <g transform={`rotate(-45) scale(${scaleFold}, 1) rotate(45)`}>
                                 {shape === 'square' && <path d="M -90,-90 L 90,-90 L 90,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                                 {shape === 'rhombus' && <path d="M 0,-100 L 110,0 L 0,100 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'circle' && <path d="M -63.6,-63.6 A 90,90 0 0,1 63.6,63.6 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                               </g>
                             </g>
                           )}
 
                           {/* ------------------------------------------- */}
-                          {/* 4. ΔΙΑΓΩΝΙΟΣ 2 (DIAG2 FOLD: -45 deg) */}
+                          {/* 4. ΔΙΑΓΩΝΙΟΣ 2 (Bottom-Left -> Top-Right Line: y = x) */}
                           {/* ------------------------------------------- */}
                           {activeAxis === 'diag2' && (
                             <g>
@@ -360,18 +342,20 @@ export default function SimmetriaTheoryPage() {
                                 <g opacity="0.6">
                                   {shape === 'square' && <path d="M -90,-90 L 90,-90 L -90,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                   {shape === 'rhombus' && <path d="M -110,0 L 0,-100 L 110,0 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
+                                  {shape === 'circle' && <path d="M -63.6,63.6 A 90,90 0 0,1 63.6,-63.6 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
                                 </g>
                               )}
 
                               {/* Κάτω-Δεξί Μισό (Σταθερό) */}
-                              {shape === 'square' && <path d="M 90,-90 L 90,90 L -90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'square' && <path d="M -90,90 L 90,90 L 90,-90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'rhombus' && <path d="M -110,0 L 0,100 L 110,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
-                              {shape === 'circle' && <circle cx="0" cy="0" r="90" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
+                              {shape === 'circle' && <path d="M -63.6,63.6 A 90,90 0 0,0 63.6,-63.6 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Πάνω-Αριστερό Μισό (Διπλώνει διαγώνια) */}
-                              <g transform={`rotate(-45) scale(${scaleFold}, 1) rotate(45)`}>
+                              {/* Πάνω-Αριστερό Μισό (Ακριβής Αναδίπλωση πάνω στη Διαγώνιο 45°) */}
+                              <g transform={`rotate(45) scale(${scaleFold}, 1) rotate(-45)`}>
                                 {shape === 'square' && <path d="M -90,-90 L 90,-90 L -90,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                                 {shape === 'rhombus' && <path d="M -110,0 L 0,-100 L 110,0 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'circle' && <path d="M -63.6,63.6 A 90,90 0 0,1 63.6,-63.6 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
                               </g>
                             </g>
                           )}
@@ -500,7 +484,7 @@ export default function SimmetriaTheoryPage() {
                     className="w-full accent-purple-600 cursor-pointer"
                   />
                   <p className="text-[11px] text-purple-800 font-medium">
-                    Σύρε το slider στο 100% για να δεις το σχήμα να διπλώνει πάνω στον άξονα που επέλεξες!
+                    Σύρε το slider στο 100% για να δεις το σχήμα να διπλώνει ακριβώς πάνω στον άξονα που επέλεξες!
                   </p>
                 </div>
 
