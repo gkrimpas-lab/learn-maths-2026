@@ -8,18 +8,85 @@ function getRandomInt(min, max) {
 }
 
 // ----------------------------------------------------
-// ΔΕΞΑΜΕΝΗ 1: ΠΛΗΘΟΣ ΑΞΟΝΩΝ ΣΥΜΜΕΤΡΙΑΣ
+// ΔΕΞΑΜΕΝΗ 1: ΣΧΗΜΑΤΑ ΘΕΩΡΙΑΣ ΜΕ SVG ΟΠΤΙΚΟΠΟΙΗΣΗ
 // ----------------------------------------------------
-const SHAPES_AXES_POOL = [
-  { shape: 'Τετράγωνο', correct: 4, explain: 'Το τετράγωνο έχει 4 άξονες συμμετρίας (1 κατακόρυφο, 1 οριζόντιο, 2 διαγώνιους).' },
-  { shape: 'Ορθογώνιο Παραλληλόγραμμο', correct: 2, explain: 'Το ορθογώνιο έχει 2 άξονες συμμετρίας (1 κατακόρυφο και 1 οριζόντιο).' },
-  { shape: 'Ισοσκελές Τρίγωνο', correct: 1, explain: 'Το ισοσκελές τρίγωνο έχει μόνο 1 κατακόρυφο άξονα συμμετρίας.' },
-  { shape: 'Ισόπλευρο Τρίγωνο', correct: 3, explain: 'Το ισόπλευρο τρίγωνο έχει 3 άξονες συμμετρίας (έναν από κάθε κορυφή).' },
-  { shape: 'Σκαληνό Τρίγωνο', correct: 0, explain: 'Το σκαληνό τρίγωνο (με όλες τις πλευρές άνισες) έχει 0 άξονες συμμετρίας.' },
-  { shape: 'Ρόμβο', correct: 2, explain: 'Ο ρόμβος έχει 2 άξονες συμμετρίας (τις 2 διαγώνιους του).' },
-  { shape: 'Πλάγιο Παραλληλόγραμμο', correct: 0, explain: 'Το πλάγιο παραλληλόγραμμο ΔΕΝ έχει κανέναν άξονα συμμετρίας (0).' },
-  { shape: 'Κανονικό Πεντάγωνο', correct: 5, explain: 'Το κανονικό πεντάγωνο έχει 5 ίσους άξονες συμμετρίας.' },
-  { shape: 'Κανονικό Εξάγωνο', correct: 6, explain: 'Το κανονικό εξάγωνο έχει 6 άξονες συμμετρίας.' }
+const THEORY_SHAPES_POOL = [
+  {
+    name: 'Τετράγωνο',
+    correct: 4,
+    explain: 'Το τετράγωνο έχει 4 άξονες συμμετρίας (1 κατακόρυφο, 1 οριζόντιο, 2 διαγώνιους).',
+    svg: (
+      <svg className="w-48 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 120">
+        <rect x="65" y="25" width="70" height="70" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+        {/* Διακεκομμένοι Άξονες */}
+        <line x1="100" y1="15" x2="100" y2="105" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
+        <line x1="55" y1="60" x2="145" y2="60" stroke="#10b981" strokeWidth="1.5" strokeDasharray="4,4" />
+        <line x1="65" y1="25" x2="135" y2="95" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" />
+        <line x1="135" y1="25" x2="65" y2="95" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" />
+      </svg>
+    )
+  },
+  {
+    name: 'Ορθογώνιο Παραλληλόγραμμο',
+    correct: 2,
+    explain: 'Το ορθογώνιο έχει 2 άξονες συμμετρίας (1 κατακόρυφο και 1 οριζόντιο).',
+    svg: (
+      <svg className="w-52 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 220 120">
+        <rect x="40" y="30" width="140" height="60" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+        {/* Άξονες */}
+        <line x1="110" y1="15" x2="110" y2="105" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
+        <line x1="25" y1="60" x2="195" y2="60" stroke="#10b981" strokeWidth="1.5" strokeDasharray="4,4" />
+      </svg>
+    )
+  },
+  {
+    name: 'Ισοσκελές Τρίγωνο',
+    correct: 1,
+    explain: 'Το ισοσκελές τρίγωνο έχει μόνο 1 κατακόρυφο άξονα συμμετρίας.',
+    svg: (
+      <svg className="w-48 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 120">
+        <polygon points="100,20 45,95 155,95" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+        {/* Άξονας */}
+        <line x1="100" y1="10" x2="100" y2="105" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
+      </svg>
+    )
+  },
+  {
+    name: 'Ρόμβος',
+    correct: 2,
+    explain: 'Ο ρόμβος έχει 2 άξονες συμμετρίας (τις 2 διαγώνιους του).',
+    svg: (
+      <svg className="w-48 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 120">
+        <polygon points="100,15 155,60 100,105 45,60" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+        {/* Άξονες */}
+        <line x1="100" y1="5" x2="100" y2="115" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
+        <line x1="30" y1="60" x2="170" y2="60" stroke="#10b981" strokeWidth="1.5" strokeDasharray="4,4" />
+      </svg>
+    )
+  },
+  {
+    name: 'Ισόπλευρο Τρίγωνο',
+    correct: 3,
+    explain: 'Το ισόπλευρο τρίγωνο έχει 3 άξονες συμμετρίας.',
+    svg: (
+      <svg className="w-48 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 120">
+        <polygon points="100,20 50,100 150,100" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+        <line x1="100" y1="10" x2="100" y2="105" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,4" />
+        <line x1="50" y1="100" x2="125" y2="60" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" />
+        <line x1="150" y1="100" x2="75" y2="60" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" />
+      </svg>
+    )
+  },
+  {
+    name: 'Σκαληνό Τρίγωνο',
+    correct: 0,
+    explain: 'Το σκαληνό τρίγωνο (με όλες τις πλευρές άνισες) έχει 0 άξονες συμμετρίας.',
+    svg: (
+      <svg className="w-48 h-32 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 120">
+        <polygon points="60,25 40,95 170,95" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+      </svg>
+    )
+  }
 ];
 
 // ----------------------------------------------------
@@ -67,7 +134,7 @@ const TRUE_FALSE_POOL = [
   { q: 'Το τετράγωνο έχει 4 άξονες συμμετρίας.', correct: 'Σωστό', explain: 'Σωστά! Έχει 1 κατακόρυφο, 1 οριζόντιο και 2 διαγώνιους.' },
   { q: 'Οι διαγώνιοι ενός ορθογωνίου παραλληλογράμμου είναι άξονες συμμετρίας του.', correct: 'Λάθος', explain: 'Λάθος! Αν διπλώσουμε το ορθογώνιο στη διαγώνιο, τα δύο μέρη ΔΕΝ ταυτίζονται.' },
   { q: 'Ο κύκλος έχει μόνο 2 άξονες συμμετρίας.', correct: 'Λάθος', explain: 'Λάθος! Ο κύκλος έχει αμέτρητους (άπειρους) άξονες συμμετρίας.' },
-  { q: 'Ένα σχήμα μπορεί να μην έχει κανέναν άξονα συμμετρίας.', correct: 'Σωστό', explain: 'Σωστά! Π.χ. το σκαληνό τρίγωνο ή το πλάγιο παραλληλόγραμμο.' },
+  { q: 'Ένα σχήμα μπορεί να μην έχει κανέναν άξονα συμμετρίας.', correct: 'Σωστό', explain: 'Σωστά! Π.χ. το σκαληνό τρίγωνο.' },
   { q: 'Το ισοσκελές τρίγωνο έχει 3 άξονες συμμετρίας.', correct: 'Λάθος', explain: 'Λάθος! Το ισοσκελές τρίγωνο έχει μόνο 1 άξονα συμμετρίας (το ισόπλευρο έχει 3).' },
   { q: 'Ο ρόμβος έχει 2 άξονες συμμετρίας (τις διαγώνιούς του).', correct: 'Σωστό', explain: 'Σωστά! Οι δύο διαγώνιοι του ρόμβου είναι άξονες συμμετρίας.' },
   { q: 'Αν διπλώσουμε ένα σχήμα στον άξονα συμμετρίας του, τα δύο μέρη θα περισσεύουν το ένα από το άλλο.', correct: 'Λάθος', explain: 'Λάθος! Τα δύο μέρη θα ταυτιστούν τέλεια.' },
@@ -76,37 +143,36 @@ const TRUE_FALSE_POOL = [
   { q: 'Το γράμμα «F» έχει έναν οριζόντιο άξονα συμμετρίας.', correct: 'Λάθος', explain: 'Λάθος! Το γράμμα F δεν έχει κανέναν άξονα συμμετρίας.' },
   { q: 'Μια πεταλούδα με ανοιχτά φτερά έχει έναν κατακόρυφο άξονα συμμετρίας.', correct: 'Σωστό', explain: 'Σωστά! Το αριστερό φτερό είναι συμμετρικό με το δεξί.' },
   { q: 'Όλα τα τρίγωνα έχουν υποχρεωτικά τουλάχιστον 1 άξονα συμμετρίας.', correct: 'Λάθος', explain: 'Λάθος! Το σκαληνό τρίγωνο δεν έχει κανέναν άξονα συμμετρίας.' },
-  { q: 'Το κανονικό πεντάγωνο έχει 5 άξονες συμμετρίας.', correct: 'Σωστό', explain: 'Σωστά! Κάθε κανονικό πολύγωνο έχει τόσο πλήθος αξόνων όσες και οι πλευρές του.' },
-  { q: 'Το πλάγιο παραλληλόγραμμο έχει 2 άξονες συμμετρίας.', correct: 'Λάθος', explain: 'Λάθος! Το πλάγιο παραλληλόγραμμο έχει 0 άξονες συμμετρίας.' },
   { q: 'Αν δύο σχήματα είναι συμμετρικά ως προς άξονα, τότε είναι οπωσδήποτε ίσα μεταξύ τους.', correct: 'Σωστό', explain: 'Σωστά! Η συμμετρία διατηρεί τα μήκη, τις γωνίες και τα εμβαδά.' },
-  { q: 'Η γραμμή δίπλωσης σε ένα φύλλο χαρτιού που χωρίζει το χαρτί ακριβώς στη μέση είναι άξονας συμμετρίας.', correct: 'Σωστό', explain: 'Σωστά! Αυτός είναι ο πρακτικός τρόπος δημιουργίας άξονα συμμετρίας.' },
-  { q: 'Ένα κανονικό εξάγωνο έχει 6 άξονες συμμετρίας.', correct: 'Σωστό', explain: 'Σωστά! Έχει 6 άξονες συμμετρίας.' }
+  { q: 'Η γραμμή δίπλωσης σε ένα φύλλο χαρτιού που χωρίζει το χαρτί ακριβώς στη μέση είναι άξονας συμμετρίας.', correct: 'Σωστό', explain: 'Σωστά! Αυτός είναι ο πρακτικός τρόπος δημιουργίας άξονα συμμετρίας.' }
 ];
 
 // ----------------------------------------------------
-// ΔΗΜΙΟΥΡΓΙΑ 8 ΑΣΚΗΣΕΩΝ
+// ΔΗΜΙΟΥΡΓΙΑ 8 ΑΣΚΗΣΕΙΣ
 // ----------------------------------------------------
 function generateQuestions() {
-  // Q1 & Q2: Πλήθος αξόνων
-  let shape1 = SHAPES_AXES_POOL[getRandomInt(0, SHAPES_AXES_POOL.length - 1)];
-  let shape2;
+  // Q1 & Q2: Πλήθος αξόνων με SVG Σχήμα
+  let item1 = THEORY_SHAPES_POOL[getRandomInt(0, THEORY_SHAPES_POOL.length - 1)];
+  let item2;
   while (true) {
-    shape2 = SHAPES_AXES_POOL[getRandomInt(0, SHAPES_AXES_POOL.length - 1)];
-    if (shape2.shape !== shape1.shape) break;
+    item2 = THEORY_SHAPES_POOL[getRandomInt(0, THEORY_SHAPES_POOL.length - 1)];
+    if (item2.name !== item1.name) break;
   }
 
   const q1 = {
-    q: `Πόσους άξονες συμμετρίας έχει το σχήμα: «${shape1.shape}»;`,
-    correct: shape1.correct,
+    q: `Πόσους άξονες συμμετρίας έχει το παρακάτω σχήμα («${item1.name}»);`,
+    correct: item1.correct,
     unit: 'άξονες',
-    explain: shape1.explain
+    explain: item1.explain,
+    svg: item1.svg
   };
 
   const q2 = {
-    q: `Πόσους άξονες συμμετρίας έχει το σχήμα: «${shape2.shape}»;`,
-    correct: shape2.correct,
+    q: `Πόσους άξονες συμμετρίας έχει το παρακάτω σχήμα («${item2.name}»);`,
+    correct: item2.correct,
     unit: 'άξονες',
-    explain: shape2.explain
+    explain: item2.explain,
+    svg: item2.svg
   };
 
   // Q3 & Q4: Υπολογισμοί Εμβαδού & Περιμέτρου
@@ -204,6 +270,9 @@ export default function SimmetriaAskPage() {
         <span className={`${colorClass} text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center`}>{numLabel}</span>
         <h3 className="text-lg font-bold text-gray-900">{qData.q}</h3>
       </div>
+
+      {/* SVG Εικόνα Σχήματος */}
+      {qData.svg && <div className="mb-4">{qData.svg}</div>}
 
       <div className="pl-0 md:pl-11 space-y-3">
         <div className="flex items-center gap-2">
@@ -362,7 +431,7 @@ export default function SimmetriaAskPage() {
                 📝 Ασκήσεις: Η Έννοια της Συμμετρίας
               </h1>
               <p className="text-purple-100 text-sm md:text-base mt-1">
-                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι ερωτήσεις και οι αριθμοί αλλάζουν.
+                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι ερωτήσεις και τα σχήματα αλλάζουν.
               </p>
             </div>
 
