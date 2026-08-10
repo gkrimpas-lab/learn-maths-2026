@@ -37,7 +37,7 @@ export default function SimmetriaTheoryPage() {
     rhombus: {
       name: 'Ρόμβος',
       totalAxes: 2,
-      allowedAxes: ['vertical', 'horizontal'], // Οι διαγώνιοί του είναι η κατακόρυφη και η οριζόντια!
+      allowedAxes: ['vertical', 'horizontal'],
       desc: 'Ο ρόμβος έχει 2 άξονες συμμετρίας (τις δύο διαγώνιους του: την κατακόρυφη και την οριζόντια).',
       halfPerimeter: 20,
       halfArea: 24
@@ -171,7 +171,7 @@ export default function SimmetriaTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εργαστήριο Συμμετρίας & Αναδίπλωσης
+                  <span>🧮</span> Διαδραστικό Εεργαστήριο Συμμετρίας & Αναδίπλωσης
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Επίλεξε σχήμα, διάλεξε **ποιον άξονα συμμετρίας** θέλεις και σύρε το slider για να δεις το δίπλωμα!
@@ -250,7 +250,7 @@ export default function SimmetriaTheoryPage() {
                           {/* ------------------------------------------- */}
                           {activeAxis === 'vertical' && (
                             <g>
-                              {/* Ίχνος Αρχικής Θέσης */}
+                              {/* Ίχνος Αρχικής Θέσης (Πίσω από όλα) */}
                               {foldProgress > 0 && (
                                 <g opacity="0.6">
                                   {shape === 'square' && <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="none" stroke="#f472b6" strokeWidth="2" strokeDasharray="5,5" />}
@@ -261,20 +261,20 @@ export default function SimmetriaTheoryPage() {
                                 </g>
                               )}
 
-                              {/* Σταθερό Αριστερό Μισό */}
+                              {/* Σταθερό Αριστερό Μισό (Στη μέση) */}
                               {shape === 'square' && <path d="M -90,-90 L 0,-90 L 0,90 L -90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'rectangle' && <path d="M -120,-70 L 0,-70 L 0,70 L -120,70 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'triangle' && <path d="M 0,-100 L -100,80 L 0,80 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'rhombus' && <path d="M 0,-100 L -110,0 L 0,100 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,0 0,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Δεξί Μισό (Διπλώνει οριζόντια -> αριστερά) */}
+                              {/* Δεξί Μισό που ΔΙΠΛΩΝΕΙ ΜΠΡΟΣΤΑ (Μπροστά από όλα) */}
                               <g transform={`scale(${scaleFold}, 1)`}>
-                                {shape === 'square' && <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
-                                {shape === 'rectangle' && <path d="M 0,-70 L 120,-70 L 120,70 L 0,70 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
-                                {shape === 'triangle' && <path d="M 0,-100 L 100,80 L 0,80 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
-                                {shape === 'rhombus' && <path d="M 0,-100 L 110,0 L 0,100 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
-                                {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'square' && <path d="M 0,-90 L 90,-90 L 90,90 L 0,90 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'rectangle' && <path d="M 0,-70 L 120,-70 L 120,70 L 0,70 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'triangle' && <path d="M 0,-100 L 100,80 L 0,80 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'rhombus' && <path d="M 0,-100 L 110,0 L 0,100 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'circle' && <path d="M 0,-90 A 90,90 0 0,1 0,90 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
                               </g>
 
                               {/* Βέλος Κατεύθυνσης */}
@@ -309,12 +309,12 @@ export default function SimmetriaTheoryPage() {
                               {shape === 'rhombus' && <path d="M -110,0 L 0,-100 L 110,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'circle' && <path d="M -90,0 A 90,90 0 0,1 90,0 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Κάτω Μισό (Διπλώνει κατακόρυφα -> πάνω) */}
+                              {/* Κάτω Μισό που ΔΙΠΛΩΝΕΙ ΜΠΡΟΣΤΑ */}
                               <g transform={`scale(1, ${scaleFold})`}>
-                                {shape === 'square' && <path d="M -90,0 L 90,0 L 90,90 L -90,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
-                                {shape === 'rectangle' && <path d="M -120,0 L 120,0 L 120,70 L -120,70 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
-                                {shape === 'rhombus' && <path d="M -110,0 L 0,100 L 110,0 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
-                                {shape === 'circle' && <path d="M -90,0 A 90,90 0 0,0 90,0 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'square' && <path d="M -90,0 L 90,0 L 90,90 L -90,90 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'rectangle' && <path d="M -120,0 L 120,0 L 120,70 L -120,70 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'rhombus' && <path d="M -110,0 L 0,100 L 110,0 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'circle' && <path d="M -90,0 A 90,90 0 0,0 90,0 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
                               </g>
 
                               {/* Βέλος Κατεύθυνσης */}
@@ -345,10 +345,10 @@ export default function SimmetriaTheoryPage() {
                               {shape === 'square' && <path d="M -90,-90 L -90,90 L 90,90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'circle' && <path d="M -63.6,-63.6 A 90,90 0 0,0 63.6,63.6 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Πάνω-Δεξί Μισό (Ακριβής Αναδίπλωση πάνω στη Διαγώνιο 135°) */}
+                              {/* Πάνω-Δεξί Μισό που ΔΙΠΛΩΝΕΙ ΜΠΡΟΣΤΑ */}
                               <g transform={`rotate(-45) scale(${scaleFold}, 1) rotate(45)`}>
-                                {shape === 'square' && <path d="M -90,-90 L 90,-90 L 90,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
-                                {shape === 'circle' && <path d="M -63.6,-63.6 A 90,90 0 0,1 63.6,63.6 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'square' && <path d="M -90,-90 L 90,-90 L 90,90 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'circle' && <path d="M -63.6,-63.6 A 90,90 0 0,1 63.6,63.6 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
                               </g>
                             </g>
                           )}
@@ -370,10 +370,10 @@ export default function SimmetriaTheoryPage() {
                               {shape === 'square' && <path d="M -90,90 L 90,90 L 90,-90 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
                               {shape === 'circle' && <path d="M -63.6,63.6 A 90,90 0 0,0 63.6,-63.6 Z" fill="#a855f7" fillOpacity="0.4" stroke="#c084fc" strokeWidth="3" />}
 
-                              {/* Πάνω-Αριστερό Μισό (Ακριβής Αναδίπλωση πάνω στη Διαγώνιο 45°) */}
+                              {/* Πάνω-Αριστερό Μισό που ΔΙΠΛΩΝΕΙ ΜΠΡΟΣΤΑ */}
                               <g transform={`rotate(45) scale(${scaleFold}, 1) rotate(-45)`}>
-                                {shape === 'square' && <path d="M -90,-90 L 90,-90 L -90,90 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
-                                {shape === 'circle' && <path d="M -63.6,63.6 A 90,90 0 0,1 63.6,-63.6 Z" fill="#ec4899" fillOpacity="0.5" stroke="#f472b6" strokeWidth="3" />}
+                                {shape === 'square' && <path d="M -90,-90 L 90,-90 L -90,90 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
+                                {shape === 'circle' && <path d="M -63.6,63.6 A 90,90 0 0,1 63.6,-63.6 Z" fill="#ec4899" fillOpacity="0.75" stroke="#f472b6" strokeWidth="3.5" />}
                               </g>
                             </g>
                           )}
