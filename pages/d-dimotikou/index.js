@@ -21,6 +21,7 @@ export default function DDimotikouMenu() {
     { id: '14-apostasi-simeiou-eutheia', label: '🎯 14. Απόσταση σημείου από ευθεία', href: '/d-dimotikou/14-apostasi-simeiou-eutheia' },
     { id: '15-embadon', label: '🎯 15. Εμβαδόν', href: '/d-dimotikou/15-embadon' },
     { id: '16-tetrapleura', label: '🎯 16. Τετράπλευρα', href: '/d-dimotikou/16-tetrapleura' },
+    { id: '17-perimetros', label: '🎯 17. Περίμετρος', href: '/d-dimotikou/17-perimetros' },
     { id: '1-megaloi-arithmoi', label: '🍕 100. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
     { id: '2-katheti-diairesi', label: '🔄 200. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' }
         
