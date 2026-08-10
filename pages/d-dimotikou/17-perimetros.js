@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 export default function PerimetrosTheoryPage() {
-  const [shape, setShape] = useState('triangle'); // 'triangle', 'square', 'rectangle', 'polygon'
+  const [shape, setShape] = useState('triangle'); // 'triangle', 'square', 'rectangle', 'polygon', 'hexagon'
   
   // Διαστάσεις πλευρών (σε cm)
   const [sideA, setSideA] = useState(6);
@@ -12,6 +12,7 @@ export default function PerimetrosTheoryPage() {
   const [sideC, setSideC] = useState(7);
   const [sideD, setSideD] = useState(5);
   const [sideE, setSideE] = useState(6);
+  const [sideF, setSideF] = useState(7);
 
   // Υπολογισμός περιμέτρου & βήμα-βήμα πράξης
   let perimeter = 0;
@@ -29,7 +30,13 @@ export default function PerimetrosTheoryPage() {
   } else if (shape === 'polygon') {
     perimeter = sideA + sideB + sideC + sideD + sideE;
     formulaText = `${sideA} + ${sideB} + ${sideC} + ${sideD} + ${sideE} = ${perimeter} cm`;
+  } else if (shape === 'hexagon') {
+    perimeter = sideA + sideB + sideC + sideD + sideE + sideF;
+    formulaText = `${sideA} + ${sideB} + ${sideC} + ${sideD} + ${sideE} + ${sideF} = ${perimeter} cm`;
   }
+
+  // Συντελεστής κλίμακας για το SVG (Pixel scaling)
+  const scale = 7; 
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -142,7 +149,7 @@ export default function PerimetrosTheoryPage() {
                   <span>🧮</span> Διαδραστικό Εργαστήριο Περιμέτρου
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Επίλεξε σχήμα, άνοιξε τα sliders για να αλλάξεις τις πλευρές και δες τον υπολογισμό της περιμέτρου!
+                  Επίλεξε σχήμα, άνοιξε τα sliders για να αλλάξεις τις πλευρές και δες τη ζωγραφιά να αλλάζει ζωντανά!
                 </p>
               </div>
 
@@ -180,12 +187,20 @@ export default function PerimetrosTheoryPage() {
                 >
                   ⬟ Πεντάγωνο
                 </button>
+                <button
+                  onClick={() => setShape('hexagon')}
+                  className={`px-4 py-2.5 rounded-xl text-xs md:text-sm font-black transition ${
+                    shape === 'hexagon' ? 'bg-amber-500 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  ⬢ Εξάγωνο (6)
+                </button>
               </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               
-              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG) */}
+              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (SVG - ΔΥΝΑΜΙΚΗ ΑΛΛΑΓΗ ΜΕΓΕΘΟΥΣ) */}
               <div className="bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-4">
                 
                 {/* DISPLAY RESULT BANNER */}
@@ -198,48 +213,111 @@ export default function PerimetrosTheoryPage() {
                   <svg className="w-full h-full" viewBox="0 0 300 300">
                     
                     {/* 1. ΤΡΙΓΩΝΟ */}
-                    {shape === 'triangle' && (
-                      <g>
-                        <polygon points="150,50 50,220 250,220" fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
-                        <text x="90" y="130" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="end">a = {sideA} cm</text>
-                        <text x="210" y="130" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="start">b = {sideB} cm</text>
-                        <text x="150" y="245" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="middle">c = {sideC} cm</text>
-                      </g>
-                    )}
+                    {shape === 'triangle' && (() => {
+                      const w = sideC * scale;
+                      const h = sideA * scale;
+                      const x1 = 150 - w / 2;
+                      const x2 = 150 + w / 2;
+                      const yBase = 220;
+                      const yTop = Math.max(40, yBase - h);
+                      return (
+                        <g>
+                          <polygon points={`${150},${yTop} ${x1},${yBase} ${x2},${yBase}`} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
+                          <text x={(150 + x1) / 2 - 10} y={(yTop + yBase) / 2} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="end">a = {sideA} cm</text>
+                          <text x={(150 + x2) / 2 + 10} y={(yTop + yBase) / 2} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="start">b = {sideB} cm</text>
+                          <text x="150" y={yBase + 20} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">c = {sideC} cm</text>
+                        </g>
+                      );
+                    })()}
 
                     {/* 2. ΤΕΤΡΑΓΩΝΟ */}
-                    {shape === 'square' && (
-                      <g>
-                        <rect x="75" y="75" width="150" height="150" fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" />
-                        <text x="150" y="60" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
-                        <text x="240" y="155" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="start">a = {sideA} cm</text>
-                        <text x="150" y="250" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
-                        <text x="60" y="155" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="end">a = {sideA} cm</text>
-                      </g>
-                    )}
+                    {shape === 'square' && (() => {
+                      const w = Math.min(220, sideA * 10);
+                      const x = 150 - w / 2;
+                      const y = 150 - w / 2;
+                      return (
+                        <g>
+                          <rect x={x} y={y} width={w} height={w} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" />
+                          <text x="150" y={y - 10} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
+                          <text x={x + w + 15} y="155" fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="start">a = {sideA} cm</text>
+                          <text x="150" y={y + w + 20} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
+                          <text x={x - 15} y="155" fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="end">a = {sideA} cm</text>
+                        </g>
+                      );
+                    })()}
 
                     {/* 3. ΟΡΘΟΓΩΝΙΟ */}
-                    {shape === 'rectangle' && (
-                      <g>
-                        <rect x="40" y="90" width="220" height="120" fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" />
-                        <text x="150" y="75" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="middle">Μήκος (a) = {sideA} cm</text>
-                        <text x="270" y="155" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="start">b = {sideB} cm</text>
-                        <text x="150" y="235" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="middle">Μήκος (a) = {sideA} cm</text>
-                        <text x="30" y="155" fill="#fbbf24" fontWeight="bold" fontSize="14" textAnchor="end">b = {sideB} cm</text>
-                      </g>
-                    )}
+                    {shape === 'rectangle' && (() => {
+                      const w = Math.min(230, sideA * 11);
+                      const h = Math.min(180, sideB * 11);
+                      const x = 150 - w / 2;
+                      const y = 150 - h / 2;
+                      return (
+                        <g>
+                          <rect x={x} y={y} width={w} height={h} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" />
+                          <text x="150" y={y - 10} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
+                          <text x={x + w + 15} y="155" fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="start">b = {sideB} cm</text>
+                          <text x="150" y={y + h + 20} fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="middle">a = {sideA} cm</text>
+                          <text x={x - 15} y="155" fill="#fbbf24" fontWeight="bold" fontSize="13" textAnchor="end">b = {sideB} cm</text>
+                        </g>
+                      );
+                    })()}
 
                     {/* 4. ΠΕΝΤΑΓΩΝΟ */}
-                    {shape === 'polygon' && (
-                      <g>
-                        <polygon points="150,40 250,110 210,230 90,230 50,110" fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
-                        <text x="210" y="70" fill="#fbbf24" fontWeight="bold" fontSize="12">a = {sideA} cm</text>
-                        <text x="240" y="180" fill="#fbbf24" fontWeight="bold" fontSize="12">b = {sideB} cm</text>
-                        <text x="150" y="250" fill="#fbbf24" fontWeight="bold" fontSize="12" textAnchor="middle">c = {sideC} cm</text>
-                        <text x="60" y="180" fill="#fbbf24" fontWeight="bold" fontSize="12">d = {sideD} cm</text>
-                        <text x="90" y="70" fill="#fbbf24" fontWeight="bold" fontSize="12">e = {sideE} cm</text>
-                      </g>
-                    )}
+                    {shape === 'polygon' && (() => {
+                      const rA = sideA * 8;
+                      const rB = sideB * 8;
+                      const rC = sideC * 8;
+                      const rD = sideD * 8;
+                      const rE = sideE * 8;
+
+                      const p1 = `${150},${150 - rA}`;
+                      const p2 = `${150 + rB},${150 - rB / 2}`;
+                      const p3 = `${150 + rC * 0.7},${150 + rC * 0.8}`;
+                      const p4 = `${150 - rD * 0.7},${150 + rD * 0.8}`;
+                      const p5 = `${150 - rE},${150 - rE / 2}`;
+
+                      return (
+                        <g>
+                          <polygon points={`${p1} ${p2} ${p3} ${p4} ${p5}`} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
+                          <text x="210" y="80" fill="#fbbf24" fontWeight="bold" fontSize="11">a = {sideA} cm</text>
+                          <text x="220" y="190" fill="#fbbf24" fontWeight="bold" fontSize="11">b = {sideB} cm</text>
+                          <text x="150" y="260" fill="#fbbf24" fontWeight="bold" fontSize="11" textAnchor="middle">c = {sideC} cm</text>
+                          <text x="70" y="190" fill="#fbbf24" fontWeight="bold" fontSize="11">d = {sideD} cm</text>
+                          <text x="80" y="80" fill="#fbbf24" fontWeight="bold" fontSize="11">e = {sideE} cm</text>
+                        </g>
+                      );
+                    })()}
+
+                    {/* 5. ΚΥΡΤΟ ΕΞΑΓΩΝΟ (6 ΠΛΕΥΡΕΣ) */}
+                    {shape === 'hexagon' && (() => {
+                      // Υπολογισμός 6 ακτινών βάσει των πλευρών
+                      const angles = [0, 55, 115, 180, 245, 305];
+                      const sidesList = [sideA, sideB, sideC, sideD, sideE, sideF];
+                      
+                      const pts = angles.map((a, idx) => {
+                        const r = Math.min(110, sidesList[idx] * 8);
+                        const rad = (a * Math.PI) / 180;
+                        return {
+                          x: 150 + r * Math.cos(rad),
+                          y: 150 - r * Math.sin(rad)
+                        };
+                      });
+
+                      const ptsStr = pts.map(p => `${p.x},${p.y}`).join(' ');
+
+                      return (
+                        <g>
+                          <polygon points={ptsStr} fill="#f59e0b" fillOpacity="0.2" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
+                          <text x="225" y="120" fill="#fbbf24" fontWeight="bold" fontSize="11">a = {sideA} cm</text>
+                          <text x="190" y="60" fill="#fbbf24" fontWeight="bold" fontSize="11">b = {sideB} cm</text>
+                          <text x="90" y="60" fill="#fbbf24" fontWeight="bold" fontSize="11">c = {sideC} cm</text>
+                          <text x="50" y="150" fill="#fbbf24" fontWeight="bold" fontSize="11">d = {sideD} cm</text>
+                          <text x="90" y="240" fill="#fbbf24" fontWeight="bold" fontSize="11">e = {sideE} cm</text>
+                          <text x="200" y="240" fill="#fbbf24" fontWeight="bold" fontSize="11">f = {sideF} cm</text>
+                        </g>
+                      );
+                    })()}
 
                   </svg>
                 </div>
@@ -257,7 +335,7 @@ export default function PerimetrosTheoryPage() {
               </div>
 
               {/* SLIDERS ΧΕΙΡΙΣΜΟΥ */}
-              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 space-y-5">
+              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 space-y-4">
                 <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
                   <span>🎛️</span> Αλλαγή Μηκών Πλευρών
                 </h3>
@@ -272,7 +350,7 @@ export default function PerimetrosTheoryPage() {
                     <input 
                       type="range" 
                       min="2" 
-                      max="20" 
+                      max="18" 
                       value={sideA} 
                       onChange={(e) => setSideA(Number(e.target.value))}
                       className="w-full accent-amber-500 cursor-pointer"
@@ -280,7 +358,7 @@ export default function PerimetrosTheoryPage() {
                   </div>
                 )}
 
-                {(shape === 'triangle' || shape === 'rectangle' || shape === 'polygon') && (
+                {(shape === 'triangle' || shape === 'rectangle' || shape === 'polygon' || shape === 'hexagon') && (
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
                       <span>Πλευρά a {shape === 'rectangle' ? '(Μήκος)' : ''}:</span>
@@ -289,7 +367,7 @@ export default function PerimetrosTheoryPage() {
                     <input 
                       type="range" 
                       min="2" 
-                      max="20" 
+                      max="18" 
                       value={sideA} 
                       onChange={(e) => setSideA(Number(e.target.value))}
                       className="w-full accent-amber-500 cursor-pointer"
@@ -297,7 +375,7 @@ export default function PerimetrosTheoryPage() {
                   </div>
                 )}
 
-                {(shape === 'triangle' || shape === 'rectangle' || shape === 'polygon') && (
+                {(shape === 'triangle' || shape === 'rectangle' || shape === 'polygon' || shape === 'hexagon') && (
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
                       <span>Πλευρά b {shape === 'rectangle' ? '(Πλάτος)' : ''}:</span>
@@ -306,7 +384,7 @@ export default function PerimetrosTheoryPage() {
                     <input 
                       type="range" 
                       min="2" 
-                      max="20" 
+                      max="18" 
                       value={sideB} 
                       onChange={(e) => setSideB(Number(e.target.value))}
                       className="w-full accent-amber-500 cursor-pointer"
@@ -314,7 +392,7 @@ export default function PerimetrosTheoryPage() {
                   </div>
                 )}
 
-                {(shape === 'triangle' || shape === 'polygon') && (
+                {(shape === 'triangle' || shape === 'polygon' || shape === 'hexagon') && (
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
                       <span>Πλευρά c:</span>
@@ -323,7 +401,7 @@ export default function PerimetrosTheoryPage() {
                     <input 
                       type="range" 
                       min="2" 
-                      max="20" 
+                      max="18" 
                       value={sideC} 
                       onChange={(e) => setSideC(Number(e.target.value))}
                       className="w-full accent-amber-500 cursor-pointer"
@@ -331,38 +409,55 @@ export default function PerimetrosTheoryPage() {
                   </div>
                 )}
 
-                {shape === 'polygon' && (
-                  <>
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
-                        <span>Πλευρά d:</span>
-                        <span className="text-amber-600 font-mono text-base font-black">{sideD} cm</span>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="2" 
-                        max="20" 
-                        value={sideD} 
-                        onChange={(e) => setSideD(Number(e.target.value))}
-                        className="w-full accent-amber-500 cursor-pointer"
-                      />
+                {(shape === 'polygon' || shape === 'hexagon') && (
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
+                      <span>Πλευρά d:</span>
+                      <span className="text-amber-600 font-mono text-base font-black">{sideD} cm</span>
                     </div>
+                    <input 
+                      type="range" 
+                      min="2" 
+                      max="18" 
+                      value={sideD} 
+                      onChange={(e) => setSideD(Number(e.target.value))}
+                      className="w-full accent-amber-500 cursor-pointer"
+                    />
+                  </div>
+                )}
 
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
-                        <span>Πλευρά e:</span>
-                        <span className="text-amber-600 font-mono text-base font-black">{sideE} cm</span>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="2" 
-                        max="20" 
-                        value={sideE} 
-                        onChange={(e) => setSideE(Number(e.target.value))}
-                        className="w-full accent-amber-500 cursor-pointer"
-                      />
+                {(shape === 'polygon' || shape === 'hexagon') && (
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
+                      <span>Πλευρά e:</span>
+                      <span className="text-amber-600 font-mono text-base font-black">{sideE} cm</span>
                     </div>
-                  </>
+                    <input 
+                      type="range" 
+                      min="2" 
+                      max="18" 
+                      value={sideE} 
+                      onChange={(e) => setSideE(Number(e.target.value))}
+                      className="w-full accent-amber-500 cursor-pointer"
+                    />
+                  </div>
+                )}
+
+                {shape === 'hexagon' && (
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
+                      <span>Πλευρά f:</span>
+                      <span className="text-amber-600 font-mono text-base font-black">{sideF} cm</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="2" 
+                      max="18" 
+                      value={sideF} 
+                      onChange={(e) => setSideF(Number(e.target.value))}
+                      className="w-full accent-amber-500 cursor-pointer"
+                    />
+                  </div>
                 )}
 
               </div>
