@@ -143,7 +143,7 @@ export default function PerimetrosTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εργαστήριο Περιμέτρου
+                  <span>🧮</span> Διαδραστικό Εεργαστήριο Περιμέτρου
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Επίλεξε σχήμα, άνοιξε τα sliders για να αλλάξεις τις πλευρές και δες τη ζωγραφιά να προσαρμόζεται ζωντανά!
@@ -197,7 +197,7 @@ export default function PerimetrosTheoryPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               
-              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (ΜΕΓΑΛΥΤΕΡΟ ΜΑΥΡΟ ΠΛΑΙΣΙΟ) */}
+              {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ */}
               <div className="bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-4">
                 
                 {/* DISPLAY RESULT BANNER */}
@@ -209,13 +209,12 @@ export default function PerimetrosTheoryPage() {
                 <div className="w-full max-w-md h-[380px] bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
                   <svg className="w-full h-full" viewBox="0 0 450 360">
                     
-                    {/* 1. ΤΡΙΓΩΝΟ - Προσαρμοσμένο Δυναμικό Μέγεθος */}
+                    {/* 1. ΤΡΙΓΩΝΟ */}
                     {shape === 'triangle' && (() => {
                       let A = sideA;
                       let B = sideB;
                       let C = sideC;
 
-                      // Διόρθωση τριγωνικής ανισότητας
                       if (A + B <= C) C = A + B - 0.5;
                       if (A + C <= B) B = A + C - 0.5;
                       if (B + C <= A) A = B + C - 0.5;
@@ -248,19 +247,16 @@ export default function PerimetrosTheoryPage() {
                         <g>
                           <polygon points={`${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`} fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="5" strokeLinejoin="round" />
                           
-                          {/* Label A */}
                           <g transform={`translate(${(p1.x + p3.x) / 2 - 25}, ${(p1.y + p3.y) / 2 - 10})`}>
                             <rect x="-5" y="-14" width="70" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
                             <text x="30" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">a = {sideA} cm</text>
                           </g>
 
-                          {/* Label B */}
                           <g transform={`translate(${(p2.x + p3.x) / 2 + 25}, ${(p2.y + p3.y) / 2 - 10})`}>
                             <rect x="-35" y="-14" width="70" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
                             <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">b = {sideB} cm</text>
                           </g>
 
-                          {/* Label C */}
                           <g transform={`translate(${(p1.x + p2.x) / 2}, ${p1.y + 25})`}>
                             <rect x="-35" y="-14" width="70" height="22" rx="6" fill="#0f172a" fillOpacity="0.85" stroke="#f59e0b" strokeWidth="1" />
                             <text x="0" y="2" fill="#fbbf24" fontWeight="black" fontSize="14" textAnchor="middle">c = {sideC} cm</text>
@@ -269,9 +265,10 @@ export default function PerimetrosTheoryPage() {
                       );
                     })()}
 
-                    {/* 2. ΤΕΤΡΑΓΩΝΟ */}
+                    {/* 2. ΤΕΤΡΑΓΩΝΟ - Πλήρως Δυναμική Αλλαγή Μεγέθους */}
                     {shape === 'square' && (() => {
-                      const size = 200;
+                      // Το μέγεθος σε pixels αλλάζει άμεσα με βάση την τιμή sideA (από 40px έως 260px)
+                      const size = Math.min(260, Math.max(40, sideA * 14.5));
                       const x = 225 - size / 2;
                       const y = 180 - size / 2;
                       return (
@@ -297,7 +294,7 @@ export default function PerimetrosTheoryPage() {
                       );
                     })()}
 
-                    {/* 3. ΟΡΘΟΓΩΝΙΟ - Αυτόματη Κλιμάκωση */}
+                    {/* 3. ΟΡΘΟΓΩΝΙΟ */}
                     {shape === 'rectangle' && (() => {
                       const maxDim = Math.max(sideA, sideB);
                       const scale = 220 / maxDim;
@@ -352,7 +349,7 @@ export default function PerimetrosTheoryPage() {
                           <text x="300" y="90" fill="#fbbf24" fontWeight="black" fontSize="13">a = {sideA} cm</text>
                           <text x="320" y="220" fill="#fbbf24" fontWeight="black" fontSize="13">b = {sideB} cm</text>
                           <text x="225" y="315" fill="#fbbf24" fontWeight="black" fontSize="13" textAnchor="middle">c = {sideC} cm</text>
-                          <text x="100" y={220} fill="#fbbf24" fontWeight="black" fontSize="13">d = {sideD} cm</text>
+                          <text x="100" y="220" fill="#fbbf24" fontWeight="black" fontSize="13">d = {sideD} cm</text>
                           <text x="110" y="90" fill="#fbbf24" fontWeight="black" fontSize="13">e = {sideE} cm</text>
                         </g>
                       );
