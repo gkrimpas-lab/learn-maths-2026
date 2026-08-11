@@ -12,7 +12,6 @@ function make4UniqueOptions(correct, wrongs) {
   const cleanWrongs = Array.from(new Set(wrongs)).filter(w => w !== correct);
   const selectedWrongs = cleanWrongs.slice(0, 3);
   
-  // Αν λείπουν δικλείδες ασφαλείας για 4 επιλογές
   while (selectedWrongs.length < 3) {
     const dummy = `${getRandomInt(10, 99)} cm`;
     if (dummy !== correct && !selectedWrongs.includes(dummy)) {
@@ -25,7 +24,7 @@ function make4UniqueOptions(correct, wrongs) {
 }
 
 // ----------------------------------------------------
-// ΒΟΗΘΗΤΙΚΑ ΚΑΘΑΡΑ SVG ΣΧΗΜΑΤΑ (ΧΩΡΙΣ ΣΗΜΑΝΣΕΙΣ)
+// ΒΟΗΘΗΤΙΚΑ ΚΑΘΑΡΑ SVG ΣΧΗΜΑΤΑ (ΧΩΡΙΣ ΥΠΟΔΕΙΞΕΙΣ)
 // ----------------------------------------------------
 const SVG_SHAPES = {
   parallelLines: (
@@ -40,12 +39,13 @@ const SVG_SHAPES = {
       <line x1="100" y1="15" x2="100" y2="85" stroke="#f43f5e" strokeWidth="3" />
     </svg>
   ),
-  pointToLine: (
+  // Καθαρό Σημείο Α και Ευθεία (ε) - Χωρίς διακεκομμένη γραμμή!
+  pointToLineClean: (
     <svg className="w-48 h-28 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 100">
       <line x1="20" y1="75" x2="180" y2="75" stroke="#38bdf8" strokeWidth="3" />
+      <text x="185" y="78" fill="#38bdf8" fontSize="12" fontWeight="bold">(ε)</text>
       <circle cx="100" cy="25" r="5" fill="#f59e0b" />
-      <text x="100" y="18" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="middle">Α</text>
-      <line x1="100" y1="25" x2="100" y2="75" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4,4" />
+      <text x="100" y="18" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="middle">Α</text>
     </svg>
   ),
   square: (
@@ -53,14 +53,37 @@ const SVG_SHAPES = {
       <rect x="65" y="15" width="70" height="70" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
     </svg>
   ),
+  // Τετράγωνο με Γράμματα Κορυφών Α, Β, Γ, Δ
+  squareLabeled: (
+    <svg className="w-48 h-28 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 100">
+      <rect x="65" y="20" width="60" height="60" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+      <text x="55" y="18" fill="#fbbf24" fontSize="13" fontWeight="black">Α</text>
+      <text x="135" y="18" fill="#fbbf24" fontSize="13" fontWeight="black">Β</text>
+      <text x="135" y="92" fill="#fbbf24" fontSize="13" fontWeight="black">Γ</text>
+      <text x="55" y="92" fill="#fbbf24" fontSize="13" fontWeight="black">Δ</text>
+    </svg>
+  ),
   rectangle: (
     <svg className="w-48 h-28 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 100">
       <rect x="35" y="25" width="130" height="50" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
     </svg>
   ),
-  triangle: (
+  // Ισοσκελές Τρίγωνο (2 ίσες πλευρές - ψηλό)
+  isoscelesTriangle: (
     <svg className="w-48 h-28 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 100">
-      <polygon points="100,15 45,85 155,85" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+      <polygon points="100,12 60,88 140,88" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+    </svg>
+  ),
+  // Ισόπλευρο Τρίγωνο (3 ίσες πλευρές)
+  equilateralTriangle: (
+    <svg className="w-48 h-28 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 100">
+      <polygon points="100,18 50,90 150,90" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+    </svg>
+  ),
+  // Σκαληνό Τρίγωνο (3 ΑΝΙΣΕΣ πλευρές)
+  scaleneTriangle: (
+    <svg className="w-48 h-28 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 100">
+      <polygon points="55,18 35,90 170,90" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
     </svg>
   ),
   rhombus: (
@@ -68,9 +91,10 @@ const SVG_SHAPES = {
       <polygon points="100,15 150,50 100,85 50,50" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
     </svg>
   ),
-  trapezoid: (
+  // Γενικό Ουδέτερο Τετράπλευρο
+  genericQuadrilateral: (
     <svg className="w-48 h-28 mx-auto bg-slate-900 rounded-xl" viewBox="0 0 200 100">
-      <polygon points="65,25 135,25 165,80 35,80" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
+      <polygon points="40,25 150,20 170,85 30,75" fill="#a855f7" fillOpacity="0.3" stroke="#c084fc" strokeWidth="3" />
     </svg>
   ),
   circle: (
@@ -138,7 +162,7 @@ const GEOMETRY_QUESTIONS_POOL = [
     correct: 'Κάθετο από το σημείο προς την ευθεία',
     wrongs: ['Παράλληλο προς την ευθεία', 'Οποιοδήποτε λοξό τμήμα', 'Το μεγαλύτερο δυνατό τμήμα'],
     explain: 'Η απόσταση σημείου από ευθεία είναι πάντα το μήκος του ΚΑΘΕΤΟΥ ευθύγραμμου τμήματος.',
-    svg: SVG_SHAPES.pointToLine
+    svg: SVG_SHAPES.pointToLineClean
   }),
   () => {
     const d = getRandomInt(4, 15);
@@ -147,15 +171,15 @@ const GEOMETRY_QUESTIONS_POOL = [
       correct: `${d} cm`,
       wrongs: [`${d + 4} cm`, `${2 * d + 4} cm`, '4 cm', `${d + 2} cm`],
       explain: `Η απόσταση είναι ΜΟΝΟ το μήκος του κάθετου τμήματος (${d} cm).`,
-      svg: SVG_SHAPES.pointToLine
+      svg: SVG_SHAPES.pointToLineClean
     };
   },
   () => ({
-    q: 'Ανάμεσα σε όλα τα ευθύγραμμα τμήματα που κινούνται από ένα σημείο Α προς μια ευθεία (ε), ποιο έχει το μικρότερο μήκος;',
+    q: 'Ανάμεσα σε όλα τα ευθύγράμματα τμήματα που κινούνται από ένα σημείο Α προς μια ευθεία (ε), ποιο έχει το μικρότερο μήκος;',
     correct: 'Το κάθετο ευθύγραμμο τμήμα',
     wrongs: ['Το πιο λοξό τμήμα', 'Το οριζόντιο τμήμα', 'Όλα έχουν το ίδιο μήκος'],
     explain: 'Το κάθετο τμήμα είναι το συντομότερο μονοπάτι (μικρότερο μήκος).',
-    svg: SVG_SHAPES.pointToLine
+    svg: SVG_SHAPES.pointToLineClean
   }),
   () => {
     const s = getRandomInt(5, 15);
@@ -164,7 +188,7 @@ const GEOMETRY_QUESTIONS_POOL = [
       correct: `${s} cm`,
       wrongs: [`${2 * s} cm`, `${s * s} cm`, `${s / 2} cm`, `${s + 2} cm`],
       explain: `Αφού οι πλευρές του τετραγώνου είναι κάθετες, η απόσταση είναι ίση με το μήκος της πλευράς (${s} cm).`,
-      svg: SVG_SHAPES.square
+      svg: SVG_SHAPES.squareLabeled
     };
   },
 
@@ -196,7 +220,7 @@ const GEOMETRY_QUESTIONS_POOL = [
       correct: `${s} cm`,
       wrongs: [`${3 * s} cm`, `${s / 3} cm`, `${s * 3} cm`, `${s + 3} cm`],
       explain: `Αφού το ισόπλευρο τρίγωνο έχει 3 ίσες πλευρές: ${3 * s} : 3 = ${s} cm.`,
-      svg: SVG_SHAPES.triangle
+      svg: SVG_SHAPES.equilateralTriangle
     };
   },
   () => {
@@ -273,11 +297,11 @@ const GEOMETRY_QUESTIONS_POOL = [
     svg: SVG_SHAPES.rhombus
   }),
   () => ({
-    q: 'Ένα τετράπλευρο που έχει ΜΟΝΟ δύο πλευρές παράλληλες μεταξύ τους ονομάζεται:',
-    correct: 'Τραπέζιο',
-    wrongs: ['Παραλληλόγραμμο', 'Ρόμβος', 'Τετράγωνο'],
-    explain: 'Το τραπέζιο έχει μόνο μία ομάδα παράλληλων πλευρών (τις βάσεις του).',
-    svg: SVG_SHAPES.trapezoid
+    q: 'Ποιο από τα παρακάτω σχήματα ΔΕΝ είναι παραλληλόγραμμο;',
+    correct: 'Το Τραπέζιο',
+    wrongs: ['Το Τετράγωνο', 'Το Ορθογώνιο', 'Ο Ρόμβος'],
+    explain: 'Τα παραλληλόγραμμα έχουν τις απέναντι πλευρές παράλληλες ανά δύο. Το τραπέζιο έχει μόνο μία ομάδα.',
+    svg: SVG_SHAPES.genericQuadrilateral
   }),
   () => ({
     q: 'Πόσες μοίρες είναι το άθροισμα των γωνιών οποιουδήποτε τετράπλευρου;',
@@ -285,13 +309,6 @@ const GEOMETRY_QUESTIONS_POOL = [
     wrongs: ['180°', '90°', '540°'],
     explain: 'Το άθροισμα των γωνιών κάθε τετράπλευρου είναι πάντα 360°.',
     svg: SVG_SHAPES.square
-  }),
-  () => ({
-    q: 'Ποιο από τα παρακάτω σχήματα ΔΕΝ είναι παραλληλόγραμμο;',
-    correct: 'Το Τραπέζιο',
-    wrongs: ['Το Τετράγωνο', 'Το Ορθογώνιο', 'Ο Ρόμβος'],
-    explain: 'Τα παραλληλόγραμμα έχουν τις απέναντι πλευρές παράλληλες ανά δύο. Το τραπέζιο έχει μόνο μία ομάδα.',
-    svg: SVG_SHAPES.trapezoid
   }),
 
   // --- 6. ΣΥΜΜΕΤΡΙΑ & ΑΞΟΝΑΣ ΣΥΜΜΕΤΡΙΑΣ ---
@@ -321,21 +338,21 @@ const GEOMETRY_QUESTIONS_POOL = [
     correct: '0',
     wrongs: ['1', '2', '3'],
     explain: 'Το σκαληνό τρίγωνο δεν έχει κανέναν άξονα συμμετρίας (0).',
-    svg: SVG_SHAPES.triangle
+    svg: SVG_SHAPES.scaleneTriangle
   }),
   () => ({
     q: 'Πόσους άξονες συμμετρίας έχει το Ισόπλευρο Τρίγωνο;',
     correct: '3',
     wrongs: ['1', '2', '0'],
     explain: 'Το ισόπλευρο τρίγωνο έχει 3 άξονες συμμετρίας (έναν από κάθε κορυφή).',
-    svg: SVG_SHAPES.triangle
+    svg: SVG_SHAPES.equilateralTriangle
   }),
   () => ({
     q: 'Πόσους άξονες συμμετρίας έχει το Ισοσκελές Τρίγωνο;',
     correct: '1',
     wrongs: ['3', '2', '0'],
     explain: 'Το ισοσκελές τρίγωνο έχει μόνο 1 άξονα συμμετρίας.',
-    svg: SVG_SHAPES.triangle
+    svg: SVG_SHAPES.isoscelesTriangle
   }),
   () => {
     const halfArea = getRandomInt(12, 40);
@@ -495,7 +512,7 @@ export default function EpanalipsiGeometryPage() {
                     <h3 className="text-lg font-bold text-gray-900 leading-snug">{q.q}</h3>
                   </div>
 
-                  {/* SVG ΣΧΗΜΑ ΧΩΡΙΣ ΣΗΜΑΝΣΕΙΣ */}
+                  {/* SVG ΣΧΗΜΑ ΧΩΡΙΣ ΣΗΜΑΝΣΕΙΣ / ΥΠΟΔΕΙΞΕΙΣ */}
                   {q.svg && <div className="mb-4">{q.svg}</div>}
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-0 md:pl-11">
