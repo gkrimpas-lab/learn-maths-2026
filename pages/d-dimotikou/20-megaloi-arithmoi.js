@@ -1,4 +1,3 @@
-// pages/d-dimotikou/1-megaloi-arithmoi.js
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -87,50 +86,90 @@ export default function MegaloiArithmoiPage() {
       </Head>
 
       <div>
-      {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full">
+        {/* NAVBAR */}
+        <nav className="bg-white shadow-md w-full sticky top-0 z-50">
           <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
             <Link href="/d-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
-            <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
-              🔙 Επιστροφή
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/d-dimotikou/20-megaloi-arithmoi-ask" className="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
+                <span>📝</span> Ασκήσεις
+              </Link>
+              <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
+                🔙 Επιστροφή
+              </Link>
+            </div>
           </div>
         </nav>
 
         {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-12`}>
+        <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
+          
+          {/* HEADER & EXERCISES PROMO CARD */}
+          <div className="bg-gradient-to-r from-teal-600 via-emerald-600 to-green-600 text-white p-8 rounded-3xl shadow-md relative overflow-hidden">
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <div className="md:col-span-2 space-y-3">
+                <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 1
+                </span>
+                <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
+                  💎 Οι Μεγάλοι Αριθμοί (μέχρι το 1.000.000)
+                </h1>
+                <p className="text-teal-100 text-base lg:text-lg leading-relaxed">
+                  Μαθαίνουμε πώς να διαβάζουμε, να γράφουμε και να αναλύουμε τους μεγάλους αριθμούς χρησιμοποιώντας τις **Κλάσεις** και την **Αξία Θέσης Ψηφίου**!
+                </p>
+              </div>
+
+              {/* ΠΛΑΙΣΙΟ ΠΑΡΑΠΟΜΠΗΣ ΣΤΙΣ ΑΣΚΗΣΕΙΣ */}
+              <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
+                <div className="text-3xl">🚀</div>
+                <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
+                <p className="text-xs text-teal-100">Δοκίμασε τις ασκήσεις στους μεγάλους αριθμούς για να σιγουρευτείς ότι τους έμαθες!</p>
+                <Link 
+                  href="/d-dimotikou/20-megaloi-arithmoi-ask"
+                  className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
+                >
+                  🎯 Μετάβαση στις Ασκήσεις
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* ΘΕΩΡΙΑ & ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ */}
           <div className="space-y-8 bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100">
             
-            {/* ΘΕΩΡΙΑ */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center border-b pb-8 border-gray-100">
               <div className="space-y-4">
-                <h2 className="text-3xl font-black text-gray-900 2xl:text-4xl">💎 Μεγάλοι Αριθμοί</h2>
-                <p className="text-gray-600 leading-relaxed text-base xl:text-lg">
-                  Στο δεκαδικό σύστημα αρίθμησης, η <strong>αξία κάθε ψηφίου</strong> εξαρτάται από τη <strong>θέση</strong> που κατέχει στον αριθμό.
+                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+                  <span>📖</span> Αναλυτική Θεωρία & Κανόνες
+                </h2>
+                <p className="text-gray-600 leading-relaxed text-sm md:text-base">
+                  Στο δεκαδικό σύστημα αρίθμησης, η <strong>αξία κάθε ψηφίου</strong> εξαρτάται από τη <strong>θέση</strong> που κατέχει στον αριθμό. Για να διαβάζουμε εύκολα τους μεγάλους αριθμούς, τους χωρίζουμε σε <strong>κλάσεις ανά 3 ψηφία</strong> από δεξιά προς τα αριστερά!
                 </p>
-                <div className="bg-teal-50 p-5 rounded-2xl border border-teal-100 text-sm xl:text-base text-teal-900 space-y-2 shadow-inner">
-                  <p>🏛️ <strong>Κλάση Χιλιάδων:</strong> Εκατοντάδες Χιλιάδες (ΕΧ), Δεκάδες Χιλιάδες (ΔΧ), Χιλιάδες (Χ).</p>
+                <div className="bg-teal-50 p-5 rounded-2xl border border-teal-100 text-xs md:text-sm text-teal-900 space-y-2 shadow-inner">
+                  <p>🏛️ <strong>Κλάση Χιλιάδων:</strong> Εκατοντάδες Χιλιάδες (ΕΧ), Δεκάδες Χιλιάδες (ΔΧ), Μονάδες Χιλιάδες (Χ).</p>
                   <p>🏠 <strong>Κλάση Μονάδων:</strong> Εκατοντάδες (Ε), Δεκάδες (Δ), Μονάδες (Μ).</p>
                 </div>
               </div>
 
               {/* ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ & ΟΝΟΜΑΣΙΑΣ */}
-              <div className="bg-gradient-to-br from-teal-500 to-emerald-600 text-white p-8 rounded-2xl shadow-md text-center py-10 space-y-4">
+              <div className="bg-gradient-to-br from-teal-500 to-emerald-600 text-white p-8 rounded-3xl shadow-md text-center py-10 space-y-4">
                 <span className="text-xs font-black uppercase tracking-widest text-teal-200">Ο Αριθμός σου</span>
                 <div className="text-4xl xl:text-5xl font-mono font-black tracking-tight text-white">
                   {formatNumber(totalNumber)}
                 </div>
-                <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 text-sm xl:text-base font-bold text-teal-50 leading-relaxed">
+                <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-sm xl:text-base font-bold text-teal-50 leading-relaxed">
                   🗣️ <span className="text-amber-300 font-extrabold capitalize">{numberToGreekWords(totalNumber)}</span>
                 </div>
               </div>
             </div>
 
             {/* ΔΙΑΔΡΑΣΤΙΚΟΣ ΑΒΑΚΑΣ */}
-            <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200 space-y-6">
-              <h3 className="text-xl font-black text-center text-gray-800 xl:text-2xl">🧮 Διαδραστικός Άβακας Αξίας Θέσης</h3>
+            <div className="bg-gray-50 p-6 md:p-8 rounded-3xl border border-gray-200 space-y-6">
+              <h3 className="text-xl font-black text-center text-gray-800 xl:text-2xl flex items-center justify-center gap-2">
+                <span>🧮</span> Διαδραστικός Άβακας Αξίας Θέσης
+              </h3>
 
               <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm overflow-x-auto">
                 <div className="min-w-[620px]">
@@ -173,13 +212,13 @@ export default function MegaloiArithmoiPage() {
                         <div className="flex gap-1.5 w-full justify-center">
                           <button 
                             onClick={() => updateDigits(col.key, -1)} 
-                            className="bg-red-500 hover:bg-red-600 text-white font-black text-sm w-8 h-8 rounded-lg shadow-sm transition flex items-center justify-center"
+                            className="bg-red-500 hover:bg-red-600 text-white font-black text-sm w-8 h-8 rounded-lg shadow-sm transition flex items-center justify-center active:scale-95"
                           >
                             -
                           </button>
                           <button 
                             onClick={() => updateDigits(col.key, 1)} 
-                            className="bg-green-500 hover:bg-green-600 text-white font-black text-sm w-8 h-8 rounded-lg shadow-sm transition flex items-center justify-center"
+                            className="bg-green-500 hover:bg-green-600 text-white font-black text-sm w-8 h-8 rounded-lg shadow-sm transition flex items-center justify-center active:scale-95"
                           >
                             +
                           </button>
@@ -193,6 +232,23 @@ export default function MegaloiArithmoiPage() {
             </div>
 
           </div>
+
+          {/* BOTTOM EXERCISES CALLOUT BANNER */}
+          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="space-y-1 text-center md:text-left">
+              <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
+              <p className="text-gray-800 text-sm md:text-base">
+                Έμαθες να διαβάζεις και να αναλύεις τους μεγάλους αριθμούς; Δοκίμασε τις διαδραστικές ασκήσεις!
+              </p>
+            </div>
+            <Link
+              href="/d-dimotikou/20-megaloi-arithmoi-ask"
+              className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            >
+              Ξεκίνα τις Ασκήσεις ➔
+            </Link>
+          </div>
+
         </main>
       </div>
 
