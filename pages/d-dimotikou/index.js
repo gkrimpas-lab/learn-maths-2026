@@ -23,6 +23,7 @@ export default function DDimotikouMenu() {
     { id: '16-tetrapleura', label: '🎯 16. Τετράπλευρα', href: '/d-dimotikou/16-tetrapleura' },
     { id: '17-perimetros', label: '🎯 17. Περίμετρος', href: '/d-dimotikou/17-perimetros' },
     { id: '18-simmetria', label: '🎯 18. Συμμετρία', href: '/d-dimotikou/18-simmetria' },
+    { id: '19-epanalipsi-2', label: '🎯 10. Επαναληπτικές Ασκήσεις 13 - 18', href: '/d-dimotikou/19-epanalipsi-2' },
     { id: '1-megaloi-arithmoi', label: '🍕 100. Μεγάλοι Αριθμοί', href: '/d-dimotikou/1-megaloi-arithmoi' },
     { id: '2-katheti-diairesi', label: '🔄 200. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' }
         
