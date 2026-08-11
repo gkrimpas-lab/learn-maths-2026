@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Analytics } from '@vercel/analytics/next';
 import { LAYOUT } from '../shared/layout-config'; // Import από τον global φάκελο
 
 export default function Home() {
