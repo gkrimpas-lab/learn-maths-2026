@@ -13,15 +13,18 @@ const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".
 // ΣΥΝΑΡΤΗΣΕΙΣ ΔΗΜΙΟΥΡΓΙΑΣ ΔΥΝΑΜΙΚΩΝ ΑΣΚΗΣΕΩΝ
 // ----------------------------------------------------
 
-// 1. Αξία Θέσης Ψηφίου (Input)
+// 1. Αξία Θέσης Ψηφίου (Input) - Με εγγύηση ΜΟΝΑΔΙΚΟΤΗΤΑΣ ΨΗΦΙΩΝ
 function makeDigitValueQuestion() {
-  const ex = getRandomInt(1, 9);
-  const dx = getRandomInt(0, 9);
-  const x = getRandomInt(0, 9);
-  const e = getRandomInt(0, 9);
-  const d = getRandomInt(0, 9);
-  const m = getRandomInt(0, 9);
+  // Παραγωγή 6 ΜΟΝΑΔΙΚΩΝ ψηφίων (0-9) ώστε κανένα ψηφίο να μη διπλοεμφανίζεται
+  const digits = [];
+  while (digits.length < 6) {
+    const d = getRandomInt(digits.length === 0 ? 1 : 0, 9); // Το πρώτο ψηφίο 1-9
+    if (!digits.includes(d)) {
+      digits.push(d);
+    }
+  }
 
+  const [ex, dx, x, e, d, m] = digits;
   const total = ex * 100000 + dx * 10000 + x * 1000 + e * 100 + d * 10 + m;
 
   const positions = [
@@ -67,7 +70,6 @@ function makeComparisonQuestion() {
   const num1 = base + diff;
   const num2 = base;
 
-  const isGreater = num1 > num2;
   const correct = `${formatNumber(num1)} > ${formatNumber(num2)}`;
 
   const options = [
