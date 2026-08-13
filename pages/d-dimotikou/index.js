@@ -25,7 +25,7 @@ export default function DDimotikouMenu() {
     { id: '18-simmetria', label: '🎯 18. Συμμετρία', href: '/d-dimotikou/18-simmetria' },
     { id: '19-epanalipsi-2', label: '🎯 19. Επαναληπτικές Ασκήσεις 13 - 18', href: '/d-dimotikou/19-epanalipsi-2' },
     { id: '20-megaloi-arithmoi', label: '🍕 20. Μεγάλοι Αριθμοί', href: '/d-dimotikou/20-megaloi-arithmoi' },
-    { id: '21-pollaplasiasmos-3-psifia.js', label: '🍕 21. Πολλαπλασιασμός 3 ψηφίων', href: '/d-dimotikou/21-pollaplasiasmos-3-psifia.js' },
+    { id: '21-pollaplasiasmos-3-psifia', label: '🍕 21. Πολλαπλασιασμός 3 ψηφίων', href: '/d-dimotikou/21-pollaplasiasmos-3-psifia' },
     { id: '2-katheti-diairesi', label: '🔄 200. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' }
         
   ];
