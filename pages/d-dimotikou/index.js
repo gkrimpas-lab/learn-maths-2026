@@ -8,7 +8,7 @@ export default function DDimotikouMenu() {
     { id: '1-arithmoi-eos-20-xiliades', label: '🍕 1. Αριθμοί έως 20.000', href: '/d-dimotikou/1-arithmoi-eos-20-xiliades' },
     { id: '2-poligona', label: '🍕 2. Πολύγωνα', href: '/d-dimotikou/2-poligona' },
     { id: '3-prosthesi-afairesi', label: '🍕 3. Πρόσθεση - Αφαίρεση Αντίστροφες', href: '/d-dimotikou/3-prosthesi-afairesi' },
-    { id: '4-pollaplasiasmos', label: '🍕 4. Πολλαπλασιασμός', href: '/d-dimotikou/4-pollaplasiasmos' },
+    { id: '4-pollaplasiasmos', label: '🍕 4. Πολλαπλασιασμός 2 ψηφίων', href: '/d-dimotikou/4-pollaplasiasmos' },
     { id: '5-diairesi', label: '🍕 5. Διαίρεση με 1 ψηφίο', href: '/d-dimotikou/5-diairesi' },
     { id: '6-dekadikoi', label: '✂️ 6. Δεκαδικά Κλάσματα', href: '/d-dimotikou/6-dekadikoi' },
     { id: '7-dekadikoi-sinexeia', label: '✂️ 7. Δεκαδικά Κλάσματα και Δεκαδικοί', href: '/d-dimotikou/7-dekadikoi-sinexeia' },
@@ -25,6 +25,7 @@ export default function DDimotikouMenu() {
     { id: '18-simmetria', label: '🎯 18. Συμμετρία', href: '/d-dimotikou/18-simmetria' },
     { id: '19-epanalipsi-2', label: '🎯 19. Επαναληπτικές Ασκήσεις 13 - 18', href: '/d-dimotikou/19-epanalipsi-2' },
     { id: '20-megaloi-arithmoi', label: '🍕 20. Μεγάλοι Αριθμοί', href: '/d-dimotikou/20-megaloi-arithmoi' },
+    { id: '21-pollaplasiasmos-3-psifia.js', label: '🍕 21. Πολλαπλασιασμός 3 ψηφίων', href: '/d-dimotikou/21-pollaplasiasmos-3-psifia.js' },
     { id: '2-katheti-diairesi', label: '🔄 200. Κάθετη Διαίρεση', href: '/d-dimotikou/2-katheti-diairesi' }
         
   ];
