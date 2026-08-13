@@ -9,7 +9,7 @@ function formatNumber(num) {
 
 export default function Pollaplasiasmos3PsifiaPage() {
   // Κατάσταση για τον διαδραστικό υπολογιστή μερικών γινομένων
-  const [numA, setNumA] = useState(243);
+  const [numA, setNumA] = useState(245);
   const [numB, setNumB] = useState(135);
 
   const unitsB = numB % 10;
@@ -188,34 +188,41 @@ export default function Pollaplasiasmos3PsifiaPage() {
                 </div>
               </div>
 
-              {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ */}
-              <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl font-mono flex flex-col items-center justify-center text-right space-y-2">
-                <div className="text-2xl md:text-3xl font-black text-slate-100 tracking-widest">
-                  {formatNumber(numA)}
-                </div>
-                <div className="text-2xl md:text-3xl font-black text-amber-400 tracking-widest border-b-2 border-slate-700 pb-2 w-48 text-right relative">
-                  <span className="absolute left-0 text-amber-400">×</span>
-                  {formatNumber(numB)}
-                </div>
+              {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ (ΜΕ ΑΠΟΛΥΤΗ ΣΤΟΙΧΙΣΗ ΔΕΞΙΑ) */}
+              <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl font-mono flex flex-col items-center justify-center space-y-2">
+                <div className="w-52 text-right space-y-2">
+                  
+                  {/* 1ος Αριθμός */}
+                  <div className="text-2xl md:text-3xl font-black text-slate-100 tracking-widest">
+                    {formatNumber(numA)}
+                  </div>
 
-                {/* 1ο Μερικό */}
-                <div className="text-lg md:text-xl font-bold text-emerald-400 w-48 tracking-widest pt-1">
-                  {formatNumber(p1)}
-                </div>
+                  {/* 2ος Αριθμός με το σύμβολο × */}
+                  <div className="text-2xl md:text-3xl font-black text-amber-400 tracking-widest border-b-2 border-slate-700 pb-2 relative">
+                    <span className="absolute left-0 text-amber-400">×</span>
+                    {formatNumber(numB)}
+                  </div>
 
-                {/* 2ο Μερικό */}
-                <div className="text-lg md:text-xl font-bold text-teal-300 w-48 tracking-widest">
-                  {p2 > 0 ? formatNumber(p2) : '0000'}
-                </div>
+                  {/* 1ο Μερικό Γινόμενο */}
+                  <div className="text-lg md:text-xl font-bold text-emerald-400 tracking-widest pt-1">
+                    {formatNumber(p1)}
+                  </div>
 
-                {/* 3ο Μερικό */}
-                <div className="text-lg md:text-xl font-bold text-purple-300 w-48 tracking-widest border-b-2 border-slate-700 pb-2">
-                  {p3 > 0 ? formatNumber(p3) : '00000'}
-                </div>
+                  {/* 2ο Μερικό Γινόμενο */}
+                  <div className="text-lg md:text-xl font-bold text-teal-300 tracking-widest">
+                    {p2 > 0 ? formatNumber(p2) : '0000'}
+                  </div>
 
-                {/* Τελικό Αποτέλεσμα */}
-                <div className="text-2xl md:text-3xl font-black text-amber-300 w-48 tracking-widest pt-2">
-                  {formatNumber(total)}
+                  {/* 3ο Μερικό Γινόμενο */}
+                  <div className="text-lg md:text-xl font-bold text-purple-300 tracking-widest border-b-2 border-slate-700 pb-2">
+                    {p3 > 0 ? formatNumber(p3) : '00000'}
+                  </div>
+
+                  {/* Τελικό Αποτέλεσμα */}
+                  <div className="text-2xl md:text-3xl font-black text-amber-300 tracking-widest pt-2">
+                    {formatNumber(total)}
+                  </div>
+
                 </div>
               </div>
 
