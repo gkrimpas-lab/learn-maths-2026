@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 function formatNumber(num) {
+  if (num === '' || isNaN(num)) return '0';
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
@@ -12,14 +13,18 @@ export default function Pollaplasiasmos3PsifiaPage() {
   const [numA, setNumA] = useState(245);
   const [numB, setNumB] = useState(135);
 
-  const unitsB = numB % 10;
-  const tensB = Math.floor((numB % 100) / 10);
-  const hundredsB = Math.floor(numB / 100);
+  // Υπολογισμοί με ασφάλεια αν το πεδίο σβηστεί προσωρινά
+  const valA = typeof numA === 'number' ? numA : 0;
+  const valB = typeof numB === 'number' ? numB : 0;
 
-  const p1 = numA * unitsB;          // 1ο μερικό γινόμενο
-  const p2 = numA * tensB * 10;      // 2ο μερικό γινόμενο
-  const p3 = numA * hundredsB * 100; // 3ο μερικό γινόμενο
-  const total = numA * numB;
+  const unitsB = valB % 10;
+  const tensB = Math.floor((valB % 100) / 10);
+  const hundredsB = Math.floor(valB / 100);
+
+  const p1 = valA * unitsB;          // 1ο μερικό γινόμενο
+  const p2 = valA * tensB * 10;      // 2ο μερικό γινόμενο
+  const p3 = valA * hundredsB * 100; // 3ο μερικό γινόμενο
+  const total = valA * valB;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -60,7 +65,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
                   ✖️ Πολλαπλασιασμός 3ψηφιων Αριθμών
                 </h1>
                 <p className="text-emerald-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε να εκτελούμε τον **κάθετο πολλαπλασιασμό τριψήφιου με τριψήφιο αριθμό** υπολογίζοντας τα **3 μερικά γινόμενα**!
+                  Μαθαίνουμε να εκτελούμε τον **κάθετο πολλαπλασιασμό τριψήφιου αριθμού** υπολογίζοντας τα **μερικά γινόμενα**!
                 </p>
               </div>
 
@@ -138,7 +143,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
                 <span>🧮</span> Διαδραστική Αναπαράσταση Κάθετου Πολλαπλασιασμού
               </h2>
               <p className="text-gray-500 text-sm mt-1">
-                Αλλάξτε τους αριθμούς για να δείτε πώς υπολογίζονται αυτόματα τα 3 μερικά γινόμενα και το τελικό άθροισμα!
+                Αλλάξτε τους αριθμούς για να δείτε πώς υπολογίζονται αυτόματα τα μερικά γινόμενα και το τελικό άθροισμα!
               </p>
             </div>
 
@@ -152,80 +157,79 @@ export default function Pollaplasiasmos3PsifiaPage() {
 
                 <div className="space-y-3">
                   <div>
-  <label className="block text-xs font-bold text-gray-600 mb-1">
-    1ος Αριθμός (Πολλαπλασιαστέος):
-  </label>
-  <input 
-    type="number"
-    min="100"
-    max="999"
-    value={numA}
-    onChange={(e) => {
-      const val = e.target.value;
-      if (val === '') {
-        setNumA('');
-      } else {
-        const parsed = Number(val);
-        if (parsed > 999) setNumA(999);
-        else setNumA(parsed);
-      }
-    }}
-    onBlur={() => {
-      if (!numA || numA < 100) setNumA(100);
-    }}
-    className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-  />
-</div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">
+                      1ος Αριθμός (100 έως 999):
+                    </label>
+                    <input 
+                      type="number"
+                      min="100"
+                      max="999"
+                      value={numA}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '') {
+                          setNumA('');
+                        } else {
+                          const parsed = Number(val);
+                          if (parsed > 999) setNumA(999);
+                          else setNumA(parsed);
+                        }
+                      }}
+                      onBlur={() => {
+                        if (!numA || numA < 100) setNumA(100);
+                      }}
+                      className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    />
+                  </div>
 
-<div>
-  <label className="block text-xs font-bold text-gray-600 mb-1">
-    2ος Αριθμός (Πολλαπλασιαστής):
-  </label>
-  <input 
-    type="number"
-    min="100"
-    max="999"
-    value={numB}
-    onChange={(e) => {
-      const val = e.target.value;
-      if (val === '') {
-        setNumB('');
-      } else {
-        const parsed = Number(val);
-        if (parsed > 999) setNumB(999);
-        else setNumB(parsed);
-      }
-    }}
-    onBlur={() => {
-      if (!numB || numB < 100) setNumB(100);
-    }}
-    className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-  />
-</div>
-
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">
+                      2ος Αριθμός (0 έως 999):
+                    </label>
+                    <input 
+                      type="number"
+                      min="0"
+                      max="999"
+                      value={numB}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '') {
+                          setNumB('');
+                        } else {
+                          const parsed = Number(val);
+                          if (parsed > 999) setNumB(999);
+                          else setNumB(parsed);
+                        }
+                      }}
+                      onBlur={() => {
+                        if (numB === '' || numB < 0) setNumB(0);
+                      }}
+                      className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    />
+                  </div>
                 </div>
 
                 <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-amber-900 text-xs space-y-1">
-                  <p className="font-bold">💡 Θυμήσου:</p>
-                  <p>• 1ο Μερικό: {numA} × {unitsB} = {formatNumber(p1)}</p>
-                  <p>• 2ο Μερικό: {numA} × {tensB * 10} = {formatNumber(p2)}</p>
-                  <p>• 3ο Μερικό: {numA} × {hundredsB * 100} = {formatNumber(p3)}</p>
+                  <p className="font-bold">💡 Αναλυτικά Μερικά Γινόμενα:</p>
+                  <p>• 1ο Μερικό (Μονάδες): {valA} × {unitsB} = {formatNumber(p1)}</p>
+                  <p>• 2ο Μερικό (Δεκάδες): {valA} × {tensB * 10} = {formatNumber(p2)}</p>
+                  <p>• 3ο Μερικό (Εκατοντάδες): {valA} × {hundredsB * 100} = {formatNumber(p3)}</p>
                 </div>
               </div>
 
-              {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ (ΜΕ ΑΠΟΛΥΤΗ ΣΤΟΙΧΙΣΗ ΔΕΞΙΑ) */}
+              {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ (ΜΕ ΑΠΟΛΥΤΗ ΣТОΙΧΙΣΗ ΔΕΞΙΑ) */}
               <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl font-mono flex flex-col items-center justify-center space-y-2">
                 <div className="w-52 text-right space-y-2">
                   
                   {/* 1ος Αριθμός */}
                   <div className="text-2xl md:text-3xl font-black text-slate-100 tracking-widest">
-                    {formatNumber(numA)}
+                    {formatNumber(valA)}
                   </div>
 
                   {/* 2ος Αριθμός με το σύμβολο × */}
                   <div className="text-2xl md:text-3xl font-black text-amber-400 tracking-widest border-b-2 border-slate-700 pb-2 relative">
                     <span className="absolute left-0 text-amber-400">×</span>
-                    {formatNumber(numB)}
+                    {formatNumber(valB)}
                   </div>
 
                   {/* 1ο Μερικό Γινόμενο */}
@@ -235,12 +239,12 @@ export default function Pollaplasiasmos3PsifiaPage() {
 
                   {/* 2ο Μερικό Γινόμενο */}
                   <div className="text-lg md:text-xl font-bold text-teal-300 tracking-widest">
-                    {p2 > 0 ? formatNumber(p2) : '0000'}
+                    {p2 > 0 ? formatNumber(p2) : '0'}
                   </div>
 
                   {/* 3ο Μερικό Γινόμενο */}
                   <div className="text-lg md:text-xl font-bold text-purple-300 tracking-widest border-b-2 border-slate-700 pb-2">
-                    {p3 > 0 ? formatNumber(p3) : '00000'}
+                    {p3 > 0 ? formatNumber(p3) : '0'}
                   </div>
 
                   {/* Τελικό Αποτέλεσμα */}
