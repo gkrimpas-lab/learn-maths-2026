@@ -164,6 +164,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
                       type="number"
                       min="100"
                       max="999"
+                      autoComplete="off"
                       value={numA}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -190,6 +191,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
                       type="number"
                       min="0"
                       max="999"
+                      autoComplete="off"
                       value={numB}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -217,7 +219,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
                 </div>
               </div>
 
-              {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ (ΜΕ ΑΠΟΛΥΤΗ ΣТОΙΧΙΣΗ ΔΕΞΙΑ) */}
+              {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ (ΜΕ ΑΠΟΛΥΤΗ ΣΤΟΙΧΙΣΗ ΔΕΞΙΑ) */}
               <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl font-mono flex flex-col items-center justify-center space-y-2">
                 <div className="w-52 text-right space-y-2">
                   
