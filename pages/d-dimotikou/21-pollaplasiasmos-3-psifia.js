@@ -152,32 +152,57 @@ export default function Pollaplasiasmos3PsifiaPage() {
 
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-gray-600 mb-1">
-                      1ος Αριθμός (Πολλαπλασιαστέος):
-                    </label>
-                    <input 
-                      type="number"
-                      min="100"
-                      max="999"
-                      value={numA}
-                      onChange={(e) => setNumA(Math.min(999, Math.max(100, Number(e.target.value))))}
-                      className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                    />
-                  </div>
+  <label className="block text-xs font-bold text-gray-600 mb-1">
+    1ος Αριθμός (Πολλαπλασιαστέος):
+  </label>
+  <input 
+    type="number"
+    min="100"
+    max="999"
+    value={numA}
+    onChange={(e) => {
+      const val = e.target.value;
+      if (val === '') {
+        setNumA('');
+      } else {
+        const parsed = Number(val);
+        if (parsed > 999) setNumA(999);
+        else setNumA(parsed);
+      }
+    }}
+    onBlur={() => {
+      if (!numA || numA < 100) setNumA(100);
+    }}
+    className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+  />
+</div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-gray-600 mb-1">
-                      2ος Αριθμός (Πολλαπλασιαστής):
-                    </label>
-                    <input 
-                      type="number"
-                      min="100"
-                      max="999"
-                      value={numB}
-                      onChange={(e) => setNumB(Math.min(999, Math.max(100, Number(e.target.value))))}
-                      className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                    />
-                  </div>
+<div>
+  <label className="block text-xs font-bold text-gray-600 mb-1">
+    2ος Αριθμός (Πολλαπλασιαστής):
+  </label>
+  <input 
+    type="number"
+    min="100"
+    max="999"
+    value={numB}
+    onChange={(e) => {
+      const val = e.target.value;
+      if (val === '') {
+        setNumB('');
+      } else {
+        const parsed = Number(val);
+        if (parsed > 999) setNumB(999);
+        else setNumB(parsed);
+      }
+    }}
+    onBlur={() => {
+      if (!numB || numB < 100) setNumB(100);
+    }}
+    className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+  />
+</div>
+
                 </div>
 
                 <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-amber-900 text-xs space-y-1">
