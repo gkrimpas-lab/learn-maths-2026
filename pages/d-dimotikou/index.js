@@ -28,7 +28,8 @@ export default function DDimotikouMenu() {
     { id: '21-pollaplasiasmos-3-psifia', label: '🍕 21. Πολλαπλασιασμός 3 ψηφίων', href: '/d-dimotikou/21-pollaplasiasmos-3-psifia' },
     { id: '22-diairesi-2-psifia', label: '🍕 22. Διαίρεση με 2 ψηφία', href: '/d-dimotikou/22-diairesi-2-psifia' },
     { id: '23-anagogi-monada', label: '🍕 23. Αναγωγή στη Μονάδα', href: '/d-dimotikou/23-anagogi-monada' },
-    { id: '24-epanalipsi-3', label: '🎯 24. Επαναληπτικές Ασκήσεις 20 - 23', href: '/d-dimotikou/24-epanalipsi-3' }
+    { id: '24-epanalipsi-3', label: '🎯 24. Επαναληπτικές Ασκήσεις 20 - 23', href: '/d-dimotikou/24-epanalipsi-3' },
+    { id: '25-ora', label: '🎯 25. Ώρα και ρολόι', href: '/d-dimotikou/25-ora' }
         
   ];
 
