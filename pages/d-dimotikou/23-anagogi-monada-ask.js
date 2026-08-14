@@ -3,87 +3,76 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
-
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
+const ITEMS_POOL = [
+  { item: 'μολύβια', single: 'μολύβι', emoji: '✏️' },
+  { item: 'τετράδια', single: 'τετράδιο', emoji: '📓' },
+  { item: 'σοκολάτες', single: 'σοκολάτα', emoji: '🍫' },
+  { item: 'μπάλες', single: 'μπάλα', emoji: '⚽' },
+  { item: 'χυμοί', single: 'χυμός', emoji: '🧃' },
+  { item: 'μαρκαδόροι', single: 'μαρκαδόρος', emoji: '🖍️' },
+  { item: 'κρουασάν', single: 'κρουασάν', emoji: '🥐' }
+];
 
-// 1. Άσκηση: Εύρεση της Μονάδας (Βήμα 1 - Input)
-function makeUnitOnlyQuestion() {
-  const items = [
-    { name: 'μολύβια', single: 'μολύβι', emoji: '✏️' },
-    { name: 'τετράδια', single: 'τετράδιο', emoji: '📓' },
-    { name: 'χυμοί', single: 'χυμός', emoji: '🧃' },
-    { name: 'σοκολάτες', single: 'σοκολάτα', emoji: '🍫' }
-  ];
-  const item = items[getRandomInt(0, items.length - 1)];
-  const qty = getRandomInt(3, 8);
-  const costPerUnit = getRandomInt(2, 6);
-  const totalCost = qty * costPerUnit;
+// 1. Βήμα 1: Εύρεση Τιμής Μονάδας (Input)
+function makeUnitCostQuestion() {
+  const itemObj = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
+  const unitPrice = getRandomInt(2, 8);
+  const qty = getRandomInt(2, 6);
+  const totalCost = unitPrice * qty;
 
   return {
-    q: `Αν τα ${qty} ${item.name} ${item.emoji} κοστίζουν ${totalCost} €, πόσο κοστίζει το 1 ${item.single};`,
-    correct: costPerUnit,
+    q: `Αν τα ${qty} ${itemObj.item} ${itemObj.emoji} κοστίζουν συνολικά ${totalCost} €, πόσο κοστίζει το 1 ${itemObj.single};`,
+    correct: unitPrice,
     unit: '€',
-    explain: `Διαιρούμε το συνολικό κόστος με το πλήθος: ${totalCost} : ${qty} = ${costPerUnit} € το 1 ${item.single}.`
+    explain: `Διαιρούμε το συνολικό ποσό με το πλήθος: ${totalCost} : ${qty} = ${unitPrice} €.`
   };
 }
 
-// 2. Άσκηση: Πλήρης Αναγωγή στη Μονάδα (Βήμα 1 & 2 - Input)
-function makeFullAnagogiQuestion() {
-  const items = [
-    { name: 'βιβλία', emoji: '📚' },
-    { name: 'μπάλες', emoji: '⚽' },
-    { name: 'εισιτήρια', emoji: '🎟️' },
-    { name: 'μπλουζάκια', emoji: '👕' }
-  ];
-  const item = items[getRandomInt(0, items.length - 1)];
-  const q1 = getRandomInt(2, 5);
-  const costPerUnit = getRandomInt(3, 8);
-  const total1 = q1 * costPerUnit;
+// 2. Πλήρες Πρόβλημα Αναγωγής στη Μονάδα (Input)
+function makeFullProblemQuestion() {
+  const itemObj = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
+  const unitPrice = getRandomInt(2, 7);
+  const initialQty = getRandomInt(2, 5);
+  const initialCost = unitPrice * initialQty;
 
-  let q2 = getRandomInt(4, 9);
-  while (q2 === q1) {
-    q2 = getRandomInt(4, 9);
+  let targetQty = getRandomInt(3, 9);
+  while (targetQty === initialQty) {
+    targetQty = getRandomInt(3, 9);
   }
-  const total2 = q2 * costPerUnit;
+
+  const finalCost = unitPrice * targetQty;
 
   return {
-    q: `Αν τα ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, πόσο κοστίζουν τα ${q2} ${item.name};`,
-    correct: total2,
+    q: `Τα ${initialQty} ${itemObj.item} ${itemObj.emoji} κοστίζουν ${initialCost} €. Πόσο θα πληρώσουμε για να αγοράσουμε ${targetQty} ${itemObj.item};`,
+    correct: finalCost,
     unit: '€',
-    explain: `Βήμα 1: Το 1 ${item.name.slice(0, -1)} κοστίζει ${total1} : ${q1} = ${costPerUnit} €. Βήμα 2: Τα ${q2} ${item.name} κοστίζουν ${q2} × ${costPerUnit} = ${total2} €.`
+    explain: `Βήμα 1: Το 1 ${itemObj.single} κοστίζει ${initialCost} : ${initialQty} = ${unitPrice} €. Βήμα 2: Τα ${targetQty} ${itemObj.item} κοστίζουν ${targetQty} × ${unitPrice} = ${finalCost} €.`
   };
 }
 
-// 3. Άσκηση: Πολλαπλή Επιλογή με 4 Επιλογές (MCQ)
-function makeMCQAnagogiQuestion() {
-  const scenarios = [
-    { item: 'κιλά μήλα', emoji: '🍎', q1: 3, unitCost: 2, q2: 7, unitName: '€' },
-    { item: 'μέτρα ύφασμα', emoji: '🧵', q1: 4, unitCost: 5, q2: 6, unitName: '€' },
-    { item: 'πακέτα αυτοκόλλητα', emoji: '📦', q1: 2, unitCost: 4, q2: 8, unitName: '€' },
-    { item: 'κουτιά μαρκαδόροι', emoji: '🎨', q1: 5, unitCost: 3, q2: 4, unitName: '€' }
-  ];
+// 3. Πολλαπλή Επιλογή (MCQ)
+function makeMCQQuestion() {
+  const itemObj = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
+  const unitPrice = getRandomInt(2, 6);
+  const initialQty = getRandomInt(2, 4);
+  const initialCost = unitPrice * initialQty;
+  const targetQty = getRandomInt(5, 8);
+  const finalCost = unitPrice * targetQty;
 
-  const sc = scenarios[getRandomInt(0, scenarios.length - 1)];
-  const total1 = sc.q1 * sc.unitCost;
-  const correct = sc.q2 * sc.unitCost;
-
-  const correctText = `${correct} €`;
-  const wrong1 = `${correct + sc.unitCost} €`;
-  const wrong2 = `${correct - sc.unitCost} €`;
-  const wrong3 = `${correct + 2 * sc.unitCost} €`;
+  const correctText = `${finalCost} €`;
+  const wrong1 = `${finalCost + unitPrice} €`;
+  const wrong2 = `${finalCost - unitPrice} €`;
+  const wrong3 = `${finalCost + 2 * unitPrice} €`;
 
   const rawOptions = [correctText, wrong1, wrong2, wrong3];
   const uniqueOptions = Array.from(new Set(rawOptions));
 
   while (uniqueOptions.length < 4) {
-    const dummy = `${correct + getRandomInt(3, 15)} €`;
+    const dummy = `${finalCost + getRandomInt(4, 15)} €`;
     if (!uniqueOptions.includes(dummy)) {
       uniqueOptions.push(dummy);
     }
@@ -95,47 +84,42 @@ function makeMCQAnagogiQuestion() {
   })).sort(() => Math.random() - 0.5);
 
   return {
-    q: `Αν τα ${sc.q1} ${sc.item} ${sc.emoji} κοστίζουν ${total1} €, πόσο θα πληρώσουμε για ${sc.q2} ${sc.item};`,
+    q: `Ένα κατάστημα πουλάει ${initialQty} ${itemObj.item} ${itemObj.emoji} προς ${initialCost} €. Πόσο κοστίζουν τα ${targetQty} ${itemObj.item};`,
     options: choices,
     correct: correctText,
-    explain: `Το 1 κοστίζει ${total1} : ${sc.q1} = ${sc.unitCost} €. Άρα τα ${sc.q2} κοστίζουν ${sc.q2} × ${sc.unitCost} = ${correct} €.`
+    explain: `Το 1 ${itemObj.single} κοστίζει ${initialCost} : ${initialQty} = ${unitPrice} €. Άρα τα ${targetQty} κοστίζουν ${targetQty} × ${unitPrice} = ${finalCost} €.`
   };
 }
 
-// 4. Άσκηση: Αντίστροφη Αναγωγή στη Μονάδα (Input - Εύρεση Ποσότητας)
-function makeReverseAnagogiQuestion() {
-  const items = [
-    { name: 'παγωτά', single: 'παγωτό', emoji: '🍦' },
-    { name: 'τυρόπιτες', single: 'τυρόπιτα', emoji: '🥐' },
-    { name: 'εισιτήρια λεωφορείου', single: 'εισιτήριο', emoji: '🚌' }
-  ];
-  const item = items[getRandomInt(0, items.length - 1)];
-  const q1 = getRandomInt(2, 4);
-  const costPerUnit = getRandomInt(2, 4);
-  const total1 = q1 * costPerUnit;
+// 4. Αντίστροφο Πρόβλημα: Εύρεση Πλήθους (Input)
+function makeReverseQuestion() {
+  const itemObj = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
+  const unitPrice = getRandomInt(2, 5);
+  const initialQty = getRandomInt(2, 4);
+  const initialCost = unitPrice * initialQty;
 
   const targetQty = getRandomInt(5, 10);
-  const totalAvailable = targetQty * costPerUnit;
+  const budget = unitPrice * targetQty;
 
   return {
-    q: `Αν τα ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, πόσα ${item.name} μπορούμε να αγοράσουμε με ${totalAvailable} €;`,
+    q: `Τα ${initialQty} ${itemObj.item} ${itemObj.emoji} κοστίζουν ${initialCost} €. Πόσα ${itemObj.item} μπορούμε να αγοράσουμε με ${budget} €;`,
     correct: targetQty,
-    unit: item.name,
-    explain: `Βήμα 1: Το 1 ${item.single} κοστίζει ${total1} : ${q1} = ${costPerUnit} €. Βήμα 2: Με ${totalAvailable} € αγοράζουμε ${totalAvailable} : ${costPerUnit} = ${targetQty} ${item.name}.`
+    unit: itemObj.item,
+    explain: `Βήμα 1: Το 1 ${itemObj.single} κοστίζει ${initialCost} : ${initialQty} = ${unitPrice} €. Βήμα 2: Με ${budget} € αγοράζουμε ${budget} : ${unitPrice} = ${targetQty} ${itemObj.item}.`
   };
 }
 
 // Δημιουργία 8 Ερωτήσεων
 function generateQuestions() {
   return {
-    q1: makeUnitOnlyQuestion(),
-    q2: makeUnitOnlyQuestion(),
-    q3: makeFullAnagogiQuestion(),
-    q4: makeFullAnagogiQuestion(),
-    q5: makeMCQAnagogiQuestion(),
-    q6: makeMCQAnagogiQuestion(),
-    q7: makeReverseAnagogiQuestion(),
-    q8: makeReverseAnagogiQuestion()
+    q1: makeUnitCostQuestion(),
+    q2: makeUnitCostQuestion(),
+    q3: makeFullProblemQuestion(),
+    q4: makeFullProblemQuestion(),
+    q5: makeMCQQuestion(),
+    q6: makeMCQQuestion(),
+    q7: makeReverseQuestion(),
+    q8: makeReverseQuestion()
   };
 }
 
@@ -182,8 +166,8 @@ export default function AnagogiMonadaAskPage() {
     setSubmitted(true);
   };
 
-  // Render Input Number Ασκήσεων (Q1, Q2, Q3, Q4, Q7, Q8)
-  const renderInputNumber = (qKey, qData, numLabel, colorClass, placeholderText) => (
+  // Render Input Ασκήσεων
+  const renderInputQuestion = (qKey, qData, numLabel, colorClass) => (
     <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
       submitted 
         ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
@@ -198,12 +182,13 @@ export default function AnagogiMonadaAskPage() {
         <div className="flex items-center gap-2">
           <input 
             type="number"
-            placeholder={placeholderText}
+            placeholder="Γράψε την απάντηση"
             value={answers[qKey]}
             onChange={(e) => handleInputChange(qKey, e.target.value)}
             disabled={submitted}
             className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none"
           />
+          {qData.unit && <span className="font-bold text-gray-600 text-lg">{qData.unit}</span>}
         </div>
       </div>
 
@@ -308,7 +293,7 @@ export default function AnagogiMonadaAskPage() {
                 📝 Ασκήσεις: Αναγωγή στη Μονάδα
               </h1>
               <p className="text-amber-100 text-sm md:text-base mt-1">
-                8 Δυναμικά προβλήματα! Πατώντας **«Νέες Ασκήσεις»** τα δεδομένα και οι αριθμοί αλλάζουν αυτόματα.
+                8 Δυναμικά προβλήματα! Πατώντας **«Νέες Ασκήσεις»** οι αριθμοί και τα σενάρια αλλάζουν αυτόματα.
               </p>
             </div>
 
@@ -322,17 +307,17 @@ export default function AnagogiMonadaAskPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
 
-            {renderInputNumber('q1', questions.q1, 1, 'bg-blue-600', 'Γράψε την τιμή του 1')}
-            {renderInputNumber('q2', questions.q2, 2, 'bg-blue-600', 'Γράψε την τιμή του 1')}
+            {renderInputQuestion('q1', questions.q1, 1, 'bg-blue-600')}
+            {renderInputQuestion('q2', questions.q2, 2, 'bg-blue-600')}
 
-            {renderInputNumber('q3', questions.q3, 3, 'bg-emerald-600', 'Γράψε το τελικό κόστος')}
-            {renderInputNumber('q4', questions.q4, 4, 'bg-emerald-600', 'Γράψε το τελικό κόστος')}
+            {renderInputQuestion('q3', questions.q3, 3, 'bg-emerald-600')}
+            {renderInputQuestion('q4', questions.q4, 4, 'bg-emerald-600')}
 
             {renderMCQQuestion('q5', questions.q5, 5)}
             {renderMCQQuestion('q6', questions.q6, 6)}
 
-            {renderInputNumber('q7', questions.q7, 7, 'bg-amber-600', 'Γράψε το πλήθος των πραγμάτων')}
-            {renderInputNumber('q8', questions.q8, 8, 'bg-amber-600', 'Γράψε το πλήθος των πραγμάτων')}
+            {renderInputQuestion('q7', questions.q7, 7, 'bg-amber-600')}
+            {renderInputQuestion('q8', questions.q8, 8, 'bg-amber-600')}
 
             {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
             {!submitted && (
@@ -373,7 +358,7 @@ export default function AnagogiMonadaAskPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Παίξε ξανά με νέα προβλήματα!
+                <span>🔄</span> Παίξε ξανά με νέες ασκήσεις!
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden md:block">
