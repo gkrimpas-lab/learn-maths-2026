@@ -146,8 +146,8 @@ export default function AnagogiMonadaPage() {
                 «Αν τα <strong>3 τετράδια</strong> κοστίζουν <strong>6 €</strong>, πόσο κοστίζουν τα <strong>5 τετράδια</strong>;»
               </p>
               <ul className="text-xs md:text-sm space-y-1.5 pl-2 font-medium text-gray-800">
-                <li>• <strong>Βήμα 1:</strong> Βρίσκουμε πόσο κοστίζει το 1 τετράδιο $\rightarrow$ $6 : 3 = \mathbf{2\text{ €}}$.</li>
-                <li>• <strong>Βήμα 2:</strong> Βρίσκουμε πόσο κοστίζουν τα 5 τετράδια $\rightarrow$ $5 \times 2 = \mathbf{10\text{ €}}$.</li>
+                <li>• <strong>Βήμα 1:</strong> Βρίσκουμε πόσο κοστίζει το 1 τετράδιο → 6 : 3 = <strong className="text-blue-700 font-bold">2 €</strong>.</li>
+                <li>• <strong>Βήμα 2:</strong> Βρίσκουμε πόσο κοστίζουν τα 5 τετράδια → 5 × 2 = <strong className="text-emerald-700 font-bold">10 €</strong>.</li>
               </ul>
             </div>
           </div>
