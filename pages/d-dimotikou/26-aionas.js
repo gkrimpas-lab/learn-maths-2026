@@ -8,9 +8,18 @@ function formatNumber(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-// Μετατροπή αιώνα σε λατινική γραφή (π.χ. 21 -> XXI)
+// Μετατροπή αιώνα σε λατινική γραφή (π.χ. 21 -> XXI, 30 -> XXX)
 function toRoman(num) {
   const romanMap = [
+    { val: 30, str: 'XXX' },
+    { val: 29, str: 'XXIX' },
+    { val: 28, str: 'XXVIII' },
+    { val: 27, str: 'XXVII' },
+    { val: 26, str: 'XXVI' },
+    { val: 25, str: 'XXV' },
+    { val: 24, str: 'XXIV' },
+    { val: 23, str: 'XXIII' },
+    { val: 22, str: 'XXII' },
     { val: 21, str: 'XXI' },
     { val: 20, str: 'XX' },
     { val: 19, str: 'XIX' },
@@ -251,7 +260,7 @@ export default function AionasTheoryPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-black uppercase text-gray-600 mb-1">
-                      Έτος:
+                      Έτος (1 έως 3.000):
                     </label>
                     <input 
                       type="number"
@@ -274,7 +283,7 @@ export default function AionasTheoryPage() {
                   <input 
                     type="range" 
                     min="1" 
-                    max="2100" 
+                    max="3000" 
                     value={y} 
                     onChange={(e) => setYearInput(Number(e.target.value))}
                     className="w-full accent-indigo-600 cursor-pointer"
