@@ -13,38 +13,61 @@ function formatNumber(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+// ----------------------------------------------------
+// ΔΕΞΑΜΕΝΗ 20+ ΑΝΤΙΚΕΙΜΕΝΩΝ ΜΕ ΠΛΗΡΗ ΓΡΑΜΜΑΤΙΚΗ ΔΟΜΗ
+// ----------------------------------------------------
+const ITEMS_POOL = [
+  // Ουδέτερα
+  { name: 'μολύβια', single: 'μολύβι', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '✏️' },
+  { name: 'τετράδια', single: 'τετράδιο', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '📓' },
+  { name: 'βιβλία', single: 'βιβλίο', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '📚' },
+  { name: 'παγωτά', single: 'παγωτό', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '🍦' },
+  { name: 'εισιτήρια', single: 'εισιτήριο', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '🎟️' },
+  { name: 'μπλουζάκια', single: 'μπλουζάκι', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '👕' },
+  { name: 'κρουασάν', single: 'κρουασάν', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '🥐' },
+  { name: 'παιχνίδια', single: 'παιχνίδι', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '🧸' },
+  { name: 'κουτιά μαρκαδόροι', single: 'κουτί μαρκαδόροι', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '🎨' },
+  { name: 'πακέτα αυτοκόλλητα', single: 'πακέτο αυτοκόλλητα', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '📦' },
+  { name: 'σάντουιτς', single: 'σάντουιτς', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '🥪' },
+  { name: 'ρολόγια', single: 'ρολόι', artPlural: 'τα', artSingle: 'το', howMany: 'πόσα', emoji: '⌚' },
+
+  // Θηλυκά
+  { name: 'μπάλες', single: 'μπάλα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '⚽' },
+  { name: 'σοκολάτες', single: 'σοκολάτα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '🍫' },
+  { name: 'τυρόπιτες', single: 'τυρόπιτα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '🥧' },
+  { name: 'τσάντες', single: 'τσάντα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '🎒' },
+  { name: 'γόμες', single: 'γόμα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '🧼' },
+  { name: 'ξύστρες', single: 'ξύστρα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '✂️' },
+  { name: 'πίτσες', single: 'πίτσα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '🍕' },
+  { name: 'κούπες', single: 'κούπα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '☕' },
+
+  // Αρσενικά
+  { name: 'χυμοί', single: 'χυμός', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσοι', emoji: '🧃' },
+  { name: 'χάρακες', single: 'χάρακας', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσοι', emoji: '📏' },
+  { name: 'φακέλοι', single: 'φάκελος', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσοι', emoji: '✉️' },
+  { name: 'πίνακες', single: 'πίνακας', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσοι', emoji: '🖼️' }
+];
+
 // 1. Άσκηση: Εύρεση της Μονάδας (Βήμα 1 - Input)
 function makeUnitOnlyQuestion() {
-  const items = [
-    { name: 'μολύβια', single: 'μολύβι', emoji: '✏️' },
-    { name: 'τετράδια', single: 'τετράδιο', emoji: '📓' },
-    { name: 'χυμοί', single: 'χυμός', emoji: '🧃' },
-    { name: 'σοκολάτες', single: 'σοκολάτα', emoji: '🍫' }
-  ];
-  const item = items[getRandomInt(0, items.length - 1)];
+  const item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
   const qty = getRandomInt(3, 8);
-  const costPerUnit = getRandomInt(2, 6);
+  const costPerUnit = getRandomInt(2, 7);
   const totalCost = qty * costPerUnit;
 
   return {
-    q: `Αν τα ${qty} ${item.name} ${item.emoji} κοστίζουν ${totalCost} €, πόσο κοστίζει το 1 ${item.single};`,
+    q: `Αν ${item.artPlural} ${qty} ${item.name} ${item.emoji} κοστίζουν ${totalCost} €, πόσο κοστίζει ${item.artSingle} 1 ${item.single};`,
     correct: costPerUnit,
     unit: '€',
-    explain: `Διαιρούμε το συνολικό κόστος με το πλήθος: ${totalCost} : ${qty} = ${costPerUnit} € το 1 ${item.single}.`
+    explain: `Διαιρούμε το συνολικό κόστος με το πλήθος: ${totalCost} : ${qty} = ${costPerUnit} € ${item.artSingle} 1 ${item.single}.`
   };
 }
 
 // 2. Άσκηση: Πλήρης Αναγωγή στη Μονάδα (Βήμα 1 & 2 - Input)
 function makeFullAnagogiQuestion() {
-  const items = [
-    { name: 'βιβλία', emoji: '📚' },
-    { name: 'μπάλες', emoji: '⚽' },
-    { name: 'εισιτήρια', emoji: '🎟️' },
-    { name: 'μπλουζάκια', emoji: '👕' }
-  ];
-  const item = items[getRandomInt(0, items.length - 1)];
+  const item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
   const q1 = getRandomInt(2, 5);
-  const costPerUnit = getRandomInt(3, 8);
+  const costPerUnit = getRandomInt(2, 8);
   const total1 = q1 * costPerUnit;
 
   let q2 = getRandomInt(4, 9);
@@ -54,30 +77,30 @@ function makeFullAnagogiQuestion() {
   const total2 = q2 * costPerUnit;
 
   return {
-    q: `Αν τα ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, πόσο κοστίζουν τα ${q2} ${item.name};`,
+    q: `Αν ${item.artPlural} ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, πόσο κοστίζουν ${item.artPlural} ${q2} ${item.name};`,
     correct: total2,
     unit: '€',
-    explain: `Βήμα 1: Το 1 ${item.name.slice(0, -1)} κοστίζει ${total1} : ${q1} = ${costPerUnit} €. Βήμα 2: Τα ${q2} ${item.name} κοστίζουν ${q2} × ${costPerUnit} = ${total2} €.`
+    explain: `Βήμα 1: ${item.artSingle} 1 ${item.single} κοστίζει ${total1} : ${q1} = ${costPerUnit} €. Βήμα 2: ${item.artPlural} ${q2} ${item.name} κοστίζουν ${q2} × ${costPerUnit} = ${total2} €.`
   };
 }
 
 // 3. Άσκηση: Πολλαπλή Επιλογή με 4 Επιλογές (MCQ)
 function makeMCQAnagogiQuestion() {
-  const scenarios = [
-    { item: 'κιλά μήλα', emoji: '🍎', q1: 3, unitCost: 2, q2: 7, unitName: '€' },
-    { item: 'μέτρα ύφασμα', emoji: '🧵', q1: 4, unitCost: 5, q2: 6, unitName: '€' },
-    { item: 'πακέτα αυτοκόλλητα', emoji: '📦', q1: 2, unitCost: 4, q2: 8, unitName: '€' },
-    { item: 'κουτιά μαρκαδόροι', emoji: '🎨', q1: 5, unitCost: 3, q2: 4, unitName: '€' }
-  ];
+  const item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
+  const q1 = getRandomInt(2, 5);
+  const unitCost = getRandomInt(2, 6);
+  const total1 = q1 * unitCost;
 
-  const sc = scenarios[getRandomInt(0, scenarios.length - 1)];
-  const total1 = sc.q1 * sc.unitCost;
-  const correct = sc.q2 * sc.unitCost;
+  let q2 = getRandomInt(4, 9);
+  while (q2 === q1) {
+    q2 = getRandomInt(4, 9);
+  }
+  const correct = q2 * unitCost;
 
   const correctText = `${correct} €`;
-  const wrong1 = `${correct + sc.unitCost} €`;
-  const wrong2 = `${correct - sc.unitCost} €`;
-  const wrong3 = `${correct + 2 * sc.unitCost} €`;
+  const wrong1 = `${correct + unitCost} €`;
+  const wrong2 = `${correct - unitCost} €`;
+  const wrong3 = `${correct + 2 * unitCost} €`;
 
   const rawOptions = [correctText, wrong1, wrong2, wrong3];
   const uniqueOptions = Array.from(new Set(rawOptions));
@@ -95,33 +118,28 @@ function makeMCQAnagogiQuestion() {
   })).sort(() => Math.random() - 0.5);
 
   return {
-    q: `Αν τα ${sc.q1} ${sc.item} ${sc.emoji} κοστίζουν ${total1} €, πόσο θα πληρώσουμε για ${sc.q2} ${sc.item};`,
+    q: `Αν ${item.artPlural} ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, πόσο θα πληρώσουμε για ${q2} ${item.name};`,
     options: choices,
     correct: correctText,
-    explain: `Το 1 κοστίζει ${total1} : ${sc.q1} = ${sc.unitCost} €. Άρα τα ${sc.q2} κοστίζουν ${sc.q2} × ${sc.unitCost} = ${correct} €.`
+    explain: `${item.artSingle} 1 ${item.single} κοστίζει ${total1} : ${q1} = ${unitCost} €. Άρα ${item.artPlural} ${q2} κοστίζουν ${q2} × ${unitCost} = ${correct} €.`
   };
 }
 
 // 4. Άσκηση: Αντίστροφη Αναγωγή στη Μονάδα (Input - Εύρεση Ποσότητας)
 function makeReverseAnagogiQuestion() {
-  const items = [
-    { name: 'παγωτά', single: 'παγωτό', emoji: '🍦' },
-    { name: 'τυρόπιτες', single: 'τυρόπιτα', emoji: '🥐' },
-    { name: 'εισιτήρια λεωφορείου', single: 'εισιτήριο', emoji: '🚌' }
-  ];
-  const item = items[getRandomInt(0, items.length - 1)];
+  const item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
   const q1 = getRandomInt(2, 4);
-  const costPerUnit = getRandomInt(2, 4);
+  const costPerUnit = getRandomInt(2, 5);
   const total1 = q1 * costPerUnit;
 
   const targetQty = getRandomInt(5, 10);
   const totalAvailable = targetQty * costPerUnit;
 
   return {
-    q: `Αν τα ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, πόσα ${item.name} μπορούμε να αγοράσουμε με ${totalAvailable} €;`,
+    q: `Αν ${item.artPlural} ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, ${item.howMany} ${item.name} μπορούμε να αγοράσουμε με ${totalAvailable} €;`,
     correct: targetQty,
     unit: item.name,
-    explain: `Βήμα 1: Το 1 ${item.single} κοστίζει ${total1} : ${q1} = ${costPerUnit} €. Βήμα 2: Με ${totalAvailable} € αγοράζουμε ${totalAvailable} : ${costPerUnit} = ${targetQty} ${item.name}.`
+    explain: `Βήμα 1: ${item.artSingle} 1 ${item.single} κοστίζει ${total1} : ${q1} = ${costPerUnit} €. Βήμα 2: Με ${totalAvailable} € αγοράζουμε ${totalAvailable} : ${costPerUnit} = ${targetQty} ${item.name}.`
   };
 }
 
@@ -322,8 +340,8 @@ export default function AnagogiMonadaAskPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
 
-            {renderInputNumber('q1', questions.q1, 1, 'bg-blue-600', 'Γράψε την τιμή του 1')}
-            {renderInputNumber('q2', questions.q2, 2, 'bg-blue-600', 'Γράψε την τιμή του 1')}
+            {renderInputNumber('q1', questions.q1, 1, 'bg-blue-600', 'Γράψε την τιμή της 1 μονάδας')}
+            {renderInputNumber('q2', questions.q2, 2, 'bg-blue-600', 'Γράψε την τιμή της 1 μονάδας')}
 
             {renderInputNumber('q3', questions.q3, 3, 'bg-emerald-600', 'Γράψε το τελικό κόστος')}
             {renderInputNumber('q4', questions.q4, 4, 'bg-emerald-600', 'Γράψε το τελικό κόστος')}
