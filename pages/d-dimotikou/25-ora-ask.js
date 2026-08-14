@@ -47,12 +47,12 @@ function makeClockReadingQuestion() {
   );
 
   return {
-    q: 'Κοίταξε το αναλογικό ρολόι και γράψε πόσα λεπτά (min) δείχνει ο μεγάλος δείκτης:',
+    q: 'Κοίταξε το αναλογικό ρολόι και γράψε πόσα λεπτά δείχνει ο μεγάλος (κόκκινος) δείκτης:',
     h,
     m,
     svg: clockSvg,
     correct: m,
-    explain: `Ο μεγάλος (κόκκινος) δείκτης δείχνει ${m} λεπτά (και ο μικρός δείχνει την ώρα ${h}).`
+    explain: `Ο μεγάλος δείκτης δείχνει ${m} λεπτά.`
   };
 }
 
@@ -64,7 +64,7 @@ function makeTimeConversionQuestion() {
     const h = getRandomInt(2, 6);
     const correct = h * 60;
     return {
-      q: `Πόσα λεπτά (min) είναι οι ${h} ώρες;`,
+      q: `Πόσα λεπτά είναι οι ${h} ώρες;`,
       correct,
       explain: `1 ώρα = 60 λεπτά, άρα οι ${h} ώρες είναι ${h} × 60 = ${correct} λεπτά.`
     };
@@ -72,7 +72,7 @@ function makeTimeConversionQuestion() {
     const m = getRandomInt(2, 6);
     const correct = m * 60;
     return {
-      q: `Πόσα δευτερόλεπτα (s) είναι τα ${m} λεπτά;`,
+      q: `Πόσα δευτερόλεπτα είναι τα ${m} λεπτά;`,
       correct,
       explain: `1 λεπτό = 60 δευτερόλεπτα, άρα τα ${m} λεπτά είναι ${m} × 60 = ${correct} δευτερόλεπτα.`
     };
@@ -113,7 +113,7 @@ function makeDigitalToSpokenMCQQuestion() {
   };
 }
 
-// 4. Άσκηση: Υπολογισμός Χρονικής Διάρκειας (Input)
+// 4. Άσκηση: Υπολογισμός Χρονικής Διάρκειας Προβλήματος (Input - Καθαρή εκφώνηση)
 function makeDurationProblemQuestion() {
   const startH = getRandomInt(14, 19);
   const startM = [0, 10, 15, 20, 30][getRandomInt(0, 4)];
@@ -129,10 +129,10 @@ function makeDurationProblemQuestion() {
   const endFormatted = `${endH}:${endM.toString().padStart(2, '0')}`;
 
   return {
-    q: `Ένα μάθημα μουσικής ξεκίνησε στις ${startFormatted} και διήρκεσε ${duration} λεπτά. Πόσα λεπτά (min) πέρασαν από την αρχή της ώρας (${endH}:00) μέχρι να τελειώσει; (Δηλαδή ποια είναι τα λεπτά της ώρας ${endFormatted});`,
+    q: `Μια προπόνηση ξεκίνησε στις ${startFormatted} και διήρκεσε ${duration} λεπτά. Πόσα είναι τα λεπτά της ώρας που τελείωσε η προπόνηση;`,
     correct: endM,
     endFormatted,
-    explain: `Αν προσθέσουμε ${duration} λεπτά στην ώρα ${startFormatted}, το μάθημα τελείωσε στις ${endFormatted} (άρα τα λεπτά είναι ${endM}).`
+    explain: `Προσθέτοντας ${duration} λεπτά στην ώρα ${startFormatted}, η προπόνηση τελείωσε στις ${endFormatted}, επομένως τα λεπτά είναι ${endM}.`
   };
 }
 
@@ -263,7 +263,7 @@ export default function OraAskPage() {
               disabled={submitted}
               className="w-5 h-5 text-purple-600 focus:ring-purple-500"
             />
-            <span className="text-sm md:text-base font-bold">{opt}</span>
+            <span className="font-mono text-base font-bold">{opt}</span>
           </label>
         ))}
       </div>
