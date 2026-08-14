@@ -31,7 +31,8 @@ export default function DDimotikouMenu() {
     { id: '24-epanalipsi-3', label: '🎯 24. Επαναληπτικές Ασκήσεις 20 - 23', href: '/d-dimotikou/24-epanalipsi-3' },
     { id: '25-ora', label: '🎯 25. Ώρα και ρολόι', href: '/d-dimotikou/25-ora' },
     { id: '26-aionas', label: '🎯 26. Ημέρες - Μήνες - Χρόνια', href: '/d-dimotikou/26-aionas' },
-    { id: '27-sterea', label: '🎯 27. Στερεά', href: '/d-dimotikou/27-sterea' }
+    { id: '27-sterea', label: '🎯 27. Στερεά', href: '/d-dimotikou/27-sterea' },
+    { id: '28-sterea-anoigma', label: '🎯 28. Στερεά Ανάπτυγμα', href: '/d-dimotikou/28-sterea-anoigma' }
         
   ];
 
