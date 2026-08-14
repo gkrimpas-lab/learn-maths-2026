@@ -56,18 +56,31 @@ const NETS_DATA = [
     ),
     netSvg: (
       <svg className="w-44 h-44 mx-auto" viewBox="0 0 200 200">
-        <rect x="70" y="25" width="50" height="30" fill="#2dd4bf" fillOpacity="0.4" stroke="#0f766e" strokeWidth="2" />
-        <rect x="70" y="55" width="50" height="45" fill="#14b8a6" fillOpacity="0.5" stroke="#0f766e" strokeWidth="2" />
-        <rect x="30" y="55" width="40" height="45" fill="#5eead4" fillOpacity="0.4" stroke="#0f766e" strokeWidth="2" />
-        <rect x="120" y="55" width="40" height="45" fill="#5eead4" fillOpacity="0.4" stroke="#0f766e" strokeWidth="2" />
-        <rect x="70" y="100" width="50" height="30" fill="#0d9488" fillOpacity="0.5" stroke="#0f766e" strokeWidth="2" />
-        <rect x="70" y="130" width="50" height="45" fill="#0f766e" fillOpacity="0.4" stroke="#0f766e" strokeWidth="2" />
-        {/* Διακεκομμένες γραμμές */}
-        <line x1="70" y1="55" x2="120" y2="55" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
-        <line x1="70" y1="100" x2="120" y2="100" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
-        <line x1="70" y1="130" x2="120" y2="130" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
-        <line x1="70" y1="55" x2="70" y2="100" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
-        <line x1="120" y1="55" x2="120" y2="100" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
+        {/* Κάθετη στήλη με 4 ξεκάθαρα μακρόστενα ορθογώνια */}
+        {/* 1. Πάνω καπάκι (74 x 26) */}
+        <rect x="63" y="16" width="74" height="26" fill="#2dd4bf" fillOpacity="0.45" stroke="#0f766e" strokeWidth="2" />
+        
+        {/* 2. Κύρια Μπροστινή Έδρα (74 x 38) */}
+        <rect x="63" y="42" width="74" height="38" fill="#14b8a6" fillOpacity="0.55" stroke="#0f766e" strokeWidth="2" />
+        
+        {/* Πλαϊνό Αριστερό (26 x 38) */}
+        <rect x="37" y="42" width="26" height="38" fill="#5eead4" fillOpacity="0.4" stroke="#0f766e" strokeWidth="2" />
+        
+        {/* Πλαϊνό Δεξί (26 x 38) */}
+        <rect x="137" y="42" width="26" height="38" fill="#5eead4" fillOpacity="0.4" stroke="#0f766e" strokeWidth="2" />
+        
+        {/* 3. Κάτω Βάση (74 x 26) */}
+        <rect x="63" y="80" width="74" height="26" fill="#0d9488" fillOpacity="0.55" stroke="#0f766e" strokeWidth="2" />
+        
+        {/* 4. Πίσω Έδρα (74 x 38) */}
+        <rect x="63" y="106" width="74" height="38" fill="#0f766e" fillOpacity="0.45" stroke="#0f766e" strokeWidth="2" />
+
+        {/* Διακεκομμένες γραμμές διπλώματος */}
+        <line x1="63" y1="42" x2="137" y2="42" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
+        <line x1="63" y1="80" x2="137" y2="80" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
+        <line x1="63" y1="106" x2="137" y2="106" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
+        <line x1="63" y1="42" x2="63" y2="80" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
+        <line x1="137" y1="42" x2="137" y2="80" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3" />
       </svg>
     )
   },
