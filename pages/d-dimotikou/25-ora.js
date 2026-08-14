@@ -59,7 +59,7 @@ export default function OraTheoryPage() {
               LearnMaths<span className="text-indigo-600">.gr</span>
             </Link>
             <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/23-anagogi-monada-ask" className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
+              <Link href="/d-dimotikou/25-ora-ask" className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
                 <span>📝</span> Ασκήσεις
               </Link>
               <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
@@ -93,7 +93,7 @@ export default function OraTheoryPage() {
                 <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
                 <p className="text-xs text-blue-100">Δοκίμασε τις διαδραστικές ασκήσεις για να σιγουρευτείς ότι έμαθες το ρολόι!</p>
                 <Link 
-                  href="/d-dimotikou/23-anagogi-monada-ask"
+                  href="/d-dimotikou/25-ora"
                   className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
                 >
                   🎯 Μετάβαση στις Ασκήσεις
@@ -366,7 +366,7 @@ export default function OraTheoryPage() {
               </p>
             </div>
             <Link
-              href="/d-dimotikou/23-anagogi-monada-ask"
+              href="/d-dimotikou/25-ora-ask"
               className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
             >
               Ξεκίνα τις Ασκήσεις ➔
