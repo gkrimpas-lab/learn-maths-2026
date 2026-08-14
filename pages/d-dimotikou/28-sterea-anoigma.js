@@ -45,13 +45,21 @@ const NETS_DATA = [
     shapesCount: '6 Ορθογώνια',
     tagBg: 'bg-teal-100 text-teal-800',
     solidSvg: (
-      <svg className="w-40 h-36 mx-auto" viewBox="0 0 220 200">
-        <line x1="40" y1="130" x2="40" y2="70" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
-        <line x1="40" y1="130" x2="130" y2="130" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
-        <line x1="40" y1="130" x2="80" y2="160" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
-        <polygon points="80,100 170,100 170,160 80,160" fill="#14b8a6" fillOpacity="0.4" stroke="#0f766e" strokeWidth="3" />
-        <polygon points="80,100 170,100 130,70 40,70" fill="#2dd4bf" fillOpacity="0.5" stroke="#0f766e" strokeWidth="3" />
-        <polygon points="170,100 170,160 130,130 130,70" fill="#0d9488" fillOpacity="0.6" stroke="#0f766e" strokeWidth="3" />
+      <svg className="w-48 h-36 mx-auto" viewBox="0 0 220 180">
+        {/* Πίσω ακμές (διακεκομμένες) */}
+        <line x1="30" y1="115" x2="30" y2="60" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
+        <line x1="30" y1="115" x2="130" y2="115" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
+        <line x1="30" y1="115" x2="70" y2="145" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
+        
+        {/* Ορατές έδρες (Μακρόστενο Παραλληλεπίπεδο) */}
+        {/* Μπροστινή κύρια έδρα (100 x 55) */}
+        <polygon points="70,90 170,90 170,145 70,145" fill="#14b8a6" fillOpacity="0.4" stroke="#0f766e" strokeWidth="3" />
+        
+        {/* Πάνω έδρα */}
+        <polygon points="70,90 170,90 130,60 30,60" fill="#2dd4bf" fillOpacity="0.5" stroke="#0f766e" strokeWidth="3" />
+        
+        {/* Δεξιά πλαϊνή έδρα */}
+        <polygon points="170,90 170,145 130,115 130,60" fill="#0d9488" fillOpacity="0.6" stroke="#0f766e" strokeWidth="3" />
       </svg>
     ),
     netSvg: (
