@@ -155,7 +155,7 @@ const NETS_DATA = [
   {
     id: 'cone',
     name: 'Κώνος',
-    netDesc: '1 κυκλικός τομέας (τμήμα κύκλου σαν "βεντάλια") και 1 κυκλικός δίσκος (βάση).',
+    netDesc: '1 κυκλικός τομέας (τμήμα κύκλου σαν "βεντάλια") και 1 κυκλικός δίσκος (βάση) που εφάπτεται στο τόξο του.',
     shapesCount: '1 Κυκλικός Τομέας + 1 Κύκλος',
     tagBg: 'bg-cyan-100 text-cyan-800',
     solidSvg: (
@@ -167,12 +167,31 @@ const NETS_DATA = [
     ),
     netSvg: (
       <svg className="w-44 h-44 mx-auto" viewBox="0 0 200 200">
-        {/* Κυκλικός τομέας */}
-        <path d="M 100,30 L 40,115 A 85,85 0 0,0 160,115 Z" fill="#06b6d4" fillOpacity="0.4" stroke="#0e7490" strokeWidth="2" />
-        {/* Κυκλική βάση */}
-        <circle cx="100" cy="155" r="25" fill="#67e8f9" fillOpacity="0.5" stroke="#0e7490" strokeWidth="2" />
-        {/* Κορυφή κώνου */}
-        <circle cx="100" cy="30" r="3" fill="#fbbf24" />
+        {/* Κυκλικός Τομέας (R = 95 από την κορυφή (100, 25)) */}
+        <path 
+          d="M 100,25 L 35,95 A 95,95 0 0,0 165,95 Z" 
+          fill="#06b6d4" 
+          fillOpacity="0.4" 
+          stroke="#0e7490" 
+          strokeWidth="2.5" 
+        />
+        
+        {/* Κυκλική Βάση (r = 24 με κέντρο (100, 144) - Εφάπτεται απόλυτα στο (100, 120)) */}
+        <circle 
+          cx="100" 
+          cy="144" 
+          r="24" 
+          fill="#67e8f9" 
+          fillOpacity="0.6" 
+          stroke="#0e7490" 
+          strokeWidth="2.5" 
+        />
+        
+        {/* Σημείο Κορυφής */}
+        <circle cx="100" cy="25" r="3.5" fill="#fbbf24" />
+
+        {/* Σημείο Επαφής (Ένωση Βάσης με Τομέα) */}
+        <circle cx="100" cy="120" r="3" fill="#f59e0b" />
       </svg>
     )
   },
