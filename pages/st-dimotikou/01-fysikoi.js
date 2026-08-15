@@ -48,19 +48,14 @@ export default function FysikoiArithmoiPage() {
   const activeDigitsCount = digits.filter(d => d !== '0').length;
   const firstNonZero = digits.findIndex(d => d !== '0');
 
-  // Υπολογισμός αναλογικού ύψους στήλης βάσει πραγματικής αξίας (Logarithmic Scale)
+  // Υπολογισμός ύψους στήλης αποκλειστικά από την τιμή του ψηφίου (1-9)
   const calculateBarHeight = (digit, index) => {
     const val = parseInt(digit, 10);
     const isLeadingZero = digit === '0' && index < firstNonZero;
     if (val === 0 || isLeadingZero) return 0;
 
-    const power = 11 - index; // 11 έως 0
-    // Μαθηματική βαθμολόγηση μεγέθους: power + log10(val)
-    const score = power + Math.log10(val); // Εύρος: 0 (για 1*10^0) έως ~11.95 (για 9*10^11)
-
-    // Γραμμική χαρτογράφηση σε ποσοστό ύψους 14% έως 96%
-    const heightPercent = Math.round(14 + (score / 12) * 82);
-    return Math.min(96, Math.max(14, heightPercent));
+    // 1 -> 12%, 2 -> 23%, 3 -> 34%, ..., 9 -> 100%
+    return 12 + (val - 1) * 11;
   };
 
   return (
@@ -366,7 +361,7 @@ export default function FysikoiArithmoiPage() {
               <div className="bg-white border border-slate-200 p-5 2xl:p-6 rounded-2xl space-y-3 shadow-sm">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5">
-                    📊 Σχετική Αξία Θέσης (Excel Bar Chart)
+                    📊 Ύψος Ψηφίου (Excel Bar Chart)
                   </span>
                   <span className="text-[10px] 2xl:text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full">
                     {activeDigitsCount} ενεργά ψηφία
