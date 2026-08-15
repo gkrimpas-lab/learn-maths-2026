@@ -4,19 +4,19 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 export default function DekadikoiArithmoiPage() {
-  const [number, setNumber] = useState("345.672");
+  const [number, setNumber] = useState("345,672");
   const [activeDigitKey, setActiveDigitKey] = useState("dec-0");
 
   const presets = [
-    { label: '🌡️ Θερμοκρασία', val: '36.6' },
-    { label: '💶 Τιμή Προϊόντος', val: '12.50' },
-    { label: '⚖️ Βάρος σε κιλά', val: '74.250' },
-    { label: '📏 Μήκος ακριβείας', val: '108.405' }
+    { label: '🌡️ Θερμοκρασία', val: '36,6' },
+    { label: '💶 Τιμή Προϊόντος', val: '12,50' },
+    { label: '⚖️ Βάρος σε κιλά', val: '74,250' },
+    { label: '📏 Μήκος ακριβείας', val: '108,405' }
   ];
 
   // Καθαρισμός και προετοιμασία ακέραιου & δεκαδικού μέρους
-  const sanitized = number.replace(',', '.').replace(/[^0-9.]/g, '');
-  const parts = sanitized.split('.');
+  const sanitized = number.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+  const parts = sanitized.split(',');
   const intRaw = parts[0] || "0";
   const decRaw = parts[1] || "";
 
@@ -254,17 +254,17 @@ export default function DekadikoiArithmoiPage() {
                     type="text"
                     value={number}
                     onChange={(e) => {
-                      let val = e.target.value.replace(/[^0-9.,]/g, '');
-                      const dotCount = (val.match(/[.,]/g) || []).length;
-                      if (dotCount <= 1) {
-                        const p = val.replace(',', '.').split('.');
+                      let val = e.target.value.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+                      const commaCount = (val.match(/,/g) || []).length;
+                      if (commaCount <= 1) {
+                        const p = val.split(',');
                         if ((p[0] || "").length <= 3 && (p[1] || "").length <= 3) {
                           setNumber(val);
                         }
                       }
                     }}
                     className="text-2xl md:text-3xl 2xl:text-4xl font-black text-center p-3 bg-white border-2 border-emerald-300 rounded-2xl shadow-sm focus:border-emerald-500 outline-none transition-all w-full tracking-wider text-emerald-700 font-mono"
-                    placeholder="π.χ. 345.672"
+                    placeholder="π.χ. 345,672"
                   />
                   <p className="text-[11px] 2xl:text-xs text-slate-400 text-center font-medium">
                     💡 Πέρασε τον κέρσορα ή κάνε κλικ στα ψηφία του πίνακα για εστίαση!
