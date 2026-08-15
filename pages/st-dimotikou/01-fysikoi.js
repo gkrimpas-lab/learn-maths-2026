@@ -128,7 +128,7 @@ export default function FysikoiArithmoiPage() {
             {/* CARD 1 */}
             <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-3 flex flex-col justify-between shadow-sm">
               <div className="space-y-2">
-                <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center gap-2 justify-center font-black text-lg shadow-sm">
+                <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   1
                 </div>
                 <h3 className="text-lg font-black text-slate-900">Τι είναι οι Φυσικοί;</h3>
@@ -251,7 +251,7 @@ export default function FysikoiArithmoiPage() {
                 {/* DIGIT VALUE EXPLORE CARD (FIXED HEIGHT CONTAINER) */}
                 <div className="bg-amber-50/80 border border-amber-200 p-5 rounded-2xl min-h-[170px] space-y-2 shadow-sm flex flex-col justify-center">
                   {activeDigitIndex !== null ? (
-                    <div className="space-y-1.5 animate-fadeIn">
+                    <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-black uppercase text-amber-800 tracking-wider">
                           🔍 Αναλύθηκε το ψηφίο:
@@ -317,6 +317,7 @@ export default function FysikoiArithmoiPage() {
                         return (
                           <button
                             key={i}
+                            type="button"
                             onClick={() => setActiveDigitIndex(i)}
                             className={`py-6 text-xl md:text-2xl font-black border-r border-slate-200 last:border-0 transition-all duration-200 hover:scale-105 hover:bg-amber-100 focus:outline-none
                               ${periods[periodIdx].light}
@@ -406,6 +407,3 @@ export default function FysikoiArithmoiPage() {
     </div>
   );
 }
-```eof
-
-Ο νέος κώδικας περιλαμβάνει όλες τις προδιαγραφές του LearnMaths.gr και παρέχει μια πλήρως διαδραστική εμπειρία μάθησης για τους μαθητές της ΣΤ' Δημοτικού. Μπορείς να μου ζητήσεις να φτιάξουμε τώρα τη σελίδα των Ασκήσεων (`01-fysikoi-ask.js`) ή κάποια άλλη ενότητα!
