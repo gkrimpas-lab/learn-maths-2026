@@ -53,9 +53,9 @@ function generateQuestions() {
 
   // Q1: Input - Κάθετη Πρόσθεση Δεκαδικών με διαφορετικά δεκαδικά ψηφία
   const q1IntA = getRandomInt(12, 65);
-  const q1DecA = getRandomInt(1, 9) * 10 + getRandomInt(1, 9); // π.χ. 45
+  const q1DecA = getRandomInt(1, 9) * 10 + getRandomInt(1, 9);
   const q1IntB = getRandomInt(8, 35);
-  const q1DecB = getRandomInt(1, 9); // π.χ. 6 (δηλ. 0,6)
+  const q1DecB = getRandomInt(1, 9);
   const q1AStr = `${q1IntA},${q1DecA}`;
   const q1BStr = `${q1IntB},${q1DecB}`;
   const q1ValA = q1IntA + q1DecA / 100;
@@ -81,10 +81,10 @@ function generateQuestions() {
   const q3Wrong3 = `${q3A} × ${q3B}`;
   const q3Options = shuffle([q3CorrectOption, q3Wrong1, q3Wrong2, q3Wrong3]);
 
-  // Q4: MCQ - Προσεταιριστική Ιδιότητα (Έξυπνη ομαδοποίηση για στρογγυλό άθροισμα)
+  // Q4: MCQ - Προσεταιριστική Ιδιότητα
   const q4A = `${getRandomInt(2, 8)},25`;
   const q4B = `${getRandomInt(10, 30)},6`;
-  const q4C = `${getRandomInt(1, 5)},75`; // 0,25 + 0,75 = 1
+  const q4C = `${getRandomInt(1, 5)},75`;
   const q4CorrectSum = (
     parseFloat(q4A.replace(',', '.')) +
     parseFloat(q4B.replace(',', '.')) +
@@ -110,11 +110,11 @@ function generateQuestions() {
     ? `Αν ${q6A} ＋ ${q6B} ＝ ${q6Sum}, τότε ισχύει πάντα ότι ${q6Sum} － ${q6B} ＝ ${q6A}.`
     : `Αν ${q6A} ＋ ${q6B} ＝ ${q6Sum}, τότε η πράξη ${q6Sum} ＋ ${q6B} αποτελεί τη δοκιμή της πρόσθεσης.`;
 
-  // Q7: SVG Visual - Κάθετη Πρόσθεση με συμπλήρωση μηδενικών
+  // Q7: SVG Visual - Κάθετη Πρόσθεση με τέλεια στοίχιση
   const q7TopInt = getRandomInt(20, 50);
-  const q7TopDec = getRandomInt(1, 9); // π.χ. 4 (δηλ. 0,4)
+  const q7TopDec = getRandomInt(1, 9); // 1 ψηφίο
   const q7BotInt = getRandomInt(10, 30);
-  const q7BotDec = getRandomInt(11, 89); // π.χ. 25
+  const q7BotDec = getRandomInt(11, 89); // 2 ψηφία
   const q7TopStr = `${q7TopInt},${q7TopDec}`;
   const q7BotStr = `${q7BotInt},${q7BotDec}`;
   const q7CorrectVal = (
@@ -122,9 +122,9 @@ function generateQuestions() {
     parseFloat(q7BotStr.replace(',', '.'))
   ).toFixed(2).replace('.', ',');
 
-  // Q8: SVG Visual - Αριθμογραμμή Μετακίνησης (Πρόσθεση)
+  // Q8: SVG Visual - Αριθμογραμμή Μετακίνησης
   const q8Base = getRandomInt(2, 6);
-  const q8Step = getRandomInt(2, 5); // π.χ. + 0,3
+  const q8Step = getRandomInt(2, 5);
   const q8StartStr = `${q8Base},0`;
   const q8AddStr = `0,${q8Step}`;
   const q8ResultStr = `${q8Base},${q8Step}`;
@@ -190,10 +190,14 @@ function generateQuestions() {
     q7: {
       type: 'input',
       title: 'Οπτική Κάθετη Στοίχιση',
+      topInt: String(q7TopInt),
+      topDec: String(q7TopDec),
+      botInt: String(q7BotInt),
+      botDec: String(q7BotDec),
       topStr: q7TopStr,
       botStr: q7BotStr,
       correct: q7CorrectVal,
-      explain: `Στοιχίζοντας κατακόρυφα και προσθέτοντας μηδενικό (${q7TopStr}0 ＋ ${q7BotStr}): βρίσκουμε ${q7CorrectVal}.`
+      explain: `Στοιχίζοντας κατακόρυφα τις υποδιαστολές και προσθέτοντας μηδενικό (${q7TopStr}0 ＋ ${q7BotStr}): βρίσκουμε ${q7CorrectVal}.`
     },
     q8: {
       type: 'mcq',
@@ -339,7 +343,7 @@ export default function ProsthesiExercisesPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              {/* ΕΡΩΤΗΣΗ 1: Input (Κάθετη Πρόσθεση Δεκαδικών) */}
+              {/* ΕΡΩΤΗΣΗ 1 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
@@ -376,7 +380,7 @@ export default function ProsthesiExercisesPage() {
                 </div>
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 2: Input (Εύρεση Άγνωστου Προσθετέου) */}
+              {/* ΕΡΩΤΗΣΗ 2 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">
@@ -413,7 +417,7 @@ export default function ProsthesiExercisesPage() {
                 </div>
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 3: MCQ (Αντιμεταθετική Ιδιότητα) */}
+              {/* ΕΡΩΤΗΣΗ 3 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
@@ -450,7 +454,7 @@ export default function ProsthesiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 4: MCQ (Προσεταιριστική Ιδιότητα) */}
+              {/* ΕΡΩΤΗΣΗ 4 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
@@ -487,7 +491,7 @@ export default function ProsthesiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 5: True/False (Στοίχιση Υποδιαστολής) */}
+              {/* ΕΡΩΤΗΣΗ 5 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
@@ -533,7 +537,7 @@ export default function ProsthesiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 6: True/False (Αφαίρεση ως Δοκιμή) */}
+              {/* ΕΡΩΤΗΣΗ 6 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
@@ -579,7 +583,7 @@ export default function ProsthesiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 7: Οπτικό SVG (Κάθετη Στοίχιση) */}
+              {/* ΕΡΩΤΗΣΗ 7: Οπτικό SVG (Κάθετη Στοίχιση με απόλυτη ευθυγράμμιση υποδιαστολών) */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
@@ -593,19 +597,38 @@ export default function ProsthesiExercisesPage() {
                   Υπολόγισε το αποτέλεσμα της κάθετης πράξης:
                 </p>
                 
-                {/* SVG Vertical Alignment Box */}
+                {/* SVG Vertical Alignment Box with strictly aligned comma */}
                 <div className="bg-slate-100 rounded-2xl p-4 mb-4 flex justify-center">
-                  <svg viewBox="0 0 200 90" className="w-40 h-20 bg-white rounded-xl border border-slate-300 shadow-sm">
-                    <text x="170" y="30" fontSize="16" fontWeight="bold" textAnchor="end" fill="#059669" fontFamily="monospace">
-                      {questions.q7.topStr}
-                    </text>
-                    <text x="35" y="55" fontSize="16" fontWeight="bold" textAnchor="start" fill="#94a3b8" fontFamily="sans-serif">
+                  <svg viewBox="0 0 200 90" className="w-48 h-24 bg-white rounded-xl border border-slate-300 shadow-sm">
+                    {/* Plus sign */}
+                    <text x="35" y="56" fontSize="16" fontWeight="bold" textAnchor="start" fill="#94a3b8" fontFamily="sans-serif">
                       ＋
                     </text>
-                    <text x="170" y="55" fontSize="16" fontWeight="bold" textAnchor="end" fill="#2563eb" fontFamily="monospace">
-                      {questions.q7.botStr}
+
+                    {/* Top Number: Int - Comma - Dec */}
+                    <text x="110" y="32" fontSize="16" fontWeight="bold" textAnchor="end" fill="#059669" fontFamily="monospace">
+                      {questions.q7.topInt}
                     </text>
-                    <line x1="30" y1="65" x2="175" y2="65" stroke="#334155" strokeWidth="2" />
+                    <text x="115" y="32" fontSize="16" fontWeight="bold" textAnchor="middle" fill="#d97706" fontFamily="monospace">
+                      ,
+                    </text>
+                    <text x="120" y="32" fontSize="16" fontWeight="bold" textAnchor="start" fill="#059669" fontFamily="monospace">
+                      {questions.q7.topDec}
+                    </text>
+
+                    {/* Bottom Number: Int - Comma - Dec */}
+                    <text x="110" y="56" fontSize="16" fontWeight="bold" textAnchor="end" fill="#2563eb" fontFamily="monospace">
+                      {questions.q7.botInt}
+                    </text>
+                    <text x="115" y="56" fontSize="16" fontWeight="bold" textAnchor="middle" fill="#d97706" fontFamily="monospace">
+                      ,
+                    </text>
+                    <text x="120" y="56" fontSize="16" fontWeight="bold" textAnchor="start" fill="#2563eb" fontFamily="monospace">
+                      {questions.q7.botDec}
+                    </text>
+
+                    {/* Horizontal Line */}
+                    <line x1="30" y1="66" x2="170" y2="66" stroke="#334155" strokeWidth="2" />
                   </svg>
                 </div>
 
@@ -626,7 +649,7 @@ export default function ProsthesiExercisesPage() {
                 </div>
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 8: Οπτικό SVG (Αριθμογραμμή Πρόσθεσης) */}
+              {/* ΕΡΩΤΗΣΗ 8 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
