@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 export default function FysikoiArithmoiPage() {
-  const [number, setNumber] = useState("478456514574");
+  const [number, setNumber] = useState("478456014574");
   const [activeDigitIndex, setActiveDigitIndex] = useState(1);
 
   // Καθαρισμός και προετοιμασία 12ψηφίου αριθμού
@@ -47,6 +47,25 @@ export default function FysikoiArithmoiPage() {
 
   const activeDigitsCount = digits.filter(d => d !== '0').length;
   const firstNonZero = digits.findIndex(d => d !== '0');
+
+  // Υπολογισμός αναλογικού ύψους στήλης
+  const calculateBarHeight = (digit, index) => {
+    const val = parseInt(digit, 10);
+    const isLeadingZero = digit === '0' && index < firstNonZero;
+    if (val === 0 || isLeadingZero) return 0;
+
+    const periodIdx = Math.floor(index / 3); // 0: Δισ, 1: Εκατ, 2: Χιλ, 3: Μον
+    const classIdx = index % 3; // 0: Εκατοντάδες, 1: Δεκάδες, 2: Μονάδες
+
+    // Βασικό ύψος περιόδου
+    const periodBase = [68, 46, 26, 8][periodIdx];
+    // Πρόσθετο ύψος τάξης (Ε > Δ > Μ)
+    const classBonus = [10, 5, 0][classIdx];
+    // Αναλογικό ύψος ψηφίου (1 έως 9)
+    const digitBonus = Math.round((val / 9) * 16);
+
+    return Math.min(100, periodBase + classBonus + digitBonus);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -347,7 +366,7 @@ export default function FysikoiArithmoiPage() {
 
               </div>
 
-              {/* ROW 3: (4) DYNAMIC EXCEL-STYLE BAR CHART */}
+              {/* ROW 3: (4) DYNAMIC EXCEL-STYLE BAR CHART (FULL WIDTH) */}
               <div className="bg-white border border-slate-200 p-5 2xl:p-6 rounded-2xl space-y-3 shadow-sm">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5">
@@ -358,47 +377,55 @@ export default function FysikoiArithmoiPage() {
                   </span>
                 </div>
 
-                <div className="w-full h-48 2xl:h-56 flex items-end justify-between gap-1.5 md:gap-3 pt-6 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100">
+                {/* SVG COLUMN CHART */}
+                <div className="w-full h-52 2xl:h-60 flex items-end justify-between gap-1.5 md:gap-3 pt-10 pb-2 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100">
                   {digits.map((digit, i) => {
                     const periodIdx = Math.floor(i / 3);
                     const power = 11 - i;
-                    const isLeadingZero = digit === '0' && i < firstNonZero;
                     const val = parseInt(digit, 10);
-                    
-                    const barHeightPercent = isLeadingZero || val === 0 
-                      ? 4 
-                      : Math.max(12, Math.round(((power + 1) / 12) * 75 + (val / 9) * 20));
-
+                    const isLeadingZero = digit === '0' && i < firstNonZero;
+                    const hasValue = val > 0 && !isLeadingZero;
+                    const barHeightPercent = calculateBarHeight(digit, i);
                     const isSelected = activeDigitIndex === i;
 
                     return (
                       <div
                         key={i}
-                        onMouseEnter={() => setActiveDigitIndex(i)}
-                        onClick={() => setActiveDigitIndex(i)}
-                        className="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer relative"
+                        onMouseEnter={() => { if (hasValue) setActiveDigitIndex(i); }}
+                        onClick={() => { if (hasValue) setActiveDigitIndex(i); }}
+                        className={`flex-1 flex flex-col items-center justify-end h-full relative ${hasValue ? 'cursor-pointer group' : 'cursor-default'}`}
                       >
-                        {isSelected && !isLeadingZero && val > 0 && (
-                          <div className="absolute -top-10 bg-slate-900 text-white text-[10px] 2xl:text-xs font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-20 animate-bounce">
+                        {/* TOOLTIP ON HOVER / SELECTION */}
+                        {isSelected && hasValue && (
+                          <div className="absolute -top-9 bg-slate-900 text-white text-[10px] 2xl:text-xs font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
                             {(val * Math.pow(10, power)).toLocaleString('el-GR')}
                           </div>
                         )}
 
-                        {!isLeadingZero && val > 0 && (
-                          <span className="text-[9px] 2xl:text-[11px] font-black text-slate-600 mb-1">
+                        {/* VALUE LABEL (MONO GIA VAL > 0) */}
+                        {hasValue ? (
+                          <span className="text-[10px] 2xl:text-xs font-black text-slate-700 mb-1">
                             {digit}
                           </span>
+                        ) : (
+                          <div className="h-4 mb-1"></div>
                         )}
 
-                        <div
-                          style={{ 
-                            height: `${barHeightPercent}%`,
-                            backgroundColor: isLeadingZero || val === 0 ? '#e2e8f0' : periods[periodIdx].hex 
-                          }}
-                          className={`w-full rounded-t-md transition-all duration-300 ${isSelected ? 'ring-2 ring-amber-400 brightness-110' : 'opacity-90 hover:opacity-100'}`}
-                        />
+                        {/* THE BAR (AN VAL === 0 DEN EMFANIZETAI TIPOTA) */}
+                        <div className="w-full h-full flex items-end">
+                          {hasValue && (
+                            <div
+                              style={{ 
+                                height: `${barHeightPercent}%`,
+                                backgroundColor: periods[periodIdx].hex 
+                              }}
+                              className={`w-full rounded-t-lg transition-all duration-300 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md scale-105' : 'opacity-90 hover:opacity-100'}`}
+                            />
+                          )}
+                        </div>
 
-                        <span className="text-[8px] 2xl:text-[10px] font-bold text-slate-400 mt-1">
+                        {/* X-AXIS LABEL */}
+                        <span className="text-[8px] 2xl:text-[10px] font-bold text-slate-400 mt-1.5">
                           10^{power}
                         </span>
                       </div>
@@ -439,6 +466,7 @@ export default function FysikoiArithmoiPage() {
         <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη ΣΤ' Δημοτικού.</p>
       </footer>
 
+      {/* CSS Hack */}
       <style jsx global>{`
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
