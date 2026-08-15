@@ -86,11 +86,9 @@ const NETS_DATABASE = [
   { key: 'cone', name: 'Κώνος', shapes: '1 κυκλικός τομέας και 1 κύκλος' }
 ];
 
-// 1. Άσκηση: Αναγνώριση Στερεού από Ανάπτυγμα (MCQ)
-function makeNetRecognitionQuestion() {
-  const solid = NETS_DATABASE[getRandomInt(0, NETS_DATABASE.length - 1)];
+// Helper δημιουργίας ερώτησης αναγνώρισης για συγκεκριμένο στερεό
+function makeRecognitionForSolid(solid) {
   const correctName = solid.name;
-
   const allNames = ['Κύβος', 'Ορθογώνιο Παραλληλεπίπεδο', 'Τετραγωνική Πυραμίδα', 'Τριγωνική Πυραμίδα', 'Κύλινδρος', 'Κώνος', 'Σφαίρα'];
   const wrongs = allNames.filter(n => n !== correctName);
   const shuffledWrongs = wrongs.sort(() => Math.random() - 0.5).slice(0, 3);
@@ -105,86 +103,65 @@ function makeNetRecognitionQuestion() {
   };
 }
 
-// 2. Άσκηση: Καταμέτρηση Σχημάτων σε Ανάπτυγμα (Input)
-function makeCountNetShapesQuestion() {
-  const questionsList = [
-    {
-      q: 'Από πόσα ίσα τετράγωνα αποτελείται το επίπεδο ανάπτυγμα ενός Κύβου;',
-      correct: 6,
-      explain: 'Ο κύβος έχει 6 ίσες τετράγωνες έδρες, άρα το ανάπτυγμά του έχει 6 τετράγωνα.'
-    },
-    {
-      q: 'Πόσα τρίγωνα έχει συνολικά το ανάπτυγμα μιας Τετραγωνικής Πυραμίδας;',
-      correct: 4,
-      explain: 'Η τετραγωνική πυραμίδα έχει 1 τετράγωνη βάση και 4 τριγωνικές παράπλευρες έδρες.'
-    },
-    {
-      q: 'Από πόσα τρίγωνα αποτελείται συνολικά το ανάπτυγμα μιας Τριγωνικής Πυραμίδας (Τετραέδρου);',
-      correct: 4,
-      explain: 'Η τριγωνική πυραμίδα αποτελείται από 4 τρίγωνα (1 βάση + 3 πλαϊνές έδρες).'
-    },
-    {
-      q: 'Πόσους κυκλικούς δίσκους (βάσεις) έχει το ανάπτυγμα ενός Κυλίνδρου;',
-      correct: 2,
-      explain: 'Ο κύλινδρος έχει 2 ίσους κυκλικούς δίσκους (την πάνω και την κάτω βάση).'
-    },
-    {
-      q: 'Από πόσα ορθογώνια παραλληλόγραμμα αποτελείται το ανάπτυγμα ενός Ορθογωνίου Παραλληλεπιπέδου;',
-      correct: 6,
-      explain: 'Το ορθογώνιο παραλληλεπίπεδο αποτελείται από 6 ορθογώνια (ανά 2 απέναντι ίσα).'
-    }
-  ];
+// Δεξαμενή ερωτήσεων καταμέτρησης
+const COUNT_QUESTIONS_POOL = [
+  {
+    q: 'Από πόσα ίσα τετράγωνα αποτελείται το επίπεδο ανάπτυγμα ενός Κύβου;',
+    correct: 6,
+    explain: 'Ο κύβος έχει 6 ίσες τετράγωνες έδρες, άρα το ανάπτυγμά του έχει 6 τετράγωνα.'
+  },
+  {
+    q: 'Πόσα τρίγωνα έχει συνολικά το ανάπτυγμα μιας Τετραγωνικής Πυραμίδας;',
+    correct: 4,
+    explain: 'Η τετραγωνική πυραμίδα έχει 1 τετράγωνη βάση και 4 τριγωνικές παράπλευρες έδρες.'
+  },
+  {
+    q: 'Από πόσα τρίγωνα αποτελείται συνολικά το ανάπτυγμα μιας Τριγωνικής Πυραμίδας (Τετραέδρου);',
+    correct: 4,
+    explain: 'Η τριγωνική πυραμίδα αποτελείται από 4 τρίγωνα (1 βάση + 3 πλαϊνές έδρες).'
+  },
+  {
+    q: 'Πόσους κυκλικούς δίσκους (βάσεις) έχει το ανάπτυγμα ενός Κυλίνδρου;',
+    correct: 2,
+    explain: 'Ο κύλινδρος έχει 2 ίσους κυκλικούς δίσκους (την πάνω και την κάτω βάση).'
+  },
+  {
+    q: 'Από πόσα ορθογώνια παραλληλόγραμμα αποτελείται το ανάπτυγμα ενός Ορθογωνίου Παραλληλεπιπέδου;',
+    correct: 6,
+    explain: 'Το ορθογώνιο παραλληλεπίπεδο αποτελείται από 6 ορθογώνια (ανά 2 απέναντι ίσα).'
+  }
+];
 
-  const item = questionsList[getRandomInt(0, questionsList.length - 1)];
-  return {
-    q: item.q,
-    correct: item.correct,
-    explain: item.explain
-  };
-}
+// Δεξαμενή ερωτήσεων αντιστοίχισης περιγραφής
+const DESCRIPTION_MATCHING_POOL = [
+  {
+    desc: '1 ορθογώνιο παραλληλόγραμμο και 2 ίσοι κυκλικοί δίσκοι',
+    correct: 'Κύλινδρος',
+    wrongs: ['Κώνος', 'Κύβος', 'Σφαίρα']
+  },
+  {
+    desc: '1 κυκλικός τομέας (τμήμα κύκλου) και 1 κυκλικός δίσκος',
+    correct: 'Κώνος',
+    wrongs: ['Κύλινδρος', 'Τετραγωνική Πυραμίδα', 'Σφαίρα']
+  },
+  {
+    desc: '1 τετράγωνο και 4 ισοσκελή τρίγωνα',
+    correct: 'Τετραγωνική Πυραμίδα',
+    wrongs: ['Τριγωνική Πυραμίδα', 'Κύβος', 'Ορθογώνιο Παραλληλεπίπεδο']
+  },
+  {
+    desc: '4 ισόπλευρα τρίγωνα',
+    correct: 'Τριγωνική Πυραμίδα (Τετράεδρο)',
+    wrongs: ['Τετραγωνική Πυραμίδα', 'Κύβος', 'Κώνος']
+  },
+  {
+    desc: '6 ίσα τετράγωνα τοποθετημένα κατάλληλα',
+    correct: 'Κύβος',
+    wrongs: ['Ορθογώνιο Παραλληλεπίπεδο', 'Τετραγωνική Πυραμίδα', 'Κύλινδρος']
+  }
+];
 
-// 3. Άσκηση: Αντιστοίχιση Περιγραφής Αναπτύγματος με Στερεό (MCQ)
-function makeDescriptionMatchingQuestion() {
-  const descriptions = [
-    {
-      desc: '1 ορθογώνιο παραλληλόγραμμο και 2 ίσοι κυκλικοί δίσκοι',
-      correct: 'Κύλινδρος',
-      wrongs: ['Κώνος', 'Κύβος', 'Σφαίρα']
-    },
-    {
-      desc: '1 κυκλικός τομέας (τμήμα κύκλου) και 1 κυκλικός δίσκος',
-      correct: 'Κώνος',
-      wrongs: ['Κύλινδρος', 'Τετραγωνική Πυραμίδα', 'Σφαίρα']
-    },
-    {
-      desc: '1 τετράγωνο και 4 ισοσκελή τρίγωνα',
-      correct: 'Τετραγωνική Πυραμίδα',
-      wrongs: ['Τριγωνική Πυραμίδα', 'Κύβος', 'Ορθογώνιο Παραλληλεπίπεδο']
-    },
-    {
-      desc: '4 ισόπλευρα τρίγωνα',
-      correct: 'Τριγωνική Πυραμίδα (Τετράεδρο)',
-      wrongs: ['Τετραγωνική Πυραμίδα', 'Κύβος', 'Κώνος']
-    },
-    {
-      desc: '6 ίσα τετράγωνα τοποθετημένα κατάλληλα',
-      correct: 'Κύβος',
-      wrongs: ['Ορθογώνιο Παραλληλεπίπεδο', 'Τετραγωνική Πυραμίδα', 'Κύλινδρος']
-    }
-  ];
-
-  const item = descriptions[getRandomInt(0, descriptions.length - 1)];
-  const options = [item.correct, ...item.wrongs].sort(() => Math.random() - 0.5);
-
-  return {
-    q: `Ποιο στερεό έχει ανάπτυγμα που αποτελείται από: «${item.desc}»;`,
-    options,
-    correct: item.correct,
-    explain: `Αυτό είναι το ανάπτυγμα για το στερεό: ${item.correct}.`
-  };
-}
-
-// 4. Άσκηση: Σωστό / Λάθος για τα Αναπτύγματα
+// Δεξαμενή ερωτήσεων Σωστού/Λάθους
 const TRUE_FALSE_POOL = [
   {
     q: 'Η σφαίρα έχει ένα επίπεδο ανάπτυγμα που αποτελείται από 2 κύκλους.',
@@ -218,25 +195,38 @@ const TRUE_FALSE_POOL = [
   }
 ];
 
-// Δημιουργία 8 Ερωτήσεων
+// Δημιουργία 8 Ερωτήσεων ΧΩΡΙΣ ΕΠΑΝΑΛΗΨΕΙΣ
 function generateQuestions() {
-  let tf1 = TRUE_FALSE_POOL[getRandomInt(0, TRUE_FALSE_POOL.length - 1)];
-  let tf2;
-  while (true) {
-    tf2 = TRUE_FALSE_POOL[getRandomInt(0, TRUE_FALSE_POOL.length - 1)];
-    if (tf2.q !== tf1.q) break;
-  }
+  // 1. Επιλογή 2 διαφορετικών στερεών για Q1 και Q2
+  const shuffledNets = [...NETS_DATABASE].sort(() => Math.random() - 0.5);
+  const q1 = makeRecognitionForSolid(shuffledNets[0]);
+  const q2 = makeRecognitionForSolid(shuffledNets[1]);
 
-  return {
-    q1: makeNetRecognitionQuestion(),
-    q2: makeNetRecognitionQuestion(),
-    q3: makeCountNetShapesQuestion(),
-    q4: makeCountNetShapesQuestion(),
-    q5: makeDescriptionMatchingQuestion(),
-    q6: makeDescriptionMatchingQuestion(),
-    q7: tf1,
-    q8: tf2
+  // 2. Επιλογή 2 διαφορετικών ερωτήσεων καταμέτρησης για Q3 και Q4
+  const shuffledCounts = [...COUNT_QUESTIONS_POOL].sort(() => Math.random() - 0.5);
+  const q3 = shuffledCounts[0];
+  const q4 = shuffledCounts[1];
+
+  // 3. Επιλογή 2 διαφορετικών ερωτήσεων περιγραφής για Q5 και Q6
+  const shuffledDesc = [...DESCRIPTION_MATCHING_POOL].sort(() => Math.random() - 0.5);
+  const makeDescQuestion = (item) => {
+    const options = [item.correct, ...item.wrongs].sort(() => Math.random() - 0.5);
+    return {
+      q: `Ποιο στερεό έχει ανάπτυγμα που αποτελείται από: «${item.desc}»;`,
+      options,
+      correct: item.correct,
+      explain: `Αυτό είναι το ανάπτυγμα για το στερεό: ${item.correct}.`
+    };
   };
+  const q5 = makeDescQuestion(shuffledDesc[0]);
+  const q6 = makeDescQuestion(shuffledDesc[1]);
+
+  // 4. Επιλογή 2 διαφορετικών ερωτήσεων Σωστό/Λάθος για Q7 και Q8
+  const shuffledTF = [...TRUE_FALSE_POOL].sort(() => Math.random() - 0.5);
+  const q7 = shuffledTF[0];
+  const q8 = shuffledTF[1];
+
+  return { q1, q2, q3, q4, q5, q6, q7, q8 };
 }
 
 export default function StereaAnoigmaAskPage() {
@@ -504,7 +494,7 @@ export default function StereaAnoigmaAskPage() {
                 📝 Ασκήσεις: Αναπτύγματα Στερεών Σωμάτων
               </h1>
               <p className="text-indigo-100 text-sm md:text-base mt-1">
-                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** τα αναπτύγματα και οι ερωτήσεις αλλάζουν αυτόματα.
+                8 Μοναδικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** τα αναπτύγματα και οι ερωτήσεις αλλάζουν χωρίς καμία επανάληψη.
               </p>
             </div>
 
