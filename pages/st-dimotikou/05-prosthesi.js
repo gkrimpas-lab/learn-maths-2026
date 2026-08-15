@@ -6,14 +6,14 @@ import { LAYOUT } from '../../shared/layout-config';
 export default function ProsthesiAfairesiPage() {
   const [numA, setNumA] = useState("34,75");
   const [numB, setNumB] = useState("18,5");
+  const [extraNum, setExtraNum] = useState("5,25"); // 3ος Αριθμός (γ)
   const [activeProperty, setActiveProperty] = useState("antimetathetiki"); // 'antimetathetiki', 'prosetairistiki', 'antitheti'
-  const [extraNum, setExtraNum] = useState("5"); // Για την προσεταιριστική ιδιότητα
 
   const presets = [
-    { label: '💶 34,75 + 18,50 (Δεκαδικά)', a: '34,75', b: '18,5' },
-    { label: '🔢 1.250 + 850 (Φυσικοί)', a: '1250', b: '850' },
-    { label: '⚖️ 4,25 + 0,75 (Συμπλήρωμα)', a: '4,25', b: '0,75' },
-    { label: '📏 120,4 + 35,85 (Μήκη)', a: '120,4', b: '35,85' }
+    { label: '💶 34,75 + 18,50 + 5,25 (Δεκαδικά)', a: '34,75', b: '18,5', c: '5,25' },
+    { label: '🔢 1.250 + 850 + 400 (Φυσικοί)', a: '1250', b: '850', c: '400' },
+    { label: '⚖️ 4,25 + 0,75 + 2,5 (Συμπληρώματα)', a: '4,25', b: '0,75', c: '2,5' },
+    { label: '📏 120,4 + 35,85 + 4,15 (Μήκη)', a: '120,4', b: '35,85', c: '4,15' }
   ];
 
   const sanitizeInput = (val) => {
@@ -37,13 +37,13 @@ export default function ProsthesiAfairesiPage() {
   const valExtra = parseVal(extraNum);
 
   const sumVal = (valA + valB).toFixed(3).replace(/\.?0+$/, '').replace('.', ',');
+  const totalSumVal = (valA + valB + valExtra).toFixed(3).replace(/\.?0+$/, '').replace('.', ',');
   const diffVal = Math.abs(valA - valB).toFixed(3).replace(/\.?0+$/, '').replace('.', ',');
 
-  // Βοηθητικές συναρτήσεις αυξομείωσης (+ / -)
+  // Βοηθητική συνάρτηση αυξομείωσης (+ / -)
   const adjustValue = (currentStr, delta) => {
     const current = parseVal(currentStr);
     const updated = Math.max(0, current + delta);
-    // Αν είναι ακέραιος εμφανίζεται χωρίς δεκαδικά, αλλιώς διατηρεί 1-2 δεκαδικά
     const isDec = currentStr.includes(',');
     const decimals = isDec ? Math.min(2, (currentStr.split(',')[1] || '').length || 1) : 0;
     return updated.toFixed(decimals).replace('.', ',');
@@ -189,7 +189,7 @@ export default function ProsthesiAfairesiPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο Πρόσθεσης & Ιδιοτήτων
                 </h2>
                 <p className="text-gray-500 text-sm 2xl:text-base">
-                  Άλλαξε τους προσθετέους είτε πληκτρολογώντας είτε πατώντας τα κουμπιά αυξομείωσης (+ / -) και δες το αποτέλεσμα να ανανεώνεται αυτόματα!
+                  Άλλαξε τους αριθμούς είτε πληκτρολογώντας είτε πατώντας τα κουμπιά αυξομείωσης (+ / -) και δες το αποτέλεσμα να ανανεώνεται αυτόματα!
                 </p>
               </div>
 
@@ -202,6 +202,7 @@ export default function ProsthesiAfairesiPage() {
                     onClick={() => {
                       setNumA(preset.a);
                       setNumB(preset.b);
+                      setExtraNum(preset.c);
                     }}
                     className="bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs 2xl:text-sm font-bold px-3.5 py-2 rounded-xl border border-slate-200 transition shadow-sm"
                   >
@@ -214,21 +215,21 @@ export default function ProsthesiAfairesiPage() {
             {/* MAIN VERTICAL STACK STRUCTURE */}
             <div className="space-y-6">
 
-              {/* ROW 1: (1) INTERACTIVE INPUTS WITH BUTTONS & (2) DYNAMIC READOUT */}
+              {/* ROW 1: (1) INTERACTIVE INPUTS (3 COLS) & (2) DYNAMIC READOUT */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
-                {/* INPUTS A & B (7 COLS) */}
-                <div className="lg:col-span-7 bg-slate-50 border border-slate-200 p-5 2xl:p-6 rounded-2xl space-y-4 shadow-inner flex flex-col justify-center">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                {/* INPUTS A, B & C (8 COLS) */}
+                <div className="lg:col-span-8 bg-slate-50 border border-slate-200 p-5 2xl:p-6 rounded-2xl space-y-4 shadow-inner flex flex-col justify-center">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 items-center">
                     
                     {/* INPUT A */}
                     <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-sm">
                       <div className="flex justify-between items-center">
-                        <label className="text-xs 2xl:text-sm font-black text-emerald-800 uppercase tracking-wider block">
-                          1ος Προσθετέος (α):
+                        <label className="text-xs font-black text-emerald-800 uppercase tracking-wider block">
+                          1ος (α):
                         </label>
-                        <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
-                          Ενεργό
+                        <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-full">
+                          Α
                         </span>
                       </div>
                       
@@ -236,11 +237,11 @@ export default function ProsthesiAfairesiPage() {
                         type="text"
                         value={numA}
                         onChange={(e) => setNumA(sanitizeInput(e.target.value))}
-                        className="text-2xl 2xl:text-3xl font-black text-center p-2.5 bg-emerald-50/50 border-2 border-emerald-300 rounded-xl focus:border-emerald-500 outline-none transition-all w-full tracking-wider text-emerald-700 font-mono"
-                        placeholder="π.χ. 34,75"
+                        className="text-xl 2xl:text-2xl font-black text-center p-2 bg-emerald-50/50 border-2 border-emerald-300 rounded-xl focus:border-emerald-500 outline-none transition-all w-full tracking-wider text-emerald-700 font-mono"
+                        placeholder="34,75"
                       />
 
-                      {/* QUICK ADJUST BUTTONS (+ / -) */}
+                      {/* BUTTONS A */}
                       <div className="grid grid-cols-4 gap-1 pt-1">
                         <button
                           type="button"
@@ -276,11 +277,11 @@ export default function ProsthesiAfairesiPage() {
                     {/* INPUT B */}
                     <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-blue-200 shadow-sm">
                       <div className="flex justify-between items-center">
-                        <label className="text-xs 2xl:text-sm font-black text-blue-800 uppercase tracking-wider block">
-                          2ος Προσθετέος (β):
+                        <label className="text-xs font-black text-blue-800 uppercase tracking-wider block">
+                          2ος (β):
                         </label>
-                        <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
-                          Ενεργό
+                        <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-full">
+                          Β
                         </span>
                       </div>
 
@@ -288,11 +289,11 @@ export default function ProsthesiAfairesiPage() {
                         type="text"
                         value={numB}
                         onChange={(e) => setNumB(sanitizeInput(e.target.value))}
-                        className="text-2xl 2xl:text-3xl font-black text-center p-2.5 bg-blue-50/50 border-2 border-blue-300 rounded-xl focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-700 font-mono"
-                        placeholder="π.χ. 18,5"
+                        className="text-xl 2xl:text-2xl font-black text-center p-2 bg-blue-50/50 border-2 border-blue-300 rounded-xl focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-700 font-mono"
+                        placeholder="18,5"
                       />
 
-                      {/* QUICK ADJUST BUTTONS (+ / -) */}
+                      {/* BUTTONS B */}
                       <div className="grid grid-cols-4 gap-1 pt-1">
                         <button
                           type="button"
@@ -325,32 +326,85 @@ export default function ProsthesiAfairesiPage() {
                       </div>
                     </div>
 
+                    {/* INPUT C (3ος ΑΡΙΘΜΟΣ) */}
+                    <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-indigo-200 shadow-sm">
+                      <div className="flex justify-between items-center">
+                        <label className="text-xs font-black text-indigo-800 uppercase tracking-wider block">
+                          3ος (γ):
+                        </label>
+                        <span className="text-[10px] font-bold bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded-full">
+                          Γ
+                        </span>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={extraNum}
+                        onChange={(e) => setExtraNum(sanitizeInput(e.target.value))}
+                        className="text-xl 2xl:text-2xl font-black text-center p-2 bg-indigo-50/50 border-2 border-indigo-300 rounded-xl focus:border-indigo-500 outline-none transition-all w-full tracking-wider text-indigo-700 font-mono"
+                        placeholder="5,25"
+                      />
+
+                      {/* BUTTONS C */}
+                      <div className="grid grid-cols-4 gap-1 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setExtraNum(adjustValue(extraNum, -1))}
+                          className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          -1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setExtraNum(adjustValue(extraNum, -0.1))}
+                          className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          -0,1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setExtraNum(adjustValue(extraNum, +0.1))}
+                          className="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          +0,1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setExtraNum(adjustValue(extraNum, +1))}
+                          className="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          +1
+                        </button>
+                      </div>
+                    </div>
+
                   </div>
 
                   <p className="text-[11px] 2xl:text-xs text-slate-400 text-center font-medium">
-                    💡 Πληκτρολόγησε φυσικούς ή δεκαδικούς αριθμούς ή χρησιμοποίησε τα πλήκτρα αυξομείωσης!
+                    💡 Άλλαξε οποιονδήποτε από τους 3 αριθμούς και δες όλα τα αποτελέσματα να προσαρμόζονται!
                   </p>
                 </div>
 
-                {/* DYNAMIC RESULT BADGE (5 COLS) */}
-                <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 2xl:p-6 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
+                {/* DYNAMIC RESULT BADGE (4 COLS) */}
+                <div className="lg:col-span-4 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 2xl:p-6 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                   <span className="text-[10px] 2xl:text-xs font-black text-amber-400 uppercase tracking-widest block">
-                    ✨ Τελικό Άθροισμα (α ＋ β):
+                    ✨ Άθροισμα 2 Αριθμών (α ＋ β):
                   </span>
                   
-                  <div className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-black font-mono">
+                  <div className="flex items-center justify-center gap-1.5 text-xl 2xl:text-2xl font-black font-mono">
                     <span className="text-emerald-400">{numA || "0"}</span>
                     <span className="text-amber-400 font-sans">＋</span>
                     <span className="text-cyan-300">{numB || "0"}</span>
                     <span className="text-slate-400 font-sans">＝</span>
-                    <span className="bg-amber-400 text-slate-900 px-3.5 py-1 rounded-xl shadow-md">
+                    <span className="bg-amber-400 text-slate-900 px-2.5 py-0.5 rounded-lg shadow-md">
                       {sumVal}
                     </span>
                   </div>
 
-                  <p className="text-xs text-blue-100 font-medium">
-                    Διαφορά (α － β): <strong className="text-amber-300 font-mono text-sm">{diffVal}</strong>
-                  </p>
+                  <div className="pt-2 border-t border-slate-800 w-full text-xs text-blue-100 space-y-1">
+                    <div>Σύνολο 3 Αριθμών (α＋β＋γ): <strong className="text-emerald-400 font-mono text-sm">{totalSumVal}</strong></div>
+                    <div>Διαφορά (α － β): <strong className="text-amber-300 font-mono text-sm">{diffVal}</strong></div>
+                  </div>
                 </div>
 
               </div>
@@ -401,7 +455,7 @@ export default function ProsthesiAfairesiPage() {
                   {/* LEFT: VERTICAL ALIGNMENT BOX (5 COLS) */}
                   <div className="lg:col-span-5 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center space-y-3">
                     <span className="text-xs font-black text-slate-400 uppercase tracking-wider block font-sans">
-                      📐 Κάθετη Στοίχιση Υποδιαστολής:
+                      📐 Κάθετη Στοίχιση Υποδιαστολής (α ＋ β):
                     </span>
 
                     <div className="font-mono text-xl md:text-2xl font-black text-slate-800 space-y-1 text-right inline-block">
@@ -457,26 +511,22 @@ export default function ProsthesiAfairesiPage() {
                             <span className="text-xl">🧩</span>
                             <h4 className="font-black text-slate-900 text-base">Προσεταιριστική Ιδιότητα</h4>
                           </div>
-                          
-                          {/* 3ος ΑΡΙΘΜΟΣ INPUT */}
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600">
-                            <span>3ος Αριθμός (γ):</span>
-                            <input
-                              type="text"
-                              value={extraNum}
-                              onChange={(e) => setExtraNum(sanitizeInput(e.target.value))}
-                              className="w-14 text-center font-mono font-black text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg p-1 outline-none"
-                            />
-                          </div>
+                          <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md">
+                            γ ＝ {extraNum || "0"}
+                          </span>
                         </div>
 
                         <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
                           Ομαδοποιούμε όπως μας εξυπηρετεί: <code className="text-indigo-700 font-bold">(α ＋ β) ＋ γ ＝ α ＋ (β ＋ γ)</code>
                         </p>
 
-                        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 font-mono text-xs md:text-sm font-bold text-center text-slate-800 space-y-1.5">
-                          <div>({numA || "0"} ＋ {numB || "0"}) ＋ {extraNum || "0"} ＝ {sumVal} ＋ {extraNum || "0"} ＝ <strong className="text-indigo-600 font-black">{(valA + valB + valExtra).toFixed(3).replace(/\.?0+$/, '').replace('.', ',')}</strong></div>
-                          <div>{numA || "0"} ＋ ({numB || "0"} ＋ {extraNum || "0"}) ＝ {numA || "0"} ＋ {(valB + valExtra).toFixed(3).replace(/\.?0+$/, '').replace('.', ',')} ＝ <strong className="text-indigo-600 font-black">{(valA + valB + valExtra).toFixed(3).replace(/\.?0+$/, '').replace('.', ',')}</strong></div>
+                        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 font-mono text-xs md:text-sm font-bold text-center text-slate-800 space-y-2">
+                          <div>
+                            ({numA || "0"} ＋ {numB || "0"}) ＋ {extraNum || "0"} ＝ {sumVal} ＋ {extraNum || "0"} ＝ <strong className="text-indigo-600 font-black">{totalSumVal}</strong>
+                          </div>
+                          <div>
+                            {numA || "0"} ＋ ({numB || "0"} ＋ {extraNum || "0"}) ＝ {numA || "0"} ＋ {(valB + valExtra).toFixed(3).replace(/\.?0+$/, '').replace('.', ',')} ＝ <strong className="text-indigo-600 font-black">{totalSumVal}</strong>
+                          </div>
                         </div>
                       </div>
                     )}
