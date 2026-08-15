@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
+// Βοηθητικές συναρτήσεις
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -16,212 +17,198 @@ function shuffle(array) {
   return arr;
 }
 
-// 1. Δεκαδικό Κλάσμα σε Δεκαδικό Αριθμό (Input)
-function makeFractionToDecimal(prevQuestion = null) {
-  let num, val;
-  const den = 1000;
+// Δεξαμενή 20+ ρεαλιστικών αντικειμένων καθημερινότητας με σωστό άρθρο και γένος
+const REAL_WORLD_DECIMALS = [
+  { item: 'το γάλα σε λίτρα', unit: 'λ.', min: 1, max: 5 },
+  { item: 'το μέλι σε κιλά', unit: 'κιλά', min: 1, max: 4 },
+  { item: 'το ελαιόλαδο σε λίτρα', unit: 'λ.', min: 2, max: 10 },
+  { item: 'το ύφασμα σε μέτρα', unit: 'μ.', min: 3, max: 15 },
+  { item: 'το τυρί σε κιλά', unit: 'κιλά', min: 1, max: 6 },
+  { item: 'η θερμοκρασία ασθενούς', unit: '°C', min: 36, max: 39 },
+  { item: 'η τιμή του βιβλίου σε ευρώ', unit: '€', min: 10, max: 35 },
+  { item: 'το μήκος της κορδέλας', unit: 'μ.', min: 2, max: 8 },
+  { item: 'το βάρος της βαλίτσας', unit: 'κιλά', min: 12, max: 28 },
+  { item: 'η απόσταση της διαδρομής', unit: 'χλμ.', min: 5, max: 45 },
+  { item: 'η βενζίνη σε λίτρα', unit: 'λ.', min: 20, max: 55 },
+  { item: 'το πάχος του μετάλλου σε χιλιοστά', unit: 'χιλ.', min: 1, max: 9 },
+  { item: 'η τιμή του εισιτηρίου σε ευρώ', unit: '€', min: 8, max: 25 },
+  { item: 'το βάρος του καρπουζιού', unit: 'κιλά', min: 4, max: 12 },
+  { item: 'η διάρκεια της πτήσης σε ώρες', unit: 'ώρες', min: 1, max: 6 },
+  { item: 'το ύψος του φυτού σε μέτρα', unit: 'μ.', min: 1, max: 3 },
+  { item: 'η ποσότητα χυμού σε λίτρα', unit: 'λ.', min: 1, max: 4 },
+  { item: 'η τιμή των φρούτων σε ευρώ', unit: '€', min: 3, max: 14 },
+  { item: 'το βάρος του δέματος σε κιλά', unit: 'κιλά', min: 2, max: 9 },
+  { item: 'το μήκος του καλωδίου σε μέτρα', unit: 'μ.', min: 4, max: 20 },
+  { item: 'η κατανάλωση ρεύματος σε κιλοβατώρες', unit: 'kWh', min: 15, max: 60 }
+];
 
-  while (true) {
-    num = getRandomInt(15, 4850);
-    val = (num / den).toFixed(3).replace('.', ',');
-
-    if (!prevQuestion || prevQuestion.num !== num) {
-      break;
-    }
-  }
-
-  return {
-    num,
-    den,
-    correct: val,
-    explain: `Διαιρώντας με το 1.000, μετακινούμε την υποδιαστολή 3 θέσεις αριστερά: ${num} / 1.000 = ${val}.`
-  };
-}
-
-// 2. Δεκαδικός Αριθμός σε Δεκαδικό Κλάσμα (MCQ)
-function makeDecimalToFraction(prevQuestion = null) {
-  let num, decVal;
-  const den = 1000;
-
-  while (true) {
-    num = getRandomInt(12, 999);
-    decVal = (num / den).toFixed(3).replace('.', ',');
-
-    if (!prevQuestion || prevQuestion.decVal !== decVal) {
-      break;
-    }
-  }
-
-  const correctText = `${num}/${den}`;
-  const options = shuffle([
-    correctText,
-    `${num}/100`,
-    `${num}/10`,
-    `${num + 10}/${den}`
-  ]);
-
-  return {
-    decVal,
-    options,
-    correct: correctText,
-    explain: `Ο αριθμός ${decVal} έχει 3 δεκαδικά ψηφία (χιλιοστά), άρα ισούται με το κλάσμα ${correctText}.`
-  };
-}
-
-// 3. Αξία Θέσης Δεκαδικού Ψηφίου (Input)
-function makePlaceValue(prevQuestion = null) {
-  let intPart, tenths, hundredths, thousandths, placeType, decStr, correctDigit;
-  const places = ['δέκατα', 'εκατοστά', 'χιλιοστά'];
-
-  while (true) {
-    intPart = getRandomInt(0, 9);
-    tenths = getRandomInt(1, 9);
-    hundredths = getRandomInt(1, 9);
-    thousandths = getRandomInt(1, 9);
-
-    placeType = places[getRandomInt(0, places.length - 1)];
-    decStr = `${intPart},${tenths}${hundredths}${thousandths}`;
-
-    if (placeType === 'δέκατα') correctDigit = tenths;
-    if (placeType === 'εκατοστά') correctDigit = hundredths;
-    if (placeType === 'χιλιοστά') correctDigit = thousandths;
-
-    if (!prevQuestion || prevQuestion.decStr !== decStr || prevQuestion.placeType !== placeType) {
-      break;
-    }
-  }
-
-  return {
-    decStr,
-    placeType,
-    correct: correctDigit,
-    explain: `Στον αριθμό ${decStr}, το ψηφίο στη θέση των ${placeType} είναι το ${correctDigit}.`
-  };
-}
-
-// 4. Σύγκριση Δεκαδικών Αριθμών (< , = , >)
-function makeComparison(prevQuestion = null) {
-  let valA, valB, strA, strB, correctSym;
-
-  while (true) {
-    const intPart = getRandomInt(0, 9);
-    const decA = getRandomInt(1, 999);
-    let decB = getRandomInt(1, 999);
-
-    valA = parseFloat(`${intPart}.${decA.toString().padStart(3, '0')}`);
-    valB = parseFloat(`${intPart}.${decB.toString().padStart(3, '0')}`);
-
-    if (Math.random() > 0.75) valB = valA;
-
-    correctSym = '=';
-    if (valA > valB) correctSym = '>';
-    if (valA < valB) correctSym = '<';
-
-    strA = valA.toFixed(3).replace('.', ',');
-    strB = valB.toFixed(3).replace('.', ',');
-
-    if (!prevQuestion || prevQuestion.strA !== strA || prevQuestion.strB !== strB) {
-      break;
-    }
-  }
-
-  return {
-    strA,
-    strB,
-    correct: correctSym,
-    explain: `Συγκρίνοντας τα μέρη: ${strA} ${correctSym} ${strB}.`
-  };
-}
-
-// 5. True / False: Ισοδύναμα Μηδενικά
-function makeEquivalentDecimalsTF() {
-  const isTrue = Math.random() > 0.5;
-  const num = (getRandomInt(1, 9) + getRandomInt(1, 9) / 10).toFixed(1).replace('.', ',');
-  const text = isTrue
-    ? `Οι δεκαδικοί αριθμοί ${num} και ${num}00 έχουν ακριβώς την ίδια μαθηματική αξία.`
-    : `Ο αριθμός ${num}00 είναι 100 φορές μεγαλύτερος από τον αριθμό ${num}.`;
-
-  return {
-    text,
-    correct: isTrue,
-    explain: isTrue
-      ? 'Σωστά! Τα μηδενικά στο τέλος του δεκαδικού μέρους δεν μεταβάλλουν την αξία του αριθμού.'
-      : 'Λάθος! Η προσθήκη μηδενικών στο τέλος του δεκαδικού μέρους δεν αλλάζει την αξία του.'
-  };
-}
-
-// 6. True / False: Αξία Υποδιαστολής
-function makeDecimalPointTF() {
-  const isTrue = Math.random() > 0.5;
-  const text = isTrue
-    ? `Η υποδιαστολή διαχωρίζει τις ακέραιες μονάδες από τα μέρη που είναι μικρότερα της μίας μονάδας.`
-    : `Το πρώτο ψηφίο δεξιά από την υποδιαστολή δείχνει πάντα τα εκατοστά (1/100).`;
-
-  return {
-    text,
-    correct: isTrue,
-    explain: isTrue
-      ? 'Σωστά! Αριστερά είναι το ακέραιο μέρος και δεξιά το δεκαδικό μέρος.'
-      : 'Λάθος! Το 1ο ψηφίο δεξιά από την υποδιαστολή είναι τα δέκατα (1/10) και το 2ο τα εκατοστά (1/100).'
-  };
-}
-
-// 7. Οπτική Ερώτηση (SVG Πίνακας Δεκαδικών)
-function makeVisualDecTable() {
-  const e = getRandomInt(1, 4);
-  const d = getRandomInt(0, 9);
-  const m = getRandomInt(1, 9);
-  const dek = getRandomInt(1, 9);
-  const ek = getRandomInt(0, 9);
-  const xil = getRandomInt(1, 9);
-
-  const decStr = `${e}${d}${m},${dek}${ek}${xil}`;
-
-  return {
-    digits: [e, d, m, dek, ek, xil],
-    correct: decStr,
-    explain: `Συνδυάζοντας ακέραιο και δεκαδικό μέρος με υποδιαστολή: ${decStr}.`
-  };
-}
-
-// 8. Ανάλυση σε Άθροισμα (MCQ)
-function makeExpandedDecimalQuestion() {
-  const a = getRandomInt(1, 9);
-  const b = getRandomInt(1, 9);
-  const c = getRandomInt(1, 9);
-
-  const decVal = `${a},${b}${c}`;
-  const correctText = `${a} + ${b}/10 + ${c}/100`;
-
-  const options = shuffle([
-    correctText,
-    `${a} + ${b}/100 + ${c}/1000`,
-    `${a * 10} + ${b}/10 + ${c}/100`,
-    `${a} + ${b}/10 + ${c}/10`
-  ]);
-
-  return {
-    decVal,
-    options,
-    correct: correctText,
-    explain: `Ο αριθμός ${decVal} αναλύεται σε ${a} μονάδες + ${b} δέκατα (${b}/10) + ${c} εκατοστά (${c}/100).`
-  };
-}
-
+// Δημιουργία 8 μοναδικών ερωτήσεων
 function generateQuestions() {
+  const shuffledItems = shuffle(REAL_WORLD_DECIMALS);
+
+  // Q1: Αριθμητικό Input - Αξία δεκαδικού ψηφίου (δέκατα, εκατοστά, χιλιοστά)
+  const q1Int = getRandomInt(12, 85);
+  const q1D = getRandomInt(1, 9);
+  const q1E = getRandomInt(1, 9);
+  const q1X = getRandomInt(1, 9);
+  const q1DecPositions = [
+    { name: 'δεκάτων', digit: q1D, valStr: `0,${q1D}`, valNum: q1D / 10, frac: `${q1D}/10` },
+    { name: 'εκατοστών', digit: q1E, valStr: `0,0${q1E}`, valNum: q1E / 100, frac: `${q1E}/100` },
+    { name: 'χιλιοστών', digit: q1X, valStr: `0,00${q1X}`, valNum: q1X / 1000, frac: `${q1X}/1000` }
+  ];
+  const q1Choice = q1DecPositions[getRandomInt(0, 2)];
+  const q1FullNumStr = `${q1Int},${q1D}${q1E}${q1X}`;
+
+  // Q2: Αριθμητικό Input - Μετατροπή Δεκαδικού Κλάσματος σε Δεκαδικό Αριθμό
+  const q2DenomType = getRandomInt(1, 3); // 1: /10, 2: /100, 3: /1000
+  let q2Numer = 0;
+  let q2AnswerStr = '';
+  let q2Denom = 10;
+  if (q2DenomType === 1) {
+    q2Numer = getRandomInt(15, 95);
+    q2Denom = 10;
+    q2AnswerStr = (q2Numer / 10).toString().replace('.', ',');
+  } else if (q2DenomType === 2) {
+    q2Numer = getRandomInt(105, 995);
+    q2Denom = 100;
+    q2AnswerStr = (q2Numer / 100).toString().replace('.', ',');
+  } else {
+    q2Numer = getRandomInt(1025, 9850);
+    q2Denom = 1000;
+    q2AnswerStr = (q2Numer / 1000).toString().replace('.', ',');
+  }
+
+  // Q3: MCQ - Σύνθεση δεκαδικού από αναπτυγμένη μορφή
+  const q3M = getRandomInt(2, 9);
+  const q3D = getRandomInt(1, 9);
+  const q3E = getRandomInt(1, 9);
+  const q3CorrectStr = `${q3M * 10},${q3D}${q3E}`;
+  const q3Wrong1 = `${q3M},${q3D}${q3E}`;
+  const q3Wrong2 = `${q3M * 10},0${q3D}${q3E}`;
+  const q3Wrong3 = `${q3M * 100},${q3D}${q3E}`;
+  const q3Options = shuffle([q3CorrectStr, q3Wrong1, q3Wrong2, q3Wrong3]);
+
+  // Q4: MCQ - Σύγκριση / Διάταξη δεκαδικών αριθμών
+  const q4BaseInt = getRandomInt(14, 48);
+  const q4Opts = [
+    { text: `${q4BaseInt},8`, val: q4BaseInt + 0.8 },
+    { text: `${q4BaseInt},75`, val: q4BaseInt + 0.75 },
+    { text: `${q4BaseInt},095`, val: q4BaseInt + 0.095 },
+    { text: `${q4BaseInt},705`, val: q4BaseInt + 0.705 }
+  ];
+  const q4Sorted = [...q4Opts].sort((a, b) => b.val - a.val);
+  const q4Correct = q4Sorted[0].text;
+  const q4Options = shuffle(q4Opts.map(o => o.text));
+
+  // Q5: True / False - Μηδενικά στο τέλος του δεκαδικού μέρους
+  const q5Int = getRandomInt(3, 18);
+  const q5Dec = getRandomInt(2, 8);
+  const q5IsTrue = Math.random() > 0.5;
+  const q5Text = q5IsTrue
+    ? `Οι δεκαδικοί αριθμοί ${q5Int},${q5Dec} και ${q5Int},${q5Dec}00 έχουν ακριβώς την ίδια αξία.`
+    : `Ο αριθμός ${q5Int},${q5Dec}00 είναι 100 φορές μεγαλύτερος από τον αριθμό ${q5Int},${q5Dec}.`;
+
+  // Q6: True / False - Σχέση δεκάτων και εκατοστών
+  const q6IsTrue = Math.random() > 0.5;
+  const q6Text = q6IsTrue
+    ? '1 δέκατο (0,1) ισοδυναμεί με 10 εκατοστά (0,10) και με 100 χιλιοστά (0,100).'
+    : '1 εκατοστό (0,01) είναι 10 φορές μεγαλύτερο από 1 δέκατο (0,1).';
+
+  // Q7: SVG Visual - Δεκαδικός Άβακας / Πίνακας Θέσεων
+  const q7Units = getRandomInt(1, 4);
+  const q7Tenths = getRandomInt(1, 5);
+  const q7Hundr = getRandomInt(1, 6);
+  const q7CorrectStr = `${q7Units},${q7Tenths}${q7Hundr}`;
+  const q7Columns = [
+    { label: 'Μονάδες (Μ)', count: q7Units, color: '#059669' },
+    { label: 'Δέκατα (δ)', count: q7Tenths, color: '#2563eb' },
+    { label: 'Εκατοστά (ε)', count: q7Hundr, color: '#9333ea' }
+  ];
+
+  // Q8: SVG Visual - Δεκαδική Αριθμογραμμή (Αναγνώριση σημείου)
+  const q8Step = getRandomInt(1, 9);
+  const q8CorrectVal = (3 + q8Step * 0.1).toFixed(1).replace('.', ',');
+  const q8Options = shuffle([
+    q8CorrectVal,
+    (3 + (q8Step + 1 > 9 ? q8Step - 1 : q8Step + 1) * 0.1).toFixed(1).replace('.', ','),
+    (3 + (q8Step - 1 < 1 ? q8Step + 2 : q8Step - 1) * 0.1).toFixed(1).replace('.', ','),
+    `3,0${q8Step}`
+  ]);
+
   return {
-    q1: makeFractionToDecimal(),
-    q2: makeDecimalToFraction(),
-    q3: makePlaceValue(),
-    q4: makeComparison(),
-    q5: makeEquivalentDecimalsTF(),
-    q6: makeDecimalPointTF(),
-    q7: makeVisualDecTable(),
-    q8: makeExpandedDecimalQuestion()
+    q1: {
+      type: 'input',
+      title: 'Αξία Δεκαδικού Ψηφίου',
+      number: q1FullNumStr,
+      posName: q1Choice.name,
+      digit: q1Choice.digit,
+      correctStr: q1Choice.valStr,
+      correctFraction: q1Choice.frac,
+      correctNum: q1Choice.valNum,
+      itemContext: shuffledItems[0].item,
+      explain: `Το ψηφίο ${q1Choice.digit} βρίσκεται στη θέση των ${q1Choice.name}, άρα η αξία του είναι ${q1Choice.valStr} (ή ${q1Choice.frac}).`
+    },
+    q2: {
+      type: 'input',
+      title: 'Δεκαδικό Κλάσμα σε Δεκαδικό',
+      numer: q2Numer,
+      denom: q2Denom,
+      correctStr: q2AnswerStr,
+      explain: `Διαιρώντας τον αριθμητή με το ${q2Denom}, μετακινούμε την υποδιαστολή ${q2Denom === 10 ? '1 θέση' : q2Denom === 100 ? '2 θέσεις' : '3 θέσεις'} αριστερά: ${q2Numer}/${q2Denom} = ${q2AnswerStr}.`
+    },
+    q3: {
+      type: 'mcq',
+      title: 'Σύνθεση Δεκαδικού Αριθμού',
+      prompt: `(${q3M} × 10) + (${q3D} × 0,1) + (${q3E} × 0,01)`,
+      options: q3Options,
+      correct: q3CorrectStr,
+      explain: `Υπολογίζοντας τα γινόμενα: ${q3M * 10} + 0,${q3D} + 0,0${q3E} = ${q3CorrectStr}.`
+    },
+    q4: {
+      type: 'mcq',
+      title: 'Σύγκριση Δεκαδικών',
+      question: 'Ποιος από τους παρακάτω δεκαδικούς αριθμούς είναι ο μεγαλύτερος;',
+      options: q4Options,
+      correct: q4Correct,
+      explain: `Συγκρίνοντας πρώτα τα δέκατα και μετά τα εκατοστά, ο μεγαλύτερος αριθμός είναι το ${q4Correct} (αφού 8 δέκατα = 0,800 > 0,750 > 0,705).`
+    },
+    q5: {
+      type: 'tf',
+      title: 'Ισοδύναμοι Δεκαδικοί & Μηδενικά',
+      text: q5Text,
+      correct: q5IsTrue,
+      explain: q5IsTrue
+        ? 'Σωστά! Η προσθήκη μηδενικών στο τέλος του δεκαδικού μέρους δεν αλλάζει την αξία του αριθμού.'
+        : 'Λάθος! Τα μηδενικά στο τέλος του δεκαδικού μέρους δεν αλλάζουν την αξία (π.χ. 5,4 = 5,40 = 5,400).'
+    },
+    q6: {
+      type: 'tf',
+      title: 'Σχέσεις Δεκαδικών Μονάδων',
+      text: q6Text,
+      correct: q6IsTrue,
+      explain: q6IsTrue
+        ? 'Σωστά! Κάθε δεκαδική μονάδα είναι 10 φορές μεγαλύτερη από την αμέσως δεξιά της (1 δέκατο = 10 εκατοστά = 100 χιλιοστά).'
+        : 'Λάθος! Το 1 δέκατο (0,1) είναι 10 φορές ΜΕΓΑΛΥΤΕΡΟ από το 1 εκατοστό (0,01).'
+    },
+    q7: {
+      type: 'input',
+      title: 'Δεκαδικός Άβακας',
+      columns: q7Columns,
+      correctStr: q7CorrectStr,
+      explain: `Μετρώντας τις χάντρες: ${q7Units} Μονάδες , ${q7Tenths} Δέκατα και ${q7Hundr} Εκατοστά = ${q7CorrectStr}.`
+    },
+    q8: {
+      type: 'mcq',
+      title: 'Δεκαδική Αριθμογραμμή',
+      step: q8Step,
+      options: q8Options,
+      correct: q8CorrectVal,
+      explain: `Το κόκκινο σημείο βρίσκεται ${q8Step} υποδιαιρέσεις (δέκατα) μετά το 3, άρα αντιστοιχεί στο ${q8CorrectVal}.`
+    }
   };
 }
 
-export default function DekadikoiArithmoiAskPage() {
+export default function DekadikoiExercisesPage() {
   const [questions, setQuestions] = useState(null);
   const [answers, setAnswers] = useState({
     q1: '', q2: '', q3: '', q4: '', q5: null, q6: null, q7: '', q8: ''
@@ -250,21 +237,23 @@ export default function DekadikoiArithmoiAskPage() {
     setAnswers(prev => ({ ...prev, [key]: val }));
   };
 
-  const normalize = (str) => String(str || '').trim().replace('.', ',');
-
   const isCorrect = (key) => {
     const q = questions[key];
     const a = answers[key];
-    if (key === 'q1' || key === 'q7') {
-      return normalize(a) === q.correct;
+
+    if (q.type === 'input') {
+      if (typeof a !== 'string' || !a.trim()) return false;
+      const cleanAns = a.replace(/\s+/g, '').replace('.', ',');
+
+      if (key === 'q1') {
+        return cleanAns === q.correctStr || cleanAns === q.correctFraction;
+      }
+      return cleanAns === q.correctStr;
     }
-    if (key === 'q3') {
-      return parseInt(a, 10) === q.correct;
-    }
-    if (key === 'q2' || key === 'q4' || key === 'q8') {
+    if (q.type === 'mcq') {
       return a === q.correct;
     }
-    if (key === 'q5' || key === 'q6') {
+    if (q.type === 'tf') {
       return a === q.correct;
     }
     return false;
@@ -274,440 +263,484 @@ export default function DekadikoiArithmoiAskPage() {
     e.preventDefault();
     if (submitted) return;
 
-    let currentScore = 0;
+    let s = 0;
     ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8'].forEach(k => {
-      if (isCorrect(k)) currentScore += 1;
+      if (isCorrect(k)) s += 1;
     });
 
-    setScore(currentScore);
+    setScore(s);
     setSubmitted(true);
   };
 
-  const getCardBorder = (key) => {
-    if (!submitted) return 'border-gray-100 bg-white';
+  const getCardStyle = (key) => {
+    if (!submitted) return 'bg-white border-slate-200 shadow-sm';
     return isCorrect(key)
-      ? 'border-emerald-500 bg-emerald-50/20 shadow-md'
-      : 'border-red-400 bg-red-50/20 shadow-md';
+      ? 'bg-emerald-50/60 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/60 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between pb-24">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col justify-between pb-32">
       <Head>
-        <title>🔢 Ασκήσεις: Δεκαδικοί Αριθμοί - LearnMaths.gr</title>
+        <title>🎯 Ασκήσεις: Δεκαδικοί Αριθμοί - ΣΤ' Δημοτικού | LearnMaths.gr</title>
+        <meta name="description" content="Διαδραστικές ασκήσεις με άμεση βαθμολόγηση στους δεκαδικούς αριθμούς και τα δεκαδικά κλάσματα για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
       <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full sticky top-0 z-50">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/st-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
+        {/* 1. STICKY NAVBAR */}
+        <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+          <div className={`${LAYOUT.CONTAINER} py-3.5 flex justify-between items-center`}>
+            <Link href="/st-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight flex items-center">
+              <span>LearnMaths</span><span className="text-indigo-600">.gr</span>
             </Link>
             <div className="flex items-center gap-3">
               <Link 
                 href="/st-dimotikou/02-dekadikoi" 
-                className="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2"
+                className="inline-flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl text-sm font-bold border border-emerald-200 transition"
               >
-                <span>📖</span> Θεωρία
+                <span>📖</span> <span>Θεωρία</span>
               </Link>
-              <button 
-                onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2"
+              <Link 
+                href="/st-dimotikou" 
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold transition"
               >
-                <span>🔄</span> Νέες Ασκήσεις
-              </button>
+                <span>🔙</span> <span>Πίσω</span>
+              </Link>
             </div>
           </div>
         </nav>
 
-        {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
-          
-          {/* HEADER BANNER */}
-          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white p-8 rounded-3xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
-              </span>
-              <h1 className="text-3xl lg:text-4xl font-black tracking-tight mt-2">
-                📝 Ασκήσεις: Δεκαδικοί Αριθμοί & Κλάσματα
+        {/* 2. HEADER HERO BANNER */}
+        <section className="bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white py-10 px-4 shadow-inner">
+          <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-6`}>
+            <div className="space-y-2 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-teal-100 border border-white/20">
+                <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+                Διαδραστικές Ασκήσεις: Δεκαδικοί Αριθμοί
               </h1>
-              <p className="text-emerald-100 text-sm md:text-base mt-1">
-                Πατώντας «Νέες Ασκήσεις» οι αριθμοί αλλάζουν αυτόματα.
+              <p className="text-teal-100 text-sm md:text-base max-w-xl">
+                Λύσε τα 8 δυναμικά προβλήματα στα δέκατα, εκατοστά και χιλιοστά και δες αναλυτική εξήγηση για κάθε ερώτηση!
               </p>
             </div>
 
             <button
+              type="button"
               onClick={loadNewQuestions}
-              className="bg-white text-gray-900 font-black px-5 py-3 rounded-2xl shadow-lg hover:bg-amber-50 transition transform active:scale-95 text-sm whitespace-nowrap"
+              className="px-5 py-3 bg-white text-teal-800 hover:bg-teal-50 rounded-2xl font-extrabold shadow-md transition transform active:scale-95 text-sm flex items-center gap-2 shrink-0"
             >
-              🔄 Αλλαγή Αριθμών
+              <span>🔄</span> <span>Νέες Ασκήσεις</span>
             </button>
           </div>
+        </section>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+        {/* 3. ΦΟΡΜΑ ΜΕ ΤΙΣ 8 ΕΡΩΤΗΣΕΙΣ */}
+        <main className={`${LAYOUT.LESSON_CONTAINER} py-10`}>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            {/* Q1: Κλάσμα -> Δεκαδικός */}
-            <div className={`p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${getCardBorder('q1')}`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-emerald-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">1</span>
-                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  Γράψε το δεκαδικό κλάσμα 
-                  <span className="inline-flex flex-col items-center leading-none text-base font-mono font-black text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
-                    <span>{questions.q1.num}</span>
-                    <span className="border-b-2 border-emerald-800 w-full"></span>
-                    <span>1.000</span>
-                  </span> 
-                  ως δεκαδικό αριθμό:
-                </h3>
-              </div>
-              <div className="pl-0 md:pl-11 space-y-3">
-                <input
-                  type="text"
-                  placeholder="π.χ. 0,245"
-                  value={answers.q1}
-                  onChange={(e) => handleInputChange('q1', e.target.value)}
-                  disabled={submitted}
-                  className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:bg-gray-100"
-                />
-              </div>
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {isCorrect('q1') ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. {questions.q1.explain}</p>
+              {/* ΕΡΩΤΗΣΗ 1: Αριθμητικό Input (Αξία Δεκαδικού Ψηφίου) */}
+              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
+                    Άσκηση 1 • Αξία Θέσης
+                  </span>
+                  {submitted && (
+                    <span className="text-lg">{isCorrect('q1') ? '✅' : '❌'}</span>
                   )}
                 </div>
-              )}
-            </div>
-
-            {/* Q2: Δεκαδικός -> Κλάσμα (MCQ) */}
-            <div className={`p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${getCardBorder('q2')}`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-blue-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">2</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Ποιο δεκαδικό κλάσμα είναι ίσο με τον αριθμό <span className="text-blue-600 font-mono font-black text-xl">{questions.q2.decVal}</span>;
-                </h3>
+                <p className="text-sm text-slate-700 mb-4 leading-relaxed font-medium">
+                  Στον δεκαδικό αριθμό <strong className="text-emerald-700 text-base font-black tracking-wider">{questions.q1.number}</strong>, ποια είναι η αξία του ψηφίου των <strong className="text-slate-900 font-black">{questions.q1.posName}</strong> ({questions.q1.digit});
+                </p>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    disabled={submitted}
+                    value={answers.q1}
+                    onChange={(e) => handleInputChange('q1', e.target.value)}
+                    placeholder="π.χ. 0,05 ή 5/100"
+                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-emerald-500 outline-none disabled:bg-slate-100 font-mono"
+                  />
+                  {submitted && (
+                    <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q1') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                      💡 {questions.q1.explain}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pl-0 md:pl-11">
-                {questions.q2.options.map((opt, idx) => {
-                  const [n, d] = opt.split('/');
-                  return (
-                    <label
+
+              {/* ΕΡΩΤΗΣΗ 2: Αριθμητικό Input (Κλάσμα σε Δεκαδικό) */}
+              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
+                    Άσκηση 2 • Δεκαδικό Κλάσμα
+                  </span>
+                  {submitted && (
+                    <span className="text-lg">{isCorrect('q2') ? '✅' : '❌'}</span>
+                  )}
+                </div>
+                <p className="text-sm text-slate-700 mb-4 leading-relaxed font-medium">
+                  Γράψε το δεκαδικό κλάσμα ως δεκαδικό αριθμό:
+                </p>
+                <div className="p-3 bg-slate-100 rounded-xl font-mono text-base text-center font-black text-slate-800 mb-4 flex items-center justify-center gap-2">
+                  <div className="inline-flex flex-col items-center leading-none">
+                    <span>{questions.q2.numer}</span>
+                    <div className="w-12 h-[2px] bg-slate-700 my-1"></div>
+                    <span>{questions.q2.denom}</span>
+                  </div>
+                  <span className="text-slate-400 font-normal">=</span>
+                  <span className="text-blue-600">;</span>
+                </div>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    disabled={submitted}
+                    value={answers.q2}
+                    onChange={(e) => handleInputChange('q2', e.target.value)}
+                    placeholder="π.χ. 3,45"
+                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100 font-mono"
+                  />
+                  {submitted && (
+                    <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q2') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                      💡 {questions.q2.explain}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* ΕΡΩΤΗΣΗ 3: MCQ (Σύνθεση Δεκαδικού) */}
+              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
+                    Άσκηση 3 • Σύνθεση
+                  </span>
+                  {submitted && (
+                    <span className="text-lg">{isCorrect('q3') ? '✅' : '❌'}</span>
+                  )}
+                </div>
+                <p className="text-sm text-slate-700 mb-2 leading-relaxed font-medium">
+                  Ποιος δεκαδικός αριθμός προκύπτει από την παρακάτω αναπτυγμένη μορφή;
+                </p>
+                <div className="p-2.5 bg-slate-100 rounded-xl font-mono text-xs text-center font-bold text-slate-800 mb-3">
+                  {questions.q3.prompt}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                  {questions.q3.options.map((opt, idx) => (
+                    <button
                       key={idx}
-                      className={`flex items-center justify-center p-3.5 rounded-2xl border cursor-pointer transition ${
-                        answers.q2 === opt
-                          ? 'border-blue-600 bg-blue-50 font-bold'
-                          : 'border-gray-200 hover:bg-gray-50'
+                      type="button"
+                      disabled={submitted}
+                      onClick={() => handleInputChange('q3', opt)}
+                      className={`p-3 rounded-xl text-xs font-mono font-bold border text-center transition ${
+                        answers.q3 === opt
+                          ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
+                          : 'bg-white text-slate-700 border-slate-200 hover:bg-purple-50'
                       }`}
                     >
-                      <input
-                        type="radio"
-                        name="q2"
-                        value={opt}
-                        checked={answers.q2 === opt}
-                        onChange={() => handleInputChange('q2', opt)}
-                        disabled={submitted}
-                        className="hidden"
-                      />
-                      <span className="inline-flex flex-col items-center leading-none text-base font-mono font-black text-gray-800">
-                        <span>{n}</span>
-                        <span className="border-b-2 border-gray-800 w-full my-0.5"></span>
-                        <span>{d}</span>
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {isCorrect('q2') ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. {questions.q2.explain}</p>
-                  )}
+                      {opt}
+                    </button>
+                  ))}
                 </div>
-              )}
-            </div>
-
-            {/* Q3: Αξία Θέσης */}
-            <div className={`p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${getCardBorder('q3')}`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-teal-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">3</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Ποιο ψηφίο βρίσκεται στη θέση <span className="text-teal-600 font-extrabold">{questions.q3.placeType}</span> στον αριθμό <span className="text-teal-600 font-mono font-black text-xl">{questions.q3.decStr}</span>;
-                </h3>
-              </div>
-              <div className="pl-0 md:pl-11 space-y-3">
-                <input
-                  type="number"
-                  placeholder="Γράψε το ψηφίο"
-                  value={answers.q3}
-                  onChange={(e) => handleInputChange('q3', e.target.value)}
-                  disabled={submitted}
-                  className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-teal-500 focus:outline-none disabled:bg-gray-100"
-                />
-              </div>
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {isCorrect('q3') ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. {questions.q3.explain}</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Q4: Σύγκριση (<, =, >) */}
-            <div className={`p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${getCardBorder('q4')}`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-amber-500 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">4</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Επίλεξε το σωστό σύμβολο σύγκρισης ( &lt; , = , &gt; ):
-                </h3>
-              </div>
-              <div className="pl-0 md:pl-11 space-y-4">
-                <div className="flex items-center gap-4 text-xl md:text-2xl font-mono font-black text-gray-800">
-                  <span>{questions.q4.strA}</span>
-                  <div className="flex gap-2">
-                    {['<', '=', '>'].map((sym) => (
-                      <button
-                        type="button"
-                        key={sym}
-                        onClick={() => handleInputChange('q4', sym)}
-                        disabled={submitted}
-                        className={`w-12 h-12 rounded-xl text-xl font-black border transition ${
-                          answers.q4 === sym
-                            ? 'bg-amber-500 text-white border-amber-600 shadow-md'
-                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
-                        }`}
-                      >
-                        {sym}
-                      </button>
-                    ))}
+                {submitted && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q3') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                    💡 {questions.q3.explain}
                   </div>
-                  <span>{questions.q4.strB}</span>
-                </div>
+                )}
               </div>
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {isCorrect('q4') ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. {questions.q4.explain}</p>
+
+              {/* ΕΡΩΤΗΣΗ 4: MCQ (Σύγκριση Δεκαδικών) */}
+              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
+                    Άσκηση 4 • Σύγκριση
+                  </span>
+                  {submitted && (
+                    <span className="text-lg">{isCorrect('q4') ? '✅' : '❌'}</span>
                   )}
                 </div>
-              )}
-            </div>
+                <p className="text-sm text-slate-700 mb-4 leading-relaxed font-medium">
+                  {questions.q4.question}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                  {questions.q4.options.map((opt, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      disabled={submitted}
+                      onClick={() => handleInputChange('q4', opt)}
+                      className={`p-3 rounded-xl text-xs font-mono font-bold border text-center transition ${
+                        answers.q4 === opt
+                          ? 'bg-amber-500 text-white border-amber-500 shadow-sm'
+                          : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
+                      }`}
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+                {submitted && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q4') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                    💡 {questions.q4.explain}
+                  </div>
+                )}
+              </div>
 
-            {/* Q5: True / False */}
-            <div className={`p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${getCardBorder('q5')}`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">5</span>
-                <h3 className="text-lg font-bold text-gray-900">
+              {/* ΕΡΩΤΗΣΗ 5: True/False (Ισοδύναμοι Δεκαδικοί) */}
+              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
+                    Άσκηση 5 • Σωστό ή Λάθος
+                  </span>
+                  {submitted && (
+                    <span className="text-lg">{isCorrect('q5') ? '✅' : '❌'}</span>
+                  )}
+                </div>
+                <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
                   «{questions.q5.text}»
-                </h3>
-              </div>
-              <div className="flex gap-4 pl-0 md:pl-11">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', true)}
-                  className={`px-8 py-3 rounded-2xl font-black text-sm border transition ${
-                    answers.q5 === true
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
-                  }`}
-                >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', false)}
-                  className={`px-8 py-3 rounded-2xl font-black text-sm border transition ${
-                    answers.q5 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {isCorrect('q5') ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ {questions.q5.explain}</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Q6: True / False */}
-            <div className={`p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${getCardBorder('q6')}`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-indigo-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">6</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  «{questions.q6.text}»
-                </h3>
-              </div>
-              <div className="flex gap-4 pl-0 md:pl-11">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', true)}
-                  className={`px-8 py-3 rounded-2xl font-black text-sm border transition ${
-                    answers.q6 === true
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
-                  }`}
-                >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', false)}
-                  className={`px-8 py-3 rounded-2xl font-black text-sm border transition ${
-                    answers.q6 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {isCorrect('q6') ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ {questions.q6.explain}</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Q7: SVG Πίνακας */}
-            <div className={`p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${getCardBorder('q7')}`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-rose-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">7</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Ποιος δεκαδικός αριθμός προκύπτει από τον παρακάτω πίνακα θέσεων;
-                </h3>
-              </div>
-              <div className="pl-0 md:pl-11 space-y-4">
-                <div className="max-w-md bg-slate-100 p-3 rounded-2xl border border-slate-200 overflow-x-auto">
-                  <div className="grid grid-cols-7 text-center font-bold text-xs bg-white rounded-xl overflow-hidden border border-slate-200">
-                    <div className="bg-emerald-600 text-white py-1">Ε</div>
-                    <div className="bg-emerald-600 text-white py-1">Δ</div>
-                    <div className="bg-emerald-600 text-white py-1">Μ</div>
-                    <div className="bg-amber-500 text-white py-1">,</div>
-                    <div className="bg-blue-600 text-white py-1">δ</div>
-                    <div className="bg-blue-600 text-white py-1">ε</div>
-                    <div className="bg-blue-600 text-white py-1">χ</div>
-
-                    <div className="py-2 border-r">{questions.q7.digits[0]}</div>
-                    <div className="py-2 border-r">{questions.q7.digits[1]}</div>
-                    <div className="py-2 border-r">{questions.q7.digits[2]}</div>
-                    <div className="py-2 border-r text-amber-600 font-black">,</div>
-                    <div className="py-2 border-r">{questions.q7.digits[3]}</div>
-                    <div className="py-2 border-r">{questions.q7.digits[4]}</div>
-                    <div className="py-2">{questions.q7.digits[5]}</div>
-                  </div>
-                </div>
-
-                <input
-                  type="text"
-                  placeholder="π.χ. 123,456"
-                  value={answers.q7}
-                  onChange={(e) => handleInputChange('q7', e.target.value)}
-                  disabled={submitted}
-                  className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-rose-500 focus:outline-none disabled:bg-gray-100"
-                />
-              </div>
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {isCorrect('q7') ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. {questions.q7.explain}</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Q8: Ανάλυση σε Άθροισμα (MCQ) */}
-            <div className={`p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${getCardBorder('q8')}`}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-teal-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">8</span>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Ποια είναι η σωστή ανάλυση σε κλάσματα για τον αριθμό <strong className="text-teal-700 font-mono text-xl">{questions.q8.decVal}</strong>;
-                </h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-0 md:pl-11">
-                {questions.q8.options.map((opt, idx) => (
-                  <label
-                    key={idx}
-                    className={`flex items-center p-3.5 rounded-2xl border cursor-pointer font-mono text-sm font-bold transition ${
-                      answers.q8 === opt
-                        ? 'border-teal-600 bg-teal-50 text-teal-900'
-                        : 'border-gray-200 hover:bg-gray-50 text-gray-800'
+                </p>
+                <div className="grid grid-cols-2 gap-4 mb-3">
+                  <button
+                    type="button"
+                    disabled={submitted}
+                    onClick={() => handleInputChange('q5', true)}
+                    className={`py-3 rounded-xl font-black text-sm border transition ${
+                      answers.q5 === true
+                        ? 'bg-emerald-600 text-white border-emerald-600 shadow'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
                     }`}
                   >
-                    <input
-                      type="radio"
-                      name="q8"
-                      value={opt}
-                      checked={answers.q8 === opt}
-                      onChange={() => handleInputChange('q8', opt)}
-                      disabled={submitted}
-                      className="hidden"
-                    />
-                    {opt}
-                  </label>
-                ))}
+                    👍 Σωστό
+                  </button>
+                  <button
+                    type="button"
+                    disabled={submitted}
+                    onClick={() => handleInputChange('q5', false)}
+                    className={`py-3 rounded-xl font-black text-sm border transition ${
+                      answers.q5 === false
+                        ? 'bg-rose-600 text-white border-rose-600 shadow'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
+                    }`}
+                  >
+                    👎 Λάθος
+                  </button>
+                </div>
+                {submitted && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q5') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                    💡 {questions.q5.explain}
+                  </div>
+                )}
               </div>
-              {submitted && (
-                <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-                  {isCorrect('q8') ? (
-                    <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-                  ) : (
-                    <p className="text-red-600">❌ Λάθος. {questions.q8.explain}</p>
+
+              {/* ΕΡΩΤΗΣΗ 6: True/False (Σχέσεις Δεκαδικών Μονάδων) */}
+              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
+                    Άσκηση 6 • Σωστό ή Λάθος
+                  </span>
+                  {submitted && (
+                    <span className="text-lg">{isCorrect('q6') ? '✅' : '❌'}</span>
                   )}
                 </div>
-              )}
+                <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
+                  «{questions.q6.text}»
+                </p>
+                <div className="grid grid-cols-2 gap-4 mb-3">
+                  <button
+                    type="button"
+                    disabled={submitted}
+                    onClick={() => handleInputChange('q6', true)}
+                    className={`py-3 rounded-xl font-black text-sm border transition ${
+                      answers.q6 === true
+                        ? 'bg-emerald-600 text-white border-emerald-600 shadow'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
+                    }`}
+                  >
+                    👍 Σωστό
+                  </button>
+                  <button
+                    type="button"
+                    disabled={submitted}
+                    onClick={() => handleInputChange('q6', false)}
+                    className={`py-3 rounded-xl font-black text-sm border transition ${
+                      answers.q6 === false
+                        ? 'bg-rose-600 text-white border-rose-600 shadow'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
+                    }`}
+                  >
+                    👎 Λάθος
+                  </button>
+                </div>
+                {submitted && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q6') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                    💡 {questions.q6.explain}
+                  </div>
+                )}
+              </div>
+
+              {/* ΕΡΩΤΗΣΗ 7: Οπτικό SVG (Δεκαδικός Άβακας) */}
+              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
+                    Άσκηση 7 • Δεκαδικός Άβακας
+                  </span>
+                  {submitted && (
+                    <span className="text-lg">{isCorrect('q7') ? '✅' : '❌'}</span>
+                  )}
+                </div>
+                <p className="text-sm text-slate-700 mb-2 font-medium">
+                  Ποιον δεκαδικό αριθμό δείχνει ο άβακας;
+                </p>
+                
+                {/* SVG Decimal Abacus */}
+                <div className="bg-slate-100 rounded-2xl p-3 mb-4 flex justify-center">
+                  <svg viewBox="0 0 300 120" className="w-full max-w-xs h-28">
+                    <line x1="20" y1="105" x2="280" y2="105" stroke="#475569" strokeWidth="4" strokeLinecap="round" />
+                    {questions.q7.columns.map((col, idx) => {
+                      const x = 55 + idx * 95;
+                      return (
+                        <g key={idx}>
+                          <line x1={x} y1="20" x2={x} y2="105" stroke="#94a3b8" strokeWidth="2" />
+                          {[...Array(col.count)].map((_, beadIdx) => (
+                            <circle
+                              key={beadIdx}
+                              cx={x}
+                              cy={100 - beadIdx * 12}
+                              r="5.5"
+                              fill={col.color}
+                            />
+                          ))}
+                          <text x={x} y="118" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#334155">
+                            {col.label}
+                          </text>
+                        </g>
+                      );
+                    })}
+                  </svg>
+                </div>
+
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    disabled={submitted}
+                    value={answers.q7}
+                    onChange={(e) => handleInputChange('q7', e.target.value)}
+                    placeholder="π.χ. 3,45"
+                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-rose-500 outline-none disabled:bg-slate-100 font-mono"
+                  />
+                  {submitted && (
+                    <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q7') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                      💡 {questions.q7.explain}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* ΕΡΩΤΗΣΗ 8: Οπτικό SVG (Δεκαδική Αριθμογραμμή) */}
+              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
+                    Άσκηση 8 • Αριθμογραμμή
+                  </span>
+                  {submitted && (
+                    <span className="text-lg">{isCorrect('q8') ? '✅' : '❌'}</span>
+                  )}
+                </div>
+                <p className="text-sm text-slate-700 mb-2 font-medium">
+                  Ποιο είναι το δεκαδικό νούμερο στη θέση του κόκκινου δείκτη;
+                </p>
+
+                {/* SVG Number Line */}
+                <div className="bg-slate-100 p-3 rounded-xl mb-3 flex items-center justify-center">
+                  <svg viewBox="0 0 320 80" className="w-full max-w-sm h-20">
+                    <line x1="20" y1="45" x2="300" y2="45" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
+                    
+                    {/* Tick marks 3.0 to 4.0 */}
+                    {[...Array(11)].map((_, idx) => {
+                      const x = 30 + idx * 26;
+                      const isMain = idx === 0 || idx === 10;
+                      return (
+                        <g key={idx}>
+                          <line
+                            x1={x}
+                            y1={isMain ? 32 : 38}
+                            x2={x}
+                            y2={isMain ? 58 : 52}
+                            stroke="#475569"
+                            strokeWidth={isMain ? "2.5" : "1.5"}
+                          />
+                          {isMain && (
+                            <text x={x} y="72" fontSize="11" fontWeight="black" textAnchor="middle" fill="#0f172a">
+                              {idx === 0 ? '3,0' : '4,0'}
+                            </text>
+                          )}
+                        </g>
+                      );
+                    })}
+
+                    {/* Red Target Marker */}
+                    <g>
+                      <circle cx={30 + questions.q8.step * 26} cy="45" r="6" fill="#ef4444" stroke="#ffffff" strokeWidth="2" />
+                      <text x={30 + questions.q8.step * 26} y="22" fontSize="11" fontWeight="black" textAnchor="middle" fill="#dc2626">
+                        ▼
+                      </text>
+                    </g>
+                  </svg>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  {questions.q8.options.map((opt, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      disabled={submitted}
+                      onClick={() => handleInputChange('q8', opt)}
+                      className={`w-full p-2.5 rounded-xl text-xs font-mono font-bold border text-center transition ${
+                        answers.q8 === opt
+                          ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
+                          : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
+                      }`}
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+                {submitted && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q8') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                    💡 {questions.q8.explain}
+                  </div>
+                )}
+              </div>
+
             </div>
 
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ (ΜΕΣΑ ΣΤΟ MAIN) */}
             {!submitted && (
-              <div className="text-center pt-4">
+              <div className="flex justify-center pt-8">
                 <button
                   type="submit"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
+                  className="bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5"
                 >
-                  🎯 Έλεγχος Απαντήσεων
+                  <span className="text-xl">🎯</span>
+                  <span>Έλεγχος Απαντήσεων</span>
                 </button>
               </div>
             )}
-
           </form>
         </main>
       </div>
 
-      {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
+      {/* 4. FIXED STICKY BOTTOM SCORE FOOTER */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
           
+          {/* ΑΡΙΣΤΕΡΑ: SCORE BADGE & PERCENTAGE */}
           <div className="flex items-center gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-lg flex items-center gap-2 shadow-sm">
-              <span>🏆 Σκορ:</span>
-              <span className="text-2xl font-mono">{score} / 8</span>
+            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-base md:text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆</span>
+              <span>Σκορ:</span>
+              <span className="font-mono text-xl md:text-2xl">{score} / 8</span>
             </div>
             {submitted && (
               <span className="text-sm font-bold text-slate-300">
@@ -716,16 +749,19 @@ export default function DekadikoiArithmoiAskPage() {
             )}
           </div>
 
+          {/* ΔΕΞΙΑ: GUIDANCE TEXT OR RETRY BUTTON */}
           <div className="flex items-center gap-3">
             {submitted ? (
               <button
+                type="button"
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Παίξε ξανά με νέους αριθμούς!
+                <span>🔄</span>
+                <span>Παίξε ξανά με νέες ασκήσεις!</span>
               </button>
             ) : (
-              <p className="text-xs text-slate-400 hidden md:block">
+              <p className="text-xs md:text-sm text-slate-400 hidden sm:block">
                 Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
               </p>
             )}
@@ -733,7 +769,6 @@ export default function DekadikoiArithmoiAskPage() {
 
         </div>
       </div>
-
     </div>
   );
 }
