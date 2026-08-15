@@ -48,23 +48,19 @@ export default function FysikoiArithmoiPage() {
   const activeDigitsCount = digits.filter(d => d !== '0').length;
   const firstNonZero = digits.findIndex(d => d !== '0');
 
-  // Υπολογισμός αναλογικού ύψους στήλης
+  // Υπολογισμός αναλογικού ύψους στήλης βάσει πραγματικής αξίας (Logarithmic Scale)
   const calculateBarHeight = (digit, index) => {
     const val = parseInt(digit, 10);
     const isLeadingZero = digit === '0' && index < firstNonZero;
     if (val === 0 || isLeadingZero) return 0;
 
-    const periodIdx = Math.floor(index / 3); // 0: Δισ, 1: Εκατ, 2: Χιλ, 3: Μον
-    const classIdx = index % 3; // 0: Εκατοντάδες, 1: Δεκάδες, 2: Μονάδες
+    const power = 11 - index; // 11 έως 0
+    // Μαθηματική βαθμολόγηση μεγέθους: power + log10(val)
+    const score = power + Math.log10(val); // Εύρος: 0 (για 1*10^0) έως ~11.95 (για 9*10^11)
 
-    // Βασικό ύψος περιόδου
-    const periodBase = [68, 46, 26, 8][periodIdx];
-    // Πρόσθετο ύψος τάξης (Ε > Δ > Μ)
-    const classBonus = [10, 5, 0][classIdx];
-    // Αναλογικό ύψος ψηφίου (1 έως 9)
-    const digitBonus = Math.round((val / 9) * 16);
-
-    return Math.min(100, periodBase + classBonus + digitBonus);
+    // Γραμμική χαρτογράφηση σε ποσοστό ύψους 14% έως 96%
+    const heightPercent = Math.round(14 + (score / 12) * 82);
+    return Math.min(96, Math.max(14, heightPercent));
   };
 
   return (
@@ -284,7 +280,7 @@ export default function FysikoiArithmoiPage() {
                       ))}
                     </div>
 
-                    {/* DIGITS ROW WITH UNIFORM PADDING & FULL-SURROUND HIGHLIGHT */}
+                    {/* DIGITS ROW */}
                     <div className="grid grid-cols-12 text-center items-center p-1.5 bg-white rounded-b-2xl">
                       {digits.map((digit, i) => {
                         const periodIdx = Math.floor(i / 3);
@@ -378,7 +374,7 @@ export default function FysikoiArithmoiPage() {
                 </div>
 
                 {/* SVG COLUMN CHART */}
-                <div className="w-full h-52 2xl:h-60 flex items-end justify-between gap-1.5 md:gap-3 pt-10 pb-2 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-full h-56 2xl:h-64 flex items-end justify-between gap-1.5 md:gap-3 pt-12 pb-2 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100 relative">
                   {digits.map((digit, i) => {
                     const periodIdx = Math.floor(i / 3);
                     const power = 11 - i;
@@ -397,12 +393,12 @@ export default function FysikoiArithmoiPage() {
                       >
                         {/* TOOLTIP ON HOVER / SELECTION */}
                         {isSelected && hasValue && (
-                          <div className="absolute -top-9 bg-slate-900 text-white text-[10px] 2xl:text-xs font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
+                          <div className="absolute -top-11 bg-slate-900 text-white text-[10px] 2xl:text-xs font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
                             {(val * Math.pow(10, power)).toLocaleString('el-GR')}
                           </div>
                         )}
 
-                        {/* VALUE LABEL (MONO GIA VAL > 0) */}
+                        {/* VALUE LABEL (ΜΟΝΟ ΓΙΑ VAL > 0) */}
                         {hasValue ? (
                           <span className="text-[10px] 2xl:text-xs font-black text-slate-700 mb-1">
                             {digit}
@@ -411,7 +407,7 @@ export default function FysikoiArithmoiPage() {
                           <div className="h-4 mb-1"></div>
                         )}
 
-                        {/* THE BAR (AN VAL === 0 DEN EMFANIZETAI TIPOTA) */}
+                        {/* THE BAR (ΟΤΑΝ VAL === 0 ΔΕΝ ΕΜΦΑΝΙΖΕΤΑΙ ΤΙΠΟΤΑ) */}
                         <div className="w-full h-full flex items-end">
                           {hasValue && (
                             <div
