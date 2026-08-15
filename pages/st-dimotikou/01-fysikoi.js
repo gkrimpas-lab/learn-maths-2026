@@ -5,7 +5,7 @@ import { LAYOUT } from '../../shared/layout-config';
 
 export default function FysikoiArithmoiPage() {
   const [number, setNumber] = useState("478456514574");
-  const [activeDigitIndex, setActiveDigitIndex] = useState(null);
+  const [activeDigitIndex, setActiveDigitIndex] = useState(1);
 
   // Καθαρισμός και προετοιμασία 12ψηφίου αριθμού
   const cleanNumber = number.replace(/\D/g, '').slice(0, 12);
@@ -14,10 +14,10 @@ export default function FysikoiArithmoiPage() {
 
   // Ορισμός Περιόδων με πλήρη χρωματική ταυτότητα & hex για το γράφημα
   const periods = [
-    { name: "Δισεκατομμύρια", short: "Δισ.", color: "bg-purple-600", light: "bg-purple-50", hex: "#9333ea", border: "border-purple-200", text: "text-purple-700" },
-    { name: "Εκατομμύρια", short: "Εκατ.", color: "bg-rose-600", light: "bg-rose-50", hex: "#e11d48", border: "border-rose-200", text: "text-rose-700" },
-    { name: "Χιλιάδες", short: "Χιλ.", color: "bg-blue-600", light: "bg-blue-50", hex: "#2563eb", border: "border-blue-200", text: "text-blue-700" },
-    { name: "Μονάδες", short: "Μον.", color: "bg-emerald-600", light: "bg-emerald-50", hex: "#059669", border: "border-emerald-200", text: "text-emerald-700" },
+    { name: "Δισεκατομμύρια", short: "Δισ.", color: "bg-purple-600", light: "bg-purple-50/70", hex: "#9333ea", border: "border-purple-200", text: "text-purple-700" },
+    { name: "Εκατομμύρια", short: "Εκατ.", color: "bg-rose-600", light: "bg-rose-50/70", hex: "#e11d48", border: "border-rose-200", text: "text-rose-700" },
+    { name: "Χιλιάδες", short: "Χιλ.", color: "bg-blue-600", light: "bg-blue-50/70", hex: "#2563eb", border: "border-blue-200", text: "text-blue-700" },
+    { name: "Μονάδες", short: "Μον.", color: "bg-emerald-600", light: "bg-emerald-50/70", hex: "#059669", border: "border-emerald-200", text: "text-emerald-700" },
   ];
 
   // Έτοιμα παραδείγματα από τον πραγματικό κόσμο
@@ -173,7 +173,7 @@ export default function FysikoiArithmoiPage() {
             </div>
           </div>
 
-          {/* 4. INTERACTIVE PLAYGROUND (ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ) */}
+          {/* 4. INTERACTIVE PLAYGROUND */}
           <div className="bg-white p-6 md:p-8 2xl:p-10 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
@@ -206,10 +206,8 @@ export default function FysikoiArithmoiPage() {
             {/* MAIN VERTICAL STACK STRUCTURE */}
             <div className="space-y-6">
 
-              {/* ROW 1: (1) INPUT & (2) READING SIDE-BY-SIDE */}
+              {/* ROW 1: (1) INPUT & (2) READING */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-                
-                {/* 1. NUMBER INPUT */}
                 <div className="bg-slate-50 border border-slate-200 p-5 2xl:p-6 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
                   <label className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
                     Πληκτρολόγησε Αριθμό (έως 12 ψηφία):
@@ -229,7 +227,6 @@ export default function FysikoiArithmoiPage() {
                   </p>
                 </div>
 
-                {/* 2. DYNAMIC READOUT */}
                 <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 2xl:p-6 rounded-2xl space-y-2 shadow-md flex flex-col justify-center">
                   <span className="text-[10px] 2xl:text-xs font-black text-amber-400 uppercase tracking-widest block flex items-center gap-1.5">
                     <span>🗣️</span> Πώς διαβάζεται ανά περίοδο:
@@ -238,18 +235,17 @@ export default function FysikoiArithmoiPage() {
                     {getPeriodBreakdown()}
                   </p>
                 </div>
-
               </div>
 
               {/* ROW 2: (3) PLACE VALUE TABLE & FULL MATHEMATICAL EXPANSION */}
               <div className="bg-slate-50 border border-slate-200 p-5 md:p-6 2xl:p-8 rounded-2xl space-y-6">
                 
                 {/* 12-DIGIT PLACE VALUE TABLE */}
-                <div className="w-full overflow-x-auto pb-2">
-                  <div className="min-w-[620px] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mx-auto">
+                <div className="w-full overflow-x-auto pb-4 pt-1">
+                  <div className="min-w-[620px] bg-white rounded-2xl shadow-sm border border-gray-200 mx-auto">
                     
                     {/* PERIODS HEADER */}
-                    <div className="grid grid-cols-4 text-white text-center font-black text-xs 2xl:text-sm uppercase tracking-wider">
+                    <div className="grid grid-cols-4 text-white text-center font-black text-xs 2xl:text-sm uppercase tracking-wider rounded-t-2xl overflow-hidden">
                       {periods.map((p, i) => (
                         <div key={i} className={`${p.color} py-3 border-r border-white/20 last:border-0`}>
                           <span className="hidden md:inline">{p.name}</span>
@@ -269,26 +265,29 @@ export default function FysikoiArithmoiPage() {
                       ))}
                     </div>
 
-                    {/* DIGITS ROW */}
-                    <div className="grid grid-cols-12 text-center items-center">
+                    {/* DIGITS ROW WITH UNIFORM PADDING & FULL-SURROUND HIGHLIGHT */}
+                    <div className="grid grid-cols-12 text-center items-center p-1.5 bg-white rounded-b-2xl">
                       {digits.map((digit, i) => {
                         const periodIdx = Math.floor(i / 3);
                         const isLeadingZero = digit === '0' && i < firstNonZero;
                         const isSelected = activeDigitIndex === i;
 
                         return (
-                          <button
-                            key={i}
-                            type="button"
-                            onClick={() => setActiveDigitIndex(i)}
-                            onMouseEnter={() => setActiveDigitIndex(i)}
-                            className={`py-5 md:py-6 2xl:py-7 text-xl md:text-2xl 2xl:text-3xl font-black border-r border-slate-200 last:border-0 transition-all duration-200 hover:bg-amber-100 focus:outline-none font-mono
-                              ${periods[periodIdx].light}
-                              ${isSelected ? 'bg-amber-300 text-slate-900 ring-4 ring-amber-400 z-10 scale-105 shadow-md' : ''}
-                              ${isLeadingZero ? 'text-slate-300' : 'text-slate-800'}`}
-                          >
-                            {digit}
-                          </button>
+                          <div key={i} className="px-0.5">
+                            <button
+                              type="button"
+                              onClick={() => setActiveDigitIndex(i)}
+                              onMouseEnter={() => setActiveDigitIndex(i)}
+                              className={`w-full py-4 md:py-5 2xl:py-6 text-xl md:text-2xl 2xl:text-3xl font-black rounded-xl transition-all duration-200 focus:outline-none font-mono flex items-center justify-center
+                                ${periods[periodIdx].light}
+                                ${isSelected 
+                                  ? 'bg-amber-400 text-slate-900 border-2 border-amber-500 shadow-md transform -translate-y-0.5' 
+                                  : 'border border-transparent hover:bg-amber-100/70'}
+                                ${isLeadingZero && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
+                            >
+                              {digit}
+                            </button>
+                          </div>
                         );
                       })}
                     </div>
@@ -296,7 +295,7 @@ export default function FysikoiArithmoiPage() {
                   </div>
                 </div>
 
-                {/* FULL MATHEMATICAL BREAKDOWN (2 COLS GRID - NO SCROLL) */}
+                {/* FULL MATHEMATICAL BREAKDOWN */}
                 <div className="bg-white border border-slate-200 p-5 2xl:p-6 rounded-2xl font-mono text-xs 2xl:text-sm space-y-3 shadow-inner">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <span className="text-[11px] 2xl:text-xs font-black text-slate-500 uppercase tracking-wider block font-sans">
@@ -322,7 +321,7 @@ export default function FysikoiArithmoiPage() {
                           onClick={() => setActiveDigitIndex(i)}
                           className={`flex items-center justify-between p-2.5 rounded-xl border transition cursor-pointer ${
                             isSelected 
-                              ? 'bg-amber-50 border-amber-300 shadow-sm ring-1 ring-amber-300' 
+                              ? 'bg-amber-50 border-amber-400 shadow-sm ring-1 ring-amber-300' 
                               : 'bg-slate-50/70 border-slate-100 hover:bg-slate-100'
                           }`}
                         >
@@ -348,7 +347,7 @@ export default function FysikoiArithmoiPage() {
 
               </div>
 
-              {/* ROW 3: (4) DYNAMIC EXCEL-STYLE BAR CHART (FULL WIDTH) */}
+              {/* ROW 3: (4) DYNAMIC EXCEL-STYLE BAR CHART */}
               <div className="bg-white border border-slate-200 p-5 2xl:p-6 rounded-2xl space-y-3 shadow-sm">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5">
@@ -359,7 +358,6 @@ export default function FysikoiArithmoiPage() {
                   </span>
                 </div>
 
-                {/* SVG COLUMN CHART */}
                 <div className="w-full h-48 2xl:h-56 flex items-end justify-between gap-1.5 md:gap-3 pt-6 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100">
                   {digits.map((digit, i) => {
                     const periodIdx = Math.floor(i / 3);
@@ -380,21 +378,18 @@ export default function FysikoiArithmoiPage() {
                         onClick={() => setActiveDigitIndex(i)}
                         className="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer relative"
                       >
-                        {/* TOOLTIP */}
                         {isSelected && !isLeadingZero && val > 0 && (
                           <div className="absolute -top-10 bg-slate-900 text-white text-[10px] 2xl:text-xs font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-20 animate-bounce">
                             {(val * Math.pow(10, power)).toLocaleString('el-GR')}
                           </div>
                         )}
 
-                        {/* VALUE LABEL */}
                         {!isLeadingZero && val > 0 && (
                           <span className="text-[9px] 2xl:text-[11px] font-black text-slate-600 mb-1">
                             {digit}
                           </span>
                         )}
 
-                        {/* THE BAR */}
                         <div
                           style={{ 
                             height: `${barHeightPercent}%`,
@@ -403,7 +398,6 @@ export default function FysikoiArithmoiPage() {
                           className={`w-full rounded-t-md transition-all duration-300 ${isSelected ? 'ring-2 ring-amber-400 brightness-110' : 'opacity-90 hover:opacity-100'}`}
                         />
 
-                        {/* X-AXIS LABEL */}
                         <span className="text-[8px] 2xl:text-[10px] font-bold text-slate-400 mt-1">
                           10^{power}
                         </span>
@@ -421,7 +415,7 @@ export default function FysikoiArithmoiPage() {
             </div>
           </div>
 
-          {/* 5. BOTTOM CALLOUT BANNER (INSIDE MAIN) */}
+          {/* 5. BOTTOM CALLOUT BANNER */}
           <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 2xl:p-10 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="space-y-1.5 text-center md:text-left">
               <h3 className="text-2xl 2xl:text-3xl font-black">📝 Ώρα για Εξάσκηση!</h3>
@@ -440,12 +434,11 @@ export default function FysikoiArithmoiPage() {
         </main>
       </div>
 
-      {/* 6. GLOBAL FOOTER (OUTSIDE MAIN) */}
+      {/* 6. GLOBAL FOOTER */}
       <footer className="bg-gray-800 text-gray-400 py-6 2xl:py-8 text-center text-sm 2xl:text-base w-full border-t border-gray-700">
         <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη ΣΤ' Δημοτικού.</p>
       </footer>
 
-      {/* CSS Hack για αφαίρεση των arrows στο input number */}
       <style jsx global>{`
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
