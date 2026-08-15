@@ -41,7 +41,7 @@ function generateQuestions() {
   // Q1: Αριθμητικό Input - Ποια είναι η πραγματική αξία του επιλεγμένου ψηφίου
   const q1NumBase = getRandomInt(120, 980) * 1000 + getRandomInt(100, 999);
   const q1Digits = q1NumBase.toString().split('');
-  const q1TargetPos = getRandomInt(0, 3); // Εστιάζουμε σε σημαντικές θέσεις
+  const q1TargetPos = getRandomInt(0, 3);
   const q1TargetDigit = Number(q1Digits[q1TargetPos]);
   const q1Power = q1Digits.length - 1 - q1TargetPos;
   const q1Answer = q1TargetDigit * Math.pow(10, q1Power);
@@ -276,21 +276,21 @@ export default function FysikoiArithmoiExercisesPage() {
         {/* 1. STICKY NAVBAR */}
         <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
           <div className={`${LAYOUT.CONTAINER} py-3.5 flex justify-between items-center`}>
-            <Link href="/st-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight flex items-center gap-2">
-              <span className="text-3xl">📐</span> LearnMaths<span className="text-indigo-600">.gr</span>
+            <Link href="/st-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight flex items-center">
+              <span>LearnMaths</span><span className="text-indigo-600">.gr</span>
             </Link>
             <div className="flex items-center gap-3">
               <Link 
                 href="/st-dimotikou/01-fysikoi" 
                 className="inline-flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-bold border border-blue-200 transition"
               >
-                📖 <span>Θεωρία</span>
+                <span>📖</span> <span>Θεωρία</span>
               </Link>
               <Link 
                 href="/st-dimotikou" 
                 className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold transition"
               >
-                🔙 <span>Πίσω</span>
+                <span>🔙</span> <span>Πίσω</span>
               </Link>
             </div>
           </div>
@@ -315,7 +315,7 @@ export default function FysikoiArithmoiExercisesPage() {
               onClick={loadNewQuestions}
               className="px-5 py-3 bg-white text-emerald-800 hover:bg-emerald-50 rounded-2xl font-extrabold shadow-md transition transform active:scale-95 text-sm flex items-center gap-2 shrink-0"
             >
-              🔄 <span>Νέες Ασκήσεις</span>
+              <span>🔄</span> <span>Νέες Ασκήσεις</span>
             </button>
           </div>
         </section>
@@ -325,7 +325,7 @@ export default function FysikoiArithmoiExercisesPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              {/* ΕΡΩΤΗΣΗ 1: Αριθμητικό Input (Αξία Θέσης) */}
+              {/* ΕΡΩΤΗΣΗ 1 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
@@ -355,7 +355,7 @@ export default function FysikoiArithmoiExercisesPage() {
                 </div>
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 2: Αριθμητικό Input (Σύνθεση Αριθμού) */}
+              {/* ΕΡΩΤΗΣΗ 2 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">
@@ -388,7 +388,7 @@ export default function FysikoiArithmoiExercisesPage() {
                 </div>
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 3: MCQ (Αναγνώριση Περιόδου) */}
+              {/* ΕΡΩΤΗΣΗ 3 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
@@ -425,7 +425,7 @@ export default function FysikoiArithmoiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 4: MCQ (Σύγκριση Αριθμών) */}
+              {/* ΕΡΩΤΗΣΗ 4 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
@@ -462,7 +462,7 @@ export default function FysikoiArithmoiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 5: True/False (Δεκαδικό Σύστημα) */}
+              {/* ΕΡΩΤΗΣΗ 5 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
@@ -508,7 +508,7 @@ export default function FysikoiArithmoiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 6: True/False (Μηδενικά) */}
+              {/* ΕΡΩΤΗΣΗ 6 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
@@ -554,7 +554,7 @@ export default function FysikoiArithmoiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 7: Οπτικό SVG (Άβακας) */}
+              {/* ΕΡΩΤΗΣΗ 7 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
@@ -571,15 +571,12 @@ export default function FysikoiArithmoiExercisesPage() {
                 {/* SVG Abacus */}
                 <div className="bg-slate-100 rounded-2xl p-3 mb-4 flex justify-center">
                   <svg viewBox="0 0 320 120" className="w-full max-w-xs h-28">
-                    {/* Base */}
                     <line x1="20" y1="105" x2="300" y2="105" stroke="#475569" strokeWidth="4" strokeLinecap="round" />
                     {questions.q7.columns.map((col, idx) => {
                       const x = 45 + idx * 58;
                       return (
                         <g key={idx}>
-                          {/* Rod */}
                           <line x1={x} y1="20" x2={x} y2="105" stroke="#94a3b8" strokeWidth="2" />
-                          {/* Beads */}
                           {[...Array(col.count)].map((_, beadIdx) => (
                             <circle
                               key={beadIdx}
@@ -589,7 +586,6 @@ export default function FysikoiArithmoiExercisesPage() {
                               fill={col.color}
                             />
                           ))}
-                          {/* Label */}
                           <text x={x} y="118" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#334155">
                             {col.label}
                           </text>
@@ -616,7 +612,7 @@ export default function FysikoiArithmoiExercisesPage() {
                 </div>
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 8: MCQ (Ανάλυση Περιόδων) */}
+              {/* ΕΡΩΤΗΣΗ 8 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
@@ -630,7 +626,7 @@ export default function FysikoiArithmoiExercisesPage() {
                   Ποια είναι η σωστή περιγραφή του αριθμού <strong className="text-teal-700 text-base font-black">{questions.q8.number}</strong>;
                 </p>
 
-                {/* SVG Visual Blocks */}
+                {/* SVG Blocks */}
                 <div className="bg-slate-100 p-3 rounded-xl mb-3 flex items-center justify-center gap-3">
                   <div className="px-3 py-2 bg-rose-500 text-white rounded-lg text-xs font-black">
                     {questions.q8.millions} Εκ.
@@ -667,14 +663,15 @@ export default function FysikoiArithmoiExercisesPage() {
 
             </div>
 
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ (ΜΕΣΑ ΣΤΟ MAIN) */}
             {!submitted && (
-              <div className="flex justify-center pt-4">
+              <div className="flex justify-center pt-8">
                 <button
                   type="submit"
-                  className="px-10 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-lg font-black rounded-2xl shadow-xl hover:shadow-2xl transition transform active:scale-95"
+                  className="bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5"
                 >
-                  🚀 Υποβολή & Βαθμολόγηση
+                  <span className="text-xl">🎯</span>
+                  <span>Έλεγχος Απαντήσεων</span>
                 </button>
               </div>
             )}
@@ -682,42 +679,42 @@ export default function FysikoiArithmoiExercisesPage() {
         </main>
       </div>
 
-      {/* 4. STICKY BOTTOM SCORE FOOTER */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-300 shadow-2xl py-3.5 px-4">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row items-center justify-between gap-3`}>
+      {/* 4. FIXED STICKY BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
+          
+          {/* ΑΡΙΣΤΕΡΑ: SCORE BADGE & PERCENTAGE */}
           <div className="flex items-center gap-4">
-            <div className="text-sm font-extrabold text-slate-700 flex items-center gap-2">
-              <span className="text-xl">🏆</span>
+            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-base md:text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆</span>
               <span>Σκορ:</span>
-              <span className="text-lg font-black text-blue-600">
-                {submitted ? `${score} / 8` : `${Object.values(answers).filter(v => v !== '' && v !== null).length} / 8 απαντημένες`}
-              </span>
+              <span className="font-mono text-xl md:text-2xl">{score} / 8</span>
             </div>
-
             {submitted && (
-              <div className="text-xs font-black px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-300">
-                Ποσοστό: {Math.round((score / 8) * 100)}%
-              </div>
+              <span className="text-sm font-bold text-slate-300">
+                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+              </span>
             )}
           </div>
 
+          {/* ΔΕΞΙΑ: GUIDANCE TEXT OR RETRY BUTTON */}
           <div className="flex items-center gap-3">
             {submitted ? (
               <button
+                type="button"
                 onClick={loadNewQuestions}
-                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md transition transform active:scale-95 flex items-center gap-2"
+                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
               >
-                🔄 <span>Παίξε ξανά με νέες ασκήσεις!</span>
+                <span>🔄</span>
+                <span>Παίξε ξανά με νέες ασκήσεις!</span>
               </button>
             ) : (
-              <button
-                onClick={handleSubmit}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl shadow-md transition transform active:scale-95"
-              >
-                Έλεγχος Απαντήσεων
-              </button>
+              <p className="text-xs md:text-sm text-slate-400 hidden sm:block">
+                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+              </p>
             )}
           </div>
+
         </div>
       </div>
     </div>
