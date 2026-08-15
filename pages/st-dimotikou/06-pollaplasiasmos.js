@@ -148,7 +148,7 @@ export default function PollaplasiasmosPage() {
             </Link>
             <div className="flex items-center gap-3">
               <Link
-                href="/st-dimotikou/6-pollaplasiasmos-ask"
+                href="/st-dimotikou/06-pollaplasiasmos-ask"
                 className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-4 py-2 rounded-xl text-xs md:text-sm 2xl:text-base font-black transition shadow-sm flex items-center gap-1.5"
               >
                 <span>🎯</span> Ασκήσεις
@@ -192,7 +192,7 @@ export default function PollaplasiasmosPage() {
                 <h3 className="font-black text-lg 2xl:text-xl text-amber-300">Έτοιμος για εξάσκηση;</h3>
                 <p className="text-xs 2xl:text-sm text-blue-50">Δοκίμασε τις διαδραστικές ασκήσεις με 8 δυναμικά προβλήματα!</p>
                 <Link
-                  href="/st-dimotikou/6-pollaplasiasmos-ask"
+                  href="/st-dimotikou/06-pollaplasiasmos-ask"
                   className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm 2xl:text-base"
                 >
                   🎯 Μετάβαση στις Ασκήσεις
@@ -591,7 +591,7 @@ export default function PollaplasiasmosPage() {
               </p>
             </div>
             <Link
-              href="/st-dimotikou/6-pollaplasiasmos-ask"
+              href="/st-dimotikou/06-pollaplasiasmos-ask"
               className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base 2xl:text-lg whitespace-nowrap"
             >
               Ξεκίνα τις Ασκήσεις ➔
