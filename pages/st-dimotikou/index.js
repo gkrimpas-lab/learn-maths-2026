@@ -7,7 +7,7 @@ export default function STDimotikouMenu() {
   const modules = [
     { id: '01-fysikoi', label: '🍕 1. Φυσικοί Αριθμοί', href: '/st-dimotikou/01-fysikoi' },
     { id: '02-dekadikoi', label: '🍕 2. Δεκαδικοί Αριθμοί', href: '/st-dimotikou/02-dekadikoi' },
-    { id: '3-arithmoi-dekadika-klasmata', label: '🍕 3. Δεκαδικοί Αριθμοί σε Δεκαδικά Κλάσματα', href: '/st-dimotikou/3-arithmoi-dekadika-klasmata' },
+    { id: '03-arithmoi-dekadika-klasmata', label: '🍕 3. Δεκαδικοί Αριθμοί σε Δεκαδικά Κλάσματα', href: '/st-dimotikou/03-arithmoi-dekadika-klasmata' },
     { id: '4-sigkrisi-arithmon', label: '🍕 4. Σύγκριση Δεκαδικών Αριθμών', href: '/st-dimotikou/4-sigkrisi-arithmon' },
     { id: '5-prosthesi', label: '🍕 5. Πρόσθεση Φυσικών Αριθμών', href: '/st-dimotikou/5-prosthesi' },
     { id: '6-pollaplasiasmos', label: '🍕 6. Πολλαπλασιασμός Φυσικών Αριθμών', href: '/st-dimotikou/6-pollaplasiasmos' },
