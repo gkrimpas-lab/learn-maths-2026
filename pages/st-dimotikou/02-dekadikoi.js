@@ -56,36 +56,49 @@ export default function DekadikoiArithmoiPage() {
     return `${intPartText} και ${decVal.toLocaleString('el-GR')} ${decNames[decLength] || 'χιλιοστά'}`;
   };
 
-  // Όλα τα στοιχεία για το Bar Chart
+  // Υπολογισμός ύψους στήλης αποκλειστικά από την τιμή του ψηφίου (1-9)
+  const calculateBarHeight = (digit, isLeading) => {
+    const val = parseInt(digit, 10);
+    if (val === 0 || isLeading) return 0;
+    return 12 + (val - 1) * 11; // 1 -> 12%, 9 -> 100%
+  };
+
+  // Στοιχεία για το Bar Chart
   const chartItems = [
-    ...intDigits.map((d, i) => ({
-      key: `int-${i}`,
-      digit: d,
-      name: intClasses[i].name,
-      short: intClasses[i].short,
-      weightLabel: intClasses[i].weight.toString(),
-      val: Number(d) * intClasses[i].weight,
-      hex: intClasses[i].hex,
-      isLeading: intFirstNonZero !== -1 && i < intFirstNonZero,
-      isDecimal: false,
-      heightPercent: (intFirstNonZero !== -1 && i < intFirstNonZero) || d === '0' 
-        ? 6 
-        : Math.round(55 + (2 - i) * 15 + (Number(d) / 9) * 15)
-    })),
-    ...decDigits.map((d, i) => ({
-      key: `dec-${i}`,
-      digit: d,
-      name: decClasses[i].name,
-      short: decClasses[i].short,
-      weightLabel: decClasses[i].fraction,
-      val: Number(d) * decClasses[i].val,
-      hex: decClasses[i].hex,
-      isLeading: i >= decRaw.length && decRaw.length > 0,
-      isDecimal: true,
-      heightPercent: (i >= decRaw.length && decRaw.length > 0) || d === '0' 
-        ? 6 
-        : Math.round(35 - i * 10 + (Number(d) / 9) * 10)
-    }))
+    ...intDigits.map((d, i) => {
+      const val = parseInt(d, 10);
+      const isLeading = intFirstNonZero !== -1 && i < intFirstNonZero;
+      const displayTooltip = (val * intClasses[i].weight).toLocaleString('el-GR');
+
+      return {
+        key: `int-${i}`,
+        digit: d,
+        name: intClasses[i].name,
+        short: intClasses[i].short,
+        weightLabel: intClasses[i].weight.toString(),
+        valStr: displayTooltip,
+        hex: intClasses[i].hex,
+        isLeading: isLeading || val === 0,
+        heightPercent: calculateBarHeight(d, isLeading)
+      };
+    }),
+    ...decDigits.map((d, i) => {
+      const val = parseInt(d, 10);
+      const isTrailing = (i >= decRaw.length && decRaw.length > 0) || val === 0;
+      const decTooltips = [`0,${d}`, `0,0${d}`, `0,00${d}`];
+
+      return {
+        key: `dec-${i}`,
+        digit: d,
+        name: decClasses[i].name,
+        short: decClasses[i].short,
+        weightLabel: decClasses[i].fraction,
+        valStr: decTooltips[i],
+        hex: decClasses[i].hex,
+        isLeading: isTrailing,
+        heightPercent: calculateBarHeight(d, isTrailing)
+      };
+    })
   ];
 
   return (
@@ -423,7 +436,7 @@ export default function DekadikoiArithmoiPage() {
                     {decDigits.map((digit, i) => {
                       if (digit === '0' && i >= decRaw.length && decRaw.length > 0) return null;
                       const decCls = decClasses[i];
-                      const valCalc = (Number(digit) / decCls.weight).toString().replace('.', ',');
+                      const valCalc = (Number(digit) / decCls.weight).toFixed(i + 1).replace('.', ',');
                       const key = `dec-${i}`;
                       const isSelected = activeDigitKey === key;
 
@@ -463,53 +476,60 @@ export default function DekadikoiArithmoiPage() {
 
               </div>
 
-              {/* ROW 3: (4) DYNAMIC EXCEL-STYLE BAR CHART */}
+              {/* ROW 3: (4) DYNAMIC EXCEL-STYLE BAR CHART (FULL WIDTH) */}
               <div className="bg-white border border-slate-200 p-5 2xl:p-6 rounded-2xl space-y-3 shadow-sm">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5">
-                    📊 Σχετική Αξία Θέσης (Ακέραια vs Δεκαδικά)
+                    📊 Ύψος Ψηφίου (Excel Bar Chart)
                   </span>
                   <span className="text-[10px] 2xl:text-xs bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full">
                     Οπτική Σύγκριση Μεγεθών
                   </span>
                 </div>
 
-                <div className="w-full h-48 2xl:h-56 flex items-end justify-between gap-2 md:gap-4 pt-6 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-full h-56 2xl:h-64 flex items-end justify-between gap-2 md:gap-4 pt-12 pb-2 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100 relative">
                   {chartItems.map((item) => {
                     const isSelected = activeDigitKey === item.key;
+                    const hasValue = !item.isLeading;
 
                     return (
                       <div
                         key={item.key}
-                        onMouseEnter={() => setActiveDigitKey(item.key)}
-                        onClick={() => setActiveDigitKey(item.key)}
-                        className="flex-1 flex flex-col items-center justify-end h-full group cursor-pointer relative"
+                        onMouseEnter={() => { if (hasValue) setActiveDigitKey(item.key); }}
+                        onClick={() => { if (hasValue) setActiveDigitKey(item.key); }}
+                        className={`flex-1 flex flex-col items-center justify-end h-full relative ${hasValue ? 'cursor-pointer group' : 'cursor-default'}`}
                       >
-                        {/* TOOLTIP */}
-                        {isSelected && !item.isLeading && Number(item.digit) > 0 && (
-                          <div className="absolute -top-10 bg-slate-900 text-white text-[10px] 2xl:text-xs font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-20 animate-bounce">
-                            {item.val.toString().replace('.', ',')}
+                        {/* TOOLTIP ON HOVER */}
+                        {isSelected && hasValue && (
+                          <div className="absolute -top-11 bg-slate-900 text-white text-[10px] 2xl:text-xs font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
+                            {item.valStr}
                           </div>
                         )}
 
                         {/* VALUE LABEL */}
-                        {!item.isLeading && Number(item.digit) > 0 && (
-                          <span className="text-[9px] 2xl:text-[11px] font-black text-slate-600 mb-1">
+                        {hasValue ? (
+                          <span className="text-[10px] 2xl:text-xs font-black text-slate-700 mb-1">
                             {item.digit}
                           </span>
+                        ) : (
+                          <div className="h-4 mb-1"></div>
                         )}
 
                         {/* THE BAR */}
-                        <div
-                          style={{ 
-                            height: `${item.heightPercent}%`,
-                            backgroundColor: item.isLeading || Number(item.digit) === 0 ? '#e2e8f0' : item.hex 
-                          }}
-                          className={`w-full rounded-t-md transition-all duration-300 ${isSelected ? 'ring-2 ring-amber-400 brightness-110' : 'opacity-90 hover:opacity-100'}`}
-                        />
+                        <div className="w-full h-full flex items-end">
+                          {hasValue && (
+                            <div
+                              style={{ 
+                                height: `${item.heightPercent}%`,
+                                backgroundColor: item.hex 
+                              }}
+                              className={`w-full rounded-t-lg transition-all duration-300 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md scale-105' : 'opacity-90 hover:opacity-100'}`}
+                            />
+                          )}
+                        </div>
 
                         {/* X-AXIS LABEL */}
-                        <span className="text-[8px] 2xl:text-[10px] font-bold text-slate-400 mt-1">
+                        <span className="text-[8px] 2xl:text-[10px] font-bold text-slate-400 mt-1.5">
                           {item.short} ({item.weightLabel})
                         </span>
                       </div>
@@ -518,8 +538,8 @@ export default function DekadikoiArithmoiPage() {
                 </div>
                 
                 <div className="flex justify-between text-[10px] 2xl:text-xs text-slate-400 font-semibold px-2 pt-1">
-                  <span>⬅️ Μεγαλύτερη Αξία (Ακέραιες Εκατοντάδες)</span>
-                  <span>Μικρότερη Αξία (Δεκαδικά Χιλιοστά) ➡️</span>
+                  <span>⬅️ Ακέραιες Εκατοντάδες</span>
+                  <span>Δεκαδικά Χιλιοστά ➡️</span>
                 </div>
               </div>
 
