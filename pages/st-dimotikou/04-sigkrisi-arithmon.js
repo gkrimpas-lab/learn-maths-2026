@@ -10,7 +10,7 @@ export default function SigkrisiArithmonPage() {
   const presets = [
     { label: '⚖️ 14,75 vs 14,8 (Δεκαδικά)', a: '14,75', b: '14,8' },
     { label: '📏 3,450 vs 3,45 (Ισοδύναμα)', a: '3,450', b: '3,45' },
-    { label: '🔢 12.450 vs 9.890 (Φυσικοί)', a: '12450', b: '9890' },
+    { label: '🔢 12450 vs 9890 (Φυσικοί)', a: '12450', b: '9890' },
     { label: '💶 0,09 € vs 0,1 € (Λεπτά)', a: '0,09', b: '0,1' }
   ];
 
@@ -20,6 +20,15 @@ export default function SigkrisiArithmonPage() {
     const clean = str.replace(/\s+/g, '').replace(',', '.');
     const val = parseFloat(clean);
     return isNaN(val) ? 0 : val;
+  };
+
+  const sanitizeInput = (val) => {
+    let formatted = val.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+    const parts = formatted.split(',');
+    if (parts.length > 2) {
+      formatted = `${parts[0]},${parts.slice(1).join('')}`;
+    }
+    return formatted;
   };
 
   const valA = parseVal(numA);
@@ -35,21 +44,21 @@ export default function SigkrisiArithmonPage() {
     symbol = "＞";
     resultText = "Ο πρώτος αριθμός είναι μεγαλύτερος";
     resultColor = "text-emerald-700 bg-emerald-50 border-emerald-200";
-    tiltDeg = -8; // Γέρνει προς τα αριστερά (βαρύτερο το Α)
+    tiltDeg = -8;
   } else if (valA < valB) {
     symbol = "＜";
     resultText = "Ο δεύτερος αριθμός είναι μεγαλύτερος";
     resultColor = "text-blue-700 bg-blue-50 border-blue-200";
-    tiltDeg = 8; // Γέρνει προς τα δεξιά (βαρύτερο το Β)
+    tiltDeg = 8;
   }
 
   // Ανάλυση ψηφίο προς ψηφίο για την εξήγηση
   const getStepExplanation = () => {
-    const cleanA = numA.replace(',', '.');
-    const cleanB = numB.replace(',', '.');
+    const cleanA = numA.replace('.', ',');
+    const cleanB = numB.replace('.', ',');
 
-    const [intA, decA = ""] = cleanA.split('.');
-    const [intB, decB = ""] = cleanB.split('.');
+    const [intA = "0", decA = ""] = cleanA.split(',');
+    const [intB = "0", decB = ""] = cleanB.split(',');
 
     const intValA = parseInt(intA || "0", 10);
     const intValB = parseInt(intB || "0", 10);
@@ -58,7 +67,6 @@ export default function SigkrisiArithmonPage() {
       return `Συγκρίνουμε πρώτα το ακέραιο μέρος: ${intValA} ${intValA > intValB ? '>' : '<'} ${intValB}. Επομένως, ${numA} ${intValA > intValB ? '>' : '<'} ${numB}.`;
     }
 
-    // Αν τα ακέραια είναι ίσα, συγκρίνουμε τα δεκαδικά ψηφία εξισώνοντας τα μήκη
     const maxDecLen = Math.max(decA.length, decB.length);
     const normDecA = decA.padEnd(maxDecLen, '0');
     const normDecB = decB.padEnd(maxDecLen, '0');
@@ -73,7 +81,7 @@ export default function SigkrisiArithmonPage() {
       const posName = i === 0 ? "στα δέκατα" : i === 1 ? "στα εκατοστά" : "στα χιλιοστά";
 
       if (d1 !== d2) {
-        return `Τα ακέραια μέρη είναι ίσα (${intValA}). Συγκρίνουμε ${posName}: ${d1} ${d1 > d2 ? '>' : '<'} ${d2} (${normDecA} vs ${normDecB}). Άρα ${numA} ${d1 > d2 ? '>' : '<'} ${numB}.`;
+        return `Τα ακέραια μέρη είναι ίσα (${intValA}). Συγκρίνουμε ${posName}: ${d1} ${d1 > d2 ? '>' : '<'} ${d2} (${intValA},${normDecA} vs ${intValB},${normDecB}). Άρα ${numA} ${d1 > d2 ? '>' : '<'} ${numB}.`;
       }
     }
 
@@ -164,7 +172,7 @@ export default function SigkrisiArithmonPage() {
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs 2xl:text-sm text-slate-700 space-y-1 font-mono text-center">
-                <p><strong className="text-blue-700">12.300</strong> ＞ <strong className="text-slate-800">9.800</strong> (5 ψηφία vs 4)</p>
+                <p><strong className="text-blue-700">12300</strong> ＞ <strong className="text-slate-800">9800</strong> (5 ψηφία vs 4)</p>
               </div>
             </div>
 
@@ -248,7 +256,7 @@ export default function SigkrisiArithmonPage() {
                       <input
                         type="text"
                         value={numA}
-                        onChange={(e) => setNumA(e.target.value.replace(/[^0-9,.]/g, ''))}
+                        onChange={(e) => setNumA(sanitizeInput(e.target.value))}
                         className="text-2xl 2xl:text-3xl font-black text-center p-3 bg-white border-2 border-emerald-300 rounded-2xl shadow-sm focus:border-emerald-500 outline-none transition-all w-full tracking-wider text-emerald-700 font-mono"
                         placeholder="π.χ. 14,75"
                       />
@@ -261,7 +269,7 @@ export default function SigkrisiArithmonPage() {
                       <input
                         type="text"
                         value={numB}
-                        onChange={(e) => setNumB(e.target.value.replace(/[^0-9,.]/g, ''))}
+                        onChange={(e) => setNumB(sanitizeInput(e.target.value))}
                         className="text-2xl 2xl:text-3xl font-black text-center p-3 bg-white border-2 border-blue-300 rounded-2xl shadow-sm focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-700 font-mono"
                         placeholder="π.χ. 14,8"
                       />
@@ -269,7 +277,7 @@ export default function SigkrisiArithmonPage() {
                   </div>
 
                   <p className="text-[11px] 2xl:text-xs text-slate-400 text-center font-medium">
-                    💡 Μπορείς να χρησιμοποιήσεις κόμμα ( , ) ή τελεία ( . ) για τα δεκαδικά μέρη.
+                    💡 Ακόμα κι αν πατήσεις τελεία ( . ), μετατρέπεται αυτόματα στο ελληνικό κόμμα ( , ).
                   </p>
                 </div>
 
