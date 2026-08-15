@@ -7,6 +7,7 @@ export default function ProsthesiAfairesiPage() {
   const [numA, setNumA] = useState("34,75");
   const [numB, setNumB] = useState("18,5");
   const [activeProperty, setActiveProperty] = useState("antimetathetiki"); // 'antimetathetiki', 'prosetairistiki', 'antitheti'
+  const [extraNum, setExtraNum] = useState("5"); // Για την προσεταιριστική ιδιότητα
 
   const presets = [
     { label: '💶 34,75 + 18,50 (Δεκαδικά)', a: '34,75', b: '18,5' },
@@ -33,8 +34,20 @@ export default function ProsthesiAfairesiPage() {
 
   const valA = parseVal(numA);
   const valB = parseVal(numB);
+  const valExtra = parseVal(extraNum);
+
   const sumVal = (valA + valB).toFixed(3).replace(/\.?0+$/, '').replace('.', ',');
   const diffVal = Math.abs(valA - valB).toFixed(3).replace(/\.?0+$/, '').replace('.', ',');
+
+  // Βοηθητικές συναρτήσεις αυξομείωσης (+ / -)
+  const adjustValue = (currentStr, delta) => {
+    const current = parseVal(currentStr);
+    const updated = Math.max(0, current + delta);
+    // Αν είναι ακέραιος εμφανίζεται χωρίς δεκαδικά, αλλιώς διατηρεί 1-2 δεκαδικά
+    const isDec = currentStr.includes(',');
+    const decimals = isDec ? Math.min(2, (currentStr.split(',')[1] || '').length || 1) : 0;
+    return updated.toFixed(decimals).replace('.', ',');
+  };
 
   // Ευθυγράμμιση ψηφίων για την κάθετη πράξη
   const formatVerticalNumber = (str) => {
@@ -120,8 +133,6 @@ export default function ProsthesiAfairesiPage() {
 
           {/* 3. THEORY CARDS (3 COLS) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 2xl:gap-8">
-            
-            {/* CARD 1 */}
             <div className="bg-blue-50/80 border border-blue-100 p-6 2xl:p-8 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
                 <div className="w-10 h-10 2xl:w-12 2xl:h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg 2xl:text-xl shadow-sm">
@@ -137,7 +148,6 @@ export default function ProsthesiAfairesiPage() {
               </div>
             </div>
 
-            {/* CARD 2 */}
             <div className="bg-indigo-50/80 border border-indigo-100 p-6 2xl:p-8 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
                 <div className="w-10 h-10 2xl:w-12 2xl:h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg 2xl:text-xl shadow-sm">
@@ -155,7 +165,6 @@ export default function ProsthesiAfairesiPage() {
               </div>
             </div>
 
-            {/* CARD 3 */}
             <div className="bg-cyan-50/80 border border-cyan-100 p-6 2xl:p-8 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
                 <div className="w-10 h-10 2xl:w-12 2xl:h-12 bg-cyan-600 text-white rounded-2xl flex items-center justify-center font-black text-lg 2xl:text-xl shadow-sm">
@@ -170,7 +179,6 @@ export default function ProsthesiAfairesiPage() {
                 <p>53,25 － 18,50 ＝ 34,75 (Δοκιμή)</p>
               </div>
             </div>
-
           </div>
 
           {/* 4. INTERACTIVE PLAYGROUND */}
@@ -181,7 +189,7 @@ export default function ProsthesiAfairesiPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο Πρόσθεσης & Ιδιοτήτων
                 </h2>
                 <p className="text-gray-500 text-sm 2xl:text-base">
-                  Άλλαξε τους προσθετέους, δες τη δυναμική κάθετη στοίχιση και δοκίμασε τις ιδιότητες σε πραγματικό χρόνο!
+                  Άλλαξε τους προσθετέους είτε πληκτρολογώντας είτε πατώντας τα κουμπιά αυξομείωσης (+ / -) και δες το αποτέλεσμα να ανανεώνεται αυτόματα!
                 </p>
               </div>
 
@@ -206,41 +214,121 @@ export default function ProsthesiAfairesiPage() {
             {/* MAIN VERTICAL STACK STRUCTURE */}
             <div className="space-y-6">
 
-              {/* ROW 1: (1) INPUTS & (2) DYNAMIC READOUT */}
+              {/* ROW 1: (1) INTERACTIVE INPUTS WITH BUTTONS & (2) DYNAMIC READOUT */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
                 {/* INPUTS A & B (7 COLS) */}
                 <div className="lg:col-span-7 bg-slate-50 border border-slate-200 p-5 2xl:p-6 rounded-2xl space-y-4 shadow-inner flex flex-col justify-center">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                    <div className="space-y-1.5">
-                      <label className="text-xs 2xl:text-sm font-black text-emerald-800 uppercase tracking-wider block">
-                        1ος Προσθετέος (α):
-                      </label>
+                    
+                    {/* INPUT A */}
+                    <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-sm">
+                      <div className="flex justify-between items-center">
+                        <label className="text-xs 2xl:text-sm font-black text-emerald-800 uppercase tracking-wider block">
+                          1ος Προσθετέος (α):
+                        </label>
+                        <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
+                          Ενεργό
+                        </span>
+                      </div>
+                      
                       <input
                         type="text"
                         value={numA}
                         onChange={(e) => setNumA(sanitizeInput(e.target.value))}
-                        className="text-2xl 2xl:text-3xl font-black text-center p-3 bg-white border-2 border-emerald-300 rounded-2xl shadow-sm focus:border-emerald-500 outline-none transition-all w-full tracking-wider text-emerald-700 font-mono"
+                        className="text-2xl 2xl:text-3xl font-black text-center p-2.5 bg-emerald-50/50 border-2 border-emerald-300 rounded-xl focus:border-emerald-500 outline-none transition-all w-full tracking-wider text-emerald-700 font-mono"
                         placeholder="π.χ. 34,75"
                       />
+
+                      {/* QUICK ADJUST BUTTONS (+ / -) */}
+                      <div className="grid grid-cols-4 gap-1 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setNumA(adjustValue(numA, -1))}
+                          className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          -1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setNumA(adjustValue(numA, -0.1))}
+                          className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          -0,1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setNumA(adjustValue(numA, +0.1))}
+                          className="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          +0,1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setNumA(adjustValue(numA, +1))}
+                          className="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          +1
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs 2xl:text-sm font-black text-blue-800 uppercase tracking-wider block">
-                        2ος Προσθετέος (β):
-                      </label>
+                    {/* INPUT B */}
+                    <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-blue-200 shadow-sm">
+                      <div className="flex justify-between items-center">
+                        <label className="text-xs 2xl:text-sm font-black text-blue-800 uppercase tracking-wider block">
+                          2ος Προσθετέος (β):
+                        </label>
+                        <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                          Ενεργό
+                        </span>
+                      </div>
+
                       <input
                         type="text"
                         value={numB}
                         onChange={(e) => setNumB(sanitizeInput(e.target.value))}
-                        className="text-2xl 2xl:text-3xl font-black text-center p-3 bg-white border-2 border-blue-300 rounded-2xl shadow-sm focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-700 font-mono"
+                        className="text-2xl 2xl:text-3xl font-black text-center p-2.5 bg-blue-50/50 border-2 border-blue-300 rounded-xl focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-700 font-mono"
                         placeholder="π.χ. 18,5"
                       />
+
+                      {/* QUICK ADJUST BUTTONS (+ / -) */}
+                      <div className="grid grid-cols-4 gap-1 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setNumB(adjustValue(numB, -1))}
+                          className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          -1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setNumB(adjustValue(numB, -0.1))}
+                          className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          -0,1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setNumB(adjustValue(numB, +0.1))}
+                          className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          +0,1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setNumB(adjustValue(numB, +1))}
+                          className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-black py-1 rounded-lg transition"
+                        >
+                          +1
+                        </button>
+                      </div>
                     </div>
+
                   </div>
 
                   <p className="text-[11px] 2xl:text-xs text-slate-400 text-center font-medium">
-                    💡 Πληκτρολόγησε φυσικούς ή δεκαδικούς με κόμμα ( , ) ή τελεία ( . ).
+                    💡 Πληκτρολόγησε φυσικούς ή δεκαδικούς αριθμούς ή χρησιμοποίησε τα πλήκτρα αυξομείωσης!
                   </p>
                 </div>
 
@@ -255,13 +343,13 @@ export default function ProsthesiAfairesiPage() {
                     <span className="text-amber-400 font-sans">＋</span>
                     <span className="text-cyan-300">{numB || "0"}</span>
                     <span className="text-slate-400 font-sans">＝</span>
-                    <span className="bg-amber-400 text-slate-900 px-3 py-1 rounded-xl shadow-md">
+                    <span className="bg-amber-400 text-slate-900 px-3.5 py-1 rounded-xl shadow-md">
                       {sumVal}
                     </span>
                   </div>
 
                   <p className="text-xs text-blue-100 font-medium">
-                    Διαφορά (α － β): <strong className="text-amber-300 font-mono">{diffVal}</strong>
+                    Διαφορά (α － β): <strong className="text-amber-300 font-mono text-sm">{diffVal}</strong>
                   </p>
                 </div>
 
@@ -292,7 +380,7 @@ export default function ProsthesiAfairesiPage() {
                         : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
                     }`}
                   >
-                    🧩 Προσεταιριστική (με ＋ 5)
+                    🧩 Προσεταιριστική (με 3ο αριθμό)
                   </button>
                   <button
                     type="button"
@@ -307,7 +395,7 @@ export default function ProsthesiAfairesiPage() {
                   </button>
                 </div>
 
-                {/* VISUALIZER GRID (VERTICAL ALIGNMENT + PROPERTY DISPLAY) */}
+                {/* VISUALIZER GRID */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                   
                   {/* LEFT: VERTICAL ALIGNMENT BOX (5 COLS) */}
@@ -341,34 +429,54 @@ export default function ProsthesiAfairesiPage() {
                   </div>
 
                   {/* RIGHT: PROPERTY INTERACTIVE CARD (7 COLS) */}
-                  <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-center min-h-[220px]">
+                  <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-center min-h-[240px]">
                     {activeProperty === 'antimetathetiki' && (
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">🔄</span>
-                          <h4 className="font-black text-slate-900 text-base">Αντιμεταθετική Ιδιότητα</h4>
+                          <h4 className="font-black text-slate-900 text-base">Αντιμεταθετική Ιδιότητα σε Δράση</h4>
                         </div>
                         <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                          Η σειρά των προσθετέων δεν αλλάζει το αποτέλεσμα:
+                          Η σειρά των προσθετέων δεν επηρεάζει το άθροισμα:
                         </p>
-                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 font-mono text-sm md:text-base font-bold text-center text-slate-800">
-                          <span className="text-emerald-700">{numA}</span> ＋ <span className="text-blue-700">{numB}</span> ＝ <span className="text-blue-700">{numB}</span> ＋ <span className="text-emerald-700">{numA}</span> ＝ <strong className="text-amber-600 font-black">{sumVal}</strong>
+                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 font-mono text-sm md:text-base font-bold text-center text-slate-800 space-y-2">
+                          <div className="text-slate-500 text-xs font-sans">
+                            α ＋ β ＝ β ＋ α
+                          </div>
+                          <div>
+                            <span className="text-emerald-700">{numA || "0"}</span> ＋ <span className="text-blue-700">{numB || "0"}</span> ＝ <span className="text-blue-700">{numB || "0"}</span> ＋ <span className="text-emerald-700">{numA || "0"}</span> ＝ <strong className="text-amber-600 font-black">{sumVal}</strong>
+                          </div>
                         </div>
                       </div>
                     )}
 
                     {activeProperty === 'prosetairistiki' && (
                       <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">🧩</span>
-                          <h4 className="font-black text-slate-900 text-base">Προσεταιριστική Ιδιότητα</h4>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl">🧩</span>
+                            <h4 className="font-black text-slate-900 text-base">Προσεταιριστική Ιδιότητα</h4>
+                          </div>
+                          
+                          {/* 3ος ΑΡΙΘΜΟΣ INPUT */}
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600">
+                            <span>3ος Αριθμός (γ):</span>
+                            <input
+                              type="text"
+                              value={extraNum}
+                              onChange={(e) => setExtraNum(sanitizeInput(e.target.value))}
+                              className="w-14 text-center font-mono font-black text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg p-1 outline-none"
+                            />
+                          </div>
                         </div>
+
                         <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                          Μπορούμε να ομαδοποιούμε τους προσθετέους με όποιον τρόπο μας διευκολύνει:
+                          Ομαδοποιούμε όπως μας εξυπηρετεί: <code className="text-indigo-700 font-bold">(α ＋ β) ＋ γ ＝ α ＋ (β ＋ γ)</code>
                         </p>
-                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 font-mono text-xs md:text-sm font-bold text-center text-slate-800 space-y-1">
-                          <div>({numA} ＋ {numB}) ＋ 5 ＝ {sumVal} ＋ 5 ＝ <strong className="text-indigo-600">{(valA + valB + 5).toFixed(2).replace('.', ',')}</strong></div>
-                          <div>{numA} ＋ ({numB} ＋ 5) ＝ {numA} ＋ {(valB + 5).toFixed(2).replace('.', ',')} ＝ <strong className="text-indigo-600">{(valA + valB + 5).toFixed(2).replace('.', ',')}</strong></div>
+
+                        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 font-mono text-xs md:text-sm font-bold text-center text-slate-800 space-y-1.5">
+                          <div>({numA || "0"} ＋ {numB || "0"}) ＋ {extraNum || "0"} ＝ {sumVal} ＋ {extraNum || "0"} ＝ <strong className="text-indigo-600 font-black">{(valA + valB + valExtra).toFixed(3).replace(/\.?0+$/, '').replace('.', ',')}</strong></div>
+                          <div>{numA || "0"} ＋ ({numB || "0"} ＋ {extraNum || "0"}) ＝ {numA || "0"} ＋ {(valB + valExtra).toFixed(3).replace(/\.?0+$/, '').replace('.', ',')} ＝ <strong className="text-indigo-600 font-black">{(valA + valB + valExtra).toFixed(3).replace(/\.?0+$/, '').replace('.', ',')}</strong></div>
                         </div>
                       </div>
                     )}
@@ -382,9 +490,9 @@ export default function ProsthesiAfairesiPage() {
                         <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
                           Αν από το άθροισμα αφαιρέσουμε έναν προσθετέο, βρίσκουμε τον άλλον:
                         </p>
-                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 font-mono text-xs md:text-sm font-bold text-center text-slate-800 space-y-1">
-                          <div><span className="text-amber-600 font-black">{sumVal}</span> － <span className="text-blue-700">{numB}</span> ＝ <strong className="text-emerald-700">{numA}</strong> (Σωστό ✅)</div>
-                          <div><span className="text-amber-600 font-black">{sumVal}</span> － <span className="text-emerald-700">{numA}</span> ＝ <strong className="text-blue-700">{numB}</strong> (Σωστό ✅)</div>
+                        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 font-mono text-xs md:text-sm font-bold text-center text-slate-800 space-y-2">
+                          <div><span className="text-amber-600 font-black">{sumVal}</span> － <span className="text-blue-700">{numB || "0"}</span> ＝ <strong className="text-emerald-700 font-black">{numA || "0"}</strong> (Σωστό ✅)</div>
+                          <div><span className="text-amber-600 font-black">{sumVal}</span> － <span className="text-emerald-700">{numA || "0"}</span> ＝ <strong className="text-blue-700 font-black">{numB || "0"}</strong> (Σωστό ✅)</div>
                         </div>
                       </div>
                     )}
