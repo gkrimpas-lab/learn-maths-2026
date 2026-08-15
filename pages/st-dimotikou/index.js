@@ -6,7 +6,7 @@ import { LAYOUT } from '../../shared/layout-config';
 export default function STDimotikouMenu() {
   const modules = [
     { id: '01-fisikoi-arithmoi', label: '🍕 1. Φυσικοί Αριθμοί', href: '/st-dimotikou/01-fisikoi-arithmoi' },
-    { id: '2-dekadikoi', label: '🍕 2. Δεκαδικοί Αριθμοί', href: '/st-dimotikou/2-dekadikoi' },
+    { id: '02-dekadikoi', label: '🍕 2. Δεκαδικοί Αριθμοί', href: '/st-dimotikou/02-dekadikoi' },
     { id: '3-arithmoi-dekadika-klasmata', label: '🍕 3. Δεκαδικοί Αριθμοί σε Δεκαδικά Κλάσματα', href: '/st-dimotikou/3-arithmoi-dekadika-klasmata' },
     { id: '4-sigkrisi-arithmon', label: '🍕 4. Σύγκριση Δεκαδικών Αριθμών', href: '/st-dimotikou/4-sigkrisi-arithmon' },
     { id: '5-prosthesi', label: '🍕 5. Πρόσθεση Φυσικών Αριθμών', href: '/st-dimotikou/5-prosthesi' },
