@@ -99,19 +99,25 @@ function generateQuestions() {
     ? `Τα μηδενικά στο τέλος του αριθμού ${formatNumber(q6NumberExample)} καθορίζουν την αξία θέσης των προηγούμενων ψηφίων.`
     : `Τα μηδενικά στην αρχή ενός φυσικού αριθμού (π.χ. 00${formatNumber(q6NumberExample)}) αλλάζουν και μεγαλώνουν την αξία του.`;
 
-  // Q7: SVG Visual - Ανάγνωση Άβακα / Θέσεων
-  const q7M = getRandomInt(1, 4);
-  const q7X = getRandomInt(1, 5);
-  const q7E = getRandomInt(1, 6);
-  const q7D = getRandomInt(1, 7);
-  const q7Units = getRandomInt(1, 8);
-  const q7Val = q7M * 1000000 + q7X * 100000 + q7E * 100 + q7D * 10 + q7Units;
+  // Q7: SVG Visual - Πλήρης Άβακας 7 Θέσεων (από Μονάδες έως Εκατομμύρια)
+  const q7M = getRandomInt(1, 4);       // Εκατομμύρια (πάντα > 0)
+  const q7EX = getRandomInt(0, 5);      // Εκατοντάδες Χιλιάδων
+  const q7DX = getRandomInt(0, 6);      // Δεκάδες Χιλιάδων
+  const q7MX = getRandomInt(0, 7);      // Μονάδες Χιλιάδων
+  const q7E = getRandomInt(0, 8);       // Εκατοντάδες
+  const q7D = getRandomInt(0, 8);       // Δεκάδες
+  const q7Units = getRandomInt(1, 9);   // Μονάδες
+
+  const q7Val = q7M * 1000000 + q7EX * 100000 + q7DX * 10000 + q7MX * 1000 + q7E * 100 + q7D * 10 + q7Units;
+  
   const q7Columns = [
-    { label: 'Εκ.', count: q7M, color: '#e11d48' },
-    { label: 'Ε.Χ.', count: q7X, color: '#2563eb' },
-    { label: 'Ε.', count: q7E, color: '#059669' },
-    { label: 'Δ.', count: q7D, color: '#d97706' },
-    { label: 'Μ.', count: q7Units, color: '#7c3aed' }
+    { label: 'Εκ.', count: q7M, color: '#e11d48', name: 'Εκατομμύρια' },
+    { label: 'Ε.Χ.', count: q7EX, color: '#2563eb', name: 'Εκατοντάδες Χιλιάδων' },
+    { label: 'Δ.Χ.', count: q7DX, color: '#0284c7', name: 'Δεκάδες Χιλιάδων' },
+    { label: 'Μ.Χ.', count: q7MX, color: '#06b6d4', name: 'Μονάδες Χιλιάδων' },
+    { label: 'Ε.', count: q7E, color: '#059669', name: 'Εκατοντάδες' },
+    { label: 'Δ.', count: q7D, color: '#d97706', name: 'Δεκάδες' },
+    { label: 'Μ.', count: q7Units, color: '#7c3aed', name: 'Μονάδες' }
   ];
 
   // Q8: SVG Visual - Επιλογή σωστής ανάλυσης από διάγραμμα περιόδων
@@ -183,7 +189,7 @@ function generateQuestions() {
       title: 'Οπτικός Άβακας Αξίας Θέσης',
       columns: q7Columns,
       correct: q7Val,
-      explain: `Μετρώντας τις χάντρες: ${q7M} Εκ. + ${q7X} Ε.Χ. + ${q7E} Ε. + ${q7D} Δ. + ${q7Units} Μ. = ${formatNumber(q7Val)}.`
+      explain: `Διαβάζοντας τις χάντρες από αριστερά προς τα δεξιά (βάζοντας 0 στις κενές θέσεις): ${formatNumber(q7Val)}.`
     },
     q8: {
       type: 'mcq',
@@ -345,7 +351,7 @@ export default function FysikoiArithmoiExercisesPage() {
                     value={answers.q1}
                     onChange={(e) => handleInputChange('q1', e.target.value)}
                     placeholder="π.χ. 70000"
-                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100"
+                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100 font-mono"
                   />
                   {submitted && (
                     <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q1') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
@@ -378,7 +384,7 @@ export default function FysikoiArithmoiExercisesPage() {
                     value={answers.q2}
                     onChange={(e) => handleInputChange('q2', e.target.value)}
                     placeholder="Γράψε τον αριθμό..."
-                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100"
+                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono"
                   />
                   {submitted && (
                     <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q2') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
@@ -554,7 +560,7 @@ export default function FysikoiArithmoiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 7 */}
+              {/* ΕΡΩΤΗΣΗ 7: Οπτικός Άβακας (Πλήρης με 7 διαδοχικές στήλες) */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
@@ -568,25 +574,34 @@ export default function FysikoiArithmoiExercisesPage() {
                   Ποιον φυσικό αριθμό αναπαριστά ο παρακάτω άβακας;
                 </p>
                 
-                {/* SVG Abacus */}
-                <div className="bg-slate-100 rounded-2xl p-3 mb-4 flex justify-center">
-                  <svg viewBox="0 0 320 120" className="w-full max-w-xs h-28">
-                    <line x1="20" y1="105" x2="300" y2="105" stroke="#475569" strokeWidth="4" strokeLinecap="round" />
+                {/* SVG Complete 7-Column Abacus */}
+                <div className="bg-slate-100 rounded-2xl p-3 mb-4 flex justify-center overflow-x-auto">
+                  <svg viewBox="0 0 350 130" className="w-full max-w-sm h-32">
+                    {/* Base */}
+                    <line x1="15" y1="110" x2="335" y2="110" stroke="#334155" strokeWidth="4" strokeLinecap="round" />
+                    
                     {questions.q7.columns.map((col, idx) => {
-                      const x = 45 + idx * 58;
+                      const x = 32 + idx * 48;
                       return (
                         <g key={idx}>
-                          <line x1={x} y1="20" x2={x} y2="105" stroke="#94a3b8" strokeWidth="2" />
+                          {/* Rod */}
+                          <line x1={x} y1="20" x2={x} y2="110" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
+                          
+                          {/* Beads */}
                           {[...Array(col.count)].map((_, beadIdx) => (
                             <circle
                               key={beadIdx}
                               cx={x}
-                              cy={100 - beadIdx * 10}
-                              r="4.5"
+                              cy={104 - beadIdx * 9.5}
+                              r="4.2"
                               fill={col.color}
+                              stroke="#ffffff"
+                              strokeWidth="0.8"
                             />
                           ))}
-                          <text x={x} y="118" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#334155">
+
+                          {/* Class Label */}
+                          <text x={x} y="124" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#334155">
                             {col.label}
                           </text>
                         </g>
@@ -602,7 +617,7 @@ export default function FysikoiArithmoiExercisesPage() {
                     value={answers.q7}
                     onChange={(e) => handleInputChange('q7', e.target.value)}
                     placeholder="Γράψε τον αριθμό..."
-                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-rose-500 outline-none disabled:bg-slate-100"
+                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-rose-500 outline-none disabled:bg-slate-100 font-mono"
                   />
                   {submitted && (
                     <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q7') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
