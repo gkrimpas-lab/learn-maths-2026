@@ -14,10 +14,10 @@ export default function PosotitaIgrouTheoryPage() {
   const mL = typeof milliliters === 'number' && milliliters >= 0 ? milliliters : 0;
   const liters = mL / 1000;
 
-  // Ύψος στάθμης υγρού στο SVG δοχείο (Max 2000 mL -> ύψος 120px)
+  // Ύψος στάθμης υγρού στο SVG δοχείο (Max 2000 mL -> διαδρομή 128px μέχρι το y = 158)
   const maxCapacity = 2000;
-  const fillHeight = Math.min(120, (mL / maxCapacity) * 120);
-  const liquidY = 150 - fillHeight;
+  const fillHeight = Math.min(128, (mL / maxCapacity) * 128);
+  const liquidY = 158 - fillHeight;
 
   const setPreset = (amount) => {
     setMilliliters(amount);
@@ -187,7 +187,7 @@ export default function PosotitaIgrouTheoryPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               
-              {/* ΑΡΙΣΤΕΡΑ: SVG ΟΓΚΟΜΕΤΡΙΚΟ ΔΟΧΕΙΟ */}
+              {/* ΑΡΙΣΤΕΡΑ: SVG ΟΓΚΟΜΕΤΡΙΚΟ ΔΟΧΕΙΟ (ΓΕΜΙΖΕΙ ΜΕΧΡΙ ΤΟΝ ΠΑΤΟ) */}
               <div className="bg-slate-900 p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center space-y-4">
                 <span className="text-xs font-black uppercase tracking-widest text-cyan-400">
                   Ογκομετρικο Δοχειο (0 - 2.000 mL)
@@ -195,14 +195,7 @@ export default function PosotitaIgrouTheoryPage() {
 
                 <div className="w-52 h-52 flex items-center justify-center">
                   <svg className="w-full h-full" viewBox="0 0 160 180">
-                    {/* Σώμα Δοχείου */}
-                    <path d="M 40,25 L 40,150 A 10,10 0 0,0 50,160 L 110,160 A 10,10 0 0,0 120,150 L 120,25" fill="#1e293b" fillOpacity="0.5" stroke="#38bdf8" strokeWidth="4" />
-                    {/* Χείλος δοχείου */}
-                    <path d="M 35,25 L 125,25" stroke="#38bdf8" strokeWidth="4" strokeLinecap="round" />
-                    {/* Στόμιο εκροής */}
-                    <path d="M 35,25 L 25,20 L 40,35" fill="none" stroke="#38bdf8" strokeWidth="3" />
-
-                    {/* Υγρό μέσα στο δοχείο */}
+                    {/* Υγρό μέσα στο δοχείο (Φτάνει μέχρι τον πάτο y = 158) */}
                     {mL > 0 && (
                       <rect 
                         x="42" 
@@ -210,10 +203,17 @@ export default function PosotitaIgrouTheoryPage() {
                         width="76" 
                         height={fillHeight} 
                         fill="#06b6d4" 
-                        fillOpacity="0.75" 
+                        fillOpacity="0.8" 
                         rx="4"
                       />
                     )}
+
+                    {/* Σώμα Δοχείου (Περίγραμμα) */}
+                    <path d="M 40,25 L 40,150 A 10,10 0 0,0 50,160 L 110,160 A 10,10 0 0,0 120,150 L 120,25" fill="none" stroke="#38bdf8" strokeWidth="4" />
+                    {/* Χείλος δοχείου */}
+                    <path d="M 35,25 L 125,25" stroke="#38bdf8" strokeWidth="4" strokeLinecap="round" />
+                    {/* Στόμιο εκροής */}
+                    <path d="M 35,25 L 25,20 L 40,35" fill="none" stroke="#38bdf8" strokeWidth="3" />
 
                     {/* Γραμμές διαβάθμισης (Ενδείξεις mL) */}
                     {/* 2000 mL (Top) */}
@@ -221,16 +221,16 @@ export default function PosotitaIgrouTheoryPage() {
                     <text x="98" y="33" textAnchor="end" fill="#94a3b8" fontSize="8" fontWeight="bold">2.000</text>
 
                     {/* 1500 mL */}
-                    <line x1="105" y1="60" x2="118" y2="60" stroke="#f8fafc" strokeWidth="2" />
-                    <text x="98" y="63" textAnchor="end" fill="#94a3b8" fontSize="8" fontWeight="bold">1.500</text>
+                    <line x1="105" y1="62" x2="118" y2="62" stroke="#f8fafc" strokeWidth="2" />
+                    <text x="98" y="65" textAnchor="end" fill="#94a3b8" fontSize="8" fontWeight="bold">1.500</text>
 
                     {/* 1000 mL (1 L) */}
-                    <line x1="100" y1="90" x2="118" y2="90" stroke="#fbbf24" strokeWidth="2.5" />
-                    <text x="95" y="93" textAnchor="end" fill="#fbbf24" fontSize="9" fontWeight="900">1 L</text>
+                    <line x1="100" y1="94" x2="118" y2="94" stroke="#fbbf24" strokeWidth="2.5" />
+                    <text x="95" y="97" textAnchor="end" fill="#fbbf24" fontSize="9" fontWeight="900">1 L</text>
 
                     {/* 500 mL (1/2 L) */}
-                    <line x1="105" y1="120" x2="118" y2="120" stroke="#f8fafc" strokeWidth="2" />
-                    <text x="98" y="123" textAnchor="end" fill="#94a3b8" fontSize="8" fontWeight="bold">500</text>
+                    <line x1="105" y1="126" x2="118" y2="126" stroke="#f8fafc" strokeWidth="2" />
+                    <text x="98" y="129" textAnchor="end" fill="#94a3b8" fontSize="8" fontWeight="bold">500</text>
                   </svg>
                 </div>
 
@@ -292,18 +292,25 @@ export default function PosotitaIgrouTheoryPage() {
                   </div>
                 </div>
 
-                {/* ΑΥΤΟΜΑΤΕΣ ΑΝΑΛΥΣΕΙΣ */}
-                <div className="bg-cyan-50 p-4 rounded-2xl border border-cyan-200 space-y-2">
-                  <h4 className="text-xs font-black uppercase text-cyan-950 flex items-center gap-1.5">
+                {/* ΑΥΤΟΜΑΤΕΣ ΑΝΑΛΥΣΕΙΣ ΜΕ ΣΤΑΘΕΡΟ ΥΨΟΣ (min-h-[108px]) */}
+                <div className="bg-cyan-50 p-4 rounded-2xl border border-cyan-200 min-h-[108px] flex flex-col justify-between">
+                  <h4 className="text-xs font-black uppercase text-cyan-950 flex items-center gap-1.5 mb-1">
                     <span>💡</span> Πώς το διαβάζουμε:
                   </h4>
                   <ul className="text-xs space-y-1 font-medium text-gray-800">
                     <li>• <strong>Σε Χιλιοστόλιτρα:</strong> {formatNumber(mL)} mL</li>
                     <li>• <strong>Σε Λίτρα:</strong> {liters} L (αφού {formatNumber(mL)} : 1.000 = {liters})</li>
-                    {mL === 500 && <li>• <strong>Ειδική ονομασία:</strong> Μισό λίτρο (1/2 L)</li>}
-                    {mL === 250 && <li>• <strong>Ειδική ονομασία:</strong> Ένα τέταρτο του λίτρου (1/4 L)</li>}
-                    {mL === 750 && <li>• <strong>Ειδική ονομασία:</strong> Τρία τέταρτα του λίτρου (3/4 L)</li>}
-                    {mL === 1000 && <li>• <strong>Ειδική ονομασία:</strong> 1 ακέραιο λίτρο (1 L)</li>}
+                    {mL === 500 ? (
+                      <li>• <strong>Ειδική ονομασία:</strong> Μισό λίτρο (1/2 L)</li>
+                    ) : mL === 250 ? (
+                      <li>• <strong>Ειδική ονομασία:</strong> Ένα τέταρτο του λίτρου (1/4 L)</li>
+                    ) : mL === 750 ? (
+                      <li>• <strong>Ειδική ονομασία:</strong> Τρία τέταρτα του λίτρου (3/4 L)</li>
+                    ) : mL === 1000 ? (
+                      <li>• <strong>Ειδική ονομασία:</strong> 1 ακέραιο λίτρο (1 L)</li>
+                    ) : (
+                      <li className="invisible select-none">• <strong>Ειδική ονομασία:</strong> -</li>
+                    )}
                   </ul>
                 </div>
 
