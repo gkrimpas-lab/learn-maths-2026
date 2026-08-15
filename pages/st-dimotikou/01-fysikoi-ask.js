@@ -52,16 +52,15 @@ function generateQuestions() {
     'Εκατοντάδων'
   ][q1TargetPos];
 
-  // Q2: Αριθμητικό Input - Σύνθεση αριθμού από αναπτυγμένη μορφή
+  // Q2: Αριθμητικό Input - Σύνθεση αριθμού από αναπτυγμένη μορφή (με d × 1)
   const q2A = getRandomInt(2, 8);
   const q2B = getRandomInt(1, 9);
   const q2C = getRandomInt(3, 9);
   const q2D = getRandomInt(1, 9);
   const q2Answer = q2A * 1000000 + q2B * 100000 + q2C * 1000 + q2D;
-  const q2Prompt = `${q2A} × 1.000.000 + ${q2B} × 100.000 + ${q2C} × 1.000 + ${q2D}`;
+  const q2Prompt = `${q2A} × 1.000.000 + ${q2B} × 100.000 + ${q2C} × 1.000 + ${q2D} × 1`;
 
   // Q3: MCQ - Σε ποια περίοδο ανήκει η συγκεκριμένη ομάδα ψηφίων
-  const q3Scenario = shuffledPool[0];
   const q3MillionPart = getRandomInt(12, 85);
   const q3ThousandPart = getRandomInt(100, 999);
   const q3UnitsPart = getRandomInt(100, 999);
@@ -142,7 +141,7 @@ function generateQuestions() {
       title: 'Σύνθεση Αριθμού',
       prompt: q2Prompt,
       correct: q2Answer,
-      explain: `Υπολογίζοντας το άθροισμα: ${formatNumber(q2A * 1000000)} + ${formatNumber(q2B * 100000)} + ${formatNumber(q2C * 1000)} + ${q2D} = ${formatNumber(q2Answer)}.`
+      explain: `Υπολογίζοντας το άθροισμα: ${formatNumber(q2A * 1000000)} + ${formatNumber(q2B * 100000)} + ${formatNumber(q2C * 1000)} + ${formatNumber(q2D * 1)} = ${formatNumber(q2Answer)}.`
     },
     q3: {
       type: 'mcq',
@@ -312,6 +311,7 @@ export default function FysikoiArithmoiExercisesPage() {
             </div>
 
             <button
+              type="button"
               onClick={loadNewQuestions}
               className="px-5 py-3 bg-white text-emerald-800 hover:bg-emerald-50 rounded-2xl font-extrabold shadow-md transition transform active:scale-95 text-sm flex items-center gap-2 shrink-0"
             >
@@ -663,7 +663,7 @@ export default function FysikoiArithmoiExercisesPage() {
 
             </div>
 
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ (ΜΕΣΑ ΣΤΟ MAIN) */}
+            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
             {!submitted && (
               <div className="flex justify-center pt-8">
                 <button
