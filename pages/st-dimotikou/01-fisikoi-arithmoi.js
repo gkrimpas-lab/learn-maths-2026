@@ -6,7 +6,6 @@ import { LAYOUT } from '../../shared/layout-config';
 export default function FysikoiArithmoiPage() {
   const [number, setNumber] = useState("10432400");
 
-  // Περίοδοι και χρώματα
   const periods = [
     { name: "Δισεκατομμύρια", color: "bg-purple-600", light: "bg-purple-50", border: "border-purple-200", text: "text-purple-700" },
     { name: "Εκατομμύρια", color: "bg-rose-600", light: "bg-rose-50", border: "border-rose-200", text: "text-rose-700" },
@@ -14,7 +13,6 @@ export default function FysikoiArithmoiPage() {
     { name: "Μονάδες", color: "bg-emerald-600", light: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700" },
   ];
 
-  // Presets πραγματικού κόσμου για ενδιαφέρον των μαθητών
   const presets = [
     { label: '🇬🇷 Πληθυσμός Ελλάδας', val: '10432400' },
     { label: '🌍 Περίμετρος Ισημερινού', val: '40075' },
@@ -22,13 +20,10 @@ export default function FysikoiArithmoiPage() {
     { label: '👥 Πληθυσμός Γης', val: '8000000000' }
   ];
 
-  // Καθαρισμός και συμπλήρωση 12 ψηφίων
   const cleanNumber = (number || "0").replace(/\D/g, '').slice(0, 12) || "0";
   const padded = cleanNumber.padStart(12, '0').slice(-12);
   const digits = padded.split('');
   const firstNonZero = digits.findIndex(d => d !== '0');
-
-  // Μορφοποίηση με τελείες για ανάγνωση
   const formattedReadable = Number(cleanNumber).toLocaleString('el-GR');
 
   return (
@@ -63,7 +58,7 @@ export default function FysikoiArithmoiPage() {
           </div>
         </nav>
 
-        {/* 2. HEADER HERO BANNER ΜΕ PROMO CARD */}
+        {/* 2. HEADER HERO BANNER */}
         <section className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white py-12 px-4 shadow-inner">
           <div className={`${LAYOUT.CONTAINER} grid grid-cols-1 lg:grid-cols-12 gap-8 items-center`}>
             <div className="lg:col-span-8 space-y-4">
@@ -80,7 +75,6 @@ export default function FysikoiArithmoiPage() {
               </p>
             </div>
 
-            {/* Promo Card (Callout) */}
             <div className="lg:col-span-4 bg-white/10 backdrop-blur-md border border-white/25 rounded-3xl p-6 text-center space-y-4 shadow-xl">
               <div className="w-14 h-14 bg-amber-400 text-slate-900 rounded-2xl flex items-center justify-center text-3xl font-black mx-auto shadow-md">
                 🎯
@@ -99,11 +93,9 @@ export default function FysikoiArithmoiPage() {
           </div>
         </section>
 
-        {/* 3. ΑΝΑΛΥΤΙΚΗ ΘΕΩΡΙΑ ΣΕ 3 ΚΑΡΤΕΣ */}
+        {/* 3. ΑΝΑΛΥΤΙΚΗ ΘΕΩΡΙΑ */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-12 space-y-12`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            {/* Κάρτα 1 */}
             <div className="bg-blue-50/70 border border-blue-100 p-6 rounded-3xl space-y-3 shadow-sm hover:shadow-md transition">
               <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center text-xl font-black">
                 1
@@ -117,7 +109,6 @@ export default function FysikoiArithmoiPage() {
               </div>
             </div>
 
-            {/* Κάρτα 2 */}
             <div className="bg-indigo-50/70 border border-indigo-100 p-6 rounded-3xl space-y-3 shadow-sm hover:shadow-md transition">
               <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-xl font-black">
                 2
@@ -133,7 +124,6 @@ export default function FysikoiArithmoiPage() {
               </ul>
             </div>
 
-            {/* Κάρτα 3 */}
             <div className="bg-emerald-50/70 border border-emerald-100 p-6 rounded-3xl space-y-3 shadow-sm hover:shadow-md transition">
               <div className="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center text-xl font-black">
                 3
@@ -146,10 +136,9 @@ export default function FysikoiArithmoiPage() {
                 💡 Στον αριθμό <strong>5.500</strong>: το πρώτο 5 αξίζει <strong>5.000</strong> ενώ το δεύτερο <strong>500</strong>.
               </div>
             </div>
-
           </div>
 
-          {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ (INTERACTIVE PLAYGROUND) */}
+          {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ */}
           <section className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-slate-100">
               <div>
@@ -165,12 +154,11 @@ export default function FysikoiArithmoiPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
               
-              {/* ΑΡΙΣΤΕΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ (Πίνακας & SVG Visualization) */}
-              <div className="lg:col-span-7 space-y-6">
+              {/* ΑΡΙΣΤΕΡΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ */}
+              <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
                 
-                {/* Κάρτα Τρέχοντος Αριθμού */}
                 <div className="bg-slate-900 text-white p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
                   <div>
                     <span className="text-xs font-bold text-slate-400 uppercase">Αριθμός σε ανάγνωση:</span>
@@ -183,11 +171,9 @@ export default function FysikoiArithmoiPage() {
                   </div>
                 </div>
 
-                {/* Πίνακας Αξίας Θέσης */}
+                {/* Πίνακας Περιόδων */}
                 <div className="overflow-x-auto pb-2">
                   <div className="min-w-[540px] bg-white rounded-2xl border border-slate-300 shadow-sm overflow-hidden">
-                    
-                    {/* Header Περιόδων */}
                     <div className="grid grid-cols-4 text-white text-center font-black text-xs uppercase tracking-wide">
                       {periods.map((p, i) => (
                         <div key={i} className={`${p.color} py-2.5 border-r border-white/20 last:border-0`}>
@@ -196,7 +182,6 @@ export default function FysikoiArithmoiPage() {
                       ))}
                     </div>
 
-                    {/* Header Τάξεων */}
                     <div className="grid grid-cols-12 text-[10px] font-black text-slate-500 text-center border-b bg-slate-100 uppercase py-1.5">
                       {[...Array(4)].map((_, i) => (
                         <span key={i} className="contents">
@@ -207,7 +192,6 @@ export default function FysikoiArithmoiPage() {
                       ))}
                     </div>
 
-                    {/* Τα ψηφία */}
                     <div className="grid grid-cols-12 text-center items-center">
                       {digits.map((digit, i) => {
                         const periodIdx = Math.floor(i / 3);
@@ -224,55 +208,63 @@ export default function FysikoiArithmoiPage() {
                         );
                       })}
                     </div>
-
                   </div>
                 </div>
 
-                {/* SVG Οπτικοποίηση - Μπάρες Βαρύτητας Ψηφίων */}
-                <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2">
-                  <span className="text-xs font-bold text-slate-500 uppercase">Οπτική κατανομή μεγέθους:</span>
-                  <svg viewBox="0 0 600 60" className="w-full h-16 bg-white rounded-xl border border-slate-200 p-2">
-                    {digits.map((digit, i) => {
-                      const val = Number(digit);
-                      const isLeading = firstNonZero !== -1 && i < firstNonZero;
-                      const height = isLeading || val === 0 ? 4 : (val / 9) * 40 + 6;
-                      const x = i * 49 + 10;
-                      const colors = ["#9333ea", "#e11d48", "#2563eb", "#059669"];
-                      const fillColor = isLeading ? "#e2e8f0" : colors[Math.floor(i / 3)];
+                {/* SVG Οπτικοποίηση - Μεγαλύτερο Ύψος & Ισομερής κλίμακα */}
+                <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl flex-1 flex flex-col justify-between shadow-inner">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
+                      📊 Οπτική Κατανομή Μεγέθους Ψηφίων:
+                    </span>
+                    <span className="text-[11px] text-slate-400 font-medium">Κλίμακα βαρύτητας ανά θέση</span>
+                  </div>
+                  
+                  <div className="bg-white rounded-xl border border-slate-200 p-3 flex-1 flex items-center justify-center min-h-[160px]">
+                    <svg viewBox="0 0 600 130" className="w-full h-36 md:h-44">
+                      <line x1="10" y1="105" x2="590" y2="105" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 3" />
+                      {digits.map((digit, i) => {
+                        const val = Number(digit);
+                        const isLeading = firstNonZero !== -1 && i < firstNonZero;
+                        const height = isLeading || val === 0 ? 6 : (val / 9) * 80 + 10;
+                        const x = i * 49 + 8;
+                        const colors = ["#9333ea", "#e11d48", "#2563eb", "#059669"];
+                        const fillColor = isLeading ? "#f1f5f9" : colors[Math.floor(i / 3)];
 
-                      return (
-                        <g key={i}>
-                          <rect 
-                            x={x} 
-                            y={50 - height} 
-                            width="30" 
-                            height={height} 
-                            rx="4" 
-                            fill={fillColor} 
-                            className="transition-all duration-300"
-                          />
-                          <text 
-                            x={x + 15} 
-                            y="58" 
-                            fontSize="8" 
-                            fontWeight="bold" 
-                            textAnchor="middle" 
-                            fill={isLeading ? "#94a3b8" : "#334155"}
-                          >
-                            {digit}
-                          </text>
-                        </g>
-                      );
-                    })}
-                  </svg>
+                        return (
+                          <g key={i}>
+                            <rect 
+                              x={x} 
+                              y={105 - height} 
+                              width="34" 
+                              height={height} 
+                              rx="6" 
+                              fill={fillColor}
+                              stroke={isLeading ? "#cbd5e1" : "none"}
+                              className="transition-all duration-300"
+                            />
+                            <text 
+                              x={x + 17} 
+                              y="122" 
+                              fontSize="11" 
+                              fontWeight="bold" 
+                              textAnchor="middle" 
+                              fill={isLeading ? "#94a3b8" : "#1e293b"}
+                            >
+                              {digit}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </svg>
+                  </div>
                 </div>
 
               </div>
 
-              {/* ΔΕΞΙΑ: ΧΕΙΡΙΣΤΗΡΙΑ & ΑΝΑΛΥΣΗ */}
-              <div className="lg:col-span-5 space-y-6">
+              {/* ΔΕΞΙΑ: ΧΕΙΡΙΣΤΗΡΙΑ & ΠΛΗΡΗΣ ΑΝΑΛΥΣΗ ΧΩΡΙΣ SCROLL */}
+              <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
                 
-                {/* Πληκτρολόγηση & Γρήγορες Επιλογές */}
                 <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4">
                   <div>
                     <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">
@@ -306,39 +298,42 @@ export default function FysikoiArithmoiPage() {
                   </div>
                 </div>
 
-                {/* Αναπτυγμένη Μορφή (Δυνάμεις 10) με min-h για σταθερό layout */}
-                <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl min-h-[220px] flex flex-col justify-between shadow-inner">
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-wider block mb-2">
-                    🧬 Αναπτυγμένη Μορφή (Ανάλυση):
-                  </span>
-                  
-                  <div className="space-y-1.5 font-mono text-xs overflow-y-auto max-h-[160px] pr-1">
-                    {digits.filter(d => d !== '0').length === 0 ? (
-                      <p className="text-slate-400 italic">Ο αριθμός είναι μηδέν (0).</p>
-                    ) : (
-                      digits.map((digit, i) => {
-                        if (digit === '0') return null;
-                        const power = 11 - i;
-                        const multiplier = Math.pow(10, power).toLocaleString('el-GR');
-                        const periodIdx = Math.floor(i / 3);
-                        return (
-                          <div key={i} className="flex items-center justify-between py-1 border-b border-slate-200/60 last:border-0">
-                            <span className="flex items-center gap-1">
-                              <strong className={`${periods[periodIdx].text} font-black`}>{digit}</strong>
-                              <span className="text-slate-400">×</span>
-                              <span className="text-slate-700 font-semibold">{multiplier}</span>
-                            </span>
-                            <span className="text-[11px] text-slate-400 bg-white px-2 py-0.5 rounded border border-slate-200">
-                              10<sup>{power}</sup>
-                            </span>
-                          </div>
-                        );
-                      })
-                    )}
+                {/* Αναπτυγμένη Μορφή: Πλήρης εμφάνιση όλων των όρων χωρίς scrollbar */}
+                <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl flex-1 flex flex-col justify-between shadow-inner">
+                  <div>
+                    <span className="text-xs font-black text-slate-500 uppercase tracking-wider block mb-3">
+                      🧬 Αναπτυγμένη Μορφή (Ανάλυση):
+                    </span>
+                    
+                    <div className="space-y-2 font-mono text-xs md:text-sm">
+                      {digits.filter(d => d !== '0').length === 0 ? (
+                        <p className="text-slate-400 italic py-4">Ο αριθμός είναι μηδέν (0).</p>
+                      ) : (
+                        digits.map((digit, i) => {
+                          if (digit === '0') return null;
+                          const power = 11 - i;
+                          const multiplier = Math.pow(10, power).toLocaleString('el-GR');
+                          const periodIdx = Math.floor(i / 3);
+                          return (
+                            <div key={i} className="flex items-center justify-between py-1.5 border-b border-slate-200/70 last:border-0">
+                              <span className="flex items-center gap-1.5">
+                                <strong className={`${periods[periodIdx].text} font-black text-sm`}>{digit}</strong>
+                                <span className="text-slate-400">×</span>
+                                <span className="text-slate-700 font-semibold">{multiplier}</span>
+                              </span>
+                              <span className="text-xs text-slate-500 bg-white px-2 py-0.5 rounded-md border border-slate-200 font-sans font-bold shadow-2xs">
+                                10<sup>{power}</sup>
+                              </span>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-200 text-[11px] text-slate-500 text-right">
-                    Σύνολο: <strong className="text-slate-800">{formattedReadable}</strong>
+                  <div className="pt-4 mt-4 border-t border-slate-200 flex justify-between items-center text-xs">
+                    <span className="text-slate-500 font-bold uppercase">Τελικό Σύνολο:</span>
+                    <strong className="text-base text-slate-900 font-black">{formattedReadable}</strong>
                   </div>
                 </div>
 
@@ -356,7 +351,6 @@ export default function FysikoiArithmoiPage() {
         </div>
       </footer>
 
-      {/* Global CSS tweaks */}
       <style jsx global>{`
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
