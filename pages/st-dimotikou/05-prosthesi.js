@@ -6,23 +6,32 @@ import { LAYOUT } from '../../shared/layout-config';
 export default function ProsthesiAfairesiPage() {
   const [numA, setNumA] = useState("34,75");
   const [numB, setNumB] = useState("18,5");
-  const [extraNum, setExtraNum] = useState("5,25"); // 3ος Αριθμός (γ)
-  const [activeProperty, setActiveProperty] = useState("antimetathetiki"); // 'antimetathetiki', 'prosetairistiki', 'antitheti'
+  const [extraNum, setExtraNum] = useState("5,25");
+  const [activeProperty, setActiveProperty] = useState("antimetathetiki");
 
   const presets = [
     { label: '💶 34,75 + 18,50 + 5,25 (Δεκαδικά)', a: '34,75', b: '18,5', c: '5,25' },
-    { label: '🔢 1.250 + 850 + 400 (Φυσικοί)', a: '1250', b: '850', c: '400' },
+    { label: '🔢 1250 + 850 + 400 (Φυσικοί)', a: '1250', b: '850', c: '400' },
     { label: '⚖️ 4,25 + 0,75 + 2,5 (Συμπληρώματα)', a: '4,25', b: '0,75', c: '2,5' },
     { label: '📏 120,4 + 35,85 + 4,15 (Μήκη)', a: '120,4', b: '35,85', c: '4,15' }
   ];
 
+  // Έλεγχος & περιορισμός: Ακέραιο μέρος <= 4 ψηφία, Δεκαδικό μέρος <= 3 ψηφία
   const sanitizeInput = (val) => {
     let formatted = val.replace(/\./g, ',').replace(/[^0-9,]/g, '');
     const parts = formatted.split(',');
-    if (parts.length > 2) {
-      formatted = `${parts[0]},${parts.slice(1).join('')}`;
+
+    let intPart = parts[0] || '';
+    if (intPart.length > 4) {
+      intPart = intPart.slice(0, 4);
     }
-    return formatted;
+
+    if (parts.length > 1) {
+      let decPart = parts.slice(1).join('').slice(0, 3);
+      return `${intPart},${decPart}`;
+    }
+
+    return intPart;
   };
 
   const parseVal = (str) => {
@@ -40,13 +49,15 @@ export default function ProsthesiAfairesiPage() {
   const totalSumVal = (valA + valB + valExtra).toFixed(3).replace(/\.?0+$/, '').replace('.', ',');
   const diffVal = Math.abs(valA - valB).toFixed(3).replace(/\.?0+$/, '').replace('.', ',');
 
-  // Βοηθητική συνάρτηση αυξομείωσης (+ / -)
+  // Αυξομείωση με διατήρηση των ορίων (έως 9999 στο ακέραιο, max 3 δεκαδικά)
   const adjustValue = (currentStr, delta) => {
     const current = parseVal(currentStr);
-    const updated = Math.max(0, current + delta);
+    let updated = Math.max(0, current + delta);
+    if (updated > 9999.999) updated = 9999.999;
+
     const isDec = currentStr.includes(',');
-    const decimals = isDec ? Math.min(2, (currentStr.split(',')[1] || '').length || 1) : 0;
-    return updated.toFixed(decimals).replace('.', ',');
+    const decimals = isDec ? Math.min(3, (currentStr.split(',')[1] || '').length || 1) : 0;
+    return sanitizeInput(updated.toFixed(decimals).replace('.', ','));
   };
 
   // Ευθυγράμμιση ψηφίων για την κάθετη πράξη
@@ -189,7 +200,7 @@ export default function ProsthesiAfairesiPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο Πρόσθεσης & Ιδιοτήτων
                 </h2>
                 <p className="text-gray-500 text-sm 2xl:text-base">
-                  Άλλαξε τους αριθμούς είτε πληκτρολογώντας είτε πατώντας τα κουμπιά αυξομείωσης (+ / -) και δες το αποτέλεσμα να ανανεώνεται αυτόματα!
+                  Άλλαξε τους αριθμούς είτε πληκτρολογώντας (έως 4 ακέραια και 3 δεκαδικά ψηφία) είτε πατώντας τα κουμπιά (+ / -)!
                 </p>
               </div>
 
@@ -229,7 +240,7 @@ export default function ProsthesiAfairesiPage() {
                           1ος (α):
                         </label>
                         <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-full">
-                          Α
+                          έως 9999,999
                         </span>
                       </div>
                       
@@ -281,7 +292,7 @@ export default function ProsthesiAfairesiPage() {
                           2ος (β):
                         </label>
                         <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-full">
-                          Β
+                          έως 9999,999
                         </span>
                       </div>
 
@@ -326,14 +337,14 @@ export default function ProsthesiAfairesiPage() {
                       </div>
                     </div>
 
-                    {/* INPUT C (3ος ΑΡΙΘΜΟΣ) */}
+                    {/* INPUT C */}
                     <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-indigo-200 shadow-sm">
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-black text-indigo-800 uppercase tracking-wider block">
                           3ος (γ):
                         </label>
                         <span className="text-[10px] font-bold bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded-full">
-                          Γ
+                          έως 9999,999
                         </span>
                       </div>
 
@@ -381,7 +392,7 @@ export default function ProsthesiAfairesiPage() {
                   </div>
 
                   <p className="text-[11px] 2xl:text-xs text-slate-400 text-center font-medium">
-                    💡 Άλλαξε οποιονδήποτε από τους 3 αριθμούς και δες όλα τα αποτελέσματα να προσαρμόζονται!
+                    💡 Έλεγχος ορίων: Ακέραιο μέρος έως 4 ψηφία (0 - 9999), κλασματικό/δεκαδικό μέρος έως 3 ψηφία (δέκατα, εκατοστά, χιλιοστά).
                   </p>
                 </div>
 
