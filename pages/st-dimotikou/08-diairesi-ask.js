@@ -309,7 +309,7 @@ export default function DiairesiExercisesPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              {/* ΕΡΩΤΗΣΗ 1: Input (Πηλίκο Τέλειας Διαίρεσης) */}
+              {/* ΕΡΩΤΗΣΗ 1 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
@@ -344,7 +344,7 @@ export default function DiairesiExercisesPage() {
                 </div>
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 2: Input (Εύρεση Διαιρετέου) */}
+              {/* ΕΡΩΤΗΣΗ 2 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">
@@ -374,7 +374,7 @@ export default function DiairesiExercisesPage() {
                 </div>
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 3: MCQ (Τέλεια vs Ατελής) */}
+              {/* ΕΡΩΤΗΣΗ 3 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
@@ -411,7 +411,7 @@ export default function DiairesiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 4: MCQ (Πρόβλημα) */}
+              {/* ΕΡΩΤΗΣΗ 4 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
@@ -448,7 +448,7 @@ export default function DiairesiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 5: True/False (Κανόνας Υπολοίπου) */}
+              {/* ΕΡΩΤΗΣΗ 5 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
@@ -494,7 +494,7 @@ export default function DiairesiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 6: True/False (Ταυτότητα Διαίρεσης) */}
+              {/* ΕΡΩΤΗΣΗ 6 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
@@ -540,7 +540,7 @@ export default function DiairesiExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 7: Input (Οπτικό Μοίρασμα) */}
+              {/* ΕΡΩΤΗΣΗ 7 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
@@ -582,7 +582,7 @@ export default function DiairesiExercisesPage() {
                 </div>
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 8: MCQ (Εύρεση Υπολοίπου) */}
+              {/* ΕΡΩΤΗΣΗ 8 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
@@ -679,6 +679,3 @@ export default function DiairesiExercisesPage() {
     </div>
   );
 }
-```eof
-
-Έχω δημιουργήσει το πλήρες αρχείο ασκήσεων **`pages/st-dimotikou/08-diairesi-ask.js`**. Περιλαμβάνει 8 δυναμικές ερωτήσεις υπολογισμού πηλίκου, υπολοίπου, εύρεσης Διαιρετέου, χαρακτηρισμού τέλειας/ατελούς διαίρεσης, οπτικής αναπαράστασης και αυτόματης βαθμολόγησης.
