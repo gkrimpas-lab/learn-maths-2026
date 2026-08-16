@@ -148,7 +148,7 @@ export default function DiairesiPage() {
                   8. Τέλεια και Ατελής Διαίρεση Φυσικών Αριθμών
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base 2xl:text-lg leading-relaxed max-w-3xl">
-                  Μάθε πώς μοιράζουμε έναν αριθμό σε ίσα μέρη, πότε η διαίρεση είναι <strong>τέλεια</strong> ($\upsilon = 0$) και πότε <strong>ατελής</strong> ($\upsilon > 0$), καθώς και τη θεμελιώδη μαθηματική ταυτότητα: $\Delta = \delta \times \pi + \upsilon$!
+                  Μάθε πώς μοιράζουμε έναν αριθμό σε ίσα μέρη, πότε η διαίρεση είναι <strong>τέλεια</strong> (υ = 0) και πότε <strong>ατελής</strong> (υ &gt; 0), καθώς και τη θεμελιώδη μαθηματική ταυτότητα: Δ = δ × π + υ!
                 </p>
               </div>
 
@@ -176,7 +176,7 @@ export default function DiairesiPage() {
                 </div>
                 <h3 className="text-lg 2xl:text-xl font-black text-slate-900">Τέλεια Διαίρεση</h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  Είναι η διαίρεση στην οποία ο Διαιρετέος χωρίζεται ακριβώς και το υπόλοιπο είναι <strong>μηδέν ($\upsilon = 0$)</strong>.
+                  Είναι η διαίρεση στην οποία ο Διαιρετέος χωρίζεται ακριβώς και το υπόλοιπο είναι <strong>μηδέν (υ = 0)</strong>.
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-emerald-100 text-xs 2xl:text-sm text-slate-700 font-mono text-center">
@@ -191,7 +191,7 @@ export default function DiairesiPage() {
                 </div>
                 <h3 className="text-lg 2xl:text-xl font-black text-slate-900">Ατελής Διαίρεση</h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο <strong>διάφορο του μηδενός ($\upsilon > 0$)</strong>. Το υπόλοιπο είναι πάντα μικρότερο από τον διαιρέτη ($\upsilon < \delta$).
+                  Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο <strong>διάφορο του μηδενός (υ &gt; 0)</strong>. Το υπόλοιπο είναι πάντα μικρότερο από τον διαιρέτη (υ &lt; δ).
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-amber-100 text-xs 2xl:text-sm text-slate-700 font-mono text-center">
@@ -414,7 +414,7 @@ export default function DiairesiPage() {
                         : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
                     }`}
                   >
-                    🍕 Οπτικό Μείρασμα σε Ομάδες
+                    🍕 Οπτικό Μοίρασμα σε Ομάδες
                   </button>
                 </div>
 
