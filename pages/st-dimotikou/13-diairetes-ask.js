@@ -48,24 +48,36 @@ function generateQuestions() {
   const q2Pool = [14, 18, 20, 22, 26, 28, 32, 34, 38, 40];
   const q2Num = q2Pool[getRandomInt(0, q2Pool.length - 1)];
   const q2Divs = getDivisors(q2Num);
-  const q2Correct = String(q2Divs[q2Divs.length - 2]); // Ο αμέσως προηγούμενος από τον εαυτό του
+  const q2Correct = String(q2Divs[q2Divs.length - 2]);
 
   // Q3: MCQ - Έλεγχος αν ένας αριθμός είναι διαιρέτης
-  const q3Base = getRandomInt(4, 9) * getRandomInt(3, 8); // π.χ. 36
+  const q3Base = getRandomInt(4, 9) * getRandomInt(3, 8);
   const q3Divs = getDivisors(q3Base);
-  const q3ValidDiv = q3Divs[getRandomInt(1, q3Divs.length - 2)]; // Γνήσιος διαιρέτης
+  const q3ValidDiv = q3Divs[getRandomInt(1, q3Divs.length - 2)];
   const q3NonDivs = [2, 3, 4, 5, 6, 7, 8, 9, 11, 13].filter(d => q3Base % d !== 0);
   const q3Wrongs = shuffle(q3NonDivs).slice(0, 3);
   const q3Options = shuffle([String(q3ValidDiv), ...q3Wrongs.map(String)]);
 
-  // Q4: MCQ - Ποιο από τα σύνολα περιέχει ΟΛΟΥΣ τους διαιρέτες
-  const q4Pool = [12, 18, 20, 24];
+  // Q4: MCQ - Ποιο από τα σύνολα περιέχει ΟΛΟΥΣ τους διαιρέτες (χωρίς διπλότυπα)
+  const q4Pool = [12, 18, 20, 24, 30];
   const q4Num = q4Pool[getRandomInt(0, q4Pool.length - 1)];
   const q4CorrectDivs = getDivisors(q4Num);
   const q4CorrectStr = `{ ${q4CorrectDivs.join(', ')} }`;
-  const q4Wrong1 = `{ ${q4CorrectDivs.filter((_, i) => i !== 1).join(', ')} }`; // Λείπει ένας
-  const q4Wrong2 = `{ ${[...q4CorrectDivs, q4Num + 2].join(', ')} }`; // Έχει παραπάνω
-  const q4Wrong3 = `{ ${q4CorrectDivs.map(d => d === 2 ? 5 : d).join(', ')} }`; // Έχει λάθος αριθμό
+
+  // 1ο Λάθος: Λείπει ένας ενδιάμεσος διαιρέτης (π.χ. το 2 ή το 3)
+  const q4MissingOne = q4CorrectDivs.filter((_, i) => i !== 1);
+  const q4Wrong1 = `{ ${q4MissingOne.join(', ')} }`;
+
+  // 2ο Λάθος: Έχει έναν επιπλέον αριθμό που ΔΕΝ είναι διαιρέτης
+  const nonDivCandidate1 = [7, 8, 9, 11, 13, 14].find(x => q4Num % x !== 0 && !q4CorrectDivs.includes(x)) || (q4Num + 2);
+  const q4WithExtra = [...q4CorrectDivs, nonDivCandidate1].sort((a, b) => a - b);
+  const q4Wrong2 = `{ ${q4WithExtra.join(', ')} }`;
+
+  // 3ο Λάθος: Έχει αντικατασταθεί ένας διαιρέτης με άλλον μη-διαιρέτη (πάντα μοναδικά ψηφία)
+  const nonDivCandidate2 = [7, 8, 9, 11, 13, 14, 15].filter(x => q4Num % x !== 0 && !q4CorrectDivs.includes(x))[0] || (q4Num - 1);
+  const q4Replaced = q4CorrectDivs.map((d, i) => (i === 1 ? nonDivCandidate2 : d)).sort((a, b) => a - b);
+  const q4Wrong3 = `{ ${q4Replaced.join(', ')} }`;
+
   const q4Options = shuffle([q4CorrectStr, q4Wrong1, q4Wrong2, q4Wrong3]);
 
   // Q5: True / False - Ο αριθμός 1 είναι διαιρέτης όλων των φυσικών
@@ -518,11 +530,11 @@ export default function DiairetesExercisesPage() {
                 )}
               </div>
 
-              {/* ΕΡΩΤΗΣΗ 7: Οπτική Κατανομή */}
+              {/* ΕΡΩΤΗΣΗ 7 */}
               <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
-                    Άσκηση 7 • Οπτικό Μοίρασμα
+                    Άσκηση 7 • Οπτική Κατανομή
                   </span>
                   {submitted && (
                     <span className="text-lg">{isCorrect('q7') ? '✅' : '❌'}</span>
@@ -561,6 +573,7 @@ export default function DiairetesExercisesPage() {
                 <p className="text-sm text-slate-700 mb-3 font-medium">
                   {questions.q8.prompt}
                 </p>
+
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   {questions.q8.options.map((opt, idx) => (
                     <button
@@ -568,7 +581,7 @@ export default function DiairetesExercisesPage() {
                       type="button"
                       disabled={submitted}
                       onClick={() => handleInputChange('q8', opt)}
-                      className={`w-full p-2.5 rounded-xl text-xs font-bold border text-center transition ${
+                      className={`w-full p-2.5 rounded-xl text-xs font-mono font-bold border text-center transition ${
                         answers.q8 === opt
                           ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
                           : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
