@@ -16,7 +16,7 @@ export default function STDimotikouMenu() {
     { id: '09-diairesi-dinameis-deka', label: '🍕 9. Διαίρεση Δυνάμεις του 10', href: '/st-dimotikou/09-diairesi-dinameis-deka' },
     { id: '10-proteraiotita-prakseon', label: '🍕 10. Προτεραιότητα Πράξεων', href: '/st-dimotikou/10-proteraiotita-prakseon' },
     { id: '11-problimata', label: '🍕 11. Προβλήματα', href: '/st-dimotikou/11-problimata' },
-    { id: '11-stroggilopoiisi', label: '🍕 12. Στρογγυλοποίηση Αριθμών', href: '/st-dimotikou/11-stroggilopoiisi' },
+    { id: '12-stroggilopoiisi', label: '🍕 12. Στρογγυλοποίηση Αριθμών', href: '/st-dimotikou/12-stroggilopoiisi' },
     { id: '12-diairetes', label: '🍕 13. Διαιρέτες Αριθμού', href: '/st-dimotikou/12-diairetes' },
     { id: '13-mkd', label: '🍕 14. Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)', href: '/st-dimotikou/13-mkd' },
     { id: '14-kritiria-diairetotitas', label: '🍕 15. Κριτήρια Διαιρετότητας', href: '/st-dimotikou/14-kritiria-diairetotitas' },
