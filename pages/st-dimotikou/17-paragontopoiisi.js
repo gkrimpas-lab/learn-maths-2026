@@ -65,14 +65,12 @@ function getPowerRepresentation(factors) {
 function buildFactorTree(num) {
   if (num <= 1) return null;
 
-  // Βρίσκουμε τον πρώτο διαιρέτη > 1
   let firstDiv = 2;
   while (num % firstDiv !== 0) {
     firstDiv++;
   }
 
   if (firstDiv === num) {
-    // Είναι πρώτος αριθμός (φύλλο)
     return { val: num, isPrime: true };
   }
 
@@ -85,35 +83,46 @@ function buildFactorTree(num) {
   };
 }
 
-// React Component για τη σχεδίαση του Δέντρου
+// Βελτιωμένο Component για τη σχεδίαση του Δέντρου Παραγόντων με SVG γραμμές
 function RenderTreeNode({ node }) {
   if (!node) return null;
 
   if (node.isPrime) {
     return (
-      <div className="flex flex-col items-center">
-        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-emerald-500 text-white font-mono font-black text-base md:text-lg flex items-center justify-center shadow-md border-2 border-emerald-300">
+      <div className="flex flex-col items-center justify-center my-1">
+        <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-emerald-500 text-white font-mono font-black text-lg md:text-xl flex items-center justify-center shadow-lg border-2 border-emerald-300 transform transition hover:scale-105">
           {node.val}
         </div>
-        <span className="text-[10px] text-emerald-600 font-bold uppercase mt-1">Πρώτος</span>
+        <span className="text-[10px] md:text-xs font-black text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full mt-1.5 border border-emerald-300 shadow-xs uppercase tracking-wider">
+          Πρώτος
+        </span>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-amber-100 text-amber-900 font-mono font-black text-base md:text-lg flex items-center justify-center shadow-sm border border-amber-300">
+    <div className="flex flex-col items-center justify-center my-1 w-full">
+      {/* Σύνθετος Κόμβος */}
+      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-amber-100 text-amber-900 font-mono font-black text-lg md:text-xl flex items-center justify-center shadow-sm border-2 border-amber-300">
         {node.val}
       </div>
-      
-      {/* Κλαδιά / Γραμμές */}
-      <div className="flex items-center justify-center my-1 text-slate-300 font-black text-xs">
-        <span className="text-slate-400">↙ ↘</span>
+
+      {/* Καθαρά SVG Κλαδιά Σύνδεσης */}
+      <div className="w-full max-w-[120px] sm:max-w-[160px] md:max-w-[220px] h-8 my-1 flex justify-center">
+        <svg className="w-full h-full overflow-visible" viewBox="0 0 100 30" preserveAspectRatio="none">
+          <line x1="50" y1="2" x2="22" y2="28" stroke="#94a3b8" strokeWidth="3.5" strokeLinecap="round" />
+          <line x1="50" y1="2" x2="78" y2="28" stroke="#94a3b8" strokeWidth="3.5" strokeLinecap="round" />
+        </svg>
       </div>
 
-      <div className="flex gap-4 md:gap-8 items-start">
-        <RenderTreeNode node={node.left} />
-        <RenderTreeNode node={node.right} />
+      {/* Παιδιά (Left & Right) Στοιχισμένα στο Κέντρο */}
+      <div className="flex gap-4 sm:gap-8 md:gap-12 justify-center items-start w-full">
+        <div className="flex flex-col items-center flex-1">
+          <RenderTreeNode node={node.left} />
+        </div>
+        <div className="flex flex-col items-center flex-1">
+          <RenderTreeNode node={node.right} />
+        </div>
       </div>
     </div>
   );
@@ -121,7 +130,7 @@ function RenderTreeNode({ node }) {
 
 export default function ParagontopoiisiPage() {
   const [number, setNumber] = useState(60);
-  const [activeView, setActiveTab] = useState('ladder'); // 'ladder' ή 'tree'
+  const [activeView, setActiveTab] = useState('tree'); // Προεπιλογή: Δέντρο
 
   const handleInputChange = (val) => {
     const parsed = parseInt(val.replace(/[^0-9]/g, ''), 10);
@@ -274,17 +283,6 @@ export default function ParagontopoiisiPage() {
               <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner gap-1">
                 <button
                   type="button"
-                  onClick={() => setActiveTab('ladder')}
-                  className={`px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
-                    activeView === 'ladder'
-                      ? 'bg-blue-600 text-white shadow-sm scale-105'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  📐 Διαδοχικές Διαιρέσεις
-                </button>
-                <button
-                  type="button"
                   onClick={() => setActiveTab('tree')}
                   className={`px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
                     activeView === 'tree'
@@ -293,6 +291,17 @@ export default function ParagontopoiisiPage() {
                   }`}
                 >
                   🌳 Δέντρο Παραγόντων
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('ladder')}
+                  className={`px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
+                    activeView === 'ladder'
+                      ? 'bg-blue-600 text-white shadow-sm scale-105'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  📐 Διαδοχικές Διαιρέσεις
                 </button>
               </div>
             </div>
@@ -366,9 +375,20 @@ export default function ParagontopoiisiPage() {
                 {/* VISUAL METHOD DISPLAY */}
                 <div className="w-full my-auto py-2">
                   {number && number >= 2 ? (
-                    activeView === 'ladder' ? (
+                    activeView === 'tree' ? (
+                      /* FACTOR TREE DISPLAY WITH CENTERED FLEX & SVG LINES */
+                      <div className="flex flex-col items-center justify-center space-y-4 w-full">
+                        <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">
+                          🌳 Διάγραμμα Δέντρου Παραγόντων:
+                        </span>
+                        
+                        <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 overflow-x-auto w-full flex justify-center items-center shadow-inner min-h-[300px]">
+                          <RenderTreeNode node={treeData} />
+                        </div>
+                      </div>
+                    ) : (
                       /* LADDER DISPLAY */
-                      <div className="flex flex-col items-center space-y-2">
+                      <div className="flex flex-col items-center justify-center space-y-2 w-full">
                         <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">
                           📋 Κατακόρυφη Κλίμακα Διαδοχικών Διαιρέσεων:
                         </span>
@@ -384,17 +404,6 @@ export default function ParagontopoiisiPage() {
                               </span>
                             </div>
                           ))}
-                        </div>
-                      </div>
-                    ) : (
-                      /* FACTOR TREE DISPLAY */
-                      <div className="flex flex-col items-center space-y-4">
-                        <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">
-                          🌳 Διάγραμμα Δέντρου Παραγόντων:
-                        </span>
-                        
-                        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 overflow-x-auto w-full flex justify-center shadow-inner">
-                          <RenderTreeNode node={treeData} />
                         </div>
                       </div>
                     )
