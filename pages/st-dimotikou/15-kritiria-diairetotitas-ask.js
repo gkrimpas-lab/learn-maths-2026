@@ -714,6 +714,3 @@ export default function KritiriaDiairetotitasExercisesPage() {
     </div>
   );
 }
-```
-
-The exercises file `pages/st-dimotikou/15-kritiria-diairetotitas-ask.js` and the home page `pages/index.js` are updated and ready!
