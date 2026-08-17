@@ -90,11 +90,11 @@ function RenderTreeNode({ node }) {
 
   if (node.isPrime) {
     return (
-      <div className="flex flex-col items-center justify-center my-1">
-        <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-emerald-500 text-white font-mono font-black text-base md:text-lg flex items-center justify-center shadow-lg border-2 border-emerald-300 transform transition hover:scale-105">
+      <div className="flex flex-col items-center justify-center my-0.5">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-emerald-500 text-white font-mono font-black text-sm sm:text-base flex items-center justify-center shadow-md border-2 border-emerald-300 transform transition hover:scale-105">
           {node.val.toLocaleString('el-GR')}
         </div>
-        <span className="text-[10px] md:text-xs font-black text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full mt-1.5 border border-emerald-300 shadow-xs uppercase tracking-wider">
+        <span className="text-[9px] sm:text-[10px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full mt-1 border border-emerald-300 shadow-xs uppercase tracking-wider">
           Πρώτος
         </span>
       </div>
@@ -102,22 +102,22 @@ function RenderTreeNode({ node }) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center my-1 w-full">
+    <div className="flex flex-col items-center justify-center my-0.5 w-full">
       {/* Σύνθετος Κόμβος */}
-      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-amber-100 text-amber-900 font-mono font-black text-sm md:text-base flex items-center justify-center shadow-sm border-2 border-amber-300">
+      <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-amber-100 text-amber-900 font-mono font-black text-xs sm:text-sm flex items-center justify-center shadow-sm border-2 border-amber-300">
         {node.val.toLocaleString('el-GR')}
       </div>
 
       {/* Καθαρά SVG Κλαδιά Σύνδεσης */}
-      <div className="w-full max-w-[120px] sm:max-w-[160px] md:max-w-[220px] h-8 my-1 flex justify-center">
+      <div className="w-full max-w-[90px] sm:max-w-[130px] md:max-w-[180px] h-6 my-0.5 flex justify-center">
         <svg className="w-full h-full overflow-visible" viewBox="0 0 100 30" preserveAspectRatio="none">
-          <line x1="50" y1="2" x2="22" y2="28" stroke="#94a3b8" strokeWidth="3.5" strokeLinecap="round" />
-          <line x1="50" y1="2" x2="78" y2="28" stroke="#94a3b8" strokeWidth="3.5" strokeLinecap="round" />
+          <line x1="50" y1="2" x2="22" y2="28" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
+          <line x1="50" y1="2" x2="78" y2="28" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
         </svg>
       </div>
 
       {/* Παιδιά (Left & Right) Στοιχισμένα στο Κέντρο */}
-      <div className="flex gap-4 sm:gap-8 md:gap-12 justify-center items-start w-full">
+      <div className="flex gap-2 sm:gap-6 md:gap-8 justify-center items-start w-full">
         <div className="flex flex-col items-center flex-1">
           <RenderTreeNode node={node.left} />
         </div>
@@ -150,6 +150,15 @@ export default function ParagontopoiisiPage() {
   const treeData = buildFactorTree(number);
 
   const isPrimeNumber = primeFactors.length === 1;
+
+  // Υπολογισμός δυναμικής κλίμακας (scale) ανάλογα με το βάθος των παραγόντων
+  const factorCount = primeFactors.length;
+  let treeScaleClass = "scale-100";
+  if (factorCount >= 8) {
+    treeScaleClass = "scale-75 sm:scale-85 md:scale-90";
+  } else if (factorCount >= 6) {
+    treeScaleClass = "scale-85 sm:scale-90 md:scale-95";
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -307,11 +316,11 @@ export default function ParagontopoiisiPage() {
               </div>
             </div>
 
-            {/* MAIN INTERACTIVE GRID */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            {/* MAIN INTERACTIVE GRID (3 COLS LEFT / 9 COLS RIGHT) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
               
-              {/* LEFT: INPUT & PRESETS (4 COLS) */}
-              <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-5 2xl:p-6 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
+              {/* LEFT: INPUT & PRESETS (3 COLS) */}
+              <div className="lg:col-span-3 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
@@ -326,18 +335,18 @@ export default function ParagontopoiisiPage() {
                     />
                   </div>
 
-                  {/* PRESET BUTTONS */}
+                  {/* PRESET BUTTONS (2 COLS x 3 ROWS) */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
                       Ή επίλεξε έτοιμο αριθμό:
                     </span>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((p) => (
                         <button
                           key={p}
                           type="button"
                           onClick={() => setNumber(p)}
-                          className={`py-2 rounded-xl border font-mono font-black text-xs md:text-sm transition-all ${
+                          className={`py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center ${
                             number === p
                               ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
                               : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
@@ -355,8 +364,8 @@ export default function ParagontopoiisiPage() {
                 </div>
               </div>
 
-              {/* RIGHT: VISUALIZATION (8 COLS) */}
-              <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[500px] space-y-6">
+              {/* RIGHT: VISUALIZATION (9 COLS) */}
+              <div className="lg:col-span-9 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[500px] space-y-6">
                 
                 {/* HEADER STATUS */}
                 <div className="w-full text-center">
@@ -374,17 +383,19 @@ export default function ParagontopoiisiPage() {
                 </div>
 
                 {/* VISUAL METHOD DISPLAY */}
-                <div className="w-full my-auto py-2">
+                <div className="w-full my-auto py-2 flex justify-center items-center">
                   {number && number >= 2 ? (
                     activeView === 'tree' ? (
-                      /* FACTOR TREE DISPLAY WITH CENTERED FLEX & SVG LINES */
+                      /* FACTOR TREE DISPLAY WITH CENTERED FLEX & DYNAMIC SCALING */
                       <div className="flex flex-col items-center justify-center space-y-4 w-full">
                         <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">
                           🌳 Διάγραμμα Δέντρου Παραγόντων:
                         </span>
                         
-                        <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 overflow-x-auto overflow-y-auto max-h-[480px] w-full flex justify-center items-center shadow-inner min-h-[300px]">
-                          <RenderTreeNode node={treeData} />
+                        <div className="bg-slate-50 p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 w-full flex justify-center items-center shadow-inner min-h-[320px] overflow-hidden">
+                          <div className={`transform origin-top transition-transform duration-300 flex justify-center w-full ${treeScaleClass}`}>
+                            <RenderTreeNode node={treeData} />
+                          </div>
                         </div>
                       </div>
                     ) : (
@@ -394,13 +405,13 @@ export default function ParagontopoiisiPage() {
                           📋 Κατακόρυφη Κλίμακα Διαδοχικών Διαιρέσεων:
                         </span>
                         
-                        <div className="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 font-mono text-base md:text-lg min-w-[240px] max-h-[400px] overflow-y-auto shadow-md">
+                        <div className="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 font-mono text-base md:text-lg min-w-[260px] max-h-[400px] overflow-y-auto shadow-md">
                           {divisionSteps.map((step, idx) => (
                             <div key={idx} className="flex justify-between items-center border-b border-slate-800 py-1.5 last:border-0">
-                              <span className="font-black text-blue-400 text-right w-24 pr-4 border-r-2 border-amber-400">
+                              <span className="font-black text-blue-400 text-right w-28 pr-4 border-r-2 border-amber-400">
                                 {step.num.toLocaleString('el-GR')}
                               </span>
-                              <span className="font-black text-emerald-400 text-left w-24 pl-4">
+                              <span className="font-black text-emerald-400 text-left w-28 pl-4">
                                 {step.divisor ? step.divisor.toLocaleString('el-GR') : '—'}
                               </span>
                             </div>
@@ -409,7 +420,7 @@ export default function ParagontopoiisiPage() {
                       </div>
                     )
                   ) : (
-                    <div className="text-center py-12 text-sm text-slate-400 font-medium bg-slate-50 rounded-2xl border border-slate-200">
+                    <div className="text-center py-12 text-sm text-slate-400 font-medium bg-slate-50 rounded-2xl border border-slate-200 w-full">
                       Πληκτρολόγησε έναν αριθμό από 2 έως 10.000.
                     </div>
                   )}
