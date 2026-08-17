@@ -65,19 +65,35 @@ export default function Home() {
             Κάνε τη μετάβαση από την ΣΤ' Δημοτικού στην Α' Γυμνασίου με απόλυτη επιτυχία! Κατέβασε συγκεντρωμένα [...]
           </p>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between hover:shadow-md transition">
-              <div><span className="text-2xl mb-3 block">📚</span><h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Μαθηματικά & Γλώσσα</h4><p className="text-[...]"></p>
-              <a href="/protypa_2020_2025.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψ[...]
-            </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between hover:shadow-md transition">
-              <div><span className="text-2xl mb-3 block">📐</span><h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Μαθηματικά</h4><p className="text-gray-500 text-x[...]"></p>
-              <a href="/maths_2016_2019.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψη[...]
-            </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between hover:shadow-md transition">
-              <div><span className="text-2xl mb-3 block">✍️</span><h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Νεοελληνική Γλώσσα</h4><p className="tex[...]"></p>
-              <a href="/glossa_2016_2019.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψ�[...]
-            </div>
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between">
+  <div>
+    <span className="text-2xl mb-3 block">📚</span>
+    <h4 className="font-bold text-slate-800 mb-2">Πρότυπα Σχολεία 2020 - 2025</h4>
+    <p className="text-xs text-slate-500 mb-4">Θέματα και ενδεικτικές απαντήσεις εξετάσεων.</p>
+  </div>
+  <a
+    href="/protypa_2020_2025.pdf"
+    download
+    className="w-full text-center bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2.5 px-4 rounded-xl text-sm transition"
+  >
+    📥 Λήψη PDF
+  </a>
+</div>
+
+<div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between">
+  <div>
+    <span className="text-2xl mb-3 block">📐</span>
+    <h4 className="font-bold text-slate-800 mb-2">Μαθηματικά 2016 - 2019</h4>
+    <p className="text-xs text-slate-500 mb-4">Παλαιότερα θέματα εξετάσεων με λύσεις.</p>
+  </div>
+  <a
+    href="/maths_2016_2019.pdf"
+    download
+    className="w-full text-center bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2.5 px-4 rounded-xl text-sm transition"
+  >
+    📥 Λήψη PDF
+  </a>
+</div>
             <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-emerald-400 bg-emerald-50/30 flex flex-col justify-between hover:shadow-md transition">
               <div><span className="text-2xl mb-3 block">✅</span><h4 className="font-bold text-emerald-900 mb-2 text-base leading-tight">Απαντήσεις Θεμάτων</h4><p className="tex[...]"></p>
               <a href="/apanteseis_2016_2025.pdf" download className="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥[...]
