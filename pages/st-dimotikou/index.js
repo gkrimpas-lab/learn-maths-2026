@@ -20,7 +20,7 @@ export default function STDimotikouMenu() {
     { id: '13-diairetes', label: '🍕 13. Διαιρέτες Αριθμού', href: '/st-dimotikou/13-diairetes' },
     { id: '14-mkd', label: '🍕 14. Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)', href: '/st-dimotikou/14-mkd' },
     { id: '15-kritiria-diairetotitas', label: '🍕 15. Κριτήρια Διαιρετότητας', href: '/st-dimotikou/15-kritiria-diairetotitas' },
-    { id: '15-protoi', label: '🍕 16. Πρώτοι - Σύνθετοι Αριθμοί', href: '/st-dimotikou/15-protoi' },
+    { id: '16-protoi', label: '🍕 16. Πρώτοι - Σύνθετοι Αριθμοί', href: '/st-dimotikou/16-protoi' },
     { id: '16-paragontopoiisi', label: '🍕 17. Παραγοντοποίηση Φυσικών Αριθμών', href: '/st-dimotikou/16-paragontopoiisi' },
     { id: '17-pollaplasia', label: '🍕 18. Πολλαπλάσια Αριθμού', href: '/st-dimotikou/17-pollaplasia' },
     { id: '18-ekp', label: '🍕 19. Ελάχιστο Κοινό Πολλαπλάσιο (ΕΚΠ)', href: '/st-dimotikou/18-ekp' },
