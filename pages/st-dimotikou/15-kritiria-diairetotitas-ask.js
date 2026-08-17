@@ -90,7 +90,7 @@ function generateQuestions() {
     String(q3Invalid3)
   ]);
 
-  // Q4: MCQ - Εύρεση ψηφίου που λείπει (π.χ. 45_2 διαιρείται με το 3 ή το 9)
+  // Q4: MCQ - Εύρεση ψηφίου που λείπει
   const q4Div = [3, 9][getRandomInt(0, 1)];
   const d1 = getRandomInt(1, 8);
   const d3 = getRandomInt(1, 8);
@@ -126,12 +126,18 @@ function generateQuestions() {
   const q7Num = q7Options[getRandomInt(0, q7Options.length - 1)];
   const q7Correct = '10';
 
-  // Q8: MCQ - Πρόβληματα Καθημερινότητας (Ισόποση κατανομή)
+  // Q8: MCQ - Πρόβλημα Καθημερινότητας (Ισόποση κατανομή)
   const p = shuffledItems[0];
+  const targetDiv = [5, 25, 4, 9][getRandomInt(0, 3)];
   let q8Count = getRandomInt(100, 400);
-  while (q8Count % 5 !== 0) q8Count++;
-  const q8CorrectStr = '5';
-  const q8Options = shuffle(['5', '3 (έχει υπόλοιπο)', '9 (έχει υπόλοιπο)', '4 (έχει υπόλοιπο)']);
+  while (q8Count % targetDiv !== 0) q8Count++;
+
+  const allCandidates = [2, 3, 4, 5, 9, 10, 25];
+  const invalidCandidates = allCandidates.filter(d => d !== targetDiv && q8Count % d !== 0);
+  const wrongDivs = shuffle(invalidCandidates).slice(0, 3);
+
+  const q8CorrectStr = String(targetDiv);
+  const q8Options = shuffle([q8CorrectStr, ...wrongDivs.map(String)]);
 
   return {
     q1: {
@@ -202,7 +208,7 @@ function generateQuestions() {
       prompt: `Έχουμε ${q8Count} ${p.item}. Με ποιον από τους παρακάτω αριθμούς μπορούμε να τα μοιράσουμε σε ακριβώς ίσα μέρη χωρίς να περισσέψει κανένα;`,
       options: q8Options,
       correct: q8CorrectStr,
-      explain: `Ο αριθμός ${q8Count} τελειώνει σε ${q8Count % 10}, άρα διαιρείται ακριβώς με το 5.`
+      explain: `Ο αριθμός ${q8Count} διαιρείται ακριβώς με το ${q8CorrectStr}.`
     }
   };
 }
@@ -708,3 +714,6 @@ export default function KritiriaDiairetotitasExercisesPage() {
     </div>
   );
 }
+```
+
+The exercises file `pages/st-dimotikou/15-kritiria-diairetotitas-ask.js` and the home page `pages/index.js` are updated and ready!
