@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Analytics } from '@vercel/analytics/next';
 import { LAYOUT } from '../shared/layout-config'; // Import από τον global φάκελο
 
 export default function Home() {
@@ -9,7 +8,7 @@ export default function Home() {
       <Head>
         <title>LearnMaths.gr - Τα Μαθηματικά Αλλιώς</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <meta name="description" content="Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο και τα Πρότυπα Σχολεία" />
+        <meta name="description" content="Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο και τα Πρότ�[...]" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -45,12 +44,12 @@ export default function Home() {
           
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             <a href="#demotiko" className="bg-white text-blue-700 px-6 py-3 rounded-full font-bold shadow-md hover:bg-gray-100 transition duration-300">Δημοτικό 🎒</a>
-            <a href="#gymnasio" className="bg-indigo-500 text-white px-6 py-3 rounded-full font-bold shadow-md hover:bg-indigo-600 transition duration-300 border border-indigo-400">Γυμνάσιο 📐</a>
+            <a href="#gymnasio" className="bg-indigo-500 text-white px-6 py-3 rounded-full font-bold shadow-md hover:bg-indigo-600 transition duration-300 border border-indigo-400">Γυμνάσι�[...]</a>
           </div>
 
           <div className="flex flex-col items-center justify-center mt-4">
             <p className="text-xs font-semibold opacity-75 mb-2 uppercase tracking-wider">Κατεβάστε την εφαρμογή</p>
-            <a href="https://play.google.com/store/apps/details?id=com.gkrimpas.learn_maths&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="inline-block transform hover:scale-105 transition duration-300">
+            <a href="https://play.google.com/store/apps/details?id=com.gkrimpas.learn_maths&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="inline-block transform hover[...]">
               <img src="https://play.google.com/intl/en_us/badges/static/images/badges/el_badge_web_generic.png" alt="Get it on Google Play" className="w-48 h-auto mx-auto" />
             </a>
           </div>
@@ -63,25 +62,25 @@ export default function Home() {
           <div className="inline-block bg-amber-200 text-amber-800 font-bold px-4 py-1 rounded-full text-xs uppercase tracking-wide mb-3">Ειδική Προετοιμασία</div>
           <h2 className="text-3xl font-black text-gray-900 mb-2">🎯 Εισαγωγή στα Πρότυπα Σχολεία</h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto mb-12">
-            Κάνε τη μετάβαση από την ΣΤ' Δημοτικού στην Α' Γυμνασίου με απόλυτη επιτυχία! Κατέβασε συγκεντρωμένα όλα τα θέματα και τις επίσημες απαντήσεις προηγούμενων ετών.
+            Κάνε τη μετάβαση από την ΣΤ' Δημοτικού στην Α' Γυμνασίου με απόλυτη επιτυχία! Κατέβασε συγκεντρωμένα [...]
           </p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between hover:shadow-md transition">
-              <div><span className="text-2xl mb-3 block">📚</span><h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Μαθηματικά & Γλώσσα</h4><p className="text-gray-500 text-xs mb-4">Θέματα εξετάσεων μαζί για τα έτη 2020 έως και 2025.</p></div>
-              <a href="/protypa_2020_2025.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψη Αρχείου (PDF)</a>
+              <div><span className="text-2xl mb-3 block">📚</span><h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Μαθηματικά & Γλώσσα</h4><p className="text-[...]"></p>
+              <a href="/protypa_2020_2025.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψ[...]
             </div>
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between hover:shadow-md transition">
-              <div><span className="text-2xl mb-3 block">📐</span><h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Μαθηματικά</h4><p className="text-gray-500 text-xs mb-4">Ξεχωριστά όλα τα θέματα Μαθηματικών από το 2016 έως και το 2019.</p></div>
-              <a href="/maths_2016_2019.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψη Αρχείου (PDF)</a>
+              <div><span className="text-2xl mb-3 block">📐</span><h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Μαθηματικά</h4><p className="text-gray-500 text-x[...]"></p>
+              <a href="/maths_2016_2019.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψη[...]
             </div>
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-200 flex flex-col justify-between hover:shadow-md transition">
-              <div><span className="text-2xl mb-3 block">✍️</span><h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Νεοελληνική Γλώσσα</h4><p className="text-gray-500 text-xs mb-4">Ξεχωριστά όλα τα θέματα της Γλώσσας από το 2016 έως και το 2019.</p></div>
-              <a href="/glossa_2016_2019.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψη Αρχείου (PDF)</a>
+              <div><span className="text-2xl mb-3 block">✍️</span><h4 className="font-bold text-gray-900 mb-2 text-base leading-tight">Νεοελληνική Γλώσσα</h4><p className="tex[...]"></p>
+              <a href="/glossa_2016_2019.pdf" download className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψ�[...]
             </div>
             <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-emerald-400 bg-emerald-50/30 flex flex-col justify-between hover:shadow-md transition">
-              <div><span className="text-2xl mb-3 block">✅</span><h4 className="font-bold text-emerald-900 mb-2 text-base leading-tight">Απαντήσεις Θεμάτων</h4><p className="text-emerald-700 text-xs mb-4">Ένα ενιαίο αρχείο με τις απαντήσεις για όλα τα έτη (2016 έως 2025).</p></div>
-              <a href="/apanteseis_2016_2025.pdf" download className="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥 Λήψη Απαντήσεων</a>
+              <div><span className="text-2xl mb-3 block">✅</span><h4 className="font-bold text-emerald-900 mb-2 text-base leading-tight">Απαντήσεις Θεμάτων</h4><p className="tex[...]"></p>
+              <a href="/apanteseis_2016_2025.pdf" download className="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">📥[...]
             </div>
           </div>
         </div>
