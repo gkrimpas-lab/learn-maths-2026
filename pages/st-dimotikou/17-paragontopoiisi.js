@@ -3,7 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-const PRESETS = [12, 24, 36, 60, 84, 100];
+const PRESETS = [36, 120, 360, 1000, 2500, 10000];
+const MAX_LIMIT = 10000;
 
 // Υπολογισμός πρώτων παραγόντων (Array)
 function getPrimeFactors(n) {
@@ -50,7 +51,7 @@ function getPowerRepresentation(factors) {
     counts[f] = (counts[f] || 0) + 1;
   });
 
-  const exponentsUnicode = { 1: '', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+  const exponentsUnicode = { 1: '', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹', 10: '¹⁰' };
 
   return Object.keys(counts)
     .map(factor => {
@@ -90,8 +91,8 @@ function RenderTreeNode({ node }) {
   if (node.isPrime) {
     return (
       <div className="flex flex-col items-center justify-center my-1">
-        <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-emerald-500 text-white font-mono font-black text-lg md:text-xl flex items-center justify-center shadow-lg border-2 border-emerald-300 transform transition hover:scale-105">
-          {node.val}
+        <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-emerald-500 text-white font-mono font-black text-base md:text-lg flex items-center justify-center shadow-lg border-2 border-emerald-300 transform transition hover:scale-105">
+          {node.val.toLocaleString('el-GR')}
         </div>
         <span className="text-[10px] md:text-xs font-black text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full mt-1.5 border border-emerald-300 shadow-xs uppercase tracking-wider">
           Πρώτος
@@ -103,8 +104,8 @@ function RenderTreeNode({ node }) {
   return (
     <div className="flex flex-col items-center justify-center my-1 w-full">
       {/* Σύνθετος Κόμβος */}
-      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-amber-100 text-amber-900 font-mono font-black text-lg md:text-xl flex items-center justify-center shadow-sm border-2 border-amber-300">
-        {node.val}
+      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-amber-100 text-amber-900 font-mono font-black text-sm md:text-base flex items-center justify-center shadow-sm border-2 border-amber-300">
+        {node.val.toLocaleString('el-GR')}
       </div>
 
       {/* Καθαρά SVG Κλαδιά Σύνδεσης */}
@@ -129,15 +130,15 @@ function RenderTreeNode({ node }) {
 }
 
 export default function ParagontopoiisiPage() {
-  const [number, setNumber] = useState(60);
+  const [number, setNumber] = useState(360);
   const [activeView, setActiveTab] = useState('tree'); // Προεπιλογή: Δέντρο
 
   const handleInputChange = (val) => {
     const parsed = parseInt(val.replace(/[^0-9]/g, ''), 10);
     if (!parsed) {
       setNumber('');
-    } else if (parsed > 500) {
-      setNumber(500);
+    } else if (parsed > MAX_LIMIT) {
+      setNumber(MAX_LIMIT);
     } else {
       setNumber(parsed);
     }
@@ -275,7 +276,7 @@ export default function ParagontopoiisiPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο Παραγοντοποίησης
                 </h2>
                 <p className="text-gray-500 text-sm 2xl:text-base">
-                  Πληκτρολόγησε έναν σύνθετο αριθμό (έως 500) και επίλεξε την οπτική μέθοδο που προτιμάς!
+                  Πληκτρολόγησε έναν σύνθετο αριθμό (έως 10.000) και επίλεξε την οπτική μέθοδο που προτιμάς!
                 </p>
               </div>
 
@@ -314,14 +315,14 @@ export default function ParagontopoiisiPage() {
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Πληκτρολόγησε Αριθμό (2 - 500):
+                      Πληκτρολόγησε Αριθμό (2 - 10.000):
                     </span>
                     <input
                       type="text"
                       value={number}
                       onChange={(e) => handleInputChange(e.target.value)}
                       className="w-full text-2xl font-mono font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm text-blue-600 outline-none focus:border-blue-500 tracking-wider"
-                      placeholder="π.χ. 60"
+                      placeholder="π.χ. 360"
                     />
                   </div>
 
@@ -336,13 +337,13 @@ export default function ParagontopoiisiPage() {
                           key={p}
                           type="button"
                           onClick={() => setNumber(p)}
-                          className={`py-2 rounded-xl border font-mono font-black text-sm transition-all ${
+                          className={`py-2 rounded-xl border font-mono font-black text-xs md:text-sm transition-all ${
                             number === p
                               ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
                               : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
                           }`}
                         >
-                          {p}
+                          {p.toLocaleString('el-GR')}
                         </button>
                       ))}
                     </div>
@@ -363,11 +364,11 @@ export default function ParagontopoiisiPage() {
                     Παραγοντοποίηση του Αριθμού:
                   </span>
                   <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-wider shadow-sm">
-                    {number || "—"}
+                    {number ? number.toLocaleString('el-GR') : "—"}
                   </div>
                   {isPrimeNumber && number > 1 && (
                     <div className="mt-2 text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 inline-block">
-                      ⭐ Ο αριθμός {number} είναι ήδη Πρώτος!
+                      ⭐ Ο αριθμός {number.toLocaleString('el-GR')} είναι ήδη Πρώτος!
                     </div>
                   )}
                 </div>
@@ -382,7 +383,7 @@ export default function ParagontopoiisiPage() {
                           🌳 Διάγραμμα Δέντρου Παραγόντων:
                         </span>
                         
-                        <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 overflow-x-auto w-full flex justify-center items-center shadow-inner min-h-[300px]">
+                        <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-200 overflow-x-auto overflow-y-auto max-h-[480px] w-full flex justify-center items-center shadow-inner min-h-[300px]">
                           <RenderTreeNode node={treeData} />
                         </div>
                       </div>
@@ -393,14 +394,14 @@ export default function ParagontopoiisiPage() {
                           📋 Κατακόρυφη Κλίμακα Διαδοχικών Διαιρέσεων:
                         </span>
                         
-                        <div className="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 font-mono text-base md:text-lg min-w-[240px] shadow-md">
+                        <div className="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 font-mono text-base md:text-lg min-w-[240px] max-h-[400px] overflow-y-auto shadow-md">
                           {divisionSteps.map((step, idx) => (
                             <div key={idx} className="flex justify-between items-center border-b border-slate-800 py-1.5 last:border-0">
                               <span className="font-black text-blue-400 text-right w-24 pr-4 border-r-2 border-amber-400">
-                                {step.num}
+                                {step.num.toLocaleString('el-GR')}
                               </span>
                               <span className="font-black text-emerald-400 text-left w-24 pl-4">
-                                {step.divisor || '—'}
+                                {step.divisor ? step.divisor.toLocaleString('el-GR') : '—'}
                               </span>
                             </div>
                           ))}
@@ -409,7 +410,7 @@ export default function ParagontopoiisiPage() {
                     )
                   ) : (
                     <div className="text-center py-12 text-sm text-slate-400 font-medium bg-slate-50 rounded-2xl border border-slate-200">
-                      Πληκτρολόγησε έναν αριθμό μεγαλύτερο ή ίσο του 2.
+                      Πληκτρολόγησε έναν αριθμό από 2 έως 10.000.
                     </div>
                   )}
                 </div>
@@ -420,8 +421,8 @@ export default function ParagontopoiisiPage() {
                     <span className="text-xs font-sans uppercase tracking-wider block text-blue-200">
                       Τελική Έκφραση σε Γινόμενο Πρώτων Παραγόντων:
                     </span>
-                    <div className="text-xl md:text-2xl tracking-widest pt-1">
-                      {number} ＝ {primeFactors.join(' × ')} ＝ <span className="text-amber-300 font-black">{powerRep}</span>
+                    <div className="text-lg md:text-xl tracking-widest pt-1">
+                      {number.toLocaleString('el-GR')} ＝ {primeFactors.join(' × ')} ＝ <span className="text-amber-300 font-black">{powerRep}</span>
                     </div>
                   </div>
                 )}
