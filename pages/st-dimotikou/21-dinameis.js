@@ -149,7 +149,6 @@ export default function DinameisPage() {
                 <p>2 × 2 × 2 × 2 ＝ <strong className="text-blue-700 font-bold">2⁴</strong></p>
               </div>
             </div>
-            </div>
 
             <div className="bg-indigo-50/80 border border-indigo-100 p-6 2xl:p-8 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
@@ -168,22 +167,23 @@ export default function DinameisPage() {
             </div>
 
             <div className="bg-emerald-50/80 border border-emerald-100 p-6 2xl:p-8 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-  <div className="space-y-2.5">
-    <div className="w-10 h-10 2xl:w-12 2xl:h-12 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg 2xl:text-xl shadow-sm">
-      3
-    </div>
-    <h3 className="text-lg 2xl:text-xl font-black text-slate-900">Ειδικές Περιπτώσεις SOS</h3>
-    <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-      • <strong>α¹ ＝ α:</strong> Κάθε αριθμός στον εκθέτη 1 μένει ίδιος.<br/>
-      • <strong>α⁰ ＝ 1:</strong> Κάθε αριθμός (εκτός του 0) στη μηδενική ισούται με 1.
-    </p>
-  </div>
-  <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs 2xl:text-sm text-slate-700 font-mono text-center flex flex-wrap justify-center gap-2 font-bold">
-    <span className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">5¹ ＝ 5</span>
-    <span className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">7⁰ ＝ 1</span>
-    <span className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">10³ ＝ 1.000</span>
-  </div>
-</div>
+              <div className="space-y-2.5">
+                <div className="w-10 h-10 2xl:w-12 2xl:h-12 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg 2xl:text-xl shadow-sm">
+                  3
+                </div>
+                <h3 className="text-lg 2xl:text-xl font-black text-slate-900">Ειδικές Περιπτώσεις SOS</h3>
+                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
+                  • <strong>α¹ ＝ α:</strong> Κάθε αριθμός στον εκθέτη 1 μένει ίδιος.<br/>
+                  • <strong>α⁰ ＝ 1:</strong> Κάθε αριθμός (εκτός του 0) στη μηδενική ισούται με 1.
+                </p>
+              </div>
+              <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs 2xl:text-sm text-slate-700 font-mono text-center flex flex-wrap justify-center gap-2 font-bold">
+                <span className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">5¹ ＝ 5</span>
+                <span className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">7⁰ ＝ 1</span>
+                <span className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">10³ ＝ 1.000</span>
+              </div>
+            </div>
+          </div>
 
           {/* 4. INTERACTIVE PLAYGROUND */}
           <div className="bg-white p-6 md:p-8 2xl:p-10 rounded-3xl border border-gray-200 shadow-sm space-y-8">
