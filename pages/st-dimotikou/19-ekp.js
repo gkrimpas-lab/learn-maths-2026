@@ -43,10 +43,8 @@ function calculateLcmArray(arr) {
 function generateMultiplesList(num, targetLcm) {
   if (!num || num < 1) return [];
   const list = [];
-  // Στόχος να φτάσει μέχρι το 3ο κοινό πολλαπλάσιο (3 * targetLcm)
   const targetLimit = targetLcm > 0 ? targetLcm * 3 : num * 20;
   
-  // Ασφάλεια μέχρι 500 στοιχεία ανά γραμμή
   for (let i = 1; num * i <= targetLimit && i <= 500; i++) {
     list.push(num * i);
   }
@@ -96,6 +94,25 @@ function getSimultaneousDivisionSteps(nums) {
   return steps;
 }
 
+// Υπολογισμός μορφής δυνάμεων από τους διαιρέτες
+function getPowerRepresentation(factors) {
+  if (!factors || factors.length === 0) return '';
+  const counts = {};
+  factors.forEach(f => {
+    counts[f] = (counts[f] || 0) + 1;
+  });
+
+  const exponentsUnicode = { 1: '', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹', 10: '¹⁰' };
+
+  return Object.keys(counts)
+    .map(factor => {
+      const count = counts[factor];
+      const exponent = count > 1 ? (exponentsUnicode[count] || `^${count}`) : '';
+      return `${factor}${exponent}`;
+    })
+    .join(' × ');
+}
+
 export default function EkpPage() {
   const [numCount, setNumCount] = useState(2); // 2, 3 ή 4 αριθμοί
   const [numbers, setNumbers] = useState([4, 6, 8, 12]);
@@ -120,6 +137,13 @@ export default function EkpPage() {
   const currentLcm = calculateLcmArray(validActiveNumbers);
 
   const divisionSteps = getSimultaneousDivisionSteps(validActiveNumbers);
+
+  // Συλλογή όλων των πρώτων διαιρετών από τα βήματα
+  const ladderDivisors = divisionSteps
+    .filter(s => s.divisor !== null)
+    .map(s => s.divisor);
+
+  const powerRep = getPowerRepresentation(ladderDivisors);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -451,12 +475,13 @@ export default function EkpPage() {
                         </div>
                       </div>
                     ) : (
-                      /* SIMULTANEOUS DIVISION DISPLAY */
-                      <div className="flex flex-col items-center justify-center space-y-3 w-full">
+                      /* SIMULTANEOUS DIVISION DISPLAY WITH CALCULATION FORMULA */
+                      <div className="flex flex-col items-center justify-center space-y-4 w-full">
                         <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">
                           📐 Πίνακας Ταυτόχρονης Διαίρεσης σε Πρώτους Παράγοντες:
                         </span>
 
+                        {/* ΚΑΤΑΚΟΡΥΦΟΣ ΠΙΝΑΚΑΣ */}
                         <div className="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 font-mono text-sm sm:text-base min-w-[280px] shadow-md">
                           {divisionSteps.map((step, idx) => (
                             <div key={idx} className="flex justify-between items-center border-b border-slate-800 py-1.5 last:border-0">
@@ -473,6 +498,23 @@ export default function EkpPage() {
                             </div>
                           ))}
                         </div>
+
+                        {/* ΥΠΟΛΟΓΙΣΜΟΣ ΓΙΝΟΜΕΝΟΥ ΔΙΑΙΡΕΤΩΝ */}
+                        {ladderDivisors.length > 0 && (
+                          <div className="bg-amber-50 border border-amber-200 px-6 py-3 rounded-2xl text-center shadow-xs space-y-1">
+                            <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">
+                              Υπολογισμός Γινομένου Πρώτων Διαιρετών:
+                            </span>
+                            <div className="text-base sm:text-lg font-mono font-black text-slate-800 tracking-wide">
+                              <span className="text-emerald-700">{ladderDivisors.join(' × ')}</span>
+                              {powerRep && powerRep !== ladderDivisors.join(' × ') && (
+                                <span className="text-slate-500 text-sm sm:text-base"> ＝ {powerRep}</span>
+                              )}
+                              <span> ＝ </span>
+                              <span className="text-blue-700 font-black">{currentLcm.toLocaleString('el-GR')}</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )
                   ) : (
@@ -485,7 +527,7 @@ export default function EkpPage() {
                 {/* FINAL RESULT CARD */}
                 {validActiveNumbers.length >= 2 && currentLcm > 0 && (
                   <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-2xl text-center shadow-lg font-mono font-black space-y-1">
-                    <span className="text-xs font-sans uppercase tracking-wider block text-blue-200">
+                    <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
                       Τελικό Συμπέρασμα:
                     </span>
                     <div className="text-lg md:text-xl tracking-wide pt-1">
