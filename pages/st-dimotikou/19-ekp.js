@@ -39,12 +39,15 @@ function calculateLcmArray(arr) {
   return valid.reduce((acc, curr) => lcmTwo(acc, curr), valid[0]);
 }
 
-// Δημιουργία πολλαπλασίων μέχρι να εμφανιστούν τουλάχιστον 3 κοινά πολλαπλάσια (1×ΕΚΠ, 2×ΕΚΠ, 3×ΕΚΠ)
+// Δημιουργία πολλαπλασίων μέχρι να φτάσουν και τα 3 κοινά πολλαπλάσια (1×, 2×, 3× ΕΚΠ)
 function generateMultiplesList(num, targetLcm) {
   if (!num || num < 1) return [];
   const list = [];
-  const limit = targetLcm > 0 ? targetLcm * 3 : num * 18;
-  for (let i = 1; num * i <= limit && i <= 36; i++) {
+  // Στόχος να φτάσει μέχρι το 3ο κοινό πολλαπλάσιο (3 * targetLcm)
+  const targetLimit = targetLcm > 0 ? targetLcm * 3 : num * 20;
+  
+  // Ασφάλεια μέχρι 500 στοιχεία ανά γραμμή
+  for (let i = 1; num * i <= targetLimit && i <= 500; i++) {
     list.push(num * i);
   }
   return list;
@@ -378,7 +381,7 @@ export default function EkpPage() {
                 <div className="w-full my-auto py-2 flex justify-center items-center">
                   {validActiveNumbers.length >= 2 && currentLcm > 0 ? (
                     activeTab === 'sets' ? (
-                      /* EXPANDED LIST OF MULTIPLES (SHOWING 3 COMMON MULTIPLES) */
+                      /* EXPANDED LIST OF MULTIPLES (SHOWING ALL 3 COMMON MULTIPLES FOR EVERY NUMBER) */
                       <div className="space-y-4 w-full">
                         <div className="flex flex-wrap items-center justify-between gap-2 px-1">
                           <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
@@ -394,12 +397,12 @@ export default function EkpPage() {
                           </div>
                         </div>
 
-                        <div className="space-y-3.5 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-inner max-h-[420px] overflow-y-auto w-full">
+                        <div className="space-y-4 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-inner max-h-[460px] overflow-y-auto w-full">
                           {validActiveNumbers.map((num, i) => {
                             const mults = generateMultiplesList(num, currentLcm);
                             return (
-                              <div key={i} className="flex flex-col md:flex-row md:items-center gap-2.5 border-b border-slate-200/80 pb-3 last:border-0 last:pb-0">
-                                <span className="font-mono font-black text-slate-800 bg-white px-3 py-1.5 rounded-xl border border-slate-200 text-xs sm:text-sm min-w-[85px] text-center shadow-xs shrink-0">
+                              <div key={i} className="flex flex-col md:flex-row md:items-start gap-2.5 border-b border-slate-200/80 pb-4 last:border-0 last:pb-0">
+                                <span className="font-mono font-black text-slate-800 bg-white px-3 py-1.5 rounded-xl border border-slate-200 text-xs sm:text-sm min-w-[85px] text-center shadow-xs shrink-0 mt-0.5">
                                   Π({num})
                                 </span>
                                 <div className="flex flex-wrap gap-1.5 items-center flex-1">
@@ -479,22 +482,15 @@ export default function EkpPage() {
                   )}
                 </div>
 
-                {/* 3 COMMON MULTIPLES SUMMARY CARD */}
+                {/* FINAL RESULT CARD */}
                 {validActiveNumbers.length >= 2 && currentLcm > 0 && (
-                  <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-4.5 rounded-2xl text-center shadow-lg font-mono space-y-2">
-                    <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                      Τα 3 Πρώτα Κοινά Πολλαπλάσια των Αριθμών ({validActiveNumbers.join(', ')}):
+                  <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-2xl text-center shadow-lg font-mono font-black space-y-1">
+                    <span className="text-xs font-sans uppercase tracking-wider block text-blue-200">
+                      Τελικό Συμπέρασμα:
                     </span>
-                    <div className="text-base sm:text-lg tracking-wide flex flex-wrap justify-center gap-3 items-center">
-                      <span className="bg-amber-400 text-slate-900 px-3 py-1 rounded-xl font-black text-sm sm:text-base shadow">
-                        1ο (Ε.Κ.Π.): {currentLcm.toLocaleString('el-GR')}
-                      </span>
-                      <span className="bg-emerald-500 text-white px-3 py-1 rounded-xl font-black text-sm sm:text-base shadow">
-                        2ο: {(currentLcm * 2).toLocaleString('el-GR')}
-                      </span>
-                      <span className="bg-emerald-500 text-white px-3 py-1 rounded-xl font-black text-sm sm:text-base shadow">
-                        3ο: {(currentLcm * 3).toLocaleString('el-GR')}
-                      </span>
+                    <div className="text-lg md:text-xl tracking-wide pt-1">
+                      Ε.Κ.Π.({validActiveNumbers.join(', ')}) ＝{' '}
+                      <span className="text-amber-300 font-black">{currentLcm.toLocaleString('el-GR')}</span>
                     </div>
                   </div>
                 )}
