@@ -149,6 +149,7 @@ export default function DinameisPage() {
                 <p>2 × 2 × 2 × 2 ＝ <strong className="text-blue-700 font-bold">2⁴</strong></p>
               </div>
             </div>
+            </div>
 
             <div className="bg-indigo-50/80 border border-indigo-100 p-6 2xl:p-8 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
