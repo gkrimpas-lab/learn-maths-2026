@@ -6,7 +6,7 @@ import { LAYOUT } from '../../shared/layout-config';
 const PRESETS = [36, 120, 360, 1000, 2500, 10000];
 const MAX_LIMIT = 10000;
 
-// Υπολογισμός πρώτων παραγόντων (Array)
+// Υπολογισμός πρώτων παραγόντων
 function getPrimeFactors(n) {
   if (!n || n < 2) return [];
   let num = n;
@@ -24,7 +24,7 @@ function getPrimeFactors(n) {
   return factors;
 }
 
-// Υπολογισμός βημάτων διαδοχικών διαιρέσεων για την κατακόρυφη κλίμακα
+// Υπολογισμός βημάτων διαδοχικών διαιρέσεων
 function getDivisionSteps(n) {
   if (!n || n < 2) return [];
   let current = n;
@@ -62,8 +62,8 @@ function getPowerRepresentation(factors) {
     .join(' × ');
 }
 
-// Δημιουργία δομής δέντρου παραγόντων
-function buildFactorTree(num) {
+// Δημιουργία αρχικού δέντρου παραγόντων
+function buildRawFactorTree(num) {
   if (num <= 1) return null;
 
   let firstDiv = 2;
@@ -79,52 +79,167 @@ function buildFactorTree(num) {
   return {
     val: num,
     isPrime: false,
-    left: buildFactorTree(firstDiv),
-    right: buildFactorTree(other)
+    left: buildRawFactorTree(firstDiv),
+    right: buildRawFactorTree(other)
   };
 }
 
-// Βελτιωμένο Component για τη σχεδίαση του Δέντρου Παραγόντων με SVG γραμμές
-function RenderTreeNode({ node }) {
+// Υπολογισμός συντεταγμένων xIndex & depth για κάθε κόμβο
+function layoutFactorTree(node, depth = 0, leafCounter = { count: 0 }) {
   if (!node) return null;
 
-  if (node.isPrime) {
-    return (
-      <div className="flex flex-col items-center justify-center my-0.5">
-        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-emerald-500 text-white font-mono font-black text-sm sm:text-base flex items-center justify-center shadow-md border-2 border-emerald-300 transform transition hover:scale-105">
-          {node.val.toLocaleString('el-GR')}
-        </div>
-        <span className="text-[9px] sm:text-[10px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full mt-1 border border-emerald-300 shadow-xs uppercase tracking-wider">
-          Πρώτος
-        </span>
-      </div>
-    );
+  if (node.isPrime || (!node.left && !node.right)) {
+    const leafIndex = leafCounter.count++;
+    return {
+      ...node,
+      depth,
+      minLeafIndex: leafIndex,
+      maxLeafIndex: leafIndex,
+      xIndex: leafIndex
+    };
   }
 
+  const left = layoutFactorTree(node.left, depth + 1, leafCounter);
+  const right = layoutFactorTree(node.right, depth + 1, leafCounter);
+
+  const minLeafIndex = left.minLeafIndex;
+  const maxLeafIndex = right.maxLeafIndex;
+  const xIndex = (minLeafIndex + maxLeafIndex) / 2;
+
+  return {
+    ...node,
+    depth,
+    minLeafIndex,
+    maxLeafIndex,
+    xIndex,
+    left,
+    right
+  };
+}
+
+// Συλλογή στοιχείων (γραμμές & κόμβοι) για το SVG
+function collectSvgElements(treeNode, dx, dy, paddingX, paddingY, lines = [], nodes = []) {
+  if (!treeNode) return { lines, nodes };
+
+  const cx = paddingX + treeNode.xIndex * dx;
+  const cy = paddingY + treeNode.depth * dy;
+
+  nodes.push({
+    id: `node-${treeNode.val}-${treeNode.depth}-${treeNode.xIndex}`,
+    val: treeNode.val,
+    isPrime: treeNode.isPrime,
+    cx,
+    cy
+  });
+
+  if (treeNode.left) {
+    const leftCx = paddingX + treeNode.left.xIndex * dx;
+    const leftCy = paddingY + treeNode.left.depth * dy;
+    lines.push({
+      id: `line-L-${treeNode.depth}-${treeNode.xIndex}`,
+      x1: cx,
+      y1: cy,
+      x2: leftCx,
+      y2: leftCy
+    });
+    collectSvgElements(treeNode.left, dx, dy, paddingX, paddingY, lines, nodes);
+  }
+
+  if (treeNode.right) {
+    const rightCx = paddingX + treeNode.right.xIndex * dx;
+    const rightCy = paddingY + treeNode.right.depth * dy;
+    lines.push({
+      id: `line-R-${treeNode.depth}-${treeNode.xIndex}`,
+      x1: cx,
+      y1: cy,
+      x2: rightCx,
+      y2: rightCy
+    });
+    collectSvgElements(treeNode.right, dx, dy, paddingX, paddingY, lines, nodes);
+  }
+
+  return { lines, nodes };
+}
+
+// Component Σχεδίασης Δέντρου σε SVG
+function FactorTreeSvg({ num }) {
+  if (!num || num < 2) return null;
+
+  const rawTree = buildRawFactorTree(num);
+  const leafCounter = { count: 0 };
+  const layoutTree = layoutFactorTree(rawTree, 0, leafCounter);
+
+  const totalLeaves = Math.max(leafCounter.count, 1);
+  
+  function getMaxDepth(node) {
+    if (!node) return 0;
+    if (!node.left && !node.right) return node.depth;
+    return Math.max(getMaxDepth(node.left), getMaxDepth(node.right));
+  }
+  const maxDepth = getMaxDepth(layoutTree);
+
+  const dx = 75;
+  const dy = 75;
+  const paddingX = 60;
+  const paddingY = 45;
+
+  const { lines, nodes } = collectSvgElements(layoutTree, dx, dy, paddingX, paddingY);
+
+  const svgWidth = totalLeaves === 1 
+    ? paddingX * 2 
+    : paddingX * 2 + (totalLeaves - 1) * dx;
+  const svgHeight = paddingY * 2 + maxDepth * dy + 15;
+
   return (
-    <div className="flex flex-col items-center justify-center my-0.5 w-full">
-      {/* Σύνθετος Κόμβος */}
-      <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-2xl bg-amber-100 text-amber-900 font-mono font-black text-xs sm:text-sm flex items-center justify-center shadow-sm border-2 border-amber-300">
-        {node.val.toLocaleString('el-GR')}
-      </div>
+    <div className="w-full flex justify-center items-center py-2">
+      <svg
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        className="w-full h-auto max-h-[460px] mx-auto overflow-visible"
+        style={{ maxWidth: `${Math.min(svgWidth * 1.2, 750)}px` }}
+      >
+        {/* Γραμμές Σύνδεσης */}
+        <g key="lines">
+          {lines.map((line) => (
+            <line
+              key={line.id}
+              x1={line.x1}
+              y1={line.y1}
+              x2={line.x2}
+              y2={line.y2}
+              stroke="#94a3b8"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+            />
+          ))}
+        </g>
 
-      {/* Καθαρά SVG Κλαδιά Σύνδεσης */}
-      <div className="w-full max-w-[90px] sm:max-w-[130px] md:max-w-[180px] h-6 my-0.5 flex justify-center">
-        <svg className="w-full h-full overflow-visible" viewBox="0 0 100 30" preserveAspectRatio="none">
-          <line x1="50" y1="2" x2="22" y2="28" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
-          <line x1="50" y1="2" x2="78" y2="28" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
-        </svg>
-      </div>
-
-      {/* Παιδιά (Left & Right) Στοιχισμένα στο Κέντρο */}
-      <div className="flex gap-2 sm:gap-6 md:gap-8 justify-center items-start w-full">
-        <div className="flex flex-col items-center flex-1">
-          <RenderTreeNode node={node.left} />
-        </div>
-        <div className="flex flex-col items-center flex-1">
-          <RenderTreeNode node={node.right} />
-        </div>
-      </div>
+        {/* Κόμβοι */}
+        <g key="nodes">
+          {nodes.map((node) => (
+            <g key={node.id} transform={`translate(${node.cx}, ${node.cy})`}>
+              {node.isPrime ? (
+                <>
+                  <circle r="21" fill="#10b981" stroke="#a7f3d0" strokeWidth="2.5" className="shadow-md" />
+                  <text x="0" y="5" textAnchor="middle" fill="#ffffff" fontFamily="monospace" fontWeight="900" fontSize="14">
+                    {node.val.toLocaleString('el-GR')}
+                  </text>
+                  <rect x="-24" y="26" width="48" height="15" rx="7" fill="#d1fae5" stroke="#a7f3d0" strokeWidth="1" />
+                  <text x="0" y="37" textAnchor="middle" fill="#047857" fontWeight="900" fontSize="8.5" letterSpacing="0.5">
+                    ΠΡΩΤΟΣ
+                  </text>
+                </>
+              ) : (
+                <>
+                  <rect x="-24" y="-20" width="48" height="40" rx="13" fill="#fef3c7" stroke="#fcd34d" strokeWidth="2.5" />
+                  <text x="0" y="5" textAnchor="middle" fill="#78350f" fontFamily="monospace" fontWeight="900" fontSize="14">
+                    {node.val.toLocaleString('el-GR')}
+                  </text>
+                </>
+              )}
+            </g>
+          ))}
+        </g>
+      </svg>
     </div>
   );
 }
@@ -147,18 +262,8 @@ export default function ParagontopoiisiPage() {
   const primeFactors = getPrimeFactors(number);
   const divisionSteps = getDivisionSteps(number);
   const powerRep = getPowerRepresentation(primeFactors);
-  const treeData = buildFactorTree(number);
 
   const isPrimeNumber = primeFactors.length === 1;
-
-  // Υπολογισμός δυναμικής κλίμακας (scale) ανάλογα με το βάθος των παραγόντων
-  const factorCount = primeFactors.length;
-  let treeScaleClass = "scale-100";
-  if (factorCount >= 8) {
-    treeScaleClass = "scale-75 sm:scale-85 md:scale-90";
-  } else if (factorCount >= 6) {
-    treeScaleClass = "scale-85 sm:scale-90 md:scale-95";
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -386,16 +491,14 @@ export default function ParagontopoiisiPage() {
                 <div className="w-full my-auto py-2 flex justify-center items-center">
                   {number && number >= 2 ? (
                     activeView === 'tree' ? (
-                      /* FACTOR TREE DISPLAY WITH CENTERED FLEX & DYNAMIC SCALING */
+                      /* FACTOR TREE DISPLAY WITH PERFECT SVG CENTERING */
                       <div className="flex flex-col items-center justify-center space-y-4 w-full">
                         <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">
                           🌳 Διάγραμμα Δέντρου Παραγόντων:
                         </span>
                         
-                        <div className="bg-slate-50 p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 w-full flex justify-center items-center shadow-inner min-h-[320px] overflow-hidden">
-                          <div className={`transform origin-top transition-transform duration-300 flex justify-center w-full ${treeScaleClass}`}>
-                            <RenderTreeNode node={treeData} />
-                          </div>
+                        <div className="bg-slate-50 p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 w-full flex justify-center items-center shadow-inner min-h-[320px]">
+                          <FactorTreeSvg num={number} />
                         </div>
                       </div>
                     ) : (
