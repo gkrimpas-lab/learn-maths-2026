@@ -249,12 +249,14 @@ export default function ParagontopoiisiPage() {
   const [activeView, setActiveTab] = useState('tree'); // Προεπιλογή: Δέντρο
 
   const handleInputChange = (val) => {
-    const parsed = parseInt(val.replace(/[^0-9]/g, ''), 10);
-    if (!parsed) {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') {
       setNumber('');
-    } else if (parsed > MAX_LIMIT) {
-      setNumber(MAX_LIMIT);
-    } else {
+      return;
+    }
+    const parsed = parseInt(clean, 10);
+    // Εάν η τιμή ξεπερνά το όριο (10.000), αγνοούμε την εισαγωγή αντί να στρογγυλοποιούμε
+    if (parsed <= MAX_LIMIT) {
       setNumber(parsed);
     }
   };
@@ -572,3 +574,6 @@ export default function ParagontopoiisiPage() {
     </div>
   );
 }
+```eof
+
+The `handleInputChange` method in `pages/st-dimotikou/17-paragontopoiisi.js` now strictly ignores any typed value greater than 10,000 without capping or modifying the current state.
