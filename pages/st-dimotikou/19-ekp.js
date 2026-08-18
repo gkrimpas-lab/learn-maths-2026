@@ -39,12 +39,12 @@ function calculateLcmArray(arr) {
   return valid.reduce((acc, curr) => lcmTwo(acc, curr), valid[0]);
 }
 
-// Δημιουργία των πρώτων πολλαπλασίων για κάθε αριθμό
-function generateMultiplesList(num, targetLcm, maxCount = 8) {
+// Δημιουργία πολλαπλασίων μέχρι να εμφανιστούν τουλάχιστον 3 κοινά πολλαπλάσια (1×ΕΚΠ, 2×ΕΚΠ, 3×ΕΚΠ)
+function generateMultiplesList(num, targetLcm) {
   if (!num || num < 1) return [];
   const list = [];
-  const limit = targetLcm > 0 ? Math.min(targetLcm * 1.5, num * maxCount) : num * maxCount;
-  for (let i = 1; num * i <= limit && i <= 15; i++) {
+  const limit = targetLcm > 0 ? targetLcm * 3 : num * 18;
+  for (let i = 1; num * i <= limit && i <= 36; i++) {
     list.push(num * i);
   }
   return list;
@@ -61,7 +61,6 @@ function getSimultaneousDivisionSteps(nums) {
   const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31];
 
   while (current.some(n => n > 1)) {
-    // Βρίσκουμε τον μικρότερο πρώτο που διαιρεί τουλάχιστον έναν από τους αριθμούς
     let chosenDivisor = null;
     for (const p of primes) {
       if (current.some(n => n % p === 0)) {
@@ -97,7 +96,7 @@ function getSimultaneousDivisionSteps(nums) {
 export default function EkpPage() {
   const [numCount, setNumCount] = useState(2); // 2, 3 ή 4 αριθμοί
   const [numbers, setNumbers] = useState([4, 6, 8, 12]);
-  const [activeTab, setActiveTab] = useState('sets'); // 'sets' (λίστα πολλαπλασίων) ή 'ladder' (ταυτόχρονη διαίρεση)
+  const [activeTab, setActiveTab] = useState('sets'); // 'sets' ή 'ladder'
 
   const handleNumberChange = (index, val) => {
     const clean = val.replace(/[^0-9]/g, '');
@@ -169,7 +168,7 @@ export default function EkpPage() {
                   19. Ελάχιστο Κοινό Πολλαπλάσιο (Ε.Κ.Π.)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base 2xl:text-lg leading-relaxed max-w-3xl">
-                  Μάθε να βρίσκεις το <strong>Ε.Κ.Π.</strong> δύο, τριών ή τεσσάρων αριθμών με τις μεθόδους των <strong>Συνόλων Πολλαπλασίων</strong>, των <strong>Διαδοχικών Διαιρέσεων</strong> και της <strong>Γονιμοποίησης σε Πρώτους Παράγοντες</strong>!
+                  Μάθε να βρίσκεις το <strong>Ε.Κ.Π.</strong> δύο, τριών ή τεσσάρων αριθμών με τις μεθόδους των <strong>Συνόλων Πολλαπλασίων</strong> και της <strong>Ταυτόχρονης Διαίρεσης</strong>!
                 </p>
               </div>
 
@@ -212,11 +211,11 @@ export default function EkpPage() {
                 </div>
                 <h3 className="text-lg 2xl:text-xl font-black text-slate-900">Μέθοδος 1: Λίστα Πολλαπλασίων</h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  Γράφουμε με τη σειρά τα πολλαπλάσια κάθε αριθμού μέχρι να εντοπίσουμε τον <strong>πρώτο κοινό αριθμό</strong> που εμφανίζεται σε όλες τις γραμμές.
+                  Γράφουμε τα πολλαπλάσια κάθε αριθμού. Το πρώτο κοινό είναι το <strong>Ε.Κ.Π.</strong>, ενώ τα επόμενα κοινά πολλαπλάσια είναι τα πολλαπλάσια του Ε.Κ.Π. (2×, 3×...).
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-indigo-100 text-xs 2xl:text-sm text-slate-700 font-mono text-center">
-                <p>Π(4): 4, 8, <strong className="text-indigo-600">12</strong>... | Π(6): 6, <strong className="text-indigo-600">12</strong>...</p>
+                <p>Κοινά Πολλαπλάσια: <strong className="text-amber-600">12</strong>, <strong className="text-emerald-600">24</strong>, <strong className="text-emerald-600">36</strong>...</p>
               </div>
             </div>
 
@@ -244,7 +243,7 @@ export default function EkpPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο Ε.Κ.Π.
                 </h2>
                 <p className="text-gray-500 text-sm 2xl:text-base">
-                  Επίλεξε το πλήθος των αριθμών (2, 3 ή 4), πληκτρολόγησε τις τιμές και δες άμεσα το Ε.Κ.Π. με 2 διαφορετικές μεθόδους!
+                  Επίλεξε το πλήθος των αριθμών (2, 3 ή 4), πληκτρολόγησε τις τιμές και δες τα 3 πρώτα κοινά πολλαπλάσια!
                 </p>
               </div>
 
@@ -357,12 +356,12 @@ export default function EkpPage() {
                 </div>
 
                 <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
-                  💡 Το Ε.Κ.Π. είναι πάντα <strong>μεγαλύτερο ή ίσο</strong> από τον μεγαλύτερο αριθμό της ομάδας!
+                  💡 Τα επόμενα κοινά πολλαπλάσια είναι πάντα πολλαπλάσια του <strong>Ε.Κ.Π.</strong> (2×, 3×, 4×...).
                 </div>
               </div>
 
               {/* RIGHT: VISUALIZATION (9 COLS) */}
-              <div className="lg:col-span-9 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[500px] space-y-6">
+              <div className="lg:col-span-9 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
                 
                 {/* HEADER STATUS */}
                 <div className="w-full text-center">
@@ -379,31 +378,63 @@ export default function EkpPage() {
                 <div className="w-full my-auto py-2 flex justify-center items-center">
                   {validActiveNumbers.length >= 2 && currentLcm > 0 ? (
                     activeTab === 'sets' ? (
-                      /* LIST OF MULTIPLES DISPLAY */
-                      <div className="space-y-4 w-full max-w-2xl">
-                        <span className="text-xs font-black text-slate-400 uppercase tracking-wider block text-center">
-                          📋 Εύρεση του Πρώτου Κοινού Πολλαπλασίου:
-                        </span>
+                      /* EXPANDED LIST OF MULTIPLES (SHOWING 3 COMMON MULTIPLES) */
+                      <div className="space-y-4 w-full">
+                        <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+                          <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
+                            📋 Λίστες Πολλαπλασίων με τα 3 Πρώτα Κοινά:
+                          </span>
+                          <div className="flex items-center gap-3 text-xs font-bold">
+                            <span className="flex items-center gap-1.5 text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-md border border-amber-300">
+                              <span className="w-2 h-2 rounded-full bg-amber-500"></span> 1ο Κοινό (Ε.Κ.Π.)
+                            </span>
+                            <span className="flex items-center gap-1.5 text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-md border border-emerald-300">
+                              <span className="w-2 h-2 rounded-full bg-emerald-500"></span> 2ο & 3ο Κοινό
+                            </span>
+                          </div>
+                        </div>
 
-                        <div className="space-y-3 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-inner">
+                        <div className="space-y-3.5 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-inner max-h-[420px] overflow-y-auto w-full">
                           {validActiveNumbers.map((num, i) => {
                             const mults = generateMultiplesList(num, currentLcm);
                             return (
-                              <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 border-b border-slate-200/80 pb-2.5 last:border-0 last:pb-0">
-                                <span className="font-mono font-black text-slate-700 bg-white px-3 py-1 rounded-lg border border-slate-200 text-xs sm:text-sm min-w-[75px] text-center shadow-xs">
+                              <div key={i} className="flex flex-col md:flex-row md:items-center gap-2.5 border-b border-slate-200/80 pb-3 last:border-0 last:pb-0">
+                                <span className="font-mono font-black text-slate-800 bg-white px-3 py-1.5 rounded-xl border border-slate-200 text-xs sm:text-sm min-w-[85px] text-center shadow-xs shrink-0">
                                   Π({num})
                                 </span>
                                 <div className="flex flex-wrap gap-1.5 items-center flex-1">
                                   {mults.map((m, idx) => {
-                                    const isMatch = m === currentLcm;
+                                    const isFirstLcm = m === currentLcm;
+                                    const isSubsequentLcm = m === currentLcm * 2 || m === currentLcm * 3;
+
+                                    if (isFirstLcm) {
+                                      return (
+                                        <span
+                                          key={idx}
+                                          className="font-mono text-xs sm:text-sm px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-black shadow-md scale-105 ring-2 ring-amber-300"
+                                          title="1ο Κοινό Πολλαπλάσιο (Ε.Κ.Π.)"
+                                        >
+                                          {m.toLocaleString('el-GR')}
+                                        </span>
+                                      );
+                                    }
+
+                                    if (isSubsequentLcm) {
+                                      return (
+                                        <span
+                                          key={idx}
+                                          className="font-mono text-xs sm:text-sm px-2.5 py-1 rounded-lg bg-emerald-500 text-white font-black shadow-sm ring-2 ring-emerald-300"
+                                          title={m === currentLcm * 2 ? '2ο Κοινό Πολλαπλάσιο' : '3ο Κοινό Πολλαπλάσιο'}
+                                        >
+                                          {m.toLocaleString('el-GR')}
+                                        </span>
+                                      );
+                                    }
+
                                     return (
                                       <span
                                         key={idx}
-                                        className={`font-mono text-xs sm:text-sm px-2.5 py-1 rounded-lg transition-all ${
-                                          isMatch
-                                            ? 'bg-amber-400 text-slate-950 font-black shadow-md scale-110 ring-2 ring-amber-300'
-                                            : 'bg-white text-slate-600 border border-slate-200'
-                                        }`}
+                                        className="font-mono text-xs sm:text-sm px-2 py-0.5 rounded-md bg-white text-slate-600 border border-slate-200/80"
                                       >
                                         {m.toLocaleString('el-GR')}
                                       </span>
@@ -448,15 +479,22 @@ export default function EkpPage() {
                   )}
                 </div>
 
-                {/* FINAL RESULT CARD */}
+                {/* 3 COMMON MULTIPLES SUMMARY CARD */}
                 {validActiveNumbers.length >= 2 && currentLcm > 0 && (
-                  <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-2xl text-center shadow-lg font-mono font-black space-y-1">
-                    <span className="text-xs font-sans uppercase tracking-wider block text-blue-200">
-                      Τελικό Συμπέρασμα:
+                  <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-4.5 rounded-2xl text-center shadow-lg font-mono space-y-2">
+                    <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
+                      Τα 3 Πρώτα Κοινά Πολλαπλάσια των Αριθμών ({validActiveNumbers.join(', ')}):
                     </span>
-                    <div className="text-lg md:text-xl tracking-wide pt-1">
-                      Ε.Κ.Π.({validActiveNumbers.join(', ')}) ＝{' '}
-                      <span className="text-amber-300 font-black">{currentLcm.toLocaleString('el-GR')}</span>
+                    <div className="text-base sm:text-lg tracking-wide flex flex-wrap justify-center gap-3 items-center">
+                      <span className="bg-amber-400 text-slate-900 px-3 py-1 rounded-xl font-black text-sm sm:text-base shadow">
+                        1ο (Ε.Κ.Π.): {currentLcm.toLocaleString('el-GR')}
+                      </span>
+                      <span className="bg-emerald-500 text-white px-3 py-1 rounded-xl font-black text-sm sm:text-base shadow">
+                        2ο: {(currentLcm * 2).toLocaleString('el-GR')}
+                      </span>
+                      <span className="bg-emerald-500 text-white px-3 py-1 rounded-xl font-black text-sm sm:text-base shadow">
+                        3ο: {(currentLcm * 3).toLocaleString('el-GR')}
+                      </span>
                     </div>
                   </div>
                 )}
