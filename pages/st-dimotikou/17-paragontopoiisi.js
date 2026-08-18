@@ -574,6 +574,3 @@ export default function ParagontopoiisiPage() {
     </div>
   );
 }
-```eof
-
-The `handleInputChange` method in `pages/st-dimotikou/17-paragontopoiisi.js` now strictly ignores any typed value greater than 10,000 without capping or modifying the current state.
