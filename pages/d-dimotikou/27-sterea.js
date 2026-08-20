@@ -8,7 +8,7 @@ const SOLIDS_DATA = [
   {
     id: 'cube',
     name: 'Κύβος',
-    category: 'Πολύεδρο',
+    category: 'Πολυεδρο',
     faces: 6,
     facesDesc: '6 ίσα τετράγωνα',
     edges: 12,
@@ -32,7 +32,7 @@ const SOLIDS_DATA = [
   {
     id: 'cuboid',
     name: 'Ορθογώνιο Παραλληλεπίπεδο',
-    category: 'Πολύεδρο',
+    category: 'Πολυεδρο',
     faces: 6,
     facesDesc: '6 ορθογώνια (ανά 2 απέναντι ίσα)',
     edges: 12,
@@ -56,7 +56,7 @@ const SOLIDS_DATA = [
   {
     id: 'sq-pyramid',
     name: 'Τετραγωνική Πυραμίδα',
-    category: 'Πολύεδρο (Πυραμίδα)',
+    category: 'Πολυεδρο (Πυραμιδα)',
     faces: 5,
     facesDesc: '1 τετράγωνη βάση + 4 τριγωνικές έδρες',
     edges: 8,
@@ -80,7 +80,7 @@ const SOLIDS_DATA = [
   {
     id: 'tri-pyramid',
     name: 'Τριγωνική Πυραμίδα (Τετράεδρο)',
-    category: 'Πολύεδρο (Πυραμίδα)',
+    category: 'Πολυεδρο (Πυραμιδα)',
     faces: 4,
     facesDesc: '1 τριγωνική βάση + 3 τριγωνικές έδρες (4 τρίγωνα)',
     edges: 6,
@@ -102,7 +102,7 @@ const SOLIDS_DATA = [
   {
     id: 'cylinder',
     name: 'Κύλινδρος',
-    category: 'Σώμα εκ περιστροφής',
+    category: 'Σωμα εκ περιστροφης',
     faces: 3,
     facesDesc: '2 ίσοι κυκλικοί δίσκοι (βάσεις) + 1 καμπύλη επιφάνεια',
     edges: 0,
@@ -124,7 +124,7 @@ const SOLIDS_DATA = [
   {
     id: 'cone',
     name: 'Κώνος',
-    category: 'Σώμα εκ περιστροφής',
+    category: 'Σωμα εκ περιστροφης',
     faces: 2,
     facesDesc: '1 κυκλική βάση + 1 καμπύλη επιφάνεια',
     edges: 0,
@@ -146,7 +146,7 @@ const SOLIDS_DATA = [
   {
     id: 'sphere',
     name: 'Σφαίρα',
-    category: 'Σώμα εκ περιστροφής',
+    category: 'Σωμα εκ περιστροφης',
     faces: 1,
     facesDesc: '1 ενιαία καμπύλη επιφάνεια (καμία επίπεδη έδρα)',
     edges: 0,
@@ -206,13 +206,13 @@ export default function StereaTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 27
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   🧊 Τα Γεωμετρικά Στερεά Σώματα
                 </h1>
                 <p className="text-blue-100 text-base lg:text-lg leading-relaxed">
-                  Εξερευνούμε τα **3D σχήματα**: κύβος, παραλληλεπίπεδο, πυραμίδες, κύλινδρος, κώνος και σφαίρα! Μαθαίνουμε να μετράμε τις **έδρες**, τις **ακμές** και τις **κορυφές** τους.
+                  Εξερευνούμε τα "3D σχήματα": κύβος, παραλληλεπίπεδο, πυραμίδες, κύλινδρος, κώνος και σφαίρα! Μαθαίνουμε να μετράμε τις "έδρες", τις "ακμές" και τις "κορυφές" τους.
                 </p>
               </div>
 
@@ -343,17 +343,17 @@ export default function StereaTheoryPage() {
                 {/* ΜΕΤΡΗΤΕΣ: ΕΔΡΕΣ - ΑΚΜΕΣ - ΚΟΡΥΦΕΣ */}
                 <div className="grid grid-cols-3 gap-3 text-center font-mono">
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-                    <span className="text-xs font-bold text-gray-500 block uppercase font-sans">Έδρες</span>
+                    <span className="text-xs font-bold text-gray-500 block uppercase font-sans">Εδρες</span>
                     <span className="text-3xl font-black text-blue-600">{currentSolid.faces}</span>
                   </div>
 
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-                    <span className="text-xs font-bold text-gray-500 block uppercase font-sans">Ακμές</span>
+                    <span className="text-xs font-bold text-gray-500 block uppercase font-sans">Ακμες</span>
                     <span className="text-3xl font-black text-purple-600">{currentSolid.edges}</span>
                   </div>
 
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-                    <span className="text-xs font-bold text-gray-500 block uppercase font-sans">Κορυφές</span>
+                    <span className="text-xs font-bold text-gray-500 block uppercase font-sans">Κορυφες</span>
                     <span className="text-3xl font-black text-emerald-600">{currentSolid.vertices}</span>
                   </div>
                 </div>
@@ -388,12 +388,12 @@ export default function StereaTheoryPage() {
               <table className="w-full text-left text-xs md:text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100 text-slate-700 uppercase font-black text-[11px] tracking-wider border-b border-slate-200">
-                    <th className="p-3.5 rounded-l-xl">Στερεό Σώμα</th>
-                    <th className="p-3.5">Κατηγορία</th>
-                    <th className="p-3.5 text-center">Έδρες</th>
-                    <th className="p-3.5 text-center">Ακμές</th>
-                    <th className="p-3.5 text-center">Κορυφές</th>
-                    <th className="p-3.5 rounded-r-xl">Σχήμα Εδρών / Βάσεων</th>
+                    <th className="p-3.5 rounded-l-xl">Στερεο Σωμα</th>
+                    <th className="p-3.5">Κατηγορια</th>
+                    <th className="p-3.5 text-center">Εδρες</th>
+                    <th className="p-3.5 text-center">Ακμες</th>
+                    <th className="p-3.5 text-center">Κορυφες</th>
+                    <th className="p-3.5 rounded-r-xl">Σχημα Εδρων / Βασεων</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
