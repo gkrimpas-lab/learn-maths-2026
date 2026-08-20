@@ -26,7 +26,7 @@ export default function PosotitaIgrouTheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>🥛 Μέτρηση Ποσότητας Υγρού (Λίτρα & Χιλιοστόλιτρα) - LearnMaths.gr</title>
+        <title>🥛 Μέτρηση Ποσότητας Υγρού (Λίτρα και Χιλιοστόλιτρα) - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -56,13 +56,13 @@ export default function PosotitaIgrouTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 29
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   🥛 Μέτρηση Ποσότητας Υγρού (Χωρητικότητα)
                 </h1>
                 <p className="text-cyan-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε πώς μετράμε τα υγρά σε **λίτρα (L)** και **χιλιοστόλιτρα (mL)**, πώς κάνουμε εύκολα μετατροπές και πώς υπολογίζουμε το μισό ή το ένα τέταρτο του λίτρου!
+                  Μαθαίνουμε πώς μετράμε τα υγρά σε "λίτρα (L)" και "χιλιοστόλιτρα (mL)", πώς κάνουμε εύκολα μετατροπές και πώς υπολογίζουμε το μισό ή το ένα τέταρτο του λίτρου!
                 </p>
               </div>
 
@@ -85,7 +85,7 @@ export default function PosotitaIgrouTheoryPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Μονάδες Μέτρησης & Βασικές Ισότητες
+                <span>📖</span> Μονάδες Μέτρησης και Βασικές Ισότητες
               </h2>
             </div>
 
@@ -97,7 +97,7 @@ export default function PosotitaIgrouTheoryPage() {
                   ΒΑΣΙΚΕΣ ΜΟΝΑΔΕΣ
                 </div>
                 <h3 className="text-lg font-bold text-cyan-950">
-                  Λίτρο (L) & Χιλιοστόλιτρο (mL)
+                  Λίτρο (L) και Χιλιοστόλιτρο (mL)
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
                   Η βασική μονάδα μέτρησης είναι το <strong>λίτρο (L)</strong>. Για μικρότερες ποσότητες (π.χ. φάρμακα, αναψυκτικά) χρησιμοποιούμε το <strong>χιλιοστόλιτρο (mL)</strong>.
@@ -113,7 +113,7 @@ export default function PosotitaIgrouTheoryPage() {
                   ΚΛΑΣΜΑΤΑ ΛΙΤΡΟΥ
                 </div>
                 <h3 className="text-lg font-bold text-teal-950">
-                  Μισό & Τέταρτο του Λίτρου
+                  Μισό και Τέταρτο του Λίτρου
                 </h3>
                 <ul className="space-y-1.5 text-xs md:text-sm text-gray-700 font-medium">
                   <li>• <strong>Μισό λίτρο (1/2 L)</strong> = 500 mL</li>
@@ -149,7 +149,7 @@ export default function PosotitaIgrouTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Ογκομετρικό Δοχείο & Μετατροπέας
+                  <span>🧮</span> Διαδραστικό Ογκομετρικό Δοχείο και Μετατροπέας
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Άλλαξε την ποσότητα υγρού για να δεις τη στάθμη στο δοχείο και την αυτόματη μετατροπή σε L και mL!
@@ -261,7 +261,7 @@ export default function PosotitaIgrouTheoryPage() {
                 <div className="space-y-4">
                   <div className="space-y-2 bg-white p-4 rounded-2xl border border-slate-200">
                     <div className="flex justify-between items-center text-xs font-black uppercase text-gray-700">
-                      <span>Ποσότητα σε Χιλιοστόλιτρα (mL):</span>
+                      <span>Ποσοτητα σε Χιλιοστολιτρα (mL):</span>
                       <span className="text-cyan-700 font-mono text-base font-black">{formatNumber(mL)} mL</span>
                     </div>
                     <input 
@@ -295,7 +295,7 @@ export default function PosotitaIgrouTheoryPage() {
                 {/* ΑΥΤΟΜΑΤΕΣ ΑΝΑΛΥΣΕΙΣ ΜΕ ΣΤΑΘΕΡΟ ΥΨΟΣ (min-h-[108px]) */}
                 <div className="bg-cyan-50 p-4 rounded-2xl border border-cyan-200 min-h-[108px] flex flex-col justify-between">
                   <h4 className="text-xs font-black uppercase text-cyan-950 flex items-center gap-1.5 mb-1">
-                    <span>💡</span> Πώς το διαβάζουμε:
+                    <span>💡</span> Πως το διαβαζουμε:
                   </h4>
                   <ul className="text-xs space-y-1 font-medium text-gray-800">
                     <li>• <strong>Σε Χιλιοστόλιτρα:</strong> {formatNumber(mL)} mL</li>
