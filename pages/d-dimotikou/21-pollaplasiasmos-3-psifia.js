@@ -59,13 +59,13 @@ export default function Pollaplasiasmos3PsifiaPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 21
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   ✖️ Πολλαπλασιασμός 3ψηφιων Αριθμών
                 </h1>
                 <p className="text-emerald-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε να εκτελούμε τον **κάθετο πολλαπλασιασμό τριψήφιου αριθμού** υπολογίζοντας τα **μερικά γινόμενα**!
+                  Μαθαίνουμε να εκτελούμε τον "κάθετο πολλαπλασιασμό τριψήφιου αριθμού" υπολογίζοντας τα "μερικά γινόμενα"!
                 </p>
               </div>
 
@@ -103,7 +103,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
                   1ο Μερικό Γινόμενο (Μονάδες)
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Πολλαπλασιάζουμε τον πάνω αριθμό με τις **Μονάδες** του κάτω αριθμού.
+                  Πολλαπλασιάζουμε τον πάνω αριθμό με τις "Μονάδες" του κάτω αριθμού.
                 </p>
               </div>
 
@@ -116,7 +116,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
                   2ο Μερικό Γινόμενο (Δεκάδες)
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Βάζουμε **ένα μηδενικό (0)** στη θέση των μονάδων (ή αφήνουμε 1 κενό) και πολλαπλασιάζουμε με τις **Δεκάδες**.
+                  Βάζουμε ένα μηδενικό (0) στη θέση των μονάδων (ή αφήνουμε 1 κενό) και πολλαπλασιάζουμε με τις "Δεκάδες".
                 </p>
               </div>
 
@@ -129,7 +129,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
                   3ο Μερικό Γινόμενο (Εκατοντάδες)
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Βάζουμε **δύο μηδενικά (00)** (ή αφήνουμε 2 κενά) και πολλαπλασιάζουμε με τις **Εκατοντάδες**.
+                  Βάζουμε δύο μηδενικά (00) (ή αφήνουμε 2 κενά) και πολλαπλασιάζουμε με τις "Εκατοντάδες".
                 </p>
               </div>
 
