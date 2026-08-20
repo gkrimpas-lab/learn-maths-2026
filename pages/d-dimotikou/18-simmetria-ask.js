@@ -377,7 +377,7 @@ export default function SimmetriaAskPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between pb-24">
       <Head>
-        <title>🦋 Ασκήσεις: Συμμετρία & Άξονες - LearnMaths.gr</title>
+        <title>🦋 Ασκήσεις: Συμμετρία και Άξονες - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -415,7 +415,7 @@ export default function SimmetriaAskPage() {
                 📝 Ασκήσεις: Η Έννοια της Συμμετρίας
               </h1>
               <p className="text-purple-100 text-sm md:text-base mt-1">
-                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι ερωτήσεις και τα σχήματα αλλάζουν.
+                Πατώντας «Νέες Ασκήσεις» οι ερωτήσεις και τα σχήματα αλλάζουν.
               </p>
             </div>
 
