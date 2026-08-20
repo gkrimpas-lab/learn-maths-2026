@@ -54,7 +54,6 @@ export default function FysikoiArithmoiPage() {
     const isLeadingZero = digit === '0' && index < firstNonZero;
     if (val === 0 || isLeadingZero) return 0;
 
-    // 1 -> 12%, 2 -> 23%, 3 -> 34%, ..., 9 -> 100%
     return 12 + (val - 1) * 11;
   };
 
@@ -216,7 +215,7 @@ export default function FysikoiArithmoiPage() {
             {/* MAIN VERTICAL STACK STRUCTURE */}
             <div className="space-y-6">
 
-              {/* ROW 1: (1) INPUT & (2) READING */}
+              {/* ROW 1: INPUT & READING */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
                 <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
                   <label className="text-xs font-black text-slate-500 uppercase tracking-wider block">
@@ -247,7 +246,7 @@ export default function FysikoiArithmoiPage() {
                 </div>
               </div>
 
-              {/* ROW 2: (3) PLACE VALUE TABLE & FULL MATHEMATICAL EXPANSION */}
+              {/* ROW 2: PLACE VALUE TABLE & FULL MATHEMATICAL EXPANSION */}
               <div className="bg-slate-50 border border-slate-200 p-5 md:p-6 rounded-2xl space-y-6">
                 
                 {/* 12-DIGIT PLACE VALUE TABLE */}
@@ -275,8 +274,8 @@ export default function FysikoiArithmoiPage() {
                       ))}
                     </div>
 
-                    {/* DIGITS ROW */}
-                    <div className="grid grid-cols-12 text-center items-center p-1.5 bg-white rounded-b-2xl">
+                    {/* DIGITS ROW (ΣΤΑΘΕΡΟ BORDER-2 & ΑΥΞΗΜΕΝΑ PADDING ΓΙΑ ΑΠΟΦΥΓΗ LAYOUT SHIFT) */}
+                    <div className="grid grid-cols-12 text-center items-center p-2.5 bg-white rounded-b-2xl gap-1">
                       {digits.map((digit, i) => {
                         const periodIdx = Math.floor(i / 3);
                         const isLeadingZero = digit === '0' && i < firstNonZero;
@@ -288,11 +287,11 @@ export default function FysikoiArithmoiPage() {
                               type="button"
                               onClick={() => setActiveDigitIndex(i)}
                               onMouseEnter={() => setActiveDigitIndex(i)}
-                              className={`w-full py-4 md:py-5 text-xl md:text-2xl font-black rounded-xl transition-all duration-200 focus:outline-none font-mono flex items-center justify-center
+                              className={`w-full py-4 md:py-5 text-xl md:text-2xl font-black rounded-xl transition-colors duration-150 focus:outline-none font-mono flex items-center justify-center border-2 box-border
                                 ${periods[periodIdx].light}
                                 ${isSelected 
-                                  ? 'bg-amber-400 text-slate-900 border-2 border-amber-500 shadow-md transform -translate-y-0.5' 
-                                  : 'border border-transparent hover:bg-amber-100/70'}
+                                  ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm' 
+                                  : 'border-transparent hover:bg-amber-100/70 hover:border-amber-300'}
                                 ${isLeadingZero && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
                             >
                               {digit}
@@ -329,10 +328,10 @@ export default function FysikoiArithmoiPage() {
                           key={i}
                           onMouseEnter={() => setActiveDigitIndex(i)}
                           onClick={() => setActiveDigitIndex(i)}
-                          className={`flex items-center justify-between p-2.5 rounded-xl border transition cursor-pointer ${
+                          className={`flex items-center justify-between p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer ${
                             isSelected 
-                              ? 'bg-amber-50 border-amber-400 shadow-sm ring-1 ring-amber-300' 
-                              : 'bg-slate-50/70 border-slate-100 hover:bg-slate-100'
+                              ? 'bg-amber-50 border-amber-400 shadow-xs' 
+                              : 'bg-slate-50/70 border-transparent hover:bg-slate-100 hover:border-slate-200'
                           }`}
                         >
                           <div className="flex items-center gap-2">
@@ -357,7 +356,7 @@ export default function FysikoiArithmoiPage() {
 
               </div>
 
-              {/* ROW 3: (4) DYNAMIC EXCEL-STYLE BAR CHART (FULL WIDTH) */}
+              {/* ROW 3: DYNAMIC EXCEL-STYLE BAR CHART */}
               <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-3 shadow-sm">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-xs font-black text-slate-700 flex items-center gap-1.5">
@@ -369,7 +368,7 @@ export default function FysikoiArithmoiPage() {
                 </div>
 
                 {/* SVG COLUMN CHART */}
-                <div className="w-full h-56 flex items-end justify-between gap-1.5 md:gap-3 pt-12 pb-2 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100 relative">
+                <div className="w-full h-56 flex items-end justify-between gap-1.5 md:gap-3 pt-12 pb-2 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100 relative overflow-hidden">
                   {digits.map((digit, i) => {
                     const periodIdx = Math.floor(i / 3);
                     const power = 11 - i;
@@ -410,7 +409,7 @@ export default function FysikoiArithmoiPage() {
                                 height: `${barHeightPercent}%`,
                                 backgroundColor: periods[periodIdx].hex 
                               }}
-                              className={`w-full rounded-t-lg transition-all duration-300 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md scale-105' : 'opacity-90 hover:opacity-100'}`}
+                              className={`w-full rounded-t-lg transition-all duration-200 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md' : 'opacity-90 hover:opacity-100'}`}
                             />
                           )}
                         </div>
