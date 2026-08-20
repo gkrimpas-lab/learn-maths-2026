@@ -125,13 +125,13 @@ export default function Diairesi2PsifiaPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 22
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   ➗ Η Διαίρεση με Διψήφιο Διαιρέτη (10 - 99)
                 </h1>
                 <p className="text-purple-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε τον αλγόριθμο της κάθετης διαίρεσης όταν ο **διαιρέτης έχει 2 ψηφία**, πώς βρίσκουμε το πηλίκο βήμα-βήμα και πώς κάνουμε **επαλήθευση**!
+                  Μαθαίνουμε τον αλγόριθμο της κάθετης διαίρεσης όταν ο "διαιρέτης έχει 2 ψηφία", πώς βρίσκουμε το πηλίκο βήμα-βήμα και πώς κάνουμε "επαλήθευση"!
                 </p>
               </div>
 
@@ -154,7 +154,7 @@ export default function Diairesi2PsifiaPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία & Τα Βήματα της Διαίρεσης
+                <span>📖</span> Αναλυτική Θεωρία και Τα Βήματα της Διαίρεσης
               </h2>
             </div>
 
@@ -169,7 +169,7 @@ export default function Diairesi2PsifiaPage() {
                   Χωρίζουμε Ψηφία
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Επειδή ο διαιρέτης είναι **διψήφιος**, χωρίζουμε **2 ψηφία** από τα αριστερά του διαιρετέου. Αν δεν χωράει, χωρίζουμε **3 ψηφία**.
+                  Επειδή ο διαιρέτης είναι "διψήφιος", χωρίζουμε "2 ψηφία" από τα αριστερά του διαιρετέου. Αν δεν χωράει, χωρίζουμε "3 ψηφία".
                 </p>
               </div>
 
@@ -182,7 +182,7 @@ export default function Diairesi2PsifiaPage() {
                   Βρίσκουμε το Ψηφίο
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Εκτιμούμε πόσες φορές χωράει ο διαιρέτης, πολλαπλασιάζουμε, γράφουμε το γινόμενο από κάτω και κάνουμε **αφαίρεση**.
+                  Εκτιμούμε πόσες φορές χωράει ο διαιρέτης, πολλαπλασιάζουμε, γράφουμε το γινόμενο από κάτω και κάνουμε "αφαίρεση".
                 </p>
               </div>
 
