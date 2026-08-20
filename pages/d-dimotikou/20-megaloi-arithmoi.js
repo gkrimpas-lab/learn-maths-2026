@@ -111,13 +111,13 @@ export default function MegaloiArithmoiPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 1
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   💎 Οι Μεγάλοι Αριθμοί (μέχρι το 1.000.000)
                 </h1>
                 <p className="text-teal-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε πώς να διαβάζουμε, να γράφουμε και να αναλύουμε τους μεγάλους αριθμούς χρησιμοποιώντας τις **Κλάσεις** και την **Αξία Θέσης Ψηφίου**!
+                  Μαθαίνουμε πώς να διαβάζουμε, να γράφουμε και να αναλύουμε τους μεγάλους αριθμούς χρησιμοποιώντας τις "Κλάσεις" και την "Αξία Θέσης Ψηφίου"!
                 </p>
               </div>
 
@@ -142,7 +142,7 @@ export default function MegaloiArithmoiPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center border-b pb-8 border-gray-100">
               <div className="space-y-4">
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>📖</span> Αναλυτική Θεωρία & Κανόνες
+                  <span>📖</span> Αναλυτική Θεωρία και Κανόνες
                 </h2>
                 <p className="text-gray-600 leading-relaxed text-sm md:text-base">
                   Στο δεκαδικό σύστημα αρίθμησης, η <strong>αξία κάθε ψηφίου</strong> εξαρτάται από τη <strong>θέση</strong> που κατέχει στον αριθμό. Για να διαβάζουμε εύκολα τους μεγάλους αριθμούς, τους χωρίζουμε σε <strong>κλάσεις ανά 3 ψηφία</strong> από δεξιά προς τα αριστερά!
@@ -155,7 +155,7 @@ export default function MegaloiArithmoiPage() {
 
               {/* ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ & ΟΝΟΜΑΣΙΑΣ */}
               <div className="bg-gradient-to-br from-teal-500 to-emerald-600 text-white p-8 rounded-3xl shadow-md text-center py-10 space-y-4">
-                <span className="text-xs font-black uppercase tracking-widest text-teal-200">Ο Αριθμός σου</span>
+                <span className="text-xs font-black uppercase tracking-widest text-teal-200">Ο Αριθμος σου</span>
                 <div className="text-4xl xl:text-5xl font-mono font-black tracking-tight text-white">
                   {formatNumber(totalNumber)}
                 </div>
