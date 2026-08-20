@@ -272,20 +272,23 @@ export default function Diairesi2PsifiaPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <label className="text-xs font-black uppercase text-gray-600">
-                    Διαιρετεος (Δ):
+                    Διαιρετεος (Δ) (100 - 9999):
                   </label>
                   <span className="text-indigo-600 font-mono text-lg font-black">{formatNumber(D)}</span>
                 </div>
                 <input 
-                  type="number"
-                  min="100"
-                  max="9999"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={4}
                   autoComplete="off"
                   value={dividend}
                   onChange={(e) => {
-                    const val = e.target.value;
-                    if (val === '') setDividend('');
-                    else setDividend(Math.min(9999, Number(val)));
+                    const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 4);
+                    if (digitsOnly === '') {
+                      setDividend('');
+                    } else {
+                      setDividend(Number(digitsOnly));
+                    }
                   }}
                   onBlur={() => {
                     if (!dividend || dividend < 10) setDividend(100);
@@ -310,15 +313,18 @@ export default function Diairesi2PsifiaPage() {
                   <span className="text-blue-600 font-mono text-lg font-black">{d}</span>
                 </div>
                 <input 
-                  type="number"
-                  min="10"
-                  max="99"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={2}
                   autoComplete="off"
                   value={divisor}
                   onChange={(e) => {
-                    const val = e.target.value;
-                    if (val === '') setDivisor('');
-                    else setDivisor(Math.min(99, Number(val)));
+                    const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 2);
+                    if (digitsOnly === '') {
+                      setDivisor('');
+                    } else {
+                      setDivisor(Number(digitsOnly));
+                    }
                   }}
                   onBlur={() => {
                     if (!divisor || divisor < 10) setDivisor(10);
