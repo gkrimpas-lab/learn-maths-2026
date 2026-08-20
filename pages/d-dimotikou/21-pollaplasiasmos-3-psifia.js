@@ -161,19 +161,17 @@ export default function Pollaplasiasmos3PsifiaPage() {
                       1ος Αριθμός (100 έως 999):
                     </label>
                     <input 
-                      type="number"
-                      min="100"
-                      max="999"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={3}
                       autoComplete="off"
                       value={numA}
                       onChange={(e) => {
-                        const val = e.target.value;
-                        if (val === '') {
+                        const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 3);
+                        if (digitsOnly === '') {
                           setNumA('');
                         } else {
-                          const parsed = Number(val);
-                          if (parsed > 999) setNumA(999);
-                          else setNumA(parsed);
+                          setNumA(Number(digitsOnly));
                         }
                       }}
                       onBlur={() => {
@@ -188,23 +186,21 @@ export default function Pollaplasiasmos3PsifiaPage() {
                       2ος Αριθμός (0 έως 999):
                     </label>
                     <input 
-                      type="number"
-                      min="0"
-                      max="999"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={3}
                       autoComplete="off"
                       value={numB}
                       onChange={(e) => {
-                        const val = e.target.value;
-                        if (val === '') {
+                        const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 3);
+                        if (digitsOnly === '') {
                           setNumB('');
                         } else {
-                          const parsed = Number(val);
-                          if (parsed > 999) setNumB(999);
-                          else setNumB(parsed);
+                          setNumB(Number(digitsOnly));
                         }
                       }}
                       onBlur={() => {
-                        if (numB === '' || numB < 0) setNumB(0);
+                        if (numB === '') setNumB(0);
                       }}
                       className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                     />
@@ -219,7 +215,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
                 </div>
               </div>
 
-              {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ (ΜΕ ΑΠΟΛΥΤΗ ΣΤΟΙΧΙΣΗ ΔΕΞΙΑ) */}
+              {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ */}
               <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl font-mono flex flex-col items-center justify-center space-y-2">
                 <div className="w-52 text-right space-y-2">
                   
