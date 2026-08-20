@@ -120,13 +120,13 @@ export default function TetrapleuraTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 16
+                  Δ' ΔΗΜΟΤΙΚΟΥ  
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  🔷 Ομοιότητες & Διαφορές Τετραπλεύρων
+                  🔷 Ομοιότητες και Διαφορές Τετραπλεύρων
                 </h1>
                 <p className="text-blue-100 text-base lg:text-lg leading-relaxed">
-                  Συγκρίνουμε το **ορθογώνιο**, το **τετράγωνο**, τον **ρόμβο** και το **πλάγιο παραλληλόγραμμο** αλλάζοντας τις πλευρές και τις γωνίες τους!
+                  Συγκρίνουμε το "ορθογώνιο", το "τετράγωνο", τον "ρόμβο" και το "πλάγιο παραλληλόγραμμο" αλλάζοντας τις πλευρές και τις γωνίες τους!
                 </p>
               </div>
 
@@ -162,7 +162,7 @@ export default function TetrapleuraTheoryPage() {
                   <span className="text-2xl">▭</span>
                 </div>
                 <ul className="text-xs text-gray-700 space-y-1.5 font-medium">
-                  <li>• Απέναντι πλευρές <strong>ίσες & παράλληλες</strong></li>
+                  <li>• Απέναντι πλευρές <strong>ίσες και παράλληλες</strong></li>
                   <li>• <strong>4 ορθές γωνίες (90°)</strong></li>
                 </ul>
               </div>
@@ -194,11 +194,11 @@ export default function TetrapleuraTheoryPage() {
               {/* 4. Πλάγιο Παραλληλόγραμμο */}
               <div className="bg-teal-50/70 p-5 rounded-2xl border border-teal-100 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold text-teal-900">Πλάγιο Παραλλ.</h3>
+                  <h3 className="text-base font-bold text-teal-900">Πλάγιο Παραλληλόγραμμο</h3>
                   <span className="text-2xl">▱</span>
                 </div>
                 <ul className="text-xs text-gray-700 space-y-1.5 font-medium">
-                  <li>• Απέναντι πλευρές <strong>ίσες & παράλληλες</strong></li>
+                  <li>• Απέναντι πλευρές <strong>ίσες και παράλληλες</strong></li>
                   <li>• Απέναντι γωνίες ίσες (όχι ορθές)</li>
                 </ul>
               </div>
@@ -215,10 +215,10 @@ export default function TetrapleuraTheoryPage() {
                 <table className="w-full text-left text-xs md:text-sm font-bold border-collapse">
                   <thead>
                     <tr className="border-b border-slate-700 text-slate-400 uppercase">
-                      <th className="py-3 px-2">Σχήμα</th>
-                      <th className="py-3 px-2 text-center">Απέναντι πλευρές παράλληλες</th>
-                      <th className="py-3 px-2 text-center">Όλες οι πλευρές ίσες (4)</th>
-                      <th className="py-3 px-2 text-center">4 Ορθές Γωνίες (90°)</th>
+                      <th className="py-3 px-2">Σχημα</th>
+                      <th className="py-3 px-2 text-center">Απεναντι πλευρες παραλληλες</th>
+                      <th className="py-3 px-2 text-center">Ολες οι πλευρες ισες (4)</th>
+                      <th className="py-3 px-2 text-center">4 Ορθες Γωνιες (90°)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800">
@@ -341,7 +341,7 @@ export default function TetrapleuraTheoryPage() {
                 {/* 1. Γωνία Κλίσης */}
                 <div className="space-y-1">
                   <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
-                    <span>Γωνία Κλίσης:</span>
+                    <span>Γωνια Κλισης:</span>
                     <span className="text-indigo-600 font-mono text-base font-black">{angleDeg}° {isRightAngle ? '(Ορθή 90°)' : ''}</span>
                   </div>
                   <input 
@@ -357,7 +357,7 @@ export default function TetrapleuraTheoryPage() {
                 {/* 2. Μήκος Βάσης */}
                 <div className="space-y-1">
                   <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
-                    <span>Μήκος Βάσης (Οριζόντια):</span>
+                    <span>Μηκος Βασης (Οριζοντια):</span>
                     <span className="text-indigo-600 font-mono text-base font-black">{baseWidth} px</span>
                   </div>
                   <input 
@@ -373,7 +373,7 @@ export default function TetrapleuraTheoryPage() {
                 {/* 3. Μήκος Πλάγιας Πλευράς */}
                 <div className="space-y-1">
                   <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
-                    <span>Μήκος Πλάγιας Πλευράς:</span>
+                    <span>Μηκος Πλαγιας Πλευρας:</span>
                     <span className="text-indigo-600 font-mono text-base font-black">{sideLength} px</span>
                   </div>
                   <input 
@@ -391,7 +391,7 @@ export default function TetrapleuraTheoryPage() {
                   onClick={() => setSideLength(baseWidth)}
                   className="w-full py-3 rounded-2xl font-black text-xs uppercase tracking-wider bg-slate-200 hover:bg-slate-300 text-slate-800 transition"
                 >
-                  ⚖️ Κάνε όλες τις πλευρές ίσες ({baseWidth} px)
+                  ⚖️ Κανε ολες τις πλευρες ισες ({baseWidth} px)
                 </button>
 
               </div>
