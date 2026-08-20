@@ -255,7 +255,7 @@ export default function FysikoiArithmoiPage() {
                   <div className="min-w-[620px] bg-white rounded-2xl shadow-sm border border-gray-200 mx-auto">
                     
                     {/* PERIODS HEADER */}
-                    <div className="grid grid-cols-4 text-white text-center font-black text-xs uppercase tracking-wider rounded-t-2xl overflow-hidden">
+                    <div className="grid grid-cols-4 text-white text-center font-black text-xs tracking-wider rounded-t-2xl overflow-hidden">
                       {periods.map((p, i) => (
                         <div key={i} className={`${p.color} py-3 border-r border-white/20 last:border-0`}>
                           <span className="hidden md:inline">{p.name}</span>
