@@ -67,7 +67,7 @@ export default function AionasTheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>📅 Ημέρα, Μήνας, Έτος, Αιώνας & Δίσεκτα Έτη - LearnMaths.gr</title>
+        <title>📅 Ημέρα, Μήνας, Έτος, Αιώνας και Δίσεκτα Έτη - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -97,13 +97,13 @@ export default function AionasTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 26
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  📅 Ημέρες, Μήνες, Έτη, Αιώνες & Δίσεκτα Έτη
+                  📅 Ημέρες, Μήνες, Έτη, Αιώνες και Δίσεκτα Έτη
                 </h1>
                 <p className="text-purple-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε πώς μετράμε τον χρόνο σε **εβδομάδες, μήνες, χρόνια και αιώνες**, τι είναι τα **δίσεκτα έτη** και πώς βρίσκουμε εύκολα σε ποιον αιώνα ανήκει κάθε χρονιά!
+                  Μαθαίνουμε πώς μετράμε τον χρόνο σε "εβδομάδες, μήνες, χρόνια και αιώνες", τι είναι τα "δίσεκτα έτη" και πώς βρίσκουμε εύκολα σε ποιον αιώνα ανήκει κάθε χρονιά!
                 </p>
               </div>
 
@@ -132,7 +132,7 @@ export default function AionasTheoryPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
-              {/* 1. Εβδομάδα, Μήνας & Χρόνος */}
+              {/* 1. Εβδομάδα, Μήνας και Χρόνος */}
               <div className="bg-blue-50/70 p-6 rounded-2xl border border-blue-100 space-y-3">
                 <h3 className="text-lg font-bold text-blue-950 flex items-center gap-2">
                   <span>🗓️</span> Εβδομάδα, Μήνας & Έτος
@@ -213,7 +213,7 @@ export default function AionasTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικός Υπολογιστής Αιώνα & Δίσεκτου Έτους
+                  <span>🧮</span> Διαδραστικός Υπολογιστής Αιώνα και Δίσεκτου Έτους
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Γράψε οποιαδήποτε χρονιά ή διάλεξε ένα ιστορικό ορόσημο για να δεις αυτόματα τον αιώνα και τα στοιχεία της!
@@ -259,7 +259,7 @@ export default function AionasTheoryPage() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-black uppercase text-gray-600 mb-1">
+                    <label className="block text-xs font-black text-gray-600 mb-1">
                       Έτος (1 έως 3.000):
                     </label>
                     <input 
