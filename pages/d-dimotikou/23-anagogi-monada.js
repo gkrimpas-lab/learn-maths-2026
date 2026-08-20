@@ -68,13 +68,13 @@ export default function AnagogiMonadaPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 23
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   🎯 Η Μέθοδος της Αναγωγής στη Μονάδα
                 </h1>
                 <p className="text-amber-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε πώς να λύνουμε προβλήματα με **2 απλά βήματα**: βρίσκουμε πρώτα πόσο κοστίζει **το 1** και μετά υπολογίζουμε πόσο κοστίζουν **τα πολλά**!
+                  Μαθαίνουμε πώς να λύνουμε προβλήματα με "2 απλά βήματα": βρίσκουμε πρώτα πόσο κοστίζει "το 1" και μετά υπολογίζουμε πόσο κοστίζουν "τα πολλά"!
                 </p>
               </div>
 
@@ -192,7 +192,7 @@ export default function AnagogiMonadaPage() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-black uppercase text-gray-600 mb-1">
+                    <label className="block text-xs font-black text-gray-600 mb-1">
                       Αρχικό Πλήθος ({currentItem.item}):
                     </label>
                     <input 
@@ -206,7 +206,7 @@ export default function AnagogiMonadaPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-black uppercase text-gray-600 mb-1">
+                    <label className="block text-xs font-black text-gray-600 mb-1">
                       Αρχικό Κόστος (€):
                     </label>
                     <input 
@@ -220,7 +220,7 @@ export default function AnagogiMonadaPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-black uppercase text-gray-600 mb-1">
+                    <label className="block text-xs font-black text-gray-600 mb-1">
                       Νέο Πλήθος που ζητάμε ({currentItem.item}):
                     </label>
                     <input 
@@ -244,7 +244,7 @@ export default function AnagogiMonadaPage() {
                 
                 {/* ΒΗΜΑ 1: ΥΠΟΛΟΓΙΣΜΟΣ ΜΟΝΑΔΑΣ */}
                 <div className="bg-slate-800/90 p-4 md:p-5 rounded-2xl border border-blue-500/30 space-y-2">
-                  <span className="text-[11px] font-black uppercase text-blue-400 tracking-wider block">
+                  <span className="text-[11px] font-black text-blue-400 tracking-wider block">
                     1️⃣ ΒΗΜΑ 1: Βρίσκουμε το 1 {currentItem.item.slice(0, -1)}
                   </span>
                   <div className="flex items-center justify-between text-base md:text-lg font-mono">
@@ -257,7 +257,7 @@ export default function AnagogiMonadaPage() {
 
                 {/* ΒΗΜΑ 2: ΥΠΟΛΟΓΙΣΜΟΣ ΤΕΛΙΚΗΣ ΠΟΣΟΤΗΤΑΣ */}
                 <div className="bg-slate-800/90 p-4 md:p-5 rounded-2xl border border-emerald-500/30 space-y-2">
-                  <span className="text-[11px] font-black uppercase text-emerald-400 tracking-wider block">
+                  <span className="text-[11px] font-black text-emerald-400 tracking-wider block">
                     2️⃣ ΒΗΜΑ 2: Βρίσκουμε τα {targetQty} {currentItem.item}
                   </span>
                   <div className="flex items-center justify-between text-base md:text-lg font-mono">
