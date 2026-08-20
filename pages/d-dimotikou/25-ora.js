@@ -47,7 +47,7 @@ export default function OraTheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>⏰ Μέτρηση του Χρόνου & Ρολόι - LearnMaths.gr</title>
+        <title>⏰ Μέτρηση του Χρόνου και Ρολόι - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -77,13 +77,13 @@ export default function OraTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 25
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   ⏰ Η Μέτρηση του Χρόνου
                 </h1>
                 <p className="text-blue-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε να διαβάζουμε το **αναλογικό** και το **ψηφιακό ρολόι**, να μετατρέπουμε **ώρες, λεπτά και δευτερόλεπτα** και να υπολογίζουμε χρονικές διάρκειες!
+                  Μαθαίνουμε να διαβάζουμε το "αναλογικό" και το "ψηφιακό ρολόι", να μετατρέπουμε "ώρες, λεπτά και δευτερόλεπτα" και να υπολογίζουμε χρονικές διάρκειες!
                 </p>
               </div>
 
@@ -338,7 +338,7 @@ export default function OraTheoryPage() {
                 {/* ΑΥΤΟΜΑΤΕΣ ΜΕΤΑΤΡΟΠΕΣ */}
                 <div className="bg-indigo-50 p-4 rounded-2xl border border-indigo-200 space-y-2">
                   <h4 className="text-xs font-black uppercase text-indigo-900 flex items-center gap-1.5">
-                    <span>🧮</span> Αυτόματη Μετατροπή της Ώρας:
+                    <span>🧮</span> Αυτοματη Μετατροπη της Ωρας:
                   </h4>
                   <div className="grid grid-cols-2 gap-2 text-center font-mono">
                     <div className="bg-white p-2.5 rounded-xl border border-indigo-100 shadow-sm">
