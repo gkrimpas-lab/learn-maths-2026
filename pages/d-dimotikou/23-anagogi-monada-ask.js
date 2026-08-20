@@ -42,10 +42,10 @@ const ITEMS_POOL = [
   { name: 'κούπες', single: 'κούπα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '☕' },
 
   // Αρσενικά
-  { name: 'χυμοί', single: 'χυμός', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσοι', emoji: '🧃' },
-  { name: 'χάρακες', single: 'χάρακας', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσοι', emoji: '📏' },
-  { name: 'φακέλοι', single: 'φάκελος', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσοι', emoji: '✉️' },
-  { name: 'πίνακες', single: 'πίνακας', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσοι', emoji: '🖼️' }
+  { name: 'χυμοί', single: 'χυμός', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσους', emoji: '🧃' },
+  { name: 'χάρακες', single: 'χάρακας', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσους', emoji: '📏' },
+  { name: 'φακέλοι', single: 'φάκελος', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσους', emoji: '✉️' },
+  { name: 'πίνακες', single: 'πίνακας', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσους', emoji: '🖼️' }
 ];
 
 // 1. Άσκηση: Εύρεση της Μονάδας (Βήμα 1 - Input)
