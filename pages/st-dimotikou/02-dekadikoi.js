@@ -104,7 +104,7 @@ export default function DekadikoiArithmoiPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>🔢 Δεκαδικοί Αριθμοί & Αξία Θέσης - LearnMaths.gr</title>
+        <title>🔢 Δεκαδικοί Αριθμοί και Αξία Θέσης - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -148,7 +148,7 @@ export default function DekadikoiArithmoiPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  2. Δεκαδικοί Αριθμοί & Δεκαδικά Κλάσματα
+                  2. Δεκαδικοί Αριθμοί και Δεκαδικά Κλάσματα
                 </h1>
                 <p className="text-teal-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς η <strong>υποδιαστολή</strong> διαχωρίζει τις ακέραιες μονάδες από τα δεκαδικά μέρη, και ανακάλυψε την αξία των <strong>δεκάτων</strong>, <strong>εκατοστών</strong> και <strong>χιλιοστών</strong>!
@@ -177,7 +177,7 @@ export default function DekadikoiArithmoiPage() {
                 <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   1
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Ακέραιο & Δεκαδικό Μέρος</h3>
+                <h3 className="text-lg font-black text-slate-900">Ακέραιο και Δεκαδικό Μέρος</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Η <strong>υποδιαστολή ( , )</strong> χωρίζει τον αριθμό σε δύο μέρη: το <strong>ακέραιο μέρος</strong> (αριστερά) και το <strong>δεκαδικό μέρος</strong> (δεξιά).
                 </p>
@@ -261,7 +261,7 @@ export default function DekadikoiArithmoiPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
                 <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
                   <label className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                    Πληκτρολόγησε Δεκαδικό Αριθμό (π.χ. 345,672):
+                    Πληκτρολογησε Δεκαδικο Αριθμο (π.χ. 345,672):
                   </label>
                   <input
                     type="text"
@@ -286,7 +286,7 @@ export default function DekadikoiArithmoiPage() {
 
                 <div className="bg-gradient-to-br from-slate-900 to-teal-950 text-white p-5 rounded-2xl space-y-2 shadow-md flex flex-col justify-center">
                   <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block flex items-center gap-1.5">
-                    <span>🗣️</span> Πώς διαβάζεται:
+                    <span>🗣️</span> Πως διαβαζεται:
                   </span>
                   <p className="text-base md:text-lg font-bold text-slate-100 leading-snug">
                     {getDecimalReading()}
@@ -303,9 +303,9 @@ export default function DekadikoiArithmoiPage() {
                     
                     {/* PERIODS / SECTIONS HEADER */}
                     <div className="grid grid-cols-7 text-white text-center font-black text-xs uppercase tracking-wider rounded-t-2xl overflow-hidden">
-                      <div className="col-span-3 bg-emerald-600 py-3 border-r border-white/20">Ακέραιο Μέρος</div>
+                      <div className="col-span-3 bg-emerald-600 py-3 border-r border-white/20">Ακεραιο Μερος</div>
                       <div className="bg-amber-500 py-3 border-r border-white/20">,</div>
-                      <div className="col-span-3 bg-blue-600 py-3">Δεκαδικό Μέρος</div>
+                      <div className="col-span-3 bg-blue-600 py-3">Δεκαδικο Μερος</div>
                     </div>
 
                     {/* CLASSES HEADER */}
@@ -388,7 +388,7 @@ export default function DekadikoiArithmoiPage() {
                 <div className="bg-white border border-slate-200 p-5 rounded-2xl font-mono text-xs space-y-3 shadow-inner">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider block font-sans">
-                      🧬 Πλήρης Αναλυτική Μορφή (Ακέραιες Μονάδες & Δεκαδικά Κλάσματα)
+                      🧬 Πληρης Αναλυτικη Μορφη (Ακεραιες Μοναδες & Δεκαδικα Κλασματα)
                     </span>
                     <span className="text-[10px] font-sans font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
                       Πλήρης Εμφάνιση
