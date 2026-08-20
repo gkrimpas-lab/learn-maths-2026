@@ -369,7 +369,7 @@ export default function Pollaplasiasmos3PsifiaAskPage() {
                 📝 Ασκήσεις: Πολλαπλασιασμός 3ψηφιων Αριθμών
               </h1>
               <p className="text-emerald-100 text-sm md:text-base mt-1">
-                8 Δυναμικές ασκήσεις! Πατώντας **«Νέες Ασκήσεις»** οι αριθμοί αλλάζουν αυτόματα.
+                Πατώντας «Νέες Ασκήσεις» οι αριθμοί αλλάζουν αυτόματα.
               </p>
             </div>
 
