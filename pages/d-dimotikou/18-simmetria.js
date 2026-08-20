@@ -83,7 +83,7 @@ export default function SimmetriaTheoryPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>🦋 Συμμετρία & Άξονας Συμμετρίας - LearnMaths.gr</title>
+        <title>🦋 Συμμετρία και Άξονας Συμμετρίας - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -119,7 +119,7 @@ export default function SimmetriaTheoryPage() {
                   🦋 Η Έννοια της Συμμετρίας
                 </h1>
                 <p className="text-purple-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε τι είναι **άξονας συμμετρίας**, πώς ένα σχήμα μπορεί να έχει **περισσότερους από έναν άξονες** και γιατί τα συμμετρικά μέρη έχουν **ίδια περίμετρο και ίδιο εμβαδόν**!
+                  Μαθαίνουμε τι είναι "άξονας συμμετρίας", πώς ένα σχήμα μπορεί να έχει "περισσότερους από έναν άξονες" και γιατί τα συμμετρικά μέρη έχουν "ίδια περίμετρο και ίδιο εμβαδόν"!
                 </p>
               </div>
 
@@ -142,7 +142,7 @@ export default function SimmetriaTheoryPage() {
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
             <div className="border-b pb-4 border-gray-100">
               <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Αναλυτική Θεωρία & Βασικοί Κανόνες
+                <span>📖</span> Αναλυτική Θεωρία και Βασικοί Κανόνες
               </h2>
             </div>
 
@@ -174,7 +174,7 @@ export default function SimmetriaTheoryPage() {
                   <span>📐</span> Ίση Περίμετρος & Εμβαδόν
                 </h3>
                 <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Επειδή τα δύο συμμετρικά μέρη είναι <strong>ακριβώς ίσα</strong> μεταξύ τους, έχουν **πάντα την ίδια περίμετρο** και **το ίδιο εμβαδόν**!
+                  Επειδή τα δύο συμμετρικά μέρη είναι <strong>ακριβώς ίσα</strong> μεταξύ τους, έχουν "πάντα την ίδια περίμετρο" και "το ίδιο εμβαδόν"!
                 </p>
               </div>
 
@@ -187,10 +187,10 @@ export default function SimmetriaTheoryPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-gray-100">
               <div>
                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>🧮</span> Διαδραστικό Εργαστήριο Συμμετρίας & Αναδίπλωσης
+                  <span>🧮</span> Διαδραστικό Εργαστήριο Συμμετρίας και Αναδίπλωσης
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Επίλεξε σχήμα, διάλεξε **ποιον άξονα συμμετρίας** θέλεις και σύρε το slider για να δεις το δίπλωμα!
+                  Επίλεξε σχήμα, διάλεξε "ποιον άξονα συμμετρίας" θέλεις και σύρε το slider για να δεις το δίπλωμα!
                 </p>
               </div>
 
@@ -472,7 +472,7 @@ export default function SimmetriaTheoryPage() {
                 {activeData.allowedAxes.length > 0 ? (
                   <div className="space-y-3">
                     <h4 className="text-xs font-black uppercase text-gray-700 flex items-center gap-1.5">
-                      <span>🎯</span> Επίλεξε Άξονα για Δίπλωμα:
+                      <span>🎯</span> Επιλεξε Αξονα για Διπλωμα:
                     </h4>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -572,7 +572,7 @@ export default function SimmetriaTheoryPage() {
                 {activeData.allowedAxes.length > 0 && (
                   <div className="space-y-2 bg-purple-50 p-4 rounded-2xl border border-purple-200">
                     <div className="flex justify-between items-center text-xs font-black uppercase text-purple-900">
-                      <span>📄 Δίπλωμα πάνω στον επιλεγμένο άξονα:</span>
+                      <span>📄 Διπλωμα πανω στον επιλεγμανο αξονα:</span>
                       <span className="text-purple-700 font-mono text-base font-black">{foldProgress}%</span>
                     </div>
                     <input 
@@ -592,7 +592,7 @@ export default function SimmetriaTheoryPage() {
                 {/* 3. ΠΙΝΑΚΑΣ ΙΣΟΤΗΤΑΣ ΠΕΡΙΜΕΤΡΟΥ & ΕΜΒΑΔΟΥ */}
                 <div className="bg-white p-4 rounded-2xl border border-gray-200 space-y-3 shadow-sm">
                   <h4 className="text-xs font-black uppercase text-indigo-900 flex items-center gap-2">
-                    <span>📏</span> Σύγκριση Συμμετρικών Μερών
+                    <span>📏</span> Συγκριση Συμμετρικων Μερων
                   </h4>
 
                   <div className="grid grid-cols-2 gap-3 text-center text-xs font-bold">
