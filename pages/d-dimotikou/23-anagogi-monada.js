@@ -9,12 +9,52 @@ function formatNumber(num) {
 }
 
 export default function AnagogiMonadaPage() {
-  // Έτοιμα σενάρια καθημερινότητας
+  // Έτοιμα σενάρια καθημερινότητας με πλήρη γραμματική υποστήριξη
   const presets = [
-    { item: 'μολύβια', emoji: '✏️', initialQty: 4, initialCost: 8, targetQty: 7, unit: '€' },
-    { item: 'σοκολάτες', emoji: '🍫', initialQty: 3, initialCost: 6, targetQty: 8, unit: '€' },
-    { item: 'μπάλες', emoji: '⚽', initialQty: 5, initialCost: 25, targetQty: 3, unit: '€' },
-    { item: 'βιβλία', emoji: '📚', initialQty: 2, initialCost: 18, targetQty: 5, unit: '€' }
+    { 
+      item: 'μολύβια', 
+      singleAcc: 'το 1 μολύβι', 
+      pluralAcc: 'τα', 
+      pluralNom: 'Τα', 
+      emoji: '✏️', 
+      initialQty: 4, 
+      initialCost: 8, 
+      targetQty: 7, 
+      unit: '€' 
+    },
+    { 
+      item: 'σοκολάτες', 
+      singleAcc: 'τη 1 σοκολάτα', 
+      pluralAcc: 'τις', 
+      pluralNom: 'Οι', 
+      emoji: '🍫', 
+      initialQty: 3, 
+      initialCost: 6, 
+      targetQty: 8, 
+      unit: '€' 
+    },
+    { 
+      item: 'μπάλες', 
+      singleAcc: 'τη 1 μπάλα', 
+      pluralAcc: 'τις', 
+      pluralNom: 'Οι', 
+      emoji: '⚽', 
+      initialQty: 5, 
+      initialCost: 25, 
+      targetQty: 3, 
+      unit: '€' 
+    },
+    { 
+      item: 'βιβλία', 
+      singleAcc: 'το 1 βιβλίο', 
+      pluralAcc: 'τα', 
+      pluralNom: 'Τα', 
+      emoji: '📚', 
+      initialQty: 2, 
+      initialCost: 18, 
+      targetQty: 5, 
+      unit: '€' 
+    }
   ];
 
   const [selectedPreset, setSelectedPreset] = useState(0);
@@ -22,9 +62,13 @@ export default function AnagogiMonadaPage() {
   const [initialCost, setInitialCost] = useState(presets[0].initialCost);
   const [targetQty, setTargetQty] = useState(presets[0].targetQty);
 
+  const numInitialQty = typeof initialQty === 'number' ? initialQty : 0;
+  const numInitialCost = typeof initialCost === 'number' ? initialCost : 0;
+  const numTargetQty = typeof targetQty === 'number' ? targetQty : 0;
+
   // Υπολογισμοί Αναγωγής στη Μονάδα
-  const unitCost = initialQty > 0 ? (initialCost / initialQty) : 0;
-  const finalCost = unitCost * targetQty;
+  const unitCost = numInitialQty > 0 ? (numInitialCost / numInitialQty) : 0;
+  const finalCost = unitCost * numTargetQty;
 
   const handleSelectPreset = (index) => {
     setSelectedPreset(index);
@@ -146,8 +190,9 @@ export default function AnagogiMonadaPage() {
                 «Αν τα <strong>3 τετράδια</strong> κοστίζουν <strong>6 €</strong>, πόσο κοστίζουν τα <strong>5 τετράδια</strong>;»
               </p>
               <ul className="text-xs md:text-sm space-y-1.5 pl-2 font-medium text-gray-800">
-                <li>• <strong>Βήμα 1:</strong> Βρίσκουμε πόσο κοστίζει το 1 τετράδιο → 6 : 3 = <strong className="text-blue-700 font-bold">2 €</strong>.</li>
-                <li>• <strong>Βήμα 2:</strong> Βρίσκουμε πόσο κοστίζουν τα 5 τετράδια → 5 × 2 = <strong className="text-emerald-700 font-bold">10 €</strong>.</li>
+                <li>• <strong>Βήμα 1:</strong> Βρίσκουμε το 1 τετράδιο → 6 : 3 = <strong className="text-blue-700 font-bold">2 €</strong>.</li>
+                <li>• <strong>Βήμα 2:</strong> Βρίσκουμε τα 5 τετράδια → 5 × 2 = <strong className="text-emerald-700 font-bold">10 €</strong>.</li>
+                <li>• <strong>Απάντηση:</strong> Τα 5 τετράδια κοστίζουν <strong className="text-emerald-700 font-bold">10 €</strong>.</li>
               </ul>
             </div>
           </div>
@@ -193,49 +238,82 @@ export default function AnagogiMonadaPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-black text-gray-600 mb-1">
-                      Αρχικό Πλήθος ({currentItem.item}):
+                      Αρχικό Πλήθος ({currentItem.item} - έως 3 ψηφία):
                     </label>
                     <input 
-                      type="number"
-                      min="1"
-                      max="50"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={3}
+                      autoComplete="off"
                       value={initialQty}
-                      onChange={(e) => setInitialQty(Math.max(1, Number(e.target.value)))}
+                      onChange={(e) => {
+                        const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 3);
+                        if (digitsOnly === '') {
+                          setInitialQty('');
+                        } else {
+                          setInitialQty(Number(digitsOnly));
+                        }
+                      }}
+                      onBlur={() => {
+                        if (!initialQty || initialQty < 1) setInitialQty(1);
+                      }}
                       className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-black text-gray-600 mb-1">
-                      Αρχικό Κόστος (€):
+                      Αρχικό Κόστος (€ - έως 3 ψηφία):
                     </label>
                     <input 
-                      type="number"
-                      min="1"
-                      max="500"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={3}
+                      autoComplete="off"
                       value={initialCost}
-                      onChange={(e) => setInitialCost(Math.max(1, Number(e.target.value)))}
+                      onChange={(e) => {
+                        const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 3);
+                        if (digitsOnly === '') {
+                          setInitialCost('');
+                        } else {
+                          setInitialCost(Number(digitsOnly));
+                        }
+                      }}
+                      onBlur={() => {
+                        if (!initialCost || initialCost < 1) setInitialCost(1);
+                      }}
                       className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-black text-gray-600 mb-1">
-                      Νέο Πλήθος που ζητάμε ({currentItem.item}):
+                      Νέο Πλήθος που ζητάμε ({currentItem.item} - έως 4 ψηφία):
                     </label>
                     <input 
-                      type="number"
-                      min="1"
-                      max="50"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={4}
+                      autoComplete="off"
                       value={targetQty}
-                      onChange={(e) => setTargetQty(Math.max(1, Number(e.target.value)))}
+                      onChange={(e) => {
+                        const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 4);
+                        if (digitsOnly === '') {
+                          setTargetQty('');
+                        } else {
+                          setTargetQty(Number(digitsOnly));
+                        }
+                      }}
+                      onBlur={() => {
+                        if (!targetQty || targetQty < 1) setTargetQty(1);
+                      }}
                       className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
                     />
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-500 font-bold bg-white p-3 rounded-xl border border-slate-200 text-center">
-                  📝 Πρόβλημα: «Αν τα <strong>{initialQty} {currentItem.item}</strong> κοστίζουν <strong>{initialCost} €</strong>, πόσο κοστίζουν τα <strong>{targetQty} {currentItem.item}</strong>;»
+                <p className="text-xs text-slate-600 font-bold bg-white p-3.5 rounded-xl border border-slate-200 text-center leading-relaxed">
+                  📝 Πρόβλημα: «Αν {currentItem.pluralAcc} <strong>{formatNumber(numInitialQty)} {currentItem.item}</strong> κοστίζουν <strong>{formatNumber(numInitialCost)} €</strong>, πόσο κοστίζουν {currentItem.pluralAcc} <strong>{formatNumber(numTargetQty)} {currentItem.item}</strong>;»
                 </p>
               </div>
 
@@ -245,12 +323,12 @@ export default function AnagogiMonadaPage() {
                 {/* ΒΗΜΑ 1: ΥΠΟΛΟΓΙΣΜΟΣ ΜΟΝΑΔΑΣ */}
                 <div className="bg-slate-800/90 p-4 md:p-5 rounded-2xl border border-blue-500/30 space-y-2">
                   <span className="text-[11px] font-black text-blue-400 tracking-wider block">
-                    1️⃣ ΒΗΜΑ 1: Βρίσκουμε το 1 {currentItem.item.slice(0, -1)}
+                    1️⃣ ΒΗΜΑ 1: Βρίσκουμε {currentItem.singleAcc}
                   </span>
                   <div className="flex items-center justify-between text-base md:text-lg font-mono">
-                    <span className="text-slate-300">{initialCost} € : {initialQty} =</span>
+                    <span className="text-slate-300">{formatNumber(numInitialCost)} € : {formatNumber(numInitialQty)} =</span>
                     <span className="text-blue-400 font-black text-xl bg-blue-950/80 px-3 py-1 rounded-xl border border-blue-500/40">
-                      {unitCost % 1 === 0 ? unitCost : unitCost.toFixed(2)} €
+                      {unitCost % 1 === 0 ? formatNumber(unitCost) : unitCost.toFixed(2)} €
                     </span>
                   </div>
                 </div>
@@ -258,12 +336,12 @@ export default function AnagogiMonadaPage() {
                 {/* ΒΗΜΑ 2: ΥΠΟΛΟΓΙΣΜΟΣ ΤΕΛΙΚΗΣ ΠΟΣΟΤΗΤΑΣ */}
                 <div className="bg-slate-800/90 p-4 md:p-5 rounded-2xl border border-emerald-500/30 space-y-2">
                   <span className="text-[11px] font-black text-emerald-400 tracking-wider block">
-                    2️⃣ ΒΗΜΑ 2: Βρίσκουμε τα {targetQty} {currentItem.item}
+                    2️⃣ ΒΗΜΑ 2: Βρίσκουμε {currentItem.pluralAcc} {formatNumber(numTargetQty)} {currentItem.item}
                   </span>
                   <div className="flex items-center justify-between text-base md:text-lg font-mono">
-                    <span className="text-slate-300">{targetQty} × {(unitCost % 1 === 0 ? unitCost : unitCost.toFixed(2))} € =</span>
+                    <span className="text-slate-300">{formatNumber(numTargetQty)} × {(unitCost % 1 === 0 ? formatNumber(unitCost) : unitCost.toFixed(2))} € =</span>
                     <span className="text-emerald-400 font-black text-2xl bg-emerald-950/80 px-4 py-1.5 rounded-xl border border-emerald-500/40">
-                      {finalCost % 1 === 0 ? finalCost : finalCost.toFixed(2)} €
+                      {finalCost % 1 === 0 ? formatNumber(finalCost) : finalCost.toFixed(2)} €
                     </span>
                   </div>
                 </div>
@@ -271,7 +349,7 @@ export default function AnagogiMonadaPage() {
                 {/* ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
                 <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 p-4 rounded-2xl border border-amber-400/30 text-center">
                   <p className="text-xs md:text-sm font-bold text-amber-200">
-                    🎉 Απάντηση: Τα {targetQty} {currentItem.item} κοστίζουν <span className="text-white font-black text-base">{finalCost % 1 === 0 ? finalCost : finalCost.toFixed(2)} €</span>!
+                    🎉 Απάντηση: {currentItem.pluralNom} {formatNumber(numTargetQty)} {currentItem.item} κοστίζουν <span className="text-white font-black text-base">{finalCost % 1 === 0 ? formatNumber(finalCost) : finalCost.toFixed(2)} €</span>!
                   </p>
                 </div>
 
