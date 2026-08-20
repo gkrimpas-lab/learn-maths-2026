@@ -222,10 +222,11 @@ export default function FysikoiArithmoiPage() {
                     Πληκτρολόγησε Αριθμό (έως 12 ψηφία):
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     value={number}
                     onChange={(e) => {
-                      setNumber(e.target.value.slice(0, 12));
+                      const cleanInput = e.target.value.replace(/[^0-9]/g, '').slice(0, 12);
+                      setNumber(cleanInput);
                       setActiveDigitIndex(null);
                     }}
                     className="text-2xl md:text-3xl font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-600 font-mono"
@@ -254,7 +255,7 @@ export default function FysikoiArithmoiPage() {
                   <div className="min-w-[620px] bg-white rounded-2xl shadow-sm border border-gray-200 mx-auto">
                     
                     {/* PERIODS HEADER */}
-                    <div className="grid grid-cols-4 text-white text-center font-black text-xs tracking-wider rounded-t-2xl overflow-hidden">
+                    <div className="grid grid-cols-4 text-white text-center font-black text-xs uppercase tracking-wider rounded-t-2xl overflow-hidden">
                       {periods.map((p, i) => (
                         <div key={i} className={`${p.color} py-3 border-r border-white/20 last:border-0`}>
                           <span className="hidden md:inline">{p.name}</span>
