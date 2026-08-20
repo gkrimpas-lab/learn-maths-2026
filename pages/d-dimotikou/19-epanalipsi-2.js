@@ -472,13 +472,13 @@ export default function EpanalipsiGeometryPage() {
           <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-8 rounded-3xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 19
+                Δ' ΔΗΜΟΤΙΚΟΥ
               </span>
               <h1 className="text-3xl lg:text-4xl font-black tracking-tight mt-2">
                 📐 Μεγάλη Επανάληψη Γεωμετρίας
               </h1>
               <p className="text-indigo-100 text-sm md:text-base mt-1">
-                15 Δυναμικές Ερωτήσεις με οπτικά σχήματα! Πατώντας **«Νέες Ερωτήσεις»** οι ασκήσεις αλλάζουν.
+                15 Ερωτήσεις! Πατώντας «Νέες Ερωτήσεις» οι ερωτήσεις αλλάζουν.
               </p>
             </div>
 
