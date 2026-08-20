@@ -60,7 +60,7 @@ export default function FysikoiArithmoiPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>🔢 Φυσικοί Αριθμοί & Αξία Θέσης - LearnMaths.gr</title>
+        <title>🔢 Φυσικοί Αριθμοί και Αξία Θέσης - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -104,7 +104,7 @@ export default function FysikoiArithmoiPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  1. Φυσικοί Αριθμοί & Αξία Θέσης Ψηφίου
+                  1. Φυσικοί Αριθμοί και Αξία Θέσης Ψηφίου
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς οργανώνουμε τους μεγάλους αριθμούς σε <strong>Περιόδους</strong> (τριάδες) και <strong>Τάξεις</strong>, και ανακάλυψε πώς η θέση κάθε ψηφίου καθορίζει τη συνολική του αξία!
@@ -218,7 +218,7 @@ export default function FysikoiArithmoiPage() {
               {/* ROW 1: INPUT & READING */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
                 <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
-                  <label className="text-xs font-black text-slate-500 uppercase tracking-wider block">
+                  <label className="text-xs font-black text-slate-500 tracking-wider block">
                     Πληκτρολόγησε Αριθμό (έως 12 ψηφία):
                   </label>
                   <input
@@ -237,7 +237,7 @@ export default function FysikoiArithmoiPage() {
                 </div>
 
                 <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 rounded-2xl space-y-2 shadow-md flex flex-col justify-center">
-                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block flex items-center gap-1.5">
+                  <span className="text-[10px] font-black text-amber-400 tracking-widest block flex items-center gap-1.5">
                     <span>🗣️</span> Πώς διαβάζεται ανά περίοδο:
                   </span>
                   <p className="text-base md:text-lg font-bold text-slate-100 leading-snug">
@@ -254,7 +254,7 @@ export default function FysikoiArithmoiPage() {
                   <div className="min-w-[620px] bg-white rounded-2xl shadow-sm border border-gray-200 mx-auto">
                     
                     {/* PERIODS HEADER */}
-                    <div className="grid grid-cols-4 text-white text-center font-black text-xs uppercase tracking-wider rounded-t-2xl overflow-hidden">
+                    <div className="grid grid-cols-4 text-white text-center font-black text-xs tracking-wider rounded-t-2xl overflow-hidden">
                       {periods.map((p, i) => (
                         <div key={i} className={`${p.color} py-3 border-r border-white/20 last:border-0`}>
                           <span className="hidden md:inline">{p.name}</span>
@@ -308,7 +308,7 @@ export default function FysikoiArithmoiPage() {
                 <div className="bg-white border border-slate-200 p-5 rounded-2xl font-mono text-xs space-y-3 shadow-inner">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider block font-sans">
-                      🧬 Πλήρης Αναλυτική Μορφή (Δυνάμεις του 10)
+                      🧬 Πληρης Αναλυτικη Μορφη (Δυναμεις του 10)
                     </span>
                     <span className="text-[10px] font-sans font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
                       Πλήρης Εμφάνιση
