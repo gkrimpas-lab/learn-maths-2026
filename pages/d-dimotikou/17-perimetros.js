@@ -105,13 +105,13 @@ export default function PerimetrosTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 17
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   📏 Υπολογισμός Περιμέτρου Σχημάτων
                 </h1>
                 <p className="text-amber-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε τι είναι **περίμετρος** (το γύρω-γύρω ενός σχήματος) και πώς την υπολογίζουμε προσθέτοντας όλες τις πλευρές του!
+                  Μαθαίνουμε τι είναι "περίμετρος" (το γύρω-γύρω ενός σχήματος) και πώς την υπολογίζουμε προσθέτοντας όλες τις πλευρές του!
                 </p>
               </div>
 
@@ -430,7 +430,7 @@ export default function PerimetrosTheoryPage() {
                 {/* FORMULA DISPLAY */}
                 <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700 text-center w-full">
                   <span className="text-xs uppercase font-black tracking-wider block text-slate-400 mb-1">
-                    Αναλυτικός Υπολογισμός:
+                    Αναλυτικος Υπολογισμος:
                   </span>
                   <div className="font-mono font-black text-lg md:text-xl text-amber-400 break-words">
                     {formulaText}
@@ -449,7 +449,7 @@ export default function PerimetrosTheoryPage() {
                 {shape === 'square' && (
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
-                      <span>Πλευρά (a):</span>
+                      <span>Πλευρα (a):</span>
                       <span className="text-amber-600 font-mono text-base font-black">{sideA} cm</span>
                     </div>
                     <input 
