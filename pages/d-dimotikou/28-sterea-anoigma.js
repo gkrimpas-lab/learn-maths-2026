@@ -281,7 +281,7 @@ export default function StereaAnoigmaTheoryPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 space-y-3">
                 <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ • ΕΝΟΤΗΤΑ 28
+                  Δ' ΔΗΜΟΤΙΚΟΥ
                 </span>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
                   📦 Τα Αναπτύγματα των Στερεών Σωμάτων
@@ -443,9 +443,9 @@ export default function StereaAnoigmaTheoryPage() {
               <table className="w-full text-left text-xs md:text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100 text-slate-700 uppercase font-black text-[11px] tracking-wider border-b border-slate-200">
-                    <th className="p-3.5 rounded-l-xl">Στερεό Σώμα</th>
-                    <th className="p-3.5">Σχήματα στο Ανάπτυγμα</th>
-                    <th className="p-3.5 rounded-r-xl">Χαρακτηριστικά</th>
+                    <th className="p-3.5 rounded-l-xl">Στερεο Σωμα</th>
+                    <th className="p-3.5">Σχηματα στο Αναπτυγμα</th>
+                    <th className="p-3.5 rounded-r-xl">Χαρακτηριστικα</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
