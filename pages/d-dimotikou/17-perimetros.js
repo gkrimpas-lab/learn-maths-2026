@@ -466,7 +466,7 @@ export default function PerimetrosTheoryPage() {
                 {(shape === 'triangle' || shape === 'rectangle' || shape === 'polygon' || shape === 'hexagon') && (
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
-                      <span>Πλευρα a {shape === 'rectangle' ? '(Μήκος)' : ''}:</span>
+                      <span>Πλευρα a {shape === 'rectangle' ? '(Μηκος)' : ''}:</span>
                       <span className="text-amber-600 font-mono text-base font-black">{sideA} cm</span>
                     </div>
                     <input 
@@ -483,7 +483,7 @@ export default function PerimetrosTheoryPage() {
                 {(shape === 'triangle' || shape === 'rectangle' || shape === 'polygon' || shape === 'hexagon') && (
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-xs font-black uppercase text-gray-600">
-                      <span>Πλευρα b {shape === 'rectangle' ? '(Πλάτος)' : ''}:</span>
+                      <span>Πλευρα b {shape === 'rectangle' ? '(Πλατος)' : ''}:</span>
                       <span className="text-amber-600 font-mono text-base font-black">{sideB} cm</span>
                     </div>
                     <input 
