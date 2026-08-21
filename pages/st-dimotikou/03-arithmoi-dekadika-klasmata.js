@@ -107,7 +107,7 @@ export default function MetatropiDekadikaKlasmataPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>🔄 Δεκαδικοί Αριθμοί & Δεκαδικά Κλάσματα - LearnMaths.gr</title>
+        <title>🔄 Δεκαδικοί Αριθμοί και Δεκαδικά Κλάσματα - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -151,7 +151,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  3. Μετατροπή Δεκαδικών & Κλασμάτων
+                  3. Μετατροπή Δεκαδικών και Κλασμάτων
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς κάθε δεκαδικός αριθμός γράφεται ως <strong>δεκαδικό κλάσμα</strong> και το αντίστροφο, ανακαλύπτοντας τον κανόνα των μηδενικών και της υποδιαστολής!
@@ -180,7 +180,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                 <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   1
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Δεκαδικό σε Κλάσμα</h3>
+                <h3 className="text-lg font-black text-slate-900">Δεκαδικός Αριθμός σε Κλάσμα</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Στον <strong>αριθμητή</strong> γράφουμε τον αριθμό χωρίς την υποδιαστολή. Στον <strong>παρονομαστή</strong> βάζουμε το 1 με τόσα μηδενικά όσα τα δεκαδικά ψηφία.
                 </p>
@@ -201,7 +201,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                 <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   2
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Κλάσμα σε Δεκαδικό</h3>
+                <h3 className="text-lg font-black text-slate-900">Κλάσμα σε Δεκαδικό Αριθμό</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Γράφουμε τον αριθμητή και χωρίζουμε με <strong>υποδιαστολή από δεξιά προς τα αριστερά</strong> τόσα ψηφία όσα είναι τα μηδενικά του παρονομαστή (10, 100, 1000).
                 </p>
@@ -222,7 +222,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                 <div className="w-10 h-10 bg-cyan-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   3
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Μονάδα & Υποδιαιρέσεις</h3>
+                <h3 className="text-lg font-black text-slate-900">Μονάδα και Υποδιαιρέσεις</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Το δεκαδικό κλάσμα δείχνει σε πόσα ίσα μέρη χωρίστηκε η ακέραιη μονάδα (10, 100 ή 1000) και πόσα από αυτά πήραμε.
                 </p>
@@ -280,7 +280,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                     <>
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                          Πληκτρολόγησε Δεκαδικό (0 έως 1):
+                          Πληκτρολογησε Δεκαδικο (0 έως 1):
                         </label>
                         <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
                           έως 3 δεκαδικά
@@ -382,7 +382,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                 {/* 2. DYNAMIC READOUT */}
                 <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                   <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
-                    ✨ Αποτέλεσμα Μετατροπής:
+                    ✨ Αποτελεσμα Μετατροπης:
                   </span>
                   
                   {activeTab === 'toKlasma' ? (
@@ -424,7 +424,7 @@ export default function MetatropiDekadikaKlasmataPage() {
               <div className="bg-slate-50 border border-slate-200 p-5 md:p-6 rounded-2xl flex flex-col items-center justify-between space-y-6">
                 <div className="text-center space-y-1">
                   <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    📊 Γεωμετρικό Πλέγμα Ακέραιας Μονάδας (SVG Visual)
+                    📊 Γεωμετρικο Πλεγμα Ακεραιας Μοναδας
                   </span>
                   <p className="text-xs text-slate-500">
                     Η ακέραιη μονάδα (τετράγωνο) χωρισμένη σε <strong className="text-slate-800">{currentDenominator}</strong> ίσα μέρη ({getGridLabel()}).
@@ -467,7 +467,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
                     <span className="font-black text-xs text-blue-800 uppercase block">
-                      1. Από Δεκαδικό σε Κλάσμα:
+                      1. Από Δεκαδικο σε Κλασμα:
                     </span>
                     <ul className="text-xs text-slate-600 space-y-1.5">
                       <li>• <strong>0,8</strong> (1 ψηφίο) ➔ <strong>8 / 10</strong> (δέκατα)</li>
@@ -478,7 +478,7 @@ export default function MetatropiDekadikaKlasmataPage() {
 
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
                     <span className="font-black text-xs text-emerald-800 uppercase block">
-                      2. Από Κλάσμα σε Δεκαδικό:
+                      2. Από Κλασμα σε Δεκαδικο:
                     </span>
                     <ul className="text-xs text-slate-600 space-y-1.5">
                       <li>• <strong>5 / 10</strong> (1 μηδενικό) ➔ <strong>0,5</strong></li>
