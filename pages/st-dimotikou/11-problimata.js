@@ -19,12 +19,12 @@ const PROBLEM_PRESETS = [
     ],
     steps: [
       {
-        action: 'Υπολογισμός λεωφορείων (Διαίρεση)',
+        action: 'Υπολογισμος λεωφορειων (Διαιρεση)',
         calc: '120 : 40 ＝ 3 λεωφορεία',
         explain: 'Μοιράζουμε το σύνολο των μαθητών στη χωρητικότητα κάθε λεωφορείου.'
       },
       {
-        action: 'Υπολογισμός συνολικού κόστους (Πολλαπλασιασμός)',
+        action: 'Υπολογισμος συνολικου κοστους (Πολλαπλασιασμος)',
         calc: '120 × 8 ＝ 960 €',
         explain: 'Πολλαπλασιάζουμε το πλήθος των μαθητών με την τιμή του ενός εισιτηρίου.'
       }
@@ -45,22 +45,22 @@ const PROBLEM_PRESETS = [
     ],
     steps: [
       {
-        action: 'Κόστος μήλων',
+        action: 'Κοστος μηλων',
         calc: '3 × 2 ＝ 6 €',
         explain: 'Βρίσκουμε πόσο πλήρωσε για τα μήλα.'
       },
       {
-        action: 'Κόστος τυριού',
+        action: 'Κοστος τυριου',
         calc: '2 × 6 ＝ 12 €',
         explain: 'Βρίσκουμε πόσο πλήρωσε για το τυρί.'
       },
       {
-        action: 'Συνολική δαπάνη',
+        action: 'Συνολικη δαπανη',
         calc: '6 ＋ 12 ＝ 18 €',
         explain: 'Προσθέτουμε τα επιμέρους έξοδα.'
       },
       {
-        action: 'Υπολογισμός ρέστων (Αφαίρεση)',
+        action: 'Υπολογισμος ρεστων (Αφαιρεση)',
         calc: '50 － 18 ＝ 32 €',
         explain: 'Αφαιρούμε τα συνολικά έξοδα από το αρχικό χαρτονόμισμα.'
       }
@@ -81,17 +81,17 @@ const PROBLEM_PRESETS = [
     ],
     steps: [
       {
-        action: 'Αρχικά βιβλία',
+        action: 'Αρχικα βιβλια',
         calc: '4 × 25 ＝ 100 βιβλία',
         explain: 'Βρίσκουμε πόσα βιβλία υπήρχαν συνολικά.'
       },
       {
-        action: 'Συνολικά βιβλία μετά την αγορά',
+        action: 'Συνολικα βιβλια μετα την αγορα',
         calc: '100 ＋ 35 ＝ 135 βιβλία',
         explain: 'Προσθέτουμε τα καινούρια βιβλία.'
       },
       {
-        action: 'Μοίρασμα στα 5 νέα ράφια',
+        action: 'Μοιρασμα στα 5 νεα ραφια',
         calc: '135 : 5 ＝ 27 βιβλία',
         explain: 'Διαιρούμε το σύνολο των βιβλίων με τα 5 ράφια.'
       }
@@ -196,10 +196,10 @@ export default function ProblimataPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  11. Στρατηγική & Βήματα Επίλυσης Προβλημάτων
+                  11. Στρατηγική και Βήματα Επίλυσης Προβλημάτων
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε τη μέθοδο των <strong>4 χρυσών βημάτων</strong> για να λύνεις με σιγουριά κάθε μαθηματικό πρόβλημα: <strong>Ανάγνωση</strong> ➔ <strong>Δεδομένα</strong> ➔ <strong>Ζητούμενα</strong> ➔ <strong>Σχέδιο & Λύση</strong>!
+                  Μάθε τη μέθοδο των <strong>4 χρυσών βημάτων</strong> για να λύνεις με σιγουριά κάθε μαθηματικό πρόβλημα: <strong>Ανάγνωση</strong> ➔ <strong>Δεδομένα</strong> ➔ <strong>Ζητούμενα</strong> ➔ <strong>Σχέδιο και Λύση</strong>!
                 </p>
               </div>
 
@@ -284,7 +284,7 @@ export default function ProblimataPage() {
               <div className="bg-slate-50 border-2 border-slate-200 p-6 rounded-3xl shadow-inner space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black uppercase text-blue-600 tracking-wider bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-                    Εκφώνηση Προβλήματος
+                    Εκφωνηση Προβληματος
                   </span>
                   <span className="text-xs font-bold text-slate-400">
                     Παράδειγμα {selectedProblemIndex + 1} από {PROBLEM_PRESETS.length}
@@ -380,7 +380,7 @@ export default function ProblimataPage() {
                   <div className="space-y-5 my-auto">
                     <div className="flex items-center gap-2">
                       <span className="text-2xl">⚙️</span>
-                      <h4 className="text-lg font-black text-purple-700">4ο Βήμα: Σχέδιο, Πράξεις & Τελική Απάντηση</h4>
+                      <h4 className="text-lg font-black text-purple-700">4ο Βήμα: Σχέδιο, Πράξεις και Τελική Απάντηση</h4>
                     </div>
 
                     <div className="space-y-3">
@@ -388,7 +388,7 @@ export default function ProblimataPage() {
                         <div key={idx} className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5 shadow-xs">
                           <div className="flex justify-between items-center">
                             <span className="text-xs font-black uppercase text-purple-700">
-                              Βήμα {idx + 1}: {s.action}
+                              Βημα {idx + 1}: {s.action}
                             </span>
                             <span className="font-mono text-sm md:text-base font-black text-slate-900 bg-white px-3 py-1 rounded-xl border border-slate-300">
                               {s.calc}
@@ -400,7 +400,7 @@ export default function ProblimataPage() {
                     </div>
 
                     <div className="p-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl shadow-md flex items-center justify-between">
-                      <span className="text-xs md:text-sm uppercase tracking-wider font-bold">🏁 Τελική Απάντηση:</span>
+                      <span className="text-xs md:text-sm uppercase tracking-wider font-bold">🏁 Τελικη Απαντηση:</span>
                       <span className="text-sm md:text-base font-black">{currentProblem.finalAnswer}</span>
                     </div>
                   </div>
