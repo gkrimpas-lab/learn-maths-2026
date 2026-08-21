@@ -199,6 +199,8 @@ export default function EkpProtoiPage() {
 
           {/* 3. THEORY CARDS (3 COLS) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* ΚΑΡΤΑ 1: ΔΙΑΧΩΡΙΣΜΕΝΕΣ ΙΣΟΤΗΤΕΣ ΣΕ BADGES */}
             <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
                 <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
@@ -209,11 +211,17 @@ export default function EkpProtoiPage() {
                   Αναλύουμε κάθε αριθμό χωριστά σε <strong>γινόμενο πρώτων παραγόντων</strong> και γράφουμε τις επαναλήψεις με <strong>εκθέτες (δυνάμεις)</strong>.
                 </p>
               </div>
-              <div className="bg-white p-3.5 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center">
-                <p>12 ＝ 2² × 3  •  18 ＝ 2 × 3²</p>
+              <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center flex flex-wrap items-center justify-center gap-2">
+                <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl">
+                  12 ＝ <strong className="text-blue-700 font-black">2² × 3</strong>
+                </span>
+                <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl">
+                  18 ＝ <strong className="text-blue-700 font-black">2 × 3²</strong>
+                </span>
               </div>
             </div>
 
+            {/* ΚΑΡΤΑ 2: ΔΙΑΧΩΡΙΣΜΕΝΕΣ ΕΠΙΛΟΓΕΣ ΣΕ BADGES */}
             <div className="bg-indigo-50/80 border border-indigo-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
                 <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
@@ -224,11 +232,17 @@ export default function EkpProtoiPage() {
                   Επιλέγουμε όλους τους <strong>κοινούς ΚΑΙ μη κοινούς</strong> πρώτους παράγοντες, παίρνοντας για τον καθένα τον <strong>μεγαλύτερο εκθέτη</strong>.
                 </p>
               </div>
-              <div className="bg-white p-3.5 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
-                <p>Από 2: παίρνουμε 2²  •  Από 3: 3²</p>
+              <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center flex flex-wrap items-center justify-center gap-2 font-bold">
+                <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
+                  Από 2: <strong className="text-indigo-700 font-black">2²</strong>
+                </span>
+                <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
+                  Από 3: <strong className="text-indigo-700 font-black">3²</strong>
+                </span>
               </div>
             </div>
 
+            {/* ΚΑΡΤΑ 3: ΥΠΟΛΟΓΙΣΜΟΣ */}
             <div className="bg-emerald-50/80 border border-emerald-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
                 <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
@@ -239,10 +253,13 @@ export default function EkpProtoiPage() {
                   Πολλαπλασιάζουμε τις δυνάμεις που επιλέξαμε για να βρούμε το τελικό αποτέλεσμα.
                 </p>
               </div>
-              <div className="bg-white p-3.5 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
-                <p>Ε.Κ.Π. ＝ 2² × 3² ＝ 4 × 9 ＝ 36</p>
+              <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
+                <span className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-emerald-900 inline-block">
+                  Ε.Κ.Π. ＝ 2² × 3² ＝ 4 × 9 ＝ <strong className="text-emerald-700 font-black">36</strong>
+                </span>
               </div>
             </div>
+
           </div>
 
           {/* 4. INTERACTIVE PLAYGROUND */}
