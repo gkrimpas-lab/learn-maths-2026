@@ -309,12 +309,12 @@ export default function EkpProtoiPage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Τιμές Αριθμών (2 - {MAX_ALLOWED_NUMBER}):
+                      Τιμες Αριθμων (2 - {MAX_ALLOWED_NUMBER}):
                     </span>
                     <div className="space-y-2.5">
                       <div className="space-y-0.5">
                         <label className="text-[10px] font-bold text-slate-400 uppercase">
-                          1ος Αριθμός:
+                          1ος Αριθμος:
                         </label>
                         <input
                           type="text"
@@ -327,7 +327,7 @@ export default function EkpProtoiPage() {
 
                       <div className="space-y-0.5">
                         <label className="text-[10px] font-bold text-slate-400 uppercase">
-                          2ος Αριθμός:
+                          2ος Αριθμος:
                         </label>
                         <input
                           type="text"
@@ -341,7 +341,7 @@ export default function EkpProtoiPage() {
                       {numCount === 3 && (
                         <div className="space-y-0.5">
                           <label className="text-[10px] font-bold text-slate-400 uppercase">
-                            3ος Αριθμός:
+                            3ος Αριθμος:
                           </label>
                           <input
                             type="text"
@@ -358,7 +358,7 @@ export default function EkpProtoiPage() {
                   {/* PRESET EXAMPLES (2 COLS x 2 ROWS) */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {numCount === 2 ? PRESETS_2.map((p, idx) => (
@@ -402,7 +402,7 @@ export default function EkpProtoiPage() {
                 {/* HEADER STATUS */}
                 <div className="w-full text-center">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                    Υπολογισμός Ε.Κ.Π. με Πρώτους Παράγοντες:
+                    Υπολογισμος Ε.Κ.Π. με Πρωτους Παραγοντες:
                   </span>
                   <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-wider shadow-sm">
                     Ε.Κ.Π.({currentNumbersString}) ＝ <span className="text-amber-500">{ekp.toLocaleString('el-GR')}</span>
@@ -412,7 +412,7 @@ export default function EkpProtoiPage() {
                 {/* 1. ΚΑΤΑΚΟΡΥΦΕΣ ΑΝΑΛΥΣΕΙΣ ΣΕ ΣΤΗΛΕΣ */}
                 <div className="w-full space-y-2">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                    📋 1. Κατακόρυφη Παραγοντοποίηση κάθε Αριθμού:
+                    📋 1. Κατακορυφη Παραγοντοποιηση καθε Αριθμου:
                   </span>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 justify-center bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-inner">
@@ -438,7 +438,7 @@ export default function EkpProtoiPage() {
 
                         {/* ΜΟΡΦΗ ΔΥΝΑΜΕΩΝ */}
                         <div className="text-center pt-2 border-t border-slate-100 w-full">
-                          <span className="text-[10px] text-slate-400 block font-bold uppercase">Μορφή Δυνάμεων:</span>
+                          <span className="text-[10px] text-slate-400 block font-bold uppercase">Μορφη Δυναμεων:</span>
                           <span className="font-mono font-black text-sm text-slate-800">
                             {numObj.val} ＝ <span className="text-blue-600">{numObj.fact.expr}</span>
                           </span>
@@ -451,7 +451,7 @@ export default function EkpProtoiPage() {
                 {/* 2. ΕΠΕΞΗΓΗΣΗ ΕΠΙΛΟΓΗΣ ΜΕΓΙΣΤΩΝ ΕΚΘΕΤΩΝ */}
                 <div className="w-full bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-3 shadow-md">
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                    🔍 2. Εφαρμογή Κανόνα (Κοινοί & Μη Κοινοί με Μέγιστο Εκθέτη):
+                    🔍 2. Εφαρμογη Κανονα (Κοινοι και Μη Κοινοι με Μεγιστο Εκθετη):
                   </span>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-1">
@@ -474,7 +474,7 @@ export default function EkpProtoiPage() {
                 {/* 3. ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ / ΓΙΝΟΜΕΝΟ */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-5 rounded-2xl text-center shadow-lg font-mono space-y-1.5">
                   <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                    Τελικός Υπολογισμός Ε.Κ.Π.:
+                    Τελικος Υπολογισμος Ε.Κ.Π.:
                   </span>
                   <div className="text-lg md:text-xl font-black tracking-wide">
                     Ε.Κ.Π.({currentNumbersString}) ＝{' '}
