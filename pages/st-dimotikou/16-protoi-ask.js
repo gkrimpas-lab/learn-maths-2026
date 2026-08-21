@@ -237,7 +237,7 @@ export default function ProtoiExercisesPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col justify-between pb-32">
       <Head>
-        <title>🎯 Ασκήσεις: Πρώτοι & Σύνθετοι Αριθμοί - ΣΤ' Δημοτικού | LearnMaths.gr</title>
+        <title>🎯 Ασκήσεις: Πρώτοι και Σύνθετοι Αριθμοί - ΣΤ' Δημοτικού | LearnMaths.gr</title>
         <meta name="description" content="Διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση στους πρώτους και σύνθετους αριθμούς για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
