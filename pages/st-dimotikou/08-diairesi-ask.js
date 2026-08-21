@@ -287,7 +287,7 @@ export default function DiairesiExercisesPage() {
                 <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                Διαδραστικές Ασκήσεις: Τέλεια & Ατελής Διαίρεση
+                Διαδραστικές Ασκήσεις: Τέλεια και Ατελής Διαίρεση
               </h1>
               <p className="text-blue-100 text-sm md:text-base max-w-xl">
                 Λύσε τα 8 δυναμικά προβλήματα διαίρεσης, υπολογισμού πηλίκου, υπολοίπου και επαλήθευσης!
