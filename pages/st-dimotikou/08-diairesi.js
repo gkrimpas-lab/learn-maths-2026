@@ -509,7 +509,7 @@ export default function DiairesiPage() {
                       {D <= LIMITS.MAX_VISUAL_BOXES && D > 0 && d > 0 ? (
                         <div className="flex flex-col items-center gap-4 w-full">
                           <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
-                            Μοιρασμα {D} στοιχειων σε {d} ισες ομάδες:
+                            Μοιρασμα {D} στοιχειων σε {d} ισες ομαδες:
                           </span>
                           
                           <div className="flex flex-wrap gap-2.5 justify-center max-h-[280px] overflow-y-auto p-3 border rounded-2xl bg-white w-full max-w-xl shadow-inner">
