@@ -260,7 +260,7 @@ export default function DiairesiPage() {
                     <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-blue-200 shadow-sm">
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-black text-blue-800 uppercase tracking-wider block">
-                          Διαιρετέος (Δ):
+                          Διαιρετεος (Δ):
                         </label>
                         <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-full">
                           έως 9999
@@ -312,7 +312,7 @@ export default function DiairesiPage() {
                     <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-sm">
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-black text-emerald-800 uppercase tracking-wider block">
-                          Διαιρέτης (δ):
+                          Διαιρετης (δ):
                         </label>
                         <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-full">
                           έως 99
@@ -350,7 +350,7 @@ export default function DiairesiPage() {
 
                   {/* STATUS BADGE */}
                   <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm text-center flex flex-col gap-1.5 font-sans">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Είδος Διαίρεσης:</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Ειδος Διαιρεσης:</span>
                     <div className={`text-sm md:text-base font-black px-4 py-1.5 rounded-full inline-block mx-auto ${
                       isPerfect ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
                     }`}>
@@ -362,7 +362,7 @@ export default function DiairesiPage() {
                 {/* DYNAMIC RESULT CARD (5 COLS) */}
                 <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                   <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
-                    ✨ Μαθηματική Ταυτότητα Επαλήθευσης:
+                    ✨ Μαθηματικη Ταυτοτητα Επαληθευσης:
                   </span>
 
                   <div className="text-xl md:text-2xl font-black font-mono bg-white/10 px-4 py-2 rounded-2xl border border-white/20">
@@ -509,7 +509,7 @@ export default function DiairesiPage() {
                       {D <= LIMITS.MAX_VISUAL_BOXES && D > 0 && d > 0 ? (
                         <div className="flex flex-col items-center gap-4 w-full">
                           <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
-                            Μοίρασμα {D} στοιχείων σε {d} ίσες ομάδες:
+                            Μοιρασμα {D} στοιχειων σε {d} ισες ομάδες:
                           </span>
                           
                           <div className="flex flex-wrap gap-2.5 justify-center max-h-[280px] overflow-y-auto p-3 border rounded-2xl bg-white w-full max-w-xl shadow-inner">
@@ -524,7 +524,7 @@ export default function DiairesiPage() {
 
                           {r > 0 && (
                             <div className="flex flex-col items-center gap-1.5 mt-1">
-                              <span className="text-xs font-bold text-rose-600 uppercase tracking-wide">📦 Περίσσεψαν (Υπόλοιπο = {r}):</span>
+                              <span className="text-xs font-bold text-rose-600 uppercase tracking-wide">📦 Περισσεψαν (Υπολοιπο = {r}):</span>
                               <div className="flex gap-1.5 bg-rose-50 border border-rose-200 p-2.5 rounded-xl">
                                 {[...Array(r)].map((_, i) => (
                                   <div key={i} className="w-3.5 h-3.5 bg-rose-500 rounded-sm shadow-xs" />
