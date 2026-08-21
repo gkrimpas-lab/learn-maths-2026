@@ -156,7 +156,7 @@ export default function StroggilopoiisiPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  12. Στρογγυλοποίηση Φυσικών & Δεκαδικών Αριθμών
+                  12. Στρογγυλοποίηση Φυσικών και Δεκαδικών Αριθμών
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε τον «κανόνα του ψηφίου-κλειδιού» για να στρογγυλοποιείς με ακρίβεια σε οποιαδήποτε τάξη: <strong>Μονάδες</strong>, <strong>Δεκάδες</strong>, <strong>Εκατοντάδες</strong> ή <strong>Δέκατα</strong>, <strong>Εκατοστά</strong> και <strong>Χιλιοστά</strong>!
@@ -264,7 +264,7 @@ export default function StroggilopoiisiPage() {
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Πληκτρολόγησε Αριθμό:
+                      Πληκτρολογησε Αριθμο:
                     </span>
                     <input
                       type="text"
@@ -277,7 +277,7 @@ export default function StroggilopoiisiPage() {
 
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Επίλεξε Τάξη Στρογγυλοποίησης:
+                      Επιλεξε Ταξη Στρογγυλοποιησης:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       <button
@@ -348,7 +348,7 @@ export default function StroggilopoiisiPage() {
                 
                 <div className="w-full text-center mb-4">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                    Οπτική Αριθμογραμμή Στρογγυλοποίησης:
+                    Οπτικη Αριθμογραμμη Στρογγυλοποιησης:
                   </span>
                   <div className="text-lg md:text-xl font-bold text-slate-700 mt-1">
                     Πού βρίσκεται ο αριθμός <span className="font-mono font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-xl border border-blue-200">{inputValue || "0"}</span>;
@@ -366,7 +366,7 @@ export default function StroggilopoiisiPage() {
                       </span>
                     </div>
                     <div className="absolute left-0 top-4 text-center -translate-x-1/2 mt-1">
-                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Κάτω Όριο</span>
+                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Κατω Οριο</span>
                     </div>
 
                     {/* Upper Bound */}
@@ -376,7 +376,7 @@ export default function StroggilopoiisiPage() {
                       </span>
                     </div>
                     <div className="absolute right-0 top-4 text-center translate-x-1/2 mt-1">
-                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Πάνω Όριο</span>
+                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Πανω Οριο</span>
                     </div>
 
                     {/* Midpoint (5 threshold) */}
@@ -402,7 +402,7 @@ export default function StroggilopoiisiPage() {
                   {/* Info Breakdown Banner */}
                   <div className="mt-16 flex justify-between items-center w-full bg-slate-50 rounded-2xl p-4 border border-slate-200 font-medium">
                     <div className="text-left space-y-1">
-                      <span className="text-[10px] uppercase text-slate-400 font-black block">Ψηφίο-Κλειδί:</span>
+                      <span className="text-[10px] uppercase text-slate-400 font-black block">Ψηφιο-Κλειδι:</span>
                       <span className={`text-base font-black font-mono ${isUp ? 'text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg' : 'text-rose-600 bg-rose-50 px-2 py-0.5 rounded-lg'}`}>
                         {isNaN(keyDigit) ? 0 : keyDigit}
                       </span>
@@ -410,7 +410,7 @@ export default function StroggilopoiisiPage() {
                     
                     <div className="flex-1 flex flex-col items-center mx-4">
                       <span className={`text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider ${isUp ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
-                        {isUp ? "Στρογγυλοποίηση Πάνω ➔" : "⮨ Στρογγυλοποίηση Κάτω"}
+                        {isUp ? "Στρογγυλοποιηση Πανω ➔" : "⮨ Στρογγυλοποιηση Κατω"}
                       </span>
                       <span className="text-[10px] text-slate-500 mt-1 text-center">
                         Επειδή το αμέσως επόμενο ψηφίο είναι {isUp ? "≥ 5" : "< 5"}
@@ -418,7 +418,7 @@ export default function StroggilopoiisiPage() {
                     </div>
 
                     <div className="text-right space-y-1">
-                      <span className="text-[10px] uppercase text-slate-400 font-black block">Στρογγυλοποίηση στα/στις:</span>
+                      <span className="text-[10px] uppercase text-slate-400 font-black block">Στρογγυλοποιηση στα/στις:</span>
                       <span className="text-xs font-black text-slate-700">
                         {placeName}
                       </span>
@@ -429,7 +429,7 @@ export default function StroggilopoiisiPage() {
                 {/* FINAL RESULT BADGE */}
                 <div className="w-full max-w-md mx-auto bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-2xl text-center shadow-lg font-mono font-black flex items-center justify-center gap-3">
                   <span className="text-xl">🎯</span>
-                  <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελική Τιμή:</span>
+                  <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελικη Τιμη:</span>
                   <span className="text-2xl bg-white/20 px-4 py-1 rounded-xl shadow-inner">
                     {formatWithComma(roundedValue, precisionDigits)}
                   </span>
