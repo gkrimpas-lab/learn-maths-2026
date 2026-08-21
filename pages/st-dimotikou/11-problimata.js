@@ -159,20 +159,20 @@ export default function ProblimataPage() {
       <div>
         {/* 1. STICKY NAVBAR */}
         <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 w-full">
-          <div className={`${LAYOUT.CONTAINER} 2xl:max-w-7xl py-3.5 flex justify-between items-center`}>
-            <Link href="/st-dimotikou" className="text-2xl 2xl:text-3xl font-black text-blue-600 tracking-tight flex items-center">
+          <div className={`${LAYOUT.CONTAINER} py-3.5 flex justify-between items-center`}>
+            <Link href="/st-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight flex items-center">
               <span>LearnMaths</span><span className="text-indigo-600">.gr</span>
             </Link>
             <div className="flex items-center gap-3">
               <Link
                 href="/st-dimotikou/11-problimata-ask"
-                className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-4 py-2 rounded-xl text-xs md:text-sm 2xl:text-base font-black transition shadow-sm flex items-center gap-1.5"
+                className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-4 py-2 rounded-xl text-xs md:text-sm font-black transition shadow-sm flex items-center gap-1.5"
               >
                 <span>🎯</span> Ασκήσεις
               </Link>
               <Link
                 href="/st-dimotikou"
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-xs md:text-sm 2xl:text-base font-bold transition"
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-xs md:text-sm font-bold transition"
               >
                 🔙 ΣΤ' Δημοτικού
               </Link>
@@ -181,36 +181,36 @@ export default function ProblimataPage() {
         </nav>
 
         {/* 2. MAIN LESSON CONTAINER */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} 2xl:max-w-7xl py-8 md:py-12 space-y-10 2xl:space-y-14`}>
+        <main className={`${LAYOUT.LESSON_CONTAINER} py-8 md:py-12 space-y-10`}>
 
           {/* HERO BANNER WITH PROMO CALLOUT CARD */}
-          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 2xl:p-12 text-white shadow-xl relative overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="bg-white/20 text-white font-black text-xs 2xl:text-sm px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
+                  <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
                     🎓 ΣΤ' Δημοτικού
                   </span>
-                  <span className="bg-amber-400 text-slate-900 font-black text-xs 2xl:text-sm px-3 py-1 rounded-full uppercase tracking-wider">
+                  <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
                     Ενότητα 11
                   </span>
                 </div>
-                <h1 className="text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
+                <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
                   11. Στρατηγική & Βήματα Επίλυσης Προβλημάτων
                 </h1>
-                <p className="text-blue-100 text-sm md:text-base 2xl:text-lg leading-relaxed max-w-3xl">
+                <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε τη μέθοδο των <strong>4 χρυσών βημάτων</strong> για να λύνεις με σιγουριά κάθε μαθηματικό πρόβλημα: <strong>Ανάγνωση</strong> ➔ <strong>Δεδομένα</strong> ➔ <strong>Ζητούμενα</strong> ➔ <strong>Σχέδιο & Λύση</strong>!
                 </p>
               </div>
 
               {/* CALLOUT PROMO CARD */}
               <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
-                <span className="text-3xl 2xl:text-4xl">🚀</span>
-                <h3 className="font-black text-lg 2xl:text-xl text-amber-300">Ώρα για Εξάσκηση!</h3>
-                <p className="text-xs 2xl:text-sm text-blue-50">Λύσε 8 δυναμικά προβλήματα με άμεσο έλεγχο και βαθμολόγηση!</p>
+                <span className="text-3xl">🚀</span>
+                <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
+                <p className="text-xs text-blue-50">Λύσε 8 δυναμικά προβλήματα με άμεσο έλεγχο και βαθμολόγηση!</p>
                 <Link
                   href="/st-dimotikou/11-problimata-ask"
-                  className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm 2xl:text-base"
+                  className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
                 >
                   🎯 Μετάβαση στις Ασκήσεις
                 </Link>
@@ -232,10 +232,10 @@ export default function ProblimataPage() {
                     </span>
                     <span className="text-2xl">{step.icon}</span>
                   </div>
-                  <h3 className={`text-base 2xl:text-lg font-black ${step.textColor}`}>
+                  <h3 className={`text-base font-black ${step.textColor}`}>
                     {step.title}
                   </h3>
-                  <p className="text-xs 2xl:text-sm text-slate-600 leading-relaxed font-medium">
+                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
                     {step.desc}
                   </p>
                 </div>
@@ -244,13 +244,13 @@ export default function ProblimataPage() {
           </div>
 
           {/* 4. INTERACTIVE PLAYGROUND: STEP-BY-STEP PROBLEM SOLVER */}
-          <div className="bg-white p-6 md:p-8 2xl:p-10 rounded-3xl border border-gray-200 shadow-sm space-y-8">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
-                <h2 className="text-2xl 2xl:text-3xl font-black text-slate-900 flex items-center gap-2">
+                <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
                   <span>🕹️</span> Διαδραστικό Εργαστήριο Καθοδηγούμενης Επίλυσης
                 </h2>
-                <p className="text-gray-500 text-sm 2xl:text-base">
+                <p className="text-gray-500 text-sm">
                   Επίλεξε ένα πρόβλημα και ακολούθησε τα βήματα για να δεις πώς αναλύεται και οργανώνεται η λύση του!
                 </p>
               </div>
@@ -290,7 +290,7 @@ export default function ProblimataPage() {
                     Παράδειγμα {selectedProblemIndex + 1} από {PROBLEM_PRESETS.length}
                   </span>
                 </div>
-                <p className="text-base md:text-lg 2xl:text-xl font-bold text-slate-800 leading-relaxed">
+                <p className="text-base md:text-lg font-bold text-slate-800 leading-relaxed">
                   «{currentProblem.text}»
                 </p>
               </div>
@@ -436,17 +436,17 @@ export default function ProblimataPage() {
             </div>
           </div>
 
-          {/* 5. BOTTOM CALLOUT BANNER (INSIDE MAIN) */}
-          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 2xl:p-10 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
+          {/* 5. BOTTOM CALLOUT BANNER */}
+          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="space-y-1.5 text-center md:text-left">
-              <h3 className="text-2xl 2xl:text-3xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-              <p className="text-gray-800 text-sm md:text-base 2xl:text-lg">
+              <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
+              <p className="text-gray-800 text-sm md:text-base">
                 Έμαθες πώς να οργανώνεις τα δεδομένα και τα ζητούμενα; Δοκίμασε τις διαδραστικές ασκήσεις προβλημάτων για να τελειοποιήσεις τη μέθοδό σου!
               </p>
             </div>
             <Link
               href="/st-dimotikou/11-problimata-ask"
-              className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base 2xl:text-lg whitespace-nowrap"
+              className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
             >
               Ξεκίνα τις Ασκήσεις ➔
             </Link>
@@ -455,8 +455,8 @@ export default function ProblimataPage() {
         </main>
       </div>
 
-      {/* 6. GLOBAL FOOTER (OUTSIDE MAIN) */}
-      <footer className="bg-gray-800 text-gray-400 py-6 2xl:py-8 text-center text-sm 2xl:text-base w-full border-t border-gray-700">
+      {/* 6. GLOBAL FOOTER */}
+      <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
         <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη ΣΤ' Δημοτικού.</p>
       </footer>
     </div>
