@@ -238,7 +238,7 @@ export default function KritiriaDiairetotitasPage() {
                 <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   2
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Άθροισμα Ψηφίων (3 & 9)</h3>
+                <h3 className="text-lg font-black text-slate-900">Άθροισμα Ψηφίων (3 και 9)</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Προσθέτουμε όλα τα ψηφία του αριθμού μεταξύ τους:<br/>
                   • <strong>με το 3:</strong> το άθροισμα διαιρείται με το 3.<br/>
@@ -255,7 +255,7 @@ export default function KritiriaDiairetotitasPage() {
                 <div className="w-10 h-10 bg-cyan-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   3
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Δύο Τελευταία Ψηφία (4 & 25)</h3>
+                <h3 className="text-lg font-black text-slate-900">Δύο Τελευταία Ψηφία (4 και 25)</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   • <strong>με το 4:</strong> τα δύο τελευταία ψηφία διαιρούνται με το 4 (ή είναι 00).<br/>
                   • <strong>με το 25:</strong> τελειώνει σε 00, 25, 50 ή 75.
@@ -288,7 +288,7 @@ export default function KritiriaDiairetotitasPage() {
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Πληκτρολόγησε Αριθμό:
+                      Πληκτρολογησε Αριθμο:
                     </span>
                     <input
                       type="text"
@@ -302,7 +302,7 @@ export default function KritiriaDiairetotitasPage() {
                   {/* PRESETS BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Ή διάλεξε έτοιμο παράδειγμα:
+                      Η διαλεξε ετοιμο παραδειγμα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((preset) => (
@@ -333,7 +333,7 @@ export default function KritiriaDiairetotitasPage() {
                 
                 <div className="w-full text-center mb-2">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                    Έλεγχος Διαιρετότητας για τον Αριθμό:
+                    Ελεγχος Διαιρετοτητας για τον Αριθμο:
                   </span>
                   <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-widest max-w-full break-all shadow-sm">
                     {numberStr || "—"}
