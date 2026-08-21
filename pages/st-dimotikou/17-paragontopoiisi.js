@@ -375,7 +375,7 @@ export default function ParagontopoiisiPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">Μέθοδος 2: Δέντρο Παραγόντων</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Διασπούμε τον αριθμό σε κλαδιά γινομένων, μέχρι όλα τα τέρματα (φύλλα) του δέντρου να γίνουν <strong>πρώτοι αριθμοί</strong>.
+                  Διασπούμε τον αριθμό σε κλαδιά γινομένων, μέχρι όλα τα φύλλα του δέντρου να γίνουν <strong>πρώτοι αριθμοί</strong>.
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -431,7 +431,7 @@ export default function ParagontopoiisiPage() {
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Πληκτρολόγησε Αριθμό (2 - 10.000):
+                      Πληκτρολογησε Αριθμο (2 - 10.000):
                     </span>
                     <input
                       type="text"
@@ -445,7 +445,7 @@ export default function ParagontopoiisiPage() {
                   {/* PRESET BUTTONS (2 COLS x 3 ROWS) */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Ή επίλεξε έτοιμο αριθμό:
+                      Η επιλεξε ετοιμο αριθμο:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((p) => (
@@ -477,7 +477,7 @@ export default function ParagontopoiisiPage() {
                 {/* HEADER STATUS */}
                 <div className="w-full text-center">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                    Παραγοντοποίηση του Αριθμού:
+                    Παραγοντοποιηση του Αριθμου:
                   </span>
                   <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-wider shadow-sm">
                     {number ? number.toLocaleString('el-GR') : "—"}
@@ -496,7 +496,7 @@ export default function ParagontopoiisiPage() {
                       /* FACTOR TREE DISPLAY WITH PERFECT SVG CENTERING */
                       <div className="flex flex-col items-center justify-center space-y-4 w-full">
                         <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">
-                          🌳 Διάγραμμα Δέντρου Παραγόντων:
+                          🌳 Διαγραμμα Δεντρου Παραγοντων:
                         </span>
                         
                         <div className="bg-slate-50 p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 w-full flex justify-center items-center shadow-inner min-h-[320px]">
@@ -507,7 +507,7 @@ export default function ParagontopoiisiPage() {
                       /* LADDER DISPLAY */
                       <div className="flex flex-col items-center justify-center space-y-2 w-full">
                         <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">
-                          📋 Κατακόρυφη Κλίμακα Διαδοχικών Διαιρέσεων:
+                          📋 Κατακορυφη Κλιμακα Διαδοχικων Διαιρεσεων:
                         </span>
                         
                         <div className="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 font-mono text-base md:text-lg min-w-[260px] max-h-[400px] overflow-y-auto shadow-md">
@@ -535,7 +535,7 @@ export default function ParagontopoiisiPage() {
                 {number && number >= 2 && (
                   <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-2xl text-center shadow-lg font-mono font-black space-y-1">
                     <span className="text-xs font-sans uppercase tracking-wider block text-blue-200">
-                      Τελική Έκφραση σε Γινόμενο Πρώτων Παραγόντων:
+                      Τελικη Εκφραση σε Γινομενο Πρωτων Παραγοντων:
                     </span>
                     <div className="text-lg md:text-xl tracking-widest pt-1">
                       {number.toLocaleString('el-GR')} ＝ {primeFactors.join(' × ')} ＝ <span className="text-amber-300 font-black">{powerRep}</span>
