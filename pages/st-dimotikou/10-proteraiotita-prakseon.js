@@ -4,17 +4,18 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 const PRESETS = {
-  EX1: { title: "10 - 2 × 4", expr: "10 - 2 * 4" },
-  EX2: { title: "5 + 3 × (4 + 2)", expr: "5 + 3 * (4 + 2)" },
-  EX3: { title: "12 ÷ 3 × 2 + 4", expr: "12 / 3 * 2 + 4" },
-  EX4: { title: "50 - (3 × 12) + 8", expr: "50 - (3 * 12) + 8" }
+  EX1: { title: "10 - 2 × 4", expr: "10-2*4" },
+  EX2: { title: "5 + 3 × (4 + 2)", expr: "5+3*(4+2)" },
+  EX3: { title: "12 ÷ 3 × 2 + 4", expr: "12/3*2+4" },
+  EX4: { title: "50 - (3 × 12) + 8", expr: "50-(3*12)+8" }
 };
 
 export default function ProteraiotitaPrakseonPage() {
-  const [customExpr, setCustomExpr] = useState("15 + 3 - (6 - 2) * 3");
+  const [customExpr, setCustomExpr] = useState("15+3-(6-2)*3");
 
   const handleInputChange = (val) => {
-    const clean = val.replace(/[^0-9+\-*/(). ,]/g, '');
+    // Αφαίρεση κενών και επιτρεπόμενα μόνο νούμερα, πράξεις, παρενθέσεις και κόμμα/τελεία
+    const clean = val.replace(/\s+/g, '').replace(/[^0-9+\-*/().,]/g, '');
     setCustomExpr(clean);
   };
 
@@ -40,15 +41,14 @@ export default function ProteraiotitaPrakseonPage() {
 
   const generateSteps = (exprStr) => {
     const steps = [];
-    let currentStr = exprStr.replace(/,/g, '.').trim();
-    if (!currentStr) return { steps: [], final: "0" };
+    let currentStr = exprStr.replace(/\s+/g, '').replace(/,/g, '.').trim();
+    if (!currentStr) return { steps: [], final: "0", isValid: false };
 
     const tokenize = (str) => {
       const res = [];
       let i = 0;
       while (i < str.length) {
         const ch = str[i];
-        if (/\s/.test(ch)) { i++; continue; }
         
         if (ch === '(' || ch === ')') {
           res.push({ type: 'PAREN', value: ch });
@@ -66,6 +66,7 @@ export default function ProteraiotitaPrakseonPage() {
                 numStr += str[i];
                 i++;
               }
+              if (numStr === '-') return null; // μη έγκυρο
               res.push({ type: 'NUMBER', value: parseFloat(numStr) });
               continue;
             }
@@ -90,9 +91,32 @@ export default function ProteraiotitaPrakseonPage() {
     };
 
     let tokens = tokenize(currentStr);
+    if (!tokens || tokens.length === 0) return { steps: [], final: "0", isValid: false };
+
+    // Έλεγχος συντακτικής εγκυρότητας (Parentheses matching & token structure)
+    let openCount = 0;
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i].type === 'PAREN') {
+        if (tokens[i].value === '(') openCount++;
+        if (tokens[i].value === ')') openCount--;
+        if (openCount < 0) return { steps: [], final: "0", isValid: false };
+      }
+      // Έλεγχος για διαδοχικούς αριθμούς χωρίς τελεστή
+      if (i > 0 && tokens[i].type === 'NUMBER' && tokens[i - 1].type === 'NUMBER') {
+        return { steps: [], final: "0", isValid: false };
+      }
+    }
+    if (openCount !== 0) return { steps: [], final: "0", isValid: false };
+
+    // Έλεγχος αν τελειώνει ή ξεκινά με απαγορευμένο τελεστή
+    const firstToken = tokens[0];
+    const lastToken = tokens[tokens.length - 1];
+    if (firstToken.type === 'OPERATOR' && firstToken.value !== '-') return { steps: [], final: "0", isValid: false };
+    if (lastToken.type === 'OPERATOR') return { steps: [], final: "0", isValid: false };
+
     let safetyCounter = 0;
 
-    while (safetyCounter < 15 && tokens.length > 1) {
+    while (safetyCounter < 20 && tokens.length > 1) {
       safetyCounter++;
       let targetIdx = -1;
       let reasonType = '';
@@ -163,9 +187,17 @@ export default function ProteraiotitaPrakseonPage() {
       }
 
       if (targetIdx !== -1 && targetIdx > 0 && targetIdx < tokens.length - 1) {
-        const num1 = tokens[targetIdx - 1].value;
-        const op = tokens[targetIdx].value;
-        const num2 = tokens[targetIdx + 1].value;
+        const num1Token = tokens[targetIdx - 1];
+        const opToken = tokens[targetIdx];
+        const num2Token = tokens[targetIdx + 1];
+
+        if (num1Token.type !== 'NUMBER' || num2Token.type !== 'NUMBER') {
+          return { steps: [], final: "0", isValid: false };
+        }
+
+        const num1 = num1Token.value;
+        const op = opToken.value;
+        const num2 = num2Token.value;
         
         let res = 0;
         if (op === '+') res = num1 + num2;
@@ -199,12 +231,12 @@ export default function ProteraiotitaPrakseonPage() {
       tokens = [tokens[1]];
     }
 
+    const isValidResult = tokens.length === 1 && tokens[0].type === 'NUMBER';
+
     return {
       steps: steps,
-      final: tokens.map(t => {
-        const str = t.value.toString().replace('.', ',');
-        return t.value < 0 ? `(${str})` : str;
-      }).join('')
+      final: isValidResult ? tokens[0].value.toString().replace('.', ',') : "0",
+      isValid: isValidResult
     };
   };
 
@@ -351,7 +383,7 @@ export default function ProteraiotitaPrakseonPage() {
                       Γράψε τη δική σου παράσταση:
                     </span>
                     <p className="text-gray-500 text-xs">
-                      Χρησιμοποίησε αριθμούς και τα σύμβολα: <code className="bg-white px-1 py-0.5 rounded font-mono font-bold text-blue-600 border">+ - * / ( )</code>
+                      Χωρίς κενά, μόνο αριθμοί και σύμβολα: <code className="bg-white px-1 py-0.5 rounded font-mono font-bold text-blue-600 border">+ - * / ( )</code>
                     </p>
                   </div>
 
@@ -360,7 +392,7 @@ export default function ProteraiotitaPrakseonPage() {
                     value={customExpr}
                     onChange={(e) => handleInputChange(e.target.value)}
                     className="w-full text-lg font-mono font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm text-blue-600 outline-none focus:border-blue-500 tracking-wide"
-                    placeholder="π.χ. 2 + 3 * 4"
+                    placeholder="π.χ. 2+3*4"
                   />
                   
                   <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200 flex items-start gap-1.5 leading-snug">
@@ -405,7 +437,7 @@ export default function ProteraiotitaPrakseonPage() {
                 </div>
 
                 <div className="w-full max-w-lg mx-auto flex flex-col gap-4 my-auto relative">
-                  {analysis.steps.length > 0 ? (
+                  {analysis.isValid && analysis.steps.length > 0 ? (
                     analysis.steps.map((step, index) => (
                       <div key={index} className="flex flex-col items-center w-full space-y-2">
                         
@@ -437,18 +469,22 @@ export default function ProteraiotitaPrakseonPage() {
                     ))
                   ) : (
                     <div className="text-center py-8 text-sm text-slate-400 font-medium bg-slate-50 rounded-2xl border border-slate-200">
-                      Γράψε μια έγκυρη παράσταση στα αριστερά για να εμφανιστούν τα βήματα.
+                      {customExpr
+                        ? "⚠️ Μη έγκυρη παράσταση. Βεβαιώσου ότι δεν υπάρχουν κενά και ότι οι πράξεις και οι παρενθέσεις είναι σωστές."
+                        : "Γράψε μια έγκυρη παράσταση στα αριστερά για να εμφανιστούν τα βήματα."}
                     </div>
                   )}
 
                   {/* FINAL RESULT BADGE */}
-                  <div className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-4 rounded-2xl text-center shadow-lg font-mono font-black flex items-center justify-center gap-3 mt-2">
-                    <span className="text-xl">🏁</span>
-                    <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελική Τιμή Παράστασης:</span>
-                    <span className="text-2xl bg-white/20 px-4 py-1 rounded-xl shadow-inner">
-                      {analysis.final}
-                    </span>
-                  </div>
+                  {analysis.isValid && (
+                    <div className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-4 rounded-2xl text-center shadow-lg font-mono font-black flex items-center justify-center gap-3 mt-2">
+                      <span className="text-xl">🏁</span>
+                      <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελική Τιμή Παράστασης:</span>
+                      <span className="text-2xl bg-white/20 px-4 py-1 rounded-xl shadow-inner">
+                        {analysis.final}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="w-full flex justify-center text-xs font-bold text-slate-400 pt-4 border-t border-slate-100 mt-6 text-center">
