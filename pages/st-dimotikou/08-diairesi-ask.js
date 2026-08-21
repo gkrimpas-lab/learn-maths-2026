@@ -250,7 +250,7 @@ export default function DiairesiExercisesPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col justify-between pb-32">
       <Head>
-        <title>🎯 Ασκήσεις: Τέλεια & Ατελής Διαίρεση - ΣΤ' Δημοτικού | LearnMaths.gr</title>
+        <title>🎯 Ασκήσεις: Τέλεια και Ατελής Διαίρεση - ΣΤ' Δημοτικού | LearnMaths.gr</title>
         <meta name="description" content="Διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση στη διαίρεση φυσικών αριθμών για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
