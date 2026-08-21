@@ -93,7 +93,7 @@ function generateQuestions() {
   // Q7: Input - Πρόβλημα Καθημερινότητας (α - β × γ)
   const p = shuffledProblems[0];
   const q7Answer = p.wallet - p.count * p.price;
-  const q7Prompt = `Ο/Η ${p.name} είχε ${p.wallet} €. Αγόρασε ${p.count} ${p.item} που κοστίζουν ${p.price} € το καθένα. Πόσα ρέστα πήρε;`;
+  const q7Prompt = `${p.name} είχε ${p.wallet} €. Αγόρασε ${p.count} ${p.item} που κοστίζουν ${p.price} € το καθένα. Πόσα ρέστα πήρε;`;
 
   // Q8: MCQ - Αναγνώριση 1ου σωστού βήματος
   const q8A = getRandomInt(30, 60);
@@ -117,7 +117,7 @@ function generateQuestions() {
     },
     q2: {
       type: 'input',
-      title: 'Παράσταση με Παραιτέρωση',
+      title: 'Παράσταση με Παρένθεση',
       prompt: q2Prompt,
       correct: String(q2Answer),
       explain: `Πρώτα υπολογίζουμε την παρένθεση: (${q2A} － ${q2B}) ＝ ${q2A - q2B}. Μετά τον πολλαπλασιασμό: ${q2A - q2B} × ${q2C} ＝ ${q2Answer}.`
@@ -281,7 +281,7 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                 <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                Διαδραστικές Ασκήσεις: Προτεραιότητα των Πράξεων
+                Διαδραστικές Ασκήσεις: Προτεραιότητα Πράξεων
               </h1>
               <p className="text-blue-100 text-sm md:text-base max-w-xl">
                 Λύσε τα 8 δυναμικά προβλήματα αριθμητικών παραστάσεων, παρενθέσεων και προτεραιότητας πράξεων!
