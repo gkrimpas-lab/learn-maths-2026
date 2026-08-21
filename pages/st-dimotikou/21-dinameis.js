@@ -155,7 +155,7 @@ export default function DinameisPage() {
                 <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   2
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Βάση & Εκθέτης</h3>
+                <h3 className="text-lg font-black text-slate-900">Βάση και Εκθέτης</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   • <strong>Βάση (α):</strong> Ο παράγοντας που πολλαπλασιάζεται.<br/>
                   • <strong>Εκθέτης (ν):</strong> Δείχνει πόσες φορές πολλαπλασιάζεται η βάση με τον εαυτό της.
@@ -208,12 +208,12 @@ export default function DinameisPage() {
                   {/* INPUTS */}
                   <div className="space-y-3">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Ρύθμιση Δύναμης:
+                      Ρυθμιση Δυναμης:
                     </span>
 
                     {/* ΒΑΣΗ */}
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-500 uppercase flex justify-between">
+                      <label className="text-[11px] font-bold text-slate-500 flex justify-between">
                         <span>Βάση (α):</span>
                         <span className="text-blue-600 font-mono font-bold">1 - {MAX_BASE}</span>
                       </label>
@@ -228,7 +228,7 @@ export default function DinameisPage() {
 
                     {/* ΕΚΘΕΤΗΣ */}
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-500 uppercase flex justify-between">
+                      <label className="text-[11px] font-bold text-slate-500 flex justify-between">
                         <span>Εκθέτης (ν):</span>
                         <span className="text-indigo-600 font-mono font-bold">0 - {MAX_EXP}</span>
                       </label>
@@ -245,7 +245,7 @@ export default function DinameisPage() {
                   {/* PRESET EXAMPLES (2 COLS x 3 ROWS) */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -281,7 +281,7 @@ export default function DinameisPage() {
                 {/* 1. HEADER STATUS */}
                 <div className="w-full text-center space-y-1">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                    Ανάλυση της Δύναμης:
+                    Αναλυση της Δυναμης:
                   </span>
                   <div className="text-2xl md:text-3xl font-mono font-black text-indigo-600 bg-indigo-50 px-8 py-2 rounded-2xl border border-indigo-100 inline-block tracking-wider shadow-sm">
                     {base !== '' ? base : 'α'}
@@ -300,7 +300,7 @@ export default function DinameisPage() {
                   {/* ΚΑΡΤΑ ΑΝΑΛΥΣΗΣ ΓΙΝΟΜΕΝΟΥ */}
                   <div className="bg-slate-50 p-5 md:p-6 rounded-3xl border border-slate-200 shadow-inner space-y-3">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                      🔍 1. Ανάλυση σε Γινόμενο Ίσων Παραγόντων:
+                      🔍 1. Αναλυση σε Γινομενο Ισων Παραγοντων:
                     </span>
 
                     <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-base md:text-lg">
@@ -347,7 +347,7 @@ export default function DinameisPage() {
                   {(e === 2 || e === 3) && b <= 12 && b >= 1 && (
                     <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 space-y-3 shadow-md">
                       <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                        📐 Γεωμετρική Ερμηνεία ({e === 2 ? 'Τετράγωνο' : 'Κύβος'}):
+                        📐 Γεωμετρικη Ερμηνεια ({e === 2 ? 'Τετραγωνο' : 'Κυβος'}):
                       </span>
 
                       {e === 2 ? (
@@ -386,7 +386,7 @@ export default function DinameisPage() {
                 {/* 3. FINAL RESULT SUMMARY BANNER */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-5 rounded-2xl text-center shadow-lg font-mono space-y-1">
                   <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                    Τελικό Αποτέλεσμα:
+                    Τελικο Αποτελεσμα:
                   </span>
                   <div className="text-xl md:text-2xl font-black tracking-wide">
                     {b}
