@@ -151,7 +151,7 @@ export default function PollaplasiaPage() {
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-cyan-100 text-xs text-slate-700 font-mono text-center font-bold">
-                <p>7 × 0 ＝ <strong className="text-cyan-700">0</strong>     |🎯|     7 × 1 ＝ <strong className="text-cyan-700">7</strong></p>
+                <p>7 × 0 ＝ <strong className="text-cyan-700">0</strong>     🎯     7 × 1 ＝ <strong className="text-cyan-700">7</strong></p>
               </div>
             </div>
           </div>
