@@ -112,7 +112,7 @@ export default function DinameisDekaPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  7. Πολλαπλασιασμός με 10, 100, 1000... και 0,1, 0,01, 0,001...
+                  7. Πολλαπλασιασμός με 10, 100, 1000 ... και 0,1,  0,01,  0,001 ...
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε τον «χρυσό κανόνα» μετατόπισης της <strong>υποδιαστολής</strong>! Υπολόγισε γινόμενα στο δευτερόλεπτο χωρίς κάθετη πράξη, απλά μετακινώντας την υποδιαστολή δεξιά ή αριστερά.
@@ -143,7 +143,7 @@ export default function DinameisDekaPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">Με 10, 100, 1000...</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Ο αριθμός <strong>μεγαλώνει</strong>. Μετακινούμε την υποδιαστολή <strong>δεξιά</strong> τόσες θέσεις όσα είναι τα μηδενικά ($1, 2, 3$). Αν λείπουν ψηφία, συμπληρώνουμε μηδενικά στο τέλος.
+                  Ο αριθμός <strong>μεγαλώνει</strong>. Μετακινούμε την υποδιαστολή <strong>δεξιά</strong> τόσες θέσεις όσα είναι τα μηδενικά (1, 2, 3). Αν λείπουν ψηφία, συμπληρώνουμε μηδενικά στο τέλος.
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-blue-100 text-xs text-slate-700 space-y-1 font-mono text-center">
@@ -159,7 +159,7 @@ export default function DinameisDekaPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">Με 0,1, 0,01, 0,001...</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Ο αριθμός <strong>μικραίνει</strong> (λειτουργεί όπως η διαίρεση). Μετακινούμε την υποδιαστολή <strong>αριστερά</strong> τόσες θέσεις όσα τα δεκαδικά ψηφία ($1, 2, 3$).
+                  Ο αριθμός <strong>μικραίνει</strong> (λειτουργεί όπως η διαίρεση). Μετακινούμε την υποδιαστολή <strong>αριστερά</strong> τόσες θέσεις όσα τα δεκαδικά ψηφία (1, 2, 3).
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-indigo-100 text-xs text-slate-700 space-y-1 font-mono text-center">
@@ -235,7 +235,7 @@ export default function DinameisDekaPage() {
                 <div className="lg:col-span-7 bg-slate-50 border border-slate-200 p-5 rounded-2xl space-y-4 shadow-inner flex flex-col justify-center">
                   <div className="space-y-2">
                     <label className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Πληκτρολόγησε Αριθμό (π.χ. 34,56):
+                      Πληκτρολογησε Αριθμο (π.χ. 34,56):
                     </label>
                     <input
                       type="text"
@@ -263,7 +263,7 @@ export default function DinameisDekaPage() {
                   {/* MULTIPLIER BUTTONS */}
                   <div className="space-y-1.5 pt-2 border-t border-slate-200">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                      Επίλεξε Πολλαπλασιαστή:
+                      Επιλεξε Πολλαπλασιαστη:
                     </span>
                     <div className="grid grid-cols-3 gap-2">
                       {activeTab === 'megaloi' ? (
@@ -304,7 +304,7 @@ export default function DinameisDekaPage() {
                 {/* DYNAMIC RESULT CARD (5 COLS) */}
                 <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                   <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
-                    ✨ Τελικό Γινόμενο:
+                    ✨ Τελικο Γινομενο:
                   </span>
 
                   <div className="flex flex-wrap items-center justify-center gap-2 text-xl md:text-2xl font-black font-mono">
@@ -328,7 +328,7 @@ export default function DinameisDekaPage() {
               <div className="bg-slate-50 border border-slate-200 p-5 md:p-6 rounded-2xl flex flex-col items-center justify-between space-y-6">
                 <div className="text-center space-y-1">
                   <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    🧭 Οπτικός Οδηγός Μετατόπισης Υποδιαστολής (SVG Steps)
+                    🧭 Οπτικος Οδηγος Μετατοπισης Υποδιαστολής
                   </span>
                   <p className="text-xs text-slate-500">
                     Παρατήρησε τα βέλη που δείχνουν το άλμα της υποδιαστολής ανάμεσα στα ψηφία!
