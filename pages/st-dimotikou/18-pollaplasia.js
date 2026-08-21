@@ -151,7 +151,7 @@ export default function PollaplasiaPage() {
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-cyan-100 text-xs text-slate-700 font-mono text-center font-bold">
-                <p>7 × 0 ＝ <strong className="text-cyan-700">0</strong>     •     7 × 1 ＝ <strong className="text-cyan-700">7</strong></p>
+                <p>7 × 0 ＝ <strong className="text-cyan-700">0</strong>     |||     7 × 1 ＝ <strong className="text-cyan-700">7</strong></p>
               </div>
             </div>
           </div>
@@ -351,7 +351,7 @@ export default function PollaplasiaPage() {
                 {number && number >= 1 && (
                   <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-2xl text-center shadow-lg font-mono font-black space-y-1">
                     <span className="text-xs font-sans uppercase tracking-wider block text-blue-200">
-                      Σύνολο Πολλαπλασίων Π({number.toLocaleString('el-GR')}):
+                      Συνολο Πολλαπλασιων Π({number.toLocaleString('el-GR')}):
                     </span>
                     <div className="text-base sm:text-lg tracking-wide pt-1 flex flex-wrap justify-center gap-2 items-center">
                       <span>Π({number}) ＝ {'{'}</span>
