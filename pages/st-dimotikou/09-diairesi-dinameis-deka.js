@@ -114,7 +114,7 @@ export default function DiairesiDinameisDekaPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  9. Διαίρεση με 10, 100, 1000... και 0,1, 0,01, 0,001...
+                  9. Διαίρεση με 10, 100, 1000 ... και 0,1,  0,01,  0,001 ...
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς να υπολογίζεις πηλίκα στο μυαλό χωρίς κάθετη πράξη, μετακινώντας την <strong>υποδιαστολή</strong> αριστερά ή δεξιά ανάλογα με τη δύναμη του 10!
@@ -143,9 +143,9 @@ export default function DiairesiDinameisDekaPage() {
                 <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   1
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Με 10, 100, 1000...</h3>
+                <h3 className="text-lg font-black text-slate-900">Με 10, 100, 1000 ...</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Ο αριθμός <strong>μικραίνει</strong>. Μετακινούμε την υποδιαστολή <strong>αριστερά</strong> τόσες θέσεις όσα είναι τα μηδενικά ($1, 2, 3$). Αν τελειώσουν τα ψηφία, βάζουμε $0,$ στην αρχή.
+                  Ο αριθμός <strong>μικραίνει</strong>. Μετακινούμε την υποδιαστολή <strong>αριστερά</strong> τόσες θέσεις όσα είναι τα μηδενικά (1, 2, 3). Αν τελειώσουν τα ψηφία, βάζουμε "0," στην αρχή.
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-blue-100 text-xs text-slate-700 space-y-1 font-mono text-center">
@@ -159,9 +159,9 @@ export default function DiairesiDinameisDekaPage() {
                 <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   2
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Με 0,1, 0,01, 0,001...</h3>
+                <h3 className="text-lg font-black text-slate-900">Με 0,1, 0,01, 0,001 ...</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Ο αριθμός <strong>μεγαλώνει!</strong> (λειτουργεί όπως ο πολλαπλασιασμός). Μετακινούμε την υποδιαστολή <strong>δεξιά</strong> τόσες θέσεις όσα τα δεκαδικά ψηφία ($1, 2, 3$).
+                  Ο αριθμός <strong>μεγαλώνει!</strong> (λειτουργεί όπως ο πολλαπλασιασμός). Μετακινούμε την υποδιαστολή <strong>δεξιά</strong> τόσες θέσεις όσα τα δεκαδικά ψηφία (1, 2, 3).
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-indigo-100 text-xs text-slate-700 space-y-1 font-mono text-center">
@@ -238,7 +238,7 @@ export default function DiairesiDinameisDekaPage() {
                 <div className="lg:col-span-7 bg-slate-50 border border-slate-200 p-5 rounded-2xl space-y-4 shadow-inner flex flex-col justify-center">
                   <div className="space-y-2">
                     <label className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Πληκτρολόγησε Αριθμό (Διαιρετέο):
+                      Πληκτρολογησε Αριθμο (Διαιρετεο):
                     </label>
                     <input
                       type="text"
@@ -266,7 +266,7 @@ export default function DiairesiDinameisDekaPage() {
                   {/* DIVISOR BUTTONS */}
                   <div className="space-y-1.5 pt-2 border-t border-slate-200">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                      Επίλεξε Διαιρέτη:
+                      Επιλεξε Διαιρετη:
                     </span>
                     <div className="grid grid-cols-3 gap-2">
                       {activeTab === 'megaloi' ? (
@@ -307,7 +307,7 @@ export default function DiairesiDinameisDekaPage() {
                 {/* DYNAMIC RESULT CARD (5 COLS) */}
                 <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                   <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
-                    ✨ Τελικό Πηλίκο:
+                    ✨ Τελικο Πηλικο:
                   </span>
 
                   <div className="flex flex-wrap items-center justify-center gap-2 text-xl md:text-2xl font-black font-mono">
@@ -331,7 +331,7 @@ export default function DiairesiDinameisDekaPage() {
               <div className="bg-slate-50 border border-slate-200 p-5 md:p-6 rounded-2xl flex flex-col items-center justify-between space-y-6">
                 <div className="text-center space-y-1">
                   <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    🧭 Οπτικός Οδηγός Μετατόπισης Υποδιαστολής (SVG Steps)
+                    🧭 Οπτικος Οδηγος Μετατοπισης Υποδιαστολος
                   </span>
                   <p className="text-xs text-slate-500">
                     Παρατήρησε τα βέλη που δείχνουν το άλμα της υποδιαστολής ανάμεσα στα ψηφία!
@@ -418,7 +418,7 @@ export default function DiairesiDinameisDekaPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600">
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                    <span className="font-black text-blue-800 uppercase block">1. Διαίρεση με 10, 100, 1000...</span>
+                    <span className="font-black text-blue-800 uppercase block">1. Διαιρεση με 10, 100, 1000 ...</span>
                     <ul className="space-y-1">
                       <li>• : 10 ➔ 1 θέση αριστερά (<code className="font-bold">45 : 10 = 4,5</code>)</li>
                       <li>• : 100 ➔ 2 θέσεις αριστερά (<code className="font-bold">45 : 100 = 0,45</code>)</li>
@@ -427,7 +427,7 @@ export default function DiairesiDinameisDekaPage() {
                   </div>
 
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                    <span className="font-black text-indigo-800 uppercase block">2. Διαίρεση με 0,1, 0,01, 0,001...</span>
+                    <span className="font-black text-indigo-800 uppercase block">2. Διαιρεση με 0,1, 0,01, 0,001 ...</span>
                     <ul className="space-y-1">
                       <li>• : 0,1 ➔ 1 θέση δεξιά (<code className="font-bold">2,5 : 0,1 = 25</code>)</li>
                       <li>• : 0,01 ➔ 2 θέσεις δεξιά (<code className="font-bold">2,5 : 0,01 = 250</code>)</li>
