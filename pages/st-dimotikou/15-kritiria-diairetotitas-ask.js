@@ -21,13 +21,13 @@ function sumDigits(numStr) {
   return numStr.split('').reduce((acc, curr) => acc + parseInt(curr, 10), 0);
 }
 
-// Δεξαμενή θεματικών σεναρίων καθημερινότητας
+// Δεξαμενή θεματικών σεναρίων καθημερινότητας με σωστές αντωνυμίες
 const REAL_WORLD_ITEMS = [
-  { item: 'μαθητές', group: 'ομάδες των 3' },
-  { item: 'καραμέλες', group: 'σακουλάκια των 5' },
-  { item: 'βιβλία', group: 'πακέτα των 9' },
-  { item: 'ευρώ', group: 'μερίδια των 4' },
-  { item: 'τετράδια', group: 'κουτιά των 25' }
+  { item: 'μαθητές', pronoun: 'τους', unit: 'ομάδες' },
+  { item: 'καραμέλες', pronoun: 'τις', unit: 'σακουλάκια' },
+  { item: 'βιβλία', pronoun: 'τα', unit: 'πακέτα' },
+  { item: 'ευρώ', pronoun: 'τα', unit: 'μερίδια' },
+  { item: 'τετράδια', pronoun: 'τα', unit: 'κουτιά' }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
@@ -128,7 +128,7 @@ function generateQuestions() {
 
   // Q8: MCQ - Πρόβλημα Καθημερινότητας (Ισόποση κατανομή)
   const p = shuffledItems[0];
-  const targetDiv = [5, 25, 4, 9][getRandomInt(0, 3)];
+  const targetDiv = [4, 5, 9, 25][getRandomInt(0, 3)];
   let q8Count = getRandomInt(100, 400);
   while (q8Count % targetDiv !== 0) q8Count++;
 
@@ -136,8 +136,11 @@ function generateQuestions() {
   const invalidCandidates = allCandidates.filter(d => d !== targetDiv && q8Count % d !== 0);
   const wrongDivs = shuffle(invalidCandidates).slice(0, 3);
 
-  const q8CorrectStr = String(targetDiv);
-  const q8Options = shuffle([q8CorrectStr, ...wrongDivs.map(String)]);
+  const q8CorrectStr = `${p.unit} των ${targetDiv}`;
+  const q8Options = shuffle([
+    q8CorrectStr,
+    ...wrongDivs.map(w => `${p.unit} των ${w}`)
+  ]);
 
   return {
     q1: {
@@ -205,10 +208,10 @@ function generateQuestions() {
     q8: {
       type: 'mcq',
       title: 'Πρόβλημα Καθημερινότητας',
-      prompt: `Έχουμε ${q8Count} ${p.item}. Με ποιον από τους παρακάτω αριθμούς μπορούμε να τα μοιράσουμε σε ακριβώς ίσα μέρη χωρίς να περισσέψει κανένα;`,
+      prompt: `Έχουμε ${q8Count} ${p.item}. Με ποιον τρόπο μπορούμε να ${p.pronoun} μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
       options: q8Options,
       correct: q8CorrectStr,
-      explain: `Ο αριθμός ${q8Count} διαιρείται ακριβώς με το ${q8CorrectStr}.`
+      explain: `Ο αριθμός ${q8Count} διαιρείται ακριβώς με το ${targetDiv} (${q8Count} : ${targetDiv} ＝ ${q8Count / targetDiv}), επομένως σχηματίζονται ακριβώς ${q8Count / targetDiv} ${p.unit} των ${targetDiv}.`
     }
   };
 }
