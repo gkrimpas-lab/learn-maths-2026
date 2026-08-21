@@ -25,13 +25,13 @@ function getDivisors(num) {
   return divs;
 }
 
-// Δεξαμενή θεματικών σεναρίων καθημερινότητας
+// Δεξαμενή θεματικών σεναρίων καθημερινότητας με σωστή γραμματική διατύπωση ερώτησης
 const REAL_WORLD_PRESETS = [
-  { item: 'μαθητές', unit: 'ισοπληθείς ομάδες' },
-  { item: 'καραμέλες', unit: 'σακουλάκια' },
-  { item: 'βιβλία', unit: 'ράφια' },
-  { item: 'λουλούδια', unit: 'ανθοδέσμες' },
-  { item: 'σοκολατάκια', unit: 'κουτάκια' }
+  { item: 'μαθητές', unit: 'ισοπληθείς ομάδες', questionPrefix: 'Σε πόσες' },
+  { item: 'καραμέλες', unit: 'σακουλάκια', questionPrefix: 'Σε πόσα' },
+  { item: 'βιβλία', unit: 'ράφια', questionPrefix: 'Σε πόσα' },
+  { item: 'λουλούδια', unit: 'ανθοδέσμες', questionPrefix: 'Σε πόσες' },
+  { item: 'σοκολατάκια', unit: 'κουτάκια', questionPrefix: 'Σε πόσα' }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
@@ -73,7 +73,7 @@ function generateQuestions() {
   const q4WithExtra = [...q4CorrectDivs, nonDivCandidate1].sort((a, b) => a - b);
   const q4Wrong2 = `{ ${q4WithExtra.join(', ')} }`;
 
-  // 3ο Λάθος: Έχει αντικατασταθεί ένας διαιρέτης με άλλον μη-διαιρέτη (πάντα μοναδικά ψηφία)
+  // 3ο Λάθος: Έχει αντικατασταθεί ένας διαιρέτης με άλλον μη-διαιρέτη
   const nonDivCandidate2 = [7, 8, 9, 11, 13, 14, 15].filter(x => q4Num % x !== 0 && !q4CorrectDivs.includes(x))[0] || (q4Num - 1);
   const q4Replaced = q4CorrectDivs.map((d, i) => (i === 1 ? nonDivCandidate2 : d)).sort((a, b) => a - b);
   const q4Wrong3 = `{ ${q4Replaced.join(', ')} }`;
@@ -167,7 +167,7 @@ function generateQuestions() {
     q8: {
       type: 'mcq',
       title: 'Πρόβλημα Καθημερινότητας',
-      prompt: `Έχουμε ${q8Total} ${q8Preset.item}. Σε πόσες ${q8Preset.unit} μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
+      prompt: `Έχουμε ${q8Total} ${q8Preset.item}. ${q8Preset.questionPrefix} ${q8Preset.unit} μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
       options: q8Options,
       correct: `${q8Possible} ${q8Preset.unit}`,
       explain: `Το ${q8Possible} είναι διαιρέτης του ${q8Total} (${q8Total} : ${q8Possible} ＝ ${q8Total / q8Possible}), επομένως το μοίρασμα γίνεται χωρίς υπόλοιπο.`
