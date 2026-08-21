@@ -76,7 +76,7 @@ export default function ProsthesiAfairesiPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>➕ Πρόσθεση, Ιδιότητες & Αφαίρεση - LearnMaths.gr</title>
+        <title>➕ Πρόσθεση, Ιδιότητες και Αφαίρεση - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -120,7 +120,7 @@ export default function ProsthesiAfairesiPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  5. Πρόσθεση Φυσικών & Δεκαδικών • Ιδιότητες & Αφαίρεση
+                  5. Πρόσθεση Φυσικών και Δεκαδικών   •   Ιδιότητες και Αφαίρεση
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς προσθέτουμε με ασφάλεια φυσικούς και δεκαδικούς αριθμούς, αξιοποίησε την <strong>αντιμεταθετική</strong> και <strong>προσεταιριστική ιδιότητα</strong> για γρήγορους υπολογισμούς και δες πώς η <strong>αφαίρεση</strong> λειτουργεί ως η αντίστροφη πράξη!
@@ -151,7 +151,7 @@ export default function ProsthesiAfairesiPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">Κάθετη Πρόσθεση Δεκαδικών</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Γράφουμε τους προσθετέους τον έναν κάτω από τον άλλον, φροντίζοντας οι <strong>υποδιαστολές</strong> και τα ομώνυμα ψηφία (Μ κάτω από Μ, δ κάτω από δ) να είναι σε <strong>απόλυτη στοίχιση</strong>.
+                  Γράφουμε τους προσθετέους τον έναν κάτω από τον άλλον, φροντίζοντας οι <strong>υποδιαστολές</strong> και τα αντίστοιχα ψηφία (Μ κάτω από Μ, δ κάτω από δ) να είναι σε <strong>απόλυτη στοίχιση</strong>.
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 space-y-1 font-mono text-center">
@@ -168,7 +168,7 @@ export default function ProsthesiAfairesiPage() {
                 <p className="text-slate-600 text-sm leading-relaxed">
                   • <strong>Αντιμεταθετική:</strong> <code className="text-indigo-700 font-bold">α ＋ β ＝ β ＋ α</code><br/>
                   • <strong>Προσεταιριστική:</strong> <code className="text-indigo-700 font-bold">(α ＋ β) ＋ γ ＝ α ＋ (β ＋ γ)</code><br/>
-                  • <strong>Ουδέτερο στοιχείο:</strong> Το 0 (<code className="text-indigo-700 font-bold">α ＋ 0 ＝ α</code>).
+                  • <strong>Ουδέτερο στοιχείο:</strong> Το 0     (<code className="text-indigo-700 font-bold">α ＋ 0 ＝ α</code>).
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 space-y-1 font-mono text-center">
@@ -197,7 +197,7 @@ export default function ProsthesiAfairesiPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <span>🕹️</span> Διαδραστικό Εργαστήριο Πρόσθεσης & Ιδιοτήτων
+                  <span>🕹️</span> Διαδραστικό Εργαστήριο Πρόσθεσης και Ιδιοτήτων
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Άλλαξε τους αριθμούς είτε πληκτρολογώντας (έως 4 ακέραια και 3 δεκαδικά ψηφία) είτε πατώντας τα κουμπιά (+ / -)!
@@ -392,13 +392,13 @@ export default function ProsthesiAfairesiPage() {
                   </div>
 
                   <p className="text-[11px] text-slate-400 text-center font-medium">
-                    💡 Έλεγχος ορίων: Ακέραιο μέρος έως 4 ψηφία (0 - 9999), κλασματικό/δεκαδικό μέρος έως 3 ψηφία (δέκατα, εκατοστά, χιλιοστά).
+                    💡 Ακέραιο μέρος έως 4 ψηφία (0 - 9999), κλασματικό/δεκαδικό μέρος έως 3 ψηφία (δέκατα, εκατοστά, χιλιοστά).
                   </p>
                 </div>
 
                 {/* DYNAMIC RESULT BADGE (4 COLS) */}
                 <div className="lg:col-span-4 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
-                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
+                  <span className="text-[10px] font-black text-amber-400 tracking-widest block">
                     ✨ Άθροισμα 2 Αριθμών (α ＋ β):
                   </span>
                   
@@ -465,7 +465,7 @@ export default function ProsthesiAfairesiPage() {
                   
                   {/* LEFT: VERTICAL ALIGNMENT BOX (5 COLS) */}
                   <div className="lg:col-span-5 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center space-y-3">
-                    <span className="text-xs font-black text-slate-400 uppercase tracking-wider block font-sans">
+                    <span className="text-xs font-black text-slate-400 tracking-wider block font-sans">
                       📐 Κάθετη Στοίχιση Υποδιαστολής (α ＋ β):
                     </span>
 
@@ -546,7 +546,7 @@ export default function ProsthesiAfairesiPage() {
                       <div className="space-y-3">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">➖</span>
-                          <h4 className="font-black text-slate-900 text-base">Αφαίρεση & Δοκιμή Πρόσθεσης</h4>
+                          <h4 className="font-black text-slate-900 text-base">Αφαίρεση και Δοκιμή Πρόσθεσης</h4>
                         </div>
                         <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
                           Αν από το άθροισμα αφαιρέσουμε έναν προσθετέο, βρίσκουμε τον άλλον:
@@ -567,7 +567,7 @@ export default function ProsthesiAfairesiPage() {
               <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-xs font-black text-slate-700 flex items-center gap-1.5">
-                    🧬 Χρυσός Κανόνας Πρόσθεσης & Αφαίρεσης Δεκαδικών
+                    🧬 Χρυσός Κανόνας Πρόσθεσης και Αφαίρεσης Δεκαδικών
                   </span>
                   <span className="text-[10px] bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full">
                     Πλήρης Εμφάνιση
@@ -576,15 +576,15 @@ export default function ProsthesiAfairesiPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-600">
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                    <span className="font-black text-blue-800 uppercase block">1. Στοίχιση Υποδιαστολών</span>
+                    <span className="font-black text-blue-800 uppercase block">1. Στοιχιση Υποδιαστολων</span>
                     <p>Τοποθετούμε τις υποδιαστολές ακριβώς στην ίδια κατακόρυφη στήλη.</p>
                   </div>
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                    <span className="font-black text-emerald-800 uppercase block">2. Συμπλήρωση Μηδενικών</span>
+                    <span className="font-black text-emerald-800 uppercase block">2. Συμπληρωση Μηδενικων</span>
                     <p>Προσθέτουμε μηδενικά στο τέλος ώστε όλοι οι αριθμοί να έχουν το ίδιο πλήθος δεκαδικών ψηφίων.</p>
                   </div>
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                    <span className="font-black text-indigo-800 uppercase block">3. Κατέβασμα Υποδιαστολής</span>
+                    <span className="font-black text-indigo-800 uppercase block">3. Κατεβασμα Υποδιαστολης</span>
                     <p>Εκτελούμε την πράξη κανονικά και κατεβάζουμε την υποδιαστολή στο αποτέλεσμα στην ίδια θέση.</p>
                   </div>
                 </div>
