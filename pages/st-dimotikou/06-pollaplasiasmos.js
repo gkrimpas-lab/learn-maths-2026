@@ -135,7 +135,7 @@ export default function PollaplasiasmosPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>✖️ Πολλαπλασιασμός & Ιδιότητες - LearnMaths.gr</title>
+        <title>✖️ Πολλαπλασιασμός και Ιδιότητες - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -179,7 +179,7 @@ export default function PollaplasiasmosPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  6. Πολλαπλασιασμός Φυσικών Αριθμών & Ιδιότητες
+                  6. Πολλαπλασιασμός Φυσικών Αριθμών και Ιδιότητες
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς να υπολογίζεις γρήγορα γινόμενα αξιοποιώντας την <strong>αντιμεταθετική</strong>, την <strong>προσεταιριστική</strong> και την <strong>επιμεριστική ιδιότητα</strong> ως προς την πρόσθεση!
@@ -302,7 +302,7 @@ export default function PollaplasiasmosPage() {
                 {activeTab === 'antimetathetiki' && (
                   <div className="space-y-5 my-auto">
                     <div>
-                      <span className="text-xs font-black text-slate-500 uppercase tracking-wider block mb-1">
+                      <span className="text-xs font-black text-slate-500 tracking-wider block mb-1">
                         Ορισμός Παραγόντων (α × β):
                       </span>
                       <p className="text-xs text-slate-500">Πληκτρολόγησε ή άλλαξε με τα κουμπιά τις γραμμές και τις στήλες.</p>
@@ -311,7 +311,7 @@ export default function PollaplasiasmosPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* Factor A */}
                       <div className="bg-white p-3.5 rounded-2xl border border-emerald-200 space-y-2 shadow-sm">
-                        <span className="text-xs font-black text-emerald-800 uppercase block">Γραμμές (α):</span>
+                        <span className="text-xs font-black text-emerald-800 block">Γραμμές (α):</span>
                         <input
                           type="text"
                           value={inputRows}
@@ -329,7 +329,7 @@ export default function PollaplasiasmosPage() {
 
                       {/* Factor B */}
                       <div className="bg-white p-3.5 rounded-2xl border border-blue-200 space-y-2 shadow-sm">
-                        <span className="text-xs font-black text-blue-800 uppercase block">Στήλες (β):</span>
+                        <span className="text-xs font-black text-blue-800 block">Στήλες (β):</span>
                         <input
                           type="text"
                           value={inputCols}
