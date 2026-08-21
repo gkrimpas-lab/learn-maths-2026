@@ -189,7 +189,7 @@ export default function DiairetesPage() {
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Πληκτρολόγησε Αριθμό (1 - 100):
+                      Πληκτρολογησε Αριθμο (1 - 100):
                     </span>
                     <input
                       type="text"
@@ -203,7 +203,7 @@ export default function DiairetesPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Ή επίλεξε έτοιμο αριθμό:
+                      Η επιλεξε ετοιμο αριθμο:
                     </span>
                     <div className="grid grid-cols-3 gap-2">
                       {PRESETS.map((p) => (
@@ -227,7 +227,7 @@ export default function DiairetesPage() {
                   {divisorPairs.length > 0 && (
                     <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-2 shadow-sm">
                       <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                        🔗 Ζεύγη Γινομένων:
+                        🔗 Ζευγη Γινομενων:
                       </span>
                       <div className="grid grid-cols-2 gap-1.5 font-mono text-xs font-bold text-slate-700">
                         {divisorPairs.map(([a, b], idx) => (
@@ -251,7 +251,7 @@ export default function DiairetesPage() {
                 {/* DIVISORS SET HEADER */}
                 <div className="w-full text-center">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                    Σύνολο Διαιρετών Δ({number || "—"}):
+                    Συνολο Διαιρετων Δ({number || "—"}):
                   </span>
                   <div className="flex flex-wrap justify-center gap-2 mt-3">
                     {divisors.length > 0 ? (
@@ -275,7 +275,7 @@ export default function DiairetesPage() {
                 {/* GROUP VISUALIZATION */}
                 <div className="w-full space-y-4 my-auto">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                    📊 Οπτική Αναπαράσταση: Πώς μοιράζεται το {number} σε ίσες ομάδες
+                    📊 Οπτικη Αναπαρασταση: Πως μοιραζεται το {number} σε ισες ομαδες
                   </span>
 
                   {number && divisors.length > 0 ? (
