@@ -151,7 +151,7 @@ export default function PollaplasiaPage() {
                 </p>
               </div>
               <div className="bg-white p-3.5 rounded-2xl border border-cyan-100 text-xs text-slate-700 font-mono text-center font-bold">
-                <p>7 × 0 ＝ <strong className="text-cyan-700">0</strong> • 7 × 1 ＝ <strong className="text-cyan-700">7</strong></p>
+                <p>7 × 0 ＝ <strong className="text-cyan-700">0</strong>     •     7 × 1 ＝ <strong className="text-cyan-700">7</strong></p>
               </div>
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function PollaplasiaPage() {
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Πληκτρολόγησε Αριθμό (1 - 1.000):
+                      Πληκτρολογησε Αριθμο (1 - 1.000):
                     </span>
                     <input
                       type="text"
@@ -217,7 +217,7 @@ export default function PollaplasiaPage() {
                   {/* PRESET BUTTONS (2 COLS x 3 ROWS) */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Ή επίλεξε έτοιμο αριθμό:
+                      Η επιλεξε ετοιμο αριθμο:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((p) => (
@@ -240,7 +240,7 @@ export default function PollaplasiaPage() {
                   {/* MULTIPLES COUNT SLIDER / SELECTOR */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Πλήθος Πολλαπλασίων:
+                      Πληθος Πολλαπλασιων:
                     </span>
                     <div className="flex gap-2">
                       {[10, 15, 20].map((c) => (
@@ -272,7 +272,7 @@ export default function PollaplasiaPage() {
                 {/* HEADER STATUS */}
                 <div className="w-full text-center">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                    Πολλαπλάσια του Αριθμού:
+                    Πολλαπλασια του Αριθμου:
                   </span>
                   <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-wider shadow-sm">
                     {number ? number.toLocaleString('el-GR') : "—"}
@@ -286,7 +286,7 @@ export default function PollaplasiaPage() {
                       /* HUNDRED GRID VISUALIZATION */
                       <div className="flex flex-col items-center justify-center space-y-4 w-full">
                         <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">
-                          🔟 Εντοπισμός Πολλαπλασίων στο Πλέγμα 1-100:
+                          🔟 Εντοπισμος Πολλαπλασιων στο Πλεγμα 1-100:
                         </span>
                         
                         <div className="bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 w-full flex flex-col items-center shadow-inner max-w-lg">
@@ -318,7 +318,7 @@ export default function PollaplasiaPage() {
                       /* MULTIPLICATION LIST DISPLAY */
                       <div className="flex flex-col items-center justify-center space-y-3 w-full">
                         <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">
-                          🧮 Αναλυτικός Πίνακας Πολλαπλασιασμού:
+                          🧮 Αναλυτικος Πινακας Πολλαπλασιασμου:
                         </span>
                         
                         <div className="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 font-mono text-sm sm:text-base w-full max-w-lg max-h-[380px] overflow-y-auto shadow-md">
