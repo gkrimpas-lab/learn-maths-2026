@@ -280,7 +280,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                     <>
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                          Πληκτρολογησε Δεκαδικο (0 έως 1):
+                          Πληκτρολογησε Δεκαδικο (0 εως 1):
                         </label>
                         <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
                           έως 3 δεκαδικά
