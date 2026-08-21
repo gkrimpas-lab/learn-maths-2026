@@ -375,7 +375,7 @@ export default function PollaplasiasmosPage() {
                 {activeTab === 'prosetairistiki' && (
                   <div className="space-y-5 my-auto">
                     <div>
-                      <span className="text-xs font-black text-slate-500 uppercase tracking-wider block mb-1">
+                      <span className="text-xs font-black text-slate-500 tracking-wider block mb-1">
                         3 Διαστάσεις Στερεού (α × β × γ):
                       </span>
                       <p className="text-xs text-slate-500">Επίλεξε διαστάσεις από {LIMITS.MIN_3D} έως {LIMITS.MAX_3D} για τρισδιάστατο υπολογισμό όγκου.</p>
@@ -384,7 +384,7 @@ export default function PollaplasiasmosPage() {
                     <div className="grid grid-cols-3 gap-2.5">
                       {/* Width */}
                       <div className="bg-white p-3 rounded-2xl border border-indigo-200 text-center space-y-1.5 shadow-sm">
-                        <span className="text-[10px] font-black text-indigo-700 uppercase">Πλάτος (α)</span>
+                        <span className="text-[10px] font-black text-indigo-700">Πλάτος (α)</span>
                         <input type="text" value={prosW} onChange={(e) => setProsW(sanitizeInput(e.target.value, 1))} className="w-full text-center font-black text-xl text-indigo-700 bg-indigo-50/50 rounded-lg p-1 outline-none font-mono" />
                         <div className="grid grid-cols-2 gap-1 pt-1">
                           <button type="button" onClick={() => setProsW(adjustValue(prosW, -1, LIMITS.MIN_3D, LIMITS.MAX_3D))} className="bg-slate-100 text-xs font-black py-0.5 rounded">-</button>
@@ -394,7 +394,7 @@ export default function PollaplasiasmosPage() {
 
                       {/* Depth */}
                       <div className="bg-white p-3 rounded-2xl border border-blue-200 text-center space-y-1.5 shadow-sm">
-                        <span className="text-[10px] font-black text-blue-700 uppercase">Βάθος (β)</span>
+                        <span className="text-[10px] font-black text-blue-700">Βάθος (β)</span>
                         <input type="text" value={prosD} onChange={(e) => setProsD(sanitizeInput(e.target.value, 1))} className="w-full text-center font-black text-xl text-blue-700 bg-blue-50/50 rounded-lg p-1 outline-none font-mono" />
                         <div className="grid grid-cols-2 gap-1 pt-1">
                           <button type="button" onClick={() => setProsD(adjustValue(prosD, -1, LIMITS.MIN_3D, LIMITS.MAX_3D))} className="bg-slate-100 text-xs font-black py-0.5 rounded">-</button>
@@ -404,7 +404,7 @@ export default function PollaplasiasmosPage() {
 
                       {/* Height */}
                       <div className="bg-white p-3 rounded-2xl border border-amber-200 text-center space-y-1.5 shadow-sm">
-                        <span className="text-[10px] font-black text-amber-700 uppercase">Ύψος (γ)</span>
+                        <span className="text-[10px] font-black text-amber-700">Ύψος (γ)</span>
                         <input type="text" value={prosH} onChange={(e) => setProsH(sanitizeInput(e.target.value, 1))} className="w-full text-center font-black text-xl text-amber-600 bg-amber-50/50 rounded-lg p-1 outline-none font-mono" />
                         <div className="grid grid-cols-2 gap-1 pt-1">
                           <button type="button" onClick={() => setProsH(adjustValue(prosH, -1, LIMITS.MIN_3D, LIMITS.MAX_3D))} className="bg-slate-100 text-xs font-black py-0.5 rounded">-</button>
@@ -430,7 +430,7 @@ export default function PollaplasiasmosPage() {
                 {activeTab === 'epimeristiki' && (
                   <div className="space-y-5 my-auto">
                     <div>
-                      <span className="text-xs font-black text-slate-500 uppercase tracking-wider block mb-1">
+                      <span className="text-xs font-black text-slate-500 tracking-wider block mb-1">
                         Μαθηματική Δομή Επιμεριστικής:
                       </span>
                       <p className="text-xs text-slate-500">α × (β ＋ γ) ＝ α × β ＋ α × γ</p>
@@ -482,9 +482,9 @@ export default function PollaplasiasmosPage() {
               <div className="lg:col-span-6 bg-white p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-between min-h-[460px] shadow-sm">
                 <div className="w-full text-center border-b border-slate-100 pb-3">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                    {activeTab === 'antimetathetiki' && "📊 Οπτικό Πλέγμα Τετραγώνων (Εμβαδόν)"}
-                    {activeTab === 'prosetairistiki' && "📦 3D Ισομετρική Αναπαράσταση Όγκου"}
-                    {activeTab === 'epimeristiki' && "📐 Γεωμετρική Διαίρεση Εμβαδού"}
+                    {activeTab === 'antimetathetiki' && "📊 Οπτικο Πλεγμα Τετραγωνων (Εμβαδον)"}
+                    {activeTab === 'prosetairistiki' && "📦 3D Ισομετρικη Αναπαρασταση Ογκου"}
+                    {activeTab === 'epimeristiki' && "📐 Γεωμετρικη Διαιρεση Εμβαδου"}
                   </span>
                 </div>
 
