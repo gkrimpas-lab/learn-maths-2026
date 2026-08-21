@@ -139,7 +139,7 @@ export default function ProblimataPage() {
     },
     {
       num: 4,
-      title: '4. Σχέδιο, Πράξεις & Έλεγχος',
+      title: '4. Σχέδιο, Πράξεις και Έλεγχος',
       icon: '⚙️',
       color: 'bg-purple-600',
       lightColor: 'bg-purple-50/80',
