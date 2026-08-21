@@ -195,7 +195,7 @@ export default function EkpPage() {
                   19. Ελάχιστο Κοινό Πολλαπλάσιο (Ε.Κ.Π.)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε να βρίσκεις το <strong>Ε.Κ.Π.</strong> δύο, τριών ή τεσσάρων αριθμών με τις μεθόδους των <strong>Συνόλων Πολλαπλασίων</strong> και της <strong>Ταυτόχρονης Διαίρεσης</strong>!
+                  Μάθε να βρίσκεις το <strong>Ε.Κ.Π.</strong> δύο, τριών ή τεσσάρων αριθμών με τις μεθόδους της <strong>Λίστας Πολλαπλασίων</strong> και της <strong>Ταυτόχρονης Διαίρεσης</strong>!
                 </p>
               </div>
 
@@ -311,7 +311,7 @@ export default function EkpPage() {
                   {/* COUNT SELECTOR (2, 3, 4) */}
                   <div className="space-y-1.5">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Πλήθος Αριθμών:
+                      Πληθος Αριθμων:
                     </span>
                     <div className="flex bg-white p-1 rounded-xl border border-slate-200 shadow-xs gap-1">
                       {[2, 3, 4].map(c => (
@@ -334,13 +334,13 @@ export default function EkpPage() {
                   {/* INPUT FIELDS */}
                   <div className="space-y-2">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Τιμές Αριθμών (1 - 500):
+                      Τιμες Αριθμων (1 - 500):
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {Array.from({ length: numCount }).map((_, idx) => (
                         <div key={idx} className="space-y-0.5">
                           <label className="text-[10px] font-bold text-slate-400 uppercase">
-                            Αριθμός {idx + 1}:
+                            Αριθμος {idx + 1}:
                           </label>
                           <input
                             type="text"
@@ -357,7 +357,7 @@ export default function EkpPage() {
                   {/* PRESET EXAMPLES (2 COLS x 3 ROWS) */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Ή διάλεξε έτοιμο παράδειγμα:
+                      Η διαλεξε ετοιμο παραδειγμα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -393,7 +393,7 @@ export default function EkpPage() {
                 {/* HEADER STATUS */}
                 <div className="w-full text-center">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                    Υπολογισμός Ε.Κ.Π. για τους Αριθμούς:
+                    Υπολογισμος Ε.Κ.Π. για τους Αριθμους:
                   </span>
                   <div className="text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-wider shadow-sm">
                     Ε.Κ.Π.({validActiveNumbers.join(', ') || '—'}) ＝{' '}
@@ -409,7 +409,7 @@ export default function EkpPage() {
                       <div className="space-y-4 w-full">
                         <div className="flex flex-wrap items-center justify-between gap-2 px-1">
                           <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                            📋 Λίστες Πολλαπλασίων με τα 3 Πρώτα Κοινά:
+                            📋 Λιστες Πολλαπλασιων με τα 3 Πρωτα Κοινα:
                           </span>
                           <div className="flex items-center gap-3 text-xs font-bold">
                             <span className="flex items-center gap-1.5 text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-md border border-amber-300">
@@ -478,7 +478,7 @@ export default function EkpPage() {
                       /* SIMULTANEOUS DIVISION DISPLAY WITH CALCULATION FORMULA */
                       <div className="flex flex-col items-center justify-center space-y-4 w-full">
                         <span className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">
-                          📐 Πίνακας Ταυτόχρονης Διαίρεσης σε Πρώτους Παράγοντες:
+                          📐 Πινακας Ταυτοχρονης Διαιρεσης σε Πρωτους Παραγοντες:
                         </span>
 
                         {/* ΚΑΤΑΚΟΡΥΦΟΣ ΠΙΝΑΚΑΣ */}
@@ -503,7 +503,7 @@ export default function EkpPage() {
                         {ladderDivisors.length > 0 && (
                           <div className="bg-amber-50 border border-amber-200 px-6 py-3 rounded-2xl text-center shadow-xs space-y-1">
                             <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">
-                              Υπολογισμός Γινομένου Πρώτων Διαιρετών:
+                              Υπολογισμος Γινομενου Πρωτων Διαιρετων:
                             </span>
                             <div className="text-base sm:text-lg font-mono font-black text-slate-800 tracking-wide">
                               <span className="text-emerald-700">{ladderDivisors.join(' × ')}</span>
@@ -528,7 +528,7 @@ export default function EkpPage() {
                 {validActiveNumbers.length >= 2 && currentLcm > 0 && (
                   <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-2xl text-center shadow-lg font-mono font-black space-y-1">
                     <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                      Τελικό Συμπέρασμα:
+                      Τελικο Συμπερασμα:
                     </span>
                     <div className="text-lg md:text-xl tracking-wide pt-1">
                       Ε.Κ.Π.({validActiveNumbers.join(', ')}) ＝{' '}
