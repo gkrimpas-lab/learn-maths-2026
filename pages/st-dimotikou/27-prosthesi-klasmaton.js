@@ -6,7 +6,7 @@ import { LAYOUT } from '../../shared/layout-config';
 // ΕΞΩΤΕΡΙΚΕΣ ΜΕΤΑΒΛΗΤΕΣ ΡΥΘΜΙΣΗΣ
 const MAX_LIMIT = 100;
 
-const PRESETS = [
+const PRESETS = [΄
   { nA: 2, dA: 7, nB: 3, dB: 7, label: "2/7 + 3/7 (Ομώνυμα)" },
   { nA: 1, dA: 3, nB: 1, dB: 6, label: "1/3 + 1/6 (Ετερώνυμα ➔ 3/6 ➔ 1/2)" },
   { nA: 1, dA: 2, nB: 2, dB: 3, label: "1/2 + 2/3 (Άθροισμα > 1)" },
@@ -153,7 +153,7 @@ export default function ProsthesiKlasmatonPage() {
             <circle cx={cx} cy={cy} r="2.5" className="fill-slate-800" />
           </svg>
           <span className="text-[9px] font-bold text-slate-400 uppercase">
-            Μονάδα {p + 1}
+            Μοναδα {p + 1}
           </span>
         </div>
       );
@@ -261,10 +261,10 @@ export default function ProsthesiKlasmatonPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 27
+                    Ενοτητα 27
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
