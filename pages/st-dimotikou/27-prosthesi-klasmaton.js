@@ -6,7 +6,7 @@ import { LAYOUT } from '../../shared/layout-config';
 // ΕΞΩΤΕΡΙΚΕΣ ΜΕΤΑΒΛΗΤΕΣ ΡΥΘΜΙΣΗΣ
 const MAX_LIMIT = 100;
 
-const PRESETS = [΄
+const PRESETS = [
   { nA: 2, dA: 7, nB: 3, dB: 7, label: "2/7 + 3/7 (Ομώνυμα)" },
   { nA: 1, dA: 3, nB: 1, dB: 6, label: "1/3 + 1/6 (Ετερώνυμα ➔ 3/6 ➔ 1/2)" },
   { nA: 1, dA: 2, nB: 2, dB: 3, label: "1/2 + 2/3 (Άθροισμα > 1)" },
