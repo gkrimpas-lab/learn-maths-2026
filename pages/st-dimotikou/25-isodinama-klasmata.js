@@ -161,7 +161,7 @@ export default function IsodinamaKlasmataPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>⚖️ Ισοδύναμα & Ανάγωγα Κλάσματα - LearnMaths.gr</title>
+        <title>⚖️ Ισοδύναμα και Ανάγωγα Κλάσματα - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -205,7 +205,7 @@ export default function IsodinamaKlasmataPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  25. Ισοδύναμα Κλάσματα & Απλοποίηση σε Ανάγωγο
+                  25. Ισοδύναμα Κλάσματα και Απλοποίηση σε Ανάγωγο
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς δημιουργούμε <strong>ισοδύναμα κλάσματα</strong> πολλαπλασιάζοντας τους όρους τους και πώς τα <strong>απλοποιούμε με τον Μ.Κ.Δ.</strong> για να φτάσουμε στο απλούστερο <strong>ανάγωγο κλάσμα</strong>!
@@ -308,7 +308,7 @@ export default function IsodinamaKlasmataPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <span>🕹️</span> Διαδραστικό Εργαστήριο Ισοδυναμίας & Απλοποίησης
+                  <span>🕹️</span> Διαδραστικό Εργαστήριο Ισοδυναμίας και Απλοποίησης
                 </h2>
                 <p className="text-gray-500 text-sm">
                   {activeTab === 'create'
@@ -329,13 +329,13 @@ export default function IsodinamaKlasmataPage() {
                   <div className="space-y-4">
                     <div className="space-y-3">
                       <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                        1. Αρχικό Κλάσμα:
+                        1. Αρχικο Κλασμα:
                       </span>
 
                       <div className="grid grid-cols-2 gap-3">
                         {/* ΑΡΙΘΜΗΤΗΣ */}
                         <div className="bg-white p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                           <div className="flex items-center gap-1">
                             <button
                               type="button"
@@ -362,7 +362,7 @@ export default function IsodinamaKlasmataPage() {
 
                         {/* ΠΑΡΟΝΟΜΑΣΤΗΣ */}
                         <div className="bg-white p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                           <div className="flex items-center gap-1">
                             <button
                               type="button"
@@ -417,7 +417,7 @@ export default function IsodinamaKlasmataPage() {
                     {/* PRESETS */}
                     <div className="space-y-2 pt-2 border-t border-slate-200">
                       <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                        Έτοιμα Παραδείγματα:
+                        Ετοιμα Παραδειγματα:
                       </span>
                       <div className="grid grid-cols-2 gap-2">
                         {PRESETS_CREATE.map((p, idx) => (
@@ -448,7 +448,7 @@ export default function IsodinamaKlasmataPage() {
                       <div className="grid grid-cols-2 gap-3">
                         {/* ΑΡΙΘΜΗΤΗΣ */}
                         <div className="bg-white p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                           <div className="flex items-center gap-1">
                             <button
                               type="button"
@@ -475,7 +475,7 @@ export default function IsodinamaKlasmataPage() {
 
                         {/* ΠΑΡΟΝΟΜΑΣΤΗΣ */}
                         <div className="bg-white p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                           <div className="flex items-center gap-1">
                             <button
                               type="button"
@@ -504,7 +504,7 @@ export default function IsodinamaKlasmataPage() {
                       {/* BOX Μ.Κ.Δ. */}
                       <div className="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-200 text-xs text-emerald-900 space-y-1 shadow-xs">
                         <span className="font-black uppercase tracking-wider block text-[10px]">
-                          🔍 Μέγιστος Κοινός Διαιρέτης:
+                          🔍 Μεγιστος Κοινος Διαιρετης:
                         </span>
                         <p>
                           Μ.Κ.Δ.({activeNum2}, {activeDen2}) ＝ <strong>{gcd}</strong>.
@@ -516,7 +516,7 @@ export default function IsodinamaKlasmataPage() {
                     {/* PRESETS REDUCE */}
                     <div className="space-y-2 pt-2 border-t border-slate-200">
                       <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                        Έτοιμα Παραδείγματα:
+                        Ετοιμα Παραδειγματα:
                       </span>
                       <div className="grid grid-cols-2 gap-2">
                         {PRESETS_REDUCE.map((p, idx) => (
@@ -621,13 +621,13 @@ export default function IsodinamaKlasmataPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-6 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
                       <div className="flex flex-col items-center space-y-2">
                         <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                          Αρχικό Κλάσμα ({activeNum2}/{activeDen2})
+                          Αρχικο Κλασμα ({activeNum2}/{activeDen2})
                         </span>
                         {renderPizzaDiagram(activeNum2, activeDen2, 'fill-emerald-500', 'stroke-emerald-700')}
                       </div>
                       <div className="flex flex-col items-center space-y-2">
                         <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                          Ανάγωγο Κλάσμα ({reducedNum}/{reducedDen})
+                          Αναγωγο Κλασμα ({reducedNum}/{reducedDen})
                         </span>
                         {renderPizzaDiagram(reducedNum, reducedDen, 'fill-teal-500', 'stroke-teal-700')}
                       </div>
