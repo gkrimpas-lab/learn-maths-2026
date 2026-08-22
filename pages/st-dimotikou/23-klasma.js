@@ -518,7 +518,7 @@ export default function KlasmaPage() {
                       {Array.from({ length: neededVisuals }).map((_, i) => (
                         <div key={i} className="space-y-1">
                           <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase">
-                            <span>Σοκολάτα {i + 1}</span>
+                            <span>Σοκολατα {i + 1}</span>
                             <span>{Math.max(0, Math.min(activeDenominator, activeNumerator - i * activeDenominator))} / {activeDenominator}</span>
                           </div>
                           {renderChocolate(i)}
