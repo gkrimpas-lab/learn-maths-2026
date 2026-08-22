@@ -118,9 +118,9 @@ export default function SigkrisiKlasmatonPage() {
     return '=';
   };
 
-  // Σχεδίαση κυκλικών διαγραμμάτων (πίτσες SVG)
+  // Σχεδίαση ΟΛΩΝ των κυκλικών διαγραμμάτων (χωρίς περιορισμό πλήθους)
   const renderFractionVisual = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
-    const totalPizzasNeeded = Math.max(1, Math.min(6, Math.ceil(num / den)));
+    const totalPizzasNeeded = Math.max(1, Math.ceil(num / den));
     const pizzas = [];
 
     const radius = 45;
@@ -164,17 +164,20 @@ export default function SigkrisiKlasmatonPage() {
       }
 
       pizzas.push(
-        <div key={p} className="relative">
-          <svg width="110" height="110" className="drop-shadow-sm overflow-visible">
+        <div key={p} className="flex flex-col items-center space-y-1">
+          <svg width="105" height="105" className="drop-shadow-sm overflow-visible">
             {slices}
             <circle cx={cx} cy={cy} r="2.5" className="fill-slate-800" />
           </svg>
+          <span className="text-[9px] font-bold text-slate-400 uppercase">
+            Μονάδα {p + 1}
+          </span>
         </div>
       );
     }
 
     return (
-      <div className="flex flex-wrap justify-center gap-2 max-w-[260px] p-2 bg-white rounded-2xl border border-slate-200 shadow-inner">
+      <div className="flex flex-wrap justify-center gap-2 max-w-full p-3 bg-white rounded-2xl border border-slate-200 shadow-inner max-h-[380px] overflow-y-auto">
         {pizzas}
       </div>
     );
@@ -494,7 +497,7 @@ export default function SigkrisiKlasmatonPage() {
                 </div>
               </div>
 
-              {/* RIGHT: VISUALIZATION, DYNAMIC NUMBER LINE & PIZZAS (8 COLS) */}
+              {/* RIGHT: VISUALIZATION, DYNAMIC NUMBER LINE & FULL SCROLLABLE PIZZAS (8 COLS) */}
               <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
                 
                 {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΜΕ ΤΟ ΣΥΜΒΟΛΟ */}
@@ -574,13 +577,18 @@ export default function SigkrisiKlasmatonPage() {
                   </p>
                 </div>
 
-                {/* 3. ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΠΙΤΣΑΣ */}
+                {/* 3. ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΠΙΤΣΑΣ (ΠΛΗΡΗΣ ΕΜΦΑΝΙΣΗ ΧΩΡΙΣ ΠΕΡΙΟΡΙΣΜΟ ΚΟΜΜΑΤΙΩΝ) */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                    🍕 Οπτική Σύγκριση Επιφάνειας (Κυκλικό Μοντέλο):
-                  </span>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
+                      🍕 Οπτική Σύγκριση Επιφάνειας (Κυκλικό Μοντέλο):
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-400">
+                      Εμφανίζονται όλες οι μονάδες (scrollable)
+                    </span>
+                  </div>
                   
-                  <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-4 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
                     {/* Πίτσα Α */}
                     <div className="flex flex-col items-center space-y-2">
                       <span className="text-xs font-black text-blue-600 uppercase tracking-wider">
