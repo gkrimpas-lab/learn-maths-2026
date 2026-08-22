@@ -5,14 +5,31 @@ import { LAYOUT } from '../../shared/layout-config';
 
 // ΕΞΩΤΕΡΙΚΕΣ ΜΕΤΑΒΛΗΤΕΣ ΡΥΘΜΙΣΗΣ
 const MAX_DENOMINATOR = 100;
-const MAX_NUMERATOR_MULTIPLIER = 3; // Ο αριθμητής μπορεί να γίνει έως 3 φορές ο παρονομαστής
+const MAX_NUMERATOR_MULTIPLIER = 3;
 
 const PRESETS = [
   { nA: 3, dA: 8, nB: 5, dB: 8, label: "3/8 vs 5/8 (Ομώνυμα)" },
   { nA: 2, dA: 3, nB: 2, dB: 5, label: "2/3 vs 2/5 (Ίδιος Αριθμητής)" },
-  { nA: 2, dA: 3, nB: 3, dB: 4, label: "2/3 vs 3/4 (Ετερώνυμα - Χιαστί)" },
+  { nA: 2, dA: 3, nB: 3, dB: 4, label: "2/3 vs 3/4 (Ετερώνυμα)" },
   { nA: 3, dA: 6, nB: 4, dB: 8, label: "3/6 vs 4/8 (Ισοδύναμα = 1/2)" }
 ];
+
+// Υπολογισμός Μ.Κ.Δ. και Ε.Κ.Π.
+function gcd(a, b) {
+  let x = Math.abs(a);
+  let y = Math.abs(b);
+  while (y) {
+    const t = y;
+    y = x % y;
+    x = t;
+  }
+  return x;
+}
+
+function lcm(a, b) {
+  if (a === 0 || b === 0) return 0;
+  return Math.abs(a * b) / gcd(a, b);
+}
 
 export default function SigkrisiKlasmatonPage() {
   // Κλάσμα Α (Αριστερά)
@@ -23,7 +40,10 @@ export default function SigkrisiKlasmatonPage() {
   const [numB, setNumB] = useState(3);
   const [denB, setDenB] = useState(4);
 
-  // Μέγιστος επιτρεπτός αριθμητής βάσει του τρέχοντος παρονομαστή
+  // Tab μεθόδου επεξήγησης: 'homo' (Ομώνυμα/ΕΚΠ) ή 'cross' (Χιαστί)
+  const [methodTab, setMethodTab] = useState('homo');
+
+  // Μέγιστος επιτρεπτός αριθμητής
   const getMaxNumerator = (denominator) => {
     const activeDen = Number(denominator) || 1;
     return Math.min(activeDen * MAX_NUMERATOR_MULTIPLIER, MAX_DENOMINATOR * MAX_NUMERATOR_MULTIPLIER);
@@ -51,7 +71,7 @@ export default function SigkrisiKlasmatonPage() {
     }
   };
 
-  // Αυξομείωση με κουμπιά για το Κλάσμα Α
+  // Αυξομείωση με κουμπιά
   const adjustValueA = (type, amount) => {
     if (type === 'num') {
       const maxNum = getMaxNumerator(denA);
@@ -66,7 +86,6 @@ export default function SigkrisiKlasmatonPage() {
     }
   };
 
-  // Αυξομείωση με κουμπιά για το Κλάσμα Β
   const adjustValueB = (type, amount) => {
     if (type === 'num') {
       const maxNum = getMaxNumerator(denB);
@@ -90,63 +109,22 @@ export default function SigkrisiKlasmatonPage() {
   const valA = activeNumA / activeDenA;
   const valB = activeNumB / activeDenB;
 
+  // Υπολογισμός Ε.Κ.Π. και Ομώνυμων Κλασμάτων
+  const commonDen = lcm(activeDenA, activeDenB) || 1;
+  const multA = commonDen / activeDenA;
+  const multB = commonDen / activeDenB;
+  const homoNumA = activeNumA * multA;
+  const homoNumB = activeNumB * multB;
+
+  // Υπολογισμός Χιαστί Γινομένων
+  const crossA = activeNumA * activeDenB;
+  const crossB = activeNumB * activeDenA;
+
   // Εύρεση του σωστού συμβόλου σύγκρισης
   const getComparisonSymbol = () => {
     if (valA > valB) return '>';
     if (valA < valB) return '<';
     return '=';
-  };
-
-  // Επεξηγηματικό παιδαγωγικό μήνυμα
-  const getExplanationMessage = () => {
-    if (activeDenA === activeDenB) {
-      return (
-        <div className="space-y-1">
-          <span className="font-bold text-blue-800 uppercase block text-[11px]">1. Ίδιοι Παρονομαστές (Ομώνυμα):</span>
-          <p>
-            Τα κλάσματα έχουν τον ίδιο παρονομαστή ({activeDenA}). Μεγαλύτερο είναι εκείνο που έχει τον μεγαλύτερο αριθμητή: 
-            <strong> {activeNumA} {valA > valB ? '>' : valA < valB ? '<' : '＝'} {activeNumB}</strong>.
-          </p>
-        </div>
-      );
-    }
-    if (activeNumA === activeNumB && activeNumA !== 0) {
-      return (
-        <div className="space-y-1">
-          <span className="font-bold text-purple-800 uppercase block text-[11px]">2. Ίδιοι Αριθμητές:</span>
-          <p>
-            Τα κλάσματα έχουν τον ίδιο αριθμητή ({activeNumA}). Μεγαλύτερο είναι εκείνο που έχει τον <strong>μικρότερο παρονομαστή</strong>, γιατί η μονάδα χωρίστηκε σε λιγότερα και άρα μεγαλύτερα κομμάτια!
-          </p>
-        </div>
-      );
-    }
-    
-    // Ετερώνυμα - Μέθοδος Χιαστί
-    const crossA = activeNumA * activeDenB;
-    const crossB = activeNumB * activeDenA;
-    
-    let resultText = "";
-    if (crossA < crossB) {
-      resultText = `Επειδή το αριστερό γινόμενο (${crossA}) είναι μικρότερο από το δεξί (${crossB}), τότε: ${activeNumA}/${activeDenA} < ${activeNumB}/${activeDenB}.`;
-    } else if (crossA > crossB) {
-      resultText = `Επειδή το αριστερό γινόμενο (${crossA}) είναι μεγαλύτερο από το δεξί (${crossB}), τότε: ${activeNumA}/${activeDenA} > ${activeNumB}/${activeDenB}.`;
-    } else {
-      resultText = `Επειδή τα γινόμενα είναι ίσα (${crossA} ＝ ${crossB}), τότε τα κλάσματα είναι ισοδύναμα (${activeNumA}/${activeDenA} ＝ ${activeNumB}/${activeDenB}).`;
-    }
-
-    return (
-      <div className="space-y-2">
-        <span className="font-bold text-amber-800 uppercase block text-[11px]">3. Ετερώνυμα (Μέθοδος Χιαστί):</span>
-        <p className="text-slate-600">
-          • Αριστερό γινόμενο: {activeNumA} × {activeDenB} ＝ <strong className="text-blue-700 font-bold">{crossA}</strong>
-          <br />
-          • Δεξί γινόμενο: {activeNumB} × {activeDenA} ＝ <strong className="text-orange-700 font-bold">{crossB}</strong>
-        </p>
-        <p className="border-t border-slate-200 pt-1.5 font-bold text-slate-800">
-          {resultText}
-        </p>
-      </div>
-    );
   };
 
   // Σχεδίαση κυκλικών διαγραμμάτων (πίτσες SVG)
@@ -258,10 +236,10 @@ export default function SigkrisiKlasmatonPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  26. Σύγκριση Κλασμάτων (Ομώνυμα, Ετερώνυμα & Χιαστί)
+                  26. Σύγκριση Κλασμάτων (Ομώνυμα, Ε.Κ.Π. & Χιαστί)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε τους 3 εύκολους κανόνες για να συγκρίνεις οποιαδήποτε κλάσματα: με <strong>ίδιους παρονομαστές</strong>, με <strong>ίδιους αριθμητές</strong> ή με τον ταχύτατο <strong>πολλαπλασιασμό χιαστί</strong>!
+                  Μάθε πώς συγκρίνουμε κλάσματα: κάνοντάς τα <strong>ομώνυμα με το Ε.Κ.Π.</strong>, συγκρίνοντας τους <strong>αριθμητές</strong> ή εφαρμόζοντας τον γρήγορο <strong>πολλαπλασιασμό χιαστί</strong>!
                 </p>
               </div>
 
@@ -299,19 +277,19 @@ export default function SigkrisiKlasmatonPage() {
               </div>
             </div>
 
-            <div className="bg-purple-50/80 border border-purple-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
+            <div className="bg-indigo-50/80 border border-indigo-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
-                <div className="w-10 h-10 bg-purple-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
+                <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   2
                 </div>
-                <h3 className="text-lg font-black text-slate-900">2. Ίδιοι Αριθμητές</h3>
+                <h3 className="text-lg font-black text-slate-900">2. Μετατροπή σε Ομώνυμα</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Όταν οι αριθμητές είναι ίδιοι, <strong>μεγαλύτερο</strong> είναι το κλάσμα με τον <strong>μικρότερο παρονομαστή</strong> (μεγαλύτερα κομμάτια).
+                  Βρίσκουμε το <strong>Ε.Κ.Π.</strong> των παρονομαστών, φτιάχνουμε ισοδύναμα ομώνυμα κλάσματα και συγκρίνουμε τους νέους αριθμητές.
                 </p>
               </div>
-              <div className="bg-white p-3 rounded-2xl border border-purple-100 text-xs text-slate-700 font-mono text-center font-bold">
-                <span className="bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-xl text-purple-900">
-                  2/3 &gt; 2/5
+              <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
+                <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
+                  2/3 (8/12) &lt; 3/4 (9/12)
                 </span>
               </div>
             </div>
@@ -323,12 +301,12 @@ export default function SigkrisiKlasmatonPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Μέθοδος Χιαστί</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Στα ετερώνυμα, πολλαπλασιάζουμε χιαστί: (α × δ) και (γ × β). Συγκρίνουμε τα γινόμενα για να βρούμε το μεγαλύτερο κλάσμα!
+                  Πολλαπλασιάζουμε χιαστί: (α × δ) και (γ × β). Συγκρίνουμε τα γινόμενα για άμεσο και γρήγορο αποτέλεσμα!
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-amber-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-xl text-amber-900">
-                  2/3 &lt; 3/4 (2×4=8 &lt; 3×3=9)
+                  2×4=8 &lt; 3×3=9 ➔ 2/3 &lt; 3/4
                 </span>
               </div>
             </div>
@@ -342,8 +320,34 @@ export default function SigkrisiKlasmatonPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο Σύγκρισης Κλασμάτων
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Ρύθμισε τα δύο κλάσματα και παρατήρησε τη μαθηματική και οπτική σύγκριση σε πραγματικό χρόνο!
+                  Ρύθμισε τα δύο κλάσματα, δες τη μετατροπή τους σε ομώνυμα, τον χιαστί έλεγχο και τη θέση τους στην αριθμογραμμή!
                 </p>
+              </div>
+
+              {/* METHOD SELECTOR TABS */}
+              <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner gap-1">
+                <button
+                  type="button"
+                  onClick={() => setMethodTab('homo')}
+                  className={`px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
+                    methodTab === 'homo'
+                      ? 'bg-blue-600 text-white shadow-sm scale-105'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  📐 Μετατροπή σε Ομώνυμα (Ε.Κ.Π.)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMethodTab('cross')}
+                  className={`px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
+                    methodTab === 'cross'
+                      ? 'bg-amber-500 text-white shadow-sm scale-105'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  ⚡ Μέθοδος Χιαστί
+                </button>
               </div>
             </div>
 
@@ -448,19 +452,58 @@ export default function SigkrisiKlasmatonPage() {
                     </div>
                   </div>
 
-                  {/* ΕΠΕΞΗΓΗΣΗ ΚΑΝΟΝΑ */}
+                  {/* ΜΑΘΗΜΑΤΙΚΗ ΕΞΗΓΗΣΗ ΑΝΑΛΟΓΑ ΜΕ ΤΟ TAB */}
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs">
-                    {getExplanationMessage()}
+                    {methodTab === 'homo' ? (
+                      <div className="space-y-1.5">
+                        <span className="font-black text-blue-800 uppercase block text-[11px]">
+                          📐 Μετατροπή σε Ομώνυμα με Ε.Κ.Π.({activeDenA}, {activeDenB}):
+                        </span>
+                        {activeDenA === activeDenB ? (
+                          <p>Τα κλάσματα είναι ήδη ομώνυμα (έχουν ίδιο παρονομαστή {activeDenA}). Συγκρίνουμε απευθείας τους αριθμητές: <strong>{activeNumA} {valA > valB ? '>' : valA < valB ? '<' : '＝'} {activeNumB}</strong>.</p>
+                        ) : (
+                          <>
+                            <p>
+                              • Ε.Κ.Π.({activeDenA}, {activeDenB}) ＝ <strong>{commonDen}</strong>
+                            </p>
+                            <p>
+                              • 1ο Κλάσμα: ({activeNumA} × {multA}) / ({activeDenA} × {multA}) ＝ <strong className="text-blue-700">{homoNumA}/{commonDen}</strong>
+                            </p>
+                            <p>
+                              • 2ο Κλάσμα: ({activeNumB} × {multB}) / ({activeDenB} × {multB}) ＝ <strong className="text-orange-700">{homoNumB}/{commonDen}</strong>
+                            </p>
+                            <p className="border-t border-slate-100 pt-1 font-bold text-slate-900">
+                              Συγκρίνουμε τους νέους αριθμητές: {homoNumA} {homoNumA > homoNumB ? '>' : homoNumA < homoNumB ? '<' : '＝'} {homoNumB}, άρα {activeNumA}/{activeDenA} {getComparisonSymbol()} {activeNumB}/{activeDenB}.
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-1.5">
+                        <span className="font-black text-amber-800 uppercase block text-[11px]">
+                          ⚡ Έλεγχος με Πολλαπλασιασμό Χιαστί:
+                        </span>
+                        <p>
+                          • Αριστερό γινόμενο: {activeNumA} × {activeDenB} ＝ <strong className="text-blue-700">{crossA}</strong>
+                        </p>
+                        <p>
+                          • Δεξί γινόμενο: {activeNumB} × {activeDenA} ＝ <strong className="text-orange-700">{crossB}</strong>
+                        </p>
+                        <p className="border-t border-slate-100 pt-1 font-bold text-slate-900">
+                          Επειδή {crossA} {crossA > crossB ? '>' : crossA < crossB ? '<' : '＝'} {crossB}, τότε {activeNumA}/{activeDenA} {getComparisonSymbol()} {activeNumB}/{activeDenB}.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                 </div>
 
                 <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
-                  💡 <strong>Συμβουλή:</strong> Μετατρέποντας τα κλάσματα σε δεκαδικούς, η σύγκριση γίνεται άμεσα προφανής!
+                  💡 <strong>Συμβουλή:</strong> Όταν δύο κλάσματα γίνουν ομώνυμα, συγκρίνουμε μόνο τους αριθμητές τους!
                 </div>
               </div>
 
-              {/* RIGHT: VISUALIZATION & PIZZAS (8 COLS) */}
+              {/* RIGHT: VISUALIZATION, NUMBER LINE & PIZZAS (8 COLS) */}
               <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
                 
                 {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΜΕ ΤΟ ΣΥΜΒΟΛΟ */}
@@ -487,13 +530,65 @@ export default function SigkrisiKlasmatonPage() {
                   </div>
                 </div>
 
-                {/* 2. ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΠΙΤΣΑΣ */}
+                {/* 2. ΟΠΤΙΚΗ ΑΠΕΙΚΟΝΙΣΗ ΣΤΗΝ ΑΡΙΘΜΟΓΡΑΜΜΗ (NUMBER LINE) */}
+                <div className="space-y-2 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                  <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
+                    📍 Τοποθέτηση στην Αριθμογραμμή (Ποιο είναι πιο δεξιά;):
+                  </span>
+
+                  <div className="relative w-full pt-10 pb-6 px-6">
+                    <div className="relative w-full h-1.5 bg-slate-300 rounded-full">
+                      {/* Ακέραιοι 0, 1, 2, 3 */}
+                      {[0, 1, 2, 3].map((num) => {
+                        const pct = (num / 3) * 100;
+                        return (
+                          <div key={num} className="absolute flex flex-col items-center" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
+                            <div className="w-0.5 h-4 bg-slate-800 -top-2 relative" />
+                            <span className="text-xs font-mono font-black text-slate-700 top-1 relative">{num}</span>
+                          </div>
+                        );
+                      })}
+
+                      {/* Δείκτης Κλάσματος Α (Μπλε) */}
+                      {valA <= 3 && (
+                        <div 
+                          className="absolute flex flex-col items-center -top-8 transition-all duration-500 ease-out z-10"
+                          style={{ left: `${(valA / 3) * 100}%`, transform: 'translateX(-50%)' }}
+                        >
+                          <div className="bg-blue-600 text-white font-mono text-[11px] font-black px-2 py-0.5 rounded-lg shadow-md mb-0.5 whitespace-nowrap">
+                            Α: {activeNumA}/{activeDenA} ({valA.toFixed(2).replace('.', ',')})
+                          </div>
+                          <div className="w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-white shadow-md animate-bounce" />
+                        </div>
+                      )}
+
+                      {/* Δείκτης Κλάσματος Β (Πορτοκαλί) */}
+                      {valB <= 3 && (
+                        <div 
+                          className="absolute flex flex-col items-center -top-8 transition-all duration-500 ease-out z-20"
+                          style={{ left: `${(valB / 3) * 100}%`, transform: 'translateX(-50%)' }}
+                        >
+                          <div className="bg-orange-600 text-white font-mono text-[11px] font-black px-2 py-0.5 rounded-lg shadow-md mb-0.5 whitespace-nowrap">
+                            Β: {activeNumB}/{activeDenB} ({valB.toFixed(2).replace('.', ',')})
+                          </div>
+                          <div className="w-3.5 h-3.5 rounded-full bg-orange-500 border-2 border-white shadow-md animate-bounce" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-400 italic text-center">
+                    Το κλάσμα που βρίσκεται <strong>πιο δεξιά στην αριθμογραμμή</strong> είναι το μεγαλύτερο!
+                  </p>
+                </div>
+
+                {/* 3. ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΠΙΤΣΑΣ */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
                     🍕 Οπτική Σύγκριση Επιφάνειας (Κυκλικό Μοντέλο):
                   </span>
                   
-                  <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-6 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
+                  <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-4 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
                     {/* Πίτσα Α */}
                     <div className="flex flex-col items-center space-y-2">
                       <span className="text-xs font-black text-blue-600 uppercase tracking-wider">
@@ -501,7 +596,7 @@ export default function SigkrisiKlasmatonPage() {
                       </span>
                       {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                       <span className="font-mono text-xs text-slate-600 font-bold bg-white px-2.5 py-0.5 rounded-md border border-slate-200">
-                        Δεκαδική τιμή: {valA.toFixed(2).replace('.', ',')}
+                        {activeDenA !== commonDen ? `Ομώνυμο: ${homoNumA}/${commonDen}` : `Αξία: ${valA.toFixed(2).replace('.', ',')}`}
                       </span>
                     </div>
 
@@ -512,15 +607,15 @@ export default function SigkrisiKlasmatonPage() {
                       </span>
                       {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                       <span className="font-mono text-xs text-slate-600 font-bold bg-white px-2.5 py-0.5 rounded-md border border-slate-200">
-                        Δεκαδική τιμή: {valB.toFixed(2).replace('.', ',')}
+                        {activeDenB !== commonDen ? `Ομώνυμο: ${homoNumB}/${commonDen}` : `Αξία: ${valB.toFixed(2).replace('.', ',')}`}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
+                {/* 4. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500 text-white p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                  ⚖️ Συμπέρασμα: {activeNumA}/{activeDenA} {getComparisonSymbol()} {activeNumB}/{activeDenB} (Το κλάσμα με τη μεγαλύτερη χρωματισμένη επιφάνεια είναι το μεγαλύτερο!)
+                  ⚖️ Συμπέρασμα: {activeNumA}/{activeDenA} {getComparisonSymbol()} {activeNumB}/{activeDenB} (Το κλάσμα που καλύπτει μεγαλύτερη επιφάνεια και βρίσκεται πιο δεξιά στην αριθμογραμμή είναι το μεγαλύτερο!)
                 </div>
 
               </div>
