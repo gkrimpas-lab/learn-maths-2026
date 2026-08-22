@@ -157,7 +157,7 @@ export default function AfairesiKlasmatonPage() {
             <circle cx={cx} cy={cy} r="2.5" className="fill-slate-800" />
           </svg>
           <span className="text-[9px] font-bold text-slate-400 uppercase">
-            Μονάδα {p + 1}
+            Μοναδα {p + 1}
           </span>
         </div>
       );
@@ -263,14 +263,14 @@ export default function AfairesiKlasmatonPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 28
+                    Ενοτητα 28
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  28. Αφαίρεση Κλασμάτων (Ομώνυμα & Ετερώνυμα)
+                  28. Αφαίρεση Κλασμάτων (Ομώνυμα και Ετερώνυμα)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς αφαιρούμε <strong>ομώνυμα κλάσματα</strong> αφαιρώντας μόνο τους αριθμητές, και πώς κάνουμε τα <strong>ετερώνυμα ομώνυμα με το Ε.Κ.Π.</strong> πριν εκτελέσουμε την αφαίρεση!
@@ -369,11 +369,11 @@ export default function AfairesiKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ - ΜΕΙΩΤΕΟΣ) */}
                   <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
                     <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                      🔵 1ο Κλάσμα (Μειωτέος)
+                      🔵 1ο Κλασμα (Μειωτεος)
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValueA('num', -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -386,7 +386,7 @@ export default function AfairesiKlasmatonPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValueA('den', -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -404,11 +404,11 @@ export default function AfairesiKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Β (ΠΟΡΤΟΚΑΛΙ - ΑΦΑΙΡΕΤΕΟΣ) */}
                   <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-200 space-y-3">
                     <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
-                      🟠 2ο Κλάσμα (Αφαιρετέος)
+                      🟠 2ο Κλασμα (Αφαιρετεος)
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValueB('num', -1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -421,7 +421,7 @@ export default function AfairesiKlasmatonPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValueB('den', -1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -439,7 +439,7 @@ export default function AfairesiKlasmatonPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -550,7 +550,7 @@ export default function AfairesiKlasmatonPage() {
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                      🍕 Οπτική Αφαίρεση (Κυκλικό Μοντέλο):
+                      🍕 Οπτικη Αφαιρεση (Κυκλικο Μοντελο):
                     </span>
                     <span className="text-[11px] font-bold text-slate-400">
                       Εμφανίζονται όλες οι μονάδες
@@ -560,7 +560,7 @@ export default function AfairesiKlasmatonPage() {
                   <div className="flex flex-wrap items-center justify-center gap-4 py-4 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner p-4 max-h-[380px] overflow-y-auto">
                     {/* Πίτσα Α */}
                     <div className="flex flex-col items-center space-y-1.5">
-                      <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider text-center">1ο Κλάσμα ({activeNumA}/{activeDenA})</span>
+                      <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider text-center">1ο Κλασμα ({activeNumA}/{activeDenA})</span>
                       {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                     </div>
 
@@ -568,7 +568,7 @@ export default function AfairesiKlasmatonPage() {
 
                     {/* Πίτσα Β */}
                     <div className="flex flex-col items-center space-y-1.5">
-                      <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider text-center">2ο Κλάσμα ({activeNumB}/{activeDenB})</span>
+                      <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider text-center">2ο Κλασμα ({activeNumB}/{activeDenB})</span>
                       {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                     </div>
 
@@ -578,14 +578,14 @@ export default function AfairesiKlasmatonPage() {
                         <div className="text-xl text-slate-400 font-black px-1">＝</div>
 
                         <div className="flex flex-col items-center space-y-1.5 opacity-90">
-                          <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider text-center">Ομώνυμο 1 ({equivalentNumA}/{lcm})</span>
+                          <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider text-center">Ομωνυμο 1 ({equivalentNumA}/{lcm})</span>
                           {renderFractionVisual(equivalentNumA, lcm, 'fill-blue-500/90', 'stroke-blue-600')}
                         </div>
 
                         <div className="text-xl text-slate-400 font-black px-1">－</div>
 
                         <div className="flex flex-col items-center space-y-1.5 opacity-90">
-                          <span className="text-[10px] font-bold text-orange-700 uppercase tracking-wider text-center">Ομώνυμο 2 ({equivalentNumB}/{lcm})</span>
+                          <span className="text-[10px] font-bold text-orange-700 uppercase tracking-wider text-center">Ομωνυμο 2 ({equivalentNumB}/{lcm})</span>
                           {renderFractionVisual(equivalentNumB, lcm, 'fill-orange-500/90', 'stroke-orange-600')}
                         </div>
                       </>
@@ -596,7 +596,7 @@ export default function AfairesiKlasmatonPage() {
                     {/* Πίτσα Αποτελέσματος */}
                     <div className={`flex flex-col items-center space-y-1.5 p-2 rounded-2xl border ${isNegative ? 'bg-rose-50/70 border-rose-200' : 'bg-emerald-50/70 border-emerald-200'}`}>
                       <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${isNegative ? 'text-rose-600' : 'text-emerald-700'}`}>
-                        {isNegative ? 'Έλλειμμα' : 'Υπόλοιπο'} ({isNegative ? '－' : ''}{lcmResultNum}/{lcmResultDen})
+                        {isNegative ? 'Ελλειμμα' : 'Υπολοιπο'} ({isNegative ? '－' : ''}{lcmResultNum}/{lcmResultDen})
                       </span>
                       {renderFractionVisual(lcmResultNum, lcmResultDen, isNegative ? 'fill-rose-500' : 'fill-emerald-500', isNegative ? 'stroke-rose-700' : 'stroke-emerald-700')}
                     </div>
@@ -607,7 +607,7 @@ export default function AfairesiKlasmatonPage() {
                         <div className={`text-xl font-black px-1 ${isNegative ? 'text-rose-600' : 'text-emerald-600'}`}>＝</div>
                         <div className={`flex flex-col items-center space-y-1.5 p-2 rounded-2xl border ${isNegative ? 'bg-rose-100/70 border-rose-300' : 'bg-emerald-100/70 border-emerald-300'}`}>
                           <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${isNegative ? 'text-rose-800' : 'text-emerald-800'}`}>
-                            Ανάγωγο ({isNegative ? '－' : ''}{simplifiedNum}/{simplifiedDen})
+                            Αναγωγο ({isNegative ? '－' : ''}{simplifiedNum}/{simplifiedDen})
                           </span>
                           {renderFractionVisual(simplifiedNum, simplifiedDen, isNegative ? 'fill-rose-600' : 'fill-emerald-600', isNegative ? 'stroke-rose-800' : 'stroke-emerald-800')}
                         </div>
