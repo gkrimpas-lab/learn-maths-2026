@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 // ΕΞΩΤΕΡΙΚΕΣ ΜΕΤΑΒΛΗΤΕΣ ΡΥΘΜΙΣΗΣ
-const MAX_DENOMINATOR = 100;
-const MAX_NUMERATOR_MULTIPLIER = 3;
+const MAX_LIMIT = 100;
 
 const PRESETS = [
   { nA: 3, dA: 8, nB: 5, dB: 8, label: "3/8 vs 5/8 (Ομώνυμα)" },
@@ -43,14 +42,8 @@ export default function SigkrisiKlasmatonPage() {
   // Tab μεθόδου επεξήγησης: 'homo' (Ομώνυμα/ΕΚΠ) ή 'cross' (Χιαστί)
   const [methodTab, setMethodTab] = useState('homo');
 
-  // Μέγιστος επιτρεπτός αριθμητής
-  const getMaxNumerator = (denominator) => {
-    const activeDen = Number(denominator) || 1;
-    return Math.min(activeDen * MAX_NUMERATOR_MULTIPLIER, MAX_DENOMINATOR * MAX_NUMERATOR_MULTIPLIER);
-  };
-
-  // Ασφαλής έλεγχος εισαγωγής κειμένου
-  const handleInputChange = (setter, val, currentDen, isDenominator = false) => {
+  // Ασφαλής έλεγχος εισαγωγής κειμένου χωρίς να επηρεάζεται ο άλλος όρος
+  const handleInputChange = (setter, val, isDenominator = false) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
       setter('');
@@ -59,44 +52,28 @@ export default function SigkrisiKlasmatonPage() {
     const n = Number(clean);
     
     if (isDenominator) {
-      if (n === 0 || n > MAX_DENOMINATOR) return;
+      if (n === 0 || n > MAX_LIMIT) return;
       setter(n);
-      const maxNumForNewDen = n * MAX_NUMERATOR_MULTIPLIER;
-      if (setter === setDenA && numA > maxNumForNewDen) setNumA(maxNumForNewDen);
-      if (setter === setDenB && numB > maxNumForNewDen) setNumB(maxNumForNewDen);
     } else {
-      const maxAllowedNum = getMaxNumerator(currentDen);
-      if (n > maxAllowedNum) return;
+      if (n > MAX_LIMIT) return;
       setter(n);
     }
   };
 
-  // Αυξομείωση με κουμπιά
+  // Αυξομείωση με κουμπιά (εντελώς ανεξάρτητα)
   const adjustValueA = (type, amount) => {
     if (type === 'num') {
-      const maxNum = getMaxNumerator(denA);
-      setNumA(prev => Math.max(0, Math.min(maxNum, (Number(prev) || 0) + amount)));
+      setNumA(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
     } else {
-      setDenA(prev => {
-        const nextDen = Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount));
-        const maxNum = getMaxNumerator(nextDen);
-        if (numA > maxNum) setNumA(maxNum);
-        return nextDen;
-      });
+      setDenA(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
     }
   };
 
   const adjustValueB = (type, amount) => {
     if (type === 'num') {
-      const maxNum = getMaxNumerator(denB);
-      setNumB(prev => Math.max(0, Math.min(maxNum, (Number(prev) || 0) + amount)));
+      setNumB(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
     } else {
-      setDenB(prev => {
-        const nextDen = Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount));
-        const maxNum = getMaxNumerator(nextDen);
-        if (numB > maxNum) setNumB(maxNum);
-        return nextDen;
-      });
+      setDenB(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
     }
   };
 
@@ -108,6 +85,20 @@ export default function SigkrisiKlasmatonPage() {
 
   const valA = activeNumA / activeDenA;
   const valB = activeNumB / activeDenB;
+
+  // Υπολογισμός δυναμικής κλίμακας αριθμογραμμής
+  const maxDecimal = Math.max(valA, valB);
+  const maxLineVal = Math.max(2, Math.ceil(maxDecimal + 0.2));
+
+  // Δημιουργία των σημείων/ακεραίων της αριθμογραμμής
+  const step = maxLineVal > 10 ? Math.ceil(maxLineVal / 6) : 1;
+  const lineMarkers = [];
+  for (let m = 0; m <= maxLineVal; m += step) {
+    lineMarkers.push(m);
+  }
+  if (!lineMarkers.includes(maxLineVal)) {
+    lineMarkers.push(maxLineVal);
+  }
 
   // Υπολογισμός Ε.Κ.Π. και Ομώνυμων Κλασμάτων
   const commonDen = lcm(activeDenA, activeDenB) || 1;
@@ -129,7 +120,7 @@ export default function SigkrisiKlasmatonPage() {
 
   // Σχεδίαση κυκλικών διαγραμμάτων (πίτσες SVG)
   const renderFractionVisual = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
-    const totalPizzasNeeded = Math.max(1, Math.ceil(num / den));
+    const totalPizzasNeeded = Math.max(1, Math.min(6, Math.ceil(num / den)));
     const pizzas = [];
 
     const radius = 45;
@@ -371,7 +362,7 @@ export default function SigkrisiKlasmatonPage() {
                           <input
                             type="text"
                             value={numA}
-                            onChange={(e) => handleInputChange(setNumA, e.target.value, denA, false)}
+                            onChange={(e) => handleInputChange(setNumA, e.target.value, false)}
                             className="w-full text-center font-mono font-black text-base outline-none text-blue-600"
                           />
                           <button type="button" onClick={() => adjustValueA('num', 1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">+</button>
@@ -384,7 +375,7 @@ export default function SigkrisiKlasmatonPage() {
                           <input
                             type="text"
                             value={denA}
-                            onChange={(e) => handleInputChange(setDenA, e.target.value, denA, true)}
+                            onChange={(e) => handleInputChange(setDenA, e.target.value, true)}
                             className="w-full text-center font-mono font-black text-base outline-none text-blue-600"
                           />
                           <button type="button" onClick={() => adjustValueA('den', 1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">+</button>
@@ -406,7 +397,7 @@ export default function SigkrisiKlasmatonPage() {
                           <input
                             type="text"
                             value={numB}
-                            onChange={(e) => handleInputChange(setNumB, e.target.value, denB, false)}
+                            onChange={(e) => handleInputChange(setNumB, e.target.value, false)}
                             className="w-full text-center font-mono font-black text-base outline-none text-orange-600"
                           />
                           <button type="button" onClick={() => adjustValueB('num', 1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">+</button>
@@ -419,7 +410,7 @@ export default function SigkrisiKlasmatonPage() {
                           <input
                             type="text"
                             value={denB}
-                            onChange={(e) => handleInputChange(setDenB, e.target.value, denB, true)}
+                            onChange={(e) => handleInputChange(setDenB, e.target.value, true)}
                             className="w-full text-center font-mono font-black text-base outline-none text-orange-600"
                           />
                           <button type="button" onClick={() => adjustValueB('den', 1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">+</button>
@@ -503,7 +494,7 @@ export default function SigkrisiKlasmatonPage() {
                 </div>
               </div>
 
-              {/* RIGHT: VISUALIZATION, NUMBER LINE & PIZZAS (8 COLS) */}
+              {/* RIGHT: VISUALIZATION, DYNAMIC NUMBER LINE & PIZZAS (8 COLS) */}
               <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
                 
                 {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΜΕ ΤΟ ΣΥΜΒΟΛΟ */}
@@ -530,17 +521,22 @@ export default function SigkrisiKlasmatonPage() {
                   </div>
                 </div>
 
-                {/* 2. ΟΠΤΙΚΗ ΑΠΕΙΚΟΝΙΣΗ ΣΤΗΝ ΑΡΙΘΜΟΓΡΑΜΜΗ (NUMBER LINE) */}
+                {/* 2. ΔΥΝΑΜΙΚΗ ΑΡΙΘΜΟΓΡΑΜΜΗ (DYNAMIC NUMBER LINE) */}
                 <div className="space-y-2 bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                    📍 Τοποθέτηση στην Αριθμογραμμή (Ποιο είναι πιο δεξιά;):
-                  </span>
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
+                      📍 Δυναμική Αριθμογραμμή (0 έως {maxLineVal}):
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-400">
+                      Προσαρμόζεται αυτόματα στο μέγεθος
+                    </span>
+                  </div>
 
                   <div className="relative w-full pt-10 pb-6 px-6">
                     <div className="relative w-full h-1.5 bg-slate-300 rounded-full">
-                      {/* Ακέραιοι 0, 1, 2, 3 */}
-                      {[0, 1, 2, 3].map((num) => {
-                        const pct = (num / 3) * 100;
+                      {/* Δυναμικοί Ακέραιοι/Σημεία */}
+                      {lineMarkers.map((num) => {
+                        const pct = (num / maxLineVal) * 100;
                         return (
                           <div key={num} className="absolute flex flex-col items-center" style={{ left: `${pct}%`, transform: 'translateX(-50%)' }}>
                             <div className="w-0.5 h-4 bg-slate-800 -top-2 relative" />
@@ -550,30 +546,26 @@ export default function SigkrisiKlasmatonPage() {
                       })}
 
                       {/* Δείκτης Κλάσματος Α (Μπλε) */}
-                      {valA <= 3 && (
-                        <div 
-                          className="absolute flex flex-col items-center -top-8 transition-all duration-500 ease-out z-10"
-                          style={{ left: `${(valA / 3) * 100}%`, transform: 'translateX(-50%)' }}
-                        >
-                          <div className="bg-blue-600 text-white font-mono text-[11px] font-black px-2 py-0.5 rounded-lg shadow-md mb-0.5 whitespace-nowrap">
-                            Α: {activeNumA}/{activeDenA} ({valA.toFixed(2).replace('.', ',')})
-                          </div>
-                          <div className="w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-white shadow-md animate-bounce" />
+                      <div 
+                        className="absolute flex flex-col items-center -top-8 transition-all duration-500 ease-out z-10"
+                        style={{ left: `${Math.min(100, Math.max(0, (valA / maxLineVal) * 100))}%`, transform: 'translateX(-50%)' }}
+                      >
+                        <div className="bg-blue-600 text-white font-mono text-[11px] font-black px-2 py-0.5 rounded-lg shadow-md mb-0.5 whitespace-nowrap">
+                          Α: {activeNumA}/{activeDenA} ({valA.toFixed(2).replace('.', ',')})
                         </div>
-                      )}
+                        <div className="w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-white shadow-md animate-bounce" />
+                      </div>
 
                       {/* Δείκτης Κλάσματος Β (Πορτοκαλί) */}
-                      {valB <= 3 && (
-                        <div 
-                          className="absolute flex flex-col items-center -top-8 transition-all duration-500 ease-out z-20"
-                          style={{ left: `${(valB / 3) * 100}%`, transform: 'translateX(-50%)' }}
-                        >
-                          <div className="bg-orange-600 text-white font-mono text-[11px] font-black px-2 py-0.5 rounded-lg shadow-md mb-0.5 whitespace-nowrap">
-                            Β: {activeNumB}/{activeDenB} ({valB.toFixed(2).replace('.', ',')})
-                          </div>
-                          <div className="w-3.5 h-3.5 rounded-full bg-orange-500 border-2 border-white shadow-md animate-bounce" />
+                      <div 
+                        className="absolute flex flex-col items-center -top-8 transition-all duration-500 ease-out z-20"
+                        style={{ left: `${Math.min(100, Math.max(0, (valB / maxLineVal) * 100))}%`, transform: 'translateX(-50%)' }}
+                      >
+                        <div className="bg-orange-600 text-white font-mono text-[11px] font-black px-2 py-0.5 rounded-lg shadow-md mb-0.5 whitespace-nowrap">
+                          Β: {activeNumB}/{activeDenB} ({valB.toFixed(2).replace('.', ',')})
                         </div>
-                      )}
+                        <div className="w-3.5 h-3.5 rounded-full bg-orange-500 border-2 border-white shadow-md animate-bounce" />
+                      </div>
                     </div>
                   </div>
 
