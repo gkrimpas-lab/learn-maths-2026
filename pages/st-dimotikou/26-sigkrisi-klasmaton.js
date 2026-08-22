@@ -528,7 +528,7 @@ export default function SigkrisiKlasmatonPage() {
                 <div className="space-y-2 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                      📍 Δυναμικη Αριθμογραμμη (0 έως {maxLineVal}):
+                      📍 Δυναμικη Αριθμογραμμη (0 εως {maxLineVal}):
                     </span>
                     <span className="text-[11px] font-bold text-slate-400">
                       Προσαρμόζεται αυτόματα στο μέγεθος
