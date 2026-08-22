@@ -230,7 +230,7 @@ export default function SigkrisiKlasmatonPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  26. Σύγκριση Κλασμάτων (Ομώνυμα, Ε.Κ.Π. & Χιαστί)
+                  26. Σύγκριση Κλασμάτων (Ομώνυμα, Ε.Κ.Π. και Χιαστί)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς συγκρίνουμε κλάσματα: κάνοντάς τα <strong>ομώνυμα με το Ε.Κ.Π.</strong>, συγκρίνοντας τους <strong>αριθμητές</strong> ή εφαρμόζοντας τον γρήγορο <strong>πολλαπλασιασμό χιαστί</strong>!
@@ -355,11 +355,11 @@ export default function SigkrisiKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
                   <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
                     <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                      🔵 Κλάσμα Α (Αριστερό)
+                      🔵 Κλασμα Α (Αριστερο)
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValueA('num', -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -372,7 +372,7 @@ export default function SigkrisiKlasmatonPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValueA('den', -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -390,11 +390,11 @@ export default function SigkrisiKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Β (ΠΟΡΤΟΚΑΛΙ) */}
                   <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-200 space-y-3">
                     <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
-                      🟠 Κλάσμα Β (Δεξί)
+                      🟠 Κλασμα Β (Δεξι)
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValueB('num', -1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -407,7 +407,7 @@ export default function SigkrisiKlasmatonPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValueB('den', -1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -425,7 +425,7 @@ export default function SigkrisiKlasmatonPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -451,7 +451,7 @@ export default function SigkrisiKlasmatonPage() {
                     {methodTab === 'homo' ? (
                       <div className="space-y-1.5">
                         <span className="font-black text-blue-800 uppercase block text-[11px]">
-                          📐 Μετατροπή σε Ομώνυμα με Ε.Κ.Π.({activeDenA}, {activeDenB}):
+                          📐 Μετατροπη σε Ομωνυμα με Ε.Κ.Π.({activeDenA}, {activeDenB}):
                         </span>
                         {activeDenA === activeDenB ? (
                           <p>Τα κλάσματα είναι ήδη ομώνυμα (έχουν ίδιο παρονομαστή {activeDenA}). Συγκρίνουμε απευθείας τους αριθμητές: <strong>{activeNumA} {valA > valB ? '>' : valA < valB ? '<' : '＝'} {activeNumB}</strong>.</p>
@@ -475,7 +475,7 @@ export default function SigkrisiKlasmatonPage() {
                     ) : (
                       <div className="space-y-1.5">
                         <span className="font-black text-amber-800 uppercase block text-[11px]">
-                          ⚡ Έλεγχος με Πολλαπλασιασμό Χιαστί:
+                          ⚡ Ελεγχος με Πολλαπλασιασμο Χιαστι:
                         </span>
                         <p>
                           • Αριστερό γινόμενο: {activeNumA} × {activeDenB} ＝ <strong className="text-blue-700">{crossA}</strong>
@@ -528,7 +528,7 @@ export default function SigkrisiKlasmatonPage() {
                 <div className="space-y-2 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                      📍 Δυναμική Αριθμογραμμή (0 έως {maxLineVal}):
+                      📍 Δυναμικη Αριθμογραμμη (0 έως {maxLineVal}):
                     </span>
                     <span className="text-[11px] font-bold text-slate-400">
                       Προσαρμόζεται αυτόματα στο μέγεθος
@@ -581,10 +581,10 @@ export default function SigkrisiKlasmatonPage() {
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                      🍕 Οπτική Σύγκριση Επιφάνειας (Κυκλικό Μοντέλο):
+                      🍕 Οπτικη Συγκριση Επιφανειας (Κυκλικο Μοντελο):
                     </span>
                     <span className="text-[11px] font-bold text-slate-400">
-                      Εμφανίζονται όλες οι μονάδες (scrollable)
+                      Εμφανίζονται όλες οι μονάδες
                     </span>
                   </div>
                   
@@ -592,7 +592,7 @@ export default function SigkrisiKlasmatonPage() {
                     {/* Πίτσα Α */}
                     <div className="flex flex-col items-center space-y-2">
                       <span className="text-xs font-black text-blue-600 uppercase tracking-wider">
-                        Κλάσμα Α ({activeNumA}/{activeDenA})
+                        Κλασμα Α ({activeNumA}/{activeDenA})
                       </span>
                       {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                       <span className="font-mono text-xs text-slate-600 font-bold bg-white px-2.5 py-0.5 rounded-md border border-slate-200">
@@ -603,7 +603,7 @@ export default function SigkrisiKlasmatonPage() {
                     {/* Πίτσα Β */}
                     <div className="flex flex-col items-center space-y-2">
                       <span className="text-xs font-black text-orange-600 uppercase tracking-wider">
-                        Κλάσμα Β ({activeNumB}/{activeDenB})
+                        Κλασμα Β ({activeNumB}/{activeDenB})
                       </span>
                       {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                       <span className="font-mono text-xs text-slate-600 font-bold bg-white px-2.5 py-0.5 rounded-md border border-slate-200">
