@@ -240,7 +240,7 @@ export default function KlasmaPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  23. Η Έννοια του Κλάσματος (Αριθμητής & Παρονομαστής)
+                  23. Η Έννοια του Κλάσματος (Αριθμητής και Παρονομαστής)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς χωρίζουμε μια μονάδα σε <strong>ίσα μέρη</strong>, τι σημαίνουν ο <strong>Αριθμητής</strong> και ο <strong>Παρονομαστής</strong> και πώς διακρίνουμε τα <strong>Γνήσια</strong>, <strong>Καταχρηστικά</strong> και <strong>Ίσα με τη Μονάδα</strong> κλάσματα!
@@ -364,13 +364,13 @@ export default function KlasmaPage() {
                   
                   <div className="space-y-3">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Ρύθμιση Κλάσματος (Όριο: {MAX_NUMERATOR}):
+                      Ρυθμιση Κλασματος (Όριο: {MAX_NUMERATOR}):
                     </span>
 
                     {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
                     <div className="bg-white p-3.5 rounded-2xl border border-blue-200 shadow-xs space-y-2">
                       <span className="text-xs font-black text-blue-800 uppercase block">
-                        Αριθμητής (Πάνω):
+                        Αριθμητης (Πανω):
                       </span>
                       <div className="flex items-center gap-2">
                         <button
@@ -399,7 +399,7 @@ export default function KlasmaPage() {
                     {/* ΕΛΕΓΧΟΣ ΠΑΡΟΝΟΜΑΣΤΗ */}
                     <div className="bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-xs space-y-2">
                       <span className="text-xs font-black text-emerald-800 uppercase block">
-                        Παρονομαστής (Κάτω):
+                        Παρονομαστης (Κατω):
                       </span>
                       <div className="flex items-center gap-2">
                         <button
@@ -429,7 +429,7 @@ export default function KlasmaPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -455,7 +455,7 @@ export default function KlasmaPage() {
                   {/* BOX ΚΑΤΗΓΟΡΙΑΣ ΚΛΑΣΜΑΤΟΣ */}
                   <div className={`p-4 rounded-2xl border ${typeInfo.color} space-y-1 transition-all`}>
                     <span className="text-[10px] font-black uppercase tracking-wider block opacity-75">
-                      Είδος Κλάσματος:
+                      Ειδος Κλασματος:
                     </span>
                     <h4 className="text-sm font-black">{typeInfo.title}</h4>
                     <p className="text-xs leading-relaxed opacity-90">{typeInfo.desc}</p>
@@ -485,7 +485,7 @@ export default function KlasmaPage() {
 
                   <div className="text-center font-mono bg-white px-6 py-3 rounded-2xl border border-slate-200 shadow-xs">
                     <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase tracking-wider">
-                      Δεκαδική Αξία:
+                      Δεκαδικη Αξια:
                     </span>
                     <span className="text-3xl font-black text-slate-800">
                       {Number(fractionValue.toFixed(3))}
@@ -497,7 +497,7 @@ export default function KlasmaPage() {
                 <div className="w-full space-y-3">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                      {activeModel === 'pizza' ? '🍕 Κυκλικό Μοντέλο (Πίτσα)' : '🍫 Γραμμικό Μοντέλο (Σοκολάτα)'}:
+                      {activeModel === 'pizza' ? '🍕 Κυκλικο Μοντελο (Πιτσα)' : '🍫 Γραμμικο Μοντελο (Σοκολατα)'}:
                     </span>
                     <span className="text-xs font-bold text-slate-400">
                       {neededVisuals} {neededVisuals === 1 ? 'μονάδα' : 'μονάδες'}
@@ -531,7 +531,7 @@ export default function KlasmaPage() {
                 {/* 3. FINAL SUMMARY BANNER */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-5 rounded-2xl text-center shadow-lg font-mono space-y-1">
                   <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                    Συμπέρασμα:
+                    Συμπερασμα:
                   </span>
                   <div className="text-lg md:text-xl font-black tracking-wide">
                     Το κλάσμα <span className="text-amber-300">{activeNumerator}/{activeDenominator}</span> αντιπροσωπεύει <strong>{activeNumerator}</strong> από τα <strong>{activeDenominator}</strong> ίσα μέρη.
