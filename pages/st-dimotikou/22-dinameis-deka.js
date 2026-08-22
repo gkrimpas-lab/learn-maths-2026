@@ -191,7 +191,7 @@ export default function DinameisDekaPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  22. Οι Δυνάμεις του 10 & Σύντομη Γραφή Μεγάλων Αριθμών
+                  22. Οι Δυνάμεις του 10 και Σύντομη Γραφή Μεγάλων Αριθμών
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε τον χρυσό κανόνα των μηδενικών! Γράψε και υπολόγισε <strong>πολύ μεγάλους αριθμούς</strong> στο δευτερόλεπτο χρησιμοποιώντας δυνάμεις με βάση το 10!
@@ -291,7 +291,7 @@ export default function DinameisDekaPage() {
                   {/* SLIDER ΓΙΑ ΤΟΝ ΕΚΘΕΤΗ */}
                   <div className="space-y-2">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Επίλεξε Εκθέτη (0 - 10):
+                      Επιλεξε Εκθετη (0 - 10):
                     </span>
                     <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3">
                       <div className="flex justify-between items-center">
@@ -322,7 +322,7 @@ export default function DinameisDekaPage() {
                   {/* PRESET BUTTONS (GRID) */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Γρήγορη Επιλογή:
+                      Γρηγορη Επιλογη:
                     </span>
                     <div className="grid grid-cols-3 gap-2">
                       {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
@@ -355,14 +355,14 @@ export default function DinameisDekaPage() {
                 {/* 1. HEADER STATUS */}
                 <div className="w-full flex flex-col sm:flex-row justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-200 gap-3">
                   <div className="text-left font-mono">
-                    <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase">Δύναμη:</span>
+                    <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase">Δυναμη:</span>
                     <div className="inline-flex items-baseline">
                       <span className="text-3xl font-black text-blue-600">10</span>
                       <sup className="text-xl font-black text-indigo-600 ml-0.5">{exponentsUnicode[activeExponent] || `^${activeExponent}`}</sup>
                     </div>
                   </div>
                   <div className="text-center sm:text-right">
-                    <span className="text-[10px] text-slate-400 block font-bold uppercase">Λεκτική Ονομασία:</span>
+                    <span className="text-[10px] text-slate-400 block font-bold uppercase">Λεκτικη Ονομασια:</span>
                     <span className="text-base sm:text-lg font-black text-slate-800">{getFriendlyName()}</span>
                   </div>
                 </div>
@@ -370,7 +370,7 @@ export default function DinameisDekaPage() {
                 {/* 2. CANVAS & ΟΠΤΙΚΟΠΟΙΗΣΗ ΧΩΡΟΥ */}
                 <div className="w-full space-y-2">
                   <div className="flex justify-between items-center w-full px-1">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">🌌 Οπτικό Γέμισμα Χώρου:</span>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">🌌 Οπτικο Γεμισμα Χωρου:</span>
                     <span className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-mono border border-blue-200">
                       {result.toLocaleString('el-GR')} {result === 1 ? 'κουκκίδα' : 'κουκκίδες'}
                     </span>
@@ -413,7 +413,7 @@ export default function DinameisDekaPage() {
                 {/* 3. ΑΝΑΛΥΣΗ ΩΣ ΓΙΝΟΜΕΝΟ */}
                 <div className="bg-slate-900 text-white p-4 rounded-2xl border border-slate-800 space-y-1.5 font-mono">
                   <div className="text-xs font-sans text-slate-400 font-bold uppercase tracking-wider">
-                    📝 Ανάλυση ως Γινόμενο:
+                    📝 Αναλυση ως Γινομενο:
                   </div>
                   <div className="text-sm sm:text-base font-black text-slate-100 flex items-center gap-2 flex-wrap max-h-[100px] overflow-y-auto pr-1">
                     10<sup>{activeExponent}</sup> ＝ {getMultiplicationSteps()} ＝ <span className="text-amber-400 font-black">{result.toLocaleString('el-GR')}</span>
@@ -423,7 +423,7 @@ export default function DinameisDekaPage() {
                 {/* 4. FINAL RESULT SUMMARY BANNER */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-5 rounded-2xl text-center shadow-lg font-mono space-y-1">
                   <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                    Τελική Τιμή & Μηδενικά:
+                    Τελικη Τιμη και Μηδενικα:
                   </span>
                   <div className="text-xl md:text-2xl font-black tracking-wide">
                     10<sup>{activeExponent}</sup> ＝{' '}
