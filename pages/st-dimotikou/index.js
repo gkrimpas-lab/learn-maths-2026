@@ -32,7 +32,7 @@ export default function STDimotikouMenu() {
     { id: '25-isodinama-klasmata', label: '🍕 25. Ισοδύναμα Κλάσματα', href: '/st-dimotikou/25-isodinama-klasmata' },
     { id: '26-sigkrisi-klasmaton', label: '🍕 26. Σύγκριση Κλασμάτων', href: '/st-dimotikou/26-sigkrisi-klasmaton' },
     { id: '27-prosthesi-klasmaton', label: '🍕 27. Πρόσθεση Κλασμάτων', href: '/st-dimotikou/27-prosthesi-klasmaton' },
-    { id: '27-afairesi-klasmaton', label: '🍕 28. Αφαίρεση Κλασμάτων', href: '/st-dimotikou/27-afairesi-klasmaton' },
+    { id: '28-afairesi-klasmaton', label: '🍕 28. Αφαίρεση Κλασμάτων', href: '/st-dimotikou/28-afairesi-klasmaton' },
     { id: '28-pollaplasiasmos-klasmaton', label: '🍕 29. Πολλαπλασιασμός Κλασμάτων', href: '/st-dimotikou/28-pollaplasiasmos-klasmaton' },
     { id: '29-diairesi-klasmaton', label: '🍕 30. Διαίρεση Κλασμάτων', href: '/st-dimotikou/29-diairesi-klasmaton' },
     { id: '30-metabliti', label: '🍕 31. Μεταβλητή', href: '/st-dimotikou/30-metabliti' },
