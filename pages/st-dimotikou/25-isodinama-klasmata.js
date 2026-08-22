@@ -577,13 +577,13 @@ export default function IsodinamaKlasmataPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-6 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
                       <div className="flex flex-col items-center space-y-2">
                         <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                          Αρχικό Κλάσμα ({activeNum1}/{activeDen1})
+                          Αρχικο Κλασμα ({activeNum1}/{activeDen1})
                         </span>
                         {renderPizzaDiagram(activeNum1, activeDen1, 'fill-blue-500', 'stroke-blue-700')}
                       </div>
                       <div className="flex flex-col items-center space-y-2">
                         <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                          Ισοδύναμο Κλάσμα ({isoNum}/{isoDen})
+                          Ισοδυναμο Κλασμα ({isoNum}/{isoDen})
                         </span>
                         {renderPizzaDiagram(isoNum, isoDen, 'fill-indigo-500', 'stroke-indigo-700')}
                       </div>
