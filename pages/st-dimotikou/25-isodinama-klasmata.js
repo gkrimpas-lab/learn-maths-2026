@@ -442,7 +442,7 @@ export default function IsodinamaKlasmataPage() {
                   <div className="space-y-4">
                     <div className="space-y-3">
                       <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                        Κλάσμα για Απλοποίηση:
+                        Κλασμα για Απλοποιηση:
                       </span>
 
                       <div className="grid grid-cols-2 gap-3">
