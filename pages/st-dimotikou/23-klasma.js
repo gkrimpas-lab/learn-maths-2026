@@ -364,7 +364,7 @@ export default function KlasmaPage() {
                   
                   <div className="space-y-3">
                     <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Ρυθμιση Κλασματος (Όριο: {MAX_NUMERATOR}):
+                      Ρυθμιση Κλασματος (Οριο: {MAX_NUMERATOR}):
                     </span>
 
                     {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
