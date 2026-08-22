@@ -138,7 +138,7 @@ export default function KlasmaSeDekadikoPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>🔢 Κλασματική Μονάδα & Δεκαδικοί - LearnMaths.gr</title>
+        <title>🔢 Κλασματική Μονάδα και Δεκαδικοί - LearnMaths.gr</title>
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -182,7 +182,7 @@ export default function KlasmaSeDekadikoPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  24. Κλασματική Μονάδα & Μετατροπή Κλάσματος σε Δεκαδικό
+                  24. Κλασματική Μονάδα και Μετατροπή Κλάσματος σε Δεκαδικό
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε τι είναι η <strong>Κλασματική Μονάδα (1/ν)</strong> και πώς κάθε κλάσμα μετατρέπεται σε <strong>δεκαδικό αριθμό</strong> εκτελώντας τη διαίρεση: Αριθμητής ÷ Παρονομαστής!
@@ -284,14 +284,14 @@ export default function KlasmaSeDekadikoPage() {
                     onClick={makeFractionalUnit}
                     className="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-black transition uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs"
                   >
-                    ⚡ Κλασματική Μονάδα (1/{activeDenominator})
+                    ⚡ Κλασματικη Μοναδα (1/{activeDenominator})
                   </button>
 
                   <div className="space-y-3">
                     {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
                     <div className="bg-white p-3.5 rounded-2xl border border-indigo-200 shadow-xs space-y-2">
                       <span className="text-xs font-black text-indigo-800 uppercase block">
-                        Αριθμητής (Διαιρετέος):
+                        Αριθμητης (Διαιρετεος):
                       </span>
                       <div className="flex items-center gap-2">
                         <button
@@ -320,7 +320,7 @@ export default function KlasmaSeDekadikoPage() {
                     {/* ΕΛΕΓΧΟΣ ΠΑΡΟΝΟΜΑΣΤΗ */}
                     <div className="bg-white p-3.5 rounded-2xl border border-amber-200 shadow-xs space-y-2">
                       <span className="text-xs font-black text-amber-800 uppercase block">
-                        Παρονομαστής (Διαιρέτης):
+                        Παρονομαστης (Διαιρετης):
                       </span>
                       <div className="flex items-center gap-2">
                         <button
@@ -350,7 +350,7 @@ export default function KlasmaSeDekadikoPage() {
                   {/* PRESET EXAMPLES */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -380,7 +380,7 @@ export default function KlasmaSeDekadikoPage() {
                       : 'bg-slate-100 border-slate-200 text-slate-600'
                   }`}>
                     <span className="font-bold uppercase tracking-wider block text-[10px]">
-                      {activeNumerator === 1 ? '✨ Κλασματική Μονάδα' : 'ℹ️ Κατάσταση'}
+                      {activeNumerator === 1 ? '✨ Κλασματικη Μοναδα' : 'ℹ️ Κατασταση'}
                     </span>
                     <p>
                       {activeNumerator === 1 
@@ -411,7 +411,7 @@ export default function KlasmaSeDekadikoPage() {
                   {/* Πράξη */}
                   <div className="text-center space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
-                      Πράξη Διαίρεσης:
+                      Πραξη Διαιρεσης:
                     </span>
                     <div className="font-mono text-xl font-bold text-slate-700 bg-white px-3 py-1.5 rounded-xl border border-slate-200 inline-block">
                       {activeNumerator} ÷ {activeDenominator}
@@ -421,14 +421,14 @@ export default function KlasmaSeDekadikoPage() {
                   {/* Δεκαδικός */}
                   <div className="text-center space-y-0.5">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
-                      Δεκαδικός Αριθμός:
+                      Δεκαδικος Αριθμος:
                     </span>
                     <div className="font-mono text-3xl font-black text-emerald-600">
                       {isPeriodic() ? `${decimalValue.toFixed(4).replace('.', ',')}...` : decimalValue.toString().replace('.', ',')}
                     </div>
                     {isPeriodic() && (
                       <span className="text-[10px] text-rose-600 font-bold uppercase tracking-wider block">
-                        ⚠️ Περιοδικός Αριθμός
+                        ⚠️ Περιοδικος Αριθμος
                       </span>
                     )}
                   </div>
@@ -437,7 +437,7 @@ export default function KlasmaSeDekadikoPage() {
                 {/* 2. ΑΡΙΘΜΗΤΙΚΗ ΓΡΑΜΜΗ (NUMBER LINE) */}
                 <div className="space-y-3 bg-slate-50/80 p-5 rounded-2xl border border-slate-200">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                    📍 Θέση του Δεκαδικού στην Αριθμογραμμή:
+                    📍 Θεση του Δεκαδικου στην Αριθμογραμμη:
                   </span>
                   
                   <div className="relative w-full pt-10 pb-4 px-4">
@@ -480,13 +480,13 @@ export default function KlasmaSeDekadikoPage() {
                 {/* 3. ΚΥΚΛΙΚΟ ΜΟΝΤΕΛΟ (ΠΙΤΣΑ) */}
                 <div className="space-y-2">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                    🍕 Οπτικοποίηση Μονάδων (Κυκλικό Μοντέλο):
+                    🍕 Οπτικοποιηση Μοναδων (Κυκλικο Μοντελο):
                   </span>
                   <div className="flex flex-wrap items-center justify-center gap-6 p-4 bg-slate-50/70 rounded-2xl border border-slate-200 max-h-[220px] overflow-y-auto shadow-inner">
                     {Array.from({ length: neededVisuals }).map((_, i) => (
                       <div key={i} className="flex flex-col items-center space-y-1 scale-[0.85]">
                         {renderPizza(i)}
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μονάδα {i + 1}</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μοναδα {i + 1}</span>
                       </div>
                     ))}
                   </div>
@@ -495,7 +495,7 @@ export default function KlasmaSeDekadikoPage() {
                 {/* 4. FINAL RESULT SUMMARY BANNER */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-4 rounded-2xl text-center shadow-lg font-mono space-y-1">
                   <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                    Συμπέρασμα:
+                    Συμπερασμα:
                   </span>
                   <div className="text-lg md:text-xl font-black tracking-wide">
                     {activeNumerator}/{activeDenominator} ＝ {activeNumerator} ÷ {activeDenominator} ＝{' '}
