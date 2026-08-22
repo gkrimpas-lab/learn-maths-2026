@@ -28,7 +28,7 @@ export default function STDimotikouMenu() {
     { id: '21-dinameis', label: '🍕 21. Δύναμη φυσικού Αριθμού', href: '/st-dimotikou/21-dinameis' },
     { id: '22-dinameis-deka', label: '🍕 22. Δυνάμεις του 10', href: '/st-dimotikou/22-dinameis-deka' },
     { id: '23-klasma', label: '🍕 23. Κλάσματα', href: '/st-dimotikou/23-klasma' },
-    { id: '23-klasma-se-dekadiko', label: '🍕 24. Κλάσματα σε Δεκαδικό', href: '/st-dimotikou/23-klasma-se-dekadiko' },
+    { id: '24-klasma-se-dekadiko', label: '🍕 24. Κλάσματα σε Δεκαδικό', href: '/st-dimotikou/24-klasma-se-dekadiko' },
     { id: '24-isodinama-klasmata', label: '🍕 25. Ισοδύναμα Κλάσματα', href: '/st-dimotikou/24-isodinama-klasmata' },
     { id: '25-sigkrisi-klasmaton', label: '🍕 26. Σύγκριση Κλασμάτων', href: '/st-dimotikou/25-sigkrisi-klasmaton' },
     { id: '26-prosthesi-klasmaton', label: '🍕 27. Πρόσθεση Κλασμάτων', href: '/st-dimotikou/26-prosthesi-klasmaton' },
