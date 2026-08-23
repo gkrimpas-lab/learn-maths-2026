@@ -94,17 +94,17 @@ export default function MetablitiPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 32
+                    Ενοτητα 32
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  32. Η Έννοια της Μεταβλητής & Αλγεβρικές Παραστάσεις
+                  32. Η Έννοια της Μεταβλητής και Αλγεβρικές Παραστάσεις
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε τι είναι η <strong>μεταβλητή ($x, y, a$)</strong>, πώς ένα γράμμα παίρνει τη θέση ενός αγνώστου ή μεταβαλλόμενου αριθμού και πώς υπολογίζουμε την <strong>αριθμητική τιμή</strong> μιας μαθηματικής έκφρασης!
+                  Μάθε τι είναι η <strong>μεταβλητή (x, y, a)</strong>, πώς ένα γράμμα παίρνει τη θέση ενός αγνώστου ή μεταβαλλόμενου αριθμού και πώς υπολογίζουμε την <strong>αριθμητική τιμή</strong> μιας μαθηματικής έκφρασης!
                 </p>
               </div>
 
@@ -185,7 +185,7 @@ export default function MetablitiPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο: Η Μηχανή της Μεταβλητής
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Άλλαξε την τιμή του $x$, διάλεξε έκφραση και δες πώς η μηχανή αντικαθιστά το γράμμα και υπολογίζει το τελικό αποτέλεσμα!
+                  Άλλαξε την τιμή του x, διάλεξε έκφραση και δες πώς η μηχανή αντικαθιστά το γράμμα και υπολογίζει το τελικό αποτέλεσμα!
                 </p>
               </div>
             </div>
@@ -200,7 +200,7 @@ export default function MetablitiPage() {
                   {/* ΡΥΘΜΙΣΗ ΜΕΤΑΒΛΗΤΗΣ X */}
                   <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-blue-800 uppercase tracking-wider">
+                      <span className="text-xs font-black text-blue-800 tracking-wider">
                         🔤 Τιμή Μεταβλητής (x)
                       </span>
                       <span className="text-xs font-mono font-black text-blue-600 bg-white px-2 py-0.5 rounded-lg border border-blue-200">
@@ -242,13 +242,13 @@ export default function MetablitiPage() {
 
                   {/* ΠΑΡΑΜΕΤΡΟΠΟΙΗΣΗ ΕΚΦΡΑΣΗΣ (a * x ± b) */}
                   <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                    <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
+                    <span className="text-xs font-black text-slate-700 tracking-wider block">
                       ⚙️ Παράσταση: a · x ± b
                     </span>
                     
                     <div className="grid grid-cols-3 gap-2 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Συντελεστής (a)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Συντελεστής (a)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => setCoeffA(prev => Math.max(1, prev - 1))} className="px-1.5 text-xs font-black text-slate-600">-</button>
                           <span className="w-full text-center font-mono font-black text-sm text-indigo-600">{coeffA}</span>
@@ -257,7 +257,7 @@ export default function MetablitiPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Πράξη</span>
+                        <span className="text-[10px] font-bold text-slate-400">Πράξη</span>
                         <button 
                           type="button" 
                           onClick={() => setOperator(prev => prev === '+' ? '-' : '+')}
@@ -268,7 +268,7 @@ export default function MetablitiPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Σταθερά (b)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Σταθερά (b)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => setConstantB(prev => Math.max(0, prev - 1))} className="px-1.5 text-xs font-black text-slate-600">-</button>
                           <span className="w-full text-center font-mono font-black text-sm text-indigo-600">{constantB}</span>
@@ -281,7 +281,7 @@ export default function MetablitiPage() {
                   {/* PRESET EXPRESSIONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμες Παραστάσεις:
+                      Ετοιμες Παραστασεις:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {PRESET_EXPRESSIONS.map((p, idx) => (
@@ -318,14 +318,14 @@ export default function MetablitiPage() {
                 {/* 1. Η ΜΗΧΑΝΗ ΥΠΟΛΟΓΙΣΜΟΥ (FUNCTION MACHINE VISUAL) */}
                 <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 shadow-inner space-y-4">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                    ⚙️ Μηχανή Αντικατάστασης & Υπολογισμού:
+                    ⚙️ Μηχανη Αντικαταστασης και Υπολογισμου:
                   </span>
 
                   <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
                     
                     {/* Είσοδος (Input x) */}
                     <div className="bg-blue-100 border-2 border-blue-400 p-4 rounded-2xl flex flex-col items-center min-w-[120px] shadow-sm">
-                      <span className="text-[10px] font-black uppercase text-blue-800 tracking-wider">Είσοδος (x)</span>
+                      <span className="text-[10px] font-black text-blue-800 tracking-wider">Είσοδος (x)</span>
                       <span className="text-4xl font-mono font-black text-blue-700 mt-1">{activeX}</span>
                     </div>
 
@@ -334,7 +334,7 @@ export default function MetablitiPage() {
                     {/* Εσωτερικό Μηχανής (Formula) */}
                     <div className="bg-gradient-to-br from-indigo-700 to-purple-800 text-white p-5 rounded-3xl shadow-xl flex-1 max-w-md border border-indigo-500">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-200 block mb-1">
-                        Εκτέλεση Πράξεων
+                        Εκτελεση Πραξεων
                       </span>
                       <div className="font-mono text-xl sm:text-2xl font-black tracking-wide">
                         {coeffA} × <span className="text-amber-300 underline underline-offset-4">{activeX}</span> {operator === '+' ? '＋' : '－'} {constantB}
@@ -348,7 +348,7 @@ export default function MetablitiPage() {
 
                     {/* Έξοδος (Result Value) */}
                     <div className="bg-emerald-100 border-2 border-emerald-400 p-4 rounded-2xl flex flex-col items-center min-w-[120px] shadow-sm">
-                      <span className="text-[10px] font-black uppercase text-emerald-800 tracking-wider">Έξοδος (Τιμή)</span>
+                      <span className="text-[10px] font-black text-emerald-800 tracking-wider">Έξοδος (Τιμή)</span>
                       <span className="text-4xl font-mono font-black text-emerald-700 mt-1">{resultVal}</span>
                     </div>
 
@@ -358,7 +358,7 @@ export default function MetablitiPage() {
                 {/* 2. ΔΥΝΑΜΙΚΟΣ ΠΙΝΑΚΑΣ ΤΙΜΩΝ (TABLE OF VALUES) */}
                 <div className="space-y-3">
                   <div className="flex justify-between items-center px-1">
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
+                    <span className="text-xs font-black text-slate-500 tracking-wider block">
                       📊 Πίνακας Τιμών για την Παράσταση: <strong className="text-indigo-600 font-mono">{coeffA}x {operator} {constantB}</strong>
                     </span>
                     <span className="text-[11px] font-bold text-slate-400">
@@ -376,7 +376,7 @@ export default function MetablitiPage() {
                             : 'bg-slate-50 border-slate-200'
                         }`}
                       >
-                        <div className="text-[10px] font-bold text-slate-400 uppercase">Αν x = {row.x}</div>
+                        <div className="text-[10px] font-bold text-slate-400">Αν x = {row.x}</div>
                         <div className="font-mono text-lg font-black text-slate-800 mt-0.5">{row.val}</div>
                       </div>
                     ))}
