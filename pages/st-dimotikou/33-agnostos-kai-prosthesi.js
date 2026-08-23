@@ -3,54 +3,48 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Όριο τιμών για το διαδραστικό εργαστήριο
-const MAX_LIMIT = 500;
+// Όριο τιμών για το διαδραστικό οπτικό εργαστήριο
+const MAX_BALLS = 18;
 
 const PRESETS = [
-  { a: 15, b: 40, label: "x ＋ 15 ＝ 40 (x ＝ 25)" },
-  { a: 28, b: 70, label: "28 ＋ x ＝ 70 (x ＝ 42)" },
-  { a: 120, b: 350, label: "x ＋ 120 ＝ 350 (x ＝ 230)" },
-  { a: 45, b: 100, label: "45 ＋ x ＝ 100 (x ＝ 55)" }
+  { a: 3, b: 8, label: "x ＋ 3 ＝ 8 (x ＝ 5)" },
+  { a: 4, b: 10, label: "x ＋ 4 ＝ 10 (x ＝ 6)" },
+  { a: 5, b: 12, label: "x ＋ 5 ＝ 12 (x ＝ 7)" },
+  { a: 2, b: 9, label: "x ＋ 2 ＝ 9 (x ＝ 7)" },
+  { a: 6, b: 15, label: "x ＋ 6 ＝ 15 (x ＝ 9)" }
 ];
 
 export default function AgnostosKaiProsthesiPage() {
   // Παράμετροι της εξίσωσης: x + a = b
-  const [paramA, setParamA] = useState(15);
-  const [paramB, setParamB] = useState(40);
+  const [paramA, setParamA] = useState(3);
+  const [paramB, setParamB] = useState(8);
 
-  // Δοκιμαστική τιμή του χρήστη για το x στη ζυγαριά
-  const [guessX, setGuessX] = useState(20);
+  // Βήμα διαδραστικής επίλυσης: 1 (Αρχική), 2 (Επισήμανση), 3 (Αφαίρεση & Αποτέλεσμα)
+  const [currentStep, setCurrentStep] = useState(1);
 
   // Ασφαλείς αριθμητικές τιμές
-  const activeA = paramA === '' ? 0 : Number(paramA);
-  const activeB = paramB === '' ? 0 : Number(paramB);
-  const activeX = guessX === '' ? 0 : Number(guessX);
+  const activeA = Math.min(MAX_BALLS - 1, Math.max(1, Number(paramA) || 1));
+  const activeB = Math.min(MAX_BALLS, Math.max(activeA + 1, Number(paramB) || activeA + 1));
 
   // Σωστή μαθηματική λύση: x = b - a
-  const exactSolution = Math.max(0, activeB - activeA);
+  const exactSolution = activeB - activeA;
 
-  // Βάρη για τους δύο δίσκους της ζυγαριάς
-  const leftWeight = activeX + activeA;
-  const rightWeight = activeB;
-  const isBalanced = leftWeight === rightWeight;
-  const tiltAngle = Math.max(-12, Math.min(12, (rightWeight - leftWeight) * 0.8));
-
-  // Έλεγχος εισαγωγής
-  const handleInputChange = (setter, val) => {
-    const clean = val.replace(/[^0-9]/g, '');
-    if (clean === '') {
-      setter('');
-      return;
-    }
-    const n = Number(clean);
-    if (n > MAX_LIMIT) return;
-    setter(n);
+  // Αλλαγή παραμέτρων με αυτόματη επαναφορά στο Βήμα 1
+  const setEquation = (a, b) => {
+    setParamA(a);
+    setParamB(b);
+    setCurrentStep(1);
   };
 
-  const adjustValue = (setter, currentVal, amount, min = 0) => {
-    const next = (Number(currentVal) || 0) + amount;
-    if (next >= min && next <= MAX_LIMIT) {
-      setter(next);
+  const adjustValue = (type, amount) => {
+    setCurrentStep(1);
+    if (type === 'a') {
+      const nextA = Math.max(1, Math.min(MAX_BALLS - 2, activeA + amount));
+      setParamA(nextA);
+      if (activeB <= nextA) setParamB(nextA + 2);
+    } else {
+      const nextB = Math.max(activeA + 1, Math.min(MAX_BALLS, activeB + amount));
+      setParamB(nextB);
     }
   };
 
@@ -58,7 +52,7 @@ export default function AgnostosKaiProsthesiPage() {
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
         <title>⚖️ Εξισώσεις: Άγνωστος Προσθετέος - LearnMaths.gr</title>
-        <meta name="description" content="Διαδραστική θεωρία για την επίλυση εξισώσεων όπου ο άγνωστος είναι προσθετέος για τη ΣΤ' Δημοτικού." />
+        <meta name="description" content="Διαδραστική θεωρία με ζυγαριά και βήματα αφαίρεσης για την επίλυση εξισώσεων όπου ο άγνωστος είναι προσθετέος για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -89,7 +83,7 @@ export default function AgnostosKaiProsthesiPage() {
         {/* 2. MAIN LESSON CONTAINER */}
         <main className={`${LAYOUT.LESSON_CONTAINER} py-8 md:py-12 space-y-10`}>
 
-          {/* HERO BANNER WITH PROMO CALLOUT CARD */}
+          {/* HERO BANNER */}
           <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
               <div className="lg:col-span-2 space-y-4">
@@ -105,7 +99,7 @@ export default function AgnostosKaiProsthesiPage() {
                   33. Εξισώσεις: Ο Άγνωστος είναι Προσθετέος ($x + \alpha = \beta$)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο προσθετέο ($x$)</strong> σε μια εξίσωση πρόσθεσης κάνοντας την <strong>αντίστροφη πράξη (αφαίρεση)</strong>: αφαιρούμε τον γνωστό προσθετέο από το άθροισμα ($x = \beta - \alpha$)!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο προσθετέο ($x$)</strong>: όπως αφαιρούμε <strong>τα ίδια βάρη</strong> και από τα δύο μέρη μιας ζυγαριάς για να μείνει το κουτί $x$ μόνο του, έτσι κάνουμε <strong>αφαίρεση: $x = \beta - \alpha$</strong>!
                 </p>
               </div>
 
@@ -113,7 +107,7 @@ export default function AgnostosKaiProsthesiPage() {
               <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
                 <span className="text-3xl">🚀</span>
                 <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
-                <p className="text-xs text-blue-50">Δοκίμασε τις 8 διαδραστικές ασκήσεις στην επίλυση εξισώσεων πρόσθεσης!</p>
+                <p className="text-xs text-blue-50">Δοκίμασε τις διαδραστικές ασκήσεις στην επίλυση εξισώσεων πρόσθεσης!</p>
                 <Link
                   href="/st-dimotikou/33-agnostos-kai-prosthesi-ask"
                   className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
@@ -131,14 +125,14 @@ export default function AgnostosKaiProsthesiPage() {
                 <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   1
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Τι είναι η Εξίσωση;</h3>
+                <h3 className="text-lg font-black text-slate-900">1. Η Ζυγαριά σε Ισορροπία</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  <strong>Εξίσωση</strong> είναι μια μαθηματική ισότητα που περιέχει έναν <strong>άγνωστο αριθμό ($x$)</strong>. Λειτουργεί ακριβώς όπως μια <strong>ζυγαριά σε ισορροπία</strong>!
+                  Μια εξίσωση είναι σαν μια <strong>ζυγαριά που ισορροπεί</strong>. Το σύμβολο του ίσον (＝) σημαίνει ότι το αριστερό και το δεξί μέλος έχουν <strong>ακριβώς το ίδιο βάρος</strong>.
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-blue-900">
-                  x ＋ 15 ＝ 40
+                  x ＋ 3 ＝ 8 (Ισορροπία)
                 </span>
               </div>
             </div>
@@ -148,14 +142,14 @@ export default function AgnostosKaiProsthesiPage() {
                 <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   2
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Ο Κανόνας Επίλυσης</h3>
+                <h3 className="text-lg font-black text-slate-900">2. Αφαίρεση ίδιων βαρών</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Για να βρούμε τον άγνωστο προσθετέο, <strong>αφαιρούμε τον γνωστό προσθετέο από το άθροισμα</strong>:
+                  Αν <strong>βγάλουμε τον ίδιο αριθμό από τους δύο δίσκους</strong>, η ζυγαριά εξακολουθεί να ισορροπεί! Έτσι μένει το $x$ μόνο του:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
-                  x ＝ 40 － 15 ＝ <strong className="text-indigo-700 font-black">25</strong>
+                  x ＝ 8 － 3 ＝ <strong className="text-indigo-700 font-black">5</strong>
                 </span>
               </div>
             </div>
@@ -165,29 +159,66 @@ export default function AgnostosKaiProsthesiPage() {
                 <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
                   3
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Επαλήθευση</h3>
+                <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Βάζουμε στη θέση του $x$ τον αριθμό που βρήκαμε και ελέγχουμε αν η ισότητα είναι σωστή:
+                  Ελέγχουμε αν το βάρος του κουτιού είναι σωστό, αντικαθιστώντας το $x$ με τον αριθμό που βρήκαμε:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-emerald-900">
-                  25 ＋ 15 ＝ 40 (Σωστό! ✔️)
+                  5 ＋ 3 ＝ 8 (Σωστό! ✔️)
                 </span>
               </div>
             </div>
           </div>
 
-          {/* 4. INTERACTIVE PLAYGROUND */}
+          {/* 4. INTERACTIVE PLAYGROUND (ΜΕΓΑΛΟ ΕΡΓΑΣΤΗΡΙΟ ΜΕ ΒΗΜΑΤΑ ΚΑΙ ΚΟΥΤΙ x) */}
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Η Ζυγαριά των Εξισώσεων
+                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Η Ζυγαριά με το Κουτί $x$ και τα Βάρη
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Ρύθμισε την εξίσωση, δοκίμασε τιμές για το $x$ ή πάτα «Αυτόματη Επίλυση» για να δεις τη ζυγαριά να ισορροπεί τέλεια!
+                  Ακολούθησε τα 3 βήματα για να δεις πώς αφαιρούνται τα ίδια βάρη και μένει το $x$ μόνο του!
                 </p>
+              </div>
+
+              {/* STEP CONTROLS BUTTONS */}
+              <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner gap-1">
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep(1)}
+                  className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
+                    currentStep === 1
+                      ? 'bg-blue-600 text-white shadow-md scale-105'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  1️⃣ Αρχική Ζυγαριά
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep(2)}
+                  className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
+                    currentStep === 2
+                      ? 'bg-amber-500 text-white shadow-md scale-105'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  2️⃣ Επισήμανση {activeA} Βαρών
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep(3)}
+                  className={`px-3.5 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
+                    currentStep === 3
+                      ? 'bg-emerald-600 text-white shadow-md scale-105'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  3️⃣ Αφαίρεση ➔ Λύση x ＝ {exactSolution}
+                </button>
               </div>
             </div>
 
@@ -198,7 +229,7 @@ export default function AgnostosKaiProsthesiPage() {
               <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
                 <div className="space-y-4">
                   
-                  {/* ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ: x + a = b */}
+                  {/* ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ */}
                   <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
                     <span className="text-xs font-black text-slate-800 uppercase tracking-wider block">
                       ⚙️ Ρύθμιση Εξίσωσης: x ＋ α ＝ β
@@ -207,102 +238,70 @@ export default function AgnostosKaiProsthesiPage() {
                     <div className="grid grid-cols-2 gap-3 text-center">
                       {/* ΓΝΩΣΤΟΣ ΠΡΟΣΘΕΤΕΟΣ (a) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Προσθετέος (α)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες αριστερά (α)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
-                          <button type="button" onClick={() => adjustValue(setParamA, paramA, -5, 0)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-200 rounded">-</button>
-                          <input
-                            type="text"
-                            value={paramA}
-                            onChange={(e) => handleInputChange(setParamA, e.target.value)}
-                            className="w-full text-center font-mono font-black text-base outline-none text-blue-600 bg-transparent"
-                          />
-                          <button type="button" onClick={() => adjustValue(setParamA, paramA, 5, 0)} className="px-1.5 font-bold text-blue-600 hover:bg-slate-200 rounded">+</button>
+                          <button type="button" onClick={() => adjustValue('a', -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-200 rounded">-</button>
+                          <span className="w-full text-center font-mono font-black text-base text-blue-600">{activeA}</span>
+                          <button type="button" onClick={() => adjustValue('a', 1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-200 rounded">+</button>
                         </div>
                       </div>
 
-                      {/* ΑΘΡΟΙΣΜΑ (b) */}
+                      {/* ΣΥΝΟΛΙΚΕΣ ΜΠΑΛΕΣ ΔΕΞΙΑ (b) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Άθροισμα (β)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες δεξιά (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
-                          <button type="button" onClick={() => adjustValue(setParamB, paramB, -5, activeA)} className="px-1.5 font-bold text-emerald-600 hover:bg-slate-200 rounded">-</button>
-                          <input
-                            type="text"
-                            value={paramB}
-                            onChange={(e) => handleInputChange(setParamB, e.target.value)}
-                            className="w-full text-center font-mono font-black text-base outline-none text-emerald-600 bg-transparent"
-                          />
-                          <button type="button" onClick={() => adjustValue(setParamB, paramB, 5, activeA)} className="px-1.5 font-bold text-emerald-600 hover:bg-slate-200 rounded">+</button>
+                          <button type="button" onClick={() => adjustValue('b', -1)} className="px-2 py-1 font-black text-emerald-600 hover:bg-slate-200 rounded">-</button>
+                          <span className="w-full text-center font-mono font-black text-base text-emerald-600">{activeB}</span>
+                          <button type="button" onClick={() => adjustValue('b', 1)} className="px-2 py-1 font-black text-emerald-600 hover:bg-slate-200 rounded">+</button>
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* ΡΥΘΜΙΣΗ ΔΟΚΙΜΑΣΤΙΚΟΥ X ΓΙΑ ΤΗ ΖΥΓΑΡΙΑ */}
-                  <div className="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-amber-900 uppercase tracking-wider">
-                        🔍 Δοκίμασε τιμή για το x:
-                      </span>
-                      <span className="text-xs font-mono font-black text-amber-700 bg-white px-2 py-0.5 rounded-lg border border-amber-200">
-                        x ＝ {activeX}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button 
-                        type="button" 
-                        onClick={() => adjustValue(setGuessX, guessX, -1, 0)} 
-                        className="w-10 py-1.5 bg-white hover:bg-slate-100 text-amber-800 font-black rounded-xl border border-amber-200 text-base shadow-xs"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="range"
-                        min="0"
-                        max={Math.max(60, activeB + 10)}
-                        value={activeX}
-                        onChange={(e) => setGuessX(Number(e.target.value))}
-                        className="flex-1 accent-amber-500 cursor-pointer h-2 bg-slate-200 rounded-lg"
-                      />
-                      <button 
-                        type="button" 
-                        onClick={() => adjustValue(setGuessX, guessX, 1, 0)} 
-                        className="w-10 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl text-base shadow-md"
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setGuessX(exactSolution)}
-                      className="w-full py-2 bg-white hover:bg-amber-100/50 text-amber-900 font-black text-xs rounded-xl border border-amber-300 transition shadow-xs flex items-center justify-center gap-1.5"
-                    >
-                      <span>⚡</span> Βάλε τη Σωστή Λύση (x ＝ {exactSolution})
-                    </button>
                   </div>
 
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμες Εξισώσεις:
+                      Έτοιμα Παραδείγματα:
                     </span>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2">
                       {PRESETS.map((p, idx) => (
                         <button
                           key={idx}
                           type="button"
-                          onClick={() => {
-                            setParamA(p.a);
-                            setParamB(p.b);
-                            setGuessX(Math.max(0, p.b - p.a));
-                          }}
-                          className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs"
+                          onClick={() => setEquation(p.a, p.b)}
+                          className={`py-2 px-3 rounded-xl border font-mono font-black text-xs transition-all text-left flex justify-between items-center ${
+                            activeA === p.a && activeB === p.b
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                              : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
+                          }`}
                         >
-                          {p.label}
+                          <span>{p.label}</span>
+                          <span className="text-[10px] opacity-75">Δοκιμή ➔</span>
                         </button>
                       ))}
                     </div>
+                  </div>
+
+                  {/* ΕΠΕΞΗΓΗΣΗ ΑΝΑΛΟΓΑ ΜΕ ΤΟ ΕΝΕΡΓΟ ΒΗΜΑ */}
+                  <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
+                    <span className="font-black text-slate-900 uppercase block text-[11px]">
+                      📖 Τι συμβαίνει στο Βήμα {currentStep}:
+                    </span>
+                    {currentStep === 1 && (
+                      <p>
+                        Στο αριστερό μέρος έχουμε το <strong>άγνωστο κουτί $x$</strong> και <strong>{activeA} μπάλες</strong>. Στο δεξί μέρος έχουμε <strong>{activeB} μπάλες</strong>. Η ζυγαριά ισορροπεί: <strong>x ＋ {activeA} ＝ {activeB}</strong>.
+                      </p>
+                    )}
+                    {currentStep === 2 && (
+                      <p className="text-amber-800">
+                        Επισημαίνουμε <strong>{activeA} μπάλες</strong> από το αριστερό μέρος και <strong>ακριβώς {activeA} μπάλες</strong> από το δεξί μέρος. Θέλουμε να τις αφαιρέσουμε για να απομονώσουμε το $x$!
+                      </p>
+                    )}
+                    {currentStep === 3 && (
+                      <p className="text-emerald-800 font-bold">
+                        Αφαιρέσαμε {activeA} μπάλες και από τις δύο πλευρές! Στο αριστερό μέρος έμεινε μόνο το <strong>κουτί $x$</strong> και στο δεξί έμειναν οι υπόλοιπες <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} － {activeA} ＝ {exactSolution}</strong>.
+                      </p>
+                    )}
                   </div>
 
                 </div>
@@ -312,100 +311,165 @@ export default function AgnostosKaiProsthesiPage() {
                 </div>
               </div>
 
-              {/* RIGHT: BALANCE SCALE & MATHEMATICAL SOLUTION (8 COLS) */}
-              <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
+              {/* RIGHT: BIG SCALE & BOX + BALLS VISUALIZER (8 COLS) */}
+              <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[560px] space-y-6">
                 
-                {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΕΠΙΛΥΣΗΣ */}
-                <div className="bg-slate-50 p-6 rounded-3xl border border-slate-200 shadow-inner space-y-4">
-                  <div className="flex flex-col md:flex-row items-center justify-around gap-4 text-center">
-                    
-                    {/* Αρχική Εξίσωση */}
-                    <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Αρχική Εξίσωση</span>
-                      <div className="font-mono text-2xl font-black text-slate-800">
-                        <span className="text-amber-600">x</span> ＋ <span className="text-blue-600">{activeA}</span> ＝ <span className="text-emerald-600">{activeB}</span>
-                      </div>
-                    </div>
+                {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΒΗΜΑΤΟΣ */}
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-inner flex items-center justify-around text-center flex-wrap gap-4">
+                  <div className="font-mono text-2xl md:text-3xl font-black text-slate-800">
+                    <span className="text-amber-600 bg-amber-100 px-3 py-1 rounded-xl border border-amber-300">x</span>
+                    <span className="text-slate-400 mx-2">＋</span>
+                    <span className="text-blue-600">{activeA}</span>
+                    <span className="text-slate-400 mx-2">＝</span>
+                    <span className="text-emerald-600">{activeB}</span>
+                  </div>
 
-                    <span className="text-2xl text-indigo-500 font-black">➔</span>
-
-                    {/* Βήμα Επίλυσης */}
-                    <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Αντίστροφη Πράξη (Αφαίρεση)</span>
-                      <div className="font-mono text-2xl font-black text-slate-800">
-                        <span className="text-amber-600">x</span> ＝ <span className="text-emerald-600">{activeB}</span> － <span className="text-blue-600">{activeA}</span>
-                      </div>
-                    </div>
-
-                    <span className="text-2xl text-indigo-500 font-black">➔</span>
-
-                    {/* Τελική Λύση */}
-                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-300 shadow-sm space-y-1">
-                      <span className="text-[10px] font-black text-emerald-800 uppercase tracking-wider block">Τελική Λύση</span>
-                      <div className="font-mono text-2xl font-black text-emerald-700">
-                        x ＝ {exactSolution}
-                      </div>
-                    </div>
-
+                  <div className="font-mono text-lg md:text-xl font-black text-indigo-700 bg-white px-4 py-2 rounded-2xl border border-indigo-200 shadow-xs">
+                    {currentStep === 1 && "Βήμα 1: Αρχική Ισότητα"}
+                    {currentStep === 2 && `Βήμα 2: Αφαίρεση ${activeA} και από τα δύο μέλη`}
+                    {currentStep === 3 && `Βήμα 3: x ＝ ${activeB} － ${activeA} ＝ ${exactSolution}`}
                   </div>
                 </div>
 
-                {/* 2. ΔΙΑΔΡΑΣΤΙΚΗ ΖΥΓΑΡΙΑ ΙΣΟΡΡΟΠΙΑΣ (BALANCE SCALE SVG) */}
+                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΜΕ ΚΟΥΤΙ x ΚΑΙ ΜΠΑΛΕΣ */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                      ⚖️ Ζυγαριά Ισορροπίας (Αριστερό Μέλος vs Δεξί Μέλος):
+                      ⚖️ Οπτική Ζυγαριά: Αριστερό Μέλος (x ＋ {activeA}) vs Δεξί Μέλος ({activeB})
                     </span>
-                    <span className={`text-xs font-black px-3 py-1 rounded-full border ${
-                      isBalanced 
-                        ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
-                        : 'bg-rose-100 text-rose-800 border-rose-300'
-                    }`}>
-                      {isBalanced ? '✔️ Ισορροπία (Ισότητα)' : '❌ Ανισορροπία'}
+                    <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      ✔️ Ισορροπία Ζυγαριάς
                     </span>
                   </div>
 
-                  <div className="p-6 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner flex flex-col items-center justify-center min-h-[220px]">
-                    <svg width="340" height="150" viewBox="0 0 340 150" className="overflow-visible transition-transform duration-500">
+                  {/* SVG & INTERACTIVE DISHES CONTAINER */}
+                  <div className="p-6 bg-slate-50/80 rounded-3xl border border-slate-200 shadow-inner flex flex-col items-center justify-center min-h-[340px] relative overflow-hidden">
+                    
+                    {/* SVG SCALE STRUCTURE */}
+                    <svg width="100%" height="220" viewBox="0 0 540 220" className="overflow-visible select-none">
                       {/* Βάση Ζυγαριάς */}
-                      <polygon points="170,110 145,145 195,145" className="fill-slate-700" />
-                      <rect x="167" y="50" width="6" height="65" className="fill-slate-600" />
-                      <circle cx="170" cy="50" r="6" className="fill-slate-900" />
+                      <polygon points="270,160 230,215 310,215" className="fill-slate-800 drop-shadow-md" />
+                      <rect x="266" y="55" width="8" height="115" className="fill-slate-700" />
+                      <circle cx="270" cy="55" r="8" className="fill-slate-950" />
 
-                      {/* Κινούμενος Ζυγός (Beam) */}
-                      <g style={{ transform: `rotate(${tiltAngle}deg)`, transformOrigin: '170px 50px', transition: 'transform 0.5s ease-out' }}>
-                        <rect x="30" y="47" width="280" height="6" rx="3" className="fill-slate-800" />
+                      {/* Οριζόντιος Ζυγός */}
+                      <rect x="60" y="51" width="420" height="8" rx="4" className="fill-slate-800" />
 
-                        {/* Αριστερός Δίσκος (x + a) */}
-                        <line x1="50" y1="50" x2="35" y2="95" stroke="#64748b" strokeWidth="2" />
-                        <line x1="50" y1="50" x2="65" y2="95" stroke="#64748b" strokeWidth="2" />
-                        <path d="M 20 95 Q 50 110 80 95 Z" className="fill-blue-600 shadow-md" />
-                        
-                        {/* Δεξιός Δίσκος (b) */}
-                        <line x1="290" y1="50" x2="275" y2="95" stroke="#64748b" strokeWidth="2" />
-                        <line x1="290" y1="50" x2="305" y2="95" stroke="#64748b" strokeWidth="2" />
-                        <path d="M 260 95 Q 290 110 320 95 Z" className="fill-emerald-600 shadow-md" />
-                      </g>
+                      {/* Αριστερή Αλυσίδα & Δίσκος */}
+                      <line x1="90" y1="55" x2="65" y2="135" stroke="#64748b" strokeWidth="2.5" />
+                      <line x1="90" y1="55" x2="115" y2="135" stroke="#64748b" strokeWidth="2.5" />
+                      <path d="M 40 135 Q 90 160 140 135 Z" className="fill-blue-600 shadow-lg" />
+
+                      {/* Δεξιά Αλυσίδα & Δίσκος */}
+                      <line x1="450" y1="55" x2="425" y2="135" stroke="#64748b" strokeWidth="2.5" />
+                      <line x1="450" y1="55" x2="475" y2="135" stroke="#64748b" strokeWidth="2.5" />
+                      <path d="M 400 135 Q 450 160 500 135 Z" className="fill-emerald-600 shadow-lg" />
                     </svg>
 
-                    {/* Ετικέτες Βαρών κάτω από τους δίσκους */}
-                    <div className="flex justify-between w-full max-w-xs text-xs font-mono font-black mt-2">
-                      <div className="bg-blue-50 border border-blue-200 text-blue-800 px-3 py-1.5 rounded-xl shadow-xs text-center">
-                        <div>Αριστερά: {activeX} ＋ {activeA}</div>
-                        <div className="text-base text-blue-600">＝ {leftWeight}</div>
+                    {/* ΑΝΤΙΚΕΙΜΕΝΑ ΕΠΑΝΩ ΣΤΟΥΣ ΔΙΣΚΟΥΣ (ABSOLUTE POSITIONED) */}
+                    <div className="absolute top-10 left-0 right-0 flex justify-between px-6 sm:px-12 pointer-events-none">
+                      
+                      {/* ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΚΟΥΤΙ x + ΜΠΑΛΕΣ a */}
+                      <div className="flex flex-col items-center justify-end w-44 h-36 pb-2">
+                        <div className="flex items-end justify-center gap-2 flex-wrap max-w-[150px]">
+                          
+                          {/* ΤΟ ΚΟΥΤΙ x */}
+                          <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl border-2 border-amber-700 shadow-lg flex flex-col items-center justify-center text-slate-950 font-mono font-black text-2xl transition-transform transform hover:scale-105">
+                            <span>x</span>
+                            <span className="text-[8px] uppercase tracking-tighter text-amber-950 -mt-1 font-bold">Κουτί</span>
+                          </div>
+
+                          {/* ΟΙ ΜΠΑΛΕΣ a (Εξαφανίζονται στο Βήμα 3, κοκκινίζουν στο Βήμα 2) */}
+                          {currentStep < 3 && (
+                            <div className="flex flex-wrap justify-center gap-1 max-w-[70px]">
+                              {Array.from({ length: activeA }).map((_, i) => (
+                                <div
+                                  key={i}
+                                  className={`w-6 h-6 rounded-full shadow-md transition-all duration-500 flex items-center justify-center font-mono text-[10px] font-black text-white ${
+                                    currentStep === 2
+                                      ? 'bg-rose-500 border-2 border-rose-700 animate-pulse ring-2 ring-rose-300'
+                                      : 'bg-blue-500 border border-blue-700'
+                                  }`}
+                                >
+                                  1
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                        </div>
+                        <span className="text-[11px] font-black text-blue-900 bg-white/90 px-2 py-0.5 rounded-lg border border-blue-200 mt-2 shadow-xs">
+                          {currentStep === 3 ? "Μόνο το Κουτί x" : `x ＋ ${activeA} μπάλες`}
+                        </span>
                       </div>
 
-                      <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-xl shadow-xs text-center">
-                        <div>Δεξιά: {activeB}</div>
-                        <div className="text-base text-emerald-600">＝ {rightWeight}</div>
+                      {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΛΕΣ ΟΙ ΜΠΑΛΕΣ b (Στο Βήμα 3 μένουν μόνο b - a) */}
+                      <div className="flex flex-col items-center justify-end w-44 h-36 pb-2">
+                        <div className="flex items-end justify-center gap-1.5 flex-wrap max-w-[160px]">
+                          
+                          {/* Μπάλες που μένουν (Exact Solution: b - a) */}
+                          {Array.from({ length: exactSolution }).map((_, i) => (
+                            <div
+                              key={`rem-${i}`}
+                              className="w-6 h-6 rounded-full bg-emerald-500 border border-emerald-700 shadow-md flex items-center justify-center font-mono text-[10px] font-black text-white"
+                            >
+                              1
+                            </div>
+                          ))}
+
+                          {/* Μπάλες που αφαιρούνται (a μπάλες: Εξαφανίζονται στο Βήμα 3, κοκκινίζουν στο Βήμα 2) */}
+                          {currentStep < 3 && Array.from({ length: activeA }).map((_, i) => (
+                            <div
+                              key={`sub-${i}`}
+                              className={`w-6 h-6 rounded-full shadow-md transition-all duration-500 flex items-center justify-center font-mono text-[10px] font-black text-white ${
+                                currentStep === 2
+                                  ? 'bg-rose-500 border-2 border-rose-700 animate-pulse ring-2 ring-rose-300'
+                                  : 'bg-emerald-500 border border-emerald-700'
+                              }`}
+                            >
+                              1
+                            </div>
+                          ))}
+
+                        </div>
+                        <span className="text-[11px] font-black text-emerald-900 bg-white/90 px-2 py-0.5 rounded-lg border border-emerald-200 mt-2 shadow-xs">
+                          {currentStep === 3 ? `Απέμειναν ${exactSolution} μπάλες` : `Σύνολο: ${activeB} μπάλες`}
+                        </span>
                       </div>
+
                     </div>
+
+                  </div>
+
+                  {/* ACTION BAR ΓΙΑ ΜΕΤΑΒΑΣΗ ΣΤΑ ΒΗΜΑΤΑ */}
+                  <div className="flex justify-between items-center gap-2 pt-1">
+                    <button
+                      type="button"
+                      disabled={currentStep === 1}
+                      onClick={() => setCurrentStep(prev => prev - 1)}
+                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 text-xs font-black rounded-xl border border-slate-200 transition"
+                    >
+                      ⬅️ Προηγούμενο Βήμα
+                    </button>
+
+                    <div className="text-xs font-black text-indigo-900 bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-200">
+                      Βήμα {currentStep} από 3
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={currentStep === 3}
+                      onClick={() => setCurrentStep(prev => prev + 1)}
+                      className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-black rounded-xl shadow-md transition transform active:scale-95"
+                    >
+                      Επόμενο Βήμα ➡️
+                    </button>
                   </div>
                 </div>
 
                 {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                  💡 Συμπέρασμα: Στην εξίσωση <strong>x ＋ {activeA} ＝ {activeB}</strong>, ο άγνωστος ισούται με <strong>x ＝ {activeB} － {activeA} ＝ {exactSolution}</strong>.
+                  💡 Συμπέρασμα: Αφαιρώντας {activeA} μπάλες και από τους δύο δίσκους, βρίσκουμε ότι το <strong>κουτί x περιέχει ακριβώς {exactSolution} μπάλες ($x = {activeB} - {activeA} = {exactSolution}$)</strong>!
                 </div>
 
               </div>
@@ -418,7 +482,7 @@ export default function AgnostosKaiProsthesiPage() {
             <div className="space-y-1.5 text-center md:text-left">
               <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
               <p className="text-gray-800 text-sm md:text-base">
-                Έμαθες να λύνεις εξισώσεις όπου ο άγνωστος είναι προσθετέος; Δοκίμασε τις διαδραστικές ασκήσεις!
+                Έμαθες πώς λύνουμε μια εξίσωση πρόσθεσης με τη βοήθεια της ζυγαριάς; Δοκίμασε τις διαδραστικές ασκήσεις!
               </p>
             </div>
             <Link
