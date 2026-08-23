@@ -309,14 +309,14 @@ export default function PollaplasiasmosKlasmatonPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 29
+                    Ενοτητα 29
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  29. Πολλαπλασιασμός Κλασμάτων & Ακεραίου με Κλάσμα
+                  29. Πολλαπλασιασμός Κλασμάτων και Ακεραίου με Κλάσμα
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε πώς πολλαπλασιάζουμε <strong>κλάσμα με κλάσμα</strong> (αριθμητή με αριθμητή και παρονομαστή με παρονομαστή) και <strong>ακέραιο με κλάσμα</strong>, καθώς και πώς απλοποιούμε το γινόμενο!
@@ -440,11 +440,11 @@ export default function PollaplasiasmosKlasmatonPage() {
                   {mode === 'fraction-fraction' ? (
                     <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
                       <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                        🔵 1ο Κλάσμα
+                        🔵 Κλάσμα 1
                       </span>
                       <div className="grid grid-cols-2 gap-2 text-center">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                           <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                             <button type="button" onClick={() => adjustValue(setNumA, numA, -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
                             <input
@@ -457,7 +457,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                           </div>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                           <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                             <button type="button" onClick={() => adjustValue(setDenA, denA, -1, true)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
                             <input
@@ -474,10 +474,10 @@ export default function PollaplasiasmosKlasmatonPage() {
                   ) : (
                     <div className="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-200 space-y-3">
                       <span className="text-xs font-black text-indigo-800 uppercase block tracking-wider">
-                        🔢 Φυσικός Αριθμός (Ακέραιος)
+                        🔢 Φυσικος Αριθμος (Ακεραιος)
                       </span>
                       <div className="space-y-1 text-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Τιμή</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Τιμη</span>
                         <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-slate-200 max-w-[160px] mx-auto">
                           <button type="button" onClick={() => adjustValue(setNumA, numA, -1)} className="px-2.5 py-1 font-black text-indigo-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -495,11 +495,11 @@ export default function PollaplasiasmosKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ Β (ΚΛΑΣΜΑ 2) */}
                   <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-200 space-y-3">
                     <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
-                      🟠 2ο Κλάσμα
+                      🟠 Κλάσμα 2
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValue(setNumB, numB, -1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -512,7 +512,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValue(setDenB, denB, -1, true)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -530,7 +530,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {(mode === 'fraction-fraction' ? PRESETS_FF : PRESETS_NF).map((p, idx) => (
@@ -560,7 +560,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                   {/* ΒΗΜΑ-ΒΗΜΑ ΕΠΕΞΗΓΗΣΗ */}
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
                     <span className="font-black text-slate-900 uppercase block text-[11px]">
-                      📝 Βήματα Υπολογισμού:
+                      📝 Βηματα Υπολογισμου:
                     </span>
                     {mode === 'fraction-fraction' ? (
                       <div className="space-y-1 text-xs">
@@ -663,7 +663,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                     <div className="space-y-3">
                       <div className="flex justify-between items-center px-1">
                         <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                          🔲 Οπτικοποίηση με Πλέγμα Εμβαδού (Area Model):
+                          🔲 Οπτικοποιηση με Πλεγμα Εμβαδου:
                         </span>
                         <span className="text-[11px] font-bold text-slate-400">
                           {activeNumA}/{activeDenA} × {activeNumB}/{activeDenB}
@@ -677,7 +677,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                     <div className="space-y-3">
                       <div className="flex justify-between items-center px-1">
                         <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                          🍕 Οπτικοποίηση ως Επαναλαμβανόμενες Μονάδες:
+                          🍕 Οπτικοποιηση ως Επαναλαμβανομενες Μοναδες:
                         </span>
                         <span className="text-[11px] font-bold text-slate-400">
                           {activeNumA} φορές το {activeNumB}/{activeDenB}
