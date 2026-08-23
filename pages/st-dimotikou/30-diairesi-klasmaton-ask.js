@@ -28,12 +28,52 @@ function findGCD(a, b) {
   return x || 1;
 }
 
-// Δεξαμενή σεναρίων καθημερινότητας
+// Δεξαμενή σεναρίων καθημερινότητας με σωστή γραμματική συμφωνία (Γενική Πτώση)
 const REAL_WORLD_SCENARIOS = [
-  { item: 'λίτρα χυμού', totalN: 3, totalD: 4, portionN: 1, portionD: 4, action: 'μοιράζονται σε μπουκαλάκια των', resultText: 'μπουκαλάκια' },
-  { item: 'μέτρα κορδέλας', totalN: 4, totalD: 5, portionN: 2, portionD: 5, action: 'κόβονται σε κομμάτια των', resultText: 'κομμάτια' },
-  { item: 'κιλά αλεύρι', totalN: 1, totalD: 2, portionN: 1, portionD: 8, action: 'χωρίζονται σε σακουλάκια των', resultText: 'σακουλάκια' },
-  { item: 'λίτρα γάλακτος', totalN: 5, totalD: 6, portionN: 1, portionD: 6, action: 'σερβίρονται σε ποτήρια των', resultText: 'ποτήρια' }
+  { 
+    item: 'κιλά αλεύρι', 
+    genitiveItem: 'κιλών αλευριού',
+    totalN: 1, 
+    totalD: 2, 
+    portionN: 1, 
+    portionD: 8, 
+    action: 'χωρίζονται σε σακουλάκια των', 
+    questionText: 'Πόσα σακουλάκια θα γεμίσουν συνολικά;',
+    resultText: 'σακουλάκια' 
+  },
+  { 
+    item: 'λίτρα χυμού', 
+    genitiveItem: 'λίτρων χυμού',
+    totalN: 3, 
+    totalD: 4, 
+    portionN: 1, 
+    portionD: 4, 
+    action: 'μοιράζονται σε μπουκαλάκια των', 
+    questionText: 'Πόσα μπουκαλάκια θα γεμίσουν συνολικά;',
+    resultText: 'μπουκαλάκια' 
+  },
+  { 
+    item: 'λίτρα γάλακτος', 
+    genitiveItem: 'λίτρων γάλακτος',
+    totalN: 5, 
+    totalD: 6, 
+    portionN: 1, 
+    portionD: 6, 
+    action: 'σερβίρονται σε ποτήρια των', 
+    questionText: 'Πόσα ποτήρια θα γεμίσουν συνολικά;',
+    resultText: 'ποτήρια' 
+  },
+  { 
+    item: 'μέτρα κορδέλας', 
+    genitiveItem: 'μέτρων κορδέλας',
+    totalN: 4, 
+    totalD: 5, 
+    portionN: 2, 
+    portionD: 5, 
+    action: 'κόβονται σε κομμάτια των', 
+    questionText: 'Πόσα κομμάτια θα έχουμε συνολικά;',
+    resultText: 'κομμάτια' 
+  }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
@@ -110,7 +150,7 @@ function generateQuestions() {
   const q7CorrectRaw = `${q7Top}/${q7Bot}`;
   const q7CorrectSimp = q7Bot / q7G === 1 ? String(q7Top / q7G) : `${q7Top / q7G}/${q7Bot / q7G}`;
 
-  // Q8: MCQ - Πρόβλημα Καθημερινότητας
+  // Q8: MCQ - Πρόβλημα Καθημερινότητας (Με σωστή γραμματική σύνταξη)
   const sc = shuffledScenarios[0];
   const scResN = sc.totalN * sc.portionD;
   const scResD = sc.totalD * sc.portionN;
@@ -188,7 +228,7 @@ function generateQuestions() {
     q8: {
       type: 'mcq',
       title: 'Πρόβλημα Καθημερινότητας',
-      prompt: `Έχουμε ${sc.totalN}/${sc.totalD} ${sc.item} και ${sc.action} ${sc.portionN}/${sc.portionD} ${sc.item}. Πόσα ${sc.resultText} θα γεμίσουν συνολικά;`,
+      prompt: `Έχουμε ${sc.totalN}/${sc.totalD} ${sc.item} και ${sc.action} ${sc.portionN}/${sc.portionD} ${sc.genitiveItem}. ${sc.questionText}`,
       options: q8Options,
       correct: scCorrectStr,
       explain: `Διαιρούμε τη συνολική ποσότητα με το μέγεθος της μερίδας: (${sc.totalN}/${sc.totalD}) : (${sc.portionN}/${sc.portionD}) ＝ (${sc.totalN}/${sc.totalD}) × (${sc.portionD}/${sc.portionN}) ＝ ${scCorrectStr}.`
