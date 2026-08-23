@@ -3,8 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Όρια ρυθμίσεων
-const MAX_VAL = 12;
+// ΚΕΝΤΡΙΚΗ ΜΕΤΑΒΛΗΤΗ ΡΥΘΜΙΣΗΣ ΜΕΓΙΣΤΩΝ ΤΙΜΩΝ
+const MAX_LIMIT = 100;
 
 const PRESETS_FF = [
   { nA: 2, dA: 3, nB: 3, dB: 4, label: "2/3 × 3/4 ➔ 1/2" },
@@ -52,7 +52,7 @@ export default function PollaplasiasmosKlasmatonPage() {
       return;
     }
     const n = Number(clean);
-    if (n > MAX_VAL) return;
+    if (n > MAX_LIMIT) return;
     if (isDenominator && n === 0) return;
     setter(n);
   };
@@ -61,7 +61,7 @@ export default function PollaplasiasmosKlasmatonPage() {
   const adjustValue = (setter, currentVal, amount, isDenominator = false) => {
     const next = (Number(currentVal) || 0) + amount;
     const min = isDenominator ? 1 : 0;
-    if (next >= min && next <= MAX_VAL) {
+    if (next >= min && next <= MAX_LIMIT) {
       setter(next);
     }
   };
@@ -89,49 +89,82 @@ export default function PollaplasiasmosKlasmatonPage() {
   const simplifiedDen = resultDen / gcd;
   const isSimplified = gcd > 1 && resultNum !== 0;
 
-  // Σχεδίαση Πλέγματος με απόλυτα ισομεγεθή τετραγωνάκια (Area Model)
+  // Προσαρμοστική Σχεδίαση Πλέγματος / Εμβαδού (Grid / Area Model)
   const renderGridVisual = () => {
     const rows = activeDenA;
     const cols = activeDenB;
-    
     const filledRows = Math.min(activeNumA, rows);
     const filledCols = Math.min(activeNumB, cols);
 
-    const cells = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const isSelectedA = r < filledRows;
-        const isSelectedB = c < filledCols;
-        const isOverlap = isSelectedA && isSelectedB;
+    // Αν οι παρονομαστές είναι έως 20x20 σχεδιάζουμε ακριβές πλέγμα κελιών
+    if (rows <= 20 && cols <= 20) {
+      const cells = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const isSelectedA = r < filledRows;
+          const isSelectedB = c < filledCols;
+          const isOverlap = isSelectedA && isSelectedB;
 
-        let cellBg = 'bg-white border-slate-200';
+          let cellBg = 'bg-white border-slate-200';
+          if (isOverlap) {
+            cellBg = 'bg-indigo-600 border-indigo-700 shadow-xs';
+          } else if (isSelectedA) {
+            cellBg = 'bg-blue-300 border-blue-400';
+          } else if (isSelectedB) {
+            cellBg = 'bg-orange-300 border-orange-400';
+          }
 
-        if (isOverlap) {
-          cellBg = 'bg-indigo-600 border-indigo-700 shadow-sm';
-        } else if (isSelectedA) {
-          cellBg = 'bg-blue-300 border-blue-400';
-        } else if (isSelectedB) {
-          cellBg = 'bg-orange-300 border-orange-400';
+          cells.push(
+            <div
+              key={`${r}-${c}`}
+              className={`border w-full h-full transition-colors duration-200 ${cellBg}`}
+              style={{ aspectRatio: '1/1' }}
+            />
+          );
         }
-
-        cells.push(
-          <div
-            key={`${r}-${c}`}
-            className={`border w-full h-full transition-colors duration-300 ${cellBg}`}
-            style={{ aspectRatio: '1/1' }}
-          />
-        );
       }
+
+      return (
+        <div className="flex flex-col items-center space-y-4 w-full max-w-sm mx-auto p-2">
+          <div 
+            className="grid gap-0.5 border-2 border-slate-300 p-2 rounded-2xl bg-slate-100 shadow-inner w-full"
+            style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+          >
+            {cells}
+          </div>
+          <div className="flex flex-wrap justify-center gap-3 text-xs font-bold pt-1">
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-blue-300 rounded border border-blue-400" /> 1ο Κλάσμα ({activeNumA}/{activeDenA})</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-orange-300 rounded border border-orange-400" /> 2ο Κλάσμα ({activeNumB}/{activeDenB})</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-indigo-600 rounded border border-indigo-700" /> Κοινή Περιοχή ({resultNum}/{resultDen})</span>
+          </div>
+        </div>
+      );
     }
+
+    // Για μεγαλύτερους παρονομαστές (21 έως 100), χρησιμοποιούμε συνεχή SVG αναπαράσταση εμβαδού
+    const pctW = Math.min(100, (activeNumB / activeDenB) * 100);
+    const pctH = Math.min(100, (activeNumA / activeDenA) * 100);
 
     return (
       <div className="flex flex-col items-center space-y-4 w-full max-w-sm mx-auto p-2">
-        <div 
-          className="grid gap-0.5 border-2 border-slate-300 p-2 rounded-2xl bg-slate-100 shadow-inner w-full"
-          style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-        >
-          {cells}
+        <div className="relative w-full aspect-square border-2 border-slate-400 rounded-2xl bg-white overflow-hidden shadow-inner">
+          {/* Περιοχή Κλάσματος Α (Οριζόντια) */}
+          <div 
+            className="absolute top-0 left-0 w-full bg-blue-200/80 border-b border-blue-400 transition-all duration-300"
+            style={{ height: `${pctH}%` }}
+          />
+          {/* Περιοχή Κλάσματος Β (Κάθετα) */}
+          <div 
+            className="absolute top-0 left-0 h-full bg-orange-200/80 border-r border-orange-400 transition-all duration-300"
+            style={{ width: `${pctW}%` }}
+          />
+          {/* Κοινή Περιοχή (Overlap) */}
+          <div 
+            className="absolute top-0 left-0 bg-indigo-600 border border-indigo-700 transition-all duration-300 shadow-md"
+            style={{ width: `${pctW}%`, height: `${pctH}%` }}
+          />
         </div>
+
         <div className="flex flex-wrap justify-center gap-3 text-xs font-bold pt-1">
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-blue-300 rounded border border-blue-400" /> 1ο Κλάσμα ({activeNumA}/{activeDenA})</span>
           <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-orange-300 rounded border border-orange-400" /> 2ο Κλάσμα ({activeNumB}/{activeDenB})</span>
@@ -198,7 +231,7 @@ export default function PollaplasiasmosKlasmatonPage() {
     }
 
     return (
-      <div className="flex flex-wrap justify-center gap-2.5 p-2.5 bg-white rounded-2xl border border-slate-200 shadow-inner max-w-full">
+      <div className="flex flex-wrap justify-center gap-2.5 p-2.5 bg-white rounded-2xl border border-slate-200 shadow-inner max-w-full max-h-[380px] overflow-y-auto">
         {pizzas}
       </div>
     );
@@ -358,8 +391,8 @@ export default function PollaplasiasmosKlasmatonPage() {
                 </h2>
                 <p className="text-gray-500 text-sm">
                   {mode === 'fraction-fraction'
-                    ? "Όρισε τους όρους των δύο κλασμάτων και δες το γινόμενο αναλυτικά καθώς και την οπτικοποίηση με το πλέγμα εμβαδού!"
-                    : "Όρισε τον ακέραιο και το κλάσμα και δες την αναπαράσταση ως επαναλαμβανόμενες μονάδες/κομμάτια!"}
+                    ? "Όρισε τους όρους των δύο κλασμάτων (έως 100) και δες το γινόμενο και την οπτικοποίηση με το πλέγμα εμβαδού!"
+                    : "Όρισε τον ακέραιο και το κλάσμα (έως 100) και δες την αναπαράσταση ως επαναλαμβανόμενες μονάδες!"}
                 </p>
               </div>
             </div>
