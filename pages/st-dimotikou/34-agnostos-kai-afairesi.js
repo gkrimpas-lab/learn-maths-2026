@@ -11,7 +11,7 @@ const PRESETS = [
   { a: 4, b: 6, label: "x － 4 ＝ 6 (x ＝ 10)" },
   { a: 5, b: 7, label: "x － 5 ＝ 7 (x ＝ 12)" },
   { a: 2, b: 8, label: "x － 2 ＝ 8 (x ＝ 10)" },
-  { a: 6, b: 9, label: "x － 6 ＝ 9 (x ＝ 15)" }
+  { a: 6, b: 8, label: "x － 6 ＝ 8 (x ＝ 14)" }
 ];
 
 export default function AgnostosKaiAfairesiPage() {
@@ -19,14 +19,14 @@ export default function AgnostosKaiAfairesiPage() {
   const [paramA, setParamA] = useState(3);
   const [paramB, setParamB] = useState(5);
 
-  // Βήμα διαδραστικής επίλυσης: 1 (Αρχική), 2 (Προσθήκη και στα δύο μέλη), 3 (Ολοκλήρωση x = b + a)
+  // Βήμα διαδραστικής επίλυσης: 1 (Αρχική με κενές θέσεις), 2 (Προσθήκη και στα δύο μέλη), 3 (Πλήρες x = b + a)
   const [currentStep, setCurrentStep] = useState(1);
 
   // Ασφαλείς αριθμητικές τιμές ώστε a + b <= MAX_TOTAL_BALLS
   const rawA = Math.max(1, Number(paramA) || 1);
   const rawB = Math.max(1, Number(paramB) || 1);
   
-  const activeA = Math.min(8, rawA);
+  const activeA = Math.min(6, rawA);
   const activeB = Math.min(MAX_TOTAL_BALLS - activeA, rawB);
 
   // Σωστή μαθηματική λύση: x = b + a (Μειωτέος)
@@ -42,7 +42,7 @@ export default function AgnostosKaiAfairesiPage() {
   const adjustValue = (type, amount) => {
     setCurrentStep(1);
     if (type === 'a') {
-      const nextA = Math.max(1, Math.min(8, activeA + amount));
+      const nextA = Math.max(1, Math.min(6, activeA + amount));
       if (nextA + activeB <= MAX_TOTAL_BALLS) {
         setParamA(nextA);
       }
@@ -57,19 +57,18 @@ export default function AgnostosKaiAfairesiPage() {
   const BALL_SPACING = BALL_RADIUS * 2 + 4; // 26px
   const BASE_Y = 248;
 
-  // 1. Θέσεις σφαιρών αριστερού δίσκου (προστίθενται στο Βήμα 2 για να συμπληρώσουν το x)
-  const leftAddedBallsPos = [];
+  // 1. Υπολογισμός θέσεων των "κενών θέσεων / ελλειμμάτων" (slots) δίπλα στο κουτί x
+  const missingSlotsPos = [];
   for (let i = 0; i < activeA; i++) {
     const row = Math.floor(i / 3);
     const col = i % 3;
-    leftAddedBallsPos.push({
-      x: 150 + col * BALL_SPACING,
+    missingSlotsPos.push({
+      x: 146 + col * BALL_SPACING,
       y: BASE_Y - BALL_RADIUS - 2 - row * BALL_SPACING
     });
   }
 
   // 2. Θέσεις σφαιρών δεξιού δίσκου (Συμμετρικό κεντράρισμα με βάση το x = 610)
-  // Στο Βήμα 1: activeB μπάλες. Στα Βήματα 2 & 3: activeB + activeA μπάλες
   const currentRightCount = currentStep === 1 ? activeB : exactSolution;
   const COLS_RIGHT = 5;
   const rightBalls = [];
@@ -88,7 +87,7 @@ export default function AgnostosKaiAfairesiPage() {
       id: i,
       x: startX + colIndexInRow * BALL_SPACING,
       y: BASE_Y - BALL_RADIUS - 2 - row * BALL_SPACING,
-      isAdded: i >= activeB // Οι επιπλέον μπάλες που προστέθηκαν στο δεξί μέλος
+      isAdded: i >= activeB
     });
   }
 
@@ -96,7 +95,7 @@ export default function AgnostosKaiAfairesiPage() {
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
         <title>⚖️ Εξισώσεις: Άγνωστος Μειωτέος - LearnMaths.gr</title>
-        <meta name="description" content="Διαδραστική θεωρία με ζυγαριά και βήματα πρόσθεσης για την επίλυση εξισώσεων όπου ο άγνωστος είναι μειωτέος (x - α = β) για τη ΣΤ' Δημοτικού." />
+        <meta name="description" content="Διαδραστική θεωρία με ζυγαριά, κουτί x με ελλείμματα και βήματα πρόσθεσης για την επίλυση εξισώσεων όπου ο άγνωστος είναι μειωτέος (x - α = β) για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -109,7 +108,7 @@ export default function AgnostosKaiAfairesiPage() {
             </Link>
             <div className="flex items-center gap-3">
               <Link
-                href="/st-dimotikou/34-agnostos_kai_afairesi-ask"
+                href="/st-dimotikou/34-agnostos-kai-afairesi-ask"
                 className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-4 py-2 rounded-xl text-xs md:text-sm font-black transition shadow-sm flex items-center gap-1.5"
               >
                 <span>🎯</span> Ασκήσεις
@@ -143,7 +142,7 @@ export default function AgnostosKaiAfairesiPage() {
                   34. Εξισώσεις: Ο Άγνωστος είναι Μειωτέος ($x - \alpha = \beta$)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο μειωτέο ($x$)</strong>: όπως προσθέτουμε <strong>τον αφαιρετέο ($\alpha$)</strong> και στα δύο μέλη για να αποκαταστήσουμε το αρχικό κουτί $x$, έτσι κάνουμε <strong>πρόσθεση: $x = \beta + \alpha$</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο μειωτέο ($x$)</strong>: όπως συμπληρώνουμε <strong>τις $\alpha$ μπάλες που λείπουν από το κουτί $x$</strong> και προσθέτουμε τις ίδιες $\alpha$ μπάλες και στον δεξιό δίσκο για ισορροπία, έτσι κάνουμε <strong>πρόσθεση: $x = \beta + \alpha$</strong>!
                 </p>
               </div>
 
@@ -153,7 +152,7 @@ export default function AgnostosKaiAfairesiPage() {
                 <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
                 <p className="text-xs text-blue-50">Δοκίμασε τις 8 διαδραστικές ασκήσεις στην επίλυση εξισώσεων με άγνωστο μειωτέο!</p>
                 <Link
-                  href="/st-dimotikou/34-agnostos_kai_afairesi-ask"
+                  href="/st-dimotikou/34-agnostos-kai-afairesi-ask"
                   className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
                 >
                   🎯 Μετάβαση στις Ασκήσεις
@@ -221,10 +220,10 @@ export default function AgnostosKaiAfairesiPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Επίλυση με Προσθήκη Βαρών
+                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Συμπλήρωση του Κουτιού $x$
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Ακολούθησε τα 3 βήματα για να δεις πώς προσθέτουμε τον αφαιρετέο $\alpha$ και στα δύο μέλη για να βρούμε το $x$!
+                  Δες το κουτί $x$ με τις κενές θέσεις (έλλειμμα) και ακολούθησε τα βήματα για να προστεθούν οι μπάλες και στα δύο μέλη!
                 </p>
               </div>
 
@@ -239,7 +238,7 @@ export default function AgnostosKaiAfairesiPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  1️⃣ Αρχική Εξίσωση
+                  1️⃣ Λείπουν {activeA} Μπάλες
                 </button>
                 <button
                   type="button"
@@ -250,7 +249,7 @@ export default function AgnostosKaiAfairesiPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  2️⃣ Προσθήκη ＋{activeA} και στα 2 Μέλη
+                  2️⃣ Προσθήκη ＋{activeA} στα 2 Μέλη
                 </button>
                 <button
                   type="button"
@@ -261,7 +260,7 @@ export default function AgnostosKaiAfairesiPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  3️⃣ Τελικό x ＝ {exactSolution}
+                  3️⃣ Πλήρες x ＝ {exactSolution}
                 </button>
               </div>
             </div>
@@ -295,7 +294,7 @@ export default function AgnostosKaiAfairesiPage() {
                           <span className="w-full text-center font-mono font-black text-base text-rose-600">{activeA}</span>
                           <button 
                             type="button" 
-                            disabled={activeA + activeB >= MAX_TOTAL_BALLS}
+                            disabled={activeA >= 6 || activeA + activeB >= MAX_TOTAL_BALLS}
                             onClick={() => adjustValue('a', 1)} 
                             className="px-2 py-1 font-black text-rose-600 hover:bg-slate-200 disabled:opacity-30 rounded"
                           >
@@ -361,17 +360,17 @@ export default function AgnostosKaiAfairesiPage() {
                     </span>
                     {currentStep === 1 && (
                       <p>
-                        Στο αριστερό μέρος έχουμε το <strong>κουτί $x$ με έλλειμμα {activeA}</strong> ($x - {activeA}$). Στο δεξί μέρος έχουμε <strong>{activeB} μπάλες</strong>: <strong>x － {activeA} ＝ {activeB}</strong>.
+                        Στον αριστερό δίσκο έχουμε το <strong>κουτί $x$ με {activeA} κενές θέσεις (διακεκομμένες)</strong> αφού του έχουν αφαιρεθεί $\alpha$ μπάλες. Στον δεξιό δίσκο έχουμε <strong>{activeB} μπάλες</strong>: <strong>x － {activeA} ＝ {activeB}</strong>.
                       </p>
                     )}
                     {currentStep === 2 && (
                       <p className="text-amber-800">
-                        Προσθέτουμε <strong>{activeA} μπάλες</strong> (με κίτρινο/πορτοκαλί χρώμα) και στα αριστερά για να γεμίσει ολόκληρο το $x$, και στα δεξιά για να παραμείνει η ζυγαριά σε ισορροπία!
+                        Προσθέτουμε <strong>{activeA} πορτοκαλί μπάλες</strong> για να «κουμπώσουν» στις κενές θέσεις του κουτιού $x$, και <strong>προσθέτουμε ακριβώς {activeA} μπάλες</strong> και στον δεξιό δίσκο για να διατηρηθεί η ισορροπία!
                       </p>
                     )}
                     {currentStep === 3 && (
                       <p className="text-emerald-800 font-bold">
-                        Στα αριστερά έχουμε πλέον το <strong>πλήρες κουτί $x$</strong> και στα δεξιά έχουμε {activeB} ＋ {activeA} ＝ <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>.
+                        Το κουτί $x$ είναι πλέον <strong>πλήρες (συμπαγές πράσινο)</strong>! Στον δεξιό δίσκο βρίσκονται {activeB} ＋ {activeA} ＝ <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>.
                       </p>
                     )}
                   </div>
@@ -383,7 +382,7 @@ export default function AgnostosKaiAfairesiPage() {
                 </div>
               </div>
 
-              {/* RIGHT: BIG SCALE & SVG BOX + BALLS VISUALIZER (8 COLS) */}
+              {/* RIGHT: BIG SCALE & SVG BOX WITH SLOTS (8 COLS) */}
               <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[580px] space-y-6">
                 
                 {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΒΗΜΑΤΟΣ */}
@@ -403,7 +402,7 @@ export default function AgnostosKaiAfairesiPage() {
                   </div>
                 </div>
 
-                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΟΛΑ ΣΤΟ SVG */}
+                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΟΛΑ ΣΤΟ SVG ΜΕ SLOTS ΕΛΛΕΙΜΜΑΤΟΣ */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
@@ -426,13 +425,13 @@ export default function AgnostosKaiAfairesiPage() {
                       {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΖΥΓΟΣ (BEAM) */}
                       <rect x="90" y="59" width="580" height="12" rx="6" fill="#1e293b" />
 
-                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (ΠΛΑΤΟΣ 240px) */}
+                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
                       <line x1="150" y1="65" x2="50" y2="250" stroke="#64748b" strokeWidth="3" />
                       <line x1="150" y1="65" x2="250" y2="250" stroke="#64748b" strokeWidth="3" />
                       <path d="M 30 250 Q 150 290 270 250 Z" fill="#2563eb" />
                       <rect x="30" y="248" width="240" height="5" fill="#1d4ed8" rx="2" />
 
-                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (ΠΛΑΤΟΣ 240px) */}
+                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
                       <line x1="610" y1="65" x2="510" y2="250" stroke="#64748b" strokeWidth="3" />
                       <line x1="610" y1="65" x2="710" y2="250" stroke="#64748b" strokeWidth="3" />
                       <path d="M 490 250 Q 610 290 730 250 Z" fill="#059669" />
@@ -449,26 +448,49 @@ export default function AgnostosKaiAfairesiPage() {
                           strokeWidth="3" 
                         />
                         <text x="28" y="34" fill={currentStep === 3 ? "#ffffff" : "#451a03"} fontSize="26" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
-                        <text x="28" y="47" fill={currentStep === 3 ? "#ecfdf5" : "#78350f"} fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">
-                          {currentStep === 3 ? "ΠΛΗΡΕΣ" : "ΚΟΥΤΙ"}
+                        <text x="28" y="47" fill={currentStep === 3 ? "#ecfdf5" : "#78350f"} fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">
+                          {currentStep === 3 ? "ΠΛΗΡΕΣ" : "ΕΛΛΙΠΕΣ"}
                         </text>
                       </g>
 
-                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΠΡΟΣΘΕΤΕΣ ΜΠΑΛΕΣ a ΣΤΟ ΒΗΜΑ 2 (ΓΙΑ ΝΑ ΣΥΜΠΛΗΡΩΣΟΥΝ ΤΟ ΚΟΥΤΙ) */}
-                      {currentStep === 2 && leftAddedBallsPos.map((pos, i) => (
-                        <g key={`lball-add-${i}`} className="transition-all duration-500">
-                          <circle
-                            cx={pos.x}
-                            cy={pos.y}
-                            r={BALL_RADIUS}
-                            fill="#f59e0b"
-                            stroke="#b45309"
-                            strokeWidth="2"
-                            className="animate-pulse"
-                          />
-                          <text x={pos.x} y={pos.y + 4} fill="#ffffff" fontSize="10" fontWeight="900" textAnchor="middle" fontFamily="monospace">＋1</text>
-                        </g>
-                      ))}
+                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΚΕΝΕΣ ΘΕΣΕΙΣ (SLOTS) Ή ΟΙ ΠΡΟΣΤΙΘΕΜΕΝΕΣ ΜΠΑΛΕΣ */}
+                      {missingSlotsPos.map((pos, i) => {
+                        if (currentStep === 1) {
+                          // Βήμα 1: Διακεκομμένες κενές θέσεις (φαίνεται ότι λείπουν μπάλες)
+                          return (
+                            <g key={`slot-${i}`} className="transition-all duration-500">
+                              <circle
+                                cx={pos.x}
+                                cy={pos.y}
+                                r={BALL_RADIUS}
+                                fill="rgba(239, 68, 68, 0.08)"
+                                stroke="#f43f5e"
+                                strokeWidth="2"
+                                strokeDasharray="3 3"
+                              />
+                              <text x={pos.x} y={pos.y + 4} fill="#f43f5e" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="monospace">－1</text>
+                            </g>
+                          );
+                        } else {
+                          // Βήματα 2 & 3: Οι μπάλες προστέθηκαν και συμπλήρωσαν το κουτί x
+                          return (
+                            <g key={`slot-filled-${i}`} className="transition-all duration-500">
+                              <circle
+                                cx={pos.x}
+                                cy={pos.y}
+                                r={BALL_RADIUS}
+                                fill={currentStep === 2 ? "#f59e0b" : "#10b981"}
+                                stroke={currentStep === 2 ? "#b45309" : "#047857"}
+                                strokeWidth="2"
+                                className={currentStep === 2 ? "animate-pulse" : ""}
+                              />
+                              <text x={pos.x} y={pos.y + 4} fill="#ffffff" fontSize="9.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                                {currentStep === 2 ? "＋1" : "1"}
+                              </text>
+                            </g>
+                          );
+                        }
+                      })}
 
                       {/* 7. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ b ΚΑΙ ΟΙ ΠΡΟΣΤΙΘΕΜΕΝΕΣ ΜΠΑΛΕΣ a */}
                       {rightBalls.map((ball) => {
@@ -479,26 +501,26 @@ export default function AgnostosKaiAfairesiPage() {
                               cx={ball.x}
                               cy={ball.y}
                               r={BALL_RADIUS}
-                              fill={isAddedBall ? "#f59e0b" : "#10b981"}
-                              stroke={isAddedBall ? "#b45309" : "#047857"}
+                              fill={isAddedBall ? (currentStep === 2 ? "#f59e0b" : "#10b981") : "#10b981"}
+                              stroke={isAddedBall ? (currentStep === 2 ? "#b45309" : "#047857") : "#047857"}
                               strokeWidth="2"
                               className={isAddedBall && currentStep === 2 ? "animate-pulse" : ""}
                             />
                             <text x={ball.x} y={ball.y + 4} fill="#ffffff" fontSize="10" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                              {isAddedBall ? "＋1" : "1"}
+                              {isAddedBall && currentStep === 2 ? "＋1" : "1"}
                             </text>
                           </g>
                         );
                       })}
 
                       {/* Ετικέτες κάτω από τους δίσκους */}
-                      <text x="150" y="325" fill="#1e3a8a" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                        {currentStep === 1 && `x － ${activeA} (Έλλειμμα ${activeA})`}
+                      <text x="150" y="325" fill="#1e3a8a" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                        {currentStep === 1 && `x (λείπουν ${activeA} μπάλες)`}
                         {currentStep === 2 && `x － ${activeA} ＋ ${activeA}`}
                         {currentStep === 3 && `Ολόκληρο το Κουτί x`}
                       </text>
 
-                      <text x="610" y="325" fill="#064e3b" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                      <text x="610" y="325" fill="#064e3b" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                         {currentStep === 1 && `Αρχικά: ${activeB} μπάλες`}
                         {currentStep === 2 && `Προσθήκη: ${activeB} ＋ ${activeA} μπάλες`}
                         {currentStep === 3 && `Σύνολο: ${exactSolution} μπάλες`}
@@ -534,7 +556,7 @@ export default function AgnostosKaiAfairesiPage() {
 
                 {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                  💡 Συμπέρασμα: Στην εξίσωση <strong>x － {activeA} ＝ {activeB}</strong>, ο άγνωστος μειωτέος ισούται με <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>!
+                  💡 Συμπέρασμα: Συμπληρώνοντας τις {activeA} μπάλες που έλειπαν από το κουτί $x$ και προσθέτοντας {activeA} μπάλες και στον δεξιό δίσκο, βρίσκουμε: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>!
                 </div>
 
               </div>
@@ -551,7 +573,7 @@ export default function AgnostosKaiAfairesiPage() {
               </p>
             </div>
             <Link
-              href="/st-dimotikou/34-agnostos_kai_afairesi-ask"
+              href="/st-dimotikou/34-agnostos-kai-afairesi-ask"
               className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
             >
               Ξεκίνα τις Ασκήσεις ➔
