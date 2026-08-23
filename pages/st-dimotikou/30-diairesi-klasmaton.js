@@ -183,8 +183,8 @@ export default function DiairesiKlasmatonPage() {
   // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (ΣΤΑΘΕΡΟΠΟΙΗΜΕΝΟ ΥΨΟΣ)
   const getStepByStepExplanation = () => {
     let typeHeader = activeDenA === activeDenB 
-      ? `🔵 Ομώνυμα Κλάσματα (Ίδιος Παρονομαστής: ${activeDenA})`
-      : `🟣 Ετερώνυμα Κλάσματα (${activeDenA} ≠ ${activeDenB})`;
+      ? `🔵 Ομωνυμα Κλασματα (Ιδιος Παρονομαστης: ${activeDenA})`
+      : `🟣 Ετερωνυμα Κλασματα (${activeDenA} ≠ ${activeDenB})`;
 
     return (
       <div className="space-y-3 flex flex-col justify-between h-full">
@@ -262,14 +262,14 @@ export default function DiairesiKlasmatonPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 30
+                    Ενοτητα 30
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  30. Διαίρεση Κλασμάτων & Διαίρεση με Ακέραιο
+                  30. Διαίρεση Κλασμάτων και Διαίρεση με Ακέραιο
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
                   Μάθε τον <strong>Χρυσό Κανόνα</strong> της διαίρεσης κλασμάτων: <strong>αντιστρέφουμε τους όρους του δεύτερου κλάσματος</strong> και εκτελούμε πολλαπλασιασμό!
@@ -390,11 +390,11 @@ export default function DiairesiKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ Α (ΔΙΑΙΡΕΤΕΟΣ) */}
                   <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
                     <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                      🔵 1ο Κλάσμα (Διαιρετέος)
+                      🔵 Κλάσμα 1 (Διαιρετεος)
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValue(setNumA, numA, -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -407,7 +407,7 @@ export default function DiairesiKlasmatonPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button type="button" onClick={() => adjustValue(setDenA, denA, -1, true)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
                           <input
@@ -426,11 +426,11 @@ export default function DiairesiKlasmatonPage() {
                   {mode === 'fraction-fraction' ? (
                     <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-200 space-y-3">
                       <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
-                        🟠 2ο Κλάσμα (Διαιρέτης)
+                        🟠 Κλασμα (Διαιρετης)
                       </span>
                       <div className="grid grid-cols-2 gap-2 text-center">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητής</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
                           <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                             <button type="button" onClick={() => adjustValue(setNumB, numB, -1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
                             <input
@@ -443,7 +443,7 @@ export default function DiairesiKlasmatonPage() {
                           </div>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστής</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
                           <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                             <button type="button" onClick={() => adjustValue(setDenB, denB, -1, true)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
                             <input
@@ -460,7 +460,7 @@ export default function DiairesiKlasmatonPage() {
                   ) : (
                     <div className="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-200 space-y-3">
                       <span className="text-xs font-black text-indigo-800 uppercase block tracking-wider">
-                        🔢 Ακέραιος Διαιρέτης
+                        🔢 Ακεραιος Διαιρετης
                       </span>
                       <div className="space-y-1 text-center">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Τιμή</span>
@@ -481,7 +481,7 @@ export default function DiairesiKlasmatonPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {(mode === 'fraction-fraction' ? PRESETS_FF : PRESETS_FN).map((p, idx) => (
@@ -594,7 +594,7 @@ export default function DiairesiKlasmatonPage() {
                 {/* 2. ΑΝΑΒΑΘΜΙΣΜΕΝΗ ΓΡΑΦΙΚΗ ΑΠΕΙΚΟΝΙΣΗ ΜΕ ΜΠΑΡΕΣ & ΜΕΤΡΗΣΕΙΣ */}
                 <div className="space-y-2 flex-1 flex flex-col justify-center">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                    📏 Γραφική Αναπαράσταση Μεγεθών & Καταμέτρηση Μεριδίων
+                    📏 Γραφικη Αναπαρασταση Μεγεθων και Καταμετρηση Μεριδιων
                   </span>
                   {activeNumB > 0 ? (
                     renderBarVisual()
