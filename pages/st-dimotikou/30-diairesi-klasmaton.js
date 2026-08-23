@@ -96,7 +96,6 @@ export default function DiairesiKlasmatonPage() {
     const widthA = maxVal > 0 ? (valA / maxVal) * 100 : 0;
     const widthB = maxVal > 0 ? (valB / maxVal) * 100 : 0;
 
-    // Υπολογισμός πόσες φορές χωράει το Β μέσα στο Α (ακέραια τμήματα για τα visual markers)
     const countFits = valB > 0 ? Math.floor(valA / valB) : 0;
     const hasRemainder = valB > 0 && valA % valB > 0.0001;
 
@@ -181,35 +180,44 @@ export default function DiairesiKlasmatonPage() {
     );
   };
 
-  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα
+  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (ΣΤΑΘΕΡΟΠΟΙΗΜΕΝΟ ΥΨΟΣ)
   const getStepByStepExplanation = () => {
     let typeHeader = activeDenA === activeDenB 
       ? `🔵 Ομώνυμα Κλάσματα (Ίδιος Παρονομαστής: ${activeDenA})`
       : `🟣 Ετερώνυμα Κλάσματα (${activeDenA} ≠ ${activeDenB})`;
 
     return (
-      <div className="space-y-3">
-        <span className={`font-black uppercase block text-[11px] ${activeDenA === activeDenB ? 'text-blue-800' : 'text-indigo-800'}`}>
-          {typeHeader}
-        </span>
-        <div className="text-slate-600 space-y-1.5 text-xs md:text-sm">
-          <p>1. Κρατάμε το 1ο κλάσμα (διαιρετέο) όπως είναι: <strong className="text-blue-700">{activeNumA}/{activeDenA}</strong></p>
-          <p>2. Αντιστρέφουμε τους όρους του 2ου κλάσματος (διαιρέτη):</p>
-          <p className="font-mono text-orange-700 pl-2">
-            ➡️ Το <strong>{activeNumB}/{activeDenB}</strong> γίνεται <strong className="bg-orange-50 px-2 py-0.5 rounded border border-orange-200">{inverseNum}/{inverseDen}</strong>
-          </p>
-          <p>3. Μετατρέπουμε τη διαίρεση σε πολλαπλασιασμό:</p>
-        </div>
-        
-        <div className="bg-white p-3 rounded-xl border border-slate-200 font-mono text-xs md:text-sm">
-          {activeNumA}/{activeDenA} : {activeNumB}/{activeDenB} ＝ {activeNumA}/{activeDenA} × {inverseNum}/{inverseDen} ＝ <strong className="text-emerald-700">{resultNum}/{resultDen}</strong>
+      <div className="space-y-3 flex flex-col justify-between h-full">
+        <div className="space-y-2.5">
+          <span className={`font-black uppercase block text-[11px] ${activeDenA === activeDenB ? 'text-blue-800' : 'text-indigo-800'}`}>
+            {typeHeader}
+          </span>
+          <div className="text-slate-600 space-y-1 text-xs md:text-sm">
+            <p>1. Κρατάμε το 1ο κλάσμα (διαιρετέο) όπως είναι: <strong className="text-blue-700">{activeNumA}/{activeDenA}</strong></p>
+            <p>2. Αντιστρέφουμε τους όρους του 2ου κλάσματος (διαιρέτη):</p>
+            <p className="font-mono text-orange-700 pl-2">
+              ➡️ Το <strong>{activeNumB}/{activeDenB}</strong> γίνεται <strong className="bg-orange-50 px-2 py-0.5 rounded border border-orange-200">{inverseNum}/{inverseDen}</strong>
+            </p>
+            <p>3. Μετατρέπουμε τη διαίρεση σε πολλαπλασιασμό:</p>
+          </div>
+          
+          <div className="bg-white p-2.5 rounded-xl border border-slate-200 font-mono text-xs md:text-sm">
+            {activeNumA}/{activeDenA} : {activeNumB}/{activeDenB} ＝ {activeNumA}/{activeDenA} × {inverseNum}/{inverseDen} ＝ <strong className="text-emerald-700">{resultNum}/{resultDen}</strong>
+          </div>
         </div>
 
-        {isSimplified && (
-          <p className="text-emerald-700 text-xs font-bold pt-1 border-t border-slate-100">
-            ✨ Απλοποιώντας με το {gcd}, το τελικό ανάγωγο κλάσμα γίνεται: <strong>{simplifiedNum}/{simplifiedDen}</strong>
-          </p>
-        )}
+        {/* Δεσμευμένος χώρος για τη γραμμή απλοποίησης ώστε να μην αναβοσβήνει / μεταβάλλεται το ύψος */}
+        <div className="min-h-[28px] flex items-center pt-1 border-t border-slate-100">
+          {isSimplified ? (
+            <p className="text-emerald-700 text-xs font-bold">
+              ✨ Απλοποιώντας με το {gcd}, το τελικό ανάγωγο κλάσμα γίνεται: <strong>{simplifiedNum}/{simplifiedDen}</strong>
+            </p>
+          ) : (
+            <p className="text-slate-400 text-xs italic">
+              Το κλάσμα είναι ήδη στην ανάγωγη μορφή του.
+            </p>
+          )}
+        </div>
       </div>
     );
   };
@@ -500,8 +508,8 @@ export default function DiairesiKlasmatonPage() {
                     </div>
                   </div>
 
-                  {/* ΒΗΜΑ-ΒΗΜΑ ΕΠΕΞΗΓΗΣΗ */}
-                  <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs">
+                  {/* ΒΗΜΑ-ΒΗΜΑ ΕΠΕΞΗΓΗΣΗ ΜΕ ΣΤΑΘΕΡΟΠΟΙΗΜΕΝΟ ΥΨΟΣ */}
+                  <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs min-h-[220px]">
                     {getStepByStepExplanation()}
                   </div>
 
