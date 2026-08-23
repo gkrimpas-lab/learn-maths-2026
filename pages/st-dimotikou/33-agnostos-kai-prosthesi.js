@@ -39,13 +39,11 @@ export default function AgnostosKaiProsthesiPage() {
   const adjustValue = (type, amount) => {
     setCurrentStep(1);
     if (type === 'a') {
-      // Αυστηρός περιορισμός: 0 <= a <= b
       const nextA = activeA + amount;
       if (nextA >= 0 && nextA <= activeB) {
         setParamA(nextA);
       }
     } else {
-      // Περιορισμός για το b: a <= b <= MAX_BALLS
       const nextB = activeB + amount;
       if (nextB >= activeA && nextB <= MAX_BALLS) {
         setParamB(nextB);
@@ -58,13 +56,13 @@ export default function AgnostosKaiProsthesiPage() {
   const BALL_SPACING = BALL_RADIUS * 2 + 4; // 26px
   const BASE_Y = 248;
 
-  // 1. Θέσεις σφαιρών αριστερού δίσκου (3 στήλες δίπλα από το κουτί x)
+  // 1. Θέσεις σφαιρών αριστερού δίσκου (Ξεκινούν με καθαρό κενό από το κουτί x)
   const leftBallsPos = [];
   for (let i = 0; i < activeA; i++) {
     const row = Math.floor(i / 3);
     const col = i % 3;
     leftBallsPos.push({
-      x: 135 + col * BALL_SPACING,
+      x: 150 + col * BALL_SPACING,
       y: BASE_Y - BALL_RADIUS - 2 - row * BALL_SPACING
     });
   }
@@ -87,7 +85,7 @@ export default function AgnostosKaiProsthesiPage() {
       id: i,
       x: startX + colIndexInRow * BALL_SPACING,
       y: BASE_Y - BALL_RADIUS - 2 - row * BALL_SPACING,
-      isRemoved: i >= exactSolution // Οι τελευταίες a μπάλες επισημαίνονται/αφαιρούνται
+      isRemoved: i >= exactSolution
     });
   }
 
@@ -428,26 +426,26 @@ export default function AgnostosKaiProsthesiPage() {
                       {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΖΥΓΟΣ (BEAM) */}
                       <rect x="90" y="59" width="580" height="12" rx="6" fill="#1e293b" />
 
-                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
-                      <line x1="150" y1="65" x2="70" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <line x1="150" y1="65" x2="230" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <path d="M 50 250 Q 150 290 250 250 Z" fill="#2563eb" />
-                      <rect x="50" y="248" width="200" height="5" fill="#1d4ed8" rx="2" />
+                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (ΠΛΑΤΟΣ 240px) */}
+                      <line x1="150" y1="65" x2="50" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <line x1="150" y1="65" x2="250" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <path d="M 30 250 Q 150 290 270 250 Z" fill="#2563eb" />
+                      <rect x="30" y="248" width="240" height="5" fill="#1d4ed8" rx="2" />
 
-                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
+                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (ΠΛΑΤΟΣ 240px) */}
                       <line x1="610" y1="65" x2="510" y2="250" stroke="#64748b" strokeWidth="3" />
                       <line x1="610" y1="65" x2="710" y2="250" stroke="#64748b" strokeWidth="3" />
                       <path d="M 490 250 Q 610 290 730 250 Z" fill="#059669" />
                       <rect x="490" y="248" width="240" height="5" fill="#047857" rx="2" />
 
-                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ x */}
-                      <g transform="translate(68, 192)">
+                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ x (ΣΤΑ ΑΡΙΣΤΕΡΑ ΤΟΥ ΔΙΣΚΟΥ ΣΤΟ x = 60) */}
+                      <g transform="translate(60, 192)">
                         <rect width="56" height="56" rx="14" fill="#f59e0b" stroke="#b45309" strokeWidth="3" />
                         <text x="28" y="34" fill="#451a03" fontSize="26" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
                         <text x="28" y="47" fill="#78350f" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">ΚΟΥΤΙ</text>
                       </g>
 
-                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ a */}
+                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ a (ΞΕΚΙΝΟΥΝ ΑΠΟ ΤΟ x = 150 ΜΕ ΚΑΘΑΡΟ ΚΕΝΟ) */}
                       {currentStep < 3 && leftBallsPos.map((pos, i) => (
                         <g key={`lball-${i}`} className="transition-all duration-500">
                           <circle
@@ -464,7 +462,6 @@ export default function AgnostosKaiProsthesiPage() {
 
                       {/* 7. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ b (ΣΤΑΘΕΡΑ ΚΕΝΤΡΑΡΙΣΜΕΝΕΣ) */}
                       {rightBalls.map((ball) => {
-                        // Αν είμαστε στο Βήμα 3 και η μπάλα αφαιρείται, δεν σχεδιάζεται
                         if (currentStep === 3 && ball.isRemoved) return null;
 
                         const isHighlighted = currentStep === 2 && ball.isRemoved;
