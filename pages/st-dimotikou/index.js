@@ -37,7 +37,7 @@ export default function STDimotikouMenu() {
     { id: '30-diairesi-klasmaton', label: '🍕 30. Διαίρεση Κλασμάτων', href: '/st-dimotikou/30-diairesi-klasmaton' },
     { id: '31-epanalipsi-1', label: '🍕 31. Επαναληπτικές Ερωτήσεις Ενοτήτων 1 έως 30', href: '/st-dimotikou/31-epanalipsi-1' },
     { id: '32-metabliti', label: '🍕 32. Μεταβλητή', href: '/st-dimotikou/32-metabliti' },
-    { id: '31-agnostos_kai_prosthesi', label: '🍕 33. Εξίσωση x + α = β', href: '/st-dimotikou/31-agnostos_kai_prosthesi' },
+    { id: '33-agnostos-kai-prosthesi', label: '🍕 33. Εξίσωση x + α = β', href: '/st-dimotikou/33-agnostos-kai-prosthesi' },
     { id: '32-agnostos_kai_afairesi', label: '🍕 34. Εξίσωση x - α = β', href: '/st-dimotikou/32-agnostos_kai_afairesi' },
     { id: '33-gnostos-meion-agnostos', label: '🍕 35. Εξίσωση α - x = β', href: '/st-dimotikou/33-gnostos-meion-agnostos' }
   ];
