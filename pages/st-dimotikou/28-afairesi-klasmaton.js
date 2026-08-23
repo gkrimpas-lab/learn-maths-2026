@@ -199,9 +199,13 @@ export default function AfairesiKlasmatonPage() {
         
         <div className="bg-white p-3 rounded-xl border border-slate-200 font-mono text-xs md:text-sm">
           {isOriginallyOmonima ? (
-            `${activeNumA}/${activeDenA} － ${activeNumB}/${activeDenB} ＝ (${activeNumA} － ${activeNumB})/${activeDenA} ＝ `
+            <span>
+              {activeNumA}/{activeDenA} － {activeNumB}/{activeDenB} ＝ ({activeNumA} － {activeNumB})/{activeDenA} ＝{' '}
+            </span>
           ) : (
-            `${equivalentNumA}/{lcm} － ${equivalentNumB}/{lcm} ＝ (${equivalentNumA} － ${equivalentNumB})/${lcm} ＝ `
+            <span>
+              {equivalentNumA}/{lcm} － {equivalentNumB}/{lcm} ＝ ({equivalentNumA} － {equivalentNumB})/{lcm} ＝{' '}
+            </span>
           )}
           <strong className={isNegative ? 'text-rose-600' : 'text-emerald-700'}>
             {isNegative ? '－' : ''}{lcmResultNum}/{lcmResultDen}
