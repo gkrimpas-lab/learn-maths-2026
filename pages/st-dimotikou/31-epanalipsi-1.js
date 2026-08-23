@@ -617,7 +617,7 @@ export default function Epanalipsi1Page() {
             </Link>
             <div className="flex items-center gap-3">
               <span className="hidden sm:inline-block bg-indigo-50 border border-indigo-200 text-indigo-700 px-3 py-1.5 rounded-xl text-xs font-black">
-                📝 30 Ερωτήσεις (1 ανά Κεφάλαιο)
+                📝 30 Ερωτήσεις
               </span>
               <Link 
                 href="/st-dimotikou" 
@@ -634,13 +634,13 @@ export default function Epanalipsi1Page() {
           <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-6`}>
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🏆 1ο Επαναληπτικό Τεστ • ΣΤ' Δημοτικού</span>
+                <span>🏆 1 Επαναληπτικο Τεστ • ΣΤ' Δημοτικου</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
                 Μεγάλη Επανάληψη: Κεφάλαια 1 έως 30
               </h1>
               <p className="text-blue-100 text-sm md:text-base max-w-2xl">
-                30 τυχαία επιλεγμένες ασκήσεις μέτριας δυσκολίας που καλύπτουν όλες τις έννοιες: φυσικούς, δεκαδικούς, διαιρετότητα, πρώτους αριθμούς, δυνάμεις και πράξεις κλασμάτων!
+                30 τυχαία επιλεγμένες ασκήσεις που καλύπτουν όλες τις έννοιες: φυσικούς, δεκαδικούς, διαιρετότητα, πρώτους αριθμούς, δυνάμεις και πράξεις κλασμάτων!
               </p>
             </div>
 
