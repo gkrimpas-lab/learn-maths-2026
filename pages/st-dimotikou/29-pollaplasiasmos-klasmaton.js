@@ -440,7 +440,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                   {mode === 'fraction-fraction' ? (
                     <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
                       <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                        🔵 Κλάσμα 1
+                        🔵 Κλασμα 1
                       </span>
                       <div className="grid grid-cols-2 gap-2 text-center">
                         <div className="space-y-1">
@@ -495,7 +495,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ Β (ΚΛΑΣΜΑ 2) */}
                   <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-200 space-y-3">
                     <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
-                      🟠 Κλάσμα 2
+                      🟠 Κλασμα 2
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
@@ -698,7 +698,7 @@ export default function PollaplasiasmosKlasmatonPage() {
 
                         <div className="flex flex-col items-center p-3 bg-emerald-50 rounded-2xl border border-emerald-200">
                           <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider mb-1">
-                            Συνολικό Γινόμενο ({resultNum}/{resultDen})
+                            Συνολικο Γινομενο ({resultNum}/{resultDen})
                           </span>
                           {renderPizzasVisual(resultNum, resultDen, 'fill-emerald-500', 'stroke-emerald-700')}
                         </div>
