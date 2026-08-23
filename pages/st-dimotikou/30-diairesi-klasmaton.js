@@ -109,7 +109,7 @@ export default function DiairesiKlasmatonPage() {
           {/* Μπάρα 1: Διαιρετέος */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-black text-blue-700 uppercase tracking-wider">
-              <span>📏 1ο Κλάσμα (Διαιρετέος)</span>
+              <span>📏 Κλασμα 1 (Διαιρετεος)</span>
               <span className="font-mono">{activeNumA}/{activeDenA} ≈ {Number(valA.toFixed(3))}</span>
             </div>
             <div className="w-full bg-slate-200/80 h-10 rounded-2xl p-1 border border-slate-300 shadow-inner flex">
@@ -126,7 +126,7 @@ export default function DiairesiKlasmatonPage() {
           {/* Μπάρα 2: Διαιρέτης & Αναπαράσταση Μετρήσεων */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-black text-orange-700 uppercase tracking-wider">
-              <span>📐 2ο Κλάσμα (Διαιρέτης - Μονάδα Μέτρησης)</span>
+              <span>📐 Κλασμα 2 (Διαιρετης - Μοναδα Μετρησης)</span>
               <span className="font-mono">
                 {mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB} ≈ {Number(valB.toFixed(3))}
               </span>
@@ -146,7 +146,7 @@ export default function DiairesiKlasmatonPage() {
           {valB > 0 && valA >= valB && countFits <= 12 && (
             <div className="space-y-1.5 pt-2 border-t border-slate-200">
               <span className="text-[11px] font-bold text-slate-500 block uppercase tracking-wider text-center">
-                Πώς χωράει ο διαιρέτης μέσα στον διαιρετέο:
+                Πως χωραει ο διαιρετης μεσα στον διαιρετεο:
               </span>
               <div className="flex gap-1 justify-center flex-wrap">
                 {Array.from({ length: countFits }).map((_, idx) => (
@@ -167,7 +167,7 @@ export default function DiairesiKlasmatonPage() {
         {/* Αποτέλεσμα Σύγκρισης / Πηλίκο */}
         <div className="text-center font-mono text-slate-800 bg-white border border-slate-200 p-4 rounded-2xl max-w-sm mx-auto shadow-sm space-y-1">
           <div className="text-slate-400 font-sans text-[11px] font-bold uppercase tracking-wider">
-            Ακριβές Πηλίκο (Πόσες φορές χωράει):
+            Ακριβες Πηλικο (Ποσες φορες χωραει):
           </div>
           <div className="text-emerald-600 text-xl md:text-2xl font-black">
             {Number.isInteger(decimalResult) ? decimalResult : Number(decimalResult.toFixed(4))} φορές!
@@ -390,7 +390,7 @@ export default function DiairesiKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ Α (ΔΙΑΙΡΕΤΕΟΣ) */}
                   <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
                     <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                      🔵 Κλάσμα 1 (Διαιρετεος)
+                      🔵 Κλασμα 1 (Διαιρετεος)
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
