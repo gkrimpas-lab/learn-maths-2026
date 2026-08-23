@@ -192,7 +192,7 @@ export default function ProsthesiKlasmatonPage() {
     return (
       <div className="space-y-2.5">
         <span className="font-black text-indigo-800 uppercase block text-[11px]">
-          🟣 Ετερώνυμα Κλάσματα ({activeDenA} ≠ {activeDenB}):
+          🟣 Ετερωνυμα Κλασματα ({activeDenA} ≠ {activeDenB}):
         </span>
         <div className="text-slate-600 space-y-1.5 text-xs md:text-sm">
           <p>
@@ -367,7 +367,7 @@ export default function ProsthesiKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
                   <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
                     <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                      🔵 1ο Κλασμα (Αριστερο)
+                      🔵 Κλασμα 1 (Αριστερο)
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
@@ -402,7 +402,7 @@ export default function ProsthesiKlasmatonPage() {
                   {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Β (ΠΟΡΤΟΚΑΛΙ) */}
                   <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-200 space-y-3">
                     <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
-                      🟠 2ο Κλασμα (Δεξι)
+                      🟠 Κλασμα 2 (Δεξι)
                     </span>
                     <div className="grid grid-cols-2 gap-2 text-center">
                       <div className="space-y-1">
@@ -552,7 +552,7 @@ export default function ProsthesiKlasmatonPage() {
                   <div className="flex flex-wrap items-center justify-center gap-4 py-4 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner p-4 max-h-[380px] overflow-y-auto">
                     {/* Πίτσα Α */}
                     <div className="flex flex-col items-center space-y-1.5">
-                      <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider text-center">1ο Κλασμα ({activeNumA}/{activeDenA})</span>
+                      <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider text-center">Κλασμα 1 ({activeNumA}/{activeDenA})</span>
                       {renderFractionVisual(activeNumA, activeDenA, 'fill-blue-500', 'stroke-blue-700')}
                     </div>
 
@@ -560,7 +560,7 @@ export default function ProsthesiKlasmatonPage() {
 
                     {/* Πίτσα Β */}
                     <div className="flex flex-col items-center space-y-1.5">
-                      <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider text-center">2ο Κλασμα ({activeNumB}/{activeDenB})</span>
+                      <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider text-center">Κλασμα 2 ({activeNumB}/{activeDenB})</span>
                       {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                     </div>
 
