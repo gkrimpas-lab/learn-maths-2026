@@ -22,9 +22,9 @@ export default function AgnostosKaiProsthesiPage() {
   // Βήμα διαδραστικής επίλυσης: 1 (Αρχική), 2 (Επισήμανση), 3 (Αφαίρεση & Αποτέλεσμα)
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Ασφαλείς αριθμητικές τιμές
-  const activeA = Math.min(MAX_BALLS - 1, Math.max(1, Number(paramA) || 1));
-  const activeB = Math.min(MAX_BALLS, Math.max(activeA + 1, Number(paramB) || activeA + 1));
+  // Ασφαλείς αριθμητικές τιμές: 0 <= a <= b <= MAX_BALLS
+  const activeB = Math.min(MAX_BALLS, Math.max(0, Number(paramB) || 0));
+  const activeA = Math.min(activeB, Math.max(0, Number(paramA) || 0));
 
   // Σωστή μαθηματική λύση: x = b - a
   const exactSolution = activeB - activeA;
@@ -39,43 +39,57 @@ export default function AgnostosKaiProsthesiPage() {
   const adjustValue = (type, amount) => {
     setCurrentStep(1);
     if (type === 'a') {
-      const nextA = Math.max(1, Math.min(MAX_BALLS - 2, activeA + amount));
-      setParamA(nextA);
-      if (activeB <= nextA) setParamB(nextA + 2);
+      // Αυστηρός περιορισμός: 0 <= a <= b
+      const nextA = activeA + amount;
+      if (nextA >= 0 && nextA <= activeB) {
+        setParamA(nextA);
+      }
     } else {
-      const nextB = Math.max(activeA + 1, Math.min(MAX_BALLS, activeB + amount));
-      setParamB(nextB);
-    }
-  };
-
-  // Βοηθητική συνάρτηση για στοίχιση μπαλών στο κέντρο ανά σειρά (Center Alignment)
-  const getCenteredBallPositions = (count, centerX, basePlateY, maxCols = 4, ballRadius = 11) => {
-    const positions = [];
-    const spacing = ballRadius * 2 + 4;
-    const totalRows = Math.ceil(count / maxCols);
-
-    for (let r = 0; r < totalRows; r++) {
-      const remaining = count - r * maxCols;
-      const colsInThisRow = Math.min(maxCols, remaining);
-      const rowWidth = (colsInThisRow - 1) * spacing;
-      const startX = centerX - rowWidth / 2;
-      const y = basePlateY - ballRadius - 3 - r * spacing;
-
-      for (let c = 0; c < colsInThisRow; c++) {
-        positions.push({
-          x: startX + c * spacing,
-          y
-        });
+      // Περιορισμός για το b: a <= b <= MAX_BALLS
+      const nextB = activeB + amount;
+      if (nextB >= activeA && nextB <= MAX_BALLS) {
+        setParamB(nextB);
       }
     }
-    return positions;
   };
 
-  // Αριστερός Δίσκος: Μπάλες δεξιά από το κουτί x (Κέντρο υποπεριοχής x = 168)
-  const leftBallsPos = getCenteredBallPositions(activeA, 168, 248, 3, 11);
+  // Σταθερή γεωμετρία σφαιρών
+  const BALL_RADIUS = 11;
+  const BALL_SPACING = BALL_RADIUS * 2 + 4; // 26px
+  const BASE_Y = 248;
 
-  // Δεξιός Δίσκος: Όλες οι b μπάλες κεντραρισμένες στον άξονα x = 610
-  const rightAllBallsPos = getCenteredBallPositions(activeB, 610, 248, 4, 11);
+  // 1. Θέσεις σφαιρών αριστερού δίσκου (3 στήλες δίπλα από το κουτί x)
+  const leftBallsPos = [];
+  for (let i = 0; i < activeA; i++) {
+    const row = Math.floor(i / 3);
+    const col = i % 3;
+    leftBallsPos.push({
+      x: 135 + col * BALL_SPACING,
+      y: BASE_Y - BALL_RADIUS - 2 - row * BALL_SPACING
+    });
+  }
+
+  // 2. Θέσεις σφαιρών δεξιού δίσκου (Συμμετρικό κεντράρισμα με βάση το x = 610)
+  const COLS_RIGHT = 5;
+  const rightBalls = [];
+  for (let i = 0; i < activeB; i++) {
+    const row = Math.floor(i / COLS_RIGHT);
+    const totalRows = Math.ceil(activeB / COLS_RIGHT);
+    const itemsInThisRow = row === totalRows - 1 && activeB % COLS_RIGHT !== 0 
+      ? activeB % COLS_RIGHT 
+      : COLS_RIGHT;
+    
+    const colIndexInRow = i % COLS_RIGHT;
+    const rowWidth = (itemsInThisRow - 1) * BALL_SPACING;
+    const startX = 610 - rowWidth / 2;
+
+    rightBalls.push({
+      id: i,
+      x: startX + colIndexInRow * BALL_SPACING,
+      y: BASE_Y - BALL_RADIUS - 2 - row * BALL_SPACING,
+      isRemoved: i >= exactSolution // Οι τελευταίες a μπάλες επισημαίνονται/αφαιρούνται
+    });
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
@@ -147,7 +161,7 @@ export default function AgnostosKaiProsthesiPage() {
             </div>
           </div>
 
-          {/* 3. THEORY CARDS (3 COLS) */}
+          {/* 3. THEORY CARDS */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
               <div className="space-y-2.5">
@@ -201,7 +215,7 @@ export default function AgnostosKaiProsthesiPage() {
             </div>
           </div>
 
-          {/* 4. INTERACTIVE PLAYGROUND (ΜΕΓΑΛΟ ΕΡΓΑΣΤΗΡΙΟ ΜΕ ΣΤΑΘΕΡΟΠΟΙΗΜΕΝΕΣ ΚΑΙ ΚΕΝΤΡΑΡΙΣΜΕΝΕΣ ΜΠΑΛΕΣ) */}
+          {/* 4. INTERACTIVE PLAYGROUND */}
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
@@ -260,18 +274,35 @@ export default function AgnostosKaiProsthesiPage() {
                   
                   {/* ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ */}
                   <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider block">
-                      ⚙️ Ρύθμιση Εξίσωσης: x ＋ α ＝ β
-                    </span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-black text-slate-800 uppercase tracking-wider block">
+                        ⚙️ Ρύθμιση Εξίσωσης: x ＋ α ＝ β
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-400">0 ≤ α ≤ β</span>
+                    </div>
 
                     <div className="grid grid-cols-2 gap-3 text-center">
                       {/* ΓΝΩΣΤΟΣ ΠΡΟΣΘΕΤΕΟΣ (a) */}
                       <div className="space-y-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες αριστερά (α)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
-                          <button type="button" onClick={() => adjustValue('a', -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-200 rounded">-</button>
+                          <button 
+                            type="button" 
+                            disabled={activeA <= 0}
+                            onClick={() => adjustValue('a', -1)} 
+                            className="px-2 py-1 font-black text-blue-600 hover:bg-slate-200 disabled:opacity-30 rounded"
+                          >
+                            -
+                          </button>
                           <span className="w-full text-center font-mono font-black text-base text-blue-600">{activeA}</span>
-                          <button type="button" onClick={() => adjustValue('a', 1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-200 rounded">+</button>
+                          <button 
+                            type="button" 
+                            disabled={activeA >= activeB}
+                            onClick={() => adjustValue('a', 1)} 
+                            className="px-2 py-1 font-black text-blue-600 hover:bg-slate-200 disabled:opacity-30 rounded"
+                          >
+                            +
+                          </button>
                         </div>
                       </div>
 
@@ -279,9 +310,23 @@ export default function AgnostosKaiProsthesiPage() {
                       <div className="space-y-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες δεξιά (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
-                          <button type="button" onClick={() => adjustValue('b', -1)} className="px-2 py-1 font-black text-emerald-600 hover:bg-slate-200 rounded">-</button>
+                          <button 
+                            type="button" 
+                            disabled={activeB <= activeA}
+                            onClick={() => adjustValue('b', -1)} 
+                            className="px-2 py-1 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-30 rounded"
+                          >
+                            -
+                          </button>
                           <span className="w-full text-center font-mono font-black text-base text-emerald-600">{activeB}</span>
-                          <button type="button" onClick={() => adjustValue('b', 1)} className="px-2 py-1 font-black text-emerald-600 hover:bg-slate-200 rounded">+</button>
+                          <button 
+                            type="button" 
+                            disabled={activeB >= MAX_BALLS}
+                            onClick={() => adjustValue('b', 1)} 
+                            className="px-2 py-1 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-30 rounded"
+                          >
+                            +
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -383,32 +428,32 @@ export default function AgnostosKaiProsthesiPage() {
                       {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΖΥΓΟΣ (BEAM) */}
                       <rect x="90" y="59" width="580" height="12" rx="6" fill="#1e293b" />
 
-                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (Κέντρο x = 150) */}
-                      <line x1="150" y1="65" x2="55" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <line x1="150" y1="65" x2="245" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <path d="M 35 250 Q 150 295 265 250 Z" fill="#2563eb" />
-                      <rect x="35" y="248" width="230" height="5" fill="#1d4ed8" rx="2" />
+                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
+                      <line x1="150" y1="65" x2="70" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <line x1="150" y1="65" x2="230" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <path d="M 50 250 Q 150 290 250 250 Z" fill="#2563eb" />
+                      <rect x="50" y="248" width="200" height="5" fill="#1d4ed8" rx="2" />
 
-                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (Κέντρο x = 610) */}
-                      <line x1="610" y1="65" x2="515" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <line x1="610" y1="65" x2="705" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <path d="M 495 250 Q 610 295 725 250 Z" fill="#059669" />
-                      <rect x="495" y="248" width="230" height="5" fill="#047857" rx="2" />
+                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
+                      <line x1="610" y1="65" x2="510" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <line x1="610" y1="65" x2="710" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <path d="M 490 250 Q 610 290 730 250 Z" fill="#059669" />
+                      <rect x="490" y="248" width="240" height="5" fill="#047857" rx="2" />
 
-                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ x (Σταθερά αριστερά στο δίσκο) */}
-                      <g transform="translate(62, 192)">
+                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ x */}
+                      <g transform="translate(68, 192)">
                         <rect width="56" height="56" rx="14" fill="#f59e0b" stroke="#b45309" strokeWidth="3" />
                         <text x="28" y="34" fill="#451a03" fontSize="26" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
                         <text x="28" y="47" fill="#78350f" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">ΚΟΥΤΙ</text>
                       </g>
 
-                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ a (Κεντραρισμένες στα δεξιά του κουτιού x) */}
+                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ a */}
                       {currentStep < 3 && leftBallsPos.map((pos, i) => (
-                        <g key={`lball-${i}`} className="transition-all duration-300">
+                        <g key={`lball-${i}`} className="transition-all duration-500">
                           <circle
                             cx={pos.x}
                             cy={pos.y}
-                            r="11"
+                            r={BALL_RADIUS}
                             fill={currentStep === 2 ? "#ef4444" : "#3b82f6"}
                             stroke={currentStep === 2 ? "#b91c1c" : "#1d4ed8"}
                             strokeWidth="2"
@@ -417,25 +462,24 @@ export default function AgnostosKaiProsthesiPage() {
                         </g>
                       ))}
 
-                      {/* 7. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΛΕΣ ΟΙ b ΜΠΑΛΕΣ (Σταθερά κεντραρισμένες στον δίσκο) */}
-                      {rightAllBallsPos.map((pos, i) => {
-                        // Οι πρώτες exactSolution μπάλες παραμένουν, οι υπόλοιπες activeA αφαιρούνται
-                        const isRemoved = i >= exactSolution;
-                        if (currentStep === 3 && isRemoved) return null;
+                      {/* 7. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ b (ΣΤΑΘΕΡΑ ΚΕΝΤΡΑΡΙΣΜΕΝΕΣ) */}
+                      {rightBalls.map((ball) => {
+                        // Αν είμαστε στο Βήμα 3 και η μπάλα αφαιρείται, δεν σχεδιάζεται
+                        if (currentStep === 3 && ball.isRemoved) return null;
 
-                        const isHighlighted = currentStep === 2 && isRemoved;
+                        const isHighlighted = currentStep === 2 && ball.isRemoved;
 
                         return (
-                          <g key={`rball-${i}`} className="transition-all duration-300">
+                          <g key={`rball-${ball.id}`} className="transition-all duration-500">
                             <circle
-                              cx={pos.x}
-                              cy={pos.y}
-                              r="11"
+                              cx={ball.x}
+                              cy={ball.y}
+                              r={BALL_RADIUS}
                               fill={isHighlighted ? "#ef4444" : "#10b981"}
                               stroke={isHighlighted ? "#b91c1c" : "#047857"}
                               strokeWidth="2"
                             />
-                            <text x={pos.x} y={pos.y + 4} fill="#ffffff" fontSize="10" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
+                            <text x={ball.x} y={ball.y + 4} fill="#ffffff" fontSize="10" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
                           </g>
                         );
                       })}
