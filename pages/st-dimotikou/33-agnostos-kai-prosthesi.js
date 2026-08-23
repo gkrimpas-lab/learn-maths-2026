@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Όριο τιμών για το διαδραστικό οπτικό εργαστήριο
-const MAX_BALLS = 18;
+const MAX_BALLS = 16;
 
 const PRESETS = [
   { a: 3, b: 8, label: "x ＋ 3 ＝ 8 (x ＝ 5)" },
   { a: 4, b: 10, label: "x ＋ 4 ＝ 10 (x ＝ 6)" },
   { a: 5, b: 12, label: "x ＋ 5 ＝ 12 (x ＝ 7)" },
   { a: 2, b: 9, label: "x ＋ 2 ＝ 9 (x ＝ 7)" },
-  { a: 6, b: 15, label: "x ＋ 6 ＝ 15 (x ＝ 9)" }
+  { a: 6, b: 14, label: "x ＋ 6 ＝ 14 (x ＝ 8)" }
 ];
 
 export default function AgnostosKaiProsthesiPage() {
@@ -48,11 +48,31 @@ export default function AgnostosKaiProsthesiPage() {
     }
   };
 
+  // Βοηθητική συνάρτηση για υπολογισμό συντεταγμένων σφαιρών επάνω στον δίσκο
+  const getBallPositions = (count, startX, basePlateY, cols = 4, ballRadius = 11) => {
+    const positions = [];
+    for (let i = 0; i < count; i++) {
+      const row = Math.floor(i / cols);
+      const col = i % cols;
+      const x = startX + col * (ballRadius * 2 + 4);
+      const y = basePlateY - ballRadius - 2 - row * (ballRadius * 2 + 4);
+      positions.push({ x, y });
+    }
+    return positions;
+  };
+
+  // Θέσεις σφαιρών αριστερού δίσκου (ξεκινούν δεξιά από το κουτί x)
+  const leftBallsPos = getBallPositions(activeA, 140, 248, 3, 11);
+
+  // Θέσεις σφαιρών δεξιού δίσκου (όλες οι b μπάλες κατανεμημένες)
+  const rightRemainingBallsPos = getBallPositions(exactSolution, 520, 248, 4, 11);
+  const rightRemovedBallsPos = getBallPositions(activeA, 520 + (exactSolution % 4 === 0 ? 0 : (exactSolution % 4) * 26), 248 - Math.floor(exactSolution / 4) * 26, 4, 11);
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
         <title>⚖️ Εξισώσεις: Άγνωστος Προσθετέος - LearnMaths.gr</title>
-        <meta name="description" content="Διαδραστική θεωρία με ζυγαριά και βήματα αφαίρεσης για την επίλυση εξισώσεων όπου ο άγνωστος είναι προσθετέος για τη ΣΤ' Δημοτικού." />
+        <meta name="description" content="Διαδραστική θεωρία με μεγάλη ζυγαριά, κουτί x και βάρη για την επίλυση εξισώσεων πρόσθεσης για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -172,7 +192,7 @@ export default function AgnostosKaiProsthesiPage() {
             </div>
           </div>
 
-          {/* 4. INTERACTIVE PLAYGROUND (ΜΕΓΑΛΟ ΕΡΓΑΣΤΗΡΙΟ ΜΕ ΒΗΜΑΤΑ ΚΑΙ ΚΟΥΤΙ x) */}
+          {/* 4. INTERACTIVE PLAYGROUND (ΜΕΓΑΛΟ ΕΡΓΑΣΤΗΡΙΟ ΜΕ ΒΗΜΑΤΑ ΚΑΙ ΟΛΑ ΣΤΟ SVG) */}
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
@@ -180,7 +200,7 @@ export default function AgnostosKaiProsthesiPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο: Η Ζυγαριά με το Κουτί $x$ και τα Βάρη
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Ακολούθησε τα 3 βήματα για να δεις πώς αφαιρούνται τα ίδια βάρη και μένει το $x$ μόνο του!
+                  Ακολούθησε τα 3 βήματα για να δεις πώς αφαιρούνται τα ίδια βάρη απευθείας επάνω στη ζυγαριά!
                 </p>
               </div>
 
@@ -289,17 +309,17 @@ export default function AgnostosKaiProsthesiPage() {
                     </span>
                     {currentStep === 1 && (
                       <p>
-                        Στο αριστερό μέρος έχουμε το <strong>άγνωστο κουτί $x$</strong> και <strong>{activeA} μπάλες</strong>. Στο δεξί μέρος έχουμε <strong>{activeB} μπάλες</strong>. Η ζυγαριά ισορροπεί: <strong>x ＋ {activeA} ＝ {activeB}</strong>.
+                        Στον αριστερό δίσκο έχουμε το <strong>άγνωστο κουτί $x$</strong> και <strong>{activeA} μπάλες</strong>. Στον δεξιό δίσκο έχουμε <strong>{activeB} μπάλες</strong>. Η ζυγαριά ισορροπεί: <strong>x ＋ {activeA} ＝ {activeB}</strong>.
                       </p>
                     )}
                     {currentStep === 2 && (
                       <p className="text-amber-800">
-                        Επισημαίνουμε <strong>{activeA} μπάλες</strong> από το αριστερό μέρος και <strong>ακριβώς {activeA} μπάλες</strong> από το δεξί μέρος. Θέλουμε να τις αφαιρέσουμε για να απομονώσουμε το $x$!
+                        Επισημαίνουμε με κόκκινο χρώμα <strong>{activeA} μπάλες</strong> από τον αριστερό δίσκο και <strong>ακριβώς {activeA} μπάλες</strong> από τον δεξιό δίσκο, έτοιμες προς αφαίρεση!
                       </p>
                     )}
                     {currentStep === 3 && (
                       <p className="text-emerald-800 font-bold">
-                        Αφαιρέσαμε {activeA} μπάλες και από τις δύο πλευρές! Στο αριστερό μέρος έμεινε μόνο το <strong>κουτί $x$</strong> και στο δεξί έμειναν οι υπόλοιπες <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} － {activeA} ＝ {exactSolution}</strong>.
+                        Αφαιρέσαμε {activeA} μπάλες και από τους δύο δίσκους! Στα αριστερά έμεινε μόνο το <strong>κουτί $x$</strong> και στα δεξιά έμειναν οι υπόλοιπες <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} － {activeA} ＝ {exactSolution}</strong>.
                       </p>
                     )}
                   </div>
@@ -311,8 +331,8 @@ export default function AgnostosKaiProsthesiPage() {
                 </div>
               </div>
 
-              {/* RIGHT: BIG SCALE & BOX + BALLS VISUALIZER (8 COLS) */}
-              <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[560px] space-y-6">
+              {/* RIGHT: BIG SCALE & SVG BOX + BALLS VISUALIZER (8 COLS) */}
+              <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[580px] space-y-6">
                 
                 {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΒΗΜΑΤΟΣ */}
                 <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-inner flex items-center justify-around text-center flex-wrap gap-4">
@@ -324,121 +344,110 @@ export default function AgnostosKaiProsthesiPage() {
                     <span className="text-emerald-600">{activeB}</span>
                   </div>
 
-                  <div className="font-mono text-lg md:text-xl font-black text-indigo-700 bg-white px-4 py-2 rounded-2xl border border-indigo-200 shadow-xs">
+                  <div className="font-mono text-base md:text-lg font-black text-indigo-700 bg-white px-4 py-2 rounded-2xl border border-indigo-200 shadow-xs">
                     {currentStep === 1 && "Βήμα 1: Αρχική Ισότητα"}
                     {currentStep === 2 && `Βήμα 2: Αφαίρεση ${activeA} και από τα δύο μέλη`}
                     {currentStep === 3 && `Βήμα 3: x ＝ ${activeB} － ${activeA} ＝ ${exactSolution}`}
                   </div>
                 </div>
 
-                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΜΕ ΚΟΥΤΙ x ΚΑΙ ΜΠΑΛΕΣ */}
+                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΟΛΑ ΣΤΟ SVG */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                      ⚖️ Οπτική Ζυγαριά: Αριστερό Μέλος (x ＋ {activeA}) vs Δεξί Μέλος ({activeB})
+                      ⚖️ Οπτική Ζυγαριά: Αριστερός Δίσκος (x ＋ {activeA}) vs Δεξιός Δίσκος ({activeB})
                     </span>
                     <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                      ✔️ Ισορροπία Ζυγαριάς
+                      ✔️ Τέλεια Ισορροπία
                     </span>
                   </div>
 
-                  {/* SVG & INTERACTIVE DISHES CONTAINER */}
-                  <div className="p-6 bg-slate-50/80 rounded-3xl border border-slate-200 shadow-inner flex flex-col items-center justify-center min-h-[340px] relative overflow-hidden">
-                    
-                    {/* SVG SCALE STRUCTURE */}
-                    <svg width="100%" height="220" viewBox="0 0 540 220" className="overflow-visible select-none">
-                      {/* Βάση Ζυγαριάς */}
-                      <polygon points="270,160 230,215 310,215" className="fill-slate-800 drop-shadow-md" />
-                      <rect x="266" y="55" width="8" height="115" className="fill-slate-700" />
-                      <circle cx="270" cy="55" r="8" className="fill-slate-950" />
-
-                      {/* Οριζόντιος Ζυγός */}
-                      <rect x="60" y="51" width="420" height="8" rx="4" className="fill-slate-800" />
-
-                      {/* Αριστερή Αλυσίδα & Δίσκος */}
-                      <line x1="90" y1="55" x2="65" y2="135" stroke="#64748b" strokeWidth="2.5" />
-                      <line x1="90" y1="55" x2="115" y2="135" stroke="#64748b" strokeWidth="2.5" />
-                      <path d="M 40 135 Q 90 160 140 135 Z" className="fill-blue-600 shadow-lg" />
-
-                      {/* Δεξιά Αλυσίδα & Δίσκος */}
-                      <line x1="450" y1="55" x2="425" y2="135" stroke="#64748b" strokeWidth="2.5" />
-                      <line x1="450" y1="55" x2="475" y2="135" stroke="#64748b" strokeWidth="2.5" />
-                      <path d="M 400 135 Q 450 160 500 135 Z" className="fill-emerald-600 shadow-lg" />
-                    </svg>
-
-                    {/* ΑΝΤΙΚΕΙΜΕΝΑ ΕΠΑΝΩ ΣΤΟΥΣ ΔΙΣΚΟΥΣ (ABSOLUTE POSITIONED) */}
-                    <div className="absolute top-10 left-0 right-0 flex justify-between px-6 sm:px-12 pointer-events-none">
+                  {/* SVG CONTAINER ΠΟΥ ΠΕΡΙΛΑΜΒΑΝΕΙ ΤΑ ΠΑΝΤΑ */}
+                  <div className="p-4 bg-slate-50/90 rounded-3xl border border-slate-200 shadow-inner flex flex-col items-center justify-center min-h-[380px] overflow-hidden">
+                    <svg width="100%" height="340" viewBox="0 0 760 360" className="overflow-visible select-none">
                       
-                      {/* ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΚΟΥΤΙ x + ΜΠΑΛΕΣ a */}
-                      <div className="flex flex-col items-center justify-end w-44 h-36 pb-2">
-                        <div className="flex items-end justify-center gap-2 flex-wrap max-w-[150px]">
-                          
-                          {/* ΤΟ ΚΟΥΤΙ x */}
-                          <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl border-2 border-amber-700 shadow-lg flex flex-col items-center justify-center text-slate-950 font-mono font-black text-2xl transition-transform transform hover:scale-105">
-                            <span>x</span>
-                            <span className="text-[8px] uppercase tracking-tighter text-amber-950 -mt-1 font-bold">Κουτί</span>
-                          </div>
+                      {/* 1. ΒΑΣΗ & ΚΟΛΟΝΑ ΖΥΓΑΡΙΑΣ */}
+                      <polygon points="380,270 320,345 440,345" fill="#1e293b" />
+                      <rect x="374" y="65" width="12" height="215" fill="#334155" />
+                      <circle cx="380" cy="65" r="12" fill="#0f172a" />
 
-                          {/* ΟΙ ΜΠΑΛΕΣ a (Εξαφανίζονται στο Βήμα 3, κοκκινίζουν στο Βήμα 2) */}
-                          {currentStep < 3 && (
-                            <div className="flex flex-wrap justify-center gap-1 max-w-[70px]">
-                              {Array.from({ length: activeA }).map((_, i) => (
-                                <div
-                                  key={i}
-                                  className={`w-6 h-6 rounded-full shadow-md transition-all duration-500 flex items-center justify-center font-mono text-[10px] font-black text-white ${
-                                    currentStep === 2
-                                      ? 'bg-rose-500 border-2 border-rose-700 animate-pulse ring-2 ring-rose-300'
-                                      : 'bg-blue-500 border border-blue-700'
-                                  }`}
-                                >
-                                  1
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                      {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΖΥΓΟΣ (BEAM) */}
+                      <rect x="90" y="59" width="580" height="12" rx="6" fill="#1e293b" />
 
-                        </div>
-                        <span className="text-[11px] font-black text-blue-900 bg-white/90 px-2 py-0.5 rounded-lg border border-blue-200 mt-2 shadow-xs">
-                          {currentStep === 3 ? "Μόνο το Κουτί x" : `x ＋ ${activeA} μπάλες`}
-                        </span>
-                      </div>
+                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
+                      <line x1="150" y1="65" x2="70" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <line x1="150" y1="65" x2="230" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <path d="M 50 250 Q 150 290 250 250 Z" fill="#2563eb" />
+                      <rect x="50" y="248" width="200" height="5" fill="#1d4ed8" rx="2" />
 
-                      {/* ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΛΕΣ ΟΙ ΜΠΑΛΕΣ b (Στο Βήμα 3 μένουν μόνο b - a) */}
-                      <div className="flex flex-col items-center justify-end w-44 h-36 pb-2">
-                        <div className="flex items-end justify-center gap-1.5 flex-wrap max-w-[160px]">
-                          
-                          {/* Μπάλες που μένουν (Exact Solution: b - a) */}
-                          {Array.from({ length: exactSolution }).map((_, i) => (
-                            <div
-                              key={`rem-${i}`}
-                              className="w-6 h-6 rounded-full bg-emerald-500 border border-emerald-700 shadow-md flex items-center justify-center font-mono text-[10px] font-black text-white"
-                            >
-                              1
-                            </div>
-                          ))}
+                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
+                      <line x1="610" y1="65" x2="530" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <line x1="610" y1="65" x2="690" y2="250" stroke="#64748b" strokeWidth="3" />
+                      <path d="M 510 250 Q 610 290 710 250 Z" fill="#059669" />
+                      <rect x="510" y="248" width="200" height="5" fill="#047857" rx="2" />
 
-                          {/* Μπάλες που αφαιρούνται (a μπάλες: Εξαφανίζονται στο Βήμα 3, κοκκινίζουν στο Βήμα 2) */}
-                          {currentStep < 3 && Array.from({ length: activeA }).map((_, i) => (
-                            <div
-                              key={`sub-${i}`}
-                              className={`w-6 h-6 rounded-full shadow-md transition-all duration-500 flex items-center justify-center font-mono text-[10px] font-black text-white ${
-                                currentStep === 2
-                                  ? 'bg-rose-500 border-2 border-rose-700 animate-pulse ring-2 ring-rose-300'
-                                  : 'bg-emerald-500 border border-emerald-700'
-                              }`}
-                            >
-                              1
-                            </div>
-                          ))}
+                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ x (ΑΡΙΣΤΕΡΑ ΕΠΑΝΩ ΣΤΟΝ ΔΙΣΚΟ) */}
+                      <g transform="translate(68, 192)">
+                        <rect width="56" height="56" rx="14" fill="#f59e0b" stroke="#b45309" strokeWidth="3" />
+                        <text x="28" y="34" fill="#451a03" fontSize="26" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
+                        <text x="28" y="47" fill="#78350f" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">ΚΟΥΤΙ</text>
+                      </g>
 
-                        </div>
-                        <span className="text-[11px] font-black text-emerald-900 bg-white/90 px-2 py-0.5 rounded-lg border border-emerald-200 mt-2 shadow-xs">
-                          {currentStep === 3 ? `Απέμειναν ${exactSolution} μπάλες` : `Σύνολο: ${activeB} μπάλες`}
-                        </span>
-                      </div>
+                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ a (ΕΠΑΝΩ ΣΤΟΝ ΔΙΣΚΟ) */}
+                      {currentStep < 3 && leftBallsPos.map((pos, i) => (
+                        <g key={`lball-${i}`} className="transition-all duration-500">
+                          <circle
+                            cx={pos.x}
+                            cy={pos.y}
+                            r="11"
+                            fill={currentStep === 2 ? "#ef4444" : "#3b82f6"}
+                            stroke={currentStep === 2 ? "#b91c1c" : "#1d4ed8"}
+                            strokeWidth="2"
+                          />
+                          <text x={pos.x} y={pos.y + 4} fill="#ffffff" fontSize="10" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
+                        </g>
+                      ))}
 
-                    </div>
+                      {/* 7. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ b (ΕΠΑΝΩ ΣΤΟΝ ΔΙΣΚΟ) */}
+                      {/* Μπάλες που παραμένουν (b - a) */}
+                      {rightRemainingBallsPos.map((pos, i) => (
+                        <g key={`rrem-${i}`}>
+                          <circle
+                            cx={pos.x}
+                            cy={pos.y}
+                            r="11"
+                            fill="#10b981"
+                            stroke="#047857"
+                            strokeWidth="2"
+                          />
+                          <text x={pos.x} y={pos.y + 4} fill="#ffffff" fontSize="10" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
+                        </g>
+                      ))}
 
+                      {/* Μπάλες που αφαιρούνται (a μπάλες: Εξαφανίζονται στο Βήμα 3, κοκκινίζουν στο Βήμα 2) */}
+                      {currentStep < 3 && rightRemovedBallsPos.map((pos, i) => (
+                        <g key={`rrem-sub-${i}`} className="transition-all duration-500">
+                          <circle
+                            cx={pos.x}
+                            cy={pos.y}
+                            r="11"
+                            fill={currentStep === 2 ? "#ef4444" : "#10b981"}
+                            stroke={currentStep === 2 ? "#b91c1c" : "#047857"}
+                            strokeWidth="2"
+                          />
+                          <text x={pos.x} y={pos.y + 4} fill="#ffffff" fontSize="10" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
+                        </g>
+                      ))}
+
+                      {/* Ετικέτες κάτω από τους δίσκους */}
+                      <text x="150" y="325" fill="#1e3a8a" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                        {currentStep === 3 ? "Μόνο το Κουτί x" : `x ＋ ${activeA} μπάλες`}
+                      </text>
+
+                      <text x="610" y="325" fill="#064e3b" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                        {currentStep === 3 ? `Απέμειναν ${exactSolution} μπάλες` : `Σύνολο: ${activeB} μπάλες`}
+                      </text>
+                    </svg>
                   </div>
 
                   {/* ACTION BAR ΓΙΑ ΜΕΤΑΒΑΣΗ ΣΤΑ ΒΗΜΑΤΑ */}
@@ -447,12 +456,12 @@ export default function AgnostosKaiProsthesiPage() {
                       type="button"
                       disabled={currentStep === 1}
                       onClick={() => setCurrentStep(prev => prev - 1)}
-                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 text-xs font-black rounded-xl border border-slate-200 transition"
+                      className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 text-xs font-black rounded-xl border border-slate-200 transition"
                     >
                       ⬅️ Προηγούμενο Βήμα
                     </button>
 
-                    <div className="text-xs font-black text-indigo-900 bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-200">
+                    <div className="text-xs font-black text-indigo-900 bg-indigo-50 px-5 py-2 rounded-xl border border-indigo-200">
                       Βήμα {currentStep} από 3
                     </div>
 
@@ -460,7 +469,7 @@ export default function AgnostosKaiProsthesiPage() {
                       type="button"
                       disabled={currentStep === 3}
                       onClick={() => setCurrentStep(prev => prev + 1)}
-                      className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-black rounded-xl shadow-md transition transform active:scale-95"
+                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-black rounded-xl shadow-md transition transform active:scale-95"
                     >
                       Επόμενο Βήμα ➡️
                     </button>
