@@ -130,17 +130,17 @@ export default function AgnostosKaiProsthesiPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
                     Ενότητα 33
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  33. Εξισώσεις: Ο Άγνωστος είναι Προσθετέος ($x + \alpha = \beta$)
+                  33. Εξισώσεις: Ο Άγνωστος είναι Προσθετέος (x + a = b)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο προσθετέο ($x$)</strong>: όπως αφαιρούμε <strong>τα ίδια βάρη</strong> και από τα δύο μέρη μιας ζυγαριάς για να μείνει το κουτί $x$ μόνο του, έτσι κάνουμε <strong>αφαίρεση: $x = \beta - \alpha$</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο προσθετέο (x)</strong>: αφαιρούμε <strong>τα ίδια βάρη</strong> και από τα δύο μέρη μιας ζυγαριάς για να μείνει το κουτί x μόνο του, έτσι κάνουμε <strong>αφαίρεση: x = b - a</strong>!
                 </p>
               </div>
 
@@ -185,7 +185,7 @@ export default function AgnostosKaiProsthesiPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">2. Αφαίρεση ίδιων βαρών</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Αν <strong>βγάλουμε τον ίδιο αριθμό από τους δύο δίσκους</strong>, η ζυγαριά εξακολουθεί να ισορροπεί! Έτσι μένει το $x$ μόνο του:
+                  Αν <strong>βγάλουμε τον ίδιο αριθμό από τους δύο δίσκους</strong>, η ζυγαριά εξακολουθεί να ισορροπεί! Έτσι μένει το x μόνο του:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -202,7 +202,7 @@ export default function AgnostosKaiProsthesiPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Ελέγχουμε αν το βάρος του κουτιού είναι σωστό, αντικαθιστώντας το $x$ με τον αριθμό που βρήκαμε:
+                  Ελέγχουμε αν το βάρος του κουτιού είναι σωστό, αντικαθιστώντας το x με τον αριθμό που βρήκαμε:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -218,7 +218,7 @@ export default function AgnostosKaiProsthesiPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Η Ζυγαριά με το Κουτί $x$ και τα Βάρη
+                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Η Ζυγαριά με το Κουτί x και τα Βάρη
                 </h2>
                 <p className="text-gray-500 text-sm">
                   Ακολούθησε τα 3 βήματα για να δεις πώς αφαιρούνται τα ίδια βάρη απευθείας επάνω στη ζυγαριά!
@@ -273,7 +273,7 @@ export default function AgnostosKaiProsthesiPage() {
                   {/* ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ */}
                   <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-slate-800 uppercase tracking-wider block">
+                      <span className="text-xs font-black text-slate-800 tracking-wider block">
                         ⚙️ Ρύθμιση Εξίσωσης: x ＋ α ＝ β
                       </span>
                       <span className="text-[10px] font-bold text-slate-400">0 ≤ α ≤ β</span>
@@ -282,7 +282,7 @@ export default function AgnostosKaiProsthesiPage() {
                     <div className="grid grid-cols-2 gap-3 text-center">
                       {/* ΓΝΩΣΤΟΣ ΠΡΟΣΘΕΤΕΟΣ (a) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες αριστερά (α)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Μπάλες αριστερά (α)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -306,7 +306,7 @@ export default function AgnostosKaiProsthesiPage() {
 
                       {/* ΣΥΝΟΛΙΚΕΣ ΜΠΑΛΕΣ ΔΕΞΙΑ (b) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες δεξιά (β)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Μπάλες δεξιά (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -333,7 +333,7 @@ export default function AgnostosKaiProsthesiPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-1 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -357,11 +357,11 @@ export default function AgnostosKaiProsthesiPage() {
                   {/* ΕΠΕΞΗΓΗΣΗ ΑΝΑΛΟΓΑ ΜΕ ΤΟ ΕΝΕΡΓΟ ΒΗΜΑ */}
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
                     <span className="font-black text-slate-900 uppercase block text-[11px]">
-                      📖 Τι συμβαίνει στο Βήμα {currentStep}:
+                      📖 Τι συμβαινει στο Βημα {currentStep}:
                     </span>
                     {currentStep === 1 && (
                       <p>
-                        Στον αριστερό δίσκο έχουμε το <strong>άγνωστο κουτί $x$</strong> και <strong>{activeA} μπάλες</strong>. Στον δεξιό δίσκο έχουμε <strong>{activeB} μπάλες</strong>. Η ζυγαριά ισορροπεί: <strong>x ＋ {activeA} ＝ {activeB}</strong>.
+                        Στον αριστερό δίσκο έχουμε το <strong>άγνωστο κουτί x</strong> και <strong>{activeA} μπάλες</strong>. Στον δεξιό δίσκο έχουμε <strong>{activeB} μπάλες</strong>. Η ζυγαριά ισορροπεί: <strong>x ＋ {activeA} ＝ {activeB}</strong>.
                       </p>
                     )}
                     {currentStep === 2 && (
@@ -371,7 +371,7 @@ export default function AgnostosKaiProsthesiPage() {
                     )}
                     {currentStep === 3 && (
                       <p className="text-emerald-800 font-bold">
-                        Αφαιρέσαμε {activeA} μπάλες και από τους δύο δίσκους! Στα αριστερά έμεινε μόνο το <strong>κουτί $x$</strong> και στα δεξιά έμειναν οι υπόλοιπες <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} － {activeA} ＝ {exactSolution}</strong>.
+                        Αφαιρέσαμε {activeA} μπάλες και από τους δύο δίσκους! Στα αριστερά έμεινε μόνο το <strong>κουτί x</strong> και στα δεξιά έμειναν οι υπόλοιπες <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} － {activeA} ＝ {exactSolution}</strong>.
                       </p>
                     )}
                   </div>
@@ -379,7 +379,7 @@ export default function AgnostosKaiProsthesiPage() {
                 </div>
 
                 <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
-                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο προσθετέο $x$, κάνουμε πάντα <strong>αφαίρεση: $x = \beta - \alpha$</strong>!
+                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο προσθετέο x, κάνουμε πάντα <strong>αφαίρεση: x = b - a</strong>!
                 </div>
               </div>
 
@@ -406,7 +406,7 @@ export default function AgnostosKaiProsthesiPage() {
                 {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΟΛΑ ΣΤΟ SVG */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
+                    <span className="text-xs font-black text-slate-500 tracking-wider block">
                       ⚖️ Οπτική Ζυγαριά: Αριστερός Δίσκος (x ＋ {activeA}) vs Δεξιός Δίσκος ({activeB})
                     </span>
                     <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
@@ -520,7 +520,7 @@ export default function AgnostosKaiProsthesiPage() {
 
                 {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                  💡 Συμπέρασμα: Αφαιρώντας {activeA} μπάλες και από τους δύο δίσκους, βρίσκουμε ότι το <strong>κουτί x περιέχει ακριβώς {exactSolution} μπάλες ($x = {activeB} - {activeA} = {exactSolution}$)</strong>!
+                  💡 Συμπέρασμα: Αφαιρώντας {activeA} μπάλες και από τους δύο δίσκους, βρίσκουμε ότι το <strong>κουτί x περιέχει ακριβώς {exactSolution} μπάλες (x = {activeB} - {activeA} = {exactSolution})</strong>!
                 </div>
 
               </div>
