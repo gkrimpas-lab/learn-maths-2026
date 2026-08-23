@@ -19,10 +19,10 @@ export default function AgnostosKaiAfairesiPage() {
   const [paramA, setParamA] = useState(3);
   const [paramB, setParamB] = useState(5);
 
-  // Βήμα διαδραστικής επίλυσης: 1 (Αρχική με κενές θέσεις), 2 (Προσθήκη και στα δύο μέλη), 3 (Πλήρες x = b + a)
+  // Βήμα διαδραστικής επίλυσης: 1 (Κενές θέσεις μέσα στο x), 2 (Προσθήκη και στα δύο μέλη), 3 (Πλήρες x = b + a)
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Ασφαλείς αριθμητικές τιμές ώστε a + b <= MAX_TOTAL_BALLS
+  // Ασφαλείς αριθμητικές τιμές
   const rawA = Math.max(1, Number(paramA) || 1);
   const rawB = Math.max(1, Number(paramB) || 1);
   
@@ -53,24 +53,25 @@ export default function AgnostosKaiAfairesiPage() {
   };
 
   // Σταθερή γεωμετρία σφαιρών
-  const BALL_RADIUS = 11;
-  const BALL_SPACING = BALL_RADIUS * 2 + 4; // 26px
+  const BALL_RADIUS = 8.5;
+  const BALL_SPACING = BALL_RADIUS * 2 + 3; // 20px
   const BASE_Y = 248;
 
-  // 1. Υπολογισμός θέσεων των "κενών θέσεων / ελλειμμάτων" (slots) δίπλα στο κουτί x
-  const missingSlotsPos = [];
+  // 1. Υπολογισμός θέσεων σφαιρών / κενών θέσεων ΜΕΣΑ ΣΤΟ ΚΟΥΤΙ x (Αριστερός Δίσκος)
+  // Το κουτί x βρίσκεται στο x = 95, y = 164, πλάτος = 110, ύψος = 84
+  const insideBoxSlots = [];
   for (let i = 0; i < activeA; i++) {
     const row = Math.floor(i / 3);
     const col = i % 3;
-    missingSlotsPos.push({
-      x: 146 + col * BALL_SPACING,
-      y: BASE_Y - BALL_RADIUS - 2 - row * BALL_SPACING
+    insideBoxSlots.push({
+      x: 130 + col * BALL_SPACING,
+      y: 226 - row * BALL_SPACING
     });
   }
 
   // 2. Θέσεις σφαιρών δεξιού δίσκου (Συμμετρικό κεντράρισμα με βάση το x = 610)
   const currentRightCount = currentStep === 1 ? activeB : exactSolution;
-  const COLS_RIGHT = 5;
+  const COLS_RIGHT = 6;
   const rightBalls = [];
   for (let i = 0; i < currentRightCount; i++) {
     const row = Math.floor(i / COLS_RIGHT);
@@ -95,7 +96,7 @@ export default function AgnostosKaiAfairesiPage() {
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
         <title>⚖️ Εξισώσεις: Άγνωστος Μειωτέος - LearnMaths.gr</title>
-        <meta name="description" content="Διαδραστική θεωρία με ζυγαριά, κουτί x με ελλείμματα και βήματα πρόσθεσης για την επίλυση εξισώσεων όπου ο άγνωστος είναι μειωτέος (x - α = β) για τη ΣΤ' Δημοτικού." />
+        <meta name="description" content="Διαδραστική θεωρία με ζυγαριά, μεγάλο κουτί x με εσωτερικά ελλείμματα και βήματα πρόσθεσης για την επίλυση εξισώσεων (x - α = β) για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -142,7 +143,7 @@ export default function AgnostosKaiAfairesiPage() {
                   34. Εξισώσεις: Ο Άγνωστος είναι Μειωτέος ($x - \alpha = \beta$)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο μειωτέο ($x$)</strong>: όπως συμπληρώνουμε <strong>τις $\alpha$ μπάλες που λείπουν από το κουτί $x$</strong> και προσθέτουμε τις ίδιες $\alpha$ μπάλες και στον δεξιό δίσκο για ισορροπία, έτσι κάνουμε <strong>πρόσθεση: $x = \beta + \alpha$</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο μειωτέο ($x$)</strong>: όπως συμπληρώνουμε <strong>τις $\alpha$ μπάλες που λείπουν μέσα από το κουτί $x$</strong> και προσθέτουμε τις ίδιες $\alpha$ μπάλες και στον δεξιό δίσκο για ισορροπία, έτσι κάνουμε <strong>πρόσθεση: $x = \beta + \alpha$</strong>!
                 </p>
               </div>
 
@@ -223,7 +224,7 @@ export default function AgnostosKaiAfairesiPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο: Συμπλήρωση του Κουτιού $x$
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Δες το κουτί $x$ με τις κενές θέσεις (έλλειμμα) και ακολούθησε τα βήματα για να προστεθούν οι μπάλες και στα δύο μέλη!
+                  Δες τις κενές θέσεις μέσα στο κουτί $x$ και ακολούθησε τα βήματα για να προστεθούν οι μπάλες και στα δύο μέλη!
                 </p>
               </div>
 
@@ -238,7 +239,7 @@ export default function AgnostosKaiAfairesiPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  1️⃣ Λείπουν {activeA} Μπάλες
+                  1️⃣ Λείπουν {activeA} Μπάλες μέσα από το x
                 </button>
                 <button
                   type="button"
@@ -281,7 +282,7 @@ export default function AgnostosKaiAfairesiPage() {
                     <div className="grid grid-cols-2 gap-3 text-center">
                       {/* ΑΦΑΙΡΕΤΕΟΣ (a) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αφαιρετέος (α)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες που λείπουν (α)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -305,7 +306,7 @@ export default function AgnostosKaiAfairesiPage() {
 
                       {/* ΔΙΑΦΟΡΑ (b) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Διαφορά (β)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες δεξιά (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -360,17 +361,17 @@ export default function AgnostosKaiAfairesiPage() {
                     </span>
                     {currentStep === 1 && (
                       <p>
-                        Στον αριστερό δίσκο έχουμε το <strong>κουτί $x$ με {activeA} κενές θέσεις (διακεκομμένες)</strong> αφού του έχουν αφαιρεθεί $\alpha$ μπάλες. Στον δεξιό δίσκο έχουμε <strong>{activeB} μπάλες</strong>: <strong>x － {activeA} ＝ {activeB}</strong>.
+                        Στον αριστερό δίσκο έχουμε το <strong>κουτί $x$ μέσα από το οποίο λείπουν {activeA} μπάλες</strong> (φαίνονται ως διακεκομμένες κενές θέσεις). Στον δεξιό δίσκο έχουμε <strong>{activeB} μπάλες</strong>: <strong>x － {activeA} ＝ {activeB}</strong>.
                       </p>
                     )}
                     {currentStep === 2 && (
                       <p className="text-amber-800">
-                        Προσθέτουμε <strong>{activeA} πορτοκαλί μπάλες</strong> για να «κουμπώσουν» στις κενές θέσεις του κουτιού $x$, και <strong>προσθέτουμε ακριβώς {activeA} μπάλες</strong> και στον δεξιό δίσκο για να διατηρηθεί η ισορροπία!
+                        Προσθέτουμε <strong>{activeA} πορτοκαλί μπάλες</strong> για να «κουμπώσουν» μέσα στο κουτί $x$, και <strong>προσθέτουμε ακριβώς {activeA} μπάλες</strong> και στον δεξιό δίσκο για να διατηρηθεί η ισορροπία!
                       </p>
                     )}
                     {currentStep === 3 && (
                       <p className="text-emerald-800 font-bold">
-                        Το κουτί $x$ είναι πλέον <strong>πλήρες (συμπαγές πράσινο)</strong>! Στον δεξιό δίσκο βρίσκονται {activeB} ＋ {activeA} ＝ <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>.
+                        Το κουτί $x$ είναι πλέον <strong>πλήρες</strong>! Στον δεξιό δίσκο βρίσκονται {activeB} ＋ {activeA} ＝ <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>.
                       </p>
                     )}
                   </div>
@@ -382,7 +383,7 @@ export default function AgnostosKaiAfairesiPage() {
                 </div>
               </div>
 
-              {/* RIGHT: BIG SCALE & SVG BOX WITH SLOTS (8 COLS) */}
+              {/* RIGHT: BIG SCALE & SVG BOX WITH IN-BOX SLOTS (8 COLS) */}
               <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[580px] space-y-6">
                 
                 {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΒΗΜΑΤΟΣ */}
@@ -402,7 +403,7 @@ export default function AgnostosKaiAfairesiPage() {
                   </div>
                 </div>
 
-                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΟΛΑ ΣΤΟ SVG ΜΕ SLOTS ΕΛΛΕΙΜΜΑΤΟΣ */}
+                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΟΛΑ ΣΤΟ SVG ΜΕ ΜΠΑΛΕΣ ΜΕΣΑ ΣΤΟ ΚΟΥΤΙ */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
@@ -425,56 +426,59 @@ export default function AgnostosKaiAfairesiPage() {
                       {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΖΥΓΟΣ (BEAM) */}
                       <rect x="90" y="59" width="580" height="12" rx="6" fill="#1e293b" />
 
-                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
+                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (ΠΛΑΤΟΣ 240px) */}
                       <line x1="150" y1="65" x2="50" y2="250" stroke="#64748b" strokeWidth="3" />
                       <line x1="150" y1="65" x2="250" y2="250" stroke="#64748b" strokeWidth="3" />
                       <path d="M 30 250 Q 150 290 270 250 Z" fill="#2563eb" />
                       <rect x="30" y="248" width="240" height="5" fill="#1d4ed8" rx="2" />
 
-                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
+                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (ΠΛΑΤΟΣ 240px) */}
                       <line x1="610" y1="65" x2="510" y2="250" stroke="#64748b" strokeWidth="3" />
                       <line x1="610" y1="65" x2="710" y2="250" stroke="#64748b" strokeWidth="3" />
                       <path d="M 490 250 Q 610 290 730 250 Z" fill="#059669" />
                       <rect x="490" y="248" width="240" height="5" fill="#047857" rx="2" />
 
-                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ x (ΣΤΟ x = 60) */}
-                      <g transform="translate(60, 192)">
+                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΜΕΓΑΛΟ ΚΟΥΤΙ x (x = 95, y = 164, w = 110, h = 84) */}
+                      <g transform="translate(95, 164)">
                         <rect 
-                          width="56" 
-                          height="56" 
-                          rx="14" 
-                          fill={currentStep === 3 ? "#10b981" : "#f59e0b"} 
-                          stroke={currentStep === 3 ? "#047857" : "#b45309"} 
+                          width="110" 
+                          height="84" 
+                          rx="16" 
+                          fill={currentStep === 3 ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.15)"} 
+                          stroke={currentStep === 3 ? "#059669" : "#d97706"} 
                           strokeWidth="3" 
+                          strokeDasharray={currentStep === 1 ? "6 4" : "none"}
                         />
-                        <text x="28" y="34" fill={currentStep === 3 ? "#ffffff" : "#451a03"} fontSize="26" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
-                        <text x="28" y="47" fill={currentStep === 3 ? "#ecfdf5" : "#78350f"} fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">
-                          {currentStep === 3 ? "ΠΛΗΡΕΣ" : "ΕΛΛΙΠΕΣ"}
+                        {/* Ετικέτα Κουτιού x */}
+                        <rect x="8" y="8" width="28" height="28" rx="8" fill={currentStep === 3 ? "#10b981" : "#f59e0b"} />
+                        <text x="22" y="27" fill="#ffffff" fontSize="18" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
+                        <text x="66" y="25" fill={currentStep === 3 ? "#065f46" : "#92400e"} fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
+                          {currentStep === 3 ? "ΠΛΗΡΕΣ x" : "ΚΟΥΤΙ x"}
                         </text>
                       </g>
 
-                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΚΕΝΕΣ ΘΕΣΕΙΣ (SLOTS) Ή ΟΙ ΠΡΟΣΤΙΘΕΜΕΝΕΣ ΜΠΑΛΕΣ */}
-                      {missingSlotsPos.map((pos, i) => {
+                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ / ΕΛΛΕΙΜΜΑΤΑ ΜΕΣΑ ΣΤΟ ΚΟΥΤΙ x */}
+                      {insideBoxSlots.map((pos, i) => {
                         if (currentStep === 1) {
-                          // Βήμα 1: Διακεκομμένες κενές θέσεις (φαίνεται ότι λείπουν μπάλες)
+                          // Βήμα 1: Διακεκομμένες κενές θέσεις μέσα στο κουτί (φαίνεται ότι λείπουν μπάλες)
                           return (
-                            <g key={`slot-${i}`} className="transition-all duration-500">
+                            <g key={`inbox-slot-${i}`} className="transition-all duration-500">
                               <circle
                                 cx={pos.x}
                                 cy={pos.y}
                                 r={BALL_RADIUS}
-                                fill="rgba(239, 68, 68, 0.08)"
-                                stroke="#f43f5e"
+                                fill="rgba(239, 68, 68, 0.12)"
+                                stroke="#ef4444"
                                 strokeWidth="2"
                                 strokeDasharray="3 3"
                               />
-                              <text x={pos.x} y={pos.y + 4} fill="#f43f5e" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="monospace">－1</text>
+                              <text x={pos.x} y={pos.y + 3} fill="#ef4444" fontSize="8" fontWeight="900" textAnchor="middle" fontFamily="monospace">－1</text>
                             </g>
                           );
                         } else {
-                          // Βήματα 2 & 3: Οι μπάλες προστέθηκαν και συμπλήρωσαν το κουτί x
+                          // Βήματα 2 & 3: Οι μπάλες συμπληρώνουν το κουτί x από μέσα
                           return (
-                            <g key={`slot-filled-${i}`} className="transition-all duration-500">
+                            <g key={`inbox-filled-${i}`} className="transition-all duration-500">
                               <circle
                                 cx={pos.x}
                                 cy={pos.y}
@@ -484,7 +488,7 @@ export default function AgnostosKaiAfairesiPage() {
                                 strokeWidth="2"
                                 className={currentStep === 2 ? "animate-pulse" : ""}
                               />
-                              <text x={pos.x} y={pos.y + 4} fill="#ffffff" fontSize="9.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                              <text x={pos.x} y={pos.y + 3} fill="#ffffff" fontSize="8.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                                 {currentStep === 2 ? "＋1" : "1"}
                               </text>
                             </g>
@@ -506,8 +510,8 @@ export default function AgnostosKaiAfairesiPage() {
                               strokeWidth="2"
                               className={isAddedBall && currentStep === 2 ? "animate-pulse" : ""}
                             />
-                            <text x={ball.x} y={ball.y + 4} fill="#ffffff" fontSize="10" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                              {isAddedBall && currentStep === 2 ? "＋1" : "1"}
+                            <text x={ball.x} y={ball.y + 3} fill="#ffffff" fontSize="8.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                              {isAddedBall ? "＋1" : "1"}
                             </text>
                           </g>
                         );
@@ -515,7 +519,7 @@ export default function AgnostosKaiAfairesiPage() {
 
                       {/* Ετικέτες κάτω από τους δίσκους */}
                       <text x="150" y="325" fill="#1e3a8a" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                        {currentStep === 1 && `x (λείπουν ${activeA} μπάλες)`}
+                        {currentStep === 1 && `x (λείπουν ${activeA} μπάλες από μέσα)`}
                         {currentStep === 2 && `x － ${activeA} ＋ ${activeA}`}
                         {currentStep === 3 && `Ολόκληρο το Κουτί x`}
                       </text>
