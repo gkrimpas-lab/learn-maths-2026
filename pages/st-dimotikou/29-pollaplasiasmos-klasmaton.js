@@ -8,16 +8,16 @@ const MAX_LIMIT = 100;
 
 const PRESETS_FF = [
   { nA: 2, dA: 3, nB: 3, dB: 4, label: "2/3 × 3/4 ➔ 1/2" },
-  { nA: 1, dA: 2, nB: 2, dB: 5, label: "1/2 × 2/5 ➔ 1/5" },
-  { nA: 3, dA: 5, nB: 2, dB: 3, label: "3/5 × 2/3 ➔ 2/5" },
-  { nA: 3, dA: 4, nB: 4, dB: 3, label: "3/4 × 4/3 ➔ 1" }
+  { nA: 4, dA: 3, nB: 3, dB: 2, label: "4/3 × 3/2 ➔ 2 (Καταχρηστικά)" },
+  { nA: 5, dA: 4, nB: 2, dB: 3, label: "5/4 × 2/3 ➔ 5/6" },
+  { nA: 3, dA: 2, nB: 5, dB: 3, label: "3/2 × 5/3 ➔ 5/2" }
 ];
 
 const PRESETS_NF = [
   { nA: 3, nB: 1, dB: 4, label: "3 × 1/4 ➔ 3/4" },
   { nA: 2, nB: 2, dB: 5, label: "2 × 2/5 ➔ 4/5" },
   { nA: 4, nB: 1, dB: 2, label: "4 × 1/2 ➔ 2" },
-  { nA: 3, nB: 2, dB: 3, label: "3 × 2/3 ➔ 2" }
+  { nA: 3, nB: 4, dB: 3, label: "3 × 4/3 ➔ 4" }
 ];
 
 // Βοηθητική συνάρτηση για εύρεση Μέγιστου Κοινού Διαιρέτη (ΜΚΔ)
@@ -89,21 +89,30 @@ export default function PollaplasiasmosKlasmatonPage() {
   const simplifiedDen = resultDen / gcd;
   const isSimplified = gcd > 1 && resultNum !== 0;
 
-  // Προσαρμοστική Σχεδίαση Πλέγματος / Εμβαδού (Grid / Area Model)
+  // Προσαρμοστική Σχεδίαση Πλέγματος / Εμβαδού (Υποστηρίζει και Καταχρηστικά Κλάσματα)
   const renderGridVisual = () => {
-    const rows = activeDenA;
-    const cols = activeDenB;
-    const filledRows = Math.min(activeNumA, rows);
-    const filledCols = Math.min(activeNumB, cols);
+    // Υπολογισμός πόσων ακεραίων μονάδων (1x1) χρειαζόμαστε οριζόντια & κάθετα
+    const unitsY = Math.max(1, Math.ceil(activeNumA / activeDenA));
+    const unitsX = Math.max(1, Math.ceil(activeNumB / activeDenB));
 
-    // Αν οι παρονομαστές είναι έως 20x20 σχεδιάζουμε ακριβές πλέγμα κελιών
-    if (rows <= 20 && cols <= 20) {
+    const totalRows = unitsY * activeDenA;
+    const totalCols = unitsX * activeDenB;
+
+    const filledRows = activeNumA;
+    const filledCols = activeNumB;
+
+    // Για πλέγματα έως 25x25 σχεδιάζουμε λεπτομερή κελιά
+    if (totalRows <= 25 && totalCols <= 25) {
       const cells = [];
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
+      for (let r = 0; r < totalRows; r++) {
+        for (let c = 0; c < totalCols; c++) {
           const isSelectedA = r < filledRows;
           const isSelectedB = c < filledCols;
           const isOverlap = isSelectedA && isSelectedB;
+
+          // Εντοπισμός ορίων ακέραιας μονάδας για έντονο περίγραμμα
+          const isBottomUnitBorder = (r + 1) % activeDenA === 0 && r + 1 < totalRows;
+          const isRightUnitBorder = (c + 1) % activeDenB === 0 && c + 1 < totalCols;
 
           let cellBg = 'bg-white border-slate-200';
           if (isOverlap) {
@@ -117,7 +126,9 @@ export default function PollaplasiasmosKlasmatonPage() {
           cells.push(
             <div
               key={`${r}-${c}`}
-              className={`border w-full h-full transition-colors duration-200 ${cellBg}`}
+              className={`border transition-colors duration-200 ${cellBg} ${
+                isBottomUnitBorder ? 'border-b-2 border-b-slate-700' : ''
+              } ${isRightUnitBorder ? 'border-r-2 border-r-slate-700' : ''}`}
               style={{ aspectRatio: '1/1' }}
             />
           );
@@ -125,10 +136,10 @@ export default function PollaplasiasmosKlasmatonPage() {
       }
 
       return (
-        <div className="flex flex-col items-center space-y-4 w-full max-w-sm mx-auto p-2">
+        <div className="flex flex-col items-center space-y-4 w-full max-w-md mx-auto p-2">
           <div 
-            className="grid gap-0.5 border-2 border-slate-300 p-2 rounded-2xl bg-slate-100 shadow-inner w-full"
-            style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+            className="grid gap-0.5 border-2 border-slate-800 p-2 rounded-2xl bg-slate-100 shadow-inner w-full overflow-hidden"
+            style={{ gridTemplateColumns: `repeat(${totalCols}, minmax(0, 1fr))` }}
           >
             {cells}
           </div>
@@ -137,17 +148,38 @@ export default function PollaplasiasmosKlasmatonPage() {
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-orange-300 rounded border border-orange-400" /> 2ο Κλάσμα ({activeNumB}/{activeDenB})</span>
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-indigo-600 rounded border border-indigo-700" /> Κοινή Περιοχή ({resultNum}/{resultDen})</span>
           </div>
+          {(unitsX > 1 || unitsY > 1) && (
+            <span className="text-[11px] text-slate-500 font-medium italic text-center">
+              ℹ️ Εμφανίζονται {unitsY} × {unitsX} ＝ {unitsY * unitsX} ακέραιες μονάδες (χωρισμένες με έντονη γραμμή) λόγω καταχρηστικών κλασμάτων.
+            </span>
+          )}
         </div>
       );
     }
 
-    // Για μεγαλύτερους παρονομαστές (21 έως 100), χρησιμοποιούμε συνεχή SVG αναπαράσταση εμβαδού
-    const pctW = Math.min(100, (activeNumB / activeDenB) * 100);
-    const pctH = Math.min(100, (activeNumA / activeDenA) * 100);
+    // Για μεγαλύτερες τιμές σχεδιάζουμε δυναμικό SVG αναλογικό ορθογώνιο
+    const pctW = Math.min(100, (activeNumB / totalCols) * 100);
+    const pctH = Math.min(100, (activeNumA / totalRows) * 100);
 
     return (
-      <div className="flex flex-col items-center space-y-4 w-full max-w-sm mx-auto p-2">
-        <div className="relative w-full aspect-square border-2 border-slate-400 rounded-2xl bg-white overflow-hidden shadow-inner">
+      <div className="flex flex-col items-center space-y-4 w-full max-w-md mx-auto p-2">
+        <div className="relative w-full aspect-square border-2 border-slate-800 rounded-2xl bg-white overflow-hidden shadow-inner">
+          {/* Διαχωριστικές γραμμές ακέραιων μονάδων */}
+          {Array.from({ length: unitsX - 1 }).map((_, i) => (
+            <div 
+              key={`vx-${i}`} 
+              className="absolute top-0 bottom-0 border-r-2 border-slate-700 z-10" 
+              style={{ left: `${((i + 1) / unitsX) * 100}%` }} 
+            />
+          ))}
+          {Array.from({ length: unitsY - 1 }).map((_, i) => (
+            <div 
+              key={`hy-${i}`} 
+              className="absolute left-0 right-0 border-b-2 border-slate-700 z-10" 
+              style={{ top: `${((i + 1) / unitsY) * 100}%` }} 
+            />
+          ))}
+
           {/* Περιοχή Κλάσματος Α (Οριζόντια) */}
           <div 
             className="absolute top-0 left-0 w-full bg-blue-200/80 border-b border-blue-400 transition-all duration-300"
@@ -634,7 +666,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                           🔲 Οπτικοποίηση με Πλέγμα Εμβαδού (Area Model):
                         </span>
                         <span className="text-[11px] font-bold text-slate-400">
-                          {activeDenA} γραμμές × {activeDenB} στήλες
+                          {activeNumA}/{activeDenA} × {activeNumB}/{activeDenB}
                         </span>
                       </div>
                       <div className="p-4 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
@@ -678,7 +710,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                 {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
                   {mode === 'fraction-fraction'
-                    ? `💡 Τελικό Αποτέλεσμα: (${activeNumA}/${activeDenA}) × (${activeNumB}/${activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`} (Το γινόμενο δύο γνήσιων κλασμάτων είναι πάντα μικρότερο και από τα δύο αρχικά!)`
+                    ? `💡 Τελικό Αποτέλεσμα: (${activeNumA}/${activeDenA}) × (${activeNumB}/${activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`}`
                     : `💡 Τελικό Αποτέλεσμα: ${activeNumA} × (${activeNumB}/${activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`}`}
                 </div>
 
