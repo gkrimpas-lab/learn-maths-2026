@@ -634,7 +634,7 @@ export default function Epanalipsi1Page() {
           <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-6`}>
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🏆 1 Επαναληπτικο Τεστ • ΣΤ' Δημοτικου</span>
+                <span>🏆 Πρωτο Επαναληπτικο Τεστ• ΣΤ' Δημοτικου</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
                 Μεγάλη Επανάληψη: Κεφάλαια 1 έως 30
