@@ -28,17 +28,74 @@ function gcd(a, b) {
   return x || 1;
 }
 
-// Δεξαμενή σεναρίων προβλημάτων
-const REAL_WORLD_SCENARIOS = [
-  { item: 'ευρώ', who: 'Ο Πέτρος είχε ένα χρηματικό ποσό (x). Αγόρασε ένα βιβλίο που κόστιζε', sub: 18, rem: 24, q: 'Πόσα χρήματα είχε αρχικά ο Πέτρος;' },
-  { item: 'κιλά', who: 'Ένα σακί περιείχε αλεύρι (x). Χρησιμοποιήσαμε για ψωμί', sub: 14, rem: 36, q: 'Πόσα κιλά αλεύρι είχε αρχικά το σακί;' },
-  { item: 'σελίδες', who: 'Ένα μυθιστόρημα έχει συνολικά σελίδες (x). Η Ελένη διάβασε', sub: 45, rem: 120, q: 'Πόσες σελίδες έχει συνολικά το μυθιστόρημα;' },
-  { item: 'μαθητές', who: 'Στην αυλή βρίσκονταν μαθητές (x). Μπήκαν στις τάξεις', sub: 26, rem: 38, q: 'Πόσοι μαθητές βρίσκονταν αρχικά στην αυλή;' }
+// Δεξαμενή προτύπων για την άσκηση 8 (δυναμική παραγωγή τυχαίων αριθμών)
+const SCENARIO_TEMPLATES = [
+  {
+    generate: () => {
+      const sub = getRandomInt(30, 80);
+      const rem = getRandomInt(90, 160);
+      const total = sub + rem;
+      return {
+        prompt: `Ένα μυθιστόρημα έχει συνολικά x σελίδες. Η Ελένη διάβασε ${sub} σελίδες και της έμειναν ${rem} σελίδες. Πόσες σελίδες έχει συνολικά το μυθιστόρημα;`,
+        correct: `${total} σελίδες`,
+        sub,
+        rem,
+        total,
+        unit: 'σελίδες'
+      };
+    }
+  },
+  {
+    generate: () => {
+      const sub = getRandomInt(15, 35);
+      const rem = getRandomInt(20, 45);
+      const total = sub + rem;
+      return {
+        prompt: `Στην αυλή βρίσκονταν x μαθητές. Μπήκαν στις τάξεις ${sub} μαθητές και στην αυλή έμειναν ${rem} μαθητές. Πόσοι μαθητές βρίσκονταν αρχικά στην αυλή;`,
+        correct: `${total} μαθητές`,
+        sub,
+        rem,
+        total,
+        unit: 'μαθητές'
+      };
+    }
+  },
+  {
+    generate: () => {
+      const sub = getRandomInt(10, 25);
+      const rem = getRandomInt(25, 50);
+      const total = sub + rem;
+      return {
+        prompt: `Ένα σακί περιείχε x κιλά αλεύρι. Χρησιμοποιήσαμε για ψωμί ${sub} κιλά και στο σακί έμειναν ${rem} κιλά. Πόσα κιλά αλεύρι είχε αρχικά το σακί;`,
+        correct: `${total} κιλά`,
+        sub,
+        rem,
+        total,
+        unit: 'κιλά'
+      };
+    }
+  },
+  {
+    generate: () => {
+      const sub = getRandomInt(12, 30);
+      const rem = getRandomInt(15, 40);
+      const total = sub + rem;
+      return {
+        prompt: `Ο Πέτρος είχε ένα χρηματικό ποσό x. Αγόρασε ένα βιβλίο που κόστιζε ${sub} ευρώ και του έμειναν ${rem} ευρώ. Πόσα χρήματα είχε αρχικά ο Πέτρος;`,
+        correct: `${total} ευρώ`,
+        sub,
+        rem,
+        total,
+        unit: 'ευρώ'
+      };
+    }
+  }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
 function generateQuestions() {
-  const shuffledScenarios = shuffle(REAL_WORLD_SCENARIOS);
+  const template = shuffle(SCENARIO_TEMPLATES)[0];
+  const sc = template.generate();
 
   // Q1: Input - Βασική εξίσωση x - a = b με φυσικούς αριθμούς
   const q1A = getRandomInt(12, 45);
@@ -90,16 +147,13 @@ function generateQuestions() {
   const q7CorrectRaw = `${q7SumN}/${q7Den}`;
   const q7CorrectSimp = q7G > 1 ? `${q7SumN / q7G}/${q7Den / q7G}` : q7CorrectRaw;
 
-  // Q8: MCQ - Πρόβλημα καθημερινότητας
-  const sc = shuffledScenarios[0];
-  const scCorrect = sc.rem + sc.sub;
+  // Q8: MCQ - Πρόβλημα καθημερινότητας (με τυχαίους αριθμούς)
   const scWrongs = [
     String(sc.rem - sc.sub),
-    String(scCorrect + 10),
-    String(Math.max(1, scCorrect - 6))
+    String(sc.total + 10),
+    String(Math.max(1, sc.total - 6))
   ];
-  const q8Options = shuffle([`${scCorrect} ${sc.item}`, ...scWrongs.map(w => `${w} ${sc.item}`)]);
-  const q8Prompt = `${sc.who} ${sc.sub} ${sc.item} και του έμειναν ${sc.rem} ${sc.item}. ${sc.q}`;
+  const q8Options = shuffle([sc.correct, ...scWrongs.map(w => `${w} ${sc.unit}`)]);
 
   return {
     q1: {
@@ -160,10 +214,10 @@ function generateQuestions() {
     q8: {
       type: 'mcq',
       title: 'Πρόβλημα Καθημερινότητας',
-      prompt: q8Prompt,
+      prompt: sc.prompt,
       options: q8Options,
-      correct: `${scCorrect} ${sc.item}`,
-      explain: `Σχηματίζουμε την εξίσωση x － ${sc.sub} ＝ ${sc.rem} ➔ x ＝ ${sc.rem} ＋ ${sc.sub} ＝ ${scCorrect} ${sc.item}.`
+      correct: sc.correct,
+      explain: `Σχηματίζουμε την εξίσωση x － ${sc.sub} ＝ ${sc.rem} ➔ x ＝ ${sc.rem} ＋ ${sc.sub} ＝ ${sc.correct}.`
     }
   };
 }
