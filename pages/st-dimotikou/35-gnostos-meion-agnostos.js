@@ -7,9 +7,9 @@ import { LAYOUT } from '../../shared/layout-config';
 const MAX_TOTAL_BALLS = 16;
 
 const PRESETS = [
-  { a: 10, b: 6, label: "10 － x ＝ 6 (x ＝ 4)" },
-  { a: 12, b: 7, label: "12 － x ＝ 7 (x ＝ 5)" },
-  { a: 15, b: 9, label: "15 － x ＝ 9 (x ＝ 6)" },
+  { a: 10, b: 4, label: "10 － x ＝ 4 (x ＝ 6)" },
+  { a: 12, b: 5, label: "12 － x ＝ 5 (x ＝ 7)" },
+  { a: 15, b: 6, label: "15 － x ＝ 6 (x ＝ 9)" },
   { a: 8, b: 3, label: "8 － x ＝ 3 (x ＝ 5)" },
   { a: 14, b: 8, label: "14 － x ＝ 8 (x ＝ 6)" }
 ];
@@ -17,9 +17,9 @@ const PRESETS = [
 export default function GnostosMeionAgnostosPage() {
   // Παράμετροι της εξίσωσης: a - x = b (x = a - b)
   const [paramA, setParamA] = useState(10);
-  const [paramB, setParamB] = useState(6);
+  const [paramB, setParamB] = useState(4);
 
-  // Βήμα διαδραστικής επίλυσης: 1 (Αρχική), 2 (Επισήμανση αφαίρεσης β), 3 (Τελικό x = a - b)
+  // Βήμα διαδραστικής επίλυσης: 1 (Αρχική), 2 (Διαχωρισμός γνωστών), 3 (Αποκάλυψη x)
   const [currentStep, setCurrentStep] = useState(1);
 
   // Ασφαλείς αριθμητικές τιμές: 1 <= b < a <= MAX_TOTAL_BALLS
@@ -29,7 +29,7 @@ export default function GnostosMeionAgnostosPage() {
   const activeA = rawA;
   const activeB = rawB;
 
-  // Σωστή μαθηματική λύση: x = a - b (Αφαιρετέος)
+  // Σωστή μαθηματική λύση: x = a - b (Αφαιρετέος / Μπάλες που διώξαμε)
   const exactSolution = activeA - activeB;
 
   // Αλλαγή παραμέτρων με αυτόματη επαναφορά στο Βήμα 1
@@ -51,61 +51,42 @@ export default function GnostosMeionAgnostosPage() {
   };
 
   // Σταθερή γεωμετρία σφαιρών
-  const BALL_RADIUS = 9.5;
-  const BALL_SPACING = BALL_RADIUS * 2 + 5; // 24px
-  const BASE_Y = 248;
+  const BALL_RADIUS = 13;
+  const BALL_SPACING = 36;
 
-  // 1. Θέσεις σφαιρών αριστερού δίσκου (δίπλα από το κουτί x)
-  const COLS_LEFT = 3;
-  const leftRemainingBalls = []; // Οι b μπάλες που μένουν
-  for (let i = 0; i < activeB; i++) {
-    const row = Math.floor(i / COLS_LEFT);
-    const col = i % COLS_LEFT;
-    leftRemainingBalls.push({
-      id: i,
-      x: 160 + col * BALL_SPACING,
-      y: BASE_Y - BALL_RADIUS - 2 - row * BALL_SPACING
-    });
-  }
-
-  // 2. Θέσεις σφαιρών ΜΕΣΑ ΣΤΟ ΚΟΥΤΙ x (οι μπάλες που αφαιρέθηκαν x = a - b)
-  const insideBoxBalls = [];
+  // 1. Θέσεις για τις μπάλες του x (Μπάλες που αφαιρέθηκαν / κρύφτηκαν στο κουτί)
+  const xBalls = [];
+  const colsX = Math.min(4, Math.max(2, Math.ceil(exactSolution / 2)));
   for (let i = 0; i < exactSolution; i++) {
-    const row = Math.floor(i / 3);
-    const col = i % 3;
-    insideBoxBalls.push({
-      id: i,
-      x: 75 + col * (BALL_RADIUS * 2 + 3),
-      y: 226 - row * (BALL_RADIUS * 2 + 3)
+    const row = Math.floor(i / colsX);
+    const col = i % colsX;
+    xBalls.push({
+      id: `x-${i}`,
+      // Κεντράρισμα μέσα στο αριστερό κουτί (κέντρο x = 190, y = 185)
+      x: 190 - ((colsX - 1) * BALL_SPACING) / 2 + col * BALL_SPACING,
+      y: 165 + row * BALL_SPACING
     });
   }
 
-  // 3. Θέσεις σφαιρών δεξιού δίσκου (b μπάλες)
-  const COLS_RIGHT = 5;
-  const rightBalls = [];
+  // 2. Θέσεις για τις μπάλες του b (Μπάλες που μένουν / ορατές)
+  const bBalls = [];
+  const colsB = Math.min(4, Math.max(2, Math.ceil(activeB / 2)));
   for (let i = 0; i < activeB; i++) {
-    const row = Math.floor(i / COLS_RIGHT);
-    const totalRows = Math.ceil(activeB / COLS_RIGHT);
-    const itemsInThisRow = row === totalRows - 1 && activeB % COLS_RIGHT !== 0 
-      ? activeB % COLS_RIGHT 
-      : COLS_RIGHT;
-    
-    const colIndexInRow = i % COLS_RIGHT;
-    const rowWidth = (itemsInThisRow - 1) * BALL_SPACING;
-    const startX = 610 - rowWidth / 2;
-
-    rightBalls.push({
-      id: i,
-      x: startX + colIndexInRow * BALL_SPACING,
-      y: BASE_Y - BALL_RADIUS - 2 - row * BALL_SPACING
+    const row = Math.floor(i / colsB);
+    const col = i % colsB;
+    bBalls.push({
+      id: `b-${i}`,
+      // Κεντράρισμα στο δεξί πλαίσιο (κέντρο x = 540, y = 185)
+      x: 540 - ((colsB - 1) * BALL_SPACING) / 2 + col * BALL_SPACING,
+      y: 165 + row * BALL_SPACING
     });
   }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
-        <title>⚖️ Εξισώσεις: Άγνωστος Αφαιρετέος - LearnMaths.gr</title>
-        <meta name="description" content="Διαδραστική θεωρία με 3D ζυγαριά, κουτί x και βήματα αφαίρεσης για την επίλυση εξισώσεων (α - x = β) για τη ΣΤ' Δημοτικού." />
+        <title>🎯 Εξισώσεις: Άγνωστος Αφαιρετέος (α - x = β) - LearnMaths.gr</title>
+        <meta name="description" content="Διαδραστική θεωρία με παραστατική αφαίρεση μπαλών και αποκάλυψη του άγνωστου αφαιρετέου (α - x = β) για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -152,7 +133,7 @@ export default function GnostosMeionAgnostosPage() {
                   35. Εξισώσεις: Ο Άγνωστος είναι Αφαιρετέος ($\alpha - x = \beta$)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο αφαιρετέο ($x$)</strong>: για να βρούμε πόσες μπάλες αφαιρέθηκαν από το αρχικό σύνολο $\alpha$ ώστε να μείνουν $\beta$, <strong>αφαιρούμε τη διαφορά από τον μειωτέο ($x = \alpha - \beta$)</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο αφαιρετέο ($x$)</strong>: είχαμε αρχικά $\alpha$ μπάλες, διώξαμε $x$ και μας έμειναν $\beta$. Για να βρούμε πόσες φύγανε, <strong>αφαιρούμε όσες έμειναν από το αρχικό σύνολο ($x = \alpha - \beta$)</strong>!
                 </p>
               </div>
 
@@ -180,12 +161,12 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">1. Ποιος είναι ο Αφαιρετέος;</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Στην αφαίρεση $\alpha - x = \beta$, το $x$ είναι ο <strong>αφαιρετέος</strong> (η ποσότητα που αφαιρείται από το αρχικό ποσό $\alpha$).
+                  Στην εξίσωση $\alpha - x = \beta$, το $x$ είναι ο <strong>αφαιρετέος</strong> (η ποσότητα που έφυγε ή αφαιρέθηκε από το αρχικό σύνολο $\alpha$).
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-blue-900">
-                  10 － x ＝ 6 (x ＝ Αφαιρετέος)
+                  10 － x ＝ 4 (x ＝ όσα φύγανε)
                 </span>
               </div>
             </div>
@@ -197,12 +178,12 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">2. Ο Κανόνας Επίλυσης</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Για να βρούμε τον άγνωστο αφαιρετέο, <strong>αφαιρούμε τη διαφορά ($\beta$) από τον μειωτέο ($\alpha$)</strong>:
+                  Για να βρούμε πόσα αφαιρέθηκαν, <strong>αφαιρούμε όσα έμειναν ($\beta$) από το αρχικό σύνολο ($\alpha$)</strong>:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
-                  x ＝ 10 － 6 ＝ <strong className="text-indigo-700 font-black">4</strong>
+                  x ＝ 10 － 4 ＝ <strong className="text-indigo-700 font-black">6</strong>
                 </span>
               </div>
             </div>
@@ -214,12 +195,12 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Αντικαθιστούμε το $x$ με τον αριθμό που βρήκαμε και ελέγχουμε αν η ισότητα επιβεβαιώνεται:
+                  Βάζουμε στη θέση του $x$ τον αριθμό που βρήκαμε και ελέγχουμε αν η πράξη είναι σωστή:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-emerald-900">
-                  10 － 4 ＝ 6 (Σωστό! ✔️)
+                  10 － 6 ＝ 4 (Σωστό! ✔️)
                 </span>
               </div>
             </div>
@@ -230,10 +211,10 @@ export default function GnostosMeionAgnostosPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Εύρεση του Αγνώστου Αφαιρετέου
+                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Πόσες μπάλες κρύφτηκαν / αφαιρέθηκαν;
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Ρύθμισε την εξίσωση και δες πώς το κουτί $x$ αφαιρείται από το σύνολο $\alpha$, αφήνοντας τις $\beta$ μπάλες!
+                  Ρύθμισε το αρχικό σύνολο ($\alpha$) και τις μπάλες που έμειναν ($\beta$), και δες το κουτί $x$ να αποκαλύπτει τη λύση!
                 </p>
               </div>
 
@@ -248,7 +229,7 @@ export default function GnostosMeionAgnostosPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  1️⃣ Αρχική: {activeA} － x ＝ {activeB}
+                  1️⃣ Αρχικά: {activeA} － x ＝ {activeB}
                 </button>
                 <button
                   type="button"
@@ -259,7 +240,7 @@ export default function GnostosMeionAgnostosPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  2️⃣ Αφαίρεση {activeB} Μπαλών
+                  2️⃣ Αφαίρεση των {activeB} που έμειναν
                 </button>
                 <button
                   type="button"
@@ -270,7 +251,7 @@ export default function GnostosMeionAgnostosPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  3️⃣ Λύση: x ＝ {exactSolution}
+                  3️⃣ Αποκάλυψη: x ＝ {exactSolution}
                 </button>
               </div>
             </div>
@@ -289,9 +270,9 @@ export default function GnostosMeionAgnostosPage() {
                     </span>
 
                     <div className="grid grid-cols-2 gap-3 text-center">
-                      {/* ΜΕΙΩΤΕΟΣ (a) */}
+                      {/* ΑΡΧΙΚΟ ΣΥΝΟΛΟ (a) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μειωτέος (α)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αρχικές Μπάλες (α)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -313,9 +294,9 @@ export default function GnostosMeionAgnostosPage() {
                         </div>
                       </div>
 
-                      {/* ΔΙΑΦΟΡΑ (b) */}
+                      {/* ΜΠΑΛΕΣ ΠΟΥ ΕΜΕΙΝΑΝ (b) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Διαφορά (β)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Έμειναν (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -370,17 +351,17 @@ export default function GnostosMeionAgnostosPage() {
                     </span>
                     {currentStep === 1 && (
                       <p>
-                        Στον αριστερό δίσκο έχουμε <strong>{activeA} μπάλες συνολικά</strong>, από τις οποίες έχει αφαιρεθεί το <strong>άγνωστο κουτί $x$</strong>, αφήνοντας τις {activeB} μπάλες: <strong>{activeA} － x ＝ {activeB}</strong>.
+                        Είχαμε <strong>{activeA} μπάλες αρχικά</strong>. Κάποιες από αυτές ($x$) <strong>αφαιρέθηκαν/κλειδώθηκαν μέσα στο Κουτί $x$</strong> και μας έμειναν φανερές <strong>{activeB} μπάλες</strong>: <strong>{activeA} － x ＝ {activeB}</strong>.
                       </p>
                     )}
                     {currentStep === 2 && (
                       <p className="text-amber-800">
-                        Επισημαίνουμε τις <strong>{activeB} μπάλες (με κόκκινο χρώμα)</strong> και από τις δύο πλευρές για να τις αφαιρέσουμε και να απομονώσουμε το $x$!
+                        Για να βρούμε πόσες μπάλες είναι κρυμμένες στο $x$, <strong>απομονώνουμε τις {activeB} μπάλες που έμειναν</strong> από το αρχικό σύνολο των {activeA} μπαλών.
                       </p>
                     )}
                     {currentStep === 3 && (
                       <p className="text-emerald-800 font-bold">
-                        Αφαιρώντας τη διαφορά {activeB} από το αρχικό σύνολο {activeA}, οι <strong>{exactSolution} μπάλες</strong> που περίσσεψαν μπαίνουν μέσα στο κουτί $x$: <strong>x ＝ {activeA} － {activeB} ＝ {exactSolution}</strong>.
+                        Το Κουτί $x$ ανοίγει! Μέσα του βρίσκονται ακριβώς {activeA} － {activeB} ＝ <strong>{exactSolution} μπάλες</strong> (όσες αφαιρέθηκαν): <strong>x ＝ {activeA} － {activeB} ＝ {exactSolution}</strong>.
                       </p>
                     )}
                   </div>
@@ -392,7 +373,7 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
               </div>
 
-              {/* RIGHT: BIG 3D SCALE & IN-BOX BALLS VISUALIZER (8 COLS) */}
+              {/* RIGHT: NEW INTUITIVE PARTITION VISUALIZER (8 COLS) */}
               <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[580px] space-y-6">
                 
                 {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΒΗΜΑΤΟΣ */}
@@ -406,59 +387,34 @@ export default function GnostosMeionAgnostosPage() {
                   </div>
 
                   <div className="font-mono text-base md:text-lg font-black text-indigo-700 bg-white px-4 py-2 rounded-2xl border border-indigo-200 shadow-xs">
-                    {currentStep === 1 && "Βήμα 1: Αρχική Ισότητα (α － x ＝ β)"}
-                    {currentStep === 2 && `Βήμα 2: Αφαίρεση της διαφοράς (${activeB})`}
+                    {currentStep === 1 && `Βήμα 1: Αρχικά ${activeA} μπάλες (διώχνουμε x)`}
+                    {currentStep === 2 && `Βήμα 2: Αφαιρούμε τις ${activeB} που έμειναν`}
                     {currentStep === 3 && `Βήμα 3: x ＝ ${activeA} － ${activeB} ＝ ${exactSolution}`}
                   </div>
                 </div>
 
-                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ 3D-LOOK ΣΤΟ SVG */}
+                {/* 2. ΔΙΑΔΡΑΣΤΙΚΟ ΓΡΑΦΗΜΑ ΔΙΑΧΩΡΙΣΜΟΥ & ΑΠΟΚΑΛΥΨΗΣ */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                      ⚖️ Οπτική Ζυγαριά: Αριστερός Δίσκος ({activeA} － x) vs Δεξιός Δίσκος ({activeB})
+                      📦 Οπτική Αναπαράσταση: Αρχικό Σύνολο ({activeA}) ➔ Κουτί x ({exactSolution}) ＋ Έμειναν ({activeB})
                     </span>
-                    <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                      ✔️ Τέλεια Ισορροπία
+                    <span className="text-xs font-black px-3 py-1 rounded-full bg-blue-100 text-blue-800 border border-blue-300">
+                      Σύνολο: {activeA} Μπάλες
                     </span>
                   </div>
 
                   {/* SVG CONTAINER */}
                   <div className="p-4 bg-gradient-to-b from-slate-50 to-slate-100/80 rounded-3xl border border-slate-200 shadow-inner flex flex-col items-center justify-center min-h-[380px] overflow-hidden">
-                    <svg width="100%" height="340" viewBox="0 0 760 360" className="overflow-visible select-none">
+                    <svg width="100%" height="330" viewBox="0 0 740 330" className="overflow-visible select-none">
                       <defs>
                         {/* Σκίαση Drop Shadow */}
-                        <filter id="shadow3d" x="-20%" y="-20%" width="140%" height="140%">
-                          <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#0f172a" floodOpacity="0.25" />
-                        </filter>
-                        <filter id="glowRed" x="-30%" y="-30%" width="160%" height="160%">
-                          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#ef4444" floodOpacity="0.6" />
+                        <filter id="shadowBox" x="-10%" y="-10%" width="120%" height="120%">
+                          <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#0f172a" floodOpacity="0.15" />
                         </filter>
                         <filter id="glowGold" x="-30%" y="-30%" width="160%" height="160%">
-                          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#f59e0b" floodOpacity="0.6" />
+                          <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#f59e0b" floodOpacity="0.6" />
                         </filter>
-
-                        {/* Μεταλλική διαβάθμιση δοκού & κολόνας */}
-                        <linearGradient id="metalBeam" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#475569" />
-                          <stop offset="40%" stopColor="#1e293b" />
-                          <stop offset="100%" stopColor="#0f172a" />
-                        </linearGradient>
-                        <linearGradient id="metalPillar" x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#334155" />
-                          <stop offset="50%" stopColor="#64748b" />
-                          <stop offset="100%" stopColor="#1e293b" />
-                        </linearGradient>
-
-                        {/* Διαβαθμίσεις Δίσκων */}
-                        <linearGradient id="leftDishGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#3b82f6" />
-                          <stop offset="100%" stopColor="#1d4ed8" />
-                        </linearGradient>
-                        <linearGradient id="rightDishGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#10b981" />
-                          <stop offset="100%" stopColor="#047857" />
-                        </linearGradient>
 
                         {/* 3D Radial Gradients για τις Μπάλες */}
                         <radialGradient id="ballBlue" cx="35%" cy="35%" r="65%">
@@ -471,62 +427,120 @@ export default function GnostosMeionAgnostosPage() {
                           <stop offset="40%" stopColor="#10b981" />
                           <stop offset="100%" stopColor="#047857" />
                         </radialGradient>
-                        <radialGradient id="ballRed" cx="35%" cy="35%" r="65%">
-                          <stop offset="0%" stopColor="#fca5a5" />
-                          <stop offset="40%" stopColor="#ef4444" />
-                          <stop offset="100%" stopColor="#b91c1c" />
-                        </radialGradient>
                         <radialGradient id="ballGold" cx="35%" cy="35%" r="65%">
                           <stop offset="0%" stopColor="#fef08a" />
                           <stop offset="40%" stopColor="#f59e0b" />
                           <stop offset="100%" stopColor="#b45309" />
                         </radialGradient>
                       </defs>
-                      
-                      {/* 1. ΒΑΣΗ & ΚΟΛΟΝΑ ΖΥΓΑΡΙΑΣ */}
-                      <polygon points="380,270 315,345 445,345" fill="url(#metalBeam)" filter="url(#shadow3d)" />
-                      <rect x="373" y="65" width="14" height="215" fill="url(#metalPillar)" rx="3" />
-                      <circle cx="380" cy="65" r="14" fill="#0f172a" stroke="#64748b" strokeWidth="2" filter="url(#shadow3d)" />
 
-                      {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΖΥΓΟΣ (BEAM) */}
-                      <rect x="90" y="58" width="580" height="14" rx="7" fill="url(#metalBeam)" filter="url(#shadow3d)" />
-                      <circle cx="150" cy="65" r="5" fill="#e2e8f0" />
-                      <circle cx="610" cy="65" r="5" fill="#e2e8f0" />
+                      {/* ΜΕΓΑΛΟ ΕΞΩΤΕΡΙΚΟ ΠΛΑΙΣΙΟ: ΟΛΕΣ ΟΙ ΑΡΧΙΚΕΣ ΜΠΑΛΕΣ (a) */}
+                      <rect 
+                        x="30" 
+                        y="40" 
+                        width="680" 
+                        height="260" 
+                        rx="24" 
+                        fill="#ffffff" 
+                        stroke="#94a3b8" 
+                        strokeWidth="2.5" 
+                        strokeDasharray={currentStep === 1 ? "none" : "6 6"}
+                        filter="url(#shadowBox)" 
+                      />
 
-                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
-                      <line x1="150" y1="65" x2="50" y2="250" stroke="#475569" strokeWidth="2.5" strokeDasharray="5 2" />
-                      <line x1="150" y1="65" x2="250" y2="250" stroke="#475569" strokeWidth="2.5" strokeDasharray="5 2" />
-                      <path d="M 30 250 Q 150 292 270 250 Z" fill="url(#leftDishGrad)" filter="url(#shadow3d)" />
-                      <rect x="30" y="248" width="240" height="6" fill="#1e40af" rx="3" />
+                      {/* ΤΙΤΛΟΣ ΑΡΧΙΚΟΥ ΣΥΝΟΛΟΥ ΣΤΟ ΕΠΑΝΩ ΜΕΡΟΣ */}
+                      <rect x="250" y="26" width="240" height="30" rx="15" fill="#2563eb" />
+                      <text x="370" y="46" fill="#ffffff" fontSize="13" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
+                        ΑΡΧΙΚΟ ΣΥΝΟΛΟ: {activeA} ΜΠΑΛΕΣ
+                      </text>
 
-                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
-                      <line x1="610" y1="65" x2="510" y2="250" stroke="#475569" strokeWidth="2.5" strokeDasharray="5 2" />
-                      <line x1="610" y1="65" x2="710" y2="250" stroke="#475569" strokeWidth="2.5" strokeDasharray="5 2" />
-                      <path d="M 490 250 Q 610 292 730 250 Z" fill="url(#rightDishGrad)" filter="url(#shadow3d)" />
-                      <rect x="490" y="248" width="240" height="6" fill="#065f46" rx="3" />
-
-                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ x (ΣΤΟ x = 52) */}
-                      <g transform="translate(52, 164)" filter="url(#shadow3d)">
+                      {/* ΑΡΙΣΤΕΡΗ ΖΩΝΗ: ΤΟ ΚΟΥΤΙ x (ΜΠΑΛΕΣ ΠΟΥ ΑΦΑΙΡΕΘΗΚΑΝ / ΔΙΩΧΘΗΚΑΝ) */}
+                      <g filter="url(#shadowBox)">
                         <rect 
-                          width="90" 
-                          height="84" 
-                          rx="14" 
-                          fill={currentStep === 3 ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.15)"} 
-                          stroke={currentStep === 3 ? "#059669" : "#d97706"} 
-                          strokeWidth="2.5" 
-                          strokeDasharray={currentStep < 3 ? "5 3" : "none"}
+                          x="55" 
+                          y="85" 
+                          width="270" 
+                          height="190" 
+                          rx="20" 
+                          fill={
+                            currentStep === 3 
+                              ? "rgba(245, 158, 11, 0.15)" 
+                              : currentStep === 2 
+                              ? "rgba(245, 158, 11, 0.08)" 
+                              : "#f8fafc"
+                          } 
+                          stroke={currentStep === 3 ? "#f59e0b" : "#cbd5e1"} 
+                          strokeWidth="3" 
+                          strokeDasharray={currentStep < 3 ? "6 4" : "none"}
                         />
+
                         {/* Ετικέτα Κουτιού x */}
-                        <rect x="6" y="6" width="24" height="24" rx="6" fill={currentStep === 3 ? "#10b981" : "#f59e0b"} />
-                        <text x="18" y="23" fill="#ffffff" fontSize="15" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
-                        <text x="54" y="22" fill={currentStep === 3 ? "#065f46" : "#92400e"} fontSize="10" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
-                          {currentStep === 3 ? "ΠΛΗΡΕΣ x" : "ΚΟΥΤΙ x"}
+                        <rect x="75" y="100" width="34" height="34" rx="10" fill="#f59e0b" filter={currentStep === 3 ? "url(#glowGold)" : "none"} />
+                        <text x="92" y="123" fill="#ffffff" fontSize="20" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
+                        <text x="120" y="122" fill="#92400e" fontSize="13" fontWeight="900">
+                          {currentStep === 3 ? `ΑΦΑΙΡΕΘΗΚΑΝ: x ＝ ${exactSolution}` : "ΑΦΑΙΡΕΘΗΚΑΝ (x);"}
                         </text>
                       </g>
 
-                      {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΜΠΑΛΕΣ ΠΟΥ ΜΠΑΙΝΟΥΝ ΣΤΟ ΚΟΥΤΙ x (ΣΤΟ ΒΗΜΑ 3) */}
-                      {currentStep === 3 && insideBoxBalls.map((pos, i) => (
-                        <g key={`inbox-ball-${i}`} className="transition-all duration-500" filter="url(#shadow3d)">
+                      {/* ΔΕΞΙΑ ΖΩΝΗ: ΟΙ ΜΠΑΛΕΣ ΠΟΥ ΕΜΕΙΝΑΝ (b) */}
+                      <g filter="url(#shadowBox)">
+                        <rect 
+                          x="405" 
+                          y="85" 
+                          width="270" 
+                          height="190" 
+                          rx="20" 
+                          fill="rgba(16, 185, 129, 0.08)" 
+                          stroke="#10b981" 
+                          strokeWidth="3" 
+                        />
+
+                        {/* Ετικέτα Ζώνης b */}
+                        <rect x="425" y="100" width="34" height="34" rx="10" fill="#10b981" />
+                        <text x="442" y="123" fill="#ffffff" fontSize="18" fontWeight="900" textAnchor="middle" fontFamily="monospace">{activeB}</text>
+                        <text x="470" y="122" fill="#065f46" fontSize="13" fontWeight="900">
+                          ΕΜΕΙΝΑΝ: {activeB} ΜΠΑΛΕΣ
+                        </text>
+                      </g>
+
+                      {/* ΣΗΜΕΙΟ ΠΡΑΞΗΣ ΑΝΑΜΕΣΑ ΣΤΑ ΔΥΟ ΠΛΑΙΣΙΑ */}
+                      <circle cx="365" cy="180" r="18" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="2" />
+                      <text x="365" y="186" fill="#64748b" fontSize="18" fontWeight="900" textAnchor="middle">＋</text>
+
+                      {/* 1. ΜΠΑΛΕΣ ΜΕΣΑ ΣΤΟ ΚΟΥΤΙ x */}
+                      {currentStep < 3 ? (
+                        // Βήμα 1 & 2: Το περιεχόμενο του x είναι κλειδωμένο / μυστηριώδες
+                        <g>
+                          <circle cx="190" cy="190" r="32" fill="#fef3c7" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4 3" />
+                          <text x="190" y="198" fill="#b45309" fontSize="24" fontWeight="900" textAnchor="middle" fontFamily="monospace">?</text>
+                          <text x="190" y="240" fill="#92400e" fontSize="11" fontWeight="bold" textAnchor="middle">
+                            {currentStep === 1 ? "Πόσες μπάλες λείπουν;" : "x ＝ 10 － 4"}
+                          </text>
+                        </g>
+                      ) : (
+                        // Βήμα 3: Αποκαλύπτονται όλες οι x μπάλες (κάθε μπάλα έχει το 1 της μονάδας)
+                        xBalls.map((pos) => (
+                          <g key={pos.id} className="transition-all duration-500" filter="url(#glowGold)">
+                            <circle
+                              cx={pos.x}
+                              cy={pos.y}
+                              r={BALL_RADIUS}
+                              fill="url(#ballGold)"
+                              stroke="#b45309"
+                              strokeWidth="1.5"
+                            />
+                            {/* Specular Highlight */}
+                            <ellipse cx={pos.x - 4} cy={pos.y - 4} rx="3.5" ry="2.5" fill="#ffffff" opacity="0.65" />
+                            <text x={pos.x} y={pos.y + 4.5} fill="#ffffff" fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                              1
+                            </text>
+                          </g>
+                        ))
+                      )}
+
+                      {/* 2. ΜΠΑΛΕΣ ΠΟΥ ΕΜΕΙΝΑΝ (b) - ΠΑΝΤΑ ΟΡΑΤΕΣ */}
+                      {bBalls.map((pos) => (
+                        <g key={pos.id} className="transition-all duration-500">
                           <circle
                             cx={pos.x}
                             cy={pos.y}
@@ -535,73 +549,14 @@ export default function GnostosMeionAgnostosPage() {
                             stroke="#047857"
                             strokeWidth="1.5"
                           />
-                          <ellipse cx={pos.x - 3} cy={pos.y - 3} rx="3" ry="2" fill="#ffffff" opacity="0.65" />
-                          <text x={pos.x} y={pos.y + 3.5} fill="#ffffff" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                          {/* Specular Highlight */}
+                          <ellipse cx={pos.x - 4} cy={pos.y - 4} rx="3.5" ry="2.5" fill="#ffffff" opacity="0.65" />
+                          <text x={pos.x} y={pos.y + 4.5} fill="#ffffff" fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                             1
                           </text>
                         </g>
                       ))}
 
-                      {/* 7. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΥΠΟΛΟΙΠΕΣ ΜΠΑΛΕΣ (b ΜΠΑΛΕΣ ΕΞΩ ΑΠΟ ΤΟ ΚΟΥΤΙ) */}
-                      {currentStep < 3 && leftRemainingBalls.map((ball) => {
-                        const isHighlighted = currentStep === 2;
-                        return (
-                          <g 
-                            key={`lrem-${ball.id}`} 
-                            className="transition-all duration-500" 
-                            filter={isHighlighted ? "url(#glowRed)" : "url(#shadow3d)"}
-                          >
-                            <circle
-                              cx={ball.x}
-                              cy={ball.y}
-                              r={BALL_RADIUS}
-                              fill={isHighlighted ? "url(#ballRed)" : "url(#ballBlue)"}
-                              stroke={isHighlighted ? "#b91c1c" : "#1d4ed8"}
-                              strokeWidth="1.5"
-                              className={isHighlighted ? "animate-pulse" : ""}
-                            />
-                            <ellipse cx={ball.x - 3} cy={ball.y - 3} rx="3" ry="2" fill="#ffffff" opacity="0.65" />
-                            <text x={ball.x} y={ball.y + 3.5} fill="#ffffff" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                              1
-                            </text>
-                          </g>
-                        );
-                      })}
-
-                      {/* 8. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ b ΜΠΑΛΕΣ */}
-                      {rightBalls.map((ball) => {
-                        const isHighlighted = currentStep === 2;
-                        return (
-                          <g key={`rball-${ball.id}`} className="transition-all duration-500" filter={isHighlighted ? "url(#glowRed)" : "url(#shadow3d)"}>
-                            <circle
-                              cx={ball.x}
-                              cy={ball.y}
-                              r={BALL_RADIUS}
-                              fill={isHighlighted ? "url(#ballRed)" : "url(#ballGreen)"}
-                              stroke={isHighlighted ? "#b91c1c" : "#047857"}
-                              strokeWidth="1.5"
-                              className={isHighlighted ? "animate-pulse" : ""}
-                            />
-                            <ellipse cx={ball.x - 3} cy={ball.y - 3} rx="3" ry="2" fill="#ffffff" opacity="0.65" />
-                            <text x={ball.x} y={ball.y + 3.5} fill="#ffffff" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                              1
-                            </text>
-                          </g>
-                        );
-                      })}
-
-                      {/* Ετικέτες κάτω από τους δίσκους */}
-                      <text x="150" y="325" fill="#1e3a8a" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                        {currentStep === 1 && `Αρχικά: ${activeA} μπάλες (αφαιρέθηκε x)`}
-                        {currentStep === 2 && `Αφαίρεση της διαφοράς (${activeB})`}
-                        {currentStep === 3 && `Το κουτί x περιέχει ${exactSolution} μπάλες`}
-                      </text>
-
-                      <text x="610" y="325" fill="#064e3b" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                        {currentStep === 1 && `Διαφορά: ${activeB} μπάλες`}
-                        {currentStep === 2 && `Διαφορά: ${activeB} μπάλες (προς αφαίρεση)`}
-                        {currentStep === 3 && `Διαφορά: ${activeB} μπάλες`}
-                      </text>
                     </svg>
                   </div>
 
@@ -633,7 +588,7 @@ export default function GnostosMeionAgnostosPage() {
 
                 {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                  💡 Συμπέρασμα: Στην εξίσωση <strong>{activeA} － x ＝ {activeB}</strong>, ο άγνωστος αφαιρετέος ισούται με <strong>x ＝ {activeA} － {activeB} ＝ {exactSolution}</strong> (το σύνολο των μπαλών που αφαιρέθηκαν)!
+                  💡 Συμπέρασμα: Στην εξίσωση <strong>{activeA} － x ＝ {activeB}</strong>, ο άγνωστος αφαιρετέος ισούται με <strong>x ＝ {activeA} － {activeB} ＝ {exactSolution}</strong> (οι {exactSolution} μπάλες που έλειπαν από το αρχικό σύνολο)!
                 </div>
 
               </div>
