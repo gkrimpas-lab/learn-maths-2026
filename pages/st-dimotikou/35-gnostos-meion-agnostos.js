@@ -11,7 +11,7 @@ const PRESETS = [
   { a: 20, b: 12, label: "20 － x ＝ 12 (x ＝ 8)" },
   { a: 35, b: 15, label: "35 － x ＝ 15 (x ＝ 20)" },
   { a: 18, b: 7, label: "18 － x ＝ 7 (x ＝ 11)" },
-  { a: 50, b: 30, label: "50 － x ＝ 30 (x ＝ 20)" }
+  { a: 50, b: 40, label: "50 － x ＝ 40 (x ＝ 10)" }
 ];
 
 export default function GnostosMeionAgnostosPage() {
@@ -336,15 +336,15 @@ export default function GnostosMeionAgnostosPage() {
                       <span className="text-slate-500 font-mono">100% του χώρου</span>
                     </div>
 
-                    {/* Η μπάρα χωρισμένη σε x και b */}
+                    {/* Η μπάρα χωρισμένη σε x (άγνωστο) και b */}
                     <div className="w-full h-14 bg-slate-200 rounded-2xl p-1 border-2 border-slate-300 shadow-inner flex gap-1">
                       
-                      {/* ΤΜΗΜΑ x (Αφαιρετέος / Κομμάτι που αφαιρέθηκε) */}
+                      {/* ΤΜΗΜΑ x (Αφαιρετέος / Κομμάτι που αφαιρείται - ΔΕΝ γράφει την απάντηση, μόνο x) */}
                       <div 
                         style={{ width: `${percentX}%` }}
-                        className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-xl transition-all duration-300 flex items-center justify-center text-slate-950 font-mono font-black text-sm md:text-base border-2 border-dashed border-amber-700 shadow-sm relative overflow-hidden"
+                        className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-xl transition-all duration-300 flex items-center justify-center text-slate-950 font-mono font-black text-base md:text-lg border-2 border-dashed border-amber-700 shadow-sm relative overflow-hidden"
                       >
-                        <span className="z-10">x ＝ {exactSolution}</span>
+                        <span className="z-10">x</span>
                         <div className="absolute inset-0 bg-white/10" />
                       </div>
 
@@ -359,12 +359,12 @@ export default function GnostosMeionAgnostosPage() {
                     </div>
 
                     <div className="flex justify-between text-[11px] font-bold text-slate-500 px-1 font-mono">
-                      <span className="text-amber-700">▲ Αφαιρέθηκε (x ＝ {exactSolution})</span>
+                      <span className="text-amber-700">▲ Αφαιρέθηκε το x</span>
                       <span className="text-emerald-700">▲ Απομένει (β ＝ {activeB})</span>
                     </div>
                   </div>
 
-                  {/* ΚΑΤΩ ΜΠΑΡΑ: 2ο ΜΕΛΟΣ (ΔΙΑΦΟΡΑ b) */}
+                  {/* ΚΑΤΩ ΜΠΑΡΑ: 2ο ΜΕΛΟΣ (ΔΙΑΦΟΡΑ b & ΥΠΟΛΟΓΙΣΜΟΣ x = a - b) */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <div className="flex justify-between items-center text-xs font-black uppercase tracking-wider">
                       <span className="text-emerald-900">2ο Μέλος: Τελικό Αποτέλεσμα (β ＝ {activeB})</span>
@@ -374,12 +374,12 @@ export default function GnostosMeionAgnostosPage() {
                     {/* Η μπάρα του b στοιχισμένη ακριβώς δεξιά κάτω από το τμήμα b */}
                     <div className="w-full h-14 bg-slate-200/80 rounded-2xl p-1 border-2 border-slate-300 shadow-inner flex justify-end">
                       
-                      {/* Κενό / Διαφορά που αντιστοιχεί στο x */}
+                      {/* Κενό / Διαφορά που αντιστοιχεί στο x = a - b */}
                       <div 
                         style={{ width: `${percentX}%` }} 
-                        className="h-full flex items-center justify-center text-[11px] font-bold text-slate-400 border-2 border-dashed border-slate-300 rounded-xl mr-1 font-mono"
+                        className="h-full flex items-center justify-center text-xs md:text-sm font-black text-amber-700 bg-amber-50/60 border-2 border-dashed border-amber-400 rounded-xl mr-1 font-mono shadow-inner"
                       >
-                        <span>Κενό: {exactSolution}</span>
+                        <span>x ＝ {exactSolution}</span>
                       </div>
 
                       {/* Το γνωστό κομμάτι b */}
@@ -393,7 +393,7 @@ export default function GnostosMeionAgnostosPage() {
                     </div>
 
                     <div className="text-center text-xs font-mono font-bold text-slate-600 pt-1">
-                      🔍 Παρατηρούμε ότι: <strong className="text-blue-700">Ολικό ({activeA})</strong> － <strong className="text-emerald-700">Πράσινο ({activeB})</strong> ＝ <strong className="text-amber-600 font-black">Κίτρινο x ({exactSolution})</strong>!
+                      🔍 Παρατηρούμε ότι: <strong className="text-blue-700">Ολικό ({activeA})</strong> － <strong className="text-emerald-700">Πράσινο ({activeB})</strong> ＝ <strong className="text-amber-600 font-black">x ＝ {exactSolution}</strong>!
                     </div>
                   </div>
 
