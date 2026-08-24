@@ -132,17 +132,17 @@ export default function AgnostosKaiAfairesiPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 34
+                    Ενοτητα 34
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  34. Εξισώσεις: Ο Άγνωστος είναι Μειωτέος ($x - \alpha = \beta$)
+                  34. Εξισώσεις: Ο Άγνωστος είναι Μειωτέος (x - a = b)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο μειωτέο ($x$)</strong>: όπως συμπληρώνουμε <strong>τις $\alpha$ μπάλες που λείπουν μέσα από το κουτί $x$</strong> και προσθέτουμε τις ίδιες $\alpha$ μπάλες και στον δεξιό δίσκο για ισορροπία, έτσι κάνουμε <strong>πρόσθεση: $x = \beta + \alpha$</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο μειωτέο (x)</strong>: όπως συμπληρώνουμε <strong>τις a μπάλες που λείπουν μέσα από το κουτί x</strong> και προσθέτουμε τις ίδιες a μπάλες και στον δεξιό δίσκο για ισορροπία, έτσι κάνουμε <strong>πρόσθεση: x = b + a</strong>!
                 </p>
               </div>
 
@@ -170,7 +170,7 @@ export default function AgnostosKaiAfairesiPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">1. Ποιος είναι ο Μειωτέος;</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Στην αφαίρεση $x - \alpha = \beta$, το $x$ είναι ο <strong>μειωτέος</strong> (η αρχική μεγάλη ποσότητα από την οποία αφαιρούμε).
+                  Στην αφαίρεση x - a = b, το x είναι ο <strong>μειωτέος</strong> (η αρχική μεγάλη ποσότητα από την οποία αφαιρούμε).
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -204,7 +204,7 @@ export default function AgnostosKaiAfairesiPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Αντικαθιστούμε το $x$ με τον αριθμό που βρήκαμε και ελέγχουμε αν η αφαίρεση είναι σωστή:
+                  Αντικαθιστούμε το x με τον αριθμό που βρήκαμε και ελέγχουμε αν η αφαίρεση είναι σωστή:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -220,10 +220,10 @@ export default function AgnostosKaiAfairesiPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Συμπλήρωση του Κουτιού $x$
+                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Συμπλήρωση του Κουτιού x
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Δες τις κενές θέσεις μέσα στο κουτί $x$ και ακολούθησε τα βήματα για να προστεθούν οι μπάλες και στα δύο μέλη!
+                  Δες τις κενές θέσεις μέσα στο κουτί x και ακολούθησε τα βήματα για να προστεθούν οι μπάλες και στα δύο μέλη!
                 </p>
               </div>
 
@@ -274,14 +274,14 @@ export default function AgnostosKaiAfairesiPage() {
                   
                   {/* ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ */}
                   <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider block">
+                    <span className="text-xs font-black text-slate-800 tracking-wider block">
                       ⚙️ Ρύθμιση Εξίσωσης: x － α ＝ β
                     </span>
 
                     <div className="grid grid-cols-2 gap-3 text-center">
                       {/* ΑΦΑΙΡΕΤΕΟΣ (a) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες που λείπουν (α)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Μπάλες που λείπουν (α)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -305,7 +305,7 @@ export default function AgnostosKaiAfairesiPage() {
 
                       {/* ΔΙΑΦΟΡΑ (b) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες δεξιά (β)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Μπάλες δεξιά (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -332,7 +332,7 @@ export default function AgnostosKaiAfairesiPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-1 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -356,21 +356,21 @@ export default function AgnostosKaiAfairesiPage() {
                   {/* ΕΠΕΞΗΓΗΣΗ ΑΝΑΛΟΓΑ ΜΕ ΤΟ ΕΝΕΡΓΟ ΒΗΜΑ */}
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
                     <span className="font-black text-slate-900 uppercase block text-[11px]">
-                      📖 Τι συμβαίνει στο Βήμα {currentStep}:
+                      📖 Τι συμβαινει στο Βημα {currentStep}:
                     </span>
                     {currentStep === 1 && (
                       <p>
-                        Στον αριστερό δίσκο έχουμε το <strong>κουτί $x$ μέσα από το οποίο λείπουν {activeA} μπάλες</strong> (φαίνονται ως διακεκομμένες κενές θέσεις). Στον δεξιό δίσκο έχουμε <strong>{activeB} μπάλες</strong>: <strong>x － {activeA} ＝ {activeB}</strong>.
+                        Στον αριστερό δίσκο έχουμε το <strong>κουτί x μέσα από το οποίο λείπουν {activeA} μπάλες</strong> (φαίνονται ως διακεκομμένες κενές θέσεις). Στον δεξιό δίσκο έχουμε <strong>{activeB} μπάλες</strong>: <strong>x － {activeA} ＝ {activeB}</strong>.
                       </p>
                     )}
                     {currentStep === 2 && (
                       <p className="text-amber-800">
-                        Προσθέτουμε <strong>{activeA} λαμπερές πορτοκαλί μπάλες</strong> για να «κουμπώσουν» μέσα στο κουτί $x$, και <strong>προσθέτουμε ακριβώς {activeA} μπάλες</strong> και στον δεξιό δίσκο για να διατηρηθεί η ισορροπία!
+                        Προσθέτουμε <strong>{activeA} λαμπερές πορτοκαλί μπάλες</strong> για να «κουμπώσουν» μέσα στο κουτί x, και <strong>προσθέτουμε ακριβώς {activeA} μπάλες</strong> και στον δεξιό δίσκο για να διατηρηθεί η ισορροπία!
                       </p>
                     )}
                     {currentStep === 3 && (
                       <p className="text-emerald-800 font-bold">
-                        Το κουτί $x$ είναι πλέον <strong>πλήρες (λαμπερό πράσινο)</strong>! Στον δεξιό δίσκο βρίσκονται {activeB} ＋ {activeA} ＝ <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>.
+                        Το κουτί x είναι πλέον <strong>πλήρες (λαμπερό πράσινο)</strong>! Στον δεξιό δίσκο βρίσκονται {activeB} ＋ {activeA} ＝ <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>.
                       </p>
                     )}
                   </div>
@@ -378,7 +378,7 @@ export default function AgnostosKaiAfairesiPage() {
                 </div>
 
                 <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
-                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο μειωτέο $x$, κάνουμε πάντα <strong>πρόσθεση: $x = \beta + \alpha$</strong>!
+                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο μειωτέο x, κάνουμε πάντα <strong>πρόσθεση: x = b + a</strong>!
                 </div>
               </div>
 
@@ -405,7 +405,7 @@ export default function AgnostosKaiAfairesiPage() {
                 {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ 3D-LOOK ΣΤΟ SVG */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
+                    <span className="text-xs font-black text-slate-500 tracking-wider block">
                       ⚖️ Οπτική Ζυγαριά: Αριστερός Δίσκος (x － {activeA}) vs Δεξιός Δίσκος ({activeB})
                     </span>
                     <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
@@ -612,7 +612,7 @@ export default function AgnostosKaiAfairesiPage() {
 
                 {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                  💡 Συμπέρασμα: Συμπληρώνοντας τις {activeA} μπάλες που έλειπαν από το κουτί $x$ και προσθέτοντας {activeA} μπάλες και στον δεξιό δίσκο, βρίσκουμε: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>!
+                  💡 Συμπέρασμα: Συμπληρώνοντας τις {activeA} μπάλες που έλειπαν από το κουτί x και προσθέτοντας {activeA} μπάλες και στον δεξιό δίσκο, βρίσκουμε: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>!
                 </div>
 
               </div>
