@@ -39,7 +39,7 @@ export default function STDimotikouMenu() {
     { id: '32-metabliti', label: '🍕 32. Μεταβλητή', href: '/st-dimotikou/32-metabliti' },
     { id: '33-agnostos-kai-prosthesi', label: '🍕 33. Εξίσωση x + α = β', href: '/st-dimotikou/33-agnostos-kai-prosthesi' },
     { id: '34-agnostos-kai-afairesi', label: '🍕 34. Εξίσωση x - α = β', href: '/st-dimotikou/34-agnostos-kai-afairesi' },
-    { id: '33-gnostos-meion-agnostos', label: '🍕 35. Εξίσωση α - x = β', href: '/st-dimotikou/33-gnostos-meion-agnostos' }
+    { id: '35-gnostos-meion-agnostos', label: '🍕 35. Εξίσωση α - x = β', href: '/st-dimotikou/35-gnostos-meion-agnostos' }
   ];
 
   return (
