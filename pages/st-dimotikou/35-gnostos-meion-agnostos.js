@@ -91,17 +91,17 @@ export default function GnostosMeionAgnostosPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 35
+                    Ενοτητα 35
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  35. Εξισώσεις: Ο Άγνωστος είναι Αφαιρετέος ($\alpha - x = \beta$)
+                  35. Εξισώσεις: Ο Άγνωστος είναι Αφαιρετέος (a - x = b)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο αφαιρετέο ($x$)</strong>: από το αρχικό ολικό μέγεθος $\alpha$ αφαιρούμε ένα κομμάτι $x$ και μένει το $\beta$. Για να βρούμε πόσο ήταν το $x$, <strong>αφαιρούμε το γνωστό κομμάτι από το ολικό ($x = \alpha - \beta$)</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο αφαιρετέο (x)</strong>: από το αρχικό ολικό μέγεθος a αφαιρούμε ένα κομμάτι x και μένει το b. Για να βρούμε πόσο ήταν το x, <strong>αφαιρούμε το γνωστό κομμάτι από το ολικό (x = a - b)</strong>!
                 </p>
               </div>
 
@@ -129,7 +129,7 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">1. Ποιος είναι ο Αφαιρετέος;</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Στην εξίσωση $\alpha - x = \beta$, το $x$ είναι ο <strong>αφαιρετέος</strong> (το κομμάτι που αφαιρείται ή κόβεται από το αρχικό μέγεθος $\alpha$).
+                  Στην εξίσωση a - x = b, το x είναι ο <strong>αφαιρετέος</strong> (το κομμάτι που αφαιρείται ή κόβεται από το αρχικό μέγεθος a).
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -146,7 +146,7 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">2. Ο Κανόνας Επίλυσης</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Για να βρούμε το κομμάτι που αφαιρέθηκε ($x$), <strong>αφαιρούμε το κομμάτι που έμεινε ($\beta$) από το ολικό ($\alpha$)</strong>:
+                  Για να βρούμε το κομμάτι που αφαιρέθηκε (x), <strong>αφαιρούμε το κομμάτι που έμεινε (b) από το ολικό (a)</strong>:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -163,7 +163,7 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Ελέγχουμε αν το υπόλοιπο είναι σωστό: $10 - 6 = 4$! Τα δύο κομμάτια $x + \beta$ συμπληρώνουν ακριβώς το ολικό μήκος $\alpha$.
+                  Ελέγχουμε αν το υπόλοιπο είναι σωστό: 10 - 6 = 4! Τα δύο κομμάτια x + b συμπληρώνουν ακριβώς το ολικό μήκος a.
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -179,10 +179,10 @@ export default function GnostosMeionAgnostosPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Σύγκριση Μήκους & Χώρου
+                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Σύγκριση Μήκους και Χώρου
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Μετακίνησε τα sliders για το $\alpha$ και το $\beta$ και δες πώς οι μπάρες αποκαλύπτουν αμέσως το μήκος του άγνωστου $x$!
+                  Μετακίνησε τα sliders για το a και το b και δες πώς οι μπάρες αποκαλύπτουν αμέσως το μήκος του άγνωστου x!
                 </p>
               </div>
             </div>
@@ -197,7 +197,7 @@ export default function GnostosMeionAgnostosPage() {
                   {/* SLIDER A: ΟΛΙΚΟ ΜΗΚΟΣ (ΜΕΙΩΤΕΟΣ) */}
                   <div className="bg-blue-50/60 p-4 rounded-2xl border border-blue-200 space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-blue-900 uppercase tracking-wider">
+                      <span className="text-xs font-black text-blue-900 tracking-wider">
                         🔵 Ολικό Μέγεθος (α)
                       </span>
                       <span className="font-mono font-black text-sm text-blue-700 bg-white px-2.5 py-0.5 rounded-lg border border-blue-200">
@@ -236,7 +236,7 @@ export default function GnostosMeionAgnostosPage() {
                   {/* SLIDER B: ΚΟΜΜΑΤΙ ΠΟΥ ΕΜΕΙΝΕ (ΔΙΑΦΟΡΑ) */}
                   <div className="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200 space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-emerald-900 uppercase tracking-wider">
+                      <span className="text-xs font-black text-emerald-900 tracking-wider">
                         🟢 Κομμάτι που έμεινε (β)
                       </span>
                       <span className="font-mono font-black text-sm text-emerald-700 bg-white px-2.5 py-0.5 rounded-lg border border-emerald-200">
@@ -275,7 +275,7 @@ export default function GnostosMeionAgnostosPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-1 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-1 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -298,13 +298,13 @@ export default function GnostosMeionAgnostosPage() {
 
                   {/* ΕΠΕΞΗΓΗΣΗ */}
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs">
-                    💡 <strong>Τι παρατηρούμε;</strong> Το ολικό μέγεθος $\alpha$ ({activeA}) χωρίζεται στο κομμάτι $x$ ({exactSolution}) και στο κομμάτι $\beta$ ({activeB}). Άρα: <strong>x ＝ {activeA} － {activeB} ＝ {exactSolution}</strong>!
+                    💡 <strong>Τι παρατηρούμε;</strong> Το ολικό μέγεθος a ({activeA}) χωρίζεται στο κομμάτι x ({exactSolution}) και στο κομμάτι b ({activeB}). Άρα: <strong>x ＝ {activeA} － {activeB} ＝ {exactSolution}</strong>!
                   </div>
 
                 </div>
 
                 <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
-                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο αφαιρετέο $x$, κάνουμε πάντα <strong>αφαίρεση: $x = \alpha - \beta$</strong>!
+                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο αφαιρετέο x, κάνουμε πάντα <strong>αφαίρεση: x = a - b</strong>!
                 </div>
               </div>
 
@@ -331,9 +331,9 @@ export default function GnostosMeionAgnostosPage() {
                   
                   {/* ΕΠΑΝΩ ΜΠΑΡΑ: 1ο ΜΕΛΟΣ (ΟΛΙΚΟ α = x + b) */}
                   <div className="space-y-2">
-                    <div className="flex justify-between items-center text-xs font-black uppercase tracking-wider">
+                    <div className="flex justify-between items-center text-xs font-black tracking-wider">
                       <span className="text-blue-900">1ο Μέλος: Αρχικό Μέγεθος (α ＝ {activeA})</span>
-                      <span className="text-slate-500 font-mono">100% του χώρου</span>
+                      <span className="text-slate-500 font-mono">100% του χωρου</span>
                     </div>
 
                     {/* Η μπάρα χωρισμένη σε x (άγνωστο) και b */}
@@ -366,9 +366,9 @@ export default function GnostosMeionAgnostosPage() {
 
                   {/* ΚΑΤΩ ΜΠΑΡΑ: 2ο ΜΕΛΟΣ (ΔΙΑΦΟΡΑ b & ΥΠΟΛΟΓΙΣΜΟΣ x = a - b) */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
-                    <div className="flex justify-between items-center text-xs font-black uppercase tracking-wider">
+                    <div className="flex justify-between items-center text-xs font-black tracking-wider">
                       <span className="text-emerald-900">2ο Μέλος: Τελικό Αποτέλεσμα (β ＝ {activeB})</span>
-                      <span className="text-slate-500 font-mono">{Math.round(percentB)}% του ολικού</span>
+                      <span className="text-slate-500 font-mono">{Math.round(percentB)}% του ολικου</span>
                     </div>
 
                     {/* Η μπάρα του b στοιχισμένη ακριβώς δεξιά κάτω από το τμήμα b */}
