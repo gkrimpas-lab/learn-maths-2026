@@ -53,12 +53,11 @@ export default function AgnostosKaiAfairesiPage() {
   };
 
   // Σταθερή γεωμετρία σφαιρών
-  const BALL_RADIUS = 8.5;
-  const BALL_SPACING = BALL_RADIUS * 2 + 3; // 20px
+  const BALL_RADIUS = 9.5;
+  const BALL_SPACING = BALL_RADIUS * 2 + 5; // 24px
   const BASE_Y = 248;
 
   // 1. Υπολογισμός θέσεων σφαιρών / κενών θέσεων ΜΕΣΑ ΣΤΟ ΚΟΥΤΙ x (Αριστερός Δίσκος)
-  // Το κουτί x βρίσκεται στο x = 95, y = 164, πλάτος = 110, ύψος = 84
   const insideBoxSlots = [];
   for (let i = 0; i < activeA; i++) {
     const row = Math.floor(i / 3);
@@ -96,7 +95,7 @@ export default function AgnostosKaiAfairesiPage() {
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
         <title>⚖️ Εξισώσεις: Άγνωστος Μειωτέος - LearnMaths.gr</title>
-        <meta name="description" content="Διαδραστική θεωρία με ζυγαριά, μεγάλο κουτί x με εσωτερικά ελλείμματα και βήματα πρόσθεσης για την επίλυση εξισώσεων (x - α = β) για τη ΣΤ' Δημοτικού." />
+        <meta name="description" content="Διαδραστική θεωρία με όμορφη 3D ζυγαριά, μεγάλο κουτί x με εσωτερικά ελλείμματα και βήματα πρόσθεσης για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -239,7 +238,7 @@ export default function AgnostosKaiAfairesiPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  1️⃣ Λείπουν {activeA} Μπάλες μέσα από το x
+                  1️⃣ Λείπουν {activeA} Μπάλες από το x
                 </button>
                 <button
                   type="button"
@@ -366,12 +365,12 @@ export default function AgnostosKaiAfairesiPage() {
                     )}
                     {currentStep === 2 && (
                       <p className="text-amber-800">
-                        Προσθέτουμε <strong>{activeA} πορτοκαλί μπάλες</strong> για να «κουμπώσουν» μέσα στο κουτί $x$, και <strong>προσθέτουμε ακριβώς {activeA} μπάλες</strong> και στον δεξιό δίσκο για να διατηρηθεί η ισορροπία!
+                        Προσθέτουμε <strong>{activeA} λαμπερές πορτοκαλί μπάλες</strong> για να «κουμπώσουν» μέσα στο κουτί $x$, και <strong>προσθέτουμε ακριβώς {activeA} μπάλες</strong> και στον δεξιό δίσκο για να διατηρηθεί η ισορροπία!
                       </p>
                     )}
                     {currentStep === 3 && (
                       <p className="text-emerald-800 font-bold">
-                        Το κουτί $x$ είναι πλέον <strong>πλήρες</strong>! Στον δεξιό δίσκο βρίσκονται {activeB} ＋ {activeA} ＝ <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>.
+                        Το κουτί $x$ είναι πλέον <strong>πλήρες (λαμπερό πράσινο)</strong>! Στον δεξιό δίσκο βρίσκονται {activeB} ＋ {activeA} ＝ <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} ＋ {activeA} ＝ {exactSolution}</strong>.
                       </p>
                     )}
                   </div>
@@ -383,7 +382,7 @@ export default function AgnostosKaiAfairesiPage() {
                 </div>
               </div>
 
-              {/* RIGHT: BIG SCALE & SVG BOX WITH IN-BOX SLOTS (8 COLS) */}
+              {/* RIGHT: PREMIUM 3D SCALE & IN-BOX BALLS VISUALIZER (8 COLS) */}
               <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[580px] space-y-6">
                 
                 {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΒΗΜΑΤΟΣ */}
@@ -403,7 +402,7 @@ export default function AgnostosKaiAfairesiPage() {
                   </div>
                 </div>
 
-                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΟΛΑ ΣΤΟ SVG ΜΕ ΜΠΑΛΕΣ ΜΕΣΑ ΣΤΟ ΚΟΥΤΙ */}
+                {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ 3D-LOOK ΣΤΟ SVG */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
@@ -414,45 +413,93 @@ export default function AgnostosKaiAfairesiPage() {
                     </span>
                   </div>
 
-                  {/* SVG CONTAINER */}
-                  <div className="p-4 bg-slate-50/90 rounded-3xl border border-slate-200 shadow-inner flex flex-col items-center justify-center min-h-[380px] overflow-hidden">
+                  {/* SVG CONTAINER ΜΕ ΟΛΟΥΣ ΤΟΥΣ ΟΡΙΣΜΟΥΣ GRADIENTS & SHADOWS */}
+                  <div className="p-4 bg-gradient-to-b from-slate-50 to-slate-100/80 rounded-3xl border border-slate-200 shadow-inner flex flex-col items-center justify-center min-h-[380px] overflow-hidden">
                     <svg width="100%" height="340" viewBox="0 0 760 360" className="overflow-visible select-none">
+                      <defs>
+                        {/* Σκίαση Drop Shadow */}
+                        <filter id="shadow3d" x="-20%" y="-20%" width="140%" height="140%">
+                          <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#0f172a" floodOpacity="0.25" />
+                        </filter>
+                        <filter id="glowGold" x="-30%" y="-30%" width="160%" height="160%">
+                          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#f59e0b" floodOpacity="0.6" />
+                        </filter>
+
+                        {/* Μεταλλική διαβάθμιση δοκού & κολόνας */}
+                        <linearGradient id="metalBeam" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#475569" />
+                          <stop offset="40%" stopColor="#1e293b" />
+                          <stop offset="100%" stopColor="#0f172a" />
+                        </linearGradient>
+                        <linearGradient id="metalPillar" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stopColor="#334155" />
+                          <stop offset="50%" stopColor="#64748b" />
+                          <stop offset="100%" stopColor="#1e293b" />
+                        </linearGradient>
+
+                        {/* Διαβαθμίσεις Δίσκων */}
+                        <linearGradient id="leftDishGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#3b82f6" />
+                          <stop offset="100%" stopColor="#1d4ed8" />
+                        </linearGradient>
+                        <linearGradient id="rightDishGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#10b981" />
+                          <stop offset="100%" stopColor="#047857" />
+                        </linearGradient>
+
+                        {/* 3D Radial Gradients για τις Μπάλες */}
+                        {/* 1. Πράσινη Μπάλα */}
+                        <radialGradient id="ballGreen" cx="35%" cy="35%" r="65%">
+                          <stop offset="0%" stopColor="#6ee7b7" />
+                          <stop offset="40%" stopColor="#10b981" />
+                          <stop offset="100%" stopColor="#047857" />
+                        </radialGradient>
+
+                        {/* 2. Χρυσή/Πορτοκαλί Προστιθέμενη Μπάλα */}
+                        <radialGradient id="ballGold" cx="35%" cy="35%" r="65%">
+                          <stop offset="0%" stopColor="#fef08a" />
+                          <stop offset="40%" stopColor="#f59e0b" />
+                          <stop offset="100%" stopColor="#b45309" />
+                        </radialGradient>
+                      </defs>
                       
                       {/* 1. ΒΑΣΗ & ΚΟΛΟΝΑ ΖΥΓΑΡΙΑΣ */}
-                      <polygon points="380,270 320,345 440,345" fill="#1e293b" />
-                      <rect x="374" y="65" width="12" height="215" fill="#334155" />
-                      <circle cx="380" cy="65" r="12" fill="#0f172a" />
+                      <polygon points="380,270 315,345 445,345" fill="url(#metalBeam)" filter="url(#shadow3d)" />
+                      <rect x="373" y="65" width="14" height="215" fill="url(#metalPillar)" rx="3" />
+                      <circle cx="380" cy="65" r="14" fill="#0f172a" stroke="#64748b" strokeWidth="2" filter="url(#shadow3d)" />
 
                       {/* 2. ΟΡΙΖΟΝΤΙΟΣ ΖΥΓΟΣ (BEAM) */}
-                      <rect x="90" y="59" width="580" height="12" rx="6" fill="#1e293b" />
+                      <rect x="90" y="58" width="580" height="14" rx="7" fill="url(#metalBeam)" filter="url(#shadow3d)" />
+                      <circle cx="150" cy="65" r="5" fill="#e2e8f0" />
+                      <circle cx="610" cy="65" r="5" fill="#e2e8f0" />
 
-                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (ΠΛΑΤΟΣ 240px) */}
-                      <line x1="150" y1="65" x2="50" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <line x1="150" y1="65" x2="250" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <path d="M 30 250 Q 150 290 270 250 Z" fill="#2563eb" />
-                      <rect x="30" y="248" width="240" height="5" fill="#1d4ed8" rx="2" />
+                      {/* 3. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
+                      <line x1="150" y1="65" x2="50" y2="250" stroke="#475569" strokeWidth="2.5" strokeDasharray="5 2" />
+                      <line x1="150" y1="65" x2="250" y2="250" stroke="#475569" strokeWidth="2.5" strokeDasharray="5 2" />
+                      <path d="M 30 250 Q 150 292 270 250 Z" fill="url(#leftDishGrad)" filter="url(#shadow3d)" />
+                      <rect x="30" y="248" width="240" height="6" fill="#1e40af" rx="3" />
 
-                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ (ΠΛΑΤΟΣ 240px) */}
-                      <line x1="610" y1="65" x2="510" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <line x1="610" y1="65" x2="710" y2="250" stroke="#64748b" strokeWidth="3" />
-                      <path d="M 490 250 Q 610 290 730 250 Z" fill="#059669" />
-                      <rect x="490" y="248" width="240" height="5" fill="#047857" rx="2" />
+                      {/* 4. ΔΕΞΙΟΣ ΔΙΣΚΟΣ & ΑΛΥΣΙΔΕΣ */}
+                      <line x1="610" y1="65" x2="510" y2="250" stroke="#475569" strokeWidth="2.5" strokeDasharray="5 2" />
+                      <line x1="610" y1="65" x2="710" y2="250" stroke="#475569" strokeWidth="2.5" strokeDasharray="5 2" />
+                      <path d="M 490 250 Q 610 292 730 250 Z" fill="url(#rightDishGrad)" filter="url(#shadow3d)" />
+                      <rect x="490" y="248" width="240" height="6" fill="#065f46" rx="3" />
 
-                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΜΕΓΑΛΟ ΚΟΥΤΙ x (x = 95, y = 164, w = 110, h = 84) */}
-                      <g transform="translate(95, 164)">
+                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΜΕΓΑΛΟ «ΓΥΑΛΙΝΟ» ΚΟΥΤΙ x */}
+                      <g transform="translate(95, 164)" filter="url(#shadow3d)">
                         <rect 
                           width="110" 
                           height="84" 
                           rx="16" 
-                          fill={currentStep === 3 ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.15)"} 
+                          fill={currentStep === 3 ? "rgba(16, 185, 129, 0.18)" : "rgba(245, 158, 11, 0.12)"} 
                           stroke={currentStep === 3 ? "#059669" : "#d97706"} 
                           strokeWidth="3" 
                           strokeDasharray={currentStep === 1 ? "6 4" : "none"}
                         />
-                        {/* Ετικέτα Κουτιού x */}
-                        <rect x="8" y="8" width="28" height="28" rx="8" fill={currentStep === 3 ? "#10b981" : "#f59e0b"} />
-                        <text x="22" y="27" fill="#ffffff" fontSize="18" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
-                        <text x="66" y="25" fill={currentStep === 3 ? "#065f46" : "#92400e"} fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
+                        {/* Ανάγλυφο Σήμα Κουτιού */}
+                        <rect x="8" y="8" width="28" height="28" rx="8" fill={currentStep === 3 ? "#10b981" : "#f59e0b"} filter="url(#shadow3d)" />
+                        <text x="22" y="28" fill="#ffffff" fontSize="18" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
+                        <text x="66" y="26" fill={currentStep === 3 ? "#065f46" : "#92400e"} fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
                           {currentStep === 3 ? "ΠΛΗΡΕΣ x" : "ΚΟΥΤΙ x"}
                         </text>
                       </g>
@@ -460,35 +507,38 @@ export default function AgnostosKaiAfairesiPage() {
                       {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ / ΕΛΛΕΙΜΜΑΤΑ ΜΕΣΑ ΣΤΟ ΚΟΥΤΙ x */}
                       {insideBoxSlots.map((pos, i) => {
                         if (currentStep === 1) {
-                          // Βήμα 1: Διακεκομμένες κενές θέσεις μέσα στο κουτί (φαίνεται ότι λείπουν μπάλες)
+                          // Βήμα 1: Λαμπερές κενές υποδοχές μέσα στο κουτί
                           return (
                             <g key={`inbox-slot-${i}`} className="transition-all duration-500">
                               <circle
                                 cx={pos.x}
                                 cy={pos.y}
                                 r={BALL_RADIUS}
-                                fill="rgba(239, 68, 68, 0.12)"
-                                stroke="#ef4444"
+                                fill="rgba(244, 63, 94, 0.1)"
+                                stroke="#f43f5e"
                                 strokeWidth="2"
                                 strokeDasharray="3 3"
                               />
-                              <text x={pos.x} y={pos.y + 3} fill="#ef4444" fontSize="8" fontWeight="900" textAnchor="middle" fontFamily="monospace">－1</text>
+                              <circle cx={pos.x - 3} cy={pos.y - 3} r="2.5" fill="#ffffff" opacity="0.6" />
+                              <text x={pos.x} y={pos.y + 3.5} fill="#e11d48" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="monospace">－1</text>
                             </g>
                           );
                         } else {
-                          // Βήματα 2 & 3: Οι μπάλες συμπληρώνουν το κουτί x από μέσα
+                          // Βήματα 2 & 3: 3D Σφαίρες που γεμίζουν το κουτί x
                           return (
-                            <g key={`inbox-filled-${i}`} className="transition-all duration-500">
+                            <g key={`inbox-filled-${i}`} className="transition-all duration-500" filter={currentStep === 2 ? "url(#glowGold)" : "url(#shadow3d)"}>
                               <circle
                                 cx={pos.x}
                                 cy={pos.y}
                                 r={BALL_RADIUS}
-                                fill={currentStep === 2 ? "#f59e0b" : "#10b981"}
+                                fill={currentStep === 2 ? "url(#ballGold)" : "url(#ballGreen)"}
                                 stroke={currentStep === 2 ? "#b45309" : "#047857"}
-                                strokeWidth="2"
+                                strokeWidth="1.5"
                                 className={currentStep === 2 ? "animate-pulse" : ""}
                               />
-                              <text x={pos.x} y={pos.y + 3} fill="#ffffff" fontSize="8.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                              {/* Specular 3D Highlight */}
+                              <ellipse cx={pos.x - 3} cy={pos.y - 3} rx="3" ry="2" fill="#ffffff" opacity="0.65" />
+                              <text x={pos.x} y={pos.y + 3.5} fill="#ffffff" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                                 {currentStep === 2 ? "＋1" : "1"}
                               </text>
                             </g>
@@ -496,21 +546,23 @@ export default function AgnostosKaiAfairesiPage() {
                         }
                       })}
 
-                      {/* 7. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ b ΚΑΙ ΟΙ ΠΡΟΣΤΙΘΕΜΕΝΕΣ ΜΠΑΛΕΣ a */}
+                      {/* 7. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ 3D ΜΠΑΛΕΣ b ΚΑΙ ΟΙ ΠΡΟΣΤΙΘΕΜΕΝΕΣ ΜΠΑΛΕΣ a */}
                       {rightBalls.map((ball) => {
                         const isAddedBall = ball.isAdded;
                         return (
-                          <g key={`rball-${ball.id}`} className="transition-all duration-500">
+                          <g key={`rball-${ball.id}`} className="transition-all duration-500" filter={isAddedBall && currentStep === 2 ? "url(#glowGold)" : "url(#shadow3d)"}>
                             <circle
                               cx={ball.x}
                               cy={ball.y}
                               r={BALL_RADIUS}
-                              fill={isAddedBall ? (currentStep === 2 ? "#f59e0b" : "#10b981") : "#10b981"}
+                              fill={isAddedBall ? (currentStep === 2 ? "url(#ballGold)" : "url(#ballGreen)") : "url(#ballGreen)"}
                               stroke={isAddedBall ? (currentStep === 2 ? "#b45309" : "#047857") : "#047857"}
-                              strokeWidth="2"
+                              strokeWidth="1.5"
                               className={isAddedBall && currentStep === 2 ? "animate-pulse" : ""}
                             />
-                            <text x={ball.x} y={ball.y + 3} fill="#ffffff" fontSize="8.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                            {/* Specular 3D Highlight */}
+                            <ellipse cx={ball.x - 3} cy={ball.y - 3} rx="3" ry="2" fill="#ffffff" opacity="0.65" />
+                            <text x={ball.x} y={ball.y + 3.5} fill="#ffffff" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                               {isAddedBall ? "＋1" : "1"}
                             </text>
                           </g>
@@ -543,7 +595,7 @@ export default function AgnostosKaiAfairesiPage() {
                       ⬅️ Προηγούμενο Βήμα
                     </button>
 
-                    <div className="text-xs font-black text-indigo-900 bg-indigo-50 px-5 py-2 rounded-xl border border-indigo-200">
+                    <div className="text-xs font-black text-indigo-900 bg-indigo-50 px-5 py-2 rounded-xl border border-indigo-200 shadow-xs">
                       Βήμα {currentStep} από 3
                     </div>
 
