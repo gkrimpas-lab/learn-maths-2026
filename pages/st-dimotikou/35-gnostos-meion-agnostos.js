@@ -98,10 +98,10 @@ export default function GnostosMeionAgnostosPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  35. Εξισώσεις: Ο Άγνωστος είναι Αφαιρετέος (a - x = b)
+                  35. Εξισώσεις: Ο Άγνωστος είναι Αφαιρετέος (α - x = β)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο αφαιρετέο (x)</strong>: από το αρχικό ολικό μέγεθος a αφαιρούμε ένα κομμάτι x και μένει το b. Για να βρούμε πόσο ήταν το x, <strong>αφαιρούμε το γνωστό κομμάτι από το ολικό (x = a - b)</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο αφαιρετέο (x)</strong>: από το αρχικό ολικό μέγεθος α αφαιρούμε ένα κομμάτι x και μένει το β. Για να βρούμε πόσο ήταν το x, <strong>αφαιρούμε το γνωστό κομμάτι από το ολικό (x = α - β)</strong>!
                 </p>
               </div>
 
@@ -129,7 +129,7 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">1. Ποιος είναι ο Αφαιρετέος;</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Στην εξίσωση a - x = b, το x είναι ο <strong>αφαιρετέος</strong> (το κομμάτι που αφαιρείται ή κόβεται από το αρχικό μέγεθος a).
+                  Στην εξίσωση α - x = β, το x είναι ο <strong>αφαιρετέος</strong> (το κομμάτι που αφαιρείται ή κόβεται από το αρχικό μέγεθος α).
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -146,7 +146,7 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">2. Ο Κανόνας Επίλυσης</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Για να βρούμε το κομμάτι που αφαιρέθηκε (x), <strong>αφαιρούμε το κομμάτι που έμεινε (b) από το ολικό (a)</strong>:
+                  Για να βρούμε το κομμάτι που αφαιρέθηκε (x), <strong>αφαιρούμε το κομμάτι που έμεινε (β) από το ολικό (α)</strong>:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -163,7 +163,7 @@ export default function GnostosMeionAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Ελέγχουμε αν το υπόλοιπο είναι σωστό: 10 - 6 = 4! Τα δύο κομμάτια x + b συμπληρώνουν ακριβώς το ολικό μήκος a.
+                  Ελέγχουμε αν το υπόλοιπο είναι σωστό: 10 - 6 = 4! Τα δύο κομμάτια x + β συμπληρώνουν ακριβώς το ολικό μήκος α.
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -182,7 +182,7 @@ export default function GnostosMeionAgnostosPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο: Σύγκριση Μήκους και Χώρου
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Μετακίνησε τα sliders για το a και το b και δες πώς οι μπάρες αποκαλύπτουν αμέσως το μήκος του άγνωστου x!
+                  Μετακίνησε τα sliders για το α και το β και δες πώς οι μπάρες αποκαλύπτουν αμέσως το μήκος του άγνωστου x!
                 </p>
               </div>
             </div>
@@ -298,13 +298,13 @@ export default function GnostosMeionAgnostosPage() {
 
                   {/* ΕΠΕΞΗΓΗΣΗ */}
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs">
-                    💡 <strong>Τι παρατηρούμε;</strong> Το ολικό μέγεθος a ({activeA}) χωρίζεται στο κομμάτι x ({exactSolution}) και στο κομμάτι b ({activeB}). Άρα: <strong>x ＝ {activeA} － {activeB} ＝ {exactSolution}</strong>!
+                    💡 <strong>Τι παρατηρούμε;</strong> Το ολικό μέγεθος α ({activeA}) χωρίζεται στο κομμάτι x ({exactSolution}) και στο κομμάτι β ({activeB}). Άρα: <strong>x ＝ {activeA} － {activeB} ＝ {exactSolution}</strong>!
                   </div>
 
                 </div>
 
                 <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
-                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο αφαιρετέο x, κάνουμε πάντα <strong>αφαίρεση: x = a - b</strong>!
+                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο αφαιρετέο x, κάνουμε πάντα <strong>αφαίρεση: x = α - β</strong>!
                 </div>
               </div>
 
