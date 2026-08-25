@@ -330,7 +330,7 @@ export default function GnostosEpiAgnostosExercisesPage() {
                 <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                Διαδραστικές Ασκήσεις: Άγνωστος Παράγοντας (α * x = b)
+                Διαδραστικές Ασκήσεις: Άγνωστος Παράγοντας (α · x = β)
               </h1>
               <p className="text-blue-100 text-sm md:text-base max-w-xl">
                 Λύσε τα 8 δυναμικά προβλήματα εξισώσεων πολλαπλασιασμού με φυσικούς, δεκαδικούς και κλάσματα!
