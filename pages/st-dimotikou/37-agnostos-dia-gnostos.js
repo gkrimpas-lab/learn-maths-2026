@@ -73,7 +73,7 @@ export default function AgnostosDiaGnostosPage() {
 
   // 1. Γεωμετρία Κουτιού x χωρισμένο σε `activeA` κομμάτια (Αριστερός Δίσκος)
   const TOTAL_BOX_WIDTH = activeA * 34 + 10;
-  const TOTAL_BOX_HEIGHT = 64;
+  const TOTAL_BOX_HEIGHT = 68;
   const boxStartX = 150 - TOTAL_BOX_WIDTH / 2;
   const boxStartY = BASE_Y - TOTAL_BOX_HEIGHT - 2;
 
@@ -104,22 +104,16 @@ export default function AgnostosDiaGnostosPage() {
     }
   }
 
-  // 3. Θέσεις σφαιρών ΜΕΣΑ ΣΕ ΚΑΘΕ ΚΟΜΜΑΤΙ του κουτιού x (Βήμα 3)
+  // 3. Θέσεις σφαιρών ΜΕΣΑ ΣΕ ΚΑΘΕ ΚΟΜΜΑΤΙ του κουτιού x (Βήμα 3) - ΤΕΛΕΙΑ ΣΤΟΙΧΙΣΗ ΣΤΟ ΚΕΝΤΡΟ
   const insidePortionBalls = [];
   for (let g = 0; g < activeA; g++) {
-    const pCenterX = boxStartX + 5 + g * 34 + 17;
-    const subCols = activeB > 4 ? 2 : 1;
-    const subSpacing = 12;
-    const startSubX = pCenterX - ((subCols - 1) * subSpacing) / 2;
-
+    const pCenterX = boxStartX + 5 + g * 34 + 15;
     for (let r = 0; r < activeB; r++) {
-      const col = Math.floor(r / 4);
-      const row = r % 4;
       insidePortionBalls.push({
         id: `inside-p-${g}-${r}`,
         group: g,
-        x: startSubX + col * subSpacing,
-        y: boxStartY + TOTAL_BOX_HEIGHT - 10 - row * 13
+        x: pCenterX,
+        y: boxStartY + TOTAL_BOX_HEIGHT - 10 - r * 14
       });
     }
   }
@@ -248,7 +242,7 @@ export default function AgnostosDiaGnostosPage() {
             </div>
           </div>
 
-          {/* 4. INTERACTIVE PLAYGROUND (3D ΖΥΓΑΡΙΑ ΜΕ ΚΟΥΤΙ ΧΩΡΙΣΜΕΝΟ ΣΕ ΚΟΜΜΑΤΙΑ) */}
+          {/* 4. INTERACTIVE PLAYGROUND */}
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
@@ -542,14 +536,14 @@ export default function AgnostosDiaGnostosPage() {
                       <g filter="url(#shadow3d)">
                         {/* ΕΠΙΚΕΦΑΛΙΔΑ ΕΞΩ ΑΠΟ ΤΟ ΚΟΥΤΙ */}
                         <rect 
-                          x="55" 
-                          y="152" 
-                          width="190" 
+                          x={boxStartX} 
+                          y={boxStartY - 26} 
+                          width={TOTAL_BOX_WIDTH} 
                           height="22" 
-                          rx="11" 
+                          rx="8" 
                           fill={currentStep === 3 ? "#10b981" : "#f59e0b"} 
                         />
-                        <text x="150" y="167" fill="#ffffff" fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
+                        <text x={150} y={boxStartY - 11} fill="#ffffff" fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
                           {currentStep === 3 ? `ΟΛΟΚΛΗΡΟ x (x ＝ ${exactSolution})` : `ΚΟΥΤΙ x ΣΕ ${activeA} ΚΟΜΜΑΤΙΑ`}
                         </text>
 
@@ -585,7 +579,7 @@ export default function AgnostosDiaGnostosPage() {
                                 strokeDasharray={currentStep < 3 && i > 0 ? "3 2" : "none"}
                               />
                               {currentStep < 3 && (
-                                <text x={pX + 15} y={pY + 32} fill={i === 0 ? "#b45309" : "#94a3b8"} fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                                <text x={pX + 15} y={pY + 34} fill={i === 0 ? "#b45309" : "#94a3b8"} fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                                   {i === 0 ? `x/${activeA}` : "?"}
                                 </text>
                               )}
@@ -593,14 +587,14 @@ export default function AgnostosDiaGnostosPage() {
                           );
                         })}
 
-                        {/* Βήμα 3: Οι μπάλες ΜΕΣΑ σε κάθε κομμάτι του x */}
+                        {/* Βήμα 3: Οι μπάλες ΜΕΣΑ σε κάθε κομμάτι του x (ΚΕΝΤΡΑΡΙΣΜΕΝΕΣ ΚΑΤΑΚΟΡΥΦΑ) */}
                         {currentStep === 3 && insidePortionBalls.map((pos) => {
                           const colTheme = PORTION_COLORS[pos.group % PORTION_COLORS.length];
                           return (
                             <g key={pos.id} filter="url(#glowGold)">
-                              <circle cx={pos.x} cy={pos.y} r="5.5" fill={colTheme.fill} stroke={colTheme.stroke} strokeWidth="1" />
-                              <ellipse cx={pos.x - 1.5} cy={pos.y - 1.5} rx="1.8" ry="1.2" fill="#ffffff" opacity="0.6" />
-                              <text x={pos.x} y={pos.y + 2} fill="#ffffff" fontSize="6" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
+                              <circle cx={pos.x} cy={pos.y} r="6.5" fill={colTheme.fill} stroke={colTheme.stroke} strokeWidth="1" />
+                              <ellipse cx={pos.x - 1.8} cy={pos.y - 1.8} rx="2" ry="1.4" fill="#ffffff" opacity="0.6" />
+                              <text x={pos.x} y={pos.y + 2.5} fill="#ffffff" fontSize="7" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
                             </g>
                           );
                         })}
