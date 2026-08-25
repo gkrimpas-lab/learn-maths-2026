@@ -11,7 +11,8 @@ const PRESETS = [
   { a: 4, b: 5, label: "x : 4 ＝ 5 (x ＝ 20)" },
   { a: 2, b: 7, label: "x : 2 ＝ 7 (x ＝ 14)" },
   { a: 5, b: 3, label: "x : 5 ＝ 3 (x ＝ 15)" },
-  { a: 6, b: 4, label: "x : 6 ＝ 4 (x ＝ 24)" }
+  { a: 6, b: 4, label: "x : 6 ＝ 4 (x ＝ 24)" },
+  { a: 4, b: 7, label: "x : 4 ＝ 7 (x ＝ 28)" }
 ];
 
 // Χρώματα ανά κομμάτι/διαμέρισμα
@@ -26,8 +27,8 @@ const PORTION_COLORS = [
 
 export default function AgnostosDiaGnostosPage() {
   // Παράμετροι της εξίσωσης: x : a = b (x = a * b)
-  const [paramA, setParamA] = useState(3);
-  const [paramB, setParamB] = useState(4);
+  const [paramA, setParamA] = useState(4);
+  const [paramB, setParamB] = useState(7);
 
   // Βήμα διαδραστικής επίλυσης: 1 (1 κομμάτι = β), 2 (Πολλαπλασιασμός επί α), 3 (Μπάλες σε κάθε κομμάτι του x)
   const [currentStep, setCurrentStep] = useState(1);
@@ -67,19 +68,19 @@ export default function AgnostosDiaGnostosPage() {
   };
 
   // Σταθερή γεωμετρία σφαιρών
-  const BALL_RADIUS = 8;
-  const BALL_SPACING_Y = 17;
+  const BALL_RADIUS = 7.5;
+  const BALL_SPACING_Y = 15;
   const BASE_Y = 248;
 
-  // 1. Γεωμετρία Κουτιού x χωρισμένο σε `activeA` κομμάτια (Αριστερός Δίσκος)
-  const TOTAL_BOX_WIDTH = activeA * 34 + 10;
-  const TOTAL_BOX_HEIGHT = 68;
+  // 1. Δυναμική Γεωμετρία Κουτιού x ώστε να χωράνε όρθιες όλες οι μπάλες
+  const TOTAL_BOX_WIDTH = activeA * 32 + 12;
+  const TOTAL_BOX_HEIGHT = Math.max(68, activeB * BALL_SPACING_Y + 18);
   const boxStartX = 150 - TOTAL_BOX_WIDTH / 2;
   const boxStartY = BASE_Y - TOTAL_BOX_HEIGHT - 2;
 
   // 2. Δεξιός Δίσκος: Στο Βήμα 1 φαίνονται b μπάλες. Στα Βήματα 2 & 3 φαίνονται όλες οι a * b μπάλες
   const currentRightPortions = currentStep === 1 ? 1 : activeA;
-  const MAX_STACK_HEIGHT = 6;
+  const MAX_STACK_HEIGHT = 7;
   const rightBalls = [];
   const groupSpacing = activeA <= 3 ? 42 : activeA <= 4 ? 32 : 24;
   const startGroupCenterX = 610 - ((currentRightPortions - 1) * groupSpacing) / 2;
@@ -104,16 +105,16 @@ export default function AgnostosDiaGnostosPage() {
     }
   }
 
-  // 3. Θέσεις σφαιρών ΜΕΣΑ ΣΕ ΚΑΘΕ ΚΟΜΜΑΤΙ του κουτιού x (Βήμα 3) - ΤΕΛΕΙΑ ΣΤΟΙΧΙΣΗ ΣΤΟ ΚΕΝΤΡΟ
+  // 3. Θέσεις σφαιρών ΜΕΣΑ ΣΕ ΚΑΘΕ ΚΟΜΜΑΤΙ του κουτιού x (Βήμα 3)
   const insidePortionBalls = [];
   for (let g = 0; g < activeA; g++) {
-    const pCenterX = boxStartX + 5 + g * 34 + 15;
+    const pCenterX = boxStartX + 6 + g * 32 + 14;
     for (let r = 0; r < activeB; r++) {
       insidePortionBalls.push({
         id: `inside-p-${g}-${r}`,
         group: g,
         x: pCenterX,
-        y: boxStartY + TOTAL_BOX_HEIGHT - 10 - r * 14
+        y: boxStartY + TOTAL_BOX_HEIGHT - 8 - r * BALL_SPACING_Y
       });
     }
   }
@@ -202,7 +203,7 @@ export default function AgnostosDiaGnostosPage() {
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-blue-900">
-                  x : 3 ＝ 4 (1 κομμάτι έχει 4)
+                  x : 4 ＝ 7 (1 κομμάτι έχει 7)
                 </span>
               </div>
             </div>
@@ -219,7 +220,7 @@ export default function AgnostosDiaGnostosPage() {
               </div>
               <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
-                  x ＝ 3 · 4 ＝ <strong className="text-indigo-700 font-black">12</strong>
+                  x ＝ 4 · 7 ＝ <strong className="text-indigo-700 font-black">28</strong>
                 </span>
               </div>
             </div>
@@ -231,18 +232,18 @@ export default function AgnostosDiaGnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Αν μοιράσουμε τις 12 μπάλες στα 3 ίσα κομμάτια του κουτιού, κάθε κομμάτι παίρνει ακριβώς 4 μπάλες: 12 : 3 ＝ 4!
+                  Αν μοιράσουμε τις 28 μπάλες στα 4 ίσα κομμάτια του κουτιού, κάθε κομμάτι παίρνει ακριβώς 7 μπάλες: 28 : 4 ＝ 7!
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-emerald-900">
-                  12 : 3 ＝ 4 (Σωστό! ✔️)
+                  28 : 4 ＝ 7 (Σωστό! ✔️)
                 </span>
               </div>
             </div>
           </div>
 
-          {/* 4. INTERACTIVE PLAYGROUND */}
+          {/* 4. INTERACTIVE PLAYGROUND (3D ΖΥΓΑΡΙΑ ΜΕ ΚΟΥΤΙ ΧΩΡΙΣΜΕΝΟ ΣΕ ΚΟΜΜΑΤΙΑ) */}
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
@@ -536,14 +537,14 @@ export default function AgnostosDiaGnostosPage() {
                       <g filter="url(#shadow3d)">
                         {/* ΕΠΙΚΕΦΑΛΙΔΑ ΕΞΩ ΑΠΟ ΤΟ ΚΟΥΤΙ */}
                         <rect 
-                          x={boxStartX} 
-                          y={boxStartY - 26} 
-                          width={TOTAL_BOX_WIDTH} 
-                          height="22" 
+                          x={150 - Math.max(85, TOTAL_BOX_WIDTH / 2)} 
+                          y={boxStartY - 24} 
+                          width={Math.max(170, TOTAL_BOX_WIDTH)} 
+                          height="20" 
                           rx="8" 
                           fill={currentStep === 3 ? "#10b981" : "#f59e0b"} 
                         />
-                        <text x={150} y={boxStartY - 11} fill="#ffffff" fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
+                        <text x="150" y={boxStartY - 10} fill="#ffffff" fontSize="10.5" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
                           {currentStep === 3 ? `ΟΛΟΚΛΗΡΟ x (x ＝ ${exactSolution})` : `ΚΟΥΤΙ x ΣΕ ${activeA} ΚΟΜΜΑΤΙΑ`}
                         </text>
 
@@ -561,7 +562,7 @@ export default function AgnostosDiaGnostosPage() {
 
                         {/* Τα a διαμερίσματα/κομμάτια */}
                         {Array.from({ length: activeA }).map((_, i) => {
-                          const pX = boxStartX + 5 + i * 34;
+                          const pX = boxStartX + 6 + i * 32;
                           const pY = boxStartY + 5;
                           const isHighlightedPortion = currentStep < 3 ? i === 0 : true;
 
@@ -570,16 +571,16 @@ export default function AgnostosDiaGnostosPage() {
                               <rect
                                 x={pX}
                                 y={pY}
-                                width="30"
+                                width="28"
                                 height={TOTAL_BOX_HEIGHT - 10}
-                                rx="8"
+                                rx="7"
                                 fill={isHighlightedPortion ? PORTION_COLORS[i % PORTION_COLORS.length].bg : "#f1f5f9"}
                                 stroke={isHighlightedPortion ? PORTION_COLORS[i % PORTION_COLORS.length].tag : "#cbd5e1"}
                                 strokeWidth={isHighlightedPortion ? "2" : "1"}
                                 strokeDasharray={currentStep < 3 && i > 0 ? "3 2" : "none"}
                               />
                               {currentStep < 3 && (
-                                <text x={pX + 15} y={pY + 34} fill={i === 0 ? "#b45309" : "#94a3b8"} fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                                <text x={pX + 14} y={boxStartY + TOTAL_BOX_HEIGHT / 2 + 4} fill={i === 0 ? "#b45309" : "#94a3b8"} fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                                   {i === 0 ? `x/${activeA}` : "?"}
                                 </text>
                               )}
@@ -587,13 +588,13 @@ export default function AgnostosDiaGnostosPage() {
                           );
                         })}
 
-                        {/* Βήμα 3: Οι μπάλες ΜΕΣΑ σε κάθε κομμάτι του x (ΚΕΝΤΡΑΡΙΣΜΕΝΕΣ ΚΑΤΑΚΟΡΥΦΑ) */}
+                        {/* Βήμα 3: Οι μπάλες ΜΕΣΑ σε κάθε κομμάτι του x (ΚΑΘΑΡΑ ΚΕΝΤΡΑΡΙΣΜΕΝΕΣ ΚΑΤΑΚΟΡΥΦΑ) */}
                         {currentStep === 3 && insidePortionBalls.map((pos) => {
                           const colTheme = PORTION_COLORS[pos.group % PORTION_COLORS.length];
                           return (
                             <g key={pos.id} filter="url(#glowGold)">
-                              <circle cx={pos.x} cy={pos.y} r="6.5" fill={colTheme.fill} stroke={colTheme.stroke} strokeWidth="1" />
-                              <ellipse cx={pos.x - 1.8} cy={pos.y - 1.8} rx="2" ry="1.4" fill="#ffffff" opacity="0.6" />
+                              <circle cx={pos.x} cy={pos.y} r={BALL_RADIUS} fill={colTheme.fill} stroke={colTheme.stroke} strokeWidth="1" />
+                              <ellipse cx={pos.x - 2} cy={pos.y - 2} rx="2" ry="1.4" fill="#ffffff" opacity="0.6" />
                               <text x={pos.x} y={pos.y + 2.5} fill="#ffffff" fontSize="7" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
                             </g>
                           );
