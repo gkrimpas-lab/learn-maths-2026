@@ -12,7 +12,7 @@ const PRESETS = [
   { a: 2, b: 7, label: "x : 2 ＝ 7 (x ＝ 14)" },
   { a: 5, b: 3, label: "x : 5 ＝ 3 (x ＝ 15)" },
   { a: 6, b: 4, label: "x : 6 ＝ 4 (x ＝ 24)" },
-  { a: 4, b: 7, label: "x : 4 ＝ 7 (x ＝ 28)" }
+  { a: 3, b: 2, label: "x : 3 ＝ 2 (x ＝ 6)" }
 ];
 
 // Χρώματα ανά κομμάτι/διαμέρισμα
@@ -27,8 +27,8 @@ const PORTION_COLORS = [
 
 export default function AgnostosDiaGnostosPage() {
   // Παράμετροι της εξίσωσης: x : a = b (x = a * b)
-  const [paramA, setParamA] = useState(4);
-  const [paramB, setParamB] = useState(7);
+  const [paramA, setParamA] = useState(3);
+  const [paramB, setParamB] = useState(2);
 
   // Βήμα διαδραστικής επίλυσης: 1 (1 κομμάτι = β), 2 (Πολλαπλασιασμός επί α), 3 (Μπάλες σε κάθε κομμάτι του x)
   const [currentStep, setCurrentStep] = useState(1);
@@ -69,10 +69,10 @@ export default function AgnostosDiaGnostosPage() {
 
   // Σταθερή γεωμετρία σφαιρών
   const BALL_RADIUS = 7.5;
-  const BALL_SPACING_Y = 15;
+  const BALL_SPACING_Y = 16;
   const BASE_Y = 248;
 
-  // 1. Δυναμική Γεωμετρία Κουτιού x ώστε να χωράνε όρθιες όλες οι μπάλες
+  // 1. Δυναμική Γεωμετρία Κουτιού x
   const TOTAL_BOX_WIDTH = activeA * 32 + 12;
   const TOTAL_BOX_HEIGHT = Math.max(68, activeB * BALL_SPACING_Y + 18);
   const boxStartX = 150 - TOTAL_BOX_WIDTH / 2;
@@ -114,7 +114,7 @@ export default function AgnostosDiaGnostosPage() {
         id: `inside-p-${g}-${r}`,
         group: g,
         x: pCenterX,
-        y: boxStartY + TOTAL_BOX_HEIGHT - 8 - r * BALL_SPACING_Y
+        y: boxStartY + TOTAL_BOX_HEIGHT - 6 - BALL_RADIUS - r * BALL_SPACING_Y
       });
     }
   }
@@ -203,7 +203,7 @@ export default function AgnostosDiaGnostosPage() {
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-blue-900">
-                  x : 4 ＝ 7 (1 κομμάτι έχει 7)
+                  x : 3 ＝ 2 (1 κομμάτι έχει 2)
                 </span>
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function AgnostosDiaGnostosPage() {
               </div>
               <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
-                  x ＝ 4 · 7 ＝ <strong className="text-indigo-700 font-black">28</strong>
+                  x ＝ 3 · 2 ＝ <strong className="text-indigo-700 font-black">6</strong>
                 </span>
               </div>
             </div>
@@ -232,18 +232,18 @@ export default function AgnostosDiaGnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Αν μοιράσουμε τις 28 μπάλες στα 4 ίσα κομμάτια του κουτιού, κάθε κομμάτι παίρνει ακριβώς 7 μπάλες: 28 : 4 ＝ 7!
+                  Αν μοιράσουμε τις 6 μπάλες στα 3 ίσα κομμάτια του κουτιού, κάθε κομμάτι παίρνει ακριβώς 2 μπάλες: 6 : 3 ＝ 2!
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-emerald-900">
-                  28 : 4 ＝ 7 (Σωστό! ✔️)
+                  6 : 3 ＝ 2 (Σωστό! ✔️)
                 </span>
               </div>
             </div>
           </div>
 
-          {/* 4. INTERACTIVE PLAYGROUND (3D ΖΥΓΑΡΙΑ ΜΕ ΚΟΥΤΙ ΧΩΡΙΣΜΕΝΟ ΣΕ ΚΟΜΜΑΤΙΑ) */}
+          {/* 4. INTERACTIVE PLAYGROUND */}
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
@@ -588,7 +588,7 @@ export default function AgnostosDiaGnostosPage() {
                           );
                         })}
 
-                        {/* Βήμα 3: Οι μπάλες ΜΕΣΑ σε κάθε κομμάτι του x (ΚΑΘΑΡΑ ΚΕΝΤΡΑΡΙΣΜΕΝΕΣ ΚΑΤΑΚΟΡΥΦΑ) */}
+                        {/* Βήμα 3: Οι μπάλες ΜΕΣΑ σε κάθε κομμάτι του x (ΑΠΟΛΥΤΑ ΕΓΚΛΕΙΣΤΕΣ) */}
                         {currentStep === 3 && insidePortionBalls.map((pos) => {
                           const colTheme = PORTION_COLORS[pos.group % PORTION_COLORS.length];
                           return (
