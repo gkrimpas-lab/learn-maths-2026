@@ -73,7 +73,7 @@ export default function AgnostosDiaGnostosPage() {
 
   // 1. Γεωμετρία Κουτιού x χωρισμένο σε `activeA` κομμάτια (Αριστερός Δίσκος)
   const TOTAL_BOX_WIDTH = activeA * 34 + 10;
-  const TOTAL_BOX_HEIGHT = 74;
+  const TOTAL_BOX_HEIGHT = 64;
   const boxStartX = 150 - TOTAL_BOX_WIDTH / 2;
   const boxStartY = BASE_Y - TOTAL_BOX_HEIGHT - 2;
 
@@ -119,7 +119,7 @@ export default function AgnostosDiaGnostosPage() {
         id: `inside-p-${g}-${r}`,
         group: g,
         x: startSubX + col * subSpacing,
-        y: boxStartY + TOTAL_BOX_HEIGHT - 12 - row * 14
+        y: boxStartY + TOTAL_BOX_HEIGHT - 10 - row * 13
       });
     }
   }
@@ -540,28 +540,35 @@ export default function AgnostosDiaGnostosPage() {
 
                       {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ x ΧΩΡΙΣΜΕΝΟ ΣΕ a ΚΟΜΜΑΤΙΑ */}
                       <g filter="url(#shadow3d)">
+                        {/* ΕΠΙΚΕΦΑΛΙΔΑ ΕΞΩ ΑΠΟ ΤΟ ΚΟΥΤΙ */}
+                        <rect 
+                          x="55" 
+                          y="152" 
+                          width="190" 
+                          height="22" 
+                          rx="11" 
+                          fill={currentStep === 3 ? "#10b981" : "#f59e0b"} 
+                        />
+                        <text x="150" y="167" fill="#ffffff" fontSize="11" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
+                          {currentStep === 3 ? `ΟΛΟΚΛΗΡΟ x (x ＝ ${exactSolution})` : `ΚΟΥΤΙ x ΣΕ ${activeA} ΚΟΜΜΑΤΙΑ`}
+                        </text>
+
                         {/* Εξωτερικό περίβλημα όλου του κουτιού x */}
                         <rect 
                           x={boxStartX} 
                           y={boxStartY} 
                           width={TOTAL_BOX_WIDTH} 
                           height={TOTAL_BOX_HEIGHT} 
-                          rx="14" 
+                          rx="12" 
                           fill="#f8fafc" 
                           stroke={currentStep === 3 ? "#059669" : "#64748b"} 
                           strokeWidth="2.5" 
                         />
 
-                        {/* Επικεφαλίδα Κουτιού x */}
-                        <rect x={boxStartX + 6} y={boxStartY + 5} width={TOTAL_BOX_WIDTH - 12} height="18" rx="6" fill={currentStep === 3 ? "#10b981" : "#f59e0b"} />
-                        <text x={150} y={boxStartY + 18} fill="#ffffff" fontSize="12" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                          {currentStep === 3 ? `ΟΛΟΚΛΗΡΟ ΚΟΥΤΙ x (x ＝ ${exactSolution})` : `ΚΟΥΤΙ x ΧΩΡΙΣΜΕΝΟ ΣΕ ${activeA} ΚΟΜΜΑΤΙΑ`}
-                        </text>
-
                         {/* Τα a διαμερίσματα/κομμάτια */}
                         {Array.from({ length: activeA }).map((_, i) => {
                           const pX = boxStartX + 5 + i * 34;
-                          const pY = boxStartY + 26;
+                          const pY = boxStartY + 5;
                           const isHighlightedPortion = currentStep < 3 ? i === 0 : true;
 
                           return (
@@ -570,7 +577,7 @@ export default function AgnostosDiaGnostosPage() {
                                 x={pX}
                                 y={pY}
                                 width="30"
-                                height="42"
+                                height={TOTAL_BOX_HEIGHT - 10}
                                 rx="8"
                                 fill={isHighlightedPortion ? PORTION_COLORS[i % PORTION_COLORS.length].bg : "#f1f5f9"}
                                 stroke={isHighlightedPortion ? PORTION_COLORS[i % PORTION_COLORS.length].tag : "#cbd5e1"}
@@ -578,7 +585,7 @@ export default function AgnostosDiaGnostosPage() {
                                 strokeDasharray={currentStep < 3 && i > 0 ? "3 2" : "none"}
                               />
                               {currentStep < 3 && (
-                                <text x={pX + 15} y={pY + 25} fill={i === 0 ? "#b45309" : "#94a3b8"} fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                                <text x={pX + 15} y={pY + 32} fill={i === 0 ? "#b45309" : "#94a3b8"} fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                                   {i === 0 ? `x/${activeA}` : "?"}
                                 </text>
                               )}
@@ -599,7 +606,7 @@ export default function AgnostosDiaGnostosPage() {
                         })}
                       </g>
 
-                      {/* 6. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ (1 ΟΜΑΔΑ ΣΤΟ ΒΗΜΑ 1, ΟΛΕΣ ΟΙ ΟΜΑΔΕΣ ΣΤΑ ΒΗΜΑΤΑ 2 & 3) */}
+                      {/* 6. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ */}
                       {rightBalls.map((ball) => {
                         const colTheme = currentStep === 1 
                           ? { fill: "url(#ballGreen)", stroke: "#047857" } 
