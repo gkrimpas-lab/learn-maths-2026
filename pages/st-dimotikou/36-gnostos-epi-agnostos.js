@@ -1,10 +1,10 @@
-  import { useState } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Όριο για το μέγιστο γινόμενο
-const MAX_PRODUCT = 36;
+const MAX_PRODUCT = 30;
 
 const PRESETS = [
   { a: 3, b: 12, label: "3 · x ＝ 12 (x ＝ 4)" },
@@ -34,9 +34,13 @@ export default function GnostosEpiAgnostosPage() {
 
   // Ασφαλείς αριθμητικές τιμές
   const activeA = Math.max(2, Math.min(6, Number(paramA) || 2));
-  // Εξασφάλιση ότι το b είναι πολλαπλάσιο του a
+  
+  function getMaxXForA(a) {
+    return Math.min(10, Math.floor(MAX_PRODUCT / a));
+  }
+
   const rawB = Number(paramB) || activeA * 4;
-  const quotient = Math.max(1, Math.min(Math.floor(MAX_PRODUCT / activeA), Math.round(rawB / activeA)));
+  const quotient = Math.max(1, Math.min(getMaxXForA(activeA), Math.round(rawB / activeA)));
   const activeB = activeA * quotient;
 
   // Σωστή μαθηματική λύση: x = b / a
@@ -51,23 +55,21 @@ export default function GnostosEpiAgnostosPage() {
   const adjustA = (amount) => {
     setCurrentStep(1);
     const nextA = Math.max(2, Math.min(6, activeA + amount));
+    const nextX = Math.min(getMaxXForA(nextA), exactSolution);
     setParamA(nextA);
-    setParamB(nextA * exactSolution);
+    setParamB(nextA * nextX);
   };
 
   const adjustXTarget = (amount) => {
     setCurrentStep(1);
-    const nextX = Math.max(1, Math.min(Math.floor(MAX_TOTAL_BALLS_PER_GROUP(activeA)), exactSolution + amount));
+    const maxX = getMaxXForA(activeA);
+    const nextX = Math.max(1, Math.min(maxX, exactSolution + amount));
     setParamB(activeA * nextX);
   };
 
-  function MAX_TOTAL_BALLS_PER_GROUP(a) {
-    return Math.floor(MAX_PRODUCT / a);
-  }
-
   // Σταθερή γεωμετρία σφαιρών
-  const BALL_RADIUS = 9;
-  const BALL_SPACING = 22;
+  const BALL_RADIUS = 8.5;
+  const BALL_SPACING_Y = 18;
   const BASE_Y = 248;
 
   // 1. Θέσεις Κουτιών x στον Αριστερό Δίσκο
@@ -84,18 +86,27 @@ export default function GnostosEpiAgnostosPage() {
     });
   }
 
-  // 2. Θέσεις Σφαιρών στον Δεξιό Δίσκο (Ομαδοποιημένες σε `activeA` ίσες στήλες)
+  // 2. Θέσεις Σφαιρών στον Δεξιό Δίσκο με Sub-Grid ώστε να μην ξεπερνούν ποτέ το ύψος
+  const MAX_STACK_HEIGHT = 6;
   const rightBalls = [];
-  const startGroupX = 610 - ((activeA - 1) * 32) / 2;
+  const groupSpacing = activeA <= 3 ? 42 : activeA <= 4 ? 34 : 26;
+  const startGroupCenterX = 610 - ((activeA - 1) * groupSpacing) / 2;
+
   for (let g = 0; g < activeA; g++) {
-    const groupX = startGroupX + g * 32;
+    const centerGX = startGroupCenterX + g * groupSpacing;
+    const subCols = exactSolution > MAX_STACK_HEIGHT ? 2 : 1;
+    const subColSpacing = 16;
+    const startSubColX = centerGX - ((subCols - 1) * subColSpacing) / 2;
+
     for (let r = 0; r < exactSolution; r++) {
+      const colIdx = Math.floor(r / MAX_STACK_HEIGHT);
+      const rowIdx = r % MAX_STACK_HEIGHT;
+
       rightBalls.push({
         id: `rball-${g}-${r}`,
         group: g,
-        x: groupX,
-        y: BASE_Y - BALL_RADIUS - 2 - r * BALL_SPACING,
-        // Στο βήμα 3 μένει μόνο η 1η ομάδα (1 μερίδα)
+        x: startSubColX + colIdx * subColSpacing,
+        y: BASE_Y - BALL_RADIUS - 2 - rowIdx * BALL_SPACING_Y,
         isKeptInStep3: g === 0
       });
     }
@@ -103,7 +114,7 @@ export default function GnostosEpiAgnostosPage() {
 
   // 3. Θέσεις σφαιρών ΜΕΣΑ στο ανοιχτό κουτί x (Βήμα 3)
   const insideSingleBoxBalls = [];
-  const colsInside = Math.min(3, exactSolution);
+  const colsInside = Math.min(4, exactSolution);
   for (let i = 0; i < exactSolution; i++) {
     const row = Math.floor(i / colsInside);
     const col = i % colsInside;
@@ -162,10 +173,10 @@ export default function GnostosEpiAgnostosPage() {
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                  36. Εξισώσεις: Ο Άγνωστος είναι Παράγοντας Γινομένου ($\alpha \cdot x = \beta$)
+                  36. Εξισώσεις: Ο Άγνωστος είναι Παράγοντας Γινομένου (α · x ＝ β)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο παράγοντα ($x$)</strong>: αν $\alpha$ όμοια κουτιά $x$ ζυγίζουν συνολικά $\beta$, για να βρούμε τι περιέχει το <strong>ένα κουτί $x$</strong>, κάνουμε <strong>διαίρεση: $x = \beta : \alpha$</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο παράγοντα (x)</strong>: αν α όμοια κουτιά x ζυγίζουν συνολικά β, για να βρούμε τι περιέχει το <strong>ένα κουτί x</strong>, κάνουμε <strong>διαίρεση: x ＝ β : α</strong>!
                 </p>
               </div>
 
@@ -193,7 +204,7 @@ export default function GnostosEpiAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">1. Παράγοντας Γινομένου</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Στην εξίσωση $\alpha \cdot x = \beta$ (ή $\alpha x = \beta$), το $\alpha$ και το $x$ είναι οι <strong>παράγοντες</strong> και το $\beta$ είναι το <strong>γινόμενο</strong>.
+                  Στην εξίσωση α · x ＝ β (ή αx ＝ β), το α και το x είναι οι <strong>παράγοντες</strong> και το β είναι το <strong>γινόμενο</strong>.
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -227,7 +238,7 @@ export default function GnostosEpiAgnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Ελέγχουμε αν το αποτέλεσμα επιβεβαιώνει την αρχική ισότητα: $3 \cdot 4 = 12$! Η πράξη είναι σωστή.
+                  Ελέγχουμε αν το αποτέλεσμα επιβεβαιώνει την αρχική ισότητα: 3 · 4 ＝ 12! Η πράξη είναι σωστή.
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -238,7 +249,7 @@ export default function GnostosEpiAgnostosPage() {
             </div>
           </div>
 
-          {/* 4. INTERACTIVE PLAYGROUND (3D ΖΥΓΑΡΙΑ ΜΕ ΟΜΑΔΟΠΟΙΗΣΗ & ΔΙΑΙΡΕΣΗ) */}
+          {/* 4. INTERACTIVE PLAYGROUND */}
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
@@ -246,7 +257,7 @@ export default function GnostosEpiAgnostosPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο: Η Ζυγαριά του Πολλαπλασιασμού
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Ρύθμισε τον συντελεστή $\alpha$ και το γινόμενο $\beta$ και δες πώς οι μπάλες μοιράζονται ισόποσα στα $\alpha$ κουτιά!
+                  Ρύθμισε τον συντελεστή α και το γινόμενο β και δες πώς οι μπάλες μοιράζονται ισόποσα στα α κουτιά!
                 </p>
               </div>
 
@@ -341,7 +352,7 @@ export default function GnostosEpiAgnostosPage() {
                           <span className="w-full text-center font-mono font-black text-base text-amber-600">{exactSolution}</span>
                           <button 
                             type="button" 
-                            disabled={exactSolution >= MAX_TOTAL_BALLS_PER_GROUP(activeA)}
+                            disabled={exactSolution >= getMaxXForA(activeA)}
                             onClick={() => adjustXTarget(1)} 
                             className="px-2 py-1 font-black text-amber-600 hover:bg-slate-200 disabled:opacity-30 rounded"
                           >
@@ -387,17 +398,17 @@ export default function GnostosEpiAgnostosPage() {
                     </span>
                     {currentStep === 1 && (
                       <p>
-                        Στον αριστερό δίσκο έχουμε <strong>{activeA} όμοια κουτιά $x$</strong>. Στον δεξιό δίσκο έχουμε συνολικά <strong>{activeB} μπάλες</strong>. Η ζυγαριά ισορροπεί: <strong>{activeA} · x ＝ {activeB}</strong>.
+                        Στον αριστερό δίσκο έχουμε <strong>{activeA} όμοια κουτιά x</strong>. Στον δεξιό δίσκο έχουμε συνολικά <strong>{activeB} μπάλες</strong>. Η ζυγαριά ισορροπεί: <strong>{activeA} · x ＝ {activeB}</strong>.
                       </p>
                     )}
                     {currentStep === 2 && (
                       <p className="text-amber-800">
-                        Χωρίζουμε τις {activeB} μπάλες του δεξιού δίσκου σε <strong>{activeA} ίσες ομάδες</strong> (όσα είναι και τα κουτιά). Κάθε ομάδα αντιστοιχεί ακριβώς σε 1 κουτί $x$!
+                        Χωρίζουμε τις {activeB} μπάλες του δεξιού δίσκου σε <strong>{activeA} ίσες ομάδες</strong> (όσα είναι και τα κουτιά). Κάθε ομάδα αντιστοιχεί ακριβώς σε 1 κουτί x!
                       </p>
                     )}
                     {currentStep === 3 && (
                       <p className="text-emerald-800 font-bold">
-                        Κρατάμε μόνο <strong>1 κουτί $x$</strong> και <strong>1 ομάδα μπαλών</strong> (διαίρεση με το {activeA}). Το κουτί $x$ περιέχει ακριβώς: <strong>x ＝ {activeB} : {activeA} ＝ {exactSolution} μπάλες</strong>!
+                        Κρατάμε μόνο <strong>1 κουτί x</strong> και <strong>1 ομάδα μπαλών</strong> (διαίρεση με το {activeA}). Το κουτί x περιέχει ακριβώς: <strong>x ＝ {activeB} : {activeA} ＝ {exactSolution} μπάλες</strong>!
                       </p>
                     )}
                   </div>
@@ -405,7 +416,7 @@ export default function GnostosEpiAgnostosPage() {
                 </div>
 
                 <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
-                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο παράγοντα $x$, κάνουμε πάντα <strong>διαίρεση: $x = \beta : \alpha$</strong>!
+                  💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο παράγοντα x, κάνουμε πάντα <strong>διαίρεση: x ＝ β : α</strong>!
                 </div>
               </div>
 
@@ -574,7 +585,7 @@ export default function GnostosEpiAgnostosPage() {
                         </g>
                       )}
 
-                      {/* 6. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ (ΟΜΑΔΟΠΟΙΗΜΕΝΕΣ Ή 1 ΜΕΡΙΔΑ ΣΤΟ ΒΗΜΑ 3) */}
+                      {/* 6. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ ΜΕ SUB-GRID */}
                       {rightBalls.map((ball) => {
                         if (currentStep === 3 && !ball.isKeptInStep3) return null;
 
@@ -593,8 +604,8 @@ export default function GnostosEpiAgnostosPage() {
                               strokeWidth="1.5"
                             />
                             {/* Specular 3D Highlight */}
-                            <ellipse cx={ball.x - 3} cy={ball.y - 3} rx="3" ry="2" fill="#ffffff" opacity="0.65" />
-                            <text x={ball.x} y={ball.y + 3.5} fill="#ffffff" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                            <ellipse cx={ball.x - 2.5} cy={ball.y - 2.5} rx="2.5" ry="1.8" fill="#ffffff" opacity="0.65" />
+                            <text x={ball.x} y={ball.y + 3} fill="#ffffff" fontSize="8" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                               1
                             </text>
                           </g>
