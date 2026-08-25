@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Όριο για τον μέγιστο διαιρετέο x (ώστε να χωράνε άψογα οι μπάλες)
+// Όριο για τον μέγιστο διαιρετέο x
 const MAX_TOTAL_X = 36;
 
 const PRESETS = [
@@ -14,14 +14,14 @@ const PRESETS = [
   { a: 6, b: 4, label: "x : 6 ＝ 4 (x ＝ 24)" }
 ];
 
-// Χρώματα μεριδίων για την ανασύνθεση του αρχικού συνόλου
+// Χρώματα ανά κομμάτι/διαμέρισμα
 const PORTION_COLORS = [
-  { fill: "url(#ballGold)", stroke: "#b45309", tag: "#f59e0b" },
-  { fill: "url(#ballGreen)", stroke: "#047857", tag: "#10b981" },
-  { fill: "url(#ballBlue)", stroke: "#1d4ed8", tag: "#3b82f6" },
-  { fill: "url(#ballPurple)", stroke: "#6b21a8", tag: "#a855f7" },
-  { fill: "url(#ballPink)", stroke: "#be185d", tag: "#ec4899" },
-  { fill: "url(#ballCyan)", stroke: "#0e7490", tag: "#06b6d4" }
+  { fill: "url(#ballGold)", stroke: "#b45309", tag: "#f59e0b", bg: "rgba(245, 158, 11, 0.2)" },
+  { fill: "url(#ballGreen)", stroke: "#047857", tag: "#10b981", bg: "rgba(16, 185, 129, 0.2)" },
+  { fill: "url(#ballBlue)", stroke: "#1d4ed8", tag: "#3b82f6", bg: "rgba(59, 130, 246, 0.2)" },
+  { fill: "url(#ballPurple)", stroke: "#6b21a8", tag: "#a855f7", bg: "rgba(168, 85, 247, 0.2)" },
+  { fill: "url(#ballPink)", stroke: "#be185d", tag: "#ec4899", bg: "rgba(236, 72, 153, 0.2)" },
+  { fill: "url(#ballCyan)", stroke: "#0e7490", tag: "#06b6d4", bg: "rgba(6, 182, 212, 0.2)" }
 ];
 
 export default function AgnostosDiaGnostosPage() {
@@ -29,14 +29,14 @@ export default function AgnostosDiaGnostosPage() {
   const [paramA, setParamA] = useState(3);
   const [paramB, setParamB] = useState(4);
 
-  // Βήμα διαδραστικής επίλυσης: 1 (1 μερίδιο = β), 2 (Πολλαπλασιασμός επί α), 3 (Πλήρες x = α · β)
+  // Βήμα διαδραστικής επίλυσης: 1 (1 κομμάτι = β), 2 (Πολλαπλασιασμός επί α), 3 (Μπάλες σε κάθε κομμάτι του x)
   const [currentStep, setCurrentStep] = useState(1);
 
   // Ασφαλείς αριθμητικές τιμές
   const activeA = Math.max(2, Math.min(6, Number(paramA) || 2));
   
   function getMaxBForA(a) {
-    return Math.min(8, Math.floor(MAX_TOTAL_X / a));
+    return Math.min(7, Math.floor(MAX_TOTAL_X / a));
   }
 
   const rawB = Math.max(1, Number(paramB) || 1);
@@ -67,22 +67,27 @@ export default function AgnostosDiaGnostosPage() {
   };
 
   // Σταθερή γεωμετρία σφαιρών
-  const BALL_RADIUS = 8.5;
-  const BALL_SPACING_Y = 18;
+  const BALL_RADIUS = 8;
+  const BALL_SPACING_Y = 17;
   const BASE_Y = 248;
 
-  // 1. Αριστερός Δίσκος: Στο Βήμα 1 & 2 φαίνεται 1 κουτί x με ένδειξη "/a". Στο Βήμα 3 φαίνεται ολόκληρο το x
-  // 2. Δεξιός Δίσκος: Στο Βήμα 1 φαίνονται b μπάλες. Στα Βήματα 2 & 3 φαίνονται όλες οι a * b μπάλες χωρισμένες σε `activeA` στήλες
+  // 1. Γεωμετρία Κουτιού x χωρισμένο σε `activeA` κομμάτια (Αριστερός Δίσκος)
+  const TOTAL_BOX_WIDTH = activeA * 34 + 10;
+  const TOTAL_BOX_HEIGHT = 74;
+  const boxStartX = 150 - TOTAL_BOX_WIDTH / 2;
+  const boxStartY = BASE_Y - TOTAL_BOX_HEIGHT - 2;
+
+  // 2. Δεξιός Δίσκος: Στο Βήμα 1 φαίνονται b μπάλες. Στα Βήματα 2 & 3 φαίνονται όλες οι a * b μπάλες
   const currentRightPortions = currentStep === 1 ? 1 : activeA;
   const MAX_STACK_HEIGHT = 6;
   const rightBalls = [];
-  const groupSpacing = activeA <= 3 ? 42 : activeA <= 4 ? 34 : 26;
+  const groupSpacing = activeA <= 3 ? 42 : activeA <= 4 ? 32 : 24;
   const startGroupCenterX = 610 - ((currentRightPortions - 1) * groupSpacing) / 2;
 
   for (let g = 0; g < currentRightPortions; g++) {
     const centerGX = startGroupCenterX + g * groupSpacing;
     const subCols = activeB > MAX_STACK_HEIGHT ? 2 : 1;
-    const subColSpacing = 16;
+    const subColSpacing = 15;
     const startSubColX = centerGX - ((subCols - 1) * subColSpacing) / 2;
 
     for (let r = 0; r < activeB; r++) {
@@ -99,24 +104,31 @@ export default function AgnostosDiaGnostosPage() {
     }
   }
 
-  // 3. Θέσεις σφαιρών ΜΕΣΑ στο ανοιχτό πλήρες κουτί x (Βήμα 3)
-  const insideFullBoxBalls = [];
-  const colsInside = Math.min(6, Math.max(3, activeA));
-  for (let i = 0; i < exactSolution; i++) {
-    const row = Math.floor(i / colsInside);
-    const col = i % colsInside;
-    insideFullBoxBalls.push({
-      id: `inside-full-${i}`,
-      x: 150 - ((colsInside - 1) * 15) / 2 + col * 15,
-      y: BASE_Y - 14 - row * 15
-    });
+  // 3. Θέσεις σφαιρών ΜΕΣΑ ΣΕ ΚΑΘΕ ΚΟΜΜΑΤΙ του κουτιού x (Βήμα 3)
+  const insidePortionBalls = [];
+  for (let g = 0; g < activeA; g++) {
+    const pCenterX = boxStartX + 5 + g * 34 + 17;
+    const subCols = activeB > 4 ? 2 : 1;
+    const subSpacing = 12;
+    const startSubX = pCenterX - ((subCols - 1) * subSpacing) / 2;
+
+    for (let r = 0; r < activeB; r++) {
+      const col = Math.floor(r / 4);
+      const row = r % 4;
+      insidePortionBalls.push({
+        id: `inside-p-${g}-${r}`,
+        group: g,
+        x: startSubX + col * subSpacing,
+        y: boxStartY + TOTAL_BOX_HEIGHT - 12 - row * 14
+      });
+    }
   }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
         <title>➗ Εξισώσεις: Άγνωστος Διαιρετέος (x : α = β) - LearnMaths.gr</title>
-        <meta name="description" content="Διαδραστική θεωρία με 3D ζυγαριά, ανασύνθεση μεριδίων και πολλαπλασιασμό για την επίλυση εξισώσεων όπου ο άγνωστος είναι διαιρετέος (x : α = β) για τη ΣΤ' Δημοτικού." />
+        <meta name="description" content="Διαδραστική θεωρία με 3D ζυγαριά, χωρισμό του κουτιού x σε κομμάτια και ανασύνθεση με πολλαπλασιασμό (x : α = β) για τη ΣΤ' Δημοτικού." />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
@@ -163,7 +175,7 @@ export default function AgnostosDiaGnostosPage() {
                   37. Εξισώσεις: Ο Άγνωστος είναι Διαιρετέος (x : α ＝ β)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο διαιρετέο (x)</strong>: αν μοιράσαμε το αρχικό ποσό x σε α ίσα μερίδια και το κάθε μερίδιο έχει β, για να βρούμε ολόκληρο το αρχικό ποσό, κάνουμε <strong>πολλαπλασιασμό: x ＝ α · β</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο διαιρετέο (x)</strong>: κόβουμε το κουτί x σε <strong>α ίσα κομμάτια</strong>. Αν το κάθε κομμάτι περιέχει <strong>β μπάλες</strong>, για να βρούμε πόσες έχει όλο το κουτί, κάνουμε <strong>πολλαπλασιασμό: x ＝ α · β</strong>!
                 </p>
               </div>
 
@@ -191,12 +203,12 @@ export default function AgnostosDiaGnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">1. Ποιος είναι ο Διαιρετέος;</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Στη διαίρεση x : α ＝ β, το x είναι ο <strong>διαιρετέος</strong> (η αρχική μεγάλη ποσότητα που μοιράζεται σε ίσα μέρη).
+                  Στη διαίρεση x : α ＝ β, το x είναι ο <strong>διαιρετέος</strong> (το ολόκληρο αρχικό κουτί που κόβεται σε α ίσα κομμάτια).
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
                 <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-blue-900">
-                  x : 3 ＝ 4 (x ＝ Αρχικό Σύνολο)
+                  x : 3 ＝ 4 (1 κομμάτι έχει 4)
                 </span>
               </div>
             </div>
@@ -208,7 +220,7 @@ export default function AgnostosDiaGnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">2. Ο Κανόνας Επίλυσης</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Για να βρούμε τον άγνωστο διαιρετέο, <strong>πολλαπλασιάζουμε τον διαιρέτη με το πηλίκο</strong> (αντίστροφη πράξη):
+                  Για να βρούμε το περιεχόμενο όλου του κουτιού x, <strong>πολλαπλασιάζουμε το πλήθος των κομματιών (α) με το περιεχόμενο του ενός (β)</strong>:
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -225,7 +237,7 @@ export default function AgnostosDiaGnostosPage() {
                 </div>
                 <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Βάζουμε το x στη θέση του και ελέγχουμε αν η διαίρεση είναι σωστή: 12 : 3 ＝ 4!
+                  Αν μοιράσουμε τις 12 μπάλες στα 3 ίσα κομμάτια του κουτιού, κάθε κομμάτι παίρνει ακριβώς 4 μπάλες: 12 : 3 ＝ 4!
                 </p>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
@@ -236,15 +248,15 @@ export default function AgnostosDiaGnostosPage() {
             </div>
           </div>
 
-          {/* 4. INTERACTIVE PLAYGROUND (3D ΖΥΓΑΡΙΑ ΜΕ ΑΝΑΣΥΝΘΕΣΗ ΜΕΡΙΔΙΩΝ) */}
+          {/* 4. INTERACTIVE PLAYGROUND (3D ΖΥΓΑΡΙΑ ΜΕ ΚΟΥΤΙ ΧΩΡΙΣΜΕΝΟ ΣΕ ΚΟΜΜΑΤΙΑ) */}
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Ανασύνθεση του Αρχικού Συνόλου x
+                  <span>🕹️</span> Διαδραστικό Εργαστήριο: Το Κουτί x Χωρισμένο σε {activeA} Κομμάτια
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Ρύθμισε τον διαιρέτη α και το μέγεθος κάθε μεριδίου β και δες πώς ενώνονται τα α μερίδια για να αποκαλυφθεί το ολικό x!
+                  Ρύθμισε τον διαιρέτη α και τις μπάλες ανά κομμάτι β και δες πώς οι μπάλες γεμίζουν όλα τα κομμάτια του x!
                 </p>
               </div>
 
@@ -259,7 +271,7 @@ export default function AgnostosDiaGnostosPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  1️⃣ 1 Μερίδιο (x / {activeA}) ＝ {activeB}
+                  1️⃣ 1 Κομμάτι (x / {activeA}) ＝ {activeB}
                 </button>
                 <button
                   type="button"
@@ -281,7 +293,7 @@ export default function AgnostosDiaGnostosPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  3️⃣ Ολόκληρο x ＝ {exactSolution}
+                  3️⃣ Μπάλες σε όλα τα {activeA} Κομμάτια (x ＝ {exactSolution})
                 </button>
               </div>
             </div>
@@ -302,7 +314,7 @@ export default function AgnostosDiaGnostosPage() {
                     <div className="grid grid-cols-2 gap-3 text-center">
                       {/* ΔΙΑΙΡΕΤΗΣ (a) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Ίσα Μερίδια (α)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Κομμάτια του x (α)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -326,7 +338,7 @@ export default function AgnostosDiaGnostosPage() {
 
                       {/* ΠΗΛΙΚΟ (b) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες ανά μερίδιο (β)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες ανά κομμάτι (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -385,17 +397,17 @@ export default function AgnostosDiaGnostosPage() {
                     </span>
                     {currentStep === 1 && (
                       <p>
-                        Στον αριστερό δίσκο έχουμε <strong>το ένα μερίδιο (x / {activeA})</strong> από το αρχικό σύνολο. Στον δεξιό δίσκο αυτό ζυγίζει <strong>{activeB} μπάλες</strong>: <strong>x : {activeA} ＝ {activeB}</strong>.
+                        Το κουτί x είναι χωρισμένο σε <strong>{activeA} ίσα κομμάτια</strong>. Το 1ο κομμάτι μόνο ισούται με <strong>{activeB} μπάλες</strong>: <strong>x : {activeA} ＝ {activeB}</strong>.
                       </p>
                     )}
                     {currentStep === 2 && (
                       <p className="text-amber-800">
-                        Πολλαπλασιάζουμε επί {activeA} και τα δύο μέλη! Παίρνουμε <strong>όλα τα {activeA} ίσα μερίδια</strong> των {activeB} μπαλών.
+                        Πολλαπλασιάζουμε επί {activeA}! Παίρνουμε {activeA} ίσες ομάδες των {activeB} μπαλών, μία ομάδα για κάθε κομμάτι του x.
                       </p>
                     )}
                     {currentStep === 3 && (
                       <p className="text-emerald-800 font-bold">
-                        Ανασυνθέσαμε ολόκληρο το κουτί x! Περιέχει συνολικά {activeA} · {activeB} ＝ <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeA} · {activeB} ＝ {exactSolution}</strong>.
+                        Οι μπάλες μπαίνουν <strong>μέσα σε κάθε κομμάτι του κουτιού x</strong> ({activeB} μπάλες σε καθένα από τα {activeA} κομμάτια). Όλο το κουτί x περιέχει: <strong>x ＝ {activeA} · {activeB} ＝ {exactSolution} μπάλες</strong>!
                       </p>
                     )}
                   </div>
@@ -407,7 +419,7 @@ export default function AgnostosDiaGnostosPage() {
                 </div>
               </div>
 
-              {/* RIGHT: BIG 3D SCALE & PORTIONS RECONSTRUCTION VISUALIZER (8 COLS) */}
+              {/* RIGHT: BIG 3D SCALE & SECTIONED BOX VISUALIZER (8 COLS) */}
               <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[580px] space-y-6">
                 
                 {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΒΗΜΑΤΟΣ */}
@@ -421,8 +433,8 @@ export default function AgnostosDiaGnostosPage() {
                   </div>
 
                   <div className="font-mono text-base md:text-lg font-black text-indigo-700 bg-white px-4 py-2 rounded-2xl border border-indigo-200 shadow-xs">
-                    {currentStep === 1 && `Βήμα 1: 1 μερίδιο (x / ${activeA}) ＝ ${activeB}`}
-                    {currentStep === 2 && `Βήμα 2: Πολλαπλασιασμός επί ${activeA} (όλα τα μερίδια)`}
+                    {currentStep === 1 && `Βήμα 1: 1 από τα ${activeA} κομμάτια ＝ ${activeB}`}
+                    {currentStep === 2 && `Βήμα 2: ${activeA} ομάδες των ${activeB} μπαλών`}
                     {currentStep === 3 && `Βήμα 3: x ＝ ${activeA} · ${activeB} ＝ ${exactSolution}`}
                   </div>
                 </div>
@@ -431,7 +443,7 @@ export default function AgnostosDiaGnostosPage() {
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                      ⚖️ Οπτική Ζυγαριά: Αριστερός Δίσκος ({currentStep === 3 ? "Ολόκληρο x" : `x / ${activeA}`}) vs Δεξιός Δίσκος ({currentStep === 1 ? activeB : `${activeA} · ${activeB} ＝ ${exactSolution}`})
+                      ⚖️ Οπτική Ζυγαριά: Αριστερός Δίσκος (Κουτί x σε {activeA} Κομμάτια) vs Δεξιός Δίσκος ({currentStep === 1 ? activeB : `${activeA} · ${activeB} ＝ ${exactSolution}`})
                     </span>
                     <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
                       ✔️ Τέλεια Ισορροπία
@@ -526,58 +538,68 @@ export default function AgnostosDiaGnostosPage() {
                       <path d="M 490 250 Q 610 292 730 250 Z" fill="url(#rightDishGrad)" filter="url(#shadow3d)" />
                       <rect x="490" y="248" width="240" height="6" fill="#065f46" rx="3" />
 
-                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΚΟΥΤΙ x (ΜΕΡΙΔΙΟ Ή ΟΛΟΚΛΗΡΟ) */}
-                      {currentStep < 3 ? (
-                        // Βήματα 1 & 2: 1 μερίδιο του κουτιού x
-                        <g transform="translate(100, 180)" filter="url(#shadow3d)">
-                          <rect 
-                            width="100" 
-                            height="68" 
-                            rx="14" 
-                            fill="rgba(245, 158, 11, 0.15)" 
-                            stroke="#d97706" 
-                            strokeWidth="2.5" 
-                            strokeDasharray="5 3"
-                          />
-                          <rect x="8" y="8" width="24" height="24" rx="6" fill="#f59e0b" />
-                          <text x="20" y="25" fill="#ffffff" fontSize="15" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
-                          <text x="62" y="24" fill="#92400e" fontSize="11" fontWeight="900">
-                            1 ΜΕΡΙΔΙΟ
-                          </text>
-                          <text x="50" y="48" fill="#b45309" fontSize="13" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                            x : {activeA}
-                          </text>
-                        </g>
-                      ) : (
-                        // Βήμα 3: Ολόκληρο το ενωμένο κουτί x με όλες τις μπάλες μέσα του
-                        <g filter="url(#shadow3d)">
-                          <rect 
-                            x="90" 
-                            y="170" 
-                            width="120" 
-                            height="78" 
-                            rx="16" 
-                            fill="rgba(16, 185, 129, 0.18)" 
-                            stroke="#059669" 
-                            strokeWidth="3" 
-                            filter="url(#glowGold)"
-                          />
-                          <rect x="98" y="178" width="26" height="26" rx="7" fill="#10b981" />
-                          <text x="111" y="196" fill="#ffffff" fontSize="16" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
-                          <text x="160" y="195" fill="#065f46" fontSize="11" fontWeight="900">ΟΛΟΚΛΗΡΟ x</text>
+                      {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ x ΧΩΡΙΣΜΕΝΟ ΣΕ a ΚΟΜΜΑΤΙΑ */}
+                      <g filter="url(#shadow3d)">
+                        {/* Εξωτερικό περίβλημα όλου του κουτιού x */}
+                        <rect 
+                          x={boxStartX} 
+                          y={boxStartY} 
+                          width={TOTAL_BOX_WIDTH} 
+                          height={TOTAL_BOX_HEIGHT} 
+                          rx="14" 
+                          fill="#f8fafc" 
+                          stroke={currentStep === 3 ? "#059669" : "#64748b"} 
+                          strokeWidth="2.5" 
+                        />
 
-                          {/* Μπάλες μέσα στο πλήρες κουτί x */}
-                          {insideFullBoxBalls.map((pos) => (
-                            <g key={pos.id} filter="url(#glowGold)">
-                              <circle cx={pos.x} cy={pos.y} r="6.5" fill="url(#ballGold)" stroke="#b45309" strokeWidth="1" />
-                              <ellipse cx={pos.x - 2} cy={pos.y - 2} rx="2" ry="1.5" fill="#ffffff" opacity="0.6" />
-                              <text x={pos.x} y={pos.y + 2.5} fill="#ffffff" fontSize="7" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
+                        {/* Επικεφαλίδα Κουτιού x */}
+                        <rect x={boxStartX + 6} y={boxStartY + 5} width={TOTAL_BOX_WIDTH - 12} height="18" rx="6" fill={currentStep === 3 ? "#10b981" : "#f59e0b"} />
+                        <text x={150} y={boxStartY + 18} fill="#ffffff" fontSize="12" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                          {currentStep === 3 ? `ΟΛΟΚΛΗΡΟ ΚΟΥΤΙ x (x ＝ ${exactSolution})` : `ΚΟΥΤΙ x ΧΩΡΙΣΜΕΝΟ ΣΕ ${activeA} ΚΟΜΜΑΤΙΑ`}
+                        </text>
+
+                        {/* Τα a διαμερίσματα/κομμάτια */}
+                        {Array.from({ length: activeA }).map((_, i) => {
+                          const pX = boxStartX + 5 + i * 34;
+                          const pY = boxStartY + 26;
+                          const isHighlightedPortion = currentStep < 3 ? i === 0 : true;
+
+                          return (
+                            <g key={`portion-box-${i}`}>
+                              <rect
+                                x={pX}
+                                y={pY}
+                                width="30"
+                                height="42"
+                                rx="8"
+                                fill={isHighlightedPortion ? PORTION_COLORS[i % PORTION_COLORS.length].bg : "#f1f5f9"}
+                                stroke={isHighlightedPortion ? PORTION_COLORS[i % PORTION_COLORS.length].tag : "#cbd5e1"}
+                                strokeWidth={isHighlightedPortion ? "2" : "1"}
+                                strokeDasharray={currentStep < 3 && i > 0 ? "3 2" : "none"}
+                              />
+                              {currentStep < 3 && (
+                                <text x={pX + 15} y={pY + 25} fill={i === 0 ? "#b45309" : "#94a3b8"} fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                                  {i === 0 ? `x/${activeA}` : "?"}
+                                </text>
+                              )}
                             </g>
-                          ))}
-                        </g>
-                      )}
+                          );
+                        })}
 
-                      {/* 6. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ (1 ΜΕΡΙΔΙΟ ΣΤΟ ΒΗΜΑ 1, ΟΛΑ ΤΑ ΜΕΡΙΔΙΑ ΣΤΑ ΒΗΜΑΤΑ 2 & 3) */}
+                        {/* Βήμα 3: Οι μπάλες ΜΕΣΑ σε κάθε κομμάτι του x */}
+                        {currentStep === 3 && insidePortionBalls.map((pos) => {
+                          const colTheme = PORTION_COLORS[pos.group % PORTION_COLORS.length];
+                          return (
+                            <g key={pos.id} filter="url(#glowGold)">
+                              <circle cx={pos.x} cy={pos.y} r="5.5" fill={colTheme.fill} stroke={colTheme.stroke} strokeWidth="1" />
+                              <ellipse cx={pos.x - 1.5} cy={pos.y - 1.5} rx="1.8" ry="1.2" fill="#ffffff" opacity="0.6" />
+                              <text x={pos.x} y={pos.y + 2} fill="#ffffff" fontSize="6" fontWeight="900" textAnchor="middle" fontFamily="monospace">1</text>
+                            </g>
+                          );
+                        })}
+                      </g>
+
+                      {/* 6. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ (1 ΟΜΑΔΑ ΣΤΟ ΒΗΜΑ 1, ΟΛΕΣ ΟΙ ΟΜΑΔΕΣ ΣΤΑ ΒΗΜΑΤΑ 2 & 3) */}
                       {rightBalls.map((ball) => {
                         const colTheme = currentStep === 1 
                           ? { fill: "url(#ballGreen)", stroke: "#047857" } 
@@ -604,12 +626,12 @@ export default function AgnostosDiaGnostosPage() {
 
                       {/* Ετικέτες κάτω από τους δίσκους */}
                       <text x="150" y="325" fill="#1e3a8a" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                        {currentStep === 3 ? `Ολόκληρο x ＝ ${exactSolution} μπάλες` : `1 Μερίδιο: x : ${activeA}`}
+                        {currentStep === 3 ? `x ＝ ${exactSolution} μπάλες (${activeA} κομμάτια · ${activeB})` : `1 από τα ${activeA} κομμάτια (x : ${activeA})`}
                       </text>
 
                       <text x="610" y="325" fill="#064e3b" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                        {currentStep === 1 && `1 Μερίδιο: ${activeB} μπάλες`}
-                        {currentStep === 2 && `Πολλαπλασιασμός: ${activeA} · ${activeB} ＝ ${exactSolution} μπάλες`}
+                        {currentStep === 1 && `1 Κομμάτι: ${activeB} μπάλες`}
+                        {currentStep === 2 && `${activeA} Ομάδες των ${activeB} μπαλών`}
                         {currentStep === 3 && `Σύνολο: ${exactSolution} μπάλες`}
                       </text>
                     </svg>
@@ -643,7 +665,7 @@ export default function AgnostosDiaGnostosPage() {
 
                 {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
                 <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                  💡 Συμπέρασμα: Στην εξίσωση <strong>x : {activeA} ＝ {activeB}</strong>, ο άγνωστος διαιρετέος ισούται με <strong>x ＝ {activeA} · {activeB} ＝ {exactSolution}</strong> (το αρχικό ολικό πλήθος μπαλών)!
+                  💡 Συμπέρασμα: Στην εξίσωση <strong>x : {activeA} ＝ {activeB}</strong>, ο άγνωστος διαιρετέος ισούται με <strong>x ＝ {activeA} · {activeB} ＝ {exactSolution}</strong> (όλες οι μπάλες και στα {activeA} κομμάτια)!
                 </div>
 
               </div>
