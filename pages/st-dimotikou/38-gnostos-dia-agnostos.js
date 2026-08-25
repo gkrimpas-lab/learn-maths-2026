@@ -424,7 +424,7 @@ export default function GnostosDiaAgnostosPage() {
                 {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ 3D ΣΤΟ SVG */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
+                    <span className="text-xs font-black text-slate-500 tracking-wider block">
                       ⚖️ Οπτική Ζυγαριά: Αριστερός Δίσκος ({activeA} : x) vs Δεξιός Δίσκος ({activeB} Μπάλες ανά Μερίδιο)
                     </span>
                     <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
