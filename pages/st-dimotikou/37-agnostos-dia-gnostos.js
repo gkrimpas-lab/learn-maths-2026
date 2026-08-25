@@ -160,10 +160,10 @@ export default function AgnostosDiaGnostosPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 37
+                    Ενοτητα 37
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -302,14 +302,14 @@ export default function AgnostosDiaGnostosPage() {
                   
                   {/* ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ */}
                   <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider block">
+                    <span className="text-xs font-black text-slate-800 tracking-wider block">
                       ⚙️ Ρύθμιση Εξίσωσης: x : α ＝ β
                     </span>
 
                     <div className="grid grid-cols-2 gap-3 text-center">
                       {/* ΔΙΑΙΡΕΤΗΣ (a) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Κομμάτια του x (α)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Κομμάτια του x (α)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -333,7 +333,7 @@ export default function AgnostosDiaGnostosPage() {
 
                       {/* ΠΗΛΙΚΟ (b) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες ανά κομμάτι (β)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Μπάλες ανά κομμάτι (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -364,7 +364,7 @@ export default function AgnostosDiaGnostosPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-1 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -388,11 +388,11 @@ export default function AgnostosDiaGnostosPage() {
                   {/* ΕΠΕΞΗΓΗΣΗ ΑΝΑΛΟΓΑ ΜΕ ΤΟ ΕΝΕΡΓΟ ΒΗΜΑ */}
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
                     <span className="font-black text-slate-900 uppercase block text-[11px]">
-                      📖 Τι συμβαίνει στο Βήμα {currentStep}:
+                      📖 Τι συμβαινει στο Βημα {currentStep}:
                     </span>
                     {currentStep === 1 && (
                       <p>
-                        Το κουτί x είναι χωρισμένο σε <strong>{activeA} ίσα κομμάτια</strong>. Το 1ο κομμάτι μόνο ισούται με <strong>{activeB} μπάλες</strong>: <strong>x : {activeA} ＝ {activeB}</strong>.
+                        Το κουτί x είναι χωρισμένο σε <strong>{activeA} ίσα κομμάτια</strong>. Το 1ο κομμάτι μόνο ισούται με <strong>{activeB} μπάλες</strong>: <strong>  x : {activeA} ＝ {activeB}</strong>.
                       </p>
                     )}
                     {currentStep === 2 && (
@@ -437,7 +437,7 @@ export default function AgnostosDiaGnostosPage() {
                 {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ 3D ΣΤΟ SVG */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center">
                   <div className="flex justify-between items-center px-1">
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
+                    <span className="text-xs font-black text-slate-500 tracking-wider block">
                       ⚖️ Οπτική Ζυγαριά: Αριστερός Δίσκος (Κουτί x σε {activeA} Κομμάτια) vs Δεξιός Δίσκος ({currentStep === 1 ? activeB : `${activeA} · ${activeB} ＝ ${exactSolution}`})
                     </span>
                     <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
