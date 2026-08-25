@@ -34,13 +34,15 @@ export default function GnostosEpiAgnostosPage() {
 
   // Ασφαλείς αριθμητικές τιμές
   const activeA = Math.max(2, Math.min(6, Number(paramA) || 2));
-  
-  function getMaxXForA(a) {
-    return Math.min(10, Math.floor(MAX_PRODUCT / a));
+
+  function getMaxBForA(a) {
+    const maxQuotient = Math.min(10, Math.floor(MAX_PRODUCT / a));
+    return a * maxQuotient;
   }
 
+  // Εξασφάλιση ότι το b είναι πολλαπλάσιο του a
   const rawB = Number(paramB) || activeA * 4;
-  const quotient = Math.max(1, Math.min(getMaxXForA(activeA), Math.round(rawB / activeA)));
+  const quotient = Math.max(1, Math.min(Math.floor(getMaxBForA(activeA) / activeA), Math.round(rawB / activeA)));
   const activeB = activeA * quotient;
 
   // Σωστή μαθηματική λύση: x = b / a
@@ -55,16 +57,16 @@ export default function GnostosEpiAgnostosPage() {
   const adjustA = (amount) => {
     setCurrentStep(1);
     const nextA = Math.max(2, Math.min(6, activeA + amount));
-    const nextX = Math.min(getMaxXForA(nextA), exactSolution);
+    const nextX = Math.min(Math.floor(MAX_PRODUCT / nextA), exactSolution);
     setParamA(nextA);
     setParamB(nextA * nextX);
   };
 
-  const adjustXTarget = (amount) => {
+  const adjustB = (amountSteps) => {
     setCurrentStep(1);
-    const maxX = getMaxXForA(activeA);
-    const nextX = Math.max(1, Math.min(maxX, exactSolution + amount));
-    setParamB(activeA * nextX);
+    const maxB = getMaxBForA(activeA);
+    const nextB = Math.max(activeA, Math.min(maxB, activeB + amountSteps * activeA));
+    setParamB(nextB);
   };
 
   // Σταθερή γεωμετρία σφαιρών
@@ -166,17 +168,17 @@ export default function GnostosEpiAgnostosPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικου
+                    🎓 ΣΤ' Δημοτικού
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενοτητα 36
+                    Ενότητα 36
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
                   36. Εξισώσεις: Ο Άγνωστος είναι Παράγοντας Γινομένου (α · x ＝ β)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο παράγοντα x</strong>: Αν α όμοια κουτιά x ζυγίζουν συνολικά β, για να βρούμε τι περιέχει το <strong>ένα κουτί x</strong>, κάνουμε <strong>διαίρεση: x ＝ β : α</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο παράγοντα (x)</strong>: αν α όμοια κουτιά x ζυγίζουν συνολικά β, για να βρούμε τι περιέχει το <strong>ένα κουτί x</strong>, κάνουμε <strong>διαίρεση: x ＝ β : α</strong>!
                 </p>
               </div>
 
@@ -257,7 +259,7 @@ export default function GnostosEpiAgnostosPage() {
                   <span>🕹️</span> Διαδραστικό Εργαστήριο: Η Ζυγαριά του Πολλαπλασιασμού
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Ρύθμισε τον συντελεστή α και το γινόμενο β και δες πώς οι μπάλες μοιράζονται ισόποσα στα α κουτιά!
+                  Ρύθμισε τον συντελεστή α και το γινόμενο β (εξασφαλίζοντας ακριβή διαίρεση) και δες πώς οι μπάλες μοιράζονται ισόποσα στα α κουτιά!
                 </p>
               </div>
 
@@ -315,7 +317,7 @@ export default function GnostosEpiAgnostosPage() {
                     <div className="grid grid-cols-2 gap-3 text-center">
                       {/* ΠΛΗΘΟΣ ΚΟΥΤΙΩΝ (a) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Κουτιά x (α)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Κουτιά (α)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -337,24 +339,24 @@ export default function GnostosEpiAgnostosPage() {
                         </div>
                       </div>
 
-                      {/* ΠΕΡΙΕΧΟΜΕΝΟ ΑΝΑ ΚΟΥΤΙ (x) */}
+                      {/* ΣΥΝΟΛΙΚΟ ΓΙΝΟΜΕΝΟ (b) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες ανά κουτί (x)</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Γινόμενο (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
-                            disabled={exactSolution <= 1}
-                            onClick={() => adjustXTarget(-1)} 
-                            className="px-2 py-1 font-black text-amber-600 hover:bg-slate-200 disabled:opacity-30 rounded"
+                            disabled={activeB <= activeA}
+                            onClick={() => adjustB(-1)} 
+                            className="px-2 py-1 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-30 rounded"
                           >
                             -
                           </button>
-                          <span className="w-full text-center font-mono font-black text-base text-amber-600">{exactSolution}</span>
+                          <span className="w-full text-center font-mono font-black text-base text-emerald-600">{activeB}</span>
                           <button 
                             type="button" 
-                            disabled={exactSolution >= getMaxXForA(activeA)}
-                            onClick={() => adjustXTarget(1)} 
-                            className="px-2 py-1 font-black text-amber-600 hover:bg-slate-200 disabled:opacity-30 rounded"
+                            disabled={activeB >= getMaxBForA(activeA)}
+                            onClick={() => adjustB(1)} 
+                            className="px-2 py-1 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-30 rounded"
                           >
                             +
                           </button>
@@ -362,8 +364,8 @@ export default function GnostosEpiAgnostosPage() {
                       </div>
                     </div>
 
-                    <div className="text-center font-mono text-xs font-bold text-emerald-800 bg-emerald-50 p-2 rounded-xl border border-emerald-200">
-                      Συνολικό Γινόμενο (β): <strong>{activeA} · {exactSolution} ＝ {activeB}</strong>
+                    <div className="text-center font-mono text-xs font-bold text-indigo-800 bg-indigo-50 p-2 rounded-xl border border-indigo-200">
+                      Εξίσωση: <strong>{activeA} · x ＝ {activeB}</strong>
                     </div>
                   </div>
 
@@ -541,7 +543,6 @@ export default function GnostosEpiAgnostosPage() {
 
                       {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΑ ΚΟΥΤΙΑ x */}
                       {currentStep < 3 ? (
-                        // Βήματα 1 & 2: Εμφάνιση των a κουτιών x
                         leftBoxes.map((box, i) => (
                           <g key={box.id} transform={`translate(${box.x}, ${box.y})`} filter="url(#shadow3d)">
                             <rect 
@@ -557,7 +558,6 @@ export default function GnostosEpiAgnostosPage() {
                           </g>
                         ))
                       ) : (
-                        // Βήμα 3: Ένα μεγάλο ανοιχτό κουτί x με τις μπάλες μέσα του
                         <g filter="url(#shadow3d)">
                           <rect 
                             x="100" 
@@ -574,7 +574,6 @@ export default function GnostosEpiAgnostosPage() {
                           <text x="119" y="204" fill="#ffffff" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
                           <text x="156" y="202" fill="#92400e" fontSize="11" fontWeight="900">1 ΚΟΥΤΙ x</text>
 
-                          {/* Μπάλες μέσα στο 1 κουτί x */}
                           {insideSingleBoxBalls.map((pos) => (
                             <g key={pos.id} filter="url(#glowGold)">
                               <circle cx={pos.x} cy={pos.y} r="7" fill="url(#ballGold)" stroke="#b45309" strokeWidth="1" />
@@ -603,7 +602,6 @@ export default function GnostosEpiAgnostosPage() {
                               stroke={colTheme.stroke}
                               strokeWidth="1.5"
                             />
-                            {/* Specular 3D Highlight */}
                             <ellipse cx={ball.x - 2.5} cy={ball.y - 2.5} rx="2.5" ry="1.8" fill="#ffffff" opacity="0.65" />
                             <text x={ball.x} y={ball.y + 3} fill="#ffffff" fontSize="8" fontWeight="900" textAnchor="middle" fontFamily="monospace">
                               1
