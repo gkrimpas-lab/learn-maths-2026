@@ -328,10 +328,10 @@ export default function GnostosDiaAgnostosExercisesPage() {
           <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-6`}>
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
+                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                Διαδραστικές Ασκήσεις: Άγνωστος Διαιρέτης ($\alpha : x = \beta$)
+                Διαδραστικές Ασκήσεις: Άγνωστος Διαιρέτης (α : x = β)
               </h1>
               <p className="text-blue-100 text-sm md:text-base max-w-xl">
                 Λύσε τα 8 δυναμικά προβλήματα εξισώσεων διαίρεσης με φυσικούς, δεκαδικούς και κλάσματα!
