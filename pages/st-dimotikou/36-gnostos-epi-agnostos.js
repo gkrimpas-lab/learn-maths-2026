@@ -166,17 +166,17 @@ export default function GnostosEpiAgnostosPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 36
+                    Ενοτητα 36
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
                   36. Εξισώσεις: Ο Άγνωστος είναι Παράγοντας Γινομένου (α · x ＝ β)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο παράγοντα (x)</strong>: αν α όμοια κουτιά x ζυγίζουν συνολικά β, για να βρούμε τι περιέχει το <strong>ένα κουτί x</strong>, κάνουμε <strong>διαίρεση: x ＝ β : α</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο παράγοντα x</strong>: Αν α όμοια κουτιά x ζυγίζουν συνολικά β, για να βρούμε τι περιέχει το <strong>ένα κουτί x</strong>, κάνουμε <strong>διαίρεση: x ＝ β : α</strong>!
                 </p>
               </div>
 
