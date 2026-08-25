@@ -147,17 +147,17 @@ export default function GnostosDiaAgnostosPage() {
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                    🎓 ΣΤ' Δημοτικού
+                    🎓 ΣΤ' Δημοτικου
                   </span>
                   <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ενότητα 38
+                    Ενοτητα 38
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
                   38. Εξισώσεις: Ο Άγνωστος είναι Διαιρέτης (α : x ＝ β)
                 </h1>
                 <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο διαιρέτη (x)</strong>: αν μοιράσουμε το αρχικό σύνολο α σε x ίσα μέρη και κάθε μέρος περιέχει β μπάλες, για να βρούμε σε πόσα μέρη μοιράστηκε, κάνουμε <strong>διαίρεση: x ＝ α : β</strong>!
+                  Μάθε πώς βρίσκουμε τον <strong>άγνωστο διαιρέτη (x)</strong>: Αν μοιράσουμε το αρχικό σύνολο α σε x ίσα μέρη και κάθε μέρος περιέχει β μπάλες, για να βρούμε σε πόσα μέρη μοιράστηκε, κάνουμε <strong>διαίρεση: x ＝ α : β</strong>!
                 </p>
               </div>
 
@@ -289,14 +289,14 @@ export default function GnostosDiaAgnostosPage() {
                   
                   {/* ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ */}
                   <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider block">
+                    <span className="text-xs font-black text-slate-800 tracking-wider block">
                       ⚙️ Ρύθμιση Εξίσωσης: α : x ＝ β
                     </span>
 
                     <div className="grid grid-cols-2 gap-3 text-center">
                       {/* ΜΕΓΕΘΟΣ ΜΕΡΙΔΙΟΥ (b) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μπάλες ανά μέρος (β)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Μπάλες ανά μέρος (β)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -320,7 +320,7 @@ export default function GnostosDiaAgnostosPage() {
 
                       {/* ΠΛΗΘΟΣ ΜΕΡΙΔΙΩΝ (x) */}
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Πλήθος μερών (x)</span>
+                        <span className="text-[10px] font-bold text-slate-400">Πλήθος μερών (x)</span>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -351,7 +351,7 @@ export default function GnostosDiaAgnostosPage() {
                   {/* PRESET BUTTONS */}
                   <div className="space-y-2 pt-2 border-t border-slate-200">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                      Έτοιμα Παραδείγματα:
+                      Ετοιμα Παραδειγματα:
                     </span>
                     <div className="grid grid-cols-1 gap-2">
                       {PRESETS.map((p, idx) => (
@@ -375,7 +375,7 @@ export default function GnostosDiaAgnostosPage() {
                   {/* ΕΠΕΞΗΓΗΣΗ ΑΝΑΛΟΓΑ ΜΕ ΤΟ ΕΝΕΡΓΟ ΒΗΜΑ */}
                   <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
                     <span className="font-black text-slate-900 uppercase block text-[11px]">
-                      📖 Τι συμβαίνει στο Βήμα {currentStep}:
+                      📖 Τι συμβαινει στο Βημα {currentStep}:
                     </span>
                     {currentStep === 1 && (
                       <p>
