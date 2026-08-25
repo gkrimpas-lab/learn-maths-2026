@@ -670,10 +670,10 @@ export default function Epanalipsi2Page() {
                 <span>🏆 2η Μεγάλη Επανάληψη • Κεφάλαια 32 - 38</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                Επαναληπτικό Τεστ: Εξισώσεις & Μεταβλητές
+                Επαναληπτικό Τεστ: Εξισώσεις και Μεταβλητές
               </h1>
               <p className="text-blue-100 text-sm md:text-base max-w-2xl leading-relaxed">
-                16 δυναμικές ερωτήσεις υψηλής δυσκολίας (2 από κάθε κεφάλαιο + 2 συνδυαστικά προβλήματα) με αυτόματη αξιολόγηση!
+                16 ερωτήσεις 2 από κάθε κεφάλαιο + 2 συνδυαστικά προβλήματα με αυτόματη αξιολόγηση!
               </p>
             </div>
 
