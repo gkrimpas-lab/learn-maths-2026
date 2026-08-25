@@ -41,7 +41,8 @@ export default function STDimotikouMenu() {
     { id: '34-agnostos-kai-afairesi', label: '🍕 34. Εξίσωση x - α = β', href: '/st-dimotikou/34-agnostos-kai-afairesi' },
     { id: '35-gnostos-meion-agnostos', label: '🍕 35. Εξίσωση α - x = β', href: '/st-dimotikou/35-gnostos-meion-agnostos' },
     { id: '36-gnostos-epi-agnostos', label: '🍕 36. Εξίσωση α * x = β ή x * α = β', href: '/st-dimotikou/36-gnostos-epi-agnostos' },
-    { id: '37-agnostos-dia-gnostos', label: '🍕 36. Εξίσωση x : α = β', href: '/st-dimotikou/37-agnostos-dia-gnostos' }
+    { id: '37-agnostos-dia-gnostos', label: '🍕 37. Εξίσωση x : α = β', href: '/st-dimotikou/37-agnostos-dia-gnostos' },
+    { id: '38-gnostos-dia-agnostos', label: '🍕 38. Εξίσωση α : x = β', href: '/st-dimotikou/38-gnostos-dia-agnostos' }
   ];
 
   return (
