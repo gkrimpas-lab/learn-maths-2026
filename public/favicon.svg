@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient (LearnMaths Blue -> Indigo) -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#4338ca" />
+    </linearGradient>
+
+    <!-- Pi / Symbol Golden Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- 1. Squircle / Rounded App Badge Container -->
+  <rect x="24" y="24" width="464" height="464" rx="128" fill="url(#bgGrad)" filter="url(#shadow)" />
+
+  <!-- 2. Inner Subtle Border Glow -->
+  <rect x="24" y="24" width="464" height="464" rx="128" fill="none" stroke="#60a5fa" stroke-width="8" opacity="0.4" />
+
+  <!-- 3. Math Symbol Pi (π) / M Design -->
+  <g filter="url(#shadow)">
+    <!-- Top Horizontal Bar with Smooth Curvature -->
+    <path d="M 120 170 Q 256 140 392 170 C 408 173 416 190 410 206 C 404 220 388 226 374 222 Q 256 195 138 222 C 122 226 106 218 102 202 C 98 186 108 172 120 170 Z" fill="#ffffff" />
+
+    <!-- Left Leg -->
+    <path d="M 175 195 L 155 350 C 153 368 136 380 118 376 C 100 372 90 354 94 336 L 120 195 Z" fill="#ffffff" />
+
+    <!-- Right Leg (with Math Curvature) -->
+    <path d="M 335 195 L 340 330 Q 342 365 375 365 Q 405 365 410 335 C 412 318 428 308 444 312 C 460 316 468 334 462 352 Q 445 405 375 405 Q 295 405 290 325 L 285 195 Z" fill="#ffffff" />
+  </g>
+
+  <!-- 4. Glowing Golden Sparkle / Star (Έμπνευση & Μαθηματική Επιτυχία) -->
+  <g transform="translate(380, 110) scale(1.1)">
+    <!-- 4-point Sparkle Star -->
+    <path d="M 0 -38 Q 0 0 38 0 Q 0 0 0 38 Q 0 0 -38 0 Q 0 0 0 -38 Z" fill="url(#goldGrad)" />
+    <!-- Small Center Dot Glow -->
+    <circle cx="0" cy="0" r="8" fill="#ffffff" />
+  </g>
+
+  <!-- 5. Math Dots / Elements (Σύμβολο Διαίρεσης & Πολλαπλασιασμού) -->
+  <circle cx="150" cy="115" r="14" fill="#fbbf24" />
+</svg>
