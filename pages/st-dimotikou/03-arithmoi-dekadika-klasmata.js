@@ -128,10 +128,10 @@ export default function MetatropiDekadikaKlasmataPage() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικού
+                  🎓 ΣΤ' Δημοτικου
                 </span>
                 <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενότητα 3
+                  Ενοτητα 3
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -263,7 +263,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                   <>
                     <div className="flex justify-between items-center">
                       <label className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                        Πληκτρολόγησε Δεκαδικό (0 έως 1):
+                        Πληκτρολογησε Δεκαδικο (0 εως 1):
                       </label>
                       <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
                         έως 3 δεκαδικά
@@ -365,7 +365,7 @@ export default function MetatropiDekadikaKlasmataPage() {
               {/* 2. DYNAMIC READOUT */}
               <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                 <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
-                  ✨ Αποτέλεσμα Μετατροπής:
+                  ✨ Αποτελεσμα Μετατροπης:
                 </span>
                 
                 {activeTab === 'toKlasma' ? (
@@ -407,7 +407,7 @@ export default function MetatropiDekadikaKlasmataPage() {
             <div className="bg-slate-50 border border-slate-200 p-4 sm:p-5 md:p-6 rounded-2xl flex flex-col items-center justify-between space-y-6">
               <div className="text-center space-y-1">
                 <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                  📊 Γεωμετρικό Πλέγμα Ακέραιας Μονάδας
+                  📊 Γεωμετρικο Πλεγμα Ακεραιας Μοναδας
                 </span>
                 <p className="text-xs text-slate-500">
                   Η ακέραιη μονάδα (τετράγωνο) χωρισμένη σε <strong className="text-slate-800">{currentDenominator}</strong> ίσα μέρη ({getGridLabel()}).
@@ -448,7 +448,7 @@ export default function MetatropiDekadikaKlasmataPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
                   <span className="font-black text-xs text-blue-800 uppercase block">
-                    1. Από Δεκαδικό σε Κλάσμα:
+                    1. Απο Δεκαδικο σε Κλασμα:
                   </span>
                   <ul className="text-xs text-slate-600 space-y-1.5">
                     <li>• <strong>0,8</strong> (1 ψηφίο) ➔ <strong>8 / 10</strong> (δέκατα)</li>
@@ -459,7 +459,7 @@ export default function MetatropiDekadikaKlasmataPage() {
 
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
                   <span className="font-black text-xs text-emerald-800 uppercase block">
-                    2. Από Κλάσμα σε Δεκαδικό:
+                    2. Απο Κλασμα σε Δεκαδικο:
                   </span>
                   <ul className="text-xs text-slate-600 space-y-1.5">
                     <li>• <strong>5 / 10</strong> (1 μηδενικό) ➔ <strong>0,5</strong></li>
