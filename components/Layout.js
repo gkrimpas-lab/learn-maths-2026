@@ -4,6 +4,9 @@ import AdSlot from './AdSlot';
 import Script from 'next/script';
 import { LAYOUT } from '../shared/layout-config';
 
+// Βάλε εδώ το δικό σου Measurement ID από το Google Analytics
+const GA_MEASUREMENT_ID = 'G-LNBTZ4JKCB';
+
 export default function Layout({
   children,
   title = "LearnMaths.gr - Τα Μαθηματικά Αλλιώς",
@@ -29,6 +32,20 @@ export default function Layout({
         <link rel="alternate icon" href="/favicon.ico" />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
+
+      {/* --- GOOGLE ANALYTICS (GA4) --- */}
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_MEASUREMENT_ID}');
+        `}
+      </Script>
 
       <div className="flex-1 flex flex-col">
         {/* 1. STICKY NAVBAR */}
