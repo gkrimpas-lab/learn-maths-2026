@@ -156,10 +156,10 @@ export default function PollaplasiasmosPage() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικού
+                  🎓 ΣΤ' Δημοτικου
                 </span>
                 <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενότητα 6
+                  Ενοτητα 6
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -286,7 +286,7 @@ export default function PollaplasiasmosPage() {
               {activeTab === 'antimetathetiki' && (
                 <div className="space-y-5 my-auto">
                   <div>
-                    <span className="text-xs font-black text-slate-500 tracking-wider block mb-1 uppercase">
+                    <span className="text-xs font-black text-slate-500 tracking-wider block mb-1">
                       Ορισμός Παραγόντων (α × β):
                     </span>
                     <p className="text-xs text-slate-500">Πληκτρολόγησε ή άλλαξε με τα κουμπιά τις γραμμές και τις στήλες.</p>
@@ -359,8 +359,8 @@ export default function PollaplasiasmosPage() {
               {activeTab === 'prosetairistiki' && (
                 <div className="space-y-5 my-auto">
                   <div>
-                    <span className="text-xs font-black text-slate-500 tracking-wider block mb-1 uppercase">
-                      3 Διαστάσεις Στερεού (α × β × γ):
+                    <span className="text-xs font-black text-slate-500 tracking-wider block mb-1">
+                      Τρεις Διαστάσεις Στερεού (α × β × γ):
                     </span>
                     <p className="text-xs text-slate-500">Επίλεξε διαστάσεις από {LIMITS.MIN_3D} έως {LIMITS.MAX_3D} για τρισδιάστατο υπολογισμό όγκου.</p>
                   </div>
@@ -415,7 +415,7 @@ export default function PollaplasiasmosPage() {
                 <div className="space-y-5 my-auto">
                   <div>
                     <span className="text-xs font-black text-slate-500 tracking-wider block mb-1 uppercase">
-                      Μαθηματική Δομή Επιμεριστικής:
+                      Μαθηματικη Δομη Επιμεριστικης:
                     </span>
                     <p className="text-xs text-slate-500">α × (β ＋ γ) ＝ α × β ＋ α × γ</p>
                   </div>
@@ -466,9 +466,9 @@ export default function PollaplasiasmosPage() {
             <div className="lg:col-span-6 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-between min-h-[420px] sm:min-h-[460px] shadow-sm">
               <div className="w-full text-center border-b border-slate-100 pb-3">
                 <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                  {activeTab === 'antimetathetiki' && "📊 Οπτικό Πλέγμα Τετραγώνων (Εμβαδόν)"}
-                  {activeTab === 'prosetairistiki' && "📦 3D Ισομετρική Αναπαράσταση Όγκου"}
-                  {activeTab === 'epimeristiki' && "📐 Γεωμετρική Διαίρεση Εμβαδού"}
+                  {activeTab === 'antimetathetiki' && "📊 Οπτικο Πλεγμα Τετραγωνων (Εμβαδον)"}
+                  {activeTab === 'prosetairistiki' && "📦 3D Ισομετρικη Αναπαρασταση Ογκου"}
+                  {activeTab === 'epimeristiki' && "📐 Γεωμετρικη Διαιρεση Εμβαδου"}
                 </span>
               </div>
 
