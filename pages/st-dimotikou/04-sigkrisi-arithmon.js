@@ -112,10 +112,10 @@ export default function SigkrisiArithmonPage() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικού
+                  🎓 ΣΤ' Δημοτικου
                 </span>
                 <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενότητα 4
+                  Ενοτητα 4
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -262,7 +262,7 @@ export default function SigkrisiArithmonPage() {
               {/* DYNAMIC RESULT BADGE (5 COLS) */}
               <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                 <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
-                  ✨ Σχέση Διάταξης:
+                  ✨ Σχεση Διαταξης:
                 </span>
                 
                 <div className="flex items-center justify-center gap-3 text-xl sm:text-2xl md:text-3xl font-black font-mono flex-wrap">
@@ -284,7 +284,7 @@ export default function SigkrisiArithmonPage() {
             <div className="bg-slate-50 border border-slate-200 p-4 sm:p-5 md:p-6 rounded-2xl flex flex-col items-center justify-between space-y-6">
               <div className="text-center space-y-1">
                 <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                  ⚖️ Διαδραστική Ζυγαριά Αξίας
+                  ⚖️ Διαδραστικη Ζυγαρια Αξιας
                 </span>
                 <p className="text-xs text-slate-500">
                   Η ζυγαριά γέρνει αυτόματα προς την πλευρά με τη μεγαλύτερη αριθμητική αξία!
@@ -333,7 +333,7 @@ export default function SigkrisiArithmonPage() {
 
               <div className="bg-white border border-slate-200 px-4 sm:px-6 py-3 rounded-2xl shadow-xs text-center max-w-2xl">
                 <span className="text-xs font-black text-slate-400 uppercase tracking-wider block mb-1">
-                  🔍 Βήμα-Βήμα Μαθηματική Εξήγηση:
+                  🔍 Βημα-Βημα Μαθηματικη Εξηγηση:
                 </span>
                 <p className="text-xs sm:text-sm md:text-base font-bold text-slate-800 leading-snug">
                   {getStepExplanation()}
@@ -355,7 +355,7 @@ export default function SigkrisiArithmonPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
                   <span className="font-black text-xs text-blue-800 uppercase block">
-                    1. Βήματα για Δεκαδικούς:
+                    1. Βηματα για Δεκαδικους:
                   </span>
                   <ul className="text-xs text-slate-600 space-y-1.5">
                     <li>• <strong>Βήμα 1:</strong> Συγκρίνουμε τα ακέραια μέρη (<strong className="text-slate-800">15</strong>,2 ＞ <strong className="text-slate-800">14</strong>,9).</li>
@@ -366,7 +366,7 @@ export default function SigkrisiArithmonPage() {
 
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
                   <span className="font-black text-xs text-emerald-800 uppercase block">
-                    2. Συνηθισμένη Παγίδα:
+                    2. Συνηθισμενη Παγιδα:
                   </span>
                   <p className="text-xs text-slate-600 leading-relaxed">
                     Πολλά παιδιά νομίζουν ότι το <strong className="text-rose-600">0,75</strong> είναι μεγαλύτερο από το <strong className="text-emerald-700">0,8</strong> επειδή το 75 μοιάζει μεγαλύτερο από το 8. Όμως:
