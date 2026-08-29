@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import AdSlot from './AdSlot';
+import Script from 'next/script';
 import { LAYOUT } from '../shared/layout-config';
 
 export default function Layout({
