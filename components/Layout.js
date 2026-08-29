@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import AdSlot from './AdSlot';
+import { LAYOUT } from '../shared/layout-config';
 
 export default function Layout({
   children,
@@ -11,7 +12,7 @@ export default function Layout({
   backText = "Πίσω",
   actionButton = null,
   hideNav = false,
-  customNavContent = null, // Για προσαρμοσμένα links όπως της αρχικής σελίδας
+  customNavContent = null,
   // Props για Overload του Footer & Ads
   hideFooter = false,
   showAds = true,
@@ -22,27 +23,23 @@ export default function Layout({
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
-        {/* Απαραίτητο για άψογο scaling σε κινητά και τάμπλετ */}
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-        {/* SVG Favicon (μοντέρνο, υψηλής ανάλυσης για όλες τις οθόνες) */}
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="alternate icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/favicon.svg" />
         <script src="https://cdn.tailwindcss.com"></script>
       </Head>
 
       <div className="flex-1 flex flex-col">
-        {/* 1. KΕΝΤΡΙΚΟ STICKY NAVBAR */}
+        {/* 1. STICKY NAVBAR */}
         {!hideNav && (
-          <nav className="bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-50 transition-all border-b border-gray-100">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row justify-between items-center gap-3">
+          <nav className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 transition-all border-b border-gray-100 w-full">
+            <div className={`${LAYOUT.CONTAINER} py-3.5 flex flex-col sm:flex-row justify-between items-center gap-3`}>
               <div className="text-2xl font-black text-blue-600 tracking-tight shrink-0">
                 <Link href="/">
                   <span className="cursor-pointer">LearnMaths<span className="text-indigo-600">.gr</span></span>
                 </Link>
               </div>
 
-              {/* Είτε ειδικό navigation (π.χ. στην αρχική) είτε standard back/action buttons */}
               {customNavContent ? (
                 <div className="flex items-center flex-wrap justify-center gap-3 sm:gap-6 font-medium text-sm sm:text-base">
                   {customNavContent}
@@ -65,30 +62,30 @@ export default function Layout({
           </nav>
         )}
 
-        {/* 2. ΕΠΑΝΩ ΔΙΑΚΡΙΤΙΚΟΣ ΧΩΡΟΣ ΔΙΑΦΗΜΙΣΗΣ */}
+        {/* 2. ΕΠΑΝΩ ΔΙΑΦΗΜΙΣΗ */}
         {showAds && (
-          <div className="max-w-7xl mx-auto w-full px-4 pt-2">
+          <div className={`${LAYOUT.CONTAINER} pt-2`}>
             <AdSlot slotId="top-horizontal-banner" format="horizontal" />
           </div>
         )}
 
-        {/* 3. ΚΥΡΙΟ ΠΕΡΙΕΧΟΜΕΝΟ */}
-        <main className={`w-full flex-1 ${fullWidth ? 'max-w-full' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'}`}>
+        {/* 3. ΚΥΡΙΟ ΠΕΡΙΕΧΟΜΕΝΟ (FULL WIDTH / CONTAINER) */}
+        <main className={`w-full flex-1 ${fullWidth ? 'max-w-full' : LAYOUT.LESSON_CONTAINER}`}>
           {children}
         </main>
 
-        {/* 4. ΚΑΤΩ ΔΙΑΚΡΙΤΙΚΟΣ ΧΩΡΟΣ ΔΙΑΦΗΜΙΣΗΣ */}
+        {/* 4. ΚΑΤΩ ΔΙΑΦΗΜΙΣΗ */}
         {showAds && (
-          <div className="max-w-7xl mx-auto w-full px-4 py-4">
+          <div className={`${LAYOUT.CONTAINER} py-4`}>
             <AdSlot slotId="bottom-horizontal-banner" format="horizontal" />
           </div>
         )}
       </div>
 
-      {/* 5. ΚΕΝΤΡΙΚΟ FOOTER */}
+      {/* 5. FOOTER */}
       {!hideFooter && (
-        <footer className="bg-gray-800 text-gray-400 py-8 text-center text-xs sm:text-sm border-t border-gray-700 w-full">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <footer className="bg-gray-800 text-gray-400 py-6 text-center text-xs sm:text-sm border-t border-gray-700 w-full mt-12">
+          <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-4`}>
             <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές μας.</p>
             <div className="flex items-center gap-4 text-xs font-semibold">
               <Link href="/epikoinonia" className="hover:text-white transition">✉️ Επικοινωνία</Link>
