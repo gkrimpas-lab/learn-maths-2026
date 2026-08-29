@@ -295,10 +295,10 @@ export default function MetatropiExercisesPage() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
+                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                Διαδραστικές Ασκήσεις: Δεκαδικοί & Κλάσματα
+                Διαδραστικές Ασκήσεις: Δεκαδικοί και Κλάσματα
               </h1>
               <p className="text-blue-100 text-xs sm:text-sm md:text-base max-w-xl leading-relaxed">
                 Λύσε τα 8 δυναμικά προβλήματα μετατροπής και οπτικών μοντέλων και δες την αναλυτική εξήγηση σε κάθε απάντηση!
