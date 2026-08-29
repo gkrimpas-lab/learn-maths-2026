@@ -168,13 +168,13 @@ export default function FysikoiArithmoiPage() {
         </div>
 
         {/* INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
+        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
             <div>
-              <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
                 <span>🕹️</span> Διαδραστικό Εργαστήριο Αξίας Θέσης
               </h2>
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 text-xs sm:text-sm">
                 Πληκτρολόγησε έναν αριθμό ή επίλεξε ένα παράδειγμα για να δεις την αυτόματη ανάλυσή του!
               </p>
             </div>
@@ -189,7 +189,7 @@ export default function FysikoiArithmoiPage() {
                     setNumber(preset.value);
                     setActiveDigitIndex(null);
                   }}
-                  className="bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs font-bold px-3.5 py-2 rounded-xl border border-slate-200 transition shadow-sm"
+                  className="bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-slate-200 transition shadow-xs"
                 >
                   {preset.label}
                 </button>
@@ -201,7 +201,7 @@ export default function FysikoiArithmoiPage() {
 
             {/* ROW 1: INPUT & READING */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-              <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
+              <div className="bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
                 <label className="text-xs font-black text-slate-500 tracking-wider block">
                   Πληκτρολόγησε Αριθμό (έως 12 ψηφία):
                 </label>
@@ -213,84 +213,95 @@ export default function FysikoiArithmoiPage() {
                     setNumber(cleanInput);
                     setActiveDigitIndex(null);
                   }}
-                  className="text-2xl md:text-3xl font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-600 font-mono"
+                  className="text-xl sm:text-2xl md:text-3xl font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-600 font-mono"
                   placeholder="Γράψε έναν αριθμό..."
                 />
                 <p className="text-[11px] text-slate-400 text-center font-medium">
-                  💡 Πέρασε τον κέρσορα ή κάνε κλικ στα ψηφία για σύγκριση!
+                  💡 Πέρασε τον κέρσορα ή πάτα σε ένα ψηφίο για ανάλυση!
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 rounded-2xl space-y-2 shadow-md flex flex-col justify-center">
-                <span className="text-[10px] font-black text-amber-400 tracking-widest block flex items-center gap-1.5">
+              <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-2 shadow-md flex flex-col justify-center">
+                <span className="text-[10px] font-black text-amber-400 tracking-widest block flex items-center gap-1.5 uppercase">
                   <span>🗣️</span> Πώς διαβάζεται ανά περίοδο:
                 </span>
-                <p className="text-base md:text-lg font-bold text-slate-100 leading-snug">
+                <p className="text-sm sm:text-base md:text-lg font-bold text-slate-100 leading-snug break-words">
                   {getPeriodBreakdown()}
                 </p>
               </div>
             </div>
 
             {/* ROW 2: PLACE VALUE TABLE & FULL MATHEMATICAL EXPANSION */}
-            <div className="bg-slate-50 border border-slate-200 p-5 md:p-6 rounded-2xl space-y-6">
+            <div className="bg-slate-50 border border-slate-200 p-3 sm:p-5 md:p-6 rounded-2xl space-y-6">
 
               {/* 12-DIGIT PLACE VALUE TABLE */}
-              <div className="w-full overflow-x-auto pb-4 pt-1">
-                <div className="min-w-[620px] bg-white rounded-2xl shadow-sm border border-gray-200 mx-auto">
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center px-1">
+                  <span className="text-xs font-black text-slate-600 uppercase tracking-wider">
+                    🗂️ Πίνακας Αξίας Θέσης (12 Ψηφία)
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-bold md:hidden flex items-center gap-1">
+                    <span>👈 Σύρετε για περισσότερα 👉</span>
+                  </span>
+                </div>
 
-                  {/* PERIODS HEADER */}
-                  <div className="grid grid-cols-4 text-white text-center font-black text-xs tracking-wider rounded-t-2xl overflow-hidden">
-                    {periods.map((p, i) => (
-                      <div key={i} className={`${p.color} py-3 border-r border-white/20 last:border-0`}>
-                        <span className="hidden md:inline">{p.name}</span>
-                        <span className="md:hidden">{p.short}</span>
-                      </div>
-                    ))}
-                  </div>
+                <div className="w-full overflow-x-auto pb-2 pt-1 touch-pan-x border border-slate-200/80 rounded-2xl bg-white shadow-xs">
+                  <div className="min-w-[580px] sm:min-w-[620px] rounded-2xl overflow-hidden">
 
-                  {/* CLASSES HEADER */}
-                  <div className="grid grid-cols-12 text-[10px] font-black text-slate-500 text-center border-b bg-slate-100 uppercase py-2">
-                    {[...Array(4)].map((_, i) => (
-                      <span key={i} className="contents">
-                        <div className="border-r border-slate-200">Ε</div>
-                        <div className="border-r border-slate-200">Δ</div>
-                        <div className="border-r border-slate-200">Μ</div>
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* DIGITS ROW */}
-                  <div className="grid grid-cols-12 text-center items-center p-2.5 bg-white rounded-b-2xl gap-1">
-                    {digits.map((digit, i) => {
-                      const periodIdx = Math.floor(i / 3);
-                      const isLeadingZero = digit === '0' && i < firstNonZero;
-                      const isSelected = activeDigitIndex === i;
-
-                      return (
-                        <div key={i} className="px-0.5">
-                          <button
-                            type="button"
-                            onClick={() => setActiveDigitIndex(i)}
-                            onMouseEnter={() => setActiveDigitIndex(i)}
-                            className={`w-full py-4 md:py-5 text-xl md:text-2xl font-black rounded-xl transition-colors duration-150 focus:outline-none font-mono flex items-center justify-center border-2 box-border
-                              ${periods[periodIdx].light}
-                              ${isSelected 
-                                ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm' 
-                                : 'border-transparent hover:bg-amber-100/70 hover:border-amber-300'}
-                              ${isLeadingZero && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
-                          >
-                            {digit}
-                          </button>
+                    {/* PERIODS HEADER */}
+                    <div className="grid grid-cols-4 text-white text-center font-black text-xs tracking-wider">
+                      {periods.map((p, i) => (
+                        <div key={i} className={`${p.color} py-2.5 sm:py-3 border-r border-white/20 last:border-0`}>
+                          <span className="hidden sm:inline">{p.name}</span>
+                          <span className="sm:hidden">{p.short}</span>
                         </div>
-                      );
-                    })}
-                  </div>
+                      ))}
+                    </div>
 
+                    {/* CLASSES HEADER */}
+                    <div className="grid grid-cols-12 text-[10px] font-black text-slate-500 text-center border-b bg-slate-100 uppercase py-2">
+                      {[...Array(4)].map((_, i) => (
+                        <span key={i} className="contents">
+                          <div className="border-r border-slate-200">Ε</div>
+                          <div className="border-r border-slate-200">Δ</div>
+                          <div className="border-r border-slate-200">Μ</div>
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* DIGITS ROW */}
+                    <div className="grid grid-cols-12 text-center items-center p-2 bg-white gap-1">
+                      {digits.map((digit, i) => {
+                        const periodIdx = Math.floor(i / 3);
+                        const isLeadingZero = digit === '0' && i < firstNonZero;
+                        const isSelected = activeDigitIndex === i;
+
+                        return (
+                          <div key={i} className="px-0.5">
+                            <button
+                              type="button"
+                              onClick={() => setActiveDigitIndex(i)}
+                              onMouseEnter={() => setActiveDigitIndex(i)}
+                              className={`w-full py-3 sm:py-4 text-lg sm:text-2xl font-black rounded-xl transition-colors duration-150 focus:outline-none font-mono flex items-center justify-center border-2 box-border
+                                ${periods[periodIdx].light}
+                                ${isSelected 
+                                  ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm' 
+                                  : 'border-transparent hover:bg-amber-100/70 hover:border-amber-300'}
+                                ${isLeadingZero && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
+                            >
+                              {digit}
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                  </div>
                 </div>
               </div>
 
-              {/* FULL MATHEMATICAL BREAKDOWN */}
-              <div className="bg-white border border-slate-200 p-5 rounded-2xl font-mono text-xs space-y-3 shadow-inner">
+              {/* FULL MATHEMATICAL BREAKDOWN (RESPONSIVE WRAPPING) */}
+              <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl font-mono text-xs space-y-3 shadow-inner">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider block font-sans">
                     🧬 Πληρης Αναλυτικη Μορφη (Δυναμεις του 10)
@@ -313,19 +324,19 @@ export default function FysikoiArithmoiPage() {
                         key={i}
                         onMouseEnter={() => setActiveDigitIndex(i)}
                         onClick={() => setActiveDigitIndex(i)}
-                        className={`flex items-center justify-between p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer ${
+                        className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-1 sm:gap-2 ${
                           isSelected 
                             ? 'bg-amber-50 border-amber-400 shadow-xs' 
                             : 'bg-slate-50/70 border-transparent hover:bg-slate-100 hover:border-slate-200'
                         }`}
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="text-emerald-600 font-black text-sm">{digit}</span>
+                        <div className="flex items-center gap-1.5 flex-wrap text-xs sm:text-sm">
+                          <span className="text-emerald-600 font-black">{digit}</span>
                           <span className="text-slate-400">×</span>
-                          <span className="font-bold text-slate-700">{multiplier}</span>
+                          <span className="font-bold text-slate-800 break-all">{multiplier}</span>
                         </div>
-                        <div className="text-right">
-                          <span className="text-slate-400 text-[10px] block">
+                        <div className="sm:text-right text-left">
+                          <span className="text-slate-500 font-bold text-[11px] sm:text-[10px] block break-all">
                             = {totalVal}
                           </span>
                         </div>
@@ -341,8 +352,8 @@ export default function FysikoiArithmoiPage() {
 
             </div>
 
-            {/* ROW 3: DYNAMIC EXCEL-STYLE BAR CHART */}
-            <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-3 shadow-sm">
+            {/* ROW 3: DYNAMIC EXCEL-STYLE BAR CHART (WITH RESPONSIVE SWIPE CONTAINER) */}
+            <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs font-black text-slate-700 flex items-center gap-1.5">
                   📊 Ύψος Ψηφίου (Excel Bar Chart)
@@ -352,60 +363,61 @@ export default function FysikoiArithmoiPage() {
                 </span>
               </div>
 
-              {/* SVG COLUMN CHART */}
-              <div className="w-full h-56 flex items-end justify-between gap-1.5 md:gap-3 pt-12 pb-2 px-2 md:px-4 bg-slate-50 rounded-xl border border-slate-100 relative overflow-hidden">
-                {digits.map((digit, i) => {
-                  const periodIdx = Math.floor(i / 3);
-                  const power = 11 - i;
-                  const val = parseInt(digit, 10);
-                  const isLeadingZero = digit === '0' && i < firstNonZero;
-                  const hasValue = val > 0 && !isLeadingZero;
-                  const barHeightPercent = calculateBarHeight(digit, i);
-                  const isSelected = activeDigitIndex === i;
+              <div className="w-full overflow-x-auto pb-2 touch-pan-x">
+                <div className="min-w-[540px] h-56 flex items-end justify-between gap-2 pt-12 pb-2 px-3 bg-slate-50 rounded-xl border border-slate-100 relative">
+                  {digits.map((digit, i) => {
+                    const periodIdx = Math.floor(i / 3);
+                    const power = 11 - i;
+                    const val = parseInt(digit, 10);
+                    const isLeadingZero = digit === '0' && i < firstNonZero;
+                    const hasValue = val > 0 && !isLeadingZero;
+                    const barHeightPercent = calculateBarHeight(digit, i);
+                    const isSelected = activeDigitIndex === i;
 
-                  return (
-                    <div
-                      key={i}
-                      onMouseEnter={() => { if (hasValue) setActiveDigitIndex(i); }}
-                      onClick={() => { if (hasValue) setActiveDigitIndex(i); }}
-                      className={`flex-1 flex flex-col items-center justify-end h-full relative ${hasValue ? 'cursor-pointer group' : 'cursor-default'}`}
-                    >
-                      {/* TOOLTIP ON HOVER / SELECTION */}
-                      {isSelected && hasValue && (
-                        <div className="absolute -top-11 bg-slate-900 text-white text-[10px] font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
-                          {(val * Math.pow(10, power)).toLocaleString('el-GR')}
-                        </div>
-                      )}
-
-                      {/* VALUE LABEL */}
-                      {hasValue ? (
-                        <span className="text-[10px] font-black text-slate-700 mb-1">
-                          {digit}
-                        </span>
-                      ) : (
-                        <div className="h-4 mb-1"></div>
-                      )}
-
-                      {/* THE BAR */}
-                      <div className="w-full h-full flex items-end">
-                        {hasValue && (
-                          <div
-                            style={{ 
-                              height: `${barHeightPercent}%`,
-                              backgroundColor: periods[periodIdx].hex 
-                            }}
-                            className={`w-full rounded-t-lg transition-all duration-200 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md' : 'opacity-90 hover:opacity-100'}`}
-                          />
+                    return (
+                      <div
+                        key={i}
+                        onMouseEnter={() => { if (hasValue) setActiveDigitIndex(i); }}
+                        onClick={() => { if (hasValue) setActiveDigitIndex(i); }}
+                        className={`flex-1 flex flex-col items-center justify-end h-full relative ${hasValue ? 'cursor-pointer group' : 'cursor-default'}`}
+                      >
+                        {/* TOOLTIP ON HOVER / SELECTION */}
+                        {isSelected && hasValue && (
+                          <div className="absolute -top-11 bg-slate-900 text-white text-[10px] font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
+                            {(val * Math.pow(10, power)).toLocaleString('el-GR')}
+                          </div>
                         )}
-                      </div>
 
-                      {/* X-AXIS LABEL */}
-                      <span className="text-[8px] font-bold text-slate-400 mt-1.5">
-                        10^{power}
-                      </span>
-                    </div>
-                  );
-                })}
+                        {/* VALUE LABEL */}
+                        {hasValue ? (
+                          <span className="text-[10px] font-black text-slate-700 mb-1">
+                            {digit}
+                          </span>
+                        ) : (
+                          <div className="h-4 mb-1"></div>
+                        )}
+
+                        {/* THE BAR */}
+                        <div className="w-full h-full flex items-end">
+                          {hasValue && (
+                            <div
+                              style={{ 
+                                height: `${barHeightPercent}%`,
+                                backgroundColor: periods[periodIdx].hex 
+                              }}
+                              className={`w-full rounded-t-lg transition-all duration-200 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md' : 'opacity-90 hover:opacity-100'}`}
+                            />
+                          )}
+                        </div>
+
+                        {/* X-AXIS LABEL */}
+                        <span className="text-[8px] font-bold text-slate-400 mt-1.5">
+                          10^{power}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="flex justify-between text-[10px] text-slate-400 font-semibold px-2 pt-1">
