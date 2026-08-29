@@ -126,10 +126,10 @@ export default function DekadikoiArithmoiPage() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικού
+                  🎓 ΣΤ' Δημοτικου
                 </span>
                 <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενότητα 2
+                  Ενοτητα 2
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -245,7 +245,7 @@ export default function DekadikoiArithmoiPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
               <div className="bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
                 <label className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                  Πληκτρολόγησε Δεκαδικό Αριθμό (π.χ. 345,672):
+                  Πληκτρολογησε Δεκαδικο Αριθμο (π.χ. 345,672):
                 </label>
                 <input
                   type="text"
@@ -270,7 +270,7 @@ export default function DekadikoiArithmoiPage() {
 
               <div className="bg-gradient-to-br from-slate-900 to-teal-950 text-white p-4 sm:p-5 rounded-2xl space-y-2 shadow-md flex flex-col justify-center">
                 <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block flex items-center gap-1.5">
-                  <span>🗣️</span> Πώς διαβάζεται:
+                  <span>🗣️</span> Πως διαβαζεται:
                 </span>
                 <p className="text-sm sm:text-base md:text-lg font-bold text-slate-100 leading-snug break-words">
                   {getDecimalReading()}
@@ -285,7 +285,7 @@ export default function DekadikoiArithmoiPage() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center px-1">
                   <span className="text-xs font-black text-slate-600 uppercase tracking-wider">
-                    🗂️ Πίνακας Αξίας Θέσης Δεκαδικών
+                    🗂️ Πινακας Αξιας Θεσης Δεκαδικων
                   </span>
                   <span className="text-[10px] text-slate-400 font-bold md:hidden flex items-center gap-1">
                     <span>👈 Σύρετε για προβολή 👉</span>
@@ -297,9 +297,9 @@ export default function DekadikoiArithmoiPage() {
                     
                     {/* PERIODS / SECTIONS HEADER */}
                     <div className="grid grid-cols-7 text-white text-center font-black text-xs uppercase tracking-wider">
-                      <div className="col-span-3 bg-emerald-600 py-2.5 sm:py-3 border-r border-white/20">Ακέραιο Μέρος</div>
+                      <div className="col-span-3 bg-emerald-600 py-2.5 sm:py-3 border-r border-white/20">Ακεραιο Μερος</div>
                       <div className="bg-amber-500 py-2.5 sm:py-3 border-r border-white/20">,</div>
-                      <div className="col-span-3 bg-blue-600 py-2.5 sm:py-3">Δεκαδικό Μέρος</div>
+                      <div className="col-span-3 bg-blue-600 py-2.5 sm:py-3">Δεκαδικο Μερος</div>
                     </div>
 
                     {/* CLASSES HEADER */}
@@ -383,7 +383,7 @@ export default function DekadikoiArithmoiPage() {
               <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl font-mono text-xs space-y-3 shadow-inner">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider block font-sans">
-                    🧬 Πλήρης Αναλυτική Μορφή (Ακέραιες Μονάδες & Δεκαδικά Κλάσματα)
+                    🧬 Πληρης Αναλυτικη Μορφη (Ακεραιες Μοναδες και Δεκαδικα Κλασματα)
                   </span>
                   <span className="text-[10px] font-sans font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
                     Πλήρης Εμφάνιση
