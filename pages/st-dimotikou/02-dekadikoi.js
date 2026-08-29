@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
 export default function DekadikoiArithmoiPage() {
   const [number, setNumber] = useState("345,672");
@@ -56,14 +55,13 @@ export default function DekadikoiArithmoiPage() {
     return `${intPartText} και ${decVal.toLocaleString('el-GR')} ${decNames[decLength] || 'χιλιοστά'}`;
   };
 
-  // Υπολογισμός ύψους στήλης αποκλειστικά από την τιμή του ψηφίου (1-9)
+  // Υπολογισμός ύψους στήλης (12% έως 100%)
   const calculateBarHeight = (digit, isLeading) => {
     const val = parseInt(digit, 10);
     if (val === 0 || isLeading) return 0;
     return 12 + (val - 1) * 11;
   };
 
-  // Στοιχεία για το Bar Chart
   const chartItems = [
     ...intDigits.map((d, i) => {
       const val = parseInt(d, 10);
@@ -118,18 +116,18 @@ export default function DekadikoiArithmoiPage() {
         </Link>
       }
     >
-      <div className="space-y-10 py-2 sm:py-4">
+      <div className="space-y-8 md:space-y-10 py-6 md:py-10">
 
-        {/* HERO BANNER WITH PROMO CALLOUT CARD */}
+        {/* HERO BANNER */}
         <div className="bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικου
+                  🎓 ΣΤ' Δημοτικού
                 </span>
                 <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενοτητα 2
+                  Ενότητα 2
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -140,7 +138,6 @@ export default function DekadikoiArithmoiPage() {
               </p>
             </div>
 
-            {/* CALLOUT PROMO CARD */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
               <span className="text-3xl">🚀</span>
               <h3 className="font-black text-lg text-amber-300">Έτοιμος για εξάσκηση;</h3>
@@ -155,7 +152,7 @@ export default function DekadikoiArithmoiPage() {
           </div>
         </div>
 
-        {/* THEORY CARDS (3 COLS) */}
+        {/* THEORY CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-emerald-50/80 border border-emerald-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
             <div className="space-y-2.5">
@@ -167,10 +164,10 @@ export default function DekadikoiArithmoiPage() {
                 Η <strong>υποδιαστολή ( , )</strong> χωρίζει τον αριθμό σε δύο μέρη: το <strong>ακέραιο μέρος</strong> (αριστερά) και το <strong>δεκαδικό μέρος</strong> (δεξιά).
               </p>
             </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-emerald-100 text-xs text-slate-700 text-center font-mono">
-              <span className="text-emerald-700 font-black text-base">345</span>
-              <span className="text-amber-500 font-black text-lg"> , </span>
-              <span className="text-blue-600 font-black text-base">672</span>
+            <div className="bg-white p-3.5 rounded-2xl border border-emerald-100 text-xs text-slate-700 text-center font-mono font-bold">
+              <span className="text-emerald-700 text-base">345</span>
+              <span className="text-amber-500 text-lg"> , </span>
+              <span className="text-blue-600 text-base">672</span>
             </div>
           </div>
 
@@ -184,8 +181,8 @@ export default function DekadikoiArithmoiPage() {
                 Κάθε θέση δεξιά από την υποδιαστολή αντιστοιχεί σε δεκαδικό κλάσμα με παρονομαστή δύναμη του 10.
               </p>
             </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-blue-100 text-xs text-slate-700 space-y-1">
-              <ul className="grid grid-cols-1 gap-1 text-[11px] font-semibold">
+            <div className="bg-white p-3.5 rounded-2xl border border-blue-100 text-xs text-slate-700 space-y-1 font-semibold">
+              <ul className="grid grid-cols-1 gap-1 text-[11px]">
                 <li className="text-blue-700">• <strong>δ (Δέκατα):</strong> 1/10 = 0,1</li>
                 <li className="text-blue-700">• <strong>ε (Εκατοστά):</strong> 1/100 = 0,01</li>
                 <li className="text-blue-700">• <strong>χ (Χιλιοστά):</strong> 1/1000 = 0,001</li>
@@ -221,7 +218,6 @@ export default function DekadikoiArithmoiPage() {
               </p>
             </div>
 
-            {/* PRESET BUTTONS */}
             <div className="flex flex-wrap gap-2">
               {presets.map((preset, idx) => (
                 <button
@@ -245,7 +241,7 @@ export default function DekadikoiArithmoiPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
               <div className="bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
                 <label className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                  Πληκτρολογησε Δεκαδικο Αριθμο (π.χ. 345,672):
+                  Πληκτρολόγησε Δεκαδικό Αριθμό (π.χ. 345,672):
                 </label>
                 <input
                   type="text"
@@ -270,7 +266,7 @@ export default function DekadikoiArithmoiPage() {
 
               <div className="bg-gradient-to-br from-slate-900 to-teal-950 text-white p-4 sm:p-5 rounded-2xl space-y-2 shadow-md flex flex-col justify-center">
                 <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block flex items-center gap-1.5">
-                  <span>🗣️</span> Πως διαβαζεται:
+                  <span>🗣️</span> Πώς διαβάζεται:
                 </span>
                 <p className="text-sm sm:text-base md:text-lg font-bold text-slate-100 leading-snug break-words">
                   {getDecimalReading()}
@@ -281,11 +277,10 @@ export default function DekadikoiArithmoiPage() {
             {/* ROW 2: PLACE VALUE TABLE & FULL MATHEMATICAL EXPANSION */}
             <div className="bg-slate-50 border border-slate-200 p-3 sm:p-5 md:p-6 rounded-2xl space-y-6">
               
-              {/* PLACE VALUE TABLE */}
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center px-1">
                   <span className="text-xs font-black text-slate-600 uppercase tracking-wider">
-                    🗂️ Πινακας Αξιας Θεσης Δεκαδικων
+                    🗂️ Πίνακας Αξίας Θέσης Δεκαδικών
                   </span>
                   <span className="text-[10px] text-slate-400 font-bold md:hidden flex items-center gap-1">
                     <span>👈 Σύρετε για προβολή 👉</span>
@@ -295,14 +290,12 @@ export default function DekadikoiArithmoiPage() {
                 <div className="w-full overflow-x-auto pb-2 pt-1 touch-pan-x border border-slate-200/80 rounded-2xl bg-white shadow-xs">
                   <div className="min-w-[560px] sm:min-w-[620px] rounded-2xl overflow-hidden">
                     
-                    {/* PERIODS / SECTIONS HEADER */}
                     <div className="grid grid-cols-7 text-white text-center font-black text-xs uppercase tracking-wider">
-                      <div className="col-span-3 bg-emerald-600 py-2.5 sm:py-3 border-r border-white/20">Ακεραιο Μερος</div>
+                      <div className="col-span-3 bg-emerald-600 py-2.5 sm:py-3 border-r border-white/20">Ακέραιο Μέρος</div>
                       <div className="bg-amber-500 py-2.5 sm:py-3 border-r border-white/20">,</div>
-                      <div className="col-span-3 bg-blue-600 py-2.5 sm:py-3">Δεκαδικο Μερος</div>
+                      <div className="col-span-3 bg-blue-600 py-2.5 sm:py-3">Δεκαδικό Μέρος</div>
                     </div>
 
-                    {/* CLASSES HEADER */}
                     <div className="grid grid-cols-7 text-[10px] font-black text-slate-500 text-center border-b bg-slate-100 uppercase py-2">
                       {intClasses.map((c, i) => (
                         <div key={`hc1-${i}`} className="border-r border-slate-200">
@@ -317,7 +310,6 @@ export default function DekadikoiArithmoiPage() {
                       ))}
                     </div>
 
-                    {/* DIGITS ROW */}
                     <div className="grid grid-cols-7 text-center items-center p-2 bg-white gap-1">
                       {intDigits.map((digit, i) => {
                         const key = `int-${i}`;
@@ -343,7 +335,6 @@ export default function DekadikoiArithmoiPage() {
                         );
                       })}
 
-                      {/* COMMA */}
                       <div className="px-0.5">
                         <div className="w-full py-3 sm:py-4 text-xl sm:text-3xl font-black text-amber-500 bg-amber-50/50 rounded-xl flex items-center justify-center font-mono border-2 border-transparent">
                           ,
@@ -379,11 +370,11 @@ export default function DekadikoiArithmoiPage() {
                 </div>
               </div>
 
-              {/* FULL MATHEMATICAL BREAKDOWN (RESPONSIVE STACKING) */}
+              {/* FULL MATHEMATICAL BREAKDOWN (3-COLUMN FIXED ALIGNMENT) */}
               <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl font-mono text-xs space-y-3 shadow-inner">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider block font-sans">
-                    🧬 Πληρης Αναλυτικη Μορφη (Ακεραιες Μοναδες και Δεκαδικα Κλασματα)
+                    🧬 Πλήρης Αναλυτική Μορφή (Ακέραιες Μονάδες & Δεκαδικά Κλάσματα)
                   </span>
                   <span className="text-[10px] font-sans font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
                     Πλήρης Εμφάνιση
@@ -404,24 +395,24 @@ export default function DekadikoiArithmoiPage() {
                         key={key}
                         onMouseEnter={() => setActiveDigitKey(key)}
                         onClick={() => setActiveDigitKey(key)}
-                        className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-1 sm:gap-2 ${
+                        className={`grid grid-cols-[auto_1fr_auto] items-center p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-2 ${
                           isSelected 
                             ? 'bg-amber-50 border-amber-400 shadow-xs' 
                             : 'bg-slate-50/70 border-transparent hover:bg-slate-100 hover:border-slate-200'
                         }`}
                       >
-                        <div className="flex items-center gap-1.5 flex-wrap text-xs sm:text-sm">
+                        <div className="flex items-center gap-1.5 text-xs sm:text-sm whitespace-nowrap">
                           <span className="text-emerald-700 font-black">{digit}</span>
                           <span className="text-slate-400">×</span>
                           <span className="font-bold text-slate-800">{weight}</span>
-                          <span className="text-[10px] font-sans text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold">
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-sans text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold inline-block truncate max-w-[90px] sm:max-w-none">
                             {intClasses[i].name}
                           </span>
                         </div>
-                        <div className="sm:text-right text-left">
-                          <span className="text-slate-600 font-black text-xs block">
-                            = {totalVal}
-                          </span>
+                        <div className="text-right whitespace-nowrap font-black text-xs text-slate-700">
+                          = {totalVal}
                         </div>
                       </div>
                     );
@@ -440,24 +431,24 @@ export default function DekadikoiArithmoiPage() {
                         key={key}
                         onMouseEnter={() => setActiveDigitKey(key)}
                         onClick={() => setActiveDigitKey(key)}
-                        className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-1 sm:gap-2 ${
+                        className={`grid grid-cols-[auto_1fr_auto] items-center p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-2 ${
                           isSelected 
                             ? 'bg-amber-50 border-amber-400 shadow-xs' 
                             : 'bg-slate-50/70 border-transparent hover:bg-slate-100 hover:border-slate-200'
                         }`}
                       >
-                        <div className="flex items-center gap-1.5 flex-wrap text-xs sm:text-sm">
+                        <div className="flex items-center gap-1.5 text-xs sm:text-sm whitespace-nowrap">
                           <span className="text-blue-700 font-black">{digit}</span>
                           <span className="text-slate-400">×</span>
                           <span className="font-bold text-slate-800">{decCls.fraction}</span>
-                          <span className="text-[10px] font-sans text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded font-bold">
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-sans text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded font-bold inline-block truncate max-w-[90px] sm:max-w-none">
                             {decCls.name}
                           </span>
                         </div>
-                        <div className="sm:text-right text-left">
-                          <span className="text-blue-700 font-black text-xs block">
-                            = {valCalc}
-                          </span>
+                        <div className="text-right whitespace-nowrap font-black text-xs text-blue-700">
+                          = {valCalc}
                         </div>
                       </div>
                     );
@@ -471,7 +462,7 @@ export default function DekadikoiArithmoiPage() {
 
             </div>
 
-            {/* ROW 3: DYNAMIC EXCEL-STYLE BAR CHART */}
+            {/* ROW 3: DYNAMIC EXCEL-STYLE BAR CHART (STRICT BASELINE ALIGNMENT) */}
             <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs font-black text-slate-700 flex items-center gap-1.5">
@@ -482,8 +473,8 @@ export default function DekadikoiArithmoiPage() {
                 </span>
               </div>
 
-              <div className="w-full overflow-x-auto pb-2 touch-pan-x">
-                <div className="min-w-[540px] h-56 flex items-end justify-between gap-2 md:gap-4 pt-12 pb-2 px-3 bg-slate-50 rounded-xl border border-slate-100 relative">
+              <div className="w-full bg-slate-50 rounded-xl border border-slate-100 pt-10 pb-3 px-2 sm:px-4">
+                <div className="flex items-end justify-between gap-1.5 sm:gap-3 h-40 border-b-2 border-slate-200 pb-0">
                   {chartItems.map((item) => {
                     const isSelected = activeDigitKey === item.key;
                     const hasValue = !item.isLeading;
@@ -497,40 +488,49 @@ export default function DekadikoiArithmoiPage() {
                       >
                         {/* TOOLTIP ON HOVER */}
                         {isSelected && hasValue && (
-                          <div className="absolute -top-11 bg-slate-900 text-white text-[10px] font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
+                          <div className="absolute -top-9 bg-slate-900 text-white text-[10px] font-mono px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
                             {item.valStr}
                           </div>
                         )}
 
                         {/* VALUE LABEL */}
                         {hasValue ? (
-                          <span className="text-[10px] font-black text-slate-700 mb-1">
+                          <span className="text-[11px] font-black text-slate-700 mb-1">
                             {item.digit}
                           </span>
                         ) : (
                           <div className="h-4 mb-1"></div>
                         )}
 
-                        {/* THE BAR */}
-                        <div className="w-full h-full flex items-end">
+                        {/* THE BAR CONTAINER */}
+                        <div className="w-full h-28 flex items-end justify-center">
                           {hasValue && (
                             <div
                               style={{ 
                                 height: `${item.heightPercent}%`,
                                 backgroundColor: item.hex 
                               }}
-                              className={`w-full rounded-t-lg transition-all duration-200 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md' : 'opacity-90 hover:opacity-100'}`}
+                              className={`w-full max-w-[38px] rounded-t-lg transition-all duration-200 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md' : 'opacity-90 hover:opacity-100'}`}
                             />
                           )}
                         </div>
-
-                        {/* X-AXIS LABEL */}
-                        <span className="text-[8px] font-bold text-slate-400 mt-1.5">
-                          {item.short} ({item.weightLabel})
-                        </span>
                       </div>
                     );
                   })}
+                </div>
+
+                {/* X-AXIS LABELS (ΕΥΘΥΓΡΑΜΜΙΣΜΕΝΕΣ ΚΑΤΩ ΑΠΟ ΤΙΣ ΜΠΑΡΕΣ) */}
+                <div className="flex justify-between gap-1.5 sm:gap-3 pt-2">
+                  {chartItems.map((item) => (
+                    <div key={`lbl-${item.key}`} className="flex-1 text-center">
+                      <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 block leading-tight">
+                        {item.short}
+                      </span>
+                      <span className="text-[8px] text-slate-400 font-mono block leading-tight">
+                        ({item.weightLabel})
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
               
