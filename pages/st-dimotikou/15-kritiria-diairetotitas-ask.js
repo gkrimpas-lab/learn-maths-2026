@@ -21,19 +21,82 @@ function sumDigits(numStr) {
   return numStr.split('').reduce((acc, curr) => acc + parseInt(curr, 10), 0);
 }
 
-// Δεξαμενή θεματικών σεναρίων καθημερινότητας με σωστή γραμματική διατύπωση και ρήματα
-const REAL_WORLD_ITEMS = [
-  { item: 'μαθητές', action: 'να τους χωρίσουμε', unit: 'ομάδες' },
-  { item: 'καραμέλες', action: 'να τις μοιράσουμε', unit: 'σακουλάκια' },
-  { item: 'βιβλία', action: 'να τα μοιράσουμε', unit: 'πακέτα' },
-  { item: 'ευρώ', action: 'να τα μοιράσουμε', unit: 'μερίδια' },
-  { item: 'τετράδια', action: 'να τα μοιράσουμε', unit: 'κουτιά' }
+// Δεξαμενή 10 θεματικών σεναρίων καθημερινότητας με σωστή σύνταξη και τυχαία/συγκεκριμένα πλήθη
+const REAL_WORLD_PROBLEMS_Q8 = [
+  {
+    prompt: (num) => `Έχουμε ${num} τετράδια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
+    total: 377,
+    correctOption: 'Δεν είναι δυνατόν χωρίς υπόλοιπο',
+    wrongOptions: ['Σε ομάδες των 2', 'Σε ομάδες των 5', 'Σε ομάδες των 10'],
+    explain: 'Ο αριθμός 377 δεν διαιρείται ακριβώς με κανέναν από τους βασικούς διαιρέτες χωρίς υπόλοιπο.'
+  },
+  {
+    prompt: (num) => `Έχουμε ${num} τετράδια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
+    total: 284,
+    correctOption: 'Σε ομάδες των 4',
+    wrongOptions: ['Σε ομάδες των 5', 'Σε ομάδες των 9', 'Σε ομάδες των 10'],
+    explain: 'Ο αριθμός 284 λήγει σε 84, άρα διαιρείται ακριβώς με το 4 (284 : 4 ＝ 71).'
+  },
+  {
+    prompt: (num) => `Έχουμε ${num} ευρώ. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
+    total: 303,
+    correctOption: 'Σε μερίδια των 3',
+    wrongOptions: ['Σε μερίδια των 2', 'Σε μερίδια των 5', 'Σε μερίδια των 10'],
+    explain: 'Το άθροισμα των ψηφίων του 303 είναι 3＋0＋3 ＝ 6, άρα διαιρείται ακριβώς με το 3.'
+  },
+  {
+    prompt: (num) => `Έχουμε ${num} μαθητές. Με ποιον τρόπο μπορούμε να τους μοιράσουμε ισόποσα χωρίς να περισσέψει κανένας;`,
+    total: 390,
+    correctOption: 'Σε ομάδες των 10',
+    wrongOptions: ['Σε ομάδες των 4', 'Σε ομάδες των 9', 'Σε ομάδες των 25'],
+    explain: 'Ο αριθμός 390 λήγει σε 0, άρα διαιρείται ακριβώς με το 10.'
+  },
+  {
+    prompt: (num) => `Έχουμε ${num} καραμέλες. Με ποιον τρόπο μπορούμε να τις μοιράσουμε ισόποσα χωρίς να περισσέψει καμία;`,
+    total: 395,
+    correctOption: 'Σε σακουλάκια των 5',
+    wrongOptions: ['Σε σακουλάκια των 2', 'Σε σακουλάκια των 4', 'Σε σακουλάκια των 9'],
+    explain: 'Ο αριθμός 395 λήγει σε 5, άρα διαιρείται ακριβώς με το 5.'
+  },
+  {
+    prompt: (num) => `Έχουμε ${num} βιβλία. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
+    total: 450,
+    correctOption: 'Σε πακέτα των 25',
+    wrongOptions: ['Σε πακέτα των 4', 'Σε πακέτα των 9', 'Σε πακέτα των 3'],
+    explain: 'Ο αριθμός 450 τελειώνει σε 50, άρα διαιρείται ακριβώς με το 25.'
+  },
+  {
+    prompt: (num) => `Έχουμε ${num} μήλα. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
+    total: 729,
+    correctOption: 'Σε καλάθια των 9',
+    wrongOptions: ['Σε καλάθια των 2', 'Σε καλάθια των 5', 'Σε καλάθια των 10'],
+    explain: 'Το άθροισμα των ψηφίων του 729 είναι 7＋2＋9 ＝ 18, το οποίο διαιρείται με το 9.'
+  },
+  {
+    prompt: (num) => `Έχουμε ${num} λουλούδια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
+    total: 524,
+    correctOption: 'Σε ανθοδέσμες των 4',
+    wrongOptions: ['Σε ανθοδέσμες των 5', 'Σε ανθοδέσμες των 9', 'Σε ανθοδέσμες των 10'],
+    explain: 'Τα δύο τελευταία ψηφία του 524 είναι το 24, που διαιρείται με το 4.'
+  },
+  {
+    prompt: (num) => `Έχουμε ${num} σοκολατάκια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
+    total: 810,
+    correctOption: 'Σε κουτάκια των 10',
+    wrongOptions: ['Σε κουτάκια των 4', 'Σε κουτάκια των 25', 'Σε κουτάκια των 9'],
+    explain: 'Ο αριθμός 810 λήγει σε 0, άρα διαιρείται ακριβώς με το 10.'
+  },
+  {
+    prompt: (num) => `Έχουμε ${num} μπάρες δημητριακών. Με ποιον τρόπο μπορούμε να τις μοιράσουμε ισόποσα χωρίς να περισσέψει καμία;`,
+    total: 625,
+    correctOption: 'Σε πακέτα των 25',
+    wrongOptions: ['Σε πακέτα των 2', 'Σε πακέτα των 3', 'Σε πακέτα των 9'],
+    explain: 'Ο αριθμός 625 τελειώνει σε 25, άρα διαιρείται ακριβώς με το 25.'
+  }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
 function generateQuestions() {
-  const shuffledItems = shuffle(REAL_WORLD_ITEMS);
-
   // Q1: Interactive Yes/No Buttons - Διαιρετότητα με το 2, 5 ή 10
   const q1Div = [2, 5, 10][getRandomInt(0, 2)];
   const q1IsDivisible = Math.random() > 0.5;
@@ -126,22 +189,13 @@ function generateQuestions() {
   const q7Num = q7Options[getRandomInt(0, q7Options.length - 1)];
   const q7Correct = '10';
 
-  // Q8: MCQ - Πρόβλημα Καθημερινότητας (Ισόποση κατανομή)
-  const p = shuffledItems[0];
-  const targetDiv = p.item === 'μαθητές' ? 10 : [4, 5, 9, 25][getRandomInt(0, 3)];
-  const q8Count = p.item === 'μαθητές' ? 390 : (p.item === 'καραμέλες' ? 395 : getRandomInt(120, 400));
-  
-  const allCandidates = [2, 3, 4, 5, 9, 10, 25];
-  const invalidCandidates = allCandidates.filter(d => d !== targetDiv && q8Count % d !== 0);
-  const wrongDivs = shuffle(invalidCandidates).slice(0, 3);
-
-  const q8CorrectStr = `${p.unit} των ${targetDiv}`;
-  const q8Options = shuffle([
-    q8CorrectStr,
-    ...wrongDivs.map(w => `${p.unit} των ${w}`)
-  ]);
-
-  const noneForm = p.item === 'μαθητές' ? 'κανένας' : 'καμία';
+  // Q8: MCQ - Τυχαία επιλογή από τη δεξαμενή των 10 προβλημάτων
+  const shuffledQ8Pool = shuffle(REAL_WORLD_PROBLEMS_Q8);
+  const selectedQ8 = shuffledQ8Pool[0];
+  const q8Prompt = selectedQ8.prompt(selectedQ8.total);
+  const q8CorrectStr = selectedQ8.correctOption;
+  const q8Options = shuffle([selectedQ8.correctOption, ...selectedQ8.wrongOptions]);
+  const q8Explain = selectedQ8.explain;
 
   return {
     q1: {
@@ -165,7 +219,7 @@ function generateQuestions() {
     },
     q3: {
       type: 'mcq',
-      title: 'Διαιρετότητα με 4 & 25',
+      title: 'Διαιρετότητα με το 4 & 25',
       prompt: `Ποιος από τους παρακάτω αριθμούς διαιρείται ακριβώς με το ${q3Div};`,
       options: q3Options,
       correct: String(q3ValidNum),
@@ -183,7 +237,7 @@ function generateQuestions() {
     },
     q5: {
       type: 'tf',
-      title: 'Κανόνας Διαιρετότητας με 9',
+      title: 'Κανόνας Διαιρετότητας με το 9',
       text: q5Text,
       correct: q5IsTrue,
       explain: q5IsTrue
@@ -192,7 +246,7 @@ function generateQuestions() {
     },
     q6: {
       type: 'tf',
-      title: 'Κανόνας Διαιρετότητας με 25',
+      title: 'Κανόνας Διαιρετότητας με το 25',
       text: q6Text,
       correct: q6IsTrue,
       explain: q6IsTrue
@@ -209,10 +263,10 @@ function generateQuestions() {
     q8: {
       type: 'mcq',
       title: 'Πρόβλημα Καθημερινότητας',
-      prompt: `Έχουμε ${q8Count} ${p.item}. Με ποιον τρόπο μπορούμε ${p.action} ισόποσα χωρίς να περισσέψει ${noneForm};`,
+      prompt: q8Prompt,
       options: q8Options,
       correct: q8CorrectStr,
-      explain: `Ο αριθμός ${q8Count} διαιρείται ακριβώς με το ${targetDiv} (${q8Count} : ${targetDiv} ＝ ${q8Count / targetDiv}), επομένως ${p.action} ισόποσα σε ${q8Count / targetDiv} ${p.unit}.`
+      explain: q8Explain
     }
   };
 }
