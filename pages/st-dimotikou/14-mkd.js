@@ -224,7 +224,7 @@ export default function MkdPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    Πληκτρολόγησε τους Αριθμούς (1 - 100):
+                    Πληκτρολογησε τους Αριθμους (1 - 100):
                   </span>
                   <p className="text-xs text-slate-400">Συμπλήρωσε τους αριθμούς στα αντίστοιχα πεδία.</p>
                 </div>
@@ -232,7 +232,7 @@ export default function MkdPage() {
                 {/* DYNAMIC INPUTS GRID */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">1ος Αριθμός</span>
+                    <span className="text-[10px] font-bold text-slate-400">1ος Αριθμός</span>
                     <input
                       type="text"
                       value={num1}
@@ -241,7 +241,7 @@ export default function MkdPage() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">2ος Αριθμός</span>
+                    <span className="text-[10px] font-bold text-slate-400">2ος Αριθμός</span>
                     <input
                       type="text"
                       value={num2}
@@ -251,7 +251,7 @@ export default function MkdPage() {
                   </div>
                   {activeTab >= 3 && (
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">3ος Αριθμός</span>
+                      <span className="text-[10px] font-bold text-slate-400">3ος Αριθμός</span>
                       <input
                         type="text"
                         value={num3}
@@ -262,7 +262,7 @@ export default function MkdPage() {
                   )}
                   {activeTab === 4 && (
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">4ος Αριθμός</span>
+                      <span className="text-[10px] font-bold text-slate-400">4ος Αριθμός</span>
                       <input
                         type="text"
                         value={num4}
@@ -276,7 +276,7 @@ export default function MkdPage() {
                 {/* PRESETS LIST */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    Ή επίλεξε έτοιμο παράδειγμα:
+                    Η επιλεξε ετοιμο παραδειγμα:
                   </span>
                   <div className="grid grid-cols-1 gap-1.5">
                     {activeTab === 2 && PRESETS_2.map((p, idx) => (
@@ -360,7 +360,7 @@ export default function MkdPage() {
               {/* VISUAL SEGMENT BARS */}
               <div className="w-full bg-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-4 shadow-md">
                 <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                  📊 Οπτική Κατάτμηση: Πώς ο Μ.Κ.Δ. ({mkd}) μετράει ακριβώς τους αριθμούς
+                  📊 Οπτικη Κατατμηση: Πως ο Μ.Κ.Δ. ({mkd}) μετραει ακριβως τους αριθμους
                 </span>
 
                 <div className="space-y-3 font-mono text-xs max-h-[220px] overflow-y-auto pr-1">
@@ -395,7 +395,7 @@ export default function MkdPage() {
               {/* FINAL RESULT BADGE */}
               <div className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white p-3.5 sm:p-4 rounded-2xl text-center shadow-lg font-mono font-black flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                 <span className="text-2xl">🏆</span>
-                <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Μέγιστος Κοινός Διαιρέτης:</span>
+                <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Μεγιστος Κοινος Διαιρετης:</span>
                 <span className="text-lg sm:text-xl md:text-2xl bg-white/20 px-3 sm:px-4 py-1 rounded-xl shadow-inner">
                   Μ.Κ.Δ.({currentNumbersString}) ＝ {mkd}
                 </span>
