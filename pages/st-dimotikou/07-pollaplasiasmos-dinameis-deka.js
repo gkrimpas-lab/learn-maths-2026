@@ -345,35 +345,21 @@ export default function DinameisDekaPage() {
                     </span>
                   </div>
                 </div>
-
                 {/* SVG Shift Diagram */}
 <div className="w-full bg-slate-50 p-3 sm:p-4 rounded-xl border border-slate-200 flex justify-center overflow-x-auto">
   <svg viewBox="0 0 340 70" className="w-full max-w-sm h-16 select-none shrink-0 overflow-visible">
     <defs>
-      {/* Right Arrowhead Marker */}
+      {/* Universal Auto-Oriented Arrowhead Marker */}
       <marker
-        id="arrow-right"
+        id="shift-arrow"
         viewBox="0 0 10 10"
         refX="6"
         refY="5"
-        markerWidth="7"
-        markerHeight="7"
+        markerWidth="6"
+        markerHeight="6"
         orient="auto"
       >
-        <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
-      </marker>
-
-      {/* Left Arrowhead Marker */}
-      <marker
-        id="arrow-left"
-        viewBox="0 0 10 10"
-        refX="4"
-        refY="5"
-        markerWidth="7"
-        markerHeight="7"
-        orient="auto"
-      >
-        <path d="M 10 1 L 0 5 L 10 9 z" fill="#f59e0b" />
+        <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#f59e0b" />
       </marker>
     </defs>
 
@@ -384,17 +370,17 @@ export default function DinameisDekaPage() {
     <circle cx="90" cy="52" r="4.5" fill="#f59e0b" />
     <circle cx="250" cy="52" r="4.5" fill="#f59e0b" />
 
-    {/* Jump Arc with Crisp Arrowhead Marker */}
+    {/* Jump Arc with Auto-Aligned Arrowhead */}
     <path
       d={
         shift.direction === 'δεξιά'
-          ? "M 90 50 Q 170 8 244 48"
-          : "M 250 50 Q 170 8 96 48"
+          ? "M 90 50 Q 170 10 244 48"
+          : "M 250 50 Q 170 10 96 48"
       }
       fill="none"
       stroke="#f59e0b"
       strokeWidth="3.5"
-      markerEnd={shift.direction === 'δεξιά' ? "url(#arrow-right)" : "url(#arrow-left)"}
+      markerEnd="url(#shift-arrow)"
     />
 
     {/* Label */}
@@ -403,6 +389,7 @@ export default function DinameisDekaPage() {
     </text>
   </svg>
 </div>
+                
               </div>
 
               <div className="bg-blue-50 border border-blue-100 p-3.5 sm:p-4 rounded-xl text-xs md:text-sm text-blue-900 font-medium text-center max-w-2xl">
