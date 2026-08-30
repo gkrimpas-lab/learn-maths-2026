@@ -654,7 +654,7 @@ export default function ProblimataExercisesPage() {
                     {/* GIVEN DATA PILLS */}
                     <div className="bg-slate-50 border border-slate-200 p-3 sm:p-3.5 rounded-2xl mb-4 space-y-1.5">
                       <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                        📋 Δεδομένα:
+                        📋 Δεδομενα:
                       </span>
                       <ul className="text-xs text-slate-600 space-y-1 font-medium">
                         {q.given.map((g, gIdx) => (
