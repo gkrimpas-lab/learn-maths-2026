@@ -1,6 +1,3 @@
-I will now generate the updated and responsive version of the exercises page for Divisibility Criteria (Κριτήρια Διαιρετότητας) using the central `Layout`, while preserving all Greek texts as provided.
-
-```javascript:pages/st-dimotikou/15-kritiria-diairetotitas-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
