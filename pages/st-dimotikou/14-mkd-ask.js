@@ -34,13 +34,43 @@ function getGCD(a, b) {
   return a;
 }
 
-// Δεξαμενή θεματικών σεναρίων καθημερινότητας
+// Δεξαμενή θεματικών σεναρίων καθημερινότητας με πλήρη γραμματική και συντακτική ακρίβεια
 const REAL_WORLD_PRESETS = [
-  { item1: 'τριαντάφυλλα', item2: 'μαργαρίτες', group: 'ανθοδέσμες' },
-  { item1: 'σοκολατάκια', item2: 'καραμέλες', group: 'πακέτα' },
-  { item1: 'τετράδια', item2: 'μολύβια', group: 'σετ δώρων' },
-  { item1: 'μήλα', item2: 'πορτοκάλια', group: 'καλάθια' },
-  { item1: 'μπάλες ποδοσφαίρου', item2: 'μπάλες μπάσκετ', group: 'σάκους' }
+  {
+    profession: 'Ένας μανάβης',
+    item1: 'μήλα',
+    item2: 'πορτοκάλια',
+    groupName: 'καλάθια',
+    questionText: 'Πόσα πανομοιότυπα καλάθια μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα;'
+  },
+  {
+    profession: 'Ένας βιβλιοπώλης',
+    item1: 'τετράδια',
+    item2: 'μολύβια',
+    groupName: 'σετ δώρων',
+    questionText: 'Πόσα πανομοιότυπα σετ δώρων μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα;'
+  },
+  {
+    profession: 'Ένας ανθοπώλης',
+    item1: 'τριαντάφυλλα',
+    item2: 'μαργαρίτες',
+    groupName: 'ανθοδέσμες',
+    questionText: 'Πόσες πανομοιότυπες ανθοδέσμες μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα;'
+  },
+  {
+    profession: 'Ένας προπονητής',
+    item1: 'μπάλες ποδοσφαίρου',
+    item2: 'μπάλες μπάσκετ',
+    groupName: 'σάκους',
+    questionText: 'Πόσους πανομοιότυπους σάκους μπορεί να φτιάξει το πολύ χωρίς να περισσέψει καμία μπάλα;'
+  },
+  {
+    profession: 'Ένας παντοπώλης',
+    item1: 'σοκολατάκια',
+    item2: 'καραμέλες',
+    groupName: 'πακέτα',
+    questionText: 'Πόσα πανομοιότυπα πακέτα μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα;'
+  }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
@@ -110,15 +140,15 @@ function generateQuestions() {
   const q7Mkd = getGCD(q7A, q7B);
   const q7Correct = String(q7Mkd);
 
-  // Q8: MCQ - Πρόβλημα Καθημερινότητας (Μέγιστος αριθμός πακέτων/ανθοδεσμών)
+  // Q8: MCQ - Πρόβλημα Καθημερινότητας (Με σωστή σύνταξη)
   const p = shuffledPresets[0];
   const q8Count1 = getRandomInt(3, 6) * 6; // π.χ. 18, 24, 30, 36
   const q8Count2 = getRandomInt(2, 5) * 6; // π.χ. 12, 18, 24
   const q8GCD = getGCD(q8Count1, q8Count2);
-  const q8CorrectStr = `${q8GCD} ${p.group}`;
-  const q8Wrong1 = `${q8GCD + 2} ${p.group}`;
-  const q8Wrong2 = `${Math.max(1, q8GCD - 2)} ${p.group}`;
-  const q8Wrong3 = `${q8GCD * 2} ${p.group}`;
+  const q8CorrectStr = `${q8GCD} ${p.groupName}`;
+  const q8Wrong1 = `${q8GCD + 2} ${p.groupName}`;
+  const q8Wrong2 = `${Math.max(1, q8GCD - 2)} ${p.groupName}`;
+  const q8Wrong3 = `${q8GCD * 2} ${p.groupName}`;
   const q8Options = shuffle([q8CorrectStr, q8Wrong1, q8Wrong2, q8Wrong3]);
 
   return {
@@ -181,7 +211,7 @@ function generateQuestions() {
     q8: {
       type: 'mcq',
       title: 'Πρόβλημα Καθημερινότητας',
-      prompt: `Ένας ανθοπώλης έχει ${q8Count1} ${p.item1} και ${q8Count2} ${p.item2}. Πόσες πανομοιότυπες ${p.group} μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα;`,
+      prompt: `${p.profession} έχει ${q8Count1} ${p.item1} και ${q8Count2} ${p.item2}. ${p.questionText}`,
       options: q8Options,
       correct: q8CorrectStr,
       explain: `Βρίσκουμε τον Μ.Κ.Δ.(${q8Count1}, ${q8Count2}) ＝ ${q8GCD}. Άρα μπορεί να φτιάξει το πολύ ${q8CorrectStr}.`
@@ -279,7 +309,7 @@ export default function MkdExercisesPage() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
+                <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
                 Διαδραστικές Ασκήσεις: Μέγιστος Κοινός Διαιρέτης (Μ.Κ.Δ.)
