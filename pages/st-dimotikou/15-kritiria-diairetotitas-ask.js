@@ -701,5 +701,3 @@ export default function KritiriaDiairetotitasExercisesPage() {
     </Layout>
   );
 }
-
-```
