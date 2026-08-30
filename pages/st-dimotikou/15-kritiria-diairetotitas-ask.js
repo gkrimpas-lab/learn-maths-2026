@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
+import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Βοηθητικές συναρτήσεις
@@ -312,7 +312,7 @@ export default function KritiriaDiairetotitasExercisesPage() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
+                <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
                 Διαδραστικές Ασκήσεις: Κριτήρια Διαιρετότητας
