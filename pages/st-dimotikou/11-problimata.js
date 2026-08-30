@@ -18,12 +18,12 @@ const PROBLEM_PRESETS = [
     ],
     steps: [
       {
-        action: 'Υπολογισμός λεωφορείων (Διαίρεση)',
+        action: 'Υπολογισμος λεωφορειων (Διαιρεση)',
         calc: '120 : 40 ＝ 3 λεωφορεία',
         explain: 'Μοιράζουμε το σύνολο των μαθητών στη χωρητικότητα κάθε λεωφορείου.'
       },
       {
-        action: 'Υπολογισμός συνολικού κόστους (Πολλαπλασιασμός)',
+        action: 'Υπολογισμος συνολικου κοστους (Πολλαπλασιασμος)',
         calc: '120 × 8 ＝ 960 €',
         explain: 'Πολλαπλασιάζουμε το πλήθος των μαθητών με την τιμή του ενός εισιτηρίου.'
       }
@@ -44,22 +44,22 @@ const PROBLEM_PRESETS = [
     ],
     steps: [
       {
-        action: 'Κόστος μήλων',
+        action: 'Κοστος μηλων',
         calc: '3 × 2 ＝ 6 €',
         explain: 'Βρίσκουμε πόσο πλήρωσε για τα μήλα.'
       },
       {
-        action: 'Κόστος τυριού',
+        action: 'Κοστος τυριου',
         calc: '2 × 6 ＝ 12 €',
         explain: 'Βρίσκουμε πόσο πλήρωσε για το τυρί.'
       },
       {
-        action: 'Συνολική δαπάνη',
+        action: 'Συνολικη δαπανη',
         calc: '6 ＋ 12 ＝ 18 €',
         explain: 'Προσθέτουμε τα επιμέρους έξοδα.'
       },
       {
-        action: 'Υπολογισμός ρέστων (Αφαίρεση)',
+        action: 'Υπολογισμος ρεστων (Αφαιρεση)',
         calc: '50 － 18 ＝ 32 €',
         explain: 'Αφαιρούμε τα συνολικά έξοδα από το αρχικό χαρτονόμισμα.'
       }
@@ -80,17 +80,17 @@ const PROBLEM_PRESETS = [
     ],
     steps: [
       {
-        action: 'Αρχικά βιβλία',
+        action: 'Αρχικα βιβλια',
         calc: '4 × 25 ＝ 100 βιβλία',
         explain: 'Βρίσκουμε πόσα βιβλία υπήρχαν συνολικά.'
       },
       {
-        action: 'Συνολικά βιβλία μετά την αγορά',
+        action: 'Συνολικα βιβλια μετα την αγορα',
         calc: '100 ＋ 35 ＝ 135 βιβλία',
         explain: 'Προσθέτουμε τα καινούρια βιβλία.'
       },
       {
-        action: 'Μοίρασμα στα 5 νέα ράφια',
+        action: 'Μοιρασμα στα 5 νεα ραφια',
         calc: '135 : 5 ＝ 27 βιβλία',
         explain: 'Διαιρούμε το σύνολο των βιβλίων με τα 5 ράφια.'
       }
@@ -173,10 +173,10 @@ export default function ProblimataPage() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικού
+                  🎓 ΣΤ' Δημοτικου
                 </span>
                 <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενότητα 11
+                  Ενοτητα 11
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -268,7 +268,7 @@ export default function ProblimataPage() {
             <div className="bg-slate-50 border-2 border-slate-200 p-5 sm:p-6 rounded-3xl shadow-inner space-y-3">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <span className="text-xs font-black uppercase text-blue-600 tracking-wider bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-                  Εκφώνηση Προβλήματος
+                  Εκφωνηση Προβληματος
                 </span>
                 <span className="text-xs font-bold text-slate-400">
                   Παράδειγμα {selectedProblemIndex + 1} από {PROBLEM_PRESETS.length}
@@ -372,7 +372,7 @@ export default function ProblimataPage() {
                       <div key={idx} className="p-3.5 sm:p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5 shadow-xs">
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1.5">
                           <span className="text-xs font-black uppercase text-purple-700">
-                            Βήμα {idx + 1}: {s.action}
+                            Βημα {idx + 1}: {s.action}
                           </span>
                           <span className="font-mono text-xs sm:text-sm md:text-base font-black text-slate-900 bg-white px-3 py-1 rounded-xl border border-slate-300 self-start sm:self-auto">
                             {s.calc}
