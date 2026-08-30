@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
-import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Βοηθητικές συναρτήσεις
@@ -21,7 +21,7 @@ function sumDigits(numStr) {
   return numStr.split('').reduce((acc, curr) => acc + parseInt(curr, 10), 0);
 }
 
-// Δεξαμενή θεματικών σεναρίων καθημερινότητας με σωστές αντωνυμίες
+// Δεξαμενή θεματικών σεναρίων καθημερινότητας με σωστή γραμματική διατύπωση
 const REAL_WORLD_ITEMS = [
   { item: 'μαθητές', pronoun: 'τους', unit: 'ομάδες' },
   { item: 'καραμέλες', pronoun: 'τις', unit: 'σακουλάκια' },
@@ -128,19 +128,21 @@ function generateQuestions() {
 
   // Q8: MCQ - Πρόβλημα Καθημερινότητας (Ισόποση κατανομή)
   const p = shuffledItems[0];
-  const targetDiv = [4, 5, 9, 25][getRandomInt(0, 3)];
-  let q8Count = getRandomInt(100, 400);
-  while (q8Count % targetDiv !== 0) q8Count++;
-
+  const targetDiv = p.targetDiv;
+  const q8Count = p.total;
+  
   const allCandidates = [2, 3, 4, 5, 9, 10, 25];
   const invalidCandidates = allCandidates.filter(d => d !== targetDiv && q8Count % d !== 0);
   const wrongDivs = shuffle(invalidCandidates).slice(0, 3);
 
-  const q8CorrectStr = `${p.unit} των ${targetDiv}`;
+  const q8CorrectStr = `${p.unit}`;
   const q8Options = shuffle([
     q8CorrectStr,
-    ...wrongDivs.map(w => `${p.unit} των ${w}`)
+    ...wrongDivs.map(w => `ομάδες των ${w}`)
   ]);
+
+  const verbForm = p.item === 'μαθητές' ? 'τους μοιράσουμε' : 'τις μοιράσουμε';
+  const noneForm = p.item === 'μαθητές' ? 'κανένας' : 'καμία';
 
   return {
     q1: {
@@ -164,7 +166,7 @@ function generateQuestions() {
     },
     q3: {
       type: 'mcq',
-      title: 'Διαιρετότητα με το 4 & 25',
+      title: 'Διαιρετότητα με 4 & 25',
       prompt: `Ποιος από τους παρακάτω αριθμούς διαιρείται ακριβώς με το ${q3Div};`,
       options: q3Options,
       correct: String(q3ValidNum),
@@ -182,7 +184,7 @@ function generateQuestions() {
     },
     q5: {
       type: 'tf',
-      title: 'Κανόνας Διαιρετότητας με το 9',
+      title: 'Κανόνας Διαιρετότητας με 9',
       text: q5Text,
       correct: q5IsTrue,
       explain: q5IsTrue
@@ -191,7 +193,7 @@ function generateQuestions() {
     },
     q6: {
       type: 'tf',
-      title: 'Κανόνας Διαιρετότητας με το 25',
+      title: 'Κανόνας Διαιρετότητας με 25',
       text: q6Text,
       correct: q6IsTrue,
       explain: q6IsTrue
@@ -208,10 +210,10 @@ function generateQuestions() {
     q8: {
       type: 'mcq',
       title: 'Πρόβλημα Καθημερινότητας',
-      prompt: `Έχουμε ${q8Count} ${p.item}. Με ποιον τρόπο μπορούμε να ${p.pronoun} μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
+      prompt: `Έχουμε ${q8Count} ${p.item}. Με ποιον τρόπο μπορούμε να ${verbForm} ισόποσα χωρίς να περισσέψει ${noneForm};`,
       options: q8Options,
       correct: q8CorrectStr,
-      explain: `Ο αριθμός ${q8Count} διαιρείται ακριβώς με το ${targetDiv} (${q8Count} : ${targetDiv} ＝ ${q8Count / targetDiv}), επομένως σχηματίζονται ακριβώς ${q8Count / targetDiv} ${p.unit} των ${targetDiv}.`
+      explain: `Ο αριθμός ${q8Count} διαιρείται ακριβώς με το ${targetDiv} (${q8Count} : ${targetDiv} ＝ ${q8Count / targetDiv}), επομένως ${verbForm} ισόποσα σε ${q8Count / targetDiv} ${p.unit}.`
     }
   };
 }
@@ -626,7 +628,7 @@ export default function KritiriaDiairetotitasExercisesPage() {
                     type="button"
                     disabled={submitted}
                     onClick={() => handleInputChange('q8', opt)}
-                    className={`w-full p-2.5 rounded-xl text-xs font-bold border text-center transition ${
+                    className={`w-full p-2.5 rounded-xl text-xs sm:text-sm font-bold border text-center transition ${
                       answers.q8 === opt
                         ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
                         : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
