@@ -508,7 +508,7 @@ export default function DiairesiPage() {
 
                         {r > 0 && (
                           <div className="flex flex-col items-center gap-1.5 mt-1">
-                            <span className="text-xs font-bold text-rose-600 uppercase tracking-wide">📦 Περίσσεψαν (Υπόλοιπο = {r}):</span>
+                            <span className="text-xs font-bold text-rose-600 uppercase tracking-wide">📦 Περισσεψαν (Υπολοιπο = {r}):</span>
                             <div className="flex gap-1.5 bg-rose-50 border border-rose-200 p-2 sm:p-2.5 rounded-xl">
                               {[...Array(r)].map((_, i) => (
                                 <div key={i} className="w-3 h-3 sm:w-3.5 sm:h-3.5 bg-rose-500 rounded-xs shadow-xs" />
