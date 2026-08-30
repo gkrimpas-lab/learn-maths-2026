@@ -384,7 +384,7 @@ export default function ProblimataPage() {
                   </div>
 
                   <div className="p-3.5 sm:p-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                    <span className="text-xs md:text-sm uppercase tracking-wider font-bold">🏁 Τελική Απάντηση:</span>
+                    <span className="text-xs md:text-sm uppercase tracking-wider font-bold">🏁 Τελικη Απαντηση:</span>
                     <span className="text-xs sm:text-sm md:text-base font-black">{currentProblem.finalAnswer}</span>
                   </div>
                 </div>
