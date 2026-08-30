@@ -89,10 +89,10 @@ export default function DinameisDekaPage() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικού
+                  🎓 ΣΤ' Δημοτικου
                 </span>
                 <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενότητα 7
+                  Ενοτητα 7
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -219,7 +219,7 @@ export default function DinameisDekaPage() {
               <div className="lg:col-span-7 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-4 shadow-inner flex flex-col justify-center">
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    Πληκτρολόγησε Αριθμό (π.χ. 34,56):
+                    Πληκτρολογησε Αριθμο (π.χ. 34,56):
                   </label>
                   <input
                     type="text"
@@ -247,7 +247,7 @@ export default function DinameisDekaPage() {
                 {/* MULTIPLIER BUTTONS */}
                 <div className="space-y-1.5 pt-2 border-t border-slate-200">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Επίλεξε Πολλαπλασιαστή:
+                    Επιλεξε Πολλαπλασιαστη:
                   </span>
                   <div className="grid grid-cols-3 gap-2">
                     {activeTab === 'megaloi' ? (
@@ -288,7 +288,7 @@ export default function DinameisDekaPage() {
               {/* DYNAMIC RESULT CARD (5 COLS) */}
               <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                 <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
-                  ✨ Τελικό Γινόμενο:
+                  ✨ Τελικο Γινομενο:
                 </span>
 
                 <div className="flex flex-wrap items-center justify-center gap-2 text-lg sm:text-xl md:text-2xl font-black font-mono">
@@ -312,7 +312,7 @@ export default function DinameisDekaPage() {
             <div className="bg-slate-50 border border-slate-200 p-4 sm:p-5 md:p-6 rounded-2xl flex flex-col items-center justify-between space-y-6">
               <div className="text-center space-y-1">
                 <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                  🧭 Οπτικός Οδηγός Μετατόπισης Υποδιαστολής
+                  🧭 Οπτικος Οδηγος Μετατοπισης Υποδιαστολης
                 </span>
                 <p className="text-xs text-slate-500">
                   Παρατήρησε τα βέλη που δείχνουν το άλμα της υποδιαστολής ανάμεσα στα ψηφία!
@@ -413,7 +413,7 @@ export default function DinameisDekaPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600">
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                  <span className="font-black text-blue-800 uppercase block">1. Πολλαπλασιασμός με 10, 100, 1000...</span>
+                  <span className="font-black text-blue-800 uppercase block">1. Πολλαπλασιασμος με 10, 100, 1000...</span>
                   <ul className="space-y-1">
                     <li>• × 10 ➔ 1 θέση δεξιά (<code className="font-bold">4,5 × 10 = 45</code>)</li>
                     <li>• × 100 ➔ 2 θέσεις δεξιά (<code className="font-bold">4,5 × 100 = 450</code>)</li>
@@ -422,7 +422,7 @@ export default function DinameisDekaPage() {
                 </div>
 
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                  <span className="font-black text-indigo-800 uppercase block">2. Πολλαπλασιασμός με 0,1, 0,01, 0,001...</span>
+                  <span className="font-black text-indigo-800 uppercase block">2. Πολλαπλασιασμος με 0,1, 0,01, 0,001...</span>
                   <ul className="space-y-1">
                     <li>• × 0,1 ➔ 1 θέση αριστερά (<code className="font-bold">25 × 0,1 = 2,5</code>)</li>
                     <li>• × 0,01 ➔ 2 θέσεις αριστερά (<code className="font-bold">25 × 0,01 = 0,25</code>)</li>
