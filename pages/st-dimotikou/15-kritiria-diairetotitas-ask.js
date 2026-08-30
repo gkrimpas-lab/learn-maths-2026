@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
-import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Βοηθητικές συναρτήσεις
@@ -21,13 +21,13 @@ function sumDigits(numStr) {
   return numStr.split('').reduce((acc, curr) => acc + parseInt(curr, 10), 0);
 }
 
-// Δεξαμενή θεματικών σεναρίων καθημερινότητας με σωστή γραμματική διατύπωση
+// Δεξαμενή θεματικών σεναρίων καθημερινότητας με ορισμένα συνολικά πλήθη (total) και σωστά γένη
 const REAL_WORLD_ITEMS = [
-  { item: 'μαθητές', pronoun: 'τους', unit: 'ομάδες' },
-  { item: 'καραμέλες', pronoun: 'τις', unit: 'σακουλάκια' },
-  { item: 'βιβλία', pronoun: 'τα', unit: 'πακέτα' },
-  { item: 'ευρώ', pronoun: 'τα', unit: 'μερίδια' },
-  { item: 'τετράδια', pronoun: 'τα', unit: 'κουτιά' }
+  { item: 'μαθητές', gender: 'm', total: 390, targetDiv: 10, unit: 'ομάδες των 10' },
+  { item: 'καραμέλες', gender: 'f', total: 395, targetDiv: 5, unit: 'σακουλάκια των 5' },
+  { item: 'βιβλία', gender: 'n', total: 360, targetDiv: 4, unit: 'πακέτα των 4' },
+  { item: 'ευρώ', gender: 'n', total: 450, targetDiv: 25, unit: 'μερίδια των 25' },
+  { item: 'τετράδια', gender: 'n', total: 270, targetDiv: 9, unit: 'κουτιά των 9' }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
@@ -141,8 +141,16 @@ function generateQuestions() {
     ...wrongDivs.map(w => `ομάδες των ${w}`)
   ]);
 
-  const verbForm = p.item === 'μαθητές' ? 'τους μοιράσουμε' : 'τις μοιράσουμε';
-  const noneForm = p.item === 'μαθητές' ? 'κανένας' : 'καμία';
+  // Γραμματική συμφωνία ανάλογα με το γένος του αντικειμένου
+  let verbForm = 'τα μοιράσουμε';
+  let noneForm = 'κανένα';
+  if (p.gender === 'm') {
+    verbForm = 'τους μοιράσουμε';
+    noneForm = 'κανένας';
+  } else if (p.gender === 'f') {
+    verbForm = 'τις μοιράσουμε';
+    noneForm = 'καμία';
+  }
 
   return {
     q1: {
