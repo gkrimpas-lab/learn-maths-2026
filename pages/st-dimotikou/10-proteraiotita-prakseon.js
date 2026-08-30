@@ -158,7 +158,7 @@ export default function ProteraiotitaPrakseonPage() {
 
         if (subTarget !== -1) {
           targetIdx = openParenIdx + 1 + subTarget;
-          reasonType = 'Παρενθέσεις ( )';
+          reasonType = 'Παρενθεσεις ( )';
           reasonText = 'Λύνουμε κατά προτεραιότητα την πράξη μέσα στην παρένθεση.';
         }
       }
@@ -167,7 +167,7 @@ export default function ProteraiotitaPrakseonPage() {
         for (let i = 0; i < tokens.length; i++) {
           if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '*' || tokens[i].value === '/')) {
             targetIdx = i;
-            reasonType = 'Πολλαπλασιασμοί / Διαιρέσεις';
+            reasonType = 'Πολλαπλασιασμοι / Διαιρεσεις';
             reasonText = tokens[i].value === '*' ? 'Ο πολλαπλασιασμός προηγείται.' : 'Η διαίρεση προηγείται.';
             break;
           }
@@ -178,7 +178,7 @@ export default function ProteraiotitaPrakseonPage() {
         for (let i = 0; i < tokens.length; i++) {
           if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '+' || tokens[i].value === '-')) {
             targetIdx = i;
-            reasonType = 'Προσθέσεις / Αφαιρέσεις';
+            reasonType = 'Προσθεσεις / Αφαιρεσεις';
             reasonText = 'Κάνουμε τις προσθέσεις και τις αφαιρέσεις από αριστερά προς τα δεξιά.';
             break;
           }
@@ -213,7 +213,7 @@ export default function ProteraiotitaPrakseonPage() {
         };
 
         steps.push({
-          level: `Βήμα ${steps.length + 1}: ${reasonType}`,
+          level: `Βημα ${steps.length + 1}: ${reasonType}`,
           text: reasonText,
           calculation: `${formatCalcNum(num1)} ${opChar} ${formatCalcNum(num2)} = ${formatCalcNum(formattedRes)}`,
           currentForm: ''
@@ -266,10 +266,10 @@ export default function ProteraiotitaPrakseonPage() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικού
+                  🎓 ΣΤ' Δημοτικου
                 </span>
                 <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενότητα 10
+                  Ενοτητα 10
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -364,7 +364,7 @@ export default function ProteraiotitaPrakseonPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    Γράψε τη δική σου παράσταση:
+                    Γραψε τη δικη σου παρασταση:
                   </span>
                   <p className="text-gray-500 text-xs">
                     Χωρίς κενά, μόνο αριθμοί και σύμβολα: <code className="bg-white px-1 py-0.5 rounded font-mono font-bold text-blue-600 border">+ - * / ( )</code>
@@ -386,7 +386,7 @@ export default function ProteraiotitaPrakseonPage() {
 
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    Ή επίλεξε έτοιμο παράδειγμα:
+                    Η επιλεξε ετοιμο παραδειγμα:
                   </span>
                   <div className="flex flex-col gap-2">
                     {Object.keys(PRESETS).map((key) => (
@@ -413,7 +413,7 @@ export default function ProteraiotitaPrakseonPage() {
               
               <div className="w-full text-center mb-6">
                 <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                  Ζωντανή Ανάλυση Βημάτων:
+                  Ζωντανη Αναλυση Βηματων:
                 </span>
                 <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-blue-600 mt-2 bg-blue-50 inline-block px-4 sm:px-6 py-2 rounded-2xl border border-blue-100 shadow-xs max-w-full overflow-x-auto">
                   {customExpr.replace(/\*/g, '×').replace(/\//g, '÷') || "—"}
@@ -463,7 +463,7 @@ export default function ProteraiotitaPrakseonPage() {
                 {analysis.isValid && (
                   <div className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-3.5 sm:p-4 rounded-2xl text-center shadow-lg font-mono font-black flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-2">
                     <span className="text-xl">🏁</span>
-                    <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελική Τιμή Παράστασης:</span>
+                    <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελικη Τιμη Παραστασης:</span>
                     <span className="text-xl sm:text-2xl bg-white/20 px-3 sm:px-4 py-1 rounded-xl shadow-inner">
                       {analysis.final}
                     </span>
