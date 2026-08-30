@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
+import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Βοηθητικές συναρτήσεις
@@ -585,48 +585,34 @@ export default function ProblimataExercisesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col justify-between pb-32">
-      <Head>
-        <title>🎯 Ασκήσεις: Επίλυση Προβλημάτων - ΣΤ' Δημοτικού | LearnMaths.gr</title>
-        <meta name="description" content="Διαδραστικά προβλήματα μαθηματικών με αυτόματη βαθμολόγηση και αναλυτική καθοδήγηση για τη ΣΤ' Δημοτικού." />
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
-
-      <div>
-        {/* 1. STICKY NAVBAR */}
-        <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-          <div className={`${LAYOUT.CONTAINER} py-3.5 flex justify-between items-center`}>
-            <Link href="/st-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight flex items-center">
-              <span>LearnMaths</span><span className="text-indigo-600">.gr</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link 
-                href="/st-dimotikou/11-problimata" 
-                className="inline-flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-bold border border-blue-200 transition"
-              >
-                <span>📖</span> <span>Θεωρία</span>
-              </Link>
-              <Link 
-                href="/st-dimotikou" 
-                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold transition"
-              >
-                <span>🔙</span> <span>Πίσω</span>
-              </Link>
-            </div>
-          </div>
-        </nav>
-
-        {/* 2. HEADER HERO BANNER */}
-        <section className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white py-10 px-4 shadow-inner">
-          <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-6`}>
+    <Layout
+      title="🎯 Ασκήσεις: Επίλυση Προβλημάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Διαδραστικά προβλήματα μαθηματικών με αυτόματη βαθμολόγηση και αναλυτική καθοδήγηση για τη ΣΤ' Δημοτικού."
+      backUrl="/st-dimotikou"
+      backText="ΣΤ' Δημοτικού"
+      showAds={false}
+      hideFooter={true}
+      actionButton={
+        <Link 
+          href="/st-dimotikou/11-problimata" 
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
+        >
+          <span>📖</span> <span>Θεωρία</span>
+        </Link>
+      }
+    >
+      <div className="pb-28">
+        {/* HEADER HERO BANNER */}
+        <section className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white py-8 sm:py-10 px-4 sm:px-6 rounded-3xl shadow-lg mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
+                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
                 Διαδραστικές Ασκήσεις: Επίλυση Προβλημάτων
               </h1>
-              <p className="text-blue-100 text-sm md:text-base max-w-xl">
+              <p className="text-blue-100 text-xs sm:text-sm md:text-base max-w-xl leading-relaxed">
                 Λύσε τα 4 δυναμικά προβλήματα καθημερινότητας, οργάνωσε τα δεδομένα και δες την πλήρη ανάλυση!
               </p>
             </div>
@@ -634,128 +620,126 @@ export default function ProblimataExercisesPage() {
             <button
               type="button"
               onClick={loadNewQuestions}
-              className="px-5 py-3 bg-white text-blue-800 hover:bg-blue-50 rounded-2xl font-extrabold shadow-md transition transform active:scale-95 text-sm flex items-center gap-2 shrink-0"
+              className="px-5 py-3 bg-white text-blue-800 hover:bg-blue-50 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm flex items-center gap-2 shrink-0"
             >
               <span>🔄</span> <span>Νέα 4 Προβλήματα</span>
             </button>
           </div>
         </section>
 
-        {/* 3. ΦΟΡΜΑ ΜΕ ΤΑ 4 ΠΡΟΒΛΗΜΑΤΑ */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10`}>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* ΦΟΡΜΑ ΜΕ ΤΑ 4 ΠΡΟΒΛΗΜΑΤΑ */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              {questionKeys.map((key, idx) => {
-                const q = questions[key];
-                return (
-                  <div key={key} className={`p-6 rounded-3xl border transition-all flex flex-col justify-between ${getCardStyle(key)}`}>
-                    <div>
-                      {/* HEADER BADGE */}
-                      <div className="flex justify-between items-center mb-4">
-                        <span className={`text-xs font-black px-3 py-1 rounded-full ${badgeColors[idx]}`}>
-                          Πρόβλημα {idx + 1} • {q.title}
-                        </span>
-                        {submitted && (
-                          <span className="text-lg">{isCorrect(key) ? '✅' : '❌'}</span>
-                        )}
-                      </div>
-
-                      {/* PROBLEM TEXT */}
-                      <p className="text-sm md:text-base text-slate-800 mb-4 leading-relaxed font-semibold">
-                        «{q.text}»
-                      </p>
-
-                      {/* GIVEN DATA PILLS */}
-                      <div className="bg-slate-50 border border-slate-200 p-3 rounded-2xl mb-4 space-y-1.5">
-                        <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                          📋 Δεδομένα:
-                        </span>
-                        <ul className="text-xs text-slate-600 space-y-1 font-medium">
-                          {q.given.map((g, gIdx) => (
-                            <li key={gIdx} className="flex items-center gap-1.5">
-                              <span className="text-emerald-600 font-bold">✔</span> {g}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {/* INPUT & EXPLANATION */}
-                    <div className="space-y-3 pt-2">
-                      <div className="space-y-1">
-                        <label className="text-xs font-black text-slate-600 block">
-                          🎯 {q.target}:
-                        </label>
-                        <input
-                          type="text"
-                          disabled={submitted}
-                          value={answers[key]}
-                          onChange={(e) => handleInputChange(key, e.target.value)}
-                          placeholder="Γράψε τον αριθμό..."
-                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100 font-mono"
-                        />
-                      </div>
-
+            {questionKeys.map((key, idx) => {
+              const q = questions[key];
+              return (
+                <div key={key} className={`p-5 sm:p-6 rounded-3xl border transition-all flex flex-col justify-between ${getCardStyle(key)}`}>
+                  <div>
+                    {/* HEADER BADGE */}
+                    <div className="flex justify-between items-center mb-4">
+                      <span className={`text-xs font-black px-3 py-1 rounded-full ${badgeColors[idx]}`}>
+                        Πρόβλημα {idx + 1} • {q.title}
+                      </span>
                       {submitted && (
-                        <div className={`p-3.5 rounded-xl text-xs font-medium leading-relaxed ${isCorrect(key) ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                          💡 <strong>Ανάλυση Λύσης:</strong> {q.explain}
-                        </div>
+                        <span className="text-lg">{isCorrect(key) ? '✅' : '❌'}</span>
                       )}
                     </div>
+
+                    {/* PROBLEM TEXT */}
+                    <p className="text-sm sm:text-base text-slate-800 mb-4 leading-relaxed font-semibold">
+                      «{q.text}»
+                    </p>
+
+                    {/* GIVEN DATA PILLS */}
+                    <div className="bg-slate-50 border border-slate-200 p-3 sm:p-3.5 rounded-2xl mb-4 space-y-1.5">
+                      <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
+                        📋 Δεδομένα:
+                      </span>
+                      <ul className="text-xs text-slate-600 space-y-1 font-medium">
+                        {q.given.map((g, gIdx) => (
+                          <li key={gIdx} className="flex items-center gap-1.5">
+                            <span className="text-emerald-600 font-bold">✔</span> {g}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                );
-              })}
 
+                  {/* INPUT & EXPLANATION */}
+                  <div className="space-y-3 pt-2">
+                    <div className="space-y-1">
+                      <label className="text-xs font-black text-slate-600 block">
+                        🎯 {q.target}:
+                      </label>
+                      <input
+                        type="text"
+                        disabled={submitted}
+                        value={answers[key]}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                        placeholder="Γράψε τον αριθμό..."
+                        className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100 font-mono"
+                      />
+                    </div>
+
+                    {submitted && (
+                      <div className={`p-3.5 rounded-xl text-xs font-medium leading-relaxed ${isCorrect(key) ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                        💡 <strong>Ανάλυση Λύσης:</strong> {q.explain}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+          </div>
+
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-6">
+              <button
+                type="submit"
+                className="bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5"
+              >
+                <span className="text-xl">🎯</span>
+                <span>Έλεγχος Απαντήσεων</span>
+              </button>
             </div>
-
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
-            {!submitted && (
-              <div className="flex justify-center pt-8">
-                <button
-                  type="submit"
-                  className="bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5"
-                >
-                  <span className="text-xl">🎯</span>
-                  <span>Έλεγχος Απαντήσεων</span>
-                </button>
-              </div>
-            )}
-          </form>
-        </main>
+          )}
+        </form>
       </div>
 
-      {/* 4. FIXED STICKY BOTTOM SCORE FOOTER (SCORE / 4) */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
+      {/* FIXED STICKY BOTTOM SCORE FOOTER (SCORE / 4) */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
           
-          {/* ΑΡΙΣΤΕΡΑ: SCORE BADGE & PERCENTAGE */}
-          <div className="flex items-center gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-base md:text-lg flex items-center gap-2 shadow-sm">
+          {/* SCORE BADGE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="bg-amber-400 text-slate-900 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
               <span>Σκορ:</span>
-              <span className="font-mono text-xl md:text-2xl">{score} / 4</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 4</span>
             </div>
             {submitted && (
-              <span className="text-sm font-bold text-slate-300">
-                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 4) * 100)}%</span>
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                Ποσοστό: <span className="text-emerald-400 font-black">{Math.round((score / 4) * 100)}%</span>
               </span>
             )}
           </div>
 
-          {/* ΔΕΞΙΑ: GUIDANCE TEXT OR RETRY BUTTON */}
+          {/* GUIDANCE TEXT OR RETRY BUTTON */}
           <div className="flex items-center gap-3">
             {submitted ? (
               <button
                 type="button"
                 onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
+                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
                 <span>🔄</span>
-                <span>Παίξε ξανά με 4 νέα προβλήματα!</span>
+                <span>Νέα 4 προβλήματα!</span>
               </button>
             ) : (
-              <p className="text-xs md:text-sm text-slate-400 hidden sm:block">
+              <p className="text-xs text-slate-400 hidden md:block">
                 Συμπλήρωσε τα 4 προβλήματα και πάτα «Έλεγχος Απαντήσεων»!
               </p>
             )}
@@ -763,6 +747,6 @@ export default function ProblimataExercisesPage() {
 
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
