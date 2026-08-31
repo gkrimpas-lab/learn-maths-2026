@@ -21,7 +21,7 @@ function sumDigits(numStr) {
   return numStr.split('').reduce((acc, curr) => acc + parseInt(curr, 10), 0);
 }
 
-// Δεξαμενή 10 θεματικών σεναρίων καθημερινότητας με σωστή σύνταξη και τυχαία/συγκεκριμένα πλήθη
+// Δεξαμενή 10 θεματικών σεναρίων καθημερινότητας με τη σωστή σύνταξη
 const REAL_WORLD_PROBLEMS_Q8 = [
   {
     prompt: (num) => `Έχουμε ${num} τετράδια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
@@ -189,7 +189,7 @@ function generateQuestions() {
   const q7Num = q7Options[getRandomInt(0, q7Options.length - 1)];
   const q7Correct = '10';
 
-  // Q8: MCQ - Τυχαία επιλογή από τη δεξαμενή των 10 προβλημάτων
+  // Q8: MCQ - Πρόβλημα Καθημερινότητας (από τη δεξαμενή 10 ερωτήσεων)
   const shuffledQ8Pool = shuffle(REAL_WORLD_PROBLEMS_Q8);
   const selectedQ8 = shuffledQ8Pool[0];
   const q8Prompt = selectedQ8.prompt(selectedQ8.total);
@@ -379,7 +379,7 @@ export default function KritiriaDiairetotitasExercisesPage() {
           <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-6`}>
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
+                <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight">
                 Διαδραστικές Ασκήσεις: Κριτήρια Διαιρετότητας
