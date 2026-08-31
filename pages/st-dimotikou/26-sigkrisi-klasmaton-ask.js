@@ -18,11 +18,72 @@ function shuffle(array) {
 }
 
 // Δεξαμενή σεναρίων καθημερινότητας
+// Πλούσια δεξαμενή σεναρίων καθημερινότητας με γραμματική και συντακτική ορθότητα
 const REAL_WORLD_SCENARIOS = [
-  { item: 'της διαδρομής', p1: 'Ο Νίκος', p2: 'Η Ελένη', n1: 3, d1: 4, n2: 5, d2: 8 },
-  { item: 'του βιβλίου', p1: 'Ο Γιώργος', p2: 'Η Μαρία', n1: 2, d1: 3, n2: 3, d2: 5 },
-  { item: 'της πίτσας', p1: 'Ο Πέτρος', p2: 'Η Άννα', n1: 5, d1: 6, n2: 7, d2: 8 },
-  { item: 'του κήπου', p1: 'Ο Κώστας', p2: 'Η Σοφία', n1: 3, d1: 5, n2: 4, d2: 10 }
+  {
+    p1: 'Ο Νίκος',
+    p2: 'Η Ελένη',
+    verb: 'διάνυσε',
+    item: 'της διαδρομής',
+    actionQuestion: 'διάνυσε τη μεγαλύτερη απόσταση',
+    actionExplain: 'Μεγαλύτερη απόσταση διάνυσε'
+  },
+  {
+    p1: 'Ο Γιώργος',
+    p2: 'Η Μαρία',
+    verb: 'διάβασε',
+    item: 'του βιβλίου',
+    actionQuestion: 'διάβασε το μεγαλύτερο μέρος',
+    actionExplain: 'Μεγαλύτερο μέρος διάβασε'
+  },
+  {
+    p1: 'Ο Πέτρος',
+    p2: 'Η Άννα',
+    verb: 'έφαγε',
+    item: 'της πίτσας',
+    actionQuestion: 'έφαγε το μεγαλύτερο μέρος',
+    actionExplain: 'Μεγαλύτερο μέρος έφαγε'
+  },
+  {
+    p1: 'Ο Κώστας',
+    p2: 'Η Σοφία',
+    verb: 'φύτεψε',
+    item: 'του κήπου',
+    actionQuestion: 'φύτεψε το μεγαλύτερο μέρος',
+    actionExplain: 'Μεγαλύτερο μέρος φύτεψε'
+  },
+  {
+    p1: 'Ο Δημήτρης',
+    p2: 'Η Κατερίνα',
+    verb: 'ήπιε',
+    item: 'του χυμού',
+    actionQuestion: 'ήπιε τη μεγαλύτερη ποσότητα',
+    actionExplain: 'Μεγαλύτερη ποσότητα ήπιε'
+  },
+  {
+    p1: 'Ο Αλέξανδρος',
+    p2: 'Η Χριστίνα',
+    verb: 'χρωμάτισε',
+    item: 'του σχεδίου',
+    actionQuestion: 'χρωμάτισε το μεγαλύτερο μέρος',
+    actionExplain: 'Μεγαλύτερο μέρος χρωμάτισε'
+  },
+  {
+    p1: 'Ο Βασίλης',
+    p2: 'Η Ιωάννα',
+    verb: 'ολοκλήρωσε',
+    item: 'των εργασιών',
+    actionQuestion: 'ολοκλήρωσε το μεγαλύτερο μέρος',
+    actionExplain: 'Μεγαλύτερο μέρος ολοκλήρωσε'
+  },
+  {
+    p1: 'Ο Μάνος',
+    p2: 'Η Δέσποινα',
+    verb: 'αποταμίευσε',
+    item: 'του χαρτζιλικιού',
+    actionQuestion: 'αποταμίευσε το μεγαλύτερο μέρος',
+    actionExplain: 'Μεγαλύτερο μέρος αποταμίευσε'
+  }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
@@ -84,13 +145,36 @@ function generateQuestions() {
   const q7CrossLeft = q7Num1 * q7Den2;
   const q7Correct = String(q7CrossLeft);
 
-  // Q8: MCQ - Πρόβλημα Καθημερινότητας
-  const sc = shuffledScenarios[0];
-  const v1 = sc.n1 / sc.d1;
-  const v2 = sc.n2 / sc.d2;
+  // Q8: MCQ - Πρόβλημα Καθημερινότητας με σωστή γραμματική και δυναμικά κλάσματα
+  const sc = shuffle(REAL_WORLD_SCENARIOS)[0];
+  
+  // Δυναμική παραγωγή δύο διαφορετικών κλασμάτων (από 3 έως 10 οι παρονομαστές)
+  const d1 = getRandomInt(4, 8);
+  const n1 = getRandomInt(1, d1 - 1);
+  let d2 = getRandomInt(4, 10);
+  let n2 = getRandomInt(1, d2 - 1);
+  
+  // Αποφυγή ταυτόσημων κλασμάτων κατά την παραγωγή
+  if (n1 * d2 === n2 * d1) {
+    n2 = Math.min(d2 - 1, n2 + 1);
+  }
+
+  const v1 = n1 / d1;
+  const v2 = n2 / d2;
   const q8WhoMore = v1 > v2 ? sc.p1 : v1 < v2 ? sc.p2 : 'Και οι δύο το ίδιο';
-  const q8Prompt = `${sc.p1} διάβασε τα ${sc.n1}/${sc.d1} ${sc.item}, ενώ ${sc.p2} διάβασε τα ${sc.n2}/${sc.d2} ${sc.item}. Ποιος διάβασε το μεγαλύτερο μέρος;`;
+  
+  const q8Prompt = `${sc.p1} ${sc.verb} τα ${n1}/${d1} ${sc.item}, ενώ ${sc.p2} ${sc.verb} τα ${n2}/${d2} ${sc.item}. Ποιος ${sc.actionQuestion};`;
   const q8Options = shuffle([sc.p1, sc.p2, 'Και οι δύο το ίδιο']);
+
+  // Στο return του generateQuestions:
+  q8: {
+    type: 'mcq',
+    title: 'Πρόβλημα Καθημερινότητας',
+    prompt: q8Prompt,
+    options: q8Options,
+    correct: q8WhoMore,
+    explain: `Συγκρίνουμε ${n1}/${d1} (${v1.toFixed(2).replace('.', ',')}) και ${n2}/${d2} (${v2.toFixed(2).replace('.', ',')}). ${sc.actionExplain}: ${q8WhoMore}.`
+  }
 
   return {
     q1: {
