@@ -113,7 +113,7 @@ export default function KlasmaPage() {
     }
 
     return (
-      <svg width="180" height="180" className="drop-shadow-md">
+      <svg width="180" height="180" className="drop-shadow-md shrink-0">
         {slices}
         <circle cx={cx} cy={cy} r="3.5" className="fill-slate-700" />
       </svg>
@@ -353,15 +353,15 @@ export default function KlasmaPage() {
                   </span>
 
                   {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
-                  <div className="bg-white p-3.5 rounded-2xl border border-blue-200 shadow-xs space-y-2">
+                  <div className="bg-white p-3 sm:p-3.5 rounded-2xl border border-blue-200 shadow-xs space-y-2">
                     <span className="text-xs font-black text-blue-800 uppercase block">
                       Αριθμητης (Πανω):
                     </span>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2 w-full">
                       <button
                         type="button"
                         onClick={() => handleNumeratorChange(-1)}
-                        className="w-10 sm:w-11 py-2 bg-slate-100 hover:bg-slate-200 text-blue-700 border border-slate-200 rounded-xl font-black transition shadow-xs text-lg"
+                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 border border-slate-200 rounded-xl font-black transition shadow-xs text-lg flex items-center justify-center"
                       >
                         -
                       </button>
@@ -369,12 +369,12 @@ export default function KlasmaPage() {
                         type="text"
                         value={numerator}
                         onChange={(e) => handleNumeratorInputChange(e.target.value)}
-                        className="flex-1 text-center font-mono font-black text-xl sm:text-2xl text-blue-600 bg-blue-50/50 border-2 border-blue-200 rounded-xl p-1.5 focus:border-blue-500 outline-none shadow-inner"
+                        className="w-full min-w-0 flex-1 text-center font-mono font-black text-xl sm:text-2xl text-blue-600 bg-blue-50/50 border-2 border-blue-200 rounded-xl p-1.5 focus:border-blue-500 outline-none shadow-inner"
                       />
                       <button
                         type="button"
                         onClick={() => handleNumeratorChange(1)}
-                        className="w-10 sm:w-11 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black transition shadow-md text-lg"
+                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black transition shadow-md text-lg flex items-center justify-center"
                       >
                         +
                       </button>
@@ -382,15 +382,15 @@ export default function KlasmaPage() {
                   </div>
 
                   {/* ΕΛΕΓΧΟΣ ΠΑΡΟΝΟΜΑΣΤΗ */}
-                  <div className="bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-xs space-y-2">
+                  <div className="bg-white p-3 sm:p-3.5 rounded-2xl border border-emerald-200 shadow-xs space-y-2">
                     <span className="text-xs font-black text-emerald-800 uppercase block">
                       Παρονομαστης (Κατω):
                     </span>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2 w-full">
                       <button
                         type="button"
                         onClick={() => handleDenominatorChange(-1)}
-                        className="w-10 sm:w-11 py-2 bg-slate-100 hover:bg-slate-200 text-emerald-700 border border-slate-200 rounded-xl font-black transition shadow-xs text-lg"
+                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 border border-slate-200 rounded-xl font-black transition shadow-xs text-lg flex items-center justify-center"
                       >
                         -
                       </button>
@@ -398,12 +398,12 @@ export default function KlasmaPage() {
                         type="text"
                         value={denominator}
                         onChange={(e) => handleDenominatorInputChange(e.target.value)}
-                        className="flex-1 text-center font-mono font-black text-xl sm:text-2xl text-emerald-600 bg-emerald-50/50 border-2 border-emerald-200 rounded-xl p-1.5 focus:border-emerald-500 outline-none shadow-inner"
+                        className="w-full min-w-0 flex-1 text-center font-mono font-black text-xl sm:text-2xl text-emerald-600 bg-emerald-50/50 border-2 border-emerald-200 rounded-xl p-1.5 focus:border-emerald-500 outline-none shadow-inner"
                       />
                       <button
                         type="button"
                         onClick={() => handleDenominatorChange(1)}
-                        className="w-10 sm:w-11 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black transition shadow-md text-lg"
+                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black transition shadow-md text-lg flex items-center justify-center"
                       >
                         +
                       </button>
