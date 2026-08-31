@@ -17,7 +17,6 @@ function shuffle(array) {
   return arr;
 }
 
-// Δεξαμενή σεναρίων καθημερινότητας
 // Πλούσια δεξαμενή σεναρίων καθημερινότητας με γραμματική και συντακτική ορθότητα
 const REAL_WORLD_SCENARIOS = [
   {
@@ -146,15 +145,13 @@ function generateQuestions() {
   const q7Correct = String(q7CrossLeft);
 
   // Q8: MCQ - Πρόβλημα Καθημερινότητας με σωστή γραμματική και δυναμικά κλάσματα
-  const sc = shuffle(REAL_WORLD_SCENARIOS)[0];
+  const sc = shuffledScenarios[0];
   
-  // Δυναμική παραγωγή δύο διαφορετικών κλασμάτων (από 3 έως 10 οι παρονομαστές)
   const d1 = getRandomInt(4, 8);
   const n1 = getRandomInt(1, d1 - 1);
   let d2 = getRandomInt(4, 10);
   let n2 = getRandomInt(1, d2 - 1);
   
-  // Αποφυγή ταυτόσημων κλασμάτων κατά την παραγωγή
   if (n1 * d2 === n2 * d1) {
     n2 = Math.min(d2 - 1, n2 + 1);
   }
@@ -165,16 +162,6 @@ function generateQuestions() {
   
   const q8Prompt = `${sc.p1} ${sc.verb} τα ${n1}/${d1} ${sc.item}, ενώ ${sc.p2} ${sc.verb} τα ${n2}/${d2} ${sc.item}. Ποιος ${sc.actionQuestion};`;
   const q8Options = shuffle([sc.p1, sc.p2, 'Και οι δύο το ίδιο']);
-
-  // Στο return του generateQuestions:
-  q8: {
-    type: 'mcq',
-    title: 'Πρόβλημα Καθημερινότητας',
-    prompt: q8Prompt,
-    options: q8Options,
-    correct: q8WhoMore,
-    explain: `Συγκρίνουμε ${n1}/${d1} (${v1.toFixed(2).replace('.', ',')}) και ${n2}/${d2} (${v2.toFixed(2).replace('.', ',')}). ${sc.actionExplain}: ${q8WhoMore}.`
-  }
 
   return {
     q1: {
@@ -240,7 +227,7 @@ function generateQuestions() {
       prompt: q8Prompt,
       options: q8Options,
       correct: q8WhoMore,
-      explain: `Συγκρίνουμε ${sc.n1}/${sc.d1} (${(v1).toFixed(2).replace('.', ',')}) και ${sc.n2}/${sc.d2} (${(v2).toFixed(2).replace('.', ',')}). Μεγαλύτερο μέρος διάβασε: ${q8WhoMore}.`
+      explain: `Συγκρίνουμε ${n1}/${d1} (${v1.toFixed(2).replace('.', ',')}) και ${n2}/${d2} (${v2.toFixed(2).replace('.', ',')}). ${sc.actionExplain}: ${q8WhoMore}.`
     }
   };
 }
