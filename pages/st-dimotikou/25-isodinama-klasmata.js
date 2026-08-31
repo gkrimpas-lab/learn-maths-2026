@@ -151,7 +151,7 @@ export default function IsodinamaKlasmataPage() {
     }
 
     return (
-      <svg width="160" height="160" className="drop-shadow-md overflow-visible shrink-0">
+      <svg width="150" height="150" className="drop-shadow-md overflow-visible shrink-0 max-w-full">
         {slices}
         <circle cx={cx} cy={cy} r="2.5" className="fill-slate-800" />
       </svg>
@@ -189,7 +189,7 @@ export default function IsodinamaKlasmataPage() {
                   Ενοτητα 25
                 </span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
                 25. Ισοδύναμα Κλάσματα και Απλοποίηση σε Ανάγωγο
               </h1>
               <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
@@ -198,7 +198,7 @@ export default function IsodinamaKlasmataPage() {
             </div>
 
             {/* CALLOUT PROMO CARD */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-5 sm:p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
               <span className="text-3xl">🚀</span>
               <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
               <p className="text-xs text-blue-50">Δοκίμασε τις 8 διαδραστικές ασκήσεις ισοδυνάμων και αναγώγων κλασμάτων!</p>
@@ -295,7 +295,7 @@ export default function IsodinamaKlasmataPage() {
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
                 <span>🕹️</span> Διαδραστικό Εργαστήριο Ισοδυναμίας και Απλοποίησης
               </h2>
-              <p className="text-gray-500 text-xs sm:text-sm">
+              <p className="text-gray-500 text-xs sm:text-sm mt-1">
                 {activeTab === 'create'
                   ? "Δώσε ένα κλάσμα, επίλεξε πολλαπλασιαστή και παρατήρησε πώς προκύπτει το νέο ισοδύναμο κλάσμα!"
                   : "Δώσε ένα σύνθετο κλάσμα και δες βήμα προς βήμα την απλοποίησή του μέσω του Μ.Κ.Δ. σε ανάγωγο!"}
@@ -317,15 +317,15 @@ export default function IsodinamaKlasmataPage() {
                       1. Αρχικο Κλασμα:
                     </span>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       {/* ΑΡΙΘΜΗΤΗΣ */}
-                      <div className="bg-white p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
-                        <div className="flex items-center gap-1.5 sm:gap-2 w-full">
+                      <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
+                        <div className="flex items-center gap-1 sm:gap-1.5 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue1('num', -1)}
-                            className="w-9 sm:w-11 h-9 sm:h-10 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 rounded-lg font-black text-sm flex items-center justify-center"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
                           >
                             -
                           </button>
@@ -333,12 +333,12 @@ export default function IsodinamaKlasmataPage() {
                             type="text"
                             value={num1}
                             onChange={(e) => handleInputChange(setNum1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, false)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 outline-none border border-blue-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 px-0.5 outline-none border border-blue-200"
                           />
                           <button
                             type="button"
                             onClick={() => adjustValue1('num', 1)}
-                            className="w-9 sm:w-11 h-9 sm:h-10 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-sm flex items-center justify-center"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
                           >
                             +
                           </button>
@@ -346,13 +346,13 @@ export default function IsodinamaKlasmataPage() {
                       </div>
 
                       {/* ΠΑΡΟΝΟΜΑΣΤΗΣ */}
-                      <div className="bg-white p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
-                        <div className="flex items-center gap-1.5 sm:gap-2 w-full">
+                      <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
+                        <div className="flex items-center gap-1 sm:gap-1.5 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue1('den', -1)}
-                            className="w-9 sm:w-11 h-9 sm:h-10 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 rounded-lg font-black text-sm flex items-center justify-center"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
                           >
                             -
                           </button>
@@ -360,12 +360,12 @@ export default function IsodinamaKlasmataPage() {
                             type="text"
                             value={den1}
                             onChange={(e) => handleInputChange(setDenominator1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, true)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 outline-none border border-blue-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 px-0.5 outline-none border border-blue-200"
                           />
                           <button
                             type="button"
                             onClick={() => adjustValue1('den', 1)}
-                            className="w-9 sm:w-11 h-9 sm:h-10 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-sm flex items-center justify-center"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
                           >
                             +
                           </button>
@@ -434,15 +434,15 @@ export default function IsodinamaKlasmataPage() {
                       Κλασμα για Απλοποιηση:
                     </span>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       {/* ΑΡΙΘΜΗΤΗΣ */}
-                      <div className="bg-white p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
-                        <div className="flex items-center gap-1.5 sm:gap-2 w-full">
+                      <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
+                        <div className="flex items-center gap-1 sm:gap-1.5 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue2('num', -1)}
-                            className="w-9 sm:w-11 h-9 sm:h-10 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 rounded-lg font-black text-sm flex items-center justify-center"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
                           >
                             -
                           </button>
@@ -450,12 +450,12 @@ export default function IsodinamaKlasmataPage() {
                             type="text"
                             value={num2}
                             onChange={(e) => handleInputChange(setNum2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, false)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 outline-none border border-emerald-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 px-0.5 outline-none border border-emerald-200"
                           />
                           <button
                             type="button"
                             onClick={() => adjustValue2('num', 1)}
-                            className="w-9 sm:w-11 h-9 sm:h-10 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-sm flex items-center justify-center"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
                           >
                             +
                           </button>
@@ -463,13 +463,13 @@ export default function IsodinamaKlasmataPage() {
                       </div>
 
                       {/* ΠΑΡΟΝΟΜΑΣΤΗΣ */}
-                      <div className="bg-white p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
-                        <div className="flex items-center gap-1.5 sm:gap-2 w-full">
+                      <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
+                        <div className="flex items-center gap-1 sm:gap-1.5 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue2('den', -1)}
-                            className="w-9 sm:w-11 h-9 sm:h-10 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 rounded-lg font-black text-sm flex items-center justify-center"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
                           >
                             -
                           </button>
@@ -477,12 +477,12 @@ export default function IsodinamaKlasmataPage() {
                             type="text"
                             value={den2}
                             onChange={(e) => handleInputChange(setDenominator2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, true)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 outline-none border border-emerald-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 px-0.5 outline-none border border-emerald-200"
                           />
                           <button
                             type="button"
                             onClick={() => adjustValue2('den', 1)}
-                            className="w-9 sm:w-11 h-9 sm:h-10 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-sm flex items-center justify-center"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
                           >
                             +
                           </button>
@@ -530,7 +530,7 @@ export default function IsodinamaKlasmataPage() {
                 </div>
               )}
 
-              <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
+              <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
                 💡 Τα ισοδύναμα κλάσματα έχουν την <strong>ίδια ακριβώς δεκαδική αξία</strong>!
               </div>
             </div>
@@ -543,14 +543,14 @@ export default function IsodinamaKlasmataPage() {
                 <div className="space-y-6 flex-1 flex flex-col justify-between">
                   {/* Μαθηματική Πράξη */}
                   <div className="flex items-center justify-center p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto shadow-2xs">
-                    <div className="flex items-center gap-3 sm:gap-4 font-mono text-lg sm:text-xl md:text-2xl font-black">
+                    <div className="flex items-center gap-2.5 sm:gap-4 font-mono text-base sm:text-xl md:text-2xl font-black">
                       <div className="flex flex-col items-center">
                         <span className="text-blue-600">{activeNum1}</span>
-                        <div className="w-9 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                        <div className="w-8 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
                         <span className="text-blue-600">{activeDen1}</span>
                       </div>
 
-                      <div className="text-slate-400 text-[11px] sm:text-xs font-sans font-bold text-center bg-white px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+                      <div className="text-slate-400 text-[10px] sm:text-xs font-sans font-bold text-center bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-200 shadow-2xs">
                         <div>× {safeMultiplier}</div>
                         <div className="border-t border-slate-200 my-0.5" />
                         <div>× {safeMultiplier}</div>
@@ -560,7 +560,7 @@ export default function IsodinamaKlasmataPage() {
 
                       <div className="flex flex-col items-center">
                         <span className="text-indigo-600">{isoNum}</span>
-                        <div className="w-11 sm:w-12 h-1 bg-slate-800 my-1 rounded-full" />
+                        <div className="w-9 sm:w-12 h-1 bg-slate-800 my-1 rounded-full" />
                         <span className="text-indigo-600">{isoDen}</span>
                       </div>
                     </div>
@@ -587,14 +587,14 @@ export default function IsodinamaKlasmataPage() {
                 <div className="space-y-6 flex-1 flex flex-col justify-between">
                   {/* Μαθηματική Πράξη */}
                   <div className="flex items-center justify-center p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto shadow-2xs">
-                    <div className="flex items-center gap-3 sm:gap-4 font-mono text-lg sm:text-xl md:text-2xl font-black">
+                    <div className="flex items-center gap-2.5 sm:gap-4 font-mono text-base sm:text-xl md:text-2xl font-black">
                       <div className="flex flex-col items-center">
                         <span className="text-emerald-600">{activeNum2}</span>
-                        <div className="w-9 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                        <div className="w-8 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
                         <span className="text-emerald-600">{activeDen2}</span>
                       </div>
 
-                      <div className="text-slate-400 text-[11px] sm:text-xs font-sans font-bold text-center bg-white px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+                      <div className="text-slate-400 text-[10px] sm:text-xs font-sans font-bold text-center bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-200 shadow-2xs">
                         <div>÷ {gcd}</div>
                         <div className="border-t border-slate-200 my-0.5" />
                         <div>÷ {gcd}</div>
@@ -604,7 +604,7 @@ export default function IsodinamaKlasmataPage() {
 
                       <div className="flex flex-col items-center">
                         <span className="text-teal-600">{reducedNum}</span>
-                        <div className="w-9 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                        <div className="w-8 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
                         <span className="text-teal-600">{reducedDen}</span>
                       </div>
                     </div>
@@ -641,7 +641,7 @@ export default function IsodinamaKlasmataPage() {
         {/* BOTTOM CALLOUT BANNER */}
         <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
+            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
             <p className="text-gray-800 text-sm md:text-base">
               Έμαθες να δημιουργείς ισοδύναμα και να απλοποιείς σε ανάγωγο κλάσμα; Δοκίμασε τις διαδραστικές ασκήσεις!
             </p>
