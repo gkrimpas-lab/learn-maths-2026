@@ -23,7 +23,7 @@ const REAL_WORLD_SCENARIOS = [
   { item: 'σοκολάτες', totalParts: 5, eaten: 2, unitName: 'πέμπτα', dec: '0,4' },
   { item: 'κέικ', totalParts: 2, eaten: 1, unitName: 'μισό', dec: '0,5' },
   { item: 'πίτες', totalParts: 8, eaten: 6, unitName: 'όγδοα', dec: '0,75' },
-  { item: 'μέτρα υφάσματος', totalParts: 10, eaten: 7, unitName: 'δέκατα', dec: '0,7' }
+  { item: 'μπισκότα', totalParts: 10, eaten: 7, unitName: 'δέκατα', dec: '0,7' }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
@@ -171,7 +171,7 @@ function generateQuestions() {
     q8: {
       type: 'mcq',
       title: 'Πρόβλημα Καθημερινότητας',
-      prompt: `Χρησιμοποιήθηκαν τα ${sc.eaten}/${sc.totalParts} από ${sc.item}. Ποιος δεκαδικός αριθμός εκφράζει την ποσότητα αυτή;`,
+      prompt: `Φαγώθηκαν τα ${sc.eaten}/${sc.totalParts} από ${sc.item}. Ποιος δεκαδικός αριθμός εκφράζει την ποσότητα αυτή;`,
       options: q8Options,
       correct: q8CorrectStr,
       explain: `Τα ${sc.eaten}/${sc.totalParts} ισούνται με ${sc.eaten} ÷ ${sc.totalParts} ＝ ${sc.dec}.`
