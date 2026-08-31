@@ -170,7 +170,7 @@ export default function SigkrisiKlasmatonPage() {
             <circle cx={cx} cy={cy} r="2.5" className="fill-slate-800" />
           </svg>
           <span className="text-[9px] font-bold text-slate-400 uppercase">
-            Μονάδα {p + 1}
+            Μοναδα {p + 1}
           </span>
         </div>
       );
@@ -209,10 +209,10 @@ export default function SigkrisiKlasmatonPage() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικού
+                  🎓 ΣΤ' Δημοτικου
                 </span>
                 <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενότητα 26
+                  Ενοτητα 26
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
@@ -567,7 +567,7 @@ export default function SigkrisiKlasmatonPage() {
               <div className="space-y-3 flex-1 flex flex-col justify-center">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 px-1">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                    🍕 Οπτικη Συγκριση Επιφανειας (Κυκλικο Μοντελο):
+                    🍕 Οπτικη Συγκριση Επιφανειας:
                   </span>
                   <span className="text-[11px] font-bold text-slate-400">
                     Εμφανίζονται όλες οι μονάδες
