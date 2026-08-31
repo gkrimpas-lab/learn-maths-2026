@@ -131,7 +131,7 @@ function generateQuestions() {
     { num: 36, item: 'κουτάκια', explain: '36 ＝ 2² × 3² (2×2×3×3)' },
     { num: 48, item: 'καραμέλες', explain: '48 ＝ 2⁴ × 3 (2×2×2×2×3)' },
     { num: 60, item: 'βιβλία', explain: '60 ＝ 2² × 3 × 5 (2×2×3×5)' },
-    { num: 90, item: 'ευρώ', explain: '90 ＝ 2 × 3² × 5 (2×3×3×5)' }
+    { num: 90, item: 'σοκολάτες', explain: '90 ＝ 2 × 3² × 5 (2×3×3×5)' }
   ];
   const q8Chosen = q8Presets[getRandomInt(0, q8Presets.length - 1)];
   const q8CorrectStr = getPowerRepresentation(getPrimeFactors(q8Chosen.num));
