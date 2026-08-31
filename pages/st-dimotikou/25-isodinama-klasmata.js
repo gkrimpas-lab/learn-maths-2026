@@ -289,9 +289,9 @@ export default function IsodinamaKlasmataPage() {
         </div>
 
         {/* 4. INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
+        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
-            <div>
+            <div className="max-w-xl">
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
                 <span>🕹️</span> Διαδραστικό Εργαστήριο Ισοδυναμίας και Απλοποίησης
               </h2>
@@ -321,7 +321,7 @@ export default function IsodinamaKlasmataPage() {
                       {/* ΑΡΙΘΜΗΤΗΣ */}
                       <div className="bg-white p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5 sm:gap-2 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue1('num', -1)}
@@ -333,7 +333,7 @@ export default function IsodinamaKlasmataPage() {
                             type="text"
                             value={num1}
                             onChange={(e) => handleInputChange(setNum1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, false)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 outline-none border border-blue-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 outline-none border border-blue-200"
                           />
                           <button
                             type="button"
@@ -348,7 +348,7 @@ export default function IsodinamaKlasmataPage() {
                       {/* ΠΑΡΟΝΟΜΑΣΤΗΣ */}
                       <div className="bg-white p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5 sm:gap-2 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue1('den', -1)}
@@ -360,7 +360,7 @@ export default function IsodinamaKlasmataPage() {
                             type="text"
                             value={den1}
                             onChange={(e) => handleInputChange(setDenominator1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, true)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 outline-none border border-blue-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 outline-none border border-blue-200"
                           />
                           <button
                             type="button"
@@ -438,7 +438,7 @@ export default function IsodinamaKlasmataPage() {
                       {/* ΑΡΙΘΜΗΤΗΣ */}
                       <div className="bg-white p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5 sm:gap-2 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue2('num', -1)}
@@ -450,7 +450,7 @@ export default function IsodinamaKlasmataPage() {
                             type="text"
                             value={num2}
                             onChange={(e) => handleInputChange(setNum2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, false)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 outline-none border border-emerald-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 outline-none border border-emerald-200"
                           />
                           <button
                             type="button"
@@ -465,7 +465,7 @@ export default function IsodinamaKlasmataPage() {
                       {/* ΠΑΡΟΝΟΜΑΣΤΗΣ */}
                       <div className="bg-white p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
                         <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5 sm:gap-2 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue2('den', -1)}
@@ -477,7 +477,7 @@ export default function IsodinamaKlasmataPage() {
                             type="text"
                             value={den2}
                             onChange={(e) => handleInputChange(setDenominator2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, true)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 outline-none border border-emerald-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 outline-none border border-emerald-200"
                           />
                           <button
                             type="button"
