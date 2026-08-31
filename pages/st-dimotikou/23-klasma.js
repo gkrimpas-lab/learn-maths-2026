@@ -494,7 +494,7 @@ export default function KlasmaPage() {
                     {Array.from({ length: neededVisuals }).map((_, i) => (
                       <div key={i} className="flex flex-col items-center space-y-2">
                         {renderPizza(i)}
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μονάδα {i + 1}</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Μοναδα {i + 1}</span>
                       </div>
                     ))}
                   </div>
