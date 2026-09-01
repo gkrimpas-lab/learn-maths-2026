@@ -191,11 +191,11 @@ export default function MetablitiPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
             {/* LEFT: CONTROLS & PRESETS (4 COLS) */}
-            <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
+            <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-3.5 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between overflow-hidden">
               <div className="space-y-4">
                 
                 {/* ΡΥΘΜΙΣΗ ΜΕΤΑΒΛΗΤΗΣ X */}
-                <div className="bg-blue-50/50 p-3.5 sm:p-4 rounded-2xl border border-blue-200 space-y-3">
+                <div className="bg-blue-50/50 p-3 sm:p-4 rounded-2xl border border-blue-200 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-black text-blue-800 tracking-wider">
                       🔤 Τιμή Μεταβλητής (x)
@@ -205,11 +205,11 @@ export default function MetablitiPage() {
                     </span>
                   </div>
 
-                  <div className="w-full min-w-0 flex items-center gap-2.5">
+                  <div className="grid grid-cols-[36px_1fr_36px] items-center gap-2 w-full">
                     <button 
                       type="button" 
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustX(-1); }} 
-                      className="w-8 h-8 shrink-0 bg-white hover:bg-slate-100 text-blue-700 font-black rounded-xl border border-slate-200 text-base shadow-xs flex items-center justify-center active:scale-95 transition"
+                      className="w-9 h-9 bg-white hover:bg-slate-100 text-blue-700 font-black rounded-xl border border-slate-200 text-base shadow-xs flex items-center justify-center active:scale-95 transition"
                     >
                       -
                     </button>
@@ -222,12 +222,12 @@ export default function MetablitiPage() {
                       step="1"
                       value={activeX}
                       onChange={(e) => handleXChange(e.target.value)}
-                      className="w-full min-w-0 flex-1 accent-blue-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg"
+                      className="w-full min-w-0 max-w-full accent-blue-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg block"
                     />
                     <button 
                       type="button" 
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustX(1); }} 
-                      className="w-8 h-8 shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-base shadow-md flex items-center justify-center active:scale-95 transition"
+                      className="w-9 h-9 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-base shadow-md flex items-center justify-center active:scale-95 transition"
                     >
                       +
                     </button>
@@ -241,7 +241,7 @@ export default function MetablitiPage() {
                 </div>
 
                 {/* ΠΑΡΑΜΕΤΡΟΠΟΙΗΣΗ ΕΚΦΡΑΣΗΣ (a * x ± b) */}
-                <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
                   <span className="text-xs font-black text-slate-700 tracking-wider block">
                     ⚙️ Παράσταση: a · x ± b
                   </span>
