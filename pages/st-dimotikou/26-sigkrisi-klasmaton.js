@@ -22,7 +22,7 @@ function gcd(a, b) {
     y = x % y;
     x = t;
   }
-  return x;
+  return x || 1;
 }
 
 function lcm(a, b) {
@@ -42,39 +42,49 @@ export default function SigkrisiKlasmatonPage() {
   // Tab μεθόδου επεξήγησης: 'homo' (Ομώνυμα/ΕΚΠ) ή 'cross' (Χιαστί)
   const [methodTab, setMethodTab] = useState('homo');
 
-  // Ασφαλής έλεγχος εισαγωγής κειμένου χωρίς να επηρεάζεται ο άλλος όρος
-  const handleInputChange = (setter, val, isDenominator = false) => {
+  // Ασφαλής έλεγχος εισαγωγής κειμένου
+  const handleNumAChange = (val) => {
     const clean = val.replace(/[^0-9]/g, '');
-    if (clean === '') {
-      setter('');
-      return;
-    }
+    if (clean === '') { setNumA(''); return; }
     const n = Number(clean);
-
-    if (isDenominator) {
-      if (n === 0 || n > MAX_LIMIT) return;
-      setter(n);
-    } else {
-      if (n > MAX_LIMIT) return;
-      setter(n);
-    }
+    if (n <= MAX_LIMIT) setNumA(n);
   };
 
-  // Αυξομείωση με κουμπιά (εντελώς ανεξάρτητα)
-  const adjustValueA = (type, amount) => {
-    if (type === 'num') {
-      setNumA(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
-    } else {
-      setDenA(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
-    }
+  const handleDenAChange = (val) => {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') { setDenA(''); return; }
+    const n = Number(clean);
+    if (n > 0 && n <= MAX_LIMIT) setDenA(n);
   };
 
-  const adjustValueB = (type, amount) => {
-    if (type === 'num') {
-      setNumB(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
-    } else {
-      setDenB(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
-    }
+  const handleNumBChange = (val) => {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') { setNumB(''); return; }
+    const n = Number(clean);
+    if (n <= MAX_LIMIT) setNumB(n);
+  };
+
+  const handleDenBChange = (val) => {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') { setDenB(''); return; }
+    const n = Number(clean);
+    if (n > 0 && n <= MAX_LIMIT) setDenB(n);
+  };
+
+  // Αυξομείωση με κουμπιά για Κλάσμα Α
+  const adjustNumA = (amount) => {
+    setNumA(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
+  };
+  const adjustDenA = (amount) => {
+    setDenA(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
+  };
+
+  // Αυξομείωση με κουμπιά για Κλάσμα Β
+  const adjustNumB = (amount) => {
+    setNumB(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
+  };
+  const adjustDenB = (amount) => {
+    setDenB(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
   };
 
   // Ενεργές τιμές για υπολογισμούς
@@ -118,7 +128,7 @@ export default function SigkrisiKlasmatonPage() {
     return '=';
   };
 
-  // Σχεδίαση ΟΛΩΝ των κυκλικών διαγραμμάτων (χωρίς περιορισμό πλήθους)
+  // Σχεδίαση ΟΛΩΝ των κυκλικών διαγραμμάτων
   const renderFractionVisual = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
     const totalPizzasNeeded = Math.max(1, Math.ceil(num / den));
     const pizzas = [];
@@ -200,6 +210,7 @@ export default function SigkrisiKlasmatonPage() {
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
       actionButton={actionButton}
+      showAds={true}
     >
       <div className="py-6 md:py-10 space-y-8 md:space-y-10">
 
@@ -293,7 +304,7 @@ export default function SigkrisiKlasmatonPage() {
         </div>
 
         {/* INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-5 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
+        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
@@ -339,70 +350,134 @@ export default function SigkrisiKlasmatonPage() {
               <div className="space-y-4">
                 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Α (ΜΠΛΕ) */}
-                <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
+                <div className="bg-blue-50/50 p-3.5 sm:p-4 rounded-2xl border border-blue-200 space-y-3">
                   <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
                     🔵 Κλασμα Α (Αριστερο)
                   </span>
-                  <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValueA('num', -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumA(-1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
+                          id="compare-num-a"
+                          name="compareNumA"
+                          autoComplete="off"
                           type="text"
+                          inputMode="numeric"
                           value={numA}
-                          onChange={(e) => handleInputChange(setNumA, e.target.value, false)}
-                          className="w-full text-center font-mono font-black text-base outline-none text-blue-600"
+                          onChange={(e) => handleNumAChange(e.target.value)}
+                          className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-blue-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValueA('num', 1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumA(1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValueA('den', -1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenA(-1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
+                          id="compare-den-a"
+                          name="compareDenA"
+                          autoComplete="off"
                           type="text"
+                          inputMode="numeric"
                           value={denA}
-                          onChange={(e) => handleInputChange(setDenA, e.target.value, true)}
-                          className="w-full text-center font-mono font-black text-base outline-none text-blue-600"
+                          onChange={(e) => handleDenAChange(e.target.value)}
+                          className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-blue-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValueA('den', 1)} className="px-2 py-1 font-black text-blue-600 hover:bg-slate-50 rounded-lg">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenA(1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ ΚΛΑΣΜΑΤΟΣ Β (ΠΟΡΤΟΚΑΛΙ) */}
-                <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-200 space-y-3">
+                <div className="bg-orange-50/50 p-3.5 sm:p-4 rounded-2xl border border-orange-200 space-y-3">
                   <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
                     🟠 Κλασμα Β (Δεξι)
                   </span>
-                  <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Αριθμητης</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValueB('num', -1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(-1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
+                          id="compare-num-b"
+                          name="compareNumB"
+                          autoComplete="off"
                           type="text"
+                          inputMode="numeric"
                           value={numB}
-                          onChange={(e) => handleInputChange(setNumB, e.target.value, false)}
-                          className="w-full text-center font-mono font-black text-base outline-none text-orange-600"
+                          onChange={(e) => handleNumBChange(e.target.value)}
+                          className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-orange-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValueB('num', 1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Παρονομαστης</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValueB('den', -1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenB(-1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
+                          id="compare-den-b"
+                          name="compareDenB"
+                          autoComplete="off"
                           type="text"
+                          inputMode="numeric"
                           value={denB}
-                          onChange={(e) => handleInputChange(setDenB, e.target.value, true)}
-                          className="w-full text-center font-mono font-black text-base outline-none text-orange-600"
+                          onChange={(e) => handleDenBChange(e.target.value)}
+                          className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-orange-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValueB('den', 1)} className="px-2 py-1 font-black text-orange-600 hover:bg-slate-50 rounded-lg">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenB(1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -484,7 +559,7 @@ export default function SigkrisiKlasmatonPage() {
             </div>
 
             {/* RIGHT: VISUALIZATION, DYNAMIC NUMBER LINE & FULL SCROLLABLE PIZZAS (8 COLS) */}
-            <div className="lg:col-span-8 bg-white p-5 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
+            <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
               
               {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΜΕ ΤΟ ΣΥΜΒΟΛΟ */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-slate-50 rounded-2xl border border-slate-200">
@@ -593,7 +668,7 @@ export default function SigkrisiKlasmatonPage() {
                     </span>
                     {renderFractionVisual(activeNumB, activeDenB, 'fill-orange-500', 'stroke-orange-700')}
                     <span className="font-mono text-xs text-slate-600 font-bold bg-white px-2.5 py-0.5 rounded-md border border-slate-200">
-                      {activeDenB !== commonDen ? `Ομώνυμο: ${homoNumB}/${commonDen}` : `Αξία: ${valB.toFixed(2).replace('.', ',')}`}
+                      {activeDenA !== commonDen ? `Ομώνυμο: ${homoNumB}/${commonDen}` : `Αξία: ${valB.toFixed(2).replace('.', ',')}`}
                     </span>
                   </div>
                 </div>
