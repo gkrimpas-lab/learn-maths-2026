@@ -202,16 +202,16 @@ export default function MetablitiPage() {
                     <span className="text-xs font-black text-blue-800 tracking-wider">
                       🔤 Τιμή Μεταβλητής (x)
                     </span>
-                    <span className="text-xs font-mono font-black text-blue-600 bg-white px-2 py-0.5 rounded-lg border border-blue-200">
+                    <span className="text-xs font-mono font-black text-blue-600 bg-white px-2.5 py-1 rounded-xl border border-blue-200 shadow-xs">
                       x ＝ {activeX}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <button 
                       type="button" 
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustX(-1); }} 
-                      className="w-10 py-1.5 bg-white hover:bg-slate-100 text-blue-700 font-black rounded-xl border border-slate-200 text-base shadow-xs flex items-center justify-center active:scale-95"
+                      className="w-9 h-9 shrink-0 bg-white hover:bg-slate-100 text-blue-700 font-black rounded-xl border border-slate-200 text-lg shadow-xs flex items-center justify-center active:scale-95 transition"
                     >
                       -
                     </button>
@@ -223,18 +223,18 @@ export default function MetablitiPage() {
                       max="20"
                       value={activeX}
                       onChange={(e) => handleXChange(e.target.value)}
-                      className="flex-1 accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg"
+                      className="flex-1 accent-blue-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg"
                     />
                     <button 
                       type="button" 
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustX(1); }} 
-                      className="w-10 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-base shadow-md flex items-center justify-center active:scale-95"
+                      className="w-9 h-9 shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-lg shadow-md flex items-center justify-center active:scale-95 transition"
                     >
                       +
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono px-1">
                     <span>x = 0</span>
                     <span>x = 10</span>
                     <span>x = 20</span>
@@ -248,53 +248,62 @@ export default function MetablitiPage() {
                   </span>
                   
                   <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400">Συντελεστής (a)</span>
-                      <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
+                    {/* Συντελεστής (a) */}
+                    <div className="flex flex-col justify-between space-y-1.5">
+                      <span className="text-[10px] font-bold text-slate-500 h-7 flex items-center justify-center leading-tight">
+                        Συντελεστής (a)
+                      </span>
+                      <div className="flex items-center justify-between bg-slate-50 p-1 rounded-xl border border-slate-200 h-10">
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustCoeffA(-1); }} 
-                          className="px-1.5 py-0.5 text-xs font-black text-slate-600 hover:bg-slate-200 rounded active:scale-95"
+                          className="w-6 h-full flex items-center justify-center text-xs font-black text-slate-600 hover:bg-slate-200 rounded-lg active:scale-95 transition"
                         >
                           -
                         </button>
-                        <span className="w-full text-center font-mono font-black text-sm text-indigo-600">{coeffA}</span>
+                        <span className="font-mono font-black text-sm text-indigo-600">{coeffA}</span>
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustCoeffA(1); }} 
-                          className="px-1.5 py-0.5 text-xs font-black text-indigo-600 hover:bg-slate-200 rounded active:scale-95"
+                          className="w-6 h-full flex items-center justify-center text-xs font-black text-indigo-600 hover:bg-slate-200 rounded-lg active:scale-95 transition"
                         >
                           +
                         </button>
                       </div>
                     </div>
 
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400">Πράξη</span>
+                    {/* Πράξη (op) */}
+                    <div className="flex flex-col justify-between space-y-1.5">
+                      <span className="text-[10px] font-bold text-slate-500 h-7 flex items-center justify-center leading-tight">
+                        Πράξη (±)
+                      </span>
                       <button 
                         type="button" 
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleOperator(); }} 
-                        className="w-full py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-black rounded-xl border border-slate-200 text-sm active:scale-95"
+                        className="w-full h-10 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-black rounded-xl border border-indigo-200 text-base flex items-center justify-center active:scale-95 transition shadow-xs"
                       >
                         {operator === '+' ? '＋' : '－'}
                       </button>
                     </div>
 
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400">Σταθερά (b)</span>
-                      <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
+                    {/* Σταθερά (b) */}
+                    <div className="flex flex-col justify-between space-y-1.5">
+                      <span className="text-[10px] font-bold text-slate-500 h-7 flex items-center justify-center leading-tight">
+                        Σταθερά (b)
+                      </span>
+                      <div className="flex items-center justify-between bg-slate-50 p-1 rounded-xl border border-slate-200 h-10">
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustConstantB(-1); }} 
-                          className="px-1.5 py-0.5 text-xs font-black text-slate-600 hover:bg-slate-200 rounded active:scale-95"
+                          className="w-6 h-full flex items-center justify-center text-xs font-black text-slate-600 hover:bg-slate-200 rounded-lg active:scale-95 transition"
                         >
                           -
                         </button>
-                        <span className="w-full text-center font-mono font-black text-sm text-indigo-600">{constantB}</span>
+                        <span className="font-mono font-black text-sm text-indigo-600">{constantB}</span>
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustConstantB(1); }} 
-                          className="px-1.5 py-0.5 text-xs font-black text-indigo-600 hover:bg-slate-200 rounded active:scale-95"
+                          className="w-6 h-full flex items-center justify-center text-xs font-black text-indigo-600 hover:bg-slate-200 rounded-lg active:scale-95 transition"
                         >
                           +
                         </button>
