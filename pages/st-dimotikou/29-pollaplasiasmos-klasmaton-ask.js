@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
+import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Βοηθητικές συναρτήσεις
@@ -28,12 +28,16 @@ function findGCD(a, b) {
   return x || 1;
 }
 
-// Δεξαμενή σεναρίων καθημερινότητας
+// Πλούσια δεξαμενή σεναρίων καθημερινότητας με γραμματική και συντακτική ορθότητα
 const REAL_WORLD_SCENARIOS = [
-  { item: 'της πίτσας', who: 'Ο Νίκος πήρε το', n1: 1, d1: 2, sub: 'και από αυτό έφαγε τα', n2: 2, d2: 3 },
-  { item: 'του οικοπέδου', who: 'Ο κηπουρός καθάρισε τα', n1: 3, d1: 4, sub: 'και από αυτά φύτεψε τα', n2: 2, d2: 5 },
-  { item: 'του χυμού', who: 'Η κανάτα περιείχε τα', n1: 2, d1: 3, sub: 'και ήπιαμε το', n2: 1, d2: 4 },
-  { item: 'της διαδρομής', who: 'Διανύσαμε τα', n1: 4, d1: 5, sub: 'και σε αυτά τρέξαμε τα', n2: 1, d2: 2 }
+  { item: 'της πίτσας', who: 'Ο Νίκος πήρε τα', sub: 'και από αυτά έφαγε τα', action: 'καταναλώθηκε' },
+  { item: 'του οικοπέδου', who: 'Ο κηπουρός καθάρισε τα', sub: 'και από αυτά φύτεψε τα', action: 'φυτεύτηκε' },
+  { item: 'του χυμού', who: 'Η κανάτα περιείχε τα', sub: 'και από αυτά ήπιαμε τα', action: 'καταναλώθηκε' },
+  { item: 'της διαδρομής', who: 'Οι δρομείς διάνυσαν τα', sub: 'και από αυτά έτρεξαν τα', action: 'διανύθηκε' },
+  { item: 'του υφάσματος', who: 'Η μοδίστρα αγόρασε τα', sub: 'και από αυτά χρησιμοποίησε τα', action: 'χρησιμοποιήθηκε' },
+  { item: 'της σοκολάτας', who: 'Η Άννα πήρε τα', sub: 'και από αυτά μοίρασε τα', action: 'μοιράστηκε' },
+  { item: 'του βιβλίου', who: 'Ο Γιώργος είχε να διαβάσει τα', sub: 'και από αυτά μελέτησε τα', action: 'μελετήθηκε' },
+  { item: 'του σχεδίου', who: 'Η Μαρία σχεδίασε τα', sub: 'και από αυτά χρωμάτισε τα', action: 'χρωματίστηκε' }
 ];
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
@@ -105,17 +109,24 @@ function generateQuestions() {
   const q7TargetD = q7D1 * q7D2;
   const q7Correct = String(q7N2);
 
-  // Q8: MCQ - Πρόβλημα Καθημερινότητας
+  // Q8: MCQ - Πρόβλημα Καθημερινότητας με δυναμικά κλάσματα και σωστή διατύπωση
   const sc = shuffledScenarios[0];
-  const scResN = sc.n1 * sc.n2;
-  const scResD = sc.d1 * sc.d2;
+  const scD1 = [2, 3, 4, 5][getRandomInt(0, 3)];
+  const scN1 = getRandomInt(1, scD1 - 1);
+  const scD2 = [3, 4, 5, 6][getRandomInt(0, 3)];
+  const scN2 = getRandomInt(1, scD2 - 1);
+
+  const scResN = scN1 * scN2;
+  const scResD = scD1 * scD2;
   const scG = findGCD(scResN, scResD);
   const scCorrectStr = scG > 1 && (scResN / scG !== scResN)
     ? `${scResN / scG}/${scResD / scG}`
     : `${scResN}/${scResD}`;
+
+  const scPrompt = `${sc.who} ${scN1}/${scD1} ${sc.item} ${sc.sub} ${scN2}/${scD2}. Ποιο μέρος ${sc.item} ${sc.action} συνολικά;`;
   const scWrongs = [
     `${scResN + 1}/${scResD}`,
-    `${sc.n1 + sc.n2}/${sc.d1 * sc.d2}`,
+    `${scN1 + scN2}/${scD1 * scD2}`,
     `${Math.max(1, scResN - 1)}/${scResD}`
   ].filter(w => w !== scCorrectStr);
   const q8Options = shuffle([scCorrectStr, ...scWrongs.slice(0, 3)]);
@@ -159,8 +170,8 @@ function generateQuestions() {
       text: q5Text,
       correct: q5IsTrue,
       explain: q5IsTrue
-        ? 'Σωστά! Στον πολλαπλασιασμό πολλαπλασιάζουμε απευθείας αριθμητές και παρονομαστές χωρίς να χρειάζεται Ε.Κ.Π.'
-        : 'Λάθος! Στον πολλαπλασιασμό ΔΕΝ χρειάζεται να κάνουμε τα κλάσματα ομώνυμα.'
+        ? 'Στον πολλαπλασιασμό πολλαπλασιάζουμε απευθείας αριθμητές και παρονομαστές χωρίς να χρειάζεται Ε.Κ.Π.'
+        : 'Στον πολλαπλασιασμό ΔΕΝ χρειάζεται να κάνουμε τα κλάσματα ομώνυμα.'
     },
     q6: {
       type: 'tf',
@@ -168,8 +179,8 @@ function generateQuestions() {
       text: q6Text,
       correct: q6IsTrue,
       explain: q6IsTrue
-        ? 'Σωστά! Παίρνουμε μέρος ενός μέρους, επομένως το αποτέλεσμα είναι μικρότερο και από τα δύο αρχικά κλάσματα (π.χ. 1/2 × 1/2 ＝ 1/4).'
-        : 'Λάθος! Το γινόμενο γνήσιων κλασμάτων είναι πάντοτε μικρότερο και από τα δύο (π.χ. 1/2 × 1/2 = 1/4 < 1/2).'
+        ? 'Παίρνουμε μέρος ενός μέρους, επομένως το αποτέλεσμα είναι μικρότερο και από τα δύο αρχικά κλάσματα (π.χ. 1/2 × 1/2 ＝ 1/4).'
+        : 'Το γινόμενο γνήσιων κλασμάτων είναι πάντοτε μικρότερο και από τα δύο (π.χ. 1/2 × 1/2 = 1/4 < 1/2).'
     },
     q7: {
       type: 'input',
@@ -181,10 +192,10 @@ function generateQuestions() {
     q8: {
       type: 'mcq',
       title: 'Πρόβλημα Καθημερινότητας',
-      prompt: `${sc.who} ${sc.n1}/${sc.d1} ${sc.item} ${sc.sub} ${sc.n2}/${sc.d2}. Ποιο μέρος ${sc.item} χρησιμοποιήθηκε συνολικά;`,
+      prompt: scPrompt,
       options: q8Options,
       correct: scCorrectStr,
-      explain: `Πολλαπλασιάζουμε τα δύο κλάσματα: (${sc.n1}/${sc.d1}) × (${sc.n2}/${sc.d2}) ＝ ${scResN}/${scResD}${scG > 1 ? ` ＝ ${scCorrectStr}` : ''}.`
+      explain: `Πολλαπλασιάζουμε τα δύο κλάσματα: (${scN1}/${scD1}) × (${scN2}/${scD2}) ＝ ${scResN}/${scResD}${scG > 1 ? ` ＝ ${scCorrectStr}` : ''}.`
     }
   };
 }
@@ -258,49 +269,38 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
       : 'bg-rose-50/60 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const actionButton = (
+    <Link
+      href="/st-dimotikou/29-pollaplasiasmos-klasmaton"
+      className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
+    >
+      <span>📖</span>
+      <span>Θεωρία</span>
+    </Link>
+  );
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col justify-between pb-32">
-      <Head>
-        <title>🎯 Ασκήσεις: Πολλαπλασιασμός Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr</title>
-        <meta name="description" content="Διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση στον πολλαπλασιασμό κλασμάτων και ακεραίων για τη ΣΤ' Δημοτικού." />
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
+    <Layout
+      title="🎯 Ασκήσεις: 29. Πολλαπλασιασμός Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση στον πολλαπλασιασμό κλασμάτων και ακεραίων για τη ΣΤ' Δημοτικού."
+      backUrl="/st-dimotikou"
+      backText="ΣΤ' Δημοτικού"
+      actionButton={actionButton}
+      hideFooter={true}
+    >
+      <div className="py-6 md:py-10 space-y-8 pb-28 sm:pb-32">
 
-      <div>
-        {/* 1. STICKY NAVBAR */}
-        <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-          <div className={`${LAYOUT.CONTAINER} py-3.5 flex justify-between items-center`}>
-            <Link href="/st-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight flex items-center">
-              <span>LearnMaths</span><span className="text-indigo-600">.gr</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link 
-                href="/st-dimotikou/29-pollaplasiasmos-klasmaton" 
-                className="inline-flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-bold border border-blue-200 transition"
-              >
-                <span>📖</span> <span>Θεωρία</span>
-              </Link>
-              <Link 
-                href="/st-dimotikou" 
-                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold transition"
-              >
-                <span>🔙</span> <span>Πίσω</span>
-              </Link>
-            </div>
-          </div>
-        </nav>
-
-        {/* 2. HEADER HERO BANNER */}
-        <section className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white py-10 px-4 shadow-inner">
-          <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-6`}>
-            <div className="space-y-2 text-center md:text-left">
+        {/* 1. HEADER HERO BANNER */}
+        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
                 <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
                 Διαδραστικές Ασκήσεις: Πολλαπλασιασμός Κλασμάτων
               </h1>
-              <p className="text-blue-100 text-sm md:text-base max-w-xl">
+              <p className="text-blue-100 text-sm md:text-base max-w-2xl leading-relaxed">
                 Λύσε τα 8 δυναμικά προβλήματα πολλαπλασιασμού κλασμάτων, ακεραίων επί κλάσμα, αντίστροφων αριθμών και απλοποίησης!
               </p>
             </div>
@@ -308,342 +308,342 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
             <button
               type="button"
               onClick={loadNewQuestions}
-              className="px-5 py-3 bg-white text-blue-800 hover:bg-blue-50 rounded-2xl font-extrabold shadow-md transition transform active:scale-95 text-sm flex items-center gap-2 shrink-0"
+              className="px-5 py-3 bg-white text-blue-800 hover:bg-blue-50 rounded-2xl font-extrabold shadow-md transition transform active:scale-95 text-xs sm:text-sm flex items-center gap-2 shrink-0 self-stretch sm:self-auto justify-center"
             >
-              <span>🔄</span> <span>Νέες Ασκήσεις</span>
+              <span>🔄</span>
+              <span>Νέες Ασκήσεις</span>
             </button>
           </div>
-        </section>
+        </div>
 
-        {/* 3. ΦΟΡΜΑ ΜΕ ΤΙΣ 8 ΕΡΩΤΗΣΕΙΣ */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10`}>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* 2. ΦΟΡΜΑ ΜΕ ΤΙΣ 8 ΕΡΩΤΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              {/* ΕΡΩΤΗΣΗ 1 */}
-              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-                    Άσκηση 1 • Κλάσμα επί Κλάσμα
-                  </span>
-                  {submitted && (
-                    <span className="text-lg">{isCorrect('q1') ? '✅' : '❌'}</span>
-                  )}
-                </div>
-                <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                  {questions.q1.prompt}
-                </p>
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    disabled={submitted}
-                    value={answers.q1}
-                    onChange={(e) => handleInputChange('q1', e.target.value)}
-                    placeholder="π.χ. 6/20"
-                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100 font-mono"
-                  />
-                  {submitted && (
-                    <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q1') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                      💡 {questions.q1.explain}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* ΕΡΩΤΗΣΗ 2 */}
-              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-black px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">
-                    Άσκηση 2 • Ακέραιος επί Κλάσμα
-                  </span>
-                  {submitted && (
-                    <span className="text-lg">{isCorrect('q2') ? '✅' : '❌'}</span>
-                  )}
-                </div>
-                <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                  {questions.q2.prompt}
-                </p>
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    disabled={submitted}
-                    value={answers.q2}
-                    onChange={(e) => handleInputChange('q2', e.target.value)}
-                    placeholder="π.χ. 6/7"
-                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono"
-                  />
-                  {submitted && (
-                    <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q2') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                      💡 {questions.q2.explain}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* ΕΡΩΤΗΣΗ 3 */}
-              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
-                    Άσκηση 3 • Αντίστροφο Κλάσμα
-                  </span>
-                  {submitted && (
-                    <span className="text-lg">{isCorrect('q3') ? '✅' : '❌'}</span>
-                  )}
-                </div>
-                <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                  {questions.q3.prompt}
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                  {questions.q3.options.map((opt, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      disabled={submitted}
-                      onClick={() => handleInputChange('q3', opt)}
-                      className={`p-3 rounded-xl text-base font-mono font-black border text-center transition ${
-                        answers.q3 === opt
-                          ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
-                          : 'bg-white text-slate-700 border-slate-200 hover:bg-purple-50'
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
-                </div>
+            {/* ΕΡΩΤΗΣΗ 1 */}
+            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
+                  Άσκηση 1 • Κλάσμα επί Κλάσμα
+                </span>
                 {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q3') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q3.explain}
+                  <span className="text-lg">{isCorrect('q1') ? '✅' : '❌'}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
+                {questions.q1.prompt}
+              </p>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  disabled={submitted}
+                  value={answers.q1}
+                  onChange={(e) => handleInputChange('q1', e.target.value)}
+                  placeholder="π.χ. 6/20"
+                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100 font-mono"
+                />
+                {submitted && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q1') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                    💡 {questions.q1.explain}
                   </div>
                 )}
               </div>
-
-              {/* ΕΡΩΤΗΣΗ 4 */}
-              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
-                    Άσκηση 4 • Γινόμενο Αντίστροφων
-                  </span>
-                  {submitted && (
-                    <span className="text-lg">{isCorrect('q4') ? '✅' : '❌'}</span>
-                  )}
-                </div>
-                <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                  {questions.q4.prompt}
-                </p>
-                <div className="space-y-2 mb-3">
-                  {questions.q4.options.map((opt, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      disabled={submitted}
-                      onClick={() => handleInputChange('q4', opt)}
-                      className={`w-full p-2.5 rounded-xl text-xs sm:text-sm font-mono font-bold border text-left transition ${
-                        answers.q4 === opt
-                          ? 'bg-amber-500 text-white border-amber-500 shadow-sm'
-                          : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
-                </div>
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q4') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q4.explain}
-                  </div>
-                )}
-              </div>
-
-              {/* ΕΡΩΤΗΣΗ 5 */}
-              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
-                    Άσκηση 5 • Σωστό ή Λάθος
-                  </span>
-                  {submitted && (
-                    <span className="text-lg">{isCorrect('q5') ? '✅' : '❌'}</span>
-                  )}
-                </div>
-                <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                  «{questions.q5.text}»
-                </p>
-                <div className="grid grid-cols-2 gap-4 mb-3">
-                  <button
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q5', true)}
-                    className={`py-3 rounded-xl font-black text-sm border transition ${
-                      answers.q5 === true
-                        ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                    }`}
-                  >
-                    👍 Σωστό
-                  </button>
-                  <button
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q5', false)}
-                    className={`py-3 rounded-xl font-black text-sm border transition ${
-                      answers.q5 === false
-                        ? 'bg-rose-600 text-white border-rose-600 shadow'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                    }`}
-                  >
-                    👎 Λάθος
-                  </button>
-                </div>
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q5') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q5.explain}
-                  </div>
-                )}
-              </div>
-
-              {/* ΕΡΩΤΗΣΗ 6 */}
-              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
-                    Άσκηση 6 • Σωστό ή Λάθος
-                  </span>
-                  {submitted && (
-                    <span className="text-lg">{isCorrect('q6') ? '✅' : '❌'}</span>
-                  )}
-                </div>
-                <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                  «{questions.q6.text}»
-                </p>
-                <div className="grid grid-cols-2 gap-4 mb-3">
-                  <button
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q6', true)}
-                    className={`py-3 rounded-xl font-black text-sm border transition ${
-                      answers.q6 === true
-                        ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                    }`}
-                  >
-                    👍 Σωστό
-                  </button>
-                  <button
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q6', false)}
-                    className={`py-3 rounded-xl font-black text-sm border transition ${
-                      answers.q6 === false
-                        ? 'bg-rose-600 text-white border-rose-600 shadow'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                    }`}
-                  >
-                    👎 Λάθος
-                  </button>
-                </div>
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q6') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q6.explain}
-                  </div>
-                )}
-              </div>
-
-              {/* ΕΡΩΤΗΣΗ 7 */}
-              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
-                    Άσκηση 7 • Άγνωστος Όρος
-                  </span>
-                  {submitted && (
-                    <span className="text-lg">{isCorrect('q7') ? '✅' : '❌'}</span>
-                  )}
-                </div>
-                <p className="text-sm text-slate-700 mb-3 font-medium">
-                  {questions.q7.prompt}
-                </p>
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    disabled={submitted}
-                    value={answers.q7}
-                    onChange={(e) => handleInputChange('q7', e.target.value)}
-                    placeholder="Γράψε την τιμή του x..."
-                    className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-rose-500 outline-none disabled:bg-slate-100 font-mono"
-                  />
-                  {submitted && (
-                    <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q7') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                      💡 {questions.q7.explain}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* ΕΡΩΤΗΣΗ 8 */}
-              <div className={`p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
-                    Άσκηση 8 • Πρόβλημα Καθημερινότητας
-                  </span>
-                  {submitted && (
-                    <span className="text-lg">{isCorrect('q8') ? '✅' : '❌'}</span>
-                  )}
-                </div>
-                <p className="text-sm text-slate-700 mb-3 font-medium">
-                  {questions.q8.prompt}
-                </p>
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  {questions.q8.options.map((opt, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      disabled={submitted}
-                      onClick={() => handleInputChange('q8', opt)}
-                      className={`w-full p-2.5 rounded-xl text-base font-mono font-black border text-center transition ${
-                        answers.q8 === opt
-                          ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
-                          : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
-                </div>
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q8') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q8.explain}
-                  </div>
-                )}
-              </div>
-
             </div>
 
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
-            {!submitted && (
-              <div className="flex justify-center pt-8">
+            {/* ΕΡΩΤΗΣΗ 2 */}
+            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">
+                  Άσκηση 2 • Ακέραιος επί Κλάσμα
+                </span>
+                {submitted && (
+                  <span className="text-lg">{isCorrect('q2') ? '✅' : '❌'}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
+                {questions.q2.prompt}
+              </p>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  disabled={submitted}
+                  value={answers.q2}
+                  onChange={(e) => handleInputChange('q2', e.target.value)}
+                  placeholder="π.χ. 6/7"
+                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono"
+                />
+                {submitted && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q2') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                    💡 {questions.q2.explain}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ΕΡΩΤΗΣΗ 3 */}
+            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
+                  Άσκηση 3 • Αντίστροφο Κλάσμα
+                </span>
+                {submitted && (
+                  <span className="text-lg">{isCorrect('q3') ? '✅' : '❌'}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
+                {questions.q3.prompt}
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                {questions.q3.options.map((opt, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    disabled={submitted}
+                    onClick={() => handleInputChange('q3', opt)}
+                    className={`p-3 rounded-xl text-base font-mono font-black border text-center transition ${
+                      answers.q3 === opt
+                        ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-purple-50'
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+              {submitted && (
+                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q3') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                  💡 {questions.q3.explain}
+                </div>
+              )}
+            </div>
+
+            {/* ΕΡΩΤΗΣΗ 4 */}
+            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
+                  Άσκηση 4 • Γινόμενο Αντίστροφων
+                </span>
+                {submitted && (
+                  <span className="text-lg">{isCorrect('q4') ? '✅' : '❌'}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
+                {questions.q4.prompt}
+              </p>
+              <div className="space-y-2 mb-3">
+                {questions.q4.options.map((opt, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    disabled={submitted}
+                    onClick={() => handleInputChange('q4', opt)}
+                    className={`w-full p-2.5 rounded-xl text-xs sm:text-sm font-mono font-bold border text-left transition ${
+                      answers.q4 === opt
+                        ? 'bg-amber-500 text-white border-amber-500 shadow-sm'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+              {submitted && (
+                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q4') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                  💡 {questions.q4.explain}
+                </div>
+              )}
+            </div>
+
+            {/* ΕΡΩΤΗΣΗ 5 */}
+            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
+                  Άσκηση 5 • Σωστό ή Λάθος
+                </span>
+                {submitted && (
+                  <span className="text-lg">{isCorrect('q5') ? '✅' : '❌'}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
+                «{questions.q5.text}»
+              </p>
+              <div className="grid grid-cols-2 gap-4 mb-3">
                 <button
-                  type="submit"
-                  className="bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5"
+                  type="button"
+                  disabled={submitted}
+                  onClick={() => handleInputChange('q5', true)}
+                  className={`py-3 rounded-xl font-black text-sm border transition ${
+                    answers.q5 === true
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
+                  }`}
                 >
-                  <span className="text-xl">🎯</span>
-                  <span>Έλεγχος Απαντήσεων</span>
+                  👍 Σωστό
+                </button>
+                <button
+                  type="button"
+                  disabled={submitted}
+                  onClick={() => handleInputChange('q5', false)}
+                  className={`py-3 rounded-xl font-black text-sm border transition ${
+                    answers.q5 === false
+                      ? 'bg-rose-600 text-white border-rose-600 shadow'
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
+                  }`}
+                >
+                  👎 Λάθος
                 </button>
               </div>
-            )}
-          </form>
-        </main>
+              {submitted && (
+                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q5') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                  💡 {questions.q5.explain}
+                </div>
+              )}
+            </div>
+
+            {/* ΕΡΩΤΗΣΗ 6 */}
+            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
+                  Άσκηση 6 • Σωστό ή Λάθος
+                </span>
+                {submitted && (
+                  <span className="text-lg">{isCorrect('q6') ? '✅' : '❌'}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
+                «{questions.q6.text}»
+              </p>
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <button
+                  type="button"
+                  disabled={submitted}
+                  onClick={() => handleInputChange('q6', true)}
+                  className={`py-3 rounded-xl font-black text-sm border transition ${
+                    answers.q6 === true
+                      ? 'bg-cyan-600 text-white border-cyan-600 shadow'
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-cyan-50'
+                  }`}
+                >
+                  👍 Σωστό
+                </button>
+                <button
+                  type="button"
+                  disabled={submitted}
+                  onClick={() => handleInputChange('q6', false)}
+                  className={`py-3 rounded-xl font-black text-sm border transition ${
+                    answers.q6 === false
+                      ? 'bg-rose-600 text-white border-rose-600 shadow'
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
+                  }`}
+                >
+                  👎 Λάθος
+                </button>
+              </div>
+              {submitted && (
+                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q6') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                  💡 {questions.q6.explain}
+                </div>
+              )}
+            </div>
+
+            {/* ΕΡΩΤΗΣΗ 7 */}
+            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
+                  Άσκηση 7 • Άγνωστος Όρος
+                </span>
+                {submitted && (
+                  <span className="text-lg">{isCorrect('q7') ? '✅' : '❌'}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-700 mb-3 font-medium">
+                {questions.q7.prompt}
+              </p>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  disabled={submitted}
+                  value={answers.q7}
+                  onChange={(e) => handleInputChange('q7', e.target.value)}
+                  placeholder="Γράψε την τιμή του x..."
+                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-rose-500 outline-none disabled:bg-slate-100 font-mono"
+                />
+                {submitted && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q7') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                    💡 {questions.q7.explain}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ΕΡΩΤΗΣΗ 8 */}
+            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
+                  Άσκηση 8 • Πρόβλημα Καθημερινότητας
+                </span>
+                {submitted && (
+                  <span className="text-lg">{isCorrect('q8') ? '✅' : '❌'}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-700 mb-3 font-medium leading-relaxed">
+                {questions.q8.prompt}
+              </p>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {questions.q8.options.map((opt, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    disabled={submitted}
+                    onClick={() => handleInputChange('q8', opt)}
+                    className={`w-full p-2.5 rounded-xl text-base font-mono font-black border text-center transition ${
+                      answers.q8 === opt
+                        ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+              {submitted && (
+                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q8') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                  💡 {questions.q8.explain}
+                </div>
+              )}
+            </div>
+
+          </div>
+
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-4 sm:pt-6">
+              <button
+                type="submit"
+                className="w-full sm:w-auto bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5"
+              >
+                <span className="text-xl">🎯</span>
+                <span>Έλεγχος Απαντήσεων</span>
+              </button>
+            </div>
+          )}
+        </form>
+
       </div>
 
-      {/* 4. FIXED STICKY BOTTOM SCORE FOOTER */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
+      {/* 3. FIXED STICKY BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 sm:py-4 px-4 sm:px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
           
           {/* ΑΡΙΣΤΕΡΑ: SCORE BADGE & PERCENTAGE */}
-          <div className="flex items-center gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-base md:text-lg flex items-center gap-2 shadow-sm">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="bg-amber-400 text-slate-900 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
               <span>Σκορ:</span>
-              <span className="font-mono text-xl md:text-2xl">{score} / 8</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 8</span>
             </div>
             {submitted && (
-              <span className="text-sm font-bold text-slate-300">
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
                 Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
@@ -655,7 +655,7 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
               <button
                 type="button"
                 onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
+                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
                 <span>🔄</span>
                 <span>Παίξε ξανά με νέες ασκήσεις!</span>
@@ -669,6 +669,6 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
 
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
