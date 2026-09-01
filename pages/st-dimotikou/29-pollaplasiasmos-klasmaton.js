@@ -45,25 +45,48 @@ export default function PollaplasiasmosKlasmatonPage() {
   const [denB, setDenB] = useState(4);
 
   // Έλεγχος εισαγωγής κειμένου
-  const handleInputChange = (setter, val, isDenominator = false) => {
+  const handleNumAChange = (val) => {
     const clean = val.replace(/[^0-9]/g, '');
-    if (clean === '') {
-      setter('');
-      return;
-    }
+    if (clean === '') { setNumA(''); return; }
     const n = Number(clean);
-    if (n > MAX_LIMIT) return;
-    if (isDenominator && n === 0) return;
-    setter(n);
+    if (n <= MAX_LIMIT) setNumA(n);
   };
 
-  // Αυξομείωση με κουμπιά
-  const adjustValue = (setter, currentVal, amount, isDenominator = false) => {
-    const next = (Number(currentVal) || 0) + amount;
-    const min = isDenominator ? 1 : 0;
-    if (next >= min && next <= MAX_LIMIT) {
-      setter(next);
-    }
+  const handleDenAChange = (val) => {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') { setDenA(''); return; }
+    const n = Number(clean);
+    if (n > 0 && n <= MAX_LIMIT) setDenA(n);
+  };
+
+  const handleNumBChange = (val) => {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') { setNumB(''); return; }
+    const n = Number(clean);
+    if (n <= MAX_LIMIT) setNumB(n);
+  };
+
+  const handleDenBChange = (val) => {
+    const clean = val.replace(/[^0-9]/g, '');
+    if (clean === '') { setDenB(''); return; }
+    const n = Number(clean);
+    if (n > 0 && n <= MAX_LIMIT) setDenB(n);
+  };
+
+  // Αυξομείωση με κουμπιά για Κλάσμα Α / Ακέραιο Α
+  const adjustNumA = (amount) => {
+    setNumA(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
+  };
+  const adjustDenA = (amount) => {
+    setDenA(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
+  };
+
+  // Αυξομείωση με κουμπιά για Κλάσμα Β
+  const adjustNumB = (amount) => {
+    setNumB(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
+  };
+  const adjustDenB = (amount) => {
+    setDenB(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
   };
 
   // Ενεργές τιμές
@@ -425,27 +448,59 @@ export default function PollaplasiasmosKlasmatonPage() {
                       <div className="space-y-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                          <button type="button" onClick={() => adjustValue(setNumA, numA, -1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">-</button>
+                          <button 
+                            type="button" 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumA(-1); }} 
+                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          >
+                            -
+                          </button>
                           <input
+                            id="mult-num-a"
+                            name="multNumA"
+                            autoComplete="off"
                             type="text"
+                            inputMode="numeric"
                             value={numA}
-                            onChange={(e) => handleInputChange(setNumA, e.target.value, false)}
+                            onChange={(e) => handleNumAChange(e.target.value)}
                             className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-blue-600 px-0.5"
                           />
-                          <button type="button" onClick={() => adjustValue(setNumA, numA, 1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">+</button>
+                          <button 
+                            type="button" 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumA(1); }} 
+                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          >
+                            +
+                          </button>
                         </div>
                       </div>
                       <div className="space-y-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                          <button type="button" onClick={() => adjustValue(setDenA, denA, -1, true)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">-</button>
+                          <button 
+                            type="button" 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenA(-1); }} 
+                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          >
+                            -
+                          </button>
                           <input
+                            id="mult-den-a"
+                            name="multDenA"
+                            autoComplete="off"
                             type="text"
+                            inputMode="numeric"
                             value={denA}
-                            onChange={(e) => handleInputChange(setDenA, e.target.value, true)}
+                            onChange={(e) => handleDenAChange(e.target.value)}
                             className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-blue-600 px-0.5"
                           />
-                          <button type="button" onClick={() => adjustValue(setDenA, denA, 1, true)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">+</button>
+                          <button 
+                            type="button" 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenA(1); }} 
+                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          >
+                            +
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -458,14 +513,30 @@ export default function PollaplasiasmosKlasmatonPage() {
                     <div className="space-y-1 text-center">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block">Τιμη</span>
                       <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 max-w-[160px] mx-auto">
-                        <button type="button" onClick={() => adjustValue(setNumA, numA, -1)} className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumA(-1); }} 
+                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
+                          id="mult-whole-a"
+                          name="multWholeA"
+                          autoComplete="off"
                           type="text"
+                          inputMode="numeric"
                           value={numA}
-                          onChange={(e) => handleInputChange(setNumA, e.target.value, false)}
+                          onChange={(e) => handleNumAChange(e.target.value)}
                           className="w-full min-w-0 text-center font-mono font-black text-lg outline-none text-indigo-600"
                         />
-                        <button type="button" onClick={() => adjustValue(setNumA, numA, 1)} className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumA(1); }} 
+                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -480,27 +551,59 @@ export default function PollaplasiasmosKlasmatonPage() {
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValue(setNumB, numB, -1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(-1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
+                          id="mult-num-b"
+                          name="multNumB"
+                          autoComplete="off"
                           type="text"
+                          inputMode="numeric"
                           value={numB}
-                          onChange={(e) => handleInputChange(setNumB, e.target.value, false)}
+                          onChange={(e) => handleNumBChange(e.target.value)}
                           className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-orange-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValue(setNumB, numB, 1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValue(setDenB, denB, -1, true)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenB(-1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
+                          id="mult-den-b"
+                          name="multDenB"
+                          autoComplete="off"
                           type="text"
+                          inputMode="numeric"
                           value={denB}
-                          onChange={(e) => handleInputChange(setDenB, e.target.value, true)}
+                          onChange={(e) => handleDenBChange(e.target.value)}
                           className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-orange-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValue(setDenB, denB, 1, true)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenB(1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                   </div>
