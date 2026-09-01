@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
+import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Βοηθητικές συναρτήσεις
@@ -50,7 +50,6 @@ const CHAPTER_GENERATORS = [
     ];
     const pos = posNames[getRandomInt(0, posNames.length - 1)];
     const d = digits[getRandomInt(0, digits.length - 1)];
-    const base = getRandomInt(12, 85) * 1000000 + getRandomInt(100, 999) * 1000 + getRandomInt(100, 999);
     const correctVal = d * pos.mult;
     return {
       title: "1. Φυσικοί Αριθμοί",
@@ -274,7 +273,6 @@ const CHAPTER_GENERATORS = [
 
   // 15. Κριτήρια Διαιρετότητας
   () => {
-    const lastDigits = [0, 2, 4, 5, 8];
     const targetDiv = [2, 3, 5, 9, 10][getRandomInt(0, 4)];
     let n;
     if (targetDiv === 3) n = 147;
@@ -360,9 +358,6 @@ const CHAPTER_GENERATORS = [
 
   // 20. ΕΚΠ - Αλγόριθμος Πρώτοι Αριθμοί
   () => {
-    const a = 12;
-    const b = 18;
-    const res = lcm(a, b);
     return {
       title: "20. ΕΚΠ με Πρώτους Αριθμούς",
       prompt: `Χρησιμοποιώντας τις αναλύσεις 12 ＝ 2² × 3 και 18 ＝ 2 × 3², ποιο είναι το Ε.Κ.Π.(12, 18);`,
@@ -535,7 +530,7 @@ const CHAPTER_GENERATORS = [
       type: 'input',
       correct: `${rN}/${rD}`,
       altCorrect: `${rN / g}/${rD / g}`,
-      explain: `(${n1}/${d1}) : (${n2}/${d2}) ＝ (${n1}/${d1}) × (${d2}/${n2}) ＝ ${rN}/${rD}${g > 1 ? ` (ή ανάγωγο: ${rN / g}/${rD / g})` : ''}.`
+      explain: `(${n1}/${d1}) : (${n2}/${d2}) ＝ (${n1} × ${d2})/(${d1} × ${n2}) ＝ ${rN}/${rD}${g > 1 ? ` (ή ανάγωγο: ${rN / g}/${rD / g})` : ''}.`
     };
   }
 ];
@@ -547,7 +542,6 @@ export default function Epanalipsi1Page() {
   const [score, setScore] = useState(0);
 
   const loadNewTest = () => {
-    // Επιλογή ακριβώς μίας τυχαίας ερώτησης από κάθε γεννήτρια (1 έως 30)
     const generated = CHAPTER_GENERATORS.map((gen, index) => {
       const q = gen();
       return { ...q, id: `q${index + 1}`, chapterNum: index + 1 };
@@ -600,46 +594,34 @@ export default function Epanalipsi1Page() {
 
   const answeredCount = Object.values(answers).filter(val => typeof val === 'string' && val.trim() !== '').length;
 
+  const actionButton = (
+    <span className="hidden sm:inline-block bg-indigo-50 border border-indigo-200 text-indigo-700 px-3 py-1.5 rounded-xl text-xs font-black">
+      📝 30 Ερωτήσεις
+    </span>
+  );
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col justify-between pb-36">
-      <Head>
-        <title>🏆 Μεγάλη Επανάληψη (Κεφάλαια 1 - 30) - ΣΤ' Δημοτικού | LearnMaths.gr</title>
-        <meta name="description" content="Πλήρες επαναληπτικό διαγώνισμα 30 ερωτήσεων στα μαθηματικά της ΣΤ' Δημοτικού (Κεφάλαια 1-30) με αυτόματη βαθμολόγηση." />
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
+    <Layout
+      title="🏆 Μεγάλη Επανάληψη (Κεφάλαια 1 - 30) - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Πλήρες επαναληπτικό διαγώνισμα 30 ερωτήσεων στα μαθηματικά της ΣΤ' Δημοτικού (Κεφάλαια 1-30) με αυτόματη βαθμολόγηση."
+      backUrl="/st-dimotikou"
+      backText="ΣΤ' Δημοτικού"
+      actionButton={actionButton}
+      hideFooter={true}
+    >
+      <div className="py-6 md:py-10 space-y-8 pb-28 sm:pb-36">
 
-      <div>
-        {/* 1. STICKY NAVBAR */}
-        <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-          <div className={`${LAYOUT.CONTAINER} py-3.5 flex justify-between items-center`}>
-            <Link href="/st-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight flex items-center">
-              <span>LearnMaths</span><span className="text-indigo-600">.gr</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <span className="hidden sm:inline-block bg-indigo-50 border border-indigo-200 text-indigo-700 px-3 py-1.5 rounded-xl text-xs font-black">
-                📝 30 Ερωτήσεις
-              </span>
-              <Link 
-                href="/st-dimotikou" 
-                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs md:text-sm font-bold transition"
-              >
-                <span>🔙</span> <span>Πίσω</span>
-              </Link>
-            </div>
-          </div>
-        </nav>
-
-        {/* 2. HERO BANNER */}
-        <section className="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white py-10 px-4 shadow-inner">
-          <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-6`}>
-            <div className="space-y-2 text-center md:text-left">
+        {/* 1. HERO BANNER */}
+        <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🏆 Πρωτο Επαναληπτικο Τεστ• ΣΤ' Δημοτικου</span>
+                <span>🏆 Πρωτο Επαναληπτικο Τεστ • ΣΤ' Δημοτικου</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
                 Μεγάλη Επανάληψη: Κεφάλαια 1 έως 30
               </h1>
-              <p className="text-blue-100 text-sm md:text-base max-w-2xl">
+              <p className="text-blue-100 text-sm md:text-base max-w-2xl leading-relaxed">
                 30 τυχαία επιλεγμένες ασκήσεις που καλύπτουν όλες τις έννοιες: φυσικούς, δεκαδικούς, διαιρετότητα, πρώτους αριθμούς, δυνάμεις και πράξεις κλασμάτων!
               </p>
             </div>
@@ -647,123 +629,125 @@ export default function Epanalipsi1Page() {
             <button
               type="button"
               onClick={loadNewTest}
-              className="px-6 py-3.5 bg-amber-400 text-slate-900 hover:bg-amber-300 rounded-2xl font-black shadow-lg transition transform active:scale-95 text-sm flex items-center gap-2 shrink-0"
+              className="px-6 py-3.5 bg-amber-400 text-slate-900 hover:bg-amber-300 rounded-2xl font-black shadow-lg transition transform active:scale-95 text-xs sm:text-sm flex items-center gap-2 shrink-0 self-stretch sm:self-auto justify-center"
             >
-              <span>🔄</span> <span>Νέο Τυχαίο Τεστ</span>
+              <span>🔄</span>
+              <span>Νέο Τυχαίο Τεστ</span>
             </button>
           </div>
-        </section>
+        </div>
 
-        {/* 3. MAIN FORM WITH 30 QUESTIONS */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10`}>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {questions.map((q) => {
-                const isCorrect = submitted && isQuestionCorrect(q);
-                const isWrong = submitted && !isCorrect;
+        {/* 2. MAIN FORM WITH 30 QUESTIONS */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {questions.map((q, idx) => {
+              const isCorrect = submitted && isQuestionCorrect(q);
 
-                return (
-                  <div
-                    key={q.id}
-                    className={`p-5 rounded-3xl border transition-all flex flex-col justify-between space-y-4 ${
-                      !submitted
-                        ? 'bg-white border-slate-200 shadow-sm hover:shadow-md'
-                        : isCorrect
-                        ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
-                        : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400'
-                    }`}
-                  >
-                    <div>
-                      {/* Κεφαλίδα Κάρτας */}
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="text-[11px] font-black px-2.5 py-1 bg-indigo-50 text-indigo-800 rounded-xl border border-indigo-100">
-                          {q.title}
-                        </span>
-                        {submitted && (
-                          <span className="text-base">{isCorrect ? '✅' : '❌'}</span>
-                        )}
-                      </div>
-
-                      {/* Ερώτηση */}
-                      <p className="text-sm font-semibold text-slate-800 leading-relaxed mb-4">
-                        {q.prompt}
-                      </p>
-                    </div>
-
-                    {/* Επιλογές ή Πεδίο Εισαγωγής */}
-                    <div className="space-y-3">
-                      {q.type === 'mcq' ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {q.options.map((opt, idx) => (
-                            <button
-                              key={idx}
-                              type="button"
-                              disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
-                              className={`p-2.5 rounded-xl text-xs font-bold border transition text-center ${
-                                answers[q.id] === opt
-                                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-indigo-50'
-                              }`}
-                            >
-                              {opt}
-                            </button>
-                          ))}
-                        </div>
-                      ) : (
-                        <input
-                          type="text"
-                          disabled={submitted}
-                          value={answers[q.id]}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
-                          placeholder="Γράψε την απάντηση..."
-                          className="w-full p-2.5 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-base focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono"
-                        />
-                      )}
-
-                      {/* Επεξήγηση μετά την υποβολή */}
-                      {submitted && (
-                        <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                          💡 {q.explain}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
-            {!submitted && (
-              <div className="flex justify-center pt-8">
-                <button
-                  type="submit"
-                  className="bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5"
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 rounded-3xl border transition-all flex flex-col justify-between space-y-4 ${
+                    !submitted
+                      ? 'bg-white border-slate-200 shadow-sm hover:shadow-md'
+                      : isCorrect
+                      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+                      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400'
+                  }`}
                 >
-                  <span className="text-2xl">🎯</span>
-                  <span>Ολοκλήρωση & Βαθμολόγηση Τεστ</span>
-                </button>
-              </div>
-            )}
-          </form>
-        </main>
+                  <div>
+                    {/* Κεφαλίδα Κάρτας */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-[11px] font-black px-2.5 py-1 bg-indigo-50 text-indigo-800 rounded-xl border border-indigo-100">
+                        {q.title}
+                      </span>
+                      {submitted && (
+                        <span className="text-base">{isCorrect ? '✅' : '❌'}</span>
+                      )}
+                    </div>
+
+                    {/* Ερώτηση */}
+                    <p className="text-sm font-semibold text-slate-800 leading-relaxed mb-4">
+                      {q.prompt}
+                    </p>
+                  </div>
+
+                  {/* Επιλογές ή Πεδίο Εισαγωγής */}
+                  <div className="space-y-3">
+                    {q.type === 'mcq' ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {q.options.map((opt, optIdx) => (
+                          <button
+                            key={optIdx}
+                            type="button"
+                            disabled={submitted}
+                            onClick={() => handleInputChange(q.id, opt)}
+                            className={`p-2.5 rounded-xl text-xs font-bold border transition text-center ${
+                              answers[q.id] === opt
+                                ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                                : 'bg-white text-slate-700 border-slate-200 hover:bg-indigo-50'
+                            }`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <input
+                        id={`test-input-${q.id}`}
+                        name={`testInput_${q.id}`}
+                        autoComplete="off"
+                        type="text"
+                        disabled={submitted}
+                        value={answers[q.id]}
+                        onChange={(e) => handleInputChange(q.id, e.target.value)}
+                        placeholder="Γράψε την απάντηση..."
+                        className="w-full p-2.5 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-base focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono"
+                      />
+                    )}
+
+                    {/* Επεξήγηση μετά την υποβολή */}
+                    {submitted && (
+                      <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
+                        💡 {q.explain}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-4 sm:pt-6">
+              <button
+                type="submit"
+                className="w-full sm:w-auto bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5"
+              >
+                <span className="text-2xl">🎯</span>
+                <span>Ολοκλήρωση & Βαθμολόγηση Τεστ</span>
+              </button>
+            </div>
+          )}
+        </form>
+
       </div>
 
-      {/* 4. FIXED STICKY BOTTOM PROGRESS FOOTER */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
+      {/* 3. FIXED STICKY BOTTOM PROGRESS FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 sm:py-4 px-4 sm:px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
           
           {/* ΑΡΙΣΤΕΡΑ: SCORE & PROGRESS BADGE */}
-          <div className="flex items-center gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-base md:text-lg flex items-center gap-2 shadow-sm">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="bg-amber-400 text-slate-900 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
               <span>{submitted ? 'Τελικό Σκορ:' : 'Απαντήθηκαν:'}</span>
-              <span className="font-mono text-xl md:text-2xl">
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
                 {submitted ? `${score} / 30` : `${answeredCount} / 30`}
               </span>
             </div>
             {submitted && (
-              <span className="text-sm font-bold text-slate-300">
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
                 Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 30) * 100)}%</span>
               </span>
             )}
@@ -775,7 +759,7 @@ export default function Epanalipsi1Page() {
               <button
                 type="button"
                 onClick={loadNewTest}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
+                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
                 <span>🔄</span>
                 <span>Παίξε ξανά με 30 νέες ασκήσεις!</span>
@@ -789,6 +773,6 @@ export default function Epanalipsi1Page() {
 
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
