@@ -207,11 +207,11 @@ export default function MetablitiPage() {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="w-full min-w-0 flex items-center gap-2.5">
                     <button 
                       type="button" 
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustX(-1); }} 
-                      className="w-9 h-9 shrink-0 bg-white hover:bg-slate-100 text-blue-700 font-black rounded-xl border border-slate-200 text-lg shadow-xs flex items-center justify-center active:scale-95 transition"
+                      className="w-8 h-8 shrink-0 bg-white hover:bg-slate-100 text-blue-700 font-black rounded-xl border border-slate-200 text-base shadow-xs flex items-center justify-center active:scale-95 transition"
                     >
                       -
                     </button>
@@ -223,12 +223,12 @@ export default function MetablitiPage() {
                       max="20"
                       value={activeX}
                       onChange={(e) => handleXChange(e.target.value)}
-                      className="flex-1 accent-blue-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg"
+                      className="w-full min-w-0 flex-1 accent-blue-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg"
                     />
                     <button 
                       type="button" 
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustX(1); }} 
-                      className="w-9 h-9 shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-lg shadow-md flex items-center justify-center active:scale-95 transition"
+                      className="w-8 h-8 shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-base shadow-md flex items-center justify-center active:scale-95 transition"
                     >
                       +
                     </button>
