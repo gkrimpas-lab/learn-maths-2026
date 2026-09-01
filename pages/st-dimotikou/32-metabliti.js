@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
 // Όριο τιμής μεταβλητής για το εργαστήριο
-const MAX_X_VAL = 50;
+const MAX_X_VAL = 20;
 
 const PRESET_EXPRESSIONS = [
   { a: 2, b: 3, op: '+', label: "2x ＋ 3" },
@@ -26,15 +26,13 @@ export default function MetablitiPage() {
 
   // Χειρισμός αλλαγής x
   const handleXChange = (val) => {
-    const clean = val.replace(/[^0-9]/g, '');
+    const clean = String(val).replace(/[^0-9]/g, '');
     if (clean === '') {
-      setXVal('');
+      setXVal(0);
       return;
     }
-    const n = Number(clean);
-    if (n <= MAX_X_VAL) {
-      setXVal(n);
-    }
+    const n = Math.min(MAX_X_VAL, Math.max(0, Number(clean)));
+    setXVal(n);
   };
 
   const adjustX = (amount) => {
@@ -54,7 +52,7 @@ export default function MetablitiPage() {
   };
 
   // Ενεργή τιμή x
-  const activeX = xVal === '' ? 0 : Number(xVal);
+  const activeX = Number(xVal) || 0;
 
   // Υπολογισμός τιμής παράστασης
   const termAx = coeffA * activeX;
@@ -135,7 +133,7 @@ export default function MetablitiPage() {
               </p>
             </div>
             <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-blue-900">
+              <span className="bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl text-blue-900 inline-block break-words max-w-full">
                 x ＝ ηλικία, απόσταση, κόστος...
               </span>
             </div>
@@ -152,7 +150,7 @@ export default function MetablitiPage() {
               </p>
             </div>
             <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
+              <span className="bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-xl text-indigo-900 inline-block break-words max-w-full">
                 2x ＋ 3,  5x － 4,  x/2
               </span>
             </div>
@@ -169,7 +167,7 @@ export default function MetablitiPage() {
               </p>
             </div>
             <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-emerald-900">
+              <span className="bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-emerald-900 inline-block break-words max-w-full">
                 Αν x ＝ 4 ➔ 2×4 ＋ 3 ＝ <strong className="text-emerald-700">11</strong>
               </span>
             </div>
@@ -221,6 +219,7 @@ export default function MetablitiPage() {
                       type="range"
                       min="0"
                       max="20"
+                      step="1"
                       value={activeX}
                       onChange={(e) => handleXChange(e.target.value)}
                       className="w-full min-w-0 flex-1 accent-blue-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg"
@@ -400,18 +399,23 @@ export default function MetablitiPage() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-5 gap-1.5 sm:gap-2 text-center">
+                {/* Πλέγμα με 5 κάρτες - Στοίχιση x = ... σε μία γραμμή */}
+                <div className="flex flex-wrap justify-center sm:grid sm:grid-cols-5 gap-2 text-center">
                   {tableValues.map((row) => (
                     <div 
                       key={row.x}
-                      className={`p-2.5 sm:p-3 rounded-2xl border transition-all ${
+                      className={`flex-1 min-w-[58px] sm:min-w-0 p-2 sm:p-3 rounded-2xl border transition-all ${
                         activeX === row.x 
                           ? 'bg-indigo-50 border-indigo-400 shadow-md ring-2 ring-indigo-400 scale-105' 
                           : 'bg-slate-50 border-slate-200'
                       }`}
                     >
-                      <div className="text-[9px] sm:text-[10px] font-bold text-slate-400">Αν x = {row.x}</div>
-                      <div className="font-mono text-base sm:text-lg font-black text-slate-800 mt-0.5">{row.val}</div>
+                      <div className="text-[10px] sm:text-[11px] font-bold text-slate-500 whitespace-nowrap">
+                        x ＝ {row.x}
+                      </div>
+                      <div className="font-mono text-base sm:text-xl font-black text-slate-800 mt-1">
+                        {row.val}
+                      </div>
                     </div>
                   ))}
                 </div>
