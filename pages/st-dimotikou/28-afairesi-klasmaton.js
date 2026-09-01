@@ -58,7 +58,7 @@ export default function AfairesiKlasmatonPage() {
     }
   };
 
-  // Αυξομείωση με κουμπιά
+  // Αυξομείωση με κουμπιά για Κλάσμα Α
   const adjustValueA = (type, amount) => {
     if (type === 'num') {
       setNumA(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
@@ -67,6 +67,7 @@ export default function AfairesiKlasmatonPage() {
     }
   };
 
+  // Αυξομείωση με κουμπιά για Κλάσμα Β
   const adjustValueB = (type, amount) => {
     if (type === 'num') {
       setNumB(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
@@ -366,27 +367,51 @@ export default function AfairesiKlasmatonPage() {
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValueA('num', -1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); adjustValueA('num', -1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
                           type="text"
                           value={numA}
                           onChange={(e) => handleInputChange(setNumA, e.target.value, false)}
                           className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-blue-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValueA('num', 1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); adjustValueA('num', 1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValueA('den', -1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); adjustValueA('den', -1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
                           type="text"
                           value={denA}
                           onChange={(e) => handleInputChange(setDenA, e.target.value, true)}
                           className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-blue-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValueA('den', 1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); adjustValueA('den', 1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -401,27 +426,51 @@ export default function AfairesiKlasmatonPage() {
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValueB('num', -1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); adjustValueB('num', -1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
                           type="text"
                           value={numB}
                           onChange={(e) => handleInputChange(setNumB, e.target.value, false)}
                           className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-orange-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValueB('num', 1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); adjustValueB('num', 1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
-                        <button type="button" onClick={() => adjustValueB('den', -1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">-</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); adjustValueB('den', -1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          -
+                        </button>
                         <input
                           type="text"
                           value={denB}
                           onChange={(e) => handleInputChange(setDenB, e.target.value, true)}
                           className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-orange-600 px-0.5"
                         />
-                        <button type="button" onClick={() => adjustValueB('den', 1)} className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95">+</button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); adjustValueB('den', 1); }} 
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                   </div>
