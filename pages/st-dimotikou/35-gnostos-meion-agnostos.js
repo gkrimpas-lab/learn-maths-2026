@@ -119,9 +119,10 @@ export default function GnostosMeionAgnostosPage() {
                 Στην εξίσωση α - x = β, το x είναι ο <strong>αφαιρετέος</strong> (το κομμάτι που αφαιρείται ή κόβεται από το αρχικό μέγεθος α).
               </p>
             </div>
-            <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-blue-900">
-                10 － x ＝ 4 (x ＝ το κομμάτι που κόπηκε)
+            <div className="text-center">
+              <span className="bg-blue-50 border border-blue-200 px-3 py-2 rounded-xl text-blue-900 text-xs font-mono font-bold inline-flex flex-wrap items-center justify-center gap-1.5 leading-relaxed break-words max-w-full">
+                <span>10 － x ＝ 4</span>
+                <span className="text-blue-700 font-normal">(x ＝ το κομμάτι που κόπηκε)</span>
               </span>
             </div>
           </div>
@@ -136,9 +137,10 @@ export default function GnostosMeionAgnostosPage() {
                 Για να βρούμε το κομμάτι που αφαιρέθηκε (x), <strong>αφαιρούμε το κομμάτι που έμεινε (β) από το ολικό (α)</strong>:
               </p>
             </div>
-            <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
-                x ＝ 10 － 4 ＝ <strong className="text-indigo-700 font-black">6</strong>
+            <div className="text-center">
+              <span className="bg-indigo-50 border border-indigo-200 px-3 py-2 rounded-xl text-indigo-900 text-xs font-mono font-bold inline-flex flex-wrap items-center justify-center gap-1.5 leading-relaxed break-words max-w-full">
+                <span>x ＝ 10 － 4 ＝</span>
+                <strong className="text-indigo-700 font-black">6</strong>
               </span>
             </div>
           </div>
@@ -153,9 +155,10 @@ export default function GnostosMeionAgnostosPage() {
                 Ελέγχουμε αν το υπόλοιπο είναι σωστό: 10 - 6 = 4! Τα δύο κομμάτια x + β συμπληρώνουν ακριβώς το ολικό μήκος α.
               </p>
             </div>
-            <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-emerald-900">
-                6 ＋ 4 ＝ 10 (Σωστό! ✔️)
+            <div className="text-center">
+              <span className="bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl text-emerald-900 text-xs font-mono font-bold inline-flex flex-wrap items-center justify-center gap-1.5 leading-relaxed break-words max-w-full">
+                <span>6 ＋ 4 ＝ 10</span>
+                <span className="text-emerald-700 font-black">(Σωστό! ✔️)</span>
               </span>
             </div>
           </div>
@@ -183,11 +186,11 @@ export default function GnostosMeionAgnostosPage() {
 
                 {/* SLIDER A: ΟΛΙΚΟ ΜΗΚΟΣ (ΜΕΙΩΤΕΟΣ) */}
                 <div className="bg-blue-50/60 p-3.5 sm:p-4 rounded-2xl border border-blue-200 space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-black text-blue-900 tracking-wider">
+                  <div className="flex justify-between items-center w-full gap-2">
+                    <span className="text-xs font-black text-blue-900 tracking-wider truncate">
                       🔵 Ολικό Μέγεθος (α)
                     </span>
-                    <span className="font-mono font-black text-sm text-blue-700 bg-white px-2.5 py-0.5 rounded-lg border border-blue-200">
+                    <span className="font-mono font-black text-sm text-blue-700 bg-white px-3 py-1 rounded-xl border border-blue-200 shrink-0 min-w-[72px] text-center whitespace-nowrap shadow-xs">
                       α ＝ {activeA}
                     </span>
                   </div>
@@ -197,7 +200,7 @@ export default function GnostosMeionAgnostosPage() {
                       type="button" 
                       disabled={activeA <= activeB + 1}
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAChange(activeA - 1); }}
-                      className="w-9 h-9 bg-white hover:bg-slate-100 disabled:opacity-30 text-blue-700 font-black rounded-xl border border-blue-200 text-base shadow-xs flex items-center justify-center active:scale-95 transition"
+                      className="w-9 h-9 bg-white hover:bg-slate-100 disabled:opacity-30 text-blue-700 font-black rounded-xl border border-blue-200 text-base shadow-xs flex items-center justify-center active:scale-95 transition shrink-0"
                     >
                       -
                     </button>
@@ -215,7 +218,7 @@ export default function GnostosMeionAgnostosPage() {
                       type="button" 
                       disabled={activeA >= MAX_VAL}
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAChange(activeA + 1); }}
-                      className="w-9 h-9 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white font-black rounded-xl text-base shadow-md flex items-center justify-center active:scale-95 transition"
+                      className="w-9 h-9 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white font-black rounded-xl text-base shadow-md flex items-center justify-center active:scale-95 transition shrink-0"
                     >
                       +
                     </button>
@@ -224,11 +227,11 @@ export default function GnostosMeionAgnostosPage() {
 
                 {/* SLIDER B: ΚΟΜΜΑΤΙ ΠΟΥ ΕΜΕΙΝΕ (ΔΙΑΦΟΡΑ) */}
                 <div className="bg-emerald-50/60 p-3.5 sm:p-4 rounded-2xl border border-emerald-200 space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-black text-emerald-900 tracking-wider">
+                  <div className="flex justify-between items-center w-full gap-2">
+                    <span className="text-xs font-black text-emerald-900 tracking-wider truncate">
                       🟢 Κομμάτι που έμεινε (β)
                     </span>
-                    <span className="font-mono font-black text-sm text-emerald-700 bg-white px-2.5 py-0.5 rounded-lg border border-emerald-200">
+                    <span className="font-mono font-black text-sm text-emerald-700 bg-white px-3 py-1 rounded-xl border border-emerald-200 shrink-0 min-w-[72px] text-center whitespace-nowrap shadow-xs">
                       β ＝ {activeB}
                     </span>
                   </div>
@@ -238,7 +241,7 @@ export default function GnostosMeionAgnostosPage() {
                       type="button" 
                       disabled={activeB <= 1}
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleBChange(activeB - 1); }}
-                      className="w-9 h-9 bg-white hover:bg-slate-100 disabled:opacity-30 text-emerald-700 font-black rounded-xl border border-emerald-200 text-base shadow-xs flex items-center justify-center active:scale-95 transition"
+                      className="w-9 h-9 bg-white hover:bg-slate-100 disabled:opacity-30 text-emerald-700 font-black rounded-xl border border-emerald-200 text-base shadow-xs flex items-center justify-center active:scale-95 transition shrink-0"
                     >
                       -
                     </button>
@@ -256,7 +259,7 @@ export default function GnostosMeionAgnostosPage() {
                       type="button" 
                       disabled={activeB >= activeA - 1}
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleBChange(activeB + 1); }}
-                      className="w-9 h-9 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 text-white font-black rounded-xl text-base shadow-md flex items-center justify-center active:scale-95 transition"
+                      className="w-9 h-9 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 text-white font-black rounded-xl text-base shadow-md flex items-center justify-center active:scale-95 transition shrink-0"
                     >
                       +
                     </button>
