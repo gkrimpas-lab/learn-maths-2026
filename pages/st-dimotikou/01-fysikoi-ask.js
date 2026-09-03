@@ -22,6 +22,19 @@ function formatNumber(num) {
   return Number(num).toLocaleString('el-GR');
 }
 
+// Δημιουργία 6ψήφιου αριθμού με μοναδικά ψηφία ώστε κάθε ψηφίο να εμφανίζεται μόνο 1 φορά
+function generateUniqueDigitsNumber() {
+  const firstDigits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const allDigits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  
+  const d0 = firstDigits[getRandomInt(0, firstDigits.length - 1)];
+  const remaining = allDigits.filter(d => d !== d0);
+  const shuffled = shuffle(remaining);
+  
+  const chosen = [d0, ...shuffled.slice(0, 5)];
+  return Number(chosen.join(''));
+}
+
 // Δεξαμενή θεματικών σεναρίων καθημερινότητας
 const REAL_WORLD_POOLS = [
   { item: 'εισιτήρια συναυλιών', val: 125000, desc: 'πωλήθηκαν σε όλο τον κόσμο' },
@@ -36,10 +49,8 @@ const REAL_WORLD_POOLS = [
 
 // Δημιουργία 8 μοναδικών ερωτήσεων
 function generateQuestions() {
-  const shuffledPool = shuffle(REAL_WORLD_POOLS);
-
-  // Q1: Αριθμητικό Input - Ποια είναι η πραγματική αξία του επιλεγμένου ψηφίου
-  const q1NumBase = getRandomInt(120, 980) * 1000 + getRandomInt(100, 999);
+  // Q1: Αριθμητικό Input - Εξασφάλιση ότι το ψηφίο υπάρχει ΜΟΝΟ μία φορά
+  const q1NumBase = generateUniqueDigitsNumber();
   const q1Digits = q1NumBase.toString().split('');
   const q1TargetPos = getRandomInt(0, 3);
   const q1TargetDigit = Number(q1Digits[q1TargetPos]);
@@ -52,7 +63,7 @@ function generateQuestions() {
     'Εκατοντάδων'
   ][q1TargetPos];
 
-  // Q2: Αριθμητικό Input - Σύνθεση αριθμού από αναπτυγμένη μορφή (με d × 1)
+  // Q2: Αριθμητικό Input - Σύνθεση αριθμού από αναπτυγμένη μορφή
   const q2A = getRandomInt(2, 8);
   const q2B = getRandomInt(1, 9);
   const q2C = getRandomInt(3, 9);
@@ -99,7 +110,7 @@ function generateQuestions() {
     ? `Τα μηδενικά στο τέλος του αριθμού ${formatNumber(q6NumberExample)} καθορίζουν την αξία θέσης των προηγούμενων ψηφίων.`
     : `Τα μηδενικά στην αρχή ενός φυσικού αριθμού (π.χ. 00${formatNumber(q6NumberExample)}) αλλάζουν και μεγαλώνουν την αξία του.`;
 
-  // Q7: SVG Visual - Πλήρης Άβακας 7 Θέσεων (από Μονάδες έως Εκατομμύρια)
+  // Q7: SVG Visual - Πλήρης Άβακας 7 Θέσεων
   const q7M = getRandomInt(1, 4);
   const q7EX = getRandomInt(0, 5);
   const q7DX = getRandomInt(0, 6);
@@ -120,7 +131,7 @@ function generateQuestions() {
     { label: 'Μ.', count: q7Units, color: '#7c3aed', name: 'Μονάδες' }
   ];
 
-  // Q8: SVG Visual - Επιλογή σωστής ανάλυσης από διάγραμμα περιόδων
+  // Q8: MCQ - Επιλογή σωστής ανάλυσης από τον αριθμό (χωρίς το προδοτικό πλαίσιο)
   const q8Millions = getRandomInt(3, 9);
   const q8Thousands = getRandomInt(120, 850);
   const q8Number = q8Millions * 1000000 + q8Thousands * 1000;
@@ -193,7 +204,7 @@ function generateQuestions() {
     },
     q8: {
       type: 'mcq',
-      title: 'Ανάλυση Περιόδων με Διάγραμμα',
+      title: 'Ανάλυση Περιόδων',
       number: formatNumber(q8Number),
       millions: q8Millions,
       thousands: q8Thousands,
@@ -292,7 +303,7 @@ export default function FysikoiArithmoiExercisesPage() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="space-y-2 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-emerald-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικού • Εξάσκηση</span>
+                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
                 Διαδραστικές Ασκήσεις: Φυσικοί Αριθμοί
@@ -331,7 +342,11 @@ export default function FysikoiArithmoiExercisesPage() {
               </p>
               <div className="space-y-3">
                 <input
+                  id="ex-fysikoi-q1"
+                  name="exFysikoiQ1"
+                  autoComplete="off"
                   type="text"
+                  inputMode="numeric"
                   disabled={submitted}
                   value={answers.q1}
                   onChange={(e) => handleInputChange('q1', e.target.value)}
@@ -364,7 +379,11 @@ export default function FysikoiArithmoiExercisesPage() {
               </div>
               <div className="space-y-3">
                 <input
+                  id="ex-fysikoi-q2"
+                  name="exFysikoiQ2"
+                  autoComplete="off"
                   type="text"
+                  inputMode="numeric"
                   disabled={submitted}
                   value={answers.q2}
                   onChange={(e) => handleInputChange('q2', e.target.value)}
@@ -596,7 +615,11 @@ export default function FysikoiArithmoiExercisesPage() {
 
               <div className="space-y-3">
                 <input
+                  id="ex-fysikoi-q7"
+                  name="exFysikoiQ7"
+                  autoComplete="off"
                   type="text"
+                  inputMode="numeric"
                   disabled={submitted}
                   value={answers.q7}
                   onChange={(e) => handleInputChange('q7', e.target.value)}
@@ -611,7 +634,7 @@ export default function FysikoiArithmoiExercisesPage() {
               </div>
             </div>
 
-            {/* ΕΡΩΤΗΣΗ 8 */}
+            {/* ΕΡΩΤΗΣΗ 8: Ανάλυση Περιόδων (χωρίς το ενδιάμεσο πλαίσιο) */}
             <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
               <div className="flex justify-between items-center mb-4">
                 <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
@@ -621,20 +644,9 @@ export default function FysikoiArithmoiExercisesPage() {
                   <span className="text-lg">{isCorrect('q8') ? '✅' : '❌'}</span>
                 )}
               </div>
-              <p className="text-sm text-slate-700 mb-3 font-medium">
+              <p className="text-sm text-slate-700 mb-4 font-medium leading-relaxed">
                 Ποια είναι η σωστή περιγραφή του αριθμού <strong className="text-teal-700 text-base font-black">{questions.q8.number}</strong>;
               </p>
-
-              {/* Blocks */}
-              <div className="bg-slate-100 p-3 rounded-xl mb-3 flex items-center justify-center gap-3">
-                <div className="px-3 py-2 bg-rose-500 text-white rounded-lg text-xs font-black">
-                  {questions.q8.millions} Εκ.
-                </div>
-                <span className="text-slate-400 font-bold">+</span>
-                <div className="px-3 py-2 bg-blue-500 text-white rounded-lg text-xs font-black">
-                  {questions.q8.thousands} Χιλ.
-                </div>
-              </div>
 
               <div className="space-y-2 mb-3">
                 {questions.q8.options.map((opt, idx) => (
@@ -643,7 +655,7 @@ export default function FysikoiArithmoiExercisesPage() {
                     type="button"
                     disabled={submitted}
                     onClick={() => handleInputChange('q8', opt)}
-                    className={`w-full p-2.5 rounded-xl text-xs font-bold border text-left transition ${
+                    className={`w-full p-3 rounded-xl text-xs sm:text-sm font-bold border text-left transition ${
                       answers.q8 === opt
                         ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
                         : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
