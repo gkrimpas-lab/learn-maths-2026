@@ -28,7 +28,7 @@ export default function ProtipaHubPage() {
           </div>
         </div>
 
-        {/* SECTION 1: ΔΙΑΔΡΑΣΤΙΚΗ ΕΞΑΣΚΗΣΗ (2 ΜΕΓΑΛΕΣ ΚΑΡΤΕΣ) */}
+        {/* SECTION 1: ΔΙΑΔΡΑΣΤΙΚΗ ΕΞΑΣΚΗΣΗ */}
         <div className="space-y-4">
           <div>
             <h2 className="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
@@ -61,7 +61,7 @@ export default function ProtipaHubPage() {
               </div>
 
               <Link
-                href="/protipa/prosomiosi"
+                href="/protipa/test-prosomoiosis"
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 px-4 rounded-2xl text-xs sm:text-sm transition shadow-sm flex items-center justify-center gap-2 active:scale-95"
               >
                 <span>🚀 Έναρξη Προσομοίωσης</span>
@@ -89,7 +89,7 @@ export default function ProtipaHubPage() {
               </div>
 
               <Link
-                href="/protipa/themata"
+                href="/protipa/pragmatika-themata"
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-4 rounded-2xl text-xs sm:text-sm transition shadow-sm flex items-center justify-center gap-2 active:scale-95"
               >
                 <span>🔍 Επιλογή Έτους Εξετάσεων</span>
@@ -100,7 +100,7 @@ export default function ProtipaHubPage() {
           </div>
         </div>
 
-        {/* SECTION 2: ΛΗΨΗ ΑΡΧΕΙΩΝ PDF (3 ΚΑΡΤΕΣ) */}
+        {/* SECTION 2: ΛΗΨΗ ΑΡΧΕΙΩΝ PDF */}
         <div className="space-y-4 pt-4 border-t border-slate-200">
           <div>
             <h2 className="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
