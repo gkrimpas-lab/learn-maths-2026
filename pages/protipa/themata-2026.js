@@ -96,7 +96,7 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: 'Ραβδόγραμμα Δ', raw: 'Δ' }
     ],
     correctRaw: 'Δ',
-    explain: 'Στο κυκλικό διάγραμμα ο τομέας Κ είναι ορθή γωνία (90° = 25%). Ο τομέας Λ είναι οξεία γωνία (< 90°, άρα < 25%). Ο τομέας Μ είναι άνω του ημικυκλίου (> 180°, άρα > 50%). Επομένως ισχύει: ύψος Λ < ύψος Κ < ύψος Μ. Το μόνο ραβδόγραμμα που τηρεί αυτή τη σχέση είναι το Δ.'
+    explain: 'Στο κυκλικό διάγραμμα ο τομέας Κ είναι ορθή γωνία (90° = 25%). Ο τομέας Λ είναι μεγαλύτερος από το Κ (περίπου 110°-120°, άρα > 30%). Ο τομέας Μ είναι ο υπόλοιπος (> 50%). Επομένως: ύψος Κ < ύψος Λ < ύψος Μ. Το μόνο ραβδόγραμμα που τηρεί αυτή τη σχέση είναι το Δ.'
   },
   {
     id: 6,
@@ -424,12 +424,10 @@ export default function Themata2026Page() {
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200">
           <svg width="260" height="145" viewBox="0 0 250 130" className="select-none">
-            {/* Ορθογώνιο ΑΒΓΔ */}
             <rect x="25" y="25" width="195" height="75" fill="none" stroke="#1e293b" strokeWidth="2.5" />
-            {/* Διαγώνιος Ε-Γ */}
             <line x1="105" y1="100" x2="220" y2="25" stroke="#1e293b" strokeWidth="2.5" />
             
-            {/* Σκιασμένος τομέας γωνίας 137° */}
+            {/* Σκιασμένος τομέας 137 μοιρών */}
             <path
               d="M 105 100 L 60 100 A 45 45 0 0 1 138 69.5 Z"
               fill="#cbd5e1"
@@ -438,7 +436,6 @@ export default function Themata2026Page() {
             />
             <text x="70" y="79" fill="#0f172a" fontSize="13" fontWeight="900" fontFamily="sans-serif">137°</text>
 
-            {/* Σημεία και Ετικέτες */}
             <circle cx="25" cy="100" r="4" fill="#0f172a" /><text x="14" y="118" fontSize="12" fontWeight="bold">Α</text>
             <circle cx="105" cy="100" r="4" fill="#0f172a" /><text x="101" y="118" fontSize="12" fontWeight="bold">Ε</text>
             <circle cx="220" cy="100" r="4" fill="#0f172a" /><text x="225" y="118" fontSize="12" fontWeight="bold">Β</text>
@@ -452,83 +449,48 @@ export default function Themata2026Page() {
     if (svgType === 'pie25') {
       return (
         <div className="space-y-4 p-3 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200">
-          {/* Κυκλικό Διάγραμμα */}
+          {/* Κυκλικό Διάγραμμα ακριβώς όπως στην εικόνα */}
           <div className="flex flex-col items-center">
             <svg width="150" height="150" viewBox="0 0 140 140" className="select-none">
               <defs>
-                <pattern id="hatch_diag" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                <pattern id="hatch_diag2" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
                   <line x1="0" y1="0" x2="0" y2="6" stroke="#000000" strokeWidth="1.8" />
                 </pattern>
               </defs>
               <circle cx="70" cy="70" r="58" fill="#ffffff" stroke="#000000" strokeWidth="2" />
-              {/* Τομέας Κ: 90° ακριβώς (Μαύρο) */}
+              {/* Τομέας Κ (90°) */}
               <path d="M 70 70 L 70 12 A 58 58 0 0 1 128 70 Z" fill="#000000" />
-              {/* Τομέας Λ: ~65° (Διαγώνιες γραμμές) */}
-              <path d="M 70 70 L 128 70 A 58 58 0 0 1 94.5 122.8 Z" fill="url(#hatch_diag)" stroke="#000000" strokeWidth="1.2" />
-              {/* Ετικέτες */}
-              <text x="103" y="44" fill="#000000" fontSize="13" fontWeight="bold">Κ</text>
-              <text x="106" y="104" fill="#000000" fontSize="13" fontWeight="bold">Λ</text>
-              <text x="24" y="74" fill="#000000" fontSize="14" fontWeight="bold">Μ</text>
+              {/* Τομέας Λ (μεγαλύτερος) */}
+              <path d="M 70 70 L 128 70 A 58 58 0 0 1 52 126 Z" fill="url(#hatch_diag2)" stroke="#000000" strokeWidth="1.2" />
+              
+              {/* Γράμματα Κ και Λ έξω από τον κύκλο */}
+              <text x="135" y="32" fill="#000000" fontSize="13" fontWeight="bold">Κ</text>
+              <text x="112" y="132" fill="#000000" fontSize="13" fontWeight="bold">Λ</text>
+              <text x="20" y="74" fill="#000000" fontSize="14" fontWeight="bold">Μ</text>
             </svg>
           </div>
 
-          {/* Τα 4 Ραβδογράμματα Α, Β, Γ, Δ με ενιαία ουδέτερη εμφάνιση */}
+          {/* 4 Ραβδογράμματα Α, Β, Γ, Δ με ομοιομορφία */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-200">
-            {/* Ραβδόγραμμα Α */}
-            <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center">
-              <svg width="110" height="100" viewBox="0 0 110 100" className="select-none">
-                <line x1="10" y1="80" x2="100" y2="80" stroke="#cbd5e1" strokeWidth="1.5" />
-                <rect x="20" y="55" width="16" height="25" fill="#475569" />
-                <rect x="47" y="48" width="16" height="32" fill="#475569" />
-                <rect x="74" y="15" width="16" height="65" fill="#475569" />
-                <text x="28" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Κ</text>
-                <text x="55" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Λ</text>
-                <text x="82" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Μ</text>
-              </svg>
-              <span className="font-bold text-xs mt-1 text-slate-700">A</span>
-            </div>
-
-            {/* Ραβδόγραμμα Β */}
-            <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center">
-              <svg width="110" height="100" viewBox="0 0 110 100" className="select-none">
-                <line x1="10" y1="80" x2="100" y2="80" stroke="#cbd5e1" strokeWidth="1.5" />
-                <rect x="20" y="20" width="16" height="60" fill="#475569" />
-                <rect x="47" y="50" width="16" height="30" fill="#475569" />
-                <rect x="74" y="20" width="16" height="60" fill="#475569" />
-                <text x="28" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Κ</text>
-                <text x="55" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Λ</text>
-                <text x="82" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Μ</text>
-              </svg>
-              <span className="font-bold text-xs mt-1 text-slate-700">B</span>
-            </div>
-
-            {/* Ραβδόγραμμα Γ */}
-            <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center">
-              <svg width="110" height="100" viewBox="0 0 110 100" className="select-none">
-                <line x1="10" y1="80" x2="100" y2="80" stroke="#cbd5e1" strokeWidth="1.5" />
-                <rect x="20" y="48" width="16" height="32" fill="#475569" />
-                <rect x="47" y="40" width="16" height="40" fill="#475569" />
-                <rect x="74" y="15" width="16" height="65" fill="#475569" />
-                <text x="28" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Κ</text>
-                <text x="55" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Λ</text>
-                <text x="82" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Μ</text>
-              </svg>
-              <span className="font-bold text-xs mt-1 text-slate-700">Γ</span>
-            </div>
-
-            {/* Ραβδόγραμμα Δ */}
-            <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center">
-              <svg width="110" height="100" viewBox="0 0 110 100" className="select-none">
-                <line x1="10" y1="80" x2="100" y2="80" stroke="#cbd5e1" strokeWidth="1.5" />
-                <rect x="20" y="38" width="16" height="42" fill="#475569" />
-                <rect x="47" y="48" width="16" height="32" fill="#475569" />
-                <rect x="74" y="15" width="16" height="65" fill="#475569" />
-                <text x="28" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Κ</text>
-                <text x="55" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Λ</text>
-                <text x="82" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Μ</text>
-              </svg>
-              <span className="font-bold text-xs mt-1 text-slate-700">Δ</span>
-            </div>
+            {[
+              { label: 'A', rects: [{x:20, y:55, h:25}, {x:47, y:48, h:32}, {x:74, y:15, h:65}] },
+              { label: 'B', rects: [{x:20, y:20, h:60}, {x:47, y:50, h:30}, {x:74, y:20, h:60}] },
+              { label: 'Γ', rects: [{x:20, y:48, h:32}, {x:47, y:40, h:40}, {x:74, y:15, h:65}] },
+              { label: 'Δ', rects: [{x:20, y:38, h:42}, {x:47, y:48, h:32}, {x:74, y:15, h:65}] }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center">
+                <svg width="110" height="100" viewBox="0 0 110 100" className="select-none">
+                  <line x1="10" y1="80" x2="100" y2="80" stroke="#cbd5e1" strokeWidth="1.5" />
+                  {item.rects.map((r, ri) => (
+                    <rect key={ri} x={r.x} y={r.y} width="16" height={r.h} fill="#475569" />
+                  ))}
+                  <text x="28" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Κ</text>
+                  <text x="55" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Λ</text>
+                  <text x="82" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Μ</text>
+                </svg>
+                <span className="font-bold text-xs mt-1 text-slate-700">{item.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       );
@@ -551,7 +513,7 @@ export default function Themata2026Page() {
     if (svgType === 'triangle36') {
       return (
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 p-4 bg-slate-50 rounded-2xl border border-slate-200">
-          {/* Αριστερό Σχήμα: 9 ισόπλευρα τρίγωνα με κόμβους */}
+          {/* Αριστερό Σχήμα */}
           <div className="flex flex-col items-center">
             <svg width="150" height="135" viewBox="0 0 160 145" className="select-none">
               <polygon points="80,12 10,133 150,133" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
@@ -561,7 +523,6 @@ export default function Themata2026Page() {
               <line x1="103.3" y1="52.3" x2="56.6" y2="133" stroke="#475569" strokeWidth="2" />
               <line x1="33.3" y1="92.6" x2="56.6" y2="133" stroke="#475569" strokeWidth="2" />
               <line x1="126.6" y1="92.6" x2="103.3" y2="133" stroke="#475569" strokeWidth="2" />
-              {/* Κόμβοι (κουκκίδες) */}
               {[
                 [80, 12],
                 [56.6, 52.3], [103.3, 52.3],
@@ -573,29 +534,24 @@ export default function Themata2026Page() {
             </svg>
           </div>
 
-          {/* Δεξί Σχήμα: Χρωματισμένο μέρος */}
+          {/* Δεξί Σχήμα */}
           <div className="flex flex-col items-center">
             <svg width="150" height="135" viewBox="0 0 160 145" className="select-none">
               <polygon points="80,12 10,133 150,133" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
               
-              {/* Σκιασμένα μέρη (ακριβώς όπως στο επίσημο θέμα) */}
               <polygon points="56.6,52.3 103.3,52.3 80,92.6" fill="#94a3b8" />
               <polygon points="56.6,52.3 80,92.6 33.3,92.6" fill="#94a3b8" />
               <polygon points="33.3,92.6 10,133 80,92.6" fill="#94a3b8" />
               <polygon points="10,133 56.6,133 103.3,133 126.6,92.6" fill="#94a3b8" />
 
-              {/* Γραμμές πλέγματος */}
               <line x1="56.6" y1="52.3" x2="103.3" y2="52.3" stroke="#1e293b" strokeWidth="2" />
               <line x1="33.3" y1="92.6" x2="126.6" y2="92.6" stroke="#1e293b" strokeWidth="2" />
               <line x1="56.6" y1="52.3" x2="103.3" y2="133" stroke="#1e293b" strokeWidth="2" />
               <line x1="103.3" y1="52.3" x2="56.6" y2="133" stroke="#1e293b" strokeWidth="2" />
               <line x1="33.3" y1="92.6" x2="56.6" y2="133" stroke="#1e293b" strokeWidth="2" />
               <line x1="126.6" y1="92.6" x2="103.3" y2="133" stroke="#1e293b" strokeWidth="2" />
-
-              {/* Διαγώνια τομή του μεσαίου-άνω τριγώνου (για να δώσει το μισό τρίγωνο) */}
               <line x1="10,133" x2="126.6,92.6" stroke="#1e293b" strokeWidth="2" />
 
-              {/* Κόμβοι */}
               {[
                 [80, 12],
                 [56.6, 52.3], [103.3, 52.3],
