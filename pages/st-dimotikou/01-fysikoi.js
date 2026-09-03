@@ -223,7 +223,7 @@ export default function FysikoiArithmoiPage() {
 
               <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-2 shadow-md flex flex-col justify-center">
                 <span className="text-[10px] font-black text-amber-400 tracking-widest block flex items-center gap-1.5 uppercase">
-                  <span>🗣️</span> Πώς διαβάζεται ανά περίοδο:
+                  <span>🗣️</span> Πως διαβαζεται ανα περιοδο:
                 </span>
                 <p className="text-sm sm:text-base md:text-lg font-bold text-slate-100 leading-snug break-words">
                   {getPeriodBreakdown()}
@@ -238,7 +238,7 @@ export default function FysikoiArithmoiPage() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center px-1">
                   <span className="text-xs font-black text-slate-600 uppercase tracking-wider">
-                    🗂️ Πίνακας Αξίας Θέσης (12 Ψηφία)
+                    🗂️ Πινακας Αξιας Θεσης (12 Ψηφια)
                   </span>
                   <span className="text-[10px] text-slate-400 font-bold md:hidden flex items-center gap-1">
                     <span>👈 Σύρετε για περισσότερα 👉</span>
