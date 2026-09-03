@@ -439,7 +439,7 @@ export default function GnostosEpiAgnostosPage() {
               <div className="space-y-3 flex-1 flex flex-col justify-center">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 px-1">
                   <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                    ⚖️ Οπτική Ζυγαριά: Αριστερός Δίσκος ({boxesToShow} · x) vs Δεξιός Δίσκος ({currentStep === 3 ? exactSolution : activeB})
+                    ⚖️ Οπτικη Ζυγαρια: Αριστερος Δισκος ({boxesToShow} · x) vs Δεξιος Δισκος ({currentStep === 3 ? exactSolution : activeB})
                   </span>
                   <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
                     ✔️ Τέλεια Ισορροπία
