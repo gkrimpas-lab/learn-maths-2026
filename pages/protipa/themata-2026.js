@@ -248,7 +248,7 @@ const QUESTIONS_2026 = [
     id: 16,
     officialNumber: 36,
     group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
-    promptText: 'Το ισόπλευρο τρίγωνο αποτελείται από 9 ίσα μεταξύ τους ισόπλευρα τρίγωνα. Χρωματίζουμε ένα μέρος του τριγώνου, όπως στο σχήμα. Τι κλάσμα του εμβαδού του μεγάλου τριγώνου είναι το χρωματισμένο μέρος;',
+    promptText: 'Το ισόπλευρο τρίγωνο του σχήματος στα αριστερά αποτελείται από 9 ίσα μεταξύ τους ισόπλευρα τρίγωνα. Χρωματίζουμε ένα μέρος του τριγώνου, όπως στο σχήμα στα δεξιά. Τι κλάσμα του εμβαδού του μεγάλου τριγώνου είναι το χρωματισμένο μέρος;',
     hasSvg: 'triangle36',
     options: [
       { key: 'A', label: <Fraction num="2" den="9" />, raw: '2/9' },
@@ -367,7 +367,7 @@ export default function Themata2026Page() {
     let s = 0;
     QUESTIONS_2026.forEach(q => {
       if (currentAnswers[q.id] === q.correctRaw) {
-        s += 2.5; // 2,5 μόρια ανά θέμα (20 * 2.5 = 50 μόρια)
+        s += 2.5; // 2,5 μόρια ανά θέμα
       }
     });
     return s;
@@ -402,7 +402,6 @@ export default function Themata2026Page() {
 
   const answeredCount = Object.keys(answers).length;
 
-  // Βοηθητική συνάρτηση απόδοσης ακριβών SVG σχημάτων
   const renderQuestionSvg = (svgType) => {
     if (svgType === 'grid23') {
       return (
@@ -424,24 +423,27 @@ export default function Themata2026Page() {
     if (svgType === 'rect24') {
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200">
-          <svg width="260" height="150" viewBox="0 0 240 130" className="select-none">
-            <rect x="20" y="20" width="200" height="80" fill="none" stroke="#334155" strokeWidth="2.5" />
-            <line x1="100" y1="100" x2="220" y2="20" stroke="#334155" strokeWidth="2.5" />
-            {/* Σκιασμένος τομέας 137 μοιρών */}
+          <svg width="260" height="145" viewBox="0 0 250 130" className="select-none">
+            {/* Ορθογώνιο ΑΒΓΔ */}
+            <rect x="25" y="25" width="195" height="75" fill="none" stroke="#1e293b" strokeWidth="2.5" />
+            {/* Διαγώνιος Ε-Γ */}
+            <line x1="105" y1="100" x2="220" y2="25" stroke="#1e293b" strokeWidth="2.5" />
+            
+            {/* Σκιασμένος τομέας γωνίας 137° */}
             <path
-              d="M 100 100 L 55 100 A 45 45 0 0 1 133 69 Z"
+              d="M 105 100 L 60 100 A 45 45 0 0 1 138 69.5 Z"
               fill="#cbd5e1"
-              fillOpacity="0.85"
-              stroke="#334155"
+              stroke="#475569"
               strokeWidth="1.5"
             />
-            <text x="64" y="80" fill="#0f172a" fontSize="13" fontWeight="900">137°</text>
-            {/* Σημεία */}
-            <circle cx="20" cy="100" r="3.5" fill="#0f172a" /><text x="10" y="118" fontSize="11" fontWeight="bold">Α</text>
-            <circle cx="100" cy="100" r="3.5" fill="#0f172a" /><text x="96" y="118" fontSize="11" fontWeight="bold">Ε</text>
-            <circle cx="220" cy="100" r="3.5" fill="#0f172a" /><text x="224" y="118" fontSize="11" fontWeight="bold">Β</text>
-            <circle cx="220" cy="20" r="3.5" fill="#0f172a" /><text x="224" y="16" fontSize="11" fontWeight="bold">Γ</text>
-            <circle cx="20" cy="20" r="3.5" fill="#0f172a" /><text x="10" y="16" fontSize="11" fontWeight="bold">Δ</text>
+            <text x="70" y="79" fill="#0f172a" fontSize="13" fontWeight="900" fontFamily="sans-serif">137°</text>
+
+            {/* Σημεία και Ετικέτες */}
+            <circle cx="25" cy="100" r="4" fill="#0f172a" /><text x="14" y="118" fontSize="12" fontWeight="bold">Α</text>
+            <circle cx="105" cy="100" r="4" fill="#0f172a" /><text x="101" y="118" fontSize="12" fontWeight="bold">Ε</text>
+            <circle cx="220" cy="100" r="4" fill="#0f172a" /><text x="225" y="118" fontSize="12" fontWeight="bold">Β</text>
+            <circle cx="220" cy="25" r="4" fill="#0f172a" /><text x="225" y="20" fontSize="12" fontWeight="bold">Γ</text>
+            <circle cx="25" cy="25" r="4" fill="#0f172a" /><text x="14" y="20" fontSize="12" fontWeight="bold">Δ</text>
           </svg>
         </div>
       );
@@ -454,23 +456,23 @@ export default function Themata2026Page() {
           <div className="flex flex-col items-center">
             <svg width="150" height="150" viewBox="0 0 140 140" className="select-none">
               <defs>
-                <pattern id="hatch" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-                  <line x1="0" y1="0" x2="0" y2="6" stroke="#0f172a" strokeWidth="1.8" />
+                <pattern id="hatch_diag" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="0" x2="0" y2="6" stroke="#000000" strokeWidth="1.8" />
                 </pattern>
               </defs>
-              <circle cx="70" cy="70" r="58" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
-              {/* Τομέας Κ: 90 μοίρες (Μαύρο) */}
+              <circle cx="70" cy="70" r="58" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+              {/* Τομέας Κ: 90° ακριβώς (Μαύρο) */}
               <path d="M 70 70 L 70 12 A 58 58 0 0 1 128 70 Z" fill="#000000" />
-              {/* Τομέας Λ: ~70 μοίρες (Γραμμοσκιασμένο) */}
-              <path d="M 70 70 L 128 70 A 58 58 0 0 1 89 125 Z" fill="url(#hatch)" stroke="#0f172a" strokeWidth="1.2" />
+              {/* Τομέας Λ: ~65° (Διαγώνιες γραμμές) */}
+              <path d="M 70 70 L 128 70 A 58 58 0 0 1 94.5 122.8 Z" fill="url(#hatch_diag)" stroke="#000000" strokeWidth="1.2" />
               {/* Ετικέτες */}
-              <text x="102" y="46" fill="#0f172a" fontSize="13" fontWeight="bold">Κ</text>
-              <text x="106" y="104" fill="#0f172a" fontSize="13" fontWeight="bold">Λ</text>
-              <text x="24" y="74" fill="#0f172a" fontSize="14" fontWeight="bold">Μ</text>
+              <text x="103" y="44" fill="#000000" fontSize="13" fontWeight="bold">Κ</text>
+              <text x="106" y="104" fill="#000000" fontSize="13" fontWeight="bold">Λ</text>
+              <text x="24" y="74" fill="#000000" fontSize="14" fontWeight="bold">Μ</text>
             </svg>
           </div>
 
-          {/* Τα 4 Ραβδογράμματα Α, Β, Γ, Δ */}
+          {/* Τα 4 Ραβδογράμματα Α, Β, Γ, Δ με ενιαία ουδέτερη εμφάνιση */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-200">
             {/* Ραβδόγραμμα Α */}
             <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center">
@@ -514,8 +516,8 @@ export default function Themata2026Page() {
               <span className="font-bold text-xs mt-1 text-slate-700">Γ</span>
             </div>
 
-            {/* Ραβδόγραμμα Δ (Σωστό) */}
-            <div className="bg-white p-3 rounded-xl border-2 border-indigo-300 flex flex-col items-center shadow-xs">
+            {/* Ραβδόγραμμα Δ */}
+            <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center">
               <svg width="110" height="100" viewBox="0 0 110 100" className="select-none">
                 <line x1="10" y1="80" x2="100" y2="80" stroke="#cbd5e1" strokeWidth="1.5" />
                 <rect x="20" y="38" width="16" height="42" fill="#475569" />
@@ -525,7 +527,7 @@ export default function Themata2026Page() {
                 <text x="55" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Λ</text>
                 <text x="82" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Μ</text>
               </svg>
-              <span className="font-black text-xs mt-1 text-indigo-700">Δ</span>
+              <span className="font-bold text-xs mt-1 text-slate-700">Δ</span>
             </div>
           </div>
         </div>
@@ -548,20 +550,62 @@ export default function Themata2026Page() {
 
     if (svgType === 'triangle36') {
       return (
-        <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200">
-          <svg width="180" height="150" viewBox="0 0 160 140" className="select-none">
-            <polygon points="80,10 10,130 150,130" fill="#ffffff" stroke="#0f172a" strokeWidth="2.5" />
-            <line x1="56.6" y1="50" x2="103.3" y2="50" stroke="#64748b" strokeWidth="1.5" />
-            <line x1="33.3" y1="90" x2="126.6" y2="90" stroke="#64748b" strokeWidth="1.5" />
-            <line x1="56.6" y1="50" x2="103.3" y2="130" stroke="#64748b" strokeWidth="1.5" />
-            <line x1="103.3" y1="50" x2="56.6" y2="130" stroke="#64748b" strokeWidth="1.5" />
-            <line x1="33.3" y1="90" x2="56.6" y2="130" stroke="#64748b" strokeWidth="1.5" />
-            <line x1="126.6" y1="90" x2="103.3" y2="130" stroke="#64748b" strokeWidth="1.5" />
-            <polygon points="80,10 56.6,50 103.3,50" fill="#3b82f6" opacity="0.8" />
-            <polygon points="56.6,50 33.3,90 80,90" fill="#3b82f6" opacity="0.8" />
-            <polygon points="103.3,50 80,90 126.6,90" fill="#3b82f6" opacity="0.8" />
-            <polygon points="80,90 56.6,130 80,130" fill="#3b82f6" opacity="0.8" />
-          </svg>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+          {/* Αριστερό Σχήμα: 9 ισόπλευρα τρίγωνα με κόμβους */}
+          <div className="flex flex-col items-center">
+            <svg width="150" height="135" viewBox="0 0 160 145" className="select-none">
+              <polygon points="80,12 10,133 150,133" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
+              <line x1="56.6" y1="52.3" x2="103.3" y2="52.3" stroke="#475569" strokeWidth="2" />
+              <line x1="33.3" y1="92.6" x2="126.6" y2="92.6" stroke="#475569" strokeWidth="2" />
+              <line x1="56.6" y1="52.3" x2="103.3" y2="133" stroke="#475569" strokeWidth="2" />
+              <line x1="103.3" y1="52.3" x2="56.6" y2="133" stroke="#475569" strokeWidth="2" />
+              <line x1="33.3" y1="92.6" x2="56.6" y2="133" stroke="#475569" strokeWidth="2" />
+              <line x1="126.6" y1="92.6" x2="103.3" y2="133" stroke="#475569" strokeWidth="2" />
+              {/* Κόμβοι (κουκκίδες) */}
+              {[
+                [80, 12],
+                [56.6, 52.3], [103.3, 52.3],
+                [33.3, 92.6], [80, 92.6], [126.6, 92.6],
+                [10, 133], [56.6, 133], [103.3, 133], [150, 133]
+              ].map(([cx, cy], idx) => (
+                <circle key={idx} cx={cx} cy={cy} r="4.5" fill="#64748b" stroke="#0f172a" strokeWidth="1.5" />
+              ))}
+            </svg>
+          </div>
+
+          {/* Δεξί Σχήμα: Χρωματισμένο μέρος */}
+          <div className="flex flex-col items-center">
+            <svg width="150" height="135" viewBox="0 0 160 145" className="select-none">
+              <polygon points="80,12 10,133 150,133" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
+              
+              {/* Σκιασμένα μέρη (ακριβώς όπως στο επίσημο θέμα) */}
+              <polygon points="56.6,52.3 103.3,52.3 80,92.6" fill="#94a3b8" />
+              <polygon points="56.6,52.3 80,92.6 33.3,92.6" fill="#94a3b8" />
+              <polygon points="33.3,92.6 10,133 80,92.6" fill="#94a3b8" />
+              <polygon points="10,133 56.6,133 103.3,133 126.6,92.6" fill="#94a3b8" />
+
+              {/* Γραμμές πλέγματος */}
+              <line x1="56.6" y1="52.3" x2="103.3" y2="52.3" stroke="#1e293b" strokeWidth="2" />
+              <line x1="33.3" y1="92.6" x2="126.6" y2="92.6" stroke="#1e293b" strokeWidth="2" />
+              <line x1="56.6" y1="52.3" x2="103.3" y2="133" stroke="#1e293b" strokeWidth="2" />
+              <line x1="103.3" y1="52.3" x2="56.6" y2="133" stroke="#1e293b" strokeWidth="2" />
+              <line x1="33.3" y1="92.6" x2="56.6" y2="133" stroke="#1e293b" strokeWidth="2" />
+              <line x1="126.6" y1="92.6" x2="103.3" y2="133" stroke="#1e293b" strokeWidth="2" />
+
+              {/* Διαγώνια τομή του μεσαίου-άνω τριγώνου (για να δώσει το μισό τρίγωνο) */}
+              <line x1="10,133" x2="126.6,92.6" stroke="#1e293b" strokeWidth="2" />
+
+              {/* Κόμβοι */}
+              {[
+                [80, 12],
+                [56.6, 52.3], [103.3, 52.3],
+                [33.3, 92.6], [80, 92.6], [126.6, 92.6],
+                [10, 133], [56.6, 133], [103.3, 133], [150, 133]
+              ].map(([cx, cy], idx) => (
+                <circle key={idx} cx={cx} cy={cy} r="4.5" fill="#64748b" stroke="#0f172a" strokeWidth="1.5" />
+              ))}
+            </svg>
+          </div>
         </div>
       );
     }
