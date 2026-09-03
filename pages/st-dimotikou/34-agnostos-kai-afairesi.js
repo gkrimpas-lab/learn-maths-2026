@@ -268,14 +268,16 @@ export default function AgnostosKaiAfairesiPage() {
 
                   <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-center">
                     {/* ΑΦΑΙΡΕΤΕΟΣ (a) */}
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 block">Μπάλες που λείπουν (α)</span>
-                      <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200 h-10">
+                    <div className="flex flex-col justify-between space-y-1.5">
+                      <span className="text-[10px] font-bold text-slate-500 h-8 flex items-center justify-center text-center leading-tight">
+                        Μπάλες που λείπουν (α)
+                      </span>
+                      <div className="grid grid-cols-[36px_1fr_36px] items-center bg-slate-50 p-1 rounded-xl border border-slate-200 h-11">
                         <button 
                           type="button" 
                           disabled={activeA <= 1}
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustValue('a', -1); }} 
-                          className="w-7 sm:w-8 h-full font-black text-rose-600 hover:bg-slate-200 disabled:opacity-30 rounded-lg active:scale-95 transition flex items-center justify-center"
+                          className="w-9 h-9 font-black text-rose-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg"
                         >
                           -
                         </button>
@@ -284,7 +286,7 @@ export default function AgnostosKaiAfairesiPage() {
                           type="button" 
                           disabled={activeA >= 6 || activeA + activeB >= MAX_TOTAL_BALLS}
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustValue('a', 1); }} 
-                          className="w-7 sm:w-8 h-full font-black text-rose-600 hover:bg-slate-200 disabled:opacity-30 rounded-lg active:scale-95 transition flex items-center justify-center"
+                          className="w-9 h-9 font-black text-rose-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg"
                         >
                           +
                         </button>
@@ -292,14 +294,16 @@ export default function AgnostosKaiAfairesiPage() {
                     </div>
 
                     {/* ΔΙΑΦΟΡΑ (b) */}
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 block">Μπάλες δεξιά (β)</span>
-                      <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200 h-10">
+                    <div className="flex flex-col justify-between space-y-1.5">
+                      <span className="text-[10px] font-bold text-slate-500 h-8 flex items-center justify-center text-center leading-tight">
+                        Μπάλες δεξιά (β)
+                      </span>
+                      <div className="grid grid-cols-[36px_1fr_36px] items-center bg-slate-50 p-1 rounded-xl border border-slate-200 h-11">
                         <button 
                           type="button" 
                           disabled={activeB <= 1}
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustValue('b', -1); }} 
-                          className="w-7 sm:w-8 h-full font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-30 rounded-lg active:scale-95 transition flex items-center justify-center"
+                          className="w-9 h-9 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg"
                         >
                           -
                         </button>
@@ -308,7 +312,7 @@ export default function AgnostosKaiAfairesiPage() {
                           type="button" 
                           disabled={activeA + activeB >= MAX_TOTAL_BALLS}
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustValue('b', 1); }} 
-                          className="w-7 sm:w-8 h-full font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-30 rounded-lg active:scale-95 transition flex items-center justify-center"
+                          className="w-9 h-9 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg"
                         >
                           +
                         </button>
