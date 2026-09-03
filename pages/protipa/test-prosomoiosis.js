@@ -51,7 +51,7 @@ const SIMULATION_TESTS = [
 ];
 
 export default function TestProsomoiosisIndexPage() {
-  // Επιλογή χρήστη: Χρήση χρονομέτρου (προεπιλογή: true)
+  // Επιλογή μαθητή για λειτουργία χρονομέτρου (προεπιλογή: ενεργό)
   const [useTimer, setUseTimer] = useState(true);
 
   return (
@@ -81,7 +81,7 @@ export default function TestProsomoiosisIndexPage() {
 
         {/* ΟΔΗΓΙΕΣ & ΡΥΘΜΙΣΗ ΧΡΟΝΟΜΕΤΡΟΥ */}
         <div className="bg-white border-2 border-indigo-200 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
-          <div className="border-b border-slate-100 pb-4">
+          <div className="border-b border-slate-100 pb-3">
             <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
               <span>📋</span> Οδηγίες Εξέτασης & Δομή Τεστ
             </h2>
@@ -89,46 +89,119 @@ export default function TestProsomoiosisIndexPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-slate-700">
             <div className="bg-indigo-50/70 border border-indigo-100 p-4 rounded-2xl space-y-1">
-              <span className="text-xl block">⏳</span>
-              <span className="text-xs font-bold text-indigo-950 block">Διάρκεια Εξέτασης: 60'</span>
+              <span className="text-2xl block">⏳</span>
+              <span className="text-xs font-black text-indigo-950 block">Διάρκεια: 60 Λεπτά</span>
               <p className="text-[11px] text-slate-600 leading-relaxed">
-                Στις επίσημες εξετάσεις ο χρόνος είναι 150' για Γλώσσα και Μαθηματικά. Εδώ εξετάζονται μόνο τα Μαθηματικά με 60' online χρόνο.
+                Στις επίσημες εξετάσεις ο χρόνος είναι 150' για Γλώσσα και Μαθηματικά μαζί. Εδώ εξετάζονται αποκλειστικά τα Μαθηματικά σε 60' online χρόνο.
               </p>
             </div>
 
             <div className="bg-indigo-50/70 border border-indigo-100 p-4 rounded-2xl space-y-1">
-              <span className="text-xl block">🎯</span>
-              <span className="text-xs font-bold text-indigo-950 block">25 Ερωτήσεις (2 Μόρια/ερώτηση)</span>
+              <span className="text-2xl block">🎯</span>
+              <span className="text-xs font-black text-indigo-950 block">25 Θέματα (2 Μόρια/θέμα)</span>
               <p className="text-[11px] text-slate-600 leading-relaxed">
-                Κάθε σωστή απάντηση βαθμολογείται με 2 μόρια. Η συνολική βαθμολογία υπολογίζεται αυτόματα από 0 έως 50 μόρια.
+                Κάθε σωστή απάντηση βαθμολογείται με 2 μόρια. Η τελική βαθμολογία υπολογίζεται αυτόματα από το 0 έως το 50 χωρίς αρνητική βαθμολόγηση.
               </p>
             </div>
 
             <div className="bg-indigo-50/70 border border-indigo-100 p-4 rounded-2xl space-y-1">
-              <span className="text-xl block">💡</span>
-              <span className="text-xs font-bold text-indigo-950 block">Αναλυτικές Λύσεις</span>
+              <span className="text-2xl block">💡</span>
+              <span className="text-xs font-black text-indigo-950 block">Αναλυτικές Λύσεις</span>
               <p className="text-[11px] text-slate-600 leading-relaxed">
-                Μετά την υποβολή βλέπεις αναλυτικά ποιες απαντήσεις ήταν σωστές/λάθος με πλήρη μαθηματική επεξήγηση σε κάθε θέμα.
+                Μετά την ολοκλήρωση του τεστ εμφανίζονται αναλυτικά όλες οι σωστές και λανθασμένες επιλογές με πλήρη μαθηματική επεξήγηση.
               </p>
             </div>
           </div>
 
           {/* TOGGLE ΧΡΟΝΟΜΕΤΡΟΥ */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2 border-t border-slate-100">
-            <div className="space-y-0.5">
-              <span className="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-1.5">
-                <span>⏱️</span> Λειτουργία Αντίστροφης Μέτρησης (60 λεπτά)
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-3 border-t border-slate-100">
+            <div className="space-y-1">
+              <span className="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-2">
+                <span>⏱️</span> Αντίστροφη Μέτρηση Χρόνου (60')
               </span>
-              <p className="text-[11px] text-slate-500">
-                Αν απενεργοποιηθεί, μπορείς να λύσεις το τεστ χωρίς χρονικό άγχος με δικό σου ρυθμό.
+              <p className="text-[11px] text-slate-500 max-w-xl leading-relaxed">
+                Αν είναι ενεργό, με τη λήξη των 60 λεπτών το τεστ κλειδώνει και υποβάλλεται αυτόματα. Αν απενεργοποιηθεί, ο μαθητής λύνει το τεστ χωρίς άγχος χρόνου.
               </p>
             </div>
 
-            <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">
-              <input
-                type="checkbox"
-                checked={useTimer}
-                onChange={(e) => setUseTimer(e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:**Οδηγίες Εξέτασης (Κείμενο για τη σελίδα `test-prosomoiosis`)**
+            <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
+              <span className={`text-xs font-black font-mono ${useTimer ? 'text-emerald-600' : 'text-slate-400'}`}>
+                {useTimer ? 'Ενεργό (60\')' : 'Ανενεργό'}
+              </span>
+
+              <button
+                type="button"
+                role="switch"
+                aria-checked={useTimer}
+                onClick={() => setUseTimer(prev => !prev)}
+                className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors duration-300 focus:outline-none ${
+                  useTimer ? 'bg-indigo-600' : 'bg-slate-300'
+                }`}
+              >
+                <div
+                  className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${
+                    useTimer ? 'translate-x-6' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* GRID ΜΕ ΤΑ ΤΕΣΤ */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+          {SIMULATION_TESTS.map((test) => (
+            <div
+              key={test.id}
+              className={`bg-white rounded-3xl p-5 sm:p-6 border-2 shadow-sm flex flex-col justify-between space-y-5 transition-all ${
+                test.available 
+                  ? 'border-slate-200 hover:border-indigo-400 hover:shadow-md' 
+                  : 'border-slate-100 opacity-65'
+              }`}
+            >
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-base sm:text-lg font-black text-slate-900 font-mono">
+                    {test.title}
+                  </span>
+                  <span className={`text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-full border ${test.badgeColor}`}>
+                    {test.badge}
+                  </span>
+                </div>
+
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  {test.desc}
+                </p>
+
+                <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500 font-mono pt-1">
+                  <span>📊 {test.questionsCount} Ερωτήσεις</span>
+                  <span>🏆 Άριστα: {test.maxScore} μόρια</span>
+                  <span>⏳ 60 λεπτά</span>
+                </div>
+              </div>
+
+              {test.available ? (
+                <Link
+                  href={`/protipa/${test.slug}?timer=${useTimer ? '1' : '0'}`}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-xs flex items-center justify-center gap-1.5 active:scale-95 text-center"
+                >
+                  <span>✍️ Έναρξη {test.title}</span>
+                  <span>➔</span>
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full bg-slate-100 text-slate-400 font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm cursor-not-allowed text-center"
+                >
+                  🔒 Σύντομα Διαθέσιμο
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </Layout>
+  );
+}
