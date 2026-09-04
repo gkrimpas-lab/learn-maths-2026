@@ -424,16 +424,19 @@ export default function Themata2026Page() {
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200">
           <svg width="260" height="145" viewBox="0 0 250 130" className="select-none">
+            {/* Ορθογώνιο ΑΒΓΔ */}
             <rect x="25" y="25" width="195" height="75" fill="none" stroke="#1e293b" strokeWidth="2.5" />
+            {/* Ευθεία Ε-Γ */}
             <line x1="105" y1="100" x2="220" y2="25" stroke="#1e293b" strokeWidth="2.5" />
             
+            {/* Σκιασμένος τομέας που ακουμπά ακριβώς πάνω στην ευθεία Ε-Γ */}
             <path
-              d="M 105 100 L 60 100 A 45 45 0 0 1 138 69.5 Z"
+              d="M 105 100 L 57 100 A 48 48 0 0 1 145.2 73.8 Z"
               fill="#cbd5e1"
-              stroke="#475569"
+              stroke="#334155"
               strokeWidth="1.5"
             />
-            <text x="70" y="79" fill="#0f172a" fontSize="13" fontWeight="900" fontFamily="sans-serif">137°</text>
+            <text x="68" y="78" fill="#0f172a" fontSize="13" fontWeight="900" fontFamily="sans-serif">137°</text>
 
             <circle cx="25" cy="100" r="4" fill="#0f172a" /><text x="14" y="118" fontSize="12" fontWeight="bold">Α</text>
             <circle cx="105" cy="100" r="4" fill="#0f172a" /><text x="101" y="118" fontSize="12" fontWeight="bold">Ε</text>
@@ -448,25 +451,30 @@ export default function Themata2026Page() {
     if (svgType === 'pie25') {
       return (
         <div className="space-y-4 p-3 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200">
+          {/* Κυκλικό Διάγραμμα */}
           <div className="flex flex-col items-center">
-            <svg width="150" height="150" viewBox="0 0 140 140" className="select-none">
+            <svg width="170" height="170" viewBox="0 0 160 160" className="select-none overflow-visible">
               <defs>
                 <pattern id="hatch_diag2" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
                   <line x1="0" y1="0" x2="0" y2="6" stroke="#000000" strokeWidth="1.8" />
                 </pattern>
               </defs>
-              <circle cx="70" cy="70" r="58" fill="#ffffff" stroke="#000000" strokeWidth="2" />
-              {/* Τομέας Κ (90°) */}
-              <path d="M 70 70 L 70 12 A 58 58 0 0 1 128 70 Z" fill="#000000" />
-              {/* Τομέας Λ (μεγαλύτερος) */}
-              <path d="M 70 70 L 128 70 A 58 58 0 0 1 52 126 Z" fill="url(#hatch_diag2)" stroke="#000000" strokeWidth="1.2" />
+              <circle cx="80" cy="80" r="52" fill="#ffffff" stroke="#000000" strokeWidth="2" />
               
-              <text x="135" y="32" fill="#000000" fontSize="13" fontWeight="bold">Κ</text>
-              <text x="112" y="132" fill="#000000" fontSize="13" fontWeight="bold">Λ</text>
-              <text x="20" y="74" fill="#000000" fontSize="14" fontWeight="bold">Μ</text>
+              {/* Τομέας Κ (90°) */}
+              <path d="M 80 80 L 80 28 A 52 52 0 0 1 132 80 Z" fill="#000000" />
+              
+              {/* Τομέας Λ */}
+              <path d="M 80 80 L 132 80 A 52 52 0 0 1 64 129.8 Z" fill="url(#hatch_diag2)" stroke="#000000" strokeWidth="1.2" />
+              
+              {/* Ετικέτες έξω από τον κύκλο */}
+              <text x="124" y="40" fill="#000000" fontSize="14" fontWeight="bold">Κ</text>
+              <text x="114" y="136" fill="#000000" fontSize="14" fontWeight="bold">Λ</text>
+              <text x="10" y="84" fill="#000000" fontSize="14" fontWeight="bold">Μ</text>
             </svg>
           </div>
 
+          {/* 4 Ραβδογράμματα Α, Β, Γ, Δ */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-200">
             {[
               { label: 'A', rects: [{x:20, y:55, h:25}, {x:47, y:48, h:32}, {x:74, y:15, h:65}] },
@@ -491,7 +499,6 @@ export default function Themata2026Page() {
         </div>
       );
     }
-
     if (svgType === 'line31') {
       return (
         <div className="flex justify-center p-4 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto">
