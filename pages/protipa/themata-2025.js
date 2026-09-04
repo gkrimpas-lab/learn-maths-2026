@@ -508,18 +508,88 @@ export default function Themata2025Page() {
     }
 
     if (q.hasSvg === 'cube34') {
+      // 3D Ισομετρικός Κύβος 3x3x3
+      // u: διάνυσμα δεξιά-κάτω (+dx, +dy), v: διάνυσμα αριστερά-κάτω (-dx, +dy), w: κατακόρυφο (0, +dz)
+      const originX = 105;
+      const originY = 22;
+      const dx = 24;
+      const dy = 14;
+      const dz = 28;
+
+      const topTiles = [];
+      const leftTiles = [];
+      const rightTiles = [];
+
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          // Πάνω έδρα: z = 0, x = i, y = j
+          // Χρώμα: αν (i + j) είναι άρτιο -> σκούρο/γκρι, αν περιττό -> λευκό
+          const isDarkTop = (i + j) % 2 === 0;
+          const p0 = [originX + (i - j) * dx, originY + (i + j) * dy];
+          const p1 = [originX + (i + 1 - j) * dx, originY + (i + 1 + j) * dy];
+          const p2 = [originX + (i + 1 - (j + 1)) * dx, originY + (i + 1 + j + 1) * dy];
+          const p3 = [originX + (i - (j + 1)) * dx, originY + (i + j + 1) * dy];
+
+          topTiles.push({
+            pts: `${p0[0]},${p0[1]} ${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`,
+            fill: isDarkTop ? '#64748b' : '#ffffff'
+          });
+        }
+      }
+
+      for (let j = 0; j < 3; j++) {
+        for (let k = 0; k < 3; k++) {
+          // Αριστερή έδρα: x = 0 (άρα i = 2 στην εμπρός προβολή), y = 2 - j, z = k
+          // Στο σχήμα η κορυφαία εμπρός είναι γκρι, άρα για j=0, k=0 είναι γκρι
+          const isDarkLeft = (j + k) % 2 === 0;
+          const px = originX - (j + 1) * dx;
+          const py = originY + (j + 1) * dy + k * dz;
+
+          const p0 = [px, py];
+          const p1 = [px + dx, py - dy];
+          const p2 = [px + dx, py - dy + dz];
+          const p3 = [px, py + dz];
+
+          leftTiles.push({
+            pts: `${p0[0]},${p0[1]} ${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`,
+            fill: isDarkLeft ? '#64748b' : '#ffffff'
+          });
+        }
+      }
+
+      for (let i = 0; i < 3; i++) {
+        for (let k = 0; k < 3; k++) {
+          // Δεξιά έδρα
+          const isDarkRight = (i + k) % 2 === 0;
+          const px = originX + i * dx;
+          const py = originY + 3 * dy + i * dy + k * dz;
+
+          const p0 = [px, py];
+          const p1 = [px + dx, py + dy];
+          const p2 = [px + dx, py + dy + dz];
+          const p3 = [px, py + dz];
+
+          rightTiles.push({
+            pts: `${p0[0]},${p0[1]} ${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`,
+            fill: isDarkRight ? '#64748b' : '#ffffff'
+          });
+        }
+      }
+
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
-          <svg width="150" height="150" viewBox="0 0 140 140" className="select-none">
-            {/* Ισομετρικός κύβος 3x3x3 */}
-            <rect x="25" y="25" width="90" height="90" fill="#f1f5f9" stroke="#0f172a" strokeWidth="2.5" />
-            <line x1="55" y1="25" x2="55" y2="115" stroke="#0f172a" strokeWidth="1.5" />
-            <line x1="85" y1="25" x2="85" y2="115" stroke="#0f172a" strokeWidth="1.5" />
-            <line x1="25" y1="55" x2="115" y2="55" stroke="#0f172a" strokeWidth="1.5" />
-            <line x1="25" y1="85" x2="115" y2="85" stroke="#0f172a" strokeWidth="1.5" />
-            {/* Σκακιέρα όψης */}
-            {[[25,25],[85,25],[55,55],[25,85],[85,85]].map(([bx,by], bi)=>(
-              <rect key={bi} x={bx} y={by} width="30" height="30" fill="#1e293b" />
+          <svg width="210" height="200" viewBox="0 0 210 200" className="select-none">
+            {/* Πάνω έδρα */}
+            {topTiles.map((t, idx) => (
+              <polygon key={`top-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.6" strokeLinejoin="round" />
+            ))}
+            {/* Αριστερή έδρα */}
+            {leftTiles.map((t, idx) => (
+              <polygon key={`left-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.6" strokeLinejoin="round" />
+            ))}
+            {/* Δεξιά έδρα */}
+            {rightTiles.map((t, idx) => (
+              <polygon key={`right-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.6" strokeLinejoin="round" />
             ))}
           </svg>
         </div>
