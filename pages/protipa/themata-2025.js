@@ -269,19 +269,19 @@ const QUESTIONS_2025 = [
     id: 18,
     officialNumber: 38,
     group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
-    promptText: 'Ένα ορθογώνιο έχει υποδιαιρεθεί σε εννέα μικρότερα ορθογώνια (3×3). Αν οι περίμετροι των ορθογωνίων της διαγωνίου Α, Β και Γ είναι 36, 56 και 50 εκ. αντίστοιχα, ποια είναι η περίμετρος του αρχικού ορθογωνίου;',
+    promptText: 'Ένα ορθογώνιο παραλληλόγραμμο έχει υποδιαιρεθεί σε εννιά μικρότερα ορθογώνια παραλληλόγραμμα διαφορετικών διαστάσεων, όπως στο σχήμα που ακολουθεί. Αν οι περίμετροι των Α, Β και Γ είναι 36, 56 και 50 εκ. αντίστοιχα, ποια είναι η περίμετρος του αρχικού ορθογωνίου;',
     hasSvg: 'grid38',
     options: [
       { key: 'A', label: '138 εκ.', raw: '138' },
       { key: 'B', label: '150 εκ.', raw: '150' },
       { key: 'Γ', label: '146 εκ.', raw: '146' },
       { key: 'Δ', label: '142 εκ.', raw: '142' },
-      { key: 'E', label: 'Δεν μπορούμε να την υπολογίσουμε', raw: 'unknown' }
+      { key: 'E', label: 'Δεν μπορούμε να την υπολογίσουμε με βάση τα δεδομένα.', raw: 'unknown' }
     ],
     correctRaw: '142',
-    explain: 'Αν οι διαστάσεις των 3 γραμμών είναι x1, x2, x3 και των 3 στηλών y1, y2, y3, τότε η περίμετρος του μεγάλου ορθογωνίου είναι 2(x1+x2+x3 + y1+y2+y3). Τα ορθογώνια της διαγωνίου έχουν περιμέτρους 2(x1+y1)=36, 2(x2+y2)=56, 2(x3+y3)=50. Προσθέτοντας τις 3 περιμέτρους παίρνουμε ακριβώς την περίμετρο του μεγάλου: 36 + 56 + 50 = 142 εκ.'
+    explain: 'Αν x1, x2, x3 είναι τα πλάτη των τριών στηλών και y1, y2, y3 τα ύψη των τριών γραμμών, η περίμετρος του αρχικού ορθογωνίου είναι 2 · (x1 + x2 + x3 + y1 + y2 + y3). Οι περίμετροι των διαγώνιων ορθογωνίων είναι 2(x1 + y1) = 36, 2(x2 + y2) = 56 και 2(x3 + y3) = 50. Προσθέτοντας κατά μέλη: 2(x1 + y1) + 2(x2 + y2) + 2(x3 + y3) = 36 + 56 + 50 = 142 εκ., που ισούται ακριβώς με την περίμετρο του αρχικού ορθογωνίου.'
   },
-  {
+      {
     id: 19,
     officialNumber: 39,
     group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
@@ -636,20 +636,22 @@ export default function Themata2025Page() {
     if (q.hasSvg === 'grid38') {
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
-          <svg width="170" height="170" viewBox="0 0 160 160" className="select-none">
-            <rect x="20" y="20" width="120" height="120" fill="#ffffff" stroke="#0f172a" strokeWidth="2.5" />
-            {/* Γραμμές 3x3 */}
-            <line x1="60" y1="20" x2="60" y2="140" stroke="#0f172a" strokeWidth="1.5" />
-            <line x1="100" y1="20" x2="100" y2="140" stroke="#0f172a" strokeWidth="1.5" />
-            <line x1="20" y1="60" x2="140" y2="60" stroke="#0f172a" strokeWidth="1.5" />
-            <line x1="20" y1="100" x2="140" y2="100" stroke="#0f172a" strokeWidth="1.5" />
-            {/* Διαγώνια ορθογώνια Α, Β, Γ */}
-            <rect x="20" y="20" width="40" height="40" fill="#e2e8f0" />
-            <rect x="60" y="60" width="40" height="40" fill="#e2e8f0" />
-            <rect x="100" y="100" width="40" height="40" fill="#e2e8f0" />
-            <text x="40" y="44" fontSize="14" fontWeight="bold" textAnchor="middle">Α</text>
-            <text x="80" y="84" fontSize="14" fontWeight="bold" textAnchor="middle">Β</text>
-            <text x="120" y="124" fontSize="14" fontWeight="bold" textAnchor="middle">Γ</text>
+          <svg width="230" height="155" viewBox="0 0 230 155" className="select-none">
+            {/* Εξωτερικό ορθογώνιο παραλληλόγραμμο (πλάτος 180, ύψος 115) */}
+            <rect x="25" y="20" width="180" height="115" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+            
+            {/* Κατακόρυφες γραμμές χωρίσματος (στήλες) */}
+            <line x1="85" y1="20" x2="85" y2="135" stroke="#000000" strokeWidth="1.6" />
+            <line x1="145" y1="20" x2="145" y2="135" stroke="#000000" strokeWidth="1.6" />
+            
+            {/* Οριζόντιες γραμμές χωρίσματος (γραμμές) */}
+            <line x1="25" y1="58" x2="205" y2="58" stroke="#000000" strokeWidth="1.6" />
+            <line x1="25" y1="97" x2="205" y2="97" stroke="#000000" strokeWidth="1.6" />
+            
+            {/* Γράμματα Α, Β, Γ στα διαγώνια κελιά */}
+            <text x="55" y="45" fontSize="17" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Α</text>
+            <text x="115" y="84" fontSize="17" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Β</text>
+            <text x="175" y="123" fontSize="17" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Γ</text>
           </svg>
         </div>
       );
