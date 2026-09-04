@@ -427,7 +427,6 @@ export default function Themata2026Page() {
             <rect x="25" y="25" width="195" height="75" fill="none" stroke="#1e293b" strokeWidth="2.5" />
             <line x1="105" y1="100" x2="220" y2="25" stroke="#1e293b" strokeWidth="2.5" />
             
-            {/* Σκιασμένος τομέας 137 μοιρών */}
             <path
               d="M 105 100 L 60 100 A 45 45 0 0 1 138 69.5 Z"
               fill="#cbd5e1"
@@ -449,7 +448,6 @@ export default function Themata2026Page() {
     if (svgType === 'pie25') {
       return (
         <div className="space-y-4 p-3 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200">
-          {/* Κυκλικό Διάγραμμα ακριβώς όπως στην εικόνα */}
           <div className="flex flex-col items-center">
             <svg width="150" height="150" viewBox="0 0 140 140" className="select-none">
               <defs>
@@ -463,14 +461,12 @@ export default function Themata2026Page() {
               {/* Τομέας Λ (μεγαλύτερος) */}
               <path d="M 70 70 L 128 70 A 58 58 0 0 1 52 126 Z" fill="url(#hatch_diag2)" stroke="#000000" strokeWidth="1.2" />
               
-              {/* Γράμματα Κ και Λ έξω από τον κύκλο */}
               <text x="135" y="32" fill="#000000" fontSize="13" fontWeight="bold">Κ</text>
               <text x="112" y="132" fill="#000000" fontSize="13" fontWeight="bold">Λ</text>
               <text x="20" y="74" fill="#000000" fontSize="14" fontWeight="bold">Μ</text>
             </svg>
           </div>
 
-          {/* 4 Ραβδογράμματα Α, Β, Γ, Δ με ομοιομορφία */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-200">
             {[
               { label: 'A', rects: [{x:20, y:55, h:25}, {x:47, y:48, h:32}, {x:74, y:15, h:65}] },
@@ -513,7 +509,7 @@ export default function Themata2026Page() {
     if (svgType === 'triangle36') {
       return (
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 p-4 bg-slate-50 rounded-2xl border border-slate-200">
-          {/* Αριστερό Σχήμα */}
+          {/* Αριστερό Σχήμα: 9 ίσα ισόπλευρα τρίγωνα */}
           <div className="flex flex-col items-center">
             <svg width="150" height="135" viewBox="0 0 160 145" className="select-none">
               <polygon points="80,12 10,133 150,133" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
@@ -534,24 +530,33 @@ export default function Themata2026Page() {
             </svg>
           </div>
 
-          {/* Δεξί Σχήμα */}
+          {/* Δεξί Σχήμα: Με 2 συμμετρικές διαγώνιες και σωστά σκιασμένα τα 3,5 τρίγωνα */}
           <div className="flex flex-col items-center">
             <svg width="150" height="135" viewBox="0 0 160 145" className="select-none">
+              {/* Λευκό φόντο τριγώνου */}
               <polygon points="80,12 10,133 150,133" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
-              
-              <polygon points="56.6,52.3 103.3,52.3 80,92.6" fill="#94a3b8" />
-              <polygon points="56.6,52.3 80,92.6 33.3,92.6" fill="#94a3b8" />
-              <polygon points="33.3,92.6 10,133 80,92.6" fill="#94a3b8" />
-              <polygon points="10,133 56.6,133 103.3,133 126.6,92.6" fill="#94a3b8" />
 
+              {/* 1. Πάνω σκιασμένο τμήμα (πάνω από την πάνω διαγώνιο) */}
+              <polygon points="56.6,52.3 103.3,52.3 10,133" fill="#94a3b8" />
+
+              {/* 2. Κάτω σκιασμένο τμήμα (κάτω από την κάτω διαγώνιο) */}
+              <polygon points="10,133 103.3,133 126.6,92.6" fill="#94a3b8" />
+
+              {/* Γραμμές βασικού πλέγματος */}
               <line x1="56.6" y1="52.3" x2="103.3" y2="52.3" stroke="#1e293b" strokeWidth="2" />
               <line x1="33.3" y1="92.6" x2="126.6" y2="92.6" stroke="#1e293b" strokeWidth="2" />
               <line x1="56.6" y1="52.3" x2="103.3" y2="133" stroke="#1e293b" strokeWidth="2" />
               <line x1="103.3" y1="52.3" x2="56.6" y2="133" stroke="#1e293b" strokeWidth="2" />
               <line x1="33.3" y1="92.6" x2="56.6" y2="133" stroke="#1e293b" strokeWidth="2" />
               <line x1="126.6" y1="92.6" x2="103.3" y2="133" stroke="#1e293b" strokeWidth="2" />
-              <line x1="10,133" x2="126.6,92.6" stroke="#1e293b" strokeWidth="2" />
 
+              {/* ΟΙ 2 ΔΙΑΓΩΝΙΕΣ ΓΡΑΜΜΕΣ ΤΟΥ ΣΧΗΜΑΤΟΣ */}
+              {/* Πάνω διαγώνιος (η κόκκινη γραμμή σου) */}
+              <line x1="10" y1="133" x2="103.3" y2="52.3" stroke="#1e293b" strokeWidth="2.5" />
+              {/* Κάτω διαγώνιος */}
+              <line x1="10" y1="133" x2="126.6" y2="92.6" stroke="#1e293b" strokeWidth="2.5" />
+
+              {/* Κόμβοι (κουκκίδες) */}
               {[
                 [80, 12],
                 [56.6, 52.3], [103.3, 52.3],
@@ -568,7 +573,6 @@ export default function Themata2026Page() {
 
     return null;
   };
-
   return (
     <Layout
       title="🏛️ Πραγματικά Θέματα 2026 - Πρότυπα Σχολεία | LearnMaths.gr"
