@@ -634,24 +634,32 @@ export default function Themata2025Page() {
     }
 
     if (q.hasSvg === 'grid38') {
+      // Συνολικό πλάτος: 180 (x από 25 έως 205), Συνολικό ύψος: 120 (y από 20 έως 140)
+      // Πλάτη στηλών: 1η = 60, 2η (μεσαία) = 50, 3η = 70 -> χωρίσματα στο x = 85 και x = 135
+      // Ύψη γραμμών: 1η = 32, 2η (μεσαία) = 52, 3η = 36 -> χωρίσματα στο y = 52 και y = 104
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
-          <svg width="230" height="155" viewBox="0 0 230 155" className="select-none">
-            {/* Εξωτερικό ορθογώνιο παραλληλόγραμμο (πλάτος 180, ύψος 115) */}
-            <rect x="25" y="20" width="180" height="115" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+          <svg width="230" height="160" viewBox="0 0 230 160" className="select-none">
+            {/* Εξωτερικό περίγραμμα */}
+            <rect x="25" y="20" width="180" height="120" fill="#ffffff" stroke="#000000" strokeWidth="2.2" />
+
+            {/* Κάθετες γραμμές (ασύμμετρες στήλες) */}
+            <line x1="85" y1="20" x2="85" y2="140" stroke="#000000" strokeWidth="1.8" />
+            <line x1="135" y1="20" x2="135" y2="140" stroke="#000000" strokeWidth="1.8" />
+
+            {/* Οριζόντιες γραμμές (ασύμμετρες γραμμές) */}
+            <line x1="25" y1="52" x2="205" y2="52" stroke="#000000" strokeWidth="1.8" />
+            <line x1="25" y1="104" x2="205" y2="104" stroke="#000000" strokeWidth="1.8" />
+
+            {/* Γράμματα Α, Β, Γ κεντραρισμένα στα αντίστοιχα κελιά */}
+            {/* Κελί Α: x [25, 85], y [20, 52] -> κέντρο (55, 41) */}
+            <text x="55" y="41" fontSize="18" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Α</text>
             
-            {/* Κατακόρυφες γραμμές χωρίσματος (στήλες) */}
-            <line x1="85" y1="20" x2="85" y2="135" stroke="#000000" strokeWidth="1.6" />
-            <line x1="145" y1="20" x2="145" y2="135" stroke="#000000" strokeWidth="1.6" />
+            {/* Κελί Β: x [85, 135], y [52, 104] -> κέντρο (110, 84) */}
+            <text x="110" y="84" fontSize="18" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Β</text>
             
-            {/* Οριζόντιες γραμμές χωρίσματος (γραμμές) */}
-            <line x1="25" y1="58" x2="205" y2="58" stroke="#000000" strokeWidth="1.6" />
-            <line x1="25" y1="97" x2="205" y2="97" stroke="#000000" strokeWidth="1.6" />
-            
-            {/* Γράμματα Α, Β, Γ στα διαγώνια κελιά */}
-            <text x="55" y="45" fontSize="17" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Α</text>
-            <text x="115" y="84" fontSize="17" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Β</text>
-            <text x="175" y="123" fontSize="17" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Γ</text>
+            {/* Κελί Γ: x [135, 205], y [104, 140] -> κέντρο (170, 127) */}
+            <text x="170" y="127" fontSize="18" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Γ</text>
           </svg>
         </div>
       );
