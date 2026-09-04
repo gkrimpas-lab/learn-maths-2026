@@ -594,13 +594,40 @@ export default function Themata2025Page() {
     }
 
     if (q.hasSvg === 'squares36') {
+      // Μεγάλο εξωτερικό τετράγωνο πλευράς 120 (από 20 έως 140)
+      // Κάθε πλευρά χωρίζεται από τις κορυφές των τετραγώνων:
+      // x0 = 20, x1 = 50, x2 = 110, x3 = 140 (και αντίστοιχα για y)
+      // Κεντρικό σημείο: (80, 80)
+      // Κορυφές κεντρικού σκιασμένου τετραγώνου: (80, 50), (110, 80), (80, 110), (50, 80)
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
-          <svg width="160" height="160" viewBox="0 0 150 150" className="select-none">
-            {/* Μεγάλο τετράγωνο */}
-            <rect x="20" y="20" width="110" height="110" fill="#ffffff" stroke="#0f172a" strokeWidth="2.5" />
-            {/* Σκιασμένο κεντρικό τετράγωνο (υπό γωνία) */}
-            <polygon points="75,30 120,75 75,120 30,75" fill="#94a3b8" stroke="#0f172a" strokeWidth="2" />
+          <svg width="180" height="180" viewBox="0 0 160 160" className="select-none">
+            {/* 1. Μεγάλο εξωτερικό τετράγωνο */}
+            <rect x="20" y="20" width="120" height="120" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
+
+            {/* 2. Κεντρικό σκιασμένο τετράγωνο */}
+            <polygon
+              points="80,50 110,80 80,110 50,80"
+              fill="#64748b"
+              stroke="#1e293b"
+              strokeWidth="2"
+            />
+
+            {/* 3. Τέσσερα λευκά περιφερειακά τετράγωνα */}
+            {/* Πάνω-Αριστερά */}
+            <polygon points="50,20 80,50 50,80 20,50" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
+            {/* Πάνω-Δεξιά */}
+            <polygon points="110,20 140,50 110,80 80,50" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
+            {/* Κάτω-Αριστερά */}
+            <polygon points="20,110 50,80 80,110 50,140" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
+            {/* Κάτω-Δεξιά */}
+            <polygon points="80,110 110,80 140,110 110,140" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
+
+            {/* Μικρές κουκκίδες στις 4 γωνίες του εξωτερικού τετραγώνου όπως στο πρωτότυπο */}
+            <circle cx="20" cy="20" r="2.5" fill="#1e293b" />
+            <circle cx="140" cy="20" r="2.5" fill="#1e293b" />
+            <circle cx="20" cy="140" r="2.5" fill="#1e293b" />
+            <circle cx="140" cy="140" r="2.5" fill="#1e293b" />
           </svg>
         </div>
       );
