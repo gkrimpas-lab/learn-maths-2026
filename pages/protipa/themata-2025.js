@@ -509,87 +509,84 @@ export default function Themata2025Page() {
 
     if (q.hasSvg === 'cube34') {
       // 3D Ισομετρικός Κύβος 3x3x3
-      // u: διάνυσμα δεξιά-κάτω (+dx, +dy), v: διάνυσμα αριστερά-κάτω (-dx, +dy), w: κατακόρυφο (0, +dz)
-      const originX = 105;
-      const originY = 22;
-      const dx = 24;
-      const dy = 14;
-      const dz = 28;
+      // Κεντρική εμπρόσθια-άνω κορυφή (κοινή για τις 3 ορατές έδρες)
+      const cx = 105;
+      const cy = 76;
+      
+      // Διανύσματα ισομετρικής προβολής (30 μοίρες)
+      const ux = 22;  // Δεξιά-Πάνω (Top & Right)
+      const uy = 12.7;
+      const vx = -22; // Αριστερά-Πάνω (Top & Left)
+      const vy = 12.7;
+      const h = 25.4; // Κατακόρυφη διάσταση
 
       const topTiles = [];
       const leftTiles = [];
       const rightTiles = [];
 
+      // 1. ΠΑΝΩ ΕΔΡΑ (Top Face)
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-          // Πάνω έδρα: z = 0, x = i, y = j
-          // Χρώμα: αν (i + j) είναι άρτιο -> σκούρο/γκρι, αν περιττό -> λευκό
-          const isDarkTop = (i + j) % 2 === 0;
-          const p0 = [originX + (i - j) * dx, originY + (i + j) * dy];
-          const p1 = [originX + (i + 1 - j) * dx, originY + (i + 1 + j) * dy];
-          const p2 = [originX + (i + 1 - (j + 1)) * dx, originY + (i + 1 + j + 1) * dy];
-          const p3 = [originX + (i - (j + 1)) * dx, originY + (i + j + 1) * dy];
+          // Η εμπρός κορυφή (i=0, j=0) είναι γκρι
+          const isDark = (i + j) % 2 === 0;
+          const p0 = [cx + i * ux + j * vx, cy - i * uy - j * vy];
+          const p1 = [cx + (i + 1) * ux + j * vx, cy - (i + 1) * uy - j * vy];
+          const p2 = [cx + (i + 1) * ux + (j + 1) * vx, cy - (i + 1) * uy - (j + 1) * vy];
+          const p3 = [cx + i * ux + (j + 1) * vx, cy - i * uy - (j + 1) * vy];
 
           topTiles.push({
             pts: `${p0[0]},${p0[1]} ${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`,
-            fill: isDarkTop ? '#64748b' : '#ffffff'
+            fill: isDark ? '#64748b' : '#ffffff'
           });
         }
       }
 
+      // 2. ΑΡΙΣΤΕΡΗ ΕΔΡΑ (Left Face)
       for (let j = 0; j < 3; j++) {
         for (let k = 0; k < 3; k++) {
-          // Αριστερή έδρα: x = 0 (άρα i = 2 στην εμπρός προβολή), y = 2 - j, z = k
-          // Στο σχήμα η κορυφαία εμπρός είναι γκρι, άρα για j=0, k=0 είναι γκρι
-          const isDarkLeft = (j + k) % 2 === 0;
-          const px = originX - (j + 1) * dx;
-          const py = originY + (j + 1) * dy + k * dz;
-
-          const p0 = [px, py];
-          const p1 = [px + dx, py - dy];
-          const p2 = [px + dx, py - dy + dz];
-          const p3 = [px, py + dz];
+          const isDark = (j + k) % 2 === 0;
+          const p0 = [cx + j * vx, cy - j * vy + k * h];
+          const p1 = [cx + (j + 1) * vx, cy - (j + 1) * vy + k * h];
+          const p2 = [cx + (j + 1) * vx, cy - (j + 1) * vy + (k + 1) * h];
+          const p3 = [cx + j * vx, cy - j * vy + (k + 1) * h];
 
           leftTiles.push({
             pts: `${p0[0]},${p0[1]} ${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`,
-            fill: isDarkLeft ? '#64748b' : '#ffffff'
+            fill: isDark ? '#64748b' : '#ffffff'
           });
         }
       }
 
+      // 3. ΔΕΞΙΑ ΕΔΡΑ (Right Face)
       for (let i = 0; i < 3; i++) {
         for (let k = 0; k < 3; k++) {
-          // Δεξιά έδρα
-          const isDarkRight = (i + k) % 2 === 0;
-          const px = originX + i * dx;
-          const py = originY + 3 * dy + i * dy + k * dz;
-
-          const p0 = [px, py];
-          const p1 = [px + dx, py + dy];
-          const p2 = [px + dx, py + dy + dz];
-          const p3 = [px, py + dz];
+          const isDark = (i + k) % 2 === 0;
+          const p0 = [cx + i * ux, cy - i * uy + k * h];
+          const p1 = [cx + (i + 1) * ux, cy - (i + 1) * uy + k * h];
+          const p2 = [cx + (i + 1) * ux, cy - (i + 1) * uy + (k + 1) * h];
+          const p3 = [cx + i * ux, cy - i * uy + (k + 1) * h];
 
           rightTiles.push({
             pts: `${p0[0]},${p0[1]} ${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`,
-            fill: isDarkRight ? '#64748b' : '#ffffff'
+            fill: isDark ? '#64748b' : '#ffffff'
           });
         }
       }
 
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
-          <svg width="210" height="200" viewBox="0 0 210 200" className="select-none">
+          <svg width="210" height="190" viewBox="0 0 210 190" className="select-none">
             {/* Πάνω έδρα */}
             {topTiles.map((t, idx) => (
-              <polygon key={`top-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.6" strokeLinejoin="round" />
+              <polygon key={`top-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.8" strokeLinejoin="round" />
             ))}
             {/* Αριστερή έδρα */}
             {leftTiles.map((t, idx) => (
-              <polygon key={`left-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.6" strokeLinejoin="round" />
+              <polygon key={`left-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.8" strokeLinejoin="round" />
             ))}
             {/* Δεξιά έδρα */}
             {rightTiles.map((t, idx) => (
-              <polygon key={`right-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.6" strokeLinejoin="round" />
+              <polygon key={`right-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.8" strokeLinejoin="round" />
             ))}
           </svg>
         </div>
