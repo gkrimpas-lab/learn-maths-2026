@@ -666,48 +666,46 @@ export default function Themata2025Page() {
     }
 
     if (q.hasSvg === 'building40') {
-      // 3 όροφοι με ύψος 70px έκαστος (y = 20, 90, 160)
-      // Παράθυρο ύψους 34px: τοποθετημένο ψηλότερα μέσα στον όροφο (top spacing = 12px, bottom spacing = 24px)
-      // ώστε η απόσταση κάτω από το παράθυρο να είναι μεγαλύτερη από την απόσταση πάνω από αυτό.
+      // viewBox 340x250 με άνετο αριστερό περιθώριο για τα κείμενα και τα βέλη
       return (
-        <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
-          <svg width="270" height="250" viewBox="0 0 270 250" className="select-none">
+        <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3 overflow-x-auto">
+          <svg width="340" height="250" viewBox="0 0 340 250" className="select-none">
             <defs>
               <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#0f172a" />
               </marker>
             </defs>
 
-            {/* Πρόσοψη 3 ορόφων */}
-            <rect x="110" y="20" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
-            <rect x="110" y="90" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
-            <rect x="110" y="160" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
+            {/* Πρόσοψη 3 ορόφων (τοποθετημένοι από x = 180 έως 320) */}
+            <rect x="180" y="20" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2.2" />
+            <rect x="180" y="90" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2.2" />
+            <rect x="180" y="160" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2.2" />
 
-            {/* Παράθυρα: τοποθετημένα ψηλότερα στον όροφο */}
-            {/* 3ος όροφος: y = 20 + 12 = 32 έως 66 */}
-            <rect x="150" y="32" width="24" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
-            {/* 2ος όροφος: y = 90 + 12 = 102 έως 136 */}
-            <rect x="150" y="102" width="24" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
-            {/* 1ος όροφος: y = 160 + 12 = 172 έως 206 */}
-            <rect x="150" y="172" width="24" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
+            {/* Παράθυρα: ύψος 34px, τοποθετημένα ψηλότερα στον όροφο */}
+            {/* 3ος όροφος: y = 32 έως 66 */}
+            <rect x="220" y="32" width="26" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
+            {/* 2ος όροφος: y = 102 έως 136 */}
+            <rect x="220" y="102" width="26" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
+            {/* 1ος όροφος: y = 172 έως 206 */}
+            <rect x="220" y="172" width="26" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
 
             {/* Οριζόντιες διακεκομμένες γραμμές οδηγών */}
-            <line x1="30" y1="32" x2="150" y2="32" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
-            <line x1="70" y1="66" x2="150" y2="66" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
-            <line x1="70" y1="102" x2="150" y2="102" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
-            <line x1="30" y1="136" x2="150" y2="136" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
+            <line x1="100" y1="32" x2="220" y2="32" stroke="#475569" strokeWidth="1.2" strokeDasharray="3 3" />
+            <line x1="140" y1="66" x2="220" y2="66" stroke="#475569" strokeWidth="1.2" strokeDasharray="3 3" />
+            <line x1="140" y1="102" x2="220" y2="102" stroke="#475569" strokeWidth="1.2" strokeDasharray="3 3" />
+            <line x1="100" y1="136" x2="220" y2="136" stroke="#475569" strokeWidth="1.2" strokeDasharray="3 3" />
 
-            {/* Διάσταση 430 εκ. με διπλό βέλος */}
-            <line x1="42" y1="38" x2="42" y2="130" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
-            <text x="35" y="88" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a">430 εκ.</text>
+            {/* Διάσταση 430 εκ. */}
+            <text x="96" y="88" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a">430 εκ.</text>
+            <line x1="112" y1="38" x2="112" y2="130" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
 
-            {/* Διάσταση 150 εκ. με διπλό βέλος */}
-            <line x1="82" y1="72" x2="82" y2="96" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
-            <text x="75" y="88" fontSize="10" fontWeight="bold" textAnchor="end" fill="#0f172a">150 εκ.</text>
+            {/* Διάσταση 150 εκ. */}
+            <text x="136" y="88" fontSize="10" fontWeight="bold" textAnchor="end" fill="#0f172a">150 εκ.</text>
+            <line x1="152" y1="72" x2="152" y2="96" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
 
             {/* Δείκτης για το παράθυρο */}
-            <line x1="45" y1="180" x2="145" y2="189" stroke="#0f172a" strokeWidth="1.5" markerEnd="url(#arrow)" />
-            <text x="40" y="183" fontSize="10" fontWeight="bold" textAnchor="end" fill="#0f172a">ΠΑΡΑΘΥΡΟ</text>
+            <text x="110" y="193" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a">ΠΑΡΑΘΥΡΟ</text>
+            <line x1="116" y1="189" x2="214" y2="197" stroke="#0f172a" strokeWidth="1.5" markerEnd="url(#arrow)" />
           </svg>
         </div>
       );
