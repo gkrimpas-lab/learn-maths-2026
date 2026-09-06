@@ -19,7 +19,7 @@ const QUESTIONS_2025 = [
     id: 1,
     officialNumber: 21,
     group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    promptText: 'Ποια από τις παρακάτω αριθμητικές παραστάσεις έχει τη μεγαλύτερη τιμή;',
+    promptText: 'Ποια από τις παρακάτω αριθμητικές παραστάσεις έχει μεγαλύτερη τιμή;',
     options: [
       { key: 'A', label: <span className="inline-flex items-center">11 ＋ <Fraction num="2" den="3" /> － <Fraction num="1" den="5" /></span>, raw: 'A' },
       { key: 'B', label: <span className="inline-flex items-center">11 ＋ <Fraction num="1" den="2" /> － <Fraction num="1" den="5" /></span>, raw: 'B' },
@@ -76,7 +76,7 @@ const QUESTIONS_2025 = [
     id: 5,
     officialNumber: 25,
     group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    promptText: 'Σε μια κατασκήνωση κάθε παιδί έχει επιλέξει να κάνει ακριβώς ένα άθλημα. Στον πίνακα φαίνονται τα ποσοστά των παιδιών επί του συνόλου. Τι ποσοστό των κοριτσιών έχει επιλέξει μπάσκετ;',
+    promptText: 'Σε μια κατασκήνωση κάθε παιδί έχει επιλέξει να κάνει ακριβώς ένα άθλημα. Στον πίνακα που ακολουθεί φαίνονται τα ποσοστά των παιδιών για διάφορους συνδυασμούς φύλου και αθλήματος. Για παράδειγμα, το 17% των παιδιών είναι αγόρια που έχουν επιλέγει μπάσκετ. Τι ποσοστό των κοριτσιών έχει επιλέξει μπάσκετ;',
     hasTable: 'table25',
     options: [
       { key: 'A', label: '12%', raw: '12%' },
@@ -402,8 +402,8 @@ export default function Themata2025Page() {
             <thead>
               <tr className="bg-slate-200/80 text-slate-800 font-black">
                 <th className="p-2.5 border-b border-slate-200">Κατάστημα</th>
-                <th className="p-2.5 border-b border-slate-200">Αρχική τιμή</th>
-                <th className="p-2.5 border-b border-slate-200">Έκπτωση (%)</th>
+                <th className="p-2.5 border-b border-slate-200">Αρχική τιμή Μπλούζας</th>
+                <th className="p-2.5 border-b border-slate-200">Έκπτωση ως ποσοστό της αρχικής τιμής</th>
               </tr>
             </thead>
             <tbody>
