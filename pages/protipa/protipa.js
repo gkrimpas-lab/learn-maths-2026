@@ -49,7 +49,7 @@ export default function ProtipaHubPage() {
                 </div>
                 <div>
                   <span className="text-[11px] font-black uppercase tracking-wider text-indigo-600 block mb-1">
-                    Χρονόμετρο & Βαθμολογία
+                    Χρονομετρο και Βαθμολογια
                   </span>
                   <h3 className="text-lg sm:text-xl font-black text-slate-900">
                     ΤΕΣΤ ΠΡΟΣΟΜΟΙΩΣΗΣ
@@ -77,7 +77,7 @@ export default function ProtipaHubPage() {
                 </div>
                 <div>
                   <span className="text-[11px] font-black uppercase tracking-wider text-blue-600 block mb-1">
-                    Επίσημα Θέματα Υπουργείου
+                    Επισημα Θεματα Υπουργειου
                   </span>
                   <h3 className="text-lg sm:text-xl font-black text-slate-900">
                     ΠΡΑΓΜΑΤΙΚΑ ΘΕΜΑΤΑ ΕΞΕΤΑΣΕΩΝ
