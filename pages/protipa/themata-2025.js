@@ -489,13 +489,13 @@ export default function Themata2025Page() {
 
             {/* Στήλες ραβδογράμματος */}
             {[
-              { label: 'Αυγό', val: 15, isAnimal: true },
-              { label: 'Γάλα', val: 15, isAnimal: true },
+              { label: 'Αυγό κότας', val: 15, isAnimal: true },
+              { label: 'Γάλα αγελάδας', val: 15, isAnimal: true },
               { label: 'Ελιές', val: 5, isAnimal: false },
               { label: 'Ντομάτα', val: 5, isAnimal: false },
               { label: 'Κρέας', val: 5, isAnimal: true },
               { label: 'Ρεβύθια', val: 10, isAnimal: false },
-              { label: 'Τυρί', val: 25, isAnimal: true },
+              { label: 'Κατσικίσιο Τυρί', val: 25, isAnimal: true },
               { label: 'Φυστίκια', val: 20, isAnimal: false }
             ].map((col, idx) => {
               const x = 40 + idx * 38;
