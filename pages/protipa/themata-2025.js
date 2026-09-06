@@ -100,7 +100,7 @@ const QUESTIONS_2025 = [
         </p>
       </div>
     )
-  }
+  },
   {
     id: 2,
     officialNumber: 22,
