@@ -18,8 +18,8 @@ const QUESTIONS_2025 = [
   {
     id: 1,
     officialNumber: 21,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    promptText: 'Ποια από τις παρακάτω αριθμητικές παραστάσεις έχει μεγαλύτερη τιμή;',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
+    promptText: 'Ποια από τις παρακάτω αριθμητικές παραστάσεις έχει τη μεγαλύτερη τιμή;',
     options: [
       { key: 'A', label: <span className="inline-flex items-center">11 ＋ <Fraction num="2" den="3" /> － <Fraction num="1" den="5" /></span>, raw: 'A' },
       { key: 'B', label: <span className="inline-flex items-center">11 ＋ <Fraction num="1" den="2" /> － <Fraction num="1" den="5" /></span>, raw: 'B' },
@@ -27,8 +27,80 @@ const QUESTIONS_2025 = [
       { key: 'Δ', label: <span className="inline-flex items-center">11 ＋ <Fraction num="3" den="4" /> － <Fraction num="1" den="3" /></span>, raw: 'Δ' }
     ],
     correctRaw: 'Γ',
-    explain: 'Όλες οι παραστάσεις ξεκινούν με 11. Συγκρίνουμε τα κλάσματα: το 3/4 είναι μεγαλύτερο από το 2/3 και το 1/2 (3/4 = 0,75, 2/3 ≈ 0,67, 1/2 = 0,5). Μεταξύ των Γ και Δ, στο Γ αφαιρούμε 1/5 (= 0,20) ενώ στο Δ αφαιρούμε 1/3 (≈ 0,33). Αφαιρώντας μικρότερη ποσότητα, το Γ δίνει το μεγαλύτερο αποτέλεσμα.'
-  },
+    explain: (
+      <div className="space-y-3 text-xs sm:text-sm">
+        <p>
+          Όλες οι παραστάσεις ξεκινούν με <strong>11</strong>, οπότε μπορούμε να μην το υπολογίσουμε στις πράξεις και να συγκρίνουμε μόνο τα κλάσματα κάθε επιλογής:
+        </p>
+
+        <div className="space-y-2 bg-white/70 p-3 rounded-xl border border-slate-200/80 font-medium">
+          {/* Επιλογή Α */}
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+            <span className="font-bold text-slate-900 w-5">Α:</span>
+            <Fraction num="2" den="3" />
+            <span>－</span>
+            <Fraction num="1" den="5" />
+            <span>＝</span>
+            <Fraction num="10" den="15" />
+            <span>－</span>
+            <Fraction num="3" den="15" />
+            <span>＝</span>
+            <Fraction num="7" den="15" />
+            <span className="text-slate-500 font-mono text-xs">(≈ 0,467 &lt; 0,5)</span>
+          </div>
+
+          {/* Επιλογή Β */}
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+            <span className="font-bold text-slate-900 w-5">Β:</span>
+            <Fraction num="1" den="2" />
+            <span>－</span>
+            <Fraction num="1" den="5" />
+            <span>＝</span>
+            <Fraction num="5" den="10" />
+            <span>－</span>
+            <Fraction num="2" den="10" />
+            <span>＝</span>
+            <Fraction num="3" den="10" />
+            <span className="text-slate-500 font-mono text-xs">(＝ 0,3)</span>
+          </div>
+
+          {/* Επιλογή Γ */}
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+            <span className="font-bold text-emerald-700 w-5">Γ:</span>
+            <Fraction num="3" den="4" />
+            <span>－</span>
+            <Fraction num="1" den="5" />
+            <span>＝</span>
+            <Fraction num="15" den="20" />
+            <span>－</span>
+            <Fraction num="4" den="20" />
+            <span>＝</span>
+            <Fraction num="11" den="20" />
+            <span className="text-emerald-700 font-bold font-mono text-xs">(＝ 0,55)</span>
+          </div>
+
+          {/* Επιλογή Δ */}
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+            <span className="font-bold text-slate-900 w-5">Δ:</span>
+            <Fraction num="3" den="4" />
+            <span>－</span>
+            <Fraction num="1" den="3" />
+            <span>＝</span>
+            <Fraction num="9" den="12" />
+            <span>－</span>
+            <Fraction num="4" den="12" />
+            <span>＝</span>
+            <Fraction num="5" den="12" />
+            <span className="text-slate-500 font-mono text-xs">(≈ 0,417)</span>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Συγκρίνοντας τα αποτελέσματα, η μεγαλύτερη διαφορά είναι το <strong className="text-emerald-800">11/20 (= 0,55)</strong>. Επομένως, η παράσταση με τη μεγαλύτερη τιμή είναι η <strong>Γ</strong>.
+        </p>
+      </div>
+    )
+  }
   {
     id: 2,
     officialNumber: 22,
