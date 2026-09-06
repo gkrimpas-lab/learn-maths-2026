@@ -61,7 +61,7 @@ const QUESTIONS_2025 = [
             <Fraction num="2" den="10" />
             <span>＝</span>
             <Fraction num="3" den="10" />
-            <span className="text-slate-500 font-mono text-xs">(＝ 0,3)</span>
+            <span className="text-slate-500 font-mono text-xs">(＝ 0,3 &lt; 0,5)</span>
           </div>
 
           {/* Επιλογή Γ */}
@@ -76,7 +76,7 @@ const QUESTIONS_2025 = [
             <Fraction num="4" den="20" />
             <span>＝</span>
             <Fraction num="11" den="20" />
-            <span className="text-emerald-700 font-bold font-mono text-xs">(＝ 0,55)</span>
+            <span className="text-emerald-700 font-bold font-mono text-xs">(＝ 0,55 &gt; 0,5)</span>
           </div>
 
           {/* Επιλογή Δ */}
@@ -91,7 +91,7 @@ const QUESTIONS_2025 = [
             <Fraction num="4" den="12" />
             <span>＝</span>
             <Fraction num="5" den="12" />
-            <span className="text-slate-500 font-mono text-xs">(≈ 0,417)</span>
+            <span className="text-slate-500 font-mono text-xs">(≈ 0,417 &lt; 0,5)</span>
           </div>
         </div>
 
