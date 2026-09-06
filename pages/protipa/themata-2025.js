@@ -475,36 +475,48 @@ export default function Themata2025Page() {
     if (q.hasSvg === 'foodChart30') {
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto my-3">
-          <svg width="360" height="180" viewBox="0 0 360 180" className="select-none">
+          <svg width="370" height="195" viewBox="0 0 370 195" className="select-none">
             {/* Οριζόντιες γραμμές 0, 5, 10, 15, 20, 25, 30 */}
             {[0, 5, 10, 15, 20, 25, 30].map((val) => {
               const y = 140 - (val / 30) * 120;
               return (
                 <g key={val}>
-                  <line x1="30" y1={y} x2="350" y2={y} stroke="#cbd5e1" strokeWidth="1" />
-                  <text x="22" y={y + 3.5} fontSize="9" fontWeight="bold" textAnchor="end" fill="#64748b">{val}</text>
+                  <line x1="30" y1={y} x2="360" y2={y} stroke="#cbd5e1" strokeWidth="1" />
+                  <text x="24" y={y + 3.5} fontSize="9" fontWeight="bold" textAnchor="end" fill="#64748b">{val}</text>
                 </g>
               );
             })}
 
             {/* Στήλες ραβδογράμματος */}
             {[
-              { label: 'Αυγό κότας', val: 15, isAnimal: true },
-              { label: 'Γάλα αγελάδας', val: 15, isAnimal: true },
-              { label: 'Ελιές', val: 5, isAnimal: false },
-              { label: 'Ντομάτα', val: 5, isAnimal: false },
-              { label: 'Κρέας', val: 5, isAnimal: true },
-              { label: 'Ρεβύθια', val: 10, isAnimal: false },
-              { label: 'Κατσικίσιο Τυρί', val: 25, isAnimal: true },
-              { label: 'Φυστίκια', val: 20, isAnimal: false }
+              { lines: ['Αυγό', 'κότας'], val: 15, isAnimal: true },
+              { lines: ['Γάλα', 'αγελάδας'], val: 15, isAnimal: true },
+              { lines: ['Ελιές'], val: 5, isAnimal: false },
+              { lines: ['Ντομάτα'], val: 5, isAnimal: false },
+              { lines: ['Κρέας'], val: 5, isAnimal: true },
+              { lines: ['Ρεβύθια'], val: 10, isAnimal: false },
+              { lines: ['Κατσικίσιο', 'τυρί'], val: 25, isAnimal: true },
+              { lines: ['Φυστίκια'], val: 20, isAnimal: false }
             ].map((col, idx) => {
-              const x = 40 + idx * 38;
+              const x = 40 + idx * 39;
               const h = (col.val / 30) * 120;
               const y = 140 - h;
+              const cx = x + 11;
+
               return (
                 <g key={idx}>
                   <rect x={x} y={y} width="22" height={h} fill={col.isAnimal ? '#0284c7' : '#0369a1'} rx="2" />
-                  <text x={x + 11} y="155" fontSize="8" fontWeight="bold" textAnchor="middle" fill="#334155">{col.label}</text>
+                  
+                  {col.lines.length === 1 ? (
+                    <text x={cx} y="156" fontSize="8" fontWeight="bold" textAnchor="middle" fill="#334155">
+                      {col.lines[0]}
+                    </text>
+                  ) : (
+                    <text x={cx} y="153" fontSize="7.5" fontWeight="bold" textAnchor="middle" fill="#334155">
+                      <tspan x={cx} dy="0">{col.lines[0]}</tspan>
+                      <tspan x={cx} dy="10">{col.lines[1]}</tspan>
+                    </text>
+                  )}
                 </g>
               );
             })}
