@@ -300,7 +300,7 @@ const QUESTIONS_2025 = [
     id: 20,
     officialNumber: 40,
     group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
-    promptText: 'Σε μια πολυκατοικία όλοι οι όροφοι έχουν το ίδιο ύψος και ίδια παράθυρα. Με βάση το σχήμα (απόσταση από το πάνω μέρος του παραθύρου του 3ου ορόφου ως το κάτω μέρος του παραθύρου του 2ου = 430 εκ., απόσταση μεταξύ των παραθύρων = 150 εκ.), ποιο είναι το ύψος του κάθε ορόφου;',
+    promptText: 'Σε μια πολυκατοικία όλοι οι όροφοι έχουν το ίδιο ύψος και ακριβώς την ίδια όψη, όπως στο σχήμα που ακολουθεί. Με βάση τα δεδομένα του σχήματος ποιο είναι το ύψος του κάθε ορόφου;',
     hasSvg: 'building40',
     options: [
       { key: 'A', label: '290 εκ.', raw: '290' },
@@ -310,9 +310,9 @@ const QUESTIONS_2025 = [
       { key: 'E', label: '430 εκ.', raw: '430' }
     ],
     correctRaw: '290',
-    explain: 'Έστω H το ύψος του ορόφου και h το ύψος του παραθύρου. Η απόσταση 430 εκ. είναι από την κορυφή του πάνω παραθύρου μέχρι τη βάση του μεσαίου παραθύρου: h + 150 + h = 430 ➔ 2h = 280 ➔ h = 140 εκ. Το ύψος ενός ορόφου αποτελείται από το ύψος ενός παραθύρου συν την απόσταση μεταξύ των διαδοχικών παραθύρων: H = h + 150 = 140 + 150 = 290 εκ.'
+    explain: 'Έστω H το ύψος κάθε ορόφου, h το ύψος κάθε παραθύρου, d_top η απόσταση από το πάνω μέρος του ορόφου έως το παράθυρο και d_bot η απόσταση από το κάτω μέρος του παραθύρου έως το πάτωμα του ορόφου. Επομένως, το ύψος του ορόφου είναι H = h + d_top + d_bot. Η απόσταση ανάμεσα στα παράθυρα δύο διαδοχικών ορόφων είναι d_bot + d_top = 150 εκ. Η διάσταση 430 εκ. εκτείνεται από το πάνω μέρος του παραθύρου του 3ου ορόφου έως το κάτω μέρος του παραθύρου του 2ου ορόφου, δηλαδή: h + (d_bot + d_top) + h = 430 ➔ 2h + 150 = 430 ➔ 2h = 280 ➔ h = 140 εκ. Άρα το ύψος κάθε ορόφου είναι H = h + 150 = 140 + 150 = 290 εκ.'
   }
-];
+    ];
 
 const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
@@ -666,38 +666,52 @@ export default function Themata2025Page() {
     }
 
     if (q.hasSvg === 'building40') {
+      // 3 όροφοι με ύψος 70px έκαστος (y = 20, 90, 160)
+      // Παράθυρο ύψους 34px: τοποθετημένο ψηλότερα μέσα στον όροφο (top spacing = 12px, bottom spacing = 24px)
+      // ώστε η απόσταση κάτω από το παράθυρο να είναι μεγαλύτερη από την απόσταση πάνω από αυτό.
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
-          <svg width="240" height="230" viewBox="0 0 240 230" className="select-none">
-            {/* 3 όροφοι */}
-            <rect x="100" y="15" width="120" height="65" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
-            <rect x="100" y="80" width="120" height="65" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
-            <rect x="100" y="145" width="120" height="65" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
+          <svg width="270" height="250" viewBox="0 0 270 250" className="select-none">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#0f172a" />
+              </marker>
+            </defs>
 
-            {/* Παράθυρα */}
-            <rect x="135" y="25" width="25" height="45" fill="#e2e8f0" stroke="#0f172a" strokeWidth="1.5" />
-            <rect x="135" y="90" width="25" height="45" fill="#e2e8f0" stroke="#0f172a" strokeWidth="1.5" />
-            <rect x="135" y="155" width="25" height="45" fill="#e2e8f0" stroke="#0f172a" strokeWidth="1.5" />
+            {/* Πρόσοψη 3 ορόφων */}
+            <rect x="110" y="20" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
+            <rect x="110" y="90" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
+            <rect x="110" y="160" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
 
-            {/* Διακεκομμένες γραμμές διαστάσεων */}
-            <line x1="30" y1="25" x2="135" y2="25" stroke="#64748b" strokeDasharray="3 3" />
-            <line x1="30" y1="135" x2="135" y2="135" stroke="#64748b" strokeDasharray="3 3" />
-            <line x1="70" y1="70" x2="135" y2="70" stroke="#64748b" strokeDasharray="3 3" />
-            <line x1="70" y1="90" x2="135" y2="90" stroke="#64748b" strokeDasharray="3 3" />
+            {/* Παράθυρα: τοποθετημένα ψηλότερα στον όροφο */}
+            {/* 3ος όροφος: y = 20 + 12 = 32 έως 66 */}
+            <rect x="150" y="32" width="24" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
+            {/* 2ος όροφος: y = 90 + 12 = 102 έως 136 */}
+            <rect x="150" y="102" width="24" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
+            {/* 1ος όροφος: y = 160 + 12 = 172 έως 206 */}
+            <rect x="150" y="172" width="24" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
 
-            {/* Βέλη & Κείμενα */}
-            <line x1="40" y1="25" x2="40" y2="135" stroke="#0f172a" strokeWidth="1.5" />
-            <text x="35" y="82" fontSize="10" fontWeight="bold" textAnchor="end">430 εκ.</text>
+            {/* Οριζόντιες διακεκομμένες γραμμές οδηγών */}
+            <line x1="30" y1="32" x2="150" y2="32" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
+            <line x1="70" y1="66" x2="150" y2="66" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
+            <line x1="70" y1="102" x2="150" y2="102" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
+            <line x1="30" y1="136" x2="150" y2="136" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
 
-            <line x1="80" y1="70" x2="80" y2="90" stroke="#0f172a" strokeWidth="1.5" />
-            <text x="75" y="82" fontSize="9" fontWeight="bold" textAnchor="end">150 εκ.</text>
+            {/* Διάσταση 430 εκ. με διπλό βέλος */}
+            <line x1="42" y1="38" x2="42" y2="130" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
+            <text x="35" y="88" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a">430 εκ.</text>
 
-            <text x="130" y="180" fontSize="9" fontWeight="bold" textAnchor="end">ΠΑΡΑΘΥΡΟ ➔</text>
+            {/* Διάσταση 150 εκ. με διπλό βέλος */}
+            <line x1="82" y1="72" x2="82" y2="96" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
+            <text x="75" y="88" fontSize="10" fontWeight="bold" textAnchor="end" fill="#0f172a">150 εκ.</text>
+
+            {/* Δείκτης για το παράθυρο */}
+            <line x1="45" y1="180" x2="145" y2="189" stroke="#0f172a" strokeWidth="1.5" markerEnd="url(#arrow)" />
+            <text x="40" y="183" fontSize="10" fontWeight="bold" textAnchor="end" fill="#0f172a">ΠΑΡΑΘΥΡΟ</text>
           </svg>
         </div>
       );
     }
-
     return null;
   };
 
