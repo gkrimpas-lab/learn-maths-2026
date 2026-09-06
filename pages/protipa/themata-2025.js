@@ -91,7 +91,7 @@ const QUESTIONS_2025 = [
     id: 6,
     officialNumber: 26,
     group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    promptText: 'Ποιος αριθμός από τους επόμενους είναι πιο κοντά στο 1/2 από ό,τι είναι στο 1/4;',
+    promptText: 'Ποιος αριθμός από τους επόμενους είναι πιο κοντά στο <Fraction num="1" den="2" /> από ό,τι είναι στο 1/4;',
     options: [
       { key: 'A', label: <Fraction num="1" den="6" />, raw: '1/6' },
       { key: 'B', label: <Fraction num="1" den="5" />, raw: '1/5' },
