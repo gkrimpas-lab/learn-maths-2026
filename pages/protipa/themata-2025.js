@@ -914,7 +914,7 @@ const QUESTIONS_2025 = [
   {
     id: 14,
     officialNumber: 34,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Ένας κύβος αποτελείται από 27 ίσα κυβάκια, όπως στο σχήμα που ακολουθεί (με εναλλάξ άσπρα και μαύρα κυβάκια). Πόσα είναι τα άσπρα κυβάκια;',
     options: [
       { key: 'A', label: '9', raw: '9' },
@@ -928,7 +928,7 @@ const QUESTIONS_2025 = [
       <div className="space-y-4 text-xs sm:text-sm">
         <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-xl text-amber-950 space-y-1">
           <span className="font-black block uppercase text-[11px] tracking-wider text-amber-800">
-            ⚠️ Προσοχή στο ζητούμενο:
+            ⚠️ Προσοχη στο ζητουμενο:
           </span>
           <p>
             Μας ζητείται να μετρήσουμε τα <strong>άσπρα κυβάκια</strong> ως τρισδιάστατα σώματα και <strong>όχι τις άσπρες πλευρές</strong> (έδρες) που φαίνονται εξωτερικά. Κάθε μικρό κυβάκι έχει 6 έδρες, αλλά εδώ μετράμε το πλήθος των κύβων.
@@ -970,21 +970,21 @@ const QUESTIONS_2025 = [
 
             // Διάταξη των 3 επιπέδων (true = άσπρο κυβάκι, false = μαύρο)
             const topLayer = [
-              [true, false, true],
-              [false, true, false],
-              [true, false, true]
-            ];
-
-            const midLayer = [
               [false, true, false],
               [true, false, true],
               [false, true, false]
             ];
 
-            const botLayer = [
+            const midLayer = [
               [true, false, true],
               [false, true, false],
               [true, false, true]
+            ];
+
+            const botLayer = [
+              [false, true, false],
+              [true, false, true],
+              [false, true, false]
             ];
 
             // Render στρώσης με σωστή σειρά σχεδίασης (από πίσω προς τα εμπρός)
