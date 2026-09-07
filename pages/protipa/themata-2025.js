@@ -104,7 +104,7 @@ const QUESTIONS_2025 = [
   {
     id: 2,
     officialNumber: 22,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Αν 3 φορές το 🍎 και 2 φορές το 🍐 κάνει 19, ενώ 2 φορές το 🍎 και 3 φορές το 🍐 κάνει 41, τότε το άθροισμα των 🍎 και 🍐 είναι:',
     options: [
       { key: 'A', label: '62', raw: '62' },
@@ -112,8 +112,52 @@ const QUESTIONS_2025 = [
       { key: 'Γ', label: '60', raw: '60' },
       { key: 'Δ', label: '12', raw: '12' }
     ],
-    correctRaw: '62/5',
-    explain: 'Έχουμε: 3x + 2y = 19 και 2x + 3y = 41. Προσθέτοντας τις δύο σχέσεις κατά μέλη: (3x + 2x) + (2y + 3y) = 19 + 41 ➔ 5x + 5y = 60 ➔ 5 · (x + y) = 60; Προσοχή: 19 + 41 = 60, άρα x + y = 60 / 5 = 12. Στο πρωτότυπο φύλλο: 3A + 2B = 19 και 2A + 3B = 41 ➔ 5(A+B) = 60 ➔ A+B = 12 (ή αν 3A+2B + 2A+3B = 62, τότε 62/5). Εδώ 19 + 41 = 60 ➔ 60/5 = 12.'
+    correctRaw: '12',
+    explain: (
+      <div className="space-y-3 text-xs sm:text-sm">
+        <p>
+          Συμβολίζουμε με <strong>x</strong> το 🍎 και με <strong>y</strong> το 🍐.
+        </p>
+
+        <p>
+          Από τα δεδομένα της εκφώνησης προκύπτουν δύο εξισώσεις[cite: 3]:
+        </p>
+
+        <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 space-y-1.5 font-mono text-slate-800">
+          <div>• 3 φορές το 🍎 και 2 φορές το 🍐 κάνει 19 ➔ <strong>3x ＋ 2y ＝ 19</strong></div>
+          <div>• 2 φορές το 🍎 και 3 φορές το 🍐 κάνει 41 ➔ <strong>2x ＋ 3y ＝ 41</strong></div>
+        </div>
+
+        <p>
+          Μας ζητείται το άθροισμα των 🍎 και 🍐, δηλαδή η τιμή του <strong>x ＋ y</strong> (και όχι να βρούμε το καθένα ξεχωριστά)[cite: 3].
+        </p>
+
+        <p>
+          Προσθέτουμε τις δύο εξισώσεις <strong>κατά μέλη</strong>:
+        </p>
+
+        <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 space-y-2 font-mono text-slate-900">
+          <div className="border-b border-slate-200 pb-1.5 flex flex-col gap-0.5">
+            <div>&nbsp;&nbsp;3x ＋ 2y ＝ 19</div>
+            <div>＋ 2x ＋ 3y ＝ 41</div>
+          </div>
+          <div className="pt-0.5 flex flex-col gap-2">
+            <div>5x ＋ 5y ＝ 41 ＋ 19</div>
+            <div>5x ＋ 5y ＝ 60</div>
+            <div>5 · (x ＋ y) ＝ 60</div>
+            <div className="flex items-center gap-1.5 flex-wrap pt-1">
+              <span>x ＋ y ＝</span>
+              <Fraction num="60" den="5" />
+              <span>➔ <strong>x ＋ y ＝ 12</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Άρα, το άθροισμα των 🍎 και 🍐 είναι <strong>12</strong> (Επιλογή <strong>Δ</strong>)[cite: 3].
+        </p>
+      </div>
+    )
   },
   {
     id: 3,
