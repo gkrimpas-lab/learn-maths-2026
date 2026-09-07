@@ -170,7 +170,7 @@ const QUESTIONS_2025 = [
   {
     id: 3,
     officialNumber: 23,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
     promptText: 'Τέσσερα καταστήματα πουλάνε την ίδια μπλούζα στις εκπτώσεις. Σύμφωνα με τον πίνακα που ακολουθεί, σε ποιο κατάστημα η μπλούζα κοστίζει φθηνότερα στις εκπτώσεις;',
     hasTable: 'table23',
     options: [
@@ -180,7 +180,87 @@ const QUESTIONS_2025 = [
       { key: 'Δ', label: 'Του Δημοσθένη', raw: 'Δημοσθένης' }
     ],
     correctRaw: 'Δημοσθένης',
-    explain: 'Υπολογίζουμε την τελική τιμή:\n• Αλίνα: 50 − 20% = 50 − 10 = 40€\n• Βασίλης: 45 − 15% = 45 − 6,75 = 38,25€\n• Γιάννα: 45 − 10% = 45 − 4,50 = 40,50€\n• Δημοσθένης: 40 − 10% = 40 − 4 = 36€.\nΗ χαμηλότερη τιμή είναι 36€ στου Δημοσθένη.'
+    explain: (
+      <div className="space-y-3 text-xs sm:text-sm">
+        <p>
+          Για να βρούμε την τιμή (της έκπτωσης ή της αύξησης) αν γνωρίζουμε το ποσοστό, πολλαπλασιάζουμε πάντα την <strong>αρχική τιμή με το ποσοστό</strong>.
+        </p>
+
+        <p>
+          Βρίσκουμε πρώτα την έκπτωση και στη συνέχεια το τελικό ποσό που θα πληρώσουμε με αφαίρεση:
+        </p>
+
+        <div className="bg-white/80 p-2.5 rounded-xl border border-slate-200/80 font-bold text-center text-slate-800 text-xs sm:text-sm">
+          Τελική Τιμή Πληρωμής ＝ Αρχική Τιμή － Έκπτωση
+        </div>
+
+        <div className="space-y-2.5 bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+          {/* Αλίνα */}
+          <div className="border-b border-slate-100 pb-2 space-y-1">
+            <div className="font-sans font-bold text-slate-950">1. Αλίνα:</div>
+            <div className="flex items-center gap-1.5 flex-wrap pl-2">
+              <span>Έκπτωση ＝ 50 ·</span>
+              <Fraction num="20" den="100" />
+              <span>＝</span>
+              <Fraction num="1000" den="100" />
+              <span>＝ <strong>10€</strong></span>
+            </div>
+            <div className="pl-2 text-slate-700">
+              Τελική Τιμή ＝ 50 － 10 ＝ <strong>40€</strong>
+            </div>
+          </div>
+
+          {/* Βασίλης */}
+          <div className="border-b border-slate-100 pb-2 space-y-1">
+            <div className="font-sans font-bold text-slate-950">2. Βασίλης:</div>
+            <div className="flex items-center gap-1.5 flex-wrap pl-2">
+              <span>Έκπτωση ＝ 45 ·</span>
+              <Fraction num="15" den="100" />
+              <span>＝</span>
+              <Fraction num="675" den="100" />
+              <span>＝ <strong>6,75€</strong></span>
+            </div>
+            <div className="pl-2 text-slate-700">
+              Τελική Τιμή ＝ 45 － 6,75 ＝ <strong>38,25€</strong>
+            </div>
+          </div>
+
+          {/* Γιάννα */}
+          <div className="border-b border-slate-100 pb-2 space-y-1">
+            <div className="font-sans font-bold text-slate-950">3. Γιάννα:</div>
+            <div className="flex items-center gap-1.5 flex-wrap pl-2">
+              <span>Έκπτωση ＝ 45 ·</span>
+              <Fraction num="10" den="100" />
+              <span>＝</span>
+              <Fraction num="450" den="100" />
+              <span>＝ <strong>4,50€</strong></span>
+            </div>
+            <div className="pl-2 text-slate-700">
+              Τελική Τιμή ＝ 45 － 4,50 ＝ <strong>40,50€</strong>
+            </div>
+          </div>
+
+          {/* Δημοσθένης */}
+          <div className="space-y-1 pt-0.5">
+            <div className="font-sans font-bold text-emerald-800">4. Δημοσθένης:</div>
+            <div className="flex items-center gap-1.5 flex-wrap pl-2">
+              <span>Έκπτωση ＝ 40 ·</span>
+              <Fraction num="10" den="100" />
+              <span>＝</span>
+              <Fraction num="400" den="100" />
+              <span>＝ <strong>4€</strong></span>
+            </div>
+            <div className="pl-2 text-emerald-800 font-bold">
+              Τελική Τιμή ＝ 40 － 4 ＝ <strong>36€</strong>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Η χαμηλότερη τιμή είναι τα <strong>36€</strong> στο κατάστημα <strong>του Δημοσθένη</strong> (Επιλογή <strong>Δ</strong>)[cite: 1].
+        </p>
+      </div>
+    )
   },
   {
     id: 4,
