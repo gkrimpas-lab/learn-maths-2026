@@ -703,11 +703,11 @@ const QUESTIONS_2025 = [
 
         <p>
           3. <strong>Επίλυση:</strong><br />
-          Αναλύουμε το 3y σε <strong>2y ＋ y</strong> στην εξίσωση των πόντων:
+          Αναλύουμε το 2x σε <strong>x ＋ x και το 3y σε <strong>y ＋ y ＋ y</strong> στην εξίσωση των πόντων:
         </p>
 
         <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-          <div>2x ＋ 2y ＋ y ＝ 29</div>
+          <div>2x ＋ 3y ＝ 29</div>
           <div>x ＋ x ＋ y ＋ y ＋ y ＝ 29</div>
           <div>x ＋ y ＋ x ＋ y ＋ y ＝ 29</div>
           <div className="text-slate-600 text-xs">// Αντικαθιστούμε το x ＋ y ＝ 12</div>
