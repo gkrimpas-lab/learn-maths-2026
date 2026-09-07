@@ -574,7 +574,7 @@ const QUESTIONS_2025 = [
   {
     id: 9,
     officialNumber: 29,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Οι πλευρές ενός τετραγώνου και ενός τριγώνου είναι όλες ίσες μεταξύ τους. Αν το άθροισμα των περιμέτρων τους είναι 21 εκατοστά, το εμβαδόν του τετραγώνου σε τ. εκ. (τετραγωνικά εκατοστά) είναι:',
     options: [
       { key: 'A', label: '6', raw: '6' },
@@ -583,7 +583,66 @@ const QUESTIONS_2025 = [
       { key: 'Δ', label: '49', raw: '49' }
     ],
     correctRaw: '9',
-    explain: 'Έστω x το κοινό μήκος πλευράς. Το τετράγωνο έχει περίμετρο 4x και το ισόπλευρο τρίγωνο 3x. Συνολική περίμετρος: 4x + 3x = 7x = 21 εκ. ➔ x = 3 εκ. Το εμβαδόν του τετραγώνου είναι x · x = 3 · 3 = 9 τ.εκ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Έστω <strong>x</strong> το κοινό μήκος της πλευράς του τετραγώνου και του τριγώνου. Εφόσον όλες οι πλευρές είναι ίσες, το τρίγωνο είναι <strong>ισόπλευρο</strong>:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ ΤΕΤΡΑΓΩΝΟΥ & ΙΣΟΠΛΕΥΡΟΥ ΤΡΙΓΩΝΟΥ */}
+        <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="320" height="135" viewBox="0 0 320 135" className="select-none font-mono">
+            {/* ΤΕΤΡΑΓΩΝΟ (πλευρά 70px) */}
+            <g>
+              <rect x="35" y="35" width="70" height="70" fill="#f8fafc" stroke="#1e293b" strokeWidth="2" rx="2" />
+              {/* Ετικέτες x στις 4 πλευρές */}
+              <text x="70" y="25" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#2563eb">x</text>
+              <text x="70" y="122" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#2563eb">x</text>
+              <text x="22" y="74" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#2563eb">x</text>
+              <text x="118" y="74" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#2563eb">x</text>
+              <text x="70" y="75" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#64748b" fontFamily="sans-serif">Τετράγωνο</text>
+            </g>
+
+            {/* ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ (βάση 70px, ύψος ≈ 61px) */}
+            <g>
+              <polygon points="235,35 200,96 270,96" fill="#f8fafc" stroke="#1e293b" strokeWidth="2" strokeLinejoin="round" />
+              {/* Ετικέτες x στις 3 πλευρές */}
+              <text x="235" y="115" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#2563eb">x</text>
+              <text x="206" y="58" fontSize="13" fontWeight="bold" textAnchor="end" fill="#2563eb">x</text>
+              <text x="264" y="58" fontSize="13" fontWeight="bold" textAnchor="start" fill="#2563eb">x</text>
+              <text x="235" y="80" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b" fontFamily="sans-serif">Τρίγωνο</text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΥΠΟΛΟΓΙΣΜΟΙ */}
+        <div className="space-y-2 bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+          <div>• <strong>Περίμετρος τετραγώνου (Π₁)</strong> ＝ 4 · x</div>
+          <div>• <strong>Περίμετρος τριγώνου (Π₂)</strong> ＝ 3 · x</div>
+          
+          <div className="pt-2 border-t border-slate-200 space-y-2">
+            <div>Συνολική Περίμετρος ＝ Π₁ ＋ Π₂ ＝ 21[cite: 1]</div>
+            <div>4 · x ＋ 3 · x ＝ 21</div>
+            <div>7 · x ＝ 21</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>x ＝</span>
+              <Fraction num="21" den="7" />
+              <span>➔ <strong>x ＝ 3 εκ.</strong></span>
+            </div>
+          </div>
+        </div>
+
+        {/* ΕΜΒΑΔΟΝ */}
+        <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+          <div className="font-sans font-bold text-slate-950">Εμβαδόν τετραγώνου:</div>
+          <div>Ε ＝ πλευρά · πλευρά ＝ x · x ＝ 3 · 3 ＝ <strong className="text-emerald-700 text-base">9 τ. εκ.</strong></div>
+        </div>
+
+        <p className="pt-1">
+          Άρα, το εμβαδόν του τετραγώνου είναι <strong>9 τ. εκ.</strong> (Επιλογή <strong>Β</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 10,
