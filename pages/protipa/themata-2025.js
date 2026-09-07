@@ -1210,9 +1210,6 @@ const QUESTIONS_2025 = [
             <div>4 γωνίες (4 × 0,25) ＝ <strong>1 επιπλέον τετράγωνο</strong></div>
           </div>
         </div>
-        <p>
-          Όπως παρατηρούμε, τα 4 χρωματιστά τρίγωνα των γωνιών κουμπώνουν ακριβώς στις 4 εσοχές. Συνεπώς, το μεγάλο εξωτερικό τετράγωνο περιέχει ακριβώς <strong>5 ίσα τετράγωνα</strong>.
-        </p>
 
         <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
           <div>• Εμβαδόν μεγάλου τετραγώνου ＝ <strong>4 τ. εκ.</strong></div>
