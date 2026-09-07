@@ -662,7 +662,7 @@ const QUESTIONS_2025 = [
   {
     id: 11,
     officialNumber: 31,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Ένας καλαθοσφαιριστής έκανε 20 σουτ, δύο και τριών πόντων, και ευστόχησε κατά 60%, με αποτέλεσμα να πετύχει 29 πόντους. Πόσα εύστοχα τρίποντα είχε;',
     options: [
       { key: 'A', label: '7', raw: '7' },
@@ -672,7 +672,54 @@ const QUESTIONS_2025 = [
       { key: 'E', label: '5', raw: '5' }
     ],
     correctRaw: '5',
-    explain: 'Συνολικά εύστοχα σουτ: 60% των 20 = 0,60 · 20 = 12 σουτ. Έστω d τα δίποντα και t τα τρίποντα: d + t = 12 και 2d + 3t = 29. Αν όλα ήταν δίποντα, θα είχε 12 · 2 = 24 πόντους. Οι 29 − 24 = 5 επιπλέον πόντοι προέρχονται από τα 5 τρίποντα.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          1. <strong>Εύρεση συνολικών εύστοχων σουτ:</strong><br />
+          Ο καλαθοσφαιριστής έκανε 20 σουτ και ευστόχησε στο 60% αυτών.
+        </p>
+
+        <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
+          <span>Εύστοχα σουτ ＝ 20 ·</span>
+          <Fraction num="60" den="100" />
+          <span>＝ 20 · 0,60 ＝ <strong>12 εύστοχα σουτ</strong></span>
+        </div>
+
+        <p>
+          2. <strong>Δημιουργία εξισώσεων:</strong><br />
+          Ορίζουμε άγνωστους απευθείας στα <em>εύστοχα</em> σουτ:
+        </p>
+
+        <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 space-y-1.5 font-mono text-slate-900">
+          <div>• Έστω <strong>x</strong> ο αριθμός των <strong>εύστοχων δίποντων</strong>.</div>
+          <div>• Έστω <strong>y</strong> ο αριθμός των <strong>εύστοχων τρίποντων</strong>.</div>
+          <div className="pt-1 text-slate-700">
+            Σύνολο εύστοχων: <strong>x ＋ y ＝ 12</strong> (1)
+          </div>
+          <div className="text-slate-700">
+            Σύνολο πόντων: <strong>2x ＋ 3y ＝ 29</strong> (2)
+          </div>
+        </div>
+
+        <p>
+          3. <strong>Επίλυση:</strong><br />
+          Αναλύουμε το 3y σε <strong>2y ＋ y</strong> στην εξίσωση των πόντων:
+        </p>
+
+        <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+          <div>2x ＋ 2y ＋ y ＝ 29</div>
+          <div>2 · (x ＋ y) ＋ y ＝ 29</div>
+          <div className="text-slate-600 text-xs">// Αντικαθιστούμε το x ＋ y ＝ 12</div>
+          <div>2 · 12 ＋ y ＝ 29</div>
+          <div>24 ＋ y ＝ 29</div>
+          <div>y ＝ 29 － 24 ➔ <strong className="text-emerald-700 text-base">y ＝ 5</strong></div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο καλαθοσφαιριστής είχε <strong>5 εύστοχα τρίποντα</strong> (Επιλογή <strong>E</strong>).
+        </p>
+      </div>
+    )
   },
     {
     id: 12,
