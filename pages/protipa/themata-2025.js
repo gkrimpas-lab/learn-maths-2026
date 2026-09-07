@@ -751,7 +751,57 @@ const QUESTIONS_2025 = [
       { key: 'E', label: '5', raw: '5' }
     ],
     correctRaw: '3',
-    explain: 'Έστω x ο αριθμός του βήματος 1 και y ο αριθμός του βήματος 3. Στο βήμα 2 έχουμε 2x και στο βήμα 4 έχουμε 2x + y. Επομένως:\n• Βήμα 5: 2x + y = 11\n• Βήμα 6: x · y = 15\n\nΟι πιθανοί ακέραιοι παράγοντες του 15 είναι (1, 15), (3, 5), (5, 3), (15, 1). Ελέγχουμε:\n• Για x = 3 και y = 5: 2 · 3 + 5 = 6 + 5 = 11 (επαληθεύεται).\nΆρα ο αριθμός που έδωσε ο χρήστης στο βήμα 1 είναι το 3.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Συμβολίζουμε με <strong>x</strong> τον ακέραιο αριθμό στο Βήμα 1 και με <strong>y</strong> τον ακέραιο αριθμό στο Βήμα 3.
+        </p>
+
+        <p>
+          Ακολουθούμε αναλυτικά τα βήματα της εφαρμογής:
+        </p>
+
+        <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+          <div>• <strong>Βήμα 1:</strong> x</div>
+          <div>• <strong>Βήμα 2:</strong> 2 · x <span className="text-slate-500 font-sans text-xs">(διπλασιασμός του x)</span></div>
+          <div>• <strong>Βήμα 3:</strong> y</div>
+          <div>• <strong>Βήμα 4:</strong> y ＋ 2 · x</div>
+          <div>• <strong>Βήμα 5:</strong> Εκτύπωσε: <strong>y ＋ 2 · x ＝ 11</strong></div>
+          <div>• <strong>Βήμα 6:</strong> Εκτύπωσε: <strong>x · y ＝ 15</strong></div>
+        </div>
+
+        <p>
+          Έχουμε λοιπόν δύο σχέσεις που πρέπει να ικανοποιούνται <strong>ταυτόχρονα</strong>:
+        </p>
+
+        <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+          <div>(1) y ＋ 2 · x ＝ 11</div>
+          <div>(2) x · y ＝ 15</div>
+        </div>
+
+        <p>
+          Εξετάζουμε τους συνδυασμούς <strong>ακέραιων αριθμών</strong> για τη σχέση (2):
+        </p>
+
+        <div className="space-y-2 bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span>• Για <strong>x ＝ 1</strong>, <strong>y ＝ 15</strong>:</span>
+            <span className="text-rose-700">15 ＋ 2 · 1 ＝ 17 ≠ 11</span>
+            <span className="text-rose-600 font-sans text-xs">(απορρίπτεται)</span>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap pt-1">
+            <span>• Για <strong>x ＝ 3</strong>, <strong>y ＝ 5</strong>:</span>
+            <span className="text-emerald-700 font-bold">5 ＋ 2 · 3 ＝ 5 ＋ 6 ＝ 11</span>
+            <span className="text-emerald-600 font-sans text-xs">(επαληθεύεται!)</span>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Άρα, ο αριθμός <strong>x</strong> που έδωσε ο χρήστης στο Βήμα 1 είναι το <strong>3</strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 13,
