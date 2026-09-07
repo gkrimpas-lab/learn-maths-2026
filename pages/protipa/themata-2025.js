@@ -621,7 +621,7 @@ const QUESTIONS_2025 = [
           <div>• <strong>Περίμετρος τριγώνου (Π₂)</strong> ＝ 3 · x</div>
           
           <div className="pt-2 border-t border-slate-200 space-y-2">
-            <div>Συνολική Περίμετρος ＝ Π₁ ＋ Π₂ ＝ 21[cite: 1]</div>
+            <div>Συνολική Περίμετρος ＝ Π₁ ＋ Π₂ ＝ 21</div>
             <div>4 · x ＋ 3 · x ＝ 21</div>
             <div>7 · x ＝ 21</div>
             <div className="flex items-center gap-1.5 flex-wrap">
