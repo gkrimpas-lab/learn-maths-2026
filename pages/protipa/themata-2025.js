@@ -806,7 +806,7 @@ const QUESTIONS_2025 = [
  {
     id: 13,
     officialNumber: 33,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Για την παρασκευή ενός φρουτοχυμού χρειάζονται 4 ποτήρια χυμού πορτοκαλιού, 11 ποτήρια χυμού μήλου και 13 ποτήρια χυμού αχλαδιού. Για την παρασκευή μεγαλύτερης ποσότητας φρουτοχυμού με την ίδια αναλογία συστατικών, για ένα πάρτι, τα ποτήρια χυμού αχλαδιού που χρησιμοποιήσαμε ήταν κατά 45 περισσότερα από τα ποτήρια χυμού πορτοκαλιού. Πόσα ποτήρια χυμού μήλου χρησιμοποιήσαμε;',
     options: [
       { key: 'A', label: '20', raw: '20' },
@@ -819,13 +819,13 @@ const QUESTIONS_2025 = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Η αρχική αναλογία συστατικών για τον φρουτοχυμό είναι[cite: 1]:
+          Η αρχική αναλογία συστατικών για τον φρουτοχυμό είναι:
         </p>
 
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-          <div>• <strong>4</strong> ποτήρια χυμού πορτοκαλιού[cite: 1]</div>
-          <div>• <strong>11</strong> ποτήρια χυμού μήλου[cite: 1]</div>
-          <div>• <strong>13</strong> ποτήρια χυμού αχλαδιού[cite: 1]</div>
+          <div>• <strong>4</strong> ποτήρια χυμού πορτοκαλιού</div>
+          <div>• <strong>11</strong> ποτήρια χυμού μήλου</div>
+          <div>• <strong>13</strong> ποτήρια χυμού αχλαδιού</div>
         </div>
 
         {/* 1ος ΤΡΟΠΟΣ */}
@@ -835,11 +835,11 @@ const QUESTIONS_2025 = [
           </div>
 
           <p className="text-slate-800">
-            Έστω <strong>x</strong> τα τελικά ποτήρια χυμού πορτοκαλιού. Τότε τα ποτήρια χυμού αχλαδιού είναι <strong>x ＋ 45</strong>[cite: 1].
+            Έστω <strong>x</strong> τα τελικά ποτήρια χυμού πορτοκαλιού. Τότε τα ποτήρια χυμού αχλαδιού είναι <strong>x ＋ 45</strong>.
           </p>
 
           <p className="text-slate-700 font-medium">
-            Επειδή η αναλογία διατηρείται σταθερή[cite: 1]:
+            Επειδή η αναλογία διατηρείται σταθερή:
           </p>
 
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
@@ -869,7 +869,7 @@ const QUESTIONS_2025 = [
           </div>
 
           <p className="text-slate-800 pt-1">
-            Έχουμε λοιπόν <strong>20</strong> ποτήρια πορτοκαλιού (και 20 ＋ 45 ＝ 65 αχλαδιού)[cite: 1]. Υπολογίζουμε τα ποτήρια χυμού μήλου (έστω <strong>m</strong>):
+            Έχουμε λοιπόν <strong>20</strong> ποτήρια πορτοκαλιού (και 20 ＋ 45 ＝ 65 αχλαδιού). Υπολογίζουμε τα ποτήρια χυμού μήλου (έστω <strong>m</strong>):
           </p>
 
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
@@ -894,19 +894,19 @@ const QUESTIONS_2025 = [
 
           <ul className="space-y-1.5 pl-4 sm:pl-5 text-slate-800 list-disc font-medium">
             <li>
-              Η διαφορά σε μερίδια μεταξύ αχλαδιού και πορτοκαλιού είναι: <strong>13 － 4 ＝ 9 μερίδια</strong>[cite: 1].
+              Η διαφορά σε μερίδια μεταξύ αχλαδιού και πορτοκαλιού είναι: <strong>13 － 4 ＝ 9 μερίδια</strong>.
             </li>
             <li>
-              Τα 9 μερίδια αντιστοιχούν σε 45 ποτήρια[cite: 1], άρα το 1 μερίδιο είναι: <strong>45 : 9 ＝ 5 ποτήρια</strong>.
+              Τα 9 μερίδια αντιστοιχούν σε 45 ποτήρια, άρα το 1 μερίδιο είναι: <strong>45 : 9 ＝ 5 ποτήρια</strong>.
             </li>
             <li>
-              Τα ποτήρια χυμού μήλου αντιστοιχούν σε 11 μερίδια[cite: 1]: <strong>11 · 5 ＝ 55 ποτήρια</strong>.
+              Τα ποτήρια χυμού μήλου αντιστοιχούν σε 11 μερίδια: <strong>11 · 5 ＝ 55 ποτήρια</strong>.
             </li>
           </ul>
         </div>
 
         <p className="pt-1">
-          Συνεπώς, χρησιμοποιήσαμε <strong>55 ποτήρια</strong> χυμού μήλου (Επιλογή <strong>Β</strong>)[cite: 1].
+          Συνεπώς, χρησιμοποιήσαμε <strong>55 ποτήρια</strong> χυμού μήλου (Επιλογή <strong>Β</strong>).
         </p>
       </div>
     )
