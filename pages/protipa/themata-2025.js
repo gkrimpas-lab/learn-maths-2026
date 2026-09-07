@@ -354,7 +354,7 @@ const QUESTIONS_2025 = [
   {
     id: 6,
     officialNumber: 26,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
     promptText: (
       <span>
         Ποιος αριθμός από τους επόμενους είναι πιο κοντά στο{' '}
@@ -369,7 +369,97 @@ const QUESTIONS_2025 = [
       { key: 'Δ', label: '1', raw: '1' }
     ],
     correctRaw: '1',
-    explain: 'Το μέσο μεταξύ του 1/4 και του 1/2 είναι το 3/8 (0,375). Κάθε αριθμός μεγαλύτερος του 0,375 είναι πιο κοντά στο 1/2. Το 1 απέχει |1 − 0,5| = 0,5 από το 1/2 και |1 − 0,25| = 0,75 από το 1/4, άρα είναι πιο κοντά στο 1/2.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Για να συγκρίνουμε τις αποστάσεις των αριθμών από το{' '}
+          <Fraction num="1" den="4" /> και το{' '}
+          <Fraction num="1" den="2" />, υπολογίζουμε αρχικά το <strong>μέσο</strong> τους (το σημείο που ισαπέχει ακριβώς και από τα δύο):
+        </p>
+
+        <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
+          <span>Μέσο ＝ (</span>
+          <Fraction num="1" den="4" />
+          <span>＋</span>
+          <Fraction num="1" den="2" />
+          <span>) : 2 ＝ (</span>
+          <Fraction num="1" den="4" />
+          <span>＋</span>
+          <Fraction num="2" den="4" />
+          <span>) : 2 ＝</span>
+          <Fraction num="3" den="4" />
+          <span>: 2 ＝ <strong><Fraction num="3" den="8" /> (＝ 0,375)</strong></span>
+        </div>
+
+        {/* ΑΡΙΘΜΟΓΡΑΜΜΗ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 overflow-x-auto my-2">
+          <svg width="420" height="120" viewBox="0 0 420 120" className="select-none mx-auto block font-mono">
+            <defs>
+              <marker id="arrow-axis" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
+              </marker>
+            </defs>
+
+            {/* Άξονας αριθμών: x = 0 αντιστοιχεί σε 0px (x=30), x = 1 αντιστοιχεί σε 340px (x=370) */}
+            <line x1="20" y1="58" x2="395" y2="58" stroke="#334155" strokeWidth="2" markerEnd="url(#arrow-axis)" />
+
+            {/* Σημεία αναφοράς 1/4, 3/8 (μέσο), 1/2 */}
+            {/* 0 -> 30 */}
+            <line x1="30" y1="50" x2="30" y2="66" stroke="#94a3b8" strokeWidth="1.5" />
+            <text x="30" y="82" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#64748b">0</text>
+
+            {/* 1/6 ≈ 0.167 -> x = 30 + 340*0.1667 = 87 */}
+            <circle cx="87" cy="58" r="4" fill="#64748b" />
+            <text x="87" y="38" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">1/6</text>
+
+            {/* 1/5 = 0.200 -> x = 30 + 340*0.20 = 98 */}
+            <circle cx="98" cy="58" r="4" fill="#64748b" />
+            <text x="98" y="82" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">1/5</text>
+
+            {/* 1/4 = 0.250 -> x = 30 + 340*0.25 = 115 */}
+            <circle cx="115" cy="58" r="5" fill="#2563eb" />
+            <text x="115" y="38" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1d4ed8">1/4</text>
+
+            {/* Μέσο 3/8 = 0.375 -> x = 30 + 340*0.375 = 157.5 */}
+            <line x1="157.5" y1="46" x2="157.5" y2="70" stroke="#d97706" strokeWidth="2" strokeDasharray="3 2" />
+            <circle cx="157.5" cy="58" r="4.5" fill="#f59e0b" />
+            <text x="157.5" y="86" fontSize="10" fontWeight="black" textAnchor="middle" fill="#b45309">3/8 (μέσο)</text>
+
+            {/* 1/2 = 0.500 -> x = 30 + 340*0.50 = 200 */}
+            <circle cx="200" cy="58" r="5" fill="#2563eb" />
+            <text x="200" y="38" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1d4ed8">1/2</text>
+
+            {/* 1 = 1.000 -> x = 30 + 340*1.00 = 370 */}
+            <circle cx="370" cy="58" r="5" fill="#15803d" />
+            <text x="370" y="38" fontSize="12" fontWeight="black" textAnchor="middle" fill="#15803d">1</text>
+            <text x="370" y="82" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#15803d">1</text>
+          </svg>
+        </div>
+
+        <p>
+          <strong>Συμπέρασμα από την αριθμογραμμή:</strong>
+        </p>
+
+        <ul className="space-y-1.5 pl-4 sm:pl-5 text-slate-800 list-disc font-medium">
+          <li>
+            Το <strong><Fraction num="3" den="8" /></strong> βρίσκεται ακριβώς στη μέση των <Fraction num="1" den="4" /> και <Fraction num="1" den="2" />, επομένως <strong>ισαπέχει</strong> και από τα δύο.
+          </li>
+          <li>
+            Οι αριθμοί <strong><Fraction num="1" den="6" /></strong> και <strong><Fraction num="1" den="5" /></strong> είναι μικρότεροι από το <Fraction num="1" den="4" />, άρα βρίσκονται σαφώς πιο κοντά στο <Fraction num="1" den="4" />.
+          </li>
+          <li>
+            Οποιοσδήποτε αριθμός βρίσκεται <strong>δεξιότερα από το μέσο <Fraction num="3" den="8" /></strong> είναι πιο κοντά στο <Fraction num="1" den="2" /> από ό,τι στο <Fraction num="1" den="4" />.
+          </li>
+          <li>
+            Ο αριθμός <strong>1</strong> έχει απόσταση από το <Fraction num="1" den="2" /> ίση με <strong>0,5</strong>, ενώ από το <Fraction num="1" den="4" /> απέχει <strong>0,75</strong>.
+          </li>
+        </ul>
+
+        <p className="pt-1">
+          Επομένως, ο αριθμός που είναι πιο κοντά στο <Fraction num="1" den="2" /> από ό,τι στο <Fraction num="1" den="4" /> είναι το <strong>1</strong> (Επιλογή <strong>Δ</strong>)[cite: 1].
+        </p>
+      </div>
+    )
   },
   {
     id: 7,
