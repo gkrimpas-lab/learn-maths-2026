@@ -1157,7 +1157,178 @@ const QUESTIONS_2025 = [
       { key: 'E', label: 'Κανένα από τα προηγούμενα', raw: 'none' }
     ],
     correctRaw: '0.8',
-    explain: 'Το μεγάλο τετράγωνο μπορεί να καλυφθεί από ένα πλέγμα 5 ίσων τετραγώνων υπό γωνία (όπως στον σταυρό του Πυθαγόρα) όπου το μεγάλο τετράγωνο περιέχει ακριβώς 5 τέτοια μικρά τετράγωνα. Άρα το εμβαδόν καθενός είναι 4 : 5 = 0,8 τ.εκ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Η διάταξη των 5 ίσων τετραγώνων σχηματίζει τον λεγόμενο <strong>Σταυρό του Πυθαγόρα</strong>.
+        </p>
+
+        {/* INLINE ANIMATION ΑΠΕΥΘΕΙΑΣ ΜΕΣΑ ΣΤΟ EXPLAIN */}
+        {(() => {
+          const CrossAnimation = () => {
+            const [progress, setProgress] = React.useState(0);
+            const [isPlaying, setIsPlaying] = React.useState(false);
+
+            React.useEffect(() => {
+              let animFrame;
+              let lastTime;
+
+              const animate = (currentTime) => {
+                if (!lastTime) lastTime = currentTime;
+                const delta = (currentTime - lastTime) / 1000;
+                lastTime = currentTime;
+
+                setProgress((prev) => {
+                  const next = prev + delta * 0.45;
+                  if (next >= 1) {
+                    setIsPlaying(false);
+                    return 1;
+                  }
+                  return next;
+                });
+
+                if (isPlaying) {
+                  animFrame = requestAnimationFrame(animate);
+                }
+              };
+
+              if (isPlaying) {
+                animFrame = requestAnimationFrame(animate);
+              }
+              return () => cancelAnimationFrame(animFrame);
+            }, [isPlaying]);
+
+            const togglePlay = () => {
+              if (progress >= 1) setProgress(0);
+              setIsPlaying(!isPlaying);
+            };
+
+            // Διαστάσεις: Πλέγμα 200x200
+            // Σταυρός: 5 ίσα τετράγωνα με πλευρά s = 200 / sqrt(5) ≈ 89.44px
+            // Γωνίες σταυρού και διανύσματα μετατόπισης των 4 τριγώνων στις εσοχές:
+            const triangles = [
+              // Πάνω γωνία -> μπαίνει στην πάνω-δεξιά εσοχή
+              { points: '0,0 80,0 0,40', fill: '#fbbf24', stroke: '#d97706', dx: 80 * progress, dy: 120 * progress },
+              // Δεξιά γωνία -> μπαίνει στην κάτω-δεξιά εσοχή
+              { points: '200,0 200,80 160,0', fill: '#34d399', stroke: '#059669', dx: -120 * progress, dy: 80 * progress },
+              // Κάτω γωνία -> μπαίνει στην κάτω-αριστερή εσοχή
+              { points: '200,200 120,200 200,160', fill: '#38bdf8', stroke: '#0284c7', dx: -80 * progress, dy: -120 * progress },
+              // Αριστερή γωνία -> μπαίνει στην πάνω-αριστερή εσοχή
+              { points: '0,200 0,120 40,200', fill: '#f87171', stroke: '#dc2626', dx: 120 * progress, dy: -80 * progress }
+            ];
+
+            return (
+              <div className="flex flex-col items-center bg-white/90 p-4 rounded-2xl border border-slate-200 shadow-sm my-3 select-none">
+                <div className="text-center mb-2">
+                  <span className="font-bold text-slate-800 text-xs sm:text-sm block">
+                    Οπτική Απόδειξη Ισοδυναμίας
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    {progress < 0.1
+                      ? 'Αρχικό: Μεγάλο τετράγωνο (4 τ.εκ.) με τα 4 γωνιακά τρίγωνα'
+                      : progress > 0.95
+                      ? 'Τελικό: Τα 4 τρίγωνα γέμισαν τις εσοχές ➔ Ακριβώς 5 ίσα τετράγωνα!'
+                      : 'Μετακίνηση των γωνιακών τριγώνων στις εσοχές...'}
+                  </span>
+                </div>
+
+                <div className="relative bg-slate-50 rounded-xl border border-slate-200 p-2 shadow-inner">
+                  <svg width="240" height="240" viewBox="-10 -10 220 220" className="mx-auto block">
+                    {/* Μεγάλο αρχικό τετράγωνο */}
+                    <rect x="0" y="0" width="200" height="200" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4 4" />
+
+                    {/* Κεντρικό σκιασμένο τετράγωνο */}
+                    <polygon
+                      points="60,60 140,20 180,100 100,140"
+                      fill="#bae6fd"
+                      stroke="#0284c7"
+                      strokeWidth="2"
+                    />
+                    <text x="120" y="85" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="sans-serif">
+                      Σκιασμένο
+                    </text>
+
+                    {/* Τα υπόλοιπα 4 τετράγωνα του σταυρού (πυρήνας) */}
+                    <polygon points="80,0 160,40 140,80 60,40" fill="#f1f5f9" stroke="#64748b" strokeWidth="1.2" opacity="0.6" />
+                    <polygon points="140,20 200,80 160,160 100,100" fill="#f1f5f9" stroke="#64748b" strokeWidth="1.2" opacity="0.6" />
+                    <polygon points="60,120 140,160 120,200 40,160" fill="#f1f5f9" stroke="#64748b" strokeWidth="1.2" opacity="0.6" />
+                    <polygon points="0,80 60,20 100,100 40,160" fill="#f1f5f9" stroke="#64748b" strokeWidth="1.2" opacity="0.6" />
+
+                    {/* Τα 4 γωνιακά ορθογώνια τρίγωνα που κινούνται */}
+                    {triangles.map((t, idx) => (
+                      <g key={idx} transform={`translate(${t.dx}, ${t.dy})`}>
+                        <polygon
+                          points={t.points}
+                          fill={t.fill}
+                          stroke={t.stroke}
+                          strokeWidth="1.5"
+                          strokeLinejoin="round"
+                          fillOpacity="0.85"
+                        />
+                      </g>
+                    ))}
+                  </svg>
+                </div>
+
+                {/* Χειριστήρια Play / Pause / Slider */}
+                <div className="w-full flex items-center justify-between gap-3 mt-3">
+                  <button
+                    type="button"
+                    onClick={togglePlay}
+                    className={`px-3.5 py-1.5 rounded-xl font-bold text-xs text-white transition-all shadow-sm ${
+                      isPlaying ? 'bg-amber-600 hover:bg-amber-700' : 'bg-emerald-600 hover:bg-emerald-700'
+                    }`}
+                  >
+                    {isPlaying ? 'Παύση ⏸' : progress >= 1 ? 'Επανάληψη ↺' : 'Αναπαραγωγή ▶'}
+                  </button>
+
+                  <div className="flex-1 flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={progress}
+                      onChange={(e) => {
+                        setIsPlaying(false);
+                        setProgress(parseFloat(e.target.value));
+                      }}
+                      className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                    />
+                    <span className="text-[10px] font-mono font-bold text-slate-500 w-8 text-right">
+                      {Math.round(progress * 100)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          return <CrossAnimation />;
+        })()}
+
+        <p>
+          Όπως βλέπουμε στο animation, τα 4 χρωματιστά τρίγωνα των γωνιών καλύπτουν ακριβώς τις 4 εσοχές του σταυρού. Συνεπώς, το μεγάλο εξωτερικό τετράγωνο έχει εμβαδόν ίσο με <strong>5 τέτοια ίσα τετράγωνα</strong>.
+        </p>
+
+        <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+          <div>• Εμβαδόν μεγάλου τετραγώνου ＝ <strong>4 τ. εκ.</strong></div>
+          <div>• Πλήθος ίσων τετραγώνων ＝ <strong>5</strong></div>
+
+          <div className="pt-2 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
+            <span>Εμβαδόν σκιασμένου τετραγώνου ＝</span>
+            <Fraction num="4" den="5" />
+            <span>＝</span>
+            <Fraction num="8" den="10" />
+            <span>＝ <strong className="text-emerald-700 text-base">0,8 τ. εκ.</strong></span>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Άρα, το εμβαδόν του σκιασμένου τετραγώνου είναι <strong>0,8 τ. εκ.</strong> (Επιλογή <strong>B</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 17,
