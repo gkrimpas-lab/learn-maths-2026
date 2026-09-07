@@ -1163,73 +1163,47 @@ const QUESTIONS_2025 = [
           Η διάταξη των 5 ίσων τετραγώνων σχηματίζει τον λεγόμενο <strong>Σταυρό του Πυθαγόρα</strong>.
         </p>
 
-        {/* ΚΑΘΑΡΟ, ΓΕΩΜΕΤΡΙΚΑ ΑΚΡΙΒΕΣ ΣΧΗΜΑ ΑΝΑΛΥΣΗΣ */}
         <div className="flex flex-col items-center bg-white/95 p-4 rounded-2xl border border-slate-200 shadow-sm my-3 select-none">
           <div className="text-center mb-2">
             <span className="font-bold text-slate-900 text-xs sm:text-sm block">
-              Γεωμετρική Ανάλυση σε Πλέγμα 4×4
+              Γεωμετρική Ανάλυση Σχήματος
             </span>
             <span className="text-[11px] text-slate-500 font-medium">
-              Ο σταυρός (5 τετράγωνα) καλύπτει ισοδύναμα ολόκληρη την επιφάνεια
+              5 ίσα λοξά τετράγωνα ＋ 4 γωνιακά τρίγωνα (που ισούνται με ακόμα 1 μικρό τετράγωνο... αλλά στην πραγματικότητα τα 5 τετράγωνα γεμίζουν όλο το εμβαδόν)
             </span>
           </div>
 
-          <div className="relative bg-slate-50 rounded-xl border border-slate-200 p-2 shadow-inner">
-            <svg width="240" height="240" viewBox="0 0 200 200" className="mx-auto block font-sans">
-              {/* Εξωτερικό Μεγάλο Τετράγωνο (4 τ.εκ.) */}
-              <rect x="0" y="0" width="200" height="200" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
+          <div className="relative bg-slate-50 rounded-xl border border-slate-200 p-3 shadow-inner">
+            <svg width="220" height="220" viewBox="0 0 200 200" className="mx-auto block font-sans">
+              {/* Εξωτερικό Τετράγωνο (Εμβαδόν = 4) */}
+              <rect x="10" y="10" width="180" height="180" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
 
-              {/* Βοηθητικό πλέγμα 4x4 (διακεκομμένο) */}
-              <line x1="50" y1="0" x2="50" y2="200" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
-              <line x1="100" y1="0" x2="100" y2="200" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
-              <line x1="150" y1="0" x2="150" y2="200" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
-              <line x1="0" y1="50" x2="200" y2="50" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
-              <line x1="0" y1="100" x2="200" y2="100" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
-              <line x1="0" y1="150" x2="200" y2="150" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
+              {/* 1. ΠΑΝΩ-ΑΡΙΣΤΕΡΑ ΤΕΤΡΑΓΩΝΟ */}
+              <polygon points="10,70 70,10 100,40 40,100" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
 
-              {/* 4 Περιφερειακά Τετράγωνα του Σταυρού */}
-              <rect x="50" y="0" width="100" height="50" fill="#f8fafc" stroke="#334155" strokeWidth="1.5" />
-              <rect x="150" y="50" width="50" height="100" fill="#f8fafc" stroke="#334155" strokeWidth="1.5" />
-              <rect x="50" y="150" width="100" height="50" fill="#f8fafc" stroke="#334155" strokeWidth="1.5" />
-              <rect x="0" y="50" width="50" height="100" fill="#f8fafc" stroke="#334155" strokeWidth="1.5" />
+              {/* 2. ΠΑΝΩ-ΔΕΞΙΑ ΤΕΤΡΑΓΩΝΟ */}
+              <polygon points="130,10 190,70 160,100 100,40" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
 
-              {/* Κεντρικό Σκιασμένο Τετράγωνο */}
-              <rect x="50" y="50" width="100" height="100" fill="#0284c7" fillOpacity="0.25" stroke="#0284c7" strokeWidth="2.5" />
-              <text x="100" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0369a1">
-                Σκιασμένο
+              {/* 3. ΚΑΤΩ-ΔΕΞΙΑ ΤΕΤΡΑΓΩΝΟ */}
+              <polygon points="160,100 190,130 130,190 100,160" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
+
+              {/* 4. ΚΑΤΩ-ΑΡΙΣΤΕΡΑ ΤΕΤΡΑΓΩΝΟ */}
+              <polygon points="40,100 100,160 70,190 10,130" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
+
+              {/* 5. ΚΕΝΤΡΙΚΟ ΣΚΙΑΣΜΕΝΟ ΤΕΤΡΑΓΩΝΟ */}
+              <polygon points="100,40 160,100 100,160 40,100" fill="#64748b" stroke="#0f172a" strokeWidth="2.5" />
+
+              <text x="100" y="104" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                0,8
               </text>
-              <text x="100" y="112" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
-                Τετράγωνο
-              </text>
-
-              {/* 4 Γωνιακά Τετράγωνα με διαγώνιο για οπτικοποίηση μεταφοράς */}
-              <g stroke="#94a3b8" strokeWidth="1.2">
-                {/* Πάνω Αριστερά */}
-                <rect x="0" y="0" width="50" height="50" fill="#fef3c7" fillOpacity="0.6" />
-                <line x1="0" y1="0" x2="50" y2="50" stroke="#d97706" strokeWidth="1.5" strokeDasharray="2 2" />
-
-                {/* Πάνω Δεξιά */}
-                <rect x="150" y="0" width="50" height="50" fill="#dcfce7" fillOpacity="0.6" />
-                <line x1="200" y1="0" x2="150" y2="50" stroke="#16a34a" strokeWidth="1.5" strokeDasharray="2 2" />
-
-                {/* Κάτω Δεξιά */}
-                <rect x="150" y="150" width="50" height="50" fill="#e0f2fe" fillOpacity="0.6" />
-                <line x1="200" y1="200" x2="150" y2="150" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="2 2" />
-
-                {/* Κάτω Αριστερά */}
-                <rect x="0" y="150" width="50" height="50" fill="#fee2e2" fillOpacity="0.6" />
-                <line x1="0" y1="200" x2="50" y2="150" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="2 2" />
-              </g>
-
-              {/* Περίγραμμα Σταυρού */}
-              <path
-                d="M 50,0 L 150,0 L 150,50 L 200,50 L 200,150 L 150,150 L 150,200 L 50,200 L 50,150 L 0,150 L 0,50 L 50,50 Z"
-                fill="none"
-                stroke="#0f172a"
-                strokeWidth="2.2"
-              />
             </svg>
           </div>
+
+          <div className="text-[12px] text-slate-700 font-mono text-center mt-2.5 space-y-1">
+            <div>Μεγάλο τετράγωνο ＝ <strong>4 τ. εκ.</strong></div>
+            <div>Εμβαδόν 1 τετραγώνου ＝ 4 : 5 ＝ <strong className="text-emerald-700">0,8 τ. εκ.</strong></div>
+          </div>
+        </div>
 
           <div className="text-[11px] text-slate-600 font-mono text-center mt-2 space-y-0.5">
             <div>Σταυρός ＝ <strong>5 ίσα τετράγωνα</strong></div>
