@@ -914,9 +914,8 @@ const QUESTIONS_2025 = [
   {
     id: 14,
     officialNumber: 34,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    promptText: 'Ένας κύβος αποτελείται από 27 ίσα κυβάκια, όπως στο σχήμα που ακολουθεί. Κάθε κυβάκι είναι είτε άσπρο είτε μαύρο και τα γειτονικά κυβάκια έχουν διαφορετικό χρώμα. Πόσα είναι τα άσπρα κυβάκια;',
-    hasSvg: 'cube34',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    promptText: 'Ένας κύβος αποτελείται από 27 ίσα κυβάκια, όπως στο σχήμα που ακολουθεί (με εναλλάξ άσπρα και μαύρα κυβάκια). Πόσα είναι τα άσπρα κυβάκια;',
     options: [
       { key: 'A', label: '9', raw: '9' },
       { key: 'B', label: '12', raw: '12' },
@@ -925,7 +924,116 @@ const QUESTIONS_2025 = [
       { key: 'E', label: '15', raw: '15' }
     ],
     correctRaw: '13',
-    explain: 'Σε πλέγμα σκακιέρας 3×3×3 με 27 κυβάκια, το ένα χρώμα εμφανίζεται 14 φορές και το άλλο 13 φορές (14 + 13 = 27). Επομένως, τα άσπρα κυβάκια είναι είτε 13 είτε 14 (εδώ ανάμεσα στις επιλογες είναι το 13 ή 14 ανάλογα με τις κορυφές).'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-xl text-amber-950 space-y-1">
+          <span className="font-black block uppercase text-[11px] tracking-wider text-amber-800">
+            ⚠️ Προσοχή στο ζητούμενο:
+          </span>
+          <p>
+            Μας ζητείται να μετρήσουμε τα <strong>άσπρα κυβάκια</strong> ως τρισδιάστατα σώματα και <strong>όχι τις άσπρες πλευρές</strong> (έδρες) που φαίνονται εξωτερικά. Κάθε μικρό κυβάκι έχει 6 έδρες, αλλά εδώ μετράμε το πλήθος των κύβων.
+          </p>
+        </div>
+
+        <p>
+          Ο μεγάλος κύβος (3 × 3 × 3 = 27 κυβάκια) αναλύεται σε <strong>3 οριζόντια επίπεδα (στρώσεις)</strong> των 9 κύβων (3 × 3):
+        </p>
+
+        {/* SVG ΜΕ ΤΑ 3 ΞΕΧΩΡΙΣΤΑ ΕΠΙΠΕΔΑ */}
+        <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="390" height="150" viewBox="0 0 390 150" className="select-none font-sans">
+            {/* 1. ΠΑΝΩ ΕΠΙΠΕΔΟ (4 άσπρα στα άκρα, 5 μαύρα σε σταυρό) */}
+            <g transform="translate(15, 20)">
+              <text x="45" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Πάνω στρώση
+              </text>
+              <g transform="translate(0, 10)">
+                {/* Γραμμή 1 */}
+                <rect x="0" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="30" y="0" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="60" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                {/* Γραμμή 2 */}
+                <rect x="0" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="30" y="30" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" display="none" />
+                <rect x="30" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="60" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                {/* Γραμμή 3 */}
+                <rect x="0" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="30" y="60" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="60" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+              </g>
+              <text x="45" y="118" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7">
+                4 άσπρα
+              </text>
+            </g>
+
+            {/* 2. ΜΕΣΑΙΟ ΕΠΙΠΕΔΟ (5 άσπρα σε σταυρό + κέντρο, 4 μαύρα) */}
+            <g transform="translate(150, 20)">
+              <text x="45" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Μεσαία στρώση
+              </text>
+              <g transform="translate(0, 10)">
+                {/* Γραμμή 1 */}
+                <rect x="0" y="0" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="30" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="60" y="0" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                {/* Γραμμή 2 */}
+                <rect x="0" y="30" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="30" y="30" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="60" y="30" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                {/* Γραμμή 3 */}
+                <rect x="0" y="60" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="30" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="60" y="60" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+              </g>
+              <text x="45" y="118" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7">
+                5 άσπρα
+              </text>
+            </g>
+
+            {/* 3. ΚΑΤΩ ΕΠΙΠΕΔΟ (ίδιο με το πάνω) */}
+            <g transform="translate(285, 20)">
+              <text x="45" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Κάτω στρώση
+              </text>
+              <g transform="translate(0, 10)">
+                {/* Γραμμή 1 */}
+                <rect x="0" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="30" y="0" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="60" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                {/* Γραμμή 2 */}
+                <rect x="0" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="30" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="60" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                {/* Γραμμή 3 */}
+                <rect x="0" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="30" y="60" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
+                <rect x="60" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
+              </g>
+              <text x="45" y="118" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7">
+                4 άσπρα
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΚΑΤΑΜΕΤΡΗΣΗ */}
+        <div className="space-y-2 bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+          <div>• <strong>Πάνω στρώση:</strong> 4 άσπρα κυβάκια (στις 4 γωνίες)</div>
+          <div>• <strong>Μεσαία στρώση:</strong> 5 άσπρα κυβάκια (στα 4 μέσα των πλευρών ＋ το κέντρο)</div>
+          <div>• <strong>Κάτω στρώση:</strong> 4 άσπρα κυβάκια (στις 4 γωνίες, ακριβώς όπως η πάνω)</div>
+
+          <div className="pt-2 border-t border-slate-200 flex items-center gap-2 flex-wrap">
+            <span>Συνολικά άσπρα κυβάκια ＝ 4 ＋ 5 ＋ 4 ＝</span>
+            <strong className="text-emerald-700 text-base">13 κυβάκια</strong>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Άρα, τα άσπρα κυβάκια είναι συνολικά <strong>13</strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 15,
