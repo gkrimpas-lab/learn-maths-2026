@@ -1304,14 +1304,14 @@ const QUESTIONS_2025 = [
  {
     id: 17,
     officialNumber: 37,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Ένα μπουκάλι γεμάτο με νερό ζυγίζει ένα ορισμένο βάρος. Αν αδειάσουμε το μισό νερό, το συνολικό βάρος γίνεται το 60% του αρχικού βάρους. Ποιος είναι ο λόγος του βάρους του άδειου μπουκαλιού προς το βάρος του νερού που χωράει;',
     options: [
-      { key: 'A', label: <Fraction num="1" den="4" />, raw: '1/4' },
+      { key: 'A', label: <Fraction num="1" den="5" />, raw: '1/5' },
       { key: 'B', label: <Fraction num="1" den="3" />, raw: '1/3' },
-      { key: 'Γ', label: <Fraction num="1" den="2" />, raw: '1/2' },
-      { key: 'Δ', label: <Fraction num="2" den="5" />, raw: '2/5' },
-      { key: 'E', label: <Fraction num="3" den="4" />, raw: '3/4' }
+      { key: 'Γ', label: <Fraction num="6" den="10" />, raw: '6/10' },
+      { key: 'Δ', label: <Fraction num="4" den="6" />, raw: '4/6' },
+      { key: 'E', label: <Fraction num="1" den="4" />, raw: '1/4' }
     ],
     correctRaw: '1/4',
     explain: (
