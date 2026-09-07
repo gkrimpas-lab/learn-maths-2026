@@ -1069,17 +1069,79 @@ const QUESTIONS_2025 = [
   {
     id: 15,
     officialNumber: 35,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    promptText: 'Πόσοι τριψήφιοι αριθμοί έχουν την ιδιότητα το γινόμενο των ψηφίων τους να ισούται με 6;',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
+    promptText: 'Πόσοι τριψήφιοι θετικοί ακέραιοι αριθμοί έχουν γινόμενο ψηφίων ίσο με 6;',
     options: [
       { key: 'A', label: '3', raw: '3' },
       { key: 'B', label: '6', raw: '6' },
-      { key: 'Γ', label: '9', raw: '9' },
-      { key: 'Δ', label: '12', raw: '12' },
-      { key: 'E', label: 'Κανένα από τα προηγούμενα', raw: 'none' }
+      { key: 'Γ', label: '8', raw: '8' },
+      { key: 'Δ', label: '9', raw: '9' },
+      { key: 'E', label: '12', raw: '12' }
     ],
     correctRaw: '9',
-    explain: 'Αναλύουμε το 6 σε γινόμενο 3 μονοψήφιων αριθμών (χωρίς το 0):\n1) Ψηφία {1, 1, 6}: διατάξεις 3! / 2! = 3 αριθμοί (116, 161, 611).\n2) Ψηφία {1, 2, 3}: διατάξεις 3! = 6 αριθμοί (123, 132, 213, 231, 312, 321).\nΣυνολικά: 3 + 6 = 9 τριψήφιοι αριθμοί.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Έστω ότι ο τριψήφιος αριθμός αποτελείται από τα ψηφία <strong>x, y, z</strong>. Θέλουμε:
+        </p>
+
+        <div className="bg-white/80 p-2.5 rounded-xl border border-slate-200/80 font-mono font-bold text-center text-slate-900 text-sm">
+          x · y · z ＝ 6
+        </div>
+
+        <p>
+          Κανένα ψηφίο δεν μπορεί να είναι <strong>0</strong>, διότι τότε το γινόμενο θα μηδενιζόταν. Επομένως, τα πιθανά μη μηδενικά ψηφία πρέπει να είναι <strong>διαιρέτες του 6</strong>, δηλαδή τα <strong>1, 2, 3 και 6</strong>.
+        </p>
+
+        <p>
+          Οι μοναδικοί συνδυασμοί τριών ψηφίων με γινόμενο 6 είναι:
+        </p>
+
+        <div className="space-y-3 bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+          {/* 1ος συνδυασμός */}
+          <div className="border-b border-slate-200 pb-2.5 space-y-1.5">
+            <div className="font-sans font-bold text-slate-950">
+              1. Ψηφία {'{1, 1, 6}'} <span className="text-slate-500 font-normal font-mono text-xs">(1 · 1 · 6 ＝ 6)</span>:
+            </div>
+            <div className="pl-3 flex items-center gap-2 flex-wrap">
+              <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 font-bold">116</span>
+              <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 font-bold">161</span>
+              <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 font-bold">611</span>
+              <span className="text-slate-600 font-sans text-xs">➔ <strong>3 αριθμοί</strong></span>
+            </div>
+          </div>
+
+          {/* 2ος συνδυασμός */}
+          <div className="space-y-1.5 pt-0.5">
+            <div className="font-sans font-bold text-slate-950">
+              2. Ψηφία {'{1, 2, 3}'} <span className="text-slate-500 font-normal font-mono text-xs">(1 · 2 · 3 ＝ 6)</span>:
+            </div>
+            <div className="pl-3 flex items-center gap-2 flex-wrap">
+              <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 font-bold">123</span>
+              <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 font-bold">132</span>
+              <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 font-bold">213</span>
+              <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 font-bold">231</span>
+              <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 font-bold">312</span>
+              <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 font-bold">321</span>
+              <span className="text-slate-600 font-sans text-xs">➔ <strong>6 αριθμοί</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          Δεν υπάρχει άλλος συνδυασμός μονοψήφιων θετικών ακεραίων, καθώς οποιαδήποτε άλλη επιλογή δίνει γινόμενο διαφορετικό από 6.
+        </p>
+
+        <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-2 flex-wrap">
+          <span>Συνολικό πλήθος αριθμών ＝ 3 ＋ 6 ＝</span>
+          <strong className="text-emerald-700 text-base">9 τριψήφιοι αριθμοί</strong>
+        </div>
+
+        <p className="pt-1">
+          Συνεπώς, υπάρχουν <strong>9</strong> τέτοιοι τριψήφιοι αριθμοί (Επιλογή <strong>Δ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 16,
