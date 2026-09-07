@@ -292,12 +292,12 @@ const QUESTIONS_2025 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Κάθε παιδί (αγόρι ή κορίτσι) επιλέγει <strong>ακριβώς ένα άθλημα</strong>, επομένως υπολογίζεται μόνο μία φορά στα ποσοστά του πίνακα[cite: 1]. Δεν χρειάζεται να γνωρίζουμε τον ακριβή αριθμό των παιδιών της κατασκήνωσης[cite: 1].
+          Κάθε παιδί (αγόρι ή κορίτσι) επιλέγει <strong>ακριβώς ένα άθλημα</strong>, επομένως υπολογίζεται μόνο μία φορά στα ποσοστά του πίνακα. Δεν χρειάζεται να γνωρίζουμε τον ακριβή αριθμό των παιδιών της κατασκήνωσης.
         </p>
 
         <p>
           1. <strong>Εύρεση ποσοστού κοριτσιών στο μπάσκετ (επί του συνόλου):</strong><br />
-          Προσθέτουμε τα γνωστά ποσοστά όλων των κελιών[cite: 1]:
+          Προσθέτουμε τα γνωστά ποσοστά όλων των κελιών:
         </p>
 
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900">
@@ -305,11 +305,11 @@ const QUESTIONS_2025 = [
         </div>
 
         <p>
-          Αφαιρούμε από το <strong>100%</strong> (σύνολο όλων των παιδιών)[cite: 1]:
+          Αφαιρούμε από το <strong>100%</strong> (σύνολο όλων των παιδιών):
         </p>
 
         <div className="bg-white/70 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
-          100% － 88% ＝ <strong>12%</strong> των παιδιών είναι κορίτσια που παίζουν μπάσκετ[cite: 1].
+          100% － 88% ＝ <strong>12%</strong> των παιδιών είναι κορίτσια που παίζουν μπάσκετ.
         </div>
 
         <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-xl text-amber-950 space-y-1">
@@ -317,23 +317,23 @@ const QUESTIONS_2025 = [
             ⚠️ Προσοχή:
           </span>
           <p>
-            Το <strong>12%</strong> εκφράζει το ποσοστό στον <strong>συνολικό αριθμό</strong> όλων των παιδιών[cite: 1].<br />
-            Η ερώτηση ζητάει: <em>«Τι ποσοστό <strong>των κοριτσιών</strong> έχει επιλέξει μπάσκετ;»</em>[cite: 1]
+            Το <strong>12%</strong> εκφράζει το ποσοστό στον <strong>συνολικό αριθμό</strong> όλων των παιδιών.<br />
+            Η ερώτηση ζητάει: <em>«Τι ποσοστό <strong>των κοριτσιών</strong> έχει επιλέξει μπάσκετ;»</em>
           </p>
         </div>
 
         <p>
           2. <strong>Συνολικό ποσοστό κοριτσιών στην κατασκήνωση:</strong><br />
-          Αθροίζουμε τα κορίτσια και από τα τρία αθλήματα[cite: 1]:
+          Αθροίζουμε τα κορίτσια και από τα τρία αθλήματα:
         </p>
 
         <div className="bg-white/70 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
-          29,5% (Βόλεϊ) ＋ 6,5% (Ποδόσφαιρο) ＋ 12% (Μπάσκετ) ＝ <strong>48%</strong>[cite: 1]
+          29,5% (Βόλεϊ) ＋ 6,5% (Ποδόσφαιρο) ＋ 12% (Μπάσκετ) ＝ <strong>48%</strong>
         </div>
 
         <p>
           3. <strong>Ποσοστό των κοριτσιών που επέλεξαν μπάσκετ:</strong><br />
-          Διαιρούμε τα κορίτσια του μπάσκετ με το σύνολο των κοριτσιών[cite: 1]:
+          Διαιρούμε τα κορίτσια του μπάσκετ με το σύνολο των κοριτσιών:
         </p>
 
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
@@ -346,7 +346,7 @@ const QUESTIONS_2025 = [
         </div>
 
         <p className="pt-1">
-          Άρα, το <strong>25%</strong> των κοριτσιών επέλεξε μπάσκετ (Επιλογή <strong>Β</strong>)[cite: 1].
+          Άρα, το <strong>25%</strong> των κοριτσιών επέλεξε μπάσκετ (Επιλογή <strong>Β</strong>).
         </p>
       </div>
     )
