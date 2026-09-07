@@ -1163,67 +1163,79 @@ const QUESTIONS_2025 = [
           Η διάταξη των 5 ίσων τετραγώνων σχηματίζει τον λεγόμενο <strong>Σταυρό του Πυθαγόρα</strong>.
         </p>
 
-        {/* ΑΣΦΑΛΕΣ CSS ANIMATION (ΧΩΡΙΣ REACT HOOKS ΠΟΥ ΚΡΑΣΑΡΟΥΝ ΤΟ NEXT.JS) */}
-        <div className="flex flex-col items-center bg-white/90 p-4 rounded-2xl border border-slate-200 shadow-sm my-3 select-none">
-          <style>{`
-            @keyframes moveT1 { 0%, 20% { transform: translate(0, 0); } 80%, 100% { transform: translate(80px, 120px); } }
-            @keyframes moveT2 { 0%, 20% { transform: translate(0, 0); } 80%, 100% { transform: translate(-120px, 80px); } }
-            @keyframes moveT3 { 0%, 20% { transform: translate(0, 0); } 80%, 100% { transform: translate(-80px, -120px); } }
-            @keyframes moveT4 { 0%, 20% { transform: translate(0, 0); } 80%, 100% { transform: translate(120px, -80px); } }
-            .pyth-t1 { animation: moveT1 3.5s ease-in-out infinite alternate; }
-            .pyth-t2 { animation: moveT2 3.5s ease-in-out infinite alternate; }
-            .pyth-t3 { animation: moveT3 3.5s ease-in-out infinite alternate; }
-            .pyth-t4 { animation: moveT4 3.5s ease-in-out infinite alternate; }
-          `}</style>
-
+        {/* ΚΑΘΑΡΟ, ΓΕΩΜΕΤΡΙΚΑ ΑΚΡΙΒΕΣ ΣΧΗΜΑ ΑΝΑΛΥΣΗΣ */}
+        <div className="flex flex-col items-center bg-white/95 p-4 rounded-2xl border border-slate-200 shadow-sm my-3 select-none">
           <div className="text-center mb-2">
-            <span className="font-bold text-slate-800 text-xs sm:text-sm block">
-              Οπτική Απόδειξη Ισοδυναμίας
+            <span className="font-bold text-slate-900 text-xs sm:text-sm block">
+              Γεωμετρική Ανάλυση σε Πλέγμα 4×4
             </span>
             <span className="text-[11px] text-slate-500 font-medium">
-              Τα 4 γωνιακά τρίγωνα μετακινούνται και γεμίζουν τις εσοχές του σταυρού
+              Ο σταυρός (5 τετράγωνα) καλύπτει ισοδύναμα ολόκληρη την επιφάνεια
             </span>
           </div>
 
           <div className="relative bg-slate-50 rounded-xl border border-slate-200 p-2 shadow-inner">
-            <svg width="240" height="240" viewBox="-10 -10 220 220" className="mx-auto block">
-              {/* Μεγάλο αρχικό τετράγωνο */}
-              <rect x="0" y="0" width="200" height="200" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4 4" />
+            <svg width="240" height="240" viewBox="0 0 200 200" className="mx-auto block font-sans">
+              {/* Εξωτερικό Μεγάλο Τετράγωνο (4 τ.εκ.) */}
+              <rect x="0" y="0" width="200" height="200" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
 
-              {/* Κεντρικό σκιασμένο τετράγωνο */}
-              <polygon
-                points="60,60 140,20 180,100 100,140"
-                fill="#bae6fd"
-                stroke="#0284c7"
-                strokeWidth="2"
-              />
-              <text x="120" y="85" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="sans-serif">
+              {/* Βοηθητικό πλέγμα 4x4 (διακεκομμένο) */}
+              <line x1="50" y1="0" x2="50" y2="200" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="100" y1="0" x2="100" y2="200" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="150" y1="0" x2="150" y2="200" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="0" y1="50" x2="200" y2="50" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="0" y1="100" x2="200" y2="100" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="0" y1="150" x2="200" y2="150" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 3" />
+
+              {/* 4 Περιφερειακά Τετράγωνα του Σταυρού */}
+              <rect x="50" y="0" width="100" height="50" fill="#f8fafc" stroke="#334155" strokeWidth="1.5" />
+              <rect x="150" y="50" width="50" height="100" fill="#f8fafc" stroke="#334155" strokeWidth="1.5" />
+              <rect x="50" y="150" width="100" height="50" fill="#f8fafc" stroke="#334155" strokeWidth="1.5" />
+              <rect x="0" y="50" width="50" height="100" fill="#f8fafc" stroke="#334155" strokeWidth="1.5" />
+
+              {/* Κεντρικό Σκιασμένο Τετράγωνο */}
+              <rect x="50" y="50" width="100" height="100" fill="#0284c7" fillOpacity="0.25" stroke="#0284c7" strokeWidth="2.5" />
+              <text x="100" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0369a1">
                 Σκιασμένο
               </text>
+              <text x="100" y="112" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
+                Τετράγωνο
+              </text>
 
-              {/* Τα υπόλοιπα 4 τετράγωνα του σταυρού */}
-              <polygon points="80,0 160,40 140,80 60,40" fill="#f1f5f9" stroke="#64748b" strokeWidth="1.2" opacity="0.6" />
-              <polygon points="140,20 200,80 160,160 100,100" fill="#f1f5f9" stroke="#64748b" strokeWidth="1.2" opacity="0.6" />
-              <polygon points="60,120 140,160 120,200 40,160" fill="#f1f5f9" stroke="#64748b" strokeWidth="1.2" opacity="0.6" />
-              <polygon points="0,80 60,20 100,100 40,160" fill="#f1f5f9" stroke="#64748b" strokeWidth="1.2" opacity="0.6" />
+              {/* 4 Γωνιακά Τετράγωνα με διαγώνιο για οπτικοποίηση μεταφοράς */}
+              <g stroke="#94a3b8" strokeWidth="1.2">
+                {/* Πάνω Αριστερά */}
+                <rect x="0" y="0" width="50" height="50" fill="#fef3c7" fillOpacity="0.6" />
+                <line x1="0" y1="0" x2="50" y2="50" stroke="#d97706" strokeWidth="1.5" strokeDasharray="2 2" />
 
-              {/* Τα 4 τρίγωνα με CSS animations */}
-              <g className="pyth-t1">
-                <polygon points="0,0 80,0 0,40" fill="#fbbf24" stroke="#d97706" strokeWidth="1.5" strokeLinejoin="round" fillOpacity="0.85" />
+                {/* Πάνω Δεξιά */}
+                <rect x="150" y="0" width="50" height="50" fill="#dcfce7" fillOpacity="0.6" />
+                <line x1="200" y1="0" x2="150" y2="50" stroke="#16a34a" strokeWidth="1.5" strokeDasharray="2 2" />
+
+                {/* Κάτω Δεξιά */}
+                <rect x="150" y="150" width="50" height="50" fill="#e0f2fe" fillOpacity="0.6" />
+                <line x1="200" y1="200" x2="150" y2="150" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="2 2" />
+
+                {/* Κάτω Αριστερά */}
+                <rect x="0" y="150" width="50" height="50" fill="#fee2e2" fillOpacity="0.6" />
+                <line x1="0" y1="200" x2="50" y2="150" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="2 2" />
               </g>
-              <g className="pyth-t2">
-                <polygon points="200,0 200,80 160,0" fill="#34d399" stroke="#059669" strokeWidth="1.5" strokeLinejoin="round" fillOpacity="0.85" />
-              </g>
-              <g className="pyth-t3">
-                <polygon points="200,200 120,200 200,160" fill="#38bdf8" stroke="#0284c7" strokeWidth="1.5" strokeLinejoin="round" fillOpacity="0.85" />
-              </g>
-              <g className="pyth-t4">
-                <polygon points="0,200 0,120 40,200" fill="#f87171" stroke="#dc2626" strokeWidth="1.5" strokeLinejoin="round" fillOpacity="0.85" />
-              </g>
+
+              {/* Περίγραμμα Σταυρού */}
+              <path
+                d="M 50,0 L 150,0 L 150,50 L 200,50 L 200,150 L 150,150 L 150,200 L 50,200 L 50,150 L 0,150 L 0,50 L 50,50 Z"
+                fill="none"
+                stroke="#0f172a"
+                strokeWidth="2.2"
+              />
             </svg>
           </div>
-        </div>
 
+          <div className="text-[11px] text-slate-600 font-mono text-center mt-2 space-y-0.5">
+            <div>Σταυρός ＝ <strong>5 ίσα τετράγωνα</strong></div>
+            <div>4 γωνίες (4 × 0,25) ＝ <strong>1 επιπλέον τετράγωνο</strong></div>
+          </div>
+        </div>
         <p>
           Όπως παρατηρούμε, τα 4 χρωματιστά τρίγωνα των γωνιών κουμπώνουν ακριβώς στις 4 εσοχές. Συνεπώς, το μεγάλο εξωτερικό τετράγωνο περιέχει ακριβώς <strong>5 ίσα τετράγωνα</strong>.
         </p>
