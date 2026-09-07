@@ -170,7 +170,7 @@ const QUESTIONS_2025 = [
   {
     id: 3,
     officialNumber: 23,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Τέσσερα καταστήματα πουλάνε την ίδια μπλούζα στις εκπτώσεις. Σύμφωνα με τον πίνακα που ακολουθεί, σε ποιο κατάστημα η μπλούζα κοστίζει φθηνότερα στις εκπτώσεις;',
     hasTable: 'table23',
     options: [
@@ -279,7 +279,7 @@ const QUESTIONS_2025 = [
   {
     id: 5,
     officialNumber: 25,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Σε μια κατασκήνωση κάθε παιδί έχει επιλέξει να κάνει ακριβώς ένα άθλημα. Στον πίνακα που ακολουθεί φαίνονται τα ποσοστά των παιδιών για διάφορους συνδυασμούς φύλου και αθλήματος. Για παράδειγμα, το 17% των παιδιών είναι αγόρια που έχουν επιλέξει μπάσκετ. Τι ποσοστό των κοριτσιών έχει επιλέξει μπάσκετ;',
     hasTable: 'table25',
     options: [
@@ -354,7 +354,7 @@ const QUESTIONS_2025 = [
   {
     id: 6,
     officialNumber: 26,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: (
       <span>
         Ποιος αριθμός από τους επόμενους είναι πιο κοντά στο{' '}
@@ -464,7 +464,7 @@ const QUESTIONS_2025 = [
   {
     id: 7,
     officialNumber: 27,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Αναμειγνύουμε ίδια ποσότητα από τρία ροφήματα. Τα δύο περιέχουν 22% πορτοκάλι το καθένα, ενώ το τρίτο περιέχει 34% πορτοκάλι. Πόσο % πορτοκάλι περιέχει το ρόφημα που προέκυψε από την ανάμειξη;',
     options: [
       { key: 'A', label: '22%', raw: '22%' },
@@ -473,7 +473,54 @@ const QUESTIONS_2025 = [
       { key: 'Δ', label: '30%', raw: '30%' }
     ],
     correctRaw: '26%',
-    explain: 'Επειδή οι ποσότητες είναι ίσες, υπολογίζουμε τον απλό μέσο όρο των ποσοστών: (22% + 22% + 34%) : 3 = 78% : 3 = 26%.'
+    explain: (
+      <div className="space-y-3 text-xs sm:text-sm">
+        <p>
+          Έχουμε 3 ροφήματα με περιεκτικότητες σε πορτοκάλι και τα αναμειγνύουμε[cite: 1]. Το βασικό στοιχείο είναι ότι οι ποσότητες που αναμειγνύουμε είναι <strong>ίσες</strong>[cite: 1].
+        </p>
+
+        <p>
+          Επομένως, το τελικό μείγμα αποτελείται κατά το <Fraction num="1" den="3" /> από κάθε επιμέρους ρόφημα.
+        </p>
+
+        <p>
+          Η ποσότητα πορτοκαλιού στο τελικό ρόφημα προκύπτει από το άθροισμα:
+        </p>
+
+        <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-medium text-slate-800 text-center">
+          <Fraction num="1" den="3" /> του 1ου ＋ <Fraction num="1" den="3" /> του 2ου ＋ <Fraction num="1" den="3" /> του 3ου
+        </div>
+
+        <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Fraction num="1" den="3" />
+            <span>· 22% ＋</span>
+            <Fraction num="1" den="3" />
+            <span>· 22% ＋</span>
+            <Fraction num="1" den="3" />
+            <span>· 34% ＝</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap pl-2">
+            <span>＝</span>
+            <Fraction num="1" den="3" />
+            <span>· (22% ＋ 22% ＋ 34%) ＝</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap pl-2">
+            <span>＝</span>
+            <Fraction num="1" den="3" />
+            <span>· 78% ＝</span>
+            <Fraction num="78" den="3" />
+            <span>% ＝ <strong className="text-emerald-700 text-base">26%</strong></span>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Άρα, το ρόφημα που προέκυψε περιέχει <strong>26%</strong> πορτοκάλι (Επιλογή <strong>Β</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 8,
