@@ -708,9 +708,10 @@ const QUESTIONS_2025 = [
 
         <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
           <div>2x ＋ 2y ＋ y ＝ 29</div>
-          <div>2 · (x ＋ y) ＋ y ＝ 29</div>
+          <div>x ＋ x ＋ y ＋ y ＋ y ＝ 29</div>
+          <div>x ＋ y ＋ x ＋ y ＋ y ＝ 29</div>
           <div className="text-slate-600 text-xs">// Αντικαθιστούμε το x ＋ y ＝ 12</div>
-          <div>2 · 12 ＋ y ＝ 29</div>
+          <div>12 ＋ 12 ＋ y ＝ 29</div>
           <div>24 ＋ y ＝ 29</div>
           <div>y ＝ 29 － 24 ➔ <strong className="text-emerald-700 text-base">y ＝ 5</strong></div>
         </div>
