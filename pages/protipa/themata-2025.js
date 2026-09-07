@@ -120,7 +120,7 @@ const QUESTIONS_2025 = [
         </p>
 
         <p>
-          Από τα δεδομένα της εκφώνησης προκύπτουν δύο εξισώσεις[cite: 3]:
+          Από τα δεδομένα της εκφώνησης προκύπτουν δύο εξισώσεις:
         </p>
 
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 space-y-1.5 font-mono text-slate-800">
@@ -129,7 +129,7 @@ const QUESTIONS_2025 = [
         </div>
 
         <p>
-          Μας ζητείται το άθροισμα των 🍎 και 🍐, δηλαδή η τιμή του <strong>x ＋ y</strong> (και όχι να βρούμε το καθένα ξεχωριστά)[cite: 3].
+          Μας ζητείται το άθροισμα των 🍎 και 🍐, δηλαδή η τιμή του <strong>x ＋ y</strong> (και όχι να βρούμε το καθένα ξεχωριστά).
         </p>
 
         <p>
@@ -162,7 +162,7 @@ const QUESTIONS_2025 = [
         </div>
 
         <p className="pt-1">
-          Άρα, το άθροισμα των 🍎 και 🍐 είναι <strong>12</strong> (Επιλογή <strong>Δ</strong>)[cite: 3].
+          Άρα, το άθροισμα των 🍎 και 🍐 είναι <strong>12</strong> (Επιλογή <strong>Δ</strong>).
         </p>
       </div>
     )
