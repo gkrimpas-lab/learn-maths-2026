@@ -137,23 +137,15 @@ const QUESTIONS_2025 = [
         </p>
 
        <div className="bg-white/70 p-4 rounded-xl border border-slate-200/80 font-mono text-slate-900 text-sm max-w-fit">
-          {/* Κάθετη πρόσθεση με CSS Grid για τέλεια στοίχιση στηλών */}
-          <div className="grid grid-cols-[20px_auto_16px_auto_16px_auto] items-center gap-y-1 pb-2 border-b-2 border-slate-700">
-            {/* 1η εξίσωση */}
-            <span></span>
-            <span className="text-right font-bold">3x</span>
-            <span className="text-center">＋</span>
-            <span className="text-right font-bold">2y</span>
-            <span className="text-center">＝</span>
-            <span className="text-left font-bold">19</span>
-
-            {/* 2η εξίσωση */}
-            <span className="font-bold text-base leading-none">＋</span>
-            <span className="text-right font-bold">2x</span>
-            <span className="text-center">＋</span>
-            <span className="text-right font-bold">3y</span>
-            <span className="text-center">＝</span>
-            <span className="text-left font-bold">41</span>
+          {/* Κάθετη πρόσθεση με φυσικά κενά και αριστερή στοίχιση */}
+          <div className="pb-2 border-b-2 border-slate-700 space-y-1">
+            <div className="pl-6">
+              3x ＋ 2y ＝ 19
+            </div>
+            <div className="flex items-center">
+              <span className="w-6 font-bold leading-none">＋</span>
+              <span>2x ＋ 3y ＝ 41</span>
+            </div>
           </div>
 
           {/* Βήματα επίλυσης */}
