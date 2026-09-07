@@ -314,7 +314,7 @@ const QUESTIONS_2025 = [
 
         <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-xl text-amber-950 space-y-1">
           <span className="font-black block uppercase text-[11px] tracking-wider text-amber-800">
-            ⚠️ Προσοχή:
+            ⚠️ Προσοχη:
           </span>
           <p>
             Το <strong>12%</strong> εκφράζει το ποσοστό στον <strong>συνολικό αριθμό</strong> όλων των παιδιών.<br />
