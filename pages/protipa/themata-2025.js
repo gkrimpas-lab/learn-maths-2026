@@ -525,7 +525,7 @@ const QUESTIONS_2025 = [
   {
     id: 8,
     officialNumber: 28,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Έχουμε 225 αμύγδαλα, 99 καρύδια και 54 κάστανα. Θέλουμε να τα μοιράσουμε σε σακουλάκια ώστε όλα να περιέχουν ίδιο αριθμό από αμύγδαλα, ίδιο αριθμό από καρύδια και ίδιο αριθμό από κάστανα. Πόσα το πολύ τέτοια σακουλάκια μπορούμε να γεμίσουμε;',
     options: [
       { key: 'A', label: '1', raw: '1' },
@@ -534,7 +534,42 @@ const QUESTIONS_2025 = [
       { key: 'Δ', label: '9', raw: '9' }
     ],
     correctRaw: '9',
-    explain: 'Το μέγιστο πλήθος σακουλιών ισούται με τον Μέγιστο Κοινό Διαιρέτη των αριθμών 225, 99 και 54. 225 = 9 · 25, 99 = 9 · 11, 54 = 9 · 6. Ο Μ.Κ.Δ.(225, 99, 54) = 9.'
+    explain: (
+      <div className="space-y-3 text-xs sm:text-sm">
+        <p>
+          Το μέγιστο πλήθος από σακουλάκια που μπορούμε να γεμίσουμε ισούται με τον <strong>Μέγιστο Κοινό Διαιρέτη</strong> των ποσοτήτων των καρπών: <strong>ΜΚΔ(225, 99, 54)</strong>.
+        </p>
+
+        <p>
+          Βρίσκουμε όλους τους διαιρέτες του κάθε αριθμού:
+        </p>
+
+        <div className="space-y-2 bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+          <div>
+            <strong className="font-sans text-slate-950">Διαιρέτες του 225:</strong> 1, 3, 5, <strong className="text-emerald-700 font-bold underline">9</strong>, 15, 25, 45, 75, 225
+          </div>
+          <div>
+            <strong className="font-sans text-slate-950">Διαιρέτες του 99:</strong> 1, 3, <strong className="text-emerald-700 font-bold underline">9</strong>, 11, 33, 99
+          </div>
+          <div>
+            <strong className="font-sans text-slate-950">Διαιρέτες του 54:</strong> 1, 2, 3, 6, <strong className="text-emerald-700 font-bold underline">9</strong>, 18, 27, 54
+          </div>
+        </div>
+
+        <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 space-y-1.5">
+          <div className="font-mono text-slate-800">
+            • <strong>Κοινοί Διαιρέτες:</strong> 1, 3, 9
+          </div>
+          <div className="font-mono text-emerald-800 font-bold">
+            • <strong>Μέγιστος Κοινός Διαιρέτης:</strong> ΜΚΔ(225, 99, 54) ＝ 9
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το μέγιστο πλήθος σακουλών που μπορούμε να γεμίσουμε είναι <strong>9</strong> (Επιλογή <strong>Δ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 9,
