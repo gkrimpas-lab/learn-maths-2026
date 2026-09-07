@@ -803,11 +803,11 @@ const QUESTIONS_2025 = [
       </div>
     )
   },
-  {
+ {
     id: 13,
     officialNumber: 33,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    promptText: 'Για την παρασκευή ενός φρουτοχυμού χρειάζονται 4 ποτήρια χυμού πορτοκαλιού, 11 ποτήρια χυμού μήλου και 13 ποτήρια χυμού αχλαδιού. Για την παρασκευή μεγαλύτερης ποσότητας φρουτοχυμού με την ίδια αναλογία συστατικών, για ένα πάρτι, τα ποτήρια χυμού αχλαδιού που χρησιμοποιήσαμε ήταν κατά 45 περισσότερα από τα ποτήρια χυμού  πορτοκαλιού. Πόσα ποτήρια χυμού μήλου χρησιμοποιήσαμε;',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    promptText: 'Για την παρασκευή ενός φρουτοχυμού χρειάζονται 4 ποτήρια χυμού πορτοκαλιού, 11 ποτήρια χυμού μήλου και 13 ποτήρια χυμού αχλαδιού. Για την παρασκευή μεγαλύτερης ποσότητας φρουτοχυμού με την ίδια αναλογία συστατικών, για ένα πάρτι, τα ποτήρια χυμού αχλαδιού που χρησιμοποιήσαμε ήταν κατά 45 περισσότερα από τα ποτήρια χυμού πορτοκαλιού. Πόσα ποτήρια χυμού μήλου χρησιμοποιήσαμε;',
     options: [
       { key: 'A', label: '20', raw: '20' },
       { key: 'B', label: '55', raw: '55' },
@@ -816,7 +816,100 @@ const QUESTIONS_2025 = [
       { key: 'E', label: '70', raw: '70' }
     ],
     correctRaw: '55',
-    explain: 'Η διαφορά σε μερίδια μεταξύ αχλαδιού και πορτοκαλιού είναι 13 − 4 = 9 μερίδια. Τα 9 μερίδια αντιστοιχούν σε 45 ποτήρια, άρα το 1 μερίδιο είναι 45 : 9 = 5 ποτήρια. Τα ποτήρια χυμού μήλου είναι 11 μερίδια: 11 · 5 = 55 ποτήρια.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Η αρχική αναλογία συστατικών για τον φρουτοχυμό είναι[cite: 1]:
+        </p>
+
+        <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+          <div>• <strong>4</strong> ποτήρια χυμού πορτοκαλιού[cite: 1]</div>
+          <div>• <strong>11</strong> ποτήρια χυμού μήλου[cite: 1]</div>
+          <div>• <strong>13</strong> ποτήρια χυμού αχλαδιού[cite: 1]</div>
+        </div>
+
+        {/* 1ος ΤΡΟΠΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 1ος Τρόπος (με εξίσωση αναλογιών)
+          </div>
+
+          <p className="text-slate-800">
+            Έστω <strong>x</strong> τα τελικά ποτήρια χυμού πορτοκαλιού. Τότε τα ποτήρια χυμού αχλαδιού είναι <strong>x ＋ 45</strong>[cite: 1].
+          </p>
+
+          <p className="text-slate-700 font-medium">
+            Επειδή η αναλογία διατηρείται σταθερή[cite: 1]:
+          </p>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <Fraction num="Πορτοκάλι (αρχικό)" den="Αχλάδι (αρχικό)" />
+              <span>＝</span>
+              <Fraction num="Πορτοκάλι (τελικό)" den="Αχλάδι (τελικό)" />
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pt-1">
+              <Fraction num="4" den="13" />
+              <span>＝</span>
+              <Fraction num="x" den="x ＋ 45" />
+            </div>
+
+            <div className="pt-1 space-y-1">
+              <div>4 · (x ＋ 45) ＝ 13x</div>
+              <div>4x ＋ 180 ＝ 13x</div>
+              <div>180 ＝ 13x － 4x</div>
+              <div>180 ＝ 9x</div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>x ＝</span>
+                <Fraction num="180" den="9" />
+                <span>➔ <strong>x ＝ 20 ποτήρια πορτοκαλιού</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-slate-800 pt-1">
+            Έχουμε λοιπόν <strong>20</strong> ποτήρια πορτοκαλιού (και 20 ＋ 45 ＝ 65 αχλαδιού)[cite: 1]. Υπολογίζουμε τα ποτήρια χυμού μήλου (έστω <strong>m</strong>):
+          </p>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <Fraction num="4" den="11" />
+              <span>＝</span>
+              <Fraction num="20" den="m" />
+            </div>
+            <div className="space-y-1">
+              <div>4 · m ＝ 20 · 11</div>
+              <div>4 · m ＝ 4 · 5 · 11</div>
+              <div>m ＝ 5 · 11 ➔ <strong className="text-emerald-700 text-base">m ＝ 55 ποτήρια μήλου</strong></div>
+            </div>
+          </div>
+        </div>
+
+        {/* 2ος ΤΡΟΠΟΣ */}
+        <div className="bg-emerald-50/50 p-3.5 rounded-2xl border border-emerald-200/80 space-y-2">
+          <div className="font-sans font-bold text-emerald-900 text-sm border-b border-emerald-200 pb-1">
+            💡 2ος Τρόπος (με μερίδια)
+          </div>
+
+          <ul className="space-y-1.5 pl-4 sm:pl-5 text-slate-800 list-disc font-medium">
+            <li>
+              Η διαφορά σε μερίδια μεταξύ αχλαδιού και πορτοκαλιού είναι: <strong>13 － 4 ＝ 9 μερίδια</strong>[cite: 1].
+            </li>
+            <li>
+              Τα 9 μερίδια αντιστοιχούν σε 45 ποτήρια[cite: 1], άρα το 1 μερίδιο είναι: <strong>45 : 9 ＝ 5 ποτήρια</strong>.
+            </li>
+            <li>
+              Τα ποτήρια χυμού μήλου αντιστοιχούν σε 11 μερίδια[cite: 1]: <strong>11 · 5 ＝ 55 ποτήρια</strong>.
+            </li>
+          </ul>
+        </div>
+
+        <p className="pt-1">
+          Συνεπώς, χρησιμοποιήσαμε <strong>55 ποτήρια</strong> χυμού μήλου (Επιλογή <strong>Β</strong>)[cite: 1].
+        </p>
+      </div>
+    )
   },
   {
     id: 14,
