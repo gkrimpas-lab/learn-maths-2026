@@ -939,84 +939,115 @@ const QUESTIONS_2025 = [
           Ο μεγάλος κύβος (3 × 3 × 3 = 27 κυβάκια) αναλύεται σε <strong>3 οριζόντια επίπεδα (στρώσεις)</strong> των 9 κύβων (3 × 3):
         </p>
 
-        {/* SVG ΜΕ ΤΑ 3 ΞΕΧΩΡΙΣΤΑ ΕΠΙΠΕΔΑ */}
+        {/* SVG ΜΕ ΤΑ 3 ΞΕΧΩΡΙΣΤΑ ΕΠΙΠΕΔΑ ΣΕ ΙΣΟΜΕΤΡΙΚΗ 3D ΠΡΟΒΟΛΗ */}
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="390" height="150" viewBox="0 0 390 150" className="select-none font-sans">
-            {/* 1. ΠΑΝΩ ΕΠΙΠΕΔΟ (4 άσπρα στα άκρα, 5 μαύρα σε σταυρό) */}
-            <g transform="translate(15, 20)">
-              <text x="45" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Πάνω στρώση
-              </text>
-              <g transform="translate(0, 10)">
-                {/* Γραμμή 1 */}
-                <rect x="0" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="30" y="0" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="60" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                {/* Γραμμή 2 */}
-                <rect x="0" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="30" y="30" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" display="none" />
-                <rect x="30" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="60" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                {/* Γραμμή 3 */}
-                <rect x="0" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="30" y="60" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="60" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-              </g>
-              <text x="45" y="118" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7">
-                4 άσπρα
-              </text>
-            </g>
+          {(() => {
+            // Μετατροπή ισομετρικών συντεταγμένων (col, row) σε (x, y)
+            const getIsoCoords = (col, row, ox, oy) => ({
+              x: ox + (col - row) * 16,
+              y: oy + (col + row) * 9
+            });
 
-            {/* 2. ΜΕΣΑΙΟ ΕΠΙΠΕΔΟ (5 άσπρα σε σταυρό + κέντρο, 4 μαύρα) */}
-            <g transform="translate(150, 20)">
-              <text x="45" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Μεσαία στρώση
-              </text>
-              <g transform="translate(0, 10)">
-                {/* Γραμμή 1 */}
-                <rect x="0" y="0" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="30" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="60" y="0" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                {/* Γραμμή 2 */}
-                <rect x="0" y="30" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="30" y="30" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="60" y="30" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                {/* Γραμμή 3 */}
-                <rect x="0" y="60" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="30" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="60" y="60" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-              </g>
-              <text x="45" y="118" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7">
-                5 άσπρα
-              </text>
-            </g>
+            // Component για κάθε μικρό 3D κυβάκι με 3 ορατές έδρες (πάνω, αριστερά, δεξιά)
+            const IsoCube = ({ col, row, isWhite, ox, oy }) => {
+              const { x, y } = getIsoCoords(col, row, ox, oy);
+              const topFill = isWhite ? '#ffffff' : '#1e293b';
+              const leftFill = isWhite ? '#cbd5e1' : '#0f172a';
+              const rightFill = isWhite ? '#94a3b8' : '#020617';
+              const strokeColor = '#334155';
 
-            {/* 3. ΚΑΤΩ ΕΠΙΠΕΔΟ (ίδιο με το πάνω) */}
-            <g transform="translate(285, 20)">
-              <text x="45" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Κάτω στρώση
-              </text>
-              <g transform="translate(0, 10)">
-                {/* Γραμμή 1 */}
-                <rect x="0" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="30" y="0" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="60" y="0" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                {/* Γραμμή 2 */}
-                <rect x="0" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="30" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="60" y="30" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                {/* Γραμμή 3 */}
-                <rect x="0" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="30" y="60" width="30" height="30" fill="#1e293b" stroke="#334155" strokeWidth="2" rx="2" />
-                <rect x="60" y="60" width="30" height="30" fill="#ffffff" stroke="#334155" strokeWidth="2" rx="2" />
-              </g>
-              <text x="45" y="118" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7">
-                4 άσπρα
-              </text>
-            </g>
-          </svg>
+              return (
+                <g stroke={strokeColor} strokeWidth="1.2" strokeLinejoin="round">
+                  {/* Πάνω έδρα */}
+                  <polygon points={`${x},${y - 12} ${x + 16},${y - 3} ${x},${y + 6} ${x - 16},${y - 3}`} fill={topFill} />
+                  {/* Αριστερή έδρα */}
+                  <polygon points={`${x - 16},${y - 3} ${x},${y + 6} ${x},${y + 20} ${x - 16},${y + 11}`} fill={leftFill} />
+                  {/* Δεξιά έδρα */}
+                  <polygon points={`${x},${y + 6} ${x + 16},${y - 3} ${x + 16},${y + 11} ${x},${y + 20}`} fill={rightFill} />
+                </g>
+              );
+            };
+
+            // Διάταξη των 3 επιπέδων (true = άσπρο κυβάκι, false = μαύρο)
+            const topLayer = [
+              [true, false, true],
+              [false, true, false],
+              [true, false, true]
+            ];
+
+            const midLayer = [
+              [false, true, false],
+              [true, false, true],
+              [false, true, false]
+            ];
+
+            const botLayer = [
+              [true, false, true],
+              [false, true, false],
+              [true, false, true]
+            ];
+
+            // Render στρώσης με σωστή σειρά σχεδίασης (από πίσω προς τα εμπρός)
+            const renderLayer = (layerGrid, ox, oy) => {
+              const cubes = [];
+              for (let sum = 0; sum <= 4; sum++) {
+                for (let r = 0; r < 3; r++) {
+                  const c = sum - r;
+                  if (c >= 0 && c < 3) {
+                    cubes.push(
+                      <IsoCube
+                        key={`${c}-${r}`}
+                        col={c}
+                        row={r}
+                        isWhite={layerGrid[r][c]}
+                        ox={ox}
+                        oy={oy}
+                      />
+                    );
+                  }
+                }
+              }
+              return cubes;
+            };
+
+            return (
+              <svg width="450" height="175" viewBox="0 0 450 175" className="select-none font-sans">
+                {/* 1. ΠΑΝΩ ΣΤΡΩΣΗ */}
+                <g>
+                  <text x="75" y="20" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                    Πάνω στρώση
+                  </text>
+                  {renderLayer(topLayer, 75, 48)}
+                  <text x="75" y="155" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7">
+                    4 άσπρα
+                  </text>
+                </g>
+
+                {/* 2. ΜΕΣΑΙΑ ΣΤΡΩΣΗ */}
+                <g>
+                  <text x="225" y="20" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                    Μεσαία στρώση
+                  </text>
+                  {renderLayer(midLayer, 225, 48)}
+                  <text x="225" y="155" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7">
+                    5 άσπρα
+                  </text>
+                </g>
+
+                {/* 3. ΚΑΤΩ ΣΤΡΩΣΗ */}
+                <g>
+                  <text x="375" y="20" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                    Κάτω στρώση
+                  </text>
+                  {renderLayer(botLayer, 375, 48)}
+                  <text x="375" y="155" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7">
+                    4 άσπρα
+                  </text>
+                </g>
+              </svg>
+            );
+          })()}
         </div>
-
         {/* ΚΑΤΑΜΕΤΡΗΣΗ */}
         <div className="space-y-2 bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           <div>• <strong>Πάνω στρώση:</strong> 4 άσπρα κυβάκια (στις 4 γωνίες)</div>
