@@ -703,7 +703,7 @@ const QUESTIONS_2025 = [
 
         <p>
           3. <strong>Επίλυση:</strong><br />
-          Αναλύουμε το 2x σε <strong>x ＋ x και το 3y σε <strong>y ＋ y ＋ y</strong> στην εξίσωση των πόντων:
+          Αναλύουμε το 2x σε <strong>x ＋ x</strong> και το 3y σε <strong>y ＋ y ＋ y</strong> στην εξίσωση των πόντων:
         </p>
 
         <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
