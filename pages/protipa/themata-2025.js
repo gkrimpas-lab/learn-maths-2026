@@ -1443,18 +1443,136 @@ const QUESTIONS_2025 = [
   {
     id: 18,
     officialNumber: 38,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    promptText: 'Ένα ορθογώνιο παραλληλόγραμμο έχει υποδιαιρεθεί σε εννιά μικρότερα ορθογώνια παραλληλόγραμμα διαφορετικών διαστάσεων, όπως στο σχήμα που ακολουθεί. Αν οι περίμετροι των Α, Β και Γ είναι 36, 56 και 50 εκ. αντίστοιχα, ποια είναι η περίμετρος του αρχικού ορθογωνίου;',
-    hasSvg: 'grid38',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
+    promptText: 'Ένα ορθογώνιο χωρίζεται σε εννέα μικρότερα ορθογώνια με γραμμές παράλληλες προς τις πλευρές του. Οι περίμετροι τριών από αυτά, των Α, Β και Γ, όπως φαίνονται στο σχήμα, είναι 14 εκ., 18 εκ. και 20 εκ. αντίστοιχα. Ποια είναι η περίμετρος του αρχικού μεγάλου ορθογωνίου σε εκατοστά;',
     options: [
-      { key: 'A', label: '138 εκ.', raw: '138' },
-      { key: 'B', label: '150 εκ.', raw: '150' },
-      { key: 'Γ', label: '146 εκ.', raw: '146' },
-      { key: 'Δ', label: '142 εκ.', raw: '142' },
-      { key: 'E', label: 'Δεν μπορούμε να την υπολογίσουμε με βάση τα δεδομένα.', raw: 'unknown' }
+      { key: 'A', label: '48', raw: '48' },
+      { key: 'B', label: '50', raw: '50' },
+      { key: 'Γ', label: '52', raw: '52' },
+      { key: 'Δ', label: '54', raw: '54' },
+      { key: 'E', label: '56', raw: '56' }
     ],
-    correctRaw: '142',
-    explain: 'Αν x1, x2, x3 είναι τα πλάτη των τριών στηλών και y1, y2, y3 τα ύψη των τριών γραμμών, η περίμετρος του αρχικού ορθογωνίου είναι 2 · (x1 + x2 + x3 + y1 + y2 + y3). Οι περίμετροι των διαγώνιων ορθογωνίων είναι 2(x1 + y1) = 36, 2(x2 + y2) = 56 και 2(x3 + y3) = 50. Προσθέτοντας κατά μέλη: 2(x1 + y1) + 2(x2 + y2) + 2(x3 + y3) = 36 + 56 + 50 = 142 εκ., που ισούται ακριβώς με την περίμετρο του αρχικού ορθογωνίου.'
+    correctRaw: '52',
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Παρατηρούμε πώς κατανέμονται τα μήκη και τα πλάτη των τριών διαγώνιων ορθογωνίων <strong>Α</strong>, <strong>Β</strong> και <strong>Γ</strong> σε σχέση με το εξωτερικό περίγραμμα.
+        </p>
+
+        {/* ΔΙΠΛΟ ΣΧΗΜΑ SVG: ΑΡΧΙΚΕΣ ΠΕΡΙΜΕΤΡΟΙ & ΜΕΤΑΦΟΡΑ ΣΤΟ ΕΞΩΤΕΡΙΚΟ ΠΕΡΙΓΡΑΜΜΑ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="430" height="185" viewBox="0 0 430 185" className="select-none font-sans">
+            {/* 1ο ΣΧΗΜΑ: ΑΡΧΙΚΟ ΜΕ ΧΡΩΜΑΤΙΣΜΕΝΕΣ ΤΙΣ ΠΕΡΙΜΕΤΡΟΥΣ Α, Β, Γ */}
+            <g transform="translate(15, 10)">
+              <text x="85" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                1. Περίμετροι Α, Β και Γ
+              </text>
+              <g transform="translate(0, 10)">
+                {/* Εξωτερικό πλέγμα 3x3 */}
+                <rect x="0" y="0" width="170" height="130" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
+                {/* Εσωτερικές γραμμές πλέγματος */}
+                <line x1="55" y1="0" x2="55" y2="130" stroke="#0f172a" strokeWidth="1.5" />
+                <line x1="110" y1="0" x2="110" y2="130" stroke="#0f172a" strokeWidth="1.5" />
+                <line x1="0" y1="35" x2="170" y2="35" stroke="#0f172a" strokeWidth="1.5" />
+                <line x1="0" y1="95" x2="170" y2="95" stroke="#0f172a" strokeWidth="1.5" />
+
+                {/* Περίμετρος Α (Μπλε) */}
+                <rect x="0" y="0" width="55" height="35" fill="none" stroke="#2563eb" strokeWidth="3.5" />
+                <text x="27.5" y="23" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#1e293b">Α</text>
+
+                {/* Περίμετρος Β (Κόκκινο) */}
+                <rect x="55" y="35" width="55" height="60" fill="none" stroke="#dc2626" strokeWidth="3.5" />
+                <text x="82.5" y="70" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#1e293b">Β</text>
+
+                {/* Περίμετρος Γ (Πράσινο) */}
+                <rect x="110" y="95" width="60" height="35" fill="none" stroke="#16a34a" strokeWidth="3.5" />
+                <text x="140" y="118" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#1e293b">Γ</text>
+              </g>
+            </g>
+
+            {/* ΒΕΛΟΣ ΜΕΤΑΒΑΣΗΣ */}
+            <g transform="translate(195, 85)">
+              <line x1="0" y1="0" x2="20" y2="0" stroke="#0f172a" strokeWidth="2" />
+              <polygon points="20,-4 28,0 20,4" fill="#0f172a" />
+            </g>
+
+            {/* 2ο ΣΧΗΜΑ: ΜΕΤΑΦΟΡΑ ΠΛΕΥΡΩΝ ΣΤΟ ΕΞΩΤΕΡΙΚΟ ΠΕΡΙΓΡΑΜΜΑ */}
+            <g transform="translate(240, 10)">
+              <text x="85" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                2. Κάλυψη Εξωτερικού Περιγράμματος
+              </text>
+              <g transform="translate(0, 10)">
+                {/* Εσωτερικές γραμμές (χνάρια) */}
+                <line x1="55" y1="0" x2="55" y2="130" stroke="#cbd5e1" strokeWidth="1.2" strokeDasharray="3 2" />
+                <line x1="110" y1="0" x2="110" y2="130" stroke="#cbd5e1" strokeWidth="1.2" strokeDasharray="3 2" />
+                <line x1="0" y1="35" x2="170" y2="35" stroke="#cbd5e1" strokeWidth="1.2" strokeDasharray="3 2" />
+                <line x1="0" y1="95" x2="170" y2="95" stroke="#cbd5e1" strokeWidth="1.2" strokeDasharray="3 2" />
+
+                <text x="27.5" y="23" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#94a3b8">Α</text>
+                <text x="82.5" y="70" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#94a3b8">Β</text>
+                <text x="140" y="118" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#94a3b8">Γ</text>
+
+                {/* ΠΑΝΩ ΠΛΕΥΡΑ: πλάτος Α (μπλε) + πλάτος Β (κόκκινο) + πλάτος Γ (πράσινο) */}
+                <line x1="0" y1="0" x2="55" y2="0" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
+                <line x1="55" y1="0" x2="110" y2="0" stroke="#dc2626" strokeWidth="4" strokeLinecap="round" />
+                <line x1="110" y1="0" x2="170" y2="0" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" />
+
+                {/* ΚΑΤΩ ΠΛΕΥΡΑ: πλάτος Α (μπλε) + πλάτος Β (κόκκινο) + πλάτος Γ (πράσινο) */}
+                <line x1="0" y1="130" x2="55" y2="130" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
+                <line x1="55" y1="130" x2="110" y2="130" stroke="#dc2626" strokeWidth="4" strokeLinecap="round" />
+                <line x1="110" y1="130" x2="170" y2="130" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" />
+
+                {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: ύψος Α (μπλε) + ύψος Β (κόκκινο) + ύψος Γ (πράσινο) */}
+                <line x1="0" y1="0" x2="0" y2="35" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
+                <line x1="0" y1="35" x2="0" y2="95" stroke="#dc2626" strokeWidth="4" strokeLinecap="round" />
+                <line x1="0" y1="95" x2="0" y2="130" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" />
+
+                {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ύψος Α (μπλε) + ύψος Β (κόκκινο) + ύψος Γ (πράσινο) */}
+                <line x1="170" y1="0" x2="170" y2="35" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
+                <line x1="170" y1="35" x2="170" y2="95" stroke="#dc2626" strokeWidth="4" strokeLinecap="round" />
+                <line x1="170" y1="95" x2="170" y2="130" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" />
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΣΗ ΚΑΙ ΣΥΛΛΟΓΙΣΜΟΣ */}
+        <p>
+          <strong>Γιατί η περίμετρος του μεγάλου ορθογωνίου ισούται με το άθροισμα των περιμέτρων Α, Β και Γ:</strong>
+        </p>
+
+        <ul className="space-y-1.5 pl-4 sm:pl-5 text-slate-800 list-disc font-medium">
+          <li>
+            Κάθε ορθογώνιο αποτελείται από <strong>2 οριζόντιες πλευρές (πλάτη)</strong> και <strong>2 κατακόρυφες πλευρές (ύψη)</strong>.
+          </li>
+          <li>
+            Τα τρία ορθογώνια βρίσκονται σε διαφορετικές στήλες. Το άθροισμα των πλατών τους καλύπτει ολόκληρο το πλάτος του μεγάλου ορθογωνίου:
+            <div className="font-mono text-slate-900 font-bold pl-1 pt-0.5">
+              Πλάτος Μεγάλου ＝ Πλάτος(Α) ＋ Πλάτος(Β) ＋ Πλάτος(Γ)
+            </div>
+          </li>
+          <li>
+            Αντίστοιχα, επειδή βρίσκονται σε διαφορετικές γραμμές, το άθροισμα των υψών τους καλύπτει ολόκληρο το ύψος του μεγάλου ορθογωνίου:
+            <div className="font-mono text-slate-900 font-bold pl-1 pt-0.5">
+              Ύψος Μεγάλου ＝ Ύψος(Α) ＋ Ύψος(Β) ＋ Ύψος(Γ)
+            </div>
+          </li>
+          <li>
+            Στο 2ο σχήμα βλέπουμε ότι αν «ξεδιπλώσουμε» τις 4 πλευρές καθενός από τα Α, Β, Γ προς το εξωτερικό περίγραμμα, αυτές καλύπτουν <strong>ακριβώς και χωρίς καμία επικάλυψη ή κενό</strong> όλη την περίμετρο του μεγάλου ορθογωνίου (2 φορές το ολικό πλάτος και 2 φορές το ολικό ύψος).
+          </li>
+        </ul>
+
+        {/* ΥΠΟΛΟΓΙΣΜΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+          <div>Περίμετρος Μεγάλου ＝ Περίμετρος(Α) ＋ Περίμετρος(Β) ＋ Περίμετρος(Γ)</div>
+          <div>Περίμετρος Μεγάλου ＝ 14 ＋ 18 ＋ 20 ＝ <strong className="text-emerald-700 text-base">52 εκ.</strong></div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η περίμετρος του αρχικού μεγάλου ορθογωνίου είναι <strong>52 εκ.</strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
       {
     id: 19,
