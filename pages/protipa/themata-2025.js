@@ -136,19 +136,35 @@ const QUESTIONS_2025 = [
           Προσθέτουμε τις δύο εξισώσεις <strong>κατά μέλη</strong>:
         </p>
 
-        <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 space-y-2 font-mono text-slate-900">
-          <div className="border-b border-slate-200 pb-1.5 flex flex-col gap-0.5">
-            <div>&nbsp;&nbsp;3x ＋ 2y ＝ 19</div>
-            <div>＋ 2x ＋ 3y ＝ 41</div>
+       <div className="bg-white/70 p-4 rounded-xl border border-slate-200/80 font-mono text-slate-900 text-sm max-w-fit">
+          {/* Κάθετη πρόσθεση με CSS Grid για τέλεια στοίχιση στηλών */}
+          <div className="grid grid-cols-[20px_auto_16px_auto_16px_auto] items-center gap-y-1 pb-2 border-b-2 border-slate-700">
+            {/* 1η εξίσωση */}
+            <span></span>
+            <span className="text-right font-bold">3x</span>
+            <span className="text-center">＋</span>
+            <span className="text-right font-bold">2y</span>
+            <span className="text-center">＝</span>
+            <span className="text-left font-bold">19</span>
+
+            {/* 2η εξίσωση */}
+            <span className="font-bold text-base leading-none">＋</span>
+            <span className="text-right font-bold">2x</span>
+            <span className="text-center">＋</span>
+            <span className="text-right font-bold">3y</span>
+            <span className="text-center">＝</span>
+            <span className="text-left font-bold">41</span>
           </div>
-          <div className="pt-0.5 flex flex-col gap-2">
+
+          {/* Βήματα επίλυσης */}
+          <div className="pt-3 space-y-2">
             <div>5x ＋ 5y ＝ 41 ＋ 19</div>
             <div>5x ＋ 5y ＝ 60</div>
             <div>5 · (x ＋ y) ＝ 60</div>
-            <div className="flex items-center gap-1.5 flex-wrap pt-1">
+            <div className="flex items-center gap-2 pt-1">
               <span>x ＋ y ＝</span>
               <Fraction num="60" den="5" />
-              <span>➔ <strong>x ＋ y ＝ 12</strong></span>
+              <span>➔ <strong className="text-emerald-700">x ＋ y ＝ 12</strong></span>
             </div>
           </div>
         </div>
