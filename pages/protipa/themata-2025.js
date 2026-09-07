@@ -1301,20 +1301,144 @@ const QUESTIONS_2025 = [
       </div>
     )
   },
-  {
+ {
     id: 17,
     officialNumber: 37,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    promptText: 'Η Άννα άδειασε το μισό ακριβώς νερό από ένα γεμάτο μπουκάλι. Στη συνέχεια, ζύγισε το μπουκάλι με το υπόλοιπο νερό και βρήκε ότι το βάρος του ήταν ίσο με το 60% του βάρους που είχε το μπουκάλι, όταν ήταν γεμάτο. Ποιος είναι ο λόγος του βάρους του άδειου μπουκαλιού προς το βάρος του νερού που χωράει στο μπουκάλι;',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    promptText: 'Ένα μπουκάλι γεμάτο με νερό ζυγίζει ένα ορισμένο βάρος. Αν αδειάσουμε το μισό νερό, το συνολικό βάρος γίνεται το 60% του αρχικού βάρους. Ποιος είναι ο λόγος του βάρους του άδειου μπουκαλιού προς το βάρος του νερού που χωράει;',
     options: [
-      { key: 'A', label: <Fraction num="1" den="5" />, raw: '1/5' },
+      { key: 'A', label: <Fraction num="1" den="4" />, raw: '1/4' },
       { key: 'B', label: <Fraction num="1" den="3" />, raw: '1/3' },
-      { key: 'Γ', label: <Fraction num="6" den="10" />, raw: '6/10' },
-      { key: 'Δ', label: <Fraction num="4" den="6" />, raw: '4/6' },
-      { key: 'E', label: <Fraction num="1" den="4" />, raw: '1/4' }
+      { key: 'Γ', label: <Fraction num="1" den="2" />, raw: '1/2' },
+      { key: 'Δ', label: <Fraction num="2" den="5" />, raw: '2/5' },
+      { key: 'E', label: <Fraction num="3" den="4" />, raw: '3/4' }
     ],
     correctRaw: '1/4',
-    explain: 'Έστω B το βάρος του μπουκαλιού και W το βάρος του νερού. Αρχικό βάρος = B + W. Μετά την αφαίρεση του μισού νερού, έχουμε B + W/2 = 0,60 · (B + W) ➔ B + 0,5W = 0,6B + 0,6W ➔ 0,4B = 0,1W ➔ 4B = W ➔ B / W = 1 / 4.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Ορίζουμε τις μεταβλητές για τα βάρη:
+        </p>
+
+        <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+          <div>• Έστω <strong>x</strong> το βάρος του νερού όταν το μπουκάλι είναι γεμάτο.</div>
+          <div>• Έστω <strong>y</strong> το βάρος του άδειου μπουκαλιού.</div>
+          <div className="pt-1 text-slate-700 font-sans font-medium flex items-center gap-1.5 flex-wrap">
+            <span>Ζητούμενο: Ο λόγος του άδειου μπουκαλιού προς το νερό, δηλαδή το</span>
+            <strong className="font-mono text-blue-700"><Fraction num="y" den="x" /></strong>.
+          </div>
+        </div>
+
+        {/* SVG ΣΧΗΜΑ: ΓΕΜΑΤΟ VS ΜΙΣΟΓΕΜΑΤΟ ΜΠΟΥΚΑΛΙ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="360" height="195" viewBox="0 0 360 195" className="select-none font-sans">
+            {/* 1. ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ: ΓΕΜΑΤΟ ΜΠΟΥΚΑΛΙ */}
+            <g transform="translate(45, 12)">
+              <text x="50" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Αρχικό Βάρος (x ＋ y)
+              </text>
+              
+              {/* Σώμα μπουκαλιού */}
+              <rect x="25" y="45" width="50" height="85" rx="6" fill="#f8fafc" stroke="#334155" strokeWidth="1.8" />
+              {/* Λαιμός & Στόμιο */}
+              <path d="M 40,45 L 40,20 L 60,20 L 60,45" fill="#f8fafc" stroke="#334155" strokeWidth="1.8" />
+              <rect x="38" y="16" width="24" height="6" rx="2" fill="#94a3b8" stroke="#334155" strokeWidth="1.5" />
+
+              {/* Νερό (Γεμάτο: ύψος 75px) */}
+              <rect x="27" y="52" width="46" height="76" rx="4" fill="#38bdf8" fillOpacity="0.75" />
+              <text x="50" y="93" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">
+                νερό (x)
+              </text>
+
+              {/* Ετικέτα μπουκαλιού y */}
+              <text x="50" y="148" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#64748b">
+                μπουκάλι (y)
+              </text>
+              <text x="50" y="166" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a" fontFamily="monospace">
+                Σύνολο: x ＋ y
+              </text>
+            </g>
+
+            {/* 2. ΤΕΛΙΚΗ ΚΑΤΑΣΤΑΣΗ: ΜΙΣΟΓΕΜΑΤΟ ΜΠΟΥΚΑΛΙ */}
+            <g transform="translate(215, 12)">
+              <text x="50" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Τελικό Βάρος (x/2 ＋ y)
+              </text>
+
+              {/* Σώμα μπουκαλιού */}
+              <rect x="25" y="45" width="50" height="85" rx="6" fill="#f8fafc" stroke="#334155" strokeWidth="1.8" />
+              {/* Λαιμός & Στόμιο */}
+              <path d="M 40,45 L 40,20 L 60,20 L 60,45" fill="#f8fafc" stroke="#334155" strokeWidth="1.8" />
+              <rect x="38" y="16" width="24" height="6" rx="2" fill="#94a3b8" stroke="#334155" strokeWidth="1.5" />
+
+              {/* Νερό (Μισό: ύψος 38px) */}
+              <rect x="27" y="90" width="46" height="38" rx="4" fill="#38bdf8" fillOpacity="0.75" />
+              <line x1="27" y1="90" x2="73" y2="90" stroke="#0284c7" strokeWidth="1.2" strokeDasharray="2 2" />
+              <text x="50" y="112" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">
+                x/2
+              </text>
+
+              {/* Ετικέτα μπουκαλιού y */}
+              <text x="50" y="148" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#64748b">
+                μπουκάλι (y)
+              </text>
+              <text x="50" y="166" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0284c7" fontFamily="monospace">
+                60% · (x ＋ y)
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΗ ΕΠΙΛΥΣΗ ΕΞΙΣΩΣΗΣ */}
+        <p>
+          Όταν αδειάσουμε το μισό νερό, το νέο βάρος είναι ίσο με το 60% του αρχικού:
+        </p>
+
+        <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Fraction num="x" den="2" />
+            <span>＋ y ＝ 60% · (x ＋ y)</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap pl-2">
+            <Fraction num="x" den="2" />
+            <span>＋ y ＝ 0,6 · (x ＋ y)</span>
+          </div>
+
+          <div className="text-slate-500 font-sans text-xs pl-2">
+            // Πολλαπλασιάζουμε όλη την εξίσωση με το 2 για απαλοιφή παρονομαστή:
+          </div>
+
+          <div className="pl-2 space-y-1">
+            <div>x ＋ 2y ＝ 2 · 0,6 · (x ＋ y)</div>
+            <div>x ＋ 2y ＝ 1,2 · (x ＋ y)</div>
+            <div>x ＋ 2y ＝ 1,2x ＋ 1,2y</div>
+          </div>
+
+          <div className="text-slate-500 font-sans text-xs pl-2">
+            // Χωρίζουμε μεταβλητές (τα y αριστερά και τα x δεξιά):
+          </div>
+
+          <div className="pl-2 space-y-1">
+            <div>2y － 1,2y ＝ 1,2x － x</div>
+            <div>0,8y ＝ 0,2x</div>
+            <div>8y ＝ 2x</div>
+            <div>4y ＝ x</div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-200 flex items-center gap-2 flex-wrap">
+            <span>Λόγος:</span>
+            <Fraction num="y" den="x" />
+            <span>＝</span>
+            <strong className="text-emerald-700 text-base"><Fraction num="1" den="4" /></strong>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο λόγος του βάρους του άδειου μπουκαλιού προς το βάρος του νερού είναι <strong><Fraction num="1" den="4" /></strong> (Επιλογή <strong>A</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 18,
