@@ -456,7 +456,7 @@ const QUESTIONS_2025 = [
         </ul>
 
         <p className="pt-1">
-          Επομένως, ο αριθμός που είναι πιο κοντά στο <Fraction num="1" den="2" /> από ό,τι στο <Fraction num="1" den="4" /> είναι το <strong>1</strong> (Επιλογή <strong>Δ</strong>)[cite: 1].
+          Επομένως, ο αριθμός που είναι πιο κοντά στο <Fraction num="1" den="2" /> από ό,τι στο <Fraction num="1" den="4" /> είναι το <strong>1</strong> (Επιλογή <strong>Δ</strong>).
         </p>
       </div>
     )
