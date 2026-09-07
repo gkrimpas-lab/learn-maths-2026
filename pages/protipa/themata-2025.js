@@ -257,7 +257,7 @@ const QUESTIONS_2025 = [
         </div>
 
         <p className="pt-1">
-          Η χαμηλότερη τιμή είναι τα <strong>36€</strong> στο κατάστημα <strong>του Δημοσθένη</strong> (Επιλογή <strong>Δ</strong>)[cite: 1].
+          Η χαμηλότερη τιμή είναι τα <strong>36€</strong> στο κατάστημα <strong>του Δημοσθένη</strong> (Επιλογή <strong>Δ</strong>).
         </p>
       </div>
     )
