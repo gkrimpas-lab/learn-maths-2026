@@ -1146,7 +1146,7 @@ const QUESTIONS_2025 = [
   {
     id: 16,
     officialNumber: 36,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
     promptText: 'Μέσα σε ένα τετράγωνο με εμβαδόν 4 τ. εκ. σχεδιάσαμε πέντε μικρότερα και ίσα μεταξύ τους τετράγωνα. Ποιο είναι το εμβαδόν του σκιασμένου τετραγώνου σε τ. εκ.;',
     hasSvg: 'squares36',
     options: [
@@ -1156,76 +1156,147 @@ const QUESTIONS_2025 = [
       { key: 'Δ', label: '0,3', raw: '0.3' },
       { key: 'E', label: 'Κανένα από τα προηγούμενα', raw: 'none' }
     ],
-    correctRaw: '0.8',
+    correctRaw: '0.5',
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Η διάταξη των 5 ίσων τετραγώνων σχηματίζει τον λεγόμενο <strong>Σταυρό του Πυθαγόρα</strong>.
+          Αναλύουμε το μεγάλο τετράγωνο μετρώντας πόσα ίσα μικρά τετράγωνα σχηματίζονται συνολικά από τα κομμάτια του:
         </p>
 
-        <div className="flex flex-col items-center bg-white/95 p-4 rounded-2xl border border-slate-200 shadow-sm my-3 select-none">
-          <div className="text-center mb-2">
-            <span className="font-bold text-slate-900 text-xs sm:text-sm block">
-              Γεωμετρική Ανάλυση Σχήματος
-            </span>
-            <span className="text-[11px] text-slate-500 font-medium">
-              5 ίσα λοξά τετράγωνα ＋ 4 γωνιακά τρίγωνα (που ισούνται με ακόμα 1 μικρό τετράγωνο... αλλά στην πραγματικότητα τα 5 τετράγωνα γεμίζουν όλο το εμβαδόν)
-            </span>
-          </div>
-
-          <div className="relative bg-slate-50 rounded-xl border border-slate-200 p-3 shadow-inner">
-            <svg width="220" height="220" viewBox="0 0 200 200" className="mx-auto block font-sans">
-              {/* Εξωτερικό Τετράγωνο (Εμβαδόν = 4) */}
-              <rect x="10" y="10" width="180" height="180" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
-
-              {/* 1. ΠΑΝΩ-ΑΡΙΣΤΕΡΑ ΤΕΤΡΑΓΩΝΟ */}
-              <polygon points="10,70 70,10 100,40 40,100" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
-
-              {/* 2. ΠΑΝΩ-ΔΕΞΙΑ ΤΕΤΡΑΓΩΝΟ */}
-              <polygon points="130,10 190,70 160,100 100,40" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
-
-              {/* 3. ΚΑΤΩ-ΔΕΞΙΑ ΤΕΤΡΑΓΩΝΟ */}
-              <polygon points="160,100 190,130 130,190 100,160" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
-
-              {/* 4. ΚΑΤΩ-ΑΡΙΣΤΕΡΑ ΤΕΤΡΑΓΩΝΟ */}
-              <polygon points="40,100 100,160 70,190 10,130" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
-
-              {/* 5. ΚΕΝΤΡΙΚΟ ΣΚΙΑΣΜΕΝΟ ΤΕΤΡΑΓΩΝΟ */}
-              <polygon points="100,40 160,100 100,160 40,100" fill="#64748b" stroke="#0f172a" strokeWidth="2.5" />
-
-              <text x="100" y="104" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
-                0,8
+        {/* ΔΙΠΛΟ ΣΧΗΜΑ: ΑΝΑΛΥΣΗ ΚΟΜΜΑΤΙΩΝ ΚΑΙ ΑΝΑΣΥΝΘΕΣΗ ΣΕ 8 ΤΕΤΡΑΓΩΝΑ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="410" height="190" viewBox="0 0 410 190" className="select-none font-sans">
+            {/* 1ο ΣΧΗΜΑ: ΑΡΧΙΚΟ ΜΕ ΧΡΩΜΑΤΙΣΜΕΝΑ ΚΟΜΜΑΤΙΑ */}
+            <g transform="translate(15, 10)">
+              <text x="80" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Ανάλυση στο Μεγάλο Τετράγωνο
               </text>
-            </svg>
-          </div>
+              <g transform="translate(0, 10)">
+                {/* Εξωτερικό πλαίσιο */}
+                <rect x="0" y="0" width="160" height="160" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
 
-          <div className="text-[12px] text-slate-700 font-mono text-center mt-2.5 space-y-1">
-            <div>Μεγάλο τετράγωνο ＝ <strong>4 τ. εκ.</strong></div>
-            <div>Εμβαδόν 1 τετραγώνου ＝ 4 : 5 ＝ <strong className="text-emerald-700">0,8 τ. εκ.</strong></div>
-          </div>
+                {/* 4 μπλε γωνιακά τρίγωνα */}
+                <polygon points="0,0 40,0 0,40" fill="#2563eb" stroke="#1d4ed8" strokeWidth="1.2" fillOpacity="0.85" />
+                <polygon points="160,0 120,0 160,40" fill="#2563eb" stroke="#1d4ed8" strokeWidth="1.2" fillOpacity="0.85" />
+                <polygon points="160,160 120,160 160,120" fill="#2563eb" stroke="#1d4ed8" strokeWidth="1.2" fillOpacity="0.85" />
+                <polygon points="0,160 40,160 0,120" fill="#2563eb" stroke="#1d4ed8" strokeWidth="1.2" fillOpacity="0.85" />
+
+                {/* 2 πράσινα τρίγωνα (πάνω & κάτω) */}
+                <polygon points="40,0 120,0 80,40" fill="#4ade80" stroke="#16a34a" strokeWidth="1.2" fillOpacity="0.85" />
+                <polygon points="40,160 120,160 80,120" fill="#4ade80" stroke="#16a34a" strokeWidth="1.2" fillOpacity="0.85" />
+
+                {/* 2 πορτοκαλί τρίγωνα (αριστερά & δεξιά) */}
+                <polygon points="0,40 0,120 40,80" fill="#fb923c" stroke="#ea580c" strokeWidth="1.2" fillOpacity="0.85" />
+                <polygon points="160,40 160,120 120,80" fill="#fb923c" stroke="#ea580c" strokeWidth="1.2" fillOpacity="0.85" />
+
+                {/* Τετράγωνα 1, 2, 4, 5 */}
+                <polygon points="0,40 40,0 80,40 40,80" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+                <polygon points="120,0 160,40 120,80 80,40" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+                <polygon points="0,120 40,80 80,120 40,160" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+                <polygon points="120,80 160,120 120,160 80,120" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+
+                {/* Κεντρικό σκιασμένο τετράγωνο (3) */}
+                <polygon points="80,40 120,80 80,120 40,80" fill="#64748b" stroke="#0f172a" strokeWidth="2" />
+
+                {/* Αριθμοί 1-5 */}
+                <text x="40" y="45" fontSize="14" fontWeight="bold" textAnchor="middle" fill="#dc2626">1</text>
+                <text x="120" y="45" fontSize="14" fontWeight="bold" textAnchor="middle" fill="#dc2626">2</text>
+                <text x="80" y="85" fontSize="14" fontWeight="bold" textAnchor="middle" fill="#ffffff">3</text>
+                <text x="40" y="125" fontSize="14" fontWeight="bold" textAnchor="middle" fill="#dc2626">4</text>
+                <text x="120" y="125" fontSize="14" fontWeight="bold" textAnchor="middle" fill="#dc2626">5</text>
+              </g>
+            </g>
+
+            {/* ΒΕΛΟΣ ΜΕΤΑΒΑΣΗΣ */}
+            <g transform="translate(188, 90)">
+              <line x1="0" y1="0" x2="22" y2="0" stroke="#0f172a" strokeWidth="2" />
+              <polygon points="22,-4 30,0 22,4" fill="#0f172a" />
+            </g>
+
+            {/* 2ο ΣΧΗΜΑ: ΤΑ 8 ΙΣΑ ΤΕΤΡΑΓΩΝΑ ΕΝΩΜΕΝΑ */}
+            <g transform="translate(235, 10)">
+              <text x="75" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Ένωση σε 8 Ίσα Τετράγωνα
+              </text>
+              <g transform="translate(0, 20)">
+                {/* Σειρά 1: Τετράγωνα 1, 2, 3, 4 */}
+                <rect x="0" y="0" width="36" height="36" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+                <text x="18" y="23" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">1</text>
+
+                <rect x="38" y="0" width="36" height="36" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+                <text x="56" y="23" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">2</text>
+
+                <rect x="76" y="0" width="36" height="36" fill="#64748b" stroke="#0f172a" strokeWidth="1.5" />
+                <text x="94" y="23" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#ffffff">3</text>
+
+                <rect x="114" y="0" width="36" height="36" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+                <text x="132" y="23" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">4</text>
+
+                {/* Σειρά 2: Τετράγωνο 5, Πορτοκαλί (6), Πράσινο (7), Μπλε (8) */}
+                <rect x="0" y="42" width="36" height="36" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
+                <text x="18" y="65" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">5</text>
+
+                {/* 6: 2 πορτοκαλί μισά */}
+                <g transform="translate(38, 42)">
+                  <polygon points="0,0 36,0 0,36" fill="#fb923c" stroke="#ea580c" strokeWidth="1" />
+                  <polygon points="36,36 36,0 0,36" fill="#fb923c" stroke="#ea580c" strokeWidth="1" />
+                  <rect x="0" y="0" width="36" height="36" fill="none" stroke="#0f172a" strokeWidth="1.5" />
+                  <text x="18" y="23" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#7c2d12">6</text>
+                </g>
+
+                {/* 7: 2 πράσινα μισά */}
+                <g transform="translate(76, 42)">
+                  <polygon points="0,0 36,0 0,36" fill="#4ade80" stroke="#16a34a" strokeWidth="1" />
+                  <polygon points="36,36 36,0 0,36" fill="#4ade80" stroke="#16a34a" strokeWidth="1" />
+                  <rect x="0" y="0" width="36" height="36" fill="none" stroke="#0f172a" strokeWidth="1.5" />
+                  <text x="18" y="23" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#14532d">7</text>
+                </g>
+
+                {/* 8: 4 μπλε τεταρτημόρια γωνιών */}
+                <g transform="translate(114, 42)">
+                  <polygon points="0,0 18,18 0,36" fill="#2563eb" stroke="#1d4ed8" strokeWidth="0.8" />
+                  <polygon points="0,0 18,18 36,0" fill="#2563eb" stroke="#1d4ed8" strokeWidth="0.8" />
+                  <polygon points="36,0 18,18 36,36" fill="#2563eb" stroke="#1d4ed8" strokeWidth="0.8" />
+                  <polygon points="0,36 18,18 36,36" fill="#2563eb" stroke="#1d4ed8" strokeWidth="0.8" />
+                  <rect x="0" y="0" width="36" height="36" fill="none" stroke="#0f172a" strokeWidth="1.5" />
+                  <text x="18" y="23" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#ffffff">8</text>
+                </g>
+              </g>
+
+              <text x="75" y="130" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
+                Σύνολο: 8 ίσα τετράγωνα
+              </text>
+            </g>
+          </svg>
         </div>
 
-          <div className="text-[11px] text-slate-600 font-mono text-center mt-2 space-y-0.5">
-            <div>Σταυρός ＝ <strong>5 ίσα τετράγωνα</strong></div>
-            <div>4 γωνίες (4 × 0,25) ＝ <strong>1 επιπλέον τετράγωνο</strong></div>
-          </div>
+        {/* ΑΝΑΛΥΤΙΚΗ ΚΑΤΑΜΕΤΡΗΣΗ */}
+        <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+          <div>• <strong>5 ακέραια τετράγωνα:</strong> Τα 1, 2, 3 (σκιασμένο), 4 και 5.</div>
+          <div>• <strong>6ο τετράγωνο:</strong> Τα 2 πορτοκαλί τρίγωνα (αριστερά και δεξιά) ενώνονται σε 1 τετράγωνο.</div>
+          <div>• <strong>7ο τετράγωνο:</strong> Τα 2 πράσινα τρίγωνα (πάνω και κάτω) ενώνονται σε 1 τετράγωνο.</div>
+          <div>• <strong>8ο τετράγωνο:</strong> Τα 4 μπλε γωνιακά τριγωνάκια ενώνονται και σχηματίζουν 1 τετράγωνο.</div>
         </div>
+
+        <p>
+          Επομένως, ολόκληρο το αρχικό τετράγωνο αποτελείται ακριβώς από <strong>8 ίσα μικρά τετράγωνα</strong>:
+        </p>
 
         <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
           <div>• Εμβαδόν μεγάλου τετραγώνου ＝ <strong>4 τ. εκ.</strong></div>
-          <div>• Πλήθος ίσων τετραγώνων ＝ <strong>5</strong></div>
+          <div>• Πλήθος ίσων τετραγώνων ＝ <strong>8</strong></div>
 
           <div className="pt-2 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
             <span>Εμβαδόν σκιασμένου τετραγώνου ＝</span>
-            <Fraction num="4" den="5" />
+            <Fraction num="4" den="8" />
             <span>＝</span>
-            <Fraction num="8" den="10" />
-            <span>＝ <strong className="text-emerald-700 text-base">0,8 τ. εκ.</strong></span>
+            <Fraction num="1" den="2" />
+            <span>＝ <strong className="text-emerald-700 text-base">0,5 τ. εκ.</strong></span>
           </div>
         </div>
 
         <p className="pt-1">
-          Άρα, το εμβαδόν του σκιασμένου τετραγώνου είναι <strong>0,8 τ. εκ.</strong> (Επιλογή <strong>B</strong>).
+          Άρα, το εμβαδόν του σκιασμένου τετραγώνου είναι <strong>0,5 τ. εκ.</strong> (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
