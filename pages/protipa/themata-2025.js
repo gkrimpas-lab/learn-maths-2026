@@ -1574,20 +1574,226 @@ const QUESTIONS_2025 = [
       </div>
     )
   },
-      {
+     {
     id: 19,
     officialNumber: 39,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    promptText: 'Ο Χρήστος ξεκινάει από το σπίτι του μια συγκεκριμένη ώρα κάθε ημέρα και πηγαίνει στην παραλία μέσω μιας ευθείας διαδρομής. Όταν πηγαίνει με το ποδήλατο και με σταθερή ταχύτητα 25 χιλιόμετρα την ώρα, φτάνει στις 3:00 μ.μ. Όταν πηγαίνει με τα πόδια και με σταθερή ταχύτητα 5 χιλιόμετρα την ώρα, φτάνει στις 3:40 μ.μ. Τι ώρα ξεκινάει από το σπίτι του;',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    promptText: 'Αν κάποιος ξεκινήσει από το σπίτι του για την παραλία με το ποδήλατό του με ταχύτητα 25 χλμ./ώρα, φτάνει στις 3:00 μ.μ. Αν πάει με τα πόδια με ταχύτητα 5 χλμ./ώρα, φτάνει στις 3:40 μ.μ. Τι ώρα ξεκίνησε από το σπίτι του;',
     options: [
-      { key: 'A', label: '2:30 μ.μ.', raw: '2:30' },
-      { key: 'B', label: '2:52 μ.μ.', raw: '2:52' },
-      { key: 'Γ', label: '2:50 μ.μ.', raw: '2:50' },
-      { key: 'Δ', label: '11:40 π.μ.', raw: '11:40' },
-      { key: 'E', label: '12:40 μ.μ.', raw: '12:40' }
+      { key: 'A', label: '2:30 μ.μ.', raw: '2:30 μ.μ.' },
+      { key: 'B', label: '2:40 μ.μ.', raw: '2:40 μ.μ.' },
+      { key: 'Γ', label: '2:45 μ.μ.', raw: '2:45 μ.μ.' },
+      { key: 'Δ', label: '2:50 μ.μ.', raw: '2:50 μ.μ.' },
+      { key: 'E', label: '2:55 μ.μ.', raw: '2:55 μ.μ.' }
     ],
-    correctRaw: '2:50',
-    explain: 'Η χρονική διαφορά μεταξύ των δύο μετακινήσεων είναι 40 λεπτά, δηλαδή 40/60 = 2/3 της ώρας. Αν d είναι η απόσταση σε χιλιόμετρα: d/5 − d/25 = 2/3 ➔ (5d − d)/25 = 2/3 ➔ 4d/25 = 2/3 ➔ 12d = 50 ➔ d = 50/12 = 25/6 χλμ. Ο χρόνος που χρειάζεται με το ποδήλατο είναι d / 25 = (25/6) / 25 = 1/6 της ώρας, δηλαδή 10 λεπτά. Εφόσον φτάνει στις 3:00 μ.μ., ξεκίνησε 10 λεπτά νωρίτερα: 2:50 μ.μ.'
+    correctRaw: '2:50 μ.μ.',
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Έστω <strong>s</strong> η απόσταση από το σπίτι μέχρι την παραλία. Οι ταχύτητες είναι <strong>25 χλμ./ώρα</strong> με το ποδήλατο και <strong>5 χλμ./ώρα</strong> με τα πόδια.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ 1: ΑΠΟΣΤΑΣΗ ΣΠΙΤΙ - ΠΑΡΑΛΙΑ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="390" height="90" viewBox="0 0 390 90" className="select-none font-sans">
+            {/* Σπίτι */}
+            <g transform="translate(25, 20)">
+              <polygon points="18,0 0,16 36,16" fill="#f97316" />
+              <rect x="5" y="16" width="26" height="26" fill="#fed7aa" stroke="#c2410c" strokeWidth="1.2" />
+              <rect x="14" y="26" width="8" height="16" fill="#9a3412" />
+              <text x="18" y="54" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Σπίτι</text>
+            </g>
+
+            {/* Διαδρομή */}
+            <g transform="translate(68, 42)">
+              <line x1="0" y1="0" x2="245" y2="0" stroke="#94a3b8" strokeWidth="2.5" strokeDasharray="4 4" />
+              <path d="M 245,-4 L 254,0 L 245,4 Z" fill="#64748b" />
+              <rect x="80" y="-18" width="85" height="18" rx="4" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
+              <text x="122.5" y="-5" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569" fontFamily="monospace">
+                Απόσταση s
+              </text>
+            </g>
+
+            {/* Παραλία */}
+            <g transform="translate(330, 20)">
+              <path d="M 0,38 Q 15,30 30,38 Q 45,46 60,38" fill="none" stroke="#0284c7" strokeWidth="2.5" />
+              <path d="M 5,44 Q 20,36 35,44 Q 50,52 65,44" fill="none" stroke="#38bdf8" strokeWidth="2" />
+              <circle cx="28" cy="14" r="10" fill="#facc15" stroke="#eab308" strokeWidth="1.2" />
+              <text x="30" y="54" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Παραλία</text>
+            </g>
+          </svg>
+        </div>
+
+        {/* SVG ΣΧΗΜΑ 2: ΧΡΟΝΙΚΗ ΔΙΑΡΚΕΙΑ & ΧΩΡΙΣΜΟΣ ΣΕ 5 ΜΕΡΗ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="400" height="135" viewBox="0 0 400 135" className="select-none font-sans">
+            {/* ΓΡΑΜΜΗ 1: ΠΟΔΗΛΑΤΟ (1 μέρος) */}
+            <g transform="translate(20, 20)">
+              <text x="0" y="14" fontSize="11" fontWeight="bold" fill="#0f172a">
+                Ποδήλατο (25 χλμ./ώρα):
+              </text>
+              <rect x="155" y="2" width="46" height="18" rx="4" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.5" />
+              <text x="178" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#15803d" fontFamily="monospace">
+                1 μέρος
+              </text>
+              <circle cx="201" cy="11" r="3.5" fill="#16a34a" />
+              <text x="201" y="30" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#16a34a">
+                3:00 μ.μ.
+              </text>
+            </g>
+
+            {/* ΓΡΑΜΜΗ 2: ΜΕ ΤΑ ΠΟΔΙΑ (5 μέρη) */}
+            <g transform="translate(20, 68)">
+              <text x="0" y="14" fontSize="11" fontWeight="bold" fill="#0f172a">
+                Με τα πόδια (5 χλμ./ώρα):
+              </text>
+
+              {/* 1ο μέρος (αντίστοιχο ποδηλάτου) */}
+              <rect x="155" y="2" width="46" height="18" rx="4" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.5" />
+              <text x="178" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#15803d" fontFamily="monospace">
+                1ο
+              </text>
+
+              {/* Υπόλοιπα 4 μέρη (συνολικά 40 λεπτά) */}
+              <rect x="203" y="2" width="46" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
+              <text x="226" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">2ο</text>
+
+              <rect x="251" y="2" width="46" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
+              <text x="274" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">3ο</text>
+
+              <rect x="299" y="2" width="46" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
+              <text x="322" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">4ο</text>
+
+              <rect x="347" y="2" width="46" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
+              <text x="370" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">5ο</text>
+
+              <circle cx="393" cy="11" r="3.5" fill="#0284c7" />
+              <text x="375" y="30" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0369a1">
+                3:40 μ.μ.
+              </text>
+
+              {/* Αγκύλη / Ένδειξη για τα 40 λεπτά */}
+              <line x1="203" y1="36" x2="393" y2="36" stroke="#0284c7" strokeWidth="1.5" />
+              <text x="298" y="49" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
+                4 μέρη ＝ 40 λεπτά (10 λεπτά/μέρος)
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* 1ος ΤΡΟΠΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 1ος Τρόπος (Σύγκριση αναλογίας ταχυτήτων και χρόνων)
+          </div>
+
+          <p className="text-slate-800">
+            Η ταχύτητα με το ποδήλατο είναι <strong>5 φορές μεγαλύτερη</strong> από την ταχύτητα με τα πόδια:
+          </p>
+
+          <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
+            <Fraction num="Ταχύτητα ποδηλάτου" den="Ταχύτητα πεζού" />
+            <span>＝</span>
+            <Fraction num="25" den="5" />
+            <span>＝ <strong>5</strong></span>
+          </div>
+
+          <p className="text-slate-800">
+            Επομένως, για την ίδια απόσταση ο πεζός χρειάζεται <strong>5πλάσιο χρόνο</strong> σε σχέση με το ποδήλατο:
+          </p>
+
+          <ul className="space-y-1.5 pl-4 sm:pl-5 text-slate-800 list-disc font-medium">
+            <li>Χρόνος με ποδήλατο: <strong>1 μέρος</strong> (άφιξη στις 3:00 μ.μ.).</li>
+            <li>Χρόνος με τα πόδια: <strong>5 ίσα μέρη</strong> (άφιξη στις 3:40 μ.μ.).</li>
+            <li>
+              Η χρονική διαφορά είναι 40 λεπτά (από 3:00 μ.μ. έως 3:40 μ.μ.), η οποία αντιστοιχεί στα επιπλέον:
+              <div className="font-mono text-slate-900 font-bold pl-1 pt-0.5">5 μέρη － 1 μέρος ＝ 4 μέρη</div>
+            </li>
+            <li>
+              Κάθε μέρος διαρκεί: <strong>40 λεπτά : 4 ＝ 10 λεπτά</strong>.
+            </li>
+            <li>
+              Άρα, η διαδρομή με το ποδήλατο (1 μέρος) διήρκεσε <strong>10 λεπτά</strong>.
+            </li>
+          </ul>
+
+          <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+            Ώρα εκκίνησης ＝ 3:00 μ.μ. － 10 λεπτά ➔ <strong className="text-emerald-700 text-base">2:50 μ.μ.</strong>
+          </div>
+        </div>
+
+        {/* 2ος ΤΡΟΠΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 2ος Τρόπος (με εξίσωση κίνησης s ＝ v · t)
+          </div>
+
+          <p className="text-slate-800">
+            Έστω <strong>t</strong> ο χρόνος (σε ώρες) με το ποδήλατο. Με τα πόδια χρειάζεται επιπλέον 40 λεπτά.
+          </p>
+
+          <p className="text-slate-700 font-medium">
+            Μετατρέπουμε τα 40 λεπτά σε ώρες:
+          </p>
+
+          <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
+            <span>40 λεπτά ＝</span>
+            <Fraction num="40" den="60" />
+            <span>ώρας ＝</span>
+            <Fraction num="2" den="3" />
+            <span>ώρας</span>
+          </div>
+
+          <p className="text-slate-800 pt-1">
+            Επειδή η απόσταση <strong>s</strong> είναι κοινή:
+          </p>
+
+          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>s ＝ 25 · t ＝ 5 · (t ＋</span>
+              <Fraction num="2" den="3" />
+              <span>)</span>
+            </div>
+
+            <div className="text-slate-500 font-sans text-xs pl-2">
+              // Διαιρούμε και τα δύο μέλη με το 5:
+            </div>
+
+            <div className="pl-2 space-y-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>5 · t ＝ t ＋</span>
+                <Fraction num="2" den="3" />
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>4 · t ＝</span>
+                <Fraction num="2" den="3" />
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>t ＝</span>
+                <Fraction num="2" den="12" />
+                <span>＝</span>
+                <Fraction num="1" den="6" />
+                <span>ώρας</span>
+              </div>
+            </div>
+
+            <div className="pt-1.5 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
+              <span>Μετατροπή σε λεπτά: t ＝</span>
+              <Fraction num="1" den="6" />
+              <span>· 60 λεπτά ＝ <strong>10 λεπτά</strong></span>
+            </div>
+          </div>
+
+          <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+            Ώρα εκκίνησης ＝ 3:00 μ.μ. － 10 λεπτά ➔ <strong className="text-emerald-700 text-base">2:50 μ.μ.</strong>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Συνεπώς, ξεκίνησε από το σπίτι του στις <strong>2:50 μ.μ.</strong> (Επιλογή <strong>Δ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 20,
