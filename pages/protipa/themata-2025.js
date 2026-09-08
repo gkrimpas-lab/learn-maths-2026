@@ -2361,7 +2361,7 @@ export default function Themata2025Page() {
               Αποτέλεσμα Εξέτασης 2025
             </h2>
             <div className="inline-block bg-blue-50 border border-blue-200 px-6 py-2.5 rounded-2xl">
-              <span className="text-xs font-bold text-blue-800 uppercase block">Τελικό Σκορ</span>
+              <span className="text-xs font-bold text-blue-800 uppercase block">Τελικο Σκορ</span>
               <span className="text-3xl sm:text-4xl font-mono font-black text-blue-700">
                 {score} / 50
               </span>
