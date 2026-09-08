@@ -1813,20 +1813,59 @@ const QUESTIONS_2025 = [
           Επειδή όλοι οι όροφοι είναι <strong>πανομοιότυποι</strong> και έχουν το ίδιο ύψος, τα παράθυρα έχουν ακριβώς το ίδιο ύψος, καθώς και τις ίδιες αποστάσεις από τα πατώματα και τις οροφές.
         </p>
 
-        {/* SVG ΣΧΗΜΑ ΠΡΟΣΟΨΗΣ ΚΤΙΡΙΟΥ ΜΕ ΧΡΩΜΑΤΙΣΤΑ ΤΜΗΜΑΤΑ */}
+        {/* SVG ΣΧΗΜΑ ΠΡΟΣΟΨΗΣ ΚΤΙΡΙΟΥ ΜΕ ΔΙΟΡΘΩΜΕΝΑ ΒΕΛΑΚΙΑ ΚΑΙ ΠΛΗΡΗ ΠΕΡΙΘΩΡΙΑ */}
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="380" height="340" viewBox="0 0 380 340" className="select-none font-sans mx-auto block">
+          <svg width="450" height="340" viewBox="0 0 450 340" className="select-none font-sans mx-auto block">
             <defs>
-              <marker id="arrow-up" viewBox="0 0 10 10" refX="5" refY="2" markerWidth="5" markerHeight="5" orient="auto">
+              <marker id="arrow-up-40" viewBox="0 0 10 10" refX="5" refY="2" markerWidth="6" markerHeight="6" orient="auto">
                 <path d="M 0 6 L 5 0 L 10 6 z" fill="#0f172a" />
               </marker>
-              <marker id="arrow-down" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="5" markerHeight="5" orient="auto">
+              <marker id="arrow-down-40" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="6" markerHeight="6" orient="auto">
                 <path d="M 0 2 L 5 8 L 10 2 z" fill="#0f172a" />
               </marker>
             </defs>
 
-            {/* ΠΡΟΣΟΨΗ ΚΤΙΡΙΟΥ (3 οροφοι των 100px) */}
-            <g transform="translate(140, 20)">
+            {/* ΔΙΑΣΤΑΣΕΙΣ ΑΡΙΣΤΕΡΑ ΜΕ ΑΦΘΟΝΟ ΧΩΡΟ (x=0 έως x=210) */}
+            <g>
+              {/* Οριζόντιες διακεκομμένες γραμμές αναφοράς */}
+              <line x1="60" y1="38" x2="252" y2="38" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" />
+              <line x1="120" y1="88" x2="252" y2="88" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" />
+              <line x1="120" y1="138" x2="252" y2="138" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" />
+              <line x1="60" y1="188" x2="252" y2="188" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" />
+
+              {/* Βέλος 430 εκ. */}
+              <line
+                x1="80"
+                y1="46"
+                x2="80"
+                y2="180"
+                stroke="#0f172a"
+                strokeWidth="1.8"
+                markerStart="url(#arrow-up-40)"
+                markerEnd="url(#arrow-down-40)"
+              />
+              <text x="70" y="117" fontSize="12" fontWeight="bold" textAnchor="end" fill="#0f172a" fontFamily="monospace">
+                430 εκ.
+              </text>
+
+              {/* Βέλος 150 εκ. */}
+              <line
+                x1="150"
+                y1="96"
+                x2="150"
+                y2="130"
+                stroke="#0f172a"
+                strokeWidth="1.8"
+                markerStart="url(#arrow-up-40)"
+                markerEnd="url(#arrow-down-40)"
+              />
+              <text x="140" y="117" fontSize="12" fontWeight="bold" textAnchor="end" fill="#0f172a" fontFamily="monospace">
+                150 εκ.
+              </text>
+            </g>
+
+            {/* ΠΡΟΣΟΨΗ ΚΤΙΡΙΟΥ (από x=210) */}
+            <g transform="translate(210, 20)">
               {/* Εξωτερικό περίγραμμα */}
               <rect x="0" y="0" width="190" height="300" fill="#ffffff" stroke="#0f172a" strokeWidth="2.2" />
 
@@ -1834,21 +1873,17 @@ const QUESTIONS_2025 = [
               <line x1="0" y1="100" x2="190" y2="100" stroke="#0f172a" strokeWidth="1.8" />
               <line x1="0" y1="200" x2="190" y2="200" stroke="#0f172a" strokeWidth="1.8" />
 
-              {/* 3ος Όροφος (y: 0 έως 100) */}
-              {/* Κόκκινο τμήμα (οροφή -> πάνω μέρος παραθύρου): y = 0 έως 18 */}
+              {/* 3ος Όροφος */}
               <line x1="72" y1="2" x2="72" y2="18" stroke="#dc2626" strokeWidth="4" strokeLinecap="round" />
               <rect x="42" y="18" width="30" height="50" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.6" />
-              {/* Μπλε τμήμα (κάτω μέρος παραθύρου -> πάτωμα): y = 68 έως 100 */}
               <line x1="72" y1="68" x2="72" y2="98" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
 
-              {/* 2ος Όροφος (y: 100 έως 200) */}
-              {/* Κόκκινο τμήμα (οροφή -> πάνω μέρος παραθύρου): y = 100 έως 118 */}
+              {/* 2ος Όροφος */}
               <line x1="72" y1="102" x2="72" y2="118" stroke="#dc2626" strokeWidth="4" strokeLinecap="round" />
               <rect x="42" y="118" width="30" height="50" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.6" />
-              {/* Μπλε τμήμα (κάτω μέρος παραθύρου -> πάτωμα): y = 168 έως 200 */}
               <line x1="72" y1="168" x2="72" y2="198" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
 
-              {/* 1ος Όροφος (y: 200 έως 300) */}
+              {/* 1ος Όροφος */}
               <rect x="42" y="218" width="30" height="50" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.6" />
 
               {/* Ενδείξεις ορόφων δεξιά */}
@@ -1856,30 +1891,9 @@ const QUESTIONS_2025 = [
               <text x="135" y="155" fontSize="11" fontWeight="bold" fill="#64748b">2ος όροφος</text>
               <text x="135" y="255" fontSize="11" fontWeight="bold" fill="#64748b">1ος όροφος</text>
 
-              {/* Βέλος παραθύρου */}
+              {/* Ετικέτα παραθύρου */}
               <line x1="12" y1="260" x2="38" y2="248" stroke="#475569" strokeWidth="1.2" />
               <text x="6" y="272" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">ΠΑΡΑΘΥΡΟ</text>
-            </g>
-
-            {/* ΔΙΑΣΤΑΣΕΙΣ ΑΡΙΣΤΕΡΑ */}
-            <g transform="translate(140, 20)">
-              {/* Οριζόντιες διακεκομμένες γραμμές αναφοράς */}
-              <line x1="-120" y1="18" x2="42" y2="18" stroke="#64748b" strokeWidth="1" strokeDasharray="3 3" />
-              <line x1="-70" y1="68" x2="42" y2="68" stroke="#64748b" strokeWidth="1" strokeDasharray="3 3" />
-              <line x1="-70" y1="118" x2="42" y2="118" stroke="#64748b" strokeWidth="1" strokeDasharray="3 3" />
-              <line x1="-120" y1="168" x2="42" y2="168" stroke="#64748b" strokeWidth="1" strokeDasharray="3 3" />
-
-              {/* Βέλος 150 εκ. (από y=68 έως y=118) */}
-              <line x1="-45" y1="74" x2="-45" y2="112" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow-up)" markerEnd="url(#arrow-down)" />
-              <text x="-52" y="97" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a" fontFamily="monospace">
-                150 εκ.
-              </text>
-
-              {/* Βέλος 430 εκ. (από y=18 έως y=168) */}
-              <line x1="-95" y1="24" x2="-95" y2="162" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow-up)" markerEnd="url(#arrow-down)" />
-              <text x="-102" y="97" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a" fontFamily="monospace">
-                430 εκ.
-              </text>
             </g>
           </svg>
         </div>
