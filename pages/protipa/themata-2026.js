@@ -369,7 +369,7 @@ const QUESTIONS_2026 = [
   {
     id: 4,
     officialNumber: 24,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Το ΑΒΓΔ είναι ορθογώνιο παραλληλόγραμμο. Στην πλευρά ΑΒ πήραμε σημείο Ε τέτοιο ώστε η γωνία ΑΕΓ να είναι 137°. Πόσες μοίρες είναι η γωνία ΒΓΕ;',
     hasSvg: 'rect24',
     options: [
@@ -384,17 +384,60 @@ const QUESTIONS_2026 = [
   {
     id: 5,
     officialNumber: 25,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
-    promptText: 'Ποιο από τα παρακάτω ραβδογράμματα αντιστοιχεί στο διπλανό κυκλικό διάγραμμα;',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
+    promptText: 'Στο διπλανό κυκλικό διάγραμμα παριστάνονται οι προτιμήσεις των μαθητών ενός σχολείου για τρία αθλήματα Κ, Λ και Μ. Ποιο από τα ραβδογράμματα Α, Β, Γ και Δ παριστάνει σωστά τα δεδομένα του κυκλικού διαγράμματος;',
     hasSvg: 'pie25',
     options: [
-      { key: 'A', label: 'Ραβδόγραμμα Α', raw: 'A' },
-      { key: 'B', label: 'Ραβδόγραμμα Β', raw: 'B' },
-      { key: 'Γ', label: 'Ραβδόγραμμα Γ', raw: 'Γ' },
-      { key: 'Δ', label: 'Ραβδόγραμμα Δ', raw: 'Δ' }
+      { key: 'A', label: 'Το ραβδόγραμμα Α', raw: 'A' },
+      { key: 'B', label: 'Το ραβδόγραμμα Β', raw: 'B' },
+      { key: 'Γ', label: 'Το ραβδόγραμμα Γ', raw: 'Γ' },
+      { key: 'Δ', label: 'Το ραβδόγραμμα Δ', raw: 'Δ' }
     ],
-    correctRaw: 'Δ',
-    explain: 'Στο κυκλικό διάγραμμα ο τομέας Κ είναι ορθή γωνία (90° = 25%). Ο τομέας Λ είναι μεγαλύτερος από το Κ (περίπου 110°-120°, άρα > 30%). Ο τομέας Μ είναι ο υπόλοιπος (> 50%). Επομένως: ύψος Κ < ύψος Λ < ύψος Μ. Το μόνο ραβδόγραμμα που τηρεί αυτή τη σχέση είναι το Δ.'
+    correctRaw: 'Γ',
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Παρατηρούμε τη σχετική διάταξη των τριών τομέων στο κυκλικό διάγραμμα:
+        </p>
+
+        <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+          <div>• Ο τομέας <strong>Κ</strong> είναι ο μικρότερος (προσεγγίζει το <Fraction num="1" den="4" /> του κύκλου, δηλ. περίπου 25%).</div>
+          <div>• Ο τομέας <strong>Λ</strong> είναι εμφανώς μεγαλύτερος από τον Κ.</div>
+          <div>• Ο τομέας <strong>Μ</strong> είναι ο μεγαλύτερος από όλους (καλύπτει σχεδόν το <Fraction num="1" den="2" /> του κύκλου).</div>
+          <div className="pt-1 text-blue-700 font-bold">
+            Συνεπώς ισχύει η διάταξη: <strong>Κ &lt; Λ &lt; Μ</strong>
+          </div>
+        </div>
+
+        <p>
+          Ελέγχουμε τα διαθέσιμα ραβδογράμματα:
+        </p>
+
+        <ul className="space-y-1.5 pl-4 sm:pl-5 text-slate-800 list-disc font-medium">
+          <li>
+            <strong>Στο Β:</strong> Οι ράβδοι Κ και Μ εμφανίζονται ίσες (<span className="font-mono">Κ ＝ Μ</span>), επομένως <strong>απορρίπτεται</strong>.
+          </li>
+          <li>
+            <strong>Στο Δ:</strong> Η ράβδος Κ είναι ψηλότερη από τη Λ (<span className="font-mono">Κ &gt; Λ</span>), επομένως <strong>απορρίπτεται</strong>.
+          </li>
+          <li>
+            <strong>Στα Α και Γ:</strong> Ικανοποιείται η συνθήκη <span className="font-mono">Κ &lt; Λ &lt; Μ</span>. Όμως:
+            <ul className="pl-4 pt-1 space-y-1 list-circle text-slate-700">
+              <li>
+                Στο <strong>Α</strong>, οι ράβδοι Κ και Λ είναι υπερβολικά κοντές συγκριτικά με τη ράβδο Μ (δεν ανταποκρίνονται στις πραγματικές αναλογίες του κύκλου).
+              </li>
+              <li>
+                Στο <strong>Γ</strong>, οι αναλογίες των υψών αποδίδουν πιστά τα μεγέθη των τομέων, όπου το Μ είναι το μεγαλύτερο, αλλά τα Κ και Λ έχουν ρεαλιστικό ύψος.
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <p className="pt-1">
+          Άρα, το σωστό ραβδόγραμμα είναι το <strong>Γ</strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 6,
@@ -757,7 +800,7 @@ export default function Themata2026Page() {
         <div className="space-y-4 p-3 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200">
           {/* Κυκλικό Διάγραμμα */}
           <div className="flex flex-col items-center">
-            <svg width="170" height="170" viewBox="0 0 160 160" className="select-none overflow-visible">
+            <svg width="170" height="170" viewBox="0 0 160 160" className="select-none overflow-visible font-sans">
               <defs>
                 <pattern id="hatch_diag2" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
                   <line x1="0" y1="0" x2="0" y2="6" stroke="#000000" strokeWidth="1.8" />
@@ -765,38 +808,47 @@ export default function Themata2026Page() {
               </defs>
               <circle cx="80" cy="80" r="52" fill="#ffffff" stroke="#000000" strokeWidth="2" />
               
-              {/* Τομέας Κ (90°) */}
+              {/* Τομέας Κ (περίπου 90° - 1/4) */}
               <path d="M 80 80 L 80 28 A 52 52 0 0 1 132 80 Z" fill="#000000" />
               
               {/* Τομέας Λ */}
               <path d="M 80 80 L 132 80 A 52 52 0 0 1 64 129.8 Z" fill="url(#hatch_diag2)" stroke="#000000" strokeWidth="1.2" />
               
               {/* Ετικέτες έξω από τον κύκλο */}
-              <text x="124" y="40" fill="#000000" fontSize="14" fontWeight="bold">Κ</text>
+              <text x="124" y="42" fill="#000000" fontSize="14" fontWeight="bold">Κ</text>
               <text x="114" y="136" fill="#000000" fontSize="14" fontWeight="bold">Λ</text>
-              <text x="10" y="84" fill="#000000" fontSize="14" fontWeight="bold">Μ</text>
+              <text x="14" y="85" fill="#000000" fontSize="14" fontWeight="bold">Μ</text>
             </svg>
           </div>
 
-          {/* 4 Ραβδογράμματα Α, Β, Γ, Δ */}
+          {/* 4 Ραβδογράμματα Α, Β, Γ, Δ ακριβώς όπως στην εικόνα */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-200">
             {[
-              { label: 'A', rects: [{x:20, y:55, h:25}, {x:47, y:48, h:32}, {x:74, y:15, h:65}] },
-              { label: 'B', rects: [{x:20, y:20, h:60}, {x:47, y:50, h:30}, {x:74, y:20, h:60}] },
-              { label: 'Γ', rects: [{x:20, y:48, h:32}, {x:47, y:40, h:40}, {x:74, y:15, h:65}] },
-              { label: 'Δ', rects: [{x:20, y:38, h:42}, {x:47, y:48, h:32}, {x:74, y:15, h:65}] }
-            ].map((item, idx) => (
-              <div key={idx} className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center">
-                <svg width="110" height="100" viewBox="0 0 110 100" className="select-none">
-                  <line x1="10" y1="80" x2="100" y2="80" stroke="#cbd5e1" strokeWidth="1.5" />
+              // A: K=20px, Λ=25px, M=68px (Κ, Λ πολύ μικρά σε σχέση με το Μ)
+              { label: 'A', rects: [{x: 20, y: 65, h: 20}, {x: 52, y: 60, h: 25}, {x: 84, y: 17, h: 68}] },
+              // B: K=75px, Λ=30px, M=75px (Κ και Μ ίσα και ψηλά)
+              { label: 'B', rects: [{x: 20, y: 10, h: 75}, {x: 52, y: 55, h: 30}, {x: 84, y: 10, h: 75}] },
+              // Γ: K=42px, Λ=52px, M=75px (Σωστή κλιμάκωση Κ < Λ < Μ)
+              { label: 'Γ', rects: [{x: 20, y: 43, h: 42}, {x: 52, y: 33, h: 52}, {x: 84, y: 10, h: 75}] },
+              // Δ: K=48px, Λ=38px, M=73px (Κ > Λ - λάθος σειρά)
+              { label: 'Δ', rects: [{x: 20, y: 37, h: 48}, {x: 52, y: 47, h: 38}, {x: 84, y: 12, h: 73}] }
+            ].map((item) => (
+              <div key={item.label} className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center shadow-xs">
+                <svg width="120" height="105" viewBox="0 0 120 105" className="select-none font-sans">
+                  {/* Άξονας βάσης */}
+                  <line x1="8" y1="85" x2="112" y2="85" stroke="#cbd5e1" strokeWidth="1.5" />
+                  
+                  {/* Στήλες */}
                   {item.rects.map((r, ri) => (
-                    <rect key={ri} x={r.x} y={r.y} width="16" height={r.h} fill="#475569" />
+                    <rect key={ri} x={r.x} y={r.y} width="16" height={r.h} fill="#52525b" />
                   ))}
-                  <text x="28" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Κ</text>
-                  <text x="55" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Λ</text>
-                  <text x="82" y="93" fontSize="10" fontWeight="bold" textAnchor="middle">Μ</text>
+                  
+                  {/* Ετικέτες στηλών */}
+                  <text x="28" y="99" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Κ</text>
+                  <text x="60" y="99" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Λ</text>
+                  <text x="92" y="99" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Μ</text>
                 </svg>
-                <span className="font-bold text-xs mt-1 text-slate-700">{item.label}</span>
+                <span className="font-bold text-sm mt-1 text-slate-800">{item.label}</span>
               </div>
             ))}
           </div>
