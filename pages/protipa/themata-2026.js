@@ -37,7 +37,151 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: <span className="inline-flex items-center">x ＝ <Fraction num="11" den="4" /></span>, raw: '11/4' }
     ],
     correctRaw: '11/8',
-    explain: 'Μετατρέπουμε τα κλάσματα σε ομώνυμα με κοινό παρονομαστή το 8: 11/2 = 44/8, 11/4 = 22/8 και 11/8. Το άθροισμά τους είναι (44 + 22 + 11)/8 = 77/8. Το 11 γράφεται ως 88/8. Άρα: x = 88/8 − 77/8 = 11/8.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Μπορούμε να επιλύσουμε την εξίσωση με δύο κομψούς τρόπους:
+        </p>
+
+        {/* 1ος ΤΡΟΠΟΣ: ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗ ΜΕ ΤΟ 11 */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 1ος Τρόπος (Παραγοντοποίηση με κοινό παράγοντα το 11)
+          </div>
+
+          <p className="text-slate-800">
+            Παρατηρούμε ότι όλα τα κλάσματα καθώς και το δεύτερο μέλος έχουν αριθμητή το <strong>11</strong>. Βγάζουμε κοινό παράγοντα το 11:
+          </p>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>11 · (</span>
+              <Fraction num="1" den="2" />
+              <span>＋</span>
+              <Fraction num="1" den="4" />
+              <span>＋</span>
+              <Fraction num="1" den="8" />
+              <span>) ＋ x ＝ 11</span>
+            </div>
+
+            <div className="text-slate-500 font-sans text-xs pl-2">
+              // Διαιρούμε όλα τα μέλη της εξίσωσης με το 11:
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pl-2">
+              <span>(</span>
+              <Fraction num="1" den="2" />
+              <span>＋</span>
+              <Fraction num="1" den="4" />
+              <span>＋</span>
+              <Fraction num="1" den="8" />
+              <span>) ＋</span>
+              <Fraction num="x" den="11" />
+              <span>＝ 1</span>
+            </div>
+
+            <div className="text-slate-500 font-sans text-xs pl-2">
+              // Κάνουμε τα κλάσματα μέσα στην παρένθεση ομώνυμα με Ε.Κ.Π.(2, 4, 8) ＝ 8:
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pl-2">
+              <Fraction num="4" den="8" />
+              <span>＋</span>
+              <Fraction num="2" den="8" />
+              <span>＋</span>
+              <Fraction num="1" den="8" />
+              <span>＋</span>
+              <Fraction num="x" den="11" />
+              <span>＝ 1</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pl-2">
+              <Fraction num="7" den="8" />
+              <span>＋</span>
+              <Fraction num="x" den="11" />
+              <span>＝ 1</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pl-2">
+              <Fraction num="x" den="11" />
+              <span>＝ 1 －</span>
+              <Fraction num="7" den="8" />
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pl-2">
+              <Fraction num="x" den="11" />
+              <span>＝</span>
+              <Fraction num="1" den="8" />
+              <span>➔ <strong className="text-emerald-700 text-base">x ＝ <Fraction num="11" den="8" /></strong></span>
+            </div>
+          </div>
+        </div>
+
+        {/* 2ος ΤΡΟΠΟΣ: ΟΜΩΝΥΜΑ ΚΛΑΣΜΑΤΑ ΣΕ ΟΛΗ ΤΗΝ ΕΞΙΣΩΣΗ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 2ος Τρόπος (Απευθείας μετατροπή σε ομώνυμα με Ε.Κ.Π. το 8)
+          </div>
+
+          <p className="text-slate-800">
+            Μετατρέπουμε όλους τους όρους σε κλάσματα με παρονομαστή το <strong>8</strong>:
+          </p>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>•</span>
+              <Fraction num="11" den="2" />
+              <span>＝</span>
+              <Fraction num="44" den="8" />
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>•</span>
+              <Fraction num="11" den="4" />
+              <span>＝</span>
+              <Fraction num="22" den="8" />
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>•</span>
+              <Fraction num="11" den="8" />
+              <span className="text-slate-500 font-sans text-xs">(παραμένει ως έχει)</span>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• 11 ＝</span>
+              <Fraction num="88" den="8" />
+            </div>
+
+            <div className="pt-2 border-t border-slate-200 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>(</span>
+                <Fraction num="44" den="8" />
+                <span>＋</span>
+                <Fraction num="22" den="8" />
+                <span>＋</span>
+                <Fraction num="11" den="8" />
+                <span>) ＋ x ＝</span>
+                <Fraction num="88" den="8" />
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Fraction num="77" den="8" />
+                <span>＋ x ＝</span>
+                <Fraction num="88" den="8" />
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>x ＝</span>
+                <Fraction num="88" den="8" />
+                <span>－</span>
+                <Fraction num="77" den="8" />
+                <span>➔ <strong className="text-emerald-700 text-base">x ＝ <Fraction num="11" den="8" /></strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Συνεπώς, ο ζητούμενος αριθμός είναι <strong>x ＝ <Fraction num="11" den="8" /></strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 2,
