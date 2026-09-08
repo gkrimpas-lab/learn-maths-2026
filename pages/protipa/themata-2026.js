@@ -1085,7 +1085,177 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: 'Αυξάνεται το ποσοστό των άσπρων σφαιρών και μειώνεται το ποσοστό των μαύρων σφαιρών στο κουτί.', raw: 'Δ' }
     ],
     correctRaw: 'Δ',
-    explain: 'Αρχικά: 52 άσπρες στις 100 (52%) και 48 μαύρες στις 100 (48%). Μετά την αφαίρεση: μένουν 12 άσπρες και 8 μαύρες (σύνολο 20). Νέο ποσοστό άσπρων: 12/20 = 60% (αυξήθηκε). Νέο ποσοστό μαύρων: 8/20 = 40% (μειώθηκε).'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Συγκρίνουμε τα <strong>ποσοστά</strong> των σφαιρών στο κουτί πριν και μετά την αφαίρεση:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΑΡΧΙΚΟ ΚΟΥΤΙ (100 ΣΦΑΙΡΕΣ) VS ΤΕΛΙΚΟ ΚΟΥΤΙ (20 ΣΦΑΙΡΕΣ) */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="460" height="235" viewBox="0 0 460 235" className="select-none font-sans mx-auto block">
+            {/* 1. ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ */}
+            <g transform="translate(15, 10)">
+              <text x="85" y="12" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Αρχικό Κουτί (Σύνολο: 100)
+              </text>
+
+              {/* Πλαίσιο κουτιού (10x10 πλέγμα) */}
+              <rect x="15" y="24" width="140" height="140" rx="8" fill="#f8fafc" stroke="#334155" strokeWidth="2" />
+
+              {/* 100 σφαίρες (52 άσπρες, 48 μαύρες) */}
+              {Array.from({ length: 100 }).map((_, idx) => {
+                const col = idx % 10;
+                const row = Math.floor(idx / 10);
+                const cx = 27 + col * 12.8;
+                const cy = 36 + row * 12.8;
+                const isWhite = idx < 52;
+
+                return (
+                  <circle
+                    key={`init-${idx}`}
+                    cx={cx}
+                    cy={cy}
+                    r="4.5"
+                    fill={isWhite ? '#ffffff' : '#0f172a'}
+                    stroke={isWhite ? '#64748b' : '#000000'}
+                    strokeWidth="1"
+                  />
+                );
+              })}
+
+              {/* Ποσοστά αρχικού κουτιού */}
+              <g transform="translate(15, 175)">
+                <rect x="0" y="0" width="140" height="42" rx="6" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+                <circle cx="14" cy="14" r="4.5" fill="#ffffff" stroke="#64748b" strokeWidth="1" />
+                <text x="24" y="17" fontSize="10" fontWeight="bold" fill="#0f172a">
+                  52 Άσπρες: <tspan fill="#047857" fontWeight="900">52%</tspan>
+                </text>
+
+                <circle cx="14" cy="29" r="4.5" fill="#0f172a" />
+                <text x="24" y="32" fontSize="10" fontWeight="bold" fill="#0f172a">
+                  48 Μαύρες: <tspan fill="#b91c1c" fontWeight="900">48%</tspan>
+                </text>
+              </g>
+            </g>
+
+            {/* ΒΕΛΟΣ ΑΦΑΙΡΕΣΗΣ */}
+            <g transform="translate(182, 85)">
+              <line x1="0" y1="0" x2="34" y2="0" stroke="#dc2626" strokeWidth="2.2" />
+              <polygon points="34,-4 42,0 34,4" fill="#dc2626" />
+              <text x="21" y="-8" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#dc2626">
+                －40 άσπρες
+              </text>
+              <text x="21" y="16" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#dc2626">
+                －40 μαύρες
+              </text>
+            </g>
+
+            {/* 2. ΤΕΛΙΚΗ ΚΑΤΑΣΤΑΣΗ */}
+            <g transform="translate(250, 10)">
+              <text x="85" y="12" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Τελικό Κουτί (Σύνολο: 20)
+              </text>
+
+              {/* Πλαίσιο κουτιού (5x4 πλέγμα) */}
+              <rect x="15" y="24" width="140" height="140" rx="8" fill="#f8fafc" stroke="#334155" strokeWidth="2" />
+
+              {/* 20 σφαίρες (12 άσπρες, 8 μαύρες) */}
+              {Array.from({ length: 20 }).map((_, idx) => {
+                const col = idx % 5;
+                const row = Math.floor(idx / 5);
+                const cx = 35 + col * 25;
+                const cy = 48 + row * 26;
+                const isWhite = idx < 12;
+
+                return (
+                  <circle
+                    key={`final-${idx}`}
+                    cx={cx}
+                    cy={cy}
+                    r="8.5"
+                    fill={isWhite ? '#ffffff' : '#0f172a'}
+                    stroke={isWhite ? '#64748b' : '#000000'}
+                    strokeWidth="1.5"
+                  />
+                );
+              })}
+
+              {/* Ποσοστά τελικού κουτιού */}
+              <g transform="translate(15, 175)">
+                <rect x="0" y="0" width="140" height="42" rx="6" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+                <circle cx="14" cy="14" r="4.5" fill="#ffffff" stroke="#64748b" strokeWidth="1" />
+                <text x="24" y="17" fontSize="10" fontWeight="bold" fill="#0f172a">
+                  12 Άσπρες: <tspan fill="#047857" fontWeight="900">60%</tspan> (↑)
+                </text>
+
+                <circle cx="14" cy="29" r="4.5" fill="#0f172a" />
+                <text x="24" y="32" fontSize="10" fontWeight="bold" fill="#0f172a">
+                  8 Μαύρες: <tspan fill="#b91c1c" fontWeight="900">40%</tspan> (↓)
+                </text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΜΑΘΗΜΑΤΙΚΟΙ ΥΠΟΛΟΓΙΣΜΟΙ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1. Αρχικά */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900">
+              1. Αρχική κατάσταση (Σύνολο: 52 ＋ 48 ＝ 100 σφαίρες):
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Ποσοστό άσπρων ＝</span>
+                <Fraction num="52" den="100" />
+                <span>＝ <strong>52%</strong></span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Ποσοστό μαύρων ＝</span>
+                <Fraction num="48" den="100" />
+                <span>＝ <strong>48%</strong></span>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Μετά την αφαίρεση */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Μετά την αφαίρεση 40 άσπρων και 40 μαύρων:
+            </div>
+            <p className="text-slate-700">
+              Απομένουν: 52 － 40 ＝ <strong>12 άσπρες</strong> και 48 － 40 ＝ <strong>8 μαύρες</strong>.<br />
+              Το νέο σύνολο σφαιρών στο κουτί είναι 12 ＋ 8 ＝ <strong>20 σφαίρες</strong>.
+            </p>
+
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Νέο ποσοστό άσπρων ＝</span>
+                <Fraction num="12" den="20" />
+                <span>＝</span>
+                <Fraction num="60" den="100" />
+                <span>＝ <strong className="text-emerald-700 text-base">60%</strong></span>
+                <span className="text-emerald-700 font-sans font-bold text-xs">(από 52% ➔ αυξήθηκε)</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Νέο ποσοστό μαύρων ＝</span>
+                <Fraction num="8" den="20" />
+                <span>＝</span>
+                <Fraction num="40" den="100" />
+                <span>＝ <strong className="text-rose-700 text-base">40%</strong></span>
+                <span className="text-rose-700 font-sans font-bold text-xs">(από 48% ➔ μειώθηκε)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Συνεπώς, <strong>αυξάνεται το ποσοστό των άσπρων σφαιρών και μειώνεται το ποσοστό των μαύρων σφαιρών</strong> (Επιλογή <strong>Δ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 11,
