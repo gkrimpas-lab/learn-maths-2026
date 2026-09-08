@@ -1577,7 +1577,7 @@ const QUESTIONS_2025 = [
      {
     id: 19,
     officialNumber: 39,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Αν κάποιος ξεκινήσει από το σπίτι του για την παραλία με το ποδήλατό του με ταχύτητα 25 χλμ./ώρα, φτάνει στις 3:00 μ.μ. Αν πάει με τα πόδια με ταχύτητα 5 χλμ./ώρα, φτάνει στις 3:40 μ.μ. Τι ώρα ξεκίνησε από το σπίτι του;',
     options: [
       { key: 'A', label: '2:30 μ.μ.', raw: '2:30 μ.μ.' },
@@ -1626,61 +1626,60 @@ const QUESTIONS_2025 = [
 
         {/* SVG ΣΧΗΜΑ 2: ΧΡΟΝΙΚΗ ΔΙΑΡΚΕΙΑ & ΧΩΡΙΣΜΟΣ ΣΕ 5 ΜΕΡΗ */}
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="400" height="135" viewBox="0 0 400 135" className="select-none font-sans">
+          <svg width="450" height="135" viewBox="0 0 450 135" className="select-none font-sans mx-auto block">
             {/* ΓΡΑΜΜΗ 1: ΠΟΔΗΛΑΤΟ (1 μέρος) */}
-            <g transform="translate(20, 20)">
+            <g transform="translate(10, 20)">
               <text x="0" y="14" fontSize="11" fontWeight="bold" fill="#0f172a">
                 Ποδήλατο (25 χλμ./ώρα):
               </text>
-              <rect x="155" y="2" width="46" height="18" rx="4" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.5" />
-              <text x="178" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#15803d" fontFamily="monospace">
+              <rect x="155" y="2" width="44" height="18" rx="4" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.5" />
+              <text x="177" y="15" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d" fontFamily="monospace">
                 1 μέρος
               </text>
-              <circle cx="201" cy="11" r="3.5" fill="#16a34a" />
-              <text x="201" y="30" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#16a34a">
+              <circle cx="199" cy="11" r="3.5" fill="#16a34a" />
+              <text x="199" y="30" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#16a34a">
                 3:00 μ.μ.
               </text>
             </g>
 
             {/* ΓΡΑΜΜΗ 2: ΜΕ ΤΑ ΠΟΔΙΑ (5 μέρη) */}
-            <g transform="translate(20, 68)">
+            <g transform="translate(10, 68)">
               <text x="0" y="14" fontSize="11" fontWeight="bold" fill="#0f172a">
                 Με τα πόδια (5 χλμ./ώρα):
               </text>
 
               {/* 1ο μέρος (αντίστοιχο ποδηλάτου) */}
-              <rect x="155" y="2" width="46" height="18" rx="4" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.5" />
-              <text x="178" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#15803d" fontFamily="monospace">
+              <rect x="155" y="2" width="44" height="18" rx="4" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.5" />
+              <text x="177" y="15" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d" fontFamily="monospace">
                 1ο
               </text>
 
               {/* Υπόλοιπα 4 μέρη (συνολικά 40 λεπτά) */}
-              <rect x="203" y="2" width="46" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
-              <text x="226" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">2ο</text>
+              <rect x="202" y="2" width="44" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
+              <text x="224" y="15" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">2ο</text>
 
-              <rect x="251" y="2" width="46" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
-              <text x="274" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">3ο</text>
+              <rect x="249" y="2" width="44" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
+              <text x="271" y="15" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">3ο</text>
 
-              <rect x="299" y="2" width="46" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
-              <text x="322" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">4ο</text>
+              <rect x="296" y="2" width="44" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
+              <text x="318" y="15" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">4ο</text>
 
-              <rect x="347" y="2" width="46" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
-              <text x="370" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">5ο</text>
+              <rect x="343" y="2" width="44" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.2" />
+              <text x="365" y="15" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">5ο</text>
 
-              <circle cx="393" cy="11" r="3.5" fill="#0284c7" />
-              <text x="375" y="30" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0369a1">
+              <circle cx="387" cy="11" r="3.5" fill="#0284c7" />
+              <text x="387" y="30" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0369a1">
                 3:40 μ.μ.
               </text>
 
               {/* Αγκύλη / Ένδειξη για τα 40 λεπτά */}
-              <line x1="203" y1="36" x2="393" y2="36" stroke="#0284c7" strokeWidth="1.5" />
-              <text x="298" y="49" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
+              <line x1="202" y1="36" x2="387" y2="36" stroke="#0284c7" strokeWidth="1.5" />
+              <text x="294.5" y="49" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
                 4 μέρη ＝ 40 λεπτά (10 λεπτά/μέρος)
               </text>
             </g>
           </svg>
         </div>
-
         {/* 1ος ΤΡΟΠΟΣ */}
         <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
           <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
