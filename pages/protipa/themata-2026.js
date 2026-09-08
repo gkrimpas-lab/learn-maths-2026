@@ -396,16 +396,36 @@ const QUESTIONS_2026 = [
               <g transform="translate(0, 12)">
                 {/* Ορθογώνιο ΑΒΓΔ */}
                 <rect x="15" y="15" width="170" height="70" fill="#f8fafc" stroke="#334155" strokeWidth="1.8" />
-                {/* Ευθεία Ε-Γ */}
-                <line x1="90" y1="85" x2="185" y2="15" stroke="#1e293b" strokeWidth="2" />
 
-                {/* Τόξο 137° (ΑΕΓ) */}
-                <path d="M 90 85 L 50 85 A 40 40 0 0 1 120 58 Z" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
-                <text x="58" y="70" fontSize="10" fontWeight="bold" fill="#0f172a">137°</text>
+                {/* 
+                  Σημείο E = (90, 85), Γ = (185, 15).
+                  Για ακτίνα R = 42:
+                  dx = 42 * (95 / 118.0) ≈ 33.8
+                  dy = -42 * (70 / 118.0) ≈ -24.9
+                  Άρα το σημείο τομής του τόξου με την ευθεία ΕΓ είναι ακριβώς:
+                  (90 + 33.8, 85 - 24.9) = (123.8, 60.1)
+                */}
 
-                {/* Τόξο 43° (ΒΕΓ - Πορτοκαλί) */}
-                <path d="M 90 85 L 125 85 A 35 35 0 0 0 115 62 Z" fill="#fdba74" stroke="#ea580c" strokeWidth="1.2" />
-                <text x="118" y="78" fontSize="10" fontWeight="bold" fill="#c2410c">43°</text>
+                {/* Γκρι τομέας 137°: ξεκινά από (48, 85) και καταλήγει ακριβώς στο σημείο (123.8, 60.1) πάνω στην ΕΓ */}
+                <path
+                  d="M 90 85 L 48 85 A 42 42 0 0 1 123.8 60.1 Z"
+                  fill="#cbd5e1"
+                  stroke="#475569"
+                  strokeWidth="1"
+                />
+                <text x="56" y="70" fontSize="10.5" fontWeight="bold" fill="#0f172a">137°</text>
+
+                {/* Πορτοκαλί τομέας 43°: ξεκινά από (132, 85) και καταλήγει ακριβώς στο ίδιο σημείο (123.8, 60.1) πάνω στην ΕΓ */}
+                <path
+                  d="M 90 85 L 132 85 A 42 42 0 0 0 123.8 60.1 Z"
+                  fill="#fdba74"
+                  stroke="#ea580c"
+                  strokeWidth="1"
+                />
+                <text x="122" y="77" fontSize="10" fontWeight="bold" fill="#c2410c">43°</text>
+
+                {/* Η μαύρη διαχωριστική ευθεία Ε-Γ σχεδιάζεται από πάνω ώστε να είναι απόλυτα καθαρή */}
+                <line x1="90" y1="85" x2="185" y2="15" stroke="#1e293b" strokeWidth="2.2" strokeLinecap="round" />
 
                 {/* Κορυφές */}
                 <circle cx="15" cy="85" r="3.5" fill="#0f172a" /><text x="6" y="99" fontSize="10.5" fontWeight="bold">Α</text>
@@ -451,7 +471,6 @@ const QUESTIONS_2026 = [
             </g>
           </svg>
         </div>
-
         {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
         <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
           {/* Βήμα 1 */}
