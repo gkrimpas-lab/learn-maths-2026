@@ -583,7 +583,7 @@ export default function Themata2026Page() {
   return (
     <Layout
       title="🏛️ Πραγματικά Θέματα 2026 - Πρότυπα Σχολεία | LearnMaths.gr"
-      description="Επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία 2026: 20 θέματα, 2,5 μόρια ανά θέμα (0-50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
+      description="Επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία 2026: 20 θέματα, 2 μόρια ανά θέμα τα πρώτα 10, 3 μόρια ανά θέμα τα υπόλοιπα 10 (0-50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
       backUrl="/protipa/pragmatika-themata"
       backText="Πραγματικά Θέματα"
       hideFooter={true}
@@ -614,7 +614,7 @@ export default function Themata2026Page() {
 
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-blue-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 20</strong></span>
-            <span>🎯 Βαθμολογία: <strong>2,5 μόρια / θέμα (Άριστα: 50)</strong></span>
+            <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα τα πρώτα 10 - 3 μόρια /θέμα τα υπόλοιπα 10 (Άριστα: 50)</strong></span>
             <span>{timerEnabled ? '⏳ Χρονόμετρο: 60 λεπτά' : '⏳ Χρονόμετρο: Ανενεργό'}</span>
           </div>
         </div>
