@@ -2399,7 +2399,7 @@ export default function Themata2025Page() {
 
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-blue-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 20</strong></span>
-            <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα τα πρώτα 10 - 3 μόρια /θέμα τα υπόλοιπα 10(Άριστα: 50)</strong></span>
+            <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα τα πρώτα 10 - 3 μόρια /θέμα τα υπόλοιπα 10 (Άριστα: 50)</strong></span>
             <span>{timerEnabled ? '⏳ Χρονόμετρο: 60 λεπτά' : '⏳ Χρονόμετρο: Ανενεργό'}</span>
           </div>
         </div>
