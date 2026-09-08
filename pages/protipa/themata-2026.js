@@ -369,7 +369,7 @@ const QUESTIONS_2026 = [
   {
     id: 4,
     officialNumber: 24,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
     promptText: 'Το ΑΒΓΔ είναι ορθογώνιο παραλληλόγραμμο. Στην πλευρά ΑΒ πήραμε σημείο Ε τέτοιο ώστε η γωνία ΑΕΓ να είναι 137°. Πόσες μοίρες είναι η γωνία ΒΓΕ;',
     hasSvg: 'rect24',
     options: [
@@ -379,7 +379,115 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: '37°', raw: '37' }
     ],
     correctRaw: '47',
-    explain: 'Οι γωνίες ΑΕΓ και ΒΕΓ είναι παραπληρωματικές (ευθεία γωνία 180°): γωνία ΒΕΓ = 180° − 137° = 43°. Στο ορθογώνιο τρίγωνο ΕΒΓ (γωνία Β = 90°), οι οξείες γωνίες είναι συμπληρωματικές: γωνία ΒΓΕ = 90° − 43° = 47°.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Ακολουθούμε δύο διαδοχικά βήματα υπολογισμού γωνιών:
+        </p>
+
+        {/* ΔΙΠΛΟ SVG ΣΧΗΜΑ: 1. ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΗ ΓΩΝΙΑ | 2. ΣΥΜΠΛΗΡΩΜΑΤΙΚΗ ΓΩΝΙΑ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="450" height="155" viewBox="0 0 450 155" className="select-none font-sans mx-auto block">
+            {/* 1ο ΣΧΗΜΑ: ΕΥΡΕΣΗ ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΗΣ ΓΩΝΙΑΣ ΒΕΓ = 43° */}
+            <g transform="translate(10, 10)">
+              <text x="100" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                1. Παραπληρωματική: ΒΕΓ ＝ 43°
+              </text>
+              <g transform="translate(0, 12)">
+                {/* Ορθογώνιο ΑΒΓΔ */}
+                <rect x="15" y="15" width="170" height="70" fill="#f8fafc" stroke="#334155" strokeWidth="1.8" />
+                {/* Ευθεία Ε-Γ */}
+                <line x1="90" y1="85" x2="185" y2="15" stroke="#1e293b" strokeWidth="2" />
+
+                {/* Τόξο 137° (ΑΕΓ) */}
+                <path d="M 90 85 L 50 85 A 40 40 0 0 1 120 58 Z" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
+                <text x="58" y="70" fontSize="10" fontWeight="bold" fill="#0f172a">137°</text>
+
+                {/* Τόξο 43° (ΒΕΓ - Πορτοκαλί) */}
+                <path d="M 90 85 L 125 85 A 35 35 0 0 0 115 62 Z" fill="#fdba74" stroke="#ea580c" strokeWidth="1.2" />
+                <text x="118" y="78" fontSize="10" fontWeight="bold" fill="#c2410c">43°</text>
+
+                {/* Κορυφές */}
+                <circle cx="15" cy="85" r="3.5" fill="#0f172a" /><text x="6" y="99" fontSize="10.5" fontWeight="bold">Α</text>
+                <circle cx="90" cy="85" r="3.5" fill="#0f172a" /><text x="88" y="99" fontSize="10.5" fontWeight="bold">Ε</text>
+                <circle cx="185" cy="85" r="3.5" fill="#0f172a" /><text x="189" y="99" fontSize="10.5" fontWeight="bold">Β</text>
+                <circle cx="185" cy="15" r="3.5" fill="#0f172a" /><text x="189" y="12" fontSize="10.5" fontWeight="bold">Γ</text>
+                <circle cx="15" cy="15" r="3.5" fill="#0f172a" /><text x="6" y="12" fontSize="10.5" fontWeight="bold">Δ</text>
+              </g>
+            </g>
+
+            {/* ΒΕΛΟΣ ΜΕΤΑΒΑΣΗΣ */}
+            <g transform="translate(210, 68)">
+              <line x1="0" y1="0" x2="16" y2="0" stroke="#0f172a" strokeWidth="2" />
+              <polygon points="16,-3.5 22,0 16,3.5" fill="#0f172a" />
+            </g>
+
+            {/* 2ο ΣΧΗΜΑ: ΕΥΡΕΣΗ ΣΥΜΠΛΗΡΩΜΑΤΙΚΗΣ ΓΩΝΙΑΣ ΒΓΕ = 47° */}
+            <g transform="translate(240, 10)">
+              <text x="100" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                2. Συμπληρωματική: ΒΓΕ ＝ 47°
+              </text>
+              <g transform="translate(0, 12)">
+                {/* Ορθογώνιο ΑΒΓΔ */}
+                <rect x="15" y="15" width="170" height="70" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="3 2" />
+                {/* Ορθογώνιο τρίγωνο ΕΒΓ */}
+                <polygon points="90,85 185,85 185,15" fill="#f0fdf4" stroke="#16a34a" strokeWidth="2" />
+
+                {/* Ορθή γωνία στο Β */}
+                <path d="M 173 85 L 173 73 L 185 73" fill="none" stroke="#16a34a" strokeWidth="1.2" />
+
+                {/* Γωνία ΒΕΓ = 43° */}
+                <text x="110" y="80" fontSize="10" fontWeight="bold" fill="#c2410c">43°</text>
+
+                {/* Ζητούμενη γωνία ΒΓΕ = 47° (Πράσινο τόξο) */}
+                <path d="M 185 15 L 185 45 A 30 30 0 0 1 165 31 Z" fill="#86efac" stroke="#16a34a" strokeWidth="1.2" />
+                <text x="156" y="44" fontSize="10" fontWeight="900" fill="#15803d">47°</text>
+
+                {/* Κορυφές */}
+                <circle cx="90" cy="85" r="3.5" fill="#0f172a" /><text x="88" y="99" fontSize="10.5" fontWeight="bold">Ε</text>
+                <circle cx="185" cy="85" r="3.5" fill="#0f172a" /><text x="189" y="99" fontSize="10.5" fontWeight="bold">Β</text>
+                <circle cx="185" cy="15" r="3.5" fill="#0f172a" /><text x="189" y="12" fontSize="10.5" fontWeight="bold">Γ</text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1 */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900">
+              1. Υπολογισμός της γωνίας ΒΕΓ (Παραπληρωματική γωνία):
+            </div>
+            <p className="text-slate-700">
+              Τα σημεία Α, Ε, Β βρίσκονται πάνω στην ίδια ευθεία (πλευρά ΑΒ), επομένως η γωνία ΑΕΒ είναι <strong>ευθεία γωνία (180°)</strong>.
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>γωνία ΑΕΓ ＋ γωνία ΒΕΓ ＝ 180°</div>
+              <div>γωνία ΒΕΓ ＝ 180° － 137° ➔ <strong className="text-orange-700">γωνία ΒΕΓ ＝ 43°</strong></div>
+            </div>
+          </div>
+
+          {/* Βήμα 2 */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Υπολογισμός της ζητούμενης γωνίας ΒΓΕ (Συμπληρωματική γωνία):
+            </div>
+            <p className="text-slate-700">
+              Στο ορθογώνιο τρίγωνο ΕΒΓ, η γωνία Β είναι <strong>ορθή (90°)</strong>. Οι δύο οξείες γωνίες ενός ορθογωνίου τριγώνου έχουν άθροισμα 90° (είναι συμπληρωματικές):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>γωνία ΒΓΕ ＋ γωνία ΒΕΓ ＝ 90°</div>
+              <div>γωνία ΒΓΕ ＝ 90° － 43° ➔ <strong className="text-emerald-700 text-base">γωνία ΒΓΕ ＝ 47°</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η γωνία ΒΓΕ είναι <strong>47°</strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 5,
