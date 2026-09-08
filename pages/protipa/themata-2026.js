@@ -515,7 +515,109 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: '300 ευρώ', raw: '300' }
     ],
     correctRaw: '1200',
-    explain: 'Η πλευρά του τετραγώνου είναι 20 μέτρα (20 · 20 = 400). Η περίμετρος είναι 4 · 20 = 80 μέτρα. Συνολικό κόστος: 80 · 15 = 1.200 ευρώ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε τα γεωμετρικά στοιχεία του τετραγώνου οικοπέδου:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ ΤΕΤΡΑΓΩΝΟΥ ΜΕ ΕΜΒΑΔΟΝ ΚΑΙ ΠΕΡΙΜΕΤΡΟ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="260" height="230" viewBox="0 0 260 230" className="select-none font-sans mx-auto block">
+            {/* Τετράγωνο οικόπεδο (x: 50 έως 210, y: 35 έως 195 -> πλευρά 160px) */}
+            <rect
+              x="50"
+              y="35"
+              width="160"
+              height="160"
+              fill="#f0fdf4"
+              stroke="#16a34a"
+              strokeWidth="3"
+              rx="4"
+            />
+
+            {/* Εσωτερικό: Εμβαδόν */}
+            <text x="130" y="110" fontSize="13" fontWeight="bold" textAnchor="middle" fill="#15803d">
+              Επιφάνεια (Εμβαδόν)
+            </text>
+            <text x="130" y="132" fontSize="16" fontWeight="900" textAnchor="middle" fill="#166534" fontFamily="monospace">
+              Ε ＝ 400 τ.μ.
+            </text>
+
+            {/* Πάνω πλευρά: a = 20 μ. */}
+            <text x="130" y="24" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#0284c7" fontFamily="monospace">
+              a ＝ 20 μ.
+            </text>
+
+            {/* Κάτω πλευρά: a = 20 μ. */}
+            <text x="130" y="215" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#0284c7" fontFamily="monospace">
+              a ＝ 20 μ.
+            </text>
+
+            {/* Αριστερή πλευρά: a = 20 μ. */}
+            <text x="36" y="118" fontSize="12" fontWeight="bold" textAnchor="end" fill="#0284c7" fontFamily="monospace">
+              20 μ.
+            </text>
+
+            {/* Δεξιά πλευρά: a = 20 μ. */}
+            <text x="224" y="118" fontSize="12" fontWeight="bold" textAnchor="start" fill="#0284c7" fontFamily="monospace">
+              20 μ.
+            </text>
+
+            {/* Ένδειξη Περιμέτρου (εξωτερικό περίγραμμα) */}
+            <text x="130" y="152" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#64748b">
+              Περίμετρος (Περίφραξη): 4 · 20 μ. ＝ 80 μ.
+            </text>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Εύρεση πλευράς */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900">
+              1. Εύρεση πλευράς του οικοπέδου:
+            </div>
+            <p className="text-slate-700">
+              Το εμβαδόν του τετραγώνου δίνεται από τον τύπο <span className="font-mono font-bold">Ε ＝ a · a</span>. Αναζητούμε τον αριθμό που όταν πολλαπλασιαστεί με τον εαυτό του δίνει 400:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 font-bold">
+              20 · 20 ＝ 400 ➔ Πλευρά (a) ＝ 20 μέτρα
+            </div>
+          </div>
+
+          {/* Βήμα 2: Εύρεση περιμέτρου */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Εύρεση μήκους περίφραξης (Περίμετρος):
+            </div>
+            <p className="text-slate-700">
+              Η περίφραξη τοποθετείται γύρω-γύρω στις 4 ίσες πλευρές του τετραγώνου:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 font-bold">
+              Περίμετρος ＝ 4 · 20 ＝ 80 μέτρα
+            </div>
+          </div>
+
+          {/* Βήμα 3: Υπολογισμός κόστους */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              3. Συνολικό κόστος περίφραξης:
+            </div>
+            <p className="text-slate-700">
+              Πολλαπλασιάζουμε τα συνολικά μέτρα της περιμέτρου με την τιμή ανά μέτρο (15 €/μ.):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+              Κόστος ＝ 80 · 15 ＝ <strong className="text-emerald-700 text-base">1.200 ευρώ</strong>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το κόστος της περίφραξης είναι <strong>1.200 ευρώ</strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 8,
