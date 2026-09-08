@@ -281,7 +281,7 @@ const QUESTIONS_2026 = [
   {
     id: 3,
     officialNumber: 23,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Πόσες διαφορετικές διαδρομές υπάρχουν για να φτάσει κάποιος από την κάτω αριστερή γωνία (Κ) του σχήματος μέχρι την πάνω δεξιά γωνία (Λ) κινούμενος επάνω στις γραμμές του πλέγματος, μόνο προς τα δεξιά ή προς τα πάνω;',
     hasSvg: 'grid23',
     options: [
@@ -291,7 +291,80 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: '3', raw: '3' }
     ],
     correctRaw: '6',
-    explain: 'Σε πλέγμα 2×2 χρειαζόμαστε 2 κινήσεις δεξιά (Δ) και 2 κινήσεις πάνω (Π). Ο αριθμός των διαφορετικών διαδρομών είναι οι αναγραμματισμοί της λέξης ΔΔΠΠ: 4! / (2! · 2!) = 24 / 4 = 6 διαδρομές.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Σε ένα πλέγμα <strong>2×2</strong>, για να μετακινηθούμε από το σημείο <strong>Κ</strong> (κάτω αριστερά) στο σημείο <strong>Λ</strong> (πάνω δεξιά), πρέπει υποχρεωτικά να κάνουμε συνολικά <strong>4 βήματα</strong>: ακριβώς <strong>2 προς τα δεξιά (Δ)</strong> και <strong>2 προς τα πάνω (Π)</strong>.
+        </p>
+
+        {/* ΠΛΕΓΜΑ ΜΕ ΤΑ 6 ΣΧΗΜΑΤΑ ΔΙΑΔΡΟΜΩΝ */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2">
+          {[
+            { num: 1, text: 'Δ ➔ Δ ➔ Π ➔ Π', path: 'M 20 80 L 80 80 L 80 20' },
+            { num: 2, text: 'Δ ➔ Π ➔ Δ ➔ Π', path: 'M 20 80 L 50 80 L 50 50 L 80 50 L 80 20' },
+            { num: 3, text: 'Δ ➔ Π ➔ Π ➔ Δ', path: 'M 20 80 L 50 80 L 50 20 L 80 20' },
+            { num: 4, text: 'Π ➔ Δ ➔ Δ ➔ Π', path: 'M 20 80 L 20 50 L 80 50 L 80 20' },
+            { num: 5, text: 'Π ➔ Δ ➔ Π ➔ Δ', path: 'M 20 80 L 20 50 L 50 50 L 50 20 L 80 20' },
+            { num: 6, text: 'Π ➔ Π ➔ Δ ➔ Δ', path: 'M 20 80 L 20 20 L 80 20' }
+          ].map((item) => (
+            <div key={item.num} className="flex flex-col items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+              <span className="font-bold text-slate-800 text-[11px] mb-1">
+                {item.num}η Διαδρομή
+              </span>
+
+              <svg width="100" height="100" viewBox="0 0 100 100" className="select-none">
+                {/* Βασικό πλέγμα 2x2 (γκρι γραμμές) */}
+                <rect x="20" y="20" width="60" height="60" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.8" />
+                <line x1="50" y1="20" x2="50" y2="80" stroke="#cbd5e1" strokeWidth="1.8" />
+                <line x1="20" y1="50" x2="80" y2="50" stroke="#cbd5e1" strokeWidth="1.8" />
+
+                {/* Ενεργή κόκκινη διαδρομή */}
+                <path
+                  d={item.path}
+                  fill="none"
+                  stroke="#dc2626"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                {/* Σημεία Κ και Λ */}
+                <circle cx="20" cy="80" r="3.5" fill="#0f172a" />
+                <text x="11" y="87" fontSize="10" fontWeight="bold" fill="#0f172a">Κ</text>
+
+                <circle cx="80" cy="20" r="3.5" fill="#0f172a" />
+                <text x="84" y="18" fontSize="10" fontWeight="bold" fill="#0f172a">Λ</text>
+              </svg>
+
+              <span className="text-[10px] font-mono font-bold text-slate-600 mt-1 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+                {item.text}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+          <div className="text-slate-700 font-sans font-medium">
+            Ο αριθμός των διαφορετικών διαδρομών ισούται με τους αναγραμματισμούς της λέξης <strong>ΔΔΠΠ</strong>:
+          </div>
+
+          <div className="pt-1 flex items-center gap-1.5 flex-wrap">
+            <span>Πλήθος Διαδρομών ＝</span>
+            <Fraction num="4!" den="2! · 2!" />
+            <span>＝</span>
+            <Fraction num="24" den="2 · 2" />
+            <span>＝</span>
+            <Fraction num="24" den="4" />
+            <span>＝ <strong className="text-emerald-700 text-base">6 διαδρομές</strong></span>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, υπάρχουν συνολικά <strong>6 διαφορετικές διαδρομές</strong> (Επιλογή <strong>B</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 4,
