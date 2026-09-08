@@ -1937,7 +1937,7 @@ const QUESTIONS_2025 = [
       </div>
     )
   };
-
+]
 const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
 export default function Themata2025Page() {
