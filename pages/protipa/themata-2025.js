@@ -1797,20 +1797,146 @@ const QUESTIONS_2025 = [
   {
     id: 20,
     officialNumber: 40,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    promptText: 'Σε μια πολυκατοικία όλοι οι όροφοι έχουν το ίδιο ύψος και ακριβώς την ίδια όψη, όπως στο σχήμα που ακολουθεί. Με βάση τα δεδομένα του σχήματος ποιο είναι το ύψος του κάθε ορόφου;',
-    hasSvg: 'building40',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
+    promptText: 'Σε ένα τριώροφο κτίριο όλοι οι όροφοι είναι πανομοιότυποι και έχουν το ίδιο ύψος. Η απόσταση από το κάτω μέρος του παραθύρου του 3ου ορόφου μέχρι το πάνω μέρος του παραθύρου του 2ου ορόφου είναι 150 εκ. Η απόσταση από το πάνω μέρος του παραθύρου του 3ου ορόφου μέχρι το κάτω μέρος του παραθύρου του 2ου ορόφου είναι 430 εκ. Ποιο είναι το ύψος του κάθε ορόφου σε εκατοστά;',
     options: [
-      { key: 'A', label: '290 εκ.', raw: '290' },
-      { key: 'B', label: '215 εκ.', raw: '215' },
-      { key: 'Γ', label: '300 εκ.', raw: '300' },
-      { key: 'Δ', label: '280 εκ.', raw: '280' },
-      { key: 'E', label: '430 εκ.', raw: '430' }
+      { key: 'A', label: '280', raw: '280' },
+      { key: 'B', label: '285', raw: '285' },
+      { key: 'Γ', label: '290', raw: '290' },
+      { key: 'Δ', label: '295', raw: '295' },
+      { key: 'E', label: '300', raw: '300' }
     ],
     correctRaw: '290',
-    explain: 'Έστω H το ύψος κάθε ορόφου, h το ύψος κάθε παραθύρου, d_top η απόσταση από το πάνω μέρος του ορόφου έως το παράθυρο και d_bot η απόσταση από το κάτω μέρος του παραθύρου έως το πάτωμα του ορόφου. Επομένως, το ύψος του ορόφου είναι H = h + d_top + d_bot. Η απόσταση ανάμεσα στα παράθυρα δύο διαδοχικών ορόφων είναι d_bot + d_top = 150 εκ. Η διάσταση 430 εκ. εκτείνεται από το πάνω μέρος του παραθύρου του 3ου ορόφου έως το κάτω μέρος του παραθύρου του 2ου ορόφου, δηλαδή: h + (d_bot + d_top) + h = 430 ➔ 2h + 150 = 430 ➔ 2h = 280 ➔ h = 140 εκ. Άρα το ύψος κάθε ορόφου είναι H = h + 150 = 140 + 150 = 290 εκ.'
-  }
-    ];
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Επειδή όλοι οι όροφοι είναι <strong>πανομοιότυποι</strong> και έχουν το ίδιο ύψος, τα παράθυρα έχουν ακριβώς το ίδιο ύψος, καθώς και τις ίδιες αποστάσεις από τα πατώματα και τις οροφές.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ ΠΡΟΣΟΨΗΣ ΚΤΙΡΙΟΥ ΜΕ ΧΡΩΜΑΤΙΣΤΑ ΤΜΗΜΑΤΑ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="380" height="340" viewBox="0 0 380 340" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="arrow-up" viewBox="0 0 10 10" refX="5" refY="2" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M 0 6 L 5 0 L 10 6 z" fill="#0f172a" />
+              </marker>
+              <marker id="arrow-down" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M 0 2 L 5 8 L 10 2 z" fill="#0f172a" />
+              </marker>
+            </defs>
+
+            {/* ΠΡΟΣΟΨΗ ΚΤΙΡΙΟΥ (3 οροφοι των 100px) */}
+            <g transform="translate(140, 20)">
+              {/* Εξωτερικό περίγραμμα */}
+              <rect x="0" y="0" width="190" height="300" fill="#ffffff" stroke="#0f172a" strokeWidth="2.2" />
+
+              {/* Διαχωριστικές γραμμές ορόφων */}
+              <line x1="0" y1="100" x2="190" y2="100" stroke="#0f172a" strokeWidth="1.8" />
+              <line x1="0" y1="200" x2="190" y2="200" stroke="#0f172a" strokeWidth="1.8" />
+
+              {/* 3ος Όροφος (y: 0 έως 100) */}
+              {/* Κόκκινο τμήμα (οροφή -> πάνω μέρος παραθύρου): y = 0 έως 18 */}
+              <line x1="72" y1="2" x2="72" y2="18" stroke="#dc2626" strokeWidth="4" strokeLinecap="round" />
+              <rect x="42" y="18" width="30" height="50" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.6" />
+              {/* Μπλε τμήμα (κάτω μέρος παραθύρου -> πάτωμα): y = 68 έως 100 */}
+              <line x1="72" y1="68" x2="72" y2="98" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
+
+              {/* 2ος Όροφος (y: 100 έως 200) */}
+              {/* Κόκκινο τμήμα (οροφή -> πάνω μέρος παραθύρου): y = 100 έως 118 */}
+              <line x1="72" y1="102" x2="72" y2="118" stroke="#dc2626" strokeWidth="4" strokeLinecap="round" />
+              <rect x="42" y="118" width="30" height="50" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.6" />
+              {/* Μπλε τμήμα (κάτω μέρος παραθύρου -> πάτωμα): y = 168 έως 200 */}
+              <line x1="72" y1="168" x2="72" y2="198" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
+
+              {/* 1ος Όροφος (y: 200 έως 300) */}
+              <rect x="42" y="218" width="30" height="50" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.6" />
+
+              {/* Ενδείξεις ορόφων δεξιά */}
+              <text x="135" y="55" fontSize="11" fontWeight="bold" fill="#64748b">3ος όροφος</text>
+              <text x="135" y="155" fontSize="11" fontWeight="bold" fill="#64748b">2ος όροφος</text>
+              <text x="135" y="255" fontSize="11" fontWeight="bold" fill="#64748b">1ος όροφος</text>
+
+              {/* Βέλος παραθύρου */}
+              <line x1="12" y1="260" x2="38" y2="248" stroke="#475569" strokeWidth="1.2" />
+              <text x="6" y="272" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">ΠΑΡΑΘΥΡΟ</text>
+            </g>
+
+            {/* ΔΙΑΣΤΑΣΕΙΣ ΑΡΙΣΤΕΡΑ */}
+            <g transform="translate(140, 20)">
+              {/* Οριζόντιες διακεκομμένες γραμμές αναφοράς */}
+              <line x1="-120" y1="18" x2="42" y2="18" stroke="#64748b" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="-70" y1="68" x2="42" y2="68" stroke="#64748b" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="-70" y1="118" x2="42" y2="118" stroke="#64748b" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="-120" y1="168" x2="42" y2="168" stroke="#64748b" strokeWidth="1" strokeDasharray="3 3" />
+
+              {/* Βέλος 150 εκ. (από y=68 έως y=118) */}
+              <line x1="-45" y1="74" x2="-45" y2="112" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow-up)" markerEnd="url(#arrow-down)" />
+              <text x="-52" y="97" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a" fontFamily="monospace">
+                150 εκ.
+              </text>
+
+              {/* Βέλος 430 εκ. (από y=18 έως y=168) */}
+              <line x1="-95" y1="24" x2="-95" y2="162" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow-up)" markerEnd="url(#arrow-down)" />
+              <text x="-102" y="97" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a" fontFamily="monospace">
+                430 εκ.
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΣΗ ΚΑΙ ΣΥΛΛΟΓΙΣΜΟΣ */}
+        <p>
+          Αναλύουμε τα επιμέρους κατακόρυφα τμήματα του κτιρίου:
+        </p>
+
+        <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+          <div>• <strong className="text-red-600 font-sans">Κόκκινο:</strong> Απόσταση από την οροφή μέχρι το πάνω μέρος του παραθύρου.</div>
+          <div>• <strong className="text-blue-600 font-sans">Μπλε:</strong> Απόσταση από το κάτω μέρος του παραθύρου μέχρι το πάτωμα.</div>
+          <div>• <strong>Π:</strong> Το ύψος ενός παραθύρου.</div>
+        </div>
+
+        <p>
+          Παρατηρώντας τις δύο δοσμένες αποστάσεις:
+        </p>
+
+        <ul className="space-y-1.5 pl-4 sm:pl-5 text-slate-800 list-disc font-medium">
+          <li>
+            <strong>Απόσταση 150 εκ.:</strong> Περιλαμβάνει το ενδιάμεσο διάστημα ανάμεσα στα δύο παράθυρα:
+            <div className="font-mono text-slate-900 font-bold pl-1 pt-0.5">
+              150 εκ. ＝ Μπλε ＋ Κόκκινο
+            </div>
+          </li>
+          <li>
+            <strong>Απόσταση 430 εκ.:</strong> Περιλαμβάνει ολόκληρο το τμήμα από το πάνω μέρος του 3ου παραθύρου μέχρι το κάτω μέρος του 2ου παραθύρου:
+            <div className="font-mono text-slate-900 font-bold pl-1 pt-0.5">
+              430 εκ. ＝ 2 Παράθυρα ＋ Μπλε ＋ Κόκκινο
+            </div>
+          </li>
+        </ul>
+
+        <p>
+          Συνεπώς, το συνολικό ύψος των <strong>δύο ορόφων</strong> (από την οροφή του 3ου μέχρι το πάτωμα του 2ου) αποτελείται ακριβώς από:
+        </p>
+
+        <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+          <div className="text-slate-700">
+            Ύψος 2 ορόφων ＝ (2 Παράθυρα ＋ Μπλε ＋ Κόκκινο) ＋ (Μπλε ＋ Κόκκινο)
+          </div>
+          <div>Ύψος 2 ορόφων ＝ 430 ＋ 150 ＝ <strong>580 εκ.</strong></div>
+
+          <div className="pt-2 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
+            <span>Ύψος 1 ορόφου ＝</span>
+            <Fraction num="580" den="2" />
+            <span>＝ <strong className="text-emerald-700 text-base">290 εκ.</strong></span>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Άρα, το ύψος του κάθε ορόφου είναι <strong>290 εκ.</strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
+  };
 
 const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
