@@ -1813,19 +1813,21 @@ const QUESTIONS_2025 = [
           Επειδή όλοι οι όροφοι είναι <strong>πανομοιότυποι</strong> και έχουν το ίδιο ύψος, τα παράθυρα έχουν ακριβώς το ίδιο ύψος, καθώς και τις ίδιες αποστάσεις από τα πατώματα και τις οροφές.
         </p>
 
-        {/* SVG ΣΧΗΜΑ ΠΡΟΣΟΨΗΣ ΚΤΙΡΙΟΥ ΜΕ ΔΙΟΡΘΩΜΕΝΑ ΒΕΛΑΚΙΑ ΚΑΙ ΠΛΗΡΗ ΠΕΡΙΘΩΡΙΑ */}
+        {/* SVG ΣΧΗΜΑ ΠΡΟΣΟΨΗΣ ΚΤΙΡΙΟΥ ΜΕ ΔΙΟΡΘΩΜΕΝΑ ΒΕΛΑΚΙΑ (ΠΑΝΩ ΠΡΟΣ ΤΑ ΠΑΝΩ, ΚΑΤΩ ΠΡΟΣ ΤΑ ΚΑΤΩ) */}
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
           <svg width="450" height="340" viewBox="0 0 450 340" className="select-none font-sans mx-auto block">
             <defs>
-              <marker id="arrow-up-40" viewBox="0 0 10 10" refX="5" refY="2" markerWidth="6" markerHeight="6" orient="auto">
-                <path d="M 0 6 L 5 0 L 10 6 z" fill="#0f172a" />
+              {/* Βελάκι με φορά αυστηρά προς τα πάνω */}
+              <marker id="arrow-pointing-up" viewBox="0 0 10 10" refX="5" refY="2" markerWidth="6" markerHeight="6" orient="0">
+                <path d="M 5 0 L 0 6 L 10 6 z" fill="#0f172a" />
               </marker>
-              <marker id="arrow-down-40" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="6" markerHeight="6" orient="auto">
-                <path d="M 0 2 L 5 8 L 10 2 z" fill="#0f172a" />
+              {/* Βελάκι με φορά αυστηρά προς τα κάτω */}
+              <marker id="arrow-pointing-down" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="6" markerHeight="6" orient="0">
+                <path d="M 5 10 L 0 4 L 10 4 z" fill="#0f172a" />
               </marker>
             </defs>
 
-            {/* ΔΙΑΣΤΑΣΕΙΣ ΑΡΙΣΤΕΡΑ ΜΕ ΑΦΘΟΝΟ ΧΩΡΟ (x=0 έως x=210) */}
+            {/* ΔΙΑΣΤΑΣΕΙΣ ΑΡΙΣΤΕΡΑ */}
             <g>
               {/* Οριζόντιες διακεκομμένες γραμμές αναφοράς */}
               <line x1="60" y1="38" x2="252" y2="38" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" />
@@ -1833,38 +1835,38 @@ const QUESTIONS_2025 = [
               <line x1="120" y1="138" x2="252" y2="138" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" />
               <line x1="60" y1="188" x2="252" y2="188" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" />
 
-              {/* Βέλος 430 εκ. */}
+              {/* Βέλος 430 εκ.: πάνω βελάκι δείχνει προς τα πάνω, κάτω βελάκι δείχνει προς τα κάτω */}
               <line
                 x1="80"
-                y1="46"
+                y1="40"
                 x2="80"
-                y2="180"
+                y2="186"
                 stroke="#0f172a"
                 strokeWidth="1.8"
-                markerStart="url(#arrow-up-40)"
-                markerEnd="url(#arrow-down-40)"
+                markerStart="url(#arrow-pointing-up)"
+                markerEnd="url(#arrow-pointing-down)"
               />
               <text x="70" y="117" fontSize="12" fontWeight="bold" textAnchor="end" fill="#0f172a" fontFamily="monospace">
                 430 εκ.
               </text>
 
-              {/* Βέλος 150 εκ. */}
+              {/* Βέλος 150 εκ.: πάνω βελάκι δείχνει προς τα πάνω, κάτω βελάκι δείχνει προς τα κάτω */}
               <line
                 x1="150"
-                y1="96"
+                y1="90"
                 x2="150"
-                y2="130"
+                y2="136"
                 stroke="#0f172a"
                 strokeWidth="1.8"
-                markerStart="url(#arrow-up-40)"
-                markerEnd="url(#arrow-down-40)"
+                markerStart="url(#arrow-pointing-up)"
+                markerEnd="url(#arrow-pointing-down)"
               />
               <text x="140" y="117" fontSize="12" fontWeight="bold" textAnchor="end" fill="#0f172a" fontFamily="monospace">
                 150 εκ.
               </text>
             </g>
 
-            {/* ΠΡΟΣΟΨΗ ΚΤΙΡΙΟΥ (από x=210) */}
+            {/* ΠΡΟΣΟΨΗ ΚΤΙΡΙΟΥ */}
             <g transform="translate(210, 20)">
               {/* Εξωτερικό περίγραμμα */}
               <rect x="0" y="0" width="190" height="300" fill="#ffffff" stroke="#0f172a" strokeWidth="2.2" />
