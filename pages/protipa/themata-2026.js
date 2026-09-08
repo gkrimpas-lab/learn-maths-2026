@@ -18,7 +18,7 @@ const QUESTIONS_2026 = [
   {
     id: 1,
     officialNumber: 21,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Ποιος είναι ο αριθμός x ώστε να ισχύει η παρακάτω ισότητα;',
     customPromptComponent: (
       <div className="flex items-center justify-center gap-1 sm:gap-2 my-3 p-3 bg-slate-50 rounded-2xl border border-slate-200 text-base sm:text-lg font-mono font-bold text-slate-900 flex-wrap">
@@ -186,7 +186,7 @@ const QUESTIONS_2026 = [
   {
     id: 2,
     officialNumber: 22,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Ένα ζαχαροπλαστείο προσφέρει παγωτό σε τρεις γεύσεις (σοκολάτα, βανίλια, φράουλα) και δύο είδη σιροπιού (κεράσι ή βύσσινο). Η Χαρά τρώει κάθε μέρα ένα διαφορετικό παγωτό επιλέγοντας δύο διαφορετικές γεύσεις και ένα είδος σιροπιού. Σε πόσες μέρες θα έχει δοκιμάσει όλους τους συνδυασμούς;',
     options: [
       { key: 'A', label: '6', raw: '6' },
@@ -195,7 +195,88 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: '5', raw: '5' }
     ],
     correctRaw: '6',
-    explain: 'Οι διαφορετικοί συνδυασμοί 2 γεύσεων από τις 3 είναι 3: (σοκολάτα-βανίλια), (σοκολάτα-φράουλα) και (βανίλια-φράουλα). Για καθέναν από τους 3 συνδυασμούς γεύσεων υπάρχουν 2 επιλογές σιροπιού: 3 · 2 = 6 διαφορετικές ημέρες.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Για να βρούμε σε πόσες ημέρες θα δοκιμάσει όλους τους δυνατούς συνδυασμούς, υπολογίζουμε αρχικά τους συνδυασμούς των γεύσεων και στη συνέχεια των σιροπιών.
+        </p>
+
+        <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+          <div>• <strong>3 επιλογές γεύσεων:</strong> Σοκολάτα (Σ), Βανίλια (Β), Φράουλα (Φ)</div>
+          <div>• <strong>2 επιλογές σιροπιού:</strong> Κεράσι, Βύσσινο</div>
+        </div>
+
+        <p>
+          Επιλέγοντας <strong>2 διαφορετικές γεύσεις</strong> από τις 3 διαθέσιμες, έχουμε <strong>3 δυνατά ζευγάρια</strong>:
+        </p>
+
+        <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-800 text-center font-bold">
+          1. (Σοκολάτα － Βανίλια) &nbsp;|&nbsp; 2. (Σοκολάτα － Φράουλα) &nbsp;|&nbsp; 3. (Βανίλια － Φράουλα)
+        </div>
+
+        {/* ΠΙΝΑΚΑΣ ΟΛΩΝ ΤΩΝ ΣΥΝΔΥΑΣΜΩΝ */}
+        <div className="overflow-x-auto my-2">
+          <table className="w-full text-xs sm:text-sm border-collapse bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm text-center">
+            <thead>
+              <tr className="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+                <th className="p-2.5">Ημέρα</th>
+                <th className="p-2.5">1η Γεύση</th>
+                <th className="p-2.5">2η Γεύση</th>
+                <th className="p-2.5">Σιρόπι</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
+              <tr className="hover:bg-slate-50/80">
+                <td className="p-2 font-mono font-bold text-slate-900">1η</td>
+                <td className="p-2">Σοκολάτα</td>
+                <td className="p-2">Βανίλια</td>
+                <td className="p-2 font-bold text-rose-600">Κεράσι</td>
+              </tr>
+              <tr className="hover:bg-slate-50/80">
+                <td className="p-2 font-mono font-bold text-slate-900">2η</td>
+                <td className="p-2">Σοκολάτα</td>
+                <td className="p-2">Βανίλια</td>
+                <td className="p-2 font-bold text-purple-700">Βύσσινο</td>
+              </tr>
+              <tr className="hover:bg-slate-50/80 bg-slate-50/40">
+                <td className="p-2 font-mono font-bold text-slate-900">3η</td>
+                <td className="p-2">Σοκολάτα</td>
+                <td className="p-2">Φράουλα</td>
+                <td className="p-2 font-bold text-rose-600">Κεράσι</td>
+              </tr>
+              <tr className="hover:bg-slate-50/80 bg-slate-50/40">
+                <td className="p-2 font-mono font-bold text-slate-900">4η</td>
+                <td className="p-2">Σοκολάτα</td>
+                <td className="p-2">Φράουλα</td>
+                <td className="p-2 font-bold text-purple-700">Βύσσινο</td>
+              </tr>
+              <tr className="hover:bg-slate-50/80">
+                <td className="p-2 font-mono font-bold text-slate-900">5η</td>
+                <td className="p-2">Βανίλια</td>
+                <td className="p-2">Φράουλα</td>
+                <td className="p-2 font-bold text-rose-600">Κεράσι</td>
+              </tr>
+              <tr className="hover:bg-slate-50/80">
+                <td className="p-2 font-mono font-bold text-slate-900">6η</td>
+                <td className="p-2">Βανίλια</td>
+                <td className="p-2">Φράουλα</td>
+                <td className="p-2 font-bold text-purple-700">Βύσσινο</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* ΜΑΘΗΜΑΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+          <div>Συνολικοί συνδυασμοί ＝ (Συνδυασμοί Γεύσεων) · (Επιλογές Σιροπιού)</div>
+          <div>Συνολικοί συνδυασμοί ＝ 3 · 2 ＝ <strong className="text-emerald-700 text-base">6 διαφορετικές ημέρες</strong></div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, θα χρειαστεί <strong>6 ημέρες</strong> για να δοκιμάσει όλους τους συνδυασμούς (Επιλογή <strong>A</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 3,
