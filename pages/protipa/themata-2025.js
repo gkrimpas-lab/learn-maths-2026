@@ -2407,7 +2407,7 @@ export default function Themata2025Page() {
 
         // Υπολογισμός συνολικού πλήθους σωστών απαντήσεων
         const correctCount = QUESTIONS_2025.filter(
-            q => answers[q.id] === q.correctRaw
+            q => userAnswers[q.id] === q.correctRaw
         ).length;
 
         {/* FEEDBACK BANNER ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
