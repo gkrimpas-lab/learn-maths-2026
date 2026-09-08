@@ -365,9 +365,10 @@ export default function Themata2026Page() {
 
   const calculateScore = (currentAnswers) => {
     let s = 0;
-    QUESTIONS_2026.forEach(q => {
+    QUESTIONS_2026.forEach((q, index) => {
       if (currentAnswers[q.id] === q.correctRaw) {
-        s += 2.5; // 2,5 μόρια ανά θέμα
+        // Τα πρώτα 10 θέματα (index 0-9) παίρνουν 2 μόρια, τα υπόλοιπα 10 (index 10-19) παίρνουν 3 μόρια
+        s += index < 10 ? 2 : 3;
       }
     });
     return s;
@@ -401,6 +402,11 @@ export default function Themata2026Page() {
   };
 
   const answeredCount = Object.keys(answers).length;
+
+  // Υπολογισμός συνολικού πλήθους σωστών απαντήσεων
+  const correctCount = QUESTIONS_2026.filter(
+    q => answers[q.id] === q.correctRaw
+  ).length;
 
   const renderQuestionSvg = (svgType) => {
     if (svgType === 'grid23') {
@@ -558,9 +564,7 @@ export default function Themata2026Page() {
               <line x1="126.6" y1="92.6" x2="103.3" y2="133" stroke="#1e293b" strokeWidth="2" />
 
               {/* ΟΙ 2 ΔΙΑΓΩΝΙΕΣ ΓΡΑΜΜΕΣ ΤΟΥ ΣΧΗΜΑΤΟΣ */}
-              {/* Πάνω διαγώνιος (η κόκκινη γραμμή σου) */}
               <line x1="10" y1="133" x2="103.3" y2="52.3" stroke="#1e293b" strokeWidth="2.5" />
-              {/* Κάτω διαγώνιος */}
               <line x1="10" y1="133" x2="126.6" y2="92.6" stroke="#1e293b" strokeWidth="2.5" />
 
               {/* Κόμβοι (κουκκίδες) */}
@@ -580,6 +584,7 @@ export default function Themata2026Page() {
 
     return null;
   };
+
   return (
     <Layout
       title="🏛️ Πραγματικά Θέματα 2026 - Πρότυπα Σχολεία | LearnMaths.gr"
@@ -632,7 +637,10 @@ export default function Themata2026Page() {
                 {score} / 50
               </span>
               <span className="text-xs font-bold text-slate-500 block mt-1">
-                ({score / 2.5} σωστές στις 20 ερωτήσεις)
+                ({correctCount} σωστές στις 20 ερωτήσεις)
+              </span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">
+                (Θέματα 21–30: 2 μόρια | Θέματα 31–40: 3 μόρια)
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto">
@@ -643,9 +651,10 @@ export default function Themata2026Page() {
 
         {/* LIST OF 20 QUESTIONS */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {QUESTIONS_2026.map((q) => {
+          {QUESTIONS_2026.map((q, qIdx) => {
             const userChoice = answers[q.id];
             const isCorrect = userChoice === q.correctRaw;
+            const pointsValue = qIdx < 10 ? 2 : 3;
 
             let cardBorder = 'border-slate-200';
             if (submitted) {
@@ -670,7 +679,7 @@ export default function Themata2026Page() {
 
                   {submitted && (
                     <span className="text-sm sm:text-base font-black">
-                      {isCorrect ? '✅ +2,5 μόρια' : '❌ 0 μόρια'}
+                      {isCorrect ? `✅ +${pointsValue} μόρια` : '❌ 0 μόρια'}
                     </span>
                   )}
                 </div>
