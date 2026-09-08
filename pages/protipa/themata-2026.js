@@ -1015,13 +1015,13 @@ const QUESTIONS_2026 = [
             <line x1="63.3" y1="54" x2="63.3" y2="70" stroke="#64748b" strokeWidth="1.5" />
             <circle cx="63.3" cy="62" r="4.5" fill="#64748b" />
             <text x="56" y="42" fontSize="11" fontWeight="bold" textAnchor="end" fill="#475569">0,9</text>
-            <text x="56" y="82" fontSize="9" fontWeight="bold" textAnchor="end" fill="#64748b">Δ=0,100</text>
+            <text x="56" y="82" fontSize="9" fontWeight="bold" textAnchor="end" fill="#64748b">Γ=0,100</text>
 
             {/* Σημείο 11/12 ≈ 0.9167 -> x ≈ 91.1 (μετατοπισμένο χαμηλότερα όπως το κόκκινο δεξιά) */}
             <line x1="91.1" y1="52" x2="91.1" y2="72" stroke="#059669" strokeWidth="2" />
             <circle cx="91.1" cy="62" r="5.5" fill="#10b981" stroke="#047857" strokeWidth="1.5" />
             <text x="96" y="32" fontSize="11.5" fontWeight="900" textAnchor="start" fill="#047857">11/12</text>
-            <text x="96" y="98" fontSize="9.5" fontWeight="900" textAnchor="start" fill="#047857">Δ=0,083</text>
+            <text x="96" y="98" fontSize="9.5" fontWeight="900" textAnchor="start" fill="#047857">Α=0,083</text>
 
             {/* Κεντρικό σημείο αναφοράς: 1 -> x = 230 */}
             <line x1="230" y1="46" x2="230" y2="78" stroke="#0f172a" strokeWidth="2.5" />
@@ -1033,7 +1033,7 @@ const QUESTIONS_2026 = [
             <line x1="381.5" y1="54" x2="381.5" y2="70" stroke="#0284c7" strokeWidth="1.5" />
             <circle cx="381.5" cy="62" r="4.5" fill="#0284c7" />
             <text x="375" y="42" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0369a1">12/11</text>
-            <text x="375" y="82" fontSize="9" fontWeight="bold" textAnchor="end" fill="#0284c7">Δ=0,091</text>
+            <text x="375" y="82" fontSize="9" fontWeight="bold" textAnchor="end" fill="#0284c7">Β=0,091</text>
 
             {/* Σημείο 1.101 -> x ≈ 398.3 */}
             <line x1="398.3" y1="54" x2="398.3" y2="70" stroke="#dc2626" strokeWidth="1.5" />
