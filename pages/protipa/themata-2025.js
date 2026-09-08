@@ -2405,6 +2405,11 @@ export default function Themata2025Page() {
           </div>
         </div>
 
+        // Υπολογισμός συνολικού πλήθους σωστών απαντήσεων
+        const correctCount = QUESTIONS_2025.filter(
+            q => answers[q.id] === q.correctRaw
+        ).length;
+
         {/* FEEDBACK BANNER ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
         {submitted && (
           <div className="bg-white border-2 border-blue-300 rounded-3xl p-6 shadow-md text-center space-y-3">
@@ -2418,7 +2423,10 @@ export default function Themata2025Page() {
                 {score} / 50
               </span>
               <span className="text-xs font-bold text-slate-500 block mt-1">
-                ({score / 2.5} σωστές στις 20 ερωτήσεις)
+                ({correctCount} σωστές στις 20 ερωτήσεις)
+              </span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">
+                (Θέματα 21–30: 2 μόρια | Θέματα 31–40: 3 μόρια)
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto">
