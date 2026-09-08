@@ -369,7 +369,7 @@ const QUESTIONS_2026 = [
   {
     id: 4,
     officialNumber: 24,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Το ΑΒΓΔ είναι ορθογώνιο παραλληλόγραμμο. Στην πλευρά ΑΒ πήραμε σημείο Ε τέτοιο ώστε η γωνία ΑΕΓ να είναι 137°. Πόσες μοίρες είναι η γωνία ΒΓΕ;',
     hasSvg: 'rect24',
     options: [
@@ -633,7 +633,7 @@ const QUESTIONS_2026 = [
   {
     id: 7,
     officialNumber: 27,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Τετράγωνο οικόπεδο έχει επιφάνεια 400 τετραγωνικά μέτρα. Για να το περιφράξουμε με συρματόπλεγμα πρέπει να πληρώσουμε 15 ευρώ ανά μέτρο. Ποιο είναι το κόστος της περίφραξης;',
     options: [
       { key: 'A', label: '60.000 ευρώ', raw: '60000' },
@@ -1076,7 +1076,7 @@ const QUESTIONS_2026 = [
   {
     id: 10,
     officialNumber: 30,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Σε ένα κουτί υπάρχουν 52 άσπρες και 48 μαύρες σφαίρες. Αν βγάλουμε 40 άσπρες και 40 μαύρες σφαίρες από το κουτί, ποιο από τα παρακάτω είναι σωστό;',
     options: [
       { key: 'A', label: 'Δεν αλλάζει το ποσοστό των άσπρων σφαιρών ούτε το ποσοστό των μαύρων σφαιρών στο κουτί.', raw: 'A' },
@@ -1260,7 +1260,7 @@ const QUESTIONS_2026 = [
   {
     id: 11,
     officialNumber: 31,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Στην παρακάτω αριθμογραμμή, το ευθύγραμμο τμήμα ΚΛ έχει διπλάσιο μήκος από το ΜΛ, ενώ το ΜΝ έχει διπλάσιο μήκος από το ΝΛ. Αν στο Κ αντιστοιχεί ο αριθμός 5 και στο Λ ο αριθμός 35, ποιος αριθμός αντιστοιχεί στο σημείο Ν;',
     hasSvg: 'line31',
     options: [
@@ -1270,8 +1270,130 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: '32', raw: '32' },
       { key: 'E', label: '33', raw: '33' }
     ],
-    correctRaw: '25',
-    explain: 'Το μήκος ΚΛ είναι 35 − 5 = 30. Αφού ΚΛ = 2 · ΜΛ, έχουμε ΜΛ = 15. Άρα το σημείο Μ είναι στο 35 − 15 = 20. Το τμήμα ΜΛ χωρίζεται από το Ν σε λόγο 2:1 (3 ίσα μέρη του 5). Επομένως ΜΝ = 10 και ΝΛ = 5, άρα στο Ν αντιστοιχεί ο αριθμός 20 + 10 = 30 (ή 35 − 5 = 30).'
+    correctRaw: '30',
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε τα μήκη των ευθυγράμμων τμημάτων κατά μήκος της αριθμογραμμής σταδιακά σε δύο φάσεις:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ 2 ΦΑΣΕΩΝ ΥΠΟΛΟΓΙΣΜΟΥ */}
+        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="450" height="220" viewBox="0 0 450 220" className="select-none font-sans mx-auto block">
+            {/* 1η ΦΑΣΗ: ΕΥΡΕΣΗ ΜΗΚΟΥΣ ΚΛ ΚΑΙ ΘΕΣΗΣ ΤΟΥ Μ */}
+            <g transform="translate(15, 10)">
+              <text x="210" y="12" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                1η Φάση: Εύρεση του Μ (ΚΛ ＝ 30, ΜΛ ＝ 15 ➔ Μ ＝ 20)
+              </text>
+
+              {/* Ευθεία γραμμή (x: 20 έως 400, μήκος 380px -> scale: 380/30 ≈ 12.67 px/μονάδα) */}
+              <line x1="20" y1="52" x2="400" y2="52" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
+
+              {/* Σημείο Κ = 5 (x = 20) */}
+              <circle cx="20" cy="52" r="4.5" fill="#1e3a8a" />
+              <text x="20" y="72" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1e3a8a">Κ (5)</text>
+
+              {/* Σημείο Μ = 20 (x = 20 + 15*12.67 = 210) */}
+              <circle cx="210" cy="52" r="4.5" fill="#0f172a" />
+              <text x="210" y="72" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Μ (20)</text>
+
+              {/* Σημείο Λ = 35 (x = 400) */}
+              <circle cx="400" cy="52" r="4.5" fill="#1e3a8a" />
+              <text x="400" y="72" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1e3a8a">Λ (35)</text>
+
+              {/* Άνω διάσταση ολικού μήκους ΚΛ = 30 */}
+              <line x1="20" y1="32" x2="400" y2="32" stroke="#64748b" strokeWidth="1.5" />
+              <text x="115" y="26" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">ΚΜ ＝ 15</text>
+              <text x="305" y="26" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#2563eb">ΜΛ ＝ 15 (μισό του ΚΛ)</text>
+            </g>
+
+            {/* 2η ΦΑΣΗ: ΧΩΡΙΣΜΟΣ ΤΟΥ ΜΛ ΑΠΟ ΤΟ Ν ΣΕ 2:1 (ΜΝ = 10, ΝΛ = 5) */}
+            <g transform="translate(15, 115)">
+              <text x="210" y="12" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                2η Φάση: Χωρισμός του ΜΛ από το Ν σε λόγο 2:1 (ΜΝ ＝ 10, ΝΛ ＝ 5)
+              </text>
+
+              <line x1="20" y1="52" x2="400" y2="52" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
+
+              {/* Σημείο Κ = 5 */}
+              <circle cx="20" cy="52" r="4" fill="#94a3b8" />
+              <text x="20" y="72" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#94a3b8">Κ (5)</text>
+
+              {/* Σημείο Μ = 20 */}
+              <circle cx="210" cy="52" r="4.5" fill="#0f172a" />
+              <text x="210" y="72" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Μ (20)</text>
+
+              {/* Σημείο Ν = 30 (x = 210 + 10*12.67 ≈ 336.7) */}
+              <circle cx="336.7" cy="52" r="5.5" fill="#dc2626" stroke="#991b1b" strokeWidth="1.5" />
+              <text x="336.7" y="74" fontSize="12" fontWeight="black" textAnchor="middle" fill="#dc2626">Ν (30)</text>
+
+              {/* Σημείο Λ = 35 */}
+              <circle cx="400" cy="52" r="4.5" fill="#1e3a8a" />
+              <text x="400" y="72" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1e3a8a">Λ (35)</text>
+
+              {/* Διαστάσεις ΜΝ και ΝΛ */}
+              <line x1="210" y1="34" x2="336.7" y2="34" stroke="#dc2626" strokeWidth="1.8" />
+              <text x="273" y="26" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#dc2626">ΜΝ ＝ 10</text>
+
+              <line x1="336.7" y1="34" x2="400" y2="34" stroke="#059669" strokeWidth="1.8" />
+              <text x="368" y="26" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#059669">ΝΛ ＝ 5</text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1 */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900">
+              1. Υπολογισμός του ολικού μήκους ΚΛ και της θέσης του σημείου Μ:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>Μήκος(ΚΛ) ＝ 35 － 5 ＝ <strong>30 μονάδες</strong></div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>Αφού ΚΛ ＝ 2 · ΜΛ, έχουμε: ΜΛ ＝</span>
+                <Fraction num="30" den="2" />
+                <span>＝ <strong>15 μονάδες</strong></span>
+              </div>
+              <div className="pt-0.5 text-slate-700">
+                Το σημείο Μ βρίσκεται 15 μονάδες αριστερά από το Λ:
+                <div className="font-bold text-slate-950 pt-0.5">Μ ＝ 35 － 15 ＝ 20</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2 */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Χωρισμός του τμήματος ΜΛ από το σημείο Ν:
+            </div>
+            <p className="text-slate-700">
+              Δίνεται ότι το τμήμα ΜΝ έχει διπλάσιο μήκος από το ΝΛ (<span className="font-mono font-bold">ΜΝ ＝ 2 · ΝΛ</span>).
+              Επομένως, το συνολικό τμήμα ΜΛ χωρίζεται σε <strong>2 ＋ 1 ＝ 3 ίσα μέρη</strong>:
+            </p>
+
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• 1 μέρος (ΝΛ) ＝</span>
+                <Fraction num="15" den="3" />
+                <span>＝ <strong>5 μονάδες</strong></span>
+              </div>
+              <div>• 2 μέρη (ΜΝ) ＝ 2 · 5 ＝ <strong>10 μονάδες</strong></div>
+
+              <div className="pt-1 border-t border-slate-200 flex items-center gap-2 flex-wrap">
+                <span>Θέση του σημείου Ν ＝ Μ ＋ ΜΝ ＝ 20 ＋ 10 ＝</span>
+                <strong className="text-emerald-700 text-base">30</strong>
+                <span className="text-slate-500 font-sans text-xs">(ή ισοδύναμα: 35 － 5 ＝ 30)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, στο σημείο Ν αντιστοιχεί ο αριθμός <strong>30</strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 12,
