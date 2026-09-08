@@ -622,16 +622,189 @@ const QUESTIONS_2026 = [
   {
     id: 8,
     officialNumber: 28,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Με 4 ίδια ποτήρια νερό γεμίζουν τα 3/5 μιας κανάτας. Με πόσα ποτήρια γεμίζει η μισή κανάτα;',
     options: [
-      { key: 'A', label: <span>2 <Fraction num="2" den="5" /> ποτήρια</span>, raw: '2 2/5' },
+      { key: 'A', label: <span className="inline-flex items-center">2 <Fraction num="2" den="5" /> ποτήρια</span>, raw: '2 2/5' },
       { key: 'B', label: '3 ποτήρια', raw: '3' },
-      { key: 'Γ', label: <span>3 <Fraction num="1" den="3" /> ποτήρια</span>, raw: '3 1/3' },
-      { key: 'Δ', label: <span>3 <Fraction num="2" den="5" /> ποτήρια</span>, raw: '3 2/5' }
+      { key: 'Γ', label: <span className="inline-flex items-center">3 <Fraction num="1" den="3" /> ποτήρια</span>, raw: '3 1/3' },
+      { key: 'Δ', label: <span className="inline-flex items-center">3 <Fraction num="2" den="5" /> ποτήρια</span>, raw: '3 2/5' }
     ],
     correctRaw: '3 1/3',
-    explain: 'Τα 3/5 της κανάτας απαιτούν 4 ποτήρια, άρα ολόκληρη η κανάτα (5/5) χρειάζεται (4 : 3) · 5 = 20/3 ποτήρια. Η μισή κανάτα (1/2) χρειάζεται (20/3) : 2 = 10/3 ποτήρια = 3 1/3 ποτήρια.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε τη χωρητικότητα της κανάτας σε <strong>5 ίσα μέρη</strong> (πέμπτα) και παρατηρούμε πόσα ποτήρια αντιστοιχούν σε κάθε στάδιο:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ 3 ΣΤΑΔΙΩΝ: 3/5, 1/5 ΚΑΙ 1/2 (2,5/5) ΜΕ ΤΑ ΑΝΤΙΣΤΟΙΧΑ ΠΟΤΗΡΙΑ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="430" height="230" viewBox="0 0 430 230" className="select-none font-sans mx-auto block">
+            {/* 1ο ΣΤΑΔΙΟ: 3/5 ΚΑΝΑΤΑΣ ＝ 4 ΠΟΤΗΡΙΑ */}
+            <g transform="translate(15, 10)">
+              <text x="50" y="12" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                1. Τα 3/5 (4 ποτήρια)
+              </text>
+              {/* Κανάτα */}
+              <g transform="translate(20, 25)">
+                <rect x="10" y="15" width="40" height="90" rx="4" fill="#f8fafc" stroke="#334155" strokeWidth="1.8" />
+                {/* Χερούλι & Στόμιο */}
+                <path d="M 10 30 Q -6 55 10 80" fill="none" stroke="#334155" strokeWidth="2" />
+                <polygon points="50,15 58,10 50,22" fill="#334155" />
+                {/* 5 ίσα τμήματα (ύψος 18px το καθένα) */}
+                <line x1="10" y1="87" x2="50" y2="87" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="2 2" />
+                <line x1="10" y1="69" x2="50" y2="69" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="2 2" />
+                <line x1="10" y1="51" x2="50" y2="51" stroke="#0284c7" strokeWidth="1.5" />
+                <line x1="10" y1="33" x2="50" y2="33" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="2 2" />
+                {/* Νερό στα 3/5 (3 κάτω τμήματα = 54px) */}
+                <rect x="11" y="51" width="38" height="53" rx="2" fill="#38bdf8" fillOpacity="0.7" />
+                <text x="30" y="80" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">3/5</text>
+              </g>
+              {/* 4 ποτήρια */}
+              <g transform="translate(10, 135)">
+                {[0, 20, 40, 60].map((gx, idx) => (
+                  <g key={idx} transform={`translate(${gx}, 0)`}>
+                    <polygon points="2,0 16,0 14,24 4,24" fill="#38bdf8" fillOpacity="0.75" stroke="#0284c7" strokeWidth="1.2" />
+                  </g>
+                ))}
+                <text x="38" y="38" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                  4 ποτήρια
+                </text>
+              </g>
+            </g>
+
+            {/* 2ο ΣΤΑΔΙΟ: 1/5 ΚΑΝΑΤΑΣ ＝ 4/3 ΠΟΤΗΡΙΑ */}
+            <g transform="translate(160, 10)">
+              <text x="50" y="12" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                2. Το 1/5 (4/3 ποτήρια)
+              </text>
+              {/* Κανάτα */}
+              <g transform="translate(20, 25)">
+                <rect x="10" y="15" width="40" height="90" rx="4" fill="#f8fafc" stroke="#334155" strokeWidth="1.8" />
+                <path d="M 10 30 Q -6 55 10 80" fill="none" stroke="#334155" strokeWidth="2" />
+                <polygon points="50,15 58,10 50,22" fill="#334155" />
+                {/* Τμήματα */}
+                <line x1="10" y1="87" x2="50" y2="87" stroke="#0284c7" strokeWidth="1.5" />
+                <line x1="10" y1="69" x2="50" y2="69" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="2 2" />
+                <line x1="10" y1="51" x2="50" y2="51" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="2 2" />
+                <line x1="10" y1="33" x2="50" y2="33" stroke="#cbd5e1" strokeWidth="1" strokeDasharray="2 2" />
+                {/* Νερό στο 1/5 (1 κάτω τμήμα = 18px) */}
+                <rect x="11" y="87" width="38" height="17" rx="2" fill="#38bdf8" fillOpacity="0.7" />
+                <text x="30" y="99" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">1/5</text>
+              </g>
+              {/* 1 γεμάτο ποτήρι + 1/3 ποτηριού */}
+              <g transform="translate(22, 135)">
+                {/* 1 ολόκληρο ποτήρι */}
+                <polygon points="2,0 16,0 14,24 4,24" fill="#38bdf8" fillOpacity="0.75" stroke="#0284c7" strokeWidth="1.2" />
+                {/* 1/3 ποτηριού */}
+                <g transform="translate(24, 0)">
+                  <polygon points="2,0 16,0 14,24 4,24" fill="none" stroke="#94a3b8" strokeWidth="1.2" />
+                  <polygon points="4.7,16 13.3,16 14,24 4,24" fill="#38bdf8" fillOpacity="0.75" stroke="#0284c7" strokeWidth="1.2" />
+                </g>
+                <text x="21" y="38" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                  4/3 ποτήρια (1 1/3)
+                </text>
+              </g>
+            </g>
+
+            {/* 3ο ΣΤΑΔΙΟ: ΜΙΣΗ ΚΑΝΑΤΑ (1/2 = 2,5/5) ＝ 10/3 ΠΟΤΗΡΙΑ */}
+            <g transform="translate(305, 10)">
+              <text x="50" y="12" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                3. Η Μισή Κανάτα (1/2)
+              </text>
+              {/* Κανάτα */}
+              <g transform="translate(20, 25)">
+                <rect x="10" y="15" width="40" height="90" rx="4" fill="#f8fafc" stroke="#334155" strokeWidth="1.8" />
+                <path d="M 10 30 Q -6 55 10 80" fill="none" stroke="#334155" strokeWidth="2" />
+                <polygon points="50,15 58,10 50,22" fill="#334155" />
+                {/* Γραμμή μέσης στα 45px από κάτω (y = 60) */}
+                <line x1="10" y1="60" x2="50" y2="60" stroke="#dc2626" strokeWidth="1.8" strokeDasharray="3 2" />
+                {/* Νερό στη μέση (ύψος 45px) */}
+                <rect x="11" y="60" width="38" height="44" rx="2" fill="#38bdf8" fillOpacity="0.7" />
+                <text x="30" y="86" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">1/2</text>
+              </g>
+              {/* 3 ποτήρια + 1/3 ποτηριού */}
+              <g transform="translate(5, 135)">
+                {[0, 20, 40].map((gx, idx) => (
+                  <g key={idx} transform={`translate(${gx}, 0)`}>
+                    <polygon points="2,0 16,0 14,24 4,24" fill="#38bdf8" fillOpacity="0.75" stroke="#0284c7" strokeWidth="1.2" />
+                  </g>
+                ))}
+                {/* 1/3 ποτηριού */}
+                <g transform="translate(60, 0)">
+                  <polygon points="2,0 16,0 14,24 4,24" fill="none" stroke="#94a3b8" strokeWidth="1.2" />
+                  <polygon points="4.7,16 13.3,16 14,24 4,24" fill="#38bdf8" fillOpacity="0.75" stroke="#0284c7" strokeWidth="1.2" />
+                </g>
+                <text x="39" y="38" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534">
+                  3 1/3 ποτήρια (10/3)
+                </text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΣ ΣΥΛΛΟΓΙΣΜΟΣ ΚΑΙ ΥΠΟΛΟΓΙΣΜΟΙ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <p className="text-slate-800">
+            Ακολουθούμε τη μέθοδο αναγωγής στη μονάδα (στο <Fraction num="1" den="5" /> της κανάτας):
+          </p>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Τα</span>
+              <Fraction num="3" den="5" />
+              <span>της κανάτας γεμίζουν με <strong>4 ποτήρια</strong>.</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pl-2 pt-1 border-t border-slate-200">
+              <span>• Το</span>
+              <Fraction num="1" den="5" />
+              <span>της κανάτας γεμίζει με: 4 : 3 ＝</span>
+              <strong className="text-blue-700"><Fraction num="4" den="3" /></strong>
+              <span>ποτήρια.</span>
+            </div>
+
+            <div className="pl-2 pt-1 border-t border-slate-200 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Η μισή κανάτα αντιστοιχεί στα</span>
+                <Fraction num="2,5" den="5" />
+                <span>＝</span>
+                <Fraction num="1" den="2" />
+                <span>της κανάτας.</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>Συνεπώς, η μισή κανάτα χρειάζεται:</span>
+                <span className="font-bold">2,5 ·</span>
+                <Fraction num="4" den="3" />
+                <span>＝</span>
+                <Fraction num="5" den="2" />
+                <span>·</span>
+                <Fraction num="4" den="3" />
+                <span>＝</span>
+                <Fraction num="20" den="6" />
+                <span>＝</span>
+                <Fraction num="10" den="3" />
+                <span>ποτήρια.</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                <span>Μετατροπή του καταχρηστικού κλάσματος σε μεικτό αριθμό:</span>
+                <Fraction num="10" den="3" />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base flex items-center gap-1">
+                  3 <Fraction num="1" den="3" /> ποτήρια
+                </strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η μισή κανάτα γεμίζει με <strong>3 <Fraction num="1" den="3" /> ποτήρια</strong> (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 9,
