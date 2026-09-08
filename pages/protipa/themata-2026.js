@@ -936,7 +936,7 @@ const QUESTIONS_2026 = [
   {
     id: 9,
     officialNumber: 29,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Ποιος από τους παρακάτω αριθμούς είναι πιο κοντά στο 1;',
     options: [
       { key: 'A', label: <Fraction num="11" den="12" />, raw: '11/12' },
@@ -945,7 +945,134 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: '1,101', raw: '1.101' }
     ],
     correctRaw: '11/12',
-    explain: 'Αποστάσεις από το 1: |1 − 11/12| = 1/12 ≈ 0,0833. |12/11 − 1| = 1/11 ≈ 0,0909. |1 − 0,9| = 0,1. |1,101 − 1| = 0,101. Η μικρότερη απόσταση είναι το 1/12, άρα το 11/12 είναι πιο κοντά.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Για να βρούμε ποιος αριθμός είναι πιο κοντά στο <strong>1</strong>, υπολογίζουμε την <strong>απόσταση</strong> (τη θετική διαφορά) καθενός από το 1 και τις συγκρίνουμε:
+        </p>
+
+        {/* ΥΠΟΛΟΓΙΣΜΟΣ ΑΠΟΣΤΑΣΕΩΝ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 font-mono text-slate-900 space-y-2.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="font-sans font-bold text-slate-950 w-6">Α:</span>
+            <span>Απόσταση ＝ 1 －</span>
+            <Fraction num="11" den="12" />
+            <span>＝</span>
+            <Fraction num="12" den="12" />
+            <span>－</span>
+            <Fraction num="11" den="12" />
+            <span>＝</span>
+            <strong className="text-emerald-700 font-bold"><Fraction num="1" den="12" /></strong>
+            <span className="text-slate-500 font-sans text-xs">(≈ 0,0833)</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
+            <span className="font-sans font-bold text-slate-950 w-6">Β:</span>
+            <span>Απόσταση ＝</span>
+            <Fraction num="12" den="11" />
+            <span>－ 1 ＝</span>
+            <Fraction num="12" den="11" />
+            <span>－</span>
+            <Fraction num="11" den="11" />
+            <span>＝</span>
+            <strong className="text-blue-700 font-bold"><Fraction num="1" den="11" /></strong>
+            <span className="text-slate-500 font-sans text-xs">(≈ 0,0909)</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
+            <span className="font-sans font-bold text-slate-950 w-6">Γ:</span>
+            <span>Απόσταση ＝ 1 － 0,9 ＝ <strong>0,1</strong> ＝</span>
+            <Fraction num="1" den="10" />
+            <span className="text-slate-500 font-sans text-xs">(＝ 0,1000)</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
+            <span className="font-sans font-bold text-slate-950 w-6">Δ:</span>
+            <span>Απόσταση ＝ 1,101 － 1 ＝ <strong className="text-rose-700">0,101</strong></span>
+            <span className="text-slate-500 font-sans text-xs">(η μεγαλύτερη απόσταση)</span>
+          </div>
+        </div>
+
+        {/* SVG ΑΡΙΘΜΟΓΡΑΜΜΗ ΜΕ ΕΣΤΙΑΣΗ ΓΥΡΩ ΑΠΟ ΤΟ 1 */}
+        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 overflow-x-auto my-2">
+          <div className="text-center mb-1">
+            <span className="font-bold text-slate-800 text-xs block">
+              Απεικόνιση στην Αριθμογραμμή (Περιοχή 0,88 έως 1,12)
+            </span>
+          </div>
+
+          <svg width="460" height="125" viewBox="0 0 460 125" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="axis-arrow-29" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#0f172a" />
+              </marker>
+            </defs>
+
+            {/* Άξονας: εύρος [0.88, 1.12], scale = 400px / 0.24 = 1666.67 px/unit */}
+            {/* x(val) = 30 + (val - 0.88) * (400 / 0.24) */}
+            <line x1="20" y1="62" x2="445" y2="62" stroke="#334155" strokeWidth="2" markerEnd="url(#axis-arrow-29)" />
+
+            {/* Σημείο 0.9 -> x ≈ 63.3 */}
+            <line x1="63.3" y1="54" x2="63.3" y2="70" stroke="#64748b" strokeWidth="1.5" />
+            <circle cx="63.3" cy="62" r="4.5" fill="#64748b" />
+            <text x="63.3" y="42" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">0,9</text>
+            <text x="63.3" y="85" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">Δ=0,100</text>
+
+            {/* Σημείο 11/12 ≈ 0.9167 -> x ≈ 91.1 */}
+            <line x1="91.1" y1="52" x2="91.1" y2="72" stroke="#059669" strokeWidth="2" />
+            <circle cx="91.1" cy="62" r="5.5" fill="#10b981" stroke="#047857" strokeWidth="1.5" />
+            <text x="91.1" y="38" fontSize="11.5" fontWeight="900" textAnchor="middle" fill="#047857">11/12</text>
+            <text x="91.1" y="85" fontSize="9.5" fontWeight="900" textAnchor="middle" fill="#047857">Δ=0,083</text>
+
+            {/* Κεντρικό σημείο αναφοράς: 1 -> x = 230 */}
+            <line x1="230" y1="46" x2="230" y2="78" stroke="#0f172a" strokeWidth="2.5" />
+            <circle cx="230" cy="62" r="5" fill="#0f172a" />
+            <text x="230" y="36" fontSize="14" fontWeight="black" textAnchor="middle" fill="#0f172a">1</text>
+            <text x="230" y="96" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0f172a">Σημείο Αναφοράς</text>
+
+            {/* Σημείο 12/11 ≈ 1.0909 -> x ≈ 381.5 */}
+            <line x1="381.5" y1="54" x2="381.5" y2="70" stroke="#0284c7" strokeWidth="1.5" />
+            <circle cx="381.5" cy="62" r="4.5" fill="#0284c7" />
+            <text x="381.5" y="42" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0369a1">12/11</text>
+            <text x="381.5" y="85" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#0284c7">Δ=0,091</text>
+
+            {/* Σημείο 1.101 -> x ≈ 398.3 */}
+            <line x1="398.3" y1="54" x2="398.3" y2="70" stroke="#dc2626" strokeWidth="1.5" />
+            <circle cx="398.3" cy="62" r="4" fill="#ef4444" />
+            <text x="402" y="32" fontSize="10" fontWeight="bold" textAnchor="start" fill="#dc2626">1,101</text>
+            <text x="402" y="98" fontSize="8.5" fontWeight="bold" textAnchor="start" fill="#dc2626">Δ=0,101</text>
+
+            {/* Τόξο μικρότερης απόστασης (11/12 προς 1) */}
+            <path d="M 91.1 50 Q 160.5 28 230 50" fill="none" stroke="#059669" strokeWidth="1.8" strokeDasharray="3 2" />
+            <text x="160" y="24" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#047857">Ελάχιστη απόσταση (1/12)</text>
+          </svg>
+        </div>
+
+        {/* ΣΥΓΚΡΙΣΗ ΚΛΑΣΜΑΤΩΝ */}
+        <div className="bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-200/80 space-y-1.5">
+          <div className="font-sans font-bold text-emerald-950 text-sm border-b border-emerald-200 pb-1">
+            💡 Σύγκριση των αποστάσεων
+          </div>
+          <p className="text-slate-800">
+            Συγκρίνοντας τα κλάσματα των δύο πλησιέστερων υποψηφίων:
+          </p>
+          <div className="font-mono text-slate-900 flex items-center gap-2 flex-wrap pt-0.5">
+            <span>Επειδή <strong>12 &gt; 11</strong>, ισχύει:</span>
+            <Fraction num="1" den="12" />
+            <span>&lt;</span>
+            <Fraction num="1" den="11" />
+            <span>&lt; 0,1 &lt; 0,101</span>
+          </div>
+          <p className="text-slate-700 pt-1">
+            Η μικρότερη απόσταση από όλες είναι το <strong><Fraction num="1" den="12" /></strong>.
+          </p>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο αριθμός που βρίσκεται πιο κοντά στο 1 είναι το <strong><Fraction num="11" den="12" /></strong> (Επιλογή <strong>A</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 10,
