@@ -2035,6 +2035,11 @@ export default function Themata2025Page() {
 
   const answeredCount = Object.keys(answers).length;
 
+  // Υπολογισμός συνολικού πλήθους σωστών απαντήσεων
+  const correctCount = QUESTIONS_2025.filter(
+    q => answers[q.id] === q.correctRaw
+  ).length;
+
   const renderQuestionVisual = (q) => {
     if (q.hasTable === 'table23') {
       return (
@@ -2161,26 +2166,21 @@ export default function Themata2025Page() {
     }
 
     if (q.hasSvg === 'cube34') {
-      // 3D Ισομετρικός Κύβος 3x3x3
-      // Κεντρική εμπρόσθια-άνω κορυφή (κοινή για τις 3 ορατές έδρες)
       const cx = 105;
       const cy = 76;
       
-      // Διανύσματα ισομετρικής προβολής (30 μοίρες)
-      const ux = 22;  // Δεξιά-Πάνω (Top & Right)
+      const ux = 22;
       const uy = 12.7;
-      const vx = -22; // Αριστερά-Πάνω (Top & Left)
+      const vx = -22;
       const vy = 12.7;
-      const h = 25.4; // Κατακόρυφη διάσταση
+      const h = 25.4;
 
       const topTiles = [];
       const leftTiles = [];
       const rightTiles = [];
 
-      // 1. ΠΑΝΩ ΕΔΡΑ (Top Face)
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-          // Η εμπρός κορυφή (i=0, j=0) είναι γκρι
           const isDark = (i + j) % 2 === 0;
           const p0 = [cx + i * ux + j * vx, cy - i * uy - j * vy];
           const p1 = [cx + (i + 1) * ux + j * vx, cy - (i + 1) * uy - j * vy];
@@ -2194,7 +2194,6 @@ export default function Themata2025Page() {
         }
       }
 
-      // 2. ΑΡΙΣΤΕΡΗ ΕΔΡΑ (Left Face)
       for (let j = 0; j < 3; j++) {
         for (let k = 0; k < 3; k++) {
           const isDark = (j + k) % 2 === 0;
@@ -2210,7 +2209,6 @@ export default function Themata2025Page() {
         }
       }
 
-      // 3. ΔΕΞΙΑ ΕΔΡΑ (Right Face)
       for (let i = 0; i < 3; i++) {
         for (let k = 0; k < 3; k++) {
           const isDark = (i + k) % 2 === 0;
@@ -2229,15 +2227,12 @@ export default function Themata2025Page() {
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
           <svg width="210" height="190" viewBox="0 0 210 190" className="select-none">
-            {/* Πάνω έδρα */}
             {topTiles.map((t, idx) => (
               <polygon key={`top-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.8" strokeLinejoin="round" />
             ))}
-            {/* Αριστερή έδρα */}
             {leftTiles.map((t, idx) => (
               <polygon key={`left-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.8" strokeLinejoin="round" />
             ))}
-            {/* Δεξιά έδρα */}
             {rightTiles.map((t, idx) => (
               <polygon key={`right-${idx}`} points={t.pts} fill={t.fill} stroke="#0f172a" strokeWidth="1.8" strokeLinejoin="round" />
             ))}
@@ -2247,36 +2242,20 @@ export default function Themata2025Page() {
     }
 
     if (q.hasSvg === 'squares36') {
-      // Μεγάλο εξωτερικό τετράγωνο πλευράς 120 (από 20 έως 140)
-      // Κάθε πλευρά χωρίζεται από τις κορυφές των τετραγώνων:
-      // x0 = 20, x1 = 50, x2 = 110, x3 = 140 (και αντίστοιχα για y)
-      // Κεντρικό σημείο: (80, 80)
-      // Κορυφές κεντρικού σκιασμένου τετραγώνου: (80, 50), (110, 80), (80, 110), (50, 80)
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
           <svg width="180" height="180" viewBox="0 0 160 160" className="select-none">
-            {/* 1. Μεγάλο εξωτερικό τετράγωνο */}
             <rect x="20" y="20" width="120" height="120" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
-
-            {/* 2. Κεντρικό σκιασμένο τετράγωνο */}
             <polygon
               points="80,50 110,80 80,110 50,80"
               fill="#64748b"
               stroke="#1e293b"
               strokeWidth="2"
             />
-
-            {/* 3. Τέσσερα λευκά περιφερειακά τετράγωνα */}
-            {/* Πάνω-Αριστερά */}
             <polygon points="50,20 80,50 50,80 20,50" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
-            {/* Πάνω-Δεξιά */}
             <polygon points="110,20 140,50 110,80 80,50" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
-            {/* Κάτω-Αριστερά */}
             <polygon points="20,110 50,80 80,110 50,140" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
-            {/* Κάτω-Δεξιά */}
             <polygon points="80,110 110,80 140,110 110,140" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
-
-            {/* Μικρές κουκκίδες στις 4 γωνίες του εξωτερικού τετραγώνου όπως στο πρωτότυπο */}
             <circle cx="20" cy="20" r="2.5" fill="#1e293b" />
             <circle cx="140" cy="20" r="2.5" fill="#1e293b" />
             <circle cx="20" cy="140" r="2.5" fill="#1e293b" />
@@ -2287,31 +2266,16 @@ export default function Themata2025Page() {
     }
 
     if (q.hasSvg === 'grid38') {
-      // Συνολικό πλάτος: 180 (x από 25 έως 205), Συνολικό ύψος: 120 (y από 20 έως 140)
-      // Πλάτη στηλών: 1η = 60, 2η (μεσαία) = 50, 3η = 70 -> χωρίσματα στο x = 85 και x = 135
-      // Ύψη γραμμών: 1η = 32, 2η (μεσαία) = 52, 3η = 36 -> χωρίσματα στο y = 52 και y = 104
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
           <svg width="230" height="160" viewBox="0 0 230 160" className="select-none">
-            {/* Εξωτερικό περίγραμμα */}
             <rect x="25" y="20" width="180" height="120" fill="#ffffff" stroke="#000000" strokeWidth="2.2" />
-
-            {/* Κάθετες γραμμές (ασύμμετρες στήλες) */}
             <line x1="85" y1="20" x2="85" y2="140" stroke="#000000" strokeWidth="1.8" />
             <line x1="135" y1="20" x2="135" y2="140" stroke="#000000" strokeWidth="1.8" />
-
-            {/* Οριζόντιες γραμμές (ασύμμετρες γραμμές) */}
             <line x1="25" y1="52" x2="205" y2="52" stroke="#000000" strokeWidth="1.8" />
             <line x1="25" y1="104" x2="205" y2="104" stroke="#000000" strokeWidth="1.8" />
-
-            {/* Γράμματα Α, Β, Γ κεντραρισμένα στα αντίστοιχα κελιά */}
-            {/* Κελί Α: x [25, 85], y [20, 52] -> κέντρο (55, 41) */}
             <text x="55" y="41" fontSize="18" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Α</text>
-            
-            {/* Κελί Β: x [85, 135], y [52, 104] -> κέντρο (110, 84) */}
             <text x="110" y="84" fontSize="18" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Β</text>
-            
-            {/* Κελί Γ: x [135, 205], y [104, 140] -> κέντρο (170, 127) */}
             <text x="170" y="127" fontSize="18" fontWeight="bold" textAnchor="middle" fill="#000000" fontFamily="sans-serif">Γ</text>
           </svg>
         </div>
@@ -2319,10 +2283,6 @@ export default function Themata2025Page() {
     }
 
     if (q.hasSvg === 'building40') {
-      // Διάταξη από αριστερά προς τα δεξιά:
-      // 1. Ένδειξη 430 εκ.: Κείμενο (x=46) -> Βέλος (x=60)
-      // 2. Ένδειξη 150 εκ.: Κείμενο (x=114) -> Βέλος (x=128)
-      // 3. Κτίριο (x=190 έως 330) με παράθυρα (x=230)
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3 overflow-x-auto">
           <svg width="350" height="250" viewBox="0 0 350 250" className="select-none">
@@ -2331,32 +2291,20 @@ export default function Themata2025Page() {
                 <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#0f172a" />
               </marker>
             </defs>
-
-            {/* Πρόσοψη 3 ορόφων */}
             <rect x="190" y="20" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2.2" />
             <rect x="190" y="90" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2.2" />
             <rect x="190" y="160" width="140" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="2.2" />
-
-            {/* Παράθυρα */}
             <rect x="230" y="32" width="26" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
             <rect x="230" y="102" width="26" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
             <rect x="230" y="172" width="26" height="34" fill="#ffffff" stroke="#0f172a" strokeWidth="1.8" />
-
-            {/* Οριζόντιες διακεκομμένες γραμμές */}
             <line x1="60" y1="32" x2="230" y2="32" stroke="#475569" strokeWidth="1.2" strokeDasharray="3 3" />
             <line x1="128" y1="66" x2="230" y2="66" stroke="#475569" strokeWidth="1.2" strokeDasharray="3 3" />
             <line x1="128" y1="102" x2="230" y2="102" stroke="#475569" strokeWidth="1.2" strokeDasharray="3 3" />
             <line x1="60" y1="136" x2="230" y2="136" stroke="#475569" strokeWidth="1.2" strokeDasharray="3 3" />
-
-            {/* Εξωτερική διάσταση (430 εκ.) - τέρμα αριστερά */}
             <text x="46" y="88" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a">430 εκ.</text>
             <line x1="60" y1="38" x2="60" y2="130" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
-
-            {/* Εσωτερική διάσταση (150 εκ.) - δεξιότερα, ανάμεσα στο 430 και το κτίριο */}
             <text x="114" y="88" fontSize="10" fontWeight="bold" textAnchor="end" fill="#0f172a">150 εκ.</text>
             <line x1="128" y1="72" x2="128" y2="96" stroke="#0f172a" strokeWidth="1.6" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
-
-            {/* Δείκτης για το παράθυρο */}
             <text x="114" y="193" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0f172a">ΠΑΡΑΘΥΡΟ</text>
             <line x1="120" y1="189" x2="224" y2="197" stroke="#0f172a" strokeWidth="1.5" markerEnd="url(#arrow)" />
           </svg>
@@ -2405,11 +2353,6 @@ export default function Themata2025Page() {
           </div>
         </div>
 
-        // Υπολογισμός συνολικού πλήθους σωστών απαντήσεων
-        const correctCount = QUESTIONS_2025.filter(
-            q => userAnswers[q.id] === q.correctRaw
-        ).length;
-
         {/* FEEDBACK BANNER ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
         {submitted && (
           <div className="bg-white border-2 border-blue-300 rounded-3xl p-6 shadow-md text-center space-y-3">
@@ -2437,9 +2380,10 @@ export default function Themata2025Page() {
 
         {/* LIST OF 20 QUESTIONS */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {QUESTIONS_2025.map((q) => {
+          {QUESTIONS_2025.map((q, qIdx) => {
             const userChoice = answers[q.id];
             const isCorrect = userChoice === q.correctRaw;
+            const pointsValue = q.officialNumber <= 30 ? 2 : 3;
 
             let cardBorder = 'border-slate-200';
             if (submitted) {
@@ -2464,7 +2408,7 @@ export default function Themata2025Page() {
 
                   {submitted && (
                     <span className="text-sm sm:text-base font-black">
-                      {isCorrect ? '✅ +2,5 μόρια' : '❌ 0 μόρια'}
+                      {isCorrect ? `✅ +${pointsValue} μόρια` : '❌ 0 μόρια'}
                     </span>
                   )}
                 </div>
@@ -2527,7 +2471,7 @@ export default function Themata2025Page() {
                       <span>💡</span>
                       <span>Μαθηματική Επεξήγηση:</span>
                     </div>
-                    <p className="font-medium whitespace-pre-line">{q.explain}</p>
+                    <div className="font-medium whitespace-pre-line">{q.explain}</div>
                   </div>
                 )}
               </div>
