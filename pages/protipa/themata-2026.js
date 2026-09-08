@@ -1001,28 +1001,27 @@ const QUESTIONS_2026 = [
             </span>
           </div>
 
-          <svg width="460" height="125" viewBox="0 0 460 125" className="select-none font-sans mx-auto block">
+          <svg width="460" height="130" viewBox="0 0 460 130" className="select-none font-sans mx-auto block">
             <defs>
               <marker id="axis-arrow-29" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 2 L 8 5 L 0 8 z" fill="#0f172a" />
               </marker>
             </defs>
 
-            {/* Άξονας: εύρος [0.88, 1.12], scale = 400px / 0.24 = 1666.67 px/unit */}
-            {/* x(val) = 30 + (val - 0.88) * (400 / 0.24) */}
+            {/* Άξονας: εύρος [0.88, 1.12] */}
             <line x1="20" y1="62" x2="445" y2="62" stroke="#334155" strokeWidth="2" markerEnd="url(#axis-arrow-29)" />
 
             {/* Σημείο 0.9 -> x ≈ 63.3 */}
             <line x1="63.3" y1="54" x2="63.3" y2="70" stroke="#64748b" strokeWidth="1.5" />
             <circle cx="63.3" cy="62" r="4.5" fill="#64748b" />
-            <text x="63.3" y="42" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">0,9</text>
-            <text x="63.3" y="85" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">Δ=0,100</text>
+            <text x="56" y="42" fontSize="11" fontWeight="bold" textAnchor="end" fill="#475569">0,9</text>
+            <text x="56" y="82" fontSize="9" fontWeight="bold" textAnchor="end" fill="#64748b">Δ=0,100</text>
 
-            {/* Σημείο 11/12 ≈ 0.9167 -> x ≈ 91.1 */}
+            {/* Σημείο 11/12 ≈ 0.9167 -> x ≈ 91.1 (μετατοπισμένο χαμηλότερα όπως το κόκκινο δεξιά) */}
             <line x1="91.1" y1="52" x2="91.1" y2="72" stroke="#059669" strokeWidth="2" />
             <circle cx="91.1" cy="62" r="5.5" fill="#10b981" stroke="#047857" strokeWidth="1.5" />
-            <text x="91.1" y="38" fontSize="11.5" fontWeight="900" textAnchor="middle" fill="#047857">11/12</text>
-            <text x="91.1" y="85" fontSize="9.5" fontWeight="900" textAnchor="middle" fill="#047857">Δ=0,083</text>
+            <text x="96" y="32" fontSize="11.5" fontWeight="900" textAnchor="start" fill="#047857">11/12</text>
+            <text x="96" y="98" fontSize="9.5" fontWeight="900" textAnchor="start" fill="#047857">Δ=0,083</text>
 
             {/* Κεντρικό σημείο αναφοράς: 1 -> x = 230 */}
             <line x1="230" y1="46" x2="230" y2="78" stroke="#0f172a" strokeWidth="2.5" />
@@ -1033,14 +1032,14 @@ const QUESTIONS_2026 = [
             {/* Σημείο 12/11 ≈ 1.0909 -> x ≈ 381.5 */}
             <line x1="381.5" y1="54" x2="381.5" y2="70" stroke="#0284c7" strokeWidth="1.5" />
             <circle cx="381.5" cy="62" r="4.5" fill="#0284c7" />
-            <text x="381.5" y="42" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0369a1">12/11</text>
-            <text x="381.5" y="85" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#0284c7">Δ=0,091</text>
+            <text x="375" y="42" fontSize="11" fontWeight="bold" textAnchor="end" fill="#0369a1">12/11</text>
+            <text x="375" y="82" fontSize="9" fontWeight="bold" textAnchor="end" fill="#0284c7">Δ=0,091</text>
 
             {/* Σημείο 1.101 -> x ≈ 398.3 */}
             <line x1="398.3" y1="54" x2="398.3" y2="70" stroke="#dc2626" strokeWidth="1.5" />
             <circle cx="398.3" cy="62" r="4" fill="#ef4444" />
-            <text x="402" y="32" fontSize="10" fontWeight="bold" textAnchor="start" fill="#dc2626">1,101</text>
-            <text x="402" y="98" fontSize="8.5" fontWeight="bold" textAnchor="start" fill="#dc2626">Δ=0,101</text>
+            <text x="404" y="32" fontSize="10" fontWeight="bold" textAnchor="start" fill="#dc2626">1,101</text>
+            <text x="404" y="98" fontSize="8.5" fontWeight="bold" textAnchor="start" fill="#dc2626">Δ=0,101</text>
 
             {/* Τόξο μικρότερης απόστασης (11/12 προς 1) */}
             <path d="M 91.1 50 Q 160.5 28 230 50" fill="none" stroke="#059669" strokeWidth="1.8" strokeDasharray="3 2" />
