@@ -1997,9 +1997,10 @@ export default function Themata2025Page() {
 
   const calculateScore = (currentAnswers) => {
     let s = 0;
-    QUESTIONS_2025.forEach(q => {
+    QUESTIONS_2025.forEach((q, index) => {
       if (currentAnswers[q.id] === q.correctRaw) {
-        s += 2.5;
+        // Τα πρώτα 10 θέματα (index 0-9) παίρνουν 2 μόρια, τα υπόλοιπα 10 (index 10-19) παίρνουν 3 μόρια
+        s += index < 10 ? 2 : 3;
       }
     });
     return s;
