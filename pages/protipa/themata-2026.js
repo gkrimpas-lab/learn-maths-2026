@@ -442,7 +442,7 @@ const QUESTIONS_2026 = [
   {
     id: 6,
     officialNumber: 26,
-    group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
+    group: 'ΟΜΑΔΑ Α (4 Επιλογες)',
     promptText: 'Ο Παναγιώτης είναι 7 χρόνια μεγαλύτερος από την Αφροδίτη. Η Αφροδίτη είναι 7 χρόνια μικρότερη από την Ευαγγελία. Αν ο Παναγιώτης είναι 33 ετών, πόσων ετών είναι η Ευαγγελία;',
     options: [
       { key: 'A', label: '26', raw: '26' },
@@ -451,7 +451,57 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: '47', raw: '47' }
     ],
     correctRaw: '33',
-    explain: 'Αφροδίτη = 33 − 7 = 26 ετών. Ευαγγελία = 26 + 7 = 33 ετών. Ο Παναγιώτης και η Ευαγγελία έχουν την ίδια ηλικία.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε τις σχέσεις των ηλικιών με βάση τα δεδομένα:
+        </p>
+
+        {/* 1ος ΤΡΟΠΟΣ: ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 1ος Τρόπος (Βήμα προς βήμα υπολογισμός)
+          </div>
+
+          <div className="space-y-2 font-mono text-slate-900">
+            <div>
+              • Ηλικία Παναγιώτη: <strong>33 έτη</strong>
+            </div>
+
+            <div className="pl-2">
+              <div className="text-slate-700 font-sans text-xs">
+                Ο Παναγιώτης είναι 7 χρόνια μεγαλύτερος από την Αφροδίτη:
+              </div>
+              <div>Ηλικία Αφροδίτης ＝ 33 － 7 ＝ <strong>26 έτη</strong></div>
+            </div>
+
+            <div className="pl-2">
+              <div className="text-slate-700 font-sans text-xs">
+                Η Αφροδίτη είναι 7 χρόνια μικρότερη από την Ευαγγελία (άρα η Ευαγγελία είναι 7 χρόνια μεγαλύτερη):
+              </div>
+              <div>Ηλικία Ευαγγελίας ＝ 26 ＋ 7 ＝ <strong className="text-emerald-700 text-base">33 έτη</strong></div>
+            </div>
+          </div>
+        </div>
+
+        {/* 2ος ΤΡΟΠΟΣ: ΑΜΕΣΗ ΛΟΓΙΚΗ ΣΥΓΚΡΙΣΗ */}
+        <div className="bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-200/80 space-y-1.5">
+          <div className="font-sans font-bold text-emerald-950 text-sm border-b border-emerald-200 pb-1">
+            💡 2ος Τρόπος (Άμεση λογική παρατήρηση)
+          </div>
+          <p className="text-slate-800">
+            Αφού ο Παναγιώτης είναι κατά <strong>7 χρόνια μεγαλύτερος</strong> από την Αφροδίτη και η Ευαγγελία είναι επίσης κατά <strong>7 χρόνια μεγαλύτερη</strong> από την Αφροδίτη, προκύπτει άμεσα ότι ο Παναγιώτης και η Ευαγγελία έχουν <strong>ακριβώς την ίδια ηλικία</strong>:
+          </p>
+          <div className="font-mono font-bold text-emerald-800 pt-1">
+            Ηλικία Ευαγγελίας ＝ Ηλικία Παναγιώτη ＝ 33 έτη
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η Ευαγγελία είναι <strong>33 ετών</strong> (Επιλογή <strong>B</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 7,
