@@ -759,7 +759,7 @@ const QUESTIONS_2026 = [
             <div className="flex items-center gap-1.5 flex-wrap pl-2 pt-1 border-t border-slate-200">
               <span>• Το</span>
               <Fraction num="1" den="5" />
-              <span>της κανάτας γεμίζει με: 4 : 3 ＝</span>
+              <span>της κανάτας γεμίζει με 4 : 3 ＝</span>
               <strong className="text-blue-700"><Fraction num="4" den="3" /></strong>
               <span>ποτήρια.</span>
             </div>
