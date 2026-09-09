@@ -2310,7 +2310,7 @@ const QUESTIONS_2026 = [
   {
     id: 18,
     officialNumber: 38,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Το πλήρωμα ενός πλοίου έχει τρόφιμα για 6 ημέρες. Αν το πλήρωμα είχε 10 μέλη λιγότερα, θα είχε τρόφιμα για 8 ημέρες. Πόσα είναι τα μέλη του πληρώματος;',
     options: [
       { key: 'A', label: '30', raw: '30' },
@@ -2320,7 +2320,107 @@ const QUESTIONS_2026 = [
       { key: 'E', label: '80', raw: '80' }
     ],
     correctRaw: '40',
-    explain: 'Τα ποσά είναι αντιστρόφως ανάλογα: 6 · x = 8 · (x − 10) ➔ 6x = 8x − 80 ➔ 2x = 80 ➔ x = 40 μέλη.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Η ποσότητα των τροφίμων παραμένει σταθερή. Τα μεγέθη <strong>πλήθος μελών</strong> και <strong>ημέρες επάρκειας τροφίμων</strong> είναι <strong>αντιστρόφως ανάλογα</strong>, επειδή λιγότερα μέλη καταναλώνουν τα ίδια τρόφιμα σε περισσότερες ημέρες.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΣΤΑΘΕΡΗΣ ΠΟΣΟΤΗΤΑΣ ΤΡΟΦΙΜΩΝ (ΜΕΡΙΔΕΣ) */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="450" height="175" viewBox="0 0 450 175" className="select-none font-sans mx-auto block">
+            {/* 1. ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ */}
+            <g transform="translate(15, 12)">
+              <rect x="0" y="0" width="195" height="145" rx="12" fill="#f8fafc" stroke="#3b82f6" strokeWidth="1.8" />
+              <text x="97" y="24" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1d4ed8">
+                Αρχικό Πλήρωμα
+              </text>
+              <g transform="translate(15, 38)">
+                <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#0f172a">👤 Μέλη: <tspan fill="#2563eb" fontFamily="monospace">x</tspan></text>
+                <text x="0" y="38" fontSize="11" fontWeight="bold" fill="#0f172a">📅 Ημέρες: <tspan fill="#2563eb" fontFamily="monospace">6</tspan></text>
+                <rect x="0" y="55" width="165" height="36" rx="8" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
+                <text x="82" y="77" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">
+                  Τρόφιμα ＝ 6 · x
+                </text>
+              </g>
+            </g>
+
+            {/* ΣΥΜΒΟΛΟ ΙΣΟΤΗΤΑΣ ΣΤΑΘΕΡΩΝ ΤΡΟΦΙΜΩΝ */}
+            <g transform="translate(225, 85)">
+              <circle cx="0" cy="0" r="16" fill="#10b981" />
+              <text x="0" y="6" fontSize="18" fontWeight="black" textAnchor="middle" fill="#ffffff">＝</text>
+              <text x="0" y="32" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#047857">Ίδια Τρόφιμα</text>
+            </g>
+
+            {/* 2. ΥΠΟΘΕΤΙΚΗ ΚΑΤΑΣΤΑΣΗ */}
+            <g transform="translate(240, 12)">
+              <rect x="0" y="0" width="195" height="145" rx="12" fill="#f8fafc" stroke="#10b981" strokeWidth="1.8" />
+              <text x="97" y="24" fontSize="12" fontWeight="black" textAnchor="middle" fill="#047857">
+                Μειωμένο Πλήρωμα
+              </text>
+              <g transform="translate(15, 38)">
+                <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#0f172a">👤 Μέλη: <tspan fill="#059669" fontFamily="monospace">x － 10</tspan></text>
+                <text x="0" y="38" fontSize="11" fontWeight="bold" fill="#0f172a">📅 Ημέρες: <tspan fill="#059669" fontFamily="monospace">8</tspan></text>
+                <rect x="0" y="55" width="165" height="36" rx="8" fill="#ecfdf5" stroke="#a7f3d0" strokeWidth="1" />
+                <text x="82" y="77" fontSize="11" fontWeight="black" textAnchor="middle" fill="#065f46" fontFamily="monospace">
+                  Τρόφιμα ＝ 8 · (x － 10)
+                </text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΗ ΕΠΙΛΥΣΗ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Σχέση Αντιστρόφως Αναλόγων */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Εξίσωση σταθερού γινομένου (αντιστρόφως ανάλογα ποσά):
+            </div>
+            <p className="text-slate-700">
+              Στα αντιστρόφως ανάλογα ποσά το <strong>γινόμενο</strong> των τιμών τους παραμένει σταθερό και ισούται με τις συνολικές «ημερήσιες μερίδες» φαγητού:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 font-bold text-center">
+              (Μέλη) · (Ημέρες) ＝ Σταθερό
+            </div>
+          </div>
+
+          {/* Βήμα 2: Αλγεβρική Επίλυση */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Επίλυση της εξίσωσης:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>6 · x ＝ 8 · (x － 10)</div>
+              <div>6x ＝ 8x － 80</div>
+              <div className="text-slate-500 font-sans text-xs">// Μεταφέρουμε τους αγνώστους στο ένα μέλος:</div>
+              <div>80 ＝ 8x － 6x</div>
+              <div>2x ＝ 80</div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>x ＝</span>
+                <Fraction num="80" den="2" />
+                <span>➔ <strong className="text-emerald-700 text-base">x ＝ 40 μέλη</strong></span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 3: Επαλήθευση */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              3. Επαλήθευση:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• 40 μέλη για 6 ημέρες ➔ 40 · 6 ＝ <strong>240 μερίδες</strong></div>
+              <div>• 40 － 10 ＝ 30 μέλη για 8 ημέρες ➔ 30 · 8 ＝ <strong>240 μερίδες</strong> (επαληθεύεται)</div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, τα μέλη του πληρώματος είναι <strong>40</strong> (Επιλογή <strong>B</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 19,
