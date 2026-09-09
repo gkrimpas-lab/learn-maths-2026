@@ -1858,7 +1858,130 @@ const QUESTIONS = [
     prompt: 'Τα παιδιά του τμήματος ΣΤ1 ενός σχολείου χωρίστηκαν σε εξάδες για ένα παιχνίδι και περίσσεψαν 4 παιδιά. Την ίδια ημέρα, όταν όλα τα παιδιά των τμημάτων ΣΤ1 και ΣΤ2 μαζί χωρίστηκαν σε εξάδες, δεν περίσσεψε κανένα παιδί. Αν χωρίσουμε μόνο τα παιδιά του τμήματος ΣΤ2 σε εξάδες, πόσα παιδιά θα περισσέψουν;',
     options: ['1 παιδί', '2 παιδιά', '3 παιδιά', '4 παιδιά', 'Κανένα παιδί'],
     correct: '2 παιδιά',
-    explain: 'Αφού το άθροισμα των παιδιών είναι πολλαπλάσιο του 6 και το ΣΤ1 αφήνει υπόλοιπο 4 όταν διαιρείται με το 6, το ΣΤ2 πρέπει να αφήνει υπόλοιπο 6 − 4 = 2 παιδιά, ώστε το άθροισμα των υπολοίπων (4 + 2 = 6) να σχηματίζει ακέραιη νέα εξάδα.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Εξετάζουμε τη διαίρεση με το <strong>6</strong> (ευκλείδεια διαίρεση) και το <strong>υπόλοιπο</strong> (περίσσευμα) παιδιών σε κάθε περίπτωση:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΣΥΜΠΛΗΡΩΣΗ ΕΞΑΔΑΣ ΑΠΟ ΤΑ ΥΠΟΛΟΙΠΑ ΤΩΝ ΔΥΟ ΤΜΗΜΑΤΩΝ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="490" height="205" viewBox="0 0 490 205" className="select-none font-sans mx-auto block">
+            {/* 1. ΤΜΗΜΑ ΣΤ1 */}
+            <g transform="translate(15, 12)">
+              <rect x="0" y="0" width="460" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+              <text x="14" y="30" fontSize="11" fontWeight="bold" fill="#0369a1">Τμήμα ΣΤ1:</text>
+              
+              {/* Πλήρεις Εξάδες */}
+              <g transform="translate(95, 10)">
+                <rect x="0" y="0" width="135" height="32" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.4" />
+                <text x="67.5" y="20" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Πλήρεις Εξάδες</text>
+              </g>
+
+              <text x="242" y="30" fontSize="13" fontWeight="bold" fill="#64748b">＋</text>
+
+              {/* Περίσσευμα 4 παιδιά */}
+              <g transform="translate(262, 10)">
+                <rect x="0" y="0" width="180" height="32" rx="6" fill="#fee2e2" stroke="#ef4444" strokeWidth="1.6" />
+                <text x="90" y="20" fontSize="11" fontWeight="black" textAnchor="middle" fill="#dc2626">
+                  Περισσεύουν: 4 παιδιά
+                </text>
+              </g>
+            </g>
+
+            {/* 2. ΤΜΗΜΑ ΣΤ2 */}
+            <g transform="translate(15, 72)">
+              <rect x="0" y="0" width="460" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+              <text x="14" y="30" fontSize="11" fontWeight="bold" fill="#15803d">Τμήμα ΣΤ2:</text>
+              
+              {/* Πλήρεις Εξάδες */}
+              <g transform="translate(95, 10)">
+                <rect x="0" y="0" width="135" height="32" rx="6" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.4" />
+                <text x="67.5" y="20" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#15803d">Πλήρεις Εξάδες</text>
+              </g>
+
+              <text x="242" y="30" fontSize="13" fontWeight="bold" fill="#64748b">＋</text>
+
+              {/* Ζητούμενο περίσσευμα (2 παιδιά) */}
+              <g transform="translate(262, 10)">
+                <rect x="0" y="0" width="180" height="32" rx="6" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" strokeDasharray="3 2" />
+                <text x="90" y="20" fontSize="11" fontWeight="black" textAnchor="middle" fill="#15803d">
+                  Περισσεύουν: 2 παιδιά ⭐
+                </text>
+              </g>
+            </g>
+
+            {/* 3. ΣΥΝΟΛΟ ΣΤ1 + ΣΤ2 (ΣΥΜΠΛΗΡΩΣΗ ΑΚΕΡΑΙΑΣ ΕΞΑΔΑΣ) */}
+            <g transform="translate(15, 134)">
+              <rect x="0" y="0" width="460" height="58" rx="10" fill="#0f172a" />
+              <g transform="translate(15, 14)">
+                <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#94a3b8">ΣΤ1 ＋ ΣΤ2 μαζί:</text>
+                <rect x="110" y="-3" width="125" height="26" rx="5" fill="#1e293b" />
+                <text x="172.5" y="14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#cbd5e1">Όλες οι εξάδες</text>
+                
+                <text x="245" y="15" fontSize="12" fontWeight="bold" fill="#ffffff">＋</text>
+
+                {/* Ένωση υπολοίπων (4 + 2 = 6) */}
+                <rect x="260" y="-3" width="170" height="26" rx="6" fill="#16a34a" />
+                <text x="345" y="15" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                  (4 ＋ 2 ＝ 6 ➔ 1 νέα εξάδα!)
+                </text>
+                <text x="215" y="34" fontSize="9.5" textAnchor="middle" fill="#86efac">
+                  Υπόλοιπο ＝ 0 (δεν περισσεύει κανένα παιδί)
+                </text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Με ευκλείδεια διαίρεση */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Συμπλήρωση ακέραιης εξάδας)
+            </div>
+            <p className="text-slate-700">
+              Οι πλήρεις εξάδες δεν αφήνουν περίσσευμα. Το τελικό περίσσευμα προκύπτει αποκλειστικά από τα παιδιά που περισσεύουν σε κάθε τμήμα:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Από το ΣΤ1 περισσεύουν <strong>4 παιδιά</strong>.</div>
+              <div>• Για να σχηματιστεί <strong>1 νέα πλήρης εξάδα</strong> (ώστε να μην περισσέψει κανένα παιδί), λείπουν:</div>
+              <div className="pl-3 font-bold text-slate-800">6 － 4 ＝ 2 παιδιά</div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Αυτά τα 2 παιδιά πρέπει υποχρεωτικά να προέρχονται από το περίσσευμα του τμήματος ΣΤ2.
+              </div>
+              <div className="pt-0.5 text-emerald-800 font-bold">
+                Άρα, αν χωρίσουμε μόνο το ΣΤ2 σε εξάδες, θα περισσέψουν <span className="text-base text-emerald-700 font-black">2 παιδιά</span>.
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Με αριθμητικό παράδειγμα */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Επαλήθευση με αριθμητικό παράδειγμα)
+            </div>
+            <p className="text-slate-700">
+              Επιλέγουμε ένα ενδεικτικό πλήθος παιδιών για το ΣΤ1 που αφήνει υπόλοιπο 4 στη διαίρεση με το 6:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• Έστω ότι το ΣΤ1 έχει <strong>16 παιδιά</strong> (αφού 16 ＝ 2 · 6 ＋ 4).</div>
+              <div>• Το σύνολο ΣΤ1 ＋ ΣΤ2 πρέπει να διαιρείται ακριβώς με το 6, π.χ. να είναι <strong>30 παιδιά</strong>.</div>
+              <div>• Τότε το ΣΤ2 έχει: 30 － 16 ＝ <strong>14 παιδιά</strong>.</div>
+              <div className="pt-1 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
+                <span>• Χωρίζουμε τα 14 παιδιά σε εξάδες: 14 : 6 ＝ 2 εξάδες και</span>
+                <strong className="text-emerald-700 text-base">υπόλοιπο 2 παιδιά</strong>.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, αν χωρίσουμε μόνο τα παιδιά του τμήματος ΣΤ2 σε εξάδες, θα περισσέψουν <strong>2 παιδιά</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 15,
