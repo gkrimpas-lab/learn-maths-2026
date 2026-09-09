@@ -1079,7 +1079,149 @@ const QUESTIONS = [
     prompt: 'Η Ελένη και η Δήμητρα έχουν μαζί 45 βιβλία. Αν η Ελένη δώσει 5 βιβλία στη Δήμητρα, τότε η Δήμητρα θα έχει ακριβώς τα διπλάσια βιβλία από την Ελένη. Πόσα βιβλία είχε αρχικά η Ελένη;',
     options: ['15', '20', '25', '30'],
     correct: '20',
-    explain: 'Το συνολικό πλήθος των βιβλίων παραμένει 45. Στο τέλος, αν η Ελένη έχει 1 μέρος, η Δήμητρα έχει 2 μέρη, δηλαδή σύνολο 3 ίσα μέρη. Κάθε μέρος είναι 45 : 3 = 15 βιβλία. Άρα στο τέλος η Ελένη έχει 15 βιβλία. Επειδή έδωσε 5, αρχικά είχε 15 + 5 = 20 βιβλία.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Η μεταφορά βιβλίων μεταξύ των δύο κοριτσιών δεν αλλάζει το συνολικό τους πλήθος, το οποίο παραμένει σταθερά <strong>45 βιβλία</strong>.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΩΝ ΙΣΩΝ ΜΕΡΩΝ ΣΤΟ ΤΕΛΟΣ ΚΑΙ ΕΠΙΣΤΡΟΦΗ ΣΤΗΝ ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="490" height="210" viewBox="0 0 490 210" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="arrow-books-back" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#dc2626" />
+              </marker>
+            </defs>
+
+            {/* 1. ΤΕΛΙΚΗ ΚΑΤΑΣΤΑΣΗ: 3 ΙΣΑ ΜΕΡΗ (45 : 3 = 15 ΒΙΒΛΙΑ ΑΝΑ ΜΕΡΟΣ) */}
+            <g transform="translate(15, 12)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="black" fill="#0f172a">
+                1. Τελική Κατάσταση (Σύνολο: 45 βιβλία ＝ 3 ίσα μέρη)
+              </text>
+
+              {/* Ελένη: 1 μέρος (15 βιβλία) */}
+              <g transform="translate(0, 26)">
+                <rect x="0" y="0" width="70" height="24" rx="4" fill="#f8fafc" />
+                <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#0369a1">Ελένη:</text>
+                <rect x="75" y="0" width="105" height="24" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
+                <text x="127.5" y="16" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1 μέρος (15)</text>
+              </g>
+
+              {/* Δήμητρα: 2 μέρη (2 · 15 = 30 βιβλία) */}
+              <g transform="translate(0, 56)">
+                <rect x="0" y="0" width="70" height="24" rx="4" fill="#f8fafc" />
+                <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#475569">Δήμητρα:</text>
+                <rect x="75" y="0" width="105" height="24" rx="6" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="1.6" />
+                <text x="127.5" y="16" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569">1 μέρος (15)</text>
+                <rect x="185" y="0" width="105" height="24" rx="6" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="1.6" />
+                <text x="237.5" y="16" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569">1 μέρος (15)</text>
+
+                {/* Συνολική ετικέτα 45 βιβλίων */}
+                <path d="M 75 -2 L 290 -2" stroke="#64748b" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="305" y="-12" width="145" height="40" rx="8" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.2" />
+                <text x="377.5" y="6" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534">45 : 3 μέρη ＝</text>
+                <text x="377.5" y="21" fontSize="12" fontWeight="black" textAnchor="middle" fill="#15803d">15 βιβλία / μέρος</text>
+              </g>
+            </g>
+
+            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
+            <line x1="20" y1="108" x2="470" y2="108" stroke="#e2e8f0" strokeWidth="1.2" />
+
+            {/* 2. ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ: ΕΠΙΣΤΡΟΦΗ ΤΩΝ 5 ΒΙΒΛΙΩΝ ΣΤΗΝ ΕΛΕΝΗ */}
+            <g transform="translate(15, 122)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="black" fill="#0f172a">
+                2. Αρχική Κατάσταση (Επιστρέφουμε τα 5 βιβλία πίσω στην Ελένη)
+              </text>
+
+              <g transform="translate(0, 26)">
+                <text x="0" y="18" fontSize="11" fontWeight="bold" fill="#0369a1">Ελένη:</text>
+                
+                {/* 15 βιβλία του τέλους */}
+                <rect x="75" y="0" width="105" height="28" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
+                <text x="127.5" y="18" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">15 (στο τέλος)</text>
+
+                {/* + 5 βιβλία που είχε δώσει */}
+                <rect x="185" y="0" width="65" height="28" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" strokeDasharray="3 2" />
+                <text x="217.5" y="18" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#dc2626">＋ 5</text>
+
+                {/* Τόξο επιστροφής */}
+                <path d="M 270 14 Q 255 32 240 28" fill="none" stroke="#dc2626" strokeWidth="1.5" markerEnd="url(#arrow-books-back)" />
+
+                {/* Τελικό Αποτέλεσμα Αρχικών Βιβλίων Ελένης */}
+                <rect x="260" y="-1" width="190" height="30" rx="8" fill="#16a34a" />
+                <text x="355" y="19" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                  Αρχικά: 15 ＋ 5 ＝ 20 βιβλία ⭐
+                </text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Με τη μέθοδο των ίσων μερών)
+            </div>
+            <p className="text-slate-700">
+              Στο τέλος, η Δήμητρα έχει διπλάσια βιβλία από την Ελένη:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Βιβλία Ελένης στο τέλος: <strong>1 μέρος</strong></div>
+              <div>• Βιβλία Δήμητρας στο τέλος: <strong>2 μέρη</strong></div>
+              <div>• Συνολικά μέρη: 1 ＋ 2 ＝ <strong>3 ίσα μέρη</strong></div>
+              <div className="pt-1 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
+                <span>• Κάθε μέρος αντιστοιχεί σε:</span>
+                <Fraction num="45" den="3" />
+                <span>＝ <strong>15 βιβλία</strong></span>
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-slate-800">
+                Άρα στο τέλος η Ελένη έχει 15 βιβλία. Επειδή είχε δώσει 5 βιβλία στη Δήμητρα, αρχικά είχε:
+              </div>
+              <div className="text-emerald-700 font-bold text-base">
+                Αρχικά βιβλία Ελένης ＝ 15 ＋ 5 ＝ 20 βιβλία
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Αλγεβρικά με εξίσωση)
+            </div>
+            <p className="text-slate-700">
+              Έστω <strong>x</strong> τα βιβλία που είχε αρχικά η Ελένη. Τότε η Δήμητρα είχε αρχικά <strong>45 － x</strong> βιβλία.
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Μετά τη μεταφορά των 5 βιβλίων:</div>
+              <div className="pl-3 text-slate-700">
+                Ελένη: x － 5 &nbsp;|&nbsp; Δήμητρα: (45 － x) ＋ 5 ＝ 50 － x
+              </div>
+              <div className="pt-1 border-t border-slate-200">
+                Η Δήμητρα έχει τα διπλάσια:
+              </div>
+              <div className="pl-3 space-y-1 text-slate-900">
+                <div>50 － x ＝ 2 · (x － 5)</div>
+                <div>50 － x ＝ 2x － 10</div>
+                <div>50 ＋ 10 ＝ 2x ＋ x</div>
+                <div>3x ＝ 60</div>
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span>x ＝</span>
+                  <Fraction num="60" den="3" />
+                  <span>➔ <strong className="text-emerald-700 text-base">x ＝ 20 βιβλία</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η Ελένη είχε αρχικά <strong>20 βιβλία</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 10,
