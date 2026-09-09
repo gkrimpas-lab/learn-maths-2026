@@ -1229,7 +1229,163 @@ const QUESTIONS = [
     prompt: 'Σε ποιον αριθμό αντιστοιχεί ο όρος που λείπει από το παρακάτω αριθμητικό μοτίβο;\n2, 6, 12, 20, 30, __, 56, 72',
     options: ['36', '40', '42', '45'],
     correct: '42',
-    explain: 'Οι διαφορές των διαδοχικών όρων είναι: +4, +6, +8, +10, +12, +14, +16. Επομένως, μετά το 30 προσθέτουμε 12: 30 + 12 = 42 (και 42 + 14 = 56).'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε το αριθμητικό μοτίβο εξετάζοντας τις <strong>διαφορές μεταξύ των διαδοχικών όρων</strong>, οι οποίες αυξάνονται σταθερά κατά 2:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΟΙ ΟΡΟΙ ΤΗΣ ΑΚΟΛΟΥΘΙΑΣ ΚΑΙ ΤΑ ΤΟΞΑ ΔΙΑΦΟΡΩΝ (+4, +6, +8, +10, +12, +14, +16) */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="530" height="170" viewBox="0 0 530 170" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="motif-arr-10" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb" />
+              </marker>
+              <marker id="motif-arr-target" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+              </marker>
+            </defs>
+
+            {/* ΟΙ 8 ΟΡΟΙ ΤΟΥ ΜΟΤΙΒΟΥ */}
+            {[
+              { val: '2', x: 30 },
+              { val: '6', x: 95 },
+              { val: '12', x: 160 },
+              { val: '20', x: 225 },
+              { val: '30', x: 290 },
+              { val: '42', x: 355, isTarget: true },
+              { val: '56', x: 420 },
+              { val: '72', x: 485 }
+            ].map((node) => (
+              <g key={node.val} transform={`translate(${node.x}, 115)`}>
+                {/* Πλαίσιο αριθμού */}
+                <rect
+                  x="-22"
+                  y="-18"
+                  width="44"
+                  height="36"
+                  rx="8"
+                  fill={node.isTarget ? '#dcfce7' : '#f8fafc'}
+                  stroke={node.isTarget ? '#16a34a' : '#cbd5e1'}
+                  strokeWidth={node.isTarget ? '2.2' : '1.5'}
+                />
+                <text
+                  x="0"
+                  y="5"
+                  fontSize={node.isTarget ? '15' : '13'}
+                  fontWeight={node.isTarget ? '900' : 'bold'}
+                  textAnchor="middle"
+                  fill={node.isTarget ? '#15803d' : '#0f172a'}
+                  fontFamily="monospace"
+                >
+                  {node.val}
+                </text>
+                {node.isTarget && (
+                  <text x="0" y="32" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">
+                    (Ζητούμενο ⭐)
+                  </text>
+                )}
+              </g>
+            ))}
+
+            {/* ΤΟΞΑ ΜΕΤΑΒΑΣΗΣ / ΔΙΑΦΟΡΩΝ (+4, +6, +8, +10, +12, +14, +16) */}
+            {[
+              { startX: 30, endX: 95, diff: '+4' },
+              { startX: 95, endX: 160, diff: '+6' },
+              { startX: 160, endX: 225, diff: '+8' },
+              { startX: 225, endX: 290, diff: '+10' },
+              { startX: 290, endX: 355, diff: '+12', isTarget: true },
+              { startX: 355, endX: 420, diff: '+14' },
+              { startX: 420, endX: 485, diff: '+16' }
+            ].map((arc, idx) => (
+              <g key={`arc-${idx}`}>
+                <path
+                  d={`M ${arc.startX} 92 C ${arc.startX + 15} 45, ${arc.endX - 15} 45, ${arc.endX} 92`}
+                  fill="none"
+                  stroke={arc.isTarget ? '#16a34a' : '#2563eb'}
+                  strokeWidth={arc.isTarget ? '2.5' : '1.8'}
+                  markerEnd={arc.isTarget ? 'url(#motif-arr-target)' : 'url(#motif-arr-10)'}
+                />
+                <text
+                  x={(arc.startX + arc.endX) / 2}
+                  y="52"
+                  fontSize={arc.isTarget ? '12.5' : '11'}
+                  fontWeight={arc.isTarget ? '900' : 'bold'}
+                  textAnchor="middle"
+                  fill={arc.isTarget ? '#15803d' : '#1e40af'}
+                  fontFamily="monospace"
+                >
+                  {arc.diff}
+                </text>
+              </g>
+            ))}
+
+            {/* ΕΝΔΕΙΞΗ ΣΤΑΘΕΡΗΣ ΑΥΞΗΣΗΣ ΤΩΝ ΔΙΑΦΟΡΩΝ */}
+            <g transform="translate(15, 12)">
+              <rect x="0" y="0" width="500" height="20" rx="6" fill="#f1f5f9" stroke="#e2e8f0" strokeWidth="1" />
+              <text x="250" y="14" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569">
+                Διαδοχικές διαφορές: +4, +6, +8, +10, +12, +14, +16 (κάθε βήμα αυξάνεται κατά +2)
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Μέσω διαφορών */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Μέσω των διαφορών διαδοχικών όρων)
+            </div>
+            <p className="text-slate-700">
+              Παρατηρούμε τη διαφορά ανάμεσα σε κάθε όρο και τον επόμενό του:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• 2 ＋ <strong className="text-blue-700">4</strong> ＝ 6</div>
+              <div>• 6 ＋ <strong className="text-blue-700">6</strong> ＝ 12</div>
+              <div>• 12 ＋ <strong className="text-blue-700">8</strong> ＝ 20</div>
+              <div>• 20 ＋ <strong className="text-blue-700">10</strong> ＝ 30</div>
+              <div className="pt-1 border-t border-slate-200 bg-emerald-50/70 p-1 rounded-md">
+                • 30 ＋ <strong className="text-emerald-700">12</strong> ＝ <strong className="text-emerald-700 text-base">42</strong> ⭐ (ο όρος που λείπει)
+              </div>
+              <div className="pt-1 text-slate-600 font-sans text-xs">
+                Επαλήθευση για τους επόμενους όρους:
+              </div>
+              <div>• 42 ＋ <strong className="text-blue-700">14</strong> ＝ 56</div>
+              <div>• 56 ＋ <strong className="text-blue-700">16</strong> ＝ 72 (επαληθεύεται)</div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Γινόμενο διαδοχικών φυσικών */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Γινόμενο διαδοχικών φυσικών αριθμών)
+            </div>
+            <p className="text-slate-700">
+              Κάθε όρος ισούται με το γινόμενο δύο διαδοχικών αριθμών (<span className="font-mono font-bold">ν · (ν ＋ 1)</span>):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• 1ος όρος: 1 · 2 ＝ <strong>2</strong></div>
+              <div>• 2ος όρος: 2 · 3 ＝ <strong>6</strong></div>
+              <div>• 3ος όρος: 3 · 4 ＝ <strong>12</strong></div>
+              <div>• 4ος όρος: 4 · 5 ＝ <strong>20</strong></div>
+              <div>• 5ος όρος: 5 · 6 ＝ <strong>30</strong></div>
+              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
+                • 6ος όρος (ζητούμενος): 6 · 7 ＝ <span className="text-base text-emerald-700 font-black">42</span>
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-slate-600 font-sans text-xs">
+                • 7ος: 7 · 8 ＝ 56 &nbsp;|&nbsp; 8ος: 8 · 9 ＝ 72
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο όρος που λείπει είναι ο αριθμός <strong>42</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 11,
