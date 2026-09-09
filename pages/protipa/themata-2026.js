@@ -2328,41 +2328,43 @@ const QUESTIONS_2026 = [
 
         {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΣΤΑΘΕΡΗΣ ΠΟΣΟΤΗΤΑΣ ΤΡΟΦΙΜΩΝ (ΜΕΡΙΔΕΣ) */}
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="450" height="175" viewBox="0 0 450 175" className="select-none font-sans mx-auto block">
-            {/* 1. ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ */}
-            <g transform="translate(15, 12)">
-              <rect x="0" y="0" width="195" height="145" rx="12" fill="#f8fafc" stroke="#3b82f6" strokeWidth="1.8" />
-              <text x="97" y="24" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1d4ed8">
+          <svg width="490" height="180" viewBox="0 0 490 180" className="select-none font-sans mx-auto block">
+            {/* 1. ΑΡΧΙΚΟ ΠΛΗΡΩΜΑ (ΑΡΙΣΤΕΡΑ: x: 10 έως 215) */}
+            <g transform="translate(10, 15)">
+              <rect x="0" y="0" width="205" height="150" rx="14" fill="#f8fafc" stroke="#3b82f6" strokeWidth="2" />
+              <text x="102.5" y="26" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1d4ed8">
                 Αρχικό Πλήρωμα
               </text>
-              <g transform="translate(15, 38)">
+              <g transform="translate(16, 42)">
                 <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#0f172a">👤 Μέλη: <tspan fill="#2563eb" fontFamily="monospace">x</tspan></text>
                 <text x="0" y="38" fontSize="11" fontWeight="bold" fill="#0f172a">📅 Ημέρες: <tspan fill="#2563eb" fontFamily="monospace">6</tspan></text>
-                <rect x="0" y="55" width="165" height="36" rx="8" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
-                <text x="82" y="77" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">
+                <rect x="0" y="55" width="173" height="38" rx="8" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
+                <text x="86.5" y="79" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">
                   Τρόφιμα ＝ 6 · x
                 </text>
               </g>
             </g>
 
-            {/* ΣΥΜΒΟΛΟ ΙΣΟΤΗΤΑΣ ΣΤΑΘΕΡΩΝ ΤΡΟΦΙΜΩΝ */}
-            <g transform="translate(225, 85)">
-              <circle cx="0" cy="0" r="16" fill="#10b981" />
-              <text x="0" y="6" fontSize="18" fontWeight="black" textAnchor="middle" fill="#ffffff">＝</text>
-              <text x="0" y="32" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#047857">Ίδια Τρόφιμα</text>
+            {/* ΚΕΝΤΡΙΚΟΣ ΣΥΝΔΕΣΜΟΣ ΙΣΟΤΗΤΑΣ (x: 245) - ΜΕ ΑΠΟΣΤΑΣΗ ΑΠΟ ΤΑ ΠΛΑΙΣΙΑ */}
+            <g transform="translate(245, 90)">
+              <circle cx="0" cy="-6" r="16" fill="#10b981" />
+              <text x="0" y="0" fontSize="18" fontWeight="black" textAnchor="middle" fill="#ffffff">＝</text>
+              <text x="0" y="26" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#047857">
+                Ίδια Τρόφιμα
+              </text>
             </g>
 
-            {/* 2. ΥΠΟΘΕΤΙΚΗ ΚΑΤΑΣΤΑΣΗ */}
-            <g transform="translate(240, 12)">
-              <rect x="0" y="0" width="195" height="145" rx="12" fill="#f8fafc" stroke="#10b981" strokeWidth="1.8" />
-              <text x="97" y="24" fontSize="12" fontWeight="black" textAnchor="middle" fill="#047857">
+            {/* 2. ΜΕΙΩΜΕΝΟ ΠΛΗΡΩΜΑ (ΔΕΞΙΑ: x: 275 έως 480) */}
+            <g transform="translate(275, 15)">
+              <rect x="0" y="0" width="205" height="150" rx="14" fill="#f8fafc" stroke="#10b981" strokeWidth="2" />
+              <text x="102.5" y="26" fontSize="12" fontWeight="black" textAnchor="middle" fill="#047857">
                 Μειωμένο Πλήρωμα
               </text>
-              <g transform="translate(15, 38)">
+              <g transform="translate(16, 42)">
                 <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#0f172a">👤 Μέλη: <tspan fill="#059669" fontFamily="monospace">x － 10</tspan></text>
                 <text x="0" y="38" fontSize="11" fontWeight="bold" fill="#0f172a">📅 Ημέρες: <tspan fill="#059669" fontFamily="monospace">8</tspan></text>
-                <rect x="0" y="55" width="165" height="36" rx="8" fill="#ecfdf5" stroke="#a7f3d0" strokeWidth="1" />
-                <text x="82" y="77" fontSize="11" fontWeight="black" textAnchor="middle" fill="#065f46" fontFamily="monospace">
+                <rect x="0" y="55" width="173" height="38" rx="8" fill="#ecfdf5" stroke="#a7f3d0" strokeWidth="1" />
+                <text x="86.5" y="79" fontSize="11" fontWeight="black" textAnchor="middle" fill="#065f46" fontFamily="monospace">
                   Τρόφιμα ＝ 8 · (x － 10)
                 </text>
               </g>
