@@ -2007,7 +2007,7 @@ const QUESTIONS_2026 = [
   {
     id: 16,
     officialNumber: 36,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Το ισόπλευρο τρίγωνο του σχήματος στα αριστερά αποτελείται από 9 ίσα μεταξύ τους ισόπλευρα τρίγωνα. Χρωματίζουμε ένα μέρος του τριγώνου, όπως στο σχήμα στα δεξιά. Τι κλάσμα του εμβαδού του μεγάλου τριγώνου είναι το χρωματισμένο μέρος;',
     hasSvg: 'triangle36',
     options: [
@@ -2024,7 +2024,7 @@ const QUESTIONS_2026 = [
           Το μεγάλο ισόπλευρο τρίγωνο αποτελείται από <strong>9 ίσα μικρά ισόπλευρα τρίγωνα</strong>. Παρατηρούμε τη γεωμετρία του σκιασμένου μέρους στα παρακάτω 3 βήματα:
         </p>
 
-        {/* 3 ΣΧΗΜΑΤΑ: 1. ΑΡΧΙΚΟ | 2. ΧΡΩΜΑΤΙΣΜΕΝΑ ΤΜΗΜΑΤΑ | 3. 4 ΟΛΟΚΛΗΡΩΜΕΝΑ ΤΡΙΓΩΝΑ */}
+        {/* 3 ΣΧΗΜΑΤΑ: 1. ΑΡΧΙΚΟ | 2. 4 ΧΡΩΜΑΤΙΣΜΕΝΑ ΤΜΗΜΑΤΑ | 3. 4 ΟΛΟΚΛΗΡΩΜΕΝΑ ΤΡΙΓΩΝΑ (ΜΕ ΤΟ ΑΝΕΣΤΡΑΜΜΕΝΟ 4) */}
         <div className="p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
           {(() => {
             // Συντεταγμένες των 10 κόμβων του πλέγματος των 9 τριγώνων
@@ -2066,6 +2066,7 @@ const QUESTIONS_2026 = [
                     1. Αρχικό Σχήμα
                   </span>
                   <svg width="150" height="145" viewBox="0 0 160 145" className="select-none font-sans">
+                    {/* Μεγάλο τρίγωνο */}
                     <polygon points={`${pt(P.top)} ${pt(P.r3_0)} ${pt(P.r3_3)}`} fill="#ffffff" stroke="#1e293b" strokeWidth="2.2" />
 
                     {/* Αρχικό σκιασμένο μέρος */}
@@ -2083,7 +2084,7 @@ const QUESTIONS_2026 = [
                   <span className="text-[10px] font-medium text-slate-600 mt-1">Σκιασμένο μέρος</span>
                 </div>
 
-                {/* 2ο ΣΧΗΜΑ: ΤΑ 3 ΧΡΩΜΑΤΙΣΤΑ ΤΜΗΜΑΤΑ (ΑΚΡΙΒΩΣ ΟΠΩΣ ΣΤΗΝ ΕΙΚΟΝΑ) */}
+                {/* 2ο ΣΧΗΜΑ: ΤΑ 4 ΧΡΩΜΑΤΙΣΤΑ ΤΜΗΜΑΤΑ */}
                 <div className="flex flex-col items-center bg-slate-50/70 p-2.5 rounded-xl border border-slate-200">
                   <span className="font-bold text-slate-800 text-[11px] mb-1">
                     2. Εντοπισμός Τμημάτων
@@ -2091,17 +2092,20 @@ const QUESTIONS_2026 = [
                   <svg width="150" height="145" viewBox="0 0 160 145" className="select-none font-sans">
                     <polygon points={`${pt(P.top)} ${pt(P.r3_0)} ${pt(P.r3_3)}`} fill="#ffffff" stroke="#1e293b" strokeWidth="2.2" />
 
-                    {/* Γκρι σκιασμένα τμήματα (τα υπόλοιπα) */}
+                    {/* Γκρι σκιασμένα μέρη */}
                     <polygon points={`${pt(P.r1_0)} ${pt(P.r1_1)} ${pt(P.r3_0)}`} fill="#94a3b8" />
                     <polygon points={`${pt(P.r3_0)} ${pt(P.r3_2)} ${pt(P.r2_2)}`} fill="#94a3b8" />
 
                     {/* 1. ΚΟΚΚΙΝΟ ΤΜΗΜΑ: πάνω-αριστερά */}
                     <polygon points={`${pt(P.r3_0)} ${pt(P.r2_0)} 57,94`} fill="#dc2626" />
 
-                    {/* 2. ΜΠΛΕ ΤΜΗΜΑ: κάτω, πατάει στη βάση */}
+                    {/* 2. ΠΡΑΣΙΝΟ ΤΜΗΜΑ: δίπλα στο κόκκινο, πάνω από την οριζόντια */}
+                    <polygon points={`${pt(P.r2_0)} ${pt(P.r2_1)} 57,94`} fill="#16a34a" />
+
+                    {/* 3. ΜΠΛΕ ΤΜΗΜΑ: κάτω, πατάει στη βάση */}
                     <polygon points={`${pt(P.r3_0)} ${pt(P.r3_1)} 68.5,114`} fill="#0284c7" />
 
-                    {/* 3. ΜΩΒ ΤΜΗΜΑ: δίπλα στο μπλε μέχρι τον κεντρικό κόμβο */}
+                    {/* 4. ΜΩΒ ΤΜΗΜΑ: δίπλα στο μπλε μέχρι τον κεντρικό κόμβο */}
                     <polygon points={`${pt(P.r3_1)} ${pt(P.r2_1)} 68.5,114`} fill="#9333ea" />
 
                     {renderGridLines()}
@@ -2112,7 +2116,7 @@ const QUESTIONS_2026 = [
 
                     {renderNodes()}
                   </svg>
-                  <span className="text-[10px] font-bold text-blue-700 mt-1">3 χρωματιστά κομμάτια</span>
+                  <span className="text-[10px] font-bold text-blue-700 mt-1">4 χρωματιστά κομμάτια</span>
                 </div>
 
                 {/* 3ο ΣΧΗΜΑ: ΑΝΑΣΥΝΘΕΣΗ ΣΕ 4 ΟΛΟΚΛΗΡΩΜΕΝΑ ΤΡΙΓΩΝΑ */}
@@ -2126,12 +2130,12 @@ const QUESTIONS_2026 = [
                     {/* Τα 4 πλήρη ισόπλευρα τρίγωνα χρωματισμένα γκρι */}
                     {/* 1ο Τρίγωνο: Επίπεδο 2, αριστερά */}
                     <polygon points={`${pt(P.r1_0)} ${pt(P.r2_0)} ${pt(P.r2_1)}`} fill="#64748b" />
-                    {/* 2ο Τρίγωνο: Επίπεδο 2, κέντρο */}
+                    {/* 2ο Τρίγωνο: Επίπεδο 2, κέντρο (δείχνει προς τα κάτω) */}
                     <polygon points={`${pt(P.r1_0)} ${pt(P.r1_1)} ${pt(P.r2_1)}`} fill="#64748b" />
-                    {/* 3ο Τρίγωνο: Επίπεδο 3, κέντρο */}
+                    {/* 3ο Τρίγωνο: Επίπεδο 3, κέντρο (δείχνει προς τα πάνω) */}
                     <polygon points={`${pt(P.r2_1)} ${pt(P.r3_1)} ${pt(P.r3_2)}`} fill="#64748b" />
-                    {/* 4ο Τρίγωνο: Επίπεδο 3, δεξιά */}
-                    <polygon points={`${pt(P.r2_2)} ${pt(P.r3_2)} ${pt(P.r3_3)}`} fill="#64748b" />
+                    {/* 4ο Τρίγωνο: Επίπεδο 3, δεξιά αναστραμμένο (δείχνει προς τα κάτω) */}
+                    <polygon points={`${pt(P.r2_1)} ${pt(P.r2_2)} ${pt(P.r3_2)}`} fill="#64748b" />
 
                     {renderGridLines()}
                     {renderNodes()}
@@ -2140,7 +2144,7 @@ const QUESTIONS_2026 = [
                     <text x="57" y="84" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">1</text>
                     <text x="80" y="68" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">2</text>
                     <text x="80" y="122" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">3</text>
-                    <text x="126" y="122" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">4</text>
+                    <text x="103" y="106" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">4</text>
                   </svg>
                   <span className="text-[10px] font-bold text-emerald-800 mt-1">4 από τα 9 τρίγωνα (4/9)</span>
                 </div>
@@ -2152,12 +2156,12 @@ const QUESTIONS_2026 = [
         {/* ΑΝΑΛΥΤΙΚΗ ΜΑΘΗΜΑΤΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
         <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
           <p className="text-slate-800">
-            Μετακινώντας κατάλληλα τα χρωματιστά κομμάτια του 2ου σχήματος:
+            Μετακινώντας κατάλληλα τα 4 χρωματιστά κομμάτια του 2ου σχήματος:
           </p>
 
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-            <div>• Το <strong>κόκκινο</strong> κομμάτι συμπληρώνει το κενό του 1ου τριγώνου.</div>
-            <div>• Το <strong>μπλε</strong> και το <strong>μωβ</strong> κομμάτι συμπληρώνουν τα αντίστοιχα κενά των υπόλοιπων τριγώνων.</div>
+            <div>• Το <strong>κόκκινο</strong> και το <strong>πράσινο</strong> κομμάτι συμπληρώνουν το 1ο τρίγωνο.</div>
+            <div>• Το <strong>μπλε</strong> και το <strong>μωβ</strong> κομμάτι συμπληρώνουν το κενό του 4ου (ανεστραμμένου) τριγώνου.</div>
             <div className="pt-1 text-slate-700 font-sans font-medium">
               Στο 3ο σχήμα φαίνεται καθαρά ότι το συνολικό εμβαδόν του χρωματισμένου μέρους ισοδυναμεί ακριβώς με <strong>4 ολόκληρα μικρά ισόπλευρα τρίγωνα</strong>.
             </div>
