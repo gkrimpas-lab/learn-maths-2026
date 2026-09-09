@@ -1691,7 +1691,7 @@ const QUESTIONS_2026 = [
   {
     id: 14,
     officialNumber: 34,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Ένα χαρτόνι σχήματος ορθογωνίου παραλληλογράμμου έχει περίμετρο 50 εκ. Το διπλώνουμε στη μέση και προκύπτει ορθογώνιο παραλληλόγραμμο που έχει περίμετρο 40 εκ. Πόσο είναι το εμβαδόν του αρχικού ορθογωνίου παραλληλογράμμου;',
     options: [
       { key: 'A', label: '200 τ.εκ.', raw: '200' },
@@ -1837,7 +1837,172 @@ const QUESTIONS_2026 = [
       { key: 'E', label: 'Δευτέρα', raw: 'Δευτέρα' }
     ],
     correctRaw: 'Παρασκευή',
-    explain: 'Στα 5 έτη έχουμε 4 κοινά έτη (+1 ημέρα έκαστο) και 1 δίσεκτο έτος (+2 ημέρες). Συνολική μετατόπιση: 4 · 1 + 2 = 6 ημέρες μπροστά από το Σάββατο, δηλαδή Παρασκευή.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Για να βρούμε την ημέρα της εβδομάδας σε μελλοντική ημερομηνία, εξετάζουμε τη <strong>μετατόπιση</strong> που προκαλούν τα κοινά και τα δίσεκτα έτη που μεσολαβούν.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΧΡΟΝΟΓΡΑΜΜΗ 5 ΕΤΩΝ ΜΕ ΜΕΤΑΤΟΠΙΣΕΙΣ (+1 / +2) */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="460" height="170" viewBox="0 0 460 170" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="year-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+              </marker>
+            </defs>
+
+            {/* ΟΡΙΖΟΝΤΙΑ ΧΡΟΝΟΓΡΑΜΜΗ */}
+            <line x1="30" y1="120" x2="430" y2="120" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#year-arrow)" />
+            <text x="435" y="124" fontSize="10" fontWeight="bold" fill="#64748b">Χρόνος</text>
+
+            {/* 6 ΣΗΜΕΙΑ ΕΤΩΝ (2026 - 2031) */}
+            {[
+              { year: '2026', day: 'Σάββατο', x: 30, color: '#0f172a' },
+              { year: '2027', day: 'Κυριακή', x: 110, color: '#475569' },
+              { year: '2028', day: 'Τρίτη', x: 190, color: '#dc2626', leap: true }, // Δίσεκτο
+              { year: '2029', day: 'Τετάρτη', x: 270, color: '#475569' },
+              { year: '2030', day: 'Πέμπτη', x: 350, color: '#475569' },
+              { year: '2031', day: 'Παρασκευή', x: 430, color: '#047857', target: true } // Ζητούμενο
+            ].map((node) => (
+              <g key={node.year} transform={`translate(${node.x}, 120)`}>
+                {/* Κάθετη γραμμή έτους */}
+                <line x1="0" y1="-5" x2="0" y2="5" stroke={node.color} strokeWidth="1.5" />
+                {/* Έτος */}
+                <text x="0" y="20" fontSize="11" fontWeight="bold" textAnchor="middle" fill={node.color}>{node.year}</text>
+                {/* Ημέρα */}
+                <text x="0" y="34" fontSize="10" fontWeight="medium" textAnchor="middle" fill={node.target ? '#047857' : node.day === 'Σάββατο' ? '#0f172a' : '#64748b'}>
+                  {node.target ? <tspan fontWeight="black">({node.day})</tspan> : node.day}
+                </text>
+                {/* Σήμανση Δίσεκτου */}
+                {node.leap && (
+                  <text x="0" y="46" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#dc2626">(δίσεκτο)</text>
+                )}
+              </g>
+            ))}
+
+            {/* ΤΟΞΑ ΜΕΤΑΤΟΠΙΣΗΣ (+1 ή +2) */}
+            {[
+              { startX: 30, endX: 110, val: '+1', isLeap: false },
+              { startX: 110, endX: 190, val: '+2', isLeap: true }, // 2027 -> 2028 (Δίσεκτο)
+              { startX: 190, endX: 270, val: '+1', isLeap: false },
+              { startX: 270, endX: 350, val: '+1', isLeap: false },
+              { startX: 350, endX: 430, val: '+1', isLeap: false }
+            ].map((arc, idx) => (
+              <g key={idx}>
+                <path
+                  d={`M ${arc.startX} 105 C ${arc.startX + 20} 70, ${arc.endX - 20} 70, ${arc.endX} 105`}
+                  fill="none"
+                  stroke={arc.isLeap ? '#dc2626' : '#2563eb'}
+                  strokeWidth={arc.isLeap ? '2.2' : '1.8'}
+                  markerEnd="url(#year-arrow)"
+                />
+                <text
+                  x={(arc.startX + arc.endX) / 2}
+                  y="78"
+                  fontSize="12"
+                  fontWeight="black"
+                  textAnchor="middle"
+                  fill={arc.isLeap ? '#991b1b' : '#1e40af'}
+                  fontFamily="monospace"
+                >
+                  {arc.val}
+                </text>
+              </g>
+            ))}
+
+            {/* ΣΥΝΟΛΙΚΗ ΕΝΔΕΙΞΗ ΜΕΤΑΤΟΠΙΣΗΣ */}
+            <rect x="30" y="5" width="400" height="20" rx="4" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+            <text x="230" y="19" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+              Συνολική Μετατόπιση (6 ημέρες): +1 +1 +1 +1 +2 ＝ +6
+            </text>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βασική Αρχή */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              💡 Βασική Αρχή Μετατόπισης Ημέρας
+            </div>
+            <p className="text-slate-700">
+              Η ημέρα της εβδομάδας για την ίδια ημερομηνία μετατοπίζεται στο επόμενο έτος λόγω του υπολοίπου της διαίρεσης των ημερών του έτους με το 7 (ημέρες εβδομάδας):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Κοινό έτος (365 ημέρες): 365 ＝ 52 · 7 ＋</span>
+                <strong className="text-blue-700">1</strong>
+                <span>➔ Μετατόπιση: <strong>＋1 ημέρα</strong></span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>• Δίσεκτο έτος (366 ημέρες): 366 ＝ 52 · 7 ＋</span>
+                <strong className="text-rose-700">2</strong>
+                <span>➔ Μετατόπιση: <strong>＋2 ημέρες</strong></span>
+              </div>
+            </div>
+          </div>
+
+          {/* 1ος ΤΡΟΠΟΣ */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              🔷 1ος Τρόπος (Βήμα προς βήμα υπολογισμός)
+            </div>
+            <p className="text-slate-700">
+              Υπολογίζουμε την ημέρα για κάθε έτος διαδοχικά από το 2026 έως το 2031:
+            </p>
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5 text-xs sm:text-sm">
+              <div className="grid grid-cols-[1fr,auto,2fr] items-center gap-x-2">
+                <span>25 Απριλίου 2026</span><span>➔</span><span className="font-bold text-slate-950">Σάββατο</span>
+              </div>
+              <div className="grid grid-cols-[1fr,auto,2fr] items-center gap-x-2 pt-1 border-t border-slate-100">
+                <span className="text-slate-600">25 Απριλίου 2027 (+1)</span><span>➔</span><span className="text-slate-800">Κυριακή</span>
+              </div>
+              <div className="grid grid-cols-[1fr,auto,2fr] items-center gap-x-2 pt-1 border-t border-slate-100 bg-rose-50/50 rounded-md px-1.5 py-1">
+                <span className="text-rose-900 font-bold">25 Απριλίου 2028 (+2*)</span><span>➔</span><span className="text-rose-950">Τρίτη</span>
+                <span className="col-span-3 text-[10px] text-rose-700 font-sans">(*To 2028 είναι δίσεκτο, η 25η Απριλίου είναι μετά τον Φεβρουάριο)</span>
+              </div>
+              <div className="grid grid-cols-[1fr,auto,2fr] items-center gap-x-2 pt-1 border-t border-slate-100">
+                <span className="text-slate-600">25 Απριλίου 2029 (+1)</span><span>➔</span><span className="text-slate-800">Τετάρτη</span>
+              </div>
+              <div className="grid grid-cols-[1fr,auto,2fr] items-center gap-x-2 pt-1 border-t border-slate-100">
+                <span className="text-slate-600">25 Απριλίου 2030 (+1)</span><span>➔</span><span className="text-slate-800">Πέμπτη</span>
+              </div>
+              <div className="grid grid-cols-[1fr,auto,2fr] items-center gap-x-2 pt-1 border-t border-slate-100 bg-emerald-50 rounded-md px-1.5 py-1">
+                <span className="text-emerald-900 font-bold">25 Απριλίου 2031 (+1)</span><span>➔</span><span className="text-emerald-950 font-black">Παρασκευή</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος ΤΡΟΠΟΣ */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              🔷 2ος Τρόπος (Συνολική μετατόπιση)
+            </div>
+            <p className="text-slate-700">
+              Από το 2026 έως το 2031 μεσολαβούν <strong>5 έτη</strong>.
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <p className="text-slate-800 font-sans text-xs">Αυτά τα 5 έτη αποτελούνται από:</p>
+              <div>• 4 κοινά έτη: 4 · (＋1 ημέρα) ＝ <strong>＋4 ημέρες</strong></div>
+              <div>• 1 δίσεκτο έτος (το 2028): 1 · (＋2 ημέρες) ＝ <strong>＋2 ημέρες</strong></div>
+              <div className="pt-1.5 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
+                <strong className="text-emerald-700">Συνολική μετατόπιση</strong> ＝ 4 ＋ 2 ＝
+                <strong className="text-emerald-700 text-base">＋6 ημέρες</strong>
+              </div>
+            </div>
+            <p className="text-slate-700 pt-1">
+              Η ημέρα θα είναι 6 ημέρες μετά το Σάββατο: <span className="font-bold">Σάββατο ＋ 6 ημέρες ➔ <span className="text-emerald-800 font-black">Παρασκευή</span></span>.
+              <span className="text-slate-500 text-xs"> (ή ισοδύναμα, 1 ημέρα πριν από το Σάββατο).</span>
+            </p>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η 25η Απριλίου 2031 θα είναι <strong>Παρασκευή</strong> (Επιλογή <strong>B</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 16,
