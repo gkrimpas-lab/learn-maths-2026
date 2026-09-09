@@ -1408,7 +1408,151 @@ const QUESTIONS_2026 = [
       { key: 'E', label: '3:10 μ.μ.', raw: '3:10' }
     ],
     correctRaw: '2:30',
-    explain: 'Προσθέτοντας διαδοχικά 1 ώρα και 10 λεπτά (70 λεπτά): 06:20, 07:30, 08:40, 09:50, 11:00, 12:10, 13:20, 14:30 (2:30 μ.μ.). Αν αναχωρήσει στις 2:30 μ.μ., με διάρκεια 3,5 ώρες φτάνει στις 6:00 μ.μ. (18:00), που είναι ακριβώς μεταξύ 5:30 μ.μ. και 6:30 μ.μ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε τα δεδομένα της διαδρομής μεταξύ των δύο πόλεων και το πρόγραμμα των αναχωρήσεων:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΠΟΛΕΙΣ Κ & Λ, ΔΙΑΡΚΕΙΑ ΤΑΞΙΔΙΟΥ ΚΑΙ ΧΡΟΝΟΣ ΑΝΑΜΕΣΑ ΣΤΙΣ ΑΝΑΧΩΡΗΣΕΙΣ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="450" height="150" viewBox="0 0 450 150" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="bus-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#0284c7" />
+              </marker>
+            </defs>
+
+            {/* ΠΟΛΗ Κ */}
+            <g transform="translate(45, 60)">
+              <rect x="-35" y="-35" width="70" height="70" rx="14" fill="#eff6ff" stroke="#2563eb" strokeWidth="2" />
+              <text x="0" y="-8" fontSize="18" fontWeight="black" textAnchor="middle" fill="#1e3a8a">Πόλη Κ</text>
+              <text x="0" y="12" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#2563eb">Αναχώρηση</text>
+              <text x="0" y="25" fontSize="9" textAnchor="middle" fill="#64748b">(1ο: 6:20 π.μ.)</text>
+            </g>
+
+            {/* ΔΙΑΔΡΟΜΗ & ΔΙΑΡΚΕΙΑ ΤΑΞΙΔΙΟΥ */}
+            <g transform="translate(100, 60)">
+              {/* Καμπύλη διαδρομής */}
+              <path
+                d="M 0 0 C 70 -35, 180 -35, 250 0"
+                fill="none"
+                stroke="#0284c7"
+                strokeWidth="2.5"
+                strokeDasharray="4 4"
+                markerEnd="url(#bus-arrow)"
+              />
+
+              {/* Ετικέτα Διάρκειας */}
+              <g transform="translate(125, -28)">
+                <rect x="-65" y="-12" width="130" height="24" rx="12" fill="#0284c7" />
+                <text x="0" y="4" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                  Διάρκεια: 3 ώρες & 30 λ.
+                </text>
+              </g>
+
+              {/* Εικονίδιο λεωφορείου στη μέση */}
+              <text x="125" y="-36" fontSize="18" textAnchor="middle">🚌</text>
+
+              {/* Συχνότητα δρομολογίων κάτω από τη γραμμή */}
+              <g transform="translate(125, 26)">
+                <rect x="-85" y="-11" width="170" height="22" rx="6" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
+                <text x="0" y="4" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">
+                  ⏱️ Συχνότητα: ανά 1 ώρα & 10 λ.
+                </text>
+              </g>
+            </g>
+
+            {/* ΠΟΛΗ Λ */}
+            <g transform="translate(405, 60)">
+              <rect x="-35" y="-35" width="70" height="70" rx="14" fill="#f0fdf4" stroke="#16a34a" strokeWidth="2" />
+              <text x="0" y="-8" fontSize="18" fontWeight="black" textAnchor="middle" fill="#14532d">Πόλη Λ</text>
+              <text x="0" y="12" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#16a34a">Άφιξη</text>
+              <text x="0" y="25" fontSize="9" textAnchor="middle" fill="#64748b">(5:30 - 6:30 μ.μ.)</text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1 */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900">
+              1. Προσδιορισμός του παραθύρου αναχώρησης για το τελευταίο δρομολόγιο:
+            </div>
+            <p className="text-slate-700">
+              Η διάρκεια του ταξιδιού είναι <strong>3,5 ώρες</strong> (δηλαδή 3 ώρες και 30 λεπτά). Αφαιρούμε τη διάρκεια από τις ώρες άφιξης:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• Αν έφτανε στις <strong>5:30 μ.μ.</strong> ➔ θα έπρεπε να είχε φύγει στις: 5:30 － 3:30 ＝ <strong>2:00 μ.μ.</strong> (14:00)</div>
+              <div>• Αν έφτανε στις <strong>6:30 μ.μ.</strong> ➔ θα έπρεπε να είχε φύγει στις: 6:30 － 3:30 ＝ <strong>3:00 μ.μ.</strong> (15:00)</div>
+              <div className="pt-1 text-blue-700 font-sans font-bold text-xs">
+                Άρα το τελευταίο δρομολόγιο αναχώρησε μεταξύ 2:00 μ.μ. (14:00) και 3:00 μ.μ. (15:00).
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2 */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Διαδοχικές ώρες αναχώρησης από την Πόλη Κ (προσθέτουμε ανά 1 ώρα και 10 λεπτά):
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-mono text-xs">
+              <div className="bg-slate-50 p-2 rounded-xl border border-slate-200 text-center">
+                <span className="text-slate-400 block text-[10px]">1ο Δρομολόγιο</span>
+                <strong className="text-slate-900">06:20</strong>
+              </div>
+              <div className="bg-slate-50 p-2 rounded-xl border border-slate-200 text-center">
+                <span className="text-slate-400 block text-[10px]">2ο Δρομολόγιο</span>
+                <strong className="text-slate-900">07:30</strong>
+              </div>
+              <div className="bg-slate-50 p-2 rounded-xl border border-slate-200 text-center">
+                <span className="text-slate-400 block text-[10px]">3ο Δρομολόγιο</span>
+                <strong className="text-slate-900">08:40</strong>
+              </div>
+              <div className="bg-slate-50 p-2 rounded-xl border border-slate-200 text-center">
+                <span className="text-slate-400 block text-[10px]">4ο Δρομολόγιο</span>
+                <strong className="text-slate-900">09:50</strong>
+              </div>
+              <div className="bg-slate-50 p-2 rounded-xl border border-slate-200 text-center">
+                <span className="text-slate-400 block text-[10px]">5ο Δρομολόγιο</span>
+                <strong className="text-slate-900">11:00</strong>
+              </div>
+              <div className="bg-slate-50 p-2 rounded-xl border border-slate-200 text-center">
+                <span className="text-slate-400 block text-[10px]">6ο Δρομολόγιο</span>
+                <strong className="text-slate-900">12:10</strong>
+              </div>
+              <div className="bg-slate-50 p-2 rounded-xl border border-slate-200 text-center">
+                <span className="text-slate-400 block text-[10px]">7ο Δρομολόγιο</span>
+                <strong className="text-slate-900">13:20</strong>
+              </div>
+              <div className="bg-emerald-50 p-2 rounded-xl border border-emerald-300 text-center shadow-xs">
+                <span className="text-emerald-700 font-bold block text-[10px]">8ο (Τελευταίο)</span>
+                <strong className="text-emerald-800 text-sm">14:30 (2:30 μ.μ.)</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 3 */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              3. Επαλήθευση ώρας άφιξης:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
+              Ώρα Άφιξης ＝ 14:30 ＋ 3 ώρες και 30 λεπτά ＝ <strong className="text-emerald-700">18:00 (6:00 μ.μ.)</strong>
+              <div className="text-slate-600 font-sans text-xs pt-0.5">
+                Η ώρα 6:00 μ.μ. βρίσκεται ακριβώς εντός του ζητούμενου διαστήματος (μεταξύ 5:30 μ.μ. και 6:30 μ.μ.).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Συνεπώς, το τελευταίο δρομολόγιο έφυγε από την πόλη Κ στις <strong>2:30 μ.μ.</strong> (Επιλογή <strong>A</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 13,
