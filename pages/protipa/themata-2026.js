@@ -1398,7 +1398,7 @@ const QUESTIONS_2026 = [
   {
     id: 12,
     officialNumber: 32,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Το 1ο δρομολόγιο λεωφορείου από την πόλη Κ προς την πόλη Λ φεύγει στις 6:20 π.μ. Το ταξίδι διαρκεί 3,5 ώρες. Κάθε επόμενο δρομολόγιο φεύγει μετά από 1 ώρα και 10 λεπτά. Αν το τελευταίο δρομολόγιο φτάνει στην πόλη Λ μεταξύ 5:30 μ.μ. με 6:30 μ.μ., τι ώρα έφυγε το τελευταίο δρομολόγιο από την πόλη Κ;',
     options: [
       { key: 'A', label: '2:30 μ.μ.', raw: '2:30' },
@@ -1557,7 +1557,7 @@ const QUESTIONS_2026 = [
   {
     id: 13,
     officialNumber: 33,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Στο άθλημα της ενόργανης γυμναστικής βαθμολογούν 6 κριτές και η τελική βαθμολογία προκύπτει από τον μέσο όρο των τεσσάρων από αυτούς καθώς δεν λαμβάνονται υπόψη ο μεγαλύτερος και ο μικρότερος βαθμός. Αν σε ένα αγώνισμα ο μέσος όρος των 6 κριτών ήταν 8,2 και ο τελικός μέσος όρος (αφού αφαιρέθηκαν η μεγαλύτερη και η μικρότερη βαθμολογία) ήταν 8,3 ποιο ήταν το άθροισμα των βαθμών που αφαιρέθηκαν;',
     options: [
       { key: 'A', label: '16', raw: '16' },
@@ -1701,7 +1701,128 @@ const QUESTIONS_2026 = [
       { key: 'E', label: '600 τ.εκ.', raw: '600' }
     ],
     correctRaw: '150',
-    explain: 'Έστω διαστάσεις x και y: 2x + 2y = 50 ➔ x + y = 25. Διπλώνοντας κατά τη μία πλευρά, η νέα περίμετρος είναι x + 2y = 40. Αφαιρώντας κατά μέλη προκύπτει y = 15 εκ., άρα x = 10 εκ. Το εμβαδόν του αρχικού ορθογωνίου είναι 10 · 15 = 150 τ.εκ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Συμβολίζουμε με <strong>x</strong> και <strong>y</strong> τις δύο διαστάσεις του αρχικού ορθογωνίου χαρτονιού.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΑΡΧΙΚΟ ΧΑΡΤΟΝΙ & ΔΙΠΛΩΜΕΝΟ ΣΤΗ ΜΕΣΗ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="450" height="175" viewBox="0 0 450 175" className="select-none font-sans mx-auto block">
+            {/* 1. ΑΡΧΙΚΟ ΟΡΘΟΓΩΝΙΟ */}
+            <g transform="translate(20, 15)">
+              <text x="85" y="0" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                1. Αρχικό Χαρτόνι (Π₁ ＝ 50 εκ.)
+              </text>
+
+              <g transform="translate(0, 12)">
+                {/* Ορθογώνιο διαστάσεων x=170px, y=110px */}
+                <rect x="0" y="0" width="170" height="110" rx="4" fill="#f8fafc" stroke="#334155" strokeWidth="2" />
+
+                {/* Γραμμή διπλώματος στη μέση του x (διακεκομμένη) */}
+                <line x1="85" y1="0" x2="85" y2="110" stroke="#dc2626" strokeWidth="1.6" strokeDasharray="4 3" />
+                <text x="85" y="58" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#dc2626">
+                  δίπλωμα
+                </text>
+
+                {/* Διαστάσεις */}
+                <text x="85" y="-4" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#2563eb" fontFamily="monospace">x</text>
+                <text x="85" y="124" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#2563eb" fontFamily="monospace">x</text>
+                <text x="-10" y="59" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#2563eb" fontFamily="monospace">y</text>
+                <text x="180" y="59" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#2563eb" fontFamily="monospace">y</text>
+              </g>
+            </g>
+
+            {/* ΒΕΛΟΣ ΜΕΤΑΒΑΣΗΣ */}
+            <g transform="translate(216, 75)">
+              <line x1="0" y1="0" x2="20" y2="0" stroke="#0f172a" strokeWidth="2" />
+              <polygon points="20,-4 28,0 20,4" fill="#0f172a" />
+            </g>
+
+            {/* 2. ΔΙΠΛΩΜΕΝΟ ΟΡΘΟΓΩΝΙΟ */}
+            <g transform="translate(275, 15)">
+              <text x="65" y="0" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                2. Διπλωμένο Χαρτόνι (Π₂ ＝ 40 εκ.)
+              </text>
+
+              <g transform="translate(20, 12)">
+                {/* Νέο ορθογώνιο: πλάτος x/2 = 85px, ύψος y = 110px */}
+                <rect x="0" y="0" width="85" height="110" rx="4" fill="#eff6ff" stroke="#2563eb" strokeWidth="2.2" />
+
+                {/* Διαστάσεις */}
+                <text x="42.5" y="-5" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0284c7" fontFamily="monospace">x/2</text>
+                <text x="42.5" y="125" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0284c7" fontFamily="monospace">x/2</text>
+                <text x="-10" y="59" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#2563eb" fontFamily="monospace">y</text>
+                <text x="95" y="59" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#2563eb" fontFamily="monospace">y</text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΗ ΕΠΙΛΥΣΗ ΜΕ ΤΙΣ ΕΞΙΣΩΣΕΙΣ ΠΕΡΙΜΕΤΡΩΝ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Αρχική Περίμετρος */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900">
+              1. Περίμετρος αρχικού σχήματος (Π₁ ＝ 50 εκ.):
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>Π₁ ＝ x ＋ y ＋ x ＋ y ＝ 50</div>
+              <div>2x ＋ 2y ＝ 50</div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>x ＋ y ＝</span>
+                <Fraction num="50" den="2" />
+                <span>➔ <strong>x ＋ y ＝ 25</strong> &nbsp;(1)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Περίμετρος Διπλωμένου Σχήματος */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Περίμετρος τελικού διπλωμένου σχήματος (Π₂ ＝ 40 εκ.):
+            </div>
+            <p className="text-slate-700">
+              Διπλώνοντας κατά μήκος της διάστασης x, η μία πλευρά υποδιπλασιάζεται (<Fraction num="x" den="2" />), ενώ η άλλη πλευρά (y) παραμένει η ίδια:
+            </p>
+
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>Π₂ ＝</span>
+                <Fraction num="x" den="2" />
+                <span>＋ y ＋</span>
+                <Fraction num="x" den="2" />
+                <span>＋ y ＝ 40</span>
+              </div>
+              <div>x ＋ 2y ＝ 40</div>
+              <div>(x ＋ y) ＋ y ＝ 40</div>
+              <div className="text-slate-500 font-sans text-xs">// Αντικαθιστούμε από τη σχέση (1) όπου (x ＋ y) το 25:</div>
+              <div>25 ＋ y ＝ 40</div>
+              <div>y ＝ 40 － 25 ➔ <strong className="text-emerald-700 text-base">y ＝ 15 εκ.</strong></div>
+            </div>
+          </div>
+
+          {/* Βήμα 3: Εύρεση διάστασης x και Εμβαδού */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              3. Υπολογισμός της διάστασης x και του αρχικού εμβαδού:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>x ＝ 25 － y ＝ 25 － 15 ➔ <strong>x ＝ 10 εκ.</strong></div>
+              <div className="pt-1 border-t border-slate-200 flex items-center gap-2 flex-wrap">
+                <span>Εμβαδόν αρχικού ορθογωνίου ＝ x · y ＝ 10 · 15 ＝</span>
+                <strong className="text-emerald-700 text-base">150 τ.εκ.</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το εμβαδόν του αρχικού ορθογωνίου είναι <strong>150 τ.εκ.</strong> (Επιλογή <strong>Δ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 15,
