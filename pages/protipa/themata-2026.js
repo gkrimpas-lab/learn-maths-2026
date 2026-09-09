@@ -2196,7 +2196,116 @@ const QUESTIONS_2026 = [
       { key: 'E', label: '80', raw: '80' }
     ],
     correctRaw: '42',
-    explain: 'Οι μαθητές των τάξεων Α΄, Β΄, Γ΄ είναι 285 − 138 = 147. Οι μαθητές των τάξεων Α΄, Β΄, Γ΄, Δ΄ είναι 189. Επομένως στη Δ΄ τάξη φοιτούν 189 − 147 = 42 μαθητές.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε το σύνολο των μαθητών του σχολείου ανά ομάδες τάξεων, παρατηρώντας ότι η <strong>Δ΄ τάξη</strong> αποτελεί την κοινή τομή των δύο δοσμένων ομάδων.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ ΚΑΤΑΝΟΜΗΣ ΤΑΞΕΩΝ & ΕΠΙΚΑΛΥΨΗΣ ΤΗΣ Δ' ΤΑΞΗΣ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="460" height="215" viewBox="0 0 460 215" className="select-none font-sans mx-auto block">
+            {/* 1. ΑΝΩ ΑΓΚΥΛΗ: ΣΥΝΟΛΟ ΟΛΩΝ ΤΩΝ ΜΑΘΗΤΩΝ (285) */}
+            <g transform="translate(20, 10)">
+              <rect x="0" y="0" width="420" height="24" rx="12" fill="#0f172a" />
+              <text x="210" y="16" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                Σύνολο Σχολείου: 285 Μαθητές (Α΄ έως ΣΤ΄)
+              </text>
+            </g>
+
+            {/* 2. ΟΙ 6 ΤΑΞΕΙΣ ΣΕ ΣΕΙΡΑ */}
+            <g transform="translate(20, 50)">
+              {/* Α, Β, Γ (Μπλε πλαίσιο) */}
+              <g transform="translate(0, 0)">
+                <rect x="0" y="0" width="180" height="55" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
+                <text x="90" y="24" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Α΄, Β΄, Γ΄</text>
+                <text x="90" y="42" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#2563eb">147 μαθητές</text>
+              </g>
+
+              {/* Δ (Επικάλυψη - Πορτοκαλί / Έντονο πλαίσιο) */}
+              <g transform="translate(188, 0)">
+                <rect x="0" y="0" width="70" height="55" rx="10" fill="#fff7ed" stroke="#ea580c" strokeWidth="2.5" />
+                <text x="35" y="24" fontSize="13" fontWeight="black" textAnchor="middle" fill="#c2410c">Δ΄</text>
+                <text x="35" y="43" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ea580c">42</text>
+              </g>
+
+              {/* Ε, ΣΤ (Πράσινο πλαίσιο) */}
+              <g transform="translate(266, 0)">
+                <rect x="0" y="0" width="154" height="55" rx="10" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.8" />
+                <text x="77" y="24" fontSize="12" fontWeight="black" textAnchor="middle" fill="#15803d">Ε΄, ΣΤ΄</text>
+                <text x="77" y="42" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#16a34a">96 μαθητές</text>
+              </g>
+            </g>
+
+            {/* 3. ΚΑΤΩ ΕΝΔΕΙΞΕΙΣ: ΟΙ ΔΥΟ ΔΟΣΜΕΝΕΣ ΟΜΑΔΕΣ ΤΑΞΕΩΝ */}
+            <g transform="translate(20, 120)">
+              {/* Ομάδα 1: Α΄, Β΄, Γ΄, Δ΄ (189 μαθητές) */}
+              <g transform="translate(0, 0)">
+                <path d="M 0 10 L 0 0 L 258 0 L 258 10" fill="none" stroke="#2563eb" strokeWidth="2" />
+                <rect x="29" y="16" width="200" height="24" rx="8" fill="#dbeafe" stroke="#bfdbfe" strokeWidth="1" />
+                <text x="129" y="32" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">
+                  Τάξεις Α΄, Β΄, Γ΄, Δ΄ ＝ 189
+                </text>
+              </g>
+
+              {/* Ομάδα 2: Δ΄, Ε΄, ΣΤ΄ (138 μαθητές) */}
+              <g transform="translate(188, 48)">
+                <path d="M 0 10 L 0 0 L 232 0 L 232 10" fill="none" stroke="#16a34a" strokeWidth="2" />
+                <rect x="26" y="16" width="180" height="24" rx="8" fill="#dcfce7" stroke="#bbf7d0" strokeWidth="1" />
+                <text x="116" y="32" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#166534">
+                  Τάξεις Δ΄, Ε΄, ΣΤ΄ ＝ 138
+                </text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Υπολογισμός μέσω των τάξεων Ε΄ και ΣΤ΄)
+            </div>
+            <p className="text-slate-700">
+              Οι μαθητές των τάξεων Ε΄ και ΣΤ΄ προκύπτουν αν αφαιρέσουμε από το σύνολο του σχολείου τους μαθητές των τάξεων Α΄, Β΄, Γ΄ και Δ΄:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>Μαθητές (Ε΄ ＋ ΣΤ΄) ＝ 285 － 189 ＝ <strong>96 μαθητές</strong></div>
+              <div className="pt-1 border-t border-slate-200">
+                Οι τάξεις Δ΄, Ε΄ και ΣΤ΄ έχουν συνολικά 138 μαθητές. Αφαιρούμε τους 96 μαθητές των Ε΄ και ΣΤ΄:
+              </div>
+              <div className="pt-0.5">
+                Μαθητές Δ΄ τάξης ＝ 138 － 96 ＝ <strong className="text-emerald-700 text-base">42 μαθητές</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Υπολογισμός μέσω των τάξεων Α΄, Β΄ και Γ΄)
+            </div>
+            <p className="text-slate-700">
+              Οι μαθητές των τάξεων Α΄, Β΄ και Γ΄ προκύπτουν αν αφαιρέσουμε από το σύνολο του σχολείου τους μαθητές των τάξεων Δ΄, Ε΄ και ΣΤ΄:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>Μαθητές (Α΄ ＋ Β΄ ＋ Γ΄) ＝ 285 － 138 ＝ <strong>147 μαθητές</strong></div>
+              <div className="pt-1 border-t border-slate-200">
+                Οι τάξεις Α΄, Β΄, Γ΄ και Δ΄ έχουν συνολικά 189 μαθητές. Αφαιρούμε τους 147 μαθητές των Α΄, Β΄ και Γ΄:
+              </div>
+              <div className="pt-0.5">
+                Μαθητές Δ΄ τάξης ＝ 189 － 147 ＝ <strong className="text-emerald-700 text-base">42 μαθητές</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, στη Δ΄ τάξη φοιτούν <strong>42 μαθητές</strong> (Επιλογή <strong>B</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 18,
