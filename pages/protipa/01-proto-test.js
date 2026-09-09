@@ -2435,7 +2435,185 @@ const QUESTIONS = [
     prompt: 'Ένα αυτοκίνητο κατανάλωσε το 1/8 της βενζίνης της συνολικής χωρητικότητας του ρεζερβουάρ του για ένα ταξίδι. Πριν ξεκινήσει το ταξίδι, το ρεζερβουάρ περιείχε 30 λίτρα βενζίνης. Μετά το τέλος του ταξιδιού, το ρεζερβουάρ ήταν ακριβώς μισογεμάτο. Πόσα λίτρα βενζίνης χωράει συνολικά το ρεζερβουάρ του αυτοκινήτου;',
     options: ['40 λίτρα', '45 λίτρα', '48 λίτρα', '50 λίτρα', '60 λίτρα'],
     correct: '48 λίτρα',
-    explain: 'Έστω C η συνολική χωρητικότητα. Αρχικά είχαμε 30 λίτρα, αφαιρέθηκε C/8 και έμεινε C/2. Άρα: 30 − C/8 = C/2 ➔ 30 = C/2 + C/8 = 4C/8 + C/8 = 5C/8 ➔ 5C = 240 ➔ C = 48 λίτρα.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Εκφράζουμε όλη τη χωρητικότητα του ρεζερβουάρ σε <strong>όγδοα (<Fraction num="1" den="8" />)</strong>. Το «μισογεμάτο» ισοδυναμεί με τα <strong><Fraction num="4" den="8" /></strong> της συνολικής του χωρητικότητας.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΤΟ ΡΕΖΕΡΒΟΥΑΡ ΣΕ 8 ΙΣΑ ΜΕΡΗ ΚΑΙ Η ΑΝΤΙΣΤΟΙΧΙΣΗ ΤΩΝ 30 ΛΙΤΡΩΝ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="510" height="215" viewBox="0 0 510 215" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="fuel-arr-18" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
+              </marker>
+            </defs>
+
+            {/* ΕΠΙΚΕΦΑΛΙΔΑ ΡΕΖΕΡΒΟΥΑΡ */}
+            <g transform="translate(20, 10)">
+              <rect x="0" y="0" width="470" height="24" rx="12" fill="#0f172a" />
+              <text x="235" y="16" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                Συνολική Χωρητικότητα Ρεζερβουάρ: 8 ίσα μέρη (8/8)
+              </text>
+            </g>
+
+            {/* Η ΜΠΑΡΑ ΤΟΥ ΡΕΖΕΡΒΟΥΑΡ (8 μέρη x 56px = 448px) */}
+            <g transform="translate(31, 46)">
+              {/* 4/8 που έμειναν στο τέλος (μισογεμάτο) */}
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <g key={`stay-${idx}`} transform={`translate(${idx * 56}, 0)`}>
+                  <rect x="0" y="0" width="54" height="46" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
+                  <text x="27" y="20" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1/8</text>
+                  <text x="27" y="34" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1e40af">6 L</text>
+                </g>
+              ))}
+
+              {/* 1/8 που καταναλώθηκε */}
+              <g transform="translate(224, 0)">
+                <rect x="0" y="0" width="54" height="46" rx="6" fill="#fee2e2" stroke="#ef4444" strokeWidth="1.8" />
+                <text x="27" y="20" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#dc2626">1/8</text>
+                <text x="27" y="34" fontSize="10" fontWeight="black" textAnchor="middle" fill="#b91c1c">6 L</text>
+              </g>
+
+              {/* 3/8 που ήταν άδεια από την αρχή */}
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <g key={`empty-${idx}`} transform={`translate(${(idx + 5) * 56}, 0)`}>
+                  <rect x="0" y="0" width="54" height="46" rx="6" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" strokeDasharray="3 2" />
+                  <text x="27" y="28" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#94a3b8">Άδειο</text>
+                </g>
+              ))}
+            </g>
+
+            {/* ΑΓΚΥΛΕΣ ΚΑΙ ΕΠΕΞΗΓΗΣΕΙΣ */}
+            <g transform="translate(31, 102)">
+              {/* Αρχικό καύσιμο: 5/8 = 30 L */}
+              <path d="M 0 5 L 0 0 L 278 0 L 278 5" fill="none" stroke="#2563eb" strokeWidth="2" />
+              <rect x="44" y="9" width="190" height="26" rx="8" fill="#dbeafe" stroke="#93c5fd" strokeWidth="1" />
+              <text x="139" y="26" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">
+                Αρχικά: 4/8 ＋ 1/8 ＝ 5/8 ＝ 30 L
+              </text>
+
+              {/* Κατανάλωση: 1/8 */}
+              <text x="251" y="-60" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#dc2626">
+                Κατανάλωση
+              </text>
+            </g>
+
+            {/* ΣΥΜΠΕΡΑΣΜΑ ΓΙΑ ΤΟ 1/8 ΚΑΙ ΤΟ ΣΥΝΟΛΟ */}
+            <g transform="translate(31, 148)">
+              <rect x="0" y="0" width="210" height="34" rx="8" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.2" />
+              <text x="105" y="15" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534">
+                5 μέρη ＝ 30 λίτρα
+              </text>
+              <text x="105" y="28" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d">
+                1 μέρος (1/8) ＝ 30 : 5 ＝ 6 λίτρα
+              </text>
+
+              <rect x="225" y="0" width="223" height="34" rx="8" fill="#16a34a" />
+              <text x="336.5" y="22" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                Σύνολο (8/8): 8 · 6 ＝ 48 λίτρα ⭐
+              </text>
+            </g>
+
+            <text x="255" y="202" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#047857">
+              Όλο το ρεζερβουάρ αποτελείται από 8 όγδοα ➔ 8 · 6 L ＝ 48 L
+            </text>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Με κλάσματα και αναγωγή στη μονάδα */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Με κλάσματα και αναγωγή στο 1/8)
+            </div>
+            <p className="text-slate-700">
+              Στο τέλος του ταξιδιού έμεινε το <strong>μισό</strong> ρεζερβουάρ και καταναλώθηκε το <strong><Fraction num="1" den="8" /></strong>:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Το μισό ρεζερβουάρ είναι:</span>
+                <Fraction num="1" den="2" />
+                <span>＝</span>
+                <strong className="text-blue-700"><Fraction num="4" den="8" /></strong>
+                <span>της συνολικής χωρητικότητας.</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Άρα πριν το ταξίδι υπήρχαν: Τελικό Νερό ＋ Κατανάλωση ＝</span>
+                <Fraction num="4" den="8" />
+                <span>＋</span>
+                <Fraction num="1" den="8" />
+                <span>＝</span>
+                <strong className="text-blue-700 text-base"><Fraction num="5" den="8" /></strong>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 space-y-1.5">
+                <div className="text-slate-700 font-sans text-xs">
+                  Γνωρίζουμε ότι αρχικά το ρεζερβουάρ περιείχε <strong>30 λίτρα</strong>, άρα τα <Fraction num="5" den="8" /> ισούνται με 30 λίτρα:
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• Το 1/8 της χωρητικότητας αντιστοιχεί σε:</span>
+                  <Fraction num="30" den="5" />
+                  <span>＝ <strong>6 λίτρα</strong></span>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span>• Ολόκληρο το ρεζερβουάρ (<Fraction num="8" den="8" />) χωράει: 8 · 6 ＝</span>
+                  <strong className="text-emerald-700 text-base font-black">48 λίτρα</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Αλγεβρικά με εξίσωση */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Αλγεβρικά με εξίσωση)
+            </div>
+            <p className="text-slate-700">
+              Έστω <strong>x</strong> η συνολική χωρητικότητα του ρεζερβουάρ σε λίτρα:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>30 －</span>
+                <Fraction num="x" den="8" />
+                <span>＝</span>
+                <Fraction num="x" den="2" />
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>30 ＝</span>
+                <Fraction num="x" den="2" />
+                <span>＋</span>
+                <Fraction num="x" den="8" />
+                <span>＝</span>
+                <Fraction num="4x" den="8" />
+                <span>＋</span>
+                <Fraction num="x" den="8" />
+                <span>＝</span>
+                <Fraction num="5x" den="8" />
+              </div>
+
+              <div className="space-y-1 pt-1 border-t border-slate-200">
+                <div>5x ＝ 30 · 8</div>
+                <div>5x ＝ 240</div>
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span>x ＝</span>
+                  <Fraction num="240" den="5" />
+                  <span>➔ <strong className="text-emerald-700 text-base font-black">x ＝ 48 λίτρα</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το ρεζερβουάρ του αυτοκινήτου χωράει συνολικά <strong>48 λίτρα</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 19,
