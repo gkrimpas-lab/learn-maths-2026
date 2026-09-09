@@ -2621,7 +2621,144 @@ const QUESTIONS = [
     prompt: 'Ο μέσος όρος των βαθμών ενός μαθητή σε 4 διαγωνίσματα Μαθηματικών είναι 15. Αν στο 5ο διαγώνισμα γράψει βαθμό 20, ποιος θα είναι ο νέος μέσος όρος των βαθμών του στα 5 διαγωνίσματα;',
     options: ['15', '15,5', '16', '16,5', '17'],
     correct: '16',
-    explain: 'Το άθροισμα των 4 πρώτων διαγωνισμάτων είναι 4 · 15 = 60. Με το 5ο διαγώνισμα το νέο άθροισμα γίνεται 60 + 20 = 80. Ο νέος μέσος όρος είναι 80 : 5 = 16.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Υπολογίζουμε πρώτα το <strong>συνολικό άθροισμα</strong> των βαθμών στα αρχικά 4 διαγωνίσματα, προσθέτουμε τον βαθμό του 5ου διαγωνίσματος και διαιρούμε με το νέο πλήθος (<strong>5</strong>):
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΑΡΧΙΚΟΥ ΚΑΙ ΝΕΟΥ ΜΕΣΟΥ ΟΡΟΥ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="510" height="210" viewBox="0 0 510 210" className="select-none font-sans mx-auto block">
+            {/* 1. ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ (4 ΔΙΑΓΩΝΙΣΜΑΤΑ) */}
+            <g transform="translate(15, 12)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
+                1. Αρχικά 4 Διαγωνίσματα (Μέσος Όρος: 15)
+              </text>
+
+              {/* 4 ίσα μπλοκ βαθμών των 15 (πλάτος 68px το καθένα) */}
+              <g transform="translate(0, 24)">
+                {['1ο', '2ο', '3ο', '4ο'].map((label, idx) => (
+                  <g key={`old-${idx}`} transform={`translate(${idx * 72}, 0)`}>
+                    <rect x="0" y="0" width="66" height="38" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="33" y="15" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">{label}</text>
+                    <text x="33" y="30" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">15</text>
+                  </g>
+                ))}
+
+                {/* Badge αρχικού αθροίσματος */}
+                <rect x="300" y="4" width="175" height="30" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.2" />
+                <text x="387.5" y="23" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569">
+                  Άθροισμα: 4 · 15 ＝ <span className="font-mono font-black text-blue-700">60</span>
+                </text>
+              </g>
+            </g>
+
+            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
+            <line x1="15" y1="92" x2="495" y2="92" stroke="#e2e8f0" strokeWidth="1.2" />
+
+            {/* 2. ΝΕΑ ΚΑΤΑΣΤΑΣΗ (5 ΔΙΑΓΩΝΙΣΜΑΤΑ ΜΕ ΤΟ 20) */}
+            <g transform="translate(15, 104)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
+                2. Προσθήκη 5ου Διαγωνίσματος (Βαθμός: 20)
+              </text>
+
+              <g transform="translate(0, 24)">
+                {/* 4 αρχικά διαγωνίσματα */}
+                {['1ο', '2ο', '3ο', '4ο'].map((label, idx) => (
+                  <g key={`new-eq-${idx}`} transform={`translate(${idx * 60}, 0)`}>
+                    <rect x="0" y="0" width="55" height="38" rx="6" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.4" />
+                    <text x="27.5" y="15" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#166534">{label}</text>
+                    <text x="27.5" y="30" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#15803d" fontFamily="monospace">16</text>
+                  </g>
+                ))}
+
+                {/* 5ο διαγώνισμα */}
+                <g transform="translate(240, 0)">
+                  <rect x="0" y="0" width="55" height="38" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" />
+                  <text x="27.5" y="15" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#dc2626">5ο (+20)</text>
+                  <text x="27.5" y="30" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">16</text>
+                </g>
+
+                {/* Badge νέου μέσου όρου */}
+                <g transform="translate(305, 0)">
+                  <rect x="0" y="0" width="170" height="38" rx="8" fill="#16a34a" />
+                  <text x="85" y="16" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#dcfce7">
+                    Νέο Άθροισμα: 60 + 20 = 80
+                  </text>
+                  <text x="85" y="31" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                    Νέος Μ.Ο. ＝ 16 ⭐
+                  </text>
+                </g>
+              </g>
+
+              {/* Επεξήγηση ισομοιρασιάς */}
+              <text x="240" y="76" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#047857">
+                Οι 5 επιπλέον μονάδες του 20 (20 － 15 ＝ 5) μοιράζονται ισότιμα στα 5 τεστ (+1 στον Μ.Ο.)
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Μέσω συνολικού αθροίσματος */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Υπολογισμός μέσω συνολικού αθροίσματος)
+            </div>
+            <p className="text-slate-700">
+              Ο μέσος όρος ισούται με το πηλίκο του αθροίσματος των βαθμών δια του πλήθους των διαγωνισμάτων:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Άθροισμα 4 πρώτων διαγωνισμάτων ＝ 4 · 15 ＝</span>
+                <strong className="text-blue-700">60 βαθμοί</strong>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200">
+                <span>• Μετά το 5ο διαγώνισμα (βαθμός 20), το νέο άθροισμα είναι:</span>
+                <div className="pl-3 pt-0.5 font-bold text-slate-800">
+                  Νέο Άθροισμα ＝ 60 ＋ 20 ＝ 80 βαθμοί
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Νέος Μέσος Όρος (στα 5 διαγωνίσματα) ＝</span>
+                <Fraction num="80" den="5" />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base font-black">16</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Μέσω της πλεονάζουσας διαφοράς */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Γρήγορος τρόπος μέσω κατανομής διαφοράς)
+            </div>
+            <p className="text-slate-700">
+              Συγκρίνουμε τον βαθμό του νέου διαγωνίσματος με τον παλιό μέσο όρο:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Ο βαθμός 20 υπερβαίνει τον παλιό μέσο όρο (15) κατά: 20 － 15 ＝ <strong>＋5 βαθμούς</strong>.</div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>• Οι 5 αυτοί επιπλέον βαθμοί μοιράζονται ισόποσα και στα 5 πλέον διαγωνίσματα:</span>
+                <Fraction num="5" den="5" />
+                <span>＝ <strong>＋1 βαθμός</strong> στον μέσο όρο.</span>
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
+                • Νέος Μέσος Όρος ＝ 15 ＋ 1 ＝ <span className="text-base text-emerald-700 font-black">16</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο νέος μέσος όρος των βαθμών του στα 5 διαγωνίσματα είναι <strong>16</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 20,
