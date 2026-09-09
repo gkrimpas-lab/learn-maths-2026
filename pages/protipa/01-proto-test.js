@@ -257,7 +257,186 @@ const QUESTIONS = [
     prompt: 'Ένα δοχείο είναι γεμάτο με λάδι κατά τα 7/10 του συνολικού του όγκου. Αδειάζουμε 3 ίδια φλιτζάνια λάδι από το δοχείο και πλέον είναι γεμάτο κατά το 1/10. Με πόσα τέτοια φλιτζάνια λάδι γεμίζει ολόκληρο το δοχείο αν είναι τελείως άδειο;',
     options: ['5', '6', '8', '10'],
     correct: '5',
-    explain: 'Τα 3 φλιτζάνια αντιστοιχούν σε 7/10 − 1/10 = 6/10 = 3/5 του δοχείου. Άρα το 1 φλιτζάνι αντιστοιχεί σε (3/5) : 3 = 1/5 του δοχείου. Επομένως, για ολόκληρο το δοχείο (5/5) χρειάζονται ακριβώς 5 φλιτζάνια.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε τη μεταβολή της ποσότητας του λαδιού στο δοχείο, χρησιμοποιώντας ως μονάδα μέτρησης τα <strong>δέκατα (<Fraction num="1" den="10" />)</strong> του συνολικού όγκου:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ ΔΟΧΕΙΟΥ ΣΕ 3 ΣΤΑΔΙΑ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="430" height="200" viewBox="0 0 430 200" className="select-none font-sans mx-auto block">
+            {/* Ορισμός 5 ίσων τμημάτων (πέμπτων) που το καθένα περιέχει 2 δέκατα */}
+            <defs>
+              <g id="tank-slice-empty">
+                <rect x="0" y="0" width="80" height="28" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
+                <line x1="0" y1="14" x2="80" y2="14" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="2 2" />
+              </g>
+              <g id="tank-slice-full">
+                <rect x="0" y="0" width="80" height="28" fill="#fbbf24" fillOpacity="0.8" stroke="#cbd5e1" strokeWidth="1" />
+                <line x1="0" y1="14" x2="80" y2="14" stroke="#f59e0b" strokeWidth="0.8" strokeDasharray="2 2" />
+                <text x="40" y="10" fontSize="9" fontWeight="black" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
+                <text x="40" y="24" fontSize="9" fontWeight="black" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
+              </g>
+            </defs>
+
+            {/* ΣΤΑΔΙΟ A: ΑΡΧΙΚΟ (7/10) */}
+            <g transform="translate(15, 10)">
+              <text x="40" y="14" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Αρχικό (7/10)
+              </text>
+              {/* Δοχείο (5 τμήματα των 2/10) */}
+              <g transform="translate(0, 25)">
+                <use href="#tank-slice-empty" x="0" y="0" />
+                <g opacity="0.6">
+                   <use href="#tank-slice-full" x="0" y="28" />
+                </g>
+                <use href="#tank-slice-full" x="0" y="56" />
+                <use href="#tank-slice-full" x="0" y="84" />
+                <use href="#tank-slice-full" x="0" y="112" />
+                {/* Το πάνω τμήμα είναι μισογεμάτο (1/10) */}
+                <rect x="0" y="28" width="80" height="14" fill="#fbbf24" fillOpacity="0.4" stroke="#cbd5e1" strokeWidth="1" />
+                
+                {/* Εξωτερικό Περίγραμμα Δοχείου */}
+                <rect x="0" y="0" width="80" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
+              </g>
+            </g>
+
+            {/* ΒΕΛΟΣ ΑΦΑΙΡΕΣΗΣ 3 ΦΛΙΤΖΑΝΙΩΝ */}
+            <g transform="translate(108, 95)">
+              <line x1="0" y1="0" x2="35" y2="0" stroke="#dc2626" strokeWidth="2.2" />
+              <polygon points="35,-4 43,0 35,4" fill="#dc2626" />
+              <text x="21" y="-8" fontSize="10" fontWeight="black" textAnchor="middle" fill="#dc2626">
+                －3 Φλιτζάνια
+              </text>
+            </g>
+
+            {/* ΣΤΑΔΙΟ Β: ΤΕΛΙΚΟ (1/10) */}
+            <g transform="translate(160, 10)">
+              <text x="40" y="14" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Τελικό (1/10)
+              </text>
+              {/* Δοχείο */}
+              <g transform="translate(0, 25)">
+                <use href="#tank-slice-empty" x="0" y="0" />
+                <use href="#tank-slice-empty" x="0" y="28" />
+                <use href="#tank-slice-empty" x="0" y="56" />
+                <use href="#tank-slice-empty" x="0" y="84" />
+                {/* Μόνο το κάτω-κάτω δέκατο είναι γεμάτο */}
+                <rect x="0" y="112" width="80" height="28" rx="1" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
+                <line x1="0" y1="126" x2="80" y2="126" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="2 2" />
+                <rect x="0" y="126" width="80" height="14" fill="#fbbf24" fillOpacity="0.8" rx="1" stroke="#cbd5e1" strokeWidth="1"/>
+                <text x="40" y="136" fontSize="9" fontWeight="black" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
+
+                <rect x="0" y="0" width="80" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
+              </g>
+            </g>
+
+            {/* ΒΕΛΟΣ ΕΡΩΤΗΣΗΣ */}
+            <g transform="translate(255, 95)">
+              <line x1="0" y1="0" x2="40" y2="0" stroke="#0284c7" strokeWidth="1.8" strokeDasharray="3 2" />
+              <polygon points="40,-3.5 46,0 40,3.5" fill="#0284c7" />
+              <text x="23" y="-7" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0284c7">
+                Πόσα Φλιτζάνια;
+              </text>
+            </g>
+
+            {/* ΣΤΑΔΙΟ Γ: ΟΛΟΚΛΗΡΟ ΔΟΧΕΙΟ (5/5 ＝ 10/10) */}
+            <g transform="translate(315, 10)">
+              <text x="40" y="14" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Ολόκληρο (10/10)
+              </text>
+              {/* Δοχείο */}
+              <g transform="translate(0, 25)">
+                <use href="#tank-slice-full" x="0" y="0" />
+                <use href="#tank-slice-full" x="0" y="28" />
+                <use href="#tank-slice-full" x="0" y="56" />
+                <use href="#tank-slice-full" x="0" y="84" />
+                <use href="#tank-slice-full" x="0" y="112" />
+                <rect x="0" y="0" width="80" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
+              </g>
+              {/* Ετικέτες Πέμπτων */}
+              <g transform="translate(86, 25)">
+                {[0, 1, 2, 3, 4].map(i => (
+                  <text key={i} x="0" y={i * 28 + 19} fontSize="11" fontWeight="black" fill="#15803d">＝ 1 Φλιτζάνι (<Fraction num="1" den="5" />)</text>
+                ))}
+              </g>
+              {/* Συνολικό Πλήθος Φλιτζανιών */}
+              <rect x="86" y="170" width="90" height="24" rx="12" fill="#16a34a" />
+              <text x="131" y="186" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">Σύνολο: 5 Φλιτζ.</text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΣ ΣΥΛΛΟΓΙΣΜΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1 */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Υπολογισμός της διαφοράς στον όγκο του λαδιού:
+            </div>
+            <p className="text-slate-700">
+              Αρχικά το δοχείο ήταν γεμάτο κατά <span className="font-mono font-bold"><Fraction num="7" den="10" /></span> και τελικά κατά <span className="font-mono font-bold"><Fraction num="1" den="10" /></span>. Η διαφορά που αδειάσαμε αντιστοιχεί στα 3 φλιτζάνια:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>3 Φλιτζάνια ＝ Αρχικό Λάδι － Τελικό Λάδι ＝</span>
+                <Fraction num="7" den="10" />
+                <span>－</span>
+                <Fraction num="1" den="10" />
+                <span>＝</span>
+                <strong className="text-blue-700"><Fraction num="6" den="10" /></strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2 */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Εύρεση της χωρητικότητας ενός φλιτζανιού:
+            </div>
+            <p className="text-slate-700">
+              Αφού τα 3 φλιτζάνια αντιστοιχούν στα <Fraction num="6" den="10" /> του δοχείου, το 1 φλιτζάνι αντιστοιχεί στο:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>1 Φλιτζάνι ＝ 3 Φλιτζάνια : 3 ＝</span>
+                <Fraction num="6" den="10" />
+                <span>: 3 ＝</span>
+                <strong className="text-emerald-700 text-base"><Fraction num="2" den="10" /></strong>
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base"><Fraction num="1" den="5" /></strong>
+                <span>του δοχείου.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 3 */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              3. Συμπέρασμα για το συνολικό πλήθος φλιτζανιών:
+            </div>
+            <p className="text-slate-700">
+              Για να γεμίσει ολόκληρο το δοχείο (δηλαδή <Fraction num="5" den="5" /> ή <Fraction num="10" den="10" />), χρειαζόμαστε τόσα φλιτζάνια όσα είναι και τα πέμπτα:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>Συνολικά Φλιτζάνια ＝ Ολόκληρο Δοχείο : 1 Φλιτζάνι ＝</span>
+                <Fraction num="5" den="5" />
+                <span>:</span>
+                <Fraction num="1" den="5" />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base">5</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, για να γεμίσει ολόκληρο το δοχείο χρειάζονται <strong>5 φλιτζάνια</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 4,
