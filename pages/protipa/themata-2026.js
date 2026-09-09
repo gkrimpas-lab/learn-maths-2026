@@ -1827,7 +1827,7 @@ const QUESTIONS_2026 = [
   {
     id: 15,
     officialNumber: 35,
-    group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
+    group: 'ΟΜΑΔΑ Β (5 Επιλογες)',
     promptText: 'Σήμερα είναι Σάββατο 25 Απριλίου 2026. Τι μέρα θα είναι η 25η Απριλίου του 2031; (Το έτος 2028 είναι δίσεκτο).',
     options: [
       { key: 'A', label: 'Πέμπτη', raw: 'Πέμπτη' },
@@ -2017,8 +2017,157 @@ const QUESTIONS_2026 = [
       { key: 'Δ', label: <Fraction num="1" den="2" />, raw: '1/2' },
       { key: 'E', label: <Fraction num="7" den="18" />, raw: '7/18' }
     ],
-    correctRaw: '7/18',
-    explain: 'Το μεγάλο τρίγωνο αποτελείται από 9 ίσα τριγωνάκια. Το σκιασμένο μέρος περιέχει 3 ολόκληρα τριγωνάκια και το μισό ενός τέταρτου: 3 + 0,5 = 3,5 τριγωνάκια. Το κλάσμα του εμβαδού είναι 3,5 / 9 = 7 / 18.'
+    correctRaw: '4/9',
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Το αρχικό μεγάλο ισόπλευρο τρίγωνο χωρίζεται σε <strong>9 ίσα μικρά ισόπλευρα τρίγωνα</strong> (έστω εμβαδού <strong>Ε</strong> το καθένα). Παρατηρούμε πώς αναδιατάσσονται τα τμήματα που τέμνονται από τις διαγώνιες ευθείες:
+        </p>
+
+        {/* ΔΙΠΛΟ SVG ΣΧΗΜΑ: 1. ΑΡΧΙΚΟ ΣΚΙΑΣΜΕΝΟ | 2. ΑΝΑΛΥΣΗ ΜΕ ΧΡΩΜΑΤΑ (ΖΕΥΓΗ ΠΟΥ ΕΝΩΝΟΝΤΑΙ) */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          {(() => {
+            // Συντεταγμένες κορυφών πλέγματος 9 τριγώνων (y0: κορυφή, y1: 1ο επίπεδο, y2: 2ο επίπεδο, y3: βάση)
+            const P = {
+              top: [80, 14],
+              r1_0: [57, 54],   r1_1: [103, 54],
+              r2_0: [34, 94],   r2_1: [80, 94],    r2_2: [126, 94],
+              r3_0: [11, 134],  r3_1: [57, 134],   r3_2: [103, 134],  r3_3: [149, 134]
+            };
+
+            const pt = (p) => `${p[0]},${p[1]}`;
+
+            return (
+              <svg width="450" height="195" viewBox="0 0 450 195" className="select-none font-sans mx-auto block">
+                {/* 1ο ΣΧΗΜΑ: ΑΡΧΙΚΟ ΣΚΙΑΣΜΕΝΟ */}
+                <g transform="translate(15, 10)">
+                  <text x="80" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                    1. Αρχικό Σκιασμένο Μέρος
+                  </text>
+
+                  <g transform="translate(0, 10)">
+                    {/* Λευκό τρίγωνο φόντου */}
+                    <polygon points={`${pt(P.top)} ${pt(P.r3_0)} ${pt(P.r3_3)}`} fill="#ffffff" stroke="#1e293b" strokeWidth="2.2" />
+
+                    {/* Σκιασμένα μέρη */}
+                    {/* Πάνω σκιασμένο πολύγωνο */}
+                    <polygon points={`${pt(P.r1_0)} ${pt(P.r1_1)} ${pt(P.r3_0)}`} fill="#94a3b8" />
+                    {/* Κάτω σκιασμένο πολύγωνο */}
+                    <polygon points={`${pt(P.r3_0)} ${pt(P.r3_2)} ${pt(P.r2_2)}`} fill="#94a3b8" />
+
+                    {/* Εσωτερικό πλέγμα γραμμών */}
+                    <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r1_1[0]} y2={P.r1_1[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r2_2[0]} y2={P.r2_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r1_1[0]} y1={P.r1_1[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r2_2[0]} y1={P.r2_2[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+
+                    {/* Οι δύο διαγώνιες γραμμές */}
+                    <line x1={P.r3_0[0]} y1={P.r3_0[1]} x2={P.r1_1[0]} y2={P.r1_1[1]} stroke="#0f172a" strokeWidth="2.2" />
+                    <line x1={P.r3_0[0]} y1={P.r3_0[1]} x2={P.r2_2[0]} y2={P.r2_2[1]} stroke="#0f172a" strokeWidth="2.2" />
+
+                    {/* Κόμβοι (κουκκίδες) */}
+                    {[P.top, P.r1_0, P.r1_1, P.r2_0, P.r2_1, P.r2_2, P.r3_0, P.r3_1, P.r3_2, P.r3_3].map(([cx, cy], idx) => (
+                      <circle key={`p1-${idx}`} cx={cx} cy={cy} r="4" fill="#64748b" stroke="#0f172a" strokeWidth="1.4" />
+                    ))}
+                  </g>
+                </g>
+
+                {/* ΒΕΛΟΣ ΜΕΤΑΒΑΣΗΣ */}
+                <g transform="translate(196, 95)">
+                  <line x1="0" y1="0" x2="20" y2="0" stroke="#0f172a" strokeWidth="2" />
+                  <polygon points="20,-4 28,0 20,4" fill="#0f172a" />
+                </g>
+
+                {/* 2ο ΣΧΗΜΑ: ΑΝΑΛΥΣΗ ΜΕ ΤΑ ΧΡΩΜΑΤΑ ΤΩΝ ΣΥΜΠΛΗΡΩΜΑΤΙΚΩΝ ΤΜΗΜΑΤΩΝ */}
+                <g transform="translate(245, 10)">
+                  <text x="80" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                    2. Σύνθεση σε 4 Πλήρη Τρίγωνα
+                  </text>
+
+                  <g transform="translate(0, 10)">
+                    <polygon points={`${pt(P.top)} ${pt(P.r3_0)} ${pt(P.r3_3)}`} fill="#ffffff" stroke="#1e293b" strokeWidth="2.2" />
+
+                    {/* 1. Ακέραια γκρι τρίγωνα (2 πλήρη τρίγωνα: 1ο και 2ο) */}
+                    {/* Τρίγωνο 2ου επιπέδου αριστερά */}
+                    <polygon points={`${pt(P.r1_0)} ${pt(P.r2_0)} ${pt(P.r2_1)}`} fill="#94a3b8" />
+                    {/* Τρίγωνο κάτω βάσης αριστερά */}
+                    <polygon points={`${pt(P.r3_0)} ${pt(P.r3_1)} ${pt(P.r2_1)}`} fill="#94a3b8" />
+
+                    {/* 2. Κόκκινο ζεύγος (συμπληρώνει το 3ο τρίγωνο μαζί με το πράσινο) */}
+                    {/* Κόκκινο κάτω-αριστερά */}
+                    <polygon points={`${pt(P.r3_0)} ${pt(P.r2_0)} ${pt(P.r2_1)}`} fill="#ef4444" fillOpacity="0.85" />
+                    {/* Κόκκινο πάνω διαγώνιο */}
+                    <polygon points={`${pt(P.r1_1)} ${pt(P.r2_1)} ${pt(P.r1_0)}`} fill="#ef4444" fillOpacity="0.85" />
+
+                    {/* 3. Πράσινο ζεύγος */}
+                    <polygon points={`${pt(P.r2_0)} ${pt(P.r2_1)} ${pt(P.r3_0)}`} fill="#22c55e" fillOpacity="0.85" />
+                    <polygon points={`${pt(P.r2_1)} ${pt(P.r1_1)} ${pt(P.r2_2)}`} fill="#22c55e" fillOpacity="0.85" />
+
+                    {/* 4. Γαλάζιο ζεύγος (συμπληρώνει το 4ο τρίγωνο) */}
+                    <polygon points={`${pt(P.r3_0)} ${pt(P.r3_1)} ${pt(P.r2_1)}`} fill="#38bdf8" fillOpacity="0.85" />
+                    <polygon points={`${pt(P.r2_1)} ${pt(P.r2_2)} ${pt(P.r3_2)}`} fill="#38bdf8" fillOpacity="0.85" />
+
+                    {/* 5. Μωβ ζεύγος */}
+                    <polygon points={`${pt(P.r3_1)} ${pt(P.r2_1)} ${pt(P.r3_2)}`} fill="#a855f7" fillOpacity="0.85" />
+                    <polygon points={`${pt(P.r2_2)} ${pt(P.r3_2)} ${pt(P.r3_3)}`} fill="#a855f7" fillOpacity="0.85" />
+
+                    {/* Πλέγμα γραμμών */}
+                    <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r1_1[0]} y2={P.r1_1[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r2_2[0]} y2={P.r2_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r1_1[0]} y1={P.r1_1[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    <line x1={P.r2_2[0]} y1={P.r2_2[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+
+                    {/* Διαγώνιες */}
+                    <line x1={P.r3_0[0]} y1={P.r3_0[1]} x2={P.r1_1[0]} y2={P.r1_1[1]} stroke="#0f172a" strokeWidth="2.2" />
+                    <line x1={P.r3_0[0]} y1={P.r3_0[1]} x2={P.r2_2[0]} y2={P.r2_2[1]} stroke="#0f172a" strokeWidth="2.2" />
+
+                    {/* Κόμβοι */}
+                    {[P.top, P.r1_0, P.r1_1, P.r2_0, P.r2_1, P.r2_2, P.r3_0, P.r3_1, P.r3_2, P.r3_3].map(([cx, cy], idx) => (
+                      <circle key={`p2-${idx}`} cx={cx} cy={cy} r="4" fill="#64748b" stroke="#0f172a" strokeWidth="1.4" />
+                    ))}
+                  </g>
+                </g>
+              </svg>
+            );
+          })()}
+        </div>
+
+        {/* ΑΝΑΛΥΣΗ ΚΑΙ ΣΥΛΛΟΓΙΣΜΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <p className="text-slate-800">
+            Παρατηρώντας τα χρωματισμένα κομμάτια στο 2ο σχήμα, βλέπουμε ότι τα επιμέρους τμήματα συνδυάζονται ανά ζεύγη σχηματίζοντας ακέραια μικρά τρίγωνα:
+          </p>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• <strong>2 ολόκληρα τρίγωνα</strong> είναι πλήρως σκιασμένα (γκρι).</div>
+            <div>• Τα <strong>κόκκινα</strong> και <strong>πράσινα</strong> τμήματα ενώνονται και συμπληρώνουν <strong>1 ολόκληρο τρίγωνο</strong>.</div>
+            <div>• Τα <strong>γαλάζια</strong> και <strong>μωβ</strong> τμήματα ενώνονται και συμπληρώνουν ακόμη <strong>1 ολόκληρο τρίγωνο</strong>.</div>
+
+            <div className="pt-2 border-t border-slate-200 font-bold text-slate-950">
+              Συνολικό εμβαδόν σκιασμένου μέρους ＝ 2 ＋ 1 ＋ 1 ＝ 4 μικρά τρίγωνα
+            </div>
+          </div>
+
+          <div className="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-1.5">
+            <div>• Συνολικό εμβαδόν μεγάλου τριγώνου ＝ <strong>9 τρίγωνα</strong></div>
+            <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+              <span>Ζητούμενο κλάσμα ＝</span>
+              <Fraction num="Σκιασμένο Μέρος" den="Μεγάλο Τρίγωνο" />
+              <span>＝</span>
+              <strong className="text-emerald-700 text-base"><Fraction num="4" den="9" /></strong>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το χρωματισμένο μέρος αντιστοιχεί στα <strong><Fraction num="4" den="9" /></strong> του μεγάλου τριγώνου (Επιλογή <strong>Γ</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 17,
