@@ -1687,18 +1687,29 @@ const QUESTIONS = [
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
           <svg width="510" height="210" viewBox="0 0 510 210" className="select-none font-sans mx-auto block">
             <defs>
-              {/* Επαναχρησιμοποιούμενο τμήμα τετάρτου ποτηριού */}
+              {/* Ενδιάμεσο τμήμα τετάρτου (κενό) */}
               <g id="glass-quarter-empty">
                 <rect x="0" y="0" width="70" height="25" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
               </g>
+
+              {/* Ενδιάμεσο τμήμα τετάρτου (νερό) */}
               <g id="glass-quarter-water">
                 <rect x="0" y="0" width="70" height="25" fill="#38bdf8" fillOpacity="0.85" stroke="#cbd5e1" strokeWidth="1" />
                 <text x="35" y="16" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">1/4</text>
               </g>
+
+              {/* Κάτω τμήμα νερού που αγκαλιάζει ακριβώς τη στρογγυλεμένη βάση */}
+              <g id="glass-bottom-water">
+                <path d="M 0 0 L 70 0 L 70 20 Q 70 25 65 25 L 5 25 Q 0 25 0 20 Z" fill="#38bdf8" fillOpacity="0.85" stroke="#cbd5e1" strokeWidth="1" />
+                <text x="35" y="16" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">1/4</text>
+              </g>
+
+              {/* Τμήμα που λείπει και χρειάζεται συμπλήρωση */}
               <g id="glass-quarter-needed">
                 <rect x="0" y="0" width="70" height="25" fill="#fef3c7" stroke="#f59e0b" strokeWidth="1.2" strokeDasharray="3 2" />
-                <text x="35" y="16" fontSize="9" fontWeight="black" textAnchor="middle" fill="#b45309" fontFamily="monospace">+1/4</text>
+                <text x="35" y="16" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#b45309" fontFamily="monospace">+1/4</text>
               </g>
+
               <marker id="transfer-arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7" />
               </marker>
@@ -1713,12 +1724,12 @@ const QUESTIONS = [
                 {/* 3 τέταρτα αρχικό νερό */}
                 <use href="#glass-quarter-water" x="0" y="25" />
                 <use href="#glass-quarter-water" x="0" y="50" />
-                <use href="#glass-quarter-water" x="0" y="75" />
-                {/* Περίγραμμα ποτηριού */}
-                <path d="M 0 0 L 0 100 Q 0 105 5 105 L 65 105 Q 70 105 70 100 L 70 0" fill="none" stroke="#334155" strokeWidth="2" />
+                <use href="#glass-bottom-water" x="0" y="75" />
+                {/* Περίγραμμα ποτηριού (ύψος ακριβώς 100px) */}
+                <path d="M 0 0 L 0 95 Q 0 100 5 100 L 65 100 Q 70 100 70 95 L 70 0" fill="none" stroke="#334155" strokeWidth="2" />
               </g>
-              <rect x="-5" y="132" width="80" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
-              <text x="35" y="147" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Λείπει: 1/4</text>
+              <rect x="-5" y="130" width="80" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
+              <text x="35" y="145" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Λείπει: 1/4</text>
             </g>
 
             {/* ΣΥΜΒΟΛΟ ΠΡΟΣΘΕΣΗΣ */}
@@ -1735,15 +1746,15 @@ const QUESTIONS = [
                 <use href="#glass-quarter-needed" x="0" y="25" />
                 {/* 2 τέταρτα (1/2) αρχικό νερό */}
                 <use href="#glass-quarter-water" x="0" y="50" />
-                <use href="#glass-quarter-water" x="0" y="75" />
+                <use href="#glass-bottom-water" x="0" y="75" />
                 {/* Περίγραμμα ποτηριού */}
-                <path d="M 0 0 L 0 100 Q 0 105 5 105 L 65 105 Q 70 105 70 100 L 70 0" fill="none" stroke="#334155" strokeWidth="2" />
+                <path d="M 0 0 L 0 95 Q 0 100 5 100 L 65 100 Q 70 100 70 95 L 70 0" fill="none" stroke="#334155" strokeWidth="2" />
               </g>
-              <rect x="-5" y="132" width="80" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
-              <text x="35" y="147" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Λείπουν: 2/4</text>
+              <rect x="-5" y="130" width="80" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
+              <text x="35" y="145" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Λείπουν: 2/4</text>
             </g>
 
-            {/* ΒΕΛΟΣ ΠΟΥ ΔΕΙΧΝΕΙ ΤΗ ΣΥΝΟΛΙΚΗ ΠΡΟΣΦΟΡΑ ΑΠΟ ΤΟ 3ο */}
+            {/* ΒΕΛΟΣ ΜΕΤΑΦΟΡΑΣ */}
             <g transform="translate(255, 75)">
               <line x1="45" y1="0" x2="5" y2="0" stroke="#0284c7" strokeWidth="2.2" markerEnd="url(#transfer-arr)" />
               <text x="25" y="-10" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0284c7">Έδωσε</text>
@@ -1756,17 +1767,17 @@ const QUESTIONS = [
               <g transform="translate(10, 20)">
                 {/* 1 κενό τέταρτο πάνω */}
                 <use href="#glass-quarter-empty" x="0" y="0" />
-                {/* 3 γεμάτα τέταρτα (το νερό που άδειασε) */}
+                {/* 3 γεμάτα τέταρτα */}
                 <use href="#glass-quarter-water" x="0" y="25" />
                 <use href="#glass-quarter-water" x="0" y="50" />
-                <use href="#glass-quarter-water" x="0" y="75" />
+                <use href="#glass-bottom-water" x="0" y="75" />
                 {/* Περίγραμμα ποτηριού */}
-                <path d="M 0 0 L 0 100 Q 0 105 5 105 L 65 105 Q 70 105 70 100 L 70 0" fill="none" stroke="#16a34a" strokeWidth="2.4" />
+                <path d="M 0 0 L 0 95 Q 0 100 5 100 L 65 100 Q 70 100 70 95 L 70 0" fill="none" stroke="#16a34a" strokeWidth="2.4" />
               </g>
 
               {/* Badge αρχικής ποσότητας 3ου ποτηριού */}
-              <rect x="-10" y="130" width="110" height="26" rx="8" fill="#dcfce7" stroke="#86efac" strokeWidth="1.2" />
-              <text x="45" y="147" fontSize="11" fontWeight="900" textAnchor="middle" fill="#166534">
+              <rect x="-10" y="128" width="110" height="26" rx="8" fill="#dcfce7" stroke="#86efac" strokeWidth="1.2" />
+              <text x="45" y="145" fontSize="11" fontWeight="900" textAnchor="middle" fill="#166534">
                 Αρχικά: 3/4 ⭐
               </text>
             </g>
