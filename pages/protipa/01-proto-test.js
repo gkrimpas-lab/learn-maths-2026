@@ -265,105 +265,107 @@ const QUESTIONS = [
 
         {/* SVG ΣΧΗΜΑ ΔΟΧΕΙΟΥ ΣΕ 3 ΣΤΑΔΙΑ */}
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="430" height="200" viewBox="0 0 430 200" className="select-none font-sans mx-auto block">
-            {/* Ορισμός 5 ίσων τμημάτων (πέμπτων) που το καθένα περιέχει 2 δέκατα */}
+          <svg width="560" height="225" viewBox="0 0 560 225" className="select-none font-sans mx-auto block">
+            {/* Ορισμός τμημάτων */}
             <defs>
-              <g id="tank-slice-empty">
-                <rect x="0" y="0" width="80" height="28" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
-                <line x1="0" y1="14" x2="80" y2="14" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="2 2" />
+              <g id="tank-slice-empty-3">
+                <rect x="0" y="0" width="75" height="28" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
+                <line x1="0" y1="14" x2="75" y2="14" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="2 2" />
               </g>
-              <g id="tank-slice-full">
-                <rect x="0" y="0" width="80" height="28" fill="#fbbf24" fillOpacity="0.8" stroke="#cbd5e1" strokeWidth="1" />
-                <line x1="0" y1="14" x2="80" y2="14" stroke="#f59e0b" strokeWidth="0.8" strokeDasharray="2 2" />
-                <text x="40" y="10" fontSize="9" fontWeight="black" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
-                <text x="40" y="24" fontSize="9" fontWeight="black" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
+              <g id="tank-slice-full-3">
+                <rect x="0" y="0" width="75" height="28" fill="#fbbf24" fillOpacity="0.85" stroke="#cbd5e1" strokeWidth="1" />
+                <line x1="0" y1="14" x2="75" y2="14" stroke="#f59e0b" strokeWidth="0.8" strokeDasharray="2 2" />
+                <text x="37.5" y="10.5" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
+                <text x="37.5" y="24.5" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
               </g>
             </defs>
 
-            {/* ΣΤΑΔΙΟ A: ΑΡΧΙΚΟ (7/10) */}
+            {/* 1. ΣΤΑΔΙΟ A: ΑΡΧΙΚΟ (7/10) */}
             <g transform="translate(15, 10)">
-              <text x="40" y="14" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+              <text x="37.5" y="14" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
                 Αρχικό (7/10)
               </text>
-              {/* Δοχείο (5 τμήματα των 2/10) */}
               <g transform="translate(0, 25)">
-                <use href="#tank-slice-empty" x="0" y="0" />
-                <g opacity="0.6">
-                   <use href="#tank-slice-full" x="0" y="28" />
-                </g>
-                <use href="#tank-slice-full" x="0" y="56" />
-                <use href="#tank-slice-full" x="0" y="84" />
-                <use href="#tank-slice-full" x="0" y="112" />
-                {/* Το πάνω τμήμα είναι μισογεμάτο (1/10) */}
-                <rect x="0" y="28" width="80" height="14" fill="#fbbf24" fillOpacity="0.4" stroke="#cbd5e1" strokeWidth="1" />
-                
-                {/* Εξωτερικό Περίγραμμα Δοχείου */}
-                <rect x="0" y="0" width="80" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
+                <use href="#tank-slice-empty-3" x="0" y="0" />
+                <rect x="0" y="28" width="75" height="14" fill="#fbbf24" fillOpacity="0.45" stroke="#cbd5e1" strokeWidth="1" />
+                <text x="37.5" y="38.5" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
+                <rect x="0" y="42" width="75" height="14" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
+                <use href="#tank-slice-full-3" x="0" y="56" />
+                <use href="#tank-slice-full-3" x="0" y="84" />
+                <use href="#tank-slice-full-3" x="0" y="112" />
+                {/* Εξωτερικό περίγραμμα */}
+                <rect x="0" y="0" width="75" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
               </g>
             </g>
 
-            {/* ΒΕΛΟΣ ΑΦΑΙΡΕΣΗΣ 3 ΦΛΙΤΖΑΝΙΩΝ */}
-            <g transform="translate(108, 95)">
-              <line x1="0" y1="0" x2="35" y2="0" stroke="#dc2626" strokeWidth="2.2" />
-              <polygon points="35,-4 43,0 35,4" fill="#dc2626" />
-              <text x="21" y="-8" fontSize="10" fontWeight="black" textAnchor="middle" fill="#dc2626">
+            {/* ΒΕΛΟΣ ΑΦΑΙΡΕΣΗΣ 3 ΦΛΙΤΖΑΝΙΩΝ (ΜΕ ΑΝΕΣΗ ΧΩΡΟΥ: 70px) */}
+            <g transform="translate(95, 95)">
+              <line x1="6" y1="0" x2="60" y2="0" stroke="#dc2626" strokeWidth="2.2" />
+              <polygon points="60,-4 68,0 60,4" fill="#dc2626" />
+              <text x="34" y="-9" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#dc2626">
                 －3 Φλιτζάνια
               </text>
             </g>
 
-            {/* ΣΤΑΔΙΟ Β: ΤΕΛΙΚΟ (1/10) */}
-            <g transform="translate(160, 10)">
-              <text x="40" y="14" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+            {/* 2. ΣΤΑΔΙΟ Β: ΤΕΛΙΚΟ (1/10) */}
+            <g transform="translate(175, 10)">
+              <text x="37.5" y="14" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
                 Τελικό (1/10)
               </text>
-              {/* Δοχείο */}
               <g transform="translate(0, 25)">
-                <use href="#tank-slice-empty" x="0" y="0" />
-                <use href="#tank-slice-empty" x="0" y="28" />
-                <use href="#tank-slice-empty" x="0" y="56" />
-                <use href="#tank-slice-empty" x="0" y="84" />
-                {/* Μόνο το κάτω-κάτω δέκατο είναι γεμάτο */}
-                <rect x="0" y="112" width="80" height="28" rx="1" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
-                <line x1="0" y1="126" x2="80" y2="126" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="2 2" />
-                <rect x="0" y="126" width="80" height="14" fill="#fbbf24" fillOpacity="0.8" rx="1" stroke="#cbd5e1" strokeWidth="1"/>
-                <text x="40" y="136" fontSize="9" fontWeight="black" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
+                <use href="#tank-slice-empty-3" x="0" y="0" />
+                <use href="#tank-slice-empty-3" x="0" y="28" />
+                <use href="#tank-slice-empty-3" x="0" y="56" />
+                <use href="#tank-slice-empty-3" x="0" y="84" />
+                {/* Κάτω τμήμα (1/10 γεμάτο) */}
+                <rect x="0" y="112" width="75" height="28" rx="1" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
+                <line x1="0" y1="126" x2="75" y2="126" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="2 2" />
+                <rect x="0" y="126" width="75" height="14" fill="#fbbf24" fillOpacity="0.85" rx="1" stroke="#cbd5e1" strokeWidth="1" />
+                <text x="37.5" y="136.5" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
 
-                <rect x="0" y="0" width="80" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
+                <rect x="0" y="0" width="75" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
               </g>
             </g>
 
-            {/* ΒΕΛΟΣ ΕΡΩΤΗΣΗΣ */}
+            {/* ΒΕΛΟΣ ΕΡΩΤΗΣΗΣ (ΜΕ ΑΝΕΣΗ ΧΩΡΟΥ: 75px) */}
             <g transform="translate(255, 95)">
-              <line x1="0" y1="0" x2="40" y2="0" stroke="#0284c7" strokeWidth="1.8" strokeDasharray="3 2" />
-              <polygon points="40,-3.5 46,0 40,3.5" fill="#0284c7" />
-              <text x="23" y="-7" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0284c7">
+              <line x1="8" y1="0" x2="62" y2="0" stroke="#0284c7" strokeWidth="2" strokeDasharray="3 2" />
+              <polygon points="62,-3.5 70,0 62,3.5" fill="#0284c7" />
+              <text x="36" y="-9" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0284c7">
                 Πόσα Φλιτζάνια;
               </text>
             </g>
 
-            {/* ΣΤΑΔΙΟ Γ: ΟΛΟΚΛΗΡΟ ΔΟΧΕΙΟ (5/5 ＝ 10/10) */}
-            <g transform="translate(315, 10)">
-              <text x="40" y="14" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+            {/* 3. ΣΤΑΔΙΟ Γ: ΟΛΟΚΛΗΡΟ (10/10) */}
+            <g transform="translate(335, 10)">
+              <text x="37.5" y="14" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
                 Ολόκληρο (10/10)
               </text>
-              {/* Δοχείο */}
               <g transform="translate(0, 25)">
-                <use href="#tank-slice-full" x="0" y="0" />
-                <use href="#tank-slice-full" x="0" y="28" />
-                <use href="#tank-slice-full" x="0" y="56" />
-                <use href="#tank-slice-full" x="0" y="84" />
-                <use href="#tank-slice-full" x="0" y="112" />
-                <rect x="0" y="0" width="80" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
+                <use href="#tank-slice-full-3" x="0" y="0" />
+                <use href="#tank-slice-full-3" x="0" y="28" />
+                <use href="#tank-slice-full-3" x="0" y="56" />
+                <use href="#tank-slice-full-3" x="0" y="84" />
+                <use href="#tank-slice-full-3" x="0" y="112" />
+                <rect x="0" y="0" width="75" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
               </g>
-              {/* Ετικέτες Πέμπτων */}
-              <g transform="translate(86, 25)">
-                {[0, 1, 2, 3, 4].map(i => (
-                  <text key={i} x="0" y={i * 28 + 19} fontSize="11" fontWeight="black" fill="#15803d">＝ 1 Φλιτζάνι (<Fraction num="1" den="5" />)</text>
+
+              {/* Ετικέτες Φλιτζανιών ανά 2/10 */}
+              <g transform="translate(83, 25)">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <text key={i} x="0" y={i * 28 + 18.5} fontSize="11" fontWeight="bold" fill="#15803d">
+                    ＝ 1 Φλιτζάνι
+                  </text>
                 ))}
               </g>
-              {/* Συνολικό Πλήθος Φλιτζανιών */}
-              <rect x="86" y="170" width="90" height="24" rx="12" fill="#16a34a" />
-              <text x="131" y="186" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">Σύνολο: 5 Φλιτζ.</text>
+
+              {/* Πράσινο badge συνόλου (πλήρως ορατό) */}
+              <g transform="translate(80, 172)">
+                <rect x="0" y="0" width="125" height="26" rx="13" fill="#16a34a" />
+                <text x="62.5" y="17" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                  Σύνολο: 5 Φλιτζάνια
+                </text>
+              </g>
             </g>
           </svg>
         </div>
