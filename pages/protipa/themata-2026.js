@@ -2437,7 +2437,190 @@ const QUESTIONS_2026 = [
       { key: 'E', label: 'Περισσότερο από 25%', raw: 'more' }
     ],
     correctRaw: '20',
-    explain: 'Συνολικά άτομα: 4 + 4 + 5 + 3 = 16. Η οικογένεια με τα 5 άτομα αντιστοιχούσε στα 5/16 του λογαριασμού. Τελικά πλήρωσε το 1/4 = 4/16. Η μείωση είναι (5/16 − 4/16) : (5/16) = (1/16) / (5/16) = 1/5 = 20%.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Καταγράφουμε τα άτομα κάθε οικογένειας (2 γονείς ＋ τα παιδιά τους) για να βρούμε το σύνολο των ατόμων:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΣΥΝΟΛΟ ΑΤΟΜΩΝ & ΣΥΓΚΡΙΣΗ ΜΕΡΙΔΙΟΥ ΤΗΣ ΠΟΛΥΤΕΚΝΗΣ ΟΙΚΟΓΕΝΕΙΑΣ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="470" height="210" viewBox="0 0 470 210" className="select-none font-sans mx-auto block">
+            {/* 1. ΟΙ 4 ΟΙΚΟΓΕΝΕΙΕΣ ΣΤΟ ΤΡΑΠΕΖΙ */}
+            <g transform="translate(15, 10)">
+              <text x="220" y="14" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Συνολικά Άτομα: 4 ＋ 4 ＋ 5 ＋ 3 ＝ 16 άτομα
+              </text>
+
+              {/* 4 κάρτες οικογενειών */}
+              <g transform="translate(0, 26)">
+                {/* Οικογένεια 1 (2 παιδιά -> 4 άτομα) */}
+                <rect x="0" y="0" width="100" height="60" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+                <text x="50" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">1η Οικογένεια</text>
+                <text x="50" y="36" fontSize="13" fontWeight="900" textAnchor="middle" fill="#0f172a">4 άτομα</text>
+                <text x="50" y="50" fontSize="9.5" textAnchor="middle" fill="#64748b">2 γονείς + 2 π.</text>
+
+                {/* Οικογένεια 2 (2 παιδιά -> 4 άτομα) */}
+                <rect x="112" y="0" width="100" height="60" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+                <text x="162" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">2η Οικογένεια</text>
+                <text x="162" y="36" fontSize="13" fontWeight="900" textAnchor="middle" fill="#0f172a">4 άτομα</text>
+                <text x="162" y="50" fontSize="9.5" textAnchor="middle" fill="#64748b">2 γονείς + 2 π.</text>
+
+                {/* Οικογένεια 3 (3 παιδιά -> 5 άτομα - ΕΠΙΚΕΝΤΡΟ) */}
+                <rect x="224" y="0" width="112" height="60" rx="8" fill="#eff6ff" stroke="#2563eb" strokeWidth="2.2" />
+                <text x="280" y="18" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">3η Οικογένεια ⭐</text>
+                <text x="280" y="36" fontSize="14" fontWeight="black" textAnchor="middle" fill="#1e40af">5 άτομα</text>
+                <text x="280" y="50" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#2563eb">2 γονείς + 3 π.</text>
+
+                {/* Οικογένεια 4 (1 παιδί -> 3 άτομα) */}
+                <rect x="348" y="0" width="92" height="60" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+                <text x="394" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">4η Οικογένεια</text>
+                <text x="394" y="36" fontSize="13" fontWeight="900" textAnchor="middle" fill="#0f172a">3 άτομα</text>
+                <text x="394" y="50" fontSize="9.5" textAnchor="middle" fill="#64748b">2 γονείς + 1 π.</text>
+              </g>
+            </g>
+
+            {/* 2. ΣΥΓΚΡΙΣΗ ΠΛΗΡΩΜΗΣ ΤΗΣ 3ης ΟΙΚΟΓΕΝΕΙΑΣ (16ατα) */}
+            <g transform="translate(25, 110)">
+              {/* Αρχική Υποχρέωση (5/16) */}
+              <g transform="translate(0, 0)">
+                <text x="0" y="14" fontSize="11" fontWeight="bold" fill="#0f172a">
+                  Αρχική υποχρέωση (ανά άτομο): <tspan fill="#2563eb" fontWeight="900">5 / 16</tspan>
+                </text>
+                {/* 16 τμήματα μπάρας */}
+                <g transform="translate(0, 22)">
+                  {Array.from({ length: 16 }).map((_, i) => (
+                    <rect
+                      key={`init-${i}`}
+                      x={i * 26}
+                      y={0}
+                      width={22}
+                      height={18}
+                      rx={3}
+                      fill={i < 5 ? '#3b82f6' : '#e2e8f0'}
+                    />
+                  ))}
+                  <text x="65" y="13" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#ffffff">5 μερίδια</text>
+                </g>
+              </g>
+
+              {/* Τελική Πληρωμή (1/4 = 4/16) */}
+              <g transform="translate(0, 48)">
+                <text x="0" y="14" fontSize="11" fontWeight="bold" fill="#0f172a">
+                  Τελική πληρωμή (ισόποσα 1/4): <tspan fill="#16a34a" fontWeight="900">4 / 16</tspan>
+                  <tspan fill="#dc2626" fontSize="10" fontWeight="bold"> (μείωση: 1 μερίδιο από τα 5)</tspan>
+                </text>
+                {/* 16 τμήματα μπάρας */}
+                <g transform="translate(0, 22)">
+                  {Array.from({ length: 16 }).map((_, i) => (
+                    <rect
+                      key={`final-${i}`}
+                      x={i * 26}
+                      y={0}
+                      width={22}
+                      height={18}
+                      rx={3}
+                      fill={i < 4 ? '#22c55e' : i === 4 ? '#fee2e2' : '#e2e8f0'}
+                      stroke={i === 4 ? '#ef4444' : 'none'}
+                      strokeDasharray={i === 4 ? '2 2' : 'none'}
+                    />
+                  ))}
+                  <text x="52" y="13" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#ffffff">4 μερίδια</text>
+                  <text x="117" y="13" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#dc2626">－1</text>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Καταμέτρηση ατόμων */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900">
+              1. Καταμέτρηση των ατόμων:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• 2 οικογένειες με 2 παιδιά: 2 · (2 ＋ 2) ＝ <strong>8 άτομα</strong></div>
+              <div>• 1 οικογένεια με 3 παιδιά: 2 ＋ 3 ＝ <strong>5 άτομα</strong></div>
+              <div>• 1 οικογένεια με 1 παιδί: 2 ＋ 1 ＝ <strong>3 άτομα</strong></div>
+              <div className="pt-1 border-t border-slate-200 font-bold text-slate-950">
+                Συνολικά άτομα ＝ 8 ＋ 5 ＋ 3 ＝ 16 άτομα
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Αρχική vs Τελική Πληρωμή */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Μερίδιο της οικογένειας με τα 3 παιδιά:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• <strong>Αρχική υποχρέωση</strong> (ανάλογα με τα άτομα):</span>
+                <strong className="text-blue-700"><Fraction num="5" den="16" /></strong>
+                <span>του λογαριασμού.</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• <strong>Τελική πληρωμή</strong> (ισόποσα στις 4 οικογένειες):</span>
+                <Fraction num="1" den="4" />
+                <span>＝</span>
+                <strong className="text-emerald-700"><Fraction num="4" den="16" /></strong>
+                <span>του λογαριασμού.</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• <strong>Διαφορά (μείωση ποσού)</strong> ＝</span>
+                <Fraction num="5" den="16" />
+                <span>－</span>
+                <Fraction num="4" den="16" />
+                <span>＝</span>
+                <strong className="text-rose-700"><Fraction num="1" den="16" /></strong>
+                <span>του λογαριασμού.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 3: Υπολογισμός Ποσοστού Μείωσης */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              3. Υπολογισμός ποσοστού μείωσης ως προς την αρχική υποχρέωση:
+            </div>
+            <p className="text-slate-700">
+              Διαιρούμε τη μείωση με την <strong>αρχική υποχρέωση</strong> της οικογένειας (και όχι με το σύνολο του λογαριασμού):
+            </p>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>Ποσοστό Μείωσης ＝</span>
+                <Fraction num="Μείωση" den="Αρχική Υποχρέωση" />
+                <span>＝</span>
+                <Fraction
+                  num={<Fraction num="1" den="16" />}
+                  den={<Fraction num="5" den="16" />}
+                />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base"><Fraction num="1" den="5" /></strong>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span>Μετατροπή σε ποσοστό στα 100:</span>
+                <Fraction num="1" den="5" />
+                <span>＝</span>
+                <Fraction num="20" den="100" />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base">20%</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η οικογένεια με τα τρία παιδιά πλήρωσε <strong>20%</strong> λιγότερο σε σχέση με την αρχική της υποχρέωση (Επιλογή <strong>B</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 20,
