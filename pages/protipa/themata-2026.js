@@ -2643,7 +2643,7 @@ const QUESTIONS_2026 = [
 
         {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΔΙΑΔΡΟΜΩΝ & ΣΤΙΓΜΙΟΤΥΠΟ ΤΕΡΜΑΤΙΣΜΟΥ ΣΤΙΣ 4 ΩΡΕΣ */}
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="470" height="235" viewBox="0 0 470 235" className="select-none font-sans mx-auto block">
+          <svg width="490" height="245" viewBox="0 0 490 245" className="select-none font-sans mx-auto block">
             <defs>
               <marker id="arrow-white" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7" />
@@ -2651,56 +2651,61 @@ const QUESTIONS_2026 = [
               <marker id="arrow-black" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f172a" />
               </marker>
-              <marker id="arrow-ret" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 10 0 L 0 5 L 10 10 z" fill="#dc2626" />
-              </marker>
             </defs>
 
-            {/* ΣΗΜΕΙΑ Α (ΕΚΚΙΝΗΣΗ / ΤΕΡΜΑΤΙΣΜΟΣ) ΚΑΙ Β (ΑΝΑΣΤΡΟΦΗ ΣΤΑ 48 χλμ.) */}
-            <line x1="45" y1="20" x2="45" y2="215" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 3" />
-            <text x="45" y="14" fontSize="11" fontWeight="black" textAnchor="middle" fill="#0f172a">Αφετηρία / Τερματισμός (0 χλμ.)</text>
+            {/* ΚΑΘΕΤΕΣ ΔΙΑΚΕΚΟΜΜΕΝΕΣ ΓΡΑΜΜΕΣ ΑΦΕΤΗΡΙΑΣ & ΑΝΑΣΤΡΟΦΗΣ */}
+            <line x1="55" y1="36" x2="55" y2="230" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 3" />
+            <line x1="435" y1="36" x2="435" y2="230" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 3" />
 
-            <line x1="425" y1="20" x2="425" y2="215" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 3" />
-            <text x="425" y="14" fontSize="11" fontWeight="black" textAnchor="middle" fill="#0f172a">Αναστροφή (48 χλμ.)</text>
+            {/* ΕΠΙΚΕΦΑΛΙΔΕΣ ΣΕ 2 ΓΡΑΜΜΕΣ ΓΙΑ ΝΑ ΜΗΝ ΚΟΒΟΝΤΑΙ */}
+            <g transform="translate(55, 14)">
+              <text x="0" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">Αφετηρία / Τερματισμός</text>
+              <text x="0" y="14" fontSize="10" fontWeight="black" textAnchor="middle" fill="#64748b">(0 χλμ.)</text>
+            </g>
+
+            <g transform="translate(435, 14)">
+              <text x="0" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">Αναστροφή</text>
+              <text x="0" y="14" fontSize="10" fontWeight="black" textAnchor="middle" fill="#64748b">(48 χλμ.)</text>
+            </g>
 
             {/* 1. ΑΣΠΡΟ ΠΟΔΗΛΑΤΟ (ΣΥΝΟΛΟ 4 ΩΡΕΣ - ΤΕΡΜΑΤΙΣΜΟΣ) */}
-            <g transform="translate(0, 35)">
-              <rect x="15" y="0" width="440" height="72" rx="10" fill="#f0f9ff" stroke="#bae6fd" strokeWidth="1.5" />
+            <g transform="translate(0, 42)">
+              <rect x="15" y="0" width="460" height="74" rx="10" fill="#f0f9ff" stroke="#bae6fd" strokeWidth="1.5" />
               <text x="25" y="18" fontSize="11" fontWeight="bold" fill="#0369a1">🚲 Άσπρο Ποδήλατο (Συνολικός Χρόνος: 4 ώρες)</text>
               
               {/* Μετάβαση */}
-              <line x1="45" y1="34" x2="420" y2="34" stroke="#0284c7" strokeWidth="2.2" markerEnd="url(#arrow-white)" />
-              <text x="235" y="30" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0284c7">Μετάβαση: 24 χλμ./ω (2 ώρες)</text>
+              <line x1="55" y1="35" x2="430" y2="35" stroke="#0284c7" strokeWidth="2.2" markerEnd="url(#arrow-white)" />
+              <text x="245" y="31" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0284c7">Μετάβαση: 24 χλμ./ω (2 ώρες)</text>
 
               {/* Επιστροφή */}
-              <line x1="420" y1="54" x2="45" y2="54" stroke="#0284c7" strokeWidth="2.2" markerStart="url(#arrow-white)" />
-              <text x="235" y="50" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0284c7">Επιστροφή: 24 χλμ./ω (2 ώρες)</text>
-              <circle cx="45" cy="54" r="5" fill="#16a34a" />
-              <text x="54" y="66" fontSize="9" fontWeight="black" fill="#16a34a">Τερμάτισε!</text>
+              <line x1="430" y1="55" x2="55" y2="55" stroke="#0284c7" strokeWidth="2.2" markerStart="url(#arrow-white)" />
+              <text x="245" y="51" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0284c7">Επιστροφή: 24 χλμ./ω (2 ώρες)</text>
+              <circle cx="55" cy="55" r="5" fill="#16a34a" />
+              <text x="64" y="67" fontSize="9" fontWeight="black" fill="#16a34a">Τερμάτισε!</text>
             </g>
 
             {/* 2. ΜΑΥΡΟ ΠΟΔΗΛΑΤΟ (ΣΤΙΣ 4 ΩΡΕΣ ΥΠΟΛΕΙΠΟΝΤΑΙ 4,8 χλμ.) */}
-            <g transform="translate(0, 122)">
-              <rect x="15" y="0" width="440" height="92" rx="10" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="1.5" />
+            <g transform="translate(0, 130)">
+              <rect x="15" y="0" width="460" height="96" rx="10" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="1.5" />
               <text x="25" y="18" fontSize="11" fontWeight="bold" fill="#0f172a">🚲 Μαύρο Ποδήλατο (Θέση στις 4 ώρες)</text>
 
               {/* Μετάβαση */}
-              <line x1="45" y1="34" x2="420" y2="34" stroke="#0f172a" strokeWidth="2.2" markerEnd="url(#arrow-black)" />
-              <text x="235" y="30" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">Μετάβαση: 30 χλμ./ω (1,6 ώρες ＝ 1 ω. 36 λ.)</text>
+              <line x1="55" y1="35" x2="430" y2="35" stroke="#0f172a" strokeWidth="2.2" markerEnd="url(#arrow-black)" />
+              <text x="245" y="31" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">Μετάβαση: 30 χλμ./ω (1,6 ώρες ＝ 1 ω. 36 λ.)</text>
 
-              {/* Επιστροφή (Διανύει 43,2 χλμ., απομένουν 4,8 χλμ. -> x = 45 + 4.8 * (380/48) = 45 + 38 = 83) */}
-              <line x1="420" y1="56" x2="83" y2="56" stroke="#475569" strokeWidth="2.2" markerStart="url(#arrow-black)" />
-              <text x="250" y="52" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">Επιστροφή: 18 χλμ./ω (κάλυψε 43,2 χλμ. σε 2,4 ώρες)</text>
+              {/* Επιστροφή (Διανύει 43,2 χλμ., υπολείπονται 4,8 χλμ. -> x = 55 + 38 = 93) */}
+              <line x1="430" y1="57" x2="93" y2="57" stroke="#475569" strokeWidth="2.2" markerStart="url(#arrow-black)" />
+              <text x="260" y="53" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">Επιστροφή: 18 χλμ./ω (κάλυψε 43,2 χλμ. σε 2,4 ώρες)</text>
 
               {/* Θέση Μαύρου στις 4 ώρες */}
-              <circle cx="83" cy="56" r="5.5" fill="#0f172a" />
-              <text x="83" y="70" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#0f172a">Εδώ στις 4 ώρες</text>
+              <circle cx="93" cy="57" r="5.5" fill="#0f172a" />
+              <text x="93" y="72" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#0f172a">Εδώ στις 4 ώρες</text>
 
               {/* Κενό που υπολείπεται μέχρι τον τερματισμό (4,8 χλμ.) */}
-              <line x1="45" y1="78" x2="83" y2="78" stroke="#dc2626" strokeWidth="2.5" />
-              <text x="64" y="90" fontSize="10" fontWeight="black" textAnchor="middle" fill="#dc2626">4,8 χλμ.</text>
-              <line x1="45" y1="74" x2="45" y2="82" stroke="#dc2626" strokeWidth="2" />
-              <line x1="83" y1="74" x2="83" y2="82" stroke="#dc2626" strokeWidth="2" />
+              <line x1="55" y1="81" x2="93" y2="81" stroke="#dc2626" strokeWidth="2.5" />
+              <text x="74" y="93" fontSize="10" fontWeight="black" textAnchor="middle" fill="#dc2626">4,8 χλμ.</text>
+              <line x1="55" y1="77" x2="55" y2="85" stroke="#dc2626" strokeWidth="2" />
+              <line x1="93" y1="77" x2="93" y2="85" stroke="#dc2626" strokeWidth="2" />
             </g>
           </svg>
         </div>
