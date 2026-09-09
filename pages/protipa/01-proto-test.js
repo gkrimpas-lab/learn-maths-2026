@@ -1989,7 +1989,147 @@ const QUESTIONS = [
     prompt: 'Ο Γιώργος μπορεί να βάψει έναν μεγάλο τοίχο σε 6 ώρες, ενώ ο Δημήτρης μπορεί να βάψει τον ίδιο ακριβώς τοίχο σε 3 ώρες. Αν εργαστούν μαζί και με τον ίδιο ρυθμό, σε πόσες ώρες θα ολοκληρώσουν το βάψιμο του τοίχου;',
     options: ['1,5 ώρα', '2 ώρες', '3 ώρες', '4 ώρες', '4,5 ώρες'],
     correct: '2 ώρες',
-    explain: 'Σε 1 ώρα ο Γιώργος βάφει το 1/6 του τοίχου και ο Δημήτρης το 1/3 = 2/6. Μαζί σε 1 ώρα βάφουν 1/6 + 2/6 = 3/6 = 1/2 του τοίχου. Άρα για ολόκληρο τον τοίχο χρειάζονται ακριβώς 2 ώρες.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε την απόδοση των δύο προσώπων ανά ώρα, χωρίζοντας τον τοίχο σε <strong>6 ίσα μέρη (<Fraction num="1" den="6" />)</strong>:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: Ο ΤΟΙΧΟΣ ΧΩΡΙΣΜΕΝΟΣ ΣΕ 6 ΕΚΤΑ ΚΑΙ Η ΚΟΙΝΗ ΕΡΓΑΣΙΑ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="510" height="205" viewBox="0 0 510 205" className="select-none font-sans mx-auto block">
+            {/* 1. ΕΡΓΑΣΙΑ ΣΤΗΝ 1η ΩΡΑ */}
+            <g transform="translate(15, 12)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
+                1. Τι βάφουν μαζί στην 1η ώρα:
+              </text>
+
+              {/* Τοίχος χωρισμένος σε 6 μέρη (πλάτος 70px το καθένα -> 420px σύνολο) */}
+              <g transform="translate(0, 24)">
+                {/* 1/6 από Γιώργο */}
+                <rect x="0" y="0" width="70" height="42" rx="4" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
+                <text x="35" y="18" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Γιώργος</text>
+                <text x="35" y="32" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">1/6</text>
+
+                {/* 2/6 (1/3) από Δημήτρη */}
+                <rect x="73" y="0" width="140" height="42" rx="4" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.6" />
+                <text x="143" y="18" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">Δημήτρης (1/3 ＝ 2/6)</text>
+                <text x="143" y="32" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#166534" fontFamily="monospace">2/6</text>
+
+                {/* Τα υπόλοιπα 3/6 άβαφα */}
+                <rect x="216" y="0" width="210" height="42" rx="4" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" strokeDasharray="3 2" />
+                <text x="321" y="26" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#94a3b8">Υπόλοιπο (3/6 ＝ 1/2)</text>
+              </g>
+
+              {/* Επεξήγηση 1ης ώρας */}
+              <text x="107" y="80" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
+                Μαζί σε 1 ώρα: 1/6 ＋ 2/6 ＝ 3/6 ＝ Μισός τοίχος (1/2)
+              </text>
+            </g>
+
+            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
+            <line x1="15" y1="102" x2="495" y2="102" stroke="#e2e8f0" strokeWidth="1.2" />
+
+            {/* 2. ΣΥΝΟΛΙΚΟΣ ΧΡΟΝΟΣ ΓΙΑ ΟΛΟΚΛΗΡΟ ΤΟΝ ΤΟΙΧΟ */}
+            <g transform="translate(15, 115)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
+                2. Ολοκλήρωση σε 2 ώρες (2 μισά ＝ 1 ολόκληρος τοίχος):
+              </text>
+
+              <g transform="translate(0, 24)">
+                {/* 1η ώρα: Μισός τοίχος */}
+                <rect x="0" y="0" width="210" height="38" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
+                <text x="105" y="16" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1η Ώρα</text>
+                <text x="105" y="30" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1e40af">Βάφεται το 1/2 του τοίχου</text>
+
+                {/* 2η ώρα: Άλλος μισός τοίχος */}
+                <rect x="216" y="0" width="210" height="38" rx="6" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
+                <text x="321" y="16" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">2η Ώρα</text>
+                <text x="321" y="30" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">Βάφεται το άλλο 1/2 του τοίχου</text>
+              </g>
+
+              {/* Τελικό Badge */}
+              <g transform="translate(150, 72)">
+                <rect x="0" y="0" width="180" height="24" rx="12" fill="#16a34a" />
+                <text x="90" y="16" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                  Συνολικός Χρόνος: 2 ώρες ⭐
+                </text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Ρυθμός εργασίας ανά ώρα */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Υπολογισμός του μέρους του τοίχου που βάφει ο καθένας σε 1 ώρα:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Ο Γιώργος σε 6 ώρες βάφει όλο τον τοίχο ➔ σε 1 ώρα βάφει το:</span>
+                <strong className="text-blue-700"><Fraction num="1" den="6" /></strong>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Ο Δημήτρης σε 3 ώρες βάφει όλο τον τοίχο ➔ σε 1 ώρα βάφει το:</span>
+                <strong className="text-emerald-700"><Fraction num="1" den="3" /></strong>
+                <span>＝</span>
+                <strong className="text-emerald-700"><Fraction num="2" den="6" /></strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Κοινή εργασία σε 1 ώρα */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Υπολογισμός του μέρους που βάφουν μαζί σε 1 ώρα:
+            </div>
+            <p className="text-slate-700">
+              Προσθέτουμε τις ωριαίες αποδόσεις τους κάνοντας τα κλάσματα ομώνυμα:
+            </p>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>Μαζί σε 1 ώρα ＝</span>
+                <Fraction num="1" den="6" />
+                <span>＋</span>
+                <Fraction num="2" den="6" />
+                <span>＝</span>
+                <Fraction num="3" den="6" />
+                <span>＝</span>
+                <strong className="text-blue-700 text-base"><Fraction num="1" den="2" /></strong>
+                <span>του τοίχου.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 3: Συνολικός χρόνος */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              3. Εύρεση του συνολικού χρόνου για ολόκληρο τον τοίχο:
+            </div>
+            <p className="text-slate-700">
+              Αφού σε 1 ώρα βάφουν το μισό (<Fraction num="1" den="2" />) τοίχο, για ολόκληρο τον τοίχο (<Fraction num="2" den="2" />) θα χρειαστούν:
+            </p>
+
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>Συνολικός Χρόνος ＝ 1 :</span>
+                <Fraction num="1" den="2" />
+                <span>＝ 1 · 2 ＝</span>
+                <strong className="text-emerald-700 text-base font-black">2 ώρες</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, εργαζόμενοι μαζί θα ολοκληρώσουν το βάψιμο του τοίχου σε <strong>2 ώρες</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 16,
