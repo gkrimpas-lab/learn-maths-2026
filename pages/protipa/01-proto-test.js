@@ -2542,7 +2542,7 @@ const QUESTIONS = [
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Άρα πριν το ταξίδι υπήρχαν: Τελικό Νερό ＋ Κατανάλωση ＝</span>
+                <span>• Άρα πριν το ταξίδι υπήρχαν: Τελική Βενζίνη ＋ Κατανάλωση ＝</span>
                 <Fraction num="4" den="8" />
                 <span>＋</span>
                 <Fraction num="1" den="8" />
