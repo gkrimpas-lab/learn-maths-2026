@@ -11,7 +11,101 @@ const QUESTIONS = [
     prompt: 'Ποια είναι η τιμή της παρακάτω αριθμητικής παράστασης;\n(13 : 2 − 2³ : 2) : 0,25 − 1⁵',
     options: ['9', '4', '1,5', '10'],
     correct: '9',
-    explain: '2³ = 8. Έχουμε: 13 : 2 = 6,5 και 8 : 2 = 4. Άρα (6,5 − 4) = 2,5. Έπειτα: 2,5 : 0,25 = 10 (αφού 2,5 : 1/4 = 2,5 · 4 = 10). Τέλος, 1⁵ = 1, άρα 10 − 1 = 9.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Εφαρμόζουμε την <strong>προτεραιότητα των πράξεων</strong> (δυνάμεις ➔ πράξεις εντός παρενθέσεων ➔ πολλαπλασιασμοί/διαιρέσεις ➔ προσθέσεις/αφαιρέσεις):
+        </p>
+
+        {/* 1ος ΤΡΟΠΟΣ: ΜΕ ΔΕΚΑΔΙΚΟΥΣ ΑΡΙΘΜΟΥΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 1ος Τρόπος (Βήμα προς βήμα με δεκαδικούς αριθμούς)
+          </div>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div>
+              • <strong>Υπολογισμός δυνάμεων:</strong>
+              <div className="pl-3 pt-0.5 text-slate-700">
+                2³ ＝ 2 · 2 · 2 ＝ <strong>8</strong> &nbsp;και&nbsp; 1⁵ ＝ <strong>1</strong>
+              </div>
+            </div>
+
+            <div className="pt-1 border-t border-slate-200">
+              • <strong>Πράξεις μέσα στην παρένθεση:</strong>
+              <div className="pl-3 pt-0.5 space-y-1 text-slate-800">
+                <div>13 : 2 ＝ <strong>6,5</strong></div>
+                <div>2³ : 2 ＝ 8 : 2 ＝ <strong>4</strong></div>
+                <div>(13 : 2 － 2³ : 2) ＝ 6,5 － 4 ＝ <strong>2,5</strong></div>
+              </div>
+            </div>
+
+            <div className="pt-1 border-t border-slate-200">
+              • <strong>Διαίρεση με το 0,25 και τελική αφαίρεση:</strong>
+              <div className="pl-3 pt-0.5 space-y-1">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>2,5 : 0,25 ＝ 2,5 · 4 ＝ <strong>10</strong></span>
+                  <span className="text-slate-500 font-sans text-xs">(αφού η διαίρεση με το 0,25 ισοδυναμεί με τετραπλασιασμό)</span>
+                </div>
+                <div className="pt-0.5 text-emerald-700 font-bold text-base">
+                  10 － 1⁵ ＝ 10 － 1 ＝ 9
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 2ος ΤΡΟΠΟΣ: ΜΕ ΚΛΑΣΜΑΤΑ */}
+        <div className="bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-200/80 space-y-2">
+          <div className="font-sans font-bold text-emerald-950 text-sm border-b border-emerald-200 pb-1">
+            💡 2ος Τρόπος (Υπολογισμός με κλάσματα)
+          </div>
+
+          <p className="text-slate-800">
+            Γράφουμε όλους τους όρους σε μορφή κλασμάτων:
+          </p>
+
+          <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Παρένθεση:</span>
+              <Fraction num="13" den="2" />
+              <span>－</span>
+              <Fraction num="8" den="2" />
+              <span>＝</span>
+              <Fraction num="13 － 8" den="2" />
+              <span>＝</span>
+              <strong className="text-blue-700"><Fraction num="5" den="2" /></strong>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
+              <span>• Παρατηρούμε ότι: 0,25 ＝</span>
+              <Fraction num="1" den="4" />
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
+              <span>• Διαίρεση:</span>
+              <Fraction num="5" den="2" />
+              <span>:</span>
+              <Fraction num="1" den="4" />
+              <span>＝</span>
+              <Fraction num="5" den="2" />
+              <span>· 4 ＝</span>
+              <Fraction num="20" den="2" />
+              <span>＝ <strong>10</strong></span>
+            </div>
+
+            <div className="pt-1 border-t border-slate-100 flex items-center gap-2 flex-wrap">
+              <span>• Τελικό αποτέλεσμα: 10 － 1 ＝</span>
+              <strong className="text-emerald-700 text-base">9</strong>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η τιμή της αριθμητικής παράστασης είναι <strong>9</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 2,
