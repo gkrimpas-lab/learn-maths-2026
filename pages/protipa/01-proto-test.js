@@ -841,7 +841,118 @@ const QUESTIONS = [
     prompt: 'Ο μέσος όρος 6 συνεχόμενων άρτιων (ζυγών) φυσικών αριθμών είναι 15. Ποιος είναι ο μεγαλύτερος από αυτούς τους έξι αριθμούς;',
     options: ['16', '18', '20', '22'],
     correct: '20',
-    explain: 'Το άθροισμα των 6 αριθμών είναι 6 · 15 = 90. Αν ο πρώτος είναι α, οι αριθμοί είναι α, α+2, α+4, α+6, α+8, α+10. Άθροισμα: 6α + 30 = 90 ➔ 6α = 60 ➔ α = 10. Οι αριθμοί είναι 10, 12, 14, 16, 18, 20. Ο μεγαλύτερος είναι το 20.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Επειδή οι 6 άρτιοι αριθμοί είναι <strong>συνεχόμενοι</strong>, διαφέρουν μεταξύ τους κατά <strong>2</strong> και είναι συμμετρικά κατανεμημένοι γύρω από τον μέσο όρο τους (<strong>15</strong>).
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΣΥΜΜΕΤΡΙΑ ΤΩΝ 6 ΑΡΤΙΩΝ ΓΥΡΩ ΑΠΟ ΤΟΝ ΜΕΣΟ ΟΡΟ 15 */}
+        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="490" height="155" viewBox="0 0 490 155" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="numline-arr-7" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
+              </marker>
+            </defs>
+
+            {/* Κεντρικός άξονας αριθμογραμμής */}
+            <line x1="20" y1="75" x2="470" y2="75" stroke="#334155" strokeWidth="2" markerEnd="url(#numline-arr-7)" />
+
+            {/* ΚΕΝΤΡΙΚΟΣ ΜΕΣΟΣ ΟΡΟΣ = 15 */}
+            <g transform="translate(245, 75)">
+              <line x1="0" y1="-28" x2="0" y2="28" stroke="#dc2626" strokeWidth="2" strokeDasharray="3 2" />
+              <circle cx="0" cy="0" r="4.5" fill="#dc2626" />
+              <rect x="-38" y="-56" width="76" height="24" rx="6" fill="#fef2f2" stroke="#fca5a5" strokeWidth="1.2" />
+              <text x="0" y="-40" fontSize="11" fontWeight="black" textAnchor="middle" fill="#b91c1c">Μ.Ο. ＝ 15</text>
+              <text x="0" y="44" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#dc2626">Κέντρο Συμμετρίας</text>
+            </g>
+
+            {/* ΟΙ 6 ΑΡΤΙΟΙ ΑΡΙΘΜΟΙ (10, 12, 14, 16, 18, 20) */}
+            {[
+              { val: 10, x: 55, label: '1ος (μικρότερος)' },
+              { val: 12, x: 120, label: '2ος' },
+              { val: 14, x: 185, label: '3ος' },
+              { val: 16, x: 305, label: '4ος' },
+              { val: 18, x: 370, label: '5ος' },
+              { val: 20, x: 435, label: '6ος (μεγαλύτερος)', isMax: true }
+            ].map((item) => (
+              <g key={item.val} transform={`translate(${item.x}, 75)`}>
+                <line x1="0" y1="-8" x2="0" y2="8" stroke={item.isMax ? '#16a34a' : '#475569'} strokeWidth={item.isMax ? '2.5' : '1.8'} />
+                <circle cx="0" cy="0" r={item.isMax ? '6' : '4.5'} fill={item.isMax ? '#16a34a' : '#3b82f6'} stroke={item.isMax ? '#14532d' : '#1d4ed8'} strokeWidth="1.2" />
+                <text x="0" y="-14" fontSize={item.isMax ? '13' : '12'} fontWeight={item.isMax ? '900' : 'bold'} textAnchor="middle" fill={item.isMax ? '#15803d' : '#0f172a'}>
+                  {item.val}
+                </text>
+                <text x="0" y="24" fontSize="8.5" fontWeight={item.isMax ? 'bold' : 'normal'} textAnchor="middle" fill={item.isMax ? '#166534' : '#64748b'}>
+                  {item.label}
+                </text>
+              </g>
+            ))}
+
+            {/* ΕΠΙΣΗΜΑΝΣΗ ΣΤΟΝ ΜΕΓΑΛΥΤΕΡΟ (20) */}
+            <g transform="translate(435, 22)">
+              <rect x="-24" y="0" width="48" height="18" rx="4" fill="#dcfce7" stroke="#86efac" strokeWidth="1" />
+              <text x="0" y="13" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#166534">Στόχος ⭐</text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Αλγεβρικά με εξίσωση αθροίσματος)
+            </div>
+            <p className="text-slate-700">
+              Αφού ο μέσος όρος των 6 αριθμών είναι 15, το συνολικό τους άθροισμα ισούται με:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>Μέσος Όρος ＝</span>
+                <Fraction num="Άθροισμα 6 αριθμών" den="6" />
+                <span>＝ 15 ➔ <strong>Άθροισμα ＝ 6 · 15 ＝ 90</strong></span>
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Αν συμβολίσουμε τον πρώτο (μικρότερο) άρτιο με <strong>α</strong>, οι 6 διαδοχικοί άρτιοι είναι:
+              </div>
+              <div className="font-bold text-slate-800">
+                α, &nbsp;α ＋ 2, &nbsp;α ＋ 4, &nbsp;α ＋ 6, &nbsp;α ＋ 8, &nbsp;α ＋ 10
+              </div>
+              <div className="pt-1 border-t border-slate-200 space-y-1">
+                <div>(α) ＋ (α ＋ 2) ＋ (α ＋ 4) ＋ (α ＋ 6) ＋ (α ＋ 8) ＋ (α ＋ 10) ＝ 90</div>
+                <div>6α ＋ 30 ＝ 90</div>
+                <div>6α ＝ 90 － 30 ＝ 60 ➔ <strong>α ＝ 10</strong></div>
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
+                Ο μεγαλύτερος είναι: α ＋ 10 ＝ 10 ＋ 10 ＝ <span className="text-base text-emerald-700 font-black">20</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Συμμετρία γύρω από τον μέσο όρο)
+            </div>
+            <p className="text-slate-700">
+              Σε μια σειρά διαδοχικών αριθμών με σταθερό βήμα, ο <strong>μέσος όρος</strong> βρίσκεται ακριβώς στη μέση.
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• Το 15 βρίσκεται ακριβώς ανάμεσα στον 3ο και τον 4ο άρτιο αριθμό.</div>
+              <div>• Οι δύο μεσαίοι άρτιοι είναι το <strong>14</strong> (15 － 1) και το <strong>16</strong> (15 ＋ 1).</div>
+              <div className="pt-1 border-t border-slate-200">
+                Προχωρώντας κατά 2 προς τα εμπρός: <strong>16 ➔ 18 ➔ 20</strong> (ο 6ος και μεγαλύτερος).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο μεγαλύτερος από τους έξι αριθμούς είναι το <strong>20</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 8,
