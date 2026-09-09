@@ -2622,7 +2622,7 @@ const QUESTIONS_2026 = [
       </div>
     )
   },
-  {
+ {
     id: 20,
     officialNumber: 40,
     group: 'ΟΜΑΔΑ Β (5 Επιλογές)',
@@ -2635,7 +2635,171 @@ const QUESTIONS_2026 = [
       { key: 'E', label: 'Το άσπρο θα φτάσει πρώτο και απέχει 4,8 χλμ. από το μαύρο.', raw: 'white4.8' }
     ],
     correctRaw: 'white4.8',
-    explain: 'Το άσπρο κάνει 48/24 + 48/24 = 2 + 2 = 4 ώρες. Το μαύρο χρειάζεται 48/30 = 1,6 ώρες για να πάει. Στις υπόλοιπες 2,4 ώρες επιστρέφει με 18 χλμ./ώρα, διανύοντας 2,4 · 18 = 43,2 χλμ. Απομένουν 48 − 43,2 = 4,8 χλμ. Άρα το άσπρο φτάνει πρώτο και το μαύρο απέχει 4,8 χλμ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε τη διαδρομή (μετάβαση και επιστροφή, απόσταση <strong>48 χλμ.</strong> ανά κατεύθυνση) για κάθε ποδήλατο:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΔΙΑΔΡΟΜΩΝ & ΣΤΙΓΜΙΟΤΥΠΟ ΤΕΡΜΑΤΙΣΜΟΥ ΣΤΙΣ 4 ΩΡΕΣ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="470" height="235" viewBox="0 0 470 235" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="arrow-white" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7" />
+              </marker>
+              <marker id="arrow-black" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f172a" />
+              </marker>
+              <marker id="arrow-ret" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 10 0 L 0 5 L 10 10 z" fill="#dc2626" />
+              </marker>
+            </defs>
+
+            {/* ΣΗΜΕΙΑ Α (ΕΚΚΙΝΗΣΗ / ΤΕΡΜΑΤΙΣΜΟΣ) ΚΑΙ Β (ΑΝΑΣΤΡΟΦΗ ΣΤΑ 48 χλμ.) */}
+            <line x1="45" y1="20" x2="45" y2="215" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 3" />
+            <text x="45" y="14" fontSize="11" fontWeight="black" textAnchor="middle" fill="#0f172a">Αφετηρία / Τερματισμός (0 χλμ.)</text>
+
+            <line x1="425" y1="20" x2="425" y2="215" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 3" />
+            <text x="425" y="14" fontSize="11" fontWeight="black" textAnchor="middle" fill="#0f172a">Αναστροφή (48 χλμ.)</text>
+
+            {/* 1. ΑΣΠΡΟ ΠΟΔΗΛΑΤΟ (ΣΥΝΟΛΟ 4 ΩΡΕΣ - ΤΕΡΜΑΤΙΣΜΟΣ) */}
+            <g transform="translate(0, 35)">
+              <rect x="15" y="0" width="440" height="72" rx="10" fill="#f0f9ff" stroke="#bae6fd" strokeWidth="1.5" />
+              <text x="25" y="18" fontSize="11" fontWeight="bold" fill="#0369a1">🚲 Άσπρο Ποδήλατο (Συνολικός Χρόνος: 4 ώρες)</text>
+              
+              {/* Μετάβαση */}
+              <line x1="45" y1="34" x2="420" y2="34" stroke="#0284c7" strokeWidth="2.2" markerEnd="url(#arrow-white)" />
+              <text x="235" y="30" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0284c7">Μετάβαση: 24 χλμ./ω (2 ώρες)</text>
+
+              {/* Επιστροφή */}
+              <line x1="420" y1="54" x2="45" y2="54" stroke="#0284c7" strokeWidth="2.2" markerStart="url(#arrow-white)" />
+              <text x="235" y="50" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0284c7">Επιστροφή: 24 χλμ./ω (2 ώρες)</text>
+              <circle cx="45" cy="54" r="5" fill="#16a34a" />
+              <text x="54" y="66" fontSize="9" fontWeight="black" fill="#16a34a">Τερμάτισε!</text>
+            </g>
+
+            {/* 2. ΜΑΥΡΟ ΠΟΔΗΛΑΤΟ (ΣΤΙΣ 4 ΩΡΕΣ ΥΠΟΛΕΙΠΟΝΤΑΙ 4,8 χλμ.) */}
+            <g transform="translate(0, 122)">
+              <rect x="15" y="0" width="440" height="92" rx="10" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="1.5" />
+              <text x="25" y="18" fontSize="11" fontWeight="bold" fill="#0f172a">🚲 Μαύρο Ποδήλατο (Θέση στις 4 ώρες)</text>
+
+              {/* Μετάβαση */}
+              <line x1="45" y1="34" x2="420" y2="34" stroke="#0f172a" strokeWidth="2.2" markerEnd="url(#arrow-black)" />
+              <text x="235" y="30" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">Μετάβαση: 30 χλμ./ω (1,6 ώρες ＝ 1 ω. 36 λ.)</text>
+
+              {/* Επιστροφή (Διανύει 43,2 χλμ., απομένουν 4,8 χλμ. -> x = 45 + 4.8 * (380/48) = 45 + 38 = 83) */}
+              <line x1="420" y1="56" x2="83" y2="56" stroke="#475569" strokeWidth="2.2" markerStart="url(#arrow-black)" />
+              <text x="250" y="52" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">Επιστροφή: 18 χλμ./ω (κάλυψε 43,2 χλμ. σε 2,4 ώρες)</text>
+
+              {/* Θέση Μαύρου στις 4 ώρες */}
+              <circle cx="83" cy="56" r="5.5" fill="#0f172a" />
+              <text x="83" y="70" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#0f172a">Εδώ στις 4 ώρες</text>
+
+              {/* Κενό που υπολείπεται μέχρι τον τερματισμό (4,8 χλμ.) */}
+              <line x1="45" y1="78" x2="83" y2="78" stroke="#dc2626" strokeWidth="2.5" />
+              <text x="64" y="90" fontSize="10" fontWeight="black" textAnchor="middle" fill="#dc2626">4,8 χλμ.</text>
+              <line x1="45" y1="74" x2="45" y2="82" stroke="#dc2626" strokeWidth="2" />
+              <line x1="83" y1="74" x2="83" y2="82" stroke="#dc2626" strokeWidth="2" />
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Χρόνος Άσπρου */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Συνολικός χρόνος διαδρομής του άσπρου ποδηλάτου:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Μετάβαση ＝</span>
+                <Fraction num="48" den="24" />
+                <span>＝ 2 ώρες</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Επιστροφή ＝</span>
+                <Fraction num="48" den="24" />
+                <span>＝ 2 ώρες</span>
+              </div>
+              <div className="pt-1 border-t border-slate-200 font-bold text-blue-700">
+                Συνολικός χρόνος άσπρου ＝ 2 ＋ 2 ＝ 4 ώρες (τερματίζει πρώτο)
+              </div>
+            </div>
+          </div>
+
+          {/* 1ος ΤΡΟΠΟΣ */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900">
+              🔷 1ος Τρόπος (Υπολογισμός απόστασης στις 4 ώρες με δεκαδικούς)
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Χρόνος μετάβασης μαύρου ＝</span>
+                <Fraction num="48" den="30" />
+                <span>＝ <strong>1,6 ώρες</strong></span>
+              </div>
+              <div>• Υπόλοιπος χρόνος μέχρι τις 4 ώρες που τερματίζει το άσπρο: 4 － 1,6 ＝ <strong>2,4 ώρες</strong></div>
+              <div>• Απόσταση που διανύει το μαύρο στην επιστροφή: 2,4 · 18 ＝ <strong>43,2 χλμ.</strong></div>
+              <div className="pt-1 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
+                <span>• Απόσταση που του απομένει μέχρι τη γραμμή τερματισμού: 48 － 43,2 ＝</span>
+                <strong className="text-emerald-700 text-base">4,8 χλμ.</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος ΤΡΟΠΟΣ */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900">
+              🔷 2ος Τρόπος (Υπολογισμός με ώρες, λεπτά και διαφορά χρόνου)
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Μετάβαση μαύρου:</span>
+                <Fraction num="48" den="30" />
+                <span>＝ 1</span>
+                <Fraction num="18" den="30" />
+                <span>ώρα ＝ 1</span>
+                <Fraction num="36" den="60" />
+                <span>ώρα ➔ <strong>1 ώρα και 36 λεπτά</strong></span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Επιστροφή μαύρου:</span>
+                <Fraction num="48" den="18" />
+                <span>＝ 2</span>
+                <Fraction num="12" den="18" />
+                <span>＝ 2</span>
+                <Fraction num="2" den="3" />
+                <span>＝ 2</span>
+                <Fraction num="40" den="60" />
+                <span>ώρα ➔ <strong>2 ώρες και 40 λεπτά</strong></span>
+              </div>
+              <div className="pt-1 border-t border-slate-200">
+                • Συνολικός χρόνος μαύρου ＝ 1 ω. 36 λ. ＋ 2 ω. 40 λ. ＝ <strong>4 ώρες και 16 λεπτά</strong>
+              </div>
+              <div className="text-slate-700 font-sans text-xs pt-0.5">
+                Όταν το άσπρο τερματίζει (στις 4 ώρες), το μαύρο χρειάζεται ακόμη <strong>16 λεπτά</strong> πορείας με 18 χλμ./ώρα:
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>Απόσταση που υπολείπεται ＝ 18 ·</span>
+                <Fraction num="16" den="60" />
+                <span>＝</span>
+                <Fraction num="18 · 16" den="60" />
+                <span>＝</span>
+                <Fraction num="288" den="60" />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base">4,8 χλμ.</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, <strong>το άσπρο θα φτάσει πρώτο και απέχει 4,8 χλμ. από το μαύρο</strong> (Επιλογή <strong>E</strong>).
+        </p>
+      </div>
+    )
   }
 ];
 
