@@ -446,7 +446,128 @@ const QUESTIONS = [
     prompt: 'Ένα ζευγάρι παπούτσια κόστιζε αρχικά 80€. Στις εκπτώσεις αγοράστηκε στην τιμή των 56€. Ποιο ήταν το ποσοστό (%) της έκπτωσης που έγινε στην αρχική τιμή;',
     options: ['24%', '30%', '40%', '70%'],
     correct: '30%',
-    explain: 'Το ποσό της έκπτωσης είναι 80 − 56 = 24€. Το ποσοστό έκπτωσης επί της αρχικής τιμής είναι 24 / 80 = 3 / 10 = 30%.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Υπολογίζουμε πρώτα το <strong>ποσό της έκπτωσης σε ευρώ</strong> και στη συνέχεια βρίσκουμε τι μέρος (ποσοστό) της <strong>αρχικής τιμής</strong> αποτελεί:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΗΣ ΑΡΧΙΚΗΣ ΤΙΜΗΣ ΣΕ 10 ΙΣΑ ΜΕΡΗ (ΤΩΝ 8€) */}
+        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="490" height="175" viewBox="0 0 490 175" className="select-none font-sans mx-auto block">
+            {/* ΕΠΙΚΕΦΑΛΙΔΑ ΣΥΝΟΛΙΚΗΣ ΑΡΧΙΚΗΣ ΤΙΜΗΣ */}
+            <g transform="translate(20, 10)">
+              <rect x="0" y="0" width="450" height="24" rx="12" fill="#0f172a" />
+              <text x="225" y="16" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                Αρχική Τιμή: 80€ (10 ίσα τμήματα των 8€ το καθένα)
+              </text>
+            </g>
+
+            {/* ΜΠΑΡΑ ΔΙΑΙΡΕΣΗΣ ΣΕ 10 ΙΣΑ ΤΜΗΜΑΤΑ (45px το καθένα) */}
+            <g transform="translate(20, 46)">
+              {/* 7 τμήματα πληρωμής (56€) */}
+              {Array.from({ length: 7 }).map((_, idx) => (
+                <g key={`paid-${idx}`} transform={`translate(${idx * 45}, 0)`}>
+                  <rect x="0" y="0" width="43" height="42" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
+                  <text x="21.5" y="25" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8" fontFamily="monospace">8€</text>
+                </g>
+              ))}
+
+              {/* 3 τμήματα έκπτωσης (24€) */}
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <g key={`disc-${idx}`} transform={`translate(${(idx + 7) * 45}, 0)`}>
+                  <rect x="0" y="0" width="43" height="42" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" strokeDasharray="3 2" />
+                  <text x="21.5" y="25" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#dc2626" fontFamily="monospace">8€</text>
+                </g>
+              ))}
+            </g>
+
+            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΕΣ ΕΤΙΚΕΤΕΣ */}
+            <g transform="translate(20, 100)">
+              {/* Τελική τιμή (56€) */}
+              <g transform="translate(0, 0)">
+                <path d="M 0 5 L 0 0 L 313 0 L 313 5" fill="none" stroke="#2563eb" strokeWidth="1.8" />
+                <rect x="46" y="10" width="220" height="26" rx="8" fill="#dbeafe" stroke="#bfdbfe" strokeWidth="1" />
+                <text x="156" y="27" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1e40af">
+                  Τιμή με έκπτωση: 56€ (70%)
+                </text>
+              </g>
+
+              {/* Έκπτωση (24€) */}
+              <g transform="translate(315, 0)">
+                <path d="M 0 5 L 0 0 L 135 0 L 135 5" fill="none" stroke="#dc2626" strokeWidth="1.8" />
+                <rect x="2" y="10" width="131" height="26" rx="8" fill="#fee2e2" stroke="#fca5a5" strokeWidth="1" />
+                <text x="67.5" y="27" fontSize="11" fontWeight="black" textAnchor="middle" fill="#b91c1c">
+                  Έκπτωση: 24€ (30%)
+                </text>
+              </g>
+            </g>
+
+            {/* ΣΥΜΠΕΡΑΣΜΑ ΠΟΣΟΣΤΟΥ */}
+            <g transform="translate(20, 146)">
+              <text x="225" y="14" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
+                3 από τα 10 μέρη είναι έκπτωση ➔ 3/10 ＝ 30%
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Ποσό έκπτωσης σε ευρώ */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900">
+              1. Υπολογισμός του ποσού της έκπτωσης:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>Ποσό Έκπτωσης ＝ Αρχική Τιμή － Τιμή Πώλησης</div>
+              <div className="pt-0.5">
+                Ποσό Έκπτωσης ＝ 80 － 56 ＝ <strong className="text-rose-700 font-bold">24€</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Ποσοστό επί της αρχικής τιμής */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Υπολογισμός του ποσοστού έκπτωσης:
+            </div>
+            <p className="text-slate-700">
+              Συγκρίνουμε το ποσό της έκπτωσης (24€) με την <strong>αρχική τιμή</strong> (80€):
+            </p>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>• Κλάσμα έκπτωσης ＝</span>
+                <Fraction num="Ποσό Έκπτωσης" den="Αρχική Τιμή" />
+                <span>＝</span>
+                <Fraction num="24" den="80" />
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Απλοποιούμε διαιρώντας με το 8:</span>
+                <Fraction num="24 : 8" den="80 : 8" />
+                <span>＝</span>
+                <strong className="text-blue-700 font-bold"><Fraction num="3" den="10" /></strong>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Μετατροπή σε ποσοστό στα 100:</span>
+                <Fraction num="3" den="10" />
+                <span>＝</span>
+                <Fraction num="30" den="100" />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base font-black">30%</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το ποσοστό της έκπτωσης στην αρχική τιμή ήταν <strong>30%</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 5,
