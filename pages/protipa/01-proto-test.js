@@ -4,6 +4,17 @@ import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
+const Fraction = ({ num, den }) => (
+  <span className="inline-flex flex-col items-center justify-center align-middle mx-1 text-center leading-none text-[0.9em]">
+    <span className="border-b border-current px-1 pb-[1px] block w-full text-center">
+      {num}
+    </span>
+    <span className="pt-[1px] block w-full text-center">
+      {den}
+    </span>
+  </span>
+);
+
 const QUESTIONS = [
   {
     id: 1,
@@ -312,17 +323,6 @@ export default function ProtoTestProsomoiosisPage() {
   const [timerEnabled, setTimerEnabled] = useState(true);
 
   const timerRef = useRef(null);
-
-  const Fraction = ({ num, den }) => (
-  <span className="inline-flex flex-col items-center justify-center align-middle mx-1 text-center leading-none text-[0.9em]">
-    <span className="border-b border-current px-1 pb-[1px] block w-full text-center">
-      {num}
-    </span>
-    <span className="pt-[1px] block w-full text-center">
-      {den}
-    </span>
-  </span>
-);
 
   // Ανάγνωση του query param `timer` (0 ή 1)
   useEffect(() => {
