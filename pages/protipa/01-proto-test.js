@@ -1535,7 +1535,135 @@ const QUESTIONS = [
     prompt: 'Ο πληθυσμός των μελισσών σε μια πρότυπη κυψέλη αυξάνεται κατά 20% κάθε μήνα. Αν σήμερα η κυψέλη έχει 5.000 μέλισσες, πόσες μέλισσες θα έχει μετά από ακριβώς δύο μήνες;',
     options: ['6.000', '7.000', '7.200', '7.500', '8.000'],
     correct: '7.200',
-    explain: '1ος μήνας: αύξηση 20% στο 5.000 = 1.000 ➔ 6.000 μέλισσες. 2ος μήνας: αύξηση 20% στο 6.000 = 1.200 ➔ 6.000 + 1.200 = 7.200 μέλισσες.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Η αύξηση κατά <strong>20%</strong> υπολογίζεται <strong>διαδοχικά</strong> σε κάθε μήνα επί του πληθυσμού που έχει διαμορφωθεί (σύνθετη αύξηση):
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΔΙΑΔΟΧΙΚΗ ΑΥΞΗΣΗ ΠΛΗΘΥΣΜΟΥ ΣΕ 2 ΜΗΝΕΣ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="490" height="180" viewBox="0 0 490 180" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="arr-growth" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+              </marker>
+            </defs>
+
+            {/* 1. ΑΡΧΙΚΟΣ ΠΛΗΘΥΣΜΟΣ (ΣΗΜΕΡΑ) */}
+            <g transform="translate(15, 65)">
+              <rect x="0" y="0" width="115" height="75" rx="10" fill="#f8fafc" stroke="#64748b" strokeWidth="1.8" />
+              <text x="57.5" y="24" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">Σήμερα</text>
+              <text x="57.5" y="50" fontSize="15" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">5.000</text>
+              <text x="57.5" y="64" fontSize="9.5" textAnchor="middle" fill="#64748b">μέλισσες</text>
+            </g>
+
+            {/* ΤΟΞΟ 1ου ΜΗΝΑ (+20% -> +1.000) */}
+            <g transform="translate(130, 0)">
+              <path d="M 10 95 C 25 50, 45 50, 60 95" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#arr-growth)" />
+              <rect x="10" y="26" width="60" height="24" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
+              <text x="40" y="38" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋20%</text>
+              <text x="40" y="47" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#2563eb">(＋1.000)</text>
+              <text x="40" y="8" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">1ος Μήνας</text>
+            </g>
+
+            {/* 2. ΠΛΗΘΥΣΜΟΣ ΣΤΟ ΤΕΛΟΣ ΤΟΥ 1ου ΜΗΝΑ */}
+            <g transform="translate(205, 65)">
+              <rect x="0" y="0" width="115" height="75" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
+              <text x="57.5" y="24" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Μετά 1 μήνα</text>
+              <text x="57.5" y="50" fontSize="15" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">6.000</text>
+              <text x="57.5" y="64" fontSize="9.5" textAnchor="middle" fill="#2563eb">μέλισσες</text>
+            </g>
+
+            {/* ΤΟΞΟ 2ου ΜΗΝΑ (+20% επί των 6.000 -> +1.200) */}
+            <g transform="translate(320, 0)">
+              <path d="M 10 95 C 25 50, 45 50, 60 95" fill="none" stroke="#16a34a" strokeWidth="2" markerEnd="url(#arr-growth)" />
+              <rect x="10" y="26" width="60" height="24" rx="6" fill="#f0fdf4" stroke="#bbf7d0" strokeWidth="1" />
+              <text x="40" y="38" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#15803d">＋20%</text>
+              <text x="40" y="47" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#16a34a">(＋1.200)</text>
+              <text x="40" y="8" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">2ος Μήνας</text>
+            </g>
+
+            {/* 3. ΤΕΛΙΚΟΣ ΠΛΗΘΥΣΜΟΣ (ΜΕΤΑ ΑΠΟ 2 ΜΗΝΕΣ) */}
+            <g transform="translate(395, 60)">
+              <rect x="0" y="0" width="125" height="85" rx="12" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.2" />
+              <text x="62.5" y="24" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">Μετά 2 μήνες</text>
+              <text x="62.5" y="52" fontSize="17" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">7.200 ⭐</text>
+              <text x="62.5" y="69" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#166534">μέλισσες</text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Βήμα προς βήμα ανά μήνα με κλάσματα)
+            </div>
+            <p className="text-slate-700">
+              Η αύξηση κατά 20% αντιστοιχεί στο ένα πέμπτο: <span className="font-mono font-bold">20% ＝ <Fraction num="20" den="100" /> ＝ <Fraction num="1" den="5" /></span>.
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div>
+                <div className="font-sans font-bold text-slate-900">• 1ος Μήνας:</div>
+                <div className="pl-3 space-y-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span>Αύξηση ＝</span>
+                    <Fraction num="1" den="5" />
+                    <span>· 5.000 ＝ <strong>1.000 μέλισσες</strong></span>
+                  </div>
+                  <div>Πληθυσμός στο τέλος του 1ου μήνα ＝ 5.000 ＋ 1.000 ＝ <strong>6.000 μέλισσες</strong></div>
+                </div>
+              </div>
+
+              <div className="pt-1.5 border-t border-slate-200">
+                <div className="font-sans font-bold text-slate-900">• 2ος Μήνας:</div>
+                <div className="pl-3 space-y-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span>Αύξηση ＝</span>
+                    <Fraction num="1" den="5" />
+                    <span>· 6.000 ＝ <strong>1.200 μέλισσες</strong></span>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                    <span>Τελικός πληθυσμός ＝ 6.000 ＋ 1.200 ＝</span>
+                    <strong className="text-emerald-700 text-base">7.200 μέλισσες</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Με συντελεστή μεταβολής)
+            </div>
+            <p className="text-slate-700">
+              Κάθε μήνα ο πληθυσμός γίνεται το 120% του προηγούμενου (<span className="font-mono font-bold">1 ＋ 0,20 ＝ 1,20</span> ή <span className="font-mono font-bold"><Fraction num="6" den="5" /></span>):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>Τελικός Πληθυσμός ＝ 5.000 ·</span>
+                <Fraction num="6" den="5" />
+                <span>·</span>
+                <Fraction num="6" den="5" />
+                <span>＝ 5.000 ·</span>
+                <Fraction num="36" den="25" />
+              </div>
+              <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                <span>＝ 200 · 36 ＝</span>
+                <strong className="text-emerald-700 text-base">7.200 μέλισσες</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, μετά από δύο μήνες η κυψέλη θα έχει <strong>7.200 μέλισσες</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 13,
