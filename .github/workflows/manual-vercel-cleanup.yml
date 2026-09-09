@@ -16,7 +16,7 @@ jobs:
 
           # Uses your exact project name: learn-maths-2026
           RESPONSE=$(curl -s -X GET \
-            "https://api.vercel.com/v6/deployments?projectId=learn-maths-2026&until=${UNTIL_TS}&limit=100" \
+            "https://api.vercel.com/v6/deployments?projectId=learn-maths-2026&until=${UNTIL_TS}&limit=1000" \
             -H "Authorization: Bearer ${TOKEN}")
 
           echo "Raw API response preview:"
