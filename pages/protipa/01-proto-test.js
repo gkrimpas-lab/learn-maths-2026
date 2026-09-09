@@ -575,7 +575,112 @@ const QUESTIONS = [
     prompt: 'Το τριπλάσιο ενός άγνωστου αριθμού x, αυξημένο κατά το 1/3 του ίδιου αριθμού, ισούται με 20. Ποια από τις παρακάτω εξισώσεις περιγράφει σωστά το πρόβλημα;',
     options: ['3 · x − x : 3 = 20', '3 · x + x : 3 = 20', '3 · (x + x : 3) = 20', 'x : 3 + 3 = 20'],
     correct: '3 · x + x : 3 = 20',
-    explain: 'Τριπλάσιο του x: 3 · x. Αυξημένο κατά το ένα τρίτο του: + x : 3. Άρα: 3 · x + x : 3 = 20.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Μεταφράζουμε βήμα-βήμα τη λεκτική διατύπωση του προβλήματος σε μαθηματική εξίσωση με άγνωστο το <strong>x</strong>:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΑΝΑΛΥΣΗ ΤΩΝ ΟΡΩΝ ΤΗΣ ΕΞΙΣΩΣΗΣ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="460" height="150" viewBox="0 0 460 150" className="select-none font-sans mx-auto block">
+            {/* 1ος Όρος: 3 · x */}
+            <g transform="translate(15, 15)">
+              <rect x="0" y="0" width="125" height="70" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
+              <text x="62.5" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Τριπλάσιο του x</text>
+              <text x="62.5" y="50" fontSize="18" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">3 · x</text>
+            </g>
+
+            {/* Σύμβολο πρόσθεσης (+) */}
+            <g transform="translate(152, 50)">
+              <text x="0" y="0" fontSize="24" fontWeight="black" textAnchor="middle" fill="#0f172a">＋</text>
+              <text x="0" y="22" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#64748b">«αυξημένο κατά»</text>
+            </g>
+
+            {/* 2ος Όρος: 1/3 του x (x : 3) */}
+            <g transform="translate(165, 15)">
+              <rect x="0" y="0" width="135" height="70" rx="10" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.8" />
+              <text x="67.5" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#15803d">Το 1/3 του αριθμού</text>
+              <text x="67.5" y="50" fontSize="18" fontWeight="black" textAnchor="middle" fill="#14532d" fontFamily="monospace">x : 3</text>
+            </g>
+
+            {/* Σύμβολο ισότητας (=) */}
+            <g transform="translate(315, 50)">
+              <text x="0" y="0" fontSize="24" fontWeight="black" textAnchor="middle" fill="#0f172a">＝</text>
+              <text x="0" y="22" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#64748b">«ισούται με»</text>
+            </g>
+
+            {/* Αποτέλεσμα: 20 */}
+            <g transform="translate(330, 15)">
+              <rect x="0" y="0" width="115" height="70" rx="10" fill="#fff7ed" stroke="#ea580c" strokeWidth="1.8" />
+              <text x="57.5" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#c2410c">Τελική τιμή</text>
+              <text x="57.5" y="50" fontSize="20" fontWeight="black" textAnchor="middle" fill="#9a3412" fontFamily="monospace">20</text>
+            </g>
+
+            {/* Κάτω ενιαία εξίσωση */}
+            <g transform="translate(15, 102)">
+              <rect x="0" y="0" width="430" height="34" rx="8" fill="#0f172a" />
+              <text x="215" y="22" fontSize="14" fontWeight="black" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
+                3 · x ＋ x : 3 ＝ 20
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΗ ΑΠΟΚΩΔΙΚΟΠΟΙΗΣΗ ΤΩΝ ΟΡΩΝ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              Αντιστοίχιση των εκφράσεων της εκφώνησης:
+            </div>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-sans text-slate-600 w-44 sm:w-52">• «Το τριπλάσιο του x»:</span>
+                <strong className="text-blue-700">3 · x</strong>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span className="font-sans text-slate-600 w-44 sm:w-52">• «αυξημένο κατά»:</span>
+                <strong className="text-slate-900 text-base">＋</strong>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span className="font-sans text-slate-600 w-44 sm:w-52">• «το 1/3 του ίδιου αριθμού»:</span>
+                <span className="flex items-center gap-1">
+                  <Fraction num="1" den="3" />
+                  <span>· x ＝</span>
+                  <Fraction num="x" den="3" />
+                  <span>＝</span>
+                  <strong className="text-emerald-700">x : 3</strong>
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span className="font-sans text-slate-600 w-44 sm:w-52">• «ισούται με 20»:</span>
+                <strong className="text-orange-700">＝ 20</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-1">
+            <div className="font-sans font-bold text-emerald-950 text-xs">
+              💡 Σύνθεση της τελικής εξίσωσης:
+            </div>
+            <div className="text-base font-black text-emerald-800 pt-0.5">
+              3 · x ＋ x : 3 ＝ 20
+            </div>
+            <p className="text-slate-600 font-sans text-xs pt-1">
+              (Η παρένθεση της επιλογής 3 · (x + x : 3) = 20 θα σήμαινε τριπλασιασμό ολόκληρου του αθροίσματος, κάτι που δεν αναφέρεται στην εκφώνηση).
+            </p>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η εξίσωση που περιγράφει σωστά το πρόβλημα είναι η <strong>3 · x + x : 3 = 20</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 6,
