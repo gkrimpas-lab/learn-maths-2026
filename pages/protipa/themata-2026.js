@@ -2021,13 +2021,13 @@ const QUESTIONS_2026 = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Το αρχικό μεγάλο ισόπλευρο τρίγωνο χωρίζεται σε <strong>9 ίσα μικρά ισόπλευρα τρίγωνα</strong> (έστω εμβαδού <strong>Ε</strong> το καθένα). Παρατηρούμε πώς αναδιατάσσονται τα τμήματα που τέμνονται από τις διαγώνιες ευθείες:
+          Το μεγάλο ισόπλευρο τρίγωνο αποτελείται από <strong>9 ίσα μικρά ισόπλευρα τρίγωνα</strong>. Παρατηρούμε τη γεωμετρία του σκιασμένου μέρους στα παρακάτω 3 βήματα:
         </p>
 
-        {/* ΔΙΠΛΟ SVG ΣΧΗΜΑ: 1. ΑΡΧΙΚΟ ΣΚΙΑΣΜΕΝΟ | 2. ΑΝΑΛΥΣΗ ΜΕ ΧΡΩΜΑΤΑ (ΖΕΥΓΗ ΠΟΥ ΕΝΩΝΟΝΤΑΙ) */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+        {/* 3 ΣΧΗΜΑΤΑ: 1. ΑΡΧΙΚΟ | 2. ΧΡΩΜΑΤΙΣΜΕΝΑ ΤΜΗΜΑΤΑ | 3. 4 ΟΛΟΚΛΗΡΩΜΕΝΑ ΤΡΙΓΩΝΑ */}
+        <div className="p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
           {(() => {
-            // Συντεταγμένες κορυφών πλέγματος 9 τριγώνων (y0: κορυφή, y1: 1ο επίπεδο, y2: 2ο επίπεδο, y3: βάση)
+            // Συντεταγμένες των 10 κόμβων του πλέγματος των 9 τριγώνων
             const P = {
               top: [80, 14],
               r1_0: [57, 54],   r1_1: [103, 54],
@@ -2037,134 +2037,148 @@ const QUESTIONS_2026 = [
 
             const pt = (p) => `${p[0]},${p[1]}`;
 
-            return (
-              <svg width="450" height="195" viewBox="0 0 450 195" className="select-none font-sans mx-auto block">
-                {/* 1ο ΣΧΗΜΑ: ΑΡΧΙΚΟ ΣΚΙΑΣΜΕΝΟ */}
-                <g transform="translate(15, 10)">
-                  <text x="80" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                    1. Αρχικό Σκιασμένο Μέρος
-                  </text>
+            // Κοινό περίγραμμα και γραμμές πλέγματος
+            const renderGridLines = () => (
+              <>
+                <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r1_1[0]} y2={P.r1_1[1]} stroke="#1e293b" strokeWidth="1.6" />
+                <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r2_2[0]} y2={P.r2_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+                <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+                <line x1={P.r1_1[0]} y1={P.r1_1[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
+                <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
+                <line x1={P.r2_2[0]} y1={P.r2_2[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+              </>
+            );
 
-                  <g transform="translate(0, 10)">
-                    {/* Λευκό τρίγωνο φόντου */}
+            // Κόμβοι (κυκλάκια)
+            const renderNodes = () => (
+              <>
+                {[P.top, P.r1_0, P.r1_1, P.r2_0, P.r2_1, P.r2_2, P.r3_0, P.r3_1, P.r3_2, P.r3_3].map(([cx, cy], idx) => (
+                  <circle key={`nd-${idx}`} cx={cx} cy={cy} r="4" fill="#64748b" stroke="#0f172a" strokeWidth="1.4" />
+                ))}
+              </>
+            );
+
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 min-w-[480px]">
+                {/* 1ο ΣΧΗΜΑ: ΑΡΧΙΚΟ ΣΚΙΑΣΜΕΝΟ */}
+                <div className="flex flex-col items-center bg-slate-50/70 p-2.5 rounded-xl border border-slate-200">
+                  <span className="font-bold text-slate-800 text-[11px] mb-1">
+                    1. Αρχικό Σχήμα
+                  </span>
+                  <svg width="150" height="145" viewBox="0 0 160 145" className="select-none font-sans">
+                    {/* Μεγάλο τρίγωνο */}
                     <polygon points={`${pt(P.top)} ${pt(P.r3_0)} ${pt(P.r3_3)}`} fill="#ffffff" stroke="#1e293b" strokeWidth="2.2" />
 
-                    {/* Σκιασμένα μέρη */}
-                    {/* Πάνω σκιασμένο πολύγωνο */}
+                    {/* Αρχικό σκιασμένο μέρος */}
                     <polygon points={`${pt(P.r1_0)} ${pt(P.r1_1)} ${pt(P.r3_0)}`} fill="#94a3b8" />
-                    {/* Κάτω σκιασμένο πολύγωνο */}
                     <polygon points={`${pt(P.r3_0)} ${pt(P.r3_2)} ${pt(P.r2_2)}`} fill="#94a3b8" />
 
-                    {/* Εσωτερικό πλέγμα γραμμών */}
-                    <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r1_1[0]} y2={P.r1_1[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r2_2[0]} y2={P.r2_2[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r1_1[0]} y1={P.r1_1[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r2_2[0]} y1={P.r2_2[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    {renderGridLines()}
 
-                    {/* Οι δύο διαγώνιες γραμμές */}
+                    {/* 2 διαγώνιες */}
                     <line x1={P.r3_0[0]} y1={P.r3_0[1]} x2={P.r1_1[0]} y2={P.r1_1[1]} stroke="#0f172a" strokeWidth="2.2" />
                     <line x1={P.r3_0[0]} y1={P.r3_0[1]} x2={P.r2_2[0]} y2={P.r2_2[1]} stroke="#0f172a" strokeWidth="2.2" />
 
-                    {/* Κόμβοι (κουκκίδες) */}
-                    {[P.top, P.r1_0, P.r1_1, P.r2_0, P.r2_1, P.r2_2, P.r3_0, P.r3_1, P.r3_2, P.r3_3].map(([cx, cy], idx) => (
-                      <circle key={`p1-${idx}`} cx={cx} cy={cy} r="4" fill="#64748b" stroke="#0f172a" strokeWidth="1.4" />
-                    ))}
-                  </g>
-                </g>
+                    {renderNodes()}
+                  </svg>
+                  <span className="text-[10px] font-medium text-slate-600 mt-1">Σκιασμένο μέρος</span>
+                </div>
 
-                {/* ΒΕΛΟΣ ΜΕΤΑΒΑΣΗΣ */}
-                <g transform="translate(196, 95)">
-                  <line x1="0" y1="0" x2="20" y2="0" stroke="#0f172a" strokeWidth="2" />
-                  <polygon points="20,-4 28,0 20,4" fill="#0f172a" />
-                </g>
-
-                {/* 2ο ΣΧΗΜΑ: ΑΝΑΛΥΣΗ ΜΕ ΤΑ ΧΡΩΜΑΤΑ ΤΩΝ ΣΥΜΠΛΗΡΩΜΑΤΙΚΩΝ ΤΜΗΜΑΤΩΝ */}
-                <g transform="translate(245, 10)">
-                  <text x="80" y="0" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                    2. Σύνθεση σε 4 Πλήρη Τρίγωνα
-                  </text>
-
-                  <g transform="translate(0, 10)">
+                {/* 2ο ΣΧΗΜΑ: ΤΑ 4 ΧΡΩΜΑΤΙΣΤΑ ΤΜΗΜΑΤΑ ΠΡΟΣ ΜΕΤΑΦΟΡΑ */}
+                <div className="flex flex-col items-center bg-slate-50/70 p-2.5 rounded-xl border border-slate-200">
+                  <span className="font-bold text-slate-800 text-[11px] mb-1">
+                    2. Εντοπισμός Τμημάτων
+                  </span>
+                  <svg width="150" height="145" viewBox="0 0 160 145" className="select-none font-sans">
                     <polygon points={`${pt(P.top)} ${pt(P.r3_0)} ${pt(P.r3_3)}`} fill="#ffffff" stroke="#1e293b" strokeWidth="2.2" />
 
-                    {/* 1. Ακέραια γκρι τρίγωνα (2 πλήρη τρίγωνα: 1ο και 2ο) */}
-                    {/* Τρίγωνο 2ου επιπέδου αριστερά */}
-                    <polygon points={`${pt(P.r1_0)} ${pt(P.r2_0)} ${pt(P.r2_1)}`} fill="#94a3b8" />
-                    {/* Τρίγωνο κάτω βάσης αριστερά */}
-                    <polygon points={`${pt(P.r3_0)} ${pt(P.r3_1)} ${pt(P.r2_1)}`} fill="#94a3b8" />
+                    {/* Κυρίως γκρι σκιασμένα μέρη */}
+                    <polygon points={`${pt(P.r1_0)} ${pt(P.r1_1)} ${pt(P.r3_0)}`} fill="#94a3b8" />
+                    <polygon points={`${pt(P.r3_0)} ${pt(P.r3_2)} ${pt(P.r2_2)}`} fill="#94a3b8" />
 
-                    {/* 2. Κόκκινο ζεύγος (συμπληρώνει το 3ο τρίγωνο μαζί με το πράσινο) */}
-                    {/* Κόκκινο κάτω-αριστερά */}
-                    <polygon points={`${pt(P.r3_0)} ${pt(P.r2_0)} ${pt(P.r2_1)}`} fill="#ef4444" fillOpacity="0.85" />
-                    {/* Κόκκινο πάνω διαγώνιο */}
-                    <polygon points={`${pt(P.r1_1)} ${pt(P.r2_1)} ${pt(P.r1_0)}`} fill="#ef4444" fillOpacity="0.85" />
+                    {/* 1. Κόκκινο τμήμα (πάνω αριστερά της διαγωνίου) */}
+                    <polygon points={`${pt(P.r3_0)} ${pt(P.r2_0)} 57,94`} fill="#dc2626" />
 
-                    {/* 3. Πράσινο ζεύγος */}
-                    <polygon points={`${pt(P.r2_0)} ${pt(P.r2_1)} ${pt(P.r3_0)}`} fill="#22c55e" fillOpacity="0.85" />
-                    <polygon points={`${pt(P.r2_1)} ${pt(P.r1_1)} ${pt(P.r2_2)}`} fill="#22c55e" fillOpacity="0.85" />
+                    {/* 2. Πράσινο τμήμα (πάνω από τη γραμμή επιπέδου 2) */}
+                    <polygon points={`${pt(P.r2_0)} ${pt(P.r2_1)} 57,94`} fill="#16a34a" />
 
-                    {/* 4. Γαλάζιο ζεύγος (συμπληρώνει το 4ο τρίγωνο) */}
-                    <polygon points={`${pt(P.r3_0)} ${pt(P.r3_1)} ${pt(P.r2_1)}`} fill="#38bdf8" fillOpacity="0.85" />
-                    <polygon points={`${pt(P.r2_1)} ${pt(P.r2_2)} ${pt(P.r3_2)}`} fill="#38bdf8" fillOpacity="0.85" />
+                    {/* 3. Γαλάζιο τμήμα (κάτω κατά μήκος της βάσης) */}
+                    <polygon points={`${pt(P.r3_0)} ${pt(P.r3_1)} 57,114`} fill="#0284c7" />
 
-                    {/* 5. Μωβ ζεύγος */}
-                    <polygon points={`${pt(P.r3_1)} ${pt(P.r2_1)} ${pt(P.r3_2)}`} fill="#a855f7" fillOpacity="0.85" />
-                    <polygon points={`${pt(P.r2_2)} ${pt(P.r3_2)} ${pt(P.r3_3)}`} fill="#a855f7" fillOpacity="0.85" />
+                    {/* 4. Μωβ τμήμα */}
+                    <polygon points={`${pt(P.r3_1)} ${pt(P.r2_1)} 57,114`} fill="#9333ea" />
 
-                    {/* Πλέγμα γραμμών */}
-                    <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r1_1[0]} y2={P.r1_1[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r2_2[0]} y2={P.r2_2[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r1_0[0]} y1={P.r1_0[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r1_1[0]} y1={P.r1_1[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r2_0[0]} y1={P.r2_0[1]} x2={P.r3_1[0]} y2={P.r3_1[1]} stroke="#1e293b" strokeWidth="1.6" />
-                    <line x1={P.r2_2[0]} y1={P.r2_2[1]} x2={P.r3_2[0]} y2={P.r3_2[1]} stroke="#1e293b" strokeWidth="1.6" />
+                    {renderGridLines()}
 
-                    {/* Διαγώνιες */}
+                    {/* 2 διαγώνιες */}
                     <line x1={P.r3_0[0]} y1={P.r3_0[1]} x2={P.r1_1[0]} y2={P.r1_1[1]} stroke="#0f172a" strokeWidth="2.2" />
                     <line x1={P.r3_0[0]} y1={P.r3_0[1]} x2={P.r2_2[0]} y2={P.r2_2[1]} stroke="#0f172a" strokeWidth="2.2" />
 
-                    {/* Κόμβοι */}
-                    {[P.top, P.r1_0, P.r1_1, P.r2_0, P.r2_1, P.r2_2, P.r3_0, P.r3_1, P.r3_2, P.r3_3].map(([cx, cy], idx) => (
-                      <circle key={`p2-${idx}`} cx={cx} cy={cy} r="4" fill="#64748b" stroke="#0f172a" strokeWidth="1.4" />
-                    ))}
-                  </g>
-                </g>
-              </svg>
+                    {renderNodes()}
+                  </svg>
+                  <span className="text-[10px] font-bold text-blue-700 mt-1">4 χρωματιστά κομμάτια</span>
+                </div>
+
+                {/* 3ο ΣΧΗΜΑ: ΑΝΑΣΥΝΘΕΣΗ ΣΕ 4 ΟΛΟΚΛΗΡΩΜΕΝΑ ΤΡΙΓΩΝΑ */}
+                <div className="flex flex-col items-center bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-300">
+                  <span className="font-bold text-emerald-900 text-[11px] mb-1">
+                    3. 4 Πλήρη Τρίγωνα
+                  </span>
+                  <svg width="150" height="145" viewBox="0 0 160 145" className="select-none font-sans">
+                    <polygon points={`${pt(P.top)} ${pt(P.r3_0)} ${pt(P.r3_3)}`} fill="#ffffff" stroke="#1e293b" strokeWidth="2.2" />
+
+                    {/* Τα 4 πλήρη ισόπλευρα τρίγωνα χρωματισμένα γκρι */}
+                    {/* 1ο Τρίγωνο: Επίπεδο 2, αριστερά (δείχνει προς τα πάνω) */}
+                    <polygon points={`${pt(P.r1_0)} ${pt(P.r2_0)} ${pt(P.r2_1)}`} fill="#64748b" />
+                    {/* 2ο Τρίγωνο: Επίπεδο 2, κέντρο (δείχνει προς τα κάτω) */}
+                    <polygon points={`${pt(P.r1_0)} ${pt(P.r1_1)} ${pt(P.r2_1)}`} fill="#64748b" />
+                    {/* 3ο Τρίγωνο: Επίπεδο 3, κέντρο (δείχνει προς τα πάνω) */}
+                    <polygon points={`${pt(P.r2_1)} ${pt(P.r3_1)} ${pt(P.r3_2)}`} fill="#64748b" />
+                    {/* 4ο Τρίγωνο: Επίπεδο 3, δεξιά (δείχνει προς τα πάνω) */}
+                    <polygon points={`${pt(P.r2_2)} ${pt(P.r3_2)} ${pt(P.r3_3)}`} fill="#64748b" />
+
+                    {renderGridLines()}
+                    {renderNodes()}
+
+                    {/* Αρίθμηση 1, 2, 3, 4 μέσα στα τρίγωνα */}
+                    <text x="57" y="84" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">1</text>
+                    <text x="80" y="68" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">2</text>
+                    <text x="80" y="122" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">3</text>
+                    <text x="126" y="122" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">4</text>
+                  </svg>
+                  <span className="text-[10px] font-bold text-emerald-800 mt-1">4 από τα 9 τρίγωνα (4/9)</span>
+                </div>
+              </div>
             );
           })()}
         </div>
 
-        {/* ΑΝΑΛΥΣΗ ΚΑΙ ΣΥΛΛΟΓΙΣΜΟΣ */}
+        {/* ΑΝΑΛΥΤΙΚΗ ΜΑΘΗΜΑΤΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
         <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
           <p className="text-slate-800">
-            Παρατηρώντας τα χρωματισμένα κομμάτια στο 2ο σχήμα, βλέπουμε ότι τα επιμέρους τμήματα συνδυάζονται ανά ζεύγη σχηματίζοντας ακέραια μικρά τρίγωνα:
+            Μετακινώντας κατάλληλα τα 4 μικρά χρωματιστά κομμάτια του 2ου σχήματος:
           </p>
 
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-            <div>• <strong>2 ολόκληρα τρίγωνα</strong> είναι πλήρως σκιασμένα (γκρι).</div>
-            <div>• Τα <strong>κόκκινα</strong> και <strong>πράσινα</strong> τμήματα ενώνονται και συμπληρώνουν <strong>1 ολόκληρο τρίγωνο</strong>.</div>
-            <div>• Τα <strong>γαλάζια</strong> και <strong>μωβ</strong> τμήματα ενώνονται και συμπληρώνουν ακόμη <strong>1 ολόκληρο τρίγωνο</strong>.</div>
-
-            <div className="pt-2 border-t border-slate-200 font-bold text-slate-950">
-              Συνολικό εμβαδόν σκιασμένου μέρους ＝ 2 ＋ 1 ＋ 1 ＝ 4 μικρά τρίγωνα
+            <div>• Το <strong>κόκκινο</strong> και το <strong>πράσινο</strong> κομμάτι συμπληρώνουν το κενό του 1ου τριγώνου.</div>
+            <div>• Το <strong>γαλάζιο</strong> και το <strong>μωβ</strong> κομμάτι συμπληρώνουν τα κενά των υπόλοιπων τριγώνων.</div>
+            <div className="pt-1 text-slate-700 font-sans font-medium">
+              Στο 3ο σχήμα φαίνεται καθαρά ότι το συνολικό εμβαδόν του χρωματισμένου μέρους ισοδυναμεί ακριβώς με <strong>4 ολόκληρα μικρά ισόπλευρα τρίγωνα</strong>.
             </div>
           </div>
 
           <div className="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-1.5">
-            <div>• Συνολικό εμβαδόν μεγάλου τριγώνου ＝ <strong>9 τρίγωνα</strong></div>
-            <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+            <div>• Εμβαδόν χρωματισμένου μέρους ＝ <strong>4</strong></div>
+            <div>• Συνολικό εμβαδόν μεγάλου τριγώνου ＝ <strong>9</strong></div>
+            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-emerald-200">
               <span>Ζητούμενο κλάσμα ＝</span>
-              <Fraction num="Σκιασμένο Μέρος" den="Μεγάλο Τρίγωνο" />
-              <span>＝</span>
               <strong className="text-emerald-700 text-base"><Fraction num="4" den="9" /></strong>
             </div>
           </div>
         </div>
 
         <p className="pt-1">
-          Επομένως, το χρωματισμένο μέρος αντιστοιχεί στα <strong><Fraction num="4" den="9" /></strong> του μεγάλου τριγώνου (Επιλογή <strong>Γ</strong>).
+          Επομένως, το χρωματισμένο μέρος είναι τα <strong><Fraction num="4" den="9" /></strong> του μεγάλου τριγώνου (Επιλογή <strong>Γ</strong>).
         </p>
       </div>
     )
