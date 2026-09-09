@@ -1997,14 +1997,14 @@ const QUESTIONS = [
 
         {/* SVG ΣΧΗΜΑ: Ο ΤΟΙΧΟΣ ΧΩΡΙΣΜΕΝΟΣ ΣΕ 6 ΕΚΤΑ ΚΑΙ Η ΚΟΙΝΗ ΕΡΓΑΣΙΑ */}
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="205" viewBox="0 0 510 205" className="select-none font-sans mx-auto block">
+          <svg width="510" height="235" viewBox="0 0 510 235" className="select-none font-sans mx-auto block">
             {/* 1. ΕΡΓΑΣΙΑ ΣΤΗΝ 1η ΩΡΑ */}
             <g transform="translate(15, 12)">
               <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
                 1. Τι βάφουν μαζί στην 1η ώρα:
               </text>
 
-              {/* Τοίχος χωρισμένος σε 6 μέρη (πλάτος 70px το καθένα -> 420px σύνολο) */}
+              {/* Τοίχος χωρισμένος σε 6 μέρη (πλάτος 426px) */}
               <g transform="translate(0, 24)">
                 {/* 1/6 από Γιώργο */}
                 <rect x="0" y="0" width="70" height="42" rx="4" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
@@ -2021,17 +2021,17 @@ const QUESTIONS = [
                 <text x="321" y="26" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#94a3b8">Υπόλοιπο (3/6 ＝ 1/2)</text>
               </g>
 
-              {/* Επεξήγηση 1ης ώρας */}
-              <text x="107" y="80" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
+              {/* Επεξήγηση 1ης ώρας κεντραρισμένη σε ολόκληρο το πλάτος του τοίχου */}
+              <text x="213" y="82" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0369a1">
                 Μαζί σε 1 ώρα: 1/6 ＋ 2/6 ＝ 3/6 ＝ Μισός τοίχος (1/2)
               </text>
             </g>
 
             {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
-            <line x1="15" y1="102" x2="495" y2="102" stroke="#e2e8f0" strokeWidth="1.2" />
+            <line x1="15" y1="106" x2="495" y2="106" stroke="#e2e8f0" strokeWidth="1.2" />
 
             {/* 2. ΣΥΝΟΛΙΚΟΣ ΧΡΟΝΟΣ ΓΙΑ ΟΛΟΚΛΗΡΟ ΤΟΝ ΤΟΙΧΟ */}
-            <g transform="translate(15, 115)">
+            <g transform="translate(15, 118)">
               <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
                 2. Ολοκλήρωση σε 2 ώρες (2 μισά ＝ 1 ολόκληρος τοίχος):
               </text>
@@ -2048,17 +2048,16 @@ const QUESTIONS = [
                 <text x="321" y="30" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">Βάφεται το άλλο 1/2 του τοίχου</text>
               </g>
 
-              {/* Τελικό Badge */}
-              <g transform="translate(150, 72)">
-                <rect x="0" y="0" width="180" height="24" rx="12" fill="#16a34a" />
-                <text x="90" y="16" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">
+              {/* Τελικό Badge με άνετο περιθώριο και πλήρη ορατότητα */}
+              <g transform="translate(123, 72)">
+                <rect x="0" y="0" width="180" height="26" rx="13" fill="#16a34a" />
+                <text x="90" y="17" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
                   Συνολικός Χρόνος: 2 ώρες ⭐
                 </text>
               </g>
             </g>
           </svg>
         </div>
-
         {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
         <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
           {/* Βήμα 1: Ρυθμός εργασίας ανά ώρα */}
