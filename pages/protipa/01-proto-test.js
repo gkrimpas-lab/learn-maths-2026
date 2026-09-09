@@ -1669,9 +1669,177 @@ const QUESTIONS = [
     id: 13,
     group: 'ΟΜΑΔΑ Β (5 επιλογες)',
     prompt: 'Έχουμε τρία ίδια ποτήρια. Το 1ο ποτήρι είναι κατά 3/4 γεμάτο με νερό και το 2ο είναι κατά 1/2 γεμάτο με νερό. Αδειάζουμε όλο το νερό που περιείχε αρχικά το 3ο ποτήρι μέσα στο 1ο και στο 2ο ποτήρι, με αποτέλεσμα αυτά τα δύο να γεμίσουν τελείως. Τι μέρος του 3ου ποτηριού ήταν γεμάτο με νερό αρχικά;',
-    options: ['1/4', '3/8', '1/2', '3/4', '7/8'],
+    options: [
+      <Fraction num="1" den="4" />,
+      <Fraction num="3" den="8" />,
+      <Fraction num="1" den="2" />,
+      <Fraction num="3" den="4" />,
+      <Fraction num="7" den="8" />
+    ],
     correct: '3/4',
-    explain: 'Για να γεμίσει το 1ο ποτήρι χρειάζεται 1 − 3/4 = 1/4. Για να γεμίσει το 2ο ποτήρι χρειάζεται 1 − 1/2 = 1/2 = 2/4. Συνολικό νερό που έδωσε το 3ο ποτήρι: 1/4 + 2/4 = 3/4.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Επειδή τα ποτήρια είναι <strong>πανομοιότυπα</strong>, εκφράζουμε τη χωρητικότητά τους σε <strong>τέταρτα (<Fraction num="1" den="4" />)</strong> για να υπολογίσουμε πόσο νερό έλειπε από το 1ο και το 2ο ποτήρι ώστε να γεμίσουν εντελώς.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΤΑ 3 ΠΟΤΗΡΙΑ ΚΑΙ ΤΟ ΝΕΡΟ ΠΟΥ ΜΕΤΑΦΕΡΘΗΚΕ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="510" height="210" viewBox="0 0 510 210" className="select-none font-sans mx-auto block">
+            <defs>
+              {/* Επαναχρησιμοποιούμενο τμήμα τετάρτου ποτηριού */}
+              <g id="glass-quarter-empty">
+                <rect x="0" y="0" width="70" height="25" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
+              </g>
+              <g id="glass-quarter-water">
+                <rect x="0" y="0" width="70" height="25" fill="#38bdf8" fillOpacity="0.85" stroke="#cbd5e1" strokeWidth="1" />
+                <text x="35" y="16" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">1/4</text>
+              </g>
+              <g id="glass-quarter-needed">
+                <rect x="0" y="0" width="70" height="25" fill="#fef3c7" stroke="#f59e0b" strokeWidth="1.2" strokeDasharray="3 2" />
+                <text x="35" y="16" fontSize="9" fontWeight="black" textAnchor="middle" fill="#b45309" fontFamily="monospace">+1/4</text>
+              </g>
+              <marker id="transfer-arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7" />
+              </marker>
+            </defs>
+
+            {/* 1ο ΠΟΤΗΡΙ */}
+            <g transform="translate(25, 15)">
+              <text x="35" y="12" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">1ο Ποτήρι</text>
+              <g transform="translate(0, 20)">
+                {/* 1ο τέταρτο (χρειάζεται) */}
+                <use href="#glass-quarter-needed" x="0" y="0" />
+                {/* 3 τέταρτα αρχικό νερό */}
+                <use href="#glass-quarter-water" x="0" y="25" />
+                <use href="#glass-quarter-water" x="0" y="50" />
+                <use href="#glass-quarter-water" x="0" y="75" />
+                {/* Περίγραμμα ποτηριού */}
+                <path d="M 0 0 L 0 100 Q 0 105 5 105 L 65 105 Q 70 105 70 100 L 70 0" fill="none" stroke="#334155" strokeWidth="2" />
+              </g>
+              <rect x="-5" y="132" width="80" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
+              <text x="35" y="147" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Λείπει: 1/4</text>
+            </g>
+
+            {/* ΣΥΜΒΟΛΟ ΠΡΟΣΘΕΣΗΣ */}
+            <g transform="translate(125, 80)">
+              <text x="0" y="0" fontSize="22" fontWeight="black" textAnchor="middle" fill="#64748b">＋</text>
+            </g>
+
+            {/* 2ο ΠΟΤΗΡΙ */}
+            <g transform="translate(155, 15)">
+              <text x="35" y="12" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">2ο Ποτήρι</text>
+              <g transform="translate(0, 20)">
+                {/* 2 τέταρτα χρειάζονται */}
+                <use href="#glass-quarter-needed" x="0" y="0" />
+                <use href="#glass-quarter-needed" x="0" y="25" />
+                {/* 2 τέταρτα (1/2) αρχικό νερό */}
+                <use href="#glass-quarter-water" x="0" y="50" />
+                <use href="#glass-quarter-water" x="0" y="75" />
+                {/* Περίγραμμα ποτηριού */}
+                <path d="M 0 0 L 0 100 Q 0 105 5 105 L 65 105 Q 70 105 70 100 L 70 0" fill="none" stroke="#334155" strokeWidth="2" />
+              </g>
+              <rect x="-5" y="132" width="80" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
+              <text x="35" y="147" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Λείπουν: 2/4</text>
+            </g>
+
+            {/* ΒΕΛΟΣ ΠΟΥ ΔΕΙΧΝΕΙ ΤΗ ΣΥΝΟΛΙΚΗ ΠΡΟΣΦΟΡΑ ΑΠΟ ΤΟ 3ο */}
+            <g transform="translate(255, 75)">
+              <line x1="45" y1="0" x2="5" y2="0" stroke="#0284c7" strokeWidth="2.2" markerEnd="url(#transfer-arr)" />
+              <text x="25" y="-10" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0284c7">Έδωσε</text>
+              <text x="25" y="18" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#0369a1">1/4 + 2/4</text>
+            </g>
+
+            {/* 3ο ΠΟΤΗΡΙ (ΑΡΧΙΚΟ ΠΕΡΙΕΧΟΜΕΝΟ) */}
+            <g transform="translate(335, 15)">
+              <text x="45" y="12" fontSize="11" fontWeight="black" textAnchor="middle" fill="#15803d">3ο Ποτήρι (Αρχικά)</text>
+              <g transform="translate(10, 20)">
+                {/* 1 κενό τέταρτο πάνω */}
+                <use href="#glass-quarter-empty" x="0" y="0" />
+                {/* 3 γεμάτα τέταρτα (το νερό που άδειασε) */}
+                <use href="#glass-quarter-water" x="0" y="25" />
+                <use href="#glass-quarter-water" x="0" y="50" />
+                <use href="#glass-quarter-water" x="0" y="75" />
+                {/* Περίγραμμα ποτηριού */}
+                <path d="M 0 0 L 0 100 Q 0 105 5 105 L 65 105 Q 70 105 70 100 L 70 0" fill="none" stroke="#16a34a" strokeWidth="2.4" />
+              </g>
+
+              {/* Badge αρχικής ποσότητας 3ου ποτηριού */}
+              <rect x="-10" y="130" width="110" height="26" rx="8" fill="#dcfce7" stroke="#86efac" strokeWidth="1.2" />
+              <text x="45" y="147" fontSize="11" fontWeight="900" textAnchor="middle" fill="#166534">
+                Αρχικά: 3/4 ⭐
+              </text>
+            </g>
+
+            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΟ ΠΛΑΙΣΙΟ */}
+            <g transform="translate(25, 175)">
+              <rect x="0" y="0" width="455" height="26" rx="8" fill="#0f172a" />
+              <text x="227.5" y="17" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                Συνολικό νερό που έδωσε το 3ο ποτήρι: 1/4 (στο 1ο) ＋ 2/4 (στο 2ο) ＝ 3/4
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Πόσο νερό λείπει από το 1ο και το 2ο */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Υπολογισμός του κενού χώρου στο 1ο και στο 2ο ποτήρι:
+            </div>
+            <p className="text-slate-700">
+              Για να γεμίσει πλήρως ένα ποτήρι, το περιεχόμενό του πρέπει να φτάσει τη μονάδα (1 ολόκληρο ποτήρι ή <Fraction num="4" den="4" />):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Στο 1ο ποτήρι έλειπαν: 1 －</span>
+                <Fraction num="3" den="4" />
+                <span>＝</span>
+                <strong className="text-blue-700"><Fraction num="1" den="4" /></strong>
+                <span>του ποτηριού.</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Στο 2ο ποτήρι έλειπαν: 1 －</span>
+                <Fraction num="1" den="2" />
+                <span>＝</span>
+                <Fraction num="1" den="2" />
+                <span>＝</span>
+                <strong className="text-blue-700"><Fraction num="2" den="4" /></strong>
+                <span>του ποτηριού.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Άθροισμα νερού που μεταφέρθηκε */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Συνολική ποσότητα νερού που περιείχε αρχικά το 3ο ποτήρι:
+            </div>
+            <p className="text-slate-700">
+              Εφόσον αδειάσαμε <strong>όλο το νερό</strong> του 3ου ποτηριού για να συμπληρώσουμε τα κενά των άλλων δύο, το αρχικό του περιεχόμενο ισούται ακριβώς με το άθροισμα των δύο ποσοτήτων:
+            </p>
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>Αρχικό νερό 3ου ＝</span>
+                <Fraction num="1" den="4" />
+                <span>＋</span>
+                <Fraction num="2" den="4" />
+                <span>＝</span>
+                <Fraction num="1 ＋ 2" den="4" />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base"><Fraction num="3" den="4" /></strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το 3ο ποτήρι ήταν αρχικά γεμάτο κατά τα <strong><Fraction num="3" den="4" /></strong> του όγκου του.
+        </p>
+      </div>
+    )
   },
   {
     id: 14,
