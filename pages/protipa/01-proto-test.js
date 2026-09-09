@@ -1393,7 +1393,141 @@ const QUESTIONS = [
     prompt: 'Για την αγορά 6 ίδιων τετραδίων και 4 ίδιων στυλό πληρώσαμε συνολικά 24€. Αν αγοράζαμε 6 ίδια τετράδια και 7 ίδια στυλό θα πληρώναμε συνολικά 33€. Πόσα ευρώ κοστίζει το ένα τετράδιο;',
     options: ['1,5€', '2€', '2,5€', '3€', '4€'],
     correct: '2€',
-    explain: 'Η διαφορά στα έξοδα οφείλεται στα 7 − 4 = 3 επιπλέον στυλό: 33 − 24 = 9€. Άρα το 1 στυλό κοστίζει 9 : 3 = 3€. Τα 4 στυλό κοστίζουν 4 · 3 = 12€. Συνεπώς τα 6 τετράδια κοστίζουν 24 − 12 = 12€, άρα το 1 τετράδιο κοστίζει 12 : 6 = 2€.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Συγκρίνουμε τις δύο αγορές: το πλήθος των τετραδίων είναι <strong>σταθερό (6 τετράδια)</strong>, επομένως η αύξηση στο συνολικό κόστος οφείλεται αποκλειστικά στα επιπλέον στυλό.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΤΩΝ ΔΥΟ ΑΓΟΡΩΝ & ΔΙΑΦΟΡΑ ΣΤΑ ΣΤΥΛΟ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="490" height="205" viewBox="0 0 490 205" className="select-none font-sans mx-auto block">
+            {/* 1η ΑΓΟΡΑ */}
+            <g transform="translate(15, 12)">
+              <rect x="0" y="0" width="460" height="68" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+              <text x="14" y="20" fontSize="11" fontWeight="bold" fill="#0f172a">1η Αγορά:</text>
+              
+              {/* 6 Τετράδια */}
+              <g transform="translate(85, 8)">
+                <rect x="0" y="0" width="130" height="48" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
+                <text x="65" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">6 Τετράδια</text>
+                <text x="65" y="38" fontSize="9.5" textAnchor="middle" fill="#2563eb">(σταθερά)</text>
+              </g>
+
+              <text x="225" y="38" fontSize="14" fontWeight="black" fill="#64748b">＋</text>
+
+              {/* 4 Στυλό */}
+              <g transform="translate(245, 8)">
+                <rect x="0" y="0" width="95" height="48" rx="6" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.5" />
+                <text x="47.5" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#15803d">4 Στυλό</text>
+                <text x="47.5" y="38" fontSize="9.5" textAnchor="middle" fill="#16a34a">(4 · 3€ = 12€)</text>
+              </g>
+
+              <text x="350" y="38" fontSize="14" fontWeight="black" fill="#64748b">＝</text>
+
+              {/* Σύνολο 24€ */}
+              <g transform="translate(370, 14)">
+                <rect x="0" y="0" width="75" height="36" rx="6" fill="#0f172a" />
+                <text x="37.5" y="23" fontSize="13" fontWeight="900" textAnchor="middle" fill="#ffffff">24€</text>
+              </g>
+            </g>
+
+            {/* 2η ΑΓΟΡΑ */}
+            <g transform="translate(15, 88)">
+              <rect x="0" y="0" width="460" height="68" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+              <text x="14" y="20" fontSize="11" fontWeight="bold" fill="#0f172a">2η Αγορά:</text>
+              
+              {/* 6 Τετράδια */}
+              <g transform="translate(85, 8)">
+                <rect x="0" y="0" width="130" height="48" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
+                <text x="65" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">6 Τετράδια</text>
+                <text x="65" y="38" fontSize="9.5" textAnchor="middle" fill="#2563eb">(σταθερά)</text>
+              </g>
+
+              <text x="225" y="38" fontSize="14" fontWeight="black" fill="#64748b">＋</text>
+
+              {/* 7 Στυλό (4 + 3 επιπλέον) */}
+              <g transform="translate(245, 8)">
+                <rect x="0" y="0" width="95" height="48" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" />
+                <text x="47.5" y="20" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#b91c1c">7 Στυλό</text>
+                <text x="47.5" y="38" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#dc2626">(＋3 στυλό)</text>
+              </g>
+
+              <text x="350" y="38" fontSize="14" fontWeight="black" fill="#64748b">＝</text>
+
+              {/* Σύνολο 33€ */}
+              <g transform="translate(370, 14)">
+                <rect x="0" y="0" width="75" height="36" rx="6" fill="#0f172a" />
+                <text x="37.5" y="23" fontSize="13" fontWeight="900" textAnchor="middle" fill="#ffffff">33€</text>
+              </g>
+            </g>
+
+            {/* ΚΑΤΩ ΕΠΙΣΗΜΑΝΣΗ ΔΙΑΦΟΡΑΣ */}
+            <g transform="translate(15, 164)">
+              <rect x="0" y="0" width="460" height="30" rx="8" fill="#ecfdf5" stroke="#a7f3d0" strokeWidth="1.2" />
+              <text x="230" y="19" fontSize="11" fontWeight="black" textAnchor="middle" fill="#065f46">
+                Διαφορά: 3 επιπλέον στυλό ＝ 33€ － 24€ ＝ 9€ ➔ 1 στυλό ＝ 3€
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Εύρεση τιμής στυλό */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Υπολογισμός του κόστους για ένα στυλό:
+            </div>
+            <p className="text-slate-700">
+              Η δεύτερη αγορά έχει ακριβώς τα ίδια τετράδια αλλά περισσότερα στυλό:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• Επιπλέον στυλό: 7 － 4 ＝ <strong>3 στυλό</strong></div>
+              <div>• Επιπλέον κόστος: 33€ － 24€ ＝ <strong>9€</strong></div>
+              <div className="pt-1 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
+                <span>• Κόστος για 1 στυλό ＝</span>
+                <Fraction num="9" den="3" />
+                <span>＝ <strong className="text-blue-700">3€</strong></span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Εύρεση τιμής τετραδίου */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Υπολογισμός του κόστους για ένα τετράδιο:
+            </div>
+            <p className="text-slate-700">
+              Αντικαθιστούμε την τιμή του στυλό στην 1η αγορά (6 τετράδια ＋ 4 στυλό ＝ 24€):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Κόστος των 4 στυλό: 4 · 3€ ＝ <strong>12€</strong></div>
+              <div>• Κόστος των 6 τετραδίων: 24€ － 12€ ＝ <strong>12€</strong></div>
+              <div className="pt-1 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
+                <span>• Κόστος για 1 τετράδιο ＝</span>
+                <Fraction num="12" den="6" />
+                <span>＝ <strong className="text-emerald-700 text-base">2€</strong></span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 3: Επαλήθευση */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              3. Επαλήθευση στη 2η αγορά:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-0.5">
+              <div>6 τετράδια · 2€ ＋ 7 στυλό · 3€ ＝ 12€ ＋ 21€ ＝ <strong>33€</strong> (επαληθεύεται)</div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το ένα τετράδιο κοστίζει <strong>2€</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 12,
