@@ -124,7 +124,132 @@ const QUESTIONS = [
     prompt: 'Ποιος είναι ο μικρότερος τετραψήφιος φυσικός αριθμός ο οποίος διαιρείται ταυτόχρονα με το 3, το 4 και το 5;',
     options: ['1.000', '1.020', '1.050', '1.080'],
     correct: '1.020',
-    explain: 'Το Ε.Κ.Π.(3, 4, 5) = 60. Ψάχνουμε το μικρότερο πολλαπλάσιο του 60 που είναι ≥ 1.000. Διαιρούμε 1.000 : 60 = 16 (υπόλοιπο 40). Το επόμενο πολλαπλάσιο είναι 60 · 17 = 1.020.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Για να διαιρείται ένας αριθμός ταυτόχρονα με το <strong>3</strong>, το <strong>4</strong> και το <strong>5</strong>, πρέπει να είναι κοινό πολλαπλάσιο των τριών αυτών αριθμών, δηλαδή πολλαπλάσιο του <strong>Ε.Κ.Π.(3, 4, 5)</strong>.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΑΡΙΘΜΟΓΡΑΜΜΗ ΠΟΛΛΑΠΛΑΣΙΩΝ ΤΟΥ 60 ΓΥΡΩ ΑΠΟ ΤΟ 1.000 */}
+        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="470" height="150" viewBox="0 0 470 150" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="axis-arr-2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
+              </marker>
+            </defs>
+
+            {/* Άξονας αριθμογραμμής */}
+            <line x1="25" y1="75" x2="445" y2="75" stroke="#334155" strokeWidth="2" markerEnd="url(#axis-arr-2)" />
+
+            {/* Όριο 3ψήφιων / 4ψήφιων (1.000) */}
+            <line x1="190" y1="35" x2="190" y2="105" stroke="#dc2626" strokeWidth="2" strokeDasharray="4 3" />
+            <circle cx="190" cy="75" r="4.5" fill="#dc2626" />
+            <text x="190" y="25" fontSize="10.5" fontWeight="900" textAnchor="middle" fill="#dc2626">
+              1.000 (Όριο 4ψήφιων)
+            </text>
+
+            {/* Περιοχή 3ψήφιων & 4ψήφιων */}
+            <text x="100" y="132" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">
+              ◀ 3ψήφιοι αριθμοί
+            </text>
+            <text x="310" y="132" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">
+              4ψήφιοι αριθμοί ▶
+            </text>
+
+            {/* 16ο πολλαπλάσιο: 960 */}
+            <line x1="85" y1="65" x2="85" y2="85" stroke="#64748b" strokeWidth="2" />
+            <circle cx="85" cy="75" r="4.5" fill="#64748b" />
+            <text x="85" y="55" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">
+              960
+            </text>
+            <text x="85" y="100" fontSize="9.5" textAnchor="middle" fill="#64748b" fontFamily="monospace">
+              60 · 16
+            </text>
+
+            {/* Βήμα +60 (Τόξο από 960 σε 1.020) */}
+            <path d="M 85 62 Q 185 30 285 62" fill="none" stroke="#0284c7" strokeWidth="1.8" strokeDasharray="3 2" />
+            <text x="185" y="44" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
+              + 60
+            </text>
+
+            {/* 17ο πολλαπλάσιο: 1.020 (Ζητούμενο) */}
+            <line x1="285" y1="60" x2="285" y2="90" stroke="#16a34a" strokeWidth="2.5" />
+            <circle cx="285" cy="75" r="6" fill="#16a34a" stroke="#14532d" strokeWidth="1.5" />
+            <text x="285" y="52" fontSize="13" fontWeight="900" textAnchor="middle" fill="#15803d">
+              1.020 ⭐
+            </text>
+            <text x="285" y="102" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534" fontFamily="monospace">
+              60 · 17
+            </text>
+            <text x="285" y="117" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">
+              (1ος 4ψήφιος)
+            </text>
+
+            {/* 18ο πολλαπλάσιο: 1.080 */}
+            <line x1="390" y1="65" x2="390" y2="85" stroke="#94a3b8" strokeWidth="1.8" />
+            <circle cx="390" cy="75" r="4.5" fill="#94a3b8" />
+            <text x="390" y="55" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#64748b">
+              1.080
+            </text>
+            <text x="390" y="100" fontSize="9.5" textAnchor="middle" fill="#94a3b8" fontFamily="monospace">
+              60 · 18
+            </text>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Ε.Κ.Π. */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900">
+              1. Υπολογισμός του Ελάχιστου Κοινού Πολλαπλασίου (Ε.Κ.Π.):
+            </div>
+            <p className="text-slate-700">
+              Οι αριθμοί 3, 4 και 5 είναι πρώτοι μεταξύ τους ανά δύο, επομένως:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 font-bold">
+              Ε.Κ.Π.(3, 4, 5) ＝ 3 · 4 · 5 ＝ 60
+            </div>
+            <p className="text-slate-600 font-sans text-xs pt-0.5">
+              Άρα, κάθε αριθμός που διαιρείται ταυτόχρονα με το 3, 4 και 5 είναι πολλαπλάσιο του 60.
+            </p>
+          </div>
+
+          {/* Βήμα 2: Εύρεση του 1ου 4ψήφιου πολλαπλασίου */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900">
+              2. Εύρεση του μικρότερου 4ψήφιου αριθμού (≥ 1.000):
+            </div>
+            <p className="text-slate-700">
+              Ο μικρότερος τετραψήφιος φυσικός αριθμός είναι το <strong>1.000</strong>. Εκτελούμε την ευκλείδεια διαίρεση:
+            </p>
+
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>1.000 : 60 ＝ <strong>16</strong> με <strong>υπόλοιπο 40</strong></span>
+              </div>
+              <div className="text-slate-600 font-sans text-xs">
+                Δηλαδή: 1.000 ＝ 60 · 16 ＋ 40 ➔ 60 · 16 ＝ <strong>960</strong> (ο μεγαλύτερος 3ψήφιος).
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-slate-800">
+                Το αμέσως επόμενο πολλαπλάσιο του 60 είναι το 17ο:
+              </div>
+              <div className="font-bold text-base text-emerald-700">
+                60 · 17 ＝ 1.020
+              </div>
+              <div className="text-slate-500 font-sans text-xs">
+                (ή ισοδύναμα: 1.000 ＋ (60 － 40) ＝ 1.000 ＋ 20 ＝ 1.020)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο μικρότερος τετραψήφιος αριθμός που διαιρείται ταυτόχρονα με το 3, το 4 και το 5 είναι το <strong>1.020</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 3,
