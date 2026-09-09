@@ -1567,7 +1567,126 @@ const QUESTIONS_2026 = [
       { key: 'E', label: 'δεν μπορούμε να γνωρίζουμε', raw: 'unknown' }
     ],
     correctRaw: '16',
-    explain: 'Το συνολικό άθροισμα των 6 κριτών είναι 6 · 8,2 = 49,2. Το άθροισμα των 4 κριτών είναι 4 · 8,3 = 33,2. Το άθροισμα των 2 βαθμών που αφαιρέθηκαν είναι 49,2 − 33,2 = 16.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Σύμφωνα με τους κανονισμούς, από τις 6 βαθμολογίες αφαιρούνται η <strong>ελάχιστη</strong> και η <strong>μέγιστη</strong>, οπότε υπολογίζουμε το άθροισμα των βαθμών από τους αντίστοιχους μέσους όρους.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ ΑΝΑΛΥΣΗΣ ΤΩΝ 6 ΒΑΘΜΟΛΟΓΙΩΝ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="450" height="175" viewBox="0 0 450 175" className="select-none font-sans mx-auto block">
+            {/* ΟΛΙΚΟ ΠΛΑΙΣΙΟ: ΟΛΟΙ ΟΙ 6 ΚΡΙΤΕΣ */}
+            <g transform="translate(15, 20)">
+              {/* Εξωτερική αγκύλη / πλαίσιο 6 κριτών */}
+              <rect x="0" y="25" width="420" height="60" rx="14" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+
+              {/* Ετικέτα όλου του συνόλου */}
+              <text x="210" y="14" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Σύνολο 6 Κριτών: Μέσος Όρος ＝ 8,2  ➔  Άθροισμα ＝ 6 · 8,2 ＝ 49,2
+              </text>
+
+              {/* 1. Ελάχιστος Βαθμός (x) - Κόκκινο */}
+              <g transform="translate(12, 33)">
+                <rect x="0" y="0" width="58" height="44" rx="8" fill="#fee2e2" stroke="#dc2626" strokeWidth="1.8" />
+                <text x="29" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#991b1b">Ελάχιστος</text>
+                <text x="29" y="34" fontSize="13" fontWeight="900" textAnchor="middle" fill="#dc2626" fontFamily="monospace">x</text>
+              </g>
+
+              {/* 2. Τέσσερις Μεσαίοι Κριτές (z) - Πράσινο */}
+              <g transform="translate(80, 33)">
+                <rect x="0" y="0" width="260" height="44" rx="8" fill="#f0fdf4" stroke="#16a34a" strokeWidth="2" />
+                <text x="130" y="18" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#14532d">
+                  4 Μεσαίοι Κριτές (Μ.Ο. ＝ 8,3)
+                </text>
+                <text x="130" y="34" fontSize="12" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">
+                  Άθροισμα (z) ＝ 4 · 8,3 ＝ 33,2
+                </text>
+              </g>
+
+              {/* 3. Μέγιστος Βαθμός (y) - Κόκκινο */}
+              <g transform="translate(350, 33)">
+                <rect x="0" y="0" width="58" height="44" rx="8" fill="#fee2e2" stroke="#dc2626" strokeWidth="1.8" />
+                <text x="29" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#991b1b">Μέγιστος</text>
+                <text x="29" y="34" fontSize="13" fontWeight="900" textAnchor="middle" fill="#dc2626" fontFamily="monospace">y</text>
+              </g>
+
+              {/* Κάτω ένδειξη για τους 2 βαθμούς που αφαιρέθηκαν */}
+              <g transform="translate(0, 98)">
+                <path d="M 41 0 L 41 12 L 379 12 L 379 0" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="3 2" />
+                <rect x="110" y="3" width="200" height="22" rx="11" fill="#dc2626" />
+                <text x="210" y="18" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                  Βαθμοί που αφαιρέθηκαν: x ＋ y ＝ 16
+                </text>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        {/* 1ος ΤΡΟΠΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 1ος Τρόπος (Με τη διαφορά των συνολικών αθροισμάτων)
+          </div>
+
+          <p className="text-slate-800">
+            Γνωρίζουμε ότι: <span className="font-mono font-bold">Άθροισμα ＝ (Μέσος Όρος) · (Πλήθος Κριτών)</span>.
+          </p>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div>• Συνολικό άθροισμα και των 6 κριτών: 6 · 8,2 ＝ <strong>49,2 βαθμοί</strong></div>
+            <div>• Συνολικό άθροισμα των 4 μεσαίων κριτών: 4 · 8,3 ＝ <strong>33,2 βαθμοί</strong></div>
+
+            <div className="pt-2 border-t border-slate-200 space-y-1">
+              <div className="text-slate-700 font-sans text-xs">
+                Αφαιρούμε το άθροισμα των 4 κριτών από το αρχικό άθροισμα των 6 κριτών:
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>Άθροισμα των 2 βαθμών που αφαιρέθηκαν ＝ 49,2 － 33,2 ＝</span>
+                <strong className="text-emerald-700 text-base">16</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 2ος ΤΡΟΠΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 2ος Τρόπος (Με αλγεβρική εξίσωση)
+          </div>
+
+          <p className="text-slate-800">
+            Ορίζουμε με <strong>x</strong> τη μικρότερη βαθμολογία, με <strong>y</strong> τη μεγαλύτερη και με <strong>z</strong> το άθροισμα των υπόλοιπων 4 μεσαίων βαθμολογιών:
+          </p>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Από τον τελικό μέσο όρο:</span>
+              <Fraction num="z" den="4" />
+              <span>＝ 8,3 ➔ z ＝ 4 · 8,3 ➔ <strong>z ＝ 33,2</strong></span>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+              <span>• Από τον μέσο όρο των 6 κριτών:</span>
+              <Fraction num="x ＋ z ＋ y" den="6" />
+              <span>＝ 8,2</span>
+            </div>
+
+            <div className="pl-3 space-y-1">
+              <div>x ＋ z ＋ y ＝ 6 · 8,2</div>
+              <div>x ＋ z ＋ y ＝ 49,2</div>
+              <div className="text-slate-500 font-sans text-xs">// Αντικαθιστούμε το z ＝ 33,2</div>
+              <div>x ＋ 33,2 ＋ y ＝ 49,2</div>
+              <div>x ＋ y ＝ 49,2 － 33,2 ➔ <strong className="text-emerald-700 text-base">x ＋ y ＝ 16</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Άρα, το άθροισμα των βαθμών που αφαιρέθηκαν είναι <strong>16</strong> (Επιλογή <strong>A</strong>).
+        </p>
+      </div>
+    )
   },
   {
     id: 14,
