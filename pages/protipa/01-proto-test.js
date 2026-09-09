@@ -2136,7 +2136,130 @@ const QUESTIONS = [
     prompt: 'Ένας σχολικός κήπος έχει σχήμα ορθογωνίου με διαστάσεις 15 μέτρα και 10 μέτρα. Στο εσωτερικό του κήπου και κατά μήκος όλων των πλευρών του κατασκευάζουμε έναν πλακόστρωτο διάδρομο σταθερού πλάτους 1 μέτρου. Ποιο είναι το συνολικό εμβαδόν του διαδρόμου αυτού;',
     options: ['25 τ.μ.', '44 τ.μ.', '46 τ.μ.', '50 τ.μ.', '104 τ.μ.'],
     correct: '46 τ.μ.',
-    explain: 'Το συνολικό αρχικό εμβαδόν είναι 15 · 10 = 150 τ.μ. Ο εσωτερικός χώρος που απομένει έχει διαστάσεις μειωμένες κατά 2 μέτρα σε κάθε διάσταση (1 μ. από κάθε πλευρά): μήκος 15 − 2 = 13 μ. και πλάτος 10 − 2 = 8 μ. Εμβαδόν εσωτερικού: 13 · 8 = 104 τ.μ. Εμβαδόν διαδρόμου: 150 − 104 = 46 τ.μ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Για να βρούμε το εμβαδόν του περιμετρικού διαδρόμου, αφαιρούμε το <strong>εμβαδόν του εσωτερικού ορθογωνίου</strong> από το <strong>συνολικό εμβαδόν του κήπου</strong>:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: Ο ΚΗΠΟΣ ΚΑΙ Ο ΠΕΡΙΜΕΤΡΙΚΟΣ ΔΙΑΔΡΟΜΟΣ ΠΛΑΤΟΥΣ 1μ. */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="510" height="230" viewBox="0 0 510 230" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="dim-arrow-16" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569" />
+              </marker>
+            </defs>
+
+            {/* ΚΥΡΙΩΣ ΣΧΗΜΑ ΟΡΘΟΓΩΝΙΟΥ (x: 55, y: 35) */}
+            <g transform="translate(55, 35)">
+              {/* 1. Εξωτερικό ορθογώνιο (Διάδρομος): 300px x 150px (αντιστοιχεί σε 15μ x 10μ) */}
+              <rect x="0" y="0" width="300" height="150" rx="6" fill="#fed7aa" stroke="#ea580c" strokeWidth="2" />
+
+              {/* 2. Εσωτερικό ορθογώνιο (Κήπος): περιθώριο 20px ολόγυρα (αντιστοιχεί σε 13μ x 8μ) */}
+              <rect x="20" y="20" width="260" height="110" rx="4" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.8" />
+
+              {/* Κείμενα εντός των επιφανειών */}
+              <text x="150" y="68" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#15803d">
+                Εσωτερικός Κήπος
+              </text>
+              <text x="150" y="86" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534" fontFamily="monospace">
+                13 μ. · 8 μ. ＝ 104 τ.μ.
+              </text>
+
+              {/* Ενδείξεις πλάτους διαδρόμου (1 μ.) */}
+              <text x="10" y="80" fontSize="9" fontWeight="black" textAnchor="middle" fill="#c2410c">1μ.</text>
+              <text x="290" y="80" fontSize="9" fontWeight="black" textAnchor="middle" fill="#c2410c">1μ.</text>
+              <text x="150" y="13" fontSize="9" fontWeight="black" textAnchor="middle" fill="#c2410c">1μ.</text>
+              <text x="150" y="144" fontSize="9" fontWeight="black" textAnchor="middle" fill="#c2410c">1μ.</text>
+
+              {/* Εσωτερικές διαστάσεις (13μ. & 8μ.) */}
+              <line x1="20" y1="135" x2="280" y2="135" stroke="#16a34a" strokeWidth="1" strokeDasharray="2 2" />
+              <text x="150" y="125" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">13 μ.</text>
+              <line x1="25" y1="20" x2="25" y2="130" stroke="#16a34a" strokeWidth="1" strokeDasharray="2 2" />
+              <text x="36" y="78" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">8 μ.</text>
+
+              {/* Εξωτερικές διαστάσεις (Πάνω: 15μ. | Αριστερά: 10μ.) */}
+              <line x1="0" y1="-14" x2="300" y2="-14" stroke="#475569" strokeWidth="1.5" markerStart="url(#dim-arrow-16)" markerEnd="url(#dim-arrow-16)" />
+              <text x="150" y="-20" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#0f172a">15 μ. (Αρχικό Μήκος)</text>
+
+              <line x1="-16" y1="0" x2="-16" y2="150" stroke="#475569" strokeWidth="1.5" markerStart="url(#dim-arrow-16)" markerEnd="url(#dim-arrow-16)" />
+              <text x="-24" y="80" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#0f172a" transform="rotate(-90 -24 80)">10 μ. (Αρχικό Πλάτος)</text>
+            </g>
+
+            {/* ΥΠΟΜΝΗΜΑ & ΣΥΝΟΨΗ ΔΕΞΙΑ */}
+            <g transform="translate(375, 42)">
+              <rect x="0" y="0" width="125" height="135" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.2" />
+              
+              <rect x="10" y="12" width="16" height="16" rx="3" fill="#fed7aa" stroke="#ea580c" strokeWidth="1" />
+              <text x="32" y="24" fontSize="9.5" fontWeight="bold" fill="#0f172a">Διάδρομος</text>
+
+              <rect x="10" y="38" width="16" height="16" rx="3" fill="#dcfce7" stroke="#16a34a" strokeWidth="1" />
+              <text x="32" y="50" fontSize="9.5" fontWeight="bold" fill="#0f172a">Κήπος (Εσωτ.)</text>
+
+              <line x1="10" y1="66" x2="115" y2="66" stroke="#e2e8f0" strokeWidth="1" />
+
+              <text x="62.5" y="82" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">Εμβαδόν Διαδρόμου:</text>
+              <text x="62.5" y="99" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">150 － 104 ＝</text>
+              <rect x="15" y="106" width="95" height="20" rx="5" fill="#ea580c" />
+              <text x="62.5" y="120" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">46 τ.μ. ⭐</text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Συνολικό εμβαδόν */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Συνολικό εμβαδόν οικοπέδου (μαζί με τον διάδρομο):
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>Ε_συνολικό ＝ Μήκος · Πλάτος</div>
+              <div className="pt-0.5">
+                Ε_συνολικό ＝ 15 μ. · 10 μ. ＝ <strong className="text-blue-700 font-bold">150 τ.μ.</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Εσωτερικό εμβαδόν */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Διαστάσεις και εμβαδόν του εσωτερικού κήπου:
+            </div>
+            <p className="text-slate-700">
+              Επειδή ο διάδρομος κατασκευάζεται κατά μήκος <strong>όλων των πλευρών</strong>, αφαιρείται πλάτος 1 μ. από την κάθε άκρη (δηλαδή 2 μ. συνολικά σε κάθε διάσταση):
+            </p>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Νέο Μήκος ＝ 15 － 1 － 1 ＝ 15 － 2 ＝ <strong>13 μ.</strong></div>
+              <div>• Νέο Πλάτος ＝ 10 － 1 － 1 ＝ 10 － 2 ＝ <strong>8 μ.</strong></div>
+              <div className="pt-1 border-t border-slate-200">
+                • Ε_εσωτερικό ＝ 13 μ. · 8 μ. ＝ <strong className="text-emerald-700 font-bold">104 τ.μ.</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 3: Εμβαδόν διαδρόμου */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              3. Υπολογισμός του εμβαδού του διαδρόμου:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>Ε_διαδρόμου ＝ Ε_συνολικό － Ε_εσωτερικό</div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>Ε_διαδρόμου ＝ 150 － 104 ＝</span>
+                <strong className="text-orange-600 text-base font-black">46 τ.μ.</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το συνολικό εμβαδόν του διαδρόμου είναι <strong>46 τ.μ.</strong>
+        </p>
+      </div>
+    )
   },
   {
     id: 17,
