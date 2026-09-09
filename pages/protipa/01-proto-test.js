@@ -2636,7 +2636,7 @@ const QUESTIONS = [
                 1. Αρχικά 4 Διαγωνίσματα (Μέσος Όρος: 15)
               </text>
 
-              {/* 4 ίσα μπλοκ βαθμών των 15 (πλάτος 68px το καθένα) */}
+              {/* 4 ίσα μπλοκ βαθμών των 15 */}
               <g transform="translate(0, 24)">
                 {['1ο', '2ο', '3ο', '4ο'].map((label, idx) => (
                   <g key={`old-${idx}`} transform={`translate(${idx * 72}, 0)`}>
@@ -2646,11 +2646,13 @@ const QUESTIONS = [
                   </g>
                 ))}
 
-                {/* Badge αρχικού αθροίσματος */}
-                <rect x="300" y="4" width="175" height="30" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.2" />
-                <text x="387.5" y="23" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569">
-                  Άθροισμα: 4 · 15 ＝ <span className="font-mono font-black text-blue-700">60</span>
-                </text>
+                {/* Badge αρχικού αθροίσματος (ευθυγραμμισμένο με το κάτω: x=305, width=170) */}
+                <g transform="translate(305, 0)">
+                  <rect x="0" y="0" width="170" height="38" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" />
+                  <text x="85" y="24" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#334155">
+                    Άθροισμα: 4 · 15 ＝ <tspan fontWeight="900" fill="#1d4ed8" fontFamily="monospace">60</tspan>
+                  </text>
+                </g>
               </g>
             </g>
 
