@@ -2267,7 +2267,152 @@ const QUESTIONS = [
     prompt: 'Σε μια έρευνα για τις προτιμήσεις διακοπών των μαθητών, το 70% των ερωτηθέντων απάντησε ότι προτιμά το βουνό. Από αυτούς που δεν προτιμούν το βουνό, οι μισοί απάντησαν ότι προτιμούν τη θάλασσα. Αν όσοι προτιμούν τη θάλασσα είναι 45 μαθητές, πόσοι ήταν συνολικά οι μαθητές που συμμετείχαν στην έρευνα;',
     options: ['150', '200', '250', '300', '450'],
     correct: '300',
-    explain: 'Αυτοί που δεν προτιμούν το βουνό είναι 100% − 70% = 30%. Οι μισοί από αυτούς είναι το 15% του συνόλου. Το 15% αντιστοιχεί σε 45 μαθητές. Άρα το σύνολο (100%) είναι (45 : 15) · 100 = 3 · 100 = 300 μαθητές.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αναλύουμε τα ποσοστά των μαθητών ξεκινώντας από το σύνολο (<strong>100%</strong>) για να βρούμε σε τι ποσοστό του συνόλου αντιστοιχούν οι <strong>45 μαθητές</strong> της θάλασσας:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΔΙΑΣΠΑΣΗ ΤΟΥ 100% ΣΕ ΒΟΥΝΟ, ΘΑΛΑΣΣΑ ΚΑΙ ΑΛΛΟ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="510" height="215" viewBox="0 0 510 215" className="select-none font-sans mx-auto block">
+            {/* ΕΠΙΚΕΦΑΛΙΔΑ ΣΥΝΟΛΙΚΟΥ ΠΛΗΘΥΣΜΟΥ */}
+            <g transform="translate(20, 10)">
+              <rect x="0" y="0" width="470" height="26" rx="13" fill="#0f172a" />
+              <text x="235" y="17" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                Σύνολο Ερωτηθέντων Μαθητών: 100% (Άγνωστος Αριθμός)
+              </text>
+            </g>
+
+            {/* ΚΥΡΙΑ ΜΠΑΡΑ ΚΑΤΑΝΟΜΗΣ (470px σύνολο -> 1% = 4.7px) */}
+            <g transform="translate(20, 48)">
+              {/* 70% ΒΟΥΝΟ (329px) */}
+              <rect x="0" y="0" width="329" height="52" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
+              <text x="164.5" y="24" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">
+                ⛰️ Προτιμούν Βουνό
+              </text>
+              <text x="164.5" y="42" fontSize="13" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">
+                70%
+              </text>
+
+              {/* 30% ΔΕΝ ΠΡΟΤΙΜΟΥΝ ΒΟΥΝΟ (141px: χωρίζεται σε 15% + 15%) */}
+              {/* 15% ΘΑΛΑΣΣΑ (70.5px) */}
+              <rect x="333" y="0" width="68" height="52" rx="6" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
+              <text x="367" y="20" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">
+                🌊 Θάλασσα
+              </text>
+              <text x="367" y="35" fontSize="11" fontWeight="900" textAnchor="middle" fill="#166534" fontFamily="monospace">
+                15%
+              </text>
+              <text x="367" y="47" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#15803d">
+                (οι μισοί)
+              </text>
+
+              {/* 15% ΑΛΛΟ (70.5px) */}
+              <rect x="404" y="0" width="66" height="52" rx="6" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="3 2" />
+              <text x="437" y="22" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#64748b">
+                Άλλο
+              </text>
+              <text x="437" y="40" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569" fontFamily="monospace">
+                15%
+              </text>
+            </g>
+
+            {/* ΑΓΚΥΛΗ & ΕΠΙΣΗΜΑΝΣΗ ΓΙΑ ΤΟ ΥΠΟΛΟΙΠΟ 30% */}
+            <g transform="translate(353, 106)">
+              <path d="M 0 0 L 0 6 L 137 6 L 137 0" fill="none" stroke="#64748b" strokeWidth="1.5" />
+              <text x="68.5" y="19" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">
+                Δεν προτιμούν βουνό: 30%
+              </text>
+            </g>
+
+            {/* ΣΥΝΔΕΣΗ ΜΕ ΤΟΥΣ 45 ΜΑΘΗΤΕΣ & ΕΥΡΕΣΗ ΣΥΝΟΛΟΥ */}
+            <g transform="translate(20, 142)">
+              {/* Αντιστοίχιση 15% -> 45 */}
+              <rect x="80" y="0" width="170" height="34" rx="8" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.2" />
+              <text x="165" y="16" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534">
+                15% ＝ 45 μαθητές
+              </text>
+              <text x="165" y="28" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#15803d">
+                1% ＝ 45 : 15 ＝ 3 μαθητές
+              </text>
+
+              {/* Τελικό Αποτέλεσμα (100%) */}
+              <rect x="265" y="0" width="180" height="34" rx="8" fill="#16a34a" />
+              <text x="355" y="22" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                Σύνολο (100%): 300 μαθητές ⭐
+              </text>
+            </g>
+
+            <text x="255" y="200" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#047857">
+              3 μαθητές ανά 1% ➔ 100 · 3 ＝ 300 μαθητές συνολικά
+            </text>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Υπολογισμός ποσοστού θάλασσας */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Εύρεση του ποσοστού των μαθητών που προτιμούν τη θάλασσα:
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Το ποσοστό όσων δεν προτιμούν το βουνό είναι:</div>
+              <div className="pl-3 font-bold text-slate-800">
+                100% － 70% ＝ 30%
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Από αυτούς, οι μισοί προτιμούν τη θάλασσα:
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap pl-3">
+                <span>Ποσοστό Θάλασσας ＝</span>
+                <Fraction num="30%" den="2" />
+                <span>＝</span>
+                <strong className="text-blue-700 font-black">15%</strong>
+                <span>του συνολικού αριθμού των μαθητών.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Αναγωγή στη μονάδα και εύρεση συνόλου */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Εύρεση του συνόλου των μαθητών (100%):
+            </div>
+            <p className="text-slate-700">
+              Γνωρίζουμε ότι το <strong>15%</strong> αντιστοιχεί σε <strong>45 μαθητές</strong>.
+            </p>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>• Το 1% αντιστοιχεί σε:</span>
+                <Fraction num="45" den="15" />
+                <span>＝ <strong>3 μαθητές</strong></span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Επομένως, το 100% (όλοι οι μαθητές) είναι:</span>
+                <span>100 · 3 ＝</span>
+                <strong className="text-emerald-700 text-base font-black">300 μαθητές</strong>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 text-slate-500 font-sans text-xs flex items-center gap-1 flex-wrap">
+                <span>(Εναλλακτικά με κλάσμα: Σύνολο ＝ 45 :</span>
+                <Fraction num="15" den="100" />
+                <span>＝ 45 ·</span>
+                <Fraction num="100" den="15" />
+                <span>＝ 3 · 100 ＝ 300)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, στην έρευνα συμμετείχαν συνολικά <strong>300 μαθητές</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 18,
