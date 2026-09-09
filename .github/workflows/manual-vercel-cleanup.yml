@@ -10,22 +10,22 @@ jobs:
       - name: Purge Deployments Prior to September 1, 2026
         env:
           TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
-          # Timestamp for Sept 1, 2026 00:00:00 UTC
           UNTIL_TS: 1788220800000
         run: |
           echo "Fetching deployments created prior to September 1, 2026..."
 
+          # Uses your exact project name: learn-maths-2026
           RESPONSE=$(curl -s -X GET \
-            "https://api.vercel.com/v6/deployments?projectId=${PROJECT_ID}&teamId=${TEAM_ID}&until=${UNTIL_TS}&limit=100" \
+            "https://api.vercel.com/v6/deployments?projectId=learn-maths-2026&until=${UNTIL_TS}&limit=100" \
             -H "Authorization: Bearer ${TOKEN}")
+
+          echo "Raw API response preview:"
+          echo "$RESPONSE" | head -n 20
 
           DEPLOYMENT_IDS=$(echo "$RESPONSE" | grep -o '"uid":"[^"]*' | cut -d'"' -f4)
 
           if [ -z "$DEPLOYMENT_IDS" ]; then
-            echo "No older deployments returned. Raw response:"
-            echo "$RESPONSE"
+            echo "No deployments found matching criteria."
             exit 0
           fi
 
@@ -33,7 +33,7 @@ jobs:
           for ID in $DEPLOYMENT_IDS; do
             echo "Deleting: $ID"
             DEL_RESP=$(curl -s -X DELETE \
-              "https://api.vercel.com/v13/deployments/${ID}?teamId=${TEAM_ID}" \
+              "https://api.vercel.com/v13/deployments/${ID}" \
               -H "Authorization: Bearer ${TOKEN}")
             echo "Result: $DEL_RESP"
             COUNT=$((COUNT + 1))
