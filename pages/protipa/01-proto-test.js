@@ -960,7 +960,118 @@ const QUESTIONS = [
     prompt: 'Ένα τετράγωνο έχει εμβαδόν 64 τ.εκ. Αν διπλασιάσουμε το μήκος της πλευράς του, πόσο θα γίνει η περίμετρος του νέου τετραγώνου;',
     options: ['32 εκ.', '48 εκ.', '64 εκ.', '128 εκ.'],
     correct: '64 εκ.',
-    explain: 'Η πλευρά του αρχικού τετραγώνου είναι 8 εκ. (αφού 8 · 8 = 64). Διπλασιάζοντας την πλευρά, η νέα πλευρά γίνεται 2 · 8 = 16 εκ. Η νέα περίμετρος είναι 4 · 16 = 64 εκ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Υπολογίζουμε πρώτα την πλευρά του αρχικού τετραγώνου από το δοσμένο εμβαδόν του και στη συνέχεια τη νέα πλευρά και την περίμετρο μετά τον διπλασιασμό:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΑΡΧΙΚΟΥ & ΝΕΟΥ ΤΕΤΡΑΓΩΝΟΥ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="490" height="200" viewBox="0 0 490 200" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="arr-scale-8" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#2563eb" />
+              </marker>
+            </defs>
+
+            {/* 1. ΑΡΧΙΚΟ ΤΕΤΡΑΓΩΝΟ (8 x 8 -> 65px στο σχεδιασμό) */}
+            <g transform="translate(35, 30)">
+              <text x="32.5" y="-12" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Αρχικό Τετράγωνο
+              </text>
+              <rect x="0" y="0" width="65" height="65" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
+              <text x="32.5" y="32" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Ε ＝ 64 τ.εκ.</text>
+              <text x="32.5" y="46" fontSize="9.5" textAnchor="middle" fill="#2563eb">(8 · 8)</text>
+
+              {/* Διαστάσεις πλευράς */}
+              <text x="32.5" y="80" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">α ＝ 8 εκ.</text>
+              <text x="-12" y="36" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">8 εκ.</text>
+              
+              {/* Περίμετρος */}
+              <rect x="-10" y="92" width="85" height="20" rx="4" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+              <text x="32.5" y="106" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">Π ＝ 32 εκ.</text>
+            </g>
+
+            {/* ΜΕΤΑΒΑΣΗ ΜΕ ΔΙΠΛΑΣΙΑΣΜΟ ΠΛΕΥΡΑΣ (· 2) */}
+            <g transform="translate(135, 70)">
+              <path d="M 10 0 L 60 0" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#arr-scale-8)" />
+              <text x="35" y="-10" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">
+                Διπλασιασμός
+              </text>
+              <text x="35" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#2563eb">
+                πλευράς (· 2)
+              </text>
+            </g>
+
+            {/* 2. ΝΕΟ ΤΕΤΡΑΓΩΝΟ (16 x 16 -> 130px στο σχεδιασμό) */}
+            <g transform="translate(235, 20)">
+              <text x="65" y="-6" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#15803d">
+                Νέο Τετράγωνο (Διπλάσια Πλευρά)
+              </text>
+              {/* Εξωτερικό νέο τετράγωνο */}
+              <rect x="0" y="6" width="130" height="130" rx="8" fill="#f0fdf4" stroke="#16a34a" strokeWidth="2.5" />
+
+              {/* 4 εσωτερικά υπο-τετράγωνα για οπτική αντίληψη */}
+              <rect x="0" y="6" width="65" height="65" fill="#dcfce7" fillOpacity="0.5" stroke="#86efac" strokeWidth="1" strokeDasharray="3 3" />
+              <rect x="65" y="6" width="65" height="65" fill="#dcfce7" fillOpacity="0.5" stroke="#86efac" strokeWidth="1" strokeDasharray="3 3" />
+              <rect x="0" y="71" width="65" height="65" fill="#dcfce7" fillOpacity="0.5" stroke="#86efac" strokeWidth="1" strokeDasharray="3 3" />
+              <rect x="65" y="71" width="65" height="65" fill="#dcfce7" fillOpacity="0.5" stroke="#86efac" strokeWidth="1" strokeDasharray="3 3" />
+
+              {/* Διαστάσεις πλευράς νέου */}
+              <text x="65" y="152" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#166534">α_νέο ＝ 16 εκ. (2 · 8)</text>
+              <text x="-14" y="75" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">16 εκ.</text>
+
+              {/* Σήμανση νέας περιμέτρου */}
+              <rect x="15" y="58" width="100" height="30" rx="6" fill="#16a34a" />
+              <text x="65" y="77" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                Π ＝ 64 εκ. ⭐
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Αρχική πλευρά */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Εύρεση της πλευράς του αρχικού τετραγώνου:
+            </div>
+            <p className="text-slate-700">
+              Το εμβαδόν τετραγώνου δίνεται από τον τύπο <span className="font-mono font-bold">Ε ＝ α · α ＝ α²</span>:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>α · α ＝ 64 τ.εκ. ➔ <strong className="text-blue-700">α ＝ 8 εκ.</strong> (αφού 8 · 8 ＝ 64)</div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Νέα πλευρά & περίμετρος */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Υπολογισμός της νέας πλευράς και της νέας περιμέτρου:
+            </div>
+            <p className="text-slate-700">
+              Διπλασιάζουμε το μήκος της πλευράς του:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Νέα πλευρά: 2 · 8 ＝ <strong>16 εκ.</strong></div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Η περίμετρος τετραγώνου ισούται με το άθροισμα των 4 ίσων πλευρών του (<span className="font-mono font-bold">Π ＝ 4 · α</span>):
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>• Νέα Περίμετρος ＝ 4 · 16 εκ. ＝</span>
+                <strong className="text-emerald-700 text-base">64 εκ.</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η περίμετρος του νέου τετραγώνου θα γίνει <strong>64 εκ.</strong>
+        </p>
+      </div>
+    )
   },
   {
     id: 9,
