@@ -86,7 +86,6 @@ export default function ArithmoiEos20XiliadesPage() {
         nextDisks.D * 10 +
         nextDisks.M;
 
-      // Όριο μέχρι το 20.000
       if (nextTotal > 20000) return prev;
       return nextDisks;
     });
@@ -113,11 +112,14 @@ export default function ArithmoiEos20XiliadesPage() {
       backUrl="/d-dimotikou"
       backText="Δ' Δημοτικού"
       showAds={true}
-      actionButton={{
-        href: '/d-dimotikou/1-arithmoi-eos-20-xiliades-ask',
-        label: 'Ασκήσεις',
-        emoji: '🎯',
-      }}
+      actionButton={
+        <Link
+          href="/d-dimotikou/1-arithmoi-eos-20-xiliades-ask"
+          className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
+        >
+          <span>🎯</span> Ασκήσεις
+        </Link>
+      }
     >
       <div className="space-y-8">
         {/* HEADER & EXERCISES PROMO CARD */}
@@ -342,19 +344,17 @@ export default function ArithmoiEos20XiliadesPage() {
                 ))}
               </div>
 
-              {/* ΧΕΙΡΙΣΤΗΡΙΑ TOUCH CONTROLS (Grid cols 36px 1fr 36px & h-11) */}
+              {/* ΧΕΙΡΙΣΤΗΡΙΑ TOUCH CONTROLS */}
               <div className="grid grid-cols-5 gap-3">
                 {columnsList.map((col) => (
                   <div
                     key={col.key}
                     className="flex flex-col items-center gap-2 bg-white p-3 rounded-xl border border-slate-200 shadow-sm"
                   >
-                    {/* Header Ετικέτας με σταθερό ύψος */}
                     <div className="h-8 flex items-center justify-center text-center text-xs font-bold text-slate-600">
                       {col.label}
                     </div>
 
-                    {/* Touch Grid: [36px_1fr_36px] με w-9 h-9 buttons και min-w-[72px] badge */}
                     <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full justify-items-center bg-slate-50 rounded-xl p-1 border border-slate-200/80">
                       <button
                         onClick={(e) => updateDigits(e, col.key, -1)}
