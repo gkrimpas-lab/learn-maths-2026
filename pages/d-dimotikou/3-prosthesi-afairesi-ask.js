@@ -489,7 +489,7 @@ export default function ProsthesiAfairesiAskPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Πρόσθεση & Αφαίρεση | LearnMaths.gr"
+      title="Ασκήσεις: Πρόσθεση και Αφαίρεση | LearnMaths.gr"
       description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού: αντίστροφες πράξεις, δοκιμή πρόσθεσης και αφαίρεσης, εύρεση άγνωστου αριθμού και ορολογία."
       backUrl="/d-dimotikou"
       backText="Δ' Δημοτικού"
@@ -511,7 +511,7 @@ export default function ProsthesiAfairesiAskPage() {
               Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Πρόσθεση & Αφαίρεση
+              📝 Ασκήσεις: Πρόσθεση και Αφαίρεση
             </h1>
             <p className="text-blue-100 text-xs sm:text-sm md:text-base">
               Πατώντας «Νέες Ασκήσεις», οι αριθμοί και οι ερωτήσεις ανανεώνονται αυτόματα από τη δεξαμενή!
