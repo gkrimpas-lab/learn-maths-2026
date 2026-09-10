@@ -2941,7 +2941,138 @@ const QUESTIONS = [
     prompt: 'Ένα ορθογώνιο και ένα ισόπλευρο τρίγωνο έχουν την ίδια περίμετρο. Το ορθογώνιο έχει μήκος 11 εκ. και πλάτος 7 εκ. Πόσο είναι το μήκος της κάθε πλευράς του ισόπλευρου τριγώνου;',
     options: ['9 εκ.', '10 εκ.', '12 εκ.', '14 εκ.', '18 εκ.'],
     correct: '12 εκ.',
-    explain: 'Η περίμετρος του ορθογωνίου είναι 2 · (11 + 7) = 2 · 18 = 36 εκ. Αφού το τρίγωνο είναι ισόπλευρο και έχει την ίδια περίμετρο, η κάθε πλευρά του ισούται με 36 : 3 = 12 εκ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Υπολογίζουμε πρώτα την <strong>περίμετρο του ορθογωνίου</strong> και, επειδή τα δύο σχήματα είναι <strong>ισοπεριμετρικά</strong>, μοιράζουμε την περίμετρο αυτή εξίσου στις <strong>3 ίσες πλευρές</strong> του ισόπλευρου τριγώνου:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΟΡΘΟΓΩΝΙΟ & ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ ΜΕ ΚΟΙΝΗ ΠΕΡΙΜΕΤΡΟ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="510" height="215" viewBox="0 0 510 215" className="select-none font-sans mx-auto block">
+            {/* 1. ΟΡΘΟΓΩΝΙΟ (Μήκος: 11 εκ., Πλάτος: 7 εκ.) */}
+            <g transform="translate(35, 25)">
+              <text x="75" y="0" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Ορθογώνιο Παραλληλόγραμμο
+              </text>
+
+              {/* Σχήμα ορθογωνίου (150px x 95px) */}
+              <g transform="translate(0, 15)">
+                <rect x="0" y="0" width="150" height="95" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
+                
+                {/* Διαστάσεις */}
+                <text x="75" y="-6" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">11 εκ.</text>
+                <text x="75" y="108" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">11 εκ.</text>
+                <text x="-12" y="52" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">7 εκ.</text>
+                <text x="162" y="52" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">7 εκ.</text>
+
+                {/* Εσωτερικός τύπος περιμέτρου */}
+                <text x="75" y="44" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#1e40af">
+                  Π ＝ 2 · (11 ＋ 7)
+                </text>
+                <text x="75" y="62" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1e3a8a" fontFamily="monospace">
+                  Π ＝ 36 εκ.
+                </text>
+              </g>
+
+              {/* Badge Περιμέτρου */}
+              <rect x="15" y="132" width="120" height="24" rx="6" fill="#dbeafe" stroke="#93c5fd" strokeWidth="1" />
+              <text x="75" y="148" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">
+                Περίμετρος: 36 εκ.
+              </text>
+            </g>
+
+            {/* ΣΥΜΒΟΛΟ ΙΣΟΤΗΤΑΣ ΠΕΡΙΜΕΤΡΩΝ */}
+            <g transform="translate(230, 85)">
+              <text x="0" y="0" fontSize="24" fontWeight="black" textAnchor="middle" fill="#64748b">＝</text>
+              <text x="0" y="18" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">ίδια περίμετρος</text>
+            </g>
+
+            {/* 2. ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ (3 ίσες πλευρές των 12 εκ.) */}
+            <g transform="translate(295, 25)">
+              <text x="85" y="0" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Ισόπλευρο Τρίγωνο
+              </text>
+
+              {/* Σχήμα ισόπλευρου τριγώνου */}
+              <g transform="translate(0, 15)">
+                <polygon points="85,5 10,105 160,105" fill="#f0fdf4" stroke="#16a34a" strokeWidth="2.2" />
+
+                {/* Διαστάσεις πλευρών */}
+                <text x="35" y="48" fontSize="11" fontWeight="black" textAnchor="middle" fill="#15803d">12 εκ.</text>
+                <text x="135" y="48" fontSize="11" fontWeight="black" textAnchor="middle" fill="#15803d">12 εκ.</text>
+                <text x="85" y="122" fontSize="11.5" fontWeight="900" textAnchor="middle" fill="#166534">12 εκ. ⭐</text>
+
+                {/* Εσωτερικός υπολογισμός */}
+                <text x="85" y="68" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#15803d">
+                  3 ίσες πλευρές (α)
+                </text>
+                <text x="85" y="84" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#14532d" fontFamily="monospace">
+                  α ＝ 36 : 3
+                </text>
+              </g>
+
+              {/* Badge Αποτελέσματος */}
+              <g transform="translate(20, 150)">
+                <rect x="0" y="0" width="130" height="26" rx="13" fill="#16a34a" />
+                <text x="65" y="17" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                  Πλευρά: 12 εκ. ⭐
+                </text>
+              </g>
+            </g>
+
+            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
+            <g transform="translate(25, 192)">
+              <text x="230" y="14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#047857">
+                Η περίμετρος των 36 εκ. μοιράζεται σε 3 ίσα μέρη ➔ 36 : 3 ＝ 12 εκ. ανά πλευρά
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Περίμετρος ορθογωνίου */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Υπολογισμός της περιμέτρου του ορθογωνίου:
+            </div>
+            <p className="text-slate-700">
+              Η περίμετρος ενός ορθογωνίου με μήκος <strong>11 εκ.</strong> και πλάτος <strong>7 εκ.</strong> ισούται με το άθροισμα και των 4 πλευρών του:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>Π_ορθογωνίου ＝ 2 · (Μήκος ＋ Πλάτος)</div>
+              <div>Π_ορθογωνίου ＝ 2 · (11 ＋ 7) ＝ 2 · 18 ＝ <strong className="text-blue-700 font-bold">36 εκ.</strong></div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Πλευρά ισόπλευρου τριγώνου */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Υπολογισμός του μήκους της πλευράς του ισόπλευρου τριγώνου:
+            </div>
+            <p className="text-slate-700">
+              Το ισόπλευρο τρίγωνο έχει <strong>3 ίσες πλευρές</strong> (<span className="font-mono font-bold">Π ＝ 3 · α</span>) και έχει την ίδια ακριβώς περίμετρο (36 εκ.):
+            </p>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>Μήκος Πλευράς (α) ＝</span>
+                <Fraction num="Περίμετρος" den="3" />
+                <span>＝</span>
+                <Fraction num="36" den="3" />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base font-black">12 εκ.</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το μήκος της κάθε πλευράς του ισόπλευρου τριγώνου είναι <strong>12 εκ.</strong>
+        </p>
+      </div>
+    )
   },
   {
     id: 22,
