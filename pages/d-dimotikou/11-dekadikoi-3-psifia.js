@@ -15,6 +15,10 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function formatNumber(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
 export default function Dekadikoi3PsifiaTheoryPage() {
   const [numerator, setNumerator] = useState(2345); // Αριθμητής
 
