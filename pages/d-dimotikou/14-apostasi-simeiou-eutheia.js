@@ -41,10 +41,6 @@ export default function ApostasiTheoryPage() {
   const distPlagiaPx = Math.hypot(pointA.x - pointP.x, pointA.y - pointP.y);
   const distPlagiaCm = (distPlagiaPx / 35).toFixed(1).replace('.', ',');
 
-  // Χειρισμός Dragging του σημείου A
-  const handleMouseDown = () => setIsDragging(true);
-  const handleMouseUp = () => setIsDragging(false);
-
   const updateCoordinates = (clientX, clientY) => {
     if (!svgRef.current) return;
     const rect = svgRef.current.getBoundingClientRect();
@@ -53,14 +49,33 @@ export default function ApostasiTheoryPage() {
     setPointA({ x, y });
   };
 
+  // Χειρισμός Mouse Dragging
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
   const handleMouseMove = (e) => {
     if (!isDragging) return;
     updateCoordinates(e.clientX, e.clientY);
   };
 
+  // Χειρισμός Touch Dragging (αποτροπή scroll οθόνης)
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
   const handleTouchMove = (e) => {
     if (!isDragging || !e.touches[0]) return;
+    e.preventDefault();
+    e.stopPropagation();
     updateCoordinates(e.touches[0].clientX, e.touches[0].clientY);
+  };
+
+  const handleEndDrag = () => {
+    setIsDragging(false);
   };
 
   const updateAngle = (e, delta) => {
@@ -87,8 +102,8 @@ export default function ApostasiTheoryPage() {
     >
       <div
         className="space-y-8"
-        onMouseUp={handleMouseUp}
-        onTouchEnd={handleMouseUp}
+        onMouseUp={handleEndDrag}
+        onTouchEnd={handleEndDrag}
       >
         {/* HEADER & EXERCISES PROMO CARD */}
         <div className="bg-gradient-to-r from-teal-600 via-emerald-600 to-indigo-600 text-white p-6 sm:p-8 rounded-3xl shadow-md relative overflow-hidden">
@@ -175,7 +190,7 @@ export default function ApostasiTheoryPage() {
               </p>
             </div>
 
-            {/* CONTROL SLIDER ΓΙΑ ΤΗ ΓΩΝΙΑ ΤΗΣ ΕΥΘΕΙΑΣ (ΚΑΝΟΝΑΣ 2) */}
+            {/* CONTROL SLIDER ΓΙΑ ΤΗ ΓΩΝΙΑ ΤΗΣ ΕΥΘΕΙΑΣ */}
             <div className="w-full sm:w-72 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2 self-start sm:self-auto">
               <div className="h-8 flex items-center justify-between text-center px-1">
                 <span className="text-xs font-black uppercase text-slate-500">ΚΛΙΣΗ ΕΥΘΕΙΑΣ (ε)</span>
@@ -215,13 +230,14 @@ export default function ApostasiTheoryPage() {
             </div>
           </div>
 
-          {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (RESPONSIVE SVG ΧΩΡΙΣ SCROLL) */}
+          {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (ΜΕ TOUCH-ACTION: NONE ΓΙΑ ΝΑ ΜΗΝ ΚΟΥΝΙΕΤΑΙ Η ΣΕΛΙΔΑ) */}
           <div className="bg-slate-950 p-4 sm:p-8 rounded-3xl border border-slate-800 shadow-xl flex flex-col items-center justify-center space-y-5">
             <div
               ref={svgRef}
               onMouseMove={handleMouseMove}
               onTouchMove={handleTouchMove}
-              className="w-full max-w-xl aspect-[5/4] bg-slate-900/60 rounded-2xl border border-slate-800 relative select-none cursor-crosshair overflow-hidden"
+              style={{ touchAction: 'none' }}
+              className="w-full max-w-xl aspect-[5/4] bg-slate-900/60 rounded-2xl border border-slate-800 relative select-none cursor-crosshair overflow-hidden touch-none"
             >
               <svg className="w-full h-full block select-none" viewBox="0 0 500 420">
                 {/* Ευθεία ε */}
@@ -311,14 +327,17 @@ export default function ApostasiTheoryPage() {
                   );
                 })()}
 
-                {/* Σημείο Α (Συρόμενο με mouse ή touch) */}
+                {/* Σημείο Α (Συρόμενο με mouse ή touch & διευρυμένο hitbox) */}
                 <g
                   onMouseDown={handleMouseDown}
-                  onTouchStart={handleMouseDown}
-                  className="cursor-grab active:cursor-grabbing"
+                  onTouchStart={handleTouchStart}
+                  className="cursor-grab active:cursor-grabbing touch-none"
+                  style={{ touchAction: 'none' }}
                 >
+                  {/* Αόρατος κύκλος 30px για άνετο πιάσιμο σε κινητά */}
+                  <circle cx={pointA.x} cy={pointA.y} r="30" fill="transparent" />
                   <circle cx={pointA.x} cy={pointA.y} r="16" fill="#f43f5e" fillOpacity="0.25" />
-                  <circle cx={pointA.x} cy={pointA.y} r="8" fill="#f43f5e" stroke="#ffffff" strokeWidth="2.5" />
+                  <circle cx={pointA.x} cy={pointA.y} r="8.5" fill="#f43f5e" stroke="#ffffff" strokeWidth="2.5" />
                   <text
                     x={pointA.x - 6}
                     y={pointA.y - 14}
