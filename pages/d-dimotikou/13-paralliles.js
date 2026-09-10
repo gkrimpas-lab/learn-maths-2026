@@ -439,30 +439,34 @@ export default function ParallilesTheoryPage() {
                 })()}
 
                 {lineType === 'perpendicular' && (
-                  <g>
-                    {/* Ευθεία ε1 (Οριζόντια) */}
-                    <line x1="40" y1="210" x2="460" y2="210" stroke="#10b981" strokeWidth="5" strokeLinecap="round" />
-                    <text x={435} y={195} fill="#34d399" fontWeight="900" fontSize="18" fontFamily="sans-serif">
-                      ε₁
-                    </text>
+  <g>
+    {/* Ευθεία ε1 (Οριζόντια) */}
+    <line x1="40" y1="210" x2="460" y2="210" stroke="#10b981" strokeWidth="5" strokeLinecap="round" />
+    <text x={435} y={195} fill="#34d399" fontWeight="900" fontSize="18" fontFamily="sans-serif">
+      ε₁
+    </text>
 
-                    {/* Ευθεία ε2 (Κάθετη) */}
-                    <line x1="250" y1="35" x2="250" y2="385" stroke="#059669" strokeWidth="5" strokeLinecap="round" />
-                    <text x={265} y={60} fill="#6ee7b7" fontWeight="900" fontSize="18" fontFamily="sans-serif">
-                      ε₂
-                    </text>
+    {/* Ευθεία ε2 (Κάθετη) */}
+    <line x1="250" y1="35" x2="250" y2="385" stroke="#059669" strokeWidth="5" strokeLinecap="round" />
+    <text x={265} y={60} fill="#6ee7b7" fontWeight="900" fontSize="18" fontFamily="sans-serif">
+      ε₂
+    </text>
 
-                    {/* Σημείο Τομής Σ */}
-                    <circle cx="250" cy="210" r="7" fill="#f43f5e" />
-                    <text x="262" y="202" fill="#f43f5e" fontWeight="900" fontSize="20" fontFamily="sans-serif">
-                      Σ
-                    </text>
+    {/* Καθαρό γωνιακό σύμβολο ορθής γωνίας (L) */}
+    <path
+      d="M 250 185 L 275 185 L 275 210"
+      fill="none"
+      stroke="#f59e0b"
+      strokeWidth="2.5"
+    />
 
-                    {/* Σύμβολο Ορθής Γωνίας (90°) */}
-                    <rect x="250" y="180" width="30" height="30" fill="none" stroke="#f59e0b" strokeWidth="3" />
-                    <circle cx="265" cy="195" r="3" fill="#f59e0b" />
-                  </g>
-                )}
+    {/* Σημείο Τομής Σ & Ετικέτα (τοποθετημένη διαγώνια αριστερά ώστε να μην πατάει τη γωνία) */}
+    <circle cx="250" cy="210" r="6" fill="#f43f5e" />
+    <text x="230" y="235" fill="#f43f5e" fontWeight="900" fontSize="18" fontFamily="sans-serif">
+      Σ
+    </text>
+  </g>
+)}
               </svg>
             </div>
 
