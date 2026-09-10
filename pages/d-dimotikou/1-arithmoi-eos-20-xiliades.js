@@ -273,130 +273,187 @@ export default function ArithmoiEos20XiliadesPage() {
         </div>
 
         {/* ΔΙΑΔΡΑΣΤΙΚΟΣ ΑΒΑΚΑΣ - SECTION 2 */}
-<div className="bg-white p-4 sm:p-6 md:p-10 rounded-3xl shadow-sm border border-slate-100 space-y-6">
-  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4 border-slate-100">
+<div className="bg-white p-4 sm:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-4 border-slate-100">
     <div>
       <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
         <span>🧮</span> Διαδραστικός Άβακας Αξίας Θέσης
       </h2>
       <p className="text-slate-500 text-xs sm:text-sm">
-        Πάτα τα κουμπιά "＋" και "－" για να αλλάξεις τις χάντρες και να φτιάξεις τον αριθμό σου!
+        Αυξομείωσε τις χάντρες σε κάθε στήλη για να συνθέσεις τον αριθμό!
       </p>
     </div>
 
-    <div className="bg-slate-100 px-4 py-2 rounded-xl text-xs font-bold text-slate-600 self-start md:self-auto">
-      Μέγιστο Όριο: <span className="text-indigo-600 font-black">20.000</span>
+    <div className="bg-slate-100 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 self-start sm:self-auto">
+      Μέγιστο: <span className="text-indigo-600 font-black">20.000</span>
     </div>
   </div>
 
   {/* ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ & ΟΝΟΜΑΣΙΑΣ */}
-  <div className="bg-gradient-to-br from-indigo-900 via-slate-900 to-blue-900 text-white p-5 sm:p-8 rounded-2xl shadow-md text-center space-y-4">
-    <span className="text-xs font-black uppercase tracking-widest text-indigo-300">
-      Ο Αριθμος σου
+  <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 text-white p-5 sm:p-7 rounded-2xl shadow-md text-center space-y-3">
+    <span className="text-[11px] font-black uppercase tracking-widest text-indigo-300">
+      Ο ΑΡΙΘΜΟΣ ΣΟΥ
     </span>
-    <div className="text-4xl md:text-6xl font-mono font-black tracking-tight text-amber-400">
+    <div className="text-4xl sm:text-6xl font-mono font-black tracking-tight text-amber-400">
       {formatNumber(totalNumber)}
     </div>
-    <div className="bg-white/10 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/20 text-xs sm:text-base font-bold text-slate-100">
+    <div className="bg-white/10 backdrop-blur-md px-3 py-2.5 rounded-xl border border-white/15 text-xs sm:text-sm font-semibold text-slate-100 max-w-xl mx-auto">
       🗣️ <span className="text-amber-300 font-extrabold capitalize">{numberToGreekWords(totalNumber)}</span>
     </div>
   </div>
 
-  {/* Οπτική ένδειξη οριζόντιας κύλισης για κινητά */}
-  <div className="flex sm:hidden items-center justify-center gap-1 text-[11px] font-bold text-slate-400 bg-slate-100 py-1.5 rounded-lg">
-    <span>⟵</span> Σύρε δεξιά/αριστερά για όλες τις στήλες <span>⟶</span>
+  {/* RESPONSIVE SVG CONTAINER - ΑΥΤΟΜΑΤΟ SCALING ΧΩΡΙΣ SCROLL */}
+  <div className="p-2 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200/90 shadow-inner">
+    <svg
+      viewBox="0 0 500 235"
+      className="w-full h-auto max-w-2xl mx-auto block select-none font-sans"
+    >
+      {/* 1. Header: Κλάσεις Αριθμών */}
+      {/* Κλάση Χιλιάδων: x=20 έως x=200 (πλάτος 180) */}
+      <rect x="20" y="10" width="182" height="24" rx="6" fill="#e0e7ff" />
+      <text x="111" y="26" fill="#3730a3" fontSize="10.5" fontWeight="800" textAnchor="middle">
+        ΚΛΑΣΗ ΧΙΛΙΑΔΩΝ
+      </text>
+
+      {/* Κλάση Μονάδων: x=212 έως x=480 (πλάτος 268) */}
+      <rect x="212" y="10" width="268" height="24" rx="6" fill="#ccfbf1" />
+      <text x="346" y="26" fill="#115e59" fontSize="10.5" fontWeight="800" textAnchor="middle">
+        ΚΛΑΣΗ ΜΟΝΑΔΩΝ
+      </text>
+
+      {/* 2. Badges Στηλών (ΔΧ, Χ, Ε, Δ, Μ) */}
+      {[
+        { x: 65, label: 'ΔΧ', bg: '#f3e8ff', text: '#6b21a8' },
+        { x: 157, label: 'Χ', bg: '#e0e7ff', text: '#3730a3' },
+        { x: 257, label: 'Ε', bg: '#ccfbf1', text: '#115e59' },
+        { x: 347, label: 'Δ', bg: '#fef3c7', text: '#92400e' },
+        { x: 437, label: 'Μ', bg: '#dcfce7', text: '#166534' },
+      ].map((col) => (
+        <g key={col.label}>
+          <rect x={col.x - 26} y="40" width="52" height="20" rx="5" fill={col.bg} />
+          <text x={col.x} y="54" fill={col.text} fontSize="11" fontWeight="800" textAnchor="middle">
+            {col.label}
+          </text>
+        </g>
+      ))}
+
+      {/* 3. Βάση Άβακα & Κάθετες Ράβδοι */}
+      <rect x="20" y="200" width="460" height="8" rx="4" fill="#cbd5e1" />
+      {[65, 157, 257, 347, 437].map((xPos) => (
+        <line
+          key={xPos}
+          x1={xPos}
+          y1="68"
+          x2={xPos}
+          y2="200"
+          stroke="#e2e8f0"
+          strokeWidth="3"
+          strokeDasharray="4 3"
+        />
+      ))}
+
+      {/* 4. Χάντρες (Disks) ανά στήλη */}
+      {[
+        { colKey: 'DX', cx: 65, fill: '#a855f7' },
+        { colKey: 'X', cx: 157, fill: '#6366f1' },
+        { colKey: 'E', cx: 257, fill: '#14b8a6' },
+        { colKey: 'D', cx: 347, fill: '#f59e0b' },
+        { colKey: 'M', cx: 437, fill: '#22c55e' },
+      ].map(({ colKey, cx, fill }) => {
+        const count = disks[colKey];
+        return (
+          <g key={colKey}>
+            {Array.from({ length: count }).map((_, idx) => {
+              // Κάθε χάντρα έχει ύψος 10px, κενό 3px και στοιβάζονται από κάτω (y=187) προς τα πάνω
+              const cy = 187 - idx * 13;
+              return (
+                <rect
+                  key={idx}
+                  x={cx - 24}
+                  y={cy}
+                  width="48"
+                  height="11"
+                  rx="5.5"
+                  fill={fill}
+                  stroke="#ffffff"
+                  strokeWidth="1.5"
+                />
+              );
+            })}
+          </g>
+        );
+      })}
+
+      {/* 5. Ένδειξη τρέχουσας τιμής κάτω από τη βάση */}
+      {[
+        { cx: 65, val: disks.DX, color: '#7e22ce' },
+        { cx: 157, val: disks.X, color: '#4338ca' },
+        { cx: 257, val: disks.E, color: '#0f766e' },
+        { cx: 347, val: disks.D, color: '#b45309' },
+        { cx: 437, val: disks.M, color: '#15803d' },
+      ].map(({ cx, val, color }, i) => (
+        <text
+          key={i}
+          x={cx}
+          y="224"
+          fill={color}
+          fontSize="14"
+          fontWeight="900"
+          fontFamily="monospace"
+          textAnchor="middle"
+        >
+          {val}
+        </text>
+      ))}
+    </svg>
   </div>
 
-  {/* ΣΧΕΔΙΑΣΜΟΣ ΑΒΑΚΑ ΜΕ ΣΩΣΤΑ TOUCH CONTROLS */}
-  <div className="bg-slate-50 p-3 sm:p-6 rounded-2xl border border-slate-200 overflow-x-auto touch-pan-x">
-    <div className="min-w-[480px] space-y-4">
-      {/* ΚΛΑΣΕΙΣ OVERHEAD BADGES */}
-      <div className="grid grid-cols-5 gap-2 text-center font-bold text-[11px] sm:text-xs">
-        <div className="col-span-2 bg-indigo-100 text-indigo-900 py-1.5 rounded-t-xl font-black border-b-2 border-indigo-400">
-          ΚΛΑΣΗ ΧΙΛΙΑΔΩΝ
+  {/* COMPACT & BALANCED TOUCH CONTROLS */}
+  <div className="grid grid-cols-5 gap-1.5 sm:gap-3">
+    {columnsList.map((col) => (
+      <div
+        key={col.key}
+        className="flex flex-col items-center justify-between bg-slate-50 p-1.5 sm:p-2.5 rounded-2xl border border-slate-200"
+      >
+        {/* Ετικέτα */}
+        <div className="h-7 sm:h-8 flex items-center justify-center text-center text-[10px] sm:text-xs font-bold text-slate-600 leading-tight">
+          <span className="truncate">{col.label.split(' ')[0]}</span>
         </div>
-        <div className="col-span-3 bg-teal-100 text-teal-900 py-1.5 rounded-t-xl font-black border-b-2 border-teal-400">
-          ΚΛΑΣΗ ΜΟΝΑΔΩΝ
+
+        {/* Compact Stepper (30px-1fr-30px σε mobile) */}
+        <div className="flex items-center justify-between w-full bg-white rounded-xl p-1 border border-slate-200/90 shadow-sm">
+          <button
+            onClick={(e) => updateDigits(e, col.key, -1)}
+            className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 flex items-center justify-center bg-rose-50 hover:bg-rose-100 text-rose-600 active:bg-rose-200 font-black text-sm sm:text-base rounded-lg transition active:scale-90"
+            title="Αφαίρεση"
+            aria-label={`Αφαίρεση από ${col.label}`}
+          >
+            －
+          </button>
+
+          <span className="font-mono font-black text-slate-800 text-xs sm:text-sm select-none px-0.5">
+            {disks[col.key]}
+          </span>
+
+          <button
+            onClick={(e) => updateDigits(e, col.key, 1)}
+            className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 text-emerald-600 active:bg-emerald-200 font-black text-sm sm:text-base rounded-lg transition active:scale-90"
+            title="Προσθήκη"
+            aria-label={`Προσθήκη σε ${col.label}`}
+          >
+            ＋
+          </button>
         </div>
       </div>
-
-      {/* ΣΤΗΛΕΣ ΣΥΝΤΟΜΟΓΡΑΦΙΩΝ */}
-      <div className="grid grid-cols-5 gap-2 text-center text-xs font-black font-mono">
-        {columnsList.map((col) => (
-          <div
-            key={col.key}
-            className={`${col.lightBg} ${col.textColor} py-1.5 rounded-lg border border-slate-200`}
-          >
-            {col.short}
-          </div>
-        ))}
-      </div>
-
-      {/* ΠΕΡΙΟΧΗ ΧΑΝΤΡΩΝ (DISKS) */}
-      <div className="grid grid-cols-5 gap-2 sm:gap-4 h-60 sm:h-64 bg-white rounded-2xl border border-slate-200 p-2 sm:p-4 items-end shadow-inner">
-        {columnsList.map((col) => (
-          <div
-            key={col.key}
-            className="flex flex-col-reverse items-center h-full justify-start gap-1 relative border-r border-dashed border-slate-200 last:border-0 pt-2"
-          >
-            {Array.from({ length: disks[col.key] }).map((_, i) => (
-              <div
-                key={i}
-                className={`w-9 sm:w-12 h-3.5 sm:h-4 ${col.color} rounded-full border border-black/10 shadow-sm transition-all`}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-
-      {/* ΧΕΙΡΙΣΤΗΡΙΑ TOUCH CONTROLS (32px - 1fr - 32px σε mobile, χωρίς clipping) */}
-      <div className="grid grid-cols-5 gap-2">
-        {columnsList.map((col) => (
-          <div
-            key={col.key}
-            className="flex flex-col items-center gap-1.5 bg-white p-1.5 sm:p-3 rounded-xl border border-slate-200 shadow-sm overflow-hidden"
-          >
-            {/* Ετικέτα με σταθερό ύψος & truncate αν χρειαστεί */}
-            <div className="h-8 flex items-center justify-center text-center text-[11px] sm:text-xs font-bold text-slate-600 leading-tight px-0.5">
-              <span className="line-clamp-2">{col.label}</span>
-            </div>
-
-            {/* Grid διάταξη κουμπιών με εγγυημένο fitting */}
-            <div className="grid grid-cols-[32px_1fr_32px] sm:grid-cols-[36px_1fr_36px] items-center h-10 sm:h-11 w-full bg-slate-50 rounded-xl p-0.5 border border-slate-200/80">
-              <button
-                onClick={(e) => updateDigits(e, col.key, -1)}
-                className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-black text-base sm:text-lg rounded-lg shadow-sm transition active:scale-95 touch-manipulation select-none"
-                title="Αφαίρεση"
-                aria-label={`Αφαίρεση από ${col.label}`}
-              >
-                －
-              </button>
-
-              <span className="w-full text-center font-mono font-black text-slate-800 text-sm sm:text-base select-none">
-                {disks[col.key]}
-              </span>
-
-              <button
-                onClick={(e) => updateDigits(e, col.key, 1)}
-                className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-black text-base sm:text-lg rounded-lg shadow-sm transition active:scale-95 touch-manipulation select-none"
-                title="Προσθήκη"
-                aria-label={`Προσθήκη σε ${col.label}`}
-              >
-                ＋
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    ))}
   </div>
 
-  {/* ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ ΤΟΥ ΑΡΙΘΜΟΥ ΣΤΟΝ ΑΒΑΚΑ */}
+  {/* ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ ΤΟΥ ΑΡΙΘΜΟΥ */}
   <div className="bg-slate-100 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-2">
     <span className="text-xs font-black uppercase tracking-wider text-slate-500 block">
-      Αναλυτικη Μορφη του Αριθμου:
+      ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ ΤΟΥ ΑΡΙΘΜΟΥ:
     </span>
-    <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-1.5 leading-relaxed break-words px-3 py-2 font-mono text-xs sm:text-base font-bold text-slate-800 w-full">
+    <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-1.5 leading-relaxed break-words px-3 py-2 font-mono text-xs sm:text-sm md:text-base font-bold text-slate-800 w-full">
       <span className="bg-purple-100 text-purple-900 px-2.5 py-1 rounded-lg border border-purple-200">
         {disks.DX * 10000}
       </span>
@@ -423,6 +480,7 @@ export default function ArithmoiEos20XiliadesPage() {
     </div>
   </div>
 </div>
+        
         {/* BOTTOM EXERCISES CALLOUT BANNER */}
         <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="space-y-1 text-center md:text-left">
