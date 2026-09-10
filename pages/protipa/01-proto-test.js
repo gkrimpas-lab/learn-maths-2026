@@ -2949,7 +2949,7 @@ const QUESTIONS = [
 
         {/* SVG ΣΧΗΜΑ: ΟΡΘΟΓΩΝΙΟ & ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ ΜΕ ΚΟΙΝΗ ΠΕΡΙΜΕΤΡΟ */}
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="215" viewBox="0 0 510 215" className="select-none font-sans mx-auto block">
+          <svg width="510" height="235" viewBox="0 0 510 235" className="select-none font-sans mx-auto block">
             {/* 1. ΟΡΘΟΓΩΝΙΟ (Μήκος: 11 εκ., Πλάτος: 7 εκ.) */}
             <g transform="translate(35, 25)">
               <text x="75" y="0" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
@@ -3013,7 +3013,7 @@ const QUESTIONS = [
               </g>
 
               {/* Badge Αποτελέσματος */}
-              <g transform="translate(20, 150)">
+              <g transform="translate(20, 146)">
                 <rect x="0" y="0" width="130" height="26" rx="13" fill="#16a34a" />
                 <text x="65" y="17" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
                   Πλευρά: 12 εκ. ⭐
@@ -3021,15 +3021,14 @@ const QUESTIONS = [
               </g>
             </g>
 
-            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
-            <g transform="translate(25, 192)">
-              <text x="230" y="14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#047857">
+            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ (ΜΕ ΑΝΕΣΗ ΧΩΡΟΥ ΣΤΟ Y=210) */}
+            <g transform="translate(25, 210)">
+              <text x="230" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
                 Η περίμετρος των 36 εκ. μοιράζεται σε 3 ίσα μέρη ➔ 36 : 3 ＝ 12 εκ. ανά πλευρά
               </text>
             </g>
           </svg>
         </div>
-
         {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
         <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
           {/* Βήμα 1: Περίμετρος ορθογωνίου */}
