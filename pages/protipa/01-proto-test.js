@@ -3254,7 +3254,182 @@ const QUESTIONS = [
     prompt: 'Ένας μαθητής ξόδεψε το 1/4 του χαρτζιλικιού του για ένα βιβλίο και στη συνέχεια το 40% των χρημάτων που του είχαν απομείνει για ένα παιχνίδι. Αν του έμειναν 18€, πόσο ήταν το αρχικό του χαρτζιλίκι;',
     options: ['36€', '40€', '45€', '48€', '60€'],
     correct: '40€',
-    explain: 'Μετά το βιβλίο μένει το 1 − 1/4 = 3/4 (ή 75%) των χρημάτων. Ξοδεύει το 40% του 75% = 0,40 · 75% = 30% του αρχικού ποσού. Του απομένει 75% − 30% = 45% του αρχικού ποσού. Αν το 45% είναι 18€, το συνολικό ποσό είναι 18 : 0,45 = 40€.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Εξετάζουμε τα χρήματα που απομένουν μετά από κάθε έξοδο, εκφράζοντας τα ποσά σε <strong>ποσοστά</strong> επί του αρχικού χαρτζιλικιού (ή με <strong>κλάσματα</strong>):
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΚΑΤΑΝΟΜΗ ΤΟΥ ΑΡΧΙΚΟΥ ΧΑΡΤΖΙΛΙΚΙΟΥ ΣΕ ΕΞΟΔΑ ΚΑΙ ΥΠΟΛΟΙΠΟ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="520" height="235" viewBox="0 0 520 235" className="select-none font-sans mx-auto block">
+            {/* 1. ΕΠΙΚΕΦΑΛΙΔΑ ΣΥΝΟΛΙΚΟΥ ΠΟΣΟΥ */}
+            <g transform="translate(20, 10)">
+              <rect x="0" y="0" width="480" height="24" rx="12" fill="#0f172a" />
+              <text x="240" y="16" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                Αρχικό Χαρτζιλίκι: 100% (ή 4/4) — Άγνωστο Ποσό
+              </text>
+            </g>
+
+            {/* 2. ΚΥΡΙΑ ΜΠΑΡΑ ΚΑΤΑΝΟΜΗΣ (480px συνολικό μήκος -> 1% = 4.8px) */}
+            <g transform="translate(20, 46)">
+              {/* ΒΙΒΛΙΟ: 25% (1/4 = 120px) */}
+              <rect x="0" y="0" width="120" height="50" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
+              <text x="60" y="20" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">📖 Βιβλίο</text>
+              <text x="60" y="36" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">
+                1/4 (25%)
+              </text>
+
+              {/* ΠΑΙΧΝΙΔΙ: 30% (40% επί του 75% = 144px) */}
+              <rect x="124" y="0" width="140" height="50" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" />
+              <text x="194" y="20" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#dc2626">🎮 Παιχνίδι</text>
+              <text x="194" y="36" fontSize="12" fontWeight="black" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">
+                30% (12€)
+              </text>
+
+              {/* ΤΕΛΙΚΟ ΥΠΟΛΟΙΠΟ: 45% (216px = 18€) */}
+              <rect x="268" y="0" width="212" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.2" />
+              <text x="374" y="20" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d">
+                💰 Τελικό Υπόλοιπο (18€)
+              </text>
+              <text x="374" y="38" fontSize="14" fontWeight="900" textAnchor="middle" fill="#166534" fontFamily="monospace">
+                45% ＝ 18€ ⭐
+              </text>
+            </g>
+
+            {/* 3. ΑΓΚΥΛΗ ΓΙΑ ΤΟ ΥΠΟΛΟΙΠΟ ΜΕΤΑ ΤΟ ΒΙΒΛΙΟ (75%) */}
+            <g transform="translate(144, 102)">
+              <path d="M 0 5 L 0 0 L 356 0 L 356 5" fill="none" stroke="#64748b" strokeWidth="1.5" />
+              <text x="178" y="16" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">
+                Υπόλοιπο μετά το βιβλίο: 75% (ή 3/4)
+              </text>
+              <text x="178" y="30" fontSize="9" textAnchor="middle" fill="#64748b">
+                Από αυτό: 40% πήγε στο παιχνίδι (30%) και το 60% απέμεινε (45%)
+              </text>
+            </g>
+
+            {/* 4. ΥΠΟΛΟΓΙΣΜΟΣ ΚΑΙ ΑΠΟΤΕΛΕΣΜΑ */}
+            <g transform="translate(20, 150)">
+              {/* Αναγωγή στο 1% */}
+              <rect x="25" y="0" width="225" height="36" rx="8" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.2" />
+              <text x="137.5" y="15" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534">
+                45% του αρχικού ＝ 18€
+              </text>
+              <text x="137.5" y="29" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d" fontFamily="monospace">
+                1% ＝ 18 : 45 ＝ 0,4€
+              </text>
+
+              {/* Τελικό 100% */}
+              <g transform="translate(265, 0)">
+                <rect x="0" y="0" width="230" height="36" rx="8" fill="#16a34a" />
+                <text x="115" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#dcfce7">
+                  Αρχικό Ποσό (100%): 100 · 0,4€
+                </text>
+                <text x="115" y="30" fontSize="12.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                  Χαρτζιλίκι ＝ 40€ ⭐
+                </text>
+              </g>
+            </g>
+
+            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
+            <g transform="translate(20, 215)">
+              <text x="240" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
+                Το 45% ισούται με 18€ ➔ Ολόκληρο το αρχικό ποσό (100%) είναι 40€
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Με ποσοστά */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Μέσω ποσοστών επί του αρχικού ποσού)
+            </div>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Το έξοδο για το βιβλίο είναι:</span>
+                <Fraction num="1" den="4" />
+                <span>＝ <strong>25%</strong> του αρχικού ποσού.</span>
+              </div>
+              <div>• Χρήματα που απομένουν μετά το βιβλίο: 100% － 25% ＝ <strong>75%</strong>.</div>
+
+              <div className="pt-1 border-t border-slate-200">
+                <div>• Το έξοδο για το παιχνίδι είναι το 40% του υπολοίπου (δηλαδή του 75%):</div>
+                <div className="pl-3 font-bold text-slate-800 pt-0.5">
+                  0,40 · 75% ＝ 30% του αρχικού ποσού
+                </div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 space-y-1">
+                <div>• Τελικό υπόλοιπο που του έμεινε:</div>
+                <div className="pl-3 font-bold text-slate-800">
+                  75% － 30% ＝ 45% του αρχικού ποσού (ή 60% του 75%)
+                </div>
+                <div className="pt-1 text-slate-700 font-sans text-xs">
+                  Γνωρίζουμε ότι το τελικό αυτό υπόλοιπο (45%) ισούται με <strong>18€</strong>:
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span>Αρχικό Χαρτζιλίκι ＝</span>
+                  <Fraction num="18" den="0,45" />
+                  <span>＝ 18 :</span>
+                  <Fraction num="45" den="100" />
+                  <span>＝ 18 ·</span>
+                  <Fraction num="100" den="45" />
+                  <span>＝</span>
+                  <strong className="text-emerald-700 text-base font-black">40€</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Με κλάσματα (ανάποδα βήματα) */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Βήμα-βήμα προς τα πίσω με κλάσματα)
+            </div>
+            <p className="text-slate-700">
+              Ξεκινάμε από το τέλος προς την αρχή:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div>
+                <div className="font-sans font-bold text-slate-900">• Πριν την αγορά του παιχνιδιού:</div>
+                <div className="pl-3 text-slate-700 font-sans text-xs">
+                  Ξόδεψε το 40% του ενδιάμεσου ποσού, άρα του έμεινε το 60% (<Fraction num="3" den="5" />), το οποίο ισούται με 18€:
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap pl-3 pt-0.5">
+                  <span>Ποσό μετά το βιβλίο ＝ 18 :</span>
+                  <Fraction num="3" den="5" />
+                  <span>＝ 18 ·</span>
+                  <Fraction num="5" den="3" />
+                  <span>＝ 6 · 5 ＝ <strong className="text-blue-700">30€</strong></span>
+                </div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200">
+                <div className="font-sans font-bold text-slate-900">• Πριν την αγορά του βιβλίου (Αρχικό ποσό):</div>
+                <div className="pl-3 text-slate-700 font-sans text-xs">
+                  Ξόδεψε το <Fraction num="1" den="4" />, άρα τα 30€ αντιστοιχούν στα <Fraction num="3" den="4" /> του αρχικού χαρτζιλικιού:
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap pl-3 pt-0.5">
+                  <span>Αρχικό Χαρτζιλίκι ＝ 30 :</span>
+                  <Fraction num="3" den="4" />
+                  <span>＝ 30 ·</span>
+                  <Fraction num="4" den="3" />
+                  <span>＝ 10 · 4 ＝</span>
+                  <strong className="text-emerald-700 text-base font-black">40€</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, το αρχικό χαρτζιλίκι του μαθητή ήταν <strong>40€</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 24,
