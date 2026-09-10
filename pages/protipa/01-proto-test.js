@@ -3593,7 +3593,133 @@ const QUESTIONS = [
     prompt: 'Ένας ανθοπώλης έχει 48 κόκκινα τριαντάφυλλα και 72 λευκά τριαντάφυλλα. Θέλει να φτιάξει όμοιες ανθοδέσμες, χρησιμοποιώντας όλα τα λουλούδια, έτσι ώστε κάθε ανθοδέσμη να έχει τον ίδιο αριθμό κόκκινων και τον ίδιο αριθμό λευκών τριαντάφυλλων. Ποιος είναι ο μέγιστος αριθμός από τέτοιες ανθοδέσμες που μπορεί να φτιάξει;',
     options: ['12', '16', '24', '36', '48'],
     correct: '24',
-    explain: 'Ο μέγιστος αριθμός ανθοδεσμών αντιστοιχεί στον Μέγιστο Κοινό Διαιρέτη των αριθμών 48 και 72: Μ.Κ.Δ.(48, 72) = 24. Σε κάθε ανθοδέσμη θα υπάρχουν 48 : 24 = 2 κόκκινα και 72 : 24 = 3 λευκά τριαντάφυλλα.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Επειδή θέλουμε να μοιράσουμε <strong>όλα</strong> τα λουλούδια σε <strong>όμοιες ανθοδέσμες</strong> χωρίς να περισσέψει κανένα και αναζητούμε τον <strong>μέγιστο αριθμό</strong> ανθοδεσμών, ψάχνουμε τον <strong>Μέγιστο Κοινό Διαιρέτη (Μ.Κ.Δ.)</strong> των αριθμών 48 και 72:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΑΝΑΛΥΣΗ Μ.Κ.Δ.(48, 72) ΚΑΙ ΠΕΡΙΕΧΟΜΕΝΟ ΚΑΘΕ ΑΝΘΟΔΕΣΜΗΣ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="520" height="235" viewBox="0 0 520 235" className="select-none font-sans mx-auto block">
+            {/* 1. ΑΡΧΙΚΑ ΛΟΥΛΟΥΔΙΑ & ΚΟΙΝΗ ΔΙΑΙΡΕΣΗ ΣΕ 24 ΑΝΘΟΔΕΣΜΕΣ */}
+            <g transform="translate(15, 12)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
+                1. Διαίρεση του συνόλου των λουλουδιών με τον Μ.Κ.Δ.(48, 72) ＝ 24:
+              </text>
+
+              <g transform="translate(0, 24)">
+                {/* 48 Κόκκινα */}
+                <g transform="translate(0, 0)">
+                  <rect x="0" y="0" width="235" height="42" rx="8" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.6" />
+                  <text x="14" y="18" fontSize="10.5" fontWeight="black" fill="#dc2626">🌹 48 Κόκκινα</text>
+                  <text x="14" y="32" fontSize="9.5" fontWeight="bold" fill="#b91c1c">48 : 24 ανθοδέσμες ＝ <tspan fontSize="11" fontWeight="900">2 κόκκινα / ανθοδέσμη</tspan></text>
+                </g>
+
+                {/* 72 Λευκά */}
+                <g transform="translate(250, 0)">
+                  <rect x="0" y="0" width="235" height="42" rx="8" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.6" />
+                  <text x="14" y="18" fontSize="10.5" fontWeight="black" fill="#475569">🪷 72 Λευκά</text>
+                  <text x="14" y="32" fontSize="9.5" fontWeight="bold" fill="#334155">72 : 24 ανθοδέσμες ＝ <tspan fontSize="11" fontWeight="900" fill="#0f172a">3 λευκά / ανθοδέσμη</tspan></text>
+                </g>
+              </g>
+            </g>
+
+            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
+            <line x1="15" y1="92" x2="500" y2="92" stroke="#e2e8f0" strokeWidth="1.2" />
+
+            {/* 2. ΣΥΣΤΑΣΗ ΜΙΑΣ ΑΝΘΟΔΕΣΜΗΣ & ΣΥΝΟΛΙΚΟΣ ΑΡΙΘΜΟΣ */}
+            <g transform="translate(15, 104)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
+                2. Σύνθεση κάθε ανθοδέσμης &amp; Τελικό Πλήθος:
+              </text>
+
+              <g transform="translate(0, 24)">
+                {/* Κάρτα σύνθεσης 1 ανθοδέσμης */}
+                <rect x="0" y="0" width="270" height="46" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
+                <text x="15" y="18" fontSize="10" fontWeight="bold" fill="#1d4ed8">Κάθε μία ανθοδέσμη περιέχει:</text>
+                <text x="15" y="34" fontSize="11.5" fontWeight="black" fill="#0f172a">
+                  <tspan fill="#dc2626">2 Κόκκινα</tspan> ＋ <tspan fill="#475569">3 Λευκά</tspan> ＝ 5 λουλούδια
+                </text>
+
+                {/* Badge μέγιστου αριθμού ανθοδεσμών */}
+                <g transform="translate(285, 0)">
+                  <rect x="0" y="0" width="200" height="46" rx="10" fill="#16a34a" />
+                  <text x="100" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#dcfce7">
+                    Μέγιστος Αριθμός: Μ.Κ.Δ.
+                  </text>
+                  <text x="100" y="36" fontSize="13.5" fontWeight="900" textAnchor="middle" fill="#ffffff">
+                    24 Ανθοδέσμες ⭐
+                  </text>
+                </g>
+              </g>
+            </g>
+
+            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
+            <g transform="translate(15, 212)">
+              <text x="245" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
+                Ο αριθμός 24 είναι ο μεγαλύτερος φυσικός που διαιρεί ταυτόχρονα το 48 και το 72
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Μέσω Μ.Κ.Δ. */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Υπολογισμός Μέγιστου Κοινού Διαιρέτη - Μ.Κ.Δ.)
+            </div>
+            <p className="text-slate-700">
+              Αναλύουμε τους αριθμούς 48 και 72 σε γινόμενο πρώτων παραγόντων:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• 48 ＝ 2 · 2 · 2 · 2 · 3 ＝ 2⁴ · 3</div>
+              <div>• 72 ＝ 2 · 2 · 2 · 3 · 3 ＝ 2³ · 3²</div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Ο Μ.Κ.Δ. ισούται με το γινόμενο των κοινών πρώτων παραγόντων με τον μικρότερο εκθέτη:
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>Μ.Κ.Δ.(48, 72) ＝ 2³ · 3 ＝ 8 · 3 ＝</span>
+                <strong className="text-emerald-700 text-base font-black">24 ανθοδέσμες</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Επαλήθευση περιεχομένου ανά ανθοδέσμη */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Υπολογισμός λουλουδιών ανά ανθοδέσμη)
+            </div>
+            <p className="text-slate-700">
+              Μοιράζουμε τα λουλούδια στις 24 ανθοδέσμες:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Κόκκινα τριαντάφυλλα σε κάθε ανθοδέσμη ＝</span>
+                <Fraction num="48" den="24" />
+                <span>＝ <strong className="text-rose-600">2 κόκκινα</strong></span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Λευκά τριαντάφυλλα σε κάθε ανθοδέσμη ＝</span>
+                <Fraction num="72" den="24" />
+                <span>＝ <strong className="text-slate-700">3 λευκά</strong></span>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 text-slate-600 font-sans text-xs">
+                Επειδή οι αριθμοί 2 και 3 είναι πρώτοι μεταξύ τους (Μ.Κ.Δ.(2, 3) ＝ 1), δεν υπάρχει δυνατότητα δημιουργίας περισσότερων όμοιων ανθοδεσμών.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο μέγιστος αριθμός από τέτοιες ανθοδέσμες που μπορεί να φτιάξει είναι <strong>24</strong>.
+        </p>
+      </div>
+    )
   }
 ];
 
