@@ -2768,7 +2768,172 @@ const QUESTIONS = [
     prompt: 'Σε μια ατελή διαίρεση φυσικών αριθμών, το πηλίκο είναι 8 και το υπόλοιπο είναι 5. Αν γνωρίζουμε ότι ο διαιρετέος είναι διψήφιος αριθμός, πόσες διαφορετικές δυνατές τιμές μπορεί να πάρει ο διαιρέτης της διαίρεσης αυτής;',
     options: ['4', '5', '6', '7', '8'],
     correct: '6',
-    explain: 'Ισχύει Δ = 8 · δ + 5. Επειδή το υπόλοιπο είναι 5, πρέπει ο διαιρέτης δ > 5 (άρα δ ≥ 6). Επιπλέον ο Δ είναι διψήφιος, άρα Δ ≤ 99 ➔ 8δ + 5 ≤ 99 ➔ 8δ ≤ 94 ➔ δ ≤ 11. Οι δυνατές τιμές του διαιρέτη είναι δ ∈ {6, 7, 8, 9, 10, 11}, δηλαδή ακριβώς 6 διαφορετικές τιμές.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Αξιοποιούμε την <strong>ταυτότητα της ευκλείδειας διαίρεσης</strong> (<span className="font-mono font-bold">Δ ＝ δ · π ＋ υ</span>) και τον βασικό κανόνα ότι <strong>το υπόλοιπο είναι πάντοτε αυστηρά μικρότερο από τον διαιρέτη</strong> (<span className="font-mono font-bold">υ &lt; δ</span>):
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΑΡΙΘΜΟΓΡΑΜΜΗ & ΔΟΚΙΜΑΣΤΗΡΙΟ ΤΙΜΩΝ ΤΟΥ ΔΙΑΙΡΕΤΗ δ */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="520" height="225" viewBox="0 0 520 225" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="axis-arr-20" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
+              </marker>
+            </defs>
+
+            {/* ΕΠΙΚΕΦΑΛΙΔΑ ΤΑΥΤΟΤΗΤΑΣ */}
+            <g transform="translate(20, 10)">
+              <rect x="0" y="0" width="480" height="24" rx="12" fill="#0f172a" />
+              <text x="240" y="16" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                Ταυτότητα Διαίρεσης: Δ ＝ 8 · δ ＋ 5 &nbsp;|&nbsp; Περιορισμοί: δ &gt; 5 &nbsp;και&nbsp; Δ ≤ 99
+              </text>
+            </g>
+
+            {/* ΑΞΟΝΑΣ ΤΙΜΩΝ ΤΟΥ δ (από δ=4 έως δ=13) */}
+            <line x1="25" y1="85" x2="495" y2="85" stroke="#334155" strokeWidth="2" markerEnd="url(#axis-arr-20)" />
+
+            {/* 1. ΑΠΑΓΟΡΕΥΜΕΝΗ ΠΕΡΙΟΧΗ: δ <= 5 (υπόλοιπο 5 >= δ, ΑΔΥΝΑΤΟ) */}
+            <g transform="translate(45, 85)">
+              <line x1="0" y1="-8" x2="0" y2="8" stroke="#ef4444" strokeWidth="2" />
+              <circle cx="0" cy="0" r="4.5" fill="#ef4444" />
+              <text x="0" y="-14" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">5</text>
+              <rect x="-30" y="14" width="60" height="20" rx="4" fill="#fee2e2" stroke="#fca5a5" strokeWidth="1" />
+              <text x="0" y="27" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#b91c1c">υ ≥ δ (❌)</text>
+            </g>
+
+            {/* ΔΙΑΚΕΚΟΜΜΕΝΟ ΚΑΘΕΤΟ ΟΡΙΟ δ > 5 */}
+            <line x1="80" y1="48" x2="80" y2="120" stroke="#dc2626" strokeWidth="1.8" strokeDasharray="3 3" />
+            <text x="80" y="44" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#dc2626">Όριο: δ &gt; 5</text>
+
+            {/* 2. ΑΠΟΔΕΚΤΕΣ ΤΙΜΕΣ: δ = 6, 7, 8, 9, 10, 11 (6 ΤΙΜΕΣ) */}
+            {[
+              { val: 6, d: 53, x: 110 },
+              { val: 7, d: 61, x: 160 },
+              { val: 8, d: 69, x: 210 },
+              { val: 9, d: 77, x: 260 },
+              { val: 10, d: 85, x: 310 },
+              { val: 11, d: 93, x: 360 }
+            ].map((item) => (
+              <g key={item.val} transform={`translate(${item.x}, 85)`}>
+                <line x1="0" y1="-10" x2="0" y2="10" stroke="#16a34a" strokeWidth="2.4" />
+                <circle cx="0" cy="0" r="5.5" fill="#16a34a" stroke="#14532d" strokeWidth="1.2" />
+                <text x="0" y="-14" fontSize="13" fontWeight="900" textAnchor="middle" fill="#15803d">
+                  {item.val}
+                </text>
+                <text x="0" y="22" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#166534" fontFamily="monospace">
+                  Δ={item.d}
+                </text>
+                <text x="0" y="32" fontSize="8" fontWeight="bold" textAnchor="middle" fill="#15803d">
+                  (διψήφιος)
+                </text>
+              </g>
+            ))}
+
+            {/* ΔΙΑΚΕΚΟΜΜΕΝΟ ΚΑΘΕΤΟ ΟΡΙΟ Δ <= 99 */}
+            <line x1="390" y1="48" x2="390" y2="120" stroke="#dc2626" strokeWidth="1.8" strokeDasharray="3 3" />
+            <text x="390" y="44" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#dc2626">Όριο: Δ ≤ 99</text>
+
+            {/* 3. ΑΠΑΓΟΡΕΥΜΕΝΗ ΠΕΡΙΟΧΗ: δ >= 12 (Δ = 101, 3ψήφιος) */}
+            <g transform="translate(425, 85)">
+              <line x1="0" y1="-8" x2="0" y2="8" stroke="#ef4444" strokeWidth="2" />
+              <circle cx="0" cy="0" r="4.5" fill="#ef4444" />
+              <text x="0" y="-14" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">12</text>
+              <rect x="-35" y="14" width="70" height="20" rx="4" fill="#fee2e2" stroke="#fca5a5" strokeWidth="1" />
+              <text x="0" y="27" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#b91c1c">Δ=101 (3ψήφιος ❌)</text>
+            </g>
+
+            {/* ΑΓΚΥΛΗ ΑΠΟΔΕΚΤΟΥ ΕΥΡΟΥΣ (6 ΤΙΜΕΣ) */}
+            <g transform="translate(100, 130)">
+              <path d="M 0 5 L 0 0 L 270 0 L 270 5" fill="none" stroke="#16a34a" strokeWidth="2" />
+              <rect x="25" y="10" width="220" height="30" rx="8" fill="#16a34a" />
+              <text x="135" y="29" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                Δεκτές Τιμές: 6 διαφορετικές (6 έως 11) ⭐
+              </text>
+            </g>
+
+            <text x="260" y="212" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#047857">
+              Οι αριθμοί δ ∈ &#123;6, 7, 8, 9, 10, 11&#125; δίνουν διψήφιο διαιρετέο (από 53 έως 93)
+            </text>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1: Κάτω όριο για τον διαιρέτη */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Περιορισμός από το υπόλοιπο της διαίρεσης:
+            </div>
+            <p className="text-slate-700">
+              Σε κάθε ευκλείδεια διαίρεση, το υπόλοιπο είναι πάντοτε <strong>αυστηρά μικρότερο</strong> από τον διαιρέτη (<span className="font-mono font-bold">υ &lt; δ</span>):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>Επειδή υ ＝ 5 ➔ <strong>δ &gt; 5</strong></div>
+              <div className="text-slate-600 font-sans text-xs">
+                Επομένως, ο φυσικός αριθμός δ μπορεί να ξεκινάει από το <strong>6</strong> και πάνω (δ ≥ 6).
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2: Άνω όριο από τον διψήφιο διαιρετέο */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Περιορισμός από το μέγιστο μέγεθος του διαιρετέου:
+            </div>
+            <p className="text-slate-700">
+              Ο διαιρετέος εκφράζεται ως <span className="font-mono font-bold">Δ ＝ 8 · δ ＋ 5</span> και γνωρίζουμε ότι είναι <strong>διψήφιος αριθμός</strong> (δηλαδή <span className="font-mono font-bold">Δ ≤ 99</span>):
+            </p>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>8 · δ ＋ 5 ≤ 99</div>
+              <div>8 · δ ≤ 99 － 5</div>
+              <div>8 · δ ≤ 94</div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>δ ≤</span>
+                <Fraction num="94" den="8" />
+                <span>＝ <strong>11,75</strong></span>
+              </div>
+              <div className="text-slate-600 font-sans text-xs pt-1">
+                Επειδή ο διαιρέτης δ είναι φυσικός αριθμός, η μέγιστη δυνατή τιμή του είναι το <strong>11</strong>.
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 3: Καταγραφή όλων των δεκτών τιμών */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              3. Συλλογή των δυνατών τιμών και επαλήθευση:
+            </div>
+            <p className="text-slate-700">
+              Συνδυάζοντας τους δύο περιορισμούς (<span className="font-mono font-bold">6 ≤ δ ≤ 11</span>):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="font-bold text-slate-800">
+                δ ∈ &#123;6, 7, 8, 9, 10, 11&#125;
+              </div>
+              <div className="text-slate-600 font-sans text-xs space-y-0.5">
+                <div>• Για δ ＝ 6 ➔ Δ ＝ 8 · 6 ＋ 5 ＝ 53 (διψήφιος ✔️)</div>
+                <div>• Για δ ＝ 7 ➔ Δ ＝ 8 · 7 ＋ 5 ＝ 61 (διψήφιος ✔️)</div>
+                <div>• Για δ ＝ 8 ➔ Δ ＝ 8 · 8 ＋ 5 ＝ 69 (διψήφιος ✔️)</div>
+                <div>• Για δ ＝ 9 ➔ Δ ＝ 8 · 9 ＋ 5 ＝ 77 (διψήφιος ✔️)</div>
+                <div>• Για δ ＝ 10 ➔ Δ ＝ 8 · 10 ＋ 5 ＝ 85 (διψήφιος ✔️)</div>
+                <div>• Για δ ＝ 11 ➔ Δ ＝ 8 · 11 ＋ 5 ＝ 93 (διψήφιος ✔️)</div>
+                <div className="text-rose-600">• Για δ ＝ 12 ➔ Δ ＝ 8 · 12 ＋ 5 ＝ 101 (τριψήφιος ❌)</div>
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
+                Πλήθος δυνατών τιμών ＝ 11 － 6 ＋ 1 ＝ <span className="text-base text-emerald-700 font-black">6 τιμές</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο διαιρέτης μπορεί να πάρει <strong>6 διαφορετικές δυνατές τιμές</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 21,
