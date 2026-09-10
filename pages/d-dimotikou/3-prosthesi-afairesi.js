@@ -204,7 +204,7 @@ export default function ProsthesiAfairesiTheoryPage() {
             {/* Slider Αριθμού α */}
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
               <div className="h-8 flex items-center justify-between text-center px-1">
-                <span className="text-xs font-black uppercase text-slate-500">1ος ΑΡΙΘΜΟΣ (α)</span>
+                <span className="text-xs font-black text-slate-500">1ος ΑΡΙΘΜΟΣ (α)</span>
                 <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-blue-600 text-base">
                   {formatNumber(numA)}
                 </span>
@@ -244,7 +244,7 @@ export default function ProsthesiAfairesiTheoryPage() {
             {/* Slider Αριθμού β */}
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
               <div className="h-8 flex items-center justify-between text-center px-1">
-                <span className="text-xs font-black uppercase text-slate-500">2ος ΑΡΙΘΜΟΣ (β)</span>
+                <span className="text-xs font-black text-slate-500">2ος ΑΡΙΘΜΟΣ (β)</span>
                 <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-indigo-600 text-base">
                   {formatNumber(numB)}
                 </span>
