@@ -472,7 +472,7 @@ export default function ParallilesTheoryPage() {
 
             {/* ΕΠΕΞΗΓΗΣΗ ΣΤΗΝ ΟΘΟΝΗ */}
             <div className="text-center space-y-1">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-400 block">
+              <span className="text-xs font-black tracking-wider text-slate-400 block">
                 {lineType === 'parallel'
                   ? 'Παράλληλες Ευθείες (ε₁ ∥ ε₂)'
                   : lineType === 'intersecting'
