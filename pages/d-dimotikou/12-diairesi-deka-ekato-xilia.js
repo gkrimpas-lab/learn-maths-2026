@@ -93,7 +93,7 @@ export default function Diairesi101001000TheoryPage() {
                 Δ' ΔΗΜΟΤΙΚΟΥ
               </span>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
-                ⚡ Διαίρεση & Πολλαπλασιασμός με 10, 100, 1.000
+                ⚡ Διαίρεση και Πολλαπλασιασμός με 10, 100, 1.000
               </h1>
               <p className="text-blue-100 text-sm sm:text-base lg:text-lg leading-relaxed">
                 Μαθαίνουμε τον χρυσό κανόνα της μετακίνησης της υποδιαστολής: αριστερά στη διαίρεση και δεξιά στον πολλαπλασιασμό!
@@ -172,7 +172,7 @@ export default function Diairesi101001000TheoryPage() {
           {/* ΣΥΝΤΟΜΟ TIP ΓΙΑ ΑΚΕΡΑΙΟΥΣ */}
           <div className="bg-amber-50 p-5 rounded-2xl border border-amber-200 text-xs sm:text-sm text-amber-950 space-y-1">
             <span className="font-black uppercase text-amber-900 block">
-              💡 Τι κάνουμε όταν ο αριθμός είναι ακέραιος;
+              💡 Τι κανουμε οταν ο αριθμος ειναι ακεραιος;
             </span>
             <p className="leading-relaxed">
               Στους ακέραιους αριθμούς (π.χ. 450), θεωρούμε ότι η υποδιαστολή βρίσκεται πάντοτε «κρυμμένη» στο τέλος τους (450,). Όταν διαιρούμε με το 10, το 100 ή το 1.000, η υποδιαστολή εμφανίζεται και μετακινείται προς τα αριστερά, ενώ αν λείπουν ψηφία συμπληρώνουμε με μηδενικά!
