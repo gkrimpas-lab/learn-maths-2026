@@ -3079,7 +3079,174 @@ const QUESTIONS = [
     prompt: 'Ένας ποδηλάτης διανύει απόσταση 18 χιλιομέτρων σε 45 λεπτά με σταθερή ταχύτητα. Πόσα χιλιόμετρα θα διανύσει σε 1 ώρα και 15 λεπτά αν διατηρήσει την ίδια ταχύτητα;',
     options: ['24 χλμ.', '27 χλμ.', '30 χλμ.', '32 χλμ.', '36 χλμ.'],
     correct: '30 χλμ.',
-    explain: 'Ο χρόνος 1 ώρα και 15 λεπτά αντιστοιχεί σε 60 + 15 = 75 λεπτά. Η ταχύτητα ανά λεπτό είναι 18 : 45 = 2/5 = 0,4 χλμ./λεπτό. Σε 75 λεπτά θα διανύσει 75 · 0,4 = 30 χλμ.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Επειδή η ταχύτητα είναι <strong>σταθερή</strong>, τα ποσά <strong>χρόνος</strong> και <strong>απόσταση</strong> είναι ποσά ανάλογα. Μετατρέπουμε τον χρόνο σε λεπτά: 1 ώρα και 15 λεπτά ＝ 60 ＋ 15 ＝ <strong>75 λεπτά</strong>.
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΑΝΑΛΟΓΙΑ ΜΕΣΩ ΤΟΥ 15ΛΕΠΤΟΥ (ΜΟΝΑΔΑΣ ΧΡΟΝΟΥ) */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="520" height="235" viewBox="0 0 520 235" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="arr-ratio-22" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+              </marker>
+            </defs>
+
+            {/* 1. ΑΡΧΙΚΗ ΔΙΑΔΡΟΜΗ (45 ΛΕΠΤΑ = 3 ΤΜΗΜΑΤΑ ΤΩΝ 15 ΛΕΠΤΩΝ) */}
+            <g transform="translate(20, 12)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
+                1. Αρχική Διαδρομή: 45 λεπτά ➔ 18 χλμ. (3 ίσα 15λεπτα των 6 χλμ.)
+              </text>
+
+              <g transform="translate(0, 24)">
+                {[0, 1, 2].map((idx) => (
+                  <g key={`leg1-${idx}`} transform={`translate(${idx * 90}, 0)`}>
+                    <rect x="0" y="0" width="84" height="42" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
+                    <text x="42" y="18" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">15 λεπτά</text>
+                    <text x="42" y="33" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">6 χλμ.</text>
+                  </g>
+                ))}
+
+                {/* Badge 45 λεπτών */}
+                <g transform="translate(280, 4)">
+                  <rect x="0" y="0" width="195" height="34" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" />
+                  <text x="97.5" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#334155">
+                    Σύνολο: 3 · 6 ＝ <tspan fontWeight="900" fill="#1d4ed8" fontFamily="monospace">18 χλμ.</tspan>
+                  </text>
+                </g>
+              </g>
+            </g>
+
+            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
+            <line x1="20" y1="96" x2="500" y2="96" stroke="#e2e8f0" strokeWidth="1.2" />
+
+            {/* 2. ΖΗΤΟΥΜΕΝΗ ΔΙΑΔΡΟΜΗ (75 ΛΕΠΤΑ = 5 ΤΜΗΜΑΤΑ ΤΩΝ 15 ΛΕΠΤΩΝ) */}
+            <g transform="translate(20, 108)">
+              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
+                2. Νέα Διαδρομή: 1 ώρα &amp; 15 λεπτά (75 λεπτά ＝ 5 ίσα 15λεπτα)
+              </text>
+
+              <g transform="translate(0, 24)">
+                {/* 5 μπλοκ των 15 λεπτών */}
+                {[0, 1, 2, 3, 4].map((idx) => (
+                  <g key={`leg2-${idx}`} transform={`translate(${idx * 58}, 0)`}>
+                    <rect
+                      x="0"
+                      y="0"
+                      width="53"
+                      height="42"
+                      rx="6"
+                      fill={idx < 3 ? '#eff6ff' : '#f0fdf4'}
+                      stroke={idx < 3 ? '#3b82f6' : '#16a34a'}
+                      strokeWidth={idx < 3 ? '1.4' : '1.8'}
+                    />
+                    <text x="26.5" y="17" fontSize="8" fontWeight="bold" textAnchor="middle" fill={idx < 3 ? '#1d4ed8' : '#15803d'}>
+                      15 λεπτ.
+                    </text>
+                    <text x="26.5" y="33" fontSize="10.5" fontWeight="black" textAnchor="middle" fill={idx < 3 ? '#1e40af' : '#166534'} fontFamily="monospace">
+                      6 χλμ.
+                    </text>
+                  </g>
+                ))}
+
+                {/* Badge τελικής απόστασης */}
+                <g transform="translate(305, 0)">
+                  <rect x="0" y="0" width="170" height="42" rx="10" fill="#16a34a" />
+                  <text x="85" y="17" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#dcfce7">
+                    5 τμήματα · 6 χλμ.
+                  </text>
+                  <text x="85" y="34" fontSize="13" fontWeight="900" textAnchor="middle" fill="#ffffff">
+                    Απόσταση: 30 χλμ. ⭐
+                  </text>
+                </g>
+              </g>
+            </g>
+
+            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
+            <g transform="translate(20, 212)">
+              <text x="240" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
+                Κάθε 15 λεπτά διανύει 6 χλμ. (18 : 3) ➔ Σε 75 λεπτά (5 · 15 λεπτά): 5 · 6 ＝ 30 χλμ.
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Αναγωγή στο κοινό διάστημα (15 λεπτά) */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Αναγωγή σε διάστημα 15 λεπτών)
+            </div>
+            <p className="text-slate-700">
+              Παρατηρούμε ότι τόσο τα 45 λεπτά όσο και τα 75 λεπτά είναι πολλαπλάσια του <strong>15</strong>:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Στα 45 λεπτά (3 δεκαπεντάλεπτα) διανύει 18 χλμ. ➔ Σε 15 λεπτά:</span>
+                <Fraction num="18" den="3" />
+                <span>＝ <strong className="text-blue-700">6 χλμ.</strong></span>
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Ο χρόνος 1 ώρα και 15 λεπτά ισούται με 75 λεπτά, δηλαδή <strong>5 δεκαπεντάλεπτα</strong> (75 : 15 ＝ 5):
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>• Συνολική απόσταση ＝ 5 · 6 χλμ. ＝</span>
+                <strong className="text-emerald-700 text-base font-black">30 χλμ.</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Με ταχύτητα ανά ώρα (km/h) */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Με ταχύτητα σε χλμ./ώρα και κλάσματα)
+            </div>
+            <p className="text-slate-700">
+              Εκφράζουμε τους χρόνους σε ώρες χρησιμοποιώντας κλάσματα:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• 45 λεπτά ＝</span>
+                <Fraction num="45" den="60" />
+                <span>＝</span>
+                <Fraction num="3" den="4" />
+                <span>της ώρας.</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Ταχύτητα ＝ Απόσταση : Χρόνος ＝ 18 :</span>
+                <Fraction num="3" den="4" />
+                <span>＝ 18 ·</span>
+                <Fraction num="4" den="3" />
+                <span>＝ <strong className="text-blue-700">24 χλμ./ώρα</strong></span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• 75 λεπτά ＝ 1 ώρα και</span>
+                <Fraction num="1" den="4" />
+                <span>ώρας ＝</span>
+                <Fraction num="5" den="4" />
+                <span>της ώρας (ή 1,25 ώρες).</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Απόσταση ＝ 24 ·</span>
+                <Fraction num="5" den="4" />
+                <span>＝ 6 · 5 ＝</span>
+                <strong className="text-emerald-700 text-base font-black">30 χλμ.</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, ο ποδηλάτης θα διανύσει <strong>30 χιλιόμετρα</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 23,
