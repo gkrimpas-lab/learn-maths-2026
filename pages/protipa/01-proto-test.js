@@ -3437,7 +3437,155 @@ const QUESTIONS = [
     prompt: 'Σε ένα τουρνουά σκακιού συμμετέχουν 6 παίκτες. Κάθε παίκτης παίζει ακριβώς μία παρτίδα με καθέναν από τους υπόλοιπους παίκτες. Πόσες παρτίδες σκακιού θα διεξαχθούν συνολικά σε ολόκληρο το τουρνουά;',
     options: ['12', '15', '18', '30', '36'],
     correct: '15',
-    explain: 'Κάθε παίκτης παίζει με τους υπόλοιπους 5. Για 6 παίκτες έχουμε 6 · 5 = 30 αναμετρήσεις. Επειδή κάθε παρτίδα μετράει και για τους δύο παίκτες, ο συνολικός αριθμός παρτίδων είναι 30 : 2 = 15.'
+    explain: (
+      <div className="space-y-4 text-xs sm:text-sm">
+        <p>
+          Κάθε παρτίδα διεξάγεται ανάμεσα σε <strong>ένα ζευγάρι 2 παικτών</strong>. Χρησιμοποιούμε συνδυαστική λογική για να υπολογίσουμε όλα τα δυνατά μοναδικά ζευγάρια ανάμεσα στους 6 παίκτες:
+        </p>
+
+        {/* SVG ΣΧΗΜΑ: ΚΑΝΟΝΙΚΟ ΕΞΑΓΩΝΟ ΜΕ ΟΛΕΣ ΤΙΣ ΠΛΕΥΡΕΣ ΚΑΙ ΔΙΑΓΩΝΙΟΥΣ (ΓΡΑΦΗΜΑ K6) */}
+        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="520" height="235" viewBox="0 0 520 235" className="select-none font-sans mx-auto block">
+            {/* ΓΡΑΦΗΜΑ 6 ΠΑΙΚΤΩΝ (Κ6: 6 κορυφές σε κύκλο, ακτίνα R=70, κέντρο cx=150, cy=115) */}
+            <g transform="translate(15, 0)">
+              {/* Όλες οι συνδέσεις (15 παρτίδες) */}
+              {/* Συνδέσεις από Π1 (150, 45) */}
+              <line x1="150" y1="45" x2="210" y2="80" stroke="#3b82f6" strokeWidth="1.8" />
+              <line x1="150" y1="45" x2="210" y2="150" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
+              <line x1="150" y1="45" x2="150" y2="185" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
+              <line x1="150" y1="45" x2="90" y2="150" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
+              <line x1="150" y1="45" x2="90" y2="80" stroke="#3b82f6" strokeWidth="1.8" />
+
+              {/* Συνδέσεις από Π2 (210, 80) */}
+              <line x1="210" y1="80" x2="210" y2="150" stroke="#3b82f6" strokeWidth="1.8" />
+              <line x1="210" y1="80" x2="150" y2="185" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
+              <line x1="210" y1="80" x2="90" y2="150" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
+              <line x1="210" y1="80" x2="90" y2="80" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
+
+              {/* Συνδέσεις από Π3 (210, 150) */}
+              <line x1="210" y1="150" x2="150" y2="185" stroke="#3b82f6" strokeWidth="1.8" />
+              <line x1="210" y1="150" x2="90" y2="150" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
+              <line x1="210" y1="150" x2="90" y2="80" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
+
+              {/* Συνδέσεις από Π4 (150, 185) */}
+              <line x1="150" y1="185" x2="90" y2="150" stroke="#3b82f6" strokeWidth="1.8" />
+              <line x1="150" y1="185" x2="90" y2="80" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
+
+              {/* Συνδέσεις από Π5 (90, 150) */}
+              <line x1="90" y1="150" x2="90" y2="80" stroke="#3b82f6" strokeWidth="1.8" />
+
+              {/* Οι 6 Κορυφές (Παίκτες Π1 έως Π6) */}
+              {[
+                { name: 'Π1', x: 150, y: 45 },
+                { name: 'Π2', x: 210, y: 80 },
+                { name: 'Π3', x: 210, y: 150 },
+                { name: 'Π4', x: 150, y: 185 },
+                { name: 'Π5', x: 90, y: 150 },
+                { name: 'Π6', x: 90, y: 80 }
+              ].map((p) => (
+                <g key={p.name} transform={`translate(${p.x}, ${p.y})`}>
+                  <circle cx="0" cy="0" r="16" fill="#eff6ff" stroke="#2563eb" strokeWidth="2" />
+                  <text x="0" y="4.5" fontSize="10.5" fontWeight="900" textAnchor="middle" fill="#1e40af">
+                    {p.name}
+                  </text>
+                </g>
+              ))}
+
+              {/* Ετικέτα κέντρου γραφήματος */}
+              <circle cx="150" cy="115" r="22" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+              <text x="150" y="112" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#64748b">Σύνολο</text>
+              <text x="150" y="124" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#0f172a">15 γραμμές</text>
+            </g>
+
+            {/* ΠΙΝΑΚΑΣ & ΑΝΑΛΥΣΗ ΖΕΥΓΑΡΙΩΝ ΔΕΞΙΑ */}
+            <g transform="translate(305, 18)">
+              <rect x="0" y="0" width="195" height="175" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" />
+              
+              <text x="97.5" y="20" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
+                Παρτίδες ανά Παίκτη
+              </text>
+              <line x1="12" y1="28" x2="183" y2="28" stroke="#e2e8f0" strokeWidth="1" />
+
+              <g transform="translate(16, 42)" fontSize="9.5" fill="#334155" className="font-mono">
+                <text x="0" y="0">• Ο 1ος παίζει με 5 νέους: <tspan fontWeight="bold" fill="#2563eb">5</tspan></text>
+                <text x="0" y="18">• Ο 2ος παίζει με 4 νέους: <tspan fontWeight="bold" fill="#2563eb">4</tspan></text>
+                <text x="0" y="36">• Ο 3ος παίζει με 3 νέους: <tspan fontWeight="bold" fill="#2563eb">3</tspan></text>
+                <text x="0" y="54">• Ο 4ος παίζει με 2 νέους: <tspan fontWeight="bold" fill="#2563eb">2</tspan></text>
+                <text x="0" y="72">• Ο 5ος παίζει με 1 νέο: &nbsp;<tspan fontWeight="bold" fill="#2563eb">1</tspan></text>
+                <text x="0" y="90">• Ο 6ος έχει ήδη παίξει: &nbsp;<tspan fontWeight="bold" fill="#64748b">0</tspan></text>
+              </g>
+
+              {/* Badge τελικού αποτελέσματος */}
+              <g transform="translate(15, 140)">
+                <rect x="0" y="0" width="165" height="26" rx="6" fill="#16a34a" />
+                <text x="82.5" y="17" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                  Άθροισμα ＝ 15 παρτίδες ⭐
+                </text>
+              </g>
+            </g>
+
+            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
+            <g transform="translate(20, 212)">
+              <text x="240" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
+                Κάθε γραμμή αντιστοιχεί σε 1 μοναδική παρτίδα μεταξύ 2 παικτών (6 · 5 : 2 ＝ 15)
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Συνδυαστικός τύπος */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Συνδυαστικά με αποφυγή διπλομέτρησης)
+            </div>
+            <p className="text-slate-700">
+              Κάθε ένας από τους <strong>6 παίκτες</strong> παίζει με τους υπόλοιπους <strong>5 παίκτες</strong>:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Συνολικές συμμετοχές: 6 · 5 ＝ <strong>30 συμμετοχές</strong>.</div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Επειδή κάθε παρτίδα χρειάζεται 2 παίκτες (δηλαδή η παρτίδα του Παίκτη Α με τον Παίκτη Β είναι ακριβώς η ίδια με την παρτίδα του Β με τον Α), κάθε αγώνας έχει μετρηθεί δύο φορές:
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                <span>• Πραγματικός αριθμός παρτίδων ＝</span>
+                <Fraction num="6 · 5" den="2" />
+                <span>＝</span>
+                <Fraction num="30" den="2" />
+                <span>＝</span>
+                <strong className="text-emerald-700 text-base font-black">15 παρτίδες</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Βήμα-βήμα άθροισμα νέων ζευγαριών */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Βήμα-βήμα καταγραφή νέων αναμετρήσεων)
+            </div>
+            <p className="text-slate-700">
+              Καταγράφουμε διαδοχικά τις παρτίδες που κανονίζει κάθε παίκτης χωρίς να επαναλαμβάνουμε όσες έχουν ήδη προγραμματιστεί:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• 1ος παίκτης: παίζει με τους 5 υπόλοιπους ➔ <strong>5 παρτίδες</strong></div>
+              <div>• 2ος παίκτης: παίζει με τους υπόλοιπους 4 (εκτός του 1ου) ➔ <strong>4 παρτίδες</strong></div>
+              <div>• 3ος παίκτης: παίζει με τους υπόλοιπους 3 ➔ <strong>3 παρτίδες</strong></div>
+              <div>• 4ος παίκτης: παίζει με τους υπόλοιπους 2 ➔ <strong>2 παρτίδες</strong></div>
+              <div>• 5ος παίκτης: παίζει με τον τελευταίο 1 ➔ <strong>1 παρτίδα</strong></div>
+              <div>• 6ος παίκτης: έχει ήδη αγωνιστεί με όλους ➔ <strong>0 παρτίδες</strong></div>
+              <div className="pt-1.5 border-t border-slate-200 text-emerald-800 font-bold">
+                Σύνολο Παρτίδων ＝ 5 ＋ 4 ＋ 3 ＋ 2 ＋ 1 ＝ <span className="text-base text-emerald-700 font-black">15 παρτίδες</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, σε ολόκληρο το τουρνουά θα διεξαχθούν συνολικά <strong>15 παρτίδες σκακιού</strong>.
+        </p>
+      </div>
+    )
   },
   {
     id: 25,
