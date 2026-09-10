@@ -109,11 +109,7 @@ export default function ProsthesiAfairesiTheoryPage() {
                 Η <strong>πρόσθεση</strong> και η <strong>αφαίρεση</strong> είναι αντίστροφες πράξεις επειδή η μία ακυρώνει το αποτέλεσμα της άλλης:
               </p>
               <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-1.5 leading-relaxed break-words px-3 py-2 bg-white rounded-xl border border-indigo-100 text-xs sm:text-sm text-indigo-950 font-medium w-full">
-                <span>Αν ξεκινήσουμε από έναν αριθμό, προσθέσουμε</span>
-                <strong className="text-blue-600 font-bold">5</strong>
-                <span>και έπειτα αφαιρέσουμε</span>
-                <strong className="text-rose-600 font-bold">5</strong>
-                <span>, επιστρέφουμε στον αρχικό μας αριθμό!</span>
+                <span>Αν ξεκινήσουμε από έναν αριθμό, προσθέσουμε <strong className="text-blue-600 font-bold">5</strong> και έπειτα αφαιρέσουμε <strong className="text-rose-600 font-bold">5</strong>, επιστρέφουμε στον αρχικό μας αριθμό!</span>
               </div>
             </div>
 
