@@ -397,7 +397,7 @@ export default function DekadikoiTheoryPage() {
           {/* ΟΛΟΓΡΑΦΗ ΕΞΗΓΗΣΗ (2 ΤΡΟΠΟΙ ΑΝΑΓΝΩΣΗΣ) */}
           <div className="bg-emerald-50/80 p-5 sm:p-6 rounded-2xl border border-emerald-200 text-center space-y-2">
             <span className="text-xs font-black uppercase text-emerald-900 block">
-              🗣️ Πώς διαβάζεται ο αριθμός:
+              🗣️ Πως διαβαζεται ο αριθμος:
             </span>
 
             {isDecimalZero ? (
