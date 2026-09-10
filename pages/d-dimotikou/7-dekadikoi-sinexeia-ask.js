@@ -477,7 +477,7 @@ export default function DekadikoiSinexeiaAskPage() {
               Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Δεκαδικοί Αριθμοί & Κλάσματα
+              📝 Ασκήσεις: Δεκαδικοί Αριθμοί και Κλάσματα
             </h1>
             <p className="text-teal-100 text-xs sm:text-sm md:text-base">
               Πατώντας «Νέες Ασκήσεις», τα κλάσματα και οι δεκαδικοί αριθμοί ανανεώνονται αυτόματα από τη δεξαμενή!
