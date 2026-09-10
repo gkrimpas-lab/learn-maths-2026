@@ -41,18 +41,31 @@ export default function ApostasiTheoryPage() {
   const distPlagiaPx = Math.hypot(pointA.x - pointP.x, pointA.y - pointP.y);
   const distPlagiaCm = (distPlagiaPx / 35).toFixed(1).replace('.', ',');
 
+  // Ακριβής μετατροπή clientX/clientY σε SVG viewBox συντεταγμένες (0-500, 0-420)
   const updateCoordinates = (clientX, clientY) => {
-    if (!svgRef.current) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const x = Math.max(50, Math.min(450, clientX - rect.left));
-    const y = Math.max(45, Math.min(185, clientY - rect.top)); // Περιορισμός πάνω από την ευθεία
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return;
+
+    // Δημιουργία σημείου SVG για ακριβή αντιστροφή της κλίμακας (responsive scaling)
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    const svgCoords = pt.matrixTransform(ctm.inverse());
+
+    // Επιτρέπουμε κίνηση σε όλο τον καμβά (και πάνω και κάτω από την ευθεία)
+    const x = Math.max(40, Math.min(460, svgCoords.x));
+    const y = Math.max(40, Math.min(380, svgCoords.y));
     setPointA({ x, y });
   };
 
-  // Χειρισμός Mouse Dragging
+  // Mouse Dragging
   const handleMouseDown = (e) => {
     e.preventDefault();
     setIsDragging(true);
+    updateCoordinates(e.clientX, e.clientY);
   };
 
   const handleMouseMove = (e) => {
@@ -60,11 +73,14 @@ export default function ApostasiTheoryPage() {
     updateCoordinates(e.clientX, e.clientY);
   };
 
-  // Χειρισμός Touch Dragging (αποτροπή scroll οθόνης)
+  // Touch Dragging (πλήρης αποτροπή scroll και άλματος θέσης)
   const handleTouchStart = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
+    if (e.touches[0]) {
+      updateCoordinates(e.touches[0].clientX, e.touches[0].clientY);
+    }
   };
 
   const handleTouchMove = (e) => {
@@ -186,7 +202,7 @@ export default function ApostasiTheoryPage() {
                 <span>🧮</span> Διαδραστικό Εργαστήριο Απόστασης
               </h2>
               <p className="text-slate-500 text-xs sm:text-sm">
-                <strong>Σύρε το κόκκινο σημείο Α</strong> ή άλλαξε την κλίση της ευθείας και δες σε πραγματικό χρόνο τη σύγκριση κάθετης και πλάγιας απόστασης!
+                <strong>Σύρε ελεύθερα το κόκκινο σημείο Α</strong> (πάνω ή κάτω από την ευθεία) και δες σε πραγματικό χρόνο τη μεταβολή της απόστασης!
               </p>
             </div>
 
@@ -230,16 +246,20 @@ export default function ApostasiTheoryPage() {
             </div>
           </div>
 
-          {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (ΜΕ TOUCH-ACTION: NONE ΓΙΑ ΝΑ ΜΗΝ ΚΟΥΝΙΕΤΑΙ Η ΣΕΛΙΔΑ) */}
+          {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ */}
           <div className="bg-slate-950 p-4 sm:p-8 rounded-3xl border border-slate-800 shadow-xl flex flex-col items-center justify-center space-y-5">
             <div
-              ref={svgRef}
-              onMouseMove={handleMouseMove}
-              onTouchMove={handleTouchMove}
               style={{ touchAction: 'none' }}
               className="w-full max-w-xl aspect-[5/4] bg-slate-900/60 rounded-2xl border border-slate-800 relative select-none cursor-crosshair overflow-hidden touch-none"
             >
-              <svg className="w-full h-full block select-none" viewBox="0 0 500 420">
+              <svg
+                ref={svgRef}
+                onMouseMove={handleMouseMove}
+                onTouchMove={handleTouchMove}
+                className="w-full h-full block select-none touch-none"
+                viewBox="0 0 500 420"
+                style={{ touchAction: 'none' }}
+              >
                 {/* Ευθεία ε */}
                 <line
                   x1={linePoint.x - 300 * dx}
@@ -296,7 +316,7 @@ export default function ApostasiTheoryPage() {
                 <circle cx={pointH.x} cy={pointH.y} r="5" fill="#10b981" />
                 <text
                   x={pointH.x - 16}
-                  y={pointH.y + 22}
+                  y={pointH.y > pointA.y ? pointH.y + 22 : pointH.y - 12}
                   fill="#34d399"
                   fontWeight="900"
                   fontSize="16"
@@ -306,9 +326,9 @@ export default function ApostasiTheoryPage() {
                 </text>
 
                 {/* Καθαρό γωνιακό σύμβολο ορθής γωνίας (L) στο σημείο Η */}
-                {(() => {
-                  const normX = (pointA.x - pointH.x) / (distPx || 1);
-                  const normY = (pointA.y - pointH.y) / (distPx || 1);
+                {distPx > 18 && (() => {
+                  const normX = (pointA.x - pointH.x) / distPx;
+                  const normY = (pointA.y - pointH.y) / distPx;
                   const size = 16;
                   const armH_X = pointH.x + dx * size;
                   const armH_Y = pointH.y + dy * size;
@@ -334,13 +354,13 @@ export default function ApostasiTheoryPage() {
                   className="cursor-grab active:cursor-grabbing touch-none"
                   style={{ touchAction: 'none' }}
                 >
-                  {/* Αόρατος κύκλος 30px για άνετο πιάσιμο σε κινητά */}
-                  <circle cx={pointA.x} cy={pointA.y} r="30" fill="transparent" />
-                  <circle cx={pointA.x} cy={pointA.y} r="16" fill="#f43f5e" fillOpacity="0.25" />
+                  {/* Αόρατο hitbox 40px για άμεση απόκριση σε κινητά */}
+                  <circle cx={pointA.x} cy={pointA.y} r="40" fill="transparent" />
+                  <circle cx={pointA.x} cy={pointA.y} r="18" fill="#f43f5e" fillOpacity="0.25" />
                   <circle cx={pointA.x} cy={pointA.y} r="8.5" fill="#f43f5e" stroke="#ffffff" strokeWidth="2.5" />
                   <text
                     x={pointA.x - 6}
-                    y={pointA.y - 14}
+                    y={pointA.y > pointH.y ? pointA.y + 26 : pointA.y - 14}
                     fill="#f43f5e"
                     fontWeight="900"
                     fontSize="20"
