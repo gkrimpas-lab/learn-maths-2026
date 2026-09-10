@@ -184,7 +184,7 @@ export default function PollaplasiasmosTheoryPage() {
             {/* Slider 1ου Αριθμού */}
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
               <div className="h-8 flex items-center justify-between text-center px-1">
-                <span className="text-xs font-black uppercase text-slate-500">1ος ΑΡΙΘΜΟΣ (ΠΑΝΩ)</span>
+                <span className="text-xs font-black text-slate-500">1ος ΑΡΙΘΜΟΣ (ΠΑΝΩ)</span>
                 <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-emerald-600 text-base">
                   {numA}
                 </span>
@@ -223,7 +223,7 @@ export default function PollaplasiasmosTheoryPage() {
             {/* Slider 2ου Αριθμού */}
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
               <div className="h-8 flex items-center justify-between text-center px-1">
-                <span className="text-xs font-black uppercase text-slate-500">2ος ΑΡΙΘΜΟΣ (ΚΑΤΩ)</span>
+                <span className="text-xs font-black text-slate-500">2ος ΑΡΙΘΜΟΣ (ΚΑΤΩ)</span>
                 <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-indigo-600 text-base">
                   {numB}
                 </span>
@@ -321,7 +321,7 @@ export default function PollaplasiasmosTheoryPage() {
 
               <div className="p-3.5 sm:p-4 bg-amber-50/80 rounded-2xl border border-amber-200/90 space-y-1.5">
                 <span className="text-xs font-black text-amber-900 uppercase">
-                  Βήμα 1: Πολλαπλασιασμός με τις Μονάδες ({unitsB})
+                  Βημα 1: Πολλαπλασιασμος με τις Μοναδες ({unitsB})
                 </span>
                 <div className="inline-flex flex-wrap items-center gap-1.5 font-mono text-xs sm:text-sm font-bold text-slate-900 w-full">
                   <span>{numA} · {unitsB}</span>
@@ -335,7 +335,7 @@ export default function PollaplasiasmosTheoryPage() {
 
               <div className="p-3.5 sm:p-4 bg-teal-50/80 rounded-2xl border border-teal-200/90 space-y-1.5">
                 <span className="text-xs font-black text-teal-900 uppercase">
-                  Βήμα 2: Πολλαπλασιασμός με τις Δεκάδες ({tensB}0)
+                  Βημα 2: Πολλαπλασιασμος με τις Δεκαδες ({tensB}0)
                 </span>
                 <div className="inline-flex flex-wrap items-center gap-1.5 font-mono text-xs sm:text-sm font-bold text-slate-900 w-full">
                   <span>{numA} · {tensB * 10}</span>
@@ -349,7 +349,7 @@ export default function PollaplasiasmosTheoryPage() {
 
               <div className="p-3.5 sm:p-4 bg-purple-50/80 rounded-2xl border border-purple-200/90 space-y-1.5">
                 <span className="text-xs font-black text-purple-900 uppercase">
-                  Βήμα 3: Τελικό Άθροισμα Μερικών Γινομένων
+                  Βημα 3: Τελικο Αθροισμα Μερικων Γινομενων
                 </span>
                 <div className="inline-flex flex-wrap items-center gap-1.5 font-mono text-xs sm:text-sm font-bold text-slate-900 w-full">
                   <span>{formatNumber(partial1)} ＋ {formatNumber(partial2)}</span>
