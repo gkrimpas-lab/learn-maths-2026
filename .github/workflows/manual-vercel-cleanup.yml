@@ -2,51 +2,61 @@ name: Manual Vercel Storage Cleanup
 
 on:
   workflow_dispatch:
+    inputs:
+      cutoff_date:
+        description: 'Delete deployments before this date (YYYY-MM-DD)'
+        required: true
+        default: '2026-09-06'
 
 jobs:
   delete-old-deployments:
     runs-on: ubuntu-latest
     steps:
-      - name: Purge Deployments Prior to September 1, 2026
+      - name: Purge Deployments Prior to Selected Date
         env:
           TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          UNTIL_TS: 1788220800000
+          CUTOFF_DATE: ${{ github.event.inputs.cutoff_date }}
         run: |
-          echo "Fetching deployments created prior to September 1, 2026..."
+          # Convert YYYY-MM-DD 00:00:00 UTC to millisecond timestamp
+          UNTIL_TS=$(date -u -d "${CUTOFF_DATE} 00:00:00" +%s000)
+          echo "Target cutoff date: ${CUTOFF_DATE} (Timestamp: ${UNTIL_TS})"
 
-          # Vercel limit must be <= 100
-          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X GET \
-            "https://api.vercel.com/v6/deployments?projectId=learn-maths-2026&until=${UNTIL_TS}&limit=100" \
-            -H "Authorization: Bearer ${TOKEN}")
+          TOTAL_DELETED=0
 
-          BODY=$(echo "$RESPONSE" | sed -e '$d')
-          STATUS=$(echo "$RESPONSE" | tail -n1 | cut -d: -f2)
+          while true; do
+            echo "Fetching next batch of deployments prior to ${CUTOFF_DATE}..."
 
-          echo "HTTP Status: $STATUS"
-          echo "Response Body Preview:"
-          echo "$BODY" | head -n 30
-
-          if [ "$STATUS" -ne 200 ]; then
-            echo "API request failed with status $STATUS. Check the response body above."
-            exit 1
-          fi
-
-          # Extract IDs cleanly using jq
-          DEPLOYMENT_IDS=$(echo "$BODY" | jq -r '.deployments[].uid // empty')
-
-          if [ -z "$DEPLOYMENT_IDS" ]; then
-            echo "No deployments found matching criteria."
-            exit 0
-          fi
-
-          COUNT=0
-          for ID in $DEPLOYMENT_IDS; do
-            echo "Deleting deployment: $ID"
-            DEL_RESP=$(curl -s -X DELETE \
-              "https://api.vercel.com/v13/deployments/${ID}" \
+            RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X GET \
+              "https://api.vercel.com/v6/deployments?projectId=learn-maths-2026&until=${UNTIL_TS}&limit=100" \
               -H "Authorization: Bearer ${TOKEN}")
-            echo "Result: $DEL_RESP"
-            COUNT=$((COUNT + 1))
+
+            BODY=$(echo "$RESPONSE" | sed -e '$d')
+            STATUS=$(echo "$RESPONSE" | tail -n1 | cut -d: -f2)
+
+            if [ "$STATUS" -ne 200 ]; then
+              echo "Error: API returned status $STATUS"
+              echo "$BODY"
+              exit 1
+            fi
+
+            DEPLOYMENT_IDS=$(echo "$BODY" | jq -r '.deployments[].uid // empty')
+
+            # Break loop when no more matching deployments exist
+            if [ -z "$DEPLOYMENT_IDS" ]; then
+              echo "No more deployments found before ${CUTOFF_DATE}."
+              break
+            fi
+
+            for ID in $DEPLOYMENT_IDS; do
+              echo "Deleting: $ID"
+              curl -s -X DELETE \
+                "https://api.vercel.com/v13/deployments/${ID}" \
+                -H "Authorization: Bearer ${TOKEN}" > /dev/null
+              TOTAL_DELETED=$((TOTAL_DELETED + 1))
+            done
+
+            echo "Current batch complete. Checking for more..."
+            sleep 1
           done
 
-          echo "Successfully deleted $COUNT deployments."
+          echo "Done! Total deployments deleted: $TOTAL_DELETED"
