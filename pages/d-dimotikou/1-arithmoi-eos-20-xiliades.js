@@ -68,34 +68,41 @@ function numberToGreekWords(num) {
 export default function ArithmoiEos20XiliadesPage() {
   const [disks, setDisks] = useState(CONFIG.initialValues);
 
-  const updateDigits = (e, column, increment) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setDisks((prev) => {
-      let newValue = prev[column] + increment;
-      if (newValue < 0) newValue = 0;
-      if (column === 'DX' && newValue > 2) newValue = 2;
-      if (column !== 'DX' && newValue > 9) newValue = 9;
-
-      const nextDisks = { ...prev, [column]: newValue };
-      const nextTotal =
-        nextDisks.DX * 10000 +
-        nextDisks.X * 1000 +
-        nextDisks.E * 100 +
-        nextDisks.D * 10 +
-        nextDisks.M;
-
-      if (nextTotal > 20000) return prev;
-      return nextDisks;
-    });
-  };
-
   const totalNumber =
     disks.DX * 10000 + disks.X * 1000 + disks.E * 100 + disks.D * 10 + disks.M;
 
   const formatNumber = (num) =>
     num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  const applyNumber = (n) => {
+    const str = n.toString().padStart(5, '0');
+    setDisks({
+      DX: parseInt(str[0], 10),
+      X: parseInt(str[1], 10),
+      E: parseInt(str[2], 10),
+      D: parseInt(str[3], 10),
+      M: parseInt(str[4], 10),
+    });
+  };
+
+  const handleDirectInputChange = (e) => {
+    // Επιτρέπονται μόνο αριθμητικά ψηφία
+    const cleanDigits = e.target.value.replace(/\D/g, '');
+
+    if (cleanDigits === '') {
+      applyNumber(0);
+      return;
+    }
+
+    const nextVal = parseInt(cleanDigits, 10);
+
+    // Αν ξεπερνά το 20.000, απορρίπτουμε την αλλαγή εντελώς (παραμένει η τρέχουσα τιμή)
+    if (nextVal > 20000) {
+      return;
+    }
+
+    applyNumber(nextVal);
+  };
 
   const columnsList = [
     { key: 'DX', label: 'Δεκάδες Χιλιάδες', short: 'ΔΧ', color: 'bg-purple-500', textColor: 'text-purple-800', lightBg: 'bg-purple-100' },
@@ -211,46 +218,77 @@ export default function ArithmoiEos20XiliadesPage() {
             </div>
           </div>
 
-          {/* ΠΙΝΑΚΑΣ ΑΞΙΑΣ ΘΕΣΗΣ */}
-          <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200/80 space-y-4">
-            <h3 className="text-base sm:text-lg font-extrabold text-slate-800 text-center md:text-left">
+          {/* ΠΙΝΑΚΑΣ ΑΞΙΑΣ ΘΕΣΗΣ - RESPONSIVE SVG (ΧΩΡΙΣ SCROLLBAR) */}
+          <div className="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200/90 space-y-4">
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-800 text-center sm:text-left">
               📊 Πίνακας Αξίας Θέσης Ψηφίου
             </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-center border-collapse text-xs sm:text-sm">
-                <thead>
-                  <tr className="text-white font-bold">
-                    <th colSpan={2} className="bg-indigo-600 p-2.5 rounded-tl-xl border-r border-indigo-500">
-                      ΚΛΑΣΗ ΧΙΛΙΑΔΩΝ
-                    </th>
-                    <th colSpan={3} className="bg-teal-600 p-2.5 rounded-tr-xl">
-                      ΚΛΑΣΗ ΜΟΝΑΔΩΝ
-                    </th>
-                  </tr>
-                  <tr className="bg-slate-200 text-slate-700 font-black">
-                    <th className="p-2 border border-slate-300">Δεκάδες Χιλιάδες (ΔΧ)</th>
-                    <th className="p-2 border border-slate-300">Μονάδες Χιλιάδες (Χ)</th>
-                    <th className="p-2 border border-slate-300">Εκατοντάδες (Ε)</th>
-                    <th className="p-2 border border-slate-300">Δεκάδες (Δ)</th>
-                    <th className="p-2 border border-slate-300">Μονάδες (Μ)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-white font-mono font-black text-base text-slate-800">
-                    <td className="p-3 border border-slate-200 text-purple-600">1</td>
-                    <td className="p-3 border border-slate-200 text-indigo-600">4</td>
-                    <td className="p-3 border border-slate-200 text-teal-600">3</td>
-                    <td className="p-3 border border-slate-200 text-amber-600">2</td>
-                    <td className="p-3 border border-slate-200 text-emerald-600">5</td>
-                  </tr>
-                </tbody>
-              </table>
+
+            <div className="bg-white p-2 sm:p-4 rounded-2xl border border-slate-200 shadow-inner">
+              <svg
+                viewBox="0 0 500 130"
+                className="w-full h-auto max-w-2xl mx-auto block select-none font-sans"
+              >
+                {/* Header: Κλάσεις */}
+                <rect x="10" y="8" width="190" height="26" rx="6" fill="#4f46e5" />
+                <text x="105" y="25" fill="#ffffff" fontSize="11" fontWeight="800" textAnchor="middle">
+                  ΚΛΑΣΗ ΧΙΛΙΑΔΩΝ
+                </text>
+
+                <rect x="206" y="8" width="284" height="26" rx="6" fill="#0d9488" />
+                <text x="348" y="25" fill="#ffffff" fontSize="11" fontWeight="800" textAnchor="middle">
+                  ΚΛΑΣΗ ΜΟΝΑΔΩΝ
+                </text>
+
+                {/* Subheader: Στήλες (ΔΧ, Χ, Ε, Δ, Μ) */}
+                {[
+                  { x: 10, w: 92, label: 'Δεκάδες Χιλιάδες', short: 'ΔΧ', bg: '#f1f5f9' },
+                  { x: 108, w: 92, label: 'Μονάδες Χιλιάδες', short: 'Χ', bg: '#f1f5f9' },
+                  { x: 206, w: 90, label: 'Εκατοντάδες', short: 'Ε', bg: '#f1f5f9' },
+                  { x: 302, w: 90, label: 'Δεκάδες', short: 'Δ', bg: '#f1f5f9' },
+                  { x: 398, w: 92, label: 'Μονάδες', short: 'Μ', bg: '#f1f5f9' },
+                ].map((col) => (
+                  <g key={col.short}>
+                    <rect x={col.x} y="40" width={col.w} height="32" rx="6" fill={col.bg} stroke="#cbd5e1" strokeWidth="1" />
+                    <text x={col.x + col.w / 2} y="54" fill="#334155" fontSize="8.5" fontWeight="700" textAnchor="middle">
+                      {col.label}
+                    </text>
+                    <text x={col.x + col.w / 2} y="66" fill="#0f172a" fontSize="10.5" fontWeight="900" textAnchor="middle">
+                      ({col.short})
+                    </text>
+                  </g>
+                ))}
+
+                {/* Ψηφία του Παραδείγματος: 1 4 . 3 2 5 */}
+                {[
+                  { x: 10, w: 92, val: '1', color: '#9333ea', bg: '#faf5ff', border: '#e9d5ff' },
+                  { x: 108, w: 92, val: '4', color: '#4f46e5', bg: '#eef2ff', border: '#c7d2fe' },
+                  { x: 206, w: 90, val: '3', color: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
+                  { x: 302, w: 90, val: '2', color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
+                  { x: 398, w: 92, val: '5', color: '#059669', bg: '#ecfdf5', border: '#a7f3d0' },
+                ].map((col) => (
+                  <g key={col.x}>
+                    <rect x={col.x} y="78" width={col.w} height="44" rx="8" fill={col.bg} stroke={col.border} strokeWidth="1.5" />
+                    <text
+                      x={col.x + col.w / 2}
+                      y="108"
+                      fill={col.color}
+                      fontSize="22"
+                      fontWeight="900"
+                      fontFamily="monospace"
+                      textAnchor="middle"
+                    >
+                      {col.val}
+                    </text>
+                  </g>
+                ))}
+              </svg>
             </div>
 
             {/* ΑΝΑΛΥΣΗ ΠΑΡΑΔΕΙΓΜΑΤΟΣ */}
             <div className="bg-white p-4 rounded-xl border border-slate-200 text-sm space-y-2">
               <span className="text-slate-500 font-bold uppercase text-xs tracking-wide">
-                Παραδειγμα Αναλυσης
+                Παραδειγμα Αναλυσης (14.325)
               </span>
               <div className="inline-flex flex-wrap items-center justify-center gap-1.5 leading-relaxed break-words px-3 py-2 bg-slate-50 rounded-xl border border-slate-200/80 font-mono text-slate-900 w-full text-xs sm:text-sm">
                 <span>14.325</span>
@@ -272,271 +310,253 @@ export default function ArithmoiEos20XiliadesPage() {
           </div>
         </div>
 
-       {/* ΔΙΑΔΡΑΣΤΙΚΟΣ ΑΒΑΚΑΣ - SECTION 2 */}
-<div className="bg-white p-4 sm:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
-  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-4 border-slate-100">
-    <div>
-      <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-        <span>🧮</span> Διαδραστικός Άβακας Αξίας Θέσης
-      </h2>
-      <p className="text-slate-500 text-xs sm:text-sm">
-        Πληκτρολόγησε έναν αριθμό ή επίλεξε τις τιμές των στηλών για να δεις τον σχηματισμό του!
-      </p>
-    </div>
+        {/* ΔΙΑΔΡΑΣΤΙΚΟΣ ΑΒΑΚΑΣ - SECTION 2 */}
+        <div className="bg-white p-4 sm:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-4 border-slate-100">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
+                <span>🧮</span> Διαδραστικός Άβακας Αξίας Θέσης
+              </h2>
+              <p className="text-slate-500 text-xs sm:text-sm">
+                Πληκτρολόγησε έναν αριθμό ή επίλεξε τις τιμές των στηλών για να δεις τον σχηματισμό του!
+              </p>
+            </div>
 
-    <div className="bg-slate-100 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 self-start sm:self-auto">
-      Όριο: <span className="text-indigo-600 font-black">20.000</span>
-    </div>
-  </div>
+            <div className="bg-slate-100 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 self-start sm:self-auto">
+              Όριο: <span className="text-indigo-600 font-black">20.000</span>
+            </div>
+          </div>
 
-  {/* ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ & ΟΝΟΜΑΣΙΑΣ */}
-  <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 text-white p-5 sm:p-7 rounded-2xl shadow-md text-center space-y-3">
-    <span className="text-[11px] font-black uppercase tracking-widest text-indigo-300">
-      Ο ΑΡΙΘΜΟΣ ΣΟΥ
-    </span>
-    <div className="text-4xl sm:text-6xl font-mono font-black tracking-tight text-amber-400">
-      {formatNumber(totalNumber)}
-    </div>
-    <div className="bg-white/10 backdrop-blur-md px-3 py-2.5 rounded-xl border border-white/15 text-xs sm:text-sm font-semibold text-slate-100 max-w-xl mx-auto">
-      🗣️ <span className="text-amber-300 font-extrabold capitalize">{numberToGreekWords(totalNumber)}</span>
-    </div>
-  </div>
+          {/* ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ & ΟΝΟΜΑΣΙΑΣ */}
+          <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 text-white p-5 sm:p-7 rounded-2xl shadow-md text-center space-y-3">
+            <span className="text-[11px] font-black uppercase tracking-widest text-indigo-300">
+              Ο ΑΡΙΘΜΟΣ ΣΟΥ
+            </span>
+            <div className="text-4xl sm:text-6xl font-mono font-black tracking-tight text-amber-400">
+              {formatNumber(totalNumber)}
+            </div>
+            <div className="bg-white/10 backdrop-blur-md px-3 py-2.5 rounded-xl border border-white/15 text-xs sm:text-sm font-semibold text-slate-100 max-w-xl mx-auto">
+              🗣️ <span className="text-amber-300 font-extrabold capitalize">{numberToGreekWords(totalNumber)}</span>
+            </div>
+          </div>
 
-  {/* RESPONSIVE SVG ΑΒΑΚΑΣ (0 0 500 235) */}
-  <div className="p-2 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200/90 shadow-inner">
-    <svg
-      viewBox="0 0 500 235"
-      className="w-full h-auto max-w-2xl mx-auto block select-none font-sans"
-    >
-      {/* 1. Header: Κλάσεις Αριθμών */}
-      <rect x="20" y="10" width="182" height="24" rx="6" fill="#e0e7ff" />
-      <text x="111" y="26" fill="#3730a3" fontSize="10.5" fontWeight="800" textAnchor="middle">
-        ΚΛΑΣΗ ΧΙΛΙΑΔΩΝ
-      </text>
+          {/* RESPONSIVE SVG ΑΒΑΚΑΣ (0 0 500 235) - ΧΩΡΙΣ SCROLLBAR */}
+          <div className="p-2 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200/90 shadow-inner">
+            <svg
+              viewBox="0 0 500 235"
+              className="w-full h-auto max-w-2xl mx-auto block select-none font-sans"
+            >
+              {/* Header: Κλάσεις Αριθμών */}
+              <rect x="20" y="10" width="182" height="24" rx="6" fill="#e0e7ff" />
+              <text x="111" y="26" fill="#3730a3" fontSize="10.5" fontWeight="800" textAnchor="middle">
+                ΚΛΑΣΗ ΧΙΛΙΑΔΩΝ
+              </text>
 
-      <rect x="212" y="10" width="268" height="24" rx="6" fill="#ccfbf1" />
-      <text x="346" y="26" fill="#115e59" fontSize="10.5" fontWeight="800" textAnchor="middle">
-        ΚΛΑΣΗ ΜΟΝΑΔΩΝ
-      </text>
+              <rect x="212" y="10" width="268" height="24" rx="6" fill="#ccfbf1" />
+              <text x="346" y="26" fill="#115e59" fontSize="10.5" fontWeight="800" textAnchor="middle">
+                ΚΛΑΣΗ ΜΟΝΑΔΩΝ
+              </text>
 
-      {/* 2. Badges Στηλών */}
-      {[
-        { x: 65, label: 'ΔΧ', bg: '#f3e8ff', text: '#6b21a8' },
-        { x: 157, label: 'Χ', bg: '#e0e7ff', text: '#3730a3' },
-        { x: 257, label: 'Ε', bg: '#ccfbf1', text: '#115e59' },
-        { x: 347, label: 'Δ', bg: '#fef3c7', text: '#92400e' },
-        { x: 437, label: 'Μ', bg: '#dcfce7', text: '#166534' },
-      ].map((col) => (
-        <g key={col.label}>
-          <rect x={col.x - 26} y="40" width="52" height="20" rx="5" fill={col.bg} />
-          <text x={col.x} y="54" fill={col.text} fontSize="11" fontWeight="800" textAnchor="middle">
-            {col.label}
-          </text>
-        </g>
-      ))}
+              {/* Badges Στηλών */}
+              {[
+                { x: 65, label: 'ΔΧ', bg: '#f3e8ff', text: '#6b21a8' },
+                { x: 157, label: 'Χ', bg: '#e0e7ff', text: '#3730a3' },
+                { x: 257, label: 'Ε', bg: '#ccfbf1', text: '#115e59' },
+                { x: 347, label: 'Δ', bg: '#fef3c7', text: '#92400e' },
+                { x: 437, label: 'Μ', bg: '#dcfce7', text: '#166534' },
+              ].map((col) => (
+                <g key={col.label}>
+                  <rect x={col.x - 26} y="40" width="52" height="20" rx="5" fill={col.bg} />
+                  <text x={col.x} y="54" fill={col.text} fontSize="11" fontWeight="800" textAnchor="middle">
+                    {col.label}
+                  </text>
+                </g>
+              ))}
 
-      {/* 3. Βάση Άβακα & Ράβδοι */}
-      <rect x="20" y="200" width="460" height="8" rx="4" fill="#cbd5e1" />
-      {[65, 157, 257, 347, 437].map((xPos) => (
-        <line
-          key={xPos}
-          x1={xPos}
-          y1="68"
-          x2={xPos}
-          y2="200"
-          stroke="#e2e8f0"
-          strokeWidth="3"
-          strokeDasharray="4 3"
-        />
-      ))}
-
-      {/* 4. Χάντρες */}
-      {[
-        { colKey: 'DX', cx: 65, fill: '#a855f7' },
-        { colKey: 'X', cx: 157, fill: '#6366f1' },
-        { colKey: 'E', cx: 257, fill: '#14b8a6' },
-        { colKey: 'D', cx: 347, fill: '#f59e0b' },
-        { colKey: 'M', cx: 437, fill: '#22c55e' },
-      ].map(({ colKey, cx, fill }) => {
-        const count = disks[colKey];
-        return (
-          <g key={colKey}>
-            {Array.from({ length: count }).map((_, idx) => {
-              const cy = 187 - idx * 13;
-              return (
-                <rect
-                  key={idx}
-                  x={cx - 24}
-                  y={cy}
-                  width="48"
-                  height="11"
-                  rx="5.5"
-                  fill={fill}
-                  stroke="#ffffff"
-                  strokeWidth="1.5"
+              {/* Βάση Άβακα & Ράβδοι */}
+              <rect x="20" y="200" width="460" height="8" rx="4" fill="#cbd5e1" />
+              {[65, 157, 257, 347, 437].map((xPos) => (
+                <line
+                  key={xPos}
+                  x1={xPos}
+                  y1="68"
+                  x2={xPos}
+                  y2="200"
+                  stroke="#e2e8f0"
+                  strokeWidth="3"
+                  strokeDasharray="4 3"
                 />
+              ))}
+
+              {/* Χάντρες */}
+              {[
+                { colKey: 'DX', cx: 65, fill: '#a855f7' },
+                { colKey: 'X', cx: 157, fill: '#6366f1' },
+                { colKey: 'E', cx: 257, fill: '#14b8a6' },
+                { colKey: 'D', cx: 347, fill: '#f59e0b' },
+                { colKey: 'M', cx: 437, fill: '#22c55e' },
+              ].map(({ colKey, cx, fill }) => {
+                const count = disks[colKey];
+                return (
+                  <g key={colKey}>
+                    {Array.from({ length: count }).map((_, idx) => {
+                      const cy = 187 - idx * 13;
+                      return (
+                        <rect
+                          key={idx}
+                          x={cx - 24}
+                          y={cy}
+                          width="48"
+                          height="11"
+                          rx="5.5"
+                          fill={fill}
+                          stroke="#ffffff"
+                          strokeWidth="1.5"
+                        />
+                      );
+                    })}
+                  </g>
+                );
+              })}
+
+              {/* Αριθμητική Τιμή */}
+              {[
+                { cx: 65, val: disks.DX, color: '#7e22ce' },
+                { cx: 157, val: disks.X, color: '#4338ca' },
+                { cx: 257, val: disks.E, color: '#0f766e' },
+                { cx: 347, val: disks.D, color: '#b45309' },
+                { cx: 437, val: disks.M, color: '#15803d' },
+              ].map(({ cx, val, color }, i) => (
+                <text
+                  key={i}
+                  x={cx}
+                  y="224"
+                  fill={color}
+                  fontSize="14"
+                  fontWeight="900"
+                  fontFamily="monospace"
+                  textAnchor="middle"
+                >
+                  {val}
+                </text>
+              ))}
+            </svg>
+          </div>
+
+          {/* DROPDOWN PICKERS ΑΝΑ ΣΤΗΛΗ */}
+          <div className="grid grid-cols-5 gap-1.5 sm:gap-3">
+            {columnsList.map((col) => {
+              const maxDigit = col.key === 'DX' ? 2 : 9;
+              return (
+                <div
+                  key={col.key}
+                  className="flex flex-col items-center bg-slate-50 p-1.5 sm:p-2.5 rounded-2xl border border-slate-200"
+                >
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-500 mb-1 text-center truncate w-full">
+                    {col.short}
+                  </span>
+
+                  <div className="relative w-full">
+                    <select
+                      value={disks[col.key]}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value, 10);
+                        const updated = { ...disks, [col.key]: val };
+                        const nextTotal =
+                          updated.DX * 10000 +
+                          updated.X * 1000 +
+                          updated.E * 100 +
+                          updated.D * 10 +
+                          updated.M;
+                        
+                        // Αν υπερβαίνει το 20.000 δεν αλλάζει τίποτα
+                        if (nextTotal > 20000) return;
+                        setDisks(updated);
+                      }}
+                      className="w-full bg-white border border-slate-300 font-mono font-black text-slate-800 text-xs sm:text-sm py-1.5 px-1 rounded-xl text-center appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm cursor-pointer"
+                    >
+                      {Array.from({ length: maxDigit + 1 }).map((_, n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               );
             })}
-          </g>
-        );
-      })}
+          </div>
 
-      {/* 5. Αριθμητική Τιμή */}
-      {[
-        { cx: 65, val: disks.DX, color: '#7e22ce' },
-        { cx: 157, val: disks.X, color: '#4338ca' },
-        { cx: 257, val: disks.E, color: '#0f766e' },
-        { cx: 347, val: disks.D, color: '#b45309' },
-        { cx: 437, val: disks.M, color: '#15803d' },
-      ].map(({ cx, val, color }, i) => (
-        <text
-          key={i}
-          x={cx}
-          y="224"
-          fill={color}
-          fontSize="14"
-          fontWeight="900"
-          fontFamily="monospace"
-          textAnchor="middle"
-        >
-          {val}
-        </text>
-      ))}
-    </svg>
-  </div>
+          {/* NUMERIC INPUT & PRESETS */}
+          <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200/80 space-y-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-600 shrink-0">✍️ Αριθμός:</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  id="direct-number-input"
+                  name="direct-number-input"
+                  placeholder="π.χ. 14325"
+                  value={totalNumber === 0 ? '' : totalNumber}
+                  onChange={handleDirectInputChange}
+                  className="w-32 bg-white border border-slate-300 rounded-xl px-3 py-1.5 font-mono font-bold text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                />
+              </div>
 
-  {/* ΝΕΟ ΚΑΘΑΡΟ ΧΕΙΡΙΣΤΗΡΙΟ: DROPDOWN PICKERS ΑΝΑ ΣΤΗΛΗ */}
-  <div className="grid grid-cols-5 gap-1.5 sm:gap-3">
-    {columnsList.map((col) => {
-      const maxDigit = col.key === 'DX' ? 2 : 9;
-      return (
-        <div
-          key={col.key}
-          className="flex flex-col items-center bg-slate-50 p-1.5 sm:p-2.5 rounded-2xl border border-slate-200"
-        >
-          <span className="text-[10px] sm:text-xs font-bold text-slate-500 mb-1 text-center truncate w-full">
-            {col.short}
-          </span>
+              {/* Γρήγορα Παραδείγματα (Quick Presets) */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                {[2500, 10450, 14325, 20000].map((preset) => (
+                  <button
+                    key={preset}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      applyNumber(preset);
+                    }}
+                    className="text-[11px] font-bold bg-white hover:bg-indigo-50 text-indigo-700 border border-slate-200 px-2.5 py-1 rounded-lg transition shrink-0 active:scale-95 shadow-sm"
+                  >
+                    {formatNumber(preset)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
 
-          <div className="relative w-full">
-            <select
-              value={disks[col.key]}
-              onChange={(e) => {
-                const val = parseInt(e.target.value, 10);
-                setDisks((prev) => {
-                  const updated = { ...prev, [col.key]: val };
-                  const total =
-                    updated.DX * 10000 +
-                    updated.X * 1000 +
-                    updated.E * 100 +
-                    updated.D * 10 +
-                    updated.M;
-                  return total > 20000 ? prev : updated;
-                });
-              }}
-              className="w-full bg-white border border-slate-300 font-mono font-black text-slate-800 text-xs sm:text-sm py-1.5 px-1 rounded-xl text-center appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm cursor-pointer"
-            >
-              {Array.from({ length: maxDigit + 1 }).map((_, n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
+          {/* ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ ΤΟΥ ΑΡΙΘΜΟΥ */}
+          <div className="bg-slate-100 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-2">
+            <span className="text-xs font-black uppercase tracking-wider text-slate-500 block">
+              ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ ΤΟΥ ΑΡΙΘΜΟΥ:
+            </span>
+            <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-1.5 leading-relaxed break-words px-3 py-2 font-mono text-xs sm:text-sm md:text-base font-bold text-slate-800 w-full">
+              <span className="bg-purple-100 text-purple-900 px-2.5 py-1 rounded-lg border border-purple-200">
+                {disks.DX * 10000}
+              </span>
+              <span>＋</span>
+              <span className="bg-indigo-100 text-indigo-900 px-2.5 py-1 rounded-lg border border-indigo-200">
+                {disks.X * 1000}
+              </span>
+              <span>＋</span>
+              <span className="bg-teal-100 text-teal-900 px-2.5 py-1 rounded-lg border border-teal-200">
+                {disks.E * 100}
+              </span>
+              <span>＋</span>
+              <span className="bg-amber-100 text-amber-900 px-2.5 py-1 rounded-lg border border-amber-200">
+                {disks.D * 10}
+              </span>
+              <span>＋</span>
+              <span className="bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-lg border border-emerald-200">
+                {disks.M}
+              </span>
+              <span>＝</span>
+              <span className="bg-slate-900 text-amber-400 px-3 py-1 rounded-lg font-black">
+                {formatNumber(totalNumber)}
+              </span>
+            </div>
           </div>
         </div>
-      );
-    })}
-  </div>
 
-  {/* DIRECT NUMERIC INPUT & PRESETS */}
-  <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200/80 space-y-3">
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-bold text-slate-600">✍️ Δοκίμασε αριθμό:</span>
-        <input
-          type="text"
-          inputMode="numeric"
-          autoComplete="off"
-          id="direct-number-input"
-          name="direct-number-input"
-          placeholder="π.χ. 14325"
-          value={totalNumber === 0 ? '' : totalNumber}
-          onChange={(e) => {
-            const raw = e.target.value.replace(/\D/g, '');
-            let n = parseInt(raw || '0', 10);
-            if (n > 20000) n = 20000;
-            const str = n.toString().padStart(5, '0');
-            setDisks({
-              DX: parseInt(str[0], 10),
-              X: parseInt(str[1], 10),
-              E: parseInt(str[2], 10),
-              D: parseInt(str[3], 10),
-              M: parseInt(str[4], 10),
-            });
-          }}
-          className="w-32 bg-white border border-slate-300 rounded-xl px-3 py-1.5 font-mono font-bold text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
-        />
-      </div>
-
-      {/* Γρήγορα Παραδείγματα (Quick Presets) */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-        {[2500, 10450, 14325, 20000].map((preset) => (
-          <button
-            key={preset}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              const str = preset.toString().padStart(5, '0');
-              setDisks({
-                DX: parseInt(str[0], 10),
-                X: parseInt(str[1], 10),
-                E: parseInt(str[2], 10),
-                D: parseInt(str[3], 10),
-                M: parseInt(str[4], 10),
-              });
-            }}
-            className="text-[11px] font-bold bg-white hover:bg-indigo-50 text-indigo-700 border border-slate-200 px-2.5 py-1 rounded-lg transition shrink-0 active:scale-95"
-          >
-            {formatNumber(preset)}
-          </button>
-        ))}
-      </div>
-    </div>
-  </div>
-
-  {/* ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ ΤΟΥ ΑΡΙΘΜΟΥ */}
-  <div className="bg-slate-100 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-2">
-    <span className="text-xs font-black uppercase tracking-wider text-slate-500 block">
-      ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ ΤΟΥ ΑΡΙΘΜΟΥ:
-    </span>
-    <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-1.5 leading-relaxed break-words px-3 py-2 font-mono text-xs sm:text-sm md:text-base font-bold text-slate-800 w-full">
-      <span className="bg-purple-100 text-purple-900 px-2.5 py-1 rounded-lg border border-purple-200">
-        {disks.DX * 10000}
-      </span>
-      <span>＋</span>
-      <span className="bg-indigo-100 text-indigo-900 px-2.5 py-1 rounded-lg border border-indigo-200">
-        {disks.X * 1000}
-      </span>
-      <span>＋</span>
-      <span className="bg-teal-100 text-teal-900 px-2.5 py-1 rounded-lg border border-teal-200">
-        {disks.E * 100}
-      </span>
-      <span>＋</span>
-      <span className="bg-amber-100 text-amber-900 px-2.5 py-1 rounded-lg border border-amber-200">
-        {disks.D * 10}
-      </span>
-      <span>＋</span>
-      <span className="bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-lg border border-emerald-200">
-        {disks.M}
-      </span>
-      <span>＝</span>
-      <span className="bg-slate-900 text-amber-400 px-3 py-1 rounded-lg font-black">
-        {formatNumber(totalNumber)}
-      </span>
-    </div>
-  </div>
-</div>
-        
         {/* BOTTOM EXERCISES CALLOUT BANNER */}
         <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="space-y-1 text-center md:text-left">
