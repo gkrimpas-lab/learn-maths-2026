@@ -313,7 +313,7 @@ export default function BarosTheoryPage() {
                       : 'bg-white text-slate-800 border-slate-200 hover:bg-slate-50'
                   }`}
                 >
-                  <span className={`text-[10px] font-black uppercase tracking-wider block ${isSelected ? 'text-emerald-200' : 'text-slate-400'}`}>
+                  <span className={`text-[10px] font-black tracking-wider block ${isSelected ? 'text-emerald-200' : 'text-slate-400'}`}>
                     {UNITS[uKey].name}
                   </span>
 
