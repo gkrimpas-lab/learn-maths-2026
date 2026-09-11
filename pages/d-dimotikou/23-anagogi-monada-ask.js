@@ -1,7 +1,7 @@
+// pages/d-dimotikou/23-anagogi-monada-ask.js
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import Layout from '../../components/Layout';
 
 // --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
 
@@ -10,7 +10,8 @@ function getRandomInt(min, max) {
 }
 
 function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
 // ----------------------------------------------------
@@ -42,62 +43,82 @@ const ITEMS_POOL = [
   { name: 'κούπες', single: 'κούπα', artPlural: 'οι', artSingle: 'η', howMany: 'πόσες', emoji: '☕' },
 
   // Αρσενικά
-  { name: 'χυμοί', single: 'χυμός', artPlural: 'ους', artSingle: 'ο', howMany: 'πόσους', emoji: '🧃' },
+  { name: 'χυμοί', single: 'χυμός', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσους', emoji: '🧃' },
   { name: 'χάρακες', single: 'χάρακας', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσους', emoji: '📏' },
-  { name: 'φακέλοι', single: 'φάκελος', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσους', emoji: '✉️' },
+  { name: 'φάκελοι', single: 'φάκελος', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσους', emoji: '✉️' },
   { name: 'πίνακες', single: 'πίνακας', artPlural: 'οι', artSingle: 'ο', howMany: 'πόσους', emoji: '🖼️' }
 ];
 
 // 1. Άσκηση: Εύρεση της Μονάδας (Βήμα 1 - Input)
-function makeUnitOnlyQuestion() {
-  const item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
-  const qty = getRandomInt(3, 8);
-  const costPerUnit = getRandomInt(2, 7);
-  const totalCost = qty * costPerUnit;
+function makeUnitOnlyQuestion(prevQ = null) {
+  let item, qty, costPerUnit, totalCost;
+
+  while (true) {
+    item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
+    qty = getRandomInt(3, 8);
+    costPerUnit = getRandomInt(2, 7);
+    totalCost = qty * costPerUnit;
+
+    if (!prevQ || prevQ.item !== item.name) break;
+  }
 
   return {
+    item: item.name,
     q: `Αν ${item.artPlural} ${qty} ${item.name} ${item.emoji} κοστίζουν ${totalCost} €, πόσο κοστίζει ${item.artSingle} 1 ${item.single};`,
     correct: costPerUnit,
     unit: '€',
-    explain: `Διαιρούμε το συνολικό κόστος με το πλήθος: ${totalCost} : ${qty} = ${costPerUnit} € ${item.artSingle} 1 ${item.single}.`
+    explainText: `Διαιρούμε το συνολικό κόστος με το πλήθος: ${totalCost} ： ${qty} ＝ ${costPerUnit} € για ${item.artSingle} 1 ${item.single}.`
   };
 }
 
 // 2. Άσκηση: Πλήρης Αναγωγή στη Μονάδα (Βήμα 1 & 2 - Input)
-function makeFullAnagogiQuestion() {
-  const item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
-  const q1 = getRandomInt(2, 5);
-  const costPerUnit = getRandomInt(2, 8);
-  const total1 = q1 * costPerUnit;
+function makeFullAnagogiQuestion(prevQ = null) {
+  let item, q1, costPerUnit, total1, q2, total2;
 
-  let q2 = getRandomInt(4, 9);
-  while (q2 === q1) {
+  while (true) {
+    item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
+    q1 = getRandomInt(2, 5);
+    costPerUnit = getRandomInt(2, 8);
+    total1 = q1 * costPerUnit;
+
     q2 = getRandomInt(4, 9);
+    while (q2 === q1) {
+      q2 = getRandomInt(4, 9);
+    }
+    total2 = q2 * costPerUnit;
+
+    if (!prevQ || prevQ.item !== item.name) break;
   }
-  const total2 = q2 * costPerUnit;
 
   return {
+    item: item.name,
     q: `Αν ${item.artPlural} ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, πόσο κοστίζουν ${item.artPlural} ${q2} ${item.name};`,
     correct: total2,
     unit: '€',
-    explain: `Βήμα 1: ${item.artSingle} 1 ${item.single} κοστίζει ${total1} : ${q1} = ${costPerUnit} €. Βήμα 2: ${item.artPlural} ${q2} ${item.name} κοστίζουν ${q2} × ${costPerUnit} = ${total2} €.`
+    explainText: `Βήμα 1: ${item.artSingle} 1 ${item.single} κοστίζει ${total1} ： ${q1} ＝ ${costPerUnit} €. Βήμα 2: ${item.artPlural} ${q2} ${item.name} κοστίζουν ${q2} · ${costPerUnit} ＝ ${total2} €.`
   };
 }
 
-// 3. Άσκηση: Πολλαπλή Επιλογή με 4 Επιλογές (MCQ)
-function makeMCQAnagogiQuestion() {
-  const item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
-  const q1 = getRandomInt(2, 5);
-  const unitCost = getRandomInt(2, 6);
-  const total1 = q1 * unitCost;
+// 3. Άσκηση: Πολλαπλή Επιλογή με 4 Επιλογές (ΟΜΑΔΑ Α - MCQ)
+function makeMCQAnagogiQuestion(prevQ = null) {
+  let item, q1, unitCost, total1, q2, correct, correctText;
 
-  let q2 = getRandomInt(4, 9);
-  while (q2 === q1) {
+  while (true) {
+    item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
+    q1 = getRandomInt(2, 5);
+    unitCost = getRandomInt(2, 6);
+    total1 = q1 * unitCost;
+
     q2 = getRandomInt(4, 9);
-  }
-  const correct = q2 * unitCost;
+    while (q2 === q1) {
+      q2 = getRandomInt(4, 9);
+    }
+    correct = q2 * unitCost;
+    correctText = `${correct} €`;
 
-  const correctText = `${correct} €`;
+    if (!prevQ || prevQ.correct !== correctText) break;
+  }
+
   const wrong1 = `${correct + unitCost} €`;
   const wrong2 = `${correct - unitCost} €`;
   const wrong3 = `${correct + 2 * unitCost} €`;
@@ -112,7 +133,7 @@ function makeMCQAnagogiQuestion() {
     }
   }
 
-  const choices = uniqueOptions.map(opt => ({
+  const choices = uniqueOptions.map((opt) => ({
     text: opt,
     isCorrect: opt === correctText
   })).sort(() => Math.random() - 0.5);
@@ -121,45 +142,57 @@ function makeMCQAnagogiQuestion() {
     q: `Αν ${item.artPlural} ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, πόσο θα πληρώσουμε για ${q2} ${item.name};`,
     options: choices,
     correct: correctText,
-    explain: `${item.artSingle} 1 ${item.single} κοστίζει ${total1} : ${q1} = ${unitCost} €. Άρα ${item.artPlural} ${q2} κοστίζουν ${q2} × ${unitCost} = ${correct} €.`
+    explainText: `Βήμα 1: ${item.artSingle} 1 ${item.single} κοστίζει ${total1} ： ${q1} ＝ ${unitCost} €. Βήμα 2: ${item.artPlural} ${q2} κοστίζουν ${q2} · ${unitCost} ＝ ${correct} €.`
   };
 }
 
 // 4. Άσκηση: Αντίστροφη Αναγωγή στη Μονάδα (Input - Εύρεση Ποσότητας)
-function makeReverseAnagogiQuestion() {
-  const item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
-  const q1 = getRandomInt(2, 4);
-  const costPerUnit = getRandomInt(2, 5);
-  const total1 = q1 * costPerUnit;
+function makeReverseAnagogiQuestion(prevQ = null) {
+  let item, q1, costPerUnit, total1, targetQty, totalAvailable;
 
-  const targetQty = getRandomInt(5, 10);
-  const totalAvailable = targetQty * costPerUnit;
+  while (true) {
+    item = ITEMS_POOL[getRandomInt(0, ITEMS_POOL.length - 1)];
+    q1 = getRandomInt(2, 4);
+    costPerUnit = getRandomInt(2, 5);
+    total1 = q1 * costPerUnit;
+
+    targetQty = getRandomInt(5, 10);
+    totalAvailable = targetQty * costPerUnit;
+
+    if (!prevQ || prevQ.item !== item.name) break;
+  }
 
   return {
+    item: item.name,
     q: `Αν ${item.artPlural} ${q1} ${item.name} ${item.emoji} κοστίζουν ${total1} €, ${item.howMany} ${item.name} μπορούμε να αγοράσουμε με ${totalAvailable} €;`,
     correct: targetQty,
     unit: item.name,
-    explain: `Βήμα 1: ${item.artSingle} 1 ${item.single} κοστίζει ${total1} : ${q1} = ${costPerUnit} €. Βήμα 2: Με ${totalAvailable} € αγοράζουμε ${totalAvailable} : ${costPerUnit} = ${targetQty} ${item.name}.`
+    explainText: `Βήμα 1: ${item.artSingle} 1 ${item.single} κοστίζει ${total1} ： ${q1} ＝ ${costPerUnit} €. Βήμα 2: Με ${totalAvailable} € αγοράζουμε ${totalAvailable} ： ${costPerUnit} ＝ ${targetQty} ${item.name}.`
   };
 }
 
 // Δημιουργία 8 Ερωτήσεων
 function generateQuestions() {
-  return {
-    q1: makeUnitOnlyQuestion(),
-    q2: makeUnitOnlyQuestion(),
-    q3: makeFullAnagogiQuestion(),
-    q4: makeFullAnagogiQuestion(),
-    q5: makeMCQAnagogiQuestion(),
-    q6: makeMCQAnagogiQuestion(),
-    q7: makeReverseAnagogiQuestion(),
-    q8: makeReverseAnagogiQuestion()
-  };
+  const q1 = makeUnitOnlyQuestion();
+  const q2 = makeUnitOnlyQuestion(q1);
+
+  const q3 = makeFullAnagogiQuestion();
+  const q4 = makeFullAnagogiQuestion(q3);
+
+  const q5 = makeMCQAnagogiQuestion();
+  const q6 = makeMCQAnagogiQuestion(q5);
+
+  const q7 = makeReverseAnagogiQuestion();
+  const q8 = makeReverseAnagogiQuestion(q7);
+
+  return { q1, q2, q3, q4, q5, q6, q7, q8 };
 }
 
 export default function AnagogiMonadaAskPage() {
   const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
+  const [answers, setAnswers] = useState({
+    q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
+  });
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
@@ -178,7 +211,13 @@ export default function AnagogiMonadaAskPage() {
 
   const handleInputChange = (key, val) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [key]: val }));
+    setAnswers((prev) => ({ ...prev, [key]: val }));
+  };
+
+  const handleNumericInput = (key, rawVal) => {
+    if (submitted) return;
+    const clean = rawVal.replace(/\D/g, '');
+    setAnswers((prev) => ({ ...prev, [key]: clean }));
   };
 
   const handleSubmit = (e) => {
@@ -201,186 +240,205 @@ export default function AnagogiMonadaAskPage() {
   };
 
   // Render Input Number Ασκήσεων (Q1, Q2, Q3, Q4, Q7, Q8)
-  const renderInputNumber = (qKey, qData, numLabel, colorClass, placeholderText) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className={`${colorClass} text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center`}>{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900 leading-snug">{qData.q}</h3>
-      </div>
-
-      <div className="pl-0 md:pl-11 space-y-3">
-        <div className="flex items-center gap-2">
-          <input 
-            type="number"
-            placeholder={placeholderText}
-            value={answers[qKey]}
-            onChange={(e) => handleInputChange(qKey, e.target.value)}
-            disabled={submitted}
-            className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none"
-          />
+  const renderInputNumber = (qKey, qData, numLabel, colorClass, placeholderText, suffixUnit) => {
+    const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className={`${colorClass} text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm`}>
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            {qData.q}
+          </h3>
         </div>
-      </div>
 
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {parseInt(answers[qKey], 10) === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. {qData.explain}</p>
-          )}
-        </div>
-      )}
-    </div>
-  );
-
-  // Render MCQ (Q5 & Q6)
-  const renderMCQQuestion = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900 leading-snug">{qData.q}</h3>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-0 md:pl-11">
-        {qData.options.map((opt, idx) => (
-          <label 
-            key={idx} 
-            className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${
-              answers[qKey] === opt.text 
-                ? 'border-purple-600 bg-purple-50/80 font-bold text-purple-900' 
-                : 'border-gray-200 hover:bg-gray-50 text-gray-800'
-            }`}
-          >
-            <input 
-              type="radio" 
-              name={qKey} 
-              value={opt.text}
-              checked={answers[qKey] === opt.text}
-              onChange={() => handleInputChange(qKey, opt.text)}
+        <div className="sm:pl-11 space-y-3">
+          <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Αποτέλεσμα:</span>
+            <span>＝</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              id={`input-${qKey}`}
+              name={`input-${qKey}`}
+              placeholder={placeholderText}
+              value={answers[qKey]}
+              onChange={(e) => handleNumericInput(qKey, e.target.value)}
               disabled={submitted}
-              className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+              className="w-40 sm:w-52 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-slate-900 bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none shadow-sm"
             />
-            <span className="font-mono text-base font-bold">{opt.text}</span>
-          </label>
-        ))}
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {answers[qKey] === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. {qData.explain}</p>
-          )}
+            {suffixUnit && (
+              <span className="font-bold text-slate-600 font-sans text-sm sm:text-base">
+                {suffixUnit}
+              </span>
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  );
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Η σωστή απάντηση είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)} {suffixUnit || ''}</span>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Render MCQ (Q5 & Q6, 4 Επιλογές)
+  const renderMCQQuestion = (qKey, qData, numLabel) => {
+    const isCorrect = answers[qKey] === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-purple-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            {qData.q}
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:pl-11">
+          {qData.options.map((opt, idx) => {
+            const isSelected = answers[qKey] === opt.text;
+            return (
+              <label
+                key={idx}
+                className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition select-none text-xs sm:text-sm ${
+                  isSelected
+                    ? 'border-purple-600 bg-purple-50/80 font-bold text-purple-950 shadow-sm'
+                    : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                } ${submitted ? 'cursor-default pointer-events-none' : ''}`}
+              >
+                <input
+                  type="radio"
+                  id={`${qKey}-opt-${idx}`}
+                  name={qKey}
+                  value={opt.text}
+                  checked={isSelected}
+                  onChange={() => handleInputChange(qKey, opt.text)}
+                  disabled={submitted}
+                  className="w-4 h-4 text-purple-600 focus:ring-purple-500 shrink-0"
+                />
+                <span className="leading-snug font-mono font-bold text-sm sm:text-base">{opt.text}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Η σωστή απάντηση είναι: <strong className="font-mono font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between pb-24">
-      <Head>
-        <title>🎯 Ασκήσεις: Αναγωγή στη Μονάδα - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
+    <Layout
+      title="Ασκήσεις: Αναγωγή στη Μονάδα | LearnMaths.gr"
+      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στη μέθοδο της αναγωγής στη μονάδα: εύρεση τιμής μονάδας, υπολογισμός νέου κόστους και αντίστροφη εύρεση ποσότητας."
+      backUrl="/d-dimotikou"
+      backText="Δ' Δημοτικού"
+      hideFooter={true}
+      actionButton={
+        <Link
+          href="/d-dimotikou/23-anagogi-monada"
+          className="bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
+        >
+          <span>📖</span> Θεωρία
+        </Link>
+      }
+    >
+      <div className="space-y-8">
+        {/* HEADER BANNER */}
+        <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-1">
+            <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+            </span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
+              📝 Ασκήσεις: Αναγωγή στη Μονάδα
+            </h1>
+            <p className="text-amber-100 text-xs sm:text-sm md:text-base">
+              Πατώντας «Νέες Ασκήσεις», τα προβλήματα, τα αντικείμενα και τα ποσά ανανεώνονται αυτόματα!
+            </p>
+          </div>
 
-      <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full sticky top-0 z-50">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/d-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/23-anagogi-monada" className="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
-                <span>📖</span> Θεωρία
-              </Link>
-              <button 
-                onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2"
+          <button
+            onClick={loadNewQuestions}
+            className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-amber-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
+          >
+            🔄 Νέες Ασκήσεις
+          </button>
+        </div>
+
+        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM SCORE BAR */}
+        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+          {renderInputNumber('q1', questions.q1, 1, 'bg-blue-600', 'Τιμή για το 1', '€')}
+          {renderInputNumber('q2', questions.q2, 2, 'bg-blue-600', 'Τιμή για το 1', '€')}
+
+          {renderInputNumber('q3', questions.q3, 3, 'bg-emerald-600', 'Τελικό κόστος', '€')}
+          {renderInputNumber('q4', questions.q4, 4, 'bg-emerald-600', 'Τελικό κόστος', '€')}
+
+          {renderMCQQuestion('q5', questions.q5, 5)}
+          {renderMCQQuestion('q6', questions.q6, 6)}
+
+          {renderInputNumber('q7', questions.q7, 7, 'bg-amber-600', 'Πλήθος', questions.q7.unit)}
+          {renderInputNumber('q8', questions.q8, 8, 'bg-amber-600', 'Πλήθος', questions.q8.unit)}
+
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="text-center pt-4">
+              <button
+                type="submit"
+                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                🎯 Έλεγχος Απαντήσεων
               </button>
             </div>
-          </div>
-        </nav>
-
-        {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
-          
-          {/* HEADER BANNER */}
-          <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white p-8 rounded-3xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
-              </span>
-              <h1 className="text-3xl lg:text-4xl font-black tracking-tight mt-2">
-                📝 Ασκήσεις: Αναγωγή στη Μονάδα
-              </h1>
-              <p className="text-amber-100 text-sm md:text-base mt-1">
-                Πατώντας «Νέες Ασκήσεις» τα δεδομένα και οι αριθμοί αλλάζουν αυτόματα.
-              </p>
-            </div>
-
-            <button
-              onClick={loadNewQuestions}
-              className="bg-white text-gray-900 font-black px-5 py-3 rounded-2xl shadow-lg hover:bg-amber-50 transition transform active:scale-95 text-sm whitespace-nowrap"
-            >
-              🔄 Αλλαγή Αριθμών
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-
-            {renderInputNumber('q1', questions.q1, 1, 'bg-blue-600', 'Γράψε την τιμή της 1 μονάδας')}
-            {renderInputNumber('q2', questions.q2, 2, 'bg-blue-600', 'Γράψε την τιμή της 1 μονάδας')}
-
-            {renderInputNumber('q3', questions.q3, 3, 'bg-emerald-600', 'Γράψε το τελικό κόστος')}
-            {renderInputNumber('q4', questions.q4, 4, 'bg-emerald-600', 'Γράψε το τελικό κόστος')}
-
-            {renderMCQQuestion('q5', questions.q5, 5)}
-            {renderMCQQuestion('q6', questions.q6, 6)}
-
-            {renderInputNumber('q7', questions.q7, 7, 'bg-amber-600', 'Γράψε το πλήθος των πραγμάτων')}
-            {renderInputNumber('q8', questions.q8, 8, 'bg-amber-600', 'Γράψε το πλήθος των πραγμάτων')}
-
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
-            {!submitted && (
-              <div className="text-center pt-4">
-                <button
-                  type="submit"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
-                >
-                  🎯 Έλεγχος Απαντήσεων
-                </button>
-              </div>
-            )}
-
-          </form>
-
-        </main>
+          )}
+        </form>
       </div>
 
       {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
-          
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-lg flex items-center gap-2 shadow-sm">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆 Σκορ:</span>
-              <span className="text-2xl font-mono">{score} / 8</span>
+              <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
-              <span className="text-sm font-bold text-slate-300">
-                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
@@ -389,20 +447,18 @@ export default function AnagogiMonadaAskPage() {
             {submitted ? (
               <button
                 onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
+                className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Παίξε ξανά με νέα προβλήματα!
+                <span>🔄</span> Νέες Ασκήσεις
               </button>
             ) : (
-              <p className="text-xs text-slate-400 hidden md:block">
-                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
               </p>
             )}
           </div>
-
         </div>
       </div>
-
-    </div>
+    </Layout>
   );
 }
