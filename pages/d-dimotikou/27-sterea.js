@@ -417,7 +417,7 @@ export default function StereaTheoryPage() {
                   <th className="p-3 text-center">Εδρες</th>
                   <th className="p-3 text-center">Ακμες</th>
                   <th className="p-3 text-center">Κορυφες</th>
-                  <th className="p-3 rounded-r-xl">Σχημα Εδρων / Βάσεων</th>
+                  <th className="p-3 rounded-r-xl">Σχημα Εδρων / Βασεων</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
