@@ -5,7 +5,7 @@ import { LAYOUT } from '../../shared/layout-config';
 
 export default function EDimotikouMenu() {
   const modules = [
-    { id: '1-klasma', label: '🍕 1. Κλάσμα', href: '/e-dimotikou/1-klasma' },
+    { id: '01-klasma', label: '🍕 1. Κλάσμα', href: '/e-dimotikou/01-klasma' },
     { id: '2-isodinama', label: '🔄 2. Ισοδύναμα Κλάσματα', href: '/e-dimotikou/2-isodinama' },
     { id: '3-aplopoiisi', label: '✂️ 3. Απλοποίηση Κλασμάτων', href: '/e-dimotikou/3-aplopoiisi' },
     { id: '4-anagogi', label: '🔍 4. Αναγωγή στην Κλασματική Μονάδα', href: '/e-dimotikou/4-anagogi' },
