@@ -1,7 +1,7 @@
+// pages/d-dimotikou/26-aionas-ask.js
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import Layout from '../../components/Layout';
 
 // --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
 
@@ -10,8 +10,8 @@ function getRandomInt(min, max) {
 }
 
 function formatNumber(num) {
-  if (num === '' || isNaN(num)) return '0';
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
 function toRoman(num) {
@@ -38,133 +38,154 @@ function toRoman(num) {
     { val: 2, str: 'II' },
     { val: 1, str: 'I' }
   ];
-  const found = romanMap.find(item => item.val === num);
+  const found = romanMap.find((item) => item.val === num);
   return found ? found.str : `${num}ος`;
 }
 
 // 1. Άσκηση: Εύρεση Αιώνα από Έτος (Input)
-function makeCenturyQuestion() {
-  const isRound = Math.random() > 0.6;
-  let year = isRound 
-    ? getRandomInt(10, 20) * 100 
-    : getRandomInt(1001, 2030);
+function makeCenturyQuestion(prevQ = null) {
+  let isRound, year, century;
 
-  const century = Math.floor((year - 1) / 100) + 1;
+  while (true) {
+    isRound = Math.random() > 0.6;
+    year = isRound ? getRandomInt(10, 20) * 100 : getRandomInt(1001, 2030);
+    century = Math.floor((year - 1) / 100) + 1;
+
+    if (!prevQ || prevQ.year !== year) break;
+  }
 
   return {
     q: `Σε ποιον αιώνα ανήκει το έτος ${formatNumber(year)}; (Γράψε μόνο τον αριθμό του αιώνα):`,
     year,
     correct: century,
-    explain: year % 100 === 0 
-      ? `Επειδή το έτος ${formatNumber(year)} τελειώνει σε 00, ανήκει ακριβώς στον ${century}ο αιώνα (${toRoman(century)}).`
-      : `Κοιτάμε τις εκατοντάδες και προσθέτουμε 1: το ${formatNumber(year)} ανήκει στον ${century}ο αιώνα (${toRoman(century)}).`
+    explainText:
+      year % 100 === 0
+        ? `Επειδή το έτος ${formatNumber(year)} τελειώνει σε 00, ανήκει ακριβώς στον ${century}ο αιώνα (${toRoman(century)}).`
+        : `Κοιτάμε τις εκατοντάδες και προσθέτουμε 1: το ${formatNumber(year)} ανήκει στον ${century}ο αιώνα (${toRoman(century)}).`
   };
 }
 
 // 2. Άσκηση: Μετατροπές Μονάδων Χρόνου (Input)
-function makeUnitConversionQuestion() {
-  const type = getRandomInt(1, 3);
+function makeUnitConversionQuestion(prevQ = null) {
+  let type, resultObj;
 
-  if (type === 1) {
-    const years = getRandomInt(2, 8);
-    const correct = years * 12;
-    return {
-      q: `Πόσους μήνες έχουν τα ${years} χρόνια (έτη);`,
-      correct,
-      unit: 'μήνες',
-      explain: `1 χρόνος = 12 μήνες, άρα τα ${years} χρόνια έχουν ${years} × 12 = ${correct} μήνες.`
-    };
-  } else if (type === 2) {
-    const weeks = getRandomInt(3, 9);
-    const correct = weeks * 7;
-    return {
-      q: `Πόσες ημέρες είναι οι ${weeks} εβδομάδες;`,
-      correct,
-      unit: 'ημέρες',
-      explain: `1 εβδομάδα = 7 ημέρες, άρα οι ${weeks} εβδομάδες είναι ${weeks} × 7 = ${correct} ημέρες.`
-    };
-  } else {
-    const centuries = getRandomInt(2, 6);
-    const correct = centuries * 100;
-    return {
-      q: `Πόσα χρόνια είναι οι ${centuries} αιώνες;`,
-      correct,
-      unit: 'χρόνια',
-      explain: `1 αιώνας = 100 χρόνια, άρα οι ${centuries} αιώνες είναι ${centuries} × 100 = ${correct} χρόνια.`
-    };
+  while (true) {
+    type = getRandomInt(1, 3);
+
+    if (type === 1) {
+      const years = getRandomInt(2, 8);
+      const correct = years * 12;
+      resultObj = {
+        q: `Πόσους μήνες περιέχουν τα ${years} χρόνια (έτη);`,
+        correct,
+        unit: 'μήνες',
+        explainText: `Επειδή 1 έτος ＝ 12 μήνες, τα ${years} χρόνια έχουν: ${years} · 12 ＝ ${correct} μήνες.`
+      };
+    } else if (type === 2) {
+      const weeks = getRandomInt(3, 9);
+      const correct = weeks * 7;
+      resultObj = {
+        q: `Πόσες ημέρες διαρκούν οι ${weeks} εβδομάδες;`,
+        correct,
+        unit: 'ημέρες',
+        explainText: `Επειδή 1 εβδομάδα ＝ 7 ημέρες, οι ${weeks} εβδομάδες είναι: ${weeks} · 7 ＝ ${correct} ημέρες.`
+      };
+    } else {
+      const centuries = getRandomInt(2, 6);
+      const correct = centuries * 100;
+      resultObj = {
+        q: `Πόσα χρόνια (έτη) διαρκούν οι ${centuries} αιώνες;`,
+        correct,
+        unit: 'χρόνια',
+        explainText: `Επειδή 1 αιώνας ＝ 100 χρόνια, οι ${centuries} αιώνες είναι: ${centuries} · 100 ＝ ${correct} χρόνια.`
+      };
+    }
+
+    if (!prevQ || prevQ.correct !== resultObj.correct) break;
   }
+
+  return resultObj;
 }
 
-// 3. Άσκηση: Πολλαπλή Επιλογή (MCQ - Διάρκεια Αιώνα / Λατινικά)
-function makeCenturyRangeMCQQuestion() {
-  const c = getRandomInt(14, 21);
-  const startYear = (c - 1) * 100 + 1;
-  const endYear = c * 100;
-  const roman = toRoman(c);
+// 3. Άσκηση: Πολλαπλή Επιλογή (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
+function makeCenturyRangeMCQQuestion(prevQ = null) {
+  let c, startYear, endYear, roman, correctText;
 
-  const correctText = `Από το ${formatNumber(startYear)} έως το ${formatNumber(endYear)}`;
-  const wrong1 = `Από το ${formatNumber(startYear - 1)} έως το ${formatNumber(endYear - 1)}`;
-  const wrong2 = `Από το ${formatNumber(startYear + 100)} έως το ${formatNumber(endYear + 100)}`;
-  const wrong3 = `Από το ${formatNumber(startYear - 100)} έως το ${formatNumber(endYear - 100)}`;
+  while (true) {
+    c = getRandomInt(14, 21);
+    startYear = (c - 1) * 100 + 1;
+    endYear = c * 100;
+    roman = toRoman(c);
+    correctText = `Από το ${formatNumber(startYear)} έως και το ${formatNumber(endYear)}`;
+
+    if (!prevQ || prevQ.correct !== correctText) break;
+  }
+
+  const wrong1 = `Από το ${formatNumber(startYear - 1)} έως και το ${formatNumber(endYear - 1)}`;
+  const wrong2 = `Από το ${formatNumber(startYear + 100)} έως και το ${formatNumber(endYear + 100)}`;
+  const wrong3 = `Από το ${formatNumber(startYear - 100)} έως και το ${formatNumber(endYear - 100)}`;
 
   const rawOptions = [correctText, wrong1, wrong2, wrong3];
   const uniqueOptions = Array.from(new Set(rawOptions));
 
-  const choices = uniqueOptions.map(opt => ({
-    text: opt,
-    isCorrect: opt === correctText
-  })).sort(() => Math.random() - 0.5);
+  const choices = uniqueOptions
+    .map((opt) => ({
+      text: opt,
+      isCorrect: opt === correctText
+    }))
+    .sort(() => Math.random() - 0.5);
 
   return {
     q: `Ποια είναι η ακριβής διάρκεια του ${c}ου αιώνα (${roman});`,
     options: choices,
     correct: correctText,
-    explain: `Ο ${c}ος αιώνας ξεκινάει την 1η Ιανουαρίου του ${formatNumber(startYear)} και τελειώνει την 31η Δεκεμβρίου του ${formatNumber(endYear)}.`
+    explainText: `Ο ${c}ος αιώνας ξεκινά την 1η Ιανουαρίου του έτους ${formatNumber(startYear)} και ολοκληρώνεται την 31η Δεκεμβρίου του έτους ${formatNumber(endYear)}.`
   };
 }
 
 // 4. Άσκηση: Σωστό / Λάθος για Δίσεκτα Έτη & Αιώνες
+// (Χωρίς «Σωστά!» ή «Λάθος!» στο κείμενο εξήγησης)
 const TRUE_FALSE_POOL = [
   {
     q: 'Ένα δίσεκτο έτος έχει 366 ημέρες επειδή ο Φεβρουάριος έχει 29 ημέρες.',
     correct: 'Σωστό',
-    explain: 'Σωστά! Στα δίσεκτα έτη προστίθεται 1 ημέρα στον Φεβρουάριο (29 ημέρες).'
+    explain: 'Στα δίσεκτα έτη προστίθεται μία επιπλέον ημέρα στο τέλος του Φεβρουαρίου (29 ημέρες).'
   },
   {
-    q: 'Το έτος 1821 ανήκει στον 18ο αιώνα.',
+    q: 'Το ιστορικό έτος 1821 ανήκει στον 18ο αιώνα.',
     correct: 'Λάθος',
-    explain: 'Λάθος! Το 1821 ανήκει στον 19ο αιώνα (18 + 1 = 19).'
+    explain: 'Επειδή το 1821 δεν τελειώνει σε 00, ανήκει στον 19ο αιώνα (18 ＋ 1 ＝ 19).'
   },
   {
     q: 'Το έτος 2000 ήταν δίσεκτο έτος και ανήκει στον 20ό αιώνα.',
     correct: 'Σωστό',
-    explain: 'Σωστά! Το 2000 ήταν το τελευταίο έτος του 20ού αιώνα και ήταν δίσεκτο.'
+    explain: 'Το 2000 ήταν το τελευταίο έτος του 20ού αιώνα και διαίρεται ακριβώς με το 400, άρα ήταν δίσεκτο.'
   },
   {
     q: 'Μία δεκαετία αποτελείται από 100 χρόνια.',
     correct: 'Λάθος',
-    explain: 'Λάθος! Μία δεκαετία αποτελείται από 10 χρόνια (ο αιώνας έχει 100 χρόνια).'
+    explain: 'Μία δεκαετία αποτελείται από 10 χρόνια, ενώ από 100 χρόνια αποτελείται ο αιώνας.'
   },
   {
     q: 'Μία χιλιετία αποτελείται από 10 αιώνες (δηλαδή 1.000 χρόνια).',
     correct: 'Σωστό',
-    explain: 'Σωστά! 10 αιώνες × 100 χρόνια = 1.000 χρόνια = 1 χιλιετία.'
+    explain: 'Ισχύει η ισότητα 10 αιώνες · 100 χρόνια ＝ 1.000 χρόνια ＝ 1 χιλιετία.'
   },
   {
     q: 'Τα δίσεκτα έτη συμβαίνουν κάθε 2 χρόνια.',
     correct: 'Λάθος',
-    explain: 'Λάθος! Τα δίσεκτα έτη συμβαίνουν κάθε 4 χρόνια.'
+    explain: 'Τα δίσεκτα έτη συμβαίνουν κάθε 4 χρόνια (με εξαίρεση ορισμένα έτη αιώνων που δεν διαιρούνται με το 400).'
   },
   {
     q: 'Το έτος 2024 ήταν δίσεκτο έτος (αφού διαιρείται ακριβώς με το 4).',
     correct: 'Σωστό',
-    explain: 'Σωστά! 2024 : 4 = 506 (τέλεια διαίρεση), άρα ήταν δίσεκτο.'
+    explain: 'Υπολογίζουμε 2024 ： 4 ＝ 506 (τέλεια διαίρεση με υπόλοιπο 0), επομένως το 2024 ήταν δίσεκτο.'
   }
 ];
 
 // Δημιουργία 8 Ερωτήσεων
 function generateQuestions() {
-  let tf1 = TRUE_FALSE_POOL[getRandomInt(0, TRUE_FALSE_POOL.length - 1)];
+  const tf1 = TRUE_FALSE_POOL[getRandomInt(0, TRUE_FALSE_POOL.length - 1)];
   let tf2;
   while (true) {
     tf2 = TRUE_FALSE_POOL[getRandomInt(0, TRUE_FALSE_POOL.length - 1)];
@@ -185,7 +206,9 @@ function generateQuestions() {
 
 export default function AionasAskPage() {
   const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
+  const [answers, setAnswers] = useState({
+    q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
+  });
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
@@ -204,7 +227,13 @@ export default function AionasAskPage() {
 
   const handleInputChange = (key, val) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [key]: val }));
+    setAnswers((prev) => ({ ...prev, [key]: val }));
+  };
+
+  const handleNumericInput = (key, rawVal) => {
+    if (submitted) return;
+    const clean = rawVal.replace(/\D/g, '');
+    setAnswers((prev) => ({ ...prev, [key]: clean }));
   };
 
   const handleSubmit = (e) => {
@@ -227,228 +256,258 @@ export default function AionasAskPage() {
   };
 
   // Render Input Number Ασκήσεων (Q1, Q2, Q3, Q4)
-  const renderInputNumber = (qKey, qData, numLabel, colorClass, placeholderText) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className={`${colorClass} text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center`}>{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900 leading-snug">{qData.q}</h3>
-      </div>
-
-      <div className="pl-0 md:pl-11 space-y-3">
-        <div className="flex items-center gap-2">
-          <input 
-            type="number"
-            placeholder={placeholderText}
-            value={answers[qKey]}
-            onChange={(e) => handleInputChange(qKey, e.target.value)}
-            disabled={submitted}
-            className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-          />
+  const renderInputNumber = (qKey, qData, numLabel, colorClass, placeholderText, suffixUnit) => {
+    const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className={`${colorClass} text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm`}>
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            {qData.q}
+          </h3>
         </div>
-      </div>
 
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {parseInt(answers[qKey], 10) === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. {qData.explain}</p>
-          )}
-        </div>
-      )}
-    </div>
-  );
-
-  // Render MCQ (Q5 & Q6)
-  const renderMCQQuestion = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900 leading-snug">{qData.q}</h3>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-0 md:pl-11">
-        {qData.options.map((opt, idx) => (
-          <label 
-            key={idx} 
-            className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${
-              answers[qKey] === opt.text 
-                ? 'border-purple-600 bg-purple-50/80 font-bold text-purple-900' 
-                : 'border-gray-200 hover:bg-gray-50 text-gray-800'
-            }`}
-          >
-            <input 
-              type="radio" 
-              name={qKey} 
-              value={opt.text}
-              checked={answers[qKey] === opt.text}
-              onChange={() => handleInputChange(qKey, opt.text)}
+        <div className="sm:pl-11 space-y-3">
+          <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Αποτέλεσμα:</span>
+            <span>＝</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              id={`input-${qKey}`}
+              name={`input-${qKey}`}
+              placeholder={placeholderText}
+              value={answers[qKey]}
+              onChange={(e) => handleNumericInput(qKey, e.target.value)}
               disabled={submitted}
-              className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+              className="w-36 sm:w-44 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-sm"
             />
-            <span className="font-mono text-base font-bold">{opt.text}</span>
-          </label>
-        ))}
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {answers[qKey] === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. {qData.explain}</p>
-          )}
+            {suffixUnit && (
+              <span className="font-bold text-slate-600 font-sans text-sm sm:text-base">
+                {suffixUnit}
+              </span>
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  );
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Η σωστή απάντηση είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)} {suffixUnit || ''}</span>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Render MCQ (Q5 & Q6, 4 Επιλογές)
+  const renderMCQQuestion = (qKey, qData, numLabel) => {
+    const isCorrect = answers[qKey] === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-purple-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            {qData.q}
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:pl-11">
+          {qData.options.map((opt, idx) => {
+            const isSelected = answers[qKey] === opt.text;
+            return (
+              <label
+                key={idx}
+                className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition select-none text-xs sm:text-sm ${
+                  isSelected
+                    ? 'border-purple-600 bg-purple-50/80 font-bold text-purple-950 shadow-sm'
+                    : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                } ${submitted ? 'cursor-default pointer-events-none' : ''}`}
+              >
+                <input
+                  type="radio"
+                  id={`${qKey}-opt-${idx}`}
+                  name={qKey}
+                  value={opt.text}
+                  checked={isSelected}
+                  onChange={() => handleInputChange(qKey, opt.text)}
+                  disabled={submitted}
+                  className="w-4 h-4 text-purple-600 focus:ring-purple-500 shrink-0"
+                />
+                <span className="leading-snug font-bold text-sm sm:text-base">{opt.text}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Η σωστή απάντηση είναι: <strong className="font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // Render Σωστό / Λάθος (Q7 & Q8)
-  const renderTrueFalse = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-indigo-700 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900 leading-snug">{qData.q}</h3>
-      </div>
-
-      <div className="flex gap-4 pl-0 md:pl-11">
-        {['Σωστό', 'Λάθος'].map((opt) => (
-          <button
-            type="button"
-            key={opt}
-            onClick={() => handleInputChange(qKey, opt)}
-            disabled={submitted}
-            className={`px-8 py-3 rounded-2xl font-black text-base border transition ${
-              answers[qKey] === opt
-                ? (opt === 'Σωστό' ? 'bg-emerald-600 text-white border-emerald-700 shadow-md' : 'bg-rose-600 text-white border-rose-700 shadow-md')
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {answers[qKey] === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. {qData.explain}</p>
-          )}
+  const renderTrueFalse = (qKey, qData, numLabel) => {
+    const isCorrect = answers[qKey] === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-indigo-700 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            {qData.q}
+          </h3>
         </div>
-      )}
-    </div>
-  );
+
+        <div className="flex gap-3 sm:pl-11">
+          {['Σωστό', 'Λάθος'].map((opt) => (
+            <button
+              type="button"
+              key={opt}
+              onClick={() => handleInputChange(qKey, opt)}
+              disabled={submitted}
+              className={`px-6 sm:px-8 py-3 rounded-2xl font-black text-sm sm:text-base border transition active:scale-95 touch-manipulation select-none ${
+                answers[qKey] === opt
+                  ? (opt === 'Σωστό' ? 'bg-emerald-600 text-white border-emerald-700 shadow-md' : 'bg-rose-600 text-white border-rose-700 shadow-md')
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+              }`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explain}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Η πρόταση είναι <strong className="font-bold text-rose-900">«{qData.correct}»</strong>: {qData.explain}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between pb-24">
-      <Head>
-        <title>📅 Ασκήσεις: Αιώνες & Δίσεκτα Έτη - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
+    <Layout
+      title="Ασκήσεις: Αιώνες & Δίσεκτα Έτη | LearnMaths.gr"
+      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στους αιώνες, τα δίσεκτα έτη και τις μετατροπές μονάδων χρόνου."
+      backUrl="/d-dimotikou"
+      backText="Δ' Δημοτικού"
+      hideFooter={true}
+      actionButton={
+        <Link
+          href="/d-dimotikou/26-aionas"
+          className="bg-purple-100 hover:bg-purple-200 text-purple-950 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
+        >
+          <span>📖</span> Θεωρία
+        </Link>
+      }
+    >
+      <div className="space-y-8">
+        {/* HEADER BANNER */}
+        <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-1">
+            <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+            </span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
+              📝 Ασκήσεις: Αιώνες & Δίσεκτα Έτη
+            </h1>
+            <p className="text-purple-100 text-xs sm:text-sm md:text-base">
+              Πατώντας «Νέες Ασκήσεις», τα έτη και οι υπολογισμοί ανανεώνονται αυτόματα από τη δεξαμενή!
+            </p>
+          </div>
 
-      <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full sticky top-0 z-50">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/d-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/26-aionas" className="bg-purple-100 hover:bg-purple-200 text-purple-800 font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
-                <span>📖</span> Θεωρία
-              </Link>
-              <button 
-                onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2"
+          <button
+            onClick={loadNewQuestions}
+            className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-purple-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
+          >
+            🔄 Νέες Ασκήσεις
+          </button>
+        </div>
+
+        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM SCORE BAR */}
+        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+          {renderInputNumber('q1', questions.q1, 1, 'bg-purple-600', 'Αιώνας', 'ος αιώνας')}
+          {renderInputNumber('q2', questions.q2, 2, 'bg-purple-600', 'Αιώνας', 'ος αιώνας')}
+
+          {renderInputNumber('q3', questions.q3, 3, 'bg-indigo-600', 'Αποτέλεσμα', questions.q3.unit)}
+          {renderInputNumber('q4', questions.q4, 4, 'bg-indigo-600', 'Αποτέλεσμα', questions.q4.unit)}
+
+          {renderMCQQuestion('q5', questions.q5, 5)}
+          {renderMCQQuestion('q6', questions.q6, 6)}
+
+          {renderTrueFalse('q7', questions.q7, 7)}
+          {renderTrueFalse('q8', questions.q8, 8)}
+
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="text-center pt-4">
+              <button
+                type="submit"
+                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                🎯 Έλεγχος Απαντήσεων
               </button>
             </div>
-          </div>
-        </nav>
-
-        {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
-          
-          {/* HEADER BANNER */}
-          <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white p-8 rounded-3xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
-              </span>
-              <h1 className="text-3xl lg:text-4xl font-black tracking-tight mt-2">
-                📝 Ασκήσεις: Αιώνες & Δίσεκτα Έτη
-              </h1>
-              <p className="text-purple-100 text-sm md:text-base mt-1">
-                Πατώντας «Νέες Ασκήσεις» τα έτη και οι ερωτήσεις αλλάζουν αυτόματα.
-              </p>
-            </div>
-
-            <button
-              onClick={loadNewQuestions}
-              className="bg-white text-gray-900 font-black px-5 py-3 rounded-2xl shadow-lg hover:bg-amber-50 transition transform active:scale-95 text-sm whitespace-nowrap"
-            >
-              🔄 Αλλαγή Αριθμών
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-
-            {renderInputNumber('q1', questions.q1, 1, 'bg-purple-600', 'Γράψε τον αιώνα (π.χ. 19)')}
-            {renderInputNumber('q2', questions.q2, 2, 'bg-purple-600', 'Γράψε τον αιώνα (π.χ. 21)')}
-
-            {renderInputNumber('q3', questions.q3, 3, 'bg-indigo-600', 'Γράψε τον αριθμό')}
-            {renderInputNumber('q4', questions.q4, 4, 'bg-indigo-600', 'Γράψε τον αριθμό')}
-
-            {renderMCQQuestion('q5', questions.q5, 5)}
-            {renderMCQQuestion('q6', questions.q6, 6)}
-
-            {renderTrueFalse('q7', questions.q7, 7, 7)}
-            {renderTrueFalse('q8', questions.q8, 8, 8)}
-
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
-            {!submitted && (
-              <div className="text-center pt-4">
-                <button
-                  type="submit"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
-                >
-                  🎯 Έλεγχος Απαντήσεων
-                </button>
-              </div>
-            )}
-
-          </form>
-
-        </main>
+          )}
+        </form>
       </div>
 
       {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
-          
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-lg flex items-center gap-2 shadow-sm">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆 Σκορ:</span>
-              <span className="text-2xl font-mono">{score} / 8</span>
+              <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
-              <span className="text-sm font-bold text-slate-300">
-                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
@@ -457,20 +516,18 @@ export default function AionasAskPage() {
             {submitted ? (
               <button
                 onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
+                className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Παίξε ξανά με νέες ασκήσεις!
+                <span>🔄</span> Νέες Ασκήσεις
               </button>
             ) : (
-              <p className="text-xs text-slate-400 hidden md:block">
-                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
               </p>
             )}
           </div>
-
         </div>
       </div>
-
-    </div>
+    </Layout>
   );
 }
