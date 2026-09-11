@@ -50,12 +50,14 @@ export default function Diairesi2PsifiaPage() {
     setDividend(randomDivisor * randomQuotient);
   };
 
+  // Μεταβολή Διαιρετέου (Βήμα ±1 για τις μονάδες, ή μεγαλύτερα βήματα)
   const updateDividend = (e, delta) => {
     e.preventDefault();
     e.stopPropagation();
     setDividend((prev) => Math.max(100, Math.min(9999, (Number(prev) || 100) + delta)));
   };
 
+  // Μεταβολή Διαιρέτη (Βήμα ±1)
   const updateDivisor = (e, delta) => {
     e.preventDefault();
     e.stopPropagation();
@@ -277,9 +279,9 @@ export default function Diairesi2PsifiaPage() {
             </div>
           </div>
 
-          {/* ΠΕΔΙΑ ΕΙΣΑΓΩΓΗΣ & TOUCH CONTROLS (ΚΑΝΟΝΑΣ 2) */}
+          {/* ΠΕΔΙΑ ΕΙΣΑΓΩΓΗΣ & TOUCH CONTROLS */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200">
-            {/* Διαιρετέος (Δ) */}
+            {/* Διαιρετέος (Δ) - Με βήμα ±1 στις μονάδες */}
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
               <div className="h-8 flex items-center justify-between text-center px-1">
                 <span className="text-[11px] font-black uppercase text-slate-500">ΔΙΑΙΡΕΤΕΟΣ (Δ: 100 - 9.999)</span>
@@ -290,10 +292,10 @@ export default function Diairesi2PsifiaPage() {
 
               <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                 <button
-                  onClick={(e) => updateDividend(e, -10)}
+                  onClick={(e) => updateDividend(e, -1)}
                   className="w-9 h-9 shrink-0 flex items-center justify-center bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
-                  title="Μείωση Δ"
-                  aria-label="Μείωση Διαιρετέου"
+                  title="Μείωση κατά 1 (Μονάδες)"
+                  aria-label="Μείωση Διαιρετέου κατά 1"
                 >
                   －
                 </button>
@@ -318,17 +320,49 @@ export default function Diairesi2PsifiaPage() {
                 />
 
                 <button
-                  onClick={(e) => updateDividend(e, 10)}
+                  onClick={(e) => updateDividend(e, 1)}
                   className="w-9 h-9 shrink-0 flex items-center justify-center bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
-                  title="Αύξηση Δ"
-                  aria-label="Αύξηση Διαιρετέου"
+                  title="Αύξηση κατά 1 (Μονάδες)"
+                  aria-label="Αύξηση Διαιρετέου κατά 1"
                 >
                   ＋
                 </button>
               </div>
+
+              {/* Βοηθητικά κουμπιά για γρήγορη μεταβολή Δεκάδων & Εκατοντάδων */}
+              <div className="flex justify-center gap-1.5 pt-0.5">
+                <button
+                  onClick={(e) => updateDividend(e, -100)}
+                  className="px-2 py-0.5 text-[10px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  title="Μείωση κατά 100"
+                >
+                  -100
+                </button>
+                <button
+                  onClick={(e) => updateDividend(e, -10)}
+                  className="px-2 py-0.5 text-[10px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  title="Μείωση κατά 10"
+                >
+                  -10
+                </button>
+                <button
+                  onClick={(e) => updateDividend(e, 10)}
+                  className="px-2 py-0.5 text-[10px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  title="Αύξηση κατά 10"
+                >
+                  +10
+                </button>
+                <button
+                  onClick={(e) => updateDividend(e, 100)}
+                  className="px-2 py-0.5 text-[10px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  title="Αύξηση κατά 100"
+                >
+                  +100
+                </button>
+              </div>
             </div>
 
-            {/* Διαιρέτης (δ) */}
+            {/* Διαιρέτης (δ) - Με βήμα ±1 */}
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
               <div className="h-8 flex items-center justify-between text-center px-1">
                 <span className="text-[11px] font-black uppercase text-slate-500">ΔΙΑΙΡΕΤΗΣ (δ: 10 - 99)</span>
@@ -341,7 +375,7 @@ export default function Diairesi2PsifiaPage() {
                 <button
                   onClick={(e) => updateDivisor(e, -1)}
                   className="w-9 h-9 shrink-0 flex items-center justify-center bg-blue-50 hover:bg-blue-100 active:bg-blue-200 text-blue-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
-                  title="Μείωση δ"
+                  title="Μείωση κατά 1"
                   aria-label="Μείωση Διαιρέτη"
                 >
                   －
@@ -369,10 +403,28 @@ export default function Diairesi2PsifiaPage() {
                 <button
                   onClick={(e) => updateDivisor(e, 1)}
                   className="w-9 h-9 shrink-0 flex items-center justify-center bg-blue-50 hover:bg-blue-100 active:bg-blue-200 text-blue-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
-                  title="Αύξηση δ"
+                  title="Αύξηση κατά 1"
                   aria-label="Αύξηση Διαιρέτη"
                 >
                   ＋
+                </button>
+              </div>
+
+              {/* Βοηθητικά κουμπιά δεκάδων για τον διαιρέτη */}
+              <div className="flex justify-center gap-1.5 pt-0.5">
+                <button
+                  onClick={(e) => updateDivisor(e, -10)}
+                  className="px-2.5 py-0.5 text-[10px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  title="Μείωση κατά 10"
+                >
+                  -10
+                </button>
+                <button
+                  onClick={(e) => updateDivisor(e, 10)}
+                  className="px-2.5 py-0.5 text-[10px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  title="Αύξηση κατά 10"
+                >
+                  +10
                 </button>
               </div>
             </div>
