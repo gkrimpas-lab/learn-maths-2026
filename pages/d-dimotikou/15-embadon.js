@@ -287,10 +287,10 @@ export default function EmbadonTheoryPage() {
 
               <span className="text-xs font-black uppercase tracking-wider text-slate-400 block text-center">
                 {zoomLevel === 'm'
-                  ? 'Βασική Μονάδα (1 τ.μ.)'
+                  ? 'Βασικη Μοναδα (1 τ.μ.)'
                   : zoomLevel === 'dm'
-                  ? 'Πλέγμα 10 · 10 ＝ 100 τ.δ.'
-                  : 'Πλέγμα 100 · 100 ＝ 10.000 τ.εκ.'}
+                  ? 'Πλεγμα 10 · 10 ＝ 100 τ.δ.'
+                  : 'Πλεγμα 100 · 100 ＝ 10.000 τ.εκ.'}
               </span>
             </div>
 
