@@ -8,7 +8,7 @@ const SOLIDS_DATA = [
   {
     id: 'cube',
     name: 'Κύβος',
-    category: 'Πολύεδρο',
+    category: 'Πολυεδρο',
     faces: 6,
     facesDesc: '6 ίσα τετράγωνα',
     edges: 12,
@@ -31,7 +31,7 @@ const SOLIDS_DATA = [
   {
     id: 'cuboid',
     name: 'Ορθογώνιο Παραλληλεπίπεδο',
-    category: 'Πολύεδρο',
+    category: 'Πολυεδρο',
     faces: 6,
     facesDesc: '6 ορθογώνια (ανά 2 απέναντι ίσα)',
     edges: 12,
@@ -77,7 +77,7 @@ const SOLIDS_DATA = [
   {
     id: 'tri-pyramid',
     name: 'Τριγωνική Πυραμίδα (Τετράεδρο)',
-    category: 'Πολύεδρο (Πυραμίδα)',
+    category: 'Πολυεδρο (Πυραμιδα)',
     faces: 4,
     facesDesc: '1 τριγωνική βάση ＋ 3 τριγωνικές έδρες (4 τρίγωνα)',
     edges: 6,
@@ -98,7 +98,7 @@ const SOLIDS_DATA = [
   {
     id: 'cylinder',
     name: 'Κύλινδρος',
-    category: 'Σώμα εκ Περιστροφής',
+    category: 'Σωμα εκ Περιστροφης',
     faces: 3,
     facesDesc: '2 ίσοι κυκλικοί δίσκοι (βάσεις) ＋ 1 καμπύλη επιφάνεια',
     edges: 0,
@@ -119,7 +119,7 @@ const SOLIDS_DATA = [
   {
     id: 'cone',
     name: 'Κώνος',
-    category: 'Σώμα εκ Περιστροφής',
+    category: 'Σωμα εκ Περιστροφης',
     faces: 2,
     facesDesc: '1 κυκλική βάση ＋ 1 καμπύλη επιφάνεια',
     edges: 0,
@@ -140,7 +140,7 @@ const SOLIDS_DATA = [
   {
     id: 'sphere',
     name: 'Σφαίρα',
-    category: 'Σώμα εκ Περιστροφής',
+    category: 'Σωμα εκ Περιστροφης',
     faces: 1,
     facesDesc: '1 ενιαία καμπύλη επιφάνεια (καμία επίπεδη έδρα)',
     edges: 0,
