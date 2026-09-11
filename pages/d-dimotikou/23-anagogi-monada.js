@@ -253,7 +253,7 @@ export default function AnagogiMonadaPage() {
                 {/* Αρχικό Πλήθος */}
                 <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
                   <div className="h-8 flex items-center justify-between text-center px-1">
-                    <span className="text-[11px] font-black uppercase text-slate-500 truncate">
+                    <span className="text-[11px] font-black text-slate-500 truncate">
                       ΑΡΧΙΚΟ ΠΛΗΘΟΣ ({currentItem.item})
                     </span>
                     <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-amber-600 text-base">
@@ -303,7 +303,7 @@ export default function AnagogiMonadaPage() {
                 {/* Αρχικό Κόστος */}
                 <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
                   <div className="h-8 flex items-center justify-between text-center px-1">
-                    <span className="text-[11px] font-black uppercase text-slate-500 truncate">
+                    <span className="text-[11px] font-black text-slate-500 truncate">
                       ΑΡΧΙΚΟ ΚΟΣΤΟΣ (€)
                     </span>
                     <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-blue-600 text-base">
@@ -353,7 +353,7 @@ export default function AnagogiMonadaPage() {
                 {/* Νέο Πλήθος που Ζητάμε */}
                 <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
                   <div className="h-8 flex items-center justify-between text-center px-1">
-                    <span className="text-[11px] font-black uppercase text-slate-500 truncate">
+                    <span className="text-[11px] font-black text-slate-500 truncate">
                       ΝΕΟ ΠΛΗΘΟΣ ΠΟΥ ΖΗΤΑΜΕ ({currentItem.item})
                     </span>
                     <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-emerald-600 text-base">
@@ -410,7 +410,7 @@ export default function AnagogiMonadaPage() {
             <div className="bg-slate-950 text-white p-5 sm:p-7 rounded-3xl border border-slate-800 shadow-xl space-y-5">
               {/* ΒΗΜΑ 1: ΥΠΟΛΟΓΙΣΜΟΣ ΜΟΝΑΔΑΣ */}
               <div className="bg-slate-900 p-4 sm:p-5 rounded-2xl border border-blue-500/30 space-y-2 shadow-inner">
-                <span className="text-xs font-black uppercase text-blue-400 tracking-wider block">
+                <span className="text-xs font-black text-blue-400 tracking-wider block">
                   1️⃣ ΒΗΜΑ 1: Βρίσκουμε {currentItem.singleAcc}
                 </span>
                 <div className="flex flex-wrap items-center justify-between gap-2 text-sm sm:text-base font-mono">
@@ -425,7 +425,7 @@ export default function AnagogiMonadaPage() {
 
               {/* ΒΗΜΑ 2: ΥΠΟΛΟΓΙΣΜΟΣ ΤΕΛΙΚΗΣ ΠΟΣΟΤΗΤΑΣ */}
               <div className="bg-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-500/30 space-y-2 shadow-inner">
-                <span className="text-xs font-black uppercase text-emerald-400 tracking-wider block">
+                <span className="text-xs font-black text-emerald-400 tracking-wider block">
                   2️⃣ ΒΗΜΑ 2: Βρίσκουμε {currentItem.pluralAcc} {formatNumber(numTargetQty)} {currentItem.item}
                 </span>
                 <div className="flex flex-wrap items-center justify-between gap-2 text-sm sm:text-base font-mono">
