@@ -1,7 +1,7 @@
+// pages/d-dimotikou/22-diairesi-2-psifia-ask.js
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import Layout from '../../components/Layout';
 
 // --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
 
@@ -10,61 +10,80 @@ function getRandomInt(min, max) {
 }
 
 function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
 // 1. Άσκηση: Τέλεια Διαίρεση με 2ψήφιο διαιρέτη (Input - Εύρεση Πηλίκου)
-function makeExactDivisionQuestion() {
-  const d = getRandomInt(11, 45);       // Διαιρέτης (δ)
-  const q = getRandomInt(12, 65);       // Πηλίκο (π)
-  const D = d * q;                      // Διαιρετέος (Δ)
+function makeExactDivisionQuestion(prevQ = null) {
+  let d, q, D;
+
+  while (true) {
+    d = getRandomInt(11, 45); // Διαιρέτης (δ)
+    q = getRandomInt(12, 65); // Πηλίκο (π)
+    D = d * q;                // Διαιρετέος (Δ)
+
+    if (!prevQ || prevQ.D !== D) break;
+  }
 
   return {
     D,
     d,
     correct: q,
-    explain: `Η διαίρεση είναι τέλεια: ${formatNumber(D)} : ${d} = ${q} (αφού ${d} × ${q} = ${formatNumber(D)}).`
+    explainText: `Η διαίρεση είναι τέλεια (υπόλοιπο 0): ${formatNumber(D)} ： ${d} ＝ ${q}, επειδή ${d} · ${q} ＝ ${formatNumber(D)}.`
   };
 }
 
 // 2. Άσκηση: Ατελής Διαίρεση - Εύρεση Υπολοίπου (Input)
-function makeRemainderQuestion() {
-  const d = getRandomInt(12, 50);       // Διαιρέτης (δ)
-  const q = getRandomInt(10, 45);       // Πηλίκο (π)
-  const r = getRandomInt(1, d - 1);     // Υπόλοιπο (υ < δ)
-  const D = d * q + r;                  // Διαιρετέος (Δ)
+function makeRemainderQuestion(prevQ = null) {
+  let d, q, r, D;
+
+  while (true) {
+    d = getRandomInt(12, 50);        // Διαιρέτης (δ)
+    q = getRandomInt(10, 45);        // Πηλίκο (π)
+    r = getRandomInt(1, d - 1);      // Υπόλοιπο (υ < δ)
+    D = d * q + r;                   // Διαιρετέος (Δ)
+
+    if (!prevQ || prevQ.D !== D) break;
+  }
 
   return {
     D,
     d,
     correct: r,
-    explain: `Στη διαίρεση ${formatNumber(D)} : ${d}, το πηλίκο είναι ${q} και το υπόλοιπο είναι ${r} (αφού ${d} × ${q} = ${formatNumber(d * q)} και ${formatNumber(D)} - ${formatNumber(d * q)} = ${r}).`
+    explainText: `Στη διαίρεση ${formatNumber(D)} ： ${d}, το πηλίκο είναι ${q} (${d} · ${q} ＝ ${formatNumber(d * q)}) και το υπόλοιπο είναι ${formatNumber(D)} － ${formatNumber(d * q)} ＝ ${r} (ισχύει ${r} ＜ ${d}).`
   };
 }
 
-// 3. Άσκηση: Πολλαπλή Επιλογή (MCQ) με 4 Μοναδικές Επιλογές (Πηλίκο & Υπόλοιπο)
-function makeMCQDivisionQuestion() {
-  const d = getRandomInt(12, 35);
-  const q = getRandomInt(12, 45);
-  const r = getRandomInt(0, d - 1);
-  const D = d * q + r;
+// 3. Άσκηση: Πολλαπλή Επιλογή (MCQ) με 4 Μοναδικές Επιλογές (ΟΜΑΔΑ Α)
+function makeMCQDivisionQuestion(prevQ = null) {
+  let d, q, r, D, correctText;
 
-  const correctText = r === 0 ? `π = ${q}` : `π = ${q}, υ = ${r}`;
-  const wrong1 = r === 0 ? `π = ${q + 2}` : `π = ${q + 1}, υ = ${r}`;
-  const wrong2 = r === 0 ? `π = ${q - 2}` : `π = ${q}, υ = ${r > 1 ? r - 1 : r + 2}`;
-  const wrong3 = `π = ${q + 3}, υ = ${r + 1}`;
+  while (true) {
+    d = getRandomInt(12, 35);
+    q = getRandomInt(12, 45);
+    r = getRandomInt(0, d - 1);
+    D = d * q + r;
+
+    correctText = r === 0 ? `π ＝ ${q}` : `π ＝ ${q}, υ ＝ ${r}`;
+    if (!prevQ || prevQ.correct !== correctText) break;
+  }
+
+  const wrong1 = r === 0 ? `π ＝ ${q + 2}` : `π ＝ ${q + 1}, υ ＝ ${r}`;
+  const wrong2 = r === 0 ? `π ＝ ${q - 2}` : `π ＝ ${q}, υ ＝ ${r > 1 ? r - 1 : r + 2}`;
+  const wrong3 = `π ＝ ${q + 3}, υ ＝ ${r + 1}`;
 
   const rawOptions = [correctText, wrong1, wrong2, wrong3];
   const uniqueOptions = Array.from(new Set(rawOptions));
 
   while (uniqueOptions.length < 4) {
-    const dummy = `π = ${q + getRandomInt(4, 10)}, υ = ${getRandomInt(0, d - 1)}`;
+    const dummy = `π ＝ ${q + getRandomInt(4, 10)}, υ ＝ ${getRandomInt(0, d - 1)}`;
     if (!uniqueOptions.includes(dummy)) {
       uniqueOptions.push(dummy);
     }
   }
 
-  const choices = uniqueOptions.map(opt => ({
+  const choices = uniqueOptions.map((opt) => ({
     text: opt,
     isCorrect: opt === correctText
   })).sort(() => Math.random() - 0.5);
@@ -74,43 +93,54 @@ function makeMCQDivisionQuestion() {
     d,
     options: choices,
     correct: correctText,
-    explain: `Το σωστό αποτέλεσμα είναι: ${correctText} (αφού ${d} × ${q} + ${r} = ${formatNumber(D)}).`
+    explainText: `Εκτελώντας τη διαίρεση ${formatNumber(D)} ： ${d}, προκύπτει ${correctText}, καθώς (${d} · ${q}) ＋ ${r} ＝ ${formatNumber(D)}.`
   };
 }
 
 // 4. Άσκηση: Επαλήθευση Διαίρεσης - Εύρεση Διαιρετέου (Input)
-function makeVerificationQuestion() {
-  const d = getRandomInt(12, 45);
-  const q = getRandomInt(15, 60);
-  const r = getRandomInt(0, d - 1);
-  const D = d * q + r;
+function makeVerificationQuestion(prevQ = null) {
+  let d, q, r, D;
+
+  while (true) {
+    d = getRandomInt(12, 45);
+    q = getRandomInt(15, 60);
+    r = getRandomInt(0, d - 1);
+    D = d * q + r;
+
+    if (!prevQ || prevQ.correct !== D) break;
+  }
 
   return {
     d,
     q,
     r,
     correct: D,
-    explain: `Χρησιμοποιούμε τον τύπο της επαλήθευσης: Δ = (δ × π) + υ = (${d} × ${q}) + ${r} = ${formatNumber(d * q)} + ${r} = ${formatNumber(D)}.`
+    explainText: `Εφαρμόζουμε τον τύπο της επαλήθευσης: Δ ＝ (δ · π) ＋ υ ＝ (${d} · ${q}) ＋ ${r} ＝ ${formatNumber(d * q)} ＋ ${r} ＝ ${formatNumber(D)}.`
   };
 }
 
 // Δημιουργία 8 Ερωτήσεων
 function generateQuestions() {
-  return {
-    q1: makeExactDivisionQuestion(),
-    q2: makeExactDivisionQuestion(),
-    q3: makeRemainderQuestion(),
-    q4: makeRemainderQuestion(),
-    q5: makeMCQDivisionQuestion(),
-    q6: makeMCQDivisionQuestion(),
-    q7: makeVerificationQuestion(),
-    q8: makeVerificationQuestion()
-  };
+  const q1 = makeExactDivisionQuestion();
+  const q2 = makeExactDivisionQuestion(q1);
+
+  const q3 = makeRemainderQuestion();
+  const q4 = makeRemainderQuestion(q3);
+
+  const q5 = makeMCQDivisionQuestion();
+  const q6 = makeMCQDivisionQuestion(q5);
+
+  const q7 = makeVerificationQuestion();
+  const q8 = makeVerificationQuestion(q7);
+
+  return { q1, q2, q3, q4, q5, q6, q7, q8 };
 }
 
 export default function Diairesi2PsifiaAskPage() {
   const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
+  const [answers, setAnswers] = useState({
+    q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
+  });
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
@@ -129,7 +159,13 @@ export default function Diairesi2PsifiaAskPage() {
 
   const handleInputChange = (key, val) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [key]: val }));
+    setAnswers((prev) => ({ ...prev, [key]: val }));
+  };
+
+  const handleNumericInput = (key, rawVal) => {
+    if (submitted) return;
+    const clean = rawVal.replace(/\D/g, '');
+    setAnswers((prev) => ({ ...prev, [key]: clean }));
   };
 
   const handleSubmit = (e) => {
@@ -152,262 +188,308 @@ export default function Diairesi2PsifiaAskPage() {
   };
 
   // Render Q1 & Q2: Τέλεια Διαίρεση (Input)
-  const renderExactDivision = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-indigo-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900">
-          Υπολόγισε το πηλίκο της τέλειας διαίρεσης: <span className="text-indigo-600 font-mono font-black text-xl">{formatNumber(qData.D)} : {qData.d}</span>
-        </h3>
-      </div>
-
-      <div className="pl-0 md:pl-11 space-y-3">
-        <input 
-          type="number"
-          placeholder="Γράψε το πηλίκο (π)"
-          value={answers[qKey]}
-          onChange={(e) => handleInputChange(qKey, e.target.value)}
-          disabled={submitted}
-          className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-        />
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {parseInt(answers[qKey], 10) === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. {qData.explain}</p>
-          )}
+  const renderExactDivision = (qKey, qData, numLabel) => {
+    const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-indigo-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            Υπολόγισε το πηλίκο της τέλειας διαίρεσης: <span className="text-indigo-700 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.D)} ： {qData.d}</span>
+          </h3>
         </div>
-      )}
-    </div>
-  );
+
+        <div className="sm:pl-11 space-y-3">
+          <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Πηλίκο (π):</span>
+            <span>＝</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              id={`input-${qKey}`}
+              name={`input-${qKey}`}
+              placeholder="π"
+              value={answers[qKey]}
+              onChange={(e) => handleNumericInput(qKey, e.target.value)}
+              disabled={submitted}
+              className="w-36 sm:w-44 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-indigo-950 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-sm"
+            />
+          </div>
+        </div>
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Το σωστό πηλίκο είναι <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // Render Q3 & Q4: Εύρεση Υπολοίπου (Input)
-  const renderRemainder = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-amber-500 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900">
-          Πόσο είναι το <span className="text-amber-600 font-black">υπόλοιπο</span> της διαίρεσης: <span className="text-amber-600 font-mono font-black text-xl">{formatNumber(qData.D)} : {qData.d}</span>;
-        </h3>
-      </div>
-
-      <div className="pl-0 md:pl-11 space-y-3">
-        <input 
-          type="number"
-          placeholder="Γράψε το υπόλοιπο (υ)"
-          value={answers[qKey]}
-          onChange={(e) => handleInputChange(qKey, e.target.value)}
-          disabled={submitted}
-          className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none"
-        />
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {parseInt(answers[qKey], 10) === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. {qData.explain}</p>
-          )}
+  const renderRemainder = (qKey, qData, numLabel) => {
+    const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-amber-500 text-slate-950 font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            Πόσο είναι το <span className="text-amber-700 font-black">υπόλοιπο</span> της διαίρεσης: <span className="text-amber-700 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.D)} ： {qData.d}</span>;
+          </h3>
         </div>
-      )}
-    </div>
-  );
 
-  // Render Q5 & Q6: Πολλαπλή Επιλογή (MCQ)
-  const renderMCQDivision = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900">
-          Επίλεξε το σωστό αποτέλεσμα της διαίρεσης: <span className="text-purple-600 font-mono font-black text-xl">{formatNumber(qData.D)} : {qData.d}</span>
-        </h3>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-0 md:pl-11">
-        {qData.options.map((opt, idx) => (
-          <label 
-            key={idx} 
-            className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${
-              answers[qKey] === opt.text 
-                ? 'border-purple-600 bg-purple-50/80 font-bold text-purple-900' 
-                : 'border-gray-200 hover:bg-gray-50 text-gray-800'
-            }`}
-          >
-            <input 
-              type="radio" 
-              name={qKey} 
-              value={opt.text}
-              checked={answers[qKey] === opt.text}
-              onChange={() => handleInputChange(qKey, opt.text)}
+        <div className="sm:pl-11 space-y-3">
+          <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Υπόλοιπο (υ):</span>
+            <span>＝</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              id={`input-${qKey}`}
+              name={`input-${qKey}`}
+              placeholder="υ"
+              value={answers[qKey]}
+              onChange={(e) => handleNumericInput(qKey, e.target.value)}
               disabled={submitted}
-              className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+              className="w-36 sm:w-44 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-amber-950 bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none shadow-sm"
             />
-            <span className="font-mono text-base font-bold">{opt.text}</span>
-          </label>
-        ))}
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {answers[qKey] === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. {qData.explain}</p>
-          )}
+          </div>
         </div>
-      )}
-    </div>
-  );
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Το σωστό υπόλοιπο είναι <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Render Q5 & Q6: Πολλαπλή Επιλογή (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
+  const renderMCQDivision = (qKey, qData, numLabel) => {
+    const isCorrect = answers[qKey] === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-purple-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            Επίλεξε το ορθό αποτέλεσμα της διαίρεσης: <span className="text-purple-700 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.D)} ： {qData.d}</span>
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:pl-11">
+          {qData.options.map((opt, idx) => {
+            const isSelected = answers[qKey] === opt.text;
+            return (
+              <label
+                key={idx}
+                className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition select-none text-xs sm:text-sm ${
+                  isSelected
+                    ? 'border-purple-600 bg-purple-50/80 font-bold text-purple-950 shadow-sm'
+                    : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                } ${submitted ? 'cursor-default pointer-events-none' : ''}`}
+              >
+                <input
+                  type="radio"
+                  id={`${qKey}-opt-${idx}`}
+                  name={qKey}
+                  value={opt.text}
+                  checked={isSelected}
+                  onChange={() => handleInputChange(qKey, opt.text)}
+                  disabled={submitted}
+                  className="w-4 h-4 text-purple-600 focus:ring-purple-500 shrink-0"
+                />
+                <span className="leading-snug font-mono font-bold text-sm sm:text-base">{opt.text}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Το ορθό αποτέλεσμα είναι: <strong className="font-mono font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // Render Q7 & Q8: Επαλήθευση - Εύρεση Διαιρετέου (Input)
-  const renderVerification = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-emerald-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900">
-          Σε μια διαίρεση ο διαιρέτης είναι <span className="text-blue-600 font-black">{qData.d}</span>, το πηλίκο είναι <span className="text-emerald-600 font-black">{qData.q}</span> και το υπόλοιπο <span className="text-amber-600 font-black">{qData.r}</span>. Ποιος είναι ο <span className="text-indigo-600 font-black">Διαιρετέος (Δ)</span>;
-        </h3>
-      </div>
-
-      <div className="pl-0 md:pl-11 space-y-3">
-        <input 
-          type="number"
-          placeholder="Γράψε τον Διαιρετέο (Δ)"
-          value={answers[qKey]}
-          onChange={(e) => handleInputChange(qKey, e.target.value)}
-          disabled={submitted}
-          className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-        />
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {parseInt(answers[qKey], 10) === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. {qData.explain}</p>
-          )}
+  const renderVerification = (qKey, qData, numLabel) => {
+    const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-emerald-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            Σε μια διαίρεση ο διαιρέτης είναι <span className="text-blue-600 font-black">{qData.d}</span>, το πηλίκο είναι <span className="text-purple-600 font-black">{qData.q}</span> και το υπόλοιπο <span className="text-amber-600 font-black">{qData.r}</span>. Ποιος είναι ο <span className="text-indigo-700 font-black">Διαιρετέος (Δ)</span>;
+          </h3>
         </div>
-      )}
-    </div>
-  );
+
+        <div className="sm:pl-11 space-y-3">
+          <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Διαιρετέος (Δ):</span>
+            <span>＝</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              id={`input-${qKey}`}
+              name={`input-${qKey}`}
+              placeholder="Δ"
+              value={answers[qKey]}
+              onChange={(e) => handleNumericInput(qKey, e.target.value)}
+              disabled={submitted}
+              className="w-40 sm:w-52 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-emerald-950 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm"
+            />
+          </div>
+        </div>
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Ο Διαιρετέος είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between pb-24">
-      <Head>
-        <title>➗ Ασκήσεις: Διαίρεση με Διψήφιο - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
+    <Layout
+      title="Ασκήσεις: Διαίρεση με Διψήφιο Διαιρέτη | LearnMaths.gr"
+      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στη διαίρεση με διψήφιο διαιρέτη: τέλεια διαίρεση, εύρεση υπολοίπου, επιλογή πηλίκου και επαλήθευση."
+      backUrl="/d-dimotikou"
+      backText="Δ' Δημοτικού"
+      hideFooter={true}
+      actionButton={
+        <Link
+          href="/d-dimotikou/22-diairesi-2-psifia"
+          className="bg-purple-100 hover:bg-purple-200 text-purple-950 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
+        >
+          <span>📖</span> Θεωρία
+        </Link>
+      }
+    >
+      <div className="space-y-8">
+        {/* HEADER BANNER */}
+        <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-1">
+            <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+            </span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
+              📝 Ασκήσεις: Διαίρεση με Διψήφιο Διαιρέτη
+            </h1>
+            <p className="text-purple-100 text-xs sm:text-sm md:text-base">
+              Πατώντας «Νέες Ασκήσεις», οι αριθμοί και οι πράξεις ανανεώνονται αυτόματα από τη δεξαμενή!
+            </p>
+          </div>
 
-      <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full sticky top-0 z-50">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/d-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/22-diairesi-2-psifia" className="bg-purple-100 hover:bg-purple-200 text-purple-800 font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
-                <span>📖</span> Θεωρία
-              </Link>
-              <button 
-                onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2"
+          <button
+            onClick={loadNewQuestions}
+            className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-purple-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
+          >
+            🔄 Νέες Ασκήσεις
+          </button>
+        </div>
+
+        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM SCORE BAR */}
+        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+          {renderExactDivision('q1', questions.q1, 1)}
+          {renderExactDivision('q2', questions.q2, 2)}
+
+          {renderRemainder('q3', questions.q3, 3)}
+          {renderRemainder('q4', questions.q4, 4)}
+
+          {renderMCQDivision('q5', questions.q5, 5)}
+          {renderMCQDivision('q6', questions.q6, 6)}
+
+          {renderVerification('q7', questions.q7, 7)}
+          {renderVerification('q8', questions.q8, 8)}
+
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="text-center pt-4">
+              <button
+                type="submit"
+                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                🎯 Έλεγχος Απαντήσεων
               </button>
             </div>
-          </div>
-        </nav>
-
-        {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
-          
-          {/* HEADER BANNER */}
-          <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white p-8 rounded-3xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
-              </span>
-              <h1 className="text-3xl lg:text-4xl font-black tracking-tight mt-2">
-                📝 Ασκήσεις: Διαίρεση με Διψήφιο Διαιρέτη
-              </h1>
-              <p className="text-purple-100 text-sm md:text-base mt-1">
-                Πατώντας «Νέες Ασκήσεις» οι αριθμοί αλλάζουν αυτόματα.
-              </p>
-            </div>
-
-            <button
-              onClick={loadNewQuestions}
-              className="bg-white text-gray-900 font-black px-5 py-3 rounded-2xl shadow-lg hover:bg-amber-50 transition transform active:scale-95 text-sm whitespace-nowrap"
-            >
-              🔄 Αλλαγή Αριθμών
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-
-            {renderExactDivision('q1', questions.q1, 1)}
-            {renderExactDivision('q2', questions.q2, 2)}
-
-            {renderRemainder('q3', questions.q3, 3)}
-            {renderRemainder('q4', questions.q4, 4)}
-
-            {renderMCQDivision('q5', questions.q5, 5)}
-            {renderMCQDivision('q6', questions.q6, 6)}
-
-            {renderVerification('q7', questions.q7, 7)}
-            {renderVerification('q8', questions.q8, 8)}
-
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
-            {!submitted && (
-              <div className="text-center pt-4">
-                <button
-                  type="submit"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
-                >
-                  🎯 Έλεγχος Απαντήσεων
-                </button>
-              </div>
-            )}
-
-          </form>
-
-        </main>
+          )}
+        </form>
       </div>
 
       {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
-          
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-lg flex items-center gap-2 shadow-sm">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆 Σκορ:</span>
-              <span className="text-2xl font-mono">{score} / 8</span>
+              <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
-              <span className="text-sm font-bold text-slate-300">
-                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
@@ -416,20 +498,18 @@ export default function Diairesi2PsifiaAskPage() {
             {submitted ? (
               <button
                 onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
+                className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Παίξε ξανά με νέους αριθμούς!
+                <span>🔄</span> Νέες Ασκήσεις
               </button>
             ) : (
-              <p className="text-xs text-slate-400 hidden md:block">
-                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
               </p>
             )}
           </div>
-
         </div>
       </div>
-
-    </div>
+    </Layout>
   );
 }
