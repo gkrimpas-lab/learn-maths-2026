@@ -1,7 +1,7 @@
+// pages/d-dimotikou/21-pollaplasiasmos-3-psifia-ask.js
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import Layout from '../../components/Layout';
 
 // --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
 
@@ -15,78 +15,105 @@ function getRandomIntEndingInZero(min, max) {
 }
 
 function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
 // 1. Άσκηση: Πολλαπλασιασμός με πολλαπλάσια του 10 ή 100 (Input)
-function makeRoundMultiplicationQuestion() {
-  const a = getRandomInt(112, 450);
-  const isHundred = Math.random() > 0.5;
-  const b = isHundred ? getRandomInt(1, 9) * 100 : getRandomIntEndingInZero(10, 90);
+function makeRoundMultiplicationQuestion(prevQ = null) {
+  let a, b, isHundred, correct;
+
+  while (true) {
+    a = getRandomInt(112, 450);
+    isHundred = Math.random() > 0.5;
+    b = isHundred ? getRandomInt(2, 9) * 100 : getRandomIntEndingInZero(20, 90);
+    correct = a * b;
+
+    if (!prevQ || prevQ.a !== a || prevQ.b !== b) break;
+  }
+
+  const baseFactor = isHundred ? b / 100 : b / 10;
+  const zerosText = isHundred ? 'δύο μηδενικά (00)' : 'ένα μηδενικό (0)';
+
   return {
     a,
     b,
-    correct: a * b
+    correct,
+    explainText: `Πολλαπλασιάζουμε ${a} · ${baseFactor} ＝ ${formatNumber(a * baseFactor)} και προσθέτουμε στο τέλος ${zerosText}: ${a} · ${b} ＝ ${formatNumber(correct)}.`
   };
 }
 
 // 2. Άσκηση: Εύρεση Μερικού Γινομένου (Input)
-function makePartialProductQuestion() {
-  const a = getRandomInt(124, 485);
-  const unitsB = getRandomInt(2, 9);
-  const tensB = getRandomInt(1, 9);
-  const hundredsB = getRandomInt(1, 4);
-  const b = hundredsB * 100 + tensB * 10 + unitsB;
+function makePartialProductQuestion(prevQ = null) {
+  let a, b, unitsB, tensB, hundredsB, mode, resultObj;
 
-  const mode = getRandomInt(1, 3); // 1 = 1o μερικό, 2 = 2ο μερικό, 3 = 3ο μερικό
+  while (true) {
+    a = getRandomInt(124, 485);
+    unitsB = getRandomInt(2, 9);
+    tensB = getRandomInt(2, 8);
+    hundredsB = getRandomInt(1, 4);
+    b = hundredsB * 100 + tensB * 10 + unitsB;
+    mode = getRandomInt(1, 3); // 1 = 1ο, 2 = 2ο, 3 = 3ο
 
-  if (mode === 1) {
-    return {
-      a,
-      b,
-      partialName: `1ο μερικό γινόμενο (${a} × ${unitsB})`,
-      correct: a * unitsB
-    };
-  } else if (mode === 2) {
-    return {
-      a,
-      b,
-      partialName: `2ο μερικό γινόμενο (${a} × ${tensB * 10})`,
-      correct: a * (tensB * 10)
-    };
-  } else {
-    return {
-      a,
-      b,
-      partialName: `3ο μερικό γινόμενο (${a} × ${hundredsB * 100})`,
-      correct: a * (hundredsB * 100)
-    };
+    if (mode === 1) {
+      resultObj = {
+        a,
+        b,
+        partialName: `1ο μερικό γινόμενο (${a} · ${unitsB})`,
+        correct: a * unitsB,
+        explainText: `Το 1ο μερικό γινόμενο προκύπτει πολλαπλασιάζοντας τον πάνω αριθμό με τις Μονάδες: ${a} · ${unitsB} ＝ ${formatNumber(a * unitsB)}.`
+      };
+    } else if (mode === 2) {
+      resultObj = {
+        a,
+        b,
+        partialName: `2ο μερικό γινόμενο (${a} · ${tensB * 10})`,
+        correct: a * (tensB * 10),
+        explainText: `Το 2ο μερικό γινόμενο προκύπτει πολλαπλασιάζοντας με τις Δεκάδες: ${a} · ${tensB * 10} ＝ ${formatNumber(a * tensB * 10)}.`
+      };
+    } else {
+      resultObj = {
+        a,
+        b,
+        partialName: `3ο μερικό γινόμενο (${a} · ${hundredsB * 100})`,
+        correct: a * (hundredsB * 100),
+        explainText: `Το 3ο μερικό γινόμενο προκύπτει πολλαπλασιάζοντας με τις Εκατοντάδες: ${a} · ${hundredsB * 100} ＝ ${formatNumber(a * hundredsB * 100)}.`
+      };
+    }
+
+    if (!prevQ || prevQ.correct !== resultObj.correct) break;
   }
+
+  return resultObj;
 }
 
-// 3. Άσκηση: Πολλαπλή Επιλογή με 4 Μοναδικές Επιλογές (MCQ)
-function makeMCQMultiplicationQuestion() {
-  const a = getRandomInt(120, 350);
-  const b = getRandomInt(112, 245);
-  const correct = a * b;
+// 3. Άσκηση: Πολλαπλή Επιλογή με 4 Μοναδικές Επιλογές (ΟΜΑΔΑ Α - MCQ)
+function makeMCQMultiplicationQuestion(prevQ = null) {
+  let a, b, correct;
 
-  // Παραγωγή 3 λανθασμένων απαντήσεων
+  while (true) {
+    a = getRandomInt(120, 350);
+    b = getRandomInt(112, 245);
+    correct = a * b;
+
+    if (!prevQ || prevQ.correct !== formatNumber(correct)) break;
+  }
+
   const wrong1 = correct + 100;
   const wrong2 = correct - 100;
-  const wrong3 = correct + getRandomInt(10, 50);
+  const wrong3 = correct + (getRandomInt(1, 4) * 10);
 
   const rawOptions = [formatNumber(correct), formatNumber(wrong1), formatNumber(wrong2), formatNumber(wrong3)];
   const uniqueOptions = Array.from(new Set(rawOptions));
 
-  // Συμπλήρωση αν προκύψει διπλότυπο
   while (uniqueOptions.length < 4) {
-    const dummy = formatNumber(correct + getRandomInt(15, 250));
+    const dummy = formatNumber(correct + getRandomInt(15, 300));
     if (!uniqueOptions.includes(dummy)) {
       uniqueOptions.push(dummy);
     }
   }
 
-  const choices = uniqueOptions.map(opt => ({
+  const options = uniqueOptions.map((opt) => ({
     text: opt,
     isCorrect: opt === formatNumber(correct)
   })).sort(() => Math.random() - 0.5);
@@ -94,39 +121,54 @@ function makeMCQMultiplicationQuestion() {
   return {
     a,
     b,
-    options: choices,
-    correct: formatNumber(correct)
+    options,
+    correct: formatNumber(correct),
+    explainText: `Εκτελώντας τον κάθετο πολλαπλασιασμό των αριθμών ${a} και ${b}, βρίσκουμε: ${a} · ${b} ＝ ${formatNumber(correct)}.`
   };
 }
 
 // 4. Άσκηση: Τελικός Πολλαπλασιασμός 3ψηφίων (Input)
-function makeFullMultiplicationQuestion() {
-  const a = getRandomInt(115, 380);
-  const b = getRandomInt(112, 250);
+function makeFullMultiplicationQuestion(prevQ = null) {
+  let a, b, correct;
+
+  while (true) {
+    a = getRandomInt(115, 360);
+    b = getRandomInt(112, 240);
+    correct = a * b;
+
+    if (!prevQ || prevQ.correct !== correct) break;
+  }
+
   return {
     a,
     b,
-    correct: a * b
+    correct,
+    explainText: `Το τελικό γινόμενο είναι το άθροισμα των τριών μερικών γινομένων: ${a} · ${b} ＝ ${formatNumber(correct)}.`
   };
 }
 
 // Δημιουργία 8 Ερωτήσεων
 function generateQuestions() {
-  return {
-    q1: makeRoundMultiplicationQuestion(),
-    q2: makeRoundMultiplicationQuestion(),
-    q3: makePartialProductQuestion(),
-    q4: makePartialProductQuestion(),
-    q5: makeMCQMultiplicationQuestion(),
-    q6: makeMCQMultiplicationQuestion(),
-    q7: makeFullMultiplicationQuestion(),
-    q8: makeFullMultiplicationQuestion()
-  };
+  const q1 = makeRoundMultiplicationQuestion();
+  const q2 = makeRoundMultiplicationQuestion(q1);
+
+  const q3 = makePartialProductQuestion();
+  const q4 = makePartialProductQuestion(q3);
+
+  const q5 = makeMCQMultiplicationQuestion();
+  const q6 = makeMCQMultiplicationQuestion(q5);
+
+  const q7 = makeFullMultiplicationQuestion();
+  const q8 = makeFullMultiplicationQuestion(q7);
+
+  return { q1, q2, q3, q4, q5, q6, q7, q8 };
 }
 
 export default function Pollaplasiasmos3PsifiaAskPage() {
   const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
+  const [answers, setAnswers] = useState({
+    q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
+  });
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
@@ -145,7 +187,13 @@ export default function Pollaplasiasmos3PsifiaAskPage() {
 
   const handleInputChange = (key, val) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [key]: val }));
+    setAnswers((prev) => ({ ...prev, [key]: val }));
+  };
+
+  const handleNumericInput = (key, rawVal) => {
+    if (submitted) return;
+    const clean = rawVal.replace(/\D/g, '');
+    setAnswers((prev) => ({ ...prev, [key]: clean }));
   };
 
   const handleSubmit = (e) => {
@@ -168,262 +216,308 @@ export default function Pollaplasiasmos3PsifiaAskPage() {
   };
 
   // Render Q1 & Q2: Στρογγυλοί Αριθμοί (Input)
-  const renderRoundMultiplication = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-emerald-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900">
-          Υπολόγισε το γινόμενο: <span className="text-emerald-600 font-mono font-black text-xl">{qData.a} × {qData.b}</span>
-        </h3>
-      </div>
-
-      <div className="pl-0 md:pl-11 space-y-3">
-        <input 
-          type="number"
-          placeholder="Γράψε το αποτέλεσμα"
-          value={answers[qKey]}
-          onChange={(e) => handleInputChange(qKey, e.target.value)}
-          disabled={submitted}
-          className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-        />
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {parseInt(answers[qKey], 10) === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. Το σωστό αποτέλεσμα είναι: <span className="font-mono font-black">{formatNumber(qData.correct)}</span></p>
-          )}
+  const renderRoundMultiplication = (qKey, qData, numLabel) => {
+    const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-emerald-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            Υπολόγισε το γινόμενο: <span className="text-emerald-700 font-mono font-black text-lg sm:text-xl">{qData.a} · {qData.b}</span>
+          </h3>
         </div>
-      )}
-    </div>
-  );
+
+        <div className="sm:pl-11 space-y-3">
+          <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
+            <span>{qData.a} · {qData.b}</span>
+            <span>＝</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              id={`input-${qKey}`}
+              name={`input-${qKey}`}
+              placeholder="Αποτέλεσμα"
+              value={answers[qKey]}
+              onChange={(e) => handleNumericInput(qKey, e.target.value)}
+              disabled={submitted}
+              className="w-40 sm:w-52 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-emerald-900 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm"
+            />
+          </div>
+        </div>
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Η σωστή απάντηση είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // Render Q3 & Q4: Μερικά Γινόμενα (Input)
-  const renderPartialProduct = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-amber-500 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900">
-          Στον πολλαπλασιασμό <span className="text-amber-600 font-mono font-black">{qData.a} × {qData.b}</span>, πόσο είναι το <span className="text-amber-600 font-bold">{qData.partialName}</span>;
-        </h3>
-      </div>
-
-      <div className="pl-0 md:pl-11 space-y-3">
-        <input 
-          type="number"
-          placeholder="Γράψε το μερικό γινόμενο"
-          value={answers[qKey]}
-          onChange={(e) => handleInputChange(qKey, e.target.value)}
-          disabled={submitted}
-          className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none"
-        />
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {parseInt(answers[qKey], 10) === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. Το μερικό γινόμενο είναι: <span className="font-mono font-black">{formatNumber(qData.correct)}</span></p>
-          )}
+  const renderPartialProduct = (qKey, qData, numLabel) => {
+    const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-amber-500 text-slate-950 font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            Στον πολλαπλασιασμό <span className="text-amber-700 font-mono font-black">{qData.a} · {qData.b}</span>, πόσο είναι το <span className="text-amber-800 font-extrabold">{qData.partialName}</span>;
+          </h3>
         </div>
-      )}
-    </div>
-  );
 
-  // Render Q5 & Q6: Πολλαπλή Επιλογή (MCQ)
-  const renderMCQMultiplication = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (answers[qKey] === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-purple-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900">
-          Επίλεξε το σωστό γινόμενο: <span className="text-purple-600 font-mono font-black text-xl">{qData.a} × {qData.b}</span>
-        </h3>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-0 md:pl-11">
-        {qData.options.map((opt, idx) => (
-          <label 
-            key={idx} 
-            className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition ${
-              answers[qKey] === opt.text 
-                ? 'border-purple-600 bg-purple-50/80 font-bold' 
-                : 'border-gray-200 hover:bg-gray-50'
-            }`}
-          >
-            <input 
-              type="radio" 
-              name={qKey} 
-              value={opt.text}
-              checked={answers[qKey] === opt.text}
-              onChange={() => handleInputChange(qKey, opt.text)}
+        <div className="sm:pl-11 space-y-3">
+          <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Μερικό γινόμενο:</span>
+            <span>＝</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              id={`input-${qKey}`}
+              name={`input-${qKey}`}
+              placeholder="Γράψε τον αριθμό"
+              value={answers[qKey]}
+              onChange={(e) => handleNumericInput(qKey, e.target.value)}
               disabled={submitted}
-              className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+              className="w-40 sm:w-52 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-amber-950 bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none shadow-sm"
             />
-            <span className="text-gray-800 font-mono text-base font-bold">{opt.text}</span>
-          </label>
-        ))}
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {answers[qKey] === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. Το σωστό αποτέλεσμα είναι: <span className="font-mono font-black">{qData.correct}</span></p>
-          )}
+          </div>
         </div>
-      )}
-    </div>
-  );
 
-  // Render Q7 & Q8: Τελικός Πολλαπλασιασμός (Input)
-  const renderFullMultiplication = (qKey, qData, numLabel) => (
-    <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-sm border transition-all ${
-      submitted 
-        ? (parseInt(answers[qKey], 10) === qData.correct ? 'border-emerald-500 bg-emerald-50/20' : 'border-red-400 bg-red-50/20')
-        : 'border-gray-100'
-    }`}>
-      <div className="flex items-center gap-3 mb-4">
-        <span className="bg-indigo-600 text-white font-black text-sm w-8 h-8 rounded-xl flex items-center justify-center">{numLabel}</span>
-        <h3 className="text-lg font-bold text-gray-900">
-          Υπολόγισε το τελικό γινόμενο: <span className="text-indigo-600 font-mono font-black text-xl">{qData.a} × {qData.b}</span>
-        </h3>
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Η σωστή απάντηση είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
       </div>
+    );
+  };
 
-      <div className="pl-0 md:pl-11 space-y-3">
-        <input 
-          type="number"
-          placeholder="Γράψε το τελικό γινόμενο"
-          value={answers[qKey]}
-          onChange={(e) => handleInputChange(qKey, e.target.value)}
-          disabled={submitted}
-          className="w-full md:w-96 p-3.5 rounded-2xl border border-gray-300 font-mono text-lg font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-        />
-      </div>
-
-      {submitted && (
-        <div className="mt-4 pl-0 md:pl-11 text-xs md:text-sm font-bold">
-          {parseInt(answers[qKey], 10) === qData.correct ? (
-            <p className="text-emerald-700">✅ Σωστό! (+1 πόντος)</p>
-          ) : (
-            <p className="text-red-600">❌ Λάθος. Το τελικό γινόμενο είναι: <span className="font-mono font-black">{formatNumber(qData.correct)}</span></p>
-          )}
+  // Render Q5 & Q6: Πολλαπλή Επιλογή (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
+  const renderMCQMultiplication = (qKey, qData, numLabel) => {
+    const isCorrect = answers[qKey] === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-purple-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            Επίλεξε το ορθό γινόμενο: <span className="text-purple-700 font-mono font-black text-lg sm:text-xl">{qData.a} · {qData.b}</span>
+          </h3>
         </div>
-      )}
-    </div>
-  );
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:pl-11">
+          {qData.options.map((opt, idx) => {
+            const isSelected = answers[qKey] === opt.text;
+            return (
+              <label
+                key={idx}
+                className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition select-none text-xs sm:text-sm ${
+                  isSelected
+                    ? 'border-purple-600 bg-purple-50/80 font-bold text-purple-950 shadow-sm'
+                    : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                } ${submitted ? 'cursor-default pointer-events-none' : ''}`}
+              >
+                <input
+                  type="radio"
+                  id={`${qKey}-opt-${idx}`}
+                  name={qKey}
+                  value={opt.text}
+                  checked={isSelected}
+                  onChange={() => handleInputChange(qKey, opt.text)}
+                  disabled={submitted}
+                  className="w-4 h-4 text-purple-600 focus:ring-purple-500 shrink-0"
+                />
+                <span className="leading-snug font-mono font-bold text-sm sm:text-base">{opt.text}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Η σωστή απάντηση είναι: <strong className="font-mono font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Render Q7 & Q8: Τελικός Πολλαπλασιασμός 3ψηφίων (Input)
+  const renderFullMultiplication = (qKey, qData, numLabel) => {
+    const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+    return (
+      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+        submitted
+          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+          : 'border-slate-100'
+      }`}>
+        <div className="flex items-start gap-3 mb-4">
+          <span className="bg-indigo-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+            {numLabel}
+          </span>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+            Υπολόγισε το τελικό αποτέλεσμα: <span className="text-indigo-700 font-mono font-black text-lg sm:text-xl">{qData.a} · {qData.b}</span>
+          </h3>
+        </div>
+
+        <div className="sm:pl-11 space-y-3">
+          <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
+            <span>{qData.a} · {qData.b}</span>
+            <span>＝</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              id={`input-${qKey}`}
+              name={`input-${qKey}`}
+              placeholder="Τελικό γινόμενο"
+              value={answers[qKey]}
+              onChange={(e) => handleNumericInput(qKey, e.target.value)}
+              disabled={submitted}
+              className="w-40 sm:w-52 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-indigo-950 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-sm"
+            />
+          </div>
+        </div>
+
+        {submitted && (
+          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+            {isCorrect ? (
+              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+                {qData.explainText}
+              </p>
+            ) : (
+              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+                Το σωστό γινόμενο είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>. {qData.explainText}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between pb-24">
-      <Head>
-        <title>✖️ Ασκήσεις: Πολλαπλασιασμός 3ψηφίων - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
+    <Layout
+      title="Ασκήσεις: Πολλαπλασιασμός 3ψήφιων Αριθμών | LearnMaths.gr"
+      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στον κάθετο πολλαπλασιασμό τριψήφιων αριθμών: στρογγυλοί αριθμοί, υπολογισμός μερικών γινομένων και τελικό αποτέλεσμα."
+      backUrl="/d-dimotikou"
+      backText="Δ' Δημοτικού"
+      hideFooter={true}
+      actionButton={
+        <Link
+          href="/d-dimotikou/21-pollaplasiasmos-3-psifia"
+          className="bg-emerald-100 hover:bg-emerald-200 text-emerald-950 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
+        >
+          <span>📖</span> Θεωρία
+        </Link>
+      }
+    >
+      <div className="space-y-8">
+        {/* HEADER BANNER */}
+        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-1">
+            <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+            </span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
+              📝 Ασκήσεις: Πολλαπλασιασμός 3ψήφιων Αριθμών
+            </h1>
+            <p className="text-emerald-100 text-xs sm:text-sm md:text-base">
+              Πατώντας «Νέες Ασκήσεις», οι αριθμοί και τα μερικά γινόμενα ανανεώνονται αυτόματα από τη δεξαμενή!
+            </p>
+          </div>
 
-      <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full sticky top-0 z-50">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/d-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/21-pollaplasiasmos-3-psifia" className="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
-                <span>📖</span> Θεωρία
-              </Link>
-              <button 
-                onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2"
+          <button
+            onClick={loadNewQuestions}
+            className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-emerald-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
+          >
+            🔄 Νέες Ασκήσεις
+          </button>
+        </div>
+
+        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM SCORE BAR */}
+        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+          {renderRoundMultiplication('q1', questions.q1, 1)}
+          {renderRoundMultiplication('q2', questions.q2, 2)}
+
+          {renderPartialProduct('q3', questions.q3, 3)}
+          {renderPartialProduct('q4', questions.q4, 4)}
+
+          {renderMCQMultiplication('q5', questions.q5, 5)}
+          {renderMCQMultiplication('q6', questions.q6, 6)}
+
+          {renderFullMultiplication('q7', questions.q7, 7)}
+          {renderFullMultiplication('q8', questions.q8, 8)}
+
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="text-center pt-4">
+              <button
+                type="submit"
+                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                🎯 Έλεγχος Απαντήσεων
               </button>
             </div>
-          </div>
-        </nav>
-
-        {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
-          
-          {/* HEADER BANNER */}
-          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 text-white p-8 rounded-3xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
-              </span>
-              <h1 className="text-3xl lg:text-4xl font-black tracking-tight mt-2">
-                📝 Ασκήσεις: Πολλαπλασιασμός 3ψηφιων Αριθμών
-              </h1>
-              <p className="text-emerald-100 text-sm md:text-base mt-1">
-                Πατώντας «Νέες Ασκήσεις» οι αριθμοί αλλάζουν αυτόματα.
-              </p>
-            </div>
-
-            <button
-              onClick={loadNewQuestions}
-              className="bg-white text-gray-900 font-black px-5 py-3 rounded-2xl shadow-lg hover:bg-amber-50 transition transform active:scale-95 text-sm whitespace-nowrap"
-            >
-              🔄 Αλλαγή Αριθμών
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-
-            {renderRoundMultiplication('q1', questions.q1, 1)}
-            {renderRoundMultiplication('q2', questions.q2, 2)}
-
-            {renderPartialProduct('q3', questions.q3, 3)}
-            {renderPartialProduct('q4', questions.q4, 4)}
-
-            {renderMCQMultiplication('q5', questions.q5, 5)}
-            {renderMCQMultiplication('q6', questions.q6, 6)}
-
-            {renderFullMultiplication('q7', questions.q7, 7)}
-            {renderFullMultiplication('q8', questions.q8, 8)}
-
-            {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
-            {!submitted && (
-              <div className="text-center pt-4">
-                <button
-                  type="submit"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
-                >
-                  🎯 Έλεγχος Απαντήσεων
-                </button>
-              </div>
-            )}
-
-          </form>
-
-        </main>
+          )}
+        </form>
       </div>
 
       {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-4 px-6 z-50">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
-          
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-4 py-2 rounded-xl text-lg flex items-center gap-2 shadow-sm">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆 Σκορ:</span>
-              <span className="text-2xl font-mono">{score} / 8</span>
+              <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
-              <span className="text-sm font-bold text-slate-300">
-                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
@@ -432,20 +526,18 @@ export default function Pollaplasiasmos3PsifiaAskPage() {
             {submitted ? (
               <button
                 onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-6 py-2.5 rounded-xl shadow-md transition text-sm flex items-center gap-2"
+                className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Παίξε ξανά με νέους αριθμούς!
+                <span>🔄</span> Νέες Ασκήσεις
               </button>
             ) : (
-              <p className="text-xs text-slate-400 hidden md:block">
-                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
               </p>
             )}
           </div>
-
         </div>
       </div>
-
-    </div>
+    </Layout>
   );
 }
