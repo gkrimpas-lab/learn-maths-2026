@@ -25,6 +25,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
   const p3 = valA * hundredsB * 100; // 3ο μερικό γινόμενο
   const total = valA * valB;
 
+  // Βήμα 1 για αλλαγή μονάδων
   const updateNumA = (e, delta) => {
     e.preventDefault();
     e.stopPropagation();
@@ -148,7 +149,7 @@ export default function Pollaplasiasmos3PsifiaPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            {/* ΧΕΙΡΙΣΤΗΡΙΑ ΕΙΣΑΓΩΓΗΣ ΑΡΙΘΜΩΝ (ΚΑΝΟΝΑΣ 2) */}
+            {/* ΧΕΙΡΙΣΤΗΡΙΑ ΕΙΣΑΓΩΓΗΣ ΑΡΙΘΜΩΝ (ΜΕ ΒΗΜΑ 1 ΓΙΑ ΤΙΣ ΜΟΝΑΔΕΣ) */}
             <div className="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 space-y-4">
               <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
                 ⚙️ Επίλεξε Αριθμούς Πολλαπλασιασμού:
@@ -165,10 +166,10 @@ export default function Pollaplasiasmos3PsifiaPage() {
 
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
-                    onClick={(e) => updateNumA(e, -10)}
+                    onClick={(e) => updateNumA(e, -1)}
                     className="w-9 h-9 shrink-0 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 text-emerald-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
-                    title="Μείωση κατά 10"
-                    aria-label="Μείωση 1ου αριθμού"
+                    title="Μείωση κατά 1"
+                    aria-label="Μείωση κατά 1"
                   >
                     －
                   </button>
@@ -193,12 +194,28 @@ export default function Pollaplasiasmos3PsifiaPage() {
                   />
 
                   <button
-                    onClick={(e) => updateNumA(e, 10)}
+                    onClick={(e) => updateNumA(e, 1)}
                     className="w-9 h-9 shrink-0 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 text-emerald-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
-                    title="Αύξηση κατά 10"
-                    aria-label="Αύξηση 1ου αριθμού"
+                    title="Αύξηση κατά 1"
+                    aria-label="Αύξηση κατά 1"
                   >
                     ＋
+                  </button>
+                </div>
+
+                {/* Γρήγορη αυξομείωση δεκάδων */}
+                <div className="flex justify-center gap-2 pt-0.5">
+                  <button
+                    onClick={(e) => updateNumA(e, -10)}
+                    className="px-2.5 py-1 text-[11px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  >
+                    -10
+                  </button>
+                  <button
+                    onClick={(e) => updateNumA(e, 10)}
+                    className="px-2.5 py-1 text-[11px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  >
+                    +10
                   </button>
                 </div>
               </div>
@@ -214,10 +231,10 @@ export default function Pollaplasiasmos3PsifiaPage() {
 
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
-                    onClick={(e) => updateNumB(e, -10)}
+                    onClick={(e) => updateNumB(e, -1)}
                     className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
-                    title="Μείωση κατά 10"
-                    aria-label="Μείωση 2ου αριθμού"
+                    title="Μείωση κατά 1"
+                    aria-label="Μείωση κατά 1"
                   >
                     －
                   </button>
@@ -242,12 +259,28 @@ export default function Pollaplasiasmos3PsifiaPage() {
                   />
 
                   <button
-                    onClick={(e) => updateNumB(e, 10)}
+                    onClick={(e) => updateNumB(e, 1)}
                     className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
-                    title="Αύξηση κατά 10"
-                    aria-label="Αύξηση 2ου αριθμού"
+                    title="Αύξηση κατά 1"
+                    aria-label="Αύξηση κατά 1"
                   >
                     ＋
+                  </button>
+                </div>
+
+                {/* Γρήγορη αυξομείωση δεκάδων */}
+                <div className="flex justify-center gap-2 pt-0.5">
+                  <button
+                    onClick={(e) => updateNumB(e, -10)}
+                    className="px-2.5 py-1 text-[11px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  >
+                    -10
+                  </button>
+                  <button
+                    onClick={(e) => updateNumB(e, 10)}
+                    className="px-2.5 py-1 text-[11px] font-black rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 touch-manipulation"
+                  >
+                    +10
                   </button>
                 </div>
               </div>
