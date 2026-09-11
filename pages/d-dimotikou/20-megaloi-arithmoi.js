@@ -1,12 +1,17 @@
+// pages/d-dimotikou/20-megaloi-arithmoi.js
 import { useState } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import Layout from '../../components/Layout';
 
 const CONFIG = {
   maxDisksPerColumn: 9,
   initialValues: {
-    EX: 1, DX: 3, X: 5, E: 4, D: 2, M: 7
+    EX: 1,
+    DX: 3,
+    X: 5,
+    E: 4,
+    D: 2,
+    M: 7
   }
 };
 
@@ -57,7 +62,9 @@ function numberToGreekWords(num) {
 export default function MegaloiArithmoiPage() {
   const [disks, setDisks] = useState(CONFIG.initialValues);
 
-  const updateDigits = (column, increment) => {
+  const updateDigits = (e, column, increment) => {
+    e.preventDefault();
+    e.stopPropagation();
     setDisks((prev) => {
       let newValue = prev[column] + increment;
       if (newValue < 0) newValue = 0;
@@ -66,196 +73,253 @@ export default function MegaloiArithmoiPage() {
     });
   };
 
-  const totalNumber = disks.EX * 100000 + disks.DX * 10000 + disks.X * 1000 + disks.E * 100 + disks.D * 10 + disks.M * 1;
-  const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const totalNumber =
+    disks.EX * 100000 +
+    disks.DX * 10000 +
+    disks.X * 1000 +
+    disks.E * 100 +
+    disks.D * 10 +
+    disks.M * 1;
+
+  const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
   const columnsList = [
-    { key: 'EX', label: 'Εκατοντάδες Χιλιάδες', short: 'ΕΧ' },
-    { key: 'DX', label: 'Δεκάδες Χιλιάδες', short: 'ΔΧ' },
-    { key: 'X', label: 'Μονάδες Χιλιάδες', short: 'Χ' },
-    { key: 'E', label: 'Εκατοντάδες', short: 'Ε' },
-    { key: 'D', label: 'Δεκάδες', short: 'Δ' },
-    { key: 'M', label: 'Μονάδες', short: 'Μ' }
+    { key: 'EX', label: 'Εκατοντάδες Χιλιάδες', short: 'ΕΧ', weight: 100000, color: '#059669' },
+    { key: 'DX', label: 'Δεκάδες Χιλιάδες', short: 'ΔΧ', weight: 10000, color: '#10b981' },
+    { key: 'X', label: 'Μονάδες Χιλιάδες', short: 'Χ', weight: 1000, color: '#34d399' },
+    { key: 'E', label: 'Εκατοντάδες', short: 'Ε', weight: 100, color: '#0284c7' },
+    { key: 'D', label: 'Δεκάδες', short: 'Δ', weight: 10, color: '#38bdf8' },
+    { key: 'M', label: 'Μονάδες', short: 'Μ', weight: 1, color: '#7dd3fc' }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
-      <Head>
-        <title>💎 Μεγάλοι Αριθμοί - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
-
-      <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full sticky top-0 z-50">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/d-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/20-megaloi-arithmoi-ask" className="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
-                <span>📝</span> Ασκήσεις
-              </Link>
-              <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
-                🔙 Επιστροφή
-              </Link>
-            </div>
-          </div>
-        </nav>
-
-        {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
-          
-          {/* HEADER & EXERCISES PROMO CARD */}
-          <div className="bg-gradient-to-r from-teal-600 via-emerald-600 to-green-600 text-white p-8 rounded-3xl shadow-md relative overflow-hidden">
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-              <div className="md:col-span-2 space-y-3">
-                <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ
-                </span>
-                <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  💎 Οι Μεγάλοι Αριθμοί (μέχρι το 1.000.000)
-                </h1>
-                <p className="text-teal-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε πώς να διαβάζουμε, να γράφουμε και να αναλύουμε τους μεγάλους αριθμούς χρησιμοποιώντας τις "Κλάσεις" και την "Αξία Θέσης Ψηφίου"!
-                </p>
-              </div>
-
-              {/* ΠΛΑΙΣΙΟ ΠΑΡΑΠΟΜΠΗΣ ΣΤΙΣ ΑΣΚΗΣΕΙΣ */}
-              <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
-                <div className="text-3xl">🚀</div>
-                <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
-                <p className="text-xs text-teal-100">Δοκίμασε τις ασκήσεις στους μεγάλους αριθμούς για να σιγουρευτείς ότι τους έμαθες!</p>
-                <Link 
-                  href="/d-dimotikou/20-megaloi-arithmoi-ask"
-                  className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
-                >
-                  🎯 Μετάβαση στις Ασκήσεις
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* ΘΕΩΡΙΑ & ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ */}
-          <div className="space-y-8 bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100">
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center border-b pb-8 border-gray-100">
-              <div className="space-y-4">
-                <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                  <span>📖</span> Αναλυτική Θεωρία και Κανόνες
-                </h2>
-                <p className="text-gray-600 leading-relaxed text-sm md:text-base">
-                  Στο δεκαδικό σύστημα αρίθμησης, η <strong>αξία κάθε ψηφίου</strong> εξαρτάται από τη <strong>θέση</strong> που κατέχει στον αριθμό. Για να διαβάζουμε εύκολα τους μεγάλους αριθμούς, τους χωρίζουμε σε <strong>κλάσεις ανά 3 ψηφία</strong> από δεξιά προς τα αριστερά!
-                </p>
-                <div className="bg-teal-50 p-5 rounded-2xl border border-teal-100 text-xs md:text-sm text-teal-900 space-y-2 shadow-inner">
-                  <p>🏛️ <strong>Κλάση Χιλιάδων:</strong> Εκατοντάδες Χιλιάδες (ΕΧ), Δεκάδες Χιλιάδες (ΔΧ), Μονάδες Χιλιάδες (Χ).</p>
-                  <p>🏠 <strong>Κλάση Μονάδων:</strong> Εκατοντάδες (Ε), Δεκάδες (Δ), Μονάδες (Μ).</p>
-                </div>
-              </div>
-
-              {/* ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ & ΟΝΟΜΑΣΙΑΣ */}
-              <div className="bg-gradient-to-br from-teal-500 to-emerald-600 text-white p-8 rounded-3xl shadow-md text-center py-10 space-y-4">
-                <span className="text-xs font-black uppercase tracking-widest text-teal-200">Ο Αριθμος σου</span>
-                <div className="text-4xl xl:text-5xl font-mono font-black tracking-tight text-white">
-                  {formatNumber(totalNumber)}
-                </div>
-                <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-sm xl:text-base font-bold text-teal-50 leading-relaxed">
-                  🗣️ <span className="text-amber-300 font-extrabold capitalize">{numberToGreekWords(totalNumber)}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* ΔΙΑΔΡΑΣΤΙΚΟΣ ΑΒΑΚΑΣ */}
-            <div className="bg-gray-50 p-6 md:p-8 rounded-3xl border border-gray-200 space-y-6">
-              <h3 className="text-xl font-black text-center text-gray-800 xl:text-2xl flex items-center justify-center gap-2">
-                <span>🧮</span> Διαδραστικός Άβακας Αξίας Θέσης
-              </h3>
-
-              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm overflow-x-auto">
-                <div className="min-w-[620px]">
-                  
-                  {/* ΚΛΑΣΕΙΣ */}
-                  <div className="grid grid-cols-6 gap-2 text-center font-bold text-xs mb-3">
-                    <div className="col-span-3 bg-emerald-100 text-emerald-800 py-1.5 rounded-t-xl border-b-2 border-emerald-400 font-black">
-                      ΚΛΑΣΗ ΧΙΛΙΑΔΩΝ
-                    </div>
-                    <div className="col-span-3 bg-teal-100 text-teal-800 py-1.5 rounded-t-xl border-b-2 border-teal-400 font-black">
-                      ΚΛΑΣΗ ΜΟΝΑΔΩΝ
-                    </div>
-                  </div>
-
-                  {/* ΣΥΝΤΟΜΟΓΡΑΦΙΕΣ */}
-                  <div className="grid grid-cols-6 gap-2 text-center text-xs font-black text-gray-500 font-mono mb-4">
-                    {columnsList.map((col) => (
-                      <div key={col.key} className="bg-slate-100 py-1.5 rounded-lg border border-slate-200">
-                        {col.short}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* ΧΩΡΟΣ ΣΧΕΔΙΑΣΗΣ ΔΙΣΚΩΝ */}
-                  <div className="grid grid-cols-6 gap-4 h-56 bg-slate-50 rounded-2xl border border-slate-200 p-4 items-end mb-6">
-                    {columnsList.map((col) => (
-                      <div key={col.key} className="flex flex-col-reverse items-center h-full justify-start gap-1 relative border-r border-dashed border-slate-300 last:border-0">
-                        {Array.from({ length: disks[col.key] }).map((_, i) => (
-                          <div key={i} className="w-10 h-3.5 bg-teal-500 rounded-full border border-teal-600 shadow-sm transition-all"></div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* ΧΕΙΡΙΣΤΗΡΙΑ (+ / -) */}
-                  <div className="grid grid-cols-6 gap-3 text-center">
-                    {columnsList.map((col) => (
-                      <div key={col.key} className="flex flex-col items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 shadow-sm">
-                        <span className="text-lg font-black font-mono text-slate-800">{disks[col.key]}</span>
-                        <div className="flex gap-1.5 w-full justify-center">
-                          <button 
-                            onClick={() => updateDigits(col.key, -1)} 
-                            className="bg-red-500 hover:bg-red-600 text-white font-black text-sm w-8 h-8 rounded-lg shadow-sm transition flex items-center justify-center active:scale-95"
-                          >
-                            -
-                          </button>
-                          <button 
-                            onClick={() => updateDigits(col.key, 1)} 
-                            className="bg-green-500 hover:bg-green-600 text-white font-black text-sm w-8 h-8 rounded-lg shadow-sm transition flex items-center justify-center active:scale-95"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* BOTTOM EXERCISES CALLOUT BANNER */}
-          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="space-y-1 text-center md:text-left">
-              <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-              <p className="text-gray-800 text-sm md:text-base">
-                Έμαθες να διαβάζεις και να αναλύεις τους μεγάλους αριθμούς; Δοκίμασε τις διαδραστικές ασκήσεις!
+    <Layout
+      title="Οι Μεγάλοι Αριθμοί μέχρι το 1.000.000 - Θεωρία | LearnMaths.gr"
+      description="Μαθαίνουμε πώς διαβάζουμε, γράφουμε και αναλύουμε μεγάλους αριθμούς έως το 1.000.000 με βάση τις κλάσεις και τον διαδραστικό άβακα θέσης."
+      backUrl="/d-dimotikou"
+      backText="Δ' Δημοτικού"
+      showAds={true}
+      actionButton={
+        <Link
+          href="/d-dimotikou/20-megaloi-arithmoi-ask"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
+        >
+          <span>🎯</span> Ασκήσεις
+        </Link>
+      }
+    >
+      <div className="space-y-8">
+        {/* HEADER & EXERCISES PROMO CARD */}
+        <div className="bg-gradient-to-r from-teal-600 via-emerald-600 to-green-600 text-white p-6 sm:p-8 rounded-3xl shadow-md relative overflow-hidden">
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div className="md:col-span-2 space-y-3">
+              <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+                Δ' ΔΗΜΟΤΙΚΟΥ
+              </span>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
+                💎 Οι Μεγάλοι Αριθμοί (μέχρι το 1.000.000)
+              </h1>
+              <p className="text-teal-100 text-sm sm:text-base lg:text-lg leading-relaxed">
+                Μαθαίνουμε πώς να διαβάζουμε, να γράφουμε και να αναλύουμε τους μεγάλους αριθμούς χρησιμοποιώντας τις «Κλάσεις» και την «Αξία Θέσης Ψηφίου»!
               </p>
             </div>
-            <Link
-              href="/d-dimotikou/20-megaloi-arithmoi-ask"
-              className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
-            >
-              Ξεκίνα τις Ασκήσεις ➔
-            </Link>
+
+            {/* ΠΛΑΙΣΙΟ ΠΑΡΑΠΟΜΠΗΣ ΣΤΙΣ ΑΣΚΗΣΕΙΣ */}
+            <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
+              <div className="text-3xl">🚀</div>
+              <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
+              <p className="text-xs text-teal-100">
+                Δοκίμασε τις ασκήσεις στους μεγάλους αριθμούς για να σιγουρευτείς ότι κατανόησες όλες τις κλάσεις!
+              </p>
+              <Link
+                href="/d-dimotikou/20-megaloi-arithmoi-ask"
+                className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
+              >
+                🎯 Μετάβαση στις Ασκήσεις
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* ΘΕΩΡΙΑ & ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ */}
+        <div className="space-y-8 bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-100">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center border-b pb-8 border-slate-100">
+            <div className="space-y-4">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
+                <span>📖</span> Αναλυτική Θεωρία και Κανόνες
+              </h2>
+              <p className="text-slate-600 leading-relaxed text-xs sm:text-sm md:text-base">
+                Στο δεκαδικό σύστημα αρίθμησης, η <strong>αξία κάθε ψηφίου</strong> καθορίζεται από τη <strong>θέση</strong> που κατέχει μέσα στον αριθμό. Για να διαβάζουμε εύκολα τους μεγάλους αριθμούς, τους χωρίζουμε σε <strong>κλάσεις ανά 3 ψηφία</strong> από τα δεξιά προς τα αριστερά!
+              </p>
+              <div className="bg-teal-50 p-4 sm:p-5 rounded-2xl border border-teal-100 text-xs sm:text-sm text-teal-950 space-y-2 shadow-inner">
+                <p>
+                  🏛️ <strong>Κλάση Χιλιάδων:</strong> Εκατοντάδες Χιλιάδες (ΕΧ), Δεκάδες Χιλιάδες (ΔΧ), Μονάδες Χιλιάδες (Χ).
+                </p>
+                <p>
+                  🏠 <strong>Κλάση Μονάδων:</strong> Εκατοντάδες (Ε), Δεκάδες (Δ), Μονάδες (Μ).
+                </p>
+              </div>
+            </div>
+
+            {/* ΠΡΟΒΟΛΗ ΑΡΙΘΜΟΥ & ΟΝΟΜΑΣΙΑΣ */}
+            <div className="bg-gradient-to-br from-teal-600 to-emerald-700 text-white p-6 sm:p-8 rounded-3xl shadow-md text-center py-8 sm:py-10 space-y-4">
+              <span className="text-xs font-black uppercase tracking-widest text-teal-200 block">
+                Ο ΑΡΙΘΜΟΣ ΣΟΥ
+              </span>
+              <div className="text-3xl sm:text-5xl font-mono font-black tracking-tight text-white break-words">
+                {formatNumber(totalNumber)}
+              </div>
+              <div className="bg-white/10 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 text-xs sm:text-sm font-bold text-teal-50 leading-relaxed">
+                🗣️ <span className="text-amber-300 font-extrabold capitalize">{numberToGreekWords(totalNumber)}</span>
+              </div>
+            </div>
           </div>
 
-        </main>
-      </div>
+          {/* ΔΙΑΔΡΑΣΤΙΚΟΣ ΑΒΑΚΑΣ - SECTION 2 */}
+          <div className="bg-slate-50 p-5 sm:p-8 rounded-3xl border border-slate-200 space-y-6">
+            <div className="text-center space-y-1">
+              <h3 className="text-lg sm:text-2xl font-black text-slate-900 flex items-center justify-center gap-2">
+                <span>🧮</span> Διαδραστικός Άβακας Αξίας Θέσης
+              </h3>
+              <p className="text-slate-500 text-xs sm:text-sm">
+                Άλλαξε τα δισκία σε κάθε θέση και δες πώς διαμορφώνεται ο αριθμός στις δύο κλάσεις!
+              </p>
+            </div>
 
-      {/* FOOTER */}
-      <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
-        <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη Δ' Δημοτικού.</p>
-      </footer>
-    </div>
+            {/* RESPONSIVE SVG ΑΒΑΚΑΣ (ΧΩΡΙΣ SCROLLBAR ΣΕ ΚΙΝΗΤΑ) */}
+            <div className="bg-slate-950 p-4 sm:p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col items-center">
+              <div className="w-full max-w-2xl aspect-[5/2] relative flex items-center justify-center overflow-hidden">
+                <svg className="w-full h-full block select-none" viewBox="0 0 600 240">
+                  {/* Κλάση Χιλιάδων (Αριστερά) */}
+                  <rect x="15" y="10" width="280" height="26" rx="6" fill="#065f46" fillOpacity="0.4" stroke="#059669" strokeWidth="1" />
+                  <text x="155" y="27" fill="#6ee7b7" fontSize="12" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">
+                    ΚΛΑΣΗ ΧΙΛΙΑΔΩΝ
+                  </text>
+
+                  {/* Κλάση Μονάδων (Δεξιά) */}
+                  <rect x="305" y="10" width="280" height="26" rx="6" fill="#075985" fillOpacity="0.4" stroke="#0284c7" strokeWidth="1" />
+                  <text x="445" y="27" fill="#7dd3fc" fontSize="12" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">
+                    ΚΛΑΣΗ ΜΟΝΑΔΩΝ
+                  </text>
+
+                  {/* Βάση Άβακα */}
+                  <rect x="15" y="205" width="570" height="14" rx="4" fill="#334155" stroke="#475569" strokeWidth="1" />
+
+                  {/* 6 Στήλες / Ράβδοι & Δισκία */}
+                  {columnsList.map((col, cIdx) => {
+                    const colX = 55 + cIdx * 96;
+                    const count = disks[col.key];
+
+                    return (
+                      <g key={col.key}>
+                        {/* Κουτί Συντομογραφίας */}
+                        <rect x={colX - 22} y="44" width="44" height="22" rx="6" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                        <text x={colX} y="59" fill="#f8fafc" fontSize="11" fontWeight="900" fontFamily="monospace" textAnchor="middle">
+                          {col.short}
+                        </text>
+
+                        {/* Ράβδος */}
+                        <line x1={colX} y1="72" x2={colX} y2="205" stroke="#475569" strokeWidth="3" strokeLinecap="round" />
+
+                        {/* Δισκία (από κάτω προς τα πάνω) */}
+                        {Array.from({ length: count }).map((_, dIdx) => {
+                          const diskY = 195 - dIdx * 13;
+                          return (
+                            <ellipse
+                              key={dIdx}
+                              cx={colX}
+                              cy={diskY}
+                              rx="22"
+                              ry="5.5"
+                              fill={cIdx < 3 ? '#10b981' : '#0284c7'}
+                              stroke="#f8fafc"
+                              strokeWidth="0.8"
+                              fillOpacity="0.9"
+                            />
+                          );
+                        })}
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
+            </div>
+
+            {/* ΧΕΙΡΙΣΤΗΡΙΑ (+ / -) ΜΕ TOUCH-FRIENDLY STEPRERS (ΚΑΝΟΝΑΣ 2) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {columnsList.map((col) => (
+                <div key={col.key} className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-center">
+                  <div className="h-8 flex flex-col items-center justify-center">
+                    <span className="text-[10px] font-black uppercase text-slate-500 block truncate">
+                      {col.short}
+                    </span>
+                    <span className="min-w-[40px] text-center whitespace-nowrap font-mono font-black text-slate-800 text-sm">
+                      {disks[col.key]}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-1.5 h-11 items-center">
+                    <button
+                      onClick={(e) => updateDigits(e, col.key, -1)}
+                      className="h-9 flex items-center justify-center bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-700 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
+                      title={`Μείωση ${col.short}`}
+                      aria-label={`Μείωση ${col.short}`}
+                    >
+                      －
+                    </button>
+                    <button
+                      onClick={(e) => updateDigits(e, col.key, 1)}
+                      className="h-9 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 text-emerald-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
+                      title={`Αύξηση ${col.short}`}
+                      aria-label={`Αύξηση ${col.short}`}
+                    >
+                      ＋
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ΑΝΑΛΥΣΗ ΤΟΥ ΑΡΙΘΜΟΥ ΣΕ ΑΘΡΟΙΣΜΑ */}
+            <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 text-center space-y-2 shadow-sm">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 block">
+                ΑΝΑΛΥΣΗ ΤΟΥ ΑΡΙΘΜΟΥ ΣΕ ΑΘΡΟΙΣΜΑ:
+              </span>
+              <div className="inline-flex flex-wrap items-center justify-center gap-1.5 font-mono text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                <span>{formatNumber(totalNumber)}</span>
+                <span>＝</span>
+                <span>({disks.EX} · 100.000)</span>
+                <span>＋</span>
+                <span>({disks.DX} · 10.000)</span>
+                <span>＋</span>
+                <span>({disks.X} · 1.000)</span>
+                <span>＋</span>
+                <span>({disks.E} · 100)</span>
+                <span>＋</span>
+                <span>({disks.D} · 10)</span>
+                <span>＋</span>
+                <span>({disks.M} · 1)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* BOTTOM EXERCISES CALLOUT BANNER */}
+        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="space-y-1 text-center md:text-left">
+            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
+            <p className="text-slate-800 text-sm md:text-base">
+              Έμαθες να διαβάζεις και να αναλύεις τους μεγάλους αριθμούς; Δοκίμασε τις διαδραστικές ασκήσεις!
+            </p>
+          </div>
+          <Link
+            href="/d-dimotikou/20-megaloi-arithmoi-ask"
+            className="bg-slate-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+          >
+            Ξεκίνα τις Ασκήσεις ➔
+          </Link>
+        </div>
+      </div>
+    </Layout>
   );
 }
