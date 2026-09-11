@@ -619,13 +619,13 @@ export default function SimmetriaTheoryPage() {
 
                 <div className="grid grid-cols-2 gap-2 text-center text-xs font-bold">
                   <div className="bg-purple-50 p-2.5 rounded-xl border border-purple-100">
-                    <span className="text-purple-900 block text-[10px] uppercase font-black">🟣 1ο Μέρος</span>
+                    <span className="text-purple-900 block text-[10px] font-black">🟣 1ο Μέρος</span>
                     <p className="text-purple-700 font-mono text-xs sm:text-sm mt-1">Π: {activeData.halfPerimeter} {activeData.halfPerimeter !== '—' ? 'cm' : ''}</p>
                     <p className="text-purple-700 font-mono text-xs sm:text-sm">Ε: {activeData.halfArea} {activeData.halfArea !== '—' ? 'cm²' : ''}</p>
                   </div>
 
                   <div className="bg-pink-50 p-2.5 rounded-xl border border-pink-100">
-                    <span className="text-pink-900 block text-[10px] uppercase font-black">🌸 2ο Μέρος</span>
+                    <span className="text-pink-900 block text-[10px] font-black">🌸 2ο Μέρος</span>
                     <p className="text-pink-700 font-mono text-xs sm:text-sm mt-1">Π: {activeData.halfPerimeter} {activeData.halfPerimeter !== '—' ? 'cm' : ''}</p>
                     <p className="text-pink-700 font-mono text-xs sm:text-sm">Ε: {activeData.halfArea} {activeData.halfArea !== '—' ? 'cm²' : ''}</p>
                   </div>
