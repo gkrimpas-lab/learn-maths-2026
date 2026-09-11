@@ -33,8 +33,9 @@ export default function TetrapleuraTheoryPage() {
 
   // Αυτόματος προσδιορισμός είδους σχήματος
   const isRightAngle = angleDeg === 90;
-  const areSidesEqual = Math.abs(baseWidth - sideLength) < 5;
-
+  // Αυστηρός έλεγχος ισότητας πλευρών χωρίς ανοχή pixel
+  const areSidesEqual = baseWidth === sideLength;
+  
   let shapeType = '';
   let shapeIcon = '';
   let shapeBadgeColor = '';
@@ -224,10 +225,10 @@ export default function TetrapleuraTheoryPage() {
               <table className="w-full text-left text-xs sm:text-sm font-bold border-collapse min-w-[520px]">
                 <thead>
                   <tr className="border-b border-slate-800 text-slate-400 uppercase text-[11px]">
-                    <th className="py-3 px-3">Σχήμα</th>
-                    <th className="py-3 px-3 text-center">Απέναντι πλευρές παράλληλες</th>
-                    <th className="py-3 px-3 text-center">4 Πλευρές ίσες</th>
-                    <th className="py-3 px-3 text-center">4 Ορθές γωνίες (90°)</th>
+                    <th className="py-3 px-3">Σχημα</th>
+                    <th className="py-3 px-3 text-center">Απεναντι πλευρες παραλληλες</th>
+                    <th className="py-3 px-3 text-center">4 Πλευρες ισες</th>
+                    <th className="py-3 px-3 text-center">4 Ορθες γωνιες (90°)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60">
