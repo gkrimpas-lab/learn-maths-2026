@@ -192,7 +192,7 @@ export default function KlasmaTheoryPage() {
             <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-sky-100 text-sky-800 text-xs 2xl:text-sm font-black rounded-lg uppercase tracking-wider">
+                  <span className="px-3 py-1 bg-sky-100 text-sky-800 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     Βήμα 1ο
                   </span>
                   <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Μέρος της Μονάδας</span>
@@ -244,7 +244,7 @@ export default function KlasmaTheoryPage() {
             <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs 2xl:text-sm font-black rounded-lg uppercase tracking-wider">
+                  <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     Βήμα 2ο
                   </span>
                   <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Πηλίκο Διαίρεσης</span>
@@ -288,7 +288,7 @@ export default function KlasmaTheoryPage() {
             <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs 2xl:text-sm font-black rounded-lg uppercase tracking-wider">
+                  <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     Βήμα 3ο
                   </span>
                   <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Κατηγοριοποίηση</span>
@@ -328,7 +328,7 @@ export default function KlasmaTheoryPage() {
             <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-rose-100 text-rose-800 text-xs 2xl:text-sm font-black rounded-lg uppercase tracking-wider">
+                  <span className="px-3 py-1 bg-rose-100 text-rose-800 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     Βήμα 4ο
                   </span>
                   <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Εφαρμογή</span>
@@ -411,7 +411,7 @@ export default function KlasmaTheoryPage() {
             {/* Αριστερή Στήλη: Steppers & Μαθηματική Ταυτότητα */}
             <div className="xl:col-span-5 2xl:col-span-4 space-y-6 bg-slate-50 p-6 sm:p-7 2xl:p-9 rounded-3xl border border-slate-200">
               <h4 className="text-xs 2xl:text-sm font-black uppercase tracking-wider text-slate-500">
-                Ρυθμίσεις Όρων
+                Ρυθμισεις Ορων
               </h4>
 
               {/* Stepper Αριθμητή */}
@@ -578,7 +578,7 @@ export default function KlasmaTheoryPage() {
               {/* Κάρτα Μαθηματικής Ταυτότητας */}
               <div className="p-5 2xl:p-6 bg-white rounded-2xl border border-slate-200 space-y-3 shadow-sm">
                 <div className="text-xs 2xl:text-sm font-bold text-slate-500 uppercase tracking-wider">
-                  Μαθηματική Ανάλυση
+                  Μαθηματικη Αναλυση
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="inline-flex items-center gap-2 font-mono font-black text-2xl 2xl:text-3xl text-slate-900">
