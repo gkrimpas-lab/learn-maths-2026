@@ -140,27 +140,27 @@ const NUMERIC_POOL = [
   }
 ];
 
-// Pool Κατηγορίας 4: Σωστό / Λάθος
+// Pool Κατηγορίας 4: Σωστό / Λάθος (Καθαρή μαθηματική αιτιολόγηση)
 const TRUE_FALSE_POOL = [
   {
-    q: 'Το τετράγωνο μπορεί να θεωρηθεί ταυτόχρονα και ορθογώνιο (4 ορθές γωνίες) και ρόμβος (4 ίσες πλευρές).',
+    q: 'Το τετράγωνο είναι ταυτόχρονα και ορθογώνιο (έχει 4 ορθές γωνίες) και ρόμβος (έχει 4 ίσες πλευρές).',
     correct: 'Σωστό',
-    explain: 'Το τετράγωνο συγκεντρώνει όλες τις ιδιότητες του ορθογωνίου και του ρόμβου.'
+    explain: 'Το τετράγωνο συγκεντρώνει ταυτόχρονα όλες τις ιδιότητες του ορθογωνίου και του ρόμβου.'
   },
   {
-    q: 'Όλα τα παραλληλόγραμμα έχουν τις απέναντι πλευρές τους παράλληλες και ίσες μεταξύ τους.',
+    q: 'Όλα τα παραλληλόγραμμα έχουν τις απέναντι πλευρές τους παράλληλες και ίσες.',
     correct: 'Σωστό',
-    explain: 'Αυτός είναι ο βασικός γεωμετρικός ορισμός όλων των ειδών παραλληλογράμμου.'
+    explain: 'Η ισότητα και η παραλληλία των απέναντι πλευρών ανά δύο αποτελεί τη βασική ιδιότητα όλων των παραλληλογράμμων.'
   },
   {
-    q: 'Ο ρόμβος έχει υποχρεωτικά 4 ορθές γωνίες ακριβώς όπως το τετράγωνο.',
+    q: 'Ο ρόμβος έχει 4 ορθές γωνίες όπως το τετράγωνο.',
     correct: 'Λάθος',
-    explain: 'Ο ρόμβος έχει πλάγιες γωνίες (δύο οξείες και δύο αμβλείες), όχι ορθές.'
+    explain: 'Ο ρόμβος έχει πλάγιες γωνίες (δύο οξείες και δύο αμβλείες) και καμία ορθή των 90°.'
   },
   {
-    q: 'Στο ορθογώνιο παραλληλόγραμμο όλες οι 4 πλευρές είναι υποχρεωτικά ίσες μεταξύ τους.',
+    q: 'Στο ορθογώνιο παραλληλόγραμμο όλες οι πλευρές είναι υποχρεωτικά ίσες μεταξύ τους.',
     correct: 'Λάθος',
-    explain: 'Στο γενικό ορθογώνιο παραλληλόγραμμο ίσες είναι μόνο οι απέναντι πλευρές ανά δύο.'
+    explain: 'Στο ορθογώνιο παραλληλόγραμμο είναι ίσες μόνο οι απέναντι πλευρές ανά δύο.'
   }
 ];
 
@@ -335,112 +335,112 @@ export default function TetrapleuraAskPage() {
     );
   };
 
-  // Render Αριθμητικό Input (Q5 & Q6)
-  const renderInputNumber = (qKey, qData, numLabel) => {
-    const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
-    return (
-      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
-        submitted
-          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
-          : 'border-slate-100'
-      }`}>
-        <div className="flex items-start gap-3 mb-4">
-          <span className="bg-teal-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
-            {numLabel}
-          </span>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            {qData.q}
-          </h3>
-        </div>
-
-        <div className="sm:pl-11 space-y-3">
-          <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Απάντηση:</span>
-            <span>＝</span>
-            <input
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              id={`input-${qKey}`}
-              name={`input-${qKey}`}
-              placeholder="Αριθμός"
-              value={answers[qKey]}
-              onChange={(e) => handleNumericInput(qKey, e.target.value)}
-              disabled={submitted}
-              className="w-28 sm:w-36 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-teal-900 bg-white focus:ring-2 focus:ring-teal-500 focus:outline-none shadow-sm"
-            />
-          </div>
-        </div>
-
-        {submitted && (
-          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
-            {isCorrect ? (
-              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
-              </p>
-            ) : (
-              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η σωστή απάντηση είναι <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {qData.explainText}
-              </p>
-            )}
-          </div>
-        )}
+ // Render Αριθμητικό Input (Q5 & Q6)
+const renderInputNumber = (qKey, qData, numLabel) => {
+  const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+  return (
+    <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+      submitted
+        ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+        : 'border-slate-100'
+    }`}>
+      <div className="flex items-start gap-3 mb-4">
+        <span className="bg-teal-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+          {numLabel}
+        </span>
+        <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+          {qData.q}
+        </h3>
       </div>
-    );
-  };
+
+      <div className="sm:pl-11 space-y-3">
+        <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
+          <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Απάντηση:</span>
+          <span>＝</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            id={`input-${qKey}`}
+            name={`input-${qKey}`}
+            placeholder="Αριθμός"
+            value={answers[qKey]}
+            onChange={(e) => handleNumericInput(qKey, e.target.value)}
+            disabled={submitted}
+            className="w-28 sm:w-36 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-teal-900 bg-white focus:ring-2 focus:ring-teal-500 focus:outline-none shadow-sm"
+          />
+        </div>
+      </div>
+
+      {submitted && (
+        <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+          {isCorrect ? (
+            <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+              {qData.explainText || qData.explain}
+            </p>
+          ) : (
+            <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+              Η σωστή απάντηση είναι <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {qData.explainText || qData.explain}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
   // Render Σωστό / Λάθος (Q7 & Q8)
-  const renderTrueFalse = (qKey, qData, numLabel) => {
-    const isCorrect = answers[qKey] === qData.correct;
-    return (
-      <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
-        submitted
-          ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
-          : 'border-slate-100'
-      }`}>
-        <div className="flex items-start gap-3 mb-4">
-          <span className="bg-amber-500 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
-            {numLabel}
-          </span>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            {qData.q}
-          </h3>
-        </div>
-
-        <div className="flex gap-3 sm:pl-11">
-          {['Σωστό', 'Λάθος'].map((opt) => (
-            <button
-              type="button"
-              key={opt}
-              onClick={() => handleInputChange(qKey, opt)}
-              disabled={submitted}
-              className={`px-6 sm:px-8 py-3 rounded-2xl font-black text-sm sm:text-base border transition active:scale-95 touch-manipulation select-none ${
-                answers[qKey] === opt
-                  ? (opt === 'Σωστό' ? 'bg-emerald-600 text-white border-emerald-700 shadow-md' : 'bg-rose-600 text-white border-rose-700 shadow-md')
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
-              }`}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-
-        {submitted && (
-          <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
-            {isCorrect ? (
-              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explain}
-              </p>
-            ) : (
-              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η ορθή απάντηση είναι «{qData.correct}». {qData.explain}
-              </p>
-            )}
-          </div>
-        )}
+const renderTrueFalse = (qKey, qData, numLabel) => {
+  const isCorrect = answers[qKey] === qData.correct;
+  return (
+    <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
+      submitted
+        ? (isCorrect ? 'border-emerald-500 bg-emerald-50/20' : 'border-rose-400 bg-rose-50/20')
+        : 'border-slate-100'
+    }`}>
+      <div className="flex items-start gap-3 mb-4">
+        <span className="bg-amber-500 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
+          {numLabel}
+        </span>
+        <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+          {qData.q}
+        </h3>
       </div>
-    );
-  };
+
+      <div className="flex gap-3 sm:pl-11">
+        {['Σωστό', 'Λάθος'].map((opt) => (
+          <button
+            type="button"
+            key={opt}
+            onClick={() => handleInputChange(qKey, opt)}
+            disabled={submitted}
+            className={`px-6 sm:px-8 py-3 rounded-2xl font-black text-sm sm:text-base border transition active:scale-95 touch-manipulation select-none ${
+              answers[qKey] === opt
+                ? (opt === 'Σωστό' ? 'bg-emerald-600 text-white border-emerald-700 shadow-md' : 'bg-rose-600 text-white border-rose-700 shadow-md')
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+            }`}
+          >
+            {opt}
+          </button>
+        ))}
+      </div>
+
+      {submitted && (
+        <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
+          {isCorrect ? (
+            <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
+              {qData.explain}
+            </p>
+          ) : (
+            <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
+              Η πρόταση είναι <strong className="font-bold text-rose-900">«{qData.correct}»</strong>: {qData.explain}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
   return (
     <Layout
