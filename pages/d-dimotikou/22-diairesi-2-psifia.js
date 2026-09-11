@@ -522,7 +522,7 @@ export default function Diairesi2PsifiaPage() {
 
                     {/* Ένδειξη Τελικού Υπολοίπου */}
                     <div className={`mt-auto pt-8 text-[11px] font-sans font-black uppercase tracking-wider ${isExact ? 'text-emerald-400' : 'text-amber-400'}`}>
-                      {isExact ? '✨ Τέλεια (υ ＝ 0)' : `🏁 Υπόλοιπο: ${r}`}
+                      {isExact ? '✨ Τέλεια (υ ＝ 0)' : `🏁 Υπολοιπο: ${r}`}
                     </div>
                   </div>
                 </div>
