@@ -1,11 +1,11 @@
+// pages/d-dimotikou/21-pollaplasiasmos-3-psifia.js
 import { useState } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import Layout from '../../components/Layout';
 
 function formatNumber(num) {
   if (num === '' || isNaN(num)) return '0';
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
 export default function Pollaplasiasmos3PsifiaPage() {
@@ -13,7 +13,6 @@ export default function Pollaplasiasmos3PsifiaPage() {
   const [numA, setNumA] = useState(245);
   const [numB, setNumB] = useState(135);
 
-  // Υπολογισμοί με ασφάλεια αν το πεδίο σβηστεί προσωρινά
   const valA = typeof numA === 'number' ? numA : 0;
   const valB = typeof numB === 'number' ? numB : 0;
 
@@ -26,259 +25,308 @@ export default function Pollaplasiasmos3PsifiaPage() {
   const p3 = valA * hundredsB * 100; // 3ο μερικό γινόμενο
   const total = valA * valB;
 
+  const updateNumA = (e, delta) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setNumA((prev) => Math.max(100, Math.min(999, (Number(prev) || 100) + delta)));
+  };
+
+  const updateNumB = (e, delta) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setNumB((prev) => Math.max(10, Math.min(999, (Number(prev) || 10) + delta)));
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
-      <Head>
-        <title>✖️ Πολλαπλασιασμός 3ψηφιων Αριθμών - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
-
-      <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full sticky top-0 z-50">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/d-dimotikou" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/d-dimotikou/21-pollaplasiasmos-3-psifia-ask" className="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2.5 rounded-xl text-sm transition shadow-sm flex items-center gap-2">
-                <span>📝</span> Ασκήσεις
-              </Link>
-              <Link href="/d-dimotikou" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
-                🔙 Επιστροφή
-              </Link>
-            </div>
-          </div>
-        </nav>
-
-        {/* MAIN CONTENT */}
-        <main className={`${LAYOUT.LESSON_CONTAINER} py-10 space-y-8`}>
-          
-          {/* HEADER BANNER */}
-          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 text-white p-8 rounded-3xl shadow-md relative overflow-hidden">
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-              <div className="md:col-span-2 space-y-3">
-                <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                  Δ' ΔΗΜΟΤΙΚΟΥ
-                </span>
-                <h1 className="text-3xl lg:text-4xl font-black tracking-tight">
-                  ✖️ Πολλαπλασιασμός 3ψηφιων Αριθμών
-                </h1>
-                <p className="text-emerald-100 text-base lg:text-lg leading-relaxed">
-                  Μαθαίνουμε να εκτελούμε τον "κάθετο πολλαπλασιασμό τριψήφιου αριθμού" υπολογίζοντας τα "μερικά γινόμενα"!
-                </p>
-              </div>
-
-              {/* ΠΛΑΙΣΙΟ ΠΑΡΑΠΟΜΠΗΣ ΣΤΙΣ ΑΣΚΗΣΕΙΣ */}
-              <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
-                <div className="text-3xl">🚀</div>
-                <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
-                <p className="text-xs text-emerald-100">Δοκίμασε τις ασκήσεις στον πολλαπλασιασμό 3ψηφίων για να σιγουρευτείς ότι τον έμαθες!</p>
-                <Link 
-                  href="/d-dimotikou/21-pollaplasiasmos-3-psifia-ask"
-                  className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
-                >
-                  🎯 Μετάβαση στις Ασκήσεις
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* ΘΕΩΡΙΑ - ΤΑ 3 ΒΗΜΑΤΑ */}
-          <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8">
-            <div className="border-b pb-4 border-gray-100">
-              <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>📖</span> Πώς κάνουμε Κάθετο Πολλαπλασιασμό 3ψηφίων
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              {/* ΒΗΜΑ 1 */}
-              <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100 space-y-3">
-                <div className="bg-amber-500 text-white font-black text-xs px-3 py-1 rounded-full w-fit">
-                  ΒΗΜΑ 1ο
-                </div>
-                <h3 className="text-lg font-bold text-amber-900">
-                  1ο Μερικό Γινόμενο (Μονάδες)
-                </h3>
-                <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Πολλαπλασιάζουμε τον πάνω αριθμό με τις "Μονάδες" του κάτω αριθμού.
-                </p>
-              </div>
-
-              {/* ΒΗΜΑ 2 */}
-              <div className="bg-teal-50 p-6 rounded-2xl border border-teal-100 space-y-3">
-                <div className="bg-teal-600 text-white font-black text-xs px-3 py-1 rounded-full w-fit">
-                  ΒΗΜΑ 2ο
-                </div>
-                <h3 className="text-lg font-bold text-teal-900">
-                  2ο Μερικό Γινόμενο (Δεκάδες)
-                </h3>
-                <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Βάζουμε ένα μηδενικό (0) στη θέση των μονάδων (ή αφήνουμε 1 κενό) και πολλαπλασιάζουμε με τις "Δεκάδες".
-                </p>
-              </div>
-
-              {/* ΒΗΜΑ 3 */}
-              <div className="bg-purple-50 p-6 rounded-2xl border border-purple-100 space-y-3">
-                <div className="bg-purple-600 text-white font-black text-xs px-3 py-1 rounded-full w-fit">
-                  ΒΗΜΑ 3ο
-                </div>
-                <h3 className="text-lg font-bold text-purple-900">
-                  3ο Μερικό Γινόμενο (Εκατοντάδες)
-                </h3>
-                <p className="text-xs md:text-sm text-gray-700 leading-relaxed">
-                  Βάζουμε δύο μηδενικά (00) (ή αφήνουμε 2 κενά) και πολλαπλασιάζουμε με τις "Εκατοντάδες".
-                </p>
-              </div>
-
-            </div>
-          </div>
-
-          {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ - ΚΑΘΕΤΟΣ ΑΒΑΚΑΣ ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΥ */}
-          <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="border-b pb-4 border-gray-100">
-              <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                <span>🧮</span> Διαδραστική Αναπαράσταση Κάθετου Πολλαπλασιασμού
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Αλλάξτε τους αριθμούς για να δείτε πώς υπολογίζονται αυτόματα τα μερικά γινόμενα και το τελικό άθροισμα!
+    <Layout
+      title="Πολλαπλασιασμός 3ψήφιων Αριθμών - Θεωρία | LearnMaths.gr"
+      description="Μαθαίνουμε τον κάθετο πολλαπλασιασμό τριψήφιων αριθμών, τον υπολογισμό των μερικών γινομένων και την πρόσθεσή τους με διαδραστικό εργαστήριο."
+      backUrl="/d-dimotikou"
+      backText="Δ' Δημοτικού"
+      showAds={true}
+      actionButton={
+        <Link
+          href="/d-dimotikou/21-pollaplasiasmos-3-psifia-ask"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
+        >
+          <span>🎯</span> Ασκήσεις
+        </Link>
+      }
+    >
+      <div className="space-y-8">
+        {/* HEADER & EXERCISES PROMO CARD */}
+        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 text-white p-6 sm:p-8 rounded-3xl shadow-md relative overflow-hidden">
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div className="md:col-span-2 space-y-3">
+              <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+                Δ' ΔΗΜΟΤΙΚΟΥ
+              </span>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
+                ✖️ Πολλαπλασιασμός 3ψήφιων Αριθμών
+              </h1>
+              <p className="text-emerald-100 text-sm sm:text-base lg:text-lg leading-relaxed">
+                Μαθαίνουμε να εκτελούμε τον <strong>κάθετο πολλαπλασιασμό</strong> τριψήφιου αριθμού υπολογίζοντας διαδοχικά τα τρία <strong>μερικά γινόμενα</strong>!
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              
-              {/* ΧΕΙΡΙΣΤΗΡΙΑ ΕΙΣΑΓΩΓΗΣ ΑΡΙΘΜΩΝ */}
-              <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
-                <h3 className="font-extrabold text-gray-800 text-base">
-                  ⚙️ Επίλεξε Αριθμούς:
-                </h3>
+            {/* ΠΛΑΙΣΙΟ ΠΑΡΑΠΟΜΠΗΣ ΣΤΙΣ ΑΣΚΗΣΕΙΣ */}
+            <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
+              <div className="text-3xl">🚀</div>
+              <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
+              <p className="text-xs text-emerald-100">
+                Δοκίμασε τις ασκήσεις στον πολλαπλασιασμό τριψήφιων για να σιγουρευτείς ότι κατέκτησες τον αλγόριθμο!
+              </p>
+              <Link
+                href="/d-dimotikou/21-pollaplasiasmos-3-psifia-ask"
+                className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
+              >
+                🎯 Μετάβαση στις Ασκήσεις
+              </Link>
+            </div>
+          </div>
+        </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-600 mb-1">
-                      1ος Αριθμός (100 έως 999):
-                    </label>
-                    <input 
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={3}
-                      autoComplete="off"
-                      value={numA}
-                      onChange={(e) => {
-                        const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 3);
-                        if (digitsOnly === '') {
-                          setNumA('');
-                        } else {
-                          setNumA(Number(digitsOnly));
-                        }
-                      }}
-                      onBlur={() => {
-                        if (!numA || numA < 100) setNumA(100);
-                      }}
-                      className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                    />
-                  </div>
+        {/* ΘΕΩΡΙΑ - ΤΑ 3 ΒΗΜΑΤΑ */}
+        <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-100 space-y-8">
+          <div className="border-b pb-4 border-slate-100">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
+              <span>📖</span> Πώς Εκτελούμε τον Κάθετο Πολλαπλασιασμό 3ψηφίων
+            </h2>
+          </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-gray-600 mb-1">
-                      2ος Αριθμός (0 έως 999):
-                    </label>
-                    <input 
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={3}
-                      autoComplete="off"
-                      value={numB}
-                      onChange={(e) => {
-                        const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 3);
-                        if (digitsOnly === '') {
-                          setNumB('');
-                        } else {
-                          setNumB(Number(digitsOnly));
-                        }
-                      }}
-                      onBlur={() => {
-                        if (numB === '') setNumB(0);
-                      }}
-                      className="w-full p-3 rounded-xl border border-gray-300 font-mono font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                    />
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* ΒΗΜΑ 1 */}
+            <div className="bg-amber-50/70 p-5 sm:p-6 rounded-2xl border border-amber-100 space-y-3 shadow-sm">
+              <div className="bg-amber-500 text-slate-950 font-black text-xs px-3 py-1 rounded-full w-fit">
+                ΒΗΜΑ 1ο
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-amber-900">
+                1ο Μερικό Γινόμενο (Μονάδες)
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                Πολλαπλασιάζουμε τον πάνω αριθμό με τις <strong>Μονάδες</strong> του κάτω αριθμού. Το αποτέλεσμα γράφεται κανονικά στην 1η γραμμή.
+              </p>
+            </div>
+
+            {/* ΒΗΜΑ 2 */}
+            <div className="bg-teal-50/70 p-5 sm:p-6 rounded-2xl border border-teal-100 space-y-3 shadow-sm">
+              <div className="bg-teal-600 text-white font-black text-xs px-3 py-1 rounded-full w-fit">
+                ΒΗΜΑ 2ο
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-teal-900">
+                2ο Μερικό Γινόμενο (Δεκάδες)
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                Σημειώνουμε ένα <strong>μηδενικό (0)</strong> στη θέση των μονάδων (ή αφήνουμε 1 κενό) και πολλαπλασιάζουμε με τις <strong>Δεκάδες</strong>.
+              </p>
+            </div>
+
+            {/* ΒΗΜΑ 3 */}
+            <div className="bg-purple-50/70 p-5 sm:p-6 rounded-2xl border border-purple-100 space-y-3 shadow-sm">
+              <div className="bg-purple-600 text-white font-black text-xs px-3 py-1 rounded-full w-fit">
+                ΒΗΜΑ 3ο
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-purple-900">
+                3ο Μερικό Γινόμενο (Εκατοντάδες)
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                Σημειώνουμε <strong>δύο μηδενικά (00)</strong> (ή αφήνουμε 2 κενά) και πολλαπλασιάζουμε με τις <strong>Εκατοντάδες</strong>. Στο τέλος, προσθέτουμε τα τρία μερικά γινόμενα!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΛΕΙΟ - ΚΑΘΕΤΟΣ ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ */}
+        <div className="bg-white p-5 sm:p-8 md:p-10 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+          <div className="border-b pb-4 border-slate-100">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
+              <span>🧮</span> Διαδραστική Αναπαράσταση Κάθετου Πολλαπλασιασμού
+            </h2>
+            <p className="text-slate-500 text-xs sm:text-sm mt-1">
+              Άλλαξε τους αριθμούς για να παρατηρήσεις πώς υπολογίζονται βήμα-βήμα τα μερικά γινόμενα και το τελικό αποτέλεσμα!
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* ΧΕΙΡΙΣΤΗΡΙΑ ΕΙΣΑΓΩΓΗΣ ΑΡΙΘΜΩΝ (ΚΑΝΟΝΑΣ 2) */}
+            <div className="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 space-y-4">
+              <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                ⚙️ Επίλεξε Αριθμούς Πολλαπλασιασμού:
+              </h3>
+
+              {/* 1ος Αριθμός (numA) */}
+              <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div className="h-8 flex items-center justify-between text-center px-1">
+                  <span className="text-[11px] font-black uppercase text-slate-500">1ος ΑΡΙΘΜΟΣ (100-999)</span>
+                  <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-emerald-600 text-base">
+                    {valA}
+                  </span>
                 </div>
 
-                <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-amber-900 text-xs space-y-1">
-                  <p className="font-bold">💡 Αναλυτικά Μερικά Γινόμενα:</p>
-                  <p>• 1ο Μερικό (Μονάδες): {valA} × {unitsB} = {formatNumber(p1)}</p>
-                  <p>• 2ο Μερικό (Δεκάδες): {valA} × {tensB * 10} = {formatNumber(p2)}</p>
-                  <p>• 3ο Μερικό (Εκατοντάδες): {valA} × {hundredsB * 100} = {formatNumber(p3)}</p>
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
+                  <button
+                    onClick={(e) => updateNumA(e, -10)}
+                    className="w-9 h-9 shrink-0 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 text-emerald-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
+                    title="Μείωση κατά 10"
+                    aria-label="Μείωση 1ου αριθμού"
+                  >
+                    －
+                  </button>
+
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={3}
+                    autoComplete="off"
+                    id="calc-num-a"
+                    name="calc-num-a"
+                    value={numA}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 3);
+                      setNumA(digits === '' ? '' : Number(digits));
+                    }}
+                    onBlur={() => {
+                      if (!numA || numA < 100) setNumA(100);
+                    }}
+                    className="w-full min-w-0 max-w-full text-center font-mono font-black text-base sm:text-lg text-slate-800 border border-slate-300 rounded-xl py-1.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    placeholder="π.χ. 245"
+                  />
+
+                  <button
+                    onClick={(e) => updateNumA(e, 10)}
+                    className="w-9 h-9 shrink-0 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 text-emerald-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
+                    title="Αύξηση κατά 10"
+                    aria-label="Αύξηση 1ου αριθμού"
+                  >
+                    ＋
+                  </button>
                 </div>
               </div>
 
-              {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ */}
-              <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl font-mono flex flex-col items-center justify-center space-y-2">
-                <div className="w-52 text-right space-y-2">
-                  
+              {/* 2ος Αριθμός (numB) */}
+              <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div className="h-8 flex items-center justify-between text-center px-1">
+                  <span className="text-[11px] font-black uppercase text-slate-500">2ος ΑΡΙΘΜΟΣ (10-999)</span>
+                  <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-amber-600 text-base">
+                    {valB}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
+                  <button
+                    onClick={(e) => updateNumB(e, -10)}
+                    className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
+                    title="Μείωση κατά 10"
+                    aria-label="Μείωση 2ου αριθμού"
+                  >
+                    －
+                  </button>
+
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={3}
+                    autoComplete="off"
+                    id="calc-num-b"
+                    name="calc-num-b"
+                    value={numB}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 3);
+                      setNumB(digits === '' ? '' : Number(digits));
+                    }}
+                    onBlur={() => {
+                      if (numB === '' || numB < 10) setNumB(10);
+                    }}
+                    className="w-full min-w-0 max-w-full text-center font-mono font-black text-base sm:text-lg text-slate-800 border border-slate-300 rounded-xl py-1.5 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    placeholder="π.χ. 135"
+                  />
+
+                  <button
+                    onClick={(e) => updateNumB(e, 10)}
+                    className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation shadow-sm"
+                    title="Αύξηση κατά 10"
+                    aria-label="Αύξηση 2ου αριθμού"
+                  >
+                    ＋
+                  </button>
+                </div>
+              </div>
+
+              {/* ΕΠΕΞΗΓΗΣΗ ΜΕΡΙΚΩΝ ΓΙΝΟΜΕΝΩΝ */}
+              <div className="bg-amber-50/80 p-4 rounded-2xl border border-amber-200/70 text-amber-950 text-xs space-y-1.5 shadow-sm">
+                <p className="font-black text-amber-900">💡 Αναλυτικά Μερικά Γινόμενα:</p>
+                <p>• 1ο Μερικό (Μονάδες): {valA} · {unitsB} ＝ <strong className="font-mono">{formatNumber(p1)}</strong></p>
+                <p>• 2ο Μερικό (Δεκάδες): {valA} · {tensB * 10} ＝ <strong className="font-mono">{formatNumber(p2)}</strong></p>
+                <p>• 3ο Μερικό (Εκατοντάδες): {valA} · {hundredsB * 100} ＝ <strong className="font-mono">{formatNumber(p3)}</strong></p>
+              </div>
+            </div>
+
+            {/* ΟΠΤΙΚΟΠΟΙΗΣΗ ΚΑΘΕΤΗΣ ΠΡΑΞΗΣ (RESPONSIVE SVG ΧΩΡΙΣ SCROLL) */}
+            <div className="bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl flex flex-col items-center justify-center">
+              <div className="w-full max-w-[280px] aspect-[5/5] relative flex items-center justify-center overflow-hidden">
+                <svg className="w-full h-full block select-none" viewBox="0 0 280 270">
                   {/* 1ος Αριθμός */}
-                  <div className="text-2xl md:text-3xl font-black text-slate-100 tracking-widest">
+                  <text x="240" y="45" fill="#f8fafc" fontSize="26" fontWeight="900" fontFamily="monospace" textAnchor="end">
                     {formatNumber(valA)}
-                  </div>
+                  </text>
 
-                  {/* 2ος Αριθμός με το σύμβολο × */}
-                  <div className="text-2xl md:text-3xl font-black text-amber-400 tracking-widest border-b-2 border-slate-700 pb-2 relative">
-                    <span className="absolute left-0 text-amber-400">×</span>
+                  {/* Σύμβολο Πολλαπλασιασμού · */}
+                  <text x="40" y="85" fill="#fbbf24" fontSize="28" fontWeight="900" fontFamily="monospace" textAnchor="start">
+                    ·
+                  </text>
+
+                  {/* 2ος Αριθμός */}
+                  <text x="240" y="85" fill="#fbbf24" fontSize="26" fontWeight="900" fontFamily="monospace" textAnchor="end">
                     {formatNumber(valB)}
-                  </div>
+                  </text>
 
-                  {/* 1ο Μερικό Γινόμενο */}
-                  <div className="text-lg md:text-xl font-bold text-emerald-400 tracking-widest pt-1">
+                  {/* 1η Γραμμή πράξης */}
+                  <line x1="35" y1="102" x2="245" y2="102" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" />
+
+                  {/* 1ο Μερικό Γινόμενο (Πράσινο) */}
+                  <text x="240" y="132" fill="#34d399" fontSize="20" fontWeight="900" fontFamily="monospace" textAnchor="end">
                     {formatNumber(p1)}
-                  </div>
+                  </text>
 
-                  {/* 2ο Μερικό Γινόμενο */}
-                  <div className="text-lg md:text-xl font-bold text-teal-300 tracking-widest">
+                  {/* 2ο Μερικό Γινόμενο (Τιρκουάζ) */}
+                  <text x="240" y="162" fill="#2dd4bf" fontSize="20" fontWeight="900" fontFamily="monospace" textAnchor="end">
                     {p2 > 0 ? formatNumber(p2) : '0'}
-                  </div>
+                  </text>
 
-                  {/* 3ο Μερικό Γινόμενο */}
-                  <div className="text-lg md:text-xl font-bold text-purple-300 tracking-widest border-b-2 border-slate-700 pb-2">
+                  {/* 3ο Μερικό Γινόμενο (Μοβ) */}
+                  <text x="240" y="192" fill="#c084fc" fontSize="20" fontWeight="900" fontFamily="monospace" textAnchor="end">
                     {p3 > 0 ? formatNumber(p3) : '0'}
-                  </div>
+                  </text>
 
-                  {/* Τελικό Αποτέλεσμα */}
-                  <div className="text-2xl md:text-3xl font-black text-amber-300 tracking-widest pt-2">
+                  {/* 2η Γραμμή αθροίσματος */}
+                  <line x1="35" y1="208" x2="245" y2="208" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" />
+
+                  {/* Τελικό Αποτέλεσμα (Χρυσό) */}
+                  <text x="240" y="242" fill="#fde047" fontSize="26" fontWeight="900" fontFamily="monospace" textAnchor="end">
                     {formatNumber(total)}
-                  </div>
-
-                </div>
+                  </text>
+                </svg>
               </div>
-
             </div>
           </div>
+        </div>
 
-          {/* BOTTOM EXERCISES CALLOUT BANNER */}
-          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="space-y-1 text-center md:text-left">
-              <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-              <p className="text-gray-800 text-sm md:text-base">
-                Έμαθες να εκτελείς τον πολλαπλασιασμό τριψήφιων αριθμών; Δοκίμασε τις διαδραστικές ασκήσεις!
-              </p>
-            </div>
-            <Link
-              href="/d-dimotikou/21-pollaplasiasmos-3-psifia-ask"
-              className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
-            >
-              Ξεκίνα τις Ασκήσεις ➔
-            </Link>
+        {/* BOTTOM EXERCISES CALLOUT BANNER */}
+        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="space-y-1 text-center md:text-left">
+            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
+            <p className="text-slate-800 text-sm md:text-base">
+              Έμαθες να εκτελείς τον πολλαπλασιασμό τριψήφιων αριθμών; Δοκίμασε τις διαδραστικές ασκήσεις!
+            </p>
           </div>
-
-        </main>
+          <Link
+            href="/d-dimotikou/21-pollaplasiasmos-3-psifia-ask"
+            className="bg-slate-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+          >
+            Ξεκίνα τις Ασκήσεις ➔
+          </Link>
+        </div>
       </div>
-
-      {/* FOOTER */}
-      <footer className="bg-gray-800 text-gray-400 py-6 text-center text-sm w-full border-t border-gray-700">
-        <p>© {new Date().getFullYear()} LearnMaths.gr. Σχεδιασμένο για τη Δ' Δημοτικού.</p>
-      </footer>
-    </div>
+    </Layout>
   );
 }
