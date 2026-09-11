@@ -336,7 +336,7 @@ export default function PosotitaIgrouTheoryPage() {
               {/* ΑΥΤΟΜΑΤΕΣ ΑΝΑΛΥΣΕΙΣ ΜΕ ΣΤΑΘΕΡΟ ΥΨΟΣ */}
               <div className="bg-cyan-50/80 p-4 rounded-2xl border border-cyan-200 min-h-[110px] flex flex-col justify-between shadow-sm">
                 <h4 className="text-xs font-black uppercase text-cyan-950 flex items-center gap-1.5 mb-1">
-                  <span>💡</span> Πώς το διαβάζουμε:
+                  <span>💡</span> Πως το διαβαζουμε:
                 </h4>
                 <ul className="text-xs space-y-1 font-medium text-slate-800">
                   <li>• <strong>Σε Χιλιοστόλιτρα:</strong> {formatNumber(mL)} mL</li>
