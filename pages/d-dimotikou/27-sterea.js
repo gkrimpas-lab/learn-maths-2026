@@ -54,7 +54,7 @@ const SOLIDS_DATA = [
   {
     id: 'sq-pyramid',
     name: 'Τετραγωνική Πυραμίδα',
-    category: 'Πολύεδρο (Πυραμίδα)',
+    category: 'Πολυεδρο (Πυραμιδα)',
     faces: 5,
     facesDesc: '1 τετράγωνη βάση ＋ 4 τριγωνικές έδρες',
     edges: 8,
