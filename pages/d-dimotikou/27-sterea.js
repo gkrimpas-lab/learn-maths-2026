@@ -363,21 +363,21 @@ export default function StereaTheoryPage() {
               {/* ΜΕΤΡΗΤΕΣ: ΕΔΡΕΣ - ΑΚΜΕΣ - ΚΟΡΥΦΕΣ */}
               <div className="grid grid-cols-3 gap-2.5 text-center font-mono">
                 <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                  <span className="text-[11px] font-bold text-slate-500 block uppercase font-sans">Έδρες</span>
+                  <span className="text-[11px] font-bold text-slate-500 block uppercase font-sans">Εδρες</span>
                   <span className="text-2xl sm:text-3xl font-black text-blue-600 min-w-[50px] inline-block">
                     {currentSolid.faces}
                   </span>
                 </div>
 
                 <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                  <span className="text-[11px] font-bold text-slate-500 block uppercase font-sans">Ακμές</span>
+                  <span className="text-[11px] font-bold text-slate-500 block uppercase font-sans">Ακμες</span>
                   <span className="text-2xl sm:text-3xl font-black text-purple-600 min-w-[50px] inline-block">
                     {currentSolid.edges}
                   </span>
                 </div>
 
                 <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                  <span className="text-[11px] font-bold text-slate-500 block uppercase font-sans">Κορυφές</span>
+                  <span className="text-[11px] font-bold text-slate-500 block uppercase font-sans">Κορυφες</span>
                   <span className="text-2xl sm:text-3xl font-black text-emerald-600 min-w-[50px] inline-block">
                     {currentSolid.vertices}
                   </span>
@@ -412,12 +412,12 @@ export default function StereaTheoryPage() {
             <table className="w-full text-left text-xs sm:text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-100 text-slate-700 uppercase font-black text-[11px] tracking-wider border-b border-slate-200">
-                  <th className="p-3 rounded-l-xl">Στερεό Σώμα</th>
-                  <th className="p-3">Κατηγορία</th>
-                  <th className="p-3 text-center">Έδρες</th>
-                  <th className="p-3 text-center">Ακμές</th>
-                  <th className="p-3 text-center">Κορυφές</th>
-                  <th className="p-3 rounded-r-xl">Σχήμα Εδρών / Βάσεων</th>
+                  <th className="p-3 rounded-l-xl">Στερεο Σωμα</th>
+                  <th className="p-3">Κατηγορια</th>
+                  <th className="p-3 text-center">Εδρες</th>
+                  <th className="p-3 text-center">Ακμες</th>
+                  <th className="p-3 text-center">Κορυφες</th>
+                  <th className="p-3 rounded-r-xl">Σχημα Εδρων / Βάσεων</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
