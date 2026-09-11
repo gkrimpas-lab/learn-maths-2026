@@ -481,7 +481,7 @@ export default function TetrapleuraTheoryPage() {
                 }}
                 className="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-200 hover:bg-slate-300 text-slate-800 transition active:scale-95 touch-manipulation shadow-sm"
               >
-                ⚖️ Εξίσωση Όλων των Πλευρών ({baseWidth} px)
+                ⚖️ Εξισωση Ολων των Πλευρων ({baseWidth} px)
               </button>
             </div>
           </div>
