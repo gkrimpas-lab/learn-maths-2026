@@ -373,7 +373,7 @@ export default function StereaAnoigmaTheoryPage() {
             {/* ΑΡΙΣΤΕΡΑ: ΤΟ 3D ΣΤΕΡΕΟ */}
             <div className="bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl flex flex-col items-center justify-center space-y-3">
               <span className="text-[11px] font-black uppercase tracking-widest text-indigo-400">
-                1. Τρισδιάστατο Στερεό (3D)
+                1. Τρισδιαστατο Στερεο (3D)
               </span>
 
               <div className="py-2 w-full max-w-[220px] aspect-square flex items-center justify-center">
@@ -409,7 +409,7 @@ export default function StereaAnoigmaTheoryPage() {
             {/* ΔΕΞΙΑ: ΤΟ ΕΠΙΠΕΔΟ ΑΝΑΠΤΥΓΜΑ (2D) */}
             <div className="bg-slate-950 p-6 sm:p-8 rounded-3xl border-2 border-indigo-500/30 shadow-xl flex flex-col items-center justify-center space-y-3">
               <span className="text-[11px] font-black uppercase tracking-widest text-amber-400">
-                2. Επίπεδο Ανάπτυγμα (2D)
+                2. Επιπεδο Αναπτυγμα (2D)
               </span>
 
               <div className="py-2 w-full max-w-[220px] aspect-square flex items-center justify-center">
@@ -452,9 +452,9 @@ export default function StereaAnoigmaTheoryPage() {
             <table className="w-full text-left text-xs sm:text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-100 text-slate-700 uppercase font-black text-[11px] tracking-wider border-b border-slate-200">
-                  <th className="p-3 rounded-l-xl">Στερεό Σώμα</th>
-                  <th className="p-3">Σχήματα στο Ανάπτυγμα</th>
-                  <th className="p-3 rounded-r-xl">Χαρακτηριστικά</th>
+                  <th className="p-3 rounded-l-xl">Στερεο Σωμα</th>
+                  <th className="p-3">Σχηματα στο Αναπτυγμα</th>
+                  <th className="p-3 rounded-r-xl">Χαρακτηριστικα</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
