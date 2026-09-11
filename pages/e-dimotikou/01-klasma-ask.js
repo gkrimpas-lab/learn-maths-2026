@@ -21,7 +21,7 @@ function shuffleArray(array) {
 // 1. ΖΕΥΓΟΣ 1 (q1, q2): Μέρος Συνόλου & Αντίστροφος Υπολογισμός
 function makeSetFractionQuestion(isReverse = false) {
   if (!isReverse) {
-    // q1: Υπολογισμός υπολοίπου (ξόδεψε num/den, πόσα περίσσεψαν;)
+    // q1: Υπολογισμός υπολοίπου
     const den = [5, 6, 8, 10][getRandomInt(0, 3)];
     const num = getRandomInt(2, den - 1);
     const multiplier = getRandomInt(6, 12);
@@ -63,7 +63,7 @@ function makeSetFractionQuestion(isReverse = false) {
 // 2. ΖΕΥΓΟΣ 2 (q3, q4): Καταχρηστικά Κλάσματα, Μεικτοί Αριθμοί & Ακέραιοι
 function makeImproperFractionQuestion(isMissingToWhole = false) {
   if (!isMissingToWhole) {
-    // q3: Μετατροπή καταχρηστικού κλάσματος σε μεικτό αριθμό (Ακέραιο μέρος)
+    // q3: Μετατροπή καταχρηστικού σε μεικτό
     const den = [3, 4, 5, 7, 8][getRandomInt(0, 4)];
     const whole = getRandomInt(3, 6);
     const rem = getRandomInt(1, den - 1);
@@ -79,7 +79,7 @@ function makeImproperFractionQuestion(isMissingToWhole = false) {
       explanation: `Εκτελούμε τη διαίρεση ${num} ： ${den} ＝ ${whole} με υπόλοιπο ${rem}. Άρα: ${num}/${den} ＝ ${whole} ＋ ${rem}/${den} (δηλαδή ${whole} ακέραιες μονάδες).`
     };
   } else {
-    // q4: Πόσα μέρη 1/den λείπουν για να φτάσουμε στον επόμενο ακέραιο (MCQ)
+    // q4: Πόσα μέρη λείπουν για τον επόμενο ακέραιο (MCQ)
     const den = [6, 8, 9, 11][getRandomInt(0, 3)];
     const targetWhole = getRandomInt(2, 4);
     const missing = getRandomInt(2, den - 2);
@@ -134,7 +134,7 @@ function makeQuotientAndEquivQuestion(isEquiv = false) {
       explanation: `Το κλάσμα εκφράζει το ακριβές πηλίκο της διαίρεσης του αριθμητή διά του παρονομαστή: ${liters} ： ${bottles} ＝ ${liters}/${bottles} L.`
     };
   } else {
-    // q6: Εύρεση αγνώστου όρου x σε ισοδύναμο κλάσμα
+    // q6: Εύρεση αγνώστου όρου x
     const baseNum = getRandomInt(2, 5);
     const baseDen = baseNum + getRandomInt(1, 4);
     const factor = getRandomInt(3, 7);
@@ -287,7 +287,7 @@ export default function KlasmaAskPage() {
             {numLabel}
           </span>
           <div className="space-y-1">
-            <span className="text-[11px] 2xl:text-xs font-black uppercase tracking-wider text-slate-400">
+            <span className="text-[11px] 2xl:text-xs font-black tracking-wider text-slate-400">
               {badgeTitle}
             </span>
             <h3 className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-snug">
@@ -361,7 +361,7 @@ export default function KlasmaAskPage() {
             {numLabel}
           </span>
           <div className="space-y-1">
-            <span className="text-[11px] 2xl:text-xs font-black uppercase tracking-wider text-slate-400">
+            <span className="text-[11px] 2xl:text-xs font-black tracking-wider text-slate-400">
               {badgeTitle}
             </span>
             <h3 className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-snug">
@@ -409,7 +409,7 @@ export default function KlasmaAskPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Η Έννοια του Κλάσματος | LearnMaths.gr"
+      title="Ασκήσεις: Η Έννοια του Κλάσματος - Ε' Δημοτικού | LearnMaths.gr"
       description="Απαιτητικές διαδραστικές ασκήσεις μαθηματικών Ε' Δημοτικού: μέρος συνόλου, ανάστροφοι υπολογισμοί, μεικτοί αριθμοί και προβλήματα."
       backUrl="/e-dimotikou"
       backText="Ε' Δημοτικού"
@@ -423,13 +423,13 @@ export default function KlasmaAskPage() {
         </Link>
       }
     >
-      {/* Fluid full-width container για 2K/4K και responsive σε κινητά */}
+      {/* Full-width container για 2K / 4K και responsive σε κινητά */}
       <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8">
-        {/* HEADER BANNER */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white p-6 sm:p-8 2xl:p-12 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="space-y-1 max-w-4xl">
-            <span className="bg-white/20 text-white text-xs 2xl:text-sm font-black uppercase px-3 py-1 rounded-full tracking-wider">
-              Ε' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+        {/* HEADER BANNER - Ίδια χρωματική παλέτα με τη θεωρία */}
+        <div className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-8 2xl:p-12 rounded-3xl shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-1.5 max-w-4xl">
+            <span className="bg-white/10 border border-white/20 text-sky-200 text-xs 2xl:text-sm font-black px-3 py-1 rounded-full tracking-wider inline-block">
+              Ε ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl 2xl:text-5xl font-black tracking-tight pt-1">
               📝 Ασκήσεις: Η Έννοια του Κλάσματος
@@ -442,25 +442,25 @@ export default function KlasmaAskPage() {
           <button
             type="button"
             onClick={loadNewQuestions}
-            className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 2xl:px-7 2xl:py-4 rounded-2xl shadow-lg hover:bg-sky-50 transition active:scale-95 text-xs sm:text-sm 2xl:text-base whitespace-nowrap self-stretch sm:self-auto text-center"
+            className="bg-amber-400 text-slate-950 font-black px-4 py-2.5 sm:px-5 sm:py-3 2xl:px-7 2xl:py-4 rounded-2xl shadow-lg hover:bg-amber-300 transition active:scale-95 text-xs sm:text-sm 2xl:text-base whitespace-nowrap self-stretch sm:self-auto text-center"
           >
             🔄 Νέες Ασκήσεις
           </button>
         </div>
 
-        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB-28 / PB-32 ΓΙΑ ΤΟ BOTTOM BAR */}
+        {/* ΦΟΡΜΑ ΑΣΚΗΣΕΩΝ & PB SAFE AREA */}
         <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
-          {renderInput('q1', questions.q1, 1, 'Μέρος Συνόλου & Υπόλοιπο', 'bg-blue-600')}
-          {renderInput('q2', questions.q2, 2, 'Ανάστροφος Υπολογισμός Συνόλου', 'bg-blue-600')}
+          {renderInput('q1', questions.q1, 1, 'ΜΕΡΟΣ ΣΥΝΟΛΟΥ ΚΑΙ ΥΠΟΛΟΙΠΟ', 'bg-blue-600')}
+          {renderInput('q2', questions.q2, 2, 'ΑΝΑΣΤΡΟΦΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΣΥΝΟΛΟΥ', 'bg-blue-600')}
 
-          {renderInput('q3', questions.q3, 3, 'Καταχρηστικό Κλάσμα σε Μεικτό', 'bg-indigo-600')}
-          {renderMCQ('q4', questions.q4, 4, 'Συμπλήρωση στον Επόμενο Ακέραιο', 'bg-indigo-600')}
+          {renderInput('q3', questions.q3, 3, 'ΚΑΤΑΧΡΗΣΤΙΚΟ ΚΛΑΣΜΑ ΣΕ ΜΕΙΚΤΟ', 'bg-indigo-600')}
+          {renderMCQ('q4', questions.q4, 4, 'ΣΥΜΠΛΗΡΩΣΗ ΣΤΟΝ ΕΠΟΜΕΝΟ ΑΚΕΡΑΙΟ', 'bg-indigo-600')}
 
-          {renderMCQ('q5', questions.q5, 5, 'Κλάσμα ως Πηλίκο Διαίρεσης', 'bg-teal-600')}
-          {renderInput('q6', questions.q6, 6, 'Εύρεση Όρου Ισοδύναμου Κλάσματος', 'bg-teal-600')}
+          {renderMCQ('q5', questions.q5, 5, 'ΚΛΑΣΜΑ ΩΣ ΠΗΛΙΚΟ ΔΙΑΙΡΕΣΗΣ', 'bg-teal-600')}
+          {renderInput('q6', questions.q6, 6, 'ΕΥΡΕΣΗ ΟΡΟΥ ΙΣΟΔΥΝΑΜΟΥ ΚΛΑΣΜΑΤΟΣ', 'bg-teal-600')}
 
-          {renderMCQ('q7', questions.q7, 7, 'Σύγκριση με το Μισό ( 1/2 )', 'bg-purple-600')}
-          {renderMCQ('q8', questions.q8, 8, 'Σύνθετο Πρόβλημα Διαδρομών', 'bg-purple-600')}
+          {renderMCQ('q7', questions.q7, 7, 'ΣΥΓΚΡΙΣΗ ΜΕ ΤΟ ΜΙΣΟ ( 1/2 )', 'bg-purple-600')}
+          {renderMCQ('q8', questions.q8, 8, 'ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΔΙΑΔΡΟΜΩΝ', 'bg-purple-600')}
 
           {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
           {!submitted && (
@@ -476,7 +476,7 @@ export default function KlasmaAskPage() {
         </form>
       </div>
 
-      {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
+      {/* FIXED BOTTOM SCORE BAR */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 2xl:py-5 z-50">
         <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
