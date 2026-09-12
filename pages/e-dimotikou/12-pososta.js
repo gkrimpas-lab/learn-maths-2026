@@ -131,24 +131,26 @@ export default function PosostaTheoryPage() {
                   Κάθε ποσοστό μπορεί να γραφτεί με 3 ισοδύναμους τρόπους που εκφράζουν ακριβώς την ίδια αξία:
                 </p>
 
-                <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm 2xl:text-base font-mono">
-                  <div className="flex justify-between items-center p-1.5 bg-white rounded-lg border border-slate-200">
-                    <span className="text-blue-700 font-bold">50%</span>
-                    <span>＝ 50/100 ( ＝ 1/2 )</span>
-                    <span className="text-emerald-700 font-bold">＝ 0,5</span>
-                  </div>
-                  <div className="flex justify-between items-center p-1.5 bg-white rounded-lg border border-slate-200">
-                    <span className="text-blue-700 font-bold">25%</span>
-                    <span>＝ 25/100 ( ＝ 1/4 )</span>
-                    <span className="text-emerald-700 font-bold">＝ 0,25</span>
-                  </div>
-                  <div className="flex justify-between items-center p-1.5 bg-white rounded-lg border border-slate-200">
-                    <span className="text-blue-700 font-bold">75%</span>
-                    <span>＝ 75/100 ( ＝ 3/4 )</span>
-                    <span className="text-emerald-700 font-bold">＝ 0,75</span>
-                  </div>
-                </div>
-              </div>
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm font-mono">
+  {[
+    { pct: '50%', frac: '50/100', simp: '1/2', dec: '0,5' },
+    { pct: '25%', frac: '25/100', simp: '1/4', dec: '0,25' },
+    { pct: '75%', frac: '75/100', simp: '3/4', dec: '0,75' }
+  ].map((row, idx) => (
+    <div
+      key={`row-${idx}`}
+      className="p-2 sm:p-2.5 bg-white rounded-xl border border-slate-200 shadow-xs flex items-center justify-between gap-1 text-center"
+    >
+      <span className="text-blue-700 font-bold w-12 shrink-0">{row.pct}</span>
+      <span className="text-slate-400 font-sans">＝</span>
+      <span className="text-slate-800 font-semibold tracking-tight whitespace-nowrap">
+        {row.frac} <span className="text-slate-500 font-normal">({row.simp})</span>
+      </span>
+      <span className="text-slate-400 font-sans">＝</span>
+      <span className="text-emerald-700 font-bold w-12 shrink-0 text-right">{row.dec}</span>
+    </div>
+  ))}
+</div>
 
               <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
                 ⚡ Για να μετατρέψουμε ποσοστό σε δεκαδικό, διαιρούμε με το 100 (μετακινούμε την υποδιαστολή 2 θέσεις αριστερά).
