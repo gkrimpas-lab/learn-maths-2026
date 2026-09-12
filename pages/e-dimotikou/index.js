@@ -16,7 +16,7 @@ export default function EDimotikouMenu() {
     { id: '09-krit-diaret', label: '🔍 9. Κριτήρια Διαιρετότητας', href: '/e-dimotikou/09-krit-diaret' },
     { id: '10-epanalipsi-1', label: '🔺 10. Επανάληψη Κεφάλαια 1 έως 9', href: '/e-dimotikou/10-epanalipsi-1' },
     { id: '11-mesitimi', label: '📊 11. Μέση Τιμή', href: '/e-dimotikou/11-mesitimi' },
-    { id: '11-pososta', label: '🏷️ 12. Ποσοστά', href: '/e-dimotikou/11-pososta' },
+    { id: '12-pososta', label: '🏷️ 12. Ποσοστά', href: '/e-dimotikou/12-pososta' },
     { id: '12-gonies', label: '📐 13. Γωνίες', href: '/e-dimotikou/12-gonies' },
     { id: '13-trigona', label: '🔺 14. Τρίγωνα - Γωνίες', href: '/e-dimotikou/13-trigona' },
     { id: '14-trigona-pleures', label: '🔺 15. Τρίγωνα - Πλευρές', href: '/e-dimotikou/14-trigona-pleures' },
