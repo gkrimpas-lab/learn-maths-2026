@@ -393,7 +393,7 @@ export default function AnagogiAskPage() {
       title="Ασκήσεις: Αναγωγή στην Κλασματική Μονάδα - Έ Δημοτικού | LearnMaths.gr"
       description="Απαιτητικές ασκήσεις μαθηματικών Έ Δημοτικού στην αναγωγή στην κλασματική μονάδα: εύρεση συνολικού ποσού, μεταβάσεις μερών και προβλήματα υπολοίπου."
       backUrl="/e-dimotikou"
-      backText="Έ Δημοτικού"
+      backText="Ε' Δημοτικού"
       hideFooter={true}
       actionButton={
         <Link
@@ -411,7 +411,7 @@ export default function AnagogiAskPage() {
         <div className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-8 2xl:p-12 rounded-3xl shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1.5 max-w-4xl">
             <span className="bg-white/10 border border-white/20 text-sky-200 text-xs 2xl:text-sm font-black px-3 py-1 rounded-full tracking-wider inline-block">
-              Έ ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              Ε' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl 2xl:text-5xl font-black tracking-tight pt-1">
               📝 Ασκήσεις: Αναγωγή στην Κλασματική Μονάδα
