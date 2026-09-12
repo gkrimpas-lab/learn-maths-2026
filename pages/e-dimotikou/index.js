@@ -9,7 +9,7 @@ export default function EDimotikouMenu() {
     { id: '02-isodinama', label: '🔄 2. Ισοδύναμα Κλάσματα', href: '/e-dimotikou/02-isodinama' },
     { id: '03-aplopoiisi', label: '✂️ 3. Απλοποίηση Κλασμάτων', href: '/e-dimotikou/03-aplopoiisi' },
     { id: '04-anagogi', label: '🔍 4. Αναγωγή στην Κλασματική Μονάδα', href: '/e-dimotikou/04-anagogi' },
-    { id: '5-pollaplasia', label: '🔢 5. Πολλαπλάσια Αριθμού', href: '/e-dimotikou/5-pollaplasia' },
+    { id: '05-pollaplasia', label: '🔢 5. Πολλαπλάσια Αριθμού', href: '/e-dimotikou/05-pollaplasia' },
     { id: '6-ekp', label: '🎯 6. ΕΚΠ', href: '/e-dimotikou/6-ekp' },
     { id: '7-diairetes', label: '🛡️ 7. Διαιρέτες Αριθμού', href: '/e-dimotikou/7-diairetes' },
     { id: '8-mkd', label: '🏆 8. ΜΚΔ', href: '/e-dimotikou/8-mkd' },
