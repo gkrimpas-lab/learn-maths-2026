@@ -106,7 +106,6 @@ export default function MesiTimiTheoryPage() {
 
           return (
             <g key={`svg-bar-${idx}`}>
-              {/* Στήλη */}
               <rect
                 x={x}
                 y={y}
@@ -115,7 +114,6 @@ export default function MesiTimiTheoryPage() {
                 rx="6"
                 className="fill-sky-500 hover:fill-sky-600 transition-colors duration-200 stroke-slate-800 stroke-[1.5]"
               />
-              {/* Τιμή πάνω από τη στήλη */}
               <text
                 x={xCenter}
                 y={y - 8}
@@ -124,7 +122,6 @@ export default function MesiTimiTheoryPage() {
               >
                 {val}
               </text>
-              {/* Ετικέτα ομάδας κάτω από τον άξονα */}
               <text
                 x={xCenter}
                 y={topPadding + chartHeight + 22}
@@ -377,24 +374,25 @@ export default function MesiTimiTheoryPage() {
             </div>
 
             {/* Επιλογέας Πλήθους Ομάδων - Mobile Responsive & Compact */}
-<div className="inline-flex max-w-full p-1 bg-slate-100 rounded-2xl border border-slate-200 self-start sm:self-center">
-  {[2, 3, 4, 5, 6].map((n) => (
-    <button
-      key={`btn-count-${n}`}
-      type="button"
-      onClick={() => setCount(n)}
-      className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-bold transition select-none touch-manipulation active:scale-95 ${
-        count === n
-          ? 'bg-blue-600 text-white shadow-sm'
-          : 'text-slate-600 hover:text-slate-900'
-      }`}
-    >
-      <span>{n}</span>
-      <span className="hidden sm:inline sm:ml-1">Ομάδες</span>
-      <span className="inline sm:hidden text-[10px] ml-0.5">Ομ.</span>
-    </button>
-  ))}
-</div>
+            <div className="inline-flex max-w-full p-1 bg-slate-100 rounded-2xl border border-slate-200 self-start sm:self-center">
+              {[2, 3, 4, 5, 6].map((n) => (
+                <button
+                  key={`btn-count-${n}`}
+                  type="button"
+                  onClick={() => setCount(n)}
+                  className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-bold transition select-none touch-manipulation active:scale-95 ${
+                    count === n
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <span>{n}</span>
+                  <span className="hidden sm:inline sm:ml-1">Ομάδες</span>
+                  <span className="inline sm:hidden text-[10px] ml-0.5">Ομ.</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
             {/* Αριστερή Στήλη: Χειριστήρια Ομάδων & Βήματα Υπολογισμού */}
@@ -470,7 +468,7 @@ export default function MesiTimiTheoryPage() {
 
                 <div className="space-y-2 text-xs sm:text-sm font-mono">
                   <div className="p-2.5 bg-blue-50/70 rounded-xl border border-blue-200 space-y-1">
-                    <span className="text-blue-900 font-sans font-bold text-[11px] tracking-wider block">
+                    <span className="text-blue-900 font-sans font-bold text-[11px] uppercase tracking-wider block">
                       1ο Βήμα • Συνολικό Άθροισμα:
                     </span>
                     <div className="font-bold text-slate-900 text-sm">
@@ -479,7 +477,7 @@ export default function MesiTimiTheoryPage() {
                   </div>
 
                   <div className="p-2.5 bg-emerald-50/70 rounded-xl border border-emerald-200 space-y-1">
-                    <span className="text-emerald-900 font-sans font-bold text-[11px] tracking-wider block">
+                    <span className="text-emerald-900 font-sans font-bold text-[11px] uppercase tracking-wider block">
                       2ο Βήμα • Διαίρεση με το Πλήθος ({count}):
                     </span>
                     <div className="font-bold text-slate-900 text-sm">
