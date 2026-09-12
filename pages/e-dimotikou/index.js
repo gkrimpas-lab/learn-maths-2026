@@ -11,7 +11,7 @@ export default function EDimotikouMenu() {
     { id: '04-anagogi', label: '🔍 4. Αναγωγή στην Κλασματική Μονάδα', href: '/e-dimotikou/04-anagogi' },
     { id: '05-pollaplasia', label: '🔢 5. Πολλαπλάσια Αριθμού', href: '/e-dimotikou/05-pollaplasia' },
     { id: '06-ekp', label: '🎯 6. ΕΚΠ', href: '/e-dimotikou/06-ekp' },
-    { id: '7-diairetes', label: '🛡️ 7. Διαιρέτες Αριθμού', href: '/e-dimotikou/7-diairetes' },
+    { id: '07-diairetes', label: '🛡️ 7. Διαιρέτες Αριθμού', href: '/e-dimotikou/07-diairetes' },
     { id: '8-mkd', label: '🏆 8. ΜΚΔ', href: '/e-dimotikou/8-mkd' },
     { id: '9-krit-diaret', label: '🔍 9. Κριτήρια Διαιρετότητας', href: '/e-dimotikou/9-krit-diaret' },
     { id: '10-mesitimi', label: '📊 10. Μέση Τιμή', href: '/e-dimotikou/10-mesitimi' },
