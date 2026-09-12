@@ -548,7 +548,7 @@ export default function AnagogiTheoryPage() {
               <div className="flex flex-wrap items-center justify-center gap-4 text-xs 2xl:text-sm">
                 <div className="flex items-center gap-1.5">
                   <span className="w-3.5 h-3.5 rounded bg-amber-500"></span>
-                  <span className="text-slate-700 font-semibold">1/den (Κλασματική Μονάδα)</span>
+                  <span className="text-slate-700 font-semibold">1/{den} (Κλασματική Μονάδα)</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-3.5 h-3.5 rounded bg-sky-500"></span>
