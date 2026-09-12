@@ -12,7 +12,7 @@ export default function EDimotikouMenu() {
     { id: '05-pollaplasia', label: '🔢 5. Πολλαπλάσια Αριθμού', href: '/e-dimotikou/05-pollaplasia' },
     { id: '06-ekp', label: '🎯 6. ΕΚΠ', href: '/e-dimotikou/06-ekp' },
     { id: '07-diairetes', label: '🛡️ 7. Διαιρέτες Αριθμού', href: '/e-dimotikou/07-diairetes' },
-    { id: '8-mkd', label: '🏆 8. ΜΚΔ', href: '/e-dimotikou/8-mkd' },
+    { id: '08-mkd', label: '🏆 8. ΜΚΔ', href: '/e-dimotikou/08-mkd' },
     { id: '9-krit-diaret', label: '🔍 9. Κριτήρια Διαιρετότητας', href: '/e-dimotikou/9-krit-diaret' },
     { id: '10-mesitimi', label: '📊 10. Μέση Τιμή', href: '/e-dimotikou/10-mesitimi' },
     { id: '11-pososta', label: '🏷️ 11. Ποσοστά', href: '/e-dimotikou/11-pososta' },
