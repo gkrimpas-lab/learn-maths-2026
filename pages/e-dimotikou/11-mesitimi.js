@@ -376,24 +376,25 @@ export default function MesiTimiTheoryPage() {
               </p>
             </div>
 
-            {/* Επιλογέας Πλήθους Ομάδων */}
-            <div className="inline-flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 self-start sm:self-center">
-              {[2, 3, 4, 5, 6].map((n) => (
-                <button
-                  key={`btn-count-${n}`}
-                  type="button"
-                  onClick={() => setCount(n)}
-                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-bold transition ${
-                    count === n
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  {n} Ομάδες
-                </button>
-              ))}
-            </div>
-          </div>
+            {/* Επιλογέας Πλήθους Ομάδων - Mobile Responsive & Compact */}
+<div className="inline-flex max-w-full p-1 bg-slate-100 rounded-2xl border border-slate-200 self-start sm:self-center">
+  {[2, 3, 4, 5, 6].map((n) => (
+    <button
+      key={`btn-count-${n}`}
+      type="button"
+      onClick={() => setCount(n)}
+      className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-bold transition select-none touch-manipulation active:scale-95 ${
+        count === n
+          ? 'bg-blue-600 text-white shadow-sm'
+          : 'text-slate-600 hover:text-slate-900'
+      }`}
+    >
+      <span>{n}</span>
+      <span className="hidden sm:inline sm:ml-1">Ομάδες</span>
+      <span className="inline sm:hidden text-[10px] ml-0.5">Ομ.</span>
+    </button>
+  ))}
+</div>
 
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
             {/* Αριστερή Στήλη: Χειριστήρια Ομάδων & Βήματα Υπολογισμού */}
