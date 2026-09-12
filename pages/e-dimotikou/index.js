@@ -19,7 +19,7 @@ export default function EDimotikouMenu() {
     { id: '12-pososta', label: '🏷️ 12. Ποσοστά', href: '/e-dimotikou/12-pososta' },
     { id: '13-gonies', label: '📐 13. Γωνίες', href: '/e-dimotikou/13-gonies' },
     { id: '14-trigona', label: '🔺 14. Τρίγωνα - Γωνίες', href: '/e-dimotikou/14-trigona' },
-    { id: '14-trigona-pleures', label: '🔺 15. Τρίγωνα - Πλευρές', href: '/e-dimotikou/14-trigona-pleures' },
+    { id: '15-trigona-pleures', label: '🔺 15. Τρίγωνα - Πλευρές', href: '/e-dimotikou/15-trigona-pleures' },
     { id: '15-kathetes-eutheies', label: '🔺 16. Κάθετες - Ευθείες', href: '/e-dimotikou/15-kathetes-eutheies' },
     { id: '16-apostasi-simeiou-eutheias', label: '🔺 17. Απόσταση Σημείου από Ευθεία', href: '/e-dimotikou/16-apostasi-simeiou-eutheia' },
     { id: '17-ipsos-trigonou', label: '🔺 18. Ύψος Τριγώνου', href: '/e-dimotikou/17-ipsos-trigonou' },
