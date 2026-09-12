@@ -469,7 +469,7 @@ export default function MesiTimiTheoryPage() {
 
                 <div className="space-y-2 text-xs sm:text-sm font-mono">
                   <div className="p-2.5 bg-blue-50/70 rounded-xl border border-blue-200 space-y-1">
-                    <span className="text-blue-900 font-sans font-bold text-[11px] uppercase tracking-wider block">
+                    <span className="text-blue-900 font-sans font-bold text-[11px] tracking-wider block">
                       1ο Βήμα • Συνολικό Άθροισμα:
                     </span>
                     <div className="font-bold text-slate-900 text-sm">
@@ -478,7 +478,7 @@ export default function MesiTimiTheoryPage() {
                   </div>
 
                   <div className="p-2.5 bg-emerald-50/70 rounded-xl border border-emerald-200 space-y-1">
-                    <span className="text-emerald-900 font-sans font-bold text-[11px] uppercase tracking-wider block">
+                    <span className="text-emerald-900 font-sans font-bold text-[11px] tracking-wider block">
                       2ο Βήμα • Διαίρεση με το Πλήθος ({count}):
                     </span>
                     <div className="font-bold text-slate-900 text-sm">
