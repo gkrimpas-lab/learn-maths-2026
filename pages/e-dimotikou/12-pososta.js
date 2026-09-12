@@ -132,25 +132,26 @@ export default function PosostaTheoryPage() {
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm font-mono">
-  {[
-    { pct: '50%', frac: '50/100', simp: '1/2', dec: '0,5' },
-    { pct: '25%', frac: '25/100', simp: '1/4', dec: '0,25' },
-    { pct: '75%', frac: '75/100', simp: '3/4', dec: '0,75' }
-  ].map((row, idx) => (
-    <div
-      key={`row-${idx}`}
-      className="p-2 sm:p-2.5 bg-white rounded-xl border border-slate-200 shadow-xs flex items-center justify-between gap-1 text-center"
-    >
-      <span className="text-blue-700 font-bold w-12 shrink-0">{row.pct}</span>
-      <span className="text-slate-400 font-sans">＝</span>
-      <span className="text-slate-800 font-semibold tracking-tight whitespace-nowrap">
-        {row.frac} <span className="text-slate-500 font-normal">({row.simp})</span>
-      </span>
-      <span className="text-slate-400 font-sans">＝</span>
-      <span className="text-emerald-700 font-bold w-12 shrink-0 text-right">{row.dec}</span>
-    </div>
-  ))}
-</div>
+                  {[
+                    { pct: '50%', frac: '50/100', simp: '1/2', dec: '0,5' },
+                    { pct: '25%', frac: '25/100', simp: '1/4', dec: '0,25' },
+                    { pct: '75%', frac: '75/100', simp: '3/4', dec: '0,75' }
+                  ].map((row, idx) => (
+                    <div
+                      key={`row-${idx}`}
+                      className="p-2 sm:p-2.5 bg-white rounded-xl border border-slate-200 shadow-xs flex items-center justify-between gap-1 text-center"
+                    >
+                      <span className="text-blue-700 font-bold w-12 shrink-0">{row.pct}</span>
+                      <span className="text-slate-400 font-sans">＝</span>
+                      <span className="text-slate-800 font-semibold tracking-tight whitespace-nowrap">
+                        {row.frac} <span className="text-slate-500 font-normal">({row.simp})</span>
+                      </span>
+                      <span className="text-slate-400 font-sans">＝</span>
+                      <span className="text-emerald-700 font-bold w-12 shrink-0 text-right">{row.dec}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
                 ⚡ Για να μετατρέψουμε ποσοστό σε δεκαδικό, διαιρούμε με το 100 (μετακινούμε την υποδιαστολή 2 θέσεις αριστερά).
@@ -513,7 +514,7 @@ export default function PosostaTheoryPage() {
                 <span className="font-sans text-slate-400">＝</span>
                 <div className="flex flex-col items-center leading-none text-slate-700 text-base">
                   <span>{mathStep1}</span>
-                  <span className="w-18 h-0.5 bg-slate-800 my-1"></span>
+                  <span className="w-20 h-0.5 bg-slate-800 my-1"></span>
                   <span>100</span>
                 </div>
                 <span className="font-sans text-slate-400">＝</span>
