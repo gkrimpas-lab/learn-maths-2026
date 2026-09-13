@@ -3,8 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../../shared/layout-config';
 
-export default function EDimotikouMenu() {
-  export const modules = [
+export const modules = [
   // --- ΕΝΟΤΗΤΑ 1: ΑΡΙΘΜΟΙ & ΚΛΑΣΜΑΤΑ (1 - 10) ---
   {
     id: '01-klasma',
@@ -252,6 +251,7 @@ export default function EDimotikouMenu() {
   }
 ];
 
+export default function EDimotikouMenu() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Head>
@@ -260,7 +260,7 @@ export default function EDimotikouMenu() {
       </Head>
 
       <div>
-        {/* NAVBAR - Fluid */}
+        {/* NAVBAR */}
         <nav className="bg-white shadow-md w-full">
           <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
             <Link href="/" className="text-2xl font-black text-blue-600 tracking-tight">
@@ -284,19 +284,39 @@ export default function EDimotikouMenu() {
           </div>
         </header>
 
-        {/* GRID ΕΝΟΤΗΤΩΝ - 4 στήλες στα μεγάλα monitor, 5 στήλες στα 2K/4K */}
+        {/* GRID ΕΝΟΤΗΤΩΝ ΜΕ ΕΙΚΟΝΕΣ ΚΑΙ BADGES */}
         <main className={`${LAYOUT.CONTAINER} py-12`}>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {modules.map((mod) => (
-              <Link key={mod.id} href={mod.href} passHref legacyBehavior>
-                <a className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group cursor-pointer min-h-[90px] 2xl:p-8">
-                  <span className="font-bold text-gray-700 group-hover:text-cyan-600 text-base md:text-lg 2xl:text-xl transition-colors">
+              <Link
+                key={mod.id}
+                href={mod.href}
+                className="group relative bg-white rounded-3xl border border-slate-200 hover:border-indigo-500 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden transform hover:-translate-y-1"
+              >
+                {/* Εικόνα / Thumbnail Κεφαλαίου */}
+                <div className="w-full h-36 bg-slate-50 border-b border-slate-100 flex items-center justify-center p-4 relative overflow-hidden group-hover:bg-indigo-50/30 transition">
+                  <img
+                    src={mod.image}
+                    alt={mod.label}
+                    className="max-h-full max-w-full object-contain drop-shadow-xs transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  <span className={`absolute top-3 left-3 text-[10px] font-black text-white px-2.5 py-0.5 rounded-full bg-gradient-to-r ${mod.color} shadow-xs`}>
+                    {mod.category}
+                  </span>
+                </div>
+
+                {/* Τίτλος & Βέλος */}
+                <div className="p-4 sm:p-5 flex items-center justify-between mt-auto">
+                  <h3 className="text-sm sm:text-base font-black text-slate-900 group-hover:text-indigo-600 transition">
                     {mod.label}
+                  </h3>
+                  <span className="text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-transform font-bold">
+                    →
                   </span>
-                  <span className="text-xl 2xl:text-2xl transform group-hover:translate-x-1 transition-transform opacity-70 group-hover:opacity-100">
-                    🚀
-                  </span>
-                </a>
+                </div>
               </Link>
             ))}
           </div>
