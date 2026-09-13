@@ -14,13 +14,14 @@ export default function EmbadoSximatonTheoryPage() {
   const w = parseInt(width, 10);
   const h = shape === 'square' ? w : parseInt(height, 10);
 
-  const canvasGridSize = (maxUnits + 1) * unitSize;
+  // Μέγεθος καμβά: 1 κελί περιθώριο αριστερά/πάνω + maxUnits + 1 κελί περιθώριο δεξιά/κάτω
+  const canvasGridSize = (maxUnits + 2) * unitSize;
 
   const getShapeStyle = () => {
     const baseStyle = {
       position: 'absolute',
-      left: `${unitSize / 2}px`,
-      top: `${unitSize / 2}px`,
+      left: `${unitSize}px`,
+      top: `${unitSize}px`,
       width: `${w * unitSize}px`,
       height: `${h * unitSize}px`,
       transition: 'all 0.25s ease',
@@ -55,8 +56,8 @@ export default function EmbadoSximatonTheoryPage() {
   const getGhostRectangleStyle = () => {
     return {
       position: 'absolute',
-      left: `${unitSize / 2}px`,
-      top: `${unitSize / 2}px`,
+      left: `${unitSize}px`,
+      top: `${unitSize}px`,
       width: `${w * unitSize}px`,
       height: `${h * unitSize}px`,
       transition: 'all 0.25s ease',
@@ -265,7 +266,7 @@ export default function EmbadoSximatonTheoryPage() {
               Δυναμικός Καμβάς &amp; Πλέγμα Σχημάτων
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Επίλεξε γεωμετρικό σχήμα και άλλαξε τις διαστάσεις του. Παρατήρησε πώς το εμβαδόν υπολογίζεται δυναμικά και πώς στο τρίγωνο εμφανίζεται το «φάντασμα» του ορθογωνίου.
+              Επίλεξε γεωμετρικό σχήμα και άλλαξε τις διαστάσεις του. Παρατήρησε πώς το εμβαδόν ξεκινάει από την κόκκινη τελεία και κουμπώνει τέλεια πάνω στα τετραγωνάκια του πλέγματος.
             </p>
           </div>
 
@@ -469,14 +470,14 @@ export default function EmbadoSximatonTheoryPage() {
               </div>
             </div>
 
-            {/* Δεξιά Στήλη: Responsive Οπτικοποίηση Πλέγματος */}
+            {/* Δεξιά Στήλη: Responsive Οπτικοποίηση Πλέγματος με Κόκκινη Τελεία Αφετηρίας */}
             <div className="lg:col-span-6 2xl:col-span-6 bg-slate-50 p-6 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 flex flex-col items-center justify-between space-y-6">
               <div className="w-full flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 px-1">
                 <span>ΟΠΤΙΚΟ ΠΛΕΓΜΑ</span>
                 <span className="font-mono text-blue-600 font-bold">1 κουτάκι ＝ 1 cm²</span>
               </div>
 
-              {/* Πλέγμα Canvas */}
+              {/* Πλέγμα Canvas με Κόκκινη Τελεία Αφετηρίας */}
               <div className="w-full flex items-center justify-center overflow-x-auto py-2">
                 <div
                   className="border-2 border-slate-300 relative bg-white rounded-2xl shadow-inner"
@@ -488,16 +489,33 @@ export default function EmbadoSximatonTheoryPage() {
                     backgroundSize: `${unitSize}px ${unitSize}px`
                   }}
                 >
+                  {/* Περίγραμμα του αντίστοιχου ορθογωνίου για το τρίγωνο */}
                   {shape === 'triangle' && <div style={getGhostRectangleStyle()} />}
+
+                  {/* Το επιλεγμένο γεωμετρικό σχήμα */}
                   <div style={getShapeStyle()} />
+
+                  {/* 🔴 Κόκκινη Τελεία Αφετηρίας στο 1ο Τετράγωνο (top-left) */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: `${unitSize + 8}px`,
+                      top: `${unitSize + 8}px`,
+                      width: '8px',
+                      height: '8px',
+                      backgroundColor: '#ef4444',
+                      borderRadius: '50%',
+                      zIndex: 20,
+                      boxShadow: '0 0 4px rgba(239, 68, 68, 0.6)'
+                    }}
+                    title="Αφετηρία μέτρησης τετραγώνων (1ο κουτάκι)"
+                  />
                 </div>
               </div>
 
               {/* Callout Συμπεράσματος */}
               <div className="w-full max-w-md p-3.5 bg-slate-100 rounded-2xl border border-slate-200 text-center font-mono text-xs sm:text-sm text-slate-700">
-                {shape === 'triangle'
-                  ? '📐 Η διακεκομμένη γραμμή δείχνει το ορθογώνιο που περιέχει το τρίγωνο (ακριβώς διπλάσιο μέγεθος).'
-                  : '🟩 Κάθε κουτάκι του πλέγματος αντιστοιχεί σε 1 τετραγωνικό εκατοστό (1 cm²).'}
+                🔴 Η <strong>κόκκινη τελεία</strong> δείχνει το πρώτο κουτάκι (1 cm²) από όπου ξεκινά η καταμέτρηση των τετραγώνων!
               </div>
             </div>
           </div>
