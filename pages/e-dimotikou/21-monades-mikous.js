@@ -458,7 +458,7 @@ export default function MonadesMikousTheoryPage() {
 
               {/* Callout Συμπεράσματος */}
               <div className="w-full max-w-md p-3.5 bg-slate-100 rounded-2xl border border-slate-200 text-center font-mono text-xs sm:text-sm text-slate-700">
-                🪜 Κάθε σκαλοπάτι προς τα κάτω πολλαπλασιάζει ( · 10 ), εκτός από το άλμα km → m ( · 1.000 )!
+                🪜 Κάθε σκαλοπάτι προς τα κάτω πολλαπλασιάζει     ( · 10 ), εκτός από το άλμα km → m ( · 1.000 )!
               </div>
             </div>
           </div>
