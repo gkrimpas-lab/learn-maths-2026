@@ -352,23 +352,23 @@ export default function MonadesEpifaneiasTheoryPage() {
                 </div>
               </div>
 
-              {/* Βήμα-βήμα ανάλυση υπολογισμών */}
-              <div className="bg-emerald-50 text-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-200 space-y-2.5 shadow-xs mt-4">
+              {/* Βήμα-βήμα ανάλυση υπολογισμών - Διορθωμένο για στενές οθόνες */}
+              <div className="bg-emerald-50 text-slate-900 p-3.5 sm:p-5 rounded-2xl border border-emerald-200 space-y-2.5 shadow-xs mt-4">
                 <span className="text-[11px] font-black text-emerald-800 uppercase tracking-wider block">
                   ΜΑΘΗΜΑΤΙΚΗ ΑΝΑΛΥΣΗ ΜΕΤΑΤΡΟΠΩΝ
                 </span>
-                <div className="space-y-1.5 font-mono text-xs sm:text-sm text-emerald-950">
-                  <div className="flex justify-between border-b border-emerald-200/60 pb-1">
-                    <span>{squareDecimeters} dm² ： 100 ＝</span>
-                    <strong className="font-bold text-teal-800">{currentM2.toLocaleString('el-GR')} m²</strong>
+                <div className="space-y-2 font-mono text-[11px] min-[360px]:text-xs sm:text-sm text-emerald-950">
+                  <div className="flex items-center justify-between gap-1 border-b border-emerald-200/60 pb-1.5">
+                    <span className="whitespace-nowrap">{squareDecimeters} dm² ： 100 ＝</span>
+                    <strong className="font-bold text-teal-800 whitespace-nowrap">{currentM2.toLocaleString('el-GR')} m²</strong>
                   </div>
-                  <div className="flex justify-between border-b border-emerald-200/60 pb-1">
-                    <span>{squareDecimeters} dm² · 100 ＝</span>
-                    <strong className="font-bold text-amber-800">{formatGreekNumber(currentCm2)} cm²</strong>
+                  <div className="flex items-center justify-between gap-1 border-b border-emerald-200/60 pb-1.5">
+                    <span className="whitespace-nowrap">{squareDecimeters} dm² · 100 ＝</span>
+                    <strong className="font-bold text-amber-800 whitespace-nowrap">{formatGreekNumber(currentCm2)} cm²</strong>
                   </div>
-                  <div className="flex justify-between pb-0.5">
-                    <span>{formatGreekNumber(currentCm2)} cm² · 100 ＝</span>
-                    <strong className="font-bold text-rose-800">{formatGreekNumber(currentMm2)} mm²</strong>
+                  <div className="flex items-center justify-between gap-1 pb-0.5">
+                    <span className="whitespace-nowrap">{formatGreekNumber(currentCm2)} cm² · 100 ＝</span>
+                    <strong className="font-bold text-rose-800 whitespace-nowrap">{formatGreekNumber(currentMm2)} mm²</strong>
                   </div>
                 </div>
               </div>
