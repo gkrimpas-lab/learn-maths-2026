@@ -230,15 +230,15 @@ export default function MonadesEpifaneiasTheoryPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Αριστερή Στήλη: Χειριστήρια & Πίνακας Μετατροπών */}
-            <div className="lg:col-span-6 2xl:col-span-6 space-y-6 bg-slate-50 p-6 sm:p-7 2xl:p-9 rounded-3xl border border-slate-200 flex flex-col justify-between">
+            <div className="lg:col-span-6 2xl:col-span-6 space-y-6 bg-slate-50 p-4 sm:p-7 2xl:p-9 rounded-3xl border border-slate-200 flex flex-col justify-between">
               <div className="space-y-6">
-                {/* Stepper dm² */}
-                <div className="space-y-2">
-                  <div className="h-8 flex items-center justify-between text-left">
-                    <span className="text-sm 2xl:text-base font-bold text-slate-800">
+                {/* Stepper dm² - Αποτροπή υπερχείλισης και αναδίπλωσης */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs sm:text-sm 2xl:text-base font-bold text-slate-800">
                       Τετραγωνικά δεκατόμετρα ( dm² ):
                     </span>
-                    <span className="min-w-[90px] text-center font-mono font-black text-2xl text-blue-600 bg-white px-2.5 py-0.5 rounded-xl border border-blue-200 shadow-sm">
+                    <span className="shrink-0 whitespace-nowrap font-mono font-black text-base sm:text-xl text-blue-600 bg-white px-2.5 py-1 rounded-xl border border-blue-200 shadow-xs">
                       {squareDecimeters} / 100
                     </span>
                   </div>
@@ -285,7 +285,7 @@ export default function MonadesEpifaneiasTheoryPage() {
                   </div>
 
                   {/* Γρήγορα κουμπιά επιλογής */}
-                  <div className="flex flex-wrap items-center justify-center gap-1.5 pt-2">
+                  <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
                     {[1, 25, 50, 75, 100].map((val) => (
                       <button
                         key={`btn-dm-${val}`}
@@ -295,7 +295,7 @@ export default function MonadesEpifaneiasTheoryPage() {
                           e.stopPropagation();
                           setSquareDecimeters(val);
                         }}
-                        className={`text-xs font-mono px-3 py-1 rounded-lg font-semibold transition ${
+                        className={`text-xs font-mono px-2.5 sm:px-3 py-1 rounded-lg font-semibold transition ${
                           squareDecimeters === val
                             ? 'bg-blue-600 text-white shadow-xs'
                             : 'bg-white hover:bg-slate-200 text-slate-700 border border-slate-200'
@@ -307,33 +307,44 @@ export default function MonadesEpifaneiasTheoryPage() {
                   </div>
                 </div>
 
-                {/* Πλέγμα Καρτών Μετατροπών */}
+                {/* Πλέγμα Καρτών Μετατροπών - Αποτροπή διαρροής των μεγάλων αριθμών */}
                 <div>
-                  <h4 className="text-xs 2xl:text-sm font-black tracking-wider text-slate-500 uppercase mb-3">
+                  <h4 className="text-xs 2xl:text-sm font-black tracking-wider text-slate-500 uppercase mb-2.5">
                     ΙΣΟΔΥΝΑΜΕΣ ΕΠΙΦΑΝΕΙΕΣ
                   </h4>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white border-2 border-teal-500/30 rounded-2xl p-4 shadow-xs">
-                      <span className="text-xs font-black text-teal-700 uppercase block">🏠 m²</span>
-                      <div className="text-xl font-mono font-black text-slate-900 mt-1">
+                  <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                    <div className="bg-white border-2 border-teal-500/30 rounded-2xl p-3 sm:p-4 shadow-xs overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-black text-teal-700 uppercase block truncate">
+                        🏠 m²
+                      </span>
+                      <div className="text-sm min-[380px]:text-base sm:text-xl font-mono font-black text-slate-900 mt-1 truncate">
                         {currentM2.toLocaleString('el-GR')}
                       </div>
                     </div>
-                    <div className="bg-white border-2 border-blue-500/30 rounded-2xl p-4 shadow-xs">
-                      <span className="text-xs font-black text-blue-700 uppercase block">🟩 dm²</span>
-                      <div className="text-xl font-mono font-black text-slate-900 mt-1">
+
+                    <div className="bg-white border-2 border-blue-500/30 rounded-2xl p-3 sm:p-4 shadow-xs overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-black text-blue-700 uppercase block truncate">
+                        🟩 dm²
+                      </span>
+                      <div className="text-sm min-[380px]:text-base sm:text-xl font-mono font-black text-slate-900 mt-1 truncate">
                         {squareDecimeters}
                       </div>
                     </div>
-                    <div className="bg-white border-2 border-amber-500/30 rounded-2xl p-4 shadow-xs">
-                      <span className="text-xs font-black text-amber-700 uppercase block">📏 cm²</span>
-                      <div className="text-xl font-mono font-black text-slate-900 mt-1">
+
+                    <div className="bg-white border-2 border-amber-500/30 rounded-2xl p-3 sm:p-4 shadow-xs overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-black text-amber-700 uppercase block truncate">
+                        📏 cm²
+                      </span>
+                      <div className="text-sm min-[380px]:text-base sm:text-xl font-mono font-black text-slate-900 mt-1 truncate">
                         {formatGreekNumber(currentCm2)}
                       </div>
                     </div>
-                    <div className="bg-white border-2 border-rose-500/30 rounded-2xl p-4 shadow-xs">
-                      <span className="text-xs font-black text-rose-700 uppercase block">🔍 mm²</span>
-                      <div className="text-xl font-mono font-black text-slate-900 mt-1">
+
+                    <div className="bg-white border-2 border-rose-500/30 rounded-2xl p-3 sm:p-4 shadow-xs overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-black text-rose-700 uppercase block truncate">
+                        🔍 mm²
+                      </span>
+                      <div className="text-sm min-[380px]:text-base sm:text-xl font-mono font-black text-slate-900 mt-1 truncate">
                         {formatGreekNumber(currentMm2)}
                       </div>
                     </div>
@@ -342,7 +353,7 @@ export default function MonadesEpifaneiasTheoryPage() {
               </div>
 
               {/* Βήμα-βήμα ανάλυση υπολογισμών */}
-              <div className="bg-emerald-50 text-slate-900 p-5 rounded-2xl border border-emerald-200 space-y-2.5 shadow-xs">
+              <div className="bg-emerald-50 text-slate-900 p-4 sm:p-5 rounded-2xl border border-emerald-200 space-y-2.5 shadow-xs mt-4">
                 <span className="text-[11px] font-black text-emerald-800 uppercase tracking-wider block">
                   ΜΑΘΗΜΑΤΙΚΗ ΑΝΑΛΥΣΗ ΜΕΤΑΤΡΟΠΩΝ
                 </span>
