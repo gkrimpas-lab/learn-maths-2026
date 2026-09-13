@@ -3,13 +3,18 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { LAYOUT } from '../shared/layout-config';
 
+// 🔑 Βάλε εδώ το Access Key που σου ήρθε στο Gmail από το web3forms.com
+const WEB3FORMS_ACCESS_KEY = "2d4b008c-46ed-47e5-987c-458eed8be84b";
+
 export default function Epikoinonia() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
+    botcheck: '' // Honeypot πεδίο για προστασία από bots
   });
+
   const [status, setStatus] = useState({ state: 'idle', message: '' });
 
   const handleChange = (e) => {
@@ -19,33 +24,58 @@ export default function Epikoinonia() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 1. Έλεγχος ασφαλείας Honeypot: Αν το κρυφό πεδίο συμπληρώθηκε, είναι bot!
+    if (formData.botcheck) {
+      // Κάνουμε σιωπηλή απόρριψη ώστε το bot να νομίζει ότι ολοκληρώθηκε
+      setStatus({ state: 'success', message: 'Το μήνυμά σας στάλθηκε με επιτυχία!' });
+      return;
+    }
+
+    // 2. Έλεγχος αν έχει ρυθμιστεί το κλειδί
+    if (WEB3FORMS_ACCESS_KEY.includes('ΒΑΛΕ_ΕΔΩ')) {
+      setStatus({
+        state: 'error',
+        message: 'Δεν έχει ρυθμιστεί το Access Key. Παρακαλώ βάλτε το κλειδί από το web3forms.com στον κώδικα.'
+      });
+      return;
+    }
+
     setStatus({ state: 'loading', message: 'Αποστολή μηνύματος...' });
 
     try {
-      // Αντικατάστησε το YOUR_FORMSPREE_ID με το ID της φόρμας σου από το formspree.io
-      const response = await fetch('https://formspree.io/f/YOUR_FORMSPREE_ID', {
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          from_name: 'LearnMaths.gr Φόρμα Επικοινωνίας',
+          botcheck: formData.botcheck
+        })
       });
 
-      if (response.ok) {
+      const result = await response.json();
+
+      if (result.success) {
         setStatus({
           state: 'success',
           message: 'Το μήνυμά σας στάλθηκε με επιτυχία! Θα σας απαντήσω το συντομότερο δυνατό.'
         });
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', subject: '', message: '', botcheck: '' });
       } else {
-        const data = await response.json();
-        throw new Error(data.error || 'Παρουσιάστηκε σφάλμα κατά την αποστολή.');
+        throw new Error(result.message || 'Σφάλμα κατά την αποστολή.');
       }
     } catch (err) {
       setStatus({
         state: 'error',
-        message: 'Υπήρξε πρόβλημα στην αποστολή. Παρακαλώ δοκιμάστε ξανά ή στείλτε απευθείας email.'
+        message: 'Υπήρξε πρόβλημα στην αποστολή. Παρακαλώ δοκιμάστε ξανά ή στείλτε απευθείας email στο gkrimpas.apps@gmail.com.'
       });
     }
   };
@@ -146,6 +176,21 @@ export default function Epikoinonia() {
                   </p>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
+                    
+                    {/* 🍯 HONEYPOT FIELD (Κρυφό πεδίο προστασίας από Spam Bots) */}
+                    <div className="hidden" aria-hidden="true">
+                      <label htmlFor="botcheck">Μην συμπληρώσετε αυτό το πεδίο αν είστε άνθρωπος</label>
+                      <input
+                        type="text"
+                        name="botcheck"
+                        id="botcheck"
+                        tabIndex="-1"
+                        autoComplete="off"
+                        value={formData.botcheck}
+                        onChange={handleChange}
+                      />
+                    </div>
+
                     <div>
                       <label htmlFor="name" className="block text-xs font-bold text-gray-700 uppercase mb-1">
                         Ονοματεπώνυμο
@@ -244,7 +289,7 @@ export default function Epikoinonia() {
                 </div>
 
                 <p className="text-[11px] text-gray-400 text-center mt-4">
-                  * Τα στοιχεία σας χρησιμοποιούνται αποκλειστικά για την απάντηση στο μήνυμά σας.
+                  * Προστατεύεται από ανεπιθύμητα μηνύματα (spam protection). Τα στοιχεία σας χρησιμοποιούνται αποκλειστικά για την απάντηση.
                 </p>
               </div>
 
