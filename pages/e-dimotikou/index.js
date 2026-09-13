@@ -24,7 +24,7 @@ export default function EDimotikouMenu() {
     { id: '17-apostasi-simeiou-eutheias', label: '🔺 17. Απόσταση Σημείου από Ευθεία', href: '/e-dimotikou/17-apostasi-simeiou-eutheia' },
     { id: '18-ipsos-trigonou', label: '🔺 18. Ύψος Τριγώνου', href: '/e-dimotikou/18-ipsos-trigonou' },
     { id: '19-aksonas-simmetrias', label: '🔺 19. Άξονας συμμετρίας', href: '/e-dimotikou/19-aksonas-simmetrias' },
-    { id: '19-mikos-kiklou', label: '🔺 20. Μήκος Κύκλου', href: '/e-dimotikou/19-mikos-kiklou' },
+    { id: '20-mikos-kiklou', label: '🔺 20. Μήκος Κύκλου', href: '/e-dimotikou/20-mikos-kiklou' },
     { id: '20-monades-mikous', label: '🔺 21. Μονάδες Μέτρησης Μήκους', href: '/e-dimotikou/20-monades-mikous' },
     { id: '21-poligona', label: '🔺 22. Πολύγωνα', href: '/e-dimotikou/21-poligona' },
     { id: '22-kanonika-poligona', label: '🔺 23. Κανονικά Πολύγωνα', href: '/e-dimotikou/22-kanonika-poligona' },
