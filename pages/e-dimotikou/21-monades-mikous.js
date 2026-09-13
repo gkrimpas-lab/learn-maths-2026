@@ -456,9 +456,11 @@ export default function MonadesMikousTheoryPage() {
                 </svg>
               </div>
 
-              {/* Callout Συμπεράσματος */}
-              <div className="w-full max-w-md p-3.5 bg-slate-100 rounded-2xl border border-slate-200 text-center font-mono text-xs sm:text-sm text-slate-700">
-                🪜 Κάθε σκαλοπάτι προς τα κάτω πολλαπλασιάζει     ( · 10 ), εκτός από το άλμα km → m ( · 1.000 )!
+              {/* Callout Συμπεράσματος (Διορθωμένο Line-break) */}
+              <div className="w-full max-w-md p-3.5 bg-slate-100 rounded-2xl border border-slate-200 text-center font-mono text-xs sm:text-sm text-slate-700 leading-relaxed">
+                🪜 Κάθε σκαλοπάτι προς τα κάτω πολλαπλασιάζει
+                <br />
+                <span className="whitespace-nowrap">( · 10 )</span>, εκτός από το άλμα km → m <span className="whitespace-nowrap">( · 1.000 )</span>!
               </div>
             </div>
           </div>
