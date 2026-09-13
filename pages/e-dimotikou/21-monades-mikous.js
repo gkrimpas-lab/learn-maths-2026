@@ -5,7 +5,7 @@ import Layout from '../../components/Layout';
 
 export default function MonadesMikousTheoryPage() {
   const [selectedUnit, setSelectedUnit] = useState(3); // Αρχική επιλογή: Μέτρο (m)
-  const [inputValue, setInputValue] = useState('150'); // String για ομαλή πληκτρολόγηση δεκαδικών
+  const [inputValue, setInputValue] = useState('150'); // String με αυστηρό validation
 
   const units = [
     { id: 0, name: 'χιλιοστό (mm)', short: 'mm', factorToMeters: 0.001, desc: 'Για πολύ μικρά μήκη (π.χ. το πάχος μιας πιστωτικής κάρτας).' },
@@ -17,8 +17,28 @@ export default function MonadesMikousTheoryPage() {
 
   const currentUnit = units[selectedUnit];
 
+  // Αυστηρός έλεγχος δεδομένων εισόδου: μόνο νούμερα, μία υποδιαστολή, μέγιστο 10 χαρακτήρες
+  const handleInputChange = (rawVal) => {
+    // 1. Μετατροπή τελείας σε κόμμα και αφαίρεση οποιουδήποτε χαρακτήρα εκτός από ψηφία 0-9 και κόμμα
+    let clean = rawVal.replace('.', ',').replace(/[^0-9,]/g, '');
+
+    // 2. Επιτρέπεται το πολύ ένα κόμμα
+    const parts = clean.split(',');
+    if (parts.length > 2) {
+      clean = parts[0] + ',' + parts.slice(1).join('');
+    }
+
+    // 3. Αυστηρό όριο 10 ψηφίων/χαρακτήρων
+    if (clean.length > 10) {
+      clean = clean.slice(0, 10);
+    }
+
+    setInputValue(clean);
+  };
+
   // Μετατροπή και εμφάνιση με ακρίβεια έως 6 δεκαδικά ψηφία
   const convertValue = (targetUnitObj) => {
+    if (!inputValue || inputValue === ',') return '0';
     const cleanStr = inputValue.replace(',', '.');
     const numValue = parseFloat(cleanStr);
     if (isNaN(numValue) || numValue <= 0) return '0';
@@ -232,7 +252,7 @@ export default function MonadesMikousTheoryPage() {
               Ζωντανός Μετατροπέας &amp; Οπτική Σκάλα Μονάδων
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Πληκτρολόγησε οποιονδήποτε αριθμό (ακέραιο ή δεκαδικό), επίλεξε τη μονάδα βάσης και δες ταυτόχρονα όλες τις ισοδύναμες τιμές και τη θέση στη γεωμετρική σκάλα.
+              Πληκτρολόγησε οποιονδήποτε αριθμό (μόνο ψηφία, έως 10 χαρακτήρες), επίλεξε τη μονάδα βάσης και δες ταυτόχρονα όλες τις ισοδύναμες τιμές και τη θέση στη γεωμετρική σκάλα.
             </p>
           </div>
 
@@ -246,15 +266,22 @@ export default function MonadesMikousTheoryPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
                   <div className="sm:col-span-7 space-y-1">
-                    <label htmlFor="input-amount" className="text-[11px] font-black text-slate-400 uppercase tracking-wider block">
-                      ΠΟΣΟΤΗΤΑ
-                    </label>
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="input-amount" className="text-[11px] font-black text-slate-400 uppercase tracking-wider block">
+                        ΠΟΣΟΤΗΤΑ
+                      </label>
+                      <span className="text-[10px] font-mono font-bold text-slate-400">
+                        {inputValue.length}/10 ψηφία
+                      </span>
+                    </div>
                     <input
                       id="input-amount"
                       type="text"
                       inputMode="decimal"
+                      autoComplete="off"
+                      maxLength={10}
                       value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
+                      onChange={(e) => handleInputChange(e.target.value)}
                       placeholder="π.χ. 150"
                       className="w-full bg-slate-50 border border-slate-300 font-mono font-black text-xl p-2.5 rounded-xl text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
                     />
