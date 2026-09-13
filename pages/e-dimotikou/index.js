@@ -26,7 +26,7 @@ export default function EDimotikouMenu() {
     { id: '19-aksonas-simmetrias', label: '🔺 19. Άξονας συμμετρίας', href: '/e-dimotikou/19-aksonas-simmetrias' },
     { id: '20-mikos-kiklou', label: '🔺 20. Μήκος Κύκλου', href: '/e-dimotikou/20-mikos-kiklou' },
     { id: '21-monades-mikous', label: '🔺 21. Μονάδες Μέτρησης Μήκους', href: '/e-dimotikou/21-monades-mikous' },
-    { id: '21-poligona', label: '🔺 22. Πολύγωνα', href: '/e-dimotikou/21-poligona' },
+    { id: '22-poligona', label: '🔺 22. Πολύγωνα', href: '/e-dimotikou/22-poligona' },
     { id: '22-kanonika-poligona', label: '🔺 23. Κανονικά Πολύγωνα', href: '/e-dimotikou/22-kanonika-poligona' },
     { id: '23-perimetros', label: '🔺 24. Περίμετρος', href: '/e-dimotikou/23-perimetros' },
     { id: '24-embado', label: '🔺 25. Εμβαδό', href: '/e-dimotikou/24-embado' },
