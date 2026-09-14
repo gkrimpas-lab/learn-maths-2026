@@ -88,7 +88,6 @@ const STANDARD_PROBLEMS_POOL = [
       const mult = randInt(2, 4);
       const wins = base * mult;
       const losses = base * 2;
-      const total = wins + losses;
       const gcd = getGCD(wins, losses);
       return {
         text: `Μια ομάδα μπάσκετ σε ένα τουρνουά πέτυχε ${wins} νίκες και είχε ${losses} ήττες. Ποιος είναι ο λόγος των νικών προς τις ήττες σε ανάγωγη μορφή;`,
@@ -194,7 +193,6 @@ const HARD_PROBLEMS_POOL = [
       const rB = randInt(6, 8);
       const unit = randInt(12, 25);
       const sum = (rA + rB) * unit;
-      const valA = rA * unit;
       const valB = rB * unit;
       return {
         text: `Δύο χωράφια έχουν συνολικό εμβαδόν ${sum} m². Ο λόγος του εμβαδού του πρώτου χωραφιού προς το εμβαδόν του δεύτερου είναι ${rA} ： ${rB}. Πόσα m² είναι το εμβαδόν του μεγαλύτερου χωραφιού;`,
@@ -210,7 +208,6 @@ const HARD_PROBLEMS_POOL = [
       const rY = randInt(5, 7);
       const diffMultiplier = randInt(8, 20);
       const diff = (rY - rX) * diffMultiplier;
-      const x = rX * diffMultiplier;
       const y = rY * diffMultiplier;
       return {
         text: `Ο λόγος των ηλικιών ενός παιδιού και του πατέρα του είναι ${rX} ： ${rY}. Αν ο πατέρας είναι κατά ${diff} έτη μεγαλύτερος από το παιδί, πόσα έτη είναι η ηλικία του πατέρα;`,
@@ -303,7 +300,6 @@ const HARD_PROBLEMS_POOL = [
       const a = randInt(2, 5);
       const b = randInt(3, 7);
       const c = randInt(4, 8);
-      const product = (a * b) / (b * c); // a/c
       const gcd = getGCD(a, c);
       return {
         text: `Αν ο λόγος x ： y είναι ίσος με ${a} ： ${b} και ο λόγος y ： z είναι ίσος με ${b} ： ${c}, ποιος είναι ο απλοποιημένος λόγος x ： z;`,
@@ -333,15 +329,16 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const girlsRatio = randInt(4, 6);
       const boysRatio = randInt(3, 5);
-      const diff = randInt(4, 10) * 2;
-      const k = diff / (girlsRatio - boysRatio > 0 ? girlsRatio - boysRatio : 1);
-      const actualGirls = girlsRatio * k;
-      const actualBoys = boysRatio * k;
-      const total = actualGirls + actualBoys;
+      const diffMultiplier = randInt(3, 7);
+      const diffParts = Math.abs(girlsRatio - boysRatio) || 1;
+      const actualDiff = diffParts * diffMultiplier * 2;
+      const k = actualDiff / diffParts;
+      const totalParts = girlsRatio + boysRatio;
+      const total = totalParts * k;
       return {
-        text: `Σε μια κατασκήνωση ο λόγος των κοριτσιών προς τα αγόρια είναι ${girlsRatio} ： ${boysRatio}. Αν τα κορίτσια είναι κατά ${Math.abs(actualGirls - actualBoys)} περισσότερα από τα αγόρια, ποιο είναι το συνολικό πλήθος των παιδιών;`,
+        text: `Σε μια κατασκήνωση ο λόγος των κοριτσιών προς τα αγόρια είναι ${girlsRatio} ： ${boysRatio}. Αν τα κορίτσια είναι κατά ${actualDiff} περισσότερα από τα αγόρια, ποιο είναι το συνολικό πλήθος των παιδιών;`,
         correctVal: total,
-        explanation: `Η διαφορά των μερών είναι ${Math.abs(girlsRatio - boysRatio)}. Αντιστοιχεί σε ${Math.abs(actualGirls - actualBoys)} παιδιά, άρα 1 μέρος ＝ ${k} παιδιά. Το σύνολο των μερών είναι ${girlsRatio} ＋ ${boysRatio} ＝ ${girlsRatio + boysRatio}. Άρα συνολικά παιδιά: ${girlsRatio + boysRatio} · ${k} ＝ ${total}.`
+        explanation: `Η διαφορά των μερών είναι ${diffParts}. Αντιστοιχεί σε ${actualDiff} παιδιά, άρα 1 μέρος ＝ ${actualDiff} ： ${diffParts} ＝ ${k} παιδιά. Το σύνολο των μερών είναι ${girlsRatio} ＋ ${boysRatio} ＝ ${totalParts}. Άρα συνολικά παιδιά: ${totalParts} · ${k} ＝ ${total}.`
       };
     }
   }
@@ -426,7 +423,7 @@ function generateQuestions() {
     const options = [
       { text: `Ο λόγος ${b} ： ${a}`, isCorrect: true },
       { text: `Ο λόγος ${a} ： ${a + b}`, isCorrect: false },
-      { text: `Ο λόγος ${a · 2} ： ${b · 2}`, isCorrect: false },
+      { text: `Ο λόγος ${a * 2} ： ${b * 2}`, isCorrect: false },
       { text: `Ο λόγος 1 ： ${b}`, isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
@@ -470,7 +467,7 @@ function generateQuestions() {
     const correct = `${eqA} ： ${eqB}`;
     const wrong1 = `${eqA + 1} ： ${eqB}`;
     const wrong2 = `${eqA} ： ${eqB + 2}`;
-    const wrong3 = `${baseA · 2} ： ${baseB · 3}`;
+    const wrong3 = `${baseA * 2} ： ${baseB * 3}`;
 
     const options = [
       { text: correct, isCorrect: true },
