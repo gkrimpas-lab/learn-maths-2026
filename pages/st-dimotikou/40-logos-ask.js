@@ -3,6 +3,15 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
+// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+}
+
 // Βοηθητικη συναρτηση ΜΚΔ
 function getGCD(a, b) {
   let x = Math.abs(Math.round(a));
@@ -55,8 +64,8 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_std_2',
     generate: () => {
-      const width = randInt(4, 9) * 10; // σε cm
-      const lengthMeters = randInt(1, 3); // σε m
+      const width = randInt(4, 9) * 10;
+      const lengthMeters = randInt(1, 3);
       const lengthCm = lengthMeters * 100;
       const gcd = getGCD(width, lengthCm);
       return {
@@ -70,8 +79,8 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_std_3',
     generate: () => {
-      const sugar = randInt(2, 6) * 50; // π.χ. 250 g
-      const flour = randInt(2, 4) * 500; // π.χ. 1000 g (1 kg)
+      const sugar = randInt(2, 6) * 50;
+      const flour = randInt(2, 4) * 500;
       const gcd = getGCD(sugar, flour);
       return {
         text: `Σε μια συνταγή ζαχαροπλαστικής χρησιμοποιούνται ${sugar} g ζάχαρης και ${flour / 1000} kg αλευριού. Βρείτε τον απλοποιημένο λόγο της ποσότητας της ζάχαρης προς την ποσότητα του αλευριού.`,
@@ -360,7 +369,7 @@ function generateQuestions() {
     qList.push({
       id: 1,
       type: 'fraction_input',
-      title: 'Ερώτηση 1 • Απλοποίηση Λόγου',
+      title: 'ΕΡΩΤΗΣΗ 1 • ΑΠΛΟΠΟΙΗΣΗ ΛΟΓΟΥ',
       instruction: 'Γράψτε τον λόγο στην απλούστερη ανάγωγη μορφή του (αριθμητής / παρονομαστής):',
       prompt: `Να απλοποιηθεί πλήρως ο λόγος ${num} ： ${den}`,
       ansNum: num / gcd,
@@ -389,7 +398,7 @@ function generateQuestions() {
     qList.push({
       id: 2,
       type: 'mcq',
-      title: 'Ερώτηση 2 • Τιμή του Λόγου',
+      title: 'ΕΡΩΤΗΣΗ 2 • ΤΙΜΗ ΤΟΥ ΛΟΓΟΥ',
       instruction: 'Επιλέξτε τη σωστή δεκαδική τιμή του λόγου:',
       prompt: `Ποια είναι η ακριβής τιμή του λόγου ${num} ： ${den};`,
       options,
@@ -407,7 +416,7 @@ function generateQuestions() {
     qList.push({
       id: 3,
       type: 'fraction_input',
-      title: 'Ερώτηση 3 • Σύγκριση Ομοειδών Μεγεθών',
+      title: 'ΕΡΩΤΗΣΗ 3 • ΣΥΓΚΡΙΣΗ ΟΜΟΕΙΔΩΝ ΜΕΓΕΘΩΝ',
       instruction: 'Υπολογίστε τον ανάγωγο λόγο (αριθμητής / παρονομαστής):',
       prompt: `Ποιος είναι ο απλοποιημένος λόγος του μήκους ${cm} cm προς το μήκος ${m} m;`,
       ansNum: cm / gcd,
@@ -430,7 +439,7 @@ function generateQuestions() {
     qList.push({
       id: 4,
       type: 'mcq',
-      title: 'Ερώτηση 4 • Αντίστροφος Λόγος',
+      title: 'ΕΡΩΤΗΣΗ 4 • ΑΝΤΙΣΤΡΟΦΟΣ ΛΟΓΟΣ',
       instruction: 'Επιλέξτε τη σωστή μαθηματική πρόταση:',
       prompt: `Ποιος είναι ο αντίστροφος λόγος του λόγου ${a} ： ${b};`,
       options,
@@ -447,7 +456,7 @@ function generateQuestions() {
     qList.push({
       id: 5,
       type: 'decimal_input',
-      title: 'Ερώτηση 5 • Λόγος Ετεροειδών Μεγεθών',
+      title: 'ΕΡΩΤΗΣΗ 5 • ΛΟΓΟΣ ΕΤΕΡΟΕΙΔΩΝ ΜΕΓΕΘΩΝ',
       instruction: 'Εισαγάγετε τον αριθμό (ακέραιος ή δεκαδικός):',
       prompt: `Ένα τρένο διανύει ${km} km σε ${hours} ώρες. Ποια είναι η τιμή του λόγου της απόστασης προς τον χρόνο (δηλαδή η μέση ταχύτητα σε km/h);`,
       correctVal: speed,
@@ -479,7 +488,7 @@ function generateQuestions() {
     qList.push({
       id: 6,
       type: 'mcq',
-      title: 'Ερώτηση 6 • Ισοδύναμοι Λόγοι',
+      title: 'ΕΡΩΤΗΣΗ 6 • ΙΣΟΔΥΝΑΜΟΙ ΛΟΓΟΙ',
       instruction: 'Επιλέξτε τον λόγο που είναι ίσος με τον δοσμένο:',
       prompt: `Ποιος από τους παρακάτω λόγους είναι ίσος με τον λόγο ${baseA} ： ${baseB};`,
       options,
@@ -498,7 +507,7 @@ function generateQuestions() {
     qList.push({
       id: 7,
       type: 'fraction_input',
-      title: 'Ερώτηση 7 • Πρόβλημα Καθημερινής Εφαρμογής',
+      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΗΣ ΕΦΑΡΜΟΓΗΣ',
       instruction: 'Λύστε το πρόβλημα και γράψτε τον απλοποιημένο λόγο (αριθμητής / παρονομαστής):',
       prompt: stdProb1.text,
       ansNum: stdProb1.ansNum,
@@ -522,7 +531,7 @@ function generateQuestions() {
     qList.push({
       id: 8,
       type: 'mcq',
-      title: 'Ερώτηση 8 • Πρόβλημα Αναλογίας',
+      title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΑΝΑΛΟΓΙΑΣ',
       instruction: 'Επιλέξτε τη σωστή απάντηση για το πρόβλημα:',
       prompt: stdProb2.text,
       options: optionsQ8,
@@ -542,7 +551,7 @@ function generateQuestions() {
       qList.push({
         id: 9,
         type: 'fraction_input',
-        title: 'Ερώτηση 9 • Πρόβλημα Αυξημένης Δυσκολίας',
+        title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
         instruction: 'Υπολογίστε τον ανάγωγο λόγο (αριθμητής / παρονομαστής):',
         prompt: hardProb1.text,
         ansNum: hardProb1.ansNum,
@@ -553,7 +562,7 @@ function generateQuestions() {
       qList.push({
         id: 9,
         type: 'decimal_input',
-        title: 'Ερώτηση 9 • Πρόβλημα Αυξημένης Δυσκολίας',
+        title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
         instruction: 'Υπολογίστε και εισαγάγετε το τελικό αποτέλεσμα:',
         prompt: hardProb1.text,
         correctVal: hardProb1.correctVal,
@@ -590,7 +599,7 @@ function generateQuestions() {
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'Ερώτηση 10 • Σύνθετο Πρόβλημα Αυξημένης Δυσκολίας',
+      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
       instruction: 'Επιλέξτε τη σωστή επιλογή:',
       prompt: hardProb2.text,
       options: optionsQ10,
@@ -751,10 +760,10 @@ export default function LogosExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Ερωτησης */}
+                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια) */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <span className="text-xs font-black uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
-                    {q.title}
+                  <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
+                    {toCleanUppercase(q.title)}
                   </span>
                   {isSubmitted && (
                     <span
@@ -928,7 +937,7 @@ export default function LogosExercisesPage() {
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
-              <span className="text-xs text-slate-400 uppercase font-semibold block">
+              <span className="text-xs text-slate-400 font-semibold block">
                 ΣΚΟΡ
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
@@ -937,7 +946,7 @@ export default function LogosExercisesPage() {
             </div>
 
             <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 uppercase font-semibold block">
+              <span className="text-xs text-slate-400 font-semibold block">
                 ΠΟΣΟΣΤΟ
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
@@ -951,7 +960,7 @@ export default function LogosExercisesPage() {
               <button
                 type="button"
                 onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation uppercase"
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
               >
                 ΕΛΕΓΧΟΣ
               </button>
@@ -959,7 +968,7 @@ export default function LogosExercisesPage() {
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation uppercase"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
               >
                 🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
               </button>
