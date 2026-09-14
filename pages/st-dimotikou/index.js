@@ -44,7 +44,8 @@ export default function STDimotikouMenu() {
     { id: '37-agnostos-dia-gnostos', label: '➗ 37. Εξίσωση x ： α ＝ β', href: '/st-dimotikou/37-agnostos-dia-gnostos' },
     { id: '38-gnostos-dia-agnostos', label: '📐 38. Εξίσωση α ： x ＝ β', href: '/st-dimotikou/38-gnostos-dia-agnostos' },
     { id: '39-epanalipsi-2', label: '🏆 39. Επανάληψη ( Κεφ. 32 - 38 )', href: '/st-dimotikou/39-epanalipsi-2' },
-    { id: '40-logos', label: '📐 40. Λόγος 2 μεγεθών', href: '/st-dimotikou/40-logos' }
+    { id: '40-logos', label: '📐 40. Λόγος 2 μεγεθών', href: '/st-dimotikou/40-logos' },
+    { id: '41-analogia', label: '📐 41. Αναλογία', href: '/st-dimotikou/41-analogia' }
   ];
 
   return (
