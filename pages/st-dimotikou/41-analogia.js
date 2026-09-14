@@ -8,6 +8,20 @@ const LIMITS = {
   MAX_VAL: 30
 };
 
+// Βοηθητικό component εμφάνισης κλάσματος με οριζόντια γραμμή
+function Fraction({ num, den, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
+      <span className="border-b-2 border-current px-1.5 pb-0.5 text-center leading-none">
+        {num}
+      </span>
+      <span className="px-1.5 pt-0.5 text-center leading-none">
+        {den}
+      </span>
+    </span>
+  );
+}
+
 // Βοηθητική συνάρτηση ΜΚΔ
 function getGCD(a, b) {
   let x = Math.abs(Math.round(a));
@@ -123,13 +137,19 @@ export default function AnalogiaTheoryPage() {
                   Τι είναι Αναλογία;
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  <strong>Αναλογία</strong> ονομάζεται η <strong>ισότητα δύο λόγων</strong>. Όταν δύο λόγοι έχουν την ίδια τιμή, λέμε ότι σχηματίζουν αναλογία.
+                  <strong>Αναλογία</strong> ονομάζεται η <strong>ισότητα δύο λόγων</strong>. Όταν δύο λόγοι έχουν την ίδια ακριβώς τιμή, λέμε ότι σχηματίζουν αναλογία.
                 </p>
 
-                <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm 2xl:text-base">
-                  <p className="text-slate-700 font-semibold">Συμβολισμός &amp; Ανάγνωση:</p>
-                  <div className="p-2.5 bg-white rounded-xl border border-slate-300 font-mono font-bold text-slate-900 shadow-inner text-center">
-                    α ： β ＝ γ ： δ &nbsp;ή&nbsp; α/β ＝ γ/δ
+                <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-3 text-xs sm:text-sm 2xl:text-base">
+                  <p className="text-slate-700 font-semibold">Συμβολισμός &amp; Μορφές:</p>
+                  <div className="p-3 bg-white rounded-xl border border-slate-300 font-mono font-bold text-slate-900 shadow-inner flex flex-wrap items-center justify-center gap-4 text-base sm:text-lg">
+                    <span>α : β ＝ γ : δ</span>
+                    <span className="text-slate-400 font-normal">ή</span>
+                    <div className="inline-flex items-center gap-1.5">
+                      <Fraction num="α" den="β" />
+                      <span className="mx-1">＝</span>
+                      <Fraction num="γ" den="δ" />
+                    </div>
                   </div>
                   <p className="text-slate-500 text-xs leading-relaxed">
                     Διαβάζεται: «Το <strong>α</strong> προς το <strong>β</strong> ισούται με το <strong>γ</strong> προς το <strong>δ</strong>».
@@ -155,10 +175,10 @@ export default function AnalogiaTheoryPage() {
                   Άκροι και Μέσοι Όροι
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  Στην αναλογία <span className="font-bold font-mono">α ： β ＝ γ ： δ</span>, οι τέσσερις αριθμοί έχουν συγκεκριμένες θέσεις και ονομασίες:
+                  Στην αναλογία <span className="font-bold font-mono">α : β ＝ γ : δ</span>, οι τέσσερις αριθμοί έχουν συγκεκριμένες θέσεις και ονομασίες:
                 </p>
 
-                <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm 2xl:text-base">
+                <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-2.5 text-xs sm:text-sm 2xl:text-base">
                   <div className="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
                     <span className="font-bold text-blue-900">Άκροι όροι:</span>
                     <span className="font-mono font-black text-blue-700">α &nbsp;και&nbsp; δ</span>
@@ -167,14 +187,14 @@ export default function AnalogiaTheoryPage() {
                     <span className="font-bold text-amber-900">Μέσοι όροι:</span>
                     <span className="font-mono font-black text-amber-700">β &nbsp;και&nbsp; γ</span>
                   </div>
-                  <p className="text-slate-500 text-xs">
-                    Τα άκρα βρίσκονται στα δύο εξωτερικά σημεία, ενώ τα μέσα βρίσκονται στο εσωτερικό της σχέσης.
-                  </p>
+                  <div className="pt-2 text-center text-xs text-slate-600 border-t border-slate-200">
+                    Στην κλασματική μορφή <Fraction num="α" den="β" /> ＝ <Fraction num="γ" den="δ" /> τα άκρα είναι διαγώνια (<span className="font-bold">α</span>, <span className="font-bold">δ</span>) και τα μέσα διαγώνια (<span className="font-bold">β</span>, <span className="font-bold">γ</span>).
+                  </div>
                 </div>
               </div>
 
               <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                ⚡ Στην κλασματική μορφή <span className="font-bold">α/β ＝ γ/δ</span>, άκρα είναι ο αριθμητής του 1ου και ο παρονομαστής του 2ου.
+                ⚡ Τα άκρα βρίσκονται στις εξωτερικές θέσεις και τα μέσα στο εσωτερικό της αναλογίας.
               </div>
             </article>
 
@@ -199,8 +219,9 @@ export default function AnalogiaTheoryPage() {
                     α · δ ＝ β · γ
                   </div>
                   <div className="pt-2 border-t border-slate-200 text-slate-600 font-sans text-xs leading-relaxed">
-                    Παράδειγμα: Για την αναλογία <span className="font-bold">2/3 ＝ 6/9</span>, ελέγχουμε τα σταυρωτά γινόμενα:<br />
-                    <span className="font-mono font-bold text-indigo-800">2 · 9 ＝ 18</span> και <span className="font-mono font-bold text-indigo-800">3 · 6 ＝ 18</span>.
+                    Παράδειγμα για <Fraction num="2" den="3" /> ＝ <Fraction num="6" den="9" />:<br />
+                    • Γινόμενο άκρων: <span className="font-mono font-bold text-indigo-800">2 · 9 ＝ 18</span><br />
+                    • Γινόμενο μέσων: <span className="font-mono font-bold text-indigo-800">3 · 6 ＝ 18</span>
                   </div>
                 </div>
               </div>
@@ -223,22 +244,22 @@ export default function AnalogiaTheoryPage() {
                   Εύρεση Άγνωστου Όρου
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  Αν σε μια αναλογία γνωρίζουμε τους τρεις όρους, μπορούμε να υπολογίσουμε άμεσα τον τέταρτο άγνωστο όρο (<span className="font-bold">χ</span>):
+                  Αν σε μια αναλογία γνωρίζουμε τους τρεις όρους, βρίσκουμε άμεσα τον τέταρτο άγνωστο όρο (<span className="font-bold">χ</span>):
                 </p>
 
-                <div className="space-y-2 text-xs sm:text-sm 2xl:text-base font-mono">
-                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950">
-                    <strong>Τύπος:</strong> χ ＝ (γινόμενο γνωστών) ： (απέναντι όρος)
+                <div className="space-y-2 text-xs sm:text-sm 2xl:text-base">
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 font-mono text-center font-bold">
+                    χ ＝ (γινόμενο γνωστών) ： (απέναντι όρος)
                   </div>
-                  <div className="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-950 font-sans text-xs">
-                    Αν <span className="font-mono font-bold">2/5 ＝ 6/χ</span>, τότε:<br />
+                  <div className="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-950 font-sans text-xs leading-relaxed">
+                    Αν <Fraction num="2" den="5" /> ＝ <Fraction num="6" den="χ" />, τότε:<br />
                     <span className="font-mono font-bold">χ ＝ (5 · 6) ： 2 ＝ 30 ： 2 ＝ 15</span>.
                   </div>
                 </div>
               </div>
 
               <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🚀 Αυτός ο κανόνας αποτελεί τη βάση για τη μέθοδο των τριών και όλα τα προβλήματα ποσών και τιμών.
+                🚀 Αυτός ο κανόνας αποτελεί τη βάση για όλα τα προβλήματα ποσών και τιμών.
               </div>
             </article>
 
@@ -462,7 +483,7 @@ export default function AnalogiaTheoryPage() {
 
           </div>
 
-          {/* Οπτική Σύγκριση Σταυρωτών Γινομένων */}
+          {/* Οπτική Σύγκριση Σταυρωτών Γινομένων & Κλασματική Μορφή */}
           <div className="bg-slate-50 p-6 2xl:p-8 rounded-2xl border border-slate-200 space-y-4">
             <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-slate-600">
               <span>ΕΛΕΓΧΟΣ ΣΤΑΥΡΩΤΩΝ ΓΙΝΟΜΕΝΩΝ (ΧΙΑΣΤΙ)</span>
@@ -494,11 +515,19 @@ export default function AnalogiaTheoryPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1 text-center text-xs sm:text-sm text-slate-600">
-              <div className="p-3 bg-white rounded-xl border border-slate-200">
-                1ος Λόγος: <strong className="font-mono">{a} ： {b}</strong> ≈ <span className="font-bold">{ratio1Dec}</span> (Ανάγωγος: {a / gcd1} ： {b / gcd1})
+              <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-center gap-2">
+                <span>1ος Λόγος:</span>
+                <Fraction num={a} den={b} className="text-sm font-bold text-slate-900" />
+                <span>≈ <strong className="font-mono">{ratio1Dec}</strong> (Ανάγωγος:</span>
+                <Fraction num={a / gcd1} den={b / gcd1} className="text-xs font-bold text-blue-800" />
+                <span>)</span>
               </div>
-              <div className="p-3 bg-white rounded-xl border border-slate-200">
-                2ος Λόγος: <strong className="font-mono">{c} ： {d}</strong> ≈ <span className="font-bold">{ratio2Dec}</span> (Ανάγωγος: {c / gcd2} ： {d / gcd2})
+              <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-center gap-2">
+                <span>2ος Λόγος:</span>
+                <Fraction num={c} den={d} className="text-sm font-bold text-slate-900" />
+                <span>≈ <strong className="font-mono">{ratio2Dec}</strong> (Ανάγωγος:</span>
+                <Fraction num={c / gcd2} den={d / gcd2} className="text-xs font-bold text-amber-800" />
+                <span>)</span>
               </div>
             </div>
           </div>
@@ -514,12 +543,22 @@ export default function AnalogiaTheoryPage() {
             <span className="text-xs 2xl:text-sm uppercase font-black tracking-wider block text-sky-200">
               {isProportion ? '✓ ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ: ΕΙΝΑΙ ΑΝΑΛΟΓΙΑ' : '✗ ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ: ΔΕΝ ΕΙΝΑΙ ΑΝΑΛΟΓΙΑ'}
             </span>
-            <div className="text-xl sm:text-3xl 2xl:text-4xl font-black font-mono flex flex-wrap items-center justify-center gap-2 sm:gap-4">
-              <span>{a} ： {b}</span>
-              <span className={isProportion ? 'text-emerald-300' : 'text-rose-300'}>
-                {isProportion ? '＝' : '≠'}
-              </span>
-              <span>{c} ： {d}</span>
+            <div className="text-xl sm:text-3xl 2xl:text-4xl font-black font-mono flex flex-wrap items-center justify-center gap-4">
+              <div className="inline-flex items-center gap-2">
+                <span>{a} : {b}</span>
+                <span className={isProportion ? 'text-emerald-300' : 'text-rose-300'}>
+                  {isProportion ? '＝' : '≠'}
+                </span>
+                <span>{c} : {d}</span>
+              </div>
+              <span className="text-white/40 text-lg sm:text-2xl">|</span>
+              <div className="inline-flex items-center gap-2">
+                <Fraction num={a} den={b} className="text-xl sm:text-3xl font-black" />
+                <span className={isProportion ? 'text-emerald-300' : 'text-rose-300'}>
+                  {isProportion ? '＝' : '≠'}
+                </span>
+                <Fraction num={c} den={d} className="text-xl sm:text-3xl font-black" />
+              </div>
             </div>
             <p className="text-xs sm:text-sm text-sky-100 max-w-xl mx-auto pt-1 leading-relaxed">
               {isProportion ? (
@@ -709,20 +748,22 @@ export default function AnalogiaTheoryPage() {
             </h4>
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-              <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-1">
-                <span className="text-xs text-slate-500 block">Σχέση Αναλογίας</span>
-                <span className="font-mono font-bold text-slate-900 text-lg">
-                  {p1} / {p2} ＝ {p3} / χ
-                </span>
+              <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-1 flex flex-col justify-center items-center">
+                <span className="text-xs text-slate-500 block mb-1">Σχέση Αναλογίας</span>
+                <div className="inline-flex items-center text-lg font-bold text-slate-900">
+                  <Fraction num={p1} den={p2} />
+                  <span className="mx-2">＝</span>
+                  <Fraction num={p3} den="χ" />
+                </div>
               </div>
-              <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-1">
-                <span className="text-xs text-slate-500 block">Εφαρμογή Χιαστί</span>
+              <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-1 flex flex-col justify-center items-center">
+                <span className="text-xs text-slate-500 block mb-1">Εφαρμογή Χιαστί</span>
                 <span className="font-mono font-bold text-indigo-700 text-lg">
                   {p1} · χ ＝ {p2} · {p3}
                 </span>
               </div>
-              <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-1">
-                <span className="text-xs text-slate-500 block">Υπολογισμός του χ</span>
+              <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-1 flex flex-col justify-center items-center">
+                <span className="text-xs text-slate-500 block mb-1">Υπολογισμός του χ</span>
                 <span className="font-mono font-black text-emerald-600 text-lg">
                   χ ＝ {unknownValue} €
                 </span>
@@ -730,7 +771,7 @@ export default function AnalogiaTheoryPage() {
             </div>
 
             <p className="text-xs 2xl:text-sm text-slate-600 pt-1 leading-relaxed">
-              💬 <strong>Ερμηνεία:</strong> Πολλαπλασιάζουμε τους δύο διαγώνια γνωστούς όρους (<span className="font-mono font-bold">{p2} · {p3} ＝ {p2 * p3}</span>) και διαιρούμε με τον όρο που βρίσκεται απέναντι από το χ (<span className="font-mono font-bold">{p1}</span>): <span className="font-mono font-bold">{p2 * p3} ： {p1} ＝ {unknownValue} €</span>.
+              💬 <strong>Ερμηνεία:</strong> Πολλαπλασιάζουμε τους δύο διαγώνια γνωστούς όρους (<span className="font-mono font-bold">{p2} · {p3} ＝ {p2 * p3}</span>) και διαιρούμε με τον όρο που βρίσκεται απέναντι από το χ (<span className="font-mono font-bold">{p1}</span>): <span className="font-mono font-bold">{p2 * p3} : {p1} ＝ {unknownValue} €</span>.
             </p>
           </div>
         </section>
