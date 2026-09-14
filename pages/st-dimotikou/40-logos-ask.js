@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Βοηθητική συνάρτηση ΜΚΔ
+// Βοηθητικη συναρτηση ΜΚΔ
 function getGCD(a, b) {
   let x = Math.abs(Math.round(a));
   let y = Math.abs(Math.round(b));
@@ -15,23 +15,23 @@ function getGCD(a, b) {
   return x || 1;
 }
 
-// Τυχαίος ακέραιος στο [min, max]
+// Τυχαιος ακεραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Τυχαία επιλογή από πίνακα
+// Τυχαια επιλογη απο πινακα
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Μορφοποίηση δεκαδικού με κόμμα
+// Μορφοποιηση δεκαδικου με κομμα
 function formatDecimal(val, decimals = 2) {
   const rounded = Number(val.toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενή Κανονικών Προβλημάτων (10 διαφορετικά προβλήματα)
+// Δεξαμενη Κανονικων Προβληματων (10 διαφορετικα προβληματα)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_std_1',
@@ -100,9 +100,9 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_std_5',
     generate: () => {
-      const timeMinutes = randInt(2, 5) * 15; // 30, 45, 60, 75
+      const timeMinutes = randInt(2, 5) * 15;
       const hours = 2;
-      const hoursInMinutes = hours * 60; // 120
+      const hoursInMinutes = hours * 60;
       const gcd = getGCD(timeMinutes, hoursInMinutes);
       return {
         text: `Ένας ποδηλάτης προπονήθηκε για ${timeMinutes} λεπτά το πρωί και ${hours} ώρες το απόγευμα. Ποιος είναι ο ανάγωγος λόγος του πρωινού χρόνου προς τον απογευματινό χρόνο προπόνησης;`,
@@ -129,8 +129,8 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_std_7',
     generate: () => {
-      const perimeter = randInt(20, 36) * 2; // π.χ. 48 cm
-      const side = randInt(4, 8); // π.χ. 6 cm
+      const perimeter = randInt(20, 36) * 2;
+      const side = randInt(4, 8);
       const gcd = getGCD(side, perimeter);
       return {
         text: `Ένα ισόπλευρο τρίγωνο έχει πλευρά μήκους ${side} cm και ένα ορθογώνιο έχει περίμετρο ${perimeter} cm. Ποιος είναι ο απλοποιημένος λόγος της πλευράς του τριγώνου προς την περίμετρο του ορθογωνίου;`,
@@ -143,8 +143,8 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_std_8',
     generate: () => {
-      const saved = randInt(3, 7) * 20; // π.χ. 80 €
-      const cost = saved + randInt(2, 5) * 20; // π.χ. 140 €
+      const saved = randInt(3, 7) * 20;
+      const cost = saved + randInt(2, 5) * 20;
       const gcd = getGCD(saved, cost);
       return {
         text: `Ο Νίκος αποταμίευσε ${saved} € για να αγοράσει ένα ποδήλατο αξίας ${cost} €. Ποιος είναι ο ανάγωγος λόγος των χρημάτων που συγκέντρωσε προς τη συνολική αξία του ποδηλάτου;`,
@@ -157,8 +157,8 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_std_9',
     generate: () => {
-      const juice = randInt(3, 6) * 150; // ml
-      const water = randInt(2, 4) * 500; // ml (π.χ. 1 l = 1000 ml)
+      const juice = randInt(3, 6) * 150;
+      const water = randInt(2, 4) * 500;
       const gcd = getGCD(juice, water);
       return {
         text: `Σε μια κανάτα αναμειγνύουμε ${juice} ml συμπυκνωμένου χυμού με ${water / 1000} l νερό. Ποιος είναι ο απλοποιημένος λόγος του χυμού προς το νερό;`,
@@ -184,7 +184,7 @@ const STANDARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δεξαμενή Προβλημάτων Αυξημένης Δυσκολίας (10 διαφορετικά προβλήματα)
+// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (10 διαφορετικα προβληματα)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_hard_1',
@@ -238,7 +238,7 @@ const HARD_PROBLEMS_POOL = [
     id: 'p_hard_4',
     generate: () => {
       const priceA = randInt(12, 20) * 10;
-      const increase = 20; // 20%
+      const increase = 20;
       const priceB = priceA * (1 + increase / 100);
       const gcd = getGCD(priceA, priceB);
       return {
@@ -269,8 +269,8 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'p_hard_6',
     generate: () => {
-      const speed1 = randInt(6, 10) * 10; // π.χ. 80 km/h
-      const speed2 = randInt(11, 14) * 10; // π.χ. 120 km/h
+      const speed1 = randInt(6, 10) * 10;
+      const speed2 = randInt(11, 14) * 10;
       const gcd = getGCD(speed1, speed2);
       return {
         text: `Δύο αυτοκίνητα κινούνται με σταθερή ταχύτητα ${speed1} km/h και ${speed2} km/h αντίστοιχα. Ποιος είναι ο απλοποιημένος λόγος του χρόνου που χρειάζεται το πρώτο προς το δεύτερο για να διανύσουν την ίδια απόσταση;`,
@@ -312,8 +312,8 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'p_hard_9',
     generate: () => {
-      const salt = randInt(2, 5) * 10; // π.χ. 30 g
-      const water = randInt(6, 12) * 50; // π.χ. 450 g
+      const salt = randInt(2, 5) * 10;
+      const water = randInt(6, 12) * 50;
       const totalSolution = salt + water;
       const gcd = getGCD(salt, totalSolution);
       return {
@@ -344,11 +344,11 @@ const HARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δημιουργία των 10 δυναμικών ερωτήσεων
+// Δημιουργια των 10 δυναμικων ερωτησεων
 function generateQuestions() {
   const qList = [];
 
-  // Q1 (Input - Fraction): Απλοποίηση δοσμένου λόγου
+  // Q1 (Input - Fraction)
   {
     const m = randInt(3, 9);
     let n1 = randInt(2, 7);
@@ -369,7 +369,7 @@ function generateQuestions() {
     });
   }
 
-  // Q2 (MCQ): Τιμή λόγου και δεκαδική μορφή
+  // Q2 (MCQ)
   {
     const num = randInt(3, 9);
     const den = pickRandom([2, 4, 5, 8, 10]);
@@ -398,10 +398,10 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (Input - Fraction): Σύγκριση ετεροειδών μονάδων μήκους
+  // Q3 (Input - Fraction)
   {
-    const cm = randInt(15, 45) * 2; // π.χ. 60 cm
-    const m = randInt(2, 4); // π.χ. 3 m = 300 cm
+    const cm = randInt(15, 45) * 2;
+    const m = randInt(2, 4);
     const mInCm = m * 100;
     const gcd = getGCD(cm, mInCm);
     qList.push({
@@ -416,7 +416,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Αντίστροφοι λόγοι & Ιδιότητες
+  // Q4 (MCQ)
   {
     const a = randInt(3, 8);
     const b = randInt(4, 9);
@@ -439,7 +439,7 @@ function generateQuestions() {
     });
   }
 
-  // Q5 (Input - Decimal): Υπολογισμός ταχύτητας (ετεροειδή μεγέθη)
+  // Q5 (Input - Decimal)
   {
     const hours = randInt(2, 4);
     const speed = randInt(65, 95);
@@ -456,7 +456,7 @@ function generateQuestions() {
     });
   }
 
-  // Q6 (MCQ): Ισότητα λόγων / αναλογία
+  // Q6 (MCQ)
   {
     const baseA = randInt(2, 5);
     const baseB = randInt(3, 7);
@@ -488,7 +488,7 @@ function generateQuestions() {
     });
   }
 
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή (1 Input Fraction, 1 MCQ)
+  // Q7 & Q8: Κανονικα Προβληματα (1 Input Fraction, 1 MCQ)
   {
     const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const stdProb1 = shuffledStd[0].generate();
@@ -531,13 +531,13 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβληματα Αυξημενης Δυσκολιας (1 Input, 1 MCQ)
   {
     const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const hardProb1 = shuffledHard[0].generate();
     const hardProb2 = shuffledHard[1].generate();
 
-    // Q9 (Input - είτε Fraction είτε Decimal ανάλογα με τη δομή του προβλήματος)
+    // Q9 (Input)
     if (hardProb1.ansNum !== undefined) {
       qList.push({
         id: 9,
@@ -562,7 +562,7 @@ function generateQuestions() {
       });
     }
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας)
+    // Q10 (MCQ)
     let correctText10 = '';
     let fake10A = '';
     let fake10B = '';
@@ -608,7 +608,7 @@ export default function LogosExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργία νέων ασκήσεων
+  // Δημιουργια νεων ασκησεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
@@ -621,7 +621,7 @@ export default function LogosExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμός Input με καθαρισμό χαρακτήρων (0-9 και κόμμα)
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (0-9 και κομμα)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -639,7 +639,7 @@ export default function LogosExercisesPage() {
     }));
   };
 
-  // Χειρισμός MCQ
+  // Χειρισμος MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -648,7 +648,7 @@ export default function LogosExercisesPage() {
     }));
   };
 
-  // Έλεγχος Απαντήσεων
+  // Ελεγχος Απαντησεων
   const handleCheckAnswers = () => {
     let currentScore = 0;
 
@@ -718,12 +718,12 @@ export default function LogosExercisesPage() {
               onClick={loadNewSet}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
             >
-              <span>🔄 Νέες Ασκήσεις</span>
+              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
           </div>
         </section>
 
-        {/* Λίστα 10 Ασκήσεων */}
+        {/* Λιστα 10 Ασκησεων */}
         <div className="space-y-6">
           {questions.map((q, idx) => {
             let isCorrect = false;
@@ -751,7 +751,7 @@ export default function LogosExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλίδα Ερώτησης */}
+                {/* Επικεφαλιδα Ερωτησης */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <span className="text-xs font-black uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {q.title}
@@ -764,12 +764,12 @@ export default function LogosExercisesPage() {
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? '✓ Σωστό' : '✗ Λάθος'}
+                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
                     </span>
                   )}
                 </div>
 
-                {/* Εκφώνηση */}
+                {/* Εκφωνηση */}
                 <div className="space-y-2 mb-5">
                   <p className="text-xs sm:text-sm font-semibold text-slate-500">
                     {q.instruction}
@@ -779,14 +779,13 @@ export default function LogosExercisesPage() {
                   </p>
                 </div>
 
-                {/* Περιοχή Απάντησης */}
+                {/* Περιοχη Απαντησης */}
                 <div className="py-2">
                   
-                  {/* 1. Fraction Input (2 κουτάκια χωρισμένα με γραμμή /) */}
+                  {/* 1. Fraction Input */}
                   {q.type === 'fraction_input' && (
                     <div className="flex items-center gap-3">
                       <div className="inline-flex items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-300 shadow-inner gap-2">
-                        {/* Αριθμητής */}
                         <input
                           type="text"
                           inputMode="numeric"
@@ -797,11 +796,9 @@ export default function LogosExercisesPage() {
                           onChange={(e) => handleInputChange(`q_${q.id}_num`, e.target.value)}
                           className="w-24 sm:w-28 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-xl py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed"
                         />
-                        {/* Γραμμή Κλάσματος */}
                         <span className="text-xl sm:text-2xl font-black text-slate-500 px-1 select-none">
                           /
                         </span>
-                        {/* Παρονομαστής */}
                         <input
                           type="text"
                           inputMode="numeric"
@@ -873,7 +870,7 @@ export default function LogosExercisesPage() {
 
                 </div>
 
-                {/* Feedback μετά την υποβολή */}
+                {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
                     className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
@@ -911,7 +908,7 @@ export default function LogosExercisesPage() {
           })}
         </div>
 
-        {/* Κουμπί Ελέγχου στο τέλος της φόρμας */}
+        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
         <div className="flex justify-center pt-4">
           <button
             type="button"
@@ -932,7 +929,7 @@ export default function LogosExercisesPage() {
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
               <span className="text-xs text-slate-400 uppercase font-semibold block">
-                Σκορ
+                ΣΚΟΡ
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
                 {score} <span className="text-slate-500 text-base">/ 10</span>
@@ -941,7 +938,7 @@ export default function LogosExercisesPage() {
 
             <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
               <span className="text-xs text-slate-400 uppercase font-semibold block">
-                Ποσοστό
+                ΠΟΣΟΣΤΟ
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
                 {Math.round((score / 10) * 100)} %
@@ -954,17 +951,17 @@ export default function LogosExercisesPage() {
               <button
                 type="button"
                 onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation uppercase"
               >
-                Έλεγχος
+                ΕΛΕΓΧΟΣ
               </button>
             ) : (
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation uppercase"
               >
-                🔄 Νέες Ασκήσεις
+                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
               </button>
             )}
           </div>
