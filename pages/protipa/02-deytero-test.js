@@ -1093,40 +1093,151 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Εξετάζουμε τα χρήματα που απομένουν μετά από κάθε αγορά:
+          Αναλύουμε τα χρήματα που απομένουν μετά από κάθε αγορά, εξετάζοντας τι μέρος του συνολικού ποσού αντιστοιχεί στα <strong>30 €</strong>[cite: 1]:
         </p>
 
-        {/* SVG ΣΧΗΜΑ 10: ΔΙΑΔΟΧΙΚΑ ΚΛΑΣΜΑΤΑ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="150" viewBox="0 0 490 150" className="select-none font-sans mx-auto block">
-            <g transform="translate(20, 20)">
-              {/* Αρχική μπάρα 3 τρίτων */}
-              <rect x="0" y="0" width="140" height="45" rx="4" fill="#fee2e2" stroke="#ef4444" strokeWidth="1.5" />
-              <text x="70" y="27" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#dc2626">Βιβλίο: 1/3 (20€)</text>
+        {/* SVG ΣΧΗΜΑ 10: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
+        <div className="bg-white/90 p-3 sm:p-4 rounded-2xl border border-slate-200/90 my-2">
+          <svg
+            viewBox="0 0 620 220"
+            className="w-full h-auto max-w-[620px] mx-auto block select-none font-sans"
+          >
+            {/* 1. ΑΡΧΙΚΟ ΠΟΣΟ (3 ΤΡΙΤΑ) */}
+            <g transform="translate(20, 16)">
+              <text x="0" y="14" fontSize="11" fontWeight="bold" fill="#0f172a">
+                1ο Στάδιο: Αρχικό Ποσό χωρισμένο σε 3 τρίτα (3/3)
+              </text>
 
-              <rect x="145" y="0" width="295" height="45" rx="4" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
-              <text x="292" y="27" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Υπόλοιπο: 2/3 (40€)</text>
+              <g transform="translate(0, 24)">
+                {/* 1/3 Βιβλίο */}
+                <rect x="0" y="0" width="190" height="46" rx="8" fill="#fee2e2" stroke="#ef4444" strokeWidth="1.8" />
+                <text x="95" y="20" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#dc2626">📖 Βιβλίο: 1/3</text>
+                <text x="95" y="36" fontSize="12" fontWeight="black" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">20 €</text>
+
+                {/* 2/3 Υπόλοιπο */}
+                <rect x="195" y="0" width="385" height="46" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
+                <text x="387.5" y="20" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Υπόλοιπο μετά το βιβλίο: 2/3</text>
+                <text x="387.5" y="36" fontSize="12.5" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">40 €</text>
+              </g>
             </g>
 
-            {/* Ανάλυση υπολοίπου */}
-            <g transform="translate(165, 80)">
-              <rect x="0" y="0" width="70" height="35" rx="4" fill="#fee2e2" stroke="#ef4444" strokeWidth="1.2" />
-              <text x="35" y="22" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#dc2626">1/4 (10€)</text>
+            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
+            <line x1="20" y1="102" x2="600" y2="102" stroke="#e2e8f0" strokeWidth="1.2" />
 
-              <rect x="75" y="0" width="220" height="35" rx="4" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.8" />
-              <text x="185" y="22" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">3/4 του υπολοίπου ＝ 30 € ⭐</text>
+            {/* 2. ΑΝΑΛΥΣΗ ΤΟΥ ΥΠΟΛΟΙΠΟΥ ΣΕ 4 ΤΕΤΑΡΤΑ */}
+            <g transform="translate(20, 114)">
+              <text x="0" y="14" fontSize="11" fontWeight="bold" fill="#0f172a">
+                2ο Στάδιο: Το υπόλοιπο χωρίζεται σε 4 ίσα τέταρτα (των 10 € το καθένα)
+              </text>
+
+              <g transform="translate(195, 24)">
+                {/* 1/4 Παιχνίδι */}
+                <rect x="0" y="0" width="92" height="44" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.6" />
+                <text x="46" y="18" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#dc2626">🎮 Παιχνίδι (1/4)</text>
+                <text x="46" y="34" fontSize="11" fontWeight="black" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">10 €</text>
+
+                {/* 3/4 Τελικό Υπόλοιπο (30€) */}
+                <rect x="97" y="0" width="288" height="44" rx="8" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.2" />
+                <text x="241" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534">💰 Τελικό Υπόλοιπο: 3/4 του υπολοίπου</text>
+                <text x="241" y="35" fontSize="13.5" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">30 € ⭐</text>
+              </g>
+            </g>
+
+            {/* ΚΑΤΩ ΕΝΙΑΙΟ BADGE */}
+            <g transform="translate(20, 192)">
+              <text x="300" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
+                3 τέταρτα ＝ 30 € ➔ 1 τέταρτο ＝ 10 € ➔ Υπόλοιπο ＝ 40 € ➔ Αρχικό (3 τρίτα) ＝ 60 €
+              </text>
             </g>
           </svg>
         </div>
 
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono space-y-1.5">
-          <div>• Μετά το βιβλίο (1/3), του έμειναν τα <strong>2/3</strong> των χρημάτων του.</div>
-          <div>• Ξόδεψε το 1/4 του υπολοίπου, άρα του έμειναν τα <strong>3/4 του υπολοίπου</strong>.</div>
-          <div>• Τα 3/4 του υπολοίπου ισούνται με 30 € ➔ Το υπόλοιπο ήταν: 30 · (4/3) ＝ <strong>40 €</strong>.</div>
-          <div className="text-emerald-700 font-bold pt-1 border-t border-slate-200">
-            • Τα 40 € ήταν τα 2/3 του αρχικού ποσού ➔ Αρχικό ποσό: 40 · (3/2) ＝ <strong>60 €</strong>.
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Βήμα-βήμα προς τα πίσω */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Υπολογισμός προς τα πίσω με κλάσματα)
+            </div>
+            <p className="text-slate-700">
+              Ξεκινάμε από το τελικό ποσό (30 €) και πηγαίνουμε προς την αρχή[cite: 1]:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div>
+                • <strong>Βήμα 1 (Πριν την αγορά του παιχνιδιού):</strong>
+                <div className="pl-3 text-slate-700 font-sans text-xs pt-0.5">
+                  Ξόδεψε το <Fraction num="1" den="4" /> του ενδιάμεσου ποσού, άρα του έμειναν τα <Fraction num="3" den="4" />[cite: 1]:
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap pl-3 pt-1">
+                  <span>Ενδιάμεσο ποσό ＝ 30 :</span>
+                  <Fraction num="3" den="4" />
+                  <span>＝ 30 ·</span>
+                  <Fraction num="4" den="3" />
+                  <span>＝ 10 · 4 ＝ <strong className="text-blue-700">40 €</strong></span>
+                </div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200">
+                • <strong>Βήμα 2 (Πριν την αγορά του βιβλίου - Αρχικό ποσό):</strong>
+                <div className="pl-3 text-slate-700 font-sans text-xs pt-0.5">
+                  Ξόδεψε το <Fraction num="1" den="3" /> των αρχικών χρημάτων, άρα τα 40 € αντιστοιχούν στα <Fraction num="2" den="3" /> του αρχικού ποσού[cite: 1]:
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap pl-3 pt-1 text-emerald-800 font-bold">
+                  <span>Αρχικό Ποσό ＝ 40 :</span>
+                  <Fraction num="2" den="3" />
+                  <span>＝ 40 ·</span>
+                  <Fraction num="3" den="2" />
+                  <span>＝ 20 · 3 ＝ <span className="text-base text-emerald-700 font-black">60 €</span> ⭐</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Αλγεβρικά με εξίσωση */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Αλγεβρικά με εξίσωση και άγνωστο x)
+            </div>
+            <p className="text-slate-700">
+              Έστω <strong>x</strong> το συνολικό αρχικό ποσό σε ευρώ[cite: 1]:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>• Έξοδο για το βιβλίο:</span>
+                <Fraction num="1" den="3" />
+                <span>· x</span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Υπόλοιπο μετά το βιβλίο: x －</span>
+                <Fraction num="1" den="3" />
+                <span>· x ＝</span>
+                <Fraction num="2" den="3" />
+                <span>· x</span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Τελικό ποσό που του μένει (τα 3/4 του υπολοίπου):</span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap pl-3">
+                <Fraction num="3" den="4" />
+                <span>·</span>
+                <Fraction num="2" den="3" />
+                <span>· x ＝ 30</span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap pl-3">
+                <Fraction num="6" den="12" />
+                <span>· x ＝ 30 ➔</span>
+                <Fraction num="1" den="2" />
+                <span>· x ＝ 30 ➔ <strong className="text-emerald-700 text-base font-black">x ＝ 60 €</strong></span>
+              </div>
+            </div>
           </div>
         </div>
+
+        <p className="pt-1">
+          Επομένως, ο Νίκος είχε αρχικά <strong>60 €</strong>[cite: 1].
+        </p>
       </div>
     )
   },
