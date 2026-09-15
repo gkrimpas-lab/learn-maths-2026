@@ -508,41 +508,137 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Λύνουμε το κλασικό πρόβλημα κεφαλών και ποδιών με τη <strong>μέθοδο της υπόθεσης</strong>:
+          Γνωρίζουμε ότι κάθε ζώο έχει <strong>1 κεφάλι</strong> (άρα σύνολο 25 ζώα), κάθε κοτόπουλο έχει <strong>2 πόδια</strong> και κάθε κατσίκα έχει <strong>4 πόδια</strong>[cite: 1]:
         </p>
 
-        {/* SVG ΣΧΗΜΑ 5: ΥΠΟΘΕΣΗ & ΕΠΙΠΛΕΟΝ ΠΟΔΙΑ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="155" viewBox="0 0 490 155" className="select-none font-sans mx-auto block">
-            <g transform="translate(20, 20)">
-              <rect x="0" y="0" width="200" height="65" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-              <text x="100" y="24" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Υπόθεση: Όλα κοτόπουλα (2 πόδια)</text>
-              <text x="100" y="48" fontSize="13" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">25 · 2 ＝ 50 πόδια</text>
+        {/* SVG ΣΧΗΜΑ 5: ΜΕΓΑΛΟ & ΕΥΔΙΑΚΡΙΤΟ (720px) */}
+        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="720" height="200" viewBox="0 0 720 200" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="arr-flow-5" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 8 5 L 0 9 z" fill="#16a34a" />
+              </marker>
+            </defs>
+
+            {/* 1. Υπόθεση: Όλα κοτόπουλα */}
+            <g transform="translate(35, 20)">
+              <rect x="0" y="0" width="300" height="85" rx="14" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
+              <text x="150" y="28" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">
+                Υπόθεση: Και τα 25 ζώα είναι κοτόπουλα
+              </text>
+              <text x="150" y="54" fontSize="18" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">
+                25 · 2 ＝ 50 πόδια
+              </text>
+              <text x="150" y="73" fontSize="10.5" textAnchor="middle" fill="#2563eb">
+                (Λείπουν πόδια σε σχέση με την πραγματικότητα)
+              </text>
             </g>
 
-            <g transform="translate(270, 20)">
-              <rect x="0" y="0" width="200" height="65" rx="8" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.6" />
-              <text x="100" y="24" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#dc2626">Πραγματικά: 70 πόδια</text>
-              <text x="100" y="48" fontSize="13" fontWeight="black" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">Διαφορά: 70 － 50 ＝ 20 πόδια</text>
+            {/* 2. Πραγματικότητα & Διαφορά */}
+            <g transform="translate(385, 20)">
+              <rect x="0" y="0" width="300" height="85" rx="14" fill="#fef2f2" stroke="#ef4444" strokeWidth="2" />
+              <text x="150" y="28" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">
+                Πραγματικότητα: 70 πόδια
+              </text>
+              <text x="150" y="54" fontSize="18" fontWeight="900" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">
+                70 － 50 ＝ 20 επιπλέον πόδια
+              </text>
+              <text x="150" y="73" fontSize="10.5" textAnchor="middle" fill="#dc2626">
+                (Ανήκουν στις 4ποδες κατσίκες)
+              </text>
             </g>
 
-            <g transform="translate(85, 100)">
-              <rect x="0" y="0" width="320" height="36" rx="8" fill="#16a34a" />
-              <text x="160" y="23" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                Κατσίκες (＋2 πόδια/ζώο): 20 : 2 ＝ 10 κατσίκες ⭐
+            {/* Βέλη σύγκλισης προς το συμπέρασμα */}
+            <path d="M 185 108 C 185 125, 300 135, 340 138" fill="none" stroke="#16a34a" strokeWidth="2" strokeDasharray="3 2" />
+            <path d="M 535 108 C 535 125, 420 135, 380 138" fill="none" stroke="#16a34a" strokeWidth="2" strokeDasharray="3 2" />
+
+            {/* Τελικό Αποτέλεσμα (Κατσίκες) */}
+            <g transform="translate(135, 138)">
+              <rect x="0" y="0" width="450" height="46" rx="12" fill="#16a34a" />
+              <text x="225" y="29" fontSize="13.5" fontWeight="900" textAnchor="middle" fill="#ffffff">
+                Πλήθος Κατσικιών: 20 επιπλέον πόδια : 2 ＝ 10 κατσίκες ⭐
               </text>
             </g>
           </svg>
         </div>
 
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono space-y-1.5">
-          <div>• Αν και τα 25 ζώα ήταν κοτόπουλα, θα είχαν: 25 · 2 ＝ <strong>50 πόδια</strong>.</div>
-          <div>• Στην πραγματικότητα υπάρχουν 70 πόδια, δηλαδή περισσεύουν: 70 － 50 ＝ <strong>20 πόδια</strong>.</div>
-          <div>• Κάθε κατσίκα έχει 4 － 2 ＝ 2 πόδια παραπάνω από ένα κοτόπουλο.</div>
-          <div className="text-emerald-700 font-bold pt-1 border-t border-slate-200">
-            • Αριθμός κατσικιών: 20 : 2 ＝ <strong>10 κατσίκες</strong> (και 15 κοτόπουλα).
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Μέθοδος Υπόθεσης (Ψευδούς Θέσης) */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Αριθμητικά με τη Μέθοδο της Υπόθεσης)
+            </div>
+            <p className="text-slate-700">
+              Υποθέτουμε ότι όλα τα ζώα ανήκουν στην κατηγορία με τα λιγότερα πόδια (κοτόπουλα)[cite: 1]:
+            </p>
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div>
+                • <strong>Βήμα 1 (Υποθετικά πόδια):</strong> Αν και τα 25 ζώα ήταν δίποδα κοτόπουλα, θα είχαμε:
+                <div className="pl-3 font-bold text-slate-800 pt-0.5">25 · 2 ＝ 50 πόδια.</div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200">
+                • <strong>Βήμα 2 (Πόδια που περισσεύουν):</strong> Στην πραγματικότητα υπάρχουν 70 πόδια[cite: 1]:
+                <div className="pl-3 font-bold text-slate-800 pt-0.5">70 － 50 ＝ 20 πόδια επιπλέον.</div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200">
+                • <strong>Βήμα 3 (Σκεπτικό αντικατάστασης):</strong> Κάθε φορά που αντικαθιστούμε 1 κοτόπουλο με 1 κατσίκα, τα κεφάλια παραμένουν 25, αλλά τα πόδια αυξάνονται κατά:
+                <div className="pl-3 font-bold text-slate-800 pt-0.5">4 － 2 ＝ 2 πόδια ανά ζώο.</div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
+                • <strong>Βήμα 4 (Εύρεση κατσικιών):</strong> Για να καλυφθούν και τα 20 επιπλέον πόδια, χρειαζόμαστε:
+                <div className="pl-3 text-base text-emerald-700 font-black pt-0.5">
+                  20 : 2 ＝ 10 κατσίκες ⭐
+                </div>
+                <div className="text-slate-600 font-sans text-xs pt-1 font-normal">
+                  (Τα υπόλοιπα 25 － 10 ＝ 15 ζώα είναι κοτόπουλα. Επαλήθευση: 15 · 2 ＋ 10 · 4 ＝ 30 ＋ 40 ＝ 70 πόδια[cite: 1]).
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Αλγεβρικά με x και y */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Αλγεβρικά με εξισώσεις x και y)
+            </div>
+            <p className="text-slate-700">
+              Ορίζουμε μεταβλητές για το πλήθος των ζώων:
+            </p>
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div>
+                • Έστω <strong>x</strong> ο αριθμός των κοτόπουλων και <strong>y</strong> ο αριθμός των κατσικιών[cite: 1].
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 space-y-1">
+                <div>• <strong>Εξίσωση για τα κεφάλια:</strong> x ＋ y ＝ 25 ➔ <strong>x ＝ 25 － y</strong>[cite: 1]</div>
+                <div>• <strong>Εξίσωση για τα πόδια:</strong> 2 · x ＋ 4 · y ＝ 70[cite: 1]</div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 space-y-1 text-slate-800">
+                <div>Αντικαθιστούμε το x στη δεύτερη εξίσωση:</div>
+                <div className="pl-3">2 · (25 － y) ＋ 4y ＝ 70</div>
+                <div className="pl-3">50 － 2y ＋ 4y ＝ 70</div>
+                <div className="pl-3">50 ＋ 2y ＝ 70</div>
+                <div className="pl-3">2y ＝ 70 － 50 ＝ 20</div>
+                <div className="pl-3 text-emerald-700 font-black text-base">
+                  y ＝ 20 : 2 ＝ 10 κατσίκες ⭐
+                </div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Και για τα κοτόπουλα: x ＝ 25 － 10 ＝ <strong>15 κοτόπουλα</strong>.
+              </div>
+            </div>
           </div>
         </div>
+
+        <p className="pt-1">
+          Επομένως, στο αγρόκτημα υπάρχουν <strong>10 κατσίκες</strong>[cite: 1].
+        </p>
       </div>
     )
   },
