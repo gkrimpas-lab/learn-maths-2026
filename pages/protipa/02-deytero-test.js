@@ -1250,58 +1250,183 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Υπολογίζουμε τη <strong>συνολική ποσότητα καθαρού αλατιού</strong> και το <strong>συνολικό βάρος</strong> του μείγματος:
+          Για να βρούμε την περιεκτικότητα του νέου μείγματος, υπολογίζουμε ξεχωριστά την <strong>καθαρή ποσότητα αλατιού</strong> σε κάθε δοχείο και τη συγκρίνουμε με το <strong>συνολικό βάρος του μείγματος</strong>:
         </p>
 
-        {/* SVG ΣΧΗΜΑ 11: ΑΝΑΜΕΙΞΗ ΔΙΑΛΥΜΑΤΩΝ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="160" viewBox="0 0 510 160" className="select-none font-sans mx-auto block">
-            {/* Δοχείο Α */}
-            <g transform="translate(20, 20)">
-              <rect x="0" y="0" width="120" height="70" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-              <text x="60" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Δοχείο Α (200 g)</text>
-              <text x="60" y="40" fontSize="9.5" textAnchor="middle" fill="#2563eb">10% αλάτι</text>
-              <text x="60" y="58" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">＝ 20 g αλάτι</text>
+        {/* SVG ΣΧΗΜΑ 11: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
+        <div className="bg-white/90 p-3 sm:p-4 rounded-2xl border border-slate-200/90 my-2">
+          <svg
+            viewBox="0 0 620 220"
+            className="w-full h-auto max-w-[620px] mx-auto block select-none font-sans"
+          >
+            <defs>
+              <marker id="mix-arr-11" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 8 5 L 0 9 z" fill="#0284c7" />
+              </marker>
+            </defs>
+
+            {/* 1. ΔΟΧΕΙΟ Α (200 g, 10% αλάτι = 20 g) */}
+            <g transform="translate(30, 20)">
+              <text x="65" y="0" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#0f172a">Δοχείο Α</text>
+              {/* Περίγραμμα δοχείου */}
+              <rect x="0" y="10" width="130" height="95" rx="6" fill="#f8fafc" stroke="#3b82f6" strokeWidth="1.8" />
+              {/* Νερό (180 g) */}
+              <rect x="2" y="32" width="126" height="50" fill="#e0f2fe" />
+              <text x="65" y="60" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1">Νερό: 180 g</text>
+              {/* Αλάτι στη βάση (20 g = 10%) */}
+              <rect x="2" y="82" width="126" height="21" rx="2" fill="#fed7aa" stroke="#f97316" strokeWidth="1" />
+              <text x="65" y="96" fontSize="10" fontWeight="black" textAnchor="middle" fill="#c2410c">Αλάτι: 20 g (10%)</text>
+              {/* Ετικέτα βάρους */}
+              <text x="65" y="120" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1e40af">Σύνολο: 200 g</text>
             </g>
 
-            <text x="165" y="60" fontSize="22" fontWeight="black" textAnchor="middle" fill="#64748b">＋</text>
+            {/* Σύμβολο πρόσθεσης (+) */}
+            <text x="195" y="80" fontSize="22" fontWeight="black" textAnchor="middle" fill="#64748b">＋</text>
 
-            {/* Δοχείο Β */}
-            <g transform="translate(190, 20)">
-              <rect x="0" y="0" width="120" height="70" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-              <text x="60" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Δοχείο Β (300 g)</text>
-              <text x="60" y="40" fontSize="9.5" textAnchor="middle" fill="#2563eb">20% αλάτι</text>
-              <text x="60" y="58" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">＝ 60 g αλάτι</text>
+            {/* 2. ΔΟΧΕΙΟ Β (300 g, 20% αλάτι = 60 g) */}
+            <g transform="translate(230, 20)">
+              <text x="75" y="0" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#0f172a">Δοχείο Β</text>
+              <rect x="0" y="10" width="150" height="95" rx="6" fill="#f8fafc" stroke="#3b82f6" strokeWidth="1.8" />
+              {/* Νερό (240 g) */}
+              <rect x="2" y="24" width="146" height="46" fill="#e0f2fe" />
+              <text x="75" y="52" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1">Νερό: 240 g</text>
+              {/* Αλάτι στη βάση (60 g = 20%) */}
+              <rect x="2" y="70" width="146" height="33" rx="2" fill="#fed7aa" stroke="#f97316" strokeWidth="1" />
+              <text x="75" y="90" fontSize="10" fontWeight="black" textAnchor="middle" fill="#c2410c">Αλάτι: 60 g (20%)</text>
+              <text x="75" y="120" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1e40af">Σύνολο: 300 g</text>
             </g>
 
-            <text x="335" y="60" fontSize="22" fontWeight="black" textAnchor="middle" fill="#64748b">＝</text>
-
-            {/* Δοχείο Γ */}
-            <g transform="translate(360, 15)">
-              <rect x="0" y="0" width="130" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.2" />
-              <text x="65" y="24" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">Δοχείο Γ (Μείγμα)</text>
-              <text x="65" y="44" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">500 g διάλυμα</text>
-              <text x="65" y="66" fontSize="14" fontWeight="900" textAnchor="middle" fill="#166534" fontFamily="monospace">16% αλάτι ⭐</text>
+            {/* Βέλος ανάμειξης */}
+            <g transform="translate(400, 75)">
+              <line x1="5" y1="0" x2="30" y2="0" stroke="#0284c7" strokeWidth="2.5" markerEnd="url(#mix-arr-11)" />
             </g>
 
-            <g transform="translate(60, 110)">
-              <rect x="0" y="0" width="390" height="34" rx="8" fill="#0f172a" />
-              <text x="195" y="22" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
-                (20 g ＋ 60 g) : 500 g ＝ 80 : 500 ＝ 16 : 100 ＝ 16%
+            {/* 3. ΔΟΧΕΙΟ Γ (500 g, 80 g αλάτι = 16%) */}
+            <g transform="translate(450, 10)">
+              <text x="70" y="8" fontSize="12" fontWeight="black" textAnchor="middle" fill="#166534">Δοχείο Γ (Μείγμα)</text>
+              <rect x="0" y="18" width="140" height="105" rx="8" fill="#f0fdf4" stroke="#16a34a" strokeWidth="2.4" />
+              {/* Συνολικό νερό (420 g) */}
+              <rect x="2" y="32" width="136" height="48" fill="#e0f2fe" />
+              <text x="70" y="60" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#0369a1">Νερό: 420 g</text>
+              {/* Συνολικό αλάτι (80 g) */}
+              <rect x="2" y="80" width="136" height="41" rx="3" fill="#fed7aa" stroke="#16a34a" strokeWidth="1.2" />
+              <text x="70" y="98" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d">Αλάτι: 80 g</text>
+              <text x="70" y="112" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">(20 g ＋ 60 g)</text>
+              {/* Badge περιεκτικότητας */}
+              <rect x="-10" y="132" width="160" height="28" rx="8" fill="#16a34a" />
+              <text x="70" y="150" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                Ποσοστό: 16% ⭐
+              </text>
+            </g>
+
+            {/* ΚΑΤΩ ΕΝΙΑΙΟ ΠΛΑΙΣΙΟ */}
+            <g transform="translate(25, 175)">
+              <rect x="0" y="0" width="570" height="34" rx="8" fill="#0f172a" />
+              <text x="285" y="21" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
+                Σύνολο Αλατιού: 80 g &nbsp;|&nbsp; Σύνολο Διαλύματος: 500 g ➔ 80 : 500 ＝ 16 : 100 ＝ 16%
               </text>
             </g>
           </svg>
         </div>
 
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono space-y-1.5">
-          <div>• Αλάτι στο δοχείο Α: 10% · 200 ＝ <strong>20 g</strong>.</div>
-          <div>• Αλάτι στο δοχείο Β: 20% · 300 ＝ <strong>60 g</strong>.</div>
-          <div>• Συνολικό αλάτι στο Γ: 20 ＋ 60 ＝ <strong>80 g</strong>.</div>
-          <div>• Συνολικό βάρος διαλύματος: 200 ＋ 300 ＝ <strong>500 g</strong>.</div>
-          <div className="text-emerald-700 font-bold pt-1 border-t border-slate-200">
-            • Ποσοστό αλατιού: 80 / 500 ＝ 16 / 100 ＝ <strong>16%</strong>.
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Βήμα-βήμα υπολογισμός μαζών */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Υπολογισμός καθαρού αλατιού και αναγωγή στο 100)
+            </div>
+            <p className="text-slate-700">
+              Βρίσκουμε την ακριβή ποσότητα καθαρού αλατιού σε γραμμάρια από κάθε δοχείο:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div>
+                • <strong>Καθαρό αλάτι στο δοχείο Α:</strong>
+                <div className="pl-3 pt-0.5 flex items-center gap-1.5 flex-wrap text-slate-800">
+                  <span>10% επί των 200 g ＝</span>
+                  <Fraction num="10" den="100" />
+                  <span>· 200 ＝ 0,10 · 200 ＝ <strong className="text-blue-700">20 γραμμάρια αλάτι</strong></span>
+                </div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200">
+                • <strong>Καθαρό αλάτι στο δοχείο Β:</strong>
+                <div className="pl-3 pt-0.5 flex items-center gap-1.5 flex-wrap text-slate-800">
+                  <span>20% επί των 300 g ＝</span>
+                  <Fraction num="20" den="100" />
+                  <span>· 300 ＝ 0,20 · 300 ＝ <strong className="text-blue-700">60 γραμμάρια αλάτι</strong></span>
+                </div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 space-y-1">
+                • <strong>Ανάμειξη στο δοχείο Γ:</strong>
+                <div className="pl-3 text-slate-800">
+                  <div>• Συνολικό καθαρό αλάτι: 20 ＋ 60 ＝ <strong>80 γραμμάρια</strong></div>
+                  <div>• Συνολικό βάρος μείγματος: 200 ＋ 300 ＝ <strong>500 γραμμάρια</strong></div>
+                </div>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200">
+                • <strong>Υπολογισμός ποσοστού επί τοις εκατό (%):</strong>
+                <div className="pl-3 pt-1 flex items-center gap-2 flex-wrap text-emerald-800 font-bold">
+                  <span>Ποσοστό ＝</span>
+                  <Fraction num="Καθαρό Αλάτι" den="Συνολικό Μείγμα" />
+                  <span>＝</span>
+                  <Fraction num="80" den="500" />
+                  <span>＝</span>
+                  <Fraction num="80 : 5" den="500 : 5" />
+                  <span>＝</span>
+                  <Fraction num="16" den="100" />
+                  <span>＝ <span className="text-base text-emerald-700 font-black">16%</span> ⭐</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Σταθμισμένος μέσος όρος με κλάσματα */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Σταθμισμένος μέσος όρος αναλογίας μαζών)
+            </div>
+            <p className="text-slate-700">
+              Εκφράζουμε τη συμμετοχή κάθε διαλύματος ως κλάσμα του συνολικού όγκου (500 g):
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Το δοχείο Α αποτελεί τα:</span>
+                <Fraction num="200" den="500" />
+                <span>＝</span>
+                <Fraction num="2" den="5" />
+                <span>του μείγματος (με περιεκτικότητα 10%).</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Το δοχείο Β αποτελεί τα:</span>
+                <Fraction num="300" den="500" />
+                <span>＝</span>
+                <Fraction num="3" den="5" />
+                <span>του μείγματος (με περιεκτικότητα 20%).</span>
+              </div>
+
+              <div className="pt-1 border-t border-slate-200 space-y-1">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>Τελικό Ποσοστό ＝ (</span>
+                  <Fraction num="2" den="5" />
+                  <span>· 10%) ＋ (</span>
+                  <Fraction num="3" den="5" />
+                  <span>· 20%)</span>
+                </div>
+                <div className="pl-3 text-slate-800">
+                  <div>＝ 4% ＋ 12% ＝ <strong className="text-emerald-700 text-base font-black">16%</strong></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <p className="pt-1">
+          Επομένως, το ποσοστό αλατιού στο νέο διάλυμα Γ είναι <strong>16%</strong>.
+        </p>
       </div>
     )
   },
