@@ -132,39 +132,62 @@ const QUESTIONS = [
           Εφαρμόζουμε τα <strong>κριτήρια διαιρετότητας</strong> για το 10 και το 9:
         </p>
 
-        {/* SVG ΣΧΗΜΑ 2: ΑΝΑΛΥΣΗ ΨΗΦΙΩΝ */}
+        {/* SVG ΣΧΗΜΑ 2: ΜΕΓΑΛΥΤΕΡΗ ΚΛΙΜΑΚΑ & ΑΝΕΤΟ ΣΧΕΔΙΟ */}
         <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="155" viewBox="0 0 490 155" className="select-none font-sans mx-auto block">
-            {/* 4 Κουτάκια Ψηφίων */}
+          <svg width="620" height="185" viewBox="0 0 620 185" className="select-none font-sans mx-auto block">
+            {/* 4 Μεγάλα Κουτάκια Ψηφίων */}
             {[
               { d: '3', label: 'Χιλιάδες' },
               { d: '4', label: 'Εκατοντάδες' },
-              { d: 'Α = 2', label: 'Δεκάδες ⭐', isTarget: true },
-              { d: 'Β = 0', label: 'Μονάδες (:10)', isFixed: true }
+              { d: 'Α ＝ 2', label: 'Δεκάδες ⭐', isTarget: true },
+              { d: 'Β ＝ 0', label: 'Μονάδες (:10)', isFixed: true }
             ].map((box, i) => (
-              <g key={i} transform={`translate(${45 + i * 105}, 20)`}>
+              <g key={i} transform={`translate(${35 + i * 140}, 16)`}>
                 <rect
                   x="0"
                   y="0"
-                  width="85"
-                  height="65"
-                  rx="10"
+                  width="115"
+                  height="80"
+                  rx="14"
                   fill={box.isTarget ? '#dcfce7' : box.isFixed ? '#eff6ff' : '#f8fafc'}
                   stroke={box.isTarget ? '#16a34a' : box.isFixed ? '#3b82f6' : '#cbd5e1'}
-                  strokeWidth="2"
+                  strokeWidth="2.5"
                 />
-                <text x="42.5" y="38" fontSize="18" fontWeight="black" textAnchor="middle" fill={box.isTarget ? '#15803d' : box.isFixed ? '#1d4ed8' : '#0f172a'} fontFamily="monospace">
+                <text
+                  x="57.5"
+                  y="46"
+                  fontSize="24"
+                  fontWeight="900"
+                  textAnchor="middle"
+                  fill={box.isTarget ? '#15803d' : box.isFixed ? '#1d4ed8' : '#0f172a'}
+                  fontFamily="monospace"
+                >
                   {box.d}
                 </text>
-                <text x="42.5" y="56" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">
+                <text
+                  x="57.5"
+                  y="68"
+                  fontSize="11.5"
+                  fontWeight="bold"
+                  textAnchor="middle"
+                  fill={box.isTarget ? '#166534' : box.isFixed ? '#2563eb' : '#64748b'}
+                >
                   {box.label}
                 </text>
               </g>
             ))}
 
-            <g transform="translate(45, 105)">
-              <rect x="0" y="0" width="400" height="34" rx="8" fill="#0f172a" />
-              <text x="200" y="21" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+            {/* Κάτω Επεξηγηματικό Πλαίσιο με άπλετο πλάτος (550px) */}
+            <g transform="translate(35, 118)">
+              <rect x="0" y="0" width="550" height="46" rx="12" fill="#0f172a" />
+              <text
+                x="275"
+                y="28"
+                fontSize="13.5"
+                fontWeight="bold"
+                textAnchor="middle"
+                fill="#ffffff"
+              >
                 Άθροισμα ψηφίων: 3 ＋ 4 ＋ Α ＋ 0 ＝ 7 ＋ Α (Πολλαπλάσιο του 9 ➔ Α ＝ 2)
               </text>
             </g>
