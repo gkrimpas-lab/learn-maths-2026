@@ -207,50 +207,159 @@ const QUESTIONS = [
     id: 3,
     group: 'ΟΜΑΔΑ Α (4 ΕΠΙΛΟΓΕΣ)',
     prompt: 'Ποιο από τα παρακάτω κλάσματα βρίσκεται πιο κοντά στο κλάσμα 3/5 στην αριθμογραμμή;',
-    options: ['1/2', '7/10', '11/20', '13/25'],
+    options: [
+      <Fraction num="1" den="2" />,
+      <Fraction num="7" den="10" />,
+      <Fraction num="11" den="20" />,
+      <Fraction num="13" den="25" />
+    ],
     correct: '11/20',
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Μετατρέπουμε όλα τα κλάσματα σε ομώνυμα με παρονομαστή το <strong>100</strong> (ή δεκαδικούς) για να συγκρίνουμε τις αποστάσεις τους από το <Fraction num="3" den="5" /> ＝ <strong>0,60</strong>:
+          Μετατρέπουμε όλα τα κλάσματα σε δεκαδικούς αριθμούς (με παρονομαστή το 100) για να συγκρίνουμε εύκολα τις αποστάσεις τους από τον στόχο <strong>0,60 (<Fraction num="3" den="5" />)</strong>:
         </p>
 
-        {/* SVG ΣΧΗΜΑ 3: ΑΡΙΘΜΟΓΡΑΜΜΗ ΣΥΓΚΡΙΣΗΣ */}
+        {/* SVG ΣΧΗΜΑ: ΑΡΙΘΜΟΓΡΑΜΜΗ ΜΕ ΟΛΑ ΤΑ ΝΟΥΜΕΡΑ ΚΑΙ ΑΠΟΣΤΑΣΕΙΣ ΑΠΟ ΤΟ 0,60 */}
         <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="170" viewBox="0 0 510 170" className="select-none font-sans mx-auto block">
-            <line x1="30" y1="85" x2="480" y2="85" stroke="#334155" strokeWidth="2" />
-            
-            {/* Σημεία */}
-            {[
-              { val: '1/2 (0,50)', x: 60, dist: 'd = 0,10' },
-              { val: '13/25 (0,52)', x: 130, dist: 'd = 0,08' },
-              { val: '11/20 (0,55)', x: 230, dist: 'd = 0,05 ⭐', isBest: true },
-              { val: '3/5 (0,60)', x: 340, isTarget: true },
-              { val: '7/10 (0,70)', x: 440, dist: 'd = 0,10' }
-            ].map((p, i) => (
-              <g key={i} transform={`translate(${p.x}, 85)`}>
-                <line x1="0" y1="-8" x2="0" y2="8" stroke={p.isTarget ? '#2563eb' : p.isBest ? '#16a34a' : '#64748b'} strokeWidth="2" />
-                <circle cx="0" cy="0" r={p.isTarget ? 6.5 : 4.5} fill={p.isTarget ? '#2563eb' : p.isBest ? '#16a34a' : '#64748b'} />
-                <text x="0" y="-14" fontSize="10.5" fontWeight={p.isTarget || p.isBest ? 'black' : 'bold'} textAnchor="middle" fill={p.isTarget ? '#1d4ed8' : p.isBest ? '#15803d' : '#475569'}>
-                  {p.val}
-                </text>
-                {p.dist && (
-                  <text x="0" y="24" fontSize="9" fontWeight="bold" textAnchor="middle" fill={p.isBest ? '#15803d' : '#dc2626'} fontFamily="monospace">
-                    {p.dist}
-                  </text>
-                )}
-              </g>
-            ))}
+          <svg width="530" height="200" viewBox="0 0 530 200" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="numline-arr-3" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
+              </marker>
+            </defs>
+
+            {/* Κεντρικός άξονας αριθμογραμμής */}
+            <line x1="20" y1="100" x2="505" y2="100" stroke="#334155" strokeWidth="2" markerEnd="url(#numline-arr-3)" />
+
+            {/* 1. ΣΗΜΕΙΟ 1/2 = 0,50 */}
+            <g transform="translate(60, 100)">
+              <line x1="0" y1="-8" x2="0" y2="8" stroke="#64748b" strokeWidth="2" />
+              <circle cx="0" cy="0" r="4.5" fill="#64748b" />
+              <text x="0" y="-28" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">1/2</text>
+              <text x="0" y="-14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,50)</text>
+              <text x="0" y="24" fontSize="9.5" textAnchor="middle" fill="#dc2626" fontFamily="monospace">d ＝ 0,10</text>
+            </g>
+
+            {/* 2. ΣΗΜΕΙΟ 13/25 = 0,52 */}
+            <g transform="translate(130, 100)">
+              <line x1="0" y1="-8" x2="0" y2="8" stroke="#64748b" strokeWidth="2" />
+              <circle cx="0" cy="0" r="4.5" fill="#64748b" />
+              <text x="0" y="-28" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">13/25</text>
+              <text x="0" y="-14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,52)</text>
+              <text x="0" y="24" fontSize="9.5" textAnchor="middle" fill="#dc2626" fontFamily="monospace">d ＝ 0,08</text>
+            </g>
+
+            {/* 3. ΣΗΜΕΙΟ 11/20 = 0,55 (ΤΟ ΠΛΗΣΙΕΣΤΕΡΟ) */}
+            <g transform="translate(235, 100)">
+              <line x1="0" y1="-10" x2="0" y2="10" stroke="#16a34a" strokeWidth="2.5" />
+              <circle cx="0" cy="0" r="6" fill="#16a34a" stroke="#14532d" strokeWidth="1.5" />
+              <text x="0" y="-28" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#15803d">11/20</text>
+              <text x="0" y="-14" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#16a34a">(0,55)</text>
+              <rect x="-26" y="14" width="52" height="18" rx="4" fill="#dcfce7" stroke="#86efac" strokeWidth="1" />
+              <text x="0" y="27" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#166534" fontFamily="monospace">d ＝ 0,05</text>
+              <text x="0" y="46" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">Πιο κοντά!</text>
+            </g>
+
+            {/* ΤΟΞΟ ΑΠΟΣΤΑΣΗΣ ΑΠΟ 0,55 ΣΕ 0,60 */}
+            <path d="M 235 82 Q 292 65 350 82" fill="none" stroke="#16a34a" strokeWidth="2" />
+            <text x="292.5" y="68" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#15803d">0,05</text>
+
+            {/* 4. ΣΤΟΧΟΣ 3/5 = 0,60 (ΕΠΙΚΕΝΤΡΟ) */}
+            <g transform="translate(350, 100)">
+              <line x1="0" y1="-32" x2="0" y2="35" stroke="#2563eb" strokeWidth="2.5" strokeDasharray="3 2" />
+              <circle cx="0" cy="0" r="6.5" fill="#2563eb" stroke="#1e40af" strokeWidth="1.5" />
+              <rect x="-38" y="-62" width="76" height="24" rx="6" fill="#1e293b" />
+              <text x="0" y="-46" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
+                0,60 ⭐
+              </text>
+              <text x="0" y="50" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">
+                (Στόχος: 3/5)
+              </text>
+            </g>
+
+            {/* 5. ΣΗΜΕΙΟ 7/10 = 0,70 */}
+            <g transform="translate(450, 100)">
+              <line x1="0" y1="-8" x2="0" y2="8" stroke="#64748b" strokeWidth="2" />
+              <circle cx="0" cy="0" r="4.5" fill="#64748b" />
+              <text x="0" y="-28" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">7/10</text>
+              <text x="0" y="-14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,70)</text>
+              <text x="0" y="24" fontSize="9.5" textAnchor="middle" fill="#dc2626" fontFamily="monospace">d ＝ 0,10</text>
+            </g>
           </svg>
         </div>
 
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono space-y-1.5">
-          <div>• 3/5 ＝ 60/100 ＝ 0,60 (Στόχος)</div>
-          <div>• 1/2 ＝ 0,50 ➔ Απόσταση: |0,60 － 0,50| ＝ 0,10</div>
-          <div>• 7/10 ＝ 0,70 ➔ Απόσταση: |0,60 － 0,70| ＝ 0,10</div>
-          <div>• 13/25 ＝ 52/100 ＝ 0,52 ➔ Απόσταση: |0,60 － 0,52| ＝ 0,08</div>
-          <div className="text-emerald-700 font-bold">• 11/20 ＝ 55/100 ＝ 0,55 ➔ Απόσταση: |0,60 － 0,55| ＝ 0,05 ⭐ (Ελάχιστη)</div>
+        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΚΑΙ ΣΥΓΚΡΙΣΗ ΑΠΟΣΤΑΣΕΩΝ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* Βήμα 1 */}
+          <div className="space-y-1">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              1. Μετατροπή των κλασμάτων σε ομώνυμα με παρονομαστή το 100 (δεκαδικοί):
+            </div>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span>•</span>
+                <Fraction num="1" den="2" />
+                <span>＝</span>
+                <Fraction num="50" den="100" />
+                <span>＝ <strong>0,50</strong></span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span>•</span>
+                <Fraction num="13" den="25" />
+                <span>＝</span>
+                <Fraction num="52" den="100" />
+                <span>＝ <strong>0,52</strong></span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200 bg-emerald-50/60 p-1.5 rounded-lg">
+                <span>•</span>
+                <strong className="text-emerald-800"><Fraction num="11" den="20" /></strong>
+                <span>＝</span>
+                <Fraction num="55" den="100" />
+                <span>＝ <strong className="text-emerald-700">0,55</strong></span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Στόχος:</span>
+                <Fraction num="3" den="5" />
+                <span>＝</span>
+                <Fraction num="60" den="100" />
+                <span>＝ <strong>0,60</strong></span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
+                <span>•</span>
+                <Fraction num="7" den="10" />
+                <span>＝</span>
+                <Fraction num="70" den="100" />
+                <span>＝ <strong>0,70</strong></span>
+              </div>
+            </div>
+          </div>
+
+          {/* Βήμα 2 */}
+          <div className="space-y-1 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
+              2. Υπολογισμός της απόστασης κάθε αριθμού από το 0,60:
+            </div>
+
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• Για το 0,50 (<Fraction num="1" den="2" />): |0,60 － 0,50| ＝ <strong>0,10</strong></div>
+              <div>• Για το 0,52 (<Fraction num="13" den="25" />): |0,60 － 0,52| ＝ <strong>0,08</strong></div>
+              <div className="text-emerald-700 font-bold bg-emerald-50 p-1 rounded-md">
+                • Για το 0,55 (<Fraction num="11" den="20" />): |0,60 － 0,55| ＝ 0,05 ⭐ (ελάχιστη απόσταση)
+              </div>
+              <div>• Για το 0,70 (<Fraction num="7" den="10" />): |0,60 － 0,70| ＝ <strong>0,10</strong></div>
+            </div>
+          </div>
         </div>
+
+        <p className="pt-1">
+          Επομένως, το κλάσμα που βρίσκεται πιο κοντά στον αριθμό <Fraction num="3" den="5" /> (0,60) είναι το <strong><Fraction num="11" den="20" /></strong>[cite: 1].
+        </p>
       </div>
     )
   },
