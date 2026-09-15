@@ -115,7 +115,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, η τιμή της αριθμητικής παράστασης είναι <strong>31,0</strong>[cite: 1].
+          Επομένως, η τιμή της αριθμητικής παράστασης είναι <strong>31,0</strong>.
         </p>
       </div>
     )
@@ -361,7 +361,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, το κλάσμα που βρίσκεται πιο κοντά στον αριθμό <Fraction num="3" den="5" /> (0,60) είναι το <strong><Fraction num="11" den="20" /></strong>[cite: 1].
+          Επομένως, το κλάσμα που βρίσκεται πιο κοντά στον αριθμό <Fraction num="3" den="5" /> (0,60) είναι το <strong><Fraction num="11" den="20" /></strong>.
         </p>
       </div>
     )
@@ -375,7 +375,7 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Εξετάζουμε τη διαδοχική μεταβολή της τιμής: η αύξηση κατά 25% υπολογίζεται πάνω στην <strong>αρχική τιμή</strong>, ενώ η μείωση κατά 20% υπολογίζεται πάνω στη <strong>νέα (αυξημένη) τιμή</strong>[cite: 1]:
+          Εξετάζουμε τη διαδοχική μεταβολή της τιμής: η αύξηση κατά 25% υπολογίζεται πάνω στην <strong>αρχική τιμή</strong>, ενώ η μείωση κατά 20% υπολογίζεται πάνω στη <strong>νέα (αυξημένη) τιμή</strong>:
         </p>
 
         {/* SVG ΣΧΗΜΑ 4: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
@@ -448,8 +448,8 @@ const QUESTIONS = [
               Επιλέγουμε ως αρχική τιμή τα <strong>100 €</strong> για ευκολία στους υπολογισμούς:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• <strong>Αύξηση κατά 25%:</strong> 100 ＋ 25 ＝ <strong>125 €</strong> (η νέα τιμή)[cite: 1].</div>
-              <div>• <strong>Μείωση κατά 20%:</strong> Υπολογίζεται πάνω στη νέα τιμή των 125 €[cite: 1]:</div>
+              <div>• <strong>Αύξηση κατά 25%:</strong> 100 ＋ 25 ＝ <strong>125 €</strong> (η νέα τιμή).</div>
+              <div>• <strong>Μείωση κατά 20%:</strong> Υπολογίζεται πάνω στη νέα τιμή των 125 €:</div>
               <div className="pl-3 text-slate-800">
                 Ποσό μείωσης ＝ 20% · 125 ＝ 0,20 · 125 ＝ <strong className="text-rose-600">25 €</strong>.
               </div>
@@ -457,7 +457,7 @@ const QUESTIONS = [
                 • <strong>Τελική τιμή:</strong> 125 － 25 ＝ <strong className="text-emerald-700 font-black">100 €</strong>.
               </div>
               <div className="pt-0.5 text-slate-600 font-sans text-xs">
-                Η τελική τιμή ισούται με την αρχική, επομένως η συνολική ποσοστιαία μεταβολή είναι <strong>0% (καμία μεταβολή)</strong>[cite: 1].
+                Η τελική τιμή ισούται με την αρχική, επομένως η συνολική ποσοστιαία μεταβολή είναι <strong>0% (καμία μεταβολή)</strong>.
               </div>
             </div>
           </div>
@@ -474,7 +474,7 @@ const QUESTIONS = [
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span>• Αύξηση κατά 25% ➔ Νέα τιμή: x · (1 ＋ 0,25) ＝ 1,25 · x ＝</span>
                 <Fraction num="5" den="4" />
-                <span>· x[cite: 1]</span>
+                <span>· x</span>
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
@@ -484,7 +484,7 @@ const QUESTIONS = [
                 <Fraction num="5" den="4" />
                 <span>·</span>
                 <Fraction num="4" den="5" />
-                <span>· x[cite: 1]</span>
+                <span>· x</span>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200 text-emerald-800 font-bold">
@@ -493,14 +493,14 @@ const QUESTIONS = [
                 <span>· x ＝ 1 · x ＝ <span className="text-base text-emerald-700 font-black">x</span></span>
               </div>
               <div className="text-slate-600 font-sans text-xs pt-0.5">
-                Εφόσον η τελική τιμή παραμένει ακριβώς <strong>x</strong>, αποδεικνύεται ότι για οποιαδήποτε τιμή του προϊόντος η μεταβολή είναι πάντοτε <strong>0%</strong>[cite: 1].
+                Εφόσον η τελική τιμή παραμένει ακριβώς <strong>x</strong>, αποδεικνύεται ότι για οποιαδήποτε τιμή του προϊόντος η μεταβολή είναι πάντοτε <strong>0%</strong>.
               </div>
             </div>
           </div>
         </div>
 
         <p className="pt-1">
-          Επομένως, η συνολική ποσοστιαία μεταβολή της τελικής τιμής είναι <strong>Καμία μεταβολή (0%)</strong>[cite: 1].
+          Επομένως, η συνολική ποσοστιαία μεταβολή της τελικής τιμής είναι <strong>Καμία μεταβολή (0%)</strong>.
         </p>
       </div>
     )
@@ -514,7 +514,7 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Γνωρίζουμε ότι κάθε ζώο έχει <strong>1 κεφάλι</strong> (σύνολο 25 ζώα), κάθε κοτόπουλο έχει <strong>2 πόδια</strong> και κάθε κατσίκα έχει <strong>4 πόδια</strong>[cite: 1]:
+          Γνωρίζουμε ότι κάθε ζώο έχει <strong>1 κεφάλι</strong> (σύνολο 25 ζώα), κάθε κοτόπουλο έχει <strong>2 πόδια</strong> και κάθε κατσίκα έχει <strong>4 πόδια</strong>:
         </p>
 
         {/* SVG ΣΧΗΜΑ 5: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
@@ -573,7 +573,7 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Αριθμητικά με τη Μέθοδο της Υπόθεσης)
             </div>
             <p className="text-slate-700">
-              Υποθέτουμε ότι όλα τα ζώα ανήκουν στην κατηγορία με τα λιγότερα πόδια (κοτόπουλα)[cite: 1]:
+              Υποθέτουμε ότι όλα τα ζώα ανήκουν στην κατηγορία με τα λιγότερα πόδια (κοτόπουλα):
             </p>
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
@@ -582,7 +582,7 @@ const QUESTIONS = [
               </div>
 
               <div className="pt-1 border-t border-slate-200">
-                • <strong>Βήμα 2 (Πόδια που περισσεύουν):</strong> Στην πραγματικότητα υπάρχουν 70 πόδια[cite: 1]:
+                • <strong>Βήμα 2 (Πόδια που περισσεύουν):</strong> Στην πραγματικότητα υπάρχουν 70 πόδια:
                 <div className="pl-3 font-bold text-slate-800 pt-0.5">70 － 50 ＝ 20 πόδια επιπλέον.</div>
               </div>
 
@@ -597,7 +597,7 @@ const QUESTIONS = [
                   20 : 2 ＝ 10 κατσίκες ⭐
                 </div>
                 <div className="text-slate-600 font-sans text-xs pt-1 font-normal">
-                  (Τα υπόλοιπα 25 － 10 ＝ 15 ζώα είναι κοτόπουλα. Επαλήθευση: 15 · 2 ＋ 10 · 4 ＝ 30 ＋ 40 ＝ 70 πόδια[cite: 1]).
+                  (Τα υπόλοιπα 25 － 10 ＝ 15 ζώα είναι κοτόπουλα. Επαλήθευση: 15 · 2 ＋ 10 · 4 ＝ 30 ＋ 40 ＝ 70 πόδια).
                 </div>
               </div>
             </div>
@@ -613,12 +613,12 @@ const QUESTIONS = [
             </p>
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
-                • Έστω <strong>x</strong> ο αριθμός των κοτόπουλων και <strong>y</strong> ο αριθμός των κατσικιών[cite: 1].
+                • Έστω <strong>x</strong> ο αριθμός των κοτόπουλων και <strong>y</strong> ο αριθμός των κατσικιών.
               </div>
 
               <div className="pt-1 border-t border-slate-200 space-y-1">
-                <div>• <strong>Εξίσωση για τα κεφάλια:</strong> x ＋ y ＝ 25 ➔ <strong>x ＝ 25 － y</strong>[cite: 1]</div>
-                <div>• <strong>Εξίσωση για τα πόδια:</strong> 2 · x ＋ 4 · y ＝ 70[cite: 1]</div>
+                <div>• <strong>Εξίσωση για τα κεφάλια:</strong> x ＋ y ＝ 25 ➔ <strong>x ＝ 25 － y</strong></div>
+                <div>• <strong>Εξίσωση για τα πόδια:</strong> 2 · x ＋ 4 · y ＝ 70</div>
               </div>
 
               <div className="pt-1 border-t border-slate-200 space-y-1 text-slate-800">
@@ -640,7 +640,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, στο αγρόκτημα υπάρχουν <strong>10 κατσίκες</strong>[cite: 1].
+          Επομένως, στο αγρόκτημα υπάρχουν <strong>10 κατσίκες</strong>.
         </p>
       </div>
     )
@@ -704,7 +704,7 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Συγκρίνουμε το <strong>συνολικό άθροισμα πόντων</strong> στους 4 αρχικούς γύρους με το επιθυμητό άθροισμα στους 5 γύρους[cite: 1]:
+          Συγκρίνουμε το <strong>συνολικό άθροισμα πόντων</strong> στους 4 αρχικούς γύρους με το επιθυμητό άθροισμα στους 5 γύρους:
         </p>
 
         {/* SVG ΣΧΗΜΑ 7: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
@@ -765,7 +765,7 @@ const QUESTIONS = [
           </div>
 
           <p className="text-slate-700">
-            Ο μέσος όρος ισούται με το πηλίκο του αθροίσματος των πόντων δια του πλήθους των γύρων[cite: 1]:
+            Ο μέσος όρος ισούται με το πηλίκο του αθροίσματος των πόντων δια του πλήθους των γύρων:
           </p>
 
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
@@ -799,12 +799,12 @@ const QUESTIONS = [
           </div>
 
           <p className="text-slate-800">
-            Συγκρίνουμε τον παλιό μέσο όρο (16) με τον επιθυμητό (17)[cite: 1]:
+            Συγκρίνουμε τον παλιό μέσο όρο (16) με τον επιθυμητό (17):
           </p>
 
           <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-1.5">
-            <div>• Ο μέσος όρος πρέπει να αυξηθεί κατά: 17 － 16 ＝ <strong>＋1 πόντο</strong>[cite: 1].</div>
-            <div>• Για να αυξηθεί ο μέσος όρος κατά 1 σε όλους τους <strong>5 γύρους</strong>, απαιτούνται επιπλέον: 5 · 1 ＝ <strong>＋5 πόντοι</strong>[cite: 1].</div>
+            <div>• Ο μέσος όρος πρέπει να αυξηθεί κατά: 17 － 16 ＝ <strong>＋1 πόντο</strong>.</div>
+            <div>• Για να αυξηθεί ο μέσος όρος κατά 1 σε όλους τους <strong>5 γύρους</strong>, απαιτούνται επιπλέον: 5 · 1 ＝ <strong>＋5 πόντοι</strong>.</div>
             <div className="pt-1 border-t border-slate-200 flex items-center gap-2 flex-wrap">
               <span>• Πόντοι 5ου γύρου ＝ Παλιός Μ.Ο. ＋ Επιπλέον πόντοι ＝ 16 ＋ 5 ＝</span>
               <strong className="text-emerald-700 text-base">21 πόντοι</strong>
@@ -813,7 +813,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, στον 5ο γύρο πρέπει να συγκεντρώσει <strong>21 πόντους</strong>[cite: 1].
+          Επομένως, στον 5ο γύρο πρέπει να συγκεντρώσει <strong>21 πόντους</strong>.
         </p>
       </div>
     )
@@ -910,10 +910,10 @@ const QUESTIONS = [
               Ξεκινώντας από τον 1ο όρο (4), για να φτάσουμε στον 40ό όρο εκτελούμε:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• <strong>Πλήθος ενδιάμεσων βημάτων:</strong> 40 － 1 ＝ <strong>39 βήματα</strong>[cite: 1].</div>
+              <div>• <strong>Πλήθος ενδιάμεσων βημάτων:</strong> 40 － 1 ＝ <strong>39 βήματα</strong>.</div>
               <div>• <strong>Συνολική αύξηση:</strong> 39 · 5 ＝ <strong>195</strong>.</div>
               <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
-                • <strong>40ός όρος ＝</strong> 4 ＋ 195 ＝ <span className="text-base text-emerald-700 font-black">199</span>[cite: 1].
+                • <strong>40ός όρος ＝</strong> 4 ＋ 195 ＝ <span className="text-base text-emerald-700 font-black">199</span>.
               </div>
             </div>
           </div>
@@ -934,14 +934,14 @@ const QUESTIONS = [
                 Κάθε όρος ισούται με το πενταπλάσιο της θέσης του μειωμένο κατά 1 ($5 · n － 1$):
               </div>
               <div className="pt-0.5 text-emerald-800 font-bold text-base">
-                • Για $n = 40$: 5 · 40 － 1 ＝ 200 － 1 ＝ <span className="text-emerald-700 font-black">199</span>[cite: 1].
+                • Για $n = 40$: 5 · 40 － 1 ＝ 200 － 1 ＝ <span className="text-emerald-700 font-black">199</span>.
               </div>
             </div>
           </div>
         </div>
 
         <p className="pt-1">
-          Επομένως, ο 40ός όρος της αριθμητικής ακολουθίας είναι το <strong>199</strong>[cite: 1].
+          Επομένως, ο 40ός όρος της αριθμητικής ακολουθίας είναι το <strong>199</strong>.
         </p>
       </div>
     )
@@ -1047,12 +1047,12 @@ const QUESTIONS = [
               <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
                 Σε κάθε διαίρεση το υπόλοιπο είναι φυσικός αριθμός αυστηρά μικρότερος του διαιρέτη (<span className="font-mono font-bold">υ &lt; δ</span>). Επειδή ο διαιρέτης είναι <strong>12</strong>:
               </div>
-              <div>• Δυνατά υπόλοιπα: 0, 1, 2, ..., <strong>11</strong>[cite: 1].</div>
+              <div>• Δυνατά υπόλοιπα: 0, 1, 2, ..., <strong>11</strong>.</div>
               <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
                 Για να γίνει ο διαιρετέος <strong>μέγιστος δυνατός</strong>, πρέπει να προσθέσουμε το <strong>μέγιστο δυνατό υπόλοιπο</strong>:
               </div>
               <div className="text-emerald-800 font-bold text-base">
-                Δ_max ＝ 12 · 15 ＋ 11 ＝ 180 ＋ 11 ＝ <span className="text-emerald-700 font-black">191</span>[cite: 1]
+                Δ_max ＝ 12 · 15 ＋ 11 ＝ 180 ＋ 11 ＝ <span className="text-emerald-700 font-black">191</span>
               </div>
             </div>
           </div>
@@ -1063,23 +1063,23 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Συλλογισμός μέσω του επόμενου πολλαπλασίου)
             </div>
             <p className="text-slate-700">
-              Σκεφτόμαστε πότε αλλάζει το πηλίκο σε 16[cite: 1]:
+              Σκεφτόμαστε πότε αλλάζει το πηλίκο σε 16:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>• Για Δ ＝ 12 · 15 ＝ <strong>180</strong>, η διαίρεση είναι τέλεια (υ ＝ 0, π ＝ 15)[cite: 1].</div>
-              <div>• Για Δ ＝ 12 · 16 ＝ <strong>192</strong>, το πηλίκο γίνεται 16 (και όχι 15)[cite: 1].</div>
+              <div>• Για Δ ＝ 12 · 15 ＝ <strong>180</strong>, η διαίρεση είναι τέλεια (υ ＝ 0, π ＝ 15).</div>
+              <div>• Για Δ ＝ 12 · 16 ＝ <strong>192</strong>, το πηλίκο γίνεται 16 (και όχι 15).</div>
               <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
                 Άρα, ο μεγαλύτερος αριθμός που εξακολουθεί να δίνει πηλίκο 15 είναι ο αμέσως προηγούμενος φυσικός του 192:
               </div>
               <div className="text-emerald-800 font-bold text-base pt-0.5">
-                Δ_max ＝ 192 － 1 ＝ <span className="text-emerald-700 font-black">191</span>[cite: 1]
+                Δ_max ＝ 192 － 1 ＝ <span className="text-emerald-700 font-black">191</span>
               </div>
             </div>
           </div>
         </div>
 
         <p className="pt-1">
-          Επομένως, ο μέγιστος δυνατός διαιρετέος είναι το <strong>191</strong>[cite: 1].
+          Επομένως, ο μέγιστος δυνατός διαιρετέος είναι το <strong>191</strong>.
         </p>
       </div>
     )
@@ -1093,7 +1093,7 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Αναλύουμε τα χρήματα που απομένουν μετά από κάθε αγορά, εξετάζοντας τι μέρος του συνολικού ποσού αντιστοιχεί στα <strong>30 €</strong>[cite: 1]:
+          Αναλύουμε τα χρήματα που απομένουν μετά από κάθε αγορά, εξετάζοντας τι μέρος του συνολικού ποσού αντιστοιχεί στα <strong>30 €</strong>:
         </p>
 
         {/* SVG ΣΧΗΜΑ 10: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
@@ -1160,13 +1160,13 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Υπολογισμός προς τα πίσω με κλάσματα)
             </div>
             <p className="text-slate-700">
-              Ξεκινάμε από το τελικό ποσό (30 €) και πηγαίνουμε προς την αρχή[cite: 1]:
+              Ξεκινάμε από το τελικό ποσό (30 €) και πηγαίνουμε προς την αρχή:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
                 • <strong>Βήμα 1 (Πριν την αγορά του παιχνιδιού):</strong>
                 <div className="pl-3 text-slate-700 font-sans text-xs pt-0.5">
-                  Ξόδεψε το <Fraction num="1" den="4" /> του ενδιάμεσου ποσού, άρα του έμειναν τα <Fraction num="3" den="4" />[cite: 1]:
+                  Ξόδεψε το <Fraction num="1" den="4" /> του ενδιάμεσου ποσού, άρα του έμειναν τα <Fraction num="3" den="4" />:
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap pl-3 pt-1">
                   <span>Ενδιάμεσο ποσό ＝ 30 :</span>
@@ -1180,7 +1180,7 @@ const QUESTIONS = [
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Βήμα 2 (Πριν την αγορά του βιβλίου - Αρχικό ποσό):</strong>
                 <div className="pl-3 text-slate-700 font-sans text-xs pt-0.5">
-                  Ξόδεψε το <Fraction num="1" den="3" /> των αρχικών χρημάτων, άρα τα 40 € αντιστοιχούν στα <Fraction num="2" den="3" /> του αρχικού ποσού[cite: 1]:
+                  Ξόδεψε το <Fraction num="1" den="3" /> των αρχικών χρημάτων, άρα τα 40 € αντιστοιχούν στα <Fraction num="2" den="3" /> του αρχικού ποσού:
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap pl-3 pt-1 text-emerald-800 font-bold">
                   <span>Αρχικό Ποσό ＝ 40 :</span>
@@ -1199,7 +1199,7 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Αλγεβρικά με εξίσωση και άγνωστο x)
             </div>
             <p className="text-slate-700">
-              Έστω <strong>x</strong> το συνολικό αρχικό ποσό σε ευρώ[cite: 1]:
+              Έστω <strong>x</strong> το συνολικό αρχικό ποσό σε ευρώ:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
@@ -1236,7 +1236,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, ο Νίκος είχε αρχικά <strong>60 €</strong>[cite: 1].
+          Επομένως, ο Νίκος είχε αρχικά <strong>60 €</strong>.
         </p>
       </div>
     )
@@ -1528,25 +1528,25 @@ const QUESTIONS = [
               <div>
                 • <strong>Βήμα 1 (Εμβαδόν τετραγώνου):</strong>
                 <div className="pl-3 text-slate-800 pt-0.5">
-                  Ε_τετραγώνου ＝ α · α ＝ 20 · 20 ＝ <strong className="text-blue-700">400 τ.εκ.</strong>[cite: 1]
+                  Ε_τετραγώνου ＝ α · α ＝ 20 · 20 ＝ <strong className="text-blue-700">400 τ.εκ.</strong>
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Βήμα 2 (Ακτίνα και εμβαδόν εγγεγραμμένου κύκλου):</strong>
                 <div className="pl-3 text-slate-700 font-sans text-xs pt-0.5">
-                  Ο μέγιστος δυνατός κύκλος εφάπτεται και στις 4 πλευρές του τετραγώνου, άρα η διάμετρός του ισούται με την πλευρά του τετραγώνου (20 εκ.)[cite: 1]:
+                  Ο μέγιστος δυνατός κύκλος εφάπτεται και στις 4 πλευρές του τετραγώνου, άρα η διάμετρός του ισούται με την πλευρά του τετραγώνου (20 εκ.):
                 </div>
                 <div className="pl-3 text-slate-800 pt-0.5 space-y-1">
-                  <div>Ακτίνα: r ＝ 20 : 2 ＝ <strong>10 εκ.</strong>[cite: 1]</div>
-                  <div>Ε_κύκλου ＝ π · r² ≈ 3,14 · 10 · 10 ＝ 3,14 · 100 ＝ <strong className="text-blue-700">314 τ.εκ.</strong>[cite: 1]</div>
+                  <div>Ακτίνα: r ＝ 20 : 2 ＝ <strong>10 εκ.</strong></div>
+                  <div>Ε_κύκλου ＝ π · r² ≈ 3,14 · 10 · 10 ＝ 3,14 · 100 ＝ <strong className="text-blue-700">314 τ.εκ.</strong></div>
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Βήμα 3 (Αφαίρεση επιφανειών):</strong>
                 <div className="pl-3 text-emerald-800 font-bold text-base pt-0.5">
-                  Ε_χωρίου ＝ 400 － 314 ＝ <span className="text-emerald-700 font-black">86 τ.εκ.</span> ⭐[cite: 1]
+                  Ε_χωρίου ＝ 400 － 314 ＝ <span className="text-emerald-700 font-black">86 τ.εκ.</span> ⭐
                 </div>
               </div>
             </div>
@@ -1558,7 +1558,7 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Συμμετρία των 4 γωνιών & ποσοστό κάλυψης)
             </div>
             <p className="text-slate-700">
-              Ο εγγεγραμμένος κύκλος καλύπτει πάντοτε σταθερό ποσοστό του τετραγώνου[cite: 1]:
+              Ο εγγεγραμμένος κύκλος καλύπτει πάντοτε σταθερό ποσοστό του τετραγώνου:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
               <div className="flex items-center gap-2 flex-wrap">
@@ -1572,7 +1572,7 @@ const QUESTIONS = [
                 <span>• Ποσοστό του εξωτερικού χωρίου ＝ 100% － 78,5% ＝ <strong>21,5%</strong></span>
               </div>
               <div className="pt-1 border-t border-slate-200">
-                • Ε_χωρίου ＝ 21,5% · 400 ＝ 0,215 · 400 ＝ <strong className="text-emerald-700 font-black text-base">86 τ.εκ.</strong>[cite: 1]
+                • Ε_χωρίου ＝ 21,5% · 400 ＝ 0,215 · 400 ＝ <strong className="text-emerald-700 font-black text-base">86 τ.εκ.</strong>
               </div>
               <div className="text-slate-600 font-sans text-xs">
                 (Κάθε μία από τις 4 ίσες εξωτερικές γωνίες έχει εμβαδόν: 86 : 4 ＝ 21,5 τ.εκ.).
@@ -1582,7 +1582,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, το εμβαδόν του χωρίου είναι <strong>86 τ.εκ.</strong>[cite: 1]
+          Επομένως, το εμβαδόν του χωρίου είναι <strong>86 τ.εκ.</strong>
         </p>
       </div>
     )
@@ -1693,7 +1693,7 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Υπολογισμός Ε.Κ.Π. & Ημερολογιακή Μετάβαση)
             </div>
             <p className="text-slate-700">
-              Αναλύουμε τους αριθμούς 12 και 18 σε γινόμενο πρώτων παραγόντων[cite: 1]:
+              Αναλύουμε τους αριθμούς 12 και 18 σε γινόμενο πρώτων παραγόντων:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
@@ -1706,19 +1706,19 @@ const QUESTIONS = [
                 Το Ε.Κ.Π. ισούται με το γινόμενο των κοινών και μη κοινών πρώτων παραγόντων με τον μεγαλύτερο εκθέτη:
               </div>
               <div className="text-blue-700 font-bold">
-                Ε.Κ.Π.(12, 18) ＝ 2² · 3² ＝ 4 · 9 ＝ 36 ημέρες[cite: 1]
+                Ε.Κ.Π.(12, 18) ＝ 2² · 3² ＝ 4 · 9 ＝ 36 ημέρες
               </div>
 
               <div className="pt-1 border-t border-slate-200 space-y-1">
                 <div className="font-sans font-bold text-slate-900">
-                  • Μετατροπή των 36 ημερών σε ημερομηνία (ξεκινώντας από 1η Μαΐου):[cite: 1]
+                  • Μετατροπή των 36 ημερών σε ημερομηνία (ξεκινώντας από 1η Μαΐου):
                 </div>
                 <div className="pl-3 text-slate-800 space-y-0.5 font-sans text-xs">
-                  <div>1. Ο Μάιος έχει 31 ημέρες[cite: 1]. Από την 1η Μαΐου έως το τέλος του μήνα απομένουν:</div>
+                  <div>1. Ο Μάιος έχει 31 ημέρες. Από την 1η Μαΐου έως το τέλος του μήνα απομένουν:</div>
                   <div className="pl-3 font-mono font-bold text-slate-900">31 － 1 ＝ 30 ημέρες.</div>
                   <div>2. Από τις 36 ημέρες αφαιρούμε τις 30 ημέρες του Μαΐου:</div>
                   <div className="pl-3 font-mono font-bold text-emerald-800 text-sm">
-                    36 － 30 ＝ 6 ημέρες του επόμενου μήνα (Ιούνιος) ➔ <strong>6 Ιουνίου</strong> ⭐[cite: 1]
+                    36 － 30 ＝ 6 ημέρες του επόμενου μήνα (Ιούνιος) ➔ <strong>6 Ιουνίου</strong> ⭐
                   </div>
                 </div>
               </div>
@@ -1731,23 +1731,23 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Αναλυτική καταγραφή των ημερών επιστροφής)
             </div>
             <p className="text-slate-700">
-              Καταγράφουμε τις ημέρες που κάθε καράβι βρίσκεται πίσω στον Πειραιά[cite: 1]:
+              Καταγράφουμε τις ημέρες που κάθε καράβι βρίσκεται πίσω στον Πειραιά:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• 1ο καράβι (κάθε 12 ημ.): 12, 24, <strong className="text-emerald-700">36</strong>, 48, ...[cite: 1]</div>
-              <div>• 2ο καράβι (κάθε 18 ημ.): 18, <strong className="text-emerald-700">36</strong>, 54, ...[cite: 1]</div>
+              <div>• 1ο καράβι (κάθε 12 ημ.): 12, 24, <strong className="text-emerald-700">36</strong>, 48, ...</div>
+              <div>• 2ο καράβι (κάθε 18 ημ.): 18, <strong className="text-emerald-700">36</strong>, 54, ...</div>
               <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
-                • Πρώτη κοινή ημέρα επιστροφής ＝ <strong>36 ημέρες μετά την 1η Μαΐου</strong>[cite: 1].
+                • Πρώτη κοινή ημέρα επιστροφής ＝ <strong>36 ημέρες μετά την 1η Μαΐου</strong>.
               </div>
               <div className="text-slate-600 font-sans text-xs">
-                1 Μαΐου ＋ 36 ημέρες ＝ 1 Μαΐου ＋ 30 ημέρες (31 Μαΐου) ＋ 6 ημέρες ＝ <strong>6 Ιουνίου</strong>[cite: 1].
+                1 Μαΐου ＋ 36 ημέρες ＝ 1 Μαΐου ＋ 30 ημέρες (31 Μαΐου) ＋ 6 ημέρες ＝ <strong>6 Ιουνίου</strong>.
               </div>
             </div>
           </div>
         </div>
 
         <p className="pt-1">
-          Επομένως, τα δύο καράβια θα συναντηθούν πάλι στο λιμάνι στις <strong>6 Ιουνίου</strong>[cite: 1].
+          Επομένως, τα δύο καράβια θα συναντηθούν πάλι στο λιμάνι στις <strong>6 Ιουνίου</strong>.
         </p>
       </div>
     )
@@ -1858,22 +1858,22 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Αριθμητικά με τη Μέθοδο των Ίσων Μερών)
             </div>
             <p className="text-slate-700">
-              Θεωρούμε ως <strong>1 μέρος</strong> το ποσό του Γιάννη[cite: 1]:
+              Θεωρούμε ως <strong>1 μέρος</strong> το ποσό του Γιάννη:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
                 • <strong>Κατανομή μερών:</strong>
                 <div className="pl-3 text-slate-800 space-y-0.5 pt-0.5">
-                  <div>• Γιάννης: <strong>1 μέρος</strong>[cite: 1]</div>
-                  <div>• Μαρία: <strong>1 μέρος ＋ 15 €</strong>[cite: 1]</div>
-                  <div>• Κώστας: 2 · (1 μέρος ＋ 15 €) ＝ <strong>2 μέρη ＋ 30 €</strong>[cite: 1]</div>
+                  <div>• Γιάννης: <strong>1 μέρος</strong></div>
+                  <div>• Μαρία: <strong>1 μέρος ＋ 15 €</strong></div>
+                  <div>• Κώστας: 2 · (1 μέρος ＋ 15 €) ＝ <strong>2 μέρη ＋ 30 €</strong></div>
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Συνολικό άθροισμα:</strong>
                 <div className="pl-3 text-slate-800 pt-0.5">
-                  (1 ＋ 1 ＋ 2) μέρη ＋ (15 ＋ 30) € ＝ <strong>4 μέρη ＋ 45 € ＝ 125 €</strong>[cite: 1]
+                  (1 ＋ 1 ＋ 2) μέρη ＋ (15 ＋ 30) € ＝ <strong>4 μέρη ＋ 45 € ＝ 125 €</strong>
                 </div>
               </div>
 
@@ -1882,7 +1882,7 @@ const QUESTIONS = [
                 <div className="pl-3 text-slate-800 pt-0.5 space-y-1">
                   <div>Αφαιρούμε τα επιπλέον ποσά: 125 － 45 ＝ <strong>80 €</strong> (αντιστοιχούν στα 4 ίσα μέρη).</div>
                   <div className="text-emerald-800 font-bold text-base">
-                    1 μέρος (Γιάννης) ＝ 80 : 4 ＝ <span className="text-emerald-700 font-black">20 €</span> ⭐[cite: 1]
+                    1 μέρος (Γιάννης) ＝ 80 : 4 ＝ <span className="text-emerald-700 font-black">20 €</span> ⭐
                   </div>
                 </div>
               </div>
@@ -1895,36 +1895,36 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Αλγεβρικά με εξίσωση πρώτου βαθμού)
             </div>
             <p className="text-slate-700">
-              Έστω <strong>x</strong> τα χρήματα του Γιάννη σε ευρώ[cite: 1]:
+              Έστω <strong>x</strong> τα χρήματα του Γιάννη σε ευρώ:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
-                • Χρήματα Μαρίας: <strong>x ＋ 15</strong>[cite: 1]
+                • Χρήματα Μαρίας: <strong>x ＋ 15</strong>
               </div>
               <div>
-                • Χρήματα Κώστα: 2 · (x ＋ 15) ＝ <strong>2x ＋ 30</strong>[cite: 1]
+                • Χρήματα Κώστα: 2 · (x ＋ 15) ＝ <strong>2x ＋ 30</strong>
               </div>
 
               <div className="pt-1 border-t border-slate-200 space-y-1 text-slate-800">
-                <div>Το συνολικό τους ποσό είναι 125 €[cite: 1]:</div>
-                <div className="pl-3">x ＋ (x ＋ 15) ＋ (2x ＋ 30) ＝ 125[cite: 1]</div>
+                <div>Το συνολικό τους ποσό είναι 125 €:</div>
+                <div className="pl-3">x ＋ (x ＋ 15) ＋ (2x ＋ 30) ＝ 125</div>
                 <div className="pl-3">4x ＋ 45 ＝ 125</div>
                 <div className="pl-3">4x ＝ 125 － 45</div>
                 <div className="pl-3">4x ＝ 80</div>
                 <div className="pl-3 text-emerald-700 font-black text-base">
-                  x ＝ 80 : 4 ＝ 20 € ⭐[cite: 1]
+                  x ＝ 80 : 4 ＝ 20 € ⭐
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200 text-slate-600 font-sans text-xs">
-                Επαλήθευση: Γιάννης ＝ 20 €, Μαρία ＝ 35 €, Κώστας ＝ 70 € (Άθροισμα: 20 ＋ 35 ＋ 70 ＝ 125 €)[cite: 1].
+                Επαλήθευση: Γιάννης ＝ 20 €, Μαρία ＝ 35 €, Κώστας ＝ 70 € (Άθροισμα: 20 ＋ 35 ＋ 70 ＝ 125 €).
               </div>
             </div>
           </div>
         </div>
 
         <p className="pt-1">
-          Επομένως, ο Γιάννης έχει <strong>20 ευρώ</strong>[cite: 1].
+          Επομένως, ο Γιάννης έχει <strong>20 ευρώ</strong>.
         </p>
       </div>
     )
@@ -2014,28 +2014,28 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Υπολογισμός μέσω των συνολικών βαθμών)
             </div>
             <p className="text-slate-700">
-              Βρίσκουμε το συνολικό άθροισμα βαθμολογίας κάθε ομάδας ξεχωριστά[cite: 1]:
+              Βρίσκουμε το συνολικό άθροισμα βαθμολογίας κάθε ομάδας ξεχωριστά:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
                 • <strong>Βαθμοί των 10 αγοριών:</strong>
                 <div className="pl-3 pt-0.5 text-slate-800">
-                  10 · 14 ＝ <strong className="text-blue-700">140 βαθμοί</strong>[cite: 1]
+                  10 · 14 ＝ <strong className="text-blue-700">140 βαθμοί</strong>
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Βαθμοί των 15 κοριτσιών:</strong>
                 <div className="pl-3 pt-0.5 text-slate-800">
-                  15 · 16,5 ＝ <strong className="text-pink-700">247,5 βαθμοί</strong>[cite: 1]
+                  15 · 16,5 ＝ <strong className="text-pink-700">247,5 βαθμοί</strong>
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200 space-y-1">
                 • <strong>Συγκεντρωτικά στοιχεία ολόκληρου του τμήματος:</strong>
                 <div className="pl-3 text-slate-800">
-                  <div>• Συνολικό πλήθος μαθητών: 10 ＋ 15 ＝ <strong>25 μαθητές</strong>[cite: 1]</div>
-                  <div>• Συνολικό άθροισμα βαθμών: 140 ＋ 247,5 ＝ <strong>387,5 βαθμοί</strong>[cite: 1]</div>
+                  <div>• Συνολικό πλήθος μαθητών: 10 ＋ 15 ＝ <strong>25 μαθητές</strong></div>
+                  <div>• Συνολικό άθροισμα βαθμών: 140 ＋ 247,5 ＝ <strong>387,5 βαθμοί</strong></div>
                 </div>
               </div>
 
@@ -2046,7 +2046,7 @@ const QUESTIONS = [
                   <Fraction num="Συνολικοί Βαθμοί" den="Σύνολο Μαθητών" />
                   <span>＝</span>
                   <Fraction num="387,5" den="25" />
-                  <span>＝ <span className="text-base text-emerald-700 font-black">15,5</span> ⭐</span>[cite: 1]
+                  <span>＝ <span className="text-base text-emerald-700 font-black">15,5</span> ⭐</span>
                 </div>
               </div>
             </div>
@@ -2058,7 +2058,7 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Σταθμισμένη αναλογία βαρών με κλάσματα)
             </div>
             <p className="text-slate-700">
-              Εκφράζουμε την αναλογία κάθε ομάδας ως κλάσμα του συνόλου των 25 μαθητών[cite: 1]:
+              Εκφράζουμε την αναλογία κάθε ομάδας ως κλάσμα του συνόλου των 25 μαθητών:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div className="flex items-center gap-1.5 flex-wrap">
@@ -2066,7 +2066,7 @@ const QUESTIONS = [
                 <Fraction num="10" den="25" />
                 <span>＝</span>
                 <Fraction num="2" den="5" />
-                <span>του τμήματος (ή 40%).</span>[cite: 1]
+                <span>του τμήματος (ή 40%).</span>
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
@@ -2074,7 +2074,7 @@ const QUESTIONS = [
                 <Fraction num="15" den="25" />
                 <span>＝</span>
                 <Fraction num="3" den="5" />
-                <span>του τμήματος (ή 60%).</span>[cite: 1]
+                <span>του τμήματος (ή 60%).</span>
               </div>
 
               <div className="pt-1 border-t border-slate-200 space-y-1">
@@ -2093,7 +2093,7 @@ const QUESTIONS = [
                     <Fraction num="49,5" den="5" />
                     <span>＝</span>
                     <Fraction num="77,5" den="5" />
-                    <span>＝ <strong className="text-emerald-700 text-base font-black">15,5</strong></span>[cite: 1]
+                    <span>＝ <strong className="text-emerald-700 text-base font-black">15,5</strong></span>
                   </div>
                 </div>
               </div>
@@ -2102,7 +2102,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, ο συνολικός μέσος όρος βαθμολογίας όλων των μαθητών του τμήματος είναι <strong>15,5</strong>[cite: 1].
+          Επομένως, ο συνολικός μέσος όρος βαθμολογίας όλων των μαθητών του τμήματος είναι <strong>15,5</strong>.
         </p>
       </div>
     )
@@ -2207,36 +2207,36 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Αριθμητικά με καταμέτρηση των διαδοχικών προσθηκών)
             </div>
             <p className="text-slate-700">
-              Αναλύουμε πώς παράγεται κάθε σχήμα ξεκινώντας από το 1ο[cite: 1]:
+              Αναλύουμε πώς παράγεται κάθε σχήμα ξεκινώντας από το 1ο:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
                 • <strong>Βήμα 1 (Αφαίρεση του κεντρικού τετραγώνου):</strong>
                 <div className="pl-3 pt-0.5 text-slate-800">
-                  Το 1ο σχήμα έχει 1 τετράγωνο[cite: 1]. Όλα τα υπόλοιπα προκύπτουν προσθέτοντας τετράδες:
+                  Το 1ο σχήμα έχει 1 τετράγωνο. Όλα τα υπόλοιπα προκύπτουν προσθέτοντας τετράδες:
                 </div>
                 <div className="pl-3 font-bold text-slate-900">
-                  97 － 1 ＝ <strong>96 τετράγωνα</strong> (προήλθαν από τις διαδοχικές προσθήκες)[cite: 1].
+                  97 － 1 ＝ <strong>96 τετράγωνα</strong> (προήλθαν από τις διαδοχικές προσθήκες).
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Βήμα 2 (Υπολογισμός των βημάτων αύξησης):</strong>
                 <div className="pl-3 pt-0.5 text-slate-800">
-                  Σε κάθε νέο σχήμα προστίθενται 4 τετράγωνα (5 － 1 ＝ 4, 9 － 5 ＝ 4, 13 － 9 ＝ 4)[cite: 1]:
+                  Σε κάθε νέο σχήμα προστίθενται 4 τετράγωνα (5 － 1 ＝ 4, 9 － 5 ＝ 4, 13 － 9 ＝ 4):
                 </div>
                 <div className="pl-3 font-bold text-blue-700">
-                  96 : 4 ＝ <strong>24 διαδοχικές προσθήκες (βήματα)</strong>[cite: 1].
+                  96 : 4 ＝ <strong>24 διαδοχικές προσθήκες (βήματα)</strong>.
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
                 • <strong>Βήμα 3 (Εύρεση του αριθμού Ν):</strong>
                 <div className="pl-3 text-slate-800 pt-0.5">
-                  Επειδή ξεκινήσαμε από το Σχήμα 1, μετά από 24 βήματα φτάνουμε στο[cite: 1]:
+                  Επειδή ξεκινήσαμε από το Σχήμα 1, μετά από 24 βήματα φτάνουμε στο:
                 </div>
                 <div className="pl-3 text-base text-emerald-700 font-black pt-0.5">
-                  Ν ＝ 1 ＋ 24 ＝ 25 ⭐[cite: 1]
+                  Ν ＝ 1 ＋ 24 ＝ 25 ⭐
                 </div>
               </div>
             </div>
@@ -2248,28 +2248,28 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Αλγεβρικά με τον τύπο της αριθμητικής ακολουθίας)
             </div>
             <p className="text-slate-700">
-              Εκφράζουμε το πλήθος των τετραγώνων του Σχήματος Ν συναρτήσει του Ν[cite: 1]:
+              Εκφράζουμε το πλήθος των τετραγώνων του Σχήματος Ν συναρτήσει του Ν:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Σχήμα 1: 1 ＋ 0 · 4 ＝ 1[cite: 1]</div>
-              <div>• Σχήμα 2: 1 ＋ 1 · 4 ＝ 5[cite: 1]</div>
-              <div>• Σχήμα 3: 1 ＋ 2 · 4 ＝ 9[cite: 1]</div>
-              <div>• Σχήμα 4: 1 ＋ 3 · 4 ＝ 13[cite: 1]</div>
+              <div>• Σχήμα 1: 1 ＋ 0 · 4 ＝ 1</div>
+              <div>• Σχήμα 2: 1 ＋ 1 · 4 ＝ 5</div>
+              <div>• Σχήμα 3: 1 ＋ 2 · 4 ＝ 9</div>
+              <div>• Σχήμα 4: 1 ＋ 3 · 4 ＝ 13</div>
               <div className="pt-1 border-t border-slate-200 font-bold text-slate-800">
-                • Σχήμα Ν: 1 ＋ (Ν － 1) · 4 ＝ 97[cite: 1]
+                • Σχήμα Ν: 1 ＋ (Ν － 1) · 4 ＝ 97
               </div>
               <div className="pl-3 space-y-0.5 text-slate-800">
                 <div>4 · (Ν － 1) ＝ 97 － 1</div>
                 <div>4 · (Ν － 1) ＝ 96</div>
                 <div>Ν － 1 ＝ 96 : 4</div>
-                <div>Ν － 1 ＝ 24 ➔ <strong className="text-emerald-700 text-base font-black">Ν ＝ 25</strong>[cite: 1]</div>
+                <div>Ν － 1 ＝ 24 ➔ <strong className="text-emerald-700 text-base font-black">Ν ＝ 25</strong></div>
               </div>
             </div>
           </div>
         </div>
 
         <p className="pt-1">
-          Επομένως, το σχήμα που αποτελείται από 97 τετράγωνα είναι το <strong>Σχήμα 25 (Ν ＝ 25)</strong>[cite: 1].
+          Επομένως, το σχήμα που αποτελείται από 97 τετράγωνα είναι το <strong>Σχήμα 25 (Ν ＝ 25)</strong>.
         </p>
       </div>
     )
@@ -2382,23 +2382,23 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Υπολογισμός αρχικής τιμής με αναγωγή στο 10%)
             </div>
             <p className="text-slate-700">
-              Αναλύουμε το ποσοστό που πλήρωσε ο πελάτης στην πρώτη περίπτωση[cite: 1]:
+              Αναλύουμε το ποσοστό που πλήρωσε ο πελάτης στην πρώτη περίπτωση:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
                 • <strong>Βήμα 1 (Ποσοστό πληρωμής):</strong>
                 <div className="pl-3 text-slate-800 pt-0.5">
-                  100% － 30% ＝ <strong>70% της αρχικής τιμής</strong>[cite: 1].
+                  100% － 30% ＝ <strong>70% της αρχικής τιμής</strong>.
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Βήμα 2 (Εύρεση του 10% και της αρχικής τιμής 100%):</strong>
                 <div className="pl-3 text-slate-800 pt-0.5 space-y-1">
-                  <div>Τα 7 δέκατα (70%) ισούνται με 210 €[cite: 1].</div>
+                  <div>Τα 7 δέκατα (70%) ισούνται με 210 €.</div>
                   <div>Το 10% ισούται με: 210 : 7 ＝ <strong>30 €</strong>.</div>
                   <div className="text-blue-700 font-bold">
-                    Αρχική Τιμή (100%) ＝ 10 · 30 € ＝ 300 €[cite: 1]
+                    Αρχική Τιμή (100%) ＝ 10 · 30 € ＝ 300 €
                   </div>
                 </div>
               </div>
@@ -2406,9 +2406,9 @@ const QUESTIONS = [
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Βήμα 3 (Υπολογισμός νέας τιμής με έκπτωση 10%):</strong>
                 <div className="pl-3 text-slate-800 pt-0.5 space-y-1">
-                  <div>Ποσό νέας έκπτωσης: 10% · 300 € ＝ <strong>30 €</strong>[cite: 1].</div>
+                  <div>Ποσό νέας έκπτωσης: 10% · 300 € ＝ <strong>30 €</strong>.</div>
                   <div className="text-emerald-800 font-bold text-base">
-                    Νέα Τιμή Πώλησης ＝ 300 € － 30 € ＝ <span className="text-emerald-700 font-black">270 €</span> ⭐[cite: 1]
+                    Νέα Τιμή Πώλησης ＝ 300 € － 30 € ＝ <span className="text-emerald-700 font-black">270 €</span> ⭐
                   </div>
                 </div>
               </div>
@@ -2421,14 +2421,14 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Απευθείας υπολογισμός με λόγο ποσοστών)
             </div>
             <p className="text-slate-700">
-              Συγκρίνουμε απευθείας τα δύο ποσοστά πληρωμής[cite: 1]:
+              Συγκρίνουμε απευθείας τα δύο ποσοστά πληρωμής:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
-                • Στην 1η περίπτωση πληρώσαμε το <strong>70%</strong> της αρχικής τιμής[cite: 1].
+                • Στην 1η περίπτωση πληρώσαμε το <strong>70%</strong> της αρχικής τιμής.
               </div>
               <div>
-                • Στη 2η περίπτωση θα πληρώσουμε το 100% － 10% ＝ <strong>90%</strong> της αρχικής τιμής[cite: 1].
+                • Στη 2η περίπτωση θα πληρώσουμε το 100% － 10% ＝ <strong>90%</strong> της αρχικής τιμής.
               </div>
 
               <div className="pt-1 border-t border-slate-200 space-y-1">
@@ -2440,7 +2440,7 @@ const QUESTIONS = [
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap pl-3 text-emerald-800 font-bold">
                   <span>＝ (210 : 7) · 9 ＝ 30 · 9 ＝</span>
-                  <span className="text-base text-emerald-700 font-black">270 €</span> ⭐[cite: 1]
+                  <span className="text-base text-emerald-700 font-black">270 €</span> ⭐
                 </div>
               </div>
             </div>
@@ -2448,7 +2448,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, με έκπτωση 10% η τιμή πώλησης θα ήταν <strong>270 ευρώ</strong>[cite: 1].
+          Επομένως, με έκπτωση 10% η τιμή πώλησης θα ήταν <strong>270 ευρώ</strong>.
         </p>
       </div>
     )
@@ -2573,34 +2573,34 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Υπολογισμός με παράδειγμα διαστάσεων)
             </div>
             <p className="text-slate-700">
-              Επιλέγουμε απλές διαστάσεις για το αρχικό ορθογώνιο, π.χ. μήκος <strong>10 εκ.</strong> και πλάτος <strong>10 εκ.</strong>[cite: 1]:
+              Επιλέγουμε απλές διαστάσεις για το αρχικό ορθογώνιο, π.χ. μήκος <strong>10 εκ.</strong> και πλάτος <strong>10 εκ.</strong>:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
                 • <strong>Αρχικό Εμβαδόν (Ε₁):</strong>
                 <div className="pl-3 text-slate-800 pt-0.5">
-                  Ε₁ ＝ 10 · 10 ＝ <strong>100 τ.εκ.</strong> (αντιστοιχεί στο 100%)[cite: 1]
+                  Ε₁ ＝ 10 · 10 ＝ <strong>100 τ.εκ.</strong> (αντιστοιχεί στο 100%)
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Νέες διαστάσεις και Νέο Εμβαδόν (Ε₂):</strong>
                 <div className="pl-3 text-slate-800 pt-0.5 space-y-1">
-                  <div>• Νέο μήκος (διπλασιασμός): 2 · 10 ＝ <strong>20 εκ.</strong>[cite: 1]</div>
-                  <div>• Νέο πλάτος (τριπλασιασμός): 3 · 10 ＝ <strong>30 εκ.</strong>[cite: 1]</div>
-                  <div>• Νέο Εμβαδόν: Ε₂ ＝ 20 · 30 ＝ <strong className="text-blue-700">600 τ.εκ.</strong>[cite: 1]</div>
+                  <div>• Νέο μήκος (διπλασιασμός): 2 · 10 ＝ <strong>20 εκ.</strong></div>
+                  <div>• Νέο πλάτος (τριπλασιασμός): 3 · 10 ＝ <strong>30 εκ.</strong></div>
+                  <div>• Νέο Εμβαδόν: Ε₂ ＝ 20 · 30 ＝ <strong className="text-blue-700">600 τ.εκ.</strong></div>
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Υπολογισμός της αύξησης:</strong>
                 <div className="pl-3 text-slate-800 pt-0.5 space-y-1">
-                  <div>Αύξηση σε τ.εκ. ＝ 600 － 100 ＝ <strong>500 τ.εκ.</strong>[cite: 1]</div>
+                  <div>Αύξηση σε τ.εκ. ＝ 600 － 100 ＝ <strong>500 τ.εκ.</strong></div>
                   <div className="text-emerald-800 font-bold text-base">
-                    Ποσοστό αύξησης ＝ <span className="text-emerald-700 font-black">500%</span> ⭐[cite: 1]
+                    Ποσοστό αύξησης ＝ <span className="text-emerald-700 font-black">500%</span> ⭐
                   </div>
                   <div className="text-slate-500 font-sans text-xs">
-                    (Προσοχή: Το εμβαδόν <em>έγινε</em> το 600% του αρχικού, αλλά <em>αυξήθηκε κατά</em> 500%[cite: 1]).
+                    (Προσοχή: Το εμβαδόν <em>έγινε</em> το 600% του αρχικού, αλλά <em>αυξήθηκε κατά</em> 500%).
                   </div>
                 </div>
               </div>
@@ -2613,21 +2613,21 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Αλγεβρική απόδειξη για οποιοδήποτε ορθογώνιο)
             </div>
             <p className="text-slate-700">
-              Έστω <strong>L</strong> το αρχικό μήκος και <strong>W</strong> το αρχικό πλάτος[cite: 1]:
+              Έστω <strong>L</strong> το αρχικό μήκος και <strong>W</strong> το αρχικό πλάτος:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Αρχικό εμβαδόν: <strong>Ε₁ ＝ L · W</strong>[cite: 1]</div>
-              <div>• Νέο εμβαδόν: Ε₂ ＝ (2 · L) · (3 · W) ＝ (2 · 3) · (L · W) ＝ <strong className="text-blue-700">6 · (L · W) ＝ 6 · Ε₁</strong>[cite: 1]</div>
+              <div>• Αρχικό εμβαδόν: <strong>Ε₁ ＝ L · W</strong></div>
+              <div>• Νέο εμβαδόν: Ε₂ ＝ (2 · L) · (3 · W) ＝ (2 · 3) · (L · W) ＝ <strong className="text-blue-700">6 · (L · W) ＝ 6 · Ε₁</strong></div>
               <div className="pt-1 border-t border-slate-200 space-y-1">
                 <div>• Καθαρή μεταβολή (αύξηση):</div>
                 <div className="pl-3 font-bold text-slate-900">
-                  Διαφορά ＝ Ε₂ － Ε₁ ＝ 6 · Ε₁ － 1 · Ε₁ ＝ <strong>5 · Ε₁</strong>[cite: 1]
+                  Διαφορά ＝ Ε₂ － Ε₁ ＝ 6 · Ε₁ － 1 · Ε₁ ＝ <strong>5 · Ε₁</strong>
                 </div>
                 <div className="pl-3 flex items-center gap-2 flex-wrap text-emerald-800 font-bold pt-0.5">
                   <span>Ποσοστό αύξησης ＝</span>
                   <Fraction num="5 · Ε₁" den="Ε₁" />
                   <span>· 100% ＝ 5 · 100% ＝</span>
-                  <span className="text-base text-emerald-700 font-black">500%</span> ⭐[cite: 1]
+                  <span className="text-base text-emerald-700 font-black">500%</span> ⭐
                 </div>
               </div>
             </div>
@@ -2635,7 +2635,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, το εμβαδόν του ορθογωνίου θα αυξηθεί κατά <strong>500%</strong>[cite: 1].
+          Επομένως, το εμβαδόν του ορθογωνίου θα αυξηθεί κατά <strong>500%</strong>.
         </p>
       </div>
     )
@@ -2766,7 +2766,7 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Μετατροπή σε ομώνυμα κλάσματα & Αναγωγή στο 1/15)
             </div>
             <p className="text-slate-700">
-              Υπολογίζουμε τι μέρος του συνόλου απασχολούν τα άλλα δύο αθλήματα[cite: 1]:
+              Υπολογίζουμε τι μέρος του συνόλου απασχολούν τα άλλα δύο αθλήματα:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
@@ -2780,7 +2780,7 @@ const QUESTIONS = [
                 <Fraction num="5" den="15" />
                 <span>＝</span>
                 <strong className="text-blue-700"><Fraction num="11" den="15" /></strong>
-                <span>του συνόλου των παιδιών.</span>[cite: 1]
+                <span>του συνόλου των παιδιών.</span>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
@@ -2794,7 +2794,7 @@ const QUESTIONS = [
                   <Fraction num="11" den="15" />
                   <span>＝</span>
                   <strong className="text-emerald-700"><Fraction num="4" den="15" /></strong>
-                  <span>του συνόλου.</span>[cite: 1]
+                  <span>του συνόλου.</span>
                 </div>
               </div>
 
@@ -2802,11 +2802,11 @@ const QUESTIONS = [
                 • <strong>Αναγωγή στο 1/15 και υπολογισμός του συνόλου:</strong>
                 <div className="pl-3 pt-0.5 space-y-1 text-slate-800">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span>Τα <Fraction num="4" den="15" /> ισούνται με 16 παιδιά[cite: 1]. Άρα το <Fraction num="1" den="15" /> αντιστοιχεί σε: 16 : 4 ＝ <strong>4 παιδιά</strong>.</span>
+                    <span>Τα <Fraction num="4" den="15" /> ισούνται με 16 παιδιά. Άρα το <Fraction num="1" den="15" /> αντιστοιχεί σε: 16 : 4 ＝ <strong>4 παιδιά</strong>.</span>
                   </div>
                   <div className="flex items-center gap-1.5 flex-wrap text-emerald-800 font-bold text-base pt-0.5">
                     <span>Όλα τα παιδιά (<Fraction num="15" den="15" />) ＝ 15 · 4 ＝</span>
-                    <span className="text-emerald-700 font-black">60 παιδιά</span> ⭐[cite: 1]
+                    <span className="text-emerald-700 font-black">60 παιδιά</span> ⭐
                   </div>
                 </div>
               </div>
@@ -2819,14 +2819,14 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Αλγεβρικά με εξίσωση και άγνωστο x)
             </div>
             <p className="text-slate-700">
-              Έστω <strong>x</strong> ο συνολικός αριθμός των παιδιών της κατασκήνωσης[cite: 1]:
+              Έστω <strong>x</strong> ο συνολικός αριθμός των παιδιών της κατασκήνωσης:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <Fraction num="2" den="5" />
                 <span>· x ＋</span>
                 <Fraction num="1" den="3" />
-                <span>· x ＋ 16 ＝ x</span>[cite: 1]
+                <span>· x ＋ 16 ＝ x</span>
               </div>
 
               <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
@@ -2840,7 +2840,7 @@ const QUESTIONS = [
                 <div>15x － 11x ＝ 240</div>
                 <div>4x ＝ 240</div>
                 <div className="text-emerald-700 font-black text-base">
-                  x ＝ 240 : 4 ＝ 60 παιδιά ⭐[cite: 1]
+                  x ＝ 240 : 4 ＝ 60 παιδιά ⭐
                 </div>
               </div>
             </div>
@@ -2848,7 +2848,7 @@ const QUESTIONS = [
         </div>
 
         <p className="pt-1">
-          Επομένως, στην κατασκήνωση βρίσκονται συνολικά <strong>60 παιδιά</strong>[cite: 1].
+          Επομένως, στην κατασκήνωση βρίσκονται συνολικά <strong>60 παιδιά</strong>.
         </p>
       </div>
     )
@@ -2862,7 +2862,7 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Συνδυάζουμε τις τρεις συνθήκες της εκφώνησης βήμα προς βήμα, ξεκινώντας από το ψηφίο των μονάδων (<strong>Υ</strong>) και συνεχίζοντας με το ψηφίο των δεκάδων (<strong>Χ</strong>)[cite: 1]:
+          Συνδυάζουμε τις τρεις συνθήκες της εκφώνησης βήμα προς βήμα, ξεκινώντας από το ψηφίο των μονάδων (<strong>Υ</strong>) και συνεχίζοντας με το ψηφίο των δεκάδων (<strong>Χ</strong>):
         </p>
 
         {/* SVG ΣΧΗΜΑ 20: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
@@ -2968,7 +2968,7 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Βήμα προς βήμα λογική παραγωγή των ψηφίων)
             </div>
             <p className="text-slate-700">
-              Αναλύουμε τις ιδιότητες των ψηφίων του αριθμού <strong>ΧΥ</strong>[cite: 1]:
+              Αναλύουμε τις ιδιότητες των ψηφίων του αριθμού <strong>ΧΥ</strong>:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
               <div>
@@ -2977,35 +2977,35 @@ const QUESTIONS = [
                   Τα πολλαπλάσια του 5 λήγουν σε 0 ή 5. Επομένως, κάθε αριθμός που αφήνει υπόλοιπο 3 όταν διαιρεθεί με το 5, έχει τελευταίο ψηφίο:
                 </div>
                 <div className="pl-3 font-bold text-slate-900 pt-0.5">
-                  0 ＋ 3 ＝ <strong>3</strong> &nbsp;ή&nbsp; 5 ＋ 3 ＝ <strong>8</strong> ➔ <strong>Υ ∈ &#123;3, 8&#125;</strong>[cite: 1]
+                  0 ＋ 3 ＝ <strong>3</strong> &nbsp;ή&nbsp; 5 ＋ 3 ＝ <strong>8</strong> ➔ <strong>Υ ∈ &#123;3, 8&#125;</strong>
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Βήμα 2 (Εξέταση της ιδιότητας του περιττού αριθμού):</strong>
                 <div className="pl-3 text-slate-800 pt-0.5 font-sans text-xs">
-                  Ένας αριθμός είναι περιττός (μονός) αν λήγει σε 1, 3, 5, 7, 9[cite: 1]. Το ψηφίο 8 είναι άρτιο και απορρίπτεται.
+                  Ένας αριθμός είναι περιττός (μονός) αν λήγει σε 1, 3, 5, 7, 9. Το ψηφίο 8 είναι άρτιο και απορρίπτεται.
                 </div>
                 <div className="pl-3 font-bold text-blue-700 pt-0.5">
-                  Άρα, υποχρεωτικά το ψηφίο των μονάδων είναι: Υ ＝ 3[cite: 1].
+                  Άρα, υποχρεωτικά το ψηφίο των μονάδων είναι: Υ ＝ 3.
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200">
                 • <strong>Βήμα 3 (Εύρεση του ψηφίου των δεκάδων Χ):</strong>
                 <div className="pl-3 text-slate-800 pt-0.5 font-sans text-xs">
-                  Το άθροισμα των ψηφίων του αριθμού είναι ίσο με 11 (Χ ＋ Υ ＝ 11)[cite: 1]:
+                  Το άθροισμα των ψηφίων του αριθμού είναι ίσο με 11 (Χ ＋ Υ ＝ 11):
                 </div>
                 <div className="pl-3 space-y-0.5 pt-0.5">
                   <div>Χ ＋ 3 ＝ 11</div>
                   <div className="text-emerald-800 font-bold text-base">
-                    Χ ＝ 11 － 3 ＝ <span className="text-emerald-700 font-black">8</span>[cite: 1]
+                    Χ ＝ 11 － 3 ＝ <span className="text-emerald-700 font-black">8</span>
                   </div>
                 </div>
               </div>
 
               <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
-                • <strong>Σύνθεση του αριθμού:</strong> Ο ζητούμενος αριθμός είναι το <span className="text-base text-emerald-700 font-black">83</span> ⭐[cite: 1]
+                • <strong>Σύνθεση του αριθμού:</strong> Ο ζητούμενος αριθμός είναι το <span className="text-base text-emerald-700 font-black">83</span> ⭐
               </div>
             </div>
           </div>
@@ -3016,22 +3016,22 @@ const QUESTIONS = [
               🔷 2ος Τρόπος (Έλεγχος των επιλογών της εκφώνησης)
             </div>
             <p className="text-slate-700">
-              Ελέγχουμε ποια από τις 5 διαθέσιμες επιλογές επαληθεύει και τις τρεις συνθήκες[cite: 1]:
+              Ελέγχουμε ποια από τις 5 διαθέσιμες επιλογές επαληθεύει και τις τρεις συνθήκες:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1 text-xs">
-              <div>• <strong>38:</strong> Είναι άρτιος αριθμός ➔ <span className="text-rose-600 font-bold">Απορρίπτεται</span> (δεν είναι περιττός)[cite: 1].</div>
-              <div>• <strong>53:</strong> Είναι περιττός και 53 : 5 = 10 (υπ. 3), αλλά 5 ＋ 3 ＝ 8 ≠ 11 ➔ <span className="text-rose-600 font-bold">Απορρίπτεται</span>[cite: 1].</div>
+              <div>• <strong>38:</strong> Είναι άρτιος αριθμός ➔ <span className="text-rose-600 font-bold">Απορρίπτεται</span> (δεν είναι περιττός).</div>
+              <div>• <strong>53:</strong> Είναι περιττός και 53 : 5 = 10 (υπ. 3), αλλά 5 ＋ 3 ＝ 8 ≠ 11 ➔ <span className="text-rose-600 font-bold">Απορρίπτεται</span>.</div>
               <div className="bg-emerald-50/80 p-1.5 rounded-md border border-emerald-200 text-emerald-950 font-bold">
-                • <strong>83:</strong> Είναι περιττός ✔️, 83 : 5 ＝ 16 (υπ. 3) ✔️, και 8 ＋ 3 ＝ 11 ✔️ ➔ <span className="text-emerald-700 font-black">ΔΕΚΤΟ ⭐</span>[cite: 1]
+                • <strong>83:</strong> Είναι περιττός ✔️, 83 : 5 ＝ 16 (υπ. 3) ✔️, και 8 ＋ 3 ＝ 11 ✔️ ➔ <span className="text-emerald-700 font-black">ΔΕΚΤΟ ⭐</span>
               </div>
-              <div>• <strong>93:</strong> Είναι περιττός και 93 : 5 = 18 (υπ. 3), αλλά 9 ＋ 3 ＝ 12 ≠ 11 ➔ <span className="text-rose-600 font-bold">Απορρίπτεται</span>[cite: 1].</div>
-              <div>• <strong>98:</strong> Είναι άρτιος αριθμός και 9 ＋ 8 ＝ 17 ≠ 11 ➔ <span className="text-rose-600 font-bold">Απορρίπτεται</span>[cite: 1].</div>
+              <div>• <strong>93:</strong> Είναι περιττός και 93 : 5 = 18 (υπ. 3), αλλά 9 ＋ 3 ＝ 12 ≠ 11 ➔ <span className="text-rose-600 font-bold">Απορρίπτεται</span>.</div>
+              <div>• <strong>98:</strong> Είναι άρτιος αριθμός και 9 ＋ 8 ＝ 17 ≠ 11 ➔ <span className="text-rose-600 font-bold">Απορρίπτεται</span>.</div>
             </div>
           </div>
         </div>
 
         <p className="pt-1">
-          Επομένως, ο ζητούμενος αριθμός είναι το <strong>83</strong>[cite: 1].
+          Επομένως, ο ζητούμενος αριθμός είναι το <strong>83</strong>.
         </p>
       </div>
     )
