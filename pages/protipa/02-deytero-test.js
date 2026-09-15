@@ -821,52 +821,119 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Παρατηρούμε ότι το σταθερό βήμα μεταξύ των διαδοχικών όρων είναι <strong>＋5</strong>:
+          Παρατηρούμε ότι κάθε όρος της ακολουθίας προκύπτει προσθέτοντας σταθερά το <strong>5</strong> στον προηγούμενό του (σταθερό βήμα $\omega ＝ 5$):
         </p>
 
-        {/* SVG ΣΧΗΜΑ 8: ΑΚΟΛΟΥΘΙΑ & ΒΗΜΑΤΑ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="140" viewBox="0 0 490 140" className="select-none font-sans mx-auto block">
-            <g transform="translate(20, 30)">
-              <rect x="0" y="0" width="70" height="40" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
-              <text x="35" y="16" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1ος όρος</text>
-              <text x="35" y="32" fontSize="13" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">4</text>
+        {/* SVG ΣΧΗΜΑ 8: ΑΝΑΛΥΤΙΚΗ ΑΚΟΛΟΥΘΙΑ ΚΑΙ 39 ΒΗΜΑΤΑ ΤΩΝ 5 */}
+        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="720" height="190" viewBox="0 0 720 190" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="step-arr-8" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 8 5 L 0 9 z" fill="#2563eb" />
+              </marker>
+              <marker id="step-arr-target-8" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 8 5 L 0 9 z" fill="#16a34a" />
+              </marker>
+            </defs>
+
+            {/* 1ος όρος */}
+            <g transform="translate(25, 65)">
+              <rect x="0" y="0" width="75" height="52" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
+              <text x="37.5" y="20" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1ος όρος</text>
+              <text x="37.5" y="42" fontSize="18" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">4</text>
             </g>
 
-            <path d="M 95 50 L 140 50" stroke="#16a34a" strokeWidth="2" />
-            <text x="117" y="42" fontSize="10" fontWeight="black" textAnchor="middle" fill="#16a34a">＋5</text>
+            {/* Τόξο 1 -> 2 */}
+            <path d="M 100 62 Q 125 32 150 62" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#step-arr-8)" />
+            <text x="125" y="32" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋5</text>
 
-            <g transform="translate(145, 30)">
-              <rect x="0" y="0" width="70" height="40" rx="6" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
-              <text x="35" y="16" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#475569">2ος όρος</text>
-              <text x="35" y="32" fontSize="13" fontWeight="black" textAnchor="middle" fill="#0f172a" fontFamily="monospace">9</text>
+            {/* 2ος όρος */}
+            <g transform="translate(150, 65)">
+              <rect x="0" y="0" width="75" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.6" />
+              <text x="37.5" y="20" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">2ος όρος</text>
+              <text x="37.5" y="42" fontSize="18" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">9</text>
             </g>
 
-            <text x="245" y="55" fontSize="16" fontWeight="black" textAnchor="middle" fill="#64748b">... (39 βήματα των 5)</text>
+            {/* Τόξο 2 -> 3 */}
+            <path d="M 225 62 Q 250 32 275 62" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#step-arr-8)" />
+            <text x="250" y="32" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋5</text>
 
-            <g transform="translate(360, 20)">
-              <rect x="0" y="0" width="110" height="60" rx="8" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
-              <text x="55" y="24" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#166534">40ός Όρος ⭐</text>
-              <text x="55" y="48" fontSize="16" fontWeight="black" textAnchor="middle" fill="#15803d" fontFamily="monospace">199</text>
+            {/* 3ος όρος */}
+            <g transform="translate(275, 65)">
+              <rect x="0" y="0" width="75" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.6" />
+              <text x="37.5" y="20" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">3ος όρος</text>
+              <text x="37.5" y="42" fontSize="18" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">14</text>
             </g>
 
-            <g transform="translate(30, 95)">
-              <rect x="0" y="0" width="430" height="30" rx="6" fill="#0f172a" />
-              <text x="215" y="19" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
-                Τύπος: 4 ＋ (40 － 1) · 5 ＝ 4 ＋ 39 · 5 ＝ 4 ＋ 195 ＝ 199
+            {/* Ενδιάμεση γέφυρα 39 αλμάτων */}
+            <path d="M 350 62 C 390 10, 480 10, 520 62" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeDasharray="4 3" markerEnd="url(#step-arr-target-8)" />
+            <rect x="385" y="14" width="105" height="24" rx="6" fill="#dcfce7" stroke="#86efac" strokeWidth="1" />
+            <text x="437.5" y="30" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#166534">
+              ＋ 39 βήματα · 5
+            </text>
+
+            {/* 40ός όρος (Στόχος) */}
+            <g transform="translate(525, 52)">
+              <rect x="0" y="0" width="165" height="75" rx="14" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.5" />
+              <text x="82.5" y="26" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#166534">40ός Όρος ⭐</text>
+              <text x="82.5" y="54" fontSize="22" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">199</text>
+              <text x="82.5" y="68" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#166534">(4 ＋ 195)</text>
+            </g>
+
+            {/* Κάτω ενιαία λωρίδα τύπου */}
+            <g transform="translate(25, 140)">
+              <rect x="0" y="0" width="665" height="36" rx="10" fill="#0f172a" />
+              <text x="332.5" y="23" fontSize="12.5" fontWeight="bold" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
+                Τύπος: α₄₀ ＝ α₁ ＋ (40 － 1) · 5 ＝ 4 ＋ 39 · 5 ＝ 4 ＋ 195 ＝ 199
               </text>
             </g>
           </svg>
         </div>
 
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono space-y-1.5">
-          <div>• Ο 1ος όρος είναι το 4.</div>
-          <div>• Για να φτάσουμε στον 40ό όρο, προσθέτουμε το βήμα 5 ακριβώς <strong>39 φορές</strong> (40 － 1 ＝ 39).</div>
-          <div>• 39 · 5 ＝ 195.</div>
-          <div className="text-emerald-700 font-bold pt-1 border-t border-slate-200">
-            • 40ός όρος ＝ 4 ＋ 195 ＝ <strong>199</strong>.
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Υπολογισμός με τα ενδιάμεσα βήματα)
+            </div>
+            <p className="text-slate-700">
+              Ξεκινώντας από τον 1ο όρο (που είναι το 4), για να φτάσουμε στον 40ό όρο πρέπει να κάνουμε:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• <strong>Πλήθος ενδιάμεσων βημάτων:</strong> 40 － 1 ＝ <strong>39 βήματα</strong>[cite: 1].</div>
+              <div>• <strong>Συνολική αύξηση:</strong> 39 · 5 ＝ <strong>195</strong>.</div>
+              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
+                • <strong>40ός όρος ＝</strong> 1ος όρος ＋ Συνολική αύξηση ＝ 4 ＋ 195 ＝ <span className="text-base text-emerald-700 font-black">199</span>[cite: 1].
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Με τον γενικό κανόνα της ακολουθίας)
+            </div>
+            <p className="text-slate-700">
+              Παρατηρούμε τη σχέση του αριθμού θέσης ($n$) με την προπαίδεια του 5:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• 1ος όρος ($n = 1$): 5 · 1 － 1 ＝ <strong>4</strong></div>
+              <div>• 2ος όρος ($n = 2$): 5 · 2 － 1 ＝ <strong>9</strong></div>
+              <div>• 3ος όρος ($n = 3$): 5 · 3 － 1 ＝ <strong>14</strong></div>
+              <div className="pt-1 border-t border-slate-200 text-slate-600 font-sans text-xs">
+                Κάθε όρος ισούται με το πενταπλάσιο της θέσης του μειωμένο κατά 1 ($5 · n － 1$):
+              </div>
+              <div className="pt-0.5 text-emerald-800 font-bold text-base">
+                • Για $n = 40$: 5 · 40 － 1 ＝ 200 － 1 ＝ <span className="text-emerald-700 font-black">199</span>[cite: 1].
+              </div>
+            </div>
           </div>
         </div>
+
+        <p className="pt-1">
+          Επομένως, ο 40ός όρος της αριθμητικής ακολουθίας είναι το <strong>199</strong>[cite: 1].
+        </p>
       </div>
     )
   },
