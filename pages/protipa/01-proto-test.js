@@ -3823,7 +3823,7 @@ export default function ProtoTestProsomoiosisPage() {
         <div className="bg-gradient-to-r from-indigo-700 via-purple-700 to-indigo-800 rounded-3xl p-5 sm:p-7 text-white shadow-lg space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1.5">
-              <span className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider text-purple-100">
+              <span className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-[11px] font-black tracking-wider text-purple-100">
                 1ο Τεστ • 25 Θέματα (Άριστα: 50 Μόρια)
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
