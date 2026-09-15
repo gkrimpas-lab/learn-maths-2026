@@ -3038,7 +3038,7 @@ const QUESTIONS = [
   }
 ];
 
-const TOTAL_TIME_SECONDS = 90 * 60; // 90 λεπτά σύμφωνα με το διαγώνισμα
+const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά σύμφωνα με το διαγώνισμα
 
 export default function DeuteroTestProsomoiosisPage() {
   const router = useRouter();
@@ -3127,7 +3127,7 @@ export default function DeuteroTestProsomoiosisPage() {
   return (
     <Layout
       title="🎯 2ο Τεστ Προσομοίωσης Προτύπων - LearnMaths.gr"
-      description="2ο Διαγνωστικό Τεστ Προσομοίωσης Μαθηματικών για τα Πρότυπα Σχολεία: 20 θέματα αυξημένης δυσκολίας, 90 λεπτά, βαθμολογία 0-50 με αναλυτικές λύσεις και σχήματα."
+      description="2ο Διαγνωστικό Τεστ Προσομοίωσης Μαθηματικών για τα Πρότυπα Σχολεία: 20 θέματα αυξημένης δυσκολίας, 60 λεπτά, βαθμολογία 0-50 με αναλυτικές λύσεις και σχήματα."
       backUrl="/protipa/test-prosomoiosis"
       backText="Τεστ Προσομοίωσης"
       hideFooter={true}
@@ -3159,7 +3159,7 @@ export default function DeuteroTestProsomoiosisPage() {
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-sky-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 20</strong></span>
             <span>🎯 Βαθμολογία: <strong>2,5 μόρια / σωστό</strong></span>
-            <span>{timerEnabled ? '⏳ Χρονόμετρο: Ενεργό (90\')' : '⏳ Χρονόμετρο: Ανενεργό'}</span>
+            <span>{timerEnabled ? '⏳ Χρονόμετρο: Ενεργό (60\')' : '⏳ Χρονόμετρο: Ανενεργό'}</span>
           </div>
         </div>
 
