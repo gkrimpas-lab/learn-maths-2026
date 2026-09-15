@@ -918,14 +918,14 @@ const QUESTIONS = [
               Παρατηρούμε τη σχέση του αριθμού θέσης ($n$) με την προπαίδεια του 5:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>• 1ος όρος ($n = 1$): 5 · 1 － 1 ＝ <strong>4</strong></div>
-              <div>• 2ος όρος ($n = 2$): 5 · 2 － 1 ＝ <strong>9</strong></div>
-              <div>• 3ος όρος ($n = 3$): 5 · 3 － 1 ＝ <strong>14</strong></div>
+              <div>• 1ος όρος (n = 1): 5 · 1 － 1 ＝ <strong>4</strong></div>
+              <div>• 2ος όρος (n = 2): 5 · 2 － 1 ＝ <strong>9</strong></div>
+              <div>• 3ος όρος (n = 3): 5 · 3 － 1 ＝ <strong>14</strong></div>
               <div className="pt-1 border-t border-slate-200 text-slate-600 font-sans text-xs">
-                Κάθε όρος ισούται με το πενταπλάσιο της θέσης του μειωμένο κατά 1 ($5 · n － 1$):
+                Κάθε όρος ισούται με το πενταπλάσιο της θέσης του μειωμένο κατά 1 (5 · n － 1):
               </div>
               <div className="pt-0.5 text-emerald-800 font-bold text-base">
-                • Για $n = 40$: 5 · 40 － 1 ＝ 200 － 1 ＝ <span className="text-emerald-700 font-black">199</span>[cite: 1].
+                • Για n = 40: 5 · 40 － 1 ＝ 200 － 1 ＝ <span className="text-emerald-700 font-black">199</span>[cite: 1].
               </div>
             </div>
           </div>
