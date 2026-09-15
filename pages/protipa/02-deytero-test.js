@@ -372,51 +372,130 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Έστω ότι η αρχική τιμή του προϊόντος είναι <strong>100 €</strong>:
+          Εξετάζουμε τη διαδοχική μεταβολή της τιμής: η αύξηση κατά 25% υπολογίζεται πάνω στην <strong>αρχική τιμή</strong>, ενώ η μείωση κατά 20% υπολογίζεται πάνω στη <strong>νέα (αυξημένη) τιμή</strong>[cite: 1]:
         </p>
 
-        {/* SVG ΣΧΗΜΑ 4: ΔΙΑΔΟΧΙΚΕΣ ΜΕΤΑΒΟΛΕΣ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="150" viewBox="0 0 490 150" className="select-none font-sans mx-auto block">
-            {/* Αρχική 100€ */}
+        {/* SVG ΣΧΗΜΑ 4: ΜΕΓΑΛΟ & ΕΥΔΙΑΚΡΙΤΟ (720px) */}
+        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="720" height="180" viewBox="0 0 720 180" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="arr-up-4" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 8 5 L 0 9 z" fill="#2563eb" />
+              </marker>
+              <marker id="arr-down-4" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 8 5 L 0 9 z" fill="#dc2626" />
+              </marker>
+            </defs>
+
+            {/* 1. Αρχική Τιμή */}
             <g transform="translate(30, 45)">
-              <rect x="0" y="0" width="100" height="60" rx="8" fill="#f8fafc" stroke="#64748b" strokeWidth="1.8" />
-              <text x="50" y="26" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">Αρχική Τιμή</text>
-              <text x="50" y="47" fontSize="16" fontWeight="black" textAnchor="middle" fill="#0f172a" fontFamily="monospace">100 €</text>
+              <rect x="0" y="0" width="150" height="85" rx="14" fill="#f8fafc" stroke="#64748b" strokeWidth="2" />
+              <text x="75" y="28" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#475569">Αρχική Τιμή</text>
+              <text x="75" y="54" fontSize="20" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">100 €</text>
+              <text x="75" y="72" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#64748b">(ή x)</text>
             </g>
 
-            {/* +25% */}
-            <path d="M 135 65 Q 180 35 220 65" fill="none" stroke="#2563eb" strokeWidth="2" />
-            <text x="177" y="42" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋25% (＋25€)</text>
+            {/* Τόξο Αύξησης +25% */}
+            <path d="M 190 70 C 220 30, 260 30, 285 65" fill="none" stroke="#2563eb" strokeWidth="2.5" markerEnd="url(#arr-up-4)" />
+            <rect x="205" y="18" width="70" height="24" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
+            <text x="240" y="34" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋25%</text>
 
-            {/* Ενδιάμεση 125€ */}
-            <g transform="translate(225, 45)">
-              <rect x="0" y="0" width="100" height="60" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
-              <text x="50" y="26" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Νέα Τιμή</text>
-              <text x="50" y="47" fontSize="16" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">125 €</text>
+            {/* 2. Νέα Τιμή */}
+            <g transform="translate(290, 45)">
+              <rect x="0" y="0" width="150" height="85" rx="14" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2.2" />
+              <text x="75" y="28" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Νέα Τιμή</text>
+              <text x="75" y="54" fontSize="20" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">125 €</text>
+              <text x="75" y="72" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#2563eb">(1,25 · x)</text>
             </g>
 
-            {/* -20% */}
-            <path d="M 330 65 Q 375 35 415 65" fill="none" stroke="#dc2626" strokeWidth="2" />
-            <text x="372" y="42" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#dc2626">－20% (－25€)</text>
+            {/* Τόξο Μείωσης -20% */}
+            <path d="M 450 70 C 480 30, 520 30, 545 65" fill="none" stroke="#dc2626" strokeWidth="2.5" markerEnd="url(#arr-down-4)" />
+            <rect x="465" y="18" width="70" height="24" rx="6" fill="#fef2f2" stroke="#fca5a5" strokeWidth="1" />
+            <text x="500" y="34" fontSize="11" fontWeight="black" textAnchor="middle" fill="#dc2626">－20%</text>
 
-            {/* Τελική 100€ */}
-            <g transform="translate(420, 45)">
-              <rect x="0" y="0" width="90" height="60" rx="8" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
-              <text x="45" y="26" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">Τελική Τιμή</text>
-              <text x="45" y="47" fontSize="16" fontWeight="black" textAnchor="middle" fill="#15803d" fontFamily="monospace">100 € ⭐</text>
+            {/* 3. Τελική Τιμή */}
+            <g transform="translate(550, 45)">
+              <rect x="0" y="0" width="145" height="85" rx="14" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.5" />
+              <text x="72.5" y="28" fontSize="12" fontWeight="black" textAnchor="middle" fill="#166534">Τελική Τιμή ⭐</text>
+              <text x="72.5" y="54" fontSize="20" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">100 €</text>
+              <text x="72.5" y="72" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#166534">(＝ 1,00 · x)</text>
+            </g>
+
+            {/* Κάτω Badge Συμπεράσματος */}
+            <g transform="translate(185, 144)">
+              <rect x="0" y="0" width="350" height="28" rx="14" fill="#0f172a" />
+              <text x="175" y="18" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+                Συνολική Μεταβολή: 100 € ➔ 100 € (Καμία Μεταβολή 0%)
+              </text>
             </g>
           </svg>
         </div>
 
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono space-y-1.5">
-          <div>• Μετά την αύξηση κατά 25%: 100 ＋ 25 ＝ <strong>125 €</strong>.</div>
-          <div>• Η μείωση κατά 20% υπολογίζεται πάνω στα 125 €: 20% · 125 ＝ 0,20 · 125 ＝ <strong>25 €</strong>.</div>
-          <div>• Νέα τιμή: 125 － 25 ＝ <strong>100 €</strong>.</div>
-          <div className="text-emerald-700 font-bold pt-1 border-t border-slate-200">
-            Η τελική τιμή ισούται με την αρχική, άρα έχουμε <strong>καμία μεταβολή (0%)</strong>.
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Με αρχική τιμή 100€ */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Υπόθεση με αρχική τιμή 100 €)
+            </div>
+            <p className="text-slate-700">
+              Επιλέγουμε ως αρχική τιμή τα <strong>100 €</strong> για ευκολία στους υπολογισμούς:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div>• <strong>Αύξηση κατά 25%:</strong> 100 ＋ 25 ＝ <strong>125 €</strong> (η νέα τιμή).</div>
+              <div>• <strong>Μείωση κατά 20%:</strong> Υπολογίζεται πάνω στη νέα τιμή των 125 €:</div>
+              <div className="pl-3 text-slate-800">
+                Ποσό μείωσης ＝ 20% · 125 ＝ 0,20 · 125 ＝ <strong className="text-rose-600">25 €</strong>.
+              </div>
+              <div className="pt-1 border-t border-slate-200">
+                • <strong>Τελική τιμή:</strong> 125 － 25 ＝ <strong className="text-emerald-700 font-black">100 €</strong>.
+              </div>
+              <div className="pt-0.5 text-slate-600 font-sans text-xs">
+                Η τελική τιμή ισούται με την αρχική, επομένως η συνολική ποσοστιαία μεταβολή είναι <strong>0% (καμία μεταβολή)</strong>.
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Αλγεβρικά με άγνωστο x */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Γενική απόδειξη με άγνωστο x και συντελεστές μεταβολής)
+            </div>
+            <p className="text-slate-700">
+              Έστω <strong>x</strong> η αρχική τιμή του προϊόντος:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Αύξηση κατά 25% ➔ Νέα τιμή: x · (1 ＋ 0,25) ＝ 1,25 · x ＝</span>
+                <Fraction num="5" den="4" />
+                <span>· x</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+                <span>• Μείωση κατά 20% ➔ Τελική τιμή: (Νέα τιμή) · (1 － 0,20) ＝</span>
+                <Fraction num="5" den="4" />
+                <span>· x · 0,80 ＝</span>
+                <Fraction num="5" den="4" />
+                <span>·</span>
+                <Fraction num="4" den="5" />
+                <span>· x</span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200 text-emerald-800 font-bold">
+                <span>• Τελική Τιμή ＝</span>
+                <Fraction num="5 · 4" den="4 · 5" />
+                <span>· x ＝ 1 · x ＝ <span className="text-base text-emerald-700 font-black">x</span></span>
+              </div>
+              <div className="text-slate-600 font-sans text-xs pt-0.5">
+                Εφόσον η τελική τιμή παραμένει ακριβώς <strong>x</strong>, αποδεικνύεται ότι για οποιαδήποτε τιμή του προϊόντος η μεταβολή είναι πάντοτε <strong>0%</strong>.
+              </div>
+            </div>
           </div>
         </div>
+
+        <p className="pt-1">
+          Επομένως, η συνολική ποσοστιαία μεταβολή της τελικής τιμής είναι <strong>Καμία μεταβολή (0%)</strong>[cite: 1].
+        </p>
       </div>
     )
   },
