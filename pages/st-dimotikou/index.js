@@ -46,7 +46,8 @@ export default function STDimotikouMenu() {
     { id: '39-epanalipsi-2', label: '🏆 39. Επανάληψη ( Κεφ. 32 - 38 )', href: '/st-dimotikou/39-epanalipsi-2' },
     { id: '40-logos', label: '📐 40. Λόγος 2 μεγεθών', href: '/st-dimotikou/40-logos' },
     { id: '41-analogia', label: '📐 41. Αναλογία', href: '/st-dimotikou/41-analogia' },
-    { id: '42-analogia-xiasti', label: '📐 42. Αναλογία χιαστί', href: '/st-dimotikou/42-analogia-xiasti' }
+    { id: '42-analogia-xiasti', label: '📐 42. Αναλογία χιαστί', href: '/st-dimotikou/42-analogia-xiasti' },
+    { id: '43-posa', label: '📐 43. Σταθερά και Μεταβλητά ποσά', href: '/st-dimotikou/43-posa' }
   ];
 
   return (
