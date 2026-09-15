@@ -1169,7 +1169,7 @@ export default function DeuteroTestProsomoiosisPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1.5">
               <span className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-[11px] font-black tracking-wider text-sky-200">
-                ΣΤ' ΔΗΜΟΤΙΚΟΥ • 2ο ΤΕΣΤ • 20 ΘΕΜΑΤΑ (ΑΡΙΣΤΑ: 50 ΜΟΡΙΑ)
+                2ο ΤΕΣΤ • 20 ΘΕΜΑΤΑ (ΑΡΙΣΤΑ: 50 ΜΟΡΙΑ)
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
                 2ο Τεστ Προσομοίωσης Εξετάσεων Προτύπων
