@@ -695,46 +695,120 @@ const QUESTIONS = [
   {
     id: 7,
     group: 'ΟΜΑΔΑ Α (4 ΕΠΙΛΟΓΕΣ)',
-    prompt: 'Ο μέσος όρος της βαθμολογίας ενός μαθητή σε 4 διαγωνίσματα είναι 16. Πόσο βαθμό πρέπει να γράψει στο 5ο διαγώνισμα ώστε ο συνολικός μέσος όρος του και στα 5 διαγωνίσματα να γίνει 17;',
+    prompt: 'Ο μέσος όρος των πόντων ενός μαθητή σε 4 γύρους ενός μαθηματικού διαγωνισμού είναι 16. Πόσους πόντους πρέπει να συγκεντρώσει στον 5ο γύρο ώστε ο συνολικός μέσος όρος του και στους 5 γύρους να γίνει 17;',
     options: ['18', '19', '20', '21'],
     correct: '21',
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Συγκρίνουμε τα <strong>συνολικά αθροίσματα</strong> βαθμών πριν και μετά το 5ο διαγώνισμα:
+          Συγκρίνουμε το <strong>συνολικό άθροισμα πόντων</strong> στους 4 αρχικούς γύρους με το επιθυμητό άθροισμα στους 5 γύρους:
         </p>
 
-        {/* SVG ΣΧΗΜΑ 7: ΣΥΓΚΡΙΣΗ ΑΘΡΟΙΣΜΑΤΩΝ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="145" viewBox="0 0 490 145" className="select-none font-sans mx-auto block">
-            <g transform="translate(25, 20)">
-              <rect x="0" y="0" width="200" height="55" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-              <text x="100" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Αρχικό Άθροισμα (4 τεστ)</text>
-              <text x="100" y="42" fontSize="13" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">4 · 16 ＝ 64 βαθμοί</text>
+        {/* SVG ΣΧΗΜΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΗΣ ΜΕΤΑΤΟΠΙΣΗΣ ΤΟΥ ΜΕΣΟΥ ΟΡΟΥ (720px) */}
+        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
+          <svg width="700" height="175" viewBox="0 0 700 175" className="select-none font-sans mx-auto block">
+            <defs>
+              <marker id="numline-arr-7" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
+              </marker>
+            </defs>
+
+            {/* Κεντρικός άξονας αριθμογραμμής */}
+            <line x1="30" y1="90" x2="670" y2="90" stroke="#334155" strokeWidth="2.2" markerEnd="url(#numline-arr-7)" />
+
+            {/* Παλιός Μέσος Όρος = 16 */}
+            <g transform="translate(180, 90)">
+              <line x1="0" y1="-30" x2="0" y2="30" stroke="#2563eb" strokeWidth="2.2" strokeDasharray="3 2" />
+              <circle cx="0" cy="0" r="5.5" fill="#2563eb" />
+              <rect x="-48" y="-62" width="96" height="26" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1.2" />
+              <text x="0" y="-45" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Μ.Ο. ＝ 16</text>
+              <text x="0" y="24" fontSize="13" fontWeight="900" textAnchor="middle" fill="#1e40af">16</text>
+              <text x="0" y="44" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#64748b">4 γύροι (4 · 16 ＝ 64)</text>
             </g>
 
-            <g transform="translate(265, 20)">
-              <rect x="0" y="0" width="200" height="55" rx="8" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.6" />
-              <text x="100" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#15803d">Νέο Άθροισμα (5 τεστ)</text>
-              <text x="100" y="42" fontSize="13" fontWeight="black" textAnchor="middle" fill="#166534" fontFamily="monospace">5 · 17 ＝ 85 βαθμοί</text>
+            {/* Βέλος Αύξησης Μέσου Όρου (+1) */}
+            <path d="M 195 40 Q 255 18 315 40" fill="none" stroke="#16a34a" strokeWidth="2" strokeDasharray="3 2" />
+            <text x="255" y="22" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d">＋1 στον Μ.Ο.</text>
+
+            {/* Νέος Μέσος Όρος = 17 */}
+            <g transform="translate(330, 90)">
+              <line x1="0" y1="-30" x2="0" y2="30" stroke="#16a34a" strokeWidth="2.2" strokeDasharray="3 2" />
+              <circle cx="0" cy="0" r="5.5" fill="#16a34a" />
+              <rect x="-48" y="-62" width="96" height="26" rx="6" fill="#dcfce7" stroke="#86efac" strokeWidth="1.2" />
+              <text x="0" y="-45" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#166534">Μ.Ο. ＝ 17</text>
+              <text x="0" y="24" fontSize="13" fontWeight="900" textAnchor="middle" fill="#15803d">17</text>
+              <text x="0" y="44" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#166534">5 γύροι (5 · 17 ＝ 85)</text>
             </g>
 
-            <g transform="translate(95, 95)">
-              <rect x="0" y="0" width="300" height="34" rx="8" fill="#0f172a" />
-              <text x="150" y="22" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                Βαθμός 5ου Τεστ ＝ 85 － 64 ＝ 21 ⭐
-              </text>
+            {/* Ζητούμενος 5ος Γύρος = 21 */}
+            <g transform="translate(560, 90)">
+              <line x1="0" y1="-35" x2="0" y2="35" stroke="#ea580c" strokeWidth="2.5" />
+              <circle cx="0" cy="0" r="7" fill="#ea580c" stroke="#9a3412" strokeWidth="1.5" />
+              <rect x="-55" y="-65" width="110" height="28" rx="7" fill="#ea580c" />
+              <text x="0" y="-47" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">Στόχος: 21 ⭐</text>
+              <text x="0" y="24" fontSize="15" fontWeight="900" textAnchor="middle" fill="#c2410c" fontFamily="monospace">21</text>
+              <text x="0" y="44" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#ea580c">5ος γύρος (85 － 64)</text>
             </g>
           </svg>
         </div>
 
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono space-y-1.5">
-          <div>• Άθροισμα βαθμών στα 4 διαγωνίσματα: 4 · 16 ＝ <strong>64</strong>.</div>
-          <div>• Επιθυμητό άθροισμα στα 5 διαγωνίσματα: 5 · 17 ＝ <strong>85</strong>.</div>
-          <div className="text-emerald-700 font-bold pt-1 border-t border-slate-200">
-            • Βαθμός στο 5ο διαγώνισμα: 85 － 64 ＝ <strong>21</strong>.
+        {/* 1ος ΤΡΟΠΟΣ: ΜΕΣΩ ΣΥΝΟΛΙΚΟΥ ΑΘΡΟΙΣΜΑΤΟΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 1ος Τρόπος (Αλγεβρικά μέσω συνολικού αθροίσματος)
+          </div>
+
+          <p className="text-slate-700">
+            Ο μέσος όρος ισούται με το πηλίκο του αθροίσματος των πόντων δια του πλήθους των γύρων:
+          </p>
+
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Αρχικό άθροισμα 4 γύρων ＝ 4 · 16 ＝</span>
+              <strong className="text-blue-700">64 πόντοι</strong>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
+              <span>• Επιθυμητό νέο άθροισμα 5 γύρων ＝ 5 · 17 ＝</span>
+              <strong className="text-blue-700">85 πόντοι</strong>
+            </div>
+
+            <div className="pt-1 border-t border-slate-200">
+              <span>• Αν συμβολίσουμε με <strong>x</strong> τους πόντους του 5ου γύρου:</span>
+              <div className="pl-3 pt-0.5 space-y-1 text-slate-800">
+                <div>64 ＋ x ＝ 85</div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>x ＝ 85 － 64 ＝</span>
+                  <strong className="text-emerald-700 text-base">21 πόντοι</strong>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* 2ος ΤΡΟΠΟΣ: ΜΕΣΩ ΚΑΤΑΝΟΜΗΣ ΔΙΑΦΟΡΑΣ */}
+        <div className="bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-200/80 space-y-2">
+          <div className="font-sans font-bold text-emerald-950 text-sm border-b border-emerald-200 pb-1">
+            💡 2ος Τρόπος (Γρήγορος υπολογισμός μέσω μεταβολής του μέσου όρου)
+          </div>
+
+          <p className="text-slate-800">
+            Συγκρίνουμε τον παλιό μέσο όρο (16) με τον επιθυμητό (17):
+          </p>
+
+          <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-1.5">
+            <div>• Ο μέσος όρος πρέπει να αυξηθεί κατά: 17 － 16 ＝ <strong>＋1 πόντο</strong>.</div>
+            <div>• Για να αυξηθεί ο μέσος όρος κατά 1 σε όλους τους <strong>5 γύρους</strong>, απαιτούνται επιπλέον: 5 · 1 ＝ <strong>＋5 πόντοι</strong>.</div>
+            <div className="pt-1 border-t border-slate-200 flex items-center gap-2 flex-wrap">
+              <span>• Πόντοι 5ου γύρου ＝ Παλιός Μ.Ο. ＋ Επιπλέον πόντοι ＝ 16 ＋ 5 ＝</span>
+              <strong className="text-emerald-700 text-base">21 πόντοι</strong>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, στον 5ο γύρο πρέπει να συγκεντρώσει <strong>21 πόντους</strong>[cite: 1].
+        </p>
       </div>
     )
   },
