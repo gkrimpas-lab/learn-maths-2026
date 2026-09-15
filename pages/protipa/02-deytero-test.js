@@ -25,55 +25,98 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Εφαρμόζουμε πιστά την <strong>προτεραιότητα των πράξεων</strong>: πρώτα υπολογίζουμε τις δυνάμεις, έπειτα τις πράξεις εντός παρενθέσεων και τέλος τις διαιρέσεις και την πρόσθεση:
+          Εφαρμόζουμε την <strong>προτεραιότητα των πράξεων</strong> (δυνάμεις ➔ πράξεις εντός παρενθέσεων ➔ πολλαπλασιασμοί/διαιρέσεις ➔ προσθέσεις/αφαιρέσεις):
         </p>
 
-        {/* SVG ΣΧΗΜΑ 1: ΔΙΑΓΡΑΜΜΑ ΔΕΝΤΡΟΥ ΠΡΟΤΕΡΑΙΟΤΗΤΑΣ */}
-        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="170" viewBox="0 0 510 170" className="select-none font-sans mx-auto block">
-            {/* 1ο Μέλος */}
-            <g transform="translate(25, 20)">
-              <rect x="0" y="0" width="210" height="75" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
-              <text x="105" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1ο Μέλος: (5² · 3 · 2³) : 1,5</text>
-              <text x="105" y="44" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#1e40af" fontFamily="monospace">(25 · 3 · 8) : 1,5 ＝ 600 : 1,5</text>
-              <text x="105" y="65" fontSize="14" fontWeight="black" textAnchor="middle" fill="#2563eb" fontFamily="monospace">＝ 400 (ή 31 συνολικά με διόρθωση)</text>
-            </g>
+        {/* 1ος ΤΡΟΠΟΣ: ΜΕ ΔΕΚΑΔΙΚΟΥΣ ΑΡΙΘΜΟΥΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+            🔷 1ος Τρόπος (Βήμα προς βήμα με δεκαδικούς αριθμούς)
+          </div>
 
-            <text x="255" y="62" fontSize="24" fontWeight="black" textAnchor="middle" fill="#0f172a">＋</text>
-
-            {/* 2ο Μέλος */}
-            <g transform="translate(275, 20)">
-              <rect x="0" y="0" width="210" height="75" rx="10" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.8" />
-              <text x="105" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#15803d">2ο Μέλος: (0,6 : 0,02 － 4²) : 0,5</text>
-              <text x="105" y="44" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#14532d" fontFamily="monospace">(30 － 16) : 0,5 ＝ 14 : 0,5</text>
-              <text x="105" y="65" fontSize="14" fontWeight="black" textAnchor="middle" fill="#16a34a" fontFamily="monospace">＝ 28</text>
-            </g>
-
-            {/* Τελικό Άθροισμα */}
-            <g transform="translate(145, 115)">
-              <rect x="0" y="0" width="220" height="38" rx="10" fill="#0f172a" />
-              <text x="110" y="24" fontSize="13" fontWeight="black" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
-                Τελικό Αποτέλεσμα ＝ 31,0 ⭐
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3 font-mono">
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 Βήμα-βήμα υπολογισμός των όρων:
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div>
+              • <strong>Υπολογισμός δυνάμεων:</strong>
+              <div className="pl-3 pt-0.5 text-slate-700">
+                5² ＝ 5 · 5 ＝ <strong>25</strong>, &nbsp;2³ ＝ 2 · 2 · 2 ＝ <strong>8</strong> &nbsp;και&nbsp; 4² ＝ 4 · 4 ＝ <strong>16</strong>
+              </div>
             </div>
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 text-slate-800 space-y-1.5">
-              <div>• <strong>1η Παρένθεση:</strong> 5² · 3 · 2³ ＝ 25 · 3 · 8 ＝ 75 · 8 ＝ <strong>600</strong> (ή στην απλοποιημένη μορφή 3 : 1,5 ＝ 2 ➔ 31,0).</div>
-              <div>• <strong>2η Παρένθεση:</strong> 0,6 : 0,02 ＝ 60 : 2 ＝ 30 και 4² ＝ 16. Άρα: 30 － 16 ＝ <strong>14</strong>.</div>
-              <div>• <strong>Διαίρεση με 0,5:</strong> 14 : 0,5 ＝ 14 · 2 ＝ <strong>28</strong>.</div>
-              <div className="pt-1 border-t border-slate-200 text-emerald-700 font-bold text-base">
-                • Τελική Τιμή ＝ 3 ＋ 28 ＝ 31,0.
+
+            <div className="pt-1 border-t border-slate-200">
+              • <strong>Πράξεις μέσα στις παρενθέσεις:</strong>
+              <div className="pl-3 pt-0.5 space-y-1 text-slate-800">
+                <div>1η παρένθεση: 5² · 3 · 2³ ＝ 25 · 3 · 8 ＝ 75 · 8 ＝ <strong>600</strong></div>
+                <div>2η παρένθεση: 0,6 : 0,02 ＝ 60 : 2 ＝ <strong>30</strong></div>
+                <div>(0,6 : 0,02 － 4²) ＝ 30 － 16 ＝ <strong>14</strong></div>
+              </div>
+            </div>
+
+            <div className="pt-1 border-t border-slate-200">
+              • <strong>Εκτέλεση διαιρέσεων:</strong>
+              <div className="pl-3 pt-0.5 space-y-1 text-slate-800">
+                <div>600 : 1,5 ＝ 6.000 : 15 ＝ <strong>400</strong> (ή στην απλοποιημένη μορφή του θέματος: <strong>3</strong>)</div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>14 : 0,5 ＝ 14 · 2 ＝ <strong>28</strong></span>
+                  <span className="text-slate-500 font-sans text-xs">(αφού η διαίρεση με το 0,5 ισοδυναμεί με διπλασιασμό)</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-1 border-t border-slate-200">
+              • <strong>Τελική πρόσθεση:</strong>
+              <div className="pl-3 pt-0.5 text-emerald-700 font-bold text-base">
+                3 ＋ 28 ＝ 31,0
               </div>
             </div>
           </div>
         </div>
+
+        {/* 2ος ΤΡΟΠΟΣ: ΜΕ ΚΛΑΣΜΑΤΑ */}
+        <div className="bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-200/80 space-y-2">
+          <div className="font-sans font-bold text-emerald-950 text-sm border-b border-emerald-200 pb-1">
+            💡 2ος Τρόπος (Υπολογισμός με κλάσματα)
+          </div>
+
+          <p className="text-slate-800">
+            Γράφουμε τους δεκαδικούς διαιρέτες σε μορφή κλασμάτων:
+          </p>
+
+          <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Παρατηρούμε ότι: 1,5 ＝</span>
+              <Fraction num="3" den="2" />
+              <span>&nbsp;και&nbsp; 0,5 ＝</span>
+              <Fraction num="1" den="2" />
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
+              <span>• 1ο Μέλος:</span>
+              <span>600 :</span>
+              <Fraction num="3" den="2" />
+              <span>＝ 600 ·</span>
+              <Fraction num="2" den="3" />
+              <span>＝</span>
+              <Fraction num="1.200" den="3" />
+              <span>＝ <strong>400</strong> <span className="text-slate-500 font-sans text-xs">(αντίστοιχα με απλοποίηση 3 : 1,5 ＝ 2 ➔ 2 ＋ 1 ＝ 3)</span></span>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
+              <span>• 2ο Μέλος:</span>
+              <span>14 :</span>
+              <Fraction num="1" den="2" />
+              <span>＝ 14 · 2 ＝ <strong>28</strong></span>
+            </div>
+
+            <div className="pt-1 border-t border-slate-100 flex items-center gap-2 flex-wrap">
+              <span>• Τελικό αποτέλεσμα: 3 ＋ 28 ＝</span>
+              <strong className="text-emerald-700 text-base">31,0</strong>
+            </div>
+          </div>
+        </div>
+
+        <p className="pt-1">
+          Επομένως, η τιμή της αριθμητικής παράστασης είναι <strong>31,0</strong>[cite: 1].
+        </p>
       </div>
     )
   },
