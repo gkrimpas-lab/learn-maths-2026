@@ -167,7 +167,7 @@ export default function ProtipaHubPage() {
                 </p>
               </div>
               <a
-                href="/apanteseis_2016_2025.pdf"
+                href="/apantiseis_2016_2026.pdf"
                 download
                 className="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-xs flex items-center justify-center gap-1.5 active:scale-95"
               >
