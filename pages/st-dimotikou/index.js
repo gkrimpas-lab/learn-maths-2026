@@ -51,7 +51,8 @@ export default function STDimotikouMenu() {
     { id: '44-analoga-posa', label: '📐 44. Ανάλογα ποσά', href: '/st-dimotikou/44-analoga-posa' },
     { id: '45-problem-analoga-posa', label: '📐 45. Προβλήματα Ανάλογα ποσά', href: '/st-dimotikou/45-problem-analoga-posa' },
     { id: '46-antistrofos-analoga-posa', label: '📐 46. Αντιστρόφως Ανάλογα ποσά', href: '/st-dimotikou/46-antistrofos-analoga-posa' },
-    { id: '47-problem-antistrofos-analoga-posa', label: '📐 47. Προβλήματα Αντιστρόφως Ανάλογα ποσά', href: '/st-dimotikou/47-problem-antistrofos-analoga-posa' }
+    { id: '47-problem-antistrofos-analoga-posa', label: '📐 47. Προβλήματα Αντιστρόφως Ανάλογα ποσά', href: '/st-dimotikou/47-problem-antistrofos-analoga-posa' },
+    { id: '48-methodos-trion', label: '📐 48. Μέθοδος των τριών', href: '/st-dimotikou/48-methodos-trion' }
   ];
 
   return (
