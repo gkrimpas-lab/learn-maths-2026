@@ -52,6 +52,21 @@ export default function AntistrofosAnalogaTheoryPage() {
     return Number.isInteger(raw) ? raw : Number(raw.toFixed(1));
   }, [speedVal]);
 
+  // Υπολογισμος σημειων της υπερβολης για το SVG
+  const curvePoints = useMemo(() => {
+    const pts = [];
+    for (let v = 30; v <= 120; v += 2) {
+      const t = fixedDistance / v;
+      const px = 50 + (v / 120) * 300;
+      const py = 350 - (t / 8) * 280;
+      pts.push(`${px},${py}`);
+    }
+    return pts.join(' ');
+  }, [fixedDistance]);
+
+  const activeDotX = 50 + (speedVal / 120) * 300;
+  const activeDotY = 350 - ((fixedDistance / speedVal) / 8) * 280;
+
   return (
     <Layout
       title="Αντιστρόφως Ανάλογα Ποσά - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -458,117 +473,94 @@ export default function AntistrofosAnalogaTheoryPage() {
             </div>
 
             {/* SVG Διαγραμμα Υπερβολης */}
-<div className="lg:col-span-7 bg-slate-50 p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center">
-  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-    ΓΡΑΦΙΚΗ ΠΑΡΑΣΤΑΣΗ: ΚΑΜΠΥΛΗ ΥΠΕΡΒΟΛΗ
-  </span>
+            <div className="lg:col-span-7 bg-slate-50 p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                ΓΡΑΦΙΚΗ ΠΑΡΑΣΤΑΣΗ: ΚΑΜΠΥΛΗ ΥΠΕΡΒΟΛΗ
+              </span>
 
-  <div className="w-full max-w-[420px] aspect-square bg-white rounded-2xl border border-slate-200 p-4 relative shadow-inner">
-    <svg viewBox="0 0 400 400" className="w-full h-full overflow-visible">
-      {/* Πλεγμα */}
-      {[1, 2, 3, 4].map((i) => (
-        <line
-          key={`grid-x-${i}`}
-          x1={50 + i * 75}
-          y1={70}
-          x2={50 + i * 75}
-          y2={350}
-          stroke="#e2e8f0"
-          strokeWidth="1"
-          strokeDasharray="4 4"
-        />
-      ))}
-      {[1, 2, 3, 4].map((i) => (
-        <line
-          key={`grid-y-${i}`}
-          x1={50}
-          y1={350 - i * 70}
-          x2={350}
-          y2={350 - i * 70}
-          stroke="#e2e8f0"
-          strokeWidth="1"
-          strokeDasharray="4 4"
-        />
-      ))}
+              <div className="w-full max-w-[420px] aspect-square bg-white rounded-2xl border border-slate-200 p-4 relative shadow-inner">
+                <svg viewBox="0 0 400 400" className="w-full h-full overflow-visible">
+                  {/* Πλεγμα */}
+                  {[1, 2, 3, 4].map((i) => (
+                    <line
+                      key={`grid-x-${i}`}
+                      x1={50 + i * 75}
+                      y1={70}
+                      x2={50 + i * 75}
+                      y2={350}
+                      stroke="#e2e8f0"
+                      strokeWidth="1"
+                      strokeDasharray="4 4"
+                    />
+                  ))}
+                  {[1, 2, 3, 4].map((i) => (
+                    <line
+                      key={`grid-y-${i}`}
+                      x1={50}
+                      y1={350 - i * 70}
+                      x2={350}
+                      y2={350 - i * 70}
+                      stroke="#e2e8f0"
+                      strokeWidth="1"
+                      strokeDasharray="4 4"
+                    />
+                  ))}
 
-      {/* Αξονες */}
-      <line x1="50" y1="350" x2="375" y2="350" stroke="#334155" strokeWidth="2.5" />
-      <line x1="50" y1="350" x2="50" y2="35" stroke="#334155" strokeWidth="2.5" />
+                  {/* Αξονες */}
+                  <line x1="50" y1="350" x2="375" y2="350" stroke="#334155" strokeWidth="2.5" />
+                  <line x1="50" y1="350" x2="50" y2="35" stroke="#334155" strokeWidth="2.5" />
 
-      {/* Βελη αξονων */}
-      <polygon points="375,346 383,350 375,354" fill="#334155" />
-      <polygon points="46,35 50,27 54,35" fill="#334155" />
+                  {/* Βελη αξονων */}
+                  <polygon points="375,346 383,350 375,354" fill="#334155" />
+                  <polygon points="46,35 50,27 54,35" fill="#334155" />
 
-      {/* Ετικετες αξονων */}
-      <text x="375" y="375" fontSize="11" fontWeight="bold" fill="#64748b" textAnchor="end">Ταχύτητα υ (km/h)</text>
-      <text x="25" y="25" fontSize="11" fontWeight="bold" fill="#64748b">Χρόνος t (h)</text>
+                  {/* Ετικετες αξονων */}
+                  <text x="375" y="375" fontSize="11" fontWeight="bold" fill="#64748b" textAnchor="end">Ταχύτητα υ (km/h)</text>
+                  <text x="25" y="25" fontSize="11" fontWeight="bold" fill="#64748b">Χρόνος t (h)</text>
 
-      {/* Αριθμοι αξονα X (30, 60, 90, 120) */}
-      {[30, 60, 90, 120].map((spd, idx) => (
-        <text key={`tx-${spd}`} x={50 + (idx + 1) * 75} y="368" fontSize="11" fontWeight="bold" fill="#475569" textAnchor="middle">
-          {spd}
-        </text>
-      ))}
+                  {/* Αριθμοι αξονα X (30, 60, 90, 120) */}
+                  {[30, 60, 90, 120].map((spd, idx) => (
+                    <text key={`tx-${spd}`} x={50 + (idx + 1) * 75} y="368" fontSize="11" fontWeight="bold" fill="#475569" textAnchor="middle">
+                      {spd}
+                    </text>
+                  ))}
 
-      {/* Αριθμοι αξονα Y (2, 4, 6, 8 ωρες) */}
-      {[2, 4, 6, 8].map((hrs, idx) => (
-        <text key={`ty-${hrs}`} x="42" y={355 - (idx + 1) * 70} fontSize="11" fontWeight="bold" fill="#475569" textAnchor="end">
-          {hrs}
-        </text>
-      ))}
+                  {/* Αριθμοι αξονα Y (2, 4, 6, 8 ωρες) */}
+                  {[2, 4, 6, 8].map((hrs, idx) => (
+                    <text key={`ty-${hrs}`} x="42" y={355 - (idx + 1) * 70} fontSize="11" fontWeight="bold" fill="#475569" textAnchor="end">
+                      {hrs}
+                    </text>
+                  ))}
 
-      {/* Σημειο (0,0) */}
-      <circle cx="50" cy="350" r="4" fill="#0f172a" />
-      <text x="38" y="365" fontSize="11" fontWeight="bold" fill="#0f172a">0</text>
+                  {/* Σημειο (0,0) */}
+                  <circle cx="50" cy="350" r="4" fill="#0f172a" />
+                  <text x="38" y="365" fontSize="11" fontWeight="bold" fill="#0f172a">0</text>
 
-      {/* Πραγματικη Καμπυλη Υπερβολης: t = 240 / v (απο v=30 εως v=120) */}
-      {(() => {
-        const points = [];
-        for (let v = 30; v <= 120; v += 2) {
-          const t = 240 / v;
-          const px = 50 + (v / 120) * 300;
-          const py = 350 - (t / 8) * 280;
-          points.push(`${px},${py}`);
-        }
-        return (
-          <polyline
-            points={points.join(' ')}
-            fill="none"
-            stroke="#e11d48"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        );
-      })()}
+                  {/* Πραγματικη Καμπυλη Υπερβολης: t = 240 / v (απο v=30 εως v=120) */}
+                  <polyline
+                    points={curvePoints}
+                    fill="none"
+                    stroke="#e11d48"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
 
-      {/* Γραμμες οδηγοι προς τους αξονες για το ενεργο σημειο */}
-      {(() => {
-        const cx = 50 + (speedVal / 120) * 300;
-        const cy = 350 - ((240 / speedVal) / 8) * 280;
-        return (
-          <>
-            <line x1={cx} y1={350} x2={cx} y2={cy} stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="3 3" />
-            <line x1={50} y1={cy} x2={cx} y2={cy} stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="3 3" />
-            <circle
-              cx={cx}
-              cy={cy}
-              r="7"
-              fill="#2563eb"
-              stroke="#ffffff"
-              strokeWidth="2.5"
-              className="animate-pulse"
-            />
-          </>
-        );
-      })()}
-    </svg>
-  </div>
+                  {/* Γραμμες οδηγοι προς τους αξονες για το ενεργο σημειο */}
+                  <line x1={activeDotX} y1={350} x2={activeDotX} y2={activeDotY} stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="3 3" />
+                  <line x1="50" y1={activeDotY} x2={activeDotX} y2={activeDotY} stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="3 3" />
+                  <circle
+                    cx={activeDotX}
+                    cy={activeDotY}
+                    r="7"
+                    fill="#2563eb"
+                    stroke="#ffffff"
+                    strokeWidth="2.5"
+                    className="animate-pulse"
+                  />
+                </svg>
+              </div>
 
-  <span className="text-xs text-rose-700 font-bold mt-3 text-center">
-    Η καμπύλη ΔΕΝ περνά ποτέ από το (0, 0) και δεν ακουμπά τους άξονες!
-  </span>
-</div>
               <span className="text-xs text-rose-700 font-bold mt-3 text-center">
                 Η καμπύλη ΔΕΝ περνά ποτέ από το (0, 0) και δεν ακουμπά τους άξονες!
               </span>
