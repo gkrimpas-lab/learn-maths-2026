@@ -946,34 +946,132 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Από την ταυτότητα της ευκλείδειας διαίρεσης: <span className="font-mono font-bold">Δ ＝ δ · π ＋ υ</span>, με τον περιορισμό ότι <span className="font-mono font-bold">υ &lt; δ</span>:
+          Αξιοποιούμε την <strong>ταυτότητα της ευκλείδειας διαίρεσης</strong> (<span className="font-mono font-bold">Δ ＝ δ · π ＋ υ</span>) και τη βασική ιδιότητα ότι το υπόλοιπο είναι πάντοτε <strong>αυστηρά μικρότερο από τον διαιρέτη</strong> (<span className="font-mono font-bold">υ &lt; δ</span>):
         </p>
 
-        {/* SVG ΣΧΗΜΑ 9: ΜΕΓΙΣΤΟΠΟΙΗΣΗ ΥΠΟΛΟΙΠΟΥ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="480" height="135" viewBox="0 0 480 135" className="select-none font-sans mx-auto block">
+        {/* SVG ΣΧΗΜΑ 9: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL (FLUID VIEWBOX) */}
+        <div className="bg-white/90 p-3 sm:p-4 rounded-2xl border border-slate-200/90 my-2">
+          <svg
+            viewBox="0 0 560 190"
+            className="w-full h-auto max-w-[560px] mx-auto block select-none font-sans"
+          >
+            {/* 1. ΣΧΗΜΑ ΚΛΑΣΙΚΗΣ ΔΙΑΙΡΕΣΗΣ (ΑΡΙΣΤΕΡΑ) */}
             <g transform="translate(30, 20)">
-              <rect x="0" y="0" width="420" height="50" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-              <text x="210" y="24" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">δ ＝ 12, π ＝ 15 ➔ δ · π ＝ 12 · 15 ＝ 180</text>
-              <text x="210" y="40" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">Μέγιστο δυνατό υπόλοιπο: υ_max ＝ δ － 1 ＝ 11</text>
+              {/* Γραμμές διαίρεσης (γωνία) */}
+              <line x1="120" y1="5" x2="120" y2="95" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="120" y1="48" x2="225" y2="48" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
+
+              {/* Διαιρετέος Δ_max */}
+              <rect x="0" y="8" width="105" height="34" rx="8" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
+              <text x="52.5" y="30" fontSize="13" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">
+                Δ_max ＝ ?
+              </text>
+              <text x="52.5" y="55" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">
+                (Διαιρετέος)
+              </text>
+
+              {/* Διαιρέτης δ = 12 */}
+              <rect x="130" y="8" width="85" height="34" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
+              <text x="172.5" y="30" fontSize="13" fontWeight="900" textAnchor="middle" fill="#1d4ed8" fontFamily="monospace">
+                δ ＝ 12
+              </text>
+
+              {/* Πηλίκο π = 15 */}
+              <rect x="130" y="55" width="85" height="34" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
+              <text x="172.5" y="77" fontSize="13" fontWeight="900" textAnchor="middle" fill="#1d4ed8" fontFamily="monospace">
+                π ＝ 15
+              </text>
+
+              {/* Υπόλοιπο υ_max = 11 */}
+              <rect x="10" y="66" width="85" height="32" rx="8" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" />
+              <text x="52.5" y="86" fontSize="12" fontWeight="900" textAnchor="middle" fill="#dc2626" fontFamily="monospace">
+                υ ＝ 11
+              </text>
+              <text x="52.5" y="112" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#dc2626">
+                (υ_max ＝ δ － 1)
+              </text>
             </g>
 
-            <g transform="translate(80, 85)">
-              <rect x="0" y="0" width="320" height="34" rx="8" fill="#16a34a" />
-              <text x="160" y="22" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
-                Δ_max ＝ 180 ＋ 11 ＝ 191 ⭐
+            {/* 2. ΠΛΑΙΣΙΟ ΚΑΝΟΝΑ & ΥΠΟΛΟΓΙΣΜΟΥ (ΔΕΞΙΑ) */}
+            <g transform="translate(280, 20)">
+              <rect x="0" y="0" width="250" height="96" rx="12" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+              
+              <text x="16" y="24" fontSize="10.5" fontWeight="bold" fill="#0f172a">
+                • Βασική σχέση: <tspan fontWeight="900" fill="#dc2626">υ &lt; δ</tspan>
+              </text>
+              <text x="16" y="44" fontSize="10" fill="#475569">
+                Αφού δ ＝ 12 ➔ υ ∈ &#123;0, 1, ..., 11&#125;
+              </text>
+              <line x1="14" y1="56" x2="236" y2="56" stroke="#e2e8f0" strokeWidth="1" />
+              <text x="16" y="74" fontSize="10.5" fontWeight="bold" fill="#15803d">
+                • Μέγιστο υπόλοιπο:
+              </text>
+              <text x="16" y="88" fontSize="11" fontWeight="900" fill="#166534" fontFamily="monospace">
+                υ_max ＝ 12 － 1 ＝ 11
+              </text>
+            </g>
+
+            {/* 3. ΚΑΤΩ ΕΝΙΑΙΟ BADGE ΤΑΥΤΟΤΗΤΑΣ */}
+            <g transform="translate(30, 138)">
+              <rect x="0" y="0" width="500" height="42" rx="10" fill="#0f172a" />
+              <text x="250" y="26" fontSize="13" fontWeight="900" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
+                Δ_max ＝ 12 · 15 ＋ 11 ＝ 180 ＋ 11 ＝ 191 ⭐
               </text>
             </g>
           </svg>
         </div>
 
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono space-y-1.5">
-          <div>• Αφού ο διαιρέτης είναι 12, το υπόλοιπο μπορεί να πάρει τιμές από 0 έως 11.</div>
-          <div>• Για να γίνει ο διαιρετέος <strong>μέγιστος</strong>, πρέπει και το υπόλοιπο να πάρει τη <strong>μέγιστη δυνατή τιμή</strong>, δηλαδή <strong>υ ＝ 11</strong>.</div>
-          <div className="text-emerald-700 font-bold pt-1 border-t border-slate-200">
-            • Δ_max ＝ 12 · 15 ＋ 11 ＝ 180 ＋ 11 ＝ <strong>191</strong>.
+        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
+        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+          {/* 1ος Τρόπος: Μέσω της Ευκλείδειας Διαίρεσης */}
+          <div className="space-y-1.5">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Ταυτότητα Ευκλείδειας Διαίρεσης & Μέγιστο Υπόλοιπο)
+            </div>
+            <p className="text-slate-700">
+              Η ταυτότητα της διαίρεσης συνδέει τους όρους με τη σχέση:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+              <div className="font-bold text-slate-800">
+                Διαιρετέος ＝ (Διαιρέτης · Πηλίκο) ＋ Υπόλοιπο
+              </div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Σε κάθε διαίρεση το υπόλοιπο είναι φυσικός αριθμός αυστηρά μικρότερος του διαιρέτη (<span className="font-mono font-bold">υ &lt; δ</span>). Επειδή ο διαιρέτης είναι <strong>12</strong>:
+              </div>
+              <div>• Δυνατά υπόλοιπα: 0, 1, 2, ..., <strong>11</strong>[cite: 1].</div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Για να γίνει ο διαιρετέος <strong>μέγιστος δυνατός</strong>, πρέπει να προσθέσουμε το <strong>μέγιστο δυνατό υπόλοιπο</strong>:
+              </div>
+              <div className="text-emerald-800 font-bold text-base">
+                Δ_max ＝ 12 · 15 ＋ 11 ＝ 180 ＋ 11 ＝ <span className="text-emerald-700 font-black">191</span>[cite: 1]
+              </div>
+            </div>
+          </div>
+
+          {/* 2ος Τρόπος: Μέσω Πολλαπλασίων του Διαιρέτη */}
+          <div className="space-y-1.5 pt-1 border-t border-slate-100">
+            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
+              🔷 2ος Τρόπος (Συλλογισμός μέσω του επόμενου πολλαπλασίου)
+            </div>
+            <p className="text-slate-700">
+              Σκεφτόμαστε πότε αλλάζει το πηλίκο σε 16[cite: 1]:
+            </p>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+              <div>• Για Δ ＝ 12 · 15 ＝ <strong>180</strong>, η διαίρεση είναι τέλεια (υ ＝ 0, π ＝ 15)[cite: 1].</div>
+              <div>• Για Δ ＝ 12 · 16 ＝ <strong>192</strong>, το πηλίκο γίνεται 16 (και όχι 15)[cite: 1].</div>
+              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
+                Άρα, ο μεγαλύτερος αριθμός που εξακολουθεί να δίνει πηλίκο 15 είναι ο αμέσως προηγούμενος φυσικός του 192:
+              </div>
+              <div className="text-emerald-800 font-bold text-base pt-0.5">
+                Δ_max ＝ 192 － 1 ＝ <span className="text-emerald-700 font-black">191</span>[cite: 1]
+              </div>
+            </div>
           </div>
         </div>
+
+        <p className="pt-1">
+          Επομένως, ο μέγιστος δυνατός διαιρετέος είναι το <strong>191</strong>[cite: 1].
+        </p>
       </div>
     )
   },
