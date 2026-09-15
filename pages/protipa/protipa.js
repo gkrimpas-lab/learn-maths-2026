@@ -113,19 +113,19 @@ export default function ProtipaHubPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
             
-            {/* PDF 1: 2020 - 2025 */}
+            {/* PDF 1: 2020 - 2026 */}
             <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <span className="text-3xl block">📚</span>
                 <h4 className="font-black text-slate-900 text-base sm:text-lg">
-                  Πρότυπα Σχολεία 2020 - 2025
+                  Πρότυπα Σχολεία 2020 - 2026
                 </h4>
                 <p className="text-xs text-slate-500 leading-relaxed">
                   Συγκεντρωμένα όλα τα επίσημα θέματα και οι ενδεικτικές απαντήσεις των τελευταίων ετών.
                 </p>
               </div>
               <a
-                href="/protypa_2020_2025.pdf"
+                href="/protypa_2020_2026.pdf"
                 download
                 className="w-full text-center bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-xs flex items-center justify-center gap-1.5 active:scale-95"
               >
