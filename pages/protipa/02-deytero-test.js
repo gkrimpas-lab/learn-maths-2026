@@ -220,9 +220,12 @@ const QUESTIONS = [
           Μετατρέπουμε όλα τα κλάσματα σε δεκαδικούς αριθμούς (με παρονομαστή το 100) για να συγκρίνουμε εύκολα τις αποστάσεις τους από τον στόχο <strong>0,60 (<Fraction num="3" den="5" />)</strong>:
         </p>
 
-        {/* SVG ΣΧΗΜΑ: ΑΡΙΘΜΟΓΡΑΜΜΗ ΜΕ ΟΛΑ ΤΑ ΝΟΥΜΕΡΑ ΚΑΙ ΑΠΟΣΤΑΣΕΙΣ ΑΠΟ ΤΟ 0,60 */}
-        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="530" height="200" viewBox="0 0 530 200" className="select-none font-sans mx-auto block">
+        {/* SVG ΣΧΗΜΑ 3: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
+        <div className="bg-white/90 p-3 sm:p-4 rounded-2xl border border-slate-200/90 my-2">
+          <svg
+            viewBox="0 0 620 185"
+            className="w-full h-auto max-w-[620px] mx-auto block select-none font-sans"
+          >
             <defs>
               <marker id="numline-arr-3" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
@@ -230,47 +233,47 @@ const QUESTIONS = [
             </defs>
 
             {/* Κεντρικός άξονας αριθμογραμμής */}
-            <line x1="20" y1="100" x2="505" y2="100" stroke="#334155" strokeWidth="2" markerEnd="url(#numline-arr-3)" />
+            <line x1="20" y1="95" x2="595" y2="95" stroke="#334155" strokeWidth="2.2" markerEnd="url(#numline-arr-3)" />
 
             {/* 1. ΣΗΜΕΙΟ 1/2 = 0,50 */}
-            <g transform="translate(60, 100)">
+            <g transform="translate(60, 95)">
               <line x1="0" y1="-8" x2="0" y2="8" stroke="#64748b" strokeWidth="2" />
               <circle cx="0" cy="0" r="4.5" fill="#64748b" />
-              <text x="0" y="-28" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">1/2</text>
-              <text x="0" y="-14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,50)</text>
+              <text x="0" y="-26" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">1/2</text>
+              <text x="0" y="-12" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,50)</text>
               <text x="0" y="24" fontSize="9.5" textAnchor="middle" fill="#dc2626" fontFamily="monospace">d ＝ 0,10</text>
             </g>
 
             {/* 2. ΣΗΜΕΙΟ 13/25 = 0,52 */}
-            <g transform="translate(130, 100)">
+            <g transform="translate(145, 95)">
               <line x1="0" y1="-8" x2="0" y2="8" stroke="#64748b" strokeWidth="2" />
               <circle cx="0" cy="0" r="4.5" fill="#64748b" />
-              <text x="0" y="-28" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">13/25</text>
-              <text x="0" y="-14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,52)</text>
+              <text x="0" y="-26" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">13/25</text>
+              <text x="0" y="-12" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,52)</text>
               <text x="0" y="24" fontSize="9.5" textAnchor="middle" fill="#dc2626" fontFamily="monospace">d ＝ 0,08</text>
             </g>
 
             {/* 3. ΣΗΜΕΙΟ 11/20 = 0,55 (ΤΟ ΠΛΗΣΙΕΣΤΕΡΟ) */}
-            <g transform="translate(235, 100)">
+            <g transform="translate(270, 95)">
               <line x1="0" y1="-10" x2="0" y2="10" stroke="#16a34a" strokeWidth="2.5" />
               <circle cx="0" cy="0" r="6" fill="#16a34a" stroke="#14532d" strokeWidth="1.5" />
-              <text x="0" y="-28" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#15803d">11/20</text>
-              <text x="0" y="-14" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#16a34a">(0,55)</text>
-              <rect x="-26" y="14" width="52" height="18" rx="4" fill="#dcfce7" stroke="#86efac" strokeWidth="1" />
-              <text x="0" y="27" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#166534" fontFamily="monospace">d ＝ 0,05</text>
-              <text x="0" y="46" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">Πιο κοντά!</text>
+              <text x="0" y="-26" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#15803d">11/20</text>
+              <text x="0" y="-12" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#16a34a">(0,55)</text>
+              <rect x="-28" y="12" width="56" height="18" rx="4" fill="#dcfce7" stroke="#86efac" strokeWidth="1" />
+              <text x="0" y="25" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#166534" fontFamily="monospace">d ＝ 0,05</text>
+              <text x="0" y="44" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">Πιο κοντά!</text>
             </g>
 
             {/* ΤΟΞΟ ΑΠΟΣΤΑΣΗΣ ΑΠΟ 0,55 ΣΕ 0,60 */}
-            <path d="M 235 82 Q 292 65 350 82" fill="none" stroke="#16a34a" strokeWidth="2" />
-            <text x="292.5" y="68" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#15803d">0,05</text>
+            <path d="M 270 78 Q 337 60 405 78" fill="none" stroke="#16a34a" strokeWidth="2" />
+            <text x="337.5" y="64" fontSize="10" fontWeight="black" textAnchor="middle" fill="#15803d">0,05</text>
 
             {/* 4. ΣΤΟΧΟΣ 3/5 = 0,60 (ΕΠΙΚΕΝΤΡΟ) */}
-            <g transform="translate(350, 100)">
+            <g transform="translate(405, 95)">
               <line x1="0" y1="-32" x2="0" y2="35" stroke="#2563eb" strokeWidth="2.5" strokeDasharray="3 2" />
               <circle cx="0" cy="0" r="6.5" fill="#2563eb" stroke="#1e40af" strokeWidth="1.5" />
-              <rect x="-38" y="-62" width="76" height="24" rx="6" fill="#1e293b" />
-              <text x="0" y="-46" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
+              <rect x="-42" y="-62" width="84" height="26" rx="6" fill="#1e293b" />
+              <text x="0" y="-45" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
                 0,60 ⭐
               </text>
               <text x="0" y="50" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">
@@ -279,11 +282,11 @@ const QUESTIONS = [
             </g>
 
             {/* 5. ΣΗΜΕΙΟ 7/10 = 0,70 */}
-            <g transform="translate(450, 100)">
+            <g transform="translate(525, 95)">
               <line x1="0" y1="-8" x2="0" y2="8" stroke="#64748b" strokeWidth="2" />
               <circle cx="0" cy="0" r="4.5" fill="#64748b" />
-              <text x="0" y="-28" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">7/10</text>
-              <text x="0" y="-14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,70)</text>
+              <text x="0" y="-26" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">7/10</text>
+              <text x="0" y="-12" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,70)</text>
               <text x="0" y="24" fontSize="9.5" textAnchor="middle" fill="#dc2626" fontFamily="monospace">d ＝ 0,10</text>
             </g>
           </svg>
@@ -375,9 +378,12 @@ const QUESTIONS = [
           Εξετάζουμε τη διαδοχική μεταβολή της τιμής: η αύξηση κατά 25% υπολογίζεται πάνω στην <strong>αρχική τιμή</strong>, ενώ η μείωση κατά 20% υπολογίζεται πάνω στη <strong>νέα (αυξημένη) τιμή</strong>[cite: 1]:
         </p>
 
-        {/* SVG ΣΧΗΜΑ 4: ΜΕΓΑΛΟ & ΕΥΔΙΑΚΡΙΤΟ (720px) */}
-        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="720" height="180" viewBox="0 0 720 180" className="select-none font-sans mx-auto block">
+        {/* SVG ΣΧΗΜΑ 4: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
+        <div className="bg-white/90 p-3 sm:p-4 rounded-2xl border border-slate-200/90 my-2">
+          <svg
+            viewBox="0 0 620 185"
+            className="w-full h-auto max-w-[620px] mx-auto block select-none font-sans"
+          >
             <defs>
               <marker id="arr-up-4" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 1 L 8 5 L 0 9 z" fill="#2563eb" />
@@ -388,43 +394,43 @@ const QUESTIONS = [
             </defs>
 
             {/* 1. Αρχική Τιμή */}
-            <g transform="translate(30, 45)">
-              <rect x="0" y="0" width="150" height="85" rx="14" fill="#f8fafc" stroke="#64748b" strokeWidth="2" />
-              <text x="75" y="28" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#475569">Αρχική Τιμή</text>
-              <text x="75" y="54" fontSize="20" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">100 €</text>
-              <text x="75" y="72" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#64748b">(ή x)</text>
+            <g transform="translate(20, 36)">
+              <rect x="0" y="0" width="130" height="78" rx="12" fill="#f8fafc" stroke="#64748b" strokeWidth="2" />
+              <text x="65" y="26" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">Αρχική Τιμή</text>
+              <text x="65" y="50" fontSize="18" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">100 €</text>
+              <text x="65" y="68" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#64748b">(ή x)</text>
             </g>
 
             {/* Τόξο Αύξησης +25% */}
-            <path d="M 190 70 C 220 30, 260 30, 285 65" fill="none" stroke="#2563eb" strokeWidth="2.5" markerEnd="url(#arr-up-4)" />
-            <rect x="205" y="18" width="70" height="24" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
-            <text x="240" y="34" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋25%</text>
+            <path d="M 160 62 C 185 24, 225 24, 248 56" fill="none" stroke="#2563eb" strokeWidth="2.2" markerEnd="url(#arr-up-4)" />
+            <rect x="175" y="14" width="60" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
+            <text x="205" y="29" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋25%</text>
 
             {/* 2. Νέα Τιμή */}
-            <g transform="translate(290, 45)">
-              <rect x="0" y="0" width="150" height="85" rx="14" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2.2" />
-              <text x="75" y="28" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Νέα Τιμή</text>
-              <text x="75" y="54" fontSize="20" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">125 €</text>
-              <text x="75" y="72" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#2563eb">(1,25 · x)</text>
+            <g transform="translate(250, 36)">
+              <rect x="0" y="0" width="130" height="78" rx="12" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
+              <text x="65" y="26" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Νέα Τιμή</text>
+              <text x="65" y="50" fontSize="18" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">125 €</text>
+              <text x="65" y="68" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#2563eb">(1,25 · x)</text>
             </g>
 
             {/* Τόξο Μείωσης -20% */}
-            <path d="M 450 70 C 480 30, 520 30, 545 65" fill="none" stroke="#dc2626" strokeWidth="2.5" markerEnd="url(#arr-down-4)" />
-            <rect x="465" y="18" width="70" height="24" rx="6" fill="#fef2f2" stroke="#fca5a5" strokeWidth="1" />
-            <text x="500" y="34" fontSize="11" fontWeight="black" textAnchor="middle" fill="#dc2626">－20%</text>
+            <path d="M 390 62 C 415 24, 455 24, 478 56" fill="none" stroke="#dc2626" strokeWidth="2.2" markerEnd="url(#arr-down-4)" />
+            <rect x="405" y="14" width="60" height="22" rx="6" fill="#fef2f2" stroke="#fca5a5" strokeWidth="1" />
+            <text x="435" y="29" fontSize="10" fontWeight="black" textAnchor="middle" fill="#dc2626">－20%</text>
 
             {/* 3. Τελική Τιμή */}
-            <g transform="translate(550, 45)">
-              <rect x="0" y="0" width="145" height="85" rx="14" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.5" />
-              <text x="72.5" y="28" fontSize="12" fontWeight="black" textAnchor="middle" fill="#166534">Τελική Τιμή ⭐</text>
-              <text x="72.5" y="54" fontSize="20" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">100 €</text>
-              <text x="72.5" y="72" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#166534">(＝ 1,00 · x)</text>
+            <g transform="translate(480, 36)">
+              <rect x="0" y="0" width="124" height="78" rx="12" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.2" />
+              <text x="62" y="26" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">Τελική Τιμή ⭐</text>
+              <text x="62" y="50" fontSize="18" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">100 €</text>
+              <text x="62" y="68" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#166534">(＝ 1,00 · x)</text>
             </g>
 
             {/* Κάτω Badge Συμπεράσματος */}
-            <g transform="translate(185, 144)">
-              <rect x="0" y="0" width="350" height="28" rx="14" fill="#0f172a" />
-              <text x="175" y="18" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
+            <g transform="translate(110, 130)">
+              <rect x="0" y="0" width="400" height="34" rx="10" fill="#0f172a" />
+              <text x="200" y="22" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#ffffff">
                 Συνολική Μεταβολή: 100 € ➔ 100 € (Καμία Μεταβολή 0%)
               </text>
             </g>
@@ -442,8 +448,8 @@ const QUESTIONS = [
               Επιλέγουμε ως αρχική τιμή τα <strong>100 €</strong> για ευκολία στους υπολογισμούς:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• <strong>Αύξηση κατά 25%:</strong> 100 ＋ 25 ＝ <strong>125 €</strong> (η νέα τιμή).</div>
-              <div>• <strong>Μείωση κατά 20%:</strong> Υπολογίζεται πάνω στη νέα τιμή των 125 €:</div>
+              <div>• <strong>Αύξηση κατά 25%:</strong> 100 ＋ 25 ＝ <strong>125 €</strong> (η νέα τιμή)[cite: 1].</div>
+              <div>• <strong>Μείωση κατά 20%:</strong> Υπολογίζεται πάνω στη νέα τιμή των 125 €[cite: 1]:</div>
               <div className="pl-3 text-slate-800">
                 Ποσό μείωσης ＝ 20% · 125 ＝ 0,20 · 125 ＝ <strong className="text-rose-600">25 €</strong>.
               </div>
@@ -451,7 +457,7 @@ const QUESTIONS = [
                 • <strong>Τελική τιμή:</strong> 125 － 25 ＝ <strong className="text-emerald-700 font-black">100 €</strong>.
               </div>
               <div className="pt-0.5 text-slate-600 font-sans text-xs">
-                Η τελική τιμή ισούται με την αρχική, επομένως η συνολική ποσοστιαία μεταβολή είναι <strong>0% (καμία μεταβολή)</strong>.
+                Η τελική τιμή ισούται με την αρχική, επομένως η συνολική ποσοστιαία μεταβολή είναι <strong>0% (καμία μεταβολή)</strong>[cite: 1].
               </div>
             </div>
           </div>
@@ -468,7 +474,7 @@ const QUESTIONS = [
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span>• Αύξηση κατά 25% ➔ Νέα τιμή: x · (1 ＋ 0,25) ＝ 1,25 · x ＝</span>
                 <Fraction num="5" den="4" />
-                <span>· x</span>
+                <span>· x[cite: 1]</span>
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
@@ -478,7 +484,7 @@ const QUESTIONS = [
                 <Fraction num="5" den="4" />
                 <span>·</span>
                 <Fraction num="4" den="5" />
-                <span>· x</span>
+                <span>· x[cite: 1]</span>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200 text-emerald-800 font-bold">
@@ -487,7 +493,7 @@ const QUESTIONS = [
                 <span>· x ＝ 1 · x ＝ <span className="text-base text-emerald-700 font-black">x</span></span>
               </div>
               <div className="text-slate-600 font-sans text-xs pt-0.5">
-                Εφόσον η τελική τιμή παραμένει ακριβώς <strong>x</strong>, αποδεικνύεται ότι για οποιαδήποτε τιμή του προϊόντος η μεταβολή είναι πάντοτε <strong>0%</strong>.
+                Εφόσον η τελική τιμή παραμένει ακριβώς <strong>x</strong>, αποδεικνύεται ότι για οποιαδήποτε τιμή του προϊόντος η μεταβολή είναι πάντοτε <strong>0%</strong>[cite: 1].
               </div>
             </div>
           </div>
@@ -508,54 +514,51 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Γνωρίζουμε ότι κάθε ζώο έχει <strong>1 κεφάλι</strong> (άρα σύνολο 25 ζώα), κάθε κοτόπουλο έχει <strong>2 πόδια</strong> και κάθε κατσίκα έχει <strong>4 πόδια</strong>[cite: 1]:
+          Γνωρίζουμε ότι κάθε ζώο έχει <strong>1 κεφάλι</strong> (σύνολο 25 ζώα), κάθε κοτόπουλο έχει <strong>2 πόδια</strong> και κάθε κατσίκα έχει <strong>4 πόδια</strong>[cite: 1]:
         </p>
 
-        {/* SVG ΣΧΗΜΑ 5: ΜΕΓΑΛΟ & ΕΥΔΙΑΚΡΙΤΟ (720px) */}
-        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="720" height="200" viewBox="0 0 720 200" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="arr-flow-5" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 1 L 8 5 L 0 9 z" fill="#16a34a" />
-              </marker>
-            </defs>
-
+        {/* SVG ΣΧΗΜΑ 5: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
+        <div className="bg-white/90 p-3 sm:p-4 rounded-2xl border border-slate-200/90 my-2">
+          <svg
+            viewBox="0 0 620 185"
+            className="w-full h-auto max-w-[620px] mx-auto block select-none font-sans"
+          >
             {/* 1. Υπόθεση: Όλα κοτόπουλα */}
-            <g transform="translate(35, 20)">
-              <rect x="0" y="0" width="300" height="85" rx="14" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
-              <text x="150" y="28" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">
-                Υπόθεση: Και τα 25 ζώα είναι κοτόπουλα
+            <g transform="translate(20, 16)">
+              <rect x="0" y="0" width="275" height="82" rx="14" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
+              <text x="137.5" y="27" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">
+                Υπόθεση: Όλα κοτόπουλα (2 πόδια)
               </text>
-              <text x="150" y="54" fontSize="18" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">
+              <text x="137.5" y="52" fontSize="17" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">
                 25 · 2 ＝ 50 πόδια
               </text>
-              <text x="150" y="73" fontSize="10.5" textAnchor="middle" fill="#2563eb">
-                (Λείπουν πόδια σε σχέση με την πραγματικότητα)
+              <text x="137.5" y="70" fontSize="9.5" textAnchor="middle" fill="#2563eb">
+                (Υποθετικά λιγότερα πόδια)
               </text>
             </g>
 
             {/* 2. Πραγματικότητα & Διαφορά */}
-            <g transform="translate(385, 20)">
-              <rect x="0" y="0" width="300" height="85" rx="14" fill="#fef2f2" stroke="#ef4444" strokeWidth="2" />
-              <text x="150" y="28" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">
+            <g transform="translate(325, 16)">
+              <rect x="0" y="0" width="275" height="82" rx="14" fill="#fef2f2" stroke="#ef4444" strokeWidth="2" />
+              <text x="137.5" y="27" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#dc2626">
                 Πραγματικότητα: 70 πόδια
               </text>
-              <text x="150" y="54" fontSize="18" fontWeight="900" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">
+              <text x="137.5" y="52" fontSize="17" fontWeight="900" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">
                 70 － 50 ＝ 20 επιπλέον πόδια
               </text>
-              <text x="150" y="73" fontSize="10.5" textAnchor="middle" fill="#dc2626">
+              <text x="137.5" y="70" fontSize="9.5" textAnchor="middle" fill="#dc2626">
                 (Ανήκουν στις 4ποδες κατσίκες)
               </text>
             </g>
 
-            {/* Βέλη σύγκλισης προς το συμπέρασμα */}
-            <path d="M 185 108 C 185 125, 300 135, 340 138" fill="none" stroke="#16a34a" strokeWidth="2" strokeDasharray="3 2" />
-            <path d="M 535 108 C 535 125, 420 135, 380 138" fill="none" stroke="#16a34a" strokeWidth="2" strokeDasharray="3 2" />
+            {/* Βέλη σύγκλισης */}
+            <path d="M 157 98 C 157 114, 250 120, 285 124" fill="none" stroke="#16a34a" strokeWidth="1.8" strokeDasharray="3 2" />
+            <path d="M 462 98 C 462 114, 370 120, 335 124" fill="none" stroke="#16a34a" strokeWidth="1.8" strokeDasharray="3 2" />
 
             {/* Τελικό Αποτέλεσμα (Κατσίκες) */}
-            <g transform="translate(135, 138)">
-              <rect x="0" y="0" width="450" height="46" rx="12" fill="#16a34a" />
-              <text x="225" y="29" fontSize="13.5" fontWeight="900" textAnchor="middle" fill="#ffffff">
+            <g transform="translate(70, 122)">
+              <rect x="0" y="0" width="480" height="44" rx="12" fill="#16a34a" />
+              <text x="240" y="27" fontSize="13" fontWeight="900" textAnchor="middle" fill="#ffffff">
                 Πλήθος Κατσικιών: 20 επιπλέον πόδια : 2 ＝ 10 κατσίκες ⭐
               </text>
             </g>
@@ -701,12 +704,15 @@ const QUESTIONS = [
     explain: (
       <div className="space-y-4 text-xs sm:text-sm">
         <p>
-          Συγκρίνουμε το <strong>συνολικό άθροισμα πόντων</strong> στους 4 αρχικούς γύρους με το επιθυμητό άθροισμα στους 5 γύρους:
+          Συγκρίνουμε το <strong>συνολικό άθροισμα πόντων</strong> στους 4 αρχικούς γύρους με το επιθυμητό άθροισμα στους 5 γύρους[cite: 1]:
         </p>
 
-        {/* SVG ΣΧΗΜΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΗΣ ΜΕΤΑΤΟΠΙΣΗΣ ΤΟΥ ΜΕΣΟΥ ΟΡΟΥ (720px) */}
-        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="700" height="175" viewBox="0 0 700 175" className="select-none font-sans mx-auto block">
+        {/* SVG ΣΧΗΜΑ 7: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
+        <div className="bg-white/90 p-3 sm:p-4 rounded-2xl border border-slate-200/90 my-2">
+          <svg
+            viewBox="0 0 620 185"
+            className="w-full h-auto max-w-[620px] mx-auto block select-none font-sans"
+          >
             <defs>
               <marker id="numline-arr-7" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
@@ -714,40 +720,40 @@ const QUESTIONS = [
             </defs>
 
             {/* Κεντρικός άξονας αριθμογραμμής */}
-            <line x1="30" y1="90" x2="670" y2="90" stroke="#334155" strokeWidth="2.2" markerEnd="url(#numline-arr-7)" />
+            <line x1="25" y1="95" x2="595" y2="95" stroke="#334155" strokeWidth="2.2" markerEnd="url(#numline-arr-7)" />
 
             {/* Παλιός Μέσος Όρος = 16 */}
-            <g transform="translate(180, 90)">
+            <g transform="translate(150, 95)">
               <line x1="0" y1="-30" x2="0" y2="30" stroke="#2563eb" strokeWidth="2.2" strokeDasharray="3 2" />
               <circle cx="0" cy="0" r="5.5" fill="#2563eb" />
-              <rect x="-48" y="-62" width="96" height="26" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1.2" />
-              <text x="0" y="-45" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Μ.Ο. ＝ 16</text>
+              <rect x="-46" y="-62" width="92" height="26" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1.2" />
+              <text x="0" y="-45" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Μ.Ο. ＝ 16</text>
               <text x="0" y="24" fontSize="13" fontWeight="900" textAnchor="middle" fill="#1e40af">16</text>
-              <text x="0" y="44" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#64748b">4 γύροι (4 · 16 ＝ 64)</text>
+              <text x="0" y="42" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">4 γύροι (64 π.)</text>
             </g>
 
             {/* Βέλος Αύξησης Μέσου Όρου (+1) */}
-            <path d="M 195 40 Q 255 18 315 40" fill="none" stroke="#16a34a" strokeWidth="2" strokeDasharray="3 2" />
-            <text x="255" y="22" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d">＋1 στον Μ.Ο.</text>
+            <path d="M 165 42 Q 225 18 285 42" fill="none" stroke="#16a34a" strokeWidth="2" strokeDasharray="3 2" />
+            <text x="225" y="23" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d">＋1 στον Μ.Ο.</text>
 
             {/* Νέος Μέσος Όρος = 17 */}
-            <g transform="translate(330, 90)">
+            <g transform="translate(300, 95)">
               <line x1="0" y1="-30" x2="0" y2="30" stroke="#16a34a" strokeWidth="2.2" strokeDasharray="3 2" />
               <circle cx="0" cy="0" r="5.5" fill="#16a34a" />
-              <rect x="-48" y="-62" width="96" height="26" rx="6" fill="#dcfce7" stroke="#86efac" strokeWidth="1.2" />
-              <text x="0" y="-45" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#166534">Μ.Ο. ＝ 17</text>
+              <rect x="-46" y="-62" width="92" height="26" rx="6" fill="#dcfce7" stroke="#86efac" strokeWidth="1.2" />
+              <text x="0" y="-45" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">Μ.Ο. ＝ 17</text>
               <text x="0" y="24" fontSize="13" fontWeight="900" textAnchor="middle" fill="#15803d">17</text>
-              <text x="0" y="44" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#166534">5 γύροι (5 · 17 ＝ 85)</text>
+              <text x="0" y="42" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#166534">5 γύροι (85 π.)</text>
             </g>
 
             {/* Ζητούμενος 5ος Γύρος = 21 */}
-            <g transform="translate(560, 90)">
+            <g transform="translate(500, 95)">
               <line x1="0" y1="-35" x2="0" y2="35" stroke="#ea580c" strokeWidth="2.5" />
-              <circle cx="0" cy="0" r="7" fill="#ea580c" stroke="#9a3412" strokeWidth="1.5" />
-              <rect x="-55" y="-65" width="110" height="28" rx="7" fill="#ea580c" />
-              <text x="0" y="-47" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">Στόχος: 21 ⭐</text>
+              <circle cx="0" cy="0" r="6.5" fill="#ea580c" stroke="#9a3412" strokeWidth="1.5" />
+              <rect x="-52" y="-64" width="104" height="28" rx="7" fill="#ea580c" />
+              <text x="0" y="-46" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#ffffff">Στόχος: 21 ⭐</text>
               <text x="0" y="24" fontSize="15" fontWeight="900" textAnchor="middle" fill="#c2410c" fontFamily="monospace">21</text>
-              <text x="0" y="44" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#ea580c">5ος γύρος (85 － 64)</text>
+              <text x="0" y="42" fontSize="9" fontWeight="black" textAnchor="middle" fill="#ea580c">5ος γύρος (85 － 64)</text>
             </g>
           </svg>
         </div>
@@ -759,7 +765,7 @@ const QUESTIONS = [
           </div>
 
           <p className="text-slate-700">
-            Ο μέσος όρος ισούται με το πηλίκο του αθροίσματος των πόντων δια του πλήθους των γύρων:
+            Ο μέσος όρος ισούται με το πηλίκο του αθροίσματος των πόντων δια του πλήθους των γύρων[cite: 1]:
           </p>
 
           <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
@@ -793,12 +799,12 @@ const QUESTIONS = [
           </div>
 
           <p className="text-slate-800">
-            Συγκρίνουμε τον παλιό μέσο όρο (16) με τον επιθυμητό (17):
+            Συγκρίνουμε τον παλιό μέσο όρο (16) με τον επιθυμητό (17)[cite: 1]:
           </p>
 
           <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-1.5">
-            <div>• Ο μέσος όρος πρέπει να αυξηθεί κατά: 17 － 16 ＝ <strong>＋1 πόντο</strong>.</div>
-            <div>• Για να αυξηθεί ο μέσος όρος κατά 1 σε όλους τους <strong>5 γύρους</strong>, απαιτούνται επιπλέον: 5 · 1 ＝ <strong>＋5 πόντοι</strong>.</div>
+            <div>• Ο μέσος όρος πρέπει να αυξηθεί κατά: 17 － 16 ＝ <strong>＋1 πόντο</strong>[cite: 1].</div>
+            <div>• Για να αυξηθεί ο μέσος όρος κατά 1 σε όλους τους <strong>5 γύρους</strong>, απαιτούνται επιπλέον: 5 · 1 ＝ <strong>＋5 πόντοι</strong>[cite: 1].</div>
             <div className="pt-1 border-t border-slate-200 flex items-center gap-2 flex-wrap">
               <span>• Πόντοι 5ου γύρου ＝ Παλιός Μ.Ο. ＋ Επιπλέον πόντοι ＝ 16 ＋ 5 ＝</span>
               <strong className="text-emerald-700 text-base">21 πόντοι</strong>
@@ -824,9 +830,12 @@ const QUESTIONS = [
           Παρατηρούμε ότι κάθε όρος της ακολουθίας προκύπτει προσθέτοντας σταθερά το <strong>5</strong> στον προηγούμενό του (σταθερό βήμα $\omega ＝ 5$):
         </p>
 
-        {/* SVG ΣΧΗΜΑ 8: ΑΝΑΛΥΤΙΚΗ ΑΚΟΛΟΥΘΙΑ ΚΑΙ 39 ΒΗΜΑΤΑ ΤΩΝ 5 */}
-        <div className="bg-white/90 p-4 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="720" height="190" viewBox="0 0 720 190" className="select-none font-sans mx-auto block">
+        {/* SVG ΣΧΗΜΑ 8: ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL */}
+        <div className="bg-white/90 p-3 sm:p-4 rounded-2xl border border-slate-200/90 my-2">
+          <svg
+            viewBox="0 0 620 180"
+            className="w-full h-auto max-w-[620px] mx-auto block select-none font-sans"
+          >
             <defs>
               <marker id="step-arr-8" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 1 L 8 5 L 0 9 z" fill="#2563eb" />
@@ -837,54 +846,54 @@ const QUESTIONS = [
             </defs>
 
             {/* 1ος όρος */}
-            <g transform="translate(25, 65)">
-              <rect x="0" y="0" width="75" height="52" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
-              <text x="37.5" y="20" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1ος όρος</text>
-              <text x="37.5" y="42" fontSize="18" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">4</text>
+            <g transform="translate(20, 55)">
+              <rect x="0" y="0" width="68" height="50" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
+              <text x="34" y="20" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1ος όρος</text>
+              <text x="34" y="41" fontSize="17" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">4</text>
             </g>
 
             {/* Τόξο 1 -> 2 */}
-            <path d="M 100 62 Q 125 32 150 62" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#step-arr-8)" />
-            <text x="125" y="32" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋5</text>
+            <path d="M 90 54 Q 115 26 140 54" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#step-arr-8)" />
+            <text x="115" y="27" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋5</text>
 
             {/* 2ος όρος */}
-            <g transform="translate(150, 65)">
-              <rect x="0" y="0" width="75" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.6" />
-              <text x="37.5" y="20" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">2ος όρος</text>
-              <text x="37.5" y="42" fontSize="18" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">9</text>
+            <g transform="translate(142, 55)">
+              <rect x="0" y="0" width="68" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.6" />
+              <text x="34" y="20" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">2ος όρος</text>
+              <text x="34" y="41" fontSize="17" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">9</text>
             </g>
 
             {/* Τόξο 2 -> 3 */}
-            <path d="M 225 62 Q 250 32 275 62" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#step-arr-8)" />
-            <text x="250" y="32" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋5</text>
+            <path d="M 212 54 Q 237 26 262 54" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#step-arr-8)" />
+            <text x="237" y="27" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋5</text>
 
             {/* 3ος όρος */}
-            <g transform="translate(275, 65)">
-              <rect x="0" y="0" width="75" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.6" />
-              <text x="37.5" y="20" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">3ος όρος</text>
-              <text x="37.5" y="42" fontSize="18" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">14</text>
+            <g transform="translate(264, 55)">
+              <rect x="0" y="0" width="68" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.6" />
+              <text x="34" y="20" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">3ος όρος</text>
+              <text x="34" y="41" fontSize="17" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">14</text>
             </g>
 
             {/* Ενδιάμεση γέφυρα 39 αλμάτων */}
-            <path d="M 350 62 C 390 10, 480 10, 520 62" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeDasharray="4 3" markerEnd="url(#step-arr-target-8)" />
-            <rect x="385" y="14" width="105" height="24" rx="6" fill="#dcfce7" stroke="#86efac" strokeWidth="1" />
-            <text x="437.5" y="30" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#166534">
-              ＋ 39 βήματα · 5
+            <path d="M 334 54 C 370 10, 440 10, 470 54" fill="none" stroke="#16a34a" strokeWidth="2.4" strokeDasharray="4 3" markerEnd="url(#step-arr-target-8)" />
+            <rect x="360" y="10" width="95" height="24" rx="6" fill="#dcfce7" stroke="#86efac" strokeWidth="1" />
+            <text x="407.5" y="26" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#166534">
+              ＋ 39 · 5
             </text>
 
             {/* 40ός όρος (Στόχος) */}
-            <g transform="translate(525, 52)">
-              <rect x="0" y="0" width="165" height="75" rx="14" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.5" />
-              <text x="82.5" y="26" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#166534">40ός Όρος ⭐</text>
-              <text x="82.5" y="54" fontSize="22" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">199</text>
-              <text x="82.5" y="68" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#166534">(4 ＋ 195)</text>
+            <g transform="translate(476, 42)">
+              <rect x="0" y="0" width="124" height="72" rx="12" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.5" />
+              <text x="62" y="24" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">40ός Όρος ⭐</text>
+              <text x="62" y="50" fontSize="21" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">199</text>
+              <text x="62" y="65" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#166534">(4 ＋ 195)</text>
             </g>
 
-            {/* Κάτω ενιαία λωρίδα τύπου */}
-            <g transform="translate(25, 140)">
-              <rect x="0" y="0" width="665" height="36" rx="10" fill="#0f172a" />
-              <text x="332.5" y="23" fontSize="12.5" fontWeight="bold" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
-                Τύπος: α₄₀ ＝ α₁ ＋ (40 － 1) · 5 ＝ 4 ＋ 39 · 5 ＝ 4 ＋ 195 ＝ 199
+            {/* Κάτω λωρίδα τύπου */}
+            <g transform="translate(20, 130)">
+              <rect x="0" y="0" width="580" height="38" rx="10" fill="#0f172a" />
+              <text x="290" y="24" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
+                Τύπος: α₄₀ ＝ 4 ＋ (40 － 1) · 5 ＝ 4 ＋ 39 · 5 ＝ 199
               </text>
             </g>
           </svg>
@@ -898,13 +907,13 @@ const QUESTIONS = [
               🔷 1ος Τρόπος (Υπολογισμός με τα ενδιάμεσα βήματα)
             </div>
             <p className="text-slate-700">
-              Ξεκινώντας από τον 1ο όρο (που είναι το 4), για να φτάσουμε στον 40ό όρο πρέπει να κάνουμε:
+              Ξεκινώντας από τον 1ο όρο (4), για να φτάσουμε στον 40ό όρο εκτελούμε:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
               <div>• <strong>Πλήθος ενδιάμεσων βημάτων:</strong> 40 － 1 ＝ <strong>39 βήματα</strong>[cite: 1].</div>
               <div>• <strong>Συνολική αύξηση:</strong> 39 · 5 ＝ <strong>195</strong>.</div>
               <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
-                • <strong>40ός όρος ＝</strong> 1ος όρος ＋ Συνολική αύξηση ＝ 4 ＋ 195 ＝ <span className="text-base text-emerald-700 font-black">199</span>[cite: 1].
+                • <strong>40ός όρος ＝</strong> 4 ＋ 195 ＝ <span className="text-base text-emerald-700 font-black">199</span>[cite: 1].
               </div>
             </div>
           </div>
@@ -918,14 +927,14 @@ const QUESTIONS = [
               Παρατηρούμε τη σχέση του αριθμού θέσης ($n$) με την προπαίδεια του 5:
             </p>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>• 1ος όρος (n = 1): 5 · 1 － 1 ＝ <strong>4</strong></div>
-              <div>• 2ος όρος (n = 2): 5 · 2 － 1 ＝ <strong>9</strong></div>
-              <div>• 3ος όρος (n = 3): 5 · 3 － 1 ＝ <strong>14</strong></div>
+              <div>• 1ος όρος ($n = 1$): 5 · 1 － 1 ＝ <strong>4</strong></div>
+              <div>• 2ος όρος ($n = 2$): 5 · 2 － 1 ＝ <strong>9</strong></div>
+              <div>• 3ος όρος ($n = 3$): 5 · 3 － 1 ＝ <strong>14</strong></div>
               <div className="pt-1 border-t border-slate-200 text-slate-600 font-sans text-xs">
-                Κάθε όρος ισούται με το πενταπλάσιο της θέσης του μειωμένο κατά 1 (5 · n － 1):
+                Κάθε όρος ισούται με το πενταπλάσιο της θέσης του μειωμένο κατά 1 ($5 · n － 1$):
               </div>
               <div className="pt-0.5 text-emerald-800 font-bold text-base">
-                • Για n = 40: 5 · 40 － 1 ＝ 200 － 1 ＝ <span className="text-emerald-700 font-black">199</span>[cite: 1].
+                • Για $n = 40$: 5 · 40 － 1 ＝ 200 － 1 ＝ <span className="text-emerald-700 font-black">199</span>[cite: 1].
               </div>
             </div>
           </div>
