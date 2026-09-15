@@ -48,7 +48,8 @@ export default function STDimotikouMenu() {
     { id: '41-analogia', label: '📐 41. Αναλογία', href: '/st-dimotikou/41-analogia' },
     { id: '42-analogia-xiasti', label: '📐 42. Αναλογία χιαστί', href: '/st-dimotikou/42-analogia-xiasti' },
     { id: '43-posa', label: '📐 43. Σταθερά και Μεταβλητά ποσά', href: '/st-dimotikou/43-posa' },
-    { id: '44-analoga-posa', label: '📐 44. Ανάλογα ποσά', href: '/st-dimotikou/44-analoga-posa' }
+    { id: '44-analoga-posa', label: '📐 44. Ανάλογα ποσά', href: '/st-dimotikou/44-analoga-posa' },
+    { id: '45-problem-analoga-posa', label: '📐 45. Προβλήματα Ανάλογα ποσά', href: '/st-dimotikou/45-problem-analoga-posa' }
   ];
 
   return (
