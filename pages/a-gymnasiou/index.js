@@ -1,68 +1,122 @@
-// pages/a-gymnasiou/index.js
-import Head from 'next/head';
+import React from 'react';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import Layout from '../../components/Layout';
 
-export default function STDimotikouMenu() {
-  const modules = [
-    { id: '01-fysikoi', label: '🔢 1. Φυσικοί Αριθμοί', href: '/a-gymnasiou/01-fysikoi' }
-    
-  ];
+const CHAPTERS = [
+  {
+    id: '01',
+    slug: '01-fysikoi',
+    title: 'Φυσικοί Αριθμοί, Πολλαπλασιασμός & Δυνάμεις',
+    desc: 'Έννοια φυσικών αριθμών, αριθμητικός άξονας, ιδιότητες πολλαπλασιασμού και δυνάμεις με βάση και εκθέτη φυσικό.',
+    badge: 'ΚΕΦΑΛΑΙΟ 1',
+    active: true,
+  },
+  {
+    id: '02',
+    slug: '02-klasmata',
+    title: 'Κλάσματα & Πράξεις',
+    desc: 'Ισοδύναμα κλάσματα, απλοποίηση, ομώνυμα/ετερώνυμα και οι 4 πράξεις.',
+    badge: 'ΚΕΦΑΛΑΙΟ 2',
+    active: false,
+  },
+  {
+    id: '03',
+    slug: '03-dekadikoi',
+    title: 'Δεκαδικοί Αριθμοί',
+    desc: 'Σχέση με κλάσματα, στρογγυλοποίηση, πράξεις και δυνάμεις του 10.',
+    badge: 'ΚΕΦΑΛΑΙΟ 3',
+    active: false,
+  },
+  {
+    id: '04',
+    slug: '04-exisoseis',
+    title: 'Εξισώσεις & Προβλήματα',
+    desc: 'Επίλυση απλών εξισώσεων και μοντελοποίηση πρακτικών προβλημάτων.',
+    badge: 'ΚΕΦΑΛΑΙΟ 4',
+    active: false,
+  },
+];
 
+export default function AGymnasiouIndex() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
-      <Head>
-        <title>Α' Γυμνασίου: Μαθηματικά - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
-
-      <div>
-        {/* NAVBAR - Fluid */}
-        <nav className="bg-white shadow-md w-full">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <Link href="/" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
-              🏠 Αρχική
-            </Link>
-          </div>
-        </nav>
-
-        {/* HEADER */}
-        <header className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-16 text-center shadow-inner w-full">
-          <div className="w-[90%] mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl 2xl:text-6xl font-black mb-3 drop-shadow-sm">
-              🎒 Μαθηματικά Α' Γυμνασίου
+    <Layout
+      title="Μαθηματικά Α' Γυμνασίου | LearnMaths.gr"
+      description="Διαδραστικά μαθήματα, θεωρία και ασκήσεις για τα Μαθηματικά της Α' Γυμνασίου."
+      backUrl="/"
+      backText="Αρχική"
+      showAds={true}
+    >
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-8 sm:space-y-12">
+        {/* Banner Header - Ενιαίο Indigo Theme της Α' Γυμνασίου */}
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-indigo-700/50">
+          <div className="max-w-4xl space-y-3">
+            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+              Α' ΓΥΜΝΑΣΙΟΥ • ΔΙΑΔΡΑΣΤΙΚΑ ΜΑΘΗΜΑΤΑ
+            </span>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
+              Μαθηματικά Α' Γυμνασίου
             </h1>
-            <p className="text-cyan-100 opacity-95 text-base md:text-lg 2xl:text-xl font-medium tracking-wide">
-              Επιλέξτε μια διαδραστική ενότητα για να ξεκινήσετε
+            <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
+              Εξερεύνησε τη θεωρία με δυναμικά εργαστήρια και εξασκήσου με διαδραστικές ασκήσεις και άμεσο feedback!
             </p>
           </div>
-        </header>
+        </section>
 
-        {/* GRID ΕΝΟΤΗΤΩΝ - 4 στήλες στα μεγάλα monitor, 5 στήλες στα 2K/4K */}
-        <main className={`${LAYOUT.CONTAINER} py-12`}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-            {modules.map((mod) => (
-              <Link key={mod.id} href={mod.href} passHref legacyBehavior>
-                <a className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group cursor-pointer min-h-[90px] 2xl:p-8">
-                  <span className="font-bold text-gray-700 group-hover:text-cyan-600 text-base md:text-lg 2xl:text-xl transition-colors">
-                    {mod.label}
-                  </span>
-                  <span className="text-xl 2xl:text-2xl transform group-hover:translate-x-1 transition-transform opacity-70 group-hover:opacity-100">
-                    🚀
-                  </span>
-                </a>
-              </Link>
-            ))}
-          </div>
-        </main>
+        {/* Grid Ενοτήτων */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {CHAPTERS.map((ch) => (
+            <div
+              key={ch.id}
+              className={`rounded-2xl border flex flex-col justify-between overflow-hidden transition-all duration-200 ${
+                ch.active
+                  ? 'bg-white border-indigo-200 shadow-md hover:shadow-lg'
+                  : 'bg-slate-50 border-slate-200 opacity-70'
+              }`}
+            >
+              {/* Header Κάρτας με το χαρακτηριστικό Indigo-500 της Α' Γυμνασίου */}
+              <div className="bg-indigo-500 py-3 px-5 flex items-center justify-between text-white font-black text-sm sm:text-base">
+                <span>{ch.badge}</span>
+                {ch.active && <span className="text-xs bg-indigo-700/60 px-2 py-0.5 rounded-full">ΕΝΕΡΓΟ</span>}
+              </div>
+
+              <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-5">
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">
+                    {ch.title}
+                  </h2>
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                    {ch.desc}
+                  </p>
+                </div>
+
+                {ch.active ? (
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <Link
+                      href={`/a-gymnasiou/${ch.slug}`}
+                      className="text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm"
+                    >
+                      📖 Θεωρία
+                    </Link>
+                    <Link
+                      href={`/a-gymnasiou/${ch.slug}-ask`}
+                      className="text-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm"
+                    >
+                      🎯 Ασκήσεις
+                    </Link>
+                  </div>
+                ) : (
+                  <button
+                    disabled
+                    className="w-full bg-slate-300 text-slate-600 font-bold py-2.5 rounded-xl cursor-not-allowed text-xs sm:text-sm"
+                  >
+                    ΣΥΝΤΟΜΑ ΔΙΑΘΕΣΙΜΟ
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-
-      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm w-full border-t border-gray-700">
-        <p>© 2026 LearnMaths.gr. Με ❤️ για τους μαθητές της Α' Γυμνασίου.</p>
-      </footer>
-    </div>
+    </Layout>
   );
 }
