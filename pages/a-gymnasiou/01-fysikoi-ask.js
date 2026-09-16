@@ -490,35 +490,37 @@ export default function FysikoiAsk() {
                     )}
 
                     {/* Feedback & Λύση μετά την υποβολή */}
-                    {isSubmitted && (
-                      <div
-                        className={`p-3.5 rounded-xl text-xs sm:text-sm space-y-1.5 mt-3 border ${
-                          isCorrect
-                            ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
-                            : 'bg-rose-50/70 border-rose-200 text-rose-900'
-                        }`}
-                      >
-                        <div className="font-extrabold flex items-center gap-1.5">
-                          {isCorrect ? (
-                            <>
-                              <span>✅</span>
-                              <span>ΣΩΣΤΟ!</span>
-                            </>
-                          ) : (
-                            <>
-                              <span>❌</span>
-                              <span>
-                                ΛΑΘΟΣ (Σωστό: <span dangerouslySetInnerHTML={{ __html: q.correctAnswer }} />)
-                              </span>
-                            </>
-                          )}
-                        </div>
-                        <div
-                          className="text-slate-700 leading-relaxed font-normal"
-                          dangerouslySetInnerHTML={{ __html: q.solution }}
-                        />
-                      </div>
-                    )}
+{isSubmitted && (
+  <div
+    className={`p-4 rounded-xl text-xs sm:text-sm space-y-2.5 mt-3 border ${
+      isCorrect
+        ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950'
+        : 'bg-rose-50/80 border-rose-200 text-rose-950'
+    }`}
+  >
+    {isCorrect ? (
+      <div className="font-black flex items-center gap-1.5 text-emerald-700 text-sm sm:text-base">
+        <span>✅</span>
+        <span>ΣΩΣΤΟ</span>
+      </div>
+    ) : (
+      <div className="space-y-1.5">
+        <div className="font-black flex items-center gap-1.5 text-rose-700 text-sm sm:text-base">
+          <span>❌</span>
+          <span>ΛΑΘΟΣ</span>
+        </div>
+        <div className="text-xs sm:text-sm font-bold text-slate-800 bg-white/70 py-1.5 px-3 rounded-lg border border-rose-200 inline-block">
+          ΣΩΣΤΗ ΑΠΑΝΤΗΣΗ: <span className="text-emerald-700 font-black ml-1" dangerouslySetInnerHTML={{ __html: q.correctAnswer }} />
+        </div>
+      </div>
+    )}
+
+    <div
+      className="text-slate-700 leading-relaxed font-normal pt-1 border-t border-slate-200/60"
+      dangerouslySetInnerHTML={{ __html: q.solution }}
+    />
+  </div>
+)}
                   </div>
                 </div>
               );
