@@ -15,6 +15,18 @@ const shuffleArray = (array) => {
   return arr;
 };
 
+// Βοηθητική συνάρτηση που εξασφαλίζει ΠΑΝΤΑ 4 μοναδικές επιλογές
+const makeUniqueOptions = (correct, wrongCandidates) => {
+  const unique = new Set([correct]);
+  for (const opt of wrongCandidates) {
+    if (opt !== undefined && opt !== null && opt !== '') {
+      unique.add(String(opt));
+    }
+    if (unique.size === 4) break;
+  }
+  return shuffleArray(Array.from(unique));
+};
+
 // ==========================================
 // ΔΕΞΑΜΕΝΗ 20 ΔΙΑΦΟΡΕΤΙΚΩΝ ΤΥΠΩΝ ΑΣΚΗΣΕΩΝ
 // ==========================================
@@ -224,19 +236,29 @@ const EXERCISE_GENERATORS = [
   // 15. Γραφή γινομένου ως δύναμη (MCQ)
   () => {
     const base = randInt(3, 7);
-    const times = randInt(4, 6);
+    // Εξασφαλίζουμε ότι το times είναι αυστηρά διάφορο του base
+    let times = randInt(3, 6);
+    while (times === base) {
+      times = randInt(3, 6);
+    }
+
     const prodStr = Array(times).fill(base).join(' · ');
+    const correct = `${base}<sup>${times}</sup>`;
+
+    const candidates = [
+      `${times}<sup>${base}</sup>`,
+      `${base} · ${times}`,
+      `${base + times}`,
+      `${base}<sup>${times + 1}</sup>`,
+      `${base * times}`,
+    ];
+
     return {
       type: 'mcq',
-      topic: 'Έννοια Δύναμης',
+      topic: 'ΕΝΝΟΙΑ ΔΥΝΑΜΗΣ', // Χωρίς κανέναν τόνο στα κεφαλαία
       question: `Πώς γράφεται συνοπτικά το γινόμενο: ${prodStr} ;`,
-      options: shuffleArray([
-        `${base}<sup>${times}</sup>`,
-        `${times}<sup>${base}</sup>`,
-        `${base} · ${times}`,
-        `${base + times}`,
-      ]),
-      correctAnswer: `${base}<sup>${times}</sup>`,
+      options: makeUniqueOptions(correct, candidates),
+      correctAnswer: correct,
       solution: `Το γινόμενο ${times} ίσων παραγόντων με τιμή ${base} γράφεται ως δύναμη με βάση το ${base} και εκθέτη το ${times}, δηλαδή ${base}<sup>${times}</sup>.`,
     };
   },
