@@ -49,20 +49,20 @@ export default function FysikoiTheoria() {
       }
     >
       <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
-        {/* Banner Header */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-blue-800/40">
-          <div className="max-w-4xl space-y-4">
-            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-semibold tracking-wider bg-blue-500/20 text-blue-200 border border-blue-400/30">
-              Α' ΓΥΜΝΑΣΙΟΥ • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ
-            </span>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
-              Φυσικοί Αριθμοί, Πολλαπλασιασμός & Δυνάμεις
-            </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-blue-100/90 leading-relaxed">
-              Εξερευνούμε τη δομή του συνόλου των φυσικών αριθμών, τις θεμελιώδεις ιδιότητες του πολλαπλασιασμού και τη σύντομη γραφή των διαδοχικών γινομένων μέσω των δυνάμεων.
-            </p>
-          </div>
-        </section>
+        {/* Banner Header - Εναρμονισμένο Indigo με άτονα κεφαλαία */}
+<section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
+  <div className="max-w-4xl space-y-4">
+    <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+      Α' ΓΥΜΝΑΣΙΟΥ • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ
+    </span>
+    <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
+      Φυσικοί Αριθμοί, Πολλαπλασιασμός & Δυνάμεις
+    </h1>
+    <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
+      Εξερευνούμε τη δομή του συνόλου των φυσικών αριθμών, τις θεμελιώδεις ιδιότητες του πολλαπλασιασμού και τη σύντομη γραφή των διαδοχικών γινομένων μέσω των δυνάμεων.
+    </p>
+  </div>
+</section>
 
         {/* 1. ΕΝΝΟΙΑ ΤΩΝ ΦΥΣΙΚΩΝ ΑΡΙΘΜΩΝ */}
         <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
