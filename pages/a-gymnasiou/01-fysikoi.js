@@ -92,7 +92,7 @@ export default function FysikoiTheoria() {
 
             <div className="flex flex-col justify-center bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200">
               <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-3">
-                Απεικόνιση στον Άξονα των Αριθμών
+                Απεικονιση στον Αξονα των Αριθμων
               </h3>
               {/* Responsive SVG Axis - no horizontal scroll */}
               <div className="w-full">
@@ -156,7 +156,7 @@ export default function FysikoiTheoria() {
           {/* Πίνακας Ιδιοτήτων */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2">
-              <div className="text-xs uppercase font-bold tracking-wider text-blue-600">Ιδιότητα 1</div>
+              <div className="text-xs uppercase font-bold tracking-wider text-blue-600">Ιδιοτητα 1</div>
               <h3 className="font-bold text-slate-900 text-base sm:text-lg">Αντιμεταθετική</h3>
               <p className="text-sm sm:text-base text-slate-600">
                 Η σειρά των παραγόντων δεν αλλάζει το γινόμενο:
@@ -167,7 +167,7 @@ export default function FysikoiTheoria() {
             </div>
 
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2">
-              <div className="text-xs uppercase font-bold tracking-wider text-blue-600">Ιδιότητα 2</div>
+              <div className="text-xs uppercase font-bold tracking-wider text-blue-600">Ιδιοτητα 2</div>
               <h3 className="font-bold text-slate-900 text-base sm:text-lg">Προσεταιριστική</h3>
               <p className="text-sm sm:text-base text-slate-600">
                 Μπορούμε να ομαδοποιήσουμε τους παράγοντες ελεύθερα:
@@ -178,7 +178,7 @@ export default function FysikoiTheoria() {
             </div>
 
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2">
-              <div className="text-xs uppercase font-bold tracking-wider text-blue-600">Ιδιότητα 3</div>
+              <div className="text-xs uppercase font-bold tracking-wider text-blue-600">Ιδιοτητα 3</div>
               <h3 className="font-bold text-slate-900 text-base sm:text-lg">Ουδέτερο & Μηδενικό Στοιχείο</h3>
               <p className="text-sm sm:text-base text-slate-600">
                 Το 1 δεν αλλάζει τον αριθμό, ενώ το 0 μηδενίζει το γινόμενο:
@@ -190,7 +190,7 @@ export default function FysikoiTheoria() {
             </div>
 
             <div className="md:col-span-2 xl:col-span-3 p-5 sm:p-6 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-3">
-              <div className="text-xs uppercase font-bold tracking-wider text-amber-700">Θεμελιώδης Ιδιότητα</div>
+              <div className="text-xs uppercase font-bold tracking-wider text-amber-700">Θεμελιωδης Ιδιοτητα</div>
               <h3 className="font-bold text-slate-900 text-base sm:text-xl">Επιμεριστική Ιδιότητα ως προς την Πρόσθεση και την Αφαίρεση</h3>
               <p className="text-sm sm:text-base text-slate-700">
                 Ο πολλαπλασιασμός ενός αριθμού με ένα άθροισμα (ή διαφορά) επιμερίζεται σε κάθε προσθετέο χωριστά:
@@ -216,7 +216,7 @@ export default function FysikoiTheoria() {
               {/* Χειριστήρια Steppers */}
               <div className="space-y-4 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
+                  <label className="block text-xs font-bold text-slate-600 mb-1">
                     Πρώτος Παράγοντας (Γραμμές α)
                   </label>
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
@@ -241,7 +241,7 @@ export default function FysikoiTheoria() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
+                  <label className="block text-xs font-bold text-slate-600 mb-1">
                     Δεύτερος Παράγοντας (Στήλες β)
                   </label>
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
@@ -368,7 +368,7 @@ export default function FysikoiTheoria() {
               {/* Χειριστήρια Βάσης και Εκθέτη */}
               <div className="space-y-4 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
+                  <label className="block text-xs font-bold text-slate-600 mb-1">
                     Βάση (α)
                   </label>
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
@@ -393,7 +393,7 @@ export default function FysikoiTheoria() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
+                  <label className="block text-xs font-bold text-slate-600 mb-1">
                     Εκθέτης (ν)
                   </label>
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
@@ -422,7 +422,7 @@ export default function FysikoiTheoria() {
               <div className="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-2xl text-white space-y-4 shadow-md">
                 <div className="text-center space-y-2">
                   <div className="text-xs uppercase tracking-widest text-indigo-300 font-semibold">
-                    Γραφή & Αποτέλεσμα
+                    Γραφη και Αποτελεσμα
                   </div>
                   <div className="text-3xl sm:text-5xl font-black font-mono">
                     {base}<sup className="text-amber-400">{exponent}</sup> ＝ {powerResult.toLocaleString('el-GR')}
