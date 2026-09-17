@@ -3,27 +3,37 @@ import Link from 'next/link';
 import Layout from '../../components/Layout';
 
 export default function SistimaArithmisisTheoria() {
-  // State για τον κεντρικό μετατροπέα (σε δεκαδική μορφή)
-  const [decValue, setDecValue] = useState(42);
+  // State ως string για ακριβή έλεγχο πληκτρολόγησης
+  const [decStr, setDecStr] = useState('42');
 
   // State για το διαδραστικό 8-bit register (0 ή 1 για κάθε θέση από 2^7 έως 2^0)
   const [bits, setBits] = useState([0, 0, 1, 0, 1, 0, 1, 0]); // Προεπιλογή: 42 (00101010)
 
-  // Stepper handler για δεκαδικό αριθμό
+  // Μετατροπή σε αριθμό για υπολογισμούς
+  const decValue = useMemo(() => {
+    if (!decStr || decStr.trim() === '') return 0;
+    return parseInt(decStr, 10) || 0;
+  }, [decStr]);
+
+  // Input handler: μόνο 0-9, αυστηρό όριο 4 ψηφίων (0 - 9999).
+  // Αν έχει ήδη 4 ψηφία και πληκτρολογηθεί κι άλλο, δεν γίνεται τίποτα.
+  const handleInputChange = (e) => {
+    const clean = e.target.value.replace(/[^0-9]/g, '');
+    if (clean.length <= 4) {
+      setDecStr(clean);
+    }
+  };
+
+  // Stepper handler: αυξομείωση κατά 1
   const handleStep = (delta, e) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
-    setDecValue((prev) => Math.max(0, Math.min(10000, prev + delta)));
-  };
-
-  // Input handler με αυστηρό φίλτρο 0-9 και μέγιστο μήκος 5 ψηφία
-  const handleInputChange = (e) => {
-    const clean = e.target.value.replace(/[^0-9]/g, '');
-    if (clean.length > 5) return;
-    const val = clean === '' ? 0 : parseInt(clean, 10);
-    setDecValue(Math.min(10000, val));
+    const next = decValue + delta;
+    if (next >= 0 && next <= 9999) {
+      setDecStr(next.toString());
+    }
   };
 
   // Υπολογισμός τιμών σε Δυαδικό και Οκταδικό
@@ -40,7 +50,7 @@ export default function SistimaArithmisisTheoria() {
       .join(' ＋ ');
   }, [decValue]);
 
-  // Πολυωνυμική ανάλυση στο Δυαδικό (π.χ. 1 · 2⁵ + 0 · 2⁴ + ...)
+  // Πολυωνυμική ανάλυση στο Δυαδικό
   const binExpansion = useMemo(() => {
     const s = binValue;
     const len = s.length;
@@ -50,7 +60,7 @@ export default function SistimaArithmisisTheoria() {
       .join(' ＋ ');
   }, [binValue]);
 
-  // Πολυωνυμική ανάλυση στο Οκταδικό (π.χ. 5 · 8¹ + 2 · 8⁰)
+  // Πολυωνυμική ανάλυση στο Οκταδικό
   const octExpansion = useMemo(() => {
     const s = octValue;
     const len = s.length;
@@ -250,7 +260,7 @@ export default function SistimaArithmisisTheoria() {
             {/* Επιλογή / Πληκτρολόγηση Αριθμού */}
             <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
               <label className="block text-xs font-bold text-slate-600 uppercase">
-                Δεκαδικός Αριθμός (0 έως 10.000)
+                Δεκαδικός Αριθμός (0 έως 9999)
               </label>
               <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                 <button
@@ -263,9 +273,10 @@ export default function SistimaArithmisisTheoria() {
                 <input
                   type="text"
                   inputMode="numeric"
-                  maxLength={5}
-                  value={decValue}
+                  maxLength={4}
+                  value={decStr}
                   onChange={handleInputChange}
+                  placeholder="0"
                   className="h-full w-full bg-white rounded-xl border border-slate-300 text-slate-900 font-black text-center text-lg font-mono focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 outline-none transition"
                 />
                 <button
@@ -285,7 +296,7 @@ export default function SistimaArithmisisTheoria() {
                     <button
                       key={val}
                       type="button"
-                      onClick={() => setDecValue(val)}
+                      onClick={() => setDecStr(val.toString())}
                       className="py-1 px-2 rounded-lg bg-white border border-slate-200 text-xs font-mono font-bold text-slate-700 hover:bg-indigo-50 hover:border-indigo-300 transition"
                     >
                       {val}
