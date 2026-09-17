@@ -43,6 +43,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 5',
     active: true,
   },
+  {
+    id: '06',
+    slug: '06-prosthesi-akeraion',
+    title: 'Πρόσθεση Ακεραίων',
+    desc: 'Πρόσθεση ακεραίων, ομόσημοι και ετερόσημοι αριθμοί.',
+    badge: 'ΚΕΦΑΛΑΙΟ 6',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
