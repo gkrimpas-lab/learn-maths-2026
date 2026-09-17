@@ -21,9 +21,9 @@ export default function ProsthesiAkeraionTheoria() {
   const absA = useMemo(() => Math.abs(numA), [numA]);
   const absB = useMemo(() => Math.abs(numB), [numB]);
 
-  // Μετατροπή τιμής [-15, 15] σε συντεταγμένη X στο SVG (viewBox 0 έως 760)
-  // Κέντρο (0) στο x = 380, κάθε μονάδα = 22px
-  const getSvgX = (val) => 380 + val * 22;
+  // Μετατροπή τιμής [-18, 18] σε συντεταγμένη X στο SVG (viewBox 0 έως 860)
+  // Κέντρο (0) στο x = 430, κάθε μονάδα = 21px
+  const getSvgX = (val) => 430 + val * 21;
 
   // Κατεύθυνση κίνησης 2ου αριθμού
   const directionB = useMemo(() => {
@@ -190,61 +190,66 @@ export default function ProsthesiAkeraionTheoria() {
                 </div>
               </div>
             </div>
-
-            {/* Οπτική Απεικόνιση στον Άξονα (SVG Responsive) */}
+{/* Αναπαράσταση στον Άξονα (SVG Responsive) */}
             <div className="lg:col-span-2 space-y-4">
               <div className="bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-inner flex flex-col items-center justify-center">
-                <div className="w-full max-w-[760px]">
+                <div className="w-full max-w-[860px]">
                   <svg
-                    viewBox="0 0 760 190"
+                    viewBox="0 0 860 200"
                     className="w-full h-auto"
                     preserveAspectRatio="xMidYMid meet"
                   >
                     <defs>
                       {/* Μύτη βέλους για το 1ο βήμα */}
-                      <marker id="arrow-a" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                        <polygon points="0 0, 6 3, 0 6" fill="#818cf8" />
+                      <marker id="arrow-a" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                        <polygon points="0 0, 7 3.5, 0 7" fill="#818cf8" />
                       </marker>
 
                       {/* Μύτη βέλους για το 2ο βήμα (Δεξιά - Sky) */}
-                      <marker id="arrow-b-right" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                        <polygon points="0 0, 6 3, 0 6" fill="#38bdf8" />
+                      <marker id="arrow-b-right" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                        <polygon points="0 0, 7 3.5, 0 7" fill="#38bdf8" />
                       </marker>
 
                       {/* Μύτη βέλους για το 2ο βήμα (Αριστερά - Rose) */}
-                      <marker id="arrow-b-left" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                        <polygon points="0 0, 6 3, 0 6" fill="#f43f5e" />
+                      <marker id="arrow-b-left" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                        <polygon points="0 0, 7 3.5, 0 7" fill="#f43f5e" />
                       </marker>
                     </defs>
 
-                    {/* Κύριος Άξονας */}
-                    <line x1="20" y1="125" x2="740" y2="125" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" />
-                    <polygon points="755,125 735,118 735,132" fill="#475569" />
+                    {/* Κύριος Άξονας από -18 έως +18 */}
+                    <line x1="25" y1="125" x2="835" y2="125" stroke="#64748b" strokeWidth="3" strokeLinecap="round" />
+                    <polygon points="852,125 832,117 832,133" fill="#64748b" />
+                    <polygon points="8,125 28,117 28,133" fill="#64748b" />
 
-                    {/* Υποδιαιρέσεις από -15 έως +15 */}
-                    {Array.from({ length: 31 }, (_, i) => i - 15).map((val) => {
+                    {/* Υποδιαιρέσεις και Μεγάλοι Αριθμοί από -18 έως +18 */}
+                    {Array.from({ length: 37 }, (_, i) => i - 18).map((val) => {
                       const x = getSvgX(val);
                       const isZero = val === 0;
+                      const isEven = val % 2 === 0;
+
                       return (
                         <g key={val}>
                           <line
                             x1={x}
-                            y1={isZero ? 110 : 118}
+                            y1={isZero ? 106 : isEven ? 114 : 118}
                             x2={x}
-                            y2={isZero ? 140 : 132}
-                            stroke={isZero ? '#f8fafc' : '#64748b'}
-                            strokeWidth={isZero ? '3' : '1.5'}
+                            y2={isZero ? 144 : isEven ? 136 : 132}
+                            stroke={isZero ? '#38bdf8' : isEven ? '#cbd5e1' : '#64748b'}
+                            strokeWidth={isZero ? '3.5' : isEven ? '2' : '1'}
                           />
-                          <text
-                            x={x}
-                            y={154}
-                            textAnchor="middle"
-                            fontSize={isZero ? '13' : '9'}
-                            fontWeight={isZero ? '900' : '600'}
-                            fill={isZero ? '#f8fafc' : '#94a3b8'}
-                          >
-                            {val}
-                          </text>
+                          {/* Εμφάνιση αριθμών: έντονοι ζυγοί και 0 για απόλυτη καθαρότητα */}
+                          {(isEven || isZero) && (
+                            <text
+                              x={x}
+                              y={158}
+                              textAnchor="middle"
+                              fontSize={isZero ? '16' : '13'}
+                              fontWeight={isZero ? '900' : '700'}
+                              fill={isZero ? '#38bdf8' : '#e2e8f0'}
+                            >
+                              {val}
+                            </text>
+                          )}
                         </g>
                       );
                     })}
@@ -253,7 +258,7 @@ export default function ProsthesiAkeraionTheoria() {
                     {numA !== 0 && (
                       <g>
                         <path
-                          d={`M ${getSvgX(0)} 95 Q ${(getSvgX(0) + getSvgX(numA)) / 2} 60 ${getSvgX(numA) + (numA > 0 ? -4 : 4)} 92`}
+                          d={`M ${getSvgX(0)} 95 Q ${(getSvgX(0) + getSvgX(numA)) / 2} 55 ${getSvgX(numA) + (numA > 0 ? -4 : 4)} 92`}
                           fill="none"
                           stroke="#818cf8"
                           strokeWidth="2.5"
@@ -262,10 +267,10 @@ export default function ProsthesiAkeraionTheoria() {
                         />
                         <text
                           x={(getSvgX(0) + getSvgX(numA)) / 2}
-                          y="50"
+                          y="48"
                           textAnchor="middle"
-                          fill="#818cf8"
-                          fontSize="11"
+                          fill="#a5b4fc"
+                          fontSize="13"
                           fontWeight="bold"
                         >
                           1ο: {numA > 0 ? `＋${numA}` : numA}
@@ -277,10 +282,10 @@ export default function ProsthesiAkeraionTheoria() {
                     {numB !== 0 && (
                       <g>
                         <path
-                          d={`M ${getSvgX(numA)} 92 Q ${(getSvgX(numA) + getSvgX(sum)) / 2} 18 ${getSvgX(sum) + (numB > 0 ? -4 : 4)} 116`}
+                          d={`M ${getSvgX(numA)} 92 Q ${(getSvgX(numA) + getSvgX(sum)) / 2} 16 ${getSvgX(sum) + (numB > 0 ? -5 : 5)} 115`}
                           fill="none"
                           stroke={numB > 0 ? '#38bdf8' : '#f43f5e'}
-                          strokeWidth="3"
+                          strokeWidth="3.5"
                           markerEnd={numB > 0 ? 'url(#arrow-b-right)' : 'url(#arrow-b-left)'}
                         />
                         <text
@@ -288,7 +293,7 @@ export default function ProsthesiAkeraionTheoria() {
                           y="22"
                           textAnchor="middle"
                           fill={numB > 0 ? '#38bdf8' : '#fb7185'}
-                          fontSize="12"
+                          fontSize="14"
                           fontWeight="900"
                         >
                           {numB > 0 ? `＋${numB} (➡️ δεξιά)` : `${numB} (⬅️ αριστερά)`}
@@ -297,29 +302,29 @@ export default function ProsthesiAkeraionTheoria() {
                     )}
 
                     {/* Σημείο Εκκίνησης 0 */}
-                    <circle cx={getSvgX(0)} cy="125" r="4" fill="#94a3b8" />
+                    <circle cx={getSvgX(0)} cy="125" r="5" fill="#38bdf8" />
 
                     {/* Ενδιάμεσο Σημείο A */}
                     {numA !== 0 && (
-                      <circle cx={getSvgX(numA)} cy="125" r="5" fill="#818cf8" stroke="#ffffff" strokeWidth="1.5" />
+                      <circle cx={getSvgX(numA)} cy="125" r="6" fill="#818cf8" stroke="#ffffff" strokeWidth="2" />
                     )}
 
                     {/* Τελικό Σημείο Αθροίσματος */}
-                    <circle cx={getSvgX(sum)} cy="125" r="7" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+                    <circle cx={getSvgX(sum)} cy="125" r="8" fill="#10b981" stroke="#ffffff" strokeWidth="2.5" />
                     <text
                       x={getSvgX(sum)}
-                      y="180"
+                      y="186"
                       textAnchor="middle"
-                      fontSize="12"
+                      fontSize="14"
                       fontWeight="900"
                       fill="#34d399"
                     >
-                      ΤΕΛΟΣ ({sum})
+                      ΤΕΛΟΣ ({sum > 0 ? `＋${sum}` : sum})
                     </text>
                   </svg>
                 </div>
 
-                <div className="text-slate-300 text-xs mt-3 text-center">
+                <div className="text-slate-300 text-xs sm:text-sm mt-3 text-center">
                   {numB < 0 ? (
                     <span>
                       Το πρόσημο <strong className="text-rose-400">－</strong> στο {numB} σημαίνει ότι από το <strong>{numA}</strong> κινούμαστε <strong className="text-rose-400">{absB} θέσεις προς τα ΑΡΙΣΤΕΡΑ ⬅️</strong>.
