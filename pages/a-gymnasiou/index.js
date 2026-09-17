@@ -75,6 +75,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 9',
     active: true,
   },
+  {
+    id: '10',
+    slug: '10-proteraiotita-prakseon',
+    title: 'Προτεραιότητα Πράξεων',
+    desc: 'Παρενθέσεις, αγκύλες, άγκιστρα, δυνάμεις, πολλαπλασιασμοί και διαιρέσεις, προσθέσεις και αφαιρέσεις.',
+    badge: 'ΚΕΦΑΛΑΙΟ 10',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
