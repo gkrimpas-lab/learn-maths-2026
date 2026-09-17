@@ -51,6 +51,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 6',
     active: true,
   },
+  {
+    id: '07',
+    slug: '07-afairesi-akeraion',
+    title: 'Αφαίρεση Ακεραίων',
+    desc: 'Αφαίρεση ακεραίων, ομόσημοι και ετερόσημοι αριθμοί.',
+    badge: 'ΚΕΦΑΛΑΙΟ 7',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
