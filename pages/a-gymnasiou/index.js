@@ -59,6 +59,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 7',
     active: true,
   },
+  {
+    id: '08',
+    slug: '08-pollaplasiasmos-akeraion',
+    title: 'Πολλαπλασιασμός Ακεραίων',
+    desc: 'Πολλαπλασιασμός ακεραίων, ομόσημοι και ετερόσημοι αριθμοί, Ιδιόητες πολλαπλασιασμού.',
+    badge: 'ΚΕΦΑΛΑΙΟ 8',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
