@@ -71,7 +71,7 @@ const CHAPTERS = [
     id: '09',
     slug: '08-pollaplasiasmos-akeraion',
     title: 'Πολλαπλασιασμός Ακεραίων',
-    desc: 'Πολλαπλασιασμός ακεραίων, ομόσημοι και ετερόσημοι αριθμοί, Ιδιόητες πολλαπλασιασμού.',
+    desc: 'Πολλαπλασιασμός ακεραίων, ομόσημοι και ετερόσημοι αριθμοί, Ιδιότητες πολλαπλασιασμού.',
     badge: 'ΚΕΦΑΛΑΙΟ 8',
     active: true,
   },
@@ -92,12 +92,15 @@ const CHAPTERS = [
     active: true,
   },
   {
-    id: '12',
-    slug: '12-epanalipsi-2',
-    title: 'Επανάληψη Ενοτήτων 6 έως 11',
-    desc: 'Ακέραιοι, πρόσθεση και πολλαπλασιασμός ακεραίων, δυνάμεις, προτεραιότητα πράξεων.',
+    id: 'epanalipsi-2',
+    tag: 'ΕΠΑΝΑΛΗΨΗ 2',
     badge: 'ΕΠΑΝΑΛΗΨΗ 2',
+    title: 'Επανάληψη Ενοτήτων 5 έως 10',
+    desc: 'Ακέραιοι, πρόσθεση, αφαίρεση, πολλαπλασιασμός, δυνάμεις και προτεραιότητα πράξεων.',
+    isReview: true,
+    url: '/a-gymnasiou/12-epanalipsi-2',
     active: true,
+    status: 'ΕΝΕΡΓΟ',
   },
 ];
 
@@ -128,57 +131,82 @@ export default function AGymnasiouIndex() {
 
         {/* Grid Ενοτήτων */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {CHAPTERS.map((ch) => (
-            <div
-              key={ch.id}
-              className={`rounded-2xl border flex flex-col justify-between overflow-hidden transition-all duration-200 ${
-                ch.active
-                  ? 'bg-white border-indigo-200 shadow-md hover:shadow-lg'
-                  : 'bg-slate-50 border-slate-200 opacity-70'
-              }`}
-            >
-              {/* Header Κάρτας με το χαρακτηριστικό Indigo-500 της Α' Γυμνασίου */}
-              <div className="bg-indigo-500 py-3 px-5 flex items-center justify-between text-white font-black text-sm sm:text-base">
-                <span>{ch.badge}</span>
-                {ch.active && <span className="text-xs bg-indigo-700/60 px-2 py-0.5 rounded-full">ΕΝΕΡΓΟ</span>}
-              </div>
+          {CHAPTERS.map((ch) => {
+            const isItemActive = ch.active || ch.status === 'ΕΝΕΡΓΟ';
+            const badgeLabel = ch.badge || ch.tag;
 
-              <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-5">
-                <div>
-                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">
-                    {ch.title}
-                  </h2>
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                    {ch.desc}
-                  </p>
+            return (
+              <div
+                key={ch.id}
+                className={`rounded-2xl border flex flex-col justify-between overflow-hidden transition-all duration-200 ${
+                  isItemActive
+                    ? 'bg-white border-indigo-200 shadow-md hover:shadow-lg'
+                    : 'bg-slate-50 border-slate-200 opacity-70'
+                }`}
+              >
+                {/* Header Κάρτας με το χαρακτηριστικό Indigo-500 της Α' Γυμνασίου */}
+                <div className="bg-indigo-500 py-3 px-5 flex items-center justify-between text-white font-black text-sm sm:text-base">
+                  <span>{badgeLabel}</span>
+                  {isItemActive && (
+                    <span className="text-xs bg-indigo-700/60 px-2 py-0.5 rounded-full uppercase">
+                      ΕΝΕΡΓΟ
+                    </span>
+                  )}
                 </div>
 
-                {ch.active ? (
-                  <div className="grid grid-cols-2 gap-3 pt-2">
-                    <Link
-                      href={`/a-gymnasiou/${ch.slug}`}
-                      className="text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm"
-                    >
-                      📖 Θεωρία
-                    </Link>
-                    <Link
-                      href={`/a-gymnasiou/${ch.slug}-ask`}
-                      className="text-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm"
-                    >
-                      🎯 Ασκήσεις
-                    </Link>
+                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-5">
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">
+                      {ch.title}
+                    </h2>
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                      {ch.desc}
+                    </p>
                   </div>
-                ) : (
-                  <button
-                    disabled
-                    className="w-full bg-slate-300 text-slate-600 font-bold py-2.5 rounded-xl cursor-not-allowed text-xs sm:text-sm"
-                  >
-                    ΣΥΝΤΟΜΑ ΔΙΑΘΕΣΙΜΟ
-                  </button>
-                )}
+
+                  {isItemActive ? (
+                    ch.isReview ? (
+                      /* ΕΝΙΑΙΟ ΠΛΑΙΣΙΟ ΓΙΑ ΕΠΑΝΑΛΗΨΗ (FULL WIDTH) */
+                      <div className="pt-2">
+                        <Link
+                          href={ch.url}
+                          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:scale-[0.98] text-slate-950 font-black py-3 px-4 rounded-xl transition-all shadow-md text-xs sm:text-sm uppercase tracking-wider"
+                        >
+                          <span>🎯</span>
+                          <span>ΕΝΑΡΞΗ ΕΠΑΝΑΛΗΨΗΣ</span>
+                        </Link>
+                      </div>
+                    ) : (
+                      /* ΚΑΝΟΝΙΚΕΣ ΕΝΟΤΗΤΕΣ ΜΕ 2 ΚΟΥΜΠΙΑ */
+                      <div className="grid grid-cols-2 gap-3 pt-2">
+                        <Link
+                          href={`/a-gymnasiou/${ch.slug}`}
+                          className="text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5"
+                        >
+                          <span>📖</span>
+                          <span>Θεωρία</span>
+                        </Link>
+                        <Link
+                          href={`/a-gymnasiou/${ch.slug}-ask`}
+                          className="text-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5"
+                        >
+                          <span>🎯</span>
+                          <span>Ασκήσεις</span>
+                        </Link>
+                      </div>
+                    )
+                  ) : (
+                    <button
+                      disabled
+                      className="w-full bg-slate-300 text-slate-600 font-bold py-2.5 rounded-xl cursor-not-allowed text-xs sm:text-sm uppercase tracking-wider"
+                    >
+                      ΣΥΝΤΟΜΑ ΔΙΑΘΕΣΙΜΟ
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </Layout>
