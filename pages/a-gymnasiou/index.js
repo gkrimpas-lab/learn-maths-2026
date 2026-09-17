@@ -35,6 +35,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 4',
     active: true,
   },
+  {
+    id: '05',
+    slug: '05-akeraioi',
+    title: 'Ακέραιοι Αριθμοί',
+    desc: 'Ακέραιοι Αριθμοί, Θετικοί και Αρνητικοί.',
+    badge: 'ΚΕΦΑΛΑΙΟ 5',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
