@@ -67,6 +67,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 8',
     active: true,
   },
+  {
+    id: '09',
+    slug: '09-dinameis',
+    title: 'Δυνάμεις',
+    desc: 'Δυνάμεις ακεραίων, βάση θετικός αριθμός, βάση αρνητικός αριθμός.',
+    badge: 'ΚΕΦΑΛΑΙΟ 8',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
