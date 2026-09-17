@@ -126,7 +126,7 @@ export default function ProsthesiAkeraionTheoria() {
             {/* Χειριστήρια Steppers */}
             <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
+                <label className="block text-xs font-bold text-slate-600 mb-1">
                   1ος Αριθμός (Αρχική Θέση από το 0)
                 </label>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
@@ -151,7 +151,7 @@ export default function ProsthesiAkeraionTheoria() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
+                <label className="block text-xs font-bold text-slate-600 mb-1">
                   2ος Αριθμός (Μετατόπιση)
                 </label>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
