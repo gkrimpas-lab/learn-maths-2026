@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 
 export default function ProsthesiAkeraionTheoria() {
   // State για τους δύο προσθετέους
-  const [numA, setNumA] = useState(4);
+  const [numA, setNumA] = useState(3);
   const [numB, setNumB] = useState(-7);
 
   // Stepper handlers
@@ -21,48 +21,21 @@ export default function ProsthesiAkeraionTheoria() {
   const absA = useMemo(() => Math.abs(numA), [numA]);
   const absB = useMemo(() => Math.abs(numB), [numB]);
 
-  // Έλεγχος σχέσης προσήμων
-  const ruleType = useMemo(() => {
-    if (numA === 0 || numB === 0) return 'zero';
-    if (numA + numB === 0) return 'opposites';
-    if ((numA > 0 && numB > 0) || (numA < 0 && numB < 0)) return 'samesign';
-    return 'diffsign';
-  }, [numA, numB]);
-
-  // Κείμενο εξήγησης κανόνα
-  const ruleExplanation = useMemo(() => {
-    const strA = numA > 0 ? `(＋${numA})` : numA < 0 ? `(－${absA})` : '0';
-    const strB = numB > 0 ? `(＋${numB})` : numB < 0 ? `(－${absB})` : '0';
-
-    if (numA === 0) return `${strA} ＋ ${strB} ＝ ${sum > 0 ? `＋${sum}` : sum} (το 0 δεν μεταβάλλει τον αριθμό).`;
-    if (numB === 0) return `${strA} ＋ ${strB} ＝ ${sum > 0 ? `＋${sum}` : sum} (το 0 δεν μεταβάλλει τον αριθμό).`;
-
-    if (ruleType === 'opposites') {
-      return `Οι αριθμοί είναι αντίθετοι με ίσες απόλυτες τιμές (${absA} ＝ ${absB}). Το άθροισμά τους ισούται πάντα με 0: ${strA} ＋ ${strB} ＝ 0.`;
-    }
-
-    if (ruleType === 'samesign') {
-      const signWord = numA > 0 ? 'θετικό (＋)' : 'αρνητικό (－)';
-      const signSymbol = numA > 0 ? '＋' : '－';
-      return `Ομόσημοι αριθμοί: Κρατάμε το κοινό ${signWord} πρόσημο και προσθέτουμε τις απόλυτες τιμές: ${signSymbol}(${absA} ＋ ${absB}) ＝ ${signSymbol}${absA + absB}.`;
-    }
-
-    // Ετερόσημοι
-    const dominantNum = absA > absB ? numA : numB;
-    const dominantSign = dominantNum > 0 ? '＋' : '－';
-    const maxAbs = Math.max(absA, absB);
-    const minAbs = Math.min(absA, absB);
-    return `Ετερόσημοι αριθμοί: Βάζουμε το πρόσημο του αριθμού με τη μεγαλύτερη απόλυτη τιμή (${dominantSign}) και αφαιρούμε τη μικρότερη απόλυτη τιμή από τη μεγαλύτερη: ${dominantSign}(${maxAbs} － ${minAbs}) ＝ ${sum > 0 ? `＋${sum}` : sum}.`;
-  }, [numA, numB, absA, absB, sum, ruleType]);
-
   // Μετατροπή τιμής [-15, 15] σε συντεταγμένη X στο SVG (viewBox 0 έως 760)
   // Κέντρο (0) στο x = 380, κάθε μονάδα = 22px
   const getSvgX = (val) => 380 + val * 22;
 
+  // Κατεύθυνση κίνησης 2ου αριθμού
+  const directionB = useMemo(() => {
+    if (numB > 0) return { text: `➡️ ΜΕΤΑΚΙΝΗΣΗ ΔΕΞΙΑ ΚΑΤΑ ${absB} ΘΕΣΕΙΣ`, color: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-400/30' };
+    if (numB < 0) return { text: `⬅️ ΜΕΤΑΚΙΝΗΣΗ ΑΡΙΣΤΕΡΑ ΚΑΤΑ ${absB} ΘΕΣΕΙΣ`, color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-400/30' };
+    return { text: '⏹️ ΚΑΜΙΑ ΜΕΤΑΚΙΝΗΣΗ (ΒΗΜΑ 0)', color: 'text-slate-400', bg: 'bg-slate-800 border-slate-700' };
+  }, [numB, absB]);
+
   return (
     <Layout
       title="Πρόσθεση Ακεραίων Αριθμών | Α' Γυμνασίου"
-      description="Θεωρία, κανόνες ομόσημων και ετερόσημων αριθμών και διαδραστικός άξονας αναπαράστασης της πρόσθεσης ακεραίων."
+      description="Θεωρία και διαδραστική κατανόηση της πρόσθεσης ακεραίων στον άξονα (κίνηση δεξιά/αριστερά)."
       backUrl="/a-gymnasiou"
       backText="Α' Γυμνασίου"
       showAds={true}
@@ -77,7 +50,7 @@ export default function ProsthesiAkeraionTheoria() {
       }
     >
       <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
-        {/* Banner Header - Ενιαίο Indigo Theme χωρίς τόνους στα κεφαλαία */}
+        {/* Banner Header */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-4">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
@@ -87,111 +60,74 @@ export default function ProsthesiAkeraionTheoria() {
               Πρόσθεση Ακέραιων Αριθμών
             </h1>
             <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Μαθαίνουμε πώς προσθέτουμε ομόσημους και ετερόσημους αριθμούς και αναπαριστούμε διανυσματικά την πρόσθεση πάνω στον αριθμητικό άξονα.
+              Κατανοούμε την πρόσθεση ως κίνηση στον άξονα: το <strong>＋</strong> σημαίνει μετακίνηση προς τα <strong>δεξιά</strong>, ενώ το <strong>－</strong> σημαίνει μετακίνηση προς τα <strong>αριστερά</strong>!
             </p>
           </div>
         </section>
 
-        {/* 1. ΟΙ ΔΥΟ ΚΑΝΟΝΕΣ ΤΗΣ ΠΡΟΣΘΕΣΗΣ */}
+        {/* 1. ΘΕΩΡΗΤΙΚΟΙ ΚΑΝΟΝΕΣ */}
         <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
                 1
               </span>
-              Κανόνες Πρόσθεσης Ακεραίων
+              Κανόνες Πρόσθεσης & Κίνηση στον Άξονα
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-700 text-sm sm:text-base leading-relaxed">
-            {/* Κανόνας Ομόσημων */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="text-xs font-bold text-indigo-600 uppercase">
-                  ΚΑΝΟΝΑΣ 1
-                </div>
-                <h3 className="font-bold text-slate-900 text-base sm:text-xl">
-                  Πρόσθεση Ομόσημων Αριθμών
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600">
-                  Για να προσθέσουμε δύο ομόσημους αριθμούς (και οι δύο θετικοί ή και οι δύο αρνητικοί):
-                </p>
-                <div className="p-3.5 bg-white rounded-xl border border-slate-200 space-y-1.5 text-xs sm:text-sm">
-                  <div>1. Βάζουμε το <strong>κοινό τους πρόσημο</strong>.</div>
-                  <div>2. <strong>Προσθέτουμε</strong> τις απόλυτες τιμές τους.</div>
-                </div>
-                <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-100 font-mono text-xs sm:text-sm text-indigo-950 space-y-1">
-                  <div>(＋3) ＋ (＋5) ＝ ＋(3 ＋ 5) ＝ <strong>＋8</strong></div>
-                  <div>(－4) ＋ (－6) ＝ －(4 ＋ 6) ＝ <strong>－10</strong></div>
-                </div>
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="text-xs font-bold text-indigo-600 uppercase">
+                ΟΜΟΣΗΜΟΙ ΑΡΙΘΜΟΙ
               </div>
-            </div>
-
-            {/* Κανόνας Ετερόσημων */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="text-xs font-bold text-indigo-600 uppercase">
-                  ΚΑΝΟΝΑΣ 2
-                </div>
-                <h3 className="font-bold text-slate-900 text-base sm:text-xl">
-                  Πρόσθεση Ετερόσημων Αριθμών
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600">
-                  Για να προσθέσουμε δύο ετερόσημους αριθμούς (ένας θετικός και ένας αρνητικός):
-                </p>
-                <div className="p-3.5 bg-white rounded-xl border border-slate-200 space-y-1.5 text-xs sm:text-sm">
-                  <div>1. Βάζουμε το <strong>πρόσημο αυτού με τη μεγαλύτερη απόλυτη τιμή</strong>.</div>
-                  <div>2. <strong>Αφαιρούμε</strong> τη μικρότερη απόλυτη τιμή από τη μεγαλύτερη.</div>
-                </div>
-                <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 font-mono text-xs sm:text-sm text-amber-950 space-y-1">
-                  <div>(＋8) ＋ (－3) ＝ ＋(8 － 3) ＝ <strong>＋5</strong></div>
-                  <div>(－9) ＋ (＋4) ＝ －(9 － 4) ＝ <strong>－5</strong></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Ειδικές Περιπτώσεις */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
-            <div className="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100 space-y-1">
-              <div className="font-bold text-indigo-950">Άθροισμα Αντιθέτων Αριθμών</div>
-              <p className="text-slate-600">
-                Το άθροισμα δύο αντίθετων αριθμών ισούται πάντα με το μηδέν: <strong>α ＋ (－α) ＝ 0</strong>.
+              <h3 className="font-bold text-slate-900 text-base sm:text-xl">
+                Ίδιο Πρόσημο
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600">
+                Κινούμαστε προς την ίδια κατεύθυνση. Κρατάμε το κοινό πρόσημο και προσθέτουμε τις απόλυτες τιμές:
               </p>
-              <div className="font-mono font-bold text-indigo-900 pt-1">
-                (＋7) ＋ (－7) ＝ 0
+              <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1">
+                <div>(＋3) ＋ (＋5) ＝ ＋(3 ＋ 5) ＝ <strong>＋8</strong></div>
+                <div>(－4) ＋ (－6) ＝ －(4 ＋ 6) ＝ <strong>－10</strong></div>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100 space-y-1">
-              <div className="font-bold text-indigo-950">Πρόσθεση με το Μηδέν</div>
-              <p className="text-slate-600">
-                Το μηδέν είναι το ουδέτερο στοιχείο της πρόσθεσης: <strong>α ＋ 0 ＝ 0 ＋ α ＝ α</strong>.
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="text-xs font-bold text-indigo-600 uppercase">
+                ΕΤΕΡΟΣΗΜΟΙ ΑΡΙΘΜΟΙ
+              </div>
+              <h3 className="font-bold text-slate-900 text-base sm:text-xl">
+                Αντίθετα Πρόσημα
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600">
+                Οι κινήσεις είναι αντίθετες. Κερδίζει η κατεύθυνση με τη μεγαλύτερη απόλυτη τιμή και αφαιρούμε τις αποστάσεις:
               </p>
-              <div className="font-mono font-bold text-indigo-900 pt-1">
-                (－6) ＋ 0 ＝ －6
+              <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1">
+                <div>(＋8) ＋ (－3) ＝ ＋(8 － 3) ＝ <strong>＋5</strong></div>
+                <div>(－9) ＋ (＋4) ＝ －(9 － 4) ＝ <strong>－5</strong></div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 2. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ: ΠΡΟΣΘΕΣΗ ΣΤΟΝ ΑΞΟΝΑ */}
+        {/* 2. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ ΜΕ ΒΕΛΗ ΚΑΙ ΕΝΔΕΙΞΗ ΚΑΤΕΥΘΥΝΣΗΣ */}
         <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
                 2
               </span>
-              Διαδραστικό Εργαστήριο: Γραφική Αναπαράσταση Πρόσθεσης
+              Διαδραστικό Εργαστήριο: Η Φυσική Σημασία των Προσήμων
             </h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            {/* Steppers Ελέγχου */}
-            <div className="space-y-5 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            {/* Χειριστήρια Steppers */}
+            <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
               <div>
                 <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
-                  Πρώτος Προσθετέος (α)
+                  1ος Αριθμός (Αρχική Θέση από το 0)
                 </label>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
@@ -216,7 +152,7 @@ export default function ProsthesiAkeraionTheoria() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
-                  Δεύτερος Προσθετέος (β)
+                  2ος Αριθμός (Μετατόπιση)
                 </label>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
@@ -226,7 +162,7 @@ export default function ProsthesiAkeraionTheoria() {
                   >
                     －
                   </button>
-                  <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-sky-900 font-black text-lg font-mono whitespace-nowrap px-2">
+                  <div className={`h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 font-black text-lg font-mono whitespace-nowrap px-2 ${numB < 0 ? 'text-rose-600' : 'text-sky-600'}`}>
                     β ＝ {numB > 0 ? `＋${numB}` : numB}
                   </div>
                   <button
@@ -239,9 +175,14 @@ export default function ProsthesiAkeraionTheoria() {
                 </div>
               </div>
 
-              {/* Τελικό Αποτέλεσμα Πρόσθεσης */}
+              {/* Callout Κατεύθυνσης 2ου Αριθμού */}
+              <div className={`p-3.5 rounded-xl border text-xs font-black text-center ${directionB.bg} ${directionB.color}`}>
+                {directionB.text}
+              </div>
+
+              {/* Τελικό Αποτέλεσμα */}
               <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 text-center space-y-1 font-mono">
-                <div className="text-xs text-indigo-700 font-sans font-bold uppercase">Αποτέλεσμα Πράξης</div>
+                <div className="text-[11px] text-indigo-700 font-sans font-bold uppercase">ΠΡΑΞΗ & ΑΠΟΤΕΛΕΣΜΑ</div>
                 <div className="text-xl sm:text-2xl font-black text-indigo-950">
                   {numA > 0 ? `(＋${numA})` : numA < 0 ? `(－${absA})` : '0'} ＋{' '}
                   {numB > 0 ? `(＋${numB})` : numB < 0 ? `(－${absB})` : '0'} ＝{' '}
@@ -250,18 +191,35 @@ export default function ProsthesiAkeraionTheoria() {
               </div>
             </div>
 
-            {/* Αναπαράσταση στον Άξονα (SVG Responsive) */}
+            {/* Οπτική Απεικόνιση στον Άξονα (SVG Responsive) */}
             <div className="lg:col-span-2 space-y-4">
               <div className="bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-inner flex flex-col items-center justify-center">
                 <div className="w-full max-w-[760px]">
                   <svg
-                    viewBox="0 0 760 170"
+                    viewBox="0 0 760 190"
                     className="w-full h-auto"
                     preserveAspectRatio="xMidYMid meet"
                   >
+                    <defs>
+                      {/* Μύτη βέλους για το 1ο βήμα */}
+                      <marker id="arrow-a" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                        <polygon points="0 0, 6 3, 0 6" fill="#818cf8" />
+                      </marker>
+
+                      {/* Μύτη βέλους για το 2ο βήμα (Δεξιά - Sky) */}
+                      <marker id="arrow-b-right" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                        <polygon points="0 0, 6 3, 0 6" fill="#38bdf8" />
+                      </marker>
+
+                      {/* Μύτη βέλους για το 2ο βήμα (Αριστερά - Rose) */}
+                      <marker id="arrow-b-left" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                        <polygon points="0 0, 6 3, 0 6" fill="#f43f5e" />
+                      </marker>
+                    </defs>
+
                     {/* Κύριος Άξονας */}
-                    <line x1="20" y1="105" x2="740" y2="105" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" />
-                    <polygon points="755,105 735,98 735,112" fill="#475569" />
+                    <line x1="20" y1="125" x2="740" y2="125" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" />
+                    <polygon points="755,125 735,118 735,132" fill="#475569" />
 
                     {/* Υποδιαιρέσεις από -15 έως +15 */}
                     {Array.from({ length: 31 }, (_, i) => i - 15).map((val) => {
@@ -271,15 +229,15 @@ export default function ProsthesiAkeraionTheoria() {
                         <g key={val}>
                           <line
                             x1={x}
-                            y1={isZero ? 90 : 98}
+                            y1={isZero ? 110 : 118}
                             x2={x}
-                            y2={isZero ? 120 : 112}
+                            y2={isZero ? 140 : 132}
                             stroke={isZero ? '#f8fafc' : '#64748b'}
                             strokeWidth={isZero ? '3' : '1.5'}
                           />
                           <text
                             x={x}
-                            y={134}
+                            y={154}
                             textAnchor="middle"
                             fontSize={isZero ? '13' : '9'}
                             fontWeight={isZero ? '900' : '600'}
@@ -291,59 +249,68 @@ export default function ProsthesiAkeraionTheoria() {
                       );
                     })}
 
-                    {/* Βέλος 1: Από 0 στο numA */}
+                    {/* 1ο Βήμα: Από το 0 στο numA */}
                     {numA !== 0 && (
                       <g>
                         <path
-                          d={`M ${getSvgX(0)} 65 Q ${(getSvgX(0) + getSvgX(numA)) / 2} 35 ${getSvgX(numA)} 65`}
+                          d={`M ${getSvgX(0)} 95 Q ${(getSvgX(0) + getSvgX(numA)) / 2} 60 ${getSvgX(numA) + (numA > 0 ? -4 : 4)} 92`}
                           fill="none"
                           stroke="#818cf8"
                           strokeWidth="2.5"
-                          strokeDasharray="3 2"
+                          strokeDasharray="4 2"
+                          markerEnd="url(#arrow-a)"
                         />
-                        <circle cx={getSvgX(numA)} cy="65" r="4" fill="#818cf8" />
                         <text
                           x={(getSvgX(0) + getSvgX(numA)) / 2}
-                          y="30"
+                          y="50"
                           textAnchor="middle"
                           fill="#818cf8"
-                          fontSize="12"
+                          fontSize="11"
                           fontWeight="bold"
                         >
-                          1ο βήμα: {numA > 0 ? `＋${numA}` : numA}
+                          1ο: {numA > 0 ? `＋${numA}` : numA}
                         </text>
                       </g>
                     )}
 
-                    {/* Βέλος 2: Από numA στο sum (numA + numB) */}
+                    {/* 2ο Βήμα: Από numA στο sum */}
                     {numB !== 0 && (
                       <g>
                         <path
-                          d={`M ${getSvgX(numA)} 65 Q ${(getSvgX(numA) + getSvgX(sum)) / 2} 48 ${getSvgX(sum)} 100`}
+                          d={`M ${getSvgX(numA)} 92 Q ${(getSvgX(numA) + getSvgX(sum)) / 2} 18 ${getSvgX(sum) + (numB > 0 ? -4 : 4)} 116`}
                           fill="none"
-                          stroke="#38bdf8"
-                          strokeWidth="2.5"
+                          stroke={numB > 0 ? '#38bdf8' : '#f43f5e'}
+                          strokeWidth="3"
+                          markerEnd={numB > 0 ? 'url(#arrow-b-right)' : 'url(#arrow-b-left)'}
                         />
                         <text
                           x={(getSvgX(numA) + getSvgX(sum)) / 2}
-                          y="50"
+                          y="22"
                           textAnchor="middle"
-                          fill="#38bdf8"
+                          fill={numB > 0 ? '#38bdf8' : '#fb7185'}
                           fontSize="12"
-                          fontWeight="bold"
+                          fontWeight="900"
                         >
-                          2ο βήμα: {numB > 0 ? `＋${numB}` : numB}
+                          {numB > 0 ? `＋${numB} (➡️ δεξιά)` : `${numB} (⬅️ αριστερά)`}
                         </text>
                       </g>
                     )}
 
+                    {/* Σημείο Εκκίνησης 0 */}
+                    <circle cx={getSvgX(0)} cy="125" r="4" fill="#94a3b8" />
+
+                    {/* Ενδιάμεσο Σημείο A */}
+                    {numA !== 0 && (
+                      <circle cx={getSvgX(numA)} cy="125" r="5" fill="#818cf8" stroke="#ffffff" strokeWidth="1.5" />
+                    )}
+
                     {/* Τελικό Σημείο Αθροίσματος */}
-                    <circle cx={getSvgX(sum)} cy="105" r="7" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+                    <circle cx={getSvgX(sum)} cy="125" r="7" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
                     <text
                       x={getSvgX(sum)}
-                      y="155"
+                      y="180"
                       textAnchor="middle"
-                      fontSize="13"
+                      fontSize="12"
                       fontWeight="900"
                       fill="#34d399"
                     >
@@ -351,19 +318,20 @@ export default function ProsthesiAkeraionTheoria() {
                     </text>
                   </svg>
                 </div>
-                <div className="text-slate-400 text-xs mt-2 text-center">
-                  Ξεκινάμε από το 0, μετακινούμαστε κατά <strong>{numA}</strong> θέσεις και από εκεί συνεχίζουμε κατά <strong>{numB}</strong> θέσεις.
-                </div>
-              </div>
 
-              {/* Κάρτα Επεξήγησης Κανόνα */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-1.5 text-xs sm:text-sm">
-                <div className="font-bold text-indigo-950 uppercase text-[11px] tracking-wider">
-                  ΜΑΘΗΜΑΤΙΚΗ ΑΝΑΛΥΣΗ ΒΗΜΑ-ΒΗΜΑ
+                <div className="text-slate-300 text-xs mt-3 text-center">
+                  {numB < 0 ? (
+                    <span>
+                      Το πρόσημο <strong className="text-rose-400">－</strong> στο {numB} σημαίνει ότι από το <strong>{numA}</strong> κινούμαστε <strong className="text-rose-400">{absB} θέσεις προς τα ΑΡΙΣΤΕΡΑ ⬅️</strong>.
+                    </span>
+                  ) : numB > 0 ? (
+                    <span>
+                      Το πρόσημο <strong className="text-sky-400">＋</strong> στο ＋{numB} σημαίνει ότι από το <strong>{numA}</strong> κινούμαστε <strong className="text-sky-400">{absB} θέσεις προς τα ΔΕΞΙΑ ➡️</strong>.
+                    </span>
+                  ) : (
+                    <span>Το δεύτερο βήμα είναι 0, παραμένουμε στο σημείο <strong>{numA}</strong>.</span>
+                  )}
                 </div>
-                <p className="text-slate-800 leading-relaxed">
-                  {ruleExplanation}
-                </p>
               </div>
             </div>
           </div>
