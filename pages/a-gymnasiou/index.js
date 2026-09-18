@@ -110,6 +110,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 11',
     active: true,
   },
+  {
+    id: '14',
+    slug: '14-isodinama-klasmata',
+    title: 'Ισοδύναμα Κλάσματα',
+    desc: 'Ισοδύναμα κλάσματα, απλοποίηση, ανάγωγα κλάσματα.',
+    badge: 'ΚΕΦΑΛΑΙΟ 12',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
