@@ -14,21 +14,27 @@ const gcd = (a, b) => {
   return x || 1;
 };
 
-// Επαναχρησιμοποιήσιμο component για κλασματική γραφή με πρόσημο μπροστά από τη γραμμή
-function Frac({ num, den, className = '', lineClass = 'border-slate-400' }) {
-  const isNegative = (num < 0 && den > 0) || (num > 0 && den < 0);
-  const absNum = Math.abs(num);
-  const absDen = Math.abs(den);
+// Επαναχρησιμοποιήσιμο component για κλασματική γραφή (υποστηρίζει αριθμούς και γράμματα)
+function Frac({ num, den, isNeg = false, className = '' }) {
+  // Αν είναι αριθμός, ελέγχουμε αν είναι αρνητικός
+  const numericNeg =
+    (typeof num === 'number' && num < 0) ||
+    (typeof den === 'number' && den < 0);
+  const showMinus = isNeg || numericNeg;
+
+  // Καθαρή εμφάνιση χωρίς το πρόσημο στον αριθμητή/παρονομαστή
+  const displayNum = typeof num === 'number' ? Math.abs(num) : num.toString().replace(/^-/, '');
+  const displayDen = typeof den === 'number' ? Math.abs(den) : den.toString().replace(/^-/, '');
 
   return (
-    <span className={`inline-flex items-center gap-1 align-middle mx-1 ${className}`}>
-      {isNegative && <span className="font-bold">－</span>}
+    <span className={`inline-flex items-center gap-1 align-middle mx-1 font-mono ${className}`}>
+      {showMinus && <span className="font-bold">－</span>}
       <span className="inline-flex flex-col items-center justify-center leading-none text-center">
-        <span className="pb-1 px-1 border-b-2 w-full text-center" style={{ borderColor: 'currentColor' }}>
-          {absNum}
+        <span className="pb-0.5 px-1 border-b-2 w-full text-center" style={{ borderColor: 'currentColor' }}>
+          {displayNum}
         </span>
-        <span className="pt-1 px-1 w-full text-center">
-          {absDen}
+        <span className="pt-0.5 px-1 w-full text-center">
+          {displayDen}
         </span>
       </span>
     </span>
