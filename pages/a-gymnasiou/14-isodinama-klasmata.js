@@ -181,7 +181,7 @@ export default function IsodinamaKlasmataTheoria() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
             {/* Steppers Ελέγχου */}
             <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
-<div>
+              <div>
                 <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
                   Αριθμητής (α)
                 </label>
@@ -255,6 +255,7 @@ export default function IsodinamaKlasmataTheoria() {
                   </button>
                 </div>
               </div>
+            </div>
 
             {/* Οπτική Αναπαράσταση & Αποτέλεσμα */}
             <div className="lg:col-span-2 p-6 rounded-2xl bg-gradient-to-br from-indigo-900 to-slate-900 text-white space-y-5 shadow-md">
@@ -267,7 +268,7 @@ export default function IsodinamaKlasmataTheoria() {
                 </span>
               </div>
 
-              {/* Μαθηματική Εξίσωση με απόλυτα ενιαίο μέγεθος γραμματοσειράς (2xl sm:text-4xl) σε όλα τα μέλη */}
+              {/* Μαθηματική Εξίσωση με ενιαίο μέγεθος γραμματοσειράς */}
               <div className="flex items-center gap-3 sm:gap-4 text-2xl sm:text-4xl font-black font-mono flex-wrap">
                 <Frac num={baseNum} den={baseDen} className="text-white text-2xl sm:text-4xl" />
                 <span className="text-indigo-300 text-2xl sm:text-4xl">＝</span>
@@ -280,7 +281,7 @@ export default function IsodinamaKlasmataTheoria() {
                 <Frac num={scaledNum} den={scaledDen} className="text-emerald-400 text-2xl sm:text-4xl" />
               </div>
 
-              {/* Οπτικές Ράβδοι Σύγκρισης (Υποστήριξη πολλαπλών μπαρών για καταχρηστικά κλάσματα) */}
+              {/* Οπτικές Ράβδοι Σύγκρισης με υποστήριξη πολλαπλών μπαρών για καταχρηστικά κλάσματα */}
               <div className="space-y-4 pt-2">
                 {/* 1. Αρχικό Κλάσμα */}
                 <div className="space-y-1.5">
@@ -294,28 +295,26 @@ export default function IsodinamaKlasmataTheoria() {
                   </div>
 
                   <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-                    {Array.from({ length: Math.ceil(baseNum / baseDen) }).map((_, barIdx) => {
-                      return (
-                        <div
-                          key={barIdx}
-                          className="flex-1 min-w-[70px] h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700"
-                        >
-                          {Array.from({ length: baseDen }).map((_, partIdx) => {
-                            const globalPartIndex = barIdx * baseDen + partIdx;
-                            const isFilled = globalPartIndex < baseNum;
-                            return (
-                              <div
-                                key={partIdx}
-                                className={`h-full border-r border-slate-900/60 transition-all ${
-                                  isFilled ? 'bg-indigo-500' : 'bg-slate-800'
-                                }`}
-                                style={{ width: `${100 / baseDen}%` }}
-                              />
-                            );
-                          })}
-                        </div>
-                      );
-                    })}
+                    {Array.from({ length: Math.ceil(baseNum / baseDen) }).map((_, barIdx) => (
+                      <div
+                        key={barIdx}
+                        className="flex-1 min-w-[70px] h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700"
+                      >
+                        {Array.from({ length: baseDen }).map((_, partIdx) => {
+                          const globalPartIndex = barIdx * baseDen + partIdx;
+                          const isFilled = globalPartIndex < baseNum;
+                          return (
+                            <div
+                              key={partIdx}
+                              className={`h-full border-r border-slate-900/60 transition-all ${
+                                isFilled ? 'bg-indigo-500' : 'bg-slate-800'
+                              }`}
+                              style={{ width: `${100 / baseDen}%` }}
+                            />
+                          );
+                        })}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -331,28 +330,26 @@ export default function IsodinamaKlasmataTheoria() {
                   </div>
 
                   <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-                    {Array.from({ length: Math.ceil(scaledNum / scaledDen) }).map((_, barIdx) => {
-                      return (
-                        <div
-                          key={barIdx}
-                          className="flex-1 min-w-[70px] h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700"
-                        >
-                          {Array.from({ length: scaledDen }).map((_, partIdx) => {
-                            const globalPartIndex = barIdx * scaledDen + partIdx;
-                            const isFilled = globalPartIndex < scaledNum;
-                            return (
-                              <div
-                                key={partIdx}
-                                className={`h-full border-r border-slate-900/40 transition-all ${
-                                  isFilled ? 'bg-emerald-500' : 'bg-slate-800'
-                                }`}
-                                style={{ width: `${100 / scaledDen}%` }}
-                              />
-                            );
-                          })}
-                        </div>
-                      );
-                    })}
+                    {Array.from({ length: Math.ceil(scaledNum / scaledDen) }).map((_, barIdx) => (
+                      <div
+                        key={barIdx}
+                        className="flex-1 min-w-[70px] h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700"
+                      >
+                        {Array.from({ length: scaledDen }).map((_, partIdx) => {
+                          const globalPartIndex = barIdx * scaledDen + partIdx;
+                          const isFilled = globalPartIndex < scaledNum;
+                          return (
+                            <div
+                              key={partIdx}
+                              className={`h-full border-r border-slate-900/40 transition-all ${
+                                isFilled ? 'bg-emerald-500' : 'bg-slate-800'
+                              }`}
+                              style={{ width: `${100 / scaledDen}%` }}
+                            />
+                          );
+                        })}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
