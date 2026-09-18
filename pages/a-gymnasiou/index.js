@@ -102,6 +102,14 @@ const CHAPTERS = [
     active: true,
     status: 'ΕΝΕΡΓΟ',
   },
+  {
+    id: '13',
+    slug: '13-ritoi',
+    title: 'Ρητοί Αριθμοί',
+    desc: 'Ρητοί Αριθμοί,Μετατροπή Κλάσματος σε Δεκαδικό, Μετατροπή Δεκαδικού σε Κλασματική Μορφή.',
+    badge: 'ΚΕΦΑΛΑΙΟ 11',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
