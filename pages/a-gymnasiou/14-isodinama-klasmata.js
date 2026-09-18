@@ -279,41 +279,79 @@ export default function IsodinamaKlasmataTheoria() {
                 <Frac num={scaledNum} den={scaledDen} className="text-emerald-400 text-2xl sm:text-4xl" />
               </div>
 
-              {/* Οπτικές Ράβδοι Σύγκρισης (Fraction Bars) */}
-              <div className="space-y-3 pt-2">
-                <div className="space-y-1">
-                  <div className="text-[11px] text-slate-300 font-bold flex justify-between">
-                    <span>Αρχικό Κλάσμα ({baseNum} από τα {baseDen} μέρη):</span>
-                    <span className="font-mono">{((baseNum / baseDen) * 100).toFixed(1)}%</span>
+              {/* Οπτικές Ράβδοι Σύγκρισης (Υποστήριξη πολλαπλών μπαρών για καταχρηστικά κλάσματα) */}
+              <div className="space-y-4 pt-2">
+                {/* 1. Αρχικό Κλάσμα */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] text-slate-300 font-bold flex justify-between items-center">
+                    <span>
+                      Αρχικό Κλάσμα ({baseNum} από τα {baseDen} μέρη
+                      {baseNum > baseDen && ` ＝ ${Math.floor(baseNum / baseDen)} ακέραιες μονάδες ＋ ${baseNum % baseDen}/${baseDen}`}
+                      ):
+                    </span>
+                    <span className="font-mono text-indigo-300">{((baseNum / baseDen) * 100).toFixed(1)}%</span>
                   </div>
-                  <div className="w-full h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700">
-                    {Array.from({ length: baseDen }).map((_, i) => (
-                      <div
-                        key={i}
-                        className={`h-full border-r border-slate-900/60 transition-all ${
-                          i < baseNum ? 'bg-indigo-500' : 'bg-slate-800'
-                        }`}
-                        style={{ width: `${100 / baseDen}%` }}
-                      />
-                    ))}
+
+                  <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                    {Array.from({ length: Math.ceil(baseNum / baseDen) }).map((_, barIdx) => {
+                      return (
+                        <div
+                          key={barIdx}
+                          className="flex-1 min-w-[70px] h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700"
+                        >
+                          {Array.from({ length: baseDen }).map((_, partIdx) => {
+                            const globalPartIndex = barIdx * baseDen + partIdx;
+                            const isFilled = globalPartIndex < baseNum;
+                            return (
+                              <div
+                                key={partIdx}
+                                className={`h-full border-r border-slate-900/60 transition-all ${
+                                  isFilled ? 'bg-indigo-500' : 'bg-slate-800'
+                                }`}
+                                style={{ width: `${100 / baseDen}%` }}
+                              />
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="text-[11px] text-slate-300 font-bold flex justify-between">
-                    <span>Ισοδύναμο μετά από Διαστολή ({scaledNum} από τα {scaledDen} μέρη):</span>
+                {/* 2. Ισοδύναμο Κλάσμα μετά από Διαστολή */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] text-slate-300 font-bold flex justify-between items-center">
+                    <span>
+                      Ισοδύναμο μετά από Διαστολή ({scaledNum} από τα {scaledDen} μέρη
+                      {scaledNum > scaledDen && ` ＝ ${Math.floor(scaledNum / scaledDen)} ακέραιες μονάδες ＋ ${scaledNum % scaledDen}/${scaledDen}`}
+                      ):
+                    </span>
                     <span className="font-mono text-emerald-400">{((scaledNum / scaledDen) * 100).toFixed(1)}%</span>
                   </div>
-                  <div className="w-full h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700">
-                    {Array.from({ length: scaledDen }).map((_, i) => (
-                      <div
-                        key={i}
-                        className={`h-full border-r border-slate-900/40 transition-all ${
-                          i < scaledNum ? 'bg-emerald-500' : 'bg-slate-800'
-                        }`}
-                        style={{ width: `${100 / scaledDen}%` }}
-                      />
-                    ))}
+
+                  <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                    {Array.from({ length: Math.ceil(scaledNum / scaledDen) }).map((_, barIdx) => {
+                      return (
+                        <div
+                          key={barIdx}
+                          className="flex-1 min-w-[70px] h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700"
+                        >
+                          {Array.from({ length: scaledDen }).map((_, partIdx) => {
+                            const globalPartIndex = barIdx * scaledDen + partIdx;
+                            const isFilled = globalPartIndex < scaledNum;
+                            return (
+                              <div
+                                key={partIdx}
+                                className={`h-full border-r border-slate-900/40 transition-all ${
+                                  isFilled ? 'bg-emerald-500' : 'bg-slate-800'
+                                }`}
+                                style={{ width: `${100 / scaledDen}%` }}
+                              />
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
