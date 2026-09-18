@@ -181,14 +181,14 @@ export default function IsodinamaKlasmataTheoria() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
             {/* Steppers Ελέγχου */}
             <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
-              <div>
+<div>
                 <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
                   Αριθμητής (α)
                 </label>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    onClick={(e) => handleStep(setBaseNum, -1, 1, 10, e)}
+                    onClick={(e) => handleStep(setBaseNum, -1, 1, 20, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                   >
                     －
@@ -198,7 +198,7 @@ export default function IsodinamaKlasmataTheoria() {
                   </div>
                   <button
                     type="button"
-                    onClick={(e) => handleStep(setBaseNum, 1, 1, 10, e)}
+                    onClick={(e) => handleStep(setBaseNum, 1, 1, 20, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                   >
                     ＋
@@ -213,7 +213,7 @@ export default function IsodinamaKlasmataTheoria() {
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    onClick={(e) => handleStep(setBaseDen, -1, baseNum, 12, e)}
+                    onClick={(e) => handleStep(setBaseDen, -1, 1, 25, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                   >
                     －
@@ -223,7 +223,7 @@ export default function IsodinamaKlasmataTheoria() {
                   </div>
                   <button
                     type="button"
-                    onClick={(e) => handleStep(setBaseDen, 1, baseNum, 12, e)}
+                    onClick={(e) => handleStep(setBaseDen, 1, 1, 25, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                   >
                     ＋
@@ -238,7 +238,7 @@ export default function IsodinamaKlasmataTheoria() {
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    onClick={(e) => handleStep(setMultiplier, -1, 1, 6, e)}
+                    onClick={(e) => handleStep(setMultiplier, -1, 1, 8, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                   >
                     －
@@ -248,14 +248,13 @@ export default function IsodinamaKlasmataTheoria() {
                   </div>
                   <button
                     type="button"
-                    onClick={(e) => handleStep(setMultiplier, 1, 1, 6, e)}
+                    onClick={(e) => handleStep(setMultiplier, 1, 1, 8, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                   >
                     ＋
                   </button>
                 </div>
               </div>
-            </div>
 
             {/* Οπτική Αναπαράσταση & Αποτέλεσμα */}
             <div className="lg:col-span-2 p-6 rounded-2xl bg-gradient-to-br from-indigo-900 to-slate-900 text-white space-y-5 shadow-md">
@@ -268,14 +267,16 @@ export default function IsodinamaKlasmataTheoria() {
                 </span>
               </div>
 
-              {/* Μαθηματική Εξίσωση */}
+              {/* Μαθηματική Εξίσωση με απόλυτα ενιαίο μέγεθος γραμματοσειράς (2xl sm:text-4xl) σε όλα τα μέλη */}
               <div className="flex items-center gap-3 sm:gap-4 text-2xl sm:text-4xl font-black font-mono flex-wrap">
-                <Frac num={baseNum} den={baseDen} className="text-white" />
-                <span className="text-indigo-300">＝</span>
-                <span className="text-sm sm:text-base text-slate-300 font-sans">
-                  <Frac num={`${baseNum} · ${multiplier}`} den={`${baseDen} · ${multiplier}`} />
-                </span>
-                <span className="text-indigo-300">＝</span>
+                <Frac num={baseNum} den={baseDen} className="text-white text-2xl sm:text-4xl" />
+                <span className="text-indigo-300 text-2xl sm:text-4xl">＝</span>
+                <Frac
+                  num={`${baseNum} · ${multiplier}`}
+                  den={`${baseDen} · ${multiplier}`}
+                  className="text-slate-200 text-2xl sm:text-4xl"
+                />
+                <span className="text-indigo-300 text-2xl sm:text-4xl">＝</span>
                 <Frac num={scaledNum} den={scaledDen} className="text-emerald-400 text-2xl sm:text-4xl" />
               </div>
 
