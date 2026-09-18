@@ -14,15 +14,13 @@ const gcd = (a, b) => {
   return x || 1;
 };
 
-// Επαναχρησιμοποιήσιμο component για κλασματική γραφή (υποστηρίζει αριθμούς και γράμματα)
+// Επαναχρησιμοποιήσιμο component για κλασματική γραφή
 function Frac({ num, den, isNeg = false, className = '' }) {
-  // Αν είναι αριθμός, ελέγχουμε αν είναι αρνητικός
   const numericNeg =
     (typeof num === 'number' && num < 0) ||
     (typeof den === 'number' && den < 0);
   const showMinus = isNeg || numericNeg;
 
-  // Καθαρή εμφάνιση χωρίς το πρόσημο στον αριθμητή/παρονομαστή
   const displayNum = typeof num === 'number' ? Math.abs(num) : num.toString().replace(/^-/, '');
   const displayDen = typeof den === 'number' ? Math.abs(den) : den.toString().replace(/^-/, '');
 
@@ -49,25 +47,17 @@ export default function RitoiTheoria() {
   // State για Εργαστήριο 2: Δεκαδικός -> Κλάσμα
   const [decInput, setDecInput] = useState('-0,75');
 
-  // Steppers για το Εργαστήριο 1
-  const handleStepNum = (delta, e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    setNumA((prev) => Math.max(-20, Math.min(20, prev + delta)));
-  };
+  // State για Εργαστήριο 3: Τοποθέτηση στην Αριθμογραμμή
+  const [axisNum, setAxisNum] = useState(-5);
+  const [axisDen, setAxisDen] = useState(3);
 
-  const handleStepDen = (delta, e) => {
+  // Steppers γενικής χρήσης
+  const handleStep = (setter, delta, min, max, e) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
-    setDenB((prev) => {
-      let next = prev + delta;
-      if (next === 0) next = delta > 0 ? 1 : -1;
-      return Math.max(1, Math.min(20, next));
-    });
+    setter((prev) => Math.max(min, Math.min(max, prev + delta)));
   };
 
   // Υπολογισμοί Εργαστηρίου 1 (Κλάσμα -> Δεκαδικός)
@@ -140,10 +130,15 @@ export default function RitoiTheoria() {
     };
   }, [decInput]);
 
+  // Υπολογισμοί Εργαστηρίου 3 (Αριθμογραμμή)
+  const axisVal = useMemo(() => axisNum / axisDen, [axisNum, axisDen]);
+  const axisFloor = useMemo(() => Math.floor(axisVal), [axisVal]);
+  const axisCeil = useMemo(() => Math.ceil(axisVal), [axisVal]);
+
   return (
     <Layout
       title="Ρητοί Αριθμοί | Α' Γυμνασίου"
-      description="Έννοια ρητών αριθμών, μετατροπή δεκαδικών σε κλάσματα και κλασμάτων σε δεκαδικούς με διαδραστικά εργαστήρια."
+      description="Έννοια ρητών αριθμών, μετατροπή δεκαδικών σε κλάσματα, κλασμάτων σε δεκαδικούς και τοποθέτηση στην αριθμογραμμή."
       backUrl="/a-gymnasiou"
       backText="Α' Γυμνασίου"
       showAds={true}
@@ -168,7 +163,7 @@ export default function RitoiTheoria() {
               Η Έννοια των Ρητών Αριθμών
             </h1>
             <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Γνωρίζουμε το σύνολο ℚ των ρητών αριθμών, τη σχέση τους με τα κλάσματα και τους δεκαδικούς, καθώς και τις τεχνικές αμφίδρομης μετατροπής μεταξύ κλασματικής και δεκαδικής μορφής.
+              Γνωρίζουμε το σύνολο ℚ των ρητών αριθμών, τη σχέση τους με τα κλάσματα και τους δεκαδικούς, τις μετατροπές μεταξύ τους και την ακριβή τοποθέτησή τους στον άξονα των πραγματικών αριθμών.
             </p>
           </div>
         </section>
@@ -207,7 +202,7 @@ export default function RitoiTheoria() {
                 </li>
                 <li>
                   <strong>Θέση προσήμου:</strong> Το πλην τοποθετείται συνήθως μπροστά από την κλασματική γραμμή:{' '}
-                  <Frac num="-α" den="β" /> ＝ <Frac num="α" den="-β" />.
+                  <Frac num="α" den="β" isNeg={true} />.
                 </li>
               </ul>
             </div>
@@ -322,7 +317,7 @@ export default function RitoiTheoria() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
                       type="button"
-                      onClick={(e) => handleStepNum(-1, e)}
+                      onClick={(e) => handleStep(setNumA, -1, -20, 20, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                     >
                       －
@@ -332,7 +327,7 @@ export default function RitoiTheoria() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStepNum(1, e)}
+                      onClick={(e) => handleStep(setNumA, 1, -20, 20, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                     >
                       ＋
@@ -347,7 +342,7 @@ export default function RitoiTheoria() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
                       type="button"
-                      onClick={(e) => handleStepDen(-1, e)}
+                      onClick={(e) => handleStep(setDenB, -1, 1, 20, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                     >
                       －
@@ -357,7 +352,7 @@ export default function RitoiTheoria() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStepDen(1, e)}
+                      onClick={(e) => handleStep(setDenB, 1, 1, 20, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                     >
                       ＋
@@ -366,7 +361,7 @@ export default function RitoiTheoria() {
                 </div>
               </div>
 
-              {/* Κάρτα Αποτελέσματος - Το πλην ΜΠΡΟΣΤΑ από την κλασματική γραμμή */}
+              {/* Κάρτα Αποτελέσματος */}
               <div className="lg:col-span-2 p-6 rounded-2xl bg-gradient-to-br from-indigo-900 to-slate-900 text-white space-y-4 shadow-md font-mono">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
@@ -384,13 +379,11 @@ export default function RitoiTheoria() {
                 </div>
 
                 <div className="flex items-center gap-3 sm:gap-4 text-2xl sm:text-4xl font-black flex-wrap">
-                  {/* Αρχικό κλάσμα με το πλην μπροστά από τη γραμμή */}
                   <Frac num={numA} den={denB} className="text-white" />
 
                   {fracAnalysis.gcdVal > 1 && (
                     <>
                       <span className="text-indigo-300">＝</span>
-                      {/* Απλοποιημένο κλάσμα με το πλην μπροστά από τη γραμμή */}
                       <Frac num={fracAnalysis.simpNum} den={fracAnalysis.simpDen} className="text-slate-300 text-xl sm:text-3xl" />
                     </>
                   )}
@@ -491,7 +484,7 @@ export default function RitoiTheoria() {
                 </div>
               </div>
 
-              {/* Ανάλυση σε Κλάσμα - Το πλην ΜΠΡΟΣΤΑ από την κλασματική γραμμή */}
+              {/* Ανάλυση σε Κλάσμα */}
               <div className="lg:col-span-2 p-6 rounded-2xl bg-slate-900 text-white space-y-4 font-mono shadow-md">
                 <div className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
                   ΑΠΟΤΕΛΕΣΜΑ ΜΕΤΑΤΡΟΠΗΣ & ΑΠΛΟΠΟΙΗΣΗΣ
@@ -503,13 +496,11 @@ export default function RitoiTheoria() {
                       <span>{decInput}</span>
                       <span className="text-indigo-400">＝</span>
 
-                      {/* Δεκαδικό κλάσμα με πλην μπροστά */}
                       <Frac num={decAnalysis.rawNum} den={decAnalysis.rawDen} className="text-slate-300 text-xl sm:text-3xl" />
 
                       {decAnalysis.gcdVal > 1 && (
                         <>
                           <span className="text-indigo-400">＝</span>
-                          {/* Ανάγωγο κλάσμα με πλην μπροστά */}
                           <Frac num={decAnalysis.redNum} den={decAnalysis.redDen} className="text-emerald-400 text-2xl sm:text-4xl" />
                         </>
                       )}
@@ -526,6 +517,198 @@ export default function RitoiTheoria() {
                     ⚠️ Παρακαλώ πληκτρολόγησε έναν έγκυρο δεκαδικό αριθμό (π.χ. -0,75 ή 3,2).
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. ΤΟΠΟΘΕΤΗΣΗ ΡΗΤΩΝ ΣΤΗΝ ΑΡΙΘΜΟΓΡΑΜΜΗ & ΕΡΓΑΣΤΗΡΙΟ 3 */}
+        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+          <div className="border-b border-slate-100 pb-4">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+                4
+              </span>
+              Τοποθέτηση Ρητών Αριθμών στην Αριθμογραμμή
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-slate-700 text-sm sm:text-base leading-relaxed">
+            <div className="space-y-3">
+              <p>
+                Για να παραστήσουμε έναν ρητό αριθμό <Frac num="α" den="β" /> πάνω στην αριθμογραμμή:
+              </p>
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 text-xs sm:text-sm">
+                <div>
+                  <strong>1. Επιλογή κατεύθυνσης:</strong> Αν ο ρητός είναι θετικός κινούμαστε <strong>δεξιά από το 0</strong>, ενώ αν είναι αρνητικός κινούμαστε <strong>αριστερά από το 0</strong>.
+                </div>
+                <div>
+                  <strong>2. Διαίρεση μονάδων (Παρονομαστής β):</strong> Χωρίζουμε κάθε ακέραια μονάδα σε <strong>β ίσα μέρη</strong> (υποδιαστήματα).
+                </div>
+                <div>
+                  <strong>3. Μέτρηση βημάτων (Αριθμητής α):</strong> Ξεκινώντας από το 0, μετράμε <strong>|α| τέτοια υποδιαστήματα</strong> προς τη σωστή κατεύθυνση.
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-indigo-50/60 border border-indigo-200 space-y-3 flex flex-col justify-between">
+              <div>
+                <div className="text-xs font-bold text-indigo-800 uppercase tracking-wider mb-1">
+                  ΧΑΡΑΚΤΗΡΙΣΤΙΚΟ ΠΑΡΑΔΕΙΓΜΑ
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center flex-wrap gap-1">
+                  Πού βρίσκεται ο αριθμός <Frac num="-5" den="3" />;
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                  Επειδή το κλάσμα είναι αρνητικό, πάμε αριστερά από το 0. Χωρίζουμε κάθε μονάδα σε <strong>3 ίσα μέρη</strong>. Μετράμε <strong>5 υποδιαστήματα</strong> αριστερά.
+                </p>
+              </div>
+              <div className="p-3 bg-white rounded-xl border border-indigo-100 font-mono text-xs sm:text-sm text-indigo-950">
+                <Frac num="-5" den="3" /> ＝ －1 <Frac num="2" den="3" /> ≈ －1,67 (βρίσκεται ανάμεσα στο －1 και το －2).
+              </div>
+            </div>
+          </div>
+
+          {/* ΕΡΓΑΣΤΗΡΙΟ 3: ΔΙΑΔΡΑΣΤΙΚΗ ΑΡΙΘΜΟΓΡΑΜΜΗ */}
+          <div className="pt-4 border-t border-slate-100 space-y-5">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900">
+              🛠️ Εργαστήριο 3: Διαδραστικός Άξονας Ρητών Αριθμών
+            </h3>
+
+            {/* Χειριστήρια Steppers */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200 items-center">
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
+                  Αριθμητής (α)
+                </label>
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-10 w-full gap-1.5">
+                  <button
+                    type="button"
+                    onClick={(e) => handleStep(setAxisNum, -1, -12, 12, e)}
+                    className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-base"
+                  >
+                    －
+                  </button>
+                  <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 font-black font-mono text-indigo-950">
+                    {axisNum > 0 ? `＋${axisNum}` : axisNum}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => handleStep(setAxisNum, 1, -12, 12, e)}
+                    className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-base"
+                  >
+                    ＋
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
+                  Παρονομαστής (β)
+                </label>
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-10 w-full gap-1.5">
+                  <button
+                    type="button"
+                    onClick={(e) => handleStep(setAxisDen, -1, 1, 8, e)}
+                    className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-base"
+                  >
+                    －
+                  </button>
+                  <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 font-black font-mono text-sky-950">
+                    {axisDen}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => handleStep(setAxisDen, 1, 1, 8, e)}
+                    className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-base"
+                  >
+                    ＋
+                  </button>
+                </div>
+              </div>
+
+              {/* Πληροφορίες Θέσης */}
+              <div className="sm:col-span-2 p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between flex-wrap gap-2 text-xs">
+                <div>
+                  <div className="text-[10px] uppercase font-bold text-slate-500">ΘΕΣΗ ΣΤΟΝ ΑΞΟΝΑ</div>
+                  <div className="font-bold text-slate-900 font-mono text-sm">
+                    {axisVal.toFixed(3).replace('.', ',')}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] uppercase font-bold text-slate-500">ΠΕΡΙΕΧΕΤΑΙ ΑΝΑΜΕΣΑ ΣΤΑ</div>
+                  <div className="font-bold text-indigo-700 font-mono text-sm">
+                    [{axisFloor}, {axisFloor === axisCeil ? axisFloor : axisCeil}]
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Οπτική Αριθμογραμμή SVG (Περιοχή από -4 έως +4) */}
+            <div className="p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md overflow-x-auto">
+              <div className="min-w-[550px] py-4">
+                <svg viewBox="-320 -50 640 100" className="w-full h-auto overflow-visible select-none">
+                  {/* Κύρια γραμμή άξονα */}
+                  <line x1="-300" y1="0" x2="300" y2="0" stroke="#94a3b8" strokeWidth="2.5" />
+                  {/* Βελάκια άκρων */}
+                  <polygon points="305,0 295,-5 295,5" fill="#94a3b8" />
+                  <polygon points="-305,0 -295,-5 -295,5" fill="#94a3b8" />
+
+                  {/* Υποδιαιρέσεις ανά μονάδα και ανά τμήμα (κλίμακα: 1 μονάδα = 70px) */}
+                  {[-3, -2, -1, 0, 1, 2, 3].map((u) => {
+                    const x = u * 70;
+                    return (
+                      <g key={u}>
+                        {/* Κύρια γραμμή ακέραιας μονάδας */}
+                        <line x1={x} y1="-12" x2={x} y2="12" stroke={u === 0 ? '#38bdf8' : '#e2e8f0'} strokeWidth={u === 0 ? '3' : '2'} />
+                        <text x={x} y="28" fill={u === 0 ? '#38bdf8' : '#cbd5e1'} fontSize="13" fontWeight="bold" textAnchor="middle" fontFamily="monospace">
+                          {u}
+                        </text>
+
+                        {/* Ενδιάμεσες μικρές υποδιαιρέσεις βάσει του παρονομαστή */}
+                        {u < 3 && axisDen > 1 && Array.from({ length: axisDen - 1 }).map((_, stepIdx) => {
+                          const subX = x + ((stepIdx + 1) * 70) / axisDen;
+                          return (
+                            <line
+                              key={stepIdx}
+                              x1={subX}
+                              y1="-5"
+                              x2={subX}
+                              y2="5"
+                              stroke="#64748b"
+                              strokeWidth="1.2"
+                            />
+                          );
+                        })}
+                      </g>
+                    );
+                  })}
+
+                  {/* Το σημείο Μ του επιλεγμένου ρητού αριθμού */}
+                  {axisVal >= -4.2 && axisVal <= 4.2 && (
+                    <g transform={`translate(${Math.max(-295, Math.min(295, axisVal * 70))}, 0)`}>
+                      {/* Κάθετη γραμμή επισήμανσης */}
+                      <line x1="0" y1="-30" x2="0" y2="0" stroke="#f59e0b" strokeWidth="2" strokeDasharray="3,3" />
+                      {/* Σημείο */}
+                      <circle cx="0" cy="0" r="6" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+                      {/* Ετικέτα Σημείου */}
+                      <rect x="-24" y="-45" width="48" height="20" rx="6" fill="#f59e0b" />
+                      <text x="0" y="-31" fill="#0f172a" fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="monospace">
+                        Μ
+                      </text>
+                    </g>
+                  )}
+                </svg>
+              </div>
+
+              {/* Επεξήγηση συμπεριφοράς */}
+              <div className="p-3 bg-white/10 rounded-xl border border-white/10 text-xs sm:text-sm text-indigo-100 flex items-center justify-between flex-wrap gap-2">
+                <span>
+                  Κάθε μονάδα χωρίστηκε σε <strong>{axisDen} ίσα τμήματα</strong>. Το σημείο <strong>Μ</strong> απέχει <strong>{Math.abs(axisNum)} υποδιαιρέσεις</strong> {axisNum < 0 ? 'αριστερά' : 'δεξιά'} από το μηδέν (0).
+                </span>
+                <span className="font-mono font-bold text-amber-300 text-sm">
+                  Μ(<Frac num={axisNum} den={axisDen} />)
+                </span>
               </div>
             </div>
           </div>
