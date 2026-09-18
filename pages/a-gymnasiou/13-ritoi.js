@@ -14,6 +14,27 @@ const gcd = (a, b) => {
   return x || 1;
 };
 
+// Επαναχρησιμοποιήσιμο component για κλασματική γραφή με πρόσημο μπροστά από τη γραμμή
+function Frac({ num, den, className = '', lineClass = 'border-slate-400' }) {
+  const isNegative = (num < 0 && den > 0) || (num > 0 && den < 0);
+  const absNum = Math.abs(num);
+  const absDen = Math.abs(den);
+
+  return (
+    <span className={`inline-flex items-center gap-1 align-middle mx-1 ${className}`}>
+      {isNegative && <span className="font-bold">－</span>}
+      <span className="inline-flex flex-col items-center justify-center leading-none text-center">
+        <span className="pb-1 px-1 border-b-2 w-full text-center" style={{ borderColor: 'currentColor' }}>
+          {absNum}
+        </span>
+        <span className="pt-1 px-1 w-full text-center">
+          {absDen}
+        </span>
+      </span>
+    </span>
+  );
+}
+
 export default function RitoiTheoria() {
   // State για Εργαστήριο 1: Κλάσμα -> Δεκαδικός
   const [numA, setNumA] = useState(-3);
@@ -22,7 +43,7 @@ export default function RitoiTheoria() {
   // State για Εργαστήριο 2: Δεκαδικός -> Κλάσμα
   const [decInput, setDecInput] = useState('-0,75');
 
-  // Stepper handlers για το Εργαστήριο 1
+  // Steppers για το Εργαστήριο 1
   const handleStepNum = (delta, e) => {
     if (e) {
       e.preventDefault();
@@ -50,11 +71,9 @@ export default function RitoiTheoria() {
     const simpDen = denB / g;
     const val = numA / denB;
 
-    // Ανίχνευση αν είναι ακέραιος ή δεκαδικός
     const isInt = Number.isInteger(val);
     const decStr = val.toString().replace('.', ',');
 
-    // Έλεγχος αν ο ανάγωγος παρονομαστής έχει μόνο πρώτους παράγοντες 2 και 5 (πεπερασμένος)
     let tempDen = Math.abs(simpDen);
     while (tempDen % 2 === 0) tempDen /= 2;
     while (tempDen % 5 === 0) tempDen /= 5;
@@ -133,7 +152,7 @@ export default function RitoiTheoria() {
       }
     >
       <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
-        {/* Banner Header - Ενιαίο Indigo Theme χωρίς τόνους στα κεφαλαία */}
+        {/* Banner Header */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-4">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
@@ -163,20 +182,26 @@ export default function RitoiTheoria() {
             <div className="space-y-4">
               <p>
                 <strong>Ρητός</strong> ονομάζεται κάθε αριθμός που μπορεί να γραφεί στη μορφή κλάσματος{' '}
-                <span className="font-mono font-bold text-indigo-900 text-lg">α / β</span>, όπου ο αριθμητής <strong>α</strong> είναι ακέραιος αριθμός (α ∈ ℤ) και ο παρονομαστής <strong>β</strong> είναι ακέραιος διάφορος του μηδενός (β ∈ ℤ*).
+                <Frac num="α" den="β" className="text-indigo-950 font-bold" />
+                , όπου ο αριθμητής <strong>α</strong> είναι ακέραιος αριθμός (α ∈ ℤ) και ο παρονομαστής <strong>β</strong> είναι ακέραιος διάφορος του μηδενός (β ∈ ℤ*).
               </p>
-              <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-950 font-black text-center text-lg sm:text-xl font-mono shadow-sm">
-                ℚ ＝ {'{'} α / β  |  α ∈ ℤ  και  β ∈ ℤ* {'}'}
+              <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-950 font-black text-center text-lg sm:text-xl font-mono shadow-sm flex items-center justify-center gap-2">
+                <span>ℚ ＝ {'{'}</span>
+                <Frac num="α" den="β" />
+                <span>| α ∈ ℤ και β ∈ ℤ* {'}'}</span>
               </div>
-              <ul className="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-slate-600">
+              <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm text-slate-600">
                 <li>
-                  <strong>Όλοι οι ακέραιοι είναι και ρητοί:</strong> π.χ. το 5 γράφεται 5 / 1, το －4 γράφεται －4 / 1 και το 0 γράφεται 0 / 1.
+                  <strong>Όλοι οι ακέραιοι είναι και ρητοί:</strong> π.χ.{' '}
+                  5 ＝ <Frac num="5" den="1" />, －4 ＝ <Frac num="-4" den="1" />, 0 ＝ <Frac num="0" den="1" />.
                 </li>
                 <li>
-                  <strong>Όλοι οι δεκαδικοί είναι ρητοί:</strong> π.χ. το 0,75 γράφεται 75 / 100 ＝ 3 / 4.
+                  <strong>Όλοι οι δεκαδικοί είναι ρητοί:</strong> π.χ.{' '}
+                  0,75 ＝ <Frac num="75" den="100" /> ＝ <Frac num="3" den="4" />.
                 </li>
                 <li>
-                  <strong>Πρόσημο κλάσματος:</strong> －(α / β) ＝ (－α) / β ＝ α / (－β).
+                  <strong>Θέση προσήμου:</strong> Το πλην τοποθετείται συνήθως μπροστά από την κλασματική γραμμή:{' '}
+                  <Frac num="-α" den="β" /> ＝ <Frac num="α" den="-β" />.
                 </li>
               </ul>
             </div>
@@ -187,21 +212,27 @@ export default function RitoiTheoria() {
                 ΚΑΤΗΓΟΡΙΕΣ ΡΗΤΩΝ ΑΡΙΘΜΩΝ
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm font-mono">
-                <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1">
+                <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-2">
                   <div className="text-indigo-900 font-sans font-bold text-xs">Θετικοί Ρητοί</div>
-                  <div>＋(3 / 4), ＋2,5, ＋7</div>
+                  <div className="flex items-center flex-wrap gap-1">
+                    <Frac num="3" den="4" />, ＋2,5, ＋7
+                  </div>
                 </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1">
+                <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-2">
                   <div className="text-rose-900 font-sans font-bold text-xs">Αρνητικοί Ρητοί</div>
-                  <div>－(5 / 2), －1,4, －9</div>
+                  <div className="flex items-center flex-wrap gap-1">
+                    <Frac num="-5" den="2" />, －1,4, －9
+                  </div>
                 </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1">
+                <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-2">
                   <div className="text-slate-900 font-sans font-bold text-xs">Ακέραιοι Αριθμοί</div>
                   <div>... －2, －1, 0, 1, 2 ...</div>
                 </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1">
+                <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-2">
                   <div className="text-sky-900 font-sans font-bold text-xs">Περιοδικοί Δεκαδικοί</div>
-                  <div>1 / 3 ＝ 0,333...</div>
+                  <div className="flex items-center flex-wrap gap-1">
+                    <Frac num="1" den="3" /> ＝ 0,333...
+                  </div>
                 </div>
               </div>
             </div>
@@ -222,20 +253,24 @@ export default function RitoiTheoria() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-slate-700 text-sm sm:text-base leading-relaxed">
             <div className="space-y-3">
               <p>
-                Για να μετατρέψουμε ένα κλάσμα <span className="font-mono font-bold">α / β</span> σε δεκαδικό αριθμό, <strong>διαιρούμε τον αριθμητή α με τον παρονομαστή β</strong> (α ： β).
+                Για να μετατρέψουμε ένα κλάσμα <Frac num="α" den="β" /> σε δεκαδικό αριθμό, <strong>διαιρούμε τον αριθμητή α με τον παρονομαστή β</strong> (α ： β).
               </p>
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <div className="text-xs font-bold uppercase text-indigo-700 tracking-wider">
                   ΔΥΟ ΠΙΘΑΝΑ ΑΠΟΤΕΛΕΣΜΑΤΑ
                 </div>
                 <div className="space-y-2 text-xs sm:text-sm">
-                  <div className="p-3 bg-white rounded-xl border border-slate-200">
-                    <strong>1. Πεπερασμένος Δεκαδικός:</strong> Η διαίρεση τελειώνει (υπόλοιπο 0).<br />
-                    <span className="font-mono text-indigo-900">3 / 4 ＝ 3 ： 4 ＝ 0,75</span>
+                  <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between flex-wrap gap-2">
+                    <div><strong>1. Πεπερασμένος Δεκαδικός:</strong> (υπόλοιπο 0)</div>
+                    <div className="font-mono text-indigo-900 flex items-center">
+                      <Frac num="3" den="4" /> ＝ 3 ： 4 ＝ 0,75
+                    </div>
                   </div>
-                  <div className="p-3 bg-white rounded-xl border border-slate-200">
-                    <strong>2. Περιοδικός Δεκαδικός:</strong> Ένα ψηφίο ή ομάδα ψηφίων επαναλαμβάνεται επ' άπειρον.<br />
-                    <span className="font-mono text-indigo-900">1 / 3 ＝ 1 ： 3 ＝ 0,333...</span> (περίοδος το 3)
+                  <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between flex-wrap gap-2">
+                    <div><strong>2. Περιοδικός Δεκαδικός:</strong> (επαναλαμβανόμενα ψηφία)</div>
+                    <div className="font-mono text-indigo-900 flex items-center">
+                      <Frac num="1" den="3" /> ＝ 1 ： 3 ＝ 0,333...
+                    </div>
                   </div>
                 </div>
               </div>
@@ -254,9 +289,13 @@ export default function RitoiTheoria() {
                   Αν απλοποιήσουμε το κλάσμα ώστε να είναι ανάγωγο, δίνει πεπερασμένο δεκαδικό <strong>μόνο αν ο παρονομαστής περιέχει ως πρώτους παράγοντες μόνο το 2 ή/και το 5</strong>.
                 </p>
               </div>
-              <div className="p-3 bg-white rounded-xl border border-indigo-100 font-mono text-xs sm:text-sm text-indigo-950">
-                • 7 / 20 → 20 ＝ 2² · 5 → Πεπερασμένος (0,35)<br />
-                • 5 / 6 → 6 ＝ 2 · 3 → Περιοδικός (0,8333...)
+              <div className="p-3 bg-white rounded-xl border border-indigo-100 font-mono text-xs sm:text-sm text-indigo-950 space-y-1">
+                <div className="flex items-center flex-wrap">
+                  • <Frac num="7" den="20" /> → 20 ＝ 2² · 5 → Πεπερασμένος (0,35)
+                </div>
+                <div className="flex items-center flex-wrap">
+                  • <Frac num="5" den="6" /> → 6 ＝ 2 · 3 → Περιοδικός (0,8333...)
+                </div>
               </div>
             </div>
           </div>
@@ -321,7 +360,7 @@ export default function RitoiTheoria() {
                 </div>
               </div>
 
-              {/* Κάρτα Αποτελέσματος */}
+              {/* Κάρτα Αποτελέσματος - Το πλην ΜΠΡΟΣΤΑ από την κλασματική γραμμή */}
               <div className="lg:col-span-2 p-6 rounded-2xl bg-gradient-to-br from-indigo-900 to-slate-900 text-white space-y-4 shadow-md font-mono">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
@@ -338,27 +377,26 @@ export default function RitoiTheoria() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 text-2xl sm:text-4xl font-black">
-                  <div className="flex flex-col items-center">
-                    <span className="border-b-2 border-white px-2">{numA}</span>
-                    <span>{denB}</span>
-                  </div>
-                  <span className="text-indigo-300">＝</span>
+                <div className="flex items-center gap-3 sm:gap-4 text-2xl sm:text-4xl font-black flex-wrap">
+                  {/* Αρχικό κλάσμα με το πλην μπροστά από τη γραμμή */}
+                  <Frac num={numA} den={denB} className="text-white" />
+
                   {fracAnalysis.gcdVal > 1 && (
                     <>
-                      <div className="flex flex-col items-center text-xl sm:text-3xl text-slate-300">
-                        <span className="border-b-2 border-slate-400 px-2">{fracAnalysis.simpNum}</span>
-                        <span>{fracAnalysis.simpDen}</span>
-                      </div>
                       <span className="text-indigo-300">＝</span>
+                      {/* Απλοποιημένο κλάσμα με το πλην μπροστά από τη γραμμή */}
+                      <Frac num={fracAnalysis.simpNum} den={fracAnalysis.simpDen} className="text-slate-300 text-xl sm:text-3xl" />
                     </>
                   )}
+
+                  <span className="text-indigo-300">＝</span>
                   <span className="text-emerald-400">{fracAnalysis.displayDec}</span>
                 </div>
 
                 <div className="p-3 bg-white/10 rounded-xl border border-white/10 text-xs sm:text-sm text-indigo-100 font-sans">
-                  Εκτελέσαμε τη διαίρεση {numA} ： {denB}.
-                  {fracAnalysis.gcdVal > 1 && ` Το κλάσμα απλοποιήθηκε με το ${fracAnalysis.gcdVal} σε ανάγωγο.`}
+                  Εκτελέσαμε τη διαίρεση {Math.abs(numA)} ： {denB}.
+                  {numA < 0 && ' Το αρνητικό πρόσημο τοποθετείται μπροστά από την κλασματική γραμμή.'}
+                  {fracAnalysis.gcdVal > 1 && ` Το κλάσμα απλοποιήθηκε με τον ΜΚΔ (${fracAnalysis.gcdVal}) σε ανάγωγο.`}
                 </div>
               </div>
             </div>
@@ -389,20 +427,27 @@ export default function RitoiTheoria() {
                   <strong>2. Παρονομαστής:</strong> Γράφουμε το <strong>1</strong> ακολουθούμενο από <strong>τόσα μηδενικά όσα είναι τα δεκαδικά ψηφία</strong> (10, 100, 1.000...).
                 </div>
                 <div>
-                  <strong>3. Απλοποίηση:</strong> Διαιρούμε αριθμητή και παρονομαστή με τον <strong>ΜΚΔ</strong> τους για να γίνει το κλάσμα ανάγωγο.
+                  <strong>3. Πρόσημο:</strong> Το πρόσημο μείον τοποθετείται <strong>μπροστά από την κλασματική γραμμή</strong>.
+                </div>
+                <div>
+                  <strong>4. Απλοποίηση:</strong> Διαιρούμε αριθμητή και παρονομαστή με τον <strong>ΜΚΔ</strong> τους για ανάγωγο κλάσμα.
                 </div>
               </div>
             </div>
 
-            {/* Παράδειγμα Βήμα-Βήμα */}
+            {/* Παράδειγμα Ανάλυσης */}
             <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2 font-mono text-xs sm:text-sm">
               <div className="text-xs font-bold uppercase text-slate-500 font-sans">
                 ΠΑΡΑΔΕΙΓΜΑ ΑΝΑΛΥΣΗΣ
               </div>
-              <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1">
+              <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-2">
                 <div>Δεκαδικός: <strong>－0,85</strong> (2 δεκαδικά ψηφία)</div>
-                <div>Δεκαδικό κλάσμα: <strong>－(85 / 100)</strong></div>
-                <div>Απλοποίηση με το 5: <strong>－(17 / 20)</strong> (ανάγωγο)</div>
+                <div className="flex items-center flex-wrap gap-1">
+                  Δεκαδικό κλάσμα: <Frac num="-85" den="100" />
+                </div>
+                <div className="flex items-center flex-wrap gap-1">
+                  Απλοποίηση με το 5: <Frac num="-17" den="20" /> (ανάγωγο)
+                </div>
               </div>
             </div>
           </div>
@@ -440,7 +485,7 @@ export default function RitoiTheoria() {
                 </div>
               </div>
 
-              {/* Ανάλυση σε Κλάσμα */}
+              {/* Ανάλυση σε Κλάσμα - Το πλην ΜΠΡΟΣΤΑ από την κλασματική γραμμή */}
               <div className="lg:col-span-2 p-6 rounded-2xl bg-slate-900 text-white space-y-4 font-mono shadow-md">
                 <div className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
                   ΑΠΟΤΕΛΕΣΜΑ ΜΕΤΑΤΡΟΠΗΣ & ΑΠΛΟΠΟΙΗΣΗΣ
@@ -448,27 +493,26 @@ export default function RitoiTheoria() {
 
                 {decAnalysis.isValid ? (
                   <div className="space-y-4">
-                    <div className="flex items-center gap-4 text-2xl sm:text-4xl font-black">
+                    <div className="flex items-center gap-3 sm:gap-4 text-2xl sm:text-4xl font-black flex-wrap">
                       <span>{decInput}</span>
                       <span className="text-indigo-400">＝</span>
-                      <div className="flex flex-col items-center text-xl sm:text-3xl text-slate-300">
-                        <span className="border-b-2 border-slate-400 px-2">{decAnalysis.rawNum}</span>
-                        <span>{decAnalysis.rawDen}</span>
-                      </div>
+
+                      {/* Δεκαδικό κλάσμα με πλην μπροστά */}
+                      <Frac num={decAnalysis.rawNum} den={decAnalysis.rawDen} className="text-slate-300 text-xl sm:text-3xl" />
+
                       {decAnalysis.gcdVal > 1 && (
                         <>
                           <span className="text-indigo-400">＝</span>
-                          <div className="flex flex-col items-center text-2xl sm:text-4xl text-emerald-400">
-                            <span className="border-b-2 border-emerald-400 px-2">{decAnalysis.redNum}</span>
-                            <span>{decAnalysis.redDen}</span>
-                          </div>
+                          {/* Ανάγωγο κλάσμα με πλην μπροστά */}
+                          <Frac num={decAnalysis.redNum} den={decAnalysis.redDen} className="text-emerald-400 text-2xl sm:text-4xl" />
                         </>
                       )}
                     </div>
 
                     <div className="p-3 bg-white/10 rounded-xl border border-white/10 text-xs sm:text-sm font-sans text-slate-200">
                       Ο αριθμός έχει {decAnalysis.decimals} δεκαδικά ψηφία, άρα γράφτηκε με παρονομαστή το {decAnalysis.rawDen}.
-                      {decAnalysis.gcdVal > 1 ? ` Απλοποιήθηκε δια του ${decAnalysis.gcdVal} και έγινε ανάγωγο κλάσμα.` : ' Το κλάσμα ήταν ήδη ανάγωγο.'}
+                      {decAnalysis.rawNum < 0 && ' Το πλην τοποθετείται μπροστά από την κλασματική γραμμή.'}
+                      {decAnalysis.gcdVal > 1 ? ` Απλοποιήθηκε δια του ΜΚΔ (${decAnalysis.gcdVal}) και έγινε ανάγωγο κλάσμα.` : ' Το κλάσμα ήταν ήδη ανάγωγο.'}
                     </div>
                   </div>
                 ) : (
