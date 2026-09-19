@@ -118,6 +118,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 12',
     active: true,
   },
+  {
+    id: '15',
+    slug: '15-omonima-eteronima-klasmata',
+    title: 'Ομώνυμα - Ετερώνυμα Κλάσματα',
+    desc: 'Ομώνυμα - Ετερώνυμα Κλάσματα, σύγκριση, απόλυτη τιμή κλασμάτων.',
+    badge: 'ΚΕΦΑΛΑΙΟ 12',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
