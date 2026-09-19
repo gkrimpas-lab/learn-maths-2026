@@ -178,7 +178,7 @@ export default function IsodinamaKlasmataTheoria() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Steppers Ελέγχου */}
             <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
               <div>
@@ -268,7 +268,7 @@ export default function IsodinamaKlasmataTheoria() {
                 </span>
               </div>
 
-              {/* Μαθηματική Εξίσωση με ενιαίο μέγεθος γραμματοσειράς */}
+              {/* Μαθηματική Εξίσωση με απόλυτα ενιαίο μέγεθος */}
               <div className="flex items-center gap-3 sm:gap-4 text-2xl sm:text-4xl font-black font-mono flex-wrap">
                 <Frac num={baseNum} den={baseDen} className="text-white text-2xl sm:text-4xl" />
                 <span className="text-indigo-300 text-2xl sm:text-4xl">＝</span>
@@ -281,29 +281,40 @@ export default function IsodinamaKlasmataTheoria() {
                 <Frac num={scaledNum} den={scaledDen} className="text-emerald-400 text-2xl sm:text-4xl" />
               </div>
 
-              {/* Οπτικές Ράβδοι Σύγκρισης με σταθερό πλάτος ανά μονάδα (τέλεια αντιστοίχιση και σε κινητά) */}
+              {/* Οπτικές Ράβδοι Σύγκρισης: Ανά Ακέραια Μονάδα σε στήλη (Χωρίς οριζόντιο scroll) */}
               <div className="space-y-4 pt-2">
-                {/* 1. Αρχικό Κλάσμα */}
-                <div className="space-y-1.5">
-                  <div className="text-[11px] text-slate-300 font-bold flex justify-between items-center">
-                    <span>
-                      Αρχικό Κλάσμα ({baseNum} από τα {baseDen} μέρη
-                      {baseNum > baseDen && ` ＝ ${Math.floor(baseNum / baseDen)} ακέραιες μονάδες ＋ ${baseNum % baseDen}/${baseDen}`}
-                      ):
-                    </span>
-                    <span className="font-mono text-indigo-300">{((baseNum / baseDen) * 100).toFixed(1)}%</span>
-                  </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-300 font-bold border-b border-slate-700/60 pb-2">
+                  <span>
+                    Σύγκριση ανά Ακέραια Μονάδα 
+                    {baseNum > baseDen && ` (${Math.ceil(baseNum / baseDen)} συνολικές μονάδες)`}:
+                  </span>
+                  <span className="font-mono text-emerald-400">
+                    {((baseNum / baseDen) * 100).toFixed(1)}%
+                  </span>
+                </div>
 
-                  <div className="overflow-x-auto pb-1.5 pt-0.5">
-                    <div className="flex gap-2.5 flex-nowrap w-max min-w-full">
-                      {Array.from({ length: Math.ceil(baseNum / baseDen) }).map((_, barIdx) => (
-                        <div
-                          key={barIdx}
-                          className="w-[140px] sm:w-[180px] h-8 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700 shrink-0 shadow-inner"
-                        >
+                <div className="space-y-3.5">
+                  {Array.from({ length: Math.ceil(baseNum / baseDen) }).map((_, barIdx) => (
+                    <div
+                      key={barIdx}
+                      className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2"
+                    >
+                      <div className="text-[10px] uppercase font-bold text-indigo-300 tracking-wider">
+                        {barIdx + 1}η Ακέραια Μονάδα [{barIdx}, {barIdx + 1}]
+                      </div>
+
+                      {/* 1. Μπάρα Αρχικού Κλάσματος */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                          <span>Αρχικό (ανά {baseDen}):</span>
+                          <span>
+                            {Math.max(0, Math.min(baseDen, baseNum - barIdx * baseDen))} / {baseDen}
+                          </span>
+                        </div>
+                        <div className="w-full h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700 shadow-inner">
                           {Array.from({ length: baseDen }).map((_, partIdx) => {
-                            const globalPartIndex = barIdx * baseDen + partIdx;
-                            const isFilled = globalPartIndex < baseNum;
+                            const globalIdx = barIdx * baseDen + partIdx;
+                            const isFilled = globalIdx < baseNum;
                             return (
                               <div
                                 key={partIdx}
@@ -315,32 +326,20 @@ export default function IsodinamaKlasmataTheoria() {
                             );
                           })}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                      </div>
 
-                {/* 2. Ισοδύναμο Κλάσμα μετά από Διαστολή */}
-                <div className="space-y-1.5">
-                  <div className="text-[11px] text-slate-300 font-bold flex justify-between items-center">
-                    <span>
-                      Ισοδύναμο μετά από Διαστολή ({scaledNum} από τα {scaledDen} μέρη
-                      {scaledNum > scaledDen && ` ＝ ${Math.floor(scaledNum / scaledDen)} ακέραιες μονάδες ＋ ${scaledNum % scaledDen}/${scaledDen}`}
-                      ):
-                    </span>
-                    <span className="font-mono text-emerald-400">{((scaledNum / scaledDen) * 100).toFixed(1)}%</span>
-                  </div>
-
-                  <div className="overflow-x-auto pb-1.5 pt-0.5">
-                    <div className="flex gap-2.5 flex-nowrap w-max min-w-full">
-                      {Array.from({ length: Math.ceil(scaledNum / scaledDen) }).map((_, barIdx) => (
-                        <div
-                          key={barIdx}
-                          className="w-[140px] sm:w-[180px] h-8 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700 shrink-0 shadow-inner"
-                        >
+                      {/* 2. Μπάρα Ισοδύναμου Κλάσματος (ακριβώς από κάτω για άμεση σύγκριση) */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[10px] text-emerald-400 font-mono">
+                          <span>Ισοδύναμο (ανά {scaledDen}):</span>
+                          <span>
+                            {Math.max(0, Math.min(scaledDen, scaledNum - barIdx * scaledDen))} / {scaledDen}
+                          </span>
+                        </div>
+                        <div className="w-full h-7 bg-slate-800 rounded-lg overflow-hidden flex border border-slate-700 shadow-inner">
                           {Array.from({ length: scaledDen }).map((_, partIdx) => {
-                            const globalPartIndex = barIdx * scaledDen + partIdx;
-                            const isFilled = globalPartIndex < scaledNum;
+                            const globalIdx = barIdx * scaledDen + partIdx;
+                            const isFilled = globalIdx < scaledNum;
                             return (
                               <div
                                 key={partIdx}
@@ -352,14 +351,14 @@ export default function IsodinamaKlasmataTheoria() {
                             );
                           })}
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
               <div className="p-3 bg-white/10 rounded-xl border border-white/10 text-xs text-indigo-100">
-                Παρατηρούμε ότι και οι δύο ράβδοι καλύπτουν ακριβώς το ίδιο συνολικό μήκος, άρα τα κλάσματα είναι <strong>ισοδύναμα</strong>!
+                Παρατηρούμε ότι σε κάθε ακέραια μονάδα οι δύο ράβδοι καλύπτουν ακριβώς το ίδιο μήκος, άρα τα κλάσματα είναι <strong>ισοδύναμα</strong>!
               </div>
             </div>
           </div>
