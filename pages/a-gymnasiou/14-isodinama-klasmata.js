@@ -299,7 +299,7 @@ export default function IsodinamaKlasmataTheoria() {
                       key={barIdx}
                       className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2"
                     >
-                      <div className="text-[10px] uppercase font-bold text-indigo-300 tracking-wider">
+                      <div className="text-[10px] font-bold text-indigo-300 tracking-wider">
                         {barIdx + 1}η Ακέραια Μονάδα [{barIdx}, {barIdx + 1}]
                       </div>
 
@@ -421,7 +421,7 @@ export default function IsodinamaKlasmataTheoria() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 {/* Κλάσμα 1 */}
                 <div className="space-y-3">
-                  <div className="text-xs font-bold text-indigo-900 uppercase">1Ο ΚΛΑΣΜΑ (α/β)</div>
+                  <div className="text-xs font-bold text-indigo-900 ">1ο ΚΛΑΣΜΑ (α/β)</div>
                   <div>
                     <label className="text-[10px] font-bold text-slate-500 block mb-0.5">ΑΡΙΘΜΗΤΗΣ (α)</label>
                     <div className="grid grid-cols-[32px_1fr_32px] items-center h-9 w-full gap-1">
@@ -471,7 +471,7 @@ export default function IsodinamaKlasmataTheoria() {
 
                 {/* Κλάσμα 2 */}
                 <div className="space-y-3">
-                  <div className="text-xs font-bold text-sky-900 uppercase">2Ο ΚΛΑΣΜΑ (γ/δ)</div>
+                  <div className="text-xs font-bold text-sky-900">2ο ΚΛΑΣΜΑ (γ/δ)</div>
                   <div>
                     <label className="text-[10px] font-bold text-slate-500 block mb-0.5">ΑΡΙΘΜΗΤΗΣ (γ)</label>
                     <div className="grid grid-cols-[32px_1fr_32px] items-center h-9 w-full gap-1">
