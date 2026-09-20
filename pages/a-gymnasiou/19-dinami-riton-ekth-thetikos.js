@@ -94,7 +94,7 @@ export default function DinamiRitonTheoria() {
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
                 1
               </span>
-              Ορισμός της Δύναμης (αᵥ)
+              <span>Ορισμός της Δύναμης (α<sup>v</sup>)</span>
             </h2>
           </div>
 
