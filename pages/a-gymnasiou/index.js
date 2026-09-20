@@ -147,7 +147,15 @@ const CHAPTERS = [
     slug: '18-pollaplasiasmos-klasmata',
     title: 'Πολλαπλασιασμός ρητών',
     desc: 'Πολλαπλασιασμός Κλασμάτων και δεκαδικών.',
-    badge: 'ΚΕΦΑΛΑΙΟ 15',
+    badge: 'ΚΕΦΑΛΑΙΟ 16',
+    active: true,
+  },
+  {
+    id: '19',
+    slug: '19-dinami-riton-ekth-thetikos',
+    title: 'Δύναμης Ρητού με Θετικό Φυσικό Εκθέτη',
+    desc: 'Δύναμη ρητού με εκθέτη φυσικό μεγαλύτερο του μηδενός. Ιδιότητες.',
+    badge: 'ΚΕΦΑΛΑΙΟ 17',
     active: true,
   },
 ];
