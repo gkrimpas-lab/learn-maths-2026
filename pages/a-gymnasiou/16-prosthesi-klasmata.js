@@ -62,14 +62,6 @@ export default function ProsthesiKlasmataTheoria() {
     setter((prev) => Math.max(min, Math.min(max, prev + val)));
   };
 
-  const handleDecStep = (setter, delta, e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    setter((prev) => Math.max(-20, Math.min(20, Number((prev + delta).toFixed(1)))));
-  };
-
   // Υπολογισμοί Εργαστηρίου 1 (Πρόσθεση Κλασμάτων)
   const isHomonymous = f1Den === f2Den;
   const commonDen = useMemo(() => lcm(f1Den, f2Den), [f1Den, f2Den]);
@@ -95,7 +87,7 @@ export default function ProsthesiKlasmataTheoria() {
   return (
     <Layout
       title="Πρόσθεση Ρητών Αριθμών | Α' Γυμνασίου"
-      description="Πρόσθεση ρητών αριθμών (κλάσματα και δεκαδικοί), κανόνες ομόσημων και ετερόσημων και διαδραστικά εργαστήρια βήμα-βήμα."
+      description="Πρόσθεση ρητών αριθμών (κλάσματα και δεκαδικοί), κανόνες ομόσημων/ετερόσημων, ιδιότητες πρόσθεσης και διαδραστικά εργαστήρια."
       backUrl="/a-gymnasiou"
       backText="Α' Γυμνασίου"
       showAds={true}
@@ -117,10 +109,10 @@ export default function ProsthesiKlasmataTheoria() {
               Α' ΓΥΜΝΑΣΙΟΥ • ΚΕΦΑΛΑΙΟ 14 • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ
             </span>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-              Πρόσθεση Ρητών Αριθμών
+              Πρόσθεση Ρητών Αριθμών & Ιδιότητες
             </h1>
             <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Μαθαίνουμε πώς προσθέτουμε ρητούς αριθμούς σε κλασματική και δεκαδική μορφή, εφαρμόζοντας τους θεμελιώδεις κανόνες για ομόσημους και ετερόσημους αριθμούς και το ΕΚΠ των παρονομαστών.
+              Μαθαίνουμε πώς προσθέτουμε ρητούς αριθμούς σε κλασματική και δεκαδική μορφή (ομόσημους και ετερόσημους), καθώς και τις βασικές ιδιότητες της πρόσθεσης που απλοποιούν τους υπολογισμούς μας.
             </p>
           </div>
         </section>
@@ -203,23 +195,96 @@ export default function ProsthesiKlasmataTheoria() {
               </div>
             </div>
           </div>
-
-          <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200 text-xs sm:text-sm text-amber-950 flex items-center justify-between flex-wrap gap-2">
-            <span>
-              <strong>Αντίθετοι Ρητοί:</strong> Δύο ρητοί αριθμοί με αντίθετα πρόσημα και ίδια απόλυτη τιμή έχουν άθροισμα <strong>0</strong>.
-            </span>
-            <span className="font-mono font-bold flex items-center">
-              (<Frac num="3" den="4" />) ＋ (<Frac num="-3" den="4" />) ＝ 0
-            </span>
-          </div>
         </section>
 
-        {/* 2. ΠΡΟΣΘΕΣΗ ΚΛΑΣΜΑΤΩΝ: ΟΜΩΝΥΜΑ ΚΑΙ ΕΤΕΡΩΝΥΜΑ */}
-        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+        {/* 2. ΙΔΙΟΤΗΤΕΣ ΤΗΣ ΠΡΟΣΘΕΣΗΣ ΤΩΝ ΡΗΤΩΝ */}
+        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
                 2
+              </span>
+              Ιδιότητες της Πρόσθεσης των Ρητών Αριθμών
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 text-slate-700 text-xs sm:text-sm leading-relaxed">
+            {/* 1. Αντιμεταθετική */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <span className="text-[10px] font-black uppercase text-indigo-600 tracking-wider block">ΙΔΙΟΤΗΤΑ 1</span>
+                <h3 className="font-bold text-slate-900 text-base">Αντιμεταθετική</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  Μπορούμε να αλλάξουμε τη σειρά των προσθετέων χωρίς να αλλάξει το άθροισμα:
+                </p>
+                <div className="p-2.5 bg-white rounded-xl border border-slate-200 font-mono font-bold text-indigo-950 text-center text-sm">
+                  α ＋ β ＝ β ＋ α
+                </div>
+              </div>
+              <div className="p-2 bg-indigo-50/70 rounded-lg text-indigo-900 font-mono text-[11px] text-center border border-indigo-100">
+                (－2) ＋ 5 ＝ 5 ＋ (－2) ＝ 3
+              </div>
+            </div>
+
+            {/* 2. Προσεταιριστική */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <span className="text-[10px] font-black uppercase text-indigo-600 tracking-wider block">ΙΔΙΟΤΗΤΑ 2</span>
+                <h3 className="font-bold text-slate-900 text-base">Προσεταιριστική</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  Μπορούμε να ομαδοποιούμε τους προσθετέους με παρενθέσεις με όποιον τρόπο θέλουμε:
+                </p>
+                <div className="p-2.5 bg-white rounded-xl border border-slate-200 font-mono font-bold text-indigo-950 text-center text-xs">
+                  (α ＋ β) ＋ γ ＝ α ＋ (β ＋ γ)
+                </div>
+              </div>
+              <div className="p-2 bg-indigo-50/70 rounded-lg text-indigo-900 font-mono text-[11px] text-center border border-indigo-100">
+                [(-1)＋2]＋4 ＝ (-1)＋[2＋4] ＝ 5
+              </div>
+            </div>
+
+            {/* 3. Ουδέτερο Στοιχείο το 0 */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <span className="text-[10px] font-black uppercase text-indigo-600 tracking-wider block">ΙΔΙΟΤΗΤΑ 3</span>
+                <h3 className="font-bold text-slate-900 text-base">Ουδέτερο Στοιχείο (0)</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  Αν σε έναν ρητό προσθέσουμε το μηδέν, η τιμή του ρητού δεν αλλάζει:
+                </p>
+                <div className="p-2.5 bg-white rounded-xl border border-slate-200 font-mono font-bold text-indigo-950 text-center text-sm">
+                  α ＋ 0 ＝ 0 ＋ α ＝ α
+                </div>
+              </div>
+              <div className="p-2 bg-indigo-50/70 rounded-lg text-indigo-900 font-mono text-[11px] text-center border border-indigo-100 flex items-center justify-center">
+                <Frac num="-3" den="4" /> ＋ 0 ＝ <Frac num="-3" den="4" />
+              </div>
+            </div>
+
+            {/* 4. Αντίθετοι Αριθμοί */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <span className="text-[10px] font-black uppercase text-indigo-600 tracking-wider block">ΙΔΙΟΤΗΤΑ 4</span>
+                <h3 className="font-bold text-slate-900 text-base">Αντίθετοι Ρητοί</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  Το άθροισμα δύο αντίθετων ρητών αριθμών ισούται πάντοτε με το μηδέν:
+                </p>
+                <div className="p-2.5 bg-white rounded-xl border border-slate-200 font-mono font-bold text-indigo-950 text-center text-sm">
+                  α ＋ (－α) ＝ 0
+                </div>
+              </div>
+              <div className="p-2 bg-indigo-50/70 rounded-lg text-indigo-900 font-mono text-[11px] text-center border border-indigo-100 flex items-center justify-center">
+                (<Frac num="5" den="8" />) ＋ (<Frac num="-5" den="8" />) ＝ 0
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. ΠΡΟΣΘΕΣΗ ΚΛΑΣΜΑΤΩΝ: ΟΜΩΝΥΜΑ ΚΑΙ ΕΤΕΡΩΝΥΜΑ & ΕΡΓΑΣΤΗΡΙΟ 1 */}
+        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+          <div className="border-b border-slate-100 pb-4">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+                3
               </span>
               Πρόσθεση Κλασμάτων (Ομώνυμα & Ετερώνυμα)
             </h2>
@@ -456,12 +521,12 @@ export default function ProsthesiKlasmataTheoria() {
           </div>
         </section>
 
-        {/* 3. ΠΡΟΣΘΕΣΗ ΔΕΚΑΔΙΚΩΝ ΑΡΙΘΜΩΝ & ΕΡΓΑΣΤΗΡΙΟ 2 */}
+        {/* 4. ΠΡΟΣΘΕΣΗ ΔΕΚΑΔΙΚΩΝ ΑΡΙΘΜΩΝ & ΕΡΓΑΣΤΗΡΙΟ 2 */}
         <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
-                3
+                4
               </span>
               Πρόσθεση Δεκαδικών Αριθμών
             </h2>
@@ -502,53 +567,65 @@ export default function ProsthesiKlasmataTheoria() {
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              {/* Χειριστήρια Steppers (5 cols) */}
+              {/* Χειριστήρια Steppers: Ακέραιο (±1) και Δεκαδικό (±0.1) (5 cols) */}
               <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 {/* 1ος Δεκαδικός */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-600 uppercase">1ΟΣ ΔΕΚΑΔΙΚΟΣ</label>
-                  
-                  {/* Κεντρική ένδειξη τιμής */}
-                  <div className="h-11 flex items-center justify-center bg-white rounded-xl border border-slate-300 font-black text-lg font-mono text-indigo-950 shadow-sm">
-                    {dec1 > 0 ? `＋${dec1.toFixed(1).replace('.', ',')}` : dec1.toFixed(1).replace('.', ',')}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-600 uppercase">1ΟΣ ΔΕΚΑΔΙΚΟΣ</label>
+                    <span className="text-base font-black font-mono text-indigo-950 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
+                      {dec1 > 0 ? `＋${dec1.toFixed(1).replace('.', ',')}` : dec1.toFixed(1).replace('.', ',')}
+                    </span>
                   </div>
 
-                  {/* Κουμπιά για ακέραιο μέρος (+/- 1) */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Ακέραιο (±1)</span>
+                  {/* Ακέραιο Μέρος (±1) */}
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">ΑΚΕΡΑΙΟ (±1)</span>
                     <div className="grid grid-cols-2 gap-1.5">
                       <button
                         type="button"
-                        onClick={(e) => handleDecStep(setDec1, -1, e)}
-                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                        onClick={(e) => {
+                          if (e) { e.preventDefault(); e.stopPropagation(); }
+                          setDec1((prev) => Math.max(-20, Number((prev - 1).toFixed(1))));
+                        }}
+                        className="h-9 flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold text-sm hover:bg-slate-100 active:scale-95 shadow-sm text-slate-800"
                       >
                         －1
                       </button>
                       <button
                         type="button"
-                        onClick={(e) => handleDecStep(setDec1, 1, e)}
-                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                        onClick={(e) => {
+                          if (e) { e.preventDefault(); e.stopPropagation(); }
+                          setDec1((prev) => Math.min(20, Number((prev + 1).toFixed(1))));
+                        }}
+                        className="h-9 flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold text-sm hover:bg-slate-100 active:scale-95 shadow-sm text-slate-800"
                       >
                         ＋1
                       </button>
                     </div>
                   </div>
 
-                  {/* Κουμπιά για δέκατα (+/- 0.1) */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Δέκατα (±0,1)</span>
+                  {/* Δεκαδικό Μέρος (±0.1) */}
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">ΔΕΚΑΔΙΚΟ (±0,1)</span>
                     <div className="grid grid-cols-2 gap-1.5">
                       <button
                         type="button"
-                        onClick={(e) => handleDecStep(setDec1, -0.1, e)}
-                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                        onClick={(e) => {
+                          if (e) { e.preventDefault(); e.stopPropagation(); }
+                          setDec1((prev) => Math.max(-20, Number((prev - 0.1).toFixed(1))));
+                        }}
+                        className="h-9 flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold text-sm hover:bg-slate-100 active:scale-95 shadow-sm text-slate-800"
                       >
                         －0,1
                       </button>
                       <button
                         type="button"
-                        onClick={(e) => handleDecStep(setDec1, 0.1, e)}
-                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                        onClick={(e) => {
+                          if (e) { e.preventDefault(); e.stopPropagation(); }
+                          setDec1((prev) => Math.min(20, Number((prev + 0.1).toFixed(1))));
+                        }}
+                        className="h-9 flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold text-sm hover:bg-slate-100 active:scale-95 shadow-sm text-slate-800"
                       >
                         ＋0,1
                       </button>
@@ -557,50 +634,62 @@ export default function ProsthesiKlasmataTheoria() {
                 </div>
 
                 {/* 2ος Δεκαδικός */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-600 uppercase">2ΟΣ ΔΕΚΑΔΙΚΟΣ</label>
-                  
-                  {/* Κεντρική ένδειξη τιμής */}
-                  <div className="h-11 flex items-center justify-center bg-white rounded-xl border border-slate-300 font-black text-lg font-mono text-sky-950 shadow-sm">
-                    {dec2 > 0 ? `＋${dec2.toFixed(1).replace('.', ',')}` : dec2.toFixed(1).replace('.', ',')}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-600 uppercase">2ΟΣ ΔΕΚΑΔΙΚΟΣ</label>
+                    <span className="text-base font-black font-mono text-sky-950 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
+                      {dec2 > 0 ? `＋${dec2.toFixed(1).replace('.', ',')}` : dec2.toFixed(1).replace('.', ',')}
+                    </span>
                   </div>
 
-                  {/* Κουμπιά για ακέραιο μέρος (+/- 1) */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Ακέραιο (±1)</span>
+                  {/* Ακέραιο Μέρος (±1) */}
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">ΑΚΕΡΑΙΟ (±1)</span>
                     <div className="grid grid-cols-2 gap-1.5">
                       <button
                         type="button"
-                        onClick={(e) => handleDecStep(setDec2, -1, e)}
-                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                        onClick={(e) => {
+                          if (e) { e.preventDefault(); e.stopPropagation(); }
+                          setDec2((prev) => Math.max(-20, Number((prev - 1).toFixed(1))));
+                        }}
+                        className="h-9 flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold text-sm hover:bg-slate-100 active:scale-95 shadow-sm text-slate-800"
                       >
                         －1
                       </button>
                       <button
                         type="button"
-                        onClick={(e) => handleDecStep(setDec2, 1, e)}
-                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                        onClick={(e) => {
+                          if (e) { e.preventDefault(); e.stopPropagation(); }
+                          setDec2((prev) => Math.min(20, Number((prev + 1).toFixed(1))));
+                        }}
+                        className="h-9 flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold text-sm hover:bg-slate-100 active:scale-95 shadow-sm text-slate-800"
                       >
                         ＋1
                       </button>
                     </div>
                   </div>
 
-                  {/* Κουμπιά για δέκατα (+/- 0.1) */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Δέκατα (±0,1)</span>
+                  {/* Δεκαδικό Μέρος (±0.1) */}
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">ΔΕΚΑΔΙΚΟ (±0,1)</span>
                     <div className="grid grid-cols-2 gap-1.5">
                       <button
                         type="button"
-                        onClick={(e) => handleDecStep(setDec2, -0.1, e)}
-                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                        onClick={(e) => {
+                          if (e) { e.preventDefault(); e.stopPropagation(); }
+                          setDec2((prev) => Math.max(-20, Number((prev - 0.1).toFixed(1))));
+                        }}
+                        className="h-9 flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold text-sm hover:bg-slate-100 active:scale-95 shadow-sm text-slate-800"
                       >
                         －0,1
                       </button>
                       <button
                         type="button"
-                        onClick={(e) => handleDecStep(setDec2, 0.1, e)}
-                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                        onClick={(e) => {
+                          if (e) { e.preventDefault(); e.stopPropagation(); }
+                          setDec2((prev) => Math.min(20, Number((prev + 0.1).toFixed(1))));
+                        }}
+                        className="h-9 flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold text-sm hover:bg-slate-100 active:scale-95 shadow-sm text-slate-800"
                       >
                         ＋0,1
                       </button>
