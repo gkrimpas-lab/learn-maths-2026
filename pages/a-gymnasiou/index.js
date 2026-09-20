@@ -166,6 +166,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 18',
     active: true,
   },
+  {
+    id: '21',
+    slug: '21-proteraiotita-prakseon-riton',
+    title: 'Προτεραιότητα Πράξεων',
+    desc: 'Προτεραιότητα Πράξεων.',
+    badge: 'ΚΕΦΑΛΑΙΟ 19',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
