@@ -345,7 +345,7 @@ export default function OmonimaEteronimaTheoria() {
                     <div className="flex items-center gap-2 text-base sm:text-xl">
                       <Frac num={lab1Num1} den={lab1Den1} className="text-white" />
                       <span className="text-indigo-300 text-sm sm:text-base font-sans">
-                        (διαστολή με το {mult1})
+                        (διαίρεση με το {mult1})
                       </span>
                       <span className="text-indigo-300">＝</span>
                       <Frac num={newNum1} den={commonLcm} className="text-emerald-400 text-lg sm:text-2xl" />
@@ -360,7 +360,7 @@ export default function OmonimaEteronimaTheoria() {
                     <div className="flex items-center gap-2 text-base sm:text-xl">
                       <Frac num={lab1Num2} den={lab1Den2} className="text-white" />
                       <span className="text-indigo-300 text-sm sm:text-base font-sans">
-                        (διαστολή με το {mult2})
+                        (διαίρεση με το {mult2})
                       </span>
                       <span className="text-indigo-300">＝</span>
                       <Frac num={newNum2} den={commonLcm} className="text-sky-300 text-lg sm:text-2xl" />
