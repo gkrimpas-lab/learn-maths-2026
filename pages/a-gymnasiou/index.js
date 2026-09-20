@@ -126,6 +126,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 12',
     active: true,
   },
+   {
+    id: '16',
+    slug: '16-prosthesi-klasmata',
+    title: 'Πρόσθεση ρητών',
+    desc: 'Πρόσθεση Ομώνυμων και Ετερώνυμων Κλασμάτων.',
+    badge: 'ΚΕΦΑΛΑΙΟ 13',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
