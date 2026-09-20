@@ -261,21 +261,21 @@ export default function ProsthesiKlasmataTheoria() {
             </div>
 
             {/* 4. Αντίθετοι Αριθμοί */}
-            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
-              <div className="space-y-2">
-                <span className="text-[10px] font-black uppercase text-indigo-600 tracking-wider block">ΙΔΙΟΤΗΤΑ 4</span>
-                <h3 className="font-bold text-slate-900 text-base">Αντίθετοι Ρητοί</h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Το άθροισμα δύο αντίθετων ρητών αριθμών ισούται πάντοτε με το μηδέν:
-                </p>
-                <div className="p-2.5 bg-white rounded-xl border border-slate-200 font-mono font-bold text-indigo-950 text-center text-sm">
-                  α ＋ (－α) ＝ 0
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <span className="text-[10px] font-black uppercase text-indigo-600 tracking-wider block">ΙΔΙΟΤΗΤΑ 4</span>
+                  <h3 className="font-bold text-slate-900 text-base">Αντίθετοι Ρητοί</h3>
+                  <p className="text-slate-600 leading-relaxed">
+                    Το άθροισμα δύο αντίθετων ρητών αριθμών ισούται πάντοτε με το μηδέν:
+                  </p>
+                  <div className="p-2.5 bg-white rounded-xl border border-slate-200 font-mono font-bold text-indigo-950 text-center text-sm">
+                    α ＋ (－α) ＝ 0
+                  </div>
+                </div>
+                <div className="p-2 bg-indigo-50/70 rounded-lg text-indigo-900 font-mono text-[11px] text-center border border-indigo-100 flex items-center justify-center">
+                  (<Frac num="5" den="8" />) ＋ (<Frac num="5" den="8" isNeg={true} />) ＝ 0
                 </div>
               </div>
-              <div className="p-2 bg-indigo-50/70 rounded-lg text-indigo-900 font-mono text-[11px] text-center border border-indigo-100 flex items-center justify-center">
-                (<Frac num="5" den="8" />) ＋ (<Frac num="-5" den="8" />) ＝ 0
-              </div>
-            </div>
           </div>
         </section>
 
