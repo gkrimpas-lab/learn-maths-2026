@@ -123,7 +123,7 @@ const CHAPTERS = [
     slug: '15-omonima-eteronima-klasmata',
     title: 'Ομώνυμα - Ετερώνυμα Κλάσματα',
     desc: 'Ομώνυμα - Ετερώνυμα Κλάσματα, σύγκριση, απόλυτη τιμή κλασμάτων.',
-    badge: 'ΚΕΦΑΛΑΙΟ 12',
+    badge: 'ΚΕΦΑΛΑΙΟ 13',
     active: true,
   },
    {
@@ -131,7 +131,15 @@ const CHAPTERS = [
     slug: '16-prosthesi-klasmata',
     title: 'Πρόσθεση ρητών',
     desc: 'Πρόσθεση Ομώνυμων και Ετερώνυμων Κλασμάτων.',
-    badge: 'ΚΕΦΑΛΑΙΟ 13',
+    badge: 'ΚΕΦΑΛΑΙΟ 14',
+    active: true,
+  },
+  {
+    id: '17',
+    slug: '17-afairesi-klasmata',
+    title: 'Αφαίρεση ρητών',
+    desc: 'Αφαίρεση Ομώνυμων και Ετερώνυμων Κλασμάτων.',
+    badge: 'ΚΕΦΑΛΑΙΟ 15',
     active: true,
   },
 ];
