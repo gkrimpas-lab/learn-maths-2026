@@ -495,7 +495,7 @@ export default function ProsthesiKlasmataTheoria() {
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              {/* Χειριστήρια Steppers (5 cols) */}
+              {/* Χειριστήρια Steppers με βήμα 0.1 (5 cols) */}
               <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 {/* 1ος Δεκαδικός */}
                 <div className="space-y-2">
@@ -503,7 +503,10 @@ export default function ProsthesiKlasmataTheoria() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-1">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setDec1, -0.5, -20, 20, e)}
+                      onClick={(e) => {
+                        if (e) { e.preventDefault(); e.stopPropagation(); }
+                        setDec1((prev) => Math.max(-20, Number((prev - 0.1).toFixed(1))));
+                      }}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95"
                     >
                       －
@@ -513,7 +516,10 @@ export default function ProsthesiKlasmataTheoria() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setDec1, 0.5, -20, 20, e)}
+                      onClick={(e) => {
+                        if (e) { e.preventDefault(); e.stopPropagation(); }
+                        setDec1((prev) => Math.min(20, Number((prev + 0.1).toFixed(1))));
+                      }}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95"
                     >
                       ＋
@@ -527,7 +533,10 @@ export default function ProsthesiKlasmataTheoria() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-1">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setDec2, -0.5, -20, 20, e)}
+                      onClick={(e) => {
+                        if (e) { e.preventDefault(); e.stopPropagation(); }
+                        setDec2((prev) => Math.max(-20, Number((prev - 0.1).toFixed(1))));
+                      }}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95"
                     >
                       －
@@ -537,7 +546,10 @@ export default function ProsthesiKlasmataTheoria() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setDec2, 0.5, -20, 20, e)}
+                      onClick={(e) => {
+                        if (e) { e.preventDefault(); e.stopPropagation(); }
+                        setDec2((prev) => Math.min(20, Number((prev + 0.1).toFixed(1))));
+                      }}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95"
                     >
                       ＋
