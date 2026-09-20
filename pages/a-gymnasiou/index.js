@@ -142,6 +142,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 15',
     active: true,
   },
+  {
+    id: '18',
+    slug: '18-pollaplasiasmos-klasmata',
+    title: 'Πολλαπλασιασμός ρητών',
+    desc: 'Πολλαπλασιασμός Κλασμάτων και δεκαδικών.',
+    badge: 'ΚΕΦΑΛΑΙΟ 15',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
