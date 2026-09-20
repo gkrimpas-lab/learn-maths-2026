@@ -158,6 +158,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 17',
     active: true,
   },
+  {
+    id: '20',
+    slug: '20-diairesi-riton',
+    title: 'Διαίρεση Ρητών',
+    desc: 'Διαίρεση Ρητών, αντιστροφή δεύτερου κλάσματος, σύνθετο κλάσμα σε απλό.',
+    badge: 'ΚΕΦΑΛΑΙΟ 18',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
