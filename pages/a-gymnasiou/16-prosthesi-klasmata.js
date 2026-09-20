@@ -186,7 +186,7 @@ export default function ProsthesiKlasmataTheoria() {
                 </div>
                 <div className="flex items-center justify-between p-2 bg-white rounded-xl border border-sky-100">
                   <span className="flex items-center gap-1">
-                    (<Frac num="5" den="7" />) ＋ (<Frac num="-2" den="7" />)
+                    (＋<Frac num="5" den="7" />) ＋ (<Frac num="-2" den="7" />)
                   </span>
                   <span className="font-bold text-emerald-700 flex items-center">
                     ＝ ＋<Frac num="3" den="7" />
@@ -382,29 +382,43 @@ export default function ProsthesiKlasmataTheoria() {
                   </div>
                 </div>
 
-                {/* Ενδιάμεση Μορφή με Ομώνυμα */}
+                {/* Ενδιάμεση Μορφή με Ομώνυμα - με απόλυτη διατήρηση προσήμων μπροστά από τα κλάσματα */}
                 {!isHomonymous && (
                   <div className="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1.5 text-xs sm:text-sm font-sans">
                     <div className="text-slate-300 font-bold">
                       Βήμα 1: Μετατροπή σε ομώνυμα με πολλαπλασιασμό των όρων (ΕΚΠ ＝ {commonDen}):
                     </div>
-                    <div className="font-mono text-sm sm:text-base flex items-center gap-2 pt-1">
+                    <div className="font-mono text-sm sm:text-base flex items-center gap-2 pt-1 flex-wrap">
                       <span>＝</span>
+                      <span>(</span>
                       <Frac num={expandedNum1} den={commonDen} className="text-indigo-200" />
+                      <span>)</span>
                       <span className="text-amber-400">＋</span>
+                      <span>(</span>
                       <Frac num={expandedNum2} den={commonDen} className="text-sky-200" />
+                      <span>)</span>
                     </div>
                   </div>
                 )}
 
-                {/* Πρόσθεση Αριθμητών */}
+                {/* Πρόσθεση Αριθμητών με ξεκάθαρη εμφάνιση των προσήμων */}
                 <div className="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1.5 text-xs sm:text-sm font-sans">
                   <div className="text-slate-300 font-bold">
                     {isHomonymous ? 'Βήμα 1' : 'Βήμα 2'}: Πρόσθεση αριθμητών ({areOmmosite ? 'ομόσημοι' : 'ετερόσημοι'}):
                   </div>
-                  <div className="font-mono text-sm sm:text-base flex items-center gap-2 pt-1">
+                  <div className="font-mono text-sm sm:text-base flex items-center gap-2 pt-1 flex-wrap">
                     <span>＝</span>
-                    <Frac num={`${expandedNum1} ＋ (${expandedNum2})`} den={commonDen} />
+                    {/* Ενιαίο κλάσμα με ρητή παράθεση των προσήμων στον αριθμητή */}
+                    <span className="inline-flex items-center gap-1 align-middle mx-1 font-mono">
+                      <span className="inline-flex flex-col items-center justify-center leading-none text-center">
+                        <span className="pb-0.5 px-1 border-b-2 w-full text-center border-white">
+                          ({expandedNum1 > 0 ? `＋${expandedNum1}` : expandedNum1}) ＋ ({expandedNum2 > 0 ? `＋${expandedNum2}` : expandedNum2})
+                        </span>
+                        <span className="pt-0.5 px-1 w-full text-center text-slate-300">
+                          {commonDen}
+                        </span>
+                      </span>
+                    </span>
                     <span>＝</span>
                     <Frac num={sumNumerator} den={commonDen} className="text-amber-300" />
                   </div>
