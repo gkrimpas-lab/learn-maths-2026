@@ -62,6 +62,14 @@ export default function ProsthesiKlasmataTheoria() {
     setter((prev) => Math.max(min, Math.min(max, prev + val)));
   };
 
+  const handleDecStep = (setter, delta, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setter((prev) => Math.max(-20, Math.min(20, Number((prev + delta).toFixed(1)))));
+  };
+
   // Υπολογισμοί Εργαστηρίου 1 (Πρόσθεση Κλασμάτων)
   const isHomonymous = f1Den === f2Den;
   const commonDen = useMemo(() => lcm(f1Den, f2Den), [f1Den, f2Den]);
@@ -102,7 +110,7 @@ export default function ProsthesiKlasmataTheoria() {
       }
     >
       <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
-        {/* Banner Header - Ενιαίο Indigo Theme χωρίς τόνους στα κεφαλαία */}
+        {/* Banner Header */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-4">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
@@ -382,7 +390,7 @@ export default function ProsthesiKlasmataTheoria() {
                   </div>
                 </div>
 
-                {/* Ενδιάμεση Μορφή με Ομώνυμα - με απόλυτη διατήρηση προσήμων μπροστά από τα κλάσματα */}
+                {/* Ενδιάμεση Μορφή με Ομώνυμα */}
                 {!isHomonymous && (
                   <div className="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1.5 text-xs sm:text-sm font-sans">
                     <div className="text-slate-300 font-bold">
@@ -401,14 +409,13 @@ export default function ProsthesiKlasmataTheoria() {
                   </div>
                 )}
 
-                {/* Πρόσθεση Αριθμητών με ξεκάθαρη εμφάνιση των προσήμων */}
+                {/* Πρόσθεση Αριθμητών */}
                 <div className="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1.5 text-xs sm:text-sm font-sans">
                   <div className="text-slate-300 font-bold">
                     {isHomonymous ? 'Βήμα 1' : 'Βήμα 2'}: Πρόσθεση αριθμητών ({areOmmosite ? 'ομόσημοι' : 'ετερόσημοι'}):
                   </div>
                   <div className="font-mono text-sm sm:text-base flex items-center gap-2 pt-1 flex-wrap">
                     <span>＝</span>
-                    {/* Ενιαίο κλάσμα με ρητή παράθεση των προσήμων στον αριθμητή */}
                     <span className="inline-flex items-center gap-1 align-middle mx-1 font-mono">
                       <span className="inline-flex flex-col items-center justify-center leading-none text-center">
                         <span className="pb-0.5 px-1 border-b-2 w-full text-center border-white">
@@ -495,65 +502,109 @@ export default function ProsthesiKlasmataTheoria() {
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              {/* Χειριστήρια Steppers με βήμα 0.1 (5 cols) */}
+              {/* Χειριστήρια Steppers (5 cols) */}
               <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 {/* 1ος Δεκαδικός */}
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-slate-600 uppercase">1ΟΣ ΔΕΚΑΔΙΚΟΣ</label>
-                  <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-1">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        if (e) { e.preventDefault(); e.stopPropagation(); }
-                        setDec1((prev) => Math.max(-20, Number((prev - 0.1).toFixed(1))));
-                      }}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95"
-                    >
-                      －
-                    </button>
-                    <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 font-bold text-base font-mono text-indigo-950">
-                      {dec1 > 0 ? `＋${dec1.toFixed(1).replace('.', ',')}` : dec1.toFixed(1).replace('.', ',')}
+                  
+                  {/* Κεντρική ένδειξη τιμής */}
+                  <div className="h-11 flex items-center justify-center bg-white rounded-xl border border-slate-300 font-black text-lg font-mono text-indigo-950 shadow-sm">
+                    {dec1 > 0 ? `＋${dec1.toFixed(1).replace('.', ',')}` : dec1.toFixed(1).replace('.', ',')}
+                  </div>
+
+                  {/* Κουμπιά για ακέραιο μέρος (+/- 1) */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Ακέραιο (±1)</span>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => handleDecStep(setDec1, -1, e)}
+                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                      >
+                        －1
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDecStep(setDec1, 1, e)}
+                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                      >
+                        ＋1
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        if (e) { e.preventDefault(); e.stopPropagation(); }
-                        setDec1((prev) => Math.min(20, Number((prev + 0.1).toFixed(1))));
-                      }}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95"
-                    >
-                      ＋
-                    </button>
+                  </div>
+
+                  {/* Κουμπιά για δέκατα (+/- 0.1) */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Δέκατα (±0,1)</span>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => handleDecStep(setDec1, -0.1, e)}
+                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                      >
+                        －0,1
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDecStep(setDec1, 0.1, e)}
+                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                      >
+                        ＋0,1
+                      </button>
+                    </div>
                   </div>
                 </div>
 
                 {/* 2ος Δεκαδικός */}
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-slate-600 uppercase">2ΟΣ ΔΕΚΑΔΙΚΟΣ</label>
-                  <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-1">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        if (e) { e.preventDefault(); e.stopPropagation(); }
-                        setDec2((prev) => Math.max(-20, Number((prev - 0.1).toFixed(1))));
-                      }}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95"
-                    >
-                      －
-                    </button>
-                    <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 font-bold text-base font-mono text-sky-950">
-                      {dec2 > 0 ? `＋${dec2.toFixed(1).replace('.', ',')}` : dec2.toFixed(1).replace('.', ',')}
+                  
+                  {/* Κεντρική ένδειξη τιμής */}
+                  <div className="h-11 flex items-center justify-center bg-white rounded-xl border border-slate-300 font-black text-lg font-mono text-sky-950 shadow-sm">
+                    {dec2 > 0 ? `＋${dec2.toFixed(1).replace('.', ',')}` : dec2.toFixed(1).replace('.', ',')}
+                  </div>
+
+                  {/* Κουμπιά για ακέραιο μέρος (+/- 1) */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Ακέραιο (±1)</span>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => handleDecStep(setDec2, -1, e)}
+                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                      >
+                        －1
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDecStep(setDec2, 1, e)}
+                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                      >
+                        ＋1
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        if (e) { e.preventDefault(); e.stopPropagation(); }
-                        setDec2((prev) => Math.min(20, Number((prev + 0.1).toFixed(1))));
-                      }}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95"
-                    >
-                      ＋
-                    </button>
+                  </div>
+
+                  {/* Κουμπιά για δέκατα (+/- 0.1) */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Δέκατα (±0,1)</span>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => handleDecStep(setDec2, -0.1, e)}
+                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                      >
+                        －0,1
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDecStep(setDec2, 0.1, e)}
+                        className="py-1.5 px-2 bg-white border border-slate-300 font-bold rounded-lg text-xs hover:bg-slate-100 active:scale-95 transition"
+                      >
+                        ＋0,1
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -569,7 +620,7 @@ export default function ProsthesiKlasmataTheoria() {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-center gap-3 text-2xl sm:text-4xl font-black py-2">
+                <div className="flex items-center justify-center gap-3 text-2xl sm:text-4xl font-black py-2 flex-wrap">
                   <span>({dec1 > 0 ? `＋${dec1.toFixed(1).replace('.', ',')}` : dec1.toFixed(1).replace('.', ',')})</span>
                   <span className="text-amber-400 font-sans">＋</span>
                   <span>({dec2 > 0 ? `＋${dec2.toFixed(1).replace('.', ',')}` : dec2.toFixed(1).replace('.', ',')})</span>
