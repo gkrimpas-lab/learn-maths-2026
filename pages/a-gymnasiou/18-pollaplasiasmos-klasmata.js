@@ -13,19 +13,18 @@ const gcd = (a, b) => {
   return x || 1;
 };
 
-// Επαναχρησιμοποιήσιμο component για κλασματική γραφή με πρόσημο μπροστά
+// Επαναχρησιμοποιήσιμο component για κλασματική γραφή με ασφαλή ανίχνευση προσήμου
 function Frac({ num, den, isNeg = false, className = '' }) {
-  const numericNeg =
-    (typeof num === 'number' && num < 0) ||
-    (typeof den === 'number' && den < 0);
-  const showMinus = isNeg || numericNeg;
+  const numStr = String(num);
+  const denStr = String(den);
+  const hasMinus = numStr.startsWith('-') || denStr.startsWith('-') || isNeg;
 
-  const displayNum = typeof num === 'number' ? Math.abs(num) : num.toString().replace(/^-/, '');
-  const displayDen = typeof den === 'number' ? Math.abs(den) : den.toString().replace(/^-/, '');
+  const displayNum = numStr.replace(/^-/, '');
+  const displayDen = denStr.replace(/^-/, '');
 
   return (
     <span className={`inline-flex items-center gap-1 align-middle mx-1 font-mono ${className}`}>
-      {showMinus && <span className="font-bold">－</span>}
+      {hasMinus && <span className="font-bold">－</span>}
       <span className="inline-flex flex-col items-center justify-center leading-none text-center">
         <span className="pb-0.5 px-1 border-b-2 w-full text-center" style={{ borderColor: 'currentColor' }}>
           {displayNum}
@@ -133,6 +132,7 @@ export default function PollaplasiasmosKlasmataTheoria() {
                 </ul>
               </div>
 
+              {/* Ομόσημοι (Αριστερή κάρτα) */}
               <div className="space-y-2 pt-2 border-t border-indigo-100 font-mono text-xs sm:text-sm text-indigo-950">
                 <div className="flex items-center justify-between p-2.5 bg-white rounded-xl border border-indigo-100">
                   <span>(＋3) · (＋4)</span>
@@ -140,10 +140,10 @@ export default function PollaplasiasmosKlasmataTheoria() {
                 </div>
                 <div className="flex items-center justify-between p-2.5 bg-white rounded-xl border border-indigo-100">
                   <span className="flex items-center gap-1">
-                    (<Frac num="-2" den="3" />) · (<Frac num="-4" den="5" />)
+                    (<Frac num={2} den={3} isNeg={true} />) · (<Frac num={4} den={5} isNeg={true} />)
                   </span>
                   <span className="font-bold text-emerald-700 flex items-center">
-                    ＝ ＋<Frac num="8" den="15" />
+                    ＝ ＋<Frac num={8} den={15} />
                   </span>
                 </div>
               </div>
@@ -166,6 +166,7 @@ export default function PollaplasiasmosKlasmataTheoria() {
                 </ul>
               </div>
 
+              {/* Ετερόσημοι (Δεξιά κάρτα) */}
               <div className="space-y-2 pt-2 border-t border-sky-100 font-mono text-xs sm:text-sm text-sky-950">
                 <div className="flex items-center justify-between p-2.5 bg-white rounded-xl border border-sky-100">
                   <span>(＋2,5) · (－3)</span>
@@ -173,10 +174,10 @@ export default function PollaplasiasmosKlasmataTheoria() {
                 </div>
                 <div className="flex items-center justify-between p-2.5 bg-white rounded-xl border border-sky-100">
                   <span className="flex items-center gap-1">
-                    (＋<Frac num="3" den="7" />) · (<Frac num="-5" den="4" />)
+                    (＋<Frac num={3} den={7} />) · (<Frac num={5} den={4} isNeg={true} />)
                   </span>
                   <span className="font-bold text-rose-700 flex items-center">
-                    ＝ <Frac num="-15" den="28" />
+                    ＝ <Frac num={15} den={28} isNeg={true} />
                   </span>
                 </div>
               </div>
