@@ -182,6 +182,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 20',
     active: true,
   },
+  {
+    id: '23',
+    slug: '23-epanalipsi-3',
+    title: 'Επανάληψη Ενοτήτων 11 έως 20',
+    desc: 'Ρητοί αριθμοί, Κλάσματα, Πράξεις Κλασμάτων, Δύναμη Ρητών, Προτεραιότητα Πράξεων.',
+    badge: 'ΕΠΑΝΑΛΗΨΗ 3',
+    active: false,
+  },
 ];
 
 export default function AGymnasiouIndex() {
