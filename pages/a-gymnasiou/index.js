@@ -174,6 +174,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 19',
     active: true,
   },
+  {
+    id: '22',
+    slug: '22-tipopoimeni-morfi',
+    title: 'Τυποποιημένη μορφή Αριθμών',
+    desc: 'Τυποποιημένη μορφή μικρών και μεγάλων Αριθμών.',
+    badge: 'ΚΕΦΑΛΑΙΟ 20',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
