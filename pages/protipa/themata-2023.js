@@ -107,7 +107,8 @@ const QUESTIONS_2023 = [
     id: 3,
     officialNumber: 28,
     group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
-    promptText: 'Το γεωμετρικό σχήμα που βρίσκεται στην 51η θέση του παρακάτω επαναλαμβανόμενου μοτίβου (Τρίγωνο, Τετράγωνο, Κύκλος, Ορθογώνιο) είναι:',
+    promptText: 'Το γεωμετρικό σχήμα που βρίσκεται στην 51η θέση του παρακάτω μοτίβου είναι:',
+    hasSvg: 'pattern28',
     options: [
       { key: 'A', label: 'Τρίγωνο', raw: 'Τρίγωνο' },
       { key: 'B', label: 'Τετράγωνο', raw: 'Τετράγωνο' },
@@ -118,22 +119,22 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Το μοτίβο αποτελείται από μία επαναλαμβανόμενη περίοδο <strong>4 σχημάτων</strong>:
+          Παρατηρώντας το σχήμα, το μοτίβο επαναλαμβάνεται ανά <strong>4 σχήματα</strong>:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-          <div>1. Τρίγωνο | 2. Τετράγωνο | 3. Κύκλος | 4. Ορθογώνιο</div>
+          <div>1. Ορθογώνιο ➔ 2. Κύκλος ➔ <strong>3. Τρίγωνο</strong> ➔ 4. Τετράγωνο</div>
         </div>
         <p>
-          Διαιρούμε τη θέση 51 με το μήκος της περιόδου (4):
+          Διαιρούμε τη θέση 51 με το πλήθος των σχημάτων της περιόδου (4):
         </p>
         <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
           <div>51 ＝ 4 · 12 ＋ <strong>3</strong></div>
           <div className="text-emerald-800 font-bold pt-1">
-            ➔ Πηλίκο 12 πλήρεις κύκλοι και υπόλοιπο 3.
+            ➔ 12 πλήρεις τετράδες και υπόλοιπο 3.
           </div>
         </div>
         <p className="pt-1">
-          Το 3ο σχήμα του κύκλου της περιόδου αντιστοιχεί στο <strong>Τρίγωνο</strong> (Επιλογή <strong>A</strong>).
+          Το 3ο σχήμα της τετράδας είναι το <strong>Τρίγωνο</strong> (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
@@ -1054,6 +1055,42 @@ export default function Themata2023Page() {
   ).length;
 
   const renderQuestionVisual = (q) => {
+    if (q.hasSvg === 'pattern28') {
+      return (
+        <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
+          <svg width="460" height="60" viewBox="0 0 460 60" className="select-none">
+            {/* 1η Τετράδα */}
+            {/* Ορθογώνιο */}
+            <rect x="10" y="16" width="34" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+            {/* Κύκλος */}
+            <circle cx="72" cy="28" r="14" fill="none" stroke="#000000" strokeWidth="2.5" />
+            {/* Τρίγωνο */}
+            <polygon points="118,12 105,42 131,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
+            {/* Τετράγωνο */}
+            <rect x="150" y="16" width="26" height="26" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+
+            {/* 2η Τετράδα */}
+            {/* Ορθογώνιο */}
+            <rect x="196" y="16" width="34" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+            {/* Κύκλος */}
+            <circle cx="258" cy="28" r="14" fill="none" stroke="#000000" strokeWidth="2.5" />
+            {/* Τρίγωνο */}
+            <polygon points="304,12 291,42 317,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
+            {/* Τετράγωνο */}
+            <rect x="336" y="16" width="26" height="26" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+
+            {/* 3η Τετράδα (απόσπασμα & αποσιωπητικά) */}
+            {/* Ορθογώνιο */}
+            <rect x="382" y="16" width="34" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+            {/* Αποσιωπητικά */}
+            <circle cx="430" cy="30" r="3" fill="#000000" />
+            <circle cx="440" cy="30" r="3" fill="#000000" />
+            <circle cx="450" cy="30" r="3" fill="#000000" />
+          </svg>
+        </div>
+      );
+    }
+    
     if (q.hasSvg === 'axis34') {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
