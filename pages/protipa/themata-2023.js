@@ -1058,34 +1058,41 @@ export default function Themata2023Page() {
     if (q.hasSvg === 'pattern28') {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
-          <svg width="460" height="60" viewBox="0 0 460 60" className="select-none">
-            {/* 1η Τετράδα */}
-            {/* Ορθογώνιο */}
-            <rect x="10" y="16" width="34" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
-            {/* Κύκλος */}
-            <circle cx="72" cy="28" r="14" fill="none" stroke="#000000" strokeWidth="2.5" />
-            {/* Τρίγωνο */}
-            <polygon points="118,12 105,42 131,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
-            {/* Τετράγωνο */}
-            <rect x="150" y="16" width="26" height="26" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+          <svg width="560" height="60" viewBox="0 0 560 60" className="select-none mx-auto block">
+            {/* 1η Τετράδα (Σχήματα 1 - 4) */}
+            {/* 1. Ορθογώνιο */}
+            <rect x="10" y="18" width="30" height="22" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+            {/* 2. Κύκλος */}
+            <circle cx="64" cy="29" r="13" fill="none" stroke="#000000" strokeWidth="2.5" />
+            {/* 3. Τρίγωνο */}
+            <polygon points="104,14 91,42 117,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
+            {/* 4. Τετράγωνο */}
+            <rect x="134" y="17" width="24" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
 
-            {/* 2η Τετράδα */}
-            {/* Ορθογώνιο */}
-            <rect x="196" y="16" width="34" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
-            {/* Κύκλος */}
-            <circle cx="258" cy="28" r="14" fill="none" stroke="#000000" strokeWidth="2.5" />
-            {/* Τρίγωνο */}
-            <polygon points="304,12 291,42 317,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
-            {/* Τετράγωνο */}
-            <rect x="336" y="16" width="26" height="26" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+            {/* 2η Τετράδα (Σχήματα 5 - 8) */}
+            {/* 5. Ορθογώνιο */}
+            <rect x="176" y="18" width="30" height="22" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+            {/* 6. Κύκλος */}
+            <circle cx="230" cy="29" r="13" fill="none" stroke="#000000" strokeWidth="2.5" />
+            {/* 7. Τρίγωνο */}
+            <polygon points="270,14 257,42 283,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
+            {/* 8. Τετράγωνο */}
+            <rect x="300" y="17" width="24" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
 
-            {/* 3η Τετράδα (απόσπασμα & αποσιωπητικά) */}
-            {/* Ορθογώνιο */}
-            <rect x="382" y="16" width="34" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
-            {/* Αποσιωπητικά */}
-            <circle cx="430" cy="30" r="3" fill="#000000" />
-            <circle cx="440" cy="30" r="3" fill="#000000" />
-            <circle cx="450" cy="30" r="3" fill="#000000" />
+            {/* 3η Τετράδα (Σχήματα 9 - 12) */}
+            {/* 9. Ορθογώνιο */}
+            <rect x="342" y="18" width="30" height="22" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+            {/* 10. Κύκλος */}
+            <circle cx="396" cy="29" r="13" fill="none" stroke="#000000" strokeWidth="2.5" />
+            {/* 11. Τρίγωνο */}
+            <polygon points="436,14 423,42 449,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
+            {/* 12. Τετράγωνο */}
+            <rect x="466" y="17" width="24" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
+
+            {/* Αποσιωπητικά (...) */}
+            <circle cx="510" cy="30" r="3" fill="#000000" />
+            <circle cx="522" cy="30" r="3" fill="#000000" />
+            <circle cx="534" cy="30" r="3" fill="#000000" />
           </svg>
         </div>
       );
