@@ -798,7 +798,7 @@ export default function DinamiRitonEkthAkeraioAsk() {
     <Layout
       title="Ασκήσεις: Δυνάμεις Ρητών με Εκθέτη Ακέραιο | Β' Γυμνασίου"
       description="12 δυναμικές ασκήσεις υπολογισμών, ιδιοτήτων και ρεαλιστικών προβλημάτων στις δυνάμεις ρητών με εκθέτη ακέραιο."
-      backUrl="/01-dinami-riton-ekth-akeraio"
+      backUrl="/b-gymnasiou/01-dinami-riton-ekth-akeraio"
       backText="ΘΕΩΡΙΑ"
       showAds={true}
     >
