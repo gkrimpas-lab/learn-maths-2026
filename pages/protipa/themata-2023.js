@@ -1260,28 +1260,50 @@ export default function Themata2023Page() {
     if (q.hasSvg === 'parks40') {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
-          <svg width="360" height="110" viewBox="0 0 360 110" className="select-none font-sans">
-            {/* 1ο σχέδιο */}
-            <g transform="translate(10, 10)">
-              <rect x="0" y="0" width="100" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
-              <rect x="18" y="22" width="82" height="48" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" />
-              <text x="50" y="88" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">1ο σχέδιο</text>
+          <svg width="450" height="125" viewBox="0 0 450 125" className="select-none font-sans mx-auto block">
+            {/* 1ο ΣΧΕΔΙΟ (Πεζόδρομος πάνω και αριστερά, πλάτους 15px) */}
+            <g transform="translate(15, 10)">
+              {/* Εξωτερικό ορθογώνιο */}
+              <rect x="0" y="0" width="120" height="75" fill="#ffffff" stroke="#000000" strokeWidth="1.8" />
+              {/* Γρασίδι (γκρι) κάτω δεξιά: 120 - 15 = 105px πλάτος, 75 - 15 = 60px ύψος */}
+              <rect x="15" y="15" width="105" height="60" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
+              {/* Μαύρη κουκίδα πάνω αριστερά */}
+              <circle cx="0" cy="0" r="3" fill="#000000" />
+              <text x="60" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">1ο σχέδιο</text>
             </g>
-            {/* 2ο σχέδιο */}
-            <g transform="translate(130, 10)">
-              <rect x="0" y="0" width="100" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
-              <rect x="0" y="0" width="41" height="25" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" />
-              <rect x="59" y="0" width="41" height="25" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" />
-              <rect x="0" y="45" width="41" height="25" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" />
-              <rect x="59" y="45" width="41" height="25" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" />
-              <text x="50" y="88" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">2ο σχέδιο</text>
+
+            {/* 2ο ΣΧΕΔΙΟ (Σταυρωτός πεζόδρομος στη μέση, πλάτους 15px) */}
+            <g transform="translate(165, 10)">
+              {/* Εξωτερικό ορθογώνιο */}
+              <rect x="0" y="0" width="120" height="75" fill="#ffffff" stroke="#000000" strokeWidth="1.8" />
+              {/* 4 ορθογώνια γρασιδιού (πλάτος: (120-15)/2 = 52.5px, ύψος: (75-15)/2 = 30px) */}
+              {/* Πάνω αριστερά */}
+              <rect x="0" y="0" width="52.5" height="30" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
+              {/* Πάνω δεξιά */}
+              <rect x="67.5" y="0" width="52.5" height="30" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
+              {/* Κάτω αριστερά */}
+              <rect x="0" y="45" width="52.5" height="30" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
+              {/* Κάτω δεξιά */}
+              <rect x="67.5" y="45" width="52.5" height="30" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
+              {/* Μαύρες κουκίδες */}
+              <circle cx="0" cy="45" r="3" fill="#000000" />
+              <circle cx="52.5" cy="75" r="3" fill="#000000" />
+              <text x="60" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">2ο σχέδιο</text>
             </g>
-            {/* 3ο σχέδιο */}
-            <g transform="translate(250, 10)">
-              <rect x="0" y="0" width="100" height="70" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
-              <rect x="0" y="0" width="38" height="48" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" />
-              <rect x="56" y="0" width="44" height="48" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" />
-              <text x="50" y="88" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">3ο σχέδιο</text>
+
+            {/* 3ο ΣΧΕΔΙΟ (Ανάποδο Τ: πεζόδρομος κάτω και κατακόρυφος, πλάτους 15px) */}
+            <g transform="translate(315, 10)">
+              {/* Εξωτερικό ορθογώνιο */}
+              <rect x="0" y="0" width="120" height="75" fill="#ffffff" stroke="#000000" strokeWidth="1.8" />
+              {/* 2 μεγάλα ορθογώνια γρασιδιού στο επάνω μέρος (ύψος: 75 - 15 = 60px) */}
+              {/* Αριστερό: πλάτος 52.5px */}
+              <rect x="0" y="0" width="52.5" height="60" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
+              {/* Δεξί: πλάτος 52.5px */}
+              <rect x="67.5" y="0" width="52.5" height="60" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
+              {/* Μαύρες κουκίδες */}
+              <circle cx="52.5" cy="0" r="3" fill="#000000" />
+              <circle cx="0" cy="60" r="3" fill="#000000" />
+              <text x="60" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">3ο σχέδιο</text>
             </g>
           </svg>
         </div>
