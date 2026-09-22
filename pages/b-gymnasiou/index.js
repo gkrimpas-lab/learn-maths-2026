@@ -11,6 +11,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 1',
     active: true,
   },
+  {
+    id: '01',
+    slug: '02-tipopoiimeni-morfi',
+    title: 'Τυποποιημένη μορφή ρητών αριθμών',
+    desc: 'Τυποποιημένη μορφή ρητών αριθμών, πολύ μικροί και πολύ μεγάλοι αριθμοί.',
+    badge: 'ΚΕΦΑΛΑΙΟ 2',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
