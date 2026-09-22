@@ -249,10 +249,38 @@ const QUESTIONS_2023 = [
     group: 'ΟΜΑΔΑ Α (4 Επιλογές)',
     promptText: 'Το διπλάσιο ενός αριθμού μειωμένο κατά το μισό του ισούται με 15. Ποια εξίσωση περιγράφει το πρόβλημα;',
     options: [
-      { key: 'A', label: <span className="font-mono">2 · x － x/2 ＝ 15</span>, raw: '2*x - x/2 = 15' },
-      { key: 'B', label: <span className="font-mono">2 · x － x ＝ 15</span>, raw: '2*x - x = 15' },
-      { key: 'Γ', label: <span className="font-mono">x/2 ＝ 15</span>, raw: 'x/2 = 15' },
-      { key: 'Δ', label: <span className="font-mono">2 · (x － x/2) ＝ 15</span>, raw: '2*(x - x/2) = 15' }
+      {
+        key: 'A',
+        label: (
+          <span className="inline-flex items-center">
+            2 · x － <Fraction num="x" den="2" /> ＝ 15
+          </span>
+        ),
+        raw: '2*x - x/2 = 15'
+      },
+      {
+        key: 'B',
+        label: <span className="inline-flex items-center">2 · x － x ＝ 15</span>,
+        raw: '2*x - x = 15'
+      },
+      {
+        key: 'Γ',
+        label: (
+          <span className="inline-flex items-center">
+            <Fraction num="x" den="2" /> ＝ 15
+          </span>
+        ),
+        raw: 'x/2 = 15'
+      },
+      {
+        key: 'Δ',
+        label: (
+          <span className="inline-flex items-center">
+            2 · ( x － <Fraction num="x" den="2" /> ) ＝ 15
+          </span>
+        ),
+        raw: '2*(x - x/2) = 15'
+      }
     ],
     correctRaw: '2*x - x/2 = 15',
     explain: (
@@ -260,15 +288,25 @@ const QUESTIONS_2023 = [
         <p>
           Αν συμβολίσουμε τον άγνωστο αριθμό με <strong>x</strong>:
         </p>
-        <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
+        <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
           <div>• Το διπλάσιο του αριθμού: <strong>2 · x</strong></div>
-          <div>• Το μισό του αριθμού: <strong>x / 2</strong></div>
-          <div className="pt-1">
-            • Μειωμένο κατά το μισό του: <strong>2 · x － x/2 ＝ 15</strong>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span>• Το μισό του αριθμού:</span>
+            <Fraction num="x" den="2" />
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap pt-1 text-slate-900">
+            <span>• Το διπλάσιο μειωμένο κατά το μισό του ισούται με 15:</span>
+            <span className="inline-flex items-center font-bold text-emerald-800">
+              2 · x － <Fraction num="x" den="2" /> ＝ 15
+            </span>
           </div>
         </div>
         <p className="pt-1">
-          Επομένως, η σωστή εξίσωση είναι η <strong>2 · x － x/2 ＝ 15</strong> (Επιλογή <strong>A</strong>).
+          Επομένως, η σωστή εξίσωση είναι η{' '}
+          <strong className="inline-flex items-center align-middle">
+            2 · x － <Fraction num="x" den="2" /> ＝ 15
+          </strong>{' '}
+          (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
