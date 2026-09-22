@@ -25,6 +25,49 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
+// Component μορφοποίησης μαθηματικών εκφράσεων σε κανονική μορφή (δυνάμεις, κλάσματα, σύμβολα)
+const MathFormattedText = ({ text = "", className = "" }) => {
+  if (!text) return null;
+
+  // Μετατροπή απλών συμβόλων
+  let str = String(text)
+    .replace(/\*/g, ' · ')
+    .replace(/:/g, ' : ')
+    .replace(/\//g, ' : ');
+
+  // Τεμαχισμός και απόδοση δυνάμεων και κλασμάτων
+  // Αναγνωρίζουμε μοτίβα όπως: (α/β), α^β, (-α)^β κτλ.
+  const tokens = str.split(/(\([+-]?\d+(?:\.\d+)?\s*:\s*\d+(?:\.\d+)?\)|\b\d+(?:\.\d+)?\s*:\s*\d+(?:\.\d+)?|\(?[-+]?\d+(?:\.\d+)?\)?\^[+-]?\d+(?:\.\d+)?)/g);
+
+  return (
+    <span className={`inline-flex items-center flex-wrap gap-y-1 font-mono ${className}`}>
+      {tokens.map((token, idx) => {
+        if (!token) return null;
+
+        // Ανίχνευση δύναμης: π.χ. 2^3 ή (-2)^2 ή 10^-1
+        if (token.includes('^')) {
+          const [base, exp] = token.split('^');
+          return (
+            <span key={idx} className="inline-flex items-center">
+              <span>{base}</span>
+              <sup className="text-amber-400 font-bold ml-0.5">{exp}</sup>
+            </span>
+          );
+        }
+
+        // Ανίχνευση κλάσματος: π.χ. (1 : 2) ή 1 : 4 (που προήλθε από διαίρεση/κλάσμα)
+        const fracMatch = token.match(/^\(?([+-]?\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)\)?$/);
+        if (fracMatch && !token.includes(' · ') && !token.includes(' + ') && !token.includes(' - ')) {
+          return <Frac key={idx} num={fracMatch[1]} den={fracMatch[2]} />;
+        }
+
+        // Κανονικό κείμενο / σύμβολα
+        return <span key={idx}>{token}</span>;
+      })}
+    </span>
+  );
+};
+
 // Preset παραδείγματα για το εργαστήριο
 const PRESET_EXPRESSIONS = [
   { label: 'Με αρνητικό εκθέτη', expr: '2^3 - 4 * 2^-1 + 6' },
@@ -42,7 +85,6 @@ function solveExpressionSteps(inputExpr) {
     return { error: 'Παρακαλώ πληκτρολόγησε μία αριθμητική παράσταση.', steps: [] };
   }
 
-  // Έλεγχος μη έγκυρων χαρακτήρων
   if (/[^0-9+\-*/^().,]/.test(current)) {
     return { error: 'Η παράσταση περιέχει μη επιτρεπτούς χαρακτήρες.', steps: [] };
   }
@@ -70,10 +112,9 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Καθαρισμός τυχόν διπλών παρενθέσεων γύρω από απλούς αριθμούς
     current = current.replace(/\((-?\d+(\.\d+)?)\)/g, '$1');
 
-    // Βήμα 2: Επίλυση δυνάμεων (π.χ. 2^3 ή 2^-1 ή (-2)^2)
+    // Βήμα 2: Επίλυση δυνάμεων
     const powerRegex = /(-?\d+(?:\.\d+)?)\^(-?\d+(?:\.\d+)?)/;
     while (powerRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -92,10 +133,9 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Καθαρισμός παρενθέσεων
     current = current.replace(/\((-?\d+(\.\d+)?)\)/g, '$1');
 
-    // Βήμα 3: Πολλαπλασιασμοί & Διαιρέσεις (αριστερά προς δεξιά)
+    // Βήμα 3: Πολλαπλασιασμοί & Διαιρέσεις
     const multDivRegex = /(-?\d+(?:\.\d+)?)\s*([*/])\s*(-?\d+(?:\.\d+)?)/;
     while (multDivRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -122,7 +162,7 @@ function solveExpressionSteps(inputExpr) {
 
     current = current.replace(/\((-?\d+(\.\d+)?)\)/g, '$1');
 
-    // Βήμα 4: Προσθέσεις & Αφαιρέσεις (αριστερά προς δεξιά)
+    // Βήμα 4: Προσθέσεις & Αφαιρέσεις
     const addSubRegex = /(-?\d+(?:\.\d+)?)\s*([+])\s*(-?\d+(?:\.\d+)?)|(-?\d+(?:\.\d+)?)\s*(-)\s*(\d+(?:\.\d+)?)/;
     while (addSubRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -156,24 +196,21 @@ function solveExpressionSteps(inputExpr) {
   }
 }
 
-// Βοηθητική απλή επίλυση εντός παρένθεσης
+// Βοηθητική επίλυση
 function evaluateSimple(expr) {
   let e = expr;
-  // Δυνάμεις
   const powReg = /(-?\d+(?:\.\d+)?)\^(-?\d+(?:\.\d+)?)/;
   while (powReg.test(e)) {
     const m = e.match(powReg);
     const val = Math.pow(parseFloat(m[1]), parseFloat(m[2]));
     e = e.replace(m[0], val);
   }
-  // Πολλαπλασιασμός / Διαίρεση
   const mdReg = /(-?\d+(?:\.\d+)?)\s*([*/])\s*(-?\d+(?:\.\d+)?)/;
   while (mdReg.test(e)) {
     const m = e.match(mdReg);
     const val = m[2] === '*' ? parseFloat(m[1]) * parseFloat(m[3]) : parseFloat(m[1]) / parseFloat(m[3]);
     e = e.replace(m[0], val);
   }
-  // Πρόσθεση / Αφαίρεση
   const asReg = /(-?\d+(?:\.\d+)?)\s*([+])\s*(-?\d+(?:\.\d+)?)|(-?\d+(?:\.\d+)?)\s*(-)\s*(\d+(?:\.\d+)?)/;
   while (asReg.test(e)) {
     const m = e.match(asReg);
@@ -262,7 +299,7 @@ export default function ArithmitikiParastasiTheoria() {
                   <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-amber-600 text-white font-black text-sm flex items-center justify-center">2</span>
                   <div>
                     <strong className="text-amber-950 block">Δυνάμεις (Θετικοί & Αρνητικοί Εκθέτες):</strong>
-                    <span className="text-xs sm:text-sm text-slate-600">Υπολογίζουμε όλες τις δυνάμεις (π.χ. <span className="font-mono font-bold">2³ = 8</span>, <span className="font-mono font-bold">5⁻¹ = 1/5</span>, <span className="font-mono font-bold">α⁰ = 1</span>).</span>
+                    <span className="text-xs sm:text-sm text-slate-600">Υπολογίζουμε όλες τις δυνάμεις (π.χ. <span className="font-mono font-bold">2³ = 8</span>, <span className="font-mono font-bold">5⁻¹ = <Frac num="1" den="5" /></span>, <span className="font-mono font-bold">α⁰ = 1</span>).</span>
                   </div>
                 </div>
 
@@ -296,8 +333,10 @@ export default function ArithmitikiParastasiTheoria() {
                   <p className="text-slate-600">
                     Ο αρνητικός εκθέτης μετατρέπεται πρώτα σε κλάσμα:
                   </p>
-                  <div className="font-mono text-slate-800 bg-slate-50 p-2 rounded-lg border border-slate-200">
-                    4 · 2<sup>-1</sup> ＝ 4 · <Frac num="1" den="2" /> ＝ 2
+                  <div className="font-mono text-slate-800 bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-center flex-wrap">
+                    <span>4 · 2<sup>-1</sup> ＝ 4 · </span>
+                    <Frac num="1" den="2" />
+                    <span> ＝ 2</span>
                   </div>
                 </div>
 
@@ -356,7 +395,7 @@ export default function ArithmitikiParastasiTheoria() {
             ))}
           </div>
 
-          {/* Input Field */}
+          {/* Input Field (Καθαρή εισαγωγή δεδομένων) */}
           <div className="space-y-2">
             <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
               ΠΛΗΚΤΡΟΛΟΓΗΣΕ ΤΗΝ ΠΑΡΑΣΤΑΣΗ:
@@ -384,7 +423,7 @@ export default function ArithmitikiParastasiTheoria() {
             </div>
           </div>
 
-          {/* Οθόνη Αποτελέσματος & Βημάτων */}
+          {/* Οθόνη Αποτελέσματος & Βημάτων με Κανονική Μαθηματική Μορφοποίηση */}
           <div className="bg-slate-900 rounded-3xl p-5 sm:p-8 text-white space-y-6 shadow-inner">
             {analysis.error ? (
               <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-sm font-semibold flex items-center gap-2">
@@ -393,18 +432,18 @@ export default function ArithmitikiParastasiTheoria() {
               </div>
             ) : (
               <>
-                {/* Τελικό Αποτέλεσμα Header */}
+                {/* Τελικό Αποτέλεσμα Header με MathFormattedText */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 gap-2">
                   <div>
-                    <span className="text-xs text-indigo-400 uppercase font-bold tracking-wider">
+                    <span className="text-xs text-indigo-400 uppercase font-bold tracking-wider block mb-1">
                       ΑΡΧΙΚΗ ΠΑΡΑΣΤΑΣΗ
                     </span>
-                    <div className="text-lg sm:text-2xl font-black font-mono text-amber-300">
-                      {customExpr}
+                    <div className="text-lg sm:text-2xl font-black text-amber-300">
+                      <MathFormattedText text={customExpr} />
                     </div>
                   </div>
                   <div className="text-left sm:text-right">
-                    <span className="text-xs text-emerald-400 uppercase font-bold tracking-wider">
+                    <span className="text-xs text-emerald-400 uppercase font-bold tracking-wider block mb-1">
                       ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ
                     </span>
                     <div className="text-2xl sm:text-4xl font-black font-mono text-white">
@@ -428,18 +467,25 @@ export default function ArithmitikiParastasiTheoria() {
                       {analysis.steps.map((st, sIdx) => (
                         <div
                           key={sIdx}
-                          className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2 font-mono text-xs sm:text-sm"
+                          className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2.5 font-mono text-xs sm:text-sm"
                         >
+                          {/* Επεξήγηση Βήματος με μαθηματική μορφή */}
                           <div className="flex items-center gap-2 text-indigo-300 font-sans font-bold">
                             <span className="w-5 h-5 rounded-md bg-indigo-500/30 text-indigo-300 flex items-center justify-center text-xs">
                               {sIdx + 1}
                             </span>
-                            <span>{st.action}</span>
+                            <MathFormattedText text={st.action} />
                           </div>
-                          <div className="pl-7 text-slate-300 flex items-center gap-2 flex-wrap">
-                            <span className="line-through opacity-50">{st.before}</span>
-                            <span className="text-amber-400 font-bold">➔</span>
-                            <span className="text-white font-bold">{st.after}</span>
+
+                          {/* Ροή αντικατάστασης (ΧΩΡΙΣ διαγραφή, κανονική μορφή) */}
+                          <div className="pl-7 text-slate-300 flex items-center gap-3 flex-wrap">
+                            <span className="text-slate-300 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                              <MathFormattedText text={st.before} />
+                            </span>
+                            <span className="text-amber-400 font-bold text-base">＝</span>
+                            <span className="text-white font-bold bg-indigo-600/30 px-2.5 py-1 rounded-lg border border-indigo-500/30">
+                              <MathFormattedText text={st.after} />
+                            </span>
                           </div>
                         </div>
                       ))}
@@ -468,10 +514,10 @@ export default function ArithmitikiParastasiTheoria() {
               <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono">
                 Α ＝ 3 · 2<sup>3</sup> - 18 : 3<sup>2</sup> + 5 · 10<sup>-1</sup>
               </h3>
-              <div className="space-y-1.5 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
-                <div>1. Δυνάμεις: 2³=8, 3²=9, 10⁻¹=0,1</div>
+              <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
+                <div>1. Δυνάμεις: 2³ = 8, 3² = 9, 10⁻¹ = 0,1</div>
                 <div className="pl-3 text-slate-500">➔ 3 · 8 - 18 : 9 + 5 · 0,1</div>
-                <div>2. Πολλαπλασιασμοί & Διαιρέσεις: 3·8=24, 18:9=2, 5·0,1=0,5</div>
+                <div>2. Πολλαπλασιασμοί & Διαιρέσεις: 3 · 8 = 24, 18 : 9 = 2, 5 · 0,1 = 0,5</div>
                 <div className="pl-3 text-slate-500">➔ 24 - 2 + 0,5</div>
                 <div>3. Αφαιρέσεις & Προσθέσεις (αριστερά προς δεξιά):</div>
                 <div className="pl-3 font-bold text-indigo-700">➔ 22 + 0,5 ＝ 22,5</div>
@@ -483,12 +529,22 @@ export default function ArithmitikiParastasiTheoria() {
               <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono">
                 Β ＝ (4 - 6)<sup>3</sup> - (-3)<sup>2</sup> + 8 · 2<sup>-2</sup>
               </h3>
-              <div className="space-y-1.5 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
+              <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
                 <div>1. Πράξη στην παρένθεση: 4 - 6 = -2</div>
                 <div className="pl-3 text-slate-500">➔ (-2)³ - (-3)² + 8 · 2⁻²</div>
-                <div>2. Δυνάμεις: (-2)³ = -8, (-3)² = +9, 2⁻² = 1/4</div>
-                <div className="pl-3 text-slate-500">➔ -8 - (+9) + 8 · (1/4)</div>
-                <div>3. Πολλαπλασιασμός: 8 · (1/4) = 2</div>
+                <div className="flex items-center flex-wrap">
+                  <span>2. Δυνάμεις: (-2)³ = -8, (-3)² = +9, 2⁻² = </span>
+                  <Frac num="1" den="4" />
+                </div>
+                <div className="pl-3 text-slate-500 flex items-center flex-wrap">
+                  <span>➔ -8 - (+9) + 8 · </span>
+                  <Frac num="1" den="4" />
+                </div>
+                <div className="flex items-center flex-wrap">
+                  <span>3. Πολλαπλασιασμός: 8 · </span>
+                  <Frac num="1" den="4" />
+                  <span> ＝ 2</span>
+                </div>
                 <div className="pl-3 text-slate-500">➔ -8 - 9 + 2</div>
                 <div>4. Προσθέσεις / Αφαιρέσεις:</div>
                 <div className="pl-3 font-bold text-indigo-700">➔ -17 + 2 ＝ -15</div>
