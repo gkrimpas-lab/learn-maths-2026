@@ -103,7 +103,7 @@ export default function DinamiRitonEkthAkeraio() {
       showAds={true}
       actionButton={
         <Link
-          href="/01-dinami-riton-ekth-akeraio-ask"
+          href="/b-gymnasiou/01-dinami-riton-ekth-akeraio-ask"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-sm sm:text-base transition-all shadow-md"
         >
           <span>🎯</span>
