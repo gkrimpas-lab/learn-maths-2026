@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
-// Component Frac με απόλυτα ασφαλή ανίχνευση προσήμου και τοποθέτηση του μείον μπροστά
+// Component Frac με ασφαλή ανίχνευση προσήμου και τοποθέτηση του μείον μπροστά
 const Frac = ({ num, den, className = "" }) => {
   const numStr = String(num).trim();
   const denStr = String(den).trim();
@@ -85,13 +85,6 @@ export default function DinamiRitonEkthAkeraio() {
   const absExp = Math.abs(exponent);
   const isExpNeg = exponent < 0;
 
-  // Βήματα Εργαστηρίου 1
-  const invertedNum = isExpNeg ? baseDen : baseNum;
-  const invertedDen = isExpNeg ? baseNum : baseDen;
-
-  const resultNumPow = Math.pow(invertedNum, absExp);
-  const resultDenPow = Math.pow(invertedDen, absExp);
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-950 via-indigo-900 to-indigo-800 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
       <Head>
@@ -150,7 +143,7 @@ export default function DinamiRitonEkthAkeraio() {
             </p>
             
             <div className="p-3 bg-indigo-950/70 border border-indigo-800/80 rounded-xl text-center font-mono text-sm sm:text-base font-semibold text-indigo-100">
-              α<sup>ν</sup> = α · α · α · ... · α <span className="text-xs text-indigo-300 block sm:inline mt-1 sm:mt-0 font-sans">({exponent &gt; 0 ? "ν παράγοντες" : "ν παράγοντες"})</span>
+              α<sup>ν</sup> = α · α · α · ... · α <span className="text-xs text-indigo-300 block sm:inline mt-1 sm:mt-0 font-sans">(ν παράγοντες)</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -402,9 +395,9 @@ export default function DinamiRitonEkthAkeraio() {
                     {scaleBase}<sup>{exp}</sup>
                   </span>
                   <span className="text-xs text-amber-300 font-semibold">
-                    {exp &gt; 0 && `${val}`}
+                    {exp > 0 && `${val}`}
                     {exp === 0 && '1'}
-                    {exp &lt; 0 && <Frac num="1" den={val} />}
+                    {exp < 0 && <Frac num="1" den={val} />}
                   </span>
                 </div>
               );
@@ -440,7 +433,7 @@ export default function DinamiRitonEkthAkeraio() {
               { id: 'mul', label: 'ΓΙΝΟΜΕΝΟ (αᵐ · αⁿ)' },
               { id: 'div', label: 'ΠΗΛΙΚΟ (αᵐ : αⁿ)' },
               { id: 'pow', label: 'ΔΥΝΑΜΗ ((αᵐ)ⁿ)' }
-            ].map(tab => (
+            ].map((tab) => (
               <button
                 key={tab.id}
                 type="button"
