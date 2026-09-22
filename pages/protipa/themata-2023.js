@@ -38,13 +38,13 @@ const QUESTIONS_2023 = [
           <div>• 8 ＝ 2³</div>
         </div>
         <p>
-          Παίρνουμε όλους τους κοινούς και μη κοινούς πρώτους παράγοντες με τον μεγαλύτερο εκθέτη:
+          Παίρνουμε όλους τους παράγοντες, κοινούς και μη κοινούς, με τον μεγαλύτερο εκθέτη:
         </p>
         <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           ΕΚΠ(3, 6, 8) ＝ 2³ · 3 ＝ 8 · 3 ＝ <strong className="text-emerald-700 text-base">24</strong>
         </div>
         <p className="pt-1">
-          Άρα, το Ελάχιστο Κοινό Πολλαπλάσιο είναι το <strong>24</strong> (Επιλογή <strong>B</strong>).
+          Επομένως, το ΕΚΠ είναι το <strong>24</strong> (Επιλογή <strong>B</strong>).
         </p>
       </div>
     )
@@ -56,10 +56,7 @@ const QUESTIONS_2023 = [
     promptText: (
       <span className="inline-flex items-center flex-wrap">
         Η τιμή της παράστασης &nbsp;
-        <span className="font-mono">
-          <Fraction num="17" den="2" /> － 2³ : 6
-        </span>
-        &nbsp; είναι:
+        <Fraction num="17" den="2" /> － 2³ : 6 &nbsp; είναι:
       </span>
     ),
     options: [
@@ -72,19 +69,17 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Εκτελούμε πρώτα τη δύναμη και τη διαίρεση, τηρώντας την προτεραιότητα των πράξεων:
+          Εκτελούμε πρώτα τη δύναμη και τη διαίρεση, τηρώντας την προτεραιότητα πράξεων:
         </p>
         <div className="space-y-2 bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           <div>• 2³ ＝ 8</div>
           <div className="flex items-center gap-1.5 flex-wrap">
             <span>• 8 : 6 ＝</span>
             <Fraction num="8" den="6" />
-            <span>＝</span>
-            <Fraction num="4" den="3" />
           </div>
         </div>
         <p>
-          Στη συνέχεια κάνουμε την αφαίρεση κάνοντας τα κλάσματα ομώνυμα (ΕΚΠ(2, 3) ＝ 6):
+          Στη συνέχεια κάνουμε την αφαίρεση κάνοντας τα κλάσματα ομώνυμα με ΕΚΠ(2, 6) ＝ 6:
         </p>
         <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
           <Fraction num="17" den="2" />
@@ -98,7 +93,7 @@ const QUESTIONS_2023 = [
           <strong className="text-emerald-700 text-base"><Fraction num="43" den="6" /></strong>
         </div>
         <p className="pt-1">
-          Επομένως, η τιμή της παράστασης είναι <strong><Fraction num="43" den="6" /></strong> (Επιλογή <strong>A</strong>).
+          Άρα, η τιμή της παράστασης είναι <strong><Fraction num="43" den="6" /></strong> (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
@@ -110,22 +105,22 @@ const QUESTIONS_2023 = [
     promptText: 'Το γεωμετρικό σχήμα που βρίσκεται στην 51η θέση του παρακάτω μοτίβου είναι:',
     hasSvg: 'pattern28',
     options: [
-      { key: 'A', label: 'Τρίγωνο', raw: 'Τρίγωνο' },
-      { key: 'B', label: 'Τετράγωνο', raw: 'Τετράγωνο' },
-      { key: 'Γ', label: 'Κύκλος', raw: 'Κύκλος' },
-      { key: 'Δ', label: 'Ορθογώνιο', raw: 'Ορθογώνιο' }
+      { key: 'A', label: 'τρίγωνο', raw: 'τρίγωνο' },
+      { key: 'B', label: 'τετράγωνο', raw: 'τετράγωνο' },
+      { key: 'Γ', label: 'κύκλος', raw: 'κύκλος' },
+      { key: 'Δ', label: 'ορθογώνιο', raw: 'ορθογώνιο' }
     ],
-    correctRaw: 'Τρίγωνο',
+    correctRaw: 'τρίγωνο',
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Παρατηρώντας το σχήμα, το μοτίβο επαναλαμβάνεται ανά <strong>4 σχήματα</strong>:
+          Στο σχήμα της εκφώνησης το μοτίβο επαναλαμβάνεται ανά <strong>4 σχήματα</strong>:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
           <div>1. Ορθογώνιο ➔ 2. Κύκλος ➔ <strong>3. Τρίγωνο</strong> ➔ 4. Τετράγωνο</div>
         </div>
         <p>
-          Διαιρούμε τη θέση 51 με το πλήθος των σχημάτων της περιόδου (4):
+          Διαιρούμε τη θέση 51 με το μήκος της περιόδου (4):
         </p>
         <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
           <div>51 ＝ 4 · 12 ＋ <strong>3</strong></div>
@@ -134,7 +129,7 @@ const QUESTIONS_2023 = [
           </div>
         </div>
         <p className="pt-1">
-          Το 3ο σχήμα της τετράδας είναι το <strong>Τρίγωνο</strong> (Επιλογή <strong>A</strong>).
+          Το 3ο σχήμα είναι το <strong>τρίγωνο</strong> (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
@@ -164,10 +159,10 @@ const QUESTIONS_2023 = [
           <Fraction num="α²" den="4" />
           <span>＝</span>
           <Fraction num="1" den="4" />
-          <span>· Ε₁ ＝ <strong className="text-emerald-700 text-base">25%</strong> του Ε₁</span>
+          <span>· Ε₁ ＝ <strong className="text-emerald-700 text-base">25%</strong></span>
         </div>
         <p className="pt-1">
-          Άρα, το εμβαδόν του γίνεται το <strong>25%</strong> του αρχικού (Επιλογή <strong>Γ</strong>).
+          Άρα, το εμβαδόν του σε σχέση με το αρχικό είναι το <strong>25%</strong> (Επιλογή <strong>Γ</strong>).
         </p>
       </div>
     )
@@ -187,10 +182,10 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Όλα τα κλάσματα έχουν τον ίδιο αριθμητή (2) και είναι γνήσια (μικρότερα του 1).
+          Όλα τα κλάσματα είναι γνήσια με ίδιο αριθμητή το 2.
         </p>
         <p>
-          Όσο <strong>μικρότερος είναι ο παρονομαστής</strong> σε κλάσματα με ίδιο θετικό αριθμητή, τόσο <strong>μεγαλύτερη είναι η τιμή</strong> του κλάσματος:
+          Όσο μικρότερος είναι ο παρονομαστής, τόσο μεγαλύτερη είναι η τιμή του κλάσματος και άρα τόσο πιο κοντά βρίσκεται στη μονάδα (1):
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
           <Fraction num="2" den="18" />
@@ -202,7 +197,7 @@ const QUESTIONS_2023 = [
           <strong className="text-emerald-700 text-base"><Fraction num="2" den="9" /></strong>
         </div>
         <p className="pt-1">
-          Επομένως, το μεγαλύτερο κλάσμα που πλησιάζει περισσότερο τη μονάδα είναι το <strong><Fraction num="2" den="9" /></strong> (Επιλογή <strong>Δ</strong>).
+          Επομένως, το πιο κοντινό στη μονάδα είναι το <strong><Fraction num="2" den="9" /></strong> (Επιλογή <strong>Δ</strong>).
         </p>
       </div>
     )
@@ -222,13 +217,13 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          1. Υπολογίζουμε το ποσό της έκπτωσης σε ευρώ:
+          1. Η έκπτωση σε ευρώ είναι:
         </p>
         <div className="bg-white/70 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
-          Έκπτωση ＝ 25€ － 15€ ＝ <strong>10€</strong>
+          25€ － 15€ ＝ <strong>10€</strong>
         </div>
         <p>
-          2. Βρίσκουμε το ποσοστό επί της <strong>αρχικής τιμής</strong>:
+          2. Το ποσοστό έκπτωσης υπολογίζεται πάνω στην <strong>αρχική τιμή</strong> (25€):
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
           <span>Ποσοστό ＝</span>
@@ -238,7 +233,7 @@ const QUESTIONS_2023 = [
           <span>＝ <strong className="text-emerald-700 text-base">40%</strong></span>
         </div>
         <p className="pt-1">
-          Άρα, το ποσοστό της έκπτωσης ήταν <strong>40%</strong> (Επιλογή <strong>A</strong>).
+          Άρα, το ποσοστό έκπτωσης ήταν <strong>40%</strong> (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
@@ -253,14 +248,14 @@ const QUESTIONS_2023 = [
         key: 'A',
         label: (
           <span className="inline-flex items-center">
-            2 · x － <Fraction num="x" den="2" /> ＝ 15
+            2 • x － <Fraction num="x" den="2" /> ＝ 15
           </span>
         ),
         raw: '2*x - x/2 = 15'
       },
       {
         key: 'B',
-        label: <span className="inline-flex items-center">2 · x － x ＝ 15</span>,
+        label: <span className="inline-flex items-center">2 • x － x ＝ 15</span>,
         raw: '2*x - x = 15'
       },
       {
@@ -276,7 +271,7 @@ const QUESTIONS_2023 = [
         key: 'Δ',
         label: (
           <span className="inline-flex items-center">
-            2 · ( x － <Fraction num="x" den="2" /> ) ＝ 15
+            2 • ( x － <Fraction num="x" den="2" /> ) ＝ 15
           </span>
         ),
         raw: '2*(x - x/2) = 15'
@@ -286,27 +281,23 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Αν συμβολίσουμε τον άγνωστο αριθμό με <strong>x</strong>:
+          Συμβολίζουμε τον άγνωστο αριθμό με <strong>x</strong>:
         </p>
         <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-          <div>• Το διπλάσιο του αριθμού: <strong>2 · x</strong></div>
+          <div>• Το διπλάσιο του αριθμού: <strong>2 • x</strong></div>
           <div className="flex items-center gap-1.5 flex-wrap">
             <span>• Το μισό του αριθμού:</span>
             <Fraction num="x" den="2" />
           </div>
-          <div className="flex items-center gap-1.5 flex-wrap pt-1 text-slate-900">
-            <span>• Το διπλάσιο μειωμένο κατά το μισό του ισούται με 15:</span>
+          <div className="flex items-center gap-1.5 flex-wrap pt-1">
+            <span>• Μειωμένο κατά το μισό του ισούται με 15:</span>
             <span className="inline-flex items-center font-bold text-emerald-800">
-              2 · x － <Fraction num="x" den="2" /> ＝ 15
+              2 • x － <Fraction num="x" den="2" /> ＝ 15
             </span>
           </div>
         </div>
         <p className="pt-1">
-          Επομένως, η σωστή εξίσωση είναι η{' '}
-          <strong className="inline-flex items-center align-middle">
-            2 · x － <Fraction num="x" den="2" /> ＝ 15
-          </strong>{' '}
-          (Επιλογή <strong>A</strong>).
+          Επομένως, η ζητούμενη εξίσωση είναι η <strong>A</strong>.
         </p>
       </div>
     )
@@ -330,17 +321,17 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Έστω <strong>X</strong> ο συνολικός αριθμός των μαθητών του σχολείου.
+          Έστω <strong>X</strong> ο αριθμός όλων των μαθητών του σχολείου.
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span>Τα μισά παιδιά είναι:</span>
+            <span>Τα μισά παιδιά:</span>
             <Fraction num="X" den="2" />
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
             <span>Το</span>
             <Fraction num="1" den="3" />
-            <span>των μισών είναι:</span>
+            <span>των μισών:</span>
             <Fraction num="1" den="3" />
             <span>·</span>
             <Fraction num="X" den="2" />
@@ -349,13 +340,13 @@ const QUESTIONS_2023 = [
           </div>
         </div>
         <p>
-          Γνωρίζουμε ότι το <Fraction num="1" den="6" /> του σχολείου είναι 36 μαθητές:
+          Γνωρίζουμε ότι το <Fraction num="1" den="6" /> του συνόλου ισούται με 36:
         </p>
         <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           X ＝ 36 · 6 ＝ <strong className="text-emerald-700 text-base">216 μαθητές</strong>
         </div>
         <p className="pt-1">
-          Άρα, όλοι οι μαθητές είναι <strong>216</strong> (Επιλογή <strong>A</strong>).
+          Άρα, όλοι οι μαθητές του σχολείου είναι <strong>216</strong> (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
@@ -380,7 +371,7 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Επειδή το <Fraction num="5" den="3" /> είναι το μέσο του τμήματος ανάμεσα στο α και το <Fraction num="9" den="4" />:
+          Επειδή το <Fraction num="5" den="3" /> είναι το μέσο του τμήματος με άκρα α και <Fraction num="9" den="4" />:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -399,7 +390,7 @@ const QUESTIONS_2023 = [
           </div>
         </div>
         <p>
-          Λύνουμε ως προς α (με κοινό παρονομαστή το 12):
+          Υπολογίζουμε το α με κοινό παρονομαστή το 12:
         </p>
         <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
           <span>α ＝</span>
@@ -449,7 +440,7 @@ const QUESTIONS_2023 = [
           </div>
         </div>
         <p>
-          Μαζί σε 1 ώρα γεμίζουν:
+          Ανοιχτές μαζί σε 1 ώρα γεμίζουν:
         </p>
         <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1.5 flex-wrap">
           <Fraction num="1" den="10" />
@@ -461,10 +452,9 @@ const QUESTIONS_2023 = [
           <Fraction num="10" den="120" />
           <span>＝</span>
           <strong className="text-emerald-700 text-base"><Fraction num="22" den="120" /></strong>
-          <span className="text-slate-500 font-sans text-xs">(ή 11/60)</span>
         </div>
         <p className="pt-1">
-          Επομένως, γεμίζουν τα <strong><Fraction num="22" den="120" /></strong> της δεξαμενής (Επιλογή <strong>Δ</strong>).
+          Άρα, γεμίζουν τα <strong><Fraction num="22" den="120" /></strong> της δεξαμενής (Επιλογή <strong>Δ</strong>).
         </p>
       </div>
     )
@@ -473,7 +463,7 @@ const QUESTIONS_2023 = [
     id: 11,
     officialNumber: 36,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Η Μαρία εκτρέφει κουνέλια και κάθε χρόνο ο πληθυσμός τους αυξάνει κατά 50%. Αν σήμερα έχει 64 κουνέλια, πόσα θα έχει σε δύο χρόνια;',
+    promptText: 'Η Μαρία εκτρέφει κουνέλια και κάθε χρόνο ο πληθυσμός τους αυξάνει κατά 50%. Αν σήμερα έχει 64 κουνέλια, πόσα θα έχει σε δυο χρόνια;',
     options: [
       { key: 'A', label: '128', raw: '128' },
       { key: 'B', label: '144', raw: '144' },
@@ -484,18 +474,18 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Αύξηση κατά 50% σημαίνει ότι ο πληθυσμός γίνεται 1,5 φορά ο προηγούμενος (ή προσθέτουμε τα μισά):
+          Αύξηση κατά 50% σημαίνει ότι κάθε χρόνο ο πληθυσμός αυξάνεται κατά το μισό του:
         </p>
         <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
           <div>
-            <strong>1ος χρόνος:</strong> 64 ＋ 50% · 64 ＝ 64 ＋ 32 ＝ <strong>96 κουνέλια</strong>
+            <strong>Σε 1 χρόνο:</strong> 64 ＋ 50% · 64 ＝ 64 ＋ 32 ＝ <strong>96 κουνέλια</strong>
           </div>
           <div>
-            <strong>2ος χρόνος:</strong> 96 ＋ 50% · 96 ＝ 96 ＋ 48 ＝ <strong className="text-emerald-700 text-base">144 κουνέλια</strong>
+            <strong>Σε 2 χρόνια:</strong> 96 ＋ 50% · 96 ＝ 96 ＋ 48 ＝ <strong className="text-emerald-700 text-base">144 κουνέλια</strong>
           </div>
         </div>
         <p className="pt-1">
-          Άρα, σε δύο χρόνια θα έχει <strong>144</strong> κουνέλια (Επιλογή <strong>B</strong>).
+          Επομένως, σε δύο χρόνια θα έχει <strong>144</strong> κουνέλια (Επιλογή <strong>B</strong>).
         </p>
       </div>
     )
@@ -504,38 +494,38 @@ const QUESTIONS_2023 = [
     id: 12,
     officialNumber: 37,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Ο Παναγιώτης βρίσκεται αρχικά στη θέση Ο και θέλει να πάει στο σπίτι του. Ξεκινά να περπατά στην κατεύθυνση που δείχνει το βέλος για 1.600 μέτρα. Μετά στρίβει 90° αριστερά και περπατάει για ακόμη 400 μέτρα μέχρι να ξαναστρίψει 90° αριστερά και να περπατήσει άλλο 1 χιλιόμετρο (1.000 μ.) ώστε να φτάσει στο σπίτι του. Αν η απόσταση ΑΒ είναι 800 μέτρα, σε ποια θέση είναι το σπίτι του Παναγιώτη;',
+    promptText: 'Ο Παναγιώτης βρίσκεται αρχικά στη θέση Ο, όπως φαίνεται στον χάρτη και θέλει να πάει στο σπίτι του. Ξεκινά να περπατά στην κατεύθυνση που δείχνει το βέλος για χίλια εξακόσια μέτρα. Μετά στρίβει 90° αριστερά και περπατάει για ακόμη τετρακόσια μέτρα μέχρι να ξαναστρίψει 90° αριστερά και να περπατήσει άλλο ένα χιλιόμετρο ώστε να φτάσει στο σπίτι του. Αν η απόσταση ΑΒ είναι οκτακόσια μέτρα σε ποια θέση είναι το σπίτι του Παναγιώτη;',
     hasSvg: 'gridMap37',
     options: [
       { key: 'A', label: 'στο Α', raw: 'στο Α' },
       { key: 'B', label: 'στο Β', raw: 'στο Β' },
-      { key: 'Γ', label: 'στο Γ', raw: 'στο Γ' },
-      { key: 'Δ', label: 'σε διαφορετικό σημείο από τα Α, Β, Γ', raw: 'σε διαφορετικό σημείο' }
+      { key: 'Γ', label: 'στο Γ.', raw: 'στο Γ.' },
+      { key: 'Δ', label: 'σε διαφορετικό σημείο από τα Α, Β,Γ.', raw: 'σε διαφορετικό σημείο' }
     ],
     correctRaw: 'στο Α',
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          1. <strong>Κλίμακα καννάβου:</strong> Παρατηρούμε στο πλέγμα ότι το σημείο Α απέχει από το Β κατά 4 κατακόρυφα τετραγωνάκια.
-          Εφόσον ΑΒ ＝ 800 μέτρα, κάθε τετραγωνάκι έχει πλευρά:
+          1. <strong>Κλίμακα καννάβου:</strong> Στο πλέγμα η κατακόρυφη απόσταση από το Α έως το Β είναι 4 τετραγωνάκια.
+          Επειδή ΑΒ ＝ 800 μέτρα, η πλευρά κάθε τετραγώνου είναι:
         </p>
         <div className="bg-white/70 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           800 : 4 ＝ <strong>200 μέτρα ανά τετραγωνάκι</strong>
         </div>
         <p>
-          2. <strong>Διαδρομή του Παναγιώτη:</strong>
+          2. <strong>Ανάλυση διαδρομής Παναγιώτη:</strong>
         </p>
         <ul className="space-y-1.5 pl-4 sm:pl-5 text-slate-800 list-disc font-medium">
-          <li>1.600 μ. δεξιά (ανατολικά) ➔ 1.600 : 200 ＝ <strong>8 κουτάκια δεξιά</strong>.</li>
-          <li>Στροφή 90° αριστερά και 400 μ. πάνω (βόρεια) ➔ 400 : 200 ＝ <strong>2 κουτάκια πάνω</strong>.</li>
-          <li>Στροφή 90° αριστερά και 1.000 μ. αριστερά (δυτικά) ➔ 1.000 : 200 ＝ <strong>5 κουτάκια αριστερά</strong>.</li>
+          <li>1.600 μέτρα δεξιά (ανατολικά) ➔ 1.600 : 200 ＝ <strong>8 τετραγωνάκια δεξιά</strong>.</li>
+          <li>Στροφή 90° αριστερά και 400 μέτρα πάνω (βόρεια) ➔ 400 : 200 ＝ <strong>2 τετραγωνάκια πάνω</strong>.</li>
+          <li>Στροφή 90° αριστερά και 1.000 μέτρα (1 χλμ) αριστερά (δυτικά) ➔ 1.000 : 200 ＝ <strong>5 τετραγωνάκια αριστερά</strong>.</li>
         </ul>
         <p>
-          Τελική συντεταγμένη από το Ο: 8 － 5 ＝ 3 κουτάκια δεξιά και 2 κουτάκια πάνω.
-          Στο πλέγμα, αυτό ακριβώς είναι το σημείο <strong>Α</strong>!
+          Τελική θέση από το Ο: 8 － 5 ＝ 3 τετραγωνάκια δεξιά και 2 τετραγωνάκια πάνω.
+          Αυτό ταυτίζεται επακριβώς με το σημείο <strong>Α</strong>.
         </p>
         <p className="pt-1 font-bold text-emerald-800">
-          Άρα, το σπίτι βρίσκεται στο σημείο Α (Επιλογή A).
+          Άρα, το σπίτι του είναι στο Α (Επιλογή A).
         </p>
       </div>
     )
@@ -544,27 +534,27 @@ const QUESTIONS_2023 = [
     id: 13,
     officialNumber: 38,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Αν κάθε τετραγωνάκι έχει εμβαδόν 1, τότε για το εμβαδόν Ε του μαύρου σχήματος (έλλειψη με άξονες μήκους 10 και 6 τετραγωνάκια) ισχύει ότι:',
+    promptText: 'Αν κάθε τετραγωνάκι έχει εμβαδόν 1, τότε για το εμβαδόν Ε του μαύρου σχήματος ισχύει ότι',
     hasSvg: 'ellipse38',
     options: [
-      { key: 'A', label: 'Ε < 50', raw: 'Ε < 50' },
-      { key: 'B', label: '50 < Ε < 52', raw: '50 < Ε < 52' },
-      { key: 'Γ', label: '52 < Ε < 54', raw: '52 < Ε < 54' },
-      { key: 'Δ', label: 'Ε > 54', raw: 'Ε > 54' }
+      { key: 'A', label: 'Ε<50', raw: 'Ε<50' },
+      { key: 'B', label: '50<Ε<52', raw: '50<Ε<52' },
+      { key: 'Γ', label: '52<Ε<54', raw: '52<Ε<54' },
+      { key: 'Δ', label: 'Ε>54', raw: 'Ε>54' }
     ],
-    correctRaw: 'Ε < 50',
+    correctRaw: 'Ε<50',
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Το σχήμα είναι μία έλλειψη εγγεγραμμένη σε ορθογώνιο διαστάσεων 10 × 6 (μεγάλος άξονας 2a ＝ 10, μικρός άξονας 2b ＝ 6, άρα a ＝ 5 και b ＝ 3):
+          Το μαύρο σχήμα είναι μία έλλειψη που περιγράφεται σε ορθογώνιο διαστάσεων 10 × 6 (μεγάλος άξονας 2a ＝ 10, μικρός άξονας 2b ＝ 6, άρα a ＝ 5 και b ＝ 3):
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-          <div>• Εμβαδόν περιγεγραμμένου ορθογωνίου: 10 · 6 ＝ 60 τετραγωνάκια</div>
-          <div>• Τύπος εμβαδού έλλειψης: <strong>Ε ＝ π · a · b</strong></div>
+          <div>• Εμβαδόν ορθογωνίου: 10 · 6 ＝ 60 τετραγωνικά</div>
+          <div>• Εμβαδόν έλλειψης: <strong>Ε ＝ π · a · b</strong></div>
           <div>• Ε ＝ 3,14 · 5 · 3 ＝ 3,14 · 15 ＝ <strong className="text-emerald-700 text-base">47,1</strong></div>
         </div>
         <p className="pt-1">
-          Επομένως, το εμβαδόν είναι 47,1, οπότε ισχύει ότι <strong>Ε &lt; 50</strong> (Επιλογή <strong>A</strong>).
+          Επειδή 47,1 &lt; 50, ισχύει <strong>Ε &lt; 50</strong> (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
@@ -573,7 +563,7 @@ const QUESTIONS_2023 = [
     id: 14,
     officialNumber: 39,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Θέλουμε να ταξιδέψουμε με λεωφορείο από την Αθήνα προς τον Πύργο και να φτάσουμε νωρίτερα από τις 3:30 μ.μ. (15:30). Σύμφωνα με τους πίνακες δρομολογίων (απευθείας ή μέσω Πάτρας), τι ώρα το αργότερο πρέπει να φύγουμε από την Αθήνα;',
+    promptText: 'Θέλουμε να ταξιδέψουμε με λεωφορείο από την Αθήνα προς τον Πύργο και να φτάσουμε νωρίτερα από τις 3.30 μμ. Τα δρομολόγια φαίνονται στους παρακάτω πίνακες. Τι ώρα το αργότερο πρέπει να φύγουμε από την Αθήνα με το λεωφορείο, ώστε να φτάσουμε εγκαίρως στον Πύργο;',
     hasTable: 'busTable39',
     options: [
       { key: 'A', label: '08:30', raw: '08:30' },
@@ -585,24 +575,24 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Εξετάζουμε τα απευθείας δρομολόγια και τα δρομολόγια με ανταπόκριση μέσω Πάτρας:
+          Θέλουμε άφιξη στον Πύργο πριν τις <strong>15:30 (3.30 μμ)</strong>:
         </p>
         <div className="space-y-2 bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           <div>
             <strong>1. Απευθείας Αθήνα - Πύργος:</strong><br />
-            • Αναχώρηση 08:30 ➔ Άφιξη: 08:30 ＋ 3ω 50λ ＝ 12:20 (πριν τις 15:30 ✅)<br />
-            • Αναχώρηση 12:15 ➔ Άφιξη: 12:15 ＋ 3ω 50λ ＝ 16:05 (αργότερα από 15:30 ❌)
+            • 08:30 ➔ Άφιξη: 08:30 ＋ 3ω 50λ ＝ 12:20 (εγκαίρως)<br />
+            • 12:15 ➔ Άφιξη: 12:15 ＋ 3ω 50λ ＝ 16:05 (εκπρόθεσμα)
           </div>
           <div className="pt-1">
-            <strong>2. Μέσω Πάτρας (Αθήνα ➔ Πάτρα ➔ Πύργος):</strong><br />
+            <strong>2. Μέσω Πάτρας:</strong><br />
             • Αναχώρηση από Αθήνα στις <strong>11:00</strong>:<br />
-            &nbsp;&nbsp;Άφιξη Πάτρα: 11:00 ＋ 2ω 50λ ＝ 13:50.<br />
+            &nbsp;&nbsp;Άφιξη στην Πάτρα: 11:00 ＋ 2ω 50λ ＝ 13:50.<br />
             &nbsp;&nbsp;Προλαβαίνει το λεωφορείο Πάτρα - Πύργος των <strong>14:15</strong>!<br />
-            &nbsp;&nbsp;Άφιξη Πύργος: 14:15 ＋ 70λ (1ω 10λ) ＝ <strong>15:25</strong> (πριν τις 15:30 ✅)
+            &nbsp;&nbsp;Άφιξη στον Πύργο: 14:15 ＋ 70λ (1ω 10λ) ＝ <strong>15:25</strong> (πριν τις 15:30 ✅).
           </div>
         </div>
         <p className="pt-1">
-          Η πιο αργοπορημένη ώρα αναχώρησης από την Αθήνα είναι στις <strong>11:00</strong> (Επιλογή <strong>Γ</strong>).
+          Η αργότερη ώρα αναχώρησης από την Αθήνα είναι στις <strong>11:00</strong> (Επιλογή <strong>Γ</strong>).
         </p>
       </div>
     )
@@ -611,7 +601,7 @@ const QUESTIONS_2023 = [
     id: 15,
     officialNumber: 40,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Για την κατασκευή μιας πλατείας σε σχήμα ορθογωνίου παραλληλογράμμου αποφασίστηκε ένα μέρος της να γίνει πεζόδρομος (λευκό) και το υπόλοιπο να φυτευτεί με γρασίδι (γκρι). Οι πεζόδρομοι έχουν παντού το ίδιο πλάτος στα 3 σχέδια. Σε ποιο σχέδιο υπάρχει περισσότερο γρασίδι;',
+    promptText: 'Για την κατασκευή μιας πλατείας σε σχήμα ορθογωνίου παραλληλογράμμου το δημοτικό συμβούλιο αποφάσισε ένα μέρος της να γίνει πεζόδρομος και το υπόλοιπο να φυτευτεί με γρασίδι. Προτάθηκαν τα τρία παρακάτω σχέδια όπου οι πεζόδρομοι, με λευκό χρώμα, έχουν όλοι το ίδιο πλάτος, ενώ με γκρι είναι η περιοχή που θα φυτευτεί με γρασίδι. Σε ποιο σχέδιο υπάρχει περισσότερο γρασίδι;',
     hasSvg: 'parks40',
     options: [
       { key: 'A', label: 'το 1ο', raw: 'το 1ο' },
@@ -623,20 +613,20 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Έστω <strong>L</strong> το μήκος και <strong>W</strong> το πλάτος της πλατείας, και <strong>d</strong> το σταθερό πλάτος του πεζοδρόμου (οριζόντιου και κατακόρυφου).
+          Έστω <strong>L</strong> το μήκος και <strong>W</strong> το πλάτος του αρχικού ορθογωνίου, και <strong>d</strong> το κοινό σταθερό πλάτος των πεζοδρόμων:
         </p>
         <p>
-          Αν «σπρώξουμε» τα κομμάτια του γρασιδιού ώστε να ενωθούν:
+          Αν μετατοπίσουμε τα γκρι κομμάτια ώστε να ενωθούν χωρίς κενά:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
           <div>• Και στα 3 σχέδια αφαιρείται μία κατακόρυφη λωρίδα πλάτους d και μία οριζόντια λωρίδα πλάτους d.</div>
-          <div>• Το συνολικό εμβαδόν του γρασιδιού ισούται πάντα με:</div>
+          <div>• Το καθαρό εμβαδόν του γρασιδιού είναι σε κάθε σχέδιο:</div>
           <div className="text-emerald-700 font-bold text-center text-sm">
-            Ε_γρασιδιού ＝ (L － d) · (W － d)
+            Ε ＝ (L － d) · (W － d)
           </div>
         </div>
         <p className="pt-1">
-          Επομένως, <strong>όλα τα σχέδια έχουν ακριβώς το ίδιο γρασίδι</strong> (Επιλογή <strong>Δ</strong>).
+          Επομένως, <strong>όλα έχουν το ίδιο γρασίδι</strong> (Επιλογή <strong>Δ</strong>).
         </p>
       </div>
     )
@@ -645,18 +635,18 @@ const QUESTIONS_2023 = [
     id: 16,
     officialNumber: 41,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Το πηλίκο της διαίρεσης 50.204 : 5 είναι ίσο με:',
+    promptText: 'Το πηλίκο της διαίρεσης 50204: 5 είναι ίσο με:',
     options: [
-      { key: 'A', label: '10.004,8', raw: '10004,8' },
-      { key: 'B', label: '10.040,8', raw: '10040,8' },
-      { key: 'Γ', label: '10.004,08', raw: '10004,08' },
-      { key: 'Δ', label: '1.004,8', raw: '1004,8' }
+      { key: 'A', label: '10004,8', raw: '10004,8' },
+      { key: 'B', label: '10040,8', raw: '10040,8' },
+      { key: 'Γ', label: '10004,08', raw: '10004,08' },
+      { key: 'Δ', label: '1004,8', raw: '1004,8' }
     ],
     correctRaw: '10040,8',
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Εκτελούμε τη διαίρεση ή διπλασιάζουμε διαιρετέο και διαιρέτη:
+          Εκτελούμε τη διαίρεση:
         </p>
         <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -665,11 +655,11 @@ const QUESTIONS_2023 = [
             <Fraction num="50204 · 2" den="5 · 2" />
             <span>＝</span>
             <Fraction num="100408" den="10" />
-            <span>＝ <strong className="text-emerald-700 text-base">10.040,8</strong></span>
+            <span>＝ <strong className="text-emerald-700 text-base">10040,8</strong></span>
           </div>
         </div>
         <p className="pt-1">
-          Συνεπώς, το πηλίκο είναι <strong>10.040,8</strong> (Επιλογή <strong>B</strong>).
+          Άρα, το πηλίκο είναι <strong>10040,8</strong> (Επιλογή <strong>B</strong>).
         </p>
       </div>
     )
@@ -678,27 +668,27 @@ const QUESTIONS_2023 = [
     id: 17,
     officialNumber: 42,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Σε έρευνα για το αγαπημένο άθλημα οι απαντήσεις ήταν «ποδόσφαιρο», «τένις», «μπάσκετ» και «βόλεϊ». Τα περισσότερα παιδιά απάντησαν «ποδόσφαιρο», ενώ «μπάσκετ» απάντησαν αρκετά περισσότερα παιδιά από όσα απάντησαν «τένις». Στο κυκλικό διάγραμμα, σε ποιο άθλημα αντιστοιχεί το μαύρο μέρος;',
+    promptText: 'Μεταξύ παιδιών ενός σχολείου έγινε μια έρευνα, για το άθλημα που προτιμούν περισσότερο. Οι απαντήσεις που δόθηκαν ήταν «ποδόσφαιρο», «τένις», «μπάσκετ» και «βόλεϊ». Τα περισσότερα παιδιά απάντησαν «ποδόσφαιρο», ενώ «μπάσκετ» απάντησαν αρκετά περισσότερα παιδιά από όσα απάντησαν «τένις». Τα αποτελέσματα φαίνονται στο κυκλικό διάγραμμα. Σε ποιο άθλημα αντιστοιχεί το μαύρο μέρος του διαγράμματος;',
     hasSvg: 'pieChart42',
     options: [
       { key: 'A', label: 'Τένις', raw: 'Τένις' },
       { key: 'B', label: 'Μπάσκετ', raw: 'Μπάσκετ' },
       { key: 'Γ', label: 'Ποδόσφαιρο', raw: 'Ποδόσφαιρο' },
-      { key: 'Δ', label: 'Βόλεϊ', raw: 'Βόλεϊ' }
+      { key: 'Δ', label: 'βόλεϊ', raw: 'βόλεϊ' }
     ],
     correctRaw: 'Τένις',
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Παρατηρούμε τα 4 τμήματα του κυκλικού διαγράμματος σε φθίνουσα σειρά μεγέθους:
+          Στο κυκλικό διάγραμμα παρατηρούμε τα μεγέθη των κυκλικών τομέων:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-          <div>1. Μεγαλύτερο τμήμα (&gt; 25%): <strong>Ποδόσφαιρο</strong> (τα περισσότερα παιδιά).</div>
-          <div>2. Επόμενο μεγάλο τμήμα (25%): <strong>Μπάσκετ</strong>.</div>
-          <div>3. Μικρότερο τμήμα (οξύς μαύρος τομέας &lt; 25%): <strong>Τένις</strong> (αφού μπάσκετ &gt;&gt; τένις).</div>
+          <div>• Ο μεγαλύτερος τομέας (&gt; 25%): <strong>Ποδόσφαιρο</strong> (τα περισσότερα παιδιά).</div>
+          <div>• Ο τομέας 25% (ορθή γωνία): <strong>Μπάσκετ</strong>.</div>
+          <div>• Ο μικρότερος μαύρος τομέας (&lt; 25%): <strong>Τένις</strong> (αφού μπάσκετ &gt;&gt; τένις).</div>
         </div>
         <p className="pt-1">
-          Άρα, το μικρό μαύρο κομμάτι αντιστοιχεί στο <strong>Τένις</strong> (Επιλογή <strong>A</strong>).
+          Συνεπώς, το μαύρο μέρος αντιστοιχεί στο <strong>Τένις</strong> (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
@@ -707,7 +697,7 @@ const QUESTIONS_2023 = [
     id: 18,
     officialNumber: 43,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Για 800 γραμμάρια καφέ πληρώσαμε μαζί με τα μεταφορικά 17€, ενώ για 500 γραμμάρια καφέ πληρώσαμε 11€. Αν το κόστος μεταφοράς είναι σταθερό, πόσο θα πληρώσουμε για 300 γραμμάρια καφέ μαζί με τα μεταφορικά;',
+    promptText: 'Για την αγορά 800 γραμμαρίων καφέ από το διαδίκτυο πληρώσαμε μαζί με τα έξοδα μεταφοράς 17€, ενώ για την αγορά 500 γραμμαρίων καφέ πληρώσαμε μαζί με τα έξοδα μεταφοράς 11€. Αν το κόστος μεταφοράς είναι πάντοτε το ίδιο, τότε για 300 γραμμάρια καφέ θα πληρώσουμε μαζί με το κόστος μεταφοράς:',
     options: [
       { key: 'A', label: '6€', raw: '6€' },
       { key: 'B', label: '6,5€', raw: '6,5€' },
@@ -718,27 +708,27 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          1. Η διαφορά στα δύο ποσά οφείλεται αποκλειστικά στα επιπλέον 300 γρ. καφέ:
+          1. Η διαφορά των 300 γραμμαρίων καφέ προκαλεί διαφορά κόστους:
         </p>
         <div className="bg-white/70 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
-          800γρ － 500γρ ＝ 300γρ καφέ κοστίζουν: 17€ － 11€ ＝ <strong>6€</strong> (χωρίς μεταφορικά).
+          800γρ － 500γρ ＝ 300γρ καφέ κοστίζουν: 17€ － 11€ ＝ <strong>6€</strong> (καθαρή αξία καφέ).
         </div>
         <p>
-          2. Βρίσκουμε το σταθερό κόστος των μεταφορικών:
+          2. Βρίσκουμε το σταθερό κόστος μεταφοράς:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
           <div>• 100γρ καφέ ＝ 6€ : 3 ＝ 2€</div>
-          <div>• 500γρ καφέ σκέτα ＝ 5 · 2€ ＝ 10€</div>
+          <div>• 500γρ καφέ ＝ 5 · 2€ ＝ 10€</div>
           <div>• Μεταφορικά ＝ 11€ － 10€ ＝ <strong>1€</strong></div>
         </div>
         <p>
-          3. Για 300 γραμμάρια καφέ μαζί με τα μεταφορικά:
+          3. Για 300 γραμμάρια καφέ μαζί με μεταφορικά:
         </p>
         <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900">
-          Σύνολο ＝ 6€ (καφές) ＋ 1€ (μεταφορικά) ＝ <strong className="text-emerald-700 text-base">7€</strong>
+          Συνολικό κόστος ＝ 6€ (καφές) ＋ 1€ (μεταφορά) ＝ <strong className="text-emerald-700 text-base">7€</strong>
         </div>
         <p className="pt-1">
-          Επομένως, θα πληρώσουμε <strong>7€</strong> (Επιλογή <strong>Γ</strong>).
+          Άρα, θα πληρώσουμε <strong>7€</strong> (Επιλογή <strong>Γ</strong>).
         </p>
       </div>
     )
@@ -747,7 +737,7 @@ const QUESTIONS_2023 = [
     id: 19,
     officialNumber: 44,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Τα παιδιά του ΣΤ1 χωρίστηκαν σε πεντάδες και περίσσεψαν 2 παιδιά. Την ίδια ημέρα, τα παιδιά των τμημάτων ΣΤ1 και ΣΤ2 μαζί χωρίστηκαν σε πεντάδες και δεν περίσσεψε κανένα παιδί. Στη συνέχεια, χωρίστηκαν σε πεντάδες τα παιδιά του ΣΤ2. Πόσα περίσσεψαν;',
+    promptText: 'Ένα δημοτικό σχολείο έχει στην έκτη τάξη δύο τμήματα, ΣΤ1 και ΣΤ2. Τα παιδιά του τμήματος ΣΤ1 χωρίστηκαν σε πεντάδες και περίσσεψαν 2 παιδιά. Την ίδια ημέρα, τα παιδιά των τμημάτων ΣΤ1 και ΣΤ2 μαζί, χωρίστηκαν σε πεντάδες και δεν περίσσεψε κανένα παιδί. Στη συνέχεια, χωρίστηκαν σε πεντάδες τα παιδιά του ΣΤ2. Πόσα περίσσεψαν;',
     options: [
       { key: 'A', label: 'Κανένα', raw: 'Κανένα' },
       { key: 'B', label: '5', raw: '5' },
@@ -761,17 +751,17 @@ const QUESTIONS_2023 = [
           Αναλύουμε τα υπόλοιπα της διαίρεσης με το 5:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-          <div>• Παιδιά ΣΤ1 ＝ (πολλαπλάσιο του 5) ＋ <strong>2</strong></div>
-          <div>• Παιδιά ΣΤ1 ＋ ΣΤ2 ＝ (πολλαπλάσιο του 5) ＋ <strong>0</strong></div>
+          <div>• Παιδιά ΣΤ1 ＝ πολλαπλάσιο του 5 ＋ <strong>2</strong></div>
+          <div>• Παιδιά (ΣΤ1 ＋ ΣΤ2) ＝ πολλαπλάσιο του 5 ＋ <strong>0</strong></div>
         </div>
         <p>
-          Για να συμπληρωθεί ακέραια πεντάδα από το άθροισμα, τα 2 παιδιά του ΣΤ1 πρέπει να ενωθούν με τα υπολειπόμενα παιδιά του ΣΤ2:
+          Για να μην περισσέψει κανένα παιδί στο άθροισμα, τα 2 παιδιά του ΣΤ1 πρέπει μαζί με το υπόλοιπο του ΣΤ2 να συμπληρώνουν ακέραια πεντάδα:
         </p>
         <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           2 ＋ Υπόλοιπο(ΣΤ2) ＝ 5 ➔ Υπόλοιπο(ΣΤ2) ＝ 5 － 2 ＝ <strong className="text-emerald-700 text-base">3 παιδιά</strong>
         </div>
         <p className="pt-1">
-          Άρα, στο ΣΤ2 περίσσεψαν <strong>3</strong> παιδιά (Επιλογή <strong>Δ</strong>).
+          Συνεπώς, περίσσεψαν <strong>3</strong> παιδιά (Επιλογή <strong>Δ</strong>).
         </p>
       </div>
     )
@@ -791,16 +781,16 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Εκτελούμε τις αντίστροφες πράξεις από το τέλος προς την αρχή:
+          Εκτελούμε αντίστροφα τις πράξεις από το τέλος προς την αρχή:
         </p>
         <div className="bg-white/70 p-3.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
           <div>1. Τελικό αποτέλεσμα: <strong>10</strong></div>
-          <div>2. Αντίστροφο της αφαίρεσης 1: 10 ＋ 1 ＝ <strong>11</strong></div>
-          <div>3. Αντίστροφο της διαίρεσης με 2: 11 · 2 ＝ <strong>22</strong></div>
-          <div>4. Αντίστροφο της πρόσθεσης 3: 22 － 3 ＝ <strong className="text-emerald-700 text-base">19</strong></div>
+          <div>2. Αντίστροφο του «αφαίρεσα 1»: 10 ＋ 1 ＝ <strong>11</strong></div>
+          <div>3. Αντίστροφο του «διαίρεσα με 2»: 11 · 2 ＝ <strong>22</strong></div>
+          <div>4. Αντίστροφο του «πρόσθεσα 3»: 22 － 3 ＝ <strong className="text-emerald-700 text-base">19</strong></div>
         </div>
         <p className="pt-1">
-          Συνεπώς, ο αρχικός αριθμός ήταν το <strong>19</strong> (Επιλογή <strong>B</strong>).
+          Άρα, ο αρχικός αριθμός ήταν το <strong>19</strong> (Επιλογή <strong>B</strong>).
         </p>
       </div>
     )
@@ -809,7 +799,7 @@ const QUESTIONS_2023 = [
     id: 21,
     officialNumber: 46,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Μία εταιρεία συσκευάζει τα στυλό σε πακέτα: 5 μπλε, 3 μαύρα και 2 κόκκινα το καθένα. Συνολικά, στα πακέτα που πήρε ένας βιβλιοπώλης, τα μπλε στυλό ήταν 60 περισσότερα από τα κόκκινα. Πόσα περισσότερα ήταν συνολικά τα μπλε από τα μαύρα;',
+    promptText: 'Μία εταιρεία συσκευάζει τα στυλό σε πακέτα που αποτελούνται από 5 μπλε, 3 μαύρα και 2 κόκκινα στυλό το καθένα. Ο κύριος Κώστας έχει βιβλιοπωλείο και πήρε από την εταιρεία μερικά τέτοια πακέτα. Συνολικά, στα πακέτα που πήρε, τα μπλε στυλό ήταν 60 περισσότερα από τα κόκκινα. Πόσα περισσότερα ήταν συνολικά τα μπλε από τα μαύρα;',
     options: [
       { key: 'A', label: '180', raw: '180' },
       { key: 'B', label: '120', raw: '120' },
@@ -820,26 +810,26 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Σε <strong>κάθε 1 πακέτο</strong> περιέχονται:
+          Σε <strong>κάθε πακέτο</strong> υπάρχουν:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-          <div>• Διαφορά Μπλε με Κόκκινα: 5 － 2 ＝ <strong>3 στυλό ανά πακέτο</strong></div>
-          <div>• Διαφορά Μπλε με Μαύρα: 5 － 3 ＝ <strong>2 στυλό ανά πακέτο</strong></div>
+          <div>• Μπλε μείον Κόκκινα: 5 － 2 ＝ <strong>3 στυλό διαφορά</strong></div>
+          <div>• Μπλε μείον Μαύρα: 5 － 3 ＝ <strong>2 στυλό διαφορά</strong></div>
         </div>
         <p>
-          Επειδή συνολικά τα μπλε ήταν 60 περισσότερα από τα κόκκινα, τα πακέτα ήταν:
+          Αφού συνολικά τα μπλε ήταν κατά 60 περισσότερα από τα κόκκινα, τα πακέτα είναι:
         </p>
         <div className="bg-white/70 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           60 : 3 ＝ <strong>20 πακέτα</strong>
         </div>
         <p>
-          Άρα, τα μπλε ήταν περισσότερα από τα μαύρα κατά:
+          Επομένως, τα μπλε ήταν περισσότερα από τα μαύρα κατά:
         </p>
         <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900">
-          20 πακέτα · 2 στυλό/πακέτο ＝ <strong className="text-emerald-700 text-base">40 στυλό</strong>
+          20 · 2 ＝ <strong className="text-emerald-700 text-base">40 στυλό</strong>
         </div>
         <p className="pt-1">
-          Επομένως, ήταν <strong>40</strong> περισσότερα (Επιλογή <strong>Γ</strong>).
+          Άρα, ήταν κατά <strong>40</strong> περισσότερα (Επιλογή <strong>Γ</strong>).
         </p>
       </div>
     )
@@ -850,7 +840,7 @@ const QUESTIONS_2023 = [
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
     promptText: (
       <span>
-        Έχουμε τρία ίδια ποτήρια με νερό. Αρχικά, το 1ο ποτήρι είναι γεμάτο κατά τα <Fraction num="5" den="8" /> και το 3ο κατά το <Fraction num="1" den="2" />. Με όλο το νερό από το 3ο ποτήρι γεμίζουμε τελείως το 1ο και 2ο ποτήρι. Τι μέρος του 2ου ποτηριού ήταν γεμάτο αρχικά;
+        Έχουμε τρία ίδια ποτήρια με νερό. Αρχικά, το 1ο ποτήρι είναι κατά <Fraction num="5" den="8" /> γεμάτο και το 3ο κατά <Fraction num="1" den="2" /> γεμάτο. Με όλο το νερό από το 3ο ποτήρι γεμίζουμε τελείως το 1ο και 2ο ποτήρι. Τι μέρος του 2ου ποτηριού ήταν γεμάτο, αρχικά;
       </span>
     ),
     options: [
@@ -863,7 +853,7 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          1. Για να γεμίσει τελείως το 1ο ποτήρι χρειάζεται ακόμα:
+          1. Για να γεμίσει πλήρως το 1ο ποτήρι απαιτείται:
         </p>
         <div className="bg-white/70 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1">
           <span>1 －</span>
@@ -873,7 +863,7 @@ const QUESTIONS_2023 = [
           <span>νερού.</span>
         </div>
         <p>
-          2. Το 3ο ποτήρι είχε αρχικά <Fraction num="1" den="2" /> ＝ <Fraction num="4" den="8" /> νερό. Αφού δώσει <Fraction num="3" den="8" /> στο 1ο ποτήρι, περισσεύει για το 2ο ποτήρι:
+          2. Το 3ο ποτήρι είχε αρχικά <Fraction num="1" den="2" /> ＝ <Fraction num="4" den="8" />. Δίνει <Fraction num="3" den="8" /> στο 1ο ποτήρι και περισσεύει για το 2ο:
         </p>
         <div className="bg-white/70 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1">
           <Fraction num="4" den="8" />
@@ -884,7 +874,7 @@ const QUESTIONS_2023 = [
           <span>νερού.</span>
         </div>
         <p>
-          3. Με αυτό το <Fraction num="1" den="8" /> το 2ο ποτήρι γέμισε τελείως (έφτασε στο 1 ＝ 8/8). Άρα αρχικά περιείχε:
+          3. Με αυτό το <Fraction num="1" den="8" /> το 2ο ποτήρι γέμισε τελείως (έφτασε στα 8/8). Άρα αρχικά περιείχε:
         </p>
         <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 flex items-center gap-1">
           <Fraction num="8" den="8" />
@@ -894,7 +884,7 @@ const QUESTIONS_2023 = [
           <strong className="text-emerald-700 text-base"><Fraction num="7" den="8" /></strong>
         </div>
         <p className="pt-1">
-          Συνεπώς, αρχικά ήταν γεμάτο κατά τα <strong><Fraction num="7" den="8" /></strong> (Επιλογή <strong>Γ</strong>).
+          Συνεπώς, ήταν γεμάτο κατά τα <strong><Fraction num="7" den="8" /></strong> (Επιλογή <strong>Γ</strong>).
         </p>
       </div>
     )
@@ -903,7 +893,7 @@ const QUESTIONS_2023 = [
     id: 23,
     officialNumber: 48,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Το 60% των μαθητών πήγαν σε νησί. Από αυτούς που δεν πήγαν σε νησί, οι μισοί πήγαν στη Θεσσαλονίκη. Αν αυτοί που πήγαν στην Καλαμάτα και στην Πάτρα ήταν συνολικά 30, τότε πόσοι ήταν όλοι οι μαθητές που απάντησαν στην ερώτηση;',
+    promptText: 'Οι μαθητές ενός σχολείου απάντησαν στην ερώτηση: «Πού πήγατε διακοπές το Πάσχα;». Οι απαντήσεις ήταν: Κρήτη, Κέρκυρα, Ρόδος, Πάτρα, Καλαμάτα και Θεσσαλονίκη. Το 60% των μαθητών πήγαν σε νησί. Από αυτούς που δεν πήγαν σε νησί, οι μισοί πήγαν στη Θεσσαλονίκη. Αν αυτοί που πήγαν στην Καλαμάτα και στην Πάτρα ήταν συνολικά 30, τότε πόσοι ήταν όλοι οι μαθητές που απάντησαν στην ερώτηση;',
     options: [
       { key: 'A', label: '75', raw: '75' },
       { key: 'B', label: '150', raw: '150' },
@@ -914,20 +904,20 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          1. Αυτοί που <strong>δεν πήγαν σε νησί</strong> είναι: 100% － 60% ＝ <strong>40%</strong>.
+          1. Αυτοί που <strong>δεν πήγαν σε νησί</strong> αποτελούν το: 100% － 60% ＝ <strong>40%</strong> των μαθητών.
         </p>
         <p>
           2. Οι μισοί από αυτούς (40% : 2 ＝ 20%) πήγαν στη Θεσσαλονίκη.
         </p>
         <p>
-          3. Το υπόλοιπο <strong>20%</strong> των μαθητών πήγαν στην Καλαμάτα και στην Πάτρα.
+          3. Το υπόλοιπο <strong>20%</strong> πήγε στην Καλαμάτα και στην Πάτρα.
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-          <div>• Το 20% του συνόλου είναι 30 μαθητές.</div>
-          <div>• Το 100% (όλοι οι μαθητές) είναι: 30 · 5 ＝ <strong className="text-emerald-700 text-base">150 μαθητές</strong></div>
+          <div>• Το 20% των μαθητών είναι 30 παιδιά.</div>
+          <div>• Το σύνολο (100%) είναι: 30 · 5 ＝ <strong className="text-emerald-700 text-base">150 μαθητές</strong></div>
         </div>
         <p className="pt-1">
-          Άρα, όλοι οι μαθητές ήταν <strong>150</strong> (Επιλογή <strong>B</strong>).
+          Επομένως, όλοι οι μαθητές ήταν <strong>150</strong> (Επιλογή <strong>B</strong>).
         </p>
       </div>
     )
@@ -936,7 +926,7 @@ const QUESTIONS_2023 = [
     id: 24,
     officialNumber: 49,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Μία μακαρονάδα και μία σαλάτα κοστίζουν 13€. Μία σούπα και μία σαλάτα κοστίζουν 10€. Η οικογένεια της Χρύσας πλήρωσε 30€, αλλά ο σερβιτόρος έκανε λάθος και τους χρέωσε τη μία σούπα όσο τη μακαρονάδα. Πόσο είναι το ποσό που θα έπρεπε να πληρώσουν κανονικά;',
+    promptText: 'Στην ταβέρνα του Θανάση μία μακαρονάδα και μία σαλάτα κοστίζουν συνολικά 13 ευρώ. Μία σούπα και μία σαλάτα κοστίζουν συνολικά 10 ευρώ. Η οικογένεια της Χρύσας πλήρωσε 30 ευρώ, αλλά ο σερβιτόρος έκανε λάθος και τους χρέωσε τη μία σούπα όσο τη μακαρονάδα. Πόσο είναι το ποσό, σε ευρώ, που θα έπρεπε να πληρώσουν, κανονικά;',
     options: [
       { key: 'A', label: '27', raw: '27' },
       { key: 'B', label: '33', raw: '33' },
@@ -947,23 +937,23 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          Συγκρίνουμε τις δύο παραγγελίες:
+          Από τα δεδομένα:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
           <div>• Μακαρονάδα ＋ Σαλάτα ＝ 13 €</div>
           <div>• Σούπα ＋ Σαλάτα ＝ 10 €</div>
-          <div className="pt-1 font-bold text-slate-800">
-            ➔ Μακαρονάδα － Σούπα ＝ 13 － 10 ＝ 3 € (η μακαρονάδα είναι 3€ ακριβότερη από τη σούπα).
+          <div className="pt-1 text-slate-800 font-bold">
+            ➔ Μακαρονάδα － Σούπα ＝ 13 － 10 ＝ 3 € (η μακαρονάδα κοστίζει 3€ ακριβότερα από τη σούπα).
           </div>
         </div>
         <p>
-          Επειδή ο σερβιτόρος χρέωσε τη σούπα ως μακαρονάδα, υπερχρέωσε τον λογαριασμό κατά <strong>3 €</strong>:
+          Επειδή ο σερβιτόρος χρέωσε τη σούπα ως μακαρονάδα, ο λογαριασμός των 30€ ήταν υπερχρεωμένος κατά 3€:
         </p>
         <div className="bg-white/80 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           Κανονικό ποσό ＝ 30 € － 3 € ＝ <strong className="text-emerald-700 text-base">27 €</strong>
         </div>
         <p className="pt-1">
-          Επομένως, κανονικά θα έπρεπε να πληρώσουν <strong>27 €</strong> (Επιλογή <strong>A</strong>).
+          Άρα, το σωστό ποσό είναι <strong>27</strong> ευρώ (Επιλογή <strong>A</strong>).
         </p>
       </div>
     )
@@ -972,7 +962,8 @@ const QUESTIONS_2023 = [
     id: 25,
     officialNumber: 50,
     group: 'ΟΜΑΔΑ Β (4 Επιλογές)',
-    promptText: 'Η Χριστίνα ακολουθεί εβδομαδιαίο πρόγραμμα κολύμβησης: Δευ: 2χμ, Τρ: 1χμ, Τετ: 1χμ, Πεμ: 2χμ, Παρ: 3χμ, Σαβ: 4χμ, Κυρ: 3χμ. Αν σε 50 ημέρες έχει κολυμπήσει συνολικά 116 χιλιόμετρα, πόσα χιλιόμετρα θα κολυμπήσει τις επόμενες 50 μέρες;',
+    promptText: 'Η Χριστίνα ακολουθεί το εξής εβδομαδιαίο πρόγραμμα κολύμβησης σε χιλιόμετρα. Αν σε 50 ημέρες έχει κολυμπήσει συνολικά 116 χιλιόμετρα, πόσα χιλιόμετρα θα κολυμπήσει τις επόμενες 50 μέρες;',
+    hasTable: 'swimTable50',
     options: [
       { key: 'A', label: '115', raw: '115' },
       { key: 'B', label: '116', raw: '116' },
@@ -983,25 +974,24 @@ const QUESTIONS_2023 = [
     explain: (
       <div className="space-y-3 text-xs sm:text-sm">
         <p>
-          1. <strong>Χιλιόμετρα μίας πλήρους εβδομάδας (7 ημέρες):</strong>
+          1. <strong>Άθροισμα μίας εβδομάδας (7 ημέρες):</strong>
         </p>
         <div className="bg-white/70 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900">
           2 ＋ 1 ＋ 1 ＋ 2 ＋ 3 ＋ 4 ＋ 3 ＝ <strong>16 χιλιόμετρα ανά εβδομάδα</strong>
         </div>
         <p>
-          2. Ανάλυση των 50 ημερών σε εβδομάδες:
+          2. Ανάλυση των 50 ημερών:
         </p>
         <div className="bg-white/70 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-          <div>50 ＝ 7 · 7 ＋ <strong>1 ημέρα</strong> (7 πλήρεις εβδομάδες και 1 επιπλέον ημέρα)</div>
-          <div>• Οι 7 πλήρεις εβδομάδες δίνουν: 7 · 16 ＝ 112 χλμ.</div>
-          <div>• Η 1 επιπλέον ημέρα έδωσε: 116 － 112 ＝ <strong>4 χλμ</strong> (άρα ξεκίνησε ημέρα Σάββατο!).</div>
+          <div>50 ＝ 7 · 7 ＋ <strong>1 ημέρα</strong> (7 πλήρεις εβδομάδες και 1 ημέρα)</div>
+          <div>• Οι 7 εβδομάδες δίνουν: 7 · 16 ＝ 112 χλμ.</div>
+          <div>• Η επιπλέον 1 ημέρα έδωσε: 116 － 112 ＝ <strong>4 χλμ</strong> (άρα ξεκίνησε Σάββατο!).</div>
         </div>
         <p>
-          3. <strong>Οι επόμενες 50 ημέρες:</strong><br />
-          Θα περιλαμβάνουν ξανά 7 πλήρεις εβδομάδες (112 χλμ) συν την 51η ημέρα της δεύτερης περιόδου, η οποία έχει το ίδιο μοτίβο και αποδίδει πάλι <strong>116 χιλιόμετρα</strong>.
+          3. Οι επόμενες 50 ημέρες ακολουθούν ακριβώς το ίδιο κυκλικό μοτίβο (7 πλήρεις εβδομάδες συν την αντίστοιχη 51η ημέρα), αποδίδοντας ακριβώς <strong>116 χιλιόμετρα</strong>.
         </p>
-        <p className="pt-1">
-          Άρα, θα κολυμπήσει <strong>116</strong> χιλιόμετρα (Επιλογή <strong>B</strong>).
+        <p className="pt-1 font-bold text-emerald-800">
+          Άρα, θα κολυμπήσει 116 χιλιόμετρα (Επιλογή B).
         </p>
       </div>
     )
@@ -1098,33 +1088,21 @@ export default function Themata2023Page() {
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="560" height="60" viewBox="0 0 560 60" className="select-none mx-auto block">
             {/* 1η Τετράδα (Σχήματα 1 - 4) */}
-            {/* 1. Ορθογώνιο */}
             <rect x="10" y="18" width="30" height="22" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
-            {/* 2. Κύκλος */}
             <circle cx="64" cy="29" r="13" fill="none" stroke="#000000" strokeWidth="2.5" />
-            {/* 3. Τρίγωνο */}
             <polygon points="104,14 91,42 117,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
-            {/* 4. Τετράγωνο */}
             <rect x="134" y="17" width="24" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
 
             {/* 2η Τετράδα (Σχήματα 5 - 8) */}
-            {/* 5. Ορθογώνιο */}
             <rect x="176" y="18" width="30" height="22" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
-            {/* 6. Κύκλος */}
             <circle cx="230" cy="29" r="13" fill="none" stroke="#000000" strokeWidth="2.5" />
-            {/* 7. Τρίγωνο */}
             <polygon points="270,14 257,42 283,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
-            {/* 8. Τετράγωνο */}
             <rect x="300" y="17" width="24" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
 
             {/* 3η Τετράδα (Σχήματα 9 - 12) */}
-            {/* 9. Ορθογώνιο */}
             <rect x="342" y="18" width="30" height="22" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
-            {/* 10. Κύκλος */}
             <circle cx="396" cy="29" r="13" fill="none" stroke="#000000" strokeWidth="2.5" />
-            {/* 11. Τρίγωνο */}
             <polygon points="436,14 423,42 449,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
-            {/* 12. Τετράγωνο */}
             <rect x="466" y="17" width="24" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
 
             {/* Αποσιωπητικά (...) */}
@@ -1135,7 +1113,7 @@ export default function Themata2023Page() {
         </div>
       );
     }
-    
+
     if (q.hasSvg === 'axis34') {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
@@ -1160,7 +1138,7 @@ export default function Themata2023Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="260" height="260" viewBox="0 0 260 260" className="select-none font-sans">
-            {/* Κάνναβος 10x10 */}
+            {/* Κάνναβος */}
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
               <g key={i}>
                 <line x1={20 + i * 22} y1="20" x2={20 + i * 22} y2="240" stroke="#e2e8f0" strokeWidth="1.5" />
@@ -1193,14 +1171,12 @@ export default function Themata2023Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="260" height="170" viewBox="0 0 260 170" className="select-none">
-            {/* Πλέγμα */}
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
               <line key={`v-${i}`} x1={20 + i * 22} y1="15" x2={20 + i * 22} y2="155" stroke="#cbd5e1" strokeWidth="1" />
             ))}
             {[0, 1, 2, 3, 4, 5, 6].map(i => (
               <line key={`h-${i}`} x1="15" y1={25 + i * 20} x2="245" y2={25 + i * 20} stroke="#cbd5e1" strokeWidth="1" />
             ))}
-            {/* Έλλειψη */}
             <ellipse cx="130" cy="85" rx="110" ry="60" fill="#334155" opacity="0.95" />
           </svg>
         </div>
@@ -1214,7 +1190,7 @@ export default function Themata2023Page() {
             <table className="w-full text-xs border-collapse bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 text-center">
               <thead>
                 <tr className="bg-slate-200/80 text-slate-800 font-black">
-                  <th colSpan="2" className="p-2 border-b border-slate-200">Αθήνα - Πύργος (Απευθείας)</th>
+                  <th colSpan="2" className="p-2 border-b border-slate-200">Αθήνα - Πύργος</th>
                 </tr>
                 <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                   <th className="p-1.5">Αναχώρηση</th>
@@ -1222,11 +1198,11 @@ export default function Themata2023Page() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">07:30</td><td className="p-1.5">3ω και 45λ</td></tr>
-                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono font-bold text-blue-700">08:30</td><td className="p-1.5">3ω και 50λ</td></tr>
-                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">12:15</td><td className="p-1.5">3ω και 50λ</td></tr>
-                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">14:00</td><td className="p-1.5">3ω και 50λ</td></tr>
-                <tr><td className="p-1.5 font-mono">17:00</td><td className="p-1.5">3ω και 45λ</td></tr>
+                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">07:30</td><td className="p-1.5">3 ώρες και 45 λεπτά</td></tr>
+                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono font-bold text-blue-700">08:30</td><td className="p-1.5">3 ώρες και 50 λεπτά</td></tr>
+                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">12:15</td><td className="p-1.5">3 ώρες και 50 λεπτά</td></tr>
+                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">14:00</td><td className="p-1.5">3 ώρες και 50 λεπτά</td></tr>
+                <tr><td className="p-1.5 font-mono">17:00</td><td className="p-1.5">3 ώρες και 45 λεπτά</td></tr>
               </tbody>
             </table>
           </div>
@@ -1238,18 +1214,18 @@ export default function Themata2023Page() {
                   <th colSpan="2" className="p-2 border-b border-slate-200 bg-slate-300/80">Πάτρα - Πύργος</th>
                 </tr>
                 <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                  <th className="p-1.5">Αναχ.</th>
-                  <th className="p-1.5">Διάρκ.</th>
-                  <th className="p-1.5 bg-slate-200/70">Αναχ.</th>
-                  <th className="p-1.5 bg-slate-200/70">Διάρκ.</th>
+                  <th className="p-1.5">Αναχώρηση</th>
+                  <th className="p-1.5">Διάρκεια</th>
+                  <th className="p-1.5 bg-slate-200/70">Αναχώρηση</th>
+                  <th className="p-1.5 bg-slate-200/70">Διάρκεια</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">08:00</td><td className="p-1.5">2ω 45λ</td><td className="p-1.5 font-mono">07:00</td><td className="p-1.5">70λ</td></tr>
-                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">09:30</td><td className="p-1.5">2ω 50λ</td><td className="p-1.5 font-mono">10:30</td><td className="p-1.5">70λ</td></tr>
-                <tr className="border-b border-slate-100 bg-emerald-50"><td className="p-1.5 font-mono font-bold text-emerald-800">11:00</td><td className="p-1.5 font-bold text-emerald-800">2ω 50λ</td><td className="p-1.5 font-mono font-bold text-emerald-800">14:15</td><td className="p-1.5 font-bold text-emerald-800">70λ</td></tr>
-                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">13:30</td><td className="p-1.5">2ω 50λ</td><td className="p-1.5 font-mono">21:00</td><td className="p-1.5">70λ</td></tr>
-                <tr><td className="p-1.5 font-mono">18:30</td><td className="p-1.5">2ω 45λ</td><td className="p-1.5 font-mono">-</td><td className="p-1.5">-</td></tr>
+                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">08:00</td><td className="p-1.5">2 ώρες και 45 λεπτά</td><td className="p-1.5 font-mono">07:00</td><td className="p-1.5">70 λεπτά</td></tr>
+                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">09:30</td><td className="p-1.5">2 ώρες και 50 λεπτά</td><td className="p-1.5 font-mono">10:30</td><td className="p-1.5">70 λεπτά</td></tr>
+                <tr className="border-b border-slate-100 bg-emerald-50"><td className="p-1.5 font-mono font-bold text-emerald-800">11:00</td><td className="p-1.5 font-bold text-emerald-800">2 ώρες και 50 λεπτά</td><td className="p-1.5 font-mono font-bold text-emerald-800">14:15</td><td className="p-1.5 font-bold text-emerald-800">70 λεπτά</td></tr>
+                <tr className="border-b border-slate-100"><td className="p-1.5 font-mono">13:30</td><td className="p-1.5">2 ώρες και 50 λεπτά</td><td className="p-1.5 font-mono">21:00</td><td className="p-1.5">70 λεπτά</td></tr>
+                <tr><td className="p-1.5 font-mono">18:30</td><td className="p-1.5">2 ώρες και 45 λεπτά</td><td className="p-1.5 font-mono">-</td><td className="p-1.5">-</td></tr>
               </tbody>
             </table>
           </div>
@@ -1261,46 +1237,31 @@ export default function Themata2023Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="450" height="125" viewBox="0 0 450 125" className="select-none font-sans mx-auto block">
-            {/* 1ο ΣΧΕΔΙΟ (Πεζόδρομος πάνω και αριστερά, πλάτους 15px) */}
+            {/* 1ο σχέδιο */}
             <g transform="translate(15, 10)">
-              {/* Εξωτερικό ορθογώνιο */}
               <rect x="0" y="0" width="120" height="75" fill="#ffffff" stroke="#000000" strokeWidth="1.8" />
-              {/* Γρασίδι (γκρι) κάτω δεξιά: 120 - 15 = 105px πλάτος, 75 - 15 = 60px ύψος */}
               <rect x="15" y="15" width="105" height="60" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
-              {/* Μαύρη κουκίδα πάνω αριστερά */}
               <circle cx="0" cy="0" r="3" fill="#000000" />
               <text x="60" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">1ο σχέδιο</text>
             </g>
 
-            {/* 2ο ΣΧΕΔΙΟ (Σταυρωτός πεζόδρομος στη μέση, πλάτους 15px) */}
+            {/* 2ο σχέδιο */}
             <g transform="translate(165, 10)">
-              {/* Εξωτερικό ορθογώνιο */}
               <rect x="0" y="0" width="120" height="75" fill="#ffffff" stroke="#000000" strokeWidth="1.8" />
-              {/* 4 ορθογώνια γρασιδιού (πλάτος: (120-15)/2 = 52.5px, ύψος: (75-15)/2 = 30px) */}
-              {/* Πάνω αριστερά */}
               <rect x="0" y="0" width="52.5" height="30" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
-              {/* Πάνω δεξιά */}
               <rect x="67.5" y="0" width="52.5" height="30" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
-              {/* Κάτω αριστερά */}
               <rect x="0" y="45" width="52.5" height="30" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
-              {/* Κάτω δεξιά */}
               <rect x="67.5" y="45" width="52.5" height="30" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
-              {/* Μαύρες κουκίδες */}
               <circle cx="0" cy="45" r="3" fill="#000000" />
               <circle cx="52.5" cy="75" r="3" fill="#000000" />
               <text x="60" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">2ο σχέδιο</text>
             </g>
 
-            {/* 3ο ΣΧΕΔΙΟ (Ανάποδο Τ: πεζόδρομος κάτω και κατακόρυφος, πλάτους 15px) */}
+            {/* 3ο σχέδιο */}
             <g transform="translate(315, 10)">
-              {/* Εξωτερικό ορθογώνιο */}
               <rect x="0" y="0" width="120" height="75" fill="#ffffff" stroke="#000000" strokeWidth="1.8" />
-              {/* 2 μεγάλα ορθογώνια γρασιδιού στο επάνω μέρος (ύψος: 75 - 15 = 60px) */}
-              {/* Αριστερό: πλάτος 52.5px */}
               <rect x="0" y="0" width="52.5" height="60" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
-              {/* Δεξί: πλάτος 52.5px */}
               <rect x="67.5" y="0" width="52.5" height="60" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
-              {/* Μαύρες κουκίδες */}
               <circle cx="52.5" cy="0" r="3" fill="#000000" />
               <circle cx="0" cy="60" r="3" fill="#000000" />
               <text x="60" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">3ο σχέδιο</text>
@@ -1314,14 +1275,43 @@ export default function Themata2023Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="180" height="180" viewBox="0 0 180 180" className="select-none">
-            {/* Κυκλικό διάγραμμα */}
             <circle cx="90" cy="90" r="75" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
             <line x1="15" y1="90" x2="90" y2="90" stroke="#0f172a" strokeWidth="2" />
             <line x1="90" y1="15" x2="90" y2="165" stroke="#0f172a" strokeWidth="2" />
-            {/* Μαύρος τομέας (Τένις) */}
             <path d="M 90,90 L 90,15 A 75,75 0 0,1 143,37 Z" fill="#0f172a" />
             <line x1="90" y1="90" x2="143" y2="37" stroke="#0f172a" strokeWidth="2" />
           </svg>
+        </div>
+      );
+    }
+
+    if (q.hasTable === 'swimTable50') {
+      return (
+        <div className="overflow-x-auto my-3">
+          <table className="w-full text-xs sm:text-sm border-collapse bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 text-center">
+            <thead>
+              <tr className="bg-slate-200/80 text-slate-800 font-black">
+                <th className="p-2 border-b border-slate-200">Δευτέρα</th>
+                <th className="p-2 border-b border-slate-200">Τρίτη</th>
+                <th className="p-2 border-b border-slate-200">Τετάρτη</th>
+                <th className="p-2 border-b border-slate-200">Πέμπτη</th>
+                <th className="p-2 border-b border-slate-200">Παρασκευή</th>
+                <th className="p-2 border-b border-slate-200">Σάββατο</th>
+                <th className="p-2 border-b border-slate-200">Κυριακή</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="p-2 font-mono">2 χμ</td>
+                <td className="p-2 font-mono">1 χμ</td>
+                <td className="p-2 font-mono">1 χμ</td>
+                <td className="p-2 font-mono">2 χμ</td>
+                <td className="p-2 font-mono">3 χμ</td>
+                <td className="p-2 font-mono">4 χμ</td>
+                <td className="p-2 font-mono">3 χμ</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       );
     }
