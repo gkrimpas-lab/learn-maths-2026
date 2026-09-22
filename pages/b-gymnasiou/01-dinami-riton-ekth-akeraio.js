@@ -2,6 +2,31 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
+// ==========================================
+// ΡΥΘΜΙΣΕΙΣ & ΟΡΙΑ ΕΡΓΑΣΤΗΡΙΩΝ (10πλάσια εύρη)
+// Μπορείς να τα προσαρμόζεις άμεσα από εδώ:
+// ==========================================
+export const LAB_LIMITS = {
+  // Εργαστήριο 1: Υπολογιστής Δύναμης
+  lab1: {
+    baseNum: { min: -50, max: 50, step: 1, default: -2 },
+    baseDen: { min: 1, max: 50, step: 1, default: 3 },
+    exponent: { min: -40, max: 40, step: 1, default: -2 },
+  },
+  // Εργαστήριο 2: Σκάλα των Δυνάμεων
+  lab2: {
+    scaleBase: { min: 2, max: 50, step: 1, default: 2 },
+    scaleExpRange: [-4, -3, -2, -1, 0, 1, 2, 3, 4], // Διευρυμένη σκάλα
+    defaultExp: 2,
+  },
+  // Εργαστήριο 3: Επαληθευτής Ιδιοτήτων
+  lab3: {
+    baseA: { min: 2, max: 60, step: 1, default: 2 },
+    expM: { min: -40, max: 40, step: 1, default: 3 },
+    expN: { min: -40, max: 40, step: 1, default: -2 },
+  }
+};
+
 // Component Frac με απόλυτα ασφαλή ανίχνευση προσήμου και τοποθέτηση του μείον μπροστά
 const Frac = ({ num, den, className = "" }) => {
   const numStr = String(num).trim();
@@ -25,20 +50,28 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
+// Βοηθητική συνάρτηση ασφαλούς μορφοποίησης μεγάλων αριθμών
+const formatSafeNumber = (num) => {
+  if (Math.abs(num) > 1e12) {
+    return num.toExponential(4);
+  }
+  return num.toLocaleString('el-GR');
+};
+
 export default function DinamiRitonEkthAkeraio() {
   // --- State Εργαστηρίου 1: Υπολογισμός Δύναμης Ρητού με Ακέραιο Εκθέτη ---
-  const [baseNum, setBaseNum] = useState(-2);
-  const [baseDen, setBaseDen] = useState(3);
-  const [exponent, setExponent] = useState(-2);
+  const [baseNum, setBaseNum] = useState(LAB_LIMITS.lab1.baseNum.default);
+  const [baseDen, setBaseDen] = useState(LAB_LIMITS.lab1.baseDen.default);
+  const [exponent, setExponent] = useState(LAB_LIMITS.lab1.exponent.default);
 
   // --- State Εργαστηρίου 2: Η Σκάλα των Δυνάμεων ---
-  const [scaleBase, setScaleBase] = useState(2);
-  const [scaleExp, setScaleExp] = useState(2);
+  const [scaleBase, setScaleBase] = useState(LAB_LIMITS.lab2.scaleBase.default);
+  const [scaleExp, setScaleExp] = useState(LAB_LIMITS.lab2.defaultExp);
 
   // --- State Εργαστηρίου 3: Επαληθευτής Ιδιοτήτων Δυνάμεων ---
-  const [propA, setPropA] = useState(2);
-  const [propM, setPropM] = useState(3);
-  const [propN, setPropN] = useState(-2);
+  const [propA, setPropA] = useState(LAB_LIMITS.lab3.baseA.default);
+  const [propM, setPropM] = useState(LAB_LIMITS.lab3.expM.default);
+  const [propN, setPropN] = useState(LAB_LIMITS.lab3.expN.default);
   const [activeTab, setActiveTab] = useState('mul');
 
   // Generic Stepper handler με touch-manipulation και αποτροπή event propagation
@@ -192,9 +225,14 @@ export default function DinamiRitonEkthAkeraio() {
 
           {/* Διαδραστικό Εργαστήριο 1: Υπολογιστής & Ανάλυση Δύναμης */}
           <div className="mt-8 pt-6 border-t border-slate-100 space-y-6">
-            <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-              🛠️ Διαδραστικό Εργαστήριο 1: Υπολογισμός Δύναμης & Ανάλυση Βήμα-Βήμα
-            </h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                🛠️ Διαδραστικό Εργαστήριο 1: Υπολογισμός Δύναμης & Ανάλυση Βήμα-Βήμα
+              </h3>
+              <span className="text-xs font-mono text-slate-500">
+                Εύρος: α ∈ [{LAB_LIMITS.lab1.baseNum.min}, {LAB_LIMITS.lab1.baseNum.max}], ν ∈ [{LAB_LIMITS.lab1.exponent.min}, {LAB_LIMITS.lab1.exponent.max}]
+              </span>
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
               {/* Χειριστήρια Steppers */}
@@ -206,7 +244,7 @@ export default function DinamiRitonEkthAkeraio() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setBaseNum, -1, -5, 5, e)}
+                      onClick={(e) => handleStep(setBaseNum, -1, LAB_LIMITS.lab1.baseNum.min, LAB_LIMITS.lab1.baseNum.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       －
@@ -216,7 +254,7 @@ export default function DinamiRitonEkthAkeraio() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setBaseNum, 1, -5, 5, e)}
+                      onClick={(e) => handleStep(setBaseNum, 1, LAB_LIMITS.lab1.baseNum.min, LAB_LIMITS.lab1.baseNum.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       ＋
@@ -231,7 +269,7 @@ export default function DinamiRitonEkthAkeraio() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setBaseDen, -1, 1, 5, e)}
+                      onClick={(e) => handleStep(setBaseDen, -1, LAB_LIMITS.lab1.baseDen.min, LAB_LIMITS.lab1.baseDen.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       －
@@ -241,7 +279,7 @@ export default function DinamiRitonEkthAkeraio() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setBaseDen, 1, 1, 5, e)}
+                      onClick={(e) => handleStep(setBaseDen, 1, LAB_LIMITS.lab1.baseDen.min, LAB_LIMITS.lab1.baseDen.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       ＋
@@ -256,7 +294,7 @@ export default function DinamiRitonEkthAkeraio() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setExponent, -1, -4, 4, e)}
+                      onClick={(e) => handleStep(setExponent, -1, LAB_LIMITS.lab1.exponent.min, LAB_LIMITS.lab1.exponent.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       －
@@ -266,7 +304,7 @@ export default function DinamiRitonEkthAkeraio() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setExponent, 1, -4, 4, e)}
+                      onClick={(e) => handleStep(setExponent, 1, LAB_LIMITS.lab1.exponent.min, LAB_LIMITS.lab1.exponent.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       ＋
@@ -288,7 +326,7 @@ export default function DinamiRitonEkthAkeraio() {
                     <span>＝</span>
                     <span className="text-emerald-400">
                       {exponent === 0 ? '1' : (
-                        resultDen === 1 ? resultNum : <Frac num={resultNum} den={resultDen} />
+                        resultDen === 1 ? formatSafeNumber(resultNum) : <Frac num={formatSafeNumber(resultNum)} den={formatSafeNumber(resultDen)} />
                       )}
                     </span>
                   </div>
@@ -300,12 +338,12 @@ export default function DinamiRitonEkthAkeraio() {
                     <div>Οποιοσδήποτε μη μηδενικός αριθμός στη μηδενική δύναμη ισούται με 1.</div>
                   ) : isExpNeg ? (
                     <div className="space-y-1">
-                      <div>1. Αρνητικός εκθέτης: Αντιστρέφουμε τη βάση σε ({<Frac num={baseDen} den={baseNum} />}) και κάνουμε τον εκθέτη θετικό (+{absExp}).</div>
+                      <div>1. Αρνητικός εκθέτης ({exponent}): Αντιστρέφουμε τη βάση σε ({<Frac num={baseDen} den={baseNum} />}) και κάνουμε τον εκθέτη θετικό (+{absExp}).</div>
                       <div>2. Υψώνουμε αριθμητή και παρονομαστή: <Frac num={`(${baseDen})` + (absExp > 1 ? `^${absExp}` : '')} den={`(${baseNum})` + (absExp > 1 ? `^${absExp}` : '')} /></div>
                     </div>
                   ) : (
                     <div className="space-y-1">
-                      <div>1. Θετικός εκθέτης: Υπολογίζουμε απευθείας τη δύναμη.</div>
+                      <div>1. Θετικός εκθέτης ({exponent}): Υπολογίζουμε απευθείας τη δύναμη.</div>
                       <div>2. Έκφραση: <Frac num={`(${baseNum})` + (absExp > 1 ? `^${absExp}` : '')} den={isFraction ? `(${baseDen})` + (absExp > 1 ? `^${absExp}` : '') : '1'} /></div>
                     </div>
                   )}
@@ -332,13 +370,18 @@ export default function DinamiRitonEkthAkeraio() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
             <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
-              <label className="block text-xs font-bold text-slate-600">
-                ΕΠΙΛΟΓΗ ΒΑΣΗΣ (α)
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-slate-600">
+                  ΕΠΙΛΟΓΗ ΒΑΣΗΣ (α)
+                </label>
+                <span className="text-[10px] font-mono text-slate-400">
+                  Έως {LAB_LIMITS.lab2.scaleBase.max}
+                </span>
+              </div>
               <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                 <button
                   type="button"
-                  onClick={(e) => handleStep(setScaleBase, -1, 2, 5, e)}
+                  onClick={(e) => handleStep(setScaleBase, -1, LAB_LIMITS.lab2.scaleBase.min, LAB_LIMITS.lab2.scaleBase.max, e)}
                   className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                 >
                   －
@@ -348,7 +391,7 @@ export default function DinamiRitonEkthAkeraio() {
                 </div>
                 <button
                   type="button"
-                  onClick={(e) => handleStep(setScaleBase, 1, 2, 5, e)}
+                  onClick={(e) => handleStep(setScaleBase, 1, LAB_LIMITS.lab2.scaleBase.min, LAB_LIMITS.lab2.scaleBase.max, e)}
                   className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                 >
                   ＋
@@ -359,31 +402,31 @@ export default function DinamiRitonEkthAkeraio() {
               </div>
             </div>
 
-            {/* Διαδραστικά Cards Σκάλας */}
-            <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 font-mono">
-              {[-2, -1, 0, 1, 2].map((exp) => {
+            {/* Διαδραστικά Cards Σκάλας (με οριζόντια/κατακόρυφη προσαρμογή) */}
+            <div className="lg:col-span-2 grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-1.5 sm:gap-2 font-mono">
+              {LAB_LIMITS.lab2.scaleExpRange.map((exp) => {
                 const isSelected = exp === scaleExp;
                 const val = Math.pow(scaleBase, Math.abs(exp));
                 return (
                   <div
                     key={exp}
                     onClick={() => setScaleExp(exp)}
-                    className={`cursor-pointer p-3 sm:p-4 rounded-2xl border transition-all flex flex-col items-center justify-center gap-1.5 touch-manipulation ${
+                    className={`cursor-pointer p-2 sm:p-3 rounded-2xl border transition-all flex flex-col items-center justify-center gap-1 touch-manipulation ${
                       isSelected
                         ? 'bg-indigo-600 text-white border-indigo-700 shadow-md ring-2 ring-indigo-400'
                         : 'bg-slate-50 text-slate-800 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
-                    <span className="text-[10px] sm:text-xs font-sans uppercase font-bold tracking-wider opacity-80">
-                      ΕΚΘΕΤΗΣ {exp}
+                    <span className="text-[9px] sm:text-[10px] font-sans uppercase font-bold tracking-wider opacity-80">
+                      ΕΚΘ. {exp}
                     </span>
-                    <span className="text-sm sm:text-lg font-bold">
+                    <span className="text-xs sm:text-sm font-bold">
                       {scaleBase}<sup>{exp}</sup>
                     </span>
-                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-amber-300' : 'text-indigo-600'}`}>
-                      {exp > 0 && `${val}`}
+                    <span className={`text-[10px] sm:text-xs font-bold truncate max-w-full ${isSelected ? 'text-amber-300' : 'text-indigo-600'}`}>
+                      {exp > 0 && `${formatSafeNumber(val)}`}
                       {exp === 0 && '1'}
-                      {exp < 0 && <Frac num="1" den={val} />}
+                      {exp < 0 && <Frac num="1" den={formatSafeNumber(val)} />}
                     </span>
                   </div>
                 );
@@ -456,9 +499,14 @@ export default function DinamiRitonEkthAkeraio() {
 
           {/* Διαδραστικό Εργαστήριο 3: Επαλήθευση Ιδιοτήτων σε Πραγματικό Χρόνο */}
           <div className="mt-8 pt-6 border-t border-slate-100 space-y-6">
-            <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-              🛠️ Διαδραστικό Εργαστήριο 3: Επαλήθευση Ιδιοτήτων σε Πραγματικό Χρόνο
-            </h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                🛠️ Διαδραστικό Εργαστήριο 3: Επαλήθευση Ιδιοτήτων σε Πραγματικό Χρόνο
+              </h3>
+              <span className="text-xs font-mono text-slate-500">
+                Εύρος: α ∈ [{LAB_LIMITS.lab3.baseA.min}, {LAB_LIMITS.lab3.baseA.max}], μ,ν ∈ [{LAB_LIMITS.lab3.expM.min}, {LAB_LIMITS.lab3.expM.max}]
+              </span>
+            </div>
 
             {/* Tab Selector */}
             <div className="grid grid-cols-3 gap-2">
@@ -489,7 +537,7 @@ export default function DinamiRitonEkthAkeraio() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setPropA, -1, 2, 6, e)}
+                      onClick={(e) => handleStep(setPropA, -1, LAB_LIMITS.lab3.baseA.min, LAB_LIMITS.lab3.baseA.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       －
@@ -499,7 +547,7 @@ export default function DinamiRitonEkthAkeraio() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setPropA, 1, 2, 6, e)}
+                      onClick={(e) => handleStep(setPropA, 1, LAB_LIMITS.lab3.baseA.min, LAB_LIMITS.lab3.baseA.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       ＋
@@ -512,7 +560,7 @@ export default function DinamiRitonEkthAkeraio() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setPropM, -1, -4, 4, e)}
+                      onClick={(e) => handleStep(setPropM, -1, LAB_LIMITS.lab3.expM.min, LAB_LIMITS.lab3.expM.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       －
@@ -522,7 +570,7 @@ export default function DinamiRitonEkthAkeraio() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setPropM, 1, -4, 4, e)}
+                      onClick={(e) => handleStep(setPropM, 1, LAB_LIMITS.lab3.expM.min, LAB_LIMITS.lab3.expM.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       ＋
@@ -535,7 +583,7 @@ export default function DinamiRitonEkthAkeraio() {
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setPropN, -1, -4, 4, e)}
+                      onClick={(e) => handleStep(setPropN, -1, LAB_LIMITS.lab3.expN.min, LAB_LIMITS.lab3.expN.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       －
@@ -545,7 +593,7 @@ export default function DinamiRitonEkthAkeraio() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setPropN, 1, -4, 4, e)}
+                      onClick={(e) => handleStep(setPropN, 1, LAB_LIMITS.lab3.expN.min, LAB_LIMITS.lab3.expN.max, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
                     >
                       ＋
