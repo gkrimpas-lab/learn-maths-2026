@@ -95,11 +95,9 @@ function fractionToDecimalAnalysis(numerator, denominator) {
   const simpNum = num / g;
   const simpDen = den / g;
 
-  // Ελέγχουμε αν ο παρονομαστής έχει μόνο παράγοντες 2 και 5 (πεπερασμένος)
   let tempDen = simpDen;
   while (tempDen % 2 === 0) tempDen /= 2;
   while (tempDen % 5 === 0) tempDen /= 5;
-  const isTerminating = tempDen === 1;
 
   const intPart = Math.floor(simpNum / simpDen);
   let remainder = simpNum % simpDen;
@@ -137,7 +135,6 @@ function fractionToDecimalAnalysis(numerator, denominator) {
   const fullInt = `${signStr}${intPart}`;
 
   if (startIndex === -1) {
-    // Πεπερασμένος δεκαδικός
     return {
       simplified: `${simpNum}/${simpDen}`,
       isTerminating: true,
@@ -145,10 +142,9 @@ function fractionToDecimalAnalysis(numerator, denominator) {
       nonPeriodic: decimalDigits,
       period: '',
       fullString: `${fullInt},${decimalDigits}`,
-      typeDesc: 'Πεπερασμένος Δεκαδικός (ο παρονομαστής περιέχει μόνο παράγοντες 2 ή 5)'
+      typeDesc: 'Πεπερασμένος Δεκαδικός (ο παρονομαστής περιέχει μόνο πρώτους παράγοντες 2 ή 5)'
     };
   } else {
-    // Περιοδικός δεκαδικός
     const nonPeriodicPart = decimalDigits.slice(0, startIndex);
     const periodPart = decimalDigits.slice(startIndex);
     const isPure = nonPeriodicPart.length === 0;
@@ -168,15 +164,50 @@ function fractionToDecimalAnalysis(numerator, denominator) {
   }
 }
 
-// Δείγματα για το Εργαστήριο 2: Ταξινόμηση Αριθμών
+// Δείγματα για το Εργαστήριο 2 με χρήση του Component <Sqrt> στα σχετικά σημεία
 const CLASSIFICATION_SAMPLES = [
-  { label: '3/4', num: '3/4', isRational: true, reason: 'Γράφεται ως κλάσμα ακεραίων (3/4 = 0,75, πεπερασμένος δεκαδικός).' },
-  { label: '√2', num: '√2', isRational: false, reason: 'Η ρίζα του 2 δεν είναι ακέραιος (1,41421356...). Έχει άπειρα δεκαδικά ψηφία χωρίς καμία περίοδο.' },
-  { label: '1/3', num: '1/3', isRational: true, reason: 'Κλάσμα ακεραίων με άπειρα ψηφία, αλλά με περίοδο το 3 (0,333... = 0,3̄).' },
-  { label: 'π (pi)', num: 'π', isRational: false, reason: 'Ο αριθμός π = 3,14159265... έχει άπειρα ψηφία χωρίς περίοδο και δεν γράφεται ως κλάσμα ακεραίων.' },
-  { label: '√25', num: '√25', isRational: true, reason: 'Επειδή 25 = 5², ισχύει √25 = 5 = 5/1 (ρητός, φυσικός αριθμός).' },
-  { label: '-7', num: '-7', isRational: true, reason: 'Κάθε ακέραιος είναι και ρητός, καθώς -7 = -7/1.' },
-  { label: '0,121121112...', num: '0,121121112...', isRational: false, reason: 'Έχει άπειρα ψηφία με κανόνα (τα 1 αυξάνονται), αλλά ΔΕΝ επαναλαμβάνεται σταθερή ομάδα ψηφίων (δεν έχει περίοδο).' }
+  { 
+    label: '3/4', 
+    renderDisplay: <span>3/4</span>, 
+    isRational: true, 
+    reason: 'Γράφεται ως κλάσμα ακεραίων (3/4 = 0,75, πεπερασμένος δεκαδικός).' 
+  },
+  { 
+    label: '√2', 
+    renderDisplay: <Sqrt>2</Sqrt>, 
+    isRational: false, 
+    reason: 'Η ρίζα του 2 δεν είναι ακέραιος (1,41421356...). Έχει άπειρα δεκαδικά ψηφία χωρίς καμία περίοδο.' 
+  },
+  { 
+    label: '1/3', 
+    renderDisplay: <span>1/3</span>, 
+    isRational: true, 
+    reason: 'Κλάσμα ακεραίων με άπειρα ψηφία, αλλά με περίοδο το 3 (0,333... = 0,3̄).' 
+  },
+  { 
+    label: 'π (pi)', 
+    renderDisplay: <span>π</span>, 
+    isRational: false, 
+    reason: 'Ο αριθμός π = 3,14159265... έχει άπειρα ψηφία χωρίς περίοδο και δεν γράφεται ως κλάσμα ακεραίων.' 
+  },
+  { 
+    label: '√25', 
+    renderDisplay: <Sqrt>25</Sqrt>, 
+    isRational: true, 
+    reason: 'Επειδή 25 = 5², ισχύει √25 = 5 = 5/1 (ρητός, φυσικός αριθμός).' 
+  },
+  { 
+    label: '-7', 
+    renderDisplay: <span>-7</span>, 
+    isRational: true, 
+    reason: 'Κάθε ακέραιος είναι και ρητός, καθώς -7 = -7/1.' 
+  },
+  { 
+    label: '0,121121112...', 
+    renderDisplay: <span>0,121121112...</span>, 
+    isRational: false, 
+    reason: 'Έχει άπειρα ψηφία με κανόνα (τα 1 αυξάνονται), αλλά ΔΕΝ επαναλαμβάνεται σταθερή ομάδα ψηφίων (δεν έχει περίοδο).' 
+  }
 ];
 
 export default function RitoiArritoiTheoria() {
@@ -499,7 +530,7 @@ export default function RitoiArritoiTheoria() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΤΑΞΙΝΟΜΗΤΗΣ ΑΡΙΘΜΩΝ */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΤΑΞΙΝΟΜΗΤΗΣ ΑΡΙΘΜΩΝ (ΔΙΟΡΘΩΜΕΝΗ ΡΙΖΑ) */}
         <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
@@ -514,25 +545,25 @@ export default function RitoiArritoiTheoria() {
             Επίλεξε έναν αριθμό για να εξετάσεις αν ανήκει στους <strong>Ρητούς (ℚ)</strong> ή στους <strong>Άρρητους</strong> και δες την αναλυτική αιτιολόγηση:
           </p>
 
-          {/* Κουμπιά Επιλογής Αριθμών */}
+          {/* Κουμπιά Επιλογής Αριθμών με χρήση <Sqrt> όπου υπάρχει ρίζα */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
             {CLASSIFICATION_SAMPLES.map((item, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => setSelectedSampleIdx(idx)}
-                className={`p-3 rounded-2xl border text-sm font-mono font-bold transition-all touch-manipulation text-center ${
+                className={`p-3 rounded-2xl border text-sm font-mono font-bold transition-all touch-manipulation flex items-center justify-center ${
                   selectedSampleIdx === idx
                     ? 'bg-indigo-600 text-white border-indigo-700 shadow-md scale-102'
                     : 'bg-slate-50 text-slate-800 border-slate-200 hover:bg-slate-100'
                 }`}
               >
-                {item.label}
+                {item.renderDisplay}
               </button>
             ))}
           </div>
 
-          {/* Κάρτα Αποτελέσματος Ταξινόμησης */}
+          {/* Κάρτα Αποτελέσματος Ταξινόμησης με ενιαίο <Sqrt> */}
           {(() => {
             const current = CLASSIFICATION_SAMPLES[selectedSampleIdx];
             return (
@@ -542,8 +573,8 @@ export default function RitoiArritoiTheoria() {
                     <span className="text-xs text-slate-400 uppercase font-bold tracking-wider block mb-1">
                       ΕΠΙΛΕΓΜΕΝΟΣ ΑΡΙΘΜΟΣ
                     </span>
-                    <div className="text-2xl sm:text-3xl font-black font-mono text-amber-300">
-                      {current.num}
+                    <div className="text-2xl sm:text-3xl font-black font-mono text-amber-300 flex items-center">
+                      {current.renderDisplay}
                     </div>
                   </div>
                   <div>
