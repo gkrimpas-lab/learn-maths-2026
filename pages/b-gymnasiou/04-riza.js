@@ -25,11 +25,10 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
-// Ενιαίο ενιαίο SVG σύμβολο ρίζας: μονοκόμματο σχήμα με οριζόντια γραμμή (vinculum)
+// Ενιαίο SVG σύμβολο ρίζας: μονοκόμματο σχήμα με οριζόντια γραμμή (vinculum)
 const Sqrt = ({ children, className = "" }) => {
   return (
     <span className={`inline-flex items-center align-middle mx-1 relative font-mono font-semibold ${className}`}>
-      {/* SVG που σχεδιάζει μονοκόμματα το 'τικ' και την επάνω οριζόντια γραμμή που σκεπάζει όλο το πλάτος */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none text-current overflow-visible"
         viewBox="0 0 100 100"
@@ -45,7 +44,6 @@ const Sqrt = ({ children, className = "" }) => {
           strokeLinejoin="round"
         />
       </svg>
-      {/* Το υπόρριζο περιεχόμενο με σωστά περιθώρια ώστε να κάθεται τέλεια κάτω από τη γραμμή */}
       <span className="pl-4 sm:pl-4.5 pr-1 pt-1 pb-0.5 leading-none inline-flex items-center">
         {children}
       </span>
@@ -53,15 +51,15 @@ const Sqrt = ({ children, className = "" }) => {
   );
 };
 
-// Πρώτα 15 τέλεια τετράγωνα για γρήγορη αναφορά
-const PERFECT_SQUARES = Array.from({ length: 15 }, (_, i) => ({
+// Πρώτα 20 τέλεια τετράγωνα για αναφορά
+const PERFECT_SQUARES = Array.from({ length: 20 }, (_, i) => ({
   n: i + 1,
   sq: (i + 1) * (i + 1)
 }));
 
 export default function RizaTheoria() {
-  // State Εργαστηρίου 1: Γεωμετρικό Τετράγωνο
-  const [geoSide, setGeoSide] = useState(5);
+  // State Εργαστηρίου 1: Γεωμετρικό Τετράγωνο (μέχρι 20)
+  const [geoSide, setGeoSide] = useState(6);
 
   // State Εργαστηρίου 2: Αναλυτής Τετραγωνικής Ρίζας
   const [customInput, setCustomInput] = useState('49');
@@ -78,7 +76,6 @@ export default function RizaTheoria() {
     const sqrtVal = Math.sqrt(val);
     const isPerfect = Number.isInteger(sqrtVal);
 
-    // Εγκλωβισμός σε διαδοχικά τέλεια τετράγωνα
     const lowerInt = Math.floor(sqrtVal);
     const upperInt = lowerInt + 1;
     const lowerSq = lowerInt * lowerInt;
@@ -159,39 +156,39 @@ export default function RizaTheoria() {
               </ul>
             </div>
 
-            {/* Πίνακας Τέλειων Τετραγώνων */}
+            {/* Πίνακας Τέλειων Τετραγώνων (1 έως 20) */}
             <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                ΤΑ ΠΡΩΤΑ 15 ΤΕΛΕΙΑ ΤΕΤΡΑΓΩΝΑ (ΑΠΟΜΝΗΜΟΝΕΥΣΗ)
+                ΤΑ ΠΡΩΤΑ 20 ΤΕΛΕΙΑ ΤΕΤΡΑΓΩΝΑ
               </h3>
-              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 font-mono text-center">
+              <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 font-mono text-center">
                 {PERFECT_SQUARES.map((item) => (
-                  <div key={item.n} className="bg-white p-2.5 rounded-xl border border-slate-200/80 shadow-xs">
-                    <div className="text-[11px] text-slate-400 font-sans">{item.n}²</div>
-                    <div className="text-base sm:text-lg font-black text-indigo-700">{item.sq}</div>
+                  <div key={item.n} className="bg-white p-2 rounded-xl border border-slate-200/80 shadow-xs">
+                    <div className="text-[10px] sm:text-[11px] text-slate-400 font-sans">{item.n}²</div>
+                    <div className="text-sm sm:text-base font-black text-indigo-700">{item.sq}</div>
                   </div>
                 ))}
               </div>
               <p className="text-xs text-slate-500 italic">
-                💡 Η εξοικείωση με τα τετράγωνα των αριθμών από το 1 έως το 15 βοηθά στην άμεση εύρεση των τετραγωνικών ριζών χωρίς πράξεις.
+                💡 Η εξοικείωση με τα τετράγωνα των αριθμών από το 1 έως το 20 βοηθά στην άμεση αναγνώριση των τετραγωνικών ριζών.
               </p>
             </div>
           </div>
         </section>
 
-        {/* 2. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΓΕΩΜΕΤΡΙΚΗ ΟΠΤΙΚΟΠΟΙΗΣΗ */}
+        {/* 2. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΓΕΩΜΕΤΡΙΚΗ ΟΠΤΙΚΟΠΟΙΗΣΗ (ΕΩΣ 20) */}
         <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 text-amber-600 font-extrabold text-base sm:text-lg">
                 2
               </span>
-              🛠️ Εργαστήριο 1: Η Γεωμετρική Ερμηνεία του Τετραγώνου
+              🛠️ Εργαστήριο 1: Η Γεωμετρική Ερμηνεία του Τετραγώνου (Πλευρά έως 20)
             </h2>
           </div>
 
           <p className="text-slate-700 text-sm sm:text-base lg:text-lg leading-relaxed">
-            Ένα τέλειο τετράγωνο αναπαριστά το <strong>πλήθος των κουκκίδων</strong> ή το <strong>εμβαδόν ενός τετραγώνου</strong> με πλευρά <span className="font-mono font-bold">α</span>. Σύρε τον επιλογέα για να αλλάξεις το μήκος της πλευράς:
+            Ένα τέλειο τετράγωνο αναπαριστά το <strong>πλήθος των τετραγωνιδίων</strong> ή το <strong>εμβαδόν ενός τετραγώνου</strong> με πλευρά <span className="font-mono font-bold">α</span>. Σύρε τον επιλογέα για να ρυθμίσεις την πλευρά από <span className="font-mono font-bold">1</span> έως <span className="font-mono font-bold">20</span>:
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-slate-900 text-white rounded-3xl p-6 sm:p-10 shadow-inner">
@@ -206,7 +203,7 @@ export default function RizaTheoria() {
                 <input
                   type="range"
                   min="1"
-                  max="10"
+                  max="20"
                   value={geoSide}
                   onChange={(e) => setGeoSide(parseInt(e.target.value, 10))}
                   className="w-full h-2.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-400"
@@ -215,6 +212,26 @@ export default function RizaTheoria() {
                   <span>1</span>
                   <span>5</span>
                   <span>10</span>
+                  <span>15</span>
+                  <span>20</span>
+                </div>
+
+                {/* Γρήγορα κουμπιά επιλογής */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {[1, 4, 8, 10, 12, 15, 20].map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => setGeoSide(num)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+                        geoSide === num
+                          ? 'bg-amber-400 text-slate-950'
+                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      }`}
+                    >
+                      α={num}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -237,7 +254,7 @@ export default function RizaTheoria() {
                     <Sqrt>{geoSide * geoSide}</Sqrt> ＝ {geoSide}
                   </div>
                   <p className="text-xs text-slate-400 font-sans pt-1">
-                    «Ποιος θετικός αριθμός αν υψωθεί στο τετράγωνο μας δίνει {geoSide * geoSide}; Ο {geoSide}!»
+                    «Ποιος θετικός αριθμός αν υψωθεί στο τετράγωνο δίνει {geoSide * geoSide}; Ο {geoSide}!»
                   </p>
                 </div>
               </div>
@@ -246,17 +263,20 @@ export default function RizaTheoria() {
             {/* Οπτική Αναπαράσταση Grid */}
             <div className="lg:col-span-7 flex flex-col items-center justify-center p-4">
               <div
-                className="grid gap-1 sm:gap-1.5 p-3 rounded-2xl bg-white/5 border border-white/10"
+                className="grid p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10"
                 style={{
                   gridTemplateColumns: `repeat(${geoSide}, minmax(0, 1fr))`,
-                  width: `${Math.min(geoSide * 32, 280)}px`,
-                  height: `${Math.min(geoSide * 32, 280)}px`,
+                  gap: geoSide > 12 ? '2px' : '4px',
+                  width: `${Math.min(geoSide * 18 + 60, 320)}px`,
+                  height: `${Math.min(geoSide * 18 + 60, 320)}px`,
                 }}
               >
                 {Array.from({ length: geoSide * geoSide }).map((_, idx) => (
                   <div
                     key={idx}
-                    className="aspect-square rounded-md sm:rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-xs border border-indigo-400/30"
+                    className={`aspect-square rounded-xs sm:rounded-sm bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-xs ${
+                      geoSide > 14 ? 'border-none' : 'border border-indigo-400/30'
+                    }`}
                   />
                 ))}
               </div>
@@ -381,7 +401,7 @@ export default function RizaTheoria() {
           {/* Προκαθορισμένα κουμπιά */}
           <div className="flex flex-wrap gap-2">
             <span className="text-xs font-bold text-slate-500 uppercase self-center mr-1">ΔΟΚΙΜΑΣΕ:</span>
-            {['49', '81', '20', '100', '144', '50', '-16'].map((sample) => (
+            {['49', '81', '20', '100', '144', '225', '400', '50', '-16'].map((sample) => (
               <button
                 key={sample}
                 type="button"
@@ -403,7 +423,7 @@ export default function RizaTheoria() {
                 type="text"
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
-                placeholder="π.χ. 49 ή 20"
+                placeholder="π.χ. 49, 225 ή 400"
                 className="w-full h-14 px-4 sm:px-5 rounded-2xl border-2 border-indigo-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 font-mono text-base sm:text-xl font-bold text-slate-900 transition-all outline-none"
               />
               {customInput && (
