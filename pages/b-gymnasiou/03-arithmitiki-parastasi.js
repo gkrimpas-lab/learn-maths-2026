@@ -88,8 +88,8 @@ const Frac = ({ num, den, className = "" }) => {
   };
 
   return (
-    <span className={`inline-flex items-center align-middle mx-1 font-mono font-semibold ${className}`}>
-      {isNegative && <span className="mr-0.5 text-base sm:text-lg font-bold">-</span>}
+    <span className={`inline-flex items-center align-middle mx-1.5 font-mono font-semibold ${className}`}>
+      {isNegative && <span className="mr-1 text-base sm:text-lg font-bold">-</span>}
       <span className="inline-flex flex-col items-center text-center leading-none text-xs sm:text-sm">
         <span className="border-b border-current px-1 pb-0.5">{renderTerm(cleanNum)}</span>
         <span className="pt-0.5 px-1">{renderTerm(cleanDen)}</span>
@@ -98,11 +98,10 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
-// Component μορφοποίησης μαθηματικών εκφράσεων που ΔΕΝ καταστρέφει παρενθέσεις
+// Component μορφοποίησης μαθηματικών εκφράσεων που ΔΕΝ καταστρέφει τις παρενθέσεις
 const MathFormattedText = ({ text = "", className = "" }) => {
   if (!text) return null;
 
-  // Καθαρίζουμε και ομαδοποιούμε
   const raw = String(text).replace(/\s+/g, ' ').trim();
   const tokens = [];
   let i = 0;
@@ -115,7 +114,7 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       continue;
     }
 
-    // 1. Έλεγχος για κλάσμα μορφής n/d ή 1/2^2
+    // 1. Κλάσμα μορφής n/d ή 1/2^2
     const fracMatch = raw.slice(i).match(/^(\d+)\s*\/\s*(\d+(?:\^\d+)?)/);
     if (fracMatch) {
       tokens.push({ type: 'frac', num: fracMatch[1], den: fracMatch[2] });
@@ -123,16 +122,47 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       continue;
     }
 
-    // 2. Έλεγχος για δύναμη: π.χ. 3^2 ή 2^(-1) ή 1^0
-    const powMatch = raw.slice(i).match(/^(\d+|\))\^(\(?-?\d+\)?)/);
-    if (powMatch) {
-      const cleanExp = powMatch[2].replace(/[()]/g, '');
-      tokens.push({ type: 'pow', base: powMatch[1], exp: cleanExp });
-      i += powMatch[0].length;
+    // 2. Δύναμη: αναγνωρίζει βάση^εκθέτη
+    // Είτε βάση είναι αριθμός, είτε το σύμβολο ) όταν προηγείται παρένθεση
+    if (ch === '^') {
+      let expStr = '';
+      let j = i + 1;
+
+      if (raw[j] === '(') {
+        // Εκθέτης σε παρένθεση: π.χ. ^(-1)
+        j++;
+        while (j < raw.length && raw[j] !== ')') {
+          expStr += raw[j];
+          j++;
+        }
+        if (j < raw.length && raw[j] === ')') j++; // προσπερνάμε το ')' του εκθέτη
+      } else {
+        // Απλός εκθέτης χωρίς παρένθεση: π.χ. ^2 ή ^-1
+        if (raw[j] === '-' || raw[j] === '+') {
+          expStr += raw[j];
+          j++;
+        }
+        while (j < raw.length && /[0-9]/.test(raw[j])) {
+          expStr += raw[j];
+          j++;
+        }
+      }
+
+      // Παίρνουμε το αμέσως προηγούμενο token ως βάση
+      if (tokens.length > 0) {
+        const lastTok = tokens.pop();
+        if (lastTok.type === 'num' || lastTok.type === 'paren') {
+          tokens.push({ type: 'pow', base: lastTok.val, exp: expStr });
+        } else {
+          tokens.push(lastTok);
+          tokens.push({ type: 'pow', base: '', exp: expStr });
+        }
+      }
+      i = j;
       continue;
     }
 
-    // 3. Σύμβολα πράξεων
+    // 3. Σύμβολα πράξεων & ισότητας
     if (ch === '*' || ch === '·') {
       tokens.push({ type: 'op', val: '·' });
       i++;
@@ -172,7 +202,6 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       continue;
     }
 
-    // Άλλοι χαρακτήρες
     tokens.push({ type: 'char', val: ch });
     i++;
   }
@@ -206,11 +235,11 @@ const MathFormattedText = ({ text = "", className = "" }) => {
   );
 };
 
-// Preset παραδείγματα για το εργαστήριο
+// Preset παραδείγματα
 const PRESET_EXPRESSIONS = [
-  { label: 'Σύνθετη με 2 παρενθέσεις: 15 + 2 * (3^2 - 2^3)^0 - (9 : 3^(-1) - 2^3)', expr: '15 + 2 * (3^2 - 2^3)^0 - (9 : 3^(-1) - 2^3)' },
+  { label: 'Σύνθετη με 2 παρενθέσεις', expr: '15 + 2 * (3^2 - 2^3)^0 - (9 : 3^(-1) - 2^3)' },
   { label: '12 * 2^(-2) - 18 / 3^2 + 5', expr: '12 * 2^(-2) - 18 / 3^2 + 5' },
-  { label: 'Σύνθετη με παρενθέσεις: (6 - 2)^2 + 15 / 3 - 3 * 3^(-1)', expr: '(6 - 2)^2 + 15 / 3 - 3 * 3^(-1)' },
+  { label: 'Σύνθετη: (6 - 2)^2 + 15 / 3 - 3 * 3^(-1)', expr: '(6 - 2)^2 + 15 / 3 - 3 * 3^(-1)' },
   { label: 'Προκαθορισμένο: 2^3 - 4 * 2^(-1) + (5 - 3)^2', expr: '2^3 - 4 * 2^(-1) + (5 - 3)^2' },
 ];
 
@@ -246,7 +275,7 @@ function solveExpressionSteps(inputExpr) {
     while (iteration < maxIterations) {
       iteration++;
 
-      // 1. Εντοπισμός της βαθύτερης (εσωτερικής) παρένθεσης
+      // 1. Εντοπισμός της βαθύτερης εσωτερικής παρένθεσης
       let innerStart = -1;
       let innerEnd = -1;
       for (let i = 0; i < current.length; i++) {
@@ -257,15 +286,13 @@ function solveExpressionSteps(inputExpr) {
         }
       }
 
-      // Αν υπάρχει εσωτερική παρένθεση, ελέγχουμε αν περιέχει πράξεις
       if (innerStart !== -1 && innerEnd !== -1) {
         const innerContent = current.substring(innerStart + 1, innerEnd);
 
-        // Αν είναι απλός αριθμός (π.χ. -1 ή 4) χωρίς πράξεις
+        // Αν είναι απλός αριθμός χωρίς πράξεις (π.χ. 1 ή -1)
         if (!/[+*:]/.test(innerContent) && !(innerContent.includes('-') && innerContent.indexOf('-') > 0)) {
-          // Ελέγχουμε αν η παρένθεση ακολουθείται από δύναμη: π.χ. (1)^0
+          // Αν ακολουθείται από δύναμη: π.χ. (1)^0
           if (current[innerEnd + 1] === '^') {
-            // Υπολογισμός δύναμης με βάση την παρένθεση
             const powIdx = innerEnd + 1;
             let eEnd = powIdx + 1;
             let expStr = '';
@@ -298,15 +325,14 @@ function solveExpressionSteps(inputExpr) {
 
           // Αν είναι απλός εκθέτης αρνητικού αριθμού, π.χ. 3^(-1)
           if (innerStart > 0 && current[innerStart - 1] === '^') {
-            // Το χειρίζεται η εκτέλεση δύναμης παρακάτω
+            // Το χειρίζεται η εκτέλεση δύναμης
           } else {
-            // Αφαίρεση περιττής παρένθεσης απλού αριθμού
-            const before = current;
+            // Αφαίρεση περιττής παρένθεσης
             current = current.substring(0, innerStart) + innerContent + current.substring(innerEnd + 1);
             continue;
           }
         } else {
-          // Η παρένθεση περιέχει πράξεις! Εκτελούμε ΑΚΡΙΒΩΣ ΜΙΑ πράξη μέσα της
+          // Η παρένθεση περιέχει πράξεις: εκτελούμε ΑΚΡΙΒΩΣ ΜΙΑ πράξη μέσα της
           const stepResult = executeSingleOperation(innerContent);
           if (stepResult) {
             const before = current;
@@ -321,7 +347,7 @@ function solveExpressionSteps(inputExpr) {
         }
       }
 
-      // 2. Εκτέλεση πράξεων έξω από παρενθέσεις (μόνο αν δεν υπάρχουν εκκρεμείς παρενθέσεις με πράξεις)
+      // 2. Εκτέλεση πράξεων έξω από παρενθέσεις
       const globalStep = executeSingleOperation(current);
       if (globalStep) {
         const before = current;
@@ -334,7 +360,6 @@ function solveExpressionSteps(inputExpr) {
         continue;
       }
 
-      // Δεν υπάρχει άλλη πράξη
       break;
     }
 
@@ -409,13 +434,11 @@ function executeSingleOperation(expr) {
   if (opIdx !== -1) {
     const op = expr[opIdx];
 
-    // Αριστερός όρος
     let lStart = opIdx - 1;
     while (lStart >= 0 && /[0-9/]/.test(expr[lStart])) lStart--;
     lStart++;
     const leftStr = expr.substring(lStart, opIdx);
 
-    // Δεξιός όρος
     let rEnd = opIdx + 1;
     while (rEnd < expr.length && /[0-9/]/.test(expr[rEnd])) rEnd++;
     const rightStr = expr.substring(opIdx + 1, rEnd);
@@ -437,14 +460,12 @@ function executeSingleOperation(expr) {
     if (expr[i] === '+' || expr[i] === '-') {
       const op = expr[i];
 
-      // Αριστερός όρος
       let lStart = i - 1;
       while (lStart >= 0 && /[0-9/]/.test(expr[lStart])) lStart--;
       if (lStart === 0 && expr[0] === '-') lStart = 0;
       else lStart++;
       const leftStr = expr.substring(lStart, i);
 
-      // Δεξιός όρος
       let rEnd = i + 1;
       while (rEnd < expr.length && /[0-9/]/.test(expr[rEnd])) rEnd++;
       const rightStr = expr.substring(i + 1, rEnd);
