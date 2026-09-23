@@ -29,14 +29,14 @@ const Frac = ({ num, den, className = "" }) => {
 const MathFormattedText = ({ text = "", className = "" }) => {
   if (!text) return null;
 
-  // Κανονικοποίηση κενών και συμβόλων
+  // Κανονικοποίηση συμβόλων και κενών
   let str = String(text)
     .replace(/\*/g, ' · ')
     .replace(/:/g, ' : ')
     .replace(/\s+/g, ' ')
     .trim();
 
-  // Τεμαχισμός: αναγνωρίζει δυνάμεις της μορφής (βάση)^εκθέτης ή αριθμός^εκθέτης, καθώς και κλάσματα
+  // Τεμαχισμός: αναγνωρίζει δυνάμεις (π.χ. 2^-1, 2^3, (-2)^2) και κλάσματα (π.χ. 1/2)
   const tokens = str.split(/(\((?:-?\d+(?:\.\d+)?)\)\^[+-]?\d+|\b\d+(?:\.\d+)?\^[+-]?\d+|\b\d+(?:\.\d+)?\s*\/\s*\d+(?:\.\d+)?)/g);
 
   return (
@@ -44,26 +44,23 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       {tokens.map((token, idx) => {
         if (!token) return null;
 
-        // Ανίχνευση δύναμης με ή χωρίς παρένθεση στη βάση: π.χ. (2)^2 ή 2^3 ή (-3)^2 ή 2^-1
+        // Δύναμη
         if (token.includes('^')) {
           const parts = token.split('^');
-          const base = parts[0];
-          const exp = parts[1];
           return (
             <span key={idx} className="inline-flex items-baseline mx-0.5">
-              <span>{base}</span>
-              <sup className="text-amber-400 font-bold ml-0.5 text-xs sm:text-sm">{exp}</sup>
+              <span>{parts[0]}</span>
+              <sup className="text-amber-400 font-bold ml-0.5 text-xs sm:text-sm">{parts[1]}</sup>
             </span>
           );
         }
 
-        // Ανίχνευση κλάσματος: π.χ. 1 / 2 ή 1 / 4
+        // Κλάσμα
         if (token.includes('/')) {
           const [n, d] = token.split('/');
           return <Frac key={idx} num={n.trim()} den={d.trim()} />;
         }
 
-        // Κανονικό κείμενο / σύμβολα
         return <span key={idx}>{token}</span>;
       })}
     </span>
@@ -72,7 +69,7 @@ const MathFormattedText = ({ text = "", className = "" }) => {
 
 // Preset παραδείγματα για το εργαστήριο
 const PRESET_EXPRESSIONS = [
-  { label: 'Προκαθορισμένο (Β' + ' Γυμνασίου)', expr: '2^3 - 4 * 2^-1 + (5 - 3)^2' },
+  { label: 'Προκαθορισμένο (Β\' Γυμνασίου)', expr: '2^3 - 4 * 2^-1 + (5 - 3)^2' },
   { label: 'Σύνθετη με παρενθέσεις', expr: '(6 - 2)^2 + 15 / 3 - 3 * 3^-1' },
   { label: 'Δυνάμεις & δεκαδικοί', expr: '10 + 2 * (3^2 - 5) - 6 * 10^-1' },
   { label: 'Πρόσημα & αρνητικοί', expr: '(-2)^2 - 2^2 + 8 * 2^-3' },
@@ -97,7 +94,7 @@ function solveExpressionSteps(inputExpr) {
     let iteration = 0;
     const maxIterations = 20;
 
-    // Βήμα 1: Παρενθέσεις που περιέχουν πράξεις (π.χ. (5 - 3))
+    // Βήμα 1: Παρενθέσεις με πράξεις: (5 - 3) -> 2
     const parenOpRegex = /\(([^()]+[+\-*/^][^()]+)\)/;
     while (parenOpRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -106,7 +103,6 @@ function solveExpressionSteps(inputExpr) {
       const innerResult = evaluateSimple(innerExpr);
 
       const before = current;
-      // Αν ακολουθεί δύναμη, π.χ. (5-3)^2 -> 2^2 (ή (2)^2 αν είναι αρνητικό)
       const replacement = innerResult < 0 ? `(${innerResult})` : `${innerResult}`;
       current = current.replace(match[0], replacement);
 
@@ -117,8 +113,7 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Βήμα 2: Δυνάμεις (π.χ. 2^3, 2^-1, (-2)^2)
-    // Ελέγχουμε πρώτα δυνάμεις με παρένθεση στη βάση: (-2)^2 ή (2)^2
+    // Βήμα 2: Δυνάμεις με παρένθεση στη βάση: (-2)^2 ή (2)^2
     const parenPowRegex = /\((-?\d+(?:\.\d+)?)\)\^([+-]?\d+(?:\.\d+)?)/;
     while (parenPowRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -149,17 +144,24 @@ function solveExpressionSteps(inputExpr) {
 
       const before = current;
       current = current.replace(match[0], String(formattedRes));
+
+      // Καθαρή περιγραφή χωρίς να μπλέκονται παρενθέσεις στο κλάσμα
+      let actionText = `Υπολογισμός δύναμης: ${match[1]}^${match[2]} ＝ ${formattedRes}`;
+      if (exp < 0) {
+        actionText = `Υπολογισμός δύναμης: ${match[1]}^${match[2]} ＝ 1/${Math.pow(base, Math.abs(exp))} ＝ ${formattedRes}`;
+      }
+
       steps.push({
-        action: `Υπολογισμός δύναμης: ${match[1]}^${match[2]} ＝ ${formattedRes}${exp < 0 ? ` (αντίστροφος 1/${base}^${Math.abs(exp)})` : ''}`,
+        action: actionText,
         before,
         after: current
       });
     }
 
-    // Καθαρισμός απλών παρενθέσεων γύρω από έναν αριθμό
+    // Καθαρισμός απλών παρενθέσεων
     current = current.replace(/\((\d+(?:\.\d+)?)\)/g, '$1');
 
-    // Βήμα 3: Πολλαπλασιασμοί & Διαιρέσεις (αριστερά προς τα δεξιά)
+    // Βήμα 3: Πολλαπλασιασμοί & Διαιρέσεις
     const multDivRegex = /(-?\d+(?:\.\d+)?)\s*([*/])\s*(-?\d+(?:\.\d+)?)/;
     while (multDivRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -177,8 +179,6 @@ function solveExpressionSteps(inputExpr) {
 
       const before = current;
       current = current.replace(match[0], String(formattedRes));
-
-      // Εξασφάλιση ότι δεν μένουν διπλά πρόσημα τύπου +- ή --
       current = current.replace(/\+-/g, '-').replace(/--/g, '+');
 
       steps.push({
@@ -188,7 +188,7 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Βήμα 4: Προσθέσεις & Αφαιρέσεις (αριστερά προς τα δεξιά)
+    // Βήμα 4: Προσθέσεις & Αφαιρέσεις
     const addSubRegex = /(-?\d+(?:\.\d+)?)\s*([+])\s*(-?\d+(?:\.\d+)?)|(-?\d+(?:\.\d+)?)\s*(-)\s*(\d+(?:\.\d+)?)/;
     while (addSubRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -224,24 +224,21 @@ function solveExpressionSteps(inputExpr) {
   }
 }
 
-// Βοηθητική επίλυση εντός παρένθεσης
+// Βοηθητική επίλυση
 function evaluateSimple(expr) {
   let e = expr;
-  // Δυνάμεις
   const powReg = /(-?\d+(?:\.\d+)?)\^([+-]?\d+(?:\.\d+)?)/;
   while (powReg.test(e)) {
     const m = e.match(powReg);
     const val = Math.pow(parseFloat(m[1]), parseFloat(m[2]));
     e = e.replace(m[0], String(val));
   }
-  // Πολλαπλασιασμός / Διαίρεση
   const mdReg = /(-?\d+(?:\.\d+)?)\s*([*/])\s*(-?\d+(?:\.\d+)?)/;
   while (mdReg.test(e)) {
     const m = e.match(mdReg);
     const val = m[2] === '*' ? parseFloat(m[1]) * parseFloat(m[3]) : parseFloat(m[1]) / parseFloat(m[3]);
     e = e.replace(m[0], String(val));
   }
-  // Πρόσθεση / Αφαίρεση
   const asReg = /(-?\d+(?:\.\d+)?)\s*([+])\s*(-?\d+(?:\.\d+)?)|(-?\d+(?:\.\d+)?)\s*(-)\s*(\d+(?:\.\d+)?)/;
   while (asReg.test(e)) {
     const m = e.match(asReg);
@@ -282,7 +279,7 @@ export default function ArithmitikiParastasiTheoria() {
     >
       <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
         
-        {/* Banner Header - Ενιαίο Indigo Theme */}
+        {/* Banner Header */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-4">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
@@ -426,7 +423,7 @@ export default function ArithmitikiParastasiTheoria() {
             ))}
           </div>
 
-          {/* Input Field (Καθαρή εισαγωγή δεδομένων) */}
+          {/* Input Field */}
           <div className="space-y-2">
             <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
               ΠΛΗΚΤΡΟΛΟΓΗΣΕ ΤΗΝ ΠΑΡΑΣΤΑΣΗ:
@@ -454,7 +451,7 @@ export default function ArithmitikiParastasiTheoria() {
             </div>
           </div>
 
-          {/* Οθόνη Αποτελέσματος & Βημάτων με Κανονική Μαθηματική Μορφοποίηση */}
+          {/* Οθόνη Αποτελέσματος & Βημάτων */}
           <div className="bg-slate-900 rounded-3xl p-5 sm:p-8 text-white space-y-6 shadow-inner">
             {analysis.error ? (
               <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-sm font-semibold flex items-center gap-2">
@@ -508,7 +505,7 @@ export default function ArithmitikiParastasiTheoria() {
                             <MathFormattedText text={st.action} />
                           </div>
 
-                          {/* Ροή αντικατάστασης (ΧΩΡΙΣ διαγραφή, κανονική μορφή) */}
+                          {/* Ροή αντικατάστασης */}
                           <div className="pl-7 text-slate-300 flex items-center gap-3 flex-wrap">
                             <span className="text-slate-300 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
                               <MathFormattedText text={st.before} />
