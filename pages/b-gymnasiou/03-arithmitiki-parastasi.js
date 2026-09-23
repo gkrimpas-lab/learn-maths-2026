@@ -52,7 +52,6 @@ class Rational {
     if (e > 0) {
       return new Rational(Math.pow(this.n, e), Math.pow(this.d, e));
     }
-    // Αρνητικός εκθέτης: αντιστροφή κλάσματος
     if (this.n === 0) throw new Error('Μηδενική βάση με αρνητικό εκθέτη.');
     return new Rational(Math.pow(this.d, Math.abs(e)), Math.pow(this.n, Math.abs(e)));
   }
@@ -90,14 +89,15 @@ const Frac = ({ num, den, className = "" }) => {
 const MathFormattedText = ({ text = "", className = "" }) => {
   if (!text) return null;
 
-  // Κανονικοποίηση συμβόλων
+  // Ομοιόμορφα κενά γύρω από τελεστές
   let str = String(text)
     .replace(/\*/g, ' · ')
     .replace(/:/g, ' : ')
+    .replace(/\+/g, ' + ')
+    .replace(/(?<=[0-9\)])-(?=[0-9\(])/g, ' - ')
     .replace(/\s+/g, ' ')
     .trim();
 
-  // Τεμαχισμός: αναγνωρίζει δυνάμεις (π.χ. 3^-1, 2^3, (-2)^2) και κλάσματα (π.χ. 1/3, -1/3)
   const tokens = str.split(/(\((?:-?\d+)\)\^[+-]?\d+|\b\d+\^[+-]?\d+|\(?-?\d+\s*\/\s*\d+\)?)/g);
 
   return (
@@ -105,7 +105,6 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       {tokens.map((token, idx) => {
         if (!token) return null;
 
-        // Δύναμη
         if (token.includes('^')) {
           const parts = token.split('^');
           return (
@@ -116,7 +115,6 @@ const MathFormattedText = ({ text = "", className = "" }) => {
           );
         }
 
-        // Κλάσμα (π.χ. 1/3 ή (-1/3))
         if (token.includes('/')) {
           const clean = token.replace(/[()]/g, '');
           const [n, d] = clean.split('/');
@@ -137,7 +135,6 @@ const PRESET_EXPRESSIONS = [
   { label: 'Πρόσημα & αρνητικοί', expr: '(-2)^2 - 2^2 + 8 * 2^-3' },
 ];
 
-// Helper: Parsing απλού όρου σε Rational (π.χ. "5", "-3", "1/3", "(-1/3)")
 function parseTerm(str) {
   const clean = str.replace(/[()]/g, '').trim();
   if (clean.includes('/')) {
@@ -164,7 +161,7 @@ function solveExpressionSteps(inputExpr) {
     let iteration = 0;
     const maxIterations = 20;
 
-    // Βήμα 1: Παρενθέσεις με πράξεις: (6 - 2) -> 4
+    // Βήμα 1: Παρενθέσεις με πράξεις
     const parenOpRegex = /\(([^()]+[+\-*/^][^()]+)\)/;
     while (parenOpRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -184,7 +181,7 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Βήμα 2: Δυνάμεις με παρένθεση στη βάση: (-2)^2 ή (2)^2
+    // Βήμα 2: Δυνάμεις με παρένθεση στη βάση
     const parenPowRegex = /\((-?\d+(?:\/\d+)?)\)\^([+-]?\d+)/;
     while (parenPowRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -205,7 +202,7 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Δυνάμεις χωρίς παρένθεση: π.χ. 3^-1, 2^3
+    // Δυνάμεις χωρίς παρένθεση
     const simplePowRegex = /(\d+)\^([+-]?\d+)/;
     while (simplePowRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -226,12 +223,10 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Καθαρισμός απλών θετικών ακεραίων παρενθέσεων: (4) -> 4
     current = current.replace(/\((\d+)\)/g, '$1');
 
-    // Βήμα 3: Πολλαπλασιασμοί & Διαιρέσεις (αριστερά προς τα δεξιά)
-    // Υποστηρίζει όρους όπως: 3 * (1/3), 15 / 3, (1/2) * 4 κτλ.
-    const termPattern = '(?:\\(-?\\d+(?:\\/\\d+)?\\)|-?\\d+(?:\\/\\d+)?)';
+    // Βήμα 3: Πολλαπλασιασμοί & Διαιρέσεις (χωρίς απορρόφηση του αρνητικού προσήμου της αφαίρεσης)
+    const termPattern = '(?:\\(-?\\d+(?:\\/\\d+)?\\)|\\d+(?:\\/\\d+)?)';
     const multDivRegex = new RegExp(`(${termPattern})\\s*([*/])\\s*(${termPattern})`);
 
     while (multDivRegex.test(current) && iteration < maxIterations) {
@@ -245,10 +240,10 @@ function solveExpressionSteps(inputExpr) {
       const resStr = resR.toString();
 
       const before = current;
-      const replacement = resR.n < 0 && !before.startsWith(match[0]) ? `(${resStr})` : `${resStr}`;
+      const replacement = resR.n < 0 ? `(${resStr})` : `${resStr}`;
       current = current.replace(match[0], replacement);
 
-      // Καθαρισμός διπλών προσήμων: +- -> -, -- -> +
+      // Καθαρισμός συμβόλων
       current = current.replace(/\+\(-/g, '-(').replace(/\+-/g, '-').replace(/--/g, '+');
       current = current.replace(/\((\d+)\)/g, '$1');
 
@@ -259,8 +254,9 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Βήμα 4: Προσθέσεις & Αφαιρέσεις (αριστερά προς τα δεξιά)
-    const addSubRegex = new RegExp(`(${termPattern})\\s*([+])\\s*(${termPattern})|(${termPattern})\\s*(-)\\s*(${termPattern})`);
+    // Βήμα 4: Προσθέσεις & Αφαιρέσεις
+    const termWithSignPattern = '(?:\\(-?\\d+(?:\\/\\d+)?\\)|-?\\d+(?:\\/\\d+)?)';
+    const addSubRegex = new RegExp(`(${termWithSignPattern})\\s*([+])\\s*(${termPattern})|(${termWithSignPattern})\\s*(-)\\s*(${termPattern})`);
 
     while (addSubRegex.test(current) && iteration < maxIterations) {
       iteration++;
@@ -295,21 +291,19 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Τελικός καθαρισμός παρενθέσεων από το αποτέλεσμα
     const finalClean = current.replace(/[()]/g, '');
-
     return { result: finalClean, steps, error: null };
   } catch (err) {
     return { error: err.message || 'Δεν ήταν δυνατή η ανάλυση της παράστασης. Βεβαιώσου για τη σωστή χρήση συμβόλων και παρενθέσεων.', steps: [] };
   }
 }
 
-// Βοηθητική επίλυση εντός παρένθεσης με Rational
+// Βοηθητική επίλυση
 function evaluateSimpleFraction(expr) {
   let e = expr.trim();
   const term = '(?:\\(-?\\d+(?:\\/\\d+)?\\)|-?\\d+(?:\\/\\d+)?)';
+  const unsignedTerm = '(?:\\(-?\\d+(?:\\/\\d+)?\\)|\\d+(?:\\/\\d+)?)';
 
-  // Δυνάμεις
   const powReg = new RegExp(`(${term})\\^([+-]?\\d+)`);
   while (powReg.test(e)) {
     const m = e.match(powReg);
@@ -319,8 +313,7 @@ function evaluateSimpleFraction(expr) {
     e = e.replace(m[0], r.toString());
   }
 
-  // Πολλαπλασιασμός / Διαίρεση
-  const mdReg = new RegExp(`(${term})\\s*([*/])\\s*(${term})`);
+  const mdReg = new RegExp(`(${unsignedTerm})\\s*([*/])\\s*(${unsignedTerm})`);
   while (mdReg.test(e)) {
     const m = e.match(mdReg);
     const a = parseTerm(m[1]);
@@ -330,8 +323,7 @@ function evaluateSimpleFraction(expr) {
     e = e.replace(m[0], r.toString());
   }
 
-  // Πρόσθεση / Αφαίρεση
-  const asReg = new RegExp(`(${term})\\s*([+])\\s*(${term})|(${term})\\s*(-)\\s*(${term})`);
+  const asReg = new RegExp(`(${term})\\s*([+])\\s*(${unsignedTerm})|(${term})\\s*(-)\\s*(${unsignedTerm})`);
   while (asReg.test(e)) {
     const m = e.match(asReg);
     let a, op, b, matched;
