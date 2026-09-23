@@ -62,7 +62,7 @@ class Rational {
   }
 }
 
-// Component Frac με απόλυτα ασφαλή ανίχνευση προσήμου και υποστήριξη δύναμης σε όρους
+// Component Frac με ασφαλή ανίχνευση προσήμου
 const Frac = ({ num, den, className = "" }) => {
   const numStr = String(num).trim();
   const denStr = String(den).trim();
@@ -74,7 +74,6 @@ const Frac = ({ num, den, className = "" }) => {
   const cleanNum = numStr.replace('-', '');
   const cleanDen = denStr.replace('-', '');
 
-  // Helper για εντοπισμό δύναμης μέσα στον αριθμητή/παρονομαστή (π.χ. 2^2)
   const renderTerm = (term) => {
     if (term.includes('^')) {
       const [b, e] = term.split('^');
@@ -103,9 +102,13 @@ const Frac = ({ num, den, className = "" }) => {
 const MathFormattedText = ({ text = "", className = "" }) => {
   if (!text) return null;
 
-  const str = String(text).replace(/\s+/g, ' ').trim();
-  // Εντοπισμός: κλάσματα με ή χωρίς δύναμη (π.χ. 1/2^2 ή 1/4), δυνάμεις, τελεστές
-  const tokens = str.split(/(\b\d+\s*\/\s*\d+\^\d+|\(?-?\d+\s*\/\s*\d+\)?|\((?:-?\d+)\)\^\(?-?\d+\)?|\b\d+\^\(?-?\d+\)?|\*|:|\/|\+|-|＝|=)/g);
+  // Προστασία συμβόλων και αντικατάσταση / σε :
+  let str = String(text)
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Τεμαχισμός με αυστηρά οριοθετημένα tokens
+  const tokens = str.split(/(\b\d+\s*\/\s*\d+\^\d+|\b\d+\s*\/\s*\d+\b|\((?:-?\d+)\)\^\(?-?\d+\)?|\b\d+\^\(?-?\d+\)?|\*|:|\/|\+|-|＝|=)/g);
 
   return (
     <span className={`inline-flex items-center flex-wrap gap-y-1 font-mono ${className}`}>
@@ -119,13 +122,10 @@ const MathFormattedText = ({ text = "", className = "" }) => {
           return <Frac key={idx} num={n.trim()} den={d.trim()} />;
         }
 
-        // Απλό κλάσμα (π.χ. 1/4, 1/3)
+        // Κλάσμα αποτελέσματος (π.χ. 1/4, 1/3)
         if (token.includes('/') && /^\d+\s*\/\s*\d+$/.test(token)) {
           const [n, d] = token.split('/');
-          if (parseInt(n, 10) < parseInt(d, 10)) {
-            return <Frac key={idx} num={n.trim()} den={d.trim()} />;
-          }
-          return <span key={idx} className="mx-1">{n.trim()} : {d.trim()}</span>;
+          return <Frac key={idx} num={n.trim()} den={d.trim()} />;
         }
 
         // Δύναμη
@@ -140,7 +140,7 @@ const MathFormattedText = ({ text = "", className = "" }) => {
           );
         }
 
-        // Σύμβολο ίσον με ομοιόμορφα κενά
+        // Σύμβολο ίσον
         if (token === '＝' || token === '=') {
           return <span key={idx} className="mx-2 font-bold text-amber-400 text-sm sm:text-base">＝</span>;
         }
@@ -165,10 +165,10 @@ const MathFormattedText = ({ text = "", className = "" }) => {
   );
 };
 
-// Preset παραδείγματα για το εργαστήριο
+// Preset παραδείγματα
 const PRESET_EXPRESSIONS = [
-  { label: '3ο Παράδειγμα: 12 * 2^(-2) - 18 / 3^2 + 5', expr: '12 * 2^(-2) - 18 / 3^2 + 5' },
-  { label: 'Σύνθετη με παρενθέσεις: (6 - 2)^2 + 15 / 3 - 3 * 3^(-1)', expr: '(6 - 2)^2 + 15 / 3 - 3 * 3^(-1)' },
+  { label: '3ο Παράδειγμα: 12 * 2^(-2) - 18 / 3^2 + 5', expr: '12 * 2^(-2) - 18 : 3^2 + 5' },
+  { label: 'Σύνθετη με παρενθέσεις: (6 - 2)^2 + 15 / 3 - 3 * 3^(-1)', expr: '(6 - 2)^2 + 15 : 3 - 3 * 3^(-1)' },
   { label: 'Προκαθορισμένο: 2^3 - 4 * 2^(-1) + (5 - 3)^2', expr: '2^3 - 4 * 2^(-1) + (5 - 3)^2' },
   { label: 'Πρόσημα & αρνητικοί: (-2)^2 - 2^2 + 8 * 2^(-3)', expr: '(-2)^2 - 2^2 + 8 * 2^(-3)' },
 ];
@@ -185,7 +185,8 @@ function parseSimpleTerm(str) {
 // Ασφαλής επιλυτής με αυστηρή ιεραρχία πράξεων
 function solveExpressionSteps(inputExpr) {
   const steps = [];
-  let current = inputExpr.replace(/\s+/g, '').replace(/·/g, '*').replace(/:/g, '/');
+  // Μετατροπή / σε : ώστε να μην εκλαμβάνεται ποτέ η διαίρεση ως κλάσμα
+  let current = inputExpr.replace(/\s+/g, '').replace(/·/g, '*').replace(/\//g, ':');
 
   if (!current) {
     return { error: 'Παρακαλώ πληκτρολόγησε μία αριθμητική παράσταση.', steps: [] };
@@ -193,7 +194,7 @@ function solveExpressionSteps(inputExpr) {
 
   for (let i = 0; i < current.length; i++) {
     const c = current[i];
-    if (!/[0-9+\-*/^()]/.test(c)) {
+    if (!/[0-9+\-*^():/]/.test(c)) {
       return { error: 'Η παράσταση περιέχει μη επιτρεπτούς χαρακτήρες.', steps: [] };
     }
   }
@@ -202,7 +203,7 @@ function solveExpressionSteps(inputExpr) {
     let iteration = 0;
     const maxIterations = 25;
 
-    // 1. Παρενθέσεις που ΠΕΡΙΕΧΟΥΝ ΠΡΑΞΕΙΣ (π.χ. (6 - 2) ή (5 - 3))
+    // 1. Παρενθέσεις με πράξεις
     while (iteration < maxIterations) {
       let foundOpParen = false;
       let start = -1;
@@ -213,7 +214,7 @@ function solveExpressionSteps(inputExpr) {
         if (current[i] === ')' && start !== -1) {
           end = i;
           const inner = current.substring(start + 1, end);
-          if (/[+*/^]/.test(inner) || (inner.includes('-') && inner.indexOf('-') > 0)) {
+          if (/[+*^:]/.test(inner) || (inner.includes('-') && inner.indexOf('-') > 0)) {
             foundOpParen = true;
             break;
           }
@@ -236,7 +237,7 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // 2. Δυνάμεις (Απομόνωση βάσης & εκθέτη)
+    // 2. Δυνάμεις (Αυστηρή απομόνωση βάσης και εκθέτη)
     while (current.includes('^') && iteration < maxIterations) {
       iteration++;
       const powIdx = current.indexOf('^');
@@ -250,7 +251,7 @@ function solveExpressionSteps(inputExpr) {
         baseStr = current.substring(openP, bStart + 1);
         bStart = openP;
       } else {
-        while (bStart >= 0 && /[0-9]/.test(current[bStart])) bStart--;
+        while (bStart >= 0 && /[0-9/]/.test(current[bStart])) bStart--;
         bStart++;
         baseStr = current.substring(bStart, powIdx);
       }
@@ -280,11 +281,11 @@ function solveExpressionSteps(inputExpr) {
       const before = current;
       current = current.substring(0, bStart) + resVal + current.substring(eEnd);
 
-      // Παιδαγωγική ανάλυση αρνητικής δύναμης με κανονικό κλάσμα 1 / α^ν
-      let actionDesc = `Υπολογισμός δύναμης : ${baseStr}^${expStr} ＝ ${resVal}`;
+      // Καθαρή επεξήγηση χωρίς περιττές παρενθέσεις
+      let actionDesc = `Υπολογισμός δύναμης : ${cleanBase}^${cleanExp} ＝ ${resVal}`;
       if (expNum < 0) {
         const absE = Math.abs(expNum);
-        actionDesc = `Υπολογισμός δύναμης : ${baseStr}^(${expStr}) ＝ 1/${cleanBase}^${absE} ＝ ${resVal}`;
+        actionDesc = `Υπολογισμός δύναμης : ${cleanBase}^${cleanExp} ＝ 1/${cleanBase}^${absE} ＝ ${resVal}`;
       }
 
       steps.push({
@@ -295,10 +296,10 @@ function solveExpressionSteps(inputExpr) {
     }
 
     // 3. Πολλαπλασιασμοί & Διαιρέσεις (Αριστερά προς τα δεξιά)
-    while ((current.includes('*') || current.includes('/')) && iteration < maxIterations) {
+    while ((current.includes('*') || current.includes(':')) && iteration < maxIterations) {
       let opIdx = -1;
       for (let i = 0; i < current.length; i++) {
-        if (current[i] === '*' || current[i] === '/') {
+        if (current[i] === '*' || current[i] === ':') {
           opIdx = i;
           break;
         }
