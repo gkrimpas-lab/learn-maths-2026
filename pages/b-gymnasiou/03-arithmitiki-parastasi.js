@@ -62,7 +62,7 @@ class Rational {
   }
 }
 
-// Component Frac με απόλυτα ασφαλή ανίχνευση προσήμου
+// Component Frac με απόλυτα ασφαλή ανίχνευση προσήμου και υποστήριξη δύναμης σε όρους
 const Frac = ({ num, den, className = "" }) => {
   const numStr = String(num).trim();
   const denStr = String(den).trim();
@@ -74,12 +74,26 @@ const Frac = ({ num, den, className = "" }) => {
   const cleanNum = numStr.replace('-', '');
   const cleanDen = denStr.replace('-', '');
 
+  // Helper για εντοπισμό δύναμης μέσα στον αριθμητή/παρονομαστή (π.χ. 2^2)
+  const renderTerm = (term) => {
+    if (term.includes('^')) {
+      const [b, e] = term.split('^');
+      return (
+        <span className="inline-flex items-baseline">
+          <span>{b}</span>
+          <sup className="text-amber-400 font-bold ml-0.5 text-[10px] sm:text-xs">{e}</sup>
+        </span>
+      );
+    }
+    return term;
+  };
+
   return (
-    <span className={`inline-flex items-center align-middle mx-1 font-mono font-semibold ${className}`}>
-      {isNegative && <span className="mr-0.5 text-base sm:text-lg font-bold">-</span>}
+    <span className={`inline-flex items-center align-middle mx-1.5 font-mono font-semibold ${className}`}>
+      {isNegative && <span className="mr-1 text-base sm:text-lg font-bold">-</span>}
       <span className="inline-flex flex-col items-center text-center leading-none text-xs sm:text-sm">
-        <span className="border-b border-current px-1 pb-0.5">{cleanNum}</span>
-        <span className="pt-0.5 px-1">{cleanDen}</span>
+        <span className="border-b border-current px-1 pb-0.5">{renderTerm(cleanNum)}</span>
+        <span className="pt-0.5 px-1">{renderTerm(cleanDen)}</span>
       </span>
     </span>
   );
@@ -90,13 +104,29 @@ const MathFormattedText = ({ text = "", className = "" }) => {
   if (!text) return null;
 
   const str = String(text).replace(/\s+/g, ' ').trim();
-  const tokens = str.split(/(\((?:-?\d+)\)\^\(?-?\d+\)?|\b\d+\^\(?-?\d+\)?|\b\d+\s*\/\s*\d+\b|\*|:|\/|\+|-)/g);
+  // Εντοπισμός: κλάσματα με ή χωρίς δύναμη (π.χ. 1/2^2 ή 1/4), δυνάμεις, τελεστές
+  const tokens = str.split(/(\b\d+\s*\/\s*\d+\^\d+|\(?-?\d+\s*\/\s*\d+\)?|\((?:-?\d+)\)\^\(?-?\d+\)?|\b\d+\^\(?-?\d+\)?|\*|:|\/|\+|-|＝|=)/g);
 
   return (
     <span className={`inline-flex items-center flex-wrap gap-y-1 font-mono ${className}`}>
       {tokens.map((rawToken, idx) => {
         if (!rawToken || rawToken.trim() === '') return null;
         const token = rawToken.trim();
+
+        // Κλάσμα με δύναμη στον παρονομαστή (π.χ. 1/2^2)
+        if (token.includes('/') && token.includes('^')) {
+          const [n, d] = token.split('/');
+          return <Frac key={idx} num={n.trim()} den={d.trim()} />;
+        }
+
+        // Απλό κλάσμα (π.χ. 1/4, 1/3)
+        if (token.includes('/') && /^\d+\s*\/\s*\d+$/.test(token)) {
+          const [n, d] = token.split('/');
+          if (parseInt(n, 10) < parseInt(d, 10)) {
+            return <Frac key={idx} num={n.trim()} den={d.trim()} />;
+          }
+          return <span key={idx} className="mx-1">{n.trim()} : {d.trim()}</span>;
+        }
 
         // Δύναμη
         if (token.includes('^')) {
@@ -110,13 +140,9 @@ const MathFormattedText = ({ text = "", className = "" }) => {
           );
         }
 
-        // Κλάσμα αποτελέσματος (π.χ. 1/4, 1/3)
-        if (token.includes('/') && /^\d+\s*\/\s*\d+$/.test(token)) {
-          const [n, d] = token.split('/');
-          if (parseInt(n, 10) < parseInt(d, 10)) {
-            return <Frac key={idx} num={n.trim()} den={d.trim()} />;
-          }
-          return <span key={idx} className="mx-1">{n.trim()} : {d.trim()}</span>;
+        // Σύμβολο ίσον με ομοιόμορφα κενά
+        if (token === '＝' || token === '=') {
+          return <span key={idx} className="mx-2 font-bold text-amber-400 text-sm sm:text-base">＝</span>;
         }
 
         // Τελεστές πράξεων
@@ -176,7 +202,7 @@ function solveExpressionSteps(inputExpr) {
     let iteration = 0;
     const maxIterations = 25;
 
-    // 1. Παρενθέσεις που ΠΕΡΙΕΧΟΥΝ ΠΡΑΞΕΙΣ (όχι απλούς εκθέτες ή αριθμούς όπως (-2))
+    // 1. Παρενθέσεις που ΠΕΡΙΕΧΟΥΝ ΠΡΑΞΕΙΣ (π.χ. (6 - 2) ή (5 - 3))
     while (iteration < maxIterations) {
       let foundOpParen = false;
       let start = -1;
@@ -187,7 +213,6 @@ function solveExpressionSteps(inputExpr) {
         if (current[i] === ')' && start !== -1) {
           end = i;
           const inner = current.substring(start + 1, end);
-          // Ελέγχουμε αν υπάρχει πράξη μέσα και ΔΕΝ είναι απλώς πρόσημο (π.χ. -2)
           if (/[+*/^]/.test(inner) || (inner.includes('-') && inner.indexOf('-') > 0)) {
             foundOpParen = true;
             break;
@@ -205,34 +230,32 @@ function solveExpressionSteps(inputExpr) {
       current = current.substring(0, start) + innerRes + current.substring(end + 1);
 
       steps.push({
-        action: `Πράξη στην παρένθεση: (${inner}) ＝ ${innerRes}`,
+        action: `Πράξη στην παρένθεση : (${inner}) ＝ ${innerRes}`,
         before,
         after: current
       });
     }
 
-    // 2. Δυνάμεις (Αυστηρή απομόνωση βάσης - ποτέ δεν απορροφά το διπλανό σύμβολο διαίρεσης ή πολλαπλασιασμού)
+    // 2. Δυνάμεις (Απομόνωση βάσης & εκθέτη)
     while (current.includes('^') && iteration < maxIterations) {
       iteration++;
       const powIdx = current.indexOf('^');
 
-      // Βρίσκουμε τη βάση (ακριβώς αριστερά από το ^)
+      // Βάση
       let bStart = powIdx - 1;
       let baseStr = '';
       if (current[bStart] === ')') {
-        // Βάση σε παρένθεση, π.χ. (-2)^2
         let openP = bStart - 1;
         while (openP >= 0 && current[openP] !== '(') openP--;
         baseStr = current.substring(openP, bStart + 1);
         bStart = openP;
       } else {
-        // Απλή βάση αριθμού: σταματάμε σε οποιοδήποτε τελεστή (+, -, *, /)
         while (bStart >= 0 && /[0-9]/.test(current[bStart])) bStart--;
         bStart++;
         baseStr = current.substring(bStart, powIdx);
       }
 
-      // Βρίσκουμε τον εκθέτη (ακριβώς δεξιά από το ^)
+      // Εκθέτης
       let eEnd = powIdx + 1;
       let expStr = '';
       if (current[eEnd] === '(') {
@@ -257,9 +280,11 @@ function solveExpressionSteps(inputExpr) {
       const before = current;
       current = current.substring(0, bStart) + resVal + current.substring(eEnd);
 
-      let actionDesc = `Υπολογισμός δύναμης: ${baseStr}^${expStr} ＝ ${resVal}`;
+      // Παιδαγωγική ανάλυση αρνητικής δύναμης με κανονικό κλάσμα 1 / α^ν
+      let actionDesc = `Υπολογισμός δύναμης : ${baseStr}^${expStr} ＝ ${resVal}`;
       if (expNum < 0) {
-        actionDesc = `Υπολογισμός δύναμης: ${baseStr}^${expStr} ＝ 1/${cleanBase}^${Math.abs(expNum)} ＝ ${resVal}`;
+        const absE = Math.abs(expNum);
+        actionDesc = `Υπολογισμός δύναμης : ${baseStr}^(${expStr}) ＝ 1/${cleanBase}^${absE} ＝ ${resVal}`;
       }
 
       steps.push({
@@ -269,18 +294,11 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // 3. Πολλαπλασιασμοί & Διαιρέσεις (Αυστηρά από αριστερά προς τα δεξιά)
+    // 3. Πολλαπλασιασμοί & Διαιρέσεις (Αριστερά προς τα δεξιά)
     while ((current.includes('*') || current.includes('/')) && iteration < maxIterations) {
-      // Ελέγχουμε αν υπάρχει πραγματικός τελεστής * ή / (όχι κάθετος κλάσματος που προέκυψε)
       let opIdx = -1;
       for (let i = 0; i < current.length; i++) {
-        if (current[i] === '*') {
-          opIdx = i;
-          break;
-        }
-        if (current[i] === '/') {
-          // Ελέγχουμε αν είναι διαίρεση μεταξύ όρων ή απλό κλάσμα
-          // Είναι διαίρεση αν πριν και μετά υπάρχουν αριθμοί που δεν είναι ανάγωγο κλάσμα
+        if (current[i] === '*' || current[i] === '/') {
           opIdx = i;
           break;
         }
@@ -310,13 +328,13 @@ function solveExpressionSteps(inputExpr) {
       current = current.substring(0, lStart) + resVal + current.substring(rEnd);
 
       steps.push({
-        action: `${op === '*' ? 'Πολλαπλασιασμός' : 'Διαίρεση'}: ${leftStr} ${op === '*' ? '·' : ':'} ${rightStr} ＝ ${resVal}`,
+        action: `${op === '*' ? 'Πολλαπλασιασμός' : 'Διαίρεση'} : ${leftStr} ${op === '*' ? '·' : ':'} ${rightStr} ＝ ${resVal}`,
         before,
         after: current
       });
     }
 
-    // 4. Προσθέσεις & Αφαιρέσεις (Αυστηρά από αριστερά προς τα δεξιά)
+    // 4. Προσθέσεις & Αφαιρέσεις (Αριστερά προς τα δεξιά)
     while (iteration < maxIterations) {
       let opIdx = -1;
       for (let i = 1; i < current.length; i++) {
@@ -351,7 +369,7 @@ function solveExpressionSteps(inputExpr) {
       current = current.substring(0, lStart) + resVal + current.substring(rEnd);
 
       steps.push({
-        action: `${op === '+' ? 'Πρόσθεση' : 'Αφαίρεση'}: ${leftStr} ${op} ${rightStr} ＝ ${resVal}`,
+        action: `${op === '+' ? 'Πρόσθεση' : 'Αφαίρεση'} : ${leftStr} ${op} ${rightStr} ＝ ${resVal}`,
         before,
         after: current
       });
@@ -591,7 +609,7 @@ export default function ArithmitikiParastasiTheoria() {
                       ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ
                     </span>
                     <div className="text-2xl sm:text-4xl font-black font-mono text-white flex items-center gap-1.5 sm:justify-end">
-                      <span>＝</span>
+                      <span className="text-amber-400 font-bold">＝</span>
                       <MathFormattedText text={analysis.result} />
                     </div>
                   </div>
@@ -621,7 +639,7 @@ export default function ArithmitikiParastasiTheoria() {
                             <MathFormattedText text={st.action} />
                           </div>
 
-                          <div className="pl-7 text-slate-300 flex items-center gap-3 flex-wrap">
+                          <div className="pl-7 text-slate-300 flex items-center gap-2 sm:gap-3 flex-wrap">
                             <span className="text-slate-300 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
                               <MathFormattedText text={st.before} />
                             </span>
@@ -660,6 +678,8 @@ export default function ArithmitikiParastasiTheoria() {
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
                 <div className="flex items-center flex-wrap">
                   <span>1. Δυνάμεις: 2⁻² = </span>
+                  <Frac num="1" den="2^2" />
+                  <span> = </span>
                   <Frac num="1" den="4" />
                   <span>, 3² = 9</span>
                 </div>
