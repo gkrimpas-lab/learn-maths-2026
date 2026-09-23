@@ -17,7 +17,7 @@ function gcd(a, b) {
 // Κλάση Ακριβούς Κλασματικής Αριθμητικής
 class Rational {
   constructor(num, den = 1) {
-    if (den === 0) throw new Error('Διαίρεση με το μηδέν δεν ορίζεται.');
+    if (den === 0) throw new Error('Η διαίρεση με το μηδέν δεν ορίζεται.');
     let n = Math.round(num);
     let d = Math.round(den);
     if (d < 0) {
@@ -42,7 +42,7 @@ class Rational {
   }
 
   div(other) {
-    if (other.n === 0) throw new Error('Διαίρεση με το μηδέν δεν ορίζεται.');
+    if (other.n === 0) throw new Error('Η διαίρεση με το μηδέν δεν ορίζεται.');
     return new Rational(this.n * other.d, this.d * other.n);
   }
 
@@ -52,7 +52,7 @@ class Rational {
     if (e > 0) {
       return new Rational(Math.pow(this.n, e), Math.pow(this.d, e));
     }
-    if (this.n === 0) throw new Error('Μηδενική βάση με αρνητικό εκθέτη.');
+    if (this.n === 0) throw new Error('Μηδενική βάση με αρνητικό εκθέτη δεν ορίζεται.');
     return new Rational(Math.pow(this.d, Math.abs(e)), Math.pow(this.n, Math.abs(e)));
   }
 
@@ -98,7 +98,7 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
-// Component μορφοποίησης μαθηματικών εκφράσεων που ΔΙΑΤΗΡΕΙ το στυλ των παρενθέσεων
+// Component μορφοποίησης μαθηματικών εκφράσεων
 const MathFormattedText = ({ text = "", className = "" }) => {
   if (!text) return null;
 
@@ -127,6 +127,12 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       let expStr = '';
       let j = i + 1;
 
+      if (j >= raw.length) {
+        tokens.push({ type: 'char', val: '^' });
+        i = j;
+        continue;
+      }
+
       if (raw[j] === '(') {
         j++;
         while (j < raw.length && raw[j] !== ')') {
@@ -153,6 +159,8 @@ const MathFormattedText = ({ text = "", className = "" }) => {
           tokens.push(lastTok);
           tokens.push({ type: 'pow', base: '', exp: expStr });
         }
+      } else {
+        tokens.push({ type: 'pow', base: '', exp: expStr });
       }
       i = j;
       continue;
@@ -169,12 +177,7 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       tokens.push({ type: 'op', val: '+' }); i++; continue;
     }
     if (ch === '-') {
-      // Έλεγχος αν είναι μοναδιαίο μείον ή πράξη
-      const prev = tokens.length > 0 ? tokens[tokens.length - 1] : null;
-      const isUnary = !prev || prev.val === '(' || prev.val === '·' || prev.val === ':' || prev.val === '+' || prev.val === '-' || prev.val === '＝';
-      tokens.push({ type: isUnary ? 'unary' : 'op', val: '-' });
-      i++;
-      continue;
+      tokens.push({ type: 'op', val: '-' }); i++; continue;
     }
     if (ch === '＝' || ch === '=') {
       tokens.push({ type: 'eq', val: '＝' }); i++; continue;
@@ -199,7 +202,6 @@ const MathFormattedText = ({ text = "", className = "" }) => {
     <span className={`inline-flex items-center flex-wrap gap-y-1 font-mono ${className}`}>
       {tokens.map((tok, idx) => {
         if (tok.type === 'op') return <span key={idx} className="mx-1.5 font-bold text-slate-300">{tok.val}</span>;
-        if (tok.type === 'unary') return <span key={idx} className="mr-0.5 font-bold text-slate-300">{tok.val}</span>;
         if (tok.type === 'eq') return <span key={idx} className="mx-2 font-bold text-amber-400 text-sm sm:text-base">＝</span>;
         if (tok.type === 'paren') return <span key={idx} className="font-bold text-indigo-300 mx-0.5">{tok.val}</span>;
         if (tok.type === 'frac') return <Frac key={idx} num={tok.num} den={tok.den} />;
@@ -218,7 +220,7 @@ const MathFormattedText = ({ text = "", className = "" }) => {
   );
 };
 
-// Preset παραδείγματα
+// Preset παραδείγματα 
 const PRESET_EXPRESSIONS = [
   { label: 'Σύνθετη με αρνητικούς: -6 - (4 + 9 - 2^2)^3 + 6 * (-3) - 13', expr: '-6 - (4 + 9 - 2^2)^3 + 6 * (-3) - 13' },
   { label: 'Κλάσματα σε παρενθέσεις', expr: '(1/2 + 5/3) * (3 + 7/4) / (1/2 - 5/6)' },
@@ -228,6 +230,7 @@ const PRESET_EXPRESSIONS = [
 
 function parseSimpleTerm(str) {
   const clean = str.replace(/[()]/g, '').trim();
+  if (clean === '' || clean === '-' || clean === '+') throw new Error('Ημιτελής όρος στην παράσταση.');
   if (clean.includes('/')) {
     const [n, d] = clean.split('/');
     return new Rational(parseInt(n, 10), parseInt(d, 10));
@@ -236,7 +239,7 @@ function parseSimpleTerm(str) {
 }
 
 // ---------------------------------------------------------
-// Ο ΠΥΡΗΝΑΣ ΤΟΥ ΕΠΙΛΥΤΗ (Απόλυτη ιεραρχία πράξεων & AST)
+// Ο ΠΥΡΗΝΑΣ ΤΟΥ ΕΠΙΛΥΤΗ (Απόλυτη ιεραρχία πράξεων & Ασφάλεια)
 // ---------------------------------------------------------
 
 function getLeftOperand(expr, opIdx) {
@@ -362,6 +365,19 @@ function solveExpressionSteps(inputExpr) {
 
   if (!current) return { error: 'Παρακαλώ πληκτρολόγησε μία αριθμητική παράσταση.', steps: [] };
 
+  // ΠΡΟΣΤΑΣΙΑ (VALIDATION GUARD)
+  const openP = (current.match(/\(/g) || []).length;
+  const closeP = (current.match(/\)/g) || []).length;
+  if (openP !== closeP) {
+    return { error: 'Η παράσταση περιέχει ασύμμετρες παρενθέσεις. Έλεγξε αν άνοιξες και έκλεισες σωστά.', steps: [] };
+  }
+  if (/[+\-*/^:]$/.test(current)) {
+    return { error: 'Η παράσταση δεν έχει ολοκληρωθεί (καταλήγει σε σύμβολο πράξης).', steps: [] };
+  }
+  if (/\(\)/.test(current)) {
+    return { error: 'Η παράσταση περιέχει κενή παρένθεση.', steps: [] };
+  }
+
   try {
     let iteration = 0;
     const maxIterations = 35;
@@ -378,7 +394,7 @@ function solveExpressionSteps(inputExpr) {
         }
       }
 
-      if (innerStart !== -1) {
+      if (innerStart !== -1 && innerEnd !== -1) {
         const innerContent = current.substring(innerStart + 1, innerEnd);
 
         if (!/[+*^:]/.test(innerContent) && !(innerContent.includes('-') && innerContent.indexOf('-') > 0)) {
@@ -434,7 +450,7 @@ function solveExpressionSteps(inputExpr) {
 
     return { result: current.replace(/\+-/g, '-').replace(/--/g, '+'), steps, error: null };
   } catch (err) {
-    return { error: err.message || 'Δεν ήταν δυνατή η ανάλυση της παράστασης. Έλεγξε τα σύμβολα.', steps: [] };
+    return { error: 'Σφάλμα ή ημιτελής παράσταση. Συνέχισε την πληκτρολόγηση.', steps: [] };
   }
 }
 
