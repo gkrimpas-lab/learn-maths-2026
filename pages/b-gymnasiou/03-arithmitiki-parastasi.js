@@ -98,7 +98,8 @@ const MathFormattedText = ({ text = "", className = "" }) => {
   // 1. Δυνάμεις: π.χ. 3^2, 2^-2, (-2)^2
   // 2. Πραγματικά κλάσματα αποτελεσμάτων (π.χ. 1/4, 1/3)
   // 3. Τελεστές πράξεων
-  const tokens = str.split(/(\((?:-?\d+)\)\^[+-]?\d+|\b\d+\^[+-]?\d+|\b\d+\s*\/\s*\d+\b|\*|:|\/|\+|-)/g);
+  // Τεμαχισμός που καλύπτει και το ^(-3)
+  const tokens = str.split(/(\((?:-?\d+)\)\^\(?-?\d+\)?|\b\d+\^\(?-?\d+\)?|\b\d+\s*\/\s*\d+\b|\*|:|\/|\+|-)/g);
 
   return (
     <span className={`inline-flex items-center flex-wrap gap-y-1 font-mono ${className}`}>
@@ -108,14 +109,15 @@ const MathFormattedText = ({ text = "", className = "" }) => {
 
         // Δύναμη
         if (token.includes('^')) {
-          const parts = token.split('^');
-          return (
-            <span key={idx} className="inline-flex items-baseline mx-0.5">
-              <span>{parts[0]}</span>
-              <sup className="text-amber-400 font-bold ml-0.5 text-xs sm:text-sm">{parts[1]}</sup>
-            </span>
-          );
-        }
+  const parts = token.split('^');
+  const cleanExp = parts[1].replace(/[()]/g, ''); // Αφαιρεί την παρένθεση στην εμφάνιση του sup
+  return (
+    <span key={idx} className="inline-flex items-baseline mx-0.5">
+      <span>{parts[0]}</span>
+      <sup className="text-amber-400 font-bold ml-0.5 text-xs sm:text-sm">{cleanExp}</sup>
+    </span>
+  );
+}
 
         // Κλάσμα αποτελέσματος (π.χ. 1/4 ή 1/3) - Μόνο αν ο αριθμητής είναι μικρός και δεν είναι διαίρεση μεγάλης παράστασης
         if (token.includes('/') && /^\d+\s*\/\s*\d+$/.test(token)) {
@@ -150,10 +152,10 @@ const MathFormattedText = ({ text = "", className = "" }) => {
 
 // Preset παραδείγματα για το εργαστήριο
 const PRESET_EXPRESSIONS = [
-  { label: '3ο Παράδειγμα: 12 * 2^-2 - 18 / 3^2 + 5', expr: '12 * 2^-2 - 18 / 3^2 + 5' },
-  { label: 'Σύνθετη με παρενθέσεις: (6 - 2)^2 + 15 / 3 - 3 * 3^-1', expr: '(6 - 2)^2 + 15 / 3 - 3 * 3^-1' },
-  { label: 'Προκαθορισμένο: 2^3 - 4 * 2^-1 + (5 - 3)^2', expr: '2^3 - 4 * 2^-1 + (5 - 3)^2' },
-  { label: 'Πρόσημα & αρνητικοί: (-2)^2 - 2^2 + 8 * 2^-3', expr: '(-2)^2 - 2^2 + 8 * 2^-3' },
+  { label: 'Προκαθορισμένο: 2^3 - 4 * 2^(-1) + (5 - 3)^2', expr: '2^3 - 4 * 2^(-1) + (5 - 3)^2' },
+  { label: 'Σύνθετη με παρενθέσεις: (6 - 2)^2 + 15 / 3 - 3 * 3^(-1)', expr: '(6 - 2)^2 + 15 / 3 - 3 * 3^(-1)' },
+  { label: '3ο Παράδειγμα: 12 * 2^(-2) - 18 / 3^2 + 5', expr: '12 * 2^(-2) - 18 / 3^2 + 5' },
+  { label: 'Πρόσημα & αρνητικοί: (-2)^2 - 2^2 + 8 * 2^(-3)', expr: '(-2)^2 - 2^2 + 8 * 2^(-3)' },
 ];
 
 function parseTerm(str) {
@@ -223,6 +225,49 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
+    // Αναγνώριση δύναμης με παρένθεση στον εκθέτη: π.χ. 2^(-3) ή (-2)^(-2)
+const parenExpPowRegex = /(\(?-?\d+(?:\/\d+)?\)?)\^\((-?\d+)\)/;
+while (parenExpPowRegex.test(current) && iteration < maxIterations) {
+  iteration++;
+  const match = current.match(parenExpPowRegex);
+  const baseR = parseTerm(match[1]);
+  const exp = parseInt(match[2], 10);
+  const resR = baseR.pow(exp);
+  const resStr = resR.toString();
+
+  const before = current;
+  const replacement = resR.n < 0 || resR.d !== 1 ? `(${resStr})` : `${resStr}`;
+  current = current.replace(match[0], replacement);
+
+  steps.push({
+    action: `Υπολογισμός δύναμης: ${match[1]}^(${match[2]}) ＝ ${resStr}`,
+    before,
+    after: current
+  });
+}
+
+// Δυνάμεις χωρίς παρένθεση στον εκθέτη: π.χ. 2^-3 ή 3^2
+const simplePowRegex = /(\(?-?\d+(?:\/\d+)?\)?)\^([+-]?\d+)/;
+while (simplePowRegex.test(current) && iteration < maxIterations) {
+  iteration++;
+  const match = current.match(simplePowRegex);
+  const baseR = parseTerm(match[1]);
+  const exp = parseInt(match[2], 10);
+  const resR = baseR.pow(exp);
+  const resStr = resR.toString();
+
+  const before = current;
+  const replacement = resR.n < 0 || resR.d !== 1 ? `(${resStr})` : `${resStr}`;
+  current = current.replace(match[0], replacement);
+
+  steps.push({
+    action: `Υπολογισμός δύναμης: ${match[1]}^(${match[2]}) ＝ ${resStr}`,
+    before,
+    after: current
+  });
+}
+
+    
     // Δυνάμεις χωρίς παρένθεση: π.χ. 2^-2, 3^2
     const simplePowRegex = /(\d+)\^([+-]?\d+)/;
     while (simplePowRegex.test(current) && iteration < maxIterations) {
