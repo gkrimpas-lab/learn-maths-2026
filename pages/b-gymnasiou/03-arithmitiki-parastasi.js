@@ -89,16 +89,10 @@ const Frac = ({ num, den, className = "" }) => {
 const MathFormattedText = ({ text = "", className = "" }) => {
   if (!text) return null;
 
-  // Προστατεύουμε πρώτα τις διαιρέσεις που ακολουθούνται από δυνάμεις: π.χ. 18 / 3^2
   let str = String(text)
     .replace(/\s+/g, ' ')
     .trim();
 
-  // Διαχωρίζουμε με βάση:
-  // 1. Δυνάμεις: π.χ. 3^2, 2^-2, (-2)^2
-  // 2. Πραγματικά κλάσματα αποτελεσμάτων (π.χ. 1/4, 1/3)
-  // 3. Τελεστές πράξεων
-  // Τεμαχισμός που καλύπτει και το ^(-3)
   const tokens = str.split(/(\((?:-?\d+)\)\^\(?-?\d+\)?|\b\d+\^\(?-?\d+\)?|\b\d+\s*\/\s*\d+\b|\*|:|\/|\+|-)/g);
 
   return (
@@ -109,28 +103,26 @@ const MathFormattedText = ({ text = "", className = "" }) => {
 
         // Δύναμη
         if (token.includes('^')) {
-  const parts = token.split('^');
-  const cleanExp = parts[1].replace(/[()]/g, ''); // Αφαιρεί την παρένθεση στην εμφάνιση του sup
-  return (
-    <span key={idx} className="inline-flex items-baseline mx-0.5">
-      <span>{parts[0]}</span>
-      <sup className="text-amber-400 font-bold ml-0.5 text-xs sm:text-sm">{cleanExp}</sup>
-    </span>
-  );
-}
+          const parts = token.split('^');
+          const cleanExp = parts[1].replace(/[()]/g, '');
+          return (
+            <span key={idx} className="inline-flex items-baseline mx-0.5">
+              <span>{parts[0]}</span>
+              <sup className="text-amber-400 font-bold ml-0.5 text-xs sm:text-sm">{cleanExp}</sup>
+            </span>
+          );
+        }
 
-        // Κλάσμα αποτελέσματος (π.χ. 1/4 ή 1/3) - Μόνο αν ο αριθμητής είναι μικρός και δεν είναι διαίρεση μεγάλης παράστασης
+        // Κλάσμα αποτελέσματος (π.χ. 1/4, 1/3)
         if (token.includes('/') && /^\d+\s*\/\s*\d+$/.test(token)) {
           const [n, d] = token.split('/');
-          // Αν είναι σύνηθες ανάγωγο κλάσμα όπως 1/4, 1/3, 2/5 κτλ.
           if (parseInt(n, 10) < parseInt(d, 10)) {
             return <Frac key={idx} num={n.trim()} den={d.trim()} />;
           }
-          // Αλλιώς προβάλλεται ως διαίρεση με άνω και κάτω τελεία
           return <span key={idx} className="mx-1">{n.trim()} : {d.trim()}</span>;
         }
 
-        // Τελεστές πράξεων με καθαρά κενά
+        // Τελεστές πράξεων
         if (token === '*' || token === '·') {
           return <span key={idx} className="mx-1.5 font-bold text-slate-300">·</span>;
         }
@@ -152,9 +144,9 @@ const MathFormattedText = ({ text = "", className = "" }) => {
 
 // Preset παραδείγματα για το εργαστήριο
 const PRESET_EXPRESSIONS = [
-  { label: 'Προκαθορισμένο: 2^3 - 4 * 2^(-1) + (5 - 3)^2', expr: '2^3 - 4 * 2^(-1) + (5 - 3)^2' },
-  { label: 'Σύνθετη με παρενθέσεις: (6 - 2)^2 + 15 / 3 - 3 * 3^(-1)', expr: '(6 - 2)^2 + 15 / 3 - 3 * 3^(-1)' },
   { label: '3ο Παράδειγμα: 12 * 2^(-2) - 18 / 3^2 + 5', expr: '12 * 2^(-2) - 18 / 3^2 + 5' },
+  { label: 'Σύνθετη με παρενθέσεις: (6 - 2)^2 + 15 / 3 - 3 * 3^(-1)', expr: '(6 - 2)^2 + 15 / 3 - 3 * 3^(-1)' },
+  { label: 'Προκαθορισμένο: 2^3 - 4 * 2^(-1) + (5 - 3)^2', expr: '2^3 - 4 * 2^(-1) + (5 - 3)^2' },
   { label: 'Πρόσημα & αρνητικοί: (-2)^2 - 2^2 + 8 * 2^(-3)', expr: '(-2)^2 - 2^2 + 8 * 2^(-3)' },
 ];
 
@@ -204,11 +196,11 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Βήμα 2: Δυνάμεις με παρένθεση στη βάση: (-2)^2
-    const parenPowRegex = /\((-?\d+(?:\/\d+)?)\)\^([+-]?\d+)/;
-    while (parenPowRegex.test(current) && iteration < maxIterations) {
+    // Βήμα 2α: Δυνάμεις με παρένθεση στη βάση: (-2)^2 ή (-2)^(-2)
+    const parenBasePowRegex = /\((-?\d+(?:\/\d+)?)\)\^\(?([+-]?\d+)\)?/;
+    while (parenBasePowRegex.test(current) && iteration < maxIterations) {
       iteration++;
-      const match = current.match(parenPowRegex);
+      const match = current.match(parenBasePowRegex);
       const baseR = parseTerm(match[1]);
       const exp = parseInt(match[2], 10);
       const resR = baseR.pow(exp);
@@ -225,51 +217,8 @@ function solveExpressionSteps(inputExpr) {
       });
     }
 
-    // Αναγνώριση δύναμης με παρένθεση στον εκθέτη: π.χ. 2^(-3) ή (-2)^(-2)
-const parenExpPowRegex = /(\(?-?\d+(?:\/\d+)?\)?)\^\((-?\d+)\)/;
-while (parenExpPowRegex.test(current) && iteration < maxIterations) {
-  iteration++;
-  const match = current.match(parenExpPowRegex);
-  const baseR = parseTerm(match[1]);
-  const exp = parseInt(match[2], 10);
-  const resR = baseR.pow(exp);
-  const resStr = resR.toString();
-
-  const before = current;
-  const replacement = resR.n < 0 || resR.d !== 1 ? `(${resStr})` : `${resStr}`;
-  current = current.replace(match[0], replacement);
-
-  steps.push({
-    action: `Υπολογισμός δύναμης: ${match[1]}^(${match[2]}) ＝ ${resStr}`,
-    before,
-    after: current
-  });
-}
-
-// Δυνάμεις χωρίς παρένθεση στον εκθέτη: π.χ. 2^-3 ή 3^2
-const simplePowRegex = /(\(?-?\d+(?:\/\d+)?\)?)\^([+-]?\d+)/;
-while (simplePowRegex.test(current) && iteration < maxIterations) {
-  iteration++;
-  const match = current.match(simplePowRegex);
-  const baseR = parseTerm(match[1]);
-  const exp = parseInt(match[2], 10);
-  const resR = baseR.pow(exp);
-  const resStr = resR.toString();
-
-  const before = current;
-  const replacement = resR.n < 0 || resR.d !== 1 ? `(${resStr})` : `${resStr}`;
-  current = current.replace(match[0], replacement);
-
-  steps.push({
-    action: `Υπολογισμός δύναμης: ${match[1]}^(${match[2]}) ＝ ${resStr}`,
-    before,
-    after: current
-  });
-}
-
-    
-    // Δυνάμεις χωρίς παρένθεση: π.χ. 2^-2, 3^2
-    const simplePowRegex = /(\d+)\^([+-]?\d+)/;
+    // Βήμα 2β: Δυνάμεις με απλή βάση (με ή χωρίς παρένθεση στον εκθέτη): 2^(-2) ή 3^2
+    const simplePowRegex = /(\d+)\^\(?([+-]?\d+)\)?/;
     while (simplePowRegex.test(current) && iteration < maxIterations) {
       iteration++;
       const match = current.match(simplePowRegex);
@@ -369,7 +318,7 @@ function evaluateSimpleFraction(expr) {
   const term = '(?:\\(-?\\d+(?:\\/\\d+)?\\)|-?\\d+(?:\\/\\d+)?)';
   const unsignedTerm = '(?:\\(-?\\d+(?:\\/\\d+)?\\)|\\d+(?:\\/\\d+)?)';
 
-  const powReg = new RegExp(`(${term})\\^([+-]?\\d+)`);
+  const powReg = new RegExp(`(${term})\\^\(?([+-]?\\d+)\)?`);
   while (powReg.test(e)) {
     const m = e.match(powReg);
     const b = parseTerm(m[1]);
@@ -411,7 +360,7 @@ function evaluateSimpleFraction(expr) {
 }
 
 export default function ArithmitikiParastasiTheoria() {
-  const [customExpr, setCustomExpr] = useState('12 * 2^-2 - 18 / 3^2 + 5');
+  const [customExpr, setCustomExpr] = useState('12 * 2^(-2) - 18 / 3^2 + 5');
 
   const analysis = useMemo(() => {
     return solveExpressionSteps(customExpr);
@@ -590,7 +539,7 @@ export default function ArithmitikiParastasiTheoria() {
                 type="text"
                 value={customExpr}
                 onChange={(e) => setCustomExpr(e.target.value)}
-                placeholder="π.χ. 12 * 2^-2 - 18 / 3^2 + 5"
+                placeholder="π.χ. 12 * 2^(-2) - 18 / 3^2 + 5"
                 className="w-full h-14 px-4 sm:px-5 rounded-2xl border-2 border-indigo-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 font-mono text-base sm:text-xl font-bold text-slate-900 transition-all outline-none"
               />
               {customExpr && (
