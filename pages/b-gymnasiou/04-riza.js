@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Component Frac με ασφαλή ανίχνευση προσήμου και τοποθέτηση του μείον μπροστά
+// Component Frac με ασφαλή ανίχνευση προσήμου
 const Frac = ({ num, den, className = "" }) => {
   const numStr = String(num).trim();
   const denStr = String(den).trim();
@@ -25,12 +25,28 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
-// Component Sqrt με κανονική οριζόντια γραμμή (vinculum) που σκεπάζει την υπόρριζη ποσότητα
+// Ενιαίο ενιαίο SVG σύμβολο ρίζας: μονοκόμματο σχήμα με οριζόντια γραμμή (vinculum)
 const Sqrt = ({ children, className = "" }) => {
   return (
-    <span className={`inline-flex items-center align-middle mx-1 font-mono font-semibold ${className}`}>
-      <span className="text-base sm:text-lg lg:text-xl leading-none font-bold select-none mr-[-1px]">√</span>
-      <span className="border-t-2 border-current pt-0.5 px-1 leading-tight inline-flex items-center">
+    <span className={`inline-flex items-center align-middle mx-1 relative font-mono font-semibold ${className}`}>
+      {/* SVG που σχεδιάζει μονοκόμματα το 'τικ' και την επάνω οριζόντια γραμμή που σκεπάζει όλο το πλάτος */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none text-current overflow-visible"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M 0 58 L 4 52 L 10 92 L 16 6 L 100 6"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          vectorEffect="non-scaling-stroke"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      {/* Το υπόρριζο περιεχόμενο με σωστά περιθώρια ώστε να κάθεται τέλεια κάτω από τη γραμμή */}
+      <span className="pl-4 sm:pl-4.5 pr-1 pt-1 pb-0.5 leading-none inline-flex items-center">
         {children}
       </span>
     </span>
