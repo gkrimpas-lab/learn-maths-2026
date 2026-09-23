@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Component Frac με ασφαλή ανίχνευση προσήμου
+// Component Frac με ασφαλή ανίχνευση προσήμου και τοποθέτηση του μείον μπροστά
 const Frac = ({ num, den, className = "" }) => {
   const numStr = String(num).trim();
   const denStr = String(den).trim();
@@ -20,6 +20,18 @@ const Frac = ({ num, den, className = "" }) => {
       <span className="inline-flex flex-col items-center text-center leading-none text-xs sm:text-sm">
         <span className="border-b border-current px-1 pb-0.5">{cleanNum}</span>
         <span className="pt-0.5 px-1">{cleanDen}</span>
+      </span>
+    </span>
+  );
+};
+
+// Component Sqrt με κανονική οριζόντια γραμμή (vinculum) που σκεπάζει την υπόρριζη ποσότητα
+const Sqrt = ({ children, className = "" }) => {
+  return (
+    <span className={`inline-flex items-center align-middle mx-1 font-mono font-semibold ${className}`}>
+      <span className="text-base sm:text-lg lg:text-xl leading-none font-bold select-none mr-[-1px]">√</span>
+      <span className="border-t-2 border-current pt-0.5 px-1 leading-tight inline-flex items-center">
+        {children}
       </span>
     </span>
   );
@@ -205,8 +217,8 @@ export default function RizaTheoria() {
                   <span className="text-xs text-amber-300 font-bold uppercase tracking-wider">
                     ΑΝΤΙΣΤΡΟΦΗ ΔΙΑΔΙΚΑΣΙΑ (ΤΕΤΡΑΓΩΝΙΚΗ ΡΙΖΑ)
                   </span>
-                  <div className="font-mono text-xl sm:text-2xl font-black text-amber-300">
-                    √{geoSide * geoSide} ＝ {geoSide}
+                  <div className="font-mono text-xl sm:text-2xl font-black text-amber-300 flex items-center">
+                    <Sqrt>{geoSide * geoSide}</Sqrt> ＝ {geoSide}
                   </div>
                   <p className="text-xs text-slate-400 font-sans pt-1">
                     «Ποιος θετικός αριθμός αν υψωθεί στο τετράγωνο μας δίνει {geoSide * geoSide}; Ο {geoSide}!»
@@ -256,21 +268,37 @@ export default function RizaTheoria() {
               <div className="p-4 rounded-2xl bg-purple-50/80 border border-purple-200 space-y-2">
                 <strong className="text-purple-950 block text-base sm:text-lg">Ορισμός Τετραγωνικής Ρίζας:</strong>
                 <p className="text-slate-700 text-sm sm:text-base">
-                  <strong>Τετραγωνική ρίζα</strong> ενός θετικού αριθμού <strong>α</strong> (συμβολίζεται με <strong>√α</strong>) ονομάζεται ο <strong>θετικός αριθμός</strong> ο οποίος, όταν υψωθεί στο τετράγωνο, δίνει τον αριθμό α.
+                  <strong>Τετραγωνική ρίζα</strong> ενός θετικού αριθμού <strong>α</strong> (συμβολίζεται με <Sqrt>α</Sqrt>) ονομάζεται ο <strong>θετικός αριθμός</strong> ο οποίος, όταν υψωθεί στο τετράγωνο, δίνει τον αριθμό α.
                 </p>
-                <div className="font-mono text-center font-bold text-purple-950 text-base sm:text-lg pt-1">
-                  Αν x ≥ 0 και x² ＝ α, τότε √α ＝ x
+                <div className="font-mono text-center font-bold text-purple-950 text-base sm:text-lg pt-1 flex items-center justify-center flex-wrap">
+                  <span>Αν x ≥ 0 και x² ＝ α, τότε </span>
+                  <Sqrt>α</Sqrt>
+                  <span> ＝ x</span>
                 </div>
               </div>
 
               <div className="space-y-2 text-sm sm:text-base">
                 <strong className="text-slate-900 block">Βασικές Ιδιότητες:</strong>
                 <ul className="space-y-2 list-disc pl-5 text-slate-600">
-                  <li><span className="font-mono font-bold text-slate-900">√0 ＝ 0</span> και <span className="font-mono font-bold text-slate-900">√1 ＝ 1</span></li>
-                  <li><span className="font-mono font-bold text-slate-900">(√α)² ＝ α</span> για κάθε α ≥ 0 (π.χ. (√7)² = 7)</li>
-                  <li><span className="font-mono font-bold text-slate-900">√(α²) ＝ α</span> για κάθε α ≥ 0 (π.χ. √(5²) = 5)</li>
-                  <li>
-                    Ρίζα κλάσματος: <span className="font-mono font-bold">√(α/β) ＝ √α / √β</span> (π.χ. √(4/9) = √4 / √9 = 2/3)
+                  <li className="flex items-center flex-wrap">
+                    <Sqrt>0</Sqrt> ＝ 0 &nbsp;και&nbsp; <Sqrt>1</Sqrt> ＝ 1
+                  </li>
+                  <li className="flex items-center flex-wrap">
+                    <span>(</span><Sqrt>α</Sqrt><span>)² ＝ α για κάθε α ≥ 0 (π.χ. (</span><Sqrt>7</Sqrt><span>)² ＝ 7)</span>
+                  </li>
+                  <li className="flex items-center flex-wrap">
+                    <Sqrt>α²</Sqrt> ＝ α για κάθε α ≥ 0 (π.χ. <Sqrt>5²</Sqrt> ＝ 5)
+                  </li>
+                  <li className="flex items-center flex-wrap">
+                    <span>Ρίζα κλάσματος: </span>
+                    <Sqrt><Frac num="α" den="β" /></Sqrt>
+                    <span> ＝ </span>
+                    <Frac num={<Sqrt>α</Sqrt>} den={<Sqrt>β</Sqrt>} />
+                    <span> (π.χ. </span>
+                    <Sqrt><Frac num="4" den="9" /></Sqrt>
+                    <span> ＝ </span>
+                    <Frac num="2" den="3" />
+                    <span>)</span>
                   </li>
                 </ul>
               </div>
@@ -285,8 +313,12 @@ export default function RizaTheoria() {
               <div className="space-y-3 text-xs sm:text-sm">
                 <div className="p-3.5 bg-white rounded-xl border border-rose-200 space-y-1">
                   <strong className="text-rose-700 block uppercase">1. ΡΙΖΑ ΑΡΝΗΤΙΚΟΥ ΑΡΙΘΜΟΥ</strong>
-                  <p className="text-slate-600">
-                    Η έκφραση <span className="font-mono font-bold text-rose-700">√(-9)</span> ή <span className="font-mono font-bold text-rose-700">√(-16)</span> <strong>ΔΕΝ ΕΧΕΙ ΝΟΗΜΑ</strong> στους πραγματικούς αριθμούς, διότι κανενός αριθμού το τετράγωνο δεν είναι αρνητικό!
+                  <p className="text-slate-600 flex items-center flex-wrap">
+                    <span>Η έκφραση </span>
+                    <Sqrt>-9</Sqrt>
+                    <span> ή </span>
+                    <Sqrt>-16</Sqrt>
+                    <span> <strong>ΔΕΝ ΕΧΕΙ ΝΟΗΜΑ</strong> στους πραγματικούς αριθμούς, διότι κανενός αριθμού το τετράγωνο δεν είναι αρνητικό!</span>
                   </p>
                 </div>
 
@@ -295,8 +327,8 @@ export default function RizaTheoria() {
                   <p className="text-slate-600">
                     Αν και τόσο το 4² όσο και το (-4)² ισούνται με 16, εξ ορισμού ισχύει:
                   </p>
-                  <div className="font-mono font-bold text-slate-800 bg-slate-50 p-2 rounded-lg border border-slate-200">
-                    √16 ＝ +4 <span className="text-rose-600 font-sans font-bold">(ΠΟΤΕ -4)</span>
+                  <div className="font-mono font-bold text-slate-800 bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-center">
+                    <Sqrt>16</Sqrt> ＝ +4 <span className="text-rose-600 font-sans font-bold ml-2">(ΠΟΤΕ -4)</span>
                   </div>
                 </div>
 
@@ -305,8 +337,9 @@ export default function RizaTheoria() {
                   <p className="text-slate-600">
                     Η ρίζα <strong>δεν σπάει</strong> στην πρόσθεση και την αφαίρεση:
                   </p>
-                  <div className="font-mono font-bold text-slate-800 bg-slate-50 p-2 rounded-lg border border-slate-200">
-                    √(9 + 16) ＝ √25 ＝ 5 <span className="text-rose-600 font-sans font-bold">(ΟΧΙ √9 + √16 = 3 + 4 = 7)</span>
+                  <div className="font-mono font-bold text-slate-800 bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-center flex-wrap">
+                    <Sqrt>9 + 16</Sqrt> ＝ <Sqrt>25</Sqrt> ＝ 5 
+                    <span className="text-rose-600 font-sans font-bold ml-2">(ΟΧΙ √9 + √16 = 3 + 4 = 7)</span>
                   </div>
                 </div>
               </div>
@@ -383,8 +416,8 @@ export default function RizaTheoria() {
                     <span className="text-xs text-indigo-400 uppercase font-bold tracking-wider block mb-1">
                       ΥΠΟΛΟΓΙΣΜΟΣ ΡΙΖΑΣ
                     </span>
-                    <div className="text-2xl sm:text-4xl font-black font-mono text-amber-300">
-                      √{rootAnalysis.val} ＝ {rootAnalysis.sqrtVal}
+                    <div className="text-2xl sm:text-4xl font-black font-mono text-amber-300 flex items-center">
+                      <Sqrt>{rootAnalysis.val}</Sqrt> ＝ {rootAnalysis.sqrtVal}
                     </div>
                   </div>
                   <div>
@@ -405,15 +438,19 @@ export default function RizaTheoria() {
                     <div className="text-emerald-300 font-sans font-bold">
                       ✓ Ο αριθμός {rootAnalysis.val} είναι τέλειο τετράγωνο!
                     </div>
-                    <div className="text-slate-300">
-                      Ισχύει: <span className="text-white font-bold">{rootAnalysis.intRoot}² ＝ {rootAnalysis.val}</span>, άρα <span className="text-amber-300 font-bold">√{rootAnalysis.val} ＝ {rootAnalysis.intRoot}</span>.
+                    <div className="text-slate-300 flex items-center flex-wrap">
+                      <span>Ισχύει: </span>
+                      <span className="text-white font-bold mx-1">{rootAnalysis.intRoot}² ＝ {rootAnalysis.val}</span>
+                      <span>, άρα </span>
+                      <span className="text-amber-300 font-bold mx-1 flex items-center"><Sqrt>{rootAnalysis.val}</Sqrt> ＝ {rootAnalysis.intRoot}</span>.
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2 text-sm sm:text-base">
-                      <div className="text-amber-300 font-sans font-bold">
-                        🔍 Εγκλωβισμός της ρίζας √{rootAnalysis.val}:
+                      <div className="text-amber-300 font-sans font-bold flex items-center flex-wrap">
+                        <span>🔍 Εγκλωβισμός της ρίζας </span>
+                        <Sqrt>{rootAnalysis.val}</Sqrt>:
                       </div>
                       <p className="text-slate-300 text-xs sm:text-sm font-sans">
                         Ο αριθμός {rootAnalysis.val} δεν είναι τέλειο τετράγωνο. Βρίσκεται όμως ανάμεσα στα διαδοχικά τέλεια τετράγωνα:
@@ -421,10 +458,12 @@ export default function RizaTheoria() {
                       <div className="font-mono text-base sm:text-lg font-bold text-white bg-slate-950/50 p-3 rounded-xl border border-slate-800 text-center">
                         {rootAnalysis.bounding.lowerSq} &lt; {rootAnalysis.val} &lt; {rootAnalysis.bounding.upperSq}
                       </div>
-                      <div className="font-mono text-base sm:text-lg font-bold text-indigo-300 bg-slate-950/50 p-3 rounded-xl border border-slate-800 text-center">
-                        √{rootAnalysis.bounding.lowerSq} &lt; √{rootAnalysis.val} &lt; √{rootAnalysis.bounding.upperSq}
-                        <div className="text-amber-400 font-black mt-1">
-                          {rootAnalysis.bounding.lowerInt} &lt; √{rootAnalysis.val} &lt; {rootAnalysis.bounding.upperInt}
+                      <div className="font-mono text-base sm:text-lg font-bold text-indigo-300 bg-slate-950/50 p-3 rounded-xl border border-slate-800 text-center flex flex-col items-center justify-center">
+                        <div className="flex items-center justify-center">
+                          <Sqrt>{rootAnalysis.bounding.lowerSq}</Sqrt> &lt; <Sqrt>{rootAnalysis.val}</Sqrt> &lt; <Sqrt>{rootAnalysis.bounding.upperSq}</Sqrt>
+                        </div>
+                        <div className="text-amber-400 font-black mt-2 flex items-center justify-center">
+                          {rootAnalysis.bounding.lowerInt} &lt; <Sqrt>{rootAnalysis.val}</Sqrt> &lt; {rootAnalysis.bounding.upperInt}
                         </div>
                       </div>
                     </div>
@@ -451,11 +490,21 @@ export default function RizaTheoria() {
             {/* Παράδειγμα 1 */}
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700">ΠΑΡΑΔΕΙΓΜΑ 1: ΥΠΟΛΟΓΙΣΜΟΣ ΠΑΡΑΣΤΑΣΗΣ ΜΕ ΡΙΖΕΣ</span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono">
-                Α ＝ 3 · √64 - 2 · √25 + √100
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap">
+                <span>Α ＝ 3 · </span>
+                <Sqrt>64</Sqrt>
+                <span> - 2 · </span>
+                <Sqrt>25</Sqrt>
+                <span> + </span>
+                <Sqrt>100</Sqrt>
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
-                <div>1. Υπολογίζουμε τις ρίζες: √64 = 8, √25 = 5, √100 = 10</div>
+                <div className="flex items-center flex-wrap">
+                  <span>1. Υπολογίζουμε τις ρίζες: </span>
+                  <Sqrt>64</Sqrt><span> = 8, </span>
+                  <Sqrt>25</Sqrt><span> = 5, </span>
+                  <Sqrt>100</Sqrt><span> = 10</span>
+                </div>
                 <div className="pl-3 text-slate-500">➔ 3 · 8 - 2 · 5 + 10</div>
                 <div>2. Πολλαπλασιασμοί: 3 · 8 = 24, 2 · 5 = 10</div>
                 <div className="pl-3 text-slate-500">➔ 24 - 10 + 10</div>
@@ -467,14 +516,26 @@ export default function RizaTheoria() {
             {/* Παράδειγμα 2 */}
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700">ΠΑΡΑΔΕΙΓΜΑ 2: ΡΙΖΑ ΜΕ ΠΡΑΞΕΙΣ ΚΑΤΩ ΑΠΟ ΤΟ ΡΙΖΙΚΟ</span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono">
-                Β ＝ √(3 · 12) + √(10² - 8²)
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap">
+                <span>Β ＝ </span>
+                <Sqrt>3 · 12</Sqrt>
+                <span> + </span>
+                <Sqrt>10² - 8²</Sqrt>
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
                 <div>1. Εκτελούμε πρώτα τις πράξεις μέσα στα ριζικά:</div>
                 <div className="pl-3 text-slate-500">3 · 12 = 36  και  10² - 8² = 100 - 64 = 36</div>
-                <div className="pl-3 text-slate-500">➔ √36 + √36</div>
-                <div>2. Υπολογίζουμε τις ρίζες: √36 = 6</div>
+                <div className="pl-3 text-slate-500 flex items-center flex-wrap">
+                  <span>➔ </span>
+                  <Sqrt>36</Sqrt>
+                  <span> + </span>
+                  <Sqrt>36</Sqrt>
+                </div>
+                <div className="flex items-center flex-wrap">
+                  <span>2. Υπολογίζουμε τις ρίζες: </span>
+                  <Sqrt>36</Sqrt>
+                  <span> ＝ 6</span>
+                </div>
                 <div className="pl-3 text-slate-500">➔ 6 + 6</div>
                 <div className="pl-3 font-bold text-indigo-700">➔ 12</div>
               </div>
@@ -483,15 +544,19 @@ export default function RizaTheoria() {
             {/* Παράδειγμα 3 */}
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700">ΠΑΡΑΔΕΙΓΜΑ 3: ΡΙΖΑ ΚΛΑΣΜΑΤΟΣ</span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center">
-                <span>Γ ＝ √</span>
-                <Frac num="49" den="81" />
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap">
+                <span>Γ ＝ </span>
+                <Sqrt><Frac num="49" den="81" /></Sqrt>
                 <span> + </span>
                 <Frac num="2" den="9" />
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
                 <div className="flex items-center flex-wrap">
-                  <span>1. Σπάμε τη ρίζα: √(49/81) = √49 / √81 = </span>
+                  <span>1. Σπάμε τη ρίζα: </span>
+                  <Sqrt><Frac num="49" den="81" /></Sqrt>
+                  <span> ＝ </span>
+                  <Frac num={<Sqrt>49</Sqrt>} den={<Sqrt>81</Sqrt>} />
+                  <span> ＝ </span>
                   <Frac num="7" den="9" />
                 </div>
                 <div className="flex items-center flex-wrap pl-3 text-slate-500">
@@ -511,15 +576,27 @@ export default function RizaTheoria() {
             {/* Παράδειγμα 4 */}
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700">ΠΑΡΑΔΕΙΓΜΑ 4: ΕΓΚΛΩΒΙΣΜΟΣ ΑΡΡΗΤΗΣ ΡΙΖΑΣ</span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono">
-                Ανάμεσα σε ποιους διαδοχικούς ακέραιους βρίσκεται το √50;
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap">
+                <span>Ανάμεσα σε ποιους διαδοχικούς ακέραιους βρίσκεται το </span>
+                <Sqrt>50</Sqrt>;
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
                 <div>1. Βρίσκουμε τα τέλεια τετράγωνα εκατέρωθεν του 50:</div>
                 <div className="pl-3 text-slate-500">49 (αφού 7² = 49) και 64 (αφού 8² = 64)</div>
                 <div>2. Άρα: 49 &lt; 50 &lt; 64</div>
-                <div className="pl-3 text-slate-500">➔ √49 &lt; √50 &lt; √64</div>
-                <div className="pl-3 font-bold text-indigo-700">➔ 7 &lt; √50 &lt; 8</div>
+                <div className="pl-3 text-slate-500 flex items-center flex-wrap">
+                  <span>➔ </span>
+                  <Sqrt>49</Sqrt>
+                  <span> &lt; </span>
+                  <Sqrt>50</Sqrt>
+                  <span> &lt; </span>
+                  <Sqrt>64</Sqrt>
+                </div>
+                <div className="pl-3 font-bold text-indigo-700 flex items-center flex-wrap">
+                  <span>➔ 7 &lt; </span>
+                  <Sqrt>50</Sqrt>
+                  <span> &lt; 8</span>
+                </div>
               </div>
             </div>
 
