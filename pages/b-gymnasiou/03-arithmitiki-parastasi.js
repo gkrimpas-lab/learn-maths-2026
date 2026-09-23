@@ -88,8 +88,8 @@ const Frac = ({ num, den, className = "" }) => {
   };
 
   return (
-    <span className={`inline-flex items-center align-middle mx-1.5 font-mono font-semibold ${className}`}>
-      {isNegative && <span className="mr-1 text-base sm:text-lg font-bold">-</span>}
+    <span className={`inline-flex items-center align-middle mx-1 font-mono font-semibold ${className}`}>
+      {isNegative && <span className="mr-0.5 text-base sm:text-lg font-bold">-</span>}
       <span className="inline-flex flex-col items-center text-center leading-none text-xs sm:text-sm">
         <span className="border-b border-current px-1 pb-0.5">{renderTerm(cleanNum)}</span>
         <span className="pt-0.5 px-1">{renderTerm(cleanDen)}</span>
@@ -98,7 +98,7 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
-// Component μορφοποίησης μαθηματικών εκφράσεων που ΔΕΝ καταστρέφει τις παρενθέσεις
+// Component ασφαλούς μορφοποίησης εκφράσεων
 const MathFormattedText = ({ text = "", className = "" }) => {
   if (!text) return null;
 
@@ -114,30 +114,37 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       continue;
     }
 
-    // 1. Κλάσμα μορφής n/d ή 1/2^2
-    const fracMatch = raw.slice(i).match(/^(\d+)\s*\/\s*(\d+(?:\^\d+)?)/);
+    // 1. Αρνητικό κλάσμα σε παρένθεση: π.χ. (-1/3) ή (-1/2^2)
+    const negParenFrac = raw.slice(i).match(/^\(\s*-\s*(\d+)\s*\/\s*(\d+(?:\^\d+)?)\s*\)/);
+    if (negParenFrac) {
+      tokens.push({ type: 'paren', val: '(' });
+      tokens.push({ type: 'frac', num: `-${negParenFrac[1]}`, den: negParenFrac[2] });
+      tokens.push({ type: 'paren', val: ')' });
+      i += negParenFrac[0].length;
+      continue;
+    }
+
+    // 2. Απλό κλάσμα: π.χ. 13/6 ή -1/3
+    const fracMatch = raw.slice(i).match(/^(-?\d+)\s*\/\s*(\d+(?:\^\d+)?)/);
     if (fracMatch) {
       tokens.push({ type: 'frac', num: fracMatch[1], den: fracMatch[2] });
       i += fracMatch[0].length;
       continue;
     }
 
-    // 2. Δύναμη: αναγνωρίζει βάση^εκθέτη
-    // Είτε βάση είναι αριθμός, είτε το σύμβολο ) όταν προηγείται παρένθεση
+    // 3. Δύναμη: π.χ. 3^2 ή 2^(-1) ή )^0
     if (ch === '^') {
       let expStr = '';
       let j = i + 1;
 
       if (raw[j] === '(') {
-        // Εκθέτης σε παρένθεση: π.χ. ^(-1)
         j++;
         while (j < raw.length && raw[j] !== ')') {
           expStr += raw[j];
           j++;
         }
-        if (j < raw.length && raw[j] === ')') j++; // προσπερνάμε το ')' του εκθέτη
+        if (j < raw.length && raw[j] === ')') j++;
       } else {
-        // Απλός εκθέτης χωρίς παρένθεση: π.χ. ^2 ή ^-1
         if (raw[j] === '-' || raw[j] === '+') {
           expStr += raw[j];
           j++;
@@ -148,7 +155,6 @@ const MathFormattedText = ({ text = "", className = "" }) => {
         }
       }
 
-      // Παίρνουμε το αμέσως προηγούμενο token ως βάση
       if (tokens.length > 0) {
         const lastTok = tokens.pop();
         if (lastTok.type === 'num' || lastTok.type === 'paren') {
@@ -162,7 +168,7 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       continue;
     }
 
-    // 3. Σύμβολα πράξεων & ισότητας
+    // 4. Σύμβολα πράξεων & ισότητας
     if (ch === '*' || ch === '·') {
       tokens.push({ type: 'op', val: '·' });
       i++;
@@ -194,7 +200,7 @@ const MathFormattedText = ({ text = "", className = "" }) => {
       continue;
     }
 
-    // 4. Αριθμοί
+    // 5. Αριθμοί
     const numMatch = raw.slice(i).match(/^\d+/);
     if (numMatch) {
       tokens.push({ type: 'num', val: numMatch[0] });
@@ -237,10 +243,10 @@ const MathFormattedText = ({ text = "", className = "" }) => {
 
 // Preset παραδείγματα
 const PRESET_EXPRESSIONS = [
+  { label: 'Κλάσματα σε 3 παρενθέσεις', expr: '(1/2 + 5/3) * (3 + 7/4) / (1/2 - 5/6)' },
   { label: 'Σύνθετη με 2 παρενθέσεις', expr: '15 + 2 * (3^2 - 2^3)^0 - (9 : 3^(-1) - 2^3)' },
   { label: '12 * 2^(-2) - 18 / 3^2 + 5', expr: '12 * 2^(-2) - 18 / 3^2 + 5' },
   { label: 'Σύνθετη: (6 - 2)^2 + 15 / 3 - 3 * 3^(-1)', expr: '(6 - 2)^2 + 15 / 3 - 3 * 3^(-1)' },
-  { label: 'Προκαθορισμένο: 2^3 - 4 * 2^(-1) + (5 - 3)^2', expr: '2^3 - 4 * 2^(-1) + (5 - 3)^2' },
 ];
 
 function parseSimpleTerm(str) {
@@ -255,7 +261,15 @@ function parseSimpleTerm(str) {
 // Ασφαλής επιλυτής με αυστηρό βήμα-βήμα υπολογισμό
 function solveExpressionSteps(inputExpr) {
   const steps = [];
-  let current = inputExpr.replace(/\s+/g, '').replace(/·/g, '*').replace(/\//g, ':');
+  // Μετατροπή των εξωτερικών διαιρέσεων / σε : (προστατεύοντας όμως τα κλάσματα εντός παρενθέσεων)
+  let current = inputExpr.replace(/\s+/g, '').replace(/·/g, '*');
+
+  // Μετατροπή του / σε : μόνο όταν είναι ανάμεσα σε παρενθέσεις ή σύνθετους όρους
+  current = current.replace(/\)\/\(/g, '):(').replace(/([0-9\)])\/([0-9(])/g, (m, p1, p2) => {
+    // Αν είναι απλό κλάσμα αριθμών όπως 1/2, το αφήνουμε ως έχει
+    if (/^[0-9]$/.test(p1) && /^[0-9]$/.test(p2)) return `${p1}/${p2}`;
+    return `${p1}:${p2}`;
+  });
 
   if (!current) {
     return { error: 'Παρακαλώ πληκτρολόγησε μία αριθμητική παράσταση.', steps: [] };
@@ -289,9 +303,11 @@ function solveExpressionSteps(inputExpr) {
       if (innerStart !== -1 && innerEnd !== -1) {
         const innerContent = current.substring(innerStart + 1, innerEnd);
 
-        // Αν είναι απλός αριθμός χωρίς πράξεις (π.χ. 1 ή -1)
-        if (!/[+*:]/.test(innerContent) && !(innerContent.includes('-') && innerContent.indexOf('-') > 0)) {
-          // Αν ακολουθείται από δύναμη: π.χ. (1)^0
+        // Αν είναι απλός αριθμός ή κλάσμα χωρίς πράξεις (π.χ. 13/6 ή -1/3)
+        const isSimpleVal = /^-?\d+(\/\d+)?$/.test(innerContent);
+
+        if (isSimpleVal) {
+          // Αν ακολουθείται από δύναμη: π.χ. (13/6)^2 ή (1)^0
           if (current[innerEnd + 1] === '^') {
             const powIdx = innerEnd + 1;
             let eEnd = powIdx + 1;
@@ -313,7 +329,7 @@ function solveExpressionSteps(inputExpr) {
             const resVal = resRat.toString();
 
             const before = current;
-            current = current.substring(0, innerStart) + resVal + current.substring(eEnd);
+            current = current.substring(0, innerStart) + (resRat.n < 0 ? `(${resVal})` : resVal) + current.substring(eEnd);
 
             steps.push({
               action: `Υπολογισμός δύναμης : (${innerContent})^${expStr} ＝ ${resVal}`,
@@ -323,14 +339,15 @@ function solveExpressionSteps(inputExpr) {
             continue;
           }
 
-          // Αν είναι απλός εκθέτης αρνητικού αριθμού, π.χ. 3^(-1)
-          if (innerStart > 0 && current[innerStart - 1] === '^') {
-            // Το χειρίζεται η εκτέλεση δύναμης
-          } else {
-            // Αφαίρεση περιττής παρένθεσης
-            current = current.substring(0, innerStart) + innerContent + current.substring(innerEnd + 1);
-            continue;
+          // Αν είναι αρνητικός αριθμός/κλάσμα και πριν υπάρχει τελεστής (π.χ. : (-1/3) ή * (-1/3)), διατηρούμε την παρένθεση
+          if (innerContent.startsWith('-') && innerStart > 0 && ['*', ':', '+', '-'].includes(current[innerStart - 1])) {
+            // Δεν την αφαιρούμε, γιατί στα μαθηματικά δεν γράφουμε διαδοχικούς τελεστές π.χ. : -1/3
+            break;
           }
+
+          // Αν είναι θετικός αριθμός ή κλάσμα, αφαιρούμε την παρένθεση
+          current = current.substring(0, innerStart) + innerContent + current.substring(innerEnd + 1);
+          continue;
         } else {
           // Η παρένθεση περιέχει πράξεις: εκτελούμε ΑΚΡΙΒΩΣ ΜΙΑ πράξη μέσα της
           const stepResult = executeSingleOperation(innerContent);
@@ -376,7 +393,6 @@ function executeSingleOperation(expr) {
   if (expr.includes('^')) {
     const powIdx = expr.indexOf('^');
 
-    // Βάση
     let bStart = powIdx - 1;
     let baseStr = '';
     if (expr[bStart] === ')') {
@@ -390,7 +406,6 @@ function executeSingleOperation(expr) {
       baseStr = expr.substring(bStart, powIdx);
     }
 
-    // Εκθέτης
     let eEnd = powIdx + 1;
     let expStr = '';
     if (expr[eEnd] === '(') {
@@ -418,11 +433,13 @@ function executeSingleOperation(expr) {
       actionDesc = `Υπολογισμός δύναμης : ${cleanBase}^${cleanExp} ＝ 1/${cleanBase}^${absE} ＝ ${resVal}`;
     }
 
-    const newExpr = expr.substring(0, bStart) + resVal + expr.substring(eEnd);
+    const replacement = resRat.n < 0 ? `(${resVal})` : resVal;
+    const newExpr = expr.substring(0, bStart) + replacement + expr.substring(eEnd);
     return { action: actionDesc, newExpr };
   }
 
   // Β. Πολλαπλασιασμοί & Διαιρέσεις (*, :)
+  // Πλήρης υποστήριξη όρων όπως: 247/24 : (-1/3)
   let opIdx = -1;
   for (let i = 0; i < expr.length; i++) {
     if (expr[i] === '*' || expr[i] === ':') {
@@ -434,21 +451,44 @@ function executeSingleOperation(expr) {
   if (opIdx !== -1) {
     const op = expr[opIdx];
 
+    // Αριστερός όρος
     let lStart = opIdx - 1;
-    while (lStart >= 0 && /[0-9/]/.test(expr[lStart])) lStart--;
-    lStart++;
-    const leftStr = expr.substring(lStart, opIdx);
+    let leftStr = '';
+    if (expr[lStart] === ')') {
+      let openP = lStart - 1;
+      while (openP >= 0 && expr[openP] !== '(') openP--;
+      leftStr = expr.substring(openP, lStart + 1);
+      lStart = openP;
+    } else {
+      while (lStart >= 0 && /[0-9/]/.test(expr[lStart])) lStart--;
+      lStart++;
+      leftStr = expr.substring(lStart, opIdx);
+    }
 
+    // Δεξιός όρος (μπορεί να είναι π.χ. (-1/3) ή απλό 19/4)
     let rEnd = opIdx + 1;
-    while (rEnd < expr.length && /[0-9/]/.test(expr[rEnd])) rEnd++;
-    const rightStr = expr.substring(opIdx + 1, rEnd);
+    let rightStr = '';
+    if (expr[rEnd] === '(') {
+      let closeP = rEnd + 1;
+      while (closeP < expr.length && expr[closeP] !== ')') closeP++;
+      rightStr = expr.substring(rEnd, closeP + 1);
+      rEnd = closeP + 1;
+    } else {
+      while (rEnd < expr.length && /[0-9/]/.test(expr[rEnd])) rEnd++;
+      rightStr = expr.substring(opIdx + 1, rEnd);
+    }
 
     const lRat = parseSimpleTerm(leftStr);
     const rRat = parseSimpleTerm(rightStr);
     const resRat = op === '*' ? lRat.mul(rRat) : lRat.div(rRat);
     const resVal = resRat.toString();
 
-    const newExpr = expr.substring(0, lStart) + resVal + expr.substring(rEnd);
+    // Αν το αποτέλεσμα είναι αρνητικό και πριν υπάρχει άλλος τελεστής, διατηρούμε παρένθεση
+    const replacement = resRat.n < 0 && lStart > 0 && ['*', ':', '+', '-'].includes(expr[lStart - 1])
+      ? `(${resVal})`
+      : resVal;
+
+    const newExpr = expr.substring(0, lStart) + replacement + expr.substring(rEnd);
     return {
       action: `${op === '*' ? 'Πολλαπλασιασμός' : 'Διαίρεση'} : ${leftStr} ${op === '*' ? '·' : ':'} ${rightStr} ＝ ${resVal}`,
       newExpr
@@ -457,25 +497,47 @@ function executeSingleOperation(expr) {
 
   // Γ. Προσθέσεις & Αφαιρέσεις (+, -)
   for (let i = 1; i < expr.length; i++) {
-    if (expr[i] === '+' || expr[i] === '-') {
+    if (expr[i] === '+' || (expr[i] === '-' && expr[i - 1] !== '(')) {
       const op = expr[i];
 
+      // Αριστερός όρος
       let lStart = i - 1;
-      while (lStart >= 0 && /[0-9/]/.test(expr[lStart])) lStart--;
-      if (lStart === 0 && expr[0] === '-') lStart = 0;
-      else lStart++;
-      const leftStr = expr.substring(lStart, i);
+      let leftStr = '';
+      if (expr[lStart] === ')') {
+        let openP = lStart - 1;
+        while (openP >= 0 && expr[openP] !== '(') openP--;
+        leftStr = expr.substring(openP, lStart + 1);
+        lStart = openP;
+      } else {
+        while (lStart >= 0 && /[0-9/]/.test(expr[lStart])) lStart--;
+        if (lStart === 0 && expr[0] === '-') lStart = 0;
+        else lStart++;
+        leftStr = expr.substring(lStart, i);
+      }
 
+      // Δεξιός όρος
       let rEnd = i + 1;
-      while (rEnd < expr.length && /[0-9/]/.test(expr[rEnd])) rEnd++;
-      const rightStr = expr.substring(i + 1, rEnd);
+      let rightStr = '';
+      if (expr[rEnd] === '(') {
+        let closeP = rEnd + 1;
+        while (closeP < expr.length && expr[closeP] !== ')') closeP++;
+        rightStr = expr.substring(rEnd, closeP + 1);
+        rEnd = closeP + 1;
+      } else {
+        while (rEnd < expr.length && /[0-9/]/.test(expr[rEnd])) rEnd++;
+        rightStr = expr.substring(i + 1, rEnd);
+      }
 
       const lRat = parseSimpleTerm(leftStr);
       const rRat = parseSimpleTerm(rightStr);
       const resRat = op === '+' ? lRat.add(rRat) : lRat.sub(rRat);
       const resVal = resRat.toString();
 
-      const newExpr = expr.substring(0, lStart) + resVal + expr.substring(rEnd);
+      const replacement = resRat.n < 0 && lStart > 0 && ['*', ':', '+', '-'].includes(expr[lStart - 1])
+        ? `(${resVal})`
+        : resVal;
+
+      const newExpr = expr.substring(0, lStart) + replacement + expr.substring(rEnd);
       return {
         action: `${op === '+' ? 'Πρόσθεση' : 'Αφαίρεση'} : ${leftStr} ${op} ${rightStr} ＝ ${resVal}`,
         newExpr
@@ -487,7 +549,7 @@ function executeSingleOperation(expr) {
 }
 
 export default function ArithmitikiParastasiTheoria() {
-  const [customExpr, setCustomExpr] = useState('15 + 2 * (3^2 - 2^3)^0 - (9 : 3^(-1) - 2^3)');
+  const [customExpr, setCustomExpr] = useState('(1/2 + 5/3) * (3 + 7/4) / (1/2 - 5/6)');
 
   const analysis = useMemo(() => {
     return solveExpressionSteps(customExpr);
@@ -666,7 +728,7 @@ export default function ArithmitikiParastasiTheoria() {
                 type="text"
                 value={customExpr}
                 onChange={(e) => setCustomExpr(e.target.value)}
-                placeholder="π.χ. 15 + 2 * (3^2 - 2^3)^0 - (9 : 3^(-1) - 2^3)"
+                placeholder="π.χ. (1/2 + 5/3) * (3 + 7/4) / (1/2 - 5/6)"
                 className="w-full h-14 px-4 sm:px-5 rounded-2xl border-2 border-indigo-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 font-mono text-base sm:text-xl font-bold text-slate-900 transition-all outline-none"
               />
               {customExpr && (
@@ -680,7 +742,7 @@ export default function ArithmitikiParastasiTheoria() {
               )}
             </div>
             <div className="text-[11px] text-slate-500 flex flex-wrap gap-x-4 gap-y-1 font-mono">
-              <span>Σύμβολα: + (πρόσθεση), - (αφαίρεση), * (πολλαπλασιασμός), / (διαίρεση), ^ (δύναμη)</span>
+              <span>Σύμβολα: + (πρόσθεση), - (αφαίρεση), * (πολλαπλασιασμός), / (διαίρεση/κλάσμα), ^ (δύναμη)</span>
             </div>
           </div>
 
