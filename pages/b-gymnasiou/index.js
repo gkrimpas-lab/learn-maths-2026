@@ -27,6 +27,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 3',
     active: true,
   },
+  {
+    id: '04',
+    slug: '04-riza',
+    title: 'Τετραγωνική ρίζα θετικού αριθμού',
+    desc: 'Τετραγωνική ρίζα θετικού αριθμού, τετράγωνοι αριθμοί, τέλεια τετράγωνα.',
+    badge: 'ΚΕΦΑΛΑΙΟ 4',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
