@@ -59,6 +59,7 @@ export default function STDimotikouMenu() {
     { id: '52-brisko-arxiki-timi', label: '📐 52. Εύρεση Αρχικής τιμής', href: '/st-dimotikou/52-brisko-arxiki-timi' },
     { id: '53-ksero-arxiki-teliki-timi', label: '📐 53. Ξέρω αρχική και Τελική Τιμή. Εύρεση ποσοστού', href: '/st-dimotikou/53-ksero-arxiki-teliki-timi' },
     { id: '54-epanalipsi-3', label: '🏆 54. Επανάληψη ( Κεφ. 40 - 53 )', href: '/st-dimotikou/54-epanalipsi-3' },
+    { id: '55-apeikonisi-data', label: '📐 55. Ραβδόγραμμα και εικονόγραμμα', href: '/st-dimotikou/55-apeikonisi-data' },
   ];
 
   return (
