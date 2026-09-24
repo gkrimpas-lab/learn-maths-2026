@@ -25,10 +25,10 @@ function formatNum(val, decimals = 2) {
 }
 
 export default function BriskoPosostaTheoryPage() {
-  // Εργαστηριο 1: Διαδραστικος Υπολογιστης Αυξησης / Μειωσης
+  // Εργαστηριο 1: Διαδραστικος Υπολογιστης Αυξησης / Μειωσης με βημα 1
   const [mode, setMode] = useState('discount'); // 'discount' (μειωση) η 'increase' (αυξηση)
-  const [initialPrice, setInitialPrice] = useState(80); // Αρχικη τιμη σε €
-  const [percentage, setPercentage] = useState(25); // Ποσοστο %
+  const [initialPrice, setInitialPrice] = useState(80); // Αρχικη τιμη σε € (step 1)
+  const [percentage, setPercentage] = useState(25); // Ποσοστο % (step 1)
 
   // Υπολογισμοι Εργαστηριου 1
   const changeAmount = useMemo(() => {
@@ -40,15 +40,6 @@ export default function BriskoPosostaTheoryPage() {
     const raw = mode === 'discount' ? initialPrice - changeAmount : initialPrice + changeAmount;
     return Number.isInteger(raw) ? raw : Number(raw.toFixed(2));
   }, [initialPrice, changeAmount, mode]);
-
-  const finalPercentage = mode === 'discount' ? 100 - percentage : 100 + percentage;
-
-  // Εργαστηριο 2: Συγκριση των 2 Τροπων Υπολογισμου Τελικης Τιμης
-  const [presetItemPrice, setPresetItemPrice] = useState(120);
-  const [presetPct, setPresetPct] = useState(20);
-
-  const presetDiscount = (presetItemPrice * presetPct) / 100;
-  const presetFinal = presetItemPrice - presetDiscount;
 
   return (
     <Layout
@@ -66,7 +57,6 @@ export default function BriskoPosostaTheoryPage() {
         </Link>
       }
     >
-      {/* Container πληρους ευρους για 2K & 4K και responsive για κινητα */}
       <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-10 2xl:space-y-14 pb-24">
         
         {/* 1. HEADER BANNER */}
@@ -245,7 +235,7 @@ export default function BriskoPosostaTheoryPage() {
           </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΕΞΟΜΟΙΩΤΗΣ ΑΥΞΗΣΗΣ / ΜΕΙΩΣΗΣ & ΤΕΛΙΚΗΣ ΤΙΜΗΣ */}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΕΞΟΜΟΙΩΤΗΣ ΑΥΞΗΣΗΣ / ΜΕΙΩΣΗΣ (STEP 1) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 2xl:p-12 space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-6">
             <div>
@@ -256,7 +246,7 @@ export default function BriskoPosostaTheoryPage() {
                 Δυναμικός Υπολογιστής Ποσοστού &amp; Τελικής Τιμής
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-                Επιλέξτε ανάμεσα σε Έκπτωση (Μείωση) ή Αύξηση, προσαρμόστε την αρχική τιμή και το ποσοστό και παρακολουθήστε τον πίνακα αναλογίας και την τελική τιμή.
+                Επιλέξτε ανάμεσα σε Έκπτωση (Μείωση) ή Αύξηση, ρυθμίστε ανά 1 μονάδα την αρχική τιμή και το ποσοστό και δείτε τον πίνακα αναλογίας και την τελική τιμή.
               </p>
             </div>
 
@@ -289,10 +279,10 @@ export default function BriskoPosostaTheoryPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            {/* Χειριστηρια Αρχικης Τιμης & Ποσοστου */}
+            {/* Χειριστηρια Αρχικης Τιμης & Ποσοστου (Step = 1) */}
             <div className="lg:col-span-5 space-y-4">
               
-              {/* Αρχικη Τιμη */}
+              {/* Αρχικη Τιμη (Step 1) */}
               <div className="bg-blue-50/70 p-4 rounded-2xl border border-blue-200 space-y-2">
                 <div className="h-8 flex items-center justify-between text-left">
                   <span className="text-xs font-black uppercase text-blue-900 tracking-wider">
@@ -305,24 +295,24 @@ export default function BriskoPosostaTheoryPage() {
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInitialPrice((prev) => Math.max(10, prev - 10)); }}
-                    disabled={initialPrice <= 10}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInitialPrice((prev) => Math.max(1, prev - 1)); }}
+                    disabled={initialPrice <= 1}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
                   >
                     －
                   </button>
                   <input
                     type="range"
-                    min={10}
+                    min={1}
                     max={200}
-                    step={10}
+                    step={1}
                     value={initialPrice}
                     onChange={(e) => setInitialPrice(Number(e.target.value))}
                     className="w-full accent-blue-600 cursor-pointer"
                   />
                   <button
                     type="button"
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInitialPrice((prev) => Math.min(200, prev + 10)); }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInitialPrice((prev) => Math.min(200, prev + 1)); }}
                     disabled={initialPrice >= 200}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
                   >
@@ -331,7 +321,7 @@ export default function BriskoPosostaTheoryPage() {
                 </div>
               </div>
 
-              {/* Ποσοστο % */}
+              {/* Ποσοστο % (Step 1) */}
               <div className="bg-amber-50/70 p-4 rounded-2xl border border-amber-200 space-y-2">
                 <div className="h-8 flex items-center justify-between text-left">
                   <span className="text-xs font-black uppercase text-amber-900 tracking-wider">
@@ -344,25 +334,25 @@ export default function BriskoPosostaTheoryPage() {
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentage((prev) => Math.max(5, prev - 5)); }}
-                    disabled={percentage <= 5}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentage((prev) => Math.max(1, prev - 1)); }}
+                    disabled={percentage <= 1}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
                   >
                     －
                   </button>
                   <input
                     type="range"
-                    min={5}
-                    max={50}
-                    step={5}
+                    min={1}
+                    max={100}
+                    step={1}
                     value={percentage}
                     onChange={(e) => setPercentage(Number(e.target.value))}
                     className="w-full accent-amber-600 cursor-pointer"
                   />
                   <button
                     type="button"
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentage((prev) => Math.min(50, prev + 5)); }}
-                    disabled={percentage >= 50}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentage((prev) => Math.min(100, prev + 1)); }}
+                    disabled={percentage >= 100}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
                   >
                     ＋
@@ -520,7 +510,7 @@ export default function BriskoPosostaTheoryPage() {
           </div>
 
           <Link
-            href="/st-dimotikou/50-brisko-pososta-ask"
+            href="/st-dimotikou/51-brisko-pososta-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
             <span>🎯 Έναρξη Ασκήσεων</span>
