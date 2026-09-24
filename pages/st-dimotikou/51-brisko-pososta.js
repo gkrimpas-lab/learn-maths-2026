@@ -1,4 +1,4 @@
-// pages/st-dimotikou/50-brisko-pososta.js
+// pages/st-dimotikou/51-brisko-pososta.js
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
@@ -59,7 +59,7 @@ export default function BriskoPosostaTheoryPage() {
       showAds={true}
       actionButton={
         <Link
-          href="/st-dimotikou/50-brisko-pososta-ask"
+          href="/st-dimotikou/51-brisko-pososta-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
           <span>🎯 Ασκήσεις</span>
@@ -73,7 +73,7 @@ export default function BriskoPosostaTheoryPage() {
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 50 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>ΚΕΦΑΛΑΙΟ 51 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Εύρεση Ποσοστού &amp; Τελικής Τιμής (Αύξηση – Μείωση)
@@ -89,7 +89,7 @@ export default function BriskoPosostaTheoryPage() {
               <span>Θεωρία, Λυμένα Προβλήματα &amp; Δυναμικός Εξομοιωτής Τελικής Τιμής</span>
             </div>
             <Link
-              href="/st-dimotikou/50-brisko-pososta-ask"
+              href="/st-dimotikou/51-brisko-pososta-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2.5 2xl:px-7 2xl:py-3.5 rounded-xl shadow-md transition active:scale-95 text-sm 2xl:text-base"
             >
               <span>Δοκίμασε τις Ασκήσεις</span>
