@@ -54,7 +54,8 @@ export default function STDimotikouMenu() {
     { id: '47-problem-antistrofos-analoga-posa', label: '📐 47. Προβλήματα Αντιστρόφως Ανάλογα ποσά', href: '/st-dimotikou/47-problem-antistrofos-analoga-posa' },
     { id: '48-methodos-trion', label: '📐 48. Μέθοδος των τριών - Ανάλογα ποσά', href: '/st-dimotikou/48-methodos-trion' },
     { id: '49-methodos-trion-ant-analoga', label: '📐 49. Μέθοδος των τριών - Αντιστρόφως ανάλογα ποσά', href: '/st-dimotikou/49-methodos-trion-ant-analoga' },
-    { id: '50-pososta', label: '📐 50. Ποσοστά', href: '/st-dimotikou/50-pososta' }
+    { id: '50-pososta', label: '📐 50. Ποσοστά', href: '/st-dimotikou/50-pososta' },
+    { id: '51-brisko-pososta', label: '📐 51. Προβλήματα με Ποσοστά', href: '/st-dimotikou/51-brisko-pososta' }
   ];
 
   return (
