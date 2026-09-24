@@ -13,10 +13,10 @@ function formatNum(val, decimals = 1) {
 export default function ApeikonisiDataTheoryPage() {
   // Εργαστηριο 1: Διαδραστικη Απεικονιση (Ραβδογραμμα vs Εικονογραμμα)
   const [viewType, setViewType] = useState('bar'); // 'bar' η 'pictogram'
-  const [catA, setCatA] = useState(12); // π.χ. Ποδόσφαιρο
-  const [catB, setCatB] = useState(8);  // π.χ. Μπάσκετ
-  const [catC, setCatC] = useState(6);  // π.χ. Βόλεϊ
-  const [catD, setCatD] = useState(10); // π.χ. Κολύμβηση
+  const [catA, setCatA] = useState(12); // Ποδόσφαιρο
+  const [catB, setCatB] = useState(8);  // Μπάσκετ
+  const [catC, setCatC] = useState(6);  // Βόλεϊ
+  const [catD, setCatD] = useState(10); // Κολύμβηση
 
   const categories = useMemo(() => [
     { name: 'Ποδόσφαιρο', value: catA, color: '#3b82f6', icon: '⚽' },
@@ -26,15 +26,14 @@ export default function ApeikonisiDataTheoryPage() {
   ], [catA, catB, catC, catD]);
 
   const totalVotes = catA + catB + catC + catD;
-  const maxVal = Math.max(catA, catB, catC, catD, 15);
 
-  // Εργαστηριο 2: Επιλογη Κλιμακας Υπομνηματος σε Εικονογραμμα
+  // Εργαστηριο 2: Επιλογη Κλιμακας Υπομνηματος & Οπτικη Αναπαρασταση
   const [booksCount, setBooksCount] = useState(30);
   const [symbolScale, setSymbolScale] = useState(5); // 1 συμβολο = 5 βιβλια
 
-  const symbolsNeeded = useMemo(() => {
-    return booksCount / symbolScale;
-  }, [booksCount, symbolScale]);
+  const fullSymbols = Math.floor(booksCount / symbolScale);
+  const remainder = booksCount % symbolScale;
+  const hasHalfSymbol = remainder >= symbolScale / 2;
 
   return (
     <Layout
@@ -71,7 +70,7 @@ export default function ApeikonisiDataTheoryPage() {
           <div className="mt-8 pt-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-3 w-3 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Λυμένα Παραδείγματα &amp; Διαδραστική Σχεδίαση Γραφημάτων</span>
+              <span>Θεωρία, Οπτικά Παραδείγματα &amp; Διαδραστική Σχεδίαση Γραφημάτων</span>
             </div>
             <Link
               href="/st-dimotikou/55-apeikonisi-data-ask"
@@ -453,7 +452,6 @@ export default function ApeikonisiDataTheoryPage() {
                 /* SVG Ραβδογραμμα */
                 <div className="w-full max-w-[440px] aspect-[4/3] bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative">
                   <svg viewBox="0 0 400 300" className="w-full h-full overflow-visible">
-                    {/* Οριζοντιες γραμμες πλεγματος ανα 5 μοναδες */}
                     {[0, 5, 10, 15, 20].map((v) => {
                       const y = 250 - (v / 20) * 200;
                       return (
@@ -523,7 +521,7 @@ export default function ApeikonisiDataTheoryPage() {
 
                   <div className="space-y-3 font-mono text-xs sm:text-sm">
                     {categories.map((cat) => {
-                      const fullSymbols = Math.floor(cat.value / 2);
+                      const fullSyms = Math.floor(cat.value / 2);
                       const hasHalf = cat.value % 2 !== 0;
 
                       return (
@@ -532,7 +530,7 @@ export default function ApeikonisiDataTheoryPage() {
                             {cat.name}:
                           </span>
                           <div className="flex flex-wrap items-center gap-1.5 grow">
-                            {Array.from({ length: fullSymbols }).map((_, idx) => (
+                            {Array.from({ length: fullSyms }).map((_, idx) => (
                               <span key={`sym-${idx}`} className="text-lg" title="2 μαθητές">
                                 {cat.icon}
                               </span>
@@ -564,45 +562,63 @@ export default function ApeikonisiDataTheoryPage() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΕΠΙΛΟΓΗ ΚΛΙΜΑΚΑΣ ΥΠΟΜΝΗΜΑΤΟΣ */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΕΠΙΛΟΓΗ ΚΛΙΜΑΚΑΣ ΚΑΙ ΟΠΤΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΣΥΜΒΟΛΩΝ */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
-              <span>⚡ ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2</span>
+              <span>⚡ ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΟΠΤΙΚΟΠΟΙΗΣΗ ΥΠΟΜΝΗΜΑΤΟΣ</span>
             </div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πώς Επιλέγουμε την Κλίμακα του Υπομνήματος;
+              Πώς Αλλάζει το Εικονόγραμμα με την Κλίμακα του Υπομνήματος;
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Όταν έχουμε μεγάλους αριθμούς, δεν μπορούμε να σχεδιάσουμε δεκάδες εικόνες. Αλλάζουμε την αξία του κάθε συμβόλου:
+              Επιλέξτε πόσα βιβλία δανείστηκαν και αλλάξτε την κλίμακα για να δείτε πώς σχεδιάζονται τα σύμβολα σε πραγματικό χρόνο:
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             {/* Ρυθμισεις */}
-            <div className="space-y-4">
+            <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-slate-700">
                   <span>ΑΡΙΘΜΟΣ ΒΙΒΛΙΩΝ:</span>
-                  <span className="font-mono text-base text-emerald-700 bg-white px-2 py-0.5 rounded border border-slate-200">
+                  <span className="font-mono text-base text-emerald-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 font-black">
                     {booksCount} βιβλία
                   </span>
                 </div>
-                <input
-                  type="range"
-                  min={10}
-                  max={60}
-                  step={5}
-                  value={booksCount}
-                  onChange={(e) => setBooksCount(Number(e.target.value))}
-                  className="w-full accent-emerald-600 cursor-pointer"
-                />
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-10 w-full gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setBooksCount((prev) => Math.max(5, prev - 5)); }}
+                    disabled={booksCount <= 5}
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                  >
+                    －
+                  </button>
+                  <input
+                    type="range"
+                    min={5}
+                    max={60}
+                    step={5}
+                    value={booksCount}
+                    onChange={(e) => setBooksCount(Number(e.target.value))}
+                    className="w-full accent-emerald-600 cursor-pointer"
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setBooksCount((prev) => Math.min(60, prev + 5)); }}
+                    disabled={booksCount >= 60}
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                  >
+                    ＋
+                  </button>
+                </div>
               </div>
 
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <span className="text-xs font-bold text-slate-700 block">
-                  ΕΠΙΛΟΓΗ ΥΠΟΜΝΗΜΑΤΟΣ (ΚΛΙΜΑΚΑ):
+                  ΕΠΙΛΕΞΤΕ ΑΞΙΑ ΥΠΟΜΝΗΜΑΤΟΣ (1 ΣΥΜΒΟΛΟ ΙΣΟΥΤΑΙ ΜΕ):
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   {[2, 5, 10].map((s) => (
@@ -610,56 +626,83 @@ export default function ApeikonisiDataTheoryPage() {
                       key={`sc-${s}`}
                       type="button"
                       onClick={() => setSymbolScale(s)}
-                      className={`p-2.5 rounded-xl font-bold text-xs sm:text-sm transition ${
+                      className={`p-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex flex-col items-center justify-center gap-1 ${
                         symbolScale === s
-                          ? 'bg-emerald-600 text-white shadow-sm'
+                          ? 'bg-emerald-600 text-white shadow-md scale-102'
                           : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
                       }`}
                     >
-                      📖 ＝ {s}
+                      <span className="text-base">📖</span>
+                      <span>＝ {s} βιβλία</span>
                     </button>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Αποτελεσμα */}
-            <div className="bg-emerald-50/60 p-6 rounded-3xl border border-emerald-200 space-y-3 text-center">
-              <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider block">
-                ΑΠΑΙΤΟΥΜΕΝΑ ΣΥΜΒΟΛΑ ΣΤΟ ΕΙΚΟΝΟΓΡΑΜΜΑ
-              </span>
-              <div className="text-3xl sm:text-4xl font-black text-emerald-700 font-mono">
-                {formatNum(symbolsNeeded)} {symbolsNeeded === 1 ? 'σύμβολο' : 'σύμβολα'}
+            {/* Οπτικη Προβολη των Συμβολων */}
+            <div className="lg:col-span-7 bg-emerald-50/50 p-6 rounded-3xl border border-emerald-200 space-y-4 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between border-b border-emerald-200/60 pb-2 mb-3">
+                  <span className="text-xs font-bold text-emerald-950 uppercase tracking-wider">
+                    ΟΠΤΙΚΗ ΑΠΟΔΟΣΗ ΣΤΟ ΕΙΚΟΝΟΓΡΑΜΜΑ
+                  </span>
+                  <span className="text-xs font-bold bg-white px-2 py-1 rounded-lg border border-emerald-200 text-emerald-800 font-mono">
+                    Υπόμνημα: 📖 ＝ {symbolScale} βιβλία
+                  </span>
+                </div>
+
+                {/* Σχεδιαση συμβολων */}
+                <div className="p-4 bg-white rounded-2xl border border-emerald-100 min-h-[90px] flex flex-wrap items-center gap-2">
+                  {Array.from({ length: fullSymbols }).map((_, idx) => (
+                    <span key={`dyn-sym-${idx}`} className="text-3xl select-none" title={`Σύμβολο ${idx + 1}: ${symbolScale} βιβλία`}>
+                      📖
+                    </span>
+                  ))}
+                  {hasHalfSymbol && (
+                    <span className="inline-flex items-center justify-center bg-amber-100 border border-amber-300 text-amber-950 font-bold px-2 py-1 rounded-lg text-xs" title={`Μισό σύμβολο: ${remainder} βιβλία`}>
+                      ½ 📖
+                    </span>
+                  )}
+                  {fullSymbols === 0 && !hasHalfSymbol && (
+                    <span className="text-xs text-slate-400">Δεν απαιτούνται σύμβολα</span>
+                  )}
+                </div>
               </div>
-              <div className="p-3 bg-white rounded-2xl border border-emerald-100 text-xs sm:text-sm text-slate-700 font-mono">
-                Υπολογισμός: {booksCount} βιβλία : {symbolScale} βιβλία/σύμβολο ＝ <strong>{formatNum(symbolsNeeded)}</strong>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-center text-xs sm:text-sm font-mono">
+                <div className="p-2.5 bg-white rounded-xl border border-emerald-100">
+                  <span className="text-slate-500 font-sans block text-xs">Ακέραια Σύμβολα</span>
+                  <strong className="text-emerald-800 text-lg font-black">{fullSymbols}</strong>
+                </div>
+                <div className="p-2.5 bg-white rounded-xl border border-emerald-100">
+                  <span className="text-slate-500 font-sans block text-xs">Πράξη Υπολογισμού</span>
+                  <strong className="text-slate-800">{booksCount} : {symbolScale} ＝ {formatNum(booksCount / symbolScale)}</strong>
+                </div>
               </div>
-              <p className="text-xs text-slate-500 font-sans">
-                Όσο μεγαλύτερη η κλίμακα (π.χ. ανά 10), τόσο πιο οικονομικό και ευανάγνωστο γίνεται το εικονόγραμμα.
-              </p>
             </div>
 
           </div>
         </section>
 
-        {/* 5. ΛΥΜΕΝΑ ΠΑΡΑΔΕΙΓΜΑΤΑ ΠΡΟΒΛΗΜΑΤΩΝ */}
+        {/* 5. ΛΥΜΕΝΑ ΠΑΡΑΔΕΙΓΜΑΤΑ ΠΡΟΒΛΗΜΑΤΩΝ ΜΕ ΣΧΗΜΑΤΑ */}
         <section className="space-y-6">
           <div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900 tracking-tight">
-              Λυμένα Παραδείγματα Προβλημάτων
+              Λυμένα Παραδείγματα Προβλημάτων με Σχήματα
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Δύο ολοκληρωμένα προβλήματα σχεδίασης και ερμηνείας ραβδογραμμάτων και εικονογραμμάτων.
+              Δύο ολοκληρωμένα προβλήματα σχεδίασης και ερμηνείας ραβδογραμμάτων και εικονογραμμάτων με αντίστοιχα γραφικά.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
-            {/* Παραδειγμα 1 */}
-            <article className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            {/* Παραδειγμα 1: Με Πληρες SVG Ραβδογραμμα */}
+            <article className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-black rounded-lg">
-                  ΠΡΟΒΛΗΜΑ 1: ΑΝΑΓΝΩΣΗ ΡΑΒΔΟΓΡΑΜΜΑΤΟΣ
+                  ΠΡΟΒΛΗΜΑ 1: ΡΑΒΔΟΓΡΑΜΜΑ
                 </span>
                 <span className="text-xs font-bold text-slate-400">Σχολείο</span>
               </div>
@@ -669,6 +712,54 @@ export default function ApeikonisiDataTheoryPage() {
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Σε ένα ραβδόγραμμα καταγράφηκαν οι δανεισμοί βιβλίων ανά τάξη: Γ' τάξη <strong>15 βιβλία</strong>, Δ' τάξη <strong>20 βιβλία</strong>, Ε' τάξη <strong>25 βιβλία</strong> και ΣΤ' τάξη <strong>30 βιβλία</strong>.
               </p>
+
+              {/* ΣΧΗΜΑ 1: SVG Ραβδογραμμα */}
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center mb-2">
+                  ΣΧΗΜΑ: ΡΑΒΔΟΓΡΑΜΜΑ ΔΑΝΕΙΣΜΩΝ ΑΝΑ ΤΑΞΗ
+                </span>
+                <div className="w-full max-w-[360px] mx-auto aspect-[4/3] bg-white rounded-xl border border-slate-200 p-3 shadow-inner">
+                  <svg viewBox="0 0 350 250" className="w-full h-full overflow-visible">
+                    {[0, 10, 20, 30].map((val) => {
+                      const y = 200 - (val / 30) * 160;
+                      return (
+                        <g key={`p1-grid-${val}`}>
+                          <line x1="40" y1={y} x2="330" y2={y} stroke="#f1f5f9" strokeWidth="1" />
+                          <text x="32" y={y + 4} fontSize="10" fill="#64748b" textAnchor="end" fontWeight="bold">
+                            {val}
+                          </text>
+                        </g>
+                      );
+                    })}
+                    <line x1="40" y1="200" x2="335" y2="200" stroke="#334155" strokeWidth="2" />
+                    <line x1="40" y1="200" x2="40" y2="25" stroke="#334155" strokeWidth="2" />
+
+                    {[
+                      { label: "Γ'", val: 15, col: '#38bdf8' },
+                      { label: "Δ'", val: 20, col: '#3b82f6' },
+                      { label: "Ε'", val: 25, col: '#2563eb' },
+                      { label: "ΣΤ'", val: 30, col: '#1d4ed8' }
+                    ].map((item, idx) => {
+                      const bw = 36;
+                      const bx = 65 + idx * 68;
+                      const bh = (item.val / 30) * 160;
+                      const by = 200 - bh;
+
+                      return (
+                        <g key={`p1-bar-${item.label}`}>
+                          <rect x={bx} y={by} width={bw} height={bh} fill={item.col} rx="4" />
+                          <text x={bx + bw / 2} y={by - 4} fontSize="11" fontWeight="bold" fill="#0f172a" textAnchor="middle">
+                            {item.val}
+                          </text>
+                          <text x={bx + bw / 2} y="218" fontSize="11" fontWeight="bold" fill="#475569" textAnchor="middle">
+                            {item.label}
+                          </text>
+                        </g>
+                      );
+                    })}
+                  </svg>
+                </div>
+              </div>
 
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
@@ -683,15 +774,15 @@ export default function ApeikonisiDataTheoryPage() {
               </div>
 
               <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-950 font-medium">
-                💡 Στο ραβδόγραμμα, η ράβδος της ΣΤ' τάξης έχει ακριβώς διπλάσιο ύψος από τη ράβδο της Γ' τάξης (30 έναντι 15).
+                💡 Στο σχήμα φαίνεται καθαρά: η ράβδος της ΣΤ' τάξης έχει ακριβώς διπλάσιο ύψος από τη ράβδο της Γ' τάξης (30 έναντι 15).
               </div>
             </article>
 
-            {/* Παραδειγμα 2 */}
-            <article className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            {/* Παραδειγμα 2: Με Πληρες Οπτικο Εικονογραμμα */}
+            <article className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs font-black rounded-lg">
-                  ΠΡΟΒΛΗΜΑ 2: ΚΑΤΑΣΚΕΥΗ ΕΙΚΟΝΟΓΡΑΜΜΑΤΟΣ
+                  ΠΡΟΒΛΗΜΑ 2: ΕΙΚΟΝΟΓΡΑΜΜΑ
                 </span>
                 <span className="text-xs font-bold text-slate-400">Ανακύκλωση</span>
               </div>
@@ -702,12 +793,42 @@ export default function ApeikonisiDataTheoryPage() {
                 Οι μαθητές συγκέντρωσαν: Δευτέρα <strong>40 μπαταρίες</strong>, Τρίτη <strong>60 μπαταρίες</strong>, Τετάρτη <strong>50 μπαταρίες</strong>. Θέλουμε να φτιάξουμε εικονόγραμμα με υπόμνημα <strong>🔋 ＝ 10 μπαταρίες</strong>.
               </p>
 
+              {/* ΣΧΗΜΑ 2: Οπτικο Εικονογραμμα */}
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 px-1">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    ΣΧΗΜΑ: ΕΙΚΟΝΟΓΡΑΜΜΑ ΑΝΑΚΥΚΛΩΣΗΣ
+                  </span>
+                  <span className="text-xs font-bold bg-white px-2 py-0.5 rounded border border-amber-200 text-amber-900 font-mono">
+                    Υπόμνημα: 🔋 ＝ 10 μπαταρίες
+                  </span>
+                </div>
+
+                <div className="bg-white rounded-xl border border-slate-200 p-3 space-y-2 text-xs sm:text-sm font-mono">
+                  <div className="flex items-center justify-between gap-2 p-1.5 bg-slate-50 rounded-lg">
+                    <span className="font-sans font-bold text-slate-700 w-20">Δευτέρα:</span>
+                    <span className="text-base select-none">🔋 🔋 🔋 🔋</span>
+                    <span className="font-bold text-amber-900">40 (4)</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-2 p-1.5 bg-slate-50 rounded-lg">
+                    <span className="font-sans font-bold text-slate-700 w-20">Τρίτη:</span>
+                    <span className="text-base select-none">🔋 🔋 🔋 🔋 🔋 🔋</span>
+                    <span className="font-bold text-amber-900">60 (6)</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-2 p-1.5 bg-slate-50 rounded-lg">
+                    <span className="font-sans font-bold text-slate-700 w-20">Τετάρτη:</span>
+                    <span className="text-base select-none">🔋 🔋 🔋 🔋 🔋</span>
+                    <span className="font-bold text-amber-900">50 (5)</span>
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                   <span className="text-slate-500 font-sans block text-xs font-bold">Υπολογισμός συμβόλων ανά ημέρα:</span>
-                  <div>• Δευτέρα: 40 : 10 ＝ <strong className="text-amber-700">4 σύμβολα</strong> (🔋🔋🔋🔋)</div>
-                  <div>• Τρίτη: 60 : 10 ＝ <strong className="text-amber-700">6 σύμβολα</strong> (🔋🔋🔋🔋🔋🔋)</div>
-                  <div>• Τετάρτη: 50 : 10 ＝ <strong className="text-amber-700">5 σύμβολα</strong> (🔋🔋🔋🔋🔋)</div>
+                  <div>• Δευτέρα: 40 : 10 ＝ <strong className="text-amber-700">4 σύμβολα</strong></div>
+                  <div>• Τρίτη: 60 : 10 ＝ <strong className="text-amber-700">6 σύμβολα</strong></div>
+                  <div>• Τετάρτη: 50 : 10 ＝ <strong className="text-amber-700">5 σύμβολα</strong></div>
                 </div>
               </div>
 
