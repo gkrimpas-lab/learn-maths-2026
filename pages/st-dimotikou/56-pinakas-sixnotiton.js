@@ -236,7 +236,7 @@ export default function PinakasSixnotitonTheoryPage() {
 
                 <div className="space-y-1.5 text-xs sm:text-sm">
                   <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950">
-                    • <strong>Επικρατούσα Τιμή (Μόδα):</strong> Η τιμή με τη <em>μεγαλύτερη συχνότητα</em>.
+                    • <strong>Επικρατούσα Τιμή (Mode):</strong> Η τιμή με τη <em>μεγαλύτερη συχνότητα</em>.
                   </div>
                   <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950">
                     • <strong>Εύρος:</strong> Μέγιστη τιμή － Ελάχιστη τιμή.
@@ -479,7 +479,7 @@ export default function PinakasSixnotitonTheoryPage() {
               {/* Ενημερωτικη Καρτα Επικρατουσας Τιμης */}
               <div className="p-2.5 sm:p-3.5 bg-blue-50/80 rounded-2xl border border-blue-200 text-xs sm:text-sm text-blue-950 flex items-center justify-between gap-2">
                 <span className="truncate">
-                  🌟 <strong>Μόδα:</strong> {maxFreqRow ? maxFreqRow.label : '-'} (ν ＝ {maxFreqRow ? maxFreqRow.freq : 0})
+                  🌟 <strong>Επικρατούσα τιμή:</strong> {maxFreqRow ? maxFreqRow.label : '-'} (ν ＝ {maxFreqRow ? maxFreqRow.freq : 0})
                 </span>
                 <span className="font-bold text-blue-800 text-[11px] sm:text-xs shrink-0">
                   {maxFreqRow ? `${formatNum(maxFreqRow.pct)}%` : ''}
@@ -625,7 +625,7 @@ export default function PinakasSixnotitonTheoryPage() {
                       <td className="p-1 font-bold text-emerald-700">20%</td>
                     </tr>
                     <tr className="border-b border-slate-100 bg-blue-50/50">
-                      <td className="p-1 text-left pl-1.5 font-sans font-bold text-blue-900 truncate">Βαθμός 9 (Μόδα)</td>
+                      <td className="p-1 text-left pl-1.5 font-sans font-bold text-blue-900 truncate">Βαθμός 9 (Mode)</td>
                       <td className="p-1 font-black text-blue-900">10</td>
                       <td className="p-1 text-blue-900 font-bold">0,40</td>
                       <td className="p-1 font-black text-blue-900">40%</td>
@@ -649,7 +649,7 @@ export default function PinakasSixnotitonTheoryPage() {
               <div className="space-y-1.5 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-2.5 sm:p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                   <span className="text-slate-500 font-sans block text-[11px] font-bold">Συμπεράσματα από τον Πίνακα:</span>
-                  <div>• <strong>Μόδα:</strong> Βαθμός 9 (10 μαθητές, 40%).</div>
+                  <div>• <strong>Επικρατούσα τιμή:</strong> Βαθμός 9 (10 μαθητές, 40%).</div>
                   <div>• <strong>Βαθμός τουλάχιστον 9:</strong> 5 ＋ 10 ＝ <strong>15 μαθητές (60%)</strong>.</div>
                 </div>
               </div>
@@ -693,7 +693,7 @@ export default function PinakasSixnotitonTheoryPage() {
                       <td className="p-1 font-bold text-amber-800">20%</td>
                     </tr>
                     <tr className="border-b border-slate-100 bg-amber-50/50">
-                      <td className="p-1 text-left pl-1.5 font-sans font-bold text-amber-950 truncate">2 ώρες (Μόδα)</td>
+                      <td className="p-1 text-left pl-1.5 font-sans font-bold text-amber-950 truncate">2 ώρες (Mode)</td>
                       <td className="p-1 font-black text-amber-900">10</td>
                       <td className="p-1 text-amber-900 font-bold">0,50</td>
                       <td className="p-1 font-black text-amber-900">50%</td>
@@ -711,7 +711,7 @@ export default function PinakasSixnotitonTheoryPage() {
               <div className="space-y-1.5 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-2.5 sm:p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                   <span className="text-slate-500 font-sans block text-[11px] font-bold">Συμπεράσματα από τον Πίνακα:</span>
-                  <div>• <strong>Μόδα:</strong> 2 ώρες (50% των μαθητών).</div>
+                  <div>• <strong>Επικρατούσα τιμή:</strong> 2 ώρες (50% των μαθητών).</div>
                   <div>• <strong>Πάνω από 1 ώρα:</strong> 10 ＋ 6 ＝ <strong>16 μαθητές (80%)</strong>.</div>
                 </div>
               </div>
