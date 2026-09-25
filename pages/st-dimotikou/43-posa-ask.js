@@ -358,18 +358,14 @@ function generateQuestions() {
     });
   }
 
-  // Q2 (MCQ): Διάκριση σταθερού και μεταβλητού ποσού
+  // Q2 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const correctOption = 'Ο αριθμός των ημερών του μήνα Απριλίου (30 ημέρες)';
-    const wrong1 = 'Η ημερήσια θερμοκρασία σε μια πόλη';
-    const wrong2 = 'Το βάρος ενός μαθητή κατά τη διάρκεια του έτους';
-    const wrong3 = 'Η ταχύτητα ενός αυτοκινήτου μέσα στην κίνηση της πόλης';
-
     const options = [
       { text: correctOption, isCorrect: true },
-      { text: wrong1, isCorrect: false },
-      { text: wrong2, isCorrect: false },
-      { text: wrong3, isCorrect: false }
+      { text: 'Η ημερήσια θερμοκρασία σε μια πόλη', isCorrect: false },
+      { text: 'Το βάρος ενός μαθητή κατά τη διάρκεια του έτους', isCorrect: false },
+      { text: 'Η ταχύτητα ενός αυτοκινήτου μέσα στην κίνηση της πόλης', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -402,18 +398,14 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Τι ονομάζεται ποσό στα Μαθηματικά
+  // Q4 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const correctAns = 'Κάθε μέγεθος που μπορεί να μετρηθεί και εκφράζεται με αριθμό και μονάδα μέτρησης';
-    const fake1 = 'Οποιοσδήποτε αφηρημένος ακέραιος αριθμός χωρίς μονάδα μέτρησης';
-    const fake2 = 'Μόνο τα χρήματα που πληρώνουμε σε μια αγορά';
-    const fake3 = 'Μόνο οι αριθμοί που παραμένουν πάντοτε σταθεροί';
-
     const options = [
       { text: correctAns, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Οποιοσδήποτε αφηρημένος ακέραιος αριθμός χωρίς μονάδα μέτρησης', isCorrect: false },
+      { text: 'Μόνο τα χρήματα που πληρώνουμε σε μια αγορά', isCorrect: false },
+      { text: 'Μόνο οι αριθμοί που παραμένουν πάντοτε σταθεροί', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -446,18 +438,14 @@ function generateQuestions() {
     });
   }
 
-  // Q6 (MCQ): Αναγνώριση μεταβλητών ποσών
+  // Q6 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const correctOpt = 'Το βάρος ενός μαθητή';
-    const optF1 = 'Ο αριθμός των μηνών του έτους (12 μήνες)';
-    const optF2 = 'Ο αριθμός των γραμμαρίων σε 1 κιλό (1.000 g)';
-    const optF3 = 'Ο αριθμός των πλευρών ενός τριγώνου (3 πλευρές)';
-
     const options = [
       { text: correctOpt, isCorrect: true },
-      { text: optF1, isCorrect: false },
-      { text: optF2, isCorrect: false },
-      { text: optF3, isCorrect: false }
+      { text: 'Ο αριθμός των μηνών του έτους (12 μήνες)', isCorrect: false },
+      { text: 'Ο αριθμός των γραμμαρίων σε 1 κιλό (1.000 g)', isCorrect: false },
+      { text: 'Ο αριθμός των πλευρών ενός τριγώνου (3 πλευρές)', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -646,30 +634,30 @@ export default function PosaExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
               Ασκήσεις: Σταθερά &amp; Μεταβλητά Ποσά
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               10 απαιτητικές ασκήσεις με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Διακρίνετε τα σταθερά από τα μεταβλητά ποσά και υπολογίστε τις συσχετισμένες τιμές.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
+          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
             <span className="text-xs sm:text-sm text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -692,7 +680,7 @@ export default function PosaExercisesPage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -701,7 +689,7 @@ export default function PosaExercisesPage() {
                 }`}
               >
                 {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
                   <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
@@ -719,21 +707,21 @@ export default function PosaExercisesPage() {
                 </div>
 
                 {/* Εκφωνηση */}
-                <div className="space-y-2 mb-5">
+                <div className="space-y-2 mb-2">
                   <p className="text-xs sm:text-sm font-semibold text-slate-500">
                     {q.instruction}
                   </p>
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
                 </div>
 
                 {/* Περιοχη Απαντησης */}
-                <div className="py-2">
+                <div className="py-2 pt-2.5">
                   
                   {/* Decimal / Single Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -742,7 +730,7 @@ export default function PosaExercisesPage() {
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
                       <span className="text-xs text-slate-500">
                         (Ακέραιος ή δεκαδικός με κόμμα)
@@ -750,9 +738,9 @@ export default function PosaExercisesPage() {
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) */}
+                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -761,15 +749,17 @@ export default function PosaExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 sm:p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm md:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -788,7 +778,7 @@ export default function PosaExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -819,7 +809,7 @@ export default function PosaExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -828,24 +818,24 @@ export default function PosaExercisesPage() {
       </div>
 
       {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
         <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΣΚΟΡ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
+                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
               </span>
             </div>
 
             <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΠΟΣΟΣΤΟ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
                 {Math.round((score / 10) * 100)} %
               </span>
             </div>
