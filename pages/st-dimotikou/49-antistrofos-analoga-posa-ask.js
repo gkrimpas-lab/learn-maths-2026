@@ -36,7 +36,7 @@ const STANDARD_PROBLEMS_POOL = [
     generate: () => {
       const w1 = pickRandom([3, 4, 6]);
       const d1 = pickRandom([6, 8, 12]);
-      const prod = w1 * d1; // π.χ. 24, 36, 48
+      const prod = w1 * d1;
       const w2 = pickRandom([2, 4, 6, 8, 12].filter(w => w !== w1 && prod % w === 0));
       const d2 = prod / w2;
       return {
@@ -53,7 +53,7 @@ const STANDARD_PROBLEMS_POOL = [
     generate: () => {
       const v1 = pickRandom([40, 50, 60, 80]);
       const t1 = pickRandom([2, 3, 4]);
-      const dist = v1 * t1; // π.χ. 120, 160, 240
+      const dist = v1 * t1;
       const v2 = pickRandom([60, 80, 100, 120].filter(v => v !== v1 && dist % v === 0));
       const t2 = dist / v2;
       return {
@@ -102,11 +102,6 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'inv_std_5',
     generate: () => {
-      const p1 = 6;
-      const d1 = 15;
-      const prod = 90;
-      const p2 = 9;
-      const d2 = 10;
       return {
         text: `Σε μια παιδική κατασκήνωση οι προμήθειες επαρκούν για 6 εβδομάδες για 15 παιδιά. Αν φιλοξενηθούν 9 παιδιά, για πόσες εβδομάδες θα επαρκέσουν οι ίδιες προμήθειες;`,
         tableData: { col1: 'Παιδιά', col2: 'Εβδομάδες', r1: [15, 6], r2: [9, 'χ'] },
@@ -135,16 +130,11 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'inv_std_7',
     generate: () => {
-      const pipes1 = 4;
-      const hours1 = 18;
-      const prod = 72;
-      const pipes2 = 6;
-      const hours2 = 12;
       return {
         text: `Μια δεξαμενή αδειάζει από 4 σωλήνες σε 18 ώρες. Σε πόσες ώρες θα αδειάσει η ίδια δεξαμενή αν χρησιμοποιηθούν 6 ίδιοι σωλήνες;`,
-        tableData: { col1: 'Σωλήνες', col2: 'Ώρες', r1: [pipes1, hours1], r2: [pipes2, 'χ'] },
-        correctVal: hours2,
-        correctStr: String(hours2),
+        tableData: { col1: 'Σωλήνες', col2: 'Ώρες', r1: [4, 18], r2: [6, 'χ'] },
+        correctVal: 12,
+        correctStr: '12',
         explanation: `4 · 18 ＝ 72. Ώρες: 72 : 6 ＝ 12 ώρες.`
       };
     }
@@ -152,16 +142,11 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'inv_std_8',
     generate: () => {
-      const w1 = 5;
-      const d1 = 20;
-      const prod = 100;
-      const w2 = 10;
-      const d2 = 10;
       return {
         text: `5 μηχανές εκτυπώνουν μια παραγγελία βιβλίων σε 20 ημέρες. Πόσες ημέρες θα χρειαστούν 10 ίδιες μηχανές;`,
-        tableData: { col1: 'Μηχανές', col2: 'Ημέρες', r1: [w1, d1], r2: [w2, 'χ'] },
-        correctVal: d2,
-        correctStr: String(d2),
+        tableData: { col1: 'Μηχανές', col2: 'Ημέρες', r1: [5, 20], r2: [10, 'χ'] },
+        correctVal: 10,
+        correctStr: '10',
         explanation: `Διπλάσιες μηχανές ➔ Μισές ημέρες: (5 · 20) : 10 ＝ 100 : 10 ＝ 10 ημέρες.`
       };
     }
@@ -348,7 +333,7 @@ function generateQuestions() {
       prompt: `Ποιο είναι το βασικό μαθηματικό χαρακτηριστικό που διακρίνει δύο αντιστρόφως ανάλογα ποσά;`,
       options,
       correctText: correctConcept,
-      explanation: `Στα αντιστρόφως ανάλογα ποσά το γινόμενο των αντίστοιχων τιμών τους παραμένει πάντα σταθερό.`
+      explanation: `Στα αντιστρόφως ανάλογα ποσά το γινόμενο των αντίστοιχων τιμών τους παραμένει πάντα σταθερό (x · y ＝ σταθερό).`
     });
   }
 
@@ -398,7 +383,6 @@ function generateQuestions() {
   {
     const b1 = 3;
     const h1 = 8;
-    const prod = 24;
     const b2 = 6;
     const h2 = 4;
 
@@ -624,7 +608,7 @@ export default function AntistrofosAnalogaPosaExercisesPage() {
               Ασκήσεις: Αντιστρόφως Ανάλογα Ποσά
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Χρησιμοποιήστε το σταθερό γινόμενο ($x \cdot y = \sigma\tau\alpha\theta.$) και την αναγωγή στη μονάδα.
+              10 απαιτητικές δραστηριότητες με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Χρησιμοποιήστε το σταθερό γινόμενο (x · y ＝ σταθερό) και την αναγωγή στη μονάδα.
             </p>
           </div>
 
