@@ -29,6 +29,27 @@ function formatNum(val, decimals = 2) {
   return String(rounded).replace('.', ',');
 }
 
+// Βοηθητικο component πινακα καταταξης μεθοδου των τριων - ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL
+function MethodosTrionTable({ data }) {
+  if (!data) return null;
+  return (
+    <div className="w-full max-w-xs sm:max-w-sm bg-slate-50 border-2 border-slate-200 rounded-2xl p-2.5 my-2.5 shadow-inner font-mono text-xs">
+      <div className="grid grid-cols-2 gap-2 font-bold border-b border-slate-200 pb-1 text-slate-600 text-center">
+        <span className="bg-blue-100/60 px-1.5 py-0.5 rounded text-blue-900 truncate">{data.col1}</span>
+        <span className="bg-emerald-100/60 px-1.5 py-0.5 rounded text-emerald-900 truncate">{data.col2}</span>
+      </div>
+      <div className="grid grid-cols-2 gap-2 pt-1.5 text-center font-bold text-slate-800">
+        <span className="truncate">{data.r1[0]}</span>
+        <span className="text-indigo-700 truncate">{data.r1[1]}</span>
+        <span className="truncate">{data.r2[0]}</span>
+        <span className={`truncate ${data.r2[1] === 'χ' ? 'text-amber-600 font-black text-sm' : 'text-indigo-700'}`}>
+          {data.r2[1]}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // Δεξαμενη Κανονικων Προβληματων Μεθοδου των Τριων (10 διαφορετικα προβληματα)
 const STANDARD_PROBLEMS_POOL = [
   {
@@ -158,6 +179,7 @@ const STANDARD_PROBLEMS_POOL = [
       const meters2 = meters1 + randInt(3, 6);
       const cost2 = meters2 * costPerMeter;
       return {
+        isAnaloga,
         text: `Ένα ύφασμα μήκους ${meters1} m κοστίζει ${cost1} €. Πόσο κοστίζουν ${meters2} m από το ίδιο ακριβώς ύφασμα;`,
         tableData: { col1: 'Μήκος (m)', col2: 'Κόστος (€)', r1: [meters1, cost1], r2: [meters2, 'χ'] },
         correctVal: cost2,
@@ -177,6 +199,7 @@ const STANDARD_PROBLEMS_POOL = [
       const packs2 = totalWeight / capGrams2;
       const cleanPacks2 = Number.isInteger(packs2) ? packs2 : Number(packs2.toFixed(1));
       return {
+        isAnaloga,
         text: `Μια ποσότητα καφέ συσκευάστηκε σε ${packs1} πακέτα των ${capGrams1} g. Πόσα πακέτα των ${capGrams2} g θα απαιτούνταν για την ίδια ακριβώς ποσότητα;`,
         tableData: { col1: 'Βάρος πακέτου (g)', col2: 'Πλήθος πακέτων', r1: [capGrams1, packs1], r2: [capGrams2, 'χ'] },
         correctVal: cleanPacks2,
@@ -195,6 +218,7 @@ const STANDARD_PROBLEMS_POOL = [
       const days2 = days1 + randInt(3, 5);
       const total2 = days2 * earnDay;
       return {
+        isAnaloga,
         text: `Ένας εργαζόμενος έλαβε αμοιβή ${total1} € για εργασία ${days1} ημερών. Πόσα € θα λάβει αν εργαστεί για ${days2} ημέρες με το ίδιο ημερομίσθιο;`,
         tableData: { col1: 'Ημέρες', col2: 'Αμοιβή (€)', r1: [days1, total1], r2: [days2, 'χ'] },
         correctVal: total2,
@@ -214,6 +238,7 @@ const STANDARD_PROBLEMS_POOL = [
       const days2 = totalPlow / tract2;
       const cleanDays2 = Number.isInteger(days2) ? days2 : Number(days2.toFixed(1));
       return {
+        isAnaloga,
         text: `${tract1} τρακτέρ οργώνουν ένα χωράφι σε ${days1} ημέρες. Σε πόσες ημέρες θα το όργωναν ${tract2} όμοια τρακτέρ;`,
         tableData: { col1: 'Τρακτέρ', col2: 'Ημέρες', r1: [tract1, days1], r2: [tract2, 'χ'] },
         correctVal: cleanDays2,
@@ -248,7 +273,7 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const flourGrams = 800;
       const breadKg = 1.2;
-      const targetFlourKg = 3; // 3.000 g
+      const targetFlourKg = 3;
       const targetFlourGrams = 3000;
       const resBread = (breadKg * targetFlourGrams) / flourGrams; // 4.5 kg
       return {
@@ -284,8 +309,8 @@ const HARD_PROBLEMS_POOL = [
     id: 'm3_hard_4',
     generate: () => {
       const olivesKg = 30;
-      const oilLiters = 5; // 6 kg ελιές για 1 l λάδι
-      const targetMlLiters = 9000; // 9 l
+      const oilLiters = 5;
+      const targetMlLiters = 9000;
       const targetLiters = 9;
       const olivesNeeded = targetLiters * (olivesKg / oilLiters); // 54 kg
       return {
@@ -385,7 +410,7 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const wireCm = 120;
       const wireGrams = 360;
-      const targetMeters = 3.5; // 350 cm
+      const targetMeters = 3.5;
       const targetCm = 350;
       const targetGrams = (wireGrams * targetCm) / wireCm; // 1050 g
       return {
@@ -416,25 +441,21 @@ function generateQuestions() {
       title: 'ΕΡΩΤΗΣΗ 1 • ΕΠΙΛΥΣΗ ΑΝΑΛΟΓΩΝ ΠΟΣΩΝ',
       instruction: 'Υπολογίστε τον άγνωστο όρο χ (ανάλογα ποσά):',
       prompt: `Στην κατάταξη ανάλογων ποσών: ${a} kg κοστίζουν ${b} € και ${c} kg κοστίζουν χ €. Πόσα € είναι το χ;`,
-      table: { col1: 'Ποσό 1 (kg)', col2: 'Ποσό 2 (€)', r1: [a, b], r2: [c, 'χ'] },
+      tableData: { col1: 'Ποσό 1 (kg)', col2: 'Ποσό 2 (€)', r1: [a, b], r2: [c, 'χ'] },
       correctVal: d,
       correctStr: String(d),
       explanation: `Στα ανάλογα ποσά εφαρμόζουμε χιαστί πολλαπλασιασμό: χ ＝ (${b} · ${c}) : ${a} ＝ ${b * c} : ${a} ＝ ${d} €.`
     });
   }
 
-  // Q2 (MCQ): Ποια είναι τα 3 βήματα της μεθόδου των τριών
+  // Q2 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const correctSeq = '1. Κατάταξη δεδομένων σε ομώνυμες στήλες, 2. Έλεγχος είδους ποσών (ανάλογα ή αντίστροφα), 3. Επιλογή σωστού τύπου επίλυσης';
-    const fakeSeq1 = '1. Πολλαπλασιασμός όλων των αριθμών, 2. Διαίρεση με το 100, 3. Αφαίρεση του μικρότερου';
-    const fakeSeq2 = '1. Χιαστί πολλαπλασιασμός χωρίς έλεγχο, 2. Πρόσθεση των στηλών, 3. Αντιστροφή όρων';
-    const fakeSeq3 = '1. Μετατροπή των αριθμών σε δεκαδικούς, 2. Σχεδίαση γραφικής παράστασης, 3. Μέτρηση με χάρακα';
-
     const options = [
       { text: correctSeq, isCorrect: true },
-      { text: fakeSeq1, isCorrect: false },
-      { text: fakeSeq2, isCorrect: false },
-      { text: fakeSeq3, isCorrect: false }
+      { text: '1. Πολλαπλασιασμός όλων των αριθμών, 2. Διαίρεση με το 100, 3. Αφαίρεση του μικρότερου', isCorrect: false },
+      { text: '1. Χιαστί πολλαπλασιασμός χωρίς έλεγχο, 2. Πρόσθεση των στηλών, 3. Αντιστροφή όρων', isCorrect: false },
+      { text: '1. Μετατροπή των αριθμών σε δεκαδικούς, 2. Σχεδίαση γραφικής παράστασης, 3. Μέτρηση με χάρακα', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -464,25 +485,21 @@ function generateQuestions() {
       title: 'ΕΡΩΤΗΣΗ 3 • ΕΠΙΛΥΣΗ ΑΝΤΙΣΤΡΟΦΩΣ ΑΝΑΛΟΓΩΝ ΠΟΣΩΝ',
       instruction: 'Υπολογίστε τον άγνωστο όρο χ (αντιστρόφως ανάλογα ποσά):',
       prompt: `Στην κατάταξη αντιστρόφως ανάλογων ποσών: ${w1} εργάτες θέλουν ${d1} ημέρες και ${w2} εργάτες θέλουν χ ημέρες. Πόσες ημέρες είναι το χ;`,
-      table: { col1: 'Εργάτες', col2: 'Ημέρες', r1: [w1, d1], r2: [w2, 'χ'] },
+      tableData: { col1: 'Εργάτες', col2: 'Ημέρες', r1: [w1, d1], r2: [w2, 'χ'] },
       correctVal: cleanD2,
       correctStr: formatNum(cleanD2),
       explanation: `Στα αντιστρόφως ανάλογα ποσά εφαρμόζουμε οριζόντιο πολλαπλασιασμό: χ ＝ (${w1} · ${d1}) : ${w2} ＝ ${total} : ${w2} ＝ ${formatNum(cleanD2)} ημέρες.`
     });
   }
 
-  // Q4 (MCQ): Γιατί ονομάζεται μέθοδος των τριών
+  // Q4 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
   {
     const correctReason = 'Επειδή γνωρίζουμε 3 όρους και αναζητούμε τον 4ο άγνωστο όρο';
-    const fakeReason1 = 'Επειδή περιλαμβάνει υποχρεωτικά 3 διαφορετικά ποσά';
-    const fakeReason2 = 'Επειδή λύνεται πάντοτε σε 3 λεπτά';
-    const fakeReason3 = 'Επειδή χρησιμοποιεί 3 διαδοχικούς πίνακες';
-
     const options = [
       { text: correctReason, isCorrect: true },
-      { text: fakeReason1, isCorrect: false },
-      { text: fakeReason2, isCorrect: false },
-      { text: fakeReason3, isCorrect: false }
+      { text: 'Επειδή περιλαμβάνει υποχρεωτικά 3 διαφορετικά ποσά', isCorrect: false },
+      { text: 'Επειδή λύνεται πάντοτε σε 3 λεπτά', isCorrect: false },
+      { text: 'Επειδή χρησιμοποιεί 3 διαδοχικούς πίνακες', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -509,7 +526,7 @@ function generateQuestions() {
       id: 5,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 5 • ΑΝΑΓΩΓΗ ΣΤΗ ΜΟΝΑΔΑ',
-      instruction: 'Υπολογίστε το συνολικό κόστος:',
+      instruction: 'Υπολογίστε το συνολικό κόστος σε €:',
       prompt: `Αν ${items} τεμάχια ενός είδους κοστίζουν ${initialCost} €, πόσα € κοστίζουν ${targetItems} ίδια τεμάχια;`,
       correctVal: expectedCost,
       correctStr: String(expectedCost),
@@ -517,18 +534,14 @@ function generateQuestions() {
     });
   }
 
-  // Q6 (MCQ): Διάκριση τύπου υπολογισμού
+  // Q6 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
   {
     const correctDiff = 'Στα ανάλογα πολλαπλασιάζουμε διαγώνια (χιαστί), ενώ στα αντιστρόφως ανάλογα πολλαπλασιάζουμε οριζόντια';
-    const fakeDiff1 = 'Στα ανάλογα πολλαπλασιάζουμε οριζόντια και στα αντίστροφα διαγώνια';
-    const fakeDiff2 = 'Και στα δύο είδη ποσών κάνουμε ακριβώς τον ίδιο χιαστί πολλαπλασιασμό';
-    const fakeDiff3 = 'Στα ανάλογα κάνουμε πρόσθεση και στα αντίστροφα αφαίρεση';
-
     const options = [
       { text: correctDiff, isCorrect: true },
-      { text: fakeDiff1, isCorrect: false },
-      { text: fakeDiff2, isCorrect: false },
-      { text: fakeDiff3, isCorrect: false }
+      { text: 'Στα ανάλογα πολλαπλασιάζουμε οριζόντια και στα αντίστροφα διαγώνια', isCorrect: false },
+      { text: 'Και στα δύο είδη ποσών κάνουμε ακριβώς τον ίδιο χιαστί πολλαπλασιασμό', isCorrect: false },
+      { text: 'Στα ανάλογα κάνουμε πρόσθεση και στα αντίστροφα αφαίρεση', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -556,7 +569,7 @@ function generateQuestions() {
       title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕΘΟΔΟΥ ΤΩΝ ΤΡΙΩΝ',
       instruction: 'Λύστε το πρόβλημα εφαρμόζοντας τη μέθοδο των τριών:',
       prompt: stdProb1.text,
-      table: stdProb1.tableData,
+      tableData: stdProb1.tableData,
       correctVal: stdProb1.correctVal,
       correctStr: stdProb1.correctStr,
       explanation: stdProb1.explanation
@@ -581,7 +594,7 @@ function generateQuestions() {
       title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΤΑΤΑΞΗΣ ΚΑΙ ΕΠΙΛΥΣΗΣ',
       instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
       prompt: stdProb2.text,
-      table: stdProb2.tableData,
+      tableData: stdProb2.tableData,
       options: optionsQ8,
       correctText: stdProb2.correctStr,
       explanation: stdProb2.explanation
@@ -601,7 +614,7 @@ function generateQuestions() {
       title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
       instruction: 'Προσέξτε τις μονάδες μέτρησης και εισαγάγετε το τελικό αποτέλεσμα:',
       prompt: hardProb1.text,
-      table: hardProb1.tableData,
+      tableData: hardProb1.tableData,
       correctVal: hardProb1.correctVal,
       correctStr: hardProb1.correctStr,
       explanation: hardProb1.explanation
@@ -626,7 +639,7 @@ function generateQuestions() {
       title: 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕΤΑΤΡΟΠΩΝ & ΜΕΘΟΔΟΥ ΤΩΝ ΤΡΙΩΝ',
       instruction: 'Επιλέξτε τη σωστή απάντηση:',
       prompt: hardProb2.text,
-      table: hardProb2.tableData,
+      tableData: hardProb2.tableData,
       options: optionsQ10,
       correctText: hardProb2.correctStr,
       explanation: hardProb2.explanation
@@ -642,7 +655,6 @@ export default function MethodosTrionExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
@@ -655,7 +667,6 @@ export default function MethodosTrionExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (0-9 και κομμα)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -673,7 +684,6 @@ export default function MethodosTrionExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -682,7 +692,6 @@ export default function MethodosTrionExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
   const handleCheckAnswers = () => {
     let currentScore = 0;
 
@@ -721,30 +730,30 @@ export default function MethodosTrionExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
               Ασκήσεις: Η Απλή Μέθοδος των Τριών
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               10 απαιτητικές δραστηριότητες με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Κατατάξτε τα ποσά σε ομώνυμες στήλες, ελέγξτε αν είναι ανάλογα ή αντίστροφα και υπολογίστε το ζητούμενο.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
+          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
             <span className="text-xs sm:text-sm text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -767,7 +776,7 @@ export default function MethodosTrionExercisesPage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -776,7 +785,7 @@ export default function MethodosTrionExercisesPage() {
                 }`}
               >
                 {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
                   <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
@@ -794,39 +803,24 @@ export default function MethodosTrionExercisesPage() {
                 </div>
 
                 {/* Εκφωνηση */}
-                <div className="space-y-3 mb-5">
+                <div className="space-y-2 mb-2">
                   <p className="text-xs sm:text-sm font-semibold text-slate-500">
                     {q.instruction}
                   </p>
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
 
-                  {/* Πινακας Τιμων (αν υπαρχει) */}
-                  {q.table && (
-                    <div className="inline-block bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 shadow-inner my-2 font-mono text-xs sm:text-sm">
-                      <div className="grid grid-cols-2 gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
-                        <span className="bg-blue-100/60 px-2 py-0.5 rounded-lg text-blue-900">{q.table.col1}</span>
-                        <span className="bg-emerald-100/60 px-2 py-0.5 rounded-lg text-emerald-900">{q.table.col2}</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 pt-2 text-center font-bold text-slate-800">
-                        <span>{q.table.r1[0]}</span>
-                        <span className="text-indigo-700">{q.table.r1[1]}</span>
-                        <span>{q.table.r2[0]}</span>
-                        <span className={q.table.r2[1] === 'χ' ? 'text-amber-600 font-black text-base' : 'text-indigo-700'}>
-                          {q.table.r2[1]}
-                        </span>
-                      </div>
-                    </div>
-                  )}
+                  {/* Πινακας Τιμων (Responsive Χωρις Scroll) */}
+                  {q.tableData && <MethodosTrionTable data={q.tableData} />}
                 </div>
 
                 {/* Περιοχη Απαντησης */}
-                <div className="py-2">
+                <div className="py-2 pt-2.5">
                   
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -835,7 +829,7 @@ export default function MethodosTrionExercisesPage() {
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
                       <span className="text-xs text-slate-500">
                         (Ακέραιος ή δεκαδικός με κόμμα)
@@ -843,9 +837,9 @@ export default function MethodosTrionExercisesPage() {
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) */}
+                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -854,15 +848,17 @@ export default function MethodosTrionExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 sm:p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm md:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -881,7 +877,7 @@ export default function MethodosTrionExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -912,7 +908,7 @@ export default function MethodosTrionExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -921,24 +917,24 @@ export default function MethodosTrionExercisesPage() {
       </div>
 
       {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
         <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΣΚΟΡ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
+                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
               </span>
             </div>
 
             <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΠΟΣΟΣΤΟ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
                 {Math.round((score / 10) * 100)} %
               </span>
             </div>
