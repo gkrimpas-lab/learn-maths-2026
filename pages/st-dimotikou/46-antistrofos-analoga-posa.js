@@ -84,30 +84,30 @@ export default function AntistrofosAnalogaTheoryPage() {
       }
     >
       {/* Container πληρους ευρους για 2K & 4K και responsive για κινητα */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-10 2xl:space-y-14 pb-24">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-24 overflow-x-hidden">
         
         {/* 1. HEADER BANNER */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4 2xl:space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
               <span>ΚΕΦΑΛΑΙΟ 46 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Αντιστρόφως Ανάλογα Ποσά
             </h1>
-            <p className="text-sky-100 text-sm sm:text-lg 2xl:text-2xl leading-relaxed max-w-4xl">
-              Μαθαίνουμε πότε δύο ποσά μεταβάλλονται αντίστροφα, γιατί το γινόμενο των αντίστοιχων τιμών τους παραμένει σταθερό, πώς διαβάζουμε τον πίνακα τιμών και γιατί η γραφική τους παράσταση είναι καμπύλη γραμμή (υπερβολή).
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-2xl leading-relaxed max-w-4xl">
+              Μαθαίνουμε πότε δύο ποσά μεταβάλλονται αντίστροφα, γιατί το γινόμενο των αντίστοιχων τιμών τους παραμένει σταθερό (x · y ＝ σταθερό), πώς διαβάζουμε τον πίνακα τιμών και γιατί η γραφική τους παράσταση είναι καμπύλη γραμμή (υπερβολή).
             </p>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-xs sm:text-sm 2xl:text-base text-sky-200">
-              <span className="flex h-3 w-3 rounded-full bg-emerald-400 animate-pulse"></span>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>Θεωρία &amp; Δυναμικός Έλεγχος Σταθερού Γινομένου</span>
             </div>
             <Link
               href="/st-dimotikou/46-antistrofos-analoga-posa-ask"
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2.5 2xl:px-7 2xl:py-3.5 rounded-xl shadow-md transition active:scale-95 text-sm 2xl:text-base"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
               <span>Δοκίμασε τις Ασκήσεις</span>
               <span aria-hidden="true">→</span>
@@ -121,30 +121,30 @@ export default function AntistrofosAnalogaTheoryPage() {
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
               Βασικές Έννοιες σε 4 Βήματα
             </h2>
-            <p className="text-slate-600 text-sm sm:text-base 2xl:text-xl mt-1">
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
               Η μαθηματική ουσία των αντιστρόφως ανάλογων ποσών και η σύγκριση με τα ανάλογα.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-4 gap-6 2xl:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-4 gap-5 sm:gap-6 2xl:gap-8">
             
             {/* Βημα 1ο */}
-            <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-sky-100 text-sky-800 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 1
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Ορισμός</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Ορισμός</span>
                 </div>
-                <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
                   Τι είναι Αντιστρόφως Ανάλογα;
                 </h3>
-                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
                   Δύο ποσά ονομάζονται <strong>αντιστρόφως ανάλογα</strong> όταν, καθώς πολλαπλασιάζεται η τιμή του ενός με έναν αριθμό, <strong>η αντίστοιχη τιμή του άλλου διαιρείται με τον ίδιο ακριβώς αριθμό</strong> (και αντίστροφα).
                 </p>
 
-                <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm">
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-1.5 text-xs sm:text-sm">
                   <p className="text-slate-700 font-semibold">Παραδείγματα στην καθημερινότητα:</p>
                   <ul className="space-y-1 text-slate-600">
                     <li>• <strong>Διπλάσιοι εργάτες</strong> ➔ <strong>Μισός χρόνος</strong> για το έργο.</li>
@@ -154,63 +154,63 @@ export default function AntistrofosAnalogaTheoryPage() {
                 </div>
               </div>
 
-              <div className="p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
                 💡 Προσοχή: Δεν αρκεί απλώς το ένα ποσό να ανεβαίνει και το άλλο να πέφτει. Πρέπει η μεταβολή να γίνεται με τον ίδιο ακριβώς συντελεστή!
               </div>
             </article>
 
             {/* Βημα 2ο */}
-            <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
+                  <span className="px-2.5 py-1 bg-amber-100 text-amber-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 2
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Βασική Ιδιότητα</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Βασική Ιδιότητα</span>
                 </div>
-                <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
                   Σταθερό Γινόμενο (α)
                 </h3>
-                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
                   Σε δύο αντιστρόφως ανάλογα ποσά, <strong>το γινόμενο των αντίστοιχων τιμών τους παραμένει πάντοτε σταθερό</strong>:
                 </p>
 
-                <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm text-center">
-                  <div className="font-mono font-black text-xl text-amber-950">
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-1.5 text-xs sm:text-sm text-center">
+                  <div className="font-mono font-black text-lg sm:text-xl text-amber-950">
                     χ · ψ ＝ α &nbsp;(σταθερό)
                   </div>
-                  <p className="text-slate-600 text-xs pt-1">
+                  <p className="text-slate-600 text-[11px] pt-0.5">
                     Όπου <span className="font-bold">χ</span> η τιμή του πρώτου ποσού, <span className="font-bold">ψ</span> η τιμή του δεύτερου ποσού και <span className="font-bold font-mono">α</span> το σταθερό γινόμενο.
                   </p>
-                  <div className="p-2 bg-white rounded-xl border border-slate-200 font-mono text-xs font-bold text-slate-800">
+                  <div className="p-1.5 bg-white rounded-xl border border-slate-200 font-mono text-xs font-bold text-slate-800">
                     ψ ＝ α : χ
                   </div>
                 </div>
               </div>
 
-              <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
+              <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
                 ⚡ Μεγάλη διαφορά: Στα ανάλογα ποσά είναι σταθερό το <em>πηλίκο</em> (ψ : χ ＝ λ), ενώ στα αντιστρόφως ανάλογα είναι σταθερό το <em>γινόμενο</em> (χ · ψ ＝ α)!
               </div>
             </article>
 
             {/* Βημα 3ο */}
-            <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-indigo-100 text-indigo-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
+                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 3
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Πίνακας Τιμών</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Πίνακας Τιμών</span>
                 </div>
-                <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
                   Έλεγχος Πίνακα Τιμών
                 </h3>
-                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
                   Για να ελέγξουμε αν ένας πίνακας περιέχει αντιστρόφως ανάλογα ποσά, <strong>πολλαπλασιάζουμε</strong> τα ζεύγη των αντίστοιχων τιμών:
                 </p>
 
-                <div className="bg-slate-50 p-3 2xl:p-4 rounded-2xl border border-slate-200 font-mono text-xs sm:text-sm space-y-2">
-                  <div className="grid grid-cols-4 gap-1 text-center border-b pb-1 font-bold text-slate-600">
+                <div className="bg-slate-50 p-2.5 sm:p-3 rounded-2xl border border-slate-200 font-mono text-xs space-y-1.5">
+                  <div className="grid grid-cols-4 gap-1 text-center border-b border-slate-200 pb-1 font-bold text-slate-600 text-[11px]">
                     <span>Εργάτες (χ)</span>
                     <span>1</span>
                     <span>2</span>
@@ -222,44 +222,44 @@ export default function AntistrofosAnalogaTheoryPage() {
                     <span>12</span>
                     <span>6</span>
                   </div>
-                  <div className="text-[11px] text-slate-600 text-center pt-1 font-sans font-bold">
+                  <div className="text-[10.5px] text-slate-600 text-center pt-0.5 font-sans font-bold">
                     Γινόμενα: 1 · 24 ＝ 2 · 12 ＝ 4 · 6 ＝ <strong>24 (σταθερό α)</strong>
                   </div>
                 </div>
               </div>
 
-              <div className="p-3.5 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
                 🎯 Αν ένα μόνο ζευγάρι δώσει διαφορετικό γινόμενο, τότε τα ποσά <strong>δεν</strong> είναι αντιστρόφως ανάλογα!
               </div>
             </article>
 
             {/* Βημα 4ο */}
-            <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-emerald-100 text-emerald-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
+                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 4
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Διάγραμμα</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Διάγραμμα</span>
                 </div>
-                <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
                   Γραφική Παράσταση (Υπερβολή)
                 </h3>
-                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
                   Σε σύστημα αξόνων, τα σημεία των αντιστρόφως ανάλογων ποσών <strong>δεν</strong> σχηματίζουν ευθεία γραμμή:
                 </p>
 
-                <div className="space-y-2 text-xs sm:text-sm">
-                  <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-950 font-bold text-center">
-                    Η γραφική παράσταση είναι ΚΑΜΠΥΛΗ ΓΡΑΜΜΗ που ονομάζεται ΥΠΕΡΒΟΛΗ.
+                <div className="space-y-1.5 text-xs sm:text-sm">
+                  <div className="p-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-950 font-bold text-center text-xs">
+                    Η γραφική παράσταση είναι ΚΑΜΠΥΛΗ ΓΡΑΜΜΗ (ΥΠΕΡΒΟΛΗ).
                   </div>
-                  <p className="text-slate-600 text-xs leading-relaxed">
+                  <p className="text-slate-600 text-[11px] leading-relaxed">
                     Η καμπύλη κατεβαίνει συνεχώς πλησιάζοντας τους άξονες, αλλά <strong>δεν περνά ποτέ από το (0, 0)</strong> και δεν ακουμπά ποτέ τους άξονες.
                   </p>
                 </div>
               </div>
 
-              <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
+              <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
                 🚀 Το μηδέν αποκλείεται, επειδή κανένας αριθμός διαιρούμενος με το 0 δεν έχει νόημα στα Μαθηματικά!
               </div>
             </article>
@@ -268,13 +268,13 @@ export default function AntistrofosAnalogaTheoryPage() {
         </section>
 
         {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΕΡΓΑΤΕΣ ΚΑΙ ΧΡΟΝΟΣ (ΣΤΑΘΕΡΟ ΓΙΝΟΜΕΝΟ) */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 2xl:p-12 space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-6">
+        <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 sm:pb-6">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
                 <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
               </div>
-              <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
                 Δυναμικός Πίνακας: Εργάτες &amp; Ημέρες (Σταθερό Έργο ＝ 48 Μεροκάματα)
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
@@ -283,26 +283,26 @@ export default function AntistrofosAnalogaTheoryPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             
             {/* Χειριστηριο Εργατων */}
-            <div className="lg:col-span-5 space-y-5">
+            <div className="lg:col-span-5 space-y-4">
               
-              <div className="bg-blue-50/70 p-5 rounded-2xl border border-blue-200 space-y-3">
+              <div className="bg-blue-50/70 p-4 sm:p-5 rounded-2xl border border-blue-200 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase text-blue-900 tracking-wider">
+                  <span className="text-[11px] sm:text-xs font-black uppercase text-blue-900 tracking-wider">
                     ΑΡΙΘΜΟΣ ΕΡΓΑΤΩΝ (χ)
                   </span>
-                  <span className="font-mono font-black text-xl text-blue-800 bg-white px-3 py-0.5 rounded-lg border border-blue-200">
+                  <span className="font-mono font-black text-base sm:text-lg text-blue-800 bg-white px-2.5 py-0.5 rounded-lg border border-blue-200">
                     {workers} {workers === 1 ? 'εργάτης' : 'εργάτες'}
                   </span>
                 </div>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
+                <div className="grid grid-cols-[34px_1fr_34px] items-center h-10 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setWorkers((prev) => Math.max(1, prev - 1)); }}
                     disabled={workers <= 1}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     －
                   </button>
@@ -318,75 +318,85 @@ export default function AntistrofosAnalogaTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setWorkers((prev) => Math.min(12, prev + 1)); }}
                     disabled={workers >= 12}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     ＋
                   </button>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed pt-0.5">
                   Υπολογισμός ημερών: <span className="font-mono font-bold">ψ ＝ 48 : {workers} ＝ {formatNum(daysNeeded)} ημέρες</span>.
                 </p>
               </div>
 
               {/* Καρτα Σταθερου Γινομενου */}
-              <div className="bg-amber-50/70 p-4 rounded-2xl border border-amber-200 text-center space-y-1">
-                <span className="text-xs font-bold text-amber-900 uppercase block">
+              <div className="bg-amber-50/70 p-3.5 sm:p-4 rounded-2xl border border-amber-200 text-center space-y-1">
+                <span className="text-[11px] sm:text-xs font-bold text-amber-900 uppercase block">
                   ΣΤΑΘΕΡΟ ΓΙΝΟΜΕΝΟ (α)
                 </span>
-                <div className="font-mono font-black text-2xl text-amber-800">
+                <div className="font-mono font-black text-xl sm:text-2xl text-amber-800">
                   {workers} · {formatNum(daysNeeded)} ＝ 48
                 </div>
-                <p className="text-xs text-slate-600 pt-1">
+                <p className="text-xs text-slate-600 pt-0.5">
                   Ο συνολικός όγκος εργασίας είναι 48 ανθρωποημέρες και δεν αλλάζει ποτέ.
                 </p>
               </div>
 
             </div>
 
-            {/* Πινακας Τιμων με Σταθερο Γινομενο */}
-            <div className="lg:col-span-7 bg-slate-50 p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-4">
-              <div className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+            {/* Πινακας Τιμων με Σταθερο Γινομενο - Fluid & Responsive */}
+            <div className="lg:col-span-7 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 space-y-3 sm:space-y-4 w-full">
+              <div className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
                 ΠΙΝΑΚΑΣ ΤΙΜΩΝ ΜΕ ΣΤΑΘΕΡΑ ΓΙΝΟΜΕΝΑ (χ · ψ ＝ 48)
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full bg-white rounded-2xl border border-slate-200 shadow-sm text-center text-xs sm:text-sm font-mono overflow-hidden">
-                  <thead>
-                    <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold">
-                      <th className="p-3">Εργάτες (χ)</th>
-                      {tableValues.map((item) => (
-                        <th key={`head-w-${item.w}`} className={`p-3 ${item.w === workers ? 'bg-blue-100 text-blue-950 font-black' : ''}`}>
-                          {item.w}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-slate-200 text-indigo-900 font-bold">
-                      <td className="p-3 font-semibold text-slate-600 bg-slate-50">Ημέρες (ψ)</td>
-                      {tableValues.map((item) => (
-                        <td key={`body-d-${item.w}`} className={`p-3 font-black ${item.w === workers ? 'bg-blue-50 text-blue-900' : 'text-indigo-700'}`}>
-                          {formatNum(item.d)}
-                        </td>
-                      ))}
-                    </tr>
-                    <tr className="bg-amber-50/50 text-amber-950 font-bold">
-                      <td className="p-3 font-semibold text-slate-600">Γινόμενο (χ · ψ)</td>
-                      {tableValues.map((item) => (
-                        <td key={`body-p-${item.w}`} className="p-3 text-amber-800 font-black">
-                          {formatNum(item.product)}
-                        </td>
-                      ))}
-                    </tr>
-                  </tbody>
-                </table>
+              {/* Πίνακας με grid-based διάταξη ώστε να χωράει άψογα στα κινητά */}
+              <div className="w-full overflow-hidden bg-white rounded-2xl border border-slate-200 shadow-sm text-center text-xs font-mono">
+                <div className="grid grid-cols-5 sm:grid-cols-8 bg-slate-100 border-b border-slate-200 text-slate-700 font-bold p-2">
+                  <span className="text-left font-sans truncate">Εργάτες (χ)</span>
+                  {tableValues.slice(0, 4).map((item) => (
+                    <span key={`head-w-sm-${item.w}`} className={`sm:hidden ${item.w === workers ? 'bg-blue-100 text-blue-950 font-black rounded' : ''}`}>
+                      {item.w}
+                    </span>
+                  ))}
+                  {tableValues.map((item) => (
+                    <span key={`head-w-${item.w}`} className={`hidden sm:inline ${item.w === workers ? 'bg-blue-100 text-blue-950 font-black rounded' : ''}`}>
+                      {item.w}
+                    </span>
+                  ))}
+                </div>
+                <div className="grid grid-cols-5 sm:grid-cols-8 border-b border-slate-100 text-indigo-900 font-bold p-2">
+                  <span className="text-left font-sans text-slate-600 truncate">Ημέρες (ψ)</span>
+                  {tableValues.slice(0, 4).map((item) => (
+                    <span key={`body-d-sm-${item.w}`} className={`sm:hidden ${item.w === workers ? 'bg-blue-50 text-blue-900 rounded font-black' : ''}`}>
+                      {formatNum(item.d)}
+                    </span>
+                  ))}
+                  {tableValues.map((item) => (
+                    <span key={`body-d-${item.w}`} className={`hidden sm:inline ${item.w === workers ? 'bg-blue-50 text-blue-900 rounded font-black' : ''}`}>
+                      {formatNum(item.d)}
+                    </span>
+                  ))}
+                </div>
+                <div className="grid grid-cols-5 sm:grid-cols-8 bg-amber-50/50 text-amber-950 font-bold p-2">
+                  <span className="text-left font-sans text-slate-600 truncate">Γινόμενο</span>
+                  {tableValues.slice(0, 4).map((item) => (
+                    <span key={`body-p-sm-${item.w}`} className="sm:hidden text-amber-800 font-black">
+                      48
+                    </span>
+                  ))}
+                  {tableValues.map((item) => (
+                    <span key={`body-p-${item.w}`} className="hidden sm:inline text-amber-800 font-black">
+                      48
+                    </span>
+                  ))}
+                </div>
               </div>
 
-              <div className="p-4 bg-white rounded-2xl border border-emerald-100 text-center space-y-1">
-                <span className="text-xs font-bold text-emerald-900 uppercase block">
+              <div className="p-3 bg-white rounded-2xl border border-emerald-100 text-center space-y-0.5">
+                <span className="text-[11px] font-bold text-emerald-900 uppercase block">
                   ΒΑΣΙΚΟ ΣΥΜΠΕΡΑΣΜΑ
                 </span>
-                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                <p className="text-xs text-slate-700 leading-relaxed">
                   Όταν οι εργάτες <strong>διπλασιάζονται</strong> (π.χ. από 2 σε 4), οι ημέρες <strong>υποδιπλασιάζονται</strong> (από 24 σε 12). Το γινόμενο παραμένει αμετάβλητο: <strong className="font-mono text-emerald-700">48</strong>.
                 </p>
               </div>
@@ -396,13 +406,13 @@ export default function AntistrofosAnalogaTheoryPage() {
         </section>
 
         {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΓΡΑΦΙΚΗ ΠΑΡΑΣΤΑΣΗ (ΥΠΕΡΒΟΛΗ) */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 2xl:p-12 space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-6">
+        <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 sm:pb-6">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
                 <span>📉 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2</span>
               </div>
-              <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
                 Η Γραφική Παράσταση είναι Υπερβολή (Καμπύλη)
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
@@ -411,26 +421,26 @@ export default function AntistrofosAnalogaTheoryPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             
             {/* Ρυθμισεις Ταχυτητας */}
-            <div className="lg:col-span-5 space-y-4">
+            <div className="lg:col-span-5 space-y-3.5">
               
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase text-slate-700 tracking-wider">
+                  <span className="text-[11px] sm:text-xs font-black uppercase text-slate-700 tracking-wider">
                     ΤΑΧΥΤΗΤΑ (km/h)
                   </span>
-                  <span className="font-mono font-black text-lg text-emerald-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
+                  <span className="font-mono font-black text-base sm:text-lg text-emerald-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
                     {speedVal} km/h
                   </span>
                 </div>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
+                <div className="grid grid-cols-[34px_1fr_34px] items-center h-10 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSpeedVal((prev) => Math.max(30, prev - 10)); }}
                     disabled={speedVal <= 30}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     －
                   </button>
@@ -447,38 +457,38 @@ export default function AntistrofosAnalogaTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSpeedVal((prev) => Math.min(120, prev + 10)); }}
                     disabled={speedVal >= 120}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     ＋
                   </button>
                 </div>
               </div>
 
-              <div className="bg-blue-50/70 p-4 rounded-2xl border border-blue-200 space-y-1 text-center">
-                <span className="text-xs font-bold text-blue-900 uppercase block">
+              <div className="bg-blue-50/70 p-3 sm:p-4 rounded-2xl border border-blue-200 space-y-1 text-center">
+                <span className="text-[11px] sm:text-xs font-bold text-blue-900 uppercase block">
                   ΧΡΟΝΟΣ ΤΑΞΙΔΙΟΥ (ΩΡΕΣ t)
                 </span>
-                <div className="font-mono font-black text-2xl text-blue-800">
+                <div className="font-mono font-black text-xl sm:text-2xl text-blue-800">
                   {formatNum(tripTime)} {tripTime === 1 ? 'ώρα' : 'ώρες'}
                 </div>
-                <p className="text-xs text-slate-500 pt-1">
+                <p className="text-xs text-slate-500 pt-0.5">
                   Σταθερή απόσταση: <span className="font-bold">240 km</span> ➔ Τύπος: <span className="font-mono font-bold">t ＝ 240 : {speedVal}</span>.
                 </p>
               </div>
 
-              <div className="p-3.5 bg-rose-50 rounded-2xl border border-rose-200 text-xs text-rose-950 leading-relaxed">
+              <div className="p-3 bg-rose-50 rounded-2xl border border-rose-200 text-xs text-rose-950 leading-relaxed">
                 📌 <strong>Σημείο καμπύλης:</strong> Συντεταγμένες: <strong className="font-mono">({speedVal} km/h, {formatNum(tripTime)} h)</strong>. Όσο μεγαλώνει η ταχύτητα, τόσο πλησιάζει ο χρόνος το 0 χωρίς να φτάνει ποτέ εκεί.
               </div>
 
             </div>
 
-            {/* SVG Διαγραμμα Υπερβολης */}
-            <div className="lg:col-span-7 bg-slate-50 p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+            {/* SVG Διαγραμμα Υπερβολης - Fluid & Responsive Χωρις Scroll */}
+            <div className="lg:col-span-7 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center">
+              <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">
                 ΓΡΑΦΙΚΗ ΠΑΡΑΣΤΑΣΗ: ΚΑΜΠΥΛΗ ΥΠΕΡΒΟΛΗ
               </span>
 
-              <div className="w-full max-w-[420px] aspect-square bg-white rounded-2xl border border-slate-200 p-4 relative shadow-inner">
+              <div className="w-full max-w-[340px] sm:max-w-[420px] aspect-square bg-white rounded-2xl border border-slate-200 p-2 sm:p-4 relative shadow-inner">
                 <svg viewBox="0 0 400 400" className="w-full h-full overflow-visible">
                   {/* Πλεγμα */}
                   {[1, 2, 3, 4].map((i) => (
@@ -561,7 +571,7 @@ export default function AntistrofosAnalogaTheoryPage() {
                 </svg>
               </div>
 
-              <span className="text-xs text-rose-700 font-bold mt-3 text-center">
+              <span className="text-[11px] sm:text-xs text-rose-700 font-bold mt-2.5 text-center">
                 Η καμπύλη ΔΕΝ περνά ποτέ από το (0, 0) και δεν ακουμπά τους άξονες!
               </span>
             </div>
@@ -570,7 +580,7 @@ export default function AntistrofosAnalogaTheoryPage() {
         </section>
 
         {/* 5. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
-        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-6 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
               Ώρα για Εξάσκηση στα Αντιστρόφως Ανάλογα Ποσά!
@@ -582,7 +592,7 @@ export default function AntistrofosAnalogaTheoryPage() {
 
           <Link
             href="/st-dimotikou/46-antistrofos-analoga-posa-ask"
-            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
             <span>🎯 Έναρξη Ασκήσεων</span>
             <span aria-hidden="true">→</span>
