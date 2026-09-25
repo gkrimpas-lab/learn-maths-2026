@@ -213,8 +213,8 @@ const HARD_PROBLEMS_POOL = [
     id: 'prob_hard_1',
     generate: () => {
       const olivesKg = 24;
-      const oilLiters = 4; // 6 kg ελιές για 1 l λάδι
-      const targetMlLiters = 7500; // 7,5 l
+      const oilLiters = 4;
+      const targetMlLiters = 7500;
       const targetLiters = targetMlLiters / 1000;
       const olivesNeeded = targetLiters * (olivesKg / oilLiters);
       return {
@@ -230,7 +230,7 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const flourGrams = 750;
       const breadKg = 1.2;
-      const targetFlourKg = 2.5; // 2.500 g
+      const targetFlourKg = 2.5;
       const targetFlourGrams = targetFlourKg * 1000;
       const breadProduced = (breadKg * targetFlourGrams) / flourGrams;
       return {
@@ -246,8 +246,8 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const minutes1 = 45;
       const hours1 = 0.75;
-      const distKm = 54; // 72 km/h
-      const hours2 = 2.5; // 2 h 30 min
+      const distKm = 54;
+      const hours2 = 2.5;
       const dist2 = (distKm / hours1) * hours2;
       return {
         text: `Ένα όχημα διήνυσε ${distKm} km σε 45 λεπτά κινούμενο με σταθερό ρυθμό. Πόσα km θα διανύσει σε χρόνο 2 ωρών και 30 λεπτών;`,
@@ -262,7 +262,7 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const wireCm = 150;
       const wireGrams = 450;
-      const targetMeters = 4.2; // 420 cm
+      const targetMeters = 4.2;
       const targetCm = targetMeters * 100;
       const targetGrams = (wireGrams * targetCm) / wireCm;
       return {
@@ -279,7 +279,7 @@ const HARD_PROBLEMS_POOL = [
       const totalAmount = 540;
       const shareA = 4;
       const shareB = 5;
-      const sumShares = shareA + shareB; // 9
+      const sumShares = shareA + shareB;
       const valA = (totalAmount * shareA) / sumShares;
       const valB = (totalAmount * shareB) / sumShares;
       const diff = valB - valA;
@@ -323,7 +323,7 @@ const HARD_PROBLEMS_POOL = [
     id: 'prob_hard_8',
     generate: () => {
       const paintLiters = 2.5;
-      const wallArea = 30; // m2
+      const wallArea = 30;
       const targetArea = 84;
       const paintNeeded = (paintLiters * targetArea) / wallArea;
       return {
@@ -339,7 +339,7 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const origCost = 140;
       const discountPct = 15;
-      const payPct = 100 - discountPct; // 85%
+      const payPct = 100 - discountPct;
       const finalCost = (origCost * payPct) / 100;
       return {
         text: `Σε ένα κατάστημα όλες οι τιμές μειώνονται ανάλογα λόγω έκπτωσης ${discountPct} %. Ποιο είναι το τελικό ποσό πληρωμής σε € για ένα είδος αξίας ${origCost} €;`,
@@ -352,10 +352,10 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'prob_hard_10',
     generate: () => {
-      const juice1 = 450; // ml
-      const water1 = 1050; // ml
-      const total1 = juice1 + water1; // 1500 ml
-      const targetTotal = 2500; // ml
+      const juice1 = 450;
+      const water1 = 1050;
+      const total1 = juice1 + water1;
+      const targetTotal = 2500;
       const targetJuice = (juice1 * targetTotal) / total1;
       return {
         text: `Για να φτιαχτεί ένα μείγμα χυμού όγκου 1.500 ml απαιτούνται ${juice1} ml φυσικού χυμού και το υπόλοιπο νερό. Πόσα ml φυσικού χυμού απαιτούνται για να παρασκευαστεί μείγμα συνολικού όγκου ${targetTotal} ml;`,
@@ -389,7 +389,7 @@ function generateQuestions() {
     });
   }
 
-  // Q2 (MCQ): Επιλογή σωστής σχέσης αναγωγής στη μονάδα
+  // Q2 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const items = randInt(3, 6);
     const price = randInt(12, 24);
@@ -438,7 +438,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Επιλογή της πιο κατάλληλης μεθόδου
+  // Q4 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const correctStatement = 'Όλες οι μέθοδοι (αναγωγή στη μονάδα, χιαστί, συντελεστής λ) οδηγούν στο ίδιο ακριβώς αποτέλεσμα';
     const fake1 = 'Η αναγωγή στη μονάδα δίνει πάντα μεγαλύτερο αποτέλεσμα από το χιαστί';
@@ -482,7 +482,7 @@ function generateQuestions() {
     });
   }
 
-  // Q6 (MCQ): Προσοχή στις μονάδες μέτρησης
+  // Q6 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const correctRule = 'Πρέπει πρώτα να μετατρέψουμε τα ομοειδή ποσά στην ίδια μονάδα μέτρησης (π.χ. όλα σε kg ή όλα σε g)';
     const fakeRule1 = 'Μπορούμε να κάνουμε κατευθείαν πολλαπλασιασμό χωρίς καμία μετατροπή';
@@ -682,30 +682,30 @@ export default function ProblemAnalogaPosaExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
               Ασκήσεις: Προβλήματα με Ανάλογα Ποσά
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               10 απαιτητικές δραστηριότητες που περιλαμβάνουν 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Επιλέξτε την κατάλληλη μέθοδο και υπολογίστε τα ζητούμενα μεγέθη.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
+          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
             <span className="text-xs sm:text-sm text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -728,7 +728,7 @@ export default function ProblemAnalogaPosaExercisesPage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -737,7 +737,7 @@ export default function ProblemAnalogaPosaExercisesPage() {
                 }`}
               >
                 {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
                   <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
@@ -755,21 +755,21 @@ export default function ProblemAnalogaPosaExercisesPage() {
                 </div>
 
                 {/* Εκφωνηση */}
-                <div className="space-y-2 mb-5">
+                <div className="space-y-2 mb-2">
                   <p className="text-xs sm:text-sm font-semibold text-slate-500">
                     {q.instruction}
                   </p>
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
                 </div>
 
                 {/* Περιοχη Απαντησης */}
-                <div className="py-2">
+                <div className="py-2 pt-2.5">
                   
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -778,7 +778,7 @@ export default function ProblemAnalogaPosaExercisesPage() {
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
                       <span className="text-xs text-slate-500">
                         (Ακέραιος ή δεκαδικός με κόμμα)
@@ -786,9 +786,9 @@ export default function ProblemAnalogaPosaExercisesPage() {
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) */}
+                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -797,15 +797,17 @@ export default function ProblemAnalogaPosaExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 sm:p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm md:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -824,7 +826,7 @@ export default function ProblemAnalogaPosaExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -855,7 +857,7 @@ export default function ProblemAnalogaPosaExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -864,24 +866,24 @@ export default function ProblemAnalogaPosaExercisesPage() {
       </div>
 
       {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
         <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΣΚΟΡ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
+                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
               </span>
             </div>
 
             <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΠΟΣΟΣΤΟ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
                 {Math.round((score / 10) * 100)} %
               </span>
             </div>
