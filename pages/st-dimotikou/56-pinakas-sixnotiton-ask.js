@@ -22,25 +22,32 @@ function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
+// Μορφοποιηση αριθμου
 function formatNum(val, decimals = 2) {
   if (Number.isInteger(val)) return String(val);
   const rounded = Number(val.toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
-// Βοηθητικο component πινακα συχνοτητων μεσα στην ασκηση
+// Βοηθητικο component πινακα συχνοτητων - ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL ΣΤΑ ΚΙΝΗΤΑ
 function ExerciseFrequencyTable({ headers, rows, totalRow }) {
+  const colCount = headers.length;
+  const firstColWidth = colCount === 2 ? 'w-[60%]' : colCount === 3 ? 'w-[42%]' : 'w-[34%]';
+  const otherColWidth = colCount === 2 ? 'w-[40%]' : colCount === 3 ? 'w-[29%]' : 'w-[22%]';
+
   return (
-    <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 my-3 max-w-lg shadow-inner overflow-x-auto">
-      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center mb-1.5">
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-2.5 sm:p-3.5 my-3 w-full max-w-lg shadow-inner">
+      <div className="text-[10.5px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center mb-1.5">
         ΠΙΝΑΚΑΣ ΚΑΤΑΝΟΜΗΣ ΣΥΧΝΟΤΗΤΩΝ
       </div>
-      <table className="w-full text-center text-xs sm:text-sm font-mono bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <table className="w-full table-fixed text-center text-[11px] sm:text-xs md:text-sm font-mono bg-white rounded-xl border border-slate-200 overflow-hidden">
         <thead>
           <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold font-sans">
             {headers.map((h, i) => (
-              <th key={`th-${i}`} className={`p-2 ${i === 0 ? 'text-left pl-3' : ''}`}>
+              <th
+                key={`th-${i}`}
+                className={`p-1.5 sm:p-2 truncate ${i === 0 ? `${firstColWidth} text-left pl-2.5` : `${otherColWidth}`}`}
+              >
                 {h}
               </th>
             ))}
@@ -52,9 +59,11 @@ function ExerciseFrequencyTable({ headers, rows, totalRow }) {
               {r.map((cell, cIdx) => (
                 <td
                   key={`td-${rIdx}-${cIdx}`}
-                  className={`p-2 ${cIdx === 0 ? 'text-left pl-3 font-sans font-bold text-slate-800' : 'text-slate-900 font-bold'} ${
-                    cell === 'χ' || cell === '?' ? 'text-amber-600 font-black text-base' : ''
-                  }`}
+                  className={`p-1.5 sm:p-2 truncate ${
+                    cIdx === 0
+                      ? 'text-left pl-2.5 font-sans font-bold text-slate-800'
+                      : 'text-slate-900 font-bold'
+                  } ${cell === 'χ' || cell === '?' ? 'text-amber-600 font-black text-sm sm:text-base' : ''}`}
                 >
                   {cell}
                 </td>
@@ -62,9 +71,12 @@ function ExerciseFrequencyTable({ headers, rows, totalRow }) {
             </tr>
           ))}
           {totalRow && (
-            <tr className="bg-slate-100/70 font-black text-slate-900 font-sans">
+            <tr className="bg-slate-100/70 font-black text-slate-900 font-sans border-t border-slate-200">
               {totalRow.map((cell, idx) => (
-                <td key={`tot-${idx}`} className={`p-2 ${idx === 0 ? 'text-left pl-3' : 'font-mono'}`}>
+                <td
+                  key={`tot-${idx}`}
+                  className={`p-1.5 sm:p-2 truncate ${idx === 0 ? 'text-left pl-2.5' : 'font-mono'}`}
+                >
                   {cell}
                 </td>
               ))}
@@ -76,7 +88,7 @@ function ExerciseFrequencyTable({ headers, rows, totalRow }) {
   );
 }
 
-// Δεξαμενη Κανονικων Προβληματων Πινακα Συχνοτητων (10 διαφορετικα προβληματα)
+// Δεξαμενη Κανονικων Προβληματων Πινακα Συχνοτητων
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'freq_std_1',
@@ -136,11 +148,11 @@ const STANDARD_PROBLEMS_POOL = [
     generate: () => {
       const total = 50;
       const freq = pickRandom([10, 15, 20, 25]);
-      const relFreq = freq / total; // π.χ. 0.20, 0.30, 0.40
+      const relFreq = freq / total;
       return {
         text: `Σε έρευνα 50 ατόμων, ένα συγκεκριμένο άθλημα επιλέχθηκε από ${freq} άτομα. Ποια είναι η σχετική συχνότητα της επιλογής αυτής σε δεκαδική μορφή;`,
         table: {
-          headers: ['Άθλημα', 'Συχνότητα (ν)', 'Σχετική Συχνότητα'],
+          headers: ['Άθλημα', 'Συχνότητα', 'Σχετική Συχνότητα'],
           rows: [
             ['Κολύμβηση', freq, 'χ']
           ],
@@ -176,76 +188,63 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: f4,
         correctStr: String(f4),
         unit: 'μαθητές',
-        explanation: `Το άθροισμα όλων των συχνοτήτων πρέπει να ισούται με 25. Άρα: χ ＝ 25 － (${f1} ＋ ${f2} ＋ ${f3}) ＝ 25 － ${f1 + f2 + f3} ＝ ${f4}.`
+        explanation: `Το άθροισμα όλων των συχνοτήτων ισούται με 25: χ ＝ 25 － (${f1} ＋ ${f2} ＋ ${f3}) ＝ 25 － ${f1 + f2 + f3} ＝ ${f4}.`
       };
     }
   },
   {
     id: 'freq_std_5',
     generate: () => {
-      const total = 40;
-      const freq = 10;
-      const pct = (freq / total) * 100; // 25%
       return {
         text: `Σε έρευνα 40 μαθητών για το αγαπημένο τους χρώμα, 10 επέλεξαν το μπλε. Τι ποσοστό (%) των μαθητών αντιπροσωπεύει η συχνότητα αυτή;`,
-        correctVal: pct,
-        correctStr: String(pct),
+        correctVal: 25,
+        correctStr: '25',
         unit: '%',
-        explanation: `Σχετική συχνότητα: 10/40 ＝ 1/4 ＝ 0,25. Ποσοστό: 0,25 · 100 ＝ ${pct} %.`
+        explanation: `Σχετική συχνότητα: 10/40 ＝ 0,25. Ποσοστό: 0,25 · 100 ＝ 25 %.`
       };
     }
   },
   {
     id: 'freq_std_6',
     generate: () => {
-      const maxVal = 10;
-      const minVal = 6;
-      const range = maxVal - minVal;
       return {
         text: `Σε έναν πίνακα βαθμολογιών, ο χαμηλότερος βαθμός ήταν 6 και ο υψηλότερος ήταν 10. Ποιο είναι το εύρος των βαθμολογιών (Μέγιστη － Ελάχιστη τιμή);`,
-        correctVal: range,
-        correctStr: String(range),
+        correctVal: 4,
+        correctStr: '4',
         unit: 'μονάδες',
-        explanation: `Εύρος ＝ Μέγιστη τιμή － Ελάχιστη τιμή ＝ ${maxVal} － ${minVal} ＝ ${range}.`
+        explanation: `Εύρος ＝ Μέγιστη τιμή － Ελάχιστη τιμή ＝ 10 － 6 ＝ 4.`
       };
     }
   },
   {
     id: 'freq_std_7',
     generate: () => {
-      const f1 = 6;
-      const f2 = 14;
-      const total = 20;
-      const pct2 = (f2 / total) * 100; // 70%
       return {
         text: `Σε έναν πίνακα συχνοτήτων 20 οδηγών, 14 οδηγοί χρησιμοποιούν ζώνη ασφαλείας. Ποιο είναι το ποσοστό (%) των οδηγών που φορούν ζώνη;`,
         table: {
-          headers: ['Χρήση Ζώνης', 'Συχνότητα (ν)', 'Ποσοστό (%)'],
+          headers: ['Χρήση Ζώνης', 'Συχνότητα', 'Ποσοστό (%)'],
           rows: [
-            ['Όχι', f1, '30 %'],
-            ['Ναι', f2, 'χ %']
+            ['Όχι', 6, '30 %'],
+            ['Ναι', 14, 'χ %']
           ],
           totalRow: ['ΣΥΝΟΛΟ', 20, '100 %']
         },
-        correctVal: pct2,
-        correctStr: String(pct2),
+        correctVal: 70,
+        correctStr: '70',
         unit: '%',
-        explanation: `Ποσοστό ＝ (14 : 20) · 100 ＝ 0,70 · 100 ＝ ${pct2} %.`
+        explanation: `Ποσοστό ＝ (14 : 20) · 100 ＝ 0,70 · 100 ＝ 70 %.`
       };
     }
   },
   {
     id: 'freq_std_8',
     generate: () => {
-      const total = 30;
-      const relA = 0.40;
-      const freqA = total * relA; // 12
       return {
         text: `Σε έναν πίνακα 30 παρατηρήσεων, η σχετική συχνότητα μιας κατηγορίας είναι 0,40. Ποια είναι η απόλυτη συχνότητα (ν) της κατηγορίας αυτής;`,
-        correctVal: freqA,
-        correctStr: String(freqA),
+        correctVal: 12,
+        correctStr: '12',
         unit: '',
-        explanation: `Συχνότητα (ν) ＝ Σύνολο (Ν) · Σχετική Συχνότητα ＝ 30 · 0,40 ＝ ${freqA}.`
+        explanation: `Συχνότητα (ν) ＝ Σύνολο (Ν) · Σχετική Συχνότητα ＝ 30 · 0,40 ＝ 12.`
       };
     }
   },
@@ -269,231 +268,180 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'freq_std_10',
     generate: () => {
-      const f1 = 8;
-      const f2 = 12;
-      const f3 = 5;
-      const diff = f2 - f1;
       return {
         text: `Σε έναν πίνακα συχνοτήτων μελετήθηκαν οι επιλογές 25 παιδιών: Μπάσκετ 8, Ποδόσφαιρο 12, Τένις 5. Πόσα περισσότερα παιδιά προτιμούν το ποδόσφαιρο από το μπάσκετ;`,
         table: {
           headers: ['Άθλημα', 'Συχνότητα (ν)'],
           rows: [
-            ['Μπάσκετ', f1],
-            ['Ποδόσφαιρο', f2],
-            ['Τένις', f3]
+            ['Μπάσκετ', 8],
+            ['Ποδόσφαιρο', 12],
+            ['Τένις', 5]
           ]
         },
-        correctVal: diff,
-        correctStr: String(diff),
+        correctVal: 4,
+        correctStr: '4',
         unit: 'παιδιά',
-        explanation: `Διαφορά συχνοτήτων: ${f2} － ${f1} ＝ ${diff} παιδιά.`
+        explanation: `Διαφορά συχνοτήτων: 12 － 8 ＝ 4 παιδιά.`
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (10 διαφορετικα προβληματα)
+// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας
 const HARD_PROBLEMS_POOL = [
   {
     id: 'freq_hard_1',
     generate: () => {
-      const f1 = 4;
-      const f2 = 8;
-      const f3 = 10;
-      const f4 = 6;
-      // Βαθμοί: 7*4 + 8*8 + 9*10 + 10*6 = 28 + 64 + 90 + 60 = 242
-      // Σύνολο μαθητών = 28 -> μέσος όρος = 242 / 28 = 8.64
-      const students = f1 + f2 + f3 + f4; // 28
-      const sumAbove8 = f3 + f4; // 9 και 10 -> 16
-      const pctAbove8 = Number(((sumAbove8 / students) * 100).toFixed(1)); // 57.1%
       return {
         text: `Στον παρακάτω πίνακα βαθμολογιών 28 μαθητών, ποιο ποσοστό (%) των μαθητών συγκέντρωσε βαθμό τουλάχιστον 9 (δηλαδή 9 ή 10);`,
         table: {
           headers: ['Βαθμός', 'Συχνότητα (ν)'],
           rows: [
-            ['Βαθμός 7', f1],
-            ['Βαθμός 8', f2],
-            ['Βαθμός 9', f3],
-            ['Βαθμός 10', f4]
+            ['Βαθμός 7', 4],
+            ['Βαθμός 8', 8],
+            ['Βαθμός 9', 10],
+            ['Βαθμός 10', 6]
           ],
-          totalRow: ['ΣΥΝΟΛΟ', students]
+          totalRow: ['ΣΥΝΟΛΟ', 28]
         },
-        correctVal: pctAbove8,
-        correctStr: formatNum(pctAbove8),
+        correctVal: 57.1,
+        correctStr: '57,1',
         unit: '%',
-        explanation: `Μαθητές με βαθμό τουλάχιστον 9: ${f3} (με 9) ＋ ${f4} (με 10) ＝ ${sumAbove8} μαθητές. Ποσοστό: (${sumAbove8} : ${students}) · 100 ＝ ${formatNum(pctAbove8)} %.`
+        explanation: `Μαθητές με βαθμό τουλάχιστον 9: 10 (με 9) ＋ 6 (με 10) ＝ 16 μαθητές. Ποσοστό: (16 : 28) · 100 ＝ 57,1 %.`
       };
     }
   },
   {
     id: 'freq_hard_2',
     generate: () => {
-      const total = 50;
-      const fA = 15;
-      const fB = 20;
-      const fC = 10;
-      const fD = total - fA - fB - fC; // 5
-      const pctD = (fD / total) * 100; // 10%
       return {
         text: `Σε έρευνα 50 ατόμων για το μέσο μετακίνησης, καταγράφηκαν: Μετρό 15, Λεωφορείο 20, Αυτοκίνητο 10 και οι υπόλοιποι κινούνται με Ποδήλατο. Ποιο είναι το ποσοστό (%) των ατόμων που κινούνται με ποδήλατο;`,
-        correctVal: pctD,
-        correctStr: String(pctD),
+        correctVal: 10,
+        correctStr: '10',
         unit: '%',
-        explanation: `Άτομα με ποδήλατο: 50 － (15 ＋ 20 ＋ 10) ＝ 50 － 45 ＝ 5 άτομα. Ποσοστό: (5 : 50) · 100 ＝ 0,10 · 100 ＝ 10 %.`
+        explanation: `Άτομα με ποδήλατο: 50 － (15 ＋ 20 ＋ 10) ＝ 5 άτομα. Ποσοστό: (5 : 50) · 100 ＝ 10 %.`
       };
     }
   },
   {
     id: 'freq_hard_3',
     generate: () => {
-      const w1 = 5;
-      const w2 = 12;
-      const w3 = 8;
-      const total = w1 + w2 + w3; // 25
       return {
         text: `Στον παρακάτω πίνακα ωρών καθημερινής μελέτης 25 μαθητών, ποια είναι η επικρατούσα τιμή (μόδα);`,
         table: {
           headers: ['Ώρες Μελέτης', 'Μαθητές (ν)'],
           rows: [
-            ['1 ώρα', w1],
-            ['2 ώρες', w2],
-            ['3 ώρες', w3]
+            ['1 ώρα', 5],
+            ['2 ώρες', 12],
+            ['3 ώρες', 8]
           ],
-          totalRow: ['ΣΥΝΟΛΟ', total]
+          totalRow: ['ΣΥΝΟΛΟ', 25]
         },
         correctText: '2 ώρες',
         options: [
           { text: '2 ώρες', isCorrect: true },
           { text: '1 ώρα', isCorrect: false },
-          { text: '3 ώρες', isCorrect: false },
-          { text: '25 ώρες', isCorrect: false }
+          { text: '3 ώρες', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         unit: '',
-        explanation: `Η επικρατούσα τιμή είναι οι «2 ώρες», καθώς έχουν τη μεγαλύτερη συχνότητα (${w2} μαθητές).`
+        explanation: `Η επικρατούσα τιμή είναι οι «2 ώρες», καθώς έχουν τη μεγαλύτερη συχνότητα (12 μαθητές).`
       };
     }
   },
   {
     id: 'freq_hard_4',
     generate: () => {
-      const f1 = 6;
-      const f2 = 10;
-      const f3 = 4;
-      // 1 αδερφός: 6, 2 αδέρφια: 10, 3 αδέρφια: 4
-      // Συνολικά αδέρφια: 6*1 + 10*2 + 4*3 = 6 + 20 + 12 = 38
-      const totalSiblings = 6 * 1 + 10 * 2 + 4 * 3;
       return {
         text: `Σε μια τάξη καταγράφηκε ο αριθμός αδερφών κάθε μαθητή: 6 μαθητές έχουν 1 αδερφό, 10 μαθητές έχουν 2 αδέρφια και 4 μαθητές έχουν 3 αδέρφια. Πόσα είναι συνολικά τα αδέρφια όλων των μαθητών μαζί;`,
         table: {
-          headers: ['Αριθμός Αδερφών', 'Μαθητές (ν)'],
+          headers: ['Αδέρφια', 'Μαθητές (ν)'],
           rows: [
-            ['1 αδερφός', f1],
-            ['2 αδέρφια', f2],
-            ['3 αδέρφια', f3]
+            ['1 αδερφός', 6],
+            ['2 αδέρφια', 10],
+            ['3 αδέρφια', 4]
           ]
         },
-        correctVal: totalSiblings,
-        correctStr: String(totalSiblings),
+        correctVal: 38,
+        correctStr: '38',
         unit: 'αδέρφια',
-        explanation: `Πολλαπλασιάζουμε κάθε τιμή με τη συχνότητά της και αθροίζουμε: (1 · 6) ＋ (2 · 10) ＋ (3 · 4) ＝ 6 ＋ 20 ＋ 12 ＝ ${totalSiblings} αδέρφια.`
+        explanation: `(1 · 6) ＋ (2 · 10) ＋ (3 · 4) ＝ 6 ＋ 20 ＋ 12 ＝ 38 αδέρφια συνολικά.`
       };
     }
   },
   {
     id: 'freq_hard_5',
     generate: () => {
-      const totalStudents = 100;
-      const soccer = 42;
-      const basketball = 38;
-      const volleyball = totalStudents - soccer - basketball; // 20
       return {
         text: `Σε έρευνα 100 μαθητών, η σχετική συχνότητα του ποδοσφαίρου είναι 0,42 και του μπάσκετ 0,38. Οι υπόλοιποι μαθητές επέλεξαν βόλεϊ. Πόσοι μαθητές επέλεξαν βόλεϊ;`,
-        correctVal: volleyball,
-        correctStr: String(volleyball),
+        correctVal: 20,
+        correctStr: '20',
         unit: 'μαθητές',
-        explanation: `Σχετική συχνότητα βόλεϊ: 1,00 － (0,42 ＋ 0,38) ＝ 1,00 － 0,80 ＝ 0,20. Μαθητές βόλεϊ: 100 · 0,20 ＝ ${volleyball} μαθητές.`
+        explanation: `Σχετική συχνότητα βόλεϊ: 1,00 － (0,42 ＋ 0,38) ＝ 0,20. Μαθητές βόλεϊ: 100 · 0,20 ＝ 20 μαθητές.`
       };
     }
   },
   {
     id: 'freq_hard_6',
     generate: () => {
-      const total = 40;
-      const f1 = 8;
-      const f2 = 16;
-      const f3 = 12;
-      const f4 = 4;
-      const pctMode = (f2 / total) * 100; // 40%
       return {
         text: `Στον παρακάτω πίνακα 40 μετρήσεων, ποιο ποσοστό (%) αντιπροσωπεύει η επικρατούσα τιμή (μόδα);`,
         table: {
           headers: ['Κατηγορία', 'Συχνότητα (ν)'],
           rows: [
-            ['Ομάδα Α', f1],
-            ['Ομάδα Β', f2],
-            ['Ομάδα Γ', f3],
-            ['Ομάδα Δ', f4]
+            ['Ομάδα Α', 8],
+            ['Ομάδα Β', 16],
+            ['Ομάδα Γ', 12],
+            ['Ομάδα Δ', 4]
           ],
-          totalRow: ['ΣΥΝΟΛΟ', total]
+          totalRow: ['ΣΥΝΟΛΟ', 40]
         },
-        correctVal: pctMode,
-        correctStr: String(pctMode),
+        correctVal: 40,
+        correctStr: '40',
         unit: '%',
-        explanation: `Η επικρατούσα τιμή είναι η «Ομάδα Β» με συχνότητα ${f2}. Ποσοστό: (${f2} : ${total}) · 100 ＝ 0,40 · 100 ＝ ${pctMode} %.`
+        explanation: `Η μόδα είναι η «Ομάδα Β» με συχνότητα 16. Ποσοστό: (16 : 40) · 100 ＝ 40 %.`
       };
     }
   },
   {
     id: 'freq_hard_7',
     generate: () => {
-      const maxScore = 98;
-      const minScore = 54;
-      const range = maxScore - minScore; // 44
       return {
         text: `Στον πίνακα επιδόσεων ενός σχολικού μαραθωνίου, ο καλύτερος χρόνος ήταν 54 λεπτά και ο μεγαλύτερος χρόνος ήταν 98 λεπτά. Ποιο είναι το εύρος των χρόνων σε λεπτά;`,
-        correctVal: range,
-        correctStr: String(range),
+        correctVal: 44,
+        correctStr: '44',
         unit: 'λεπτά',
-        explanation: `Εύρος ＝ Μέγιστη τιμή － Ελάχιστη τιμή ＝ ${maxScore} － ${minScore} ＝ ${range} λεπτά.`
+        explanation: `Εύρος ＝ 98 － 54 ＝ 44 λεπτά.`
       };
     }
   },
   {
     id: 'freq_hard_8',
     generate: () => {
-      const f1 = 12;
-      const f2 = 18;
-      const f3 = 10;
-      const total = f1 + f2 + f3; // 40
-      const diffPct = ((f2 - f1) / total) * 100; // 15%
       return {
         text: `Στον παρακάτω πίνακα 40 μαθητών, κατά πόσες ποσοστιαίες μονάδες (%) υπερέχει η Κατηγορία Β σε σχέση με την Κατηγορία Α;`,
         table: {
           headers: ['Κατηγορία', 'Συχνότητα (ν)'],
           rows: [
-            ['Κατηγορία Α', f1],
-            ['Κατηγορία Β', f2],
-            ['Κατηγορία Γ', f3]
+            ['Κατηγορία Α', 12],
+            ['Κατηγορία Β', 18],
+            ['Κατηγορία Γ', 10]
           ],
-          totalRow: ['ΣΥΝΟΛΟ', total]
+          totalRow: ['ΣΥΝΟΛΟ', 40]
         },
-        correctVal: diffPct,
-        correctStr: String(diffPct),
+        correctVal: 15,
+        correctStr: '15',
         unit: '%',
-        explanation: `Ποσοστό Κατηγορίας Β: (18 : 40) · 100 ＝ 45 %. Ποσοστό Κατηγορίας Α: (12 : 40) · 100 ＝ 30 %. Διαφορά ποσοστών: 45 % － 30 % ＝ ${diffPct} %.`
+        explanation: `Κατηγορία Β: (18:40)·100 ＝ 45%. Κατηγορία Α: (12:40)·100 ＝ 30%. Διαφορά: 45% － 30% ＝ 15%.`
       };
     }
   },
   {
     id: 'freq_hard_9',
     generate: () => {
-      const total = 80;
-      const freqA = 24;
-      const relFreqA = freqA / total; // 0.30
       return {
         text: `Σε έναν πίνακα συχνοτήτων 80 παρατηρήσεων, μια κατηγορία έχει συχνότητα 24. Ποια είναι η σχετική συχνότητα της κατηγορίας αυτής;`,
-        correctVal: relFreqA,
-        correctStr: formatNum(relFreqA, 2),
+        correctVal: 0.3,
+        correctStr: '0,30',
         unit: '',
         explanation: `Σχετική συχνότητα ＝ 24 : 80 ＝ 0,30.`
       };
@@ -502,27 +450,22 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'freq_hard_10',
     generate: () => {
-      const q1 = 15;
-      const q2 = 25;
-      const q3 = 35;
-      const q4 = 25;
-      const total = q1 + q2 + q3 + q4; // 100
       return {
         text: `Σε έρευνα 100 καταναλωτών, οι προτιμήσεις σε 4 προϊόντα καταγράφηκαν στον πίνακα. Πόσοι καταναλωτές επέλεξαν το Προϊόν Γ;`,
         table: {
-          headers: ['Προϊόν', 'Καταναλωτές (ν)', 'Ποσοστό (%)'],
+          headers: ['Προϊόν', 'Συχνότητα', 'Ποσοστό (%)'],
           rows: [
-            ['Προϊόν Α', q1, '15 %'],
-            ['Προϊόν Β', q2, '25 %'],
+            ['Προϊόν Α', 15, '15 %'],
+            ['Προϊόν Β', 25, '25 %'],
             ['Προϊόν Γ', 'χ', '35 %'],
-            ['Προϊόν Δ', q4, '25 %']
+            ['Προϊόν Δ', 25, '25 %']
           ],
-          totalRow: ['ΣΥΝΟΛΟ', total, '100 %']
+          totalRow: ['ΣΥΝΟΛΟ', 100, '100 %']
         },
-        correctVal: q3,
-        correctStr: String(q3),
+        correctVal: 35,
+        correctStr: '35',
         unit: 'καταναλωτές',
-        explanation: `Εφόσον το ποσοστό του Προϊόντος Γ είναι 35 % σε σύνολο 100 καταναλωτών, η συχνότητά του είναι απευθείας: χ ＝ (100 · 35) : 100 ＝ 35 καταναλωτές.`
+        explanation: `Εφόσον το ποσοστό είναι 35% σε σύνολο 100 καταναλωτών, η συχνότητά του είναι απευθείας 35.`
       };
     }
   }
@@ -532,7 +475,7 @@ const HARD_PROBLEMS_POOL = [
 function generateQuestions() {
   const qList = [];
 
-  // Q1 (Input - Decimal): Συμπλήρωση συνόλου παρατηρήσεων από πίνακα
+  // Q1 (Input - Decimal)
   {
     const fA = randInt(4, 7);
     const fB = randInt(8, 12);
@@ -561,18 +504,14 @@ function generateQuestions() {
     });
   }
 
-  // Q2 (MCQ): Τι είναι η επικρατούσα τιμή (μόδα)
+  // Q2 (MCQ)
   {
     const correctDef = 'Η τιμή της μεταβλητής που εμφανίζεται με τη μεγαλύτερη συχνότητα';
-    const fake1 = 'Το άθροισμα όλων των συχνοτήτων διαιρεμένο με το 2';
-    const fake2 = 'Η διαφορά ανάμεσα στη μέγιστη και την ελάχιστη τιμή';
-    const fake3 = 'Η τιμή που εμφανίζεται ακριβώς μία φορά';
-
     const options = [
       { text: correctDef, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Το άθροισμα όλων των συχνοτήτων διαιρεμένο με το 2', isCorrect: false },
+      { text: 'Η διαφορά ανάμεσα στη μέγιστη και την ελάχιστη τιμή', isCorrect: false },
+      { text: 'Η τιμή που εμφανίζεται ακριβώς μία φορά', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -587,7 +526,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (Input - Decimal): Υπολογισμός σχετικής συχνότητας
+  // Q3 (Input - Decimal)
   {
     const total = 20;
     const freq = pickRandom([4, 5, 8, 10]);
@@ -600,7 +539,7 @@ function generateQuestions() {
       instruction: 'Υπολογίστε τη σχετική συχνότητα σε δεκαδική μορφή:',
       prompt: `Στον παρακάτω πίνακα 20 μαθητών, ποια είναι η σχετική συχνότητα της Κατηγορίας Α;`,
       table: {
-        headers: ['Κατηγορία', 'Συχνότητα (ν)', 'Σχετική Συχνότητα'],
+        headers: ['Κατηγορία', 'Συχνότητα', 'Σχετική Συχνότητα'],
         rows: [
           ['Κατηγορία Α', freq, 'χ'],
           ['Άλλες', total - freq, formatNum((total - freq) / total, 2)]
@@ -613,18 +552,14 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Άθροισμα σχετικών συχνοτήτων
+  // Q4 (MCQ)
   {
     const correctSum = 'Είναι πάντοτε ίσο με 1 (ή 100 %)';
-    const fake1 = 'Είναι ίσο με το συνολικό πλήθος των μαθητών';
-    const fake2 = 'Είναι πάντοτε ίσο με 0';
-    const fake3 = 'Αλλάζει ανάλογα με τον αριθμό των κατηγοριών';
-
     const options = [
       { text: correctSum, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Είναι ίσο με το συνολικό πλήθος των μαθητών', isCorrect: false },
+      { text: 'Είναι πάντοτε ίσο με 0', isCorrect: false },
+      { text: 'Αλλάζει ανάλογα με τον αριθμό των κατηγοριών', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -635,11 +570,11 @@ function generateQuestions() {
       prompt: `Σε έναν πλήρη πίνακα κατανομής συχνοτήτων, τι ισχύει για το άθροισμα όλων των σχετικών συχνοτήτων;`,
       options,
       correctText: correctSum,
-      explanation: `Επειδή οι σχετικές συχνότητες αντιπροσωπεύουν τα κλασματικά μέρη του όλου, το άθροισμά τους ισούται πάντα με 1 (ή 100%).`
+      explanation: `Επειδή οι σχετικές συχνότητες εκφράζουν τα κλασματικά μέρη του όλου, το άθροισμά τους ισούται πάντα με 1 (ή 100%).`
     });
   }
 
-  // Q5 (Input - Decimal): Εύρεση ελλείπουσας συχνότητας
+  // Q5 (Input - Decimal)
   {
     const f1 = randInt(5, 8);
     const f2 = randInt(7, 10);
@@ -669,18 +604,14 @@ function generateQuestions() {
     });
   }
 
-  // Q6 (MCQ): Τι είναι το εύρος των δεδομένων
+  // Q6 (MCQ)
   {
     const correctRange = 'Η διαφορά μεταξύ της μεγαλύτερης και της μικρότερης τιμής των δεδομένων';
-    const fake1 = 'Το άθροισμα της μεγαλύτερης και της μικρότερης τιμής';
-    const fake2 = 'Ο αριθμός των γραμμών του πίνακα συχνοτήτων';
-    const fake3 = 'Το ποσοστό της πρώτης κατηγορίας';
-
     const options = [
       { text: correctRange, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Το άθροισμα της μεγαλύτερης και της μικρότερης τιμής', isCorrect: false },
+      { text: 'Ο αριθμός των γραμμών του πίνακα συχνοτήτων', isCorrect: false },
+      { text: 'Το ποσοστό της πρώτης κατηγορίας', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -763,7 +694,7 @@ function generateQuestions() {
       explanation: hardProb1.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Σύμβολο '%' ΜΟΝΟ όταν είναι ποσοστό)
+    // Q10 (MCQ Αυξημένης Δυσκολίας)
     const val10 = hardProb2.correctVal !== undefined ? hardProb2.correctVal : hardProb2.correctText;
     const isPercentageQuestion = hardProb2.unit === '%';
     const unitSuffix = isPercentageQuestion ? ' %' : (hardProb2.unit ? ` ${hardProb2.unit}` : '');
@@ -805,7 +736,6 @@ export default function PinakasSixnotitonExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
@@ -818,7 +748,6 @@ export default function PinakasSixnotitonExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (0-9 και κομμα)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -836,7 +765,6 @@ export default function PinakasSixnotitonExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -845,7 +773,6 @@ export default function PinakasSixnotitonExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
   const handleCheckAnswers = () => {
     let currentScore = 0;
 
@@ -884,30 +811,30 @@ export default function PinakasSixnotitonExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
               Ασκήσεις: Πίνακας Συχνοτήτων &amp; Ταξινόμηση Δεδομένων
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               10 απαιτητικές δραστηριότητες με οπτικούς πίνακες συχνοτήτων και 4 ρεαλιστικά προβλήματα. Υπολογίστε σχετικές συχνότητες, ποσοστά (%), αθροίσματα και εντοπίστε την επικρατούσα τιμή (μόδα).
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
+          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
             <span className="text-xs sm:text-sm text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους και πίνακες.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -930,7 +857,7 @@ export default function PinakasSixnotitonExercisesPage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -939,7 +866,7 @@ export default function PinakasSixnotitonExercisesPage() {
                 }`}
               >
                 {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
                   <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
@@ -957,13 +884,13 @@ export default function PinakasSixnotitonExercisesPage() {
                 </div>
 
                 {/* Εκφωνηση */}
-                <div className="space-y-2 mb-3">
+                <div className="space-y-2 mb-2">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm font-semibold text-slate-500">
                       {q.instruction}
                     </p>
                   )}
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
                 </div>
@@ -978,11 +905,11 @@ export default function PinakasSixnotitonExercisesPage() {
                 )}
 
                 {/* Περιοχη Απαντησης */}
-                <div className="py-2 pt-3">
+                <div className="py-2 pt-2.5">
                   
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -991,7 +918,7 @@ export default function PinakasSixnotitonExercisesPage() {
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
                       <span className="text-xs text-slate-500">
                         (Ακέραιος η δεκαδικός με κόμμα)
@@ -1001,7 +928,7 @@ export default function PinakasSixnotitonExercisesPage() {
 
                   {/* Multiple Choice (MCQ) */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -1010,15 +937,15 @@ export default function PinakasSixnotitonExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3 rounded-2xl border text-left font-semibold text-xs sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="truncate mr-2">{opt.text}</span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -1037,7 +964,7 @@ export default function PinakasSixnotitonExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -1068,7 +995,7 @@ export default function PinakasSixnotitonExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -1077,24 +1004,24 @@ export default function PinakasSixnotitonExercisesPage() {
       </div>
 
       {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
         <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΣΚΟΡ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
+                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
               </span>
             </div>
 
             <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΠΟΣΟΣΤΟ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
                 {Math.round((score / 10) * 100)} %
               </span>
             </div>
