@@ -61,6 +61,7 @@ export default function STDimotikouMenu() {
     { id: '54-epanalipsi-3', label: '🏆 54. Επανάληψη ( Κεφ. 40 - 53 )', href: '/st-dimotikou/54-epanalipsi-3' },
     { id: '55-apeikonisi-data', label: '📐 55. Ραβδόγραμμα και εικονόγραμμα', href: '/st-dimotikou/55-apeikonisi-data' },
     { id: '56-pinakas-sixnotiton', label: '📐 56. Ταξινόμηση Δεδομένων', href: '/st-dimotikou/56-pinakas-sixnotiton' },
+    { id: '57-alla-grafimata', label: '📐 57. Άλλοι τύποι γραφημάτων', href: '/st-dimotikou/57-alla-grafimata' },
   ];
 
   return (
