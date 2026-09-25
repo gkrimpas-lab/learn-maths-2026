@@ -67,7 +67,7 @@ export default function AntistrofosAnalogaPosaTheoryPage() {
               Αντιστρόφως Ανάλογα Ποσά
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-2xl leading-relaxed max-w-4xl">
-              Ανακαλύπτουμε τα ποσά που συμπεριφέρονται αντίστροφα: Όταν το ένα πολλαπλασιάζεται με έναν αριθμό, το άλλο <strong>διαιρείται</strong> με τον ίδιο αριθμό. Το μυστικό τους κλειδί είναι το <strong>σταθερό γινόμενο</strong> ($x \cdot y = \sigma\tau\alpha\theta.$).
+              Ανακαλύπτουμε τα ποσά που συμπεριφέρονται αντίστροφα: Όταν το ένα πολλαπλασιάζεται με έναν αριθμό, το άλλο <strong>διαιρείται</strong> με τον ίδιο αριθμό. Το μυστικό τους κλειδί είναι το <strong>σταθερό γινόμενο</strong> (x · y ＝ σταθερό).
             </p>
           </div>
 
