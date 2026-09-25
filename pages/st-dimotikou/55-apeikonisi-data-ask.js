@@ -41,6 +41,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Σε ένα εικονόγραμμα ανακύκλωσης κάθε σύμβολο 📦 αντιστοιχεί σε ${scale} kg χαρτιού. Αν για μια τάξη έχουν σχεδιαστεί ${fullSyms} σύμβολα, πόσα kg χαρτιού συγκέντρωσε η τάξη αυτή;`,
         correctVal: totalUnits,
         correctStr: String(totalUnits),
+        unit: 'kg',
         explanation: `Πολλαπλασιάζουμε το πλήθος των συμβόλων με την τιμή του υπομνήματος: ${fullSyms} · ${scale} ＝ ${totalUnits} kg.`
       };
     }
@@ -56,6 +57,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Ένα ραβδόγραμμα δείχνει τις προτιμήσεις των μαθητών σε 3 γεύσεις παγωτού: Σοκολάτα ${vA}, Βανίλια ${vB} και Φράουλα ${vC}. Πόσοι ήταν συνολικά οι μαθητές που συμμετείχαν στην έρευνα;`,
         correctVal: total,
         correctStr: String(total),
+        unit: 'μαθητές',
         explanation: `Αθροίζουμε τις συχνότητες όλων των ράβδων: ${vA} ＋ ${vB} ＋ ${vC} ＝ ${total} μαθητές.`
       };
     }
@@ -70,6 +72,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Σε ένα ραβδόγραμμα επισκεπτών μουσείου, τη Δευτέρα καταγράφηκαν ${vMon} επισκέπτες και την Παρασκευή ${vFri} επισκέπτες. Πόσους περισσότερους επισκέπτες είχε το μουσείο την Παρασκευή;`,
         correctVal: diff,
         correctStr: String(diff),
+        unit: 'επισκέπτες',
         explanation: `Βρίσκουμε τη διαφορά υψών των ράβδων: ${vFri} － ${vMon} ＝ ${diff} επισκέπτες.`
       };
     }
@@ -84,6 +87,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Ένας γεωπόνος θέλει να σχεδιάσει εικονόγραμμα για ${totalTrees} ελαιόδεντρα, χρησιμοποιώντας υπόμνημα 🌳 ＝ ${scale} δέντρα. Πόσα σύμβολα πρέπει να σχεδιάσει;`,
         correctVal: reqSymbols,
         correctStr: String(reqSymbols),
+        unit: 'σύμβολα',
         explanation: `Διαιρούμε το συνολικό πλήθος με την κλίμακα του υπομνήματος: ${totalTrees} : ${scale} ＝ ${reqSymbols} σύμβολα.`
       };
     }
@@ -91,14 +95,11 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'data_std_5',
     generate: () => {
-      const vA = 18;
-      const vB = 24;
-      const vC = 30;
-      const total = vA + vB + vC; // 72
       return {
         text: `Σε έναν πίνακα συχνοτήτων καταγράφηκαν τα αγαπημένα κατοικίδια: Σκύλος 30, Γάτα 24, Παπαγάλος 18. Ποιο είναι το ποσοστό (%) των παιδιών που προτιμούν τον σκύλο αν ρωτήθηκαν συνολικά 60 παιδιά;`,
         correctVal: 50,
         correctStr: '50',
+        unit: '%',
         explanation: `Ο σκύλος έχει συχνότητα 30 σε σύνολο 60 παιδιών: (30 : 60) · 100 ＝ 0,5 · 100 ＝ 50 %.`
       };
     }
@@ -112,6 +113,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Σε ένα ραβδόγραμμα η ράβδος της ομάδας Α έχει ύψος ${baseVal} πόντους και η ράβδος της ομάδας Β έχει ακριβώς διπλάσιο ύψος. Πόσους πόντους συγκέντρωσε η ομάδα Β;`,
         correctVal: doubleVal,
         correctStr: String(doubleVal),
+        unit: 'πόντοι',
         explanation: `Εφόσον το ύψος είναι διπλάσιο: ${baseVal} · 2 ＝ ${doubleVal} πόντοι.`
       };
     }
@@ -121,12 +123,12 @@ const STANDARD_PROBLEMS_POOL = [
     generate: () => {
       const scale = 5;
       const fullSyms = randInt(3, 6);
-      // fullSyms ακέραια και 1 μισό (2.5 μονάδες)
       const totalVal = fullSyms * scale + 2.5;
       return {
         text: `Σε ένα εικονόγραμμα ισχύει το υπόμνημα 🚗 ＝ 5 αυτοκίνητα. Αν για ένα συνεργείο υπάρχουν ${fullSyms} ολόκληρα σύμβολα και 1 μισό σύμβολο (½), πόσα αυτοκίνητα επισκευάστηκαν;`,
         correctVal: totalVal,
         correctStr: formatNum(totalVal),
+        unit: 'αυτοκίνητα',
         explanation: `Τα ολόκληρα σύμβολα είναι: ${fullSyms} · 5 ＝ ${fullSyms * 5}. Το μισό σύμβολο αντιστοιχεί σε 2,5 αυτοκίνητα. Σύνολο: ${formatNum(totalVal)}.`
       };
     }
@@ -137,11 +139,11 @@ const STANDARD_PROBLEMS_POOL = [
       const bus = randInt(20, 35);
       const walk = randInt(15, 30);
       const car = randInt(10, 20);
-      const sum = bus + walk + car;
       return {
         text: `Ένα ραβδόγραμμα μετακίνησης μαθητών προς το σχολείο δείχνει: Λεωφορείο ${bus}, Με τα πόδια ${walk}, Αυτοκίνητο ${car}. Πόσοι μαθητές μετακινούνται με όχημα (λεωφορείο ή αυτοκίνητο);`,
         correctVal: bus + car,
         correctStr: String(bus + car),
+        unit: 'μαθητές',
         explanation: `Αθροίζουμε τις συχνότητες των οχημάτων: ${bus} ＋ ${car} ＝ ${bus + car} μαθητές.`
       };
     }
@@ -149,13 +151,11 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'data_std_9',
     generate: () => {
-      const apples = 45;
-      const oranges = 30;
-      const bananas = 25;
       return {
         text: `Σε ένα κατάστημα φρούτων πουλήθηκαν 45 kg μήλα, 30 kg πορτοκάλια και 25 kg μπανάνες. Πόσα kg φρούτων πουλήθηκαν συνολικά;`,
         correctVal: 100,
         correctStr: '100',
+        unit: 'kg',
         explanation: `45 ＋ 30 ＋ 25 ＝ 100 kg φρούτων.`
       };
     }
@@ -170,6 +170,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Σε ένα εικονόγραμμα κάθε αστέρι ⭐ αντιπροσωπεύει ${symbolVal} βαθμούς. Ένας μαθητής συγκέντρωσε ${symCount} αστέρια. Πόσους βαθμούς πέτυχε;`,
         correctVal: totalUnits,
         correctStr: String(totalUnits),
+        unit: 'βαθμοί',
         explanation: `${symCount} · ${symbolVal} ＝ ${totalUnits} βαθμοί.`
       };
     }
@@ -191,6 +192,7 @@ const HARD_PROBLEMS_POOL = [
         text: `Σε ένα ραβδόγραμμα καταγράφηκε η ημερήσια παραγωγή κιβωτίων ενός εργοστασίου: Δευτέρα 40, Τρίτη 60, Τετάρτη 50, Πέμπτη 70. Ποιος ήταν ο μέσος όρος παραγωγής ανά ημέρα;`,
         correctVal: avg,
         correctStr: String(avg),
+        unit: 'κιβώτια',
         explanation: `1ο Βήμα: Συνολική παραγωγή: 40 ＋ 60 ＋ 50 ＋ 70 ＝ ${total} κιβώτια. 2ο Βήμα: Μέσος όρος: ${total} : 4 ＝ ${avg} κιβώτια ανά ημέρα.`
       };
     }
@@ -207,6 +209,7 @@ const HARD_PROBLEMS_POOL = [
         text: `Σε έρευνα 120 μαθητών για το αγαπημένο τους άθλημα, 48 επέλεξαν ποδόσφαιρο και 36 μπάσκετ. Οι υπόλοιποι μαθητές επέλεξαν στίβο. Τι ποσοστό (%) των μαθητών επέλεξε στίβο;`,
         correctVal: pctRem,
         correctStr: String(pctRem),
+        unit: '%',
         explanation: `Μαθητές στίβου: 120 － (48 ＋ 36) ＝ 120 － 84 ＝ 36 μαθητές. Ποσοστό: (36 : 120) · 100 ＝ 0,30 · 100 ＝ ${pctRem} %.`
       };
     }
@@ -223,6 +226,7 @@ const HARD_PROBLEMS_POOL = [
         text: `Σε ένα σχολικό συμβούλιο ψήφισαν 200 μαθητές για 3 προτάσεις: Η πρόταση Α έλαβε 90 ψήφους, η πρόταση Β έλαβε 70 ψήφους και οι υπόλοιποι ψήφισαν την πρόταση Γ. Πόσες περισσότερες ψήφους έλαβε η πρόταση Α από την πρόταση Γ;`,
         correctVal: diff,
         correctStr: String(diff),
+        unit: 'ψήφοι',
         explanation: `Ψήφοι πρότασης Γ: 200 － (90 ＋ 70) ＝ 200 － 160 ＝ 40 ψήφοι. Διαφορά: 90 － 40 ＝ ${diff} ψήφοι.`
       };
     }
@@ -231,13 +235,14 @@ const HARD_PROBLEMS_POOL = [
     id: 'data_hard_4',
     generate: () => {
       const scale = 25; // 1 σύμβολο = 25 δέντρα
-      const symTeamA = 6; // 150 δέντρα
-      const symTeamB = 8; // 200 δέντρα
+      const symTeamA = 6;
+      const symTeamB = 8;
       const diffTrees = (symTeamB - symTeamA) * scale; // 50 δέντρα
       return {
         text: `Σε ένα εικονόγραμμα αναδάσωσης ισχύει το υπόμνημα 🌲 ＝ 25 δέντρα. Η ομάδα Α έχει σχεδιάσει 6 σύμβολα και η ομάδα Β έχει σχεδιάσει 8 σύμβολα. Πόσα περισσότερα δέντρα φύτεψε η ομάδα Β;`,
         correctVal: diffTrees,
         correctStr: String(diffTrees),
+        unit: 'δέντρα',
         explanation: `Διαφορά συμβόλων: 8 － 6 ＝ 2 σύμβολα. Σε δέντρα: 2 · 25 ＝ ${diffTrees} δέντρα.`
       };
     }
@@ -252,6 +257,7 @@ const HARD_PROBLEMS_POOL = [
         text: `Στον κατακόρυφο άξονα ενός ραβδογράμματος, το μέγιστο ύψος είναι 180 και ο άξονας χωρίζεται σε 6 ίσα διαστήματα (υποδιαιρέσεις). Πόσες μονάδες αντιπροσωπεύει κάθε διάστημα της κλίμακας;`,
         correctVal: stepVal,
         correctStr: String(stepVal),
+        unit: 'μονάδες',
         explanation: `Διαιρούμε το μέγιστο ύψος με τον αριθμό των ίσων διαστημάτων: 180 : 6 ＝ ${stepVal} μονάδες ανά διάστημα.`
       };
     }
@@ -268,6 +274,7 @@ const HARD_PROBLEMS_POOL = [
         text: `Σε ένα ραβδόγραμμα 100 συνολικά αναγνωστών, η εφημερίδα Α έχει 35 αναγνώστες, η Β έχει 45 και η Γ έχει 20. Ποιο είναι το ποσοστό (%) των αναγνωστών της εφημερίδας Β;`,
         correctVal: pctB,
         correctStr: String(pctB),
+        unit: '%',
         explanation: `Εφόσον το σύνολο είναι 100, η συχνότητα 45 αντιστοιχεί απευθείας σε ${pctB} %.`
       };
     }
@@ -275,7 +282,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'data_hard_7',
     generate: () => {
-      const origHeightCm = 15; // 15 cm ράβδος για 60 πωλήσεις
+      const origHeightCm = 15;
       const origUnits = 60;
       const newUnits = 100;
       const newHeightCm = (origHeightCm * newUnits) / origUnits; // 25 cm
@@ -283,6 +290,7 @@ const HARD_PROBLEMS_POOL = [
         text: `Σε ένα ραβδόγραμμα, μια ράβδος ύψους 15 cm αντιστοιχεί σε 60 πωλήσεις προϊόντων. Πόσα εκατοστά (cm) ύψος πρέπει να έχει μια άλλη ράβδος στο ίδιο γράφημα για να αναπαραστήσει 100 πωλήσεις;`,
         correctVal: newHeightCm,
         correctStr: String(newHeightCm),
+        unit: 'cm',
         explanation: `Τα ύψη των ράβδων είναι ανάλογα των συχνοτήτων: χ ＝ (15 · 100) : 60 ＝ 1.500 : 60 ＝ ${newHeightCm} cm.`
       };
     }
@@ -295,11 +303,12 @@ const HARD_PROBLEMS_POOL = [
       const symA = totalItems / scaleA; // 30 σύμβολα
       const scaleB = 15;
       const symB = totalItems / scaleB; // 10 σύμβολα
-      const diffSyms = symA - symB; // 20 λιγότερα σύμβολα
+      const diffSyms = symA - symB; // 20
       return {
         text: `Για να αναπαραστήσουμε 150 μονάδες σε εικονόγραμμα, αν αλλάξουμε το υπόμνημα από 1 σύμβολο ＝ 5 μονάδες σε 1 σύμβολο ＝ 15 μονάδες, πόσα λιγότερα σύμβολα θα χρειαστεί να σχεδιάσουμε;`,
         correctVal: diffSyms,
         correctStr: String(diffSyms),
+        unit: 'σύμβολα',
         explanation: `Με κλίμακα 5: 150 : 5 ＝ 30 σύμβολα. Με κλίμακα 15: 150 : 15 ＝ 10 σύμβολα. Διαφορά: 30 － 10 ＝ ${diffSyms} λιγότερα σύμβολα.`
       };
     }
@@ -309,12 +318,12 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const girls = 28;
       const boys = 32;
-      const total = girls + boys; // 60
       const diff = boys - girls; // 4
       return {
         text: `Στο ραβδόγραμμα δύο τμημάτων της ΣΤ' τάξης καταγράφηκαν 28 κορίτσια και 32 αγόρια. Πόσα περισσότερα είναι τα αγόρια από τα κορίτσια;`,
         correctVal: diff,
         correctStr: String(diff),
+        unit: 'αγόρια',
         explanation: `Διαφορά: 32 － 28 ＝ ${diff} αγόρια.`
       };
     }
@@ -331,6 +340,7 @@ const HARD_PROBLEMS_POOL = [
         text: `Σε ένα τριμηνιαίο ραβδόγραμμα καταγράφηκαν οι πωλήσεις 4 τριμήνων: Α' 120, Β' 180, Γ' 150, Δ' 210. Ποιες ήταν οι συνολικές πωλήσεις ολόκληρου του έτους;`,
         correctVal: total,
         correctStr: String(total),
+        unit: 'πωλήσεις',
         explanation: `Σύνολο: 120 ＋ 180 ＋ 150 ＋ 210 ＝ ${total} πωλήσεις.`
       };
     }
@@ -493,15 +503,16 @@ function generateQuestions() {
 
     // Q8 (MCQ)
     const val8 = stdProb2.correctVal;
+    const unit8 = stdProb2.unit ? ` ${stdProb2.unit}` : '';
     const fake8A = typeof val8 === 'number' ? formatNum(val8 + randInt(5, 12)) : '0';
     const fake8B = typeof val8 === 'number' ? formatNum(Math.max(1, val8 - randInt(4, 10))) : '0';
     const fake8C = typeof val8 === 'number' ? formatNum(val8 * 1.4) : '0';
 
     const optionsQ8 = [
-      { text: stdProb2.correctStr, isCorrect: true },
-      { text: String(fake8A), isCorrect: false },
-      { text: String(fake8B), isCorrect: false },
-      { text: String(fake8C), isCorrect: false }
+      { text: `${stdProb2.correctStr}${unit8}`, isCorrect: true },
+      { text: `${fake8A}${unit8}`, isCorrect: false },
+      { text: `${fake8B}${unit8}`, isCorrect: false },
+      { text: `${fake8C}${unit8}`, isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -511,7 +522,7 @@ function generateQuestions() {
       instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
       prompt: stdProb2.text,
       options: optionsQ8,
-      correctText: stdProb2.correctStr,
+      correctText: `${stdProb2.correctStr}${unit8}`,
       explanation: stdProb2.explanation
     });
   }
@@ -534,27 +545,32 @@ function generateQuestions() {
       explanation: hardProb1.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας)
+    // Q10 (MCQ Αυξημένης Δυσκολίας - Εμφάνιση '%' ΜΟΝΟ όταν πρόκειται για ποσοστό)
     const val10 = hardProb2.correctVal;
+    const isPercentageQuestion = hardProb2.unit === '%';
+    const unitSuffix = isPercentageQuestion ? ' %' : '';
+
     const fake10A = typeof val10 === 'number' ? formatNum(val10 + randInt(5, 10)) : '0';
-    const fake10B = typeof val10 === 'number' ? formatNum(Math.max(5, val10 - randInt(4, 8))) : '0';
+    const fake10B = typeof val10 === 'number' ? formatNum(Math.max(2, val10 - randInt(3, 7))) : '0';
     const fake10C = typeof val10 === 'number' ? formatNum(val10 * 1.3) : '0';
 
     const optionsQ10 = [
-      { text: `${hardProb2.correctStr} %`, isCorrect: true },
-      { text: `${fake10A} %`, isCorrect: false },
-      { text: `${fake10B} %`, isCorrect: false },
-      { text: `${fake10C} %`, isCorrect: false }
+      { text: `${hardProb2.correctStr}${unitSuffix}`, isCorrect: true },
+      { text: `${fake10A}${unitSuffix}`, isCorrect: false },
+      { text: `${fake10B}${unitSuffix}`, isCorrect: false },
+      { text: `${fake10C}${unitSuffix}`, isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΣΤΑΤΙΣΤΙΚΗΣ & ΠΟΣΟΣΤΩΝ',
+      title: isPercentageQuestion
+        ? 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΣΤΑΤΙΣΤΙΚΗΣ & ΠΟΣΟΣΤΩΝ'
+        : 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΣΤΑΤΙΣΤΙΚΗΣ ΑΠΕΙΚΟΝΙΣΗΣ',
       instruction: 'Επιλέξτε τη σωστή απάντηση:',
       prompt: hardProb2.text,
       options: optionsQ10,
-      correctText: `${hardProb2.correctStr} %`,
+      correctText: `${hardProb2.correctStr}${unitSuffix}`,
       explanation: hardProb2.explanation
     });
   }
