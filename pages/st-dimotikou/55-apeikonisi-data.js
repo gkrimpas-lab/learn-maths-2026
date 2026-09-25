@@ -12,7 +12,7 @@ function formatNum(val, decimals = 1) {
 
 export default function ApeikonisiDataTheoryPage() {
   // Εργαστηριο 1: Διαδραστικη Απεικονιση (Ραβδογραμμα vs Εικονογραμμα)
-  const [viewType, setViewType] = useState('bar'); // 'bar' η 'pictogram'
+  const [viewType, setViewType] = useState('bar');
   const [catA, setCatA] = useState(12); // Ποδόσφαιρο
   const [catB, setCatB] = useState(8);  // Μπάσκετ
   const [catC, setCatC] = useState(6);  // Βόλεϊ
@@ -29,7 +29,7 @@ export default function ApeikonisiDataTheoryPage() {
 
   // Εργαστηριο 2: Επιλογη Κλιμακας Υπομνηματος & Οπτικη Αναπαρασταση
   const [booksCount, setBooksCount] = useState(30);
-  const [symbolScale, setSymbolScale] = useState(5); // 1 συμβολο = 5 βιβλια
+  const [symbolScale, setSymbolScale] = useState(5);
 
   const fullSymbols = Math.floor(booksCount / symbolScale);
   const remainder = booksCount % symbolScale;
@@ -94,8 +94,6 @@ export default function ApeikonisiDataTheoryPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-4 gap-5 sm:gap-6 2xl:gap-8">
-            
-            {/* Βημα 1ο */}
             <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
@@ -130,7 +128,6 @@ export default function ApeikonisiDataTheoryPage() {
               </div>
             </article>
 
-            {/* Βημα 2ο */}
             <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
@@ -164,7 +161,6 @@ export default function ApeikonisiDataTheoryPage() {
               </div>
             </article>
 
-            {/* Βημα 3ο */}
             <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
@@ -195,7 +191,6 @@ export default function ApeikonisiDataTheoryPage() {
               </div>
             </article>
 
-            {/* Βημα 4ο */}
             <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
@@ -228,7 +223,6 @@ export default function ApeikonisiDataTheoryPage() {
                 🚀 Ένα γράφημα αξίζει όσο χίλιοι αριθμοί γιατί κάνει τη σύγκριση ορατή σε όλους.
               </div>
             </article>
-
           </div>
         </section>
 
@@ -247,7 +241,6 @@ export default function ApeikonisiDataTheoryPage() {
               </p>
             </div>
 
-            {/* Διακοπτης Προβολης */}
             <div className="grid grid-cols-2 sm:flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 w-full sm:w-auto">
               <button
                 type="button"
@@ -275,11 +268,7 @@ export default function ApeikonisiDataTheoryPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-            
-            {/* Χειριστηρια 4 Κατηγοριων (Step 1) */}
             <div className="lg:col-span-5 space-y-3">
-              
-              {/* Κατηγορια A */}
               <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
@@ -318,7 +307,6 @@ export default function ApeikonisiDataTheoryPage() {
                 </div>
               </div>
 
-              {/* Κατηγορια B */}
               <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
@@ -357,8 +345,7 @@ export default function ApeikonisiDataTheoryPage() {
                 </div>
               </div>
 
-              {/* Κατηγορια C */}
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                     <span>🏐</span> Βόλεϊ
@@ -396,8 +383,7 @@ export default function ApeikonisiDataTheoryPage() {
                 </div>
               </div>
 
-              {/* Κατηγορια D */}
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                     <span>🏊</span> Κολύμβηση
@@ -435,21 +421,17 @@ export default function ApeikonisiDataTheoryPage() {
                 </div>
               </div>
 
-              {/* Συνολο */}
               <div className="p-2.5 bg-blue-50 rounded-xl border border-blue-200 text-center font-bold text-xs sm:text-sm text-blue-950">
                 Σύνολο μαθητών που ρωτήθηκαν: <strong className="font-mono text-sm sm:text-base">{totalVotes}</strong>
               </div>
-
             </div>
 
-            {/* Οπτικο Γραφημα (Ραβδογραμμα η Εικονογραμμα) - Χωρις Scroll στα Κινητα */}
             <div className="lg:col-span-7 bg-slate-50 p-3 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center w-full min-h-[340px]">
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 text-center">
                 {viewType === 'bar' ? 'ΡΑΒΔΟΓΡΑΜΜΑ ΠΡΟΤΙΜΗΣΕΩΝ ΑΘΛΗΜΑΤΩΝ' : 'ΕΙΚΟΝΟΓΡΑΜΜΑ (1 ΣΥΜΒΟΛΟ ＝ 2 ΜΑΘΗΤΕΣ)'}
               </span>
 
               {viewType === 'bar' ? (
-                /* SVG Ραβδογραμμα Responsive */
                 <div className="w-full max-w-[420px] aspect-[4/3] sm:aspect-[16/10] bg-white rounded-2xl border border-slate-200 p-2 sm:p-4 shadow-sm relative flex items-center justify-center">
                   <svg viewBox="0 0 380 250" className="w-full h-auto max-h-[260px] overflow-visible">
                     {[0, 5, 10, 15, 20].map((v) => {
@@ -511,7 +493,6 @@ export default function ApeikonisiDataTheoryPage() {
                   </svg>
                 </div>
               ) : (
-                /* Εικονογραμμα Responsive */
                 <div className="w-full max-w-[420px] bg-white rounded-2xl border border-slate-200 p-3 sm:p-5 shadow-sm space-y-3">
                   <div className="p-2 bg-amber-50 rounded-xl border border-amber-200 text-xs font-bold text-amber-900 text-center">
                     📌 Υπόμνημα: Κάθε σύμβολο αντιστοιχεί σε <strong>2 μαθητές</strong>.
@@ -524,7 +505,7 @@ export default function ApeikonisiDataTheoryPage() {
 
                       return (
                         <div key={`picto-${cat.name}`} className="p-2 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-1.5">
-                          <span className="font-sans font-bold text-slate-700 w-20 sm:w-24 shrink-0 truncate">
+                          <span className="font-sans font-bold text-slate-700 w-20 sm:w-24 shrink-0 break-words">
                             {cat.name}:
                           </span>
                           <div className="flex flex-wrap items-center gap-1 grow">
@@ -556,7 +537,6 @@ export default function ApeikonisiDataTheoryPage() {
                 Η επικρατούσα προτίμηση ξεχωρίζει άμεσα από το ύψος ή το πλήθος των εικόνων!
               </span>
             </div>
-
           </div>
         </section>
 
@@ -575,8 +555,6 @@ export default function ApeikonisiDataTheoryPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-            
-            {/* Ρυθμισεις */}
             <div className="lg:col-span-5 space-y-3.5">
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-slate-700">
@@ -638,7 +616,6 @@ export default function ApeikonisiDataTheoryPage() {
               </div>
             </div>
 
-            {/* Οπτικη Προβολη των Συμβολων */}
             <div className="lg:col-span-7 bg-emerald-50/50 p-4 sm:p-6 rounded-3xl border border-emerald-200 space-y-3 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between border-b border-emerald-200/60 pb-2 mb-2">
@@ -650,7 +627,6 @@ export default function ApeikonisiDataTheoryPage() {
                   </span>
                 </div>
 
-                {/* Σχεδιαση συμβολων */}
                 <div className="p-3 sm:p-4 bg-white rounded-2xl border border-emerald-100 min-h-[75px] flex flex-wrap items-center gap-1.5 sm:gap-2">
                   {Array.from({ length: fullSymbols }).map((_, idx) => (
                     <span key={`dyn-sym-${idx}`} className="text-2xl sm:text-3xl select-none" title={`Σύμβολο ${idx + 1}: ${symbolScale} βιβλία`}>
@@ -679,7 +655,6 @@ export default function ApeikonisiDataTheoryPage() {
                 </div>
               </div>
             </div>
-
           </div>
         </section>
 
@@ -772,7 +747,7 @@ export default function ApeikonisiDataTheoryPage() {
               </div>
             </article>
 
-            {/* Παραδειγμα 2 */}
+            {/* Παραδειγμα 2: Πλήρως αναγνώσιμο χωρίς truncate / αποσιωπητικά */}
             <article className="bg-white p-4 sm:p-7 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-2.5 py-1 bg-amber-100 text-amber-900 text-[11px] sm:text-xs font-black rounded-lg">
@@ -787,32 +762,49 @@ export default function ApeikonisiDataTheoryPage() {
                 Οι μαθητές συγκέντρωσαν: Δευτέρα <strong>40 μπαταρίες</strong>, Τρίτη <strong>60 μπαταρίες</strong>, Τετάρτη <strong>50 μπαταρίες</strong> (Υπόμνημα: <strong>🔋 ＝ 10 μπαταρίες</strong>).
               </p>
 
-              {/* ΣΧΗΜΑ 2: Οπτικο Εικονογραμμα Responsive */}
+              {/* ΣΧΗΜΑ 2: Οπτικο Εικονογραμμα Χωρίς Truncate / Αποσιωπητικά */}
               <div className="p-2.5 sm:p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                <div className="flex items-center justify-between border-b border-slate-200 pb-1 px-1">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 px-1">
                   <span className="text-[10.5px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                     ΣΧΗΜΑ: ΕΙΚΟΝΟΓΡΑΜΜΑ
                   </span>
                   <span className="text-[11px] font-bold bg-white px-2 py-0.5 rounded border border-amber-200 text-amber-900 font-mono">
-                    🔋 ＝ 10
+                    🔋 ＝ 10 μπαταρίες
                   </span>
                 </div>
 
-                <div className="bg-white rounded-xl border border-slate-200 p-2 sm:p-2.5 space-y-1.5 text-xs font-mono">
-                  <div className="flex items-center justify-between gap-1.5 p-1.5 bg-slate-50 rounded-lg">
-                    <span className="font-sans font-bold text-slate-700 w-16 sm:w-20 truncate">Δευτέρα:</span>
-                    <span className="text-sm sm:text-base select-none truncate">🔋 🔋 🔋 🔋</span>
-                    <span className="font-bold text-amber-900 shrink-0">40 (4)</span>
+                <div className="bg-white rounded-xl border border-slate-200 p-2 sm:p-2.5 space-y-2 text-xs font-mono">
+                  {/* Δευτέρα */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 bg-slate-50 rounded-lg">
+                    <span className="font-sans font-bold text-slate-700 break-words">Δευτέρα:</span>
+                    <div className="flex flex-wrap items-center gap-1.5 text-base sm:text-lg select-none">
+                      <span>🔋</span><span>🔋</span><span>🔋</span><span>🔋</span>
+                    </div>
+                    <span className="font-bold text-amber-900 text-right sm:text-right shrink-0">
+                      40 μπαταρίες (4 σύμβολα)
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between gap-1.5 p-1.5 bg-slate-50 rounded-lg">
-                    <span className="font-sans font-bold text-slate-700 w-16 sm:w-20 truncate">Τρίτη:</span>
-                    <span className="text-sm sm:text-base select-none truncate">🔋 🔋 🔋 🔋 🔋 🔋</span>
-                    <span className="font-bold text-amber-900 shrink-0">60 (6)</span>
+
+                  {/* Τρίτη */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 bg-slate-50 rounded-lg">
+                    <span className="font-sans font-bold text-slate-700 break-words">Τρίτη:</span>
+                    <div className="flex flex-wrap items-center gap-1.5 text-base sm:text-lg select-none">
+                      <span>🔋</span><span>🔋</span><span>🔋</span><span>🔋</span><span>🔋</span><span>🔋</span>
+                    </div>
+                    <span className="font-bold text-amber-900 text-right sm:text-right shrink-0">
+                      60 μπαταρίες (6 σύμβολα)
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between gap-1.5 p-1.5 bg-slate-50 rounded-lg">
-                    <span className="font-sans font-bold text-slate-700 w-16 sm:w-20 truncate">Τετάρτη:</span>
-                    <span className="text-sm sm:text-base select-none truncate">🔋 🔋 🔋 🔋 🔋</span>
-                    <span className="font-bold text-amber-900 shrink-0">50 (5)</span>
+
+                  {/* Τετάρτη */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 bg-slate-50 rounded-lg">
+                    <span className="font-sans font-bold text-slate-700 break-words">Τετάρτη:</span>
+                    <div className="flex flex-wrap items-center gap-1.5 text-base sm:text-lg select-none">
+                      <span>🔋</span><span>🔋</span><span>🔋</span><span>🔋</span><span>🔋</span>
+                    </div>
+                    <span className="font-bold text-amber-900 text-right sm:text-right shrink-0">
+                      50 μπαταρίες (5 σύμβολα)
+                    </span>
                   </div>
                 </div>
               </div>
