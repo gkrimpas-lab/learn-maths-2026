@@ -388,11 +388,10 @@ function generateQuestions() {
     });
   }
 
-  // Q2 (MCQ): Έλεγχος ανάλογων ποσών σε πίνακα
+  // Q2 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const base1 = 2;
     const base2 = randInt(5, 8);
-    const lambda = base2 / base1;
 
     const isAnaloga = Math.random() > 0.4;
     const xVals = [2, 4, 6];
@@ -450,7 +449,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Χαρακτηριστικό γραφικής παράστασης ανάλογων ποσών
+  // Q4 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const correctProp = 'Ευθεία γραμμή που διέρχεται από την αρχή των αξόνων (0, 0)';
     const fake1 = 'Καμπύλη γραμμή που ξεκινά από το σημείο (0, 1)';
@@ -494,7 +493,7 @@ function generateQuestions() {
     });
   }
 
-  // Q6 (MCQ): Αναγνώριση ζεύγους μη ανάλογων ποσών
+  // Q6 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
   {
     const correctNonAnaloga = 'Η ηλικία ενός ανθρώπου και το ύψος του';
     const optAnaloga1 = 'Τα κιλά των μήλων και το συνολικό κόστος αγοράς τους';
@@ -694,30 +693,30 @@ export default function AnalogaPosaExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Ανάλογα Ποσά
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               10 απαιτητικές ασκήσεις με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Υπολογίστε τον συντελεστή αναλογίας λ, συμπληρώστε πίνακες τιμών και ελέγξτε τις γνώσεις σας.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
+          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
             <span className="text-xs sm:text-sm text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -740,7 +739,7 @@ export default function AnalogaPosaExercisesPage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -749,7 +748,7 @@ export default function AnalogaPosaExercisesPage() {
                 }`}
               >
                 {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
                   <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
@@ -767,30 +766,30 @@ export default function AnalogaPosaExercisesPage() {
                 </div>
 
                 {/* Εκφωνηση */}
-                <div className="space-y-3 mb-5">
+                <div className="space-y-2 mb-2">
                   <p className="text-xs sm:text-sm font-semibold text-slate-500">
                     {q.instruction}
                   </p>
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
 
-                  {/* Πινακας Τιμων (αν υπαρχει) */}
+                  {/* Πινακας Τιμων (αν υπαρχει) - Responsive Χωρις Scroll */}
                   {q.table && (
-                    <div className="inline-block bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 shadow-inner my-2 font-mono text-xs sm:text-sm">
-                      <div className="grid grid-cols-2 gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
-                        <span className="bg-blue-100/60 px-2 py-0.5 rounded-lg text-blue-900">{q.table.col1}</span>
-                        <span className="bg-emerald-100/60 px-2 py-0.5 rounded-lg text-emerald-900">{q.table.col2}</span>
+                    <div className="w-full max-w-xs sm:max-w-sm bg-slate-50 border-2 border-slate-200 rounded-2xl p-2.5 my-2.5 shadow-inner font-mono text-xs">
+                      <div className="grid grid-cols-2 gap-2 font-bold border-b border-slate-200 pb-1 text-slate-600 text-center">
+                        <span className="bg-blue-100/60 px-1.5 py-0.5 rounded text-blue-900 truncate">{q.table.col1}</span>
+                        <span className="bg-emerald-100/60 px-1.5 py-0.5 rounded text-emerald-900 truncate">{q.table.col2}</span>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 pt-2 text-center font-bold text-slate-800">
-                        <span>{q.table.r1[0]}</span>
-                        <span className="text-indigo-700">{q.table.r1[1]}</span>
-                        <span>{q.table.r2[0]}</span>
-                        <span className="text-indigo-700">{q.table.r2[1]}</span>
+                      <div className="grid grid-cols-2 gap-2 pt-1.5 text-center font-bold text-slate-800">
+                        <span className="truncate">{q.table.r1[0]}</span>
+                        <span className="text-indigo-700 truncate">{q.table.r1[1]}</span>
+                        <span className="truncate">{q.table.r2[0]}</span>
+                        <span className="text-indigo-700 truncate">{q.table.r2[1]}</span>
                         {q.table.r3 && (
                           <>
-                            <span>{q.table.r3[0]}</span>
-                            <span className="text-indigo-700">{q.table.r3[1]}</span>
+                            <span className="truncate">{q.table.r3[0]}</span>
+                            <span className="text-indigo-700 truncate">{q.table.r3[1]}</span>
                           </>
                         )}
                       </div>
@@ -799,11 +798,11 @@ export default function AnalogaPosaExercisesPage() {
                 </div>
 
                 {/* Περιοχη Απαντησης */}
-                <div className="py-2">
+                <div className="py-2 pt-2.5">
                   
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -812,7 +811,7 @@ export default function AnalogaPosaExercisesPage() {
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
                       <span className="text-xs text-slate-500">
                         (Ακέραιος ή δεκαδικός με κόμμα)
@@ -820,9 +819,9 @@ export default function AnalogaPosaExercisesPage() {
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) */}
+                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -831,15 +830,17 @@ export default function AnalogaPosaExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 sm:p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm md:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -858,7 +859,7 @@ export default function AnalogaPosaExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -889,7 +890,7 @@ export default function AnalogaPosaExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -898,24 +899,24 @@ export default function AnalogaPosaExercisesPage() {
       </div>
 
       {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
         <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΣΚΟΡ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
+                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
               </span>
             </div>
 
             <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΠΟΣΟΣΤΟ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
                 {Math.round((score / 10) * 100)} %
               </span>
             </div>
