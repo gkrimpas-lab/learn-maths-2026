@@ -29,11 +29,11 @@ function formatNum(val, decimals = 2) {
   return String(rounded).replace('.', ',');
 }
 
-// Βοηθητικο component πινακα συχνοτητων - ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL ΣΤΑ ΚΙΝΗΤΑ
+// Βοηθητικο component πινακα συχνοτητων - ΠΛΗΡΩΣ ΑΝΑΓΝΩΣΙΜΟ ΣΤΑ ΚΙΝΗΤΑ
 function ExerciseFrequencyTable({ headers, rows, totalRow }) {
   const colCount = headers.length;
-  const firstColWidth = colCount === 2 ? 'w-[60%]' : colCount === 3 ? 'w-[42%]' : 'w-[34%]';
-  const otherColWidth = colCount === 2 ? 'w-[40%]' : colCount === 3 ? 'w-[29%]' : 'w-[22%]';
+  const firstColWidth = colCount === 2 ? 'w-[58%]' : colCount === 3 ? 'w-[42%]' : 'w-[34%]';
+  const otherColWidth = colCount === 2 ? 'w-[42%]' : colCount === 3 ? 'w-[29%]' : 'w-[22%]';
 
   return (
     <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-2.5 sm:p-3.5 my-3 w-full max-w-lg shadow-inner">
@@ -46,7 +46,7 @@ function ExerciseFrequencyTable({ headers, rows, totalRow }) {
             {headers.map((h, i) => (
               <th
                 key={`th-${i}`}
-                className={`p-1.5 sm:p-2 truncate ${i === 0 ? `${firstColWidth} text-left pl-2.5` : `${otherColWidth}`}`}
+                className={`p-1.5 sm:p-2 break-words ${i === 0 ? `${firstColWidth} text-left pl-2.5` : `${otherColWidth}`}`}
               >
                 {h}
               </th>
@@ -59,7 +59,7 @@ function ExerciseFrequencyTable({ headers, rows, totalRow }) {
               {r.map((cell, cIdx) => (
                 <td
                   key={`td-${rIdx}-${cIdx}`}
-                  className={`p-1.5 sm:p-2 truncate ${
+                  className={`p-1.5 sm:p-2 break-words ${
                     cIdx === 0
                       ? 'text-left pl-2.5 font-sans font-bold text-slate-800'
                       : 'text-slate-900 font-bold'
@@ -75,7 +75,7 @@ function ExerciseFrequencyTable({ headers, rows, totalRow }) {
               {totalRow.map((cell, idx) => (
                 <td
                   key={`tot-${idx}`}
-                  className={`p-1.5 sm:p-2 truncate ${idx === 0 ? 'text-left pl-2.5' : 'font-mono'}`}
+                  className={`p-1.5 sm:p-2 break-words ${idx === 0 ? 'text-left pl-2.5' : 'font-mono'}`}
                 >
                   {cell}
                 </td>
@@ -123,7 +123,7 @@ const STANDARD_PROBLEMS_POOL = [
       const fB = randInt(12, 18);
       const fC = randInt(4, 8);
       return {
-        text: `Παρατηρήστε τον πίνακα προτιμήσεων για τρία βιβλία. Ποιο είναι το βιβλίο με τη μεγαλύτερη συχνότητα (επικρατούσα κατηγορία / Mode);`,
+        text: `Παρατηρήστε τον πίνακα προτιμήσεων για τρία βιβλία. Ποιο είναι το βιβλίο με τη μεγαλύτερη συχνότητα (επικρατούσα κατηγορία / μόδα);`,
         table: {
           headers: ['Βιβλίο', 'Αναγνώστες (ν)'],
           rows: [
@@ -327,7 +327,7 @@ const HARD_PROBLEMS_POOL = [
     id: 'freq_hard_3',
     generate: () => {
       return {
-        text: `Στον παρακάτω πίνακα ωρών καθημερινής μελέτης 25 μαθητών, ποια είναι η επικρατούσα τιμή (mode);`,
+        text: `Στον παρακάτω πίνακα ωρών καθημερινής μελέτης 25 μαθητών, ποια είναι η επικρατούσα τιμή (μόδα);`,
         table: {
           headers: ['Ώρες Μελέτης', 'Μαθητές (ν)'],
           rows: [
@@ -384,7 +384,7 @@ const HARD_PROBLEMS_POOL = [
     id: 'freq_hard_6',
     generate: () => {
       return {
-        text: `Στον παρακάτω πίνακα 40 μετρήσεων, ποιο ποσοστό (%) αντιπροσωπεύει η επικρατούσα τιμή (mode);`,
+        text: `Στον παρακάτω πίνακα 40 μετρήσεων, ποιο ποσοστό (%) αντιπροσωπεύει η επικρατούσα τιμή (μόδα);`,
         table: {
           headers: ['Κατηγορία', 'Συχνότητα (ν)'],
           rows: [
@@ -398,7 +398,7 @@ const HARD_PROBLEMS_POOL = [
         correctVal: 40,
         correctStr: '40',
         unit: '%',
-        explanation: `Η επικρατούσα τιμή είναι η «Ομάδα Β» με συχνότητα 16. Ποσοστό: (16 : 40) · 100 ＝ 40 %.`
+        explanation: `Η μόδα είναι η «Ομάδα Β» με συχνότητα 16. Ποσοστό: (16 : 40) · 100 ＝ 40 %.`
       };
     }
   },
@@ -519,10 +519,10 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 2 • Η ΕΝΝΟΙΑ ΤΗΣ ΕΠΙΚΡΑΤΟΥΣΑΣ ΤΙΜΗΣ',
       instruction: 'Επιλέξτε τον σωστό στατιστικό ορισμό:',
-      prompt: `Τι ονομάζουμε «επικρατούσα τιμή» (ή mode) σε έναν πίνακα συχνοτήτων;`,
+      prompt: `Τι ονομάζουμε «επικρατούσα τιμή» (ή μόδα) σε έναν πίνακα συχνοτήτων;`,
       options,
       correctText: correctDef,
-      explanation: `Επικρατούσα τιμή (mode) είναι η τιμή ή κατηγορία που παρουσιάζει τη μεγαλύτερη συχνότητα εμφάνισης.`
+      explanation: `Επικρατούσα τιμή (μόδα) είναι η τιμή ή κατηγορία που παρουσιάζει τη μεγαλύτερη συχνότητα εμφάνισης.`
     });
   }
 
@@ -823,7 +823,7 @@ export default function PinakasSixnotitonExercisesPage() {
               Ασκήσεις: Πίνακας Συχνοτήτων &amp; Ταξινόμηση Δεδομένων
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με οπτικούς πίνακες συχνοτήτων και 4 ρεαλιστικά προβλήματα. Υπολογίστε σχετικές συχνότητες, ποσοστά (%), αθροίσματα και εντοπίστε την επικρατούσα τιμή (mode).
+              10 απαιτητικές δραστηριότητες με οπτικούς πίνακες συχνοτήτων και 4 ρεαλιστικά προβλήματα. Υπολογίστε σχετικές συχνότητες, ποσοστά (%), αθροίσματα και εντοπίστε την επικρατούσα τιμή (μόδα).
             </p>
           </div>
 
@@ -926,9 +926,9 @@ export default function PinakasSixnotitonExercisesPage() {
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) */}
+                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
+                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -937,15 +937,17 @@ export default function PinakasSixnotitonExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3 rounded-2xl border text-left font-semibold text-xs sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 sm:p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm md:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span className="truncate mr-2">{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 ${
+                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs shrink-0 mt-0.5 ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
