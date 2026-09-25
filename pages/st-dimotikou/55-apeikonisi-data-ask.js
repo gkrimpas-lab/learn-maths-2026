@@ -29,51 +29,186 @@ function formatNum(val, decimals = 1) {
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων Ραβδογραμματων & Εικονογραμματων (10 διαφορετικα προβληματα)
+// =========================================================================
+// ΟΠΤΙΚΑ ΒΟΗΘΗΤΙΚΑ COMPONENTS ΓΙΑ ΡΑΒΔΟΓΡΑΜΜΑΤΑ & ΕΙΚΟΝΟΓΡΑΜΜΑΤΑ
+// =========================================================================
+
+function MiniBarChart({ data, maxVal = 100, yStep = 20, height = 180 }) {
+  const chartHeight = 130;
+  const chartWidth = 320;
+  const paddingLeft = 40;
+  const paddingBottom = 30;
+
+  const yTicks = [];
+  for (let v = 0; v <= maxVal; v += yStep) {
+    yTicks.push(v);
+  }
+
+  const barCount = data.length;
+  const barWidth = Math.min(42, Math.floor(220 / barCount));
+  const totalBarWidth = barWidth * barCount;
+  const gap = (chartWidth - paddingLeft - totalBarWidth) / (barCount + 1);
+
+  return (
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 my-3 max-w-md shadow-inner">
+      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center mb-2">
+        ΣΧΗΜΑ: ΡΑΒΔΟΓΡΑΜΜΑ ΔΕΔΟΜΕΝΩΝ
+      </div>
+      <div className="w-full aspect-[16/9] bg-white rounded-xl border border-slate-200 p-2 shadow-sm">
+        <svg viewBox="0 0 350 170" className="w-full h-full overflow-visible">
+          {/* Οριζοντιες γραμμες πλεγματος */}
+          {yTicks.map((val) => {
+            const y = chartHeight - (val / maxVal) * (chartHeight - 20) + 10;
+            return (
+              <g key={`bar-tick-${val}`}>
+                <line x1={paddingLeft} y1={y} x2="340" y2={y} stroke="#f1f5f9" strokeWidth="1" />
+                <text x={paddingLeft - 6} y={y + 3.5} fontSize="9" fontWeight="bold" fill="#64748b" textAnchor="end">
+                  {val}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Αξονες */}
+          <line x1={paddingLeft} y1={chartHeight + 10} x2="340" y2={chartHeight + 10} stroke="#334155" strokeWidth="2" />
+          <line x1={paddingLeft} y1={chartHeight + 10} x2={paddingLeft} y2="10" stroke="#334155" strokeWidth="2" />
+
+          {/* Ραβδοι */}
+          {data.map((item, idx) => {
+            const bx = paddingLeft + gap + idx * (barWidth + gap);
+            const bHeight = (item.value / maxVal) * (chartHeight - 20);
+            const by = chartHeight + 10 - bHeight;
+            const barColor = item.color || '#3b82f6';
+
+            return (
+              <g key={`bar-rect-${idx}`}>
+                <rect x={bx} y={by} width={barWidth} height={Math.max(bHeight, 2)} fill={barColor} rx="4" />
+                <text x={bx + barWidth / 2} y={by - 3} fontSize="10" fontWeight="bold" fill="#0f172a" textAnchor="middle">
+                  {item.value}
+                </text>
+                <text x={bx + barWidth / 2} y={chartHeight + 24} fontSize="9.5" fontWeight="bold" fill="#475569" textAnchor="middle">
+                  {item.label}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function MiniPictogram({ items, legend }) {
+  return (
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 my-3 max-w-md shadow-inner space-y-2.5">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 px-1">
+        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+          ΣΧΗΜΑ: ΕΙΚΟΝΟΓΡΑΜΜΑ
+        </span>
+        <span className="text-xs font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-amber-900 font-mono">
+          Υπόμνημα: {legend}
+        </span>
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 p-2.5 space-y-2 text-xs font-mono">
+        {items.map((it, idx) => (
+          <div key={`pic-${idx}`} className="flex items-center justify-between gap-2 p-1.5 bg-slate-50 rounded-lg">
+            <span className="font-sans font-bold text-slate-700 w-24 shrink-0 truncate">
+              {it.label}:
+            </span>
+            <div className="flex flex-wrap items-center gap-1.5 grow select-none text-base">
+              {Array.from({ length: it.symbols }).map((_, sIdx) => (
+                <span key={`sym-icon-${sIdx}`}>{it.icon}</span>
+              ))}
+              {it.hasHalf && (
+                <span className="text-[11px] font-bold bg-amber-100 border border-amber-300 text-amber-950 px-1 py-0.2 rounded font-sans">
+                  ½
+                </span>
+              )}
+            </div>
+            {it.showTotal !== false && (
+              <span className="font-bold text-slate-900 w-12 text-right shrink-0">
+                {it.value}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
+// ΔΕΞΑΜΕΝΕΣ ΘΕΜΑΤΩΝ
+// =========================================================================
+
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'data_std_1',
     generate: () => {
       const scale = pickRandom([5, 10, 20]);
-      const fullSyms = randInt(4, 7);
+      const fullSyms = randInt(4, 6);
       const totalUnits = fullSyms * scale;
       return {
-        text: `Σε ένα εικονόγραμμα ανακύκλωσης κάθε σύμβολο 📦 αντιστοιχεί σε ${scale} kg χαρτιού. Αν για μια τάξη έχουν σχεδιαστεί ${fullSyms} σύμβολα, πόσα kg χαρτιού συγκέντρωσε η τάξη αυτή;`,
+        text: `Παρατηρήστε το παρακάτω εικονόγραμμα ανακύκλωσης χαρτιού. Πόσα kg χαρτιού συγκέντρωσε η τάξη;`,
+        pictogram: {
+          legend: `📦 ＝ ${scale} kg`,
+          items: [
+            { label: 'ΣΤ1 Τάξη', icon: '📦', symbols: fullSyms, value: '?' }
+          ]
+        },
         correctVal: totalUnits,
         correctStr: String(totalUnits),
         unit: 'kg',
-        explanation: `Πολλαπλασιάζουμε το πλήθος των συμβόλων με την τιμή του υπομνήματος: ${fullSyms} · ${scale} ＝ ${totalUnits} kg.`
+        explanation: `Στο εικονόγραμμα υπάρχουν ${fullSyms} σύμβολα. Βάσει του υπομνήματος (📦 ＝ ${scale} kg), υπολογίζουμε: ${fullSyms} · ${scale} ＝ ${totalUnits} kg.`
       };
     }
   },
   {
     id: 'data_std_2',
     generate: () => {
-      const vA = randInt(15, 30);
-      const vB = randInt(10, 25);
-      const vC = randInt(20, 35);
+      const vA = randInt(15, 25);
+      const vB = randInt(10, 20);
+      const vC = randInt(20, 30);
       const total = vA + vB + vC;
       return {
-        text: `Ένα ραβδόγραμμα δείχνει τις προτιμήσεις των μαθητών σε 3 γεύσεις παγωτού: Σοκολάτα ${vA}, Βανίλια ${vB} και Φράουλα ${vC}. Πόσοι ήταν συνολικά οι μαθητές που συμμετείχαν στην έρευνα;`,
+        text: `Στο παρακάτω ραβδόγραμμα καταγράφηκαν οι προτιμήσεις σε γεύσεις παγωτού. Πόσοι ήταν συνολικά οι μαθητές που συμμετείχαν στην έρευνα;`,
+        barChart: {
+          maxVal: 35,
+          yStep: 10,
+          data: [
+            { label: 'Σοκολάτα', value: vA, color: '#854d0e' },
+            { label: 'Βανίλια', value: vB, color: '#f59e0b' },
+            { label: 'Φράουλα', value: vC, color: '#ec4899' }
+          ]
+        },
         correctVal: total,
         correctStr: String(total),
         unit: 'μαθητές',
-        explanation: `Αθροίζουμε τις συχνότητες όλων των ράβδων: ${vA} ＋ ${vB} ＋ ${vC} ＝ ${total} μαθητές.`
+        explanation: `Διαβάζουμε τα ύψη των ράβδων και αθροίζουμε τις συχνότητες: ${vA} ＋ ${vB} ＋ ${vC} ＝ ${total} μαθητές.`
       };
     }
   },
   {
     id: 'data_std_3',
     generate: () => {
-      const vMon = randInt(25, 45);
-      const vFri = vMon + randInt(10, 25);
+      const vMon = randInt(20, 35);
+      const vFri = vMon + randInt(10, 20);
       const diff = vFri - vMon;
       return {
-        text: `Σε ένα ραβδόγραμμα επισκεπτών μουσείου, τη Δευτέρα καταγράφηκαν ${vMon} επισκέπτες και την Παρασκευή ${vFri} επισκέπτες. Πόσους περισσότερους επισκέπτες είχε το μουσείο την Παρασκευή;`,
+        text: `Στο ραβδόγραμμα απεικονίζονται οι επισκέπτες ενός μουσείου τη Δευτέρα και την Παρασκευή. Πόσους περισσότερους επισκέπτες είχε το μουσείο την Παρασκευή;`,
+        barChart: {
+          maxVal: 60,
+          yStep: 20,
+          data: [
+            { label: 'Δευτέρα', value: vMon, color: '#64748b' },
+            { label: 'Παρασκευή', value: vFri, color: '#3b82f6' }
+          ]
+        },
         correctVal: diff,
         correctStr: String(diff),
         unit: 'επισκέπτες',
-        explanation: `Βρίσκουμε τη διαφορά υψών των ράβδων: ${vFri} － ${vMon} ＝ ${diff} επισκέπτες.`
+        explanation: `Διαβάζουμε τα ύψη των ράβδων: Παρασκευή ${vFri} και Δευτέρα ${vMon}. Διαφορά: ${vFri} － ${vMon} ＝ ${diff} επισκέπτες.`
       };
     }
   },
@@ -96,7 +231,16 @@ const STANDARD_PROBLEMS_POOL = [
     id: 'data_std_5',
     generate: () => {
       return {
-        text: `Σε έναν πίνακα συχνοτήτων καταγράφηκαν τα αγαπημένα κατοικίδια: Σκύλος 30, Γάτα 24, Παπαγάλος 18. Ποιο είναι το ποσοστό (%) των παιδιών που προτιμούν τον σκύλο αν ρωτήθηκαν συνολικά 60 παιδιά;`,
+        text: `Στο παρακάτω ραβδόγραμμα καταγράφηκαν τα αγαπημένα κατοικίδια 60 παιδιών. Ποιο είναι το ποσοστό (%) των παιδιών που επέλεξαν τον σκύλο;`,
+        barChart: {
+          maxVal: 35,
+          yStep: 10,
+          data: [
+            { label: 'Σκύλος', value: 30, color: '#3b82f6' },
+            { label: 'Γάτα', value: 18, color: '#f59e0b' },
+            { label: 'Πουλί', value: 12, color: '#10b981' }
+          ]
+        },
         correctVal: 50,
         correctStr: '50',
         unit: '%',
@@ -107,7 +251,7 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'data_std_6',
     generate: () => {
-      const baseVal = randInt(12, 20);
+      const baseVal = randInt(12, 18);
       const doubleVal = baseVal * 2;
       return {
         text: `Σε ένα ραβδόγραμμα η ράβδος της ομάδας Α έχει ύψος ${baseVal} πόντους και η ράβδος της ομάδας Β έχει ακριβώς διπλάσιο ύψος. Πόσους πόντους συγκέντρωσε η ομάδα Β;`,
@@ -122,29 +266,44 @@ const STANDARD_PROBLEMS_POOL = [
     id: 'data_std_7',
     generate: () => {
       const scale = 5;
-      const fullSyms = randInt(3, 6);
+      const fullSyms = randInt(3, 5);
       const totalVal = fullSyms * scale + 2.5;
       return {
-        text: `Σε ένα εικονόγραμμα ισχύει το υπόμνημα 🚗 ＝ 5 αυτοκίνητα. Αν για ένα συνεργείο υπάρχουν ${fullSyms} ολόκληρα σύμβολα και 1 μισό σύμβολο (½), πόσα αυτοκίνητα επισκευάστηκαν;`,
+        text: `Παρατηρήστε το παρακάτω εικονόγραμμα επισκευής οχημάτων. Πόσα οχήματα επισκευάστηκαν συνολικά;`,
+        pictogram: {
+          legend: `🚗 ＝ ${scale} οχήματα`,
+          items: [
+            { label: 'Επισκευές', icon: '🚗', symbols: fullSyms, hasHalf: true, value: '?' }
+          ]
+        },
         correctVal: totalVal,
         correctStr: formatNum(totalVal),
-        unit: 'αυτοκίνητα',
-        explanation: `Τα ολόκληρα σύμβολα είναι: ${fullSyms} · 5 ＝ ${fullSyms * 5}. Το μισό σύμβολο αντιστοιχεί σε 2,5 αυτοκίνητα. Σύνολο: ${formatNum(totalVal)}.`
+        unit: 'οχήματα',
+        explanation: `Έχουμε ${fullSyms} ολόκληρα σύμβολα (${fullSyms} · 5 ＝ ${fullSyms * 5}) και 1 μισό σύμβολο (2,5 οχήματα). Σύνολο: ${formatNum(totalVal)} οχήματα.`
       };
     }
   },
   {
     id: 'data_std_8',
     generate: () => {
-      const bus = randInt(20, 35);
-      const walk = randInt(15, 30);
+      const bus = randInt(20, 30);
+      const walk = randInt(15, 25);
       const car = randInt(10, 20);
       return {
-        text: `Ένα ραβδόγραμμα μετακίνησης μαθητών προς το σχολείο δείχνει: Λεωφορείο ${bus}, Με τα πόδια ${walk}, Αυτοκίνητο ${car}. Πόσοι μαθητές μετακινούνται με όχημα (λεωφορείο ή αυτοκίνητο);`,
+        text: `Στο ραβδόγραμμα καταγράφεται ο τρόπος μετακίνησης μαθητών προς το σχολείο. Πόσοι μαθητές μετακινούνται με όχημα (λεωφορείο ή αυτοκίνητο);`,
+        barChart: {
+          maxVal: 35,
+          yStep: 10,
+          data: [
+            { label: 'Λεωφορείο', value: bus, color: '#3b82f6' },
+            { label: 'Πόδια', value: walk, color: '#10b981' },
+            { label: 'Αυτοκίνητο', value: car, color: '#f59e0b' }
+          ]
+        },
         correctVal: bus + car,
         correctStr: String(bus + car),
         unit: 'μαθητές',
-        explanation: `Αθροίζουμε τις συχνότητες των οχημάτων: ${bus} ＋ ${car} ＝ ${bus + car} μαθητές.`
+        explanation: `Διαβάζουμε από το ραβδόγραμμα: Λεωφορείο ＝ ${bus} και Αυτοκίνητο ＝ ${car}. Σύνολο μετακίνησης με όχημα: ${bus} ＋ ${car} ＝ ${bus + car} μαθητές.`
       };
     }
   },
@@ -152,32 +311,46 @@ const STANDARD_PROBLEMS_POOL = [
     id: 'data_std_9',
     generate: () => {
       return {
-        text: `Σε ένα κατάστημα φρούτων πουλήθηκαν 45 kg μήλα, 30 kg πορτοκάλια και 25 kg μπανάνες. Πόσα kg φρούτων πουλήθηκαν συνολικά;`,
+        text: `Στο παρακάτω ραβδόγραμμα πωλήσεων φρούτων, πόσα κιλά (kg) φρούτων πουλήθηκαν συνολικά;`,
+        barChart: {
+          maxVal: 50,
+          yStep: 10,
+          data: [
+            { label: 'Μήλα', value: 45, color: '#ef4444' },
+            { label: 'Πορτοκάλια', value: 30, color: '#f97316' },
+            { label: 'Μπανάνες', value: 25, color: '#eab308' }
+          ]
+        },
         correctVal: 100,
         correctStr: '100',
         unit: 'kg',
-        explanation: `45 ＋ 30 ＋ 25 ＝ 100 kg φρούτων.`
+        explanation: `Διαβάζουμε τα ύψη των ράβδων: 45 ＋ 30 ＋ 25 ＝ 100 kg.`
       };
     }
   },
   {
     id: 'data_std_10',
     generate: () => {
-      const symbolVal = pickRandom([4, 6, 8]);
-      const symCount = randInt(5, 9);
+      const symbolVal = pickRandom([4, 5, 8]);
+      const symCount = randInt(4, 7);
       const totalUnits = symCount * symbolVal;
       return {
-        text: `Σε ένα εικονόγραμμα κάθε αστέρι ⭐ αντιπροσωπεύει ${symbolVal} βαθμούς. Ένας μαθητής συγκέντρωσε ${symCount} αστέρια. Πόσους βαθμούς πέτυχε;`,
+        text: `Βάσει του παρακάτω εικονογράμματος επιδόσεων, πόσους βαθμούς συγκέντρωσε ο μαθητής;`,
+        pictogram: {
+          legend: `⭐ ＝ ${symbolVal} βαθμοί`,
+          items: [
+            { label: 'Βαθμολογία', icon: '⭐', symbols: symCount, value: '?' }
+          ]
+        },
         correctVal: totalUnits,
         correctStr: String(totalUnits),
         unit: 'βαθμοί',
-        explanation: `${symCount} · ${symbolVal} ＝ ${totalUnits} βαθμοί.`
+        explanation: `Μετράμε ${symCount} αστέρια. Κάθε αστέρι ισούται με ${symbolVal} βαθμούς: ${symCount} · ${symbolVal} ＝ ${totalUnits} βαθμοί.`
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (10 διαφορετικα προβληματα)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'data_hard_1',
@@ -189,11 +362,21 @@ const HARD_PROBLEMS_POOL = [
       const total = mon + tue + wed + thu; // 220
       const avg = total / 4; // 55
       return {
-        text: `Σε ένα ραβδόγραμμα καταγράφηκε η ημερήσια παραγωγή κιβωτίων ενός εργοστασίου: Δευτέρα 40, Τρίτη 60, Τετάρτη 50, Πέμπτη 70. Ποιος ήταν ο μέσος όρος παραγωγής ανά ημέρα;`,
+        text: `Στο παρακάτω ραβδόγραμμα καταγράφεται η ημερήσια παραγωγή κιβωτίων ενός εργοστασίου για 4 ημέρες. Ποιος ήταν ο μέσος όρος παραγωγής ανά ημέρα;`,
+        barChart: {
+          maxVal: 80,
+          yStep: 20,
+          data: [
+            { label: 'Δευτέρα', value: mon, color: '#3b82f6' },
+            { label: 'Τρίτη', value: tue, color: '#2563eb' },
+            { label: 'Τετάρτη', value: wed, color: '#1d4ed8' },
+            { label: 'Πέμπτη', value: thu, color: '#1e40af' }
+          ]
+        },
         correctVal: avg,
         correctStr: String(avg),
         unit: 'κιβώτια',
-        explanation: `1ο Βήμα: Συνολική παραγωγή: 40 ＋ 60 ＋ 50 ＋ 70 ＝ ${total} κιβώτια. 2ο Βήμα: Μέσος όρος: ${total} : 4 ＝ ${avg} κιβώτια ανά ημέρα.`
+        explanation: `1ο Βήμα: Διαβάζουμε τα ύψη και αθροίζουμε τη συνολική παραγωγή: 40 ＋ 60 ＋ 50 ＋ 70 ＝ ${total} κιβώτια. 2ο Βήμα: Μέσος όρος: ${total} : 4 ＝ ${avg} κιβώτια ανά ημέρα.`
       };
     }
   },
@@ -203,31 +386,47 @@ const HARD_PROBLEMS_POOL = [
       const totalStudents = 120;
       const soccer = 48; // 40%
       const basket = 36; // 30%
-      const rem = totalStudents - soccer - basket; // 36
-      const pctRem = (rem / totalStudents) * 100; // 30%
+      const track = 36; // 30%
       return {
-        text: `Σε έρευνα 120 μαθητών για το αγαπημένο τους άθλημα, 48 επέλεξαν ποδόσφαιρο και 36 μπάσκετ. Οι υπόλοιποι μαθητές επέλεξαν στίβο. Τι ποσοστό (%) των μαθητών επέλεξε στίβο;`,
-        correctVal: pctRem,
-        correctStr: String(pctRem),
+        text: `Στο ραβδόγραμμα προτιμήσεων 120 συνολικά μαθητών, πόσο είναι το ποσοστό (%) των μαθητών που επέλεξαν τον στίβο;`,
+        barChart: {
+          maxVal: 60,
+          yStep: 20,
+          data: [
+            { label: 'Ποδόσφαιρο', value: soccer, color: '#10b981' },
+            { label: 'Μπάσκετ', value: basket, color: '#f59e0b' },
+            { label: 'Στίβος', value: track, color: '#6366f1' }
+          ]
+        },
+        correctVal: 30,
+        correctStr: '30',
         unit: '%',
-        explanation: `Μαθητές στίβου: 120 － (48 ＋ 36) ＝ 120 － 84 ＝ 36 μαθητές. Ποσοστό: (36 : 120) · 100 ＝ 0,30 · 100 ＝ ${pctRem} %.`
+        explanation: `Από το ραβδόγραμμα, ο στίβος έχει 36 μαθητές. Σε σύνολο 120 μαθητών: (36 : 120) · 100 ＝ 0,30 · 100 ＝ 30 %.`
       };
     }
   },
   {
     id: 'data_hard_3',
     generate: () => {
-      const totalVotes = 200;
       const catA = 90;
       const catB = 70;
-      const catC = totalVotes - catA - catB; // 40
+      const catC = 40;
       const diff = catA - catC; // 50
       return {
-        text: `Σε ένα σχολικό συμβούλιο ψήφισαν 200 μαθητές για 3 προτάσεις: Η πρόταση Α έλαβε 90 ψήφους, η πρόταση Β έλαβε 70 ψήφους και οι υπόλοιποι ψήφισαν την πρόταση Γ. Πόσες περισσότερες ψήφους έλαβε η πρόταση Α από την πρόταση Γ;`,
+        text: `Παρατηρήστε το ραβδόγραμμα ψήφων σχολικού συμβουλίου. Πόσες περισσότερες ψήφους έλαβε η πρόταση Α από την πρόταση Γ;`,
+        barChart: {
+          maxVal: 100,
+          yStep: 20,
+          data: [
+            { label: 'Πρόταση Α', value: catA, color: '#3b82f6' },
+            { label: 'Πρόταση Β', value: catB, color: '#64748b' },
+            { label: 'Πρόταση Γ', value: catC, color: '#f43f5e' }
+          ]
+        },
         correctVal: diff,
         correctStr: String(diff),
         unit: 'ψήφοι',
-        explanation: `Ψήφοι πρότασης Γ: 200 － (90 ＋ 70) ＝ 200 － 160 ＝ 40 ψήφοι. Διαφορά: 90 － 40 ＝ ${diff} ψήφοι.`
+        explanation: `Διαβάζουμε από το ραβδόγραμμα: Πρόταση Α ＝ ${catA} ψήφοι και Πρόταση Γ ＝ ${catC} ψήφοι. Διαφορά: ${catA} － ${catC} ＝ ${diff} ψήφοι.`
       };
     }
   },
@@ -235,15 +434,22 @@ const HARD_PROBLEMS_POOL = [
     id: 'data_hard_4',
     generate: () => {
       const scale = 25; // 1 σύμβολο = 25 δέντρα
-      const symTeamA = 6;
-      const symTeamB = 8;
-      const diffTrees = (symTeamB - symTeamA) * scale; // 50 δέντρα
+      const symA = 6;
+      const symB = 8;
+      const diffTrees = (symB - symA) * scale; // 50 δέντρα
       return {
-        text: `Σε ένα εικονόγραμμα αναδάσωσης ισχύει το υπόμνημα 🌲 ＝ 25 δέντρα. Η ομάδα Α έχει σχεδιάσει 6 σύμβολα και η ομάδα Β έχει σχεδιάσει 8 σύμβολα. Πόσα περισσότερα δέντρα φύτεψε η ομάδα Β;`,
+        text: `Στο παρακάτω εικονόγραμμα αναδάσωσης, πόσα περισσότερα δέντρα φύτεψε η Ομάδα Β σε σχέση με την Ομάδα Α;`,
+        pictogram: {
+          legend: '🌲 ＝ 25 δέντρα',
+          items: [
+            { label: 'Ομάδα Α', icon: '🌲', symbols: symA, value: `${symA * scale}` },
+            { label: 'Ομάδα Β', icon: '🌲', symbols: symB, value: `${symB * scale}` }
+          ]
+        },
         correctVal: diffTrees,
         correctStr: String(diffTrees),
         unit: 'δέντρα',
-        explanation: `Διαφορά συμβόλων: 8 － 6 ＝ 2 σύμβολα. Σε δέντρα: 2 · 25 ＝ ${diffTrees} δέντρα.`
+        explanation: `Η διαφορά στο εικονόγραμμα είναι 8 － 6 ＝ 2 σύμβολα. Επειδή 🌲 ＝ 25 δέντρα: 2 · 25 ＝ ${diffTrees} δέντρα.`
       };
     }
   },
@@ -268,48 +474,45 @@ const HARD_PROBLEMS_POOL = [
       const a = 35;
       const b = 45;
       const c = 20;
-      const total = a + b + c; // 100
-      const pctB = (b / total) * 100; // 45%
       return {
-        text: `Σε ένα ραβδόγραμμα 100 συνολικά αναγνωστών, η εφημερίδα Α έχει 35 αναγνώστες, η Β έχει 45 και η Γ έχει 20. Ποιο είναι το ποσοστό (%) των αναγνωστών της εφημερίδας Β;`,
-        correctVal: pctB,
-        correctStr: String(pctB),
+        text: `Στο παρακάτω ραβδόγραμμα αναγνωστών 100 συνολικά ατόμων, ποιο είναι το ποσοστό (%) των αναγνωστών της εφημερίδας Β;`,
+        barChart: {
+          maxVal: 50,
+          yStep: 10,
+          data: [
+            { label: 'Εφημερίδα Α', value: a, color: '#64748b' },
+            { label: 'Εφημερίδα Β', value: b, color: '#3b82f6' },
+            { label: 'Εφημερίδα Γ', value: c, color: '#10b981' }
+          ]
+        },
+        correctVal: 45,
+        correctStr: '45',
         unit: '%',
-        explanation: `Εφόσον το σύνολο είναι 100, η συχνότητα 45 αντιστοιχεί απευθείας σε ${pctB} %.`
+        explanation: `Από το ραβδόγραμμα, η εφημερίδα Β έχει 45 αναγνώστες σε σύνολο 100 ατόμων, άρα το ποσοστό είναι απευθείας 45 %.`
       };
     }
   },
   {
     id: 'data_hard_7',
     generate: () => {
-      const origHeightCm = 15;
-      const origUnits = 60;
-      const newUnits = 100;
-      const newHeightCm = (origHeightCm * newUnits) / origUnits; // 25 cm
       return {
         text: `Σε ένα ραβδόγραμμα, μια ράβδος ύψους 15 cm αντιστοιχεί σε 60 πωλήσεις προϊόντων. Πόσα εκατοστά (cm) ύψος πρέπει να έχει μια άλλη ράβδος στο ίδιο γράφημα για να αναπαραστήσει 100 πωλήσεις;`,
-        correctVal: newHeightCm,
-        correctStr: String(newHeightCm),
+        correctVal: 25,
+        correctStr: '25',
         unit: 'cm',
-        explanation: `Τα ύψη των ράβδων είναι ανάλογα των συχνοτήτων: χ ＝ (15 · 100) : 60 ＝ 1.500 : 60 ＝ ${newHeightCm} cm.`
+        explanation: `Τα ύψη των ράβδων είναι ανάλογα των συχνοτήτων: χ ＝ (15 · 100) : 60 ＝ 1.500 : 60 ＝ 25 cm.`
       };
     }
   },
   {
     id: 'data_hard_8',
     generate: () => {
-      const scaleA = 5;
-      const totalItems = 150;
-      const symA = totalItems / scaleA; // 30 σύμβολα
-      const scaleB = 15;
-      const symB = totalItems / scaleB; // 10 σύμβολα
-      const diffSyms = symA - symB; // 20
       return {
         text: `Για να αναπαραστήσουμε 150 μονάδες σε εικονόγραμμα, αν αλλάξουμε το υπόμνημα από 1 σύμβολο ＝ 5 μονάδες σε 1 σύμβολο ＝ 15 μονάδες, πόσα λιγότερα σύμβολα θα χρειαστεί να σχεδιάσουμε;`,
-        correctVal: diffSyms,
-        correctStr: String(diffSyms),
+        correctVal: 20,
+        correctStr: '20',
         unit: 'σύμβολα',
-        explanation: `Με κλίμακα 5: 150 : 5 ＝ 30 σύμβολα. Με κλίμακα 15: 150 : 15 ＝ 10 σύμβολα. Διαφορά: 30 － 10 ＝ ${diffSyms} λιγότερα σύμβολα.`
+        explanation: `Με κλίμακα 5: 150 : 5 ＝ 30 σύμβολα. Με κλίμακα 15: 150 : 15 ＝ 10 σύμβολα. Διαφορά: 30 － 10 ＝ 20 λιγότερα σύμβολα.`
       };
     }
   },
@@ -318,13 +521,20 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const girls = 28;
       const boys = 32;
-      const diff = boys - girls; // 4
       return {
-        text: `Στο ραβδόγραμμα δύο τμημάτων της ΣΤ' τάξης καταγράφηκαν 28 κορίτσια και 32 αγόρια. Πόσα περισσότερα είναι τα αγόρια από τα κορίτσια;`,
-        correctVal: diff,
-        correctStr: String(diff),
+        text: `Στο ραβδόγραμμα κατανομής δύο τμημάτων της ΣΤ' τάξης, πόσα περισσότερα είναι τα αγόρια από τα κορίτσια;`,
+        barChart: {
+          maxVal: 40,
+          yStep: 10,
+          data: [
+            { label: 'Κορίτσια', value: girls, color: '#ec4899' },
+            { label: 'Αγόρια', value: boys, color: '#3b82f6' }
+          ]
+        },
+        correctVal: 4,
+        correctStr: '4',
         unit: 'αγόρια',
-        explanation: `Διαφορά: 32 － 28 ＝ ${diff} αγόρια.`
+        explanation: `Διαβάζουμε από το ραβδόγραμμα: Αγόρια ＝ 32, Κορίτσια ＝ 28. Διαφορά: 32 － 28 ＝ 4 αγόρια.`
       };
     }
   },
@@ -337,11 +547,21 @@ const HARD_PROBLEMS_POOL = [
       const q4 = 210;
       const total = q1 + q2 + q3 + q4; // 660
       return {
-        text: `Σε ένα τριμηνιαίο ραβδόγραμμα καταγράφηκαν οι πωλήσεις 4 τριμήνων: Α' 120, Β' 180, Γ' 150, Δ' 210. Ποιες ήταν οι συνολικές πωλήσεις ολόκληρου του έτους;`,
+        text: `Στο παρακάτω τριμηνιαίο ραβδόγραμμα καταγράφηκαν οι πωλήσεις μιας επιχείρησης. Ποιες ήταν οι συνολικές πωλήσεις ολόκληρου του έτους;`,
+        barChart: {
+          maxVal: 240,
+          yStep: 60,
+          data: [
+            { label: "Α' Τρίμηνο", value: q1, color: '#38bdf8' },
+            { label: "Β' Τρίμηνο", value: q2, color: '#3b82f6' },
+            { label: "Γ' Τρίμηνο", value: q3, color: '#2563eb' },
+            { label: "Δ' Τρίμηνο", value: q4, color: '#1d4ed8' }
+          ]
+        },
         correctVal: total,
         correctStr: String(total),
         unit: 'πωλήσεις',
-        explanation: `Σύνολο: 120 ＋ 180 ＋ 150 ＋ 210 ＝ ${total} πωλήσεις.`
+        explanation: `Διαβάζουμε τα ύψη των 4 τριμήνων και αθροίζουμε: 120 ＋ 180 ＋ 150 ＋ 210 ＝ ${total} πωλήσεις.`
       };
     }
   }
@@ -354,18 +574,24 @@ function generateQuestions() {
   // Q1 (Input - Decimal): Ανάγνωση υπομνήματος εικονογράμματος
   {
     const scale = pickRandom([4, 5, 8, 10]);
-    const symbols = randInt(3, 7);
+    const symbols = randInt(3, 6);
     const total = symbols * scale;
 
     qList.push({
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΑΝΑΓΝΩΣΗ ΕΙΚΟΝΟΓΡΑΜΜΑΤΟΣ',
-      instruction: 'Υπολογίστε το συνολικό μέγεθος βάσει του υπομνήματος:',
-      prompt: `Σε ένα εικονόγραμμα το υπόμνημα δηλώνει: 📚 ＝ ${scale} βιβλία. Αν ένας μαθητής έχει δίπλα στο όνομά του ${symbols} σύμβολα 📚, πόσα βιβλία διάβασε συνολικά;`,
+      instruction: 'Παρατηρήστε το εικονόγραμμα και υπολογίστε το συνολικό μέγεθος:',
+      prompt: `Βάσει του παρακάτω εικονογράμματος, πόσα βιβλία διάβασε συνολικά ο μαθητής;`,
+      pictogram: {
+        legend: `📚 ＝ ${scale} βιβλία`,
+        items: [
+          { label: 'Ανάγνωση', icon: '📚', symbols, value: '?' }
+        ]
+      },
       correctVal: total,
       correctStr: String(total),
-      explanation: `Πολλαπλασιάζουμε τα σύμβολα με την τιμή του υπομνήματος: ${symbols} · ${scale} ＝ ${total} βιβλία.`
+      explanation: `Στο εικονόγραμμα υπάρχουν ${symbols} σύμβολα. Αφού 📚 ＝ ${scale} βιβλία: ${symbols} · ${scale} ＝ ${total} βιβλία.`
     });
   }
 
@@ -449,11 +675,19 @@ function generateQuestions() {
       id: 5,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 5 • ΣΥΓΚΡΙΣΗ ΥΨΩΝ ΡΑΒΔΩΝ',
-      instruction: 'Υπολογίστε τη διαφορά συχνοτήτων:',
-      prompt: `Σε ένα ραβδόγραμμα η ράβδος της κατηγορίας Α φτάνει στο νούμερο ${valHigh} και η ράβδος της κατηγορίας Β φτάνει στο νούμερο ${valLow}. Πόσο μεγαλύτερη είναι η συχνότητα της κατηγορίας Α;`,
+      instruction: 'Παρατηρήστε το ραβδόγραμμα και υπολογίστε τη διαφορά:',
+      prompt: `Πόσο μεγαλύτερη είναι η συχνότητα της Κατηγορίας Α σε σχέση με την Κατηγορία Β;`,
+      barChart: {
+        maxVal: 45,
+        yStep: 15,
+        data: [
+          { label: 'Κατηγορία Α', value: valHigh, color: '#3b82f6' },
+          { label: 'Κατηγορία Β', value: valLow, color: '#f43f5e' }
+        ]
+      },
       correctVal: diff,
       correctStr: String(diff),
-      explanation: `Αφαιρούμε τα ύψη των δύο ράβδων: ${valHigh} － ${valLow} ＝ ${diff}.`
+      explanation: `Διαβάζουμε τα ύψη: Κατηγορία Α ＝ ${valHigh} και Κατηγορία Β ＝ ${valLow}. Διαφορά: ${valHigh} － ${valLow} ＝ ${diff}.`
     });
   }
 
@@ -483,7 +717,7 @@ function generateQuestions() {
     });
   }
 
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
+  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή
   {
     const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const stdProb1 = shuffledStd[0].generate();
@@ -494,8 +728,10 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΓΡΑΦΗΜΑΤΟΣ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
+      instruction: 'Παρατηρήστε το σχήμα και εισαγάγετε το τελικό αποτέλεσμα:',
       prompt: stdProb1.text,
+      barChart: stdProb1.barChart,
+      pictogram: stdProb1.pictogram,
       correctVal: stdProb1.correctVal,
       correctStr: stdProb1.correctStr,
       explanation: stdProb1.explanation
@@ -503,7 +739,7 @@ function generateQuestions() {
 
     // Q8 (MCQ)
     const val8 = stdProb2.correctVal;
-    const unit8 = stdProb2.unit ? ` ${stdProb2.unit}` : '';
+    const unit8 = stdProb2.unit === '%' ? ' %' : (stdProb2.unit ? ` ${stdProb2.unit}` : '');
     const fake8A = typeof val8 === 'number' ? formatNum(val8 + randInt(5, 12)) : '0';
     const fake8B = typeof val8 === 'number' ? formatNum(Math.max(1, val8 - randInt(4, 10))) : '0';
     const fake8C = typeof val8 === 'number' ? formatNum(val8 * 1.4) : '0';
@@ -519,15 +755,17 @@ function generateQuestions() {
       id: 8,
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΕΡΜΗΝΕΙΑΣ ΔΕΔΟΜΕΝΩΝ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
+      instruction: 'Παρατηρήστε το σχήμα και επιλέξτε τη σωστή τιμή:',
       prompt: stdProb2.text,
+      barChart: stdProb2.barChart,
+      pictogram: stdProb2.pictogram,
       options: optionsQ8,
       correctText: `${stdProb2.correctStr}${unit8}`,
       explanation: stdProb2.explanation
     });
   }
 
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας με Σχήματα
   {
     const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const hardProb1 = shuffledHard[0].generate();
@@ -538,17 +776,19 @@ function generateQuestions() {
       id: 9,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
-      instruction: 'Υπολογίστε με προσοχή και εισαγάγετε το αποτέλεσμα:',
+      instruction: 'Παρατηρήστε προσεκτικά το σχήμα και υπολογίστε το αποτέλεσμα:',
       prompt: hardProb1.text,
+      barChart: hardProb1.barChart,
+      pictogram: hardProb1.pictogram,
       correctVal: hardProb1.correctVal,
       correctStr: hardProb1.correctStr,
       explanation: hardProb1.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εμφάνιση '%' ΜΟΝΟ όταν πρόκειται για ποσοστό)
+    // Q10 (MCQ Αυξημένης Δυσκολίας - Σύμβολο '%' ΜΟΝΟ όταν είναι ποσοστό)
     const val10 = hardProb2.correctVal;
     const isPercentageQuestion = hardProb2.unit === '%';
-    const unitSuffix = isPercentageQuestion ? ' %' : '';
+    const unitSuffix = isPercentageQuestion ? ' %' : (hardProb2.unit ? ` ${hardProb2.unit}` : '');
 
     const fake10A = typeof val10 === 'number' ? formatNum(val10 + randInt(5, 10)) : '0';
     const fake10B = typeof val10 === 'number' ? formatNum(Math.max(2, val10 - randInt(3, 7))) : '0';
@@ -567,8 +807,10 @@ function generateQuestions() {
       title: isPercentageQuestion
         ? 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΣΤΑΤΙΣΤΙΚΗΣ & ΠΟΣΟΣΤΩΝ'
         : 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΣΤΑΤΙΣΤΙΚΗΣ ΑΠΕΙΚΟΝΙΣΗΣ',
-      instruction: 'Επιλέξτε τη σωστή απάντηση:',
+      instruction: 'Παρατηρήστε το σχήμα και επιλέξτε τη σωστή απάντηση:',
       prompt: hardProb2.text,
+      barChart: hardProb2.barChart,
+      pictogram: hardProb2.pictogram,
       options: optionsQ10,
       correctText: `${hardProb2.correctStr}${unitSuffix}`,
       explanation: hardProb2.explanation
@@ -597,7 +839,7 @@ export default function ApeikonisiDataExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (0-9 και κομμα)
+  // Χειρισμος Input
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -675,13 +917,13 @@ export default function ApeikonisiDataExercisesPage() {
               Ασκήσεις: Ραβδόγραμμα &amp; Εικονόγραμμα
             </h1>
             <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Διαβάστε κλίμακες αξόνων, ερμηνεύστε υπομνήματα εικονογραμμάτων και υπολογίστε συχνότητες, διαφορές και ποσοστά.
+              10 απαιτητικές δραστηριότητες με οπτικά γραφήματα και 4 ρεαλιστικά προβλήματα. Διαβάστε ραβδογράμματα, υπολογίστε συχνότητες από εικονογράμματα και εξάγετε ασφαλή συμπεράσματα.
             </p>
           </div>
 
           <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
             <span className="text-xs sm:text-sm text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
+              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους και οπτικά σχήματα.
             </span>
             <button
               type="button"
@@ -736,17 +978,35 @@ export default function ApeikonisiDataExercisesPage() {
                 </div>
 
                 {/* Εκφωνηση */}
-                <div className="space-y-3 mb-5">
-                  <p className="text-xs sm:text-sm font-semibold text-slate-500">
-                    {q.instruction}
-                  </p>
+                <div className="space-y-2 mb-3">
+                  {q.instruction && (
+                    <p className="text-xs sm:text-sm font-semibold text-slate-500">
+                      {q.instruction}
+                    </p>
+                  )}
                   <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
                 </div>
 
+                {/* ΟΠΤΙΚΟ ΣΧΗΜΑ (ΑΝ ΥΠΑΡΧΕΙ ΡΑΒΔΟΓΡΑΜΜΑ Η ΕΙΚΟΝΟΓΡΑΜΜΑ) */}
+                {q.barChart && (
+                  <MiniBarChart
+                    data={q.barChart.data}
+                    maxVal={q.barChart.maxVal}
+                    yStep={q.barChart.yStep}
+                  />
+                )}
+
+                {q.pictogram && (
+                  <MiniPictogram
+                    legend={q.pictogram.legend}
+                    items={q.pictogram.items}
+                  />
+                )}
+
                 {/* Περιοχη Απαντησης */}
-                <div className="py-2">
+                <div className="py-2 pt-3">
                   
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
