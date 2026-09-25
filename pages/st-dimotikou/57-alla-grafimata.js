@@ -13,10 +13,10 @@ function formatNum(val, decimals = 1) {
 export default function AllaGrafimataTheoryPage() {
   // Εργαστηριο 1: Διαδραστικη Απεικονιση Δεδομενων σε 3 ειδη γραφηματων
   const [chartType, setChartType] = useState('line'); // 'line', 'hbar', 'pie'
-  const [val1, setVal1] = useState(15); // π.χ. Χειμώνας / 9:00 / Κατηγορία 1
-  const [val2, setVal2] = useState(25); // π.χ. Άνοιξη / 12:00 / Κατηγορία 2
-  const [val3, setVal3] = useState(35); // π.χ. Καλοκαίρι / 15:00 / Κατηγορία 3
-  const [val4, setVal4] = useState(20); // π.χ. Φθινόπωρο / 18:00 / Κατηγορία 4
+  const [val1, setVal1] = useState(15);
+  const [val2, setVal2] = useState(25);
+  const [val3, setVal3] = useState(35);
+  const [val4, setVal4] = useState(20);
 
   const total = val1 + val2 + val3 + val4;
 
@@ -50,10 +50,10 @@ export default function AllaGrafimataTheoryPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-10 2xl:space-y-14 pb-24">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-10 2xl:space-y-14 pb-24 overflow-x-hidden">
         
         {/* 1. HEADER BANNER */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
               <span>ΚΕΦΑΛΑΙΟ 57 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
@@ -94,8 +94,8 @@ export default function AllaGrafimataTheoryPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-4 gap-6 2xl:gap-8">
             
-            {/* Βημα 1ο: Γραφημα Γραμμης */}
-            <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
+            {/* Βημα 1ο */}
+            <article className="bg-white p-5 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-sky-100 text-sky-800 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
@@ -122,8 +122,8 @@ export default function AllaGrafimataTheoryPage() {
               </div>
             </article>
 
-            {/* Βημα 2ο: Οριζοντιο Ραβδογραμμα */}
-            <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
+            {/* Βημα 2ο */}
+            <article className="bg-white p-5 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
@@ -150,8 +150,8 @@ export default function AllaGrafimataTheoryPage() {
               </div>
             </article>
 
-            {/* Βημα 3ο: Κυκλικο Διαγραμμα */}
-            <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
+            {/* Βημα 3ο */}
+            <article className="bg-white p-5 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-indigo-100 text-indigo-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
@@ -181,8 +181,8 @@ export default function AllaGrafimataTheoryPage() {
               </div>
             </article>
 
-            {/* Βημα 4ο: Υπολογισμος Γωνιας */}
-            <article className="bg-white p-6 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
+            {/* Βημα 4ο */}
+            <article className="bg-white p-5 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-emerald-100 text-emerald-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
@@ -216,8 +216,8 @@ export default function AllaGrafimataTheoryPage() {
         </section>
 
         {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΔΥΝΑΜΙΚΟΣ ΜΕΤΑΤΡΟΠΕΑΣ ΓΡΑΦΗΜΑΤΩΝ */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 2xl:p-12 space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-6">
+        <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
                 <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
@@ -226,16 +226,16 @@ export default function AllaGrafimataTheoryPage() {
                 Δυναμικός Μετατροπέας: Ίδια Δεδομένα σε 3 Διαφορετικά Γραφήματα
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-                Ρυθμίστε τις τιμές των 4 σημείων ανά 1 μονάδα και αλλάξτε την προβολή για να δείτε πώς τα ίδια δεδομένα παρουσιάζονται σε Γράφημα Γραμμής, Οριζόντιο Ραβδόγραμμα ή Κυκλικό Διάγραμμα.
+                Ρυθμίστε τις τιμές ανά 1 μονάδα και αλλάξτε την προβολή για να δείτε πώς τα ίδια δεδομένα παρουσιάζονται σε Γράφημα Γραμμής, Οριζόντιο Ραβδόγραμμα ή Κυκλικό Διάγραμμα.
               </p>
             </div>
 
             {/* Διακοπτης 3 Τυπων Γραφηματος */}
-            <div className="inline-flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 self-start sm:self-center">
+            <div className="grid grid-cols-3 sm:flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => setChartType('line')}
-                className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+                className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-center ${
                   chartType === 'line'
                     ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
@@ -246,7 +246,7 @@ export default function AllaGrafimataTheoryPage() {
               <button
                 type="button"
                 onClick={() => setChartType('hbar')}
-                className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+                className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-center ${
                   chartType === 'hbar'
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
@@ -257,7 +257,7 @@ export default function AllaGrafimataTheoryPage() {
               <button
                 type="button"
                 onClick={() => setChartType('pie')}
-                className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+                className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-center ${
                   chartType === 'pie'
                     ? 'bg-amber-600 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
@@ -268,27 +268,27 @@ export default function AllaGrafimataTheoryPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             
             {/* Χειριστηρια Τιμων (Step 1) */}
-            <div className="lg:col-span-5 space-y-3.5">
+            <div className="lg:col-span-5 space-y-3">
               
               {/* Σημειο Α */}
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-blue-500"></span> Σημείο Α
+                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Σημείο Α
                   </span>
-                  <span className="font-mono font-black text-sm text-blue-700 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                  <span className="font-mono font-black text-xs sm:text-sm text-blue-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                     {val1} μονάδες
                   </span>
                 </div>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-10 w-full gap-2">
+                <div className="grid grid-cols-[34px_1fr_34px] items-center h-9 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal1((prev) => Math.max(5, prev - 1)); }}
                     disabled={val1 <= 5}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     －
                   </button>
@@ -305,7 +305,7 @@ export default function AllaGrafimataTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal1((prev) => Math.min(50, prev + 1)); }}
                     disabled={val1 >= 50}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     ＋
                   </button>
@@ -313,21 +313,21 @@ export default function AllaGrafimataTheoryPage() {
               </div>
 
               {/* Σημειο Β */}
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-emerald-500"></span> Σημείο Β
+                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Σημείο Β
                   </span>
-                  <span className="font-mono font-black text-sm text-emerald-700 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                  <span className="font-mono font-black text-xs sm:text-sm text-emerald-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                     {val2} μονάδες
                   </span>
                 </div>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-10 w-full gap-2">
+                <div className="grid grid-cols-[34px_1fr_34px] items-center h-9 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal2((prev) => Math.max(5, prev - 1)); }}
                     disabled={val2 <= 5}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     －
                   </button>
@@ -344,7 +344,7 @@ export default function AllaGrafimataTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal2((prev) => Math.min(50, prev + 1)); }}
                     disabled={val2 >= 50}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     ＋
                   </button>
@@ -352,21 +352,21 @@ export default function AllaGrafimataTheoryPage() {
               </div>
 
               {/* Σημειο Γ */}
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-amber-500"></span> Σημείο Γ
+                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Σημείο Γ
                   </span>
-                  <span className="font-mono font-black text-sm text-amber-700 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                  <span className="font-mono font-black text-xs sm:text-sm text-amber-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                     {val3} μονάδες
                   </span>
                 </div>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-10 w-full gap-2">
+                <div className="grid grid-cols-[34px_1fr_34px] items-center h-9 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal3((prev) => Math.max(5, prev - 1)); }}
                     disabled={val3 <= 5}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     －
                   </button>
@@ -383,7 +383,7 @@ export default function AllaGrafimataTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal3((prev) => Math.min(50, prev + 1)); }}
                     disabled={val3 >= 50}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     ＋
                   </button>
@@ -391,21 +391,21 @@ export default function AllaGrafimataTheoryPage() {
               </div>
 
               {/* Σημειο Δ */}
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-pink-500"></span> Σημείο Δ
+                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500"></span> Σημείο Δ
                   </span>
-                  <span className="font-mono font-black text-sm text-pink-700 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                  <span className="font-mono font-black text-xs sm:text-sm text-pink-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                     {val4} μονάδες
                   </span>
                 </div>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-10 w-full gap-2">
+                <div className="grid grid-cols-[34px_1fr_34px] items-center h-9 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal4((prev) => Math.max(5, prev - 1)); }}
                     disabled={val4 <= 5}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     －
                   </button>
@@ -422,7 +422,7 @@ export default function AllaGrafimataTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal4((prev) => Math.min(50, prev + 1)); }}
                     disabled={val4 >= 50}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     ＋
                   </button>
@@ -430,16 +430,16 @@ export default function AllaGrafimataTheoryPage() {
               </div>
 
               {/* Συνολο Μοναδων */}
-              <div className="p-3 bg-blue-50 rounded-2xl border border-blue-200 text-center font-bold text-xs sm:text-sm text-blue-950">
-                Σύνολο μονάδων: <strong className="font-mono text-base">{total}</strong>
+              <div className="p-2.5 bg-blue-50 rounded-xl border border-blue-200 text-center font-bold text-xs sm:text-sm text-blue-950">
+                Σύνολο μονάδων: <strong className="font-mono text-sm sm:text-base">{total}</strong>
               </div>
 
             </div>
 
-            {/* Οπτικη Προβολη Γραφηματος (SVG) */}
-            <div className="lg:col-span-7 bg-slate-50 p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center min-h-[360px]">
+            {/* Οπτικη Προβολη Γραφηματος (SVG) Χωρις Scroll στα Κινητα */}
+            <div className="lg:col-span-7 bg-slate-50 p-3 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center w-full min-h-[340px]">
               
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+              <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 sm:mb-3 text-center">
                 {chartType === 'line' && 'ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ (ΧΡΟΝΟΣΕΙΡΑ)'}
                 {chartType === 'hbar' && 'ΟΡΙΖΟΝΤΙΟ ΡΑΒΔΟΓΡΑΜΜΑ (ΣΥΓΚΡΙΣΗ)'}
                 {chartType === 'pie' && 'ΚΥΚΛΙΚΟ ΔΙΑΓΡΑΜΜΑ (ΜΕΡΟΣ ΠΡΟΣ ΟΛΟ)'}
@@ -447,29 +447,27 @@ export default function AllaGrafimataTheoryPage() {
 
               {/* 1. Γραφημα Γραμμης (Line Chart) */}
               {chartType === 'line' && (
-                <div className="w-full max-w-[420px] aspect-[4/3] bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative">
-                  <svg viewBox="0 0 380 260" className="w-full h-full overflow-visible">
+                <div className="w-full max-w-[460px] aspect-[4/3] sm:aspect-[16/10] bg-white rounded-2xl border border-slate-200 p-2 sm:p-4 shadow-sm flex items-center justify-center">
+                  <svg viewBox="0 0 380 240" className="w-full h-auto max-h-[260px] overflow-visible">
                     {[0, 15, 30, 45, 60].map((t) => {
-                      const y = 210 - (t / 60) * 160;
+                      const y = 195 - (t / 60) * 150;
                       return (
                         <g key={`l-tick-${t}`}>
-                          <line x1="45" y1={y} x2="360" y2={y} stroke="#f1f5f9" strokeWidth="1.5" />
-                          <text x="38" y={y + 4} fontSize="10" fontWeight="bold" fill="#64748b" textAnchor="end">
+                          <line x1="42" y1={y} x2="365" y2={y} stroke="#f1f5f9" strokeWidth="1.5" />
+                          <text x="35" y={y + 4} fontSize="10" fontWeight="bold" fill="#64748b" textAnchor="end">
                             {t}
                           </text>
                         </g>
                       );
                     })}
 
-                    {/* Αξονες */}
-                    <line x1="45" y1="210" x2="365" y2="210" stroke="#334155" strokeWidth="2" />
-                    <line x1="45" y1="210" x2="45" y2="30" stroke="#334155" strokeWidth="2" />
+                    <line x1="42" y1="195" x2="370" y2="195" stroke="#334155" strokeWidth="2" />
+                    <line x1="42" y1="195" x2="42" y2="25" stroke="#334155" strokeWidth="2" />
 
-                    {/* Σημεια και γραμμες */}
                     {(() => {
                       const pts = dataset.map((d, i) => {
-                        const px = 85 + i * 85;
-                        const py = 210 - (d.value / 60) * 160;
+                        const px = 80 + i * 85;
+                        const py = 195 - (d.value / 60) * 150;
                         return { px, py, ...d };
                       });
                       const polyStr = pts.map(p => `${p.px},${p.py}`).join(' ');
@@ -479,11 +477,11 @@ export default function AllaGrafimataTheoryPage() {
                           <polyline points={polyStr} fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                           {pts.map((p, idx) => (
                             <g key={`pt-${idx}`}>
-                              <circle cx={p.px} cy={p.py} r="6" fill={p.color} stroke="#ffffff" strokeWidth="2" />
-                              <text x={p.px} y={p.py - 10} fontSize="11" fontWeight="bold" fill="#0f172a" textAnchor="middle">
+                              <circle cx={p.px} cy={p.py} r="5.5" fill={p.color} stroke="#ffffff" strokeWidth="2" />
+                              <text x={p.px} y={p.py - 9} fontSize="11" fontWeight="bold" fill="#0f172a" textAnchor="middle">
                                 {p.value}
                               </text>
-                              <text x={p.px} y="228" fontSize="10.5" fontWeight="bold" fill="#475569" textAnchor="middle">
+                              <text x={p.px} y="215" fontSize="10.5" fontWeight="bold" fill="#475569" textAnchor="middle">
                                 {p.label}
                               </text>
                             </g>
@@ -497,37 +495,35 @@ export default function AllaGrafimataTheoryPage() {
 
               {/* 2. Οριζοντιο Ραβδογραμμα (Horizontal Bar Chart) */}
               {chartType === 'hbar' && (
-                <div className="w-full max-w-[420px] aspect-[4/3] bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative">
-                  <svg viewBox="0 0 380 260" className="w-full h-full overflow-visible">
+                <div className="w-full max-w-[460px] aspect-[4/3] sm:aspect-[16/10] bg-white rounded-2xl border border-slate-200 p-2 sm:p-4 shadow-sm flex items-center justify-center">
+                  <svg viewBox="0 0 380 240" className="w-full h-auto max-h-[260px] overflow-visible">
                     {[0, 15, 30, 45, 60].map((t) => {
-                      const x = 85 + (t / 60) * 250;
+                      const x = 75 + (t / 60) * 260;
                       return (
                         <g key={`h-tick-${t}`}>
-                          <line x1={x} y1="35" x2={x} y2="220" stroke="#f1f5f9" strokeWidth="1.5" />
-                          <text x={x} y="236" fontSize="10" fontWeight="bold" fill="#64748b" textAnchor="middle">
+                          <line x1={x} y1="25" x2={x} y2="195" stroke="#f1f5f9" strokeWidth="1.5" />
+                          <text x={x} y="210" fontSize="10" fontWeight="bold" fill="#64748b" textAnchor="middle">
                             {t}
                           </text>
                         </g>
                       );
                     })}
 
-                    {/* Αξονες */}
-                    <line x1="85" y1="220" x2="350" y2="220" stroke="#334155" strokeWidth="2" />
-                    <line x1="85" y1="220" x2="85" y2="35" stroke="#334155" strokeWidth="2" />
+                    <line x1="75" y1="195" x2="350" y2="195" stroke="#334155" strokeWidth="2" />
+                    <line x1="75" y1="195" x2="75" y2="25" stroke="#334155" strokeWidth="2" />
 
-                    {/* Οριζοντιες Ραβδοι */}
                     {dataset.map((d, i) => {
-                      const bh = 28;
-                      const by = 50 + i * 44;
-                      const bw = (d.value / 60) * 250;
+                      const bh = 24;
+                      const by = 38 + i * 38;
+                      const bw = (d.value / 60) * 260;
 
                       return (
                         <g key={`hbar-${i}`}>
-                          <text x="75" y={by + 18} fontSize="11" fontWeight="bold" fill="#334155" textAnchor="end">
+                          <text x="68" y={by + 16} fontSize="10.5" fontWeight="bold" fill="#334155" textAnchor="end">
                             {d.label}
                           </text>
-                          <rect x="85" y={by} width={Math.max(bw, 2)} height={bh} fill={d.color} rx="5" />
-                          <text x={85 + bw + 8} y={by + 19} fontSize="11" fontWeight="bold" fill="#0f172a">
+                          <rect x="75" y={by} width={Math.max(bw, 3)} height={bh} fill={d.color} rx="4" />
+                          <text x={75 + bw + 6} y={by + 17} fontSize="10.5" fontWeight="bold" fill="#0f172a">
                             {d.value}
                           </text>
                         </g>
@@ -537,59 +533,70 @@ export default function AllaGrafimataTheoryPage() {
                 </div>
               )}
 
-              {/* 3. Κυκλικο Διαγραμμα (Pie Chart SVG) */}
+              {/* 3. Κυκλικο Διαγραμμα (Pie Chart - Πληρως Responsive για κινητα χωρις overflow) */}
               {chartType === 'pie' && (
-                <div className="w-full max-w-[420px] aspect-[4/3] bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col items-center justify-center relative">
-                  <svg viewBox="0 0 240 240" className="w-48 h-48 overflow-visible">
-                    {(() => {
-                      let cumulativeAngle = 0;
-                      return dataset.map((d, i) => {
-                        const startAngle = cumulativeAngle;
-                        const sliceAngle = d.angle;
-                        cumulativeAngle += sliceAngle;
+                <div className="w-full max-w-[460px] bg-white rounded-2xl border border-slate-200 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center gap-3">
+                  
+                  {/* SVG Κυκλος με fluid aspect ratio */}
+                  <div className="w-full max-w-[190px] sm:max-w-[210px] aspect-square flex items-center justify-center">
+                    <svg viewBox="0 0 220 220" className="w-full h-full overflow-visible">
+                      {(() => {
+                        let cumulativeAngle = 0;
+                        return dataset.map((d, i) => {
+                          const startAngle = cumulativeAngle;
+                          const sliceAngle = d.angle;
+                          cumulativeAngle += sliceAngle;
 
-                        if (sliceAngle <= 0) return null;
+                          if (sliceAngle <= 0) return null;
 
-                        // Υπολογισμος συντεταγμενων τοξου
-                        const x1 = 120 + 90 * Math.cos((Math.PI * (startAngle - 90)) / 180);
-                        const y1 = 120 + 90 * Math.sin((Math.PI * (startAngle - 90)) / 180);
-                        const x2 = 120 + 90 * Math.cos((Math.PI * (startAngle + sliceAngle - 90)) / 180);
-                        const y2 = 120 + 90 * Math.sin((Math.PI * (startAngle + sliceAngle - 90)) / 180);
-                        const largeArc = sliceAngle > 180 ? 1 : 0;
+                          const x1 = 110 + 85 * Math.cos((Math.PI * (startAngle - 90)) / 180);
+                          const y1 = 110 + 85 * Math.sin((Math.PI * (startAngle - 90)) / 180);
+                          const x2 = 110 + 85 * Math.cos((Math.PI * (startAngle + sliceAngle - 90)) / 180);
+                          const y2 = 110 + 85 * Math.sin((Math.PI * (startAngle + sliceAngle - 90)) / 180);
+                          const largeArc = sliceAngle > 180 ? 1 : 0;
 
-                        const pathData = `M 120 120 L ${x1} ${y1} A 90 90 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                          const pathData = `M 110 110 L ${x1} ${y1} A 85 85 0 ${largeArc} 1 ${x2} ${y2} Z`;
 
-                        return (
-                          <path
-                            key={`slice-${i}`}
-                            d={pathData}
-                            fill={d.color}
-                            stroke="#ffffff"
-                            strokeWidth="2"
-                            className="transition-all duration-300 hover:opacity-90 cursor-pointer"
-                          />
-                        );
-                      });
-                    })()}
-                  </svg>
+                          return (
+                            <path
+                              key={`slice-${i}`}
+                              d={pathData}
+                              fill={d.color}
+                              stroke="#ffffff"
+                              strokeWidth="2"
+                              className="transition-all duration-300"
+                            />
+                          );
+                        });
+                      })()}
+                    </svg>
+                  </div>
 
-                  {/* Υπομνημα Κυκλικου */}
-                  <div className="flex flex-wrap justify-center gap-3 pt-3 text-xs font-mono">
+                  {/* Υπομνημα Κυκλικου σε Responsive Grid (2 στηλες στα κινητα ωστε να χωραει παντα το Σημειο Δ) */}
+                  <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full text-[11px] sm:text-xs font-mono pt-1">
                     {dataset.map((d, i) => {
                       const pct = total > 0 ? ((d.value / total) * 100).toFixed(0) : 0;
                       return (
-                        <div key={`pie-leg-${i}`} className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200">
-                          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }}></span>
-                          <span className="font-sans font-bold text-slate-700">{d.label}:</span>
-                          <span className="font-bold text-slate-900">{pct} % ({formatNum(d.angle, 0)}°)</span>
+                        <div
+                          key={`pie-leg-${i}`}
+                          className="flex items-center justify-between gap-1 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-200"
+                        >
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: d.color }}></span>
+                            <span className="font-sans font-bold text-slate-700 truncate">{d.label}</span>
+                          </div>
+                          <span className="font-bold text-slate-900 shrink-0">
+                            {pct}% ({formatNum(d.angle, 0)}°)
+                          </span>
                         </div>
                       );
                     })}
                   </div>
+
                 </div>
               )}
 
-              <span className="text-xs text-slate-500 font-semibold mt-3 text-center">
+              <span className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-2.5 text-center">
                 Η επιλογή του γραφήματος εξαρτάται από τον στόχο: εξέλιξη (γραμμή), σύγκριση (ραβδόγραμμα) ή ποσοστά (κυκλικό)!
               </span>
             </div>
@@ -598,7 +605,7 @@ export default function AllaGrafimataTheoryPage() {
         </section>
 
         {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΕΠΙΚΕΝΤΡΗΣ ΓΩΝΙΑΣ */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 2xl:p-12 space-y-6">
+        <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs 2xl:text-sm font-bold text-amber-800 mb-1">
               <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΑΝΑΛΟΓΙΑ ΜΟΙΡΩΝ ΚΑΙ ΠΟΣΟΣΤΩΝ</span>
@@ -618,16 +625,16 @@ export default function AllaGrafimataTheoryPage() {
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-slate-700">
                   <span>ΠΟΣΟΣΤΟ ΚΑΤΗΓΟΡΙΑΣ (%):</span>
-                  <span className="font-mono text-lg text-amber-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 font-black">
+                  <span className="font-mono text-base sm:text-lg text-amber-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 font-black">
                     {percentInput} %
                   </span>
                 </div>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-10 w-full gap-2">
+                <div className="grid grid-cols-[34px_1fr_34px] items-center h-10 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentInput((prev) => Math.max(1, prev - 1)); }}
                     disabled={percentInput <= 1}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     －
                   </button>
@@ -644,7 +651,7 @@ export default function AllaGrafimataTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentInput((prev) => Math.min(100, prev + 1)); }}
                     disabled={percentInput >= 100}
-                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-xl border border-slate-300 shadow-sm text-base"
+                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
                   >
                     ＋
                   </button>
@@ -652,13 +659,13 @@ export default function AllaGrafimataTheoryPage() {
               </div>
 
               {/* Γρηγορες Επιλογες */}
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {[10, 25, 50, 75].map((presetPct) => (
                   <button
                     key={`pre-${presetPct}`}
                     type="button"
                     onClick={() => setPercentInput(presetPct)}
-                    className="bg-white border border-slate-200 hover:bg-slate-100 px-3 py-1.5 rounded-xl font-bold text-xs text-slate-700 shadow-sm transition active:scale-95"
+                    className="bg-white border border-slate-200 hover:bg-slate-100 py-2 rounded-xl font-bold text-xs text-slate-700 shadow-sm transition active:scale-95 text-center"
                   >
                     {presetPct} %
                   </button>
@@ -667,14 +674,14 @@ export default function AllaGrafimataTheoryPage() {
             </div>
 
             {/* Αποτελεσμα & Τυπος */}
-            <div className="bg-amber-50/60 p-6 rounded-3xl border border-amber-200 space-y-3 text-center">
+            <div className="bg-amber-50/60 p-5 sm:p-6 rounded-3xl border border-amber-200 space-y-3 text-center">
               <span className="text-xs font-bold text-amber-900 uppercase tracking-wider block">
                 ΕΠΙΚΕΝΤΡΗ ΓΩΝΙΑ ΣΕ ΜΟΙΡΕΣ (α°)
               </span>
-              <div className="text-4xl sm:text-5xl font-black text-amber-700 font-mono">
+              <div className="text-3xl sm:text-5xl font-black text-amber-700 font-mono">
                 {degreesCalculated}°
               </div>
-              <div className="p-3 bg-white rounded-2xl border border-amber-100 text-xs sm:text-sm text-slate-700 font-mono">
+              <div className="p-2.5 sm:p-3 bg-white rounded-2xl border border-amber-100 text-xs sm:text-sm text-slate-700 font-mono">
                 Αναλογία: ({percentInput} · 360°) : 100 ＝ <strong>{degreesCalculated}°</strong>
               </div>
               <p className="text-xs text-slate-500 font-sans">
@@ -698,8 +705,8 @@ export default function AllaGrafimataTheoryPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
-            {/* Παραδειγμα 1: Γραφημα Γραμμης (Θερμοκρασια) */}
-            <article className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            {/* Παραδειγμα 1 */}
+            <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-black rounded-lg">
                   ΠΡΟΒΛΗΜΑ 1: ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ
@@ -713,7 +720,7 @@ export default function AllaGrafimataTheoryPage() {
                 Σε έναν μετεωρολογικό σταθμό καταγράφηκε η θερμοκρασία: 08:00 (<strong>12°C</strong>), 12:00 (<strong>20°C</strong>), 16:00 (<strong>18°C</strong>), 20:00 (<strong>14°C</strong>).
               </p>
 
-              {/* ΣΧΗΜΑ 1: SVG Γραφημα Γραμμης */}
+              {/* ΣΧΗΜΑ 1: SVG Γραφημα Γραμμης Responsive */}
               <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center mb-1">
                   ΣΧΗΜΑ: ΧΡΟΝΟΣΕΙΡΑ ΘΕΡΜΟΚΡΑΣΙΑΣ (°C)
@@ -732,7 +739,6 @@ export default function AllaGrafimataTheoryPage() {
                     <line x1="35" y1="120" x2="315" y2="120" stroke="#334155" strokeWidth="1.5" />
                     <line x1="35" y1="120" x2="35" y2="15" stroke="#334155" strokeWidth="1.5" />
 
-                    {/* Γραμμη και σημεια */}
                     <polyline points="60,63 130,25 200,34 270,53" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" />
                     {[
                       { x: 60, y: 63, label: '08:00', val: '12°' },
@@ -763,8 +769,8 @@ export default function AllaGrafimataTheoryPage() {
               </div>
             </article>
 
-            {/* Παραδειγμα 2: Κυκλικο Διαγραμμα (Ελευθερος Χρονος) */}
-            <article className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            {/* Παραδειγμα 2 */}
+            <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs font-black rounded-lg">
                   ΠΡΟΒΛΗΜΑ 2: ΚΥΚΛΙΚΟ ΔΙΑΓΡΑΜΜΑ
@@ -778,24 +784,21 @@ export default function AllaGrafimataTheoryPage() {
                 Ένας μαθητής αφιερώνει τον ελεύθερο χρόνο του ως εξής: Αθλητισμός <strong>50 %</strong>, Διάβασμα εξωσχολικών βιβλίων <strong>25 %</strong>, Μουσική <strong>25 %</strong>.
               </p>
 
-              {/* ΣΧΗΜΑ 2: SVG Κυκλικο Διαγραμμα */}
+              {/* ΣΧΗΜΑ 2: SVG Κυκλικο Διαγραμμα Responsive */}
               <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center mb-1">
                   ΣΧΗΜΑ: ΚΥΚΛΙΚΟΣ ΤΟΜΕΑΣ ΑΝΑΛΟΓΙΑΣ
                 </span>
                 <div className="w-full max-w-[280px] mx-auto aspect-square bg-white rounded-xl border border-slate-200 p-2 shadow-inner flex flex-col items-center justify-center">
-                  <svg viewBox="0 0 160 160" className="w-36 h-36">
-                    {/* 50% = 180 μοιρες (αριστερο ημικυκλιο) */}
+                  <svg viewBox="0 0 160 160" className="w-32 h-32 sm:w-36 sm:h-36">
                     <path d="M 80 80 L 80 10 A 70 70 0 0 1 80 150 Z" fill="#3b82f6" stroke="#fff" strokeWidth="1.5" />
-                    {/* 25% = 90 μοιρες (κατω δεξια τεταρτοκυκλιο) */}
                     <path d="M 80 80 L 80 150 A 70 70 0 0 1 10 80 Z" fill="#10b981" stroke="#fff" strokeWidth="1.5" />
-                    {/* 25% = 90 μοιρες (πανω δεξια τεταρτοκυκλιο) */}
                     <path d="M 80 80 L 10 80 A 70 70 0 0 1 80 10 Z" fill="#f59e0b" stroke="#fff" strokeWidth="1.5" />
                   </svg>
-                  <div className="flex flex-wrap justify-center gap-2 pt-2 text-[10px] font-mono">
-                    <span className="text-blue-700 font-bold">● Αθλητισμός (50% / 180°)</span>
-                    <span className="text-emerald-700 font-bold">● Διάβασμα (25% / 90°)</span>
-                    <span className="text-amber-700 font-bold">● Μουσική (25% / 90°)</span>
+                  <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 pt-2 text-[10px] font-mono">
+                    <span className="text-blue-700 font-bold">● Αθλητισμός (50%/180°)</span>
+                    <span className="text-emerald-700 font-bold">● Διάβασμα (25%/90°)</span>
+                    <span className="text-amber-700 font-bold">● Μουσική (25%/90°)</span>
                   </div>
                 </div>
               </div>
