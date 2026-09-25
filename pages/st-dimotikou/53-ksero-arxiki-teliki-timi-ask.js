@@ -12,20 +12,6 @@ function toCleanUppercase(str) {
     .toUpperCase();
 }
 
-// Βοηθητικο component εμφανισης κλασματος
-function Fraction({ num, den, className = '' }) {
-  return (
-    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
-      <span className="border-b-2 border-current px-1.5 pb-0.5 text-center leading-none">
-        {num}
-      </span>
-      <span className="px-1.5 pt-0.5 text-center leading-none">
-        {den}
-      </span>
-    </span>
-  );
-}
-
 // Τυχαιος ακεραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -36,14 +22,14 @@ function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
+// Μορφοποιηση αριθμου
 function formatNum(val, decimals = 2) {
   if (Number.isInteger(val)) return String(val);
   const rounded = Number(val.toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων Ευρεσης Ποσοστου απο Αρχικη & Τελικη Τιμη (10 διαφορετικα προβληματα)
+// Δεξαμενη Κανονικων Προβληματων
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'k_std_1',
@@ -57,7 +43,7 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: { col1: 'Αρχική (€)', col2: 'Έκπτωση (€)', r1: [origPrice, discount], r2: [100, 'χ'] },
         correctVal: discPct,
         correctStr: String(discPct),
-        explanation: `1ο Βήμα: Βρίσκουμε τη διαφορά (ποσό έκπτωσης): ${origPrice} － ${finalPrice} ＝ ${discount} €. 2ο Βήμα: Υπολογίζουμε το ποσοστό επί της αρχικής τιμής: (${discount} : ${origPrice}) · 100 ＝ ${discPct} % (ή με πίνακα: χ ＝ (${discount} · 100) : ${origPrice} ＝ ${discPct} %).`
+        explanation: `1ο Βήμα: Διαφορά (έκπτωση): ${origPrice} － ${finalPrice} ＝ ${discount} €. 2ο Βήμα: Ποσοστό επί της αρχικής: (${discount} : ${origPrice}) · 100 ＝ ${discPct} %.`
       };
     }
   },
@@ -73,7 +59,7 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: { col1: 'Αρχικό (€)', col2: 'Αύξηση (€)', r1: [origRent, increase], r2: [100, 'χ'] },
         correctVal: incPct,
         correctStr: String(incPct),
-        explanation: `1ο Βήμα: Η αύξηση σε ευρώ είναι: ${finalRent} － ${origRent} ＝ ${increase} €. 2ο Βήμα: Το ποσοστό αύξησης επί του αρχικού ενοικίου είναι: (${increase} : ${origRent}) · 100 ＝ ${incPct} %.`
+        explanation: `Αύξηση σε ευρώ: ${finalRent} － ${origRent} ＝ ${increase} €. Ποσοστό επί του αρχικού: (${increase} : ${origRent}) · 100 ＝ ${incPct} %.`
       };
     }
   },
@@ -89,23 +75,19 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: { col1: 'Αρχική (€)', col2: 'Έκπτωση (€)', r1: [origPrice, discount], r2: [100, 'χ'] },
         correctVal: discPct,
         correctStr: String(discPct),
-        explanation: `Διαφορά τιμής: ${origPrice} － ${finalPrice} ＝ ${discount} €. Ποσοστό έκπτωσης: (${discount} : ${origPrice}) · 100 ＝ ${discPct} %.`
+        explanation: `Διαφορά: ${origPrice} － ${finalPrice} ＝ ${discount} €. Ποσοστό: (${discount} : ${origPrice}) · 100 ＝ ${discPct} %.`
       };
     }
   },
   {
     id: 'k_std_4',
     generate: () => {
-      const origBusTicket = 1.20;
-      const finalBusTicket = 1.50;
-      const inc = 0.30;
-      const incPct = 25;
       return {
         text: `Η τιμή του εισιτηρίου λεωφορείου αυξήθηκε από 1,20 € σε 1,50 €. Ποιο ήταν το ποσοστό αύξησης (%) στην τιμή του εισιτηρίου;`,
         tableData: { col1: 'Αρχική (€)', col2: 'Αύξηση (€)', r1: ['1,20', '0,30'], r2: [100, 'χ'] },
-        correctVal: incPct,
-        correctStr: String(incPct),
-        explanation: `Η αύξηση είναι: 1,50 － 1,20 ＝ 0,30 €. Το ποσοστό αύξησης επί της αρχικής τιμής είναι: (0,30 : 1,20) · 100 ＝ 0,25 · 100 ＝ 25 %.`
+        correctVal: 25,
+        correctStr: '25',
+        explanation: `Αύξηση: 1,50 － 1,20 ＝ 0,30 €. Ποσοστό αύξησης: (0,30 : 1,20) · 100 ＝ 25 %.`
       };
     }
   },
@@ -121,7 +103,7 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: { col1: 'Πέρυσι', col2: 'Αύξηση', r1: [origStudents, addedStudents], r2: [100, 'χ'] },
         correctVal: incPct,
         correctStr: String(incPct),
-        explanation: `Οι επιπλέον μαθητές είναι: ${finalStudents} － ${origStudents} ＝ ${addedStudents}. Το ποσοστό αύξησης επί των περσινών μαθητών είναι: (${addedStudents} : ${origStudents}) · 100 ＝ ${incPct} %.`
+        explanation: `Επιπλέον μαθητές: ${finalStudents} － ${origStudents} ＝ ${addedStudents}. Ποσοστό αύξησης: (${addedStudents} : ${origStudents}) · 100 ＝ ${incPct} %.`
       };
     }
   },
@@ -137,7 +119,7 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: { col1: 'Αρχικό (kg)', col2: 'Μείωση (kg)', r1: [origWeight, lossKg], r2: [100, 'χ'] },
         correctVal: lossPct,
         correctStr: String(lossPct),
-        explanation: `Η απώλεια βάρους είναι: ${origWeight} － ${finalWeight} ＝ ${lossKg} kg. Το ποσοστό μείωσης ως προς το αρχικό βάρος είναι: (${lossKg} : ${origWeight}) · 100 ＝ ${lossPct} %.`
+        explanation: `Απώλεια βάρους: ${origWeight} － ${finalWeight} ＝ ${lossKg} kg. Ποσοστό: (${lossKg} : ${origWeight}) · 100 ＝ ${lossPct} %.`
       };
     }
   },
@@ -153,218 +135,167 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: { col1: 'Αρχική (€)', col2: 'Έκπτωση (€)', r1: [origCost, discount], r2: [100, 'χ'] },
         correctVal: discPct,
         correctStr: String(discPct),
-        explanation: `Ποσό έκπτωσης: ${origCost} － ${finalCost} ＝ ${discount} €. Ποσοστό έκπτωσης: (${discount} : ${origCost}) · 100 ＝ ${discPct} %.`
+        explanation: `Έκπτωση: ${origCost} － ${finalCost} ＝ ${discount} €. Ποσοστό: (${discount} : ${origCost}) · 100 ＝ ${discPct} %.`
       };
     }
   },
   {
     id: 'k_std_8',
     generate: () => {
-      const origFuel = 1.60;
-      const finalFuel = 1.84;
-      const diff = 0.24;
-      const pct = 15;
       return {
         text: `Η τιμή της αμόλυβδης βενζίνης αυξήθηκε από 1,60 € το λίτρο σε 1,84 € το λίτρο. Ποιο ήταν το ποσοστό αύξησης (%) στην τιμή του καυσίμου;`,
         tableData: { col1: 'Αρχική (€)', col2: 'Αύξηση (€)', r1: ['1,60', '0,24'], r2: [100, 'χ'] },
-        correctVal: pct,
-        correctStr: String(pct),
-        explanation: `Η αύξηση ανά λίτρο είναι: 1,84 － 1,60 ＝ 0,24 €. Το ποσοστό αύξησης επί της αρχικής τιμής είναι: (0,24 : 1,60) · 100 ＝ 0,15 · 100 ＝ 15 %.`
+        correctVal: 15,
+        correctStr: '15',
+        explanation: `Αύξηση: 1,84 － 1,60 ＝ 0,24 €. Ποσοστό: (0,24 : 1,60) · 100 ＝ 15 %.`
       };
     }
   },
   {
     id: 'k_std_9',
     generate: () => {
-      const origBill = pickRandom([40, 50, 60, 80]);
-      const tip = pickRandom([4, 5, 6, 8]);
-      const pct = (tip / origBill) * 100;
-      const finalBill = origBill + tip;
       return {
-        text: `Σε ένα εστιατόριο ο λογαριασμός ήταν ${origBill} € και οι πελάτες πλήρωσαν τελικά ${finalBill} € αφήνοντας φιλοδώρημα. Ποιο ποσοστό (%) επί του λογαριασμού αντιστοιχούσε στο φιλοδώρημα;`,
-        tableData: { col1: 'Λογαριασμός (€)', col2: 'Φιλοδώρημα (€)', r1: [origBill, tip], r2: [100, 'χ'] },
-        correctVal: pct,
-        correctStr: String(pct),
-        explanation: `Το ποσό φιλοδωρήματος είναι: ${finalBill} － ${origBill} ＝ ${tip} €. Το ποσοστό είναι: (${tip} : ${origBill}) · 100 ＝ ${pct} %.`
+        text: `Σε ένα εστιατόριο ο λογαριασμός ήταν 50 € και οι πελάτες πλήρωσαν 55 € αφήνοντας φιλοδώρημα. Ποιο ποσοστό (%) επί του λογαριασμού ήταν το φιλοδώρημα;`,
+        tableData: { col1: 'Λογαριασμός (€)', col2: 'Φιλοδώρημα (€)', r1: [50, 5], r2: [100, 'χ'] },
+        correctVal: 10,
+        correctStr: '10',
+        explanation: `Φιλοδώρημα: 55 － 50 ＝ 5 €. Ποσοστό: (5 : 50) · 100 ＝ 10 %.`
       };
     }
   },
   {
     id: 'k_std_10',
     generate: () => {
-      const origPrice = pickRandom([100, 200, 300, 500]);
-      const discPct = 35;
-      const discount = (origPrice * discPct) / 100;
-      const finalPrice = origPrice - discount;
       return {
-        text: `Μια τηλεόραση που κόστιζε αρχικά ${origPrice} € πωλήθηκε κατά τη διάρκεια εκπτώσεων προς ${finalPrice} €. Ποιο ήταν το ποσοστό έκπτωσης (%);`,
-        tableData: { col1: 'Αρχική (€)', col2: 'Έκπτωση (€)', r1: [origPrice, discount], r2: [100, 'χ'] },
-        correctVal: discPct,
-        correctStr: String(discPct),
-        explanation: `Έκπτωση: ${origPrice} － ${finalPrice} ＝ ${discount} €. Ποσοστό έκπτωσης: (${discount} : ${origPrice}) · 100 ＝ ${discPct} %.`
+        text: `Μια τηλεόραση που κόστιζε αρχικά 200 € πωλήθηκε κατά τη διάρκεια εκπτώσεων προς 130 €. Ποιο ήταν το ποσοστό έκπτωσης (%);`,
+        tableData: { col1: 'Αρχική (€)', col2: 'Έκπτωση (€)', r1: [200, 70], r2: [100, 'χ'] },
+        correctVal: 35,
+        correctStr: '35',
+        explanation: `Έκπτωση: 200 － 130 ＝ 70 €. Ποσοστό: (70 : 200) · 100 ＝ 35 %.`
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (10 διαφορετικα προβληματα)
+// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας
 const HARD_PROBLEMS_POOL = [
   {
     id: 'k_hard_1',
     generate: () => {
-      const origCleanPrice = 250;
-      const finalWithVat = 310;
-      const vatAmount = finalWithVat - origCleanPrice; // 60 €
-      const vatPct = (vatAmount / origCleanPrice) * 100; // 24%
       return {
-        text: `Ένα ηλεκτρονικό κατάστημα τιμολογεί έναν εκτυπωτή με αρχική καθαρή αξία ${origCleanPrice} €. Ο πελάτης πλήρωσε τελικά ${finalWithVat} € μαζί με τον φόρο. Ποιο ήταν το ποσοστό (%) του Φ.Π.Α. με το οποίο επιβαρύνθηκε ο εκτυπωτής;`,
-        tableData: { col1: 'Καθαρή Αξία (€)', col2: 'Φ.Π.Α. (€)', r1: [origCleanPrice, vatAmount], r2: [100, 'χ'] },
-        correctVal: vatPct,
-        correctStr: String(vatPct),
-        explanation: `Ο φόρος σε ευρώ είναι: ${finalWithVat} － ${origCleanPrice} ＝ ${vatAmount} €. Το ποσοστό Φ.Π.Α. υπολογίζεται πάντα πάνω στην καθαρή αρχική αξία: (${vatAmount} : ${origCleanPrice}) · 100 ＝ (60 : 250) · 100 ＝ ${vatPct} %.`
+        text: `Ένα κατάστημα τιμολογεί έναν εκτυπωτή με αρχική καθαρή αξία 250 €. Ο πελάτης πλήρωσε τελικά 310 € μαζί με τον φόρο. Ποιο ήταν το ποσοστό (%) του Φ.Π.Α. με το οποίο επιβαρύνθηκε ο εκτυπωτής;`,
+        tableData: { col1: 'Καθαρή (€)', col2: 'Φ.Π.Α. (€)', r1: [250, 60], r2: [100, 'χ'] },
+        correctVal: 24,
+        correctStr: '24',
+        explanation: `Φόρος: 310 － 250 ＝ 60 €. Ποσοστό Φ.Π.Α. επί της αρχικής καθαρής αξίας: (60 : 250) · 100 ＝ 24 %.`
       };
     }
   },
   {
     id: 'k_hard_2',
     generate: () => {
-      const origCost = 80;
-      const discPct = 25; // 20 € έκπτωση
-      const discount = (origCost * discPct) / 100;
-      const finalCost = origCost - discount; // 60 €
       return {
-        text: `Ένας αγοραστής αγόρασε ένα μπουφάν πληρώνοντας ${finalCost} € και υπολόγισε ότι εξοικονόμησε ${discount} € σε σχέση με την αρχική τιμή της ετικέτας. Ποιο ήταν το ποσοστό έκπτωσης (%);`,
-        tableData: { col1: 'Αρχική (€)', col2: 'Έκπτωση (€)', r1: [origCost, discount], r2: [100, 'χ'] },
-        correctVal: discPct,
-        correctStr: String(discPct),
-        explanation: `1ο Βήμα: Η αρχική τιμή της ετικέτας ήταν: ${finalCost} ＋ ${discount} ＝ ${origCost} €. 2ο Βήμα: Το ποσοστό έκπτωσης υπολογίζεται πάνω στην αρχική τιμή: (${discount} : ${origCost}) · 100 ＝ (20 : 80) · 100 ＝ ${discPct} %.`
+        text: `Ένας αγοραστής αγόρασε ένα μπουφάν πληρώνοντας 60 € και υπολόγισε ότι εξοικονόμησε 20 € σε σχέση με την αρχική τιμή της ετικέτας. Ποιο ήταν το ποσοστό έκπτωσης (%);`,
+        tableData: { col1: 'Αρχική (€)', col2: 'Έκπτωση (€)', r1: [80, 20], r2: [100, 'χ'] },
+        correctVal: 25,
+        correctStr: '25',
+        explanation: `Αρχική τιμή: 60 ＋ 20 ＝ 80 €. Ποσοστό έκπτωσης επί της αρχικής τιμής: (20 : 80) · 100 ＝ 25 %.`
       };
     }
   },
   {
     id: 'k_hard_3',
     generate: () => {
-      const buyPrice = 50;
-      const sellPrice = 65;
-      const profit = sellPrice - buyPrice; // 15 €
-      const profitPct = (profit / buyPrice) * 100; // 30%
       return {
-        text: `Ένας έμπορος αγόρασε ένα εμπόρευμα προς ${buyPrice} € και το πούλησε προς ${sellPrice} €. Ποιο ήταν το ποσοστό κέρδους (%) του εμπόρου επί της τιμής αγοράς;`,
-        tableData: { col1: 'Αγορά (€)', col2: 'Κέρδος (€)', r1: [buyPrice, profit], r2: [100, 'χ'] },
-        correctVal: profitPct,
-        correctStr: String(profitPct),
-        explanation: `Το κέρδος σε ευρώ είναι: ${sellPrice} － ${buyPrice} ＝ ${profit} €. Το ποσοστό κέρδους επί της τιμής αγοράς είναι: (${profit} : ${buyPrice}) · 100 ＝ (15 : 50) · 100 ＝ ${profitPct} %.`
+        text: `Ένας έμπορος αγόρασε ένα εμπόρευμα προς 50 € και το πούλησε προς 65 €. Ποιο ήταν το ποσοστό κέρδους (%) του εμπόρου επί της τιμής αγοράς;`,
+        tableData: { col1: 'Αγορά (€)', col2: 'Κέρδος (€)', r1: [50, 15], r2: [100, 'χ'] },
+        correctVal: 30,
+        correctStr: '30',
+        explanation: `Κέρδος: 65 － 50 ＝ 15 €. Ποσοστό κέρδους επί της τιμής αγοράς: (15 : 50) · 100 ＝ 30 %.`
       };
     }
   },
   {
     id: 'k_hard_4',
     generate: () => {
-      const capacityLit = 500;
-      const usedLit = 175;
-      const pctUsed = (usedLit / capacityLit) * 100; // 35%
-      const remLit = capacityLit - usedLit; // 325 l
       return {
-        text: `Μια δεξαμενή είχε αρχικά ${capacityLit} l νερό. Μετά από κατανάλωση, έχουν απομείνει στη δεξαμενή ${remLit} l νερό. Ποιο ποσοστό (%) του αρχικού νερού καταναλώθηκε;`,
-        tableData: { col1: 'Αρχικό (l)', col2: 'Κατανάλωση (l)', r1: [capacityLit, usedLit], r2: [100, 'χ'] },
-        correctVal: pctUsed,
-        correctStr: String(pctUsed),
-        explanation: `Το νερό που καταναλώθηκε είναι: ${capacityLit} － ${remLit} ＝ ${usedLit} l. Το ποσοστό κατανάλωσης επί του αρχικού όγκου είναι: (${usedLit} : ${capacityLit}) · 100 ＝ (175 : 500) · 100 ＝ ${pctUsed} %.`
+        text: `Μια δεξαμενή είχε αρχικά 500 l νερό. Μετά από κατανάλωση, έχουν απομείνει στη δεξαμενή 325 l νερό. Ποιο ποσοστό (%) του αρχικού νερού καταναλώθηκε;`,
+        tableData: { col1: 'Αρχικό (l)', col2: 'Κατανάλωση (l)', r1: [500, 175], r2: [100, 'χ'] },
+        correctVal: 35,
+        correctStr: '35',
+        explanation: `Νερό που καταναλώθηκε: 500 － 325 ＝ 175 l. Ποσοστό: (175 : 500) · 100 ＝ 35 %.`
       };
     }
   },
   {
     id: 'k_hard_5',
     generate: () => {
-      const origMembers = 150;
-      const leftMembers = 18;
-      const finalMembers = origMembers - leftMembers; // 132
-      const pctDrop = (leftMembers / origMembers) * 100; // 12%
       return {
-        text: `Ένας αθλητικός σύλλογος είχε ${origMembers} μέλη και φέτος τα μέλη του μειώθηκαν στα ${finalMembers}. Ποιο ήταν το ποσοστό μείωσης (%) των μελών του συλλόγου;`,
-        tableData: { col1: 'Αρχικά Μέλη', col2: 'Μείωση', r1: [origMembers, leftMembers], r2: [100, 'χ'] },
-        correctVal: pctDrop,
-        correctStr: String(pctDrop),
-        explanation: `Τα μέλη που αποχώρησαν είναι: ${origMembers} － ${finalMembers} ＝ ${leftMembers}. Το ποσοστό μείωσης είναι: (${leftMembers} : ${origMembers}) · 100 ＝ (18 : 150) · 100 ＝ ${pctDrop} %.`
+        text: `Ένας αθλητικός σύλλογος είχε 150 μέλη και φέτος τα μέλη του μειώθηκαν στα 132. Ποιο ήταν το ποσοστό μείωσης (%) των μελών του συλλόγου;`,
+        tableData: { col1: 'Αρχικά Μέλη', col2: 'Μείωση', r1: [150, 18], r2: [100, 'χ'] },
+        correctVal: 12,
+        correctStr: '12',
+        explanation: `Μέλη που αποχώρησαν: 150 － 132 ＝ 18. Ποσοστό μείωσης: (18 : 150) · 100 ＝ 12 %.`
       };
     }
   },
   {
     id: 'k_hard_6',
     generate: () => {
-      const origExamScore = 75;
-      const newExamScore = 90;
-      const gain = newExamScore - origExamScore; // 15 μόρια
-      const pctGain = (gain / origExamScore) * 100; // 20%
       return {
-        text: `Ένας μαθητής στο πρώτο τεστ συγκέντρωσε ${origExamScore} μόρια, ενώ στο δεύτερο τεστ βελτίωσε την επίδοσή του και έλαβε ${newExamScore} μόρια. Ποιο ήταν το ποσοστό βελτίωσης (%) της βαθμολογίας του;`,
-        tableData: { col1: '1ο Τεστ', col2: 'Βελτίωση', r1: [origExamScore, gain], r2: [100, 'χ'] },
-        correctVal: pctGain,
-        correctStr: String(pctGain),
-        explanation: `Η βελτίωση σε μόρια είναι: ${newExamScore} － ${origExamScore} ＝ ${gain}. Το ποσοστό βελτίωσης επί της αρχικής βαθμολογίας είναι: (${gain} : ${origExamScore}) · 100 ＝ (15 : 75) · 100 ＝ ${pctGain} %.`
+        text: `Ένας μαθητής στο πρώτο τεστ συγκέντρωσε 75 μόρια, ενώ στο δεύτερο τεστ βελτίωσε την επίδοσή του και έλαβε 90 μόρια. Ποιο ήταν το ποσοστό βελτίωσης (%) της βαθμολογίας του;`,
+        tableData: { col1: '1ο Τεστ', col2: 'Βελτίωση', r1: [75, 15], r2: [100, 'χ'] },
+        correctVal: 20,
+        correctStr: '20',
+        explanation: `Βελτίωση: 90 － 75 ＝ 15 μόρια. Ποσοστό επί της αρχικής βαθμολογίας: (15 : 75) · 100 ＝ 20 %.`
       };
     }
   },
   {
     id: 'k_hard_7',
     generate: () => {
-      const origGrams = 400;
-      const bakedGrams = 320;
-      const lossGrams = origGrams - bakedGrams; // 80 g
-      const pctLoss = (lossGrams / origGrams) * 100; // 20%
       return {
-        text: `Μια ζύμη βάρους ${origGrams} g μετά το ψήσιμο ζυγίζει ${bakedGrams} g λόγω απώλειας υγρασίας. Ποιο ποσοστό (%) του αρχικού της βάρους χάθηκε κατά το ψήσιμο;`,
-        tableData: { col1: 'Αρχικό Βάρος (g)', col2: 'Απώλεια (g)', r1: [origGrams, lossGrams], r2: [100, 'χ'] },
-        correctVal: pctLoss,
-        correctStr: String(pctLoss),
-        explanation: `Το βάρος που χάθηκε είναι: ${origGrams} － ${bakedGrams} ＝ ${lossGrams} g. Το ποσοστό απώλειας είναι: (${lossGrams} : ${origGrams}) · 100 ＝ (80 : 400) · 100 ＝ ${pctLoss} %.`
+        text: `Μια ζύμη βάρους 400 g μετά το ψήσιμο ζυγίζει 320 g λόγω απώλειας υγρασίας. Ποιο ποσοστό (%) του αρχικού της βάρους χάθηκε κατά το ψήσιμο;`,
+        tableData: { col1: 'Αρχικό (g)', col2: 'Απώλεια (g)', r1: [400, 80], r2: [100, 'χ'] },
+        correctVal: 20,
+        correctStr: '20',
+        explanation: `Απώλεια: 400 － 320 ＝ 80 g. Ποσοστό απώλειας: (80 : 400) · 100 ＝ 20 %.`
       };
     }
   },
   {
     id: 'k_hard_8',
     generate: () => {
-      const origHours = 50;
-      const newHours = 41;
-      const diffHours = origHours - newHours; // 9 h
-      const pctSaved = (diffHours / origHours) * 100; // 18%
       return {
-        text: `Μια βιομηχανική μηχανή μετά από συντήρηση ολοκληρώνει μια παρτίδα παραγωγής σε ${newHours} ώρες αντί για τις ${origHours} ώρες που χρειαζόταν προηγουμένως. Ποιο είναι το ποσοστό μείωσης (%) του χρόνου λειτουργίας;`,
-        tableData: { col1: 'Αρχικός Χρόνος (h)', col2: 'Μείωση Χρόνου (h)', r1: [origHours, diffHours], r2: [100, 'χ'] },
-        correctVal: pctSaved,
-        correctStr: String(pctSaved),
-        explanation: `Ο χρόνος που εξοικονομήθηκε είναι: ${origHours} － ${newHours} ＝ ${diffHours} ώρες. Το ποσοστό μείωσης είναι: (${diffHours} : ${origHours}) · 100 ＝ (9 : 50) · 100 ＝ ${pctSaved} %.`
+        text: `Μια βιομηχανική μηχανή μετά από συντήρηση ολοκληρώνει μια παρτίδα παραγωγής σε 41 ώρες αντί για τις 50 ώρες που χρειαζόταν προηγουμένως. Ποιο είναι το ποσοστό μείωσης (%) του χρόνου λειτουργίας;`,
+        tableData: { col1: 'Αρχικός (h)', col2: 'Μείωση (h)', r1: [50, 9], r2: [100, 'χ'] },
+        correctVal: 18,
+        correctStr: '18',
+        explanation: `Χρόνος που εξοικονομήθηκε: 50 － 41 ＝ 9 ώρες. Ποσοστό: (9 : 50) · 100 ＝ 18 %.`
       };
     }
   },
   {
     id: 'k_hard_9',
     generate: () => {
-      const totalKm = 800;
-      const traveledKm = 520;
-      const pct = (traveledKm / totalKm) * 100; // 65%
       return {
-        text: `Από μια συνολική διαδρομή ${totalKm} km ενός ιστιοπλοϊκού αγώνα, ένα σκάφος έχει διανύσει ${traveledKm} km. Ποιο ποσοστό (%) της συνολικής διαδρομής έχει καλύψει το σκάφος;`,
-        tableData: { col1: 'Συνολική Διαδρομή (km)', col2: 'Διανυθείσα (km)', r1: [totalKm, traveledKm], r2: [100, 'χ'] },
-        correctVal: pct,
-        correctStr: String(pct),
-        explanation: `Το ποσοστό της διαδρομής είναι: (${traveledKm} : ${totalKm}) · 100 ＝ (520 : 800) · 100 ＝ 0,65 · 100 ＝ ${pct} %.`
+        text: `Από μια συνολική διαδρομή 800 km ενός ιστιοπλοϊκού αγώνα, ένα σκάφος έχει διανύσει 520 km. Ποιο ποσοστό (%) της συνολικής διαδρομής έχει καλύψει το σκάφος;`,
+        tableData: { col1: 'Συνολική (km)', col2: 'Διανυθείσα (km)', r1: [800, 520], r2: [100, 'χ'] },
+        correctVal: 65,
+        correctStr: '65',
+        explanation: `Ποσοστό: (520 : 800) · 100 ＝ 0,65 · 100 ＝ 65 %.`
       };
     }
   },
   {
     id: 'k_hard_10',
     generate: () => {
-      const origBattery = 5000; // mAh
-      const drain = 1750;
-      const finalBattery = origBattery - drain; // 3250 mAh
-      const pctDrain = (drain / origBattery) * 100; // 35%
       return {
-        text: `Μια μπαταρία χωρητικότητας ${origBattery} mAh μετά από πολύωρη χρήση έχει αποθηκευμένη ενέργεια ${finalBattery} mAh. Ποιο ποσοστό (%) της αρχικής της ενέργειας καταναλώθηκε;`,
-        tableData: { col1: 'Αρχική Ενέργεια (mAh)', col2: 'Κατανάλωση (mAh)', r1: [origBattery, drain], r2: [100, 'χ'] },
-        correctVal: pctDrain,
-        correctStr: String(pctDrain),
-        explanation: `Η ενέργεια που καταναλώθηκε είναι: ${origBattery} － ${finalBattery} ＝ ${drain} mAh. Το ποσοστό κατανάλωσης είναι: (${drain} : ${origBattery}) · 100 ＝ (1.750 : 5.000) · 100 ＝ ${pctDrain} %.`
+        text: `Μια μπαταρία χωρητικότητας 5.000 mAh μετά από πολύωρη χρήση έχει αποθηκευμένη ενέργεια 3.250 mAh. Ποιο ποσοστό (%) της αρχικής της ενέργειας καταναλώθηκε;`,
+        tableData: { col1: 'Αρχική (mAh)', col2: 'Κατανάλωση', r1: ['5.000', '1.750'], r2: [100, 'χ'] },
+        correctVal: 35,
+        correctStr: '35',
+        explanation: `Ενέργεια που καταναλώθηκε: 5.000 － 3.250 ＝ 1.750 mAh. Ποσοστό: (1.750 : 5.000) · 100 ＝ 35 %.`
       };
     }
   }
@@ -374,7 +305,7 @@ const HARD_PROBLEMS_POOL = [
 function generateQuestions() {
   const qList = [];
 
-  // Q1 (Input - Decimal): Εύρεση ποσοστού έκπτωσης (καθαρή διαίρεση)
+  // Q1 (Input - Decimal)
   {
     const origPrice = pickRandom([50, 80, 100, 120]);
     const discPct = 25;
@@ -389,22 +320,18 @@ function generateQuestions() {
       prompt: `Ένα προϊόν κόστιζε αρχικά ${origPrice} € και πωλείται τώρα προς ${finalPrice} €. Ποιο είναι το ποσοστό έκπτωσης (%) που έγινε;`,
       correctVal: discPct,
       correctStr: String(discPct),
-      explanation: `Βρίσκουμε τη διαφορά: ${origPrice} － ${finalPrice} ＝ ${diff} €. Υπολογίζουμε το ποσοστό επί της αρχικής τιμής: (${diff} : ${origPrice}) · 100 ＝ ${discPct} %.`
+      explanation: `Διαφορά: ${origPrice} － ${finalPrice} ＝ ${diff} €. Ποσοστό επί της αρχικής τιμής: (${diff} : ${origPrice}) · 100 ＝ ${discPct} %.`
     });
   }
 
-  // Q2 (MCQ): Βάση υπολογισμού του ποσοστού
+  // Q2 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
   {
     const correctConcept = 'Πάντοτε στην αρχική τιμή, γιατί αυτή αποτελεί το 100 % της σύγκρισης';
-    const fake1 = 'Πάντοτε στην τελική τιμή, γιατί αυτή πληρώνουμε στο ταμείο';
-    const fake2 = 'Στο άθροισμα της αρχικής και της τελικής τιμής';
-    const fake3 = 'Δεν έχει σημασία σε ποια τιμή θα το υπολογίσουμε';
-
     const options = [
       { text: correctConcept, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Πάντοτε στην τελική τιμή, γιατί αυτή πληρώνουμε στο ταμείο', isCorrect: false },
+      { text: 'Στο άθροισμα της αρχικής και της τελικής τιμής', isCorrect: false },
+      { text: 'Δεν έχει σημασία σε ποια τιμή θα το υπολογίσουμε', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -419,7 +346,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (Input - Decimal): Εύρεση ποσοστού αύξησης
+  // Q3 (Input - Decimal)
   {
     const origP = pickRandom([40, 50, 80]);
     const incPct = 20;
@@ -434,22 +361,18 @@ function generateQuestions() {
       prompt: `Η τιμή ενός προϊόντος ανέβηκε από τα ${origP} € στα ${finalP} €. Ποιο ήταν το ποσοστό αύξησης (%) της τιμής;`,
       correctVal: incPct,
       correctStr: String(incPct),
-      explanation: `Η διαφορά είναι: ${finalP} － ${origP} ＝ ${diff} €. Το ποσοστό αύξησης επί της αρχικής τιμής είναι: (${diff} : ${origP}) · 100 ＝ ${incPct} %.`
+      explanation: `Διαφορά: ${finalP} － ${origP} ＝ ${diff} €. Ποσοστό αύξησης επί της αρχικής τιμής: (${diff} : ${origP}) · 100 ＝ ${incPct} %.`
     });
   }
 
-  // Q4 (MCQ): Τύπος υπολογισμού ποσοστού
+  // Q4 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
   {
     const correctFormula = 'Ποσοστό % ＝ (Διαφορά Τιμών : Αρχική Τιμή) · 100';
-    const fake1 = 'Ποσοστό % ＝ (Διαφορά Τιμών : Τελική Τιμή) · 100';
-    const fake2 = 'Ποσοστό % ＝ (Αρχική Τιμή : Τελική Τιμή) · 100';
-    const fake3 = 'Ποσοστό % ＝ (Τελική Τιμή － 100) : Αρχική Τιμή';
-
     const options = [
       { text: correctFormula, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Ποσοστό % ＝ (Διαφορά Τιμών : Τελική Τιμή) · 100', isCorrect: false },
+      { text: 'Ποσοστό % ＝ (Αρχική Τιμή : Τελική Τιμή) · 100', isCorrect: false },
+      { text: 'Ποσοστό % ＝ (Τελική Τιμή － 100) : Αρχική Τιμή', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -464,7 +387,7 @@ function generateQuestions() {
     });
   }
 
-  // Q5 (Input - Decimal): Υπολογισμός ποσοστού κέρδους
+  // Q5 (Input - Decimal)
   {
     const cost = pickRandom([20, 25, 40, 50]);
     const profitPct = pickRandom([10, 15, 25, 50]);
@@ -479,24 +402,18 @@ function generateQuestions() {
       prompt: `Ένας καταστηματάρχης αγόρασε ένα είδος προς ${cost} € και το πούλησε προς ${sell} €. Ποιο ήταν το ποσοστό κέρδους (%) επί της τιμής αγοράς;`,
       correctVal: profitPct,
       correctStr: String(profitPct),
-      explanation: `Το κέρδος είναι: ${sell} － ${cost} ＝ ${profitEur} €. Το ποσοστό κέρδους επί της τιμής αγοράς είναι: (${profitEur} : ${cost}) · 100 ＝ ${profitPct} %.`
+      explanation: `Κέρδος: ${sell} － ${cost} ＝ ${profitEur} €. Ποσοστό κέρδους: (${profitEur} : ${cost}) · 100 ＝ ${profitPct} %.`
     });
   }
 
-  // Q6 (MCQ): Έλεγχος κατεύθυνσης μεταβολής
+  // Q6 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
   {
-    const origVal = 100;
-    const finalVal = 80;
     const correctStatement = 'Έχουμε μείωση (έκπτωση) 20 %, επειδή η τελική τιμή είναι μικρότερη από την αρχική';
-    const fake1 = 'Έχουμε αύξηση 20 %, επειδή αφαιρέσαμε 20 €';
-    const fake2 = 'Έχουμε μείωση 25 %, επειδή διαιρούμε με το 80';
-    const fake3 = 'Δεν υπάρχει καμία ποσοστιαία μεταβολή';
-
     const options = [
       { text: correctStatement, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Έχουμε αύξηση 20 %, επειδή αφαιρέσαμε 20 €', isCorrect: false },
+      { text: 'Έχουμε μείωση 25 %, επειδή διαιρούμε με το 80', isCorrect: false },
+      { text: 'Δεν υπάρχει καμία ποσοστιαία μεταβολή', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -511,7 +428,7 @@ function generateQuestions() {
     });
   }
 
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
+  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή
   {
     const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const stdProb1 = shuffledStd[0].generate();
@@ -556,7 +473,7 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας
   {
     const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const hardProb1 = shuffledHard[0].generate();
@@ -575,7 +492,7 @@ function generateQuestions() {
       explanation: hardProb1.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας)
+    // Q10 (MCQ)
     const val10 = hardProb2.correctVal;
     const fake10A = typeof val10 === 'number' ? formatNum(val10 + randInt(4, 10)) : '0';
     const fake10B = typeof val10 === 'number' ? formatNum(Math.max(3, val10 - randInt(3, 8))) : '0';
@@ -610,7 +527,6 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
@@ -623,7 +539,6 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (0-9 και κομμα)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -641,7 +556,6 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -650,7 +564,6 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
   const handleCheckAnswers = () => {
     let currentScore = 0;
 
@@ -689,30 +602,30 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
               Ασκήσεις: Εύρεση Ποσοστού από Αρχική και Τελική Τιμή
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               10 απαιτητικές δραστηριότητες με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Υπολογίστε τη διαφορά τιμών, αναγάγετε τη μεταβολή σε ποσοστό επί της αρχικής τιμής και ελέγξτε τις επιδόσεις σας.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
+          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
             <span className="text-xs sm:text-sm text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -735,7 +648,7 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -744,7 +657,7 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
                 }`}
               >
                 {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
                   <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
@@ -762,39 +675,37 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
                 </div>
 
                 {/* Εκφωνηση */}
-                <div className="space-y-3 mb-5">
+                <div className="space-y-2 mb-2">
                   <p className="text-xs sm:text-sm font-semibold text-slate-500">
                     {q.instruction}
                   </p>
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
 
-                  {/* Πινακας Τιμων (αν υπαρχει) */}
+                  {/* Πινακας Τιμων (Responsive Χωρις Scroll) */}
                   {q.tableData && (
-                    <div className="inline-block bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 shadow-inner my-2 font-mono text-xs sm:text-sm">
-                      <div className="grid grid-cols-2 gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
-                        <span className="bg-blue-100/60 px-2 py-0.5 rounded-lg text-blue-900">{q.tableData.col1}</span>
-                        <span className="bg-amber-100/60 px-2 py-0.5 rounded-lg text-amber-900">{q.tableData.col2}</span>
+                    <div className="w-full max-w-xs sm:max-w-sm bg-slate-50 border-2 border-slate-200 rounded-2xl p-2.5 my-2 shadow-inner font-mono text-xs">
+                      <div className="grid grid-cols-2 gap-2 font-bold border-b border-slate-200 pb-1 text-slate-600 text-center">
+                        <span className="bg-blue-100/60 px-1.5 py-0.5 rounded text-blue-900 truncate">{q.tableData.col1}</span>
+                        <span className="bg-amber-100/60 px-1.5 py-0.5 rounded text-amber-900 truncate">{q.tableData.col2}</span>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 pt-2 text-center font-bold text-slate-800">
+                      <div className="grid grid-cols-2 gap-2 pt-1.5 text-center font-bold text-slate-800">
                         <span>{q.tableData.r1[0]}</span>
                         <span className="text-indigo-700">{q.tableData.r1[1]}</span>
                         <span>{q.tableData.r2[0]}</span>
-                        <span className="text-amber-600 font-black text-base">
-                          {q.tableData.r2[1]}
-                        </span>
+                        <span className="text-amber-600 font-black text-sm">{q.tableData.r2[1]}</span>
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* Περιοχη Απαντησης */}
-                <div className="py-2">
+                <div className="py-2 pt-2.5">
                   
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -803,7 +714,7 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
                       <span className="text-xs text-slate-500">
                         (Ακέραιος η δεκαδικός με κόμμα)
@@ -811,9 +722,9 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) */}
+                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -822,15 +733,17 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 sm:p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm md:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -849,7 +762,7 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -880,7 +793,7 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -889,24 +802,24 @@ export default function KseroArxikiTelikiTimiExercisesPage() {
       </div>
 
       {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
         <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΣΚΟΡ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
+                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
               </span>
             </div>
 
             <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΠΟΣΟΣΤΟ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
                 {Math.round((score / 10) * 100)} %
               </span>
             </div>
