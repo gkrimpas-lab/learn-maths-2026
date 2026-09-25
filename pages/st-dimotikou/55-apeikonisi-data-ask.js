@@ -22,7 +22,7 @@ function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
+// Μορφοποιηση αριθμου
 function formatNum(val, decimals = 1) {
   if (Number.isInteger(val)) return String(val);
   const rounded = Number(val.toFixed(decimals));
@@ -30,14 +30,13 @@ function formatNum(val, decimals = 1) {
 }
 
 // =========================================================================
-// ΟΠΤΙΚΑ ΒΟΗΘΗΤΙΚΑ COMPONENTS ΓΙΑ ΡΑΒΔΟΓΡΑΜΜΑΤΑ & ΕΙΚΟΝΟΓΡΑΜΜΑΤΑ
+// ΟΠΤΙΚΑ ΒΟΗΘΗΤΙΚΑ COMPONENTS (ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL)
 // =========================================================================
 
-function MiniBarChart({ data, maxVal = 100, yStep = 20, height = 180 }) {
-  const chartHeight = 130;
-  const chartWidth = 320;
-  const paddingLeft = 40;
-  const paddingBottom = 30;
+function MiniBarChart({ data, maxVal = 100, yStep = 20 }) {
+  const chartHeight = 150;
+  const paddingLeft = 45;
+  const chartWidth = 460;
 
   const yTicks = [];
   for (let v = 0; v <= maxVal; v += yStep) {
@@ -45,24 +44,24 @@ function MiniBarChart({ data, maxVal = 100, yStep = 20, height = 180 }) {
   }
 
   const barCount = data.length;
-  const barWidth = Math.min(42, Math.floor(220 / barCount));
+  const barWidth = Math.min(42, Math.floor(280 / barCount));
   const totalBarWidth = barWidth * barCount;
   const gap = (chartWidth - paddingLeft - totalBarWidth) / (barCount + 1);
 
   return (
-    <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 my-3 max-w-md shadow-inner">
-      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center mb-2">
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-3.5 sm:p-5 my-3.5 w-full max-w-2xl shadow-inner">
+      <div className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center mb-2 sm:mb-3">
         ΣΧΗΜΑ: ΡΑΒΔΟΓΡΑΜΜΑ ΔΕΔΟΜΕΝΩΝ
       </div>
-      <div className="w-full aspect-[16/9] bg-white rounded-xl border border-slate-200 p-2 shadow-sm">
-        <svg viewBox="0 0 350 170" className="w-full h-full overflow-visible">
+      <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-white rounded-2xl border border-slate-200 p-2 sm:p-3 shadow-sm flex items-center justify-center">
+        <svg viewBox="0 0 490 200" className="w-full h-auto max-h-[220px] overflow-visible">
           {/* Οριζοντιες γραμμες πλεγματος */}
           {yTicks.map((val) => {
-            const y = chartHeight - (val / maxVal) * (chartHeight - 20) + 10;
+            const y = chartHeight + 15 - (val / maxVal) * chartHeight;
             return (
               <g key={`bar-tick-${val}`}>
-                <line x1={paddingLeft} y1={y} x2="340" y2={y} stroke="#f1f5f9" strokeWidth="1" />
-                <text x={paddingLeft - 6} y={y + 3.5} fontSize="9" fontWeight="bold" fill="#64748b" textAnchor="end">
+                <line x1={paddingLeft} y1={y} x2="475" y2={y} stroke="#f1f5f9" strokeWidth="1.5" />
+                <text x={paddingLeft - 8} y={y + 4} fontSize="11" fontWeight="bold" fill="#64748b" textAnchor="end">
                   {val}
                 </text>
               </g>
@@ -70,23 +69,23 @@ function MiniBarChart({ data, maxVal = 100, yStep = 20, height = 180 }) {
           })}
 
           {/* Αξονες */}
-          <line x1={paddingLeft} y1={chartHeight + 10} x2="340" y2={chartHeight + 10} stroke="#334155" strokeWidth="2" />
-          <line x1={paddingLeft} y1={chartHeight + 10} x2={paddingLeft} y2="10" stroke="#334155" strokeWidth="2" />
+          <line x1={paddingLeft} y1={chartHeight + 15} x2="480" y2={chartHeight + 15} stroke="#334155" strokeWidth="2.5" />
+          <line x1={paddingLeft} y1={chartHeight + 15} x2={paddingLeft} y2="10" stroke="#334155" strokeWidth="2.5" />
 
           {/* Ραβδοι */}
           {data.map((item, idx) => {
             const bx = paddingLeft + gap + idx * (barWidth + gap);
-            const bHeight = (item.value / maxVal) * (chartHeight - 20);
-            const by = chartHeight + 10 - bHeight;
+            const bHeight = (item.value / maxVal) * chartHeight;
+            const by = chartHeight + 15 - bHeight;
             const barColor = item.color || '#3b82f6';
 
             return (
               <g key={`bar-rect-${idx}`}>
-                <rect x={bx} y={by} width={barWidth} height={Math.max(bHeight, 2)} fill={barColor} rx="4" />
-                <text x={bx + barWidth / 2} y={by - 3} fontSize="10" fontWeight="bold" fill="#0f172a" textAnchor="middle">
+                <rect x={bx} y={by} width={barWidth} height={Math.max(bHeight, 2)} fill={barColor} rx="5" />
+                <text x={bx + barWidth / 2} y={by - 4} fontSize="12" fontWeight="900" fill="#0f172a" textAnchor="middle">
                   {item.value}
                 </text>
-                <text x={bx + barWidth / 2} y={chartHeight + 24} fontSize="9.5" fontWeight="bold" fill="#475569" textAnchor="middle">
+                <text x={bx + barWidth / 2} y={chartHeight + 35} fontSize="11" fontWeight="bold" fill="#475569" textAnchor="middle">
                   {item.label}
                 </text>
               </g>
@@ -100,9 +99,9 @@ function MiniBarChart({ data, maxVal = 100, yStep = 20, height = 180 }) {
 
 function MiniPictogram({ items, legend }) {
   return (
-    <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 my-3 max-w-md shadow-inner space-y-2.5">
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-3 sm:p-5 my-3.5 w-full max-w-2xl shadow-inner space-y-2.5">
       <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 px-1">
-        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+        <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
           ΣΧΗΜΑ: ΕΙΚΟΝΟΓΡΑΜΜΑ
         </span>
         <span className="text-xs font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-amber-900 font-mono">
@@ -110,13 +109,13 @@ function MiniPictogram({ items, legend }) {
         </span>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 p-2.5 space-y-2 text-xs font-mono">
+      <div className="bg-white rounded-2xl border border-slate-200 p-2.5 sm:p-3 space-y-2 text-xs font-mono">
         {items.map((it, idx) => (
-          <div key={`pic-${idx}`} className="flex items-center justify-between gap-2 p-1.5 bg-slate-50 rounded-lg">
-            <span className="font-sans font-bold text-slate-700 w-24 shrink-0 truncate">
+          <div key={`pic-${idx}`} className="flex items-center justify-between gap-2 p-1.5 sm:p-2 bg-slate-50 rounded-xl">
+            <span className="font-sans font-bold text-slate-700 w-24 sm:w-28 shrink-0 truncate">
               {it.label}:
             </span>
-            <div className="flex flex-wrap items-center gap-1.5 grow select-none text-base">
+            <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 grow select-none text-base sm:text-lg">
               {Array.from({ length: it.symbols }).map((_, sIdx) => (
                 <span key={`sym-icon-${sIdx}`}>{it.icon}</span>
               ))}
@@ -127,7 +126,7 @@ function MiniPictogram({ items, legend }) {
               )}
             </div>
             {it.showTotal !== false && (
-              <span className="font-bold text-slate-900 w-12 text-right shrink-0">
+              <span className="font-bold text-slate-900 w-10 text-right shrink-0">
                 {it.value}
               </span>
             )}
@@ -160,7 +159,7 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: totalUnits,
         correctStr: String(totalUnits),
         unit: 'kg',
-        explanation: `Στο εικονόγραμμα υπάρχουν ${fullSyms} σύμβολα. Βάσει του υπομνήματος (📦 ＝ ${scale} kg), υπολογίζουμε: ${fullSyms} · ${scale} ＝ ${totalUnits} kg.`
+        explanation: `Στο εικονόγραμμα υπάρχουν ${fullSyms} σύμβολα. Βάσει του υπομνήματος (📦 ＝ ${scale} kg): ${fullSyms} · ${scale} ＝ ${totalUnits} kg.`
       };
     }
   },
@@ -278,7 +277,7 @@ const STANDARD_PROBLEMS_POOL = [
         },
         correctVal: totalVal,
         correctStr: formatNum(totalVal),
-        unit: 'οχήματα',
+        unit: 'αυτοκίνητα',
         explanation: `Έχουμε ${fullSyms} ολόκληρα σύμβολα (${fullSyms} · 5 ＝ ${fullSyms * 5}) και 1 μισό σύμβολο (2,5 οχήματα). Σύνολο: ${formatNum(totalVal)} οχήματα.`
       };
     }
@@ -303,7 +302,7 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: bus + car,
         correctStr: String(bus + car),
         unit: 'μαθητές',
-        explanation: `Διαβάζουμε από το ραβδόγραμμα: Λεωφορείο ＝ ${bus} και Αυτοκίνητο ＝ ${car}. Σύνολο μετακίνησης με όχημα: ${bus} ＋ ${car} ＝ ${bus + car} μαθητές.`
+        explanation: `Διαβάζουμε: Λεωφορείο ＝ ${bus} και Αυτοκίνητο ＝ ${car}. Σύνολο: ${bus} ＋ ${car} ＝ ${bus + car} μαθητές.`
       };
     }
   },
@@ -376,14 +375,13 @@ const HARD_PROBLEMS_POOL = [
         correctVal: avg,
         correctStr: String(avg),
         unit: 'κιβώτια',
-        explanation: `1ο Βήμα: Διαβάζουμε τα ύψη και αθροίζουμε τη συνολική παραγωγή: 40 ＋ 60 ＋ 50 ＋ 70 ＝ ${total} κιβώτια. 2ο Βήμα: Μέσος όρος: ${total} : 4 ＝ ${avg} κιβώτια ανά ημέρα.`
+        explanation: `1ο Βήμα: Συνολική παραγωγή: 40 ＋ 60 ＋ 50 ＋ 70 ＝ ${total} κιβώτια. 2ο Βήμα: Μέσος όρος: ${total} : 4 ＝ ${avg} κιβώτια ανά ημέρα.`
       };
     }
   },
   {
     id: 'data_hard_2',
     generate: () => {
-      const totalStudents = 120;
       const soccer = 48; // 40%
       const basket = 36; // 30%
       const track = 36; // 30%
@@ -401,7 +399,7 @@ const HARD_PROBLEMS_POOL = [
         correctVal: 30,
         correctStr: '30',
         unit: '%',
-        explanation: `Από το ραβδόγραμμα, ο στίβος έχει 36 μαθητές. Σε σύνολο 120 μαθητών: (36 : 120) · 100 ＝ 0,30 · 100 ＝ 30 %.`
+        explanation: `Από το ραβδόγραμμα, ο στίβος έχει 36 μαθητές. Σε σύνολο 120 μαθητών: (36 : 120) · 100 ＝ 30 %.`
       };
     }
   },
@@ -456,33 +454,27 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'data_hard_5',
     generate: () => {
-      const maxVal = 180;
-      const steps = 6;
-      const stepVal = maxVal / steps; // 30
       return {
         text: `Στον κατακόρυφο άξονα ενός ραβδογράμματος, το μέγιστο ύψος είναι 180 και ο άξονας χωρίζεται σε 6 ίσα διαστήματα (υποδιαιρέσεις). Πόσες μονάδες αντιπροσωπεύει κάθε διάστημα της κλίμακας;`,
-        correctVal: stepVal,
-        correctStr: String(stepVal),
+        correctVal: 30,
+        correctStr: '30',
         unit: 'μονάδες',
-        explanation: `Διαιρούμε το μέγιστο ύψος με τον αριθμό των ίσων διαστημάτων: 180 : 6 ＝ ${stepVal} μονάδες ανά διάστημα.`
+        explanation: `Διαιρούμε το μέγιστο ύψος με τον αριθμό των ίσων διαστημάτων: 180 : 6 ＝ 30 μονάδες ανά διάστημα.`
       };
     }
   },
   {
     id: 'data_hard_6',
     generate: () => {
-      const a = 35;
-      const b = 45;
-      const c = 20;
       return {
         text: `Στο παρακάτω ραβδόγραμμα αναγνωστών 100 συνολικά ατόμων, ποιο είναι το ποσοστό (%) των αναγνωστών της εφημερίδας Β;`,
         barChart: {
           maxVal: 50,
           yStep: 10,
           data: [
-            { label: 'Εφημερίδα Α', value: a, color: '#64748b' },
-            { label: 'Εφημερίδα Β', value: b, color: '#3b82f6' },
-            { label: 'Εφημερίδα Γ', value: c, color: '#10b981' }
+            { label: 'Εφημερίδα Α', value: 35, color: '#64748b' },
+            { label: 'Εφημερίδα Β', value: 45, color: '#3b82f6' },
+            { label: 'Εφημερίδα Γ', value: 20, color: '#10b981' }
           ]
         },
         correctVal: 45,
@@ -519,16 +511,14 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'data_hard_9',
     generate: () => {
-      const girls = 28;
-      const boys = 32;
       return {
         text: `Στο ραβδόγραμμα κατανομής δύο τμημάτων της ΣΤ' τάξης, πόσα περισσότερα είναι τα αγόρια από τα κορίτσια;`,
         barChart: {
           maxVal: 40,
           yStep: 10,
           data: [
-            { label: 'Κορίτσια', value: girls, color: '#ec4899' },
-            { label: 'Αγόρια', value: boys, color: '#3b82f6' }
+            { label: 'Κορίτσια', value: 28, color: '#ec4899' },
+            { label: 'Αγόρια', value: 32, color: '#3b82f6' }
           ]
         },
         correctVal: 4,
@@ -541,27 +531,22 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'data_hard_10',
     generate: () => {
-      const q1 = 120;
-      const q2 = 180;
-      const q3 = 150;
-      const q4 = 210;
-      const total = q1 + q2 + q3 + q4; // 660
       return {
         text: `Στο παρακάτω τριμηνιαίο ραβδόγραμμα καταγράφηκαν οι πωλήσεις μιας επιχείρησης. Ποιες ήταν οι συνολικές πωλήσεις ολόκληρου του έτους;`,
         barChart: {
           maxVal: 240,
           yStep: 60,
           data: [
-            { label: "Α' Τρίμηνο", value: q1, color: '#38bdf8' },
-            { label: "Β' Τρίμηνο", value: q2, color: '#3b82f6' },
-            { label: "Γ' Τρίμηνο", value: q3, color: '#2563eb' },
-            { label: "Δ' Τρίμηνο", value: q4, color: '#1d4ed8' }
+            { label: "Α' Τρίμηνο", value: 120, color: '#38bdf8' },
+            { label: "Β' Τρίμηνο", value: 180, color: '#3b82f6' },
+            { label: "Γ' Τρίμηνο", value: 150, color: '#2563eb' },
+            { label: "Δ' Τρίμηνο", value: 210, color: '#1d4ed8' }
           ]
         },
-        correctVal: total,
-        correctStr: String(total),
+        correctVal: 660,
+        correctStr: '660',
         unit: 'πωλήσεις',
-        explanation: `Διαβάζουμε τα ύψη των 4 τριμήνων και αθροίζουμε: 120 ＋ 180 ＋ 150 ＋ 210 ＝ ${total} πωλήσεις.`
+        explanation: `Διαβάζουμε τα ύψη των 4 τριμήνων και αθροίζουμε: 120 ＋ 180 ＋ 150 ＋ 210 ＝ 660 πωλήσεις.`
       };
     }
   }
@@ -571,7 +556,7 @@ const HARD_PROBLEMS_POOL = [
 function generateQuestions() {
   const qList = [];
 
-  // Q1 (Input - Decimal): Ανάγνωση υπομνήματος εικονογράμματος
+  // Q1 (Input - Decimal)
   {
     const scale = pickRandom([4, 5, 8, 10]);
     const symbols = randInt(3, 6);
@@ -595,18 +580,14 @@ function generateQuestions() {
     });
   }
 
-  // Q2 (MCQ): Κανόνες ραβδογράμματος
+  // Q2 (MCQ)
   {
     const correctRule = 'Όλες οι ράβδοι πρέπει να έχουν αυστηρά το ίδιο πλάτος και ίσα κενά μεταξύ τους';
-    const fake1 = 'Οι ράβδοι πρέπει να έχουν διαφορετικό πλάτος ανάλογα με την προτίμηση';
-    const fake2 = 'Δεν χρειάζεται να αναγράφεται κλίμακα στον κατακόρυφο άξονα';
-    const fake3 = 'Τα κενά ανάμεσα στις ράβδους πρέπει να μεγαλώνουν συνεχώς';
-
     const options = [
       { text: correctRule, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Οι ράβδοι πρέπει να έχουν διαφορετικό πλάτος ανάλογα με την προτίμηση', isCorrect: false },
+      { text: 'Δεν χρειάζεται να αναγράφεται κλίμακα στον κατακόρυφο άξονα', isCorrect: false },
+      { text: 'Τα κενά ανάμεσα στις ράβδους πρέπει να μεγαλώνουν συνεχώς', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -621,7 +602,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (Input - Decimal): Εύρεση πλήθους συμβόλων για εικονόγραμμα
+  // Q3 (Input - Decimal)
   {
     const totalItems = pickRandom([40, 50, 60, 80, 100]);
     const scale = pickRandom([5, 10, 20]);
@@ -639,18 +620,14 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Τι είναι η συχνότητα
+  // Q4 (MCQ)
   {
     const correctConcept = 'Ο αριθμός που δείχνει πόσες φορές εμφανίζεται μια συγκεκριμένη τιμή ή επιλογή';
-    const fake1 = 'Το συνολικό άθροισμα όλων των αριθμών ενός προβλήματος';
-    const fake2 = 'Η διαφορά ανάμεσα στη μέγιστη και την ελάχιστη τιμή';
-    const fake3 = 'Το πλάτος της στήλης σε ένα ραβδόγραμμα';
-
     const options = [
       { text: correctConcept, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Το συνολικό άθροισμα όλων των αριθμών ενός προβλήματος', isCorrect: false },
+      { text: 'Η διαφορά ανάμεσα στη μέγιστη και την ελάχιστη τιμή', isCorrect: false },
+      { text: 'Το πλάτος της στήλης σε ένα ραβδόγραμμα', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -665,7 +642,7 @@ function generateQuestions() {
     });
   }
 
-  // Q5 (Input - Decimal): Ανάγνωση διαφοράς από ραβδόγραμμα
+  // Q5 (Input - Decimal)
   {
     const valHigh = randInt(25, 40);
     const valLow = randInt(10, 20);
@@ -691,18 +668,14 @@ function generateQuestions() {
     });
   }
 
-  // Q6 (MCQ): Γιατί είναι απαραίτητο το υπόμνημα
+  // Q6 (MCQ)
   {
     const correctReason = 'Επειδή χωρίς υπόμνημα δεν γνωρίζουμε πόσες μονάδες αντιπροσωπεύει κάθε εικόνα';
-    const fake1 = 'Για να ομορφύνει το χρώμα του γραφήματος';
-    const fake2 = 'Για να μην χρειάζεται να κάνουμε πολλαπλασιασμό';
-    const fake3 = 'Επειδή είναι υποχρεωτικό μόνο στα ραβδογράμματα';
-
     const options = [
       { text: correctReason, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
+      { text: 'Για να ομορφύνει το χρώμα του γραφήματος', isCorrect: false },
+      { text: 'Για να μην χρειάζεται να κάνουμε πολλαπλασιασμό', isCorrect: false },
+      { text: 'Επειδή είναι υποχρεωτικό μόνο στα ραβδογράμματα', isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -826,7 +799,6 @@ export default function ApeikonisiDataExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
@@ -839,7 +811,6 @@ export default function ApeikonisiDataExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -857,7 +828,6 @@ export default function ApeikonisiDataExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -866,7 +836,6 @@ export default function ApeikonisiDataExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
   const handleCheckAnswers = () => {
     let currentScore = 0;
 
@@ -905,30 +874,30 @@ export default function ApeikonisiDataExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
               Ασκήσεις: Ραβδόγραμμα &amp; Εικονόγραμμα
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με οπτικά γραφήματα και 4 ρεαλιστικά προβλήματα. Διαβάστε ραβδογράμματα, υπολογίστε συχνότητες από εικονογράμματα και εξάγετε ασφαλή συμπεράσματα.
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              10 απαιτητικές δραστηριότητες με οπτικά γραφήματα και 4 ρεαλιστικά προβλήματα. Διαβάστε κλίμακες αξόνων, ερμηνεύστε υπομνήματα εικονογραμμάτων και υπολογίστε συχνότητες, διαφορές και ποσοστά.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
+          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
             <span className="text-xs sm:text-sm text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους και οπτικά σχήματα.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -951,7 +920,7 @@ export default function ApeikonisiDataExercisesPage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -960,7 +929,7 @@ export default function ApeikonisiDataExercisesPage() {
                 }`}
               >
                 {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
                   <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
@@ -978,13 +947,13 @@ export default function ApeikonisiDataExercisesPage() {
                 </div>
 
                 {/* Εκφωνηση */}
-                <div className="space-y-2 mb-3">
+                <div className="space-y-2 mb-2">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm font-semibold text-slate-500">
                       {q.instruction}
                     </p>
                   )}
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
                 </div>
@@ -1006,11 +975,11 @@ export default function ApeikonisiDataExercisesPage() {
                 )}
 
                 {/* Περιοχη Απαντησης */}
-                <div className="py-2 pt-3">
+                <div className="py-2 pt-2.5">
                   
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -1019,7 +988,7 @@ export default function ApeikonisiDataExercisesPage() {
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
                       <span className="text-xs text-slate-500">
                         (Ακέραιος η δεκαδικός με κόμμα)
@@ -1027,9 +996,9 @@ export default function ApeikonisiDataExercisesPage() {
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) */}
+                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -1038,15 +1007,17 @@ export default function ApeikonisiDataExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3 rounded-2xl border text-left font-semibold text-xs sm:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -1065,7 +1036,7 @@ export default function ApeikonisiDataExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -1096,7 +1067,7 @@ export default function ApeikonisiDataExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -1105,24 +1076,24 @@ export default function ApeikonisiDataExercisesPage() {
       </div>
 
       {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
         <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΣΚΟΡ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
+                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
               </span>
             </div>
 
             <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
                 ΠΟΣΟΣΤΟ
               </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
                 {Math.round((score / 10) * 100)} %
               </span>
             </div>
