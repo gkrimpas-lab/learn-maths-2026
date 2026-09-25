@@ -33,51 +33,62 @@ function formatNum(val, decimals = 1) {
 // ΟΠΤΙΚΑ ΒΟΗΘΗΤΙΚΑ COMPONENTS (ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ, ΟΡΙΖΟΝΤΙΟ, ΚΥΚΛΙΚΟ)
 // =========================================================================
 
+// Αντικατάσταση των οπτικών components στο 57-alla-grafimata-ask.js
+
 function MiniLineChart({ points, maxVal = 30, yStep = 10, unit = '°C' }) {
-  const chartHeight = 110;
-  const paddingLeft = 35;
+  const chartHeight = 160;
+  const paddingLeft = 50;
+  const chartWidth = 490;
+  
   const yTicks = [];
   for (let v = 0; v <= maxVal; v += yStep) {
     yTicks.push(v);
   }
 
+  const stepX = (chartWidth - paddingLeft - 50) / Math.max(1, points.length - 1);
   const pts = points.map((p, i) => {
-    const px = paddingLeft + 30 + i * 75;
-    const py = chartHeight + 10 - (p.value / maxVal) * (chartHeight - 15);
+    const px = paddingLeft + 25 + i * stepX;
+    const py = chartHeight + 20 - (p.value / maxVal) * chartHeight;
     return { px, py, ...p };
   });
 
   const polylineStr = pts.map((p) => `${p.px},${p.py}`).join(' ');
 
   return (
-    <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 my-3 max-w-md shadow-inner">
-      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center mb-1">
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 sm:p-6 my-4 w-full max-w-2xl shadow-inner">
+      <div className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider text-center mb-3">
         ΣΧΗΜΑ: ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ
       </div>
-      <div className="w-full aspect-[16/9] bg-white rounded-xl border border-slate-200 p-2 shadow-sm">
-        <svg viewBox="0 0 340 150" className="w-full h-full overflow-visible">
+      <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-sm flex items-center justify-center">
+        <svg viewBox="0 0 520 230" className="w-full h-full overflow-visible">
+          {/* Οριζόντιες γραμμές πλέγματος */}
           {yTicks.map((val) => {
-            const y = chartHeight + 10 - (val / maxVal) * (chartHeight - 15);
+            const y = chartHeight + 20 - (val / maxVal) * chartHeight;
             return (
               <g key={`l-tick-${val}`}>
-                <line x1={paddingLeft} y1={y} x2="325" y2={y} stroke="#f1f5f9" strokeWidth="1" />
-                <text x={paddingLeft - 5} y={y + 3.5} fontSize="9" fontWeight="bold" fill="#64748b" textAnchor="end">
+                <line x1={paddingLeft} y1={y} x2={chartWidth} y2={y} stroke="#f1f5f9" strokeWidth="1.5" />
+                <text x={paddingLeft - 8} y={y + 4.5} fontSize="12" fontWeight="bold" fill="#64748b" textAnchor="end">
                   {val}{unit}
                 </text>
               </g>
             );
           })}
-          <line x1={paddingLeft} y1={chartHeight + 10} x2="330" y2={chartHeight + 10} stroke="#334155" strokeWidth="1.5" />
-          <line x1={paddingLeft} y1={chartHeight + 10} x2={paddingLeft} y2="10" stroke="#334155" strokeWidth="1.5" />
 
-          <polyline points={polylineStr} fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Άξονες X και Y */}
+          <line x1={paddingLeft} y1={chartHeight + 20} x2={chartWidth + 10} y2={chartHeight + 20} stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1={paddingLeft} y1={chartHeight + 20} x2={paddingLeft} y2="12" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
+
+          {/* Γραμμή γραφήματος */}
+          <polyline points={polylineStr} fill="none" stroke="#2563eb" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+          
+          {/* Σημεία και Ετικέτες */}
           {pts.map((p, idx) => (
             <g key={`pt-${idx}`}>
-              <circle cx={p.px} cy={p.py} r="4.5" fill="#3b82f6" stroke="#ffffff" strokeWidth="1.5" />
-              <text x={p.px} y={p.py - 6} fontSize="10" fontWeight="bold" fill="#0f172a" textAnchor="middle">
+              <circle cx={p.px} cy={p.py} r="6.5" fill="#3b82f6" stroke="#ffffff" strokeWidth="2.5" />
+              <text x={p.px} y={p.py - 10} fontSize="13" fontWeight="900" fill="#0f172a" textAnchor="middle">
                 {p.value}{unit}
               </text>
-              <text x={p.px} y={chartHeight + 23} fontSize="9" fontWeight="bold" fill="#475569" textAnchor="middle">
+              <text x={p.px} y={chartHeight + 42} fontSize="12" fontWeight="bold" fill="#475569" textAnchor="middle">
                 {p.label}
               </text>
             </g>
@@ -89,45 +100,45 @@ function MiniLineChart({ points, maxVal = 30, yStep = 10, unit = '°C' }) {
 }
 
 function MiniHBarChart({ data, maxVal = 50, xStep = 10, unit = '' }) {
-  const chartWidth = 240;
-  const paddingLeft = 70;
+  const chartWidth = 340;
+  const paddingLeft = 90;
   const xTicks = [];
   for (let v = 0; v <= maxVal; v += xStep) {
     xTicks.push(v);
   }
 
   return (
-    <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 my-3 max-w-md shadow-inner">
-      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center mb-1">
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 sm:p-6 my-4 w-full max-w-2xl shadow-inner">
+      <div className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider text-center mb-3">
         ΣΧΗΜΑ: ΟΡΙΖΟΝΤΙΟ ΡΑΒΔΟΓΡΑΜΜΑ
       </div>
-      <div className="w-full aspect-[16/9] bg-white rounded-xl border border-slate-200 p-2 shadow-sm">
-        <svg viewBox="0 0 340 150" className="w-full h-full overflow-visible">
+      <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-sm flex items-center justify-center">
+        <svg viewBox="0 0 480 200" className="w-full h-full overflow-visible">
           {xTicks.map((val) => {
             const x = paddingLeft + (val / maxVal) * chartWidth;
             return (
               <g key={`h-tick-${val}`}>
-                <line x1={x} y1="15" x2={x} y2="125" stroke="#f1f5f9" strokeWidth="1" />
-                <text x={x} y="137" fontSize="8.5" fontWeight="bold" fill="#64748b" textAnchor="middle">
+                <line x1={x} y1="15" x2={x} y2="155" stroke="#f1f5f9" strokeWidth="1.5" />
+                <text x={x} y="174" fontSize="11" fontWeight="bold" fill="#64748b" textAnchor="middle">
                   {val}{unit}
                 </text>
               </g>
             );
           })}
-          <line x1={paddingLeft} y1="125" x2={paddingLeft + chartWidth + 10} y2="125" stroke="#334155" strokeWidth="1.5" />
-          <line x1={paddingLeft} y1="125" x2={paddingLeft} y2="15" stroke="#334155" strokeWidth="1.5" />
+          <line x1={paddingLeft} y1="155" x2={paddingLeft + chartWidth + 15} y2="155" stroke="#334155" strokeWidth="2.5" />
+          <line x1={paddingLeft} y1="155" x2={paddingLeft} y2="15" stroke="#334155" strokeWidth="2.5" />
 
           {data.map((item, idx) => {
-            const bh = 20;
-            const by = 24 + idx * 32;
+            const bh = 26;
+            const by = 25 + idx * 42;
             const bw = (item.value / maxVal) * chartWidth;
             return (
               <g key={`hbar-it-${idx}`}>
-                <text x={paddingLeft - 6} y={by + 14} fontSize="9.5" fontWeight="bold" fill="#334155" textAnchor="end">
+                <text x={paddingLeft - 10} y={by + 18} fontSize="12" fontWeight="bold" fill="#334155" textAnchor="end">
                   {item.label}
                 </text>
-                <rect x={paddingLeft} y={by} width={Math.max(bw, 2)} height={bh} fill={item.color || '#3b82f6'} rx="4" />
-                <text x={paddingLeft + bw + 6} y={by + 14} fontSize="10" fontWeight="bold" fill="#0f172a">
+                <rect x={paddingLeft} y={by} width={Math.max(bw, 3)} height={bh} fill={item.color || '#3b82f6'} rx="5" />
+                <text x={paddingLeft + bw + 10} y={by + 19} fontSize="13" fontWeight="900" fill="#0f172a">
                   {item.value}{unit}
                 </text>
               </g>
@@ -148,13 +159,13 @@ function MiniPieChart({ slices }) {
     const sliceAngle = total > 0 ? (s.value / total) * 360 : 0;
     cumulativeAngle += sliceAngle;
 
-    const x1 = 70 + 55 * Math.cos((Math.PI * (startAngle - 90)) / 180);
-    const y1 = 70 + 55 * Math.sin((Math.PI * (startAngle - 90)) / 180);
-    const x2 = 70 + 55 * Math.cos((Math.PI * (startAngle + sliceAngle - 90)) / 180);
-    const y2 = 70 + 55 * Math.sin((Math.PI * (startAngle + sliceAngle - 90)) / 180);
+    const x1 = 100 + 80 * Math.cos((Math.PI * (startAngle - 90)) / 180);
+    const y1 = 100 + 80 * Math.sin((Math.PI * (startAngle - 90)) / 180);
+    const x2 = 100 + 80 * Math.cos((Math.PI * (startAngle + sliceAngle - 90)) / 180);
+    const y2 = 100 + 80 * Math.sin((Math.PI * (startAngle + sliceAngle - 90)) / 180);
     const largeArc = sliceAngle > 180 ? 1 : 0;
 
-    const pathData = `M 70 70 L ${x1} ${y1} A 55 55 0 ${largeArc} 1 ${x2} ${y2} Z`;
+    const pathData = `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArc} 1 ${x2} ${y2} Z`;
 
     return {
       ...s,
@@ -164,22 +175,24 @@ function MiniPieChart({ slices }) {
   });
 
   return (
-    <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 my-3 max-w-md shadow-inner space-y-2">
-      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 sm:p-6 my-4 w-full max-w-2xl shadow-inner space-y-3">
+      <div className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider text-center">
         ΣΧΗΜΑ: ΚΥΚΛΙΚΟ ΔΙΑΓΡΑΜΜΑ
       </div>
-      <div className="bg-white rounded-xl border border-slate-200 p-3 flex flex-col sm:flex-row items-center justify-around gap-3 shadow-sm">
-        <svg viewBox="0 0 140 140" className="w-28 h-28 shrink-0">
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-around gap-6 shadow-sm">
+        <svg viewBox="0 0 200 200" className="w-40 h-40 sm:w-48 sm:h-48 shrink-0 overflow-visible">
           {renderedSlices.map((s, idx) => (
-            <path key={`slice-${idx}`} d={s.pathData} fill={s.color} stroke="#ffffff" strokeWidth="1.5" />
+            <path key={`slice-${idx}`} d={s.pathData} fill={s.color} stroke="#ffffff" strokeWidth="2" />
           ))}
         </svg>
 
-        <div className="flex flex-col gap-1.5 text-xs font-mono">
+        <div className="flex flex-col gap-2.5 text-xs sm:text-sm font-mono w-full sm:w-auto">
           {slices.map((s, idx) => (
-            <div key={`pie-legend-${idx}`} className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }}></span>
-              <span className="font-sans font-bold text-slate-700">{s.label}:</span>
+            <div key={`pie-legend-${idx}`} className="flex items-center justify-between sm:justify-start gap-2.5 p-1.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: s.color }}></span>
+                <span className="font-sans font-bold text-slate-700">{s.label}:</span>
+              </div>
               <span className="font-bold text-slate-900">{s.value}% ({formatNum((s.value / 100) * 360, 0)}°)</span>
             </div>
           ))}
