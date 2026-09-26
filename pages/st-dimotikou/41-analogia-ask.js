@@ -12,7 +12,7 @@ function toCleanUppercase(str) {
     .toUpperCase();
 }
 
-// Βοηθητικο component εμφανισης κλασματος
+// Βοηθητικο component εμφανισης κλασματος (καθαρο JSX, οχι LaTeX)
 function Fraction({ num, den, className = '' }) {
   return (
     <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
@@ -26,29 +26,12 @@ function Fraction({ num, den, className = '' }) {
   );
 }
 
-// Βοηθητικη συναρτηση ΜΚΔ
-function getGCD(a, b) {
-  let x = Math.abs(Math.round(a));
-  let y = Math.abs(Math.round(b));
-  while (y) {
-    const t = y;
-    y = x % y;
-    x = t;
-  }
-  return x || 1;
-}
-
 // Τυχαιος ακεραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Τυχαια επιλογη απο πινακα
-function pickRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-// Μορφοποιηση αριθμου (ακεραιος ή δεκαδικος με κομμα)
+// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
 function formatNum(val, decimals = 2) {
   if (Number.isInteger(val)) return String(val);
   const rounded = Number(val.toFixed(decimals));
@@ -78,7 +61,7 @@ const STANDARD_PROBLEMS_POOL = [
     generate: () => {
       const kg1 = randInt(2, 5);
       const rate = randInt(4, 8) * 10;
-      const juice1 = kg1 * rate; // σε ml
+      const juice1 = kg1 * rate;
       const kg2 = randInt(6, 10);
       const juice2 = kg2 * rate;
       return {
@@ -109,7 +92,7 @@ const STANDARD_PROBLEMS_POOL = [
     id: 'p_std_4',
     generate: () => {
       const eggs1 = randInt(2, 4);
-      const flour1 = eggs1 * 125; // γραμμάρια
+      const flour1 = eggs1 * 125;
       const eggs2 = eggs1 + randInt(2, 4);
       const flour2 = eggs2 * 125;
       return {
@@ -155,7 +138,7 @@ const STANDARD_PROBLEMS_POOL = [
     id: 'p_std_7',
     generate: () => {
       const tiles1 = randInt(4, 8) * 10;
-      const area1 = tiles1 * 2; // π.χ. 0.2 m2 -> x10
+      const area1 = tiles1 * 2;
       const tiles2 = randInt(9, 15) * 10;
       const area2 = tiles2 * 2;
       return {
@@ -170,7 +153,7 @@ const STANDARD_PROBLEMS_POOL = [
     id: 'p_std_8',
     generate: () => {
       const lit1 = randInt(3, 5);
-      const paintKm1 = lit1 * 18; // m²
+      const paintKm1 = lit1 * 18;
       const lit2 = randInt(6, 9);
       const paintKm2 = lit2 * 18;
       return {
@@ -200,7 +183,7 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_std_10',
     generate: () => {
-      const min1 = randInt(2, 4) * 10; // π.χ. 20 min
+      const min1 = randInt(2, 4) * 10;
       const bottles1 = min1 * 45;
       const min2 = min1 + randInt(2, 4) * 10;
       const bottles2 = min2 * 45;
@@ -219,7 +202,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'p_hard_1',
     generate: () => {
-      const scaleVal = randInt(2, 5) * 50; // π.χ. 1:200
+      const scaleVal = randInt(2, 5) * 50;
       const mapCm = randInt(3, 7);
       const realMeters = (mapCm * scaleVal) / 100;
       return {
@@ -250,8 +233,8 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'p_hard_3',
     generate: () => {
-      const speed1 = randInt(6, 8) * 10; // π.χ. 60 km/h
-      const time1 = randInt(3, 5); // π.χ. 4 hours
+      const speed1 = randInt(6, 8) * 10;
+      const time1 = randInt(3, 5);
       const dist = speed1 * time1;
       const time2 = time1 - 1;
       const speed2 = dist / time2;
@@ -317,8 +300,8 @@ const HARD_PROBLEMS_POOL = [
     id: 'p_hard_7',
     generate: () => {
       const rGold = 18;
-      const rTotal = 24; // 18 καράτια
-      const totalWeight = randInt(4, 9) * 12; // γραμμάρια
+      const rTotal = 24;
+      const totalWeight = randInt(4, 9) * 12;
       const pureGold = (totalWeight * rGold) / rTotal;
       return {
         text: `Ένα χρυσό κόσμημα 18 καρατίων περιέχει 18 μέρη καθαρού χρυσού στα 24 μέρη συνολικής μάζας. Αν το κόσμημα ζυγίζει ${totalWeight} g, πόσα g καθαρού χρυσού περιέχει;`,
@@ -331,7 +314,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'p_hard_8',
     generate: () => {
-      const realDistKm = randInt(2, 6) * 15; // π.χ. 45 km
+      const realDistKm = randInt(2, 6) * 15;
       const realDistCm = realDistKm * 100000;
       const mapCm = randInt(3, 6);
       const scaleDiv = realDistCm / mapCm;
@@ -365,7 +348,7 @@ const HARD_PROBLEMS_POOL = [
       const k = randInt(5, 12);
       const salt = 3 * k;
       const water = 17 * k;
-      const solution = salt + water; // 20 * k
+      const solution = salt + water;
       return {
         text: `Σε ένα αλατόνερο ο λόγος του αλατιού προς το νερό είναι 3 : 17. Αν το συνολικό διάλυμα ζυγίζει ${solution} g, πόσα g αλατιού περιέχονται σε αυτό;`,
         correctVal: salt,
@@ -386,7 +369,7 @@ function generateQuestions() {
     const b = randInt(3, 8);
     const mult = randInt(2, 5);
     const c = a * mult;
-    const d = b * mult; // d = (b * c) / a
+    const d = b * mult;
     qList.push({
       id: 1,
       type: 'decimal_input',
@@ -438,14 +421,13 @@ function generateQuestions() {
     const c = randInt(2, 5);
     const m = randInt(2, 4);
     const d = b * m;
-    const a = (b * c * m) / d; // a = c
     const xVal = c;
     qList.push({
       id: 3,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 3 • ΑΓΝΩΣΤΟΣ ΣΕ ΑΚΡΑ ΘΕΣΗ',
       instruction: 'Υπολογίστε τον αριθμό χ:',
-      prompt: `Αν ισχύει η ισότητα των κλασμάτων χ/${b} ＝ ${c * m}/${d}, ποια είναι η τιμή του χ;`,
+      prompt: `Αν ισχύει η ισότητα των κλασμάτων, ποια είναι η τιμή του χ;`,
       correctVal: xVal,
       correctStr: String(xVal),
       fractionDisplay: { num1: 'χ', den1: b, num2: c * m, den2: d },
@@ -496,7 +478,7 @@ function generateQuestions() {
       type: 'fraction_input',
       title: 'ΕΡΩΤΗΣΗ 5 • ΣΧΗΜΑΤΙΣΜΟΣ ΑΝΑΛΟΓΙΑΣ',
       instruction: 'Συμπληρώστε τον αριθμητή και τον παρονομαστή του ίσου κλάσματος:',
-      prompt: `Βρείτε ένα ισοδύναμο κλάσμα με το ${num}/${den} ώστε ο αριθμητής του να είναι ${eqNum}:`,
+      prompt: `Βρείτε ένα ισοδύναμο κλάσμα ώστε να ισχύει η ισότητα:`,
       ansNum: eqNum,
       ansDen: eqDen,
       fractionDisplay: { num1: num, den1: den, num2: eqNum, den2: '?' },
@@ -643,7 +625,7 @@ export default function AnalogiaExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (0-9 και κομμα)
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -715,30 +697,31 @@ export default function AnalogiaExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Αναλογίες
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               10 απαιτητικές ασκήσεις με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Υπολογίστε τους άγνωστους όρους χ, ελέγξτε τα σταυρωτά γινόμενα και ελέγξτε τις απαντήσεις σας.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-sky-200">
+          <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -746,7 +729,7 @@ export default function AnalogiaExercisesPage() {
         </section>
 
         {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6">
+        <div className="space-y-6 sm:space-y-8">
           {questions.map((q, idx) => {
             let isCorrect = false;
             if (isSubmitted) {
@@ -765,7 +748,7 @@ export default function AnalogiaExercisesPage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-5 sm:p-8 2xl:p-10 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -773,14 +756,14 @@ export default function AnalogiaExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια) */}
+                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
+                  <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
                   {isSubmitted && (
                     <span
-                      className={`text-xs font-bold px-3 py-1 rounded-full ${
+                      className={`text-xs 2xl:text-sm font-bold px-3 py-1 rounded-full ${
                         isCorrect
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-rose-100 text-rose-800'
@@ -793,13 +776,13 @@ export default function AnalogiaExercisesPage() {
 
                 {/* Εκφωνηση */}
                 <div className="space-y-2 mb-5">
-                  <p className="text-xs sm:text-sm font-semibold text-slate-500">
+                  <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
                     {q.instruction}
                   </p>
-                  <div className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed flex flex-wrap items-center gap-2">
+                  <div className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed flex flex-wrap items-center gap-2">
                     <span>{q.prompt}</span>
                     {q.fractionDisplay && (
-                      <span className="inline-flex items-center bg-slate-100 px-3 py-1 rounded-xl text-base font-bold">
+                      <span className="inline-flex items-center bg-slate-100 px-3 py-1 rounded-xl text-base 2xl:text-lg font-bold">
                         <Fraction num={q.fractionDisplay.num1} den={q.fractionDisplay.den1} />
                         <span className="mx-2">＝</span>
                         <Fraction num={q.fractionDisplay.num2} den={q.fractionDisplay.den2} />
@@ -813,7 +796,7 @@ export default function AnalogiaExercisesPage() {
                   
                   {/* 1. Fraction Input */}
                   {q.type === 'fraction_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       <div className="inline-flex items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-300 shadow-inner gap-2">
                         <input
                           type="text"
@@ -839,7 +822,7 @@ export default function AnalogiaExercisesPage() {
                           className="w-24 sm:w-28 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-xl py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed"
                         />
                       </div>
-                      <span className="text-xs text-slate-500 hidden sm:inline">
+                      <span className="text-xs 2xl:text-sm text-slate-500">
                         (Μορφή κλάσματος: αριθμητής / παρονομαστής)
                       </span>
                     </div>
@@ -847,7 +830,7 @@ export default function AnalogiaExercisesPage() {
 
                   {/* 2. Decimal / Single Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -858,15 +841,15 @@ export default function AnalogiaExercisesPage() {
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
                         className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs 2xl:text-sm text-slate-500">
                         (Ακέραιος ή δεκαδικός με κόμμα)
                       </span>
                     </div>
                   )}
 
-                  {/* 3. Multiple Choice (MCQ) */}
+                  {/* 3. Multiple Choice (MCQ) - Χωρις truncate, break-words */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -875,15 +858,17 @@ export default function AnalogiaExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center text-xs ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -902,7 +887,7 @@ export default function AnalogiaExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -943,7 +928,7 @@ export default function AnalogiaExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -953,7 +938,7 @@ export default function AnalogiaExercisesPage() {
 
       {/* Fixed Bottom Score Bar */}
       <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
@@ -980,7 +965,7 @@ export default function AnalogiaExercisesPage() {
               <button
                 type="button"
                 onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
                 ΕΛΕΓΧΟΣ
               </button>
@@ -988,7 +973,7 @@ export default function AnalogiaExercisesPage() {
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
                 🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
               </button>
