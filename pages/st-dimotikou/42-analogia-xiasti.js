@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Βοηθητικο component εμφανισης κλασματος
+// Βοηθητικο component εμφανισης κλασματος (καθαρο JSX, οχι LaTeX)
 function Fraction({ num, den, className = '' }) {
   return (
     <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
@@ -17,7 +17,7 @@ function Fraction({ num, den, className = '' }) {
   );
 }
 
-// Μορφοποιηση αριθμου (ακεραιος ή δεκαδικος με κομμα)
+// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
 function formatNum(val, decimals = 2) {
   if (Number.isInteger(val)) return String(val);
   const rounded = Number(val.toFixed(decimals));
@@ -30,7 +30,7 @@ export default function XiastiTheoryPage() {
   const [valB, setValB] = useState(75); // π.χ. Μετρα εργου
   const [valC, setValC] = useState(8);  // Νεοι εργατες
 
-  // Υπολογισμος αγνωστου χ: (valB * valC) / valA
+  // Υπολογισμος αγνωστου χ: (valB · valC) : valA
   const calculatedX = useMemo(() => {
     const raw = (valB * valC) / valA;
     return Number.isInteger(raw) ? raw : Number(raw.toFixed(2));
@@ -41,7 +41,7 @@ export default function XiastiTheoryPage() {
   const [costEur] = useState(4.5); // €
   const [targetMassG] = useState(1500); // g
 
-  // Υπολογισμος για Εργαστηριο 2 (Μετατροπη targetMassG σε kg -> targetMassG / 1000)
+  // Υπολογισμος για Εργαστηριο 2 (Μετατροπη targetMassG σε kg -> targetMassG : 1000)
   const targetMassKg = targetMassG / 1000;
   const calculatedCost = useMemo(() => {
     const res = (costEur * targetMassKg) / massKg;
@@ -64,8 +64,8 @@ export default function XiastiTheoryPage() {
         </Link>
       }
     >
-      {/* Container πληρους ευρους για 2K & 4K και responsive για κινητα */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-24 overflow-x-hidden">
+      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
         
         {/* 1. HEADER BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
@@ -76,7 +76,7 @@ export default function XiastiTheoryPage() {
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Η Τεχνική της Αναλογίας Χιαστί
             </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-2xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               Οργανώνουμε τα δεδομένα κάθε προβλήματος σε πίνακα ποσών και τιμών, εφαρμόζουμε τη σταυρωτή διαγώνια μέθοδο (χιαστί) και επιλύουμε απαιτητικά προβλήματα με άγνωστο όρο χωρίς κόπο.
             </p>
           </div>
@@ -127,14 +127,18 @@ export default function XiastiTheoryPage() {
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-1.5 text-xs sm:text-sm">
                   <div className="grid grid-cols-2 gap-2 text-center font-mono">
-                    <div className="bg-blue-100/70 p-2 rounded-xl text-blue-950 font-bold text-[11px] sm:text-xs truncate">Ποσό Α (π.χ. kg)</div>
-                    <div className="bg-emerald-100/70 p-2 rounded-xl text-emerald-950 font-bold text-[11px] sm:text-xs truncate">Ποσό Β (π.χ. €)</div>
+                    <div className="bg-blue-100/70 p-2 rounded-xl text-blue-950 font-bold text-[11px] sm:text-xs break-words">
+                      Ποσό Α (π.χ. kg)
+                    </div>
+                    <div className="bg-emerald-100/70 p-2 rounded-xl text-emerald-950 font-bold text-[11px] sm:text-xs break-words">
+                      Ποσό Β (π.χ. €)
+                    </div>
                     <div className="bg-white p-2 rounded-xl border border-slate-200 font-bold">α</div>
                     <div className="bg-white p-2 rounded-xl border border-slate-200 font-bold">β</div>
                     <div className="bg-white p-2 rounded-xl border border-slate-200 font-bold">γ</div>
                     <div className="bg-amber-100 p-2 rounded-xl border border-amber-300 font-bold text-amber-900">χ</div>
                   </div>
-                  <p className="text-slate-500 text-[11px] text-center pt-1">
+                  <p className="text-slate-500 text-[11px] text-center pt-1 leading-normal">
                     Προσέχουμε οι τιμές του ίδιου ποσού να είναι στην ίδια στήλη και στην ίδια μονάδα μέτρησης!
                   </p>
                 </div>
@@ -167,7 +171,7 @@ export default function XiastiTheoryPage() {
                     <span>＝</span>
                     <Fraction num="β" den="χ" />
                   </div>
-                  <div className="pt-1.5 border-t border-slate-200 text-slate-700 font-sans text-[11px] text-center">
+                  <div className="pt-1.5 border-t border-slate-200 text-slate-700 font-sans text-[11px] text-center leading-normal">
                     Διαγώνιοι: <strong className="text-blue-900">α με χ</strong> και <strong className="text-amber-900">β με γ</strong>.<br />
                     Άρα: <span className="font-mono font-bold text-slate-900">α · χ ＝ β · γ</span>.
                   </div>
@@ -262,7 +266,7 @@ export default function XiastiTheoryPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             
-            {/* Χειριστηρια Τιμων (3 Steppers) */}
+            {/* Χειριστηρια Τιμων (3 Steppers με κουμπια 36px και grid 36px_1fr_36px) */}
             <div className="lg:col-span-5 space-y-3.5 sm:space-y-4">
               
               {/* Τιμη Α */}
@@ -275,12 +279,13 @@ export default function XiastiTheoryPage() {
                     {valA}
                   </span>
                 </div>
-                <div className="grid grid-cols-[34px_1fr_34px] items-center h-10 w-full gap-2">
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setValA((prev) => Math.max(1, prev - 1)); }}
                     disabled={valA <= 1}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
+                    aria-label="Μείωση τιμής α"
                   >
                     －
                   </button>
@@ -296,7 +301,8 @@ export default function XiastiTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setValA((prev) => Math.min(15, prev + 1)); }}
                     disabled={valA >= 15}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
+                    aria-label="Αύξηση τιμής α"
                   >
                     ＋
                   </button>
@@ -313,12 +319,13 @@ export default function XiastiTheoryPage() {
                     {valB}
                   </span>
                 </div>
-                <div className="grid grid-cols-[34px_1fr_34px] items-center h-10 w-full gap-2">
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setValB((prev) => Math.max(10, prev - 5)); }}
                     disabled={valB <= 10}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
+                    aria-label="Μείωση τιμής β"
                   >
                     －
                   </button>
@@ -335,7 +342,8 @@ export default function XiastiTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setValB((prev) => Math.min(150, prev + 5)); }}
                     disabled={valB >= 150}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
+                    aria-label="Αύξηση τιμής β"
                   >
                     ＋
                   </button>
@@ -352,12 +360,13 @@ export default function XiastiTheoryPage() {
                     {valC}
                   </span>
                 </div>
-                <div className="grid grid-cols-[34px_1fr_34px] items-center h-10 w-full gap-2">
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setValC((prev) => Math.max(1, prev - 1)); }}
                     disabled={valC <= 1}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
+                    aria-label="Μείωση τιμής γ"
                   >
                     －
                   </button>
@@ -373,7 +382,8 @@ export default function XiastiTheoryPage() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setValC((prev) => Math.min(20, prev + 1)); }}
                     disabled={valC >= 20}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
+                    aria-label="Αύξηση τιμής γ"
                   >
                     ＋
                   </button>
@@ -391,8 +401,8 @@ export default function XiastiTheoryPage() {
               {/* Πινακας 2x2 Responsive Χωρις Scroll */}
               <div className="w-full max-w-xs sm:max-w-sm mx-auto bg-white rounded-2xl border-2 border-slate-300 shadow-md p-3 sm:p-4 space-y-2.5">
                 <div className="grid grid-cols-2 gap-2 text-center border-b pb-1.5 border-slate-200 font-bold text-xs sm:text-sm text-slate-600">
-                  <span className="bg-blue-50 py-1 rounded-lg text-blue-900 truncate">ΠΟΣΟ 1</span>
-                  <span className="bg-emerald-50 py-1 rounded-lg text-emerald-900 truncate">ΠΟΣΟ 2</span>
+                  <span className="bg-blue-50 py-1 rounded-lg text-blue-900 break-words">ΠΟΣΟ 1</span>
+                  <span className="bg-emerald-50 py-1 rounded-lg text-emerald-900 break-words">ΠΟΣΟ 2</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5 text-center font-mono font-black text-lg sm:text-2xl text-slate-800 py-1">
@@ -471,7 +481,7 @@ export default function XiastiTheoryPage() {
               <div className="p-2.5 bg-white rounded-xl border border-slate-200 font-mono font-bold text-slate-800 text-xs sm:text-sm text-center">
                 {targetMassG} g ＝ {formatNum(targetMassKg)} kg
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-slate-500 leading-normal">
                 Διαιρούμε τα γραμμάρια με το 1.000 για να γίνουν κιλά.
               </p>
             </div>
@@ -496,7 +506,7 @@ export default function XiastiTheoryPage() {
                   <span className="text-amber-600 font-black">χ</span>
                 </div>
               </div>
-              <p className="text-[11px] text-slate-500 text-center">
+              <p className="text-[11px] text-slate-500 text-center leading-normal">
                 Και τα δύο βάρη είναι πλέον σε κιλά (kg).
               </p>
             </div>
@@ -515,7 +525,7 @@ export default function XiastiTheoryPage() {
                   χ ＝ {formatNum(calculatedCost)} €
                 </div>
               </div>
-              <p className="text-[11px] text-slate-500 text-center">
+              <p className="text-[11px] text-slate-500 text-center leading-normal">
                 Βρήκαμε το τελικό κόστος με μία απλή πράξη.
               </p>
             </div>
