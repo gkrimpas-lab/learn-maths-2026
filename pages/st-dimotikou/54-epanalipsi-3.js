@@ -12,7 +12,7 @@ function toCleanUppercase(str) {
     .toUpperCase();
 }
 
-// Βοηθητικο component εμφανισης κλασματος
+// Βοηθητικο component εμφανισης κλασματος (καθαρο JSX, οχι LaTeX)
 function Fraction({ num, den, className = '' }) {
   return (
     <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
@@ -71,7 +71,7 @@ const CHAPTER_POOLS = {
           { text: `${a} : ${b + 2}`, isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: `${simpA} : ${simpB}`,
-        explanation: `Ο λόγος είναι ${a}/${b}. Διαιρώντας αριθμητή και παρονομαστή με το ${g}, προκύπτει ${simpA} : ${simpB}.`
+        explanation: `Ο λόγος είναι ${a} : ${b}. Διαιρώντας αριθμητή και παρονομαστή με το ${g}, προκύπτει ${simpA} : ${simpB}.`
       };
     },
     () => {
@@ -121,21 +121,19 @@ const CHAPTER_POOLS = {
       };
     },
     () => {
-      const a = 15;
-      const b = 45;
       return {
         type: 'mcq',
         title: 'ΚΕΦ. 40 • ΑΝΤΙΣΤΡΟΦΟΣ ΛΟΓΟΣ',
         instruction: 'Επιλέξτε τη σωστή σχέση:',
-        prompt: `Αν ο λόγος δύο μεγεθών είναι 1/3, ποιος είναι ο αντίστροφος λόγος τους;`,
+        prompt: 'Αν ο λόγος δύο μεγεθών είναι 1 : 3, ποιος είναι ο αντίστροφος λόγος τους;',
         options: [
-          { text: '3/1 (δηλαδή 3)', isCorrect: true },
-          { text: '1/3', isCorrect: false },
-          { text: '2/3', isCorrect: false },
-          { text: '3/10', isCorrect: false }
+          { text: '3 : 1 (δηλαδή 3)', isCorrect: true },
+          { text: '1 : 3', isCorrect: false },
+          { text: '2 : 3', isCorrect: false },
+          { text: '3 : 10', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
-        correctText: '3/1 (δηλαδή 3)',
-        explanation: `Ο αντίστροφος λόγος προκύπτει αντιστρέφοντας τους όρους του κλάσματος: 3/1.`
+        correctText: '3 : 1 (δηλαδή 3)',
+        explanation: 'Ο αντίστροφος λόγος προκύπτει αντιστρέφοντας τους όρους του λόγου: 3 : 1.'
       };
     },
     () => {
@@ -152,13 +150,11 @@ const CHAPTER_POOLS = {
       };
     },
     () => {
-      const euros = randInt(5, 12);
-      const cents = euros * 100;
       return {
         type: 'mcq',
         title: 'ΚΕΦ. 40 • ΜΕΓΕΘΗ ΣΕ ΔΙΑΦΟΡΕΤΙΚΕΣ ΜΟΝΑΔΕΣ',
         instruction: 'Επιλέξτε τη σωστή προσέγγιση:',
-        prompt: `Για να συγκρίνουμε 50 λεπτά με 2 ευρώ, τι πρέπει να κάνουμε πρώτα;`,
+        prompt: 'Για να συγκρίνουμε 50 λεπτά με 2 ευρώ, τι πρέπει να κάνουμε πρώτα;',
         options: [
           { text: 'Να μετατρέψουμε και τα δύο ποσά στην ίδια μονάδα (π.χ. σε λεπτά)', isCorrect: true },
           { text: 'Να διαιρέσουμε αμέσως 50 με το 2', isCorrect: false },
@@ -166,20 +162,18 @@ const CHAPTER_POOLS = {
           { text: 'Να πολλαπλασιάσουμε 50 επί 2', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: 'Να μετατρέψουμε και τα δύο ποσά στην ίδια μονάδα (π.χ. σε λεπτά)',
-        explanation: `Ο λόγος δύο ομοειδών μεγεθών ορίζεται μόνο όταν είναι εκφρασμένα στην ίδια μονάδα μέτρησης.`
+        explanation: 'Ο λόγος δύο ομοειδών μεγεθών ορίζεται μόνο όταν είναι εκφρασμένα στην ίδια μονάδα μέτρησης.'
       };
     },
     () => {
-      const g = 250;
-      const kg = 1000;
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 40 • ΔΕΚΑΔΙΚΟΣ ΛΟΓΟΣ ΒΑΡΟΥΣ',
         instruction: 'Υπολογίστε τον δεκαδικό λόγο των 250 g προς 1 kg:',
-        prompt: `Ποιος είναι ο λόγος 250 g προς 1 kg;`,
+        prompt: 'Ποιος είναι ο λόγος 250 g προς 1 kg;',
         correctVal: 0.25,
         correctStr: '0,25',
-        explanation: `1 kg ＝ 1.000 g. Λόγος: 250 : 1.000 ＝ 0,25.`
+        explanation: '1 kg ＝ 1.000 g. Λόγος: 250 : 1.000 ＝ 0,25.'
       };
     },
     () => {
@@ -228,27 +222,23 @@ const CHAPTER_POOLS = {
         type: 'mcq',
         title: 'ΚΕΦ. 41 • ΕΝΝΟΙΑ ΑΝΑΛΟΓΙΑΣ',
         instruction: 'Επιλέξτε αν σχηματίζεται αναλογία:',
-        prompt: `Είναι τα κλάσματα ${a}/${b} και ${c}/${d} ίσα ώστε να σχηματίζουν αναλογία;`,
+        prompt: `Είναι οι λόγοι ${a} : ${b} και ${c} : ${d} ίσοι ώστε να σχηματίζουν αναλογία;`,
         options: [
           { text: `Ναι, γιατί ${a} · ${d} ＝ ${b} · ${c} ＝ ${a * d}`, isCorrect: true },
           { text: 'Όχι, γιατί οι αριθμοί είναι διαφορετικοί', isCorrect: false },
           { text: 'Μόνο αν τους προσθέσουμε', isCorrect: false },
-          { text: 'Όχι, γιατί δεν έχουν ίδιο παρονομαστή', isCorrect: false }
+          { text: 'Όχι, γιατί δεν έχουν ίδιο επόμενο όρο', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: `Ναι, γιατί ${a} · ${d} ＝ ${b} · ${c} ＝ ${a * d}`,
-        explanation: `Αναλογία είναι η ισότητα δύο λόγων. Εδώ ${a}/${b} ＝ ${c}/${d}.`
+        explanation: `Αναλογία είναι η ισότητα δύο λόγων. Εδώ ${a} : ${b} ＝ ${c} : ${d}.`
       };
     },
     () => {
-      const a = 3;
-      const b = 5;
-      const c = 9;
-      const d = 15;
       return {
         type: 'mcq',
         title: 'ΚΕΦ. 41 • ΟΡΟΙ ΑΝΑΛΟΓΙΑΣ',
-        instruction: 'Επιλέξτε τους άκρους όρους της αναλογίας 3/5 ＝ 9/15:',
-        prompt: `Στην αναλογία 3/5 ＝ 9/15, ποιοι είναι οι άκροι όροι;`,
+        instruction: 'Επιλέξτε τους άκρους όρους της αναλογίας 3 : 5 ＝ 9 : 15:',
+        prompt: 'Στην αναλογία 3 : 5 ＝ 9 : 15, ποιοι είναι οι άκροι όροι;',
         options: [
           { text: 'Το 3 και το 15', isCorrect: true },
           { text: 'Το 5 και το 9', isCorrect: false },
@@ -256,7 +246,7 @@ const CHAPTER_POOLS = {
           { text: 'Το 5 και το 15', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: 'Το 3 και το 15',
-        explanation: `Στην αναλογία α/β ＝ γ/δ, άκροι όροι είναι οι α και δ (εδώ 3 και 15) και μέσοι όροι οι β και γ.`
+        explanation: 'Στην αναλογία α : β ＝ γ : δ, άκροι όροι είναι οι α και δ (εδώ 3 και 15) και μέσοι όροι οι β και γ.'
       };
     },
     () => {
@@ -269,7 +259,7 @@ const CHAPTER_POOLS = {
         type: 'decimal_input',
         title: 'ΚΕΦ. 41 • ΓΙΝΟΜΕΝΟ ΑΚΡΩΝ ΟΡΩΝ',
         instruction: 'Υπολογίστε το γινόμενο των άκρων όρων στην αναλογία:',
-        prompt: `Στην αναλογία ${a}/${b} ＝ ${c}/${d}, ποιο είναι το γινόμενο των άκρων όρων;`,
+        prompt: `Στην αναλογία ${a} : ${b} ＝ ${c} : ${d}, ποιο είναι το γινόμενο των άκρων όρων;`,
         correctVal: a * d,
         correctStr: String(a * d),
         explanation: `Άκροι όροι είναι το ${a} και το ${d}: ${a} · ${d} ＝ ${a * d}.`
@@ -280,7 +270,7 @@ const CHAPTER_POOLS = {
         type: 'mcq',
         title: 'ΚΕΦ. 41 • ΟΡΙΣΜΟΣ ΑΝΑΛΟΓΙΑΣ',
         instruction: 'Επιλέξτε τον σωστό ορισμό:',
-        prompt: `Τι ονομάζουμε αναλογία στα Μαθηματικά;`,
+        prompt: 'Τι ονομάζουμε αναλογία στα Μαθηματικά;',
         options: [
           { text: 'Την ισότητα δύο λόγων', isCorrect: true },
           { text: 'Το άθροισμα δύο κλασμάτων', isCorrect: false },
@@ -288,19 +278,18 @@ const CHAPTER_POOLS = {
           { text: 'Το γινόμενο δύο δεκαδικών', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: 'Την ισότητα δύο λόγων',
-        explanation: `Αναλογία ονομάζεται η ισότητα δύο ίσων λόγων (α/β ＝ γ/δ).`
+        explanation: 'Αναλογία ονομάζεται η ισότητα δύο ίσων λόγων (α : β ＝ γ : δ).'
       };
     },
     () => {
-      const x = randInt(2, 6);
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 41 • ΙΣΟΤΗΤΑ ΛΟΓΩΝ',
-        instruction: 'Συμπληρώστε τον αριθμητή ώστε να ισχύει η αναλογία:',
-        prompt: `Στην αναλογία χ/10 ＝ 4/5, ποια είναι η τιμή του χ;`,
+        instruction: 'Συμπληρώστε τον όρο ώστε να ισχύει η αναλογία:',
+        prompt: 'Στην αναλογία χ : 10 ＝ 4 : 5, ποια είναι η τιμή του χ;',
         correctVal: 8,
         correctStr: '8',
-        explanation: `χ ＝ (10 · 4) : 5 ＝ 8.`
+        explanation: 'χ ＝ (10 · 4) : 5 ＝ 8.'
       };
     },
     () => {
@@ -308,7 +297,7 @@ const CHAPTER_POOLS = {
         type: 'mcq',
         title: 'ΚΕΦ. 41 • ΜΕΣΟΙ ΟΡΟΙ',
         instruction: 'Επιλέξτε τους μέσους όρους:',
-        prompt: `Στην αναλογία 2/7 ＝ 6/21, ποιοι είναι οι μέσοι όροι;`,
+        prompt: 'Στην αναλογία 2 : 7 ＝ 6 : 21, ποιοι είναι οι μέσοι όροι;',
         options: [
           { text: 'Το 7 και το 6', isCorrect: true },
           { text: 'Το 2 και το 21', isCorrect: false },
@@ -316,20 +305,18 @@ const CHAPTER_POOLS = {
           { text: 'Το 7 και το 21', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: 'Το 7 και το 6',
-        explanation: `Μέσοι όροι είναι ο παρονομαστής του πρώτου κλάσματος και ο αριθμητής του δεύτερου (7 και 6).`
+        explanation: 'Μέσοι όροι είναι ο δεύτερος και ο τρίτος όρος της αναλογίας (7 και 6).'
       };
     },
     () => {
-      const a = 4;
-      const b = 6;
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 41 • ΑΠΛΟΠΟΙΗΣΗ ΑΝΑΛΟΓΙΑΣ',
-        instruction: 'Απλοποιήστε το κλάσμα 4/6 σε ανάγωγο χ/3 και βρείτε το χ:',
-        prompt: `Αν 4/6 ＝ χ/3, ποιο είναι το χ;`,
+        instruction: 'Απλοποιήστε τον λόγο 4 : 6 σε ανάγωγο χ : 3 και βρείτε το χ:',
+        prompt: 'Αν 4 : 6 ＝ χ : 3, ποιο είναι το χ;',
         correctVal: 2,
         correctStr: '2',
-        explanation: `4/6 ＝ 2/3, άρα χ ＝ 2.`
+        explanation: '4 : 6 ＝ 2 : 3, άρα χ ＝ 2.'
       };
     },
     () => {
@@ -337,27 +324,26 @@ const CHAPTER_POOLS = {
         type: 'mcq',
         title: 'ΚΕΦ. 41 • ΕΛΕΓΧΟΣ ΑΝΑΛΟΓΙΑΣ',
         instruction: 'Ελέγξτε ποιο ζεύγος σχηματίζει αναλογία:',
-        prompt: `Ποιο από τα παρακάτω ζεύγη κλασμάτων σχηματίζει σωστή αναλογία;`,
+        prompt: 'Ποιο από τα παρακάτω ζεύγη λόγων σχηματίζει σωστή αναλογία;',
         options: [
-          { text: '2/3 και 8/12', isCorrect: true },
-          { text: '2/3 και 5/6', isCorrect: false },
-          { text: '3/4 και 6/10', isCorrect: false },
-          { text: '1/2 και 3/8', isCorrect: false }
+          { text: '2 : 3 και 8 : 12', isCorrect: true },
+          { text: '2 : 3 και 5 : 6', isCorrect: false },
+          { text: '3 : 4 και 6 : 10', isCorrect: false },
+          { text: '1 : 2 και 3 : 8', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
-        correctText: '2/3 και 8/12',
-        explanation: `2 · 12 ＝ 24 και 3 · 8 ＝ 24. Τα σταυρωτά γινόμενα είναι ίσα.`
+        correctText: '2 : 3 και 8 : 12',
+        explanation: '2 · 12 ＝ 24 και 3 · 8 ＝ 24. Τα σταυρωτά γινόμενα είναι ίσα.'
       };
     },
     () => {
-      const b = randInt(4, 8);
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 41 • ΕΥΡΕΣΗ ΑΓΝΩΣΤΟΥ',
-        instruction: 'Βρείτε το χ αν 1/2 ＝ χ/14:',
-        prompt: `Στην αναλογία 1/2 ＝ χ/14, ποια είναι η τιμή του χ;`,
+        instruction: 'Βρείτε το χ αν 1 : 2 ＝ χ : 14:',
+        prompt: 'Στην αναλογία 1 : 2 ＝ χ : 14, ποια είναι η τιμή του χ;',
         correctVal: 7,
         correctStr: '7',
-        explanation: `χ ＝ 14 : 2 ＝ 7.`
+        explanation: 'χ ＝ 14 : 2 ＝ 7.'
       };
     },
     () => {
@@ -365,15 +351,15 @@ const CHAPTER_POOLS = {
         type: 'mcq',
         title: 'ΚΕΦ. 41 • ΙΔΙΟΤΗΤΑ ΑΝΑΛΟΓΙΑΣ',
         instruction: 'Επιλέξτε τη θεμελιώδη ιδιότητα:',
-        prompt: `Σε κάθε αναλογία, τι ισχύει για τα γινόμενα των όρων;`,
+        prompt: 'Σε κάθε αναλογία, τι ισχύει για τα γινόμενα των όρων;',
         options: [
           { text: 'Το γινόμενο των άκρων όρων ισούται με το γινόμενο των μέσων όρων', isCorrect: true },
           { text: 'Το άθροισμα των άκρων ισούται με το άθροισμα των μέσων', isCorrect: false },
           { text: 'Όλοι οι όροι είναι ίσοι μεταξύ τους', isCorrect: false },
-          { text: 'Οι παρονομαστές είναι πάντα ίσοι', isCorrect: false }
+          { text: 'Οι επόμενοι όροι είναι πάντα ίσοι', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: 'Το γινόμενο των άκρων όρων ισούται με το γινόμενο των μέσων όρων',
-        explanation: `Θεμελιώδης ιδιότητα: α · δ ＝ β · γ.`
+        explanation: 'Θεμελιώδης ιδιότητα: α · δ ＝ β · γ.'
       };
     }
   ],
@@ -392,7 +378,7 @@ const CHAPTER_POOLS = {
         type: 'decimal_input',
         title: 'ΚΕΦ. 42 • ΧΙΑΣΤΙ ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ',
         instruction: 'Υπολογίστε τον άγνωστο όρο χ με χιαστί πολλαπλασιασμό:',
-        prompt: `Στην αναλογία ${a}/${b} ＝ ${c}/χ, ποια είναι η τιμή του χ;`,
+        prompt: `Στην αναλογία ${a} : ${b} ＝ ${c} : χ, ποια είναι η τιμή του χ;`,
         correctVal: d,
         correctStr: String(d),
         explanation: `χ ＝ (${b} · ${c}) : ${a} ＝ ${b * c} : ${a} ＝ ${d}.`
@@ -409,7 +395,7 @@ const CHAPTER_POOLS = {
         type: 'mcq',
         title: 'ΚΕΦ. 43 • ΣΤΑΘΕΡΑ & ΜΕΤΑΒΛΗΤΑ ΠΟΣΑ',
         instruction: 'Χαρακτηρίστε το μέγεθος:',
-        prompt: `Ποιο από τα παρακάτω αποτελεί ΣΤΑΘΕΡΟ ποσό;`,
+        prompt: 'Ποιο από τα παρακάτω αποτελεί ΣΤΑΘΕΡΟ ποσό;',
         options: [
           { text: 'Ο αριθμός των ημερών του μήνα Ιανουαρίου (πάντα 31)', isCorrect: true },
           { text: 'Η θερμοκρασία της πόλης στη διάρκεια της ημέρας', isCorrect: false },
@@ -417,7 +403,7 @@ const CHAPTER_POOLS = {
           { text: 'Η ταχύτητα ενός αυτοκινήτου στην εθνική οδό', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: 'Ο αριθμός των ημερών του μήνα Ιανουαρίου (πάντα 31)',
-        explanation: `Σταθερό ποσό είναι εκείνο του οποίου η τιμή δεν αλλάζει ποτέ (όπως οι 31 ημέρες του Ιανουαρίου).`
+        explanation: 'Σταθερό ποσό είναι εκείνο του οποίου η τιμή δεν αλλάζει ποτέ (όπως οι 31 ημέρες του Ιανουαρίου).'
       };
     }
   ],
@@ -572,7 +558,7 @@ const CHAPTER_POOLS = {
         prompt: `Σε ποιο ποσοστό στα εκατό (%) αντιστοιχεί το κλάσμα ${preset.num}/${preset.den};`,
         correctVal: preset.pct,
         correctStr: String(preset.pct),
-        explanation: `(${preset.num} · ${100 / preset.den}) / (${preset.den} · ${100 / preset.den}) ＝ ${preset.pct}/100 ＝ ${preset.pct} %.`
+        explanation: `(${preset.num} · ${100 / preset.den}) : (${preset.den} · ${100 / preset.den}) ＝ ${preset.pct}/100 ＝ ${preset.pct} %.`
       };
     }
   ],
@@ -582,7 +568,7 @@ const CHAPTER_POOLS = {
   // ----------------------------------------------------
   51: [
     () => {
-      const orig = randInt(4, 10) * 20; // 80, 100, ..., 200 €
+      const orig = randInt(4, 10) * 20;
       const pct = pickRandom([10, 20, 25, 30]);
       const disc = (orig * pct) / 100;
       const finalP = orig - disc;
@@ -640,7 +626,7 @@ const CHAPTER_POOLS = {
   ]
 };
 
-// Συμπληρωση επιπλεον γεννητριων ωστε καθε κεφαλαιο να εχει τουλαχιστον 10 θεματα
+// Συμπληρωση επιπλεον γεννητριων
 const EXTRA_GENERATORS = {
   42: [
     () => {
@@ -651,19 +637,17 @@ const EXTRA_GENERATORS = {
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 42 • ΕΥΡΕΣΗ ΑΓΝΩΣΤΟΥ ΧΙΑΣΤΙ',
-        prompt: `Αν ${a}/${b} ＝ ${c}/χ, ποιο είναι το χ;`,
+        prompt: `Αν ${a} : ${b} ＝ ${c} : χ, ποιο είναι το χ;`,
         correctVal: d,
         correctStr: String(d),
         explanation: `χ ＝ (${b} · ${c}) : ${a} ＝ ${d}.`
       };
     },
     () => {
-      const x = 5;
-      const y = 15;
       return {
         type: 'mcq',
         title: 'ΚΕΦ. 42 • ΣΤΑΥΡΩΤΑ ΓΙΝΟΜΕΝΑ',
-        prompt: `Στην αναλογία 2/5 ＝ 6/15, πόσο ισούται το σταυρωτό γινόμενο;`,
+        prompt: 'Στην αναλογία 2 : 5 ＝ 6 : 15, πόσο ισούται το σταυρωτό γινόμενο;',
         options: [
           { text: '30', isCorrect: true },
           { text: '20', isCorrect: false },
@@ -671,28 +655,24 @@ const EXTRA_GENERATORS = {
           { text: '12', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: '30',
-        explanation: `2 · 15 ＝ 30 και 5 · 6 ＝ 30.`
+        explanation: '2 · 15 ＝ 30 και 5 · 6 ＝ 30.'
       };
     },
     () => {
-      const a = 4;
-      const b = 10;
-      const c = 6;
-      const d = 15;
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 42 • ΧΙΑΣΤΙ ΣΕ ΔΕΚΑΔΙΚΟΥΣ',
-        prompt: `Βρείτε το χ στην αναλογία 4/10 ＝ χ/15:`,
+        prompt: 'Βρείτε το χ στην αναλογία 4 : 10 ＝ χ : 15:',
         correctVal: 6,
         correctStr: '6',
-        explanation: `χ ＝ (4 · 15) : 10 ＝ 60 : 10 ＝ 6.`
+        explanation: 'χ ＝ (4 · 15) : 10 ＝ 60 : 10 ＝ 6.'
       };
     },
     () => {
       return {
         type: 'mcq',
         title: 'ΚΕΦ. 42 • ΠΟΤΕ ΚΑΝΟΥΜΕ ΧΙΑΣΤΙ',
-        prompt: `Σε ποιο είδος ποσών εφαρμόζουμε σταυρωτό πολλαπλασιασμό (χιαστί);`,
+        prompt: 'Σε ποιο είδος ποσών εφαρμόζουμε σταυρωτό πολλαπλασιασμό (χιαστί);',
         options: [
           { text: 'Αποκλειστικά στα ανάλογα ποσά', isCorrect: true },
           { text: 'Στα αντιστρόφως ανάλογα ποσά', isCorrect: false },
@@ -700,60 +680,60 @@ const EXTRA_GENERATORS = {
           { text: 'Μόνο στα σταθερά ποσά', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: 'Αποκλειστικά στα ανάλογα ποσά',
-        explanation: `Το χιαστί ισχύει μόνο όταν τα ποσά είναι ανάλογα.`
+        explanation: 'Το χιαστί ισχύει μόνο όταν τα ποσά είναι ανάλογα.'
       };
     },
     () => {
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 42 • ΥΠΟΛΟΓΙΣΜΟΣ ΟΡΟΥ',
-        prompt: `Αν χ/8 ＝ 3/4, ποια είναι η τιμή του χ;`,
+        prompt: 'Αν χ : 8 ＝ 3 : 4, ποια είναι η τιμή του χ;',
         correctVal: 6,
         correctStr: '6',
-        explanation: `χ ＝ (8 · 3) : 4 ＝ 6.`
+        explanation: 'χ ＝ (8 · 3) : 4 ＝ 6.'
       };
     },
     () => {
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 42 • ΧΙΑΣΤΙ ΣΕ ΚΛΑΣΜΑΤΑ',
-        prompt: `Αν 5/χ ＝ 10/16, ποιο είναι το χ;`,
+        prompt: 'Αν 5 : χ ＝ 10 : 16, ποιο είναι το χ;',
         correctVal: 8,
         correctStr: '8',
-        explanation: `χ ＝ (5 · 16) : 10 ＝ 8.`
+        explanation: 'χ ＝ (5 · 16) : 10 ＝ 8.'
       };
     },
     () => {
       return {
         type: 'mcq',
         title: 'ΚΕΦ. 42 • ΕΛΕΓΧΟΣ ΙΣΟΤΗΤΑΣ',
-        prompt: `Είναι ίσα τα γινόμενα 3 · 20 και 5 · 12;`,
+        prompt: 'Είναι ίσα τα γινόμενα 3 · 20 και 5 · 12;',
         options: [
           { text: 'Ναι, ισούνται και τα δύο με 60', isCorrect: true },
           { text: 'Όχι, είναι διαφορετικά', isCorrect: false }
         ].sort(() => Math.random() - 0.5),
         correctText: 'Ναι, ισούνται και τα δύο με 60',
-        explanation: `3 · 20 ＝ 60 και 5 · 12 ＝ 60.`
+        explanation: '3 · 20 ＝ 60 και 5 · 12 ＝ 60.'
       };
     },
     () => {
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 42 • ΕΥΡΕΣΗ Χ',
-        prompt: `Στην αναλογία 7/2 ＝ 21/χ, βρείτε το χ:`,
+        prompt: 'Στην αναλογία 7 : 2 ＝ 21 : χ, βρείτε το χ:',
         correctVal: 6,
         correctStr: '6',
-        explanation: `χ ＝ (2 · 21) : 7 ＝ 6.`
+        explanation: 'χ ＝ (2 · 21) : 7 ＝ 6.'
       };
     },
     () => {
       return {
         type: 'decimal_input',
         title: 'ΚΕΦ. 42 • ΑΝΑΛΟΓΙΑ ΜΕ 100',
-        prompt: `Αν 3/5 ＝ χ/100, ποιο είναι το χ;`,
+        prompt: 'Αν 3 : 5 ＝ χ : 100, ποιο είναι το χ;',
         correctVal: 60,
         correctStr: '60',
-        explanation: `χ ＝ (3 · 100) : 5 ＝ 60.`
+        explanation: 'χ ＝ (3 · 100) : 5 ＝ 60.'
       };
     }
   ],
@@ -887,7 +867,6 @@ function generateRevisionQuestions() {
   for (let ch = 40; ch <= 53; ch++) {
     const pool = CHAPTER_POOLS[ch];
     if (pool && pool.length >= 2) {
-      // Ανακατεμα δεξαμενης του κεφαλαιου
       const shuffled = [...pool].sort(() => Math.random() - 0.5);
       const q1 = shuffled[0]();
       const q2 = shuffled[1]();
@@ -919,7 +898,7 @@ export default function RevisionThreePage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -977,30 +956,31 @@ export default function RevisionThreePage() {
       backText="ΣΤ' Δημοτικού"
       hideFooter={true}
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΠΑΝΑΛΗΨΗ 3 (ΚΕΦ. 40 - 53)</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Επαναληπτικό Διαγώνισμα: Λόγοι, Αναλογίες &amp; Ποσοστά
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               28 επιλεγμένες δραστηριότητες (ακριβώς 2 από κάθε κεφάλαιο από το 40 έως το 53). Κάθε ανανέωση αντλεί τυχαία θέματα από μια πλούσια δεξαμενή 140+ ασκήσεων και προβλημάτων.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-sky-200">
+          <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
               ⚡ 28 θέματα με αυτόματη βαθμολόγηση και πλήρεις επεξηγήσεις.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
               <span>🔄 ΝΕΟ ΤΕΣΤ</span>
             </button>
@@ -1008,7 +988,7 @@ export default function RevisionThreePage() {
         </section>
 
         {/* Λιστα 28 Ασκησεων */}
-        <div className="space-y-6">
+        <div className="space-y-6 sm:space-y-8">
           {questions.map((q, idx) => {
             let isCorrect = false;
             if (isSubmitted) {
@@ -1023,7 +1003,7 @@ export default function RevisionThreePage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-5 sm:p-8 2xl:p-10 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -1033,17 +1013,17 @@ export default function RevisionThreePage() {
               >
                 {/* Επικεφαλιδα Ερωτησης */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                       ΘΕΜΑ {idx + 1} / 28
                     </span>
-                    <span className="text-xs font-bold text-slate-500">
+                    <span className="text-xs 2xl:text-sm font-bold text-slate-500">
                       {toCleanUppercase(q.title)}
                     </span>
                   </div>
                   {isSubmitted && (
                     <span
-                      className={`text-xs font-bold px-3 py-1 rounded-full ${
+                      className={`text-xs 2xl:text-sm font-bold px-3 py-1 rounded-full ${
                         isCorrect
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-rose-100 text-rose-800'
@@ -1057,26 +1037,26 @@ export default function RevisionThreePage() {
                 {/* Εκφωνηση */}
                 <div className="space-y-3 mb-5">
                   {q.instruction && (
-                    <p className="text-xs sm:text-sm font-semibold text-slate-500">
+                    <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
                       {q.instruction}
                     </p>
                   )}
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
 
                   {/* Πινακας Τιμων (αν υπαρχει) */}
                   {q.tableData && (
-                    <div className="inline-block bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 shadow-inner my-2 font-mono text-xs sm:text-sm">
-                      <div className="grid grid-cols-2 gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
-                        <span className="bg-blue-100/60 px-2 py-0.5 rounded-lg text-blue-900">{q.tableData.col1}</span>
-                        <span className="bg-emerald-100/60 px-2 py-0.5 rounded-lg text-emerald-900">{q.tableData.col2}</span>
+                    <div className="inline-block max-w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 shadow-inner my-2 font-mono text-xs sm:text-sm 2xl:text-base">
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
+                        <span className="bg-blue-100/60 px-2 py-0.5 rounded-lg text-blue-900 break-words">{q.tableData.col1}</span>
+                        <span className="bg-emerald-100/60 px-2 py-0.5 rounded-lg text-emerald-900 break-words">{q.tableData.col2}</span>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 pt-2 text-center font-bold text-slate-800">
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-2 text-center font-bold text-slate-800">
                         <span>{q.tableData.r1[0]}</span>
                         <span className="text-indigo-700">{q.tableData.r1[1]}</span>
                         <span>{q.tableData.r2[0]}</span>
-                        <span className="text-amber-600 font-black text-base">{q.tableData.r2[1]}</span>
+                        <span className="text-amber-600 font-black text-base sm:text-lg">{q.tableData.r2[1]}</span>
                       </div>
                     </div>
                   )}
@@ -1087,7 +1067,7 @@ export default function RevisionThreePage() {
                   
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -1098,15 +1078,15 @@ export default function RevisionThreePage() {
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
                         className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs 2xl:text-sm text-slate-500">
                         (Ακέραιος η δεκαδικός με κόμμα)
                       </span>
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) */}
+                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -1115,15 +1095,17 @@ export default function RevisionThreePage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center text-xs ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -1142,7 +1124,7 @@ export default function RevisionThreePage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -1173,7 +1155,7 @@ export default function RevisionThreePage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Όλων των Απαντήσεων (28 Θέματα)</span>
           </button>
@@ -1183,7 +1165,7 @@ export default function RevisionThreePage() {
 
       {/* Fixed Bottom Score Bar */}
       <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
@@ -1210,7 +1192,7 @@ export default function RevisionThreePage() {
               <button
                 type="button"
                 onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
                 ΕΛΕΓΧΟΣ
               </button>
@@ -1218,7 +1200,7 @@ export default function RevisionThreePage() {
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
                 🔄 ΝΕΟ ΤΕΣΤ
               </button>
