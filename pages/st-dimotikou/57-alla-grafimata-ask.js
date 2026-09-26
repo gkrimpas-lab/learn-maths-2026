@@ -33,8 +33,6 @@ function formatNum(val, decimals = 1) {
 // ΟΠΤΙΚΑ ΒΟΗΘΗΤΙΚΑ COMPONENTS (ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ, ΟΡΙΖΟΝΤΙΟ, ΚΥΚΛΙΚΟ)
 // =========================================================================
 
-// Αντικατάσταση των οπτικών components στο 57-alla-grafimata-ask.js
-
 function MiniLineChart({ points, maxVal = 30, yStep = 10, unit = '°C' }) {
   const chartHeight = 160;
   const paddingLeft = 50;
@@ -61,7 +59,7 @@ function MiniLineChart({ points, maxVal = 30, yStep = 10, unit = '°C' }) {
       </div>
       <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-sm flex items-center justify-center">
         <svg viewBox="0 0 520 230" className="w-full h-full overflow-visible">
-          {/* Οριζόντιες γραμμές πλέγματος */}
+          {/* Οριζοντιες γραμμες πλεγματος */}
           {yTicks.map((val) => {
             const y = chartHeight + 20 - (val / maxVal) * chartHeight;
             return (
@@ -74,14 +72,14 @@ function MiniLineChart({ points, maxVal = 30, yStep = 10, unit = '°C' }) {
             );
           })}
 
-          {/* Άξονες X και Y */}
+          {/* Αξονες X και Y */}
           <line x1={paddingLeft} y1={chartHeight + 20} x2={chartWidth + 10} y2={chartHeight + 20} stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
           <line x1={paddingLeft} y1={chartHeight + 20} x2={paddingLeft} y2="12" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
 
-          {/* Γραμμή γραφήματος */}
+          {/* Γραμμη γραφηματος */}
           <polyline points={polylineStr} fill="none" stroke="#2563eb" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
           
-          {/* Σημεία και Ετικέτες */}
+          {/* Σημεια και Ετικετες */}
           {pts.map((p, idx) => (
             <g key={`pt-${idx}`}>
               <circle cx={p.px} cy={p.py} r="6.5" fill="#3b82f6" stroke="#ffffff" strokeWidth="2.5" />
@@ -380,8 +378,6 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'graf_std_9',
     generate: () => {
-      const vA = 20;
-      const vB = 30;
       const vC = 50;
       return {
         text: `Σε ένα κυκλικό διάγραμμα τριών κατηγοριών, η Κατηγορία Α καλύπτει 20% και η Κατηγορία Β καλύπτει 30%. Τι ποσοστό (%) καλύπτει η Κατηγορία Γ;`,
@@ -417,7 +413,7 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const minT = 8;
       const maxT = 24;
-      const range = maxT - minT; // 16°C
+      const range = maxT - minT;
       return {
         text: `Στο παρακάτω γράφημα γραμμής καταγράφηκαν οι θερμοκρασίες μιας ημέρας. Ποιο είναι το εύρος διακύμανσης της θερμοκρασίας (Μέγιστη － Ελάχιστη τιμή) σε °C;`,
         lineChart: {
@@ -445,7 +441,7 @@ const HARD_PROBLEMS_POOL = [
       const pMath = 40;
       const pLang = 35;
       const pHist = 25;
-      const degHist = (pHist * 360) / 100; // 90°
+      const degHist = (pHist * 360) / 100;
       return {
         text: `Στο παρακάτω κυκλικό διάγραμμα καταγράφονται οι αγαπημένες θεματικές ενότητες των μαθητών. Πόσες μοίρες (°) είναι η επίκεντρη γωνία του τομέα της Ιστορίας (25%);`,
         pieChart: {
@@ -468,8 +464,8 @@ const HARD_PROBLEMS_POOL = [
       const vMon = 20;
       const vTue = 35;
       const vWed = 45;
-      const total = vMon + vTue + vWed; // 100
-      const pctWed = (vWed / total) * 100; // 45%
+      const total = vMon + vTue + vWed;
+      const pctWed = (vWed / total) * 100;
       return {
         text: `Στο οριζόντιο ραβδόγραμμα φαίνεται η προσέλευση 100 πελατών σε ένα κατάστημα για 3 ημέρες. Τι ποσοστό (%) των πελατών προσήλθε την Τετάρτη;`,
         hbarChart: {
@@ -494,7 +490,7 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const totalBudget = 1200;
       const rentPct = 40;
-      const rentAmount = (totalBudget * rentPct) / 100; // 480 €
+      const rentAmount = (totalBudget * rentPct) / 100;
       return {
         text: `Σε ένα κυκλικό διάγραμμα οικογενειακού προϋπολογισμού 1.200 €, ο τομέας του ενοικίου έχει επίκεντρη γωνία 144° (που αντιστοιχεί σε 40%). Πόσα ευρώ (€) δαπανώνται για το ενοίκιο;`,
         correctVal: rentAmount,
@@ -509,7 +505,7 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const degA = 120;
       const degB = 90;
-      const degC = 360 - degA - degB; // 150°
+      const degC = 360 - degA - degB;
       return {
         text: `Σε ένα κυκλικό διάγραμμα τριών δραστηριοτήτων, ο πρώτος τομέας έχει γωνία 120° και ο δεύτερος 90°. Πόσες μοίρες (°) είναι η γωνία του τρίτου τομέα;`,
         correctVal: degC,
@@ -522,11 +518,6 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'graf_hard_6',
     generate: () => {
-      const vA = 15;
-      const vB = 25;
-      const vC = 40;
-      const total = vA + vB + vC; // 80
-      const avg = total / 3; // 26.7
       return {
         text: `Στο παρακάτω οριζόντιο ραβδόγραμμα καταγράφονται οι ημερήσιες πωλήσεις 3 ημερών: Ημέρα 1 (15), Ημέρα 2 (25), Ημέρα 3 (50). Πόσες ήταν οι συνολικές πωλήσεις των τριών ημερών;`,
         hbarChart: {
@@ -550,7 +541,7 @@ const HARD_PROBLEMS_POOL = [
     id: 'graf_hard_7',
     generate: () => {
       const pct = 15;
-      const deg = (pct * 360) / 100; // 54°
+      const deg = (pct * 360) / 100;
       return {
         text: `Ένα κυκλικό διάγραμμα απεικονίζει τις προτιμήσεις σε ένα άθλημα με ποσοστό 15%. Πόσες μοίρες (°) πρέπει να έχει η επίκεντρη γωνία του τομέα αυτού;`,
         correctVal: deg,
@@ -567,8 +558,8 @@ const HARD_PROBLEMS_POOL = [
       const t1 = 15;
       const t2 = 25;
       const t3 = 20;
-      const sum = t0 + t1 + t2 + t3; // 70
-      const avg = sum / 4; // 17.5
+      const sum = t0 + t1 + t2 + t3;
+      const avg = sum / 4;
       return {
         text: `Στο γράφημα γραμμής καταγράφηκε η θερμοκρασία σε 4 χρονικές στιγμές: 10°C, 15°C, 25°C, 20°C. Ποια ήταν η μέση θερμοκρασία (°C);`,
         lineChart: {
@@ -593,7 +584,7 @@ const HARD_PROBLEMS_POOL = [
     id: 'graf_hard_9',
     generate: () => {
       const deg = 18;
-      const pct = (deg / 360) * 100; // 5%
+      const pct = (deg / 360) * 100;
       return {
         text: `Σε ένα κυκλικό διάγραμμα, ένας μικρός τομέας έχει επίκεντρη γωνία 18°. Τι ποσοστό (%) του κύκλου αντιπροσωπεύει;`,
         correctVal: pct,
@@ -644,7 +635,7 @@ function generateQuestions() {
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΑΝΑΓΝΩΣΗ ΓΡΑΦΗΜΑΤΟΣ ΓΡΑΜΜΗΣ',
       instruction: 'Παρατηρήστε το γράφημα γραμμής και υπολογίστε τη μέγιστη τιμή:',
-      prompt: `Ποια ήταν η μέγιστη θερμοκρασία (°C) που καταγράφηκε στη διάρκεια της ημέρας;`,
+      prompt: 'Ποια ήταν η μέγιστη θερμοκρασία (°C) που καταγράφηκε στη διάρκεια της ημέρας;',
       lineChart: {
         points: [
           { label: '08:00', value: t1 },
@@ -681,10 +672,10 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 2 • ΧΡΗΣΗ ΓΡΑΦΗΜΑΤΟΣ ΓΡΑΜΜΗΣ',
       instruction: 'Επιλέξτε τη σωστή εφαρμογή:',
-      prompt: `Σε ποια περίπτωση χρησιμοποιούμε κατά προτίμηση ένα γράφημα γραμμής (χρονοσειρά);`,
+      prompt: 'Σε ποια περίπτωση χρησιμοποιούμε κατά προτίμηση ένα γράφημα γραμμής (χρονοσειρά);',
       options,
       correctText: correctUse,
-      explanation: `Το γράφημα γραμμής χρησιμοποιείται για να αναδείξει τη μεταβολή και την τάση ενός μεγέθους στον χρόνο.`
+      explanation: 'Το γράφημα γραμμής χρησιμοποιείται για να αναδείξει τη μεταβολή και την τάση ενός μεγέθους στον χρόνο.'
     });
   }
 
@@ -724,10 +715,10 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 4 • ΟΡΙΖΟΝΤΙΟ ΡΑΒΔΟΓΡΑΜΜΑ',
       instruction: 'Επιλέξτε το πλεονέκτημα του οριζόντιου ραβδογράμματος:',
-      prompt: `Για ποιο λόγο προτιμάμε συχνά ένα οριζόντιο ραβδόγραμμα αντί για κατακόρυφο;`,
+      prompt: 'Για ποιο λόγο προτιμάμε συχνά ένα οριζόντιο ραβδόγραμμα αντί για κατακόρυφο;',
       options,
       correctText: correctReason,
-      explanation: `Στο οριζόντιο ραβδόγραμμα τα ονόματα των κατηγοριών γράφονται άνετα στον κατακόρυφο άξονα χωρίς να επικαλύπτονται.`
+      explanation: 'Στο οριζόντιο ραβδόγραμμα τα ονόματα των κατηγοριών γράφονται άνετα στον κατακόρυφο άξονα χωρίς να επικαλύπτονται.'
     });
   }
 
@@ -742,7 +733,7 @@ function generateQuestions() {
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 5 • ΑΝΑΓΝΩΣΗ ΟΡΙΖΟΝΤΙΟΥ ΡΑΒΔΟΓΡΑΜΜΑΤΟΣ',
       instruction: 'Παρατηρήστε το οριζόντιο ραβδόγραμμα και βρείτε το σύνολο:',
-      prompt: `Πόσα βιβλία δανείστηκαν συνολικά τα δύο τμήματα;`,
+      prompt: 'Πόσα βιβλία δανείστηκαν συνολικά τα δύο τμήματα;',
       hbarChart: {
         data: [
           { label: 'ΣΤ1 Τμήμα', value: v1, color: '#3b82f6' },
@@ -777,14 +768,14 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 6 • ΑΘΡΟΙΣΜΑ ΜΟΙΡΩΝ ΚΥΚΛΙΚΟΥ ΔΙΑΓΡΑΜΜΑΤΟΣ',
       instruction: 'Επιλέξτε το σωστό άθροισμα:',
-      prompt: `Πόσο ισούται πάντοτε το άθροισμα των επίκεντρων γωνιών όλων των τομέων σε ένα πλήρες κυκλικό διάγραμμα;`,
+      prompt: 'Πόσο ισούται πάντοτε το άθροισμα των επίκεντρων γωνιών όλων των τομέων σε ένα πλήρες κυκλικό διάγραμμα;',
       options,
       correctText: correctDegrees,
-      explanation: `Ένας πλήρης κύκλος αποτελείται από 360°, επομένως όλες οι επιμέρους γωνίες μαζί αθροίζουν σε 360°.`
+      explanation: 'Ένας πλήρης κύκλος αποτελείται από 360°, επομένως όλες οι επιμέρους γωνίες μαζί αθροίζουν σε 360°.'
     });
   }
 
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή
+  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
   {
     const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const stdProb1 = shuffledStd[0].generate();
@@ -837,7 +828,7 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας με Σχήματα
+  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας με Σχήματα (1 Input, 1 MCQ)
   {
     const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const hardProb1 = shuffledHard[0].generate();
@@ -858,7 +849,7 @@ function generateQuestions() {
       explanation: hardProb1.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Σύμβολο '%' ΜΟΝΟ όταν είναι ποσοστό)
+    // Q10 (MCQ Αυξημένης Δυσκολίας)
     const val10 = hardProb2.correctVal !== undefined ? hardProb2.correctVal : hardProb2.correctText;
     const isPercentage = hardProb2.unit === '%';
     const isDegrees = hardProb2.unit === '°';
@@ -916,7 +907,7 @@ export default function AllaGrafimataExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -982,30 +973,31 @@ export default function AllaGrafimataExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις: Γράφημα Γραμμής, Οριζόντιο &amp; Κυκλικό Διάγραμμα
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               10 απαιτητικές δραστηριότητες με οπτικά γραφήματα και 4 ρεαλιστικά προβλήματα. Διαβάστε χρονοσειρές θερμοκρασιών, συγκρίνετε οριζόντιες ράβδους και υπολογίστε επίκεντρες γωνίες σε κυκλικά διαγράμματα.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-sky-200">
+          <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους και οπτικά σχήματα.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -1013,7 +1005,7 @@ export default function AllaGrafimataExercisesPage() {
         </section>
 
         {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6">
+        <div className="space-y-6 sm:space-y-8">
           {questions.map((q, idx) => {
             let isCorrect = false;
             if (isSubmitted) {
@@ -1028,7 +1020,7 @@ export default function AllaGrafimataExercisesPage() {
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-5 sm:p-8 2xl:p-10 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -1038,12 +1030,12 @@ export default function AllaGrafimataExercisesPage() {
               >
                 {/* Επικεφαλιδα Ερωτησης */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
+                  <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
                   {isSubmitted && (
                     <span
-                      className={`text-xs font-bold px-3 py-1 rounded-full ${
+                      className={`text-xs 2xl:text-sm font-bold px-3 py-1 rounded-full ${
                         isCorrect
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-rose-100 text-rose-800'
@@ -1057,11 +1049,11 @@ export default function AllaGrafimataExercisesPage() {
                 {/* Εκφωνηση */}
                 <div className="space-y-2 mb-3">
                   {q.instruction && (
-                    <p className="text-xs sm:text-sm font-semibold text-slate-500">
+                    <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
                       {q.instruction}
                     </p>
                   )}
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
                 </div>
@@ -1096,7 +1088,7 @@ export default function AllaGrafimataExercisesPage() {
                   
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -1107,15 +1099,15 @@ export default function AllaGrafimataExercisesPage() {
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
                         className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs 2xl:text-sm text-slate-500">
                         (Ακέραιος η δεκαδικός με κόμμα)
                       </span>
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) */}
+                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -1124,15 +1116,17 @@ export default function AllaGrafimataExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center text-xs ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -1151,7 +1145,7 @@ export default function AllaGrafimataExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -1182,7 +1176,7 @@ export default function AllaGrafimataExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -1192,7 +1186,7 @@ export default function AllaGrafimataExercisesPage() {
 
       {/* Fixed Bottom Score Bar */}
       <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
@@ -1219,7 +1213,7 @@ export default function AllaGrafimataExercisesPage() {
               <button
                 type="button"
                 onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
                 ΕΛΕΓΧΟΣ
               </button>
@@ -1227,7 +1221,7 @@ export default function AllaGrafimataExercisesPage() {
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
                 🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
               </button>
