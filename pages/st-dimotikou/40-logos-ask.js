@@ -12,6 +12,20 @@ function toCleanUppercase(str) {
     .toUpperCase();
 }
 
+// Βοηθητικο component εμφανισης κλασματος (καθαρο JSX, οχι LaTeX)
+function Fraction({ num, den, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
+      <span className="border-b-2 border-current px-1.5 pb-0.5 text-center leading-none">
+        {num}
+      </span>
+      <span className="px-1.5 pt-0.5 text-center leading-none">
+        {den}
+      </span>
+    </span>
+  );
+}
+
 // Βοηθητικη συναρτηση ΜΚΔ
 function getGCD(a, b) {
   let x = Math.abs(Math.round(a));
@@ -57,7 +71,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Σε μια τάξη της ΣΤ' Δημοτικού φοιτούν ${boys} αγόρια και ${girls} κορίτσια. Ποιος είναι ο απλοποιημένος λόγος των κοριτσιών προς το σύνολο των μαθητών της τάξης;`,
         ansNum: girls / gcd,
         ansDen: total / gcd,
-        explanation: `Το σύνολο των μαθητών είναι ${boys} ＋ ${girls} ＝ ${total}. Ο λόγος των κοριτσιών προς το σύνολο είναι ${girls} ： ${total}. Διαιρούμε με τον ΜΚΔ(${girls}, ${total}) ＝ ${gcd}, άρα ο απλοποιημένος λόγος είναι ${girls / gcd} ： ${total / gcd}.`
+        explanation: `Το σύνολο των μαθητών είναι ${boys} ＋ ${girls} ＝ ${total}. Ο λόγος των κοριτσιών προς το σύνολο είναι ${girls} : ${total}. Διαιρούμε με τον ΜΚΔ(${girls}, ${total}) ＝ ${gcd}, άρα ο απλοποιημένος λόγος είναι ${girls / gcd} : ${total / gcd}.`
       };
     }
   },
@@ -72,7 +86,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Ένα ορθογώνιο πανό έχει πλάτος ${width} cm και μήκος ${lengthMeters} m. Ποιος είναι ο απλοποιημένος λόγος του πλάτους προς το μήκος του;`,
         ansNum: width / gcd,
         ansDen: lengthCm / gcd,
-        explanation: `Μετατρέπουμε το μήκος σε ίδια μονάδα: ${lengthMeters} m ＝ ${lengthCm} cm. Ο λόγος είναι ${width} ： ${lengthCm}. Διαιρούμε με τον ΜΚΔ(${width}, ${lengthCm}) ＝ ${gcd} και προκύπτει ${width / gcd} ： ${lengthCm / gcd}.`
+        explanation: `Μετατρέπουμε το μήκος σε ίδια μονάδα: ${lengthMeters} m ＝ ${lengthCm} cm. Ο λόγος είναι ${width} : ${lengthCm}. Διαιρούμε με τον ΜΚΔ(${width}, ${lengthCm}) ＝ ${gcd} και προκύπτει ${width / gcd} : ${lengthCm / gcd}.`
       };
     }
   },
@@ -86,7 +100,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Σε μια συνταγή ζαχαροπλαστικής χρησιμοποιούνται ${sugar} g ζάχαρης και ${flour / 1000} kg αλευριού. Βρείτε τον απλοποιημένο λόγο της ποσότητας της ζάχαρης προς την ποσότητα του αλευριού.`,
         ansNum: sugar / gcd,
         ansDen: flour / gcd,
-        explanation: `Μετατρέπουμε το αλεύρι σε γραμμάρια: ${flour / 1000} kg ＝ ${flour} g. Ο λόγος είναι ${sugar} ： ${flour}. Απλοποιώντας με τον ΜΚΔ(${sugar}, ${flour}) ＝ ${gcd}, έχουμε ${sugar / gcd} ： ${flour / gcd}.`
+        explanation: `Μετατρέπουμε το αλεύρι σε γραμμάρια: ${flour / 1000} kg ＝ ${flour} g. Ο λόγος είναι ${sugar} : ${flour}. Απλοποιώντας με τον ΜΚΔ(${sugar}, ${flour}) ＝ ${gcd}, έχουμε ${sugar / gcd} : ${flour / gcd}.`
       };
     }
   },
@@ -102,7 +116,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Μια ομάδα μπάσκετ σε ένα τουρνουά πέτυχε ${wins} νίκες και είχε ${losses} ήττες. Ποιος είναι ο λόγος των νικών προς τις ήττες σε ανάγωγη μορφή;`,
         ansNum: wins / gcd,
         ansDen: losses / gcd,
-        explanation: `Ο λόγος των νικών προς τις ήττες είναι ${wins} ： ${losses}. Διαιρώντας αριθμητή και παρονομαστή με τον ΜΚΔ(${wins}, ${losses}) ＝ ${gcd}, βρίσκουμε ${wins / gcd} ： ${losses / gcd}.`
+        explanation: `Ο λόγος των νικών προς τις ήττες είναι ${wins} : ${losses}. Διαιρώντας αριθμητή και παρονομαστή με τον ΜΚΔ(${wins}, ${losses}) ＝ ${gcd}, βρίσκουμε ${wins / gcd} : ${losses / gcd}.`
       };
     }
   },
@@ -117,7 +131,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Ένας ποδηλάτης προπονήθηκε για ${timeMinutes} λεπτά το πρωί και ${hours} ώρες το απόγευμα. Ποιος είναι ο ανάγωγος λόγος του πρωινού χρόνου προς τον απογευματινό χρόνο προπόνησης;`,
         ansNum: timeMinutes / gcd,
         ansDen: hoursInMinutes / gcd,
-        explanation: `Μετατρέπουμε τις ${hours} ώρες σε λεπτά: ${hours} · 60 ＝ ${hoursInMinutes} λεπτά. Ο λόγος είναι ${timeMinutes} ： ${hoursInMinutes}. Μετά από απλοποίηση με το ${gcd}, έχουμε ${timeMinutes / gcd} ： ${hoursInMinutes / gcd}.`
+        explanation: `Μετατρέπουμε τις ${hours} ώρες σε λεπτά: ${hours} · 60 ＝ ${hoursInMinutes} λεπτά. Ο λόγος είναι ${timeMinutes} : ${hoursInMinutes}. Μετά από απλοποίηση με το ${gcd}, έχουμε ${timeMinutes / gcd} : ${hoursInMinutes / gcd}.`
       };
     }
   },
@@ -131,7 +145,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Σε ένα κατάστημα ανθοπωλείου υπάρχουν ${red} κόκκινα τριαντάφυλλα και ${white} λευκά τριαντάφυλλα. Ποιος είναι ο απλοποιημένος λόγος των κόκκινων προς τα λευκά τριαντάφυλλα;`,
         ansNum: red / gcd,
         ansDen: white / gcd,
-        explanation: `Ο λόγος είναι ${red} ： ${white}. Διαιρούμε και τους δύο όρους με το ${gcd} και έχουμε ${red / gcd} ： ${white / gcd}.`
+        explanation: `Ο λόγος είναι ${red} : ${white}. Διαιρούμε και τους δύο όρους με το ${gcd} και έχουμε ${red / gcd} : ${white / gcd}.`
       };
     }
   },
@@ -145,7 +159,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Ένα ισόπλευρο τρίγωνο έχει πλευρά μήκους ${side} cm και ένα ορθογώνιο έχει περίμετρο ${perimeter} cm. Ποιος είναι ο απλοποιημένος λόγος της πλευράς του τριγώνου προς την περίμετρο του ορθογωνίου;`,
         ansNum: side / gcd,
         ansDen: perimeter / gcd,
-        explanation: `Ο λόγος είναι ${side} ： ${perimeter}. Διαιρώντας με τον ΜΚΔ(${side}, ${perimeter}) ＝ ${gcd}, βρίσκουμε ${side / gcd} ： ${perimeter / gcd}.`
+        explanation: `Ο λόγος είναι ${side} : ${perimeter}. Διαιρώντας με τον ΜΚΔ(${side}, ${perimeter}) ＝ ${gcd}, βρίσκουμε ${side / gcd} : ${perimeter / gcd}.`
       };
     }
   },
@@ -159,7 +173,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Ο Νίκος αποταμίευσε ${saved} € για να αγοράσει ένα ποδήλατο αξίας ${cost} €. Ποιος είναι ο ανάγωγος λόγος των χρημάτων που συγκέντρωσε προς τη συνολική αξία του ποδηλάτου;`,
         ansNum: saved / gcd,
         ansDen: cost / gcd,
-        explanation: `Ο λόγος των αποταμιεύσεων προς τη συνολική τιμή είναι ${saved} ： ${cost}. Με απλοποίηση με το ${gcd}, προκύπτει ${saved / gcd} ： ${cost / gcd}.`
+        explanation: `Ο λόγος των αποταμιεύσεων προς τη συνολική τιμή είναι ${saved} : ${cost}. Με απλοποίηση με το ${gcd}, προκύπτει ${saved / gcd} : ${cost / gcd}.`
       };
     }
   },
@@ -173,7 +187,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Σε μια κανάτα αναμειγνύουμε ${juice} ml συμπυκνωμένου χυμού με ${water / 1000} l νερό. Ποιος είναι ο απλοποιημένος λόγος του χυμού προς το νερό;`,
         ansNum: juice / gcd,
         ansDen: water / gcd,
-        explanation: `Μετατρέπουμε σε ml: ${water / 1000} l ＝ ${water} ml. Ο λόγος είναι ${juice} ： ${water}. Διαιρούμε με τον ΜΚΔ(${juice}, ${water}) ＝ ${gcd} και λαμβάνουμε ${juice / gcd} ： ${water / gcd}.`
+        explanation: `Μετατρέπουμε σε ml: ${water / 1000} l ＝ ${water} ml. Ο λόγος είναι ${juice} : ${water}. Διαιρούμε με τον ΜΚΔ(${juice}, ${water}) ＝ ${gcd} και λαμβάνουμε ${juice / gcd} : ${water / gcd}.`
       };
     }
   },
@@ -187,7 +201,7 @@ const STANDARD_PROBLEMS_POOL = [
         text: `Η Ελένη διάβασε ${pagesRead} σελίδες από ένα βιβλίο που έχει συνολικά ${totalPages} σελίδες. Ποιος είναι ο απλοποιημένος λόγος των σελίδων που διάβασε προς το σύνολο των σελίδων;`,
         ansNum: pagesRead / gcd,
         ansDen: totalPages / gcd,
-        explanation: `Ο λόγος είναι ${pagesRead} ： ${totalPages}. Διαιρούμε με τον ΜΚΔ(${pagesRead}, ${totalPages}) ＝ ${gcd}, άρα έχουμε ${pagesRead / gcd} ： ${totalPages / gcd}.`
+        explanation: `Ο λόγος είναι ${pagesRead} : ${totalPages}. Διαιρούμε με τον ΜΚΔ(${pagesRead}, ${totalPages}) ＝ ${gcd}, άρα έχουμε ${pagesRead / gcd} : ${totalPages / gcd}.`
       };
     }
   }
@@ -204,9 +218,10 @@ const HARD_PROBLEMS_POOL = [
       const sum = (rA + rB) * unit;
       const valB = rB * unit;
       return {
-        text: `Δύο χωράφια έχουν συνολικό εμβαδόν ${sum} m². Ο λόγος του εμβαδού του πρώτου χωραφιού προς το εμβαδόν του δεύτερου είναι ${rA} ： ${rB}. Πόσα m² είναι το εμβαδόν του μεγαλύτερου χωραφιού;`,
+        text: `Δύο χωράφια έχουν συνολικό εμβαδόν ${sum} m². Ο λόγος του εμβαδού του πρώτου χωραφιού προς το εμβαδόν του δεύτερου είναι ${rA} : ${rB}. Πόσα m² είναι το εμβαδόν του μεγαλύτερου χωραφιού;`,
         correctVal: valB,
-        explanation: `Το σύνολο των ίσων μερών είναι ${rA} ＋ ${rB} ＝ ${rA + rB}. Κάθε μέρος αντιστοιχεί σε ${sum} ： ${rA + rB} ＝ ${unit} m². Το μεγαλύτερο χωράφι έχει ${rB} μέρη, άρα ${rB} · ${unit} ＝ ${valB} m².`
+        correctStr: String(valB),
+        explanation: `Το σύνολο των ίσων μερών είναι ${rA} ＋ ${rB} ＝ ${rA + rB}. Κάθε μέρος αντιστοιχεί σε ${sum} : ${rA + rB} ＝ ${unit} m². Το μεγαλύτερο χωράφι έχει ${rB} μέρη, άρα ${rB} · ${unit} ＝ ${valB} m².`
       };
     }
   },
@@ -219,9 +234,10 @@ const HARD_PROBLEMS_POOL = [
       const diff = (rY - rX) * diffMultiplier;
       const y = rY * diffMultiplier;
       return {
-        text: `Ο λόγος των ηλικιών ενός παιδιού και του πατέρα του είναι ${rX} ： ${rY}. Αν ο πατέρας είναι κατά ${diff} έτη μεγαλύτερος από το παιδί, πόσα έτη είναι η ηλικία του πατέρα;`,
+        text: `Ο λόγος των ηλικιών ενός παιδιού και του πατέρα του είναι ${rX} : ${rY}. Αν ο πατέρας είναι κατά ${diff} έτη μεγαλύτερος από το παιδί, πόσα έτη είναι η ηλικία του πατέρα;`,
         correctVal: y,
-        explanation: `Η διαφορά των μερών είναι ${rY} － ${rX} ＝ ${rY - rX} μέρη, τα οποία αντιστοιχούν σε ${diff} έτη. Άρα το 1 μέρος είναι ${diff} ： ${rY - rX} ＝ ${diffMultiplier} έτη. Η ηλικία του πατέρα είναι ${rY} · ${diffMultiplier} ＝ ${y} έτη.`
+        correctStr: String(y),
+        explanation: `Η διαφορά των μερών είναι ${rY} － ${rX} ＝ ${rY - rX} μέρη, τα οποία αντιστοιχούν σε ${diff} έτη. Άρα το 1 μέρος είναι ${diff} : ${rY - rX} ＝ ${diffMultiplier} έτη. Η ηλικία του πατέρα είναι ${rY} · ${diffMultiplier} ＝ ${y} έτη.`
       };
     }
   },
@@ -237,9 +253,10 @@ const HARD_PROBLEMS_POOL = [
       const perimeter = 2 * semi;
       const area = length * width;
       return {
-        text: `Σε ένα ορθογώνιο οικόπεδο ο λόγος του μήκους προς το πλάτος είναι ${rL} ： ${rW} και η περίμετρός του είναι ${perimeter} m. Πόσα m² είναι το εμβαδόν του οικοπέδου;`,
+        text: `Σε ένα ορθογώνιο οικόπεδο ο λόγος του μήκους προς το πλάτος είναι ${rL} : ${rW} και η περίμετρός του είναι ${perimeter} m. Πόσα m² είναι το εμβαδόν του οικοπέδου;`,
         correctVal: area,
-        explanation: `Το ημιπερίμετρος (μήκος ＋ πλάτος) είναι ${perimeter} ： 2 ＝ ${semi} m. Τα μέρη είναι ${rL} ＋ ${rW} ＝ ${rL + rW}. Το 1 μέρος ισούται με ${semi} ： ${rL + rW} ＝ ${k} m. Άρα μήκος ＝ ${length} m και πλάτος ＝ ${width} m. Το εμβαδόν είναι ${length} · ${width} ＝ ${area} m².`
+        correctStr: String(area),
+        explanation: `Το ημιπερίμετρος (μήκος ＋ πλάτος) είναι ${perimeter} : 2 ＝ ${semi} m. Τα μέρη είναι ${rL} ＋ ${rW} ＝ ${rL + rW}. Το 1 μέρος ισούται με ${semi} : ${rL + rW} ＝ ${k} m. Άρα μήκος ＝ ${length} m και πλάτος ＝ ${width} m. Το εμβαδόν είναι ${length} · ${width} ＝ ${area} m².`
       };
     }
   },
@@ -248,13 +265,13 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       const priceA = randInt(12, 20) * 10;
       const increase = 20;
-      const priceB = priceA * (1 + increase / 100);
+      const priceB = Math.round(priceA * (1 + increase / 100));
       const gcd = getGCD(priceA, priceB);
       return {
         text: `Ένα προϊόν κόστιζε ${priceA} € και μετά από ανατίμηση κοστίζει ${priceB} €. Ποιος είναι ο απλοποιημένος λόγος της αρχικής τιμής προς τη νέα αυξημένη τιμή;`,
         ansNum: priceA / gcd,
         ansDen: priceB / gcd,
-        explanation: `Ο λόγος αρχικής προς νέα τιμή είναι ${priceA} ： ${priceB}. Διαιρούμε με τον ΜΚΔ(${priceA}, ${priceB}) ＝ ${gcd} και βρίσκουμε ${priceA / gcd} ： ${priceB / gcd}.`
+        explanation: `Ο λόγος αρχικής προς νέα τιμή είναι ${priceA} : ${priceB}. Διαιρούμε με τον ΜΚΔ(${priceA}, ${priceB}) ＝ ${gcd} και βρίσκουμε ${priceA / gcd} : ${priceB / gcd}.`
       };
     }
   },
@@ -269,9 +286,10 @@ const HARD_PROBLEMS_POOL = [
       const totalAmount = sumParts * unit;
       const maxPartVal = Math.max(part1, part2, part3) * unit;
       return {
-        text: `Τρεις φίλοι μοιράστηκαν το ποσό των ${totalAmount} € σε λόγο ${part1} ： ${part2} ： ${part3}. Πόσα € πήρε αυτός που έλαβε το μεγαλύτερο μερίδιο;`,
+        text: `Τρεις φίλοι μοιράστηκαν το ποσό των ${totalAmount} € σε λόγο ${part1} : ${part2} : ${part3}. Πόσα € πήρε αυτός που έλαβε το μεγαλύτερο μερίδιο;`,
         correctVal: maxPartVal,
-        explanation: `Τα συνολικά μέρη είναι ${part1} ＋ ${part2} ＋ ${part3} ＝ ${sumParts}. Το 1 μέρος αντιστοιχεί σε ${totalAmount} ： ${sumParts} ＝ ${unit} €. Το μεγαλύτερο μερίδιο είναι ${Math.max(part1, part2, part3)} · ${unit} ＝ ${maxPartVal} €.`
+        correctStr: String(maxPartVal),
+        explanation: `Τα συνολικά μέρη είναι ${part1} ＋ ${part2} ＋ ${part3} ＝ ${sumParts}. Το 1 μέρος αντιστοιχεί σε ${totalAmount} : ${sumParts} ＝ ${unit} €. Το μεγαλύτερο μερίδιο είναι ${Math.max(part1, part2, part3)} · ${unit} ＝ ${maxPartVal} €.`
       };
     }
   },
@@ -285,7 +303,7 @@ const HARD_PROBLEMS_POOL = [
         text: `Δύο αυτοκίνητα κινούνται με σταθερή ταχύτητα ${speed1} km/h και ${speed2} km/h αντίστοιχα. Ποιος είναι ο απλοποιημένος λόγος του χρόνου που χρειάζεται το πρώτο προς το δεύτερο για να διανύσουν την ίδια απόσταση;`,
         ansNum: speed2 / gcd,
         ansDen: speed1 / gcd,
-        explanation: `Όταν η απόσταση είναι σταθερή, ο χρόνος είναι αντιστρόφως ανάλογος της ταχύτητας. Άρα ο λόγος των χρόνων t1 : t2 ισούται με τον αντίστροφο λόγο των ταχυτήτων v2 : v1 ＝ ${speed2} ： ${speed1}. Απλοποιώντας με τον ΜΚΔ(${speed2}, ${speed1}) ＝ ${gcd}, έχουμε ${speed2 / gcd} ： ${speed1 / gcd}.`
+        explanation: `Όταν η απόσταση είναι σταθερή, ο χρόνος είναι αντιστρόφως ανάλογος της ταχύτητας. Άρα ο λόγος των χρόνων t1 : t2 ισούται με τον αντίστροφο λόγο των ταχυτήτων v2 : v1 ＝ ${speed2} : ${speed1}. Απλοποιώντας με τον ΜΚΔ(${speed2}, ${speed1}) ＝ ${gcd}, έχουμε ${speed2 / gcd} : ${speed1 / gcd}.`
       };
     }
   },
@@ -297,9 +315,10 @@ const HARD_PROBLEMS_POOL = [
       const zinc = 3 * k;
       const totalAlloy = copper + zinc;
       return {
-        text: `Ένα μεταλλικό κράμα βάρους ${totalAlloy} kg αποτελείται από χαλκό και ψευδάργυρο με λόγο ${7} ： ${3}. Πόσα kg χαλκού περιέχονται στο κράμα;`,
+        text: `Ένα μεταλλικό κράμα βάρους ${totalAlloy} kg αποτελείται από χαλκό και ψευδάργυρο με λόγο 7 : 3. Πόσα kg χαλκού περιέχονται στο κράμα;`,
         correctVal: copper,
-        explanation: `Τα μέρη είναι 7 ＋ 3 ＝ 10. Το κάθε μέρος ζυγίζει ${totalAlloy} ： 10 ＝ ${k} kg. Ο χαλκός αποτελείται από 7 μέρη, άρα περιέχει 7 · ${k} ＝ ${copper} kg.`
+        correctStr: String(copper),
+        explanation: `Τα μέρη είναι 7 ＋ 3 ＝ 10. Το κάθε μέρος ζυγίζει ${totalAlloy} : 10 ＝ ${k} kg. Ο χαλκός αποτελείται από 7 μέρη, άρα περιέχει 7 · ${k} ＝ ${copper} kg.`
       };
     }
   },
@@ -311,10 +330,10 @@ const HARD_PROBLEMS_POOL = [
       const c = randInt(4, 8);
       const gcd = getGCD(a, c);
       return {
-        text: `Αν ο λόγος x ： y είναι ίσος με ${a} ： ${b} και ο λόγος y ： z είναι ίσος με ${b} ： ${c}, ποιος είναι ο απλοποιημένος λόγος x ： z;`,
+        text: `Αν ο λόγος x : y είναι ίσος με ${a} : ${b} και ο λόγος y : z είναι ίσος με ${b} : ${c}, ποιος είναι ο απλοποιημένος λόγος x : z;`,
         ansNum: a / gcd,
         ansDen: c / gcd,
-        explanation: `Επειδή x/y ＝ ${a}/${b} και y/z ＝ ${b}/${c}, πολλαπλασιάζουμε τους λόγους: (x/y) · (y/z) ＝ (${a}/${b}) · (${b}/${c}) ＝ ${a}/${c}. Απλοποιώντας με τον ΜΚΔ(${a}, ${c}) ＝ ${gcd}, βρίσκουμε ${a / gcd} ： ${c / gcd}.`
+        explanation: `Επειδή x/y ＝ ${a}/${b} και y/z ＝ ${b}/${c}, πολλαπλασιάζουμε τους λόγους: (x/y) · (y/z) ＝ (${a}/${b}) · (${b}/${c}) ＝ ${a}/${c}. Απλοποιώντας με τον ΜΚΔ(${a}, ${c}) ＝ ${gcd}, βρίσκουμε ${a / gcd} : ${c / gcd}.`
       };
     }
   },
@@ -329,7 +348,7 @@ const HARD_PROBLEMS_POOL = [
         text: `Διαλύουμε ${salt} g αλατιού σε ${water} g νερού. Ποιος είναι ο απλοποιημένος λόγος της μάζας του αλατιού προς τη συνολική μάζα του διαλύματος;`,
         ansNum: salt / gcd,
         ansDen: totalSolution / gcd,
-        explanation: `Η συνολική μάζα του διαλύματος είναι ${salt} ＋ ${water} ＝ ${totalSolution} g. Ο λόγος αλατιού προς διάλυμα είναι ${salt} ： ${totalSolution}. Διαιρώντας με τον ΜΚΔ(${salt}, ${totalSolution}) ＝ ${gcd}, έχουμε ${salt / gcd} ： ${totalSolution / gcd}.`
+        explanation: `Η συνολική μάζα του διαλύματος είναι ${salt} ＋ ${water} ＝ ${totalSolution} g. Ο λόγος αλατιού προς διάλυμα είναι ${salt} : ${totalSolution}. Διαιρώντας με τον ΜΚΔ(${salt}, ${totalSolution}) ＝ ${gcd}, έχουμε ${salt / gcd} : ${totalSolution / gcd}.`
       };
     }
   },
@@ -337,7 +356,7 @@ const HARD_PROBLEMS_POOL = [
     id: 'p_hard_10',
     generate: () => {
       const girlsRatio = randInt(4, 6);
-      const boysRatio = randInt(3, 5);
+      const boysRatio = randInt(2, 3);
       const diffMultiplier = randInt(3, 7);
       const diffParts = Math.abs(girlsRatio - boysRatio) || 1;
       const actualDiff = diffParts * diffMultiplier * 2;
@@ -345,9 +364,10 @@ const HARD_PROBLEMS_POOL = [
       const totalParts = girlsRatio + boysRatio;
       const total = totalParts * k;
       return {
-        text: `Σε μια κατασκήνωση ο λόγος των κοριτσιών προς τα αγόρια είναι ${girlsRatio} ： ${boysRatio}. Αν τα κορίτσια είναι κατά ${actualDiff} περισσότερα από τα αγόρια, ποιο είναι το συνολικό πλήθος των παιδιών;`,
+        text: `Σε μια κατασκήνωση ο λόγος των κοριτσιών προς τα αγόρια είναι ${girlsRatio} : ${boysRatio}. Αν τα κορίτσια είναι κατά ${actualDiff} περισσότερα από τα αγόρια, ποιο είναι το συνολικό πλήθος των παιδιών;`,
         correctVal: total,
-        explanation: `Η διαφορά των μερών είναι ${diffParts}. Αντιστοιχεί σε ${actualDiff} παιδιά, άρα 1 μέρος ＝ ${actualDiff} ： ${diffParts} ＝ ${k} παιδιά. Το σύνολο των μερών είναι ${girlsRatio} ＋ ${boysRatio} ＝ ${totalParts}. Άρα συνολικά παιδιά: ${totalParts} · ${k} ＝ ${total}.`
+        correctStr: String(total),
+        explanation: `Η διαφορά των μερών είναι ${diffParts}. Αντιστοιχεί σε ${actualDiff} παιδιά, άρα 1 μέρος ＝ ${actualDiff} : ${diffParts} ＝ ${k} παιδιά. Το σύνολο των μερών είναι ${girlsRatio} ＋ ${boysRatio} ＝ ${totalParts}. Άρα συνολικά παιδιά: ${totalParts} · ${k} ＝ ${total}.`
       };
     }
   }
@@ -371,10 +391,10 @@ function generateQuestions() {
       type: 'fraction_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΑΠΛΟΠΟΙΗΣΗ ΛΟΓΟΥ',
       instruction: 'Γράψτε τον λόγο στην απλούστερη ανάγωγη μορφή του (αριθμητής / παρονομαστής):',
-      prompt: `Να απλοποιηθεί πλήρως ο λόγος ${num} ： ${den}`,
+      prompt: `Να απλοποιηθεί πλήρως ο λόγος ${num} : ${den}:`,
       ansNum: num / gcd,
       ansDen: den / gcd,
-      explanation: `Διαιρούμε και τους δύο όρους με τον Μέγιστο Κοινό Διαιρέτη ΜΚΔ(${num}, ${den}) ＝ ${gcd}: (${num} ： ${gcd}) / (${den} ： ${gcd}) ＝ ${num / gcd} ： ${den / gcd}.`
+      explanation: `Διαιρούμε και τους δύο όρους με τον Μέγιστο Κοινό Διαιρέτη ΜΚΔ(${num}, ${den}) ＝ ${gcd}: (${num} : ${gcd}) / (${den} : ${gcd}) ＝ ${num / gcd} : ${den / gcd}.`
     });
   }
 
@@ -400,10 +420,10 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 2 • ΤΙΜΗ ΤΟΥ ΛΟΓΟΥ',
       instruction: 'Επιλέξτε τη σωστή δεκαδική τιμή του λόγου:',
-      prompt: `Ποια είναι η ακριβής τιμή του λόγου ${num} ： ${den};`,
+      prompt: `Ποια είναι η ακριβής τιμή του λόγου ${num} : ${den};`,
       options,
       correctText: valStr,
-      explanation: `Η τιμή του λόγου βρίσκεται εκτελώντας τη διαίρεση του προηγούμενου όρου με τον επόμενο: ${num} ： ${den} ＝ ${valStr}.`
+      explanation: `Η τιμή του λόγου βρίσκεται εκτελώντας τη διαίρεση του προηγούμενου όρου με τον επόμενο: ${num} : ${den} ＝ ${valStr}.`
     });
   }
 
@@ -421,7 +441,7 @@ function generateQuestions() {
       prompt: `Ποιος είναι ο απλοποιημένος λόγος του μήκους ${cm} cm προς το μήκος ${m} m;`,
       ansNum: cm / gcd,
       ansDen: mInCm / gcd,
-      explanation: `Μετατρέπουμε τα ${m} m σε cm: ${m} · 100 ＝ ${mInCm} cm. Ο λόγος είναι ${cm} ： ${mInCm}. Διαιρούμε με τον ΜΚΔ(${cm}, ${mInCm}) ＝ ${gcd} και προκύπτει ${cm / gcd} ： ${mInCm / gcd}.`
+      explanation: `Μετατρέπουμε τα ${m} m σε cm: ${m} · 100 ＝ ${mInCm} cm. Ο λόγος είναι ${cm} : ${mInCm}. Διαιρούμε με τον ΜΚΔ(${cm}, ${mInCm}) ＝ ${gcd} και προκύπτει ${cm / gcd} : ${mInCm / gcd}.`
     });
   }
 
@@ -430,10 +450,10 @@ function generateQuestions() {
     const a = randInt(3, 8);
     const b = randInt(4, 9);
     const options = [
-      { text: `Ο λόγος ${b} ： ${a}`, isCorrect: true },
-      { text: `Ο λόγος ${a} ： ${a + b}`, isCorrect: false },
-      { text: `Ο λόγος ${a * 2} ： ${b * 2}`, isCorrect: false },
-      { text: `Ο λόγος 1 ： ${b}`, isCorrect: false }
+      { text: `Ο λόγος ${b} : ${a}`, isCorrect: true },
+      { text: `Ο λόγος ${a} : ${a + b}`, isCorrect: false },
+      { text: `Ο λόγος ${a * 2} : ${b * 2}`, isCorrect: false },
+      { text: `Ο λόγος 1 : ${b}`, isCorrect: false }
     ].sort(() => Math.random() - 0.5);
 
     qList.push({
@@ -441,10 +461,10 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 4 • ΑΝΤΙΣΤΡΟΦΟΣ ΛΟΓΟΣ',
       instruction: 'Επιλέξτε τη σωστή μαθηματική πρόταση:',
-      prompt: `Ποιος είναι ο αντίστροφος λόγος του λόγου ${a} ： ${b};`,
+      prompt: `Ποιος είναι ο αντίστροφος λόγος του λόγου ${a} : ${b};`,
       options,
-      correctText: `Ο λόγος ${b} ： ${a}`,
-      explanation: `Αντίστροφος ενός λόγου α ： β ονομάζεται ο λόγος β ： α. Το γινόμενό τους είναι ίσο με 1: (${a}/${b}) · (${b}/${a}) ＝ 1.`
+      correctText: `Ο λόγος ${b} : ${a}`,
+      explanation: `Αντίστροφος ενός λόγου α : β ονομάζεται ο λόγος β : α. Το γινόμενό τους είναι ίσο με 1: (${a}/${b}) · (${b}/${a}) ＝ 1.`
     });
   }
 
@@ -461,7 +481,7 @@ function generateQuestions() {
       prompt: `Ένα τρένο διανύει ${km} km σε ${hours} ώρες. Ποια είναι η τιμή του λόγου της απόστασης προς τον χρόνο (δηλαδή η μέση ταχύτητα σε km/h);`,
       correctVal: speed,
       correctStr: String(speed),
-      explanation: `Ο λόγος της απόστασης προς τον χρόνο είναι ${km} ： ${hours} ＝ ${speed} km/h.`
+      explanation: `Ο λόγος της απόστασης προς τον χρόνο είναι ${km} : ${hours} ＝ ${speed} km/h.`
     });
   }
 
@@ -473,10 +493,10 @@ function generateQuestions() {
     const eqA = baseA * mult;
     const eqB = baseB * mult;
 
-    const correct = `${eqA} ： ${eqB}`;
-    const wrong1 = `${eqA + 1} ： ${eqB}`;
-    const wrong2 = `${eqA} ： ${eqB + 2}`;
-    const wrong3 = `${baseA * 2} ： ${baseB * 3}`;
+    const correct = `${eqA} : ${eqB}`;
+    const wrong1 = `${eqA + 1} : ${eqB}`;
+    const wrong2 = `${eqA} : ${eqB + 2}`;
+    const wrong3 = `${baseA * 2} : ${baseB * 3}`;
 
     const options = [
       { text: correct, isCorrect: true },
@@ -490,14 +510,14 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 6 • ΙΣΟΔΥΝΑΜΟΙ ΛΟΓΟΙ',
       instruction: 'Επιλέξτε τον λόγο που είναι ίσος με τον δοσμένο:',
-      prompt: `Ποιος από τους παρακάτω λόγους είναι ίσος με τον λόγο ${baseA} ： ${baseB};`,
+      prompt: `Ποιος από τους παρακάτω λόγους είναι ίσος με τον λόγο ${baseA} : ${baseB};`,
       options,
       correctText: correct,
-      explanation: `Πολλαπλασιάζοντας και τους δύο όρους του ${baseA} ： ${baseB} με το ${mult}, έχουμε (${baseA} · ${mult}) ： (${baseB} · ${mult}) ＝ ${eqA} ： ${eqB}.`
+      explanation: `Πολλαπλασιάζοντας και τους δύο όρους του ${baseA} : ${baseB} με το ${mult}, έχουμε (${baseA} · ${mult}) : (${baseB} · ${mult}) ＝ ${eqA} : ${eqB}.`
     });
   }
 
-  // Q7 & Q8: Κανονικα Προβληματα (1 Input Fraction, 1 MCQ)
+  // Q7 & Q8: Κανονικά Προβλήματα (1 Input Fraction, 1 MCQ)
   {
     const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const stdProb1 = shuffledStd[0].generate();
@@ -516,10 +536,10 @@ function generateQuestions() {
     });
 
     // Q8 (MCQ)
-    const correctFrac = `${stdProb2.ansNum} ： ${stdProb2.ansDen}`;
-    const fakeA = `${stdProb2.ansDen} ： ${stdProb2.ansNum}`;
-    const fakeB = `${stdProb2.ansNum + 1} ： ${stdProb2.ansDen}`;
-    const fakeC = `${stdProb2.ansNum} ： ${stdProb2.ansDen + 2}`;
+    const correctFrac = `${stdProb2.ansNum} : ${stdProb2.ansDen}`;
+    const fakeA = `${stdProb2.ansDen} : ${stdProb2.ansNum}`;
+    const fakeB = `${stdProb2.ansNum + 1} : ${stdProb2.ansDen}`;
+    const fakeC = `${stdProb2.ansNum} : ${stdProb2.ansDen + 2}`;
 
     const optionsQ8 = [
       { text: correctFrac, isCorrect: true },
@@ -540,7 +560,7 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβληματα Αυξημενης Δυσκολιας (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
   {
     const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
     const hardProb1 = shuffledHard[0].generate();
@@ -578,10 +598,10 @@ function generateQuestions() {
     let fake10C = '';
 
     if (hardProb2.ansNum !== undefined) {
-      correctText10 = `${hardProb2.ansNum} ： ${hardProb2.ansDen}`;
-      fake10A = `${hardProb2.ansDen} ： ${hardProb2.ansNum}`;
-      fake10B = `${hardProb2.ansNum + 1} ： ${hardProb2.ansDen}`;
-      fake10C = `${hardProb2.ansNum} ： ${hardProb2.ansDen + 1}`;
+      correctText10 = `${hardProb2.ansNum} : ${hardProb2.ansDen}`;
+      fake10A = `${hardProb2.ansDen} : ${hardProb2.ansNum}`;
+      fake10B = `${hardProb2.ansNum + 1} : ${hardProb2.ansDen}`;
+      fake10C = `${hardProb2.ansNum} : ${hardProb2.ansDen + 1}`;
     } else {
       correctText10 = `${hardProb2.correctVal}`;
       fake10A = `${hardProb2.correctVal + randInt(5, 15)}`;
@@ -630,7 +650,7 @@ export default function LogosExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (0-9 και κομμα)
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (0-9 και κομμα, μεγιστο 10 χαρακτηρες)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -676,7 +696,7 @@ export default function LogosExercisesPage() {
       } else if (q.type === 'decimal_input') {
         const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
         const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.01) {
+        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
           currentScore += 1;
         }
       }
@@ -702,30 +722,31 @@ export default function LogosExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32">
+      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
         
         {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
               <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Η Έννοια του Λόγου
             </h1>
-            <p className="text-sky-100 text-sm sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               10 απαιτητικές δραστηριότητες που περιλαμβάνουν 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Συμπληρώστε τις απαντήσεις σας σε ανάγωγη μορφή και ελέγξτε την επίδοσή σας.
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-sky-200">
+          <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
               ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
               <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
@@ -733,7 +754,7 @@ export default function LogosExercisesPage() {
         </section>
 
         {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6">
+        <div className="space-y-6 sm:space-y-8">
           {questions.map((q, idx) => {
             let isCorrect = false;
             if (isSubmitted) {
@@ -745,14 +766,14 @@ export default function LogosExercisesPage() {
                 isCorrect = un === q.ansNum && ud === q.ansDen;
               } else if (q.type === 'decimal_input') {
                 const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.01;
+                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
               }
             }
 
             return (
               <article
                 key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-6 sm:p-8 shadow-sm transition-all ${
+                className={`bg-white rounded-3xl border p-5 sm:p-8 2xl:p-10 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
                       ? 'border-emerald-400 bg-emerald-50/20'
@@ -760,14 +781,14 @@ export default function LogosExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια) */}
+                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
+                  <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
                   </span>
                   {isSubmitted && (
                     <span
-                      className={`text-xs font-bold px-3 py-1 rounded-full ${
+                      className={`text-xs 2xl:text-sm font-bold px-3 py-1 rounded-full ${
                         isCorrect
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-rose-100 text-rose-800'
@@ -780,10 +801,10 @@ export default function LogosExercisesPage() {
 
                 {/* Εκφωνηση */}
                 <div className="space-y-2 mb-5">
-                  <p className="text-xs sm:text-sm font-semibold text-slate-500">
+                  <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
                     {q.instruction}
                   </p>
-                  <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                  <p className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
                 </div>
@@ -793,7 +814,7 @@ export default function LogosExercisesPage() {
                   
                   {/* 1. Fraction Input */}
                   {q.type === 'fraction_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       <div className="inline-flex items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-300 shadow-inner gap-2">
                         <input
                           type="text"
@@ -819,7 +840,7 @@ export default function LogosExercisesPage() {
                           className="w-24 sm:w-28 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-xl py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed"
                         />
                       </div>
-                      <span className="text-xs text-slate-500 hidden sm:inline">
+                      <span className="text-xs 2xl:text-sm text-slate-500">
                         (Μορφή λόγου: αριθμητής / παρονομαστής)
                       </span>
                     </div>
@@ -827,7 +848,7 @@ export default function LogosExercisesPage() {
 
                   {/* 2. Decimal / Single Input */}
                   {q.type === 'decimal_input' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -838,15 +859,15 @@ export default function LogosExercisesPage() {
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
                         className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs 2xl:text-sm text-slate-500">
                         (Ακέραιος ή δεκαδικός με κόμμα)
                       </span>
                     </div>
                   )}
 
-                  {/* 3. Multiple Choice (MCQ) */}
+                  {/* 3. Multiple Choice (MCQ) - Χωρις truncate, break-words */}
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
                         const isSelected = answers[`q_${q.id}`] === opt.text;
                         return (
@@ -855,15 +876,17 @@ export default function LogosExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-sm sm:text-base transition active:scale-98 touch-manipulation flex items-center justify-between ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
                               isSelected
                                 ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
-                            <span>{opt.text}</span>
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
                             <span
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs ${
+                              className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center text-xs ${
                                 isSelected
                                   ? 'border-white bg-white text-blue-600 font-bold'
                                   : 'border-slate-400 bg-transparent'
@@ -882,7 +905,7 @@ export default function LogosExercisesPage() {
                 {/* Feedback μετα την υποβολη */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
+                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-1.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -923,7 +946,7 @@ export default function LogosExercisesPage() {
             type="button"
             onClick={handleCheckAnswers}
             disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-lg px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
           >
             <span>🎯 Έλεγχος Απαντήσεων</span>
           </button>
@@ -933,7 +956,7 @@ export default function LogosExercisesPage() {
 
       {/* Fixed Bottom Score Bar */}
       <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
@@ -960,7 +983,7 @@ export default function LogosExercisesPage() {
               <button
                 type="button"
                 onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
                 ΕΛΕΓΧΟΣ
               </button>
@@ -968,7 +991,7 @@ export default function LogosExercisesPage() {
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
                 🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
               </button>
