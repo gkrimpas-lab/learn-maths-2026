@@ -50,30 +50,31 @@ export default function AllaGrafimataTheoryPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-10 2xl:space-y-14 pb-24 overflow-x-hidden">
+      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K χωρις οριζοντιο scroll */}
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
         
         {/* 1. HEADER BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4 2xl:space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
               <span>ΚΕΦΑΛΑΙΟ 57 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Άλλα Είδη Γραφημάτων: Γραμμής, Οριζόντιο &amp; Κυκλικό
             </h1>
-            <p className="text-sky-100 text-sm sm:text-lg 2xl:text-2xl leading-relaxed max-w-4xl">
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               Επεκτείνουμε τις γνώσεις μας στη στατιστική απεικόνιση: Μαθαίνουμε να αποτυπώνουμε τη διαχρονική εξέλιξη με <strong>γραφήματα γραμμής</strong>, να συγκρίνουμε ονόματα με <strong>οριζόντια ραβδογράμματα</strong> και να διαιρούμε το όλο σε ποσοστά και μοίρες με <strong>κυκλικά διαγράμματα</strong>.
             </p>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-xs sm:text-sm 2xl:text-base text-sky-200">
-              <span className="flex h-3 w-3 rounded-full bg-emerald-400 animate-pulse"></span>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>Θεωρία, Οπτικά Παραδείγματα &amp; Διαδραστική Εναλλαγή Γραφημάτων</span>
             </div>
             <Link
               href="/st-dimotikou/57-alla-grafimata-ask"
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2.5 2xl:px-7 2xl:py-3.5 rounded-xl shadow-md transition active:scale-95 text-sm 2xl:text-base"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
               <span>Δοκίμασε τις Ασκήσεις</span>
               <span aria-hidden="true">→</span>
@@ -87,117 +88,117 @@ export default function AllaGrafimataTheoryPage() {
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
               Επιλογή του Κατάλληλου Γραφήματος σε 4 Βήματα
             </h2>
-            <p className="text-slate-600 text-sm sm:text-base 2xl:text-xl mt-1">
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
               Κάθε είδος γραφήματος έχει έναν συγκεκριμένο ρόλο ανάλογα με τα δεδομένα που θέλουμε να προβάλουμε.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-4 gap-6 2xl:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-4 gap-5 sm:gap-6 2xl:gap-8">
             
             {/* Βημα 1ο */}
-            <article className="bg-white p-5 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-sky-100 text-sky-800 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 1
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Εξέλιξη Χρόνου</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Εξέλιξη Χρόνου</span>
                 </div>
-                <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
                   Γράφημα Γραμμής
                 </h3>
-                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
                   Χρησιμοποιείται όταν θέλουμε να δείξουμε <strong>πώς μεταβάλλεται ένα μέγεθος με την πάροδο του χρόνου</strong> (χρονοσειρά):
                 </p>
 
-                <div className="bg-slate-50 p-3.5 2xl:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 text-slate-700">
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 text-slate-700">
                   <div>• <strong>Οριζόντιος άξονας (χ):</strong> Ο χρόνος (ώρες, ημέρες, μήνες, έτη).</div>
                   <div>• <strong>Κατακόρυφος άξονας (ψ):</strong> Το μέγεθος (θερμοκρασία, ύψος, πωλήσεις).</div>
                   <div>• <strong>Σημεία &amp; Ευθύγραμμα τμήματα:</strong> Ενώνουμε τα σημεία για να δούμε αν η τάση είναι ανοδική, καθοδική ή σταθερή.</div>
                 </div>
               </div>
 
-              <div className="p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
                 💡 Ιδανικό για: ημερήσιες θερμοκρασίες, ανάπτυξη φυτού, μηνιαία έξοδα.
               </div>
             </article>
 
             {/* Βημα 2ο */}
-            <article className="bg-white p-5 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
+                  <span className="px-2.5 py-1 bg-amber-100 text-amber-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 2
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Σύγκριση Ονομάτων</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Σύγκριση Ονομάτων</span>
                 </div>
-                <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
                   Οριζόντιο Ραβδόγραμμα
                 </h3>
-                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
                   Είναι ένα κλασικό ραβδόγραμμα «ξαπλωμένο» οριζόντια. Προτιμάται όταν <strong>οι κατηγορίες έχουν μεγάλα ονόματα</strong>:
                 </p>
 
-                <div className="bg-slate-50 p-3.5 2xl:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 text-slate-700">
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 text-slate-700">
                   <div>• <strong>Κατακόρυφος άξονας:</strong> Οι κατηγορίες / ονόματα.</div>
                   <div>• <strong>Οριζόντιος άξονας:</strong> Η κλίμακα των αριθμητικών τιμών.</div>
                   <div>• <strong>Μήκος ράβδου:</strong> Δείχνει τη συχνότητα της κάθε κατηγορίας.</div>
                 </div>
               </div>
 
-              <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
+              <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
                 ⚡ Διευκολύνει την ανάγνωση χωρίς να χρειάζεται να γέρνουμε το κεφάλι για να διαβάσουμε μεγάλες λέξεις!
               </div>
             </article>
 
             {/* Βημα 3ο */}
-            <article className="bg-white p-5 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-indigo-100 text-indigo-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
+                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 3
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Μέρος προς Όλο</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Μέρος προς Όλο</span>
                 </div>
-                <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
                   Κυκλικό Διάγραμμα (Πίτα)
                 </h3>
-                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
                   Αναπαριστά τη <strong>σχέση των επιμέρους τμημάτων με το σύνολο</strong>. Ολόκληρος ο κύκλος αντιπροσωπεύει το 100%:
                 </p>
 
-                <div className="bg-slate-50 p-3.5 2xl:p-4 rounded-2xl border border-slate-200 space-y-1.5 text-xs sm:text-sm text-center font-mono">
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-1.5 text-xs sm:text-sm text-center font-mono">
                   <div className="text-indigo-950 font-bold">
                     Ολόκληρος Κύκλος ＝ 100 % ＝ 360°
                   </div>
-                  <div className="text-slate-600 font-sans text-xs">
+                  <div className="text-slate-600 font-sans text-[11px] leading-normal">
                     Μισός Κύκλος ＝ 50 % ＝ 180° | Τέταρτο ＝ 25 % ＝ 90°
                   </div>
                 </div>
               </div>
 
-              <div className="p-3.5 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
                 🎯 Κάθε τομέας του κύκλου έχει επίκεντρη γωνία ανάλογη με το ποσοστό της κατηγορίας.
               </div>
             </article>
 
             {/* Βημα 4ο */}
-            <article className="bg-white p-5 sm:p-8 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 bg-emerald-100 text-emerald-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
+                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 4
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Μαθηματικός Τύπος</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Μαθηματικός Τύπος</span>
                 </div>
-                <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
                   Υπολογισμός Επίκεντρης Γωνίας
                 </h3>
-                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
                   Για να σχεδιάσουμε έναν κυκλικό τομέα με μοιρογνωμόνιο, βρίσκουμε τις μοίρες με αναλογία:
                 </p>
 
-                <div className="bg-slate-50 p-3.5 2xl:p-4 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm font-mono text-center">
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-1.5 text-xs sm:text-sm font-mono text-center">
                   <div className="p-2 bg-white rounded-xl border border-slate-200 text-emerald-900 font-bold">
                     Μοίρες (α°) ＝ (Ποσοστό % · 360°) : 100
                   </div>
@@ -207,7 +208,7 @@ export default function AllaGrafimataTheoryPage() {
                 </div>
               </div>
 
-              <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
+              <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
                 🚀 Το άθροισμα των γωνιών όλων των κυκλικών τομέων ισούται αυστηρά με 360°.
               </div>
             </article>
@@ -222,7 +223,7 @@ export default function AllaGrafimataTheoryPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
                 <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
               </div>
-              <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
                 Δυναμικός Μετατροπέας: Ίδια Δεδομένα σε 3 Διαφορετικά Γραφήματα
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
@@ -270,25 +271,26 @@ export default function AllaGrafimataTheoryPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             
-            {/* Χειριστηρια Τιμων (Step 1) */}
-            <div className="lg:col-span-5 space-y-3">
+            {/* Χειριστηρια Τιμων (4 Steppers με grid 36px_1fr_36px και κουμπια 36px) */}
+            <div className="lg:col-span-5 space-y-3 sm:space-y-3.5">
               
               {/* Σημειο Α */}
-              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Σημείο Α
                   </span>
                   <span className="font-mono font-black text-xs sm:text-sm text-blue-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                     {val1} μονάδες
                   </span>
                 </div>
-                <div className="grid grid-cols-[34px_1fr_34px] items-center h-9 w-full gap-2">
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
+                    aria-label="Μείωση Σημείου Α"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal1((prev) => Math.max(5, prev - 1)); }}
                     disabled={val1 <= 5}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     －
                   </button>
@@ -303,9 +305,10 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
+                    aria-label="Αύξηση Σημείου Α"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal1((prev) => Math.min(50, prev + 1)); }}
                     disabled={val1 >= 50}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     ＋
                   </button>
@@ -313,21 +316,22 @@ export default function AllaGrafimataTheoryPage() {
               </div>
 
               {/* Σημειο Β */}
-              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Σημείο Β
                   </span>
                   <span className="font-mono font-black text-xs sm:text-sm text-emerald-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                     {val2} μονάδες
                   </span>
                 </div>
-                <div className="grid grid-cols-[34px_1fr_34px] items-center h-9 w-full gap-2">
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
+                    aria-label="Μείωση Σημείου Β"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal2((prev) => Math.max(5, prev - 1)); }}
                     disabled={val2 <= 5}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     －
                   </button>
@@ -342,9 +346,10 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
+                    aria-label="Αύξηση Σημείου Β"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal2((prev) => Math.min(50, prev + 1)); }}
                     disabled={val2 >= 50}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     ＋
                   </button>
@@ -352,21 +357,22 @@ export default function AllaGrafimataTheoryPage() {
               </div>
 
               {/* Σημειο Γ */}
-              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Σημείο Γ
                   </span>
                   <span className="font-mono font-black text-xs sm:text-sm text-amber-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                     {val3} μονάδες
                   </span>
                 </div>
-                <div className="grid grid-cols-[34px_1fr_34px] items-center h-9 w-full gap-2">
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
+                    aria-label="Μείωση Σημείου Γ"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal3((prev) => Math.max(5, prev - 1)); }}
                     disabled={val3 <= 5}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     －
                   </button>
@@ -381,9 +387,10 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
+                    aria-label="Αύξηση Σημείου Γ"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal3((prev) => Math.min(50, prev + 1)); }}
                     disabled={val3 >= 50}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     ＋
                   </button>
@@ -391,21 +398,22 @@ export default function AllaGrafimataTheoryPage() {
               </div>
 
               {/* Σημειο Δ */}
-              <div className="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-pink-500"></span> Σημείο Δ
                   </span>
                   <span className="font-mono font-black text-xs sm:text-sm text-pink-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                     {val4} μονάδες
                   </span>
                 </div>
-                <div className="grid grid-cols-[34px_1fr_34px] items-center h-9 w-full gap-2">
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
+                    aria-label="Μείωση Σημείου Δ"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal4((prev) => Math.max(5, prev - 1)); }}
                     disabled={val4 <= 5}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     －
                   </button>
@@ -420,9 +428,10 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
+                    aria-label="Αύξηση Σημείου Δ"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal4((prev) => Math.min(50, prev + 1)); }}
                     disabled={val4 >= 50}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     ＋
                   </button>
@@ -430,14 +439,14 @@ export default function AllaGrafimataTheoryPage() {
               </div>
 
               {/* Συνολο Μοναδων */}
-              <div className="p-2.5 bg-blue-50 rounded-xl border border-blue-200 text-center font-bold text-xs sm:text-sm text-blue-950">
+              <div className="p-3 bg-blue-50 rounded-2xl border border-blue-200 text-center font-bold text-xs sm:text-sm text-blue-950">
                 Σύνολο μονάδων: <strong className="font-mono text-sm sm:text-base">{total}</strong>
               </div>
 
             </div>
 
             {/* Οπτικη Προβολη Γραφηματος (SVG) Χωρις Scroll στα Κινητα */}
-            <div className="lg:col-span-7 bg-slate-50 p-3 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center w-full min-h-[340px]">
+            <div className="lg:col-span-7 bg-slate-50 p-3.5 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center w-full min-h-[340px]">
               
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 sm:mb-3 text-center">
                 {chartType === 'line' && 'ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ (ΧΡΟΝΟΣΕΙΡΑ)'}
@@ -572,7 +581,7 @@ export default function AllaGrafimataTheoryPage() {
                     </svg>
                   </div>
 
-                  {/* Υπομνημα Κυκλικου σε Responsive Grid (2 στηλες στα κινητα ωστε να χωραει παντα το Σημειο Δ) */}
+                  {/* Υπομνημα Κυκλικου σε Responsive Grid */}
                   <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full text-[11px] sm:text-xs font-mono pt-1">
                     {dataset.map((d, i) => {
                       const pct = total > 0 ? ((d.value / total) * 100).toFixed(0) : 0;
@@ -581,7 +590,7 @@ export default function AllaGrafimataTheoryPage() {
                           key={`pie-leg-${i}`}
                           className="flex items-center justify-between gap-1 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-200"
                         >
-                          <div className="flex items-center gap-1.5 truncate">
+                          <div className="flex items-center gap-1.5 min-w-0">
                             <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: d.color }}></span>
                             <span className="font-sans font-bold text-slate-700 truncate">{d.label}</span>
                           </div>
@@ -596,7 +605,7 @@ export default function AllaGrafimataTheoryPage() {
                 </div>
               )}
 
-              <span className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-2.5 text-center">
+              <span className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-2.5 text-center leading-normal">
                 Η επιλογή του γραφήματος εξαρτάται από τον στόχο: εξέλιξη (γραμμή), σύγκριση (ραβδόγραμμα) ή ποσοστά (κυκλικό)!
               </span>
             </div>
@@ -620,21 +629,22 @@ export default function AllaGrafimataTheoryPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             
-            {/* Ρυθμισεις Ποσοστου */}
+            {/* Ρυθμισεις Ποσοστου με stepper 36px */}
             <div className="space-y-4">
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-slate-700">
                   <span>ΠΟΣΟΣΤΟ ΚΑΤΗΓΟΡΙΑΣ (%):</span>
                   <span className="font-mono text-base sm:text-lg text-amber-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 font-black">
                     {percentInput} %
                   </span>
                 </div>
-                <div className="grid grid-cols-[34px_1fr_34px] items-center h-10 w-full gap-2">
+                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
+                    aria-label="Μείωση ποσοστού"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentInput((prev) => Math.max(1, prev - 1)); }}
                     disabled={percentInput <= 1}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     －
                   </button>
@@ -649,9 +659,10 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
+                    aria-label="Αύξηση ποσοστού"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentInput((prev) => Math.min(100, prev + 1)); }}
                     disabled={percentInput >= 100}
-                    className="w-8 h-8 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-sm"
+                    className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     ＋
                   </button>
@@ -665,7 +676,7 @@ export default function AllaGrafimataTheoryPage() {
                     key={`pre-${presetPct}`}
                     type="button"
                     onClick={() => setPercentInput(presetPct)}
-                    className="bg-white border border-slate-200 hover:bg-slate-100 py-2 rounded-xl font-bold text-xs text-slate-700 shadow-sm transition active:scale-95 text-center"
+                    className="bg-white border border-slate-200 hover:bg-slate-100 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-700 shadow-sm transition active:scale-95 text-center touch-manipulation"
                   >
                     {presetPct} %
                   </button>
@@ -821,7 +832,7 @@ export default function AllaGrafimataTheoryPage() {
         </section>
 
         {/* 6. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
-        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-6 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
               Ώρα για Εξάσκηση στα Άλλα Είδη Γραφημάτων!
@@ -833,7 +844,7 @@ export default function AllaGrafimataTheoryPage() {
 
           <Link
             href="/st-dimotikou/57-alla-grafimata-ask"
-            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
             <span>🎯 Έναρξη Ασκήσεων</span>
             <span aria-hidden="true">→</span>
