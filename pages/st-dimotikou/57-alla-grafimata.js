@@ -34,6 +34,37 @@ export default function AllaGrafimataTheoryPage() {
     return Number(((percentInput * 360) / 100).toFixed(1));
   }, [percentInput]);
 
+  // Υπολογισμος γεωμετριας τομεα για τον δυναμικο κυκλο του Εργαστηριου 2
+  const angleSectorData = useMemo(() => {
+    const cx = 100;
+    const cy = 100;
+    const r = 75;
+    const angle = degreesCalculated;
+
+    if (angle >= 360) {
+      return {
+        path: `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx} ${cy + r} A ${r} ${r} 0 1 1 ${cx} ${cy - r} Z`,
+        arcPath: '',
+        endX: cx,
+        endY: cy - r
+      };
+    }
+
+    const rad = (Math.PI * (angle - 90)) / 180;
+    const endX = cx + r * Math.cos(rad);
+    const endY = cy + r * Math.sin(rad);
+    const largeArc = angle > 180 ? 1 : 0;
+    const path = `M ${cx} ${cy} L ${cx} ${cy - r} A ${r} ${r} 0 ${largeArc} 1 ${endX} ${endY} Z`;
+
+    // Μικρο τοξο ενδειξης γωνιας κοντα στο κεντρο
+    const rSmall = 26;
+    const endXSmall = cx + rSmall * Math.cos(rad);
+    const endYSmall = cy + rSmall * Math.sin(rad);
+    const arcPath = `M ${cx} ${cy - rSmall} A ${rSmall} ${rSmall} 0 ${largeArc} 1 ${endXSmall} ${endYSmall}`;
+
+    return { path, arcPath, endX, endY };
+  }, [degreesCalculated]);
+
   return (
     <Layout
       title="Άλλα Γραφήματα: Γραμμής, Οριζόντιο, Κυκλικό - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -623,14 +654,14 @@ export default function AllaGrafimataTheoryPage() {
               Πώς Υπολογίζουμε την Επίκεντρη Γωνία (360° ＝ 100%)
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρετε το ποσοστό (%) για να δείτε ακριβώς πόσες μοίρες επίκεντρης γωνίας πρέπει να σχεδιάσουμε με το μοιρογνωμόνιο:
+              Σύρετε το ποσοστό (%) για να δείτε ακριβώς πόσες μοίρες επίκεντρης γωνίας πρέπει να σχεδιάσουμε με το μοιρογνωμόνιο και παρατηρήστε το άνοιγμα της γωνίας στον κύκλο:
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             
-            {/* Ρυθμισεις Ποσοστου με stepper 36px */}
-            <div className="space-y-4">
+            {/* Ρυθμισεις Ποσοστου με stepper 36px (5 στήλες) */}
+            <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-slate-700">
                   <span>ΠΟΣΟΣΤΟ ΚΑΤΗΓΟΡΙΑΣ (%):</span>
@@ -684,8 +715,68 @@ export default function AllaGrafimataTheoryPage() {
               </div>
             </div>
 
-            {/* Αποτελεσμα & Τυπος */}
-            <div className="bg-amber-50/60 p-5 sm:p-6 rounded-3xl border border-amber-200 space-y-3 text-center">
+            {/* Δυναμικος Κυκλος με Ανοιγμα Επικεντρης Γωνιας (3 στήλες) */}
+            <div className="lg:col-span-3 bg-slate-50 p-4 rounded-3xl border border-slate-200 flex flex-col items-center justify-center space-y-2">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">
+                ΑΝΟΙΓΜΑ ΓΩΝΙΑΣ ΣΤΟΝ ΚΥΚΛΟ
+              </span>
+              <div className="w-full max-w-[180px] aspect-square bg-white rounded-2xl border border-slate-200 p-2 shadow-inner flex items-center justify-center">
+                <svg viewBox="0 0 200 200" className="w-full h-full overflow-visible">
+                  {/* Περιγραμμα ολοκληρου του κυκλου */}
+                  <circle cx="100" cy="100" r="75" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="4 3" />
+                  
+                  {/* Χρωματισμενος τομεας της επικεντρης γωνιας */}
+                  <path
+                    d={angleSectorData.path}
+                    fill="#f59e0b"
+                    fillOpacity="0.28"
+                    stroke="#d97706"
+                    strokeWidth="2.5"
+                    className="transition-all duration-150"
+                  />
+
+                  {/* Αρχικη ακτινα αναφορας (κατακορυφη προς τα επανω: 0 μοιρες) */}
+                  <line x1="100" y1="100" x2="100" y2="25" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" />
+
+                  {/* Τελικη κινητη ακτινα της επικεντρης γωνιας */}
+                  {degreesCalculated < 360 && (
+                    <line
+                      x1="100"
+                      y1="100"
+                      x2={angleSectorData.endX}
+                      y2={angleSectorData.endY}
+                      stroke="#b45309"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      className="transition-all duration-150"
+                    />
+                  )}
+
+                  {/* Εσωτερικο τοξο επικεντρης γωνιας κοντα στο κεντρο */}
+                  {degreesCalculated > 0 && degreesCalculated < 360 && angleSectorData.arcPath && (
+                    <path
+                      d={angleSectorData.arcPath}
+                      fill="none"
+                      stroke="#d97706"
+                      strokeWidth="2"
+                      className="transition-all duration-150"
+                    />
+                  )}
+
+                  {/* Κεντρο του κυκλου */}
+                  <circle cx="100" cy="100" r="4.5" fill="#78350f" stroke="#ffffff" strokeWidth="1.5" />
+                  <text x="100" y="116" fontSize="10" fontWeight="bold" fill="#78350f" textAnchor="middle">
+                    Ο
+                  </text>
+                </svg>
+              </div>
+              <div className="text-[11px] font-mono font-bold text-amber-800 text-center">
+                Επίκεντρη: <strong className="text-sm">{degreesCalculated}°</strong> ({percentInput}%)
+              </div>
+            </div>
+
+            {/* Αποτελεσμα & Τυπος (4 στήλες) */}
+            <div className="lg:col-span-4 bg-amber-50/60 p-5 sm:p-6 rounded-3xl border border-amber-200 space-y-3 text-center">
               <span className="text-xs font-bold text-amber-900 uppercase tracking-wider block">
                 ΕΠΙΚΕΝΤΡΗ ΓΩΝΙΑ ΣΕ ΜΟΙΡΕΣ (α°)
               </span>
