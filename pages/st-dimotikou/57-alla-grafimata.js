@@ -604,7 +604,6 @@ export default function AllaGrafimataTheoryPage() {
                               fill={d.color}
                               stroke="#ffffff"
                               strokeWidth="2"
-                              className="transition-all duration-300"
                             />
                           );
                         });
@@ -725,14 +724,13 @@ export default function AllaGrafimataTheoryPage() {
                   {/* Περιγραμμα ολοκληρου του κυκλου */}
                   <circle cx="100" cy="100" r="75" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="4 3" />
                   
-                  {/* Χρωματισμενος τομεας της επικεντρης γωνιας */}
+                  {/* Χρωματισμενος τομεας της επικεντρης γωνιας (χωρις CSS transition για απολυτη σταθεροτητα) */}
                   <path
                     d={angleSectorData.path}
                     fill="#f59e0b"
                     fillOpacity="0.28"
                     stroke="#d97706"
                     strokeWidth="2.5"
-                    className="transition-all duration-150"
                   />
 
                   {/* Αρχικη ακτινα αναφορας (κατακορυφη προς τα επανω: 0 μοιρες) */}
@@ -748,7 +746,6 @@ export default function AllaGrafimataTheoryPage() {
                       stroke="#b45309"
                       strokeWidth="2.5"
                       strokeLinecap="round"
-                      className="transition-all duration-150"
                     />
                   )}
 
@@ -759,7 +756,6 @@ export default function AllaGrafimataTheoryPage() {
                       fill="none"
                       stroke="#d97706"
                       strokeWidth="2"
-                      className="transition-all duration-150"
                     />
                   )}
 
