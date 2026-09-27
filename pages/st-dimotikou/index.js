@@ -105,7 +105,6 @@ export default function STDimotikouMenu() {
                     {mod.label}
                   </span>
                   <span className="text-xl 2xl:text-2xl transform group-hover:translate-x-1 transition-transform opacity-70 group-hover:opacity-100">
-                    🚀
                   </span>
                 </a>
               </Link>
