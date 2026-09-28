@@ -1,13 +1,23 @@
-import { useState, useEffect } from 'react';
+// pages/st-dimotikou/03-arithmoi-dekadika-klasmata-ask.js
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
-// Βοηθητικές συναρτήσεις
-function getRandomInt(min, max) {
+// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+}
+
+// Τυχαιος ακεραιος στο [min, max]
+function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// Ανακατεμα πινακα
 function shuffle(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -17,716 +27,719 @@ function shuffle(array) {
   return arr;
 }
 
-// Δεξαμενή 20+ θεματικών αντικειμένων καθημερινότητας με σωστά άρθρα και μονάδες
-const REAL_WORLD_FRACTIONS = [
-  { item: 'η πορτοκαλάδα στο μπουκάλι', unit: 'λ.' },
-  { item: 'το αλεύρι για το κέικ', unit: 'κιλά' },
-  { item: 'η κορδέλα της συσκευασίας', unit: 'μ.' },
-  { item: 'το ελαιόλαδο στη σαλάτα', unit: 'λ.' },
-  { item: 'το τυρί φέτα', unit: 'κιλά' },
-  { item: 'το ύφασμα για την κουρτίνα', unit: 'μ.' },
-  { item: 'η ποσότητα μελιού', unit: 'κιλά' },
-  { item: 'το νερό στο παγούρι', unit: 'λ.' },
-  { item: 'το πάχος του ξύλου', unit: 'μ.' },
-  { item: 'το βάρος της ζύμης', unit: 'κιλά' },
-  { item: 'το γάλα στο ποτήρι', unit: 'λ.' },
-  { item: 'το καλώδιο φόρτισης', unit: 'μ.' },
-  { item: 'η ποσότητα κακάο', unit: 'κιλά' },
-  { item: 'ο φρεσκοστυμμένος χυμός', unit: 'λ.' },
-  { item: 'το βάρος του μήλου', unit: 'κιλά' },
-  { item: 'το μήκος του σύρματος', unit: 'μ.' },
-  { item: 'το σιρόπι σοκολάτας', unit: 'λ.' },
-  { item: 'το βούτυρο για τα μπισκότα', unit: 'κιλά' },
-  { item: 'το λάστιχο ποτίσματος', unit: 'μ.' },
-  { item: 'το ρόφημα βοτάνων', unit: 'λ.' },
-  { item: 'η ποσότητα ρυζιού', unit: 'κιλά' }
+// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
+function formatNum(val, decimals = 3) {
+  if (Number.isInteger(val)) return String(val);
+  const rounded = Number(val.toFixed(decimals));
+  return String(rounded).replace('.', ',');
+}
+
+// Βοηθητικο component κλασματος
+function Fraction({ num, den, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
+      <span className="border-b-2 border-current px-1 pb-0.5 text-center leading-none">
+        {num}
+      </span>
+      <span className="px-1 pt-0.5 text-center leading-none">
+        {den}
+      </span>
+    </span>
+  );
+}
+
+// Δεξαμενη Κανονικων Προβληματων
+const STANDARD_PROBLEMS_POOL = [
+  {
+    id: 'p_klasm_std_1',
+    generate: () => {
+      const parts = 100;
+      const shaded = randInt(25, 75);
+      const decVal = Number((shaded / parts).toFixed(2));
+      return {
+        text: `Σε ένα τετράγωνο χωρισμένο σε 100 ίσα τετραγωνάκια, χρωματίστηκαν τα ${shaded}. Ποιος δεκαδικός αριθμός εκφράζει το χρωματισμένο μέρος της μονάδας;`,
+        tableData: { col1: 'Χρωματισμένα', col2: 'Συνολικά', r1: [`${shaded}`, `${parts}`], r2: ['Δεκαδικό Κλάσμα', `${shaded}/${parts}`] },
+        correctVal: decVal,
+        correctStr: formatNum(decVal, 2),
+        explanation: `Το χρωματισμένο μέρος είναι ${shaded}/100 ＝ ${formatNum(decVal, 2)}.`
+      };
+    }
+  },
+  {
+    id: 'p_klasm_std_2',
+    generate: () => {
+      const bottles = 10;
+      const capacityL = 0.7; // 7/10
+      const totalL = Number((bottles * capacityL).toFixed(1));
+      return {
+        text: `Γεμίσαμε ${bottles} μπουκάλια με χυμό. Κάθε μπουκάλι χωράει 7/10 του λίτρου. Πόσα λίτρα (λ.) χυμού χρησιμοποιήσαμε συνολικά;`,
+        tableData: { col1: 'Μπουκάλια', col2: 'Χωρητικότητα', r1: [`${bottles} μπουκάλια`, '7/10 λ. ＝ 0,7 λ.'], r2: ['Πολλαπλασιασμός', 'χ λ.'] },
+        correctVal: totalL,
+        correctStr: formatNum(totalL, 1),
+        explanation: `7/10 του λίτρου ισούται με 0,7 λ. Για 10 μπουκάλια: 10 · 0,7 ＝ ${formatNum(totalL, 1)} λ.`
+      };
+    }
+  },
+  {
+    id: 'p_klasm_std_3',
+    generate: () => {
+      const ribbonM = 1.25;
+      const fracNum = 125;
+      const fracDen = 100;
+      return {
+        text: `Μια κορδέλα έχει μήκος ${formatNum(ribbonM)} m. Ποιος είναι ο αριθμητής του δεκαδικού κλάσματος με παρονομαστή το 100 που ισούται με το μήκος της κορδέλας;`,
+        tableData: { col1: 'Μήκος', col2: 'Παρονομαστής', r1: [`${formatNum(ribbonM)} m`, `${fracDen}`], r2: ['Αριθμητής', 'χ'] },
+        correctVal: fracNum,
+        correctStr: String(fracNum),
+        explanation: `Ο αριθμός ${formatNum(ribbonM)} έχει 2 δεκαδικά ψηφία, άρα γράφεται ως ${fracNum}/${fracDen}. Ο αριθμητής είναι ${fracNum}.`
+      };
+    }
+  }
 ];
 
-// Δημιουργία 8 μοναδικών ερωτήσεων
-function generateQuestions() {
-  const shuffledItems = shuffle(REAL_WORLD_FRACTIONS);
-
-  // Q1: Input - Μετατροπή Δεκαδικού σε Δεκαδικό Κλάσμα (Εύρεση Αριθμητή)
-  const q1DenomPool = [10, 100, 1000];
-  const q1Denom = q1DenomPool[getRandomInt(0, 2)];
-  let q1Numer = 0;
-  let q1DecStr = '';
-
-  if (q1Denom === 10) {
-    q1Numer = getRandomInt(1, 9);
-    q1DecStr = `0,${q1Numer}`;
-  } else if (q1Denom === 100) {
-    q1Numer = getRandomInt(11, 89);
-    q1DecStr = `0,${q1Numer}`;
-  } else {
-    q1Numer = getRandomInt(105, 750);
-    q1DecStr = `0,${q1Numer}`;
-  }
-
-  // Q2: Input - Μετατροπή Δεκαδικού Κλάσματος σε Δεκαδικό Αριθμό
-  const q2DenomType = getRandomInt(1, 3);
-  let q2Numer = 0;
-  let q2Denom = 10;
-  let q2DecAnswer = '';
-
-  if (q2DenomType === 1) {
-    q2Numer = getRandomInt(3, 9);
-    q2Denom = 10;
-    q2DecAnswer = `0,${q2Numer}`;
-  } else if (q2DenomType === 2) {
-    q2Numer = getRandomInt(5, 95);
-    q2Denom = 100;
-    q2DecAnswer = (q2Numer / 100).toFixed(2).replace('.', ',');
-  } else {
-    q2Numer = getRandomInt(12, 650);
-    q2Denom = 1000;
-    q2DecAnswer = (q2Numer / 1000).toFixed(3).replace('.', ',');
-  }
-
-  // Q3: MCQ - Επιλογή ισοδύναμου δεκαδικού κλάσματος
-  const q3DecVal = getRandomInt(1, 9) / 10;
-  const q3DecStr = q3DecVal.toFixed(1).replace('.', ',');
-  const q3CorrectFrac = `${Math.round(q3DecVal * 100)}/100`;
-  const q3Wrong1 = `${Math.round(q3DecVal * 10)}/100`;
-  const q3Wrong2 = `${Math.round(q3DecVal * 100)}/10`;
-  const q3Wrong3 = `${Math.round(q3DecVal * 1000)}/100`;
-  const q3Options = shuffle([q3CorrectFrac, q3Wrong1, q3Wrong2, q3Wrong3]);
-
-  // Q4: MCQ - Σύγκριση Δεκαδικού με Δεκαδικό Κλάσμα
-  const q4Tenths = getRandomInt(4, 8);
-  const q4FracVal = q4Tenths / 10;
-  const q4DecMore = ((q4Tenths + 1) / 10).toFixed(1).replace('.', ',');
-  const q4DecEqual = (q4Tenths / 10).toFixed(2).replace('.', ',');
-  const q4DecLess = ((q4Tenths - 2) / 10).toFixed(1).replace('.', ',');
-  const q4Question = `Ποιος δεκαδικός αριθμός είναι ΊΣΟΣ με το δεκαδικό κλάσμα ${q4Tenths * 10}/100;`;
-  const q4Options = shuffle([q4DecEqual, q4DecMore, q4DecLess, `0,0${q4Tenths}`]);
-
-  // Q5: True / False - Κανόνας μετατροπής και πλήθος μηδενικών
-  const q5IsTrue = Math.random() > 0.5;
-  const q5Text = q5IsTrue
-    ? 'Στο κλάσμα 45/100, ο παρονομαστής έχει 2 μηδενικά, άρα ο δεκαδικός αριθμός (0,45) έχει ακριβώς 2 δεκαδικά ψηφία.'
-    : 'Στο κλάσμα 45/100, ο παρονομαστής έχει 2 μηδενικά, άρα ο δεκαδικός αριθμός θα είναι το 4,5 (1 δεκαδικό ψηφίο).';
-
-  // Q6: True / False - Ισοδυναμία κλασμάτων με διαφορετικούς παρονομαστές
-  const q6Num = getRandomInt(2, 7);
-  const q6IsTrue = Math.random() > 0.5;
-  const q6Text = q6IsTrue
-    ? `Τα κλάσματα ${q6Num}/10 και ${q6Num * 10}/100 εκφράζουν ακριβώς την ίδια ποσότητα (0,${q6Num}).`
-    : `Το κλάσμα ${q6Num * 10}/100 είναι 10 φορές μεγαλύτερο από το κλάσμα ${q6Num}/10.`;
-
-  // Q7: SVG Visual - Λωρίδα δεκάτων (Οπτικό Κλάσμα)
-  const q7Count = getRandomInt(2, 8);
-  const q7DecAns = `0,${q7Count}`;
-
-  // Q8: SVG Visual - Πλέγμα 100 τετραγώνων (Εκατοστά)
-  const q8Tens = getRandomInt(2, 6);
-  const q8Units = getRandomInt(1, 8);
-  const q8TotalSquares = q8Tens * 10 + q8Units;
-  const q8DecCorrect = (q8TotalSquares / 100).toFixed(2).replace('.', ',');
-  const q8FracCorrect = `${q8TotalSquares}/100`;
-  const q8Options = shuffle([
-    q8DecCorrect,
-    (q8TotalSquares / 10).toFixed(1).replace('.', ','),
-    `0,0${q8TotalSquares}`,
-    ((q8TotalSquares + 10) / 100).toFixed(2).replace('.', ',')
-  ]);
-
-  return {
-    q1: {
-      type: 'input',
-      title: 'Δεκαδικός σε Κλάσμα',
-      decStr: q1DecStr,
-      denom: q1Denom,
-      correctNumer: q1Numer,
-      itemContext: shuffledItems[0].item,
-      explain: `Ο αριθμός ${q1DecStr} έχει ${q1Denom === 10 ? '1 δεκαδικό ψηφίο' : q1Denom === 100 ? '2 δεκαδικά ψηφία' : '3 δεκαδικά ψηφία'}, άρα ${q1DecStr} = ${q1Numer}/${q1Denom}. Ο αριθμητής είναι το ${q1Numer}.`
-    },
-    q2: {
-      type: 'input',
-      title: 'Κλάσμα σε Δεκαδικό',
-      numer: q2Numer,
-      denom: q2Denom,
-      correctStr: q2DecAnswer,
-      explain: `Διαιρώντας το ${q2Numer} με το ${q2Denom} (${q2Denom === 10 ? '1 μηδενικό' : q2Denom === 100 ? '2 μηδενικά' : '3 μηδενικά'}), βρίσκουμε ${q2Numer}/${q2Denom} = ${q2DecAnswer}.`
-    },
-    q3: {
-      type: 'mcq',
-      title: 'Ισοδύναμα Δεκαδικά Κλάσματα',
-      decStr: q3DecStr,
-      options: q3Options,
-      correct: q3CorrectFrac,
-      explain: `Το ${q3DecStr} ισούται με ${Math.round(q3DecVal * 10)}/10. Πολλαπλασιάζοντας αριθμητή και παρονομαστή με το 10, προκύπτει το ισοδύναμο κλάσμα ${q3CorrectFrac}.`
-    },
-    q4: {
-      type: 'mcq',
-      title: 'Σύγκριση & Ισοδυναμία',
-      question: q4Question,
-      options: q4Options,
-      correct: q4DecEqual,
-      explain: `Το κλάσμα ${q4Tenths * 10}/100 ισούται με ${q4Tenths}/10 = ${q4DecEqual}.`
-    },
-    q5: {
-      type: 'tf',
-      title: 'Κανόνας των Μηδενικών',
-      text: q5Text,
-      correct: q5IsTrue,
-      explain: q5IsTrue
-        ? 'Το πλήθος των μηδενικών στον δεκαδικό παρονομαστή καθορίζει ακριβώς το πλήθος των δεκαδικών ψηφίων.'
-        : '45/100 σημαίνει 2 μηδενικά στον παρονομαστή, άρα 2 δεκαδικά ψηφία: 0,45.'
-    },
-    q6: {
-      type: 'tf',
-      title: 'Ισοδυναμία Μορφών',
-      text: q6Text,
-      correct: q6IsTrue,
-      explain: q6IsTrue
-        ? 'Προσθέτοντας ένα μηδενικό στον αριθμητή και στον παρονομαστή (ή στο τέλος του δεκαδικού) η αξία παραμένει ακριβώς η ίδια.'
-        : `${q6Num}/10 και ${q6Num * 10}/100 είναι ισοδύναμα κλάσματα (εκφράζουν και τα δύο το 0,${q6Num}).`
-    },
-    q7: {
-      type: 'input',
-      title: 'Οπτική Λωρίδα Δεκάτων',
-      count: q7Count,
-      correctStr: q7DecAns,
-      explain: `Στη λωρίδα έχουν χρωματιστεί ${q7Count} από τα 10 ίσα μέρη, δηλαδή ${q7Count}/10 = ${q7DecAns}.`
-    },
-    q8: {
-      type: 'mcq',
-      title: 'Οπτικό Πλέγμα Εκατοστών',
-      count: q8TotalSquares,
-      options: q8Options,
-      correct: q8DecCorrect,
-      explain: `Στο πλέγμα 10x10 (100 κουτάκια) έχουν χρωματιστεί ${q8TotalSquares} κουτάκια, άρα ${q8FracCorrect} = ${q8DecCorrect}.`
+// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_klasm_hard_1',
+    generate: () => {
+      const a = 3;
+      const bTenths = 4;
+      const cHundr = 5;
+      const totalDec = Number((a + bTenths * 0.1 + cHundr * 0.01).toFixed(2));
+      const totalNum = a * 100 + bTenths * 10 + cHundr; // 345
+      return {
+        text: `Ένα μείγμα περιέχει ${a} ακέραιες μονάδες, ${bTenths}/10 της μονάδας και ${cHundr}/100 της μονάδας. Ποιος είναι ο αριθμητής αν γράψουμε όλη την ποσότητα ως δεκαδικό κλάσμα με παρονομαστή το 100;`,
+        tableData: { col1: 'Μείγμα', col2: 'Αναγωγή σε εκατοστά', r1: [`${a} μον. ＝ ${a * 100}/100`, `${bTenths}/10 ＝ ${bTenths * 10}/100`], r2: [`${cHundr}/100`, 'Συνολικός Αριθμητής'] },
+        correctVal: totalNum,
+        correctStr: String(totalNum),
+        explanation: `Μετατρέπουμε όλα τα μέρη σε εκατοστά: ${a * 100}/100 ＋ ${bTenths * 10}/100 ＋ ${cHundr}/100 ＝ ${totalNum}/100. Ο αριθμητής είναι το ${totalNum} (που αντιστοιχεί στο ${formatNum(totalDec, 2)}).`
+      };
     }
-  };
+  },
+  {
+    id: 'p_klasm_hard_2',
+    generate: () => {
+      const f1Numer = 35; // 35/100 = 0.35
+      const f2Dec = 0.4;   // 4/10 = 0.40
+      const sum = Number((f1Numer / 100 + f2Dec).toFixed(2));
+      return {
+        text: `Από ένα ύφασμα χρησιμοποιήθηκαν τα 35/100 του μέτρου το πρωί και άλλα 4/10 του μέτρου το απόγευμα. Πόσα μέτρα (m) υφάσματος χρησιμοποιήθηκαν συνολικά;`,
+        tableData: { col1: 'Πρωί', col2: 'Απόγευμα', r1: ['35/100 m ＝ 0,35 m', '4/10 m ＝ 0,40 m'], r2: ['Πρόσθεση', 'χ m'] },
+        correctVal: sum,
+        correctStr: formatNum(sum, 2),
+        explanation: `35/100 ＝ 0,35 m και 4/10 ＝ 40/100 ＝ 0,40 m. Συνολικά: 0,35 ＋ 0,40 ＝ ${formatNum(sum, 2)} m (ή 75/100 m).`
+      };
+    }
+  }
+];
+
+// Δημιουργια των 10 δυναμικων ερωτησεων
+function generateQuestions() {
+  const qList = [];
+
+  // Q1 (Input - Decimal): Δεκαδικός σε Δεκαδικό Κλάσμα (Εύρεση Αριθμητή)
+  {
+    const denomPool = [10, 100, 1000];
+    const denom = denomPool[randInt(0, 2)];
+    let numer = 0;
+    let decStr = '';
+
+    if (denom === 10) {
+      numer = randInt(1, 9);
+      decStr = `0,${numer}`;
+    } else if (denom === 100) {
+      numer = randInt(11, 89);
+      decStr = `0,${numer}`;
+    } else {
+      numer = randInt(105, 750);
+      decStr = `0,${numer}`;
+    }
+
+    qList.push({
+      id: 1,
+      type: 'decimal_input',
+      title: 'ΕΡΩΤΗΣΗ 1 • ΣΕ ΔΕΚΑΔΙΚΟ ΚΛΑΣΜΑ (ΑΡΙΘΜΗΤΗΣ)',
+      instruction: 'Συμπληρώστε τον αριθμητή ώστε να ισχύει η ισότητα:',
+      prompt: `Στην ισότητα ${decStr} ＝ χ / ${denom}, ποιος είναι ο αριθμητής χ;`,
+      correctVal: numer,
+      correctStr: String(numer),
+      explanation: `Ο αριθμός ${decStr} έχει ${denom === 10 ? '1 δεκαδικό ψηφίο' : denom === 100 ? '2 δεκαδικά ψηφία' : '3 δεκαδικά ψηφία'}, άρα ${decStr} ＝ ${numer} / ${denom}. Ο αριθμητής είναι το ${numer}.`
+    });
+  }
+
+  // Q2 (Input - Decimal): Μετατροπή Δεκαδικού Κλάσματος σε Δεκαδικό Αριθμό
+  {
+    const denomType = randInt(1, 3);
+    let numer = 0;
+    let denom = 10;
+    let decAnswer = 0;
+
+    if (denomType === 1) {
+      numer = randInt(3, 9);
+      denom = 10;
+      decAnswer = numer / 10;
+    } else if (denomType === 2) {
+      numer = randInt(5, 95);
+      denom = 100;
+      decAnswer = numer / 100;
+    } else {
+      numer = randInt(12, 650);
+      denom = 1000;
+      decAnswer = numer / 1000;
+    }
+
+    qList.push({
+      id: 2,
+      type: 'decimal_input',
+      title: 'ΕΡΩΤΗΣΗ 2 • ΚΛΑΣΜΑ ΣΕ ΔΕΚΑΔΙΚΟ ΑΡΙΘΜΟ',
+      instruction: 'Γράψτε το κλάσμα ως δεκαδικό αριθμό με κόμμα:',
+      prompt: `Ποιος δεκαδικός αριθμός ισούται με το δεκαδικό κλάσμα ${numer} / ${denom};`,
+      correctVal: decAnswer,
+      correctStr: formatNum(decAnswer, denom === 10 ? 1 : denom === 100 ? 2 : 3),
+      explanation: `Διαιρώντας το ${numer} με το ${denom} μετακινούμε την υποδιαστολή ${denom === 10 ? '1 θέση' : denom === 100 ? '2 θέσεις' : '3 θέσεις'} αριστερά: ${numer} : ${denom} ＝ ${formatNum(decAnswer, denom === 10 ? 1 : denom === 100 ? 2 : 3)}.`
+    });
+  }
+
+  // Q3 (MCQ): Επιλογή ισοδύναμου δεκαδικού κλάσματος
+  {
+    const tenthsDigit = randInt(2, 8);
+    const decVal = tenthsDigit / 10;
+    const decStr = formatNum(decVal, 1);
+    const correctFrac = `${tenthsDigit * 10}/100`;
+
+    const rawOptions = [
+      correctFrac,
+      `${tenthsDigit}/100`,
+      `${tenthsDigit * 10}/10`,
+      `${tenthsDigit * 100}/100`
+    ];
+    const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+      text,
+      isCorrect: text === correctFrac
+    }));
+
+    qList.push({
+      id: 3,
+      type: 'mcq',
+      title: 'ΕΡΩΤΗΣΗ 3 • ΙΣΟΔΥΝΑΜΑ ΔΕΚΑΔΙΚΑ ΚΛΑΣΜΑΤΑ',
+      instruction: 'Επιλέξτε το σωστό ισοδύναμο κλάσμα:',
+      prompt: `Ποιο από τα παρακάτω δεκαδικά κλάσματα είναι ίσο με τον αριθμό ${decStr};`,
+      options,
+      correctText: correctFrac,
+      explanation: `Το ${decStr} ισούται με ${tenthsDigit}/10. Πολλαπλασιάζοντας αριθμητή και παρονομαστή με το 10, προκύπτει το ισοδύναμο κλάσμα ${correctFrac}.`
+    });
+  }
+
+  // Q4 (MCQ): Σύγκριση Δεκαδικού με Δεκαδικό Κλάσμα (Εγγύηση Μοναδικότητας)
+  {
+    const tenths = randInt(4, 8);
+    const fracStr = `${tenths * 10}/100`;
+    const correctDec = (tenths / 10).toFixed(2).replace('.', ',');
+    const w1 = ((tenths + 1) / 10).toFixed(1).replace('.', ',');
+    const w2 = ((tenths - 2) / 10).toFixed(1).replace('.', ',');
+    const w3 = `0,0${tenths}`;
+
+    const rawOptions = [correctDec, w1, w2, w3];
+    const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+      text,
+      isCorrect: text === correctDec
+    }));
+
+    qList.push({
+      id: 4,
+      type: 'mcq',
+      title: 'ΕΡΩΤΗΣΗ 4 • ΣΥΓΚΡΙΣΗ & ΙΣΟΔΥΝΑΜΙΑ',
+      instruction: 'Επιλέξτε τον ίσο δεκαδικό αριθμό:',
+      prompt: `Ποιος δεκαδικός αριθμός είναι ίσος με το δεκαδικό κλάσμα ${fracStr};`,
+      options,
+      correctText: correctDec,
+      explanation: `Το κλάσμα ${fracStr} απλοποιείται σε ${tenths}/10 ＝ ${correctDec}.`
+    });
+  }
+
+  // Q5 (MCQ): True / False - Κανόνας των Μηδενικών
+  {
+    const q5IsTrue = Math.random() > 0.5;
+    const q5Text = q5IsTrue
+      ? 'Στο κλάσμα 45/100, ο παρονομαστής έχει 2 μηδενικά, άρα ο δεκαδικός αριθμός (0,45) έχει ακριβώς 2 δεκαδικά ψηφία.'
+      : 'Στο κλάσμα 45/100, ο παρονομαστής έχει 2 μηδενικά, άρα ο δεκαδικός αριθμός θα είναι το 4,5 (1 δεκαδικό ψηφίο).';
+    const correctAns = q5IsTrue ? 'Σωστό' : 'Λάθος';
+
+    const options = [
+      { text: 'Σωστό', isCorrect: q5IsTrue },
+      { text: 'Λάθος', isCorrect: !q5IsTrue }
+    ];
+
+    qList.push({
+      id: 5,
+      type: 'mcq',
+      title: 'ΕΡΩΤΗΣΗ 5 • ΚΑΝΟΝΑΣ ΤΩΝ ΜΗΔΕΝΙΚΩΝ',
+      instruction: 'Χαρακτηρίστε την πρόταση ως Σωστή ή Λάθος:',
+      prompt: `«${q5Text}»`,
+      options,
+      correctText: correctAns,
+      explanation: q5IsTrue
+        ? 'Σωστό! Το πλήθος των μηδενικών στον δεκαδικό παρονομαστή καθορίζει ακριβώς το πλήθος των δεκαδικών ψηφίων.'
+        : 'Λάθος! 45/100 σημαίνει 2 μηδενικά στον παρονομαστή, άρα 2 δεκαδικά ψηφία: 0,45.'
+    });
+  }
+
+  // Q6 (MCQ): True / False - Ισοδυναμία Μορφών
+  {
+    const num = randInt(2, 7);
+    const q6IsTrue = Math.random() > 0.5;
+    const q6Text = q6IsTrue
+      ? `Τα κλάσματα ${num}/10 και ${num * 10}/100 εκφράζουν ακριβώς την ίδια ποσότητα (0,${num}).`
+      : `Το κλάσμα ${num * 10}/100 είναι 10 φορές μεγαλύτερο από το κλάσμα ${num}/10.`;
+    const correctAns = q6IsTrue ? 'Σωστό' : 'Λάθος';
+
+    const options = [
+      { text: 'Σωστό', isCorrect: q6IsTrue },
+      { text: 'Λάθος', isCorrect: !q6IsTrue }
+    ];
+
+    qList.push({
+      id: 6,
+      type: 'mcq',
+      title: 'ΕΡΩΤΗΣΗ 6 • ΙΣΟΔΥΝΑΜΙΑ ΜΟΡΦΩΝ',
+      instruction: 'Χαρακτηρίστε την πρόταση ως Σωστή ή Λάθος:',
+      prompt: `«${q6Text}»`,
+      options,
+      correctText: correctAns,
+      explanation: q6IsTrue
+        ? 'Σωστό! Προσθέτοντας ένα μηδενικό στον αριθμητή και στον παρονομαστή η αξία παραμένει ακριβώς η ίδια.'
+        : `Λάθος! ${num}/10 και ${num * 10}/100 είναι ισοδύναμα κλάσματα (εκφράζουν και τα δύο το 0,${num}).`
+    });
+  }
+
+  // Q7 (Input - Decimal): Οπτική Λωρίδα Δεκάτων
+  {
+    const count = randInt(2, 8);
+    const decVal = count / 10;
+    const decStr = formatNum(decVal, 1);
+
+    qList.push({
+      id: 7,
+      type: 'decimal_input',
+      title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΗ ΛΩΡΙΔΑ ΔΕΚΑΤΩΝ',
+      instruction: 'Γράψτε τον δεκαδικό αριθμό με κόμμα:',
+      prompt: `Σε μια λωρίδα χωρισμένη σε 10 ίσα μέρη, έχουν χρωματιστεί τα ${count}. Ποιον δεκαδικό αριθμό εκφράζει το χρωματισμένο μέρος;`,
+      correctVal: decVal,
+      correctStr: decStr,
+      explanation: `Έχουν χρωματιστεί ${count} από τα 10 ίσα μέρη, δηλαδή ${count}/10 ＝ ${decStr}.`
+    });
+  }
+
+  // Q8 (MCQ): Οπτικό Πλέγμα Εκατοστών (Εγγύηση Μοναδικότητας)
+  {
+    const tens = randInt(2, 6);
+    const units = randInt(1, 8);
+    const totalSquares = tens * 10 + units;
+    const decCorrect = (totalSquares / 100).toFixed(2).replace('.', ',');
+    const w1 = (totalSquares / 10).toFixed(1).replace('.', ',');
+    const w2 = `0,0${totalSquares}`;
+    const w3 = ((totalSquares + 10) / 100).toFixed(2).replace('.', ',');
+
+    const rawOptions = [decCorrect, w1, w2, w3];
+    const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+      text,
+      isCorrect: text === decCorrect
+    }));
+
+    qList.push({
+      id: 8,
+      type: 'mcq',
+      title: 'ΕΡΩΤΗΣΗ 8 • ΟΠΤΙΚΟ ΠΛΕΓΜΑ ΕΚΑΤΟΣΤΩΝ',
+      instruction: 'Επιλέξτε τον σωστό δεκαδικό αριθμό:',
+      prompt: `Σε ένα πλέγμα 100 τετραγώνων έχουν χρωματιστεί ${totalSquares} τετραγωνάκια. Ποιον δεκαδικό αριθμό δείχνει το πλέγμα;`,
+      options,
+      correctText: decCorrect,
+      explanation: `Στο πλέγμα 100 κουτιών έχουν χρωματιστεί ${totalSquares} κουτάκια, άρα ${totalSquares}/100 ＝ ${decCorrect}.`
+    });
+  }
+
+  // Q9 & Q10: Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
+  {
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
+
+    // Q9 (Input - Decimal)
+    qList.push({
+      id: 9,
+      type: 'decimal_input',
+      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΚΛΑΣΜΑΤΩΝ',
+      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
+    });
+
+    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας)
+    const val10 = hardProb.correctVal;
+    const correctStr10 = `${hardProb.correctStr} m`;
+    const fake10A = `${formatNum(val10 + 0.2, 2)} m`;
+    const fake10B = `${formatNum(Math.max(0.1, val10 - 0.2), 2)} m`;
+    const fake10C = `${formatNum(val10 + 0.45, 2)} m`;
+
+    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
+    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
+      text,
+      isCorrect: text === correctStr10
+    }));
+
+    qList.push({
+      id: 10,
+      type: 'mcq',
+      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΜΕΤΑΤΡΟΠΗΣ & ΠΡΟΣΘΕΣΗΣ',
+      instruction: 'Επιλέξτε το σωστό συνολικό μήκος:',
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
+      options: optionsQ10,
+      correctText: correctStr10,
+      explanation: hardProb.explanation
+    });
+  }
+
+  return qList;
 }
 
 export default function MetatropiExercisesPage() {
-  const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({
-    q1: '', q2: '', q3: '', q4: '', q5: null, q6: null, q7: '', q8: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
-    setAnswers({
-      q1: '', q2: '', q3: '', q4: '', q5: null, q6: null, q7: '', q8: ''
-    });
-    setSubmitted(false);
+  // Δημιουργια νεων ασκησεων
+  const loadNewSet = useCallback(() => {
+    const q = generateQuestions();
+    setQuestions(q);
+    setAnswers({});
+    setIsSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    loadNewQuestions();
   }, []);
 
-  if (!questions) return null;
+  useEffect(() => {
+    loadNewSet();
+  }, [loadNewSet]);
 
-  const handleInputChange = (key, val) => {
-    if (submitted) return;
-    setAnswers(prev => ({ ...prev, [key]: val }));
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
+  const handleInputChange = (fieldKey, rawValue) => {
+    if (isSubmitted) return;
+    let sanitized = rawValue.replace(/\./g, ',');
+    sanitized = sanitized.replace(/[^0-9,]/g, '');
+    const parts = sanitized.split(',');
+    if (parts.length > 2) {
+      sanitized = parts[0] + ',' + parts.slice(1).join('');
+    }
+    if (sanitized.length > 10) {
+      sanitized = sanitized.slice(0, 10);
+    }
+    setAnswers((prev) => ({
+      ...prev,
+      [fieldKey]: sanitized
+    }));
   };
 
-  const isCorrect = (key) => {
-    const q = questions[key];
-    const a = answers[key];
+  // Χειρισμος MCQ
+  const handleSelectMCQ = (qId, optionText) => {
+    if (isSubmitted) return;
+    setAnswers((prev) => ({
+      ...prev,
+      [`q_${qId}`]: optionText
+    }));
+  };
 
-    if (q.type === 'input') {
-      if (typeof a !== 'string' || !a.trim()) return false;
-      const cleanAns = a.replace(/\s+/g, '').replace('.', ',');
+  // Ελεγχος Απαντησεων
+  const handleCheckAnswers = () => {
+    let currentScore = 0;
 
-      if (key === 'q1') {
-        return cleanAns === String(q.correctNumer);
+    questions.forEach((q) => {
+      if (q.type === 'mcq') {
+        const userChoice = answers[`q_${q.id}`];
+        if (userChoice === q.correctText) {
+          currentScore += 1;
+        }
+      } else if (q.type === 'decimal_input') {
+        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
+        const userVal = parseFloat(userValStr);
+        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
+          currentScore += 1;
+        }
       }
-      return cleanAns === q.correctStr;
-    }
-    if (q.type === 'mcq') {
-      return a === q.correct;
-    }
-    if (q.type === 'tf') {
-      return a === q.correct;
-    }
-    return false;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (submitted) return;
-
-    let s = 0;
-    ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8'].forEach(k => {
-      if (isCorrect(k)) s += 1;
     });
 
-    setScore(s);
-    setSubmitted(true);
-  };
-
-  const getCardStyle = (key) => {
-    if (!submitted) return 'bg-white border-slate-200 shadow-sm';
-    return isCorrect(key)
-      ? 'bg-emerald-50/60 border-emerald-400 shadow-md ring-1 ring-emerald-400'
-      : 'bg-rose-50/60 border-rose-400 shadow-md ring-1 ring-rose-400';
+    setScore(currentScore);
+    setIsSubmitted(true);
   };
 
   return (
     <Layout
-      title="🎯 Ασκήσεις: Δεκαδικοί & Κλάσματα - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση στη μετατροπή δεκαδικών αριθμών σε δεκαδικά κλάσματα για τη ΣΤ' Δημοτικού."
+      title="Ασκήσεις: Δεκαδικοί & Κλάσματα - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="10 απαιτητικές ασκήσεις και προβλήματα στη μετατροπή δεκαδικών αριθμών σε δεκαδικά κλάσματα και το αντίστροφο για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
-      showAds={false}
       hideFooter={true}
       actionButton={
-        <Link 
-          href="/st-dimotikou/03-arithmoi-dekadika-klasmata" 
-          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
+        <Link
+          href="/st-dimotikou/03-arithmoi-dekadika-klasmata"
+          className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>📖</span> <span>Θεωρία</span>
+          <span>📖 Θεωρία</span>
         </Link>
       }
     >
-      <div className="pb-28">
-        {/* HEADER HERO BANNER */}
-        <section className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white py-8 sm:py-10 px-4 sm:px-6 rounded-3xl shadow-lg mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="space-y-2 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                Διαδραστικές Ασκήσεις: Δεκαδικοί και Κλάσματα
-              </h1>
-              <p className="text-blue-100 text-xs sm:text-sm md:text-base max-w-xl leading-relaxed">
-                Λύσε τα 8 δυναμικά προβλήματα μετατροπής και οπτικών μοντέλων και δες την αναλυτική εξήγηση σε κάθε απάντηση!
-              </p>
+      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+        
+        {/* Banner Header */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              Ασκήσεις &amp; Προβλήματα: Δεκαδικοί &amp; Κλάσματα
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              10 απαιτητικές δραστηριότητες μετατροπής δεκαδικών αριθμών σε δεκαδικά κλάσματα και το αντίστροφο, οπτικές αναπαραστάσεις μονάδας και 4 ρεαλιστικά προβλήματα καθημερινής ζωής.
+            </p>
+          </div>
 
+          <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
+              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
+            </span>
             <button
               type="button"
-              onClick={loadNewQuestions}
-              className="px-5 py-3 bg-white text-blue-800 hover:bg-blue-50 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm flex items-center gap-2 shrink-0"
+              onClick={loadNewSet}
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
-              <span>🔄</span> <span>Νέες Ασκήσεις</span>
+              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
             </button>
           </div>
         </section>
 
-        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 8 ΕΡΩΤΗΣΕΙΣ */}
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Λιστα 10 Ασκησεων */}
+        <div className="space-y-6 sm:space-y-8">
+          {questions.map((q, idx) => {
+            let isCorrect = false;
+            if (isSubmitted) {
+              if (q.type === 'mcq') {
+                isCorrect = answers[`q_${q.id}`] === q.correctText;
+              } else if (q.type === 'decimal_input') {
+                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
+                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
+              }
+            }
 
-            {/* ΕΡΩΤΗΣΗ 1 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-                  Άσκηση 1 • Σε Δεκαδικό Κλάσμα
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q1') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                Συμπλήρωσε τον <strong>αριθμητή</strong> ώστε να ισχύει η ισότητα:
-              </p>
-              <div className="p-3 bg-slate-100 rounded-xl font-mono text-base sm:text-lg text-center font-black text-slate-800 mb-4 flex items-center justify-center gap-3 overflow-x-auto">
-                <span className="text-blue-700">{questions.q1.decStr}</span>
-                <span className="text-slate-400">=</span>
-                <div className="inline-flex flex-col items-center leading-none">
-                  <span className="text-emerald-600">;</span>
-                  <div className="w-12 h-[2px] bg-slate-700 my-1"></div>
-                  <span className="text-slate-700">{questions.q1.denom}</span>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  disabled={submitted}
-                  value={answers.q1}
-                  onChange={(e) => handleInputChange('q1', e.target.value)}
-                  placeholder="Γράψε τον αριθμητή..."
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q1') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q1.explain}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 2 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">
-                  Άσκηση 2 • Σε Δεκαδικό Αριθμό
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q2') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                Γράψε το δεκαδικό κλάσμα ως δεκαδικό αριθμό:
-              </p>
-              <div className="p-3 bg-slate-100 rounded-xl font-mono text-base sm:text-lg text-center font-black text-slate-800 mb-4 flex items-center justify-center gap-3 overflow-x-auto">
-                <div className="inline-flex flex-col items-center leading-none">
-                  <span className="text-emerald-700">{questions.q2.numer}</span>
-                  <div className="w-12 h-[2px] bg-slate-700 my-1"></div>
-                  <span className="text-slate-700">{questions.q2.denom}</span>
-                </div>
-                <span className="text-slate-400">=</span>
-                <span className="text-indigo-600">;</span>
-              </div>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  disabled={submitted}
-                  value={answers.q2}
-                  onChange={(e) => handleInputChange('q2', e.target.value)}
-                  placeholder="π.χ. 0,45"
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q2') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q2.explain}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 3 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
-                  Άσκηση 3 • Ισοδυναμία
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q3') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-4 leading-relaxed font-medium">
-                Ποιο από τα παρακάτω δεκαδικά κλάσματα είναι ΊΣΟ με τον αριθμό <strong className="text-purple-700 font-black font-mono text-base">{questions.q3.decStr}</strong>;
-              </p>
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                {questions.q3.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q3', opt)}
-                    className={`p-3 rounded-xl text-xs sm:text-sm font-mono font-bold border text-center transition ${
-                      answers.q3 === opt
-                        ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-purple-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q3') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q3.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 4 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
-                  Άσκηση 4 • Σύγκριση
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q4') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-4 leading-relaxed font-medium">
-                {questions.q4.question}
-              </p>
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                {questions.q4.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q4', opt)}
-                    className={`p-3 rounded-xl text-xs sm:text-sm font-mono font-bold border text-center transition ${
-                      answers.q4 === opt
-                        ? 'bg-amber-500 text-white border-amber-500 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q4') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q4.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 5 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
-                  Άσκηση 5 • Σωστό ή Λάθος
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q5') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                «{questions.q5.text}»
-              </p>
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', true)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q5 === true
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                  }`}
-                >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', false)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q5 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q5') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q5.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 6 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
-                  Άσκηση 6 • Σωστό ή Λάθος
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q6') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                «{questions.q6.text}»
-              </p>
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', true)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q6 === true
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                  }`}
-                >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', false)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q6 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q6') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q6.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 7 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
-                  Άσκηση 7 • Οπτική Λωρίδα
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q7') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 font-medium">
-                Ποιον δεκαδικό αριθμό εκφράζει το χρωματισμένο μέρος της μονάδας;
-              </p>
-              
-              <div className="bg-slate-100 rounded-2xl p-4 mb-4 flex justify-center overflow-x-auto">
-                <svg viewBox="0 0 300 40" className="w-full max-w-[280px] h-11 shrink-0 select-none">
-                  <rect x="0" y="0" width="300" height="40" rx="6" fill="#ffffff" stroke="#94a3b8" strokeWidth="2" />
-                  {[...Array(10)].map((_, i) => (
-                    <rect
-                      key={i}
-                      x={i * 30}
-                      y="0"
-                      width="30"
-                      height="40"
-                      fill={i < questions.q7.count ? '#f59e0b' : 'transparent'}
-                      stroke="#cbd5e1"
-                      strokeWidth="1.5"
-                    />
-                  ))}
-                </svg>
-              </div>
-
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  disabled={submitted}
-                  value={answers.q7}
-                  onChange={(e) => handleInputChange('q7', e.target.value)}
-                  placeholder="π.χ. 0,4"
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-rose-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q7') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q7.explain}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 8 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
-                  Άσκηση 8 • Πλέγμα Εκατοστών
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q8') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 font-medium">
-                Ποιον δεκαδικό αριθμό δείχνει το παρακάτω πλέγμα 100 τετραγώνων;
-              </p>
-
-              <div className="bg-slate-100 p-3 rounded-2xl mb-3 flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-24 h-24 sm:w-28 sm:h-28 bg-white border border-slate-300 rounded shadow-sm select-none">
-                  {[...Array(100)].map((_, idx) => {
-                    const r = Math.floor(idx / 10);
-                    const c = idx % 10;
-                    const isFilled = idx < questions.q8.count;
-                    return (
-                      <rect
-                        key={idx}
-                        x={c * 10}
-                        y={r * 10}
-                        width="10"
-                        height="10"
-                        fill={isFilled ? '#059669' : '#ffffff'}
-                        stroke="#e2e8f0"
-                        strokeWidth="0.5"
-                      />
-                    );
-                  })}
-                </svg>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                {questions.q8.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q8', opt)}
-                    className={`w-full p-2.5 rounded-xl text-xs sm:text-sm font-mono font-bold border text-center transition ${
-                      answers.q8 === opt
-                        ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q8') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q8.explain}
-                </div>
-              )}
-            </div>
-
-          </div>
-
-          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
-          {!submitted && (
-            <div className="flex justify-center pt-6">
-              <button
-                type="submit"
-                className="bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5"
+            return (
+              <article
+                key={`q-${q.id}-${idx}`}
+                className={`bg-white rounded-3xl border p-5 sm:p-8 2xl:p-10 shadow-sm transition-all ${
+                  isSubmitted
+                    ? isCorrect
+                      ? 'border-emerald-400 bg-emerald-50/20'
+                      : 'border-rose-400 bg-rose-50/20'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
               >
-                <span className="text-xl">🎯</span>
-                <span>Έλεγχος Απαντήσεων</span>
-              </button>
-            </div>
-          )}
-        </form>
+                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
+                    {toCleanUppercase(q.title)}
+                  </span>
+                  {isSubmitted && (
+                    <span
+                      className={`text-xs 2xl:text-sm font-bold px-3 py-1 rounded-full ${
+                        isCorrect
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-rose-100 text-rose-800'
+                      }`}
+                    >
+                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
+                    </span>
+                  )}
+                </div>
+
+                {/* Εκφωνηση */}
+                <div className="space-y-3 mb-5">
+                  {q.instruction && (
+                    <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
+                      {q.instruction}
+                    </p>
+                  )}
+                  <p className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed">
+                    {q.prompt}
+                  </p>
+
+                  {/* Πινακας Δεδομενων (αν υπαρχει) */}
+                  {q.tableData && (
+                    <div className="inline-block max-w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 shadow-inner my-2 font-mono text-xs sm:text-sm 2xl:text-base">
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
+                        <span className="bg-blue-100/60 px-2 py-0.5 rounded-lg text-blue-900 break-words">{q.tableData.col1}</span>
+                        <span className="bg-emerald-100/60 px-2 py-0.5 rounded-lg text-emerald-900 break-words">{q.tableData.col2}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-2 text-center font-bold text-slate-800">
+                        <span>{q.tableData.r1[0]}</span>
+                        <span className="text-indigo-700 font-bold">{q.tableData.r1[1]}</span>
+                        <span>{q.tableData.r2[0]}</span>
+                        <span className="text-amber-600 font-black">{q.tableData.r2[1]}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Περιοχη Απαντησης */}
+                <div className="py-2">
+                  
+                  {/* Decimal / Number Input */}
+                  {q.type === 'decimal_input' && (
+                    <div className="flex flex-wrap items-center gap-3">
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        maxLength={10}
+                        disabled={isSubmitted}
+                        placeholder="Απάντηση..."
+                        value={answers[`q_${q.id}`] || ''}
+                        onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
+                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                      />
+                      <span className="text-xs 2xl:text-sm text-slate-500">
+                        (Ακέραιος η δεκαδικός με κόμμα)
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
+                  {q.type === 'mcq' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
+                      {q.options.map((opt, oIdx) => {
+                        const isSelected = answers[`q_${q.id}`] === opt.text;
+                        return (
+                          <button
+                            key={`opt-${q.id}-${oIdx}`}
+                            type="button"
+                            disabled={isSubmitted}
+                            onClick={() => handleSelectMCQ(q.id, opt.text)}
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
+                              isSelected
+                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                                : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
+                            } disabled:cursor-not-allowed`}
+                          >
+                            <span className="break-words whitespace-normal leading-snug flex-1">
+                              {opt.text}
+                            </span>
+                            <span
+                              className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center text-xs ${
+                                isSelected
+                                  ? 'border-white bg-white text-blue-600 font-bold'
+                                  : 'border-slate-400 bg-transparent'
+                              }`}
+                            >
+                              {isSelected ? '●' : ''}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                </div>
+
+                {/* Feedback μετα την υποβολη */}
+                {isSubmitted && (
+                  <div
+                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-1.5 ${
+                      isCorrect
+                        ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
+                        : 'bg-rose-100/60 border-rose-300 text-rose-950'
+                    }`}
+                  >
+                    <div className="font-bold flex items-center gap-1.5">
+                      <span>{isCorrect ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Επεξήγηση:'}</span>
+                    </div>
+                    <div>{q.explanation}</div>
+                    {!isCorrect && (
+                      <div className="font-semibold pt-1 text-slate-800">
+                        Σωστή απάντηση:{' '}
+                        <span className="font-mono font-bold text-blue-900">
+                          {q.correctStr || q.correctText}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+
+        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
+        <div className="flex justify-center pt-4">
+          <button
+            type="button"
+            onClick={handleCheckAnswers}
+            disabled={isSubmitted}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+          >
+            <span>🎯 Έλεγχος Απαντήσεων</span>
+          </button>
+        </div>
+
       </div>
 
-      {/* FIXED STICKY BOTTOM SCORE FOOTER */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
+      {/* Fixed Bottom Score Bar */}
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
           
-          {/* SCORE BADGE & PERCENTAGE */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
-              <span>🏆</span>
-              <span>Σκορ:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 8</span>
-            </div>
-            {submitted && (
-              <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Ποσοστό: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+          <div className="flex items-center gap-4 sm:gap-8">
+            <div>
+              <span className="text-xs text-slate-400 font-semibold block">
+                ΣΚΟΡ
               </span>
-            )}
+              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
+                {score} <span className="text-slate-500 text-base">/ 10</span>
+              </span>
+            </div>
+
+            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
+              <span className="text-xs text-slate-400 font-semibold block">
+                ΠΟΣΟΣΤΟ
+              </span>
+              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+                {Math.round((score / 10) * 100)} %
+              </span>
+            </div>
           </div>
 
-          {/* GUIDANCE TEXT OR RETRY BUTTON */}
           <div className="flex items-center gap-3">
-            {submitted ? (
+            {!isSubmitted ? (
               <button
                 type="button"
-                onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
+                onClick={handleCheckAnswers}
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                <span>🔄</span>
-                <span>Νέες ασκήσεις!</span>
+                ΕΛΕΓΧΟΣ
               </button>
             ) : (
-              <p className="text-xs text-slate-400 hidden md:block">
-                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
-              </p>
+              <button
+                type="button"
+                onClick={loadNewSet}
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
+              >
+                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+              </button>
             )}
           </div>
 
         </div>
-      </div>
+      </footer>
     </Layout>
   );
 }
