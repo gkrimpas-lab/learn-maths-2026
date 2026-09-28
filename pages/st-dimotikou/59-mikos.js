@@ -351,7 +351,7 @@ export default function MikosTheoryPage() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΟΠΤΙΚΟ ΤΕΤΡΑΓΩΝΟ 1 m x 1 m ΚΑΙ ΥΠΟΔΙΑΙΡΕΣΕΙΣ (10x10, 100x100, 1000x1000) */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΟΠΤΙΚΟ ΤΕΤΡΑΓΩΝΟ 1 m x 1 m ΚΑΙ ΠΡΑΓΜΑΤΙΚΕΣ ΥΠΟΔΙΑΙΡΕΣΕΙΣ (10x10, 100x100, 1000x1000) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -417,7 +417,7 @@ export default function MikosTheoryPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             
-            {/* Σχημα SVG Τετραγωνου με Ακριβεις Γραμμες Καναβου (6 στηλες) */}
+            {/* Σχημα SVG Τετραγωνου με ΠΡΑΓΜΑΤΙΚΕΣ ΚΑΙ ΕΥΔΙΑΚΡΙΤΕΣ ΥΠΟΔΙΑΙΡΕΣΕΙΣ (6 στηλες) */}
             <div className="lg:col-span-6 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center space-y-2">
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
                 ΣΧΗΜΑ: ΤΕΤΡΑΓΩΝΟ 1 m × 1 m
@@ -441,7 +441,6 @@ export default function MikosTheoryPage() {
                   {/* 2. Υποδιαίρεση 10 x 10 (dm) - Ακριβώς 100 ίσα τετράγωνα των 26x26 px */}
                   {squareUnit === 'dm' && (
                     <g>
-                      {/* Φόντο */}
                       <rect x="20" y="20" width="260" height="260" fill="#f0fdf4" />
                       
                       {/* Επισήμανση 1ου τετραγώνου (1 dm²) πάνω αριστερά */}
@@ -481,51 +480,56 @@ export default function MikosTheoryPage() {
                     </g>
                   )}
 
-                  {/* 3. Υποδιαίρεση 100 x 100 (cm) */}
+                  {/* 3. Υποδιαίρεση 100 x 100 (cm) - 100x100 μικρά τετραγωνάκια ανά 2.6 px */}
                   {squareUnit === 'cm' && (
                     <g>
                       <rect x="20" y="20" width="260" height="260" fill="#fffbeb" />
                       
-                      {/* Λεπτός κάναβος ανά 1 cm (2.6px) */}
+                      {/* Όλες οι 99 κατακόρυφες λεπτές γραμμές (ανά 1 cm = 2.6 px) */}
                       {Array.from({ length: 99 }).map((_, i) => (
                         <line
-                          key={`cm-sub-${i}`}
+                          key={`cm-v-${i}`}
                           x1={20 + (i + 1) * 2.6}
                           y1="20"
                           x2={20 + (i + 1) * 2.6}
                           y2="280"
-                          stroke="#fde68a"
-                          strokeWidth="0.5"
+                          stroke={(i + 1) % 10 === 0 ? '#d97706' : '#fde68a'}
+                          strokeWidth={(i + 1) % 10 === 0 ? 1 : 0.45}
                         />
                       ))}
+
+                      {/* Όλες οι 99 οριζόντιες λεπτές γραμμές (ανά 1 cm = 2.6 px) */}
                       {Array.from({ length: 99 }).map((_, i) => (
                         <line
-                          key={`cm-subh-${i}`}
+                          key={`cm-h-${i}`}
                           x1="20"
                           y1={20 + (i + 1) * 2.6}
                           x2="280"
                           y2={20 + (i + 1) * 2.6}
-                          stroke="#fde68a"
-                          strokeWidth="0.5"
+                          stroke={(i + 1) % 10 === 0 ? '#d97706' : '#fde68a'}
+                          strokeWidth={(i + 1) % 10 === 0 ? 1 : 0.45}
                         />
                       ))}
 
-                      {/* Κύριες γραμμές ανά 10 cm (26px) */}
-                      {Array.from({ length: 9 }).map((_, i) => (
-                        <g key={`cm-major-${i}`}>
-                          <line x1={20 + (i + 1) * 26} y1="20" x2={20 + (i + 1) * 26} y2="280" stroke="#d97706" strokeWidth="1.2" />
-                          <line x1="20" y1={20 + (i + 1) * 26} x2="280" y2={20 + (i + 1) * 26} stroke="#d97706" strokeWidth="1.2" />
-                        </g>
-                      ))}
+                      {/* Επισήμανση ενός μικρού τετραγώνου 1 cm² πάνω αριστερά */}
+                      <rect x="20" y="20" width="2.6" height="2.6" fill="#b45309" stroke="#78350f" strokeWidth="0.5" />
+                      
+                      {/* Επισήμανση και μεγέθυνση του 1 cm² για να είναι απόλυτα σαφές */}
+                      <circle cx="210" cy="85" r="48" fill="#ffffff" stroke="#b45309" strokeWidth="2.5" />
+                      <rect x="195" y="70" width="30" height="30" fill="#fde68a" stroke="#b45309" strokeWidth="2" />
+                      <text x="210" y="88" fontSize="10" fontWeight="900" fill="#78350f" textAnchor="middle">
+                        1 cm²
+                      </text>
+                      <text x="210" y="122" fontSize="9.5" fontWeight="bold" fill="#b45309" textAnchor="middle">
+                        100 × 100 κουτάκια
+                      </text>
 
-                      {/* Επισήμανση 10 cm x 10 cm */}
-                      <rect x="20" y="20" width="26" height="26" fill="#fcd34d" fillOpacity="0.5" stroke="#b45309" strokeWidth="1.5" />
-                      <text x="33" y="37" fontSize="8" fontWeight="bold" fill="#78350f" textAnchor="middle">10 cm</text>
+                      {/* Εξωτερικό Περίγραμμα */}
                       <rect x="20" y="20" width="260" height="260" fill="none" stroke="#b45309" strokeWidth="2.5" />
                     </g>
                   )}
 
-                  {/* 4. Υποδιαίρεση 1.000 x 1.000 (mm) με Zoom In */}
+                  {/* 4. Υποδιαίρεση 1.000 x 1.000 (mm) - Υπερπυκνό πλέγμα με Zoom In */}
                   {squareUnit === 'mm' && (
                     <g>
                       <rect x="20" y="20" width="260" height="260" fill="#fff1f2" stroke="#e11d48" strokeWidth="2.5" />
@@ -598,7 +602,7 @@ export default function MikosTheoryPage() {
                 {squareUnit === 'cm' && (
                   <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
                     <p>• <strong>Υποδιαίρεση σε Εκατοστά (cm):</strong> Χωρίζουμε κάθε πλευρά του 1 m σε 100 ίσα τμήματα (1 m ＝ 100 cm).</p>
-                    <p>• Το τετράγωνο χωρίζεται σε <strong>100 × 100 ＝ 10.000</strong> μικροσκοπικά τετράγωνα (τετραγωνικά εκατοστά).</p>
+                    <p>• Το τετράγωνο χωρίζεται σε <strong>100 × 100 ＝ 10.000</strong> μικροσκοπικά τετραγωνάκια (τετραγωνικά εκατοστά).</p>
                     <div className="p-2 bg-amber-50 rounded-xl border border-amber-200 font-mono text-amber-950 font-bold text-xs">
                       1 m ＝ 100 cm | Επιφάνεια: 100 · 100 ＝ 10.000 cm²
                     </div>
