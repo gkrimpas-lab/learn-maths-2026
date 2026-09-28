@@ -63,7 +63,8 @@ export default function STDimotikouMenu() {
   { id: '56-pinakas-sixnotiton', label: '📑 56. Ταξινόμηση δεδομένων και πίνακας συχνοτήτων', href: '/st-dimotikou/56-pinakas-sixnotiton' },
   { id: '57-alla-grafimata', label: '🥧 57. Γραφήματα γραμμής και κυκλικά διαγράμματα', href: '/st-dimotikou/57-alla-grafimata' },
     { id: '58-mesos-oros', label: '🥧 58. Μέσος Όρος', href: '/st-dimotikou/58-mesos-oros' },
-    { id: '59-mikos', label: '🥧 59. Μέτρηση Μήκους', href: '/st-dimotikou/59-mikos' }
+    { id: '59-mikos', label: '🥧 59. Μέτρηση Μήκους', href: '/st-dimotikou/59-mikos' },
+    { id: '60-baros', label: '🥧 60. Μέτρηση Βάρους', href: '/st-dimotikou/60-baros' }
 ];
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
