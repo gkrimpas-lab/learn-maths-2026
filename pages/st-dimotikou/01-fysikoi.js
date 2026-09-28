@@ -245,7 +245,7 @@ export default function FysikoiArithmoiPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
               <div className="bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
                 <label className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
-                  Πληκτρολόγησε Αριθμό (έως 12 ψηφία):
+                  Πληκτρολογησε Αριθμο (εως 12 ψηφια):
                 </label>
                 <input
                   type="text"
@@ -280,7 +280,7 @@ export default function FysikoiArithmoiPage() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center px-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-600 uppercase tracking-wider">
-                    🗂️ Πίνακας Αξίας Θέσης (12 Ψηφία)
+                    🗂️ Πινακας Αξιας Θεσης (12 Ψηφια)
                   </span>
                 </div>
 
@@ -380,7 +380,7 @@ export default function FysikoiArithmoiPage() {
               <div className="bg-white border border-slate-200 p-3 sm:p-5 rounded-2xl font-mono text-xs sm:text-sm space-y-3 shadow-inner">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-[11px] sm:text-xs font-black text-slate-500 uppercase tracking-wider block font-sans">
-                    🧬 Πλήρης Αναλυτική Μορφή (Δυνάμεις του 10)
+                    🧬 Πληρης Αναλυτικη Μορφη (Δυναμεις του 10)
                   </span>
                   <span className="text-[10px] sm:text-xs font-sans font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
                     Πλήρης Εμφάνιση
@@ -431,7 +431,7 @@ export default function FysikoiArithmoiPage() {
             <div className="bg-white border border-slate-200 p-3 sm:p-5 rounded-2xl space-y-3 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5 uppercase">
-                  📊 Ύψος Ψηφίου (Στατιστική Κατανομή)
+                  📊 Υψος Ψηφιου (Στατιστικη Κατανομη)
                 </span>
                 <span className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full">
                   {activeDigitsCount} ενεργά ψηφία
