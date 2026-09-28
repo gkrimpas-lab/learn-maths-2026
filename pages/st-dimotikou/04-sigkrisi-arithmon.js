@@ -325,7 +325,7 @@ export default function SigkrisiArithmonPage() {
             <div className="bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-2xl flex flex-col items-center justify-between space-y-4 sm:space-y-6">
               <div className="text-center space-y-1">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                  ⚖️ Διαδραστική Ζυγαριά Αξίας
+                  ⚖️ Διαδραστικη Ζυγαρια Αξιας
                 </span>
                 <p className="text-xs sm:text-sm text-slate-500">
                   Η ζυγαριά γέρνει αυτόματα προς την πλευρά με τη μεγαλύτερη αριθμητική αξία!
@@ -386,7 +386,7 @@ export default function SigkrisiArithmonPage() {
             <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-4 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5 uppercase">
-                  🧬 Οδηγός Σύγκρισης Ψηφίο-προς-Ψηφίο
+                  🧬 Οδηγος Συγκρισης Ψηφιο-προς-Ψηφιο
                 </span>
                 <span className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full">
                   Πλήρης Εμφάνιση
