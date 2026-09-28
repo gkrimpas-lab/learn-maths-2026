@@ -38,10 +38,10 @@ export default function MikosTheoryPage() {
     };
   }, [metersValue]);
 
-  // ΝΕΟ Εργαστηριο: Οπτικη Υποδιαιρεση Τετραγωνου 1 m x 1 m σε dm (10x10), cm (100x100), mm (1000x1000)
+  // Εργαστηριο 2: Οπτικη Υποδιαιρεση Τετραγωνου 1 m x 1 m σε dm (10x10), cm (100x100), mm (1000x1000)
   const [squareUnit, setSquareUnit] = useState('m'); // 'm', 'dm', 'cm', 'mm'
 
-  // Εργαστηριο 2: Υπολογισμος Περιμετρου με Διαφορετικες Μοναδες (m και cm)
+  // Εργαστηριο 3: Υπολογισμος Περιμετρου με Διαφορετικες Μοναδες (m και cm)
   const [fieldLengthM, setFieldLengthM] = useState(12); // σε m
   const [fieldWidthCm, setFieldWidthCm] = useState(850); // σε cm (8,5 m)
 
@@ -351,7 +351,7 @@ export default function MikosTheoryPage() {
           </div>
         </section>
 
-        {/* 4. ΝΕΟ ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ: ΟΠΤΙΚΟ ΤΕΤΡΑΓΩΝΟ 1 m x 1 m ΚΑΙ ΥΠΟΔΙΑΙΡΕΣΕΙΣ (10x10, 100x100, 1000x1000) */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΟΠΤΙΚΟ ΤΕΤΡΑΓΩΝΟ 1 m x 1 m ΚΑΙ ΥΠΟΔΙΑΙΡΕΣΕΙΣ (10x10, 100x100, 1000x1000) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -417,93 +417,148 @@ export default function MikosTheoryPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             
-            {/* Σχημα SVG Τετραγωνου (6 στηλες) */}
+            {/* Σχημα SVG Τετραγωνου με Ακριβεις Γραμμες Καναβου (6 στηλες) */}
             <div className="lg:col-span-6 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center space-y-2">
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
                 ΣΧΗΜΑ: ΤΕΤΡΑΓΩΝΟ 1 m × 1 m
               </span>
 
-              <div className="w-full max-w-[320px] aspect-square bg-white rounded-2xl border-2 border-slate-300 p-2 shadow-inner flex items-center justify-center relative overflow-hidden">
+              <div className="w-full max-w-[320px] aspect-square bg-white rounded-2xl border-2 border-slate-300 p-3 shadow-inner flex items-center justify-center relative overflow-hidden">
                 <svg viewBox="0 0 300 300" className="w-full h-full overflow-visible">
-                  <defs>
-                    {/* Πατερν για 100 x 100 (cm) */}
-                    <pattern id="grid-cm" width="3" height="3" patternUnits="userSpaceOnUse">
-                      <rect width="3" height="3" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.35" />
-                    </pattern>
-                    {/* Πατερν για 10 x 10 (dm) */}
-                    <pattern id="grid-dm" width="30" height="30" patternUnits="userSpaceOnUse">
-                      <rect width="30" height="30" fill="#ecfdf5" stroke="#10b981" strokeWidth="1" />
-                    </pattern>
-                    {/* Πατερν για 1000 x 1000 (mm) */}
-                    <pattern id="grid-mm" width="0.75" height="0.75" patternUnits="userSpaceOnUse">
-                      <rect width="0.75" height="0.75" fill="#fff1f2" stroke="#fda4af" strokeWidth="0.15" />
-                    </pattern>
-                  </defs>
-
                   {/* 1. Ενιαίο Τετράγωνο 1 m */}
                   {squareUnit === 'm' && (
                     <g>
-                      <rect x="15" y="15" width="270" height="270" fill="#eff6ff" stroke="#2563eb" strokeWidth="3" rx="4" />
-                      <text x="150" y="155" fontSize="24" fontWeight="900" fill="#1e40af" textAnchor="middle">
+                      <rect x="20" y="20" width="260" height="260" fill="#eff6ff" stroke="#2563eb" strokeWidth="2.5" />
+                      <text x="150" y="145" fontSize="22" fontWeight="900" fill="#1e40af" textAnchor="middle">
                         1 m × 1 m
                       </text>
-                      <text x="150" y="180" fontSize="13" fontWeight="bold" fill="#3b82f6" textAnchor="middle">
+                      <text x="150" y="172" fontSize="12" fontWeight="bold" fill="#3b82f6" textAnchor="middle">
                         (Ενιαία επιφάνεια 1 m²)
                       </text>
                     </g>
                   )}
 
-                  {/* 2. Υποδιαίρεση 10 x 10 (dm) */}
+                  {/* 2. Υποδιαίρεση 10 x 10 (dm) - Ακριβώς 100 ίσα τετράγωνα των 26x26 px */}
                   {squareUnit === 'dm' && (
                     <g>
-                      <rect x="15" y="15" width="270" height="270" fill="url(#grid-dm)" stroke="#059669" strokeWidth="3" rx="4" />
-                      {/* Επισημανση 1 dm στην ακρη */}
-                      <rect x="15" y="15" width="27" height="27" fill="#10b981" fillOpacity="0.4" stroke="#047857" strokeWidth="1.5" />
-                      <text x="28" y="32" fontSize="9" fontWeight="bold" fill="#065f46" textAnchor="middle">1 dm²</text>
+                      {/* Φόντο */}
+                      <rect x="20" y="20" width="260" height="260" fill="#f0fdf4" />
+                      
+                      {/* Επισήμανση 1ου τετραγώνου (1 dm²) πάνω αριστερά */}
+                      <rect x="20" y="20" width="26" height="26" fill="#86efac" stroke="#16a34a" strokeWidth="1.5" />
+                      <text x="33" y="37" fontSize="9" fontWeight="900" fill="#14532d" textAnchor="middle">
+                        1 dm²
+                      </text>
+
+                      {/* 9 Εσωτερικές Κατακόρυφες Γραμμές */}
+                      {Array.from({ length: 9 }).map((_, i) => (
+                        <line
+                          key={`dm-v-${i}`}
+                          x1={20 + (i + 1) * 26}
+                          y1="20"
+                          x2={20 + (i + 1) * 26}
+                          y2="280"
+                          stroke="#16a34a"
+                          strokeWidth="1.2"
+                        />
+                      ))}
+
+                      {/* 9 Εσωτερικές Οριζόντιες Γραμμές */}
+                      {Array.from({ length: 9 }).map((_, i) => (
+                        <line
+                          key={`dm-h-${i}`}
+                          x1="20"
+                          y1={20 + (i + 1) * 26}
+                          x2="280"
+                          y2={20 + (i + 1) * 26}
+                          stroke="#16a34a"
+                          strokeWidth="1.2"
+                        />
+                      ))}
+
+                      {/* Εξωτερικό Περίγραμμα Τετραγώνου */}
+                      <rect x="20" y="20" width="260" height="260" fill="none" stroke="#15803d" strokeWidth="2.5" />
                     </g>
                   )}
 
                   {/* 3. Υποδιαίρεση 100 x 100 (cm) */}
                   {squareUnit === 'cm' && (
                     <g>
-                      <rect x="15" y="15" width="270" height="270" fill="url(#grid-cm)" stroke="#d97706" strokeWidth="2.5" rx="4" />
-                      {/* Κυριοι αξονες ανα 10 cm για καθαροτητα */}
+                      <rect x="20" y="20" width="260" height="260" fill="#fffbeb" />
+                      
+                      {/* Λεπτός κάναβος ανά 1 cm (2.6px) */}
+                      {Array.from({ length: 99 }).map((_, i) => (
+                        <line
+                          key={`cm-sub-${i}`}
+                          x1={20 + (i + 1) * 2.6}
+                          y1="20"
+                          x2={20 + (i + 1) * 2.6}
+                          y2="280"
+                          stroke="#fde68a"
+                          strokeWidth="0.5"
+                        />
+                      ))}
+                      {Array.from({ length: 99 }).map((_, i) => (
+                        <line
+                          key={`cm-subh-${i}`}
+                          x1="20"
+                          y1={20 + (i + 1) * 2.6}
+                          x2="280"
+                          y2={20 + (i + 1) * 2.6}
+                          stroke="#fde68a"
+                          strokeWidth="0.5"
+                        />
+                      ))}
+
+                      {/* Κύριες γραμμές ανά 10 cm (26px) */}
                       {Array.from({ length: 9 }).map((_, i) => (
                         <g key={`cm-major-${i}`}>
-                          <line x1={15 + (i + 1) * 27} y1="15" x2={15 + (i + 1) * 27} y2="285" stroke="#f59e0b" strokeWidth="1.2" />
-                          <line x1="15" y1={15 + (i + 1) * 27} x2="285" y2={15 + (i + 1) * 27} stroke="#f59e0b" strokeWidth="1.2" />
+                          <line x1={20 + (i + 1) * 26} y1="20" x2={20 + (i + 1) * 26} y2="280" stroke="#d97706" strokeWidth="1.2" />
+                          <line x1="20" y1={20 + (i + 1) * 26} x2="280" y2={20 + (i + 1) * 26} stroke="#d97706" strokeWidth="1.2" />
                         </g>
                       ))}
-                      <rect x="15" y="15" width="27" height="27" fill="#fbbf24" fillOpacity="0.35" stroke="#b45309" strokeWidth="1.5" />
-                      <text x="28" y="32" fontSize="8" fontWeight="bold" fill="#78350f" textAnchor="middle">10 cm</text>
+
+                      {/* Επισήμανση 10 cm x 10 cm */}
+                      <rect x="20" y="20" width="26" height="26" fill="#fcd34d" fillOpacity="0.5" stroke="#b45309" strokeWidth="1.5" />
+                      <text x="33" y="37" fontSize="8" fontWeight="bold" fill="#78350f" textAnchor="middle">10 cm</text>
+                      <rect x="20" y="20" width="260" height="260" fill="none" stroke="#b45309" strokeWidth="2.5" />
                     </g>
                   )}
 
-                  {/* 4. Υποδιαίρεση 1.000 x 1.000 (mm) */}
+                  {/* 4. Υποδιαίρεση 1.000 x 1.000 (mm) με Zoom In */}
                   {squareUnit === 'mm' && (
                     <g>
-                      <rect x="15" y="15" width="270" height="270" fill="url(#grid-mm)" stroke="#e11d48" strokeWidth="2.5" rx="4" />
-                      {/* Οπτικος Μεγεθυντικος Φακος (Zoom In) στη γωνια για τα mm */}
-                      <circle cx="215" cy="85" r="50" fill="#ffffff" stroke="#be123c" strokeWidth="3" shadow="true" />
-                      {/* Κάναβος 10x10 mm μεσα στον μεγεθυντικο φακο */}
-                      {Array.from({ length: 9 }).map((_, i) => (
-                        <g key={`zoom-mm-${i}`}>
-                          <line x1={175 + (i + 1) * 8} y1="45" x2={175 + (i + 1) * 8} y2="125" stroke="#fda4af" strokeWidth="0.8" />
-                          <line x1="175" y1={45 + (i + 1) * 8} x2="255" y2={45 + (i + 1) * 8} stroke="#fda4af" strokeWidth="0.8" />
+                      <rect x="20" y="20" width="260" height="260" fill="#fff1f2" stroke="#e11d48" strokeWidth="2.5" />
+                      
+                      {/* Πυκνές μικρο-γραμμές ένδειξης χιλιοστών */}
+                      {Array.from({ length: 49 }).map((_, i) => (
+                        <g key={`mm-line-${i}`}>
+                          <line x1={20 + (i + 1) * 5.2} y1="20" x2={20 + (i + 1) * 5.2} y2="280" stroke="#fecdd3" strokeWidth="0.5" />
+                          <line x1="20" y1={20 + (i + 1) * 5.2} x2="280" y2={20 + (i + 1) * 5.2} stroke="#fecdd3" strokeWidth="0.5" />
                         </g>
                       ))}
-                      <text x="215" y="146" fontSize="10" fontWeight="black" fill="#be123c" textAnchor="middle">
-                        🔍 Μεγέθυνση: 1 cm ＝ 10 mm
+
+                      {/* Μεγεθυντικός φακός (Zoom In) για τα χιλιοστά */}
+                      <circle cx="205" cy="95" r="54" fill="#ffffff" stroke="#be123c" strokeWidth="3" />
+                      {Array.from({ length: 9 }).map((_, i) => (
+                        <g key={`zoom-grid-${i}`}>
+                          <line x1={165 + (i + 1) * 8} y1="55" x2={165 + (i + 1) * 8} y2="135" stroke="#fb7185" strokeWidth="1" />
+                          <line x1="165" y1={55 + (i + 1) * 8} x2="245" y2={55 + (i + 1) * 8} stroke="#fb7185" strokeWidth="1" />
+                        </g>
+                      ))}
+                      <rect x="165" y="55" width="8" height="8" fill="#fda4af" stroke="#9f1239" strokeWidth="1" />
+                      <text x="205" y="160" fontSize="10.5" fontWeight="900" fill="#9f1239" textAnchor="middle">
+                        🔍 1 cm ＝ 10 mm
                       </text>
                     </g>
                   )}
 
-                  {/* Διαστασεις πλευρας */}
-                  <text x="150" y="10" fontSize="11" fontWeight="bold" fill="#475569" textAnchor="middle">
+                  {/* Ένδειξη διάστασης πλευράς */}
+                  <text x="150" y="13" fontSize="11" fontWeight="bold" fill="#334155" textAnchor="middle">
                     {squareUnit === 'm' && 'Μήκος πλευράς ＝ 1 m'}
-                    {squareUnit === 'dm' && 'Μήκος πλευράς ＝ 10 dm'}
-                    {squareUnit === 'cm' && 'Μήκος πλευράς ＝ 100 cm'}
-                    {squareUnit === 'mm' && 'Μήκος πλευράς ＝ 1.000 mm'}
+                    {squareUnit === 'dm' && 'Μήκος πλευράς ＝ 10 dm (10 ίσα τμήματα)'}
+                    {squareUnit === 'cm' && 'Μήκος πλευράς ＝ 100 cm (100 ίσα τμήματα)'}
+                    {squareUnit === 'mm' && 'Μήκος πλευράς ＝ 1.000 mm (1.000 ίσα τμήματα)'}
                   </text>
                 </svg>
               </div>
