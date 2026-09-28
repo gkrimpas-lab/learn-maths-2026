@@ -303,7 +303,7 @@ export default function DekadikoiArithmoiPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
               <div className="bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
                 <label className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
-                  Πληκτρολόγησε Δεκαδικό Αριθμό (π.χ. 345,672):
+                  Πληκτρολογησε Δεκαδικο Αριθμο (π.χ. 345,672):
                 </label>
                 <input
                   type="text"
@@ -342,16 +342,16 @@ export default function DekadikoiArithmoiPage() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center px-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-600 uppercase tracking-wider">
-                    🗂️ Πίνακας Αξίας Θέσης Δεκαδικών
+                    🗂️ Πινακας Αξιας Θεσης Δεκαδικων
                   </span>
                 </div>
 
                 <div className="w-full border border-slate-200/80 rounded-2xl bg-white shadow-sm overflow-hidden">
                   {/* Κεφαλίδες Μερών */}
                   <div className="grid grid-cols-7 text-white text-center font-black text-[10px] sm:text-xs md:text-sm uppercase tracking-wider">
-                    <div className="col-span-3 bg-emerald-600 py-2 sm:py-3 border-r border-white/20">Ακέραιο Μέρος</div>
+                    <div className="col-span-3 bg-emerald-600 py-2 sm:py-3 border-r border-white/20">Ακεραιο Μερος</div>
                     <div className="bg-amber-500 py-2 sm:py-3 border-r border-white/20">,</div>
-                    <div className="col-span-3 bg-blue-600 py-2 sm:py-3">Δεκαδικό Μέρος</div>
+                    <div className="col-span-3 bg-blue-600 py-2 sm:py-3">Δεκαδικο Μερος</div>
                   </div>
 
                   {/* Κεφαλίδες Τάξεων */}
@@ -432,7 +432,7 @@ export default function DekadikoiArithmoiPage() {
               <div className="bg-white border border-slate-200 p-3 sm:p-5 rounded-2xl font-mono text-xs sm:text-sm space-y-3 shadow-inner">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-[11px] sm:text-xs font-black text-slate-500 uppercase tracking-wider block font-sans">
-                    🧬 Πλήρης Αναλυτική Μορφή (Ακέραιες Μονάδες &amp; Δεκαδικά Κλάσματα)
+                    🧬 Πληρης Αναλυτικη Μορφη (Ακεραιες Μοναδες &amp; Δεκαδικα Κλασματα)
                   </span>
                   <span className="text-[10px] sm:text-xs font-sans font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
                     Πλήρης Εμφάνιση
@@ -523,7 +523,7 @@ export default function DekadikoiArithmoiPage() {
             <div className="bg-white border border-slate-200 p-3 sm:p-5 rounded-2xl space-y-3 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5 uppercase">
-                  📊 Ύψος Ψηφίου (Οπτική Σύγκριση Μεγεθών)
+                  📊 Υψος Ψηφιου (Οπτικη Συγκριση Μεγεθων)
                 </span>
                 <span className="text-[10px] sm:text-xs bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full">
                   Ακέραια &amp; Δεκαδικά
