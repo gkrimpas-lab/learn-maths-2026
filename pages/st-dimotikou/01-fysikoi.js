@@ -245,7 +245,7 @@ export default function FysikoiArithmoiPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
               <div className="bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-inner flex flex-col justify-center">
                 <label className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
-                  Πληκτρολογησε Αριθμο (εως 12 ψηφια):
+                  Πληκτρολόγησε Αριθμό (έως 12 ψηφία):
                 </label>
                 <input
                   type="text"
@@ -275,83 +275,119 @@ export default function FysikoiArithmoiPage() {
               </div>
             </div>
 
-            {/* ROW 2: ΠΙΝΑΚΑΣ ΑΞΙΑΣ ΘΕΣΗΣ */}
-            <div className="bg-slate-50 border border-slate-200 p-3 sm:p-5 md:p-6 rounded-2xl space-y-6">
+            {/* ROW 2: ΠΙΝΑΚΑΣ ΑΞΙΑΣ ΘΕΣΗΣ - 100% FLUID ΧΩΡΙΣ ΟΡΙΖΟΝΤΙΟ SCROLL ΣΤΑ ΚΙΝΗΤΑ */}
+            <div className="bg-slate-50 border border-slate-200 p-2 sm:p-5 md:p-6 rounded-2xl space-y-4 sm:space-y-6">
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center px-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-600 uppercase tracking-wider">
-                    🗂️ Πινακας Αξιας Θεσης (12 Ψηφια)
-                  </span>
-                  <span className="text-[10px] sm:text-xs text-slate-400 font-bold md:hidden flex items-center gap-1">
-                    <span>👈 Σύρετε οριζόντια 👉</span>
+                    🗂️ Πίνακας Αξίας Θέσης (12 Ψηφία)
                   </span>
                 </div>
 
-                <div className="w-full overflow-x-auto pb-2 pt-1 touch-pan-x border border-slate-200/80 rounded-2xl bg-white shadow-sm">
-                  <div className="min-w-[580px] sm:min-w-[620px] rounded-2xl overflow-hidden">
-                    {/* PERIODS HEADER */}
-                    <div className="grid grid-cols-4 text-white text-center font-black text-xs sm:text-sm tracking-wider">
-                      {periods.map((p, i) => (
-                        <div key={i} className={`${p.color} py-2.5 sm:py-3 border-r border-white/20 last:border-0`}>
-                          <span className="hidden sm:inline">{p.name}</span>
-                          <span className="sm:hidden">{p.short}</span>
+                {/* ΠΡΟΒΟΛΗ ΚΙΝΗΤΟΥ (<640px): 4 Compact Κάρτες Περιόδων (2x2) ώστε να μην υπάρχει ποτέ scroll */}
+                <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 sm:hidden">
+                  {periods.map((p, pIdx) => {
+                    const pDigits = [digits[pIdx * 3], digits[pIdx * 3 + 1], digits[pIdx * 3 + 2]];
+                    return (
+                      <div key={`m-period-${pIdx}`} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+                        <div className={`${p.color} text-white text-center font-black text-[11px] py-1`}>
+                          {p.name}
                         </div>
-                      ))}
-                    </div>
+                        <div className="grid grid-cols-3 text-[9px] font-black text-slate-400 text-center bg-slate-50 border-b py-0.5">
+                          <div>Ε</div>
+                          <div>Δ</div>
+                          <div>Μ</div>
+                        </div>
+                        <div className="grid grid-cols-3 p-1 gap-1 text-center">
+                          {pDigits.map((d, dIdx) => {
+                            const globalIdx = pIdx * 3 + dIdx;
+                            const isLeadingZero = d === '0' && globalIdx < firstNonZero;
+                            const isSelected = activeDigitIndex === globalIdx;
 
-                    {/* CLASSES HEADER */}
-                    <div className="grid grid-cols-12 text-[10px] sm:text-xs font-black text-slate-500 text-center border-b bg-slate-100 uppercase py-2">
-                      {[...Array(4)].map((_, i) => (
-                        <span key={i} className="contents">
-                          <div className="border-r border-slate-200">Ε</div>
-                          <div className="border-r border-slate-200">Δ</div>
-                          <div className="border-r border-slate-200">Μ</div>
-                        </span>
-                      ))}
-                    </div>
+                            return (
+                              <button
+                                key={`m-d-${globalIdx}`}
+                                type="button"
+                                onClick={() => setActiveDigitIndex(globalIdx)}
+                                className={`py-2 text-base font-black rounded-lg font-mono transition-colors border ${
+                                  isSelected
+                                    ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm'
+                                    : 'bg-slate-50 border-transparent hover:bg-amber-50'
+                                } ${isLeadingZero && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
+                              >
+                                {d}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
-                    {/* DIGITS ROW */}
-                    <div className="grid grid-cols-12 text-center items-center p-2 bg-white gap-1">
-                      {digits.map((digit, i) => {
-                        const periodIdx = Math.floor(i / 3);
-                        const isLeadingZero = digit === '0' && i < firstNonZero;
-                        const isSelected = activeDigitIndex === i;
+                {/* ΠΡΟΒΟΛΗ DESKTOP/TABLET (>=640px): Ο κλασικός ενιαίος πίνακας 12 στηλών */}
+                <div className="hidden sm:block w-full border border-slate-200/80 rounded-2xl bg-white shadow-sm overflow-hidden">
+                  {/* PERIODS HEADER */}
+                  <div className="grid grid-cols-4 text-white text-center font-black text-xs sm:text-sm tracking-wider">
+                    {periods.map((p, i) => (
+                      <div key={i} className={`${p.color} py-2.5 sm:py-3 border-r border-white/20 last:border-0`}>
+                        <span>{p.name}</span>
+                      </div>
+                    ))}
+                  </div>
 
-                        return (
-                          <div key={i} className="px-0.5">
-                            <button
-                              type="button"
-                              onClick={() => setActiveDigitIndex(i)}
-                              onMouseEnter={() => setActiveDigitIndex(i)}
-                              className={`w-full py-3 sm:py-4 text-lg sm:text-2xl font-black rounded-xl transition-colors duration-150 focus:outline-none font-mono flex items-center justify-center border-2 box-border touch-manipulation
-                                ${periods[periodIdx].light}
-                                ${isSelected 
-                                  ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm' 
-                                  : 'border-transparent hover:bg-amber-100/70 hover:border-amber-300'}
-                                ${isLeadingZero && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
-                            >
-                              {digit}
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
+                  {/* CLASSES HEADER */}
+                  <div className="grid grid-cols-12 text-[10px] sm:text-xs font-black text-slate-500 text-center border-b bg-slate-100 uppercase py-2">
+                    {[...Array(4)].map((_, i) => (
+                      <span key={i} className="contents">
+                        <div className="border-r border-slate-200">Ε</div>
+                        <div className="border-r border-slate-200">Δ</div>
+                        <div className="border-r border-slate-200">Μ</div>
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* DIGITS ROW */}
+                  <div className="grid grid-cols-12 text-center items-center p-2 bg-white gap-1">
+                    {digits.map((digit, i) => {
+                      const periodIdx = Math.floor(i / 3);
+                      const isLeadingZero = digit === '0' && i < firstNonZero;
+                      const isSelected = activeDigitIndex === i;
+
+                      return (
+                        <div key={i} className="px-0.5">
+                          <button
+                            type="button"
+                            onClick={() => setActiveDigitIndex(i)}
+                            onMouseEnter={() => setActiveDigitIndex(i)}
+                            className={`w-full py-3 sm:py-4 text-lg sm:text-2xl font-black rounded-xl transition-colors duration-150 focus:outline-none font-mono flex items-center justify-center border-2 box-border touch-manipulation
+                              ${periods[periodIdx].light}
+                              ${isSelected 
+                                ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm' 
+                                : 'border-transparent hover:bg-amber-100/70 hover:border-amber-300'}
+                              ${isLeadingZero && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
+                          >
+                            {digit}
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
 
               {/* ΠΛΗΡΗΣ ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ */}
-              <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl font-mono text-xs sm:text-sm space-y-3 shadow-inner">
+              <div className="bg-white border border-slate-200 p-3 sm:p-5 rounded-2xl font-mono text-xs sm:text-sm space-y-3 shadow-inner">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-[11px] sm:text-xs font-black text-slate-500 uppercase tracking-wider block font-sans">
-                    🧬 Πληρης Αναλυτικη Μορφη (Δυναμεις του 10)
+                    🧬 Πλήρης Αναλυτική Μορφή (Δυνάμεις του 10)
                   </span>
                   <span className="text-[10px] sm:text-xs font-sans font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
                     Πλήρης Εμφάνιση
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5">
                   {digits.map((digit, i) => {
                     if (digit === '0') return null;
                     const power = 11 - i;
@@ -364,7 +400,7 @@ export default function FysikoiArithmoiPage() {
                         key={i}
                         onMouseEnter={() => setActiveDigitIndex(i)}
                         onClick={() => setActiveDigitIndex(i)}
-                        className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-1 sm:gap-2 touch-manipulation ${
+                        className={`flex flex-wrap sm:flex-nowrap items-center justify-between p-2 sm:p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-1 sm:gap-2 touch-manipulation ${
                           isSelected 
                             ? 'bg-amber-50 border-amber-400 shadow-sm' 
                             : 'bg-slate-50/70 border-transparent hover:bg-slate-100 hover:border-slate-200'
@@ -391,19 +427,19 @@ export default function FysikoiArithmoiPage() {
               </div>
             </div>
 
-            {/* ROW 3: ΟΠΤΙΚΟ ΓΡΑΦΗΜΑ ΡΑΒΔΩΝ */}
-            <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-sm">
+            {/* ROW 3: ΟΠΤΙΚΟ ΓΡΑΦΗΜΑ ΡΑΒΔΩΝ - 100% FLUID ΧΩΡΙΣ ΟΡΙΖΟΝΤΙΟ SCROLL */}
+            <div className="bg-white border border-slate-200 p-3 sm:p-5 rounded-2xl space-y-3 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5 uppercase">
-                  📊 Υψος Ψηφιου (Στατιστικη Κατανομη)
+                  📊 Ύψος Ψηφίου (Στατιστική Κατανομή)
                 </span>
                 <span className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full">
                   {activeDigitsCount} ενεργά ψηφία
                 </span>
               </div>
 
-              <div className="w-full overflow-x-auto pb-2 touch-pan-x">
-                <div className="min-w-[540px] h-56 flex items-end justify-between gap-2 pt-12 pb-2 px-3 bg-slate-50 rounded-xl border border-slate-100 relative">
+              <div className="w-full bg-slate-50 rounded-xl border border-slate-100 pt-8 sm:pt-10 pb-3 px-1 sm:px-3">
+                <div className="flex items-end justify-between gap-0.5 sm:gap-1.5 h-44 sm:h-52 border-b-2 border-slate-200 pb-0">
                   {digits.map((digit, i) => {
                     const periodIdx = Math.floor(i / 3);
                     const power = 11 - i;
@@ -422,7 +458,7 @@ export default function FysikoiArithmoiPage() {
                       >
                         {/* TOOLTIP ON HOVER / SELECTION */}
                         {isSelected && hasValue && (
-                          <div className="absolute -top-11 bg-slate-900 text-white text-[10px] font-mono px-2 py-1 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
+                          <div className="absolute -top-10 bg-slate-900 text-white text-[9px] sm:text-[10px] font-mono px-1.5 py-0.5 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
                             {(val * Math.pow(10, power)).toLocaleString('el-GR')}
                           </div>
                         )}
@@ -437,20 +473,20 @@ export default function FysikoiArithmoiPage() {
                         )}
 
                         {/* THE BAR */}
-                        <div className="w-full h-full flex items-end">
+                        <div className="w-full h-28 sm:h-36 flex items-end justify-center">
                           {hasValue && (
                             <div
                               style={{ 
                                 height: `${barHeightPercent}%`,
                                 backgroundColor: periods[periodIdx].hex 
                               }}
-                              className={`w-full rounded-t-lg transition-all duration-200 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md' : 'opacity-90 hover:opacity-100'}`}
+                              className={`w-full max-w-[28px] rounded-t-lg transition-all duration-200 ${isSelected ? 'ring-2 sm:ring-4 ring-amber-400 brightness-110 shadow-md' : 'opacity-90 hover:opacity-100'}`}
                             />
                           )}
                         </div>
 
                         {/* X-AXIS LABEL */}
-                        <span className="text-[9px] font-mono font-bold text-slate-400 mt-1.5">
+                        <span className="text-[7.5px] sm:text-[9px] font-mono font-bold text-slate-400 mt-1 leading-none">
                           10^{power}
                         </span>
                       </div>
@@ -459,9 +495,9 @@ export default function FysikoiArithmoiPage() {
                 </div>
               </div>
 
-              <div className="flex justify-between text-[10px] sm:text-xs text-slate-400 font-semibold px-2 pt-1">
-                <span>⬅️ Μεγαλύτερη Αξία (Δισεκατομμύρια)</span>
-                <span>Μικρότερη Αξία (Μονάδες) ➡️</span>
+              <div className="flex justify-between text-[10px] sm:text-xs text-slate-400 font-semibold px-1 pt-1">
+                <span>⬅️ Μεγαλύτερη Αξία (Δισ.)</span>
+                <span>Μικρότερη Αξία (Μον.) ➡️</span>
               </div>
             </div>
           </div>
