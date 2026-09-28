@@ -38,6 +38,9 @@ export default function MikosTheoryPage() {
     };
   }, [metersValue]);
 
+  // ΝΕΟ Εργαστηριο: Οπτικη Υποδιαιρεση Τετραγωνου 1 m x 1 m σε dm (10x10), cm (100x100), mm (1000x1000)
+  const [squareUnit, setSquareUnit] = useState('m'); // 'm', 'dm', 'cm', 'mm'
+
   // Εργαστηριο 2: Υπολογισμος Περιμετρου με Διαφορετικες Μοναδες (m και cm)
   const [fieldLengthM, setFieldLengthM] = useState(12); // σε m
   const [fieldWidthCm, setFieldWidthCm] = useState(850); // σε cm (8,5 m)
@@ -348,11 +351,229 @@ export default function MikosTheoryPage() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΠΕΡΙΜΕΤΡΟΣ ΜΕ ΜΕΤΑΤΡΟΠΗ ΜΟΝΑΔΩΝ */}
+        {/* 4. ΝΕΟ ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ: ΟΠΤΙΚΟ ΤΕΤΡΑΓΩΝΟ 1 m x 1 m ΚΑΙ ΥΠΟΔΙΑΙΡΕΣΕΙΣ (10x10, 100x100, 1000x1000) */}
+        <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
+          <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-xs 2xl:text-sm font-bold text-indigo-800 mb-1">
+                <span>🔍 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΕΤΡΑΓΩΝΟΥ 1 m × 1 m</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Πώς Χωρίζεται το 1 Μέτρο (1 m) στις Υποδιαιρέσεις του
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
+                Επιλέξτε μονάδα μέτρησης για να δείτε πώς η πλευρά του 1 m χωρίζεται σε 10 δεκατόμετρα (10 × 10), 100 εκατοστά (100 × 100) και 1.000 χιλιοστά (1.000 × 1.000):
+              </p>
+            </div>
+
+            {/* Επιλογεας Μοναδας */}
+            <div className="grid grid-cols-2 sm:flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 gap-1 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setSquareUnit('m')}
+                className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-center ${
+                  squareUnit === 'm'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-700 hover:text-slate-950'
+                }`}
+              >
+                1 m (Ενιαίο)
+              </button>
+              <button
+                type="button"
+                onClick={() => setSquareUnit('dm')}
+                className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-center ${
+                  squareUnit === 'dm'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-slate-700 hover:text-slate-950'
+                }`}
+              >
+                10 dm (10 × 10)
+              </button>
+              <button
+                type="button"
+                onClick={() => setSquareUnit('cm')}
+                className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-center ${
+                  squareUnit === 'cm'
+                    ? 'bg-amber-600 text-white shadow-sm'
+                    : 'text-slate-700 hover:text-slate-950'
+                }`}
+              >
+                100 cm (100 × 100)
+              </button>
+              <button
+                type="button"
+                onClick={() => setSquareUnit('mm')}
+                className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-center ${
+                  squareUnit === 'mm'
+                    ? 'bg-rose-600 text-white shadow-sm'
+                    : 'text-slate-700 hover:text-slate-950'
+                }`}
+              >
+                1.000 mm (1.000 × 1.000)
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            
+            {/* Σχημα SVG Τετραγωνου (6 στηλες) */}
+            <div className="lg:col-span-6 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center space-y-2">
+              <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+                ΣΧΗΜΑ: ΤΕΤΡΑΓΩΝΟ 1 m × 1 m
+              </span>
+
+              <div className="w-full max-w-[320px] aspect-square bg-white rounded-2xl border-2 border-slate-300 p-2 shadow-inner flex items-center justify-center relative overflow-hidden">
+                <svg viewBox="0 0 300 300" className="w-full h-full overflow-visible">
+                  <defs>
+                    {/* Πατερν για 100 x 100 (cm) */}
+                    <pattern id="grid-cm" width="3" height="3" patternUnits="userSpaceOnUse">
+                      <rect width="3" height="3" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.35" />
+                    </pattern>
+                    {/* Πατερν για 10 x 10 (dm) */}
+                    <pattern id="grid-dm" width="30" height="30" patternUnits="userSpaceOnUse">
+                      <rect width="30" height="30" fill="#ecfdf5" stroke="#10b981" strokeWidth="1" />
+                    </pattern>
+                    {/* Πατερν για 1000 x 1000 (mm) */}
+                    <pattern id="grid-mm" width="0.75" height="0.75" patternUnits="userSpaceOnUse">
+                      <rect width="0.75" height="0.75" fill="#fff1f2" stroke="#fda4af" strokeWidth="0.15" />
+                    </pattern>
+                  </defs>
+
+                  {/* 1. Ενιαίο Τετράγωνο 1 m */}
+                  {squareUnit === 'm' && (
+                    <g>
+                      <rect x="15" y="15" width="270" height="270" fill="#eff6ff" stroke="#2563eb" strokeWidth="3" rx="4" />
+                      <text x="150" y="155" fontSize="24" fontWeight="900" fill="#1e40af" textAnchor="middle">
+                        1 m × 1 m
+                      </text>
+                      <text x="150" y="180" fontSize="13" fontWeight="bold" fill="#3b82f6" textAnchor="middle">
+                        (Ενιαία επιφάνεια 1 m²)
+                      </text>
+                    </g>
+                  )}
+
+                  {/* 2. Υποδιαίρεση 10 x 10 (dm) */}
+                  {squareUnit === 'dm' && (
+                    <g>
+                      <rect x="15" y="15" width="270" height="270" fill="url(#grid-dm)" stroke="#059669" strokeWidth="3" rx="4" />
+                      {/* Επισημανση 1 dm στην ακρη */}
+                      <rect x="15" y="15" width="27" height="27" fill="#10b981" fillOpacity="0.4" stroke="#047857" strokeWidth="1.5" />
+                      <text x="28" y="32" fontSize="9" fontWeight="bold" fill="#065f46" textAnchor="middle">1 dm²</text>
+                    </g>
+                  )}
+
+                  {/* 3. Υποδιαίρεση 100 x 100 (cm) */}
+                  {squareUnit === 'cm' && (
+                    <g>
+                      <rect x="15" y="15" width="270" height="270" fill="url(#grid-cm)" stroke="#d97706" strokeWidth="2.5" rx="4" />
+                      {/* Κυριοι αξονες ανα 10 cm για καθαροτητα */}
+                      {Array.from({ length: 9 }).map((_, i) => (
+                        <g key={`cm-major-${i}`}>
+                          <line x1={15 + (i + 1) * 27} y1="15" x2={15 + (i + 1) * 27} y2="285" stroke="#f59e0b" strokeWidth="1.2" />
+                          <line x1="15" y1={15 + (i + 1) * 27} x2="285" y2={15 + (i + 1) * 27} stroke="#f59e0b" strokeWidth="1.2" />
+                        </g>
+                      ))}
+                      <rect x="15" y="15" width="27" height="27" fill="#fbbf24" fillOpacity="0.35" stroke="#b45309" strokeWidth="1.5" />
+                      <text x="28" y="32" fontSize="8" fontWeight="bold" fill="#78350f" textAnchor="middle">10 cm</text>
+                    </g>
+                  )}
+
+                  {/* 4. Υποδιαίρεση 1.000 x 1.000 (mm) */}
+                  {squareUnit === 'mm' && (
+                    <g>
+                      <rect x="15" y="15" width="270" height="270" fill="url(#grid-mm)" stroke="#e11d48" strokeWidth="2.5" rx="4" />
+                      {/* Οπτικος Μεγεθυντικος Φακος (Zoom In) στη γωνια για τα mm */}
+                      <circle cx="215" cy="85" r="50" fill="#ffffff" stroke="#be123c" strokeWidth="3" shadow="true" />
+                      {/* Κάναβος 10x10 mm μεσα στον μεγεθυντικο φακο */}
+                      {Array.from({ length: 9 }).map((_, i) => (
+                        <g key={`zoom-mm-${i}`}>
+                          <line x1={175 + (i + 1) * 8} y1="45" x2={175 + (i + 1) * 8} y2="125" stroke="#fda4af" strokeWidth="0.8" />
+                          <line x1="175" y1={45 + (i + 1) * 8} x2="255" y2={45 + (i + 1) * 8} stroke="#fda4af" strokeWidth="0.8" />
+                        </g>
+                      ))}
+                      <text x="215" y="146" fontSize="10" fontWeight="black" fill="#be123c" textAnchor="middle">
+                        🔍 Μεγέθυνση: 1 cm ＝ 10 mm
+                      </text>
+                    </g>
+                  )}
+
+                  {/* Διαστασεις πλευρας */}
+                  <text x="150" y="10" fontSize="11" fontWeight="bold" fill="#475569" textAnchor="middle">
+                    {squareUnit === 'm' && 'Μήκος πλευράς ＝ 1 m'}
+                    {squareUnit === 'dm' && 'Μήκος πλευράς ＝ 10 dm'}
+                    {squareUnit === 'cm' && 'Μήκος πλευράς ＝ 100 cm'}
+                    {squareUnit === 'mm' && 'Μήκος πλευράς ＝ 1.000 mm'}
+                  </text>
+                </svg>
+              </div>
+
+              <div className="text-[11px] font-mono font-bold text-slate-700 text-center">
+                Πλευρά: <strong>1 m ＝ 10 dm ＝ 100 cm ＝ 1.000 mm</strong>
+              </div>
+            </div>
+
+            {/* Επεξηγησεις & Αναλυση Υποδιαιρεσεων (6 στηλες) */}
+            <div className="lg:col-span-6 space-y-3">
+              <div className="p-4 rounded-2xl border bg-slate-50 border-slate-200 space-y-2">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                  ΜΑΘΗΜΑΤΙΚΗ ΑΝΑΛΥΣΗ ΤΟΥ ΣΧΗΜΑΤΟΣ
+                </span>
+                
+                {squareUnit === 'm' && (
+                  <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
+                    <p>• <strong>Βασική Μονάδα:</strong> Βλέπουμε το ενιαίο τετράγωνο πλευράς <strong>1 m</strong>.</p>
+                    <p>• Κάθε πλευρά του έχει μήκος ακριβώς 1 μέτρο.</p>
+                    <div className="p-2 bg-blue-50 rounded-xl border border-blue-200 font-mono text-blue-950 font-bold text-xs">
+                      Μήκος πλευράς ＝ 1 m
+                    </div>
+                  </div>
+                )}
+
+                {squareUnit === 'dm' && (
+                  <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
+                    <p>• <strong>Υποδιαίρεση σε Δεκατόμετρα (dm):</strong> Χωρίζουμε κάθε πλευρά του 1 m σε 10 ίσα τμήματα (1 m ＝ 10 dm).</p>
+                    <p>• Το τετράγωνο χωρίζεται σε <strong>10 × 10 ＝ 100</strong> ίσα μικρότερα τετράγωνα (τετραγωνικά δεκατόμετρα).</p>
+                    <div className="p-2 bg-emerald-50 rounded-xl border border-emerald-200 font-mono text-emerald-950 font-bold text-xs">
+                      1 m ＝ 10 dm | Επιφάνεια: 10 · 10 ＝ 100 dm²
+                    </div>
+                  </div>
+                )}
+
+                {squareUnit === 'cm' && (
+                  <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
+                    <p>• <strong>Υποδιαίρεση σε Εκατοστά (cm):</strong> Χωρίζουμε κάθε πλευρά του 1 m σε 100 ίσα τμήματα (1 m ＝ 100 cm).</p>
+                    <p>• Το τετράγωνο χωρίζεται σε <strong>100 × 100 ＝ 10.000</strong> μικροσκοπικά τετράγωνα (τετραγωνικά εκατοστά).</p>
+                    <div className="p-2 bg-amber-50 rounded-xl border border-amber-200 font-mono text-amber-950 font-bold text-xs">
+                      1 m ＝ 100 cm | Επιφάνεια: 100 · 100 ＝ 10.000 cm²
+                    </div>
+                  </div>
+                )}
+
+                {squareUnit === 'mm' && (
+                  <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
+                    <p>• <strong>Υποδιαίρεση σε Χιλιοστά (mm):</strong> Χωρίζουμε κάθε πλευρά του 1 m σε 1.000 ίσα τμήματα (1 m ＝ 1.000 mm).</p>
+                    <p>• Το τετράγωνο χωρίζεται σε <strong>1.000 × 1.000 ＝ 1.000.000</strong> τετραγωνικά χιλιοστά!</p>
+                    <div className="p-2 bg-rose-50 rounded-xl border border-rose-200 font-mono text-rose-950 font-bold text-xs">
+                      1 m ＝ 1.000 mm | Επιφάνεια: 1.000 · 1.000 ＝ 1.000.000 mm²
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs text-indigo-950 font-medium">
+                💡 <strong>Συμπέρασμα:</strong> Όσο μικραίνει η μονάδα μέτρησης (από m σε dm, cm, mm), ο αριθμός των υποδιαιρέσεων στην πλευρά δεκαπλασιάζεται (1 ➔ 10 ➔ 100 ➔ 1.000)!
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* 5. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 3: ΠΕΡΙΜΕΤΡΟΣ ΜΕ ΜΕΤΑΤΡΟΠΗ ΜΟΝΑΔΩΝ */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
-              <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΠΡΑΚΤΙΚΗ ΕΦΑΡΜΟΓΗ</span>
+              <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 3: ΠΡΑΚΤΙΚΗ ΕΦΑΡΜΟΓΗ</span>
             </div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
               Περίμετρος Γηπέδου με Διαφορετικές Μονάδες (m και cm)
@@ -482,7 +703,7 @@ export default function MikosTheoryPage() {
           </div>
         </section>
 
-        {/* 5. ΛΥΜΕΝΑ ΠΑΡΑΔΕΙΓΜΑΤΑ ΠΡΟΒΛΗΜΑΤΩΝ ΜΕ ΣΧΗΜΑΤΑ */}
+        {/* 6. ΛΥΜΕΝΑ ΠΑΡΑΔΕΙΓΜΑΤΑ ΠΡΟΒΛΗΜΑΤΩΝ ΜΕ ΣΧΗΜΑΤΑ */}
         <section className="space-y-6">
           <div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900 tracking-tight">
@@ -588,7 +809,7 @@ export default function MikosTheoryPage() {
           </div>
         </section>
 
-        {/* 6. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        {/* 7. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
