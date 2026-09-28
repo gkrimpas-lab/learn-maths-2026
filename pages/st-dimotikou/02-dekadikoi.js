@@ -337,101 +337,99 @@ export default function DekadikoiArithmoiPage() {
               </div>
             </div>
 
-            {/* ROW 2: ΠΙΝΑΚΑΣ ΑΞΙΑΣ ΘΕΣΗΣ ΔΕΚΑΔΙΚΩΝ */}
-            <div className="bg-slate-50 border border-slate-200 p-3 sm:p-5 md:p-6 rounded-2xl space-y-6">
+            {/* ROW 2: ΠΙΝΑΚΑΣ ΑΞΙΑΣ ΘΕΣΗΣ ΔΕΚΑΔΙΚΩΝ - 100% FLUID ΧΩΡΙΣ SCROLL */}
+            <div className="bg-slate-50 border border-slate-200 p-2 sm:p-5 md:p-6 rounded-2xl space-y-4 sm:space-y-6">
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center px-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-600 uppercase tracking-wider">
                     🗂️ Πίνακας Αξίας Θέσης Δεκαδικών
                   </span>
-                  <span className="text-[10px] sm:text-xs text-slate-400 font-bold md:hidden flex items-center gap-1">
-                    <span>👈 Σύρετε οριζόντια 👉</span>
-                  </span>
                 </div>
 
-                <div className="w-full overflow-x-auto pb-2 pt-1 touch-pan-x border border-slate-200/80 rounded-2xl bg-white shadow-sm">
-                  <div className="min-w-[560px] sm:min-w-[620px] rounded-2xl overflow-hidden">
-                    <div className="grid grid-cols-7 text-white text-center font-black text-xs sm:text-sm uppercase tracking-wider">
-                      <div className="col-span-3 bg-emerald-600 py-2.5 sm:py-3 border-r border-white/20">Ακέραιο Μέρος</div>
-                      <div className="bg-amber-500 py-2.5 sm:py-3 border-r border-white/20">,</div>
-                      <div className="col-span-3 bg-blue-600 py-2.5 sm:py-3">Δεκαδικό Μέρος</div>
-                    </div>
+                <div className="w-full border border-slate-200/80 rounded-2xl bg-white shadow-sm overflow-hidden">
+                  {/* Κεφαλίδες Μερών */}
+                  <div className="grid grid-cols-7 text-white text-center font-black text-[10px] sm:text-xs md:text-sm uppercase tracking-wider">
+                    <div className="col-span-3 bg-emerald-600 py-2 sm:py-3 border-r border-white/20">Ακέραιο Μέρος</div>
+                    <div className="bg-amber-500 py-2 sm:py-3 border-r border-white/20">,</div>
+                    <div className="col-span-3 bg-blue-600 py-2 sm:py-3">Δεκαδικό Μέρος</div>
+                  </div>
 
-                    <div className="grid grid-cols-7 text-[10px] sm:text-xs font-black text-slate-500 text-center border-b bg-slate-100 uppercase py-2">
-                      {intClasses.map((c, i) => (
-                        <div key={`hc1-${i}`} className="border-r border-slate-200">
-                          {c.short} <span className="hidden sm:inline font-normal lowercase">({c.name})</span>
-                        </div>
-                      ))}
-                      <div className="text-amber-600 font-bold border-r border-slate-200 bg-amber-50/50">Υποδ.</div>
-                      {decClasses.map((c, i) => (
-                        <div key={`hc2-${i}`} className="border-r border-slate-200 last:border-0">
-                          {c.short} <span className="hidden sm:inline font-normal lowercase">({c.name})</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="grid grid-cols-7 text-center items-center p-2 bg-white gap-1">
-                      {intDigits.map((digit, i) => {
-                        const key = `int-${i}`;
-                        const isLeading = intFirstNonZero !== -1 && i < intFirstNonZero;
-                        const isSelected = activeDigitKey === key;
-
-                        return (
-                          <div key={key} className="px-0.5">
-                            <button
-                              type="button"
-                              onClick={() => setActiveDigitKey(key)}
-                              onMouseEnter={() => setActiveDigitKey(key)}
-                              className={`w-full py-3 sm:py-4 text-lg sm:text-2xl font-black rounded-xl transition-colors duration-150 focus:outline-none font-mono flex items-center justify-center border-2 box-border touch-manipulation
-                                ${intClasses[i].light}
-                                ${isSelected 
-                                  ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm' 
-                                  : 'border-transparent hover:bg-amber-100/70 hover:border-amber-300'}
-                                ${isLeading && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
-                            >
-                              {digit}
-                            </button>
-                          </div>
-                        );
-                      })}
-
-                      <div className="px-0.5">
-                        <div className="w-full py-3 sm:py-4 text-xl sm:text-3xl font-black text-amber-500 bg-amber-50/50 rounded-xl flex items-center justify-center font-mono border-2 border-transparent">
-                          ,
-                        </div>
+                  {/* Κεφαλίδες Τάξεων */}
+                  <div className="grid grid-cols-7 text-[10px] sm:text-xs font-black text-slate-500 text-center border-b bg-slate-100 uppercase py-1.5 sm:py-2">
+                    {intClasses.map((c, i) => (
+                      <div key={`hc1-${i}`} className="border-r border-slate-200">
+                        {c.short} <span className="hidden sm:inline font-normal lowercase">({c.name})</span>
                       </div>
+                    ))}
+                    <div className="text-amber-600 font-bold border-r border-slate-200 bg-amber-50/50">Υποδ.</div>
+                    {decClasses.map((c, i) => (
+                      <div key={`hc2-${i}`} className="border-r border-slate-200 last:border-0">
+                        {c.short} <span className="hidden sm:inline font-normal lowercase">({c.name})</span>
+                      </div>
+                    ))}
+                  </div>
 
-                      {decDigits.map((digit, i) => {
-                        const key = `dec-${i}`;
-                        const isTrailing = i >= decRaw.length && decRaw.length > 0;
-                        const isSelected = activeDigitKey === key;
+                  {/* Ψηφία */}
+                  <div className="grid grid-cols-7 text-center items-center p-1 sm:p-2 bg-white gap-0.5 sm:gap-1">
+                    {intDigits.map((digit, i) => {
+                      const key = `int-${i}`;
+                      const isLeading = intFirstNonZero !== -1 && i < intFirstNonZero;
+                      const isSelected = activeDigitKey === key;
 
-                        return (
-                          <div key={key} className="px-0.5">
-                            <button
-                              type="button"
-                              onClick={() => setActiveDigitKey(key)}
-                              onMouseEnter={() => setActiveDigitKey(key)}
-                              className={`w-full py-3 sm:py-4 text-lg sm:text-2xl font-black rounded-xl transition-colors duration-150 focus:outline-none font-mono flex items-center justify-center border-2 box-border touch-manipulation
-                                ${decClasses[i].light}
-                                ${isSelected 
-                                  ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm' 
-                                  : 'border-transparent hover:bg-amber-100/70 hover:border-amber-300'}
-                                ${isTrailing && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
-                            >
-                              {digit}
-                            </button>
-                          </div>
-                        );
-                      })}
+                      return (
+                        <div key={key} className="px-0.5">
+                          <button
+                            type="button"
+                            onClick={() => setActiveDigitKey(key)}
+                            onMouseEnter={() => setActiveDigitKey(key)}
+                            className={`w-full py-2.5 sm:py-4 text-base sm:text-2xl font-black rounded-xl transition-colors duration-150 focus:outline-none font-mono flex items-center justify-center border-2 box-border touch-manipulation
+                              ${intClasses[i].light}
+                              ${isSelected 
+                                ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm' 
+                                : 'border-transparent hover:bg-amber-100/70 hover:border-amber-300'}
+                              ${isLeading && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
+                          >
+                            {digit}
+                          </button>
+                        </div>
+                      );
+                    })}
+
+                    <div className="px-0.5">
+                      <div className="w-full py-2.5 sm:py-4 text-lg sm:text-3xl font-black text-amber-500 bg-amber-50/50 rounded-xl flex items-center justify-center font-mono border-2 border-transparent">
+                        ,
+                      </div>
                     </div>
+
+                    {decDigits.map((digit, i) => {
+                      const key = `dec-${i}`;
+                      const isTrailing = i >= decRaw.length && decRaw.length > 0;
+                      const isSelected = activeDigitKey === key;
+
+                      return (
+                        <div key={key} className="px-0.5">
+                          <button
+                            type="button"
+                            onClick={() => setActiveDigitKey(key)}
+                            onMouseEnter={() => setActiveDigitKey(key)}
+                            className={`w-full py-2.5 sm:py-4 text-base sm:text-2xl font-black rounded-xl transition-colors duration-150 focus:outline-none font-mono flex items-center justify-center border-2 box-border touch-manipulation
+                              ${decClasses[i].light}
+                              ${isSelected 
+                                ? 'bg-amber-400 text-slate-900 border-amber-500 shadow-sm' 
+                                : 'border-transparent hover:bg-amber-100/70 hover:border-amber-300'}
+                              ${isTrailing && !isSelected ? 'text-slate-300' : isSelected ? 'text-slate-900' : 'text-slate-800'}`}
+                          >
+                            {digit}
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
 
               {/* ΠΛΗΡΗΣ ΑΝΑΛΥΤΙΚΗ ΜΟΡΦΗ */}
-              <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl font-mono text-xs sm:text-sm space-y-3 shadow-inner">
+              <div className="bg-white border border-slate-200 p-3 sm:p-5 rounded-2xl font-mono text-xs sm:text-sm space-y-3 shadow-inner">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                   <span className="text-[11px] sm:text-xs font-black text-slate-500 uppercase tracking-wider block font-sans">
                     🧬 Πλήρης Αναλυτική Μορφή (Ακέραιες Μονάδες &amp; Δεκαδικά Κλάσματα)
@@ -441,7 +439,7 @@ export default function DekadikoiArithmoiPage() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5">
                   {/* Ακέραια ψηφία */}
                   {intDigits.map((digit, i) => {
                     if (digit === '0' && intFirstNonZero !== -1 && i < intFirstNonZero) return null;
@@ -455,23 +453,23 @@ export default function DekadikoiArithmoiPage() {
                         key={key}
                         onMouseEnter={() => setActiveDigitKey(key)}
                         onClick={() => setActiveDigitKey(key)}
-                        className={`grid grid-cols-[auto_1fr_auto] items-center p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-2 touch-manipulation ${
+                        className={`flex flex-wrap sm:flex-nowrap items-center justify-between p-2 sm:p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-1 sm:gap-2 touch-manipulation ${
                           isSelected 
                             ? 'bg-amber-50 border-amber-400 shadow-sm' 
                             : 'bg-slate-50/70 border-transparent hover:bg-slate-100 hover:border-slate-200'
                         }`}
                       >
-                        <div className="flex items-center gap-1.5 text-xs sm:text-sm whitespace-nowrap">
+                        <div className="flex items-center gap-1 text-xs sm:text-sm">
                           <span className="text-emerald-700 font-black">{digit}</span>
                           <span className="text-slate-400">·</span>
                           <span className="font-bold text-slate-800">{weight}</span>
                         </div>
                         <div>
-                          <span className="text-[10px] sm:text-xs font-sans text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold inline-block truncate max-w-[90px] sm:max-w-none">
+                          <span className="text-[10px] sm:text-xs font-sans text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-bold inline-block">
                             {intClasses[i].name}
                           </span>
                         </div>
-                        <div className="text-right whitespace-nowrap font-black text-xs sm:text-sm text-slate-700">
+                        <div className="text-right font-black text-xs sm:text-sm text-slate-700">
                           ＝ {totalVal}
                         </div>
                       </div>
@@ -491,23 +489,23 @@ export default function DekadikoiArithmoiPage() {
                         key={key}
                         onMouseEnter={() => setActiveDigitKey(key)}
                         onClick={() => setActiveDigitKey(key)}
-                        className={`grid grid-cols-[auto_1fr_auto] items-center p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-2 touch-manipulation ${
+                        className={`flex flex-wrap sm:flex-nowrap items-center justify-between p-2 sm:p-2.5 rounded-xl border-2 box-border transition-colors cursor-pointer gap-1 sm:gap-2 touch-manipulation ${
                           isSelected 
                             ? 'bg-amber-50 border-amber-400 shadow-sm' 
                             : 'bg-slate-50/70 border-transparent hover:bg-slate-100 hover:border-slate-200'
                         }`}
                       >
-                        <div className="flex items-center gap-1.5 text-xs sm:text-sm whitespace-nowrap">
+                        <div className="flex items-center gap-1 text-xs sm:text-sm">
                           <span className="text-blue-700 font-black">{digit}</span>
                           <span className="text-slate-400">·</span>
                           <Fraction num={decCls.num} den={decCls.den} className="text-xs" />
                         </div>
                         <div>
-                          <span className="text-[10px] sm:text-xs font-sans text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded font-bold inline-block truncate max-w-[90px] sm:max-w-none">
+                          <span className="text-[10px] sm:text-xs font-sans text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded font-bold inline-block">
                             {decCls.name}
                           </span>
                         </div>
-                        <div className="text-right whitespace-nowrap font-black text-xs sm:text-sm text-blue-700">
+                        <div className="text-right font-black text-xs sm:text-sm text-blue-700">
                           ＝ {valCalc}
                         </div>
                       </div>
@@ -521,8 +519,8 @@ export default function DekadikoiArithmoiPage() {
               </div>
             </div>
 
-            {/* ROW 3: ΟΠΤΙΚΟ ΓΡΑΦΗΜΑ ΡΑΒΔΩΝ */}
-            <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-3 shadow-sm">
+            {/* ROW 3: ΟΠΤΙΚΟ ΓΡΑΦΗΜΑ ΡΑΒΔΩΝ - ΧΩΡΙΣ SCROLL */}
+            <div className="bg-white border border-slate-200 p-3 sm:p-5 rounded-2xl space-y-3 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5 uppercase">
                   📊 Ύψος Ψηφίου (Οπτική Σύγκριση Μεγεθών)
@@ -532,8 +530,8 @@ export default function DekadikoiArithmoiPage() {
                 </span>
               </div>
 
-              <div className="w-full bg-slate-50 rounded-xl border border-slate-100 pt-10 pb-3 px-2 sm:px-4">
-                <div className="flex items-end justify-between gap-1.5 sm:gap-3 h-40 border-b-2 border-slate-200 pb-0">
+              <div className="w-full bg-slate-50 rounded-xl border border-slate-100 pt-8 sm:pt-10 pb-3 px-1 sm:px-4">
+                <div className="flex items-end justify-between gap-1 sm:gap-3 h-36 sm:h-40 border-b-2 border-slate-200 pb-0">
                   {chartItems.map((item) => {
                     const isSelected = activeDigitKey === item.key;
                     const hasValue = !item.isLeading;
@@ -547,14 +545,14 @@ export default function DekadikoiArithmoiPage() {
                       >
                         {/* TOOLTIP ON HOVER */}
                         {isSelected && hasValue && (
-                          <div className="absolute -top-9 bg-slate-900 text-white text-[10px] font-mono px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
+                          <div className="absolute -top-9 bg-slate-900 text-white text-[10px] font-mono px-1.5 py-0.5 rounded shadow-lg whitespace-nowrap z-30 animate-bounce">
                             {item.valStr}
                           </div>
                         )}
 
                         {/* VALUE LABEL */}
                         {hasValue ? (
-                          <span className="text-[11px] sm:text-xs font-black text-slate-700 mb-1">
+                          <span className="text-[10px] sm:text-xs font-black text-slate-700 mb-1">
                             {item.digit}
                           </span>
                         ) : (
@@ -562,14 +560,14 @@ export default function DekadikoiArithmoiPage() {
                         )}
 
                         {/* THE BAR CONTAINER */}
-                        <div className="w-full h-28 flex items-end justify-center">
+                        <div className="w-full h-24 sm:h-28 flex items-end justify-center">
                           {hasValue && (
                             <div
                               style={{ 
                                 height: `${item.heightPercent}%`,
                                 backgroundColor: item.hex 
                               }}
-                              className={`w-full max-w-[38px] rounded-t-lg transition-all duration-200 ${isSelected ? 'ring-4 ring-amber-400 brightness-110 shadow-md' : 'opacity-90 hover:opacity-100'}`}
+                              className={`w-full max-w-[34px] rounded-t-lg transition-all duration-200 ${isSelected ? 'ring-2 sm:ring-4 ring-amber-400 brightness-110 shadow-md' : 'opacity-90 hover:opacity-100'}`}
                             />
                           )}
                         </div>
@@ -579,10 +577,10 @@ export default function DekadikoiArithmoiPage() {
                 </div>
 
                 {/* X-AXIS LABELS */}
-                <div className="flex justify-between gap-1.5 sm:gap-3 pt-2">
+                <div className="flex justify-between gap-1 sm:gap-3 pt-2">
                   {chartItems.map((item) => (
                     <div key={`lbl-${item.key}`} className="flex-1 text-center">
-                      <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 block leading-tight">
+                      <span className="text-[9px] sm:text-[10px] font-bold text-slate-600 block leading-tight">
                         {item.short}
                       </span>
                       <span className="text-[8px] text-slate-400 font-mono block leading-tight">
