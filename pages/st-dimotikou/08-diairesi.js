@@ -438,7 +438,7 @@ export default function DiairesiPage() {
                       : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
                   }`}
                 >
-                  🍕 Οπτικό Μοίρασμα σε Ομάδες
+                  🍕 Οπτικο Μοιρασμα σε Ομαδες
                 </button>
               </div>
 
