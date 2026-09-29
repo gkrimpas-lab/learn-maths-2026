@@ -321,12 +321,12 @@ function generateQuestions() {
     const prob9 = shuffledPool[0].generate();
     const prob10 = shuffledPool[1].generate();
 
-    // Q9 (Input - Decimal)
+    // Q9 (Input - Decimal) - Ο πίνακας tableData εμφανίζεται μόνο στο feedback
     qList.push({
       id: 9,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΓΟΡΑΣ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
+      instruction: 'Λύστε το πρόβλημα σχηματίζοντας μία αριθμητική παράσταση:',
       prompt: prob9.text,
       tableData: prob9.tableData,
       correctVal: prob9.correctVal,
@@ -334,7 +334,7 @@ function generateQuestions() {
       explanation: prob9.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας)
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Ο πίνακας tableData εμφανίζεται μόνο στο feedback
     const val10 = prob10.correctVal;
     const correctStr10 = `${prob10.correctStr} μήλα`;
     const fake10A = `${val10 + 4} μήλα`;
@@ -521,7 +521,7 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                   )}
                 </div>
 
-                {/* Εκφωνηση */}
+                {/* Εκφωνηση (Καθαρο κειμενο χωρις πινακα που προδιδει τη λυση) */}
                 <div className="space-y-3 mb-5">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
@@ -531,22 +531,6 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                   <p className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed">
                     {q.prompt}
                   </p>
-
-                  {/* Πινακας Δεδομενων (αν υπαρχει) */}
-                  {q.tableData && (
-                    <div className="inline-block max-w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 shadow-inner my-2 font-mono text-xs sm:text-sm 2xl:text-base">
-                      <div className="grid grid-cols-2 gap-3 sm:gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
-                        <span className="bg-blue-100/60 px-2 py-0.5 rounded-lg text-blue-900 break-words">{q.tableData.col1}</span>
-                        <span className="bg-emerald-100/60 px-2 py-0.5 rounded-lg text-emerald-900 break-words">{q.tableData.col2}</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-2 text-center font-bold text-slate-800">
-                        <span>{q.tableData.r1[0]}</span>
-                        <span className="text-indigo-700 font-bold">{q.tableData.r1[1]}</span>
-                        <span>{q.tableData.r2[0]}</span>
-                        <span className="text-amber-600 font-black">{q.tableData.r2[1]}</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Περιοχη Απαντησης */}
@@ -608,10 +592,10 @@ export default function ProteraiotitaPrakseonExercisesPage() {
 
                 </div>
 
-                {/* Feedback μετα την υποβολη */}
+                {/* Feedback μετα την υποβολη (Εδω εμφανιζεται ο αναλυτικος πινακας δεδομενων) */}
                 {isSubmitted && (
                   <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-1.5 ${
+                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-2.5 ${
                       isCorrect
                         ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
                         : 'bg-rose-100/60 border-rose-300 text-rose-950'
@@ -620,7 +604,25 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                     <div className="font-bold flex items-center gap-1.5">
                       <span>{isCorrect ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Επεξήγηση:'}</span>
                     </div>
+
+                    {/* Οργανωτικός Πίνακας Δεδομένων στην Επεξήγηση */}
+                    {q.tableData && (
+                      <div className="inline-block max-w-full bg-white/90 border border-slate-200 rounded-2xl p-3 shadow-inner my-1 font-mono text-xs sm:text-sm">
+                        <div className="grid grid-cols-2 gap-3 sm:gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
+                          <span className="bg-blue-100/70 px-2 py-0.5 rounded-lg text-blue-900 break-words">{q.tableData.col1}</span>
+                          <span className="bg-emerald-100/70 px-2 py-0.5 rounded-lg text-emerald-900 break-words">{q.tableData.col2}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-2 text-center font-bold text-slate-800">
+                          <span>{q.tableData.r1[0]}</span>
+                          <span className="text-indigo-700 font-bold">{q.tableData.r1[1]}</span>
+                          <span>{q.tableData.r2[0]}</span>
+                          <span className="text-amber-600 font-black">{q.tableData.r2[1]}</span>
+                        </div>
+                      </div>
+                    )}
+
                     <div>{q.explanation}</div>
+                    
                     {!isCorrect && (
                       <div className="font-semibold pt-1 text-slate-800">
                         Σωστή απάντηση:{' '}
