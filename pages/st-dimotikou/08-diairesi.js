@@ -1,3 +1,4 @@
+// pages/st-dimotikou/08-diairesi.js
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
@@ -13,8 +14,8 @@ export default function DiairesiPage() {
   const [activeTab, setActiveTab] = useState('katheti'); // 'katheti' ή 'moirasma'
   
   // Κατάσταση για την πράξη
-  const [dividendInput, setDividendInput] = useState("1569");
-  const [divisorInput, setDivisorInput] = useState("8");
+  const [dividendInput, setDividendInput] = useState('1569');
+  const [divisorInput, setDivisorInput] = useState('8');
 
   const D = Math.floor(parseFloat(dividendInput)) || 0;
   const d = Math.floor(parseFloat(divisorInput)) || LIMITS.MIN_DIVISOR;
@@ -99,116 +100,153 @@ export default function DiairesiPage() {
 
   return (
     <Layout
-      title="➗ 8. Τέλεια και Ατελής Διαίρεση Φυσικών Αριθμών - LearnMaths.gr"
-      description="Μάθε πώς μοιράζουμε σε ίσα μέρη, την τέλεια και ατελή διαίρεση και τη μαθηματική ταυτότητα Δ = δ × π + υ για τη ΣΤ' Δημοτικού."
+      title="Τέλεια και Ατελής Διαίρεση Φυσικών Αριθμών - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Μάθε πώς μοιράζουμε σε ίσα μέρη, την τέλεια και ατελή διαίρεση και τη μαθηματική ταυτότητα Δ = δ · π + υ για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/08-diairesi-ask"
-          className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-sm flex items-center gap-1.5 shrink-0"
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯</span>
-          <span>Ασκήσεις</span>
+          <span>🎯 Ασκήσεις</span>
         </Link>
       }
     >
-      <div className="space-y-8 md:space-y-10 py-6 md:py-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
 
-        {/* HERO BANNER WITH PROMO CALLOUT CARD */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικου
-                </span>
-                <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενοτητα 8
-                </span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                8. Τέλεια και Ατελής Διαίρεση Φυσικών Αριθμών
-              </h1>
-              <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                Μάθε πώς μοιράζουμε έναν αριθμό σε ίσα μέρη, πότε η διαίρεση είναι <strong>τέλεια</strong> (υ = 0) και πότε <strong>ατελής</strong> (υ &gt; 0), καθώς και τη θεμελιώδη μαθηματική ταυτότητα: <strong className="text-amber-300 font-mono">Δ = δ × π + υ</strong>!
-              </p>
+        {/* 1. HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΚΕΦΑΛΑΙΟ 8 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
-
-            {/* CALLOUT PROMO CARD */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
-              <span className="text-3xl">🚀</span>
-              <h3 className="font-black text-lg text-amber-300">Έτοιμος για εξάσκηση;</h3>
-              <p className="text-xs text-blue-50">Δοκίμασε τις διαδραστικές ασκήσεις με 8 δυναμικά προβλήματα!</p>
-              <Link
-                href="/st-dimotikou/08-diairesi-ask"
-                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
-              >
-                🎯 Μετάβαση στις Ασκήσεις
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* THEORY CARDS (3 COLS) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-emerald-50/80 border border-emerald-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                1
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Τέλεια Διαίρεση</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Είναι η διαίρεση στην οποία ο Διαιρετέος χωρίζεται ακριβώς και το υπόλοιπο είναι <strong>μηδέν (υ = 0)</strong>.
-              </p>
-            </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <p>12 : 3 = <strong className="text-emerald-700">4</strong> (υπόλοιπο 0)</p>
-            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              Τέλεια &amp; Ατελής Διαίρεση Φυσικών Αριθμών
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Μάθε πώς μοιράζουμε έναν αριθμό σε ίσα μέρη, πότε η διαίρεση είναι <strong>τέλεια</strong> (υ ＝ 0) και πότε <strong>ατελής</strong> (υ ＞ 0), καθώς και τη θεμελιώδη μαθηματική ταυτότητα: <strong className="text-amber-300 font-mono">Δ ＝ δ · π ＋ υ</strong>!
+            </p>
           </div>
 
-          <div className="bg-amber-50/80 border border-amber-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-amber-500 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                2
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Ατελής Διαίρεση</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο <strong>διάφορο του μηδενός (υ &gt; 0)</strong>. Το υπόλοιπο είναι πάντα μικρότερο από τον διαιρέτη (υ &lt; δ).
-              </p>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Κάθετη Πράξη με Βήματα, Οπτικό Μοίρασμα &amp; Ταυτότητα Διαίρεσης</span>
             </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-amber-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <p>14 : 3 = <strong className="text-amber-600">4</strong> (υπόλοιπο 2)</p>
-            </div>
+            <Link
+              href="/st-dimotikou/08-diairesi-ask"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ */}
+        <section className="space-y-6 2xl:space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
+              Βασικές Έννοιες της Διαίρεσης σε 3 Βήματα
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
+              Η τέλεια διαίρεση, η ατελής διαίρεση και η μαθηματική επαλήθευση.
+            </p>
           </div>
 
-          <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                3
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Μαθηματική Επαλήθευση</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Η θεμελιώδης ταυτότητα της διαίρεσης: <code className="text-blue-700 font-bold font-mono">Δ = δ × π + υ</code>.<br/>
-                Ο Διαιρετέος ισούται με τον Διαιρέτη επί το Πηλίκο συν το Υπόλοιπο.
-              </p>
-            </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <p>1569 = 8 × 196 + 1</p>
-            </div>
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΒΗΜΑ 1
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Χωρίς Υπόλοιπο</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Τέλεια Διαίρεση
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Είναι η διαίρεση στην οποία ο Διαιρετέος χωρίζεται ακριβώς και το υπόλοιπο είναι <strong>μηδέν (υ ＝ 0)</strong>.
+                </p>
 
-        {/* INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>12 : 3 ＝ <strong className="text-emerald-700">4</strong> (υπόλοιπο 0)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
+                💡 Στην τέλεια διαίρεση ισχύει: <strong>Δ ＝ δ · π</strong>.
+              </div>
+            </article>
+
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-amber-100 text-amber-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΒΗΜΑ 2
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Με Υπόλοιπο</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Ατελής Διαίρεση
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Είναι η διαίρεση στην οποία περισσεύει υπόλοιπο <strong>διάφορο του μηδενός (υ ＞ 0)</strong>. Το υπόλοιπο είναι πάντα μικρότερο από τον διαιρέτη (<strong className="font-mono">υ ＜ δ</strong>).
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>14 : 3 ＝ <strong className="text-amber-600">4</strong> (υπόλοιπο 2)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
+                ⚡ Αν το υπόλοιπο είναι μεγαλύτερο ή ίσο με τον διαιρέτη, η διαίρεση δεν έχει τελειώσει!
+              </div>
+            </article>
+
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-blue-100 text-blue-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΒΗΜΑ 3
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Επαλήθευση</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Μαθηματική Ταυτότητα
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Η θεμελιώδης ταυτότητα της διαίρεσης: <code className="text-blue-700 font-bold font-mono">Δ ＝ δ · π ＋ υ</code>.<br />
+                  Ο Διαιρετέος ισούται με τον Διαιρέτη επί το Πηλίκο συν το Υπόλοιπο.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>1569 ＝ 8 · 196 ＋ 1</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-blue-50 rounded-2xl border border-blue-200 text-xs 2xl:text-sm text-blue-950 font-medium">
+                🎯 Χρησιμοποιούμε πάντοτε την ταυτότητα για να ελέγξουμε αν το αποτέλεσμα είναι σωστό.
+              </div>
+            </article>
+          </div>
+        </section>
+
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ ΔΙΑΙΡΕΣΗΣ */}
+        <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🕹️</span> Διαδραστικό Εργαστήριο Διαίρεσης
-              </h2>
-              <p className="text-gray-500 text-xs sm:text-sm">
-                Άλλαξε τον Διαιρετέο και τον Διαιρέτη με τα κουμπιά αυξομείωσης (+ / -) ή πληκτρολόγησε τους αριθμούς!
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
+                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Διαδραστικό Εργαστήριο Διαίρεσης
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
+                Άλλαξε τον Διαιρετέο και τον Διαιρέτη με τα κουμπιά αυξομείωσης (＋ / －) ή πληκτρολόγησε τους αριθμούς!
               </p>
             </div>
 
@@ -222,7 +260,7 @@ export default function DiairesiPage() {
                     setDividendInput(preset.D);
                     setDivisorInput(preset.d);
                   }}
-                  className="bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-slate-200 transition shadow-xs"
+                  className="bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 text-xs 2xl:text-sm font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-slate-200 transition shadow-sm touch-manipulation active:scale-95"
                 >
                   {preset.label}
                 </button>
@@ -234,25 +272,26 @@ export default function DiairesiPage() {
           <div className="space-y-6">
 
             {/* ROW 1: INPUT CONTROLS & STATUS BADGE */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
               
               {/* INPUTS D & d (7 COLS) */}
               <div className="lg:col-span-7 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-4 shadow-inner flex flex-col justify-center">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                   
-                  {/* INPUT Δ (ΔΙAIPETEOΣ) */}
+                  {/* INPUT Δ (ΔΙΑΙΡΕΤΕΟΣ) */}
                   <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-blue-200 shadow-sm">
                     <div className="flex justify-between items-center">
-                      <label className="text-xs font-black text-blue-800 tracking-wider block">
+                      <label className="text-xs 2xl:text-sm font-black text-blue-800 tracking-wider block uppercase">
                         Διαιρετέος (Δ):
                       </label>
-                      <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-full">
+                      <span className="text-[10px] sm:text-xs font-bold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-full">
                         έως 9999
                       </span>
                     </div>
                     
                     <input
                       type="text"
+                      inputMode="numeric"
                       value={dividendInput}
                       onChange={(e) => handleInputChange(e.target.value, setDividendInput)}
                       className="text-xl sm:text-2xl font-black text-center p-2 bg-blue-50/50 border-2 border-blue-300 rounded-xl focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-700 font-mono"
@@ -264,47 +303,48 @@ export default function DiairesiPage() {
                       <button
                         type="button"
                         onClick={() => setDividendInput(adjustValue(dividendInput, -10))}
-                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-1.5 rounded-lg transition"
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-2 rounded-lg transition touch-manipulation active:scale-95"
                       >
-                        -10
+                        －10
                       </button>
                       <button
                         type="button"
                         onClick={() => setDividendInput(adjustValue(dividendInput, -1))}
-                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-1.5 rounded-lg transition"
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-2 rounded-lg transition touch-manipulation active:scale-95"
                       >
-                        -1
+                        －1
                       </button>
                       <button
                         type="button"
                         onClick={() => setDividendInput(adjustValue(dividendInput, +1))}
-                        className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-black py-1.5 rounded-lg transition"
+                        className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-black py-2 rounded-lg transition touch-manipulation active:scale-95"
                       >
-                        +1
+                        ＋1
                       </button>
                       <button
                         type="button"
                         onClick={() => setDividendInput(adjustValue(dividendInput, +10))}
-                        className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-black py-1.5 rounded-lg transition"
+                        className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-black py-2 rounded-lg transition touch-manipulation active:scale-95"
                       >
-                        +10
+                        ＋10
                       </button>
                     </div>
                   </div>
 
-                  {/* INPUT δ (ΔΙAIPETHΣ) */}
+                  {/* INPUT δ (ΔΙΑΙΡΕΤΗΣ) */}
                   <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-sm">
                     <div className="flex justify-between items-center">
-                      <label className="text-xs font-black text-emerald-800 tracking-wider block">
+                      <label className="text-xs 2xl:text-sm font-black text-emerald-800 tracking-wider block uppercase">
                         Διαιρέτης (δ):
                       </label>
-                      <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-full">
+                      <span className="text-[10px] sm:text-xs font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-full">
                         έως 99
                       </span>
                     </div>
 
                     <input
                       type="text"
+                      inputMode="numeric"
                       value={divisorInput}
                       onChange={(e) => handleInputChange(e.target.value, setDivisorInput, true)}
                       className="text-xl sm:text-2xl font-black text-center p-2 bg-emerald-50/50 border-2 border-emerald-300 rounded-xl focus:border-emerald-500 outline-none transition-all w-full tracking-wider text-emerald-700 font-mono"
@@ -316,16 +356,16 @@ export default function DiairesiPage() {
                       <button
                         type="button"
                         onClick={() => setDivisorInput(adjustValue(divisorInput, -1, true))}
-                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-1.5 rounded-lg transition"
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black py-2 rounded-lg transition touch-manipulation active:scale-95"
                       >
-                        -1
+                        －1
                       </button>
                       <button
                         type="button"
                         onClick={() => setDivisorInput(adjustValue(divisorInput, +1, true))}
-                        className="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-black py-1.5 rounded-lg transition"
+                        className="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-black py-2 rounded-lg transition touch-manipulation active:scale-95"
                       >
-                        +1
+                        ＋1
                       </button>
                     </div>
                   </div>
@@ -333,27 +373,27 @@ export default function DiairesiPage() {
                 </div>
 
                 {/* STATUS BADGE */}
-                <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-xs text-center flex flex-col gap-1 font-sans">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Ειδος Διαιρεσης:</span>
+                <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm text-center flex flex-col gap-1 font-sans">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Είδος Διαίρεσης:</span>
                   <div className={`text-xs sm:text-sm md:text-base font-black px-4 py-1.5 rounded-full inline-block mx-auto ${
                     isPerfect ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
                   }`}>
-                    {isPerfect ? "🎯 TΕΛΕΙΑ ΔΙΑΙΡΕΣΗ (υ = 0)" : "🔍 ΑΤΕΛΗΣ ΔΙΑΙΡΕΣΗ (υ > 0)"}
+                    {isPerfect ? '🎯 ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ (υ ＝ 0)' : '🔍 ΑΤΕΛΗΣ ΔΙΑΙΡΕΣΗ (υ ＞ 0)'}
                   </div>
                 </div>
               </div>
 
               {/* DYNAMIC RESULT CARD (5 COLS) */}
               <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
-                <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
-                  ✨ Μαθηματικη Ταυτοτητα Επαληθευσης:
+                <span className="text-[10px] sm:text-xs font-black text-amber-400 uppercase tracking-wider block">
+                  ✨ Μαθηματική Ταυτότητα Επαλήθευσης:
                 </span>
 
                 <div className="text-lg sm:text-xl md:text-2xl font-black font-mono bg-white/10 px-3.5 py-2 rounded-2xl border border-white/20 flex flex-wrap items-center justify-center">
                   <span className="text-blue-400">{D.toLocaleString('el-GR')}</span>
                   <span className="text-slate-400 font-sans mx-1.5">＝</span>
                   <span className="text-emerald-400">{d}</span>
-                  <span className="text-amber-400 font-sans mx-1">×</span>
+                  <span className="text-amber-400 font-sans mx-1">·</span>
                   <span className="text-purple-300">{q.toLocaleString('el-GR')}</span>
                   <span className="text-amber-400 font-sans mx-1">＋</span>
                   <span className="text-rose-400">{r}</span>
@@ -381,7 +421,7 @@ export default function DiairesiPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('katheti')}
-                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
                     activeTab === 'katheti'
                       ? 'bg-blue-600 text-white shadow-sm'
                       : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -392,7 +432,7 @@ export default function DiairesiPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('moirasma')}
-                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all ${
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
                     activeTab === 'moirasma'
                       ? 'bg-blue-600 text-white shadow-sm'
                       : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -402,16 +442,16 @@ export default function DiairesiPage() {
                 </button>
               </div>
 
-              {/* TAB CONTENT */}
+              {/* TAB CONTENT - 100% FLUID ΧΩΡΙΣ SCROLL */}
               <div className="flex flex-col items-center justify-center">
                 {activeTab === 'katheti' ? (
-                  <div className="w-full max-w-[360px] sm:max-w-[380px] bg-slate-900 text-white p-4 sm:p-6 rounded-2xl shadow-xl border-4 border-slate-700 font-mono text-lg sm:text-xl md:text-2xl font-black relative min-h-[300px] flex py-6 sm:py-8 select-none justify-center overflow-x-auto">
+                  <div className="w-full max-w-[340px] sm:max-w-[380px] bg-slate-900 text-white p-4 sm:p-6 rounded-2xl shadow-xl border-4 border-slate-700 font-mono text-base sm:text-xl md:text-2xl font-black relative min-h-[300px] flex py-6 sm:py-8 select-none justify-center">
                     <div className="flex w-full items-start justify-center">
                       
-                      {/* ΑΡΙΣΤΕΡΟ ΜΕΡΟΣ: ΔΙAIPETEOΣ & ΑΦΑΙΡΕΣΕΙΣ */}
-                      <div className="flex flex-col items-end pr-3 sm:pr-4 text-right">
+                      {/* ΑΡΙΣΤΕΡΟ ΜΕΡΟΣ: ΔΙΑΙΡΕΤΕΟΣ & ΑΦΑΙΡΕΣΕΙΣ */}
+                      <div className="flex flex-col items-end pr-2.5 sm:pr-4 text-right">
                         <div className="flex justify-end text-blue-400 font-bold mb-3 h-8 items-center">
-                          <div className="w-5 sm:w-6"></div>
+                          <div className="w-4 sm:w-6"></div>
                           <div className="flex justify-end">
                             {divDigits.map((char, i) => (
                               <span key={i} className="w-4 sm:w-5 text-center">{char}</span>
@@ -427,7 +467,7 @@ export default function DiairesiPage() {
                             return (
                               <div key={idx} className="flex flex-col items-end w-full">
                                 <div className="flex items-center justify-end w-full h-7">
-                                  <span className="w-5 sm:w-6 text-left text-rose-400 font-bold text-sm sm:text-base select-none">-</span>
+                                  <span className="w-4 sm:w-6 text-left text-rose-400 font-bold text-sm sm:text-base select-none">－</span>
                                   <div className="flex justify-end text-rose-300 font-medium">
                                     {productDigits.map((char, i) => (
                                       <span key={i} className="w-4 sm:w-5 text-center">{char}</span>
@@ -436,7 +476,7 @@ export default function DiairesiPage() {
                                 </div>
 
                                 <div className="w-full flex justify-end h-[2px] my-1">
-                                  <div className="w-5 sm:w-6"></div>
+                                  <div className="w-4 sm:w-6"></div>
                                   <div className="flex justify-end">
                                     {productDigits.map((char, i) => (
                                       <div key={i} className={`w-4 sm:w-5 h-full ${char !== '' ? 'bg-slate-700' : ''}`}></div>
@@ -445,7 +485,7 @@ export default function DiairesiPage() {
                                 </div>
 
                                 <div className="flex justify-end w-full h-7 items-center">
-                                  <div className="w-5 sm:w-6"></div>
+                                  <div className="w-4 sm:w-6"></div>
                                   <div className="flex justify-end text-slate-200 font-black">
                                     {idx === schoolSteps.length - 1 ? (
                                       remainderDigits.map((char, i) => (
@@ -468,7 +508,7 @@ export default function DiairesiPage() {
                       <div className="w-[3px] bg-slate-600 self-stretch min-h-[200px] sm:min-h-[220px]"></div>
 
                       {/* ΔΕΞΙ ΜΕΡΟΣ: ΔΙΑΙΡΕΤΗΣ & ΠΗΛΙΚΟ */}
-                      <div className="text-left pl-3 sm:pl-5 flex flex-col h-full justify-start">
+                      <div className="text-left pl-2.5 sm:pl-5 flex flex-col h-full justify-start">
                         <div className="text-emerald-400 font-bold border-b-4 border-slate-600 pb-2 tracking-wider flex w-full">
                           {divisorInput.split('').map((char, i) => (
                             <span key={i} className="w-4 sm:w-5 text-center">{char}</span>
@@ -482,7 +522,7 @@ export default function DiairesiPage() {
                         </div>
                         
                         <div className="mt-auto pt-8 sm:pt-10 text-[10px] font-sans font-black uppercase text-rose-400 tracking-wider whitespace-nowrap">
-                          🏁 Υπολοιπο: {r}
+                          🏁 Υπόλοιπο: {r}
                         </div>
                       </div>
 
@@ -492,8 +532,8 @@ export default function DiairesiPage() {
                   <div className="my-auto flex flex-col items-center gap-4 w-full px-2 text-center">
                     {D <= LIMITS.MAX_VISUAL_BOXES && D > 0 && d > 0 ? (
                       <div className="flex flex-col items-center gap-4 w-full">
-                        <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
-                          Μοιρασμα {D} στοιχειων σε {d} ισες ομαδες:
+                        <span className="text-xs sm:text-sm font-bold text-slate-600 uppercase tracking-wider">
+                          Μοίρασμα {D} στοιχείων σε {d} ίσες ομάδες:
                         </span>
                         
                         <div className="flex flex-wrap gap-2 sm:gap-2.5 justify-center max-h-[260px] sm:max-h-[280px] overflow-y-auto p-3 border rounded-2xl bg-white w-full max-w-xl shadow-inner">
@@ -508,7 +548,7 @@ export default function DiairesiPage() {
 
                         {r > 0 && (
                           <div className="flex flex-col items-center gap-1.5 mt-1">
-                            <span className="text-xs font-bold text-rose-600 uppercase tracking-wide">📦 Περισσεψαν (Υπολοιπο = {r}):</span>
+                            <span className="text-xs font-bold text-rose-600 uppercase tracking-wider">📦 Περίσσεψαν (Υπόλοιπο ＝ {r}):</span>
                             <div className="flex gap-1.5 bg-rose-50 border border-rose-200 p-2 sm:p-2.5 rounded-xl">
                               {[...Array(r)].map((_, i) => (
                                 <div key={i} className="w-3 h-3 sm:w-3.5 sm:h-3.5 bg-rose-500 rounded-xs shadow-xs" />
@@ -520,7 +560,7 @@ export default function DiairesiPage() {
                     ) : (
                       <div className="bg-white border border-slate-200 p-6 rounded-2xl max-w-xs mx-auto text-slate-600 text-sm font-medium space-y-2 shadow-sm">
                         <p className="font-bold">📊 Οπτική Απεικόνιση</p>
-                        <p className="text-xs text-slate-500 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                           Βάλε έναν Διαιρετέο μικρότερο από {LIMITS.MAX_VISUAL_BOXES} για να δεις τα κουτάκια να μοιράζονται αυτόματα στις ομάδες.
                         </p>
                       </div>
@@ -532,23 +572,27 @@ export default function DiairesiPage() {
             </div>
 
           </div>
-        </div>
+        </section>
 
-        {/* BOTTOM CALLOUT BANNER */}
-        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-gray-800 text-sm md:text-base">
-              Κατανόησες την τέλεια και την ατελή διαίρεση; Δοκίμασε τις διαδραστικές ασκήσεις για να εμπεδώσεις τις γνώσεις σου!
+        {/* 4. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              Ώρα για Εξάσκηση στη Διαίρεση!
+            </h3>
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              Κατανόησες την τέλεια και την ατελή διαίρεση; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
+
           <Link
             href="/st-dimotikou/08-diairesi-ask"
-            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            Ξεκίνα τις Ασκήσεις ➔
+            <span>🎯 Έναρξη Ασκήσεων</span>
+            <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </section>
 
       </div>
     </Layout>
