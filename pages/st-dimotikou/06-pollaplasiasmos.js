@@ -324,7 +324,7 @@ export default function PollaplasiasmosPage() {
               {activeTab === 'antimetathetiki' && (
                 <div className="space-y-5 my-auto">
                   <div>
-                    <span className="text-xs 2xl:text-sm font-black text-slate-500 tracking-wider block mb-1 uppercase">
+                    <span className="text-xs 2xl:text-sm font-black text-slate-500 tracking-wider block mb-1">
                       Ορισμός Παραγόντων (α · β):
                     </span>
                     <p className="text-xs sm:text-sm text-slate-500">Πληκτρολόγησε ή άλλαξε με τα κουμπιά τις γραμμές και τις στήλες.</p>
@@ -333,7 +333,7 @@ export default function PollaplasiasmosPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Factor A */}
                     <div className="bg-white p-3.5 rounded-2xl border border-emerald-200 space-y-2 shadow-sm">
-                      <span className="text-xs font-black text-emerald-800 block uppercase">Γραμμές (α):</span>
+                      <span className="text-xs font-black text-emerald-800 block">Γραμμές (α):</span>
                       <input
                         type="text"
                         inputMode="numeric"
@@ -352,7 +352,7 @@ export default function PollaplasiasmosPage() {
 
                     {/* Factor B */}
                     <div className="bg-white p-3.5 rounded-2xl border border-blue-200 space-y-2 shadow-sm">
-                      <span className="text-xs font-black text-blue-800 block uppercase">Στήλες (β):</span>
+                      <span className="text-xs font-black text-blue-800 block">Στήλες (β):</span>
                       <input
                         type="text"
                         inputMode="numeric"
@@ -509,9 +509,9 @@ export default function PollaplasiasmosPage() {
             <div className="lg:col-span-6 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-between min-h-[400px] sm:min-h-[460px] shadow-sm">
               <div className="w-full text-center border-b border-slate-100 pb-3">
                 <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider">
-                  {activeTab === 'antimetathetiki' && '📊 Οπτικό Πλέγμα Τετραγώνων (Εμβαδόν)'}
-                  {activeTab === 'prosetairistiki' && '📦 3D Ισομετρική Αναπαράσταση Όγκου'}
-                  {activeTab === 'epimeristiki' && '📐 Γεωμετρική Διαίρεση Εμβαδού'}
+                  {activeTab === 'antimetathetiki' && '📊 Οπτικο Πλεγμα Τετραγωνων (Εμβαδον)'}
+                  {activeTab === 'prosetairistiki' && '📦 3D Ισομετρικη Αναπαρασταση Ογκου'}
+                  {activeTab === 'epimeristiki' && '📐 Γεωμετρικη Διαιρεση Εμβαδου'}
                 </span>
               </div>
 
@@ -551,7 +551,7 @@ export default function PollaplasiasmosPage() {
               {activeTab === 'prosetairistiki' && (
                 <div className="my-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-md">
                   <div className="flex flex-col items-center gap-1.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 w-full shadow-xs">
-                    <span className="text-[10px] sm:text-xs font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full uppercase">1ος Τρόπος (Βάση)</span>
+                    <span className="text-[10px] sm:text-xs font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full uppercase">1ος Τροπος (Βαση)</span>
                     <svg viewBox="0 0 200 170" className="w-full h-32 sm:h-36 overflow-visible select-none">
                       {renderIsometricCube('base')}
                     </svg>
@@ -559,7 +559,7 @@ export default function PollaplasiasmosPage() {
                   </div>
 
                   <div className="flex flex-col items-center gap-1.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 w-full shadow-xs">
-                    <span className="text-[10px] sm:text-xs font-black text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full uppercase">2ος Τρόπος (Φέτα)</span>
+                    <span className="text-[10px] sm:text-xs font-black text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full uppercase">2ος Τροπος (Φετα)</span>
                     <svg viewBox="0 0 200 170" className="w-full h-32 sm:h-36 overflow-visible select-none">
                       {renderIsometricCube('slice')}
                     </svg>
@@ -573,7 +573,7 @@ export default function PollaplasiasmosPage() {
                 <div className="my-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-md">
                   {/* Entire Shape */}
                   <div className="flex flex-col items-center gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 w-full shadow-xs">
-                    <span className="text-[10px] sm:text-xs font-black text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full uppercase">Ενιαίο Σχήμα</span>
+                    <span className="text-[10px] sm:text-xs font-black text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full uppercase">Ενιαιο Σχημα</span>
                     <div className="border-2 border-indigo-700 rounded-xl overflow-hidden flex w-full h-24 sm:h-28 text-white font-mono font-black text-xs shadow-xs">
                       <div className="bg-indigo-500 flex flex-col justify-center items-center w-full transition-all p-1 text-center">
                         <span className="truncate max-w-full">{valA} · ({valB + valC})</span>
@@ -585,7 +585,7 @@ export default function PollaplasiasmosPage() {
 
                   {/* Split Shape */}
                   <div className="flex flex-col items-center gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 w-full shadow-xs">
-                    <span className="text-[10px] sm:text-xs font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full uppercase">Επιμερισμένο</span>
+                    <span className="text-[10px] sm:text-xs font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full uppercase">Επιμερισμενο</span>
                     <div className="border-2 border-slate-700 rounded-xl overflow-hidden flex w-full h-24 sm:h-28 text-white font-mono font-black text-xs shadow-xs">
                       <div className="bg-emerald-500 flex flex-col justify-center items-center transition-all p-1 text-center" style={{ flexGrow: Math.max(valB, 1) }}>
                         <span className="truncate max-w-full">{valA} · {valB}</span>
