@@ -262,7 +262,7 @@ export default function DinameisDekaPage() {
               <div className="lg:col-span-7 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-4 shadow-inner flex flex-col justify-center">
                 <div className="space-y-2">
                   <label className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                    Πληκτρολόγησε Αριθμό (π.χ. 34,56):
+                    Πληκτρολογησε Αριθμο (π.χ. 34,56):
                   </label>
                   <input
                     type="text"
@@ -332,7 +332,7 @@ export default function DinameisDekaPage() {
               {/* DYNAMIC RESULT CARD (5 COLS) */}
               <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                 <span className="text-[10px] sm:text-xs font-black text-amber-400 uppercase tracking-wider block">
-                  ✨ Τελικό Γινόμενο:
+                  ✨ Τελικο Γινομενο:
                 </span>
 
                 <div className="flex flex-wrap items-center justify-center gap-2 text-lg sm:text-xl md:text-2xl font-black font-mono">
