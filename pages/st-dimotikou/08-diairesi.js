@@ -281,7 +281,7 @@ export default function DiairesiPage() {
                   {/* INPUT Δ (ΔΙΑΙΡΕΤΕΟΣ) */}
                   <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-blue-200 shadow-sm">
                     <div className="flex justify-between items-center">
-                      <label className="text-xs 2xl:text-sm font-black text-blue-800 tracking-wider block uppercase">
+                      <label className="text-xs 2xl:text-sm font-black text-blue-800 tracking-wider block">
                         Διαιρετέος (Δ):
                       </label>
                       <span className="text-[10px] sm:text-xs font-bold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-full">
@@ -334,7 +334,7 @@ export default function DiairesiPage() {
                   {/* INPUT δ (ΔΙΑΙΡΕΤΗΣ) */}
                   <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-sm">
                     <div className="flex justify-between items-center">
-                      <label className="text-xs 2xl:text-sm font-black text-emerald-800 tracking-wider block uppercase">
+                      <label className="text-xs 2xl:text-sm font-black text-emerald-800 tracking-wider block">
                         Διαιρέτης (δ):
                       </label>
                       <span className="text-[10px] sm:text-xs font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-full">
@@ -374,7 +374,7 @@ export default function DiairesiPage() {
 
                 {/* STATUS BADGE */}
                 <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm text-center flex flex-col gap-1 font-sans">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Είδος Διαίρεσης:</span>
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Ειδος Διαιρεσης:</span>
                   <div className={`text-xs sm:text-sm md:text-base font-black px-4 py-1.5 rounded-full inline-block mx-auto ${
                     isPerfect ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
                   }`}>
@@ -386,7 +386,7 @@ export default function DiairesiPage() {
               {/* DYNAMIC RESULT CARD (5 COLS) */}
               <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                 <span className="text-[10px] sm:text-xs font-black text-amber-400 uppercase tracking-wider block">
-                  ✨ Μαθηματική Ταυτότητα Επαλήθευσης:
+                  ✨ Μαθηματικη Ταυτοτητα Επαληθευσης:
                 </span>
 
                 <div className="text-lg sm:text-xl md:text-2xl font-black font-mono bg-white/10 px-3.5 py-2 rounded-2xl border border-white/20 flex flex-wrap items-center justify-center">
