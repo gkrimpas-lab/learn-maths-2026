@@ -265,7 +265,7 @@ export default function DiairesiDinameisDekaPage() {
               <div className="lg:col-span-7 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-4 shadow-inner flex flex-col justify-center">
                 <div className="space-y-2">
                   <label className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                    Πληκτρολόγησε Αριθμό (Διαιρετέο):
+                    Πληκτρολογησε Αριθμο (Διαιρετεο):
                   </label>
                   <input
                     type="text"
@@ -294,7 +294,7 @@ export default function DiairesiDinameisDekaPage() {
                 {/* DIVISOR BUTTONS */}
                 <div className="space-y-1.5 pt-2 border-t border-slate-200">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Επίλεξε Διαιρέτη:
+                    Επιλεξε Διαιρετη:
                   </span>
                   <div className="grid grid-cols-3 gap-2">
                     {activeTab === 'megaloi' ? (
@@ -335,7 +335,7 @@ export default function DiairesiDinameisDekaPage() {
               {/* DYNAMIC RESULT CARD (5 COLS) */}
               <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                 <span className="text-[10px] sm:text-xs font-black text-amber-400 uppercase tracking-wider block">
-                  ✨ Τελικό Πηλίκο:
+                  ✨ Τελικο Πηλικο:
                 </span>
 
                 <div className="flex flex-wrap items-center justify-center gap-2 text-lg sm:text-xl md:text-2xl font-black font-mono">
@@ -359,7 +359,7 @@ export default function DiairesiDinameisDekaPage() {
             <div className="bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-2xl flex flex-col items-center justify-between space-y-4 sm:space-y-6">
               <div className="text-center space-y-1">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                  🧭 Οπτικός Οδηγός Μετατόπισης Υποδιαστολής
+                  🧭 Οπτικος Οδηγος Μετατοπισης Υποδιαστολης
                 </span>
                 <p className="text-xs sm:text-sm text-slate-500">
                   Παρατήρησε τα βέλη που δείχνουν το άλμα της υποδιαστολής ανάμεσα στα ψηφία!
@@ -450,7 +450,7 @@ export default function DiairesiDinameisDekaPage() {
             <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-4 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5 uppercase">
-                  🧬 Συνοπτικός Κανόνας Νοερών Υπολογισμών
+                  🧬 Συνοπτικος Κανονας Νοερων Υπολογισμων
                 </span>
                 <span className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full">
                   Πλήρης Εμφάνιση
@@ -459,7 +459,7 @@ export default function DiairesiDinameisDekaPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-600">
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                  <span className="font-black text-blue-800 uppercase tracking-wider block">1. Διαίρεση με 10, 100, 1.000 ...</span>
+                  <span className="font-black text-blue-800 uppercase tracking-wider block">1. Διαιρεση με 10, 100, 1.000 ...</span>
                   <ul className="space-y-1">
                     <li>• : 10 ➔ 1 θέση αριστερά (<code className="font-bold font-mono">45 : 10 ＝ 4,5</code>)</li>
                     <li>• : 100 ➔ 2 θέσεις αριστερά (<code className="font-bold font-mono">45 : 100 ＝ 0,45</code>)</li>
@@ -468,7 +468,7 @@ export default function DiairesiDinameisDekaPage() {
                 </div>
 
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                  <span className="font-black text-indigo-800 uppercase tracking-wider block">2. Διαίρεση με 0,1, 0,01, 0,001 ...</span>
+                  <span className="font-black text-indigo-800 uppercase tracking-wider block">2. Διαιρεση με 0,1, 0,01, 0,001 ...</span>
                   <ul className="space-y-1">
                     <li>• : 0,1 ➔ 1 θέση δεξιά (<code className="font-bold font-mono">2,5 : 0,1 ＝ 25</code>)</li>
                     <li>• : 0,01 ➔ 2 θέσεις δεξιά (<code className="font-bold font-mono">2,5 : 0,01 ＝ 250</code>)</li>
