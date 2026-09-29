@@ -590,7 +590,7 @@ export default function ProsthesiAfairesiPage() {
             <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-4 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5 uppercase">
-                  🧬 Χρυσός Κανόνας Πρόσθεσης και Αφαίρεσης Δεκαδικών
+                  🧬 Χρυσος Κανονας Προσθεσης και Αφαιρεσης Δεκαδικων
                 </span>
                 <span className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full">
                   Πλήρης Εμφάνιση
