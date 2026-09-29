@@ -1,16 +1,17 @@
+// pages/st-dimotikou/10-proteraiotita-prakseon.js
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
 const PRESETS = {
-  EX1: { title: "10 - 2 × 4", expr: "10-2*4" },
-  EX2: { title: "5 + 3 × (4 + 2)", expr: "5+3*(4+2)" },
-  EX3: { title: "12 ÷ 3 × 2 + 4", expr: "12/3*2+4" },
-  EX4: { title: "50 - (3 × 12) + 8", expr: "50-(3*12)+8" }
+  EX1: { title: '10 － 2 · 4', expr: '10-2*4' },
+  EX2: { title: '5 ＋ 3 · (4 ＋ 2)', expr: '5+3*(4+2)' },
+  EX3: { title: '12 : 3 · 2 ＋ 4', expr: '12/3*2+4' },
+  EX4: { title: '50 － (3 · 12) ＋ 8', expr: '50-(3*12)+8' }
 };
 
 export default function ProteraiotitaPrakseonPage() {
-  const [customExpr, setCustomExpr] = useState("15+3-(6-2)*3");
+  const [customExpr, setCustomExpr] = useState('15+3-(6-2)*3');
 
   const handleInputChange = (val) => {
     // Αφαίρεση κενών και επιτρεπόμενα μόνο νούμερα, πράξεις, παρενθέσεις και κόμμα/τελεία
@@ -18,12 +19,14 @@ export default function ProteraiotitaPrakseonPage() {
     setCustomExpr(clean);
   };
 
-  // Μετατροπή των tokens σε καθαρό κείμενο με σωστή διαχείριση παρενθέσεων
+  // Μετατροπή των tokens σε καθαρό κείμενο με σωστή διαχείριση παρενθέσεων και ελληνικών συμβόλων
   const tokensToString = (tokens) => {
     return tokens.map((t, idx) => {
       if (t.type === 'OPERATOR') {
-        if (t.value === '*') return '×';
-        if (t.value === '/') return '÷';
+        if (t.value === '*') return '·';
+        if (t.value === '/') return ':';
+        if (t.value === '+') return '＋';
+        if (t.value === '-') return '－';
         return t.value;
       }
       if (t.type === 'NUMBER' && t.value < 0) {
@@ -41,7 +44,7 @@ export default function ProteraiotitaPrakseonPage() {
   const generateSteps = (exprStr) => {
     const steps = [];
     let currentStr = exprStr.replace(/\s+/g, '').replace(/,/g, '.').trim();
-    if (!currentStr) return { steps: [], final: "0", isValid: false };
+    if (!currentStr) return { steps: [], final: '0', isValid: false };
 
     const tokenize = (str) => {
       const res = [];
@@ -90,7 +93,7 @@ export default function ProteraiotitaPrakseonPage() {
     };
 
     let tokens = tokenize(currentStr);
-    if (!tokens || tokens.length === 0) return { steps: [], final: "0", isValid: false };
+    if (!tokens || tokens.length === 0) return { steps: [], final: '0', isValid: false };
 
     // Έλεγχος συντακτικής εγκυρότητας (Parentheses matching & token structure)
     let openCount = 0;
@@ -98,20 +101,20 @@ export default function ProteraiotitaPrakseonPage() {
       if (tokens[i].type === 'PAREN') {
         if (tokens[i].value === '(') openCount++;
         if (tokens[i].value === ')') openCount--;
-        if (openCount < 0) return { steps: [], final: "0", isValid: false };
+        if (openCount < 0) return { steps: [], final: '0', isValid: false };
       }
       // Έλεγχος για διαδοχικούς αριθμούς χωρίς τελεστή
       if (i > 0 && tokens[i].type === 'NUMBER' && tokens[i - 1].type === 'NUMBER') {
-        return { steps: [], final: "0", isValid: false };
+        return { steps: [], final: '0', isValid: false };
       }
     }
-    if (openCount !== 0) return { steps: [], final: "0", isValid: false };
+    if (openCount !== 0) return { steps: [], final: '0', isValid: false };
 
     // Έλεγχος αν τελειώνει ή ξεκινά με απαγορευμένο τελεστή
     const firstToken = tokens[0];
     const lastToken = tokens[tokens.length - 1];
-    if (firstToken.type === 'OPERATOR' && firstToken.value !== '-') return { steps: [], final: "0", isValid: false };
-    if (lastToken.type === 'OPERATOR') return { steps: [], final: "0", isValid: false };
+    if (firstToken.type === 'OPERATOR' && firstToken.value !== '-') return { steps: [], final: '0', isValid: false };
+    if (lastToken.type === 'OPERATOR') return { steps: [], final: '0', isValid: false };
 
     let safetyCounter = 0;
 
@@ -158,7 +161,7 @@ export default function ProteraiotitaPrakseonPage() {
 
         if (subTarget !== -1) {
           targetIdx = openParenIdx + 1 + subTarget;
-          reasonType = 'Παρενθεσεις ( )';
+          reasonType = 'ΠΑΡΕΝΘΕΣΕΙΣ ( )';
           reasonText = 'Λύνουμε κατά προτεραιότητα την πράξη μέσα στην παρένθεση.';
         }
       }
@@ -167,7 +170,7 @@ export default function ProteraiotitaPrakseonPage() {
         for (let i = 0; i < tokens.length; i++) {
           if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '*' || tokens[i].value === '/')) {
             targetIdx = i;
-            reasonType = 'Πολλαπλασιασμοι / Διαιρεσεις';
+            reasonType = 'ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΙ / ΔΙΑΙΡΕΣΕΙΣ';
             reasonText = tokens[i].value === '*' ? 'Ο πολλαπλασιασμός προηγείται.' : 'Η διαίρεση προηγείται.';
             break;
           }
@@ -178,7 +181,7 @@ export default function ProteraiotitaPrakseonPage() {
         for (let i = 0; i < tokens.length; i++) {
           if (tokens[i].type === 'OPERATOR' && (tokens[i].value === '+' || tokens[i].value === '-')) {
             targetIdx = i;
-            reasonType = 'Προσθεσεις / Αφαιρεσεις';
+            reasonType = 'ΠΡΟΣΘΕΣΕΙΣ / ΑΦΑΙΡΕΣΕΙΣ';
             reasonText = 'Κάνουμε τις προσθέσεις και τις αφαιρέσεις από αριστερά προς τα δεξιά.';
             break;
           }
@@ -191,7 +194,7 @@ export default function ProteraiotitaPrakseonPage() {
         const num2Token = tokens[targetIdx + 1];
 
         if (num1Token.type !== 'NUMBER' || num2Token.type !== 'NUMBER') {
-          return { steps: [], final: "0", isValid: false };
+          return { steps: [], final: '0', isValid: false };
         }
 
         const num1 = num1Token.value;
@@ -205,7 +208,7 @@ export default function ProteraiotitaPrakseonPage() {
         else if (op === '/') res = num2 !== 0 ? num1 / num2 : 0;
 
         const formattedRes = parseFloat(res.toFixed(2));
-        const opChar = op === '*' ? '×' : (op === '/' ? '÷' : op);
+        const opChar = op === '*' ? '·' : (op === '/' ? ':' : (op === '+' ? '＋' : '－'));
 
         const formatCalcNum = (val) => {
           const str = val.toString().replace('.', ',');
@@ -213,9 +216,9 @@ export default function ProteraiotitaPrakseonPage() {
         };
 
         steps.push({
-          level: `Βημα ${steps.length + 1}: ${reasonType}`,
+          level: `ΒΗΜΑ ${steps.length + 1}: ${reasonType}`,
           text: reasonText,
-          calculation: `${formatCalcNum(num1)} ${opChar} ${formatCalcNum(num2)} = ${formatCalcNum(formattedRes)}`,
+          calculation: `${formatCalcNum(num1)} ${opChar} ${formatCalcNum(num2)} ＝ ${formatCalcNum(formattedRes)}`,
           currentForm: ''
         });
 
@@ -234,7 +237,7 @@ export default function ProteraiotitaPrakseonPage() {
 
     return {
       steps: steps,
-      final: isValidResult ? tokens[0].value.toString().replace('.', ',') : "0",
+      final: isValidResult ? tokens[0].value.toString().replace('.', ',') : '0',
       isValid: isValidResult
     };
   };
@@ -243,7 +246,7 @@ export default function ProteraiotitaPrakseonPage() {
 
   return (
     <Layout
-      title="🏆 10. Προτεραιότητα Πράξεων και Αριθμητικές Παραστάσεις - LearnMaths.gr"
+      title="Προτεραιότητα Πράξεων και Αριθμητικές Παραστάσεις - ΣΤ' Δημοτικού | LearnMaths.gr"
       description="Μάθε τη σειρά των πράξεων (παρενθέσεις, πολλαπλασιασμοί/διαιρέσεις, προσθέσεις/αφαιρέσεις) και δες live βήμα-βήμα την επίλυση κάθε παράστασης!"
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
@@ -251,123 +254,160 @@ export default function ProteraiotitaPrakseonPage() {
       actionButton={
         <Link
           href="/st-dimotikou/10-proteraiotita-prakseon-ask"
-          className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-sm flex items-center gap-1.5 shrink-0"
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯</span>
-          <span>Ασκήσεις</span>
+          <span>🎯 Ασκήσεις</span>
         </Link>
       }
     >
-      <div className="space-y-8 md:space-y-10 py-6 md:py-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
 
-        {/* HERO BANNER WITH PROMO CALLOUT CARD */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικου
-                </span>
-                <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενοτητα 10
-                </span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                10. Προτεραιότητα Πράξεων και Αριθμητικές Παραστάσεις
-              </h1>
-              <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                Μάθε τη χρυσή σειρά των μαθηματικών: <strong>Παρενθέσεις</strong>, μετά <strong>Πολλαπλασιασμοί και Διαιρέσεις</strong>, και τέλος <strong>Προσθέσεις & Αφαιρέσεις</strong> από αριστερά προς τα δεξιά!
-              </p>
+        {/* 1. HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΚΕΦΑΛΑΙΟ 10 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
-
-            {/* CALLOUT PROMO CARD */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
-              <span className="text-3xl">🚀</span>
-              <h3 className="font-black text-lg text-amber-300">Έτοιμος για εξάσκηση;</h3>
-              <p className="text-xs text-blue-50">Δοκίμασε τις διαδραστικές ασκήσεις με 8 δυναμικά προβλήματα!</p>
-              <Link
-                href="/st-dimotikou/10-proteraiotita-prakseon-ask"
-                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
-              >
-                🎯 Μετάβαση στις Ασκήσεις
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* THEORY CARDS (3 COLS) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                1
-              </div>
-              <h3 className="text-lg font-black text-slate-900">1ο Βήμα: Παρενθέσεις ( )</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Εκτελούμε <strong>πρώτα</strong> όλες τις πράξεις μέσα στις παρενθέσεις. Αν υπάρχουν εσωτερικές παρενθέσεις, ξεκινάμε από τις πιο εσωτερικές.
-              </p>
-            </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <p>5 ＋ 3 × <strong className="text-blue-700">(4 ＋ 2)</strong> ＝ 5 ＋ 3 × <strong className="text-blue-700">6</strong></p>
-            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              Προτεραιότητα Πράξεων &amp; Αριθμητικές Παραστάσεις
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Μάθε τη χρυσή σειρά των μαθηματικών: <strong>Παρενθέσεις</strong>, μετά <strong>Πολλαπλασιασμοί και Διαιρέσεις</strong>, και τέλος <strong>Προσθέσεις &amp; Αφαιρέσεις</strong> από αριστερά προς τα δεξιά!
+            </p>
           </div>
 
-          <div className="bg-indigo-50/80 border border-indigo-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                2
-              </div>
-              <h3 className="text-lg font-black text-slate-900">2ο Βήμα: × και ÷</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Στη συνέχεια κάνουμε τους <strong>πολλαπλασιασμούς</strong> και τις <strong>διαιρέσεις</strong> με τη σειρά που εμφανίζονται από αριστερά προς τα δεξιά.
-              </p>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Κανόνες Προτεραιότητας, Βήμα-Βήμα Επίλυση &amp; Ζωντανός Επιλυτής</span>
             </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <p>10 － <strong className="text-indigo-700">2 × 4</strong> ＝ 10 － <strong className="text-indigo-700">8</strong> ＝ 2</p>
-            </div>
+            <Link
+              href="/st-dimotikou/10-proteraiotita-prakseon-ask"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ */}
+        <section className="space-y-6 2xl:space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
+              Η Σειρά των Πράξεων σε 3 Βήματα
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
+              Ο απόλυτος κανόνας για να μην κάνεις ποτέ λάθος σε αριθμητική παράσταση.
+            </p>
           </div>
 
-          <div className="bg-cyan-50/80 border border-cyan-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-cyan-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                3
-              </div>
-              <h3 className="text-lg font-black text-slate-900">3ο Βήμα: ＋ και －</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Τέλος, κάνουμε τις <strong>προσθέσεις</strong> και τις <strong>αφαιρέσεις</strong> διαδοχικά, εκτελώντας τις από αριστερά προς τα δεξιά.
-              </p>
-            </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-cyan-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <p>12 － 3 ＋ 2 ＝ 9 ＋ 2 ＝ 11</p>
-            </div>
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΒΗΜΑ 1
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Προηγούνται Πάντα</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  1ο Βήμα: Παρενθέσεις ( )
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Εκτελούμε <strong>πρώτα</strong> όλες τις πράξεις μέσα στις παρενθέσεις. Αν υπάρχουν εσωτερικές παρενθέσεις, ξεκινάμε από τις πιο εσωτερικές.
+                </p>
 
-        {/* INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>5 ＋ 3 · <strong className="text-blue-700">(4 ＋ 2)</strong> ＝ 5 ＋ 3 · <strong className="text-blue-700">6</strong></p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+                💡 Οι παρενθέσεις αλλάζουν τη φυσική ροή και παίρνουν πάντα την απόλυτη προτεραιότητα.
+              </div>
+            </article>
+
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΒΗΜΑ 2
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Ισχυρές Πράξεις</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  2ο Βήμα: · και :
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Στη συνέχεια κάνουμε τους <strong>πολλαπλασιασμούς</strong> και τις <strong>διαιρέσεις</strong> με τη σειρά που εμφανίζονται από αριστερά προς τα δεξιά.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>10 － <strong className="text-indigo-700">2 · 4</strong> ＝ 10 － <strong className="text-indigo-700">8</strong> ＝ 2</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
+                ⚡ Αν συναντήσουμε πολλαπλασιασμό και διαίρεση μαζί, κάνουμε πρώτα όποια πράξη βρίσκεται πιο αριστερά.
+              </div>
+            </article>
+
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-cyan-100 text-cyan-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΒΗΜΑ 3
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Τελικές Πράξεις</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  3ο Βήμα: ＋ και －
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Τέλος, κάνουμε τις <strong>προσθέσεις</strong> και τις <strong>αφαιρέσεις</strong> διαδοχικά, εκτελώντας τις από αριστερά προς τα δεξιά.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>12 － 3 ＋ 2 ＝ 9 ＋ 2 ＝ 11</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-cyan-50 rounded-2xl border border-cyan-200 text-xs 2xl:text-sm text-cyan-950 font-medium">
+                🎯 Ποτέ δεν κάνουμε πρόσθεση πριν από πολλαπλασιασμό, εκτός αν η πρόσθεση βρίσκεται σε παρένθεση!
+              </div>
+            </article>
+          </div>
+        </section>
+
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ ΒΗΜΑ-ΒΗΜΑ */}
+        <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🕹️</span> Διαδραστικό Εργαστήριο Βήμα-Βήμα
-              </h2>
-              <p className="text-gray-500 text-xs sm:text-sm">
-                Γράψε μια παράσταση ή διάλεξε παράδειγμα για να δεις όλα τα βήματα επίλυσης με αιτιολογία!
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
+                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Διαδραστικός Επιλυτής Αριθμητικών Παραστάσεων
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
+                Γράψε μια παράσταση ή διάλεξε παράδειγμα για να δεις όλα τα βήματα επίλυσης με μαθηματική αιτιολογία!
               </p>
             </div>
           </div>
 
-          {/* MAIN INTERACTIVE GRID */}
+          {/* MAIN INTERACTIVE GRID - 100% FLUID ΧΩΡΙΣ SCROLL */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch">
             
             {/* LEFT: INPUT & PRESETS (4 COLS) */}
             <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    Γραψε τη δικη σου παρασταση:
+                  <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
+                    Γράψε τη δική σου παράσταση:
                   </span>
-                  <p className="text-gray-500 text-xs">
-                    Χωρίς κενά, μόνο αριθμοί και σύμβολα: <code className="bg-white px-1 py-0.5 rounded font-mono font-bold text-blue-600 border">+ - * / ( )</code>
+                  <p className="text-gray-500 text-xs sm:text-sm">
+                    Χωρίς κενά, μόνο αριθμοί και σύμβολα: <code className="bg-white px-1.5 py-0.5 rounded font-mono font-bold text-blue-600 border border-slate-200">+ - * / ( )</code>
                   </p>
                 </div>
 
@@ -379,14 +419,14 @@ export default function ProteraiotitaPrakseonPage() {
                   placeholder="π.χ. 2+3*4"
                 />
                 
-                <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200 flex items-start gap-1.5 leading-snug">
+                <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200 flex items-start gap-1.5 leading-snug">
                   <span>💻</span>
-                  <span><strong>Πληκτρολόγιο:</strong> Χρησιμοποίησε <strong>*</strong> για πολλαπλασιασμό (×) και <strong>/</strong> για διαίρεση (÷).</span>
+                  <span><strong>Πληκτρολόγιο:</strong> Χρησιμοποίησε <strong>*</strong> για πολλαπλασιασμό (·) και <strong>/</strong> για διαίρεση (:).</span>
                 </div>
 
                 <div className="space-y-2 pt-2 border-t border-slate-200">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    Η επιλεξε ετοιμο παραδειγμα:
+                  <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
+                    Ή επίλεξε έτοιμο παράδειγμα:
                   </span>
                   <div className="flex flex-col gap-2">
                     {Object.keys(PRESETS).map((key) => (
@@ -394,9 +434,9 @@ export default function ProteraiotitaPrakseonPage() {
                         key={key}
                         type="button"
                         onClick={() => setCustomExpr(PRESETS[key].expr)}
-                        className={`w-full text-left px-3.5 sm:px-4 py-2.5 rounded-xl border font-mono font-bold text-xs md:text-sm transition-all ${
+                        className={`w-full text-left px-3.5 sm:px-4 py-2.5 rounded-xl border font-mono font-bold text-xs md:text-sm transition-all touch-manipulation active:scale-95 ${
                           customExpr === PRESETS[key].expr
-                            ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-[1.02]'
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-md'
                             : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
                         }`}
                       >
@@ -412,11 +452,11 @@ export default function ProteraiotitaPrakseonPage() {
             <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center justify-between min-h-[420px] sm:min-h-[460px]">
               
               <div className="w-full text-center mb-6">
-                <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                  Ζωντανη Αναλυση Βηματων:
+                <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
+                  Ζωντανή Ανάλυση Βημάτων:
                 </span>
-                <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-blue-600 mt-2 bg-blue-50 inline-block px-4 sm:px-6 py-2 rounded-2xl border border-blue-100 shadow-xs max-w-full overflow-x-auto">
-                  {customExpr.replace(/\*/g, '×').replace(/\//g, '÷') || "—"}
+                <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-blue-600 mt-2 bg-blue-50 inline-block px-4 sm:px-6 py-2 rounded-2xl border border-blue-100 shadow-xs max-w-full break-words">
+                  {customExpr.replace(/\*/g, ' · ').replace(/\//g, ' : ').replace(/\+/g, ' ＋ ').replace(/-/g, ' － ') || '—'}
                 </div>
               </div>
 
@@ -427,10 +467,10 @@ export default function ProteraiotitaPrakseonPage() {
                       
                       <div className="bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl border-2 border-slate-700 w-full shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center font-mono gap-3 sm:gap-4">
                         <div className="space-y-0.5 text-left flex-1">
-                          <div className="text-[10px] font-sans font-black uppercase text-amber-400 tracking-wider">
+                          <div className="text-[10px] sm:text-xs font-sans font-black uppercase text-amber-400 tracking-wider">
                             {step.level}
                           </div>
-                          <div className="text-xs text-slate-300 font-sans leading-snug">
+                          <div className="text-xs sm:text-sm text-slate-300 font-sans leading-snug">
                             {step.text}
                           </div>
                         </div>
@@ -444,8 +484,8 @@ export default function ProteraiotitaPrakseonPage() {
 
                       <div className="flex flex-col items-center text-slate-400">
                         <span className="text-xs font-black">↓</span>
-                        <span className="text-xs font-mono font-bold tracking-wider text-purple-700 bg-purple-50 px-3 py-1 rounded-lg border border-purple-200 text-center max-w-full overflow-x-auto">
-                          Επόμενη μορφή: {step.currentForm || "🏁"}
+                        <span className="text-xs font-mono font-bold tracking-wider text-purple-700 bg-purple-50 px-3 py-1 rounded-lg border border-purple-200 text-center max-w-full break-words">
+                          Επόμενη μορφή: {step.currentForm || '🏁'}
                         </span>
                       </div>
 
@@ -454,8 +494,8 @@ export default function ProteraiotitaPrakseonPage() {
                 ) : (
                   <div className="text-center py-8 text-xs sm:text-sm text-slate-400 font-medium bg-slate-50 rounded-2xl border border-slate-200 p-4">
                     {customExpr
-                      ? "⚠️ Μη έγκυρη παράσταση. Βεβαιώσου ότι δεν υπάρχουν κενά και ότι οι πράξεις και οι παρενθέσεις είναι σωστές."
-                      : "Γράψε μια έγκυρη παράσταση στα αριστερά για να εμφανιστούν τα βήματα."}
+                      ? '⚠️ Μη έγκυρη παράσταση. Βεβαιώσου ότι δεν υπάρχουν κενά και ότι οι πράξεις και οι παρενθέσεις είναι σωστές.'
+                      : 'Γράψε μια έγκυρη παράσταση στα αριστερά για να εμφανιστούν τα βήματα.'}
                   </div>
                 )}
 
@@ -463,7 +503,7 @@ export default function ProteraiotitaPrakseonPage() {
                 {analysis.isValid && (
                   <div className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-3.5 sm:p-4 rounded-2xl text-center shadow-lg font-mono font-black flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-2">
                     <span className="text-xl">🏁</span>
-                    <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελικη Τιμη Παραστασης:</span>
+                    <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελική Τιμή Παράστασης:</span>
                     <span className="text-xl sm:text-2xl bg-white/20 px-3 sm:px-4 py-1 rounded-xl shadow-inner">
                       {analysis.final}
                     </span>
@@ -477,23 +517,27 @@ export default function ProteraiotitaPrakseonPage() {
             </div>
 
           </div>
-        </div>
+        </section>
 
-        {/* BOTTOM CALLOUT BANNER */}
-        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-gray-800 text-sm md:text-base">
-              Κατανόησες τη σειρά προτεραιότητας των πράξεων; Δοκίμασε τις διαδραστικές ασκήσεις για να εμπεδώσεις τις γνώσεις σου!
+        {/* 4. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              Ώρα για Εξάσκηση στην Προτεραιότητα Πράξεων!
+            </h3>
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              Κατανόησες τη σειρά προτεραιότητας των πράξεων; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
+
           <Link
             href="/st-dimotikou/10-proteraiotita-prakseon-ask"
-            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            Ξεκίνα τις Ασκήσεις ➔
+            <span>🎯 Έναρξη Ασκήσεων</span>
+            <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </section>
 
       </div>
     </Layout>
