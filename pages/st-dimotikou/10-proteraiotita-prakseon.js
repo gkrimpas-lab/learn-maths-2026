@@ -404,7 +404,7 @@ export default function ProteraiotitaPrakseonPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                    Γράψε τη δική σου παράσταση:
+                    Γραψε τη δικη σου παρασταση:
                   </span>
                   <p className="text-gray-500 text-xs sm:text-sm">
                     Χωρίς κενά, μόνο αριθμοί και σύμβολα: <code className="bg-white px-1.5 py-0.5 rounded font-mono font-bold text-blue-600 border border-slate-200">+ - * / ( )</code>
@@ -426,7 +426,7 @@ export default function ProteraiotitaPrakseonPage() {
 
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
-                    Ή επίλεξε έτοιμο παράδειγμα:
+                    Η επιλεξε ετοιμο παραδειγμα:
                   </span>
                   <div className="flex flex-col gap-2">
                     {Object.keys(PRESETS).map((key) => (
@@ -453,7 +453,7 @@ export default function ProteraiotitaPrakseonPage() {
               
               <div className="w-full text-center mb-6">
                 <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
-                  Ζωντανή Ανάλυση Βημάτων:
+                  Ζωντανη Αναλυση Βηματων:
                 </span>
                 <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-blue-600 mt-2 bg-blue-50 inline-block px-4 sm:px-6 py-2 rounded-2xl border border-blue-100 shadow-xs max-w-full break-words">
                   {customExpr.replace(/\*/g, ' · ').replace(/\//g, ' : ').replace(/\+/g, ' ＋ ').replace(/-/g, ' － ') || '—'}
@@ -503,7 +503,7 @@ export default function ProteraiotitaPrakseonPage() {
                 {analysis.isValid && (
                   <div className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-3.5 sm:p-4 rounded-2xl text-center shadow-lg font-mono font-black flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-2">
                     <span className="text-xl">🏁</span>
-                    <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελική Τιμή Παράστασης:</span>
+                    <span className="text-xs md:text-sm font-sans uppercase tracking-wider">Τελικη Τιμη Παραστασης:</span>
                     <span className="text-xl sm:text-2xl bg-white/20 px-3 sm:px-4 py-1 rounded-xl shadow-inner">
                       {analysis.final}
                     </span>
