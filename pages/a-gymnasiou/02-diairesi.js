@@ -4,8 +4,8 @@ import Layout from '../../components/Layout';
 
 export default function DiairesiTheoria() {
   // State για το διαδραστικό εργαστήριο Ευκλείδειας Διαίρεσης
-  const [dividend, setDividend] = useState(23); // Διαιρετέος (Δ)
-  const [divisor, setDivisor] = useState(5);   // Διαιρέτης (δ)
+  const [dividend, setDividend] = useState(23); // Διαιρετέος (Δ - συνολικές μπάλες)
+  const [divisor, setDivisor] = useState(6);   // Διαιρέτης (δ - άνθρωποι/μερίδια)
 
   // State για τον διαδραστικό έλεγχο διαιρετότητας (string για έλεγχο έως 10 ψηφία)
   const [testNumberStr, setTestNumberStr] = useState('120');
@@ -212,7 +212,7 @@ export default function DiairesiTheoria() {
           {/* Διαδραστικό Εργαστήριο Ευκλείδειας Διαίρεσης */}
           <div className="mt-8 pt-6 border-t border-slate-100 space-y-6">
             <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-              🛠️ Διαδραστικό Εργαστήριο: Οπτική Αναπαράσταση Διαίρεσης
+              🛠️ Διαδραστικό Εργαστήριο: Οπτική Αναπαράσταση Διαίρεσης (Μοίρασμα σε Ανθρώπους)
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -220,12 +220,12 @@ export default function DiairesiTheoria() {
               <div className="space-y-4 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
-                    Διαιρετέος (Δ)
+                    Διαιρετέος (Δ) • Συνολικές Μπάλες
                   </label>
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setDividend, -1, 1, 40, e)}
+                      onClick={(e) => handleStep(setDividend, -1, 1, 50, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                     >
                       －
@@ -235,7 +235,7 @@ export default function DiairesiTheoria() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setDividend, 1, 1, 40, e)}
+                      onClick={(e) => handleStep(setDividend, 1, 1, 50, e)}
                       className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
                     >
                       ＋
@@ -245,7 +245,7 @@ export default function DiairesiTheoria() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
-                    Διαιρέτης (δ)
+                    Διαιρέτης (δ) • Άνθρωποι
                   </label>
                   <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                     <button
@@ -283,84 +283,90 @@ export default function DiairesiTheoria() {
                 </div>
               </div>
 
-              {/* Οπτικοποίηση Ομάδων (SVG Responsive - Χωρίς Scroll) */}
-              <div className="lg:col-span-2 bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-inner flex flex-col items-center justify-center">
-                <div className="w-full max-w-[650px]">
-                  <svg
-                    viewBox={`0 0 600 ${Math.max(120, (quotient + (remainder > 0 ? 1 : 0)) * 46 + 30)}`}
-                    className="w-full h-auto"
-                    preserveAspectRatio="xMidYMid meet"
-                  >
-                    {Array.from({ length: quotient }).map((_, gIdx) => (
-                      <g key={`group-${gIdx}`}>
-                        <rect
-                          x="20"
-                          y={15 + gIdx * 46}
-                          width={divisor * 34 + 16}
-                          height="36"
-                          rx="8"
-                          fill="#1e1b4b"
-                          stroke="#6366f1"
-                          strokeWidth="1.5"
-                        />
-                        <text
-                          x="5"
-                          y={38 + gIdx * 46}
-                          fill="#94a3b8"
-                          fontSize="12"
-                          fontWeight="bold"
-                        >
-                          {gIdx + 1}η
-                        </text>
-                        {Array.from({ length: divisor }).map((_, cIdx) => (
-                          <circle
-                            key={`c-${gIdx}-${cIdx}`}
-                            cx={36 + cIdx * 34}
-                            cy={33 + gIdx * 46}
-                            r="10"
-                            fill="#38bdf8"
-                          />
-                        ))}
-                      </g>
-                    ))}
-
-                    {remainder > 0 && (
-                      <g>
-                        <rect
-                          x="20"
-                          y={15 + quotient * 46}
-                          width={remainder * 34 + 16}
-                          height="36"
-                          rx="8"
-                          fill="#4c0519"
-                          stroke="#f43f5e"
-                          strokeWidth="1.5"
-                          strokeDasharray="4 2"
-                        />
-                        <text
-                          x="5"
-                          y={38 + quotient * 46}
-                          fill="#fb7185"
-                          fontSize="12"
-                          fontWeight="bold"
-                        >
-                          υ
-                        </text>
-                        {Array.from({ length: remainder }).map((_, rIdx) => (
-                          <circle
-                            key={`r-${rIdx}`}
-                            cx={36 + rIdx * 34}
-                            cy={33 + quotient * 46}
-                            r="10"
-                            fill="#fb7185"
-                          />
-                        ))}
-                      </g>
-                    )}
-                  </svg>
+              {/* ΝΕΑ ΟΠΤΙΚΟΠΟΙΗΣΗ: ΜΟΙΡΑΣΜΑ ΣΕ ΑΝΘΡΩΠΟΥΣ */}
+              <div className="lg:col-span-2 bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-inner flex flex-col space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
+                  <div className="text-xs sm:text-sm text-slate-300">
+                    Έχουμε <strong className="text-amber-400">{dividend} μπάλες</strong> και τις μοιράζουμε ισόποσα σε <strong className="text-sky-400">{divisor} ανθρώπους</strong>:
+                  </div>
+                  <span className="px-2.5 py-1 rounded-lg bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 font-mono text-xs font-bold">
+                    Καθένας παίρνει: {quotient} {quotient === 1 ? 'μπάλα' : 'μπάλες'}
+                  </span>
                 </div>
-                <div className="text-slate-300 text-xs sm:text-sm mt-3 text-center">
-                  Σχηματίστηκαν <strong className="text-sky-300">{quotient}</strong> πλήρεις ισοπληθείς ομάδες των <strong className="text-sky-300">{divisor}</strong> στοιχείων και περίσσεψαν <strong className="text-rose-300">{remainder}</strong> στοιχεία.
+
+                {/* Πλέγμα Ανθρώπων / Δικαιούχων */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {Array.from({ length: divisor }).map((_, personIdx) => (
+                    <div
+                      key={`person-${personIdx}`}
+                      className="bg-slate-950/80 border border-indigo-800/40 rounded-xl p-3 flex flex-col items-center space-y-2 shadow-sm"
+                    >
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-sky-300">
+                        <span className="text-base">👤</span>
+                        <span>{personIdx + 1}ος</span>
+                      </div>
+
+                      {/* Μπάλες που πήρε αυτός ο άνθρωπος */}
+                      <div className="w-full min-h-[58px] bg-slate-900/90 rounded-lg p-2 flex flex-wrap gap-1.5 items-center justify-center border border-slate-800">
+                        {quotient > 0 ? (
+                          Array.from({ length: quotient }).map((_, bIdx) => (
+                            <span
+                              key={`p-${personIdx}-b-${bIdx}`}
+                              className="w-5 h-5 rounded-full bg-sky-400 shadow-sm flex items-center justify-center text-[10px] text-slate-950 font-black"
+                              title={`Μπάλα ${bIdx + 1}`}
+                            >
+                              •
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[11px] text-slate-500 italic">0 μπάλες</span>
+                        )}
+                      </div>
+
+                      <div className="text-[11px] text-slate-400 font-mono font-semibold">
+                        {quotient} {quotient === 1 ? 'μπάλα' : 'μπάλες'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Περίσσευμα / Υπόλοιπο (αν υπάρχει) */}
+                {remainder > 0 && (
+                  <div className="p-3.5 bg-rose-950/40 border border-rose-800/50 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xs font-black">
+                        υ
+                      </span>
+                      <div className="text-xs sm:text-sm text-rose-200">
+                        <strong>Περίσσεψαν (Υπόλοιπο):</strong> Δεν φτάνουν για να πάρουν όλοι από άλλη μία.
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 flex-wrap bg-slate-950/80 px-3 py-1.5 rounded-lg border border-rose-900/40">
+                      {Array.from({ length: remainder }).map((_, rIdx) => (
+                        <span
+                          key={`rem-ball-${rIdx}`}
+                          className="w-5 h-5 rounded-full bg-rose-500 border border-rose-300 shadow-sm flex items-center justify-center text-[10px] text-white font-black"
+                          title={`Υπόλοιπο: μπάλα ${rIdx + 1}`}
+                        >
+                          •
+                        </span>
+                      ))}
+                      <span className="text-xs text-rose-300 font-mono font-bold ml-1">
+                        (＝ {remainder})
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Συμπέρασμα */}
+                <div className="text-slate-300 text-xs sm:text-sm pt-2 text-center border-t border-slate-800">
+                  Μοιράστηκαν <strong className="text-sky-300">{divisor} · {quotient} ＝ {divisor * quotient}</strong> μπάλες ισότιμα
+                  {remainder > 0 ? (
+                    <> και περίσσεψαν <strong className="text-rose-400">{remainder}</strong> (αφού {remainder} ＜ {divisor}).</>
+                  ) : (
+                    <> και δεν περίσσεψε καμία μπάλα (Τέλεια Διαίρεση!).</>
+                  )}
                 </div>
               </div>
             </div>
