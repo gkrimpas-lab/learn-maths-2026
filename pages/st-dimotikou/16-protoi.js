@@ -272,7 +272,7 @@ export default function ProtoiPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                    Πληκτρολόγησε Αριθμό:
+                    Πληκτρολογησε Αριθμο:
                   </span>
                   <input
                     type="text"
@@ -380,7 +380,7 @@ export default function ProtoiPage() {
                     <div className="text-center py-6 px-4 max-w-md mx-auto space-y-2">
                       <div className="text-2xl">📐</div>
                       <h4 className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-wide">
-                        Ο αριθμός είναι πολύ μεγάλος για οπτικά κουτάκια!
+                        Ο αριθμος ειναι πολυ μεγαλος για οπτικα κουτακια!
                       </h4>
                       <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
                         Η γραφική αναπαράσταση λειτουργεί για αριθμούς έως το 100.
