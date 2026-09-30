@@ -225,7 +225,7 @@ export default function PollaplasiaPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                    Πληκτρολόγησε Αριθμό (1 - 1.000):
+                    Πληκτρολογησε Αριθμο (1 - 1.000):
                   </span>
                   <input
                     type="text"
@@ -240,7 +240,7 @@ export default function PollaplasiaPage() {
                 {/* PRESET BUTTONS */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
-                    Ή επίλεξε έτοιμο αριθμό:
+                    Η επιλεξε ετοιμο αριθμο:
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     {PRESETS.map((p) => (
@@ -263,7 +263,7 @@ export default function PollaplasiaPage() {
                 {/* MULTIPLES COUNT SELECTOR */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
-                    Πλήθος Πολλαπλασίων:
+                    Πληθος Πολλαπλασιων:
                   </span>
                   <div className="flex gap-2">
                     {[10, 15, 20].map((c) => (
