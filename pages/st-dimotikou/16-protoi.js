@@ -1,5 +1,5 @@
 // pages/st-dimotikou/16-protoi.js
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
@@ -8,8 +8,24 @@ const MAX_ALLOWED_NUMBER = 9999999999;
 
 const PRESETS = [2, 7, 12, 15, 23, 97];
 
+// Ολοι οι 168 πρωτοι αριθμοι μεχρι το 1000
+const PRIMES_UP_TO_1000 = [
+  2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
+  101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199,
+  211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293,
+  307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397,
+  401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499,
+  503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599,
+  601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691,
+  701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797,
+  809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887,
+  907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997
+];
+
 export default function ProtoiPage() {
   const [numberStr, setNumberStr] = useState('7');
+  const [primeRangeFilter, setPrimeRangeFilter] = useState('all'); // 'all' ή '1-100', '101-200', κ.λπ.
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleInputChange = (val) => {
     const clean = val.replace(/[^0-9]/g, '');
@@ -79,10 +95,26 @@ export default function ProtoiPage() {
 
   const rectangles = getRectangles(numForGrid);
 
+  // Φιλτραρισμα πινακα πρωτων μεχρι το 1000
+  const filteredPrimes = useMemo(() => {
+    return PRIMES_UP_TO_1000.filter((p) => {
+      // Ελεγχος range
+      if (primeRangeFilter !== 'all') {
+        const [min, max] = primeRangeFilter.split('-').map(Number);
+        if (p < min || p > max) return false;
+      }
+      // Ελεγχος search term
+      if (searchTerm.trim() !== '') {
+        return p.toString().includes(searchTerm.trim());
+      }
+      return true;
+    });
+  }, [primeRangeFilter, searchTerm]);
+
   return (
     <Layout
       title="Πρώτοι και Σύνθετοι Αριθμοί - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Ανακάλυψε τους δομικούς λίθους των Μαθηματικών! Μάθε να ξεχωρίζεις τους Πρώτους αριθμούς από τους Σύνθετους για τη ΣΤ' Δημοτικού."
+      description="Ανακάλυψε τους δομικούς λίθους των Μαθηματικών! Μάθε να ξεχωρίζεις τους Πρώτους αριθμούς από τους Σύνθετους και δες τον πίνακα όλων των πρώτων έως το 1.000."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
       showAds={true}
@@ -107,14 +139,14 @@ export default function ProtoiPage() {
               Πρώτοι &amp; Σύνθετοι Αριθμοί
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Ανακάλυψε τους δομικούς λίθους των Μαθηματικών! Μάθε να ξεχωρίζεις τους <strong>Πρώτους αριθμούς</strong> (που έχουν μόνο 2 διαιρέτες) από τους <strong>Σύνθετους αριθμούς</strong>!
+              Ανακάλυψε τους δομικούς λίθους των Μαθηματικών! Μάθε να ξεχωρίζεις τους <strong>Πρώτους αριθμούς</strong> (που έχουν μόνο 2 διαιρέτες) από τους <strong>Σύνθετους αριθμούς</strong> και εξερεύνησε τον πλήρη πίνακα όλων των πρώτων μέχρι το 1.000!
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Δομικά Στοιχεία των Αριθμών &amp; Ορθογώνιοι Σχηματισμοί</span>
+              <span>168 Πρώτοι Αριθμοί έως το 1.000 &amp; Ορθογώνιοι Σχηματισμοί</span>
             </div>
             <Link
               href="/st-dimotikou/16-protoi-ask"
@@ -407,7 +439,124 @@ export default function ProtoiPage() {
           </div>
         </section>
 
-        {/* 4. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        {/* 4. ΠΛΗΡΗΣ ΠΙΝΑΚΑΣ ΠΡΩΤΩΝ ΑΡΙΘΜΩΝ ΜΕΧΡΙ ΤΟ 1.000 */}
+        <section className="bg-white p-5 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
+                <span>📋 ΠΛΗΡΗΣ ΚΑΤΑΛΟΓΟΣ</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Όλοι οι Πρώτοι Αριθμοί μέχρι το 1.000
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
+                Συνολικά υπάρχουν ακριβώς <strong>168 πρώτοι αριθμοί</strong> ανάμεσα στο 1 και το 1.000. Αναζήτησε ή φιλτράρισε ανά εκατοντάδα:
+              </p>
+            </div>
+
+            {/* ΣΤΑΤΙΣΤΙΚΟ BADGE */}
+            <div className="bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-2xl text-center self-stretch sm:self-auto shrink-0">
+              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Πληθος Πρωτων</span>
+              <span className="text-xl sm:text-2xl font-black font-mono text-emerald-800">
+                {filteredPrimes.length} <span className="text-xs text-slate-400 font-normal">/ 168</span>
+              </span>
+            </div>
+          </div>
+
+          {/* ΦΙΛΤΡΑ & ΑΝΑΖΗΤΗΣΗ */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200">
+            {/* Range Select */}
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <label htmlFor="prime-range" className="text-xs sm:text-sm font-bold text-slate-700 shrink-0">
+                Εύρος:
+              </label>
+              <select
+                id="prime-range"
+                value={primeRangeFilter}
+                onChange={(e) => setPrimeRangeFilter(e.target.value)}
+                className="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold text-slate-800 outline-none focus:border-blue-500 w-full sm:w-auto"
+              >
+                <option value="all">Όλοι (1 - 1.000)</option>
+                <option value="1-100">1 - 100 (25 πρώτοι)</option>
+                <option value="101-200">101 - 200 (21 πρώτοι)</option>
+                <option value="201-300">201 - 300 (16 πρώτοι)</option>
+                <option value="301-400">301 - 400 (16 πρώτοι)</option>
+                <option value="401-500">401 - 500 (17 πρώτοι)</option>
+                <option value="501-600">501 - 600 (14 πρώτοι)</option>
+                <option value="601-700">601 - 700 (16 πρώτοι)</option>
+                <option value="701-800">701 - 800 (14 πρώτοι)</option>
+                <option value="801-900">801 - 900 (15 πρώτοι)</option>
+                <option value="901-1000">901 - 1.000 (14 πρώτοι)</option>
+              </select>
+            </div>
+
+            {/* Live Search Input */}
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <span className="text-xs sm:text-sm font-bold text-slate-700 shrink-0">Αναζήτηση:</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value.replace(/[^0-9]/g, ''))}
+                placeholder="π.χ. 97"
+                className="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-mono font-bold text-slate-800 outline-none focus:border-blue-500 w-full sm:w-36 text-center"
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="text-xs text-rose-600 hover:text-rose-800 font-bold px-1"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* GRID ΟΛΩΝ ΤΩΝ ΠΡΩΤΩΝ ΑΡΙΘΜΩΝ */}
+          <div className="bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-3xl max-h-[380px] sm:max-h-[460px] overflow-y-auto">
+            {filteredPrimes.length > 0 ? (
+              <div className="flex flex-wrap gap-2 justify-center">
+                {filteredPrimes.map((p) => {
+                  const isCurrent = numberStr === p.toString();
+                  const isEvenTwo = p === 2;
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setNumberStr(p.toString())}
+                      title={`Πρώτος αριθμός: ${p}`}
+                      className={`font-mono font-bold text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 rounded-xl border transition-all touch-manipulation active:scale-95 ${
+                        isCurrent
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-110 z-10'
+                          : isEvenTwo
+                          ? 'bg-amber-100 text-amber-950 border-amber-300 font-black'
+                          : 'bg-white text-slate-800 border-slate-200 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 shadow-xs'
+                      }`}
+                    >
+                      {p} {isEvenTwo && '⭐'}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-xs sm:text-sm text-slate-400 font-medium">
+                Δεν βρέθηκε κανένας πρώτος αριθμός με αυτό το κριτήριο αναζήτησης.
+              </div>
+            )}
+          </div>
+
+          {/* ΥΠΟΜΝΗΜΑ ΠΙΝΑΚΑ */}
+          <div className="flex flex-wrap items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100 gap-2">
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-amber-200 border border-amber-400 inline-block"></span>
+              <span>Το <strong>2</strong> είναι ο μόνος άρτιος πρώτος</span>
+            </span>
+            <span>💡 Κάνε κλικ σε οποιονδήποτε αριθμό για να φορτωθεί απευθείας στο διαδραστικό εργαστήριο!</span>
+          </div>
+        </section>
+
+        {/* 5. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
