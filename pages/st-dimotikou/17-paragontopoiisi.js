@@ -452,7 +452,7 @@ export default function ParagontopoiisiPage() {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                    Πληκτρολόγησε Αριθμό (2 - 10.000):
+                    Πληκτρολογησε Αριθμο (2 - 10.000):
                   </span>
                   <input
                     type="text"
