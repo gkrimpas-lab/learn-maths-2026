@@ -4,9 +4,10 @@ import Link from 'next/link';
 import Layout from '../../components/Layout';
 
 const PRESETS = [4, 6, 12, 15, 25, 50];
+const MAX_LIMIT = 1000;
 
-// Υπολογισμος των πρωτων πολλαπλασιων
-function getMultiples(num, count = 10) {
+// Υπολογισμος των πρωτων Ν πολλαπλασιων
+function getMultiples(num, count = 12) {
   if (!num || num < 1) return [];
   const multiples = [];
   for (let i = 0; i <= count; i++) {
@@ -20,6 +21,7 @@ function getMultiples(num, count = 10) {
 
 export default function PollaplasiaPage() {
   const [number, setNumber] = useState(6);
+  const [count, setCount] = useState(12); // Πληθος πολλαπλασιων προς εμφανιση
   const [activeView, setActiveView] = useState('grid'); // 'grid' (πλεγμα 1-100) η 'list' (πινακας)
 
   const handleInputChange = (val) => {
@@ -29,12 +31,12 @@ export default function PollaplasiaPage() {
       return;
     }
     const parsed = parseInt(clean, 10);
-    if (parsed <= 1000) {
+    if (parsed <= MAX_LIMIT) {
       setNumber(parsed);
     }
   };
 
-  const multiplesList = getMultiples(number, 9);
+  const multiplesList = getMultiples(number, count);
 
   return (
     <Layout
@@ -42,145 +44,161 @@ export default function PollaplasiaPage() {
       description="Ανακάλυψε τι είναι τα πολλαπλάσια ενός αριθμού, πώς τα υπολογίζουμε και πώς σχηματίζουν άπειρα μοτίβα στο πλέγμα των αριθμών για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
-      showAds={false}
-      hideFooter={true}
+      showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/18-pollaplasia-ask"
-          className="inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm transition active:scale-95 text-xs sm:text-sm"
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
           <span>🎯 Ασκήσεις</span>
         </Link>
       }
     >
-      {/* Κεντρικο Container που κλειδωνει ακριβως στο υψος της οθονης χωρις κανενα scroll */}
-      <div className="w-full h-[calc(100dvh-4.25rem)] max-w-[1920px] 2xl:max-w-[2560px] mx-auto px-2 sm:px-4 py-2 flex flex-col justify-between overflow-hidden select-none">
-        
-        {/* 1. COMPACT HERO HEADER */}
-        <section className="bg-gradient-to-r from-indigo-950 via-blue-900 to-sky-900 text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-2xl shadow-md shrink-0 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <span className="bg-white/15 px-2 py-0.5 rounded-lg text-[10px] sm:text-xs font-black tracking-wider text-sky-200 uppercase shrink-0">
-              ΚΕΦΑΛΑΙΟ 18 • ΣΤ' ΔΗΜΟΤΙΚΟΥ
-            </span>
-            <h1 className="text-xs sm:text-base md:text-lg font-black tracking-tight truncate">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
+
+        {/* 1. HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΚΕΦΑΛΑΙΟ 18 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Πολλαπλάσια ενός Φυσικού Αριθμού
             </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Ανακάλυψε τι είναι τα <strong>πολλαπλάσια</strong> ενός αριθμού, πώς τα υπολογίζουμε με τη βοήθεια του πολλαπλασιασμού και πώς σχηματίζουν άπειρα μοτίβα στο πλέγμα των αριθμών!
+            </p>
           </div>
 
-          <Link
-            href="/st-dimotikou/18-pollaplasia-ask"
-            className="hidden xs:inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3 py-1 rounded-xl shadow-xs transition active:scale-95 text-[11px] sm:text-xs shrink-0"
-          >
-            <span>Εξάσκηση</span>
-            <span aria-hidden="true">→</span>
-          </Link>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Πλέγμα 1-100 &amp; Αναλυτικός Πίνακας Πολλαπλασιασμού</span>
+            </div>
+            <Link
+              href="/st-dimotikou/18-pollaplasia-ask"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         </section>
 
-        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ (3 COMPACT COLS) */}
-        <section className="grid grid-cols-3 gap-1.5 sm:gap-3 shrink-0">
-          <article className="bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">
-                  ΟΡΙΣΜΟΣ
-                </span>
-                <span className="text-xs sm:text-sm">✖️</span>
-              </div>
-              <h2 className="text-[11px] sm:text-xs font-black text-slate-900 mt-1 leading-tight">
-                Τι είναι τα Πολλαπλάσια;
-              </h2>
-              <p className="text-[9px] sm:text-[11px] text-slate-600 leading-tight mt-0.5 hidden xs:block">
-                Προκύπτουν πολλαπλασιάζοντας τον αριθμό με 0, 1, 2, 3, 4...
-              </p>
-            </div>
-            <div className="bg-slate-50 py-1 px-1.5 rounded-lg border border-slate-200 text-[9px] sm:text-[11px] font-mono text-center font-bold text-blue-900 mt-1 truncate">
-              Π(5) ＝ {'{'} 0, 5, 10, 15... {'}'}
-            </div>
-          </article>
+        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ (3 COLS) */}
+        <section className="space-y-6 2xl:space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
+              Βασικές Έννοιες &amp; Ιδιότητες Πολλαπλασίων
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
+              Όλα όσα πρέπει να γνωρίζεις για τα πολλαπλάσια ενός φυσικού αριθμού.
+            </p>
+          </div>
 
-          <article className="bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded">
-                  ΙΔΙΟΤΗΤΑ
-                </span>
-                <span className="text-xs sm:text-sm">♾️</span>
-              </div>
-              <h2 className="text-[11px] sm:text-xs font-black text-slate-900 mt-1 leading-tight">
-                Άπειρο Πλήθος
-              </h2>
-              <p className="text-[9px] sm:text-[11px] text-slate-600 leading-tight mt-0.5 hidden xs:block">
-                Δεν τελειώνουν ποτέ, επειδή οι φυσικοί αριθμοί είναι άπειροι!
-              </p>
-            </div>
-            <div className="bg-slate-50 py-1 px-1.5 rounded-lg border border-slate-200 text-[9px] sm:text-[11px] font-mono text-center font-bold text-indigo-900 mt-1 truncate">
-              6 · 1.000 ＝ 6.000 (και συνεχίζει...)
-            </div>
-          </article>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΟΡΙΣΜΟΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Πολλαπλασιασμός</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Τι είναι τα Πολλαπλάσια;
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  <strong>Πολλαπλάσια</strong> ενός φυσικού αριθμού λέγονται οι αριθμοί που προκύπτουν όταν τον πολλαπλασιάσουμε με τους φυσικούς αριθμούς (0, 1, 2, 3, 4...).
+                </p>
 
-          <article className="bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
-                  ΚΑΝΟΝΕΣ SOS
-                </span>
-                <span className="text-xs sm:text-sm">🎯</span>
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>Π(5) ＝ {'{'} 0, 5, 10, 15, 20, 25... {'}'}</p>
+                </div>
               </div>
-              <h2 className="text-[11px] sm:text-xs font-black text-slate-900 mt-1 leading-tight">
-                Το 0 και ο Εαυτός του
-              </h2>
-              <p className="text-[9px] sm:text-[11px] text-slate-600 leading-tight mt-0.5 hidden xs:block">
-                Το 0 είναι πολλαπλάσιο όλων, και κάθε αριθμός του εαυτού του.
-              </p>
-            </div>
-            <div className="bg-slate-50 py-1 px-1.5 rounded-lg border border-slate-200 text-[9px] sm:text-[11px] font-mono text-center font-bold text-emerald-900 mt-1 truncate">
-              α · 0 ＝ 0 &nbsp;|&nbsp; α · 1 ＝ α
-            </div>
-          </article>
+
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+                💡 Κάθε πολλαπλάσιο διαιρείται ακριβώς (χωρίς υπόλοιπο) από τον αριθμό.
+              </div>
+            </article>
+
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΙΔΙΟΤΗΤΑ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">Χωρίς Τέλος</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Άπειρο Πλήθος
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Κάθε φυσικός αριθμός (εκτός από το 0) έχει <strong>άπειρα πολλαπλάσια</strong>, επειδή οι φυσικοί αριθμοί με τους οποίους πολλαπλασιάζουμε δεν τελειώνουν ποτέ!
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>6 · 1.000 ＝ 6.000 (και συνεχίζει... ∞)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
+                ⚡ Σε αντίθεση με τους διαιρέτες που είναι πεπερασμένοι, τα πολλαπλάσια είναι άπειρα.
+              </div>
+            </article>
+
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-cyan-100 text-cyan-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΕΙΔΙΚΟΙ ΚΑΝΟΝΕΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-cyan-700">0 &amp; Εαυτός</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Βασικές Ιδιότητες SOS
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  • Το <strong>0</strong> είναι πολλαπλάσιο κάθε φυσικού αριθμού (α · 0 ＝ 0).<br />
+                  • Κάθε φυσικός αριθμός είναι πολλαπλάσιο του <strong>εαυτού του</strong> (α · 1 ＝ α).
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>7 · 0 ＝ <strong className="text-cyan-700">0</strong>&nbsp;&nbsp;&nbsp;&nbsp;🎯&nbsp;&nbsp;&nbsp;&nbsp;7 · 1 ＝ <strong className="text-cyan-700">7</strong></p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-cyan-50 rounded-2xl border border-cyan-200 text-xs 2xl:text-sm text-cyan-950 font-medium">
+                🎯 Το μικρότερο θετικό πολλαπλάσιο ενός αριθμού είναι πάντοτε ο ίδιος ο αριθμός.
+              </div>
+            </article>
+          </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ (FIT TO FLEX-1 ΧΩΡΙΣ SCROLL) */}
-        <section className="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex-1 flex flex-col justify-between min-h-0 overflow-hidden my-1">
-          
-          {/* Controls Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pb-1.5 border-b border-slate-100 shrink-0">
-            <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-black text-slate-900">
-                Αριθμός:
-              </span>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={number}
-                onChange={(e) => handleInputChange(e.target.value)}
-                className="w-16 sm:w-20 text-center font-mono font-black text-xs sm:text-base text-blue-700 bg-blue-50 border border-blue-200 rounded-xl py-0.5 outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="6"
-              />
-              <div className="hidden sm:flex items-center gap-1">
-                {PRESETS.map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setNumber(p)}
-                    className={`px-2 py-0.5 rounded-lg font-mono text-xs font-bold transition active:scale-95 ${
-                      number === p
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ))}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ ΠΟΛΛΑΠΛΑΣΙΩΝ */}
+        <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
+                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
               </div>
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Διαδραστικό Εργαστήριο Πολλαπλασίων
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
+                Πληκτρολόγησε έναν αριθμό και δες τα πολλαπλάσιά του στον αναλυτικό πίνακα πράξεων ή στο πλέγμα 1-100!
+              </p>
             </div>
 
-            {/* Display Toggle Tabs */}
-            <div className="flex bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-[11px] sm:text-xs font-black">
+            {/* DISPLAY TOGGLE */}
+            <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner gap-1 w-full md:w-auto">
               <button
                 type="button"
                 onClick={() => setActiveView('grid')}
-                className={`px-2.5 py-1 rounded-lg transition ${
-                  activeView === 'grid' ? 'bg-blue-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center touch-manipulation active:scale-95 ${
+                  activeView === 'grid'
+                    ? 'bg-blue-600 text-white shadow-sm scale-105'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 🔟 Πλέγμα 1-100
@@ -188,8 +206,10 @@ export default function PollaplasiaPage() {
               <button
                 type="button"
                 onClick={() => setActiveView('list')}
-                className={`px-2.5 py-1 rounded-lg transition ${
-                  activeView === 'list' ? 'bg-indigo-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center touch-manipulation active:scale-95 ${
+                  activeView === 'list'
+                    ? 'bg-indigo-600 text-white shadow-sm scale-105'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 🧮 Πίνακας Πράξεων
@@ -197,82 +217,199 @@ export default function PollaplasiaPage() {
             </div>
           </div>
 
-          {/* Visualization Area */}
-          <div className="flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden">
-            {number && number >= 1 ? (
-              activeView === 'grid' ? (
-                /* HUNDRED GRID (Auto-sized aspect-square boxes to fit container perfectly) */
-                <div className="w-full max-w-sm sm:max-w-md h-full flex flex-col justify-center items-center">
-                  <div className="grid grid-cols-10 gap-0.5 sm:gap-1 w-full max-h-full aspect-square p-1.5 bg-slate-50 border border-slate-200 rounded-xl">
-                    {Array.from({ length: 100 }, (_, i) => i + 1).map((val) => {
-                      const isMultiple = val % number === 0;
-                      return (
-                        <div
-                          key={val}
-                          className={`flex items-center justify-center rounded text-[9px] sm:text-[11px] font-mono transition-all ${
-                            isMultiple
-                              ? 'bg-blue-600 text-white font-black shadow-xs scale-105 z-10 ring-1 ring-blue-300'
-                              : 'bg-white/80 text-slate-400 border border-slate-100'
-                          }`}
-                        >
-                          {val}
-                        </div>
-                      );
-                    })}
+          {/* MAIN INTERACTIVE GRID (3 COLS LEFT / 9 COLS RIGHT) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch">
+            
+            {/* LEFT: INPUT & PRESETS (3 COLS) */}
+            <div className="lg:col-span-3 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
+                    Πληκτρολόγησε Αριθμό (1 - 1.000):
+                  </span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={number}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    className="w-full text-xl sm:text-2xl font-mono font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm text-blue-600 outline-none focus:border-blue-500 tracking-wider"
+                    placeholder="π.χ. 6"
+                  />
+                </div>
+
+                {/* PRESET BUTTONS */}
+                <div className="space-y-2 pt-2 border-t border-slate-200">
+                  <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
+                    Ή επίλεξε έτοιμο αριθμό:
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {PRESETS.map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setNumber(p)}
+                        className={`py-2 px-1 rounded-xl border font-mono font-black text-xs sm:text-sm transition-all text-center touch-manipulation active:scale-95 ${
+                          number === p
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
+                            : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+                        }`}
+                      >
+                        {p.toLocaleString('el-GR')}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              ) : (
-                /* MULTIPLICATION LIST (2-Column Grid Fit) */
-                <div className="w-full max-w-md grid grid-cols-2 gap-1.5 sm:gap-2">
-                  {multiplesList.map((m) => (
-                    <div
-                      key={m.multiplier}
-                      className="bg-slate-900 text-white px-2.5 py-1 sm:py-1.5 rounded-xl border border-slate-800 flex justify-between items-center text-[10px] sm:text-xs font-mono"
-                    >
-                      <span className="text-slate-400">
-                        {number} · {m.multiplier} ＝
-                      </span>
-                      <span className="font-black text-amber-300 text-xs sm:text-sm">
-                        {m.result.toLocaleString('el-GR')}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )
-            ) : (
-              <div className="text-xs text-slate-400 font-medium">
-                Πληκτρολόγησε έναν φυσικό αριθμό (≥ 1).
-              </div>
-            )}
-          </div>
 
-          {/* Bottom Results Bar */}
-          <div className="bg-slate-900 text-white px-3 py-1.5 rounded-xl flex items-center justify-between text-xs font-mono shrink-0 gap-2">
-            <span className="text-slate-400 text-[10px] sm:text-xs uppercase font-sans font-bold truncate">
-              Π({number || '—'}):
-            </span>
-            <div className="text-amber-300 font-bold truncate text-[11px] sm:text-xs">
-              {multiplesList.slice(0, 6).map((m) => m.result).join(', ')} ...
+                {/* MULTIPLES COUNT SELECTOR */}
+                <div className="space-y-2 pt-2 border-t border-slate-200">
+                  <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
+                    Πλήθος Πολλαπλασίων:
+                  </span>
+                  <div className="flex gap-2">
+                    {[10, 15, 20].map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setCount(c)}
+                        className={`flex-1 py-1.5 rounded-lg border font-mono font-bold text-xs sm:text-sm transition-all touch-manipulation active:scale-95 ${
+                          count === c
+                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
+                            : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
+                💡 Τα πολλαπλάσια ενός αριθμού αυξάνονται <strong>ρυθμικά</strong> με το ίδιο βήμα!
+              </div>
             </div>
+
+            {/* RIGHT: VISUALIZATION (9 COLS) */}
+            <div className="lg:col-span-9 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[460px] space-y-6">
+              
+              {/* HEADER STATUS */}
+              <div className="w-full text-center">
+                <span className="text-xs 2xl:text-sm font-bold text-slate-400 uppercase tracking-wider block">
+                  ΠΟΛΛΑΠΛΑΣΙΑ ΤΟΥ ΑΡΙΘΜΟΥ:
+                </span>
+                <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-4 sm:px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-wider shadow-sm">
+                  {number ? number.toLocaleString('el-GR') : '—'}
+                </div>
+              </div>
+
+              {/* VISUAL METHOD DISPLAY */}
+              <div className="w-full my-auto py-2 flex justify-center items-center">
+                {number && number >= 1 ? (
+                  activeView === 'grid' ? (
+                    /* HUNDRED GRID VISUALIZATION */
+                    <div className="flex flex-col items-center justify-center space-y-4 w-full">
+                      <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider mb-1">
+                        🔟 ΕΝΤΟΠΙΣΜΟΣ ΠΟΛΛΑΠΛΑΣΙΩΝ ΣΤΟ ΠΛΕΓΜΑ 1-100:
+                      </span>
+                      
+                      <div className="bg-slate-50 p-3 sm:p-6 rounded-3xl border border-slate-200 w-full flex flex-col items-center shadow-inner max-w-lg">
+                        <div className="grid grid-cols-10 gap-1 sm:gap-1.5 w-full">
+                          {Array.from({ length: 100 }, (_, i) => i + 1).map((val) => {
+                            const isMultiple = val % number === 0;
+                            return (
+                              <div
+                                key={val}
+                                className={`aspect-square flex items-center justify-center rounded-lg font-mono text-[10px] sm:text-xs md:text-sm font-bold transition-all ${
+                                  isMultiple
+                                    ? 'bg-blue-600 text-white font-black shadow-md scale-105 ring-2 ring-blue-300'
+                                    : 'bg-white text-slate-400 border border-slate-200/60'
+                                }`}
+                              >
+                                {val}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {number > 100 && (
+                          <p className="text-xs sm:text-sm text-amber-600 font-bold mt-3 text-center">
+                            * Ο αριθμός {number} είναι μεγαλύτερος του 100, επομένως τα θετικά του πολλαπλάσια βρίσκονται πέρα από το πλέγμα 1-100!
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    /* MULTIPLICATION LIST DISPLAY - ΑΠΕΡΙΟΡΙΣΤΟ ΥΨΟΣ ΧΩΡΙΣ SCROLLBAR ΓΙΑ ΝΑ ΦΑΙΝΟΝΤΑΙ ΟΛΑ */
+                    <div className="flex flex-col items-center justify-center space-y-3 w-full">
+                      <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider mb-2">
+                        🧮 ΑΝΑΛΥΤΙΚΟΣ ΠΙΝΑΚΑΣ ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΥ:
+                      </span>
+                      
+                      <div className="bg-slate-900 text-white p-4 sm:p-6 rounded-2xl border border-slate-800 font-mono text-xs sm:text-sm md:text-base w-full max-w-2xl shadow-md">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          {multiplesList.map((m) => (
+                            <div
+                              key={m.multiplier}
+                              className="bg-slate-800/80 p-2 sm:p-2.5 rounded-xl border border-slate-700 flex justify-between items-center px-3 sm:px-4"
+                            >
+                              <span className="text-slate-400">
+                                {number} · {m.multiplier} ＝
+                              </span>
+                              <span className="font-black text-amber-300 text-base sm:text-lg">
+                                {m.result.toLocaleString('el-GR')}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                ) : (
+                  <div className="text-center py-12 text-xs sm:text-sm text-slate-400 font-medium bg-slate-50 rounded-2xl border border-slate-200 w-full p-4">
+                    Πληκτρολόγησε έναν φυσικό αριθμό μεγαλύτερο ή ίσο του 1.
+                  </div>
+                )}
+              </div>
+
+              {/* MULTIPLES SET BADGE */}
+              {number && number >= 1 && (
+                <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-3.5 sm:p-4 rounded-2xl text-center shadow-lg font-mono font-black space-y-1">
+                  <span className="text-xs md:text-sm font-sans uppercase tracking-wider block text-blue-200">
+                    ΣΥΝΟΛΟ ΠΟΛΛΑΠΛΑΣΙΩΝ Π({number.toLocaleString('el-GR')}):
+                  </span>
+                  <div className="text-sm sm:text-base md:text-lg tracking-wide pt-1 flex flex-wrap justify-center gap-1.5 sm:gap-2 items-center">
+                    <span>Π({number}) ＝ {'{'}</span>
+                    {multiplesList.slice(0, 8).map((m, idx) => (
+                      <span key={m.multiplier} className="text-amber-300 font-black">
+                        {m.result.toLocaleString('el-GR')}{idx < 7 ? ',' : ''}
+                      </span>
+                    ))}
+                    <span className="text-blue-200">... {'}'}</span>
+                  </div>
+                </div>
+              )}
+
+            </div>
+
           </div>
         </section>
 
-        {/* 4. COMPACT FOOTER ACTION */}
-        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white px-3 sm:px-5 py-2 rounded-2xl shadow-md shrink-0 flex items-center justify-between gap-3">
-          <div className="truncate">
-            <h3 className="text-xs sm:text-sm font-black truncate">
-              Έτοιμος για εξάσκηση;
+        {/* 4. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              Ώρα για Εξάσκηση στα Πολλαπλάσια!
             </h3>
-            <p className="text-[10px] sm:text-xs text-emerald-100 truncate hidden xs:block">
-              Δοκίμασε τις 10 διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση.
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              Κατάλαβες πώς σχηματίζονται τα πολλαπλάσια ενός αριθμού; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
 
           <Link
             href="/st-dimotikou/18-pollaplasia-ask"
-            className="inline-flex items-center gap-1.5 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-3.5 py-1 rounded-xl shadow-xs transition active:scale-95 text-xs shrink-0"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
             <span>🎯 Έναρξη Ασκήσεων</span>
+            <span aria-hidden="true">→</span>
           </Link>
         </section>
 
