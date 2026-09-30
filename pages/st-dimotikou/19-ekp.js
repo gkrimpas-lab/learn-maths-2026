@@ -333,7 +333,7 @@ export default function EkpPage() {
                 {/* COUNT SELECTOR (2, 3, 4) */}
                 <div className="space-y-1.5">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                    Πλήθος Αριθμών:
+                    Πληθος Αριθμων:
                   </span>
                   <div className="flex bg-white p-1 rounded-xl border border-slate-200 shadow-xs gap-1">
                     {[2, 3, 4].map((c) => (
@@ -356,13 +356,13 @@ export default function EkpPage() {
                 {/* INPUT FIELDS */}
                 <div className="space-y-2">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                    Τιμές Αριθμών (1 - 500):
+                    Τιμες Αριθμων (1 - 500):
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     {Array.from({ length: numCount }).map((_, idx) => (
                       <div key={idx} className="space-y-0.5">
                         <label className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase">
-                          Αριθμός {idx + 1}:
+                          Αριθμσς {idx + 1}:
                         </label>
                         <input
                           type="text"
@@ -380,7 +380,7 @@ export default function EkpPage() {
                 {/* PRESET EXAMPLES (2 COLS x 3 ROWS) */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
-                    Ή διάλεξε έτοιμο παράδειγμα:
+                    Η διαλεξε ετοιμο παραδειγμα:
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     {PRESETS.map((p, idx) => (
