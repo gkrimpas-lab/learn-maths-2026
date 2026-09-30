@@ -415,37 +415,37 @@ export default function DiairesiTheoria() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-                <div className="text-xs font-bold text-indigo-600 uppercase">Διαίρεση με το 2</div>
+                <div className="text-xs font-bold text-indigo-600 uppercase">Διαιρεση με το 2</div>
                 <div className="font-bold text-slate-900 text-sm sm:text-base">Λήγει σε άρτιο ψηφίο</div>
                 <p className="text-xs text-slate-600">Το τελευταίο ψηφίο είναι 0, 2, 4, 6 ή 8.</p>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-                <div className="text-xs font-bold text-indigo-600 uppercase">Διαίρεση με το 3</div>
+                <div className="text-xs font-bold text-indigo-600 uppercase">Διαιρεση με το 3</div>
                 <div className="font-bold text-slate-900 text-sm sm:text-base">Άθροισμα ψηφίων</div>
                 <p className="text-xs text-slate-600">Το άθροισμα των ψηφίων του διαιρείται με το 3.</p>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-                <div className="text-xs font-bold text-indigo-600 uppercase">Διαίρεση με το 4</div>
+                <div className="text-xs font-bold text-indigo-600 uppercase">Διαιρεση με το 4</div>
                 <div className="font-bold text-slate-900 text-sm sm:text-base">Δύο τελευταία ψηφία</div>
                 <p className="text-xs text-slate-600">Τα 2 τελευταία ψηφία σχηματίζουν αριθμό που διαιρείται με το 4 (ή λήγει σε 00).</p>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-                <div className="text-xs font-bold text-indigo-600 uppercase">Διαίρεση με το 5</div>
+                <div className="text-xs font-bold text-indigo-600 uppercase">Διαιρεση με το 5</div>
                 <div className="font-bold text-slate-900 text-sm sm:text-base">Λήγει σε 0 ή 5</div>
                 <p className="text-xs text-slate-600">Το τελευταίο του ψηφίο είναι αποκλειστικά 0 ή 5.</p>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-                <div className="text-xs font-bold text-indigo-600 uppercase">Διαίρεση με το 9</div>
+                <div className="text-xs font-bold text-indigo-600 uppercase">Διαιρεση με το 9</div>
                 <div className="font-bold text-slate-900 text-sm sm:text-base">Άθροισμα ψηφίων</div>
                 <p className="text-xs text-slate-600">Το άθροισμα των ψηφίων του διαιρείται με το 9.</p>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-                <div className="text-xs font-bold text-indigo-600 uppercase">Διαίρεση με το 10 & 25</div>
+                <div className="text-xs font-bold text-indigo-600 uppercase">Διαιρεση με το 10 & 25</div>
                 <div className="font-bold text-slate-900 text-sm sm:text-base">Τελικά ψηφία</div>
                 <p className="text-xs text-slate-600">Με το 10: λήγει σε 0. Με το 25: τα 2 τελευταία ψηφία είναι 00, 25, 50 ή 75.</p>
               </div>
@@ -462,7 +462,7 @@ export default function DiairesiTheoria() {
               <div className="max-w-md space-y-2">
                 <div className="flex justify-between items-center">
                   <label className="block text-xs font-bold text-slate-600 uppercase">
-                    Πληκτρολόγησε αριθμό (Μέγιστο 10 ψηφία)
+                    Πληκτρολογησε αριθμο (Μεγιστο 10 ψηφια)
                   </label>
                   <span className="text-xs font-mono text-slate-400">
                     {testNumberStr.length}/10
@@ -595,7 +595,7 @@ export default function DiairesiTheoria() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
               <div className="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 <label className="block text-xs font-bold text-slate-600 uppercase">
-                  Επίλεξε αριθμό (2 έως 100)
+                  Επιλεξε αριθμο (2 έως 100)
                 </label>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
@@ -622,7 +622,7 @@ export default function DiairesiTheoria() {
               <div className="lg:col-span-2 p-6 rounded-2xl border bg-gradient-to-br from-indigo-900 to-slate-900 text-white space-y-3 shadow-md">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="text-xs uppercase tracking-widest text-indigo-300 font-semibold">
-                    Χαρακτηρισμός
+                    Χαρακτηρισμος
                   </div>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
