@@ -58,8 +58,8 @@ const REAL_WORLD_MULTIPLICATIONS = [
   { item: 'πακέτα με σελιδοδείκτες', unit: 'σελιδοδείκτες' }
 ];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_mul_std_1',
     generate: () => {
@@ -67,8 +67,10 @@ const EXTRA_PROBLEMS_POOL = [
       const itemsPerBox = 24;
       const total = boxes * itemsPerBox;
       return {
+        title: 'ΚΙΒΩΤΙΑ ΜΕ ΧΥΜΟΥΣ',
+        instruction: 'Υπολογίστε το συνολικό πλήθος των μπουκαλιών (ακέραιος χωρίς τελείες):',
         text: `Σε μια αποθήκη έφτασαν ${boxes} κιβώτια με χυμούς. Αν κάθε κιβώτιο περιέχει ${itemsPerBox} μπουκάλια, πόσα μπουκάλια χυμού έφτασαν συνολικά;`,
-        tableData: { col1: 'Κιβώτια', col2: 'Μπουκάλια ανά κιβώτιο', r1: [`${boxes} κιβώτια`, `${itemsPerBox} μπουκάλια`], r2: ['Πολλαπλασιασμός', 'χ μπουκάλια'] },
+        tableData: { col1: 'Κιβώτια', col2: 'Μπουκάλια ανά κιβώτιο', r1: [`${boxes} κιβώτια`, `${itemsPerBox} μπουκάλια`], r2: ['Πολλαπλασιασμός', `${formatNumber(total)} μπουκάλια`] },
         correctVal: total,
         correctStr: String(total),
         explanation: `Πολλαπλασιάζουμε: ${boxes} · ${itemsPerBox} ＝ ${formatNumber(total)} μπουκάλια.`
@@ -82,8 +84,10 @@ const EXTRA_PROBLEMS_POOL = [
       const seatsPerRow = 25;
       const total = rows * seatsPerRow;
       return {
+        title: 'ΧΩΡΗΤΙΚΟΤΗΤΑ ΘΕΑΤΡΟΥ',
+        instruction: 'Υπολογίστε τον συνολικό αριθμό θέσεων (ακέραιος χωρίς τελείες):',
         text: `Ένα θέατρο έχει ${rows} σειρές καθισμάτων και κάθε σειρά έχει ${seatsPerRow} θέσεις. Πόσες θέσεις έχει συνολικά το θέατρο;`,
-        tableData: { col1: 'Σειρές', col2: 'Θέσεις ανά σειρά', r1: [`${rows} σειρές`, `${seatsPerRow} θέσεις`], r2: ['Πολλαπλασιασμός', 'χ θέσεις'] },
+        tableData: { col1: 'Σειρές', col2: 'Θέσεις ανά σειρά', r1: [`${rows} σειρές`, `${seatsPerRow} θέσεις`], r2: ['Πολλαπλασιασμός', `${formatNumber(total)} θέσεις`] },
         correctVal: total,
         correctStr: String(total),
         explanation: `Υπολογίζουμε έξυπνα: ${rows} · 25 ＝ (${rows} · 100) : 4 ＝ ${formatNumber(total)} θέσεις.`
@@ -97,11 +101,236 @@ const EXTRA_PROBLEMS_POOL = [
       const quantity = randInt(12, 28);
       const total = price * quantity;
       return {
+        title: 'ΑΓΟΡΑ ΑΘΛΗΤΙΚΟΥ ΕΞΟΠΛΙΣΜΟΥ',
+        instruction: 'Υπολογίστε το συνολικό ποσό σε ευρώ (€):',
         text: `Ένα σχολείο αγόρασε ${quantity} μπάλες μπάσκετ προς ${price} € τη μία. Πόσα ευρώ (€) πλήρωσε συνολικά;`,
-        tableData: { col1: 'Τιμή ανά μπάλα', col2: 'Πλήθος μπαλών', r1: [`${price} €`, `${quantity} μπάλες`], r2: ['Πολλαπλασιασμός', 'χ €'] },
+        tableData: { col1: 'Τιμή ανά μπάλα', col2: 'Πλήθος μπαλών', r1: [`${price} €`, `${quantity} μπάλες`], r2: ['Πολλαπλασιασμός', `${formatNumber(total)} €`] },
         correctVal: total,
         correctStr: String(total),
         explanation: `Πολλαπλασιάζουμε: ${quantity} · ${price} ＝ ${formatNumber(total)} €.`
+      };
+    }
+  },
+  {
+    id: 'p_mul_std_4',
+    generate: () => {
+      const sacks = randInt(20, 40);
+      const kgPerSack = 50;
+      const total = sacks * kgPerSack;
+      return {
+        title: 'ΦΟΡΤΙΟ ΑΛΕΥΡΙΟΥ ΣΕ ΚΙΛΑ',
+        instruction: 'Υπολογίστε το συνολικό βάρος σε κιλά (kg):',
+        text: `Ένας φούρνος παρέλαβε ${sacks} σακιά αλεύρι των ${kgPerSack} kg το καθένα. Πόσα κιλά (kg) αλεύρι παρέλαβε συνολικά;`,
+        tableData: { col1: 'Σακιά', col2: 'Βάρος ανά σακί', r1: [`${sacks} σακιά`, `${kgPerSack} kg`], r2: ['Γινόμενο', `${formatNumber(total)} kg`] },
+        correctVal: total,
+        correctStr: String(total),
+        explanation: `Πολλαπλασιάζουμε: ${sacks} · ${kgPerSack} ＝ ${formatNumber(total)} kg.`
+      };
+    }
+  },
+  {
+    id: 'p_mul_std_5',
+    generate: () => {
+      const boxes = randInt(15, 30);
+      const tilesPerBox = 16;
+      const total = boxes * tilesPerBox;
+      return {
+        title: 'ΠΛΑΚΑΚΙΑ ΔΑΠΕΔΟΥ',
+        instruction: 'Υπολογίστε το συνολικό πλήθος των πλακιδίων:',
+        text: `Ένας τεχνίτης αγόρασε ${boxes} κουτιά με πλακάκια. Αν κάθε κουτί περιέχει ${tilesPerBox} πλακάκια, πόσα πλακάκια έχει συνολικά;`,
+        tableData: { col1: 'Κουτιά', col2: 'Πλακάκια ανά κουτί', r1: [`${boxes} κουτιά`, `${tilesPerBox} πλακάκια`], r2: ['Γινόμενο', `${formatNumber(total)} πλακάκια`] },
+        correctVal: total,
+        correctStr: String(total),
+        explanation: `Πολλαπλασιάζουμε: ${boxes} · ${tilesPerBox} ＝ ${formatNumber(total)} πλακάκια.`
+      };
+    }
+  },
+  {
+    id: 'p_mul_std_6',
+    generate: () => {
+      const hours = randInt(12, 24);
+      const kmPerHour = 85;
+      const total = hours * kmPerHour;
+      return {
+        title: 'ΣΥΝΟΛΙΚΗ ΔΙΑΝΥΘΕΙΣΑ ΑΠΟΣΤΑΣΗ',
+        instruction: 'Υπολογίστε τη συνολική απόσταση σε χιλιόμετρα (km):',
+        text: `Ένα τρένο ταξιδεύει με σταθερή ταχύτητα ${kmPerHour} km την ώρα για ${hours} ώρες. Πόσα χιλιόμετρα (km) θα διανύσει συνολικά;`,
+        tableData: { col1: 'Ταχύτητα', col2: 'Χρόνος', r1: [`${kmPerHour} km/h`, `${hours} ώρες`], r2: ['Γινόμενο', `${formatNumber(total)} km`] },
+        correctVal: total,
+        correctStr: String(total),
+        explanation: `Πολλαπλασιάζουμε την ταχύτητα επί τον χρόνο: ${hours} · ${kmPerHour} ＝ ${formatNumber(total)} km.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_mul_hard_1',
+    generate: () => {
+      const rows = randInt(18, 32);
+      const seatsPerRow = 25;
+      const total = rows * seatsPerRow;
+      const correctStr = `${formatNumber(total)} θέσεις`;
+      const fake1 = `${formatNumber(total + 50)} θέσεις`;
+      const fake2 = `${formatNumber(Math.max(10, total - 25))} θέσεις`;
+      const fake3 = `${formatNumber(total + 100)} θέσεις`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΧΩΡΗΤΙΚΟΤΗΤΑ ΚΙΝΗΜΑΤΟΓΡΑΦΟΥ',
+        instruction: 'Επιλέξτε τον συνολικό αριθμό θέσεων:',
+        text: `Ένας κινηματογράφος διαθέτει ${rows} σειρές καθισμάτων και κάθε σειρά έχει ${seatsPerRow} θέσεις. Πόσες θέσεις έχει συνολικά ο κινηματογράφος;`,
+        tableData: { col1: 'Σειρές', col2: 'Θέσεις ανά σειρά', r1: [`${rows} σειρές`, `${seatsPerRow} θέσεις`], r2: ['Γινόμενο', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε έξυπνα: ${rows} · 25 ＝ (${rows} · 100) : 4 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mul_hard_2',
+    generate: () => {
+      const price = randInt(18, 35);
+      const quantity = randInt(25, 45);
+      const total = price * quantity;
+      const correctStr = `${formatNumber(total)} €`;
+      const fake1 = `${formatNumber(total + 100)} €`;
+      const fake2 = `${formatNumber(Math.max(50, total - 50))} €`;
+      const fake3 = `${formatNumber(total + 150)} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ ΣΧΟΛΙΚΩΝ ΒΙΒΛΙΩΝ',
+        instruction: 'Επιλέξτε το συνολικό κόστος σε ευρώ (€):',
+        text: `Μια βιβλιοθήκη αγόρασε ${quantity} αντίτυπα μιας εγκυκλοπαίδειας προς ${price} € το καθένα. Πόσα ευρώ (€) πλήρωσε συνολικά η βιβλιοθήκη;`,
+        tableData: { col1: 'Τιμή ανά αντίτυπο', col2: 'Πλήθος αντιτύπων', r1: [`${price} €`, `${quantity} αντίτυπα`], r2: ['Κόστος', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε τα αντίτυπα με την τιμή: ${quantity} · ${price} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mul_hard_3',
+    generate: () => {
+      const boxes = randInt(25, 50);
+      const bottlesPerBox = 24;
+      const total = boxes * bottlesPerBox;
+      const correctStr = `${formatNumber(total)} μπουκάλια`;
+      const fake1 = `${formatNumber(total + 24)} μπουκάλια`;
+      const fake2 = `${formatNumber(Math.max(24, total - 48))} μπουκάλια`;
+      const fake3 = `${formatNumber(total + 96)} μπουκάλια`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΑΠΟΘΗΚΕΥΣΗ ΑΝΑΨΥΚΤΙΚΩΝ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος των μπουκαλιών:',
+        text: `Μια αποθήκη τροφίμων παρέλαβε ${boxes} κιβώτια με αναψυκτικά. Αν κάθε κιβώτιο περιέχει ${bottlesPerBox} μπουκάλια, πόσα μπουκάλια αναψυκτικού παρελήφθησαν συνολικά;`,
+        tableData: { col1: 'Κιβώτια', col2: 'Μπουκάλια ανά κιβώτιο', r1: [`${boxes} κιβώτια`, `${bottlesPerBox} μπουκάλια`], r2: ['Σύνολο', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε: ${boxes} · ${bottlesPerBox} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mul_hard_4',
+    generate: () => {
+      const trees = randInt(35, 65);
+      const kgPerTree = 40;
+      const total = trees * kgPerTree;
+      const correctStr = `${formatNumber(total)} kg`;
+      const fake1 = `${formatNumber(total + 200)} kg`;
+      const fake2 = `${formatNumber(Math.max(100, total - 200))} kg`;
+      const fake3 = `${formatNumber(total + 400)} kg`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΟΔΕΙΑ ΕΛΑΙΩΝ ΣΕ ΚΙΛΑ',
+        instruction: 'Επιλέξτε τη συνολική σοδειά σε κιλά (kg):',
+        text: `Σε έναν ελαιώνα μαζεύτηκαν οι ελιές από ${trees} ελαιόδεντρα. Αν κάθε δέντρο απέδωσε κατά μέσο όρο ${kgPerTree} kg ελιές, ποια ήταν η συνολική σοδειά σε κιλά (kg);`,
+        tableData: { col1: 'Ελαιόδεντρα', col2: 'Κιλά ανά δέντρο', r1: [`${trees} δέντρα`, `${kgPerTree} kg`], r2: ['Σύνολο', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε: ${trees} · ${kgPerTree} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mul_hard_5',
+    generate: () => {
+      const packs = randInt(30, 70);
+      const barsPerPack = 12;
+      const total = packs * barsPerPack;
+      const correctStr = `${formatNumber(total)} σοκολάτες`;
+      const fake1 = `${formatNumber(total + 24)} σοκολάτες`;
+      const fake2 = `${formatNumber(Math.max(12, total - 24))} σοκολάτες`;
+      const fake3 = `${formatNumber(total + 60)} σοκολάτες`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΣΟΚΟΛΑΤΑΣ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος των σοκολατών:',
+        text: `Ένα εργοστάσιο παρήγαγε ${packs} πακέτα με σοκολάτες. Αν κάθε πακέτο περιέχει ${barsPerPack} σοκολάτες, πόσες σοκολάτες συσκευάστηκαν συνολικά;`,
+        tableData: { col1: 'Πακέτα', col2: 'Σοκολάτες ανά πακέτο', r1: [`${packs} πακέτα`, `${barsPerPack} σοκολάτες`], r2: ['Σύνολο', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε: ${packs} · ${barsPerPack} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mul_hard_6',
+    generate: () => {
+      const days = randInt(15, 30);
+      const fuelPerDay = 35;
+      const total = days * fuelPerDay;
+      const correctStr = `${formatNumber(total)} L`;
+      const fake1 = `${formatNumber(total + 70)} L`;
+      const fake2 = `${formatNumber(Math.max(35, total - 70))} L`;
+      const fake3 = `${formatNumber(total + 140)} L`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΚΑΤΑΝΑΛΩΣΗ ΚΑΥΣΙΜΟΥ ΣΤΟΛΟΥ',
+        instruction: 'Επιλέξτε τη συνολική κατανάλωση σε λίτρα (L):',
+        text: `Ένα λεωφορείο καταναλώνει κατά μέσο όρο ${fuelPerDay} L πετρέλαιο την ημέρα. Πόσα λίτρα (L) καυσίμου θα καταναλώσει συνολικά σε ${days} ημέρες συνεχούς λειτουργίας;`,
+        tableData: { col1: 'Ημέρες', col2: 'Κατανάλωση ανά ημέρα', r1: [`${days} ημέρες`, `${fuelPerDay} L`], r2: ['Σύνολο', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε τις ημέρες με την ημερήσια κατανάλωση: ${days} · ${fuelPerDay} ＝ ${correctStr}.`
       };
     }
   }
@@ -122,7 +351,7 @@ function generateQuestions() {
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΥΠΟΛΟΓΙΣΜΟΣ ΓΙΝΟΜΕΝΟΥ',
-      instruction: 'Υπολογίστε το γινόμενο:',
+      instruction: 'Υπολογίστε το γινόμενο (ακέραιος χωρίς τελείες):',
       prompt: `Υπολογίστε: ${q1A} · ${q1Mult};`,
       itemContext: shuffledItems[0].item,
       correctVal: q1Answer,
@@ -144,7 +373,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΕΠΙΜΕΡΙΣΤΙΚΗ ΙΔΙΟΤΗΤΑ',
-      instruction: 'Υπολογίστε το αποτέλεσμα της επιμεριστικής παράστασης:',
+      instruction: 'Υπολογίστε το αποτέλεσμα της επιμεριστικής παράστασης (ακέραιος χωρίς τελείες):',
       prompt: `Υπολογίστε: ${q2Prompt};`,
       correctVal: q2Answer,
       correctStr: String(q2Answer),
@@ -152,7 +381,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (MCQ): Αντιμεταθετική Ιδιότητα
+  // Q3 (MCQ): Αντιμεταθετική Ιδιότητα (Εγγύηση Μοναδικότητας)
   {
     const q3A = randInt(25, 95);
     const q3B = randInt(12, 48);
@@ -179,7 +408,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Προσεταιριστική Ιδιότητα (Έξυπνη ομαδοποίηση)
+  // Q4 (MCQ): Προσεταιριστική Ιδιότητα (Έξυπνη ομαδοποίηση, Εγγύηση Μοναδικότητας)
   {
     const q4PairType = randInt(1, 3);
     let q4A = 25;
@@ -292,7 +521,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΟ ΠΛΕΓΜΑ ΤΕΤΡΑΓΩΝΩΝ',
-      instruction: 'Βρείτε το πλήθος των τετραγώνων:',
+      instruction: 'Βρείτε το πλήθος των τετραγώνων (ακέραιος):',
       prompt: `Πόσα τετραγωνάκια περιέχει ένα πλέγμα με ${q7Rows} γραμμές και ${q7Cols} στήλες;`,
       gridData: { rows: q7Rows, cols: q7Cols },
       correctVal: q7Val,
@@ -331,48 +560,37 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΥ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
-      correctVal: prob9.correctVal,
-      correctStr: prob9.correctStr,
-      explanation: prob9.explanation
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = prob10.correctVal;
-    const correctStr10 = `${prob10.correctStr} θέσεις`;
-    const fake10A = `${formatNumber(val10 + 50)} θέσεις`;
-    const fake10B = `${formatNumber(Math.max(10, val10 - 25))} θέσεις`;
-    const fake10C = `${formatNumber(val10 + 100)} θέσεις`;
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΥΠΟΛΟΓΙΣΜΟΥ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
-      explanation: prob10.explanation
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
@@ -392,21 +610,17 @@ export default function PollaplasiasmosExercisesPage() {
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9, οριο 10 χαρακτηρων)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, '');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
+    let sanitized = rawValue.replace(/[^0-9]/g, '');
     if (sanitized.length > 10) {
       sanitized = sanitized.slice(0, 10);
     }
@@ -436,7 +650,7 @@ export default function PollaplasiasmosExercisesPage() {
           currentScore += 1;
         }
       } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
+        const userValStr = (answers[`q_${q.id}`] || '').trim();
         const userVal = parseFloat(userValStr);
         if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
           currentScore += 1;
@@ -503,7 +717,7 @@ export default function PollaplasiasmosExercisesPage() {
               if (q.type === 'mcq') {
                 isCorrect = answers[`q_${q.id}`] === q.correctText;
               } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
+                const uv = parseFloat((answers[`q_${q.id}`] || '').trim());
                 isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
               }
             }
