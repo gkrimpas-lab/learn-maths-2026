@@ -34,7 +34,7 @@ function formatNum(val, decimals = 3) {
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων Συγκρισης για την Ερωτηση 9 (Input)
+// Διευρυμενη Δεξαμενη Κανονικων Προβληματων Συγκρισης για την Ερωτηση 9 (Input)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_cmp_std_1',
@@ -43,8 +43,8 @@ const STANDARD_PROBLEMS_POOL = [
       const w2 = 14.75;
       const diff = Number((w1 - w2).toFixed(2));
       return {
-        title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΓΚΡΙΣΗ ΒΑΡΟΥΣ',
-        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τη διαφορά σε κιλά με κόμμα:',
+        title: 'ΣΥΓΚΡΙΣΗ ΒΑΡΟΥΣ ΔΕΜΑΤΩΝ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τη διαφορά σε κιλά (kg) με κόμμα:',
         text: `Δύο δέματα ζυγίζουν ${formatNum(w1)} kg και ${formatNum(w2)} kg αντίστοιχα. Πόσα κιλά (kg) παραπάνω ζυγίζει το βαρύτερο δέμα;`,
         tableData: { col1: '1ο Δέμα', col2: '2ο Δέμα', r1: [`${formatNum(w1)} kg ＝ 14,80 kg`, `${formatNum(w2)} kg`], r2: ['Διαφορά', `${formatNum(diff, 2)} kg`] },
         correctVal: diff,
@@ -62,8 +62,8 @@ const STANDARD_PROBLEMS_POOL = [
       const p3 = 2.45;
       const maxVal = Math.max(p1, p2, p3);
       return {
-        title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΓΚΡΙΣΗ ΤΙΜΩΝ',
-        instruction: 'Λύστε το πρόβλημα και συμπληρώστε την ακριβότερη τιμή σε ευρώ με κόμμα:',
+        title: 'ΣΥΓΚΡΙΣΗ ΤΙΜΩΝ ΠΡΟΪΟΝΤΩΝ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε την ακριβότερη τιμή σε ευρώ (€) με κόμμα:',
         text: `Τρία όμοια προϊόντα πωλούνται σε τρία διαφορετικά καταστήματα προς ${formatNum(p1)} €, ${formatNum(p2)} € και ${formatNum(p3)} €. Ποια είναι η ακριβότερη τιμή σε ευρώ (€);`,
         tableData: { col1: 'Καταστήματα Α & Β', col2: 'Κατάστημα Γ', r1: [`${formatNum(p1)} €`, `${formatNum(p3)} €`], r2: [`${formatNum(p2)} €`, `Ακριβότερη: ${formatNum(maxVal, 2)} €`] },
         correctVal: maxVal,
@@ -80,8 +80,8 @@ const STANDARD_PROBLEMS_POOL = [
       const km2 = 12.5;
       const diff = Number((km2 - km1).toFixed(2));
       return {
-        title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΓΚΡΙΣΗ ΑΠΟΣΤΑΣΕΩΝ',
-        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τη διαφορά σε χιλιόμετρα με κόμμα:',
+        title: 'ΣΥΓΚΡΙΣΗ ΑΠΟΣΤΑΣΕΩΝ ΔΡΟΜΕΩΝ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τη διαφορά σε χιλιόμετρα (km) με κόμμα:',
         text: `Δύο δρομείς κάλυψαν αποστάσεις ${formatNum(km1)} km και ${formatNum(km2)} km αντίστοιχα. Πόσα χιλιόμετρα (km) περισσότερα διένυσε ο δεύτερος δρομέας;`,
         tableData: { col1: '1ος Δρομέας', col2: '2ος Δρομέας', r1: [`${formatNum(km1)} km`, `${formatNum(km2)} km ＝ 12,50 km`], r2: ['Διαφορά', `${formatNum(diff, 2)} km`] },
         correctVal: diff,
@@ -90,10 +90,64 @@ const STANDARD_PROBLEMS_POOL = [
         explanation: `Συμπληρώνουμε μηδενικό στο τέλος: 12,50 － 12,35 ＝ ${formatNum(diff, 2)} km.`
       };
     }
+  },
+  {
+    id: 'p_cmp_std_4',
+    generate: () => {
+      const len1 = 8.75;
+      const len2 = 8.8;
+      const diff = Number((len2 - len1).toFixed(2));
+      return {
+        title: 'ΣΥΓΚΡΙΣΗ ΜΗΚΟΥΣ ΥΦΑΣΜΑΤΩΝ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τη διαφορά μήκους σε μέτρα (m) με κόμμα:',
+        text: `Δύο τόπια υφάσματος έχουν μήκη ${formatNum(len1)} m και ${formatNum(len2)} m. Πόσα μέτρα (m) μακρύτερο είναι το δεύτερο τόπι;`,
+        tableData: { col1: '1ο Τόπι', col2: '2ο Τόπι', r1: [`${formatNum(len1)} m`, `${formatNum(len2)} m ＝ 8,80 m`], r2: ['Διαφορά', `${formatNum(diff, 2)} m`] },
+        correctVal: diff,
+        correctStr: formatNum(diff, 2),
+        unit: 'm',
+        explanation: `Εξισώνουμε τα δεκαδικά ψηφία: 8,80 － 8,75 ＝ ${formatNum(diff, 2)} m.`
+      };
+    }
+  },
+  {
+    id: 'p_cmp_std_5',
+    generate: () => {
+      const v1 = 5.6;
+      const v2 = 5.45;
+      const diff = Number((v1 - v2).toFixed(2));
+      return {
+        title: 'ΣΥΓΚΡΙΣΗ ΟΓΚΟΥ ΥΓΡΩΝ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τη διαφορά σε λίτρα (L) με κόμμα:',
+        text: `Δύο δοχεία περιέχουν ${formatNum(v1)} L και ${formatNum(v2)} L ελαιόλαδο αντίστοιχα. Πόσα λίτρα (L) περισσότερο ελαιόλαδο περιέχει το πρώτο δοχείο;`,
+        tableData: { col1: '1ο Δοχείο', col2: '2ο Δοχείο', r1: [`${formatNum(v1)} L ＝ 5,60 L`, `${formatNum(v2)} L`], r2: ['Διαφορά', `${formatNum(diff, 2)} L`] },
+        correctVal: diff,
+        correctStr: formatNum(diff, 2),
+        unit: 'L',
+        explanation: `Εξισώνουμε τα ψηφία: 5,60 － 5,45 ＝ ${formatNum(diff, 2)} L.`
+      };
+    }
+  },
+  {
+    id: 'p_cmp_std_6',
+    generate: () => {
+      const t1 = 10.25;
+      const t2 = 10.18;
+      const diff = Number((t1 - t2).toFixed(2));
+      return {
+        title: 'ΣΥΓΚΡΙΣΗ ΧΡΟΝΟΥ ΚΟΥΡΣΑΣ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τη διαφορά χρόνου σε δευτερόλεπτα (s) με κόμμα:',
+        text: `Δύο αθλητές τερμάτισαν στα 100 μέτρα με χρόνους ${formatNum(t1)} s και ${formatNum(t2)} s αντίστοιχα. Πόσα δευτερόλεπτα (s) ταχύτερος ήταν ο νικητής;`,
+        tableData: { col1: '2ος Αθλητής', col2: '1ος Αθλητής (Νικητής)', r1: [`${formatNum(t1)} s`, `${formatNum(t2)} s`], r2: ['Διαφορά', `${formatNum(diff, 2)} s`] },
+        correctVal: diff,
+        correctStr: formatNum(diff, 2),
+        unit: 's',
+        explanation: `Ο ταχύτερος αθλητής έχει τον μικρότερο χρόνο: 10,25 － 10,18 ＝ ${formatNum(diff, 2)} s.`
+      };
+    }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας για την Ερωτηση 10 (MCQ)
+// Διευρυμενη Δεξαμενη Προβληματων Αυξημενης Δυσκολιας για την Ερωτηση 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_cmp_hard_1',
@@ -113,8 +167,8 @@ const HARD_PROBLEMS_POOL = [
       }));
 
       return {
-        title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΓΚΡΙΣΗ ΜΗΚΩΝ',
-        instruction: 'Επιλέξτε το μήκος του κοντύτερου σύρματος:',
+        title: 'ΣΥΓΚΡΙΣΗ ΜΗΚΩΝ ΣΥΡΜΑΤΟΣ',
+        instruction: 'Επιλέξτε το μήκος του κοντύτερου σύρματος σε μέτρα (m):',
         text: `Τέσσερα κομμάτια σύρματος έχουν μήκη ${formatNum(lengths[0])} m, ${formatNum(lengths[1])} m, ${formatNum(lengths[2])} m και ${formatNum(lengths[3])} m. Ποιο είναι το μήκος του κοντύτερου σύρματος σε μέτρα (m);`,
         tableData: { col1: 'Τέσσερα Μήκη', col2: 'Εξίσωση σε χιλιοστά', r1: ['3,050 m / 3,500 m', '3,450 m / 3,005 m'], r2: ['Μικρότερο μήκος', `${formatNum(minVal, 3)} m`] },
         options,
@@ -143,8 +197,8 @@ const HARD_PROBLEMS_POOL = [
       }));
 
       return {
-        title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΣΥΝΑΛΛΑΓΗΣ',
-        instruction: 'Επιλέξτε το σωστό ποσό ρέστων:',
+        title: 'ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΣΥΝΑΛΛΑΓΗΣ',
+        instruction: 'Επιλέξτε το σωστό ποσό ρέστων σε ευρώ (€):',
         text: `Ένα βιβλίο κοστίζει ${formatNum(b1)} € σε ένα βιβλιοπωλείο και ${formatNum(b2)} € σε ένα άλλο. Αν κάποιος αγοράσει το ακριβότερο και πληρώσει με χαρτονόμισμα των 50 €, πόσα ρέστα (€) θα πάρει;`,
         tableData: { col1: 'Τιμές Βιβλίου', col2: 'Χαρτονόμισμα 50 €', r1: [`${formatNum(b1)} € (18,60 €)`, `${formatNum(b2)} €`], r2: ['Ακριβότερο: 18,60 €', `Ρέστα: ${formatNum(remain, 2)} €`] },
         options,
@@ -171,13 +225,97 @@ const HARD_PROBLEMS_POOL = [
       }));
 
       return {
-        title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΓΚΡΙΣΗ ΒΑΡΟΥΣ ΔΕΜΑΤΩΝ',
-        instruction: 'Επιλέξτε το βάρος του βαρύτερου δέματος:',
+        title: 'ΣΥΓΚΡΙΣΗ ΒΑΡΟΥΣ ΔΕΜΑΤΩΝ',
+        instruction: 'Επιλέξτε το βάρος του βαρύτερου δέματος σε κιλά (kg):',
         text: `Τέσσερα δέματα έχουν βάρη ${formatNum(weights[0])} kg, ${formatNum(weights[1])} kg, ${formatNum(weights[2])} kg και ${formatNum(weights[3])} kg. Ποιο είναι το βάρος του βαρύτερου δέματος σε κιλά (kg);`,
         tableData: { col1: 'Τέσσερα Βάρη', col2: 'Εξίσωση σε χιλιοστά', r1: ['2,450 kg / 2,500 kg', '2,055 kg / 2,405 kg'], r2: ['Βαρύτερο δέμα', `${formatNum(maxVal, 2)} kg`] },
         options,
         correctText: correctStr,
         explanation: `Εξισώνουμε σε 3 δεκαδικά ψηφία: 2,500 ＞ 2,450 ＞ 2,405 ＞ 2,055. Το βαρύτερο δέμα είναι αυτό με ${formatNum(maxVal, 2)} kg.`
+      };
+    }
+  },
+  {
+    id: 'p_cmp_hard_4',
+    generate: () => {
+      const distances = [15.2, 15.08, 15.25, 15.025];
+      const sorted = [...distances].sort((a, b) => b - a);
+      const maxVal = sorted[0];
+      const correctStr = `${formatNum(maxVal, 2)} km`;
+      const fake1 = `${formatNum(sorted[1], 1)} km`;
+      const fake2 = `${formatNum(sorted[2], 2)} km`;
+      const fake3 = `${formatNum(sorted[3], 3)} km`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΓΚΡΙΣΗ ΔΙΑΔΡΟΜΩΝ ΠΟΔΗΛΑΣΙΑΣ',
+        instruction: 'Επιλέξτε τη μεγαλύτερη διαδρομή σε χιλιόμετρα (km):',
+        text: `Τέσσερις ποδηλάτες διένυσαν διαδρομές ${formatNum(distances[0])} km, ${formatNum(distances[1])} km, ${formatNum(distances[2])} km και ${formatNum(distances[3])} km. Ποια είναι η μεγαλύτερη διαδρομή σε χιλιόμετρα (km);`,
+        tableData: { col1: 'Διαδρομές', col2: 'Εξίσωση σε χιλιοστά', r1: ['15,200 km / 15,080 km', '15,250 km / 15,025 km'], r2: ['Μέγιστη διαδρομή', `${formatNum(maxVal, 2)} km`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εξισώνουμε τα δεκαδικά ψηφία: 15,250 ＞ 15,200 ＞ 15,080 ＞ 15,025. Η μεγαλύτερη διαδρομή είναι ${formatNum(maxVal, 2)} km.`
+      };
+    }
+  },
+  {
+    id: 'p_cmp_hard_5',
+    generate: () => {
+      const fuels = [4.8, 4.75, 4.09, 4.82];
+      const sorted = [...fuels].sort((a, b) => a - b);
+      const minVal = sorted[0];
+      const correctStr = `${formatNum(minVal, 2)} L`;
+      const fake1 = `${formatNum(sorted[1], 2)} L`;
+      const fake2 = `${formatNum(sorted[2], 1)} L`;
+      const fake3 = `${formatNum(sorted[3], 2)} L`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΓΚΡΙΣΗ ΚΑΤΑΝΑΛΩΣΗΣ ΚΑΥΣΙΜΟΥ',
+        instruction: 'Επιλέξτε τη χαμηλότερη κατανάλωση σε λίτρα (L):',
+        text: `Τέσσερα αυτοκίνητα κατανάλωσαν ανά 100 km: ${formatNum(fuels[0])} L, ${formatNum(fuels[1])} L, ${formatNum(fuels[2])} L και ${formatNum(fuels[3])} L. Ποια είναι η χαμηλότερη κατανάλωση καυσίμου σε λίτρα (L);`,
+        tableData: { col1: 'Καταναλώσεις', col2: 'Εξίσωση εκατοστών', r1: ['4,80 L / 4,75 L', '4,09 L / 4,82 L'], r2: ['Χαμηλότερη', `${formatNum(minVal, 2)} L`] },
+        options,
+        correctText: correctStr,
+        explanation: `Συγκρίνουμε τα δέκατα: 4,09 ＜ 4,75 ＜ 4,80 ＜ 4,82. Η χαμηλότερη κατανάλωση είναι ${formatNum(minVal, 2)} L.`
+      };
+    }
+  },
+  {
+    id: 'p_cmp_hard_6',
+    generate: () => {
+      const heights = [7.6, 7.55, 7.65, 7.08];
+      const sorted = [...heights].sort((a, b) => b - a);
+      const maxVal = sorted[0];
+      const correctStr = `${formatNum(maxVal, 2)} m`;
+      const fake1 = `${formatNum(sorted[1], 1)} m`;
+      const fake2 = `${formatNum(sorted[2], 2)} m`;
+      const fake3 = `${formatNum(sorted[3], 2)} m`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΓΚΡΙΣΗ ΥΨΟΥΣ ΔΕΝΤΡΩΝ',
+        instruction: 'Επιλέξτε το ύψος του ψηλότερου δέντρου σε μέτρα (m):',
+        text: `Σε ένα πάρκο μετρήθηκαν τέσσερα δέντρα με ύψη ${formatNum(heights[0])} m, ${formatNum(heights[1])} m, ${formatNum(heights[2])} m και ${formatNum(heights[3])} m. Ποιο είναι το ύψος του ψηλότερου δέντρου σε μέτρα (m);`,
+        tableData: { col1: 'Ύψη Δέντρων', col2: 'Εξίσωση εκατοστών', r1: ['7,60 m / 7,55 m', '7,65 m / 7,08 m'], r2: ['Ψηλότερο', `${formatNum(maxVal, 2)} m`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εξισώνουμε τα εκατοστά: 7,65 ＞ 7,60 ＞ 7,55 ＞ 7,08. Το ψηλότερο δέντρο έχει ύψος ${formatNum(maxVal, 2)} m.`
       };
     }
   }
@@ -412,7 +550,7 @@ function generateQuestions() {
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: stdProb.title,
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
       instruction: stdProb.instruction,
       prompt: stdProb.text,
       tableData: stdProb.tableData,
@@ -425,7 +563,7 @@ function generateQuestions() {
     qList.push({
       id: 10,
       type: 'mcq',
-      title: hardProb.title,
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
       instruction: hardProb.instruction,
       prompt: hardProb.text,
       tableData: hardProb.tableData,
@@ -451,6 +589,7 @@ export default function SigkrisiExercisesPage() {
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
