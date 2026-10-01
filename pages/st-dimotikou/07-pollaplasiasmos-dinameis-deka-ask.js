@@ -29,9 +29,16 @@ function shuffle(array) {
 
 // Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
 function formatNum(val, decimals = 3) {
+  if (val === '' || val === null || val === undefined || isNaN(val)) return '0';
   if (Number.isInteger(val)) return String(val);
   const rounded = Number(val.toFixed(decimals));
   return String(rounded).replace('.', ',');
+}
+
+// Μορφοποιηση αριθμου με τελειες χιλιαδων
+function formatNumber(num) {
+  if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
+  return Number(num).toLocaleString('el-GR');
 }
 
 // Πληρης δεξαμενη θεματικων αντικειμενων καθημερινοτητας
@@ -439,10 +446,10 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 4 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑΣ',
       instruction: 'Υπολογίστε το συνολικό κόστος σε ευρώ (€):',
-      prompt: `Ένα σχολείο αγόρασε ${q4Count} ${q4Item.item} που κοστίζουν ${formatNum(q4Item.price, 2)} € το καθένα. Πόσο κόστισαν όλα μαζί;`,
+      prompt: `Ένα σχολείο αγόρασε ${formatNumber(q4Count)} ${q4Item.item} που κοστίζουν ${formatNum(q4Item.price, 2)} € το καθένα. Πόσο κόστισαν όλα μαζί;`,
       options,
       correctText: q4Correct,
-      explanation: `Υπολογίζουμε το συνολικό κόστος: ${q4Count} · ${formatNum(q4Item.price, 2)} € ＝ ${q4Correct}.`
+      explanation: `Υπολογίζουμε το συνολικό κόστος: ${formatNumber(q4Count)} · ${formatNum(q4Item.price, 2)} € ＝ ${q4Correct}.`
     });
   }
 
@@ -514,12 +521,12 @@ function generateQuestions() {
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΗ ΜΕΤΑΤΟΠΙΣΗ ΥΠΟΔΙΑΣΤΟΛΗΣ',
       instruction: 'Υπολογίστε το αποτέλεσμα της μετατόπισης με κόμμα:',
-      prompt: `Υπολογίστε: ${q7Int},${q7Dec} · ${q7Mult};`,
+      prompt: `Υπολογίστε: ${q7Int},${q7Dec} · ${formatNumber(q7Mult)};`,
       startStr: `${q7Int},${q7Dec}`,
       mult: q7Mult,
       correctVal: q7Ans,
       correctStr: q7AnsStr,
-      explanation: `Ξεκινώντας από το ${q7Int},${q7Dec} και κάνοντας ${q7Mult === 10 ? '1 άλμα' : '2 άλματα'} δεξιά λόγω του · ${q7Mult}, βρίσκουμε ${q7AnsStr}.`
+      explanation: `Ξεκινώντας από το ${q7Int},${q7Dec} και κάνοντας ${q7Mult === 10 ? '1 άλμα' : '2 άλματα'} δεξιά λόγω του · ${formatNumber(q7Mult)}, βρίσκουμε ${q7AnsStr}.`
     });
   }
 
