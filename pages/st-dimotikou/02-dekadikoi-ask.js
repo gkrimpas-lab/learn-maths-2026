@@ -34,7 +34,7 @@ function formatNum(val, decimals = 3) {
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων Δεκαδικων για την Ερωτηση 7 (Input)
+// Διευρυμενη Δεξαμενη Κανονικων Προβληματων Δεκαδικων για την Ερωτηση 7 (Input)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_dec_std_1',
@@ -86,10 +86,61 @@ const STANDARD_PROBLEMS_POOL = [
         explanation: `Πολλαπλασιάζουμε: ${liters} · ${formatNum(pricePerL)} ＝ ${formatNum(totalCost)} €.`
       };
     }
+  },
+  {
+    id: 'p_dec_std_4',
+    generate: () => {
+      const b1 = 4.25;
+      const b2 = 5.5;
+      const sum = Number((b1 + b2).toFixed(2));
+      return {
+        title: 'ΕΡΩΤΗΣΗ 7 • ΣΥΝΟΛΙΚΟΣ ΟΓΚΟΣ ΕΛΑΙΟΛΑΔΟΥ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τον συνολικό όγκο σε λίτρα (L) με κόμμα:',
+        text: `Ένα δοχείο περιέχει ${formatNum(b1)} L ελαιόλαδο και ένα άλλο ${formatNum(b2)} L. Πόσα λίτρα (L) ελαιόλαδο περιέχουν συνολικά τα δύο δοχεία;`,
+        tableData: { col1: '1ο Δοχείο', col2: '2ο Δοχείο', r1: [`${formatNum(b1)} L`, `${formatNum(b2)} L`], r2: ['Πρόσθεση', `${formatNum(sum)} L`] },
+        correctVal: sum,
+        correctStr: formatNum(sum),
+        explanation: `Προσθέτουμε ευθυγραμμίζοντας τα δέκατα και τα εκατοστά: ${formatNum(b1)} ＋ ${formatNum(b2)} ＝ ${formatNum(sum)} L.`
+      };
+    }
+  },
+  {
+    id: 'p_dec_std_5',
+    generate: () => {
+      const fullKm = 15;
+      const walkedKm = 8.35;
+      const remain = Number((fullKm - walkedKm).toFixed(2));
+      return {
+        title: 'ΕΡΩΤΗΣΗ 7 • ΥΠΟΛΟΙΠΟ ΔΙΑΔΡΟΜΗΣ ΠΕΖΟΠΟΡΙΑΣ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τα υπολειπόμενα χιλιόμετρα (km) με κόμμα:',
+        text: `Μια διαδρομή πεζοπορίας έχει συνολικό μήκος ${fullKm} km. Ένας πεζοπόρος έχει διανύσει ${formatNum(walkedKm)} km. Πόσα χιλιόμετρα (km) του απομένουν;`,
+        tableData: { col1: 'Συνολικό Μήκος', col2: 'Διανυθείσα Απόσταση', r1: [`${fullKm} km`, `${formatNum(walkedKm)} km`], r2: ['Αφαίρεση', `${formatNum(remain)} km`] },
+        correctVal: remain,
+        correctStr: formatNum(remain),
+        explanation: `Αφαιρούμε: 15,00 － ${formatNum(walkedKm)} ＝ ${formatNum(remain)} km.`
+      };
+    }
+  },
+  {
+    id: 'p_dec_std_6',
+    generate: () => {
+      const pricePerKg = 3.4;
+      const kg = 5;
+      const totalCost = Number((pricePerKg * kg).toFixed(2));
+      return {
+        title: 'ΕΡΩΤΗΣΗ 7 • ΑΓΟΡΑ ΜΕΛΙΟΥ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε το συνολικό ποσό σε ευρώ (€) με κόμμα:',
+        text: `Αγοράσαμε ${kg} κιλά μέλι προς ${formatNum(pricePerKg)} € το κιλό. Πόσα ευρώ (€) πληρώσαμε;`,
+        tableData: { col1: 'Ποσότητα', col2: 'Τιμή ανά κιλό', r1: [`${kg} kg`, `${formatNum(pricePerKg)} €`], r2: ['Γινόμενο', `${formatNum(totalCost)} €`] },
+        correctVal: totalCost,
+        correctStr: formatNum(totalCost),
+        explanation: `Πολλαπλασιάζουμε: ${kg} · ${formatNum(pricePerKg)} ＝ ${formatNum(totalCost)} €.`
+      };
+    }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας για τις Ερωτησεις 9 (Input) και 10 (MCQ)
+// Διευρυμενη Δεξαμενη Προβληματων Αυξημενης Δυσκολιας για τις Ερωτησεις 9 (Input) και 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_dec_hard_1',
@@ -185,6 +236,70 @@ const HARD_PROBLEMS_POOL = [
         options,
         correctText: correctStr,
         explanation: `Προσθέτουμε τα βάρη: ${formatNum(sack1)} ＋ ${formatNum(sack2)} ＋ ${formatNum(sack3)} ＝ ${formatNum(totalWeight)} kg.`
+      };
+    }
+  },
+  {
+    id: 'p_dec_hard_4',
+    generate: () => {
+      const cap = 20;
+      const fill1 = 6.8;
+      const fill2 = 7.45;
+      const remainL = Number((cap - (fill1 + fill2)).toFixed(2));
+      const correctStr = `${formatNum(remainL)} L`;
+      const fake1 = `${formatNum(remainL + 1.2)} L`;
+      const fake2 = `${formatNum(Math.max(0.5, remainL - 1.5))} L`;
+      const fake3 = `${formatNum(remainL + 2)} L`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΧΩΡΗΤΙΚΟΤΗΤΑ ΔΕΞΑΜΕΝΗΣ ΝΕΡΟΥ',
+        inputInstruction: 'Υπολογίστε πόσα λίτρα (L) χρειάζονται για να γεμίσει η δεξαμενή:',
+        mcqInstruction: 'Επιλέξτε πόσα λίτρα (L) νερού χρειάζονται για να γεμίσει η δεξαμενή:',
+        text: `Μια δεξαμενή χωράει ${cap} L νερό. Ρίξαμε αρχικά ${formatNum(fill1)} L και στη συνέχεια άλλα ${formatNum(fill2)} L. Πόσα λίτρα (L) νερού χρειάζονται ακόμη για να γεμίσει πλήρως;`,
+        tableData: { col1: 'Συνολική Χωρητικότητα', col2: 'Νερό που Ρίξαμε', r1: [`${cap} L`, `${formatNum(fill1)} L ＋ ${formatNum(fill2)} L`], r2: ['Υπόλοιπο', `${correctStr}`] },
+        correctVal: remainL,
+        correctStr: formatNum(remainL),
+        options,
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε το νερό που ρίξαμε: ${formatNum(fill1)} ＋ ${formatNum(fill2)} ＝ ${formatNum(fill1 + fill2)} L. Αφαιρούμε από τη συνολική χωρητικότητα: 20,00 － ${formatNum(fill1 + fill2)} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_dec_hard_5',
+    generate: () => {
+      const stage1 = 12.35;
+      const stage2 = 14.8;
+      const stage3 = 9.45;
+      const totalKm = Number((stage1 + stage2 + stage3).toFixed(2));
+      const correctStr = `${formatNum(totalKm)} km`;
+      const fake1 = `${formatNum(totalKm + 1.5)} km`;
+      const fake2 = `${formatNum(totalKm - 2)} km`;
+      const fake3 = `${formatNum(totalKm + 3.2)} km`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΝΟΛΙΚΗ ΑΠΟΣΤΑΣΗ ΠΟΔΗΛΑΤΙΚΟΥ ΓΥΡΟΥ',
+        inputInstruction: 'Υπολογίστε τη συνολική απόσταση σε χιλιόμετρα (km):',
+        mcqInstruction: 'Επιλέξτε τη συνολική απόσταση του γύρου σε χιλιόμετρα (km):',
+        text: `Ένας ποδηλάτης διένυσε τρία ετάπ: ${formatNum(stage1)} km στο πρώτο, ${formatNum(stage2)} km στο δεύτερο και ${formatNum(stage3)} km στο τρίτο. Πόσα χιλιόμετρα (km) διένυσε συνολικά;`,
+        tableData: { col1: 'Τρία Ετάπ', col2: 'Συνολική Διαδρομή', r1: [`${formatNum(stage1)} km ＋ ${formatNum(stage2)} km`, `＋ ${formatNum(stage3)} km`], r2: ['Άθροισμα', `${correctStr}`] },
+        correctVal: totalKm,
+        correctStr: formatNum(totalKm),
+        options,
+        correctText: correctStr,
+        explanation: `Προσθέτουμε τις αποστάσεις: ${formatNum(stage1)} ＋ ${formatNum(stage2)} ＋ ${formatNum(stage3)} ＝ ${correctStr}.`
       };
     }
   }
@@ -410,7 +525,7 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ) από το HARD_PROBLEMS_POOL
+  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ) από το HARD_PROBLEMS_POOL (χωρίς επανάληψη)
   {
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
     const hardProb1 = shuffledHard[0].generate();
@@ -459,6 +574,7 @@ export default function DekadikoiExercisesPage() {
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
