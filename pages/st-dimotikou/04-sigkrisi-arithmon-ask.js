@@ -34,7 +34,7 @@ function formatNum(val, decimals = 3) {
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων Συγκρισης
+// Δεξαμενη Κανονικων Προβληματων Συγκρισης για την Ερωτηση 9 (Input)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_cmp_std_1',
@@ -43,10 +43,13 @@ const STANDARD_PROBLEMS_POOL = [
       const w2 = 14.75;
       const diff = Number((w1 - w2).toFixed(2));
       return {
-        text: `Δύο δέματα ζυγίζουν ${formatNum(w1)} kg και ${formatNum(w2)} kg αντίστοιχα. Ποιο είναι το βαρύτερο δέμα και πόσα κιλά (kg) παραπάνω ζυγίζει;`,
-        tableData: { col1: '1ο Δέμα', col2: '2ο Δέμα', r1: [`${formatNum(w1)} kg ＝ 14,80 kg`, `${formatNum(w2)} kg`], r2: ['Διαφορά', 'χ kg'] },
+        title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΓΚΡΙΣΗ ΒΑΡΟΥΣ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τη διαφορά σε κιλά με κόμμα:',
+        text: `Δύο δέματα ζυγίζουν ${formatNum(w1)} kg και ${formatNum(w2)} kg αντίστοιχα. Πόσα κιλά (kg) παραπάνω ζυγίζει το βαρύτερο δέμα;`,
+        tableData: { col1: '1ο Δέμα', col2: '2ο Δέμα', r1: [`${formatNum(w1)} kg ＝ 14,80 kg`, `${formatNum(w2)} kg`], r2: ['Διαφορά', `${formatNum(diff, 2)} kg`] },
         correctVal: diff,
         correctStr: formatNum(diff, 2),
+        unit: 'kg',
         explanation: `Εξισώνουμε τα δεκαδικά ψηφία: 14,80 ＞ 14,75. Το 1ο δέμα είναι βαρύτερο κατά: 14,80 － 14,75 ＝ ${formatNum(diff, 2)} kg.`
       };
     }
@@ -59,10 +62,13 @@ const STANDARD_PROBLEMS_POOL = [
       const p3 = 2.45;
       const maxVal = Math.max(p1, p2, p3);
       return {
+        title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΓΚΡΙΣΗ ΤΙΜΩΝ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε την ακριβότερη τιμή σε ευρώ με κόμμα:',
         text: `Τρία όμοια προϊόντα πωλούνται σε τρία διαφορετικά καταστήματα προς ${formatNum(p1)} €, ${formatNum(p2)} € και ${formatNum(p3)} €. Ποια είναι η ακριβότερη τιμή σε ευρώ (€);`,
-        tableData: { col1: 'Καταστήματα Α & Β', col2: 'Κατάστημα Γ', r1: [`${formatNum(p1)} €`, `${formatNum(p3)} €`], r2: [`${formatNum(p2)} €`, 'Ακριβότερη τιμή'] },
+        tableData: { col1: 'Καταστήματα Α & Β', col2: 'Κατάστημα Γ', r1: [`${formatNum(p1)} €`, `${formatNum(p3)} €`], r2: [`${formatNum(p2)} €`, `Ακριβότερη: ${formatNum(maxVal, 2)} €`] },
         correctVal: maxVal,
         correctStr: formatNum(maxVal, 2),
+        unit: '€',
         explanation: `Συγκρίνουμε τα δέκατα και τα εκατοστά: 2,45 ＞ 2,40 ＞ 2,05. Η ακριβότερη τιμή είναι ${formatNum(maxVal, 2)} €.`
       };
     }
@@ -74,17 +80,20 @@ const STANDARD_PROBLEMS_POOL = [
       const km2 = 12.5;
       const diff = Number((km2 - km1).toFixed(2));
       return {
+        title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΓΚΡΙΣΗ ΑΠΟΣΤΑΣΕΩΝ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε τη διαφορά σε χιλιόμετρα με κόμμα:',
         text: `Δύο δρομείς κάλυψαν αποστάσεις ${formatNum(km1)} km και ${formatNum(km2)} km αντίστοιχα. Πόσα χιλιόμετρα (km) περισσότερα διένυσε ο δεύτερος δρομέας;`,
-        tableData: { col1: '1ος Δρομέας', col2: '2ος Δρομέας', r1: [`${formatNum(km1)} km`, `${formatNum(km2)} km ＝ 12,50 km`], r2: ['Διαφορά', 'χ km'] },
+        tableData: { col1: '1ος Δρομέας', col2: '2ος Δρομέας', r1: [`${formatNum(km1)} km`, `${formatNum(km2)} km ＝ 12,50 km`], r2: ['Διαφορά', `${formatNum(diff, 2)} km`] },
         correctVal: diff,
         correctStr: formatNum(diff, 2),
+        unit: 'km',
         explanation: `Συμπληρώνουμε μηδενικό στο τέλος: 12,50 － 12,35 ＝ ${formatNum(diff, 2)} km.`
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας
+// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας για την Ερωτηση 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_cmp_hard_1',
@@ -92,11 +101,24 @@ const HARD_PROBLEMS_POOL = [
       const lengths = [3.05, 3.5, 3.45, 3.005];
       const sorted = [...lengths].sort((a, b) => a - b);
       const minVal = sorted[0];
+      const correctStr = `${formatNum(minVal, 3)} m`;
+      const fake1 = `${formatNum(sorted[1], 2)} m`;
+      const fake2 = `${formatNum(sorted[2], 2)} m`;
+      const fake3 = `${formatNum(sorted[3], 1)} m`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΓΚΡΙΣΗ ΜΗΚΩΝ',
+        instruction: 'Επιλέξτε το μήκος του κοντύτερου σύρματος:',
         text: `Τέσσερα κομμάτια σύρματος έχουν μήκη ${formatNum(lengths[0])} m, ${formatNum(lengths[1])} m, ${formatNum(lengths[2])} m και ${formatNum(lengths[3])} m. Ποιο είναι το μήκος του κοντύτερου σύρματος σε μέτρα (m);`,
-        tableData: { col1: 'Τέσσερα Μήκη', col2: 'Εξίσωση σε χιλιοστά', r1: ['3,050 m / 3,500 m', '3,450 m / 3,005 m'], r2: ['Μικρότερο μήκος', 'χ m'] },
-        correctVal: minVal,
-        correctStr: formatNum(minVal, 3),
+        tableData: { col1: 'Τέσσερα Μήκη', col2: 'Εξίσωση σε χιλιοστά', r1: ['3,050 m / 3,500 m', '3,450 m / 3,005 m'], r2: ['Μικρότερο μήκος', `${formatNum(minVal, 3)} m`] },
+        options,
+        correctText: correctStr,
         explanation: `Εξισώνουμε σε 3 δεκαδικά ψηφία: 3,005 ＜ 3,050 ＜ 3,450 ＜ 3,500. Το κοντύτερο σύρμα έχει μήκος ${formatNum(minVal, 3)} m.`
       };
     }
@@ -109,12 +131,53 @@ const HARD_PROBLEMS_POOL = [
       const b2 = 18.06;
       const maxVal = Math.max(b1, b2);
       const remain = Number((budget - maxVal).toFixed(2));
+      const correctStr = `${formatNum(remain, 2)} €`;
+      const fake1 = `${formatNum(remain + 1.5, 2)} €`;
+      const fake2 = `${formatNum(Math.max(0.5, remain - 1.2), 2)} €`;
+      const fake3 = `${formatNum(remain + 3.1, 2)} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΣΥΝΑΛΛΑΓΗΣ',
+        instruction: 'Επιλέξτε το σωστό ποσό ρέστων:',
         text: `Ένα βιβλίο κοστίζει ${formatNum(b1)} € σε ένα βιβλιοπωλείο και ${formatNum(b2)} € σε ένα άλλο. Αν κάποιος αγοράσει το ακριβότερο και πληρώσει με χαρτονόμισμα των 50 €, πόσα ρέστα (€) θα πάρει;`,
-        tableData: { col1: 'Τιμές Βιβλίου', col2: 'Χαρτονόμισμα 50 €', r1: [`${formatNum(b1)} € (18,60 €)`, `${formatNum(b2)} €`], r2: ['Ακριβότερο: 18,60 €', 'Ρέστα'] },
-        correctVal: remain,
-        correctStr: formatNum(remain, 2),
+        tableData: { col1: 'Τιμές Βιβλίου', col2: 'Χαρτονόμισμα 50 €', r1: [`${formatNum(b1)} € (18,60 €)`, `${formatNum(b2)} €`], r2: ['Ακριβότερο: 18,60 €', `Ρέστα: ${formatNum(remain, 2)} €`] },
+        options,
+        correctText: correctStr,
         explanation: `18,60 ＞ 18,06, άρα το ακριβότερο κοστίζει 18,60 €. Ρέστα από 50 €: 50,00 － 18,60 ＝ ${formatNum(remain, 2)} €.`
+      };
+    }
+  },
+  {
+    id: 'p_cmp_hard_3',
+    generate: () => {
+      const weights = [2.45, 2.5, 2.055, 2.405];
+      const sorted = [...weights].sort((a, b) => b - a);
+      const maxVal = sorted[0];
+      const correctStr = `${formatNum(maxVal, 2)} kg`;
+      const fake1 = `${formatNum(sorted[1], 2)} kg`;
+      const fake2 = `${formatNum(sorted[2], 3)} kg`;
+      const fake3 = `${formatNum(sorted[3], 3)} kg`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΓΚΡΙΣΗ ΒΑΡΟΥΣ ΔΕΜΑΤΩΝ',
+        instruction: 'Επιλέξτε το βάρος του βαρύτερου δέματος:',
+        text: `Τέσσερα δέματα έχουν βάρη ${formatNum(weights[0])} kg, ${formatNum(weights[1])} kg, ${formatNum(weights[2])} kg και ${formatNum(weights[3])} kg. Ποιο είναι το βάρος του βαρύτερου δέματος σε κιλά (kg);`,
+        tableData: { col1: 'Τέσσερα Βάρη', col2: 'Εξίσωση σε χιλιοστά', r1: ['2,450 kg / 2,500 kg', '2,055 kg / 2,405 kg'], r2: ['Βαρύτερο δέμα', `${formatNum(maxVal, 2)} kg`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εξισώνουμε σε 3 δεκαδικά ψηφία: 2,500 ＞ 2,450 ＞ 2,405 ＞ 2,055. Το βαρύτερο δέμα είναι αυτό με ${formatNum(maxVal, 2)} kg.`
       };
     }
   }
@@ -187,7 +250,7 @@ function generateQuestions() {
     const q3Sorted = [...q3List].sort((a, b) => b.val - a.val);
     const q3CorrectAnswer = q3Sorted[0].text;
     const q3CorrectVal = q3Sorted[0].val;
-    const q3DisplayList = shuffle(q3List.map(o => o.text)).join('  •  ');
+    const q3DisplayList = shuffle(q3List.map((o) => o.text)).join('  •  ');
 
     qList.push({
       id: 3,
@@ -338,7 +401,7 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
@@ -349,8 +412,8 @@ function generateQuestions() {
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΣΥΓΚΡΙΣΗΣ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα με κόμμα:',
+      title: stdProb.title,
+      instruction: stdProb.instruction,
       prompt: stdProb.text,
       tableData: stdProb.tableData,
       correctVal: stdProb.correctVal,
@@ -358,28 +421,16 @@ function generateQuestions() {
       explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = hardProb.correctVal;
-    const correctStr10 = `${hardProb.correctStr} €`;
-    const fake10A = `${formatNum(val10 + 1.5, 2)} €`;
-    const fake10B = `${formatNum(Math.max(0.5, val10 - 1.2), 2)} €`;
-    const fake10C = `${formatNum(val10 + 3.1, 2)} €`;
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένες μονάδες μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΣΥΝΑΛΛΑΓΗΣ',
-      instruction: 'Επιλέξτε το σωστό ποσό ρέστων:',
+      title: hardProb.title,
+      instruction: hardProb.instruction,
       prompt: hardProb.text,
       tableData: hardProb.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
       explanation: hardProb.explanation
     });
   }
