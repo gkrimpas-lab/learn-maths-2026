@@ -39,28 +39,44 @@ function generateUniqueDigitsNumber() {
   const allDigits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   
   const d0 = firstDigits[randInt(0, firstDigits.length - 1)];
-  const remaining = allDigits.filter(d => d !== d0);
+  const remaining = allDigits.filter((d) => d !== d0);
   const shuffled = shuffle(remaining);
   
   const chosen = [d0, ...shuffled.slice(0, 5)];
   return Number(chosen.join(''));
 }
 
-// Δεξαμενη Κανονικων Προβληματων
+// Διευρυμενη Δεξαμενη Κανονικων Προβληματων (για Q7 και Q8)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_fys_std_1',
     generate: () => {
-      const tickets = randInt(120, 450) * 1000;
+      const digit = randInt(2, 8);
+      const tickets = digit * 100000 + randInt(12, 85) * 1000;
       const targetPos = 'Εκατοντάδες Χιλιάδων';
-      const digit = Math.floor(tickets / 100000);
       const digitVal = digit * 100000;
+      const valStr = formatNumber(digitVal);
+      const f1 = formatNumber(digit * 10000);
+      const f2 = formatNumber(digit * 1000000);
+      const f3 = formatNumber(digit * 1000);
+
+      const rawOptions = [valStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === valStr
+      }));
+
       return {
-        text: `Σε μια διεθνή συναυλία διατέθηκαν ${formatNumber(tickets)} εισιτήρια. Ποια είναι η πραγματική αριθμητική αξία του ψηφίου των ${targetPos};`,
-        tableData: { col1: 'Εισιτήρια', col2: 'Θέση', r1: [`${formatNumber(tickets)}`, `${targetPos}`], r2: ['Ψηφίο: ' + digit, 'Αξία: χ'] },
+        title: 'ΑΞΙΑ ΘΕΣΗΣ ΣΕ ΕΙΣΙΤΗΡΙΑ',
+        inputInstruction: 'Υπολογίστε την αριθμητική αξία του ψηφίου (ακέραιος χωρίς τελείες):',
+        mcqInstruction: 'Επιλέξτε την πραγματική αριθμητική αξία του ψηφίου:',
+        text: `Σε μια διεθνή συναυλία διατέθηκαν ${formatNumber(tickets)} εισιτήρια. Ποια είναι η πραγματική αριθμητική αξία του ψηφίου των ${targetPos} (${digit});`,
+        tableData: { col1: 'Εισιτήρια', col2: 'Θέση', r1: [`${formatNumber(tickets)}`, `${targetPos}`], r2: [`Ψηφίο: ${digit}`, `Αξία: ${valStr}`] },
         correctVal: digitVal,
         correctStr: String(digitVal),
-        explanation: `Το ψηφίο των ${targetPos} είναι το ${digit}, άρα η αξία του είναι ${digit} · 100.000 ＝ ${formatNumber(digitVal)}.`
+        options,
+        correctText: valStr,
+        explanation: `Το ψηφίο των ${targetPos} είναι το ${digit}, άρα η αξία του είναι ${digit} · 100.000 ＝ ${valStr}.`
       };
     }
   },
@@ -68,13 +84,29 @@ const STANDARD_PROBLEMS_POOL = [
     id: 'p_fys_std_2',
     generate: () => {
       const pA = randInt(35, 75) * 10000;
-      const pB = pA + randInt(12, 35) * 1000;
-      const diff = pB - pA;
+      const diff = randInt(12, 35) * 1000;
+      const pB = pA + diff;
+      const correctStr = `${formatNumber(diff)} κάτοικοι`;
+      const f1 = `${formatNumber(diff + 10000)} κάτοικοι`;
+      const f2 = `${formatNumber(Math.max(1000, diff - 10000))} κάτοικοι`;
+      const f3 = `${formatNumber(diff + 5000)} κάτοικοι`;
+
+      const rawOptions = [correctStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΣΥΓΚΡΙΣΗ ΠΛΗΘΥΣΜΟΥ ΠΕΡΙΦΕΡΕΙΩΝ',
+        inputInstruction: 'Υπολογίστε τη διαφορά πληθυσμού (ακέραιος χωρίς τελείες):',
+        mcqInstruction: 'Επιλέξτε πόσους περισσότερους κατοίκους έχει η μεγαλύτερη περιφέρεια:',
         text: `Δύο όμορες περιφέρειες έχουν πληθυσμούς ${formatNumber(pB)} και ${formatNumber(pA)} κατοίκους. Πόσους περισσότερους κατοίκους έχει η μεγαλύτερη περιφέρεια;`,
-        tableData: { col1: 'Περιφέρεια Α', col2: 'Περιφέρεια Β', r1: [`${formatNumber(pB)} κατ.`, `${formatNumber(pA)} κατ.`], r2: ['Διαφορά', 'χ'] },
+        tableData: { col1: 'Περιφέρεια Α', col2: 'Περιφέρεια Β', r1: [`${formatNumber(pB)} κατ.`, `${formatNumber(pA)} κατ.`], r2: ['Διαφορά', `${formatNumber(diff)} κατ.`] },
         correctVal: diff,
         correctStr: String(diff),
+        options,
+        correctText: correctStr,
         explanation: `Αφαιρούμε τον μικρότερο αριθμό από τον μεγαλύτερο: ${formatNumber(pB)} － ${formatNumber(pA)} ＝ ${formatNumber(diff)} κάτοικοι.`
       };
     }
@@ -84,18 +116,126 @@ const STANDARD_PROBLEMS_POOL = [
     generate: () => {
       const thousands = randInt(250, 650);
       const fullNum = thousands * 1000;
+      const correctStr = `${formatNumber(thousands)} χιλιάδες`;
+      const f1 = `${formatNumber(thousands * 10)} χιλιάδες`;
+      const f2 = `${formatNumber(Math.floor(thousands / 10))} χιλιάδες`;
+      const f3 = `${formatNumber(thousands + 100)} χιλιάδες`;
+
+      const rawOptions = [correctStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΚΑΤΑΜΕΤΡΗΣΗ ΠΡΟΒΟΛΩΝ ΣΕ ΧΙΛΙΑΔΕΣ',
+        inputInstruction: 'Υπολογίστε το πλήθος των χιλιάδων (ακέραιος χωρίς τελείες):',
+        mcqInstruction: 'Επιλέξτε πόσες ακέραιες χιλιάδες προβολών συγκεντρώθηκαν:',
         text: `Ένα εκπαιδευτικό βίντεο συγκέντρωσε ${formatNumber(fullNum)} προβολές. Πόσες ακέραιες χιλιάδες προβολών συγκέντρωσε το βίντεο;`,
-        tableData: { col1: 'Προβολές', col2: 'Μονάδα Χιλιάδων', r1: [`${formatNumber(fullNum)}`, '1 Χιλιάδα ＝ 1.000'], r2: ['Διαίρεση με 1.000', 'χ'] },
+        tableData: { col1: 'Προβολές', col2: 'Μονάδα Χιλιάδων', r1: [`${formatNumber(fullNum)}`, '1 Χιλιάδα ＝ 1.000'], r2: ['Διαίρεση με 1.000', `${formatNumber(thousands)}`] },
         correctVal: thousands,
         correctStr: String(thousands),
+        options,
+        correctText: correctStr,
         explanation: `Διαιρούμε με το 1.000: ${formatNumber(fullNum)} : 1.000 ＝ ${formatNumber(thousands)} χιλιάδες.`
+      };
+    }
+  },
+  {
+    id: 'p_fys_std_4',
+    generate: () => {
+      const copies = randInt(12, 45) * 10000;
+      const digit = Math.floor(copies / 10000);
+      const digitVal = digit * 10000;
+      const valStr = formatNumber(digitVal);
+      const f1 = formatNumber(digit * 1000);
+      const f2 = formatNumber(digit * 100000);
+      const f3 = formatNumber(digit * 100);
+
+      const rawOptions = [valStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === valStr
+      }));
+
+      return {
+        title: 'ΑΞΙΑ ΘΕΣΗΣ ΣΕ ΑΝΤΙΤΥΠΑ ΒΙΒΛΙΩΝ',
+        inputInstruction: 'Υπολογίστε την αξία του ψηφίου των Δεκάδων Χιλιάδων:',
+        mcqInstruction: 'Επιλέξτε την πραγματική αξία του ψηφίου των Δεκάδων Χιλιάδων:',
+        text: `Ένας εκδοτικός οίκος τύπωσε ${formatNumber(copies)} αντίτυπα ενός λεξικού. Ποια είναι η πραγματική αξία του ψηφίου των Δεκάδων Χιλιάδων (${digit});`,
+        tableData: { col1: 'Αντίτυπα', col2: 'Θέση', r1: [`${formatNumber(copies)}`, 'Δεκάδες Χιλιάδων'], r2: [`Ψηφίο: ${digit}`, `Αξία: ${valStr}`] },
+        correctVal: digitVal,
+        correctStr: String(digitVal),
+        options,
+        correctText: valStr,
+        explanation: `Το ψηφίο ${digit} βρίσκεται στις Δεκάδες Χιλιάδων, άρα η αξία του είναι ${digit} · 10.000 ＝ ${valStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_fys_std_5',
+    generate: () => {
+      const year1 = randInt(110, 240) * 1000;
+      const diff = randInt(15, 45) * 1000;
+      const year2 = year1 + diff;
+      const correctStr = `${formatNumber(diff)} kg`;
+      const f1 = `${formatNumber(diff + 10000)} kg`;
+      const f2 = `${formatNumber(Math.max(1000, diff - 5000))} kg`;
+      const f3 = `${formatNumber(diff + 20000)} kg`;
+
+      const rawOptions = [correctStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΠΑΡΑΓΩΓΗ ΕΛΑΙΟΛΑΔΟΥ',
+        inputInstruction: 'Υπολογίστε την αύξηση της παραγωγής σε κιλά (kg):',
+        mcqInstruction: 'Επιλέξτε πόσα κιλά παραπάνω παρήχθησαν τη δεύτερη χρονιά:',
+        text: `Ένας συνεταιρισμός παρήγαγε ${formatNumber(year1)} kg ελαιόλαδο την πρώτη χρονιά και ${formatNumber(year2)} kg τη δεύτερη χρονιά. Πόσα κιλά (kg) παραπάνω παρήγαγε τη δεύτερη χρονιά;`,
+        tableData: { col1: '1η Χρονιά', col2: '2η Χρονιά', r1: [`${formatNumber(year1)} kg`, `${formatNumber(year2)} kg`], r2: ['Αύξηση', `${formatNumber(diff)} kg`] },
+        correctVal: diff,
+        correctStr: String(diff),
+        options,
+        correctText: correctStr,
+        explanation: `Αφαιρούμε την παραγωγή του πρώτου έτους: ${formatNumber(year2)} － ${formatNumber(year1)} ＝ ${formatNumber(diff)} kg.`
+      };
+    }
+  },
+  {
+    id: 'p_fys_std_6',
+    generate: () => {
+      const spectators = randInt(15, 35) * 1000;
+      const hundreds = Math.floor(spectators / 100);
+      const correctStr = `${formatNumber(hundreds)} εκατοντάδες`;
+      const f1 = `${formatNumber(hundreds * 10)} εκατοντάδες`;
+      const f2 = `${formatNumber(Math.floor(hundreds / 10))} εκατοντάδες`;
+      const f3 = `${formatNumber(hundreds + 50)} εκατοντάδες`;
+
+      const rawOptions = [correctStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΚΑΤΑΜΕΤΡΗΣΗ ΘΕΑΤΩΝ ΣΕ ΕΚΑΤΟΝΤΑΔΕΣ',
+        inputInstruction: 'Υπολογίστε το πλήθος των εκατοντάδων (ακέραιος χωρίς τελείες):',
+        mcqInstruction: 'Επιλέξτε πόσες ακέραιες εκατοντάδες θεατών παρακολούθησαν τον αγώνα:',
+        text: `Σε έναν τελικό ποδοσφαίρου παρευρέθηκαν ${formatNumber(spectators)} θεατές. Πόσες ακέραιες εκατοντάδες θεατών αντιστοιχούν σε αυτόν τον αριθμό;`,
+        tableData: { col1: 'Συνολικοί Θεατές', col2: 'Μονάδα Εκατοντάδων', r1: [`${formatNumber(spectators)}`, '1 Εκατοντάδα ＝ 100'], r2: ['Διαίρεση με 100', `${formatNumber(hundreds)}`] },
+        correctVal: hundreds,
+        correctStr: String(hundreds),
+        options,
+        correctText: correctStr,
+        explanation: `Διαιρούμε με το 100: ${formatNumber(spectators)} : 100 ＝ ${formatNumber(hundreds)} εκατοντάδες θεατών.`
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας
+// Διευρυμενη Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (για Q9 και Q10)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_fys_hard_1',
@@ -106,12 +246,28 @@ const HARD_PROBLEMS_POOL = [
       const fullNumber = millions * 1000000 + thousands * 1000 + units;
       const targetDigit = millions;
       const powerVal = targetDigit * 1000000;
+      const valStr = formatNumber(powerVal);
+      const f1 = formatNumber(targetDigit * 100000);
+      const f2 = formatNumber(targetDigit * 10000000);
+      const f3 = formatNumber(targetDigit * 10000);
+
+      const rawOptions = [valStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === valStr
+      }));
+
       return {
+        title: 'ΑΞΙΑ ΘΕΣΗΣ ΣΕ ΑΡΧΑΙΟΛΟΓΙΚΟ ΕΥΡΗΜΑ',
+        inputInstruction: 'Υπολογίστε την αριθμητική αξία του ψηφίου (ακέραιος χωρίς τελείες):',
+        mcqInstruction: 'Επιλέξτε πόσες μονάδες αξίζει το ψηφίο των Εκατομμυρίων:',
         text: `Η ηλικία ενός αρχαιολογικού ευρήματος εκτιμήθηκε στα ${formatNumber(fullNumber)} έτη. Πόσες μονάδες αξίζει το ψηφίο των Εκατομμυρίων (${targetDigit}) μέσα σε αυτόν τον αριθμό;`,
-        tableData: { col1: 'Αριθμός Ετών', col2: 'Τάξη Εκατομμυρίων', r1: [`${formatNumber(fullNumber)}`, `Ψηφίο: ${targetDigit}`], r2: ['Αξία Θέσης', 'χ'] },
+        tableData: { col1: 'Αριθμός Ετών', col2: 'Τάξη Εκατομμυρίων', r1: [`${formatNumber(fullNumber)}`, `Ψηφίο: ${targetDigit}`], r2: ['Αξία Θέσης', `${valStr}`] },
         correctVal: powerVal,
         correctStr: String(powerVal),
-        explanation: `Το ψηφίο ${targetDigit} βρίσκεται στην τάξη των Μονάδων Εκατομμυρίων, άρα η αξία του είναι ${targetDigit} · 1.000.000 ＝ ${formatNumber(powerVal)}.`
+        options,
+        correctText: valStr,
+        explanation: `Το ψηφίο ${targetDigit} βρίσκεται στην τάξη των Μονάδων Εκατομμυρίων, άρα η αξία του είναι ${targetDigit} · 1.000.000 ＝ ${valStr}.`
       };
     }
   },
@@ -122,12 +278,121 @@ const HARD_PROBLEMS_POOL = [
       const budget2 = randInt(4, 9) * 100000;
       const budget3 = randInt(2, 8) * 10000;
       const totalBudget = budget1 + budget2 + budget3;
+      const correctStr = `${formatNumber(totalBudget)} €`;
+      const f1 = `${formatNumber(totalBudget + 1000000)} €`;
+      const f2 = `${formatNumber(Math.max(10000, totalBudget - 500000))} €`;
+      const f3 = `${formatNumber(totalBudget + 200000)} €`;
+
+      const rawOptions = [correctStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΣΥΝΟΛΙΚΟΣ ΣΧΟΛΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ',
+        inputInstruction: 'Υπολογίστε το συνολικό ποσό σε ευρώ (€):',
+        mcqInstruction: 'Επιλέξτε το σωστό συνολικό ποσό σε ευρώ (€):',
         text: `Για τη συντήρηση των σχολείων εγκρίθηκαν: ${formatNumber(budget1)} € για κτηριακά, ${formatNumber(budget2)} € για ψηφιακό εξοπλισμό και ${formatNumber(budget3)} € για βιβλιοθήκες. Ποιο είναι το συνολικό ποσό σε ευρώ (€);`,
-        tableData: { col1: 'Επιμέρους Κονδύλια', col2: 'Σύνολο Προϋπολογισμού', r1: [`${formatNumber(budget1)} € ＋ ${formatNumber(budget2)} €`, `＋ ${formatNumber(budget3)} €`], r2: ['Πρόσθεση', 'χ €'] },
+        tableData: { col1: 'Επιμέρους Κονδύλια', col2: 'Σύνολο Προϋπολογισμού', r1: [`${formatNumber(budget1)} € ＋ ${formatNumber(budget2)} €`, `＋ ${formatNumber(budget3)} €`], r2: ['Πρόσθεση', `${correctStr}`] },
         correctVal: totalBudget,
         correctStr: String(totalBudget),
-        explanation: `Προσθέτουμε τα επιμέρους ποσά: ${formatNumber(budget1)} ＋ ${formatNumber(budget2)} ＋ ${formatNumber(budget3)} ＝ ${formatNumber(totalBudget)} €.`
+        options,
+        correctText: correctStr,
+        explanation: `Προσθέτουμε τα επιμέρους ποσά: ${formatNumber(budget1)} ＋ ${formatNumber(budget2)} ＋ ${formatNumber(budget3)} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_fys_hard_3',
+    generate: () => {
+      const dEarthMoon = 384400;
+      const trips = randInt(2, 5);
+      const totalKm = dEarthMoon * trips;
+      const correctStr = `${formatNumber(totalKm)} km`;
+      const f1 = `${formatNumber(totalKm + 100000)} km`;
+      const f2 = `${formatNumber(totalKm - 100000)} km`;
+      const f3 = `${formatNumber(totalKm + 50000)} km`;
+
+      const rawOptions = [correctStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΔΙΑΣΤΗΜΙΚΗΣ ΑΠΟΣΤΑΣΗΣ',
+        inputInstruction: 'Υπολογίστε τη συνολική απόσταση σε χιλιόμετρα (km):',
+        mcqInstruction: 'Επιλέξτε τη συνολική απόσταση σε χιλιόμετρα (km):',
+        text: `Η μέση απόσταση Γης - Σελήνης είναι περίπου ${formatNumber(dEarthMoon)} km. Πόσα χιλιόμετρα (km) θα διανύσει ένα διαστημόπλοιο που θα εκτελέσει ${trips} φορές αυτή τη διαδρομή;`,
+        tableData: { col1: 'Μονή Διαδρομή', col2: 'Πλήθος Ταξιδιών', r1: [`${formatNumber(dEarthMoon)} km`, `${trips} ταξίδια`], r2: ['Γινόμενο', `${correctStr}`] },
+        correctVal: totalKm,
+        correctStr: String(totalKm),
+        options,
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε την απόσταση με τα ταξίδια: ${formatNumber(dEarthMoon)} · ${trips} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_fys_hard_4',
+    generate: () => {
+      const dep1 = randInt(10, 25) * 1000000;
+      const dep2 = randInt(300, 750) * 1000;
+      const totalDep = dep1 + dep2;
+      const correctStr = `${formatNumber(totalDep)} €`;
+      const f1 = `${formatNumber(totalDep + 500000)} €`;
+      const f2 = `${formatNumber(Math.max(100000, totalDep - 1000000))} €`;
+      const f3 = `${formatNumber(totalDep + 250000)} €`;
+
+      const rawOptions = [correctStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΤΡΑΠΕΖΙΚΕΣ ΚΑΤΑΘΕΣΕΙΣ ΕΤΑΙΡΕΙΑΣ',
+        inputInstruction: 'Υπολογίστε τις συνολικές καταθέσεις σε ευρώ (€):',
+        mcqInstruction: 'Επιλέξτε το συνολικό ποσό καταθέσεων σε ευρώ (€):',
+        text: `Μια επιχείρηση διατηρεί δύο εταιρικούς λογαριασμούς με καταθέσεις ${formatNumber(dep1)} € και ${formatNumber(dep2)} € αντίστοιχα. Ποιο είναι το συνολικό ποσό των καταθέσεων της επιχείρησης σε ευρώ (€);`,
+        tableData: { col1: '1ος Λογαριασμός', col2: '2ος Λογαριασμός', r1: [`${formatNumber(dep1)} €`, `${formatNumber(dep2)} €`], r2: ['Άθροισμα', `${correctStr}`] },
+        correctVal: totalDep,
+        correctStr: String(totalDep),
+        options,
+        correctText: correctStr,
+        explanation: `Προσθέτουμε τους δύο λογαριασμούς: ${formatNumber(dep1)} ＋ ${formatNumber(dep2)} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_fys_hard_5',
+    generate: () => {
+      const highwayKm = randInt(12, 28) * 1000000;
+      const bridgeKm = randInt(3, 8) * 100000;
+      const totalCost = highwayKm + bridgeKm;
+      const correctStr = `${formatNumber(totalCost)} €`;
+      const f1 = `${formatNumber(totalCost + 2000000)} €`;
+      const f2 = `${formatNumber(Math.max(100000, totalCost - 1000000))} €`;
+      const f3 = `${formatNumber(totalCost + 500000)} €`;
+
+      const rawOptions = [correctStr, f1, f2, f3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΕΠΕΝΔΥΣΕΙΣ ΟΔΙΚΩΝ ΥΠΟΔΟΜΩΝ',
+        inputInstruction: 'Υπολογίστε το συνολικό κόστος των έργων σε ευρώ (€):',
+        mcqInstruction: 'Επιλέξτε το συνολικό κόστος των έργων υποδομής σε ευρώ (€):',
+        text: `Για την κατασκευή ενός αυτοκινητοδρόμου δαπανήθηκαν ${formatNumber(highwayKm)} € και για μια γέφυρα ${formatNumber(bridgeKm)} €. Πόσα ευρώ (€) δαπανήθηκαν συνολικά για τα δύο έργα;`,
+        tableData: { col1: 'Αυτοκινητόδρομος', col2: 'Γέφυρα', r1: [`${formatNumber(highwayKm)} €`, `${formatNumber(bridgeKm)} €`], r2: ['Συνολική Δαπάνη', `${correctStr}`] },
+        correctVal: totalCost,
+        correctStr: String(totalCost),
+        options,
+        correctText: correctStr,
+        explanation: `Προσθέτουμε τα κόστη των έργων: ${formatNumber(highwayKm)} ＋ ${formatNumber(bridgeKm)} ＝ ${correctStr}.`
       };
     }
   }
@@ -156,7 +421,7 @@ function generateQuestions() {
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΑΞΙΑ ΘΕΣΗΣ ΨΗΦΙΟΥ',
-      instruction: 'Βρείτε την πραγματική αριθμητική αξία του ψηφίου:',
+      instruction: 'Βρείτε την πραγματική αριθμητική αξία του ψηφίου (ακέραιος χωρίς τελείες):',
       prompt: `Στον αριθμό ${formatNumber(q1NumBase)}, ποια είναι η πραγματική αξία του ψηφίου ${q1TargetDigit};`,
       correctVal: q1Answer,
       correctStr: String(q1Answer),
@@ -177,7 +442,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΣΥΝΘΕΣΗ ΑΡΙΘΜΟΥ',
-      instruction: 'Συνθέστε τον φυσικό αριθμό από την αναπτυγμένη μορφή του:',
+      instruction: 'Συνθέστε τον φυσικό αριθμό (ακέραιος χωρίς τελείες):',
       prompt: `Ποιος φυσικός αριθμός προκύπτει από την πράξη: ${q2Prompt};`,
       correctVal: q2Answer,
       correctStr: String(q2Answer),
@@ -185,7 +450,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (MCQ): Αναγνώριση Περιόδου
+  // Q3 (MCQ): Αναγνώριση Περιόδου (Εγγύηση Μοναδικότητας)
   {
     const q3MillionPart = randInt(12, 85);
     const q3ThousandPart = randInt(100, 999);
@@ -216,7 +481,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Σύγκριση Μεγάλων Αριθμών
+  // Q4 (MCQ): Σύγκριση Μεγάλων Αριθμών (Εγγύηση Μοναδικότητας)
   {
     const q4Base = randInt(450, 750) * 10000;
     const v1 = q4Base + 45000;
@@ -298,18 +563,18 @@ function generateQuestions() {
     });
   }
 
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
+  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή STANDARD_PROBLEMS_POOL (χωρίς επανάληψη)
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
     const stdProb1 = shuffledStd[0].generate();
     const stdProb2 = shuffledStd[1].generate();
 
-    // Q7 (Input - Decimal)
+    // Q7 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 7,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΦΥΣΙΚΩΝ ΑΡΙΘΜΩΝ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
+      title: `ΕΡΩΤΗΣΗ 7 • ${stdProb1.title}`,
+      instruction: stdProb1.inputInstruction,
       prompt: stdProb1.text,
       tableData: stdProb1.tableData,
       correctVal: stdProb1.correctVal,
@@ -317,43 +582,32 @@ function generateQuestions() {
       explanation: stdProb1.explanation
     });
 
-    // Q8 (MCQ)
-    const val8 = stdProb2.correctVal;
-    const fake8A = Math.round(val8 * 1.2);
-    const fake8B = Math.max(1, Math.round(val8 * 0.8));
-    const fake8C = val8 + 50000;
-
-    const rawOptionsQ8 = [formatNumber(val8), formatNumber(fake8A), formatNumber(fake8B), formatNumber(fake8C)];
-    const optionsQ8 = shuffle([...new Set(rawOptionsQ8)]).map((text) => ({
-      text,
-      isCorrect: text === formatNumber(val8)
-    }));
-
+    // Q8 (MCQ) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 8,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΗΣ ΖΩΗΣ',
-      instruction: 'Επιλέξτε τη σωστή τιμή:',
+      title: `ΕΡΩΤΗΣΗ 8 • ${stdProb2.title}`,
+      instruction: stdProb2.mcqInstruction,
       prompt: stdProb2.text,
       tableData: stdProb2.tableData,
-      options: optionsQ8,
-      correctText: formatNumber(val8),
+      options: stdProb2.options,
+      correctText: stdProb2.correctText,
       explanation: stdProb2.explanation
     });
   }
 
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας από το HARD_PROBLEMS_POOL (χωρίς επανάληψη)
   {
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
     const hardProb1 = shuffledHard[0].generate();
     const hardProb2 = shuffledHard[1].generate();
 
-    // Q9 (Input - Decimal)
+    // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΞΙΑΣ ΘΕΣΗΣ',
-      instruction: 'Υπολογίστε την αριθμητική αξία:',
+      title: `ΕΡΩΤΗΣΗ 9 • ${hardProb1.title}`,
+      instruction: hardProb1.inputInstruction,
       prompt: hardProb1.text,
       tableData: hardProb1.tableData,
       correctVal: hardProb1.correctVal,
@@ -361,32 +615,16 @@ function generateQuestions() {
       explanation: hardProb1.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας)
-    const val10 = hardProb2.correctVal;
-    const fake10A = val10 + 1000000;
-    const fake10B = Math.max(10000, val10 - 500000);
-    const fake10C = val10 + 200000;
-
-    const rawOptionsQ10 = [
-      `${formatNumber(val10)} €`,
-      `${formatNumber(fake10A)} €`,
-      `${formatNumber(fake10B)} €`,
-      `${formatNumber(fake10C)} €`
-    ];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === `${formatNumber(val10)} €`
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΥ',
-      instruction: 'Επιλέξτε το σωστό συνολικό ποσό:',
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb2.title}`,
+      instruction: hardProb2.mcqInstruction,
       prompt: hardProb2.text,
       tableData: hardProb2.tableData,
-      options: optionsQ10,
-      correctText: `${formatNumber(val10)} €`,
+      options: hardProb2.options,
+      correctText: hardProb2.correctText,
       explanation: hardProb2.explanation
     });
   }
@@ -407,21 +645,17 @@ export default function FysikoiArithmoiExercisesPage() {
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και κομμα, μεγιστο 10 χαρακτηρες)
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9, μεγιστο 10 χαρακτηρες)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, '');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
+    let sanitized = rawValue.replace(/[^0-9]/g, '');
     if (sanitized.length > 10) {
       sanitized = sanitized.slice(0, 10);
     }
@@ -451,7 +685,7 @@ export default function FysikoiArithmoiExercisesPage() {
           currentScore += 1;
         }
       } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
+        const userValStr = (answers[`q_${q.id}`] || '').trim();
         const userVal = parseFloat(userValStr);
         if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
           currentScore += 1;
@@ -518,7 +752,7 @@ export default function FysikoiArithmoiExercisesPage() {
               if (q.type === 'mcq') {
                 isCorrect = answers[`q_${q.id}`] === q.correctText;
               } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
+                const uv = parseFloat((answers[`q_${q.id}`] || '').trim());
                 isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
               }
             }
