@@ -47,54 +47,287 @@ const REAL_WORLD_DIVISIONS = [
   { item: 'σοκολάτες', group: 'πακέτα', unit: 'σοκολάτες' }
 ];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_div_std_1',
     generate: () => {
-      const totalStudents = randInt(120, 240);
-      const perBus = 45;
-      const fullBuses = Math.floor(totalStudents / perBus);
-      const remaining = totalStudents % perBus;
-      const totalBuses = remaining > 0 ? fullBuses + 1 : fullBuses;
+      const perBox = 12;
+      const totalCandies = randInt(15, 35) * perBox;
+      const boxes = totalCandies / perBox;
       return {
-        text: `Σε μια σχολική εκδρομή συμμετέχουν ${totalStudents} μαθητές. Κάθε λεωφορείο χωράει ${perBus} μαθητές. Πόσα λεωφορεία χρειάζονται τουλάχιστον ώστε να μεταφερθούν όλοι οι μαθητές;`,
-        tableData: { col1: 'Σύνολο Μαθητών', col2: 'Χωρητικότητα Λεωφορείου', r1: [`${totalStudents} μαθητές`, `${perBus} θέσεις`], r2: [`Διαίρεση: ${fullBuses} (υπόλ. ${remaining})`, `Σύνολο: ${totalBuses} λεωφορεία`] },
-        correctVal: totalBuses,
-        correctStr: String(totalBuses),
-        explanation: `Εκτελούμε τη διαίρεση: ${totalStudents} : ${perBus} ＝ ${fullBuses} με υπόλοιπο ${remaining}. Επειδή οι ${remaining} μαθητές που περισσεύουν χρειάζονται άλλο ένα λεωφορείο, θα χρειαστούν ${totalBuses} λεωφορεία συνολικά.`
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΣΟΚΟΛΑΤΩΝ ΣΕ ΚΟΥΤΙΑ',
+        instruction: 'Υπολογίστε πόσα κουτιά θα γεμίσουν (ακέραιος χωρίς τελείες):',
+        text: `Ένα εργαστήριο ζαχαροπλαστικής παρήγαγε ${formatNumber(totalCandies)} σοκολατάκια. Αν σε κάθε κουτί τοποθετούνται ${perBox} σοκολατάκια, πόσα κουτιά θα γεμίσουν ακριβώς;`,
+        tableData: { col1: 'Συνολικά Σοκολατάκια', col2: 'Ανά Κουτί', r1: [`${formatNumber(totalCandies)}`, `${perBox} τεμάχια`], r2: ['Διαίρεση', `${formatNumber(boxes)} κουτιά`] },
+        correctVal: boxes,
+        correctStr: String(boxes),
+        explanation: `Εκτελούμε την τέλεια διαίρεση: ${formatNumber(totalCandies)} : ${perBox} ＝ ${formatNumber(boxes)} κουτιά.`
       };
     }
   },
   {
     id: 'p_div_std_2',
     generate: () => {
-      const money = randInt(150, 450);
-      const ticketPrice = 12;
-      const tickets = Math.floor(money / ticketPrice);
-      const change = money % ticketPrice;
+      const friends = randInt(4, 8);
+      const perFriend = randInt(15, 45);
+      const totalMoney = friends * perFriend;
       return {
-        text: `Μια ομάδα παιδιών συγκέντρωσε ${money} € για εισιτήρια συναυλίας. Αν κάθε εισιτήριο κοστίζει ${ticketPrice} €, πόσα εισιτήρια μπορούν να αγοράσουν το πολύ;`,
-        tableData: { col1: 'Συνολικό Ποσό', col2: 'Τιμή Εισιτηρίου', r1: [`${money} €`, `${ticketPrice} €`], r2: ['Διαίρεση', 'χ εισιτήρια'] },
-        correctVal: tickets,
-        correctStr: String(tickets),
-        explanation: `Εκτελούμε τη διαίρεση: ${money} : ${ticketPrice} ＝ ${tickets} με υπόλοιπο ${change} €. Άρα μπορούν να αγοράσουν ${tickets} εισιτήρια και θα περισσέψουν ${change} €.`
+        title: 'ΙΣΟΜΕΡΗΣ ΚΑΤΑΝΟΜΗ ΕΞΟΔΩΝ',
+        instruction: 'Υπολογίστε το μερίδιο κάθε ατόμου σε ευρώ (€):',
+        text: `Μια παρέα ${friends} φίλων πλήρωσε συνολικό λογαριασμό ${totalMoney} €. Αν μοιράστηκαν το ποσό ισόποσα, πόσα ευρώ (€) πλήρωσε ο καθένας;`,
+        tableData: { col1: 'Συνολικός Λογαριασμός', col2: 'Άτομα', r1: [`${totalMoney} €`, `${friends} άτομα`], r2: ['Διαίρεση', `${perFriend} €`] },
+        correctVal: perFriend,
+        correctStr: String(perFriend),
+        explanation: `Διαιρούμε το συνολικό ποσό διά του πλήθους των ατόμων: ${totalMoney} : ${friends} ＝ ${perFriend} €.`
       };
     }
   },
   {
     id: 'p_div_std_3',
     generate: () => {
+      const perRow = 25;
+      const totalBooks = randInt(12, 28) * perRow;
+      const rows = totalBooks / perRow;
+      return {
+        title: 'ΤΟΠΟΘΕΤΗΣΗ ΒΙΒΛΙΩΝ ΣΕ ΡΑΦΙΑ',
+        instruction: 'Υπολογίστε πόσα ράφια θα γεμίσουν (ακέραιος χωρίς τελείες):',
+        text: `Μια βιβλιοθήκη παρέλαβε ${formatNumber(totalBooks)} νέα βιβλία. Αν κάθε ράφι χωράει ακριβώς ${perRow} βιβλία, πόσα ράφια θα γεμίσουν πλήρως;`,
+        tableData: { col1: 'Σύνολο Βιβλίων', col2: 'Χωρητικότητα Ραφιού', r1: [`${formatNumber(totalBooks)}`, `${perRow} βιβλία`], r2: ['Διαίρεση', `${formatNumber(rows)} ράφια`] },
+        correctVal: rows,
+        correctStr: String(rows),
+        explanation: `Εκτελούμε τη διαίρεση: ${formatNumber(totalBooks)} : ${perRow} ＝ ${formatNumber(rows)} ράφια.`
+      };
+    }
+  },
+  {
+    id: 'p_div_std_4',
+    generate: () => {
+      const capacityKg = 50;
+      const totalKg = randInt(10, 25) * capacityKg;
+      const sacks = totalKg / capacityKg;
+      return {
+        title: 'ΣΑΚΙΑ ΜΕ ΣΙΤΑΡΙ',
+        instruction: 'Υπολογίστε πόσα σακιά θα γεμίσουν (ακέραιος):',
+        text: `Ένας γεωργός συγκέντρωσε ${formatNumber(totalKg)} kg σιτάρι. Αν κάθε σακί χωράει ${capacityKg} kg, πόσα σακιά θα χρειαστεί για να το συσκευάσει όλο;`,
+        tableData: { col1: 'Συνολικό Σιτάρι', col2: 'Ανά Σακί', r1: [`${formatNumber(totalKg)} kg`, `${capacityKg} kg`], r2: ['Διαίρεση', `${formatNumber(sacks)} σακιά`] },
+        correctVal: sacks,
+        correctStr: String(sacks),
+        explanation: `Εκτελούμε τη διαίρεση: ${formatNumber(totalKg)} : ${capacityKg} ＝ ${formatNumber(sacks)} σακιά.`
+      };
+    }
+  },
+  {
+    id: 'p_div_std_5',
+    generate: () => {
+      const students = randInt(18, 30);
+      const perStudent = 6;
+      const totalNotebooks = students * perStudent;
+      return {
+        title: 'ΜΟΙΡΑΣΜΑ ΤΕΤΡΑΔΙΩΝ ΣΤΗΝ ΤΑΞΗ',
+        instruction: 'Υπολογίστε πόσα τετράδια παίρνει κάθε μαθητής:',
+        text: `Σε μια τάξη με ${students} μαθητές μοιράστηκαν ισόποσα ${totalNotebooks} τετράδια. Πόσα τετράδια πήρε ο κάθε μαθητής;`,
+        tableData: { col1: 'Σύνολο Τετραδίων', col2: 'Μαθητές', r1: [`${totalNotebooks} τετράδια`, `${students} μαθητές`], r2: ['Διαίρεση', `${perStudent} τετράδια`] },
+        correctVal: perStudent,
+        correctStr: String(perStudent),
+        explanation: `Εκτελούμε τη διαίρεση: ${totalNotebooks} : ${students} ＝ ${perStudent} τετράδια.`
+      };
+    }
+  },
+  {
+    id: 'p_div_std_6',
+    generate: () => {
+      const treesPerRow = 15;
+      const totalTrees = randInt(12, 30) * treesPerRow;
+      const rows = totalTrees / treesPerRow;
+      return {
+        title: 'ΦΥΤΕΥΣΗ ΔΕΝΤΡΩΝ ΣΕ ΣΕΙΡΕΣ',
+        instruction: 'Υπολογίστε πόσες σειρές σχηματίστηκαν:',
+        text: `Σε ένα άλσος φυτεύτηκαν ${formatNumber(totalTrees)} δενδρύλλια σε ισάριθμες σειρές των ${treesPerRow} δέντρων. Πόσες σειρές σχηματίστηκαν συνολικά;`,
+        tableData: { col1: 'Σύνολο Δέντρων', col2: 'Δέντρα ανά Σειρά', r1: [`${formatNumber(totalTrees)}`, `${treesPerRow} δέντρα`], r2: ['Διαίρεση', `${formatNumber(rows)} σειρές`] },
+        correctVal: rows,
+        correctStr: String(rows),
+        explanation: `Διαιρούμε: ${formatNumber(totalTrees)} : ${treesPerRow} ＝ ${formatNumber(rows)} σειρές.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_div_hard_1',
+    generate: () => {
+      const totalStudents = randInt(120, 240);
+      const perBus = 45;
+      const fullBuses = Math.floor(totalStudents / perBus);
+      const remaining = totalStudents % perBus;
+      const totalBuses = remaining > 0 ? fullBuses + 1 : fullBuses;
+      const correctStr = `${totalBuses} λεωφορεία`;
+      const fake1 = `${fullBuses} λεωφορεία`;
+      const fake2 = `${totalBuses + 1} λεωφορεία`;
+      const fake3 = `${Math.max(1, fullBuses - 1)} λεωφορεία`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΤΑΦΟΡΑ ΜΑΘΗΤΩΝ ΜΕ ΛΕΩΦΟΡΕΙΑ',
+        instruction: 'Επιλέξτε πόσα λεωφορεία χρειάζονται τουλάχιστον:',
+        text: `Σε μια σχολική εκδρομή συμμετέχουν ${totalStudents} μαθητές. Κάθε λεωφορείο χωράει ${perBus} μαθητές. Πόσα λεωφορεία χρειάζονται τουλάχιστον ώστε να μεταφερθούν όλοι οι μαθητές;`,
+        tableData: { col1: 'Σύνολο Μαθητών', col2: 'Χωρητικότητα Λεωφορείου', r1: [`${totalStudents} μαθητές`, `${perBus} θέσεις`], r2: [`Διαίρεση: ${fullBuses} (υπόλ. ${remaining})`, `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εκτελούμε τη διαίρεση: ${totalStudents} : ${perBus} ＝ ${fullBuses} με υπόλοιπο ${remaining}. Επειδή οι ${remaining} μαθητές που περισσεύουν χρειάζονται άλλο ένα λεωφορείο, απαιτούνται ${correctStr} συνολικά.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_2',
+    generate: () => {
+      const money = randInt(150, 450);
+      const ticketPrice = 12;
+      const tickets = Math.floor(money / ticketPrice);
+      const change = money % ticketPrice;
+      const correctStr = `${tickets} εισιτήρια`;
+      const fake1 = `${tickets + 2} εισιτήρια`;
+      const fake2 = `${Math.max(1, tickets - 2)} εισιτήρια`;
+      const fake3 = `${tickets + 5} εισιτήρια`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΑΓΟΡΑ ΕΙΣΙΤΗΡΙΩΝ ΣΥΝΑΥΛΙΑΣ',
+        instruction: 'Επιλέξτε πόσα εισιτήρια μπορούν να αγοραστούν το πολύ:',
+        text: `Μια ομάδα παιδιών συγκέντρωσε ${money} € για εισιτήρια συναυλίας. Αν κάθε εισιτήριο κοστίζει ${ticketPrice} €, πόσα εισιτήρια μπορούν να αγοράσουν το πολύ;`,
+        tableData: { col1: 'Συνολικό Ποσό', col2: 'Τιμή Εισιτηρίου', r1: [`${money} €`, `${ticketPrice} €`], r2: [`Πηλίκο: ${tickets}`, `Ρέστα: ${change} €`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εκτελούμε τη διαίρεση: ${money} : ${ticketPrice} ＝ ${tickets} με υπόλοιπο ${change} €. Άρα μπορούν να αγοράσουν ${correctStr} και θα περισσέψουν ${change} €.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_3',
+    generate: () => {
       const oilKg = randInt(180, 360);
       const canKg = 5;
       const cans = Math.floor(oilKg / canKg);
       const rem = oilKg % canKg;
+      const correctStr = `${cans} δοχεία`;
+      const fake1 = `${cans + 2} δοχεία`;
+      const fake2 = `${Math.max(1, cans - 2)} δοχεία`;
+      const fake3 = `${cans + 4} δοχεία`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΕΜΦΙΑΛΩΣΗ ΕΛΑΙΟΛΑΔΟΥ ΣΕ ΔΟΧΕΙΑ',
+        instruction: 'Επιλέξτε πόσα δοχεία θα γεμίσουν πλήρως:',
         text: `Ένας παραγωγός έχει ${oilKg} kg ελαιόλαδο και θέλει να το βάλει σε δοχεία των ${canKg} kg. Πόσα τέτοια δοχεία θα γεμίσει πλήρως;`,
-        tableData: { col1: 'Συνολικό Λάδι', col2: 'Χωρητικότητα Δοχείου', r1: [`${oilKg} kg`, `${canKg} kg`], r2: ['Διαίρεση', 'χ δοχεία'] },
-        correctVal: cans,
-        correctStr: String(cans),
-        explanation: `Εκτελούμε τη διαίρεση: ${oilKg} : ${canKg} ＝ ${cans} με υπόλοιπο ${rem} kg. Θα γεμίσουν πλήρως ${cans} δοχεία.`
+        tableData: { col1: 'Συνολικό Λάδι', col2: 'Χωρητικότητα Δοχείου', r1: [`${oilKg} kg`, `${canKg} kg`], r2: ['Πλήρη Δοχεία', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εκτελούμε τη διαίρεση: ${oilKg} : ${canKg} ＝ ${cans} με υπόλοιπο ${rem} kg. Θα γεμίσουν πλήρως ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_4',
+    generate: () => {
+      const totalEggs = randInt(140, 260);
+      const perCarton = 6;
+      const fullCartons = Math.floor(totalEggs / perCarton);
+      const remaining = totalEggs % perCarton;
+      const correctStr = `${fullCartons} θήκες (περίσσεψαν ${remaining})`;
+      const fake1 = `${fullCartons + 1} θήκες (περίσσεψαν 0)`;
+      const fake2 = `${fullCartons} θήκες (περίσσεψαν 0)`;
+      const fake3 = `${Math.max(1, fullCartons - 1)} θήκες (περίσσεψαν ${remaining + 1})`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΑΥΓΩΝ ΣΕ ΘΗΚΕΣ',
+        instruction: 'Επιλέξτε τις πλήρεις θήκες και τα αυγά που περισσεύουν:',
+        text: `Σε ένα πτηνοτροφείο μαζεύτηκαν ${totalEggs} αυγά και συσκευάζονται σε 6άδες. Πόσες πλήρεις θήκες θα γεμίσουν και πόσα αυγά θα περισσέψουν;`,
+        tableData: { col1: 'Σύνολο Αυγών', col2: 'Χωρητικότητα Θήκης', r1: [`${totalEggs} αυγά`, '6 αυγά'], r2: ['Αποτέλεσμα', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εκτελούμε τη διαίρεση: ${totalEggs} : 6 ＝ ${fullCartons} με υπόλοιπο ${remaining} αυγά. Άρα ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_5',
+    generate: () => {
+      const apples = randInt(180, 320);
+      const perCrate = 15;
+      const fullCrates = Math.floor(apples / perCrate);
+      const rem = apples % perCrate;
+      const totalCrates = rem > 0 ? fullCrates + 1 : fullCrates;
+      const correctStr = `${totalCrates} τελάρα`;
+      const fake1 = `${fullCrates} τελάρα`;
+      const fake2 = `${totalCrates + 2} τελάρα`;
+      const fake3 = `${Math.max(1, fullCrates - 1)} τελάρα`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΤΑΦΟΡΑ ΜΗΛΩΝ ΣΕ ΤΕΛΑΡΑ',
+        instruction: 'Επιλέξτε πόσα τελάρα χρειάζονται τουλάχιστον:',
+        text: `Ένας παραγωγός μάζεψε ${apples} μήλα και θέλει να τα βάλει σε τελάρα που χωράνε ${perCrate} μήλα το καθένα. Πόσα τελάρα θα χρειαστεί τουλάχιστον για να μπουν όλα τα μήλα;`,
+        tableData: { col1: 'Σύνολο Μήλων', col2: 'Χωρητικότητα Τελάρου', r1: [`${apples} μήλα`, `${perCrate} μήλα`], r2: [`Διαίρεση: ${fullCrates} (υπόλ. ${rem})`, `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εκτελούμε τη διαίρεση: ${apples} : ${perCrate} ＝ ${fullCrates} με υπόλοιπο ${rem} μήλα. Για να χωρέσουν και τα ${rem} μήλα που περισσεύουν, απαιτούνται ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_6',
+    generate: () => {
+      const budget = randInt(250, 600);
+      const ballPrice = 18;
+      const balls = Math.floor(budget / ballPrice);
+      const remMoney = budget % ballPrice;
+      const correctStr = `${balls} μπάλες (ρέστα ${remMoney} €)`;
+      const fake1 = `${balls + 1} μπάλες (ρέστα 0 €)`;
+      const fake2 = `${balls} μπάλες (ρέστα 0 €)`;
+      const fake3 = `${Math.max(1, balls - 1)} μπάλες (ρέστα ${remMoney + 5} €)`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΑΓΟΡΑ ΑΘΛΗΤΙΚΩΝ ΜΠΑΛΩΝ',
+        instruction: 'Επιλέξτε πόσες μπάλες αγοράστηκαν και τα ρέστα:',
+        text: `Ένας σύλλογος διαθέτει ${budget} € για την αγορά μπαλών που κοστίζουν ${ballPrice} € η καθεμία. Πόσες μπάλες μπορεί να αγοράσει το πολύ και πόσα ρέστα (€) θα του μείνουν;`,
+        tableData: { col1: 'Διαθέσιμο Ποσό', col2: 'Τιμή Μπάλας', r1: [`${budget} €`, `${ballPrice} €`], r2: ['Αποτέλεσμα', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Διαιρούμε: ${budget} : ${ballPrice} ＝ ${balls} με υπόλοιπο ${remMoney} €. Άρα ${correctStr}.`
       };
     }
   }
@@ -115,7 +348,7 @@ function generateQuestions() {
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ (ΠΗΛΙΚΟ)',
-      instruction: 'Υπολογίστε το πηλίκο της τέλειας διαίρεσης:',
+      instruction: 'Υπολογίστε το πηλίκο της τέλειας διαίρεσης (ακέραιος):',
       prompt: `Υπολογίστε: ${formatNumber(q1Dividend)} : ${q1Divisor};`,
       correctVal: q1Quotient,
       correctStr: String(q1Quotient),
@@ -134,7 +367,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΕΥΡΕΣΗ ΔΙΑΙΡΕΤΕΟΥ (Δ)',
-      instruction: 'Βρείτε τον Διαιρετέο εφαρμόζοντας τη μαθηματική ταυτότητα:',
+      instruction: 'Βρείτε τον Διαιρετέο εφαρμόζοντας τη μαθηματική ταυτότητα (ακέραιος χωρίς τελείες):',
       prompt: `Βρείτε τον Διαιρετέο (Δ) όταν: διαιρέτης (δ) ＝ ${q2Divisor}, πηλίκο (π) ＝ ${q2Quotient} και υπόλοιπο (υ) ＝ ${q2Remainder}.`,
       correctVal: q2Dividend,
       correctStr: String(q2Dividend),
@@ -142,7 +375,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (MCQ): Χαρακτηρισμός Τέλειας / Ατελούς Διαίρεσης
+  // Q3 (MCQ): Χαρακτηρισμός Τέλειας / Ατελούς Διαίρεσης (Εγγύηση Μοναδικότητας)
   {
     const q3IsPerfect = Math.random() > 0.5;
     const q3Divisor = randInt(4, 9);
@@ -268,7 +501,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΟ ΜΟΙΡΑΣΜΑ',
-      instruction: 'Βρείτε πόσα στοιχεία παίρνει κάθε ομάδα:',
+      instruction: 'Βρείτε πόσα στοιχεία παίρνει κάθε ομάδα (ακέραιος):',
       prompt: `Μοιράζουμε ${q7Dividend} στοιχεία σε ${q7Divisor} ίσες ομάδες. Πόσα στοιχεία παίρνει η κάθε ομάδα;`,
       correctVal: q7Quotient,
       correctStr: String(q7Quotient),
@@ -306,48 +539,37 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΔΙΑΙΡΕΣΗΣ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
-      correctVal: prob9.correctVal,
-      correctStr: prob9.correctStr,
-      explanation: prob9.explanation
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = prob10.correctVal;
-    const correctStr10 = `${prob10.correctStr} εισιτήρια`;
-    const fake10A = `${val10 + 2} εισιτήρια`;
-    const fake10B = `${Math.max(1, val10 - 2)} εισιτήρια`;
-    const fake10C = `${val10 + 5} εισιτήρια`;
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΚΑΤΑΝΟΜΗΣ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
-      explanation: prob10.explanation
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
@@ -367,6 +589,7 @@ export default function DiairesiExercisesPage() {
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
