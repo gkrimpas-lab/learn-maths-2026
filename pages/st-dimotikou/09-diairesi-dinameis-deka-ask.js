@@ -29,9 +29,16 @@ function shuffle(array) {
 
 // Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
 function formatNum(val, decimals = 3) {
+  if (val === '' || val === null || val === undefined || isNaN(val)) return '0';
   if (Number.isInteger(val)) return String(val);
   const rounded = Number(val.toFixed(decimals));
   return String(rounded).replace('.', ',');
+}
+
+// Μορφοποιηση αριθμου με τελειες χιλιαδων
+function formatNumber(num) {
+  if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
+  return Number(num).toLocaleString('el-GR');
 }
 
 // Πληρης δεξαμενη θεματικων αντικειμενων καθημερινοτητας
@@ -43,17 +50,19 @@ const REAL_WORLD_ITEMS = [
   { item: 'σελίδες φωτοτυπιών', total: 840, group: 10, unit: 'σελίδες ανά πακέτο' }
 ];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_div10_std_1',
     generate: () => {
-      const totalCost = 145;
+      const totalCost = randInt(120, 350);
       const students = 100;
       const costPerStudent = Number((totalCost / students).toFixed(2));
       return {
+        title: 'ΚΑΤΑΝΟΜΗ ΚΟΣΤΟΥΣ ΒΙΒΛΙΩΝ',
+        instruction: 'Υπολογίστε το ποσό ανά μαθητή σε ευρώ (€) με κόμμα:',
         text: `Μια ομάδα ${students} μαθητών συγκέντρωσε ${totalCost} € για την αγορά βιβλίων. Πόσα ευρώ (€) αντιστοιχούν σε κάθε μαθητή;`,
-        tableData: { col1: 'Συνολικό Ποσό', col2: 'Μαθητές', r1: [`${totalCost} €`, `${students} μαθητές`], r2: ['Διαίρεση', 'χ € / μαθητή'] },
+        tableData: { col1: 'Συνολικό Ποσό', col2: 'Μαθητές', r1: [`${totalCost} €`, `${students} μαθητές`], r2: ['Διαίρεση', `${formatNum(costPerStudent, 2)} €`] },
         correctVal: costPerStudent,
         correctStr: formatNum(costPerStudent, 2),
         explanation: `Μετακινούμε την υποδιαστολή 2 θέσεις αριστερά: ${totalCost} : ${students} ＝ ${formatNum(costPerStudent, 2)} €.`
@@ -63,12 +72,14 @@ const EXTRA_PROBLEMS_POOL = [
   {
     id: 'p_div10_std_2',
     generate: () => {
-      const lengthM = 18.5;
-      const divisor = 0.1; // 10 κομμάτια ανά μέτρο (δέκατα)
+      const lengthM = randInt(12, 35) + 0.5;
+      const divisor = 0.1;
       const pieces = Number((lengthM / divisor).toFixed(0));
       return {
+        title: 'ΚΟΠΗ ΥΦΑΣΜΑΤΟΣ ΣΕ ΔΕΚΑΤΑ',
+        instruction: 'Υπολογίστε πόσα κομμάτια προέκυψαν (ακέραιος):',
         text: `Ένα ύφασμα μήκους ${formatNum(lengthM)} m κόπηκε σε κομμάτια μήκους 0,1 m το καθένα. Πόσα κομμάτια προέκυψαν συνολικά;`,
-        tableData: { col1: 'Μήκος Υφάσματος', col2: 'Μήκος Κομματιού', r1: [`${formatNum(lengthM)} m`, '0,1 m'], r2: ['Διαίρεση', 'χ κομμάτια'] },
+        tableData: { col1: 'Μήκος Υφάσματος', col2: 'Μήκος Κομματιού', r1: [`${formatNum(lengthM)} m`, '0,1 m'], r2: ['Διαίρεση', `${pieces} κομμάτια`] },
         correctVal: pieces,
         correctStr: String(pieces),
         explanation: `Η διαίρεση με το 0,1 ισοδυναμεί με πολλαπλασιασμό επί 10 (μετακίνηση 1 θέση δεξιά): ${formatNum(lengthM)} : 0,1 ＝ ${pieces} κομμάτια.`
@@ -78,15 +89,240 @@ const EXTRA_PROBLEMS_POOL = [
   {
     id: 'p_div10_std_3',
     generate: () => {
-      const totalG = 750;
+      const totalG = randInt(250, 950);
       const divisor = 1000;
       const kg = Number((totalG / divisor).toFixed(3));
       return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΓΡΑΜΜΑΡΙΩΝ ΣΕ ΚΙΛΑ',
+        instruction: 'Υπολογίστε το βάρος σε κιλά (kg) με κόμμα:',
         text: `Ένα κουτί γλυκών ζυγίζει ${totalG} g. Πόσα κιλά (kg) είναι το βάρος του κουτιού, αν γνωρίζουμε ότι 1 kg ＝ 1.000 g;`,
-        tableData: { col1: 'Βάρος σε γραμμάρια', col2: 'Αναγωγή σε κιλά', r1: [`${totalG} g`, ': 1.000'], r2: ['Υπολογισμός', 'χ kg'] },
+        tableData: { col1: 'Βάρος σε γραμμάρια', col2: 'Αναγωγή σε κιλά', r1: [`${totalG} g`, ': 1.000'], r2: ['Υπολογισμός', `${formatNum(kg, 3)} kg`] },
         correctVal: kg,
         correctStr: formatNum(kg, 3),
         explanation: `Μετατρέπουμε τα γραμμάρια σε κιλά διαιρώντας με το 1.000 (3 θέσεις αριστερά): ${totalG} : 1.000 ＝ ${formatNum(kg, 3)} kg.`
+      };
+    }
+  },
+  {
+    id: 'p_div10_std_4',
+    generate: () => {
+      const totalL = randInt(150, 480);
+      const bottles = 10;
+      const perBottle = Number((totalL / bottles).toFixed(1));
+      return {
+        title: 'ΙΣΟΜΟΙΡΑΣΙΑ ΧΥΜΟΥ ΣΕ ΔΟΧΕΙΑ',
+        instruction: 'Υπολογίστε τον όγκο ανά δοχείο σε λίτρα (L) με κόμμα:',
+        text: `Μια ποσότητα ${totalL} L χυμού μοιράστηκε εξίσου σε ${bottles} μεγάλα δοχεία. Πόσα λίτρα (L) χυμού περιέχει το κάθε δοχείο;`,
+        tableData: { col1: 'Συνολικός Χυμός', col2: 'Δοχεία', r1: [`${totalL} L`, `${bottles} δοχεία`], r2: ['Διαίρεση', `${formatNum(perBottle, 1)} L`] },
+        correctVal: perBottle,
+        correctStr: formatNum(perBottle, 1),
+        explanation: `Μετακινούμε την υποδιαστολή 1 θέση αριστερά: ${totalL} : 10 ＝ ${formatNum(perBottle, 1)} L.`
+      };
+    }
+  },
+  {
+    id: 'p_div10_std_5',
+    generate: () => {
+      const wireM = randInt(24, 68);
+      const divisor = 0.01;
+      const pieces = Number((wireM / divisor).toFixed(0));
+      return {
+        title: 'ΚΟΠΗ ΣΥΡΜΑΤΟΣ ΣΕ ΕΚΑΤΟΣΤΑ',
+        instruction: 'Υπολογίστε πόσα κομμάτια προέκυψαν (ακέραιος):',
+        text: `Ένα σύρμα μήκους ${wireM} m κόπηκε σε μικρά κομματάκια μήκους 0,01 m (1 cm) το καθένα. Πόσα κομμάτια σχηματίστηκαν συνολικά;`,
+        tableData: { col1: 'Συνολικό Μήκος', col2: 'Μήκος Τεμαχίου', r1: [`${wireM} m`, '0,01 m'], r2: ['Διαίρεση', `${formatNumber(pieces)} τεμάχια`] },
+        correctVal: pieces,
+        correctStr: String(pieces),
+        explanation: `Η διαίρεση με το 0,01 ισοδυναμεί με πολλαπλασιασμό επί 100 (2 θέσεις δεξιά): ${wireM} : 0,01 ＝ ${formatNumber(pieces)} κομμάτια.`
+      };
+    }
+  },
+  {
+    id: 'p_div10_std_6',
+    generate: () => {
+      const lengthM = randInt(4500, 8500);
+      const divisor = 1000;
+      const km = Number((lengthM / divisor).toFixed(2));
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΜΕΤΡΩΝ ΣΕ ΧΙΛΙΟΜΕΤΡΑ',
+        instruction: 'Υπολογίστε την απόσταση σε χιλιόμετρα (km) με κόμμα:',
+        text: `Μια διαδρομή ποδηλασίας έχει μήκος ${formatNumber(lengthM)} m. Πόσα χιλιόμετρα (km) είναι η απόσταση αυτή, αν 1 km ＝ 1.000 m;`,
+        tableData: { col1: 'Μέτρα', col2: 'Αναγωγή σε km', r1: [`${formatNumber(lengthM)} m`, ': 1.000'], r2: ['Αποτέλεσμα', `${formatNum(km, 2)} km`] },
+        correctVal: km,
+        correctStr: formatNum(km, 2),
+        explanation: `Μετατρέπουμε τα μέτρα σε χιλιόμετρα διαιρώντας με το 1.000 (3 θέσεις αριστερά): ${formatNumber(lengthM)} : 1.000 ＝ ${formatNum(km, 2)} km.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_div10_hard_1',
+    generate: () => {
+      const totalCost = randInt(150, 480);
+      const students = 100;
+      const costPerStudent = Number((totalCost / students).toFixed(2));
+      const correctStr = `${formatNum(costPerStudent, 2)} €`;
+      const fake1 = `${formatNum(costPerStudent * 10, 2)} €`;
+      const fake2 = `${formatNum(costPerStudent / 10, 3)} €`;
+      const fake3 = `${formatNum(costPerStudent + 1.5, 2)} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΚΑΤΑΝΟΜΗ ΕΞΟΔΩΝ ΣΧΟΛΙΚΗΣ ΕΚΔΡΟΜΗΣ',
+        instruction: 'Επιλέξτε το σωστό ποσό ανά μαθητή σε ευρώ (€):',
+        text: `Για μια εκδρομή ${students} μαθητών συγκεντρώθηκαν συνολικά ${totalCost} € για εισιτήρια. Πόσα ευρώ (€) αντιστοιχούν σε κάθε μαθητή;`,
+        tableData: { col1: 'Συνολικό Ποσό', col2: 'Μαθητές', r1: [`${totalCost} €`, `${students} μαθητές`], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετακινούμε την υποδιαστολή 2 θέσεις αριστερά: ${totalCost} : ${students} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div10_hard_2',
+    generate: () => {
+      const lengthM = randInt(14, 38) + 0.5;
+      const divisor = 0.1;
+      const pieces = Number((lengthM / divisor).toFixed(0));
+      const correctStr = `${pieces} κομμάτια`;
+      const fake1 = `${pieces + 10} κομμάτια`;
+      const fake2 = `${Math.max(1, pieces - 15)} κομμάτια`;
+      const fake3 = `${pieces * 2} κομμάτια`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΚΑΤΑΜΕΤΡΗΣΗ ΚΟΜΜΑΤΙΩΝ ΥΦΑΣΜΑΤΟΣ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος των κομματιών:',
+        text: `Ένα ύφασμα μήκους ${formatNum(lengthM)} m κόπηκε σε κομμάτια μήκους 0,1 m το καθένα. Πόσα κομμάτια προέκυψαν συνολικά;`,
+        tableData: { col1: 'Μήκος Υφάσματος', col2: 'Μήκος Κομματιού', r1: [`${formatNum(lengthM)} m`, '0,1 m'], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Η διαίρεση με το 0,1 ισοδυναμεί με πολλαπλασιασμό επί 10: ${formatNum(lengthM)} : 0,1 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div10_hard_3',
+    generate: () => {
+      const totalG = randInt(450, 950);
+      const divisor = 1000;
+      const kg = Number((totalG / divisor).toFixed(3));
+      const correctStr = `${formatNum(kg, 3)} kg`;
+      const fake1 = `${formatNum(kg * 10, 2)} kg`;
+      const fake2 = `${formatNum(kg / 10, 4)} kg`;
+      const fake3 = `${formatNum(kg + 0.5, 3)} kg`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΜΑΖΑΣ ΣΥΣΚΕΥΑΣΙΑΣ ΣΕ ΚΙΛΑ',
+        instruction: 'Επιλέξτε το σωστό βάρος σε κιλά (kg):',
+        text: `Ένα κουτί γλυκών ζυγίζει ${totalG} g. Πόσα κιλά (kg) είναι το βάρος του κουτιού, αν γνωρίζουμε ότι 1 kg ＝ 1.000 g;`,
+        tableData: { col1: 'Βάρος σε γραμμάρια', col2: 'Αναγωγή σε κιλά', r1: [`${totalG} g`, ': 1.000'], r2: ['Αποτέλεσμα', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετατρέπουμε τα γραμμάρια σε κιλά διαιρώντας με το 1.000 (3 θέσεις αριστερά): ${totalG} : 1.000 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div10_hard_4',
+    generate: () => {
+      const totalL = randInt(12, 35);
+      const divisor = 0.01;
+      const cups = Number((totalL / divisor).toFixed(0));
+      const correctStr = `${formatNumber(cups)} φλιτζάνια`;
+      const fake1 = `${formatNumber(cups + 100)} φλιτζάνια`;
+      const fake2 = `${formatNumber(Math.max(50, cups - 200))} φλιτζάνια`;
+      const fake3 = `${formatNumber(cups * 2)} φλιτζάνια`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΡΙΔΙΟΠΟΙΗΣΗ ΥΓΡΟΥ ΣΕ ΕΚΑΤΟΣΤΑ ΤΟΥ ΛΙΤΡΟΥ',
+        instruction: 'Επιλέξτε πόσα φλιτζάνια θα γεμίσουν:',
+        text: `Ένα δοχείο περιέχει ${totalL} L τσάι. Αν σερβιριστεί σε φλιτζανάκια χωρητικότητας 0,01 L (10 mL) το καθένα, πόσα τέτοια φλιτζάνια θα γεμίσουν συνολικά;`,
+        tableData: { col1: 'Συνολικός Όγκος', col2: 'Χωρητικότητα Φλιτζανιού', r1: [`${totalL} L`, '0,01 L'], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Διαιρούμε με το 0,01 (ισοδυναμεί με πολλαπλασιασμό επί 100): ${totalL} : 0,01 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div10_hard_5',
+    generate: () => {
+      const lengthCm = randInt(350, 850);
+      const divisor = 100;
+      const m = Number((lengthCm / divisor).toFixed(2));
+      const correctStr = `${formatNum(m, 2)} m`;
+      const fake1 = `${formatNum(m * 10, 1)} m`;
+      const fake2 = `${formatNum(m / 10, 3)} m`;
+      const fake3 = `${formatNum(m + 1.2, 2)} m`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΜΗΚΟΥΣ ΣΑΝΙΔΑΣ ΣΕ ΜΕΤΡΑ',
+        instruction: 'Επιλέξτε το σωστό μήκος σε μέτρα (m):',
+        text: `Μια ξύλινη σανίδα έχει μήκος ${lengthCm} cm. Πόσα μέτρα (m) είναι το μήκος της, αν γνωρίζουμε ότι 1 m ＝ 100 cm;`,
+        tableData: { col1: 'Μήκος σε εκατοστά', col2: 'Αναγωγή σε μέτρα', r1: [`${lengthCm} cm`, ': 100'], r2: ['Αποτέλεσμα', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετατρέπουμε τα εκατοστά σε μέτρα διαιρώντας με το 100 (2 θέσεις αριστερά): ${lengthCm} : 100 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div10_hard_6',
+    generate: () => {
+      const budget = randInt(1500, 4500);
+      const workers = 100;
+      const bonus = Number((budget / workers).toFixed(2));
+      const correctStr = `${formatNum(bonus, 2)} €`;
+      const fake1 = `${formatNum(bonus * 10, 2)} €`;
+      const fake2 = `${formatNum(bonus / 10, 3)} €`;
+      const fake3 = `${formatNum(bonus + 10, 2)} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΔΙΑΝΟΜΗ ΕΤΑΙΡΙΚΟΥ ΕΠΙΔΟΜΑΤΟΣ',
+        instruction: 'Επιλέξτε το ποσό ανά εργαζόμενο σε ευρώ (€):',
+        text: `Μια εταιρεία διέθεσε ${formatNumber(budget)} € ως επίδομα που θα μοιραστεί ισόποσα σε ${workers} εργαζομένους. Πόσα ευρώ (€) θα λάβει ο καθένας;`,
+        tableData: { col1: 'Συνολικό Επίδομα', col2: 'Εργαζόμενοι', r1: [`${formatNumber(budget)} €`, `${workers} άτομα`], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετακινούμε την υποδιαστολή 2 θέσεις αριστερά: ${formatNumber(budget)} : 100 ＝ ${correctStr}.`
       };
     }
   }
@@ -106,17 +342,17 @@ function generateQuestions() {
     const q1RawAns = parseFloat((q1Val / q1Div).toFixed(5));
     const q1Correct = q1RawAns;
     const q1CorrectStr = formatNum(q1RawAns, 5);
-    const q1Prompt = `${q1Int},${q1Dec} : ${q1Div}`;
+    const q1Prompt = `${q1Int},${q1Dec} : ${formatNumber(q1Div)}`;
 
     qList.push({
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΔΙΑΙΡΕΣΗ ΜΕ 10, 100, 1.000',
-      instruction: 'Υπολογίστε το πηλίκο μετακινώντας την υποδιαστολή:',
+      instruction: 'Υπολογίστε το πηλίκο μετακινώντας την υποδιαστολή (με κόμμα):',
       prompt: `Υπολογίστε: ${q1Prompt};`,
       correctVal: q1Correct,
       correctStr: q1CorrectStr,
-      explanation: `Διαιρώντας με το ${q1Div}, μετακινούμε την υποδιαστολή ${q1Div === 10 ? '1 θέση' : q1Div === 100 ? '2 θέσεις' : '3 θέσεις'} προς τα αριστερά: ${q1Prompt} ＝ ${q1CorrectStr}.`
+      explanation: `Διαιρώντας με το ${formatNumber(q1Div)}, μετακινούμε την υποδιαστολή ${q1Div === 10 ? '1 θέση' : q1Div === 100 ? '2 θέσεις' : '3 θέσεις'} προς τα αριστερά: ${q1Prompt} ＝ ${q1CorrectStr}.`
     });
   }
 
@@ -136,7 +372,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΔΙΑΙΡΕΣΗ ΜΕ 0,1, 0,01, 0,001',
-      instruction: 'Υπολογίστε το πηλίκο μετακινώντας την υποδιαστολή:',
+      instruction: 'Υπολογίστε το πηλίκο μετακινώντας την υποδιαστολή (με κόμμα):',
       prompt: `Υπολογίστε: ${q2Prompt};`,
       correctVal: q2Correct,
       correctStr: q2CorrectStr,
@@ -144,7 +380,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (MCQ): Εύρεση του διαιρέτη που λείπει
+  // Q3 (MCQ): Εύρεση του διαιρέτη που λείπει (Εγγύηση Μοναδικότητας)
   {
     const q3Int = randInt(15, 85);
     const q3Dec = randInt(1, 9);
@@ -206,10 +442,10 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 4 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑΣ',
       instruction: 'Υπολογίστε το αποτέλεσμα της κατανομής:',
-      prompt: `Μοιράζουμε ${q4Item.total} ${q4Item.item} σε ${q4Item.group} ίσα μέρη. Πόσο αντιστοιχεί σε κάθε μέρος;`,
+      prompt: `Μοιράζουμε ${formatNumber(q4Item.total)} ${q4Item.item} σε ${formatNumber(q4Item.group)} ίσα μέρη. Πόσο αντιστοιχεί σε κάθε μέρος;`,
       options,
       correctText: q4Correct,
-      explanation: `Υπολογίζουμε τη διαίρεση: ${q4Item.total} : ${q4Item.group} ＝ ${q4Correct}.`
+      explanation: `Υπολογίζουμε τη διαίρεση: ${formatNumber(q4Item.total)} : ${formatNumber(q4Item.group)} ＝ ${q4Correct}.`
     });
   }
 
@@ -281,12 +517,12 @@ function generateQuestions() {
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΗ ΜΕΤΑΤΟΠΙΣΗ ΥΠΟΔΙΑΣΤΟΛΗΣ',
       instruction: 'Υπολογίστε το αποτέλεσμα της μετατόπισης με κόμμα:',
-      prompt: `Υπολογίστε: ${q7Int},${q7Dec} : ${q7Div};`,
+      prompt: `Υπολογίστε: ${q7Int},${q7Dec} : ${formatNumber(q7Div)};`,
       startStr: `${q7Int},${q7Dec}`,
       div: q7Div,
       correctVal: q7Ans,
       correctStr: q7AnsStr,
-      explanation: `Ξεκινώντας από το ${q7Int},${q7Dec} και κάνοντας ${q7Div === 10 ? '1 άλμα' : '2 άλματα'} αριστερά λόγω του : ${q7Div}, βρίσκουμε ${q7AnsStr}.`
+      explanation: `Ξεκινώντας από το ${q7Int},${q7Dec} και κάνοντας ${q7Div === 10 ? '1 άλμα' : '2 άλματα'} αριστερά λόγω του : ${formatNumber(q7Div)}, βρίσκουμε ${q7AnsStr}.`
     });
   }
 
@@ -317,48 +553,37 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕ ΔΥΝΑΜΕΙΣ ΤΟΥ 10',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα με κόμμα:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
-      correctVal: prob9.correctVal,
-      correctStr: prob9.correctStr,
-      explanation: prob9.explanation
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = prob10.correctVal;
-    const correctStr10 = `${prob10.correctStr} κομμάτια`;
-    const fake10A = `${val10 + 10} κομμάτια`;
-    const fake10B = `${Math.max(1, val10 - 15)} κομμάτια`;
-    const fake10C = `${val10 * 2} κομμάτια`;
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΚΑΤΑΜΕΤΡΗΣΗΣ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
-      explanation: prob10.explanation
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
@@ -378,6 +603,7 @@ export default function DiairesiDinameisDekaExercisesPage() {
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
@@ -563,7 +789,7 @@ export default function DiairesiDinameisDekaExercisesPage() {
                           markerEnd="url(#diairesi-ask-arrow-left)"
                         />
                         <text x="155" y="16" fontSize="11" fontWeight="black" textAnchor="middle" fill="#d97706">
-                          : {q.div}
+                          : {formatNumber(q.div)}
                         </text>
                       </svg>
                     </div>
