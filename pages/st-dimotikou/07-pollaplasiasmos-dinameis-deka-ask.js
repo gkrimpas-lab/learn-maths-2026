@@ -46,8 +46,8 @@ const REAL_WORLD_ITEMS = [
   { item: 'βιβλία μαθηματικών', price: 9.75, unit: '€' }
 ];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_pow10_std_1',
     generate: () => {
@@ -55,41 +55,270 @@ const EXTRA_PROBLEMS_POOL = [
       const count = 100;
       const total = Number((pricePerItem * count).toFixed(2));
       return {
+        title: 'ΑΓΟΡΑ ΕΙΣΙΤΗΡΙΩΝ ΜΟΥΣΕΙΟΥ',
+        instruction: 'Υπολογίστε το συνολικό ποσό σε ευρώ (€) με κόμμα:',
         text: `Μια τάξη αγόρασε ${count} εισιτήρια μουσείου προς ${formatNum(pricePerItem)} € το καθένα. Πόσα ευρώ (€) πλήρωσε συνολικά;`,
-        tableData: { col1: 'Εισιτήρια', col2: 'Τιμή ανά τεμάχιο', r1: [`${count} τεμάχια`, `${formatNum(pricePerItem)} €`], r2: ['Πολλαπλασιασμός', 'χ €'] },
+        tableData: { col1: 'Εισιτήρια', col2: 'Τιμή ανά τεμάχιο', r1: [`${count} τεμάχια`, `${formatNum(pricePerItem)} €`], r2: ['Πολλαπλασιασμός', `${formatNum(total, 2)} €`] },
         correctVal: total,
         correctStr: formatNum(total, 2),
-        explanation: `Μετακινούμε την υποδιαστολή 2 θέσεις δεξιά (λόγω των 2 μηδενικών του 100): ${formatNum(pricePerItem)} · 100 ＝ ${formatNum(total, 2)} €.`
+        explanation: `Μετακινούμε την υποδιαστολή 2 θέσεις δεξιά: ${formatNum(pricePerItem)} · 100 ＝ ${formatNum(total, 2)} €.`
       };
     }
   },
   {
     id: 'p_pow10_std_2',
     generate: () => {
-      const weightKg = 3450;
-      const mult = 0.001; // τόνοι
-      const totalT = Number((weightKg * mult).toFixed(3));
+      const priceUnit = 0.85;
+      const count = 1000;
+      const total = Number((priceUnit * count).toFixed(2));
       return {
-        text: `Ένα φορτηγό μεταφέρει φορτίο ${weightKg} kg. Πόσους τόνους (t) ζυγίζει το φορτίο, αν γνωρίζουμε ότι 1 kg ＝ 0,001 t;`,
-        tableData: { col1: 'Βάρος σε κιλά', col2: 'Σχέση σε τόνους', r1: [`${weightKg} kg`, '1 kg ＝ 0,001 t'], r2: ['Πολλαπλασιασμός', 'χ t'] },
-        correctVal: totalT,
-        correctStr: formatNum(totalT, 3),
-        explanation: `Μετακινούμε την υποδιαστολή 3 θέσεις αριστερά: ${weightKg} · 0,001 ＝ ${formatNum(totalT, 3)} t.`
+        title: 'ΜΑΖΙΚΗ ΑΓΟΡΑ ΣΤΥΛΟ',
+        instruction: 'Υπολογίστε το συνολικό ποσό σε ευρώ (€) με κόμμα:',
+        text: `Ένα σχολείο παρήγγειλε ${formatNumber(count)} στυλό προς ${formatNum(priceUnit)} € το τεμάχιο. Πόσα ευρώ (€) κόστισε η παραγγελία;`,
+        tableData: { col1: 'Τεμάχια', col2: 'Τιμή τεμαχίου', r1: [`${formatNumber(count)} στυλό`, `${formatNum(priceUnit)} €`], r2: ['Γινόμενο', `${formatNum(total, 2)} €`] },
+        correctVal: total,
+        correctStr: formatNum(total, 2),
+        explanation: `Μετακινούμε την υποδιαστολή 3 θέσεις δεξιά: ${formatNum(priceUnit)} · 1.000 ＝ ${formatNum(total, 2)} €.`
       };
     }
   },
   {
     id: 'p_pow10_std_3',
     generate: () => {
+      const lengthM = 4.25;
+      const count = 10;
+      const total = Number((lengthM * count).toFixed(2));
+      return {
+        title: 'ΜΗΚΟΣ ΡΟΛΩΝ ΥΦΑΣΜΑΤΟΣ',
+        instruction: 'Υπολογίστε το συνολικό μήκος σε μέτρα (m) με κόμμα:',
+        text: `Ένα κατάστημα παρέλαβε ${count} τόπια υφάσματος, μήκους ${formatNum(lengthM)} m το καθένα. Πόσα μέτρα (m) υφάσματος παρέλαβε συνολικά;`,
+        tableData: { col1: 'Τόπια', col2: 'Μήκος ανά τόπι', r1: [`${count} τόπια`, `${formatNum(lengthM)} m`], r2: ['Γινόμενο', `${formatNum(total, 2)} m`] },
+        correctVal: total,
+        correctStr: formatNum(total, 2),
+        explanation: `Μετακινούμε την υποδιαστολή 1 θέση δεξιά: ${formatNum(lengthM)} · 10 ＝ ${formatNum(total, 2)} m.`
+      };
+    }
+  },
+  {
+    id: 'p_pow10_std_4',
+    generate: () => {
+      const weightGr = 4500;
+      const mult = 0.001;
+      const totalKg = Number((weightGr * mult).toFixed(3));
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΓΡΑΜΜΑΡΙΩΝ ΣΕ ΚΙΛΑ',
+        instruction: 'Υπολογίστε το βάρος σε κιλά (kg) με κόμμα:',
+        text: `Μια ποσότητα αλευριού ζυγίζει ${formatNumber(weightGr)} g. Πόσα κιλά (kg) είναι, αν γνωρίζουμε ότι 1 g ＝ 0,001 kg;`,
+        tableData: { col1: 'Γραμμάρια', col2: 'Σχέση σε κιλά', r1: [`${formatNumber(weightGr)} g`, '1 g ＝ 0,001 kg'], r2: ['Γινόμενο', `${formatNum(totalKg, 1)} kg`] },
+        correctVal: totalKg,
+        correctStr: formatNum(totalKg, 1),
+        explanation: `Μετακινούμε την υποδιαστολή 3 θέσεις αριστερά: ${weightGr} · 0,001 ＝ ${formatNum(totalKg, 1)} kg.`
+      };
+    }
+  },
+  {
+    id: 'p_pow10_std_5',
+    generate: () => {
+      const distM = 6800;
+      const mult = 0.001;
+      const totalKm = Number((distM * mult).toFixed(3));
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΜΕΤΡΩΝ ΣΕ ΧΙΛΙΟΜΕΤΡΑ',
+        instruction: 'Υπολογίστε την απόσταση σε χιλιόμετρα (km) με κόμμα:',
+        text: `Ένας δρομέας διένυσε απόσταση ${formatNumber(distM)} m. Πόσα χιλιόμετρα (km) διένυσε, αν 1 m ＝ 0,001 km;`,
+        tableData: { col1: 'Μέτρα', col2: 'Σχέση σε χιλιόμετρα', r1: [`${formatNumber(distM)} m`, '1 m ＝ 0,001 km'], r2: ['Γινόμενο', `${formatNum(totalKm, 2)} km`] },
+        correctVal: totalKm,
+        correctStr: formatNum(totalKm, 2),
+        explanation: `Μετακινούμε την υποδιαστολή 3 θέσεις αριστερά: ${distM} · 0,001 ＝ ${formatNum(totalKm, 2)} km.`
+      };
+    }
+  },
+  {
+    id: 'p_pow10_std_6',
+    generate: () => {
+      const volMl = 750;
+      const mult = 0.01;
+      const totalDl = Number((volMl * mult).toFixed(2));
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΟΓΚΟΥ ΥΓΡΟΥ',
+        instruction: 'Υπολογίστε τον όγκο με κόμμα:',
+        text: `Ένα δοχείο περιέχει ${volMl} μονάδες υγρού. Αν πολλαπλασιάσουμε την ποσότητα με το 0,01, ποιο αποτέλεσμα θα πάρουμε;`,
+        tableData: { col1: 'Αρχική Ποσότητα', col2: 'Πολλαπλασιαστής', r1: [`${volMl}`, '· 0,01'], r2: ['Αποτέλεσμα', `${formatNum(totalDl, 2)}`] },
+        correctVal: totalDl,
+        correctStr: formatNum(totalDl, 2),
+        explanation: `Μετακινούμε την υποδιαστολή 2 θέσεις αριστερά: ${volMl} · 0,01 ＝ ${formatNum(totalDl, 2)}.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_pow10_hard_1',
+    generate: () => {
+      const weightKg = 3450;
+      const mult = 0.001; // τόνοι
+      const totalT = Number((weightKg * mult).toFixed(3));
+      const correctStr = `${formatNum(totalT, 3)} t`;
+      const fake1 = `${formatNum(totalT * 10, 2)} t`;
+      const fake2 = `${formatNum(totalT / 10, 4)} t`;
+      const fake3 = `${formatNum(totalT + 1, 3)} t`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΒΑΡΟΥΣ ΦΟΡΤΙΟΥ ΣΕ ΤΟΝΟΥΣ',
+        instruction: 'Επιλέξτε το σωστό βάρος σε τόνους (t):',
+        text: `Ένα φορτηγό μεταφέρει φορτίο ${weightKg} kg. Πόσους τόνους (t) ζυγίζει το φορτίο, αν γνωρίζουμε ότι 1 kg ＝ 0,001 t;`,
+        tableData: { col1: 'Βάρος σε κιλά', col2: 'Σχέση σε τόνους', r1: [`${weightKg} kg`, '1 kg ＝ 0,001 t'], r2: ['Πολλαπλασιασμός', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετακινούμε την υποδιαστολή 3 θέσεις αριστερά: ${weightKg} · 0,001 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_pow10_hard_2',
+    generate: () => {
       const rollCm = 850;
       const mult = 0.01; // μέτρα
       const totalM = Number((rollCm * mult).toFixed(2));
+      const correctStr = `${formatNum(totalM, 2)} m`;
+      const fake1 = `${formatNum(totalM * 10, 1)} m`;
+      const fake2 = `${formatNum(totalM / 10, 3)} m`;
+      const fake3 = `${formatNum(totalM + 2, 2)} m`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΕΚΑΤΟΣΤΩΝ ΣΕ ΜΕΤΡΑ',
+        instruction: 'Επιλέξτε το σωστό μήκος σε μέτρα (m):',
         text: `Μια κορδέλα έχει μήκος ${rollCm} cm. Πόσα μέτρα (m) είναι το μήκος της, αν 1 cm ＝ 0,01 m;`,
-        tableData: { col1: 'Μήκος σε εκατοστά', col2: 'Σχέση σε μέτρα', r1: [`${rollCm} cm`, '1 cm ＝ 0,01 m'], r2: ['Πολλαπλασιασμός', 'χ m'] },
-        correctVal: totalM,
-        correctStr: formatNum(totalM, 2),
-        explanation: `Μετακινούμε την υποδιαστολή 2 θέσεις αριστερά: ${rollCm} · 0,01 ＝ ${formatNum(totalM, 2)} m.`
+        tableData: { col1: 'Μήκος σε εκατοστά', col2: 'Σχέση σε μέτρα', r1: [`${rollCm} cm`, '1 cm ＝ 0,01 m'], r2: ['Πολλαπλασιασμός', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετακινούμε την υποδιαστολή 2 θέσεις αριστερά: ${rollCm} · 0,01 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_pow10_hard_3',
+    generate: () => {
+      const pricePerL = 1.35;
+      const count = 100;
+      const totalCost = Number((pricePerL * count).toFixed(2));
+      const correctStr = `${formatNum(totalCost, 2)} €`;
+      const fake1 = `${formatNum(totalCost / 10, 2)} €`;
+      const fake2 = `${formatNum(totalCost * 10, 2)} €`;
+      const fake3 = `${formatNum(totalCost + 15, 2)} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΠΡΟΜΗΘΕΙΑ ΚΑΥΣΙΜΟΥ ΣΕ ΕΥΡΩ',
+        instruction: 'Επιλέξτε το συνολικό κόστος σε ευρώ (€):',
+        text: `Μια εταιρεία αγόρασε ${count} λίτρα καυσίμου προς ${formatNum(pricePerL)} € το λίτρο. Πόσα ευρώ (€) πλήρωσε συνολικά;`,
+        tableData: { col1: 'Ποσότητα', col2: 'Τιμή ανά λίτρο', r1: [`${count} L`, `${formatNum(pricePerL)} €`], r2: ['Γινόμενο', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετακινούμε την υποδιαστολή 2 θέσεις δεξιά: ${formatNum(pricePerL)} · 100 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_pow10_hard_4',
+    generate: () => {
+      const weightGr = 7250;
+      const mult = 0.001; // κιλά
+      const totalKg = Number((weightGr * mult).toFixed(3));
+      const correctStr = `${formatNum(totalKg, 2)} kg`;
+      const fake1 = `${formatNum(totalKg * 10, 1)} kg`;
+      const fake2 = `${formatNum(totalKg / 10, 3)} kg`;
+      const fake3 = `${formatNum(totalKg + 5, 2)} kg`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΜΑΖΑΣ ΣΕ ΚΙΛΑ',
+        instruction: 'Επιλέξτε το σωστό βάρος σε κιλά (kg):',
+        text: `Ένα δέμα ζυγίζει ${formatNumber(weightGr)} g. Πόσα κιλά (kg) ζυγίζει, αν 1 g ＝ 0,001 kg;`,
+        tableData: { col1: 'Γραμμάρια', col2: 'Σχέση σε κιλά', r1: [`${formatNumber(weightGr)} g`, '1 g ＝ 0,001 kg'], r2: ['Γινόμενο', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετακινούμε την υποδιαστολή 3 θέσεις αριστερά: ${weightGr} · 0,001 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_pow10_hard_5',
+    generate: () => {
+      const lengthM = 12500;
+      const mult = 0.001; // χιλιόμετρα
+      const totalKm = Number((lengthM * mult).toFixed(3));
+      const correctStr = `${formatNum(totalKm, 1)} km`;
+      const fake1 = `${formatNum(totalKm * 10, 1)} km`;
+      const fake2 = `${formatNum(totalKm / 10, 2)} km`;
+      const fake3 = `${formatNum(totalKm + 10, 1)} km`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΑΠΟΣΤΑΣΗΣ ΣΕ ΧΙΛΙΟΜΕΤΡΑ',
+        instruction: 'Επιλέξτε τη σωστή απόσταση σε χιλιόμετρα (km):',
+        text: `Μια διαδρομή αγώνα δρόμου έχει μήκος ${formatNumber(lengthM)} m. Πόσα χιλιόμετρα (km) είναι η διαδρομή, αν 1 m ＝ 0,001 km;`,
+        tableData: { col1: 'Μέτρα', col2: 'Σχέση σε km', r1: [`${formatNumber(lengthM)} m`, '1 m ＝ 0,001 km'], r2: ['Γινόμενο', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετακινούμε την υποδιαστολή 3 θέσεις αριστερά: ${lengthM} · 0,001 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_pow10_hard_6',
+    generate: () => {
+      const volMl = 4500;
+      const mult = 0.001; // λίτρα
+      const totalL = Number((volMl * mult).toFixed(3));
+      const correctStr = `${formatNum(totalL, 1)} L`;
+      const fake1 = `${formatNum(totalL * 10, 1)} L`;
+      const fake2 = `${formatNum(totalL / 10, 2)} L`;
+      const fake3 = `${formatNum(totalL + 2, 1)} L`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΤΑΤΡΟΠΗ ΧΩΡΗΤΙΚΟΤΗΤΑΣ ΣΕ ΛΙΤΡΑ',
+        instruction: 'Επιλέξτε τη σωστή χωρητικότητα σε λίτρα (L):',
+        text: `Μια κανάτα περιέχει ${formatNumber(volMl)} mL χυμό. Πόσα λίτρα (L) χυμού περιέχει, αν 1 mL ＝ 0,001 L;`,
+        tableData: { col1: 'Χιλιοστόλιτρα', col2: 'Σχέση σε λίτρα', r1: [`${formatNumber(volMl)} mL`, '1 mL ＝ 0,001 L'], r2: ['Γινόμενο', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Μετακινούμε την υποδιαστολή 3 θέσεις αριστερά: ${volMl} · 0,001 ＝ ${correctStr}.`
       };
     }
   }
@@ -109,17 +338,17 @@ function generateQuestions() {
     const q1RawAns = q1Val * q1Mult;
     const q1Correct = Number(q1RawAns.toFixed(2));
     const q1CorrectStr = formatNum(q1Correct);
-    const q1Prompt = `${q1Int},${q1Dec} · ${q1Mult}`;
+    const q1Prompt = `${q1Int},${q1Dec} · ${formatNumber(q1Mult)}`;
 
     qList.push({
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ ΜΕ 10, 100, 1.000',
-      instruction: 'Υπολογίστε το γινόμενο μετακινώντας την υποδιαστολή:',
+      instruction: 'Υπολογίστε το γινόμενο μετακινώντας την υποδιαστολή (με κόμμα):',
       prompt: `Υπολογίστε: ${q1Prompt};`,
       correctVal: q1Correct,
       correctStr: q1CorrectStr,
-      explanation: `Πολλαπλασιάζοντας με το ${q1Mult}, μετακινούμε την υποδιαστολή ${q1Mult === 10 ? '1 θέση' : q1Mult === 100 ? '2 θέσεις' : '3 θέσεις'} προς τα δεξιά: ${q1Prompt} ＝ ${q1CorrectStr}.`
+      explanation: `Πολλαπλασιάζοντας με το ${formatNumber(q1Mult)}, μετακινούμε την υποδιαστολή ${q1Mult === 10 ? '1 θέση' : q1Mult === 100 ? '2 θέσεις' : '3 θέσεις'} προς τα δεξιά: ${q1Prompt} ＝ ${q1CorrectStr}.`
     });
   }
 
@@ -139,7 +368,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ ΜΕ 0,1, 0,01, 0,001',
-      instruction: 'Υπολογίστε το γινόμενο μετακινώντας την υποδιαστολή:',
+      instruction: 'Υπολογίστε το γινόμενο μετακινώντας την υποδιαστολή (με κόμμα):',
       prompt: `Υπολογίστε: ${q2Prompt};`,
       correctVal: q2Correct,
       correctStr: q2CorrectStr,
@@ -147,7 +376,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (MCQ): Εύρεση του πολλαπλασιαστή που λείπει
+  // Q3 (MCQ): Εύρεση του πολλαπλασιαστή που λείπει (Εγγύηση Μοναδικότητας)
   {
     const q3Int = randInt(2, 65);
     const q3Dec = randInt(1, 9) * 10 + randInt(1, 9);
@@ -189,7 +418,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Πρόβλημα Καθημερινότητας (10, 100, 1000 τεμάχια)
+  // Q4 (MCQ): Πρόβλημα Καθημερινότητας (Εγγύηση Μοναδικότητας)
   {
     const q4Item = shuffledItems[0];
     const q4Count = [10, 100, 1000][randInt(0, 2)];
@@ -209,7 +438,7 @@ function generateQuestions() {
       id: 4,
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 4 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑΣ',
-      instruction: 'Υπολογίστε το συνολικό κόστος:',
+      instruction: 'Υπολογίστε το συνολικό κόστος σε ευρώ (€):',
       prompt: `Ένα σχολείο αγόρασε ${q4Count} ${q4Item.item} που κοστίζουν ${formatNum(q4Item.price, 2)} € το καθένα. Πόσο κόστισαν όλα μαζί;`,
       options,
       correctText: q4Correct,
@@ -321,48 +550,37 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕ ΔΥΝΑΜΕΙΣ ΤΟΥ 10',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα με κόμμα:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
-      correctVal: prob9.correctVal,
-      correctStr: prob9.correctStr,
-      explanation: prob9.explanation
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = prob10.correctVal;
-    const correctStr10 = `${prob10.correctStr} t`;
-    const fake10A = `${formatNum(val10 * 10, 3)} t`;
-    const fake10B = `${formatNum(val10 / 10, 4)} t`;
-    const fake10C = `${formatNum(val10 + 1, 3)} t`;
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΜΕΤΑΤΡΟΠΗΣ ΒΑΡΟΥΣ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
-      explanation: prob10.explanation
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
@@ -382,6 +600,7 @@ export default function DinameisDekaExercisesPage() {
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
@@ -567,7 +786,7 @@ export default function DinameisDekaExercisesPage() {
                           markerEnd="url(#ask-arrow-right)"
                         />
                         <text x="165" y="16" fontSize="11" fontWeight="black" textAnchor="middle" fill="#d97706">
-                          · {q.mult}
+                          · {formatNumber(q.mult)}
                         </text>
                       </svg>
                     </div>
