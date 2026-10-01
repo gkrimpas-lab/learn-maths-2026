@@ -34,21 +34,7 @@ function formatNum(val, decimals = 3) {
   return String(rounded).replace('.', ',');
 }
 
-// Βοηθητικο component κλασματος
-function Fraction({ num, den, className = '' }) {
-  return (
-    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
-      <span className="border-b-2 border-current px-1 pb-0.5 text-center leading-none">
-        {num}
-      </span>
-      <span className="px-1 pt-0.5 text-center leading-none">
-        {den}
-      </span>
-    </span>
-  );
-}
-
-// Δεξαμενη Κανονικων Προβληματων Δεκαδικων
+// Δεξαμενη Κανονικων Προβληματων Δεκαδικων για την Ερωτηση 7 (Input)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_dec_std_1',
@@ -57,8 +43,10 @@ const STANDARD_PROBLEMS_POOL = [
       const p2 = 3.8;
       const sum = Number((p1 + p2).toFixed(2));
       return {
+        title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΟΣΘΕΣΗ ΒΑΡΟΥΣ ΦΡΟΥΤΩΝ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε το συνολικό βάρος σε κιλά (kg) με κόμμα:',
         text: `Ένα παντοπωλείο πούλησε ${formatNum(p1)} kg μήλα και ${formatNum(p2)} kg πορτοκάλια. Πόσα κιλά (kg) φρούτων πούλησε συνολικά;`,
-        tableData: { col1: 'Μήλα', col2: 'Πορτοκάλια', r1: [`${formatNum(p1)} kg`, `${formatNum(p2)} kg`], r2: ['Πρόσθεση', 'χ kg'] },
+        tableData: { col1: 'Μήλα', col2: 'Πορτοκάλια', r1: [`${formatNum(p1)} kg`, `${formatNum(p2)} kg`], r2: ['Πρόσθεση', `${formatNum(sum)} kg`] },
         correctVal: sum,
         correctStr: formatNum(sum),
         explanation: `Προσθέτουμε ευθυγραμμίζοντας τις υποδιαστολές: ${formatNum(p1)} ＋ ${formatNum(p2)} ＝ ${formatNum(sum)} kg.`
@@ -72,8 +60,10 @@ const STANDARD_PROBLEMS_POOL = [
       const usedM = 3.65;
       const remain = Number((initialM - usedM).toFixed(2));
       return {
+        title: 'ΕΡΩΤΗΣΗ 7 • ΑΦΑΙΡΕΣΗ ΜΗΚΟΥΣ ΥΦΑΣΜΑΤΟΣ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε το υπόλοιπο μήκος σε μέτρα (m) με κόμμα:',
         text: `Από ένα ύφασμα μήκους ${initialM} m, κόπηκε ένα κομμάτι μήκους ${formatNum(usedM)} m. Πόσα μέτρα (m) υφάσματος έμειναν;`,
-        tableData: { col1: 'Αρχικό Μήκος', col2: 'Κομμάτι που κόπηκε', r1: [`${initialM} m`, `${formatNum(usedM)} m`], r2: ['Αφαίρεση', 'χ m'] },
+        tableData: { col1: 'Αρχικό Μήκος', col2: 'Κομμάτι που κόπηκε', r1: [`${initialM} m`, `${formatNum(usedM)} m`], r2: ['Αφαίρεση', `${formatNum(remain)} m`] },
         correctVal: remain,
         correctStr: formatNum(remain),
         explanation: `Συμπληρώνουμε μηδενικά στο ακέραιο μέρος: 10,00 － ${formatNum(usedM)} ＝ ${formatNum(remain)} m.`
@@ -87,8 +77,10 @@ const STANDARD_PROBLEMS_POOL = [
       const liters = 4;
       const totalCost = Number((pricePerL * liters).toFixed(2));
       return {
+        title: 'ΕΡΩΤΗΣΗ 7 • ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ ΑΓΟΡΑΣ',
+        instruction: 'Λύστε το πρόβλημα και συμπληρώστε το συνολικό ποσό σε ευρώ (€) με κόμμα:',
         text: `Αγοράσαμε ${liters} λίτρα γάλα προς ${formatNum(pricePerL)} € το λίτρο. Πόσα ευρώ (€) πληρώσαμε;`,
-        tableData: { col1: 'Λίτρα Γάλακτος', col2: 'Τιμή ανά λίτρο', r1: [`${liters} λ.`, `${formatNum(pricePerL)} €`], r2: ['Πολλαπλασιασμός', 'χ €'] },
+        tableData: { col1: 'Λίτρα Γάλακτος', col2: 'Τιμή ανά λίτρο', r1: [`${liters} λ.`, `${formatNum(pricePerL)} €`], r2: ['Πολλαπλασιασμός', `${formatNum(totalCost)} €`] },
         correctVal: totalCost,
         correctStr: formatNum(totalCost),
         explanation: `Πολλαπλασιάζουμε: ${liters} · ${formatNum(pricePerL)} ＝ ${formatNum(totalCost)} €.`
@@ -97,7 +89,7 @@ const STANDARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας
+// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας για τις Ερωτησεις 9 (Input) και 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_dec_hard_1',
@@ -108,11 +100,27 @@ const HARD_PROBLEMS_POOL = [
       const b3 = 6.25;
       const totalSpent = Number((b1 + b2 + b3).toFixed(2));
       const change = Number((note50 - totalSpent).toFixed(2));
+      const correctStr = `${formatNum(change)} €`;
+      const fake1 = `${formatNum(change + 1.5)} €`;
+      const fake2 = `${formatNum(Math.max(1, change - 1.2))} €`;
+      const fake3 = `${formatNum(change + 2.4)} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΣΥΝΑΛΛΑΓΗΣ',
+        inputInstruction: 'Υπολογίστε τα ρέστα σε ευρώ (€) με κόμμα:',
+        mcqInstruction: 'Επιλέξτε το σωστό ποσό ρέστων σε ευρώ (€):',
         text: `Ένας πελάτης αγόρασε τρία είδη αξίας ${formatNum(b1)} €, ${formatNum(b2)} € και ${formatNum(b3)} €. Πλήρωσε με χαρτονόμισμα των 50 €. Πόσα ρέστα (€) έλαβε;`,
-        tableData: { col1: 'Τρία Είδη', col2: 'Πληρωμή & Ρέστα', r1: [`${formatNum(b1)} € ＋ ${formatNum(b2)} €`, `＋ ${formatNum(b3)} €`], r2: [`Σύνολο: ${formatNum(totalSpent)} €`, 'Ρέστα από 50 €'] },
+        tableData: { col1: 'Τρία Είδη', col2: 'Πληρωμή & Ρέστα', r1: [`${formatNum(b1)} € ＋ ${formatNum(b2)} €`, `＋ ${formatNum(b3)} €`], r2: [`Σύνολο: ${formatNum(totalSpent)} €`, `Ρέστα: ${formatNum(change)} €`] },
         correctVal: change,
         correctStr: formatNum(change),
+        options,
+        correctText: correctStr,
         explanation: `Υπολογίζουμε το συνολικό κόστος: ${formatNum(b1)} ＋ ${formatNum(b2)} ＋ ${formatNum(b3)} ＝ ${formatNum(totalSpent)} €. Αφαιρούμε από τα 50 €: 50,00 － ${formatNum(totalSpent)} ＝ ${formatNum(change)} €.`
       };
     }
@@ -123,12 +131,60 @@ const HARD_PROBLEMS_POOL = [
       const lengthM = 8.4;
       const widthM = 5.25;
       const perim = Number((2 * (lengthM + widthM)).toFixed(2));
+      const correctStr = `${formatNum(perim)} m`;
+      const fake1 = `${formatNum(perim + 2.5)} m`;
+      const fake2 = `${formatNum(Math.max(1, perim - 1.5))} m`;
+      const fake3 = `${formatNum(perim * 1.2)} m`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΠΕΡΙΜΕΤΡΟΥ ΜΕ ΔΕΚΑΔΙΚΟΥΣ',
+        inputInstruction: 'Υπολογίστε την περίμετρο σε μέτρα (m) με κόμμα:',
+        mcqInstruction: 'Επιλέξτε τη σωστή τιμή περιμέτρου σε μέτρα (m):',
         text: `Ένα ορθογώνιο δωμάτιο έχει μήκος ${formatNum(lengthM)} m και πλάτος ${formatNum(widthM)} m. Πόσα μέτρα (m) είναι η περίμετρος του δωματίου;`,
-        tableData: { col1: 'Διαστάσεις', col2: 'Περίμετρος', r1: [`Μήκος: ${formatNum(lengthM)} m`, `Πλάτος: ${formatNum(widthM)} m`], r2: ['2 · (μήκος ＋ πλάτος)', 'χ m'] },
+        tableData: { col1: 'Διαστάσεις', col2: 'Περίμετρος', r1: [`Μήκος: ${formatNum(lengthM)} m`, `Πλάτος: ${formatNum(widthM)} m`], r2: ['2 · (μήκος ＋ πλάτος)', `${formatNum(perim)} m`] },
         correctVal: perim,
         correctStr: formatNum(perim),
+        options,
+        correctText: correctStr,
         explanation: `Υπολογίζουμε: 2 · (${formatNum(lengthM)} ＋ ${formatNum(widthM)}) ＝ 2 · ${formatNum(lengthM + widthM)} ＝ ${formatNum(perim)} m.`
+      };
+    }
+  },
+  {
+    id: 'p_dec_hard_3',
+    generate: () => {
+      const sack1 = 12.75;
+      const sack2 = 15.6;
+      const sack3 = 8.45;
+      const totalWeight = Number((sack1 + sack2 + sack3).toFixed(2));
+      const correctStr = `${formatNum(totalWeight)} kg`;
+      const fake1 = `${formatNum(totalWeight + 1.2)} kg`;
+      const fake2 = `${formatNum(Math.max(1, totalWeight - 2.5))} kg`;
+      const fake3 = `${formatNum(totalWeight + 3)} kg`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΝΟΛΙΚΟ ΒΑΡΟΣ ΦΟΡΤΙΟΥ',
+        inputInstruction: 'Υπολογίστε το συνολικό βάρος σε κιλά (kg) με κόμμα:',
+        mcqInstruction: 'Επιλέξτε το σωστό συνολικό βάρος σε κιλά (kg):',
+        text: `Ένας αγρότης φόρτωσε τρία σακιά με βάρη ${formatNum(sack1)} kg, ${formatNum(sack2)} kg και ${formatNum(sack3)} kg. Πόσα κιλά (kg) ζυγίζει ολόκληρο το φορτίο;`,
+        tableData: { col1: 'Τρία Σακιά', col2: 'Συνολικό Βάρος', r1: [`${formatNum(sack1)} kg ＋ ${formatNum(sack2)} kg`, `＋ ${formatNum(sack3)} kg`], r2: ['Άθροισμα', `${formatNum(totalWeight)} kg`] },
+        correctVal: totalWeight,
+        correctStr: formatNum(totalWeight),
+        options,
+        correctText: correctStr,
+        explanation: `Προσθέτουμε τα βάρη: ${formatNum(sack1)} ＋ ${formatNum(sack2)} ＋ ${formatNum(sack3)} ＝ ${formatNum(totalWeight)} kg.`
       };
     }
   }
@@ -251,7 +307,7 @@ function generateQuestions() {
       prompt: 'Ποιος από τους παρακάτω δεκαδικούς αριθμούς είναι ο μεγαλύτερος;',
       options,
       correctText: o1,
-      explanation: `Συγκρίνοντας πρώτα τα δέκατα και μετά τα εκατοστά, ο μεγαλύτερος αριθμός είναι το ${o1} (αφού 8 δέκατα ＝ 0,800 > 0,750 > 0,705 > 0,095).`
+      explanation: `Συγκρίνοντας πρώτα τα δέκατα και μετά τα εκατοστά, ο μεγαλύτερος αριθμός είναι το ${o1} (αφού 8 δέκατα ＝ 0,800 ＞ 0,750 ＞ 0,705 ＞ 0,095).`
     });
   }
 
@@ -311,23 +367,22 @@ function generateQuestions() {
     });
   }
 
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
+  // Q7 & Q8: Κανονικό Πρόβλημα & Αριθμογραμμή
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
-    const stdProb1 = shuffledStd[0].generate();
-    const stdProb2 = shuffledStd[1].generate();
+    const stdProb = shuffledStd[0].generate();
 
     // Q7 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 7,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΔΕΚΑΔΙΚΩΝ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα με κόμμα:',
-      prompt: stdProb1.text,
-      tableData: stdProb1.tableData,
-      correctVal: stdProb1.correctVal,
-      correctStr: stdProb1.correctStr,
-      explanation: stdProb1.explanation
+      title: stdProb.title,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
     });
 
     // Q8 (MCQ - Αριθμογραμμή με Εγγύηση Μοναδικότητας Επιλογών)
@@ -347,7 +402,7 @@ function generateQuestions() {
       id: 8,
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 8 • ΔΕΚΑΔΙΚΗ ΑΡΙΘΜΟΓΡΑΜΜΗ',
-      instruction: 'Επιλέξτε τον δεκαδικό αριθμό που δείχνει ο κόκκινος δείκτης:',
+      instruction: 'Επιλέξτε τον δεκαδικό αριθμό που δείχνει ο δείκτης:',
       prompt: `Στην αριθμογραμμή μεταξύ του 3,0 και του 4,0, ποιος αριθμός βρίσκεται ${q8Step} δέκατα μετά το 3,0;`,
       options: optionsQ8,
       correctText: q8CorrectVal,
@@ -355,7 +410,7 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ) από το HARD_PROBLEMS_POOL
   {
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
     const hardProb1 = shuffledHard[0].generate();
@@ -365,8 +420,8 @@ function generateQuestions() {
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΣΥΝΑΛΛΑΓΗΣ',
-      instruction: 'Υπολογίστε τα ρέστα σε ευρώ (€) με κόμμα:',
+      title: `ΕΡΩΤΗΣΗ 9 • ${hardProb1.title}`,
+      instruction: hardProb1.inputInstruction,
       prompt: hardProb1.text,
       tableData: hardProb1.tableData,
       correctVal: hardProb1.correctVal,
@@ -374,32 +429,16 @@ function generateQuestions() {
       explanation: hardProb1.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = hardProb2.correctVal;
-    const fake10A = formatNum(val10 + 2.5);
-    const fake10B = formatNum(Math.max(1, val10 - 1.5));
-    const fake10C = formatNum(val10 * 1.2);
-
-    const rawOptionsQ10 = [
-      `${formatNum(val10)} m`,
-      `${fake10A} m`,
-      `${fake10B} m`,
-      `${fake10C} m`
-    ];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === `${formatNum(val10)} m`
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΠΕΡΙΜΕΤΡΟΣ ΜΕ ΔΕΚΑΔΙΚΟΥΣ ΑΡΙΘΜΟΥΣ',
-      instruction: 'Επιλέξτε τη σωστή τιμή περιμέτρου:',
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb2.title}`,
+      instruction: hardProb2.mcqInstruction,
       prompt: hardProb2.text,
       tableData: hardProb2.tableData,
-      options: optionsQ10,
-      correctText: `${formatNum(val10)} m`,
+      options: hardProb2.options,
+      correctText: hardProb2.correctText,
       explanation: hardProb2.explanation
     });
   }
