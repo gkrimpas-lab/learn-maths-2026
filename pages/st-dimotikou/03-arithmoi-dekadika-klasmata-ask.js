@@ -34,21 +34,7 @@ function formatNum(val, decimals = 3) {
   return String(rounded).replace('.', ',');
 }
 
-// Βοηθητικο component κλασματος
-function Fraction({ num, den, className = '' }) {
-  return (
-    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
-      <span className="border-b-2 border-current px-1 pb-0.5 text-center leading-none">
-        {num}
-      </span>
-      <span className="px-1 pt-0.5 text-center leading-none">
-        {den}
-      </span>
-    </span>
-  );
-}
-
-// Δεξαμενη Κανονικων Προβληματων
+// Διευρυμενη Δεξαμενη Κανονικων Προβληματων (για Q9 Input)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_klasm_std_1',
@@ -57,6 +43,8 @@ const STANDARD_PROBLEMS_POOL = [
       const shaded = randInt(25, 75);
       const decVal = Number((shaded / parts).toFixed(2));
       return {
+        title: 'ΕΡΩΤΗΣΗ 9 • ΧΡΩΜΑΤΙΣΜΕΝΟ ΜΕΡΟΣ ΜΟΝΑΔΑΣ',
+        instruction: 'Γράψτε τον δεκαδικό αριθμό με κόμμα:',
         text: `Σε ένα τετράγωνο χωρισμένο σε 100 ίσα τετραγωνάκια, χρωματίστηκαν τα ${shaded}. Ποιος δεκαδικός αριθμός εκφράζει το χρωματισμένο μέρος της μονάδας;`,
         tableData: { col1: 'Χρωματισμένα', col2: 'Συνολικά', r1: [`${shaded}`, `${parts}`], r2: ['Δεκαδικό Κλάσμα', `${shaded}/${parts}`] },
         correctVal: decVal,
@@ -69,65 +57,241 @@ const STANDARD_PROBLEMS_POOL = [
     id: 'p_klasm_std_2',
     generate: () => {
       const bottles = 10;
-      const capacityL = 0.7; // 7/10
+      const fracNumer = randInt(6, 9);
+      const capacityL = fracNumer / 10;
       const totalL = Number((bottles * capacityL).toFixed(1));
       return {
-        text: `Γεμίσαμε ${bottles} μπουκάλια με χυμό. Κάθε μπουκάλι χωράει 7/10 του λίτρου. Πόσα λίτρα (λ.) χυμού χρησιμοποιήσαμε συνολικά;`,
-        tableData: { col1: 'Μπουκάλια', col2: 'Χωρητικότητα', r1: [`${bottles} μπουκάλια`, '7/10 λ. ＝ 0,7 λ.'], r2: ['Πολλαπλασιασμός', 'χ λ.'] },
+        title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΟΛΙΚΟΣ ΟΓΚΟΣ ΧΥΜΟΥ',
+        instruction: 'Συμπληρώστε τα συνολικά λίτρα (L) με κόμμα:',
+        text: `Γεμίσαμε ${bottles} μπουκάλια με χυμό. Κάθε μπουκάλι χωράει ${fracNumer}/10 του λίτρου. Πόσα λίτρα (L) χυμού χρησιμοποιήσαμε συνολικά;`,
+        tableData: { col1: 'Μπουκάλια', col2: 'Χωρητικότητα', r1: [`${bottles} μπουκάλια`, `${fracNumer}/10 L ＝ ${formatNum(capacityL, 1)} L`], r2: ['Πολλαπλασιασμός', `${formatNum(totalL, 1)} L`] },
         correctVal: totalL,
         correctStr: formatNum(totalL, 1),
-        explanation: `7/10 του λίτρου ισούται με 0,7 λ. Για 10 μπουκάλια: 10 · 0,7 ＝ ${formatNum(totalL, 1)} λ.`
+        explanation: `${fracNumer}/10 του λίτρου ισούται με ${formatNum(capacityL, 1)} L. Για 10 μπουκάλια: 10 · ${formatNum(capacityL, 1)} ＝ ${formatNum(totalL, 1)} L.`
       };
     }
   },
   {
     id: 'p_klasm_std_3',
     generate: () => {
-      const ribbonM = 1.25;
-      const fracNum = 125;
+      const tenths = randInt(115, 185);
+      const ribbonM = Number((tenths / 100).toFixed(2));
+      const fracNum = tenths;
       const fracDen = 100;
       return {
+        title: 'ΕΡΩΤΗΣΗ 9 • ΑΡΙΘΜΗΤΗΣ ΔΕΚΑΔΙΚΟΥ ΚΛΑΣΜΑΤΟΣ',
+        instruction: 'Συμπληρώστε τον αριθμητή του δεκαδικού κλάσματος (ακέραιος):',
         text: `Μια κορδέλα έχει μήκος ${formatNum(ribbonM)} m. Ποιος είναι ο αριθμητής του δεκαδικού κλάσματος με παρονομαστή το 100 που ισούται με το μήκος της κορδέλας;`,
-        tableData: { col1: 'Μήκος', col2: 'Παρονομαστής', r1: [`${formatNum(ribbonM)} m`, `${fracDen}`], r2: ['Αριθμητής', 'χ'] },
+        tableData: { col1: 'Μήκος', col2: 'Παρονομαστής', r1: [`${formatNum(ribbonM)} m`, `${fracDen}`], r2: ['Αριθμητής', `${fracNum}`] },
         correctVal: fracNum,
         correctStr: String(fracNum),
         explanation: `Ο αριθμός ${formatNum(ribbonM)} έχει 2 δεκαδικά ψηφία, άρα γράφεται ως ${fracNum}/${fracDen}. Ο αριθμητής είναι ${fracNum}.`
       };
     }
+  },
+  {
+    id: 'p_klasm_std_4',
+    generate: () => {
+      const sackKg = randInt(25, 85);
+      const decKg = Number((sackKg / 10).toFixed(1));
+      return {
+        title: 'ΕΡΩΤΗΣΗ 9 • ΜΕΤΑΤΡΟΠΗ ΒΑΡΟΥΣ ΣΕ ΔΕΚΑΔΙΚΟ',
+        instruction: 'Γράψτε το βάρος ως δεκαδικό αριθμό σε κιλά (kg) με κόμμα:',
+        text: `Ένα σακί περιέχει ${sackKg}/10 του κιλού αλεύρι. Ποιος δεκαδικός αριθμός σε κιλά (kg) αντιστοιχεί σε αυτή την ποσότητα;`,
+        tableData: { col1: 'Δεκαδικό Κλάσμα', col2: 'Δεκαδική Μορφή', r1: [`${sackKg}/10 kg`, 'Διαίρεση με 10'], r2: ['Αποτέλεσμα', `${formatNum(decKg, 1)} kg`] },
+        correctVal: decKg,
+        correctStr: formatNum(decKg, 1),
+        explanation: `${sackKg}/10 ＝ ${sackKg} : 10 ＝ ${formatNum(decKg, 1)} kg.`
+      };
+    }
+  },
+  {
+    id: 'p_klasm_std_5',
+    generate: () => {
+      const wireM = randInt(12, 48);
+      const decM = Number((wireM / 100).toFixed(2));
+      return {
+        title: 'ΕΡΩΤΗΣΗ 9 • ΜΗΚΟΣ ΣΥΡΜΑΤΟΣ',
+        instruction: 'Γράψτε το μήκος ως δεκαδικό αριθμό σε μέτρα (m) με κόμμα:',
+        text: `Ένα κομμάτι σύρματος έχει μήκος ${wireM}/100 του μέτρου. Ποιος δεκαδικός αριθμός σε μέτρα (m) εκφράζει το μήκος του σύρματος;`,
+        tableData: { col1: 'Δεκαδικό Κλάσμα', col2: 'Δεκαδικός Αριθμός', r1: [`${wireM}/100 m`, '2 δεκαδικά ψηφία'], r2: ['Αποτέλεσμα', `${formatNum(decM, 2)} m`] },
+        correctVal: decM,
+        correctStr: formatNum(decM, 2),
+        explanation: `${wireM}/100 ＝ ${wireM} : 100 ＝ ${formatNum(decM, 2)} m.`
+      };
+    }
+  },
+  {
+    id: 'p_klasm_std_6',
+    generate: () => {
+      const thousands = randInt(125, 875);
+      const decKm = Number((thousands / 1000).toFixed(3));
+      return {
+        title: 'ΕΡΩΤΗΣΗ 9 • ΑΠΟΣΤΑΣΗ ΣΕ ΧΙΛΙΟΜΕΤΡΑ',
+        instruction: 'Γράψτε την απόσταση ως δεκαδικό αριθμό σε χιλιόμετρα (km) με κόμμα:',
+        text: `Μια διαδρομή έχει μήκος ${thousands}/1.000 του χιλιομέτρου. Ποιος δεκαδικός αριθμός σε χιλιόμετρα (km) ισούται με τη διαδρομή αυτή;`,
+        tableData: { col1: 'Δεκαδικό Κλάσμα', col2: 'Δεκαδικός Αριθμός', r1: [`${thousands}/1.000 km`, '3 δεκαδικά ψηφία'], r2: ['Αποτέλεσμα', `${formatNum(decKm, 3)} km`] },
+        correctVal: decKm,
+        correctStr: formatNum(decKm, 3),
+        explanation: `${thousands}/1.000 ＝ ${thousands} : 1.000 ＝ ${formatNum(decKm, 3)} km.`
+      };
+    }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας
+// Διευρυμενη Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (για Q10 MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_klasm_hard_1',
     generate: () => {
-      const a = 3;
-      const bTenths = 4;
-      const cHundr = 5;
+      const a = randInt(2, 5);
+      const bTenths = randInt(3, 7);
+      const cHundr = randInt(2, 8);
       const totalDec = Number((a + bTenths * 0.1 + cHundr * 0.01).toFixed(2));
-      const totalNum = a * 100 + bTenths * 10 + cHundr; // 345
+      const totalNum = a * 100 + bTenths * 10 + cHundr;
+
+      const correctStr = String(totalNum);
+      const fake1 = String(totalNum + 10);
+      const fake2 = String(Math.max(10, totalNum - 10));
+      const fake3 = String(a * 10 + bTenths * 10 + cHundr);
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
+        title: 'ΣΥΝΘΕΣΗ ΜΕΙΓΜΑΤΟΣ ΣΕ ΕΚΑΤΟΣΤΑ',
+        instruction: 'Επιλέξτε τον σωστό αριθμητή του δεκαδικού κλάσματος:',
         text: `Ένα μείγμα περιέχει ${a} ακέραιες μονάδες, ${bTenths}/10 της μονάδας και ${cHundr}/100 της μονάδας. Ποιος είναι ο αριθμητής αν γράψουμε όλη την ποσότητα ως δεκαδικό κλάσμα με παρονομαστή το 100;`,
-        tableData: { col1: 'Μείγμα', col2: 'Αναγωγή σε εκατοστά', r1: [`${a} μον. ＝ ${a * 100}/100`, `${bTenths}/10 ＝ ${bTenths * 10}/100`], r2: [`${cHundr}/100`, 'Συνολικός Αριθμητής'] },
+        tableData: { col1: 'Μείγμα', col2: 'Αναγωγή σε εκατοστά', r1: [`${a} μον. ＝ ${a * 100}/100`, `${bTenths}/10 ＝ ${bTenths * 10}/100`], r2: [`${cHundr}/100`, `Αριθμητής: ${totalNum}`] },
         correctVal: totalNum,
-        correctStr: String(totalNum),
-        explanation: `Μετατρέπουμε όλα τα μέρη σε εκατοστά: ${a * 100}/100 ＋ ${bTenths * 10}/100 ＋ ${cHundr}/100 ＝ ${totalNum}/100. Ο αριθμητής είναι το ${totalNum} (που αντιστοιχεί στο ${formatNum(totalDec, 2)}).`
+        correctStr,
+        options,
+        correctText: correctStr,
+        explanation: `Μετατρέπουμε όλα τα μέρη σε εκατοστά: ${a * 100}/100 ＋ ${bTenths * 10}/100 ＋ ${cHundr}/100 ＝ ${totalNum}/100. Ο αριθμητής είναι το ${totalNum} (ισούται με ${formatNum(totalDec, 2)}).`
       };
     }
   },
   {
     id: 'p_klasm_hard_2',
     generate: () => {
-      const f1Numer = 35; // 35/100 = 0.35
-      const f2Dec = 0.4;   // 4/10 = 0.40
-      const sum = Number((f1Numer / 100 + f2Dec).toFixed(2));
+      const f1Numer = 35;
+      const f2Tenths = 4;
+      const sum = Number((f1Numer / 100 + f2Tenths / 10).toFixed(2));
+      const correctStr = `${formatNum(sum, 2)} m`;
+      const fake1 = `${formatNum(sum + 0.15, 2)} m`;
+      const fake2 = `${formatNum(Math.max(0.1, sum - 0.2), 2)} m`;
+      const fake3 = `${formatNum(sum + 0.35, 2)} m`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
       return {
-        text: `Από ένα ύφασμα χρησιμοποιήθηκαν τα 35/100 του μέτρου το πρωί και άλλα 4/10 του μέτρου το απόγευμα. Πόσα μέτρα (m) υφάσματος χρησιμοποιήθηκαν συνολικά;`,
-        tableData: { col1: 'Πρωί', col2: 'Απόγευμα', r1: ['35/100 m ＝ 0,35 m', '4/10 m ＝ 0,40 m'], r2: ['Πρόσθεση', 'χ m'] },
+        title: 'ΠΡΟΣΘΕΣΗ ΜΗΚΩΝ ΥΦΑΣΜΑΤΟΣ',
+        instruction: 'Επιλέξτε το σωστό συνολικό μήκος σε μέτρα (m):',
+        text: `Από ένα ύφασμα χρησιμοποιήθηκαν τα ${f1Numer}/100 του μέτρου το πρωί και άλλα ${f2Tenths}/10 του μέτρου το απόγευμα. Πόσα μέτρα (m) υφάσματος χρησιμοποιήθηκαν συνολικά;`,
+        tableData: { col1: 'Πρωί', col2: 'Απόγευμα', r1: [`${f1Numer}/100 m ＝ 0,35 m`, `${f2Tenths}/10 m ＝ 0,40 m`], r2: ['Πρόσθεση', `${correctStr}`] },
         correctVal: sum,
-        correctStr: formatNum(sum, 2),
-        explanation: `35/100 ＝ 0,35 m και 4/10 ＝ 40/100 ＝ 0,40 m. Συνολικά: 0,35 ＋ 0,40 ＝ ${formatNum(sum, 2)} m (ή 75/100 m).`
+        correctStr,
+        options,
+        correctText: correctStr,
+        explanation: `${f1Numer}/100 ＝ 0,35 m και ${f2Tenths}/10 ＝ 40/100 ＝ 0,40 m. Συνολικά: 0,35 ＋ 0,40 ＝ ${correctStr} (ή 75/100 m).`
+      };
+    }
+  },
+  {
+    id: 'p_klasm_hard_3',
+    generate: () => {
+      const l1Tenths = 6;
+      const l2Hundr = 25;
+      const sumL = Number((l1Tenths / 10 + l2Hundr / 100).toFixed(2));
+      const correctStr = `${formatNum(sumL, 2)} L`;
+      const fake1 = `${formatNum(sumL + 0.2, 2)} L`;
+      const fake2 = `${formatNum(Math.max(0.1, sumL - 0.15), 2)} L`;
+      const fake3 = `${formatNum(sumL + 0.4, 2)} L`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΑΝΑΜΕΙΞΗ ΥΓΡΩΝ ΣΕ ΛΙΤΡΑ',
+        instruction: 'Επιλέξτε τον συνολικό όγκο σε λίτρα (L):',
+        text: `Σε ένα δοχείο ρίξαμε ${l1Tenths}/10 του λίτρου νερό και ${l2Hundr}/100 του λίτρου χυμό. Πόσα λίτρα (L) υγρού περιέχει συνολικά το δοχείο;`,
+        tableData: { col1: 'Νερό', col2: 'Χυμός', r1: [`${l1Tenths}/10 L ＝ 0,60 L`, `${l2Hundr}/100 L ＝ 0,25 L`], r2: ['Σύνολο', `${correctStr}`] },
+        correctVal: sumL,
+        correctStr,
+        options,
+        correctText: correctStr,
+        explanation: `${l1Tenths}/10 L ＝ 0,60 L και ${l2Hundr}/100 L ＝ 0,25 L. Άρα συνολικά: 0,60 ＋ 0,25 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_klasm_hard_4',
+    generate: () => {
+      const kg1 = 45;
+      const kg2 = 3;
+      const sumKg = Number((kg1 / 100 + kg2 / 10).toFixed(2));
+      const correctStr = `${formatNum(sumKg, 2)} kg`;
+      const fake1 = `${formatNum(sumKg + 0.1, 2)} kg`;
+      const fake2 = `${formatNum(Math.max(0.1, sumKg - 0.2), 2)} kg`;
+      const fake3 = `${formatNum(sumKg + 0.25, 2)} kg`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΝΟΛΙΚΟ ΒΑΡΟΣ ΜΠΑΧΑΡΙΚΩΝ',
+        instruction: 'Επιλέξτε το συνολικό βάρος σε κιλά (kg):',
+        text: `Ένας σεφ αγόρασε ${kg1}/100 του κιλού κανέλα και ${kg2}/10 του κιλού γαρίφαλο. Πόσα κιλά (kg) μπαχαρικών αγόρασε συνολικά;`,
+        tableData: { col1: 'Κανέλα', col2: 'Γαρίφαλο', r1: [`${kg1}/100 kg ＝ 0,45 kg`, `${kg2}/10 kg ＝ 0,30 kg`], r2: ['Πρόσθεση', `${correctStr}`] },
+        correctVal: sumKg,
+        correctStr,
+        options,
+        correctText: correctStr,
+        explanation: `${kg1}/100 ＝ 0,45 kg και ${kg2}/10 ＝ 0,30 kg. Συνολικά: 0,45 ＋ 0,30 ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_klasm_hard_5',
+    generate: () => {
+      const totalKm = 1;
+      const walkedTenths = 7;
+      const walkedDec = walkedTenths / 10;
+      const remainKm = Number((totalKm - walkedDec).toFixed(1));
+      const correctStr = `${formatNum(remainKm, 1)} km`;
+      const fake1 = `${formatNum(remainKm + 0.2, 1)} km`;
+      const fake2 = `${formatNum(Math.max(0.1, remainKm - 0.1), 1)} km`;
+      const fake3 = '0,7 km';
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΥΠΟΛΟΙΠΟ ΔΙΑΔΡΟΜΗΣ ΣΕ ΧΙΛΙΟΜΕΤΡΑ',
+        instruction: 'Επιλέξτε την υπολειπόμενη απόσταση σε χιλιόμετρα (km):',
+        text: `Μια κυκλική πίστα έχει μήκος ακριβώς 1 km. Ένας αθλητής διένυσε τα ${walkedTenths}/10 του χιλιομέτρου. Πόσα χιλιόμετρα (km) του απομένουν για να ολοκληρώσει τον γύρο;`,
+        tableData: { col1: 'Συνολικός Γύρος', col2: 'Διανυθείσα Απόσταση', r1: ['1 km ＝ 10/10 km', `${walkedTenths}/10 km ＝ 0,7 km`], r2: ['Υπόλοιπο', `${correctStr}`] },
+        correctVal: remainKm,
+        correctStr,
+        options,
+        correctText: correctStr,
+        explanation: `1 km ＝ 10/10 km. Αφαιρούμε: 10/10 － ${walkedTenths}/10 ＝ 3/10 km ＝ ${correctStr}.`
       };
     }
   }
@@ -159,7 +323,7 @@ function generateQuestions() {
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΣΕ ΔΕΚΑΔΙΚΟ ΚΛΑΣΜΑ (ΑΡΙΘΜΗΤΗΣ)',
-      instruction: 'Συμπληρώστε τον αριθμητή ώστε να ισχύει η ισότητα:',
+      instruction: 'Συμπληρώστε τον αριθμητή ώστε να ισχύει η ισότητα (ακέραιος):',
       prompt: `Στην ισότητα ${decStr} ＝ χ / ${denom}, ποιος είναι ο αριθμητής χ;`,
       correctVal: numer,
       correctStr: String(numer),
@@ -200,7 +364,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (MCQ): Επιλογή ισοδύναμου δεκαδικού κλάσματος
+  // Q3 (MCQ): Επιλογή ισοδύναμου δεκαδικού κλάσματος (Εγγύηση Μοναδικότητας)
   {
     const tenthsDigit = randInt(2, 8);
     const decVal = tenthsDigit / 10;
@@ -358,7 +522,7 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
@@ -369,8 +533,8 @@ function generateQuestions() {
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΚΛΑΣΜΑΤΩΝ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
+      title: stdProb.title,
+      instruction: stdProb.instruction,
       prompt: stdProb.text,
       tableData: stdProb.tableData,
       correctVal: stdProb.correctVal,
@@ -378,28 +542,16 @@ function generateQuestions() {
       explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = hardProb.correctVal;
-    const correctStr10 = `${hardProb.correctStr} m`;
-    const fake10A = `${formatNum(val10 + 0.2, 2)} m`;
-    const fake10B = `${formatNum(Math.max(0.1, val10 - 0.2), 2)} m`;
-    const fake10C = `${formatNum(val10 + 0.45, 2)} m`;
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΜΕΤΑΤΡΟΠΗΣ & ΠΡΟΣΘΕΣΗΣ',
-      instruction: 'Επιλέξτε το σωστό συνολικό μήκος:',
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
       prompt: hardProb.text,
       tableData: hardProb.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
       explanation: hardProb.explanation
     });
   }
