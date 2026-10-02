@@ -43,9 +43,9 @@ const PROBLEM_GENERATORS = [
     const ticketPrice = randInt(6, 12);
     const totalCost = totalStudents * ticketPrice;
     return {
-      title: 'Σχολική Εκδρομή',
+      title: 'ΣΧΟΛΙΚΗ ΕΚΔΡΟΜΗ',
       text: `Σε μια εκδρομή συμμετέχουν ${totalStudents} μαθητές. Αν κάθε λεωφορείο χωράει ${busCapacity} μαθητές και το εισιτήριο κοστίζει ${ticketPrice} € ανά μαθητή, ποιο είναι το συνολικό κόστος των εισιτηρίων;`,
-      given: [`Μαθητές: ${totalStudents}`, `Χωρητικότητα: ${busCapacity}`, `Τιμή εισιτηρίου: ${ticketPrice} €`],
+      given: [`Μαθητές: ${totalStudents}`, `Χωρητικότητα: ${busCapacity} θέσεις`, `Τιμή εισιτηρίου: ${ticketPrice} €`],
       target: 'Συνολικό κόστος εισιτηρίων (€)',
       correctVal: totalCost,
       correctStr: String(totalCost),
@@ -62,7 +62,7 @@ const PROBLEM_GENERATORS = [
     const wallet = totalSpend + randInt(5, 25);
     const change = wallet - totalSpend;
     return {
-      title: 'Ψώνια στο Μανάβικο',
+      title: 'ΨΩΝΙΑ ΣΤΟ ΜΑΝΑΒΙΚΟ',
       text: `Ο Νίκος είχε ${wallet} €. Αγόρασε ${applesKg} κιλά μήλα προς ${applePrice} € το κιλό και ${orangesKg} κιλά πορτοκάλια προς ${orangePrice} € το κιλό. Πόσα ρέστα πήρε;`,
       given: [`Χρήματα: ${wallet} €`, `Μήλα: ${applesKg} κιλά · ${applePrice} €`, `Πορτοκάλια: ${orangesKg} κιλά · ${orangePrice} €`],
       target: 'Ρέστα (€)',
@@ -83,7 +83,7 @@ const PROBLEM_GENERATORS = [
     const finalTotal = booksPerNew * newShelves;
     const actualAdded = finalTotal - initial;
     return {
-      title: 'Αναδιοργάνωση Βιβλιοθήκης',
+      title: 'ΑΝΑΔΙΟΡΓΑΝΩΣΗ ΒΙΒΛΙΟΘΗΚΗΣ',
       text: `Μια βιβλιοθήκη είχε ${shelves} ράφια με ${perShelf} βιβλία στο καθένα. Προστέθηκαν ακόμη ${actualAdded} βιβλία και όλα μαζί μοιράστηκαν ισότιμα σε ${newShelves} νέα ράφια. Πόσα βιβλία έχει κάθε νέο ράφι;`,
       given: [`Αρχικά: ${shelves} ράφια · ${perShelf} βιβλία`, `Προστέθηκαν: ${actualAdded} βιβλία`, `Νέα ράφια: ${newShelves}`],
       target: 'Βιβλία ανά νέο ράφι',
@@ -100,9 +100,9 @@ const PROBLEM_GENERATORS = [
     const pricePerBox = randInt(10, 18);
     const totalEarnings = boxes * pricePerBox;
     return {
-      title: 'Ζαχαροπλαστείο',
+      title: 'ΖΑΧΑΡΟΠΛΑΣΤΕΙΟ',
       text: `Ένας ζαχαροπλάστης έφτιαξε ${totalSweets} γλυκά και τα συσκεύασε σε κουτιά των ${perBox} τεμαχίων. Αν πούλησε όλα τα κουτιά προς ${pricePerBox} € το καθένα, πόσα χρήματα εισέπραξε συνολικά;`,
-      given: [`Σύνολο γλυκών: ${totalSweets}`, `Ανά κουτί: ${perBox}`, `Τιμή ανά κουτί: ${pricePerBox} €`],
+      given: [`Σύνολο γλυκών: ${totalSweets}`, `Ανά κουτί: ${perBox} τεμάχια`, `Τιμή ανά κουτί: ${pricePerBox} €`],
       target: 'Συνολική είσπραξη (€)',
       correctVal: totalEarnings,
       correctStr: String(totalEarnings),
@@ -117,7 +117,7 @@ const PROBLEM_GENERATORS = [
     const pcPrice = totalSaved + randInt(50, 150);
     const needed = pcPrice - totalSaved;
     return {
-      title: 'Αποταμίευση για Υπολογιστή',
+      title: 'ΑΠΟΤΑΜΙΕΥΣΗ ΓΙΑ ΥΠΟΛΟΓΙΣΤΗ',
       text: `Η Ελένη αποταμιεύει ${monthlySave} € κάθε μήνα για ${months} μήνες. Αν ο υπολογιστής που θέλει να αγοράσει κοστίζει ${pcPrice} €, πόσα χρήματα της λείπουν ακόμη;`,
       given: [`Μηνιαία αποταμίευση: ${monthlySave} €`, `Μήνες: ${months}`, `Κόστος υπολογιστή: ${pcPrice} €`],
       target: 'Χρήματα που υπολείπονται (€)',
@@ -134,9 +134,9 @@ const PROBLEM_GENERATORS = [
     const canCapacity = [5, 10].find(c => totalOil % c === 0) || 5;
     const cans = totalOil / canCapacity;
     return {
-      title: 'Συγκομιδή Ελαιολάδου',
+      title: 'ΣΥΓΚΟΜΙΔΗ ΕΛΑΙΟΛΑΔΟΥ',
       text: `Ένας παραγωγός έχει ${trees} ελαιόδεντρα και κάθε δέντρο έδωσε ${oilPerTree} λίτρα λάδι. Αν έβαλε όλο το λάδι σε δοχεία των ${canCapacity} λίτρων, πόσα δοχεία γέμισε;`,
-      given: [`Δέντρα: ${trees}`, `Λίτρα ανά δέντρο: ${oilPerTree}`, `Χωρητικότητα δοχείου: ${canCapacity} λ.`],
+      given: [`Δέντρα: ${trees}`, `Λίτρα ανά δέντρο: ${oilPerTree}`, `Χωρητικότητα δοχείου: ${canCapacity} L`],
       target: 'Πλήθος δοχείων',
       correctVal: cans,
       correctStr: String(cans),
@@ -151,7 +151,7 @@ const PROBLEM_GENERATORS = [
     const emptySeats = randInt(15, 45);
     const bookedSeats = totalSeats - emptySeats;
     return {
-      title: 'Θεατρική Παράσταση',
+      title: 'ΘΕΑΤΡΙΚΗ ΠΑΡΑΣΤΑΣΗ',
       text: `Μια αίθουσα θεάτρου έχει ${rows} σειρές με ${seatsPerRow} καθίσματα σε κάθε σειρά. Αν σε μια παράσταση έμειναν κενά ${emptySeats} καθίσματα, πόσα εισιτήρια κόπηκαν;`,
       given: [`Σειρές: ${rows}`, `Καθίσματα ανά σειρά: ${seatsPerRow}`, `Κενά καθίσματα: ${emptySeats}`],
       target: 'Εισιτήρια που κόπηκαν',
@@ -168,7 +168,7 @@ const PROBLEM_GENERATORS = [
     const dried = randInt(5, 18);
     const remaining = totalPlants - dried;
     return {
-      title: 'Σχολικός Λαχανόκηπος',
+      title: 'ΣΧΟΛΙΚΟΣ ΛΑΧΑΝΟΚΗΠΟΣ',
       text: `Οι μαθητές φύτεψαν ${plots} παρτέρια με ${plantsPerPlot} φυτά το καθένα. Αν ξεράθηκαν ${dried} φυτά, πόσα φυτά μεγάλωσαν κανονικά;`,
       given: [`Παρτέρια: ${plots}`, `Φυτά ανά παρτέρι: ${plantsPerPlot}`, `Ξεράθηκαν: ${dried}`],
       target: 'Φυτά που μεγάλωσαν',
@@ -185,7 +185,7 @@ const PROBLEM_GENERATORS = [
     const pricePerLoaf = 2;
     const earnings = totalLoaves * pricePerLoaf;
     return {
-      title: 'Αρτοποιείο',
+      title: 'ΑΡΤΟΠΟΙΕΙΟ',
       text: `Ένας φούρνος έψησε ${trays} λαμαρίνες με ${loavesPerTray} φραντζόλες ψωμί στην καθεμία. Αν πούλησε όλες τις φραντζόλες προς ${pricePerLoaf} € τη μία, ποια ήταν η συνολική του είσπραξη;`,
       given: [`Λαμαρίνες: ${trays}`, `Ψωμιά ανά λαμαρίνα: ${loavesPerTray}`, `Τιμή ανά ψωμί: ${pricePerLoaf} €`],
       target: 'Συνολική είσπραξη (€)',
@@ -202,7 +202,7 @@ const PROBLEM_GENERATORS = [
     const distributed = randInt(10, 25);
     const leftInStorage = totalBalls - distributed;
     return {
-      title: 'Αθλητικός Όμιλος',
+      title: 'ΑΘΛΗΤΙΚΟΣ ΟΜΙΛΟΣ',
       text: `Ένα γυμναστήριο αγόρασε ${boxes} κουτιά με ${ballsPerBox} μπάλες μπάσκετ το καθένα. Αν μοιράστηκαν στα τμήματα ${distributed} μπάλες, πόσες μπάλες έμειναν στην αποθήκη;`,
       given: [`Κουτιά: ${boxes}`, `Μπάλες ανά κουτί: ${ballsPerBox}`, `Μοιράστηκαν: ${distributed}`],
       target: 'Μπάλες που έμειναν',
@@ -219,7 +219,7 @@ const PROBLEM_GENERATORS = [
     const broken = randInt(4, 15);
     const goodEggs = totalEggs - broken;
     return {
-      title: 'Παραγωγή Αυγών',
+      title: 'ΠΑΡΑΓΩΓΗ ΑΥΓΩΝ',
       text: `Μια φάρμα μάζεψε ${cartons} δωδεκάδες αυγά. Κατά τη μεταφορά έσπασαν ${broken} αυγά. Πόσα ακέραια αυγά έμειναν προς πώληση;`,
       given: [`Δωδεκάδες: ${cartons} (12 αυγά/δωδεκάδα)`, `Έσπασαν: ${broken}`],
       target: 'Ακέραια αυγά',
@@ -236,7 +236,7 @@ const PROBLEM_GENERATORS = [
     const helmetCost = 2;
     const total = (hours * costPerHour) + (helmets * helmetCost);
     return {
-      title: 'Ενοικίαση Ποδηλάτων',
+      title: 'ΕΝΟΙΚΙΑΣΗ ΠΟΔΗΛΑΤΩΝ',
       text: `Μια παρέα νοίκιασε ποδήλατα για ${hours} ώρες προς ${costPerHour} € την ώρα και ${helmets} κράνη προς ${helmetCost} € το καθένα. Πόσο πλήρωσε συνολικά;`,
       given: [`Ώρες: ${hours} · ${costPerHour} €/ώρα`, `Κράνη: ${helmets} · ${helmetCost} €`],
       target: 'Συνολικό ποσό πληρωμής (€)',
@@ -253,7 +253,7 @@ const PROBLEM_GENERATORS = [
     const pricePerPack = randInt(3, 6);
     const income = packs * pricePerPack;
     return {
-      title: 'Εμφιάλωση Χυμών',
+      title: 'ΕΜΦΙΑΛΩΣΗ ΧΥΜΩΝ',
       text: `Ένα εργοστάσιο παρήγαγε ${totalBottles} μπουκάλια χυμό και τα ομαδοποίησε σε 4άδες. Αν πούλησε κάθε τετράδα προς ${pricePerPack} €, ποια είναι η συνολική είσπραξη;`,
       given: [`Μπουκάλια: ${totalBottles}`, `4 μπουκάλια ανά συσκευασία`, `Τιμή ανά συσκευασία: ${pricePerPack} €`],
       target: 'Συνολική είσπραξη (€)',
@@ -262,21 +262,22 @@ const PROBLEM_GENERATORS = [
       explain: `Συσκευασίες: ${totalBottles} : 4 ＝ ${packs}. Είσπραξη: ${packs} · ${pricePerPack} ＝ ${income} €.`
     };
   },
-  // 14. Ταξιδι & Βενζινη
+  // 14. Ταξιδι & Βενζινη (Καθαροι ακεραιοι χωρις στρογγυλοποιησεις)
   () => {
-    const km = randInt(200, 500);
+    const hundredKms = randInt(2, 5); // 200 έως 500 χλμ
+    const km = hundredKms * 100;
     const litersPer100Km = randInt(6, 9);
-    const totalLiters = (km / 100) * litersPer100Km;
+    const totalLiters = hundredKms * litersPer100Km;
     const pricePerLiter = 2;
     const cost = totalLiters * pricePerLiter;
     return {
-      title: 'Ταξίδι με Αυτοκίνητο',
+      title: 'ΤΑΞΙΔΙ ΜΕ ΑΥΤΟΚΙΝΗΤΟ',
       text: `Ένα αυτοκίνητο διανύει ${km} χιλιόμετρα και καταναλώνει ${litersPer100Km} λίτρα βενζίνη ανά 100 χλμ. Αν το λίτρο κοστίζει ${pricePerLiter} €, ποιο είναι το συνολικό κόστος των καυσίμων;`,
-      given: [`Απόσταση: ${km} χλμ.`, `Κατανάλωση: ${litersPer100Km} λ./100 χλμ.`, `Τιμή βενζίνης: ${pricePerLiter} €/λ.`],
+      given: [`Απόσταση: ${km} χλμ.`, `Κατανάλωση: ${litersPer100Km} L/100 χλμ.`, `Τιμή βενζίνης: ${pricePerLiter} €/L`],
       target: 'Κόστος καυσίμων (€)',
-      correctVal: Math.round(cost),
-      correctStr: String(Math.round(cost)),
-      explain: `Συνολικά λίτρα: (${km} : 100) · ${litersPer100Km} ＝ ${totalLiters} λ. Κόστος: ${totalLiters} · ${pricePerLiter} ＝ ${Math.round(cost)} €.`
+      correctVal: cost,
+      correctStr: String(cost),
+      explain: `Συνολικά λίτρα: (${km} : 100) · ${litersPer100Km} ＝ ${totalLiters} L. Κόστος: ${totalLiters} · ${pricePerLiter} ＝ ${cost} €.`
     };
   },
   // 15. Φωτοτυπιες & Εξοδα Σχολειου
@@ -287,7 +288,7 @@ const PROBLEM_GENERATORS = [
     const usedSheets = randInt(800, 2000);
     const leftSheets = totalSheets - usedSheets;
     return {
-      title: 'Χαρτί Φωτοτυπικού',
+      title: 'ΧΑΡΤΙ ΦΩΤΟΤΥΠΙΚΟΥ',
       text: `Το σχολείο αγόρασε ${reams} δεσμίδες χαρτί με ${sheetsPerReam} φύλλα η καθεμία. Κατά τη διάρκεια του μήνα χρησιμοποιήθηκαν ${usedSheets} φύλλα. Πόσα φύλλα περίσσεψαν;`,
       given: [`Δεσμίδες: ${reams} · ${sheetsPerReam} φύλλα`, `Χρησιμοποιήθηκαν: ${usedSheets} φύλλα`],
       target: 'Φύλλα που περίσσεψαν',
@@ -305,7 +306,7 @@ const PROBLEM_GENERATORS = [
     const duplicates = randInt(6, 14);
     const totalUnique = initial + bought - duplicates;
     return {
-      title: 'Συλλογή Αυτοκολλήτων',
+      title: 'ΣΥΛΛΟΓΗ ΑΥΤΟΚΟΛΛΗΤΩΝ',
       text: `Ο Πέτρος είχε ${initial} αυτοκόλλητα στο άλμπουμ του. Αγόρασε ${packs} φακελάκια με ${stickersPerPack} αυτοκόλλητα το καθένα, αλλά ${duplicates} από αυτά ήταν διπλά. Πόσα μοναδικά αυτοκόλλητα έχει τώρα συνολικά;`,
       given: [`Αρχικά: ${initial}`, `Αγόρασε: ${packs} φακελάκια · ${stickersPerPack}`, `Διπλά: ${duplicates}`],
       target: 'Συνολικά μοναδικά αυτοκόλλητα',
@@ -321,7 +322,7 @@ const PROBLEM_GENERATORS = [
     const lapsPerDay = randInt(20, 40);
     const totalLaps = weeks * daysPerWeek * lapsPerDay;
     return {
-      title: 'Προπόνηση Κολύμβησης',
+      title: 'ΠΡΟΠΟΝΗΣΗ ΚΟΛΥΜΒΗΣΗΣ',
       text: `Η Άννα προπονείται ${daysPerWeek} ημέρες την εβδομάδα και κολυμπάει ${lapsPerDay} γύρους την ημέρα. Πόσους γύρους κολύμπησε συνολικά σε ${weeks} εβδομάδες;`,
       given: [`Εβδομάδες: ${weeks}`, `Ημέρες/εβδομάδα: ${daysPerWeek}`, `Γύροι/ημέρα: ${lapsPerDay}`],
       target: 'Συνολικοί γύροι',
@@ -338,7 +339,7 @@ const PROBLEM_GENERATORS = [
     const totalInstallments = months * monthlyInstallment;
     const totalCost = advance + totalInstallments;
     return {
-      title: 'Αγορά Γραφείου με Δόσεις',
+      title: 'ΑΓΟΡΑ ΓΡΑΦΕΙΟΥ ΜΕ ΔΟΣΕΙΣ',
       text: `Για την αγορά ενός γραφείου δόθηκε προκαταβολή ${advance} € και συμφωνήθηκαν ${months} ισόποσες μηνιαίες δόσεις των ${monthlyInstallment} €. Ποια είναι η τελική αξία του γραφείου;`,
       given: [`Προκαταβολή: ${advance} €`, `Δόσεις: ${months} · ${monthlyInstallment} €`],
       target: 'Συνολική αξία (€)',
@@ -355,7 +356,7 @@ const PROBLEM_GENERATORS = [
     const amountPerStudent = 3;
     const totalCollected = totalStudents * amountPerStudent;
     return {
-      title: 'Φιλανθρωπικός Έρανος',
+      title: 'ΦΙΛΑΝΘΡΩΠΙΚΟΣ ΕΡΑΝΟΣ',
       text: `Σε έναν σχολικό έρανο συμμετείχαν ${classes} τμήματα με ${studentsPerClass} μαθητές το καθένα. Αν κάθε μαθητής πρόσφερε ${amountPerStudent} €, πόσα χρήματα συγκεντρώθηκαν συνολικά;`,
       given: [`Τμήματα: ${classes}`, `Μαθητές/τμήμα: ${studentsPerClass}`, `Προσφορά/μαθητή: ${amountPerStudent} €`],
       target: 'Συνολικό ποσό (€)',
@@ -371,7 +372,7 @@ const PROBLEM_GENERATORS = [
     const itemsPerBox = 10;
     const totalItems = pallets * boxesPerPallet * itemsPerBox;
     return {
-      title: 'Αποθήκη Ηλεκτρονικών',
+      title: 'ΑΠΟΘΗΚΗ ΗΛΕΚΤΡΟΝΙΚΩΝ',
       text: `Σε μια αποθήκη έφτασαν ${pallets} παλέτες. Κάθε παλέτα περιέχει ${boxesPerPallet} κιβώτια και κάθε κιβώτιο έχει μέσα ${itemsPerBox} πληκτρολόγια. Πόσα πληκτρολόγια παραδόθηκαν συνολικά;`,
       given: [`Παλέτες: ${pallets}`, `Κιβώτια/παλέτα: ${boxesPerPallet}`, `Πληκτρολόγια/κιβώτιο: ${itemsPerBox}`],
       target: 'Συνολικά πληκτρολόγια',
@@ -387,13 +388,13 @@ const PROBLEM_GENERATORS = [
     const barWeight = 100;
     const totalBars = weightGrams / barWeight;
     return {
-      title: 'Εργοστάσιο Σοκολάτας',
+      title: 'ΕΡΓΟΣΤΑΣΙΟ ΣΟΚΟΛΑΤΑΣ',
       text: `Μια δεξαμενή περιέχει ${totalWeightKg} κιλά ρευστής σοκολάτας. Αν κάθε πλάκα σοκολάτας ζυγίζει ${barWeight} γραμμάρια, πόσες πλάκες σοκολάτας μπορούν να παραχθούν;`,
-      given: [`Σοκολάτα: ${totalWeightKg} κιλά (${weightGrams} γραμμάρια)`, `Βάρος ανά πλάκα: ${barWeight} γρ.`],
+      given: [`Σοκολάτα: ${totalWeightKg} kg (${weightGrams} g)`, `Βάρος ανά πλάκα: ${barWeight} g`],
       target: 'Πλήθος πλακών σοκολάτας',
       correctVal: totalBars,
       correctStr: String(totalBars),
-      explain: `Μετατρέπουμε σε γραμμάρια: ${totalWeightKg} · 1000 ＝ ${weightGrams} γρ. Πλάκες: ${weightGrams} : ${barWeight} ＝ ${totalBars}.`
+      explain: `Μετατρέπουμε σε γραμμάρια: ${totalWeightKg} · 1000 ＝ ${weightGrams} g. Πλάκες: ${weightGrams} : ${barWeight} ＝ ${totalBars}.`
     };
   },
   // 22. Φυτωριο Δεντρων
@@ -404,7 +405,7 @@ const PROBLEM_GENERATORS = [
     const soldTrees = randInt(50, 120);
     const remaining = initialTrees - soldTrees;
     return {
-      title: 'Φυτώριο Δέντρων',
+      title: 'ΦΥΤΩΡΙΟ ΔΕΝΤΡΩΝ',
       text: `Ένα φυτώριο έχει ${rows} σειρές με ${treesPerRow} δενδρύλλια σε κάθε σειρά. Αν πουλήθηκαν ${soldTrees} δενδρύλλια, πόσα έχουν απομείνει;`,
       given: [`Σειρές: ${rows}`, `Δέντρα/σειρά: ${treesPerRow}`, `Πουλήθηκαν: ${soldTrees}`],
       target: 'Δενδρύλλια που απέμειναν',
@@ -421,7 +422,7 @@ const PROBLEM_GENERATORS = [
     const totalViewers = viewersDay1 + viewersDay2;
     const totalRevenue = totalViewers * ticketPrice;
     return {
-      title: 'Κινηματογράφος',
+      title: 'ΚΙΝΗΜΑΤΟΓΡΑΦΟΣ',
       text: `Σε έναν κινηματογράφο το εισιτήριο κοστίζει ${ticketPrice} €. Το Σάββατο κόπηκαν ${viewersDay1} εισιτήρια και την Κυριακή ${viewersDay2} εισιτήρια. Ποια ήταν η συνολική είσπραξη του διημέρου;`,
       given: [`Τιμή εισιτηρίου: ${ticketPrice} €`, `Σάββατο: ${viewersDay1}`, `Κυριακή: ${viewersDay2}`],
       target: 'Συνολική είσπραξη (€)',
@@ -438,9 +439,9 @@ const PROBLEM_GENERATORS = [
     const remainder = totalKids % tentCapacity;
     const totalTentsNeeded = remainder === 0 ? fullTents : fullTents + 1;
     return {
-      title: 'Καλοκαιρινή Κατασκήνωση',
+      title: 'ΚΑΛΟΚΑΙΡΙΝΗ ΚΑΤΑΣΚΗΝΩΣΗ',
       text: `Σε μια κατασκήνωση φτάνουν ${totalKids} παιδιά. Αν κάθε σκηνή χωράει το πολύ ${tentCapacity} παιδιά, πόσες σκηνές χρειάζονται τουλάχιστον για να κοιμηθούν όλα τα παιδιά;`,
-      given: [`Παιδιά: ${totalKids}`, `Χωρητικότητα σκηνής: ${tentCapacity}`],
+      given: [`Παιδιά: ${totalKids}`, `Χωρητικότητα σκηνής: ${tentCapacity} παιδιά`],
       target: 'Σκηνές που απαιτούνται',
       correctVal: totalTentsNeeded,
       correctStr: String(totalTentsNeeded),
@@ -455,7 +456,7 @@ const PROBLEM_GENERATORS = [
     const doneKm = kmPerDay * 3;
     const leftKm = totalKm - doneKm;
     return {
-      title: 'Ποδηλατικός Γύρος',
+      title: 'ΠΟΔΗΛΑΤΙΚΟΣ ΓΥΡΟΣ',
       text: `Ένας ποδηλάτης σχεδιάζει να διανύσει συνολικά ${totalKm} χλμ. σε ${days} ημέρες κάνοντας την ίδια απόσταση κάθε μέρα. Μετά από 3 ημέρες ποδηλασίας, πόσα χιλιόμετρα του απομένουν ακόμη;`,
       given: [`Συνολική διαδρομή: ${totalKm} χλμ. σε ${days} ημέρες`, `Ολοκληρώθηκαν: 3 ημέρες`],
       target: 'Χιλιόμετρα που απομένουν',
@@ -470,7 +471,7 @@ const PROBLEM_GENERATORS = [
     const tables6 = randInt(4, 10);
     const totalCapacity = (tables4 * 4) + (tables6 * 6);
     return {
-      title: 'Χωρητικότητα Εστιατορίου',
+      title: 'ΧΩΡΗΤΙΚΟΤΗΤΑ ΕΣΤΙΑΤΟΡΙΟΥ',
       text: `Ένα εστιατόριο διαθέτει ${tables4} τραπέζια των 4 ατόμων και ${tables6} τραπέζια των 6 ατόμων. Πόσα άτομα μπορούν να καθίσουν συνολικά αν γεμίσουν όλα τα τραπέζια;`,
       given: [`Τραπέζια 4 ατόμων: ${tables4}`, `Τραπέζια 6 ατόμων: ${tables6}`],
       target: 'Συνολική χωρητικότητα ατόμων',
@@ -487,7 +488,7 @@ const PROBLEM_GENERATORS = [
     const fixedDesks = randInt(20, 50);
     const remaining = totalDesks - fixedDesks;
     return {
-      title: 'Συντήρηση Θρανίων',
+      title: 'ΣΥΝΤΗΡΗΣΗ ΘΡΑΝΙΩΝ',
       text: `Σε ένα σχολείο με ${classrooms} αίθουσες υπάρχουν ${desksPerRoom} θρανία σε κάθε αίθουσα. Αν επιδιορθώθηκαν ${fixedDesks} θρανία, πόσα θρανία μένουν ακόμη για συντήρηση;`,
       given: [`Αίθουσες: ${classrooms}`, `Θρανία/αίθουσα: ${desksPerRoom}`, `Επιδιορθώθηκαν: ${fixedDesks}`],
       target: 'Θρανία που απομένουν',
@@ -504,13 +505,13 @@ const PROBLEM_GENERATORS = [
     const remainingWeight = totalKg - bigWeight;
     const smallJars = remainingWeight; // 1kg βαζα
     return {
-      title: 'Παραγωγή Μελιού',
+      title: 'ΠΑΡΑΓΩΓΗ ΜΕΛΙΟΥ',
       text: `Ένας μελισσοκόμος μάζεψε ${totalKg} κιλά μέλι. Έβαλε ${jarsBig} βάζα των 2 κιλών και το υπόλοιπο μέλι το έβαλε σε βάζα του 1 κιλού. Πόσα βάζα του 1 κιλού γέμισε;`,
-      given: [`Σύνολο μέλι: ${totalKg} κιλά`, `Βάζα 2 κιλών: ${jarsBig}`, `Υπόλοιπο: βάζα 1 κιλού`],
+      given: [`Σύνολο μέλι: ${totalKg} kg`, `Βάζα 2 κιλών: ${jarsBig}`, `Υπόλοιπο: βάζα 1 κιλού`],
       target: 'Βάζα του 1 κιλού',
       correctVal: smallJars,
       correctStr: String(smallJars),
-      explain: `Μέλι στα μεγάλα βάζα: ${jarsBig} · 2 ＝ ${bigWeight} κιλά. Υπόλοιπο για μικρά βάζα: ${totalKg} － ${bigWeight} ＝ ${smallJars} βάζα.`
+      explain: `Μέλι στα μεγάλα βάζα: ${jarsBig} · 2 ＝ ${bigWeight} kg. Υπόλοιπο για μικρά βάζα: ${totalKg} － ${bigWeight} ＝ ${smallJars} βάζα.`
     };
   },
   // 29. Διανομη Εφημεριδων
@@ -521,7 +522,7 @@ const PROBLEM_GENERATORS = [
     const totalPerDay = morningPapers + eveningPapers;
     const totalWeek = totalPerDay * days;
     return {
-      title: 'Διανομή Εφημερίδων',
+      title: 'ΔΙΑΝΟΜΗ ΕΦΗΜΕΡΙΔΩΝ',
       text: `Ένας διανομέας μοιράζει κάθε μέρα ${morningPapers} πρωινές και ${eveningPapers} απογευματινές εφημερίδες. Πόσες εφημερίδες μοιράζει συνολικά σε μια εβδομάδα (7 ημέρες);`,
       given: [`Πρωινές/ημέρα: ${morningPapers}`, `Απογευματινές/ημέρα: ${eveningPapers}`, `Ημέρες: 7`],
       target: 'Συνολικές εφημερίδες εβδομάδας',
@@ -539,7 +540,7 @@ const PROBLEM_GENERATORS = [
     const coupon = randInt(10, 25);
     const finalToPay = total - coupon;
     return {
-      title: 'Αθλητικά Είδη με Έκπτωση',
+      title: 'ΑΘΛΗΤΙΚΑ ΕΙΔΗ ΜΕ ΕΚΠΤΩΣΗ',
       text: `Ο Αλέξης αγόρασε παπούτσια αξίας ${shoes} €, ένα σορτσάκι αξίας ${shorts} € και μια μπλούζα αξίας ${shirts} €. Αν χρησιμοποίησε ένα εκπτωτικό κουπόνι ${coupon} €, πόσα χρήματα πλήρωσε τελικά;`,
       given: [`Παπούτσια: ${shoes} €`, `Σορτσάκι: ${shorts} €`, `Μπλούζα: ${shirts} €`, `Κουπόνι: ${coupon} €`],
       target: 'Τελικό ποσό πληρωμής (€)',
