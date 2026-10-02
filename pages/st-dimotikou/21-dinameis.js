@@ -1,21 +1,49 @@
+// pages/st-dimotikou/21-dinameis.js
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
 const PRESETS = [
-  { base: 2, exp: 3, label: "2³ (2 στον κύβο)" },
-  { base: 3, exp: 2, label: "3² (3 στο τετράγωνο)" },
-  { base: 5, exp: 2, label: "5² (5 στο τετράγωνο)" },
-  { base: 2, exp: 4, label: "2⁴ (2 στην 4η)" },
-  { base: 10, exp: 3, label: "10³ (10 στον κύβο)" },
-  { base: 4, exp: 3, label: "4³ (4 στον κύβο)" }
+  { base: 2, exp: 3, label: '2³ (2 στον κύβο)' },
+  { base: 3, exp: 2, label: '3² (3 στο τετράγωνο)' },
+  { base: 5, exp: 2, label: '5² (5 στο τετράγωνο)' },
+  { base: 2, exp: 4, label: '2⁴ (2 στην 4η)' },
+  { base: 10, exp: 3, label: '10³ (10 στον κύβο)' },
+  { base: 4, exp: 3, label: '4³ (4 στον κύβο)' }
 ];
 
 const MAX_BASE = 50;
 const MAX_EXP = 10;
 
-const exponentsUnicode = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹', 10: '¹⁰' };
+const EXPONENTS_UNICODE = {
+  0: '⁰',
+  1: '¹',
+  2: '²',
+  3: '³',
+  4: '⁴',
+  5: '⁵',
+  6: '⁶',
+  7: '⁷',
+  8: '⁸',
+  9: '⁹',
+  10: '¹⁰'
+};
+
+// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
+function formatNumber(num) {
+  if (num === null || num === undefined || isNaN(Number(num))) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
 
 export default function DinameisPage() {
   const [base, setBase] = useState(2);
@@ -53,7 +81,12 @@ export default function DinameisPage() {
 
   // Δημιουργια λιστας παραγοντων
   const factorsList = e > 0 ? Array(e).fill(b) : [];
-  const multiplicationString = e === 0 ? "1 (εξ ορισμού)" : e === 1 ? `${b}` : factorsList.join(" × ");
+  const multiplicationString =
+    e === 0
+      ? '1 (εξ ορισμού)'
+      : e === 1
+      ? `${b}`
+      : factorsList.join(' · ');
 
   // Αναγνωση δυναμης στα ελληνικα
   const getPowerPronunciation = (baseVal, expVal) => {
@@ -66,7 +99,7 @@ export default function DinameisPage() {
 
   return (
     <Layout
-      title="⚡ 21. Δυνάμεις Φυσικών Αριθμών - LearnMaths.gr"
+      title="Δυνάμεις Φυσικών Αριθμών - ΣΤ' Δημοτικού | LearnMaths.gr"
       description="Ανακάλυψε τη δύναμη του σύντομου πολλαπλασιασμού! Μάθε τι είναι η Βάση, τι δείχνει ο Εκθέτης και πώς υπολογίζουμε το Τετράγωνο και τον Κύβο ενός αριθμού για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
@@ -74,111 +107,154 @@ export default function DinameisPage() {
       actionButton={
         <Link
           href="/st-dimotikou/21-dinameis-ask"
-          className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-sm flex items-center gap-1.5 shrink-0"
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯</span>
-          <span>Ασκήσεις</span>
+          <span>🎯 Ασκήσεις</span>
         </Link>
       }
     >
-      <div className="space-y-8 md:space-y-10 py-6 md:py-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
 
-        {/* HERO BANNER WITH PROMO CALLOUT CARD */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικου
-                </span>
-                <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενοτητα 21
-                </span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                21. Δυνάμεις Φυσικών Αριθμών
-              </h1>
-              <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                Ανακάλυψε τη δύναμη του σύντομου πολλαπλασιασμού! Μάθε τι είναι η <strong>Βάση</strong>, τι δείχνει ο <strong>Εκθέτης</strong> και πώς υπολογίζουμε το <strong>Τετράγωνο</strong> και τον <strong>Κύβο</strong> ενός αριθμού!
-              </p>
+        {/* 1. HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΚΕΦΑΛΑΙΟ 21 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
-
-            {/* CALLOUT PROMO CARD */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
-              <span className="text-3xl">🚀</span>
-              <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
-              <p className="text-xs text-blue-50">Δοκίμασε τις 8 διαδραστικές ασκήσεις στις δυνάμεις με αυτόματη βαθμολόγηση!</p>
-              <Link
-                href="/st-dimotikou/21-dinameis-ask"
-                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
-              >
-                🎯 Μετάβαση στις Ασκήσεις
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* THEORY CARDS (3 COLS) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                1
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Τι είναι η Δύναμη;</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                <strong>Δύναμη</strong> είναι η σύντομη γραφή ενός γινομένου όπου <strong>όλοι οι παράγοντες είναι ίσοι</strong>.
-              </p>
-            </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <p>2 × 2 × 2 × 2 ＝ <strong className="text-blue-700 font-bold">2⁴</strong></p>
-            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              Δυνάμεις Φυσικών Αριθμών
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Ανακάλυψε τη δύναμη του σύντομου πολλαπλασιασμού! Μάθε τι είναι η <strong>Βάση</strong>, τι δείχνει ο <strong>Εκθέτης</strong> και πώς υπολογίζουμε το <strong>Τετράγωνο</strong> και τον <strong>Κύβο</strong> ενός αριθμού!
+            </p>
           </div>
 
-          <div className="bg-indigo-50/80 border border-indigo-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                2
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Βάση και Εκθέτης</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                • <strong>Βάση (α):</strong> Ο παράγοντας που πολλαπλασιάζεται.<br/>
-                • <strong>Εκθέτης (ν):</strong> Δείχνει πόσες φορές πολλαπλασιάζεται η βάση με τον εαυτό της.
-              </p>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Ανάλυση Γινομένου &amp; Γεωμετρική Ερμηνεία (Τετράγωνο - Κύβος)</span>
             </div>
-            <div className="bg-white p-3.5 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <p>α<sup>ν</sup> ＝ α × α × ... × α (ν φορές)</p>
-            </div>
+            <Link
+              href="/st-dimotikou/21-dinameis-ask"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ (3 COLS) */}
+        <section className="space-y-6 2xl:space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
+              Βασικές Έννοιες &amp; Ιδιότητες των Δυνάμεων
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
+              Όλα όσα πρέπει να γνωρίζεις για τον σύντομο πολλαπλασιασμό ίσων παραγόντων.
+            </p>
           </div>
 
-          <div className="bg-emerald-50/80 border border-emerald-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                3
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Ειδικές Περιπτώσεις SOS</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                • <strong>α¹ ＝ α:</strong> Κάθε αριθμός στον εκθέτη 1 μένει ίδιος.<br/>
-                • <strong>α⁰ ＝ 1:</strong> Κάθε αριθμός (εκτός του 0) στη μηδενική ισούται με 1.
-              </p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center flex flex-wrap justify-center gap-2 font-bold">
-              <span className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">5¹ ＝ 5</span>
-              <span className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">7⁰ ＝ 1</span>
-              <span className="bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">10³ ＝ 1.000</span>
-            </div>
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            
+            {/* ΚΑΡΤΑ 1 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΟΡΙΣΜΟΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Ίσοι Παράγοντες</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Τι είναι η Δύναμη;
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  <strong>Δύναμη</strong> είναι η σύντομη γραφή ενός γινομένου όπου <strong>όλοι οι παράγοντες είναι ίσοι</strong> μεταξύ τους.
+                </p>
 
-        {/* INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>2 · 2 · 2 · 2 ＝ <strong className="text-sky-700">2⁴ ＝ 16</strong></p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+                💡 Όπως η πρόσθεση ίσων αριθμών γίνεται πολλαπλασιασμός (2 ＋ 2 ＋ 2 ＝ 3 · 2), έτσι και το γινόμενο ίσων αριθμών γίνεται δύναμη (2 · 2 · 2 ＝ 2³)!
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 2 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΡΟΛΟΣ ΣΤΟΙΧΕΙΩΝ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">α στην ν</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Βάση &amp; Εκθέτης
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  • <strong>Βάση (α):</strong> Ο αριθμός που πολλαπλασιάζεται.<br />
+                  • <strong>Εκθέτης (ν):</strong> Δείχνει πόσες φορές πολλαπλασιάζεται η βάση με τον εαυτό της.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>α<sup>ν</sup> ＝ α · α · ... · α&nbsp;&nbsp;<span className="text-slate-500 font-sans font-normal text-xs">(ν φορές)</span></p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
+                ⚡ <strong>Προσοχή SOS:</strong> Το 2³ ΔΕΝ σημαίνει 2 · 3 ＝ 6! Σημαίνει 2 · 2 · 2 ＝ <strong>8</strong>.
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 3 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-cyan-100 text-cyan-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΕΙΔΙΚΟΙ ΚΑΝΟΝΕΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-cyan-700">Εκθέτες 0 &amp; 1</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Ειδικές Περιπτώσεις SOS
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  • <strong>α¹ ＝ α:</strong> Κάθε αριθμός στον εκθέτη 1 παραμένει ίδιος.<br />
+                  • <strong>α⁰ ＝ 1:</strong> Κάθε αριθμός (εκτός του 0) στον εκθέτη 0 ισούται με 1.<br />
+                  • <strong>10<sup>ν</sup>:</strong> Το 1 ακολουθούμενο από ν μηδενικά.
+                </p>
+
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center flex flex-wrap justify-center gap-2 font-bold">
+                  <span className="bg-white px-2.5 py-1 rounded-xl border border-slate-200 text-slate-800">5¹ ＝ 5</span>
+                  <span className="bg-white px-2.5 py-1 rounded-xl border border-slate-200 text-slate-800">7⁰ ＝ 1</span>
+                  <span className="bg-white px-2.5 py-1 rounded-xl border border-slate-200 text-cyan-700">10³ ＝ 1.000</span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-cyan-50 rounded-2xl border border-cyan-200 text-xs 2xl:text-sm text-cyan-950 font-medium">
+                🎯 Ο εκθέτης 2 ονομάζεται <strong>τετράγωνο</strong> (εμβαδόν) και ο εκθέτης 3 <strong>κύβος</strong> (όγκος)!
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ */}
+        <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🕹️</span> Διαδραστικό Εργαστήριο Δυνάμεων
-              </h2>
-              <p className="text-gray-500 text-xs sm:text-sm">
-                Όρισε τη βάση και τον εκθέτη και δες άμεσα την ανάλυση σε γινόμενο, τη γεωμετρική απεικόνιση και τον υπολογισμό!
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
+                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Διαδραστικό Εργαστήριο Δυνάμεων
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
+                Όρισε τη βάση και τον εκθέτη και δες άμεσα την ανάλυση σε γινόμενο, τη γεωμετρική απεικόνιση και τον τελικό υπολογισμό!
               </p>
             </div>
           </div>
@@ -192,18 +268,19 @@ export default function DinameisPage() {
                 
                 {/* INPUTS */}
                 <div className="space-y-3">
-                  <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    Ρυθμιση Δυναμης:
+                  <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
+                    ΡΥΘΜΙΣΗ ΔΥΝΑΜΗΣ:
                   </span>
 
                   {/* ΒΑΣΗ */}
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-500 flex justify-between">
+                    <label className="text-[11px] font-bold text-slate-500 flex justify-between uppercase">
                       <span>Βάση (α):</span>
-                      <span className="text-blue-600 font-mono font-bold">1 - {MAX_BASE}</span>
+                      <span className="text-blue-600 font-mono font-bold">1 － {MAX_BASE}</span>
                     </label>
                     <input
                       type="text"
+                      inputMode="numeric"
                       value={base}
                       onChange={(e) => handleBaseChange(e.target.value)}
                       className="w-full text-lg sm:text-xl font-mono font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-xs text-blue-600 outline-none focus:border-blue-500 tracking-wider"
@@ -213,12 +290,13 @@ export default function DinameisPage() {
 
                   {/* ΕΚΘΕΤΗΣ */}
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-500 flex justify-between">
+                    <label className="text-[11px] font-bold text-slate-500 flex justify-between uppercase">
                       <span>Εκθέτης (ν):</span>
-                      <span className="text-indigo-600 font-mono font-bold">0 - {MAX_EXP}</span>
+                      <span className="text-indigo-600 font-mono font-bold">0 － {MAX_EXP}</span>
                     </label>
                     <input
                       type="text"
+                      inputMode="numeric"
                       value={exponent}
                       onChange={(e) => handleExpChange(e.target.value)}
                       className="w-full text-lg sm:text-xl font-mono font-black text-center p-2.5 bg-white border-2 border-indigo-200 rounded-xl shadow-xs text-indigo-600 outline-none focus:border-indigo-500 tracking-wider"
@@ -227,10 +305,10 @@ export default function DinameisPage() {
                   </div>
                 </div>
 
-                {/* PRESET EXAMPLES (2 COLS x 3 ROWS) */}
+                {/* PRESET EXAMPLES */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    Ετοιμα Παραδειγματα:
+                  <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
+                    ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     {PRESETS.map((p, idx) => (
@@ -241,13 +319,13 @@ export default function DinameisPage() {
                           setBase(p.base);
                           setExponent(p.exp);
                         }}
-                        className={`py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center ${
+                        className={`py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 ${
                           b === p.base && e === p.exp
                             ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
                             : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
                         }`}
                       >
-                        {p.base}{exponentsUnicode[p.exp] || `^${p.exp}`}
+                        {p.base}{EXPONENTS_UNICODE[p.exp] || `^${p.exp}`}
                       </button>
                     ))}
                   </div>
@@ -255,8 +333,8 @@ export default function DinameisPage() {
 
               </div>
 
-              <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
-                💡 <strong>Προσοχή:</strong> Το 2³ ΔΕΝ είναι 2 × 3 ＝ 6, αλλά 2 × 2 × 2 ＝ <strong>8</strong>!
+              <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
+                💡 <strong>Προσοχή:</strong> Το 2³ ΔΕΝ είναι 2 · 3 ＝ 6, αλλά 2 · 2 · 2 ＝ <strong>8</strong>!
               </div>
             </div>
 
@@ -265,16 +343,20 @@ export default function DinameisPage() {
               
               {/* 1. HEADER STATUS */}
               <div className="w-full text-center space-y-1">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                  Αναλυση της Δυναμης:
+                <span className="text-xs 2xl:text-sm font-bold text-slate-400 uppercase tracking-wider block">
+                  ΑΝΑΛΥΣΗ ΤΗΣ ΔΥΝΑΜΗΣ:
                 </span>
-                <div className="text-xl sm:text-2xl md:text-3xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 sm:px-8 py-2 rounded-2xl border border-indigo-100 inline-block tracking-wider shadow-xs">
+                <div className="text-xl sm:text-2xl md:text-3xl font-mono font-black text-indigo-600 bg-indigo-50 px-6 sm:px-8 py-2 rounded-2xl border border-indigo-100 inline-block tracking-wider shadow-sm">
                   {base !== '' ? base : 'α'}
-                  <sup className="text-rose-600 text-lg sm:text-xl md:text-2xl">{exponent !== '' ? (exponentsUnicode[e] || exponent) : 'ν'}</sup>
+                  <sup className="text-rose-600 text-lg sm:text-xl md:text-2xl">
+                    {exponent !== '' ? (EXPONENTS_UNICODE[e] || exponent) : 'ν'}
+                  </sup>
                   {' ＝ '}
-                  <span className="text-amber-500">{base !== '' && exponent !== '' ? result.toLocaleString('el-GR') : '—'}</span>
+                  <span className="text-amber-500">
+                    {base !== '' && exponent !== '' ? formatNumber(result) : '—'}
+                  </span>
                 </div>
-                <p className="text-xs text-slate-500 font-medium italic pt-1">
+                <p className="text-xs sm:text-sm text-slate-500 font-medium italic pt-1">
                   📖 Διαβάζεται: «{getPowerPronunciation(b, e)}»
                 </p>
               </div>
@@ -284,13 +366,13 @@ export default function DinameisPage() {
                 
                 {/* ΚΑΡΤΑ ΑΝΑΛΥΣΗΣ ΓΙΝΟΜΕΝΟΥ */}
                 <div className="bg-slate-50 p-4 sm:p-5 md:p-6 rounded-3xl border border-slate-200 shadow-inner space-y-3">
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center sm:text-left">
-                    🔍 1. Αναλυση σε Γινομενο Ισων Παραγοντων:
+                  <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block text-center sm:text-left">
+                    🔍 1. ΑΝΑΛΥΣΗ ΣΕ ΓΙΝΟΜΕΝΟ ΙΣΩΝ ΠΑΡΑΓΟΝΤΩΝ:
                   </span>
 
                   <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-sm sm:text-base md:text-lg">
                     <span className="font-black text-blue-700 bg-blue-100 px-3 py-1 rounded-xl border border-blue-200">
-                      {b}{exponentsUnicode[e] || `^${e}`}
+                      {b}{EXPONENTS_UNICODE[e] || `^${e}`}
                     </span>
                     <span className="text-slate-400 font-black">＝</span>
                     
@@ -310,7 +392,7 @@ export default function DinameisPage() {
                               {factor}
                             </span>
                             {idx < factorsList.length - 1 && (
-                              <span className="text-slate-400 font-black text-xs sm:text-sm">×</span>
+                              <span className="text-slate-400 font-black text-xs sm:text-sm">·</span>
                             )}
                           </span>
                         ))}
@@ -319,7 +401,7 @@ export default function DinameisPage() {
 
                     <span className="text-slate-400 font-black">＝</span>
                     <span className="font-black text-emerald-700 bg-emerald-100 px-3 sm:px-4 py-1 rounded-xl border border-emerald-300">
-                      {result.toLocaleString('el-GR')}
+                      {formatNumber(result)}
                     </span>
                   </div>
 
@@ -331,8 +413,8 @@ export default function DinameisPage() {
                 {/* ΓΕΩΜΕΤΡΙΚΗ ΑΠΕΙΚΟΝΙΣΗ ΓΙΑ ΤΕΤΡΑΓΩΝΟ (e=2) ΚΑΙ ΚΥΒΟ (e=3) */}
                 {(e === 2 || e === 3) && b <= 12 && b >= 1 && (
                   <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-3 shadow-md">
-                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
-                      📐 Γεωμετρικη Ερμηνεια ({e === 2 ? 'Τετραγωνο' : 'Κυβος'}):
+                    <span className="text-xs 2xl:text-sm font-bold text-amber-400 uppercase tracking-wider block text-center">
+                      📐 ΓΕΩΜΕΤΡΙΚΗ ΕΡΜΗΝΕΙΑ ({e === 2 ? 'ΤΕΤΡΑΓΩΝΟ' : 'ΚΥΒΟΣ'}):
                     </span>
 
                     {e === 2 ? (
@@ -351,15 +433,15 @@ export default function DinameisPage() {
                             />
                           ))}
                         </div>
-                        <span className="text-xs font-mono text-slate-300 text-center">
-                          Εμβαδόν Τετραγώνου με πλευρά {b}: <strong className="text-amber-300">{b} × {b} ＝ {result}</strong> τετραγωνάκια
+                        <span className="text-xs sm:text-sm font-mono text-slate-300 text-center">
+                          Εμβαδόν Τετραγώνου με πλευρά {b}: <strong className="text-amber-300">{b} · {b} ＝ {formatNumber(result)}</strong> τετραγωνάκια
                         </span>
                       </div>
                     ) : (
                       <div className="text-center space-y-1.5 py-1">
                         <div className="text-3xl">🧊</div>
                         <p className="text-xs sm:text-sm font-mono text-slate-200">
-                          Όγκος Κύβου με ακμή {b}: <strong className="text-amber-300">{b} × {b} × {b} ＝ {result}</strong> κυβάκια
+                          Όγκος Κύβου με ακμή {b}: <strong className="text-amber-300">{b} · {b} · {b} ＝ {formatNumber(result)}</strong> κυβάκια
                         </p>
                       </div>
                     )}
@@ -371,18 +453,20 @@ export default function DinameisPage() {
               {/* 3. FINAL RESULT SUMMARY BANNER */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-4 sm:p-5 rounded-2xl text-center shadow-lg font-mono space-y-1">
                 <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                  Τελικο Αποτελεσμα:
+                  ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ:
                 </span>
                 <div className="text-base sm:text-xl md:text-2xl font-black tracking-wide flex flex-wrap justify-center items-center gap-1.5 sm:gap-2">
                   <span>
                     {b}
-                    <sup className="text-rose-300">{exponentsUnicode[e] || `^${e}`}</sup>
+                    <sup className="text-rose-300">{EXPONENTS_UNICODE[e] || `^${e}`}</sup>
                   </span>
                   <span>＝</span>
-                  <span className="text-blue-100 text-sm sm:text-lg md:text-xl font-medium">({multiplicationString})</span>
+                  <span className="text-blue-100 text-sm sm:text-lg md:text-xl font-medium">
+                    ({multiplicationString})
+                  </span>
                   <span>＝</span>
                   <span className="text-amber-300 text-xl sm:text-2xl md:text-3xl font-black bg-white/10 px-3 py-0.5 rounded-xl shadow-xs inline-block">
-                    {result.toLocaleString('el-GR')}
+                    {formatNumber(result)}
                   </span>
                 </div>
               </div>
@@ -390,23 +474,27 @@ export default function DinameisPage() {
             </div>
 
           </div>
-        </div>
+        </section>
 
-        {/* BOTTOM CALLOUT BANNER */}
-        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-gray-800 text-sm md:text-base">
-              Έμαθες να υπολογίζεις δυνάμεις, τετράγωνα και κύβους; Δοκίμασε τις διαδραστικές ασκήσεις!
+        {/* 4. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              Ώρα για Εξάσκηση στις Δυνάμεις!
+            </h3>
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              Έμαθες να υπολογίζεις δυνάμεις, τετράγωνα και κύβους; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
+
           <Link
             href="/st-dimotikou/21-dinameis-ask"
-            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            Ξεκίνα τις Ασκήσεις ➔
+            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </section>
 
       </div>
     </Layout>
