@@ -44,12 +44,14 @@ function getDivisors(num) {
 
 // Υπολογισμος Μ.Κ.Δ. με τον αλγοριθμο του Ευκλειδη
 function getGCD(a, b) {
-  while (b !== 0) {
-    const t = b;
-    b = a % b;
-    a = t;
+  let x = Math.abs(a);
+  let y = Math.abs(b);
+  while (y !== 0) {
+    const t = y;
+    y = x % y;
+    x = t;
   }
-  return a;
+  return x;
 }
 
 // Δεξαμενη θεματικων σεναριων καθημερινοτητας με πληρη γραμματικη και συντακτικη ακριβεια
@@ -91,8 +93,8 @@ const REAL_WORLD_PRESETS = [
   }
 ];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_mkd_std_1',
     generate: () => {
@@ -100,6 +102,8 @@ const EXTRA_PROBLEMS_POOL = [
       const blueRibbon = 48;
       const maxCut = getGCD(redRibbon, blueRibbon);
       return {
+        title: 'ΜΕΓΙΣΤΟ ΚΟΙΝΟ ΜΗΚΟΣ ΚΟΡΔΕΛΑΣ',
+        instruction: 'Υπολογίστε το μέγιστο μήκος σε εκατοστά (εκ.):',
         text: `Μια μοδίστρα έχει δύο κορδέλες μήκους ${redRibbon} εκ. και ${blueRibbon} εκ. Θέλει να τις κόψει σε ίσα κομμάτια με το μεγαλύτερο δυνατό μήκος χωρίς να περισσέψει καθόλου ύφασμα. Ποιο είναι το μέγιστο μήκος (σε εκ.) κάθε κομματιού;`,
         tableData: { col1: 'Μήκη Κορδελών', col2: 'Μέγιστο Ίσο Μήκος', r1: [`${redRibbon} εκ. & ${blueRibbon} εκ.`, 'Μ.Κ.Δ.(36, 48)'], r2: ['Υπολογισμός', `${maxCut} εκ.`] },
         correctVal: maxCut,
@@ -115,6 +119,8 @@ const EXTRA_PROBLEMS_POOL = [
       const spinachPies = 60;
       const maxBoxes = getGCD(cheesePies, spinachPies);
       return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΠΙΤΩΝ ΣΕ ΚΟΥΤΙΑ',
+        instruction: 'Υπολογίστε το μέγιστο πλήθος συσκευασιών:',
         text: `Ένα κυλικείο έψησε ${cheesePies} τυροπιτάκια και ${spinachPies} σπανακοπιτάκια. Θέλει να τα μοιράσει σε πανομοιότυπες συσκευασίες χωρίς να περισσέψει κανένα. Πόσες τέτοιες συσκευασίες μπορεί να ετοιμάσει το πολύ;`,
         tableData: { col1: 'Προϊόντα', col2: 'Μέγιστες Συσκευασίες', r1: [`${cheesePies} τυρ. & ${spinachPies} σπαν.`, 'Μ.Κ.Δ.(40, 60)'], r2: ['Υπολογισμός', `${maxBoxes} συσκευασίες`] },
         correctVal: maxBoxes,
@@ -130,11 +136,236 @@ const EXTRA_PROBLEMS_POOL = [
       const pens = 75;
       const maxPacks = getGCD(notebooks, pens);
       return {
+        title: 'ΠΑΚΕΤΑ ΓΡΑΦΙΚΗΣ ΥΛΗΣ',
+        instruction: 'Υπολογίστε τον μέγιστο αριθμό πακέτων:',
         text: `Ένα βιβλιοπωλείο διαθέτει ${notebooks} τετράδια και ${pens} στυλό. Θέλει να φτιάξει όμοια πακέτα γραφικής ύλης για μαθητές. Πόσα τέτοια πακέτα μπορεί να δημιουργήσει το μέγιστο;`,
         tableData: { col1: 'Υλικά', col2: 'Μέγιστα Πακέτα', r1: [`${notebooks} τετράδια & ${pens} στυλό`, 'Μ.Κ.Δ.(45, 75)'], r2: ['Υπολογισμός', `${maxPacks} πακέτα`] },
         correctVal: maxPacks,
         correctStr: String(maxPacks),
         explanation: `Ο μέγιστος αριθμός πακέτων ισούται με τον Μ.Κ.Δ. των 45 και 75: Μ.Κ.Δ.(45, 75) ＝ ${maxPacks} πακέτα.`
+      };
+    }
+  },
+  {
+    id: 'p_mkd_std_4',
+    generate: () => {
+      const roses = 32;
+      const lilies = 48;
+      const maxBouquets = getGCD(roses, lilies);
+      return {
+        title: 'ΠΑΝΟΜΟΙΟΤΥΠΕΣ ΑΝΘΟΔΕΣΜΕΣ',
+        instruction: 'Υπολογίστε το μέγιστο πλήθος ανθοδεσμών:',
+        text: `Ένα ανθοπωλείο έχει ${roses} τριαντάφυλλα και ${lilies} κρίνα. Θέλει να φτιάξει πανομοιότυπες ανθοδέσμες χρησιμοποιώντας όλα τα λουλούδια. Πόσες ανθοδέσμες μπορεί να φτιάξει το πολύ;`,
+        tableData: { col1: 'Λουλούδια', col2: 'Μέγιστες Ανθοδέσμες', r1: [`${roses} τριαντάφυλλα & ${lilies} κρίνα`, 'Μ.Κ.Δ.(32, 48)'], r2: ['Υπολογισμός', `${maxBouquets} ανθοδέσμες`] },
+        correctVal: maxBouquets,
+        correctStr: String(maxBouquets),
+        explanation: `Βρίσκουμε τον Μ.Κ.Δ. των 32 και 48: Μ.Κ.Δ.(32, 48) ＝ ${maxBouquets} ανθοδέσμες.`
+      };
+    }
+  },
+  {
+    id: 'p_mkd_std_5',
+    generate: () => {
+      const ropeA = 42;
+      const ropeB = 56;
+      const maxPiece = getGCD(ropeA, ropeB);
+      return {
+        title: 'ΚΟΠΗ ΣΧΟΙΝΙΩΝ ΣΕ ΙΣΑ ΚΟΜΜΑΤΙΑ',
+        instruction: 'Υπολογίστε το μέγιστο μήκος κομματιού σε μέτρα (m):',
+        text: `Σε μια αποθήκη υπάρχουν δύο σχοινιά μήκους ${ropeA} m και ${ropeB} m. Θέλουμε να τα κόψουμε σε ίσα κομμάτια με το μεγαλύτερο δυνατό μήκος. Πόσα μέτρα (m) θα είναι κάθε κομμάτι;`,
+        tableData: { col1: 'Μήκη Σχοινιών', col2: 'Μέγιστο Κοινό Μήκος', r1: [`${ropeA} m & ${ropeB} m`, 'Μ.Κ.Δ.(42, 56)'], r2: ['Υπολογισμός', `${maxPiece} m`] },
+        correctVal: maxPiece,
+        correctStr: String(maxPiece),
+        explanation: `Υπολογίζουμε τον Μ.Κ.Δ.(42, 56) ＝ ${maxPiece} m.`
+      };
+    }
+  },
+  {
+    id: 'p_mkd_std_6',
+    generate: () => {
+      const apples = 54;
+      const oranges = 72;
+      const maxBaskets = getGCD(apples, oranges);
+      return {
+        title: 'ΚΑΛΑΘΙΑ ΜΕ ΦΡΟΥΤΑ',
+        instruction: 'Υπολογίστε το μέγιστο πλήθος καλαθιών:',
+        text: `Ένας παραγωγός έχει ${apples} μήλα και ${oranges} πορτοκάλια. Θέλει να ετοιμάσει πανομοιότυπα καλάθια φρούτων χωρίς να περισσέψει κανένα φρούτο. Πόσα καλάθια μπορεί να ετοιμάσει το πολύ;`,
+        tableData: { col1: 'Φρούτα', col2: 'Μέγιστα Καλάθια', r1: [`${apples} μήλα & ${oranges} πορτοκάλια`, 'Μ.Κ.Δ.(54, 72)'], r2: ['Υπολογισμός', `${maxBaskets} καλάθια`] },
+        correctVal: maxBaskets,
+        correctStr: String(maxBaskets),
+        explanation: `Ο μέγιστος αριθμός καλαθιών είναι ο Μ.Κ.Δ.(54, 72) ＝ ${maxBaskets} καλάθια.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_mkd_hard_1',
+    generate: () => {
+      const redRibbon = 36;
+      const blueRibbon = 48;
+      const maxCut = getGCD(redRibbon, blueRibbon);
+      const correctStr = `${maxCut} εκ.`;
+      const fake1 = `${maxCut + 4} εκ.`;
+      const fake2 = `${Math.max(2, maxCut - 4)} εκ.`;
+      const fake3 = `${maxCut * 2} εκ.`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΕΓΙΣΤΟ ΚΟΙΝΟ ΜΗΚΟΣ ΚΟΡΔΕΛΑΣ',
+        instruction: 'Επιλέξτε το μέγιστο μήκος κάθε κομματιού σε εκατοστά (εκ.):',
+        text: `Μια μοδίστρα έχει δύο κορδέλες μήκους ${redRibbon} εκ. και ${blueRibbon} εκ. Θέλει να τις κόψει σε ίσα κομμάτια με το μεγαλύτερο δυνατό μήκος χωρίς να περισσέψει καθόλου ύφασμα. Ποιο είναι το μέγιστο μήκος (σε εκ.) κάθε κομματιού;`,
+        tableData: { col1: 'Μήκη Κορδελών', col2: 'Μέγιστο Ίσο Μήκος', r1: [`${redRibbon} εκ. & ${blueRibbon} εκ.`, 'Μ.Κ.Δ.(36, 48)'], r2: ['Υπολογισμός', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Αναζητούμε το μέγιστο κοινό μέγεθος, δηλαδή τον Μ.Κ.Δ. των 36 και 48: Μ.Κ.Δ.(36, 48) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mkd_hard_2',
+    generate: () => {
+      const cheesePies = 40;
+      const spinachPies = 60;
+      const maxBoxes = getGCD(cheesePies, spinachPies);
+      const correctStr = `${maxBoxes} συσκευασίες`;
+      const fake1 = `${maxBoxes + 5} συσκευασίες`;
+      const fake2 = `${Math.max(5, maxBoxes - 5)} συσκευασίες`;
+      const fake3 = `${maxBoxes * 2} συσκευασίες`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΙΣΟΤΙΜΟΥ ΜΟΙΡΑΣΜΑΤΟΣ',
+        instruction: 'Επιλέξτε τον μέγιστο αριθμό συσκευασιών:',
+        text: `Ένα κυλικείο έψησε ${cheesePies} τυροπιτάκια και ${spinachPies} σπανακοπιτάκια. Θέλει να τα μοιράσει σε πανομοιότυπες συσκευασίες χωρίς να περισσέψει κανένα. Πόσες τέτοιες συσκευασίες μπορεί να ετοιμάσει το πολύ;`,
+        tableData: { col1: 'Προϊόντα', col2: 'Μέγιστες Συσκευασίες', r1: [`${cheesePies} τυρ. & ${spinachPies} σπαν.`, 'Μ.Κ.Δ.(40, 60)'], r2: ['Υπολογισμός', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Ο μέγιστος αριθμός πανομοιότυπων συσκευασιών αντιστοιχεί στον Μ.Κ.Δ.(40, 60) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mkd_hard_3',
+    generate: () => {
+      const notebooks = 45;
+      const pens = 75;
+      const maxPacks = getGCD(notebooks, pens);
+      const correctStr = `${maxPacks} πακέτα`;
+      const fake1 = `${maxPacks + 5} πακέτα`;
+      const fake2 = `${Math.max(5, maxPacks - 5)} πακέτα`;
+      const fake3 = `${maxPacks + 10} πακέτα`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΔΗΜΙΟΥΡΓΙΑ ΠΑΚΕΤΩΝ ΓΡΑΦΙΚΗΣ ΥΛΗΣ',
+        instruction: 'Επιλέξτε το μέγιστο πλήθος πακέτων:',
+        text: `Ένα βιβλιοπωλείο διαθέτει ${notebooks} τετράδια και ${pens} στυλό. Θέλει να φτιάξει όμοια πακέτα γραφικής ύλης για μαθητές. Πόσα τέτοια πακέτα μπορεί να δημιουργήσει το μέγιστο;`,
+        tableData: { col1: 'Υλικά', col2: 'Μέγιστα Πακέτα', r1: [`${notebooks} τετράδια & ${pens} στυλό`, 'Μ.Κ.Δ.(45, 75)'], r2: ['Υπολογισμός', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Ο μέγιστος αριθμός πακέτων ισούται με τον Μ.Κ.Δ. των 45 και 75: Μ.Κ.Δ.(45, 75) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mkd_hard_4',
+    generate: () => {
+      const roses = 32;
+      const lilies = 48;
+      const maxBouquets = getGCD(roses, lilies);
+      const correctStr = `${maxBouquets} ανθοδέσμες`;
+      const fake1 = `${maxBouquets + 4} ανθοδέσμες`;
+      const fake2 = `${Math.max(4, maxBouquets - 4)} ανθοδέσμες`;
+      const fake3 = `${maxBouquets * 2} ανθοδέσμες`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΝΘΕΣΗ ΟΜΟΙΩΝ ΑΝΘΟΔΕΣΜΩΝ',
+        instruction: 'Επιλέξτε τον μέγιστο αριθμό ανθοδεσμών:',
+        text: `Ένα ανθοπωλείο έχει ${roses} τριαντάφυλλα και ${lilies} κρίνα. Θέλει να φτιάξει πανομοιότυπες ανθοδέσμες χρησιμοποιώντας όλα τα λουλούδια. Πόσες ανθοδέσμες μπορεί να φτιάξει το πολύ;`,
+        tableData: { col1: 'Λουλούδια', col2: 'Μέγιστες Ανθοδέσμες', r1: [`${roses} τριαντάφυλλα & ${lilies} κρίνα`, 'Μ.Κ.Δ.(32, 48)'], r2: ['Υπολογισμός', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Βρίσκουμε τον Μ.Κ.Δ. των 32 και 48: Μ.Κ.Δ.(32, 48) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mkd_hard_5',
+    generate: () => {
+      const ropeA = 42;
+      const ropeB = 56;
+      const maxPiece = getGCD(ropeA, ropeB);
+      const correctStr = `${maxPiece} m`;
+      const fake1 = `${maxPiece + 7} m`;
+      const fake2 = `${Math.max(2, maxPiece - 7)} m`;
+      const fake3 = `${maxPiece * 2} m`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΚΑΤΑΤΜΗΣΗ ΣΧΟΙΝΙΩΝ',
+        instruction: 'Επιλέξτε το μέγιστο μήκος κομματιού σε μέτρα (m):',
+        text: `Σε μια αποθήκη υπάρχουν δύο σχοινιά μήκους ${ropeA} m και ${ropeB} m. Θέλουμε να τα κόψουμε σε ίσα κομμάτια με το μεγαλύτερο δυνατό μήκος. Πόσα μέτρα (m) θα είναι κάθε κομμάτι;`,
+        tableData: { col1: 'Μήκη Σχοινιών', col2: 'Μέγιστο Κοινό Μήκος', r1: [`${ropeA} m & ${ropeB} m`, 'Μ.Κ.Δ.(42, 56)'], r2: ['Υπολογισμός', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε τον Μ.Κ.Δ.(42, 56) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mkd_hard_6',
+    generate: () => {
+      const apples = 54;
+      const oranges = 72;
+      const maxBaskets = getGCD(apples, oranges);
+      const correctStr = `${maxBaskets} καλάθια`;
+      const fake1 = `${maxBaskets + 6} καλάθια`;
+      const fake2 = `${Math.max(6, maxBaskets - 6)} καλάθια`;
+      const fake3 = `${maxBaskets * 2} καλάθια`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΠΑΡΑΣΚΕΥΗ ΚΑΛΑΘΙΩΝ ΦΡΟΥΤΩΝ',
+        instruction: 'Επιλέξτε το μέγιστο πλήθος καλαθιών:',
+        text: `Ένας παραγωγός έχει ${apples} μήλα και ${oranges} πορτοκάλια. Θέλει να ετοιμάσει πανομοιότυπα καλάθια φρούτων χωρίς να περισσέψει κανένα φρούτο. Πόσα καλάθια μπορεί να ετοιμάσει το πολύ;`,
+        tableData: { col1: 'Φρούτα', col2: 'Μέγιστα Καλάθια', r1: [`${apples} μήλα & ${oranges} πορτοκάλια`, 'Μ.Κ.Δ.(54, 72)'], r2: ['Υπολογισμός', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Ο μέγιστος αριθμός καλαθιών είναι ο Μ.Κ.Δ.(54, 72) ＝ ${correctStr}.`
       };
     }
   }
@@ -157,7 +388,7 @@ function generateQuestions() {
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • Μ.Κ.Δ. ΔΥΟ ΑΡΙΘΜΩΝ',
-      instruction: 'Υπολογίστε τον Μέγιστο Κοινό Διαιρέτη:',
+      instruction: 'Υπολογίστε τον Μέγιστο Κοινό Διαιρέτη (ακέραιος):',
       prompt: `Υπολογίστε: Μ.Κ.Δ.(${q1A}, ${q1B});`,
       correctVal: q1GCD,
       correctStr: String(q1GCD),
@@ -177,7 +408,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • Μ.Κ.Δ. ΤΡΙΩΝ ΑΡΙΘΜΩΝ',
-      instruction: 'Υπολογίστε τον Μέγιστο Κοινό Διαιρέτη:',
+      instruction: 'Υπολογίστε τον Μέγιστο Κοινό Διαιρέτη (ακέραιος):',
       prompt: `Υπολογίστε: Μ.Κ.Δ.(${q2A}, ${q2B}, ${q2C});`,
       correctVal: q2GCD,
       correctStr: String(q2GCD),
@@ -315,7 +546,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΗ ΚΑΤΑΤΜΗΣΗ',
-      instruction: 'Βρείτε το μέγιστο κοινό μήκος κομματιού:',
+      instruction: 'Βρείτε το μέγιστο κοινό μήκος κομματιού σε εκατοστά (εκ.):',
       prompt: `Ποιο είναι το μεγαλύτερο κοινό μήκος κομματιού που μετράει ακριβώς δύο ράβδους μήκους ${q7A} εκ. και ${q7B} εκ.;`,
       correctVal: q7Mkd,
       correctStr: String(q7Mkd),
@@ -353,48 +584,37 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕΓΙΣΤΟΥ ΚΟΙΝΟΥ ΜΗΚΟΥΣ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
-      correctVal: prob9.correctVal,
-      correctStr: prob9.correctStr,
-      explanation: prob9.explanation
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = prob10.correctVal;
-    const correctStr10 = `${prob10.correctStr} συσκευασίες`;
-    const fake10A = `${val10 + 5} συσκευασίες`;
-    const fake10B = `${Math.max(2, val10 - 5)} συσκευασίες`;
-    const fake10C = `${val10 * 2} συσκευασίες`;
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΙΣΟΤΙΜΟΥ ΜΟΙΡΑΣΜΑΤΟΣ',
-      instruction: 'Επιλέξτε τον σωστό αριθμό συσκευασιών:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
-      explanation: prob10.explanation
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
