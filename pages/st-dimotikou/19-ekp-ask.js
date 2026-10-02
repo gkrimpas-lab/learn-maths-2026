@@ -50,25 +50,28 @@ function lcmArray(arr) {
   return arr.reduce((acc, curr) => lcmTwo(acc, curr), arr[0]);
 }
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (MCQ)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_ekp_std_1',
     generate: () => {
       const busA = 12;
       const busB = 18;
       const l = lcmTwo(busA, busB);
+      const correctStr = `${l} λεπτά`;
       return {
+        title: 'ΣΥΓΧΡΟΝΙΣΜΟΣ ΔΡΟΜΟΛΟΓΙΩΝ ΛΕΩΦΟΡΕΙΩΝ',
+        instruction: 'Επιλέξτε τον σωστό χρόνο ταυτόχρονης αναχώρησης:',
         text: `Σε έναν σταθμό, το λεωφορείο Α αναχωρεί κάθε ${busA} λεπτά και το λεωφορείο Β αναχωρεί κάθε ${busB} λεπτά. Αν ξεκινήσουν ταυτόχρονα στις 08:00 το πρωί, μετά από πόσα λεπτά θα αναχωρήσουν ξανά ταυτόχρονα για πρώτη φορά;`,
         tableData: { col1: 'Δρομολόγια', col2: 'Χρόνος Αναχώρησης', r1: [`Λεωφορείο Α: ${busA} λ.`, `Λεωφορείο Β: ${busB} λ.`], r2: ['Υπολογισμός Ε.Κ.Π.', `Ε.Κ.Π.(${busA}, ${busB}) ＝ ${l} λεπτά ✅`] },
         optionsRaw: [
-          `${l} λεπτά`,
+          correctStr,
           `${busA + busB} λεπτά`,
           `${l * 2} λεπτά`,
           `${busA * 2} λεπτά`
         ],
-        correctText: `${l} λεπτά`,
-        explanation: `Τα λεωφορεία θα συναντηθούν στο Ελάχιστο Κοινό Πολλαπλάσιο των χρόνων τους: Ε.Κ.Π.(${busA}, ${busB}) ＝ ${l} λεπτά.`
+        correctText: correctStr,
+        explanation: `Τα λεωφορεία θα συναντηθούν στο Ελάχιστο Κοινό Πολλαπλάσιο των χρόνων τους: Ε.Κ.Π.(${busA}, ${busB}) ＝ ${correctStr}.`
       };
     }
   },
@@ -78,17 +81,20 @@ const EXTRA_PROBLEMS_POOL = [
       const light1 = 15;
       const light2 = 20;
       const l = lcmTwo(light1, light2);
+      const correctStr = `${l} δευτερόλεπτα`;
       return {
+        title: 'ΡΥΘΜΙΚΕΣ ΦΩΤΕΙΝΕΣ ΠΙΝΑΚΙΔΕΣ',
+        instruction: 'Επιλέξτε κάθε πόσα δευτερόλεπτα ανάβουν ταυτόχρονα:',
         text: `Σε έναν δρόμο δύο φωτεινές πινακίδες αναβοσβήνουν ρυθμικά: η πρώτη ανάβει κάθε ${light1} δευτερόλεπτα και η δεύτερη κάθε ${light2} δευτερόλεπτα. Κάθε πόσα δευτερόλεπτα θα ανάβουν ταυτόχρονα;`,
         tableData: { col1: 'Πινακίδες', col2: 'Συχνότητα', r1: [`Πινακίδα 1: ${light1} δευτ.`, `Πινακίδα 2: ${light2} δευτ.`], r2: ['Υπολογισμός Ε.Κ.Π.', `Ε.Κ.Π.(${light1}, ${light2}) ＝ ${l} δευτερόλεπτα ✅`] },
         optionsRaw: [
-          `${l} δευτερόλεπτα`,
+          correctStr,
           `${light1 + light2} δευτερόλεπτα`,
           `${l * 2} δευτερόλεπτα`,
           `${light1 * 2} δευτερόλεπτα`
         ],
-        correctText: `${l} δευτερόλεπτα`,
-        explanation: `Οι πινακίδες ανάβουν ταυτόχρονα σε χρόνο ίσο με το Ε.Κ.Π. των δύο περιόδων: Ε.Κ.Π.(${light1}, ${light2}) ＝ ${l} δευτερόλεπτα.`
+        correctText: correctStr,
+        explanation: `Οι πινακίδες ανάβουν ταυτόχρονα σε χρόνο ίσο με το Ε.Κ.Π. των δύο περιόδων: Ε.Κ.Π.(${light1}, ${light2}) ＝ ${correctStr}.`
       };
     }
   },
@@ -98,17 +104,234 @@ const EXTRA_PROBLEMS_POOL = [
       const doctorDays = 6;
       const nurseDays = 9;
       const l = lcmTwo(doctorDays, nurseDays);
+      const correctStr = `${l} ημέρες`;
       return {
+        title: 'ΚΟΙΝΗ ΕΦΗΜΕΡΙΑ ΣΤΟ ΝΟΣΟΚΟΜΕΙΟ',
+        instruction: 'Επιλέξτε μετά από πόσες ημέρες θα συμπέσει η εφημερία:',
         text: `Ένας γιατρός έχει εφημερία κάθε ${doctorDays} ημέρες και μια νοσηλεύτρια έχει εφημερία κάθε ${nurseDays} ημέρες. Αν εφημερεύουν μαζί σήμερα, μετά από πόσες ημέρες θα συμπέσει ξανά η εφημερία τους;`,
         tableData: { col1: 'Εφημερίες', col2: 'Συχνότητα', r1: [`Γιατρός: ${doctorDays} ημέρες`, `Νοσηλεύτρια: ${nurseDays} ημέρες`], r2: ['Υπολογισμός Ε.Κ.Π.', `Ε.Κ.Π.(${doctorDays}, ${nurseDays}) ＝ ${l} ημέρες ✅`] },
         optionsRaw: [
-          `${l} ημέρες`,
+          correctStr,
           `${doctorDays + nurseDays} ημέρες`,
           `${l + 6} ημέρες`,
           `${l * 2} ημέρες`
         ],
-        correctText: `${l} ημέρες`,
-        explanation: `Η κοινή εφημερία θα συμβεί ξανά σε ημέρες που ισούνται με το Ε.Κ.Π. των δύο διαστημάτων: Ε.Κ.Π.(${doctorDays}, ${nurseDays}) ＝ ${l} ημέρες.`
+        correctText: correctStr,
+        explanation: `Η κοινή εφημερία θα συμβεί ξανά σε ημέρες που ισούνται με το Ε.Κ.Π. των δύο διαστημάτων: Ε.Κ.Π.(${doctorDays}, ${nurseDays}) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_ekp_std_4',
+    generate: () => {
+      const bellA = 45;
+      const bellB = 60;
+      const l = lcmTwo(bellA, bellB);
+      const correctStr = `${l} λεπτά`;
+      return {
+        title: 'ΣΥΓΧΡΟΝΙΣΜΟΣ ΚΟΥΔΟΥΝΙΩΝ ΣΧΟΛΕΙΟΥ',
+        instruction: 'Επιλέξτε μετά από πόσα λεπτά θα χτυπήσουν μαζί:',
+        text: `Σε δύο γειτονικά σχολεία τα κουδούνια χτυπούν ανά ${bellA} λεπτά και ${bellB} λεπτά αντίστοιχα. Αν χτύπησαν ταυτόχρονα το πρωί, μετά από πόσα λεπτά θα ξαναχτυπήσουν μαζί;`,
+        tableData: { col1: 'Κουδούνια', col2: 'Περίοδος', r1: [`Σχολείο Α: ${bellA} λ.`, `Σχολείο Β: ${bellB} λ.`], r2: ['Ε.Κ.Π.', `Ε.Κ.Π.(${bellA}, ${bellB}) ＝ ${l} λ. ✅`] },
+        optionsRaw: [
+          correctStr,
+          `${bellA + bellB} λεπτά`,
+          `${l * 2} λεπτά`,
+          `${l - 30} λεπτά`
+        ],
+        correctText: correctStr,
+        explanation: `Τα κουδούνια χτυπούν ξανά ταυτόχρονα στο Ε.Κ.Π.(${bellA}, ${bellB}) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_ekp_std_5',
+    generate: () => {
+      const cycle1 = 8;
+      const cycle2 = 12;
+      const l = lcmTwo(cycle1, cycle2);
+      const correctStr = `${l} λεπτά`;
+      return {
+        title: 'ΓΥΡΟΙ ΣΤΗΝ ΠΙΣΤΑ ΑΓΩΝΩΝ',
+        instruction: 'Επιλέξτε μετά από πόσο χρόνο θα συναντηθούν στην αφετηρία:',
+        text: `Δύο καρτ κινούνται σε κυκλική πίστα. Το πρώτο ολοκληρώνει έναν γύρο σε ${cycle1} λεπτά και το δεύτερο σε ${cycle2} λεπτά. Αν ξεκινήσουν μαζί, μετά από πόσα λεπτά θα περάσουν ξανά ταυτόχρονα από την αφετηρία;`,
+        tableData: { col1: 'Καρτ', col2: 'Χρόνος Γύρου', r1: [`1ο Καρτ: ${cycle1} λ.`, `2ο Καρτ: ${cycle2} λ.`], r2: ['Ε.Κ.Π.', `Ε.Κ.Π.(${cycle1}, ${cycle2}) ＝ ${l} λ. ✅`] },
+        optionsRaw: [
+          correctStr,
+          `${cycle1 + cycle2} λεπτά`,
+          `${l * 2} λεπτά`,
+          `${l + 4} λεπτά`
+        ],
+        correctText: correctStr,
+        explanation: `Θα συναντηθούν ξανά στην αφετηρία σε χρόνο ίσο με το Ε.Κ.Π.(${cycle1}, ${cycle2}) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_ekp_std_6',
+    generate: () => {
+      const waterA = 4;
+      const waterB = 6;
+      const l = lcmTwo(waterA, waterB);
+      const correctStr = `${l} ημέρες`;
+      return {
+        title: 'ΠΟΤΙΣΜΑ ΦΥΤΩΝ',
+        instruction: 'Επιλέξτε κάθε πόσες ημέρες ποτίζονται ταυτόχρονα:',
+        text: `Σε έναν κήπο τα τριαντάφυλλα ποτίζονται κάθε ${waterA} ημέρες και οι ορτανσίες κάθε ${waterB} ημέρες. Κάθε πόσες ημέρες ποτίζονται και τα δύο φυτά την ίδια ημέρα;`,
+        tableData: { col1: 'Φυτά', col2: 'Συχνότητα', r1: [`Τριαντάφυλλα: ${waterA} ημέρες`, `Ορτανσίες: ${waterB} ημέρες`], r2: ['Ε.Κ.Π.', `Ε.Κ.Π.(${waterA}, ${waterB}) ＝ ${l} ημέρες ✅`] },
+        optionsRaw: [
+          correctStr,
+          `${waterA + waterB} ημέρες`,
+          `${l * 2} ημέρες`,
+          `${l + 2} ημέρες`
+        ],
+        correctText: correctStr,
+        explanation: `Ποτίζονται ταυτόχρονα σε διάστημα ίσο με το Ε.Κ.Π.(${waterA}, ${waterB}) ＝ ${correctStr}.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_ekp_hard_1',
+    generate: () => {
+      const shipA = 6;
+      const shipB = 8;
+      const shipC = 12;
+      const l = lcmArray([shipA, shipB, shipC]);
+      const correctStr = `${l} ημέρες`;
+      return {
+        title: 'ΣΥΝΑΝΤΗΣΗ ΤΡΙΩΝ ΠΛΟΙΩΝ ΣΤΟ ΛΙΜΑΝΙ',
+        instruction: 'Επιλέξτε μετά από πόσες ημέρες θα συμπέσουν και τα τρία πλοία:',
+        text: `Τρία πλοία επιστρέφουν στο ίδιο λιμάνι: το πρώτο κάθε ${shipA} ημέρες, το δεύτερο κάθε ${shipB} ημέρες και το τρίτο κάθε ${shipC} ημέρες. Αν αναχώρησαν σήμερα μαζί, μετά από πόσες ημέρες θα ξαναβρεθούν ταυτόχρονα στο λιμάνι;`,
+        tableData: { col1: 'Πλοία', col2: 'Διάστημα Επιστροφής', r1: [`A: ${shipA} ημ., B: ${shipB} ημ.`, `Γ: ${shipC} ημ.`], r2: ['Υπολογισμός Ε.Κ.Π.', `Ε.Κ.Π.(${shipA}, ${shipB}, ${shipC}) ＝ ${l} ημέρες ✅`] },
+        optionsRaw: [
+          correctStr,
+          `${l * 2} ημέρες`,
+          `${shipA + shipB + shipC} ημέρες`,
+          `${l - 6} ημέρες`
+        ],
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε το Ε.Κ.Π. των τριών αριθμών: Ε.Κ.Π.(${shipA}, ${shipB}, ${shipC}) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_ekp_hard_2',
+    generate: () => {
+      const runnerA = 3;
+      const runnerB = 4;
+      const runnerC = 5;
+      const l = lcmArray([runnerA, runnerB, runnerC]);
+      const correctStr = `${l} λεπτά`;
+      return {
+        title: 'ΣΥΝΑΝΤΗΣΗ ΤΡΙΩΝ ΔΡΟΜΕΩΝ ΣΤΗΝ ΑΦΕΤΗΡΙΑ',
+        instruction: 'Επιλέξτε μετά από πόσα λεπτά θα συναντηθούν ξανά στην αφετηρία:',
+        text: `Τρεις δρομείς τρέχουν σε κυκλικό στίβο και κάνουν έναν γύρο σε ${runnerA}, ${runnerB} και ${runnerC} λεπτά αντίστοιχα. Αν ξεκινήσουν ταυτόχρονα, μετά από πόσα λεπτά θα ξαναβρεθούν όλοι μαζί στην αφετηρία;`,
+        tableData: { col1: 'Δρομείς', col2: 'Χρόνοι Γύρου', r1: [`${runnerA} λ., ${runnerB} λ.`, `${runnerC} λ.`], r2: ['Ε.Κ.Π.', `Ε.Κ.Π.(${runnerA}, ${runnerB}, ${runnerC}) ＝ ${l} λεπτά ✅`] },
+        optionsRaw: [
+          correctStr,
+          `${l * 2} λεπτά`,
+          `${runnerA * runnerB} λεπτά`,
+          `${l - 15} λεπτά`
+        ],
+        correctText: correctStr,
+        explanation: `Επειδή οι αριθμοί είναι πρώτοι μεταξύ τους ανά ζεύγη, Ε.Κ.Π.(${runnerA}, ${runnerB}, ${runnerC}) ＝ ${runnerA} · ${runnerB} · ${runnerC} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_ekp_hard_3',
+    generate: () => {
+      const packSpoons = 10;
+      const packForks = 12;
+      const l = lcmTwo(packSpoons, packForks);
+      const packsSpoonsNeeded = l / packSpoons;
+      const correctStr = `${l} τεμάχια (από ${packsSpoonsNeeded} πακέτα)`;
+      return {
+        title: 'ΑΓΟΡΑ ΣΕΤ ΜΑΧΑΙΡΟΠΙΡΟΥΝΩΝ',
+        instruction: 'Επιλέξτε τον ελάχιστο ίσο αριθμό κουταλιών και πιρουνιών:',
+        text: `Ένα κατάστημα πουλάει κουτάλια σε πακέτα των ${packSpoons} και πιρούνια σε πακέτα των ${packForks}. Ποιο είναι το ελάχιστο πλήθος που πρέπει να αγοράσουμε από το καθένα ώστε να έχουμε ίσο αριθμό κουταλιών και πιρουνιών;`,
+        tableData: { col1: 'Συσκευασίες', col2: 'Ε.Κ.Π.', r1: [`Κουτάλια: ${packSpoons}`, `Πιρούνια: ${packForks}`], r2: ['Ελάχιστη Ίση Ποσότητα', `${l} τεμάχια ✅`] },
+        optionsRaw: [
+          `${l} τεμάχια`,
+          `${packSpoons * packForks} τεμάχια`,
+          `${l * 2} τεμάχια`,
+          `${packSpoons + packForks} τεμάχια`
+        ],
+        correctText: `${l} τεμάχια`,
+        explanation: `Αναζητούμε το Ε.Κ.Π. των συσκευασιών: Ε.Κ.Π.(${packSpoons}, ${packForks}) ＝ ${l} τεμάχια.`
+      };
+    }
+  },
+  {
+    id: 'p_ekp_hard_4',
+    generate: () => {
+      const trainA = 20;
+      const trainB = 30;
+      const l = lcmTwo(trainA, trainB);
+      const correctStr = `${l} λεπτά`;
+      return {
+        title: 'ΔΡΟΜΟΛΟΓΙΑ ΤΡΕΝΩΝ',
+        instruction: 'Επιλέξτε μετά από πόσο χρόνο θα αναχωρήσουν ξανά ταυτόχρονα:',
+        text: `Δύο τρένα αναχωρούν από τον κεντρικό σταθμό ανά ${trainA} λεπτά και ${trainB} λεπτά αντίστοιχα. Αν αναχώρησαν μαζί στις 09:00, μετά από πόσα λεπτά θα αναχωρήσουν πάλι μαζί;`,
+        tableData: { col1: 'Τρένα', col2: 'Συχνότητα', r1: [`Τρένο 1: ${trainA} λ.`, `Τρένο 2: ${trainB} λ.`], r2: ['Ε.Κ.Π.', `Ε.Κ.Π.(${trainA}, ${trainB}) ＝ ${l} λεπτά ✅`] },
+        optionsRaw: [
+          correctStr,
+          `${trainA + trainB} λεπτά`,
+          `${l * 2} λεπτά`,
+          `${trainA * 2} λεπτά`
+        ],
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε: Ε.Κ.Π.(${trainA}, ${trainB}) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_ekp_hard_5',
+    generate: () => {
+      const alarmA = 12;
+      const alarmB = 16;
+      const l = lcmTwo(alarmA, alarmB);
+      const correctStr = `${l} δευτερόλεπτα`;
+      return {
+        title: 'ΗΧΗΤΙΚΑ ΣΗΜΑΤΑ ΣΥΝΑΓΕΡΜΟΥ',
+        instruction: 'Επιλέξτε κάθε πόσα δευτερόλεπτα ηχούν ταυτόχρονα:',
+        text: `Δύο συσκευές συναγερμού εκπέμπουν ηχητικό σήμα ανά ${alarmA} δευτερόλεπτα και ${alarmB} δευτερόλεπτα αντίστοιχα. Κάθε πόσα δευτερόλεπτα ηχούν ταυτόχρονα;`,
+        tableData: { col1: 'Συσκευές', col2: 'Περίοδος', r1: [`Συσκευή 1: ${alarmA} δευτ.`, `Συσκευή 2: ${alarmB} δευτ.`], r2: ['Ε.Κ.Π.', `Ε.Κ.Π.(${alarmA}, ${alarmB}) ＝ ${l} δευτερόλεπτα ✅`] },
+        optionsRaw: [
+          correctStr,
+          `${alarmA + alarmB} δευτερόλεπτα`,
+          `${l * 2} δευτερόλεπτα`,
+          `${alarmA * 2} δευτερόλεπτα`
+        ],
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε: Ε.Κ.Π.(${alarmA}, ${alarmB}) ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_ekp_hard_6',
+    generate: () => {
+      const lessonA = 4;
+      const lessonB = 5;
+      const l = lcmTwo(lessonA, lessonB);
+      const correctStr = `${l} ημέρες`;
+      return {
+        title: 'ΣΥΜΠΤΩΣΗ ΕΞΩΣΧΟΛΙΚΩΝ ΔΡΑΣΤΗΡΙΟΤΗΤΩΝ',
+        instruction: 'Επιλέξτε μετά από πόσες ημέρες συμπίπτουν ξανά:',
+        text: `Ο Γιάννης έχει μάθημα κιθάρας κάθε ${lessonA} ημέρες και προπόνηση σκάκι κάθε ${lessonB} ημέρες. Αν σήμερα είχε και τα δύο μαθήματα, μετά από πόσες ημέρες θα έχει ξανά και τα δύο την ίδια ημέρα;`,
+        tableData: { col1: 'Μαθήματα', col2: 'Συχνότητα', r1: [`Κιθάρα: ${lessonA} ημέρες`, `Σκάκι: ${lessonB} ημέρες`], r2: ['Ε.Κ.Π.', `Ε.Κ.Π.(${lessonA}, ${lessonB}) ＝ ${l} ημέρες ✅`] },
+        optionsRaw: [
+          correctStr,
+          `${lessonA + lessonB} ημέρες`,
+          `${l * 2} ημέρες`,
+          `${lessonA * 3} ημέρες`
+        ],
+        correctText: correctStr,
+        explanation: `Επειδή το 4 και το 5 είναι πρώτοι μεταξύ τους: Ε.Κ.Π.(4, 5) ＝ 4 · 5 ＝ ${correctStr}.`
       };
     }
   }
@@ -160,7 +383,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΠΡΩΤΟΙ ΜΕΤΑΞΥ ΤΟΥΣ',
-      instruction: 'Συμπληρώστε το Ε.Κ.Π. των αριθμών:',
+      instruction: 'Συμπληρώστε το Ε.Κ.Π. των αριθμών (ακέραιος):',
       prompt: `Ποιο είναι το Ε.Κ.Π. των αριθμών ${q2Chosen[0]} και ${q2Chosen[1]};`,
       correctVal: q2CorrectVal,
       correctStr: String(q2CorrectVal),
@@ -308,7 +531,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • Ε.Κ.Π. ΤΕΣΣΑΡΩΝ ΑΡΙΘΜΩΝ',
-      instruction: 'Υπολογίστε το Ε.Κ.Π.:',
+      instruction: 'Υπολογίστε το Ε.Κ.Π. (ακέραιος):',
       prompt: `Ποιο είναι το Ε.Κ.Π. των 4 αριθμών (${q7Chosen.nums.join(', ')});`,
       correctVal: q7Chosen.val,
       correctStr: String(q7Chosen.val),
@@ -368,46 +591,47 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ9 = shuffle([...new Set(prob9.optionsRaw)]).map((text) => ({
+    const optionsQ9 = shuffle([...new Set(stdProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob9.correctText
+      isCorrect: text === stdProb.correctText
     }));
 
     qList.push({
       id: 9,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΧΡΟΝΙΣΜΟΣ ΔΡΟΜΟΛΟΓΙΩΝ',
-      instruction: 'Επιλέξτε τον σωστό χρόνο ταυτόχρονης αναχώρησης:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
       options: optionsQ9,
-      correctText: prob9.correctText,
-      explanation: prob9.explanation
+      correctText: stdProb.correctText,
+      explanation: stdProb.explanation
     });
 
     // Q10 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ10 = shuffle([...new Set(prob10.optionsRaw)]).map((text) => ({
+    const optionsQ10 = shuffle([...new Set(hardProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob10.correctText
+      isCorrect: text === hardProb.correctText
     }));
 
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΠΕΡΙΟΔΙΚΟΤΗΤΑ ΣΥΜΒΑΝΤΩΝ',
-      instruction: 'Επιλέξτε το σωστό διάστημα:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
       options: optionsQ10,
-      correctText: prob10.correctText,
-      explanation: prob10.explanation
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
