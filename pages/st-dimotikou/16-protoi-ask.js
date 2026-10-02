@@ -51,20 +51,21 @@ function getDivisors(n) {
 const PRIMES_UNDER_50 = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47];
 const COMPOSITES_UNDER_50 = [4, 6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 24, 25, 26, 27, 28, 30, 32, 33, 34, 35, 36, 38, 39, 40, 42, 44, 45, 46, 48, 49, 50];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (MCQ)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_prime_std_1',
     generate: () => {
       const candidates = [49, 51, 53, 57];
       const primeNum = 53;
-      const explainStr = 'Ο αριθμός 53 δεν διαιρείται με το 2, το 3, το 5 ή το 7 και έχει διαιρέτες μόνο το 1 και τον εαυτό του, άρα είναι πρώτος. (49 ＝ 7 · 7, 51 ＝ 3 · 17, 57 ＝ 3 · 19).';
       return {
+        title: 'ΑΝΑΓΝΩΡΙΣΗ ΠΡΩΤΟΥ ΑΡΙΘΜΟΥ',
+        instruction: 'Επιλέξτε ποιος αριθμός είναι πρώτος:',
         text: 'Ποιος από τους παρακάτω αριθμούς είναι πρώτος αριθμός: 49, 51, 53 ή 57;',
         tableData: { col1: 'Υποψήφιοι Αριθμοί', col2: 'Ανάλυση Διαιρετών', r1: ['49, 51, 57', 'Σύνθετοι (διαιρούνται με 7 ή 3)'], r2: ['53', 'Πρώτος (διαιρέτες μόνο 1 και 53) ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(primeNum),
-        explanation: explainStr
+        explanation: 'Ο αριθμός 53 δεν διαιρείται με το 2, το 3, το 5 ή το 7 και έχει διαιρέτες μόνο το 1 και τον εαυτό του, άρα είναι πρώτος. (49 ＝ 7 · 7, 51 ＝ 3 · 17, 57 ＝ 3 · 19).'
       };
     }
   },
@@ -73,27 +74,172 @@ const EXTRA_PROBLEMS_POOL = [
     generate: () => {
       const candidates = [61, 67, 71, 77];
       const compNum = 77;
-      const explainStr = 'Ο αριθμός 77 διαιρείται με το 7 και το 11 (77 ＝ 7 · 11), επομένως έχει περισσότερους από δύο διαιρέτες και είναι σύνθετος. Οι αριθμοί 61, 67 και 71 είναι πρώτοι.';
       return {
+        title: 'ΑΝΑΓΝΩΡΙΣΗ ΣΥΝΘΕΤΟΥ ΑΡΙΘΜΟΥ',
+        instruction: 'Επιλέξτε ποιος αριθμός είναι σύνθετος:',
         text: 'Ποιος από τους παρακάτω αριθμούς είναι σύνθετος αριθμός: 61, 67, 71 ή 77;',
         tableData: { col1: 'Υποψήφιοι Αριθμοί', col2: 'Ανάλυση Διαιρετών', r1: ['61, 67, 71', 'Πρώτοι αριθμοί'], r2: ['77', 'Σύνθετος (77 ＝ 7 · 11) ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(compNum),
-        explanation: explainStr
+        explanation: 'Ο αριθμός 77 διαιρείται με το 7 και το 11 (77 ＝ 7 · 11), επομένως έχει περισσότερους από δύο διαιρέτες και είναι σύνθετος. Οι αριθμοί 61, 67 και 71 είναι πρώτοι.'
       };
     }
   },
   {
     id: 'p_prime_std_3',
     generate: () => {
-      const chairs = 29;
-      const explainStr = 'Επειδή ο αριθμός 29 είναι πρώτος, οι μοναδικοί διαιρέτες του είναι το 1 και το 29. Άρα δεν μπορεί να τοποθετηθεί σε περισσότερες από 1 ίσες σειρές χωρίς να περισσέψει καρέκλα.';
+      const candidates = [81, 83, 85, 87];
+      const primeNum = 83;
       return {
+        title: 'ΑΝΑΖΗΤΗΣΗ ΠΡΩΤΟΥ ΣΤΗΝ ΟΓΔΟΝΤΑΔΑ',
+        instruction: 'Επιλέξτε τον πρώτο αριθμό:',
+        text: 'Ποιος από τους παρακάτω αριθμούς είναι πρώτος: 81, 83, 85 ή 87;',
+        tableData: { col1: 'Υποψήφιοι', col2: 'Έλεγχος Διαιρετότητας', r1: ['81 (διά 9), 85 (διά 5), 87 (διά 3)', 'Σύνθετοι αριθμοί'], r2: ['83', 'Πρώτος αριθμός ✅'] },
+        optionsRaw: candidates.map(String),
+        correctText: String(primeNum),
+        explanation: 'Ο αριθμός 83 είναι πρώτος. Το 81 διαιρείται με το 9, το 85 με το 5 και το 87 με το 3 (8 ＋ 7 ＝ 15).'
+      };
+    }
+  },
+  {
+    id: 'p_prime_std_4',
+    generate: () => {
+      const candidates = [91, 93, 95, 97];
+      const primeNum = 97;
+      return {
+        title: 'ΜΕΓΑΛΥΤΕΡΟΣ ΔΙΨΗΦΙΟΣ ΠΡΩΤΟΣ',
+        instruction: 'Επιλέξτε τον πρώτο αριθμό:',
+        text: 'Ποιος από τους παρακάτω αριθμούς είναι πρώτος: 91, 93, 95 ή 97;',
+        tableData: { col1: 'Υποψήφιοι', col2: 'Έλεγχος', r1: ['91 (7·13), 93 (3·31), 95 (5·19)', 'Σύνθετοι'], r2: ['97', 'Πρώτος αριθμός ✅'] },
+        optionsRaw: candidates.map(String),
+        correctText: String(primeNum),
+        explanation: 'Ο αριθμός 97 είναι ο μεγαλύτερος διψήφιος πρώτος. Το 91 ＝ 7 · 13, το 93 ＝ 3 · 31 και το 95 ＝ 5 · 19.'
+      };
+    }
+  },
+  {
+    id: 'p_prime_std_5',
+    generate: () => {
+      const candidates = [33, 35, 37, 39];
+      const primeNum = 37;
+      return {
+        title: 'ΑΝΑΖΗΤΗΣΗ ΠΡΩΤΟΥ ΣΤΗΝ ΤΡΙΑΝΤΑΔΑ',
+        instruction: 'Επιλέξτε τον πρώτο αριθμό:',
+        text: 'Ποιος από τους παρακάτω αριθμούς είναι πρώτος: 33, 35, 37 ή 39;',
+        tableData: { col1: 'Αριθμοί', col2: 'Διαιρέτες', r1: ['33 (3·11), 35 (5·7), 39 (3·13)', 'Σύνθετοι'], r2: ['37', 'Πρώτος ✅'] },
+        optionsRaw: candidates.map(String),
+        correctText: String(primeNum),
+        explanation: 'Ο αριθμός 37 έχει διαιρέτες μόνο το 1 και το 37, άρα είναι πρώτος.'
+      };
+    }
+  },
+  {
+    id: 'p_prime_std_6',
+    generate: () => {
+      const candidates = [21, 23, 25, 27];
+      const primeNum = 23;
+      return {
+        title: 'ΕΥΡΕΣΗ ΠΡΩΤΟΥ ΣΤΗΝ ΕΙΚΟΣΑΔΑ',
+        instruction: 'Επιλέξτε τον πρώτο αριθμό:',
+        text: 'Ποιος από τους παρακάτω αριθμούς είναι πρώτος: 21, 23, 25 ή 27;',
+        tableData: { col1: 'Υποψήφιοι', col2: 'Ανάλυση', r1: ['21 (3·7), 25 (5·5), 27 (3·9)', 'Σύνθετοι'], r2: ['23', 'Πρώτος ✅'] },
+        optionsRaw: candidates.map(String),
+        correctText: String(primeNum),
+        explanation: 'Ο αριθμός 23 είναι πρώτος, ενώ οι 21, 25 και 27 είναι σύνθετοι.'
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_prime_hard_1',
+    generate: () => {
+      const chairs = 29;
+      return {
+        title: 'ΔΙΑΤΑΞΗ ΚΑΘΙΣΜΑΤΩΝ ΕΚΔΗΛΩΣΗΣ',
+        instruction: 'Επιλέξτε αν είναι δυνατή η διάταξη:',
         text: `Ένας διοργανωτής εκδηλώσεων έχει ${chairs} καρέκλες. Μπορεί να τις τοποθετήσει σε περισσότερες από 1 ίσες σειρές με τον ίδιο αριθμό καθισμάτων χωρίς να περισσέψει καμία;`,
         tableData: { col1: 'Σύνολο Καρεκλών', col2: 'Ιδιότητα Αριθμού', r1: [`${chairs} καρέκλες`, 'Πρώτος αριθμός'], r2: ['Διαιρέτες', 'Μόνο το 1 και το 29 (Όχι ❌)'] },
         optionsRaw: ['Ναι', 'Όχι'],
         correctText: 'Όχι',
-        explanation: explainStr
+        explanation: 'Επειδή ο αριθμός 29 είναι πρώτος, οι μοναδικοί διαιρέτες του είναι το 1 και το 29. Άρα δεν μπορεί να τοποθετηθεί σε περισσότερες από 1 ίσες σειρές χωρίς να περισσέψει καρέκλα.'
+      };
+    }
+  },
+  {
+    id: 'p_prime_hard_2',
+    generate: () => {
+      const tiles = 31;
+      return {
+        title: 'ΟΡΘΟΓΩΝΙΟ ΠΛΑΚΟΣΤΡΩΤΟ ΜΕ ΠΛΑΚΑΚΙΑ',
+        instruction: 'Επιλέξτε αν μπορεί να σχηματιστεί ορθογώνιο πλέγμα:',
+        text: `Ένας τεχνίτης έχει ${tiles} τετράγωνα πλακάκια. Μπορεί να φτιάξει ένα ορθογώνιο πλακόστρωτο με περισσότερες από μία σειρές και στήλες;`,
+        tableData: { col1: 'Πλακάκια', col2: 'Ιδιότητα', r1: [`${tiles} πλακάκια`, 'Πρώτος αριθμός'], r2: ['Διαστάσεις', 'Μόνο 1 · 31 (Όχι ❌)'] },
+        optionsRaw: ['Ναι', 'Όχι'],
+        correctText: 'Όχι',
+        explanation: 'Ο αριθμός 31 είναι πρώτος. Μπορεί να τοποθετηθεί μόνο σε μία ευθεία γραμμή 1 · 31 και όχι σε πολυεπίπεδο ορθογώνιο.'
+      };
+    }
+  },
+  {
+    id: 'p_prime_hard_3',
+    generate: () => {
+      const students = 41;
+      return {
+        title: 'ΙΣΟΜΕΡΗΣ ΚΑΤΑΝΟΜΗ ΜΑΘΗΤΩΝ',
+        instruction: 'Επιλέξτε αν μπορούν να σχηματιστούν ισοπληθείς ομάδες:',
+        text: `Σε μια κατασκήνωση υπάρχουν ${students} παιδιά. Μπορεί ο υπεύθυνος να χωρίσει τα παιδιά σε ισοπληθείς ομάδες με τουλάχιστον 2 παιδιά σε κάθε ομάδα;`,
+        tableData: { col1: 'Παιδιά', col2: 'Έλεγχος', r1: [`${students} παιδιά`, 'Πρώτος αριθμός'], r2: ['Ομάδες', 'Αδύνατος διαχωρισμός (Όχι ❌)'] },
+        optionsRaw: ['Ναι', 'Όχι'],
+        correctText: 'Όχι',
+        explanation: 'Ο αριθμός 41 είναι πρώτος και δεν διαιρείται με κανέναν ακέραιο αριθμό εκτός από το 1 και το 41.'
+      };
+    }
+  },
+  {
+    id: 'p_prime_hard_4',
+    generate: () => {
+      const candies = 47;
+      return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΚΑΡΑΜΕΛΩΝ ΣΕ ΣΑΚΟΥΛΑΚΙΑ',
+        instruction: 'Επιλέξτε αν είναι εφικτή η συσκευασία:',
+        text: `Μια ζαχαροπλάστης έχει ${candies} καραμέλες. Μπορεί να τις μοιράσει ισόποσα σε περισσότερα από ένα σακουλάκια χωρίς να περισσέψει καμία;`,
+        tableData: { col1: 'Καραμέλες', col2: 'Ιδιότητα', r1: [`${candies} καραμέλες`, 'Πρώτος αριθμός'], r2: ['Αποτέλεσμα', 'Μόνο 1 σακουλάκι των 47 (Όχι ❌)'] },
+        optionsRaw: ['Ναι', 'Όχι'],
+        correctText: 'Όχι',
+        explanation: 'Ο αριθμός 47 είναι πρώτος αριθμός, επομένως δεν μπορεί να μοιραστεί ισότιμα σε περισσότερα σακουλάκια.'
+      };
+    }
+  },
+  {
+    id: 'p_prime_hard_5',
+    generate: () => {
+      const soldiers = 37;
+      return {
+        title: 'ΣΧΗΜΑΤΙΣΜΟΣ ΠΑΡΕΛΑΣΗΣ',
+        instruction: 'Επιλέξτε αν μπορούν να σχηματιστούν ίσες σειρές:',
+        text: `Σε μια παρέλαση συμμετέχουν ${soldiers} άτομα. Μπορούν να παρελάσουν σε ίσες σειρές των 2, 3, 4 ή 5 ατόμων χωρίς να περισσέψει κανείς;`,
+        tableData: { col1: 'Άτομα', col2: 'Διαιρέτες', r1: [`${soldiers} άτομα`, 'Πρώτος αριθμός'], r2: ['Έλεγχος', 'Όχι ❌'] },
+        optionsRaw: ['Ναι', 'Όχι'],
+        correctText: 'Όχι',
+        explanation: 'Ο αριθμός 37 είναι πρώτος και δεν διαιρείται με το 2, 3, 4 ή 5.'
+      };
+    }
+  },
+  {
+    id: 'p_prime_hard_6',
+    generate: () => {
+      const books = 43;
+      return {
+        title: 'ΤΟΠΟΘΕΤΗΣΗ ΒΙΒΛΙΩΝ ΣΕ ΡΑΦΙΑ',
+        instruction: 'Επιλέξτε αν μπορούν να μοιραστούν ισόποσα:',
+        text: `Έχουμε ${books} βιβλία. Μπορούμε να τα τοποθετήσουμε ισόποσα σε περισσότερα από ένα ράφια χωρίς να περισσέψει κανένα;`,
+        tableData: { col1: 'Βιβλία', col2: 'Ιδιότητα', r1: [`${books} βιβλία`, 'Πρώτος αριθμός'], r2: ['Ράφια', 'Όχι ❌'] },
+        optionsRaw: ['Ναι', 'Όχι'],
+        correctText: 'Όχι',
+        explanation: 'Ο αριθμός 43 είναι πρώτος και διαιρείται μόνο με το 1 και το 43.'
       };
     }
   }
@@ -142,7 +288,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΕΥΡΕΣΗ ΕΠΟΜΕΝΟΥ ΠΡΩΤΟΥ',
-      instruction: 'Συμπληρώστε τον επόμενο πρώτο αριθμό:',
+      instruction: 'Συμπληρώστε τον επόμενο πρώτο αριθμό (ακέραιος):',
       prompt: `Ποιος είναι ο αμέσως επόμενος πρώτος αριθμός μετά το ${baseQ2};`,
       correctVal: nextPrime,
       correctStr: String(nextPrime),
@@ -259,7 +405,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΡΘΟΓΩΝΙΕΣ ΔΙΑΤΑΞΕΙΣ',
-      instruction: 'Υπολογίστε το πλήθος των διαφορετικών διατάξεων:',
+      instruction: 'Υπολογίστε το πλήθος των διαφορετικών διατάξεων (ακέραιος):',
       prompt: `Πόσους διαφορετικούς ορθογώνιους σχηματισμούς μπορείς να φτιάξεις με ${q7Num} τετράγωνα κουτάκια;`,
       correctVal: q7Correct,
       correctStr: String(q7Correct),
@@ -295,46 +441,47 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ9 = shuffle([...new Set(prob9.optionsRaw)]).map((text) => ({
+    const optionsQ9 = shuffle([...new Set(stdProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob9.correctText
+      isCorrect: text === stdProb.correctText
     }));
 
     qList.push({
       id: 9,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΕΥΡΕΣΗ ΠΡΩΤΟΥ ΑΡΙΘΜΟΥ',
-      instruction: 'Επιλέξτε τον σωστό αριθμό:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
       options: optionsQ9,
-      correctText: prob9.correctText,
-      explanation: prob9.explanation
+      correctText: stdProb.correctText,
+      explanation: stdProb.explanation
     });
 
     // Q10 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ10 = shuffle([...new Set(prob10.optionsRaw)]).map((text) => ({
+    const optionsQ10 = shuffle([...new Set(hardProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob10.correctText
+      isCorrect: text === hardProb.correctText
     }));
 
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΚΑΤΑΝΟΜΗΣ',
-      instruction: 'Επιλέξτε τη σωστή απάντηση:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
       options: optionsQ10,
-      correctText: prob10.correctText,
-      explanation: prob10.explanation
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
@@ -361,7 +508,7 @@ export default function ProtoiExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9, οριο 10 χαρακτηρων)
   const handleInputChange = (qId, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
