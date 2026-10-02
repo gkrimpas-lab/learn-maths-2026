@@ -2,9 +2,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
-// Μεγιστος επιτρεπομενος αριθμος για εισαγωγη
+// Μεγιστος αριθμος για εισαγωγη
 const MAX_ALLOWED_NUMBER = 1000;
 
 // Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
@@ -37,7 +36,6 @@ const PRESETS_3 = [
   { n1: 6, n2: 20, n3: 45, label: 'Ε.Κ.Π.(6, 20, 45)' }
 ];
 
-// Πινακας εκθετων Unicode
 const EXPONENTS_UNICODE = {
   1: '',
   2: '²',
@@ -50,11 +48,15 @@ const EXPONENTS_UNICODE = {
   9: '⁹'
 };
 
-// Συναρτηση αναλυσης σε πρωτους παραγοντες και βηματων κατακορυφης γραμμης
+// Συναρτηση που επιστρεφει τους πρωτους παραγοντες ενος αριθμου και τα βηματα της καθετης αναλυσης
 function factorize(num) {
   const parsed = Number(num);
   if (!parsed || isNaN(parsed) || parsed < 2) {
-    return { steps: [{ current: parsed || 1, divisor: null }], factors: {}, expr: `${parsed || 1}` };
+    return {
+      steps: [{ current: parsed || 1, divisor: null }],
+      factors: {},
+      expr: `${parsed || 1}`
+    };
   }
 
   let temp = parsed;
@@ -85,7 +87,7 @@ function factorize(num) {
   const parts = Object.keys(factors)
     .map(Number)
     .sort((a, b) => a - b)
-    .map(f => {
+    .map((f) => {
       const exp = factors[f];
       return exp > 1 ? `${f}${EXPONENTS_UNICODE[exp] || `^${exp}`}` : `${f}`;
     });
@@ -122,7 +124,10 @@ export default function EkpProtoiPage() {
 
   const f1 = factorize(safeNum1);
   const f2 = factorize(safeNum2);
-  const f3 = numCount === 3 ? factorize(safeNum3) : { steps: [{ current: 1, divisor: null }], factors: {}, expr: '1' };
+  const f3 =
+    numCount === 3
+      ? factorize(safeNum3)
+      : { steps: [{ current: 1, divisor: null }], factors: {}, expr: '1' };
 
   const allPrimeBases = Array.from(
     new Set([
@@ -136,7 +141,7 @@ export default function EkpProtoiPage() {
   const calculationFormulaParts = [];
   const ruleBreakdown = [];
 
-  allPrimeBases.forEach(base => {
+  allPrimeBases.forEach((base) => {
     const e1 = f1.factors[base] || 0;
     const e2 = f2.factors[base] || 0;
     const e3 = numCount === 3 ? f3.factors[base] || 0 : 0;
@@ -145,7 +150,10 @@ export default function EkpProtoiPage() {
     if (maxExp > 0) {
       ekp *= Math.pow(base, maxExp);
 
-      const expStr = maxExp > 1 ? `${base}${EXPONENTS_UNICODE[maxExp] || `^${maxExp}`}` : `${base}`;
+      const expStr =
+        maxExp > 1
+          ? `${base}${EXPONENTS_UNICODE[maxExp] || `^${maxExp}`}`
+          : `${base}`;
       calculationFormulaParts.push(expStr);
 
       const appearances = [];
@@ -162,7 +170,8 @@ export default function EkpProtoiPage() {
     }
   });
 
-  const activeNumbers = numCount === 2 ? [safeNum1, safeNum2] : [safeNum1, safeNum2, safeNum3];
+  const activeNumbers =
+    numCount === 2 ? [safeNum1, safeNum2] : [safeNum1, safeNum2, safeNum3];
 
   const numbersList = [
     {
@@ -198,7 +207,7 @@ export default function EkpProtoiPage() {
 
   return (
     <Layout
-      title="🔬 20. Ε.Κ.Π. με Ανάλυση σε Γινόμενο Πρώτων Παραγόντων - LearnMaths.gr"
+      title="Ε.Κ.Π. με Ανάλυση σε Πρώτους Παράγοντες - ΣΤ' Δημοτικού | LearnMaths.gr"
       description="Υπολόγισε ταχύτατα το Ελάχιστο Κοινό Πολλαπλάσιο μεγάλων αριθμών εφαρμόζοντας τον κανόνα των κοινών και μη κοινών πρώτων παραγόντων με τον μεγαλύτερο εκθέτη για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
@@ -206,121 +215,150 @@ export default function EkpProtoiPage() {
       actionButton={
         <Link
           href="/st-dimotikou/20-ekp-protoi-ask"
-          className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-sm flex items-center gap-1.5 shrink-0"
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯</span>
-          <span>{toCleanUppercase('Ασκήσεις')}</span>
+          <span>🎯 Ασκήσεις</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto space-y-8 md:space-y-10 py-6 md:py-10 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
 
-        {/* HERO BANNER */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' ΔΗΜΟΤΙΚΟΥ
-                </span>
-                <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  {toCleanUppercase('Ενοτητα 20')}
-                </span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                20. Ε.Κ.Π. με Ανάλυση σε Γινόμενο Πρώτων Παραγόντων
-              </h1>
-              <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                Υπολόγισε ταχύτατα το Ελάχιστο Κοινό Πολλαπλάσιο μεγάλων αριθμών εφαρμόζοντας τον κανόνα: <strong>Κοινοί και μη κοινοί πρώτοι παράγοντες με τον μεγαλύτερο εκθέτη</strong>!
-              </p>
+        {/* 1. HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΚΕΦΑΛΑΙΟ 20 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
-
-            {/* CALLOUT PROMO CARD */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
-              <span className="text-3xl">🚀</span>
-              <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
-              <p className="text-xs text-blue-50">Δοκίμασε τις 10 διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση!</p>
-              <Link
-                href="/st-dimotikou/20-ekp-protoi-ask"
-                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
-              >
-                🎯 {toCleanUppercase('Μετάβαση στις Ασκήσεις')}
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* THEORY CARDS (3 COLS) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* ΚΑΡΤΑ 1 */}
-          <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                1
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Βήμα 1: Παραγοντοποίηση</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Αναλύουμε κάθε αριθμό χωριστά σε <strong>γινόμενο πρώτων παραγόντων</strong> και γράφουμε τις επαναλήψεις με <strong>εκθέτες (δυνάμεις)</strong>.
-              </p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center flex flex-wrap items-center justify-center gap-2 font-bold">
-              <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl">
-                12 ＝ <strong className="text-blue-700 font-black">2² · 3</strong>
-              </span>
-              <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl">
-                18 ＝ <strong className="text-blue-700 font-black">2 · 3²</strong>
-              </span>
-            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              Ε.Κ.Π. με Ανάλυση σε Πρώτους Παράγοντες
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Υπολόγισε ταχύτατα το Ελάχιστο Κοινό Πολλαπλάσιο μεγάλων αριθμών εφαρμόζοντας τον χρυσό κανόνα: <strong>Κοινοί και μη κοινοί πρώτοι παράγοντες με τον μεγαλύτερο εκθέτη</strong>!
+            </p>
           </div>
 
-          {/* ΚΑΡΤΑ 2 */}
-          <div className="bg-indigo-50/80 border border-indigo-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                2
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Βήμα 2: Ο Κανόνας</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Επιλέγουμε όλους τους <strong>κοινούς ΚΑΙ μη κοινούς</strong> πρώτους παράγοντες, παίρνοντας για τον καθένα τον <strong>μεγαλύτερο εκθέτη</strong>.
-              </p>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Κατακόρυφη Ανάλυση &amp; Αυτόματη Επιλογή Μέγιστων Εκθετών</span>
             </div>
-            <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center flex flex-wrap items-center justify-center gap-2 font-bold">
-              <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
-                Από 2: <strong className="text-indigo-700 font-black">2²</strong>
-              </span>
-              <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
-                Από 3: <strong className="text-indigo-700 font-black">3²</strong>
-              </span>
-            </div>
+            <Link
+              href="/st-dimotikou/20-ekp-protoi-ask"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ (3 COLS) */}
+        <section className="space-y-6 2xl:space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
+              Βασικές Έννοιες &amp; Κανόνας Υπολογισμού Ε.Κ.Π.
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
+              Η μέθοδος των πρώτων παραγόντων σε τρία απλά και ξεκάθαρα βήματα.
+            </p>
           </div>
 
-          {/* ΚΑΡΤΑ 3 */}
-          <div className="bg-emerald-50/80 border border-emerald-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                3
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Βήμα 3: Υπολογισμός Ε.Κ.Π.</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Πολλαπλασιάζουμε τις δυνάμεις που επιλέξαμε για να βρούμε το τελικό αποτέλεσμα.
-              </p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-emerald-900 inline-block">
-                Ε.Κ.Π. ＝ 2² · 3² ＝ 4 · 9 ＝ <strong className="text-emerald-700 font-black">36</strong>
-              </span>
-            </div>
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            
+            {/* ΚΑΡΤΑ 1 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΒΗΜΑ 1
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Κατακόρυφη Γραμμή</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Παραγοντοποίηση
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Αναλύουμε κάθε αριθμό χωριστά σε <strong>γινόμενο πρώτων παραγόντων</strong> και γράφουμε τις επαναλήψεις με <strong>εκθέτες (δυνάμεις)</strong>.
+                </p>
 
-        {/* INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold space-y-1">
+                  <p>12 ＝ <strong className="text-sky-700">2² · 3</strong></p>
+                  <p>18 ＝ <strong className="text-sky-700">2 · 3²</strong></p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+                💡 Διαιρούμε διαδοχικά μόνο με πρώτους αριθμούς: 2, 3, 5, 7, 11...
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 2 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΒΗΜΑ 2
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">Ο Χρυσός Κανόνας</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Επιλογή Παραγόντων
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Επιλέγουμε όλους τους <strong>κοινούς ΚΑΙ μη κοινούς</strong> πρώτους παράγοντες, παίρνοντας για τον καθένα τον <strong>μεγαλύτερο εκθέτη</strong>.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold space-y-1">
+                  <p>Από το 2: επιλέγουμε <strong className="text-indigo-700">2²</strong> (όχι το 2¹)</p>
+                  <p>Από το 3: επιλέγουμε <strong className="text-indigo-700">3²</strong> (όχι το 3¹)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
+                ⚡ Στο Ε.Κ.Π. δεν αφήνουμε κανέναν παράγοντα έξω και διαλέγουμε πάντα τη μεγαλύτερη δύναμη!
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 3 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-cyan-100 text-cyan-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΒΗΜΑ 3
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-cyan-700">Γινόμενο Δυνάμεων</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Υπολογισμός Ε.Κ.Π.
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Σχηματίζουμε το γινόμενο των δυνάμεων που επιλέξαμε και εκτελούμε τους πολλαπλασιασμούς για το τελικό αποτέλεσμα.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>Ε.Κ.Π.(12, 18) ＝ 2² · 3² ＝ 4 · 9 ＝ <strong className="text-cyan-700">36</strong></p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-cyan-50 rounded-2xl border border-cyan-200 text-xs 2xl:text-sm text-cyan-950 font-medium">
+                🎯 Το αποτέλεσμα είναι το μικρότερο κοινό πολλαπλάσιο που διαιρείται ακριβώς από όλους τους αριθμούς.
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ */}
+        <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🕹️</span> Διαδραστικό Εργαστήριο Ε.Κ.Π. με Πρώτους Παράγοντες
-              </h2>
-              <p className="text-gray-500 text-xs sm:text-sm">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
+                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Διαδραστικό Εργαστήριο Ε.Κ.Π. με Πρώτους Παράγοντες
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
                 Διάλεξε 2 ή 3 αριθμούς και παρακολούθησε βήμα προς βήμα την κατακόρυφη ανάλυση και την επιλογή των μέγιστων εκθετών!
               </p>
             </div>
@@ -330,9 +368,9 @@ export default function EkpProtoiPage() {
               <button
                 type="button"
                 onClick={() => setNumCount(2)}
-                className={`flex-1 md:flex-none px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-center ${
+                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center touch-manipulation active:scale-95 ${
                   numCount === 2
-                    ? 'bg-blue-600 text-white shadow-xs scale-105'
+                    ? 'bg-blue-600 text-white shadow-sm scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -341,9 +379,9 @@ export default function EkpProtoiPage() {
               <button
                 type="button"
                 onClick={() => setNumCount(3)}
-                className={`flex-1 md:flex-none px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-center ${
+                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center touch-manipulation active:scale-95 ${
                   numCount === 3
-                    ? 'bg-indigo-600 text-white shadow-xs scale-105'
+                    ? 'bg-indigo-600 text-white shadow-sm scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -352,16 +390,17 @@ export default function EkpProtoiPage() {
             </div>
           </div>
 
-          {/* MAIN INTERACTIVE GRID */}
+          {/* MAIN INTERACTIVE GRID (3 COLS LEFT / 9 COLS RIGHT) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch">
             
             {/* LEFT: INPUTS & PRESETS (3 COLS) */}
             <div className="lg:col-span-3 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    ΤΙΜΕΣ ΑΡΙΘΜΩΝ (2 － {MAX_ALLOWED_NUMBER}):
+                  <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
+                    ΤΙΜΕΣ ΑΡΙΘΜΩΝ (2 － {formatNumber(MAX_ALLOWED_NUMBER)}):
                   </span>
+                  
                   <div className="space-y-2.5">
                     <div className="space-y-0.5">
                       <label className="text-[10px] font-bold text-slate-400 uppercase">
@@ -369,9 +408,10 @@ export default function EkpProtoiPage() {
                       </label>
                       <input
                         type="text"
+                        inputMode="numeric"
                         value={num1}
                         onChange={(e) => handleInputChange(setNum1, e.target.value)}
-                        className="w-full text-base sm:text-lg font-mono font-black text-center p-2 bg-white border-2 border-blue-200 rounded-xl shadow-xs text-blue-600 outline-none focus:border-blue-500 tracking-wider"
+                        className="w-full text-base sm:text-lg font-mono font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-xs text-blue-600 outline-none focus:border-blue-500 tracking-wider"
                         placeholder="π.χ. 12"
                       />
                     </div>
@@ -382,9 +422,10 @@ export default function EkpProtoiPage() {
                       </label>
                       <input
                         type="text"
+                        inputMode="numeric"
                         value={num2}
                         onChange={(e) => handleInputChange(setNum2, e.target.value)}
-                        className="w-full text-base sm:text-lg font-mono font-black text-center p-2 bg-white border-2 border-indigo-200 rounded-xl shadow-xs text-indigo-600 outline-none focus:border-indigo-500 tracking-wider"
+                        className="w-full text-base sm:text-lg font-mono font-black text-center p-2.5 bg-white border-2 border-indigo-200 rounded-xl shadow-xs text-indigo-600 outline-none focus:border-indigo-500 tracking-wider"
                         placeholder="π.χ. 18"
                       />
                     </div>
@@ -396,9 +437,10 @@ export default function EkpProtoiPage() {
                         </label>
                         <input
                           type="text"
+                          inputMode="numeric"
                           value={num3}
                           onChange={(e) => handleInputChange(setNum3, e.target.value)}
-                          className="w-full text-base sm:text-lg font-mono font-black text-center p-2 bg-white border-2 border-purple-200 rounded-xl shadow-xs text-purple-600 outline-none focus:border-purple-500 tracking-wider"
+                          className="w-full text-base sm:text-lg font-mono font-black text-center p-2.5 bg-white border-2 border-purple-200 rounded-xl shadow-xs text-purple-600 outline-none focus:border-purple-500 tracking-wider"
                           placeholder="π.χ. 15"
                         />
                       </div>
@@ -408,7 +450,7 @@ export default function EkpProtoiPage() {
 
                 {/* PRESET EXAMPLES */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
+                  <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
                     ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
                   </span>
                   <div className="grid grid-cols-2 gap-2">
@@ -421,7 +463,7 @@ export default function EkpProtoiPage() {
                               setNum1(p.n1);
                               setNum2(p.n2);
                             }}
-                            className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs"
+                            className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs"
                           >
                             ({p.n1}, {p.n2})
                           </button>
@@ -435,7 +477,7 @@ export default function EkpProtoiPage() {
                               setNum2(p.n2);
                               setNum3(p.n3);
                             }}
-                            className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs"
+                            className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs"
                           >
                             ({p.n1}, {p.n2}, {p.n3})
                           </button>
@@ -444,27 +486,27 @@ export default function EkpProtoiPage() {
                 </div>
               </div>
 
-              <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
+              <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
                 💡 Επιλέγουμε <strong>όλους</strong> τους πρώτους παράγοντες (κοινούς και μη κοινούς), κρατώντας τον <strong>μεγαλύτερο εκθέτη</strong>!
               </div>
             </div>
 
             {/* RIGHT: VISUALIZATION (9 COLS) */}
-            <div className="lg:col-span-9 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[460px] sm:min-h-[520px] space-y-6">
+            <div className="lg:col-span-9 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[460px] space-y-6">
               
               {/* HEADER STATUS */}
               <div className="w-full text-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                <span className="text-xs 2xl:text-sm font-bold text-slate-400 uppercase tracking-wider block">
                   ΥΠΟΛΟΓΙΣΜΟΣ Ε.Κ.Π. ΜΕ ΠΡΩΤΟΥΣ ΠΑΡΑΓΟΝΤΕΣ:
                 </span>
-                <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-4 sm:px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-wider shadow-xs">
+                <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-4 sm:px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-wider shadow-sm">
                   Ε.Κ.Π.({currentNumbersString}) ＝ <span className="text-amber-500">{formatNumber(ekp)}</span>
                 </div>
               </div>
 
               {/* 1. ΚΑΤΑΚΟΡΥΦΕΣ ΑΝΑΛΥΣΕΙΣ */}
               <div className="w-full space-y-2">
-                <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
+                <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block text-center">
                   📋 1. ΚΑΤΑΚΟΡΥΦΗ ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗ ΚΑΘΕ ΑΡΙΘΜΟΥ:
                 </span>
 
@@ -511,7 +553,7 @@ export default function EkpProtoiPage() {
 
               {/* 2. ΕΠΕΞΗΓΗΣΗ ΕΠΙΛΟΓΗΣ ΜΕΓΙΣΤΩΝ ΕΚΘΕΤΩΝ */}
               <div className="w-full bg-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-3 shadow-md">
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block text-center">
+                <span className="text-xs 2xl:text-sm font-bold text-amber-400 uppercase tracking-wider block text-center">
                   🔍 2. ΕΦΑΡΜΟΓΗ ΚΑΝΟΝΑ (ΚΟΙΝΟΙ ΚΑΙ ΜΗ ΚΟΙΝΟΙ ΜΕ ΜΕΓΙΣΤΟ ΕΚΘΕΤΗ):
                 </span>
 
@@ -555,23 +597,27 @@ export default function EkpProtoiPage() {
             </div>
 
           </div>
-        </div>
+        </section>
 
-        {/* BOTTOM CALLOUT BANNER */}
-        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-gray-800 text-sm md:text-base">
-              Έμαθες να βρίσκεις το Ε.Κ.Π. με ανάλυση σε πρώτους παράγοντες; Δοκίμασε τις 10 διαδραστικές ασκήσεις!
+        {/* 4. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              Ώρα για Εξάσκηση στο Ε.Κ.Π.!
+            </h3>
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              Κατάλαβες πώς βρίσκουμε το Ε.Κ.Π. με ανάλυση σε πρώτους παράγοντες; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
+
           <Link
             href="/st-dimotikou/20-ekp-protoi-ask"
-            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            {toCleanUppercase('Ξεκίνα τις Ασκήσεις')} ➔
+            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </section>
 
       </div>
     </Layout>
