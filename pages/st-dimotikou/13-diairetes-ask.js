@@ -51,8 +51,8 @@ const REAL_WORLD_PRESETS = [
   { item: 'σοκολατάκια', unit: 'κουτάκια', questionPrefix: 'Σε πόσα' }
 ];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_div_std_1',
     generate: () => {
@@ -61,6 +61,8 @@ const EXTRA_PROBLEMS_POOL = [
       const vase = vasesPossible[randInt(0, vasesPossible.length - 1)];
       const perVase = flowers / vase;
       return {
+        title: 'ΜΟΙΡΑΣΜΑ ΤΡΙΑΝΤΑΦΥΛΛΩΝ ΣΕ ΒΑΖΑ',
+        instruction: 'Υπολογίστε πόσα τριαντάφυλλα μπαίνουν σε κάθε βάζο:',
         text: `Ένα ανθοπωλείο έχει ${flowers} τριαντάφυλλα και θέλει να τα μοιράσει ισόποσα σε ${vase} βάζα χωρίς να περισσέψει κανένα. Πόσα τριαντάφυλλα θα βάλει σε κάθε βάζο;`,
         tableData: { col1: 'Σύνολο Τριαντάφυλλων', col2: 'Πλήθος Βάζων', r1: [`${flowers} τριαντάφυλλα`, `${vase} βάζα`], r2: ['Διαίρεση', `${perVase} τριαντάφυλλα / βάζο`] },
         correctVal: perVase,
@@ -77,6 +79,8 @@ const EXTRA_PROBLEMS_POOL = [
       const size = teamSizes[randInt(0, teamSizes.length - 1)];
       const teams = students / size;
       return {
+        title: 'ΙΣΟΠΛΗΘΕΙΣ ΟΜΑΔΕΣ ΜΑΘΗΤΩΝ',
+        instruction: 'Υπολογίστε πόσες ομάδες θα δημιουργηθούν:',
         text: `Σε μια αθλητική εκδήλωση συμμετέχουν ${students} μαθητές. Ο γυμναστής θέλει να σχηματίσει ομάδες των ${size} ατόμων. Πόσες ακριβώς ισοπληθείς ομάδες θα δημιουργηθούν;`,
         tableData: { col1: 'Συνολικοί Μαθητές', col2: 'Άτομα ανά Ομάδα', r1: [`${students} μαθητές`, `${size} άτομα`], r2: ['Διαίρεση', `${teams} ομάδες`] },
         correctVal: teams,
@@ -93,11 +97,245 @@ const EXTRA_PROBLEMS_POOL = [
       const bag = bagsPossible[randInt(0, bagsPossible.length - 1)];
       const perBag = candies / bag;
       return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΚΑΡΑΜΕΛΩΝ',
+        instruction: 'Υπολογίστε πόσες καραμέλες αντιστοιχούν σε κάθε σακουλάκι:',
         text: `Μια ζαχαροπλάστης έχει ${candies} καραμέλες και θέλει να φτιάξει ${bag} ίδια σακουλάκια. Πόσες καραμέλες πρέπει να βάλει σε κάθε σακουλάκι για να μη μείνει καμία;`,
         tableData: { col1: 'Σύνολο Καραμελών', col2: 'Σακουλάκια', r1: [`${candies} καραμέλες`, `${bag} σακουλάκια`], r2: ['Διαίρεση', `${perBag} καραμέλες / σακουλάκι`] },
         correctVal: perBag,
         correctStr: String(perBag),
         explanation: `Το ${bag} είναι διαιρέτης του ${candies}, επομένως: ${candies} : ${bag} ＝ ${perBag} καραμέλες ανά σακουλάκι.`
+      };
+    }
+  },
+  {
+    id: 'p_div_std_4',
+    generate: () => {
+      const books = 84;
+      const shelvesPossible = [4, 6, 7, 12];
+      const shelf = shelvesPossible[randInt(0, shelvesPossible.length - 1)];
+      const perShelf = books / shelf;
+      return {
+        title: 'ΤΟΠΟΘΕΤΗΣΗ ΒΙΒΛΙΩΝ ΣΕ ΡΑΦΙΑ',
+        instruction: 'Υπολογίστε πόσα βιβλία μπαίνουν σε κάθε ράφι:',
+        text: `Μια βιβλιοθήκη έχει ${books} βιβλία και θέλει να τα τοποθετήσει ισόποσα σε ${shelf} ράφια. Πόσα βιβλία θα έχει κάθε ράφι χωρίς να περισσέψει κανένα;`,
+        tableData: { col1: 'Σύνολο Βιβλίων', col2: 'Ράφια', r1: [`${books} βιβλία`, `${shelf} ράφια`], r2: ['Διαίρεση', `${perShelf} βιβλία / ράφι`] },
+        correctVal: perShelf,
+        correctStr: String(perShelf),
+        explanation: `Το ${shelf} διαιρεί ακριβώς το ${books}: ${books} : ${shelf} ＝ ${perShelf} βιβλία ανά ράφι.`
+      };
+    }
+  },
+  {
+    id: 'p_div_std_5',
+    generate: () => {
+      const sweets = 96;
+      const boxesPossible = [6, 8, 12, 16];
+      const box = boxesPossible[randInt(0, boxesPossible.length - 1)];
+      const perBox = sweets / box;
+      return {
+        title: 'ΚΟΥΤΙΑ ΜΕ ΣΟΚΟΛΑΤΑΚΙΑ',
+        instruction: 'Υπολογίστε πόσα σοκολατάκια χωράει κάθε κουτί:',
+        text: `Σε ένα εργαστήριο ζαχαροπλαστικής υπάρχουν ${sweets} σοκολατάκια που μοιράζονται ισόποσα σε ${box} κουτιά. Πόσα σοκολατάκια περιέχει κάθε κουτί;`,
+        tableData: { col1: 'Σύνολο', col2: 'Κουτιά', r1: [`${sweets} σοκολατάκια`, `${box} κουτιά`], r2: ['Διαίρεση', `${perBox} σοκολατάκια / κουτί`] },
+        correctVal: perBox,
+        correctStr: String(perBox),
+        explanation: `Επειδή το ${box} είναι διαιρέτης του ${sweets}: ${sweets} : ${box} ＝ ${perBox} σοκολατάκια ανά κουτί.`
+      };
+    }
+  },
+  {
+    id: 'p_div_std_6',
+    generate: () => {
+      const apples = 90;
+      const cratesPossible = [5, 6, 9, 10];
+      const crate = cratesPossible[randInt(0, cratesPossible.length - 1)];
+      const perCrate = apples / crate;
+      return {
+        title: 'ΤΕΛΑΡΑ ΜΕ ΜΗΛΑ',
+        instruction: 'Υπολογίστε πόσα μήλα μπαίνουν σε κάθε τελάρο:',
+        text: `Ένας αγρότης έχει ${apples} μήλα και θέλει να τα μοιράσει ισόποσα σε ${crate} τελάρα. Πόσα μήλα θα βάλει σε κάθε τελάρο;`,
+        tableData: { col1: 'Σύνολο Μήλων', col2: 'Τελάρα', r1: [`${apples} μήλα`, `${crate} τελάρα`], r2: ['Διαίρεση', `${perCrate} μήλα / τελάρο`] },
+        correctVal: perCrate,
+        correctStr: String(perCrate),
+        explanation: `Το ${crate} είναι διαιρέτης του ${apples}: ${apples} : ${crate} ＝ ${perCrate} μήλα σε κάθε τελάρο.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_div_hard_1',
+    generate: () => {
+      const students = 60;
+      const teamSizes = [4, 5, 6, 10];
+      const size = teamSizes[randInt(0, teamSizes.length - 1)];
+      const teams = students / size;
+      const correctStr = `${teams} ομάδες`;
+      const fake1 = `${teams + 2} ομάδες`;
+      const fake2 = `${Math.max(1, teams - 2)} ομάδες`;
+      const fake3 = `${teams + 4} ομάδες`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΟΜΑΔΟΠΟΙΗΣΗΣ',
+        instruction: 'Επιλέξτε τον σωστό αριθμό ομάδων:',
+        text: `Σε μια αθλητική εκδήλωση συμμετέχουν ${students} μαθητές. Ο γυμναστής θέλει να σχηματίσει ομάδες των ${size} ατόμων. Πόσες ακριβώς ισοπληθείς ομάδες θα δημιουργηθούν;`,
+        tableData: { col1: 'Συνολικοί Μαθητές', col2: 'Άτομα ανά Ομάδα', r1: [`${students} μαθητές`, `${size} άτομα`], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Το ${size} είναι διαιρέτης του ${students}, άρα: ${students} : ${size} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_2',
+    generate: () => {
+      const flowers = 48;
+      const vasesPossible = [3, 4, 6, 8];
+      const vase = vasesPossible[randInt(0, vasesPossible.length - 1)];
+      const perVase = flowers / vase;
+      const correctStr = `${perVase} τριαντάφυλλα`;
+      const fake1 = `${perVase + 2} τριαντάφυλλα`;
+      const fake2 = `${Math.max(1, perVase - 2)} τριαντάφυλλα`;
+      const fake3 = `${perVase + 4} τριαντάφυλλα`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΚΑΤΑΝΟΜΗ ΛΟΥΛΟΥΔΙΩΝ ΣΕ ΒΑΖΑ',
+        instruction: 'Επιλέξτε πόσα τριαντάφυλλα θα μπουν σε κάθε βάζο:',
+        text: `Ένα ανθοπωλείο έχει ${flowers} τριαντάφυλλα και θέλει να τα μοιράσει ισόποσα σε ${vase} βάζα χωρίς να περισσέψει κανένα. Πόσα τριαντάφυλλα θα βάλει σε κάθε βάζο;`,
+        tableData: { col1: 'Σύνολο Τριαντάφυλλων', col2: 'Πλήθος Βάζων', r1: [`${flowers} τριαντάφυλλα`, `${vase} βάζα`], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Το ${vase} είναι διαιρέτης του ${flowers}: ${flowers} : ${vase} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_3',
+    generate: () => {
+      const candies = 72;
+      const bagsPossible = [6, 8, 9, 12];
+      const bag = bagsPossible[randInt(0, bagsPossible.length - 1)];
+      const perBag = candies / bag;
+      const correctStr = `${perBag} καραμέλες`;
+      const fake1 = `${perBag + 3} καραμέλες`;
+      const fake2 = `${Math.max(1, perBag - 2)} καραμέλες`;
+      const fake3 = `${perBag + 5} καραμέλες`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΟΙΡΑΣΙΑ ΚΑΡΑΜΕΛΩΝ ΣΕ ΣΑΚΟΥΛΑΚΙΑ',
+        instruction: 'Επιλέξτε πόσες καραμέλες θα περιέχει κάθε σακουλάκι:',
+        text: `Μια ζαχαροπλάστης έχει ${candies} καραμέλες και θέλει να φτιάξει ${bag} ίδια σακουλάκια. Πόσες καραμέλες πρέπει να βάλει σε κάθε σακουλάκι για να μη μείνει καμία;`,
+        tableData: { col1: 'Σύνολο Καραμελών', col2: 'Σακουλάκια', r1: [`${candies} καραμέλες`, `${bag} σακουλάκια`], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Το ${bag} είναι διαιρέτης του ${candies}: ${candies} : ${bag} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_4',
+    generate: () => {
+      const books = 84;
+      const shelvesPossible = [4, 6, 7, 12];
+      const shelf = shelvesPossible[randInt(0, shelvesPossible.length - 1)];
+      const perShelf = books / shelf;
+      const correctStr = `${perShelf} βιβλία`;
+      const fake1 = `${perShelf + 2} βιβλία`;
+      const fake2 = `${Math.max(1, perShelf - 3)} βιβλία`;
+      const fake3 = `${perShelf + 5} βιβλία`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΚΑΤΑΝΟΜΗ ΒΙΒΛΙΩΝ ΣΕ ΡΑΦΙΑ',
+        instruction: 'Επιλέξτε πόσα βιβλία θα έχει κάθε ράφι:',
+        text: `Μια βιβλιοθήκη έχει ${books} βιβλία και θέλει να τα τοποθετήσει ισόποσα σε ${shelf} ράφια. Πόσα βιβλία θα έχει κάθε ράφι χωρίς να περισσέψει κανένα;`,
+        tableData: { col1: 'Σύνολο Βιβλίων', col2: 'Ράφια', r1: [`${books} βιβλία`, `${shelf} ράφια`], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Το ${shelf} διαιρεί ακριβώς το ${books}: ${books} : ${shelf} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_5',
+    generate: () => {
+      const sweets = 96;
+      const boxesPossible = [6, 8, 12, 16];
+      const box = boxesPossible[randInt(0, boxesPossible.length - 1)];
+      const perBox = sweets / box;
+      const correctStr = `${perBox} σοκολατάκια`;
+      const fake1 = `${perBox + 2} σοκολατάκια`;
+      const fake2 = `${Math.max(1, perBox - 2)} σοκολατάκια`;
+      const fake3 = `${perBox + 4} σοκολατάκια`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΣΟΚΟΛΑΤΑΣ ΣΕ ΚΟΥΤΙΑ',
+        instruction: 'Επιλέξτε πόσα σοκολατάκια περιέχει κάθε κουτί:',
+        text: `Σε ένα εργαστήριο ζαχαροπλαστικής υπάρχουν ${sweets} σοκολατάκια που μοιράζονται ισόποσα σε ${box} κουτιά. Πόσα σοκολατάκια περιέχει κάθε κουτί;`,
+        tableData: { col1: 'Σύνολο', col2: 'Κουτιά', r1: [`${sweets} σοκολατάκια`, `${box} κουτιά`], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Το ${box} είναι διαιρέτης του ${sweets}: ${sweets} : ${box} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_div_hard_6',
+    generate: () => {
+      const apples = 90;
+      const cratesPossible = [5, 6, 9, 10];
+      const crate = cratesPossible[randInt(0, cratesPossible.length - 1)];
+      const perCrate = apples / crate;
+      const correctStr = `${perCrate} μήλα`;
+      const fake1 = `${perCrate + 3} μήλα`;
+      const fake2 = `${Math.max(1, perCrate - 3)} μήλα`;
+      const fake3 = `${perCrate + 5} μήλα`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΟΙΡΑΣΜΑ ΜΗΛΩΝ ΣΕ ΤΕΛΑΡΑ',
+        instruction: 'Επιλέξτε πόσα μήλα μπαίνουν σε κάθε τελάρο:',
+        text: `Ένας αγρότης έχει ${apples} μήλα και θέλει να τα μοιράσει ισόποσα σε ${crate} τελάρα. Πόσα μήλα θα βάλει σε κάθε τελάρο;`,
+        tableData: { col1: 'Σύνολο Μήλων', col2: 'Τελάρα', r1: [`${apples} μήλα`, `${crate} τελάρα`], r2: ['Διαίρεση', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Το ${crate} είναι διαιρέτης του ${apples}: ${apples} : ${crate} ＝ ${correctStr}.`
       };
     }
   }
@@ -119,7 +357,7 @@ function generateQuestions() {
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΠΛΗΘΟΣ ΔΙΑΙΡΕΤΩΝ',
-      instruction: 'Βρείτε το πλήθος όλων των διαιρετών του αριθμού:',
+      instruction: 'Βρείτε το πλήθος όλων των διαιρετών του αριθμού (ακέραιος):',
       prompt: `Πόσους συνολικά διαιρέτες έχει ο αριθμός ${q1Num};`,
       correctVal: q1Correct,
       correctStr: String(q1Correct),
@@ -138,7 +376,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΜΕΓΑΛΥΤΕΡΟΣ ΓΝΗΣΙΟΣ ΔΙΑΙΡΕΤΗΣ',
-      instruction: 'Βρείτε τον μεγαλύτερο διαιρέτη εκτός από τον ίδιο τον αριθμό:',
+      instruction: 'Βρείτε τον μεγαλύτερο διαιρέτη εκτός από τον ίδιο τον αριθμό (ακέραιος):',
       prompt: `Ποιος είναι ο μεγαλύτερος διαιρέτης του ${q2Num} (εκτός από τον ίδιο τον αριθμό);`,
       correctVal: q2CorrectVal,
       correctStr: String(q2CorrectVal),
@@ -179,16 +417,13 @@ function generateQuestions() {
     const q4CorrectDivs = getDivisors(q4Num);
     const q4CorrectStr = `{ ${q4CorrectDivs.join(', ')} }`;
 
-    // 1ο Λάθος: Λείπει ένας ενδιάμεσος διαιρέτης
     const q4MissingOne = q4CorrectDivs.filter((_, i) => i !== 1);
     const q4Wrong1 = `{ ${q4MissingOne.join(', ')} }`;
 
-    // 2ο Λάθος: Έχει έναν επιπλέον αριθμό που ΔΕΝ είναι διαιρέτης
     const nonDivCandidate1 = [7, 8, 9, 11, 13, 14].find((x) => q4Num % x !== 0 && !q4CorrectDivs.includes(x)) || (q4Num + 2);
     const q4WithExtra = [...q4CorrectDivs, nonDivCandidate1].sort((a, b) => a - b);
     const q4Wrong2 = `{ ${q4WithExtra.join(', ')} }`;
 
-    // 3ο Λάθος: Έχει αντικατασταθεί ένας διαιρέτης με άλλον μη-διαιρέτη
     const nonDivCandidate2 = [7, 8, 9, 11, 13, 14, 15].filter((x) => q4Num % x !== 0 && !q4CorrectDivs.includes(x))[0] || (q4Num - 1);
     const q4Replaced = q4CorrectDivs.map((d, i) => (i === 1 ? nonDivCandidate2 : d)).sort((a, b) => a - b);
     const q4Wrong3 = `{ ${q4Replaced.join(', ')} }`;
@@ -276,7 +511,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΗ ΚΑΤΑΝΟΜΗ',
-      instruction: 'Υπολογίστε τον αριθμό των ισοπληθών ομάδων:',
+      instruction: 'Υπολογίστε τον αριθμό των ισοπληθών ομάδων (ακέραιος):',
       prompt: `Αν μοιράσουμε ${q7ItemsCount} στοιχεία σε ομάδες των ${q7ChosenDiv}, πόσες πλήρεις ομάδες σχηματίζονται;`,
       correctVal: q7CorrectGroups,
       correctStr: String(q7CorrectGroups),
@@ -314,48 +549,37 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΔΙΑΙΡΕΤΩΝ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
-      correctVal: prob9.correctVal,
-      correctStr: prob9.correctStr,
-      explanation: prob9.explanation
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = prob10.correctVal;
-    const correctStr10 = `${prob10.correctStr} ομάδες`;
-    const fake10A = `${val10 + 2} ομάδες`;
-    const fake10B = `${Math.max(1, val10 - 2)} ομάδες`;
-    const fake10C = `${val10 + 4} ομάδες`;
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΟΜΑΔΟΠΟΙΗΣΗΣ',
-      instruction: 'Επιλέξτε τον σωστό αριθμό ομάδων για το πρόβλημα:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
-      explanation: prob10.explanation
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
