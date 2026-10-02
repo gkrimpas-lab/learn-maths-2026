@@ -27,19 +27,25 @@ function shuffle(array) {
   return arr;
 }
 
-// Αθροισμα ψηφιων
-function sumDigits(numStr) {
-  return numStr.split('').reduce((acc, curr) => acc + parseInt(curr, 10), 0);
+// Μορφοποιηση αριθμου με τελειες χιλιαδων
+function formatNumber(num) {
+  if (num === '' || isNaN(num)) return '0';
+  return Number(num).toLocaleString('el-GR');
 }
 
-// Δεξαμενη 10 θεματικων σεναριων καθημερινοτητας
+// Αθροισμα ψηφιων
+function sumDigits(numStr) {
+  return String(numStr).split('').reduce((acc, curr) => acc + parseInt(curr, 10), 0);
+}
+
+// Δεξαμενη θεματικων σεναριων καθημερινοτητας για την Q8
 const REAL_WORLD_PROBLEMS_Q8 = [
   {
     prompt: (num) => `Έχουμε ${num} τετράδια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
     total: 377,
     correctOption: 'Δεν είναι δυνατόν χωρίς υπόλοιπο',
     wrongOptions: ['Σε ομάδες των 2', 'Σε ομάδες των 5', 'Σε ομάδες των 10'],
-    explain: 'Ο αριθμός 377 δεν διαιρείται ακριβώς με κανέναν από τους βασικούς διαιρέτες χωρίς υπόλοιπο.'
+    explain: 'Ο αριθμός 377 δεν διαιρείται ακριβώς με κανέναν από τους αριθμούς 2, 5, 10 χωρίς υπόλοιπο.'
   },
   {
     prompt: (num) => `Έχουμε ${num} τετράδια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
@@ -73,7 +79,7 @@ const REAL_WORLD_PROBLEMS_Q8 = [
     prompt: (num) => `Έχουμε ${num} βιβλία. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
     total: 450,
     correctOption: 'Σε πακέτα των 25',
-    wrongOptions: ['Σε πακέτα των 4', 'Σε πακέτα των 9', 'Σε πακέτα των 3'],
+    wrongOptions: ['Σε πακέτα των 4', 'Σε πακέτα των 9', 'Σε πακέτα των 7'],
     explain: 'Ο αριθμός 450 τελειώνει σε 50, άρα διαιρείται ακριβώς με το 25.'
   },
   {
@@ -94,7 +100,7 @@ const REAL_WORLD_PROBLEMS_Q8 = [
     prompt: (num) => `Έχουμε ${num} σοκολατάκια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
     total: 810,
     correctOption: 'Σε κουτάκια των 10',
-    wrongOptions: ['Σε κουτάκια των 4', 'Σε κουτάκια των 25', 'Σε κουτάκια των 9'],
+    wrongOptions: ['Σε κουτάκια των 4', 'Σε κουτάκια των 25', 'Σε κουτάκια των 7'],
     explain: 'Ο αριθμός 810 λήγει σε 0, άρα διαιρείται ακριβώς με το 10.'
   },
   {
@@ -106,31 +112,114 @@ const REAL_WORLD_PROBLEMS_Q8 = [
   }
 ];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (MCQ)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_crit_std_1',
     generate: () => {
-      const targetDiv = 4;
       const candidates = [326, 448, 514, 622];
       const validNum = 448;
-      const explainStr = 'Τα δύο τελευταία ψηφία του 448 είναι το 48, το οποίο διαιρείται ακριβώς με το 4 (48 : 4 ＝ 12).';
       return {
+        title: 'ΠΡΑΚΤΙΚΟΣ ΕΛΕΓΧΟΣ ΣΥΣΚΕΥΑΣΙΑΣ ΣΕ 4ΑΔΕΣ',
+        instruction: 'Επιλέξτε τη σωστή ποσότητα:',
         text: 'Ένας αποθηκάριος θέλει να συσκευάσει αντικείμενα σε 4άδες χωρίς να περισσέψει κανένα. Ποια από τις παρακάτω ποσότητες μπορεί να συσκευαστεί ακριβώς: 326, 448, 514 ή 622;',
         tableData: { col1: 'Υποψήφιοι Αριθμοί', col2: 'Κριτήριο του 4', r1: ['326, 448, 514, 622', 'Δύο τελευταία ψηφία'], r2: ['Έλεγχος', '48 : 4 ＝ 12 ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(validNum),
-        explanation: explainStr
+        explanation: 'Τα δύο τελευταία ψηφία του 448 είναι το 48, το οποίο διαιρείται ακριβώς με το 4 (48 : 4 ＝ 12).'
       };
     }
   },
   {
     id: 'p_crit_std_2',
     generate: () => {
-      const candidates = [1350, 2435, 3142, 4205];
-      const validNum = 1350;
-      const explainStr = 'Ο αριθμός 1350 λήγει σε 0 (άρα διαιρείται με το 2, 5, 10), τελειώνει σε 50 (διαιρείται με το 25) και έχει άθροισμα ψηφίων 1 ＋ 3 ＋ 5 ＋ 0 ＝ 9 (διαιρείται με το 3 και 9).';
+      const price = 575;
       return {
+        title: 'ΠΛΗΡΩΜΗ ΜΕ ΧΑΡΤΟΝΟΜΙΣΜΑΤΑ ΤΩΝ 25 €',
+        instruction: 'Επιλέξτε αν είναι δυνατή η ακριβής πληρωμή:',
+        text: `Ένα σχολείο αγόρασε μπάλες αξίας ${price} €. Μπορεί να πληρώσει το ποσό αυτό χρησιμοποιώντας αποκλειστικά χαρτονομίσματα των 25 € χωρίς να χρειαστούν ρέστα;`,
+        tableData: { col1: 'Συνολικό Ποσό', col2: 'Χαρτονόμισμα 25 €', r1: [`${price} €`, 'Κριτήριο του 25'], r2: ['Τελευταία ψηφία: 75', '575 : 25 ＝ 23 ✅'] },
+        optionsRaw: ['Ναι', 'Όχι'],
+        correctText: 'Ναι',
+        explanation: 'Ο αριθμός 575 τελειώνει σε 75, άρα διαιρείται ακριβώς με το 25 (575 : 25 ＝ 23).'
+      };
+    }
+  },
+  {
+    id: 'p_crit_std_3',
+    generate: () => {
+      const candidates = [142, 235, 318, 421];
+      const validNum = 235;
+      return {
+        title: 'ΜΟΙΡΑΣΙΑ ΚΑΡΑΜΕΛΩΝ ΣΕ 5ΑΔΕΣ',
+        instruction: 'Επιλέξτε τον αριθμό που διαιρείται με το 5:',
+        text: 'Μια δασκάλα θέλει να μοιράσει καραμέλες σε σακουλάκια των 5 χωρίς να περισσέψει καμία. Ποιο από τα παρακάτω πλήθη καραμελών είναι κατάλληλο: 142, 235, 318 ή 421;',
+        tableData: { col1: 'Υποψήφιοι Αριθμοί', col2: 'Κριτήριο του 5', r1: ['142, 235, 318, 421', 'Λήγει σε 0 ή 5'], r2: ['Αποτέλεσμα', '235 : 5 ＝ 47 ✅'] },
+        optionsRaw: candidates.map(String),
+        correctText: String(validNum),
+        explanation: 'Ο αριθμός 235 λήγει σε 5, επομένως διαιρείται ακριβώς με το 5.'
+      };
+    }
+  },
+  {
+    id: 'p_crit_std_4',
+    generate: () => {
+      const candidates = [521, 633, 715, 802];
+      const validNum = 633;
+      return {
+        title: 'ΚΑΤΑΝΟΜΗ ΜΑΘΗΤΩΝ ΣΕ 3ΑΔΕΣ',
+        instruction: 'Επιλέξτε το πλήθος που διαιρείται με το 3:',
+        text: 'Σε έναν διαγωνισμό οι μαθητές πρέπει να σχηματίσουν τριάδες. Ποιος από τους παρακάτω αριθμούς μαθητών επιτρέπει τον πλήρη σχηματισμό τριάδων: 521, 633, 715 ή 802;',
+        tableData: { col1: 'Υποψήφιοι', col2: 'Κριτήριο του 3', r1: ['521, 633, 715, 802', 'Άθροισμα ψηφίων'], r2: ['Έλεγχος 633', '6＋3＋3 ＝ 12 (12 : 3 ＝ 4) ✅'] },
+        optionsRaw: candidates.map(String),
+        correctText: String(validNum),
+        explanation: 'Το άθροισμα των ψηφίων του 633 είναι 6 ＋ 3 ＋ 3 ＝ 12, το οποίο διαιρείται ακριβώς με το 3.'
+      };
+    }
+  },
+  {
+    id: 'p_crit_std_5',
+    generate: () => {
+      const candidates = [1240, 1345, 1452, 1506];
+      const validNum = 1240;
+      return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΣΕ 10ΑΔΕΣ',
+        instruction: 'Επιλέξτε τον αριθμό που διαιρείται με το 10:',
+        text: 'Ένα εργοστάσιο συσκευάζει μολύβια σε δεκάδες. Ποιο από τα παρακάτω πλήθη μολυβιών συσκευάζεται χωρίς περίσσευμα: 1.240, 1.345, 1.452 ή 1.506;',
+        tableData: { col1: 'Ποσότητες', col2: 'Κριτήριο του 10', r1: ['1.240, 1.345, 1.452, 1.506', 'Λήγει σε 0'], r2: ['Αποτέλεσμα', '1.240 : 10 ＝ 124 ✅'] },
+        optionsRaw: ['1.240', '1.345', '1.452', '1.506'],
+        correctText: '1.240',
+        explanation: 'Ο αριθμός 1.240 λήγει σε 0, άρα διαιρείται ακριβώς με το 10.'
+      };
+    }
+  },
+  {
+    id: 'p_crit_std_6',
+    generate: () => {
+      const candidates = [316, 425, 513, 620];
+      const validNum = 513;
+      return {
+        title: 'ΟΜΑΔΕΣ ΤΩΝ 9 ΑΤΟΜΩΝ',
+        instruction: 'Επιλέξτε τον αριθμό που διαιρείται με το 9:',
+        text: 'Σε ένα φεστιβάλ οι θεατές χωρίζονται σε ομάδες των 9. Ποιο από τα παρακάτω πλήθη θεατών μπορεί να χωριστεί χωρίς να μείνει κανείς: 316, 425, 513 ή 620;',
+        tableData: { col1: 'Υποψήφιοι', col2: 'Κριτήριο του 9', r1: ['316, 425, 513, 620', 'Άθροισμα ψηφίων'], r2: ['Έλεγχος 513', '5＋1＋3 ＝ 9 (9 : 9 ＝ 1) ✅'] },
+        optionsRaw: candidates.map(String),
+        correctText: String(validNum),
+        explanation: 'Το άθροισμα των ψηφίων του 513 είναι 5 ＋ 1 ＋ 3 ＝ 9, άρα διαιρείται ακριβώς με το 9.'
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_crit_hard_1',
+    generate: () => {
+      const explainStr = 'Ο αριθμός 1350 λήγει σε 0 (άρα διαιρείται με το 2 και το 5) και έχει άθροισμα ψηφίων 1 ＋ 3 ＋ 5 ＋ 0 ＝ 9 (άρα διαιρείται με το 9).';
+      return {
+        title: 'ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ ΜΕ 2, 5 ΚΑΙ 9',
+        instruction: 'Επιλέξτε τον σωστό αριθμό:',
         text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 2, το 5 και το 9: 1.350, 2.435, 3.142 ή 4.205;',
         tableData: { col1: 'Αριθμός 1.350', col2: 'Έλεγχος Κριτηρίων', r1: ['Λήγει σε 0', 'Διαιρείται με 2 & 5 ✅'], r2: ['Άθροισμα: 1＋3＋5＋0 ＝ 9', 'Διαιρείται με 9 ✅'] },
         optionsRaw: ['1.350', '2.435', '3.142', '4.205'],
@@ -140,15 +229,76 @@ const EXTRA_PROBLEMS_POOL = [
     }
   },
   {
-    id: 'p_crit_std_3',
+    id: 'p_crit_hard_2',
     generate: () => {
-      const price = 575;
-      const explainStr = 'Ο αριθμός 575 τελειώνει σε 75, άρα διαιρείται ακριβώς με το 25 (575 : 25 ＝ 23).';
+      const explainStr = 'Ο αριθμός 2100 λήγει σε 00, άρα διαιρείται και με το 4 και με το 25.';
       return {
-        text: `Ένα σχολείο αγόρασε μπάλες αξίας ${price} €. Μπορεί να πληρώσει το ποσό αυτό χρησιμοποιώντας αποκλειστικά χαρτονομίσματα των 25 € χωρίς να χρειαστούν ρέστα;`,
-        tableData: { col1: 'Συνολικό Ποσό', col2: 'Χαρτονόμισμα 25 €', r1: [`${price} €`, 'Κριτήριο του 25'], r2: ['Τελευταία ψηφία: 75', '575 : 25 ＝ 23 ✅'] },
-        optionsRaw: ['Ναι', 'Όχι'],
-        correctText: 'Ναι',
+        title: 'ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ ΜΕ 4 ΚΑΙ 25',
+        instruction: 'Επιλέξτε τον αριθμό που διαιρείται ταυτόχρονα με το 4 και το 25:',
+        text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 4 και το 25: 1.550, 2.100, 3.225 ή 4.150;',
+        tableData: { col1: 'Αριθμός 2.100', col2: 'Έλεγχος Κριτηρίων', r1: ['Τελειώνει σε 00', 'Διαιρείται με 4 ✅'], r2: ['Τελειώνει σε 00', 'Διαιρείται με 25 ✅'] },
+        optionsRaw: ['1.550', '2.100', '3.225', '4.150'],
+        correctText: '2.100',
+        explanation: explainStr
+      };
+    }
+  },
+  {
+    id: 'p_crit_hard_3',
+    generate: () => {
+      const explainStr = 'Ο αριθμός 720 είναι άρτιος (διαιρείται με 2), λήγει σε 0 (διαιρείται με 5 και 10) και έχει άθροισμα ψηφίων 7 ＋ 2 ＋ 0 ＝ 9 (διαιρείται με 3 και 9).';
+      return {
+        title: 'ΚΟΙΝΟΣ ΔΙΑΙΡΕΤΗΣ ΠΟΛΛΑΠΛΩΝ ΚΡΙΤΗΡΙΩΝ',
+        instruction: 'Επιλέξτε τον αριθμό που διαιρείται με 2, 3, 5, 9 και 10:',
+        text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 2, το 3, το 5, το 9 και το 10: 520, 635, 720 ή 815;',
+        tableData: { col1: 'Αριθμός 720', col2: 'Έλεγχος Κριτηρίων', r1: ['Λήγει σε 0', 'Διαιρείται με 2, 5, 10 ✅'], r2: ['Άθροισμα: 7＋2＋0 ＝ 9', 'Διαιρείται με 3 & 9 ✅'] },
+        optionsRaw: ['520', '635', '720', '815'],
+        correctText: '720',
+        explanation: explainStr
+      };
+    }
+  },
+  {
+    id: 'p_crit_hard_4',
+    generate: () => {
+      const explainStr = 'Ο αριθμός 828 είναι άρτιος (διαιρείται με 2), λήγει σε 28 (διαιρείται με 4) και έχει άθροισμα 8 ＋ 2 ＋ 8 ＝ 18 (διαιρείται με 3 και 9).';
+      return {
+        title: 'ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ ΜΕ 3, 4 ΚΑΙ 9',
+        instruction: 'Επιλέξτε τον σωστό αριθμό:',
+        text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 3, το 4 και το 9: 614, 726, 828 ή 916;',
+        tableData: { col1: 'Αριθμός 828', col2: 'Έλεγχος Κριτηρίων', r1: ['Τελειώνει σε 28', '28 : 4 ＝ 7 ✅'], r2: ['Άθροισμα: 8＋2＋8 ＝ 18', 'Διαιρείται με 3 & 9 ✅'] },
+        optionsRaw: ['614', '726', '828', '916'],
+        correctText: '828',
+        explanation: explainStr
+      };
+    }
+  },
+  {
+    id: 'p_crit_hard_5',
+    generate: () => {
+      const explainStr = 'Ο αριθμός 1575 τελειώνει σε 75 (διαιρείται με 25) και έχει άθροισμα ψηφίων 1 ＋ 5 ＋ 7 ＋ 5 ＝ 18 (διαιρείται με 9).';
+      return {
+        title: 'ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ ΜΕ 9 ΚΑΙ 25',
+        instruction: 'Επιλέξτε τον αριθμό που διαιρείται ταυτόχρονα με το 9 και το 25:',
+        text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 9 και το 25: 1.250, 1.425, 1.575 ή 1.850;',
+        tableData: { col1: 'Αριθμός 1.575', col2: 'Έλεγχος Κριτηρίων', r1: ['Τελειώνει σε 75', 'Διαιρείται με 25 ✅'], r2: ['Άθροισμα: 1＋5＋7＋5 ＝ 18', 'Διαιρείται με 9 ✅'] },
+        optionsRaw: ['1.250', '1.425', '1.575', '1.850'],
+        correctText: '1.575',
+        explanation: explainStr
+      };
+    }
+  },
+  {
+    id: 'p_crit_hard_6',
+    generate: () => {
+      const explainStr = 'Ο αριθμός 960 λήγει σε 0 (διαιρείται με 10) και τελειώνει σε 60 (60 : 4 ＝ 15, άρα διαιρείται με 4).';
+      return {
+        title: 'ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ ΜΕ 4 ΚΑΙ 10',
+        instruction: 'Επιλέξτε τον αριθμό που διαιρείται ταυτόχρονα με το 4 και το 10:',
+        text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 4 και το 10: 930, 950, 960 ή 970;',
+        tableData: { col1: 'Αριθμός 960', col2: 'Έλεγχος Κριτηρίων', r1: ['Λήγει σε 0', 'Διαιρείται με 10 ✅'], r2: ['Τελειώνει σε 60', '60 : 4 ＝ 15 ✅'] },
+        optionsRaw: ['930', '950', '960', '970'],
+        correctText: '960',
         explanation: explainStr
       };
     }
@@ -219,7 +369,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΑΘΡΟΙΣΜΑ ΨΗΦΙΩΝ',
-      instruction: 'Υπολογίστε το άθροισμα των ψηφίων του αριθμού:',
+      instruction: 'Υπολογίστε το άθροισμα των ψηφίων του αριθμού (ακέραιος):',
       prompt: `Ποιο είναι το άθροισμα των ψηφίων του αριθμού ${q2Num};`,
       correctVal: q2Sum,
       correctStr: String(q2Sum),
@@ -365,7 +515,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ',
-      instruction: 'Συμπληρώστε τον αριθμό:',
+      instruction: 'Συμπληρώστε τον αριθμό (ακέραιος):',
       prompt: `Ο αριθμός ${q7Num} διαιρείται ταυτόχρονα με το 2 και το 5. Με ποιον άλλον βασικό αριθμό διαιρείται σίγουρα;`,
       correctVal: q7CorrectVal,
       correctStr: String(q7CorrectVal),
@@ -397,46 +547,47 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ9 = shuffle([...new Set(prob9.optionsRaw)]).map((text) => ({
+    const optionsQ9 = shuffle([...new Set(stdProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob9.correctText
+      isCorrect: text === stdProb.correctText
     }));
 
     qList.push({
       id: 9,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟΣ ΕΛΕΓΧΟΣ ΣΥΣΚΕΥΑΣΙΑΣ',
-      instruction: 'Επιλέξτε τη σωστή ποσότητα:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
       options: optionsQ9,
-      correctText: prob9.correctText,
-      explanation: prob9.explanation
+      correctText: stdProb.correctText,
+      explanation: stdProb.explanation
     });
 
     // Q10 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ10 = shuffle([...new Set(prob10.optionsRaw)]).map((text) => ({
+    const optionsQ10 = shuffle([...new Set(hardProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob10.correctText
+      isCorrect: text === hardProb.correctText
     }));
 
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟΣ ΕΛΕΓΧΟΣ ΔΙΑΙΡΕΤΟΤΗΤΑΣ',
-      instruction: 'Επιλέξτε τον σωστό αριθμό:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
       options: optionsQ10,
-      correctText: prob10.correctText,
-      explanation: prob10.explanation
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
