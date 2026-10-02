@@ -64,8 +64,8 @@ function getPowerRepresentation(factors) {
     .join(' · ');
 }
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (MCQ)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_factor_std_1',
     generate: () => {
@@ -73,6 +73,8 @@ const EXTRA_PROBLEMS_POOL = [
       const factors = getPrimeFactors(num);
       const powerStr = getPowerRepresentation(factors);
       return {
+        title: 'ΑΝΑΛΥΣΗ ΜΙΚΡΟΤΣΙΠ ΣΕ ΔΥΝΑΜΕΙΣ',
+        instruction: 'Επιλέξτε τη σωστή μορφή δυνάμεων:',
         text: `Ένα κατάστημα ηλεκτρονικών παρέλαβε ${num} μικροτσίπ. Ποια είναι η πλήρης ανάλυση του αριθμού ${num} σε γινόμενο πρώτων παραγόντων με μορφή δυνάμεων;`,
         tableData: { col1: 'Αριθμός', col2: 'Γινόμενο Πρώτων Παραγόντων', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Μορφή Δυνάμεων', `${powerStr}`] },
         optionsRaw: [
@@ -93,7 +95,9 @@ const EXTRA_PROBLEMS_POOL = [
       const factors = getPrimeFactors(num);
       const powerStr = getPowerRepresentation(factors);
       return {
-        text: `Μια βιβλιοθήκη έχει ${num} λογοτεχνικά βιβλία. Ποια είναι η σωστή παραγοντοποίηση του ${num} σε πρώτους παράγοντες;`,
+        title: 'ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗ ΒΙΒΛΙΩΝ ΒΙΒΛΙΟΘΗΚΗΣ',
+        instruction: 'Επιλέξτε τη σωστή παραγοντοποίηση:',
+        text: `Μια βιβλιοθήκη έχει ${num} λογοτεχνικά βιβλία. Ποια είναι η σωστή παραγοντοποίηση του ${num} σε πρώτους παράγοντες με μορφή δυνάμεων;`,
         tableData: { col1: 'Αριθμός', col2: 'Ανάλυση σε Πρώτους', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Τελική Μορφή', `${powerStr}`] },
         optionsRaw: [
           powerStr,
@@ -109,12 +113,107 @@ const EXTRA_PROBLEMS_POOL = [
   {
     id: 'p_factor_std_3',
     generate: () => {
+      const num = 200;
+      const factors = getPrimeFactors(num);
+      const powerStr = getPowerRepresentation(factors);
+      return {
+        title: 'ΑΝΑΛΥΣΗ ΤΕΤΡΑΔΙΩΝ ΣΕ ΔΥΝΑΜΕΙΣ',
+        instruction: 'Επιλέξτε τη σωστή μορφή δυνάμεων:',
+        text: `Ένα σχολείο παρέλαβε ${num} τετράδια. Ποια είναι η σωστή ανάλυση του ${num} σε πρώτους παράγοντες;`,
+        tableData: { col1: 'Αριθμός', col2: 'Ανάλυση', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Μορφή Δυνάμεων', `${powerStr}`] },
+        optionsRaw: [
+          powerStr,
+          '2² · 5²',
+          '2⁴ · 5',
+          '8 · 25'
+        ],
+        correctText: powerStr,
+        explanation: `${num} ＝ ${factors.join(' · ')} ＝ ${powerStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_factor_std_4',
+    generate: () => {
+      const num = 150;
+      const factors = getPrimeFactors(num);
+      const powerStr = getPowerRepresentation(factors);
+      return {
+        title: 'ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗ ΚΑΡΑΜΕΛΩΝ',
+        instruction: 'Επιλέξτε τη σωστή μορφή δυνάμεων:',
+        text: `Μια ζαχαροπλάστης συσκεύασε ${num} καραμέλες. Ποια είναι η πλήρης ανάλυση του ${num} σε πρώτους παράγοντες;`,
+        tableData: { col1: 'Αριθμός', col2: 'Γινόμενο', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Μορφή Δυνάμεων', `${powerStr}`] },
+        optionsRaw: [
+          powerStr,
+          '2² · 3 · 5',
+          '2 · 3² · 5',
+          '6 · 25'
+        ],
+        correctText: powerStr,
+        explanation: `${num} ＝ ${factors.join(' · ')} ＝ ${powerStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_factor_std_5',
+    generate: () => {
+      const num = 108;
+      const factors = getPrimeFactors(num);
+      const powerStr = getPowerRepresentation(factors);
+      return {
+        title: 'ΑΝΑΛΥΣΗ ΣΥΣΚΕΥΑΣΙΩΝ ΧΥΜΟΥ',
+        instruction: 'Επιλέξτε τη σωστή ανάλυση σε δυνάμεις:',
+        text: `Μια αποθήκη διαθέτει ${num} συσκευασίες χυμού. Ποια είναι η σωστή παραγοντοποίηση του ${num} σε πρώτους παράγοντες;`,
+        tableData: { col1: 'Αριθμός', col2: 'Ανάλυση', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Μορφή Δυνάμεων', `${powerStr}`] },
+        optionsRaw: [
+          powerStr,
+          '2³ · 3²',
+          '2² · 3²',
+          '4 · 27'
+        ],
+        correctText: powerStr,
+        explanation: `${num} ＝ ${factors.join(' · ')} ＝ ${powerStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_factor_std_6',
+    generate: () => {
+      const num = 160;
+      const factors = getPrimeFactors(num);
+      const powerStr = getPowerRepresentation(factors);
+      return {
+        title: 'ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗ ΑΘΛΗΤΙΚΩΝ ΜΠΑΛΩΝ',
+        instruction: 'Επιλέξτε τη σωστή ανάλυση σε δυνάμεις:',
+        text: `Ένα γυμναστήριο έχει ${num} μπάλες τένις. Ποια είναι η ανάλυση του ${num} σε γινόμενο πρώτων παραγόντων με μορφή δυνάμεων;`,
+        tableData: { col1: 'Αριθμός', col2: 'Ανάλυση', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Μορφή Δυνάμεων', `${powerStr}`] },
+        optionsRaw: [
+          powerStr,
+          '2⁴ · 5',
+          '2⁵ · 3',
+          '32 · 5'
+        ],
+        correctText: powerStr,
+        explanation: `${num} ＝ ${factors.join(' · ')} ＝ ${powerStr}.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_factor_hard_1',
+    generate: () => {
       const num = 210;
       const factors = getPrimeFactors(num);
-      const count = factors.length;
+      const uniqueFactors = [...new Set(factors)];
+      const count = uniqueFactors.length;
       return {
+        title: 'ΔΙΑΦΟΡΕΤΙΚΟΙ ΠΡΩΤΟΙ ΠΑΡΑΓΟΝΤΕΣ ΣΤΟ ΕΛΑΙΟΛΑΔΟ',
+        instruction: 'Επιλέξτε το πλήθος των διαφορετικών πρώτων παραγόντων:',
         text: `Ένας αγρότης συσκεύασε ${num} κιλά λάδι. Πόσους διαφορετικούς πρώτους παράγοντες περιέχει η ανάλυση του αριθμού ${num};`,
-        tableData: { col1: 'Αριθμός', col2: 'Πρώτοι Παράγοντες', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Πλήθος', `${count} πρώτοι παράγοντες`] },
+        tableData: { col1: 'Αριθμός', col2: 'Πρώτοι Παράγοντες', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Πλήθος', `${count} διαφορετικοί παράγοντες`] },
         optionsRaw: [
           String(count),
           String(count - 1),
@@ -123,6 +222,118 @@ const EXTRA_PROBLEMS_POOL = [
         ],
         correctText: String(count),
         explanation: `${num} ＝ 2 · 3 · 5 · 7. Άρα έχει ακριβώς ${count} διαφορετικούς πρώτους παράγοντες.`
+      };
+    }
+  },
+  {
+    id: 'p_factor_hard_2',
+    generate: () => {
+      const num = 300;
+      const factors = getPrimeFactors(num);
+      const uniqueFactors = [...new Set(factors)];
+      const count = uniqueFactors.length;
+      return {
+        title: 'ΔΙΑΦΟΡΕΤΙΚΟΙ ΠΡΩΤΟΙ ΠΑΡΑΓΟΝΤΕΣ ΣΤΑ ΧΑΡΤΟΚΙΒΩΤΙΑ',
+        instruction: 'Επιλέξτε το πλήθος των διαφορετικών πρώτων παραγόντων:',
+        text: `Μια αποθήκη περιέχει ${num} χαρτοκιβώτια. Πόσους διαφορετικούς πρώτους παράγοντες έχει η παραγοντοποίηση του ${num};`,
+        tableData: { col1: 'Αριθμός', col2: 'Ανάλυση', r1: [`${num}`, '2² · 3 · 5²'], r2: ['Διαφορετικοί', '2, 3, 5'] },
+        optionsRaw: [
+          String(count),
+          String(count + 1),
+          String(count + 2),
+          String(count - 1)
+        ],
+        correctText: String(count),
+        explanation: `${num} ＝ 2² · 3 · 5². Οι διαφορετικοί πρώτοι παράγοντες είναι οι 2, 3 και 5 (συνολικά ${count}).`
+      };
+    }
+  },
+  {
+    id: 'p_factor_hard_3',
+    generate: () => {
+      const num = 240;
+      const factors = getPrimeFactors(num);
+      const totalCount = factors.length;
+      return {
+        title: 'ΣΥΝΟΛΙΚΟ ΠΛΗΘΟΣ ΠΡΩΤΩΝ ΠΑΡΑΓΟΝΤΩΝ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος παραγόντων (με τις επαναλήψεις):',
+        text: `Ένα εργοστάσιο παρήγαγε ${num} εξαρτήματα. Πόσους πρώτους παράγοντες συνολικά (μαζί με τις επαναλήψεις) περιέχει η ανάλυση του ${num};`,
+        tableData: { col1: 'Αριθμός', col2: 'Γινόμενο', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Σύνολο Παραγόντων', `${totalCount}`] },
+        optionsRaw: [
+          String(totalCount),
+          String(totalCount - 1),
+          String(totalCount + 1),
+          String(totalCount + 2)
+        ],
+        correctText: String(totalCount),
+        explanation: `${num} ＝ 2⁴ · 3 · 5 ＝ 2 · 2 · 2 · 2 · 3 · 5, άρα περιέχει ${totalCount} πρώτους παράγοντες συνολικά.`
+      };
+    }
+  },
+  {
+    id: 'p_factor_hard_4',
+    generate: () => {
+      const num = 360;
+      const factors = getPrimeFactors(num);
+      const powerStr = getPowerRepresentation(factors);
+      return {
+        title: 'ΠΛΗΡΗΣ ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗ ΣΕ ΔΥΝΑΜΕΙΣ',
+        instruction: 'Επιλέξτε τη σωστή μορφή δυνάμεων:',
+        text: `Μια αίθουσα διαθέτει ${num} καθίσματα. Ποια είναι η πλήρης ανάλυση του ${num} σε γινόμενο πρώτων παραγόντων με μορφή δυνάμεων;`,
+        tableData: { col1: 'Αριθμός', col2: 'Ανάλυση', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Μορφή Δυνάμεων', `${powerStr}`] },
+        optionsRaw: [
+          powerStr,
+          '2² · 3³ · 5',
+          '2⁴ · 3 · 5',
+          '8 · 9 · 5'
+        ],
+        correctText: powerStr,
+        explanation: `${num} ＝ ${factors.join(' · ')} ＝ ${powerStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_factor_hard_5',
+    generate: () => {
+      const num = 420;
+      const factors = getPrimeFactors(num);
+      const uniqueFactors = [...new Set(factors)];
+      const count = uniqueFactors.length;
+      return {
+        title: 'ΠΡΩΤΟΙ ΠΑΡΑΓΟΝΤΕΣ ΣΕ ΦΑΡΜΑΚΕΥΤΙΚΑ ΣΚΕΥΑΣΜΑΤΑ',
+        instruction: 'Επιλέξτε το πλήθος των διαφορετικών πρώτων παραγόντων:',
+        text: `Ένα φαρμακείο παρέλαβε ${num} σκευάσματα. Πόσους διαφορετικούς πρώτους παράγοντες περιέχει η ανάλυση του ${num};`,
+        tableData: { col1: 'Αριθμός', col2: 'Ανάλυση', r1: [`${num}`, '2² · 3 · 5 · 7'], r2: ['Διαφορετικοί', '2, 3, 5, 7'] },
+        optionsRaw: [
+          String(count),
+          String(count - 1),
+          String(count + 1),
+          String(count + 2)
+        ],
+        correctText: String(count),
+        explanation: `${num} ＝ 2² · 3 · 5 · 7. Οι διαφορετικοί πρώτοι παράγοντες είναι 4 (το 2, 3, 5 και 7).`
+      };
+    }
+  },
+  {
+    id: 'p_factor_hard_6',
+    generate: () => {
+      const num = 500;
+      const factors = getPrimeFactors(num);
+      const powerStr = getPowerRepresentation(factors);
+      return {
+        title: 'ΑΝΑΛΥΣΗ ΦΥΛΛΩΝ ΧΑΡΤΙΟΥ',
+        instruction: 'Επιλέξτε τη σωστή μορφή δυνάμεων:',
+        text: `Μια δεσμίδα περιέχει ${num} φύλλα χαρτί. Ποια είναι η σωστή παραγοντοποίηση του ${num} σε πρώτους παράγοντες;`,
+        tableData: { col1: 'Αριθμός', col2: 'Ανάλυση', r1: [`${num}`, `${factors.join(' · ')}`], r2: ['Μορφή Δυνάμεων', `${powerStr}`] },
+        optionsRaw: [
+          powerStr,
+          '2³ · 5²',
+          '2 · 5⁴',
+          '4 · 125'
+        ],
+        correctText: powerStr,
+        explanation: `${num} ＝ ${factors.join(' · ')} ＝ ${powerStr}.`
       };
     }
   }
@@ -172,7 +383,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΜΙΚΡΟΤΕΡΟΣ ΠΡΩΤΟΣ ΔΙΑΙΡΕΤΗΣ',
-      instruction: 'Συμπληρώστε τον μικρότερο πρώτο διαιρέτη:',
+      instruction: 'Συμπληρώστε τον μικρότερο πρώτο διαιρέτη (ακέραιος):',
       prompt: `Ποιος είναι ο μικρότερος πρώτος διαιρέτης του αριθμού ${q2Num};`,
       correctVal: q2Correct,
       correctStr: String(q2Correct),
@@ -309,7 +520,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΠΛΗΘΟΣ ΠΡΩΤΩΝ ΠΑΡΑΓΟΝΤΩΝ',
-      instruction: 'Υπολογίστε το πλήθος των πρώτων παραγόντων:',
+      instruction: 'Υπολογίστε το πλήθος των πρώτων παραγόντων (ακέραιος):',
       prompt: `Πόσους πρώτους παράγοντες συνολικά (μαζί με τις επαναλήψεις) έχει ο αριθμός ${q7Num};`,
       correctVal: q7Correct,
       correctStr: String(q7Correct),
@@ -349,46 +560,47 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ9 = shuffle([...new Set(prob9.optionsRaw)]).map((text) => ({
+    const optionsQ9 = shuffle([...new Set(stdProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob9.correctText
+      isCorrect: text === stdProb.correctText
     }));
 
     qList.push({
       id: 9,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΗ ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗ ΣΕ ΔΥΝΑΜΕΙΣ',
-      instruction: 'Επιλέξτε τη σωστή μορφή δυνάμεων:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
       options: optionsQ9,
-      correctText: prob9.correctText,
-      explanation: prob9.explanation
+      correctText: stdProb.correctText,
+      explanation: stdProb.explanation
     });
 
     // Q10 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ10 = shuffle([...new Set(prob10.optionsRaw)]).map((text) => ({
+    const optionsQ10 = shuffle([...new Set(hardProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob10.correctText
+      isCorrect: text === hardProb.correctText
     }));
 
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΠΑΡΑΓΟΝΤΩΝ',
-      instruction: 'Επιλέξτε τη σωστή απάντηση:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
       options: optionsQ10,
-      correctText: prob10.correctText,
-      explanation: prob10.explanation
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
