@@ -29,23 +29,30 @@ function shuffle(array) {
 
 // Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
 function formatNum(val, decimals = 3) {
+  if (val === '' || val === null || val === undefined || isNaN(val)) return '0';
   if (Number.isInteger(val)) return String(val);
   const rounded = Number(val.toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
+// Μορφοποιηση αριθμου με τελειες χιλιαδων
+function formatNumber(num) {
+  if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
+
 // Δεξαμενη θεματικων σεναριων καθημερινοτητας
 const REAL_WORLD_PRESETS = [
-  { item: 'το μήκος της διαδρομής', unit: 'μ.' },
-  { item: 'το βάρος του κιβωτίου', unit: 'κιλά' },
+  { item: 'το μήκος της διαδρομής', unit: 'm' },
+  { item: 'το βάρος του κιβωτίου', unit: 'kg' },
   { item: 'την τιμή του ηλεκτρονικού υπολογιστή', unit: '€' },
-  { item: 'την απόσταση μεταξύ των δύο πόλεων', unit: 'χλμ.' },
-  { item: 'την ποσότητα του ελαιολάδου', unit: 'λίτρα' },
+  { item: 'την απόσταση μεταξύ των δύο πόλεων', unit: 'km' },
+  { item: 'την ποσότητα του ελαιολάδου', unit: 'L' },
   { item: 'το εμβαδόν του οικοπέδου', unit: 'τ.μ.' }
 ];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_round_std_1',
     generate: () => {
@@ -53,6 +60,8 @@ const EXTRA_PROBLEMS_POOL = [
       const budgetStr = budgetFloat.toFixed(2).replace('.', ',');
       const roundedHundreds = Math.round(budgetFloat / 100) * 100;
       return {
+        title: 'ΣΤΡΟΓΓΥΛΟΠΟΙΗΣΗ ΣΧΟΛΙΚΟΥ ΠΡΟΫΠΟΛΟΓΙΣΜΟΥ',
+        instruction: 'Υπολογίστε το στρογγυλοποιημένο ποσό σε ευρώ (€):',
         text: `Ένα σχολείο συγκέντρωσε ${budgetStr} € για την αγορά αθλητικού εξοπλισμού. Ποιο είναι το προσεγγιστικό ποσό αν γίνει στρογγυλοποίηση στην πλησιέστερη εκατοντάδα ευρώ (€);`,
         tableData: { col1: 'Ακριβές Ποσό', col2: 'Τάξη Στρογγυλοποίησης', r1: [`${budgetStr} €`, 'Εκατοντάδες'], r2: ['Ψηφίο-κλειδί (Δεκάδες)', `${roundedHundreds} €`] },
         correctVal: roundedHundreds,
@@ -68,11 +77,13 @@ const EXTRA_PROBLEMS_POOL = [
       const weightStr = weightFloat.toFixed(3).replace('.', ',');
       const roundedTenths = (Math.round(weightFloat * 10) / 10).toFixed(1).replace('.', ',');
       return {
-        text: `Ένα δέμα ζυγίζει ${weightStr} κιλά. Ποιο είναι το βάρος του δέματος στρογγυλοποιημένο στα πλησιέστερα δέκατα (0,1) του κιλού;`,
-        tableData: { col1: 'Ακριβές Βάρος', col2: 'Στα Δέκατα (0,1)', r1: [`${weightStr} κιλά`, 'Δέκατα'], r2: ['Ψηφίο-κλειδί (Εκατοστά)', `${roundedTenths} κιλά`] },
+        title: 'ΣΤΡΟΓΓΥΛΟΠΟΙΗΣΗ ΒΑΡΟΥΣ ΔΕΜΑΤΟΣ',
+        instruction: 'Υπολογίστε το βάρος στα πλησιέστερα δέκατα (0,1) σε κιλά (kg) με κόμμα:',
+        text: `Ένα δέμα ζυγίζει ${weightStr} kg. Ποιο είναι το βάρος του δέματος στρογγυλοποιημένο στα πλησιέστερα δέκατα (0,1) του κιλού;`,
+        tableData: { col1: 'Ακριβές Βάρος', col2: 'Στα Δέκατα (0,1)', r1: [`${weightStr} kg`, 'Δέκατα'], r2: ['Ψηφίο-κλειδί (Εκατοστά)', `${roundedTenths} kg`] },
         correctVal: parseFloat(roundedTenths.replace(',', '.')),
         correctStr: roundedTenths,
-        explanation: `Εξετάζουμε το ψηφίο των εκατοστών. Στρογγυλοποιώντας στα πλησιέστερα δέκατα προκύπτει ${roundedTenths} κιλά.`
+        explanation: `Εξετάζουμε το ψηφίο των εκατοστών. Στρογγυλοποιώντας στα πλησιέστερα δέκατα προκύπτει ${roundedTenths} kg.`
       };
     }
   },
@@ -83,11 +94,236 @@ const EXTRA_PROBLEMS_POOL = [
       const roadStr = roadKm.toFixed(2).replace('.', ',');
       const roundedUnits = Math.round(roadKm);
       return {
+        title: 'ΜΗΚΟΣ ΠΟΔΗΛΑΤΙΚΗΣ ΔΙΑΔΡΟΜΗΣ',
+        instruction: 'Υπολογίστε τα ακέραια χιλιόμετρα (km):',
         text: `Μια διαδρομή ποδηλασίας έχει μήκος ${roadStr} km. Πόσα ακέραια χιλιόμετρα είναι η διαδρομή αν στρογγυλοποιηθεί στις πλησιέστερες ακέραιες μονάδες;`,
         tableData: { col1: 'Μήκος Διαδρομής', col2: 'Στις Ακέραιες Μονάδες', r1: [`${roadStr} km`, 'Μονάδες'], r2: ['Ψηφίο-κλειδί (Δέκατα)', `${roundedUnits} km`] },
         correctVal: roundedUnits,
         correctStr: String(roundedUnits),
         explanation: `Εξετάζουμε το ψηφίο των δεκάτων. Στρογγυλοποιώντας στις πλησιέστερες ακέραιες μονάδες βρίσκουμε ${roundedUnits} km.`
+      };
+    }
+  },
+  {
+    id: 'p_round_std_4',
+    generate: () => {
+      const fuelL = parseFloat(`${randInt(35, 75)}.${randInt(1, 9)}${randInt(5, 9)}`);
+      const fuelStr = fuelL.toFixed(2).replace('.', ',');
+      const roundedTens = Math.round(fuelL / 10) * 10;
+      return {
+        title: 'ΚΑΤΑΝΑΛΩΣΗ ΚΑΥΣΙΜΟΥ',
+        instruction: 'Υπολογίστε την ποσότητα στην πλησιέστερη δεκάδα λίτρων (L):',
+        text: `Ένα όχημα κατανάλωσε ${fuelStr} L καύσιμο σε ένα μεγάλο ταξίδι. Πόσα λίτρα (L) καυσίμου είναι κατά προσέγγιση αν στρογγυλοποιήσουμε στην πλησιέστερη δεκάδα;`,
+        tableData: { col1: 'Ακριβής Ποσότητα', col2: 'Πλησιέστερη Δεκάδα', r1: [`${fuelStr} L`, 'Δεκάδες'], r2: ['Ψηφίο-κλειδί (Μονάδες)', `${roundedTens} L`] },
+        correctVal: roundedTens,
+        correctStr: String(roundedTens),
+        explanation: `Εξετάζουμε το ψηφίο των μονάδων. Στρογγυλοποιώντας στην πλησιέστερη δεκάδα προκύπτει ${roundedTens} L.`
+      };
+    }
+  },
+  {
+    id: 'p_round_std_5',
+    generate: () => {
+      const priceFloat = parseFloat(`${randInt(12, 45)}.${randInt(1, 9)}${randInt(1, 9)}${randInt(5, 9)}`);
+      const priceStr = priceFloat.toFixed(3).replace('.', ',');
+      const roundedHundr = (Math.round(priceFloat * 100) / 100).toFixed(2).replace('.', ',');
+      return {
+        title: 'ΣΤΡΟΓΓΥΛΟΠΟΙΗΣΗ ΤΙΜΗΣ ΣΤΑ ΕΚΑΤΟΣΤΑ',
+        instruction: 'Υπολογίστε την τιμή στα πλησιέστερα εκατοστά του ευρώ (0,01 €) με κόμμα:',
+        text: `Ένα προϊόν τιμολογήθηκε με υπολογιστική ακρίβεια στα ${priceStr} €. Ποια είναι η τιμή του προϊόντος στρογγυλοποιημένη στα πλησιέστερα εκατοστά (λεπτά του ευρώ);`,
+        tableData: { col1: 'Ακριβής Τιμή', col2: 'Στα Εκατοστά (0,01)', r1: [`${priceStr} €`, 'Εκατοστά'], r2: ['Ψηφίο-κλειδί (Χιλιοστά)', `${roundedHundr} €`] },
+        correctVal: parseFloat(roundedHundr.replace(',', '.')),
+        correctStr: roundedHundr,
+        explanation: `Εξετάζουμε το ψηφίο των χιλιοστών. Στρογγυλοποιώντας στα εκατοστά βρίσκουμε ${roundedHundr} €.`
+      };
+    }
+  },
+  {
+    id: 'p_round_std_6',
+    generate: () => {
+      const distFloat = parseFloat(`${randInt(1200, 3800)}.${randInt(1, 9)}`);
+      const distStr = distFloat.toFixed(1).replace('.', ',');
+      const roundedThousands = Math.round(distFloat / 1000) * 1000;
+      return {
+        title: 'ΣΤΡΟΓΓΥΛΟΠΟΙΗΣΗ ΣΤΙΣ ΧΙΛΙΑΔΕΣ',
+        instruction: 'Υπολογίστε την απόσταση στην πλησιέστερη χιλιάδα μέτρων (m):',
+        text: `Μια διαδρομή μετρήθηκε στα ${distStr} m. Ποιο είναι το μήκος της διαδρομής στρογγυλοποιημένο στην πλησιέστερη χιλιάδα μέτρων;`,
+        tableData: { col1: 'Ακριβές Μήκος', col2: 'Στις Χιλιάδες', r1: [`${distStr} m`, 'Χιλιάδες'], r2: ['Ψηφίο-κλειδί (Εκατοντάδες)', `${roundedThousands} m`] },
+        correctVal: roundedThousands,
+        correctStr: String(roundedThousands),
+        explanation: `Εξετάζουμε το ψηφίο των εκατοντάδων. Στρογγυλοποιώντας στην πλησιέστερη χιλιάδα προκύπτει ${roundedThousands} m.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_round_hard_1',
+    generate: () => {
+      const budgetFloat = parseFloat(`${randInt(140, 380)}.${randInt(1, 9)}${randInt(5, 9)}`);
+      const budgetStr = budgetFloat.toFixed(2).replace('.', ',');
+      const roundedHundreds = Math.round(budgetFloat / 100) * 100;
+      const correctStr = `${roundedHundreds} €`;
+      const fake1 = `${roundedHundreds + 100} €`;
+      const fake2 = `${Math.max(100, roundedHundreds - 100)} €`;
+      const fake3 = `${Math.floor(budgetFloat / 10) * 10} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΕΚΤΙΜΗΣΗ ΚΟΣΤΟΥΣ ΕΞΟΠΛΙΣΜΟΥ',
+        instruction: 'Επιλέξτε τη στρογγυλοποιημένη τιμή στην πλησιέστερη εκατοντάδα ευρώ (€):',
+        text: `Ένα σχολείο συγκέντρωσε ${budgetStr} € για την αγορά αθλητικού εξοπλισμού. Ποιο είναι το προσεγγιστικό ποσό αν γίνει στρογγυλοποίηση στην πλησιέστερη εκατοντάδα ευρώ (€);`,
+        tableData: { col1: 'Ακριβές Ποσό', col2: 'Τάξη Στρογγυλοποίησης', r1: [`${budgetStr} €`, 'Εκατοντάδες'], r2: ['Ψηφίο-κλειδί (Δεκάδες)', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εξετάζουμε το ψηφίο των δεκάδων. Στρογγυλοποιώντας στην πλησιέστερη εκατοντάδα προκύπτει ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_round_hard_2',
+    generate: () => {
+      const weightFloat = parseFloat(`${randInt(4, 18)}.${randInt(1, 9)}${randInt(5, 9)}${randInt(1, 9)}`);
+      const weightStr = weightFloat.toFixed(3).replace('.', ',');
+      const roundedTenths = (Math.round(weightFloat * 10) / 10).toFixed(1).replace('.', ',');
+      const correctStr = `${roundedTenths} kg`;
+      const fake1 = `${(parseFloat(roundedTenths.replace(',', '.')) + 0.1).toFixed(1).replace('.', ',')} kg`;
+      const fake2 = `${(parseFloat(roundedTenths.replace(',', '.')) - 0.1).toFixed(1).replace('.', ',')} kg`;
+      const fake3 = `${Math.round(weightFloat)} kg`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΕΚΤΙΜΗΣΗ ΒΑΡΟΥΣ ΦΟΡΤΙΟΥ',
+        instruction: 'Επιλέξτε το στρογγυλοποιημένο βάρος στα πλησιέστερα δέκατα (0,1 kg):',
+        text: `Ένα δέμα ζυγίζει ${weightStr} kg. Ποιο είναι το βάρος του δέματος στρογγυλοποιημένο στα πλησιέστερα δέκατα (0,1) του κιλού;`,
+        tableData: { col1: 'Ακριβές Βάρος', col2: 'Στα Δέκατα (0,1)', r1: [`${weightStr} kg`, 'Δέκατα'], r2: ['Ψηφίο-κλειδί (Εκατοστά)', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εξετάζουμε το ψηφίο των εκατοστών. Στρογγυλοποιώντας στα πλησιέστερα δέκατα προκύπτει ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_round_hard_3',
+    generate: () => {
+      const roadKm = parseFloat(`${randInt(25, 85)}.${randInt(1, 9)}${randInt(1, 9)}`);
+      const roadStr = roadKm.toFixed(2).replace('.', ',');
+      const roundedUnits = Math.round(roadKm);
+      const correctStr = `${roundedUnits} km`;
+      const fake1 = `${roundedUnits + 1} km`;
+      const fake2 = `${roundedUnits - 1} km`;
+      const fake3 = `${Math.floor(roadKm / 10) * 10} km`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΕΚΤΙΜΗΣΗ ΑΠΟΣΤΑΣΗΣ ΣΕ ΑΚΕΡΑΙΑ ΧΙΛΙΟΜΕΤΡΑ',
+        instruction: 'Επιλέξτε την απόσταση στις πλησιέστερες ακέραιες μονάδες (km):',
+        text: `Μια διαδρομή ποδηλασίας έχει μήκος ${roadStr} km. Πόσα ακέραια χιλιόμετρα είναι η διαδρομή αν στρογγυλοποιηθεί στις πλησιέστερες ακέραιες μονάδες;`,
+        tableData: { col1: 'Μήκος Διαδρομής', col2: 'Στις Ακέραιες Μονάδες', r1: [`${roadStr} km`, 'Μονάδες'], r2: ['Ψηφίο-κλειδί (Δέκατα)', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εξετάζουμε το ψηφίο των δεκάτων. Στρογγυλοποιώντας στις ακέραιες μονάδες προκύπτει ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_round_hard_4',
+    generate: () => {
+      const oilFloat = parseFloat(`${randInt(14, 48)}.${randInt(1, 9)}${randInt(1, 9)}`);
+      const oilStr = oilFloat.toFixed(2).replace('.', ',');
+      const roundedTenths = (Math.round(oilFloat * 10) / 10).toFixed(1).replace('.', ',');
+      const correctStr = `${roundedTenths} L`;
+      const fake1 = `${(parseFloat(roundedTenths.replace(',', '.')) + 0.1).toFixed(1).replace('.', ',')} L`;
+      const fake2 = `${(parseFloat(roundedTenths.replace(',', '.')) - 0.1).toFixed(1).replace('.', ',')} L`;
+      const fake3 = `${Math.round(oilFloat)} L`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΕΚΤΙΜΗΣΗ ΟΓΚΟΥ ΕΛΑΙΟΛΑΔΟΥ',
+        instruction: 'Επιλέξτε τον όγκο στα πλησιέστερα δέκατα του λίτρου (0,1 L):',
+        text: `Ένα δοχείο περιέχει ${oilStr} L ελαιόλαδο. Ποιος είναι ο όγκος του ελαιολάδου στρογγυλοποιημένος στα πλησιέστερα δέκατα του λίτρου;`,
+        tableData: { col1: 'Ακριβής Όγκος', col2: 'Στα Δέκατα', r1: [`${oilStr} L`, 'Δέκατα'], r2: ['Ψηφίο-κλειδί (Εκατοστά)', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εξετάζουμε το ψηφίο των εκατοστών. Στρογγυλοποιώντας στα πλησιέστερα δέκατα προκύπτει ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_round_hard_5',
+    generate: () => {
+      const priceFloat = parseFloat(`${randInt(25, 95)}.${randInt(1, 9)}${randInt(1, 9)}${randInt(5, 9)}`);
+      const priceStr = priceFloat.toFixed(3).replace('.', ',');
+      const roundedHundr = (Math.round(priceFloat * 100) / 100).toFixed(2).replace('.', ',');
+      const correctStr = `${roundedHundr} €`;
+      const fake1 = `${(parseFloat(roundedHundr.replace(',', '.')) + 0.01).toFixed(2).replace('.', ',')} €`;
+      const fake2 = `${(parseFloat(roundedHundr.replace(',', '.')) - 0.01).toFixed(2).replace('.', ',')} €`;
+      const fake3 = `${(Math.round(priceFloat * 10) / 10).toFixed(1).replace('.', ',')} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΤΡΟΓΓΥΛΟΠΟΙΗΣΗ ΤΙΜΗΣ ΣΤΑ ΕΚΑΤΟΣΤΑ',
+        instruction: 'Επιλέξτε την τιμή στα πλησιέστερα εκατοστά του ευρώ (0,01 €):',
+        text: `Μια ηλεκτρονική παραγγελία κοστολογήθηκε ακριβώς στα ${priceStr} €. Ποιο είναι το τελικό ποσό πληρωμής στρογγυλοποιημένο στα πλησιέστερα εκατοστά (λεπτά του ευρώ);`,
+        tableData: { col1: 'Ακριβής Τιμή', col2: 'Στα Εκατοστά (0,01 €)', r1: [`${priceStr} €`, 'Εκατοστά'], r2: ['Ψηφίο-κλειδί (Χιλιοστά)', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εξετάζουμε το ψηφίο των χιλιοστών. Στρογγυλοποιώντας στα πλησιέστερα εκατοστά προκύπτει ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_round_hard_6',
+    generate: () => {
+      const areaFloat = parseFloat(`${randInt(120, 480)}.${randInt(1, 9)}${randInt(1, 9)}`);
+      const areaStr = areaFloat.toFixed(2).replace('.', ',');
+      const roundedTens = Math.round(areaFloat / 10) * 10;
+      const correctStr = `${roundedTens} τ.μ.`;
+      const fake1 = `${roundedTens + 10} τ.μ.`;
+      const fake2 = `${Math.max(10, roundedTens - 10)} τ.μ.`;
+      const fake3 = `${Math.round(areaFloat)} τ.μ.`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΕΚΤΙΜΗΣΗ ΕΜΒΑΔΟΥ ΟΙΚΟΠΕΔΟΥ',
+        instruction: 'Επιλέξτε το εμβαδόν στην πλησιέστερη δεκάδα τετραγωνικών μέτρων (τ.μ.):',
+        text: `Ένα οικόπεδο έχει εμβαδόν ${areaStr} τ.μ. Ποιο είναι το εμβαδόν του οικοπέδου αν στρογγυλοποιηθεί στην πλησιέστερη δεκάδα τετραγωνικών μέτρων;`,
+        tableData: { col1: 'Ακριβές Εμβαδόν', col2: 'Πλησιέστερη Δεκάδα', r1: [`${areaStr} τ.μ.`, 'Δεκάδες'], r2: ['Ψηφίο-κλειδί (Μονάδες)', `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Εξετάζουμε το ψηφίο των μονάδων. Στρογγυλοποιώντας στην πλησιέστερη δεκάδα προκύπτει ${correctStr}.`
       };
     }
   }
@@ -111,7 +347,7 @@ function generateQuestions() {
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΣΤΡΟΓΓΥΛΟΠΟΙΗΣΗ ΦΥΣΙΚΟΥ ΑΡΙΘΜΟΥ',
-      instruction: 'Στρογγυλοποιήστε τον αριθμό στην επιθυμητή τάξη:',
+      instruction: 'Στρογγυλοποιήστε τον αριθμό στην επιθυμητή τάξη (ακέραιος):',
       prompt: `Στρογγυλοποιήστε τον αριθμό ${q1Int} στην ${q1PlaceName}:`,
       correctVal: q1CorrectVal,
       correctStr: String(q1CorrectVal),
@@ -273,7 +509,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΗ ΑΡΙΘΜΟΓΡΑΜΜΗ',
-      instruction: 'Συμπληρώστε την πλησιέστερη δεκάδα:',
+      instruction: 'Συμπληρώστε την πλησιέστερη δεκάδα (ακέραιος):',
       prompt: `Σε ποια πλησιέστερη δεκάδα στρογγυλοποιείται ο αριθμός ${q7Val};`,
       val: q7Val,
       base: q7Base,
@@ -314,48 +550,37 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΣΤΡΟΓΓΥΛΟΠΟΙΗΣΗΣ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
-      correctVal: prob9.correctVal,
-      correctStr: prob9.correctStr,
-      explanation: prob9.explanation
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Εγγύηση Μοναδικότητας) - Χωρίς πίνακα στην εκφώνηση
-    const val10 = prob10.correctVal;
-    const correctStr10 = `${prob10.correctStr}`;
-    const fake10A = formatNum(val10 + 1);
-    const fake10B = formatNum(Math.max(1, val10 - 1));
-    const fake10C = formatNum(val10 + 0.5);
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΕΚΤΙΜΗΣΗΣ',
-      instruction: 'Επιλέξτε τη σωστή στρογγυλοποιημένη τιμή για το πρόβλημα:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
-      explanation: prob10.explanation
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
@@ -375,6 +600,7 @@ export default function StroggilopoiisiExercisesPage() {
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
@@ -520,7 +746,7 @@ export default function StroggilopoiisiExercisesPage() {
                   )}
                 </div>
 
-                {/* Εκφωνηση */}
+                {/* Εκφωνηση (Καθαρο κειμενο χωρις πινακα που προδιδει τη λυση) */}
                 <div className="space-y-3 mb-5">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
