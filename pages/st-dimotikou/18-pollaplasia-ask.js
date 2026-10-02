@@ -27,24 +27,33 @@ function shuffle(array) {
   return arr;
 }
 
-// Δεξαμενη 10 θεματικων σεναριων για προβληματα
-const EXTRA_PROBLEMS_POOL = [
+// Μορφοποιηση αριθμου με τελειες χιλιαδων
+function formatNumber(num) {
+  if (num === '' || isNaN(num)) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
+
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (MCQ)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_mult_std_1',
     generate: () => {
       const perPacket = 8;
       const packets = randInt(12, 25);
       const totalCandies = perPacket * packets;
+      const correctStr = `Ναι (ακριβώς ${packets} πακέτα)`;
       return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΚΑΡΑΜΕΛΩΝ ΣΕ ΠΑΚΕΤΑ',
+        instruction: 'Επιλέξτε τη σωστή απάντηση:',
         text: `Ένας ζαχαροπλάστης φτιάχνει πακέτα που περιέχουν ${perPacket} καραμέλες το καθένα. Αν έχει συνολικά ${totalCandies} καραμέλες, μπορεί να τις συσκευάσει όλες ακριβώς χωρίς να του περισσέψει καμία;`,
         tableData: { col1: 'Σύνολο Καραμελών', col2: 'Ανά Πακέτο', r1: [`${totalCandies} καραμέλες`, `${perPacket} ανά πακέτο`], r2: ['Έλεγχος Πολλαπλασίου', `${totalCandies} : ${perPacket} ＝ ${packets} πακέτα ✅`] },
         optionsRaw: [
-          `Ναι (ακριβώς ${packets} πακέτα)`,
+          correctStr,
           `Όχι, περισσεύουν ${randInt(1, 3)}`,
           `Όχι, λείπουν ${randInt(2, 4)}`,
           `Ναι (ακριβώς ${packets + 2} πακέτα)`
         ],
-        correctText: `Ναι (ακριβώς ${packets} πακέτα)`,
+        correctText: correctStr,
         explanation: `Ο αριθμός ${totalCandies} είναι πολλαπλάσιο του ${perPacket} (${perPacket} · ${packets} ＝ ${totalCandies}), άρα σχηματίζονται ακριβώς ${packets} πακέτα.`
       };
     }
@@ -55,17 +64,20 @@ const EXTRA_PROBLEMS_POOL = [
       const step = 6;
       const hours = randInt(5, 10);
       const totalKm = step * hours;
+      const correctStr = `${totalKm} km`;
       return {
-        text: `Ένας δρομέας τρέχει με σταθερό ρυθμό ${step} χλμ. την ώρα. Πόσα χιλιόμετρα θα διανύσει συνολικά σε ${hours} ώρες συνεχούς τρεξίματος;`,
-        tableData: { col1: 'Ταχύτητα', col2: 'Χρόνος', r1: [`${step} χλμ./ώρα`, `${hours} ώρες`], r2: ['Υπολογισμός', `${step} · ${hours} ＝ ${totalKm} χλμ.`] },
+        title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΑΠΟΣΤΑΣΗΣ ΔΡΟΜΕΑ',
+        instruction: 'Επιλέξτε τη συνολική απόσταση:',
+        text: `Ένας δρομέας τρέχει με σταθερό ρυθμό ${step} km την ώρα. Πόσα χιλιόμετρα (km) θα διανύσει συνολικά σε ${hours} ώρες συνεχούς τρεξίματος;`,
+        tableData: { col1: 'Ταχύτητα', col2: 'Χρόνος', r1: [`${step} km/h`, `${hours} ώρες`], r2: ['Υπολογισμός', `${step} · ${hours} ＝ ${totalKm} km`] },
         optionsRaw: [
-          `${totalKm} χλμ.`,
-          `${totalKm + step} χλμ.`,
-          `${totalKm - step} χλμ.`,
-          `${totalKm + 10} χλμ.`
+          correctStr,
+          `${totalKm + step} km`,
+          `${totalKm - step} km`,
+          `${totalKm + 10} km`
         ],
-        correctText: `${totalKm} χλμ.`,
-        explanation: `Το ${hours}ο πολλαπλάσιο του ${step} είναι: ${step} · ${hours} ＝ ${totalKm} χλμ.`
+        correctText: correctStr,
+        explanation: `Το ${hours}ο πολλαπλάσιο του ${step} είναι: ${step} · ${hours} ＝ ${correctStr}.`
       };
     }
   },
@@ -75,17 +87,231 @@ const EXTRA_PROBLEMS_POOL = [
       const perRow = 12;
       const rows = randInt(8, 15);
       const totalChairs = perRow * rows;
+      const correctStr = `${totalChairs} καρέκλες`;
       return {
+        title: 'ΤΟΠΟΘΕΤΗΣΗ ΚΑΘΙΣΜΑΤΩΝ ΣΕ ΣΕΙΡΕΣ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος των καθισμάτων:',
         text: `Μια αίθουσα εκδηλώσεων τοποθετεί καρέκλες σε σειρές των ${perRow}. Αν τοποθετηθούν ${rows} τέτοιες σειρές, πόσες καρέκλες θα χρησιμοποιηθούν συνολικά;`,
         tableData: { col1: 'Καρέκλες ανά Σειρά', col2: 'Σειρές', r1: [`${perRow} καρέκλες`, `${rows} σειρές`], r2: ['Πολλαπλάσιο', `${perRow} · ${rows} ＝ ${totalChairs}`] },
         optionsRaw: [
-          `${totalChairs}`,
-          `${totalChairs + perRow}`,
-          `${totalChairs - perRow}`,
-          `${totalChairs + 6}`
+          correctStr,
+          `${totalChairs + perRow} καρέκλες`,
+          `${totalChairs - perRow} καρέκλες`,
+          `${totalChairs + 6} καρέκλες`
         ],
-        correctText: `${totalChairs}`,
-        explanation: `Πολλαπλασιάζουμε τις καρέκλες κάθε σειράς με τον αριθμό των σειρών: ${perRow} · ${rows} ＝ ${totalChairs} καρέκλες.`
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε τις καρέκλες κάθε σειράς με τον αριθμό των σειρών: ${perRow} · ${rows} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mult_std_4',
+    generate: () => {
+      const perBox = 15;
+      const boxes = randInt(6, 12);
+      const totalJuices = perBox * boxes;
+      const correctStr = `${totalJuices} χυμοί`;
+      return {
+        title: 'ΚΙΒΩΤΙΑ ΜΕ ΧΥΜΟΥΣ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος των χυμών:',
+        text: `Ένα παντοπωλείο παρέλαβε ${boxes} κιβώτια που περιέχουν ${perBox} χυμούς το καθένα. Πόσους χυμούς παρέλαβε συνολικά;`,
+        tableData: { col1: 'Κιβώτια', col2: 'Χυμοί ανά Κιβώτιο', r1: [`${boxes} κιβώτια`, `${perBox} χυμοί`], r2: ['Γινόμενο', `${boxes} · ${perBox} ＝ ${totalJuices}`] },
+        optionsRaw: [
+          correctStr,
+          `${totalJuices + 15} χυμοί`,
+          `${totalJuices - 15} χυμοί`,
+          `${totalJuices + 30} χυμοί`
+        ],
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε: ${boxes} · ${perBox} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mult_std_5',
+    generate: () => {
+      const perTeam = 7;
+      const teams = randInt(8, 14);
+      const totalPlayers = perTeam * teams;
+      const correctStr = `${totalPlayers} παίκτες`;
+      return {
+        title: 'ΟΜΑΔΕΣ ΧΑΝΤΜΠΟΛ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος παικτών:',
+        text: `Σε ένα τουρνουά συμμετέχουν ${teams} ομάδες των ${perTeam} παικτών. Πόσοι παίκτες συμμετέχουν συνολικά στο τουρνουά;`,
+        tableData: { col1: 'Ομάδες', col2: 'Παίκτες ανά Ομάδα', r1: [`${teams} ομάδες`, `${perTeam} παίκτες`], r2: ['Πολλαπλάσιο', `${teams} · ${perTeam} ＝ ${totalPlayers}`] },
+        optionsRaw: [
+          correctStr,
+          `${totalPlayers + 7} παίκτες`,
+          `${totalPlayers - 7} παίκτες`,
+          `${totalPlayers + 14} παίκτες`
+        ],
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε: ${teams} · ${perTeam} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mult_std_6',
+    generate: () => {
+      const perShelf = 20;
+      const shelves = randInt(7, 15);
+      const totalBooks = perShelf * shelves;
+      const correctStr = `${totalBooks} βιβλία`;
+      return {
+        title: 'ΤΟΠΟΘΕΤΗΣΗ ΒΙΒΛΙΩΝ ΣΕ ΡΑΦΙΑ',
+        instruction: 'Επιλέξτε τον συνολικό αριθμό βιβλίων:',
+        text: `Μια βιβλιοθήκη έχει ${shelves} ράφια και σε κάθε ράφι χωράνε ακριβώς ${perShelf} βιβλία. Πόσα βιβλία χωράνε συνολικά σε όλα τα ράφια;`,
+        tableData: { col1: 'Ράφια', col2: 'Βιβλία ανά Ράφι', r1: [`${shelves} ράφια`, `${perShelf} βιβλία`], r2: ['Πολλαπλάσιο', `${shelves} · ${perShelf} ＝ ${totalBooks}`] },
+        optionsRaw: [
+          correctStr,
+          `${totalBooks + 20} βιβλία`,
+          `${totalBooks - 20} βιβλία`,
+          `${totalBooks + 10} βιβλία`
+        ],
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε: ${shelves} · ${perShelf} ＝ ${correctStr}.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_mult_hard_1',
+    generate: () => {
+      const perRow = 15;
+      const rows = randInt(12, 20);
+      const totalTiles = perRow * rows;
+      const correctStr = `${totalTiles} πλακάκια`;
+      return {
+        title: 'ΣΥΝΘΕΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΠΛΑΚΙΔΙΩΝ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος πλακιδίων:',
+        text: `Ένας τεχνίτης τοποθετεί πλακάκια σε ${rows} σειρές με ${perRow} πλακάκια η καθεμία. Πόσα πλακάκια τοποθέτησε συνολικά;`,
+        tableData: { col1: 'Σειρές', col2: 'Πλακάκια ανά Σειρά', r1: [`${rows} σειρές`, `${perRow} πλακάκια`], r2: ['Γινόμενο', `${rows} · ${perRow} ＝ ${totalTiles}`] },
+        optionsRaw: [
+          correctStr,
+          `${totalTiles + 15} πλακάκια`,
+          `${totalTiles - 15} πλακάκια`,
+          `${totalTiles + 30} πλακάκια`
+        ],
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε: ${rows} · ${perRow} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mult_hard_2',
+    generate: () => {
+      const perDay = 25;
+      const days = randInt(14, 28);
+      const totalPages = perDay * days;
+      const correctStr = `${totalPages} σελίδες`;
+      return {
+        title: 'ΡΥΘΜΟΣ ΑΝΑΓΝΩΣΗΣ ΒΙΒΛΙΟΥ',
+        instruction: 'Επιλέξτε τον συνολικό αριθμό σελίδων:',
+        text: `Ένας μαθητής διαβάζει ${perDay} σελίδες την ημέρα. Πόσες σελίδες θα διαβάσει συνολικά σε ${days} ημέρες;`,
+        tableData: { col1: 'Σελίδες/Ημέρα', col2: 'Ημέρες', r1: [`${perDay} σελίδες`, `${days} ημέρες`], r2: ['Πολλαπλάσιο', `${days} · ${perDay} ＝ ${totalPages}`] },
+        optionsRaw: [
+          correctStr,
+          `${totalPages + 25} σελίδες`,
+          `${totalPages - 25} σελίδες`,
+          `${totalPages + 50} σελίδες`
+        ],
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε: ${days} · ${perDay} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mult_hard_3',
+    generate: () => {
+      const panelsPerRow = 18;
+      const rows = randInt(10, 16);
+      const totalPanels = panelsPerRow * rows;
+      const correctStr = `${totalPanels} πάνελ`;
+      return {
+        title: 'ΦΩΤΟΒΟΛΤΑΪΚΟ ΠΑΡΚΟ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος ηλιακών πάνελ:',
+        text: `Σε ένα πάρκο τοποθετήθηκαν φωτοβολταϊκά πάνελ σε ${rows} σειρές των ${panelsPerRow} πάνελ. Πόσα πάνελ υπάρχουν συνολικά;`,
+        tableData: { col1: 'Σειρές', col2: 'Πάνελ ανά Σειρά', r1: [`${rows} σειρές`, `${panelsPerRow} πάνελ`], r2: ['Γινόμενο', `${rows} · ${panelsPerRow} ＝ ${totalPanels}`] },
+        optionsRaw: [
+          correctStr,
+          `${totalPanels + 18} πάνελ`,
+          `${totalPanels - 18} πάνελ`,
+          `${totalPanels + 36} πάνελ`
+        ],
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε: ${rows} · ${panelsPerRow} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mult_hard_4',
+    generate: () => {
+      const lapsPerDay = 30;
+      const days = randInt(12, 24);
+      const totalLaps = lapsPerDay * days;
+      const correctStr = `${totalLaps} γύροι`;
+      return {
+        title: 'ΠΡΟΠΟΝΗΣΗ ΣΤΟ ΚΟΛΥΜΒΗΤΗΡΙΟ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος γύρων:',
+        text: `Μια αθλήτρια κολυμπάει ${lapsPerDay} γύρους την ημέρα. Πόσους γύρους θα κάνει συνολικά σε ${days} ημέρες προπόνησης;`,
+        tableData: { col1: 'Γύροι/Ημέρα', col2: 'Ημέρες', r1: [`${lapsPerDay} γύροι`, `${days} ημέρες`], r2: ['Πολλαπλάσιο', `${days} · ${lapsPerDay} ＝ ${totalLaps}`] },
+        optionsRaw: [
+          correctStr,
+          `${totalLaps + 30} γύροι`,
+          `${totalLaps - 30} γύροι`,
+          `${totalLaps + 60} γύροι`
+        ],
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε: ${days} · ${lapsPerDay} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mult_hard_5',
+    generate: () => {
+      const treesPerRow = 24;
+      const rows = randInt(8, 15);
+      const totalTrees = treesPerRow * rows;
+      const correctStr = `${totalTrees} δέντρα`;
+      return {
+        title: 'ΔΕΝΔΡΟΦΥΤΕΥΣΗ ΣΤΟ ΑΛΣΟΣ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος δέντρων:',
+        text: `Σε ένα άλσος φυτεύτηκαν ${rows} σειρές με ${treesPerRow} δέντρα σε κάθε σειρά. Πόσα δέντρα φυτεύτηκαν συνολικά;`,
+        tableData: { col1: 'Σειρές', col2: 'Δέντρα ανά Σειρά', r1: [`${rows} σειρές`, `${treesPerRow} δέντρα`], r2: ['Γινόμενο', `${rows} · ${treesPerRow} ＝ ${totalTrees}`] },
+        optionsRaw: [
+          correctStr,
+          `${totalTrees + 24} δέντρα`,
+          `${totalTrees - 24} δέντρα`,
+          `${totalTrees + 48} δέντρα`
+        ],
+        correctText: correctStr,
+        explanation: `Πολλαπλασιάζουμε: ${rows} · ${treesPerRow} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_mult_hard_6',
+    generate: () => {
+      const perBox = 16;
+      const boxes = randInt(12, 25);
+      const totalMarkers = perBox * boxes;
+      const correctStr = `${totalMarkers} μαρκαδόροι`;
+      return {
+        title: 'ΠΑΚΕΤΑΡΙΣΜΑ ΜΑΡΚΑΔΟΡΩΝ',
+        instruction: 'Επιλέξτε το συνολικό πλήθος μαρκαδόρων:',
+        text: `Ένα εργοστάσιο συσκεύασε ${boxes} κουτιά των ${perBox} μαρκαδόρων. Πόσοι μαρκαδόροι συσκευάστηκαν συνολικά;`,
+        tableData: { col1: 'Κουτιά', col2: 'Μαρκαδόροι ανά Κουτί', r1: [`${boxes} κουτιά`, `${perBox} μαρκαδόροι`], r2: ['Πολλαπλάσιο', `${boxes} · ${perBox} ＝ ${totalMarkers}`] },
+        optionsRaw: [
+          correctStr,
+          `${totalMarkers + 16} μαρκαδόροι`,
+          `${totalMarkers - 16} μαρκαδόροι`,
+          `${totalMarkers + 32} μαρκαδόροι`
+        ],
+        correctText: correctStr,
+        explanation: `Υπολογίζουμε: ${boxes} · ${perBox} ＝ ${correctStr}.`
       };
     }
   }
@@ -133,7 +359,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΕΠΟΜΕΝΟ ΠΟΛΛΑΠΛΑΣΙΟ',
-      instruction: 'Συμπληρώστε το αμέσως επόμενο πολλαπλάσιο:',
+      instruction: 'Συμπληρώστε το αμέσως επόμενο πολλαπλάσιο (ακέραιος):',
       prompt: `Ποιο είναι το αμέσως επόμενο πολλαπλάσιο του ${q2Base} μετά το ${q2Given};`,
       correctVal: q2Next,
       correctStr: String(q2Next),
@@ -267,7 +493,7 @@ function generateQuestions() {
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΥΠΟΛΟΓΙΣΜΟΣ ΠΟΛΛΑΠΛΑΣΙΟΥ',
-      instruction: 'Υπολογίστε το γινόμενο:',
+      instruction: 'Υπολογίστε το γινόμενο (ακέραιος):',
       prompt: `Πόσο κάνει το ${q7MultIndex}ο πολλαπλάσιο του αριθμού ${q7Base} (${q7Base} · ${q7MultIndex});`,
       correctVal: q7Ans,
       correctStr: String(q7Ans),
@@ -302,46 +528,47 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
     // Q9 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ9 = shuffle([...new Set(prob9.optionsRaw)]).map((text) => ({
+    const optionsQ9 = shuffle([...new Set(stdProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob9.correctText
+      isCorrect: text === stdProb.correctText
     }));
 
     qList.push({
       id: 9,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΑΚΤΙΚΗ ΕΦΑΡΜΟΓΗ ΠΟΛΛΑΠΛΑΣΙΩΝ',
-      instruction: 'Επιλέξτε τη σωστή τιμή:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
       options: optionsQ9,
-      correctText: prob9.correctText,
-      explanation: prob9.explanation
+      correctText: stdProb.correctText,
+      explanation: stdProb.explanation
     });
 
     // Q10 (MCQ) - Χωρίς πίνακα στην εκφώνηση
-    const optionsQ10 = shuffle([...new Set(prob10.optionsRaw)]).map((text) => ({
+    const optionsQ10 = shuffle([...new Set(hardProb.optionsRaw)]).map((text) => ({
       text,
-      isCorrect: text === prob10.correctText
+      isCorrect: text === hardProb.correctText
     }));
 
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΠΟΣΟΤΗΤΑΣ',
-      instruction: 'Επιλέξτε τη σωστή απάντηση:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
       options: optionsQ10,
-      correctText: prob10.correctText,
-      explanation: prob10.explanation
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
