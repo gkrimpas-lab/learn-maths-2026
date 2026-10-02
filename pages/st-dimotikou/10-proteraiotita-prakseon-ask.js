@@ -38,11 +38,13 @@ const REAL_WORLD_PROBLEMS = [
   { name: 'Ο Νίκος', item: 'βιβλία', price: 12, wallet: 50, count: 3, unit: '€' },
   { name: 'Η Μαρία', item: 'τετράδια', price: 4, wallet: 30, count: 5, unit: '€' },
   { name: 'Ο Γιώργος', item: 'εισιτήρια', price: 6, wallet: 40, count: 4, unit: '€' },
-  { name: 'Η Ελένη', item: 'χυμούς', price: 2, wallet: 20, count: 6, unit: '€' }
+  { name: 'Η Ελένη', item: 'χυμούς', price: 2, wallet: 20, count: 6, unit: '€' },
+  { name: 'Ο Κώστας', item: 'μπάλες', price: 8, wallet: 60, count: 5, unit: '€' },
+  { name: 'Η Δήμητρα', item: 'μαρκαδόρους', price: 3, wallet: 25, count: 4, unit: '€' }
 ];
 
-// Δεξαμενη προβληματων για τις ερωτησεις 9 & 10
-const EXTRA_PROBLEMS_POOL = [
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_prio_std_1',
     generate: () => {
@@ -54,6 +56,8 @@ const EXTRA_PROBLEMS_POOL = [
       const totalCost = tickets * ticketPrice + popcorn * popcornPrice;
       const change = wallet - totalCost;
       return {
+        title: 'ΑΓΟΡΑ ΕΙΣΙΤΗΡΙΩΝ ΚΑΙ ΣΝΑΚ',
+        instruction: 'Υπολογίστε τα ρέστα σε ευρώ (€):',
         text: `Μια παρέα αγόρασε ${tickets} εισιτήρια σινεμά προς ${ticketPrice} € το καθένα και ${popcorn} ποπ κορν προς ${popcornPrice} € το καθένα. Πλήρωσαν με χαρτονόμισμα των ${wallet} €. Πόσα ρέστα (€) έλαβαν;`,
         tableData: { col1: 'Αγορές', col2: 'Κόστος & Ρέστα', r1: [`${tickets} · ${ticketPrice} € ＋ ${popcorn} · ${popcornPrice} €`, `Σύνολο: ${totalCost} €`], r2: [`Χαρτονόμισμα: ${wallet} €`, `Ρέστα: ${change} €`] },
         correctVal: change,
@@ -65,24 +69,6 @@ const EXTRA_PROBLEMS_POOL = [
   {
     id: 'p_prio_std_2',
     generate: () => {
-      const crates = 5;
-      const applesPerCrate = 20;
-      const rotten = 8;
-      const bags = 6;
-      const goodApples = crates * applesPerCrate - rotten;
-      const applesPerBag = goodApples / bags;
-      return {
-        text: `Ένας μανάβης είχε ${crates} τελάρα με ${applesPerCrate} μήλα το καθένα. Αφαίρεσε ${rotten} χαλασμένα μήλα και τα υπόλοιπα τα μοίρασε εξίσου σε ${bags} σακούλες. Πόσα μήλα έβαλε σε κάθε σακούλα;`,
-        tableData: { col1: 'Συνολικά & Χαλασμένα', col2: 'Μοίρασμα', r1: [`(${crates} · ${applesPerCrate}) － ${rotten}`, `${goodApples} καλά μήλα`], r2: [`: ${bags} σακούλες`, `${applesPerBag} μήλα / σακούλα`] },
-        correctVal: applesPerBag,
-        correctStr: String(applesPerBag),
-        explanation: `Φτιάχνουμε την παράσταση: (${crates} · ${applesPerCrate} － ${rotten}) : ${bags} ＝ (${crates * applesPerCrate} － ${rotten}) : ${bags} ＝ ${goodApples} : ${bags} ＝ ${applesPerBag} μήλα.`
-      };
-    }
-  },
-  {
-    id: 'p_prio_std_3',
-    generate: () => {
       const initial = 100;
       const b1 = 15;
       const count1 = 2;
@@ -91,11 +77,280 @@ const EXTRA_PROBLEMS_POOL = [
       const totalCost = b1 * count1 + b2 * count2;
       const remain = initial - totalCost;
       return {
+        title: 'ΑΓΟΡΑ ΕΝΔΥΜΑΤΩΝ',
+        instruction: 'Υπολογίστε το υπόλοιπο ποσό σε ευρώ (€):',
         text: `Από αρχικό ποσό ${initial} € αγοράστηκαν ${count1} μπλούζες προς ${b1} € η καθεμία και ${count2} καπέλα προς ${b2} € το καθένα. Πόσα ευρώ (€) περίσσεψαν;`,
         tableData: { col1: 'Αγορές', col2: 'Υπόλοιπο', r1: [`${count1} · ${b1} € ＋ ${count2} · ${b2} €`, `Σύνολο: ${totalCost} €`], r2: [`Αρχικά: ${initial} €`, `Περίσσεψαν: ${remain} €`] },
         correctVal: remain,
         correctStr: String(remain),
         explanation: `Παράσταση: ${initial} － (${count1} · ${b1} ＋ ${count2} · ${b2}) ＝ ${initial} － (${count1 * b1} ＋ ${count2 * b2}) ＝ ${initial} － ${totalCost} ＝ ${remain} €.`
+      };
+    }
+  },
+  {
+    id: 'p_prio_std_3',
+    generate: () => {
+      const notebooks = 5;
+      const nbPrice = 3;
+      const pens = 4;
+      const penPrice = 2;
+      const wallet = 30;
+      const total = notebooks * nbPrice + pens * penPrice;
+      const change = wallet - total;
+      return {
+        title: 'ΑΓΟΡΑ ΣΧΟΛΙΚΩΝ ΕΙΔΩΝ',
+        instruction: 'Υπολογίστε τα ρέστα σε ευρώ (€):',
+        text: `Ένας μαθητής αγόρασε ${notebooks} τετράδια προς ${nbPrice} € το καθένα και ${pens} στυλό προς ${penPrice} € το καθένα. Πλήρωσε με χαρτονόμισμα των ${wallet} €. Πόσα ρέστα (€) πήρε;`,
+        tableData: { col1: 'Έξοδα', col2: 'Πληρωμή & Ρέστα', r1: [`${notebooks} · ${nbPrice} € ＋ ${pens} · ${penPrice} €`, `Σύνολο: ${total} €`], r2: [`Χαρτονόμισμα: ${wallet} €`, `Ρέστα: ${change} €`] },
+        correctVal: change,
+        correctStr: String(change),
+        explanation: `Παράσταση: ${wallet} － (${notebooks} · ${nbPrice} ＋ ${pens} · ${penPrice}) ＝ ${wallet} － ${total} ＝ ${change} €.`
+      };
+    }
+  },
+  {
+    id: 'p_prio_std_4',
+    generate: () => {
+      const totalStudents = 60;
+      const boysTeams = 4;
+      const perBoyTeam = 6;
+      const girls = totalStudents - boysTeams * perBoyTeam;
+      return {
+        title: 'ΚΑΤΑΜΕΤΡΗΣΗ ΜΑΘΗΤΩΝ ΣΕ ΟΜΑΔΕΣ',
+        instruction: 'Υπολογίστε το πλήθος των κοριτσιών:',
+        text: `Στην αυλή βρίσκονται ${totalStudents} μαθητές. Σχηματίστηκαν ${boysTeams} ομάδες αγοριών με ${perBoyTeam} αγόρια η καθεμία και οι υπόλοιποι μαθητές είναι κορίτσια. Πόσα είναι τα κορίτσια;`,
+        tableData: { col1: 'Σύνολο Μαθητών', col2: 'Αγόρια', r1: [`${totalStudents} μαθητές`, `${boysTeams} · ${perBoyTeam} ＝ ${boysTeams * perBoyTeam} αγόρια`], r2: ['Αφαίρεση', `${girls} κορίτσια`] },
+        correctVal: girls,
+        correctStr: String(girls),
+        explanation: `Παράσταση: ${totalStudents} － (${boysTeams} · ${perBoyTeam}) ＝ ${totalStudents} － ${boysTeams * perBoyTeam} ＝ ${girls} κορίτσια.`
+      };
+    }
+  },
+  {
+    id: 'p_prio_std_5',
+    generate: () => {
+      const totalCrates = 8;
+      const perCrate = 15;
+      const sold = 45;
+      const remain = totalCrates * perCrate - sold;
+      return {
+        title: 'ΑΠΟΘΗΚΗ ΦΡΟΥΤΩΝ',
+        instruction: 'Υπολογίστε τα κιλά που απέμειναν (ακέραιος):',
+        text: `Ένας παραγωγός είχε ${totalCrates} τελάρα με ${perCrate} kg πορτοκάλια το καθένα. Πούλησε ${sold} kg. Πόσα κιλά (kg) πορτοκάλια του έμειναν;`,
+        tableData: { col1: 'Αρχικό Βάρος', col2: 'Πώληση & Υπόλοιπο', r1: [`${totalCrates} · ${perCrate} kg`, `${sold} kg πωλήθηκαν`], r2: ['Υπόλοιπο', `${remain} kg`] },
+        correctVal: remain,
+        correctStr: String(remain),
+        explanation: `Παράσταση: (${totalCrates} · ${perCrate}) － ${sold} ＝ ${totalCrates * perCrate} － ${sold} ＝ ${remain} kg.`
+      };
+    }
+  },
+  {
+    id: 'p_prio_std_6',
+    generate: () => {
+      const hours = 5;
+      const perHour = 12;
+      const bonus = 20;
+      const total = hours * perHour + bonus;
+      return {
+        title: 'ΑΜΟΙΒΗ ΕΡΓΑΣΙΑΣ',
+        instruction: 'Υπολογίστε τη συνολική αμοιβή σε ευρώ (€):',
+        text: `Ένας τεχνικός εργάστηκε ${hours} ώρες με ωρομίσθιο ${perHour} € και έλαβε επιπλέον επίδομα μετακίνησης ${bonus} €. Ποια ήταν η συνολική αμοιβή του σε ευρώ (€);`,
+        tableData: { col1: 'Ωρομίσθιο', col2: 'Επίδομα & Σύνολο', r1: [`${hours} · ${perHour} €`, `${bonus} €`], r2: ['Σύνολο', `${total} €`] },
+        correctVal: total,
+        correctStr: String(total),
+        explanation: `Παράσταση: (${hours} · ${perHour}) ＋ ${bonus} ＝ ${hours * perHour} ＋ ${bonus} ＝ ${total} €.`
+      };
+    }
+  }
+];
+
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'p_prio_hard_1',
+    generate: () => {
+      const crates = 5;
+      const applesPerCrate = 20;
+      const rotten = 8;
+      const bags = 6;
+      const goodApples = crates * applesPerCrate - rotten;
+      const applesPerBag = goodApples / bags;
+      const correctStr = `${applesPerBag} μήλα`;
+      const fake1 = `${applesPerBag + 4} μήλα`;
+      const fake2 = `${Math.max(1, applesPerBag - 3)} μήλα`;
+      const fake3 = `${applesPerBag * 2} μήλα`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΜΟΙΡΑΣΜΑ ΜΗΛΩΝ ΣΕ ΣΑΚΟΥΛΕΣ',
+        instruction: 'Επιλέξτε πόσα μήλα μπήκαν σε κάθε σακούλα:',
+        text: `Ένας μανάβης είχε ${crates} τελάρα με ${applesPerCrate} μήλα το καθένα. Αφαίρεσε ${rotten} χαλασμένα μήλα και τα υπόλοιπα τα μοίρασε εξίσου σε ${bags} σακούλες. Πόσα μήλα έβαλε σε κάθε σακούλα;`,
+        tableData: { col1: 'Συνολικά & Χαλασμένα', col2: 'Μοίρασμα', r1: [`(${crates} · ${applesPerCrate}) － ${rotten}`, `${goodApples} καλά μήλα`], r2: [`: ${bags} σακούλες`, `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Φτιάχνουμε την παράσταση: (${crates} · ${applesPerCrate} － ${rotten}) : ${bags} ＝ (${crates * applesPerCrate} － ${rotten}) : ${bags} ＝ ${goodApples} : ${bags} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_prio_hard_2',
+    generate: () => {
+      const adultTickets = 3;
+      const adultPrice = 10;
+      const kidTickets = 4;
+      const kidPrice = 5;
+      const wallet = 60;
+      const totalCost = adultTickets * adultPrice + kidTickets * kidPrice;
+      const change = wallet - totalCost;
+      const correctStr = `${change} €`;
+      const fake1 = `${change + 5} €`;
+      const fake2 = `${Math.max(1, change - 3)} €`;
+      const fake3 = `${change + 10} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΕΙΣΙΤΗΡΙΑ ΘΕΑΜΑΤΟΣ & ΡΕΣΤΑ',
+        instruction: 'Επιλέξτε το σωστό ποσό ρέστων σε ευρώ (€):',
+        text: `Μια οικογένεια αγόρασε ${adultTickets} εισιτήρια ενηλίκων προς ${adultPrice} € το καθένα και ${kidTickets} παιδικά εισιτήρια προς ${kidPrice} € το καθένα. Πλήρωσε με χαρτονόμισμα των ${wallet} €. Πόσα ρέστα (€) έλαβε;`,
+        tableData: { col1: 'Εισιτήρια', col2: 'Πληρωμή & Ρέστα', r1: [`${adultTickets} · ${adultPrice} € ＋ ${kidTickets} · ${kidPrice} €`, `Σύνολο: ${totalCost} €`], r2: [`Χαρτονόμισμα: ${wallet} €`, `Ρέστα: ${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Παράσταση: ${wallet} － (${adultTickets} · ${adultPrice} ＋ ${kidTickets} · ${kidPrice}) ＝ ${wallet} － (${adultTickets * adultPrice} ＋ ${kidTickets * kidPrice}) ＝ ${wallet} － ${totalCost} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_prio_hard_3',
+    generate: () => {
+      const rows = 6;
+      const perRow = 15;
+      const damaged = 10;
+      const boxes = 8;
+      const goodTiles = rows * perRow - damaged;
+      const perBox = goodTiles / boxes;
+      const correctStr = `${perBox} πλακάκια`;
+      const fake1 = `${perBox + 2} πλακάκια`;
+      const fake2 = `${Math.max(1, perBox - 2)} πλακάκια`;
+      const fake3 = `${perBox + 5} πλακάκια`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΑΚΕΡΑΙΩΝ ΠΛΑΚΙΔΙΩΝ',
+        instruction: 'Επιλέξτε πόσα πλακάκια τοποθετούνται σε κάθε κουτί:',
+        text: `Ένας εργάτης είχε ${rows} σειρές πλακιδίων με ${perRow} πλακάκια η καθεμία. Αφαίρεσε ${damaged} σπασμένα και τα υπόλοιπα τα μοίρασε ισόποσα σε ${boxes} κουτιά. Πόσα πλακάκια έβαλε σε κάθε κουτί;`,
+        tableData: { col1: 'Σύνολο & Σπασμένα', col2: 'Μοίρασμα', r1: [`(${rows} · ${perRow}) － ${damaged}`, `${goodTiles} γερά πλακάκια`], r2: [`: ${boxes} κουτιά`, `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Παράσταση: (${rows} · ${perRow} － ${damaged}) : ${boxes} ＝ (${rows * perRow} － ${damaged}) : ${boxes} ＝ ${goodTiles} : ${boxes} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_prio_hard_4',
+    generate: () => {
+      const pack1 = 4;
+      const price1 = 12;
+      const pack2 = 5;
+      const price2 = 6;
+      const budget = 100;
+      const total = pack1 * price1 + pack2 * price2;
+      const remain = budget - total;
+      const correctStr = `${remain} €`;
+      const fake1 = `${remain + 10} €`;
+      const fake2 = `${Math.max(2, remain - 8)} €`;
+      const fake3 = `${remain + 15} €`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΑΓΟΡΑ ΒΙΒΛΙΩΝ ΚΑΙ ΤΕΤΡΑΔΙΩΝ',
+        instruction: 'Επιλέξτε πόσα ευρώ (€) περίσσεψαν:',
+        text: `Από αρχικό ποσό ${budget} € αγοράστηκαν ${pack1} βιβλία προς ${price1} € το καθένα και ${pack2} πακέτα τετραδίων προς ${price2} € το καθένα. Πόσα ευρώ (€) περίσσεψαν;`,
+        tableData: { col1: 'Αγορές', col2: 'Υπόλοιπο', r1: [`${pack1} · ${price1} € ＋ ${pack2} · ${price2} €`, `Σύνολο: ${total} €`], r2: [`Αρχικά: ${budget} €`, `Περίσσεψαν: ${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Παράσταση: ${budget} － (${pack1} · ${price1} ＋ ${pack2} · ${price2}) ＝ ${budget} － (${pack1 * price1} ＋ ${pack2 * price2}) ＝ ${budget} － ${total} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_prio_hard_5',
+    generate: () => {
+      const barrels = 4;
+      const lPerBarrel = 50;
+      const waste = 20;
+      const cans = 9;
+      const goodOil = barrels * lPerBarrel - waste;
+      const perCan = goodOil / cans;
+      const correctStr = `${perCan} L`;
+      const fake1 = `${perCan + 2} L`;
+      const fake2 = `${Math.max(1, perCan - 2)} L`;
+      const fake3 = `${perCan + 5} L`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΕΜΦΙΑΛΩΣΗ ΕΛΑΙΟΛΑΔΟΥ',
+        instruction: 'Επιλέξτε πόσα λίτρα (L) λάδι μπήκαν σε κάθε δοχείο:',
+        text: `Ένας παραγωγός είχε ${barrels} βαρέλια με ${lPerBarrel} L λάδι το καθένα. Αφαίρεσε ${waste} L κατακάθι και το υπόλοιπο λάδι το μοίρασε ισόποσα σε ${cans} δοχεία. Πόσα λίτρα (L) λάδι μπήκαν σε κάθε δοχείο;`,
+        tableData: { col1: 'Συνολικό Λάδι', col2: 'Μοίρασμα', r1: [`(${barrels} · ${lPerBarrel}) － ${waste}`, `${goodOil} L καθαρό`], r2: [`: ${cans} δοχεία`, `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Παράσταση: (${barrels} · ${lPerBarrel} － ${waste}) : ${cans} ＝ (${barrels * lPerBarrel} － ${waste}) : ${cans} ＝ ${goodOil} : ${cans} ＝ ${correctStr}.`
+      };
+    }
+  },
+  {
+    id: 'p_prio_hard_6',
+    generate: () => {
+      const boxes = 6;
+      const kgPerBox = 12;
+      const damagedKg = 8;
+      const bags = 8;
+      const goodKg = boxes * kgPerBox - damagedKg;
+      const perBag = goodKg / bags;
+      const correctStr = `${perBag} kg`;
+      const fake1 = `${perBag + 1} kg`;
+      const fake2 = `${Math.max(1, perBag - 1)} kg`;
+      const fake3 = `${perBag + 3} kg`;
+
+      const rawOptions = [correctStr, fake1, fake2, fake3];
+      const options = shuffle([...new Set(rawOptions)]).map((text) => ({
+        text,
+        isCorrect: text === correctStr
+      }));
+
+      return {
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΑΛΕΥΡΙΟΥ ΣΕ ΣΑΚΟΥΛΕΣ',
+        instruction: 'Επιλέξτε πόσα κιλά (kg) αλεύρι περιέχει κάθε σακούλα:',
+        text: `Ένας αρτοποιός είχε ${boxes} κιβώτια με ${kgPerBox} kg αλεύρι το καθένα. Αφαίρεσε ${damagedKg} kg ακατάλληλο αλεύρι και το υπόλοιπο το μοίρασε ισόποσα σε ${bags} σακούλες. Πόσα κιλά (kg) περιέχει η κάθε σακούλα;`,
+        tableData: { col1: 'Σύνολο & Ακατάλληλο', col2: 'Μοίρασμα', r1: [`(${boxes} · ${kgPerBox}) － ${damagedKg}`, `${goodKg} kg καλό`], r2: [`: ${bags} σακούλες`, `${correctStr}`] },
+        options,
+        correctText: correctStr,
+        explanation: `Παράσταση: (${boxes} · ${kgPerBox} － ${damagedKg}) : ${bags} ＝ (${boxes * kgPerBox} － ${damagedKg}) : ${bags} ＝ ${goodKg} : ${bags} ＝ ${correctStr}.`
       };
     }
   }
@@ -118,7 +373,7 @@ function generateQuestions() {
       id: 1,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΑΠΛΗ ΠΑΡΑΣΤΑΣΗ',
-      instruction: 'Υπολογίστε την τιμή της παράστασης τηρώντας την προτεραιότητα:',
+      instruction: 'Υπολογίστε την τιμή της παράστασης τηρώντας την προτεραιότητα (ακέραιος):',
       prompt: `Υπολογίστε: ${q1Prompt};`,
       correctVal: q1Answer,
       correctStr: String(q1Answer),
@@ -138,7 +393,7 @@ function generateQuestions() {
       id: 2,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΠΑΡΑΣΤΑΣΗ ΜΕ ΠΑΡΕΝΘΕΣΗ',
-      instruction: 'Υπολογίστε πρώτα την παρένθεση:',
+      instruction: 'Υπολογίστε πρώτα την παρένθεση (ακέραιος):',
       prompt: `Υπολογίστε: ${q2Prompt};`,
       correctVal: q2Answer,
       correctStr: String(q2Answer),
@@ -146,7 +401,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (MCQ): Αναγνώριση πρώτης πράξης
+  // Q3 (MCQ): Αναγνώριση πρώτης πράξης (Εγγύηση Μοναδικότητας)
   {
     const q3A = randInt(20, 50);
     const q3B = randInt(3, 8);
@@ -178,7 +433,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Τιμή παράστασης με πολλαπλές πράξεις: α － β · (γ ＋ δ) (Εγγύηση Μοναδικότητας)
+  // Q4 (MCQ): Τιμή παράστασης με πολλαπλές πράξεις (Εγγύηση Μοναδικότητας)
   {
     const q4B = randInt(2, 5);
     const q4C = randInt(3, 7);
@@ -270,13 +525,13 @@ function generateQuestions() {
   {
     const p = shuffledProblems[0];
     const q7Answer = p.wallet - p.count * p.price;
-    const q7Prompt = `${p.name} είχε ${p.wallet} €. Αγόρασε ${p.count} ${p.item} που κοστίζουν ${p.price} € το καθένα. Πόσα ρέστα πήρε;`;
+    const q7Prompt = `${p.name} είχε ${p.wallet} €. Αγόρασε ${p.count} ${p.item} που κοστίζουν ${p.price} € το καθένα. Πόσα ρέστα πήρε σε ευρώ (€);`;
 
     qList.push({
       id: 7,
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑΣ',
-      instruction: 'Υπολογίστε τα ρέστα εφαρμόζοντας τη σωστή σειρά πράξεων:',
+      instruction: 'Υπολογίστε τα ρέστα εφαρμόζοντας τη σωστή σειρά πράξεων (ακέραιος):',
       prompt: q7Prompt,
       correctVal: q7Answer,
       correctStr: String(q7Answer),
@@ -315,48 +570,37 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τη δεξαμενή EXTRA_PROBLEMS_POOL (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
   {
-    const shuffledPool = shuffle([...EXTRA_PROBLEMS_POOL]);
-    const prob9 = shuffledPool[0].generate();
-    const prob10 = shuffledPool[1].generate();
+    const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
+    const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
+    const stdProb = shuffledStd[0].generate();
+    const hardProb = shuffledHard[0].generate();
 
-    // Q9 (Input - Decimal) - Ο πίνακας tableData εμφανίζεται μόνο στο feedback
+    // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
     qList.push({
       id: 9,
       type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΓΟΡΑΣ',
-      instruction: 'Λύστε το πρόβλημα σχηματίζοντας μία αριθμητική παράσταση:',
-      prompt: prob9.text,
-      tableData: prob9.tableData,
-      correctVal: prob9.correctVal,
-      correctStr: prob9.correctStr,
-      explanation: prob9.explanation
+      title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
+      instruction: stdProb.instruction,
+      prompt: stdProb.text,
+      tableData: stdProb.tableData,
+      correctVal: stdProb.correctVal,
+      correctStr: stdProb.correctStr,
+      explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας) - Ο πίνακας tableData εμφανίζεται μόνο στο feedback
-    const val10 = prob10.correctVal;
-    const correctStr10 = `${prob10.correctStr} μήλα`;
-    const fake10A = `${val10 + 4} μήλα`;
-    const fake10B = `${Math.max(1, val10 - 3)} μήλα`;
-    const fake10C = `${val10 * 2} μήλα`;
-
-    const rawOptionsQ10 = [correctStr10, fake10A, fake10B, fake10C];
-    const optionsQ10 = shuffle([...new Set(rawOptionsQ10)]).map((text) => ({
-      text,
-      isCorrect: text === correctStr10
-    }));
-
+    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
     qList.push({
       id: 10,
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΚΑΤΑΝΟΜΗΣ & ΠΡΑΞΕΩΝ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
-      prompt: prob10.text,
-      tableData: prob10.tableData,
-      options: optionsQ10,
-      correctText: correctStr10,
-      explanation: prob10.explanation
+      title: `ΕΡΩΤΗΣΗ 10 • ${hardProb.title}`,
+      instruction: hardProb.instruction,
+      prompt: hardProb.text,
+      tableData: hardProb.tableData,
+      options: hardProb.options,
+      correctText: hardProb.correctText,
+      explanation: hardProb.explanation
     });
   }
 
@@ -376,13 +620,14 @@ export default function ProteraiotitaPrakseonExercisesPage() {
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
+  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9, οριο 10 χαρακτηρων)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, '');
