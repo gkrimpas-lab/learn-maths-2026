@@ -342,9 +342,12 @@ export default function KlasmaSeDekadikoPage() {
                         －
                       </button>
                       <input
+                        key={`num-input-${numerator}`}
                         type="text"
                         inputMode="numeric"
-                        value={numerator !== '' ? numerator : ''}
+                        autoComplete="off"
+                        spellCheck="false"
+                        value={numerator === '' ? '' : String(numerator)}
                         onChange={(e) => handleNumeratorInputChange(e.target.value)}
                         placeholder="1"
                         className="w-full min-w-0 flex-1 text-center font-mono font-black text-xl sm:text-2xl text-indigo-600 bg-indigo-50/50 border-2 border-indigo-200 rounded-xl p-1.5 focus:border-indigo-500 outline-none shadow-inner"
@@ -373,9 +376,12 @@ export default function KlasmaSeDekadikoPage() {
                         －
                       </button>
                       <input
+                        key={`den-input-${denominator}`}
                         type="text"
                         inputMode="numeric"
-                        value={denominator !== '' ? denominator : ''}
+                        autoComplete="off"
+                        spellCheck="false"
+                        value={denominator === '' ? '' : String(denominator)}
                         onChange={(e) => handleDenominatorInputChange(e.target.value)}
                         placeholder="4"
                         className="w-full min-w-0 flex-1 text-center font-mono font-black text-xl sm:text-2xl text-amber-600 bg-amber-50/50 border-2 border-amber-200 rounded-xl p-1.5 focus:border-amber-500 outline-none shadow-inner"
