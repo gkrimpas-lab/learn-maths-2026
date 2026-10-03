@@ -92,9 +92,9 @@ export default function KlasmaSeDekadikoPage() {
   // Σχεδιασμος Πιτσας (SVG)
   const renderPizza = (pizzaIndex = 0) => {
     const slices = [];
-    const radius = 65;
-    const cx = 80;
-    const cy = 80;
+    const radius = 55;
+    const cx = 65;
+    const cy = 65;
 
     const startingNumeratorForPizza = pizzaIndex * activeDenominator;
     const activeSlicesForThisPizza = Math.max(
@@ -142,7 +142,7 @@ export default function KlasmaSeDekadikoPage() {
     }
 
     return (
-      <svg width="160" height="160" className="drop-shadow-sm shrink-0">
+      <svg width="130" height="130" viewBox="0 0 130 130" className="drop-shadow-xs shrink-0">
         {slices}
         <circle cx={cx} cy={cy} r="3" className="fill-slate-800" />
       </svg>
@@ -518,14 +518,14 @@ export default function KlasmaSeDekadikoPage() {
                 </p>
               </div>
 
-              {/* 3. ΚΥΚΛΙΚΟ ΜΟΝΤΕΛΟ (ΠΙΤΣΑ) */}
+              {/* 3. ΚΥΚΛΙΚΟ ΜΟΝΤΕΛΟ (ΠΙΤΣΑ) - AUTO-EXPANDING ΧΩΡΙΣ SCROLL */}
               <div className="space-y-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block text-center">
                   🍕 ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΟΝΑΔΩΝ (ΚΥΚΛΙΚΟ ΜΟΝΤΕΛΟ):
                 </span>
-                <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 p-4 bg-slate-50/70 rounded-2xl border border-slate-200 max-h-[220px] overflow-y-auto shadow-inner">
+                <div className="w-full flex flex-wrap items-center justify-center gap-3 sm:gap-5 p-4 sm:p-5 bg-slate-50/70 rounded-2xl border border-slate-200 shadow-inner">
                   {Array.from({ length: neededVisuals }).map((_, i) => (
-                    <div key={i} className="flex flex-col items-center space-y-1 scale-[0.85]">
+                    <div key={i} className="flex flex-col items-center space-y-1">
                       {renderPizza(i)}
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Μοναδα {i + 1}</span>
                     </div>
