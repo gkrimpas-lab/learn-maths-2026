@@ -365,29 +365,29 @@ export default function KlasmaPage() {
               </p>
             </div>
 
-            {/* MODEL TOGGLE */}
-            <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner gap-1 w-full sm:w-auto shrink-0">
+            {/* MODEL TOGGLE (RESPONSIVE WRAPPING & NO OVERFLOW) */}
+            <div className="flex bg-slate-100 p-1 sm:p-1.5 rounded-2xl border border-slate-200 shadow-inner gap-1 w-full sm:w-auto shrink-0">
               <button
                 type="button"
                 onClick={() => setActiveModel('pizza')}
-                className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center whitespace-nowrap touch-manipulation active:scale-95 ${
+                className={`flex-1 sm:flex-none px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs md:text-sm 2xl:text-base font-black transition-all text-center leading-tight sm:leading-normal touch-manipulation active:scale-95 ${
                   activeModel === 'pizza'
                     ? 'bg-amber-500 text-white shadow-sm scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🍕 Πίτσα (Κυκλικό)
+                <span>🍕 Πίτσα</span> <span className="text-[10px] sm:text-xs opacity-90 block sm:inline">(Κυκλικό)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveModel('chocolate')}
-                className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center whitespace-nowrap touch-manipulation active:scale-95 ${
+                className={`flex-1 sm:flex-none px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs md:text-sm 2xl:text-base font-black transition-all text-center leading-tight sm:leading-normal touch-manipulation active:scale-95 ${
                   activeModel === 'chocolate'
                     ? 'bg-amber-800 text-white shadow-sm scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🍫 Σοκολάτα (Γραμμικό)
+                <span>🍫 Σοκολάτα</span> <span className="text-[10px] sm:text-xs opacity-90 block sm:inline">(Γραμμικό)</span>
               </button>
             </div>
           </div>
