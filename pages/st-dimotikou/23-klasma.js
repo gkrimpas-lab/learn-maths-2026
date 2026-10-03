@@ -1,27 +1,43 @@
+// pages/st-dimotikou/23-klasma.js
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
-// ΜΕΓΙΣΤΕΣ ΤΙΜΕΣ (Όριο στο 40)
+// Μεγιστες επιτρεπομενες τιμες (Οριο στο 40)
 const MAX_NUMERATOR = 40;
 const MAX_DENOMINATOR = 40;
 
+// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
+function formatNum(num) {
+  if (num === null || num === undefined || isNaN(Number(num))) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
+
 const PRESETS = [
-  { num: 3, den: 4, label: "3/4 (Γνήσιο)" },
-  { num: 4, den: 4, label: "4/4 (Μονάδα)" },
-  { num: 5, den: 4, label: "5/4 (Καταχρηστικό)" },
-  { num: 6, den: 2, label: "6/2 (Ακέραιος = 3)" },
-  { num: 2, den: 3, label: "2/3 (Γνήσιο)" },
-  { num: 7, den: 5, label: "7/5 (Καταχρηστικό)" }
+  { num: 3, den: 4, label: '3/4 (Γνήσιο)' },
+  { num: 4, den: 4, label: '4/4 (Μονάδα)' },
+  { num: 5, den: 4, label: '5/4 (Καταχρηστικό)' },
+  { num: 6, den: 2, label: '6/2 (Ακέραιος ＝ 3)' },
+  { num: 2, den: 3, label: '2/3 (Γνήσιο)' },
+  { num: 7, den: 5, label: '7/5 (Καταχρηστικό)' }
 ];
 
 export default function KlasmaPage() {
   const [numerator, setNumerator] = useState(3);
   const [denominator, setDenominator] = useState(4);
-  const [activeModel, setActiveModel] = useState('pizza'); // 'pizza' ή 'chocolate'
+  const [activeModel, setActiveModel] = useState('pizza'); // 'pizza' η 'chocolate'
 
-  // Διαχείριση πληκτρολόγησης για τον Αριθμητή
+  // Διαχειριση πληκτρολογησης για τον Αριθμητη
   const handleNumeratorInputChange = (val) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
@@ -33,7 +49,7 @@ export default function KlasmaPage() {
     setNumerator(n);
   };
 
-  // Διαχείριση πληκτρολόγησης για τον Παρονομαστή
+  // Διαχειριση πληκτρολογησης για τον Παρονομαστη
   const handleDenominatorInputChange = (val) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
@@ -45,22 +61,22 @@ export default function KlasmaPage() {
     setDenominator(n);
   };
 
-  // Αλλαγή αριθμητή με κουμπιά (+1 / -1)
+  // Αλλαγη αριθμητη με κουμπια (+1 / -1)
   const handleNumeratorChange = (amount) => {
     setNumerator(prev => Math.max(0, Math.min(MAX_NUMERATOR, (Number(prev) || 0) + amount)));
   };
 
-  // Αλλαγή παρονομαστή με κουμπιά (+1 / -1)
+  // Αλλαγη παρονομαστη με κουμπια (+1 / -1)
   const handleDenominatorChange = (amount) => {
     setDenominator(prev => Math.max(1, Math.min(MAX_DENOMINATOR, (Number(prev) || 1) + amount)));
   };
 
-  // Ασφαλείς τιμές για υπολογισμούς
+  // Ασφαλεις τιμες για υπολογισμους
   const activeNumerator = numerator === '' ? 0 : numerator;
   const activeDenominator = denominator === '' || denominator === 0 ? 1 : denominator;
   const fractionValue = activeNumerator / activeDenominator;
 
-  // Δημιουργία των κομματιών της πίτσας (κύκλος SVG)
+  // Δημιουργια των κομματιων της πιτσας (κυκλος SVG)
   const renderPizza = (pizzaIndex = 0) => {
     const slices = [];
     const radius = 70;
@@ -120,7 +136,7 @@ export default function KlasmaPage() {
     );
   };
 
-  // Δημιουργία των κομματιών της σοκολάτας (ορθογώνιο)
+  // Δημιουργια των κομματιων της σοκολατας (ορθογωνιο)
   const renderChocolate = (chocoIndex = 0) => {
     const blocks = [];
     const startingNumeratorForChoco = chocoIndex * activeDenominator;
@@ -160,33 +176,33 @@ export default function KlasmaPage() {
   const getFractionTypeMessage = () => {
     if (activeNumerator === 0) {
       return {
-        title: "Μηδενικό Κλάσμα",
-        desc: "Όταν ο αριθμητής είναι 0, το κλάσμα ισούται με 0 (δεν πήραμε κανένα μέρος).",
-        color: "text-slate-700 bg-slate-100 border-slate-300"
+        title: 'Μηδενικό Κλάσμα',
+        desc: 'Όταν ο αριθμητής είναι 0, το κλάσμα ισούται με 0 (δεν πήραμε κανένα μέρος).',
+        color: 'text-slate-700 bg-slate-100 border-slate-300'
       };
     }
     if (activeNumerator === activeDenominator) {
       return {
-        title: "Ίσο με τη Μονάδα (1 ολόκληρο)",
-        desc: "Ο αριθμητής είναι ίσος με τον παρονομαστή. Έχουμε πάρει όλα τα κομμάτια!",
-        color: "text-emerald-800 bg-emerald-50 border-emerald-300"
+        title: 'Ίσο με τη Μονάδα (1 ολόκληρο)',
+        desc: 'Ο αριθμητής είναι ίσος με τον παρονομαστή. Έχουμε πάρει όλα τα κομμάτια!',
+        color: 'text-emerald-800 bg-emerald-50 border-emerald-300'
       };
     }
     if (activeNumerator < activeDenominator) {
       return {
-        title: "Γνήσιο Κλάσμα (< 1)",
-        desc: "Ο αριθμητής είναι μικρότερος από τον παρονομαστή. Αντιπροσωπεύει ποσότητα μικρότερη από 1 ολόκληρη μονάδα.",
-        color: "text-blue-800 bg-blue-50 border-blue-300"
+        title: 'Γνήσιο Κλάσμα (＜ 1)',
+        desc: 'Ο αριθμητής είναι μικρότερος από τον παρονομαστή. Αντιπροσωπεύει ποσότητα μικρότερη από 1 ολόκληρη μονάδα.',
+        color: 'text-blue-800 bg-blue-50 border-blue-300'
       };
     }
     if (activeNumerator > activeDenominator) {
       const isInteger = activeNumerator % activeDenominator === 0;
       return {
-        title: isInteger ? `Ακέραιος Αριθμός (= ${activeNumerator / activeDenominator})` : "Καταχρηστικό (Μη Γνήσιο) Κλάσμα (> 1)",
+        title: isInteger ? `Ακέραιος Αριθμός (＝ ${activeNumerator / activeDenominator})` : 'Καταχρηστικό Κλάσμα (＞ 1)',
         desc: isInteger 
           ? `Ο αριθμητής διαιρείται ακριβώς με τον παρονομαστή και μας δίνει ακριβώς ${activeNumerator / activeDenominator} ολόκληρες μονάδες!`
-          : "Ο αριθμητής είναι μεγαλύτερος από τον παρονομαστή. Χρειαζόμαστε πάνω από 1 ολόκληρη μονάδα!",
-        color: "text-purple-800 bg-purple-50 border-purple-300"
+          : 'Ο αριθμητής είναι μεγαλύτερος από τον παρονομαστή. Χρειαζόμαστε πάνω από 1 ολόκληρη μονάδα!',
+        color: 'text-purple-800 bg-purple-50 border-purple-300'
       };
     }
   };
@@ -195,7 +211,7 @@ export default function KlasmaPage() {
 
   return (
     <Layout
-      title="🍕 23. Η Έννοια του Κλάσματος (Αριθμητής και Παρονομαστής) - LearnMaths.gr"
+      title="Η Έννοια του Κλάσματος - ΣΤ' Δημοτικού | LearnMaths.gr"
       description="Μάθε πώς χωρίζουμε μια μονάδα σε ίσα μέρη, τι σημαίνουν ο Αριθμητής και ο Παρονομαστής και πώς διακρίνουμε τα Γνήσια, Καταχρηστικά και Ίσα με τη Μονάδα κλάσματα για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
@@ -203,112 +219,148 @@ export default function KlasmaPage() {
       actionButton={
         <Link
           href="/st-dimotikou/23-klasma-ask"
-          className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-sm flex items-center gap-1.5 shrink-0"
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯</span>
-          <span>Ασκήσεις</span>
+          <span>🎯 Ασκήσεις</span>
         </Link>
       }
     >
-      <div className="space-y-8 md:space-y-10 py-6 md:py-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
 
-        {/* HERO BANNER WITH PROMO CALLOUT CARD */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικου
-                </span>
-                <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενοτητα 23
-                </span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                23. Η Έννοια του Κλάσματος (Αριθμητής και Παρονομαστής)
-              </h1>
-              <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                Μάθε πώς χωρίζουμε μια μονάδα σε <strong>ίσα μέρη</strong>, τι σημαίνουν ο <strong>Αριθμητής</strong> και ο <strong>Παρονομαστής</strong> και πώς διακρίνουμε τα <strong>Γνήσια</strong>, <strong>Καταχρηστικά</strong> και <strong>Ίσα με τη Μονάδα</strong> κλάσματα!
-              </p>
+        {/* 1. HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΚΕΦΑΛΑΙΟ 23 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
-
-            {/* CALLOUT PROMO CARD */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
-              <span className="text-3xl">🚀</span>
-              <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
-              <p className="text-xs text-blue-50">Δοκίμασε τις 8 διαδραστικές ασκήσεις στην έννοια του κλάσματος!</p>
-              <Link
-                href="/st-dimotikou/23-klasma-ask"
-                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
-              >
-                🎯 Μετάβαση στις Ασκήσεις
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* THEORY CARDS (3 COLS) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                1
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Αριθμητής (Πάνω)</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Δείχνει <strong>πόσα από τα ίσα μέρη</strong> πήραμε, χρωματίσαμε ή εξετάζουμε.
-              </p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center flex items-center justify-center gap-2 font-bold">
-              <span className="bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl">
-                Στο <strong className="text-blue-700 font-black">3/4</strong> ➔ πήραμε τα <strong>3</strong> κομμάτια
-              </span>
-            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              Η Έννοια του Κλάσματος (Αριθμητής και Παρονομαστής)
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Μάθε πώς χωρίζουμε μια μονάδα σε <strong>ίσα μέρη</strong>, τι σημαίνουν ο <strong>Αριθμητής</strong> και ο <strong>Παρονομαστής</strong> και πώς διακρίνουμε τα <strong>Γνήσια</strong>, <strong>Καταχρηστικά</strong> και <strong>Ίσα με τη Μονάδα</strong> κλάσματα!
+            </p>
           </div>
 
-          <div className="bg-emerald-50/80 border border-emerald-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                2
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Παρονομαστής (Κάτω)</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Δείχνει <strong>σε πόσα ίσα μέρη</strong> χωρίσαμε την αρχική ακέραια μονάδα (δεν μπορεί να είναι 0).
-              </p>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Διαδραστικά Μοντέλα Πίτσας &amp; Σοκολάτας με Αυτόματο Υπολογισμό</span>
             </div>
-            <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center flex items-center justify-center gap-2 font-bold">
-              <span className="bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl text-emerald-900">
-                Στο <strong className="text-emerald-700 font-black">3/4</strong> ➔ χωρίσαμε σε <strong>4</strong> ίσα μέρη
-              </span>
-            </div>
+            <Link
+              href="/st-dimotikou/23-klasma-ask"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ (3 COLS) */}
+        <section className="space-y-6 2xl:space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
+              Βασικές Έννοιες &amp; Ρόλος των Όρων του Κλάσματος
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
+              Όλα όσα πρέπει να γνωρίζεις για τον αριθμητή, τον παρονομαστή και τη γραμμή του κλάσματος.
+            </p>
           </div>
 
-          <div className="bg-purple-50/80 border border-purple-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-purple-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                3
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Γραμμή Κλάσματος</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Συμβολίζει πάντα την πράξη της <strong>διαίρεσης</strong>: Αριθμητής : Παρονομαστής ＝ Δεκαδική Αξία.
-              </p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl border border-purple-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-purple-50 border border-purple-200 px-3 py-1 rounded-xl text-purple-900 inline-block">
-                3/4 ＝ 3 : 4 ＝ <strong className="text-purple-700 font-black">0,75</strong>
-              </span>
-            </div>
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            
+            {/* ΚΑΡΤΑ 1 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΠΑΝΩ ΜΕΡΟΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Πόσα πήραμε</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Αριθμητής (Πάνω)
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Δείχνει <strong>πόσα από τα ίσα μέρη</strong> πήραμε, χρωματίσαμε ή εξετάζουμε.
+                </p>
 
-        {/* INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>Στο <strong className="text-sky-700">3/4</strong> ➔ πήραμε τα <strong>3</strong> κομμάτια</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+                💡 Ο αριθμητής μπορεί να είναι 0 (0/4 ＝ 0) ή και μεγαλύτερος από τον παρονομαστή (καταχρηστικό).
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 2 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΚΑΤΩ ΜΕΡΟΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">Σε πόσα χωρίσαμε</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Παρονομαστής (Κάτω)
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Δείχνει <strong>σε πόσα ίσα μέρη</strong> χωρίσαμε την αρχική ακέραια μονάδα (δεν μπορεί ποτέ να είναι 0).
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>Στο <strong className="text-emerald-700">3/4</strong> ➔ χωρίσαμε σε <strong>4</strong> ίσα μέρη</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
+                ⚡ <strong>Κανόνας SOS:</strong> Ο παρονομαστής ονομάζει τα μέρη (τέταρτα, πέμπτα, δέκατα) και δεν μπορεί ποτέ να είναι μηδέν!
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 3 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-purple-100 text-purple-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΠΡΑΞΗ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-purple-700">Διαίρεση</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Γραμμή Κλάσματος
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Συμβολίζει πάντα την πράξη της <strong>διαίρεσης</strong>: Αριθμητής : Παρονομαστής ＝ Δεκαδική Αξία.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>3/4 ＝ 3 : 4 ＝ <strong className="text-purple-700">0,75</strong></p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-purple-50 rounded-2xl border border-purple-200 text-xs 2xl:text-sm text-purple-950 font-medium">
+                🎯 Κάθε κλάσμα είναι ένας ακριβής τρόπος γραφής μιας διαίρεσης χωρίς να χρειάζεται να υπολογίσουμε δεκαδικό!
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ */}
+        <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div className="max-w-xl">
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🕹️</span> Διαδραστικό Εργαστήριο Κλασμάτων
-              </h2>
-              <p className="text-gray-500 text-xs sm:text-sm">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
+                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Διαδραστικό Εργαστήριο Κλασμάτων
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
                 Άλλαξε τον αριθμητή και τον παρονομαστή ή κάνε κλικ στα κομμάτια για να δεις την άμεση οπτική αναπαράσταση!
               </p>
             </div>
@@ -318,9 +370,9 @@ export default function KlasmaPage() {
               <button
                 type="button"
                 onClick={() => setActiveModel('pizza')}
-                className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-center whitespace-nowrap ${
+                className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center whitespace-nowrap touch-manipulation active:scale-95 ${
                   activeModel === 'pizza'
-                    ? 'bg-amber-500 text-white shadow-xs scale-105'
+                    ? 'bg-amber-500 text-white shadow-sm scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -329,9 +381,9 @@ export default function KlasmaPage() {
               <button
                 type="button"
                 onClick={() => setActiveModel('chocolate')}
-                className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-center whitespace-nowrap ${
+                className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center whitespace-nowrap touch-manipulation active:scale-95 ${
                   activeModel === 'chocolate'
-                    ? 'bg-amber-800 text-white shadow-xs scale-105'
+                    ? 'bg-amber-800 text-white shadow-sm scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -348,8 +400,8 @@ export default function KlasmaPage() {
               <div className="space-y-4">
                 
                 <div className="space-y-3">
-                  <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                    Ρυθμιση Κλασματος (Οριο: {MAX_NUMERATOR}):
+                  <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
+                    ΡΥΘΜΙΣΗ ΚΛΑΣΜΑΤΟΣ (ΟΡΙΟ: {MAX_NUMERATOR}):
                   </span>
 
                   {/* ΕΛΕΓΧΟΣ ΑΡΙΘΜΗΤΗ */}
@@ -361,12 +413,13 @@ export default function KlasmaPage() {
                       <button
                         type="button"
                         onClick={() => handleNumeratorChange(-1)}
-                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 border border-slate-200 rounded-xl font-black transition shadow-xs text-lg flex items-center justify-center"
+                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 border border-slate-200 rounded-xl font-black transition shadow-xs text-lg flex items-center justify-center touch-manipulation active:scale-95"
                       >
-                        -
+                        －
                       </button>
                       <input
                         type="text"
+                        inputMode="numeric"
                         value={numerator}
                         onChange={(e) => handleNumeratorInputChange(e.target.value)}
                         className="w-full min-w-0 flex-1 text-center font-mono font-black text-xl sm:text-2xl text-blue-600 bg-blue-50/50 border-2 border-blue-200 rounded-xl p-1.5 focus:border-blue-500 outline-none shadow-inner"
@@ -374,9 +427,9 @@ export default function KlasmaPage() {
                       <button
                         type="button"
                         onClick={() => handleNumeratorChange(1)}
-                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black transition shadow-md text-lg flex items-center justify-center"
+                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black transition shadow-md text-lg flex items-center justify-center touch-manipulation active:scale-95"
                       >
-                        +
+                        ＋
                       </button>
                     </div>
                   </div>
@@ -390,12 +443,13 @@ export default function KlasmaPage() {
                       <button
                         type="button"
                         onClick={() => handleDenominatorChange(-1)}
-                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 border border-slate-200 rounded-xl font-black transition shadow-xs text-lg flex items-center justify-center"
+                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 border border-slate-200 rounded-xl font-black transition shadow-xs text-lg flex items-center justify-center touch-manipulation active:scale-95"
                       >
-                        -
+                        －
                       </button>
                       <input
                         type="text"
+                        inputMode="numeric"
                         value={denominator}
                         onChange={(e) => handleDenominatorInputChange(e.target.value)}
                         className="w-full min-w-0 flex-1 text-center font-mono font-black text-xl sm:text-2xl text-emerald-600 bg-emerald-50/50 border-2 border-emerald-200 rounded-xl p-1.5 focus:border-emerald-500 outline-none shadow-inner"
@@ -403,9 +457,9 @@ export default function KlasmaPage() {
                       <button
                         type="button"
                         onClick={() => handleDenominatorChange(1)}
-                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black transition shadow-md text-lg flex items-center justify-center"
+                        className="w-9 sm:w-11 h-10 sm:h-11 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black transition shadow-md text-lg flex items-center justify-center touch-manipulation active:scale-95"
                       >
-                        +
+                        ＋
                       </button>
                     </div>
                   </div>
@@ -413,8 +467,8 @@ export default function KlasmaPage() {
 
                 {/* PRESET BUTTONS */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    Ετοιμα Παραδειγματα:
+                  <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
+                    ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     {PRESETS.map((p, idx) => (
@@ -425,7 +479,7 @@ export default function KlasmaPage() {
                           setNumerator(p.num);
                           setDenominator(p.den);
                         }}
-                        className={`py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center ${
+                        className={`py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 ${
                           activeNumerator === p.num && activeDenominator === p.den
                             ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
                             : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
@@ -440,7 +494,7 @@ export default function KlasmaPage() {
                 {/* BOX ΚΑΤΗΓΟΡΙΑΣ ΚΛΑΣΜΑΤΟΣ */}
                 <div className={`p-4 rounded-2xl border ${typeInfo.color} space-y-1 transition-all`}>
                   <span className="text-[10px] font-black uppercase tracking-wider block opacity-75">
-                    Ειδος Κλασματος:
+                    ΕΙΔΟΣ ΚΛΑΣΜΑΤΟΣ:
                   </span>
                   <h4 className="text-sm font-black">{typeInfo.title}</h4>
                   <p className="text-xs leading-relaxed opacity-90">{typeInfo.desc}</p>
@@ -448,7 +502,7 @@ export default function KlasmaPage() {
 
               </div>
 
-              <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
+              <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
                 💡 <strong>Tip:</strong> Κάνε κλικ πάνω στα κομμάτια για να ορίσεις απευθείας τον αριθμητή!
               </div>
             </div>
@@ -457,7 +511,7 @@ export default function KlasmaPage() {
             <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[460px] sm:min-h-[520px] space-y-6">
               
               {/* 1. HEADER STATUS */}
-              <div className="w-full flex flex-col sm:flex-row justify-around items-center bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 gap-4 shadow-2xs">
+              <div className="w-full flex flex-col sm:flex-row justify-around items-center bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 gap-4 shadow-xs">
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col items-center font-mono select-none">
                     <span className="text-4xl sm:text-5xl font-black text-blue-600">{activeNumerator}</span>
@@ -470,10 +524,10 @@ export default function KlasmaPage() {
 
                 <div className="text-center font-mono bg-white px-5 sm:px-6 py-3 rounded-2xl border border-slate-200 shadow-xs">
                   <span className="text-[10px] font-sans text-slate-400 block font-bold uppercase tracking-wider">
-                    Δεκαδικη Αξια:
+                    ΔΕΚΑΔΙΚΗ ΑΞΙΑ:
                   </span>
                   <span className="text-2xl sm:text-3xl font-black text-slate-800">
-                    {Number(fractionValue.toFixed(3))}
+                    {Number(fractionValue.toFixed(3)).toLocaleString('el-GR')}
                   </span>
                 </div>
               </div>
@@ -481,8 +535,8 @@ export default function KlasmaPage() {
               {/* 2. ΟΠΤΙΚΟ ΜΟΝΤΕΛΟ */}
               <div className="w-full space-y-3">
                 <div className="flex justify-between items-center px-1">
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                    {activeModel === 'pizza' ? '🍕 Κυκλικο Μοντελο (Πιτσα)' : '🍫 Γραμμικο Μοντελο (Σοκολατα)'}:
+                  <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider">
+                    {activeModel === 'pizza' ? '🍕 ΚΥΚΛΙΚΟ ΜΟΝΤΕΛΟ (ΠΙΤΣΑ)' : '🍫 ΓΡΑΜΜΙΚΟ ΜΟΝΤΕΛΟ (ΣΟΚΟΛΑΤΑ)'}:
                   </span>
                   <span className="text-xs font-bold text-slate-400">
                     {neededVisuals} {neededVisuals === 1 ? 'μονάδα' : 'μονάδες'}
@@ -516,7 +570,7 @@ export default function KlasmaPage() {
               {/* 3. FINAL SUMMARY BANNER */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-4 sm:p-5 rounded-2xl text-center shadow-lg font-mono space-y-1">
                 <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                  Συμπερασμα:
+                  ΣΥΜΠΕΡΑΣΜΑ:
                 </span>
                 <div className="text-base sm:text-lg md:text-xl font-black tracking-wide">
                   Το κλάσμα <span className="text-amber-300">{activeNumerator}/{activeDenominator}</span> αντιπροσωπεύει <strong>{activeNumerator}</strong> από τα <strong>{activeDenominator}</strong> ίσα μέρη.
@@ -526,23 +580,27 @@ export default function KlasmaPage() {
             </div>
 
           </div>
-        </div>
+        </section>
 
-        {/* BOTTOM CALLOUT BANNER */}
-        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-gray-800 text-sm md:text-base">
-              Κατάλαβες πώς λειτουργούν ο αριθμητής και ο παρονομαστής; Δοκίμασε τις διαδραστικές ασκήσεις!
+        {/* 4. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              Ώρα για Εξάσκηση στα Κλάσματα!
+            </h3>
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              Κατάλαβες πώς λειτουργούν ο αριθμητής και ο παρονομαστής; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
+
           <Link
             href="/st-dimotikou/23-klasma-ask"
-            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            Ξεκίνα τις Ασκήσεις ➔
+            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </section>
 
       </div>
     </Layout>
