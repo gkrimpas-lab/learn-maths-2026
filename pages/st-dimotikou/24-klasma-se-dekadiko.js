@@ -421,7 +421,7 @@ export default function KlasmaSeDekadikoPage() {
                     : 'bg-slate-100 border-slate-200 text-slate-600'
                 }`}>
                   <span className="font-bold uppercase tracking-wider block text-[10px]">
-                    {activeNumerator === 1 ? '✨ Κλασματικη Μοναδα' : 'ℹ️️ Κατασταση'}
+                    {activeNumerator === 1 ? '✨ Κλασματικη Μοναδα' : 'ℹ Κατασταση'}
                   </span>
                   <p>
                     {activeNumerator === 1 
@@ -438,7 +438,7 @@ export default function KlasmaSeDekadikoPage() {
             </div>
 
             {/* RIGHT: VISUALIZATION & NUMBER LINE (8 COLS) */}
-            <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[460px] sm:min-h-[520px] space-y-6">
+            <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6 sm:space-y-7 pb-4 sm:pb-6">
               
               {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΜΕΤΑΤΡΟΠΗ */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
@@ -475,15 +475,15 @@ export default function KlasmaSeDekadikoPage() {
                 </div>
               </div>
 
-              {/* 2. ΑΡΙΘΜΗΤΙΚΗ ΓΡΑΜΜΗ (NUMBER LINE) */}
-              <div className="space-y-3 bg-slate-50/80 p-4 sm:p-5 rounded-2xl border border-slate-200">
+              {/* 2. ΑΡΙΘΜΗΤΙΚΗ ΓΡΑΜΜΗ (NUMBER LINE) - ΧΩΡΙΣ SCROLLBARS */}
+              <div className="space-y-3 bg-slate-50/80 p-4 sm:p-6 rounded-2xl border border-slate-200 overflow-hidden">
                 <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block text-center">
                   📍 ΘΕΣΗ ΤΟΥ ΔΕΚΑΔΙΚΟΥ ΣΤΗΝ ΑΡΙΘΜΟΓΡΑΜΜΗ:
                 </span>
                 
-                <div className="relative w-full pt-10 pb-4 px-4 overflow-x-auto">
+                <div className="relative w-full pt-12 pb-6 px-4 sm:px-6 select-none">
                   {/* Η Αριθμητική Γραμμή */}
-                  <div className="relative w-full min-w-[240px] h-1.5 bg-slate-300 rounded-full">
+                  <div className="relative w-full h-1.5 bg-slate-300 rounded-full">
                     
                     {/* Υποδιαιρέσεις & Ακέραιοι (0, 1, 2, 3, 4) */}
                     {[0, 1, 2, 3, 4].map((num) => {
@@ -499,10 +499,10 @@ export default function KlasmaSeDekadikoPage() {
                     {/* Ο Δείκτης (Marker) του Δεκαδικού */}
                     {decimalValue <= 4 && (
                       <div 
-                        className="absolute flex flex-col items-center -top-8 transition-all duration-500 ease-out z-10"
+                        className="absolute flex flex-col items-center -top-9 transition-all duration-500 ease-out z-10"
                         style={{ left: `${(decimalValue / 4) * 100}%`, transform: 'translateX(-50%)' }}
                       >
-                        <div className="bg-emerald-600 text-white font-mono text-xs font-black px-2 py-0.5 rounded-lg shadow-md mb-0.5 whitespace-nowrap">
+                        <div className="bg-emerald-600 text-white font-mono text-[11px] sm:text-xs font-black px-2 py-0.5 rounded-lg shadow-md mb-0.5 whitespace-nowrap">
                           {isPeriodic() ? decimalValue.toFixed(3).replace('.', ',') : decimalValue.toString().replace('.', ',')}
                         </div>
                         <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-md animate-bounce" />
@@ -511,7 +511,7 @@ export default function KlasmaSeDekadikoPage() {
                   </div>
                 </div>
 
-                <p className="text-[11px] sm:text-xs text-slate-400 italic text-center">
+                <p className="text-[11px] sm:text-xs text-slate-400 italic text-center pt-1">
                   {decimalValue > 4 
                     ? 'Ο αριθμός είναι μεγαλύτερος από το 4 και βρίσκεται εκτός των ορίων της γραμμής!' 
                     : `Η καρφίτσα δείχνει ακριβώς πού τοποθετείται ο δεκαδικός ${isPeriodic() ? decimalValue.toFixed(3).replace('.', ',') : decimalValue.toString().replace('.', ',')} ανάμεσα στους ακεραίους.`}
