@@ -1,14 +1,21 @@
-import { useState, useEffect } from 'react';
+// pages/st-dimotikou/26-sigkrisi-klasmaton-ask.js
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Βοηθητικές συναρτήσεις
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
+
+function randInt(min, max) {
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
 }
 
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -17,100 +24,393 @@ function shuffle(array) {
   return arr;
 }
 
-// Πλούσια δεξαμενή σεναρίων καθημερινότητας με γραμματική και συντακτική ορθότητα
-const REAL_WORLD_SCENARIOS = [
+function gcd(a, b) {
+  let x = Math.abs(a || 0);
+  let y = Math.abs(b || 0);
+  while (y) {
+    const t = y;
+    y = x % y;
+    x = t;
+  }
+  return x || 1;
+}
+
+function lcm(a, b) {
+  if (!a || !b) return 1;
+  return Math.abs(a * b) / gcd(a, b);
+}
+
+// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποιηση αριθμων με ελληνικο locale
+function formatNum(num) {
+  if (num === null || num === undefined || isNaN(Number(num))) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
+
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q9 & Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
+
+const STANDARD_PROBLEMS_POOL = [
   {
-    p1: 'Ο Νίκος',
-    p2: 'Η Ελένη',
-    verb: 'διάνυσε',
-    item: 'της διαδρομής',
-    actionQuestion: 'διάνυσε τη μεγαλύτερη απόσταση',
-    actionExplain: 'Μεγαλύτερη απόσταση διάνυσε'
+    id: 'sp1',
+    title: 'Σύγκριση Αποστάσεων Δρομέων',
+    unit: 'της διαδρομής',
+    generate: () => {
+      // 3/5 vs 4/7 -> 21/35 vs 20/35 (3/5 > 4/7)
+      const n1 = 3;
+      const d1 = 5;
+      const n2 = 4;
+      const d2 = 7;
+      const p1 = 'Ο Νίκος';
+      const p2 = 'Η Ελένη';
+      return {
+        prompt: `${p1} διάνυσε τα ${n1}/${d1} μιας διαδρομής, ενώ ${p2} διάνυσε τα ${n2}/${d2} της ίδιας διαδρομής. Ποιος διάνυσε τη μεγαλύτερη απόσταση;`,
+        unit: '',
+        correctVal: p1,
+        correctText: p1,
+        tableData: [
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 7) / 35`, val: `21/35` },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 5) / 35`, val: `20/35` },
+          { item: 'Σύγκριση', formula: '21/35 ＞ 20/35', val: `${p1} ＞ ${p2}` }
+        ],
+        explain: `Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(5, 7) ＝ 35. ${p1} διάνυσε τα 21/35, ενώ ${p2} τα 20/35. Επειδή 21/35 ＞ 20/35, ${p1} διάνυσε τη μεγαλύτερη απόσταση.`,
+        distractors: [p2, 'Και οι δύο την ίδια']
+      };
+    }
   },
   {
-    p1: 'Ο Γιώργος',
-    p2: 'Η Μαρία',
-    verb: 'διάβασε',
-    item: 'του βιβλίου',
-    actionQuestion: 'διάβασε το μεγαλύτερο μέρος',
-    actionExplain: 'Μεγαλύτερο μέρος διάβασε'
+    id: 'sp2',
+    title: 'Μελέτη Βιβλίου',
+    unit: 'του βιβλίου',
+    generate: () => {
+      // 2/3 vs 5/8 -> 16/24 vs 15/24 (2/3 > 5/8)
+      const n1 = 2;
+      const d1 = 3;
+      const n2 = 5;
+      const d2 = 8;
+      const p1 = 'Ο Γιώργος';
+      const p2 = 'Η Μαρία';
+      return {
+        prompt: `${p1} διάβασε τα ${n1}/${d1} ενός βιβλίου, ενώ ${p2} διάβασε τα ${n2}/${d2} του ίδιου βιβλίου. Ποιος διάβασε το μεγαλύτερο μέρος;`,
+        unit: '',
+        correctVal: p1,
+        correctText: p1,
+        tableData: [
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 8) / 24`, val: `16/24` },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 3) / 24`, val: `15/24` },
+          { item: 'Σύγκριση', formula: '16/24 ＞ 15/24', val: `${p1} ＞ ${p2}` }
+        ],
+        explain: `Μετατρέπουμε σε ομώνυμα με Ε.Κ.Π.(3, 8) ＝ 24. ${p1} διάβασε τα 16/24 και ${p2} τα 15/24. Άρα ${p1} διάβασε περισσότερο.`,
+        distractors: [p2, 'Και οι δύο το ίδιο']
+      };
+    }
   },
   {
-    p1: 'Ο Πέτρος',
-    p2: 'Η Άννα',
-    verb: 'έφαγε',
-    item: 'της πίτσας',
-    actionQuestion: 'έφαγε το μεγαλύτερο μέρος',
-    actionExplain: 'Μεγαλύτερο μέρος έφαγε'
+    id: 'sp3',
+    title: 'Κατανάλωση Πίτσας',
+    unit: 'της πίτσας',
+    generate: () => {
+      // 3/8 vs 2/5 -> 15/40 vs 16/40 (3/8 < 2/5)
+      const n1 = 3;
+      const d1 = 8;
+      const n2 = 2;
+      const d2 = 5;
+      const p1 = 'Ο Πέτρος';
+      const p2 = 'Η Άννα';
+      return {
+        prompt: `${p1} έφαγε τα ${n1}/${d1} μιας πίτσας, ενώ ${p2} έφαγε τα ${n2}/${d2} μιας ίδιας πίτσας. Ποιος έφαγε το μεγαλύτερο μέρος;`,
+        unit: '',
+        correctVal: p2,
+        correctText: p2,
+        tableData: [
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 40`, val: `15/40` },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 8) / 40`, val: `16/40` },
+          { item: 'Σύγκριση', formula: '16/40 ＞ 15/40', val: `${p2} ＞ ${p1}` }
+        ],
+        explain: `Μετατρέπουμε σε ομώνυμα με Ε.Κ.Π.(8, 5) ＝ 40: 3/8 ＝ 15/40 και 2/5 ＝ 16/40. Επειδή 16/40 ＞ 15/40, ${p2} έφαγε περισσότερο.`,
+        distractors: [p1, 'Και οι δύο το ίδιο']
+      };
+    }
   },
   {
-    p1: 'Ο Κώστας',
-    p2: 'Η Σοφία',
-    verb: 'φύτεψε',
-    item: 'του κήπου',
-    actionQuestion: 'φύτεψε το μεγαλύτερο μέρος',
-    actionExplain: 'Μεγαλύτερο μέρος φύτεψε'
+    id: 'sp4',
+    title: 'Φύτευση Κήπου',
+    unit: 'του κήπου',
+    generate: () => {
+      // 4/7 vs 3/5 -> 20/35 vs 21/35 (4/7 < 3/5)
+      const n1 = 4;
+      const d1 = 7;
+      const n2 = 3;
+      const d2 = 5;
+      const p1 = 'Ο Κώστας';
+      const p2 = 'Η Σοφία';
+      return {
+        prompt: `${p1} φύτεψε τα ${n1}/${d1} ενός κήπου, ενώ ${p2} φύτεψε τα ${n2}/${d2} του ίδιου κήπου. Ποιος φύτεψε το μεγαλύτερο μέρος;`,
+        unit: '',
+        correctVal: p2,
+        correctText: p2,
+        tableData: [
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 35`, val: `20/35` },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 7) / 35`, val: `21/35` },
+          { item: 'Σύγκριση', formula: '21/35 ＞ 20/35', val: `${p2} ＞ ${p1}` }
+        ],
+        explain: `Με ομώνυμα κλάσματα: 4/7 ＝ 20/35 και 3/5 ＝ 21/35. Άρα ${p2} φύτεψε το μεγαλύτερο μέρος.`,
+        distractors: [p1, 'Και οι δύο το ίδιο']
+      };
+    }
   },
   {
-    p1: 'Ο Δημήτρης',
-    p2: 'Η Κατερίνα',
-    verb: 'ήπιε',
-    item: 'του χυμού',
-    actionQuestion: 'ήπιε τη μεγαλύτερη ποσότητα',
-    actionExplain: 'Μεγαλύτερη ποσότητα ήπιε'
+    id: 'sp5',
+    title: 'Κατανάλωση Χυμού',
+    unit: 'του μπουκαλιού',
+    generate: () => {
+      // 5/6 vs 4/5 -> 25/30 vs 24/30 (5/6 > 4/5)
+      const n1 = 5;
+      const d1 = 6;
+      const n2 = 4;
+      const d2 = 5;
+      const p1 = 'Ο Δημήτρης';
+      const p2 = 'Η Κατερίνα';
+      return {
+        prompt: `${p1} ήπιε τα ${n1}/${d1} ενός μπουκαλιού χυμού, ενώ ${p2} ήπιε τα ${n2}/${d2} ενός ίδιου μπουκαλιού. Ποιος ήπιε τη μεγαλύτερη ποσότητα;`,
+        unit: '',
+        correctVal: p1,
+        correctText: p1,
+        tableData: [
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 30`, val: `25/30` },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 6) / 30`, val: `24/30` },
+          { item: 'Σύγκριση', formula: '25/30 ＞ 24/30', val: `${p1} ＞ ${p2}` }
+        ],
+        explain: `Μετατρέπουμε σε ομώνυμα με Ε.Κ.Π.(6, 5) ＝ 30: 5/6 ＝ 25/30 και 4/5 ＝ 24/30. Επομένως, ${p1} ήπιε περισσότερο.`,
+        distractors: [p2, 'Και οι δύο το ίδιο']
+      };
+    }
   },
   {
-    p1: 'Ο Αλέξανδρος',
-    p2: 'Η Χριστίνα',
-    verb: 'χρωμάτισε',
-    item: 'του σχεδίου',
-    actionQuestion: 'χρωμάτισε το μεγαλύτερο μέρος',
-    actionExplain: 'Μεγαλύτερο μέρος χρωμάτισε'
-  },
-  {
-    p1: 'Ο Βασίλης',
-    p2: 'Η Ιωάννα',
-    verb: 'ολοκλήρωσε',
-    item: 'των εργασιών',
-    actionQuestion: 'ολοκλήρωσε το μεγαλύτερο μέρος',
-    actionExplain: 'Μεγαλύτερο μέρος ολοκλήρωσε'
-  },
-  {
-    p1: 'Ο Μάνος',
-    p2: 'Η Δέσποινα',
-    verb: 'αποταμίευσε',
-    item: 'του χαρτζιλικιού',
-    actionQuestion: 'αποταμίευσε το μεγαλύτερο μέρος',
-    actionExplain: 'Μεγαλύτερο μέρος αποταμίευσε'
+    id: 'sp6',
+    title: 'Αποταμίευση Χαρτζιλικιού',
+    unit: 'του χαρτζιλικιού',
+    generate: () => {
+      // 3/4 vs 7/10 -> 15/20 vs 14/20 (3/4 > 7/10)
+      const n1 = 3;
+      const d1 = 4;
+      const n2 = 7;
+      const d2 = 10;
+      const p1 = 'Ο Μάνος';
+      const p2 = 'Η Δέσποινα';
+      return {
+        prompt: `${p1} αποταμίευσε τα ${n1}/${d1} του χαρτζιλικιού του, ενώ ${p2} αποταμίευσε τα ${n2}/${d2} του ίδιου ποσού χαρτζιλικιού. Ποιος αποταμίευσε το μεγαλύτερο μέρος;`,
+        unit: '',
+        correctVal: p1,
+        correctText: p1,
+        tableData: [
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 20`, val: `15/20` },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 2) / 20`, val: `14/20` },
+          { item: 'Σύγκριση', formula: '15/20 ＞ 14/20', val: `${p1} ＞ ${p2}` }
+        ],
+        explain: `Ε.Κ.Π.(4, 10) ＝ 20. Έχουμε 3/4 ＝ 15/20 και 7/10 ＝ 14/20. Επειδή 15/20 ＞ 14/20, ${p1} αποταμίευσε το μεγαλύτερο μέρος.`,
+        distractors: [p2, 'Και οι δύο το ίδιο']
+      };
+    }
   }
 ];
 
-// Δημιουργία 8 μοναδικών ερωτήσεων
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'hp1',
+    title: 'Σύγκριση Τριών Κλασμάτων',
+    unit: '',
+    generate: () => {
+      // 1/2 (6/12), 2/3 (8/12), 3/4 (9/12)
+      return {
+        prompt: 'Δίνονται τα κλάσματα Α ＝ 1/2, Β ＝ 2/3 και Γ ＝ 3/4. Ποια είναι η σωστή σειρά διάταξης από το μικρότερο προς το μεγαλύτερο;',
+        unit: '',
+        correctVal: 'Α ＜ Β ＜ Γ (1/2 ＜ 2/3 ＜ 3/4)',
+        correctText: 'Α ＜ Β ＜ Γ (1/2 ＜ 2/3 ＜ 3/4)',
+        tableData: [
+          { item: 'Κλάσμα Α (1/2)', formula: 'Μετατροπή με Ε.Κ.Π. ＝ 12', val: '6/12' },
+          { item: 'Κλάσμα Β (2/3)', formula: 'Μετατροπή με Ε.Κ.Π. ＝ 12', val: '8/12' },
+          { item: 'Κλάσμα Γ (3/4)', formula: 'Μετατροπή με Ε.Κ.Π. ＝ 12', val: '9/12' },
+          { item: 'Σειρά Διάταξης', formula: '6/12 ＜ 8/12 ＜ 9/12', val: 'Α ＜ Β ＜ Γ' }
+        ],
+        explain: 'Με κοινό παρονομαστή το 12: 1/2 ＝ 6/12, 2/3 ＝ 8/12, 3/4 ＝ 9/12. Άρα η σωστή σειρά είναι Α ＜ Β ＜ Γ.',
+        distractors: [
+          'Γ ＜ Β ＜ Α (3/4 ＜ 2/3 ＜ 1/2)',
+          'Β ＜ Α ＜ Γ (2/3 ＜ 1/2 ＜ 3/4)',
+          'Α ＜ Γ ＜ Β (1/2 ＜ 3/4 ＜ 2/3)'
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp2',
+    title: 'Σύγκριση με Αναφορά τη Μονάδα (1)',
+    unit: '',
+    generate: () => {
+      const proper = '7/9';
+      const improper = '9/7';
+      return {
+        prompt: `Χωρίς να κάνεις διαίρεση ή πράξεις με Ε.Κ.Π., ποια σχέση συνδέει τα κλάσματα Α ＝ ${proper} και Β ＝ ${improper};`,
+        unit: '',
+        correctVal: `${proper} ＜ ${improper} (το Α ＜ 1 και το Β ＞ 1)`,
+        correctText: `${proper} ＜ ${improper} (το Α ＜ 1 και το Β ＞ 1)`,
+        tableData: [
+          { item: `Κλάσμα Α (${proper})`, formula: 'Αριθμητής ＜ Παρονομαστή', val: 'Γνήσιο (＜ 1)' },
+          { item: `Κλάσμα Β (${improper})`, formula: 'Αριθμητής ＞ Παρονομαστή', val: 'Καταχρηστικό (＞ 1)' },
+          { item: 'Σύγκριση με τη μονάδα', formula: 'Α ＜ 1 ＜ Β', val: `${proper} ＜ ${improper}` }
+        ],
+        explain: `Το ${proper} είναι γνήσιο κλάσμα άρα είναι μικρότερο από το 1. Το ${improper} είναι καταχρηστικό κλάσμα άρα είναι μεγαλύτερο από το 1. Επομένως, ${proper} ＜ ${improper}.`,
+        distractors: [
+          `${proper} ＞ ${improper} (το Α ＞ 1 και το Β ＜ 1)`,
+          `${proper} ＝ ${improper} (είναι ίσα)`,
+          'Δεν μπορούμε να συγκρίνουμε χωρίς Ε.Κ.Π.'
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp3',
+    title: 'Έλεγχος Ισοδυναμίας με Χιαστί Γινόμενα',
+    unit: '',
+    generate: () => {
+      const n1 = 6;
+      const d1 = 8;
+      const n2 = 9;
+      const d2 = 12;
+      const cross = n1 * d2;
+      return {
+        prompt: `Συγκρίνουμε τα κλάσματα Α ＝ ${n1}/${d1} και Β ＝ ${n2}/${d2}. Τι παρατηρούμε υπολογίζοντας τα χιαστί γινόμενα;`,
+        unit: '',
+        correctVal: `Τα χιαστί γινόμενα είναι ίσα (${cross} ＝ ${cross}), άρα τα κλάσματα είναι ισοδύναμα (＝)`,
+        correctText: `Τα χιαστί γινόμενα είναι ίσα (${cross} ＝ ${cross}), άρα τα κλάσματα είναι ισοδύναμα (＝)`,
+        tableData: [
+          { item: 'Αριστερό γινόμενο', formula: `${n1} · ${d2}`, val: `${cross}` },
+          { item: 'Δεξί γινόμενο', formula: `${n2} · ${d1}`, val: `${cross}` },
+          { item: 'Σχέση κλασμάτων', formula: `${cross} ＝ ${cross}`, val: `${n1}/${d1} ＝ ${n2}/${d2}` }
+        ],
+        explain: `Τα χιαστί γινόμενα είναι ${n1} · ${d2} ＝ ${cross} και ${n2} · ${d1} ＝ ${cross}. Επειδή είναι ίσα, τα κλάσματα είναι ισοδύναμα (${n1}/${d1} ＝ ${n2}/${d2} ＝ 3/4).`,
+        distractors: [
+          `Το Α είναι μεγαλύτερο από το Β (${cross} ＞ ${cross - 6})`,
+          `Το Β είναι μεγαλύτερο από το Α (${cross + 6} ＞ ${cross})`,
+          'Τα χιαστί γινόμενα δεν εφαρμόζονται σε αυτά τα κλάσματα'
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp4',
+    title: 'Σύγκριση με Ίδιο Συμπλήρωμα ως τη Μονάδα',
+    unit: '',
+    generate: () => {
+      // 5/6 (λείπει 1/6) vs 7/8 (λείπει 1/8) -> 1/8 < 1/6 άρα 7/8 > 5/6
+      return {
+        prompt: 'Ποιο από τα δύο κλάσματα είναι μεγαλύτερο: το 5/6 ή το 7/8;',
+        unit: '',
+        correctVal: '7/8 ＞ 5/6 (λείπει μικρότερο μέρος για να φτάσει τη μονάδα)',
+        correctText: '7/8 ＞ 5/6 (λείπει μικρότερο μέρος για να φτάσει τη μονάδα)',
+        tableData: [
+          { item: 'Συμπλήρωμα 5/6', formula: '1 － 5/6', val: '1/6' },
+          { item: 'Συμπλήρωμα 7/8', formula: '1 － 7/8', val: '1/8' },
+          { item: 'Σύγκριση συμπληρωμάτων', formula: '1/8 ＜ 1/6', val: '7/8 ＞ 5/6' }
+        ],
+        explain: 'Από το 5/6 λείπει το 1/6 για να φτάσει το 1, ενώ από το 7/8 λείπει μόνο το 1/8. Επειδή το 1/8 είναι μικρότερο κομμάτι, το 7/8 είναι πιο κοντά στη μονάδα, άρα 7/8 ＞ 5/6 (ή με Ε.Κ.Π. 24: 21/24 ＞ 20/24).',
+        distractors: [
+          '5/6 ＞ 7/8 (γιατί έχει μικρότερο παρονομαστή)',
+          '5/6 ＝ 7/8 (είναι ίσα)',
+          'Δεν μπορούμε να αποφανθούμε'
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp5',
+    title: 'Σύγκριση Κλασμάτων με το Μισό (1/2)',
+    unit: '',
+    generate: () => {
+      // 4/10 < 1/2 < 5/8
+      return {
+        prompt: 'Συγκρίνοντας τα κλάσματα 4/10 και 5/8 με το μισό (1/2), ποιο είναι το μεγαλύτερο;',
+        unit: '',
+        correctVal: '5/8 ＞ 4/10 (το 5/8 ＞ 1/2 ενώ το 4/10 ＜ 1/2)',
+        correctText: '5/8 ＞ 4/10 (το 5/8 ＞ 1/2 ενώ το 4/10 ＜ 1/2)',
+        tableData: [
+          { item: 'Κλάσμα 4/10', formula: 'Μισό του 10 είναι το 5 (4 ＜ 5)', val: '4/10 ＜ 1/2' },
+          { item: 'Κλάσμα 5/8', formula: 'Μισό του 8 είναι το 4 (5 ＞ 4)', val: '5/8 ＞ 1/2' },
+          { item: 'Σύγκριση', formula: '4/10 ＜ 1/2 ＜ 5/8', val: '5/8 ＞ 4/10' }
+        ],
+        explain: 'Το μισό των δεκάτων είναι 5/10, άρα 4/10 ＜ 1/2. Το μισό των ογδόων είναι 4/8, άρα 5/8 ＞ 1/2. Επομένως, 5/8 ＞ 4/10.',
+        distractors: [
+          '4/10 ＞ 5/8 (το 4/10 είναι μεγαλύτερο)',
+          '4/10 ＝ 5/8 (είναι ίσα με το 1/2)',
+          'Και τα δύο κλάσματα είναι μεγαλύτερα από το 1/2'
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp6',
+    title: 'Εύρεση Αριθμητή σε Ανισότητα',
+    unit: '',
+    generate: () => {
+      // x/12 < 1/3 (δηλαδή x/12 < 4/12) -> μέγιστος φυσικός x = 3
+      return {
+        prompt: 'Ποιος είναι ο ΜΕΓΑΛΥΤΕΡΟΣ φυσικός αριθμός x για τον οποίο ισχύει η ανισότητα: x/12 ＜ 1/3;',
+        unit: '',
+        correctVal: '3',
+        correctText: 'x ＝ 3 (καθώς 3/12 ＜ 4/12)',
+        tableData: [
+          { item: 'Κλάσμα 1/3 σε δωδέκατα', formula: '(1 · 4) / (3 · 4)', val: '4/12' },
+          { item: 'Ανισότητα', formula: 'x/12 ＜ 4/12', val: 'x ＜ 4' },
+          { item: 'Μέγιστος φυσικός αριθμός x', formula: 'x ＜ 4', val: 'x ＝ 3' }
+        ],
+        explain: 'Μετατρέπουμε το 1/3 σε δωδέκατα: 1/3 ＝ 4/12. Για να ισχύει x/12 ＜ 4/12, πρέπει x ＜ 4. Ο μεγαλύτερος φυσικός αριθμός μικρότερος του 4 είναι το 3.',
+        distractors: [
+          'x ＝ 4 (καθώς 4/12 ＝ 1/3)',
+          'x ＝ 2',
+          'x ＝ 5'
+        ]
+      };
+    }
+  }
+];
+
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
 function generateQuestions() {
-  const shuffledScenarios = shuffle(REAL_WORLD_SCENARIOS);
-
-  // Q1: Interactive Comparison Buttons (>, <, =) - Ομώνυμα κλάσματα
-  const q1Den = getRandomInt(4, 12);
-  const q1Num1 = getRandomInt(1, q1Den - 1);
-  let q1Num2 = getRandomInt(1, q1Den - 1);
+  // Q1: Compare Buttons (>, <, =) - Ομώνυμα κλάσματα
+  const q1Den = randInt(4, 12);
+  const q1Num1 = randInt(1, q1Den - 1);
+  let q1Num2 = randInt(1, q1Den - 1);
   if (q1Num1 === q1Num2) q1Num2 = (q1Num1 % (q1Den - 1)) + 1;
-  const q1Correct = q1Num1 > q1Num2 ? '>' : '<';
+  const q1Correct = q1Num1 > q1Num2 ? '＞' : '＜';
 
-  // Q2: Interactive Comparison Buttons (>, <, =) - Ίδιοι Αριθμητές
-  const q2Num = getRandomInt(2, 6);
-  const q2Den1 = getRandomInt(q2Num + 1, 10);
-  let q2Den2 = getRandomInt(q2Num + 1, 10);
+  // Q2: Compare Buttons (>, <, =) - Ίδιοι Αριθμητές
+  const q2Num = randInt(2, 6);
+  const q2Den1 = randInt(q2Num + 1, 10);
+  let q2Den2 = randInt(q2Num + 1, 10);
   if (q2Den1 === q2Den2) q2Den2 = q2Den1 + 1;
-  const q2Correct = q2Den1 < q2Den2 ? '>' : '<'; // Μικρότερος παρονομαστής = μεγαλύτερο κλάσμα
+  const q2Correct = q2Den1 < q2Den2 ? '＞' : '＜'; // Μικρότερος παρονομαστής = μεγαλύτερο κλάσμα
 
-  // Q3: Interactive Comparison Buttons (>, <, =) - Ετερώνυμα κλάσματα (Χιαστί)
-  const q3Num1 = getRandomInt(2, 5);
-  const q3Den1 = getRandomInt(q3Num1 + 1, 8);
-  const q3Num2 = getRandomInt(2, 5);
-  const q3Den2 = getRandomInt(q3Num2 + 1, 8);
+  // Q3: Compare Buttons (>, <, =) - Ετερώνυμα κλάσματα (Χιαστί)
+  const q3Num1 = randInt(2, 5);
+  const q3Den1 = randInt(q3Num1 + 1, 8);
+  const q3Num2 = randInt(2, 5);
+  const q3Den2 = randInt(q3Num2 + 1, 8);
   const cross1 = q3Num1 * q3Den2;
   const cross2 = q3Num2 * q3Den1;
-  const q3Correct = cross1 > cross2 ? '>' : cross1 < cross2 ? '<' : '=';
+  const q3Correct = cross1 > cross2 ? '＞' : cross1 < cross2 ? '＜' : '＝';
 
   // Q4: MCQ - Ποιο κλάσμα είναι το ΜΕΓΑΛΥΤΕΡΟ
   const q4List = [
@@ -121,50 +421,58 @@ function generateQuestions() {
   ];
   const q4Shuffled = shuffle(q4List);
   const q4MaxItem = q4Shuffled.reduce((max, item) => item.val > max.val ? item : max, q4Shuffled[0]);
-  const q4Options = q4Shuffled.map(item => item.str);
+  const q4Options = shuffle([...new Set(q4Shuffled.map(item => item.str))]);
   const q4Correct = q4MaxItem.str;
 
-  // Q5: True / False - Σύγκριση κλασμάτων με ίδιο αριθμητή
+  // Q5: True / False - Κανόνας Ίδιων Αριθμητών
   const q5IsTrue = Math.random() > 0.5;
   const q5Text = q5IsTrue
     ? 'Ανάμεσα σε δύο κλάσματα με τον ίδιο αριθμητή, μεγαλύτερο είναι εκείνο με τον μικρότερο παρονομαστή.'
     : 'Ανάμεσα σε δύο κλάσματα με τον ίδιο αριθμητή, μεγαλύτερο είναι εκείνο με τον μεγαλύτερο παρονομαστή.';
 
-  // Q6: True / False - Σύγκριση με τη μονάδα (Γνήσια vs Καταχρηστικά)
+  // Q6: True / False - Γνήσια vs Καταχρηστικά
   const q6IsTrue = Math.random() > 0.5;
   const q6Text = q6IsTrue
-    ? 'Κάθε καταχρηστικό κλάσμα (αριθμητής > παρονομαστής) είναι μεγαλύτερο από οποιοδήποτε γνήσιο κλάσμα (αριθμητής < παρονομαστής).'
+    ? 'Κάθε καταχρηστικό κλάσμα (αριθμητής ＞ παρονομαστή) είναι μεγαλύτερο από οποιοδήποτε γνήσιο κλάσμα (αριθμητής ＜ παρονομαστή).'
     : 'Ένα γνήσιο κλάσμα μπορεί να είναι μεγαλύτερο από ένα καταχρηστικό κλάσμα.';
 
-  // Q7: Input - Χιαστί γινόμενο
-  const q7Num1 = getRandomInt(2, 4);
-  const q7Den1 = getRandomInt(5, 7);
-  const q7Num2 = getRandomInt(3, 5);
-  const q7Den2 = getRandomInt(6, 9);
+  // Q7: Input - Υπολογισμός χιαστί γινομένου
+  const q7Num1 = randInt(2, 4);
+  const q7Den1 = randInt(5, 7);
+  const q7Num2 = randInt(3, 5);
+  const q7Den2 = randInt(6, 9);
   const q7CrossLeft = q7Num1 * q7Den2;
   const q7Correct = String(q7CrossLeft);
 
-  // Q8: MCQ - Πρόβλημα Καθημερινότητας με σωστή γραμματική και δυναμικά κλάσματα
-  const sc = shuffledScenarios[0];
-  
-  const d1 = getRandomInt(4, 8);
-  const n1 = getRandomInt(1, d1 - 1);
-  let d2 = getRandomInt(4, 10);
-  let n2 = getRandomInt(1, d2 - 1);
-  
-  if (n1 * d2 === n2 * d1) {
-    n2 = Math.min(d2 - 1, n2 + 1);
-  }
+  // Q8: MCQ - Ποιο κλάσμα είναι ισοδύναμο
+  const q8BaseN = randInt(2, 3);
+  const q8BaseD = randInt(4, 5);
+  const q8Mult = randInt(2, 4);
+  const q8CorrectStr = `${q8BaseN * q8Mult}/${q8BaseD * q8Mult}`;
+  const q8Wrongs = [
+    `${q8BaseN * q8Mult + 1}/${q8BaseD * q8Mult}`,
+    `${q8BaseN * q8Mult}/${q8BaseD * q8Mult + 1}`,
+    `${q8BaseN + 2}/${q8BaseD + 2}`
+  ];
+  const q8Options = shuffle([...new Set([q8CorrectStr, ...q8Wrongs])]);
 
-  const v1 = n1 / d1;
-  const v2 = n2 / d2;
-  const q8WhoMore = v1 > v2 ? sc.p1 : v1 < v2 ? sc.p2 : 'Και οι δύο το ίδιο';
-  
-  const q8Prompt = `${sc.p1} ${sc.verb} τα ${n1}/${d1} ${sc.item}, ενώ ${sc.p2} ${sc.verb} τα ${n2}/${d2} ${sc.item}. Ποιος ${sc.actionQuestion};`;
-  const q8Options = shuffle([sc.p1, sc.p2, 'Και οι δύο το ίδιο']);
+  // Q9: Standard Problem (Pool of 6)
+  const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate();
+  const q9Options = shuffle([
+    ...new Set([q9Raw.correctText, ...q9Raw.distractors])
+  ]);
 
-  return {
-    q1: {
+  // Q10: Hard Problem (Pool of 6)
+  const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate();
+  const q10Options = shuffle([
+    ...new Set([q10Raw.correctText, ...q10Raw.distractors])
+  ]);
+
+  return [
+    {
+      id: 'q1',
       type: 'compare',
       title: 'Ομώνυμα Κλάσματα',
       f1: `${q1Num1}/${q1Den}`,
@@ -172,7 +480,8 @@ function generateQuestions() {
       correct: q1Correct,
       explain: `Τα κλάσματα έχουν τον ίδιο παρονομαστή (${q1Den}). Επειδή ${q1Num1} ${q1Correct} ${q1Num2}, ισχύει ${q1Num1}/${q1Den} ${q1Correct} ${q1Num2}/${q1Den}.`
     },
-    q2: {
+    {
+      id: 'q2',
       type: 'compare',
       title: 'Ίδιοι Αριθμητές',
       f1: `${q2Num}/${q2Den1}`,
@@ -180,15 +489,17 @@ function generateQuestions() {
       correct: q2Correct,
       explain: `Τα κλάσματα έχουν τον ίδιο αριθμητή (${q2Num}). Μεγαλύτερο είναι εκείνο με τον μικρότερο παρονομαστή, άρα ${q2Num}/${q2Den1} ${q2Correct} ${q2Num}/${q2Den2}.`
     },
-    q3: {
+    {
+      id: 'q3',
       type: 'compare',
-      title: 'Ετερώνυμα Κλάσματα',
+      title: 'Ετερώνυμα Κλάσματα (Χιαστί)',
       f1: `${q3Num1}/${q3Den1}`,
       f2: `${q3Num2}/${q3Den2}`,
       correct: q3Correct,
-      explain: `Με πολλαπλασιασμό χιαστί: ${q3Num1} × ${q3Den2} ＝ ${cross1} και ${q3Num2} × ${q3Den1} ＝ ${cross2}. Επειδή ${cross1} ${q3Correct} ${cross2}, ισχύει ${q3Num1}/${q3Den1} ${q3Correct} ${q3Num2}/${q3Den2}.`
+      explain: `Με πολλαπλασιασμό χιαστί: ${q3Num1} · ${q3Den2} ＝ ${cross1} και ${q3Num2} · ${q3Den1} ＝ ${cross2}. Επειδή ${cross1} ${q3Correct} ${cross2}, ισχύει ${q3Num1}/${q3Den1} ${q3Correct} ${q3Num2}/${q3Den2}.`
     },
-    q4: {
+    {
+      id: 'q4',
       type: 'mcq',
       title: 'Εύρεση Μεγαλύτερου',
       prompt: 'Ποιο από τα παρακάτω κλάσματα είναι το μεγαλύτερο;',
@@ -196,554 +507,413 @@ function generateQuestions() {
       correct: q4Correct,
       explain: `Μετατρέποντας σε ομώνυμα (ή σε δεκαδικούς), το ${q4Correct} (${q4MaxItem.val.toFixed(3).replace('.', ',')}) είναι το μεγαλύτερο.`
     },
-    q5: {
+    {
+      id: 'q5',
       type: 'tf',
       title: 'Κανόνας Ίδιων Αριθμητών',
       text: q5Text,
       correct: q5IsTrue,
       explain: q5IsTrue
-        ? 'Όσο μικρότερος είναι ο παρονομαστής, σε τόσο λιγότερα και άρα μεγαλύτερα κομμάτια χωρίζεται η μονάδα.'
-        : 'Μεγαλύτερο είναι εκείνο με τον ΜΙΚΡΟΤΕΡΟ παρονομαστή.'
+        ? 'Σωστά! Όσο μικρότερος είναι ο παρονομαστής, σε τόσο λιγότερα και άρα μεγαλύτερα κομμάτια χωρίζεται η μονάδα.'
+        : 'Λάθος! Μεγαλύτερο είναι εκείνο με τον ΜΙΚΡΟΤΕΡΟ παρονομαστή.'
     },
-    q6: {
+    {
+      id: 'q6',
       type: 'tf',
       title: 'Σύγκριση με τη Μονάδα',
       text: q6Text,
       correct: q6IsTrue,
       explain: q6IsTrue
-        ? 'Τα γνήσια κλάσματα είναι < 1, ενώ τα καταχρηστικά είναι > 1. Επομένως κάθε καταχρηστικό είναι μεγαλύτερο από κάθε γνήσιο.'
-        : 'Κανένα γνήσιο κλάσμα (< 1) δεν μπορεί να ξεπεράσει ένα καταχρηστικό κλάσμα (> 1).'
+        ? 'Σωστά! Τα γνήσια κλάσματα είναι ＜ 1, ενώ τα καταχρηστικά είναι ＞ 1. Επομένως κάθε καταχρηστικό είναι μεγαλύτερο από οποιοδήποτε γνήσιο.'
+        : 'Λάθος! Κανένα γνήσιο κλάσμα (＜ 1) δεν μπορεί να ξεπεράσει ένα καταχρηστικό κλάσμα (＞ 1).'
     },
-    q7: {
+    {
+      id: 'q7',
       type: 'input',
       title: 'Υπολογισμός Χιαστί',
-      prompt: `Στη σύγκριση ${q7Num1}/${q7Den1} και ${q7Num2}/${q7Den2}, ποιο είναι το αριστερό χιαστί γινόμενο (${q7Num1} × ${q7Den2});`,
+      prompt: `Στη σύγκριση των κλασμάτων ${q7Num1}/${q7Den1} και ${q7Num2}/${q7Den2}, ποιο είναι το αριστερό χιαστί γινόμενο (${q7Num1} · ${q7Den2});`,
       correct: q7Correct,
-      explain: `Το αριστερό χιαστί γινόμενο είναι: ${q7Num1} × ${q7Den2} ＝ ${q7Correct}.`
+      explain: `Το αριστερό χιαστί γινόμενο ισούται με: ${q7Num1} · ${q7Den2} ＝ ${q7Correct}.`
     },
-    q8: {
+    {
+      id: 'q8',
       type: 'mcq',
-      title: 'Πρόβλημα Καθημερινότητας',
-      prompt: q8Prompt,
+      title: 'Ισοδύναμο Κλάσμα',
+      prompt: `Ποιο από τα παρακάτω κλάσματα είναι ίσο (ισοδύναμο) με το ${q8BaseN}/${q8BaseD};`,
       options: q8Options,
-      correct: q8WhoMore,
-      explain: `Συγκρίνουμε ${n1}/${d1} (${v1.toFixed(2).replace('.', ',')}) και ${n2}/${d2} (${v2.toFixed(2).replace('.', ',')}). ${sc.actionExplain}: ${q8WhoMore}.`
+      correct: q8CorrectStr,
+      explain: `Πολλαπλασιάζοντας και τους δύο όρους του ${q8BaseN}/${q8BaseD} επί ${q8Mult} παίρνουμε το ισοδύναμο κλάσμα ${q8CorrectStr}.`
+    },
+    {
+      id: 'q9',
+      type: 'mcq',
+      title: `Πρόβλημα: ${STANDARD_PROBLEMS_POOL[spIndex].title}`,
+      prompt: q9Raw.prompt,
+      options: q9Options,
+      correct: q9Raw.correctText,
+      tableData: q9Raw.tableData,
+      explain: q9Raw.explain
+    },
+    {
+      id: 'q10',
+      type: 'mcq',
+      title: `Σύνθετο Πρόβλημα: ${HARD_PROBLEMS_POOL[hpIndex].title}`,
+      prompt: q10Raw.prompt,
+      options: q10Options,
+      correct: q10Raw.correctText,
+      tableData: q10Raw.tableData,
+      explain: q10Raw.explain
     }
-  };
+  ];
 }
 
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
+
 export default function SigkrisiKlasmatonExercisesPage() {
-  const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({
-    q1: '', q2: '', q3: '', q4: '', q5: null, q6: null, q7: '', q8: ''
-  });
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
-    setAnswers({
-      q1: '', q2: '', q3: '', q4: '', q5: null, q6: null, q7: '', q8: ''
+  const loadNewSet = useCallback(() => {
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = q.type === 'tf' ? null : '';
     });
+    setAnswers(initialAnswers);
     setSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    loadNewQuestions();
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
-  if (!questions) return null;
+  useEffect(() => {
+    loadNewSet();
+  }, [loadNewSet]);
 
-  const handleInputChange = (key, val) => {
+  const handleInputChange = (id, val) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [key]: val }));
+    setAnswers(prev => ({ ...prev, [id]: val }));
   };
 
-  const isCorrect = (key) => {
-    const q = questions[key];
-    const a = answers[key];
-
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
     if (q.type === 'compare') {
-      return a === q.correct;
+      return userVal === q.correct;
     }
     if (q.type === 'input') {
-      if (typeof a !== 'string' || !a.trim()) return false;
-      const cleanAns = a.replace(/\s+/g, '').trim().toLowerCase();
-      const cleanCorrect = q.correct.replace(/\s+/g, '').trim().toLowerCase();
-      return cleanAns === cleanCorrect;
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\s+/g, '').trim().toLowerCase();
+      const cleanTarget = q.correct.replace(/\s+/g, '').trim().toLowerCase();
+      return cleanUser === cleanTarget;
     }
     if (q.type === 'mcq') {
-      return a === q.correct;
+      return userVal === q.correct;
     }
     if (q.type === 'tf') {
-      return a === q.correct;
+      return userVal === q.correct;
     }
     return false;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (submitted) return;
+    if (submitted || questions.length === 0) return;
 
-    let s = 0;
-    ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8'].forEach(k => {
-      if (isCorrect(k)) s += 1;
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(s);
+    setScore(total);
     setSubmitted(true);
   };
 
-  const getCardStyle = (key) => {
+  const getCardStyle = (q) => {
     if (!submitted) return 'bg-white border-slate-200 shadow-sm';
-    return isCorrect(key)
-      ? 'bg-emerald-50/60 border-emerald-400 shadow-md ring-1 ring-emerald-400'
-      : 'bg-rose-50/60 border-rose-400 shadow-md ring-1 ring-rose-400';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
-
-  const actionButton = (
-    <Link
-      href="/st-dimotikou/26-sigkrisi-klasmaton"
-      className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
-    >
-      <span>📖</span>
-      <span>Θεωρία</span>
-    </Link>
-  );
 
   return (
     <Layout
-      title="🎯 Ασκήσεις: 26. Σύγκριση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση στη σύγκριση ομώνυμων, ετερώνυμων και ισοδύναμων κλασμάτων για τη ΣΤ' Δημοτικού."
+      title="Ασκήσεις: Σύγκριση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στη σύγκριση ομώνυμων, ετερώνυμων και ισοδύναμων κλασμάτων για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
-      actionButton={actionButton}
+      showAds={false}
       hideFooter={true}
+      actionButton={
+        <Link
+          href="/st-dimotikou/26-sigkrisi-klasmaton"
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
+        >
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
+        </Link>
+      }
     >
-      <div className="py-6 md:py-10 space-y-8 pb-28 sm:pb-32">
-
-        {/* 1. HEADER HERO BANNER */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+        
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 26 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
                 Διαδραστικές Ασκήσεις: Σύγκριση Κλασμάτων
               </h1>
-              <p className="text-blue-100 text-sm md:text-base max-w-2xl leading-relaxed">
-                Λύσε τα 8 δυναμικά προβλήματα σύγκρισης ομώνυμων, ετερώνυμων κλασμάτων, μεθόδου χιαστί και σύγκρισης με τη μονάδα!
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στη σύγκριση ομώνυμων, ετερώνυμων κλασμάτων, στη μέθοδο χιαστί και στη σύγκριση με τη μονάδα!
               </p>
             </div>
 
             <button
               type="button"
-              onClick={loadNewQuestions}
-              className="px-5 py-3 bg-white text-blue-800 hover:bg-blue-50 rounded-2xl font-extrabold shadow-md transition transform active:scale-95 text-xs sm:text-sm flex items-center gap-2 shrink-0 self-stretch sm:self-auto justify-center"
+              onClick={loadNewSet}
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
               <span>🔄</span>
-              <span>Νέες Ασκήσεις</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
-        </div>
+        </section>
 
-        {/* 2. ΦΟΡΜΑ ΜΕ ΤΙΣ 8 ΕΡΩΤΗΣΕΙΣ */}
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
         <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* ΕΡΩΤΗΣΗ 1: ΟΜΩΝΥΜΑ ΚΛΑΣΜΑΤΑ */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-                  Άσκηση 1 • Ομώνυμα Κλάσματα
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q1') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-4 font-medium text-center">
-                Σύγκρινε τα κλάσματα επιλέγοντας το σωστό σύμβολο:
-              </p>
-              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 font-mono text-lg sm:text-xl font-black">
-                <span className="text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200">
-                  {questions.q1.f1}
-                </span>
-                <span className="text-amber-500 text-2xl font-bold min-w-[24px] text-center">
-                  {answers.q1 || '?'}
-                </span>
-                <span className="text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200">
-                  {questions.q1.f2}
-                </span>
-              </div>
-              <div className="grid grid-cols-3 gap-3 mb-3">
-                {['>', '<', '='].map((sym) => (
-                  <button
-                    key={sym}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q1', sym)}
-                    className={`py-3 rounded-xl font-mono font-black text-xl border transition ${
-                      answers.q1 === sym
-                        ? 'bg-blue-600 text-white border-blue-600 shadow'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-blue-50'
-                    }`}
-                  >
-                    {sym}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q1') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q1.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 2: ΙΔΙΟΙ ΑΡΙΘΜΗΤΕΣ */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
-                  Άσκηση 2 • Ίδιοι Αριθμητές
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q2') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-4 font-medium text-center">
-                Σύγκρινε τα κλάσματα επιλέγοντας το σωστό σύμβολο:
-              </p>
-              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 font-mono text-lg sm:text-xl font-black">
-                <span className="text-purple-700 bg-purple-50 px-3 py-1.5 rounded-xl border border-purple-200">
-                  {questions.q2.f1}
-                </span>
-                <span className="text-amber-500 text-2xl font-bold min-w-[24px] text-center">
-                  {answers.q2 || '?'}
-                </span>
-                <span className="text-purple-700 bg-purple-50 px-3 py-1.5 rounded-xl border border-purple-200">
-                  {questions.q2.f2}
-                </span>
-              </div>
-              <div className="grid grid-cols-3 gap-3 mb-3">
-                {['>', '<', '='].map((sym) => (
-                  <button
-                    key={sym}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q2', sym)}
-                    className={`py-3 rounded-xl font-mono font-black text-xl border transition ${
-                      answers.q2 === sym
-                        ? 'bg-purple-600 text-white border-purple-600 shadow'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-purple-50'
-                    }`}
-                  >
-                    {sym}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q2') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q2.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 3: ΕΤΕΡΩΝΥΜΑ ΚΛΑΣΜΑΤΑ (ΧΙΑΣΤΙ) */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
-                  Άσκηση 3 • Ετερώνυμα Κλάσματα
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q3') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-4 font-medium text-center">
-                Σύγκρινε τα κλάσματα επιλέγοντας το σωστό σύμβολο:
-              </p>
-              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 font-mono text-lg sm:text-xl font-black">
-                <span className="text-amber-800 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
-                  {questions.q3.f1}
-                </span>
-                <span className="text-amber-500 text-2xl font-bold min-w-[24px] text-center">
-                  {answers.q3 || '?'}
-                </span>
-                <span className="text-amber-800 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
-                  {questions.q3.f2}
-                </span>
-              </div>
-              <div className="grid grid-cols-3 gap-3 mb-3">
-                {['>', '<', '='].map((sym) => (
-                  <button
-                    key={sym}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q3', sym)}
-                    className={`py-3 rounded-xl font-mono font-black text-xl border transition ${
-                      answers.q3 === sym
-                        ? 'bg-amber-500 text-white border-amber-500 shadow'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
-                    }`}
-                  >
-                    {sym}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q3') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q3.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 4 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">
-                  Άσκηση 4 • Εύρεση Μεγαλύτερου
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q4') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                {questions.q4.prompt}
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                {questions.q4.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q4', opt)}
-                    className={`p-3 rounded-xl text-base font-mono font-black border text-center transition ${
-                      answers.q4 === opt
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-indigo-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q4') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q4.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 5 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
-                  Άσκηση 5 • Σωστό ή Λάθος
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q5') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                «{questions.q5.text}»
-              </p>
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', true)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q5 === true
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                  }`}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
                 >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', false)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q5 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q5') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q5.explain}
-                </div>
-              )}
-            </div>
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
+                      </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
+                        </span>
+                      )}
+                    </div>
 
-            {/* ΕΡΩΤΗΣΗ 6 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
-                  Άσκηση 6 • Σωστό ή Λάθος
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q6') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                «{questions.q6.text}»
-              </p>
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', true)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q6 === true
-                      ? 'bg-cyan-600 text-white border-cyan-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-cyan-50'
-                  }`}
-                >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', false)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q6 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q6') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q6.explain}
-                </div>
-              )}
-            </div>
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    {q.type === 'compare' ? (
+                      <div className="space-y-4 mb-4">
+                        <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold text-center">
+                          Σύγκρινε τα κλάσματα επιλέγοντας το σωστό σύμβολο:
+                        </p>
+                        <div className="flex items-center justify-center gap-3 sm:gap-4 font-mono text-lg sm:text-xl font-black">
+                          <span className="text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200">
+                            {q.f1}
+                          </span>
+                          <span className="text-amber-500 text-2xl font-bold min-w-[28px] text-center">
+                            {answers[q.id] || '?'}
+                          </span>
+                          <span className="text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200">
+                            {q.f2}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2.5">
+                          {['＞', '＜', '＝'].map((sym) => (
+                            <button
+                              key={sym}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleInputChange(q.id, sym)}
+                              className={`py-3 rounded-2xl font-mono font-black text-xl border transition touch-manipulation active:scale-95 ${
+                                answers[q.id] === sym
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-blue-50'
+                              }`}
+                            >
+                              {sym}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-4">
+                        {q.type === 'tf' ? `«${q.text}»` : q.prompt}
+                      </p>
+                    )}
 
-            {/* ΕΡΩΤΗΣΗ 7 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
-                  Άσκηση 7 • Χιαστί Πολλαπλασιασμός
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q7') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 font-medium">
-                {questions.q7.prompt}
-              </p>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  disabled={submitted}
-                  value={answers.q7}
-                  onChange={(e) => handleInputChange('q7', e.target.value)}
-                  placeholder="Γράψε το γινόμενο..."
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-rose-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q7') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q7.explain}
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleInputChange(q.id, opt)}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
+                                isSelected
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          placeholder="Γράψε την απάντησή σου..."
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
+                      </div>
+                    )}
+
+                    {q.type === 'tf' && (
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <button
+                          type="button"
+                          disabled={submitted}
+                          onClick={() => handleInputChange(q.id, true)}
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                            answers[q.id] === true
+                              ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
+                              : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
+                          }`}
+                        >
+                          👍 {toCleanUppercase('Σωστό')}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={submitted}
+                          onClick={() => handleInputChange(q.id, false)}
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                            answers[q.id] === false
+                              ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
+                              : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
+                          }`}
+                        >
+                          👎 {toCleanUppercase('Λάθος')}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
 
-            {/* ΕΡΩΤΗΣΗ 8 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
-                  Άσκηση 8 • Πρόβλημα Καθημερινότητας
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q8') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 font-medium leading-relaxed">
-                {questions.q8.prompt}
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
-                {questions.q8.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q8', opt)}
-                    className={`w-full p-2.5 rounded-xl text-xs font-bold border text-center transition ${
-                      answers.q8 === opt
-                        ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q8') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q8.explain}
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && q.tableData.length > 0 && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Μέθοδος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-
+              );
+            })}
           </div>
 
           {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
           {!submitted && (
-            <div className="flex justify-center pt-4 sm:pt-6">
+            <div className="flex justify-center pt-4">
               <button
                 type="submit"
-                className="w-full sm:w-auto bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
                 <span className="text-xl">🎯</span>
-                <span>Έλεγχος Απαντήσεων</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
             </div>
           )}
         </form>
-
       </div>
 
-      {/* 3. FIXED STICKY BOTTOM SCORE FOOTER */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 sm:py-4 px-4 sm:px-6 z-50">
+      {/* FIXED BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
           
-          {/* ΑΡΙΣΤΕΡΑ: SCORE BADGE & PERCENTAGE */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>Σκορ:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 8</span>
+              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
               </span>
             )}
           </div>
 
-          {/* ΔΕΞΙΑ: GUIDANCE TEXT OR RETRY BUTTON */}
+          {/* GUIDANCE OR RESTART */}
           <div className="flex items-center gap-3">
             {submitted ? (
               <button
                 type="button"
-                onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
+                onClick={loadNewSet}
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
                 <span>🔄</span>
-                <span>Παίξε ξανά με νέες ασκήσεις!</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             ) : (
-              <p className="text-xs md:text-sm text-slate-400 hidden sm:block">
-                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
               </p>
             )}
           </div>
