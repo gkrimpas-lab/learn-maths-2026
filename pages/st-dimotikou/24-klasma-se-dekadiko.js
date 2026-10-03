@@ -33,6 +33,7 @@ const PRESETS = [
 ];
 
 export default function KlasmaSeDekadikoPage() {
+  // Αρχικοποιηση αυστηρα στο 1/4 (0,25)
   const [numerator, setNumerator] = useState(1);
   const [denominator, setDenominator] = useState(4);
 
@@ -75,8 +76,8 @@ export default function KlasmaSeDekadikoPage() {
   };
 
   // Ασφαλεις τιμες για υπολογισμους
-  const activeNumerator = numerator === '' ? 0 : numerator;
-  const activeDenominator = denominator === '' || denominator === 0 ? 1 : denominator;
+  const activeNumerator = numerator === '' ? 0 : Number(numerator);
+  const activeDenominator = denominator === '' || Number(denominator) === 0 ? 1 : Number(denominator);
   const decimalValue = activeNumerator / activeDenominator;
 
   // Ελεγχος αν ο δεκαδικος ειναι περιοδικος
@@ -343,8 +344,9 @@ export default function KlasmaSeDekadikoPage() {
                       <input
                         type="text"
                         inputMode="numeric"
-                        value={numerator}
+                        value={numerator !== '' ? numerator : ''}
                         onChange={(e) => handleNumeratorInputChange(e.target.value)}
+                        placeholder="1"
                         className="w-full min-w-0 flex-1 text-center font-mono font-black text-xl sm:text-2xl text-indigo-600 bg-indigo-50/50 border-2 border-indigo-200 rounded-xl p-1.5 focus:border-indigo-500 outline-none shadow-inner"
                       />
                       <button
@@ -373,8 +375,9 @@ export default function KlasmaSeDekadikoPage() {
                       <input
                         type="text"
                         inputMode="numeric"
-                        value={denominator}
+                        value={denominator !== '' ? denominator : ''}
                         onChange={(e) => handleDenominatorInputChange(e.target.value)}
+                        placeholder="4"
                         className="w-full min-w-0 flex-1 text-center font-mono font-black text-xl sm:text-2xl text-amber-600 bg-amber-50/50 border-2 border-amber-200 rounded-xl p-1.5 focus:border-amber-500 outline-none shadow-inner"
                       />
                       <button
