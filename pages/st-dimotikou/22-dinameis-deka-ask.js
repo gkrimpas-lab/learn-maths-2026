@@ -1,14 +1,21 @@
-import { useState, useEffect } from 'react';
+// pages/st-dimotikou/22-dinameis-deka-ask.js
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Βοηθητικές συναρτήσεις
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
+
+function randInt(min, max) {
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
 }
 
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -17,606 +24,864 @@ function shuffle(array) {
   return arr;
 }
 
-const exponentsUnicode = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹', 10: '¹⁰' };
+// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
 
-// Θεματικά σενάρια καθημερινότητας & επιστήμης
-const REAL_WORLD_CONTEXTS = [
-  { item: 'αστέρια στον γαλαξία', exp: 9, unit: 'δισεκατομμύριο', pronoun: 'τα' },
-  { item: 'κύτταρα στο σώμα', exp: 6, unit: 'εκατομμύριο', pronoun: 'τα' },
-  { item: 'ευρώ στον προϋπολογισμό', exp: 6, unit: 'εκατομμύριο', pronoun: 'τα' },
-  { item: 'σταγόνες νερού σε δεξαμενή', exp: 4, unit: 'χιλιάδες', pronoun: 'τις' },
-  { item: 'κόκκοι άμμου', exp: 5, unit: 'χιλιάδες', pronoun: 'τους' }
+// Μορφοποιηση αριθμων με ελληνικο locale
+function formatNum(num) {
+  if (num === null || num === undefined || isNaN(Number(num))) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
+
+const EXPONENTS_UNICODE = {
+  0: '⁰',
+  1: '¹',
+  2: '²',
+  3: '³',
+  4: '⁴',
+  5: '⁵',
+  6: '⁶',
+  7: '⁷',
+  8: '⁸',
+  9: '⁹',
+  10: '¹⁰'
+};
+
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q9 & Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
+
+const STANDARD_PROBLEMS_POOL = [
+  {
+    id: 'sp1',
+    title: 'Εισιτήρια Συναυλίας',
+    unit: 'ευρώ (€)',
+    generate: () => {
+      const coeff = randInt(3, 8);
+      const exp = randInt(4, 5); // 10^4 = 10.000 ή 10^5 = 100.000
+      const total = coeff * Math.pow(10, exp);
+      return {
+        prompt: `Τα συνολικά έσοδα από μία μεγάλη φιλανθρωπική συναυλία έφτασαν τα ${formatNum(total)} €. Πώς γράφεται σύντομα αυτό το ποσό με χρήση δύναμης του 10;`,
+        unit: '€',
+        correctVal: total,
+        correctText: `${coeff} · 10${EXPONENTS_UNICODE[exp]} €`,
+        tableData: [
+          { item: 'Συνολικό Ποσό', formula: `${formatNum(total)} €`, val: `${formatNum(total)} €` },
+          { item: 'Πλήθος Μηδενικών', formula: `${exp} μηδενικά`, val: `10${EXPONENTS_UNICODE[exp]}` },
+          { item: 'Σύντομη Γραφή', formula: `${coeff} · 10${EXPONENTS_UNICODE[exp]}`, val: `${coeff} · 10${EXPONENTS_UNICODE[exp]} €` }
+        ],
+        explain: `Ο αριθμός ${formatNum(total)} έχει ${exp} μηδενικά, άρα ισούται με ${coeff} · ${formatNum(Math.pow(10, exp))} ＝ ${coeff} · 10${EXPONENTS_UNICODE[exp]} €.`,
+        distractors: [
+          `${coeff} · 10${EXPONENTS_UNICODE[exp - 1]} €`,
+          `${coeff} · 10${EXPONENTS_UNICODE[exp + 1]} €`,
+          `${coeff * 10} · 10${EXPONENTS_UNICODE[exp]} €`
+        ]
+      };
+    }
+  },
+  {
+    id: 'sp2',
+    title: 'Συσκευασίες Καρφιών σε Εργοστάσιο',
+    unit: 'καρφιά',
+    generate: () => {
+      const boxes = randInt(4, 9);
+      const perBoxExp = 3; // 10^3 = 1.000
+      const total = boxes * 1000;
+      return {
+        prompt: `Ένα εργοστάσιο παρήγαγε ${boxes} κιβώτια με καρφιά. Κάθε κιβώτιο περιέχει ακριβώς 10³ καρφιά. Πόσα καρφιά παρήχθησαν συνολικά;`,
+        unit: 'καρφιά',
+        correctVal: total,
+        correctText: `${formatNum(total)} καρφιά`,
+        tableData: [
+          { item: 'Πλήθος Κιβωτίων', formula: `${boxes}`, val: `${boxes}` },
+          { item: 'Καρφιά ανά Κιβώτιο', formula: '10³ ＝ 1.000', val: '1.000' },
+          { item: 'Συνολικό Πλήθος', formula: `${boxes} · 1.000`, val: `${formatNum(total)} καρφιά` }
+        ],
+        explain: `Η δύναμη 10³ ισούται με 1.000 (1 ακολουθούμενο από 3 μηδενικά). Άρα ${boxes} · 1.000 ＝ ${formatNum(total)} καρφιά.`,
+        distractors: [
+          `${formatNum(boxes * 100)} καρφιά`,
+          `${formatNum(boxes * 10000)} καρφιά`,
+          `${formatNum(boxes * 30)} καρφιά`
+        ]
+      };
+    }
+  },
+  {
+    id: 'sp3',
+    title: 'Μικροοργανισμοί σε Δεξαμενή',
+    unit: 'μικροοργανισμοί',
+    generate: () => {
+      const coeff = randInt(2, 7);
+      const exp = 6; // 10^6 = 1.000.000
+      const total = coeff * 1000000;
+      return {
+        prompt: `Σε έναν βιολογικό καθαρισμό μετρήθηκαν ${coeff} · 10⁶ μικροοργανισμοί ανά κυβικό μέτρο νερού. Ποιος είναι ο ακριβής αριθμός των μικροοργανισμών σε κανονική αριθμητική γραφή;`,
+        unit: 'μικροοργανισμοί',
+        correctVal: total,
+        correctText: `${formatNum(total)} μικροοργανισμοί`,
+        tableData: [
+          { item: 'Δύναμη του 10', formula: '10⁶ (6 μηδενικά)', val: '1.000.000' },
+          { item: 'Συντελεστής', formula: `${coeff}`, val: `${coeff}` },
+          { item: 'Αριθμητική Τιμή', formula: `${coeff} · 1.000.000`, val: `${formatNum(total)}` }
+        ],
+        explain: `Η δύναμη 10⁶ ισούται με 1.000.000 (ένα εκατομμύριο). Επομένως, ${coeff} · 10⁶ ＝ ${formatNum(total)} μικροοργανισμοί.`,
+        distractors: [
+          `${formatNum(coeff * 100000)} μικροοργανισμοί`,
+          `${formatNum(coeff * 10000000)} μικροοργανισμοί`,
+          `${formatNum(coeff * 60)} μικροοργανισμοί`
+        ]
+      };
+    }
+  },
+  {
+    id: 'sp4',
+    title: 'Σελίδες σε Ψηφιακή Βιβλιοθήκη',
+    unit: 'σελίδες',
+    generate: () => {
+      const coeff = randInt(3, 9);
+      const exp = 4; // 10^4 = 10.000
+      const total = coeff * 10000;
+      return {
+        prompt: `Μία ψηφιακή εκπαιδευτική πλατφόρμα περιέχει ${formatNum(total)} σελίδες ασκήσεων. Πώς γράφεται σύντομα αυτό το νούμερο ως γινόμενο μονοψήφιου αριθμού με δύναμη του 10;`,
+        unit: 'σελίδες',
+        correctVal: total,
+        correctText: `${coeff} · 10⁴ σελίδες`,
+        tableData: [
+          { item: 'Αριθμός Σελίδων', formula: `${formatNum(total)}`, val: `${formatNum(total)}` },
+          { item: 'Ανάλυση', formula: `${coeff} · 10.000`, val: `${coeff} · 10⁴` }
+        ],
+        explain: `Ο αριθμός ${formatNum(total)} αποτελείται από το ψηφίο ${coeff} ακολουθούμενο από 4 μηδενικά, δηλαδή ${coeff} · 10⁴ σελίδες.`,
+        distractors: [
+          `${coeff} · 10³ σελίδες`,
+          `${coeff} · 10⁵ σελίδες`,
+          `${coeff * 10} · 10⁴ σελίδες`
+        ]
+      };
+    }
+  },
+  {
+    id: 'sp5',
+    title: 'Φωτεινά Έτη και Χιλιόμετρα',
+    unit: 'χλμ.',
+    generate: () => {
+      const coeff = randInt(2, 6);
+      const exp = 5; // 10^5 = 100.000
+      const total = coeff * 100000;
+      return {
+        prompt: `Ένα τηλεσκόπιο κατέγραψε έναν αστεροειδή που απέχει ${coeff} · 10⁵ χιλιόμετρα από τη Γη. Πόσα χιλιόμετρα είναι αυτή η απόσταση;`,
+        unit: 'χλμ.',
+        correctVal: total,
+        correctText: `${formatNum(total)} χλμ.`,
+        tableData: [
+          { item: 'Εκθέτης', formula: '5 μηδενικά', val: '100.000' },
+          { item: 'Υπολογισμός', formula: `${coeff} · 100.000`, val: `${formatNum(total)} χλμ.` }
+        ],
+        explain: `Το 10⁵ ισούται με το 1 με 5 μηδενικά (100.000). Έτσι, ${coeff} · 100.000 ＝ ${formatNum(total)} χλμ.`,
+        distractors: [
+          `${formatNum(coeff * 10000)} χλμ.`,
+          `${formatNum(coeff * 1000000)} χλμ.`,
+          `${formatNum(coeff * 50)} χλμ.`
+        ]
+      };
+    }
+  },
+  {
+    id: 'sp6',
+    title: 'Αποθήκευση Δεδομένων σε Bytes',
+    unit: 'bytes',
+    generate: () => {
+      const coeff = randInt(5, 9);
+      const exp = 3; // 10^3 = 1.000 (Kilobyte βάσης 10)
+      const total = coeff * 1000;
+      return {
+        prompt: `Ένα μικρό ψηφιακό αρχείο κειμένου καταλαμβάνει ${coeff} · 10³ bytes στη μνήμη. Πόσα bytes καταλαμβάνει το αρχείο;`,
+        unit: 'bytes',
+        correctVal: total,
+        correctText: `${formatNum(total)} bytes`,
+        tableData: [
+          { item: 'Δύναμη 10³', formula: '1.000 bytes', val: '1.000' },
+          { item: 'Συνολικό Μέγεθος', formula: `${coeff} · 1.000`, val: `${formatNum(total)} bytes` }
+        ],
+        explain: `10³ ＝ 1.000 bytes. Επομένως, ${coeff} · 10³ ＝ ${formatNum(total)} bytes.`,
+        distractors: [
+          `${formatNum(coeff * 100)} bytes`,
+          `${formatNum(coeff * 10000)} bytes`,
+          `${formatNum(coeff * 300)} bytes`
+        ]
+      };
+    }
+  }
 ];
 
-// Δημιουργία 8 μοναδικών ερωτήσεων
-function generateQuestions() {
-  const shuffledContexts = shuffle(REAL_WORLD_CONTEXTS);
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'hp1',
+    title: 'Η Ταχύτητα του Φωτός',
+    unit: 'μέτρα ανά δευτερόλεπτο (m/s)',
+    generate: () => {
+      // 3 · 10^8 m/s = 300.000.000 m/s
+      const coeff = 3;
+      const exp = 8;
+      const total = 300000000;
+      return {
+        prompt: `Η ταχύτητα του φωτός στο κενό είναι περίπου 3 · 10⁸ μέτρα ανά δευτερόλεπτο. Πόσα μέτρα ανά δευτερόλεπτο διανύει το φως σε κανονική αναπτυγμένη μορφή;`,
+        unit: 'm/s',
+        correctVal: total,
+        correctText: '300.000.000 m/s (300 εκατομμύρια)',
+        tableData: [
+          { item: 'Δύναμη 10⁸', formula: '1 με 8 μηδενικά', val: '100.000.000' },
+          { item: 'Ταχύτητα', formula: '3 · 100.000.000', val: '300.000.000 m/s' }
+        ],
+        explain: `10⁸ ＝ 100.000.000 (8 μηδενικά). Πολλαπλασιάζοντας με το 3 έχουμε 300.000.000 μέτρα ανά δευτερόλεπτο (300 εκατομμύρια m/s).`,
+        distractors: [
+          '30.000.000 m/s',
+          '3.000.000.000 m/s',
+          '24.000.000 m/s'
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp2',
+    title: 'Αστέρια στον Γαλαξία',
+    unit: 'αστέρια',
+    generate: () => {
+      // 2 · 10^11 = 200.000.000.000 (200 δισεκατομμύρια)
+      const coeff = randInt(2, 4);
+      const exp = 11;
+      const valText = `${coeff * 100} δισεκατομμύρια`;
+      return {
+        prompt: `Οι αστρονόμοι εκτιμούν ότι ένας σπειροειδής γαλαξίας περιέχει περίπου ${coeff} · 10¹¹ αστέρια. Πόσα αστέρια εκφράζει αυτός ο αριθμός με λόγια;`,
+        unit: 'αστέρια',
+        correctVal: coeff * 100,
+        correctText: `${valText} αστέρια`,
+        tableData: [
+          { item: '10⁹', formula: '1 δισεκατομμύριο (9 μηδενικά)', val: '1.000.000.000' },
+          { item: '10¹¹', formula: '100 δισεκατομμύρια (11 μηδενικά)', val: '100.000.000.000' },
+          { item: `${coeff} · 10¹¹`, formula: `${coeff} · 100 δισεκατομμύρια`, val: `${valText}` }
+        ],
+        explain: `Ο εκθέτης 9 δηλώνει τα δισεκατομμύρια (10⁹). Ο εκθέτης 11 έχει 2 επιπλέον μηδενικά (100 δισεκατομμύρια). Άρα ${coeff} · 10¹¹ ＝ ${valText} αστέρια.`,
+        distractors: [
+          `${coeff * 10} δισεκατομμύρια αστέρια`,
+          `${coeff} τρισεκατομμύρια αστέρια`,
+          `${coeff * 100} εκατομμύρια αστέρια`
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp3',
+    title: 'Πληθυσμός Κυττάρων στον Ανθρώπινο Εγκέφαλο',
+    unit: 'νευρώνες',
+    generate: () => {
+      // 10^11 = 100 δισεκατομμύρια
+      const exp = 11;
+      return {
+        prompt: `Ο ανθρώπινος εγκέφαλος περιέχει περίπου 10¹¹ νευρώνες (νευρικά κύτταρα). Αν κάθε νευρώνας κάνει κατά μέσο όρο 10³ συνάψεις, ποια δύναμη του 10 εκφράζει το συνολικό πλήθος των συνάψεων; (Χρησιμοποίησε τον κανόνα: 10¹¹ · 10³ ＝ 10¹¹⁺³)`,
+        unit: 'συνάψεις',
+        correctVal: 14,
+        correctText: `10¹⁴ συνάψεις (100 τρισεκατομμύρια)`,
+        tableData: [
+          { item: 'Νευρώνες', formula: '10¹¹', val: '100 δισεκατομμύρια' },
+          { item: 'Συνάψεις ανά νευρώνα', formula: '10³', val: '1.000' },
+          { item: 'Σύνολο Συνάψεων', formula: '10¹¹ · 10³ ＝ 10¹¹⁺³', val: '10¹⁴' }
+        ],
+        explain: `Όταν πολλαπλασιάζουμε δυνάμεις με την ίδια βάση (το 10), προσθέτουμε τους εκθέτες: 11 ＋ 3 ＝ 14. Άρα έχουμε 10¹⁴ συνάψεις.`,
+        distractors: [
+          '10³³ συνάψεις',
+          '10⁸ συνάψεις',
+          '10¹² συνάψεις'
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp4',
+    title: 'Σύγκριση Μεγάλων Μεγεθών',
+    unit: 'φορές',
+    generate: () => {
+      // Πόσες φορές μεγαλύτερος είναι ο 10^7 από τον 10^4 -> 10^3 = 1.000 φορές
+      const exp1 = randInt(6, 8);
+      const exp2 = exp1 - randInt(2, 3);
+      const diff = exp1 - exp2;
+      const times = Math.pow(10, diff);
+      return {
+        prompt: `Πόσες φορές μεγαλύτερος είναι ένας προϋπολογισμός 10${EXPONENTS_UNICODE[exp1]} € από έναν προϋπολογισμό 10${EXPONENTS_UNICODE[exp2]} €;`,
+        unit: 'φορές',
+        correctVal: times,
+        correctText: `${formatNum(times)} φορές (10${EXPONENTS_UNICODE[diff]})`,
+        tableData: [
+          { item: 'Μεγαλύτερο Ποσό', formula: `10${EXPONENTS_UNICODE[exp1]}`, val: `${exp1} μηδενικά` },
+          { item: 'Μικρότερο Ποσό', formula: `10${EXPONENTS_UNICODE[exp2]}`, val: `${exp2} μηδενικά` },
+          { item: 'Λόγος Μεγεθών', formula: `10${EXPONENTS_UNICODE[exp1]} : 10${EXPONENTS_UNICODE[exp2]} ＝ 10${EXPONENTS_UNICODE[diff]}`, val: `${formatNum(times)} φορές` }
+        ],
+        explain: `Η διαφορά των εκθετών είναι ${exp1} － ${exp2} ＝ ${diff}. Επομένως, το πρώτο ποσό έχει ${diff} επιπλέον μηδενικά, δηλαδή είναι 10${EXPONENTS_UNICODE[diff]} ＝ ${formatNum(times)} φορές μεγαλύτερο!`,
+        distractors: [
+          `${diff} φορές`,
+          `${formatNum(times * 10)} φορές`,
+          `${formatNum(Math.max(10, times / 10))} φορές`
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp5',
+    title: 'Χρηματικός Προϋπολογισμός Κράτους',
+    unit: 'ευρώ (€)',
+    generate: () => {
+      // 6 · 10^10 € = 60.000.000.000 € (60 δισεκατομμύρια)
+      const coeff = randInt(4, 9);
+      const exp = 10;
+      const valText = `${coeff * 10} δισεκατομμύρια €`;
+      return {
+        prompt: `Τα ετήσια κρατικά έσοδα μιας ευρωπαϊκής χώρας ανέρχονται σε ${coeff} · 10¹⁰ €. Ποιο είναι το ποσό αυτό διατυπωμένο με λόγια;`,
+        unit: '€',
+        correctVal: coeff * 10,
+        correctText: valText,
+        tableData: [
+          { item: '10⁹ €', formula: '1 δισεκατομμύριο €', val: '1.000.000.000 €' },
+          { item: '10¹⁰ €', formula: '10 δισεκατομμύρια €', val: '10.000.000.000 €' },
+          { item: `${coeff} · 10¹⁰ €`, formula: `${coeff} · 10 δισεκατομμύρια €`, val: valText }
+        ],
+        explain: `10¹⁰ ＝ 10.000.000.000 (10 δισεκατομμύρια). Πολλαπλασιάζοντας με το ${coeff}, προκύπτουν ακριβώς ${valText}.`,
+        distractors: [
+          `${coeff} δισεκατομμύρια €`,
+          `${coeff * 100} εκατομμύρια €`,
+          `${coeff} τρισεκατομμύρια €`
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp6',
+    title: 'Κύτταρα στο Ανθρώπινο Σώμα',
+    unit: 'κύτταρα',
+    generate: () => {
+      // 3 · 10^13 = 30 τρισεκατομμύρια
+      const coeff = 3;
+      const exp = 13;
+      return {
+        prompt: `Το ανθρώπινο σώμα αποτελείται από περίπου 3 · 10¹³ κύτταρα. Πόσα μηδενικά έχει αυτός ο αριθμός όταν γραφτεί ολόκληρος με ψηφία μετά το 3;`,
+        unit: 'μηδενικά',
+        correctVal: exp,
+        correctText: `${exp} μηδενικά (30 τρισεκατομμύρια)`,
+        tableData: [
+          { item: 'Μορφή', formula: `3 · 10¹³`, val: `Εκθέτης ${exp}` },
+          { item: 'Πλήθος Μηδενικών', formula: 'Ίσο με τον εκθέτη της δύναμης του 10', val: `${exp} μηδενικά` }
+        ],
+        explain: `Στη δύναμη 10¹³, ο εκθέτης 13 δείχνει ότι μετά το ψηφίο 3 ακολουθούν ακριβώς 13 μηδενικά (δηλαδή 30.000.000.000.000 κύτταρα).`,
+        distractors: [
+          '12 μηδενικά',
+          '14 μηδενικά',
+          '10 μηδενικά'
+        ]
+      };
+    }
+  }
+];
 
-  // Q1: Input - Υπολογισμός δύναμης του 10 (π.χ. 10^3, 10^4, 10^5)
-  const q1Exp = getRandomInt(2, 6);
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
+function generateQuestions() {
+  // Q1: Input - Υπολογισμός δύναμης του 10
+  const q1Exp = randInt(2, 6);
   const q1Val = Math.pow(10, q1Exp);
   const q1Correct = String(q1Val);
 
   // Q2: Input - Πλήθος μηδενικών σε μια δύναμη του 10
-  const q2Exp = getRandomInt(3, 8);
+  const q2Exp = randInt(3, 8);
   const q2Correct = String(q2Exp);
 
   // Q3: MCQ - Σύντομη γραφή μεγάλου αριθμού σε δύναμη του 10
-  const q3Exp = getRandomInt(3, 7);
+  const q3Exp = randInt(3, 7);
   const q3Val = Math.pow(10, q3Exp);
-  const q3CorrectStr = `10${exponentsUnicode[q3Exp]}`;
+  const q3CorrectStr = `10${EXPONENTS_UNICODE[q3Exp]}`;
   const q3Wrongs = [
-    `10${exponentsUnicode[q3Exp - 1]}`,
-    `10${exponentsUnicode[q3Exp + 1]}`,
-    `10${exponentsUnicode[q3Exp + 2]}`
+    `10${EXPONENTS_UNICODE[q3Exp - 1]}`,
+    `10${EXPONENTS_UNICODE[q3Exp + 1]}`,
+    `10${EXPONENTS_UNICODE[q3Exp + 2]}`
   ];
-  const q3Options = shuffle([q3CorrectStr, ...q3Wrongs]);
+  const q3Options = shuffle([...new Set([q3CorrectStr, ...q3Wrongs])]);
 
-  // Q4: MCQ - Εύρεση του αριθμού από ανάπτυγμα με δύναμη του 10 (π.χ. 7 × 10^4 = 70.000)
-  const q4Digit = getRandomInt(2, 9);
-  const q4Exp = getRandomInt(2, 5);
+  // Q4: MCQ - Εύρεση αριθμού από ανάπτυγμα με δύναμη του 10 (π.χ. 7 · 10^4 = 70.000)
+  const q4Digit = randInt(2, 9);
+  const q4Exp = randInt(2, 5);
   const q4Result = q4Digit * Math.pow(10, q4Exp);
-  const q4CorrectStr = q4Result.toLocaleString('el-GR');
+  const q4CorrectStr = formatNum(q4Result);
   const q4Wrongs = [
-    (q4Digit * Math.pow(10, q4Exp - 1)).toLocaleString('el-GR'),
-    (q4Digit * Math.pow(10, q4Exp + 1)).toLocaleString('el-GR'),
-    (q4Digit * 10 + q4Exp).toLocaleString('el-GR')
+    formatNum(q4Digit * Math.pow(10, q4Exp - 1)),
+    formatNum(q4Digit * Math.pow(10, q4Exp + 1)),
+    formatNum(q4Digit * 10 + q4Exp)
   ];
-  const q4Options = shuffle([q4CorrectStr, ...q4Wrongs]);
+  const q4Options = shuffle([...new Set([q4CorrectStr, ...q4Wrongs])]);
 
-  // Q5: True / False - Η ειδική περίπτωση 10^0 = 1
+  // Q5: True/False - Η ειδική περίπτωση 10^0 = 1
   const q5IsTrue = Math.random() > 0.5;
   const q5Text = q5IsTrue
     ? 'Η δύναμη 10⁰ ισούται με 1.'
     : 'Η δύναμη 10⁰ ισούται με 0.';
 
-  // Q6: True / False - Κανόνας για τα μηδενικά
+  // Q6: True/False - Κανόνας για τα μηδενικά
   const q6IsTrue = Math.random() > 0.5;
   const q6Text = q6IsTrue
-    ? 'Σε μια δύναμη του 10, ο εκθέτης δείχνει πόσα μηδενικά ακολουθούν μετά το 1.'
-    : 'Σε μια δύναμη του 10, ο εκθέτης δείχνει με πόσα μηδενικά πολλαπλασιάζουμε το 10.';
+    ? 'Σε μία δύναμη του 10, ο εκθέτης δείχνει ακριβώς πόσα μηδενικά ακολουθούν μετά το 1.'
+    : 'Σε μία δύναμη του 10, ο εκθέτης δείχνει με πόσα μηδενικά πολλαπλασιάζουμε το 10.';
 
-  // Q7: Input - Εύρεση εκθέτη: 10^x = 1.000.000
-  const q7Exp = [2, 3, 4, 5, 6, 7][getRandomInt(0, 5)];
+  // Q7: Input - Εύρεση εκθέτη: 10^x = τιμή
+  const q7Exp = [2, 3, 4, 5, 6, 7][randInt(0, 5)];
   const q7Val = Math.pow(10, q7Exp);
   const q7Correct = String(q7Exp);
 
-  // Q8: MCQ - Πρόβλημα Καθημερινότητας / Επιστήμης
-  const ctx = shuffledContexts[0];
-  const q8Coeff = getRandomInt(2, 8);
-  const q8Total = q8Coeff * Math.pow(10, ctx.exp);
-  const q8CorrectStr = `${q8Coeff} × 10${exponentsUnicode[ctx.exp]}`;
-  const q8Wrongs = [
-    `${q8Coeff} × 10${exponentsUnicode[ctx.exp - 1]}`,
-    `${q8Coeff} × 10${exponentsUnicode[ctx.exp + 1]}`,
-    `${q8Coeff * 10}${exponentsUnicode[ctx.exp]}`
-  ];
-  const q8Options = shuffle([q8CorrectStr, ...q8Wrongs]);
-
-  return {
-    q1: {
-      type: 'input',
-      title: 'Υπολογισμός Δύναμης',
-      exp: q1Exp,
-      correct: q1Correct,
-      explain: `10${exponentsUnicode[q1Exp]} ＝ 1 ακολουθούμενο από ${q1Exp} μηδενικά ＝ ${q1Val.toLocaleString('el-GR')}.`
+  // Q8: MCQ - Πράξεις με δυνάμεις του 10
+  const q8Pool = [
+    {
+      prompt: 'Ποιο είναι το αποτέλεσμα της πρόσθεσης 10³ ＋ 10²;',
+      correct: '1.100',
+      wrong: ['2.000', '10⁵', '10.000'],
+      explain: '10³ ＝ 1.000 και 10² ＝ 100. Επομένως, 1.000 ＋ 100 ＝ 1.100.'
     },
-    q2: {
+    {
+      prompt: 'Ποιο είναι το αποτέλεσμα της αφαίρεσης 10⁴ － 10³;',
+      correct: '9.000',
+      wrong: ['10', '1.000', '9.900'],
+      explain: '10⁴ ＝ 10.000 και 10³ ＝ 1.000. Επομένως, 10.000 － 1.000 ＝ 9.000.'
+    },
+    {
+      prompt: 'Πόσο κάνει το γινόμενο 5 · 10³ ＋ 3 · 10²;',
+      correct: '5.300',
+      wrong: ['5.030', '8.000', '53.000'],
+      explain: '5 · 1.000 ＝ 5.000 και 3 · 100 ＝ 300. Άρα 5.000 ＋ 300 ＝ 5.300.'
+    }
+  ];
+  const q8Data = q8Pool[randInt(0, q8Pool.length - 1)];
+  const q8Options = shuffle([...new Set([q8Data.correct, ...q8Data.wrong])]);
+
+  // Q9: Standard Problem (Pool of 6)
+  const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate();
+  const q9Options = shuffle([
+    ...new Set([q9Raw.correctText, ...q9Raw.distractors])
+  ]);
+
+  // Q10: Hard Problem (Pool of 6)
+  const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate();
+  const q10Options = shuffle([
+    ...new Set([q10Raw.correctText, ...q10Raw.distractors])
+  ]);
+
+  return [
+    {
+      id: 'q1',
+      type: 'input',
+      title: 'Υπολογισμός Δύναμης του 10',
+      prompt: `Ποια είναι η αριθμητική τιμή της δύναμης 10${EXPONENTS_UNICODE[q1Exp]};`,
+      correct: q1Correct,
+      explain: `10${EXPONENTS_UNICODE[q1Exp]} ＝ 1 ακολουθούμενο από ${q1Exp} μηδενικά ＝ ${formatNum(q1Val)}.`
+    },
+    {
+      id: 'q2',
       type: 'input',
       title: 'Πλήθος Μηδενικών',
-      exp: q2Exp,
+      prompt: `Πόσα μηδενικά ακολουθούν μετά το 1 όταν αναπτύξουμε τη δύναμη 10${EXPONENTS_UNICODE[q2Exp]};`,
       correct: q2Correct,
-      explain: `Στη δύναμη 10${exponentsUnicode[q2Exp]}, ο εκθέτης είναι το ${q2Exp}, άρα το 1 ακολουθείται από ${q2Exp} μηδενικά.`
+      explain: `Στη δύναμη 10${EXPONENTS_UNICODE[q2Exp]}, ο εκθέτης είναι το ${q2Exp}, άρα το 1 ακολουθείται από ${q2Exp} μηδενικά.`
     },
-    q3: {
+    {
+      id: 'q3',
       type: 'mcq',
       title: 'Σύντομη Μορφή Δύναμης',
-      prompt: `Πώς γράφεται ο αριθμός ${q3Val.toLocaleString('el-GR')} ως δύναμη με βάση το 10;`,
+      prompt: `Πώς γράφεται ο αριθμός ${formatNum(q3Val)} ως δύναμη με βάση το 10;`,
       options: q3Options,
       correct: q3CorrectStr,
-      explain: `Ο αριθμός ${q3Val.toLocaleString('el-GR')} έχει ${q3Exp} μηδενικά, άρα γράφεται 10${exponentsUnicode[q3Exp]}.`
+      explain: `Ο αριθμός ${formatNum(q3Val)} έχει ${q3Exp} μηδενικά, άρα γράφεται 10${EXPONENTS_UNICODE[q3Exp]}.`
     },
-    q4: {
+    {
+      id: 'q4',
       type: 'mcq',
-      title: 'Ανάπτυγμα με Δυνάμεις του 10',
-      prompt: `Ποια είναι η τιμή της παράστασης ${q4Digit} × 10${exponentsUnicode[q4Exp]};`,
+      title: 'Ανάπτυγμα με Δύναμη του 10',
+      prompt: `Ποια είναι η τελική τιμή της παράστασης ${q4Digit} · 10${EXPONENTS_UNICODE[q4Exp]};`,
       options: q4Options,
       correct: q4CorrectStr,
-      explain: `10${exponentsUnicode[q4Exp]} ＝ ${Math.pow(10, q4Exp).toLocaleString('el-GR')}. Επομένως, ${q4Digit} × ${Math.pow(10, q4Exp).toLocaleString('el-GR')} ＝ ${q4Result.toLocaleString('el-GR')}.`
+      explain: `10${EXPONENTS_UNICODE[q4Exp]} ＝ ${formatNum(Math.pow(10, q4Exp))}. Επομένως, ${q4Digit} · ${formatNum(Math.pow(10, q4Exp))} ＝ ${formatNum(q4Result)}.`
     },
-    q5: {
+    {
+      id: 'q5',
       type: 'tf',
       title: 'Η Δύναμη 10⁰',
       text: q5Text,
       correct: q5IsTrue,
       explain: q5IsTrue
         ? 'Σωστά! Κάθε μη μηδενικός αριθμός στον εκθέτη 0 ισούται με 1 (10⁰ ＝ 1).'
-        : 'Λάθος! 10⁰ ＝ 1 (το 1 χωρίς κανένα μηδενικό, όχι 0).'
+        : 'Λάθος! 10⁰ ＝ 1 (το 1 χωρίς κανένα μηδενικό, δηλαδή 1 μονάδα, όχι 0).'
     },
-    q6: {
+    {
+      id: 'q6',
       type: 'tf',
-      title: 'Κανόνας Εκθέτη',
+      title: 'Κανόνας των Μηδενικών',
       text: q6Text,
       correct: q6IsTrue,
       explain: q6IsTrue
-        ? 'Σωστά! Ο εκθέτης στις δυνάμεις του 10 ισούται ακριβώς με το πλήθος των μηδενικών.'
-        : 'Λάθος! Ο εκθέτης δείχνει το πλήθος των μηδενικών μετά το 1.'
+        ? 'Σωστά! Ο εκθέτης στις δυνάμεις του 10 ισούται ακριβώς με το πλήθος των μηδενικών μετά το 1.'
+        : 'Λάθος! Ο εκθέτης δείχνει το πλήθος των μηδενικών που τοποθετούνται μετά το 1.'
     },
-    q7: {
+    {
+      id: 'q7',
       type: 'input',
       title: 'Εύρεση Εκθέτη',
-      val: q7Val.toLocaleString('el-GR'),
+      prompt: `Ποιος είναι ο εκθέτης x στην ισότητα 10ˣ ＝ ${formatNum(q7Val)};`,
       correct: q7Correct,
-      explain: `Ο αριθμός ${q7Val.toLocaleString('el-GR')} έχει ${q7Exp} μηδενικά, επομένως 10${exponentsUnicode[q7Exp]} ＝ ${q7Val.toLocaleString('el-GR')} (εκθέτης: ${q7Exp}).`
+      explain: `Ο αριθμός ${formatNum(q7Val)} έχει ${q7Exp} μηδενικά, επομένως 10${EXPONENTS_UNICODE[q7Exp]} ＝ ${formatNum(q7Val)} (εκθέτης: ${q7Exp}).`
     },
-    q8: {
+    {
+      id: 'q8',
       type: 'mcq',
-      title: 'Πρόβλημα Καθημερινότητας',
-      prompt: `Σε ένα επιστημονικό πείραμα καταγράφηκαν ${q8Total.toLocaleString('el-GR')} ${ctx.item}. Πώς γράφεται σύντομα αυτό το πλήθος με δύναμη του 10;`,
+      title: 'Πράξεις με Δυνάμεις του 10',
+      prompt: q8Data.prompt,
       options: q8Options,
-      correct: q8CorrectStr,
-      explain: `${q8Total.toLocaleString('el-GR')} ＝ ${q8Coeff} × ${Math.pow(10, ctx.exp).toLocaleString('el-GR')} ＝ ${q8Coeff} × 10${exponentsUnicode[ctx.exp]}.`
+      correct: q8Data.correct,
+      explain: q8Data.explain
+    },
+    {
+      id: 'q9',
+      type: 'mcq',
+      title: `Πρόβλημα: ${STANDARD_PROBLEMS_POOL[spIndex].title}`,
+      prompt: q9Raw.prompt,
+      options: q9Options,
+      correct: q9Raw.correctText,
+      tableData: q9Raw.tableData,
+      explain: q9Raw.explain
+    },
+    {
+      id: 'q10',
+      type: 'mcq',
+      title: `Σύνθετο Πρόβλημα: ${HARD_PROBLEMS_POOL[hpIndex].title}`,
+      prompt: q10Raw.prompt,
+      options: q10Options,
+      correct: q10Raw.correctText,
+      tableData: q10Raw.tableData,
+      explain: q10Raw.explain
     }
-  };
+  ];
 }
 
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
+
 export default function DinameisDekaExercisesPage() {
-  const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({
-    q1: '', q2: '', q3: '', q4: '', q5: null, q6: null, q7: '', q8: ''
-  });
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
-    setAnswers({
-      q1: '', q2: '', q3: '', q4: '', q5: null, q6: null, q7: '', q8: ''
+  const loadNewSet = useCallback(() => {
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = q.type === 'tf' ? null : '';
     });
+    setAnswers(initialAnswers);
     setSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    loadNewQuestions();
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
-  if (!questions) return null;
+  useEffect(() => {
+    loadNewSet();
+  }, [loadNewSet]);
 
-  const handleInputChange = (key, val) => {
+  const handleInputChange = (id, val) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [key]: val }));
+    setAnswers(prev => ({ ...prev, [id]: val }));
   };
 
-  const isCorrect = (key) => {
-    const q = questions[key];
-    const a = answers[key];
-
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
     if (q.type === 'input') {
-      if (typeof a !== 'string' || !a.trim()) return false;
-      const cleanAns = a.replace(/\./g, '').replace(/\s+/g, '').trim();
-      const cleanCorrect = q.correct.replace(/\./g, '').replace(/\s+/g, '').trim();
-      return cleanAns === cleanCorrect;
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\s+/g, '').replace(/\./g, '').replace(/,/g, '.').trim();
+      const cleanTarget = q.correct.replace(/\s+/g, '').replace(/\./g, '').replace(/,/g, '.').trim();
+      return cleanUser === cleanTarget;
     }
     if (q.type === 'mcq') {
-      return a === q.correct;
+      return userVal === q.correct;
     }
     if (q.type === 'tf') {
-      return a === q.correct;
+      return userVal === q.correct;
     }
     return false;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (submitted) return;
+    if (submitted || questions.length === 0) return;
 
-    let s = 0;
-    ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8'].forEach(k => {
-      if (isCorrect(k)) s += 1;
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(s);
+    setScore(total);
     setSubmitted(true);
   };
 
-  const getCardStyle = (key) => {
+  const getCardStyle = (q) => {
     if (!submitted) return 'bg-white border-slate-200 shadow-sm';
-    return isCorrect(key)
-      ? 'bg-emerald-50/60 border-emerald-400 shadow-md ring-1 ring-emerald-400'
-      : 'bg-rose-50/60 border-rose-400 shadow-md ring-1 ring-rose-400';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
   return (
     <Layout
-      title="🎯 Ασκήσεις: Οι Δυνάμεις του 10 - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση στις δυνάμεις του 10 και τη σύντομη γραφή μεγάλων αριθμών για τη ΣΤ' Δημοτικού."
+      title="Ασκήσεις: Οι Δυνάμεις του 10 - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στις δυνάμεις του 10 και τη σύντομη γραφή μεγάλων αριθμών για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
       showAds={false}
       hideFooter={true}
       actionButton={
-        <Link 
-          href="/st-dimotikou/22-dinameis-deka" 
+        <Link
+          href="/st-dimotikou/22-dinameis-deka"
           className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
-          <span>📖</span> <span>Θεωρία</span>
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      <div className="pb-28">
-        {/* HEADER HERO BANNER */}
-        <section className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white py-8 sm:py-10 px-4 sm:px-6 rounded-3xl shadow-lg mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="space-y-2 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+        
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 22 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
                 Διαδραστικές Ασκήσεις: Οι Δυνάμεις του 10
               </h1>
-              <p className="text-blue-100 text-xs sm:text-sm md:text-base max-w-xl leading-relaxed">
-                Λύσε τα 8 δυναμικά προβλήματα υπολογισμού δυνάμεων του 10, καταμέτρησης μηδενικών και σύντομης γραφής μεγάλων αριθμών!
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στον υπολογισμό δυνάμεων του 10, στην καταμέτρηση μηδενικών και στη σύντομη γραφή μεγάλων αριθμών!
               </p>
             </div>
 
             <button
               type="button"
-              onClick={loadNewQuestions}
-              className="px-5 py-3 bg-white text-blue-800 hover:bg-blue-50 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm flex items-center gap-2 shrink-0"
+              onClick={loadNewSet}
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
-              <span>🔄</span> <span>Νέες Ασκήσεις</span>
+              <span>🔄</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 8 ΕΡΩΤΗΣΕΙΣ */}
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
         <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                >
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
+                      </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
+                        </span>
+                      )}
+                    </div>
 
-            {/* ΕΡΩΤΗΣΗ 1 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-                  Άσκηση 1 • Υπολογισμός Δύναμης
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q1') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                Ποια είναι η αριθμητική τιμή της δύναμης <strong className="text-blue-700 font-mono text-base">10{exponentsUnicode[questions.q1.exp]}</strong>;
-              </p>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  disabled={submitted}
-                  value={answers.q1}
-                  onChange={(e) => handleInputChange('q1', e.target.value)}
-                  placeholder="π.χ. 1000"
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q1') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q1.explain}
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-4">
+                      {q.type === 'tf' ? `«${q.text}»` : q.prompt}
+                    </p>
+
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleInputChange(q.id, opt)}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
+                                isSelected
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          placeholder="Γράψε την απάντησή σου..."
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
+                      </div>
+                    )}
+
+                    {q.type === 'tf' && (
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <button
+                          type="button"
+                          disabled={submitted}
+                          onClick={() => handleInputChange(q.id, true)}
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                            answers[q.id] === true
+                              ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
+                              : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
+                          }`}
+                        >
+                          👍 {toCleanUppercase('Σωστό')}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={submitted}
+                          onClick={() => handleInputChange(q.id, false)}
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                            answers[q.id] === false
+                              ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
+                              : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
+                          }`}
+                        >
+                          👎 {toCleanUppercase('Λάθος')}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
 
-            {/* ΕΡΩΤΗΣΗ 2 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">
-                  Άσκηση 2 • Πλήθος Μηδενικών
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q2') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                Πόσα μηδενικά ακολουθούν μετά το 1 όταν αναπτύξουμε τη δύναμη <strong className="text-indigo-700 font-mono text-base">10{exponentsUnicode[questions.q2.exp]}</strong>;
-              </p>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  disabled={submitted}
-                  value={answers.q2}
-                  onChange={(e) => handleInputChange('q2', e.target.value)}
-                  placeholder="Γράψε το πλήθος των μηδενικών..."
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q2') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q2.explain}
-                  </div>
-                )}
-              </div>
-            </div>
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && q.tableData.length > 0 && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
 
-            {/* ΕΡΩΤΗΣΗ 3 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
-                  Άσκηση 3 • Σύντομη Γραφή Δύναμης
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q3') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                {questions.q3.prompt}
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                {questions.q3.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q3', opt)}
-                    className={`p-3 rounded-xl text-base font-mono font-black border text-center transition ${
-                      answers.q3 === opt
-                        ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-purple-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q3') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q3.explain}
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 4 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
-                  Άσκηση 4 • Ανάπτυγμα με Δύναμη
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q4') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                {questions.q4.prompt}
-              </p>
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                {questions.q4.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q4', opt)}
-                    className={`w-full p-2.5 rounded-xl text-xs font-mono font-bold border text-center transition ${
-                      answers.q4 === opt
-                        ? 'bg-amber-500 text-white border-amber-500 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q4') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q4.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 5 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
-                  Άσκηση 5 • Σωστό ή Λάθος
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q5') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                «{questions.q5.text}»
-              </p>
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', true)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q5 === true
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                  }`}
-                >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', false)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q5 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q5') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q5.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 6 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
-                  Άσκηση 6 • Σωστό ή Λάθος
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q6') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                «{questions.q6.text}»
-              </p>
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', true)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q6 === true
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                  }`}
-                >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', false)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q6 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q6') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q6.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 7 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
-                  Άσκηση 7 • Εύρεση Εκθέτη
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q7') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 font-medium">
-                Ποιος είναι ο εκθέτης <strong className="text-rose-700 font-mono text-base">x</strong> στην ισότητα <strong className="text-blue-700 font-mono text-base">10<sup>x</sup> ＝ {questions.q7.val}</strong>;
-              </p>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  disabled={submitted}
-                  value={answers.q7}
-                  onChange={(e) => handleInputChange('q7', e.target.value)}
-                  placeholder="Γράψε τον εκθέτη x..."
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-rose-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q7') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q7.explain}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 8 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
-                  Άσκηση 8 • Πρόβλημα & Επιστήμη
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q8') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 font-medium">
-                {questions.q8.prompt}
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
-                {questions.q8.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q8', opt)}
-                    className={`w-full p-2.5 rounded-xl text-xs font-mono font-bold border text-center transition ${
-                      answers.q8 === opt
-                        ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q8') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q8.explain}
-                </div>
-              )}
-            </div>
-
+              );
+            })}
           </div>
 
           {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
           {!submitted && (
-            <div className="flex justify-center pt-6">
+            <div className="flex justify-center pt-4">
               <button
                 type="submit"
-                className="bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
                 <span className="text-xl">🎯</span>
-                <span>Έλεγχος Απαντήσεων</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
             </div>
           )}
         </form>
       </div>
 
-      {/* FIXED STICKY BOTTOM SCORE FOOTER */}
+      {/* FIXED BOTTOM SCORE FOOTER */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col md:flex-row justify-between items-center gap-3`}>
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
           
-          {/* SCORE BADGE & PERCENTAGE */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>Σκορ:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 8</span>
+              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Ποσοστό: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
               </span>
             )}
           </div>
 
-          {/* GUIDANCE TEXT OR RETRY BUTTON */}
+          {/* GUIDANCE OR RESTART */}
           <div className="flex items-center gap-3">
             {submitted ? (
               <button
                 type="button"
-                onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
+                onClick={loadNewSet}
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
                 <span>🔄</span>
-                <span>Νέες ασκήσεις!</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             ) : (
-              <p className="text-xs text-slate-400 hidden md:block">
-                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
               </p>
             )}
           </div>
