@@ -1,39 +1,55 @@
+// pages/st-dimotikou/25-isodinama-klasmata.js
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
-// ΜΕΓΙΣΤΕΣ ΤΙΜΕΣ
+// Μεγιστες επιτρεπομενες τιμες
 const MAX_VALUE = 100;
 const MAX_MULTIPLIER = 10;
 
+// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
+function formatNum(num) {
+  if (num === null || num === undefined || isNaN(Number(num))) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
+
 const PRESETS_CREATE = [
-  { num: 1, den: 2, mult: 2, label: "1/2 (×2)" },
-  { num: 2, den: 3, mult: 3, label: "2/3 (×3)" },
-  { num: 3, den: 4, mult: 2, label: "3/4 (×2)" },
-  { num: 2, den: 5, mult: 4, label: "2/5 (×4)" }
+  { num: 1, den: 2, mult: 2, label: '1/2 (· 2)' },
+  { num: 2, den: 3, mult: 3, label: '2/3 (· 3)' },
+  { num: 3, den: 4, mult: 2, label: '3/4 (· 2)' },
+  { num: 2, den: 5, mult: 4, label: '2/5 (· 4)' }
 ];
 
 const PRESETS_REDUCE = [
-  { num: 6, den: 8, label: "6/8 (Μ.Κ.Δ. = 2)" },
-  { num: 12, den: 18, label: "12/18 (Μ.Κ.Δ. = 6)" },
-  { num: 15, den: 20, label: "15/20 (Μ.Κ.Δ. = 5)" },
-  { num: 9, den: 12, label: "9/12 (Μ.Κ.Δ. = 3)" }
+  { num: 6, den: 8, label: '6/8 (Μ.Κ.Δ. ＝ 2)' },
+  { num: 12, den: 18, label: '12/18 (Μ.Κ.Δ. ＝ 6)' },
+  { num: 15, den: 20, label: '15/20 (Μ.Κ.Δ. ＝ 5)' },
+  { num: 9, den: 12, label: '9/12 (Μ.Κ.Δ. ＝ 3)' }
 ];
 
 export default function IsodinamaKlasmataPage() {
-  const [activeTab, setActiveTab] = useState('create'); // 'create' ή 'reduce'
-  
-  // Κατάσταση για τη Λειτουργία 1 (Δημιουργία Ισοδυνάμου)
+  const [activeTab, setActiveTab] = useState('create'); // 'create' η 'reduce'
+
+  // Κατασταση για τη Λειτουργια 1 (Δημιουργια Ισοδυναμου)
   const [num1, setNum1] = useState(1);
   const [den1, setDenominator1] = useState(2);
   const [multiplier, setMultiplier] = useState(3);
 
-  // Κατάσταση για τη Λειτουργία 2 (Μετατροπή σε Ανάγωγο)
+  // Κατασταση για τη Λειτουργια 2 (Μετατροπη σε Αναγωγο)
   const [num2, setNum2] = useState(6);
   const [den2, setDenominator2] = useState(8);
 
-  // Συναρτήσεις ασφαλούς εισαγωγής
+  // Συναρτησεις ασφαλους εισαγωγης
   const handleInputChange = (setter, val, currentPair, isDenominator = false) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') {
@@ -41,7 +57,7 @@ export default function IsodinamaKlasmataPage() {
       return;
     }
     const n = Number(clean);
-    
+
     if (isDenominator) {
       if (n === 0 || n > MAX_VALUE) return;
       setter(n);
@@ -54,7 +70,7 @@ export default function IsodinamaKlasmataPage() {
     }
   };
 
-  // Αυξομείωση με κουμπιά για τη Λειτουργία 1
+  // Αυξομειωση με κουμπια για τη Λειτουργια 1
   const adjustValue1 = (type, amount) => {
     if (type === 'num') {
       setNum1(prev => Math.max(0, Math.min(Number(den1) || MAX_VALUE, (Number(prev) || 0) + amount)));
@@ -67,7 +83,7 @@ export default function IsodinamaKlasmataPage() {
     }
   };
 
-  // Αυξομείωση με κουμπιά για τη Λειτουργία 2
+  // Αυξομειωση με κουμπια για τη Λειτουργια 2
   const adjustValue2 = (type, amount) => {
     if (type === 'num') {
       setNum2(prev => Math.max(0, Math.min(Number(den2) || MAX_VALUE, (Number(prev) || 0) + amount)));
@@ -80,19 +96,19 @@ export default function IsodinamaKlasmataPage() {
     }
   };
 
-  // Αλγόριθμος Ευκλείδη για εύρεση ΜΚΔ
+  // Αλγοριθμος Ευκλειδη για ευρεση ΜΚΔ
   const findGcd = (a, b) => {
     let x = Math.abs(a);
     let y = Math.abs(b);
     while (y) {
-      let t = y;
+      const t = y;
       y = x % y;
       x = t;
     }
     return x;
   };
 
-  // Υπολογισμοί για τη Λειτουργία 1 (Δημιουργία)
+  // Υπολογισμοι για τη Λειτουργια 1 (Δημιουργια)
   const activeNum1 = num1 === '' ? 0 : Number(num1);
   const activeDen1 = den1 === '' || den1 === 0 ? 1 : Number(den1);
   const safeMultiplier = Math.min(multiplier, MAX_MULTIPLIER);
@@ -100,20 +116,20 @@ export default function IsodinamaKlasmataPage() {
   const isoNum = activeNum1 * safeMultiplier;
   const isoDen = activeDen1 * safeMultiplier;
 
-  // Υπολογισμοί για τη Λειτουργία 2 (Ανάγωγο)
+  // Υπολογισμοι για τη Λειτουργια 2 (Αναγωγο)
   const activeNum2 = num2 === '' ? 0 : Number(num2);
   const activeDen2 = den2 === '' || den2 === 0 ? 1 : Number(den2);
   const gcd = findGcd(activeNum2, activeDen2) || 1;
-  
+
   const reducedNum = activeNum2 / gcd;
   const reducedDen = activeDen2 / gcd;
 
-  // Σχεδίαση της πίτσας (Κυκλικό Σχήμα SVG)
+  // Σχεδιαση της πιτσας (Κυκλικο Σχημα SVG)
   const renderPizzaDiagram = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
     const slices = [];
-    const radius = 65;
-    const cx = 80;
-    const cy = 80;
+    const radius = 60;
+    const cx = 75;
+    const cy = 75;
     const activeSlices = Math.max(0, Math.min(den, num));
 
     for (let i = 0; i < den; i++) {
@@ -151,7 +167,7 @@ export default function IsodinamaKlasmataPage() {
     }
 
     return (
-      <svg width="150" height="150" className="drop-shadow-md overflow-visible shrink-0 max-w-full">
+      <svg width="150" height="150" viewBox="0 0 150 150" className="drop-shadow-xs overflow-visible shrink-0 max-w-full">
         {slices}
         <circle cx={cx} cy={cy} r="2.5" className="fill-slate-800" />
       </svg>
@@ -160,7 +176,7 @@ export default function IsodinamaKlasmataPage() {
 
   return (
     <Layout
-      title="⚖️ 25. Ισοδύναμα Κλάσματα και Απλοποίηση σε Ανάγωγο - LearnMaths.gr"
+      title="Ισοδύναμα Κλάσματα & Ανάγωγο - ΣΤ' Δημοτικού | LearnMaths.gr"
       description="Μάθε πώς δημιουργούμε ισοδύναμα κλάσματα πολλαπλασιάζοντας τους όρους τους και πώς τα απλοποιούμε με τον Μ.Κ.Δ. για να φτάσουμε στο απλούστερο ανάγωγο κλάσμα για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
@@ -168,137 +184,175 @@ export default function IsodinamaKlasmataPage() {
       actionButton={
         <Link
           href="/st-dimotikou/25-isodinama-klasmata-ask"
-          className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-sm flex items-center gap-1.5 shrink-0"
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯</span>
-          <span>Ασκήσεις</span>
+          <span>🎯 Ασκήσεις</span>
         </Link>
       }
     >
-      <div className="space-y-8 md:space-y-10 py-6 md:py-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
 
-        {/* HERO BANNER WITH PROMO CALLOUT CARD */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικου
-                </span>
-                <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενοτητα 25
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                25. Ισοδύναμα Κλάσματα και Απλοποίηση σε Ανάγωγο
-              </h1>
-              <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                Μάθε πώς δημιουργούμε <strong>ισοδύναμα κλάσματα</strong> πολλαπλασιάζοντας τους όρους τους και πώς τα <strong>απλοποιούμε με τον Μ.Κ.Δ.</strong> για να φτάσουμε στο απλούστερο <strong>ανάγωγο κλάσμα</strong>!
-              </p>
+        {/* 1. HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΚΕΦΑΛΑΙΟ 25 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
-
-            {/* CALLOUT PROMO CARD */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-5 sm:p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
-              <span className="text-3xl">🚀</span>
-              <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
-              <p className="text-xs text-blue-50">Δοκίμασε τις 8 διαδραστικές ασκήσεις ισοδυνάμων και αναγώγων κλασμάτων!</p>
-              <Link
-                href="/st-dimotikou/25-isodinama-klasmata-ask"
-                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
-              >
-                🎯 Μετάβαση στις Ασκήσεις
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* THEORY CARDS (3 COLS) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                1
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Τι είναι τα Ισοδύναμα;</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Είναι τα κλάσματα που έχουν διαφορετικούς όρους, αλλά εκφράζουν την <strong>ίδια ακριβώς ποσότητα ή αξία</strong>.
-              </p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center flex items-center justify-center gap-2 font-bold">
-              <span className="bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl">
-                1/2 ＝ <strong className="text-blue-700 font-black">2/4</strong> ＝ <strong className="text-blue-700 font-black">4/8</strong>
-              </span>
-            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              Ισοδύναμα Κλάσματα και Απλοποίηση σε Ανάγωγο
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Μάθε πώς δημιουργούμε <strong>ισοδύναμα κλάσματα</strong> πολλαπλασιάζοντας τους όρους τους και πώς τα <strong>απλοποιούμε με τον Μ.Κ.Δ.</strong> για να φτάσουμε στο απλούστερο <strong>ανάγωγο κλάσμα</strong>!
+            </p>
           </div>
 
-          <div className="bg-indigo-50/80 border border-indigo-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                2
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Δημιουργία Ισοδυνάμων</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                <strong>Πολλαπλασιάζουμε</strong> ή <strong>διαιρούμε</strong> και τον αριθμητή και τον παρονομαστή με τον <strong>ίδιο φυσικό αριθμό</strong> (≠ 0).
-              </p>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Διαδραστική Δημιουργία &amp; Απλοποίηση με Οπτική Επιβεβαίωση Επιφανειών</span>
             </div>
-            <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-xl text-indigo-900 inline-block">
-                (1 × 3) / (2 × 3) ＝ <strong className="text-indigo-700 font-black">3/6</strong>
-              </span>
-            </div>
+            <Link
+              href="/st-dimotikou/25-isodinama-klasmata-ask"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ (3 COLS) */}
+        <section className="space-y-6 2xl:space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
+              Βασικές Έννοιες, Δημιουργία Ισοδυνάμων &amp; Απλοποίηση
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
+              Πώς διατηρείται η αξία ενός κλάσματος και πώς φτάνουμε στην απλούστερη μορφή του.
+            </p>
           </div>
 
-          <div className="bg-emerald-50/80 border border-emerald-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                3
-              </div>
-              <h3 className="text-lg font-black text-slate-900">Ανάγωγο Κλάσμα</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Είναι το κλάσμα που <strong>δεν μπορεί να απλοποιηθεί άλλο</strong>. Προκύπτει διαιρώντας τους όρους με τον <strong>Μ.Κ.Δ.</strong> τους!
-              </p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl text-emerald-900 inline-block">
-                6/8 (: 2) ➔ <strong className="text-emerald-700 font-black">3/4</strong> (Ανάγωγο)
-              </span>
-            </div>
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            
+            {/* ΚΑΡΤΑ 1 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΟΡΙΣΜΟΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Ίδια Ποσότητα</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Τι είναι τα Ισοδύναμα;
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Είναι τα κλάσματα που έχουν διαφορετικούς όρους, αλλά εκφράζουν την <strong>ίδια ακριβώς ποσότητα ή αξία</strong>.
+                </p>
 
-        {/* TABS SELECTOR */}
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center flex items-center justify-center gap-2 font-bold">
+                  <span className="bg-white px-3 py-1 rounded-xl border border-slate-200 text-slate-800">
+                    1/2 ＝ <strong className="text-sky-700">2/4</strong> ＝ <strong className="text-sky-700">4/8</strong>
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+                💡 Αν κάνεις τη διαίρεση σε όλα τα ισοδύναμα κλάσματα, θα βρεις τον ίδιο ακριβώς δεκαδικό αριθμό!
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 2 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΜΕΘΟΔΟΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">Ίδιος Αριθμός</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Δημιουργία Ισοδυνάμων
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  <strong>Πολλαπλασιάζουμε</strong> ή <strong>διαιρούμε</strong> και τον αριθμητή και τον παρονομαστή με τον <strong>ίδιο φυσικό αριθμό</strong> (διάφορο του 0).
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>(1 · 3) / (2 · 3) ＝ <strong className="text-indigo-700">3/6</strong></p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
+                ⚡ <strong>Κανόνας SOS:</strong> Ό,τι πράξη κάνεις στον αριθμητή, πρέπει υποχρεωτικά να την κάνεις και στον παρονομαστή!
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 3 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΑΠΛΟΠΟΙΗΣΗ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">Με Μ.Κ.Δ.</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Ανάγωγο Κλάσμα
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Είναι το κλάσμα που <strong>δεν μπορεί να απλοποιηθεί άλλο</strong>. Προκύπτει διαιρώντας τους όρους με τον <strong>Μ.Κ.Δ.</strong> τους!
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>6/8 (: 2) ➔ <strong className="text-emerald-700">3/4</strong> (Ανάγωγο)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
+                🎯 Στο ανάγωγο κλάσμα, ο αριθμητής και ο παρονομαστής έχουν Μ.Κ.Δ. ίσο με το 1 (είναι πρώτοι μεταξύ τους).
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        {/* 3. TABS SELECTOR */}
         <div className="flex justify-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner max-w-md mx-auto gap-1">
           <button
             type="button"
             onClick={() => setActiveTab('create')}
-            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all ${
+            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
               activeTab === 'create' ? 'bg-blue-600 text-white shadow-sm scale-105' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            🛠️ Δημιουργία Ισοδυνάμου
+            🛠️ {toCleanUppercase('Δημιουργία Ισοδυνάμου')}
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('reduce')}
-            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all ${
+            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
               activeTab === 'reduce' ? 'bg-emerald-600 text-white shadow-sm scale-105' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            🎯 Μετατροπή σε Ανάγωγο
+            🎯 {toCleanUppercase('Μετατροπή σε Ανάγωγο')}
           </button>
         </div>
 
         {/* 4. INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
+        <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div className="max-w-xl">
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🕹️</span> Διαδραστικό Εργαστήριο Ισοδυναμίας και Απλοποίησης
-              </h2>
-              <p className="text-gray-500 text-xs sm:text-sm mt-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
+                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Διαδραστικό Εργαστήριο Ισοδυναμίας και Απλοποίησης
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-1">
                 {activeTab === 'create'
-                  ? "Δώσε ένα κλάσμα, επίλεξε πολλαπλασιαστή και παρατήρησε πώς προκύπτει το νέο ισοδύναμο κλάσμα!"
-                  : "Δώσε ένα σύνθετο κλάσμα και δες βήμα προς βήμα την απλοποίησή του μέσω του Μ.Κ.Δ. σε ανάγωγο!"}
+                  ? 'Δώσε ένα κλάσμα, επίλεξε πολλαπλασιαστή και παρατήρησε πώς προκύπτει το νέο ισοδύναμο κλάσμα!'
+                  : 'Δώσε ένα σύνθετο κλάσμα και δες βήμα προς βήμα την απλοποίησή του μέσω του Μ.Κ.Δ. σε ανάγωγο!'}
               </p>
             </div>
           </div>
@@ -313,61 +367,69 @@ export default function IsodinamaKlasmataPage() {
                 /* TAB 1: ΔΗΜΙΟΥΡΓΙΑ */
                 <div className="space-y-4">
                   <div className="space-y-3">
-                    <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      1. Αρχικο Κλασμα:
+                    <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
+                      1. ΑΡΧΙΚΟ ΚΛΑΣΜΑ:
                     </span>
 
                     <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       {/* ΑΡΙΘΜΗΤΗΣ */}
                       <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΑΡΙΘΜΗΤΗΣ</span>
                         <div className="flex items-center gap-1 sm:gap-1.5 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue1('num', -1)}
-                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 rounded-lg font-black text-sm flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            -
+                            －
                           </button>
                           <input
+                            key={`num1-${num1}`}
                             type="text"
-                            value={num1}
+                            inputMode="numeric"
+                            autoComplete="off"
+                            spellCheck="false"
+                            value={num1 === '' ? '' : String(num1)}
                             onChange={(e) => handleInputChange(setNum1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, false)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 px-0.5 outline-none border border-blue-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 px-0.5 outline-none border border-blue-200 shadow-inner"
                           />
                           <button
                             type="button"
                             onClick={() => adjustValue1('num', 1)}
-                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-sm flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            +
+                            ＋
                           </button>
                         </div>
                       </div>
 
                       {/* ΠΑΡΟΝΟΜΑΣΤΗΣ */}
                       <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-blue-200 shadow-xs space-y-1 text-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΠΑΡΟΝΟΜΑΣΤΗΣ</span>
                         <div className="flex items-center gap-1 sm:gap-1.5 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue1('den', -1)}
-                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-blue-700 rounded-lg font-black text-sm flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            -
+                            －
                           </button>
                           <input
+                            key={`den1-${den1}`}
                             type="text"
-                            value={den1}
+                            inputMode="numeric"
+                            autoComplete="off"
+                            spellCheck="false"
+                            value={den1 === '' ? '' : String(den1)}
                             onChange={(e) => handleInputChange(setDenominator1, e.target.value, { num: num1, setNum: setNum1, den: den1 }, true)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 px-0.5 outline-none border border-blue-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-blue-600 bg-blue-50/50 rounded-lg py-1 px-0.5 outline-none border border-blue-200 shadow-inner"
                           />
                           <button
                             type="button"
                             onClick={() => adjustValue1('den', 1)}
-                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-sm flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            +
+                            ＋
                           </button>
                         </div>
                       </div>
@@ -378,7 +440,7 @@ export default function IsodinamaKlasmataPage() {
                       <div className="flex justify-between items-center text-xs font-bold text-slate-700">
                         <span>Πολλαπλασιαστής:</span>
                         <span className="font-mono font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">
-                          × {safeMultiplier}
+                          · {safeMultiplier}
                         </span>
                       </div>
                       <input
@@ -387,21 +449,21 @@ export default function IsodinamaKlasmataPage() {
                         max={MAX_MULTIPLIER}
                         value={safeMultiplier}
                         onChange={(e) => setMultiplier(Number(e.target.value))}
-                        className="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg appearance-none"
+                        className="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg appearance-none touch-manipulation"
                       />
                       <div className="flex justify-between text-[9px] text-slate-400 font-mono font-bold">
-                        <span>×2</span>
-                        <span>×4</span>
-                        <span>×6</span>
-                        <span>×8</span>
-                        <span>×10</span>
+                        <span>· 2</span>
+                        <span>· 4</span>
+                        <span>· 6</span>
+                        <span>· 8</span>
+                        <span>· 10</span>
                       </div>
                     </div>
 
                     {/* PRESETS */}
                     <div className="space-y-2 pt-2 border-t border-slate-200">
-                      <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                        Ετοιμα Παραδειγματα:
+                      <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
+                        ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
                       </span>
                       <div className="grid grid-cols-2 gap-2">
                         {PRESETS_CREATE.map((p, idx) => (
@@ -413,7 +475,7 @@ export default function IsodinamaKlasmataPage() {
                               setDenominator1(p.den);
                               setMultiplier(p.mult);
                             }}
-                            className={`py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center ${
+                            className={`py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 ${
                               activeNum1 === p.num && activeDen1 === p.den && safeMultiplier === p.mult
                                 ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
                                 : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
@@ -430,61 +492,69 @@ export default function IsodinamaKlasmataPage() {
                 /* TAB 2: ΑΝΑΓΩΓΟ */
                 <div className="space-y-4">
                   <div className="space-y-3">
-                    <span className="text-xs font-black text-slate-700 uppercase tracking-wider block">
-                      Κλασμα για Απλοποιηση:
+                    <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
+                      ΚΛΑΣΜΑ ΓΙΑ ΑΠΛΟΠΟΙΗΣΗ:
                     </span>
 
                     <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       {/* ΑΡΙΘΜΗΤΗΣ */}
                       <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΑΡΙΘΜΗΤΗΣ</span>
                         <div className="flex items-center gap-1 sm:gap-1.5 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue2('num', -1)}
-                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 rounded-lg font-black text-sm flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            -
+                            －
                           </button>
                           <input
+                            key={`num2-${num2}`}
                             type="text"
-                            value={num2}
+                            inputMode="numeric"
+                            autoComplete="off"
+                            spellCheck="false"
+                            value={num2 === '' ? '' : String(num2)}
                             onChange={(e) => handleInputChange(setNum2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, false)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 px-0.5 outline-none border border-emerald-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 px-0.5 outline-none border border-emerald-200 shadow-inner"
                           />
                           <button
                             type="button"
                             onClick={() => adjustValue2('num', 1)}
-                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-sm flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            +
+                            ＋
                           </button>
                         </div>
                       </div>
 
                       {/* ΠΑΡΟΝΟΜΑΣΤΗΣ */}
                       <div className="bg-white p-2.5 sm:p-3 rounded-2xl border border-emerald-200 shadow-xs space-y-1 text-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΠΑΡΟΝΟΜΑΣΤΗΣ</span>
                         <div className="flex items-center gap-1 sm:gap-1.5 w-full">
                           <button
                             type="button"
                             onClick={() => adjustValue2('den', -1)}
-                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-slate-100 hover:bg-slate-200 text-emerald-700 rounded-lg font-black text-sm flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            -
+                            －
                           </button>
                           <input
+                            key={`den2-${den2}`}
                             type="text"
-                            value={den2}
+                            inputMode="numeric"
+                            autoComplete="off"
+                            spellCheck="false"
+                            value={den2 === '' ? '' : String(den2)}
                             onChange={(e) => handleInputChange(setDenominator2, e.target.value, { num: num2, setNum: setNum2, den: den2 }, true)}
-                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 px-0.5 outline-none border border-emerald-200"
+                            className="w-full min-w-0 flex-1 text-center font-mono font-black text-base sm:text-lg text-emerald-600 bg-emerald-50/50 rounded-lg py-1 px-0.5 outline-none border border-emerald-200 shadow-inner"
                           />
                           <button
                             type="button"
                             onClick={() => adjustValue2('den', 1)}
-                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-sm flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 sm:h-9 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-sm flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            +
+                            ＋
                           </button>
                         </div>
                       </div>
@@ -493,18 +563,18 @@ export default function IsodinamaKlasmataPage() {
                     {/* BOX Μ.Κ.Δ. */}
                     <div className="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-200 text-xs text-emerald-900 space-y-1 shadow-xs">
                       <span className="font-black uppercase tracking-wider block text-[10px]">
-                        🔍 Μεγιστος Κοινος Διαιρετης:
+                        🔍 ΜΕΓΙΣΤΟΣ ΚΟΙΝΟΣ ΔΙΑΙΡΕΤΗΣ:
                       </span>
                       <p>
                         Μ.Κ.Δ.({activeNum2}, {activeDen2}) ＝ <strong>{gcd}</strong>.
-                        {gcd === 1 ? " Το κλάσμα είναι ήδη ανάγωγο!" : ` Διαιρούμε και τους δύο όρους με το ${gcd}.`}
+                        {gcd === 1 ? ' Το κλάσμα είναι ήδη ανάγωγο!' : ` Διαιρούμε και τους δύο όρους με το ${gcd}.`}
                       </p>
                     </div>
 
                     {/* PRESETS REDUCE */}
                     <div className="space-y-2 pt-2 border-t border-slate-200">
-                      <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                        Ετοιμα Παραδειγματα:
+                      <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
+                        ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
                       </span>
                       <div className="grid grid-cols-2 gap-2">
                         {PRESETS_REDUCE.map((p, idx) => (
@@ -515,7 +585,7 @@ export default function IsodinamaKlasmataPage() {
                               setNum2(p.num);
                               setDenominator2(p.den);
                             }}
-                            className={`py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center ${
+                            className={`py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 ${
                               activeNum2 === p.num && activeDen2 === p.den
                                 ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-105'
                                 : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
@@ -530,7 +600,7 @@ export default function IsodinamaKlasmataPage() {
                 </div>
               )}
 
-              <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
+              <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
                 💡 Τα ισοδύναμα κλάσματα έχουν την <strong>ίδια ακριβώς δεκαδική αξία</strong>!
               </div>
             </div>
@@ -542,7 +612,7 @@ export default function IsodinamaKlasmataPage() {
                 /* TAB 1: ΔΗΜΙΟΥΡΓΙΑ */
                 <div className="space-y-6 flex-1 flex flex-col justify-between">
                   {/* Μαθηματική Πράξη */}
-                  <div className="flex items-center justify-center p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto shadow-2xs">
+                  <div className="flex items-center justify-center p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
                     <div className="flex items-center gap-2.5 sm:gap-4 font-mono text-base sm:text-xl md:text-2xl font-black">
                       <div className="flex flex-col items-center">
                         <span className="text-blue-600">{activeNum1}</span>
@@ -550,10 +620,10 @@ export default function IsodinamaKlasmataPage() {
                         <span className="text-blue-600">{activeDen1}</span>
                       </div>
 
-                      <div className="text-slate-400 text-[10px] sm:text-xs font-sans font-bold text-center bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-200 shadow-2xs">
-                        <div>× {safeMultiplier}</div>
+                      <div className="text-slate-500 text-[10px] sm:text-xs font-sans font-bold text-center bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-200 shadow-xs">
+                        <div>· {safeMultiplier}</div>
                         <div className="border-t border-slate-200 my-0.5" />
-                        <div>× {safeMultiplier}</div>
+                        <div>· {safeMultiplier}</div>
                       </div>
 
                       <span className="text-slate-400 font-light">＝</span>
@@ -570,13 +640,13 @@ export default function IsodinamaKlasmataPage() {
                   <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-6 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
                     <div className="flex flex-col items-center space-y-2">
                       <span className="text-xs font-black text-slate-500 uppercase tracking-wider text-center">
-                        Αρχικο Κλασμα ({activeNum1}/{activeDen1})
+                        ΑΡΧΙΚΟ ΚΛΑΣΜΑ ({activeNum1}/{activeDen1})
                       </span>
                       {renderPizzaDiagram(activeNum1, activeDen1, 'fill-blue-500', 'stroke-blue-700')}
                     </div>
                     <div className="flex flex-col items-center space-y-2">
                       <span className="text-xs font-black text-slate-500 uppercase tracking-wider text-center">
-                        Ισοδυναμο Κλασμα ({isoNum}/{isoDen})
+                        ΙΣΟΔΥΝΑΜΟ ΚΛΑΣΜΑ ({isoNum}/{isoDen})
                       </span>
                       {renderPizzaDiagram(isoNum, isoDen, 'fill-indigo-500', 'stroke-indigo-700')}
                     </div>
@@ -586,7 +656,7 @@ export default function IsodinamaKlasmataPage() {
                 /* TAB 2: ΑΝΑΓΩΓΟ */
                 <div className="space-y-6 flex-1 flex flex-col justify-between">
                   {/* Μαθηματική Πράξη */}
-                  <div className="flex items-center justify-center p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto shadow-2xs">
+                  <div className="flex items-center justify-center p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
                     <div className="flex items-center gap-2.5 sm:gap-4 font-mono text-base sm:text-xl md:text-2xl font-black">
                       <div className="flex flex-col items-center">
                         <span className="text-emerald-600">{activeNum2}</span>
@@ -594,10 +664,10 @@ export default function IsodinamaKlasmataPage() {
                         <span className="text-emerald-600">{activeDen2}</span>
                       </div>
 
-                      <div className="text-slate-400 text-[10px] sm:text-xs font-sans font-bold text-center bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-200 shadow-2xs">
-                        <div>÷ {gcd}</div>
+                      <div className="text-slate-500 text-[10px] sm:text-xs font-sans font-bold text-center bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-200 shadow-xs">
+                        <div>: {gcd}</div>
                         <div className="border-t border-slate-200 my-0.5" />
-                        <div>÷ {gcd}</div>
+                        <div>: {gcd}</div>
                       </div>
 
                       <span className="text-slate-400 font-light">＝</span>
@@ -614,13 +684,13 @@ export default function IsodinamaKlasmataPage() {
                   <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-6 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
                     <div className="flex flex-col items-center space-y-2">
                       <span className="text-xs font-black text-slate-500 uppercase tracking-wider text-center">
-                        Αρχικο Κλασμα ({activeNum2}/{activeDen2})
+                        ΑΡΧΙΚΟ ΚΛΑΣΜΑ ({activeNum2}/{activeDen2})
                       </span>
                       {renderPizzaDiagram(activeNum2, activeDen2, 'fill-emerald-500', 'stroke-emerald-700')}
                     </div>
                     <div className="flex flex-col items-center space-y-2">
                       <span className="text-xs font-black text-slate-500 uppercase tracking-wider text-center">
-                        Αναγωγο Κλασμα ({reducedNum}/{reducedDen})
+                        ΑΝΑΓΩΓΟ ΚΛΑΣΜΑ ({reducedNum}/{reducedDen})
                       </span>
                       {renderPizzaDiagram(reducedNum, reducedDen, 'fill-teal-500', 'stroke-teal-700')}
                     </div>
@@ -630,29 +700,33 @@ export default function IsodinamaKlasmataPage() {
 
               {/* Τελική Επιβεβαίωση Αξίας */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-3.5 sm:p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                ⚖️ Οπτική Επιβεβαίωση: Παρατήρησε ότι οι χρωματισμένες επιφάνειες στους δύο κύκλους είναι ακριβώς ίσες!
+                ⚖️ ΟΠΤΙΚΗ ΕΠΙΒΕΒΑΙΩΣΗ: Οι χρωματισμένες επιφάνειες στους δύο κύκλους είναι ακριβώς ίσες!
               </div>
 
             </div>
 
           </div>
-        </div>
+        </section>
 
-        {/* BOTTOM CALLOUT BANNER */}
-        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-gray-800 text-sm md:text-base">
-              Έμαθες να δημιουργείς ισοδύναμα και να απλοποιείς σε ανάγωγο κλάσμα; Δοκίμασε τις διαδραστικές ασκήσεις!
+        {/* 5. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              Ώρα για Εξάσκηση στα Ισοδύναμα Κλάσματα!
+            </h3>
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              Έμαθες να δημιουργείς ισοδύναμα και να απλοποιείς σε ανάγωγο κλάσμα; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
+
           <Link
             href="/st-dimotikou/25-isodinama-klasmata-ask"
-            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            Ξεκίνα τις Ασκήσεις ➔
+            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </section>
 
       </div>
     </Layout>
