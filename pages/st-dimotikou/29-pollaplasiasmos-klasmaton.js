@@ -845,8 +845,8 @@ export default function PollaplasiasmosKlasmatonPage() {
               {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-3.5 sm:p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
                 {mode === 'fraction-fraction'
-                  ? `💡 ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ: ({activeNumA}/{activeDenA}) · ({activeNumB}/{activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`}`
-                  : `💡 ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ: {activeNumA} · ({activeNumB}/{activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`}`}
+                  ? `💡 ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ: (${activeNumA}/${activeDenA}) · (${activeNumB}/${activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`}`
+                  : `💡 ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ: ${activeNumA} · (${activeNumB}/${activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`}`}
               </div>
 
             </div>
