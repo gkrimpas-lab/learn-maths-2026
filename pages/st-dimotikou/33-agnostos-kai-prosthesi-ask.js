@@ -1,14 +1,21 @@
-import { useState, useEffect } from 'react';
+// pages/st-dimotikou/33-agnostos-kai-prosthesi-ask.js
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
-// Βοηθητικές συναρτήσεις
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
+
+function randInt(min, max) {
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
 }
 
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -18,8 +25,8 @@ function shuffle(array) {
 }
 
 function gcd(a, b) {
-  let x = Math.abs(a);
-  let y = Math.abs(b);
+  let x = Math.abs(a || 0);
+  let y = Math.abs(b || 0);
   while (y) {
     const t = y;
     y = x % y;
@@ -28,48 +35,353 @@ function gcd(a, b) {
   return x || 1;
 }
 
-// Δεξαμενή σεναρίων προβλημάτων με σωστή διατύπωση
-const REAL_WORLD_SCENARIOS = [
-  { item: 'ευρώ', who: 'Ο Νίκος είχε κάποια χρήματα (x). Ο παππούς του τού έδωσε ακόμη', add: 15, total: 42, q: 'Πόσα χρήματα είχε αρχικά ο Νίκος;' },
-  { item: 'σελίδες', who: 'Η Μαρία διάβασε ένα μέρος ενός βιβλίου (x) και μετά διάβασε άλλες', add: 28, total: 75, q: 'Πόσες σελίδες είχε διαβάσει στο πρώτο μέρος;' },
-  { item: 'κιλά', who: 'Ένα κιβώτιο με μήλα ζυγίζει συνολικά', total: 35, add: 12, who2: 'Αν τα μήλα ζυγίζουν', q: 'Πόσο ζυγίζει το άδειο κιβώτιο (x);' },
-  { item: 'μαθητές', who: 'Σε ένα λεωφορείο υπήρχαν μαθητές (x). Στην πρώτη στάση επιβιβάστηκαν άλλοι', add: 14, total: 48, q: 'Πόσοι μαθητές βρίσκονταν αρχικά στο λεωφορείο;' },
-  { item: 'πόντους', who: 'Σε έναν αγώνα μπάσκετ η ομάδα πέτυχε κάποιους πόντους στο πρώτο ημίχρονο (x) και πρόσθεσε άλλους', add: 34, total: 78, q: 'Πόσους πόντους είχε πετύχει στο πρώτο ημίχρονο;' },
-  { item: 'αυτοκόλλητα', who: 'Ο Γιώργος είχε μια συλλογή (x) και η φίλη του τού χάρισε ακόμη', add: 19, total: 63, q: 'Πόσα αυτοκόλλητα είχε αρχικά ο Γιώργος;' }
+// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποιηση αριθμων με ελληνικο locale
+function formatNum(num) {
+  if (num === null || num === undefined || isNaN(Number(num))) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
+
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q9 & Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
+
+const STANDARD_PROBLEMS_POOL = [
+  {
+    id: 'sp1',
+    title: 'Χαρτζιλίκι από τον Παππού',
+    unit: 'ευρώ',
+    generate: () => {
+      // x + 15 = 42 -> x = 27
+      const add = 15;
+      const total = 42;
+      const x = total - add;
+      return {
+        prompt: `Ο Νίκος είχε ένα χρηματικό ποσό (x). Ο παππούς του τού έδωσε ακόμη ${add}€ και τώρα έχει συνολικά ${total}€. Πόσα ευρώ είχε αρχικά ο Νίκος;`,
+        unit: 'ευρώ',
+        correctVal: String(x),
+        correctText: `${x}€`,
+        tableData: [
+          { item: 'Εξίσωση προβλήματος', formula: `x ＋ ${add} ＝ ${total}`, val: `x ＝ ${total} － ${add}` },
+          { item: 'Αφαίρεση', formula: `${total} － ${add}`, val: `${x}€` }
+        ],
+        explain: `Σχηματίζουμε την εξίσωση: x ＋ ${add} ＝ ${total}. Για να βρούμε το x, αφαιρούμε: x ＝ ${total} － ${add} ＝ ${x}€.`,
+        distractors: [`${x + 5}€`, `${x - 4}€`, `${total + add}€`]
+      };
+    }
+  },
+  {
+    id: 'sp2',
+    title: 'Σελίδες Βιβλίου',
+    unit: 'σελίδες',
+    generate: () => {
+      // x + 28 = 75 -> x = 47
+      const add = 28;
+      const total = 75;
+      const x = total - add;
+      return {
+        prompt: `Η Μαρία διάβασε ένα μέρος ενός βιβλίου (x) το πρωί και το απόγευμα διάβασε άλλες ${add} σελίδες. Αν συνολικά διάβασε ${total} σελίδες, πόσες σελίδες είχε διαβάσει το πρωί;`,
+        unit: 'σελίδες',
+        correctVal: String(x),
+        correctText: `${x} σελίδες`,
+        tableData: [
+          { item: 'Εξίσωση', formula: `x ＋ ${add} ＝ ${total}`, val: `x ＝ ${total} － ${add}` },
+          { item: 'Υπολογισμός', formula: `${total} － ${add}`, val: `${x} σελίδες` }
+        ],
+        explain: `Λύνουμε την εξίσωση πρόσθεσης x ＋ ${add} ＝ ${total}: x ＝ ${total} － ${add} ＝ ${x} σελίδες.`,
+        distractors: [`${x + 6} σελίδες`, `${x - 5} σελίδες`, `${total + add} σελίδες`]
+      };
+    }
+  },
+  {
+    id: 'sp3',
+    title: 'Βάρος Κιβωτίου με Φρούτα',
+    unit: 'κιλά',
+    generate: () => {
+      // x + 12 = 35 -> x = 23
+      const add = 12;
+      const total = 35;
+      const x = total - add;
+      return {
+        prompt: `Ένα κιβώτιο γεμάτο με μήλα ζυγίζει συνολικά ${total} κιλά. Αν τα μήλα μόνα τους ζυγίζουν ${add} κιλά, πόσα κιλά ζυγίζει το άδειο κιβώτιο (x);`,
+        unit: 'κιλά',
+        correctVal: String(x),
+        correctText: `${x} κιλά`,
+        tableData: [
+          { item: 'Σχέση βάρους', formula: `x ＋ ${add} ＝ ${total}`, val: `x ＝ ${total} － ${add}` },
+          { item: 'Βάρος κιβωτίου', formula: `${total} － ${add}`, val: `${x} κιλά` }
+        ],
+        explain: `Το βάρος του κιβωτίου συν τα μήλα δίνει το μεικτό βάρος: x ＋ ${add} ＝ ${total} ➔ x ＝ ${total} － ${add} ＝ ${x} κιλά.`,
+        distractors: [`${x + 3} κιλά`, `${x - 3} κιλά`, `${total + add} κιλά`]
+      };
+    }
+  },
+  {
+    id: 'sp4',
+    title: 'Μαθητές σε Σχολικό Λεωφορείο',
+    unit: 'μαθητές',
+    generate: () => {
+      // x + 14 = 48 -> x = 34
+      const add = 14;
+      const total = 48;
+      const x = total - add;
+      return {
+        prompt: `Σε ένα σχολικό λεωφορείο επέβαιναν μαθητές (x). Στην πρώτη στάση επιβιβάστηκαν ακόμη ${add} μαθητές και τώρα βρίσκονται μέσα ${total} μαθητές. Πόσοι μαθητές βρίσκονταν αρχικά στο λεωφορείο;`,
+        unit: 'μαθητές',
+        correctVal: String(x),
+        correctText: `${x} μαθητές`,
+        tableData: [
+          { item: 'Εξίσωση επιβατών', formula: `x ＋ ${add} ＝ ${total}`, val: `x ＝ ${total} － ${add}` },
+          { item: 'Αρχικοί μαθητές', formula: `${total} － ${add}`, val: `${x}` }
+        ],
+        explain: `Η εξίσωση είναι x ＋ ${add} ＝ ${total}. Βρίσκουμε τον άγνωστο προσθετέο: x ＝ ${total} － ${add} ＝ ${x} μαθητές.`,
+        distractors: [`${x + 4} μαθητές`, `${x - 4} μαθητές`, `${total + add} μαθητές`]
+      };
+    }
+  },
+  {
+    id: 'sp5',
+    title: 'Πόντοι Αγώνα Μπάσκετ',
+    unit: 'πόντους',
+    generate: () => {
+      // x + 34 = 78 -> x = 44
+      const add = 34;
+      const total = 78;
+      const x = total - add;
+      return {
+        prompt: `Σε έναν αγώνα μπάσκετ η ομάδα πέτυχε κάποιους πόντους στο πρώτο ημίχρονο (x) και στο δεύτερο ημίχρονο πρόσθεσε άλλους ${add} πόντους, φτάνοντας συνολικά τους ${total} πόντους. Πόσους πόντους είχε πετύχει στο πρώτο ημίχρονο;`,
+        unit: 'πόντους',
+        correctVal: String(x),
+        correctText: `${x} πόντους`,
+        tableData: [
+          { item: 'Εξίσωση πόντων', formula: `x ＋ ${add} ＝ ${total}`, val: `x ＝ ${total} － ${add}` },
+          { item: 'Πόντοι 1ου ημιχρόνου', formula: `${total} － ${add}`, val: `${x}` }
+        ],
+        explain: `x ＋ ${add} ＝ ${total} ➔ x ＝ ${total} － ${add} ＝ ${x} πόντοι.`,
+        distractors: [`${x + 6} πόντους`, `${x - 6} πόντους`, `${total + add} πόντους`]
+      };
+    }
+  },
+  {
+    id: 'sp6',
+    title: 'Συλλογή Αυτοκόλλητων',
+    unit: 'αυτοκόλλητα',
+    generate: () => {
+      // x + 19 = 63 -> x = 44
+      const add = 19;
+      const total = 63;
+      const x = total - add;
+      return {
+        prompt: `Ο Γιώργος είχε μια συλλογή με αυτοκόλλητα (x). Η φίλη του τού χάρισε ακόμη ${add} αυτοκόλλητα και η συλλογή του έφτασε τα ${total}. Πόσα αυτοκόλλητα είχε αρχικά ο Γιώργος;`,
+        unit: 'αυτοκόλλητα',
+        correctVal: String(x),
+        correctText: `${x} αυτοκόλλητα`,
+        tableData: [
+          { item: 'Εξίσωση συλλογής', formula: `x ＋ ${add} ＝ ${total}`, val: `x ＝ ${total} － ${add}` },
+          { item: 'Αρχικά αυτοκόλλητα', formula: `${total} － ${add}`, val: `${x}` }
+        ],
+        explain: `Υπολογίζουμε: x ＝ ${total} － ${add} ＝ ${x} αυτοκόλλητα.`,
+        distractors: [`${x + 5} αυτοκόλλητα`, `${x - 5} αυτοκόλλητα`, `${total + add} αυτοκόλλητα`]
+      };
+    }
+  }
 ];
 
-// Δημιουργία 8 μοναδικών ερωτήσεων
-function generateQuestions() {
-  const shuffledScenarios = shuffle(REAL_WORLD_SCENARIOS);
+const HARD_PROBLEMS_POOL = [
+  {
+    id: 'hp1',
+    title: 'Περίμετρος Τριγώνου με Άγνωστη Πλευρά',
+    unit: 'εκ.',
+    generate: () => {
+      // x + 7 + 9 = 24 -> x + 16 = 24 -> x = 8
+      const a = 7;
+      const b = 9;
+      const sumKnown = a + b;
+      const totalP = 24;
+      const x = totalP - sumKnown;
+      return {
+        prompt: `Η περίμετρος ενός τριγώνου είναι ${totalP} εκατοστά. Οι δύο γνωστές πλευρές του έχουν μήκος ${a} εκ. και ${b} εκ. αντίστοιχα. Πόσα εκατοστά είναι η τρίτη πλευρά (x);`,
+        unit: 'εκ.',
+        correctVal: String(x),
+        correctText: `${x} εκ.`,
+        tableData: [
+          { item: 'Άθροισμα γνωστών πλευρών', formula: `${a} ＋ ${b}`, val: `${sumKnown} εκ.` },
+          { item: 'Εξίσωση περιμέτρου', formula: `x ＋ ${sumKnown} ＝ ${totalP}`, val: `x ＝ ${totalP} － ${sumKnown}` },
+          { item: 'Μήκος τρίτης πλευράς', formula: `${totalP} － ${sumKnown}`, val: `${x} εκ.` }
+        ],
+        explain: `Η περίμετρος είναι το άθροισμα των τριών πλευρών: x ＋ ${a} ＋ ${b} ＝ ${totalP} ➔ x ＋ ${sumKnown} ＝ ${totalP} ➔ x ＝ ${totalP} － ${sumKnown} ＝ ${x} εκ.`,
+        distractors: [`${x + 2} εκ.`, `${x - 2} εκ.`, `${sumKnown} εκ.`]
+      };
+    }
+  },
+  {
+    id: 'hp2',
+    title: 'Εξίσωση με Ετερώνυμα Κλάσματα',
+    unit: '',
+    generate: () => {
+      // x + 1/3 = 5/6 -> x = 5/6 - 2/6 = 3/6 = 1/2
+      return {
+        prompt: 'Λύσε την εξίσωση με τα ετερώνυμα κλάσματα: x ＋ 1/3 ＝ 5/6:',
+        unit: '',
+        correctVal: '1/2',
+        correctText: '1/2 (ή 3/6)',
+        tableData: [
+          { item: 'Εξίσωση', formula: 'x ＋ 1/3 ＝ 5/6', val: 'x ＝ 5/6 － 1/3' },
+          { item: 'Μετατροπή σε ομώνυμα', formula: '5/6 － 2/6', val: '3/6' },
+          { item: 'Απλοποίηση', formula: '3/6 (: 3)', val: '1/2' }
+        ],
+        explain: 'x ＝ 5/6 － 1/3 ＝ 5/6 － 2/6 ＝ 3/6 ＝ 1/2.',
+        distractors: ['2/3', '1/3', '4/6']
+      };
+    }
+  },
+  {
+    id: 'hp3',
+    title: 'Σύνθετο Πρόβλημα Αγορών & Ρέστα',
+    unit: '€',
+    generate: () => {
+      // (x + 12) + 8 = 30 -> x + 20 = 30 -> x = 10
+      const paid = 50;
+      const itemBook = 18;
+      const change = 12;
+      const spentTotal = paid - change; // 38
+      const x = spentTotal - itemBook; // 20
+      return {
+        prompt: `Ο Ανδρέας αγόρασε ένα βιβλίο αξίας ${itemBook}€ και ένα παιχνίδι (x). Πλήρωσε με χαρτονόμισμα των ${paid}€ και πήρε ρέστα ${change}€. Πόσα ευρώ κόστιζε το παιχνίδι;`,
+        unit: '€',
+        correctVal: String(x),
+        correctText: `${x}€`,
+        tableData: [
+          { item: 'Συνολικό κόστος αγορών', formula: `${paid} － ${change}`, val: `${spentTotal}€` },
+          { item: 'Εξίσωση δαπάνης', formula: `x ＋ ${itemBook} ＝ ${spentTotal}`, val: `x ＝ ${spentTotal} － ${itemBook}` },
+          { item: 'Κόστος παιχνιδιού', formula: `${spentTotal} － ${itemBook}`, val: `${x}€` }
+        ],
+        explain: `Το συνολικό ποσό που ξόδεψε είναι ${paid} － ${change} ＝ ${spentTotal}€. Επομένως x ＋ ${itemBook} ＝ ${spentTotal} ➔ x ＝ ${spentTotal} － ${itemBook} ＝ ${x}€.`,
+        distractors: [`${x + 4}€`, `${x - 4}€`, `${spentTotal}€`]
+      };
+    }
+  },
+  {
+    id: 'hp4',
+    title: 'Εξίσωση με Δεκαδικούς Αριθμούς',
+    unit: '',
+    generate: () => {
+      // x + 14,75 = 32,5 -> x = 17,75
+      const a = 14.75;
+      const total = 32.5;
+      const x = total - a;
+      const aStr = a.toFixed(2).replace('.', ',');
+      const totalStr = total.toFixed(2).replace('.', ',');
+      const xStr = x.toFixed(2).replace('.', ',');
+      return {
+        prompt: `Λύσε την εξίσωση με τους δεκαδικούς αριθμούς: x ＋ ${aStr} ＝ ${totalStr}:`,
+        unit: '',
+        correctVal: xStr,
+        correctText: xStr,
+        tableData: [
+          { item: 'Εξίσωση', formula: `x ＋ ${aStr} ＝ ${totalStr}`, val: `x ＝ ${totalStr} － ${aStr}` },
+          { item: 'Αφαίρεση δεκαδικών', formula: `${totalStr} － ${aStr}`, val: `${xStr}` }
+        ],
+        explain: `x ＝ ${totalStr} － ${aStr} ＝ ${xStr}.`,
+        distractors: [
+          (x + 1).toFixed(2).replace('.', ','),
+          (x - 1).toFixed(2).replace('.', ','),
+          (total + a).toFixed(2).replace('.', ',')
+        ]
+      };
+    }
+  },
+  {
+    id: 'hp5',
+    title: 'Άθροισμα Τριών Αριθμών με Μεταβλητή',
+    unit: '',
+    generate: () => {
+      // 15 + x + 25 = 70 -> x + 40 = 70 -> x = 30
+      const a = 15;
+      const b = 25;
+      const sumKnown = a + b;
+      const total = 70;
+      const x = total - sumKnown;
+      return {
+        prompt: `Στην ισότητα ${a} ＋ x ＋ ${b} ＝ ${total}, ποια είναι η τιμή του άγνωστου προσθετέου x;`,
+        unit: '',
+        correctVal: String(x),
+        correctText: `x ＝ ${x}`,
+        tableData: [
+          { item: 'Άθροισμα γνωστών όρων', formula: `${a} ＋ ${b}`, val: `${sumKnown}` },
+          { item: 'Εξίσωση', formula: `x ＋ ${sumKnown} ＝ ${total}`, val: `x ＝ ${total} － ${sumKnown}` },
+          { item: 'Υπολογισμός x', formula: `${total} － ${sumKnown}`, val: `${x}` }
+        ],
+        explain: `Προσθέτουμε πρώτα τους γνωστούς όρους: ${a} ＋ ${b} ＝ ${sumKnown}. Η εξίσωση γίνεται x ＋ ${sumKnown} ＝ ${total} ➔ x ＝ ${total} － ${sumKnown} ＝ ${x}.`,
+        distractors: [String(x + 5), String(x - 5), String(sumKnown)]
+      };
+    }
+  },
+  {
+    id: 'hp6',
+    title: 'Συμπλήρωση μέχρι τον Επόμενο Ακέραιο',
+    unit: '',
+    generate: () => {
+      // x + 3/7 = 2 -> x = 2 - 3/7 = 14/7 - 3/7 = 11/7
+      return {
+        prompt: 'Λύσε την εξίσωση όπου το άθροισμα είναι ακέραιος αριθμός: x ＋ 3/7 ＝ 2:',
+        unit: '',
+        correctVal: '11/7',
+        correctText: '11/7 (ή 1 και 4/7)',
+        tableData: [
+          { item: 'Ακέραιος σε έβδομα', formula: '2 ＝ 14/7', val: '14/7' },
+          { item: 'Εξίσωση', formula: 'x ＋ 3/7 ＝ 14/7', val: 'x ＝ 14/7 － 3/7' },
+          { item: 'Λύση', formula: '14/7 － 3/7', val: '11/7' }
+        ],
+        explain: 'Γράφουμε τον ακέραιο 2 ως κλάσμα με παρονομαστή 7: 2 ＝ 14/7. Επομένως x ＝ 14/7 － 3/7 ＝ 11/7.',
+        distractors: ['4/7', '1', '10/7']
+      };
+    }
+  }
+];
 
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
+function generateQuestions() {
   // Q1: Input - Βασική εξίσωση x + a = b με φυσικούς αριθμούς
-  const q1A = getRandomInt(14, 48);
-  const q1X = getRandomInt(15, 55);
+  const q1A = randInt(14, 48);
+  const q1X = randInt(15, 55);
   const q1B = q1X + q1A;
 
   // Q2: Input - Εξίσωση a + x = b με φυσικούς αριθμούς
-  const q2A = getRandomInt(35, 120);
-  const q2X = getRandomInt(25, 90);
+  const q2A = randInt(35, 120);
+  const q2X = randInt(25, 90);
   const q2B = q2A + q2X;
 
   // Q3: Input - Εξίσωση με δεκαδικούς αριθμούς: x + a = b
-  const q3A_raw = getRandomInt(12, 85) / 10;
-  const q3X_raw = getRandomInt(15, 65) / 10;
+  const q3A_raw = randInt(12, 85) / 10;
+  const q3X_raw = randInt(15, 65) / 10;
   const q3B_raw = Number((q3X_raw + q3A_raw).toFixed(1));
   const q3A = q3A_raw.toFixed(1).replace('.', ',');
   const q3B = q3B_raw.toFixed(1).replace('.', ',');
   const q3Correct = q3X_raw.toFixed(1).replace('.', ',');
 
   // Q4: MCQ - Επιλογή του σωστού βήματος επίλυσης για την εξίσωση x + a = b
-  const q4A = getRandomInt(15, 45);
-  const q4B = q4A + getRandomInt(10, 30);
+  const q4A = randInt(15, 45);
+  const q4B = q4A + randInt(10, 30);
   const q4CorrectStep = `x ＝ ${q4B} － ${q4A}`;
   const q4Wrongs = [
     `x ＝ ${q4B} ＋ ${q4A}`,
     `x ＝ ${q4A} － ${q4B}`,
     `x ＝ ${q4B} : ${q4A}`
   ];
-  const q4Options = shuffle([q4CorrectStep, ...q4Wrongs]);
+  const q4Options = shuffle([...new Set([q4CorrectStep, ...q4Wrongs])]);
 
   // Q5: True / False - Κανόνας εύρεσης άγνωστου προσθετέου
   const q5IsTrue = Math.random() > 0.5;
@@ -81,53 +393,64 @@ function generateQuestions() {
   const q6IsTrue = Math.random() > 0.5;
   const q6Text = q6IsTrue
     ? 'Η εξίσωση x ＋ 12 ＝ 30 λύνεται με τον ίδιο ακριβώς τρόπο όπως η εξίσωση 12 ＋ x ＝ 30.'
-    : 'Στην εξίσωση 12 ＋ x ＝ 30 δεν μπορούμε να κάνουμε αφαίρεση επειδή το x είναι δεύτερο.';
+    : 'Στην εξίσωση 12 ＋ x ＝ 30 δεν μπορούμε να κάνουμε αφαίρεση επειδή το x είναι δεύτερος προσθετέος.';
 
   // Q7: Input - Εξίσωση με ομώνυμα κλάσματα: x + n1/d = n2/d
-  const q7Den = getRandomInt(5, 12);
-  const q7N1 = getRandomInt(1, Math.floor((q7Den - 1) / 2));
-  const q7N2 = getRandomInt(q7N1 + 2, q7Den);
+  const q7Den = randInt(5, 12);
+  const q7N1 = randInt(1, Math.floor((q7Den - 1) / 2));
+  const q7N2 = randInt(q7N1 + 2, q7Den);
   const q7DiffN = q7N2 - q7N1;
   const q7G = gcd(q7DiffN, q7Den);
   const q7CorrectRaw = `${q7DiffN}/${q7Den}`;
   const q7CorrectSimp = q7G > 1 ? `${q7DiffN / q7G}/${q7Den / q7G}` : q7CorrectRaw;
 
-  // Q8: MCQ - Πρόβλημα καθημερινότητας
-  const sc = shuffledScenarios[0];
-  const scCorrect = sc.total - sc.add;
-  const scWrongs = [
-    String(sc.total + sc.add),
-    String(scCorrect + 5),
-    String(Math.max(1, scCorrect - 4))
-  ];
-  const q8Options = shuffle([`${scCorrect} ${sc.item}`, ...scWrongs.map(w => `${w} ${sc.item}`)]);
-  const q8Prompt = sc.who2 
-    ? `${sc.who} ${sc.total} ${sc.item}. ${sc.who2} ${sc.add} ${sc.item}. ${sc.q}`
-    : `${sc.who} ${sc.add} ${sc.item} και τώρα έχει συνολικά ${sc.total} ${sc.item}. ${sc.q}`;
+  // Q8: MCQ - Επαλήθευση εξίσωσης
+  const q8A = randInt(12, 25);
+  const q8B = randInt(35, 55);
+  const q8CorrectX = q8B - q8A;
+  const q8Options = shuffle([...new Set([String(q8CorrectX), String(q8CorrectX + 3), String(q8CorrectX - 3), String(q8B + q8A)])]);
 
-  return {
-    q1: {
+  // Q9: Standard Problem (Pool of 6)
+  const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate();
+  const q9Options = shuffle([
+    ...new Set([q9Raw.correctText, ...q9Raw.distractors])
+  ]);
+
+  // Q10: Hard Problem (Pool of 6)
+  const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate();
+  const q10Options = shuffle([
+    ...new Set([q10Raw.correctText, ...q10Raw.distractors])
+  ]);
+
+  return [
+    {
+      id: 'q1',
       type: 'input',
       title: 'Εξίσωση: x ＋ α ＝ β',
       prompt: `Λύσε την εξίσωση: x ＋ ${q1A} ＝ ${q1B}`,
       correct: String(q1X),
       explain: `x ＝ ${q1B} － ${q1A} ＝ ${q1X}.`
     },
-    q2: {
+    {
+      id: 'q2',
       type: 'input',
       title: 'Εξίσωση: α ＋ x ＝ β',
       prompt: `Λύσε την εξίσωση: ${q2A} ＋ x ＝ ${q2B}`,
       correct: String(q2X),
       explain: `x ＝ ${q2B} － ${q2A} ＝ ${q2X}.`
     },
-    q3: {
+    {
+      id: 'q3',
       type: 'input',
       title: 'Δεκαδικοί Αριθμοί',
       prompt: `Λύσε την εξίσωση: x ＋ ${q3A} ＝ ${q3B}`,
       correct: q3Correct,
       explain: `x ＝ ${q3B} － ${q3A} ＝ ${q3Correct}.`
     },
-    q4: {
+    {
+      id: 'q4',
       type: 'mcq',
       title: 'Σωστό Βήμα Επίλυσης',
       prompt: `Ποιο είναι το σωστό βήμα για να λύσουμε την εξίσωση x ＋ ${q4A} ＝ ${q4B};`,
@@ -135,25 +458,28 @@ function generateQuestions() {
       correct: q4CorrectStep,
       explain: `Για να βρούμε τον άγνωστο προσθετέο x, κάνουμε αφαίρεση: ${q4CorrectStep}.`
     },
-    q5: {
+    {
+      id: 'q5',
       type: 'tf',
       title: 'Κανόνας Προσθετέου',
       text: q5Text,
       correct: q5IsTrue,
       explain: q5IsTrue
-        ? 'Η αντίστροφη πράξη της πρόσθεσης είναι η αφαίρεση: x ＝ β － α.'
-        : 'Για να απομονώσουμε το x κάνουμε αφαίρεση (x ＝ β － α), όχι πρόσθεση.'
+        ? 'Σωστά! Η αντίστροφη πράξη της πρόσθεσης είναι η αφαίρεση: x ＝ β － α.'
+        : 'Λάθος! Για να απομονώσουμε το x κάνουμε αφαίρεση (x ＝ β － α), όχι πρόσθεση.'
     },
-    q6: {
+    {
+      id: 'q6',
       type: 'tf',
       title: 'Θέση του Αγνώστου',
       text: q6Text,
       correct: q6IsTrue,
       explain: q6IsTrue
-        ? 'Λόγω της αντιμεταθετικής ιδιότητας, είτε το x είναι 1ος είτε 2ος προσθετέος, λύνεται πάντα με αφαίρεση: x ＝ β － α.'
-        : 'Και στις δύο περιπτώσεις ο άγνωστος είναι προσθετέος και υπολογίζεται με αφαίρεση.'
+        ? 'Σωστά! Λόγω της αντιμεταθετικής ιδιότητας, είτε το x είναι 1ος είτε 2ος προσθετέος, λύνεται πάντα με αφαίρεση: x ＝ β － α.'
+        : 'Λάθος! Και στις δύο περιπτώσεις ο άγνωστος είναι προσθετέος και υπολογίζεται με αφαίρεση.'
     },
-    q7: {
+    {
+      id: 'q7',
       type: 'input',
       title: 'Εξίσωση με Κλάσματα',
       prompt: `Λύσε την εξίσωση: x ＋ ${q7N1}/${q7Den} ＝ ${q7N2}/${q7Den} (π.χ. 3/7):`,
@@ -161,488 +487,350 @@ function generateQuestions() {
       altCorrect: q7CorrectSimp,
       explain: `x ＝ ${q7N2}/${q7Den} － ${q7N1}/${q7Den} ＝ (${q7N2} － ${q7N1})/${q7Den} ＝ ${q7CorrectRaw}${q7G > 1 ? ` (ή ανάγωγο: ${q7CorrectSimp})` : ''}.`
     },
-    q8: {
+    {
+      id: 'q8',
       type: 'mcq',
-      title: 'Πρόβλημα Καθημερινότητας',
-      prompt: q8Prompt,
+      title: 'Επαλήθευση Εξίσωσης',
+      prompt: `Στην εξίσωση x ＋ ${q8A} ＝ ${q8B}, ποια τιμή του x επαληθεύει την ισότητα;`,
       options: q8Options,
-      correct: `${scCorrect} ${sc.item}`,
-      explain: `Σχηματίζουμε την εξίσωση x ＋ ${sc.add} ＝ ${sc.total} ➔ x ＝ ${sc.total} － ${sc.add} ＝ ${scCorrect} ${sc.item}.`
+      correct: String(q8CorrectX),
+      explain: `Αντικαθιστούμε x ＝ ${q8CorrectX}: ${q8CorrectX} ＋ ${q8A} ＝ ${q8B} (Σωστό ✔️).`
+    },
+    {
+      id: 'q9',
+      type: 'mcq',
+      title: `Πρόβλημα: ${STANDARD_PROBLEMS_POOL[spIndex].title}`,
+      prompt: q9Raw.prompt,
+      options: q9Options,
+      correct: q9Raw.correctText,
+      tableData: q9Raw.tableData,
+      explain: q9Raw.explain
+    },
+    {
+      id: 'q10',
+      type: 'mcq',
+      title: `Σύνθετο Πρόβλημα: ${HARD_PROBLEMS_POOL[hpIndex].title}`,
+      prompt: q10Raw.prompt,
+      options: q10Options,
+      correct: q10Raw.correctText,
+      tableData: q10Raw.tableData,
+      explain: q10Raw.explain
     }
-  };
+  ];
 }
 
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
+
 export default function AgnostosKaiProsthesiExercisesPage() {
-  const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({
-    q1: '', q2: '', q3: '', q4: '', q5: null, q6: null, q7: '', q8: ''
-  });
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
-    setAnswers({
-      q1: '', q2: '', q3: '', q4: '', q5: null, q6: null, q7: '', q8: ''
+  const loadNewSet = useCallback(() => {
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = q.type === 'tf' ? null : '';
     });
+    setAnswers(initialAnswers);
     setSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    loadNewQuestions();
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
-  if (!questions) return null;
+  useEffect(() => {
+    loadNewSet();
+  }, [loadNewSet]);
 
-  const handleInputChange = (key, val) => {
+  const handleInputChange = (id, val) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [key]: val }));
+    setAnswers(prev => ({ ...prev, [id]: val }));
   };
 
-  const isCorrect = (key) => {
-    const q = questions[key];
-    const a = answers[key];
-
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
     if (q.type === 'input') {
-      if (typeof a !== 'string' || !a.trim()) return false;
-      const cleanAns = a.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanCorrect = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
+      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
       const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase() : null;
-      return cleanAns === cleanCorrect || (cleanAlt && cleanAns === cleanAlt);
+      return cleanUser === cleanTarget || (cleanAlt && cleanUser === cleanAlt);
     }
     if (q.type === 'mcq') {
-      return a === q.correct;
+      return userVal === q.correct;
     }
     if (q.type === 'tf') {
-      return a === q.correct;
+      return userVal === q.correct;
     }
     return false;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (submitted) return;
+    if (submitted || questions.length === 0) return;
 
-    let s = 0;
-    ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8'].forEach(k => {
-      if (isCorrect(k)) s += 1;
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(s);
+    setScore(total);
     setSubmitted(true);
   };
 
-  const getCardStyle = (key) => {
+  const getCardStyle = (q) => {
     if (!submitted) return 'bg-white border-slate-200 shadow-sm';
-    return isCorrect(key)
-      ? 'bg-emerald-50/60 border-emerald-400 shadow-md ring-1 ring-emerald-400'
-      : 'bg-rose-50/60 border-rose-400 shadow-md ring-1 ring-rose-400';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
-
-  const actionButton = (
-    <Link
-      href="/st-dimotikou/33-agnostos-kai-prosthesi"
-      className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
-    >
-      <span>📖</span>
-      <span>Θεωρία</span>
-    </Link>
-  );
 
   return (
     <Layout
-      title="🎯 Ασκήσεις: 33. Άγνωστος Προσθετέος - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις με αυτόματη βαθμολόγηση στην επίλυση εξισώσεων πρόσθεσης για τη ΣΤ' Δημοτικού."
+      title="Ασκήσεις: Άγνωστος Προσθετέος - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στην επίλυση εξισώσεων πρόσθεσης για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
-      actionButton={actionButton}
+      showAds={false}
       hideFooter={true}
+      actionButton={
+        <Link
+          href="/st-dimotikou/33-agnostos-kai-prosthesi"
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
+        >
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
+        </Link>
+      }
     >
-      <div className="py-6 md:py-10 space-y-8 pb-28 sm:pb-32">
-
-        {/* 1. HEADER HERO BANNER */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-blue-100 border border-white/20">
-                <span>🎯 ΣΤ' Δημοτικου • Εξασκηση</span>
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+        
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 33 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
                 Διαδραστικές Ασκήσεις: Άγνωστος Προσθετέος (x ＋ α ＝ β)
               </h1>
-              <p className="text-blue-100 text-sm md:text-base max-w-2xl leading-relaxed">
-                Λύσε τα 8 δυναμικά προβλήματα εξισώσεων πρόσθεσης με φυσικούς, δεκαδικούς και κλάσματα!
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στην επίλυση εξισώσεων πρόσθεσης με φυσικούς αριθμούς, δεκαδικούς, κλάσματα και προβλήματα καθημερινότητας!
               </p>
             </div>
 
             <button
               type="button"
-              onClick={loadNewQuestions}
-              className="px-5 py-3 bg-white text-blue-800 hover:bg-blue-50 rounded-2xl font-extrabold shadow-md transition transform active:scale-95 text-xs sm:text-sm flex items-center gap-2 shrink-0 self-stretch sm:self-auto justify-center"
+              onClick={loadNewSet}
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
               <span>🔄</span>
-              <span>Νέες Ασκήσεις</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
-        </div>
+        </section>
 
-        {/* 2. ΦΟΡΜΑ ΜΕ ΤΙΣ 8 ΕΡΩΤΗΣΕΙΣ */}
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
         <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* ΕΡΩΤΗΣΗ 1 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q1')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-                  Άσκηση 1 • Εξίσωση x ＋ α ＝ β
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q1') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                {questions.q1.prompt}
-              </p>
-              <div className="space-y-3">
-                <input
-                  id="ex-input-q1"
-                  name="exInputQ1"
-                  autoComplete="off"
-                  type="text"
-                  inputMode="numeric"
-                  disabled={submitted}
-                  value={answers.q1}
-                  onChange={(e) => handleInputChange('q1', e.target.value)}
-                  placeholder="x ＝ ..."
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-blue-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q1') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q1.explain}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 2 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q2')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full">
-                  Άσκηση 2 • Εξίσωση α ＋ x ＝ β
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q2') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                {questions.q2.prompt}
-              </p>
-              <div className="space-y-3">
-                <input
-                  id="ex-input-q2"
-                  name="exInputQ2"
-                  autoComplete="off"
-                  type="text"
-                  inputMode="numeric"
-                  disabled={submitted}
-                  value={answers.q2}
-                  onChange={(e) => handleInputChange('q2', e.target.value)}
-                  placeholder="x ＝ ..."
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q2') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q2.explain}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 3 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q3')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
-                  Άσκηση 3 • Δεκαδικοί Αριθμοί
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q3') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                {questions.q3.prompt}
-              </p>
-              <div className="space-y-3">
-                <input
-                  id="ex-input-q3"
-                  name="exInputQ3"
-                  autoComplete="off"
-                  type="text"
-                  inputMode="numeric"
-                  disabled={submitted}
-                  value={answers.q3}
-                  onChange={(e) => handleInputChange('q3', e.target.value)}
-                  placeholder="π.χ. 3,5"
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-purple-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q3') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q3.explain}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 4 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q4')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-amber-100 text-amber-800 rounded-full">
-                  Άσκηση 4 • Επιλογή Βήματος
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q4') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 leading-relaxed font-medium">
-                {questions.q4.prompt}
-              </p>
-              <div className="space-y-2 mb-3">
-                {questions.q4.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q4', opt)}
-                    className={`w-full p-2.5 rounded-xl text-xs sm:text-sm font-mono font-bold border text-left transition ${
-                      answers.q4 === opt
-                        ? 'bg-amber-500 text-white border-amber-500 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q4') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q4.explain}
-                </div>
-              )}
-            </div>
-
-            {/* ΕΡΩΤΗΣΗ 5 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q5')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
-                  Άσκηση 5 • Σωστό ή Λάθος
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q5') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                «{questions.q5.text}»
-              </p>
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', true)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q5 === true
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                  }`}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
                 >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q5', false)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q5 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q5') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q5.explain}
-                </div>
-              )}
-            </div>
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
+                      </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
+                        </span>
+                      )}
+                    </div>
 
-            {/* ΕΡΩΤΗΣΗ 6 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q6')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full">
-                  Άσκηση 6 • Σωστό ή Λάθος
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q6') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-6 leading-relaxed font-medium">
-                «{questions.q6.text}»
-              </p>
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', true)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q6 === true
-                      ? 'bg-cyan-600 text-white border-cyan-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-cyan-50'
-                  }`}
-                >
-                  👍 Σωστό
-                </button>
-                <button
-                  type="button"
-                  disabled={submitted}
-                  onClick={() => handleInputChange('q6', false)}
-                  className={`py-3 rounded-xl font-black text-sm border transition ${
-                    answers.q6 === false
-                      ? 'bg-rose-600 text-white border-rose-600 shadow'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
-                  }`}
-                >
-                  👎 Λάθος
-                </button>
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q6') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q6.explain}
-                </div>
-              )}
-            </div>
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-4">
+                      {q.type === 'tf' ? `«${q.text}»` : q.prompt}
+                    </p>
 
-            {/* ΕΡΩΤΗΣΗ 7 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q7')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-rose-100 text-rose-800 rounded-full">
-                  Άσκηση 7 • Εξίσωση με Κλάσματα
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q7') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 font-medium">
-                {questions.q7.prompt}
-              </p>
-              <div className="space-y-3">
-                <input
-                  id="ex-input-q7"
-                  name="exInputQ7"
-                  autoComplete="off"
-                  type="text"
-                  disabled={submitted}
-                  value={answers.q7}
-                  onChange={(e) => handleInputChange('q7', e.target.value)}
-                  placeholder="π.χ. 3/7"
-                  className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-lg focus:border-rose-500 outline-none disabled:bg-slate-100 font-mono"
-                />
-                {submitted && (
-                  <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q7') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                    💡 {questions.q7.explain}
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleInputChange(q.id, opt)}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
+                                isSelected
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          key={`input-${q.id}`}
+                          autoComplete="off"
+                          spellCheck="false"
+                          type="text"
+                          inputMode="text"
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          placeholder="x ＝ ..."
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
+                      </div>
+                    )}
+
+                    {q.type === 'tf' && (
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <button
+                          type="button"
+                          disabled={submitted}
+                          onClick={() => handleInputChange(q.id, true)}
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                            answers[q.id] === true
+                              ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
+                              : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
+                          }`}
+                        >
+                          👍 {toCleanUppercase('Σωστό')}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={submitted}
+                          onClick={() => handleInputChange(q.id, false)}
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                            answers[q.id] === false
+                              ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
+                              : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
+                          }`}
+                        >
+                          👎 {toCleanUppercase('Λάθος')}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
 
-            {/* ΕΡΩΤΗΣΗ 8 */}
-            <div className={`p-5 sm:p-6 rounded-3xl border transition-all ${getCardStyle('q8')}`}>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-black px-3 py-1 bg-teal-100 text-teal-800 rounded-full">
-                  Άσκηση 8 • Πρόβλημα Καθημερινότητας
-                </span>
-                {submitted && (
-                  <span className="text-lg">{isCorrect('q8') ? '✅' : '❌'}</span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 mb-3 font-medium leading-relaxed">
-                {questions.q8.prompt}
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
-                {questions.q8.options.map((opt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => handleInputChange('q8', opt)}
-                    className={`w-full p-2.5 rounded-xl text-xs sm:text-sm font-bold border text-center transition ${
-                      answers.q8 === opt
-                        ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-              {submitted && (
-                <div className={`p-3 rounded-xl text-xs font-medium ${isCorrect('q8') ? 'bg-emerald-100/70 text-emerald-900' : 'bg-rose-100/70 text-rose-900'}`}>
-                  💡 {questions.q8.explain}
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && q.tableData.length > 0 && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Πράξη / Μέθοδος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-
+              );
+            })}
           </div>
 
           {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
           {!submitted && (
-            <div className="flex justify-center pt-4 sm:pt-6">
+            <div className="flex justify-center pt-4">
               <button
                 type="submit"
-                className="w-full sm:w-auto bg-[#10b981] hover:bg-[#059669] text-white text-base md:text-lg font-black px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
                 <span className="text-xl">🎯</span>
-                <span>Έλεγχος Απαντήσεων</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
             </div>
           )}
         </form>
-
       </div>
 
-      {/* 3. FIXED STICKY BOTTOM SCORE FOOTER */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 sm:py-4 px-4 sm:px-6 z-50">
+      {/* FIXED BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
           
-          {/* ΑΡΙΣΤΕΡΑ: SCORE BADGE & PERCENTAGE */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="bg-amber-400 text-slate-900 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>Σκορ:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 8</span>
+              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Ποσοστό Επιτυχίας: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
               </span>
             )}
           </div>
 
-          {/* ΔΕΞΙΑ: GUIDANCE TEXT OR RETRY BUTTON */}
+          {/* GUIDANCE OR RESTART */}
           <div className="flex items-center gap-3">
             {submitted ? (
               <button
                 type="button"
-                onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
+                onClick={loadNewSet}
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
                 <span>🔄</span>
-                <span>Παίξε ξανά με νέες ασκήσεις!</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             ) : (
-              <p className="text-xs md:text-sm text-slate-400 hidden sm:block">
-                Συμπλήρωσε όλες τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
               </p>
             )}
           </div>
