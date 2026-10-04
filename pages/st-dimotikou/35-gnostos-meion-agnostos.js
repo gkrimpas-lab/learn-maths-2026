@@ -258,7 +258,8 @@ export default function GnostosMeionAgnostosPage() {
                       max={MAX_VAL}
                       value={activeA}
                       onChange={(e) => handleAChange(e.target.value)}
-                      className="w-full min-w-0 max-w-full accent-blue-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg block touch-manipulation"
+                      onInput={(e) => handleAChange(e.target.value)}
+                      className="w-full min-w-0 max-w-full accent-blue-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg block touch-manipulation pointer-events-auto"
                     />
                     <button 
                       type="button" 
@@ -300,7 +301,8 @@ export default function GnostosMeionAgnostosPage() {
                       max={activeA - 1}
                       value={activeB}
                       onChange={(e) => handleBChange(e.target.value)}
-                      className="w-full min-w-0 max-w-full accent-emerald-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg block touch-manipulation"
+                      onInput={(e) => handleBChange(e.target.value)}
+                      className="w-full min-w-0 max-w-full accent-emerald-600 cursor-pointer h-2.5 bg-slate-200 rounded-lg block touch-manipulation pointer-events-auto"
                     />
                     <button 
                       type="button" 
@@ -450,23 +452,19 @@ export default function GnostosMeionAgnostosPage() {
           </div>
         </section>
 
-        {/* 5. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
-        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
-          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
-            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στον Άγνωστο Αφαιρετέο!
-            </h3>
-            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Έμαθες πώς λύνουμε μια εξίσωση με άγνωστο αφαιρετέο; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
+        {/* 5. BOTTOM CALLOUT BANNER */}
+        <section className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="space-y-1.5 text-center md:text-left">
+            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
+            <p className="text-gray-800 text-sm md:text-base">
+              Έμαθες πώς λύνουμε μια εξίσωση με άγνωστο αφαιρετέο; Δοκίμασε τις διαδραστικές ασκήσεις!
             </p>
           </div>
-
           <Link
             href="/st-dimotikou/35-gnostos-meion-agnostos-ask"
-            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
+            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
           >
-            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
-            <span aria-hidden="true">→</span>
+            σπαράσσεστε Ξεκίνα τις Ασκήσεις ➔
           </Link>
         </section>
 
