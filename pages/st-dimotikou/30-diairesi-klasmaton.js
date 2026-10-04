@@ -36,6 +36,13 @@ const PRESETS_FN = [
   { nA: 5, dA: 6, nB: 5, label: '5/6 : 5 ➔ 1/6' }
 ];
 
+const PRESETS_COMPLEX = [
+  { nA: 2, dA: 3, nB: 4, dB: 5, label: '(2/3) / (4/5) ➔ 10/12 ➔ 5/6' },
+  { nA: 3, dA: 4, nB: 1, dB: 2, label: '(3/4) / (1/2) ➔ 6/4 ➔ 3/2' },
+  { nA: 1, dA: 3, nB: 2, dB: 9, label: '(1/3) / (2/9) ➔ 9/6 ➔ 3/2' },
+  { nA: 4, dA: 7, nB: 2, dB: 7, label: '(4/7) / (2/7) ➔ 28/14 ➔ 2' }
+];
+
 // Βοηθητικη συναρτηση για ευρεση Μεγιστου Κοινου Διαιρετη (ΜΚΔ)
 function findGCD(a, b) {
   let x = Math.abs(a || 0);
@@ -49,14 +56,14 @@ function findGCD(a, b) {
 }
 
 export default function DiairesiKlasmatonPage() {
-  // Mode: 'fraction-fraction' (κλασμα με κλασμα) η 'fraction-number' (κλασμα με ακεραιο)
+  // Mode: 'fraction-fraction', 'fraction-number' η 'complex-fraction'
   const [mode, setMode] = useState('fraction-fraction');
 
-  // Κατασταση για Κλασμα Α (Διαιρετεος)
+  // Κατασταση για Κλασμα Α (Διαιρετεος ή Επάνω Κλάσμα)
   const [numA, setNumA] = useState(3);
   const [denA, setDenA] = useState(4);
 
-  // Κατασταση για Κλασμα Β (Διαιρετης) - Η Ακεραιο Β
+  // Κατασταση για Κλασμα Β (Διαιρετης ή Κάτω Κλάσμα ή Ακεραιος)
   const [numB, setNumB] = useState(1);
   const [denB, setDenB] = useState(4);
 
@@ -109,13 +116,13 @@ export default function DiairesiKlasmatonPage() {
   const activeNumA = numA === '' ? 0 : Number(numA);
   const activeDenA = denA === '' || Number(denA) === 0 ? 1 : Number(denA);
   const activeNumB = numB === '' ? 0 : Number(numB);
-  const activeDenB = mode === 'fraction-fraction' ? (denB === '' || Number(denB) === 0 ? 1 : Number(denB)) : 1;
+  const activeDenB = mode === 'fraction-number' ? 1 : (denB === '' || Number(denB) === 0 ? 1 : Number(denB));
 
   // Υπολογισμος Αντιστροφου Κλασματος Διαιρετη
   const inverseNum = activeDenB;
   const inverseDen = activeNumB;
 
-  // Υπολογισμος Διαιρεσης
+  // Υπολογισμος Διαιρεσης / Συνθετου
   const resultNum = activeNumA * inverseNum;
   const resultDen = activeDenA * inverseDen;
 
@@ -167,7 +174,7 @@ export default function DiairesiKlasmatonPage() {
             <div className="flex justify-between text-xs font-black text-orange-700 uppercase tracking-wider">
               <span>📐 ΚΛΑΣΜΑ 2 (ΔΙΑΙΡΕΤΗΣ)</span>
               <span className="font-mono">
-                {mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB} ≈ {Number(valB.toFixed(3)).toLocaleString('el-GR')}
+                {mode === 'fraction-number' ? activeNumB : `${activeNumB}/${activeDenB}`} ≈ {Number(valB.toFixed(3)).toLocaleString('el-GR')}
               </span>
             </div>
             <div className="w-full bg-slate-200/80 h-10 rounded-2xl p-1 border border-slate-300 shadow-inner flex">
@@ -175,7 +182,7 @@ export default function DiairesiKlasmatonPage() {
                 className="bg-gradient-to-r from-orange-400 to-amber-500 h-full rounded-xl transition-all duration-500 flex items-center justify-between px-3 text-white font-mono font-black text-xs shadow-md truncate"
                 style={{ width: `${Math.min(100, Math.max(8, widthB))}%` }}
               >
-                <span>{mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB}</span>
+                <span>{mode === 'fraction-number' ? activeNumB : `${activeNumB}/${activeDenB}`}</span>
                 {widthB > 20 && <span className="text-[10px] opacity-80 font-normal">Μέγεθος μερίδας</span>}
               </div>
             </div>
@@ -190,7 +197,7 @@ export default function DiairesiKlasmatonPage() {
               <div className="flex gap-1 justify-center flex-wrap">
                 {Array.from({ length: countFits }).map((_, idx) => (
                   <div key={idx} className="bg-amber-100 border-2 border-amber-400 text-amber-900 font-mono font-bold text-xs px-2.5 py-1 rounded-xl shadow-xs">
-                    {idx + 1}η φορά ({mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB})
+                    {idx + 1}η φορά ({mode === 'fraction-number' ? activeNumB : `${activeNumB}/${activeDenB}`})
                   </div>
                 ))}
                 {hasRemainder && (
@@ -219,8 +226,134 @@ export default function DiairesiKlasmatonPage() {
     );
   };
 
+  // Ειδικό Οπτικό Πλαίσιο για το ΣΥΝΘΕΤΟ ΚΛΑΣΜΑ (Άκρα και Μέσα)
+  const renderComplexFractionVisual = () => {
+    return (
+      <div className="w-full bg-slate-50 p-4 sm:p-7 rounded-3xl border border-slate-200 space-y-6 shadow-inner">
+        <div className="text-center space-y-1">
+          <span className="text-xs font-black text-indigo-900 uppercase tracking-wider block">
+            🧱 ΟΠΤΙΚΟΣ ΚΑΝΟΝΑΣ: ΑΚΡΟΙ (ΕΞΩ) ΚΑΙ ΜΕΣΟΙ (ΜΕΣΑ) ΟΡΟΙ
+          </span>
+          <p className="text-xs text-slate-600 max-w-md mx-auto">
+            Πολλαπλασιάζουμε τους <strong>άκρους όρους</strong> για τον νέο αριθμητή και τους <strong>μέσους όρους</strong> για τον νέο παρονομαστή!
+          </p>
+        </div>
+
+        {/* Μεγάλο Σύνθετο Κλάσμα με διαγράμματα συνδέσεων */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 py-4">
+          
+          {/* Αριστερά: Το Σύνθετο Κλάσμα με επισήμανση */}
+          <div className="relative flex flex-col items-center bg-white p-6 sm:p-8 rounded-3xl border-2 border-indigo-200 shadow-md font-mono select-none">
+            
+            {/* Επάνω Κλάσμα (Αριθμητής Σύνθετου) */}
+            <div className="flex flex-col items-center">
+              <span className="text-2xl sm:text-3xl font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-xl border border-indigo-200 shadow-xs ring-2 ring-indigo-400">
+                {activeNumA} <span className="text-[10px] font-sans text-indigo-500 font-bold ml-1">(Άκρος)</span>
+              </span>
+              <div className="w-14 sm:w-16 h-0.5 bg-slate-400 my-1 rounded-full" />
+              <span className="text-2xl sm:text-3xl font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-xl border border-amber-200 shadow-xs ring-2 ring-amber-400">
+                {activeDenA} <span className="text-[10px] font-sans text-amber-600 font-bold ml-1">(Μέσος)</span>
+              </span>
+            </div>
+
+            {/* ΚΥΡΙΑ ΓΡΑΜΜΗ ΣΥΝΘΕΤΟΥ ΚΛΑΣΜΑΤΟΣ */}
+            <div className="w-36 sm:w-44 h-1.5 bg-slate-900 my-3 rounded-full shadow-sm" />
+
+            {/* Κάτω Κλάσμα (Παρονομαστής Σύνθετου) */}
+            <div className="flex flex-col items-center">
+              <span className="text-2xl sm:text-3xl font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-xl border border-amber-200 shadow-xs ring-2 ring-amber-400">
+                {activeNumB} <span className="text-[10px] font-sans text-amber-600 font-bold ml-1">(Μέσος)</span>
+              </span>
+              <div className="w-14 sm:w-16 h-0.5 bg-slate-400 my-1 rounded-full" />
+              <span className="text-2xl sm:text-3xl font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-xl border border-indigo-200 shadow-xs ring-2 ring-indigo-400">
+                {activeDenB} <span className="text-[10px] font-sans text-indigo-500 font-bold ml-1">(Άκρος)</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Βέλος Μετάβασης */}
+          <div className="text-3xl text-indigo-600 font-black">➔</div>
+
+          {/* Δεξιά: Οι πράξεις σε κάρτες */}
+          <div className="space-y-4 max-w-xs w-full">
+            
+            {/* Κάρτα Άκρων (Αριθμητής) */}
+            <div className="bg-indigo-50 border-2 border-indigo-300 p-3.5 rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase text-indigo-800 tracking-wider block">
+                🟣 ΓΙΝΟΜΕΝΟ ΑΚΡΩΝ (ΕΞΩ) ΟΡΩΝ ➔ ΑΡΙΘΜΗΤΗΣ:
+              </span>
+              <div className="font-mono text-base sm:text-lg font-black text-indigo-950">
+                {activeNumA} · {activeDenB} ＝ <strong className="text-indigo-600">{resultNum}</strong>
+              </div>
+            </div>
+
+            {/* Κάρτα Μέσων (Παρονομαστής) */}
+            <div className="bg-amber-50 border-2 border-amber-300 p-3.5 rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase text-amber-800 tracking-wider block">
+                🟠 ΓΙΝΟΜΕΝΟ ΜΕΣΩΝ (ΜΕΣΑ) ΟΡΩΝ ➔ ΠΑΡΟΝΟΜΑΣΤΗΣ:
+              </span>
+              <div className="font-mono text-base sm:text-lg font-black text-amber-950">
+                {activeDenA} · {activeNumB} ＝ <strong className="text-amber-600">{resultDen}</strong>
+              </div>
+            </div>
+
+            {/* Τελικό Απλό Κλάσμα */}
+            <div className="bg-white border-2 border-emerald-400 p-3.5 rounded-2xl shadow-sm text-center space-y-1">
+              <span className="text-[10px] font-black uppercase text-emerald-800 tracking-wider block">
+                ✨ ΤΕΛΙΚΟ ΑΠΛΟ ΚΛΑΣΜΑ:
+              </span>
+              <div className="font-mono text-xl sm:text-2xl font-black text-emerald-700">
+                {resultNum}/{resultDen} {isSimplified && `＝ ${simplifiedNum}/${simplifiedDen}`}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    );
+  };
+
   // Επεξηγηματικο μηνυμα βημα-βημα
   const getStepByStepExplanation = () => {
+    if (mode === 'complex-fraction') {
+      return (
+        <div className="space-y-3 flex flex-col justify-between h-full">
+          <div className="space-y-2.5">
+            <span className="font-black text-indigo-800 uppercase block text-[11px]">
+              🧱 ΣΥΝΘΕΤΟ ΚΛΑΣΜΑ: ({activeNumA}/{activeDenA}) / ({activeNumB}/{activeDenB})
+            </span>
+            <div className="text-slate-600 space-y-1 text-xs md:text-sm">
+              <p>1. Πολλαπλασιάζουμε τους <strong>άκρους όρους</strong> (τους έξω):</p>
+              <p className="font-mono text-indigo-700 pl-2">
+                ➔ Αριθμητής: {activeNumA} · {activeDenB} ＝ <strong className="text-indigo-900">{resultNum}</strong>
+              </p>
+              <p>2. Πολλαπλασιάζουμε τους <strong>μέσους όρους</strong> (τους μέσα):</p>
+              <p className="font-mono text-amber-700 pl-2">
+                ➔ Παρονομαστής: {activeDenA} · {activeNumB} ＝ <strong className="text-amber-900">{resultDen}</strong>
+              </p>
+            </div>
+            
+            <div className="bg-white p-2.5 rounded-xl border border-slate-200 font-mono text-xs md:text-sm">
+              ({activeNumA}/{activeDenA}) / ({activeNumB}/{activeDenB}) ＝ ({activeNumA} · {activeDenB}) / ({activeDenA} · {activeNumB}) ＝ <strong className="text-emerald-700">{resultNum}/{resultDen}</strong>
+            </div>
+          </div>
+
+          <div className="min-h-[28px] flex items-center pt-1 border-t border-slate-100">
+            {isSimplified ? (
+              <p className="text-emerald-700 text-xs font-bold">
+                ✨ Απλοποιώντας με το {gcd}: <strong>{simplifiedNum}/{simplifiedDen}</strong>
+              </p>
+            ) : (
+              <p className="text-slate-400 text-xs italic">
+                Το κλάσμα είναι ήδη στην ανάγωγη μορφή του.
+              </p>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     let typeHeader = activeDenA === activeDenB 
       ? `🔵 ΟΜΩΝΥΜΑ ΚΛΑΣΜΑΤΑ (ΙΔΙΟΣ ΠΑΡΟΝΟΜΑΣΤΗΣ: ${activeDenA})`
       : `🟣 ΕΤΕΡΩΝΥΜΑ ΚΛΑΣΜΑΤΑ (${activeDenA} ≠ ${activeDenB})`;
@@ -248,7 +381,7 @@ export default function DiairesiKlasmatonPage() {
         <div className="min-h-[28px] flex items-center pt-1 border-t border-slate-100">
           {isSimplified ? (
             <p className="text-emerald-700 text-xs font-bold">
-              ✨ Απλοποιώντας με το {gcd}, το τελικό ανάγωγο κλάσμα γίνεται: <strong>{simplifiedNum}/{simplifiedDen}</strong>
+              ✨ Απλοποιώντας με το {gcd}: <strong>{simplifiedNum}/{simplifiedDen}</strong>
             </p>
           ) : (
             <p className="text-slate-400 text-xs italic">
@@ -262,8 +395,8 @@ export default function DiairesiKlasmatonPage() {
 
   return (
     <Layout
-      title="Διαίρεση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Μάθε πώς διαιρούμε κλάσμα με κλάσμα και κλάσμα με ακέραιο, αντιστρέφοντας το 2ο κλάσμα και κάνοντας πολλαπλασιασμό για τη ΣΤ' Δημοτικού."
+      title="Διαίρεση & Σύνθετα Κλάσματα - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Μάθε πώς διαιρούμε κλάσμα με κλάσμα, κλάσμα με ακέραιο και πώς λύνουμε σύνθετα κλάσματα με άκρους και μέσους όρους για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
       showAds={true}
@@ -285,17 +418,17 @@ export default function DiairesiKlasmatonPage() {
               <span>ΚΕΦΑΛΑΙΟ 30 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Διαίρεση Κλασμάτων και Διαίρεση με Ακέραιο
+              Διαίρεση Κλασμάτων και Σύνθετα Κλάσματα
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Μάθε τον <strong>Χρυσό Κανόνα</strong> της διαίρεσης κλασμάτων: <strong>αντιστρέφουμε τους όρους του δεύτερου κλάσματος</strong> και εκτελούμε πολλαπλασιασμό!
+              Μάθε τον <strong>Χρυσό Κανόνα</strong> της διαίρεσης κλασμάτων: <strong>αντιστρέφουμε τους όρους του δεύτερου κλάσματος</strong> και εκτελούμε πολλαπλασιασμό, καθώς και πώς λύνουμε τα <strong>σύνθετα κλάσματα με τους άκρους και μέσους όρους</strong>!
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Οπτική Καταμέτρηση Μεριδίων &amp; Αντιστροφή Κλασμάτων</span>
+              <span>Οπτική Καταμέτρηση Μεριδίων, Αντιστροφή Κλασμάτων &amp; Σύνθετα Κλάσματα</span>
             </div>
             <Link
               href="/st-dimotikou/30-diairesi-klasmaton-ask"
@@ -311,10 +444,10 @@ export default function DiairesiKlasmatonPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Βασικές Έννοιες &amp; Κανόνες Διαίρεσης Κλασμάτων
+              Βασικές Έννοιες &amp; Κανόνες Διαίρεσης &amp; Σύνθετων Κλασμάτων
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Πώς μετατρέπουμε οποιαδήποτε διαίρεση σε πολλαπλασιασμό με τη βοήθεια του αντίστροφου κλάσματος.
+              Πώς μετατρέπουμε οποιαδήποτε διαίρεση σε πολλαπλασιασμό και πώς επιλύουμε τα σύνθετα κλάσματα.
             </p>
           </div>
 
@@ -385,7 +518,7 @@ export default function DiairesiKlasmatonPage() {
                   Σύνθετο Κλάσμα
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Στη μορφή σύνθετου κλάσματος: γινόμενο <strong>άκρων όρων</strong> στον αριθμητή, γινόμενο <strong>μέσων όρων</strong> στον παρονομαστή.
+                  Στη μορφή σύνθετου κλάσματος: γινόμενο <strong>άκρων (έξω) όρων</strong> στον αριθμητή, γινόμενο <strong>μέσων (μέσα) όρων</strong> στον παρονομαστή.
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
@@ -394,19 +527,19 @@ export default function DiairesiKlasmatonPage() {
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🎯 Το σύνθετο κλάσμα είναι απλώς ένας άλλος τρόπος γραφής της διαίρεσης κλασμάτων.
+                🎯 Το σύνθετο κλάσμα είναι ένας κομψός τρόπος γραφής της διαίρεσης κλασμάτων.
               </div>
             </article>
 
           </div>
         </section>
 
-        {/* 3. MODE SELECTOR TABS */}
-        <div className="flex justify-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner max-w-md mx-auto gap-1">
+        {/* 3. MODE SELECTOR TABS (3 Tabs) */}
+        <div className="flex flex-wrap justify-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner max-w-xl mx-auto gap-1">
           <button
             type="button"
             onClick={() => { setMode('fraction-fraction'); setNumA(3); setDenA(4); setNumB(1); setDenB(4); }}
-            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
+            className={`flex-1 min-w-[140px] text-center py-2.5 px-3 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
               mode === 'fraction-fraction' ? 'bg-blue-600 text-white shadow-sm scale-105' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -415,11 +548,20 @@ export default function DiairesiKlasmatonPage() {
           <button
             type="button"
             onClick={() => { setMode('fraction-number'); setNumA(3); setDenA(4); setNumB(2); }}
-            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
+            className={`flex-1 min-w-[140px] text-center py-2.5 px-3 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
               mode === 'fraction-number' ? 'bg-indigo-600 text-white shadow-sm scale-105' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             🔢 {toCleanUppercase('Κλάσμα με Ακέραιο')}
+          </button>
+          <button
+            type="button"
+            onClick={() => { setMode('complex-fraction'); setNumA(2); setDenA(3); setNumB(4); setDenB(5); }}
+            className={`flex-1 min-w-[140px] text-center py-2.5 px-3 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
+              mode === 'complex-fraction' ? 'bg-emerald-600 text-white shadow-sm scale-105' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            🧱 {toCleanUppercase('Σύνθετο Κλάσμα')}
           </button>
         </div>
 
@@ -430,10 +572,14 @@ export default function DiairesiKlasmatonPage() {
               <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Διαδραστικό Εργαστήριο Διαίρεσης Κλασμάτων
+              {mode === 'complex-fraction' 
+                ? 'Διαδραστικό Εργαστήριο Σύνθετων Κλασμάτων (Άκροι & Μέσοι Όροι)' 
+                : 'Διαδραστικό Εργαστήριο Διαίρεσης Κλασμάτων'}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-1">
-              Ρύθμισε τον διαιρετέο και τον διαιρέτη και δες την αντιστροφή, τη μαθηματική πράξη και την οπτική καταμέτρηση μερίδων!
+              {mode === 'complex-fraction'
+                ? 'Όρισε τους όρους του επάνω και του κάτω κλάσματος και δες πώς οι άκροι όροι δίνουν τον αριθμητή και οι μέσοι τον παρονομαστή!'
+                : 'Ρύθμισε τον διαιρετέο και τον διαιρέτη και δες την αντιστροφή, τη μαθηματική πράξη και την οπτική καταμέτρηση μερίδων!'}
             </p>
           </div>
 
@@ -444,14 +590,16 @@ export default function DiairesiKlasmatonPage() {
             <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
               <div className="space-y-4">
                 
-                {/* ΧΕΙΡΙΣΤΗΡΙΟ Α (ΔΙΑΙΡΕΤΕΟΣ) */}
+                {/* ΧΕΙΡΙΣΤΗΡΙΟ Α (ΕΠΑΝΩ ΚΛΑΣΜΑ / ΔΙΑΙΡΕΤΕΟΣ) */}
                 <div className="bg-blue-50/60 p-3.5 sm:p-4 rounded-2xl border border-blue-200 space-y-3">
                   <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                    🔵 ΚΛΑΣΜΑ 1 (ΔΙΑΙΡΕΤΕΟΣ)
+                    {mode === 'complex-fraction' ? '🔵 ΕΠΑΝΩ ΚΛΑΣΜΑ (ΑΡΙΘΜΗΤΗΣ ΣΥΝΘΕΤΟΥ)' : '🔵 ΚΛΑΣΜΑ 1 (ΔΙΑΙΡΕΤΕΟΣ)'}
                   </span>
                   <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ΑΡΙΘΜΗΤΗΣ</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">
+                        {mode === 'complex-fraction' ? 'Αριθμητης (Ακρος)' : 'Αριθμητης'}
+                      </span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                         <button 
                           type="button" 
@@ -481,7 +629,9 @@ export default function DiairesiKlasmatonPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ΠΑΡΟΝΟΜΑΣΤΗΣ</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">
+                        {mode === 'complex-fraction' ? 'Παρονομαστης (Μεσος)' : 'Παρονομαστης'}
+                      </span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                         <button 
                           type="button" 
@@ -513,15 +663,17 @@ export default function DiairesiKlasmatonPage() {
                   </div>
                 </div>
 
-                {/* ΧΕΙΡΙΣΤΗΡΙΟ Β (ΔΙΑΙΡΕΤΗΣ) */}
-                {mode === 'fraction-fraction' ? (
+                {/* ΧΕΙΡΙΣΤΗΡΙΟ Β (ΚΑΤΩ ΚΛΑΣΜΑ / ΔΙΑΙΡΕΤΗΣ) */}
+                {mode !== 'fraction-number' ? (
                   <div className="bg-orange-50/60 p-3.5 sm:p-4 rounded-2xl border border-orange-200 space-y-3">
                     <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
-                      🟠 ΚΛΑΣΜΑ 2 (ΔΙΑΙΡΕΤΗΣ)
+                      {mode === 'complex-fraction' ? '🟠 ΚΑΤΩ ΚΛΑΣΜΑ (ΠΑΡΟΝΟΜΑΣΤΗΣ ΣΥΝΘΕΤΟΥ)' : '🟠 ΚΛΑΣΜΑ 2 (ΔΙΑΙΡΕΤΗΣ)'}
                     </span>
                     <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΑΡΙΘΜΗΤΗΣ</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">
+                          {mode === 'complex-fraction' ? 'Αριθμητης (Μεσος)' : 'Αριθμητης'}
+                        </span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -551,7 +703,9 @@ export default function DiairesiKlasmatonPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΠΑΡΟΝΟΜΑΣΤΗΣ</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">
+                          {mode === 'complex-fraction' ? 'Παρονομαστης (Ακρος)' : 'Παρονομαστης'}
+                        </span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -593,7 +747,7 @@ export default function DiairesiKlasmatonPage() {
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(-1); }} 
-                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
+                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
                         >
                           －
                         </button>
@@ -611,7 +765,7 @@ export default function DiairesiKlasmatonPage() {
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(1); }} 
-                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
+                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
                         >
                           ＋
                         </button>
@@ -626,7 +780,7 @@ export default function DiairesiKlasmatonPage() {
                     ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
                   </span>
                   <div className="grid grid-cols-2 gap-2">
-                    {(mode === 'fraction-fraction' ? PRESETS_FF : PRESETS_FN).map((p, idx) => (
+                    {(mode === 'fraction-fraction' ? PRESETS_FF : mode === 'fraction-number' ? PRESETS_FN : PRESETS_COMPLEX).map((p, idx) => (
                       <button
                         key={idx}
                         type="button"
@@ -636,10 +790,15 @@ export default function DiairesiKlasmatonPage() {
                             setDenA(p.dA);
                             setNumB(p.nB);
                             setDenB(p.dB);
+                          } else if (mode === 'fraction-number') {
+                            setNumA(p.nA);
+                            setDenA(p.dA);
+                            setNumB(p.nB);
                           } else {
                             setNumA(p.nA);
                             setDenA(p.dA);
                             setNumB(p.nB);
+                            setDenB(p.dB);
                           }
                         }}
                         className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs touch-manipulation active:scale-95"
@@ -658,18 +817,71 @@ export default function DiairesiKlasmatonPage() {
               </div>
 
               <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
-                💡 <strong>Θυμήσου:</strong> Στη διαίρεση κλασμάτων <strong>αντιστρέφουμε πάντα το 2ο κλάσμα</strong> και κάνουμε πολλαπλασιασμό!
+                💡 <strong>Θυμήσου:</strong> {mode === 'complex-fraction' 
+                  ? 'Γινόμενο άκρων στον αριθμητή, γινόμενο μέσων στον παρονομαστή!' 
+                  : 'Στη διαίρεση κλασμάτων αντιστρέφουμε πάντα το 2ο κλάσμα και κάνουμε πολλαπλασιασμό!'}
               </div>
             </div>
 
-            {/* RIGHT: VISUALIZATION & DYNAMIC BARS (8 COLS) */}
+            {/* RIGHT: VISUALIZATION (BARS Ή ΣΥΝΘΕΤΟ ΚΛΑΣΜΑ) (8 COLS) */}
             <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
               
-              {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΔΙΑΙΡΕΣΗΣ */}
+              {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΠΡΑΞΗΣ */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-slate-50 rounded-2xl border border-slate-200 shadow-xs">
                 {activeNumB === 0 ? (
                   <div className="text-rose-600 font-bold font-mono text-base">⚠️ Αδύνατη Πράξη (Διαίρεση με το 0)</div>
+                ) : mode === 'complex-fraction' ? (
+                  /* Παρουσίαση Σύνθετου Κλάσματος */
+                  <div className="flex items-center gap-3 sm:gap-6 font-mono font-black text-base sm:text-xl md:text-2xl select-none flex-wrap justify-center">
+                    
+                    {/* Σύνθετο Κλάσμα */}
+                    <div className="flex flex-col items-center">
+                      <div className="flex flex-col items-center text-indigo-700">
+                        <span>{activeNumA}</span>
+                        <div className="w-6 sm:w-8 h-0.5 bg-indigo-400 my-0.5" />
+                        <span>{activeDenA}</span>
+                      </div>
+                      <div className="w-16 sm:w-20 h-1 bg-slate-900 my-1 rounded-full" />
+                      <div className="flex flex-col items-center text-amber-700">
+                        <span>{activeNumB}</span>
+                        <div className="w-6 sm:w-8 h-0.5 bg-amber-400 my-0.5" />
+                        <span>{activeDenB}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-slate-500 font-bold">＝</div>
+
+                    {/* Ανάλυση Άκρων & Μέσων */}
+                    <div className="flex flex-col items-center bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                      <span className="text-indigo-700 text-sm sm:text-base md:text-lg">{activeNumA} · {activeDenB} (Άκροι)</span>
+                      <div className="w-24 sm:w-32 h-0.5 bg-slate-500 my-1 rounded-full" />
+                      <span className="text-amber-700 text-sm sm:text-base md:text-lg">{activeDenA} · {activeNumB} (Μέσοι)</span>
+                    </div>
+
+                    <div className="text-slate-500 font-bold">＝</div>
+
+                    {/* Αποτέλεσμα */}
+                    <div className="flex flex-col items-center bg-emerald-50 px-2.5 sm:px-3 py-1.5 rounded-xl border border-emerald-200">
+                      <span className="text-emerald-700">{resultNum}</span>
+                      <div className="w-8 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                      <span className="text-emerald-700">{resultDen}</span>
+                    </div>
+
+                    {/* Ανάγωγο */}
+                    {isSimplified && (
+                      <>
+                        <div className="text-emerald-600 font-bold">＝</div>
+                        <div className="flex flex-col items-center bg-emerald-100 px-2.5 sm:px-3 py-1.5 rounded-xl border border-emerald-300">
+                          <span className="text-emerald-800">{simplifiedNum}</span>
+                          <div className="w-8 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
+                          <span className="text-emerald-800">{simplifiedDen}</span>
+                        </div>
+                      </>
+                    )}
+
+                  </div>
                 ) : (
+                  /* Παρουσίαση Κλασικής Διαίρεσης */
                   <div className="flex items-center gap-2.5 sm:gap-4 font-mono font-black text-lg sm:text-xl md:text-3xl select-none flex-wrap justify-center">
                     
                     {/* Κλάσμα Α */}
@@ -737,23 +949,31 @@ export default function DiairesiKlasmatonPage() {
                 )}
               </div>
 
-              {/* 2. ΓΡΑΦΙΚΗ ΑΠΕΙΚΟΝΙΣΗ ΜΕ ΜΠΑΡΕΣ & ΜΕΤΡΗΣΕΙΣ */}
+              {/* 2. ΓΡΑΦΙΚΗ ΑΠΕΙΚΟΝΙΣΗ (ΜΠΑΡΕΣ Ή ΣΥΝΘΕΤΟ ΚΛΑΣΜΑ) */}
               <div className="space-y-2 flex-1 flex flex-col justify-center">
-                <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block text-center">
-                  📏 ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕΓΕΘΩΝ ΚΑΙ ΚΑΤΑΜΕΤΡΗΣΗ ΜΕΡΙΔΙΩΝ
-                </span>
-                {activeNumB > 0 ? (
-                  renderBarVisual()
+                {mode === 'complex-fraction' ? (
+                  renderComplexFractionVisual()
                 ) : (
-                  <div className="text-center text-xs text-slate-400 italic py-6">
-                    Επίλεξε έναν διαιρέτη μεγαλύτερο του 0 για να εμφανιστεί η οπτικοποίηση.
-                  </div>
+                  <>
+                    <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block text-center">
+                      📏 ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕΓΕΘΩΝ ΚΑΙ ΚΑΤΑΜΕΤΡΗΣΗ ΜΕΡΙΔΙΩΝ
+                    </span>
+                    {activeNumB > 0 ? (
+                      renderBarVisual()
+                    ) : (
+                      <div className="text-center text-xs text-slate-400 italic py-6">
+                        Επίλεξε έναν διαιρέτη μεγαλύτερο του 0 για να εμφανιστεί η οπτικοποίηση.
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
               {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-3.5 sm:p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                💡 ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ: ({activeNumA}/{activeDenA}) : ({mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB}) ＝ {isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`} (Όταν διαιρούμε με κλάσμα ＜ 1, το πηλίκο μεγαλώνει γιατί το μικρό κομμάτι χωράει πολλές φορές!)
+                {mode === 'complex-fraction'
+                  ? `💡 Τελικό Αποτέλεσμα: (${activeNumA}/${activeDenA}) / (${activeNumB}/${activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`} (Άκροι: ${activeNumA}·${activeDenB} ＝ ${resultNum}, Μέσοι: ${activeDenA}·${activeNumB} ＝ ${resultDen})`
+                  : `💡 Τελικό Αποτέλεσμα: (${activeNumA}/${activeDenA}) : (${mode === 'fraction-number' ? activeNumB : `${activeNumB}/${activeDenB}`}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`} (Όταν διαιρούμε με κλάσμα ＜ 1, το πηλίκο μεγαλώνει γιατί το μικρό κομμάτι χωράει πολλές φορές!)`}
               </div>
 
             </div>
@@ -768,7 +988,7 @@ export default function DiairesiKlasmatonPage() {
               Ώρα για Εξάσκηση στη Διαίρεση Κλασμάτων!
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Έμαθες τον κανόνα της διαίρεσης κλασμάτων και ακεραίων; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
+              Έμαθες τον κανόνα της διαίρεσης κλασμάτων και των σύνθετων κλασμάτων; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
 
