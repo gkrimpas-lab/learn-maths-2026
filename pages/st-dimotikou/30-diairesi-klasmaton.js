@@ -1,50 +1,66 @@
+// pages/st-dimotikou/30-diairesi-klasmaton.js
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
-// ΚΕΝΤΡΙΚΗ ΜΕΤΑΒΛΗΤΗ ΡΥΘΜΙΣΗΣ ΜΕΓΙΣΤΩΝ ΤΙΜΩΝ
+// Κεντρικη μεταβλητη ρυθμισης μεγιστων τιμων
 const MAX_LIMIT = 100;
 
+// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
+function formatNum(num) {
+  if (num === null || num === undefined || isNaN(Number(num))) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
+
 const PRESETS_FF = [
-  { nA: 3, dA: 4, nB: 1, dB: 4, label: "3/4 : 1/4 ➔ 3 (Χωράει 3 φορές)" },
-  { nA: 1, dA: 2, nB: 1, dB: 6, label: "1/2 : 1/6 ➔ 3" },
-  { nA: 2, dA: 3, nB: 3, dB: 4, label: "2/3 : 3/4 ➔ 8/9" },
-  { nA: 4, dA: 5, nB: 2, dB: 5, label: "4/5 : 2/5 ➔ 2" }
+  { nA: 3, dA: 4, nB: 1, dB: 4, label: '3/4 : 1/4 ➔ 3 (Χωράει 3 φορές)' },
+  { nA: 1, dA: 2, nB: 1, dB: 6, label: '1/2 : 1/6 ➔ 3' },
+  { nA: 2, dA: 3, nB: 3, dB: 4, label: '2/3 : 3/4 ➔ 8/9' },
+  { nA: 4, dA: 5, nB: 2, dB: 5, label: '4/5 : 2/5 ➔ 2' }
 ];
 
 const PRESETS_FN = [
-  { nA: 3, dA: 4, nB: 2, label: "3/4 : 2 ➔ 3/8 (Μοιρασιά)" },
-  { nA: 4, dA: 5, nB: 2, label: "4/5 : 2 ➔ 2/5" },
-  { nA: 1, dA: 2, nB: 3, label: "1/2 : 3 ➔ 1/6" },
-  { nA: 5, dA: 6, nB: 5, label: "5/6 : 5 ➔ 1/6" }
+  { nA: 3, dA: 4, nB: 2, label: '3/4 : 2 ➔ 3/8 (Μοιρασιά)' },
+  { nA: 4, dA: 5, nB: 2, label: '4/5 : 2 ➔ 2/5' },
+  { nA: 1, dA: 2, nB: 3, label: '1/2 : 3 ➔ 1/6' },
+  { nA: 5, dA: 6, nB: 5, label: '5/6 : 5 ➔ 1/6' }
 ];
 
-// Βοηθητική συνάρτηση για εύρεση Μέγιστου Κοινού Διαιρέτη (ΜΚΔ)
-const findGCD = (a, b) => {
-  let x = Math.abs(a);
-  let y = Math.abs(b);
+// Βοηθητικη συναρτηση για ευρεση Μεγιστου Κοινου Διαιρετη (ΜΚΔ)
+function findGCD(a, b) {
+  let x = Math.abs(a || 0);
+  let y = Math.abs(b || 0);
   while (y) {
     const t = y;
     y = x % y;
     x = t;
   }
   return x || 1;
-};
+}
 
 export default function DiairesiKlasmatonPage() {
-  // Mode: 'fraction-fraction' (κλάσμα με κλάσμα) ή 'fraction-number' (κλάσμα με ακέραιο)
+  // Mode: 'fraction-fraction' (κλασμα με κλασμα) η 'fraction-number' (κλασμα με ακεραιο)
   const [mode, setMode] = useState('fraction-fraction');
 
-  // Κατάσταση για Κλάσμα Α (Διαιρετέος)
+  // Κατασταση για Κλασμα Α (Διαιρετεος)
   const [numA, setNumA] = useState(3);
   const [denA, setDenA] = useState(4);
 
-  // Κατάσταση για Κλάσμα Β (Διαιρέτης) - Ή Ακέραιο Β
+  // Κατασταση για Κλασμα Β (Διαιρετης) - Η Ακεραιο Β
   const [numB, setNumB] = useState(1);
   const [denB, setDenB] = useState(4);
 
-  // Έλεγχος εισαγωγής κειμένου
+  // Ελεγχος εισαγωγης κειμενου
   const handleNumAChange = (val) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') { setNumA(''); return; }
@@ -73,7 +89,7 @@ export default function DiairesiKlasmatonPage() {
     if (n > 0 && n <= MAX_LIMIT) setDenB(n);
   };
 
-  // Αυξομείωση με κουμπιά για Κλάσμα Α
+  // Αυξομειωση με κουμπια για Κλασμα Α
   const adjustNumA = (amount) => {
     setNumA(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
   };
@@ -81,7 +97,7 @@ export default function DiairesiKlasmatonPage() {
     setDenA(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
   };
 
-  // Αυξομείωση με κουμπιά για Κλάσμα Β
+  // Αυξομειωση με κουμπια για Κλασμα Β
   const adjustNumB = (amount) => {
     setNumB(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
   };
@@ -89,17 +105,17 @@ export default function DiairesiKlasmatonPage() {
     setDenB(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
   };
 
-  // Ενεργές τιμές για τους υπολογισμούς
+  // Ενεργες τιμες για τους υπολογισμους
   const activeNumA = numA === '' ? 0 : Number(numA);
-  const activeDenA = denA === '' || denA === 0 ? 1 : Number(denA);
+  const activeDenA = denA === '' || Number(denA) === 0 ? 1 : Number(denA);
   const activeNumB = numB === '' ? 0 : Number(numB);
-  const activeDenB = mode === 'fraction-fraction' ? (denB === '' || denB === 0 ? 1 : Number(denB)) : 1;
+  const activeDenB = mode === 'fraction-fraction' ? (denB === '' || Number(denB) === 0 ? 1 : Number(denB)) : 1;
 
-  // Υπολογισμός Αντίστροφου Κλάσματος Διαιρέτη
+  // Υπολογισμος Αντιστροφου Κλασματος Διαιρετη
   const inverseNum = activeDenB;
   const inverseDen = activeNumB;
 
-  // Υπολογισμός Διαίρεσης
+  // Υπολογισμος Διαιρεσης
   const resultNum = activeNumA * inverseNum;
   const resultDen = activeDenA * inverseDen;
 
@@ -110,7 +126,7 @@ export default function DiairesiKlasmatonPage() {
 
   const decimalResult = activeNumB > 0 ? (activeNumA / activeDenA) / (activeNumB / activeDenB) : 0;
 
-  // Αναβαθμισμένη Γραφική Απεικόνιση Μέτρησης & Μπαρών
+  // Γραφικη Απεικονιση Μετρησης & Μπαρων
   const renderBarVisual = () => {
     const valA = activeNumA / activeDenA;
     const valB = activeNumB / activeDenB;
@@ -129,11 +145,11 @@ export default function DiairesiKlasmatonPage() {
         </div>
 
         <div className="space-y-6 max-w-xl mx-auto">
-          {/* Μπάρα 1: Διαιρετέος */}
+          {/* Μπαρα 1: Διαιρετεος */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-black text-blue-700 uppercase tracking-wider">
-              <span>📏 Κλασμα 1 (Διαιρετεος)</span>
-              <span className="font-mono">{activeNumA}/{activeDenA} ≈ {Number(valA.toFixed(3))}</span>
+              <span>📏 ΚΛΑΣΜΑ 1 (ΔΙΑΙΡΕΤΕΟΣ)</span>
+              <span className="font-mono">{activeNumA}/{activeDenA} ≈ {Number(valA.toFixed(3)).toLocaleString('el-GR')}</span>
             </div>
             <div className="w-full bg-slate-200/80 h-10 rounded-2xl p-1 border border-slate-300 shadow-inner flex">
               <div 
@@ -146,12 +162,12 @@ export default function DiairesiKlasmatonPage() {
             </div>
           </div>
 
-          {/* Μπάρα 2: Διαιρέτης & Αναπαράσταση Μετρήσεων */}
+          {/* Μπαρα 2: Διαιρετης */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-black text-orange-700 uppercase tracking-wider">
-              <span>📐 Κλασμα 2 (Διαιρετης - Μοναδα Μετρησης)</span>
+              <span>📐 ΚΛΑΣΜΑ 2 (ΔΙΑΙΡΕΤΗΣ)</span>
               <span className="font-mono">
-                {mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB} ≈ {Number(valB.toFixed(3))}
+                {mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB} ≈ {Number(valB.toFixed(3)).toLocaleString('el-GR')}
               </span>
             </div>
             <div className="w-full bg-slate-200/80 h-10 rounded-2xl p-1 border border-slate-300 shadow-inner flex">
@@ -165,11 +181,11 @@ export default function DiairesiKlasmatonPage() {
             </div>
           </div>
 
-          {/* Οπτική Καταμέτρηση Μεριδίων (Visual Segments) */}
+          {/* Οπτικη Καταμετρηση Μεριδιων */}
           {valB > 0 && valA >= valB && countFits <= 12 && (
             <div className="space-y-1.5 pt-2 border-t border-slate-200">
               <span className="text-[11px] font-bold text-slate-500 block uppercase tracking-wider text-center">
-                Πως χωραει ο διαιρετης μεσα στον διαιρετεο:
+                ΠΩΣ ΧΩΡΑΕΙ Ο ΔΙΑΙΡΕΤΗΣ ΜΕΣΑ ΣΤΟΝ ΔΙΑΙΡΕΤΕΟ:
               </span>
               <div className="flex gap-1 justify-center flex-wrap">
                 {Array.from({ length: countFits }).map((_, idx) => (
@@ -179,7 +195,7 @@ export default function DiairesiKlasmatonPage() {
                 ))}
                 {hasRemainder && (
                   <div className="bg-slate-100 border-2 border-dashed border-slate-400 text-slate-600 font-mono font-bold text-xs px-2 py-1 rounded-xl">
-                    + υπόλοιπο μέρος
+                    ＋ υπόλοιπο μέρος
                   </div>
                 )}
               </div>
@@ -187,13 +203,13 @@ export default function DiairesiKlasmatonPage() {
           )}
         </div>
 
-        {/* Αποτέλεσμα Σύγκρισης / Πηλίκο */}
+        {/* Αποτελεσμα Συγκρισης / Πηλικο */}
         <div className="text-center font-mono text-slate-800 bg-white border border-slate-200 p-4 rounded-2xl max-w-sm mx-auto shadow-sm space-y-1">
           <div className="text-slate-400 font-sans text-[11px] font-bold uppercase tracking-wider">
-            Ακριβες Πηλικο (Ποσες φορες χωραει):
+            ΑΚΡΙΒΕΣ ΠΗΛΙΚΟ (ΠΟΣΕΣ ΦΟΡΕΣ ΧΩΡΑΕΙ):
           </div>
           <div className="text-emerald-600 text-xl md:text-2xl font-black">
-            {Number.isInteger(decimalResult) ? decimalResult : Number(decimalResult.toFixed(4))} φορές!
+            {Number.isInteger(decimalResult) ? decimalResult : Number(decimalResult.toFixed(4)).toLocaleString('el-GR')} φορές!
           </div>
           <div className="text-slate-500 text-xs font-mono font-bold">
             (Κλασματικά: {isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`})
@@ -203,11 +219,11 @@ export default function DiairesiKlasmatonPage() {
     );
   };
 
-  // Επεξηγηματικό παιδαγωγικό μήνυμα βήμα-βήμα (ΣΤΑΘΕΡΟΠΟΙΗΜΕΝΟ ΥΨΟΣ)
+  // Επεξηγηματικο μηνυμα βημα-βημα
   const getStepByStepExplanation = () => {
     let typeHeader = activeDenA === activeDenB 
-      ? `🔵 Ομωνυμα Κλασματα (Ιδιος Παρονομαστης: ${activeDenA})`
-      : `🟣 Ετερωνυμα Κλασματα (${activeDenA} ≠ ${activeDenB})`;
+      ? `🔵 ΟΜΩΝΥΜΑ ΚΛΑΣΜΑΤΑ (ΙΔΙΟΣ ΠΑΡΟΝΟΜΑΣΤΗΣ: ${activeDenA})`
+      : `🟣 ΕΤΕΡΩΝΥΜΑ ΚΛΑΣΜΑΤΑ (${activeDenA} ≠ ${activeDenB})`;
 
     return (
       <div className="space-y-3 flex flex-col justify-between h-full">
@@ -219,17 +235,16 @@ export default function DiairesiKlasmatonPage() {
             <p>1. Κρατάμε το 1ο κλάσμα (διαιρετέο) όπως είναι: <strong className="text-blue-700">{activeNumA}/{activeDenA}</strong></p>
             <p>2. Αντιστρέφουμε τους όρους του 2ου κλάσματος (διαιρέτη):</p>
             <p className="font-mono text-orange-700 pl-2">
-              ➡️ Το <strong>{mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB}</strong> γίνεται <strong className="bg-orange-50 px-2 py-0.5 rounded border border-orange-200">{inverseNum}/{inverseDen}</strong>
+              ➔ Το <strong>{mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB}</strong> γίνεται <strong className="bg-orange-50 px-2 py-0.5 rounded border border-orange-200">{inverseNum}/{inverseDen}</strong>
             </p>
             <p>3. Μετατρέπουμε τη διαίρεση σε πολλαπλασιασμό:</p>
           </div>
           
           <div className="bg-white p-2.5 rounded-xl border border-slate-200 font-mono text-xs md:text-sm">
-            {activeNumA}/{activeDenA} : {mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB} ＝ {activeNumA}/{activeDenA} × {inverseNum}/{inverseDen} ＝ <strong className="text-emerald-700">{resultNum}/{resultDen}</strong>
+            {activeNumA}/{activeDenA} : {mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB} ＝ {activeNumA}/{activeDenA} · {inverseNum}/{inverseDen} ＝ <strong className="text-emerald-700">{resultNum}/{resultDen}</strong>
           </div>
         </div>
 
-        {/* Δεσμευμένος χώρος για τη γραμμή απλοποίησης */}
         <div className="min-h-[28px] flex items-center pt-1 border-t border-slate-100">
           {isSimplified ? (
             <p className="text-emerald-700 text-xs font-bold">
@@ -245,149 +260,181 @@ export default function DiairesiKlasmatonPage() {
     );
   };
 
-  const actionButton = (
-    <Link
-      href="/st-dimotikou/30-diairesi-klasmaton-ask"
-      className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-sm flex items-center gap-1.5 shrink-0"
-    >
-      <span>🎯</span>
-      <span>Ασκήσεις</span>
-    </Link>
-  );
-
   return (
     <Layout
-      title="➗ 30. Διαίρεση Κλασμάτων και Διαίρεση με Ακέραιο - LearnMaths.gr"
+      title="Διαίρεση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
       description="Μάθε πώς διαιρούμε κλάσμα με κλάσμα και κλάσμα με ακέραιο, αντιστρέφοντας το 2ο κλάσμα και κάνοντας πολλαπλασιασμό για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
-      actionButton={actionButton}
       showAds={true}
+      actionButton={
+        <Link
+          href="/st-dimotikou/30-diairesi-klasmaton-ask"
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+        >
+          <span>🎯 Ασκήσεις</span>
+        </Link>
+      }
     >
-      <div className="py-6 md:py-10 space-y-8 md:space-y-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
 
-        {/* HERO BANNER WITH PROMO CALLOUT CARD */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικου
-                </span>
-                <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενοτητα 30
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                30. Διαίρεση Κλασμάτων και Διαίρεση με Ακέραιο
-              </h1>
-              <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                Μάθε τον <strong>Χρυσό Κανόνα</strong> της διαίρεσης κλασμάτων: <strong>αντιστρέφουμε τους όρους του δεύτερου κλάσματος</strong> και εκτελούμε πολλαπλασιασμό!
-              </p>
+        {/* 1. HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΚΕΦΑΛΑΙΟ 30 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
-
-            {/* CALLOUT PROMO CARD */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-5 sm:p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
-              <span className="text-3xl">🚀</span>
-              <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
-              <p className="text-xs text-blue-50">Δοκίμασε τις 8 διαδραστικές ασκήσεις διαίρεσης κλασμάτων!</p>
-              <Link
-                href="/st-dimotikou/30-diairesi-klasmaton-ask"
-                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
-              >
-                🎯 Μετάβαση στις Ασκήσεις
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* THEORY CARDS (3 COLS) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                1
-              </div>
-              <h3 className="text-lg font-black text-slate-900">1. Ο Χρυσός Κανόνας</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Αφήνουμε το 1ο κλάσμα όπως είναι, <strong>αντιστρέφουμε το 2ο κλάσμα</strong> και κάνουμε <strong>πολλαπλασιασμό</strong>.
-              </p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl border border-blue-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl text-blue-900">
-                (α/β) : (γ/δ) ＝ (α/β) × (δ/γ)
-              </span>
-            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              Διαίρεση Κλασμάτων και Διαίρεση με Ακέραιο
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Μάθε τον <strong>Χρυσό Κανόνα</strong> της διαίρεσης κλασμάτων: <strong>αντιστρέφουμε τους όρους του δεύτερου κλάσματος</strong> και εκτελούμε πολλαπλασιασμό!
+            </p>
           </div>
 
-          <div className="bg-indigo-50/80 border border-indigo-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                2
-              </div>
-              <h3 className="text-lg font-black text-slate-900">2. Διαίρεση με Ακέραιο</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Γράφουμε τον ακέραιο ως κλάσμα με <strong>παρονομαστή το 1</strong> (γ ＝ γ/1), αντιστρέφουμε σε 1/γ και πολλαπλασιάζουμε.
-              </p>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Οπτική Καταμέτρηση Μεριδίων &amp; Αντιστροφή Κλασμάτων</span>
             </div>
-            <div className="bg-white p-3 rounded-2xl border border-indigo-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-xl text-indigo-900">
-                (α/β) : γ ＝ (α/β) × (1/γ)
-              </span>
-            </div>
+            <Link
+              href="/st-dimotikou/30-diairesi-klasmaton-ask"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ (3 COLS) */}
+        <section className="space-y-6 2xl:space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
+              Βασικές Έννοιες &amp; Κανόνες Διαίρεσης Κλασμάτων
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
+              Πώς μετατρέπουμε οποιαδήποτε διαίρεση σε πολλαπλασιασμό με τη βοήθεια του αντίστροφου κλάσματος.
+            </p>
           </div>
 
-          <div className="bg-emerald-50/80 border border-emerald-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                3
-              </div>
-              <h3 className="text-lg font-black text-slate-900">3. Σύνθετο Κλάσμα</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Στη μορφή σύνθετου κλάσματος: γινόμενο <strong>άκρων όρων</strong> στον αριθμητή, γινόμενο <strong>μέσων όρων</strong> στον παρονομαστή.
-              </p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl border border-emerald-100 text-xs text-slate-700 font-mono text-center font-bold">
-              <span className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl text-emerald-900">
-                (α/β) / (γ/δ) ＝ (α × δ) / (β × γ)
-              </span>
-            </div>
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            
+            {/* ΚΑΡΤΑ 1 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    1. Ο ΧΡΥΣΟΣ ΚΑΝΟΝΑΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Αντιστροφή 2ου</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Ο Χρυσός Κανόνας
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Αφήνουμε το 1ο κλάσμα όπως είναι, <strong>αντιστρέφουμε το 2ο κλάσμα</strong> και κάνουμε <strong>πολλαπλασιασμό</strong>.
+                </p>
 
-        {/* MODE SELECTOR TABS */}
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>(α/β) : (γ/δ) ＝ (α/β) · (δ/γ)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+                💡 <strong>Μυστικό:</strong> «Κρατάω το πρώτο, αλλάζω το σύμβολο σε πολλαπλασιασμό, τουμπάρω το δεύτερο!»
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 2 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    2. ΜΕ ΑΚΕΡΑΙΟ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">γ ＝ γ/1</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Διαίρεση με Ακέραιο
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Γράφουμε τον ακέραιο ως κλάσμα με <strong>παρονομαστή το 1</strong> (γ ＝ γ/1), αντιστρέφουμε σε 1/γ και πολλαπλασιάζουμε.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>(α/β) : γ ＝ (α/β) · (1/γ)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
+                ⚡ Όταν διαιρούμε με ακέραιο αριθμό μεγαλύτερο του 1, το κλάσμα μικραίνει γιατί μοιράζεται σε περισσότερα ίσα μέρη!
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 3 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    3. ΣΥΝΘΕΤΟ ΚΛΑΣΜΑ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">Άκρα &amp; Μέσα</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  Σύνθετο Κλάσμα
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Στη μορφή σύνθετου κλάσματος: γινόμενο <strong>άκρων όρων</strong> στον αριθμητή, γινόμενο <strong>μέσων όρων</strong> στον παρονομαστή.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>(α/β) / (γ/δ) ＝ (α · δ) / (β · γ)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
+                🎯 Το σύνθετο κλάσμα είναι απλώς ένας άλλος τρόπος γραφής της διαίρεσης κλασμάτων.
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        {/* 3. MODE SELECTOR TABS */}
         <div className="flex justify-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner max-w-md mx-auto gap-1">
           <button
             type="button"
             onClick={() => { setMode('fraction-fraction'); setNumA(3); setDenA(4); setNumB(1); setDenB(4); }}
-            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all ${
+            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
               mode === 'fraction-fraction' ? 'bg-blue-600 text-white shadow-sm scale-105' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            ➗ Κλάσμα με Κλάσμα
+            ➗ {toCleanUppercase('Κλάσμα με Κλάσμα')}
           </button>
           <button
             type="button"
             onClick={() => { setMode('fraction-number'); setNumA(3); setDenA(4); setNumB(2); }}
-            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all ${
+            className={`flex-1 text-center py-2.5 rounded-xl text-xs md:text-sm font-black transition-all touch-manipulation active:scale-95 ${
               mode === 'fraction-number' ? 'bg-indigo-600 text-white shadow-sm scale-105' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            🔢 Κλάσμα με Ακέραιο
+            🔢 {toCleanUppercase('Κλάσμα με Ακέραιο')}
           </button>
         </div>
 
         {/* 4. INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🕹️</span> Διαδραστικό Εργαστήριο Διαίρεσης Κλασμάτων
-              </h2>
-              <p className="text-gray-500 text-xs sm:text-sm mt-1">
-                Ρύθμισε τον διαιρετέο και τον διαιρέτη και δες την αντιστροφή, τη μαθηματική πράξη και την οπτική καταμέτρηση μερίδων!
-              </p>
+        <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
+          <div className="border-b border-slate-100 pb-5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
+              <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
             </div>
+            <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+              Διαδραστικό Εργαστήριο Διαίρεσης Κλασμάτων
+            </h3>
+            <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-1">
+              Ρύθμισε τον διαιρετέο και τον διαιρέτη και δες την αντιστροφή, τη μαθηματική πράξη και την οπτική καταμέτρηση μερίδων!
+            </p>
           </div>
 
           {/* MAIN INTERACTIVE GRID (4 COLS LEFT / 8 COLS RIGHT) */}
@@ -398,66 +445,68 @@ export default function DiairesiKlasmatonPage() {
               <div className="space-y-4">
                 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ Α (ΔΙΑΙΡΕΤΕΟΣ) */}
-                <div className="bg-blue-50/50 p-3.5 sm:p-4 rounded-2xl border border-blue-200 space-y-3">
+                <div className="bg-blue-50/60 p-3.5 sm:p-4 rounded-2xl border border-blue-200 space-y-3">
                   <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                    🔵 Κλασμα 1 (Διαιρετεος)
+                    🔵 ΚΛΑΣΜΑ 1 (ΔΙΑΙΡΕΤΕΟΣ)
                   </span>
                   <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ΑΡΙΘΜΗΤΗΣ</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumA(-1); }} 
-                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                         >
-                          -
+                          －
                         </button>
                         <input
-                          id="div-num-a"
-                          name="divNumA"
+                          key={`div-num-a-${numA}`}
                           autoComplete="off"
+                          spellCheck="false"
                           type="text"
                           inputMode="numeric"
-                          value={numA}
+                          value={numA === '' ? '' : String(numA)}
                           onChange={(e) => handleNumAChange(e.target.value)}
+                          placeholder="3"
                           className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-blue-600 px-0.5"
                         />
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumA(1); }} 
-                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                         >
-                          +
+                          ＋
                         </button>
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ΠΑΡΟΝΟΜΑΣΤΗΣ</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenA(-1); }} 
-                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                         >
-                          -
+                          －
                         </button>
                         <input
-                          id="div-den-a"
-                          name="divDenA"
+                          key={`div-den-a-${denA}`}
                           autoComplete="off"
+                          spellCheck="false"
                           type="text"
                           inputMode="numeric"
-                          value={denA}
+                          value={denA === '' ? '' : String(denA)}
                           onChange={(e) => handleDenAChange(e.target.value)}
+                          placeholder="4"
                           className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-blue-600 px-0.5"
                         />
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenA(1); }} 
-                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          className="w-7 sm:w-8 h-8 shrink-0 font-black text-blue-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                         >
-                          +
+                          ＋
                         </button>
                       </div>
                     </div>
@@ -466,102 +515,105 @@ export default function DiairesiKlasmatonPage() {
 
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ Β (ΔΙΑΙΡΕΤΗΣ) */}
                 {mode === 'fraction-fraction' ? (
-                  <div className="bg-orange-50/50 p-3.5 sm:p-4 rounded-2xl border border-orange-200 space-y-3">
+                  <div className="bg-orange-50/60 p-3.5 sm:p-4 rounded-2xl border border-orange-200 space-y-3">
                     <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
-                      🟠 Κλασμα 2 (Διαιρετης)
+                      🟠 ΚΛΑΣΜΑ 2 (ΔΙΑΙΡΕΤΗΣ)
                     </span>
                     <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Αριθμητης</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΑΡΙΘΜΗΤΗΣ</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(-1); }} 
-                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            -
+                            －
                           </button>
                           <input
-                            id="div-num-b"
-                            name="divNumB"
+                            key={`div-num-b-${numB}`}
                             autoComplete="off"
+                            spellCheck="false"
                             type="text"
                             inputMode="numeric"
-                            value={numB}
+                            value={numB === '' ? '' : String(numB)}
                             onChange={(e) => handleNumBChange(e.target.value)}
+                            placeholder="1"
                             className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-orange-600 px-0.5"
                           />
                           <button 
                             type="button" 
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(1); }} 
-                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            +
+                            ＋
                           </button>
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Παρονομαστης</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΠΑΡΟΝΟΜΑΣΤΗΣ</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenB(-1); }} 
-                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            -
+                            －
                           </button>
                           <input
-                            id="div-den-b"
-                            name="divDenB"
+                            key={`div-den-b-${denB}`}
                             autoComplete="off"
+                            spellCheck="false"
                             type="text"
                             inputMode="numeric"
-                            value={denB}
+                            value={denB === '' ? '' : String(denB)}
                             onChange={(e) => handleDenBChange(e.target.value)}
+                            placeholder="4"
                             className="w-full min-w-0 text-center font-mono font-black text-base outline-none text-orange-600 px-0.5"
                           />
                           <button 
                             type="button" 
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustDenB(1); }} 
-                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                            className="w-7 sm:w-8 h-8 shrink-0 font-black text-orange-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                           >
-                            +
+                            ＋
                           </button>
                         </div>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-indigo-50/50 p-3.5 sm:p-4 rounded-2xl border border-indigo-200 space-y-3">
+                  <div className="bg-indigo-50/60 p-3.5 sm:p-4 rounded-2xl border border-indigo-200 space-y-3">
                     <span className="text-xs font-black text-indigo-800 uppercase block tracking-wider">
-                      🔢 Ακεραιος Διαιρετης
+                      🔢 ΑΚΕΡΑΙΟΣ ΔΙΑΙΡΕΤΗΣ
                     </span>
                     <div className="space-y-1 text-center">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Τιμή</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ΤΙΜΗ</span>
                       <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 max-w-[160px] mx-auto">
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(-1); }} 
-                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                         >
-                          -
+                          －
                         </button>
                         <input
-                          id="div-whole-b"
-                          name="divWholeB"
+                          key={`div-whole-b-${numB}`}
                           autoComplete="off"
+                          spellCheck="false"
                           type="text"
                           inputMode="numeric"
-                          value={numB}
+                          value={numB === '' ? '' : String(numB)}
                           onChange={(e) => handleNumBChange(e.target.value)}
+                          placeholder="2"
                           className="w-full min-w-0 text-center font-mono font-black text-lg outline-none text-indigo-600"
                         />
                         <button 
                           type="button" 
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustNumB(1); }} 
-                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center active:scale-95"
+                          className="w-8 h-8 font-black text-indigo-600 hover:bg-slate-50 rounded-lg flex items-center justify-center touch-manipulation active:scale-95"
                         >
-                          +
+                          ＋
                         </button>
                       </div>
                     </div>
@@ -571,7 +623,7 @@ export default function DiairesiKlasmatonPage() {
                 {/* PRESET BUTTONS */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    Ετοιμα Παραδειγματα:
+                    ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     {(mode === 'fraction-fraction' ? PRESETS_FF : PRESETS_FN).map((p, idx) => (
@@ -590,7 +642,7 @@ export default function DiairesiKlasmatonPage() {
                             setNumB(p.nB);
                           }
                         }}
-                        className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs"
+                        className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs touch-manipulation active:scale-95"
                       >
                         {p.label}
                       </button>
@@ -598,14 +650,14 @@ export default function DiairesiKlasmatonPage() {
                   </div>
                 </div>
 
-                {/* ΒΗΜΑ-ΒΗΜΑ ΕΠΕΞΗΓΗΣΗ ΜΕ ΣΤΑΘΕΡΟΠΟΙΗΜΕΝΟ ΥΨΟΣ */}
+                {/* ΒΗΜΑ-ΒΗΜΑ ΕΠΕΞΗΓΗΣΗ */}
                 <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs min-h-[220px]">
                   {getStepByStepExplanation()}
                 </div>
 
               </div>
 
-              <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
+              <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
                 💡 <strong>Θυμήσου:</strong> Στη διαίρεση κλασμάτων <strong>αντιστρέφουμε πάντα το 2ο κλάσμα</strong> και κάνουμε πολλαπλασιασμό!
               </div>
             </div>
@@ -614,7 +666,7 @@ export default function DiairesiKlasmatonPage() {
             <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
               
               {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΔΙΑΙΡΕΣΗΣ */}
-              <div className="flex items-center justify-center p-4 sm:p-6 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto">
+              <div className="flex items-center justify-center p-4 sm:p-6 bg-slate-50 rounded-2xl border border-slate-200 shadow-xs">
                 {activeNumB === 0 ? (
                   <div className="text-rose-600 font-bold font-mono text-base">⚠️ Αδύνατη Πράξη (Διαίρεση με το 0)</div>
                 ) : (
@@ -651,8 +703,8 @@ export default function DiairesiKlasmatonPage() {
                       <span className="text-blue-600">{activeDenA}</span>
                     </div>
 
-                    {/* Σύμβολο x */}
-                    <div className="text-indigo-600 font-bold">×</div>
+                    {/* Σύμβολο · */}
+                    <div className="text-indigo-600 font-bold">·</div>
 
                     {/* Αντίστροφο Κλάσμα Β */}
                     <div className="flex flex-col items-center bg-orange-50 px-2 sm:px-2.5 py-1 rounded-xl border-2 border-dashed border-orange-300">
@@ -685,10 +737,10 @@ export default function DiairesiKlasmatonPage() {
                 )}
               </div>
 
-              {/* 2. ΑΝΑΒΑΘΜΙΣΜΕΝΗ ΓΡΑΦΙΚΗ ΑΠΕΙΚΟΝΙΣΗ ΜΕ ΜΠΑΡΕΣ & ΜΕΤΡΗΣΕΙΣ */}
+              {/* 2. ΓΡΑΦΙΚΗ ΑΠΕΙΚΟΝΙΣΗ ΜΕ ΜΠΑΡΕΣ & ΜΕΤΡΗΣΕΙΣ */}
               <div className="space-y-2 flex-1 flex flex-col justify-center">
-                <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                  📏 Γραφικη Αναπαρασταση Μεγεθων και Καταμετρηση Μεριδιων
+                <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block text-center">
+                  📏 ΓΡΑΦΙΚΗ ΑΝΑΠΑΡΑΣΤΑΣΗ ΜΕΓΕΘΩΝ ΚΑΙ ΚΑΤΑΜΕΤΡΗΣΗ ΜΕΡΙΔΙΩΝ
                 </span>
                 {activeNumB > 0 ? (
                   renderBarVisual()
@@ -701,29 +753,33 @@ export default function DiairesiKlasmatonPage() {
 
               {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-3.5 sm:p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                💡 Τελικό Αποτέλεσμα: ({activeNumA}/{activeDenA}) : ({mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB}) ＝ {isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`} (Όταν διαιρούμε με κλάσμα &lt; 1, το πηλίκο μεγαλώνει γιατί το μικρό κομμάτι χωράει πολλές φορές!)
+                💡 ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ: ({activeNumA}/{activeDenA}) : ({mode === 'fraction-fraction' ? `${activeNumB}/${activeDenB}` : activeNumB}) ＝ {isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`} (Όταν διαιρούμε με κλάσμα ＜ 1, το πηλίκο μεγαλώνει γιατί το μικρό κομμάτι χωράει πολλές φορές!)
               </div>
 
             </div>
 
           </div>
-        </div>
+        </section>
 
-        {/* 5. BOTTOM CALLOUT BANNER */}
-        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-gray-800 text-sm md:text-base">
-              Έμαθες τον κανόνα της διαίρεσης κλασμάτων και ακεραίων; Δοκίμασε τις διαδραστικές ασκήσεις!
+        {/* 5. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              Ώρα για Εξάσκηση στη Διαίρεση Κλασμάτων!
+            </h3>
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              Έμαθες τον κανόνα της διαίρεσης κλασμάτων και ακεραίων; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
+
           <Link
             href="/st-dimotikou/30-diairesi-klasmaton-ask"
-            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            Ξεκίνα τις Ασκήσεις ➔
+            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </section>
 
       </div>
     </Layout>
