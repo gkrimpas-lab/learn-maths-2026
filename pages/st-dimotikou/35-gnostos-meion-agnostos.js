@@ -16,12 +16,6 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
-function formatNum(num) {
-  if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
-}
-
 const PRESETS = [
   { a: 10, b: 4, label: '10 － x ＝ 4 (x ＝ 6)' },
   { a: 20, b: 12, label: '20 － x ＝ 12 (x ＝ 8)' },
@@ -196,7 +190,7 @@ export default function GnostosMeionAgnostosPage() {
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>6 ＋ 4 ＝ 10 (Σωστό! ✔️)</p>
+                  <p>6 ＋ 4 ＝ 10 (Σωστό! ✔️️)</p>
                 </div>
               </div>
 
@@ -250,7 +244,6 @@ export default function GnostosMeionAgnostosPage() {
                       －
                     </button>
                     <input
-                      key={`range-param-a-${activeA}`}
                       id="range-param-a"
                       name="rangeParamA"
                       type="range"
@@ -293,7 +286,6 @@ export default function GnostosMeionAgnostosPage() {
                       －
                     </button>
                     <input
-                      key={`range-param-b-${activeB}`}
                       id="range-param-b"
                       name="rangeParamB"
                       type="range"
@@ -464,7 +456,7 @@ export default function GnostosMeionAgnostosPage() {
             href="/st-dimotikou/35-gnostos-meion-agnostos-ask"
             className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
           >
-            σπαράσσεστε Ξεκίνα τις Ασκήσεις ➔
+            Ξεκίνα τις Ασκήσεις ➔
           </Link>
         </section>
 
