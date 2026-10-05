@@ -9,7 +9,7 @@ const EXAM_YEARS = [
     badge: 'Πρόσφατο',
     badgeColor: 'bg-rose-100 text-rose-800 border-rose-200',
     desc: 'Επίσημα θέματα εξετάσεων 2026 με online επίλυση και άμεση αξιολόγηση.',
-    questionsCount: 25,
+    questionsCount: 20,
     available: true
   },
   {
@@ -18,7 +18,7 @@ const EXAM_YEARS = [
     badge: 'Επίσημο',
     badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
     desc: 'Επίσημα θέματα εξετάσεων 2025 με online επίλυση και άμεση αξιολόγηση.',
-    questionsCount: 25,
+    questionsCount: 20,
     available: true
   },
   {
