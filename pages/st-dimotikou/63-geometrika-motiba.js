@@ -36,20 +36,20 @@ export default function GeometrikaMotibaTheoryPage() {
     return { count, ruleText, unitName: 'κύκλοι' };
   }, [stepN, patternType]);
 
-  // Εργαστήριο 2: Διαδραστική Πλακόστρωση (Tessellation) με μαθηματική ακρίβεια
+  // Εργαστήριο 2: Διαδραστική Πλακόστρωση (Tessellation)
   const [tessellationStyle, setTessellationStyle] = useState('honeycomb'); 
   const [activePalette, setActivePalette] = useState('gold'); 
 
   const paletteColors = useMemo(() => {
     switch (activePalette) {
       case 'blue':
-        return { c1: '#1e3a8a', c2: '#3b82f6', c3: '#93c5fd', bg: '#eff6ff' };
+        return { c1: '#1e3a8a', c2: '#60a5fa', c3: '#bfdbfe', bg: '#eff6ff' };
       case 'emerald':
-        return { c1: '#064e3b', c2: '#10b981', c3: '#6ee7b7', bg: '#f0fdf4' };
+        return { c1: '#064e3b', c2: '#34d399', c3: '#a7f3d0', bg: '#f0fdf4' };
       case 'rose':
-        return { c1: '#831843', c2: '#e11d48', c3: '#fca5a5', bg: '#fff1f2' };
+        return { c1: '#831843', c2: '#fb7185', c3: '#fecdd3', bg: '#fff1f2' };
       default: // gold
-        return { c1: '#78350f', c2: '#f59e0b', c3: '#fde68a', bg: '#fffbeb' };
+        return { c1: '#854d0e', c2: '#fbbf24', c3: '#fef08a', bg: '#fffbeb' };
     }
   }, [activePalette]);
 
@@ -403,7 +403,7 @@ export default function GeometrikaMotibaTheoryPage() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΠΛΑΚΟΣΤΡΩΣΗ (TESSELLATION) - FULLY CORRECTED MATH */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΠΛΑΚΟΣΤΡΩΣΗ (TESSELLATION) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
@@ -498,61 +498,48 @@ export default function GeometrikaMotibaTheoryPage() {
               </div>
             </div>
 
-            {/* Πλαίσιο SVG Πλακόστρωσης - Εξασφαλισμένη Μαθηματική Ακρίβεια για Seamless Tiling */}
+            {/* Πλαίσιο SVG Πλακόστρωσης - Απόλυτη Seamless Γεωμετρία */}
             <div className="w-full h-56 sm:h-80 rounded-3xl border border-slate-300 shadow-inner overflow-hidden flex items-center justify-center relative transition-colors duration-500" style={{ backgroundColor: paletteColors.bg }}>
               <svg width="100%" height="100%" className="w-full h-full">
                 <defs>
-                  {/* Pattern 1: Κηρήθρα (Κανονικά Εξάγωνα χωρίς κενά) - Perfect Math W=60, H=103.923 */}
+                  {/* Pattern 1: Κηρήθρα (Εξάγωνα) - Ενιαίο γέμισμα χωρίς κενά και χωρίς διχρωμίες */}
                   <pattern id="pat-honeycomb" width="60" height="103.923" patternUnits="userSpaceOnUse">
-                    {/* Top center hex */}
-                    <polygon
-                      points="30,0 60,17.321 60,51.962 30,69.282 0,51.962 0,17.321"
-                      fill={paletteColors.c3}
-                      fillOpacity="0.4"
+                    <rect width="60" height="103.923" fill={paletteColors.c2} fillOpacity="0.85" />
+                    <path
+                      d="M0,17.32 L30,0 L60,17.32 L60,51.96 L30,69.28 L0,51.96 Z
+                         M0,69.28 L30,86.6 L30,121.24 L0,103.92 Z
+                         M60,69.28 L30,86.6
+                         M60,103.92 L30,121.24"
+                      fill="none"
                       stroke={paletteColors.c1}
                       strokeWidth="2.5"
-                    />
-                    {/* Bottom left hex */}
-                    <polygon
-                      points="0,51.962 30,69.282 30,103.923 0,121.244 -30,103.923 -30,69.282"
-                      fill={paletteColors.c2}
-                      fillOpacity="0.4"
-                      stroke={paletteColors.c1}
-                      strokeWidth="2.5"
-                    />
-                    {/* Bottom right hex */}
-                    <polygon
-                      points="60,51.962 90,69.282 90,103.923 60,121.244 30,103.923 30,69.282"
-                      fill={paletteColors.c2}
-                      fillOpacity="0.4"
-                      stroke={paletteColors.c1}
-                      strokeWidth="2.5"
+                      strokeLinejoin="round"
                     />
                   </pattern>
 
-                  {/* Pattern 2: Ισομετρικοί Κύβοι (Q*bert style) 3D Optical Illusion */}
+                  {/* Pattern 2: Ισομετρικοί Κύβοι 3D (Tessellation 3D Illusion) */}
                   <pattern id="pat-cubes" width="60" height="103.923" patternUnits="userSpaceOnUse">
-                    {/* Cube 1 (Top Center) */}
-                    <polygon points="30,0 60,17.321 30,34.641 0,17.321" fill={paletteColors.c3} />
-                    <polygon points="0,17.321 30,34.641 30,69.282 0,51.962" fill={paletteColors.c2} />
-                    <polygon points="60,17.321 30,34.641 30,69.282 60,51.962" fill={paletteColors.c1} />
+                    {/* Top Group */}
+                    <polygon points="30,0 60,17.32 30,34.64 0,17.32" fill={paletteColors.c3} stroke={paletteColors.c1} strokeWidth="1" />
+                    <polygon points="0,17.32 30,34.64 30,69.28 0,51.96" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1" />
+                    <polygon points="60,17.32 30,34.64 30,69.28 60,51.96" fill={paletteColors.c1} stroke={paletteColors.c1} strokeWidth="1" />
                     
-                    {/* Cube 2 (Bottom Left) */}
-                    <polygon points="0,51.962 30,69.282 0,86.603 -30,69.282" fill={paletteColors.c3} />
-                    <polygon points="-30,69.282 0,86.603 0,121.244 -30,103.923" fill={paletteColors.c2} />
-                    <polygon points="30,69.282 0,86.603 0,121.244 30,103.923" fill={paletteColors.c1} />
+                    {/* Bottom Left Group */}
+                    <polygon points="0,51.96 30,69.28 0,86.6 -30,69.28" fill={paletteColors.c3} stroke={paletteColors.c1} strokeWidth="1" />
+                    <polygon points="-30,69.28 0,86.6 0,121.24 -30,103.92" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1" />
+                    <polygon points="30,69.28 0,86.6 0,121.24 30,103.92" fill={paletteColors.c1} stroke={paletteColors.c1} strokeWidth="1" />
 
-                    {/* Cube 3 (Bottom Right) */}
-                    <polygon points="60,51.962 90,69.282 60,86.603 30,69.282" fill={paletteColors.c3} />
-                    <polygon points="30,69.282 60,86.603 60,121.244 30,103.923" fill={paletteColors.c2} />
-                    <polygon points="90,69.282 60,86.603 60,121.244 90,103.923" fill={paletteColors.c1} />
+                    {/* Bottom Right Group */}
+                    <polygon points="60,51.96 90,69.28 60,86.6 30,69.28" fill={paletteColors.c3} stroke={paletteColors.c1} strokeWidth="1" />
+                    <polygon points="30,69.28 60,86.6 60,121.24 30,103.92" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1" />
+                    <polygon points="90,69.28 60,86.6 60,121.24 90,103.92" fill={paletteColors.c1} stroke={paletteColors.c1} strokeWidth="1" />
                   </pattern>
 
                   {/* Pattern 3: Ζιγκ-Ζαγκ (Chevron) */}
                   <pattern id="pat-chevron" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <rect width="40" height="40" fill={paletteColors.bg} />
-                    <polygon points="0,10 20,30 40,10 40,25 20,45 0,25" fill={paletteColors.c2} />
-                    <polygon points="0,-10 20,10 40,-10 40,5 20,25 0,5" fill={paletteColors.c1} />
+                    <rect width="40" height="40" fill={paletteColors.c3} />
+                    <polygon points="0,0 20,20 40,0 40,20 20,40 0,20" fill={paletteColors.c2} />
+                    <polygon points="0,20 20,40 40,20 40,40 20,60 0,40" fill={paletteColors.c1} />
                   </pattern>
 
                   {/* Pattern 4: Σκακιέρα */}
@@ -690,7 +677,7 @@ export default function GeometrikaMotibaTheoryPage() {
                 </div>
               </div>
 
-              <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-950 font-medium">
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 font-medium">
                 ⚡ Αν το υπόλοιπο ήταν 0, το στοιχείο θα ήταν το τελευταίο του πυρήνα (δηλαδή ο Ρόμβος).
               </div>
             </article>
