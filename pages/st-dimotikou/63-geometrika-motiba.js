@@ -36,18 +36,20 @@ export default function GeometrikaMotibaTheoryPage() {
     return { count, ruleText, unitName: 'κύκλοι' };
   }, [stepN, patternType]);
 
-  // Εργαστήριο 2: Διαδραστική Πλακόστρωση (Tessellation)
-  const [tessellationStyle, setTessellationStyle] = useState('honeycomb'); // 'honeycomb' | 'checker' | 'meander'
-  const [activePalette, setActivePalette] = useState('gold'); // 'gold' | 'blue' | 'emerald'
+  // Εργαστήριο 2: Διαδραστική Πλακόστρωση (Tessellation) με μαθηματική ακρίβεια
+  const [tessellationStyle, setTessellationStyle] = useState('honeycomb'); 
+  const [activePalette, setActivePalette] = useState('gold'); 
 
   const paletteColors = useMemo(() => {
     switch (activePalette) {
       case 'blue':
-        return { c1: '#1d4ed8', c2: '#3b82f6', c3: '#93c5fd', bg: '#eff6ff' };
+        return { c1: '#1e3a8a', c2: '#3b82f6', c3: '#93c5fd', bg: '#eff6ff' };
       case 'emerald':
-        return { c1: '#047857', c2: '#10b981', c3: '#6ee7b7', bg: '#f0fdf4' };
-      default:
-        return { c1: '#b45309', c2: '#f59e0b', c3: '#fde68a', bg: '#fffbeb' };
+        return { c1: '#064e3b', c2: '#10b981', c3: '#6ee7b7', bg: '#f0fdf4' };
+      case 'rose':
+        return { c1: '#831843', c2: '#e11d48', c3: '#fca5a5', bg: '#fff1f2' };
+      default: // gold
+        return { c1: '#78350f', c2: '#f59e0b', c3: '#fde68a', bg: '#fffbeb' };
     }
   }, [activePalette]);
 
@@ -366,7 +368,7 @@ export default function GeometrikaMotibaTheoryPage() {
                           height={boxSize}
                           rx={4}
                           fill="#3b82f6"
-                          stroke="#1d4ed8"
+                          stroke="#1e3a8a"
                           strokeWidth="2"
                         />
                       ));
@@ -384,7 +386,7 @@ export default function GeometrikaMotibaTheoryPage() {
                           cy={rowY}
                           r={rSize}
                           fill="#6366f1"
-                          stroke="#4338ca"
+                          stroke="#312e81"
                           strokeWidth="2"
                         />
                       ));
@@ -401,30 +403,30 @@ export default function GeometrikaMotibaTheoryPage() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΠΛΑΚΟΣΤΡΩΣΗ (TESSELLATION) */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΠΛΑΚΟΣΤΡΩΣΗ (TESSELLATION) - FULLY CORRECTED MATH */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
-              <span>🎨 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΠΛΑΚΟΣΤΡΩΣΗ</span>
+              <span>🎨 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΕΞΥΠΝΑ ΜΟΤΙΒΑ</span>
             </div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πλακόστρωση του Επιπέδου: Φύση, Τέχνη &amp; Συμμετρία
+              Πλακόστρωση του Επιπέδου: Φύση, Τέχνη &amp; Ψευδαισθήσεις
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Επίλεξε στυλ πλακόστρωσης (Εξαγωνική Κηρήθρα, Σκακιέρα, Ελληνικός Μαίανδρος) και άλλαξε χρωματική παλέτα για να δεις τη μαγεία της γεωμετρικής επανάληψης:
+              Επίλεξε έξυπνα στυλ πλακόστρωσης και άλλαξε χρωματική παλέτα για να δεις τη μαγεία της τέλειας γεωμετρικής επανάληψης χωρίς κενά:
             </p>
           </div>
 
           <div className="space-y-6">
             
             {/* Επιλογές Στυλ & Χρωμάτων */}
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold text-slate-600 uppercase mr-1">ΜΟΤΙΒΟ:</span>
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-center">
+                <span className="text-xs font-bold text-slate-600 uppercase mr-1 hidden sm:block">ΜΟΤΙΒΟ:</span>
                 <button
                   type="button"
                   onClick={() => setTessellationStyle('honeycomb')}
-                  className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold border transition touch-manipulation ${
+                  className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold border transition touch-manipulation ${
                     tessellationStyle === 'honeycomb'
                       ? 'bg-amber-500 text-white border-amber-600 shadow-sm'
                       : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
@@ -434,34 +436,45 @@ export default function GeometrikaMotibaTheoryPage() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setTessellationStyle('cubes')}
+                  className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold border transition touch-manipulation ${
+                    tessellationStyle === 'cubes'
+                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  🧊 Ισομετρικοί Κύβοι (3D)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTessellationStyle('chevron')}
+                  className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold border transition touch-manipulation ${
+                    tessellationStyle === 'chevron'
+                      ? 'bg-rose-500 text-white border-rose-600 shadow-sm'
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  〰️ Ζιγκ-Ζαγκ
+                </button>
+                <button
+                  type="button"
                   onClick={() => setTessellationStyle('checker')}
-                  className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold border transition touch-manipulation ${
+                  className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-bold border transition touch-manipulation ${
                     tessellationStyle === 'checker'
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                      ? 'bg-slate-800 text-white border-slate-900 shadow-sm'
                       : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   🏁 Σκακιέρα
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setTessellationStyle('meander')}
-                  className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold border transition touch-manipulation ${
-                    tessellationStyle === 'meander'
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
-                  }`}
-                >
-                  🏛️ Μαίανδρος
-                </button>
               </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-600 uppercase mr-1">ΠΑΛΕΤΑ:</span>
+              <div className="flex items-center gap-3 bg-white p-2 px-4 rounded-xl border border-slate-200 w-full lg:w-auto justify-center">
+                <span className="text-xs font-bold text-slate-600 uppercase">ΠΑΛΕΤΑ:</span>
                 <button
                   type="button"
                   onClick={() => setActivePalette('gold')}
-                  className={`w-7 h-7 rounded-full bg-amber-400 border-2 transition active:scale-95 ${activePalette === 'gold' ? 'border-slate-900 ring-2 ring-amber-300' : 'border-white shadow-xs'}`}
+                  className={`w-7 h-7 rounded-full bg-amber-500 border-2 transition active:scale-95 ${activePalette === 'gold' ? 'border-slate-900 ring-2 ring-amber-300' : 'border-white shadow-xs'}`}
                   title="Χρυσή παλέτα"
                 />
                 <button
@@ -476,69 +489,78 @@ export default function GeometrikaMotibaTheoryPage() {
                   className={`w-7 h-7 rounded-full bg-emerald-600 border-2 transition active:scale-95 ${activePalette === 'emerald' ? 'border-slate-900 ring-2 ring-emerald-300' : 'border-white shadow-xs'}`}
                   title="Πράσινη παλέτα"
                 />
+                <button
+                  type="button"
+                  onClick={() => setActivePalette('rose')}
+                  className={`w-7 h-7 rounded-full bg-rose-600 border-2 transition active:scale-95 ${activePalette === 'rose' ? 'border-slate-900 ring-2 ring-rose-300' : 'border-white shadow-xs'}`}
+                  title="Κόκκινη παλέτα"
+                />
               </div>
             </div>
 
-            {/* Πλαίσιο SVG Πλακόστρωσης - Μαθηματικά Τέλεια Εξαγωνική Κηρήθρα */}
-            <div className="w-full h-48 sm:h-64 rounded-3xl border border-slate-300 shadow-inner overflow-hidden flex items-center justify-center relative" style={{ backgroundColor: paletteColors.bg }}>
+            {/* Πλαίσιο SVG Πλακόστρωσης - Εξασφαλισμένη Μαθηματική Ακρίβεια για Seamless Tiling */}
+            <div className="w-full h-56 sm:h-80 rounded-3xl border border-slate-300 shadow-inner overflow-hidden flex items-center justify-center relative transition-colors duration-500" style={{ backgroundColor: paletteColors.bg }}>
               <svg width="100%" height="100%" className="w-full h-full">
                 <defs>
-                  {/* Pattern 1: Κηρήθρα (Κανονικά Εξάγωνα χωρίς κενά) */}
-                  <pattern id="pat-honeycomb" width="60" height="104" patternUnits="userSpaceOnUse">
-                    {/* Κεντρικό Εξάγωνο 1 */}
+                  {/* Pattern 1: Κηρήθρα (Κανονικά Εξάγωνα χωρίς κενά) - Perfect Math W=60, H=103.923 */}
+                  <pattern id="pat-honeycomb" width="60" height="103.923" patternUnits="userSpaceOnUse">
+                    {/* Top center hex */}
                     <polygon
-                      points="30,4 56,19 56,49 30,64 4,49 4,19"
-                      fill={paletteColors.c2}
-                      fillOpacity="0.25"
+                      points="30,0 60,17.321 60,51.962 30,69.282 0,51.962 0,17.321"
+                      fill={paletteColors.c3}
+                      fillOpacity="0.4"
                       stroke={paletteColors.c1}
                       strokeWidth="2.5"
-                      strokeLinejoin="round"
                     />
-                    {/* Κεντρικό Εξάγωνο 2 (μετατόπιση μισού πλάτους/ύψους) */}
+                    {/* Bottom left hex */}
                     <polygon
-                      points="60,56 86,71 86,101 60,116 34,101 34,71"
+                      points="0,51.962 30,69.282 30,103.923 0,121.244 -30,103.923 -30,69.282"
                       fill={paletteColors.c2}
-                      fillOpacity="0.25"
+                      fillOpacity="0.4"
                       stroke={paletteColors.c1}
                       strokeWidth="2.5"
-                      strokeLinejoin="round"
                     />
+                    {/* Bottom right hex */}
                     <polygon
-                      points="0,56 26,71 26,101 0,116 -26,101 -26,71"
+                      points="60,51.962 90,69.282 90,103.923 60,121.244 30,103.923 30,69.282"
                       fill={paletteColors.c2}
-                      fillOpacity="0.25"
+                      fillOpacity="0.4"
                       stroke={paletteColors.c1}
                       strokeWidth="2.5"
-                      strokeLinejoin="round"
-                    />
-                    {/* Seamless Tiling στα άκρα */}
-                    <polygon
-                      points="30,108 56,123 56,153 30,168 4,153 4,123"
-                      fill={paletteColors.c2}
-                      fillOpacity="0.25"
-                      stroke={paletteColors.c1}
-                      strokeWidth="2.5"
-                      strokeLinejoin="round"
                     />
                   </pattern>
 
-                  {/* Pattern 2: Σκακιέρα */}
+                  {/* Pattern 2: Ισομετρικοί Κύβοι (Q*bert style) 3D Optical Illusion */}
+                  <pattern id="pat-cubes" width="60" height="103.923" patternUnits="userSpaceOnUse">
+                    {/* Cube 1 (Top Center) */}
+                    <polygon points="30,0 60,17.321 30,34.641 0,17.321" fill={paletteColors.c3} />
+                    <polygon points="0,17.321 30,34.641 30,69.282 0,51.962" fill={paletteColors.c2} />
+                    <polygon points="60,17.321 30,34.641 30,69.282 60,51.962" fill={paletteColors.c1} />
+                    
+                    {/* Cube 2 (Bottom Left) */}
+                    <polygon points="0,51.962 30,69.282 0,86.603 -30,69.282" fill={paletteColors.c3} />
+                    <polygon points="-30,69.282 0,86.603 0,121.244 -30,103.923" fill={paletteColors.c2} />
+                    <polygon points="30,69.282 0,86.603 0,121.244 30,103.923" fill={paletteColors.c1} />
+
+                    {/* Cube 3 (Bottom Right) */}
+                    <polygon points="60,51.962 90,69.282 60,86.603 30,69.282" fill={paletteColors.c3} />
+                    <polygon points="30,69.282 60,86.603 60,121.244 30,103.923" fill={paletteColors.c2} />
+                    <polygon points="90,69.282 60,86.603 60,121.244 90,103.923" fill={paletteColors.c1} />
+                  </pattern>
+
+                  {/* Pattern 3: Ζιγκ-Ζαγκ (Chevron) */}
+                  <pattern id="pat-chevron" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <rect width="40" height="40" fill={paletteColors.bg} />
+                    <polygon points="0,10 20,30 40,10 40,25 20,45 0,25" fill={paletteColors.c2} />
+                    <polygon points="0,-10 20,10 40,-10 40,5 20,25 0,5" fill={paletteColors.c1} />
+                  </pattern>
+
+                  {/* Pattern 4: Σκακιέρα */}
                   <pattern id="pat-checker" width="40" height="40" patternUnits="userSpaceOnUse">
                     <rect width="20" height="20" fill={paletteColors.c1} />
                     <rect x="20" width="20" height="20" fill={paletteColors.c3} />
                     <rect y="20" width="20" height="20" fill={paletteColors.c3} />
                     <rect x="20" y="20" width="20" height="20" fill={paletteColors.c1} />
-                  </pattern>
-
-                  {/* Pattern 3: Ελληνικός Μαίανδρος */}
-                  <pattern id="pat-meander" width="60" height="60" patternUnits="userSpaceOnUse">
-                    <path
-                      d="M 0 30 L 15 30 L 15 15 L 45 15 L 45 45 L 30 45 L 30 30 L 0 30 M 45 15 L 60 15 M 15 45 L 30 45"
-                      fill="none"
-                      stroke={paletteColors.c1}
-                      strokeWidth="3.5"
-                      strokeLinecap="square"
-                    />
                   </pattern>
                 </defs>
 
@@ -548,16 +570,18 @@ export default function GeometrikaMotibaTheoryPage() {
                   fill={
                     tessellationStyle === 'honeycomb'
                       ? 'url(#pat-honeycomb)'
-                      : tessellationStyle === 'checker'
-                      ? 'url(#pat-checker)'
-                      : 'url(#pat-meander)'
+                      : tessellationStyle === 'cubes'
+                      ? 'url(#pat-cubes)'
+                      : tessellationStyle === 'chevron'
+                      ? 'url(#pat-chevron)'
+                      : 'url(#pat-checker)'
                   }
                 />
               </svg>
             </div>
 
             <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-center font-sans text-xs sm:text-sm text-slate-700">
-              💡 <strong>Γεωμετρική Αρχή:</strong> Σε μια πλακόστρωση (tessellation), το άθροισμα των γωνιών των σχημάτων γύρω από κάθε κοινή κορυφή πρέπει να είναι <strong>ακριβώς 360°</strong>. Στα κανονικά εξάγωνα: 120° · 3 ＝ 360°!
+              💡 <strong>Γεωμετρική Αρχή:</strong> Σε μια πλακόστρωση (tessellation), το άθροισμα των γωνιών των σχημάτων γύρω από κάθε κοινή κορυφή πρέπει να είναι <strong>ακριβώς 360°</strong>. Στα κανονικά εξάγωνα της κηρήθρας: 120° · 3 ＝ 360°!
             </div>
           </div>
         </section>
@@ -666,7 +690,7 @@ export default function GeometrikaMotibaTheoryPage() {
                 </div>
               </div>
 
-              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 font-medium">
+              <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-950 font-medium">
                 ⚡ Αν το υπόλοιπο ήταν 0, το στοιχείο θα ήταν το τελευταίο του πυρήνα (δηλαδή ο Ρόμβος).
               </div>
             </article>
