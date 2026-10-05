@@ -20,8 +20,8 @@ function formatNum(val) {
 }
 
 export default function GeometrikaMotibaTheoryPage() {
-  // Εργαστήριο 1: Αυξανόμενο Μοτίβο Τριγώνων / Τετραγώνων
-  const [stepN, setStepN] = useState(3);
+  // Εργαστήριο 1: Αυξανόμενο Μοτίβο με Τελίτσες (n έως 20)
+  const [stepN, setStepN] = useState(4);
   const [patternType, setPatternType] = useState('squares'); // 'squares' | 'triangles'
 
   // Υπολογισμοί για το αυξανόμενο μοτίβο
@@ -29,11 +29,11 @@ export default function GeometrikaMotibaTheoryPage() {
     if (patternType === 'squares') {
       const count = stepN * stepN;
       const ruleText = `n · n ＝ n²`;
-      return { count, ruleText, unitName: 'τετραγωνάκια' };
+      return { count, ruleText, unitName: 'τελίτσες' };
     }
     const count = (stepN * (stepN + 1)) / 2;
     const ruleText = `[n · (n ＋ 1)] : 2`;
-    return { count, ruleText, unitName: 'κύκλοι' };
+    return { count, ruleText, unitName: 'τελίτσες' };
   }, [stepN, patternType]);
 
   // Εργαστήριο 2: Έξυπνες Πλακοστρώσεις (Tessellations)
@@ -88,7 +88,7 @@ export default function GeometrikaMotibaTheoryPage() {
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Κανόνες Ακολουθιών, Διαδραστική Πλακόστρωση &amp; Γεννήτρια</span>
+              <span>Θεωρία, Κανόνες Ακολουθιών, Διαδραστική Πλακόστρωση &amp; Γεννήτρια Τελειών</span>
             </div>
             <Link
               href="/st-dimotikou/63-geometrika-motiba-ask"
@@ -162,9 +162,9 @@ export default function GeometrikaMotibaTheoryPage() {
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 font-mono">
-                  <div>• <strong>Βήμα 1:</strong> 1 τετράγωνο (1 · 1 ＝ 1)</div>
-                  <div>• <strong>Βήμα 2:</strong> 4 τετράγωνα (2 · 2 ＝ 4)</div>
-                  <div>• <strong>Βήμα 3:</strong> 9 τετράγωνα (3 · 3 ＝ 9)</div>
+                  <div>• <strong>Βήμα 1:</strong> 1 τελίτσα (1 · 1 ＝ 1)</div>
+                  <div>• <strong>Βήμα 2:</strong> 4 τελίτσες (2 · 2 ＝ 4)</div>
+                  <div>• <strong>Βήμα 3:</strong> 9 τελίτσες (3 · 3 ＝ 9)</div>
                   <div className="text-amber-900 font-bold pt-1 font-sans text-xs">
                     Κανόνας για το βήμα n: <strong>Πλήθος ＝ n · n</strong>
                   </div>
@@ -172,7 +172,7 @@ export default function GeometrikaMotibaTheoryPage() {
               </div>
 
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                ⚡ Με τη βοήθεια μιας μεταβλητής n, βρίσκουμε πόσα σχήματα χρειάζονται ακόμα και για το 100ό βήμα χωρίς να τα σχεδιάσουμε!
+                ⚡ Με τη βοήθεια μιας μεταβλητής n, βρίσκουμε πόσες τελίτσες χρειάζονται ακόμα και για το 100ό βήμα χωρίς να τις σχεδιάσουμε!
               </div>
             </article>
 
@@ -200,7 +200,7 @@ export default function GeometrikaMotibaTheoryPage() {
                     🌻 <strong>Ηλιοτρόπια &amp; Κοχύλια:</strong> Σπείρες που ακολουθούν την περίφημη μαθηματική ακολουθία Fibonacci.
                   </div>
                   <div>
-                    ❄️ <strong>Νιφάδες Χιονιού:</strong> Εξαγωνική συμμετρία κρυστάλλων.
+                    ❄️️ <strong>Νιφάδες Χιονιού:</strong> Εξαγωνική συμμετρία κρυστάλλων.
                   </div>
                 </div>
               </div>
@@ -244,17 +244,17 @@ export default function GeometrikaMotibaTheoryPage() {
           </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΑΥΞΑΝΟΜΕΝΟ ΜΟΤΙΒΟ */}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΑΥΞΑΝΟΜΕΝΟ ΜΟΤΙΒΟ ΜΕ ΤΕΛΙΤΣΕΣ (n έως 20) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
               <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Διαδραστική Γεννήτρια Αυξανόμενου Μοτίβου
+              Διαδραστική Γεννήτρια Αυξανόμενου Μοτίβου (Τελίτσες έως n ＝ 20)
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Άλλαξε το βήμα (n) και παρακολούθησε πώς μεγαλώνει το σχήμα και πώς υπολογίζεται ο μαθηματικός κανόνας.
+              Ρύθμισε το βήμα (n από 1 έως 20) και δες πώς οι τελίτσες διατάσσονται σε τετράγωνα ή τριγωνικά μοτίβα και πώς αυξάνεται ραγδαία το πλήθος τους.
             </p>
           </div>
 
@@ -266,7 +266,7 @@ export default function GeometrikaMotibaTheoryPage() {
               {/* Επιλογή Τύπου Μοτίβου */}
               <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <span className="text-xs font-bold text-slate-700 block uppercase">
-                  ΕΠΙΛΟΓΗ ΜΟΤΙΒΟΥ:
+                  ΔΙΑΤΑΞΗ ΤΕΛΙΤΣΩΝ:
                 </span>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -278,7 +278,7 @@ export default function GeometrikaMotibaTheoryPage() {
                         : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
-                    🟦 Τετραγωνικά (n²)
+                    🟦 Τετραγωνικό (n²)
                   </button>
                   <button
                     type="button"
@@ -289,16 +289,16 @@ export default function GeometrikaMotibaTheoryPage() {
                         : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
-                    🔺 Τριγωνικά
+                    🔺 Τριγωνικό
                   </button>
                 </div>
               </div>
 
-              {/* Slider για το Βήμα n */}
+              {/* Slider για το Βήμα n (1 έως 20) */}
               <div className="bg-blue-50/70 p-4 rounded-2xl border border-blue-200 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black uppercase text-blue-900 tracking-wider">
-                    ΒΗΜΑ (n):
+                    ΒΗΜΑ (n από 1 έως 20):
                   </span>
                   <span className="font-mono font-black text-base sm:text-xl text-blue-700 bg-white px-3 py-1 rounded-xl border border-blue-200 shadow-sm">
                     n ＝ {stepN}
@@ -317,7 +317,7 @@ export default function GeometrikaMotibaTheoryPage() {
                   <input
                     type="range"
                     min={1}
-                    max={6}
+                    max={20}
                     step={1}
                     value={stepN}
                     onChange={(e) => setStepN(Number(e.target.value))}
@@ -326,8 +326,8 @@ export default function GeometrikaMotibaTheoryPage() {
                   <button
                     type="button"
                     aria-label="Αύξηση βήματος"
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setStepN((prev) => Math.min(6, prev + 1)); }}
-                    disabled={stepN >= 6}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setStepN((prev) => Math.min(20, prev + 1)); }}
+                    disabled={stepN >= 20}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
                   >
                     ＋
@@ -335,75 +335,103 @@ export default function GeometrikaMotibaTheoryPage() {
                 </div>
               </div>
 
+              {/* Γρήγορες Επιλογές Βήματος */}
+              <div className="grid grid-cols-4 gap-2">
+                {[1, 5, 10, 20].map((quickStep) => (
+                  <button
+                    key={`qstep-${quickStep}`}
+                    type="button"
+                    onClick={() => setStepN(quickStep)}
+                    className="bg-white border border-slate-200 hover:bg-slate-100 py-1.5 rounded-xl font-bold text-xs text-slate-700 shadow-xs transition active:scale-95 touch-manipulation text-center"
+                  >
+                    n ＝ {quickStep}
+                  </button>
+                ))}
+              </div>
+
               {/* Κάρτα Σύνοψης */}
               <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-1 text-center font-mono">
                 <span className="text-xs font-sans text-slate-500 block">Μαθηματικός Κανόνας:</span>
                 <div className="text-base sm:text-lg font-black text-blue-700">{patternData.ruleText}</div>
-                <div className="text-xs text-slate-600 pt-1">
-                  Για n ＝ {stepN}: <strong>{patternData.count} {patternData.unitName}</strong>
+                <div className="text-xs sm:text-sm text-slate-700 pt-1">
+                  Για n ＝ {stepN}: <strong className="text-blue-800 text-base">{formatNum(patternData.count)}</strong> {patternData.unitName}
                 </div>
               </div>
 
             </div>
 
-            {/* SVG Οπτικοποίηση Αυξανόμενου Μοτίβου (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center space-y-3 min-h-[300px]">
+            {/* SVG Οπτικοποίηση Αυξανόμενου Μοτίβου Τελειών (7 στήλες) */}
+            <div className="lg:col-span-7 bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center space-y-3 min-h-[320px]">
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
-                ΟΠΤΙΚΟΠΟΙΗΣΗ ΣΧΗΜΑΤΟΣ (ΒΗΜΑ {stepN})
+                ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΕΛΕΙΩΝ (ΒΗΜΑ {stepN})
               </span>
 
-              <div className="w-full max-w-[340px] aspect-square bg-white rounded-2xl border border-slate-200 p-4 shadow-inner flex items-center justify-center overflow-hidden">
+              <div className="w-full max-w-[340px] aspect-square bg-white rounded-2xl border border-slate-200 p-3 shadow-inner flex items-center justify-center overflow-hidden">
                 <svg viewBox="0 0 240 240" className="w-full h-full overflow-visible">
-                  {patternType === 'squares' ? (
-                    Array.from({ length: stepN }).map((_, rIdx) => {
-                      const boxSize = Math.min(32, 200 / stepN - 4);
-                      const startX = 120 - (stepN * (boxSize + 4) - 4) / 2;
-                      const startY = 120 - (stepN * (boxSize + 4) - 4) / 2;
-                      return Array.from({ length: stepN }).map((__, cIdx) => (
-                        <rect
-                          key={`sq-${rIdx}-${cIdx}`}
-                          x={startX + cIdx * (boxSize + 4)}
-                          y={startY + rIdx * (boxSize + 4)}
-                          width={boxSize}
-                          height={boxSize}
-                          rx={4}
-                          fill="#3b82f6"
-                          stroke="#1e3a8a"
-                          strokeWidth="2"
-                        />
-                      ));
-                    })
-                  ) : (
-                    Array.from({ length: stepN }).map((_, rIdx) => {
-                      const rSize = Math.min(14, 110 / stepN);
-                      const countInRow = rIdx + 1;
-                      const rowY = 120 - (stepN * (rSize * 2 + 4)) / 2 + rIdx * (rSize * 2 + 4) + rSize;
-                      const rowStartX = 120 - ((countInRow - 1) * (rSize * 2 + 4)) / 2;
-                      return Array.from({ length: countInRow }).map((__, cIdx) => (
-                        <circle
-                          key={`tr-c-${rIdx}-${cIdx}`}
-                          cx={rowStartX + cIdx * (rSize * 2 + 4)}
-                          cy={rowY}
-                          r={rSize}
-                          fill="#6366f1"
-                          stroke="#312e81"
-                          strokeWidth="2"
-                        />
-                      ));
-                    })
-                  )}
+                  {patternType === 'squares' ? (() => {
+                    // Δυναμικός υπολογισμός διαστάσεων για τελίτσες
+                    const spacing = 200 / (stepN + 1);
+                    const dotRadius = Math.max(2.2, Math.min(6, spacing / 2.8));
+                    const startX = 120 - ((stepN - 1) * spacing) / 2;
+                    const startY = 120 - ((stepN - 1) * spacing) / 2;
+
+                    const dots = [];
+                    for (let r = 0; r < stepN; r++) {
+                      for (let c = 0; c < stepN; c++) {
+                        dots.push(
+                          <circle
+                            key={`sq-dot-${r}-${c}`}
+                            cx={startX + c * spacing}
+                            cy={startY + r * spacing}
+                            r={dotRadius}
+                            fill="#3b82f6"
+                            stroke="#1d4ed8"
+                            strokeWidth={dotRadius > 3 ? "1.5" : "0.8"}
+                          />
+                        );
+                      }
+                    }
+                    return dots;
+                  })() : (() => {
+                    // Τριγωνική διάταξη τελειών
+                    const spacing = 200 / (stepN + 1);
+                    const dotRadius = Math.max(2.2, Math.min(6, spacing / 2.8));
+                    const totalH = (stepN - 1) * spacing;
+                    const topY = 120 - totalH / 2;
+
+                    const dots = [];
+                    for (let r = 0; r < stepN; r++) {
+                      const countInRow = r + 1;
+                      const rowY = topY + r * spacing;
+                      const rowStartX = 120 - ((countInRow - 1) * spacing) / 2;
+                      for (let c = 0; c < countInRow; c++) {
+                        dots.push(
+                          <circle
+                            key={`tr-dot-${r}-${c}`}
+                            cx={rowStartX + c * spacing}
+                            cy={rowY}
+                            r={dotRadius}
+                            fill="#6366f1"
+                            stroke="#4338ca"
+                            strokeWidth={dotRadius > 3 ? "1.5" : "0.8"}
+                          />
+                        );
+                      }
+                    }
+                    return dots;
+                  })()}
                 </svg>
               </div>
 
-              <div className="text-xs font-mono font-bold text-slate-700 text-center">
-                Σύνολο: <strong className="text-blue-700">{patternData.count}</strong> {patternData.unitName}
+              <div className="text-xs sm:text-sm font-mono font-bold text-slate-700 text-center">
+                Σύνολο: <strong className="text-blue-700">{formatNum(patternData.count)}</strong> {patternData.unitName}
               </div>
             </div>
 
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΠΛΑΚΟΣΤΡΩΣΗ (TESSELLATION) - SEAMLESS MATHEMATICAL REWRITE */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΠΛΑΚΟΣΤΡΩΣΗ (TESSELLATION) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
@@ -525,7 +553,7 @@ export default function GeometrikaMotibaTheoryPage() {
                     />
                   </pattern>
 
-                  {/* Pattern 2: Ψαροκόκαλο (Herringbone) - Κλασικό γεωμετρικό μοτίβο παρκέ */}
+                  {/* Pattern 2: Ψαροκόκαλο (Herringbone) */}
                   <pattern id="pat-herringbone" width="40" height="40" patternUnits="userSpaceOnUse">
                     <rect width="40" height="40" fill={paletteColors.bg} />
                     <path
@@ -563,7 +591,7 @@ export default function GeometrikaMotibaTheoryPage() {
                     <rect x="20" y="20" width="20" height="20" fill={paletteColors.c1} />
                   </pattern>
 
-                  {/* Pattern 5: Τριγωνικό Πλέγμα (Ισοπλευρικά Τρίγωνα) */}
+                  {/* Pattern 5: Τριγωνικό Πλέγμα */}
                   <pattern id="pat-triangles" width="40" height="34.641" patternUnits="userSpaceOnUse">
                     <rect width="40" height="34.641" fill={paletteColors.c3} />
                     <polygon points="0,0 40,0 20,34.641" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1.5" />
