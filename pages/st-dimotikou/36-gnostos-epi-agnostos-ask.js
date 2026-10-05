@@ -221,7 +221,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Επίλυση εξίσωσης', formula: `${perim} : 4`, val: `x ＝ ${side} εκ.` }
         ],
         explain: `Το τετράγωνο έχει 4 ίσες πλευρές, άρα 4 · x ＝ ${perim} ➔ x ＝ ${perim} : 4 ＝ ${side} εκ.`,
-        distractors: [`${side + 2} εκ.`, `${side - 2} εκ.`, `${perim : 2} εκ.`]
+        distractors: [`${side + 2} εκ.`, `${side - 2} εκ.`, `${Math.round(perim / 2)} εκ.`]
       };
     }
   },
@@ -284,7 +284,6 @@ const HARD_PROBLEMS_POOL = [
       const x = randInt(6, 12);
       const b = (num * x) / den;
       if (!Number.isInteger(b)) {
-        // Fallback εγγύησης ακέραιου
         return {
           prompt: 'Λύσε την εξίσωση: 2/3 · x ＝ 8:',
           unit: '',
@@ -754,7 +753,7 @@ export default function GnostosEpiAgnostosExercisesPage() {
                             <thead>
                               <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
                                 <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
-                                <th className="p-1.5">{toCleanUppercase('Πράξη / Μέθοδος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
                                 <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
                               </tr>
                             </thead>
