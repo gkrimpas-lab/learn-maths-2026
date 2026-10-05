@@ -27,12 +27,10 @@ export default function GeometrikaMotibaTheoryPage() {
   // Υπολογισμοί για το αυξανόμενο μοτίβο
   const patternData = useMemo(() => {
     if (patternType === 'squares') {
-      // Κανόνας: τετράγωνο n x n (σύνολο n^2 τετραγωνάκια)
       const count = stepN * stepN;
       const ruleText = `n · n ＝ n²`;
       return { count, ruleText, unitName: 'τετραγωνάκια' };
     }
-    // Τριγωνικοί αριθμοί: 1 + 2 + ... + n = n(n+1)/2
     const count = (stepN * (stepN + 1)) / 2;
     const ruleText = `[n · (n ＋ 1)] : 2`;
     return { count, ruleText, unitName: 'κύκλοι' };
@@ -228,7 +226,7 @@ export default function GeometrikaMotibaTheoryPage() {
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
                   <div>
-                    🏛️️ <strong>Ελληνικός Μαίανδρος:</strong> Συνεχής γραμμή που διπλώνει σε ορθές γωνίες, σύμβολο της αιωνιότητας και της ροής.
+                    🏛 <strong>Ελληνικός Μαίανδρος:</strong> Συνεχής γραμμή που διπλώνει σε ορθές γωνίες, σύμβολο της αιωνιότητας και της ροής.
                   </div>
                   <div>
                     🎨 <strong>Πλακόστρωση (Tessellation):</strong> Κάλυψη επιφάνειας με σχήματα χωρίς κενά και χωρίς επικαλύψεις (όπως τα πλακάκια του δαπέδου ή τα έργα του M.C. Escher).
@@ -355,7 +353,6 @@ export default function GeometrikaMotibaTheoryPage() {
               <div className="w-full max-w-[340px] aspect-square bg-white rounded-2xl border border-slate-200 p-4 shadow-inner flex items-center justify-center overflow-hidden">
                 <svg viewBox="0 0 240 240" className="w-full h-full overflow-visible">
                   {patternType === 'squares' ? (
-                    // Πλέγμα n x n τετραγώνων
                     Array.from({ length: stepN }).map((_, rIdx) => {
                       const boxSize = Math.min(32, 200 / stepN - 4);
                       const startX = 120 - (stepN * (boxSize + 4) - 4) / 2;
@@ -375,7 +372,6 @@ export default function GeometrikaMotibaTheoryPage() {
                       ));
                     })
                   ) : (
-                    // Τριγωνική πυραμίδα κύκλων
                     Array.from({ length: stepN }).map((_, rIdx) => {
                       const rSize = Math.min(14, 110 / stepN);
                       const countInRow = rIdx + 1;
@@ -483,19 +479,47 @@ export default function GeometrikaMotibaTheoryPage() {
               </div>
             </div>
 
-            {/* Πλαίσιο SVG Πλακόστρωσης */}
+            {/* Πλαίσιο SVG Πλακόστρωσης - Μαθηματικά Τέλεια Εξαγωνική Κηρήθρα */}
             <div className="w-full h-48 sm:h-64 rounded-3xl border border-slate-300 shadow-inner overflow-hidden flex items-center justify-center relative" style={{ backgroundColor: paletteColors.bg }}>
               <svg width="100%" height="100%" className="w-full h-full">
                 <defs>
-                  {/* Pattern 1: Κηρήθρα (Εξάγωνα) */}
-                  <pattern id="pat-honeycomb" width="56" height="96" patternUnits="userSpaceOnUse">
-                    <path
-                      d="M 28 0 L 56 16 L 56 48 L 28 64 L 0 48 L 0 16 Z M 28 64 L 56 80 L 56 112 L 28 128 L 0 112 L 0 80 Z"
-                      fill="none"
+                  {/* Pattern 1: Κηρήθρα (Κανονικά Εξάγωνα χωρίς κενά) */}
+                  <pattern id="pat-honeycomb" width="60" height="104" patternUnits="userSpaceOnUse">
+                    {/* Κεντρικό Εξάγωνο 1 */}
+                    <polygon
+                      points="30,4 56,19 56,49 30,64 4,49 4,19"
+                      fill={paletteColors.c2}
+                      fillOpacity="0.25"
                       stroke={paletteColors.c1}
                       strokeWidth="2.5"
+                      strokeLinejoin="round"
                     />
-                    <polygon points="28,16 46,26 46,46 28,56 10,46 10,26" fill={paletteColors.c2} opacity="0.35" />
+                    {/* Κεντρικό Εξάγωνο 2 (μετατόπιση μισού πλάτους/ύψους) */}
+                    <polygon
+                      points="60,56 86,71 86,101 60,116 34,101 34,71"
+                      fill={paletteColors.c2}
+                      fillOpacity="0.25"
+                      stroke={paletteColors.c1}
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                    />
+                    <polygon
+                      points="0,56 26,71 26,101 0,116 -26,101 -26,71"
+                      fill={paletteColors.c2}
+                      fillOpacity="0.25"
+                      stroke={paletteColors.c1}
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                    />
+                    {/* Seamless Tiling στα άκρα */}
+                    <polygon
+                      points="30,108 56,123 56,153 30,168 4,153 4,123"
+                      fill={paletteColors.c2}
+                      fillOpacity="0.25"
+                      stroke={paletteColors.c1}
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                    />
                   </pattern>
 
                   {/* Pattern 2: Σκακιέρα */}
