@@ -273,7 +273,7 @@ const HARD_PROBLEMS_POOL = [
           { item: '2ο Βήμα (διαίρεση διαιρετέου)', formula: `${a} : ${inter}`, val: `x ＝ ${x}` }
         ],
         explain: `Πρώτα βρίσκουμε πόσο είναι το ${a} : x αφαιρώντας το ${add}: ${a} : x ＝ ${total} － ${add} ＝ ${inter}. Στη συνέχεια βρίσκουμε τον διαιρέτη: x ＝ ${a} : ${inter} ＝ ${x}.`,
-        distractors: [String(x + 2), String(x - 1), String(a : add)]
+        distractors: [String(x + 2), String(x - 1), String(Math.round(a / add))]
       };
     }
   },
