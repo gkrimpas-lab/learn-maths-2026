@@ -1,27 +1,43 @@
+// pages/st-dimotikou/36-gnostos-epi-agnostos.js
 import { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
 // Όριο για το μέγιστο γινόμενο
 const MAX_PRODUCT = 30;
 
+// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
+function formatNum(num) {
+  if (num === null || num === undefined || isNaN(Number(num))) return '0';
+  return Number(num).toLocaleString('el-GR');
+}
+
 const PRESETS = [
-  { a: 3, b: 12, label: "3 · x ＝ 12 (x ＝ 4)" },
-  { a: 4, b: 20, label: "4 · x ＝ 20 (x ＝ 5)" },
-  { a: 2, b: 14, label: "2 · x ＝ 14 (x ＝ 7)" },
-  { a: 5, b: 15, label: "5 · x ＝ 15 (x ＝ 3)" },
-  { a: 6, b: 24, label: "6 · x ＝ 24 (x ＝ 4)" }
+  { a: 3, b: 12, label: '3 · x ＝ 12 (x ＝ 4)' },
+  { a: 4, b: 20, label: '4 · x ＝ 20 (x ＝ 5)' },
+  { a: 2, b: 14, label: '2 · x ＝ 14 (x ＝ 7)' },
+  { a: 5, b: 15, label: '5 · x ＝ 15 (x ＝ 3)' },
+  { a: 6, b: 24, label: '6 · x ＝ 24 (x ＝ 4)' }
 ];
 
 // Χρώματα ομάδων για την ισοκατανομή των μπαλών
 const GROUP_COLORS = [
-  { fill: "url(#ballGold)", stroke: "#b45309", tag: "#f59e0b" },
-  { fill: "url(#ballGreen)", stroke: "#047857", tag: "#10b981" },
-  { fill: "url(#ballBlue)", stroke: "#1d4ed8", tag: "#3b82f6" },
-  { fill: "url(#ballPurple)", stroke: "#6b21a8", tag: "#a855f7" },
-  { fill: "url(#ballPink)", stroke: "#be185d", tag: "#ec4899" },
-  { fill: "url(#ballCyan)", stroke: "#0e7490", tag: "#06b6d4" }
+  { fill: 'url(#ballGold)', stroke: '#b45309', tag: '#f59e0b' },
+  { fill: 'url(#ballGreen)', stroke: '#047857', tag: '#10b981' },
+  { fill: 'url(#ballBlue)', stroke: '#1d4ed8', tag: '#3b82f6' },
+  { fill: 'url(#ballPurple)', stroke: '#6b21a8', tag: '#a855f7' },
+  { fill: 'url(#ballPink)', stroke: '#be185d', tag: '#ec4899' },
+  { fill: 'url(#ballCyan)', stroke: '#0e7490', tag: '#06b6d4' }
 ];
 
 export default function GnostosEpiAgnostosPage() {
@@ -88,7 +104,7 @@ export default function GnostosEpiAgnostosPage() {
     });
   }
 
-  // 2. Θέσεις Σφαιρών στον Δεξιό Δίσκο με Sub-Grid ώστε να μην ξεπερνούν ποτέ το ύψος
+  // 2. Θέσεις Σφαιρών στον Δεξιό Δίσκο με Sub-Grid
   const MAX_STACK_HEIGHT = 6;
   const rightBalls = [];
   const groupSpacing = activeA <= 3 ? 42 : activeA <= 4 ? 34 : 26;
@@ -127,128 +143,159 @@ export default function GnostosEpiAgnostosPage() {
     });
   }
 
-  const actionButton = (
-    <Link
-      href="/st-dimotikou/36-gnostos-epi-agnostos-ask"
-      className="bg-amber-400 hover:bg-amber-500 text-slate-900 px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black transition shadow-sm flex items-center gap-1.5 shrink-0"
-    >
-      <span>🎯</span>
-      <span>Ασκήσεις</span>
-    </Link>
-  );
-
   return (
     <Layout
-      title="✖️ 36. Εξισώσεις: Άγνωστος Παράγοντας Γινομένου (α · x ＝ β) - LearnMaths.gr"
+      title="Εξισώσεις: Άγνωστος Παράγοντας - ΣΤ' Δημοτικού | LearnMaths.gr"
       description="Διαδραστική θεωρία με ζυγαριά, ομαδοποίηση και διαίρεση για την επίλυση εξισώσεων όπου ο άγνωστος είναι παράγοντας γινομένου (α · x = β) για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
-      actionButton={actionButton}
       showAds={true}
+      actionButton={
+        <Link
+          href="/st-dimotikou/36-gnostos-epi-agnostos-ask"
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+        >
+          <span>🎯 Ασκήσεις</span>
+        </Link>
+      }
     >
-      <div className="py-6 md:py-10 space-y-8 md:space-y-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
 
-        {/* HERO BANNER */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="bg-white/20 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  🎓 ΣΤ' Δημοτικου
-                </span>
-                <span className="bg-amber-400 text-slate-900 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                  Ενοτητα 36
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
-                36. Εξισώσεις: Ο Άγνωστος είναι Παράγοντας Γινομένου (α · x ＝ β)
-              </h1>
-              <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-                Μάθε πώς βρίσκουμε τον <strong>άγνωστο παράγοντα (x)</strong>: Αν α όμοια κουτιά x ζυγίζουν συνολικά β, για να βρούμε τι περιέχει το <strong>ένα κουτί x</strong>, κάνουμε <strong>διαίρεση: x ＝ β : α</strong>!
-              </p>
+        {/* 1. HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΚΕΦΑΛΑΙΟ 36 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
-
-            {/* CALLOUT PROMO CARD */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-5 sm:p-6 rounded-2xl flex flex-col items-center text-center space-y-3 shadow-inner">
-              <span className="text-3xl">🚀</span>
-              <h3 className="font-black text-lg text-amber-300">Ώρα για Εξάσκηση!</h3>
-              <p className="text-xs text-blue-50">Δοκίμασε τις 8 διαδραστικές ασκήσεις στην επίλυση εξισώσεων πολλαπλασιασμού!</p>
-              <Link
-                href="/st-dimotikou/36-gnostos-epi-agnostos-ask"
-                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-2.5 px-4 rounded-xl shadow-md transition transform hover:scale-105 text-sm"
-              >
-                🎯 Μετάβαση στις Ασκήσεις
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* THEORY CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-50/80 border border-blue-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                1
-              </div>
-              <h3 className="text-lg font-black text-slate-900">1. Παράγοντας Γινομένου</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Στην εξίσωση α · x ＝ β (ή αx ＝ β), το α και το x είναι οι <strong>παράγοντες</strong> και το β είναι το <strong>γινόμενο</strong>.
-              </p>
-            </div>
-            <div className="text-center">
-              <span className="bg-blue-50 border border-blue-200 px-3 py-2 rounded-xl text-blue-900 text-xs font-mono font-bold inline-flex flex-wrap items-center justify-center gap-1.5 leading-relaxed break-words max-w-full">
-                <span>3 · x ＝ 12</span>
-                <span className="text-blue-700 font-normal">(3 όμοια x ζυγίζουν 12)</span>
-              </span>
-            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              36. Εξισώσεις: Ο Άγνωστος είναι Παράγοντας Γινομένου (α · x ＝ β)
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Μάθε πώς βρίσκουμε τον <strong>άγνωστο παράγοντα (x)</strong>: Αν α όμοια κουτιά x ζυγίζουν συνολικά β, για να βρούμε τι περιέχει το <strong>ένα κουτί x</strong>, κάνουμε <strong>διαίρεση: x ＝ β : α</strong>!
+            </p>
           </div>
 
-          <div className="bg-indigo-50/80 border border-indigo-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                2
-              </div>
-              <h3 className="text-lg font-black text-slate-900">2. Ο Κανόνας Επίλυσης</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Για να βρούμε τον άγνωστο παράγοντα, <strong>διαιρούμε το γινόμενο με τον γνωστό παράγοντα</strong> (αντίστροφη πράξη):
-              </p>
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Διαδραστική Ζυγαριά σε Ισορροπία &amp; Οπτική Ομαδοποίηση Μπαλών</span>
             </div>
-            <div className="text-center">
-              <span className="bg-indigo-50 border border-indigo-200 px-3 py-2 rounded-xl text-indigo-900 text-xs font-mono font-bold inline-flex flex-wrap items-center justify-center gap-1.5 leading-relaxed break-words max-w-full">
-                <span>x ＝ 12 : 3 ＝</span>
-                <strong className="text-indigo-700 font-black">4</strong>
-              </span>
-            </div>
+            <Link
+              href="/st-dimotikou/36-gnostos-epi-agnostos-ask"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* 2. ΚΑΡΤΕΣ ΘΕΩΡΙΑΣ (3 COLS) */}
+        <section className="space-y-6 2xl:space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
+              Βασικές Έννοιες: Παράγοντας Γινομένου &amp; Επίλυση Εξισώσεων Πολλαπλασιασμού
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
+              Πώς υπολογίζουμε το περιεχόμενο μίας μόνο μονάδας x μέσω της διαίρεσης.
+            </p>
           </div>
 
-          <div className="bg-emerald-50/80 border border-emerald-100 p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-sm">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-sm">
-                3
-              </div>
-              <h3 className="text-lg font-black text-slate-900">3. Επαλήθευση</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Ελέγχουμε αν το αποτέλεσμα επιβεβαιώνει την αρχική ισότητα: 3 · 4 ＝ 12! Η πράξη είναι σωστή.
-              </p>
-            </div>
-            <div className="text-center">
-              <span className="bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl text-emerald-900 text-xs font-mono font-bold inline-flex flex-wrap items-center justify-center gap-1.5 leading-relaxed break-words max-w-full">
-                <span>3 · 4 ＝ 12</span>
-                <span className="text-emerald-700 font-black">(Σωστό! ✔️)</span>
-              </span>
-            </div>
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            
+            {/* ΚΑΡΤΑ 1 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΠΑΡΑΓΟΝΤΑΣ ΓΙΝΟΜΕΝΟΥ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">α · x ＝ β</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  1. Παράγοντας Γινομένου
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Στην εξίσωση α · x ＝ β (ή αx ＝ β), το α και το x είναι οι <strong>παράγοντες</strong> και το β είναι το <strong>γινόμενο</strong>.
+                </p>
 
-        {/* 4. INTERACTIVE PLAYGROUND */}
-        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-5">
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>3 · x ＝ 12 (3 όμοια x ζυγίζουν 12)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+                💡 Όταν ένας αριθμός γράφεται δίπλα στο x (π.χ. 3x), εννοείται πάντα πολλαπλασιασμός (3 · x)!
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 2 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΜΕΘΟΔΟΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">x ＝ β : α</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  2. Ο Κανόνας Επίλυσης
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Για να βρούμε τον άγνωστο παράγοντα, <strong>διαιρούμε το γινόμενο με τον γνωστό παράγοντα</strong> (αντίστροφη πράξη):
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>x ＝ 12 : 3 ＝ <strong className="text-indigo-700">4</strong></p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
+                ⚡ <strong>Χρυσός Κανόνας:</strong> Στον πολλαπλασιασμό α · x ＝ β, ο άγνωστος x βρίσκεται πάντα με <strong>διαίρεση</strong>!
+              </div>
+            </article>
+
+            {/* ΚΑΡΤΑ 3 */}
+            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                    ΕΛΕΓΧΟΣ
+                  </span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">Αντικατάσταση</span>
+                </div>
+                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                  3. Επαλήθευση
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                  Ελέγχουμε αν το αποτέλεσμα επιβεβαιώνει την αρχική ισότητα: 3 · 4 ＝ 12! Η πράξη είναι σωστή.
+                </p>
+
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
+                  <p>3 · 4 ＝ 12 (Σωστό! ✔️)</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
+                🎯 Αν πολλαπλασιάσουμε τον αριθμό που βρήκαμε με τον συντελεστή και βγει το γινόμενο, η λύση είναι απόλυτα σωστή!
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ */}
+        <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🕹️</span> Διαδραστικό Εργαστήριο: Η Ζυγαριά του Πολλαπλασιασμού
-              </h2>
-              <p className="text-gray-500 text-xs sm:text-sm mt-1">
-                Ρύθμισε τον συντελεστή α και το γινόμενο β (εξασφαλίζοντας ακριβή διαίρεση) και δες πώς οι μπάλες μοιράζονται ισόποσα στα α κουτιά!
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
+                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
+                Η Ζυγαριά του Πολλαπλασιασμού &amp; Ισοκατανομή Μπαλών
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-1">
+                Ρύθμισε τον συντελεστή α και το γινόμενο β και δες πώς οι μπάλες μοιράζονται ισόποσα στα α κουτιά!
               </p>
             </div>
 
@@ -257,35 +304,35 @@ export default function GnostosEpiAgnostosPage() {
               <button
                 type="button"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentStep(1); }}
-                className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
+                className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all touch-manipulation active:scale-95 ${
                   currentStep === 1
                     ? 'bg-blue-600 text-white shadow-md scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                1️⃣ {activeA} Κουτιά x ＝ {activeB}
+                1️⃣ {toCleanUppercase(`${activeA} Κουτιά x ＝ ${activeB}`)}
               </button>
               <button
                 type="button"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentStep(2); }}
-                className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
+                className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all touch-manipulation active:scale-95 ${
                   currentStep === 2
                     ? 'bg-amber-500 text-white shadow-md scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                2️⃣ Χωρισμός σε {activeA} Ομάδες
+                2️⃣ {toCleanUppercase(`Χωρισμός σε ${activeA} Ομάδες`)}
               </button>
               <button
                 type="button"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentStep(3); }}
-                className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
+                className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all touch-manipulation active:scale-95 ${
                   currentStep === 3
                     ? 'bg-emerald-600 text-white shadow-md scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                3️⃣ 1 Κουτί x ＝ {exactSolution}
+                3️⃣ {toCleanUppercase(`1 Κουτί x ＝ ${exactSolution}`)}
               </button>
             </div>
           </div>
@@ -299,59 +346,59 @@ export default function GnostosEpiAgnostosPage() {
                 
                 {/* ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ */}
                 <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                  <span className="text-xs font-black text-slate-800 tracking-wider block">
-                    ⚙️ Ρύθμιση Εξίσωσης: α · x ＝ β
+                  <span className="text-xs font-black text-slate-800 tracking-wider block uppercase">
+                    ⚙️ ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ: α · x ＝ β
                   </span>
 
                   <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-center">
                     {/* ΠΛΗΘΟΣ ΚΟΥΤΙΩΝ (a) */}
                     <div className="flex flex-col justify-between space-y-1.5">
-                      <span className="text-[10px] font-bold text-slate-500 h-8 flex items-center justify-center text-center leading-tight">
-                        Κουτιά (α)
+                      <span className="text-[10px] font-bold text-slate-500 h-8 flex items-center justify-center text-center leading-tight uppercase">
+                        ΚΟΥΤΙΑ (α)
                       </span>
                       <div className="grid grid-cols-[36px_1fr_36px] items-center bg-slate-50 p-1 rounded-xl border border-slate-200 h-11">
                         <button 
                           type="button" 
                           disabled={activeA <= 2}
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustA(-1); }} 
-                          className="w-9 h-9 font-black text-blue-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg"
+                          className="w-9 h-9 font-black text-blue-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg touch-manipulation"
                         >
-                          -
+                          －
                         </button>
                         <span className="w-full text-center font-mono font-black text-base text-blue-600">{activeA}</span>
                         <button 
                           type="button" 
                           disabled={activeA >= 6}
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustA(1); }} 
-                          className="w-9 h-9 font-black text-blue-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg"
+                          className="w-9 h-9 font-black text-blue-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg touch-manipulation"
                         >
-                          +
+                          ＋
                         </button>
                       </div>
                     </div>
 
                     {/* ΣΥΝΟΛΙΚΟ ΓΙΝΟΜΕΝΟ (b) */}
                     <div className="flex flex-col justify-between space-y-1.5">
-                      <span className="text-[10px] font-bold text-slate-500 h-8 flex items-center justify-center text-center leading-tight">
-                        Γινόμενο (β)
+                      <span className="text-[10px] font-bold text-slate-500 h-8 flex items-center justify-center text-center leading-tight uppercase">
+                        ΓΙΝΟΜΕΝΟ (β)
                       </span>
                       <div className="grid grid-cols-[36px_1fr_36px] items-center bg-slate-50 p-1 rounded-xl border border-slate-200 h-11">
                         <button 
                           type="button" 
                           disabled={activeB <= activeA}
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustB(-1); }} 
-                          className="w-9 h-9 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg"
+                          className="w-9 h-9 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg touch-manipulation"
                         >
-                          -
+                          －
                         </button>
                         <span className="w-full text-center font-mono font-black text-base text-emerald-600">{activeB}</span>
                         <button 
                           type="button" 
                           disabled={activeB >= getMaxBForA(activeA)}
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); adjustB(1); }} 
-                          className="w-9 h-9 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg"
+                          className="w-9 h-9 font-black text-emerald-600 hover:bg-slate-200 disabled:opacity-25 rounded-lg active:scale-95 transition flex items-center justify-center text-lg touch-manipulation"
                         >
-                          +
+                          ＋
                         </button>
                       </div>
                     </div>
@@ -365,7 +412,7 @@ export default function GnostosEpiAgnostosPage() {
                 {/* PRESET BUTTONS */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    Ετοιμα Παραδειγματα:
+                    ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
                   </span>
                   <div className="grid grid-cols-1 gap-2">
                     {PRESETS.map((p, idx) => (
@@ -373,7 +420,7 @@ export default function GnostosEpiAgnostosPage() {
                         key={idx}
                         type="button"
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEquation(p.a, p.b); }}
-                        className={`py-2 px-3 rounded-xl border font-mono font-black text-xs transition-all text-left flex justify-between items-center ${
+                        className={`py-2 px-3 rounded-xl border font-mono font-black text-xs transition-all text-left flex justify-between items-center touch-manipulation active:scale-95 ${
                           activeA === p.a && activeB === p.b
                             ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                             : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
@@ -389,7 +436,7 @@ export default function GnostosEpiAgnostosPage() {
                 {/* ΕΠΕΞΗΓΗΣΗ ΑΝΑΛΟΓΑ ΜΕ ΤΟ ΕΝΕΡΓΟ ΒΗΜΑ */}
                 <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
                   <span className="font-black text-slate-900 uppercase block text-[11px]">
-                    📖 Τι συμβαινει στο Βημα {currentStep}:
+                    📖 ΤΙ ΣΥΜΒΑΙΝΕΙ ΣΤΟ ΒΗΜΑ {currentStep}:
                   </span>
                   {currentStep === 1 && (
                     <p>
@@ -410,7 +457,7 @@ export default function GnostosEpiAgnostosPage() {
 
               </div>
 
-              <div className="text-[11px] text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
+              <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
                 💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο παράγοντα x, κάνουμε πάντα <strong>διαίρεση: x ＝ β : α</strong>!
               </div>
             </div>
@@ -435,14 +482,14 @@ export default function GnostosEpiAgnostosPage() {
                 </div>
               </div>
 
-              {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ 3D ΣΤΟ SVG */}
+              {/* 2. ΜΕΓΑΛΗ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ ΣΤΟ SVG */}
               <div className="space-y-3 flex-1 flex flex-col justify-center">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 px-1">
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-wider block">
-                    ⚖️ Οπτικη Ζυγαρια: Αριστερος Δισκος ({boxesToShow} · x) vs Δεξιος Δισκος ({currentStep === 3 ? exactSolution : activeB})
+                  <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
+                    ⚖️ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ: ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ ({boxesToShow} · x) VS ΔΕΞΙΟΣ ΔΙΣΚΟΣ ({currentStep === 3 ? exactSolution : activeB})
                   </span>
                   <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                    ✔️ Τέλεια Ισορροπία
+                    ✔ Τέλεια Ισορροπία
                   </span>
                 </div>
 
@@ -457,7 +504,6 @@ export default function GnostosEpiAgnostosPage() {
                         <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#f59e0b" floodOpacity="0.6" />
                       </filter>
 
-                      {/* Μεταλλική διαβάθμιση δοκού & κολόνας */}
                       <linearGradient id="metalBeam" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#475569" />
                         <stop offset="40%" stopColor="#1e293b" />
@@ -469,7 +515,6 @@ export default function GnostosEpiAgnostosPage() {
                         <stop offset="100%" stopColor="#1e293b" />
                       </linearGradient>
 
-                      {/* Διαβαθμίσεις Δίσκων */}
                       <linearGradient id="leftDishGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#3b82f6" />
                         <stop offset="100%" stopColor="#1d4ed8" />
@@ -479,7 +524,6 @@ export default function GnostosEpiAgnostosPage() {
                         <stop offset="100%" stopColor="#047857" />
                       </linearGradient>
 
-                      {/* 3D Gradients Σφαιρών ανά ομάδα */}
                       <radialGradient id="ballGold" cx="35%" cy="35%" r="65%">
                         <stop offset="0%" stopColor="#fef08a" />
                         <stop offset="40%" stopColor="#f59e0b" />
@@ -564,8 +608,8 @@ export default function GnostosEpiAgnostosPage() {
                           filter="url(#glowGold)"
                         />
                         <rect x="108" y="188" width="22" height="22" rx="6" fill="#f59e0b" />
-                        <text x="119" y="204" fill="#ffffff" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
-                        <text x="156" y="202" fill="#92400e" fontSize="11" fontWeight="900">1 ΚΟΥΤΙ x</text>
+                        <text x={119} y="204" fill="#ffffff" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
+                        <text x={156} y="202" fill="#92400e" fontSize="11" fontWeight="900">1 ΚΟΥΤΙ x</text>
 
                         {insideSingleBoxBalls.map((pos) => (
                           <g key={pos.id} filter="url(#glowGold)">
@@ -582,7 +626,7 @@ export default function GnostosEpiAgnostosPage() {
                       if (currentStep === 3 && !ball.isKeptInStep3) return null;
 
                       const colTheme = currentStep === 1 
-                        ? { fill: "url(#ballGreen)", stroke: "#047857" } 
+                        ? { fill: 'url(#ballGreen)', stroke: '#047857' } 
                         : GROUP_COLORS[ball.group % GROUP_COLORS.length];
 
                       return (
@@ -605,7 +649,7 @@ export default function GnostosEpiAgnostosPage() {
 
                     {/* Ετικέτες κάτω από τους δίσκους */}
                     <text x="150" y="325" fill="#1e3a8a" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                      {currentStep === 3 ? "1 Μόνο Κουτί x" : `${activeA} Όμοια Κουτιά x`}
+                      {currentStep === 3 ? '1 Μόνο Κουτί x' : `${activeA} Όμοια Κουτιά x`}
                     </text>
 
                     <text x="610" y="325" fill="#064e3b" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
@@ -622,7 +666,7 @@ export default function GnostosEpiAgnostosPage() {
                     type="button"
                     disabled={currentStep === 1}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentStep(prev => prev - 1); }}
-                    className="px-3.5 sm:px-4 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 text-xs font-black rounded-xl border border-slate-200 transition"
+                    className="px-3.5 sm:px-4 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 text-xs font-black rounded-xl border border-slate-200 transition touch-manipulation active:scale-95"
                   >
                     ⬅️ Προηγούμενο
                   </button>
@@ -635,7 +679,7 @@ export default function GnostosEpiAgnostosPage() {
                     type="button"
                     disabled={currentStep === 3}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentStep(prev => prev + 1); }}
-                    className="px-4 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-black rounded-xl shadow-md transition transform active:scale-95"
+                    className="px-4 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-black rounded-xl shadow-md transition transform active:scale-95 touch-manipulation"
                   >
                     Επόμενο ➡️
                   </button>
@@ -644,29 +688,33 @@ export default function GnostosEpiAgnostosPage() {
 
               {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-3.5 sm:p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                💡 Συμπέρασμα: Στην εξίσωση <strong>{activeA} · x ＝ {activeB}</strong>, ο άγνωστος παράγοντας ισούται με <strong>x ＝ {activeB} : {activeA} ＝ {exactSolution}</strong> (όσες μπάλες περιέχει το ένα κουτί)!
+                💡 ΣΥΜΠΕΡΑΣΜΑ: Στην εξίσωση <strong>{activeA} · x ＝ {activeB}</strong>, ο άγνωστος παράγοντας ισούται με <strong>x ＝ {activeB} : {activeA} ＝ {exactSolution}</strong> (όσες μπάλες περιέχει το ένα κουτί)!
               </div>
 
             </div>
 
           </div>
-        </div>
+        </section>
 
-        {/* 5. BOTTOM CALLOUT BANNER */}
-        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-gray-800 text-sm md:text-base">
-              Έμαθες πώς λύνουμε μια εξίσωση με άγνωστο παράγοντα γινομένου; Δοκίμασε τις διαδραστικές ασκήσεις!
+        {/* 4. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              Ώρα για Εξάσκηση στον Άγνωστο Παράγοντα Γινομένου!
+            </h3>
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              Έμαθες πώς λύνουμε μια εξίσωση με άγνωστο παράγοντα γινομένου; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
             </p>
           </div>
+
           <Link
             href="/st-dimotikou/36-gnostos-epi-agnostos-ask"
-            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            Ξεκίνα τις Ασκήσεις ➔
+            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </section>
 
       </div>
     </Layout>
