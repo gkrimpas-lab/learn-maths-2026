@@ -43,13 +43,13 @@ export default function GeometrikaMotibaTheoryPage() {
   const paletteColors = useMemo(() => {
     switch (activePalette) {
       case 'blue':
-        return { c1: '#1e3a8a', c2: '#60a5fa', c3: '#bfdbfe', bg: '#eff6ff' };
+        return { c1: '#1e3a8a', c2: '#60a5fa', c3: '#bfdbfe', bg: '#dbeafe' };
       case 'emerald':
-        return { c1: '#064e3b', c2: '#34d399', c3: '#a7f3d0', bg: '#f0fdf4' };
+        return { c1: '#064e3b', c2: '#34d399', c3: '#a7f3d0', bg: '#d1fae5' };
       case 'rose':
-        return { c1: '#831843', c2: '#fb7185', c3: '#fecdd3', bg: '#fff1f2' };
+        return { c1: '#831843', c2: '#fb7185', c3: '#fecdd3', bg: '#ffe4e6' };
       default: // gold
-        return { c1: '#854d0e', c2: '#fbbf24', c3: '#fef08a', bg: '#fffbeb' };
+        return { c1: '#78350f', c2: '#f59e0b', c3: '#fde68a', bg: '#fef3c7' };
     }
   }, [activePalette]);
 
@@ -498,46 +498,45 @@ export default function GeometrikaMotibaTheoryPage() {
               </div>
             </div>
 
-            {/* Πλαίσιο SVG Πλακόστρωσης - Απόλυτη Seamless Γεωμετρία */}
+            {/* Πλαίσιο SVG Πλακόστρωσης - Πλήρως απαλλαγμένο από ασυνέχειες και λευκά κενά */}
             <div className="w-full h-56 sm:h-80 rounded-3xl border border-slate-300 shadow-inner overflow-hidden flex items-center justify-center relative transition-colors duration-500" style={{ backgroundColor: paletteColors.bg }}>
               <svg width="100%" height="100%" className="w-full h-full">
                 <defs>
-                  {/* Pattern 1: Κηρήθρα (Εξάγωνα) - Ενιαίο γέμισμα χωρίς κενά και χωρίς διχρωμίες */}
-                  <pattern id="pat-honeycomb" width="60" height="103.923" patternUnits="userSpaceOnUse">
-                    <rect width="60" height="103.923" fill={paletteColors.c2} fillOpacity="0.85" />
+                  {/* Pattern 1: Κηρήθρα (Εξάγωνα) - Ενιαίο συμπαγές χρώμα με wireframe διακλάδωσης (άνευ ραφών) */}
+                  <pattern id="pat-honeycomb" width="56" height="96.995" patternUnits="userSpaceOnUse">
+                    <rect width="56" height="96.995" fill={paletteColors.bg} />
                     <path
-                      d="M0,17.32 L30,0 L60,17.32 L60,51.96 L30,69.28 L0,51.96 Z
-                         M0,69.28 L30,86.6 L30,121.24 L0,103.92 Z
-                         M60,69.28 L30,86.6
-                         M60,103.92 L30,121.24"
-                      fill="none"
+                      d="M0,16.166 L28,0 L56,16.166 L56,48.497 L28,64.663 L0,48.497 Z
+                         M28,64.663 L28,96.995
+                         M0,48.497 L0,80.829 L28,96.995 L56,80.829 L56,48.497
+                         M0,16.166 L0,-16.166 L28,0
+                         M56,16.166 L56,-16.166 L28,0"
+                      fill={paletteColors.bg}
                       stroke={paletteColors.c1}
                       strokeWidth="2.5"
+                      strokeLinecap="round"
                       strokeLinejoin="round"
                     />
                   </pattern>
 
                   {/* Pattern 2: Ισομετρικοί Κύβοι 3D (Tessellation 3D Illusion) */}
                   <pattern id="pat-cubes" width="60" height="103.923" patternUnits="userSpaceOnUse">
-                    {/* Top Group */}
-                    <polygon points="30,0 60,17.32 30,34.64 0,17.32" fill={paletteColors.c3} stroke={paletteColors.c1} strokeWidth="1" />
-                    <polygon points="0,17.32 30,34.64 30,69.28 0,51.96" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1" />
-                    <polygon points="60,17.32 30,34.64 30,69.28 60,51.96" fill={paletteColors.c1} stroke={paletteColors.c1} strokeWidth="1" />
+                    <polygon points="30,0 60,17.32 30,34.64 0,17.32" fill={paletteColors.c3} stroke={paletteColors.c1} strokeWidth="1" strokeLinejoin="round" />
+                    <polygon points="0,17.32 30,34.64 30,69.28 0,51.96" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1" strokeLinejoin="round" />
+                    <polygon points="60,17.32 30,34.64 30,69.28 60,51.96" fill={paletteColors.c1} stroke={paletteColors.c1} strokeWidth="1" strokeLinejoin="round" />
                     
-                    {/* Bottom Left Group */}
-                    <polygon points="0,51.96 30,69.28 0,86.6 -30,69.28" fill={paletteColors.c3} stroke={paletteColors.c1} strokeWidth="1" />
-                    <polygon points="-30,69.28 0,86.6 0,121.24 -30,103.92" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1" />
-                    <polygon points="30,69.28 0,86.6 0,121.24 30,103.92" fill={paletteColors.c1} stroke={paletteColors.c1} strokeWidth="1" />
+                    <polygon points="0,51.96 30,69.28 0,86.6 -30,69.28" fill={paletteColors.c3} stroke={paletteColors.c1} strokeWidth="1" strokeLinejoin="round" />
+                    <polygon points="-30,69.28 0,86.6 0,121.24 -30,103.92" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1" strokeLinejoin="round" />
+                    <polygon points="30,69.28 0,86.6 0,121.24 30,103.92" fill={paletteColors.c1} stroke={paletteColors.c1} strokeWidth="1" strokeLinejoin="round" />
 
-                    {/* Bottom Right Group */}
-                    <polygon points="60,51.96 90,69.28 60,86.6 30,69.28" fill={paletteColors.c3} stroke={paletteColors.c1} strokeWidth="1" />
-                    <polygon points="30,69.28 60,86.6 60,121.24 30,103.92" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1" />
-                    <polygon points="90,69.28 60,86.6 60,121.24 90,103.92" fill={paletteColors.c1} stroke={paletteColors.c1} strokeWidth="1" />
+                    <polygon points="60,51.96 90,69.28 60,86.6 30,69.28" fill={paletteColors.c3} stroke={paletteColors.c1} strokeWidth="1" strokeLinejoin="round" />
+                    <polygon points="30,69.28 60,86.6 60,121.24 30,103.92" fill={paletteColors.c2} stroke={paletteColors.c1} strokeWidth="1" strokeLinejoin="round" />
+                    <polygon points="90,69.28 60,86.6 60,121.24 90,103.92" fill={paletteColors.c1} stroke={paletteColors.c1} strokeWidth="1" strokeLinejoin="round" />
                   </pattern>
 
                   {/* Pattern 3: Ζιγκ-Ζαγκ (Chevron) */}
                   <pattern id="pat-chevron" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <rect width="40" height="40" fill={paletteColors.c3} />
+                    <rect width="40" height="40" fill={paletteColors.bg} />
                     <polygon points="0,0 20,20 40,0 40,20 20,40 0,20" fill={paletteColors.c2} />
                     <polygon points="0,20 20,40 40,20 40,40 20,60 0,40" fill={paletteColors.c1} />
                   </pattern>
