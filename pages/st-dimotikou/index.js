@@ -65,7 +65,8 @@ export default function STDimotikouMenu() {
     { id: '58-mesos-oros', label: '🥧 58. Μέσος Όρος', href: '/st-dimotikou/58-mesos-oros' },
     { id: '59-mikos', label: '🥧 59. Μέτρηση Μήκους', href: '/st-dimotikou/59-mikos' },
     { id: '60-baros', label: '🥧 60. Μέτρηση Βάρους', href: '/st-dimotikou/60-baros' },
-    { id: '61-xronos', label: '🥧 61. Μέτρηση Χρόνου', href: '/st-dimotikou/61-xronos' }
+    { id: '61-xronos', label: '🥧 61. Μέτρηση Χρόνου', href: '/st-dimotikou/61-xronos' },
+    { id: '62-xrimata', label: '🥧 62. Χρήματα - Ευρώ', href: '/st-dimotikou/62-xrimata' }
 ];
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
