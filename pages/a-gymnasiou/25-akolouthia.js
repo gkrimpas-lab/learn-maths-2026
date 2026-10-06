@@ -132,8 +132,8 @@ export default function AkolouthiaTheoria() {
                 </p>
                 <ul className="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-slate-600 pt-2">
                   <li>Το <strong>ν</strong> συμβολίζει τη <strong>θέση</strong> (1ος, 2ος, 3ος, ...).</li>
-                  <li>Είναι πάντοτε ένας <strong>φυσικός αριθμός μεγαλύτερος του μηδενός</strong> ($\nu \ge 1$).</li>
-                  <li>Για τους άρτιους αριθμούς, ο τύπος είναι <strong>2 · ν</strong>. Αν $\nu=100$, ο 100ός όρος είναι $2 \cdot 100 = 200$.</li>
+                  <li>Είναι πάντοτε ένας <strong>φυσικός αριθμός μεγαλύτερος του μηδενός</strong> (ν ≥ 1).</li>
+                  <li>Για τους άρτιους αριθμούς, ο τύπος είναι <strong>2 · ν</strong>. Αν ν ＝ 100, ο 100ός όρος είναι 2 · 100 ＝ 200.</li>
                 </ul>
               </div>
             </div>
@@ -260,9 +260,9 @@ export default function AkolouthiaTheoria() {
                 Σε ένα εστιατόριο, ένα ορθογώνιο τραπέζι χωράει <strong>6 άτομα</strong> (από 2 στις μεγάλες πλευρές και από 1 στις μικρές). Αν ενώσουμε 2 τραπέζια στη σειρά, χάνουμε τις ενδιάμεσες θέσεις.
               </p>
               <ul className="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-slate-600">
-                <li>1 τραπέζι ($\nu=1$): 6 θέσεις</li>
-                <li>2 τραπέζια ($\nu=2$): 10 θέσεις</li>
-                <li>3 τραπέζια ($\nu=3$): 14 θέσεις</li>
+                <li>1 τραπέζι (ν ＝ 1): 6 θέσεις</li>
+                <li>2 τραπέζια (ν ＝ 2): 10 θέσεις</li>
+                <li>3 τραπέζια (ν ＝ 3): 14 θέσεις</li>
               </ul>
               <div className="mt-3 p-3 bg-white rounded-xl border border-amber-200 font-mono text-center font-bold text-amber-800">
                 Τύπος (ν-οστός όρος): 4 · ν ＋ 2
@@ -278,15 +278,15 @@ export default function AkolouthiaTheoria() {
                 Ο Γιάννης έχει ήδη <strong>15 €</strong> στον κουμπαρά του. Αποφασίζει κάθε εβδομάδα να αποταμιεύει <strong>5 €</strong>.
               </p>
               <ul className="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-slate-600">
-                <li>Μετά από 1 εβδομάδα ($\nu=1$): 20 €</li>
-                <li>Μετά από 2 εβδομάδες ($\nu=2$): 25 €</li>
-                <li>Μετά από 3 εβδομάδες ($\nu=3$): 30 €</li>
+                <li>Μετά από 1 εβδομάδα (ν ＝ 1): 20 €</li>
+                <li>Μετά από 2 εβδομάδες (ν ＝ 2): 25 €</li>
+                <li>Μετά από 3 εβδομάδες (ν ＝ 3): 30 €</li>
               </ul>
               <div className="mt-3 p-3 bg-white rounded-xl border border-emerald-200 font-mono text-center font-bold text-emerald-800">
                 Τύπος (ν-οστός όρος): 5 · ν ＋ 15
               </div>
               <p className="text-xs text-slate-600 pt-2">
-                <strong>Εξήγηση:</strong> Το 15 είναι το αρχικό ποσό (σταθερό). Για κάθε εβδομάδα $\nu$, προσθέτουμε 5 ευρώ (ο ρυθμός αύξησης).
+                <strong>Εξήγηση:</strong> Το 15 είναι το αρχικό ποσό (σταθερό). Για κάθε εβδομάδα ν, προσθέτουμε 5 ευρώ (ο ρυθμός αύξησης).
               </p>
             </div>
           </div>
