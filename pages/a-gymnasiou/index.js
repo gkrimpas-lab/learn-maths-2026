@@ -198,6 +198,14 @@ const CHAPTERS = [
     badge: 'ΕΠΑΝΑΛΗΨΗ 3',
     active: false,
   },
+  {
+    id: '25',
+    slug: '25-akolouthia',
+    title: 'Ακολουθία - Κανονικότητα',
+    desc: 'Αριθμητικές - Γεωμετρικές Ακολουθίες - Κανονικότητες',
+    badge: 'ΚΕΦΑΛΑΙΟ 22',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
