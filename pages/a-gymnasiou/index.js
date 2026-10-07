@@ -206,6 +206,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 22',
     active: true,
   },
+  {
+    id: '26',
+    slug: '26-akolouthia-view',
+    title: 'Αναπαράσταση μιας Ακολουθίας - Κανονικότητας',
+    desc: '΅Εικόνες - Γεωμετρικά Σχήματα - Πίνακες Τιμών',
+    badge: 'ΚΕΦΑΛΑΙΟ 23',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
