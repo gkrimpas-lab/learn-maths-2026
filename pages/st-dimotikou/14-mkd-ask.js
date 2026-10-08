@@ -3,22 +3,24 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαιος ακεραιος στο [min, max]
+// Τυχαίος ακέραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Ανακατεμα πινακα
+// Ανακάτεμα πίνακα
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -27,13 +29,13 @@ function shuffle(array) {
   return arr;
 }
 
-// Μορφοποιηση αριθμου με τελειες χιλιαδων
+// Μορφοποίηση αριθμού με τελείες χιλιάδων
 function formatNumber(num) {
   if (num === '' || isNaN(num)) return '0';
   return Number(num).toLocaleString('el-GR');
 }
 
-// Ευρεση ολων των διαιρετων
+// Εύρεση όλων των διαιρετών
 function getDivisors(num) {
   const divs = [];
   for (let i = 1; i <= num; i++) {
@@ -42,7 +44,7 @@ function getDivisors(num) {
   return divs;
 }
 
-// Υπολογισμος Μ.Κ.Δ. με τον αλγοριθμο του Ευκλειδη
+// Υπολογισμός Μ.Κ.Δ. με τον αλγόριθμο του Ευκλείδη
 function getGCD(a, b) {
   let x = Math.abs(a);
   let y = Math.abs(b);
@@ -54,28 +56,28 @@ function getGCD(a, b) {
   return x;
 }
 
-// Δεξαμενη θεματικων σεναριων καθημερινοτητας με πληρη γραμματικη και συντακτικη ακριβεια
+// Δεξαμενή θεματικών σεναρίων καθημερινότητας
 const REAL_WORLD_PRESETS = [
   {
     profession: 'Ένας μανάβης',
     item1: 'μήλα',
     item2: 'πορτοκάλια',
     groupName: 'καλάθια',
-    questionText: 'Πόσα πανομοιότυπα καλάθια μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα;'
+    questionText: 'Πόσα πανομοιότυπα καλάθια μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα φρούτο;'
   },
   {
     profession: 'Ένας βιβλιοπώλης',
     item1: 'τετράδια',
     item2: 'μολύβια',
     groupName: 'σετ δώρων',
-    questionText: 'Πόσα πανομοιότυπα σετ δώρων μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα;'
+    questionText: 'Πόσα πανομοιότυπα σετ δώρων μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα είδος;'
   },
   {
     profession: 'Ένας ανθοπώλης',
     item1: 'τριαντάφυλλα',
     item2: 'μαργαρίτες',
     groupName: 'ανθοδέσμες',
-    questionText: 'Πόσες πανομοιότυπες ανθοδέσμες μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα;'
+    questionText: 'Πόσες πανομοιότυπες ανθοδέσμες μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα λουλούδι;'
   },
   {
     profession: 'Ένας προπονητής',
@@ -89,11 +91,11 @@ const REAL_WORLD_PRESETS = [
     item1: 'σοκολατάκια',
     item2: 'καραμέλες',
     groupName: 'πακέτα',
-    questionText: 'Πόσα πανομοιότυπα πακέτα μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα;'
+    questionText: 'Πόσα πανομοιότυπα πακέτα μπορεί να φτιάξει το πολύ χωρίς να περισσέψει κανένα γλύκισμα;'
   }
 ];
 
-// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 9 (Input)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_mkd_std_1',
@@ -199,7 +201,7 @@ const STANDARD_PROBLEMS_POOL = [
   }
 ];
 
-// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_mkd_hard_1',
@@ -247,7 +249,7 @@ const HARD_PROBLEMS_POOL = [
       }));
 
       return {
-        title: 'ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΙΣΟΤΙΜΟΥ ΜΟΙΡΑΣΜΑΤΟΣ',
+        title: 'ΠΑΝΟΜΟΙΟΤΥΠΕΣ ΣΥΣΚΕΥΑΣΙΕΣ',
         instruction: 'Επιλέξτε τον μέγιστο αριθμό συσκευασιών:',
         text: `Ένα κυλικείο έψησε ${cheesePies} τυροπιτάκια και ${spinachPies} σπανακοπιτάκια. Θέλει να τα μοιράσει σε πανομοιότυπες συσκευασίες χωρίς να περισσέψει κανένα. Πόσες τέτοιες συσκευασίες μπορεί να ετοιμάσει το πολύ;`,
         tableData: { col1: 'Προϊόντα', col2: 'Μέγιστες Συσκευασίες', r1: [`${cheesePies} τυρ. & ${spinachPies} σπαν.`, 'Μ.Κ.Δ.(40, 60)'], r2: ['Υπολογισμός', `${correctStr}`] },
@@ -260,13 +262,14 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'p_mkd_hard_3',
     generate: () => {
-      const notebooks = 45;
-      const pens = 75;
-      const maxPacks = getGCD(notebooks, pens);
-      const correctStr = `${maxPacks} πακέτα`;
-      const fake1 = `${maxPacks + 5} πακέτα`;
-      const fake2 = `${Math.max(5, maxPacks - 5)} πακέτα`;
-      const fake3 = `${maxPacks + 10} πακέτα`;
+      const candies = 72;
+      const bagsPossible = [6, 8, 9, 12];
+      const bag = bagsPossible[randInt(0, bagsPossible.length - 1)];
+      const perBag = candies / bag;
+      const correctStr = `${perBag} καραμέλες`;
+      const fake1 = `${perBag + 3} καραμέλες`;
+      const fake2 = `${Math.max(1, perBag - 2)} καραμέλες`;
+      const fake3 = `${perBag + 5} καραμέλες`;
 
       const rawOptions = [correctStr, fake1, fake2, fake3];
       const options = shuffle([...new Set(rawOptions)]).map((text) => ({
@@ -275,26 +278,27 @@ const HARD_PROBLEMS_POOL = [
       }));
 
       return {
-        title: 'ΔΗΜΙΟΥΡΓΙΑ ΠΑΚΕΤΩΝ ΓΡΑΦΙΚΗΣ ΥΛΗΣ',
-        instruction: 'Επιλέξτε το μέγιστο πλήθος πακέτων:',
-        text: `Ένα βιβλιοπωλείο διαθέτει ${notebooks} τετράδια και ${pens} στυλό. Θέλει να φτιάξει όμοια πακέτα γραφικής ύλης για μαθητές. Πόσα τέτοια πακέτα μπορεί να δημιουργήσει το μέγιστο;`,
-        tableData: { col1: 'Υλικά', col2: 'Μέγιστα Πακέτα', r1: [`${notebooks} τετράδια & ${pens} στυλό`, 'Μ.Κ.Δ.(45, 75)'], r2: ['Υπολογισμός', `${correctStr}`] },
+        title: 'ΚΑΤΑΝΟΜΗ ΚΑΡΑΜΕΛΩΝ ΣΕ ΣΑΚΟΥΛΑΚΙΑ',
+        instruction: 'Επιλέξτε πόσες καραμέλες θα περιέχει κάθε σακουλάκι:',
+        text: `Ένας ζαχαροπλάστης έχει ${candies} καραμέλες και θέλει να φτιάξει ${bag} ίδια σακουλάκια. Πόσες καραμέλες πρέπει να βάλει σε κάθε σακουλάκι για να μη μείνει καμία;`,
+        tableData: { col1: 'Σύνολο Καραμελών', col2: 'Σακουλάκια', r1: [`${candies} καραμέλες`, `${bag} σακουλάκια`], r2: ['Διαίρεση', `${correctStr}`] },
         options,
         correctText: correctStr,
-        explanation: `Ο μέγιστος αριθμός πακέτων ισούται με τον Μ.Κ.Δ. των 45 και 75: Μ.Κ.Δ.(45, 75) ＝ ${correctStr}.`
+        explanation: `Το ${bag} είναι διαιρέτης του ${candies}: ${candies} : ${bag} ＝ ${correctStr}.`
       };
     }
   },
   {
     id: 'p_mkd_hard_4',
     generate: () => {
-      const roses = 32;
-      const lilies = 48;
-      const maxBouquets = getGCD(roses, lilies);
-      const correctStr = `${maxBouquets} ανθοδέσμες`;
-      const fake1 = `${maxBouquets + 4} ανθοδέσμες`;
-      const fake2 = `${Math.max(4, maxBouquets - 4)} ανθοδέσμες`;
-      const fake3 = `${maxBouquets * 2} ανθοδέσμες`;
+      const books = 84;
+      const shelvesPossible = [4, 6, 7, 12];
+      const shelf = shelvesPossible[randInt(0, shelvesPossible.length - 1)];
+      const perShelf = books / shelf;
+      const correctStr = `${perShelf} βιβλία`;
+      const fake1 = `${perShelf + 2} βιβλία`;
+      const fake2 = `${Math.max(1, perShelf - 3)} βιβλία`;
+      const fake3 = `${perShelf + 5} βιβλία`;
 
       const rawOptions = [correctStr, fake1, fake2, fake3];
       const options = shuffle([...new Set(rawOptions)]).map((text) => ({
@@ -303,26 +307,27 @@ const HARD_PROBLEMS_POOL = [
       }));
 
       return {
-        title: 'ΣΥΝΘΕΣΗ ΟΜΟΙΩΝ ΑΝΘΟΔΕΣΜΩΝ',
-        instruction: 'Επιλέξτε τον μέγιστο αριθμό ανθοδεσμών:',
-        text: `Ένα ανθοπωλείο έχει ${roses} τριαντάφυλλα και ${lilies} κρίνα. Θέλει να φτιάξει πανομοιότυπες ανθοδέσμες χρησιμοποιώντας όλα τα λουλούδια. Πόσες ανθοδέσμες μπορεί να φτιάξει το πολύ;`,
-        tableData: { col1: 'Λουλούδια', col2: 'Μέγιστες Ανθοδέσμες', r1: [`${roses} τριαντάφυλλα & ${lilies} κρίνα`, 'Μ.Κ.Δ.(32, 48)'], r2: ['Υπολογισμός', `${correctStr}`] },
+        title: 'ΚΑΤΑΝΟΜΗ ΒΙΒΛΙΩΝ ΣΕ ΡΑΦΙΑ',
+        instruction: 'Επιλέξτε πόσα βιβλία θα έχει κάθε ράφι:',
+        text: `Σε μια βιβλιοθήκη υπάρχουν ${books} βιβλία και θέλουμε να τα τοποθετήσουμε ισόποσα σε ${shelf} ράφια. Πόσα βιβλία θα έχει κάθε ράφι χωρίς να περισσέψει κανένα;`,
+        tableData: { col1: 'Σύνολο Βιβλίων', col2: 'Ράφια', r1: [`${books} βιβλία`, `${shelf} ράφια`], r2: ['Διαίρεση', `${correctStr}`] },
         options,
         correctText: correctStr,
-        explanation: `Βρίσκουμε τον Μ.Κ.Δ. των 32 και 48: Μ.Κ.Δ.(32, 48) ＝ ${correctStr}.`
+        explanation: `Το ${shelf} διαιρεί ακριβώς το ${books}: ${books} : ${shelf} ＝ ${correctStr}.`
       };
     }
   },
   {
     id: 'p_mkd_hard_5',
     generate: () => {
-      const ropeA = 42;
-      const ropeB = 56;
-      const maxPiece = getGCD(ropeA, ropeB);
-      const correctStr = `${maxPiece} m`;
-      const fake1 = `${maxPiece + 7} m`;
-      const fake2 = `${Math.max(2, maxPiece - 7)} m`;
-      const fake3 = `${maxPiece * 2} m`;
+      const sweets = 96;
+      const boxesPossible = [6, 8, 12, 16];
+      const box = boxesPossible[randInt(0, boxesPossible.length - 1)];
+      const perBox = sweets / box;
+      const correctStr = `${perBox} σοκολατάκια`;
+      const fake1 = `${perBox + 2} σοκολατάκια`;
+      const fake2 = `${Math.max(1, perBox - 2)} σοκολατάκια`;
+      const fake3 = `${perBox + 4} σοκολατάκια`;
 
       const rawOptions = [correctStr, fake1, fake2, fake3];
       const options = shuffle([...new Set(rawOptions)]).map((text) => ({
@@ -331,13 +336,13 @@ const HARD_PROBLEMS_POOL = [
       }));
 
       return {
-        title: 'ΚΑΤΑΤΜΗΣΗ ΣΧΟΙΝΙΩΝ',
-        instruction: 'Επιλέξτε το μέγιστο μήκος κομματιού σε μέτρα (m):',
-        text: `Σε μια αποθήκη υπάρχουν δύο σχοινιά μήκους ${ropeA} m και ${ropeB} m. Θέλουμε να τα κόψουμε σε ίσα κομμάτια με το μεγαλύτερο δυνατό μήκος. Πόσα μέτρα (m) θα είναι κάθε κομμάτι;`,
-        tableData: { col1: 'Μήκη Σχοινιών', col2: 'Μέγιστο Κοινό Μήκος', r1: [`${ropeA} m & ${ropeB} m`, 'Μ.Κ.Δ.(42, 56)'], r2: ['Υπολογισμός', `${correctStr}`] },
+        title: 'ΣΥΣΚΕΥΑΣΙΑ ΣΟΚΟΛΑΤΑΣ ΣΕ ΚΟΥΤΙΑ',
+        instruction: 'Επιλέξτε πόσα σοκολατάκια περιέχει κάθε κουτί:',
+        text: `Σε ένα εργαστήριο ζαχαροπλαστικής υπάρχουν ${sweets} σοκολατάκια που μοιράζονται ισόποσα σε ${box} κουτιά. Πόσα σοκολατάκια περιέχει κάθε κουτί;`,
+        tableData: { col1: 'Σύνολο', col2: 'Κουτιά', r1: [`${sweets} σοκολατάκια`, `${box} κουτιά`], r2: ['Διαίρεση', `${correctStr}`] },
         options,
         correctText: correctStr,
-        explanation: `Υπολογίζουμε τον Μ.Κ.Δ.(42, 56) ＝ ${correctStr}.`
+        explanation: `Το ${box} είναι διαιρέτης του ${sweets}: ${sweets} : ${box} ＝ ${correctStr}.`
       };
     }
   },
@@ -359,7 +364,7 @@ const HARD_PROBLEMS_POOL = [
       }));
 
       return {
-        title: 'ΠΑΡΑΣΚΕΥΗ ΚΑΛΑΘΙΩΝ ΦΡΟΥΤΩΝ',
+        title: 'ΣΥΝΘΕΣΗ ΚΑΛΑΘΙΩΝ ΦΡΟΥΤΩΝ',
         instruction: 'Επιλέξτε το μέγιστο πλήθος καλαθιών:',
         text: `Ένας παραγωγός έχει ${apples} μήλα και ${oranges} πορτοκάλια. Θέλει να ετοιμάσει πανομοιότυπα καλάθια φρούτων χωρίς να περισσέψει κανένα φρούτο. Πόσα καλάθια μπορεί να ετοιμάσει το πολύ;`,
         tableData: { col1: 'Φρούτα', col2: 'Μέγιστα Καλάθια', r1: [`${apples} μήλα & ${oranges} πορτοκάλια`, 'Μ.Κ.Δ.(54, 72)'], r2: ['Υπολογισμός', `${correctStr}`] },
@@ -371,12 +376,12 @@ const HARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// Δημιουργία των 10 δυναμικών ερωτήσεων
 function generateQuestions() {
   const qList = [];
   const shuffledPresets = shuffle(REAL_WORLD_PRESETS);
 
-  // Q1 (Input - Decimal): Μ.Κ.Δ. 2 αριθμών
+  // Q1 (Input): Μ.Κ.Δ. 2 αριθμών
   {
     const q1Pool = [
       [12, 18], [15, 20], [24, 36], [20, 30], [16, 24], [18, 27], [30, 45]
@@ -386,17 +391,17 @@ function generateQuestions() {
 
     qList.push({
       id: 1,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 1 • Μ.Κ.Δ. ΔΥΟ ΑΡΙΘΜΩΝ',
       instruction: 'Υπολογίστε τον Μέγιστο Κοινό Διαιρέτη (ακέραιος):',
-      prompt: `Υπολογίστε: Μ.Κ.Δ.(${q1A}, ${q1B});`,
+      prompt: `Υπολογίστε: Μ.Κ.Δ.(${q1A}, ${q1B})`,
       correctVal: q1GCD,
       correctStr: String(q1GCD),
-      explanation: `Οι κοινοί διαιρέτες των ${q1A} και ${q1B} έχουν μεγαλύτερο το ${q1GCD}. Άρα Μ.Κ.Δ.(${q1A}, ${q1B}) ＝ ${q1GCD}.`
+      explanation: `Οι κοινοί διαιρέτες των ${q1A} και ${q1B} έχουν μεγαλύτερο το ${q1GCD}. Άρα: Μ.Κ.Δ.(${q1A}, ${q1B}) ＝ ${q1GCD}.`
     });
   }
 
-  // Q2 (Input - Decimal): Μ.Κ.Δ. 3 αριθμών
+  // Q2 (Input): Μ.Κ.Δ. 3 αριθμών
   {
     const q2Pool = [
       [12, 18, 24], [16, 24, 32], [20, 30, 40], [15, 30, 45], [12, 16, 20]
@@ -406,17 +411,17 @@ function generateQuestions() {
 
     qList.push({
       id: 2,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 2 • Μ.Κ.Δ. ΤΡΙΩΝ ΑΡΙΘΜΩΝ',
       instruction: 'Υπολογίστε τον Μέγιστο Κοινό Διαιρέτη (ακέραιος):',
-      prompt: `Υπολογίστε: Μ.Κ.Δ.(${q2A}, ${q2B}, ${q2C});`,
+      prompt: `Υπολογίστε: Μ.Κ.Δ.(${q2A}, ${q2B}, ${q2C})`,
       correctVal: q2GCD,
       correctStr: String(q2GCD),
       explanation: `Ο μεγαλύτερος κοινός διαιρέτης των ${q2A}, ${q2B} και ${q2C} είναι το ${q2GCD}.`
     });
   }
 
-  // Q3 (MCQ): Σύνολο Κοινών Διαιρετών (Εγγύηση Μοναδικότητας)
+  // Q3 (MCQ): Σύνολο Κοινών Διαιρετών
   {
     const q3Pool = [
       [12, 18], [20, 30], [24, 36], [16, 24]
@@ -449,7 +454,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Πρώτοι μεταξύ τους αριθμοί (Μ.Κ.Δ. = 1) (Εγγύηση Μοναδικότητας)
+  // Q4 (MCQ): Πρώτοι μεταξύ τους αριθμοί (Μ.Κ.Δ. = 1)
   {
     const q4CoprimePairs = [
       [8, 9], [9, 14], [15, 16], [8, 15], [21, 22], [14, 25]
@@ -536,7 +541,7 @@ function generateQuestions() {
     });
   }
 
-  // Q7 (Input - Decimal): Οπτική Κατάτμηση
+  // Q7 (Input): Οπτική Κατάτμηση
   {
     const q7A = [18, 24, 30][randInt(0, 2)];
     const q7B = [12, 16, 20][randInt(0, 2)];
@@ -544,7 +549,7 @@ function generateQuestions() {
 
     qList.push({
       id: 7,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΗ ΚΑΤΑΤΜΗΣΗ',
       instruction: 'Βρείτε το μέγιστο κοινό μήκος κομματιού σε εκατοστά (εκ.):',
       prompt: `Ποιο είναι το μεγαλύτερο κοινό μήκος κομματιού που μετράει ακριβώς δύο ράβδους μήκους ${q7A} εκ. και ${q7B} εκ.;`,
@@ -554,7 +559,7 @@ function generateQuestions() {
     });
   }
 
-  // Q8 (MCQ): Πρόβλημα Καθημερινότητας (Εγγύηση Μοναδικότητας)
+  // Q8 (MCQ): Πρόβλημα Καθημερινότητας
   {
     const p = shuffledPresets[0];
     const q8Count1 = randInt(3, 6) * 6; // π.χ. 18, 24, 30, 36
@@ -584,17 +589,17 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
     const stdProb = shuffledStd[0].generate();
     const hardProb = shuffledHard[0].generate();
 
-    // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
+    // Q9 (Input)
     qList.push({
       id: 9,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
       instruction: stdProb.instruction,
       prompt: stdProb.text,
@@ -604,7 +609,7 @@ function generateQuestions() {
       explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
+    // Q10 (MCQ)
     qList.push({
       id: 10,
       type: 'mcq',
@@ -627,29 +632,26 @@ export default function MkdExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
+  // Δημιουργία νέων ασκήσεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
+  // Χειρισμός Input μόνο για ακέραιους αριθμούς (0-9)
   const handleInputChange = (qId, rawValue) => {
     if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
+    let sanitized = rawValue.replace(/[^0-9]/g, '');
     if (sanitized.length > 10) {
       sanitized = sanitized.slice(0, 10);
     }
@@ -659,7 +661,7 @@ export default function MkdExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
+  // Χειρισμός MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -668,31 +670,35 @@ export default function MkdExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
+  const isQuestionCorrect = (q) => {
+    if (q.type === 'mcq') {
+      return answers[`q_${q.id}`] === q.correctText;
+    }
+    if (q.type === 'integer_input') {
+      const userValStr = (answers[`q_${q.id}`] || '').trim();
+      const userVal = parseInt(userValStr, 10);
+      return !isNaN(userVal) && userVal === q.correctVal;
+    }
+    return false;
+  };
+
+  // Έλεγχος Απαντήσεων
   const handleCheckAnswers = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (isSubmitted) return;
 
     let currentScore = 0;
-
     questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+      if (isQuestionCorrect(q)) {
+        currentScore += 1;
       }
     });
 
     setScore(currentScore);
     setIsSubmitted(true);
   };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
@@ -707,57 +713,48 @@ export default function MkdExercisesPage() {
           href="/st-dimotikou/14-mkd"
           className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖 {toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-36 overflow-x-hidden">
         
         {/* Banner Header */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              <span>ΚΕΦΑΛΑΙΟ 14 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Μέγιστος Κοινός Διαιρέτης (Μ.Κ.Δ.)
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες εύρεσης Μ.Κ.Δ., κοινών διαιρετών, πρώτων μεταξύ τους αριθμών και 4 ρεαλιστικά προβλήματα καθημερινής ζωής.
+              10 δυναμικές δραστηριότητες εύρεσης Μ.Κ.Δ., κοινών διαιρετών, πρώτων μεταξύ τους αριθμών και ρεαλιστικά προβλήματα καθημερινής ζωής.
             </p>
           </div>
 
           <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
             <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
+              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίους αριθμούς.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
+        {/* Λίστα 10 Ασκήσεων */}
         <div className="space-y-6 sm:space-y-8">
-          {questions.map((q) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
+          {questions.map((q, idx) => {
+            const isCorrect = isSubmitted && isQuestionCorrect(q);
 
             return (
               <article
-                key={`q-${q.id}`}
+                key={`q-${q.id}-${idx}`}
                 className={`bg-white rounded-3xl border p-5 sm:p-8 2xl:p-10 shadow-sm transition-all ${
                   isSubmitted
                     ? isCorrect
@@ -766,7 +763,7 @@ export default function MkdExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
+                {/* Επικεφαλίδα Ερώτησης */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
@@ -779,12 +776,12 @@ export default function MkdExercisesPage() {
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
+                      {isCorrect ? `✓ ${toCleanUppercase('Σωστό')}` : `✗ ${toCleanUppercase('Λάθος')}`}
                     </span>
                   )}
                 </div>
 
-                {/* Εκφωνηση (Καθαρο κειμενο χωρις πινακες που προδιδουν τη λυση) */}
+                {/* Εκφώνηση */}
                 <div className="space-y-3 mb-5">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
@@ -796,29 +793,30 @@ export default function MkdExercisesPage() {
                   </p>
                 </div>
 
-                {/* Περιοχη Απαντησης */}
+                {/* Περιοχή Απάντησης */}
                 <div className="py-2">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
+                  {/* Integer Input */}
+                  {q.type === 'integer_input' && (
                     <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="numeric"
+                        autoComplete="off"
+                        spellCheck="false"
                         maxLength={10}
                         disabled={isSubmitted}
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(q.id, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs 2xl:text-sm text-slate-500">
+                      <span className="text-xs 2xl:text-sm text-slate-500 font-medium">
                         (Ακέραιος αριθμός)
                       </span>
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
+                  {/* Multiple Choice (MCQ) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
@@ -829,9 +827,9 @@ export default function MkdExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 min-h-[48px] ${
                               isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm ring-2 ring-blue-300'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
@@ -852,10 +850,9 @@ export default function MkdExercisesPage() {
                       })}
                     </div>
                   )}
-
                 </div>
 
-                {/* Feedback μετα την υποβολη (Εδω εμφανιζεται ο αναλυτικος πινακας δεδομενων) */}
+                {/* Feedback μετά την υποβολή */}
                 {isSubmitted && (
                   <div
                     className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-2.5 ${
@@ -901,17 +898,18 @@ export default function MkdExercisesPage() {
           })}
         </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+        {/* Κουμπί Ελέγχου στο τέλος της φόρμας */}
+        {!isSubmitted && (
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={handleCheckAnswers}
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            >
+              <span>🎯 {toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
+            </button>
+          </div>
+        )}
 
       </div>
 
@@ -922,21 +920,23 @@ export default function MkdExercisesPage() {
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
               <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
+                {isSubmitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+                {isSubmitted ? `${score} / 10` : `${answeredCount} / 10`}
               </span>
             </div>
 
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+            {isSubmitted && (
+              <div className="border-l border-slate-700 pl-4 sm:pl-8">
+                <span className="text-xs text-slate-400 font-semibold block">
+                  {toCleanUppercase('Ποσοστό')}
+                </span>
+                <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+                  {Math.round((score / 10) * 100)} %
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -946,7 +946,7 @@ export default function MkdExercisesPage() {
                 onClick={handleCheckAnswers}
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                {toCleanUppercase('Έλεγχος')}
               </button>
             ) : (
               <button
@@ -954,7 +954,7 @@ export default function MkdExercisesPage() {
                 onClick={loadNewSet}
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             )}
           </div>
