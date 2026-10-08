@@ -3,22 +3,24 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαιος ακεραιος στο [min, max]
+// Τυχαίος ακέραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Ανακατεμα πινακα
+// Ανακάτεμα πίνακα
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -27,7 +29,7 @@ function shuffle(array) {
   return arr;
 }
 
-// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
+// Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός με κόμμα)
 function formatNum(val, decimals = 3) {
   if (val === '' || val === null || val === undefined || isNaN(val)) return '0';
   if (Number.isInteger(val)) return String(val);
@@ -35,13 +37,13 @@ function formatNum(val, decimals = 3) {
   return String(rounded).replace('.', ',');
 }
 
-// Μορφοποιηση αριθμου με τελειες χιλιαδων
+// Μορφοποίηση αριθμού με τελείες χιλιάδων
 function formatNumber(num) {
   if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
   return Number(num).toLocaleString('el-GR');
 }
 
-// Πληρης δεξαμενη θεματικων αντικειμενων καθημερινοτητας
+// Πλήρης δεξαμενή θεματικών αντικειμένων καθημερινότητας
 const REAL_WORLD_ITEMS = [
   { item: 'λίτρα νερού', total: 450, group: 10, unit: 'λίτρα ανά δοχείο' },
   { item: 'ευρώ προϋπολογισμού', total: 1250, group: 100, unit: '€ ανά μαθητή' },
@@ -50,7 +52,7 @@ const REAL_WORLD_ITEMS = [
   { item: 'σελίδες φωτοτυπιών', total: 840, group: 10, unit: 'σελίδες ανά πακέτο' }
 ];
 
-// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 9 (Input)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_div10_std_1',
@@ -110,7 +112,7 @@ const STANDARD_PROBLEMS_POOL = [
       const bottles = 10;
       const perBottle = Number((totalL / bottles).toFixed(1));
       return {
-        title: 'ΙΣΟΜΟΙΡΑΣΙΑ ΧΥΜΟΥ ΣΕ ΔΟΧΕΙΑ',
+        title: 'ΙΣΟΜΕΡΗΣ ΚΑΤΑΝΟΜΗ ΧΥΜΟΥ ΣΕ ΔΟΧΕΙΑ',
         instruction: 'Υπολογίστε τον όγκο ανά δοχείο σε λίτρα (L) με κόμμα:',
         text: `Μια ποσότητα ${totalL} L χυμού μοιράστηκε εξίσου σε ${bottles} μεγάλα δοχεία. Πόσα λίτρα (L) χυμού περιέχει το κάθε δοχείο;`,
         tableData: { col1: 'Συνολικός Χυμός', col2: 'Δοχεία', r1: [`${totalL} L`, `${bottles} δοχεία`], r2: ['Διαίρεση', `${formatNum(perBottle, 1)} L`] },
@@ -146,7 +148,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΜΕΤΑΤΡΟΠΗ ΜΕΤΡΩΝ ΣΕ ΧΙΛΙΟΜΕΤΡΑ',
         instruction: 'Υπολογίστε την απόσταση σε χιλιόμετρα (km) με κόμμα:',
-        text: `Μια διαδρομή ποδηλασίας έχει μήκος ${formatNumber(lengthM)} m. Πόσα χιλιόμετρα (km) είναι η απόσταση αυτή, αν 1 km ＝ 1.000 m;`,
+        text: `Μια διαδρομή ποδηλασίας έχει μήκος ${formatNumber(lengthM)} m. Πόσα χιλιόμετρα (km) είναι η απόσταση αυτή, αν γνωρίζουμε ότι 1 km ＝ 1.000 m;`,
         tableData: { col1: 'Μέτρα', col2: 'Αναγωγή σε km', r1: [`${formatNumber(lengthM)} m`, ': 1.000'], r2: ['Αποτέλεσμα', `${formatNum(km, 2)} km`] },
         correctVal: km,
         correctStr: formatNum(km, 2),
@@ -156,7 +158,7 @@ const STANDARD_PROBLEMS_POOL = [
   }
 ];
 
-// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_div10_hard_1',
@@ -260,7 +262,7 @@ const HARD_PROBLEMS_POOL = [
       }));
 
       return {
-        title: 'ΜΕΡΙΔΙΟΠΟΙΗΣΗ ΥΓΡΟΥ ΣΕ ΕΚΑΤΟΣΤΑ ΤΟΥ ΛΙΤΡΟΥ',
+        title: 'ΣΕΡΒΙΡΙΣΜΑ ΤΣΑΓΙΟΥ ΣΕ ΦΛΙΤΖΑΝΙΑ',
         instruction: 'Επιλέξτε πόσα φλιτζάνια θα γεμίσουν:',
         text: `Ένα δοχείο περιέχει ${totalL} L τσάι. Αν σερβιριστεί σε φλιτζανάκια χωρητικότητας 0,01 L (10 mL) το καθένα, πόσα τέτοια φλιτζάνια θα γεμίσουν συνολικά;`,
         tableData: { col1: 'Συνολικός Όγκος', col2: 'Χωρητικότητα Φλιτζανιού', r1: [`${totalL} L`, '0,01 L'], r2: ['Διαίρεση', `${correctStr}`] },
@@ -328,12 +330,12 @@ const HARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// Δημιουργία των 10 δυναμικών ερωτήσεων
 function generateQuestions() {
   const qList = [];
   const shuffledItems = shuffle(REAL_WORLD_ITEMS);
 
-  // Q1 (Input - Decimal): Διαίρεση με 10, 100, 1000
+  // Q1 (Input): Διαίρεση με 10, 100, 1.000
   {
     const q1Int = randInt(12, 95);
     const q1Dec = randInt(1, 9);
@@ -349,14 +351,14 @@ function generateQuestions() {
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΔΙΑΙΡΕΣΗ ΜΕ 10, 100, 1.000',
       instruction: 'Υπολογίστε το πηλίκο μετακινώντας την υποδιαστολή (με κόμμα):',
-      prompt: `Υπολογίστε: ${q1Prompt};`,
+      prompt: `Υπολογίστε: ${q1Prompt}`,
       correctVal: q1Correct,
       correctStr: q1CorrectStr,
       explanation: `Διαιρώντας με το ${formatNumber(q1Div)}, μετακινούμε την υποδιαστολή ${q1Div === 10 ? '1 θέση' : q1Div === 100 ? '2 θέσεις' : '3 θέσεις'} προς τα αριστερά: ${q1Prompt} ＝ ${q1CorrectStr}.`
     });
   }
 
-  // Q2 (Input - Decimal): Διαίρεση με 0,1, 0,01, 0,001
+  // Q2 (Input): Διαίρεση με 0,1, 0,01, 0,001
   {
     const q2Int = randInt(2, 48);
     const q2Dec = randInt(1, 9);
@@ -373,14 +375,14 @@ function generateQuestions() {
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΔΙΑΙΡΕΣΗ ΜΕ 0,1, 0,01, 0,001',
       instruction: 'Υπολογίστε το πηλίκο μετακινώντας την υποδιαστολή (με κόμμα):',
-      prompt: `Υπολογίστε: ${q2Prompt};`,
+      prompt: `Υπολογίστε: ${q2Prompt}`,
       correctVal: q2Correct,
       correctStr: q2CorrectStr,
       explanation: `Διαιρώντας με το ${q2DivStr}, μετακινούμε την υποδιαστολή ${q2Div === 0.1 ? '1 θέση' : q2Div === 0.01 ? '2 θέσεις' : '3 θέσεις'} προς τα δεξιά: ${q2Prompt} ＝ ${q2CorrectStr}.`
     });
   }
 
-  // Q3 (MCQ): Εύρεση του διαιρέτη που λείπει (Εγγύηση Μοναδικότητας)
+  // Q3 (MCQ): Εύρεση του διαιρέτη που λείπει
   {
     const q3Int = randInt(15, 85);
     const q3Dec = randInt(1, 9);
@@ -422,7 +424,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Πρόβλημα Καθημερινότητας (Εγγύηση Μοναδικότητας)
+  // Q4 (MCQ): Πρόβλημα Καθημερινότητας
   {
     const q4Item = shuffledItems[0];
     const q4Val = parseFloat((q4Item.total / q4Item.group).toFixed(2));
@@ -449,7 +451,7 @@ function generateQuestions() {
     });
   }
 
-  // Q5 (MCQ): True / False - Κανόνας μετατόπισης αριστερά (10, 100, 1000)
+  // Q5 (MCQ): True / False - Κανόνας μετατόπισης αριστερά
   {
     const q5IsTrue = Math.random() > 0.5;
     const q5Text = q5IsTrue
@@ -476,11 +478,11 @@ function generateQuestions() {
     });
   }
 
-  // Q6 (MCQ): True / False - Κανόνας μετατόπισης δεξιά (0,1, 0,01) & Ισοδυναμία
+  // Q6 (MCQ): True / False - Κανόνας μετατόπισης δεξιά
   {
     const q6IsTrue = Math.random() > 0.5;
     const q6Text = q6IsTrue
-      ? 'Η διαίρεση ενός αριθμού με το 0,1 μεγαλώνει τον αριθμό (είναι ισοδύναμη με πολλαπλασιασμό με το 10).'
+      ? 'Η διαίρεση ενός αριθμού με το 0,1 μεγαλώνει τον αριθμό (είναι ισοδύναμη με πολλαπλασιασμό επί 10).'
       : 'Η διαίρεση ενός αριθμού με το 0,01 μικραίνει τον αριθμό κατά 100 φορές.';
     const correctAns = q6IsTrue ? 'Σωστό' : 'Λάθος';
 
@@ -503,7 +505,7 @@ function generateQuestions() {
     });
   }
 
-  // Q7 (Input - Decimal): Οπτική Μετατόπιση Υποδιαστολής
+  // Q7 (Input): Οπτική Μετατόπιση Υποδιαστολής
   {
     const q7Int = randInt(12, 85);
     const q7Dec = randInt(1, 9);
@@ -517,7 +519,7 @@ function generateQuestions() {
       type: 'decimal_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΠΤΙΚΗ ΜΕΤΑΤΟΠΙΣΗ ΥΠΟΔΙΑΣΤΟΛΗΣ',
       instruction: 'Υπολογίστε το αποτέλεσμα της μετατόπισης με κόμμα:',
-      prompt: `Υπολογίστε: ${q7Int},${q7Dec} : ${formatNumber(q7Div)};`,
+      prompt: `Υπολογίστε: ${q7Int},${q7Dec} : ${formatNumber(q7Div)}`,
       startStr: `${q7Int},${q7Dec}`,
       div: q7Div,
       correctVal: q7Ans,
@@ -526,7 +528,7 @@ function generateQuestions() {
     });
   }
 
-  // Q8 (MCQ): Αναγνώριση Πράξης από Μετατόπιση (Εγγύηση Μοναδικότητας)
+  // Q8 (MCQ): Αναγνώριση Πράξης από Μετατόπιση
   {
     const q8BaseInt = randInt(35, 95);
     const q8BaseDec = randInt(1, 9);
@@ -553,14 +555,14 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
     const stdProb = shuffledStd[0].generate();
     const hardProb = shuffledHard[0].generate();
 
-    // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
+    // Q9 (Input)
     qList.push({
       id: 9,
       type: 'decimal_input',
@@ -573,7 +575,7 @@ function generateQuestions() {
       explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
+    // Q10 (MCQ)
     qList.push({
       id: 10,
       type: 'mcq',
@@ -596,21 +598,21 @@ export default function DiairesiDinameisDekaExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
     let sanitized = rawValue.replace(/\./g, ',');
@@ -628,7 +630,6 @@ export default function DiairesiDinameisDekaExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -637,28 +638,34 @@ export default function DiairesiDinameisDekaExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
-  const handleCheckAnswers = () => {
-    let currentScore = 0;
+  const isQuestionCorrect = (q) => {
+    if (q.type === 'mcq') {
+      return answers[`q_${q.id}`] === q.correctText;
+    }
+    if (q.type === 'decimal_input') {
+      const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
+      const userVal = parseFloat(userValStr);
+      return !isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05;
+    }
+    return false;
+  };
 
+  const handleCheckAnswers = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (isSubmitted) return;
+
+    let currentScore = 0;
     questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+      if (isQuestionCorrect(q)) {
+        currentScore += 1;
       }
     });
 
     setScore(currentScore);
     setIsSubmitted(true);
   };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
@@ -672,53 +679,44 @@ export default function DiairesiDinameisDekaExercisesPage() {
           href="/st-dimotikou/09-diairesi-dinameis-deka"
           className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖 {toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-36 overflow-x-hidden">
         
         {/* Banner Header */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              <span>ΚΕΦΑΛΑΙΟ 09 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Διαίρεση με Δυνάμεις του 10
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες μετατόπισης υποδιαστολής με 10, 100, 1.000 και 0,1, 0,01, 0,001 και 4 ρεαλιστικά προβλήματα καθημερινής ζωής.
+              10 δυναμικές δραστηριότητες μετατόπισης υποδιαστολής με 10, 100, 1.000 και 0,1, 0,01, 0,001 και 4 ρεαλιστικά προβλήματα καθημερινής ζωής.
             </p>
           </div>
 
           <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
             <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
+              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίους αριθμούς.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
+        {/* Λίστα 10 Ασκήσεων */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q, idx) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
+            const isCorrect = isSubmitted && isQuestionCorrect(q);
 
             return (
               <article
@@ -731,7 +729,7 @@ export default function DiairesiDinameisDekaExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
+                {/* Επικεφαλίδα Ερώτησης */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
@@ -744,12 +742,12 @@ export default function DiairesiDinameisDekaExercisesPage() {
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
+                      {isCorrect ? `✓ ${toCleanUppercase('Σωστό')}` : `✗ ${toCleanUppercase('Λάθος')}`}
                     </span>
                   )}
                 </div>
 
-                {/* Εκφωνηση (Καθαρο κειμενο χωρις πινακα που προδιδει τη λυση) */}
+                {/* Εκφώνηση */}
                 <div className="space-y-3 mb-5">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
@@ -760,7 +758,7 @@ export default function DiairesiDinameisDekaExercisesPage() {
                     {q.prompt}
                   </p>
 
-                  {/* Οπτικη Μετατοπιση για την Q7 */}
+                  {/* Οπτική Μετατόπιση για την Q7 */}
                   {q.startStr && q.div && (
                     <div className="bg-slate-100 rounded-2xl p-4 my-3 flex justify-center overflow-x-auto">
                       <svg viewBox="0 0 300 70" className="w-full max-w-xs h-16 select-none shrink-0 overflow-visible">
@@ -796,29 +794,30 @@ export default function DiairesiDinameisDekaExercisesPage() {
                   )}
                 </div>
 
-                {/* Περιοχη Απαντησης */}
+                {/* Περιοχή Απάντησης */}
                 <div className="py-2">
-                  
                   {/* Decimal / Number Input */}
                   {q.type === 'decimal_input' && (
                     <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="decimal"
+                        autoComplete="off"
+                        spellCheck="false"
                         maxLength={10}
                         disabled={isSubmitted}
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs 2xl:text-sm text-slate-500">
-                        (Ακέραιος η δεκαδικός με κόμμα)
+                      <span className="text-xs 2xl:text-sm text-slate-500 font-medium">
+                        (Ακέραιος ή δεκαδικός με κόμμα)
                       </span>
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
+                  {/* Multiple Choice (MCQ) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
@@ -829,9 +828,9 @@ export default function DiairesiDinameisDekaExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 min-h-[48px] ${
                               isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm ring-2 ring-blue-300'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
@@ -852,10 +851,9 @@ export default function DiairesiDinameisDekaExercisesPage() {
                       })}
                     </div>
                   )}
-
                 </div>
 
-                {/* Feedback μετα την υποβολη (Εδω εμφανιζεται ο αναλυτικος πινακας δεδομενων) */}
+                {/* Feedback μετά την υποβολή */}
                 {isSubmitted && (
                   <div
                     className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-2.5 ${
@@ -901,17 +899,18 @@ export default function DiairesiDinameisDekaExercisesPage() {
           })}
         </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+        {/* Κουμπί Ελέγχου στο τέλος της φόρμας */}
+        {!isSubmitted && (
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={handleCheckAnswers}
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            >
+              <span>🎯 {toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
+            </button>
+          </div>
+        )}
 
       </div>
 
@@ -922,21 +921,23 @@ export default function DiairesiDinameisDekaExercisesPage() {
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
               <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
+                {isSubmitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+                {isSubmitted ? `${score} / 10` : `${answeredCount} / 10`}
               </span>
             </div>
 
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+            {isSubmitted && (
+              <div className="border-l border-slate-700 pl-4 sm:pl-8">
+                <span className="text-xs text-slate-400 font-semibold block">
+                  {toCleanUppercase('Ποσοστό')}
+                </span>
+                <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+                  {Math.round((score / 10) * 100)} %
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -946,7 +947,7 @@ export default function DiairesiDinameisDekaExercisesPage() {
                 onClick={handleCheckAnswers}
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                {toCleanUppercase('Έλεγχος')}
               </button>
             ) : (
               <button
@@ -954,7 +955,7 @@ export default function DiairesiDinameisDekaExercisesPage() {
                 onClick={loadNewSet}
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             )}
           </div>
