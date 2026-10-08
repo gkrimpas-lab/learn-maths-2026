@@ -3,22 +3,24 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαιος ακεραιος στο [min, max]
+// Τυχαίος ακέραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Ανακατεμα πινακα
+// Ανακάτεμα πίνακα
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -27,32 +29,32 @@ function shuffle(array) {
   return arr;
 }
 
-// Μορφοποιηση αριθμου με τελειες χιλιαδων
+// Μορφοποίηση αριθμού με τελείες χιλιάδων
 function formatNumber(num) {
   if (num === '' || isNaN(num)) return '0';
   return Number(num).toLocaleString('el-GR');
 }
 
-// Αθροισμα ψηφιων
+// Άθροισμα ψηφίων
 function sumDigits(numStr) {
   return String(numStr).split('').reduce((acc, curr) => acc + parseInt(curr, 10), 0);
 }
 
-// Δεξαμενη θεματικων σεναριων καθημερινοτητας για την Q8
+// Δεξαμενή θεματικών σεναρίων καθημερινότητας για την Q8
 const REAL_WORLD_PROBLEMS_Q8 = [
   {
     prompt: (num) => `Έχουμε ${num} τετράδια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
     total: 377,
     correctOption: 'Δεν είναι δυνατόν χωρίς υπόλοιπο',
     wrongOptions: ['Σε ομάδες των 2', 'Σε ομάδες των 5', 'Σε ομάδες των 10'],
-    explain: 'Ο αριθμός 377 δεν διαιρείται ακριβώς με κανέναν από τους αριθμούς 2, 5, 10 χωρίς υπόλοιπο.'
+    explain: 'Ο αριθμός 377 δεν διαιρείται με κανέναν από τους αριθμούς 2, 5 και 10 (αφήνει πάντα υπόλοιπο).'
   },
   {
     prompt: (num) => `Έχουμε ${num} τετράδια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
     total: 284,
     correctOption: 'Σε ομάδες των 4',
     wrongOptions: ['Σε ομάδες των 5', 'Σε ομάδες των 9', 'Σε ομάδες των 10'],
-    explain: 'Ο αριθμός 284 λήγει σε 84, άρα διαιρείται ακριβώς με το 4 (284 : 4 ＝ 71).'
+    explain: 'Ο αριθμός 284 λήγει σε 84, το οποίο διαιρείται ακριβώς με το 4 (84 : 4 ＝ 21).'
   },
   {
     prompt: (num) => `Έχουμε ${num} ευρώ. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
@@ -62,7 +64,7 @@ const REAL_WORLD_PROBLEMS_Q8 = [
     explain: 'Το άθροισμα των ψηφίων του 303 είναι 3 ＋ 0 ＋ 3 ＝ 6, άρα διαιρείται ακριβώς με το 3.'
   },
   {
-    prompt: (num) => `Έχουμε ${num} μαθητές. Με ποιον τρόπο μπορούμε να τους μοιράσουμε ισόποσα χωρίς να περισσέψει κανένας;`,
+    prompt: (num) => `Έχουμε ${num} μαθητές. Με ποιον τρόπο μπορούμε να τους χωρίσουμε σε ισοπληθείς ομάδες χωρίς να περισσέψει κανένας;`,
     total: 390,
     correctOption: 'Σε ομάδες των 10',
     wrongOptions: ['Σε ομάδες των 4', 'Σε ομάδες των 9', 'Σε ομάδες των 25'],
@@ -79,7 +81,7 @@ const REAL_WORLD_PROBLEMS_Q8 = [
     prompt: (num) => `Έχουμε ${num} βιβλία. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
     total: 450,
     correctOption: 'Σε πακέτα των 25',
-    wrongOptions: ['Σε πακέτα των 4', 'Σε πακέτα των 9', 'Σε πακέτα των 7'],
+    wrongOptions: ['Σε πακέτα των 4', 'Σε πακέτα των 8', 'Σε πακέτα των 7'],
     explain: 'Ο αριθμός 450 τελειώνει σε 50, άρα διαιρείται ακριβώς με το 25.'
   },
   {
@@ -94,7 +96,7 @@ const REAL_WORLD_PROBLEMS_Q8 = [
     total: 524,
     correctOption: 'Σε ανθοδέσμες των 4',
     wrongOptions: ['Σε ανθοδέσμες των 5', 'Σε ανθοδέσμες των 9', 'Σε ανθοδέσμες των 10'],
-    explain: 'Τα δύο τελευταία ψηφία του 524 είναι το 24, που διαιρείται με το 4.'
+    explain: 'Τα δύο τελευταία ψηφία του 524 σχηματίζουν το 24, που διαιρείται με το 4.'
   },
   {
     prompt: (num) => `Έχουμε ${num} σοκολατάκια. Με ποιον τρόπο μπορούμε να τα μοιράσουμε ισόποσα χωρίς να περισσέψει κανένα;`,
@@ -112,7 +114,7 @@ const REAL_WORLD_PROBLEMS_Q8 = [
   }
 ];
 
-// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (MCQ)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 9 (MCQ)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_crit_std_1',
@@ -126,7 +128,7 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: { col1: 'Υποψήφιοι Αριθμοί', col2: 'Κριτήριο του 4', r1: ['326, 448, 514, 622', 'Δύο τελευταία ψηφία'], r2: ['Έλεγχος', '48 : 4 ＝ 12 ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(validNum),
-        explanation: 'Τα δύο τελευταία ψηφία του 448 είναι το 48, το οποίο διαιρείται ακριβώς με το 4 (48 : 4 ＝ 12).'
+        explanation: 'Τα δύο τελευταία ψηφία του 448 σχηματίζουν το 48, το οποίο διαιρείται ακριβώς με το 4 (48 : 4 ＝ 12).'
       };
     }
   },
@@ -151,7 +153,7 @@ const STANDARD_PROBLEMS_POOL = [
       const candidates = [142, 235, 318, 421];
       const validNum = 235;
       return {
-        title: 'ΜΟΙΡΑΣΙΑ ΚΑΡΑΜΕΛΩΝ ΣΕ 5ΑΔΕΣ',
+        title: 'ΜΟΙΡΑΣΜΑ ΚΑΡΑΜΕΛΩΝ ΣΕ 5ΑΔΕΣ',
         instruction: 'Επιλέξτε τον αριθμό που διαιρείται με το 5:',
         text: 'Μια δασκάλα θέλει να μοιράσει καραμέλες σε σακουλάκια των 5 χωρίς να περισσέψει καμία. Ποιο από τα παρακάτω πλήθη καραμελών είναι κατάλληλο: 142, 235, 318 ή 421;',
         tableData: { col1: 'Υποψήφιοι Αριθμοί', col2: 'Κριτήριο του 5', r1: ['142, 235, 318, 421', 'Λήγει σε 0 ή 5'], r2: ['Αποτέλεσμα', '235 : 5 ＝ 47 ✅'] },
@@ -170,7 +172,7 @@ const STANDARD_PROBLEMS_POOL = [
         title: 'ΚΑΤΑΝΟΜΗ ΜΑΘΗΤΩΝ ΣΕ 3ΑΔΕΣ',
         instruction: 'Επιλέξτε το πλήθος που διαιρείται με το 3:',
         text: 'Σε έναν διαγωνισμό οι μαθητές πρέπει να σχηματίσουν τριάδες. Ποιος από τους παρακάτω αριθμούς μαθητών επιτρέπει τον πλήρη σχηματισμό τριάδων: 521, 633, 715 ή 802;',
-        tableData: { col1: 'Υποψήφιοι', col2: 'Κριτήριο του 3', r1: ['521, 633, 715, 802', 'Άθροισμα ψηφίων'], r2: ['Έλεγχος 633', '6＋3＋3 ＝ 12 (12 : 3 ＝ 4) ✅'] },
+        tableData: { col1: 'Υποψήφιοι', col2: 'Κριτήριο του 3', r1: ['521, 633, 715, 802', 'Άθροισμα ψηφίων'], r2: ['Έλεγχος 633', '6 ＋ 3 ＋ 3 ＝ 12 (12 : 3 ＝ 4) ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(validNum),
         explanation: 'Το άθροισμα των ψηφίων του 633 είναι 6 ＋ 3 ＋ 3 ＝ 12, το οποίο διαιρείται ακριβώς με το 3.'
@@ -185,7 +187,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΣΥΣΚΕΥΑΣΙΑ ΣΕ 10ΑΔΕΣ',
         instruction: 'Επιλέξτε τον αριθμό που διαιρείται με το 10:',
-        text: 'Ένα εργοστάσιο συσκευάζει μολύβια σε δεκάδες. Ποιο από τα παρακάτω πλήθη μολυβιών συσκευάζεται χωρίς περίσσευμα: 1.240, 1.345, 1.452 ή 1.506;',
+        text: 'Ένα εργοστάσιο συσκευάζει μολύβια σε δεκάδες. Ποιο από τα παρακάτω πλήθη μολυβιών συσκευάζεται χωρίς να περισσέψει κανένα μολύβι: 1.240, 1.345, 1.452 ή 1.506;',
         tableData: { col1: 'Ποσότητες', col2: 'Κριτήριο του 10', r1: ['1.240, 1.345, 1.452, 1.506', 'Λήγει σε 0'], r2: ['Αποτέλεσμα', '1.240 : 10 ＝ 124 ✅'] },
         optionsRaw: ['1.240', '1.345', '1.452', '1.506'],
         correctText: '1.240',
@@ -201,8 +203,8 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΟΜΑΔΕΣ ΤΩΝ 9 ΑΤΟΜΩΝ',
         instruction: 'Επιλέξτε τον αριθμό που διαιρείται με το 9:',
-        text: 'Σε ένα φεστιβάλ οι θεατές χωρίζονται σε ομάδες των 9. Ποιο από τα παρακάτω πλήθη θεατών μπορεί να χωριστεί χωρίς να μείνει κανείς: 316, 425, 513 ή 620;',
-        tableData: { col1: 'Υποψήφιοι', col2: 'Κριτήριο του 9', r1: ['316, 425, 513, 620', 'Άθροισμα ψηφίων'], r2: ['Έλεγχος 513', '5＋1＋3 ＝ 9 (9 : 9 ＝ 1) ✅'] },
+        text: 'Σε ένα φεστιβάλ οι θεατές χωρίζονται σε ομάδες των 9. Ποιο από τα παρακάτω πλήθη θεατών μπορεί να χωριστεί χωρίς να περισσέψει κανείς: 316, 425, 513 ή 620;',
+        tableData: { col1: 'Υποψήφιοι', col2: 'Κριτήριο του 9', r1: ['316, 425, 513, 620', 'Άθροισμα ψηφίων'], r2: ['Έλεγχος 513', '5 ＋ 1 ＋ 3 ＝ 9 (9 : 9 ＝ 1) ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(validNum),
         explanation: 'Το άθροισμα των ψηφίων του 513 είναι 5 ＋ 1 ＋ 3 ＝ 9, άρα διαιρείται ακριβώς με το 9.'
@@ -211,17 +213,17 @@ const STANDARD_PROBLEMS_POOL = [
   }
 ];
 
-// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_crit_hard_1',
     generate: () => {
-      const explainStr = 'Ο αριθμός 1350 λήγει σε 0 (άρα διαιρείται με το 2 και το 5) και έχει άθροισμα ψηφίων 1 ＋ 3 ＋ 5 ＋ 0 ＝ 9 (άρα διαιρείται με το 9).';
+      const explainStr = 'Ο αριθμός 1.350 λήγει σε 0 (άρα διαιρείται με το 2 και το 5) και έχει άθροισμα ψηφίων 1 ＋ 3 ＋ 5 ＋ 0 ＝ 9 (άρα διαιρείται με το 9).';
       return {
         title: 'ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ ΜΕ 2, 5 ΚΑΙ 9',
         instruction: 'Επιλέξτε τον σωστό αριθμό:',
         text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 2, το 5 και το 9: 1.350, 2.435, 3.142 ή 4.205;',
-        tableData: { col1: 'Αριθμός 1.350', col2: 'Έλεγχος Κριτηρίων', r1: ['Λήγει σε 0', 'Διαιρείται με 2 & 5 ✅'], r2: ['Άθροισμα: 1＋3＋5＋0 ＝ 9', 'Διαιρείται με 9 ✅'] },
+        tableData: { col1: 'Αριθμός 1.350', col2: 'Έλεγχος Κριτηρίων', r1: ['Λήγει σε 0', 'Διαιρείται με 2 & 5 ✅'], r2: ['Άθροισμα: 1 ＋ 3 ＋ 5 ＋ 0 ＝ 9', 'Διαιρείται με 9 ✅'] },
         optionsRaw: ['1.350', '2.435', '3.142', '4.205'],
         correctText: '1.350',
         explanation: explainStr
@@ -231,7 +233,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'p_crit_hard_2',
     generate: () => {
-      const explainStr = 'Ο αριθμός 2100 λήγει σε 00, άρα διαιρείται και με το 4 και με το 25.';
+      const explainStr = 'Ο αριθμός 2.100 λήγει σε 00, άρα διαιρείται και με το 4 και με το 25.';
       return {
         title: 'ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ ΜΕ 4 ΚΑΙ 25',
         instruction: 'Επιλέξτε τον αριθμό που διαιρείται ταυτόχρονα με το 4 και το 25:',
@@ -251,7 +253,7 @@ const HARD_PROBLEMS_POOL = [
         title: 'ΚΟΙΝΟΣ ΔΙΑΙΡΕΤΗΣ ΠΟΛΛΑΠΛΩΝ ΚΡΙΤΗΡΙΩΝ',
         instruction: 'Επιλέξτε τον αριθμό που διαιρείται με 2, 3, 5, 9 και 10:',
         text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 2, το 3, το 5, το 9 και το 10: 520, 635, 720 ή 815;',
-        tableData: { col1: 'Αριθμός 720', col2: 'Έλεγχος Κριτηρίων', r1: ['Λήγει σε 0', 'Διαιρείται με 2, 5, 10 ✅'], r2: ['Άθροισμα: 7＋2＋0 ＝ 9', 'Διαιρείται με 3 & 9 ✅'] },
+        tableData: { col1: 'Αριθμός 720', col2: 'Έλεγχος Κριτηρίων', r1: ['Λήγει σε 0', 'Διαιρείται με 2, 5, 10 ✅'], r2: ['Άθροισμα: 7 ＋ 2 ＋ 0 ＝ 9', 'Διαιρείται με 3 & 9 ✅'] },
         optionsRaw: ['520', '635', '720', '815'],
         correctText: '720',
         explanation: explainStr
@@ -266,7 +268,7 @@ const HARD_PROBLEMS_POOL = [
         title: 'ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ ΜΕ 3, 4 ΚΑΙ 9',
         instruction: 'Επιλέξτε τον σωστό αριθμό:',
         text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 3, το 4 και το 9: 614, 726, 828 ή 916;',
-        tableData: { col1: 'Αριθμός 828', col2: 'Έλεγχος Κριτηρίων', r1: ['Τελειώνει σε 28', '28 : 4 ＝ 7 ✅'], r2: ['Άθροισμα: 8＋2＋8 ＝ 18', 'Διαιρείται με 3 & 9 ✅'] },
+        tableData: { col1: 'Αριθμός 828', col2: 'Έλεγχος Κριτηρίων', r1: ['Τελειώνει σε 28', '28 : 4 ＝ 7 ✅'], r2: ['Άθροισμα: 8 ＋ 2 ＋ 8 ＝ 18', 'Διαιρείται με 3 & 9 ✅'] },
         optionsRaw: ['614', '726', '828', '916'],
         correctText: '828',
         explanation: explainStr
@@ -276,12 +278,12 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'p_crit_hard_5',
     generate: () => {
-      const explainStr = 'Ο αριθμός 1575 τελειώνει σε 75 (διαιρείται με 25) και έχει άθροισμα ψηφίων 1 ＋ 5 ＋ 7 ＋ 5 ＝ 18 (διαιρείται με 9).';
+      const explainStr = 'Ο αριθμός 1.575 τελειώνει σε 75 (διαιρείται με 25) και έχει άθροισμα ψηφίων 1 ＋ 5 ＋ 7 ＋ 5 ＝ 18 (διαιρείται με 9).';
       return {
         title: 'ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ ΜΕ 9 ΚΑΙ 25',
         instruction: 'Επιλέξτε τον αριθμό που διαιρείται ταυτόχρονα με το 9 και το 25:',
         text: 'Ποιος από τους παρακάτω αριθμούς διαιρείται ταυτόχρονα με το 9 και το 25: 1.250, 1.425, 1.575 ή 1.850;',
-        tableData: { col1: 'Αριθμός 1.575', col2: 'Έλεγχος Κριτηρίων', r1: ['Τελειώνει σε 75', 'Διαιρείται με 25 ✅'], r2: ['Άθροισμα: 1＋5＋7＋5 ＝ 18', 'Διαιρείται με 9 ✅'] },
+        tableData: { col1: 'Αριθμός 1.575', col2: 'Έλεγχος Κριτηρίων', r1: ['Τελειώνει σε 75', 'Διαιρείται με 25 ✅'], r2: ['Άθροισμα: 1 ＋ 5 ＋ 7 ＋ 5 ＝ 18', 'Διαιρείται με 9 ✅'] },
         optionsRaw: ['1.250', '1.425', '1.575', '1.850'],
         correctText: '1.575',
         explanation: explainStr
@@ -305,7 +307,7 @@ const HARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// Δημιουργία των 10 δυναμικών ερωτήσεων
 function generateQuestions() {
   const qList = [];
 
@@ -349,12 +351,12 @@ function generateQuestions() {
       options,
       correctText: q1Correct,
       explanation: q1Num % q1Div === 0
-        ? `Σωστά! Το τελευταίο ψηφίο είναι ${q1Num % 10}, επομένως ο αριθμός ${q1Num} διαιρείται ακριβώς με το ${q1Div}.`
+        ? `Σωστά! Το τελευταίο ψηφίο είναι το ${q1Num % 10}, επομένως ο αριθμός ${q1Num} διαιρείται ακριβώς με το ${q1Div}.`
         : `Ο αριθμός ${q1Num} τελειώνει σε ${q1Num % 10}, άρα ΔΕΝ διαιρείται ακριβώς με το ${q1Div}.`
     });
   }
 
-  // Q2 (Input - Decimal): Άθροισμα ψηφίων & Διαιρετότητα με το 3 ή 9
+  // Q2 (Input): Άθροισμα ψηφίων & Διαιρετότητα με το 3 ή 9
   {
     const q2Div = [3, 9][randInt(0, 1)];
     let q2Num = randInt(110, 890);
@@ -367,7 +369,7 @@ function generateQuestions() {
 
     qList.push({
       id: 2,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΑΘΡΟΙΣΜΑ ΨΗΦΙΩΝ',
       instruction: 'Υπολογίστε το άθροισμα των ψηφίων του αριθμού (ακέραιος):',
       prompt: `Ποιο είναι το άθροισμα των ψηφίων του αριθμού ${q2Num};`,
@@ -377,7 +379,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (MCQ): Διαιρετότητα με το 4 ή το 25 (Εγγύηση Μοναδικότητας)
+  // Q3 (MCQ): Διαιρετότητα με το 4 ή το 25
   {
     const q3Div = [4, 25][randInt(0, 1)];
     let q3ValidNum = randInt(100, 900);
@@ -415,7 +417,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Εύρεση ψηφίου που λείπει (Εγγύηση Μοναδικότητας)
+  // Q4 (MCQ): Εύρεση ψηφίου που λείπει
   {
     const q4Div = [3, 9][randInt(0, 1)];
     const d1 = randInt(1, 8);
@@ -444,7 +446,7 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 4 • ΕΥΡΕΣΗ ΨΗΦΙΟΥ ΠΟΥ ΛΕΙΠΕΙ',
       instruction: 'Επιλέξτε το κατάλληλο ψηφίο:',
-      prompt: `Ποιο ψηφίο πρέπει να μπει στο κενό του αριθμού ${q4NumberPattern} ώστε να διαιρείται ακριβώς με το ${q4Div};`,
+      prompt: `Ποιο ψηφίο πρέπει να μπει στη θέση του κενού στον αριθμό ${q4NumberPattern} ώστε να διαιρείται ακριβώς με το ${q4Div};`,
       options,
       correctText: String(correctDigit),
       explanation: `Βάζοντας το ψηφίο ${correctDigit}, το άθροισμα των ψηφίων γίνεται ${d1} ＋ ${correctDigit} ＋ ${d3} ＝ ${d1 + correctDigit + d3}, που διαιρείται με το ${q4Div}.`
@@ -474,7 +476,7 @@ function generateQuestions() {
       correctText: correctAns,
       explanation: q5IsTrue
         ? 'Σωστό! Για το 3 και το 9 αρκεί να προσθέσουμε τα ψηφία του αριθμού.'
-        : 'Λάθος! Για τη διαιρετότητα με το 9 εξετάζουμε το ΑΘΡΟΙΣΜΑ των ψηφίων, όχι μόνο το τελευταίο ψηφίο.'
+        : 'Λάθος! Για τη διαιρετότητα με το 9 εξετάζουμε το άθροισμα των ψηφίων, όχι μόνο το τελευταίο ψηφίο.'
     });
   }
 
@@ -505,7 +507,7 @@ function generateQuestions() {
     });
   }
 
-  // Q7 (Input - Decimal): Ταυτόχρονη διαιρετότητα (με 2, 5 και 10)
+  // Q7 (Input): Ταυτόχρονη διαιρετότητα (με 2, 5 και 10)
   {
     const q7Options = [120, 240, 350, 480, 500, 620, 750, 900];
     const q7Num = q7Options[randInt(0, q7Options.length - 1)];
@@ -513,7 +515,7 @@ function generateQuestions() {
 
     qList.push({
       id: 7,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΤΑΥΤΟΧΡΟΝΗ ΔΙΑΙΡΕΤΟΤΗΤΑ',
       instruction: 'Συμπληρώστε τον αριθμό (ακέραιος):',
       prompt: `Ο αριθμός ${q7Num} διαιρείται ταυτόχρονα με το 2 και το 5. Με ποιον άλλον βασικό αριθμό διαιρείται σίγουρα;`,
@@ -523,7 +525,7 @@ function generateQuestions() {
     });
   }
 
-  // Q8 (MCQ): Πρόβλημα Καθημερινότητας (Εγγύηση Μοναδικότητας)
+  // Q8 (MCQ): Πρόβλημα Καθημερινότητας
   {
     const shuffledQ8Pool = shuffle(REAL_WORLD_PROBLEMS_Q8);
     const selectedQ8 = shuffledQ8Pool[0];
@@ -547,14 +549,14 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
     const stdProb = shuffledStd[0].generate();
     const hardProb = shuffledHard[0].generate();
 
-    // Q9 (MCQ) - Χωρίς πίνακα στην εκφώνηση
+    // Q9 (MCQ)
     const optionsQ9 = shuffle([...new Set(stdProb.optionsRaw)]).map((text) => ({
       text,
       isCorrect: text === stdProb.correctText
@@ -572,7 +574,7 @@ function generateQuestions() {
       explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ) - Χωρίς πίνακα στην εκφώνηση
+    // Q10 (MCQ)
     const optionsQ10 = shuffle([...new Set(hardProb.optionsRaw)]).map((text) => ({
       text,
       isCorrect: text === hardProb.correctText
@@ -600,29 +602,26 @@ export default function KritiriaDiairetotitasExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
+  // Δημιουργία νέων ασκήσεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
+  // Χειρισμός Input μόνο για ακέραιους αριθμούς (0-9)
   const handleInputChange = (qId, rawValue) => {
     if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
+    let sanitized = rawValue.replace(/[^0-9]/g, '');
     if (sanitized.length > 10) {
       sanitized = sanitized.slice(0, 10);
     }
@@ -632,7 +631,7 @@ export default function KritiriaDiairetotitasExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
+  // Χειρισμός MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -641,31 +640,35 @@ export default function KritiriaDiairetotitasExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
+  const isQuestionCorrect = (q) => {
+    if (q.type === 'mcq') {
+      return answers[`q_${q.id}`] === q.correctText;
+    }
+    if (q.type === 'integer_input') {
+      const userValStr = (answers[`q_${q.id}`] || '').trim();
+      const userVal = parseInt(userValStr, 10);
+      return !isNaN(userVal) && userVal === q.correctVal;
+    }
+    return false;
+  };
+
+  // Έλεγχος Απαντήσεων
   const handleCheckAnswers = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (isSubmitted) return;
 
     let currentScore = 0;
-
     questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+      if (isQuestionCorrect(q)) {
+        currentScore += 1;
       }
     });
 
     setScore(currentScore);
     setIsSubmitted(true);
   };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
@@ -680,24 +683,23 @@ export default function KritiriaDiairetotitasExercisesPage() {
           href="/st-dimotikou/15-kritiria-diairetotitas"
           className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖 {toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-36 overflow-x-hidden">
         
         {/* Banner Header */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              <span>ΚΕΦΑΛΑΙΟ 15 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Κριτήρια Διαιρετότητας
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες κριτηρίων διαιρετότητας με το 2, 3, 4, 5, 9, 10 και 25, ταυτόχρονης διαιρετότητας και 4 ρεαλιστικά προβλήματα καθημερινής ζωής.
+              10 δυναμικές δραστηριότητες κριτηρίων διαιρετότητας με το 2, 3, 4, 5, 9, 10 και 25, ταυτόχρονης διαιρετότητας και ρεαλιστικά προβλήματα καθημερινής ζωής.
             </p>
           </div>
 
@@ -710,23 +712,15 @@ export default function KritiriaDiairetotitasExercisesPage() {
               onClick={loadNewSet}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
+        {/* Λίστα 10 Ασκήσεων */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
+            const isCorrect = isSubmitted && isQuestionCorrect(q);
 
             return (
               <article
@@ -739,7 +733,7 @@ export default function KritiriaDiairetotitasExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
+                {/* Επικεφαλίδα Ερώτησης */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
@@ -752,12 +746,12 @@ export default function KritiriaDiairetotitasExercisesPage() {
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
+                      {isCorrect ? `✓ ${toCleanUppercase('Σωστό')}` : `✗ ${toCleanUppercase('Λάθος')}`}
                     </span>
                   )}
                 </div>
 
-                {/* Εκφωνηση (Καθαρο κειμενο χωρις πινακες που προδιδουν τη λυση) */}
+                {/* Εκφώνηση */}
                 <div className="space-y-3 mb-5">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
@@ -769,29 +763,30 @@ export default function KritiriaDiairetotitasExercisesPage() {
                   </p>
                 </div>
 
-                {/* Περιοχη Απαντησης */}
+                {/* Περιοχή Απάντησης */}
                 <div className="py-2">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
+                  {/* Integer Input */}
+                  {q.type === 'integer_input' && (
                     <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="numeric"
+                        autoComplete="off"
+                        spellCheck="false"
                         maxLength={10}
                         disabled={isSubmitted}
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(q.id, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs 2xl:text-sm text-slate-500">
+                      <span className="text-xs 2xl:text-sm text-slate-500 font-medium">
                         (Ακέραιος αριθμός)
                       </span>
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
+                  {/* Multiple Choice (MCQ) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
@@ -802,9 +797,9 @@ export default function KritiriaDiairetotitasExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 min-h-[48px] ${
                               isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm ring-2 ring-blue-300'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
@@ -825,10 +820,9 @@ export default function KritiriaDiairetotitasExercisesPage() {
                       })}
                     </div>
                   )}
-
                 </div>
 
-                {/* Feedback μετα την υποβολη (Εδω εμφανιζεται ο αναλυτικος πινακας δεδομενων) */}
+                {/* Feedback μετά την υποβολή */}
                 {isSubmitted && (
                   <div
                     className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-2.5 ${
@@ -874,17 +868,18 @@ export default function KritiriaDiairetotitasExercisesPage() {
           })}
         </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+        {/* Κουμπί Ελέγχου στο τέλος της φόρμας */}
+        {!isSubmitted && (
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={handleCheckAnswers}
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            >
+              <span>🎯 {toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
+            </button>
+          </div>
+        )}
 
       </div>
 
@@ -895,21 +890,23 @@ export default function KritiriaDiairetotitasExercisesPage() {
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
               <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
+                {isSubmitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+                {isSubmitted ? `${score} / 10` : `${answeredCount} / 10`}
               </span>
             </div>
 
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+            {isSubmitted && (
+              <div className="border-l border-slate-700 pl-4 sm:pl-8">
+                <span className="text-xs text-slate-400 font-semibold block">
+                  {toCleanUppercase('Ποσοστό')}
+                </span>
+                <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+                  {Math.round((score / 10) * 100)} %
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -919,7 +916,7 @@ export default function KritiriaDiairetotitasExercisesPage() {
                 onClick={handleCheckAnswers}
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                {toCleanUppercase('Έλεγχος')}
               </button>
             ) : (
               <button
@@ -927,7 +924,7 @@ export default function KritiriaDiairetotitasExercisesPage() {
                 onClick={loadNewSet}
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             )}
           </div>
