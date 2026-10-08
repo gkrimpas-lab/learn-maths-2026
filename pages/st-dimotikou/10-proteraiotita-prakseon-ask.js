@@ -3,22 +3,24 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαιος ακεραιος στο [min, max]
+// Τυχαίος ακέραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Ανακατεμα πινακα
+// Ανακάτεμα πίνακα
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -27,13 +29,13 @@ function shuffle(array) {
   return arr;
 }
 
-// Μορφοποιηση αριθμου με τελειες χιλιαδων
+// Μορφοποίηση αριθμού με τελείες χιλιάδων
 function formatNumber(num) {
   if (num === '' || isNaN(num)) return '0';
   return Number(num).toLocaleString('el-GR');
 }
 
-// Πληρης δεξαμενη θεματικων σεναριων καθημερινοτητας
+// Πλήρης δεξαμενή θεματικών σεναρίων καθημερινότητας
 const REAL_WORLD_PROBLEMS = [
   { name: 'Ο Νίκος', item: 'βιβλία', price: 12, wallet: 50, count: 3, unit: '€' },
   { name: 'Η Μαρία', item: 'τετράδια', price: 4, wallet: 30, count: 5, unit: '€' },
@@ -43,7 +45,7 @@ const REAL_WORLD_PROBLEMS = [
   { name: 'Η Δήμητρα', item: 'μαρκαδόρους', price: 3, wallet: 25, count: 4, unit: '€' }
 ];
 
-// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (Input)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 9 (Input)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_prio_std_1',
@@ -58,7 +60,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΑΓΟΡΑ ΕΙΣΙΤΗΡΙΩΝ ΚΑΙ ΣΝΑΚ',
         instruction: 'Υπολογίστε τα ρέστα σε ευρώ (€):',
-        text: `Μια παρέα αγόρασε ${tickets} εισιτήρια σινεμά προς ${ticketPrice} € το καθένα και ${popcorn} ποπ κορν προς ${popcornPrice} € το καθένα. Πλήρωσαν με χαρτονόμισμα των ${wallet} €. Πόσα ρέστα (€) έλαβαν;`,
+        text: `Μια παρέα αγόρασε ${tickets} εισιτήρια κινηματογράφου προς ${ticketPrice} € το καθένα και ${popcorn} κουτιά ποπ κορν προς ${popcornPrice} € το καθένα. Πλήρωσαν με χαρτονόμισμα των ${wallet} €. Πόσα ρέστα (€) έλαβαν;`,
         tableData: { col1: 'Αγορές', col2: 'Κόστος & Ρέστα', r1: [`${tickets} · ${ticketPrice} € ＋ ${popcorn} · ${popcornPrice} €`, `Σύνολο: ${totalCost} €`], r2: [`Χαρτονόμισμα: ${wallet} €`, `Ρέστα: ${change} €`] },
         correctVal: change,
         correctStr: String(change),
@@ -77,7 +79,7 @@ const STANDARD_PROBLEMS_POOL = [
       const totalCost = b1 * count1 + b2 * count2;
       const remain = initial - totalCost;
       return {
-        title: 'ΑΓΟΡΑ ΕΝΔΥΜΑΤΩΝ',
+        title: 'ΑΓΟΡΑ ΕΙΔΩΝ ΕΝΔΥΣΗΣ',
         instruction: 'Υπολογίστε το υπόλοιπο ποσό σε ευρώ (€):',
         text: `Από αρχικό ποσό ${initial} € αγοράστηκαν ${count1} μπλούζες προς ${b1} € η καθεμία και ${count2} καπέλα προς ${b2} € το καθένα. Πόσα ευρώ (€) περίσσεψαν;`,
         tableData: { col1: 'Αγορές', col2: 'Υπόλοιπο', r1: [`${count1} · ${b1} € ＋ ${count2} · ${b2} €`, `Σύνολο: ${totalCost} €`], r2: [`Αρχικά: ${initial} €`, `Περίσσεψαν: ${remain} €`] },
@@ -100,7 +102,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΑΓΟΡΑ ΣΧΟΛΙΚΩΝ ΕΙΔΩΝ',
         instruction: 'Υπολογίστε τα ρέστα σε ευρώ (€):',
-        text: `Ένας μαθητής αγόρασε ${notebooks} τετράδια προς ${nbPrice} € το καθένα και ${pens} στυλό προς ${penPrice} € το καθένα. Πλήρωσε με χαρτονόμισμα των ${wallet} €. Πόσα ρέστα (€) πήρε;`,
+        text: `Ένας μαθητής αγόρασε ${notebooks} τετράδια προς ${nbPrice} € το καθένα και ${pens} στυλό προς ${penPrice} € το καθένα. Πλήρωσε με χαρτονόμισμα των ${wallet} €. Πόσα ρέστα (€) έλαβε;`,
         tableData: { col1: 'Έξοδα', col2: 'Πληρωμή & Ρέστα', r1: [`${notebooks} · ${nbPrice} € ＋ ${pens} · ${penPrice} €`, `Σύνολο: ${total} €`], r2: [`Χαρτονόμισμα: ${wallet} €`, `Ρέστα: ${change} €`] },
         correctVal: change,
         correctStr: String(change),
@@ -164,7 +166,7 @@ const STANDARD_PROBLEMS_POOL = [
   }
 ];
 
-// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_prio_hard_1',
@@ -315,7 +317,7 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΕΜΦΙΑΛΩΣΗ ΕΛΑΙΟΛΑΔΟΥ',
         instruction: 'Επιλέξτε πόσα λίτρα (L) λάδι μπήκαν σε κάθε δοχείο:',
-        text: `Ένας παραγωγός είχε ${barrels} βαρέλια με ${lPerBarrel} L λάδι το καθένα. Αφαίρεσε ${waste} L κατακάθι και το υπόλοιπο λάδι το μοίρασε ισόποσα σε ${cans} δοχεία. Πόσα λίτρα (L) λάδι μπήκαν σε κάθε δοχείο;`,
+        text: `Ένας παραγωγός είχε ${barrels} βαρέλια με ${lPerBarrel} L λάδι το καθένα. Αφαίρεσε ${waste} L ακατάλληλο λάδι και το υπόλοιπο λάδι το μοίρασε ισόποσα σε ${cans} δοχεία. Πόσα λίτρα (L) λάδι μπήκαν σε κάθε δοχείο;`,
         tableData: { col1: 'Συνολικό Λάδι', col2: 'Μοίρασμα', r1: [`(${barrels} · ${lPerBarrel}) － ${waste}`, `${goodOil} L καθαρό`], r2: [`: ${cans} δοχεία`, `${correctStr}`] },
         options,
         correctText: correctStr,
@@ -346,7 +348,7 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΣΥΣΚΕΥΑΣΙΑ ΑΛΕΥΡΙΟΥ ΣΕ ΣΑΚΟΥΛΕΣ',
         instruction: 'Επιλέξτε πόσα κιλά (kg) αλεύρι περιέχει κάθε σακούλα:',
-        text: `Ένας αρτοποιός είχε ${boxes} κιβώτια με ${kgPerBox} kg αλεύρι το καθένα. Αφαίρεσε ${damagedKg} kg ακατάλληλο αλεύρι και το υπόλοιπο το μοίρασε ισόποσα σε ${bags} σακούλες. Πόσα κιλά (kg) περιέχει η κάθε σακούλα;`,
+        text: `Ένας αρτοποιός είχε ${boxes} κιβώτια με ${kgPerBox} kg αλεύρι το καθένα. Αφαίρεσε ${damagedKg} kg ακατάλληλο αλεύρι και το υπόλοιπο το μοίρασε ισόποσα σε ${bags} σακούλες. Πόσα κιλά (kg) αλεύρι περιέχει κάθε σακούλα;`,
         tableData: { col1: 'Σύνολο & Ακατάλληλο', col2: 'Μοίρασμα', r1: [`(${boxes} · ${kgPerBox}) － ${damagedKg}`, `${goodKg} kg καλό`], r2: [`: ${bags} σακούλες`, `${correctStr}`] },
         options,
         correctText: correctStr,
@@ -356,12 +358,12 @@ const HARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// Δημιουργία των 10 δυναμικών ερωτήσεων
 function generateQuestions() {
   const qList = [];
   const shuffledProblems = shuffle(REAL_WORLD_PROBLEMS);
 
-  // Q1 (Input - Decimal): Απλή παράσταση χωρίς παρενθέσεις (α ＋ β · γ)
+  // Q1 (Input): Απλή παράσταση χωρίς παρενθέσεις (α ＋ β · γ)
   {
     const q1A = randInt(10, 30);
     const q1B = randInt(2, 6);
@@ -371,17 +373,17 @@ function generateQuestions() {
 
     qList.push({
       id: 1,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 1 • ΑΠΛΗ ΠΑΡΑΣΤΑΣΗ',
       instruction: 'Υπολογίστε την τιμή της παράστασης τηρώντας την προτεραιότητα (ακέραιος):',
-      prompt: `Υπολογίστε: ${q1Prompt};`,
+      prompt: `Υπολογίστε την τιμή της παράστασης: ${q1Prompt}`,
       correctVal: q1Answer,
       correctStr: String(q1Answer),
-      explanation: `Πρώτα κάνουμε τον πολλαπλασιασμό: ${q1B} · ${q1C} ＝ ${q1B * q1C}. Στη συνέχεια την πρόσθεση: ${q1A} ＋ ${q1B * q1C} ＝ ${q1Answer}.`
+      explanation: `Πρώτα εκτελούμε τον πολλαπλασιασμό: ${q1B} · ${q1C} ＝ ${q1B * q1C}. Στη συνέχεια την πρόσθεση: ${q1A} ＋ ${q1B * q1C} ＝ ${q1Answer}.`
     });
   }
 
-  // Q2 (Input - Decimal): Παράσταση με παρενθέσεις (α － β) · γ
+  // Q2 (Input): Παράσταση με παρενθέσεις (α － β) · γ
   {
     const q2A = randInt(15, 30);
     const q2B = randInt(2, q2A - 5);
@@ -391,17 +393,17 @@ function generateQuestions() {
 
     qList.push({
       id: 2,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΠΑΡΑΣΤΑΣΗ ΜΕ ΠΑΡΕΝΘΕΣΗ',
       instruction: 'Υπολογίστε πρώτα την παρένθεση (ακέραιος):',
-      prompt: `Υπολογίστε: ${q2Prompt};`,
+      prompt: `Υπολογίστε την τιμή της παράστασης: ${q2Prompt}`,
       correctVal: q2Answer,
       correctStr: String(q2Answer),
-      explanation: `Πρώτα υπολογίζουμε την παρένθεση: (${q2A} － ${q2B}) ＝ ${q2A - q2B}. Μετά τον πολλαπλασιασμό: ${q2A - q2B} · ${q2C} ＝ ${q2Answer}.`
+      explanation: `Πρώτα υπολογίζουμε την παρένθεση: (${q2A} － ${q2B}) ＝ ${q2A - q2B}. Μετά εκτελούμε τον πολλαπλασιασμό: ${q2A - q2B} · ${q2C} ＝ ${q2Answer}.`
     });
   }
 
-  // Q3 (MCQ): Αναγνώριση πρώτης πράξης (Εγγύηση Μοναδικότητας)
+  // Q3 (MCQ): Αναγνώριση πρώτης πράξης
   {
     const q3A = randInt(20, 50);
     const q3B = randInt(3, 8);
@@ -433,7 +435,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Τιμή παράστασης με πολλαπλές πράξεις (Εγγύηση Μοναδικότητας)
+  // Q4 (MCQ): Τιμή παράστασης με πολλαπλές πράξεις
   {
     const q4B = randInt(2, 5);
     const q4C = randInt(3, 7);
@@ -460,7 +462,7 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 4 • ΠΟΛΛΑΠΛΕΣ ΠΡΑΞΕΙΣ',
       instruction: 'Υπολογίστε την τελική τιμή της παράστασης:',
-      prompt: `Υπολογίστε: ${q4ExprStr};`,
+      prompt: `Υπολογίστε την τιμή της παράστασης: ${q4ExprStr}`,
       options,
       correctText: correctStr,
       explanation: `1) Παρένθεση: ${q4C} ＋ ${q4D} ＝ ${q4SubTotal}. 2) Πολλαπλασιασμός: ${q4B} · ${q4SubTotal} ＝ ${q4Prod}. 3) Αφαίρεση: ${q4A} － ${q4Prod} ＝ ${q4Answer}.`
@@ -489,8 +491,8 @@ function generateQuestions() {
       options,
       correctText: correctAns,
       explanation: q5IsTrue
-        ? 'Σωστό! Οι πολλαπλασιασμοί και οι διαιρέσεις προηγούνται πάντα των προσθέσεων και αφαιρέσεων.'
-        : 'Λάθος! Οι προσθέσεις και οι αφαιρέσεις γίνονται ΤΕΛΕΥΤΑΙΕΣ, εκτός αν βρίσκονται μέσα σε παρενθέσεις.'
+        ? 'Σωστό! Οι πολλαπλασιασμοί και οι διαιρέσεις προηγούνται πάντα των προσθέσεων και των αφαιρέσεων.'
+        : 'Λάθος! Οι προσθέσεις και οι αφαιρέσεις εκτελούνται τελευταίες, εκτός εάν βρίσκονται μέσα σε παρενθέσεις.'
     });
   }
 
@@ -499,7 +501,7 @@ function generateQuestions() {
     const q6IsTrue = Math.random() > 0.5;
     const q6Text = q6IsTrue
       ? 'Όταν σε μια παράσταση υπάρχουν μόνο προσθέσεις και αφαιρέσεις, τις εκτελούμε με τη σειρά από αριστερά προς τα δεξιά.'
-      : 'Όταν σε μια παράσταση υπάρχουν μόνο προσθέσεις και αφαιρέσεις, κάνουμε πάντα πρώτα τις προσθέσεις.';
+      : 'Όταν σε μια παράσταση υπάρχουν μόνο προσθέσεις και αφαιρέσεις, κάνουμε πάντα πρώτα όλες τις προσθέσεις.';
     const correctAns = q6IsTrue ? 'Σωστό' : 'Λάθος';
 
     const options = [
@@ -516,30 +518,30 @@ function generateQuestions() {
       options,
       correctText: correctAns,
       explanation: q6IsTrue
-        ? 'Σωστό! Πράξεις με την ίδια προτεραιότητα εκτελούνται διαδοχικά από αριστερά προς τα δεξιά.'
-        : 'Λάθος! Δεν προηγείται η πρόσθεση της αφαίρεσης. Εκτελούνται με τη σειρά που εμφανίζονται από αριστερά προς τα δεξιά.'
+        ? 'Σωστό! Πράξεις με την ίδια προτεραιότητα εκτελούνται διαδοχικά από τα αριστερά προς τα δεξιά.'
+        : 'Λάθος! Δεν προηγείται η πρόσθεση έναντι της αφαίρεσης. Εκτελούνται με τη σειρά που εμφανίζονται από αριστερά προς τα δεξιά.'
     });
   }
 
-  // Q7 (Input - Decimal): Πρόβλημα Καθημερινότητας (α － β · γ)
+  // Q7 (Input): Πρόβλημα Καθημερινότητας (α － β · γ)
   {
     const p = shuffledProblems[0];
     const q7Answer = p.wallet - p.count * p.price;
-    const q7Prompt = `${p.name} είχε ${p.wallet} €. Αγόρασε ${p.count} ${p.item} που κοστίζουν ${p.price} € το καθένα. Πόσα ρέστα πήρε σε ευρώ (€);`;
+    const q7Prompt = `${p.name} είχε ${p.wallet} €. Αγόρασε ${p.count} ${p.item} που κοστίζουν ${p.price} € το καθένα. Πόσα ρέστα (€) έλαβε;`;
 
     qList.push({
       id: 7,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑΣ',
-      instruction: 'Υπολογίστε τα ρέστα εφαρμόζοντας τη σωστή σειρά πράξεων (ακέραιος):',
+      instruction: 'Υπολογίστε το ποσό των ρέστων σε ευρώ (€):',
       prompt: q7Prompt,
       correctVal: q7Answer,
       correctStr: String(q7Answer),
-      explanation: `Φτιάχνουμε την παράσταση: ${p.wallet} － ${p.count} · ${p.price} ＝ ${p.wallet} － ${p.count * p.price} ＝ ${q7Answer} €.`
+      explanation: `Φτιάχνουμε την αριθμητική παράσταση: ${p.wallet} － ${p.count} · ${p.price} ＝ ${p.wallet} － ${p.count * p.price} ＝ ${q7Answer} €.`
     });
   }
 
-  // Q8 (MCQ): Αναγνώριση 1ου σωστού βήματος (Εγγύηση Μοναδικότητας)
+  // Q8 (MCQ): Αναγνώριση 1ου σωστού βήματος
   {
     const q8A = randInt(30, 60);
     const q8B = randInt(2, 5);
@@ -570,17 +572,17 @@ function generateQuestions() {
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
     const stdProb = shuffledStd[0].generate();
     const hardProb = shuffledHard[0].generate();
 
-    // Q9 (Input - Decimal) - Χωρίς πίνακα στην εκφώνηση
+    // Q9 (Input)
     qList.push({
       id: 9,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: `ΕΡΩΤΗΣΗ 9 • ${stdProb.title}`,
       instruction: stdProb.instruction,
       prompt: stdProb.text,
@@ -590,7 +592,7 @@ function generateQuestions() {
       explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ Αυξημένης Δυσκολίας) - Πλήρως ευθυγραμμισμένη μονάδα μέτρησης και τίτλος
+    // Q10 (MCQ)
     qList.push({
       id: 10,
       type: 'mcq',
@@ -613,29 +615,26 @@ export default function ProteraiotitaPrakseonExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
+  // Δημιουργία νέων ασκήσεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9, οριο 10 χαρακτηρων)
+  // Χειρισμός Input μόνο για ακεραίους αριθμούς (0-9)
   const handleInputChange = (fieldKey, rawValue) => {
     if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, '');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
+    let sanitized = rawValue.replace(/[^0-9]/g, '');
     if (sanitized.length > 10) {
       sanitized = sanitized.slice(0, 10);
     }
@@ -645,7 +644,7 @@ export default function ProteraiotitaPrakseonExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
+  // Χειρισμός MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -654,28 +653,35 @@ export default function ProteraiotitaPrakseonExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
-  const handleCheckAnswers = () => {
-    let currentScore = 0;
+  const isQuestionCorrect = (q) => {
+    if (q.type === 'mcq') {
+      return answers[`q_${q.id}`] === q.correctText;
+    }
+    if (q.type === 'integer_input') {
+      const userValStr = (answers[`q_${q.id}`] || '').trim();
+      const userVal = parseInt(userValStr, 10);
+      return !isNaN(userVal) && userVal === q.correctVal;
+    }
+    return false;
+  };
 
+  // Έλεγχος Απαντήσεων
+  const handleCheckAnswers = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (isSubmitted) return;
+
+    let currentScore = 0;
     questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+      if (isQuestionCorrect(q)) {
+        currentScore += 1;
       }
     });
 
     setScore(currentScore);
     setIsSubmitted(true);
   };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
@@ -689,53 +695,44 @@ export default function ProteraiotitaPrakseonExercisesPage() {
           href="/st-dimotikou/10-proteraiotita-prakseon"
           className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖 {toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-36 overflow-x-hidden">
         
         {/* Banner Header */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              <span>ΚΕΦΑΛΑΙΟ 10 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Προτεραιότητα Πράξεων
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με αριθμητικές παραστάσεις, παρενθέσεις, αναγνώριση πρώτης πράξης και 4 ρεαλιστικά προβλήματα καθημερινής ζωής.
+              10 δυναμικές δραστηριότητες με αριθμητικές παραστάσεις, παρενθέσεις, αναγνώριση πρώτης πράξης και 4 ρεαλιστικά προβλήματα καθημερινής ζωής.
             </p>
           </div>
 
           <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
             <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
+              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίους αριθμούς.
             </span>
             <button
               type="button"
               onClick={loadNewSet}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
+        {/* Λίστα 10 Ασκήσεων */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q, idx) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
+            const isCorrect = isSubmitted && isQuestionCorrect(q);
 
             return (
               <article
@@ -748,7 +745,7 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
+                {/* Επικεφαλίδα Ερώτησης */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
@@ -761,12 +758,12 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
+                      {isCorrect ? `✓ ${toCleanUppercase('Σωστό')}` : `✗ ${toCleanUppercase('Λάθος')}`}
                     </span>
                   )}
                 </div>
 
-                {/* Εκφωνηση (Καθαρο κειμενο χωρις πινακα που προδιδει τη λυση) */}
+                {/* Εκφώνηση */}
                 <div className="space-y-3 mb-5">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
@@ -778,29 +775,30 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                   </p>
                 </div>
 
-                {/* Περιοχη Απαντησης */}
+                {/* Περιοχή Απάντησης */}
                 <div className="py-2">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
+                  {/* Integer Input */}
+                  {q.type === 'integer_input' && (
                     <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="numeric"
+                        autoComplete="off"
+                        spellCheck="false"
                         maxLength={10}
                         disabled={isSubmitted}
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs 2xl:text-sm text-slate-500">
+                      <span className="text-xs 2xl:text-sm text-slate-500 font-medium">
                         (Ακέραιος αριθμός)
                       </span>
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
+                  {/* Multiple Choice (MCQ) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
@@ -811,9 +809,9 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 min-h-[48px] ${
                               isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm ring-2 ring-blue-300'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
@@ -834,10 +832,9 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                       })}
                     </div>
                   )}
-
                 </div>
 
-                {/* Feedback μετα την υποβολη (Εδω εμφανιζεται ο αναλυτικος πινακας δεδομενων) */}
+                {/* Feedback μετά την υποβολή */}
                 {isSubmitted && (
                   <div
                     className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-2.5 ${
@@ -883,17 +880,18 @@ export default function ProteraiotitaPrakseonExercisesPage() {
           })}
         </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+        {/* Κουμπί Ελέγχου στο τέλος της φόρμας */}
+        {!isSubmitted && (
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={handleCheckAnswers}
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            >
+              <span>🎯 {toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
+            </button>
+          </div>
+        )}
 
       </div>
 
@@ -904,21 +902,23 @@ export default function ProteraiotitaPrakseonExercisesPage() {
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
               <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
+                {isSubmitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+                {isSubmitted ? `${score} / 10` : `${answeredCount} / 10`}
               </span>
             </div>
 
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+            {isSubmitted && (
+              <div className="border-l border-slate-700 pl-4 sm:pl-8">
+                <span className="text-xs text-slate-400 font-semibold block">
+                  {toCleanUppercase('Ποσοστό')}
+                </span>
+                <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+                  {Math.round((score / 10) * 100)} %
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -928,7 +928,7 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                 onClick={handleCheckAnswers}
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                {toCleanUppercase('Έλεγχος')}
               </button>
             ) : (
               <button
@@ -936,7 +936,7 @@ export default function ProteraiotitaPrakseonExercisesPage() {
                 onClick={loadNewSet}
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             )}
           </div>
