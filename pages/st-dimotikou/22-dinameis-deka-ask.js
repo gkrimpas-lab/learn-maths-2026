@@ -24,7 +24,7 @@ function shuffle(array) {
   return arr;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -34,7 +34,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -81,7 +81,7 @@ const STANDARD_PROBLEMS_POOL = [
         distractors: [
           `${coeff} · 10${EXPONENTS_UNICODE[exp - 1]} €`,
           `${coeff} · 10${EXPONENTS_UNICODE[exp + 1]} €`,
-          `${coeff * 10} · 10${EXPONENTS_UNICODE[exp]} €`
+          `${coeff + 1} · 10${EXPONENTS_UNICODE[exp]} €`
         ]
       };
     }
@@ -104,7 +104,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Καρφιά ανά Κιβώτιο', formula: '10³ ＝ 1.000', val: '1.000' },
           { item: 'Συνολικό Πλήθος', formula: `${boxes} · 1.000`, val: `${formatNum(total)} καρφιά` }
         ],
-        explain: `Η δύναμη 10³ ισούται με 1.000 (1 ακολουθούμενο από 3 μηδενικά). Άρα ${boxes} · 1.000 ＝ ${formatNum(total)} καρφιά.`,
+        explain: `Η δύναμη 10³ ισούται με 1.000 (1 ακολουθούμενο από 3 μηδενικά). Άρα: ${boxes} · 1.000 ＝ ${formatNum(total)} καρφιά.`,
         distractors: [
           `${formatNum(boxes * 100)} καρφιά`,
           `${formatNum(boxes * 10000)} καρφιά`,
@@ -131,7 +131,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Συντελεστής', formula: `${coeff}`, val: `${coeff}` },
           { item: 'Αριθμητική Τιμή', formula: `${coeff} · 1.000.000`, val: `${formatNum(total)}` }
         ],
-        explain: `Η δύναμη 10⁶ ισούται με 1.000.000 (ένα εκατομμύριο). Επομένως, ${coeff} · 10⁶ ＝ ${formatNum(total)} μικροοργανισμοί.`,
+        explain: `Η δύναμη 10⁶ ισούται με 1.000.000 (ένα εκατομμύριο). Επομένως: ${coeff} · 10⁶ ＝ ${formatNum(total)} μικροοργανισμοί.`,
         distractors: [
           `${formatNum(coeff * 100000)} μικροοργανισμοί`,
           `${formatNum(coeff * 10000000)} μικροοργανισμοί`,
@@ -161,14 +161,14 @@ const STANDARD_PROBLEMS_POOL = [
         distractors: [
           `${coeff} · 10³ σελίδες`,
           `${coeff} · 10⁵ σελίδες`,
-          `${coeff * 10} · 10⁴ σελίδες`
+          `${coeff + 1} · 10⁴ σελίδες`
         ]
       };
     }
   },
   {
     id: 'sp5',
-    title: 'Φωτεινά Έτη και Χιλιόμετρα',
+    title: 'Απόσταση Αστεροειδούς στο Διάστημα',
     unit: 'χλμ.',
     generate: () => {
       const coeff = randInt(2, 6);
@@ -183,7 +183,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Εκθέτης', formula: '5 μηδενικά', val: '100.000' },
           { item: 'Υπολογισμός', formula: `${coeff} · 100.000`, val: `${formatNum(total)} χλμ.` }
         ],
-        explain: `Το 10⁵ ισούται με το 1 με 5 μηδενικά (100.000). Έτσι, ${coeff} · 100.000 ＝ ${formatNum(total)} χλμ.`,
+        explain: `Το 10⁵ ισούται με το 1 ακολουθούμενο από 5 μηδενικά (100.000). Έτσι: ${coeff} · 100.000 ＝ ${formatNum(total)} χλμ.`,
         distractors: [
           `${formatNum(coeff * 10000)} χλμ.`,
           `${formatNum(coeff * 1000000)} χλμ.`,
@@ -198,10 +198,10 @@ const STANDARD_PROBLEMS_POOL = [
     unit: 'bytes',
     generate: () => {
       const coeff = randInt(5, 9);
-      const exp = 3; // 10^3 = 1.000 (Kilobyte βάσης 10)
+      const exp = 3; // 10^3 = 1.000
       const total = coeff * 1000;
       return {
-        prompt: `Ένα μικρό ψηφιακό αρχείο κειμένου καταλαμβάνει ${coeff} · 10³ bytes στη μνήμη. Πόσα bytes καταλαμβάνει το αρχείο;`,
+        prompt: `Ένα ψηφιακό αρχείο κειμένου καταλαμβάνει ${coeff} · 10³ bytes στη μνήμη. Πόσα bytes καταλαμβάνει το αρχείο;`,
         unit: 'bytes',
         correctVal: total,
         correctText: `${formatNum(total)} bytes`,
@@ -209,7 +209,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Δύναμη 10³', formula: '1.000 bytes', val: '1.000' },
           { item: 'Συνολικό Μέγεθος', formula: `${coeff} · 1.000`, val: `${formatNum(total)} bytes` }
         ],
-        explain: `10³ ＝ 1.000 bytes. Επομένως, ${coeff} · 10³ ＝ ${formatNum(total)} bytes.`,
+        explain: `10³ ＝ 1.000 bytes. Επομένως: ${coeff} · 10³ ＝ ${formatNum(total)} bytes.`,
         distractors: [
           `${formatNum(coeff * 100)} bytes`,
           `${formatNum(coeff * 10000)} bytes`,
@@ -224,9 +224,8 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp1',
     title: 'Η Ταχύτητα του Φωτός',
-    unit: 'μέτρα ανά δευτερόλεπτο (m/s)',
+    unit: 'm/s',
     generate: () => {
-      // 3 · 10^8 m/s = 300.000.000 m/s
       const coeff = 3;
       const exp = 8;
       const total = 300000000;
@@ -253,7 +252,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Αστέρια στον Γαλαξία',
     unit: 'αστέρια',
     generate: () => {
-      // 2 · 10^11 = 200.000.000.000 (200 δισεκατομμύρια)
       const coeff = randInt(2, 4);
       const exp = 11;
       const valText = `${coeff * 100} δισεκατομμύρια`;
@@ -267,7 +265,7 @@ const HARD_PROBLEMS_POOL = [
           { item: '10¹¹', formula: '100 δισεκατομμύρια (11 μηδενικά)', val: '100.000.000.000' },
           { item: `${coeff} · 10¹¹`, formula: `${coeff} · 100 δισεκατομμύρια`, val: `${valText}` }
         ],
-        explain: `Ο εκθέτης 9 δηλώνει τα δισεκατομμύρια (10⁹). Ο εκθέτης 11 έχει 2 επιπλέον μηδενικά (100 δισεκατομμύρια). Άρα ${coeff} · 10¹¹ ＝ ${valText} αστέρια.`,
+        explain: `Ο εκθέτης 9 δηλώνει τα δισεκατομμύρια (10⁹). Ο εκθέτης 11 έχει 2 επιπλέον μηδενικά (100 δισεκατομμύρια). Άρα: ${coeff} · 10¹¹ ＝ ${valText} αστέρια.`,
         distractors: [
           `${coeff * 10} δισεκατομμύρια αστέρια`,
           `${coeff} τρισεκατομμύρια αστέρια`,
@@ -279,10 +277,8 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp3',
     title: 'Πληθυσμός Κυττάρων στον Ανθρώπινο Εγκέφαλο',
-    unit: 'νευρώνες',
+    unit: 'συνάψεις',
     generate: () => {
-      // 10^11 = 100 δισεκατομμύρια
-      const exp = 11;
       return {
         prompt: `Ο ανθρώπινος εγκέφαλος περιέχει περίπου 10¹¹ νευρώνες (νευρικά κύτταρα). Αν κάθε νευρώνας κάνει κατά μέσο όρο 10³ συνάψεις, ποια δύναμη του 10 εκφράζει το συνολικό πλήθος των συνάψεων; (Χρησιμοποίησε τον κανόνα: 10¹¹ · 10³ ＝ 10¹¹⁺³)`,
         unit: 'συνάψεις',
@@ -307,13 +303,12 @@ const HARD_PROBLEMS_POOL = [
     title: 'Σύγκριση Μεγάλων Μεγεθών',
     unit: 'φορές',
     generate: () => {
-      // Πόσες φορές μεγαλύτερος είναι ο 10^7 από τον 10^4 -> 10^3 = 1.000 φορές
       const exp1 = randInt(6, 8);
       const exp2 = exp1 - randInt(2, 3);
       const diff = exp1 - exp2;
       const times = Math.pow(10, diff);
       return {
-        prompt: `Πόσες φορές μεγαλύτερος είναι ένας προϋπολογισμός 10${EXPONENTS_UNICODE[exp1]} € από έναν προϋπολογισμό 10${EXPONENTS_UNICODE[exp2]} €;`,
+        prompt: `Πόσες φορές μεγαλύτερο είναι ένα κονδύλι 10${EXPONENTS_UNICODE[exp1]} € από ένα κονδύλι 10${EXPONENTS_UNICODE[exp2]} €;`,
         unit: 'φορές',
         correctVal: times,
         correctText: `${formatNum(times)} φορές (10${EXPONENTS_UNICODE[diff]})`,
@@ -336,7 +331,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Χρηματικός Προϋπολογισμός Κράτους',
     unit: 'ευρώ (€)',
     generate: () => {
-      // 6 · 10^10 € = 60.000.000.000 € (60 δισεκατομμύρια)
       const coeff = randInt(4, 9);
       const exp = 10;
       const valText = `${coeff * 10} δισεκατομμύρια €`;
@@ -362,9 +356,8 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp6',
     title: 'Κύτταρα στο Ανθρώπινο Σώμα',
-    unit: 'κύτταρα',
+    unit: 'μηδενικά',
     generate: () => {
-      // 3 · 10^13 = 30 τρισεκατομμύρια
       const coeff = 3;
       const exp = 13;
       return {
@@ -412,7 +405,7 @@ function generateQuestions() {
   ];
   const q3Options = shuffle([...new Set([q3CorrectStr, ...q3Wrongs])]);
 
-  // Q4: MCQ - Εύρεση αριθμού από ανάπτυγμα με δύναμη του 10 (π.χ. 7 · 10^4 = 70.000)
+  // Q4: MCQ - Εύρεση αριθμού από ανάπτυγμα με δύναμη του 10
   const q4Digit = randInt(2, 9);
   const q4Exp = randInt(2, 5);
   const q4Result = q4Digit * Math.pow(10, q4Exp);
@@ -456,10 +449,10 @@ function generateQuestions() {
       explain: '10⁴ ＝ 10.000 και 10³ ＝ 1.000. Επομένως, 10.000 － 1.000 ＝ 9.000.'
     },
     {
-      prompt: 'Πόσο κάνει το γινόμενο 5 · 10³ ＋ 3 · 10²;',
+      prompt: 'Ποιο είναι το αποτέλεσμα της παράστασης 5 · 10³ ＋ 3 · 10²;',
       correct: '5.300',
       wrong: ['5.030', '8.000', '53.000'],
-      explain: '5 · 1.000 ＝ 5.000 και 3 · 100 ＝ 300. Άρα 5.000 ＋ 300 ＝ 5.300.'
+      explain: '5 · 1.000 ＝ 5.000 και 3 · 100 ＝ 300. Άρα: 5.000 ＋ 300 ＝ 5.300.'
     }
   ];
   const q8Data = q8Pool[randInt(0, q8Pool.length - 1)];
@@ -512,7 +505,7 @@ function generateQuestions() {
       prompt: `Ποια είναι η τελική τιμή της παράστασης ${q4Digit} · 10${EXPONENTS_UNICODE[q4Exp]};`,
       options: q4Options,
       correct: q4CorrectStr,
-      explain: `10${EXPONENTS_UNICODE[q4Exp]} ＝ ${formatNum(Math.pow(10, q4Exp))}. Επομένως, ${q4Digit} · ${formatNum(Math.pow(10, q4Exp))} ＝ ${formatNum(q4Result)}.`
+      explain: `10${EXPONENTS_UNICODE[q4Exp]} ＝ ${formatNum(Math.pow(10, q4Exp))}. Επομένως: ${q4Digit} · ${formatNum(Math.pow(10, q4Exp))} ＝ ${formatNum(q4Result)}.`
     },
     {
       id: 'q5',
@@ -603,17 +596,22 @@ export default function DinameisDekaExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
+  // Χειρισμός Input μόνο για ακέραιους αριθμούς (0-9)
   const handleInputChange = (id, val) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    let sanitized = String(val).replace(/[^0-9]/g, '');
+    if (sanitized.length > 10) {
+      sanitized = sanitized.slice(0, 10);
+    }
+    setAnswers(prev => ({ ...prev, [id]: sanitized }));
   };
 
   const isQuestionCorrect = (q) => {
     const userVal = answers[q.id];
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
-      const cleanUser = userVal.replace(/\s+/g, '').replace(/\./g, '').replace(/,/g, '.').trim();
-      const cleanTarget = q.correct.replace(/\s+/g, '').replace(/\./g, '').replace(/,/g, '.').trim();
+      const cleanUser = userVal.replace(/\s+/g, '').replace(/\./g, '').trim();
+      const cleanTarget = q.correct.replace(/\s+/g, '').replace(/\./g, '').trim();
       return cleanUser === cleanTarget;
     }
     if (q.type === 'mcq') {
@@ -645,6 +643,8 @@ export default function DinameisDekaExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Οι Δυνάμεις του 10 - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -663,7 +663,7 @@ export default function DinameisDekaExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -748,6 +748,9 @@ export default function DinameisDekaExercisesPage() {
                         <input
                           type="text"
                           inputMode="numeric"
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
                           onChange={(e) => handleInputChange(q.id, e.target.value)}
@@ -855,8 +858,10 @@ export default function DinameisDekaExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
