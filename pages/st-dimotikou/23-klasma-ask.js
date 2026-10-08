@@ -24,7 +24,7 @@ function shuffle(array) {
   return arr;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -34,7 +34,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -67,7 +67,7 @@ const STANDARD_PROBLEMS_POOL = [
         distractors: [
           `${eaten}/${parts}`,
           `${parts}/${remaining}`,
-          `${remaining}/${parts + 1}`
+          `${remaining - 1}/${parts}`
         ]
       };
     }
@@ -87,7 +87,7 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: [
           { item: 'Σύνολο ίσων μερών', formula: `${parts}`, val: `${parts}` },
           { item: 'Μέρη που μοιράστηκαν', formula: `${given}`, val: `${given}` },
-          { item: 'Κλάσμα Κεράσματος', formula: `Αριθμητής / Παρονομαστής`, val: `${given}/${parts}` }
+          { item: 'Κλάσμα Κεράσματος', formula: 'Αριθμητής / Παρονομαστής', val: `${given}/${parts}` }
         ],
         explain: `Ο Νίκος πήρε ${given} από τα ${parts} ίσα μέρη, άρα το κλάσμα είναι ${given}/${parts}.`,
         distractors: [
@@ -126,7 +126,7 @@ const STANDARD_PROBLEMS_POOL = [
   },
   {
     id: 'sp4',
-    title: 'Διαδρομή Μαραθωνίου',
+    title: 'Διαδρομή Αγώνα Δρόμου',
     unit: 'μέρος διαδρομής',
     generate: () => {
       const totalKm = 10;
@@ -209,10 +209,9 @@ const STANDARD_PROBLEMS_POOL = [
 const HARD_PROBLEMS_POOL = [
   {
     id: 'hp1',
-    title: 'Πάνω από Μία Πίτσες (Καταχρηστικό)',
+    title: 'Περισσότερες από Μία Πίτσες (Καταχρηστικό Κλάσμα)',
     unit: 'πίτσες',
     generate: () => {
-      // 10 κομμάτια όταν κάθε πίτσα έχει 4 μέρη -> 10/4 = 2 ολόκληρες και 2/4
       const partsPerPizza = 4;
       const totalSlices = randInt(9, 14);
       return {
@@ -228,8 +227,8 @@ const HARD_PROBLEMS_POOL = [
         explain: `Επειδή κάθε μονάδα (πίτσα) χωρίζεται σε ${partsPerPizza} μέρη και καταναλώθηκαν ${totalSlices} κομμάτια, το κλάσμα είναι ${totalSlices}/${partsPerPizza}. Εφόσον ο αριθμητής είναι μεγαλύτερος από τον παρονομαστή (${totalSlices} ＞ ${partsPerPizza}), το κλάσμα είναι καταχρηστικό (μεγαλύτερο από 1).`,
         distractors: [
           `${partsPerPizza}/${totalSlices} (Γνήσιο ＜ 1)`,
-          `${totalSlices}/${partsPerPizza} (Γνήσιο ＜ 1)`,
-          `${totalSlices}/${partsPerPizza * 2} (Γνήσιο ＜ 1)`
+          `${totalSlices}/${partsPerPizza * 2} (Γνήσιο ＜ 1)`,
+          `${totalSlices}/${partsPerPizza + 1} (Καταχρηστικό ＞ 1)`
         ]
       };
     }
@@ -239,7 +238,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Σοκολάτες για την Εκδρομή',
     unit: 'σοκολάτες',
     generate: () => {
-      // Κάθε σοκολάτα έχει 6 σειρές. Φαγώθηκαν 15 σειρές -> 15/6
       const den = 6;
       const num = randInt(13, 19);
       return {
@@ -264,7 +262,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp3',
     title: 'Ακέραια Μερίδια Αναψυκτικού',
-    unit: 'ακέραιος',
+    unit: 'μπουκάλια',
     generate: () => {
       const den = randInt(3, 5);
       const whole = randInt(3, 6);
@@ -319,9 +317,8 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp5',
     title: 'Ζαχαροπλαστική και Μερίδες Αλευριού',
-    unit: 'κιλά (kg)',
+    unit: 'kg',
     generate: () => {
-      // 8 τέταρτα του κιλού -> 8/4 = 2 kg
       const quarters = 8;
       return {
         prompt: `Μία συνταγή απαιτεί ${quarters} τέταρτα (δηλαδή ${quarters}/4) του κιλού αλεύρι. Πόσα ολόκληρα κιλά αλεύρι χρειαζόμαστε;`,
@@ -346,7 +343,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Χρόνος Μελέτης σε Κλάσμα της Ώρας',
     unit: 'λεπτά',
     generate: () => {
-      // 3/4 της ώρας = 45 λεπτά ή 2/5 της ώρας = 24 λεπτά
       const pairs = [
         { frac: '3/4', num: 3, den: 4, mins: 45 },
         { frac: '2/4', num: 2, den: 4, mins: 30 },
@@ -380,7 +376,7 @@ const HARD_PROBLEMS_POOL = [
 // ---------------------------------------------------------
 
 function generateQuestions() {
-  // Q1: Input - Αναγνώριση όρων κλάσματος (Αριθμητής ή Παρονομαστής)
+  // Q1: Input - Αναγνώριση όρων κλάσματος
   const q1Num = randInt(2, 9);
   const q1Den = randInt(q1Num + 1, 15);
   const q1AskNumerator = Math.random() > 0.5;
@@ -389,7 +385,7 @@ function generateQuestions() {
     : `Ποιος αριθμός είναι ο παρονομαστής του κλάσματος ${q1Num}/${q1Den};`;
   const q1Correct = String(q1AskNumerator ? q1Num : q1Den);
 
-  // Q2: MCQ - Κατηγορία κλάσματος (Γνήσιο, Καταχρηστικό, Ίσο με τη μονάδα)
+  // Q2: MCQ - Κατηγορία κλάσματος
   const q2Type = ['proper', 'improper', 'unit'][randInt(0, 2)];
   let q2Num, q2Den, q2CorrectType;
   if (q2Type === 'proper') {
@@ -409,7 +405,7 @@ function generateQuestions() {
     ...new Set(['Γνήσιο κλάσμα (＜ 1)', 'Καταχρηστικό κλάσμα (＞ 1)', 'Ίσο με τη μονάδα (＝ 1)'])
   ]);
 
-  // Q3: Input - Οπτικό μοντέλο ορθογωνίου: Πόσα είναι τα χρωματισμένα μέρη
+  // Q3: Input - Οπτικό μοντέλο ορθογωνίου
   const q3Total = [4, 5, 6, 8, 10][randInt(0, 4)];
   const q3Filled = randInt(1, q3Total - 1);
   const q3Correct = `${q3Filled}/${q3Total}`;
@@ -512,7 +508,7 @@ function generateQuestions() {
       title: 'Οπτικό Μοντέλο Ορθογωνίου',
       total: q3Total,
       filled: q3Filled,
-      prompt: `Γράψε το κλάσμα που αντιστοιχεί στα χρωματισμένα μέρη του παρακάτω σχήματος (π.χ. 3/5):`,
+      prompt: 'Γράψε το κλάσμα που αντιστοιχεί στα χρωματισμένα μέρη του παρακάτω σχήματος (π.χ. 3/5):',
       correct: q3Correct,
       explain: `Έχουν χρωματιστεί ${q3Filled} από τα ${q3Total} ίσα μέρη, άρα το κλάσμα είναι ${q3Filled}/${q3Total}.`
     },
@@ -656,6 +652,8 @@ export default function KlasmaExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Η Έννοια του Κλάσματος - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -674,7 +672,7 @@ export default function KlasmaExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -773,6 +771,9 @@ export default function KlasmaExercisesPage() {
                         <input
                           type="text"
                           inputMode={q.id === 'q3' ? 'text' : 'numeric'}
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
                           onChange={(e) => handleInputChange(q.id, e.target.value)}
@@ -880,8 +881,10 @@ export default function KlasmaExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
