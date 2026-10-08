@@ -3,22 +3,24 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαιος ακεραιος στο [min, max]
+// Τυχαίος ακέραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Ανακατεμα πινακα
+// Ανακάτεμα πίνακα
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -27,13 +29,13 @@ function shuffle(array) {
   return arr;
 }
 
-// Μορφοποιηση αριθμου με τελειες χιλιαδων
+// Μορφοποίηση αριθμού με τελείες χιλιάδων
 function formatNumber(num) {
   if (num === '' || isNaN(num)) return '0';
   return Number(num).toLocaleString('el-GR');
 }
 
-// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (MCQ)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 9 (MCQ)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_mult_std_1',
@@ -91,7 +93,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΤΟΠΟΘΕΤΗΣΗ ΚΑΘΙΣΜΑΤΩΝ ΣΕ ΣΕΙΡΕΣ',
         instruction: 'Επιλέξτε το συνολικό πλήθος των καθισμάτων:',
-        text: `Μια αίθουσα εκδηλώσεων τοποθετεί καρέκλες σε σειρές των ${perRow}. Αν τοποθετηθούν ${rows} τέτοιες σειρές, πόσες καρέκλες θα χρησιμοποιηθούν συνολικά;`,
+        text: `Σε μια αίθουσα εκδηλώσεων τοποθετούνται καρέκλες σε σειρές των ${perRow}. Αν τοποθετηθούν ${rows} τέτοιες σειρές, πόσες καρέκλες θα χρησιμοποιηθούν συνολικά;`,
         tableData: { col1: 'Καρέκλες ανά Σειρά', col2: 'Σειρές', r1: [`${perRow} καρέκλες`, `${rows} σειρές`], r2: ['Πολλαπλάσιο', `${perRow} · ${rows} ＝ ${totalChairs}`] },
         optionsRaw: [
           correctStr,
@@ -160,7 +162,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΤΟΠΟΘΕΤΗΣΗ ΒΙΒΛΙΩΝ ΣΕ ΡΑΦΙΑ',
         instruction: 'Επιλέξτε τον συνολικό αριθμό βιβλίων:',
-        text: `Μια βιβλιοθήκη έχει ${shelves} ράφια και σε κάθε ράφι χωράνε ακριβώς ${perShelf} βιβλία. Πόσα βιβλία χωράνε συνολικά σε όλα τα ράφια;`,
+        text: `Μια βιβλιοθήκη έχει ${shelves} ράφια και σε κάθε ράφι χωρούν ακριβώς ${perShelf} βιβλία. Πόσα βιβλία χωρούν συνολικά σε όλα τα ράφια;`,
         tableData: { col1: 'Ράφια', col2: 'Βιβλία ανά Ράφι', r1: [`${shelves} ράφια`, `${perShelf} βιβλία`], r2: ['Πολλαπλάσιο', `${shelves} · ${perShelf} ＝ ${totalBooks}`] },
         optionsRaw: [
           correctStr,
@@ -175,7 +177,7 @@ const STANDARD_PROBLEMS_POOL = [
   }
 ];
 
-// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_mult_hard_1',
@@ -302,7 +304,7 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΠΑΚΕΤΑΡΙΣΜΑ ΜΑΡΚΑΔΟΡΩΝ',
         instruction: 'Επιλέξτε το συνολικό πλήθος μαρκαδόρων:',
-        text: `Ένα εργοστάσιο συσκεύασε ${boxes} κουτιά των ${perBox} μαρκαδόρων. Πόσοι μαρκαδόροι συσκευάστηκαν συνολικά;`,
+        text: `Ένα εργοστάσιο συσκεύασε ${boxes} κουτιά με ${perBox} μαρκαδόρους το καθένα. Πόσοι μαρκαδόροι συσκευάστηκαν συνολικά;`,
         tableData: { col1: 'Κουτιά', col2: 'Μαρκαδόροι ανά Κουτί', r1: [`${boxes} κουτιά`, `${perBox} μαρκαδόροι`], r2: ['Πολλαπλάσιο', `${boxes} · ${perBox} ＝ ${totalMarkers}`] },
         optionsRaw: [
           correctStr,
@@ -317,7 +319,7 @@ const HARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// Δημιουργία των 10 δυναμικών ερωτήσεων
 function generateQuestions() {
   const qList = [];
 
@@ -348,7 +350,7 @@ function generateQuestions() {
     });
   }
 
-  // Q2 (Input - Decimal): Εύρεση επόμενου πολλαπλασίου
+  // Q2 (Input): Εύρεση επόμενου πολλαπλασίου
   {
     const q2Base = [6, 7, 8, 9, 12, 15, 25][randInt(0, 6)];
     const q2K = randInt(3, 8);
@@ -357,7 +359,7 @@ function generateQuestions() {
 
     qList.push({
       id: 2,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΕΠΟΜΕΝΟ ΠΟΛΛΑΠΛΑΣΙΟ',
       instruction: 'Συμπληρώστε το αμέσως επόμενο πολλαπλάσιο (ακέραιος):',
       prompt: `Ποιο είναι το αμέσως επόμενο πολλαπλάσιο του ${q2Base} μετά το ${q2Given};`,
@@ -367,7 +369,7 @@ function generateQuestions() {
     });
   }
 
-  // Q3 (MCQ): Επιλογή πολλαπλασίου ανάμεσα σε μη πολλαπλάσια (Εγγύηση Μοναδικότητας)
+  // Q3 (MCQ): Επιλογή πολλαπλασίου ανάμεσα σε μη πολλαπλάσια
   {
     const q3Base = [6, 7, 8, 9, 12, 15][randInt(0, 5)];
     const q3Valid = q3Base * randInt(5, 14);
@@ -398,7 +400,7 @@ function generateQuestions() {
     });
   }
 
-  // Q4 (MCQ): Εύρεση κοινού πολλαπλασίου (Εγγύηση Μοναδικότητας)
+  // Q4 (MCQ): Εύρεση κοινού πολλαπλασίου
   {
     const q4Pair = [
       { a: 3, b: 4, correct: 24, wrong: [15, 16, 20] },
@@ -425,7 +427,7 @@ function generateQuestions() {
       prompt: `Ποιος από τους παρακάτω αριθμούς είναι κοινό πολλαπλάσιο του ${q4Pair.a} και του ${q4Pair.b};`,
       options,
       correctText: String(q4Pair.correct),
-      explanation: `Το ${q4Pair.correct} διαιρείται ακριβώς και με το ${q4Pair.a} (${q4Pair.correct} : ${q4Pair.a} ＝ ${q4Pair.correct / q4Pair.a}) και με το ${q4Pair.b} (${q4Pair.correct} : ${q4Pair.b} ＝ ${q4Pair.correct / q4Pair.b}).`
+      explanation: `Το ${q4Pair.correct} διαιρείται ακριβώς και με το ${q4Pair.a} (${q4Pair.correct} : ${q4Pair.a} ＝ ${q4Pair.correct / q4Pair.a}) και με το ${q4Pair.b} (${q4Pair.correct} : ${q4Pair.b} ＝ ${q4Pair.correct / q4Pair.a}).`
     });
   }
 
@@ -483,7 +485,7 @@ function generateQuestions() {
     });
   }
 
-  // Q7 (Input - Decimal): Υπολογισμός πολλαπλασίου
+  // Q7 (Input): Υπολογισμός πολλαπλασίου
   {
     const q7Base = [12, 15, 20, 25, 30, 50][randInt(0, 5)];
     const q7MultIndex = randInt(4, 9);
@@ -491,17 +493,17 @@ function generateQuestions() {
 
     qList.push({
       id: 7,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΥΠΟΛΟΓΙΣΜΟΣ ΠΟΛΛΑΠΛΑΣΙΟΥ',
       instruction: 'Υπολογίστε το γινόμενο (ακέραιος):',
-      prompt: `Πόσο κάνει το ${q7MultIndex}ο πολλαπλάσιο του αριθμού ${q7Base} (${q7Base} · ${q7MultIndex});`,
+      prompt: `Ποιο είναι το ${q7MultIndex}ο πολλαπλάσιο του αριθμού ${q7Base} (${q7Base} · ${q7MultIndex});`,
       correctVal: q7Ans,
       correctStr: String(q7Ans),
       explanation: `${q7Base} · ${q7MultIndex} ＝ ${q7Ans}.`
     });
   }
 
-  // Q8 (MCQ): Πρόβλημα Καθημερινότητας (Ρυθμός / Κουτιά)
+  // Q8 (MCQ): Πρόβλημα Καθημερινότητας
   {
     const q8Items = [
       { name: 'τετράδια', box: 6, count: 48, correct: 'Ναι (ακριβώς 8 κουτιά)', wrong: ['Όχι, περισσεύουν 2', 'Όχι, λείπουν 3', 'Ναι (ακριβώς 9 κουτιά)'] },
@@ -521,21 +523,21 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑΣ',
       instruction: 'Επιλέξτε τη σωστή απάντηση για τη συσκευασία:',
-      prompt: `Ένα βιβλιοπωλείο έχει ${q8Chosen.count} ${q8Chosen.name} και θέλει να τα βάλει σε κουτιά των ${q8Chosen.box}. Μπορούν να συσκευαστούν χωρίς να περισσέψει κανένα;`,
+      prompt: `Ένα βιβλιοπωλείο έχει ${q8Chosen.count} ${q8Chosen.name} και θέλει να τα βάλει σε κουτιά χωρητικότητας ${q8Chosen.box} τεμαχίων το καθένα. Μπορούν να συσκευαστούν πλήρως χωρίς να περισσέψει κανένα;`,
       options,
       correctText: q8Chosen.correct,
-      explanation: `Επειδή ${q8Chosen.count} : ${q8Chosen.box} ＝ ${q8Chosen.count / q8Chosen.box}, χωράνε σε ακριβώς ${q8Chosen.count / q8Chosen.box} κουτιά!`
+      explanation: `Επειδή ${q8Chosen.count} : ${q8Chosen.box} ＝ ${q8Chosen.count / q8Chosen.box}, χωρούν σε ακριβώς ${q8Chosen.count / q8Chosen.box} κουτιά.`
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
     const stdProb = shuffledStd[0].generate();
     const hardProb = shuffledHard[0].generate();
 
-    // Q9 (MCQ) - Χωρίς πίνακα στην εκφώνηση
+    // Q9 (MCQ)
     const optionsQ9 = shuffle([...new Set(stdProb.optionsRaw)]).map((text) => ({
       text,
       isCorrect: text === stdProb.correctText
@@ -553,7 +555,7 @@ function generateQuestions() {
       explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ) - Χωρίς πίνακα στην εκφώνηση
+    // Q10 (MCQ)
     const optionsQ10 = shuffle([...new Set(hardProb.optionsRaw)]).map((text) => ({
       text,
       isCorrect: text === hardProb.correctText
@@ -581,29 +583,26 @@ export default function PollaplasiaExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
+  // Δημιουργία νέων ασκήσεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
+  // Χειρισμός Input μόνο για ακέραιους αριθμούς (0-9)
   const handleInputChange = (qId, rawValue) => {
     if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
+    let sanitized = rawValue.replace(/[^0-9]/g, '');
     if (sanitized.length > 10) {
       sanitized = sanitized.slice(0, 10);
     }
@@ -613,7 +612,7 @@ export default function PollaplasiaExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
+  // Χειρισμός MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -622,31 +621,35 @@ export default function PollaplasiaExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
+  const isQuestionCorrect = (q) => {
+    if (q.type === 'mcq') {
+      return answers[`q_${q.id}`] === q.correctText;
+    }
+    if (q.type === 'integer_input') {
+      const userValStr = (answers[`q_${q.id}`] || '').trim();
+      const userVal = parseInt(userValStr, 10);
+      return !isNaN(userVal) && userVal === q.correctVal;
+    }
+    return false;
+  };
+
+  // Έλεγχος Απαντήσεων
   const handleCheckAnswers = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (isSubmitted) return;
 
     let currentScore = 0;
-
     questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+      if (isQuestionCorrect(q)) {
+        currentScore += 1;
       }
     });
 
     setScore(currentScore);
     setIsSubmitted(true);
   };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
@@ -661,24 +664,23 @@ export default function PollaplasiaExercisesPage() {
           href="/st-dimotikou/18-pollaplasia"
           className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖 {toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-36 overflow-x-hidden">
         
         {/* Banner Header */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              <span>ΚΕΦΑΛΑΙΟ 18 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Πολλαπλάσια Αριθμού
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες υπολογισμού πολλαπλασίων, κοινών πολλαπλασίων, ιδιοτήτων και 4 ρεαλιστικά προβλήματα καθημερινής ζωής.
+              10 δυναμικές δραστηριότητες υπολογισμού πολλαπλασίων, κοινών πολλαπλασίων, ιδιοτήτων και ρεαλιστικά προβλήματα καθημερινής ζωής.
             </p>
           </div>
 
@@ -691,23 +693,15 @@ export default function PollaplasiaExercisesPage() {
               onClick={loadNewSet}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
+        {/* Λίστα 10 Ασκήσεων */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
+            const isCorrect = isSubmitted && isQuestionCorrect(q);
 
             return (
               <article
@@ -720,7 +714,7 @@ export default function PollaplasiaExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
+                {/* Επικεφαλίδα Ερώτησης */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
@@ -733,12 +727,12 @@ export default function PollaplasiaExercisesPage() {
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
+                      {isCorrect ? `✓ ${toCleanUppercase('Σωστό')}` : `✗ ${toCleanUppercase('Λάθος')}`}
                     </span>
                   )}
                 </div>
 
-                {/* Εκφωνηση (Καθαρο κειμενο χωρις πινακες που προδιδουν τη λυση) */}
+                {/* Εκφώνηση */}
                 <div className="space-y-3 mb-5">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
@@ -750,29 +744,30 @@ export default function PollaplasiaExercisesPage() {
                   </p>
                 </div>
 
-                {/* Περιοχη Απαντησης */}
+                {/* Περιοχή Απάντησης */}
                 <div className="py-2">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
+                  {/* Integer Input */}
+                  {q.type === 'integer_input' && (
                     <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="numeric"
+                        autoComplete="off"
+                        spellCheck="false"
                         maxLength={10}
                         disabled={isSubmitted}
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(q.id, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs 2xl:text-sm text-slate-500">
+                      <span className="text-xs 2xl:text-sm text-slate-500 font-medium">
                         (Ακέραιος αριθμός)
                       </span>
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
+                  {/* Multiple Choice (MCQ) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
@@ -783,9 +778,9 @@ export default function PollaplasiaExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 min-h-[48px] ${
                               isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm ring-2 ring-blue-300'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
@@ -806,10 +801,9 @@ export default function PollaplasiaExercisesPage() {
                       })}
                     </div>
                   )}
-
                 </div>
 
-                {/* Feedback μετα την υποβολη (Εδω εμφανιζεται ο αναλυτικος πινακας δεδομενων) */}
+                {/* Feedback μετά την υποβολή */}
                 {isSubmitted && (
                   <div
                     className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-2.5 ${
@@ -855,17 +849,18 @@ export default function PollaplasiaExercisesPage() {
           })}
         </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+        {/* Κουμπί Ελέγχου στο τέλος της φόρμας */}
+        {!isSubmitted && (
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={handleCheckAnswers}
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            >
+              <span>🎯 {toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
+            </button>
+          </div>
+        )}
 
       </div>
 
@@ -876,21 +871,23 @@ export default function PollaplasiaExercisesPage() {
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
               <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
+                {isSubmitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+                {isSubmitted ? `${score} / 10` : `${answeredCount} / 10`}
               </span>
             </div>
 
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+            {isSubmitted && (
+              <div className="border-l border-slate-700 pl-4 sm:pl-8">
+                <span className="text-xs text-slate-400 font-semibold block">
+                  {toCleanUppercase('Ποσοστό')}
+                </span>
+                <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+                  {Math.round((score / 10) * 100)} %
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -900,7 +897,7 @@ export default function PollaplasiaExercisesPage() {
                 onClick={handleCheckAnswers}
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                {toCleanUppercase('Έλεγχος')}
               </button>
             ) : (
               <button
@@ -908,7 +905,7 @@ export default function PollaplasiaExercisesPage() {
                 onClick={loadNewSet}
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             )}
           </div>
