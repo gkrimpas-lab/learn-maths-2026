@@ -3,22 +3,24 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαιος ακεραιος στο [min, max]
+// Τυχαίος ακέραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Ανακατεμα πινακα
+// Ανακάτεμα πίνακα
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -27,15 +29,15 @@ function shuffle(array) {
   return arr;
 }
 
-// Μορφοποιηση αριθμου με τελειες χιλιαδων
+// Μορφοποίηση αριθμού με τελείες χιλιάδων
 function formatNumber(num) {
   if (num === '' || isNaN(num)) return '0';
   return Number(num).toLocaleString('el-GR');
 }
 
-// Δεξαμενη 30 δυναμικων γεννητριων προβληματων
+// Δεξαμενή 30 δυναμικών γεννητριών προβλημάτων
 const PROBLEM_GENERATORS = [
-  // 1. Σχολικα λεωφορεια
+  // 1. Σχολικά λεωφορεία
   () => {
     const busCapacity = randInt(35, 50);
     const busCount = randInt(3, 8);
@@ -44,7 +46,7 @@ const PROBLEM_GENERATORS = [
     const totalCost = totalStudents * ticketPrice;
     return {
       title: 'ΣΧΟΛΙΚΗ ΕΚΔΡΟΜΗ',
-      text: `Σε μια εκδρομή συμμετέχουν ${totalStudents} μαθητές. Αν κάθε λεωφορείο χωράει ${busCapacity} μαθητές και το εισιτήριο κοστίζει ${ticketPrice} € ανά μαθητή, ποιο είναι το συνολικό κόστος των εισιτηρίων;`,
+      text: `Σε μια σχολική εκδρομή συμμετέχουν ${totalStudents} μαθητές. Αν κάθε λεωφορείο χωράει ${busCapacity} μαθητές και το εισιτήριο κοστίζει ${ticketPrice} € ανά μαθητή, ποιο είναι το συνολικό κόστος των εισιτηρίων;`,
       given: [`Μαθητές: ${totalStudents}`, `Χωρητικότητα: ${busCapacity} θέσεις`, `Τιμή εισιτηρίου: ${ticketPrice} €`],
       target: 'Συνολικό κόστος εισιτηρίων (€)',
       correctVal: totalCost,
@@ -52,7 +54,7 @@ const PROBLEM_GENERATORS = [
       explain: `Πολλαπλασιάζουμε το σύνολο των μαθητών με την τιμή του εισιτηρίου: ${totalStudents} · ${ticketPrice} ＝ ${formatNumber(totalCost)} €.`
     };
   },
-  // 2. Ψωνια στο μαναβικο & ρεστα
+  // 2. Ψώνια στο μανάβικο & ρέστα
   () => {
     const applesKg = randInt(2, 6);
     const applePrice = randInt(2, 4);
@@ -63,7 +65,7 @@ const PROBLEM_GENERATORS = [
     const change = wallet - totalSpend;
     return {
       title: 'ΨΩΝΙΑ ΣΤΟ ΜΑΝΑΒΙΚΟ',
-      text: `Ο Νίκος είχε ${wallet} €. Αγόρασε ${applesKg} κιλά μήλα προς ${applePrice} € το κιλό και ${orangesKg} κιλά πορτοκάλια προς ${orangePrice} € το κιλό. Πόσα ρέστα πήρε;`,
+      text: `Ο Νίκος είχε ${wallet} €. Αγόρασε ${applesKg} κιλά μήλα προς ${applePrice} € το κιλό και ${orangesKg} κιλά πορτοκάλια προς ${orangePrice} € το κιλό. Πόσα ρέστα (€) έλαβε;`,
       given: [`Χρήματα: ${wallet} €`, `Μήλα: ${applesKg} κιλά · ${applePrice} €`, `Πορτοκάλια: ${orangesKg} κιλά · ${orangePrice} €`],
       target: 'Ρέστα (€)',
       correctVal: change,
@@ -71,7 +73,7 @@ const PROBLEM_GENERATORS = [
       explain: `Έξοδα: (${applesKg} · ${applePrice}) ＋ (${orangesKg} · ${orangePrice}) ＝ ${applesKg * applePrice} ＋ ${orangesKg * orangePrice} ＝ ${totalSpend} €. Ρέστα: ${wallet} － ${totalSpend} ＝ ${change} €.`
     };
   },
-  // 3. Βιβλιοθηκη & νεα ραφια
+  // 3. Βιβλιοθήκη & νέα ράφια
   () => {
     const shelves = randInt(4, 8);
     const perShelf = randInt(20, 35);
@@ -84,7 +86,7 @@ const PROBLEM_GENERATORS = [
     const actualAdded = finalTotal - initial;
     return {
       title: 'ΑΝΑΔΙΟΡΓΑΝΩΣΗ ΒΙΒΛΙΟΘΗΚΗΣ',
-      text: `Μια βιβλιοθήκη είχε ${shelves} ράφια με ${perShelf} βιβλία στο καθένα. Προστέθηκαν ακόμη ${actualAdded} βιβλία και όλα μαζί μοιράστηκαν ισότιμα σε ${newShelves} νέα ράφια. Πόσα βιβλία έχει κάθε νέο ράφι;`,
+      text: `Μια βιβλιοθήκη είχε ${shelves} ράφια με ${perShelf} βιβλία στο καθένα. Προστέθηκαν ακόμη ${actualAdded} βιβλία και όλα μαζί μοιράστηκαν ισόποσα σε ${newShelves} νέα ράφια. Πόσα βιβλία έχει κάθε νέο ράφι;`,
       given: [`Αρχικά: ${shelves} ράφια · ${perShelf} βιβλία`, `Προστέθηκαν: ${actualAdded} βιβλία`, `Νέα ράφια: ${newShelves}`],
       target: 'Βιβλία ανά νέο ράφι',
       correctVal: booksPerNew,
@@ -92,7 +94,7 @@ const PROBLEM_GENERATORS = [
       explain: `Αρχικά βιβλία: ${shelves} · ${perShelf} ＝ ${initial}. Σύνολο: ${initial} ＋ ${actualAdded} ＝ ${finalTotal}. Ανά νέο ράφι: ${finalTotal} : ${newShelves} ＝ ${booksPerNew} βιβλία.`
     };
   },
-  // 4. Ζαχαροπλαστειο (Συσκευασια σε κουτια)
+  // 4. Ζαχαροπλαστείο (Συσκευασία σε κουτιά)
   () => {
     const boxes = randInt(12, 25);
     const perBox = randInt(8, 16);
@@ -109,7 +111,7 @@ const PROBLEM_GENERATORS = [
       explain: `Κουτιά: ${totalSweets} : ${perBox} ＝ ${boxes}. Είσπραξη: ${boxes} · ${pricePerBox} ＝ ${formatNumber(totalEarnings)} €.`
     };
   },
-  // 5. Αποταμιευση & Αγορα Υπολογιστη
+  // 5. Αποταμίευση & Αγορά Υπολογιστή
   () => {
     const months = randInt(6, 12);
     const monthlySave = randInt(40, 80);
@@ -126,7 +128,7 @@ const PROBLEM_GENERATORS = [
       explain: `Αποταμίευση: ${months} · ${monthlySave} ＝ ${totalSaved} €. Υπολείπονται: ${pcPrice} － ${totalSaved} ＝ ${needed} €.`
     };
   },
-  // 6. Ελαιοτριβειο & Δοχεια
+  // 6. Ελαιοτριβείο & Δοχεία
   () => {
     const trees = randInt(30, 70);
     const oilPerTree = randInt(4, 8);
@@ -143,7 +145,7 @@ const PROBLEM_GENERATORS = [
       explain: `Συνολικό λάδι: ${trees} · ${oilPerTree} ＝ ${totalOil} λίτρα. Δοχεία: ${totalOil} : ${canCapacity} ＝ ${cans} δοχεία.`
     };
   },
-  // 7. Εισιτηρια Θεατρου & Σειρες
+  // 7. Εισιτήρια Θεάτρου & Σειρές
   () => {
     const rows = randInt(12, 20);
     const seatsPerRow = randInt(15, 25);
@@ -152,15 +154,15 @@ const PROBLEM_GENERATORS = [
     const bookedSeats = totalSeats - emptySeats;
     return {
       title: 'ΘΕΑΤΡΙΚΗ ΠΑΡΑΣΤΑΣΗ',
-      text: `Μια αίθουσα θεάτρου έχει ${rows} σειρές με ${seatsPerRow} καθίσματα σε κάθε σειρά. Αν σε μια παράσταση έμειναν κενά ${emptySeats} καθίσματα, πόσα εισιτήρια κόπηκαν;`,
+      text: `Μια αίθουσα θεάτρου έχει ${rows} σειρές με ${seatsPerRow} καθίσματα σε κάθε σειρά. Αν σε μια παράσταση έμειναν κενά ${emptySeats} καθίσματα, πόσα εισιτήρια πουλήθηκαν συνολικά;`,
       given: [`Σειρές: ${rows}`, `Καθίσματα ανά σειρά: ${seatsPerRow}`, `Κενά καθίσματα: ${emptySeats}`],
-      target: 'Εισιτήρια που κόπηκαν',
+      target: 'Εισιτήρια που πουλήθηκαν',
       correctVal: bookedSeats,
       correctStr: String(bookedSeats),
       explain: `Συνολικά καθίσματα: ${rows} · ${seatsPerRow} ＝ ${totalSeats}. Εισιτήρια: ${totalSeats} － ${emptySeats} ＝ ${bookedSeats}.`
     };
   },
-  // 8. Σχολικος Κηπος & Φυτα
+  // 8. Σχολικός Κήπος & Φυτά
   () => {
     const plots = randInt(4, 9);
     const plantsPerPlot = randInt(15, 30);
@@ -177,7 +179,7 @@ const PROBLEM_GENERATORS = [
       explain: `Συνολικά φυτά: ${plots} · ${plantsPerPlot} ＝ ${totalPlants}. Επιβίωσαν: ${totalPlants} － ${dried} ＝ ${remaining} φυτά.`
     };
   },
-  // 9. Αρτοποιειο & Φραντζολες
+  // 9. Αρτοποιείο & Φραντζόλες
   () => {
     const trays = randInt(6, 12);
     const loavesPerTray = randInt(14, 25);
@@ -194,7 +196,7 @@ const PROBLEM_GENERATORS = [
       explain: `Σύνολο ψωμιών: ${trays} · ${loavesPerTray} ＝ ${totalLoaves}. Είσπραξη: ${totalLoaves} · ${pricePerLoaf} ＝ ${earnings} €.`
     };
   },
-  // 10. Αθλητικος Ομιλος & Μπαλες
+  // 10. Αθλητικός Όμιλος & Μπάλες
   () => {
     const boxes = randInt(4, 8);
     const ballsPerBox = randInt(6, 12);
@@ -211,10 +213,10 @@ const PROBLEM_GENERATORS = [
       explain: `Συνολικές μπάλες: ${boxes} · ${ballsPerBox} ＝ ${totalBalls}. Έμειναν: ${totalBalls} － ${distributed} ＝ ${leftInStorage}.`
     };
   },
-  // 11. Πτηνοτροφειο & Αυγα
+  // 11. Πτηνοτροφείο & Αυγά
   () => {
     const cartons = randInt(15, 30);
-    const eggsPerCarton = 12; // 1 ντουζινα
+    const eggsPerCarton = 12; // 1 ντουζίνα
     const totalEggs = cartons * eggsPerCarton;
     const broken = randInt(4, 15);
     const goodEggs = totalEggs - broken;
@@ -228,7 +230,7 @@ const PROBLEM_GENERATORS = [
       explain: `Συνολικά αυγά: ${cartons} · 12 ＝ ${totalEggs}. Έμειναν: ${totalEggs} － ${broken} ＝ ${goodEggs} αυγά.`
     };
   },
-  // 12. Ενοικιαση Ποδηλατων
+  // 12. Ενοικίαση Ποδηλάτων
   () => {
     const hours = randInt(3, 7);
     const costPerHour = randInt(4, 8);
@@ -245,7 +247,7 @@ const PROBLEM_GENERATORS = [
       explain: `Ποδήλατα: ${hours} · ${costPerHour} ＝ ${hours * costPerHour} €. Κράνη: ${helmets} · ${helmetCost} ＝ ${helmets * helmetCost} €. Σύνολο: ${hours * costPerHour} ＋ ${helmets * helmetCost} ＝ ${total} €.`
     };
   },
-  // 13. Εργοστασιο Χυμων (Τετραδες)
+  // 13. Εργοστάσιο Χυμών (Τετράδες)
   () => {
     const packs = randInt(20, 50);
     const bottlesPerPack = 4;
@@ -262,7 +264,7 @@ const PROBLEM_GENERATORS = [
       explain: `Συσκευασίες: ${totalBottles} : 4 ＝ ${packs}. Είσπραξη: ${packs} · ${pricePerPack} ＝ ${income} €.`
     };
   },
-  // 14. Ταξιδι & Βενζινη (Καθαροι ακεραιοι χωρις στρογγυλοποιησεις)
+  // 14. Ταξίδι & Βενζίνη
   () => {
     const hundredKms = randInt(2, 5); // 200 έως 500 χλμ
     const km = hundredKms * 100;
@@ -272,7 +274,7 @@ const PROBLEM_GENERATORS = [
     const cost = totalLiters * pricePerLiter;
     return {
       title: 'ΤΑΞΙΔΙ ΜΕ ΑΥΤΟΚΙΝΗΤΟ',
-      text: `Ένα αυτοκίνητο διανύει ${km} χιλιόμετρα και καταναλώνει ${litersPer100Km} λίτρα βενζίνη ανά 100 χλμ. Αν το λίτρο κοστίζει ${pricePerLiter} €, ποιο είναι το συνολικό κόστος των καυσίμων;`,
+      text: `Ένα αυτοκίνητο διανύει ${km} χιλιόμετρα και καταναλώνει ${litersPer100Km} λίτρα βενζίνης ανά 100 χλμ. Αν το λίτρο κοστίζει ${pricePerLiter} €, ποιο είναι το συνολικό κόστος των καυσίμων;`,
       given: [`Απόσταση: ${km} χλμ.`, `Κατανάλωση: ${litersPer100Km} L/100 χλμ.`, `Τιμή βενζίνης: ${pricePerLiter} €/L`],
       target: 'Κόστος καυσίμων (€)',
       correctVal: cost,
@@ -280,7 +282,7 @@ const PROBLEM_GENERATORS = [
       explain: `Συνολικά λίτρα: (${km} : 100) · ${litersPer100Km} ＝ ${totalLiters} L. Κόστος: ${totalLiters} · ${pricePerLiter} ＝ ${cost} €.`
     };
   },
-  // 15. Φωτοτυπιες & Εξοδα Σχολειου
+  // 15. Φωτοτυπίες & Έξοδα Σχολείου
   () => {
     const reams = randInt(5, 12);
     const sheetsPerReam = 500;
@@ -297,7 +299,7 @@ const PROBLEM_GENERATORS = [
       explain: `Συνολικά φύλλα: ${reams} · ${sheetsPerReam} ＝ ${totalSheets}. Περίσσεψαν: ${totalSheets} － ${usedSheets} ＝ ${leftSheets} φύλλα.`
     };
   },
-  // 16. Συλλογη Αυτοκολλητων
+  // 16. Συλλογή Αυτοκόλλητων
   () => {
     const packs = randInt(8, 15);
     const stickersPerPack = 5;
@@ -315,7 +317,7 @@ const PROBLEM_GENERATORS = [
       explain: `Νέα αυτοκόλλητα: ${packs} · ${stickersPerPack} ＝ ${bought}. Σύνολο: ${initial} ＋ ${bought} － ${duplicates} ＝ ${totalUnique}.`
     };
   },
-  // 17. Κολυμβητηριο & Προπονησεις
+  // 17. Κολυμβητήριο & Προπονήσεις
   () => {
     const weeks = randInt(4, 8);
     const daysPerWeek = randInt(3, 5);
@@ -331,7 +333,7 @@ const PROBLEM_GENERATORS = [
       explain: `Υπολογισμός: ${weeks} · ${daysPerWeek} · ${lapsPerDay} ＝ ${weeks * daysPerWeek} · ${lapsPerDay} ＝ ${totalLaps} γύροι.`
     };
   },
-  // 18. Αγορα Επιπλων με Δοσεις
+  // 18. Αγορά Επίπλων με Δόσεις
   () => {
     const advance = randInt(100, 250);
     const months = randInt(6, 12);
@@ -348,7 +350,7 @@ const PROBLEM_GENERATORS = [
       explain: `Σύνολο δόσεων: ${months} · ${monthlyInstallment} ＝ ${totalInstallments} €. Τελική αξία: ${advance} ＋ ${totalInstallments} ＝ ${totalCost} €.`
     };
   },
-  // 19. Φιλανθρωπικος Ερανος
+  // 19. Φιλανθρωπικός Έρανος
   () => {
     const classes = randInt(6, 12);
     const studentsPerClass = randInt(18, 25);
@@ -365,7 +367,7 @@ const PROBLEM_GENERATORS = [
       explain: `Σύνολο μαθητών: ${classes} · ${studentsPerClass} ＝ ${totalStudents}. Συνολικό ποσό: ${totalStudents} · ${amountPerStudent} ＝ ${totalCollected} €.`
     };
   },
-  // 20. Αποθηκη Ηλεκτρονικων
+  // 20. Αποθήκη Ηλεκτρονικών
   () => {
     const pallets = randInt(5, 10);
     const boxesPerPallet = randInt(12, 20);
@@ -381,7 +383,7 @@ const PROBLEM_GENERATORS = [
       explain: `Υπολογισμός: ${pallets} · ${boxesPerPallet} · ${itemsPerBox} ＝ ${pallets * boxesPerPallet} · ${itemsPerBox} ＝ ${totalItems} τεμάχια.`
     };
   },
-  // 21. Συσκευασια Σοκολατας
+  // 21. Συσκευασία Σοκολάτας
   () => {
     const totalWeightKg = randInt(12, 30);
     const weightGrams = totalWeightKg * 1000;
@@ -389,15 +391,15 @@ const PROBLEM_GENERATORS = [
     const totalBars = weightGrams / barWeight;
     return {
       title: 'ΕΡΓΟΣΤΑΣΙΟ ΣΟΚΟΛΑΤΑΣ',
-      text: `Μια δεξαμενή περιέχει ${totalWeightKg} κιλά ρευστής σοκολάτας. Αν κάθε πλάκα σοκολάτας ζυγίζει ${barWeight} γραμμάρια, πόσες πλάκες σοκολάτας μπορούν να παραχθούν;`,
+      text: `Ένα εργαστήριο διαθέτει ${totalWeightKg} κιλά ρευστής σοκολάτας. Αν κάθε πλάκα σοκολάτας ζυγίζει ${barWeight} γραμμάρια, πόσες πλάκες σοκολάτας μπορούν να παραχθούν;`,
       given: [`Σοκολάτα: ${totalWeightKg} kg (${weightGrams} g)`, `Βάρος ανά πλάκα: ${barWeight} g`],
       target: 'Πλήθος πλακών σοκολάτας',
       correctVal: totalBars,
       correctStr: String(totalBars),
-      explain: `Μετατρέπουμε σε γραμμάρια: ${totalWeightKg} · 1000 ＝ ${weightGrams} g. Πλάκες: ${weightGrams} : ${barWeight} ＝ ${totalBars}.`
+      explain: `Μετατρέπουμε σε γραμμάρια: ${totalWeightKg} · 1.000 ＝ ${weightGrams} g. Πλάκες: ${weightGrams} : ${barWeight} ＝ ${totalBars}.`
     };
   },
-  // 22. Φυτωριο Δεντρων
+  // 22. Φυτώριο Δέντρων
   () => {
     const rows = randInt(15, 30);
     const treesPerRow = randInt(12, 25);
@@ -414,7 +416,7 @@ const PROBLEM_GENERATORS = [
       explain: `Αρχικά δέντρα: ${rows} · ${treesPerRow} ＝ ${initialTrees}. Απέμειναν: ${initialTrees} － ${soldTrees} ＝ ${remaining}.`
     };
   },
-  // 23. Κινηματογραφικες Προβολες
+  // 23. Κινηματογραφικές Προβολές
   () => {
     const ticketPrice = randInt(7, 10);
     const viewersDay1 = randInt(80, 150);
@@ -431,7 +433,7 @@ const PROBLEM_GENERATORS = [
       explain: `Σύνολο θεατών: ${viewersDay1} ＋ ${viewersDay2} ＝ ${totalViewers}. Είσπραξη: ${totalViewers} · ${ticketPrice} ＝ ${formatNumber(totalRevenue)} €.`
     };
   },
-  // 24. Κατασκηνωση & Σκηνες
+  // 24. Κατασκήνωση & Σκηνές
   () => {
     const totalKids = randInt(60, 120);
     const tentCapacity = 6;
@@ -448,7 +450,7 @@ const PROBLEM_GENERATORS = [
       explain: `Διαίρεση: ${totalKids} : ${tentCapacity} ＝ ${fullTents} με υπόλοιπο ${remainder}. Επειδή πρέπει να κοιμηθούν όλα τα παιδιά, χρειάζονται ${totalTentsNeeded} σκηνές.`
     };
   },
-  // 25. Ποδηλατικος Γυρος
+  // 25. Ποδηλατικός Γύρος
   () => {
     const days = 5;
     const kmPerDay = randInt(35, 65);
@@ -465,7 +467,7 @@ const PROBLEM_GENERATORS = [
       explain: `Ημερήσια απόσταση: ${totalKm} : ${days} ＝ ${kmPerDay} χλμ. Σε 3 ημέρες διένυσε: 3 · ${kmPerDay} ＝ ${doneKm} χλμ. Απομένουν: ${totalKm} － ${doneKm} ＝ ${leftKm} χλμ.`
     };
   },
-  // 26. Εστιατοριο & Τραπεζια
+  // 26. Εστιατόριο & Τραπέζια
   () => {
     const tables4 = randInt(6, 12);
     const tables6 = randInt(4, 10);
@@ -480,7 +482,7 @@ const PROBLEM_GENERATORS = [
       explain: `Υπολογισμός: (${tables4} · 4) ＋ (${tables6} · 6) ＝ ${tables4 * 4} ＋ ${tables6 * 6} ＝ ${totalCapacity} άτομα.`
     };
   },
-  // 27. Επισκευη Σχολικων Θρανιων
+  // 27. Επισκευή Σχολικών Θρανίων
   () => {
     const classrooms = randInt(6, 10);
     const desksPerRoom = randInt(12, 18);
@@ -497,16 +499,16 @@ const PROBLEM_GENERATORS = [
       explain: `Σύνολο θρανίων: ${classrooms} · ${desksPerRoom} ＝ ${totalDesks}. Απομένουν: ${totalDesks} － ${fixedDesks} ＝ ${remaining}.`
     };
   },
-  // 28. Συσκευασια Μελιου
+  // 28. Συσκευασία Μελιού
   () => {
     const totalKg = randInt(40, 100);
-    const jarsBig = randInt(10, 20); // 2kg βαζα
+    const jarsBig = randInt(10, 20); // 2kg βάζα
     const bigWeight = jarsBig * 2;
     const remainingWeight = totalKg - bigWeight;
-    const smallJars = remainingWeight; // 1kg βαζα
+    const smallJars = remainingWeight; // 1kg βάζα
     return {
       title: 'ΠΑΡΑΓΩΓΗ ΜΕΛΙΟΥ',
-      text: `Ένας μελισσοκόμος μάζεψε ${totalKg} κιλά μέλι. Έβαλε ${jarsBig} βάζα των 2 κιλών και το υπόλοιπο μέλι το έβαλε σε βάζα του 1 κιλού. Πόσα βάζα του 1 κιλού γέμισε;`,
+      text: `Ένας μελισσοκόμος μάζεψε ${totalKg} κιλά μέλι. Γέμισε ${jarsBig} βάζα των 2 κιλών και το υπόλοιπο μέλι το έβαλε σε βάζα του 1 κιλού. Πόσα βάζα του 1 κιλού γέμισε;`,
       given: [`Σύνολο μέλι: ${totalKg} kg`, `Βάζα 2 κιλών: ${jarsBig}`, `Υπόλοιπο: βάζα 1 κιλού`],
       target: 'Βάζα του 1 κιλού',
       correctVal: smallJars,
@@ -514,7 +516,7 @@ const PROBLEM_GENERATORS = [
       explain: `Μέλι στα μεγάλα βάζα: ${jarsBig} · 2 ＝ ${bigWeight} kg. Υπόλοιπο για μικρά βάζα: ${totalKg} － ${bigWeight} ＝ ${smallJars} βάζα.`
     };
   },
-  // 29. Διανομη Εφημεριδων
+  // 29. Διανομή Εφημερίδων
   () => {
     const days = 7;
     const morningPapers = randInt(80, 150);
@@ -531,7 +533,7 @@ const PROBLEM_GENERATORS = [
       explain: `Ημερήσια διανομή: ${morningPapers} ＋ ${eveningPapers} ＝ ${totalPerDay}. Εβδομαδιαία: ${totalPerDay} · 7 ＝ ${formatNumber(totalWeek)} εφημερίδες.`
     };
   },
-  // 30. Αγορα Αθλητικου Εξοπλισμου
+  // 30. Αγορά Αθλητικού Εξοπλισμού
   () => {
     const shoes = randInt(45, 80);
     const shorts = randInt(15, 30);
@@ -551,7 +553,7 @@ const PROBLEM_GENERATORS = [
   }
 ];
 
-// Δημιουργια 10 τυχαιων προβληματων απο τη δεξαμενη των 30
+// Δημιουργία 10 τυχαίων προβλημάτων από τη δεξαμενή των 30
 function generateQuestions() {
   const shuffledGenerators = shuffle(PROBLEM_GENERATORS);
   return shuffledGenerators.slice(0, 10).map((gen, idx) => ({
@@ -566,29 +568,26 @@ export default function ProblimataExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
+  // Δημιουργία νέων ασκήσεων
   const loadNewQuestions = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewQuestions();
   }, [loadNewQuestions]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
+  // Χειρισμός Input μόνο για αριθμητικά ψηφία 0-9
   const handleInputChange = (qId, rawValue) => {
     if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, '');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
+    let sanitized = rawValue.replace(/[^0-9]/g, '');
     if (sanitized.length > 10) {
       sanitized = sanitized.slice(0, 10);
     }
@@ -598,14 +597,14 @@ export default function ProblimataExercisesPage() {
     }));
   };
 
-  // Ελεγχος εγκυροτητας απαντησης
+  // Έλεγχος εγκυρότητας απάντησης
   const isCorrect = (q) => {
-    const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-    const userVal = parseFloat(userValStr);
-    return !isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05;
+    const userValStr = (answers[`q_${q.id}`] || '').trim();
+    const userVal = parseInt(userValStr, 10);
+    return !isNaN(userVal) && userVal === q.correctVal;
   };
 
-  // Ελεγχος Απαντησεων
+  // Έλεγχος Απαντήσεων
   const handleCheckAnswers = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (isSubmitted) return;
@@ -618,6 +617,8 @@ export default function ProblimataExercisesPage() {
     setScore(currentScore);
     setIsSubmitted(true);
   };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
@@ -632,24 +633,23 @@ export default function ProblimataExercisesPage() {
           href="/st-dimotikou/11-problimata"
           className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖 {toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-36 overflow-x-hidden">
         
         {/* Banner Header */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              <span>ΚΕΦΑΛΑΙΟ 11 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Στρατηγική Επίλυσης
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικά προβλήματα καθημερινής ζωής. Διάβασε προσεκτικά την εκφώνηση, αναγνώρισε τα δεδομένα και τα ζητούμενα και εφάρμοσε τη σωστή σειρά πράξεων.
+              10 δυναμικά προβλήματα καθημερινής ζωής. Διάβασε προσεκτικά την εκφώνηση, αναγνώρισε τα δεδομένα και τα ζητούμενα και εφάρμοσε τη σωστή σειρά πράξεων.
             </p>
           </div>
 
@@ -662,12 +662,12 @@ export default function ProblimataExercisesPage() {
               onClick={loadNewQuestions}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
-              <span>🔄 ΝΕΑ 10 ΠΡΟΒΛΗΜΑΤΑ</span>
+              <span>🔄 {toCleanUppercase('Νέα 10 Προβλήματα')}</span>
             </button>
           </div>
         </section>
 
-        {/* Φορμα με τα 10 Προβληματα */}
+        {/* Φόρμα με τα 10 Προβλήματα */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q) => {
             const correctStatus = isSubmitted ? isCorrect(q) : false;
@@ -683,7 +683,7 @@ export default function ProblimataExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Προβληματος */}
+                {/* Επικεφαλίδα Προβλήματος */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(`ΠΡΟΒΛΗΜΑ ${q.id} • ${q.title}`)}
@@ -696,19 +696,19 @@ export default function ProblimataExercisesPage() {
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {correctStatus ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
+                      {correctStatus ? `✓ ${toCleanUppercase('Σωστό')}` : `✗ ${toCleanUppercase('Λάθος')}`}
                     </span>
                   )}
                 </div>
 
-                {/* Εκφωνηση (Καθαρο κειμενο χωρις πλαισια δεδομενων που προδιδουν τη λυση) */}
+                {/* Εκφώνηση */}
                 <div className="space-y-3 mb-5">
                   <p className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed">
-                    «{q.text}»
+                    {q.text}
                   </p>
                 </div>
 
-                {/* Περιοχη Απαντησης */}
+                {/* Περιοχή Απάντησης */}
                 <div className="py-2">
                   <div className="flex flex-wrap items-center gap-3">
                     <label className="text-xs sm:text-sm 2xl:text-base font-bold text-slate-700">
@@ -716,7 +716,9 @@ export default function ProblimataExercisesPage() {
                     </label>
                     <input
                       type="text"
-                      inputMode="decimal"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      spellCheck="false"
                       maxLength={10}
                       disabled={isSubmitted}
                       placeholder="Απάντηση..."
@@ -724,13 +726,13 @@ export default function ProblimataExercisesPage() {
                       onChange={(e) => handleInputChange(q.id, e.target.value)}
                       className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                     />
-                    <span className="text-xs 2xl:text-sm text-slate-500">
+                    <span className="text-xs 2xl:text-sm text-slate-500 font-medium">
                       (Ακέραιος αριθμός)
                     </span>
                   </div>
                 </div>
 
-                {/* Feedback μετα την υποβολη (Εδω εμφανιζονται τα δεδομενα και η πληρης επεξηγηση) */}
+                {/* Feedback μετά την υποβολή */}
                 {isSubmitted && (
                   <div
                     className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-2.5 ${
@@ -743,10 +745,10 @@ export default function ProblimataExercisesPage() {
                       <span>{correctStatus ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Ανάλυση:'}</span>
                     </div>
 
-                    {/* Οργανωμενα Δεδομενα Προβληματος στην Επεξηγηση */}
+                    {/* Οργανωμένα Δεδομένα Προβλήματος στην Επεξήγηση */}
                     <div className="bg-white/90 border border-slate-200 p-3 sm:p-3.5 rounded-xl space-y-1.5 my-1">
                       <span className="text-[10px] sm:text-xs font-black uppercase text-slate-500 tracking-wider block">
-                        📋 ΔΕΔΟΜΕΝΑ ΠΡΟΒΛΗΜΑΤΟΣ:
+                        📋 {toCleanUppercase('Δεδομένα Προβλήματος')}:
                       </span>
                       <ul className="text-xs sm:text-sm text-slate-700 space-y-1 font-medium">
                         {q.given.map((g, gIdx) => (
@@ -774,17 +776,18 @@ export default function ProblimataExercisesPage() {
           })}
         </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+        {/* Κουμπί Ελέγχου στο τέλος της φόρμας */}
+        {!isSubmitted && (
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={handleCheckAnswers}
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            >
+              <span>🎯 {toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
+            </button>
+          </div>
+        )}
 
       </div>
 
@@ -795,21 +798,23 @@ export default function ProblimataExercisesPage() {
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
               <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
+                {isSubmitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+                {isSubmitted ? `${score} / 10` : `${answeredCount} / 10`}
               </span>
             </div>
 
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+            {isSubmitted && (
+              <div className="border-l border-slate-700 pl-4 sm:pl-8">
+                <span className="text-xs text-slate-400 font-semibold block">
+                  {toCleanUppercase('Ποσοστό')}
+                </span>
+                <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+                  {Math.round((score / 10) * 100)} %
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -819,7 +824,7 @@ export default function ProblimataExercisesPage() {
                 onClick={handleCheckAnswers}
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                {toCleanUppercase('Έλεγχος')}
               </button>
             ) : (
               <button
@@ -827,7 +832,7 @@ export default function ProblimataExercisesPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             )}
           </div>
