@@ -24,7 +24,7 @@ function shuffle(array) {
   return arr;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -34,7 +34,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -58,7 +58,7 @@ const STANDARD_PROBLEMS_POOL = [
       const ekpExpr = '2² · 3²';
       const ekpVal = 36;
       return {
-        prompt: `Σε μια διασταύρωση, ένα πράσινο φανάρι πεζών ανάβει κάθε ${n1} δευτερόλεπτα και ένα άλλο κάθε ${n1 + 6} δευτερόλεπτα. Αν άναψαν μαζί τώρα, μετά από πόσα δευτερόλεπτα θα ανάψουν ξανά ταυτόχρονα; (Δίνονται: ${n1} ＝ ${f1} και ${n2} ＝ ${f2})`,
+        prompt: `Σε μια διασταύρωση, ένα πράσινο φανάρι πεζών ανάβει κάθε ${n1} δευτερόλεπτα και ένα άλλο κάθε ${n2} δευτερόλεπτα. Αν άναψαν μαζί τώρα, μετά από πόσα δευτερόλεπτα θα ανάψουν ξανά ταυτόχρονα; (Δίνονται: ${n1} ＝ ${f1} και ${n2} ＝ ${f2})`,
         unit: 'δευτερόλεπτα',
         correctVal: ekpVal,
         correctText: `${ekpVal} δευτερόλεπτα`,
@@ -279,7 +279,7 @@ const HARD_PROBLEMS_POOL = [
       const ekpExpr = '2³ · 3 · 5';
       const ekpVal = 120;
       return {
-        prompt: `Τρία εμπορικά πλοία εκτελούν κυκλικά δρομολόγια από το λιμάνι του Πειραιά. Το πρώτο επιστρέφει κάθε ${n1} ημέρες (${f1}), το δεύτερο κάθε ${n2} ημέρες (${f2}) και το τρίτο κάθε ${n3} ημέρες (${f3}). Κάθε πόσες ημέρες θα συναντώνται και τα τρία ταυτόχρονα στο λιμάνι;`,
+        prompt: `Τρία εμπορικά πλοία εκτελούν κυκλικά δρομολόγια από το λιμάνι του Πειραιά. Το πρώτο επιστρέφει κάθε ${n1} ημέρες (${f1}), το δεύτερο κάθε ${n2} ημέρες (${f2}) και το τρίτο κάθε ${n3} ημέρες (${f3}). Κάθε πόσες ημέρες θα συμπίπτει η παρουσία και των τριών ταυτόχρονα στο λιμάνι;`,
         unit: 'ημέρες',
         correctVal: ekpVal,
         correctText: `${ekpVal} ημέρες`,
@@ -324,7 +324,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp5',
     title: 'Συναρμολόγηση Πλακετών LED',
-    unit: 'εκατοστά (cm)',
+    unit: 'cm',
     generate: () => {
       // 30 = 2 · 3 · 5, 40 = 2³ · 5 -> ΕΚΠ = 2³ · 3 · 5 = 8 · 3 · 5 = 120
       const n1 = 30;
@@ -334,7 +334,7 @@ const HARD_PROBLEMS_POOL = [
       const ekpExpr = '2³ · 3 · 5';
       const ekpVal = 120;
       return {
-        prompt: `Ένας ηλεκτρονικός θέλει να κατασκευάσει ένα τετράγωνο φωτιστικό πάνελ τοποθετώντας ορθογώνιες πλακέτες LED διαστάσεων ${n1} cm (${f1}) επί ${n2} cm (${f2}). Ποιο είναι το ελάχιστο μήκος πλευράς που μπορεί να έχει το τετράγωνο πάνελ;`,
+        prompt: `Ένας τεχνικός ηλεκτρονικών θέλει να κατασκευάσει ένα τετράγωνο φωτιστικό πάνελ τοποθετώντας ορθογώνιες πλακέτες LED διαστάσεων ${n1} cm (${f1}) επί ${n2} cm (${f2}). Ποιο είναι το ελάχιστο μήκος πλευράς που μπορεί να έχει το τετράγωνο πάνελ;`,
         unit: 'cm',
         correctVal: ekpVal,
         correctText: `${ekpVal} cm`,
@@ -625,7 +625,7 @@ function generateQuestions() {
       id: 'q7',
       type: 'input',
       title: 'Συμπλήρωση Παράγοντα στο Γινόμενο',
-      prompt: `Αν ${q7Data.n1} και ${q7Data.n2}, τότε Ε.Κ.Π. ＝ ${q7Data.known}[ ? ] ＝ ${q7Data.target}. Ποιος αριθμός λείπει στο [ ? ];`,
+      prompt: `Αν ${q7Data.n1} και ${q7Data.n2}, τότε Ε.Κ.Π. ＝ ${q7Data.known}[ ? ] ＝ ${q7Data.target}. Ποιος αριθμός αντιστοιχεί στο [ ? ];`,
       correct: q7Data.missing,
       explain: q7Data.explain
     },
@@ -690,17 +690,22 @@ export default function EkpProtoiExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός Input μόνο για ακέραιους αριθμούς (0-9)
+  const handleInputChange = (id, rawValue) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    let sanitized = String(rawValue).replace(/[^0-9]/g, '');
+    if (sanitized.length > 10) {
+      sanitized = sanitized.slice(0, 10);
+    }
+    setAnswers(prev => ({ ...prev, [id]: sanitized }));
   };
 
   const isQuestionCorrect = (q) => {
     const userVal = answers[q.id];
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
-      const cleanUser = userVal.replace(/\s+/g, '').replace(/,/g, '.').trim();
-      const cleanTarget = q.correct.replace(/\s+/g, '').replace(/,/g, '.').trim();
+      const cleanUser = userVal.trim();
+      const cleanTarget = String(q.correct).trim();
       return cleanUser === cleanTarget;
     }
     if (q.type === 'mcq') {
@@ -732,6 +737,8 @@ export default function EkpProtoiExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Ε.Κ.Π. με Πρώτους Παράγοντες - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -750,7 +757,7 @@ export default function EkpProtoiExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -835,6 +842,9 @@ export default function EkpProtoiExercisesPage() {
                         <input
                           type="text"
                           inputMode="numeric"
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
                           onChange={(e) => handleInputChange(q.id, e.target.value)}
@@ -942,8 +952,10 @@ export default function EkpProtoiExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
