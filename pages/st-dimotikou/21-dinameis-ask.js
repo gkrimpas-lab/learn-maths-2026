@@ -24,7 +24,7 @@ function shuffle(array) {
   return arr;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -34,7 +34,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -156,7 +156,7 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: [
           { item: 'Αρχικός Πληθυσμός', formula: '1', val: '2⁰ ＝ 1' },
           { item: 'Ρυθμός Διπλασιασμού', formula: 'Βάση 2', val: '2' },
-          { item: 'Πληθυσμός σε ${h} ώρες', formula: `2${EXPONENTS_UNICODE[h]} (2 υψωμένο στις ${h})`, val: `${formatNum(count)} βακτήρια` }
+          { item: `Πληθυσμός σε ${h} ώρες`, formula: `2${EXPONENTS_UNICODE[h]} (2 υψωμένο στην ${h})`, val: `${formatNum(count)} βακτήρια` }
         ],
         explain: `Ο συνεχής διπλασιασμός εκφράζεται ως δύναμη με βάση το 2: 2${EXPONENTS_UNICODE[h]} ＝ ${Array(h).fill(2).join(' · ')} ＝ ${formatNum(count)} βακτήρια.`,
         distractors: [
@@ -184,7 +184,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Διαστάσεις (Μ · Π · Υ)', formula: `${n} · ${n} · ${n}`, val: `${n}³` },
           { item: 'Συνολικά Κουτιά', formula: `${n} · ${n} · ${n}`, val: `${formatNum(total)} κουτιά` }
         ],
-        explain: `Όταν γεμίζουμε έναν κύβο σε όλες τις διαστάσεις (μήκος, πλάτος, ύψος), ο αριθμός είναι ${n}³ ＝ ${n} · ${n} · ${n} ＝ ${formatNum(total)} κουτιά.`,
+        explain: `Όταν γεμίζουμε έναν κύβο σε όλες τις διαστάσεις (μήκος, πλάτος, ύψος), το συνολικό πλήθος των κουτιών ισούται με ${n}³ ＝ ${n} · ${n} · ${n} ＝ ${formatNum(total)} κουτιά.`,
         distractors: [
           `${n} · 3 ＝ ${formatNum(n * 3)} κουτιά`,
           `${n}² ＝ ${formatNum(n * n)} κουτιά`,
@@ -228,7 +228,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Αλυσίδα Μηνυμάτων (Εκθετική Διάδοση)',
     unit: 'άτομα',
     generate: () => {
-      // 3 άτομα στέλνουν σε άλλα 3 άτομα σε 4 γύρους -> 3^4 = 81
       const rounds = [3, 4, 5];
       const r = rounds[randInt(0, rounds.length - 1)];
       const total = Math.pow(3, r);
@@ -254,7 +253,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp2',
     title: 'Δυνάμεις του 10 και Μέτρηση Δεδομένων',
-    unit: 'μονάδες',
+    unit: 'αιτήματα',
     generate: () => {
       const exps = [4, 5, 6];
       const e = exps[randInt(0, exps.length - 1)];
@@ -307,9 +306,8 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp4',
     title: 'Σύγκριση Μεγέθους Δυνάμεων',
-    unit: '',
+    unit: 'μονάδες',
     generate: () => {
-      // 2^5 vs 5^2 (32 vs 25) ή 3^4 vs 4^3 (81 vs 64)
       const pairs = [
         { b1: 2, e1: 5, v1: 32, b2: 5, e2: 2, v2: 25 },
         { b1: 3, e1: 4, v1: 81, b2: 4, e2: 3, v2: 64 },
@@ -329,8 +327,8 @@ const HARD_PROBLEMS_POOL = [
         ],
         explain: `Υπολογίζουμε χωριστά τις δύο δυνάμεις: Α ＝ ${p.b1}${EXPONENTS_UNICODE[p.e1]} ＝ ${p.v1} και Β ＝ ${p.b2}${EXPONENTS_UNICODE[p.e2]} ＝ ${p.v2}. Η διαφορά τους είναι ${p.v1} － ${p.v2} ＝ ${diff}.`,
         distractors: [
-          `${diff + 5} μονάδες`,
-          `${Math.max(1, diff - 7)} μονάδες`,
+          `${diff + 5} μονάδες (Α ＝ ${p.v1 + 5}, Β ＝ ${p.v2})`,
+          `${Math.max(1, diff - 7)} μονάδες (Α ＝ ${p.v1 - 7}, Β ＝ ${p.v2})`,
           'Είναι ίσες (0 μονάδες)'
         ]
       };
@@ -338,7 +336,7 @@ const HARD_PROBLEMS_POOL = [
   },
   {
     id: 'hp5',
-    title: 'Σύνθεση Κύβου του Rubik (Μικρά Κυβάκια)',
+    title: 'Σύνθεση Κυβικών Κυβιδίων',
     unit: 'κυβάκια',
     generate: () => {
       const sizes = [3, 4, 5];
@@ -354,7 +352,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Πλήθος Στρώσεων', formula: `${n}`, val: `${n}` },
           { item: 'Συνολικός Αριθμός', formula: `${n}² · ${n} ＝ ${n}³`, val: `${formatNum(total)} κυβάκια` }
         ],
-        explain: `Ο συνολικός αριθμός των κυβιδίων προκύπτει από τον κύβο του αριθμού των υποδιαιρέσεων: ${n}³ ＝ ${n} · ${n} · ${n} ＝ ${formatNum(total)} κυβάκια.`,
+        explain: `Το συνολικό πλήθος των κύβων ισούται με ${n}³ ＝ ${n} · ${n} · ${n} ＝ ${formatNum(total)} κυβάκια.`,
         distractors: [
           `${n} · 3 ＝ ${formatNum(n * 3)} κυβάκια`,
           `${n}² ＝ ${formatNum(n * n)} κυβάκια`,
@@ -366,9 +364,8 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp6',
     title: 'Τουρνουά Αγώνων με Σύστημα Νοκ-Άουτ',
-    unit: 'ομάδες',
+    unit: 'παίκτες',
     generate: () => {
-      // Σε 4 γύρους χρειάζονται 2^4 = 16 ομάδες, σε 5 γύρους 32 κ.λπ.
       const rounds = [3, 4, 5, 6];
       const r = rounds[randInt(0, rounds.length - 1)];
       const teams = Math.pow(2, r);
@@ -380,7 +377,7 @@ const HARD_PROBLEMS_POOL = [
         tableData: [
           { item: 'Τελικός (1ος γύρος από το τέλος)', formula: '2¹', val: '2 παίκτες' },
           { item: 'Ημιτελικοί', formula: '2²', val: '4 παίκτες' },
-          { item: 'Έναρξη (${r} γύροι)', formula: `2${EXPONENTS_UNICODE[r]}`, val: `${formatNum(teams)} παίκτες` }
+          { item: `Έναρξη (${r} γύροι)`, formula: `2${EXPONENTS_UNICODE[r]}`, val: `${formatNum(teams)} παίκτες` }
         ],
         explain: `Κάθε γύρος διπλασιάζει τους απαιτούμενους συμμετέχοντες: για ${r} γύρους απαιτούνται 2${EXPONENTS_UNICODE[r]} ＝ ${formatNum(teams)} παίκτες.`,
         distractors: [
@@ -544,7 +541,7 @@ function generateQuestions() {
       id: 'q4',
       type: 'mcq',
       title: 'Ειδικές Περιπτώσεις (0 & 1)',
-      prompt: `Πόσο κάνει ${q4Data.base}${EXPONENTS_UNICODE[q4Data.exp]};`,
+      prompt: `Πόσο ισούται η δύναμη ${q4Data.base}${EXPONENTS_UNICODE[q4Data.exp]};`,
       options: q4Options,
       correct: q4Correct,
       explain: q4Data.explain
@@ -638,17 +635,22 @@ export default function DinameisExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
+  // Χειρισμός Input μόνο για ακέραιους αριθμούς (0-9)
   const handleInputChange = (id, val) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    let sanitized = String(val).replace(/[^0-9]/g, '');
+    if (sanitized.length > 10) {
+      sanitized = sanitized.slice(0, 10);
+    }
+    setAnswers(prev => ({ ...prev, [id]: sanitized }));
   };
 
   const isQuestionCorrect = (q) => {
     const userVal = answers[q.id];
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
-      const cleanUser = userVal.replace(/\s+/g, '').replace(/\./g, '').replace(/,/g, '.').trim();
-      const cleanTarget = q.correct.replace(/\s+/g, '').replace(/\./g, '').replace(/,/g, '.').trim();
+      const cleanUser = userVal.trim();
+      const cleanTarget = String(q.correct).trim();
       return cleanUser === cleanTarget;
     }
     if (q.type === 'mcq') {
@@ -680,6 +682,8 @@ export default function DinameisExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Δυνάμεις Φυσικών Αριθμών - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -698,7 +702,7 @@ export default function DinameisExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -783,6 +787,9 @@ export default function DinameisExercisesPage() {
                         <input
                           type="text"
                           inputMode="numeric"
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
                           onChange={(e) => handleInputChange(q.id, e.target.value)}
@@ -890,8 +897,10 @@ export default function DinameisExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
