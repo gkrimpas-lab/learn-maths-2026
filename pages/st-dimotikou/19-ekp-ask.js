@@ -342,7 +342,7 @@ const HARD_PROBLEMS_POOL = [
 function generateQuestions() {
   const qList = [];
 
-  // Q1 (MCQ): Ε.Κ.Π. δύο απλών αριθμών
+  // Q1 (MCQ): Ε.Κ.Π. δύο απλών αριθμών (Εγγύηση ακριβώς 4 μοναδικών επιλογών)
   {
     const q1Pairs = [
       [4, 6], [6, 8], [3, 5], [6, 9], [8, 12], [5, 10], [4, 10], [9, 12]
@@ -350,12 +350,23 @@ function generateQuestions() {
     const q1Chosen = q1Pairs[randInt(0, q1Pairs.length - 1)];
     const q1CorrectVal = lcmArray(q1Chosen);
     const q1Correct = String(q1CorrectVal);
-    const q1Wrong1 = String(q1Chosen[0] * q1Chosen[1]);
-    const q1Wrong2 = String(q1CorrectVal * 2);
-    const q1Wrong3 = String(Math.max(...q1Chosen) + 2);
 
-    const rawOptions = [q1Correct, q1Wrong1, q1Wrong2, q1Wrong3];
-    const options = shuffle([...new Set(rawOptions)]).slice(0, 4).map((text) => ({
+    // Δημιουργία δεξαμενής πιθανών λαθών που διαφέρουν από τη σωστή απάντηση
+    const candidateWrongs = [
+      q1CorrectVal * 2,
+      q1CorrectVal * 3,
+      q1Chosen[0] * q1Chosen[1],
+      Math.max(...q1Chosen) + 2,
+      Math.max(...q1Chosen),
+      q1CorrectVal - Math.min(...q1Chosen)
+    ]
+      .filter((v) => v > 0 && v !== q1CorrectVal)
+      .map(String);
+
+    const uniqueWrongs = [...new Set(candidateWrongs)];
+    const selectedWrongs = shuffle(uniqueWrongs).slice(0, 3);
+
+    const options = shuffle([q1Correct, ...selectedWrongs]).map((text) => ({
       text,
       isCorrect: text === q1Correct
     }));
