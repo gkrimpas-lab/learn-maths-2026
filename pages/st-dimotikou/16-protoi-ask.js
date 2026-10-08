@@ -3,22 +3,24 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαιος ακεραιος στο [min, max]
+// Τυχαίος ακέραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Ανακατεμα πινακα
+// Ανακάτεμα πίνακα
 function shuffle(array) {
+  if (!Array.isArray(array)) return [];
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -27,7 +29,7 @@ function shuffle(array) {
   return arr;
 }
 
-// Ελεγχος αν ο αριθμος ειναι πρωτος
+// Έλεγχος αν ο αριθμός είναι πρώτος
 function checkIsPrime(n) {
   if (n <= 1) return false;
   if (n === 2 || n === 3) return true;
@@ -38,7 +40,7 @@ function checkIsPrime(n) {
   return true;
 }
 
-// Ευρεση ολων των διαιρετων
+// Εύρεση όλων των διαιρετών
 function getDivisors(n) {
   const divs = [];
   for (let i = 1; i <= n; i++) {
@@ -47,11 +49,11 @@ function getDivisors(n) {
   return divs;
 }
 
-// Δεξαμενη πρωτων και συνθετων αριθμων
+// Δεξαμενή πρώτων και σύνθετων αριθμών
 const PRIMES_UNDER_50 = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47];
 const COMPOSITES_UNDER_50 = [4, 6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 24, 25, 26, 27, 28, 30, 32, 33, 34, 35, 36, 38, 39, 40, 42, 44, 45, 46, 48, 49, 50];
 
-// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (MCQ)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 9 (MCQ)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_prime_std_1',
@@ -65,7 +67,7 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: { col1: 'Υποψήφιοι Αριθμοί', col2: 'Ανάλυση Διαιρετών', r1: ['49, 51, 57', 'Σύνθετοι (διαιρούνται με 7 ή 3)'], r2: ['53', 'Πρώτος (διαιρέτες μόνο 1 και 53) ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(primeNum),
-        explanation: 'Ο αριθμός 53 δεν διαιρείται με το 2, το 3, το 5 ή το 7 και έχει διαιρέτες μόνο το 1 και τον εαυτό του, άρα είναι πρώτος. (49 ＝ 7 · 7, 51 ＝ 3 · 17, 57 ＝ 3 · 19).'
+        explanation: 'Ο αριθμός 53 δεν διαιρείται με το 2, το 3, το 5 ή το 7 και έχει διαιρέτες μόνο το 1 και τον εαυτό του, άρα είναι πρώτος (49 ＝ 7 · 7, 51 ＝ 3 · 17, 57 ＝ 3 · 19).'
       };
     }
   },
@@ -110,7 +112,7 @@ const STANDARD_PROBLEMS_POOL = [
         title: 'ΜΕΓΑΛΥΤΕΡΟΣ ΔΙΨΗΦΙΟΣ ΠΡΩΤΟΣ',
         instruction: 'Επιλέξτε τον πρώτο αριθμό:',
         text: 'Ποιος από τους παρακάτω αριθμούς είναι πρώτος: 91, 93, 95 ή 97;',
-        tableData: { col1: 'Υποψήφιοι', col2: 'Έλεγχος', r1: ['91 (7·13), 93 (3·31), 95 (5·19)', 'Σύνθετοι'], r2: ['97', 'Πρώτος αριθμός ✅'] },
+        tableData: { col1: 'Υποψήφιοι', col2: 'Έλεγχος', r1: ['91 (7 · 13), 93 (3 · 31), 95 (5 · 19)', 'Σύνθετοι'], r2: ['97', 'Πρώτος αριθμός ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(primeNum),
         explanation: 'Ο αριθμός 97 είναι ο μεγαλύτερος διψήφιος πρώτος. Το 91 ＝ 7 · 13, το 93 ＝ 3 · 31 και το 95 ＝ 5 · 19.'
@@ -126,7 +128,7 @@ const STANDARD_PROBLEMS_POOL = [
         title: 'ΑΝΑΖΗΤΗΣΗ ΠΡΩΤΟΥ ΣΤΗΝ ΤΡΙΑΝΤΑΔΑ',
         instruction: 'Επιλέξτε τον πρώτο αριθμό:',
         text: 'Ποιος από τους παρακάτω αριθμούς είναι πρώτος: 33, 35, 37 ή 39;',
-        tableData: { col1: 'Αριθμοί', col2: 'Διαιρέτες', r1: ['33 (3·11), 35 (5·7), 39 (3·13)', 'Σύνθετοι'], r2: ['37', 'Πρώτος ✅'] },
+        tableData: { col1: 'Αριθμοί', col2: 'Διαιρέτες', r1: ['33 (3 · 11), 35 (5 · 7), 39 (3 · 13)', 'Σύνθετοι'], r2: ['37', 'Πρώτος ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(primeNum),
         explanation: 'Ο αριθμός 37 έχει διαιρέτες μόνο το 1 και το 37, άρα είναι πρώτος.'
@@ -142,7 +144,7 @@ const STANDARD_PROBLEMS_POOL = [
         title: 'ΕΥΡΕΣΗ ΠΡΩΤΟΥ ΣΤΗΝ ΕΙΚΟΣΑΔΑ',
         instruction: 'Επιλέξτε τον πρώτο αριθμό:',
         text: 'Ποιος από τους παρακάτω αριθμούς είναι πρώτος: 21, 23, 25 ή 27;',
-        tableData: { col1: 'Υποψήφιοι', col2: 'Ανάλυση', r1: ['21 (3·7), 25 (5·5), 27 (3·9)', 'Σύνθετοι'], r2: ['23', 'Πρώτος ✅'] },
+        tableData: { col1: 'Υποψήφιοι', col2: 'Ανάλυση', r1: ['21 (3 · 7), 25 (5 · 5), 27 (3 · 9)', 'Σύνθετοι'], r2: ['23', 'Πρώτος ✅'] },
         optionsRaw: candidates.map(String),
         correctText: String(primeNum),
         explanation: 'Ο αριθμός 23 είναι πρώτος, ενώ οι 21, 25 και 27 είναι σύνθετοι.'
@@ -151,7 +153,7 @@ const STANDARD_PROBLEMS_POOL = [
   }
 ];
 
-// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
+// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_prime_hard_1',
@@ -205,11 +207,11 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΣΥΣΚΕΥΑΣΙΑ ΚΑΡΑΜΕΛΩΝ ΣΕ ΣΑΚΟΥΛΑΚΙΑ',
         instruction: 'Επιλέξτε αν είναι εφικτή η συσκευασία:',
-        text: `Μια ζαχαροπλάστης έχει ${candies} καραμέλες. Μπορεί να τις μοιράσει ισόποσα σε περισσότερα από ένα σακουλάκια χωρίς να περισσέψει καμία;`,
+        text: `Ένας ζαχαροπλάστης έχει ${candies} καραμέλες. Μπορεί να τις μοιράσει ισόποσα σε περισσότερα από ένα σακουλάκια χωρίς να περισσέψει καμία;`,
         tableData: { col1: 'Καραμέλες', col2: 'Ιδιότητα', r1: [`${candies} καραμέλες`, 'Πρώτος αριθμός'], r2: ['Αποτέλεσμα', 'Μόνο 1 σακουλάκι των 47 (Όχι ❌)'] },
         optionsRaw: ['Ναι', 'Όχι'],
         correctText: 'Όχι',
-        explanation: 'Ο αριθμός 47 είναι πρώτος αριθμός, επομένως δεν μπορεί να μοιραστεί ισότιμα σε περισσότερα σακουλάκια.'
+        explanation: 'Ο αριθμός 47 είναι πρώτος αριθμός, επομένως δεν μπορεί να μοιραστεί ισόποσα σε περισσότερα σακουλάκια.'
       };
     }
   },
@@ -220,7 +222,7 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΣΧΗΜΑΤΙΣΜΟΣ ΠΑΡΕΛΑΣΗΣ',
         instruction: 'Επιλέξτε αν μπορούν να σχηματιστούν ίσες σειρές:',
-        text: `Σε μια παρέλαση συμμετέχουν ${soldiers} άτομα. Μπορούν να παρελάσουν σε ίσες σειρές των 2, 3, 4 ή 5 ατόμων χωρίς να περισσέψει κανείς;`,
+        text: `Σε μια παρέλαση συμμετέχουν ${soldiers} άτομα. Μπορούν να παρελάσουν σε ίσες σειρές των 2, 3, 4 ή 5 ατόμων χωρίς να περισσέψει κανένα άτομο;`,
         tableData: { col1: 'Άτομα', col2: 'Διαιρέτες', r1: [`${soldiers} άτομα`, 'Πρώτος αριθμός'], r2: ['Έλεγχος', 'Όχι ❌'] },
         optionsRaw: ['Ναι', 'Όχι'],
         correctText: 'Όχι',
@@ -245,7 +247,7 @@ const HARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// Δημιουργία των 10 δυναμικών ερωτήσεων
 function generateQuestions() {
   const qList = [];
 
@@ -276,7 +278,7 @@ function generateQuestions() {
     });
   }
 
-  // Q2 (Input - Decimal): Εύρεση του αμέσως επόμενου πρώτου αριθμού
+  // Q2 (Input): Εύρεση του αμέσως επόμενου πρώτου αριθμού
   {
     const baseQ2 = [10, 14, 20, 24, 30, 32, 38, 44][randInt(0, 7)];
     let nextPrime = baseQ2 + 1;
@@ -286,7 +288,7 @@ function generateQuestions() {
 
     qList.push({
       id: 2,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 2 • ΕΥΡΕΣΗ ΕΠΟΜΕΝΟΥ ΠΡΩΤΟΥ',
       instruction: 'Συμπληρώστε τον επόμενο πρώτο αριθμό (ακέραιος):',
       prompt: `Ποιος είναι ο αμέσως επόμενος πρώτος αριθμός μετά το ${baseQ2};`,
@@ -394,7 +396,7 @@ function generateQuestions() {
     });
   }
 
-  // Q7 (Input - Decimal): Ορθογώνιοι Σχηματισμοί
+  // Q7 (Input): Ορθογώνιοι Σχηματισμοί
   {
     const q7Num = [6, 7, 8, 11, 12, 13, 15, 17][randInt(0, 7)];
     const q7Divs = getDivisors(q7Num);
@@ -403,7 +405,7 @@ function generateQuestions() {
 
     qList.push({
       id: 7,
-      type: 'decimal_input',
+      type: 'integer_input',
       title: 'ΕΡΩΤΗΣΗ 7 • ΟΡΘΟΓΩΝΙΕΣ ΔΙΑΤΑΞΕΙΣ',
       instruction: 'Υπολογίστε το πλήθος των διαφορετικών διατάξεων (ακέραιος):',
       prompt: `Πόσους διαφορετικούς ορθογώνιους σχηματισμούς μπορείς να φτιάξεις με ${q7Num} τετράγωνα κουτάκια;`,
@@ -433,22 +435,22 @@ function generateQuestions() {
       id: 8,
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑΣ',
-      instruction: 'Επιλέξτε τη σωστή απάντηση για το μοίρασμα των μαθητών:',
-      prompt: `Μια δασκάλα θέλει να μοιράσει ${q8Students} μαθητές σε ισόποσες ομάδες με περισσότερους από 1 μαθητή. Μπορεί να το κάνει;`,
+      instruction: 'Επιλέξτε τη σωστή απάντηση για τον διαχωρισμό των μαθητών:',
+      prompt: `Μια δασκάλα θέλει να χωρίσει ${q8Students} μαθητές σε ισοπληθείς ομάδες με περισσότερους από 1 μαθητή. Μπορεί να το κάνει;`,
       options,
       correctText: q8CorrectStr,
-      explanation: `Ο αριθμός ${q8Students} είναι πρώτος αριθμός, επομένως δεν μπορεί να χωριστεί σε ισόποσες ομάδες περισσότερων των 1 ατόμων.`
+      explanation: `Ο αριθμός ${q8Students} είναι πρώτος αριθμός, επομένως δεν μπορεί να χωριστεί σε ισοπληθείς ομάδες με περισσότερους από 1 μαθητή.`
     });
   }
 
-  // Q9 & Q10: Προβλήματα από τις δεξαμενές (1 Input, 1 MCQ)
+  // Q9 & Q10: Προβλήματα από τις δεξαμενές
   {
     const shuffledStd = shuffle([...STANDARD_PROBLEMS_POOL]);
     const shuffledHard = shuffle([...HARD_PROBLEMS_POOL]);
     const stdProb = shuffledStd[0].generate();
     const hardProb = shuffledHard[0].generate();
 
-    // Q9 (MCQ) - Χωρίς πίνακα στην εκφώνηση
+    // Q9 (MCQ)
     const optionsQ9 = shuffle([...new Set(stdProb.optionsRaw)]).map((text) => ({
       text,
       isCorrect: text === stdProb.correctText
@@ -466,7 +468,7 @@ function generateQuestions() {
       explanation: stdProb.explanation
     });
 
-    // Q10 (MCQ) - Χωρίς πίνακα στην εκφώνηση
+    // Q10 (MCQ)
     const optionsQ10 = shuffle([...new Set(hardProb.optionsRaw)]).map((text) => ({
       text,
       isCorrect: text === hardProb.correctText
@@ -494,29 +496,26 @@ export default function ProtoiExercisesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
+  // Δημιουργία νέων ασκήσεων
   const loadNewSet = useCallback(() => {
     const q = generateQuestions();
     setQuestions(q);
     setAnswers({});
     setIsSubmitted(false);
     setScore(0);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9, οριο 10 χαρακτηρων)
+  // Χειρισμός Input μόνο για ακέραιους αριθμούς (0-9)
   const handleInputChange = (qId, rawValue) => {
     if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
+    let sanitized = rawValue.replace(/[^0-9]/g, '');
     if (sanitized.length > 10) {
       sanitized = sanitized.slice(0, 10);
     }
@@ -526,7 +525,7 @@ export default function ProtoiExercisesPage() {
     }));
   };
 
-  // Χειρισμος MCQ
+  // Χειρισμός MCQ
   const handleSelectMCQ = (qId, optionText) => {
     if (isSubmitted) return;
     setAnswers((prev) => ({
@@ -535,31 +534,35 @@ export default function ProtoiExercisesPage() {
     }));
   };
 
-  // Ελεγχος Απαντησεων
+  const isQuestionCorrect = (q) => {
+    if (q.type === 'mcq') {
+      return answers[`q_${q.id}`] === q.correctText;
+    }
+    if (q.type === 'integer_input') {
+      const userValStr = (answers[`q_${q.id}`] || '').trim();
+      const userVal = parseInt(userValStr, 10);
+      return !isNaN(userVal) && userVal === q.correctVal;
+    }
+    return false;
+  };
+
+  // Έλεγχος Απαντήσεων
   const handleCheckAnswers = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (isSubmitted) return;
 
     let currentScore = 0;
-
     questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+      if (isQuestionCorrect(q)) {
+        currentScore += 1;
       }
     });
 
     setScore(currentScore);
     setIsSubmitted(true);
   };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
@@ -574,24 +577,23 @@ export default function ProtoiExercisesPage() {
           href="/st-dimotikou/16-protoi"
           className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖 {toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-36 overflow-x-hidden">
         
         {/* Banner Header */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              <span>ΚΕΦΑΛΑΙΟ 16 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Ασκήσεις &amp; Προβλήματα: Πρώτοι &amp; Σύνθετοι Αριθμοί
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες αναγνώρισης πρώτων αριθμών, ορθογώνιων διατάξεων, ιδιοτήτων και 4 ρεαλιστικά προβλήματα καθημερινής ζωής.
+              10 δυναμικές δραστηριότητες αναγνώρισης πρώτων αριθμών, ορθογώνιων διατάξεων, ιδιοτήτων και ρεαλιστικά προβλήματα καθημερινής ζωής.
             </p>
           </div>
 
@@ -604,23 +606,15 @@ export default function ProtoiExercisesPage() {
               onClick={loadNewSet}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
+        {/* Λίστα 10 Ασκήσεων */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
+            const isCorrect = isSubmitted && isQuestionCorrect(q);
 
             return (
               <article
@@ -633,7 +627,7 @@ export default function ProtoiExercisesPage() {
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
+                {/* Επικεφαλίδα Ερώτησης */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
                     {toCleanUppercase(q.title)}
@@ -646,12 +640,12 @@ export default function ProtoiExercisesPage() {
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
+                      {isCorrect ? `✓ ${toCleanUppercase('Σωστό')}` : `✗ ${toCleanUppercase('Λάθος')}`}
                     </span>
                   )}
                 </div>
 
-                {/* Εκφωνηση (Καθαρο κειμενο χωρις πινακες που προδιδουν τη λυση) */}
+                {/* Εκφώνηση */}
                 <div className="space-y-3 mb-5">
                   {q.instruction && (
                     <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
@@ -663,29 +657,30 @@ export default function ProtoiExercisesPage() {
                   </p>
                 </div>
 
-                {/* Περιοχη Απαντησης */}
+                {/* Περιοχή Απάντησης */}
                 <div className="py-2">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
+                  {/* Integer Input */}
+                  {q.type === 'integer_input' && (
                     <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="text"
                         inputMode="numeric"
+                        autoComplete="off"
+                        spellCheck="false"
                         maxLength={10}
                         disabled={isSubmitted}
                         placeholder="Απάντηση..."
                         value={answers[`q_${q.id}`] || ''}
                         onChange={(e) => handleInputChange(q.id, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
+                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
                       />
-                      <span className="text-xs 2xl:text-sm text-slate-500">
+                      <span className="text-xs 2xl:text-sm text-slate-500 font-medium">
                         (Ακέραιος αριθμός)
                       </span>
                     </div>
                   )}
 
-                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
+                  {/* Multiple Choice (MCQ) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
                       {q.options.map((opt, oIdx) => {
@@ -696,9 +691,9 @@ export default function ProtoiExercisesPage() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
+                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 min-h-[48px] ${
                               isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm ring-2 ring-blue-300'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                             } disabled:cursor-not-allowed`}
                           >
@@ -719,10 +714,9 @@ export default function ProtoiExercisesPage() {
                       })}
                     </div>
                   )}
-
                 </div>
 
-                {/* Feedback μετα την υποβολη (Εδω εμφανιζεται ο αναλυτικος πινακας δεδομενων) */}
+                {/* Feedback μετά την υποβολή */}
                 {isSubmitted && (
                   <div
                     className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-2.5 ${
@@ -768,17 +762,18 @@ export default function ProtoiExercisesPage() {
           })}
         </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+        {/* Κουμπί Ελέγχου στο τέλος της φόρμας */}
+        {!isSubmitted && (
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={handleCheckAnswers}
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
+            >
+              <span>🎯 {toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
+            </button>
+          </div>
+        )}
 
       </div>
 
@@ -789,21 +784,23 @@ export default function ProtoiExercisesPage() {
           <div className="flex items-center gap-4 sm:gap-8">
             <div>
               <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
+                {isSubmitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}
               </span>
               <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
+                {isSubmitted ? `${score} / 10` : `${answeredCount} / 10`}
               </span>
             </div>
 
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+            {isSubmitted && (
+              <div className="border-l border-slate-700 pl-4 sm:pl-8">
+                <span className="text-xs text-slate-400 font-semibold block">
+                  {toCleanUppercase('Ποσοστό')}
+                </span>
+                <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
+                  {Math.round((score / 10) * 100)} %
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -813,7 +810,7 @@ export default function ProtoiExercisesPage() {
                 onClick={handleCheckAnswers}
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                {toCleanUppercase('Έλεγχος')}
               </button>
             ) : (
               <button
@@ -821,7 +818,7 @@ export default function ProtoiExercisesPage() {
                 onClick={loadNewSet}
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄 {toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
             )}
           </div>
