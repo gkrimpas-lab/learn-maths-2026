@@ -35,7 +35,7 @@ function findGCD(a, b) {
   return x || 1;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -45,7 +45,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -280,7 +280,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Πηλίκο', formula: '3/8', val: '3/8' },
           { item: 'Υπολογισμός διαιρέτη', formula: '(3/4) : (3/8) ＝ (3/4) · (8/3) ＝ 24/12', val: '2' }
         ],
-        explain: `Για να βρούμε τον διαιρέτη, διαιρούμε τον διαιρετέο με το πηλίκο: x ＝ (3/4) : (3/8) ＝ (3/4) · (8/3) ＝ 24/12 ＝ 2.`,
+        explain: 'Για να βρούμε τον διαιρέτη, διαιρούμε τον διαιρετέο με το πηλίκο: x ＝ (3/4) : (3/8) ＝ (3/4) · (8/3) ＝ 24/12 ＝ 2.',
         distractors: ['1/2', '4', '8']
       };
     }
@@ -301,7 +301,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Αντιστροφή διαιρέτη', formula: 'Αντίστροφο του 3/2', val: '2/3' },
           { item: 'Πολλαπλασιασμός', formula: '(3/4) · (2/3) ＝ 6/12 (: 6)', val: '1/2' }
         ],
-        explain: `Μετατρέπουμε τον μικτό αριθμό σε κλάσμα: 1 και 1/2 ＝ 3/2. Έπειτα εκτελούμε: (3/4) : (3/2) ＝ (3/4) · (2/3) ＝ 6/12 ＝ 1/2.`,
+        explain: 'Μετατρέπουμε τον μικτό αριθμό σε κλάσμα: 1 και 1/2 ＝ 3/2. Έπειτα εκτελούμε: (3/4) : (3/2) ＝ (3/4) · (2/3) ＝ 6/12 ＝ 1/2.',
         distractors: ['3/8', '2', '9/8']
       };
     }
@@ -323,7 +323,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Μέσοι όροι', formula: '4 · 6', val: '24' },
           { item: 'Απλοποίηση', formula: '3/24 (: 3)', val: '1/8' }
         ],
-        explain: `Γράφουμε τον ακέραιο 6 ως 6/1. Στο σύνθετο κλάσμα (3/4) / (6/1) οι άκροι δίνουν 3 · 1 ＝ 3 και οι μέσοι 4 · 6 ＝ 24. Απλοποιώντας: 3/24 ＝ 1/8.`,
+        explain: 'Γράφουμε τον ακέραιο 6 ως 6/1. Στο σύνθετο κλάσμα (3/4) / (6/1) οι άκροι δίνουν 3 · 1 ＝ 3 και οι μέσοι 4 · 6 ＝ 24. Απλοποιώντας: 3/24 ＝ 1/8.',
         distractors: ['9/2', '1/2', '3/8']
       };
     }
@@ -343,7 +343,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Πράξη διαίρεσης', formula: '4 : (2/3) ＝ 4 · (3/2)', val: '12/2 ＝ 6' },
           { item: 'Σύγκριση με τον διαιρετέο', formula: '6 ＞ 4', val: 'Πηλίκο ＞ 4' }
         ],
-        explain: `Υπολογίζουμε: 4 : (2/3) ＝ 4 · (3/2) ＝ 12/2 ＝ 6. Επειδή διαιρούμε με αριθμό μικρότερο του 1 (2/3 ＜ 1), το πηλίκο είναι μεγαλύτερο από τον αρχικό αριθμό (6 ＞ 4).`,
+        explain: 'Υπολογίζουμε: 4 : (2/3) ＝ 4 · (3/2) ＝ 12/2 ＝ 6. Επειδή διαιρούμε με αριθμό μικρότερο του 1 (2/3 ＜ 1), το πηλίκο είναι μεγαλύτερο από τον αρχικό αριθμό (6 ＞ 4).',
         distractors: [
           'Το πηλίκο είναι 8/3 (μικρότερο από το 4)',
           'Το πηλίκο είναι ίσο με 4',
@@ -389,8 +389,8 @@ function generateQuestions() {
     String(q3Whole + q3Den),
     `${q3Whole}/${q3Den}`,
     String(Math.max(1, q3Res - 2))
-  ];
-  const q3Options = shuffle([...new Set([q3CorrectStr, ...q3Wrongs])]);
+  ].filter(w => w !== q3CorrectStr);
+  const q3Options = shuffle([...new Set([q3CorrectStr, ...q3Wrongs])]).slice(0, 4);
 
   // Q4: MCQ - Μετατροπή σε Πολλαπλασιασμό
   const q4N1 = randInt(2, 5);
@@ -402,8 +402,8 @@ function generateQuestions() {
     `(${q4D1}/${q4N1}) · (${q4N2}/${q4D2})`,
     `(${q4N1}/${q4D1}) · (${q4N2}/${q4D2})`,
     `(${q4D1}/${q4N1}) · (${q4D2}/${q4N2})`
-  ];
-  const q4Options = shuffle([...new Set([q4CorrectStr, ...q4Wrongs])]);
+  ].filter(w => w !== q4CorrectStr);
+  const q4Options = shuffle([...new Set([q4CorrectStr, ...q4Wrongs])]).slice(0, 4);
 
   // Q5: True/False - Κανόνας αντιστροφής
   const q5IsTrue = Math.random() > 0.5;
@@ -431,7 +431,6 @@ function generateQuestions() {
   // Q8: MCQ - Πράξη σύνθετου κλάσματος
   const q8Top = '1/2';
   const q8Bot = '3/4';
-  const q8CorrectComp = '4/6';
   const q8CorrectSimpComp = '2/3';
   const q8WrongsComp = ['3/8', '8/3', '1/4'];
   const q8Options = shuffle([...new Set([q8CorrectSimpComp, ...q8WrongsComp])]);
@@ -523,7 +522,7 @@ function generateQuestions() {
       prompt: `Ποιο είναι το απλούστερο ανάγωγο αποτέλεσμα του σύνθετου κλάσματος (${q8Top}) / (${q8Bot});`,
       options: q8Options,
       correct: q8CorrectSimpComp,
-      explain: `Πολλαπλασιάζουμε τους άκρους όρους (1 · 4 ＝ 4) και τους μέσους (2 · 3 ＝ 6). Παίρνουμε 4/6, το οποίο απλοποιείται σε 2/3.`
+      explain: 'Πολλαπλασιάζουμε τους άκρους όρους (1 · 4 ＝ 4) και τους μέσους (2 · 3 ＝ 6). Παίρνουμε 4/6, το οποίο απλοποιείται σε 2/3.'
     },
     {
       id: 'q9',
@@ -577,9 +576,22 @@ export default function DiairesiKlasmatonExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      let sanitized = String(rawValue).replace(/[^0-9/]/g, '');
+      const parts = sanitized.split('/');
+      if (parts.length > 2) {
+        sanitized = parts[0] + '/' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -620,6 +632,8 @@ export default function DiairesiKlasmatonExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Διαίρεση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -638,7 +652,7 @@ export default function DiairesiKlasmatonExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -704,7 +718,7 @@ export default function DiairesiKlasmatonExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -723,9 +737,12 @@ export default function DiairesiKlasmatonExercisesPage() {
                         <input
                           type="text"
                           inputMode="text"
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
                           placeholder="π.χ. 3/2"
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
@@ -737,7 +754,7 @@ export default function DiairesiKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -749,7 +766,7 @@ export default function DiairesiKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -830,7 +847,7 @@ export default function DiairesiKlasmatonExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
