@@ -40,7 +40,7 @@ function lcm(a, b) {
   return Math.abs(a * b) / gcd(a, b);
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -50,7 +50,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -79,12 +79,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: p1,
         correctText: p1,
         tableData: [
-          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 7) / 35`, val: `21/35` },
-          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 5) / 35`, val: `20/35` },
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 7) / 35`, val: '21/35' },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 5) / 35`, val: '20/35' },
           { item: 'Σύγκριση', formula: '21/35 ＞ 20/35', val: `${p1} ＞ ${p2}` }
         ],
         explain: `Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(5, 7) ＝ 35. ${p1} διάνυσε τα 21/35, ενώ ${p2} τα 20/35. Επειδή 21/35 ＞ 20/35, ${p1} διάνυσε τη μεγαλύτερη απόσταση.`,
-        distractors: [p2, 'Και οι δύο την ίδια']
+        distractors: [p2, 'Και οι δύο την ίδια απόσταση']
       };
     }
   },
@@ -106,12 +106,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: p1,
         correctText: p1,
         tableData: [
-          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 8) / 24`, val: `16/24` },
-          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 3) / 24`, val: `15/24` },
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 8) / 24`, val: '16/24' },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 3) / 24`, val: '15/24' },
           { item: 'Σύγκριση', formula: '16/24 ＞ 15/24', val: `${p1} ＞ ${p2}` }
         ],
         explain: `Μετατρέπουμε σε ομώνυμα με Ε.Κ.Π.(3, 8) ＝ 24. ${p1} διάβασε τα 16/24 και ${p2} τα 15/24. Άρα ${p1} διάβασε περισσότερο.`,
-        distractors: [p2, 'Και οι δύο το ίδιο']
+        distractors: [p2, 'Και οι δύο το ίδιο μέρος']
       };
     }
   },
@@ -133,12 +133,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: p2,
         correctText: p2,
         tableData: [
-          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 40`, val: `15/40` },
-          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 8) / 40`, val: `16/40` },
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 40`, val: '15/40' },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 8) / 40`, val: '16/40' },
           { item: 'Σύγκριση', formula: '16/40 ＞ 15/40', val: `${p2} ＞ ${p1}` }
         ],
         explain: `Μετατρέπουμε σε ομώνυμα με Ε.Κ.Π.(8, 5) ＝ 40: 3/8 ＝ 15/40 και 2/5 ＝ 16/40. Επειδή 16/40 ＞ 15/40, ${p2} έφαγε περισσότερο.`,
-        distractors: [p1, 'Και οι δύο το ίδιο']
+        distractors: [p1, 'Και οι δύο το ίδιο μέρος']
       };
     }
   },
@@ -160,12 +160,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: p2,
         correctText: p2,
         tableData: [
-          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 35`, val: `20/35` },
-          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 7) / 35`, val: `21/35` },
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 35`, val: '20/35' },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 7) / 35`, val: '21/35' },
           { item: 'Σύγκριση', formula: '21/35 ＞ 20/35', val: `${p2} ＞ ${p1}` }
         ],
         explain: `Με ομώνυμα κλάσματα: 4/7 ＝ 20/35 και 3/5 ＝ 21/35. Άρα ${p2} φύτεψε το μεγαλύτερο μέρος.`,
-        distractors: [p1, 'Και οι δύο το ίδιο']
+        distractors: [p1, 'Και οι δύο το ίδιο μέρος']
       };
     }
   },
@@ -187,12 +187,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: p1,
         correctText: p1,
         tableData: [
-          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 30`, val: `25/30` },
-          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 6) / 30`, val: `24/30` },
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 30`, val: '25/30' },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 6) / 30`, val: '24/30' },
           { item: 'Σύγκριση', formula: '25/30 ＞ 24/30', val: `${p1} ＞ ${p2}` }
         ],
         explain: `Μετατρέπουμε σε ομώνυμα με Ε.Κ.Π.(6, 5) ＝ 30: 5/6 ＝ 25/30 και 4/5 ＝ 24/30. Επομένως, ${p1} ήπιε περισσότερο.`,
-        distractors: [p2, 'Και οι δύο το ίδιο']
+        distractors: [p2, 'Και οι δύο την ίδια ποσότητα']
       };
     }
   },
@@ -214,12 +214,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: p1,
         correctText: p1,
         tableData: [
-          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 20`, val: `15/20` },
-          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 2) / 20`, val: `14/20` },
+          { item: `${p1}`, formula: `${n1}/${d1} ＝ (${n1} · 5) / 20`, val: '15/20' },
+          { item: `${p2}`, formula: `${n2}/${d2} ＝ (${n2} · 2) / 20`, val: '14/20' },
           { item: 'Σύγκριση', formula: '15/20 ＞ 14/20', val: `${p1} ＞ ${p2}` }
         ],
         explain: `Ε.Κ.Π.(4, 10) ＝ 20. Έχουμε 3/4 ＝ 15/20 και 7/10 ＝ 14/20. Επειδή 15/20 ＞ 14/20, ${p1} αποταμίευσε το μεγαλύτερο μέρος.`,
-        distractors: [p2, 'Και οι δύο το ίδιο']
+        distractors: [p2, 'Και οι δύο το ίδιο μέρος']
       };
     }
   }
@@ -327,7 +327,7 @@ const HARD_PROBLEMS_POOL = [
         distractors: [
           '5/6 ＞ 7/8 (γιατί έχει μικρότερο παρονομαστή)',
           '5/6 ＝ 7/8 (είναι ίσα)',
-          'Δεν μπορούμε να αποφανθούμε'
+          'Δεν μπορούμε να συγκρίνουμε χωρίς κοινό παρονομαστή'
         ]
       };
     }
@@ -369,7 +369,7 @@ const HARD_PROBLEMS_POOL = [
         correctVal: '3',
         correctText: 'x ＝ 3 (καθώς 3/12 ＜ 4/12)',
         tableData: [
-          { item: 'Κλάσμα 1/3 σε δωδέκατα', formula: '(1 · 4) / (3 · 4)', val: '4/12' },
+          { item: 'Μετατροπή του 1/3 σε ισοδύναμο με παρονομαστή 12', formula: '(1 · 4) / (3 · 4)', val: '4/12' },
           { item: 'Ανισότητα', formula: 'x/12 ＜ 4/12', val: 'x ＜ 4' },
           { item: 'Μέγιστος φυσικός αριθμός x', formula: 'x ＜ 4', val: 'x ＝ 3' }
         ],
@@ -401,7 +401,7 @@ function generateQuestions() {
   const q2Den1 = randInt(q2Num + 1, 10);
   let q2Den2 = randInt(q2Num + 1, 10);
   if (q2Den1 === q2Den2) q2Den2 = q2Den1 + 1;
-  const q2Correct = q2Den1 < q2Den2 ? '＞' : '＜'; // Μικρότερος παρονομαστής = μεγαλύτερο κλάσμα
+  const q2Correct = q2Den1 < q2Den2 ? '＞' : '＜';
 
   // Q3: Compare Buttons (>, <, =) - Ετερώνυμα κλάσματα (Χιαστί)
   const q3Num1 = randInt(2, 5);
@@ -420,7 +420,7 @@ function generateQuestions() {
     { n: 5, d: 8, val: 0.625, str: '5/8' }
   ];
   const q4Shuffled = shuffle(q4List);
-  const q4MaxItem = q4Shuffled.reduce((max, item) => item.val > max.val ? item : max, q4Shuffled[0]);
+  const q4MaxItem = q4Shuffled.reduce((max, item) => (item.val > max.val ? item : max), q4Shuffled[0]);
   const q4Options = shuffle([...new Set(q4Shuffled.map(item => item.str))]);
   const q4Correct = q4MaxItem.str;
 
@@ -596,9 +596,18 @@ export default function SigkrisiKlasmatonExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για compare/mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      let sanitized = String(rawValue).replace(/[^0-9]/g, '');
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -609,7 +618,7 @@ export default function SigkrisiKlasmatonExercisesPage() {
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
       const cleanUser = userVal.replace(/\s+/g, '').trim().toLowerCase();
-      const cleanTarget = q.correct.replace(/\s+/g, '').trim().toLowerCase();
+      const cleanTarget = String(q.correct).replace(/\s+/g, '').trim().toLowerCase();
       return cleanUser === cleanTarget;
     }
     if (q.type === 'mcq') {
@@ -641,6 +650,8 @@ export default function SigkrisiKlasmatonExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Σύγκριση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -659,7 +670,7 @@ export default function SigkrisiKlasmatonExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -733,7 +744,7 @@ export default function SigkrisiKlasmatonExercisesPage() {
                               key={sym}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, sym)}
+                              onClick={() => handleAnswerChange(q.id, sym, 'compare')}
                               className={`py-3 rounded-2xl font-mono font-black text-xl border transition touch-manipulation active:scale-95 ${
                                 answers[q.id] === sym
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -761,7 +772,7 @@ export default function SigkrisiKlasmatonExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -780,9 +791,12 @@ export default function SigkrisiKlasmatonExercisesPage() {
                         <input
                           type="text"
                           inputMode="numeric"
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
                           placeholder="Γράψε την απάντησή σου..."
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
@@ -794,7 +808,7 @@ export default function SigkrisiKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -806,7 +820,7 @@ export default function SigkrisiKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -887,7 +901,7 @@ export default function SigkrisiKlasmatonExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
