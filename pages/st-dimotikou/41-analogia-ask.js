@@ -76,9 +76,9 @@ const STANDARD_PROBLEMS_POOL = [
         tableData: [
           { item: 'Πρώτη αγορά', formula: `${pCount1} τετράδια`, val: `${cost1} €` },
           { item: 'Δεύτερη αγορά', formula: `${pCount2} τετράδια`, val: 'x €' },
-          { item: 'Αναλογία (σταυρωτά γινόμενα)', formula: `(${cost1} · ${pCount2}) :${pCount1}`, val: `${cost2} €` }
+          { item: 'Αναλογία (σταυρωτά γινόμενα)', formula: `(${cost1} · ${pCount2}) : ${pCount1}`, val: `${cost2} €` }
         ],
-        explain: `Στήνουμε την αναλογία ποσότητας προς κόστος: ${pCount1} : ${cost1} ＝${pCount2} : x. Εφαρμόζοντας σταυρωτά γινόμενα (χιαστί), έχουμε: x ＝ (${cost1} ·${pCount2}) : ${pCount1} ＝${cost1 * pCount2} : ${pCount1} ＝${cost2} €.`,
+        explain: `Στήνουμε την αναλογία ποσότητας προς κόστος: ${pCount1} : ${cost1} ＝ ${pCount2} : x. Εφαρμόζοντας σταυρωτά γινόμενα (χιαστί), έχουμε: x ＝ (${cost1} · ${pCount2}) : ${pCount1} ＝ ${cost1 * pCount2} : ${pCount1} ＝ ${cost2} €.`,
         distractors: [`${cost2 + 4} €`, `${cost2 - 3} €`, `${cost2 + 6} €`]
       };
     }
@@ -100,7 +100,7 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${juice2} ml`,
         tableData: [
           { item: 'Αρχική ποσότητα', formula: `${kg1} kg`, val: `${juice1} ml` },
-          { item: 'Νέα ποσότητα', formula: `${kg2} kg`, val: 'x ml` },
+          { item: 'Νέα ποσότητα', formula: `${kg2} kg`, val: 'x ml' },
           { item: 'Επίλυση αναλογίας', formula: `(${juice1} · ${kg2}) : ${kg1}`, val: `${juice2} ml` }
         ],
         explain: `Τα ποσά είναι ανάλογα: ${kg1} : ${juice1} ＝ ${kg2} : x. Άρα x ＝ (${juice1} · ${kg2}) : ${kg1} ＝ ${juice1 * kg2} : ${kg1} ＝ ${juice2} ml.`,
