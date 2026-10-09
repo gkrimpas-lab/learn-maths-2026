@@ -40,7 +40,7 @@ function findLCM(a, b) {
   return Math.abs(a * b) / findGCD(a, b);
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -50,7 +50,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -86,7 +86,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Συνολικό Άθροισμα', formula: `${n1}/${resD} ＋ 2/${resD}`, val: `${resN}/${resD}` }
         ],
         explain: `Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(4, 2) ＝ 4. Το 1/2 γίνεται 2/4. Προσθέτουμε τους αριθμητές: 1/4 ＋ 2/4 ＝ ${resN}/${resD}.`,
-        distractors: [`2/6`, `1/6`, `3/8`]
+        distractors: ['2/6', '3/8', '2/4']
       };
     }
   },
@@ -105,15 +105,15 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `${p1} ήπιε το ${n1}/${d1} ενός λίτρου χυμού και ${p2} ήπιε το ${n2}/${d2} του ίδιου λίτρου. Ποιο μέρος του λίτρου καταναλώθηκε συνολικά;`,
         unit: '',
-        correctVal: `1/2`,
-        correctText: `1/2 (3/6)`,
+        correctVal: '1/2',
+        correctText: '1/2 (3/6)',
         tableData: [
-          { item: '1ο Μέρος (Ομώνυμο)', formula: `(${n1} · 2) / (${d1} · 2)`, val: `2/6` },
-          { item: '2ο Μέρος', formula: `${n2}/${d2}`, val: `1/6` },
-          { item: 'Άθροισμα & Απλοποίηση', formula: `2/6 ＋ 1/6 ＝ 3/6 (: 3)`, val: `1/2` }
+          { item: '1ο Μέρος (Ομώνυμο)', formula: `(${n1} · 2) / (${d1} · 2)`, val: '2/6' },
+          { item: '2ο Μέρος', formula: `${n2}/${d2}`, val: '1/6' },
+          { item: 'Άθροισμα & Απλοποίηση', formula: '2/6 ＋ 1/6 ＝ 3/6 (: 3)', val: '1/2' }
         ],
         explain: `Ε.Κ.Π.(3, 6) ＝ 6. Το 1/3 γίνεται 2/6. Προσθέτουμε: 2/6 ＋ 1/6 ＝ 3/6. Απλοποιώντας με το 3 παίρνουμε 1/2 του λίτρου.`,
-        distractors: [`2/9`, `1/9`, `2/3`]
+        distractors: ['2/9', '2/6', '2/3']
       };
     }
   },
@@ -142,7 +142,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Σύνολο', formula: `4/${resD} ＋ 3/${resD}`, val: `${resN}/${resD}` }
         ],
         explain: `Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(5, 10) ＝ 10. Το 2/5 γίνεται 4/10. Προσθέτουμε: 4/10 ＋ 3/10 ＝ ${resN}/${resD}.`,
-        distractors: [`5/15`, `5/10`, `6/10`]
+        distractors: ['5/15', '5/10', '6/10']
       };
     }
   },
@@ -161,15 +161,15 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `${p1} διάβασε το ${n1}/${d1} ενός βιβλίου το πρωί και ${p2} διάβασε τα ${n2}/${d2} του βιβλίου το απόγευμα. Ποιο μέρος του βιβλίου διαβάστηκε συνολικά;`,
         unit: '',
-        correctVal: `1/2`,
-        correctText: `1/2 (4/8)`,
+        correctVal: '1/2',
+        correctText: '1/2 (4/8)',
         tableData: [
           { item: 'Πρωινό διάβασμα', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
           { item: 'Απογευματινό διάβασμα', formula: `${n2}/${d2}`, val: `${n2}/${d2}` },
-          { item: 'Άθροισμα (Ομώνυμα)', formula: `(${n1} ＋ ${n2})/${d1} ＝ 4/8 (: 4)`, val: `1/2` }
+          { item: 'Άθροισμα (Ομώνυμα)', formula: `(${n1} ＋ ${n2})/${d1} ＝ 4/8 (: 4)`, val: '1/2' }
         ],
         explain: `Τα κλάσματα είναι ήδη ομώνυμα: 1/8 ＋ 3/8 ＝ 4/8. Απλοποιώντας διαιρώντας με το 4 παίρνουμε 1/2 του βιβλίου.`,
-        distractors: [`4/16`, `3/16`, `2/8`]
+        distractors: ['4/16', '3/16', '2/8']
       };
     }
   },
@@ -198,7 +198,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Συνολικό Μέρος', formula: `2/${resD} ＋ 3/${resD}`, val: `${resN}/${resD}` }
         ],
         explain: `Ε.Κ.Π.(4, 8) ＝ 8. Το 1/4 γίνεται 2/8. Προσθέτουμε: 2/8 ＋ 3/8 ＝ ${resN}/${resD} της διαδρομής.`,
-        distractors: [`4/12`, `4/8`, `6/8`]
+        distractors: ['4/12', '4/8', '6/8']
       };
     }
   },
@@ -227,7 +227,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Σύνολο (Ομώνυμα)', formula: `(${n1} ＋ ${n2})/${d1}`, val: `${resN}/${resD}` }
         ],
         explain: `Προσθέτουμε κατευθείαν τους αριθμητές στα ομώνυμα: 2/7 ＋ 3/7 ＝ ${resN}/${resD}.`,
-        distractors: [`5/14`, `6/7`, `4/7`]
+        distractors: ['5/14', '6/7', '4/7']
       };
     }
   }
@@ -243,8 +243,8 @@ const HARD_PROBLEMS_POOL = [
       return {
         prompt: 'Υπολόγισε το άθροισμα 1/2 ＋ 2/3. Τι παρατηρείς για το τελικό αποτέλεσμα σε σχέση με τη μονάδα;',
         unit: '',
-        correctVal: '7/6 (είναι μεγαλύτερο από το 1)',
-        correctText: '7/6 (είναι μεγαλύτερο από το 1)',
+        correctVal: '7/6 (μεγαλύτερο από το 1)',
+        correctText: '7/6 (μεγαλύτερο από το 1)',
         tableData: [
           { item: '1/2 σε έκτα', formula: '(1 · 3) / 6', val: '3/6' },
           { item: '2/3 σε έκτα', formula: '(2 · 2) / 6', val: '4/6' },
@@ -252,9 +252,9 @@ const HARD_PROBLEMS_POOL = [
         ],
         explain: 'Ε.Κ.Π.(2, 3) ＝ 6. Μετατρέπουμε σε ομώνυμα: 3/6 ＋ 4/6 ＝ 7/6. Επειδή ο αριθμητής είναι μεγαλύτερος από τον παρονομαστή (7 ＞ 6), το άθροισμα είναι μεγαλύτερο από το 1 (καταχρηστικό κλάσμα ＝ 1 και 1/6).',
         distractors: [
-          '3/5 (είναι μικρότερο από το 1)',
-          '5/6 (είναι μικρότερο από το 1)',
-          '1 (είναι ίσο με τη μονάδα)'
+          '3/5 (μικρότερο από το 1)',
+          '5/6 (μικρότερο από το 1)',
+          '6/6 (ίσο με τη μονάδα)'
         ]
       };
     }
@@ -291,7 +291,7 @@ const HARD_PROBLEMS_POOL = [
     generate: () => {
       // 2 + 1/4 + 1/2 = 2 + 3/4 = 11/4
       return {
-        prompt: 'Ένας μάγειρας χρησιμοποίησε 2 ολόκληρα κιλά αλεύρι, επιπλέον 1/4 του κιλού και άλλα 1/2 του κιλού. Πόσα κιλά αλεύρι χρησιμοποίησε συνολικά σε κλασματική μορφή;',
+        prompt: 'Ένας μάγειρας χρησιμοποίησε 2 ολόκληρα κιλά αλεύρι, επιπλέον 1/4 του κιλού και ακόμη 1/2 του κιλού. Πόσα κιλά αλεύρι χρησιμοποίησε συνολικά σε κλασματική μορφή;',
         unit: 'κιλά',
         correctVal: '11/4',
         correctText: '11/4 κιλά (2 και 3/4)',
@@ -424,8 +424,8 @@ function generateQuestions() {
   let q3D2 = [3, 4, 5, 8, 9][randInt(0, 4)];
   while (q3D1 === q3D2) q3D2 += 2;
   const q3Lcm = findLCM(q3D1, q3D2);
-  const q3Wrongs = [q3D1 * q3D2 + 2, Math.max(2, q3Lcm - 2), q3Lcm + q3D1];
-  const q3Options = shuffle([...new Set([String(q3Lcm), ...q3Wrongs.map(String).filter(w => w !== String(q3Lcm)).slice(0, 3)])]);
+  const q3Wrongs = [q3D1 * q3D2 + 2, Math.max(2, q3Lcm - 2), q3Lcm + q3D1].filter(w => w !== q3Lcm);
+  const q3Options = shuffle([...new Set([String(q3Lcm), ...q3Wrongs.map(String)])]).slice(0, 4);
 
   // Q4: MCQ - Πρόσθεση Ακέραιου με Κλάσμα
   const q4Whole = randInt(1, 3);
@@ -609,9 +609,22 @@ export default function ProsthesiKlasmatonExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      let sanitized = String(rawValue).replace(/[^0-9/]/g, '');
+      const parts = sanitized.split('/');
+      if (parts.length > 2) {
+        sanitized = parts[0] + '/' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -652,6 +665,8 @@ export default function ProsthesiKlasmatonExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Πρόσθεση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -670,7 +685,7 @@ export default function ProsthesiKlasmatonExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -736,7 +751,7 @@ export default function ProsthesiKlasmatonExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -754,11 +769,14 @@ export default function ProsthesiKlasmatonExercisesPage() {
                       <div className="space-y-2 mb-3">
                         <input
                           type="text"
-                          inputMode="text"
+                          inputMode={q.id === 'q7' ? 'numeric' : 'text'}
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
-                          placeholder="π.χ. 3/4"
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.id === 'q7' ? 'π.χ. 3' : 'π.χ. 3/4'}
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -769,7 +787,7 @@ export default function ProsthesiKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -781,7 +799,7 @@ export default function ProsthesiKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -862,7 +880,7 @@ export default function ProsthesiKlasmatonExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
