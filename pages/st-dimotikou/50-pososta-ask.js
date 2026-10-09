@@ -2,823 +2,736 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import { LAYOUT } from '../../shared/layout-config';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
-function toCleanUppercase(str) {
-  if (!str) return '';
-  return str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-}
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
 
-// Τυχαιος ακεραιος στο [min, max]
 function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
 }
 
-// Τυχαια επιλογη απο πινακα
+function shuffle(array) {
+  if (!Array.isArray(array)) return [];
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Μορφοποιηση αριθμου
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός με κόμμα)
 function formatNum(val, decimals = 2) {
-  if (Number.isInteger(val)) return String(val);
-  const rounded = Number(val.toFixed(decimals));
+  if (val === null || val === undefined || isNaN(Number(val))) return '0';
+  if (Number.isInteger(Number(val))) return String(val);
+  const rounded = Number(Number(val).toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων Ποσοστων
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q7, Q8, Q9, Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
+
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'pct_std_1',
-    generate: () => {
-      const preset = pickRandom([
-        { num: 1, den: 4, pct: 25 },
-        { num: 3, den: 4, pct: 75 },
-        { num: 1, den: 2, pct: 50 },
-        { num: 2, den: 5, pct: 40 },
-        { num: 3, den: 5, pct: 60 },
-        { num: 7, den: 10, pct: 70 },
-        { num: 9, den: 20, pct: 45 }
-      ]);
-      return {
-        text: `Σε ποιο ποσοστό στα εκατό (%) αντιστοιχεί το κλάσμα ${preset.num}/${preset.den};`,
-        correctVal: preset.pct,
-        correctStr: String(preset.pct),
-        explanation: `(${preset.num} : ${preset.den}) · 100 ＝ ${preset.pct} %.`
-      };
-    }
-  },
-  {
-    id: 'pct_std_2',
-    generate: () => {
-      const dec = pickRandom([0.15, 0.35, 0.48, 0.62, 0.05, 0.8]);
-      const pct = Number((dec * 100).toFixed(0));
-      return {
-        text: `Ποιο ποσοστό στα εκατό (%) αντιπροσωπεύει ο δεκαδικός αριθμός ${formatNum(dec, 2)};`,
-        correctVal: pct,
-        correctStr: String(pct),
-        explanation: `${formatNum(dec, 2)} · 100 ＝ ${pct} %.`
-      };
-    }
-  },
-  {
-    id: 'pct_std_3',
+    title: 'Ποσοστό Μαθητών στην Τάξη',
+    unit: '%',
     generate: () => {
       const totalStudents = pickRandom([20, 25, 50]);
       const boys = pickRandom([8, 10, 12, 15]);
       const pct = (boys / totalStudents) * 100;
       return {
-        text: `Σε μια τάξη ${totalStudents} μαθητών, τα ${boys} είναι αγόρια. Τι ποσοστό (%) των μαθητών της τάξης είναι αγόρια;`,
-        correctVal: pct,
-        correctStr: String(pct),
-        explanation: `(${boys} : ${totalStudents}) · 100 ＝ ${pct} %.`
+        prompt: `Σε μια τάξη ${totalStudents} μαθητών, τα ${boys} είναι αγόρια. Τι ποσοστό (%) των μαθητών της τάξης είναι αγόρια;`,
+        unit: '%',
+        correctVal: String(pct),
+        correctText: `${pct} %`,
+        tableData: [
+          { item: 'Πλήθος αγοριών', formula: `${boys}`, val: `${boys}` },
+          { item: 'Σύνολο μαθητών', formula: `${totalStudents}`, val: `${totalStudents}` },
+          { item: 'Υπολογισμός ποσοστού', formula: `(${boys} : ${totalStudents}) · 100`, val: `${pct} %` }
+        ],
+        explain: `Για να βρούμε το ποσοστό στα εκατό, διαιρούμε το μέρος με το όλο και πολλαπλασιάζουμε με το 100: (${boys} : ${totalStudents}) · 100 ＝ ${pct} %.`,
+        distractors: [`${pct + 10} %`, `${Math.max(5, pct - 10)} %`, `${pct + 15} %`]
       };
     }
   },
   {
-    id: 'pct_std_4',
-    generate: () => {
-      const pct = pickRandom([12, 25, 40, 75]);
-      const permille = pct * 10;
-      return {
-        text: `Σε πόσα στα χίλια (‰) αντιστοιχεί το ποσοστό ${pct} %;`,
-        correctVal: permille,
-        correctStr: String(permille),
-        explanation: `1 % ＝ 10 ‰. Άρα: ${pct} · 10 ＝ ${permille} ‰.`
-      };
-    }
-  },
-  {
-    id: 'pct_std_5',
+    id: 'pct_std_2',
+    title: 'Πληρότητα Δεξαμενής Νερού',
+    unit: '%',
     generate: () => {
       const totalCapacity = 200;
       const filled = 150;
-      const pct = (filled / totalCapacity) * 100; // 75%
+      const pct = (filled / totalCapacity) * 100;
       return {
-        text: `Μια δεξαμενή 200 l περιέχει 150 l νερό. Ποιο είναι το ποσοστό (%) πληρότητας της δεξαμενής;`,
-        correctVal: pct,
-        correctStr: String(pct),
-        explanation: `(150 : 200) · 100 ＝ 0,75 · 100 ＝ 75 %.`
+        prompt: `Μια δεξαμενή χωρητικότητας ${totalCapacity} l περιέχει ${filled} l νερό. Ποιο είναι το ποσοστό (%) πληρότητας της δεξαμενής;`,
+        unit: '%',
+        correctVal: String(pct),
+        correctText: `${pct} %`,
+        tableData: [
+          { item: 'Ποσότητα νερού', formula: `${filled} l`, val: `${filled} l` },
+          { item: 'Συνολική χωρητικότητα', formula: `${totalCapacity} l`, val: `${totalCapacity} l` },
+          { item: 'Ποσοστό πληρότητας', formula: `(${filled} : ${totalCapacity}) · 100`, val: `${pct} %` }
+        ],
+        explain: `(${filled} : ${totalCapacity}) · 100 ＝ 0,75 · 100 ＝ ${pct} %.`,
+        distractors: [`${pct - 15} %`, `${pct + 10} %`, `${pct - 25} %`]
       };
     }
   },
   {
-    id: 'pct_std_6',
-    generate: () => {
-      const correctRatio = '25/100 (δηλαδή 1/4)';
-      return {
-        text: `Ποιο ανάγωγο κλάσμα αντιστοιχεί στο ποσοστό 25 %;`,
-        options: [
-          { text: '1/4', isCorrect: true },
-          { text: '1/2', isCorrect: false },
-          { text: '1/5', isCorrect: false },
-          { text: '2/5', isCorrect: false }
-        ].sort(() => Math.random() - 0.5),
-        correctText: '1/4',
-        explanation: `25 % ＝ 25/100 ＝ 1/4.`
-      };
-    }
-  },
-  {
-    id: 'pct_std_7',
+    id: 'pct_std_3',
+    title: 'Ανάγνωση Σελίδων Βιβλίου',
+    unit: '%',
     generate: () => {
       const totalPages = 200;
       const read = 80;
       const pct = (read / totalPages) * 100;
       return {
-        text: `Ένας μαθητής διάβασε 80 από τις 200 σελίδες ενός βιβλίου. Τι ποσοστό (%) του βιβλίου διάβασε;`,
-        correctVal: pct,
-        correctStr: String(pct),
-        explanation: `(80 : 200) · 100 ＝ 40 %.`
+        prompt: `Ένας μαθητής διάβασε ${read} από τις ${totalPages} σελίδες ενός βιβλίου. Τι ποσοστό (%) του βιβλίου διάβασε;`,
+        unit: '%',
+        correctVal: String(pct),
+        correctText: `${pct} %`,
+        tableData: [
+          { item: 'Σελίδες που διαβάστηκαν', formula: `${read}`, val: `${read}` },
+          { item: 'Σύνολο σελίδων', formula: `${totalPages}`, val: `${totalPages}` },
+          { item: 'Ποσοστό ανάγνωσης', formula: `(${read} : ${totalPages}) · 100`, val: `${pct} %` }
+        ],
+        explain: `Διαιρούμε τις σελίδες που διαβάστηκαν με το σύνολο και πολλαπλασιάζουμε με το 100: (${read} : ${totalPages}) · 100 ＝ ${pct} %.`,
+        distractors: [`${pct + 10} %`, `${pct - 10} %`, `${pct + 20} %`]
       };
     }
   },
   {
-    id: 'pct_std_8',
+    id: 'pct_std_4',
+    title: 'Ευστοχία σε Αγώνα Μπάσκετ',
+    unit: '%',
     generate: () => {
+      const attempts = 30;
+      const scored = 18;
+      const pct = (scored / attempts) * 100;
       return {
-        text: `Ποιος δεκαδικός αριθμός αντιστοιχεί στο ποσοστό 8 %;`,
-        correctVal: 0.08,
-        correctStr: '0,08',
-        explanation: `8 % ＝ 8 : 100 ＝ 0,08.`
-      };
-    }
-  },
-  {
-    id: 'pct_std_9',
-    generate: () => {
-      const saltGrams = 35; // 35 g σε 1.000 g νερό = 35 ‰
-      return {
-        text: `Σε 1.000 g θαλασσινού νερού περιέχονται 35 g αλάτι. Ποια είναι η περιεκτικότητα σε αλάτι στα χίλια (‰);`,
-        correctVal: saltGrams,
-        correctStr: String(saltGrams),
-        explanation: `(35 : 1.000) ＝ 35 ‰.`
-      };
-    }
-  },
-  {
-    id: 'pct_std_10',
-    generate: () => {
-      return {
-        text: `Αν σε έναν αγώνα μπάσκετ μια ομάδα ευστόχησε σε 18 από τα 30 σουτ, ποιο ήταν το ποσοστό ευστοχίας (%);`,
-        correctVal: 60,
-        correctStr: '60',
-        explanation: `(18 : 30) · 100 ＝ 0,60 · 100 ＝ 60 %.`
+        prompt: `Σε έναν αγώνα μπάσκετ μια ομάδα ευστόχησε σε ${scored} από τα ${attempts} σουτ. Ποιο ήταν το ποσοστό ευστοχίας (%);`,
+        unit: '%',
+        correctVal: String(pct),
+        correctText: `${pct} %`,
+        tableData: [
+          { item: 'Επιτυχημένα σουτ', formula: `${scored}`, val: `${scored}` },
+          { item: 'Συνολικές προσπάθειες', formula: `${attempts}`, val: `${attempts}` },
+          { item: 'Ποσοστό ευστοχίας', formula: `(${scored} : ${attempts}) · 100`, val: `${pct} %` }
+        ],
+        explain: `(${scored} : ${attempts}) · 100 ＝ 0,60 · 100 ＝ ${pct} %.`,
+        distractors: [`${pct + 10} %`, `${pct - 10} %`, `${pct + 15} %`]
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας
 const HARD_PROBLEMS_POOL = [
   {
     id: 'pct_hard_1',
+    title: 'Κατανομή Μαθητών Σχολείου',
+    unit: 'κορίτσια',
     generate: () => {
+      const totalStudents = 250;
+      const boysPct = 40;
+      const girlsPct = 100 - boysPct;
+      const girls = (totalStudents * girlsPct) / 100;
       return {
-        text: `Σε ένα σχολείο 250 μαθητών, το 40 % είναι αγόρια. Πόσα είναι τα κορίτσια στο σχολείο;`,
-        correctVal: 150,
-        correctStr: '150',
-        explanation: `Ποσοστό κοριτσιών: 100 % － 40 % ＝ 60 %. Πλήθος κοριτσιών: (250 · 60) : 100 ＝ 150.`
+        prompt: `Σε ένα σχολείο ${totalStudents} μαθητών, το ${boysPct} % είναι αγόρια. Πόσα είναι τα κορίτσια στο σχολείο;`,
+        unit: 'κορίτσια',
+        correctVal: String(girls),
+        correctText: `${girls} κορίτσια`,
+        tableData: [
+          { item: 'Ποσοστό κοριτσιών', formula: `100 % － ${boysPct} %`, val: `${girlsPct} %` },
+          { item: 'Πλήθος κοριτσιών', formula: `(${totalStudents} · ${girlsPct}) : 100`, val: `${girls}` }
+        ],
+        explain: `Ποσοστό κοριτσιών: 100 % － ${boysPct} % ＝ ${girlsPct} %. Πλήθος κοριτσιών: (${totalStudents} · ${girlsPct}) : 100 ＝ ${girls}.`,
+        distractors: [`${girls - 25} κορίτσια`, `${girls + 25} κορίτσια`, `${totalStudents - girls - 20} κορίτσια`]
       };
     }
   },
   {
     id: 'pct_hard_2',
+    title: 'Ποσοστό Περιεκτικότητας σε Κράμα',
+    unit: '%',
     generate: () => {
+      const totalAlloy = 500;
+      const copper = 120;
+      const tin = 180;
+      const zinc = totalAlloy - (copper + tin);
+      const zincPct = (zinc / totalAlloy) * 100;
       return {
-        text: `Ένα κράμα βάρους 500 g περιέχει 120 g χαλκό, 180 g κασσίτερο και το υπόλοιπο είναι ψευδάργυρος. Ποιο είναι το ποσοστό (%) του ψευδαργύρου στο κράμα;`,
-        correctVal: 40,
-        correctStr: '40',
-        explanation: `Βάρος ψευδαργύρου: 500 － (120 ＋ 180) ＝ 200 g. Ποσοστό: (200 : 500) · 100 ＝ 40 %.`
+        prompt: `Ένα κράμα βάρους ${totalAlloy} g περιέχει ${copper} g χαλκό, ${tin} g κασσίτερο και το υπόλοιπο είναι ψευδάργυρος. Ποιο είναι το ποσοστό (%) του ψευδαργύρου στο κράμα;`,
+        unit: '%',
+        correctVal: String(zincPct),
+        correctText: `${zincPct} %`,
+        tableData: [
+          { item: 'Μάζα ψευδαργύρου', formula: `${totalAlloy} － (${copper} ＋ ${tin})`, val: `${zinc} g` },
+          { item: 'Ποσοστό ψευδαργύρου', formula: `(${zinc} : ${totalAlloy}) · 100`, val: `${zincPct} %` }
+        ],
+        explain: `Μάζα ψευδαργύρου: ${totalAlloy} － (${copper} ＋ ${tin}) ＝ ${zinc} g. Ποσοστό: (${zinc} : ${totalAlloy}) · 100 ＝ ${zincPct} %.`,
+        distractors: [`${zincPct + 10} %`, `${zincPct - 10} %`, `${zincPct + 15} %`]
       };
     }
   },
   {
     id: 'pct_hard_3',
+    title: 'Κιβώτια με Φρούτα στην Αποθήκη',
+    unit: 'κιβώτια',
     generate: () => {
+      const totalBoxes = 800;
+      const applesPct = 25;
+      const orangesPct = 35;
+      const pearsPct = 100 - (applesPct + orangesPct);
+      const pearsBoxes = (totalBoxes * pearsPct) / 100;
       return {
-        text: `Σε μια αποθήκη υπάρχουν 800 κιβώτια. Το 25 % περιέχει μήλα, το 35 % πορτοκάλια και τα υπόλοιπα αχλάδια. Πόσα είναι τα κιβώτια με αχλάδια;`,
-        correctVal: 320,
-        correctStr: '320',
-        explanation: `Ποσοστό αχλαδιών: 100 % － (25 % ＋ 35 %) ＝ 40 %. Κιβώτια: (800 · 40) : 100 ＝ 320.`
+        prompt: `Σε μια αποθήκη υπάρχουν ${totalBoxes} κιβώτια. Το ${applesPct} % περιέχει μήλα, το ${orangesPct} % πορτοκάλια και τα υπόλοιπα αχλάδια. Πόσα είναι τα κιβώτια με αχλάδια;`,
+        unit: 'κιβώτια',
+        correctVal: String(pearsBoxes),
+        correctText: `${pearsBoxes} κιβώτια`,
+        tableData: [
+          { item: 'Ποσοστό αχλαδιών', formula: `100 % － (${applesPct} % ＋ ${orangesPct} %)`, val: `${pearsPct} %` },
+          { item: 'Κιβώτια αχλαδιών', formula: `(${totalBoxes} · ${pearsPct}) : 100`, val: `${pearsBoxes}` }
+        ],
+        explain: `Ποσοστό αχλαδιών: 100 % － (${applesPct} % ＋ ${orangesPct} %) ＝ ${pearsPct} %. Κιβώτια: (${totalBoxes} · ${pearsPct}) : 100 ＝ ${pearsBoxes}.`,
+        distractors: [`${pearsBoxes + 40} κιβώτια`, `${pearsBoxes - 40} κιβώτια`, `${pearsBoxes + 80} κιβώτια`]
       };
     }
   },
   {
     id: 'pct_hard_4',
+    title: 'Ερωτήσεις Διαγωνίσματος με Ποσοστό Επιτυχίας',
+    unit: 'ερωτήσεις',
     generate: () => {
+      const totalQuestions = 50;
+      const successPct = 90;
+      const correctQuestions = (totalQuestions * successPct) / 100;
       return {
-        text: `Σε έναν έλεγχο 400 οχημάτων, βρέθηκαν 16 οχήματα με τεχνικά προβλήματα. Ποιο ήταν το ποσοστό (%) των προβληματικών οχημάτων;`,
-        correctVal: 4,
-        correctStr: '4',
-        explanation: `(16 : 400) · 100 ＝ 4 %.`
-      };
-    }
-  },
-  {
-    id: 'pct_hard_5',
-    generate: () => {
-      return {
-        text: `Ένας εργαζόμενος αποταμιεύει 300 € από τον μηνιαίο μισθό των 1.500 €. Τι ποσοστό (%) του μισθού του αποταμιεύει;`,
-        correctVal: 20,
-        correctStr: '20',
-        explanation: `(300 : 1.500) · 100 ＝ 20 %.`
-      };
-    }
-  },
-  {
-    id: 'pct_hard_6',
-    generate: () => {
-      return {
-        text: `Ποιο ποσοστό (%) είναι μεγαλύτερο: το 3/5 ή το 0,55;`,
-        options: [
-          { text: 'Το 3/5 (γιατί ισούται με 60 % έναντι 55 %)', isCorrect: true },
-          { text: 'Το 0,55 (γιατί είναι δεκαδικός αριθμός)', isCorrect: false },
-          { text: 'Είναι ίσα', isCorrect: false }
-        ].sort(() => Math.random() - 0.5),
-        correctText: 'Το 3/5 (γιατί ισούται με 60 % έναντι 55 %)',
-        explanation: `3/5 ＝ 60/100 ＝ 60 %, ενώ 0,55 ＝ 55 %.`
-      };
-    }
-  },
-  {
-    id: 'pct_hard_7',
-    generate: () => {
-      return {
-        text: `Σε ένα διαγώνισμα 50 ερωτήσεων, ένας μαθητής είχε 90 % επιτυχία. Πόσες ερωτήσεις απάντησε σωστά;`,
-        correctVal: 45,
-        correctStr: '45',
-        explanation: `(50 · 90) : 100 ＝ 45 ερωτήσεις.`
-      };
-    }
-  },
-  {
-    id: 'pct_hard_8',
-    generate: () => {
-      return {
-        text: `Αν το 15 ‰ των κατοίκων μιας πόλης 20.000 κατοίκων είναι αλλοδαποί, πόσοι είναι οι αλλοδαποί κάτοικοι;`,
-        correctVal: 300,
-        correctStr: '300',
-        explanation: `(20.000 · 15) : 1.000 ＝ 300 κάτοικοι.`
-      };
-    }
-  },
-  {
-    id: 'pct_hard_9',
-    generate: () => {
-      return {
-        text: `Ένα κατάστημα είχε 120 πελάτες το πρωί και 80 πελάτες το απόγευμα. Τι ποσοστό (%) του συνολικού πλήθους πελατών επισκέφθηκε το κατάστημα το πρωί;`,
-        correctVal: 60,
-        correctStr: '60',
-        explanation: `Σύνολο πελατών: 120 ＋ 80 ＝ 200. Πρωινοί πελάτες: (120 : 200) · 100 ＝ 60 %.`
-      };
-    }
-  },
-  {
-    id: 'pct_hard_10',
-    generate: () => {
-      return {
-        text: `Σε ένα δάσος 1.500 δέντρων, το 45 % είναι πεύκα, το 35 % είναι έλατα και τα υπόλοιπα είναι βελανιδιές. Πόσες είναι οι βελανιδιές;`,
-        correctVal: 300,
-        correctStr: '300',
-        explanation: `Ποσοστό βελανιδιών: 100 % － (45 % ＋ 35 %) ＝ 20 %. Πλήθος: (1.500 · 20) : 100 ＝ 300 δέντρα.`
+        prompt: `Σε ένα διαγώνισμα ${totalQuestions} ερωτήσεων, ένας μαθητής είχε ${successPct} % επιτυχία. Πόσες ερωτήσεις απάντησε σωστά;`,
+        unit: 'ερωτήσεις',
+        correctVal: String(correctQuestions),
+        correctText: `${correctQuestions} ερωτήσεις`,
+        tableData: [
+          { item: 'Σύνολο ερωτήσεων', formula: `${totalQuestions}`, val: `${totalQuestions}` },
+          { item: 'Ποσοστό επιτυχίας', formula: `${successPct} %`, val: `${successPct} %` },
+          { item: 'Σωστές ερωτήσεις', formula: `(${totalQuestions} · ${successPct}) : 100`, val: `${correctQuestions}` }
+        ],
+        explain: `(${totalQuestions} · ${successPct}) : 100 ＝ ${correctQuestions} ερωτήσεις.`,
+        distractors: [`${correctQuestions - 5} ερωτήσεις`, `${correctQuestions + 3} ερωτήσεις`, `${correctQuestions - 10} ερωτήσεις`]
       };
     }
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
 function generateQuestions() {
-  const qList = [];
+  // Q1: Input - Μετατροπή κλάσματος σε ποσοστό
+  const q1Preset = pickRandom([
+    { num: 1, den: 4, pct: 25 },
+    { num: 3, den: 4, pct: 75 },
+    { num: 2, den: 5, pct: 40 },
+    { num: 7, den: 10, pct: 70 }
+  ]);
 
-  // Q1 (Input - Decimal): Μετατροπή κλάσματος σε ποσοστό
-  {
-    const preset = pickRandom([
-      { num: 1, den: 4, pct: 25 },
-      { num: 3, den: 4, pct: 75 },
-      { num: 2, den: 5, pct: 40 },
-      { num: 7, den: 10, pct: 70 }
-    ]);
+  // Q2: MCQ - Ορισμός ποσοστού
+  const q2CorrectConcept = 'Ένας λόγος ή ένα κλάσμα με σταθερό παρονομαστή το 100';
+  const q2Options = shuffle([
+    q2CorrectConcept,
+    'Το γινόμενο δύο τυχαίων ακεραίων αριθμών',
+    'Ένα κλάσμα που έχει πάντοτε αριθμητή το 100',
+    'Η διαφορά ανάμεσα σε δύο δεκαδικούς'
+  ]);
 
-    qList.push({
-      id: 1,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 1 • ΜΕΤΑΤΡΟΠΗ ΚΛΑΣΜΑΤΟΣ ΣΕ ΠΟΣΟΣΤΟ',
-      instruction: 'Υπολογίστε το ποσοστό στα εκατό (%):',
-      prompt: `Σε ποιο ποσοστό στα εκατό (%) αντιστοιχεί το κλάσμα ${preset.num}/${preset.den};`,
-      correctVal: preset.pct,
-      correctStr: String(preset.pct),
-      explanation: `(${preset.num} : ${preset.den}) · 100 ＝ ${preset.pct} %.`
-    });
-  }
+  // Q3: Input - Μετατροπή δεκαδικού σε ποσοστό
+  const q3Dec = pickRandom([0.35, 0.45, 0.6, 0.08, 0.72]);
+  const q3Pct = Number((q3Dec * 100).toFixed(0));
 
-  // Q2 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
-  {
-    const correctConcept = 'Ένας λόγος ή ένα κλάσμα με σταθερό παρονομαστή το 100';
-    const options = [
-      { text: correctConcept, isCorrect: true },
-      { text: 'Το γινόμενο δύο τυχαίων ακεραίων αριθμών', isCorrect: false },
-      { text: 'Ένα κλάσμα που έχει πάντοτε αριθμητή το 100', isCorrect: false },
-      { text: 'Η διαφορά ανάμεσα σε δύο δεκαδικούς', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
+  // Q4: MCQ - Σχέση στα εκατό και στα χίλια
+  const q4CorrectRelation = '1 % ＝ 10 ‰ (το ποσοστό στα εκατό ισούται με 10 στα χίλια)';
+  const q4Options = shuffle([
+    q4CorrectRelation,
+    '1 % ＝ 100 ‰',
+    '10 % ＝ 1 ‰',
+    'Δεν έχουν καμία μαθηματική σχέση μεταξύ τους'
+  ]);
 
-    qList.push({
-      id: 2,
+  // Q5: Input - Υπολογισμός ποσοστού επί του συνόλου
+  const q5Total = 50;
+  const q5Part = pickRandom([15, 20, 25, 30]);
+  const q5Pct = (q5Part / q5Total) * 100;
+
+  // Q6: MCQ - Ανάγωγο κλάσμα του 50%
+  const q6CorrectFrac = '1/2 (ένα δεύτερο)';
+  const q6Options = shuffle([
+    q6CorrectFrac,
+    '1/4',
+    '1/5',
+    '3/4'
+  ]);
+
+  // Q7: Standard Problem (Input)
+  const spIndex1 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q7Data = STANDARD_PROBLEMS_POOL[spIndex1].generate();
+
+  // Q8: Standard Problem (MCQ)
+  let spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  while (spIndex2 === spIndex1) spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q8Data = STANDARD_PROBLEMS_POOL[spIndex2].generate();
+  const q8Options = shuffle([
+    ...new Set([
+      q8Data.correctText,
+      ...q8Data.distractors
+    ])
+  ]);
+
+  // Q9: Hard Problem (Input)
+  const hpIndex1 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q9Data = HARD_PROBLEMS_POOL[hpIndex1].generate();
+
+  // Q10: Hard Problem (MCQ)
+  let hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  while (hpIndex2 === hpIndex1) hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q10Data = HARD_PROBLEMS_POOL[hpIndex2].generate();
+  const q10Options = shuffle([
+    ...new Set([
+      q10Data.correctText,
+      ...q10Data.distractors
+    ])
+  ]);
+
+  return [
+    {
+      id: 'q1',
+      type: 'input',
+      inputType: 'number',
+      title: 'Μετατροπή Κλάσματος σε Ποσοστό',
+      prompt: `Σε ποιο ποσοστό στα εκατό (%) αντιστοιχεί το κλάσμα ${q1Preset.num}/${q1Preset.den}; (γράψε μόνο τον αριθμό)`,
+      correct: String(q1Preset.pct),
+      explain: `(${q1Preset.num} : ${q1Preset.den}) · 100 ＝ ${q1Preset.pct} %.`
+    },
+    {
+      id: 'q2',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 2 • ΟΡΙΣΜΟΣ ΠΟΣΟΣΤΟΥ',
-      instruction: 'Επιλέξτε τον σωστό ορισμό:',
-      prompt: `Τι ονομάζουμε ποσοστό στα εκατό (%) στα Μαθηματικά;`,
-      options,
-      correctText: correctConcept,
-      explanation: `Ποσοστό στα εκατό (%) είναι το κλάσμα που συγκρίνει ένα μέγεθος με βάση το 100 (παρονομαστής 100).`
-    });
-  }
-
-  // Q3 (Input - Decimal): Μετατροπή δεκαδικού σε ποσοστό
-  {
-    const dec = pickRandom([0.35, 0.45, 0.6, 0.08, 0.72]);
-    const pct = Number((dec * 100).toFixed(0));
-
-    qList.push({
-      id: 3,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 3 • ΑΠΟ ΔΕΚΑΔΙΚΟ ΣΕ ΠΟΣΟΣΤΟ',
-      instruction: 'Μετατρέψτε τον δεκαδικό αριθμό σε ποσοστό (%):',
-      prompt: `Ποιο ποσοστό στα εκατό (%) αντιπροσωπεύει ο δεκαδικός αριθμός ${formatNum(dec, 2)};`,
-      correctVal: pct,
-      correctStr: String(pct),
-      explanation: `${formatNum(dec, 2)} · 100 ＝ ${pct} %.`
-    });
-  }
-
-  // Q4 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
-  {
-    const correctRelation = '1 % ＝ 10 ‰ (το ποσοστό στα εκατό ισούται με 10 στα χίλια)';
-    const options = [
-      { text: correctRelation, isCorrect: true },
-      { text: '1 % ＝ 100 ‰', isCorrect: false },
-      { text: '10 % ＝ 1 ‰', isCorrect: false },
-      { text: 'Δεν έχουν καμία μαθηματική σχέση μεταξύ τους', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 4,
+      title: 'Ορισμός Ποσοστού',
+      prompt: 'Τι ονομάζουμε ποσοστό στα εκατό (%) στα Μαθηματικά;',
+      options: q2Options,
+      correct: q2CorrectConcept,
+      explain: 'Ποσοστό στα εκατό (%) είναι το κλάσμα που συγκρίνει ένα μέγεθος με βάση το 100 (παρονομαστής 100).'
+    },
+    {
+      id: 'q3',
+      type: 'input',
+      inputType: 'number',
+      title: 'Από Δεκαδικό σε Ποσοστό',
+      prompt: `Ποιο ποσοστό στα εκατό (%) αντιπροσωπεύει ο δεκαδικός αριθμός ${formatNum(q3Dec, 2)}; (γράψε μόνο τον αριθμό)`,
+      correct: String(q3Pct),
+      explain: `${formatNum(q3Dec, 2)} · 100 ＝ ${q3Pct} %.`
+    },
+    {
+      id: 'q4',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 4 • ΣΧΕΣΗ ΣΤΑ ΕΚΑΤΟ ΚΑΙ ΣΤΑ ΧΙΛΙΑ',
-      instruction: 'Επιλέξτε τη σωστή ισοδυναμία:',
-      prompt: `Ποια είναι η σχέση ανάμεσα στο ποσοστό στα εκατό (%) και στο ποσοστό στα χίλια (‰);`,
-      options,
-      correctText: correctRelation,
-      explanation: `1/100 ＝ 10/1.000, επομένως 1 % ＝ 10 ‰.`
-    });
-  }
-
-  // Q5 (Input - Decimal): Υπολογισμός ποσοστού από μέγεθος
-  {
-    const total = 50;
-    const part = pickRandom([15, 20, 25, 30]);
-    const pct = (part / total) * 100;
-
-    qList.push({
-      id: 5,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 5 • ΥΠΟΛΟΓΙΣΜΟΣ ΠΟΣΟΣΤΟΥ ΕΠΙ ΤΟΥ ΣΥΝΟΛΟΥ',
-      instruction: 'Βρείτε το ποσοστό (%):',
-      prompt: `Σε μια ομάδα 50 ατόμων, τα ${part} άτομα ασχολούνται με το τρέξιμο. Τι ποσοστό (%) της ομάδας ασχολείται με το τρέξιμο;`,
-      correctVal: pct,
-      correctStr: String(pct),
-      explanation: `(${part} : 50) · 100 ＝ ${pct} %.`
-    });
-  }
-
-  // Q6 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
-  {
-    const correctFrac = '1/2 (ένα δεύτερο)';
-    const options = [
-      { text: correctFrac, isCorrect: true },
-      { text: '1/4', isCorrect: false },
-      { text: '1/5', isCorrect: false },
-      { text: '3/4', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 6,
+      title: 'Σχέση στα Εκατό και στα Χίλια',
+      prompt: 'Ποια είναι η σχέση ανάμεσα στο ποσοστό στα εκατό (%) και στο ποσοστό στα χίλια (‰);',
+      options: q4Options,
+      correct: q4CorrectRelation,
+      explain: '1/100 ＝ 10/1.000, επομένως 1 % ＝ 10 ‰.'
+    },
+    {
+      id: 'q5',
+      type: 'input',
+      inputType: 'number',
+      title: 'Υπολογισμός Ποσοστού επί του Συνόλου',
+      prompt: `Σε μια ομάδα 50 ατόμων, τα ${q5Part} άτομα ασχολούνται με το τρέξιμο. Τι ποσοστό (%) της ομάδας ασχολείται με το τρέξιμο; (γράψε μόνο τον αριθμό)`,
+      correct: String(q5Pct),
+      explain: `(${q5Part} : 50) · 100 ＝ ${q5Pct} %.`
+    },
+    {
+      id: 'q6',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 6 • ΑΝΑΓΩΓΟ ΚΛΑΣΜΑ ΤΟΥ 50%',
-      instruction: 'Επιλέξτε το σωστό κλάσμα:',
-      prompt: `Ποιο ανάγωγο κλάσμα αντιστοιχεί ακριβώς στο ποσοστό 50 %;`,
-      options,
-      correctText: correctFrac,
-      explanation: `50 % ＝ 50/100 ＝ 1/2 (το μισό του όλου).`
-    });
-  }
-
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή
-  {
-    const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const stdProb1 = shuffledStd[0].generate();
-    const stdProb2 = shuffledStd[1].generate();
-
-    // Q7 (Input - Decimal)
-    qList.push({
-      id: 7,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΠΟΣΟΣΤΩΝ',
-      instruction: 'Υπολογίστε το τελικό αποτέλεσμα:',
-      prompt: stdProb1.text,
-      correctVal: stdProb1.correctVal,
-      correctStr: stdProb1.correctStr,
-      explanation: stdProb1.explanation
-    });
-
-    // Q8 (MCQ)
-    const val8 = stdProb2.correctVal !== undefined ? stdProb2.correctVal : stdProb2.correctText;
-    let optionsQ8 = stdProb2.options;
-    if (!optionsQ8 && typeof val8 === 'number') {
-      const fake8A = formatNum(val8 + randInt(5, 15));
-      const fake8B = formatNum(Math.max(2, val8 - randInt(5, 10)));
-      const fake8C = formatNum(val8 * 1.5);
-      optionsQ8 = [
-        { text: `${stdProb2.correctStr} %`, isCorrect: true },
-        { text: `${fake8A} %`, isCorrect: false },
-        { text: `${fake8B} %`, isCorrect: false },
-        { text: `${fake8C} %`, isCorrect: false }
-      ].sort(() => Math.random() - 0.5);
+      title: 'Ανάγωγο Κλάσμα του 50%',
+      prompt: 'Ποιο ανάγωγο κλάσμα αντιστοιχεί ακριβώς στο ποσοστό 50 %;',
+      options: q6Options,
+      correct: q6CorrectFrac,
+      explain: '50 % ＝ 50/100 ＝ 1/2 (το μισό του όλου).'
+    },
+    {
+      id: 'q7',
+      type: 'input',
+      inputType: 'number',
+      title: `Πρόβλημα: ${q7Data.title}`,
+      prompt: q7Data.prompt,
+      correct: q7Data.correctVal,
+      tableData: q7Data.tableData,
+      explain: q7Data.explain
+    },
+    {
+      id: 'q8',
+      type: 'mcq',
+      title: `Πρόβλημα: ${q8Data.title}`,
+      prompt: q8Data.prompt,
+      options: q8Options,
+      correct: q8Data.correctText,
+      tableData: q8Data.tableData,
+      explain: q8Data.explain
+    },
+    {
+      id: 'q9',
+      type: 'input',
+      inputType: 'number',
+      title: `Σύνθετο Πρόβλημα: ${q9Data.title}`,
+      prompt: q9Data.prompt,
+      correct: q9Data.correctVal,
+      tableData: q9Data.tableData,
+      explain: q9Data.explain
+    },
+    {
+      id: 'q10',
+      type: 'mcq',
+      title: `Σύνθετο Πρόβλημα: ${q10Data.title}`,
+      prompt: q10Data.prompt,
+      options: q10Options,
+      correct: q10Data.correctText,
+      tableData: q10Data.tableData,
+      explain: q10Data.explain
     }
-
-    qList.push({
-      id: 8,
-      type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΗΣ ΕΦΑΡΜΟΓΗΣ',
-      instruction: 'Επιλέξτε τη σωστή τιμή:',
-      prompt: stdProb2.text,
-      options: optionsQ8,
-      correctText: stdProb2.correctText || `${stdProb2.correctStr} %`,
-      explanation: stdProb2.explanation
-    });
-  }
-
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας
-  {
-    const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const hardProb1 = shuffledHard[0].generate();
-    const hardProb2 = shuffledHard[1].generate();
-
-    // Q9 (Input - Decimal)
-    qList.push({
-      id: 9,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΠΟΣΟΣΤΩΝ',
-      instruction: 'Υπολογίστε με ακρίβεια και εισαγάγετε το αποτέλεσμα:',
-      prompt: hardProb1.text,
-      correctVal: hardProb1.correctVal,
-      correctStr: hardProb1.correctStr,
-      explanation: hardProb1.explanation
-    });
-
-    // Q10 (MCQ Αυξημένης Δυσκολίας)
-    const val10 = hardProb2.correctVal !== undefined ? hardProb2.correctVal : hardProb2.correctText;
-    let optionsQ10 = hardProb2.options;
-    if (!optionsQ10 && typeof val10 === 'number') {
-      const fake10A = formatNum(val10 + randInt(5, 15));
-      const fake10B = formatNum(Math.max(2, val10 - randInt(5, 10)));
-      const fake10C = formatNum(val10 * 1.4);
-      optionsQ10 = [
-        { text: `${hardProb2.correctStr}`, isCorrect: true },
-        { text: `${fake10A}`, isCorrect: false },
-        { text: `${fake10B}`, isCorrect: false },
-        { text: `${fake10C}`, isCorrect: false }
-      ].sort(() => Math.random() - 0.5);
-    }
-
-    qList.push({
-      id: 10,
-      type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΠΟΣΟΣΤΙΑΙΑΣ ΚΑΤΑΝΟΜΗΣ',
-      instruction: 'Επιλέξτε τη σωστή απάντηση:',
-      prompt: hardProb2.text,
-      options: optionsQ10,
-      correctText: hardProb2.correctText || `${hardProb2.correctStr}`,
-      explanation: hardProb2.explanation
-    });
-  }
-
-  return qList;
+  ];
 }
+
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
 
 export default function PosostaExercisesPage() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
   const loadNewSet = useCallback(() => {
-    const q = generateQuestions();
-    setQuestions(q);
-    setAnswers({});
-    setIsSubmitted(false);
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = '';
+    });
+    setAnswers(initialAnswers);
+    setSubmitted(false);
     setScore(0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (fieldKey, rawValue) => {
-    if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
-    if (sanitized.length > 10) {
-      sanitized = sanitized.slice(0, 10);
-    }
-    setAnswers((prev) => ({
-      ...prev,
-      [fieldKey]: sanitized
-    }));
-  };
-
-  const handleSelectMCQ = (qId, optionText) => {
-    if (isSubmitted) return;
-    setAnswers((prev) => ({
-      ...prev,
-      [`q_${qId}`]: optionText
-    }));
-  };
-
-  const handleCheckAnswers = () => {
-    let currentScore = 0;
-
-    questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq
+  const handleAnswerChange = (id, rawValue, type) => {
+    if (submitted) return;
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
       }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
+  };
+
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
+    if (q.type === 'input') {
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/%/g, '').trim().toLowerCase();
+      const cleanTarget = String(q.correct).replace(/\./g, ',').replace(/\s+/g, '').replace(/%/g, '').trim().toLowerCase();
+
+      if (cleanUser === cleanTarget) return true;
+
+      if (q.inputType === 'decimal') {
+        const numUser = parseFloat(cleanUser.replace(',', '.'));
+        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
+      }
+      return false;
+    }
+    if (q.type === 'mcq') {
+      return userVal === q.correct;
+    }
+    return false;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (submitted || questions.length === 0) return;
+
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(currentScore);
-    setIsSubmitted(true);
+    setScore(total);
+    setSubmitted(true);
   };
+
+  const getCardStyle = (q) => {
+    if (!submitted) return 'bg-white border-slate-200 shadow-sm';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
+  };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
       title="Ασκήσεις: Ποσοστά (Έννοια & Μετατροπές) - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="10 απαιτητικές ασκήσεις και προβλήματα στα ποσοστά στα εκατό (%) και στα χίλια (‰), μετατροπές κλασμάτων και δεκαδικών για τη ΣΤ' Δημοτικού."
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στα ποσοστά στα εκατό (%) και στα χίλια (‰) για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
+      showAds={false}
       hideFooter={true}
       actionButton={
         <Link
           href="/st-dimotikou/50-pososta"
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
-        {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 50 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
+                Διαδραστικές Ασκήσεις: Ποσοστά στα Εκατό (%) &amp; στα Χίλια (‰)
+              </h1>
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στη μετατροπή κλασμάτων και δεκαδικών σε ποσοστά, στα ποσοστά επί του συνόλου και σε πρακτικά προβλήματα!
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-              Ασκήσεις: Ποσοστά στα Εκατό (%) &amp; στα Χίλια (‰)
-            </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Μετατρέψτε κλάσματα και δεκαδικούς σε ποσοστά και ελέγξτε τις επιδόσεις σας.
-            </p>
-          </div>
 
-          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
-            </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6">
-          {questions.map((q, idx) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
-
-            return (
-              <article
-                key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
-                  isSubmitted
-                    ? isCorrect
-                      ? 'border-emerald-400 bg-emerald-50/20'
-                      : 'border-rose-400 bg-rose-50/20'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
-                  <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
-                    {toCleanUppercase(q.title)}
-                  </span>
-                  {isSubmitted && (
-                    <span
-                      className={`text-xs font-bold px-3 py-1 rounded-full ${
-                        isCorrect
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
-                    </span>
-                  )}
-                </div>
-
-                {/* Εκφωνηση */}
-                <div className="space-y-2 mb-2">
-                  <p className="text-xs sm:text-sm font-semibold text-slate-500">
-                    {q.instruction}
-                  </p>
-                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
-                    {q.prompt}
-                  </p>
-                </div>
-
-                {/* Περιοχη Απαντησης */}
-                <div className="py-2 pt-2.5">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        maxLength={10}
-                        disabled={isSubmitted}
-                        placeholder="Απάντηση..."
-                        value={answers[`q_${q.id}`] || ''}
-                        onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
-                      />
-                      <span className="text-xs text-slate-500">
-                        (Ακέραιος η δεκαδικός με κόμμα)
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                >
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
                       </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
-                  {q.type === 'mcq' && (
-                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
-                      {q.options.map((opt, oIdx) => {
-                        const isSelected = answers[`q_${q.id}`] === opt.text;
-                        return (
-                          <button
-                            key={`opt-${q.id}-${oIdx}`}
-                            type="button"
-                            disabled={isSubmitted}
-                            onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 sm:p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm md:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                                : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                            } disabled:cursor-not-allowed`}
-                          >
-                            <span className="break-words whitespace-normal leading-snug flex-1">
-                              {opt.text}
-                            </span>
-                            <span
-                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-4">
+                      {q.prompt}
+                    </p>
+
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
-                                  ? 'border-white bg-white text-blue-600 font-bold'
-                                  : 'border-slate-400 bg-transparent'
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                               }`}
                             >
-                              {isSelected ? '●' : ''}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
 
-                </div>
-
-                {/* Feedback μετα την υποβολη */}
-                {isSubmitted && (
-                  <div
-                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
-                      isCorrect
-                        ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
-                        : 'bg-rose-100/60 border-rose-300 text-rose-950'
-                    }`}
-                  >
-                    <div className="font-bold flex items-center gap-1.5">
-                      <span>{isCorrect ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Επεξήγηση:'}</span>
-                    </div>
-                    <div>{q.explanation}</div>
-                    {!isCorrect && (
-                      <div className="font-semibold pt-1 text-slate-800">
-                        Σωστή απάντηση:{' '}
-                        <span className="font-mono font-bold text-blue-900">
-                          {q.correctStr || q.correctText}
-                        </span>
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          key={`input-${q.id}`}
+                          autoComplete="off"
+                          spellCheck="false"
+                          type="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder="Απάντηση..."
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
                       </div>
                     )}
                   </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
 
-      </div>
-
-      {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
-          
-          <div className="flex items-center gap-4 sm:gap-8">
-            <div>
-              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
-              </span>
-              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
-              </span>
-            </div>
-
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          <div className="flex items-center gap-3">
-            {!isSubmitted ? (
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-4">
               <button
-                type="button"
-                onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                type="submit"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                <span className="text-xl">🎯</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
-            ) : (
+            </div>
+          )}
+        </form>
+      </div>
+
+      {/* FIXED BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
+          
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+            </div>
+            {submitted && (
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* GUIDANCE OR RESTART */}
+          <div className="flex items-center gap-3">
+            {submitted ? (
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
+            ) : (
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
+              </p>
             )}
           </div>
 
         </div>
-      </footer>
+      </div>
     </Layout>
   );
 }
