@@ -35,7 +35,7 @@ function findGCD(a, b) {
   return x || 1;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -45,7 +45,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -79,7 +79,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Πολλαπλασιασμός', formula: `(${n1} · ${n2}) / (${d1} · ${d2})`, val: `${resN}/${resD}` }
         ],
         explain: `Το μέρος ενός μέρους υπολογίζεται με πολλαπλασιασμό: (${n1}/${d1}) · (${n2}/${d2}) ＝ (${n1} · ${n2}) / (${d1} · ${d2}) ＝ ${resN}/${resD}.`,
-        distractors: [`4/6`, `2/6`, `3/6`]
+        distractors: ['4/6', '2/6', '3/6']
       };
     }
   },
@@ -96,15 +96,15 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `Ένας κηπουρός καθάρισε τα ${n1}/${d1} ενός οικοπέδου και από αυτά φύτεψε με γκαζόν τα ${n2}/${d2}. Ποιο μέρος του οικοπέδου φυτεύτηκε με γκαζόν;`,
         unit: '',
-        correctVal: `2/5`,
-        correctText: `2/5 (ή 6/15)`,
+        correctVal: '2/5',
+        correctText: '2/5 (ή 6/15)',
         tableData: [
           { item: 'Καθαρισμένο μέρος', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
           { item: 'Φυτεμένο μέρος', formula: `${n2}/${d2}`, val: `${n2}/${d2}` },
-          { item: 'Γινόμενο & Απλοποίηση', formula: `(2 · 3) / (3 · 5) ＝ 6/15 (: 3)`, val: `2/5` }
+          { item: 'Γινόμενο & Απλοποίηση', formula: '(2 · 3) / (3 · 5) ＝ 6/15 (: 3)', val: '2/5' }
         ],
         explain: `Πολλαπλασιάζουμε τα δύο κλάσματα: (${n1}/${d1}) · (${n2}/${d2}) ＝ 6/15. Απλοποιώντας με το 3 έχουμε 2/5 του οικοπέδου.`,
-        distractors: [`5/8`, `1/5`, `3/5`]
+        distractors: ['5/8', '1/5', '3/5']
       };
     }
   },
@@ -121,22 +121,22 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `Μία κανάτα περιείχε τα ${n1}/${d1} χυμού. Τα παιδιά ήπιαν τα ${n2}/${d2} από αυτόν τον χυμό. Ποιο μέρος της κανάτας ήπιαν συνολικά;`,
         unit: '',
-        correctVal: `3/10`,
-        correctText: `3/10 (ή 6/20)`,
+        correctVal: '3/10',
+        correctText: '3/10 (ή 6/20)',
         tableData: [
           { item: 'Αρχικός χυμός', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
           { item: 'Μέρος που ήπιαν', formula: `${n2}/${d2}`, val: `${n2}/${d2}` },
-          { item: 'Γινόμενο & Απλοποίηση', formula: `(3 · 2) / (4 · 5) ＝ 6/20 (: 2)`, val: `3/10` }
+          { item: 'Γινόμενο & Απλοποίηση', formula: '(3 · 2) / (4 · 5) ＝ 6/20 (: 2)', val: '3/10' }
         ],
         explain: `Πολλαπλασιάζουμε: (${n1}/${d1}) · (${n2}/${d2}) ＝ 6/20 ＝ 3/10 της κανάτας.`,
-        distractors: [`5/9`, `1/10`, `6/9`]
+        distractors: ['5/9', '1/10', '6/9']
       };
     }
   },
   {
     id: 'sp4',
     title: 'Χρήση Υφάσματος',
-    unit: 'του τόπι',
+    unit: 'του ρολού',
     generate: () => {
       // 1/3 · 3/4 = 3/12 = 1/4
       const n1 = 1;
@@ -144,17 +144,17 @@ const STANDARD_PROBLEMS_POOL = [
       const n2 = 3;
       const d2 = 4;
       return {
-        prompt: `Μια μοδίστρα αγόρασε τα ${n2}/${d2} ενός τόπι υφάσματος και από αυτά χρησιμοποίησε το ${n1}/${d1} για μια μπλούζα. Ποιο μέρος του αρχικού τόπι χρησιμοποίησε;`,
+        prompt: `Μια μοδίστρα αγόρασε τα ${n2}/${d2} ενός ρολού υφάσματος και από αυτά χρησιμοποίησε το ${n1}/${d1} για μια μπλούζα. Ποιο μέρος του αρχικού ρολού χρησιμοποίησε;`,
         unit: '',
-        correctVal: `1/4`,
-        correctText: `1/4 (ή 3/12)`,
+        correctVal: '1/4',
+        correctText: '1/4 (ή 3/12)',
         tableData: [
           { item: 'Ύφασμα που αγοράστηκε', formula: `${n2}/${d2}`, val: `${n2}/${d2}` },
           { item: 'Μέρος για μπλούζα', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
-          { item: 'Γινόμενο & Απλοποίηση', formula: `(1 · 3) / (3 · 4) ＝ 3/12 (: 3)`, val: `1/4` }
+          { item: 'Γινόμενο & Απλοποίηση', formula: '(1 · 3) / (3 · 4) ＝ 3/12 (: 3)', val: '1/4' }
         ],
-        explain: `Υπολογίζουμε: (1/3) · (3/4) ＝ 3/12 ＝ 1/4 του τόπι.`,
-        distractors: [`4/7`, `2/4`, `3/7`]
+        explain: `Υπολογίζουμε: (1/3) · (3/4) ＝ 3/12 ＝ 1/4 του ρολού.`,
+        distractors: ['4/7', '2/4', '3/7']
       };
     }
   },
@@ -171,15 +171,15 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `Η Μαρία σχεδίασε τα ${n1}/${d1} ενός πίνακα και από αυτά χρωμάτισε με μπλε το ${n2}/${d2}. Ποιο μέρος ολόκληρου του πίνακα είναι χρωματισμένο με μπλε;`,
         unit: '',
-        correctVal: `1/6`,
-        correctText: `1/6 (ή 2/12)`,
+        correctVal: '1/6',
+        correctText: '1/6 (ή 2/12)',
         tableData: [
           { item: 'Σχεδιασμένο μέρος', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
           { item: 'Μπλε χρώμα', formula: `${n2}/${d2}`, val: `${n2}/${d2}` },
-          { item: 'Γινόμενο & Απλοποίηση', formula: `(2 · 1) / (3 · 4) ＝ 2/12 (: 2)`, val: `1/6` }
+          { item: 'Γινόμενο & Απλοποίηση', formula: '(2 · 1) / (3 · 4) ＝ 2/12 (: 2)', val: '1/6' }
         ],
         explain: `Πολλαπλασιάζουμε: (2/3) · (1/4) ＝ 2/12 ＝ 1/6 του πίνακα.`,
-        distractors: [`3/7`, `2/7`, `1/12`]
+        distractors: ['3/7', '2/7', '1/12']
       };
     }
   },
@@ -196,15 +196,15 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `Ένας αθλητής προγραμμάτισε να τρέξει τα ${n1}/${d1} μιας διαδρομής, αλλά τελικά κατάφερε να καλύψει το ${n2}/${d2} αυτού του στόχου. Ποιο μέρος της συνολικής διαδρομής κάλυψε;`,
         unit: '',
-        correctVal: `2/5`,
-        correctText: `2/5 (ή 4/10)`,
+        correctVal: '2/5',
+        correctText: '2/5 (ή 4/10)',
         tableData: [
           { item: 'Στόχος διαδρομής', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
           { item: 'Επίτευξη στόχου', formula: `${n2}/${d2}`, val: `${n2}/${d2}` },
-          { item: 'Γινόμενο & Απλοποίηση', formula: `(4 · 1) / (5 · 2) ＝ 4/10 (: 2)`, val: `2/5` }
+          { item: 'Γινόμενο & Απλοποίηση', formula: '(4 · 1) / (5 · 2) ＝ 4/10 (: 2)', val: '2/5' }
         ],
         explain: `Υπολογίζουμε: (4/5) · (1/2) ＝ 4/10 ＝ 2/5 της διαδρομής.`,
-        distractors: [`5/7`, `1/5`, `4/7`]
+        distractors: ['5/7', '1/5', '4/7']
       };
     }
   }
@@ -229,7 +229,7 @@ const HARD_PROBLEMS_POOL = [
         tableData: [
           { item: 'Μήκος (α)', formula: `${n1}/${d1} μ.`, val: `${n1}/${d1}` },
           { item: 'Πλάτος (β)', formula: `${n2}/${d2} μ.`, val: `${n2}/${d2}` },
-          { item: 'Εμβαδόν (Ε ＝ α · β)', formula: `(3 · 2) / (4 · 5) ＝ 6/20 (: 2)`, val: '3/10 τ.μ.' }
+          { item: 'Εμβαδόν (Ε ＝ α · β)', formula: '(3 · 2) / (4 · 5) ＝ 6/20 (: 2)', val: '3/10 τ.μ.' }
         ],
         explain: `Το εμβαδόν ορθογωνίου ισούται με μήκος επί πλάτος: (${n1}/${d1}) · (${n2}/${d2}) ＝ 6/20 ＝ 3/10 τ.μ.`,
         distractors: ['5/9 τ.μ.', '6/9 τ.μ.', '1/10 τ.μ.']
@@ -278,7 +278,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Υπολογισμός', formula: `(${whole} · ${num}) / ${den} ＝ 180 / 4`, val: `${res} €` }
         ],
         explain: `Πολλαπλασιάζουμε τον ακέραιο με το κλάσμα: ${whole} · (3/4) ＝ (60 · 3) / 4 ＝ 180 / 4 ＝ ${res} €.`,
-        distractors: [`${res - 5} €`, `${res + 5} €`, `40 €`]
+        distractors: [`${res - 5} €`, `${res + 5} €`, '40 €']
       };
     }
   },
@@ -323,7 +323,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Αντίστροφος αριθμός', formula: 'Αντιστροφή όρων', val: '2/3' },
           { item: 'Επαλήθευση', formula: '(3/2) · (2/3)', val: '6/6 ＝ 1' }
         ],
-        explain: `Γράφουμε πρώτα την ποσότητα ως κλάσμα: 1 και 1/2 ＝ 3/2. Ο αντίστροφος προκύπτει αντιστρέφοντας τους όρους: 2/3.`,
+        explain: 'Γράφουμε πρώτα την ποσότητα ως κλάσμα: 1 και 1/2 ＝ 3/2. Ο αντίστροφος προκύπτει αντιστρέφοντας τους όρους: 2/3.',
         distractors: ['3/2', '1/2', '1/3']
       };
     }
@@ -349,7 +349,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Συνολικό βάρος', formula: `(${packs} · ${num}) / ${den} ＝ 24 / 4`, val: `${total} κιλά` }
         ],
         explain: `Πολλαπλασιάζουμε τον ακέραιο με τον αριθμητή: ${packs} · (3/4) ＝ (8 · 3) / 4 ＝ 24/4 ＝ ${total} ολόκληρα κιλά.`,
-        distractors: [`${total + 2} κιλά`, `${total - 2} κιλά`, `7 κιλά`]
+        distractors: [`${total + 2} κιλά`, `${total - 2} κιλά`, '7 κιλά']
       };
     }
   }
@@ -390,8 +390,8 @@ function generateQuestions() {
     `${q3Num}/${q3Den + 1}`,
     `${q3Den + 1}/${q3Num}`,
     `${q3Num + 1}/${q3Den}`
-  ];
-  const q3Options = shuffle([...new Set([q3CorrectStr, ...q3Wrongs])]);
+  ].filter(w => w !== q3CorrectStr);
+  const q3Options = shuffle([...new Set([q3CorrectStr, ...q3Wrongs])]).slice(0, 4);
 
   // Q4: MCQ - Ποιο γινόμενο ισούται με 1 (Αντίστροφοι Αριθμοί)
   const q4N = randInt(3, 7);
@@ -479,7 +479,7 @@ function generateQuestions() {
       id: 'q4',
       type: 'mcq',
       title: 'Γινόμενο Αντίστροφων',
-      prompt: `Ποιο από τα παρακάτω γινόμενα ισούται ακριβώς με το 1;`,
+      prompt: 'Ποιο από τα παρακάτω γινόμενα ισούται ακριβώς με το 1;',
       options: q4Options,
       correct: q4CorrectProd,
       explain: `Το γινόμενο δύο αντίστροφων αριθμών ισούται πάντοτε με 1: (${q4N}/${q4D}) · (${q4D}/${q4N}) ＝ 1.`
@@ -573,9 +573,22 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      let sanitized = String(rawValue).replace(/[^0-9/]/g, '');
+      const parts = sanitized.split('/');
+      if (parts.length > 2) {
+        sanitized = parts[0] + '/' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -616,6 +629,8 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Πολλαπλασιασμός Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -634,7 +649,7 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -700,7 +715,7 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -718,11 +733,14 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
                       <div className="space-y-2 mb-3">
                         <input
                           type="text"
-                          inputMode="text"
+                          inputMode={q.id === 'q7' ? 'numeric' : 'text'}
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
-                          placeholder="π.χ. 6/20"
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.id === 'q7' ? 'π.χ. 3' : 'π.χ. 6/20'}
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -733,7 +751,7 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -745,7 +763,7 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -826,7 +844,7 @@ export default function PollaplasiasmosKlasmatonExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
