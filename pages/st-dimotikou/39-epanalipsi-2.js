@@ -35,7 +35,7 @@ function gcd(a, b) {
   return x || 1;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -45,7 +45,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -67,6 +67,7 @@ const POOL_CH32 = [
       title: 'Κεφάλαιο 32 • Υπολογισμός Παράστασης',
       prompt: `Αν x ＝ ${x}, ποια είναι η τιμή της παράστασης ${a} · x ＋ ${b};`,
       type: 'input',
+      inputType: 'number',
       correct: String(res),
       explain: `Αντικαθιστούμε το x με ${x}: ${a} · ${x} ＋ ${b} ＝ ${a * x} ＋ ${b} ＝ ${res}.`
     };
@@ -81,6 +82,7 @@ const POOL_CH32 = [
       title: 'Κεφάλαιο 32 • Υπολογισμός Παράστασης',
       prompt: `Αν x ＝ ${x}, ποια είναι η τιμή της παράστασης ${a} · x － ${b};`,
       type: 'input',
+      inputType: 'number',
       correct: String(res),
       explain: `Αντικαθιστούμε το x με ${x}: ${a} · ${x} － ${b} ＝ ${a * x} － ${b} ＝ ${res}.`
     };
@@ -93,6 +95,7 @@ const POOL_CH32 = [
       title: 'Κεφάλαιο 32 • Μεταβλητή στη Γεωμετρία',
       prompt: `Η περίμετρος ενός τετραγώνου πλευράς x δίνεται από τον τύπο Π ＝ 4 · x. Αν x ＝ ${side} εκ., πόση είναι η περίμετρος;`,
       type: 'input',
+      inputType: 'number',
       correct: String(res),
       explain: `Π ＝ 4 · ${side} ＝ ${res} εκ.`
     };
@@ -119,6 +122,7 @@ const POOL_CH32 = [
       title: 'Κεφάλαιο 32 • Μεταβλητή με Διαίρεση',
       prompt: `Αν x ＝ ${x}, ποια είναι η τιμή της παράστασης (x : ${a}) ＋ ${b};`,
       type: 'input',
+      inputType: 'number',
       correct: String(res),
       explain: `(${x} : ${a}) ＋ ${b} ＝ ${x / a} ＋ ${b} ＝ ${res}.`
     };
@@ -139,6 +143,7 @@ const POOL_CH33 = [
       title: 'Κεφάλαιο 33 • Εξίσωση x ＋ α ＝ β (Δεκαδικοί)',
       prompt: `Λύσε την εξίσωση: x ＋ ${a} ＝ ${b}`,
       type: 'input',
+      inputType: 'decimal',
       correct,
       explain: `x ＝ ${b} － ${a} ＝ ${correct}.`
     };
@@ -156,6 +161,7 @@ const POOL_CH33 = [
       title: 'Κεφάλαιο 33 • Εξίσωση x ＋ α ＝ β (Κλάσματα)',
       prompt: `Λύσε την εξίσωση: x ＋ ${n1}/${d} ＝ ${n2}/${d} (π.χ. 3/7):`,
       type: 'input',
+      inputType: 'fraction',
       correct: correctRaw,
       altCorrect: correctSimp,
       explain: `x ＝ ${n2}/${d} － ${n1}/${d} ＝ ${correctRaw}${g > 1 ? ` (ή ${correctSimp})` : ''}.`
@@ -170,6 +176,7 @@ const POOL_CH33 = [
       title: 'Κεφάλαιο 33 • Εξίσωση x ＋ α ＝ β (Φυσικοί)',
       prompt: `Λύσε την εξίσωση: x ＋ ${a} ＝ ${b}`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `x ＝ ${b} － ${a} ＝ ${x}.`
     };
@@ -179,13 +186,15 @@ const POOL_CH33 = [
     const isTrue = Math.random() > 0.5;
     return {
       title: 'Κεφάλαιο 33 • Ιδιότητες Πρόσθεσης',
-      prompt: '«Στην εξίσωση x ＋ α ＝ β, ο άγνωστος προσθετέος x υπολογίζεται πάντοτε με αφαίρεση: x ＝ β － α.»',
+      prompt: isTrue
+        ? '«Στην εξίσωση x ＋ α ＝ β, ο άγνωστος προσθετέος x υπολογίζεται πάντοτε με αφαίρεση: x ＝ β － α.»'
+        : '«Στην εξίσωση x ＋ α ＝ β, ο άγνωστος προσθετέος x υπολογίζεται πάντοτε με πρόσθεση: x ＝ β ＋ α.»',
       type: 'tf',
       correct: isTrue,
       text: isTrue 
         ? 'Στην εξίσωση x ＋ α ＝ β, ο άγνωστος προσθετέος x υπολογίζεται με αφαίρεση: x ＝ β － α.'
         : 'Στην εξίσωση x ＋ α ＝ β, ο άγνωστος x υπολογίζεται με πρόσθεση: x ＝ β ＋ α.',
-      explain: isTrue ? 'Η αφαίρεση είναι η αντίστροφη πράξη της πρόσθεσης.' : 'Για να βρούμε τον άγνωστο προσθετέο κάνουμε αφαίρεση: x ＝ β － α.'
+      explain: isTrue ? 'Η αφαίρεση είναι η αντίστροφη πράξη της πρόσθεσης: x ＝ β － α.' : 'Για να βρούμε τον άγνωστο προσθετέο κάνουμε αφαίρεση: x ＝ β － α.'
     };
   }
 ];
@@ -204,6 +213,7 @@ const POOL_CH34 = [
       title: 'Κεφάλαιο 34 • Άγνωστος Μειωτέος x － α ＝ β',
       prompt: `Λύσε την εξίσωση: x － ${a} ＝ ${b}`,
       type: 'input',
+      inputType: 'decimal',
       correct,
       explain: `x ＝ ${b} ＋ ${a} ＝ ${correct}.`
     };
@@ -221,6 +231,7 @@ const POOL_CH34 = [
       title: 'Κεφάλαιο 34 • Άγνωστος Μειωτέος (Κλάσματα)',
       prompt: `Λύσε την εξίσωση: x － ${n1}/${d} ＝ ${n2}/${d} (π.χ. 5/7):`,
       type: 'input',
+      inputType: 'fraction',
       correct: correctRaw,
       altCorrect: correctSimp,
       explain: `x ＝ ${n2}/${d} ＋ ${n1}/${d} ＝ ${correctRaw}${g > 1 ? ` (ή ${correctSimp})` : ''}.`
@@ -235,6 +246,7 @@ const POOL_CH34 = [
       title: 'Κεφάλαιο 34 • Άγνωστος Μειωτέος (Φυσικοί)',
       prompt: `Λύσε την εξίσωση: x － ${a} ＝ ${b}`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `x ＝ ${b} ＋ ${a} ＝ ${x}.`
     };
@@ -269,6 +281,7 @@ const POOL_CH35 = [
       title: 'Κεφάλαιο 35 • Άγνωστος Αφαιρετέος α － x ＝ β',
       prompt: `Λύσε την εξίσωση: ${a} － x ＝ ${b}`,
       type: 'input',
+      inputType: 'decimal',
       correct,
       explain: `x ＝ ${a} － ${b} ＝ ${correct}.`
     };
@@ -286,6 +299,7 @@ const POOL_CH35 = [
       title: 'Κεφάλαιο 35 • Άγνωστος Αφαιρετέος (Κλάσματα)',
       prompt: `Λύσε την εξίσωση: ${n1}/${d} － x ＝ ${n2}/${d} (π.χ. 3/8):`,
       type: 'input',
+      inputType: 'fraction',
       correct: correctRaw,
       altCorrect: correctSimp,
       explain: `x ＝ ${n1}/${d} － ${n2}/${d} ＝ ${correctRaw}${g > 1 ? ` (ή ${correctSimp})` : ''}.`
@@ -300,6 +314,7 @@ const POOL_CH35 = [
       title: 'Κεφάλαιο 35 • Άγνωστος Αφαιρετέος (Φυσικοί)',
       prompt: `Λύσε την εξίσωση: ${a} － x ＝ ${b}`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `x ＝ ${a} － ${b} ＝ ${x}.`
     };
@@ -330,6 +345,7 @@ const POOL_CH36 = [
       title: 'Κεφάλαιο 36 • Άγνωστος Παράγοντας Γινομένου (Δεκαδικοί)',
       prompt: `Λύσε την εξίσωση: ${a} · x ＝ ${b}`,
       type: 'input',
+      inputType: 'decimal',
       correct,
       explain: `x ＝ ${b} : ${a} ＝ ${correct}.`
     };
@@ -343,6 +359,7 @@ const POOL_CH36 = [
       title: 'Κεφάλαιο 36 • Άγνωστος Παράγοντας x · α ＝ β',
       prompt: `Λύσε την εξίσωση: x · ${a} ＝ ${b}`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `x ＝ ${b} : ${a} ＝ ${x}.`
     };
@@ -357,6 +374,7 @@ const POOL_CH36 = [
       title: 'Κεφάλαιο 36 • Άγνωστος Παράγοντας (Κλάσματα)',
       prompt: `Λύσε την εξίσωση: ${numA}/${d} · x ＝ ${numB}/${d}`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `x ＝ (${numB}/${d}) : (${numA}/${d}) ＝ ${numB} : ${numA} ＝ ${x}.`
     };
@@ -391,6 +409,7 @@ const POOL_CH37 = [
       title: 'Κεφάλαιο 37 • Άγνωστος Διαιρετέος x : α ＝ β',
       prompt: `Λύσε την εξίσωση: x : ${a} ＝ ${b}`,
       type: 'input',
+      inputType: 'decimal',
       correct,
       explain: `x ＝ ${a} · ${b} ＝ ${correct}.`
     };
@@ -404,6 +423,7 @@ const POOL_CH37 = [
       title: 'Κεφάλαιο 37 • Άγνωστος Διαιρετέος (Φυσικοί)',
       prompt: `Λύσε την εξίσωση: x : ${a} ＝ ${b}`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `x ＝ ${a} · ${b} ＝ ${x}.`
     };
@@ -419,6 +439,7 @@ const POOL_CH37 = [
       title: 'Κεφάλαιο 37 • Άγνωστος Διαιρετέος (Κλάσματα)',
       prompt: `Λύσε την εξίσωση: x : (${numA}/${d}) ＝ ${b}`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `x ＝ ${b} · (${numA}/${d}) ＝ ${x}.`
     };
@@ -450,6 +471,7 @@ const POOL_CH38 = [
       title: 'Κεφάλαιο 38 • Άγνωστος Διαιρέτης α : x ＝ β',
       prompt: `Λύσε την εξίσωση: ${a} : x ＝ ${b}`,
       type: 'input',
+      inputType: 'number',
       correct,
       explain: `x ＝ ${a} : ${b} ＝ ${correct}.`
     };
@@ -463,6 +485,7 @@ const POOL_CH38 = [
       title: 'Κεφάλαιο 38 • Άγνωστος Διαιρέτης (Φυσικοί)',
       prompt: `Λύσε την εξίσωση: ${a} : x ＝ ${b}`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `x ＝ ${a} : ${b} ＝ ${x}.`
     };
@@ -477,6 +500,7 @@ const POOL_CH38 = [
       title: 'Κεφάλαιο 38 • Άγνωστος Διαιρέτης (Κλάσματα)',
       prompt: `Λύσε την εξίσωση: ${numA}/${d} : x ＝ ${numB}/${d}`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `x ＝ (${numA}/${d}) : (${numB}/${d}) ＝ ${numA} : ${numB} ＝ ${x}.`
     };
@@ -510,6 +534,7 @@ const POOL_COMBINED = [
       title: 'Συνδυαστικό Πρόβλημα • Εξίσωση 2 Βημάτων',
       prompt: `Η Μαρία αγόρασε ${a} ίδια βιβλία (x ευρώ το καθένα) και ένα στυλό που κόστιζε ${b}€. Πλήρωσε συνολικά ${c}€. Πόσο κόστιζε το κάθε βιβλίο (x);`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `Σχηματίζουμε την εξίσωση: ${a} · x ＋ ${b} ＝ ${c} ➔ ${a} · x ＝ ${c} － ${b} ＝ ${a * x} ➔ x ＝ ${a * x} : ${a} ＝ ${x}€.`
     };
@@ -524,6 +549,7 @@ const POOL_COMBINED = [
       title: 'Συνδυαστικό Πρόβλημα • Εξίσωση με Έκπτωση',
       prompt: `Ο Γιώργος αγόρασε ${a} ίδια πουκάμισα αξίας x ευρώ το καθένα. Είχε κουπόνι έκπτωσης ${discount}€ και τελικά πλήρωσε ${total}€. Πόσο κόστιζε αρχικά το κάθε πουκάμισο;`,
       type: 'input',
+      inputType: 'number',
       correct: String(x),
       explain: `Σχηματίζουμε την εξίσωση: ${a} · x － ${discount} ＝ ${total} ➔ ${a} · x ＝ ${total} ＋ ${discount} ＝ ${a * x} ➔ x ＝ ${a * x} : ${a} ＝ ${x}€.`
     };
@@ -537,6 +563,7 @@ const POOL_COMBINED = [
       title: 'Συνδυαστικό Πρόβλημα • Περίμετρος Ορθογωνίου',
       prompt: `Ένα ορθογώνιο οικόπεδο έχει πλάτος ${width} μ. και περίμετρο ${perimeter} μ. Αν x είναι το μήκος του, να βρεις το x (σε μέτρα):`,
       type: 'input',
+      inputType: 'number',
       correct: String(length),
       explain: `Η περίμετρος είναι 2 · (x ＋ ${width}) ＝ ${perimeter} ➔ x ＋ ${width} ＝ ${perimeter / 2} ➔ x ＝ ${perimeter / 2} － ${width} ＝ ${length} μέτρα.`
     };
@@ -551,6 +578,7 @@ const POOL_COMBINED = [
       title: 'Συνδυαστικό Πρόβλημα • Διαίρεση με Υπόλοιπο',
       prompt: `Μοιράσαμε ${total} καραμέλες σε ${portions} παιδιά και πήραν από x καραμέλες το καθένα, ενώ περίσσεψαν ${leftover} καραμέλες. Πόσες καραμέλες πήρε κάθε παιδί;`,
       type: 'input',
+      inputType: 'number',
       correct: String(perPortion),
       explain: `${portions} · x ＋ ${leftover} ＝ ${total} ➔ ${portions} · x ＝ ${total - leftover} ➔ x ＝ ${total - leftover} : ${portions} ＝ ${perPortion} καραμέλες.`
     };
@@ -561,7 +589,6 @@ const POOL_COMBINED = [
 function generate16Questions() {
   const qList = [];
 
-  // Επιλογή 2 ερωτήσεων από κάθε κεφάλαιο (32 έως 38)
   const chapters = [
     { pool: POOL_CH32 },
     { pool: POOL_CH33 },
@@ -578,12 +605,11 @@ function generate16Questions() {
     qList.push(shuffledPool[1] ? shuffledPool[1]() : shuffledPool[0]());
   });
 
-  // Προσθήκη 2 συνδυαστικών προβλημάτων
   const shuffledComb = shuffle(POOL_COMBINED);
   qList.push(shuffledComb[0]());
   qList.push(shuffledComb[1] ? shuffledComb[1]() : shuffledComb[0]());
 
-  return qList;
+  return qList.map((q, idx) => ({ ...q, id: `q${idx}` }));
 }
 
 // ---------------------------------------------------------
@@ -615,18 +641,47 @@ export default function Epanalipsi2Page() {
     loadNewTest();
   }, [loadNewTest]);
 
-  const handleInputChange = (key, val) => {
+  // Χειρισμός απαντήσεων: sanitize ανά τύπο ερώτησης
+  const handleAnswerChange = (key, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [key]: val }));
+    if (type === 'input') {
+      const q = questions.find(item => item.id === key);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
+      } else if (q?.inputType === 'fraction') {
+        sanitized = sanitized.replace(/[^0-9/]/g, '');
+        const parts = sanitized.split('/');
+        if (parts.length > 2) sanitized = parts[0] + '/' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 12) {
+        sanitized = sanitized.slice(0, 12);
+      }
+      setAnswers(prev => ({ ...prev, [key]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [key]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q, userAns) => {
     if (q.type === 'input') {
       if (typeof userAns !== 'string' || !userAns.trim()) return false;
-      const cleanAns = userAns.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanCorrect = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase() : null;
-      return cleanAns === cleanCorrect || (cleanAlt && cleanAns === cleanAlt);
+      const cleanAns = userAns.replace(/\./g, ',').replace(/\s+/g, '').replace(/^x[=＝]/i, '').trim().toLowerCase();
+      const cleanCorrect = q.correct.replace(/\./g, ',').replace(/\s+/g, '').replace(/^x[=＝]/i, '').trim().toLowerCase();
+      const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').replace(/^x[=＝]/i, '').trim().toLowerCase() : null;
+
+      if (cleanAns === cleanCorrect || (cleanAlt && cleanAns === cleanAlt)) return true;
+
+      if (q.inputType === 'decimal') {
+        const numAns = parseFloat(cleanAns.replace(',', '.'));
+        const numCor = parseFloat(cleanCorrect.replace(',', '.'));
+        return !isNaN(numAns) && !isNaN(numCor) && Math.abs(numAns - numCor) < 0.05;
+      }
+      return false;
     }
     if (q.type === 'mcq') {
       return userAns === q.correct;
@@ -743,9 +798,10 @@ export default function Epanalipsi2Page() {
                         autoComplete="off"
                         spellCheck="false"
                         type="text"
+                        inputMode={q.inputType === 'fraction' ? 'text' : q.inputType === 'decimal' ? 'decimal' : 'numeric'}
                         disabled={submitted}
                         value={userAns || ''}
-                        onChange={(e) => handleInputChange(key, e.target.value)}
+                        onChange={(e) => handleAnswerChange(key, e.target.value, 'input')}
                         placeholder="Γράψε την απάντηση..."
                         className="w-full p-3 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono shadow-inner"
                       />
@@ -759,7 +815,7 @@ export default function Epanalipsi2Page() {
                             key={optIdx}
                             type="button"
                             disabled={submitted}
-                            onClick={() => handleInputChange(key, opt)}
+                            onClick={() => handleAnswerChange(key, opt, 'mcq')}
                             className={`p-3 rounded-xl text-xs sm:text-sm font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[44px] ${
                               userAns === opt
                                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-2 ring-indigo-300'
@@ -778,7 +834,7 @@ export default function Epanalipsi2Page() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(key, true)}
+                          onClick={() => handleAnswerChange(key, true, 'tf')}
                           className={`py-3 rounded-xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             userAns === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -790,7 +846,7 @@ export default function Epanalipsi2Page() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(key, false)}
+                          onClick={() => handleAnswerChange(key, false, 'tf')}
                           className={`py-3 rounded-xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             userAns === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
