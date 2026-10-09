@@ -40,7 +40,7 @@ function lcm(a, b) {
   return Math.abs(a * b) / gcd(a, b);
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -50,7 +50,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -102,11 +102,11 @@ const CHAPTER_GENERATORS = [
     const multipliers = ['0,1', '0,01', '0,001'];
     return {
       title: '2. Δεκαδικοί Αριθμοί',
-      prompt: `Στον δεκαδικό αριθμό ${num.replace('.', ',')}, τι εκφράζει το ψηφίο ${targetDigit};`,
+      prompt: `Στον δεκαδικό αριθμό ${num.replace('.', ',')}, ποια θέση κατέχει το ψηφίο ${targetDigit};`,
       type: 'mcq',
       options: shuffle([...new Set([names[targetIdx], names[(targetIdx + 1) % 3], names[(targetIdx + 2) % 3], 'μονάδες'])]),
       correct: names[targetIdx],
-      explain: `Το ${targetDigit} είναι το ${targetIdx + 1}ο ψηφίο μετά την υποδιαστολή, άρα εκφράζει ${names[targetIdx]} (αξία: ${targetDigit} · ${multipliers[targetIdx]}).`
+      explain: `Το ${targetDigit} είναι το ${targetIdx + 1}ο ψηφίο μετά την υποδιαστολή, άρα εκφράζει ${names[targetIdx]} (αξία θέσης: ${targetDigit} · ${multipliers[targetIdx]}).`
     };
   },
 
@@ -127,6 +127,7 @@ const CHAPTER_GENERATORS = [
       title: '3. Δεκαδικοί σε Δεκαδικά Κλάσματα',
       prompt: `Γράψε τον δεκαδικό αριθμό ${item.dec} ως δεκαδικό κλάσμα (π.χ. 25/100):`,
       type: 'input',
+      inputType: 'fraction',
       correct: item.frac,
       explain: `Ο αριθμός ${item.dec} έχει ${item.dec.split(',')[1].length} δεκαδικά ψηφία, άρα γράφεται ως ${item.frac}.`
     };
@@ -157,6 +158,7 @@ const CHAPTER_GENERATORS = [
       title: '5. Πρόσθεση Φυσικών Αριθμών',
       prompt: `Υπολόγισε το άθροισμα: ${a.toLocaleString('el-GR')} ＋ ${b.toLocaleString('el-GR')} ＝`,
       type: 'input',
+      inputType: 'number',
       correct: String(res),
       explain: `${a.toLocaleString('el-GR')} ＋ ${b.toLocaleString('el-GR')} ＝ ${res.toLocaleString('el-GR')}.`
     };
@@ -171,6 +173,7 @@ const CHAPTER_GENERATORS = [
       title: '6. Πολλαπλασιασμός Φυσικών',
       prompt: `Υπολόγισε το γινόμενο: ${a} · ${b} ＝`,
       type: 'input',
+      inputType: 'number',
       correct: String(res),
       explain: `${a} · ${b} ＝ ${res.toLocaleString('el-GR')}.`
     };
@@ -185,6 +188,7 @@ const CHAPTER_GENERATORS = [
       title: '7. Πολλαπλασιασμός με Δυνάμεις του 10',
       prompt: `Υπολόγισε το γινόμενο: ${dec.toString().replace('.', ',')} · ${mult} ＝`,
       type: 'input',
+      inputType: 'decimal',
       correct: res.toString().replace('.', ','),
       explain: `Μετακινούμε την υποδιαστολή ${mult === 10 ? '1 θέση' : mult === 100 ? '2 θέσεις' : '3 θέσεις'} δεξιά: ${res.toString().replace('.', ',')}.`
     };
@@ -200,6 +204,7 @@ const CHAPTER_GENERATORS = [
       title: '8. Διαίρεση Φυσικών (Υπόλοιπο)',
       prompt: `Στη διαίρεση ${dividend} : ${divisor}, ποιο είναι το υπόλοιπο;`,
       type: 'input',
+      inputType: 'number',
       correct: String(remainder),
       explain: `${dividend} ＝ (${divisor} · ${quotient}) ＋ ${remainder}, άρα το υπόλοιπο είναι ${remainder}.`
     };
@@ -214,6 +219,7 @@ const CHAPTER_GENERATORS = [
       title: '9. Διαίρεση με Δυνάμεις του 10',
       prompt: `Υπολόγισε το πηλίκο: ${num} : ${div} ＝`,
       type: 'input',
+      inputType: 'decimal',
       correct: res.toString().replace('.', ','),
       explain: `Μετακινούμε την υποδιαστολή αριστερά: ${num} : ${div} ＝ ${res.toString().replace('.', ',')}.`
     };
@@ -230,6 +236,7 @@ const CHAPTER_GENERATORS = [
       title: '10. Προτεραιότητα Πράξεων',
       prompt: `Υπολόγισε την τιμή της αριθμητικής παράστασης: ${a} ＋ ${b} · ${c} － ${d} ＝`,
       type: 'input',
+      inputType: 'number',
       correct: String(res),
       explain: `Πρώτα εκτελούμε τον πολλαπλασιασμό (${b} · ${c} ＝ ${b * c}) και έπειτα τις προσθαφαιρέσεις: ${a} ＋ ${b * c} － ${d} ＝ ${res}.`
     };
@@ -244,8 +251,9 @@ const CHAPTER_GENERATORS = [
     const change = paid - totalCost;
     return {
       title: '11. Επίλυση Προβλήματος',
-      prompt: `Αγοράσαμε ${items} τετράδια προς ${pricePer}€ το καθένα και πληρώσαμε με χαρτονόμισμα των ${paid}€. Πόσα ρέστα θα πάρουμε;`,
+      prompt: `Αγοράσαμε ${items} τετράδια προς ${pricePer}€ το καθένα και πληρώσαμε με χαρτονόμισμα των ${paid}€. Πόσα ρέστα θα λάβουμε;`,
       type: 'input',
+      inputType: 'number',
       correct: String(change),
       explain: `Κόστος: ${items} · ${pricePer} ＝ ${totalCost}€. Ρέστα: ${paid} － ${totalCost} ＝ ${change}€.`
     };
@@ -259,6 +267,7 @@ const CHAPTER_GENERATORS = [
       title: '12. Στρογγυλοποίηση Αριθμών',
       prompt: `Στρογγυλοποίησε τον αριθμό ${num.toLocaleString('el-GR')} στην πλησιέστερη εκατοντάδα:`,
       type: 'input',
+      inputType: 'number',
       correct: String(rounded),
       explain: `Κοιτάμε το ψηφίο των δεκάδων (${Math.floor((num % 100) / 10)}). Ο αριθμός στρογγυλοποιείται στο ${rounded.toLocaleString('el-GR')}.`
     };
@@ -276,8 +285,9 @@ const CHAPTER_GENERATORS = [
       title: '13. Διαιρέτες Αριθμού',
       prompt: `Πόσους διαιρέτες έχει συνολικά ο αριθμός ${num};`,
       type: 'input',
+      inputType: 'number',
       correct: String(count),
-      explain: `Οι διαιρέτες του ${num} είναι: ${divs.join(', ')} (σύνολο: ${count}).`
+      explain: `Οι διαιρέτες του ${num} είναι οι: ${divs.join(', ')} (συνολικά: ${count}).`
     };
   },
 
@@ -291,6 +301,7 @@ const CHAPTER_GENERATORS = [
       title: '14. Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)',
       prompt: `Βρες τον Μ.Κ.Δ. των αριθμών (${a}, ${b}):`,
       type: 'input',
+      inputType: 'number',
       correct: String(trueGcd),
       explain: `Ο μεγαλύτερος κοινός διαιρέτης των ${a} και ${b} είναι το ${trueGcd}.`
     };
@@ -306,14 +317,15 @@ const CHAPTER_GENERATORS = [
     else if (targetDiv === 10) n = 480;
     else n = 356;
 
-    const options = shuffle([...new Set([String(n), String(n + 1), String(n + 2), String(n - 1)])]);
+    const wrongs = [n + 1, n + 2, n + 4].filter(w => w % targetDiv !== 0);
+    const options = shuffle([...new Set([String(n), ...wrongs.map(String)])]).slice(0, 4);
     return {
       title: '15. Κριτήρια Διαιρετότητας',
       prompt: `Ποιος από τους παρακάτω αριθμούς διαιρείται ακριβώς με το ${targetDiv};`,
       type: 'mcq',
       options,
       correct: String(n),
-      explain: `Ο αριθμός ${n} ικανοποιεί το κριτήριο διαιρετότητας του ${targetDiv}.`
+      explain: `Ο αριθμός ${n} διαιρείται ακριβώς με το ${targetDiv} (${n} : ${targetDiv} ＝ ${n / targetDiv}).`
     };
   },
 
@@ -360,7 +372,8 @@ const CHAPTER_GENERATORS = [
     const n = randInt(6, 12);
     const k = randInt(4, 9);
     const mult = n * k;
-    const options = shuffle([...new Set([String(mult), String(mult + 1), String(mult - 2), String(mult + 3)])]);
+    const wrongs = [mult + 1, mult + 2, mult + 3].filter(w => w % n !== 0);
+    const options = shuffle([...new Set([String(mult), ...wrongs.map(String)])]).slice(0, 4);
     return {
       title: '18. Πολλαπλάσια Αριθμού',
       prompt: `Ποιο από τα παρακάτω είναι πολλαπλάσιο του ${n};`,
@@ -380,6 +393,7 @@ const CHAPTER_GENERATORS = [
       title: '19. Ελάχιστο Κοινό Πολλαπλάσιο (ΕΚΠ)',
       prompt: `Βρες το Ε.Κ.Π. των αριθμών (${a}, ${b}):`,
       type: 'input',
+      inputType: 'number',
       correct: String(trueLcm),
       explain: `Το Ε.Κ.Π.(${a}, ${b}) είναι το ${trueLcm}.`
     };
@@ -407,6 +421,7 @@ const CHAPTER_GENERATORS = [
       title: '21. Δύναμη Φυσικού Αριθμού',
       prompt: `Υπολόγισε την τιμή της δύναμης: ${base}${exponentsUnicode[exp]} ＝`,
       type: 'input',
+      inputType: 'number',
       correct: String(res),
       explain: `${base}${exponentsUnicode[exp]} ＝ ${Array(exp).fill(base).join(' · ')} ＝ ${res}.`
     };
@@ -420,6 +435,7 @@ const CHAPTER_GENERATORS = [
       title: '22. Δυνάμεις του 10',
       prompt: `Πόσα μηδενικά ακολουθούν μετά το 1 στον αριθμό 10${exponentsUnicode[exp]};`,
       type: 'input',
+      inputType: 'number',
       correct: String(exp),
       explain: `Στη δύναμη 10${exponentsUnicode[exp]} ο εκθέτης είναι ${exp}, άρα ακολουθούν ${exp} μηδενικά (${val.toLocaleString('el-GR')}).`
     };
@@ -433,6 +449,7 @@ const CHAPTER_GENERATORS = [
       title: '23. Η Έννοια του Κλάσματος',
       prompt: `Στο κλάσμα ${n}/${d}, ποιος αριθμός δείχνει σε πόσα ίσα μέρη χωρίσαμε τη μονάδα (παρονομαστής);`,
       type: 'input',
+      inputType: 'number',
       correct: String(d),
       explain: `Ο παρονομαστής είναι ο κάτω όρος (${d}) και δείχνει σε πόσα ίσα μέρη χωρίστηκε η μονάδα.`
     };
@@ -452,6 +469,7 @@ const CHAPTER_GENERATORS = [
       title: '24. Κλάσμα σε Δεκαδικό',
       prompt: `Μετάτρεψε το κλάσμα ${item.n}/${item.d} σε δεκαδικό αριθμό (π.χ. 0,5):`,
       type: 'input',
+      inputType: 'decimal',
       correct: item.dec,
       explain: `${item.n}/${item.d} ＝ ${item.n} : ${item.d} ＝ ${item.dec}.`
     };
@@ -468,6 +486,7 @@ const CHAPTER_GENERATORS = [
       title: '25. Ισοδύναμα & Ανάγωγα Κλάσματα',
       prompt: `Απλοποίησε το κλάσμα ${origN}/${origD} στην ανάγωγη μορφή του (π.χ. 2/3):`,
       type: 'input',
+      inputType: 'fraction',
       correct: `${simpN}/${simpD}`,
       explain: `Διαιρούμε και τους δύο όρους με το ${m} (Μ.Κ.Δ.): ${origN}/${origD} ＝ ${simpN}/${simpD}.`
     };
@@ -503,6 +522,7 @@ const CHAPTER_GENERATORS = [
       title: '27. Πρόσθεση Κλασμάτων',
       prompt: `Υπολόγισε το άθροισμα: ${n1}/${d} ＋ ${n2}/${d} ＝ (π.χ. 3/7)`,
       type: 'input',
+      inputType: 'fraction',
       correct: `${resN}/${d}`,
       altCorrect: `${resN / g}/${d / g}`,
       explain: `${n1}/${d} ＋ ${n2}/${d} ＝ (${n1} ＋ ${n2})/${d} ＝ ${resN}/${d}${g > 1 ? ` (ή ανάγωγο: ${resN / g}/${d / g})` : ''}.`
@@ -520,6 +540,7 @@ const CHAPTER_GENERATORS = [
       title: '28. Αφαίρεση Κλασμάτων',
       prompt: `Υπολόγισε τη διαφορά: ${n1}/${d} － ${n2}/${d} ＝ (π.χ. 2/7)`,
       type: 'input',
+      inputType: 'fraction',
       correct: `${resN}/${d}`,
       altCorrect: `${resN / g}/${d / g}`,
       explain: `${n1}/${d} － ${n2}/${d} ＝ (${n1} － ${n2})/${d} ＝ ${resN}/${d}${g > 1 ? ` (ή ανάγωγο: ${resN / g}/${d / g})` : ''}.`
@@ -539,6 +560,7 @@ const CHAPTER_GENERATORS = [
       title: '29. Πολλαπλασιασμός Κλασμάτων',
       prompt: `Υπολόγισε το γινόμενο: (${n1}/${d1}) · (${n2}/${d2}) ＝ (π.χ. 2/15)`,
       type: 'input',
+      inputType: 'fraction',
       correct: `${pN}/${pD}`,
       altCorrect: `${pN / g}/${pD / g}`,
       explain: `(${n1}/${d1}) · (${n2}/${d2}) ＝ (${n1} · ${n2})/(${d1} · ${d2}) ＝ ${pN}/${pD}${g > 1 ? ` (ή ανάγωγο: ${pN / g}/${pD / g})` : ''}.`
@@ -558,6 +580,7 @@ const CHAPTER_GENERATORS = [
       title: '30. Διαίρεση Κλασμάτων',
       prompt: `Υπολόγισε το πηλίκο: (${n1}/${d1}) : (${n2}/${d2}) ＝ (π.χ. 5/3)`,
       type: 'input',
+      inputType: 'fraction',
       correct: `${rN}/${rD}`,
       altCorrect: `${rN / g}/${rD / g}`,
       explain: `(${n1}/${d1}) : (${n2}/${d2}) ＝ (${n1} · ${d2})/(${d1} · ${n2}) ＝ ${rN}/${rD}${g > 1 ? ` (ή ανάγωγο: ${rN / g}/${rD / g})` : ''}.`
@@ -599,9 +622,30 @@ export default function Epanalipsi1Page() {
     loadNewTest();
   }, [loadNewTest]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων με διαχωρισμό τύπου
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
+      } else if (q?.inputType === 'fraction') {
+        sanitized = sanitized.replace(/[^0-9/]/g, '');
+        const parts = sanitized.split('/');
+        if (parts.length > 2) sanitized = parts[0] + '/' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 12) {
+        sanitized = sanitized.slice(0, 12);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -612,7 +656,20 @@ export default function Epanalipsi1Page() {
     const cleanCorrect = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
     const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase() : null;
 
-    return cleanAns === cleanCorrect || (cleanAlt && cleanAns === cleanAlt);
+    if (cleanAns === cleanCorrect || (cleanAlt && cleanAns === cleanAlt)) {
+      return true;
+    }
+
+    // Για δεκαδικούς αριθμούς: έλεγχος με ανοχή +-0.05
+    if (q.inputType === 'decimal') {
+      const nAns = parseFloat(cleanAns.replace(',', '.'));
+      const nCor = parseFloat(cleanCorrect.replace(',', '.'));
+      if (!isNaN(nAns) && !isNaN(nCor) && Math.abs(nAns - nCor) < 0.05) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   const handleSubmit = (e) => {
@@ -714,7 +771,7 @@ export default function Epanalipsi1Page() {
                             key={optIdx}
                             type="button"
                             disabled={submitted}
-                            onClick={() => handleInputChange(q.id, opt)}
+                            onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                             className={`p-2.5 rounded-xl text-xs sm:text-sm font-bold border transition text-center touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[44px] ${
                               answers[q.id] === opt
                                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
@@ -731,10 +788,11 @@ export default function Epanalipsi1Page() {
                         autoComplete="off"
                         spellCheck="false"
                         type="text"
+                        inputMode={q.inputType === 'fraction' ? 'text' : q.inputType === 'decimal' ? 'decimal' : 'numeric'}
                         disabled={submitted}
                         value={answers[q.id] || ''}
-                        onChange={(e) => handleInputChange(q.id, e.target.value)}
-                        placeholder="Γράψε την απάντηση..."
+                        onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                        placeholder={q.inputType === 'fraction' ? 'π.χ. 3/4' : q.inputType === 'decimal' ? 'π.χ. 0,5' : 'Απάντηση...'}
                         className="w-full p-2.5 bg-white border-2 border-slate-200 rounded-xl font-bold text-center text-base focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono shadow-inner"
                       />
                     )}
@@ -796,7 +854,7 @@ export default function Epanalipsi1Page() {
               <button
                 type="button"
                 onClick={loadNewTest}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
                 <span>🔄</span>
                 <span>{toCleanUppercase('Παίξε ξανά με 30 νέες ασκήσεις!')}</span>
