@@ -35,7 +35,7 @@ function gcd(a, b) {
   return x || 1;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -45,7 +45,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -72,11 +72,11 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${x}€`,
         tableData: [
           { item: 'Πλήθος φίλων (α)', formula: `${a}`, val: `${a}` },
-          { item: 'Μερίδιο καθενός (β)', formula: `${b} €`, val: `${b}` },
+          { item: 'Μερίδιο καθενός (β)', formula: `${b} €`, val: `${b} €` },
           { item: 'Εξίσωση (x : α ＝ β)', formula: `x : ${a} ＝ ${b}`, val: `x ＝ ${a} · ${b} ＝ ${x}€` }
         ],
         explain: `Σχηματίζουμε την εξίσωση: x : ${a} ＝ ${b}. Για να βρούμε τον άγνωστο διαιρετέο x, κάνουμε πολλαπλασιασμό: x ＝ ${a} · ${b} ＝ ${x}€.`,
-        distractors: [`${x + a}€`, `${x - b}€`, `${Math.round(b / a)}€`]
+        distractors: [`${x + a * 2}€`, `${x - a * 2}€`, `${x + 10}€`]
       };
     }
   },
@@ -96,7 +96,7 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${x} λίτρα`,
         tableData: [
           { item: 'Κανάτες (α)', formula: `${a}`, val: `${a}` },
-          { item: 'Χωρητικότητα κανάτας (β)', formula: `${b} λ.`, val: `${b}` },
+          { item: 'Χωρητικότητα κανάτας (β)', formula: `${b} λ.`, val: `${b} λ.` },
           { item: 'Εξίσωση', formula: `x : ${a} ＝ ${b}`, val: `x ＝ ${a} · ${b} ＝ ${x} λ.` }
         ],
         explain: `Η εξίσωση είναι x : ${a} ＝ ${b}. Βρίσκουμε τον άγνωστο διαιρετέο με πολλαπλασιασμό: x ＝ ${a} · ${b} ＝ ${x} λίτρα.`,
@@ -120,11 +120,11 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${x} κιλά`,
         tableData: [
           { item: 'Σακιά (α)', formula: `${a}`, val: `${a}` },
-          { item: 'Βάρος σακιού (β)', formula: `${b} κιλά`, val: `${b}` },
+          { item: 'Βάρος σακιού (β)', formula: `${b} κιλά`, val: `${b} κιλά` },
           { item: 'Εξίσωση', formula: `x : ${a} ＝ ${b}`, val: `x ＝ ${a} · ${b} ＝ ${x} κιλά` }
         ],
         explain: `x : ${a} ＝ ${b} ➔ x ＝ ${a} · ${b} ＝ ${x} κιλά.`,
-        distractors: [`${x + 10} κιλά`, `${x - 10} κιλά`, `${Math.round(b / a)} κιλά`]
+        distractors: [`${x + 10} κιλά`, `${x - 10} κιλά`, `${x + 20} κιλά`]
       };
     }
   },
@@ -186,13 +186,13 @@ const STANDARD_PROBLEMS_POOL = [
       const b = randInt(3, 5);
       const x = a * b;
       return {
-        prompt: `Από ένα τόπι υφάσματος x μέτρων ράφτηκαν ${a} ίδιες στολές, χρησιμοποιώντας ${b} μέτρα για την καθεμία. Πόσα μέτρα ήταν το αρχικό τόπι υφάσματος;`,
+        prompt: `Από ένα ρολό υφάσματος x μέτρων ράφτηκαν ${a} ίδιες στολές, χρησιμοποιώντας ${b} μέτρα για την καθεμία. Πόσα μέτρα ήταν το αρχικό ρολό υφάσματος;`,
         unit: 'μέτρα',
         correctVal: String(x),
         correctText: `${x} μέτρα`,
         tableData: [
           { item: 'Στολές (α)', formula: `${a}`, val: `${a}` },
-          { item: 'Μέτρα ανά στολή (β)', formula: `${b} μ.`, val: `${b}` },
+          { item: 'Μέτρα ανά στολή (β)', formula: `${b} μ.`, val: `${b} μ.` },
           { item: 'Εξίσωση', formula: `x : ${a} ＝ ${b}`, val: `x ＝ ${a} · ${b} ＝ ${x} μ.` }
         ],
         explain: `x : ${a} ＝ ${b} ➔ x ＝ ${a} · ${b} ＝ ${x} μέτρα.`,
@@ -223,7 +223,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Πολλαπλασιασμός', formula: `${a} · ${b}`, val: `x ＝ ${x}` }
         ],
         explain: `x ＝ ${a} · ${bStr} ＝ ${x}.`,
-        distractors: [String(x + 2), String(x - 2), (b / a).toFixed(2).replace('.', ',')]
+        distractors: [String(x + 2), String(x - 2), String(x + 4)]
       };
     }
   },
@@ -343,7 +343,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Συνολικό ποσό', formula: `${a} · ${b}€`, val: `${x}€` }
         ],
         explain: `x : ${a} ＝ ${b} ➔ x ＝ ${a} · ${b} ＝ ${x}€.`,
-        distractors: [`${x - 20}€`, `${x + 25}€`, `${Math.round(b / a)}€`]
+        distractors: [`${x - 20}€`, `${x + 25}€`, `${x + 10}€`]
       };
     }
   }
@@ -427,6 +427,7 @@ function generateQuestions() {
     {
       id: 'q1',
       type: 'input',
+      inputType: 'number',
       title: 'Εξίσωση: x : α ＝ β',
       prompt: `Λύσε την εξίσωση: x : ${q1A} ＝ ${q1B}`,
       correct: String(q1X),
@@ -435,6 +436,7 @@ function generateQuestions() {
     {
       id: 'q2',
       type: 'input',
+      inputType: 'number',
       title: 'Μεγαλύτεροι Αριθμοί',
       prompt: `Λύσε την εξίσωση: x : ${q2A} ＝ ${q2B}`,
       correct: String(q2X),
@@ -443,6 +445,7 @@ function generateQuestions() {
     {
       id: 'q3',
       type: 'input',
+      inputType: 'decimal',
       title: 'Δεκαδικοί Αριθμοί',
       prompt: `Λύσε την εξίσωση: x : ${q3A} ＝ ${q3B}`,
       correct: q3Correct,
@@ -480,6 +483,7 @@ function generateQuestions() {
     {
       id: 'q7',
       type: 'input',
+      inputType: 'number',
       title: 'Εξίσωση με Κλάσματα',
       prompt: q7Prompt,
       correct: q7Correct,
@@ -546,18 +550,44 @@ export default function AgnostosDiaGnostosExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
     const userVal = answers[q.id];
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
-      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      return cleanUser === cleanTarget;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/^x[=＝]/i, '').trim().toLowerCase();
+      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').replace(/^x[=＝]/i, '').trim().toLowerCase();
+
+      if (cleanUser === cleanTarget) return true;
+
+      // Για δεκαδικούς αριθμούς (Q3)
+      if (q.inputType === 'decimal') {
+        const numUser = parseFloat(cleanUser.replace(',', '.'));
+        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
+      }
+      return false;
     }
     if (q.type === 'mcq') {
       return userVal === q.correct;
@@ -588,6 +618,8 @@ export default function AgnostosDiaGnostosExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Άγνωστος Διαιρετέος - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -606,7 +638,7 @@ export default function AgnostosDiaGnostosExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -672,7 +704,7 @@ export default function AgnostosDiaGnostosExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -693,11 +725,11 @@ export default function AgnostosDiaGnostosExercisesPage() {
                           autoComplete="off"
                           spellCheck="false"
                           type="text"
-                          inputMode="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
-                          placeholder="x ＝ ..."
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.inputType === 'decimal' ? 'π.χ. 3,5' : 'Απάντηση...'}
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -708,7 +740,7 @@ export default function AgnostosDiaGnostosExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -720,7 +752,7 @@ export default function AgnostosDiaGnostosExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -742,7 +774,7 @@ export default function AgnostosDiaGnostosExercisesPage() {
                             <thead>
                               <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
                                 <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
-                                <th className="p-1.5">{toCleanUppercase('Πράξη / Μέθοδος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
                                 <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
                               </tr>
                             </thead>
@@ -801,7 +833,7 @@ export default function AgnostosDiaGnostosExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
