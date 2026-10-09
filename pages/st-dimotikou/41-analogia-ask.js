@@ -47,8 +47,9 @@ function toCleanUppercase(str) {
 
 // Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός με κόμμα)
 function formatNum(val, decimals = 2) {
-  if (Number.isInteger(val)) return String(val);
-  const rounded = Number(val.toFixed(decimals));
+  if (val === null || val === undefined || isNaN(Number(val))) return '0';
+  if (Number.isInteger(Number(val))) return String(val);
+  const rounded = Number(Number(val).toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
@@ -74,10 +75,10 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${cost2} €`,
         tableData: [
           { item: 'Πρώτη αγορά', formula: `${pCount1} τετράδια`, val: `${cost1} €` },
-          { item: 'Δεύτερη αγορά', formula: `${pCount2} τετράδια`, val: `x €` },
-          { item: 'Αναλογία (σταυρωτά γινόμενα)', formula: `(${cost1} · ${pCount2}) : ${pCount1}`, val: `${cost2} €` }
+          { item: 'Δεύτερη αγορά', formula: `${pCount2} τετράδια`, val: 'x €' },
+          { item: 'Αναλογία (σταυρωτά γινόμενα)', formula: `(${cost1} · ${pCount2}) :${pCount1}`, val: `${cost2} €` }
         ],
-        explain: `Στήνουμε την αναλογία ποσότητας προς κόστος: ${pCount1} : ${cost1} ＝ ${pCount2} : x. Εφαρμόζοντας σταυρωτά γινόμενα (χιαστί), έχουμε: x ＝ (${cost1} · ${pCount2}) : ${pCount1} ＝ ${cost1 * pCount2} : ${pCount1} ＝ ${cost2} €.`,
+        explain: `Στήνουμε την αναλογία ποσότητας προς κόστος: ${pCount1} : ${cost1} ＝${pCount2} : x. Εφαρμόζοντας σταυρωτά γινόμενα (χιαστί), έχουμε: x ＝ (${cost1} ·${pCount2}) : ${pCount1} ＝${cost1 * pCount2} : ${pCount1} ＝${cost2} €.`,
         distractors: [`${cost2 + 4} €`, `${cost2 - 3} €`, `${cost2 + 6} €`]
       };
     }
@@ -99,7 +100,7 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${juice2} ml`,
         tableData: [
           { item: 'Αρχική ποσότητα', formula: `${kg1} kg`, val: `${juice1} ml` },
-          { item: 'Νέα ποσότητα', formula: `${kg2} kg`, val: `x ml` },
+          { item: 'Νέα ποσότητα', formula: `${kg2} kg`, val: 'x ml` },
           { item: 'Επίλυση αναλογίας', formula: `(${juice1} · ${kg2}) : ${kg1}`, val: `${juice2} ml` }
         ],
         explain: `Τα ποσά είναι ανάλογα: ${kg1} : ${juice1} ＝ ${kg2} : x. Άρα x ＝ (${juice1} · ${kg2}) : ${kg1} ＝ ${juice1 * kg2} : ${kg1} ＝ ${juice2} ml.`,
@@ -124,7 +125,7 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${km2} km`,
         tableData: [
           { item: 'Πρώτη διαδρομή', formula: `${hours1} ώρες`, val: `${km1} km` },
-          { item: 'Δεύτερη διαδρομή', formula: `${hours2} ώρες`, val: `x km` },
+          { item: 'Δεύτερη διαδρομή', formula: `${hours2} ώρες`, val: 'x km' },
           { item: 'Αναλογία', formula: `(${km1} · ${hours2}) : ${hours1}`, val: `${km2} km` }
         ],
         explain: `Απόσταση και χρόνος σχηματίζουν αναλογία: ${km1} : ${hours1} ＝ x : ${hours2}. Με σταυρωτά γινόμενα βρίσκουμε: x ＝ (${km1} · ${hours2}) : ${hours1} ＝ ${km2} km.`,
@@ -147,7 +148,7 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: String(flour2),
         correctText: `${flour2} g`,
         tableData: [
-          { item: 'Αυγά', formula: `${eggs1} αυγά ➔ ${eggs2} αυγά`, val: `Αύξηση` },
+          { item: 'Αυγά', formula: `${eggs1} αυγά ➔ ${eggs2} αυγά`, val: 'Αύξηση' },
           { item: 'Αναλογία', formula: `${eggs1} : ${flour1} ＝ ${eggs2} : x`, val: `x ＝ (${flour1} · ${eggs2}) : ${eggs1}` },
           { item: 'Τελικό αλεύρι', formula: `${flour1 * eggs2} : ${eggs1}`, val: `${flour2} g` }
         ],
@@ -174,7 +175,7 @@ const HARD_PROBLEMS_POOL = [
         correctText: `${formatNum(realMeters)} m`,
         tableData: [
           { item: 'Κλίμακα', formula: `1 : ${scaleVal}`, val: `1 cm ➔ ${scaleVal} cm` },
-          { item: 'Απόσταση στον χάρτη', formula: `${mapCm} cm`, val: `${mapCm · scaleVal} cm` },
+          { item: 'Απόσταση στον χάρτη', formula: `${mapCm} cm`, val: `${mapCm * scaleVal} cm` },
           { item: 'Μετατροπή σε μέτρα', formula: `(${mapCm} · ${scaleVal}) : 100`, val: `${formatNum(realMeters)} m` }
         ],
         explain: `Η κλίμακα είναι αναλογία: 1 : ${scaleVal} ＝ ${mapCm} : x. Άρα η πραγματική απόσταση είναι x ＝ ${mapCm} · ${scaleVal} ＝ ${mapCm * scaleVal} cm. Μετατρέπουμε σε μέτρα: ${mapCm * scaleVal} : 100 ＝ ${formatNum(realMeters)} m.`,
@@ -250,7 +251,7 @@ const HARD_PROBLEMS_POOL = [
         correctVal: String(pureGold),
         correctText: `${pureGold} g`,
         tableData: [
-          { item: 'Αναλογία καρατίων', formula: '18 μέρη στα 24', val: `18/24 ＝ 3/4` },
+          { item: 'Αναλογία καρατίων', formula: '18 μέρη στα 24', val: '18/24 ＝ 3/4' },
           { item: 'Εξίσωση αναλογίας', formula: `18 : 24 ＝ x : ${totalWeight}`, val: `x ＝ (18 · ${totalWeight}) : 24` },
           { item: 'Καθαρός χρυσός', formula: `(3 · ${totalWeight}) : 4`, val: `${pureGold} g` }
         ],
@@ -335,8 +336,8 @@ function generateQuestions() {
   ]);
 
   // Q7: Standard Problem (Input)
-  const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
-  const q7Data = STANDARD_PROBLEMS_POOL[spIndex].generate();
+  const spIndex1 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q7Data = STANDARD_PROBLEMS_POOL[spIndex1].generate();
 
   // Q8: MCQ - Επαλήθευση ισότητας αναλογίας
   const q8A = randInt(2, 5);
@@ -354,8 +355,8 @@ function generateQuestions() {
   ]);
 
   // Q9: Hard Problem (Pool)
-  const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
-  const q9Data = HARD_PROBLEMS_POOL[hpIndex].generate();
+  const hpIndex1 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q9Data = HARD_PROBLEMS_POOL[hpIndex1].generate();
 
   // Q10: True/False - Βασική θεωρία αναλογιών
   const q10IsTrue = Math.random() > 0.5;
