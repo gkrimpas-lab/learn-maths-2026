@@ -40,7 +40,7 @@ function findLCM(a, b) {
   return Math.abs(a * b) / findGCD(a, b);
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -50,7 +50,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -84,7 +84,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Υπόλοιπο (Διαφορά)', formula: `${n1}/${resD} － 4/${resD}`, val: `${resN}/${resD}` }
         ],
         explain: `Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(8, 2) ＝ 8. Το 1/2 γίνεται 4/8. Αφαιρούμε τους αριθμητές: 7/8 － 4/8 ＝ ${resN}/${resD}.`,
-        distractors: [`6/6`, `5/8`, `2/8`]
+        distractors: ['4/8', '5/8', '2/8']
       };
     }
   },
@@ -101,15 +101,15 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `Ένα μπουκάλι περιείχε τα ${n1}/${d1} χυμού. Ήπιαμε το ${n2}/${d2} του χυμού. Ποιο μέρος του χυμού έμεινε στο μπουκάλι;`,
         unit: '',
-        correctVal: `1/2`,
-        correctText: `1/2 (3/6)`,
+        correctVal: '1/2',
+        correctText: '1/2 (3/6)',
         tableData: [
           { item: 'Αρχικό περιεχόμενο', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
-          { item: 'Ποσότητα που ήπιαμε (Ομώνυμο)', formula: `(${n2} · 2) / (${d2} · 2)`, val: `2/6` },
-          { item: 'Υπόλοιπο & Απλοποίηση', formula: `5/6 － 2/6 ＝ 3/6 (: 3)`, val: `1/2` }
+          { item: 'Ποσότητα που ήπιαμε (Ομώνυμο)', formula: `(${n2} · 2) / (${d2} · 2)`, val: '2/6' },
+          { item: 'Υπόλοιπο & Απλοποίηση', formula: '5/6 － 2/6 ＝ 3/6 (: 3)', val: '1/2' }
         ],
         explain: `Ε.Κ.Π.(6, 3) ＝ 6. Το 1/3 γίνεται 2/6. Αφαιρούμε: 5/6 － 2/6 ＝ 3/6. Απλοποιώντας διαιρώντας με το 3 παίρνουμε 1/2.`,
-        distractors: [`4/3`, `2/3`, `1/6`]
+        distractors: ['4/6', '2/3', '1/6']
       };
     }
   },
@@ -124,17 +124,17 @@ const STANDARD_PROBLEMS_POOL = [
       const n2 = 1;
       const d2 = 4;
       return {
-        prompt: `Μια μοδίστρα είχε τα ${n1}/${d1} ενός τόπι υφάσματος και χρησιμοποίησε το ${n2}/${d2}. Ποιο μέρος του υφάσματος περίσσεψε;`,
+        prompt: `Μια μοδίστρα είχε τα ${n1}/${d1} ενός ρολού υφάσματος και χρησιμοποίησε το ${n2}/${d2}. Ποιο μέρος του υφάσματος περίσσεψε;`,
         unit: '',
-        correctVal: `1/2`,
-        correctText: `1/2 (2/4)`,
+        correctVal: '1/2',
+        correctText: '1/2 (2/4)',
         tableData: [
           { item: 'Αρχικό ύφασμα', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
           { item: 'Ύφασμα που χρησιμοποιήθηκε', formula: `${n2}/${d2}`, val: `${n2}/${d2}` },
-          { item: 'Διαφορά & Απλοποίηση', formula: `(${n1} － ${n2})/${d1} ＝ 2/4 (: 2)`, val: `1/2` }
+          { item: 'Διαφορά & Απλοποίηση', formula: `(${n1} － ${n2})/${d1} ＝ 2/4 (: 2)`, val: '1/2' }
         ],
         explain: `Τα κλάσματα είναι ομώνυμα: 3/4 － 1/4 ＝ 2/4. Απλοποιώντας με το 2 έχουμε 1/2.`,
-        distractors: [`2/0`, `1/4`, `3/8`]
+        distractors: ['2/8', '1/4', '3/8']
       };
     }
   },
@@ -151,15 +151,15 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `Οι μαθητές είχαν σκάψει τα ${n1}/${d1} ενός κήπου. Φύτεψαν λουλούδια στα ${n2}/${d2} του κήπου. Ποιο μέρος του κήπου έμεινε σκαμμένο χωρίς φυτά;`,
         unit: '',
-        correctVal: `1/2`,
-        correctText: `1/2 (5/10)`,
+        correctVal: '1/2',
+        correctText: '1/2 (5/10)',
         tableData: [
           { item: 'Σκαμμένο μέρος', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
-          { item: 'Φυτεμένο μέρος (Ομώνυμο)', formula: `(${n2} · 2) / (${d2} · 2)`, val: `4/10` },
-          { item: 'Υπόλοιπο & Απλοποίηση', formula: `9/10 － 4/10 ＝ 5/10 (: 5)`, val: `1/2` }
+          { item: 'Φυτεμένο μέρος (Ομώνυμο)', formula: `(${n2} · 2) / (${d2} · 2)`, val: '4/10' },
+          { item: 'Υπόλοιπο & Απλοποίηση', formula: '9/10 － 4/10 ＝ 5/10 (: 5)', val: '1/2' }
         ],
         explain: `Ε.Κ.Π.(10, 5) ＝ 10. Το 2/5 γίνεται 4/10. Αφαιρούμε: 9/10 － 4/10 ＝ 5/10 ＝ 1/2.`,
-        distractors: [`7/5`, `3/10`, `7/10`]
+        distractors: ['4/10', '3/10', '7/10']
       };
     }
   },
@@ -176,15 +176,15 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `Μία πλάκα σοκολάτας είχε τα ${n1}/${d1} του βάρους της. Δόθηκαν τα ${n2}/${d2}. Ποιο μέρος της σοκολάτας περίσσεψε;`,
         unit: '',
-        correctVal: `1/2`,
-        correctText: `1/2 (5/10)`,
+        correctVal: '1/2',
+        correctText: '1/2 (5/10)',
         tableData: [
-          { item: 'Αρχική ποσότητα (Ομώνυμο)', formula: `(${n1} · 2) / (${d1} · 2)`, val: `8/10` },
-          { item: 'Ποσότητα που δόθηκε', formula: `${n2}/${d2}`, val: `3/10` },
-          { item: 'Διαφορά & Απλοποίηση', formula: `8/10 － 3/10 ＝ 5/10 (: 5)`, val: `1/2` }
+          { item: 'Αρχική ποσότητα (Ομώνυμο)', formula: `(${n1} · 2) / (${d1} · 2)`, val: '8/10' },
+          { item: 'Ποσότητα που δόθηκε', formula: `${n2}/${d2}`, val: '3/10' },
+          { item: 'Διαφορά & Απλοποίηση', formula: '8/10 － 3/10 ＝ 5/10 (: 5)', val: '1/2' }
         ],
         explain: `Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(5, 10) ＝ 10: 4/5 ＝ 8/10. Αφαιρούμε: 8/10 － 3/10 ＝ 5/10 ＝ 1/2.`,
-        distractors: [`1/5`, `2/5`, `1/10`]
+        distractors: ['1/5', '2/5', '1/10']
       };
     }
   },
@@ -201,15 +201,15 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         prompt: `Ένας ποδηλάτης είχε σχεδιάσει να διανύσει τα ${n1}/${d1} μιας διαδρομής. Αν διάνυσε μόνο το ${n2}/${d2}, ποιο μέρος της σχεδιασμένης διαδρομής του απομένει;`,
         unit: '',
-        correctVal: `1/3`,
-        correctText: `1/3 (4/12)`,
+        correctVal: '1/3',
+        correctText: '1/3 (4/12)',
         tableData: [
           { item: 'Σχεδιασμένη διαδρομή', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
-          { item: 'Διανυθείσα διαδρομή (Ομώνυμο)', formula: `(${n2} · 3) / (${d2} · 3)`, val: `3/12` },
-          { item: 'Υπόλοιπο & Απλοποίηση', formula: `7/12 － 3/12 ＝ 4/12 (: 4)`, val: `1/3` }
+          { item: 'Διανυθείσα διαδρομή (Ομώνυμο)', formula: `(${n2} · 3) / (${d2} · 3)`, val: '3/12' },
+          { item: 'Υπόλοιπο & Απλοποίηση', formula: '7/12 － 3/12 ＝ 4/12 (: 4)', val: '1/3' }
         ],
         explain: `Ε.Κ.Π.(12, 4) ＝ 12. Το 1/4 γίνεται 3/12. Αφαιρούμε: 7/12 － 3/12 ＝ 4/12 ＝ 1/3.`,
-        distractors: [`6/8`, `1/4`, `5/12`]
+        distractors: ['5/12', '1/4', '3/12']
       };
     }
   }
@@ -233,12 +233,12 @@ const HARD_PROBLEMS_POOL = [
         correctVal: `${resN}/${resD}`,
         correctText: `${resN}/${resD} (ή 1 και 1/4)`,
         tableData: [
-          { item: 'Ακέραιος σε τέταρτα', formula: `${whole} ＝ (${whole} · ${den})/${den}`, val: `8/4` },
-          { item: 'Αφαιρετέος', formula: `${num}/${den}`, val: `3/4` },
+          { item: 'Ακέραιος σε τέταρτα', formula: `${whole} ＝ (${whole} · ${den})/${den}`, val: '8/4' },
+          { item: 'Αφαιρετέος', formula: `${num}/${den}`, val: '3/4' },
           { item: 'Διαφορά', formula: `8/4 － 3/4`, val: `${resN}/${resD}` }
         ],
         explain: `Γράφουμε τον ακέραιο 2 ως κλάσμα με παρονομαστή 4: 2 ＝ 8/4. Αφαιρούμε: 8/4 － 3/4 ＝ 5/4 (ή 1 και 1/4).`,
-        distractors: [`1/4`, `7/4`, `5/0`]
+        distractors: ['1/4', '7/4', '3/4']
       };
     }
   },
@@ -394,8 +394,8 @@ function generateQuestions() {
     `${q3DiffNum + 1}/${q3Den}`,
     `${q3Num}/${q3Den}`,
     `${q3DiffNum}/${q3Den + 1}`
-  ];
-  const q3Options = shuffle([...new Set([q3CorrectStr, ...q3Wrongs])]);
+  ].filter(w => w !== q3CorrectStr);
+  const q3Options = shuffle([...new Set([q3CorrectStr, ...q3Wrongs])]).slice(0, 4);
 
   // Q4: MCQ - Αφαίρεση Ακέραιου με Κλάσμα
   const q4Whole = randInt(2, 3);
@@ -579,9 +579,22 @@ export default function AfairesiKlasmatonExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      let sanitized = String(rawValue).replace(/[^0-9/]/g, '');
+      const parts = sanitized.split('/');
+      if (parts.length > 2) {
+        sanitized = parts[0] + '/' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -622,6 +635,8 @@ export default function AfairesiKlasmatonExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Αφαίρεση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -640,7 +655,7 @@ export default function AfairesiKlasmatonExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -706,7 +721,7 @@ export default function AfairesiKlasmatonExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -724,11 +739,14 @@ export default function AfairesiKlasmatonExercisesPage() {
                       <div className="space-y-2 mb-3">
                         <input
                           type="text"
-                          inputMode="text"
+                          inputMode={q.id === 'q7' ? 'numeric' : 'text'}
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
-                          placeholder="π.χ. 1/4"
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.id === 'q7' ? 'π.χ. 3' : 'π.χ. 1/4'}
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -739,7 +757,7 @@ export default function AfairesiKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -751,7 +769,7 @@ export default function AfairesiKlasmatonExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -832,7 +850,7 @@ export default function AfairesiKlasmatonExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
