@@ -35,7 +35,7 @@ function gcd(a, b) {
   return x || 1;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -45,7 +45,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -72,11 +72,11 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${x}€`,
         tableData: [
           { item: 'Πλήθος τετραδίων (α)', formula: `${a}`, val: `${a}` },
-          { item: 'Συνολικό κόστος (β)', formula: `${b} €`, val: `${b}` },
+          { item: 'Συνολικό κόστος (β)', formula: `${b} €`, val: `${b} €` },
           { item: 'Εξίσωση (α · x ＝ β)', formula: `${a} · x ＝ ${b}`, val: `x ＝ ${b} : ${a} ＝ ${x}€` }
         ],
         explain: `Σχηματίζουμε την εξίσωση: ${a} · x ＝ ${b}. Για να βρούμε τον άγνωστο παράγοντα x, διαιρούμε το γινόμενο με τον γνωστό παράγοντα: x ＝ ${b} : ${a} ＝ ${x}€.`,
-        distractors: [`${x + 2}€`, `${Math.max(1, x - 2)}€`, `${b - a}€`]
+        distractors: [`${x + 2}€`, `${Math.max(1, x - 2)}€`, `${x + 4}€`]
       };
     }
   },
@@ -96,7 +96,7 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${x} κιλά`,
         tableData: [
           { item: 'Πλήθος σακιών (α)', formula: `${a}`, val: `${a}` },
-          { item: 'Συνολικό βάρος (β)', formula: `${b} κιλά`, val: `${b}` },
+          { item: 'Συνολικό βάρος (β)', formula: `${b} κιλά`, val: `${b} κιλά` },
           { item: 'Εξίσωση', formula: `${a} · x ＝ ${b}`, val: `x ＝ ${b} : ${a} ＝ ${x} κιλά` }
         ],
         explain: `Η εξίσωση είναι ${a} · x ＝ ${b}. Βρίσκουμε τον άγνωστο παράγοντα με διαίρεση: x ＝ ${b} : ${a} ＝ ${x} κιλά.`,
@@ -168,11 +168,11 @@ const STANDARD_PROBLEMS_POOL = [
         correctText: `${x}€`,
         tableData: [
           { item: 'Παιδιά (α)', formula: `${a}`, val: `${a}` },
-          { item: 'Συνολικό κόστος (β)', formula: `${b} €`, val: `${b}` },
+          { item: 'Συνολικό κόστος (β)', formula: `${b} €`, val: `${b} €` },
           { item: 'Εξίσωση', formula: `${a} · x ＝ ${b}`, val: `x ＝ ${b} : ${a} ＝ ${x}€` }
         ],
         explain: `${a} · x ＝ ${b} ➔ x ＝ ${b} : ${a} ＝ ${x}€.`,
-        distractors: [`${x + 2}€`, `${x - 2}€`, `${b - a}€`]
+        distractors: [`${x + 2}€`, `${x - 2}€`, `${x + 3}€`]
       };
     }
   },
@@ -275,28 +275,15 @@ const HARD_PROBLEMS_POOL = [
   },
   {
     id: 'hp4',
-    title: 'Εξίσωση με Κλάσμα ως Συντελεστή (2/3 · x ＝ 8)',
+    title: 'Εξίσωση με Κλάσμα ως Συντελεστή',
     unit: '',
     generate: () => {
-      // 2/3 * x = 8 -> x = 8 : 2/3 = 8 * 3/2 = 12
+      // 2/3 * x = b -> x είναι πολλαπλάσιο του 3 (π.χ. 6, 9, 12)
       const num = 2;
       const den = 3;
-      const x = randInt(6, 12);
-      const b = (num * x) / den;
-      if (!Number.isInteger(b)) {
-        return {
-          prompt: 'Λύσε την εξίσωση: 2/3 · x ＝ 8:',
-          unit: '',
-          correctVal: '12',
-          correctText: '12',
-          tableData: [
-            { item: 'Εξίσωση', formula: '2/3 · x ＝ 8', val: 'x ＝ 8 : (2/3)' },
-            { item: 'Αντιστροφή και πολλαπλασιασμός', formula: '8 · (3/2) ＝ 24/2', val: '12' }
-          ],
-          explain: 'x ＝ 8 : (2/3) ＝ 8 · (3/2) ＝ 24/2 ＝ 12.',
-          distractors: ['16/3', '10', '6']
-        };
-      }
+      const mult = randInt(2, 4);
+      const x = mult * den; // 6, 9, 12
+      const b = (num * x) / den; // ακέραιος
       return {
         prompt: `Λύσε την εξίσωση: ${num}/${den} · x ＝ ${b}:`,
         unit: '',
@@ -307,7 +294,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Πολλαπλασιασμός με αντίστροφο', formula: `${b} · (${den}/${num})`, val: `${x}` }
         ],
         explain: `x ＝ ${b} : (${num}/${den}) ＝ ${b} · (${den}/${num}) ＝ ${x}.`,
-        distractors: [String(x + 2), String(x - 2), String(b * num)]
+        distractors: [String(x + 3), String(Math.max(1, x - 3)), String(x + 6)]
       };
     }
   },
@@ -406,7 +393,7 @@ function generateQuestions() {
     ? 'Η εξίσωση 5 · x ＝ 35 και η εξίσωση x · 5 ＝ 35 λύνονται με τον ίδιο ακριβώς τρόπο (x ＝ 35 : 5).'
     : 'Στην εξίσωση x · 5 ＝ 35 δεν μπορούμε να κάνουμε διαίρεση επειδή το x είναι πρώτος παράγοντας.';
 
-  // Q7: Input - Εξίσωση με κλάσματα: a/b · x = c/d
+  // Q7: Input - Εξίσωση με κλάσματα: a/b · x = c/b
   const q7Den = randInt(3, 8);
   const q7NumA = randInt(2, 5);
   const q7X = randInt(2, 6);
@@ -418,7 +405,7 @@ function generateQuestions() {
   const q8A = randInt(3, 6);
   const q8X = randInt(6, 12);
   const q8B = q8A * q8X;
-  const q8Options = shuffle([...new Set([String(q8X), String(q8X + 2), String(q8X - 2), String(q8B - q8A)])]);
+  const q8Options = shuffle([...new Set([String(q8X), String(q8X + 2), String(Math.max(1, q8X - 2)), String(q8X + 4)])]);
 
   // Q9: Standard Problem (Pool of 6)
   const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
@@ -438,6 +425,7 @@ function generateQuestions() {
     {
       id: 'q1',
       type: 'input',
+      inputType: 'number',
       title: 'Εξίσωση: α · x ＝ β',
       prompt: `Λύσε την εξίσωση: ${q1A} · x ＝ ${q1B}`,
       correct: String(q1X),
@@ -446,6 +434,7 @@ function generateQuestions() {
     {
       id: 'q2',
       type: 'input',
+      inputType: 'number',
       title: 'Εξίσωση: x · α ＝ β',
       prompt: `Λύσε την εξίσωση: x · ${q2A} ＝ ${q2B}`,
       correct: String(q2X),
@@ -454,6 +443,7 @@ function generateQuestions() {
     {
       id: 'q3',
       type: 'input',
+      inputType: 'decimal',
       title: 'Δεκαδικοί Αριθμοί',
       prompt: `Λύσε την εξίσωση: ${q3A} · x ＝ ${q3B}`,
       correct: q3Correct,
@@ -491,6 +481,7 @@ function generateQuestions() {
     {
       id: 'q7',
       type: 'input',
+      inputType: 'number',
       title: 'Εξίσωση με Κλάσματα',
       prompt: q7Prompt,
       correct: q7Correct,
@@ -557,18 +548,44 @@ export default function GnostosEpiAgnostosExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
     const userVal = answers[q.id];
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
-      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      return cleanUser === cleanTarget;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/^x[=＝]/i, '').trim().toLowerCase();
+      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').replace(/^x[=＝]/i, '').trim().toLowerCase();
+
+      if (cleanUser === cleanTarget) return true;
+
+      // Για δεκαδικούς αριθμούς (Q3)
+      if (q.inputType === 'decimal') {
+        const numUser = parseFloat(cleanUser.replace(',', '.'));
+        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
+      }
+      return false;
     }
     if (q.type === 'mcq') {
       return userVal === q.correct;
@@ -599,6 +616,8 @@ export default function GnostosEpiAgnostosExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Άγνωστος Παράγοντας - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -617,7 +636,7 @@ export default function GnostosEpiAgnostosExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -683,7 +702,7 @@ export default function GnostosEpiAgnostosExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -704,11 +723,11 @@ export default function GnostosEpiAgnostosExercisesPage() {
                           autoComplete="off"
                           spellCheck="false"
                           type="text"
-                          inputMode="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
-                          placeholder="x ＝ ..."
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.inputType === 'decimal' ? 'π.χ. 3,5' : 'Απάντηση...'}
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -719,7 +738,7 @@ export default function GnostosEpiAgnostosExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -731,7 +750,7 @@ export default function GnostosEpiAgnostosExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -812,7 +831,7 @@ export default function GnostosEpiAgnostosExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
