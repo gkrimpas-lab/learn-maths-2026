@@ -170,7 +170,7 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'sp5',
     title: 'Συσκευασία Κυβικών Κουτιών',
-    unit: 'μικρά κουτιά',
+    unit: 'κουτιά',
     generate: () => {
       const counts = [2, 3, 4];
       const n = counts[randInt(0, counts.length - 1)];
@@ -635,14 +635,18 @@ export default function DinameisExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμός Input μόνο για ακέραιους αριθμούς (0-9)
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize μόνο για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    let sanitized = String(val).replace(/[^0-9]/g, '');
-    if (sanitized.length > 10) {
-      sanitized = sanitized.slice(0, 10);
+    if (type === 'input') {
+      let sanitized = String(rawValue).replace(/[^0-9]/g, '');
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
     }
-    setAnswers(prev => ({ ...prev, [id]: sanitized }));
   };
 
   const isQuestionCorrect = (q) => {
@@ -768,7 +772,7 @@ export default function DinameisExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -792,7 +796,7 @@ export default function DinameisExercisesPage() {
                           maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
                           placeholder="Γράψε την απάντησή σου..."
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
@@ -804,7 +808,7 @@ export default function DinameisExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -816,7 +820,7 @@ export default function DinameisExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -898,9 +902,7 @@ export default function DinameisExercisesPage() {
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
               <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">
-                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
-              </span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
