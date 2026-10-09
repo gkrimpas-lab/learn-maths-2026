@@ -35,7 +35,7 @@ function gcd(a, b) {
   return x || 1;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -45,7 +45,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -61,7 +61,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Μοίρασμα Πίτσας σε Παρέα',
     unit: 'μέρος',
     generate: () => {
-      // 4/8 = 1/2
       const origN = 4;
       const origD = 8;
       const redN = 1;
@@ -77,7 +76,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Ανάγωγο κλάσμα', formula: `(${origN} : 4) / (${origD} : 4)`, val: `${redN}/${redD}` }
         ],
         explain: `Διαιρούμε και τους δύο όρους με το 4 (Μ.Κ.Δ.): (${origN} : 4) / (${origD} : 4) ＝ ${redN}/${redD} (δηλαδή ακριβώς η μισή πίτσα).`,
-        distractors: [`2/${redD}`, `${redN}/4`, `2/3`]
+        distractors: ['3/4', `${redN}/4`, '2/3']
       };
     }
   },
@@ -86,7 +85,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Σοκολάτα σε Τετραγωνάκια',
     unit: 'μέρος',
     generate: () => {
-      // 6/9 = 2/3
       const origN = 6;
       const origD = 9;
       const redN = 2;
@@ -102,7 +100,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Ανάγωγο κλάσμα', formula: `(${origN} : 3) / (${origD} : 3)`, val: `${redN}/${redD}` }
         ],
         explain: `Απλοποιούμε διαιρώντας αριθμητή και παρονομαστή με το 3: (${origN} : 3) / (${origD} : 3) ＝ ${redN}/${redD}.`,
-        distractors: [`1/3`, `3/4`, `2/5`]
+        distractors: ['1/3', '3/4', '2/5']
       };
     }
   },
@@ -111,7 +109,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Σελίδες Βιβλίου',
     unit: 'μέρος',
     generate: () => {
-      // 8/12 = 2/3
       const origN = 8;
       const origD = 12;
       const redN = 2;
@@ -127,7 +124,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Ανάγωγο κλάσμα', formula: `(${origN} : 4) / (${origD} : 4)`, val: `${redN}/${redD}` }
         ],
         explain: `Διαιρούμε και τους δύο όρους με το 4 (Μ.Κ.Δ.): (${origN} : 4) / (${origD} : 4) ＝ ${redN}/${redD}.`,
-        distractors: [`4/6`, `1/2`, `3/4`]
+        distractors: ['4/6', '1/2', '3/4']
       };
     }
   },
@@ -136,7 +133,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Κήπος με Λουλούδια',
     unit: 'μέρος',
     generate: () => {
-      // 6/10 = 3/5
       const origN = 6;
       const origD = 10;
       const redN = 3;
@@ -152,7 +148,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Ανάγωγο κλάσμα', formula: `(${origN} : 2) / (${origD} : 2)`, val: `${redN}/${redD}` }
         ],
         explain: `Απλοποιούμε με το 2: (${origN} : 2) / (${origD} : 2) ＝ ${redN}/${redD}.`,
-        distractors: [`2/5`, `3/10`, `4/5`]
+        distractors: ['2/5', '3/10', '4/5']
       };
     }
   },
@@ -161,7 +157,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Κομμάτια Παζλ',
     unit: 'μέρος',
     generate: () => {
-      // 9/12 = 3/4
       const origN = 9;
       const origD = 12;
       const redN = 3;
@@ -177,7 +172,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Ανάγωγο κλάσμα', formula: `(${origN} : 3) / (${origD} : 3)`, val: `${redN}/${redD}` }
         ],
         explain: `Διαιρούμε και τους δύο όρους με το 3: (${origN} : 3) / (${origD} : 3) ＝ ${redN}/${redD}.`,
-        distractors: [`2/3`, `3/6`, `1/4`]
+        distractors: ['2/3', '3/6', '1/4']
       };
     }
   },
@@ -186,7 +181,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Αθλητική Διαδρομή',
     unit: 'μέρος',
     generate: () => {
-      // 4/16 = 1/4
       const origN = 4;
       const origD = 16;
       const redN = 1;
@@ -202,7 +196,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Ανάγωγο κλάσμα', formula: `(${origN} : 4) / (${origD} : 4)`, val: `${redN}/${redD}` }
         ],
         explain: `Διαιρούμε αριθμητή και παρονομαστή με το 4: (${origN} : 4) / (${origD} : 4) ＝ ${redN}/${redD}.`,
-        distractors: [`2/8`, `1/8`, `1/2`]
+        distractors: ['2/8', '1/8', '1/2']
       };
     }
   }
@@ -214,14 +208,13 @@ const HARD_PROBLEMS_POOL = [
     title: 'Διεύρυνση Κλάσματος για Συνταγή',
     unit: 'ισοδύναμο',
     generate: () => {
-      // 3/5 με πολλαπλασιαστή 4 -> 12/20
       const baseN = 3;
       const baseD = 5;
       const mult = 4;
       const targetN = baseN * mult;
       const targetD = baseD * mult;
       return {
-        prompt: `Σε μία συνταγή ζαχαροπλαστικής χρειαζόμαστε τα ${baseN}/${baseD} του κιλού ζάχαρη. Αν θέλουμε να εκφράσουμε το κλάσμα με παρονομαστή το ${targetD}, ποιος πρέπει να είναι ο νέος αριθμητής x ώστε να διατηρηθεί η ισοδυναμία (${baseN}/${baseD} ＝ x/${targetD});`,
+        prompt: `Σε μία συνταγή ζαχαροπλαστικής χρειαζόμαστε 3/5 του κιλού ζάχαρη. Αν θέλουμε να εκφράσουμε το κλάσμα με παρονομαστή το ${targetD}, ποιος πρέπει να είναι ο νέος αριθμητής x ώστε να διατηρηθεί η ισοδυναμία (${baseN}/${baseD} ＝ x/${targetD});`,
         unit: '',
         correctVal: String(targetN),
         correctText: `${targetN} (κλάσμα: ${targetN}/${targetD})`,
@@ -240,7 +233,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Απλοποίηση με Μεγάλο Μ.Κ.Δ.',
     unit: 'ανάγωγο',
     generate: () => {
-      // 24/36 -> ΜΚΔ=12 -> 2/3
       const origN = 24;
       const origD = 36;
       const commonGcd = 12;
@@ -257,7 +249,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Ανάγωγο κλάσμα', formula: `(${origN} : ${commonGcd}) / (${origD} : ${commonGcd})`, val: `${redN}/${redD}` }
         ],
         explain: `Ο Μέγιστος Κοινός Διαιρέτης του ${origN} και του ${origD} είναι το ${commonGcd}. Διαιρώντας και τους δύο όρους με το ${commonGcd} παίρνουμε άμεσα το ανάγωγο κλάσμα ${redN}/${redD}.`,
-        distractors: [`4/6`, `6/9`, `3/4`]
+        distractors: ['4/6', '6/9', '3/4']
       };
     }
   },
@@ -266,7 +258,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Σύγκριση Ισοδύναμων Ποσοτήτων',
     unit: '',
     generate: () => {
-      // 2/3 vs 8/12 vs 10/15
       const n1 = 2;
       const d1 = 3;
       const n2 = 8;
@@ -280,12 +271,12 @@ const HARD_PROBLEMS_POOL = [
         correctText: 'Και τα τρία κλάσματα είναι απολύτως ισοδύναμα (Α ＝ Β ＝ Γ)',
         tableData: [
           { item: `Κλάσμα Α (${n1}/${d1})`, formula: 'Ανάγωγη μορφή', val: `${n1}/${d1}` },
-          { item: `Κλάσμα Β (${n2}/${d2})`, formula: `Απλοποίηση με 4`, val: `${n1}/${d1}` },
-          { item: `Κλάσμα Γ (${n3}/${d3})`, formula: `Απλοποίηση με 5`, val: `${n1}/${d1}` }
+          { item: `Κλάσμα Β (${n2}/${d2})`, formula: 'Απλοποίηση με 4', val: `${n1}/${d1}` },
+          { item: `Κλάσμα Γ (${n3}/${d3})`, formula: 'Απλοποίηση με 5', val: `${n1}/${d1}` }
         ],
         explain: `Απλοποιώντας το Β με το 4 παίρνουμε ${n1}/${d1}. Απλοποιώντας το Γ με το 5 παίρνουμε επίσης ${n1}/${d1}. Επομένως, και τα τρία κλάσματα είναι ισοδύναμα μεταξύ τους (Α ＝ Β ＝ Γ).`,
         distractors: [
-          'Το Α είναι μεγαλύτερο από το Β και το Γ',
+          'Το Α εκφράζει μεγαλύτερη ποσότητα από τα Β και Γ',
           'Το Γ είναι το μεγαλύτερο από όλα',
           'Μόνο τα Α και Β είναι ισοδύναμα'
         ]
@@ -297,7 +288,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Εύρεση Άγνωστου Παρονομαστή',
     unit: '',
     generate: () => {
-      // 4/7 = 20/y -> y = 35
       const baseN = 4;
       const baseD = 7;
       const mult = 5;
@@ -323,7 +313,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Απλοποίηση Μεγάλου Κλάσματος (Βήμα-Βήμα)',
     unit: 'ανάγωγο',
     generate: () => {
-      // 30/45 -> ΜΚΔ=15 -> 2/3
       const origN = 30;
       const origD = 45;
       const commonGcd = 15;
@@ -340,7 +329,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Ανάγωγο κλάσμα', formula: `(${origN} : ${commonGcd}) / (${origD} : ${commonGcd})`, val: `${redN}/${redD}` }
         ],
         explain: `Ο Μ.Κ.Δ.(30, 45) είναι το 15. Διαιρούμε και τους δύο όρους με το 15: (${origN} : 15) / (${origD} : 15) ＝ ${redN}/${redD}.`,
-        distractors: [`6/9`, `10/15`, `3/5`]
+        distractors: ['6/9', '10/15', '3/5']
       };
     }
   },
@@ -349,20 +338,20 @@ const HARD_PROBLEMS_POOL = [
     title: 'Σύνθετος Έλεγχος Ανάγωγου',
     unit: '',
     generate: () => {
-      const properRed = '11/15'; // gcd = 1
-      const wr1 = '12/15'; // gcd = 3
-      const wr2 = '10/25'; // gcd = 5
-      const wr3 = '14/21'; // gcd = 7
+      const properRed = '11/15';
+      const wr1 = '12/15';
+      const wr2 = '10/25';
+      const wr3 = '14/21';
       return {
-        prompt: `Ποιο από τα παρακάτω κλάσματα είναι ήδη ανάγωγο (δεν μπορεί να διαιρεθεί με κανέναν κοινό διαιρέτη εκτός του 1);`,
+        prompt: 'Ποιο από τα παρακάτω κλάσματα είναι ήδη ανάγωγο (δεν μπορεί να διαιρεθεί με κανέναν κοινό διαιρέτη εκτός του 1);',
         unit: '',
         correctVal: properRed,
         correctText: `${properRed} (Μ.Κ.Δ. ＝ 1)`,
         tableData: [
-          { item: `12/15`, formula: `Διαιρείται με το 3`, val: `4/5` },
-          { item: `10/25`, formula: `Διαιρείται με το 5`, val: `2/5` },
-          { item: `14/21`, formula: `Διαιρείται με το 7`, val: `2/3` },
-          { item: `${properRed}`, formula: `Μ.Κ.Δ.(11, 15) ＝ 1`, val: `Ανάγωγο` }
+          { item: '12/15', formula: 'Διαιρείται με το 3', val: '4/5' },
+          { item: '10/25', formula: 'Διαιρείται με το 5', val: '2/5' },
+          { item: '14/21', formula: 'Διαιρείται με το 7', val: '2/3' },
+          { item: `${properRed}`, formula: 'Μ.Κ.Δ.(11, 15) ＝ 1', val: 'Ανάγωγο' }
         ],
         explain: `Οι αριθμοί 11 και 15 δεν έχουν κανέναν κοινό διαιρέτη εκτός του 1 (Μ.Κ.Δ. ＝ 1), άρα το ${properRed} είναι ανάγωγο.`,
         distractors: [wr1, wr2, wr3]
@@ -376,14 +365,14 @@ const HARD_PROBLEMS_POOL = [
 // ---------------------------------------------------------
 
 function generateQuestions() {
-  // Q1: Input - Εύρεση άγνωστου αριθμητή σε ισοδύναμα κλάσματα (π.χ. 2/3 = x/12)
+  // Q1: Input - Εύρεση άγνωστου αριθμητή σε ισοδύναμα κλάσματα
   const q1BaseNum = randInt(1, 4);
   const q1BaseDen = randInt(q1BaseNum + 1, 6);
   const q1Mult = randInt(2, 5);
   const q1TargetDen = q1BaseDen * q1Mult;
   const q1Correct = String(q1BaseNum * q1Mult);
 
-  // Q2: Input - Μετατροπή κλάσματος σε ανάγωγο (π.χ. 6/8 -> 3/4)
+  // Q2: Input - Μετατροπή κλάσματος σε ανάγωγο
   const q2RedNum = randInt(1, 4);
   let q2RedDen = randInt(q2RedNum + 1, 6);
   while (gcd(q2RedNum, q2RedDen) !== 1) {
@@ -406,7 +395,7 @@ function generateQuestions() {
   ];
   const q3Options = shuffle([...new Set([q3CorrectStr, ...q3Wrongs])]);
 
-  // Q4: MCQ - Ποιο κλάσμα είναι ήδη ανάγωγο (δεν απλοποιείται άλλο)
+  // Q4: MCQ - Ποιο κλάσμα είναι ήδη ανάγωγο
   const irreducibleList = [
     { num: 3, den: 5 },
     { num: 2, den: 7 },
@@ -492,7 +481,7 @@ function generateQuestions() {
       id: 'q1',
       type: 'input',
       title: 'Εύρεση Άγνωστου Όρου',
-      prompt: `Βρες τον αριθμητή x ώστε τα κλάσματα να είναι ισοδύναμα: ${q1BaseNum}/${q1BaseDen} ＝ x/${q1TargetDen}`,
+      prompt: `Βρες τον αριθμητή x ώστε τα κλάσματα να είναι ισοδύναμα: ${q1BaseNum}/${q1BaseDen} ＝ x/${q1TargetDen}.`,
       correct: q1Correct,
       explain: `Ο παρονομαστής πολλαπλασιάστηκε επί ${q1Mult} (${q1BaseDen} · ${q1Mult} ＝ ${q1TargetDen}), άρα και ο αριθμητής γίνεται ${q1BaseNum} · ${q1Mult} ＝ ${q1Correct}.`
     },
@@ -517,7 +506,7 @@ function generateQuestions() {
       id: 'q4',
       type: 'mcq',
       title: 'Εντοπισμός Ανάγωγου Κλάσματος',
-      prompt: `Ποιο από τα παρακάτω κλάσματα είναι ανάγωγο (δεν μπορεί να απλοποιηθεί άλλο);`,
+      prompt: 'Ποιο από τα παρακάτω κλάσματα είναι ανάγωγο (δεν μπορεί να απλοποιηθεί άλλο);',
       options: q4Options,
       correct: q4CorrectStr,
       explain: `Στο κλάσμα ${q4CorrectStr}, ο αριθμητής και ο παρονομαστής έχουν Μ.Κ.Δ. το 1 (είναι πρώτοι μεταξύ τους), άρα είναι ανάγωγο.`
@@ -611,9 +600,22 @@ export default function IsodinamaKlasmataExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      let sanitized = String(rawValue).replace(/[^0-9/]/g, '');
+      const parts = sanitized.split('/');
+      if (parts.length > 2) {
+        sanitized = parts[0] + '/' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -621,7 +623,7 @@ export default function IsodinamaKlasmataExercisesPage() {
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
       const cleanUser = userVal.replace(/\s+/g, '').trim().toLowerCase();
-      const cleanTarget = q.correct.replace(/\s+/g, '').trim().toLowerCase();
+      const cleanTarget = String(q.correct).replace(/\s+/g, '').trim().toLowerCase();
       return cleanUser === cleanTarget;
     }
     if (q.type === 'mcq') {
@@ -653,6 +655,8 @@ export default function IsodinamaKlasmataExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Ισοδύναμα & Ανάγωγα Κλάσματα - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -671,7 +675,7 @@ export default function IsodinamaKlasmataExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -737,7 +741,7 @@ export default function IsodinamaKlasmataExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -755,11 +759,14 @@ export default function IsodinamaKlasmataExercisesPage() {
                       <div className="space-y-2 mb-3">
                         <input
                           type="text"
-                          inputMode="text"
+                          inputMode={q.id === 'q2' ? 'text' : 'numeric'}
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
-                          placeholder="Γράψε την απάντησή σου..."
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.id === 'q2' ? 'π.χ. 3/4' : 'Γράψε την απάντησή σου...'}
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -770,7 +777,7 @@ export default function IsodinamaKlasmataExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -782,7 +789,7 @@ export default function IsodinamaKlasmataExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -863,7 +870,7 @@ export default function IsodinamaKlasmataExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
