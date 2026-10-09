@@ -35,7 +35,7 @@ function gcd(a, b) {
   return x || 1;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -45,7 +45,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -71,12 +71,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: String(x),
         correctText: `${x} παιδιά`,
         tableData: [
-          { item: 'Συνολικό ποσό (α)', formula: `${a} €`, val: `${a}` },
-          { item: 'Ποσό ανά παιδί (β)', formula: `${b} €`, val: `${b}` },
+          { item: 'Συνολικό ποσό (α)', formula: `${a} €`, val: `${a} €` },
+          { item: 'Ποσό ανά παιδί (β)', formula: `${b} €`, val: `${b} €` },
           { item: 'Εξίσωση (α : x ＝ β)', formula: `${a} : x ＝ ${b}`, val: `x ＝ ${a} : ${b} ＝ ${x} παιδιά` }
         ],
         explain: `Σχηματίζουμε την εξίσωση: ${a} : x ＝ ${b}. Για να βρούμε τον άγνωστο διαιρέτη x, διαιρούμε τον διαιρετέο με το πηλίκο: x ＝ ${a} : ${b} ＝ ${x} παιδιά.`,
-        distractors: [`${x + 2} παιδιά`, `${Math.max(1, x - 1)} παιδιά`, `${a - b} παιδιά`]
+        distractors: [`${x + 2} παιδιά`, `${Math.max(1, x - 1)} παιδιά`, `${x + 4} παιδιά`]
       };
     }
   },
@@ -95,12 +95,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: String(x),
         correctText: `${x} μπουκάλια`,
         tableData: [
-          { item: 'Συνολικό γάλα (α)', formula: `${a} λ.`, val: `${a}` },
-          { item: 'Χωρητικότητα μπουκαλιού (β)', formula: `${b} λ.`, val: `${b}` },
+          { item: 'Συνολικό γάλα (α)', formula: `${a} λ.`, val: `${a} λ.` },
+          { item: 'Χωρητικότητα μπουκαλιού (β)', formula: `${b} λ.`, val: `${b} λ.` },
           { item: 'Εξίσωση', formula: `${a} : x ＝ ${b}`, val: `x ＝ ${a} : ${b} ＝ ${x} μπουκάλια` }
         ],
         explain: `Η εξίσωση είναι ${a} : x ＝ ${b}. Βρίσκουμε τον άγνωστο διαιρέτη με διαίρεση: x ＝ ${a} : ${b} ＝ ${x} μπουκάλια.`,
-        distractors: [`${x + 2} μπουκάλια`, `${x - 2} μπουκάλια`, `${b + 2} μπουκάλια`]
+        distractors: [`${x + 2} μπουκάλια`, `${x - 2} μπουκάλια`, `${x + 3} μπουκάλια`]
       };
     }
   },
@@ -124,7 +124,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Εξίσωση', formula: `${a} : x ＝ ${b}`, val: `x ＝ ${a} : ${b} ＝ ${x} ομάδες` }
         ],
         explain: `${a} : x ＝ ${b} ➔ x ＝ ${a} : ${b} ＝ ${x} ομάδες.`,
-        distractors: [`${x + 2} ομάδες`, `${x - 1} ομάδες`, `${Math.round(a / 2)} ομάδες`]
+        distractors: [`${x + 2} ομάδες`, `${x - 1} ομάδες`, `${x + 4} ομάδες`]
       };
     }
   },
@@ -143,12 +143,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: String(x),
         correctText: `${x} σακιά`,
         tableData: [
-          { item: 'Συνολικό βάρος (α)', formula: `${a} κιλά`, val: `${a}` },
-          { item: 'Βάρος σακιού (β)', formula: `${b} κιλά`, val: `${b}` },
+          { item: 'Συνολικό βάρος (α)', formula: `${a} κιλά`, val: `${a} κιλά` },
+          { item: 'Βάρος σακιού (β)', formula: `${b} κιλά`, val: `${b} κιλά` },
           { item: 'Εξίσωση', formula: `${a} : x ＝ ${b}`, val: `x ＝ ${a} : ${b} ＝ ${x}` }
         ],
         explain: `Εξίσωση: ${a} : x ＝ ${b} ➔ x ＝ ${a} : ${b} ＝ ${x} σακιά.`,
-        distractors: [`${x + 3} σακιά`, `${x - 2} σακιά`, `${b - 2} σακιά`]
+        distractors: [`${x + 3} σακιά`, `${x - 2} σακιά`, `${x + 5} σακιά`]
       };
     }
   },
@@ -167,12 +167,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: String(x),
         correctText: `${x} κιβώτια`,
         tableData: [
-          { item: 'Συνολικά πορτοκάλια (α)', formula: `${a} κιλά`, val: `${a}` },
-          { item: 'Κιλά ανά κιβώτιο (β)', formula: `${b} κιλά`, val: `${b}` },
+          { item: 'Συνολικά πορτοκάλια (α)', formula: `${a} κιλά`, val: `${a} κιλά` },
+          { item: 'Κιλά ανά κιβώτιο (β)', formula: `${b} κιλά`, val: `${b} κιλά` },
           { item: 'Εξίσωση', formula: `${a} : x ＝ ${b}`, val: `x ＝ ${a} : ${b} ＝ ${x}` }
         ],
         explain: `${a} : x ＝ ${b} ➔ x ＝ ${a} : ${b} ＝ ${x} κιβώτια.`,
-        distractors: [`${x + 2} κιβώτια`, `${x - 1} κιβώτια`, `${a - b} κιβώτια`]
+        distractors: [`${x + 2} κιβώτια`, `${x - 1} κιβώτια`, `${x + 3} κιβώτια`]
       };
     }
   },
@@ -191,12 +191,12 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: String(x),
         correctText: `${x} κομμάτια`,
         tableData: [
-          { item: 'Αρχικό μήκος (α)', formula: `${a} μ.`, val: `${a}` },
-          { item: 'Μήκος κομματιού (β)', formula: `${b} μ.`, val: `${b}` },
+          { item: 'Αρχικό μήκος (α)', formula: `${a} μ.`, val: `${a} μ.` },
+          { item: 'Μήκος κομματιού (β)', formula: `${b} μ.`, val: `${b} μ.` },
           { item: 'Εξίσωση', formula: `${a} : x ＝ ${b}`, val: `x ＝ ${a} : ${b} ＝ ${x}` }
         ],
         explain: `${a} : x ＝ ${b} ➔ x ＝ ${a} : ${b} ＝ ${x} κομμάτια.`,
-        distractors: [`${x + 2} κομμάτια`, `${x - 2} κομμάτια`, `${a - b} κομμάτια`]
+        distractors: [`${x + 2} κομμάτια`, `${x - 2} κομμάτια`, `${x + 4} κομμάτια`]
       };
     }
   }
@@ -273,7 +273,7 @@ const HARD_PROBLEMS_POOL = [
           { item: '2ο Βήμα (διαίρεση διαιρετέου)', formula: `${a} : ${inter}`, val: `x ＝ ${x}` }
         ],
         explain: `Πρώτα βρίσκουμε πόσο είναι το ${a} : x αφαιρώντας το ${add}: ${a} : x ＝ ${total} － ${add} ＝ ${inter}. Στη συνέχεια βρίσκουμε τον διαιρέτη: x ＝ ${a} : ${inter} ＝ ${x}.`,
-        distractors: [String(x + 2), String(x - 1), String(Math.round(a / add))]
+        distractors: [String(x + 2), String(x - 1), String(x + 4)]
       };
     }
   },
@@ -298,7 +298,7 @@ const HARD_PROBLEMS_POOL = [
           { item: '2ο Βήμα (διαίρεση διαιρετέου)', formula: `${a} : ${inter}`, val: `x ＝ ${x}` }
         ],
         explain: `Πρώτα βρίσκουμε το ${a} : x προσθέτοντας το ${sub}: ${a} : x ＝ ${rem} ＋ ${sub} ＝ ${inter}. Έπειτα υπολογίζουμε το x: x ＝ ${a} : ${inter} ＝ ${x}.`,
-        distractors: [String(x + 2), String(x - 2), String(inter)]
+        distractors: [String(x + 2), String(x - 2), String(x + 4)]
       };
     }
   },
@@ -329,7 +329,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp6',
     title: 'Πρόβλημα Μοιρασιάς με Σταθερό Πηλίκο',
-    unit: 'μερίδες',
+    unit: 'κομμάτια',
     generate: () => {
       // 45 : x = 5 -> x = 9
       const a = 45;
@@ -341,12 +341,12 @@ const HARD_PROBLEMS_POOL = [
         correctVal: String(x),
         correctText: `${x} κομμάτια`,
         tableData: [
-          { item: 'Ολικό μήκος περιφέρειας (α)', formula: `${a} εκ.`, val: `${a}` },
-          { item: 'Μήκος κομματιού (β)', formula: `${b} εκ.`, val: `${b}` },
+          { item: 'Ολικό μήκος περιφέρειας (α)', formula: `${a} εκ.`, val: `${a} εκ.` },
+          { item: 'Μήκος κομματιού (β)', formula: `${b} εκ.`, val: `${b} εκ.` },
           { item: 'Εξίσωση', formula: `${a} : x ＝ ${b}`, val: `x ＝ ${a} : ${b} ＝ ${x}` }
         ],
         explain: `${a} : x ＝ ${b} ➔ x ＝ ${a} : ${b} ＝ ${x} κομμάτια.`,
-        distractors: [`${x + 2} κομμάτια`, `${x - 2} κομμάτια`, `${a - b} κομμάτια`]
+        distractors: [`${x + 2} κομμάτια`, `${x - 2} κομμάτια`, `${x + 3} κομμάτια`]
       };
     }
   }
@@ -431,6 +431,7 @@ function generateQuestions() {
     {
       id: 'q1',
       type: 'input',
+      inputType: 'number',
       title: 'Εξίσωση: α : x ＝ β',
       prompt: `Λύσε την εξίσωση: ${q1A} : x ＝ ${q1B}`,
       correct: String(q1X),
@@ -439,6 +440,7 @@ function generateQuestions() {
     {
       id: 'q2',
       type: 'input',
+      inputType: 'number',
       title: 'Μεγαλύτεροι Αριθμοί',
       prompt: `Λύσε την εξίσωση: ${q2A} : x ＝ ${q2B}`,
       correct: String(q2X),
@@ -447,6 +449,7 @@ function generateQuestions() {
     {
       id: 'q3',
       type: 'input',
+      inputType: 'number',
       title: 'Δεκαδικοί Αριθμοί',
       prompt: `Λύσε την εξίσωση: ${q3A} : x ＝ ${q3B}`,
       correct: q3Correct,
@@ -484,6 +487,7 @@ function generateQuestions() {
     {
       id: 'q7',
       type: 'input',
+      inputType: 'number',
       title: 'Εξίσωση με Κλάσματα',
       prompt: q7Prompt,
       correct: q7Correct,
@@ -550,19 +554,27 @@ export default function GnostosDiaAgnostosExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      let sanitized = String(rawValue).replace(/[^0-9]/g, '');
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
     const userVal = answers[q.id];
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
-      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase() : null;
-      return cleanUser === cleanTarget || (cleanAlt && cleanUser === cleanAlt);
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/^x[=＝]/i, '').trim().toLowerCase();
+      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').replace(/^x[=＝]/i, '').trim().toLowerCase();
+      return cleanUser === cleanTarget;
     }
     if (q.type === 'mcq') {
       return userVal === q.correct;
@@ -593,6 +605,8 @@ export default function GnostosDiaAgnostosExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Άγνωστος Διαιρέτης - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -611,7 +625,7 @@ export default function GnostosDiaAgnostosExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -677,7 +691,7 @@ export default function GnostosDiaAgnostosExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -698,10 +712,11 @@ export default function GnostosDiaAgnostosExercisesPage() {
                           autoComplete="off"
                           spellCheck="false"
                           type="text"
-                          inputMode="text"
+                          inputMode="numeric"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
                           placeholder="x ＝ ..."
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
@@ -713,7 +728,7 @@ export default function GnostosDiaAgnostosExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -725,7 +740,7 @@ export default function GnostosDiaAgnostosExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -806,7 +821,7 @@ export default function GnostosDiaAgnostosExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
