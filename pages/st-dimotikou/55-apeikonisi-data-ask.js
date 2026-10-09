@@ -2,30 +2,47 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import { LAYOUT } from '../../shared/layout-config';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
-function toCleanUppercase(str) {
-  if (!str) return '';
-  return str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-}
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
 
-// Τυχαιος ακεραιος στο [min, max]
 function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
 }
 
-// Τυχαια επιλογη απο πινακα
+function shuffle(array) {
+  if (!Array.isArray(array)) return [];
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Μορφοποιηση αριθμου
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός με κόμμα)
 function formatNum(val, decimals = 1) {
-  if (Number.isInteger(val)) return String(val);
-  const rounded = Number(val.toFixed(decimals));
+  if (val === null || val === undefined || isNaN(Number(val))) return '0';
+  if (Number.isInteger(Number(val))) return String(val);
+  const rounded = Number(Number(val).toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
@@ -51,11 +68,11 @@ function MiniBarChart({ data, maxVal = 100, yStep = 20 }) {
   return (
     <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-3.5 sm:p-5 my-3.5 w-full max-w-2xl shadow-inner">
       <div className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center mb-2 sm:mb-3">
-        ΣΧΗΜΑ: ΡΑΒΔΟΓΡΑΜΜΑ ΔΕΔΟΜΕΝΩΝ
+        {toCleanUppercase('Σχήμα: Ραβδόγραμμα Δεδομένων')}
       </div>
       <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-white rounded-2xl border border-slate-200 p-2 sm:p-3 shadow-sm flex items-center justify-center">
         <svg viewBox="0 0 490 200" className="w-full h-auto max-h-[220px] overflow-visible">
-          {/* Οριζοντιες γραμμες πλεγματος */}
+          {/* Οριζόντιες γραμμές πλέγματος */}
           {yTicks.map((val) => {
             const y = chartHeight + 15 - (val / maxVal) * chartHeight;
             return (
@@ -68,11 +85,11 @@ function MiniBarChart({ data, maxVal = 100, yStep = 20 }) {
             );
           })}
 
-          {/* Αξονες */}
+          {/* Άξονες */}
           <line x1={paddingLeft} y1={chartHeight + 15} x2="480" y2={chartHeight + 15} stroke="#334155" strokeWidth="2.5" />
           <line x1={paddingLeft} y1={chartHeight + 15} x2={paddingLeft} y2="10" stroke="#334155" strokeWidth="2.5" />
 
-          {/* Ραβδοι */}
+          {/* Ράβδοι */}
           {data.map((item, idx) => {
             const bx = paddingLeft + gap + idx * (barWidth + gap);
             const bHeight = (item.value / maxVal) * chartHeight;
@@ -102,7 +119,7 @@ function MiniPictogram({ items, legend }) {
     <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-3 sm:p-5 my-3.5 w-full max-w-2xl shadow-inner space-y-2.5">
       <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 px-1">
         <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
-          ΣΧΗΜΑ: ΕΙΚΟΝΟΓΡΑΜΜΑ
+          {toCleanUppercase('Σχήμα: Εικονόγραμμα')}
         </span>
         <span className="text-xs font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-amber-900 font-mono">
           Υπόμνημα: {legend}
@@ -137,41 +154,50 @@ function MiniPictogram({ items, legend }) {
   );
 }
 
-// =========================================================================
-// ΔΕΞΑΜΕΝΕΣ ΘΕΜΑΤΩΝ
-// =========================================================================
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q7, Q8, Q9, Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
 
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'data_std_1',
+    title: 'Ανακύκλωση Χαρτιού σε Εικονόγραμμα',
+    unit: 'kg',
     generate: () => {
       const scale = pickRandom([5, 10, 20]);
       const fullSyms = randInt(4, 6);
       const totalUnits = fullSyms * scale;
       return {
-        text: `Παρατηρήστε το παρακάτω εικονόγραμμα ανακύκλωσης χαρτιού. Πόσα kg χαρτιού συγκέντρωσε η τάξη;`,
+        prompt: `Παρατηρήστε το παρακάτω εικονόγραμμα ανακύκλωσης χαρτιού. Πόσα kg χαρτιού συγκέντρωσε η τάξη;`,
         pictogram: {
           legend: `📦 ＝ ${scale} kg`,
           items: [
             { label: 'ΣΤ1 Τάξη', icon: '📦', symbols: fullSyms, value: '?' }
           ]
         },
-        correctVal: totalUnits,
-        correctStr: String(totalUnits),
-        unit: 'kg',
-        explanation: `Στο εικονόγραμμα υπάρχουν ${fullSyms} σύμβολα. Βάσει του υπομνήματος (📦 ＝ ${scale} kg): ${fullSyms} · ${scale} ＝ ${totalUnits} kg.`
+        correctVal: String(totalUnits),
+        correctText: `${totalUnits} kg`,
+        tableData: [
+          { item: 'Πλήθος συμβόλων', formula: `${fullSyms} σύμβολα`, val: `${fullSyms}` },
+          { item: 'Αξία ανά σύμβολο', formula: `${scale} kg`, val: `${scale} kg` },
+          { item: 'Συνολική ποσότητα', formula: `${fullSyms} · ${scale}`, val: `${totalUnits} kg` }
+        ],
+        explain: `Στο εικονόγραμμα υπάρχουν ${fullSyms} σύμβολα. Βάσει του υπομνήματος (📦 ＝ ${scale} kg): ${fullSyms} · ${scale} ＝ ${totalUnits} kg.`,
+        distractors: [`${totalUnits + scale} kg`, `${totalUnits - scale} kg`, `${totalUnits + 2 * scale} kg`]
       };
     }
   },
   {
     id: 'data_std_2',
+    title: 'Σύνολο Προτιμήσεων σε Ραβδόγραμμα',
+    unit: 'μαθητές',
     generate: () => {
       const vA = randInt(15, 25);
       const vB = randInt(10, 20);
       const vC = randInt(20, 30);
       const total = vA + vB + vC;
       return {
-        text: `Στο παρακάτω ραβδόγραμμα καταγράφηκαν οι προτιμήσεις σε γεύσεις παγωτού. Πόσοι ήταν συνολικά οι μαθητές που συμμετείχαν στην έρευνα;`,
+        prompt: `Στο παρακάτω ραβδόγραμμα καταγράφηκαν οι προτιμήσεις σε γεύσεις παγωτού. Πόσοι ήταν συνολικά οι μαθητές που συμμετείχαν στην έρευνα;`,
         barChart: {
           maxVal: 35,
           yStep: 10,
@@ -181,21 +207,29 @@ const STANDARD_PROBLEMS_POOL = [
             { label: 'Φράουλα', value: vC, color: '#ec4899' }
           ]
         },
-        correctVal: total,
-        correctStr: String(total),
-        unit: 'μαθητές',
-        explanation: `Διαβάζουμε τα ύψη των ράβδων και αθροίζουμε τις συχνότητες: ${vA} ＋ ${vB} ＋ ${vC} ＝ ${total} μαθητές.`
+        correctVal: String(total),
+        correctText: `${total} μαθητές`,
+        tableData: [
+          { item: 'Σοκολάτα', formula: `${vA} μαθητές`, val: `${vA}` },
+          { item: 'Βανίλια', formula: `${vB} μαθητές`, val: `${vB}` },
+          { item: 'Φράουλα', formula: `${vC} μαθητές`, val: `${vC}` },
+          { item: 'Συνολικό άθροισμα', formula: `${vA} ＋ ${vB} ＋ ${vC}`, val: `${total} μαθητές` }
+        ],
+        explain: `Διαβάζουμε τα ύψη των ράβδων και αθροίζουμε τις συχνότητες: ${vA} ＋ ${vB} ＋ ${vC} ＝ ${total} μαθητές.`,
+        distractors: [`${total + 5} μαθητές`, `${total - 5} μαθητές`, `${total + 10} μαθητές`]
       };
     }
   },
   {
     id: 'data_std_3',
+    title: 'Διαφορά Επισκεπτών Μουσείου',
+    unit: 'επισκέπτες',
     generate: () => {
       const vMon = randInt(20, 35);
       const vFri = vMon + randInt(10, 20);
       const diff = vFri - vMon;
       return {
-        text: `Στο ραβδόγραμμα απεικονίζονται οι επισκέπτες ενός μουσείου τη Δευτέρα και την Παρασκευή. Πόσους περισσότερους επισκέπτες είχε το μουσείο την Παρασκευή;`,
+        prompt: `Στο ραβδόγραμμα απεικονίζονται οι επισκέπτες ενός μουσείου τη Δευτέρα και την Παρασκευή. Πόσους περισσότερους επισκέπτες είχε το μουσείο την Παρασκευή;`,
         barChart: {
           maxVal: 60,
           yStep: 20,
@@ -204,147 +238,38 @@ const STANDARD_PROBLEMS_POOL = [
             { label: 'Παρασκευή', value: vFri, color: '#3b82f6' }
           ]
         },
-        correctVal: diff,
-        correctStr: String(diff),
-        unit: 'επισκέπτες',
-        explanation: `Διαβάζουμε τα ύψη των ράβδων: Παρασκευή ${vFri} και Δευτέρα ${vMon}. Διαφορά: ${vFri} － ${vMon} ＝ ${diff} επισκέπτες.`
+        correctVal: String(diff),
+        correctText: `${diff} επισκέπτες`,
+        tableData: [
+          { item: 'Επισκέπτες Παρασκευής', formula: `${vFri}`, val: `${vFri}` },
+          { item: 'Επισκέπτες Δευτέρας', formula: `${vMon}`, val: `${vMon}` },
+          { item: 'Διαφορά', formula: `${vFri} － ${vMon}`, val: `${diff} επισκέπτες` }
+        ],
+        explain: `Διαβάζουμε τα ύψη των ράβδων: Παρασκευή ${vFri} και Δευτέρα ${vMon}. Διαφορά: ${vFri} － ${vMon} ＝ ${diff} επισκέπτες.`,
+        distractors: [`${diff + 5} επισκέπτες`, `${Math.max(2, diff - 5)} επισκέπτες`, `${diff + 10} επισκέπτες`]
       };
     }
   },
   {
     id: 'data_std_4',
+    title: 'Υπολογισμός Συμβόλων Εικονογράμματος',
+    unit: 'σύμβολα',
     generate: () => {
       const totalTrees = pickRandom([60, 80, 100, 120]);
       const scale = pickRandom([10, 20]);
       const reqSymbols = totalTrees / scale;
       return {
-        text: `Ένας γεωπόνος θέλει να σχεδιάσει εικονόγραμμα για ${totalTrees} ελαιόδεντρα, χρησιμοποιώντας υπόμνημα 🌳 ＝ ${scale} δέντρα. Πόσα σύμβολα πρέπει να σχεδιάσει;`,
-        correctVal: reqSymbols,
-        correctStr: String(reqSymbols),
+        prompt: `Ένας γεωπόνος θέλει να σχεδιάσει εικονόγραμμα για ${totalTrees} ελαιόδεντρα, χρησιμοποιώντας υπόμνημα 🌳 ＝ ${scale} δέντρα. Πόσα σύμβολα πρέπει να σχεδιάσει;`,
         unit: 'σύμβολα',
-        explanation: `Διαιρούμε το συνολικό πλήθος με την κλίμακα του υπομνήματος: ${totalTrees} : ${scale} ＝ ${reqSymbols} σύμβολα.`
-      };
-    }
-  },
-  {
-    id: 'data_std_5',
-    generate: () => {
-      return {
-        text: `Στο παρακάτω ραβδόγραμμα καταγράφηκαν τα αγαπημένα κατοικίδια 60 παιδιών. Ποιο είναι το ποσοστό (%) των παιδιών που επέλεξαν τον σκύλο;`,
-        barChart: {
-          maxVal: 35,
-          yStep: 10,
-          data: [
-            { label: 'Σκύλος', value: 30, color: '#3b82f6' },
-            { label: 'Γάτα', value: 18, color: '#f59e0b' },
-            { label: 'Πουλί', value: 12, color: '#10b981' }
-          ]
-        },
-        correctVal: 50,
-        correctStr: '50',
-        unit: '%',
-        explanation: `Ο σκύλος έχει συχνότητα 30 σε σύνολο 60 παιδιών: (30 : 60) · 100 ＝ 0,5 · 100 ＝ 50 %.`
-      };
-    }
-  },
-  {
-    id: 'data_std_6',
-    generate: () => {
-      const baseVal = randInt(12, 18);
-      const doubleVal = baseVal * 2;
-      return {
-        text: `Σε ένα ραβδόγραμμα η ράβδος της ομάδας Α έχει ύψος ${baseVal} πόντους και η ράβδος της ομάδας Β έχει ακριβώς διπλάσιο ύψος. Πόσους πόντους συγκέντρωσε η ομάδα Β;`,
-        correctVal: doubleVal,
-        correctStr: String(doubleVal),
-        unit: 'πόντοι',
-        explanation: `Εφόσον το ύψος είναι διπλάσιο: ${baseVal} · 2 ＝ ${doubleVal} πόντοι.`
-      };
-    }
-  },
-  {
-    id: 'data_std_7',
-    generate: () => {
-      const scale = 5;
-      const fullSyms = randInt(3, 5);
-      const totalVal = fullSyms * scale + 2.5;
-      return {
-        text: `Παρατηρήστε το παρακάτω εικονόγραμμα επισκευής οχημάτων. Πόσα οχήματα επισκευάστηκαν συνολικά;`,
-        pictogram: {
-          legend: `🚗 ＝ ${scale} οχήματα`,
-          items: [
-            { label: 'Επισκευές', icon: '🚗', symbols: fullSyms, hasHalf: true, value: '?' }
-          ]
-        },
-        correctVal: totalVal,
-        correctStr: formatNum(totalVal),
-        unit: 'αυτοκίνητα',
-        explanation: `Έχουμε ${fullSyms} ολόκληρα σύμβολα (${fullSyms} · 5 ＝ ${fullSyms * 5}) και 1 μισό σύμβολο (2,5 οχήματα). Σύνολο: ${formatNum(totalVal)} οχήματα.`
-      };
-    }
-  },
-  {
-    id: 'data_std_8',
-    generate: () => {
-      const bus = randInt(20, 30);
-      const walk = randInt(15, 25);
-      const car = randInt(10, 20);
-      return {
-        text: `Στο ραβδόγραμμα καταγράφεται ο τρόπος μετακίνησης μαθητών προς το σχολείο. Πόσοι μαθητές μετακινούνται με όχημα (λεωφορείο ή αυτοκίνητο);`,
-        barChart: {
-          maxVal: 35,
-          yStep: 10,
-          data: [
-            { label: 'Λεωφορείο', value: bus, color: '#3b82f6' },
-            { label: 'Πόδια', value: walk, color: '#10b981' },
-            { label: 'Αυτοκίνητο', value: car, color: '#f59e0b' }
-          ]
-        },
-        correctVal: bus + car,
-        correctStr: String(bus + car),
-        unit: 'μαθητές',
-        explanation: `Διαβάζουμε: Λεωφορείο ＝ ${bus} και Αυτοκίνητο ＝ ${car}. Σύνολο: ${bus} ＋ ${car} ＝ ${bus + car} μαθητές.`
-      };
-    }
-  },
-  {
-    id: 'data_std_9',
-    generate: () => {
-      return {
-        text: `Στο παρακάτω ραβδόγραμμα πωλήσεων φρούτων, πόσα κιλά (kg) φρούτων πουλήθηκαν συνολικά;`,
-        barChart: {
-          maxVal: 50,
-          yStep: 10,
-          data: [
-            { label: 'Μήλα', value: 45, color: '#ef4444' },
-            { label: 'Πορτοκάλια', value: 30, color: '#f97316' },
-            { label: 'Μπανάνες', value: 25, color: '#eab308' }
-          ]
-        },
-        correctVal: 100,
-        correctStr: '100',
-        unit: 'kg',
-        explanation: `Διαβάζουμε τα ύψη των ράβδων: 45 ＋ 30 ＋ 25 ＝ 100 kg.`
-      };
-    }
-  },
-  {
-    id: 'data_std_10',
-    generate: () => {
-      const symbolVal = pickRandom([4, 5, 8]);
-      const symCount = randInt(4, 7);
-      const totalUnits = symCount * symbolVal;
-      return {
-        text: `Βάσει του παρακάτω εικονογράμματος επιδόσεων, πόσους βαθμούς συγκέντρωσε ο μαθητής;`,
-        pictogram: {
-          legend: `⭐ ＝ ${symbolVal} βαθμοί`,
-          items: [
-            { label: 'Βαθμολογία', icon: '⭐', symbols: symCount, value: '?' }
-          ]
-        },
-        correctVal: totalUnits,
-        correctStr: String(totalUnits),
-        unit: 'βαθμοί',
-        explanation: `Μετράμε ${symCount} αστέρια. Κάθε αστέρι ισούται με ${symbolVal} βαθμούς: ${symCount} · ${symbolVal} ＝ ${totalUnits} βαθμοί.`
+        correctVal: String(reqSymbols),
+        correctText: `${reqSymbols} σύμβολα`,
+        tableData: [
+          { item: 'Συνολικά δέντρα', formula: `${totalTrees} δέντρα`, val: `${totalTrees}` },
+          { item: 'Κλίμακα ανά σύμβολο', formula: `${scale} δέντρα`, val: `${scale}` },
+          { item: 'Απαιτούμενα σύμβολα', formula: `${totalTrees} : ${scale}`, val: `${reqSymbols}` }
+        ],
+        explain: `Διαιρούμε το συνολικό πλήθος με την κλίμακα του υπομνήματος: ${totalTrees} : ${scale} ＝ ${reqSymbols} σύμβολα.`,
+        distractors: [`${reqSymbols + 2} σύμβολα`, `${Math.max(1, reqSymbols - 2)} σύμβολα`, `${reqSymbols + 4} σύμβολα`]
       };
     }
   }
@@ -353,15 +278,17 @@ const STANDARD_PROBLEMS_POOL = [
 const HARD_PROBLEMS_POOL = [
   {
     id: 'data_hard_1',
+    title: 'Μέσος Όρος Παραγωγής από Ραβδόγραμμα',
+    unit: 'κιβώτια',
     generate: () => {
       const mon = 40;
       const tue = 60;
       const wed = 50;
       const thu = 70;
-      const total = mon + tue + wed + thu; // 220
-      const avg = total / 4; // 55
+      const total = mon + tue + wed + thu;
+      const avg = total / 4;
       return {
-        text: `Στο παρακάτω ραβδόγραμμα καταγράφεται η ημερήσια παραγωγή κιβωτίων ενός εργοστασίου για 4 ημέρες. Ποιος ήταν ο μέσος όρος παραγωγής ανά ημέρα;`,
+        prompt: `Στο παρακάτω ραβδόγραμμα καταγράφεται η ημερήσια παραγωγή κιβωτίων ενός εργοστασίου για 4 ημέρες. Ποιος ήταν ο μέσος όρος παραγωγής ανά ημέρα;`,
         barChart: {
           maxVal: 80,
           yStep: 20,
@@ -372,21 +299,28 @@ const HARD_PROBLEMS_POOL = [
             { label: 'Πέμπτη', value: thu, color: '#1e40af' }
           ]
         },
-        correctVal: avg,
-        correctStr: String(avg),
         unit: 'κιβώτια',
-        explanation: `1ο Βήμα: Συνολική παραγωγή: 40 ＋ 60 ＋ 50 ＋ 70 ＝ ${total} κιβώτια. 2ο Βήμα: Μέσος όρος: ${total} : 4 ＝ ${avg} κιβώτια ανά ημέρα.`
+        correctVal: String(avg),
+        correctText: `${avg} κιβώτια`,
+        tableData: [
+          { item: 'Συνολική παραγωγή (4 ημέρες)', formula: `${mon} ＋ ${tue} ＋ ${wed} ＋ ${thu}`, val: `${total} κιβώτια` },
+          { item: 'Μέσος όρος ανά ημέρα', formula: `${total} : 4`, val: `${avg} κιβώτια` }
+        ],
+        explain: `1ο Βήμα: Συνολική παραγωγή: 40 ＋ 60 ＋ 50 ＋ 70 ＝ ${total} κιβώτια. 2ο Βήμα: Μέσος όρος: ${total} : 4 ＝ ${avg} κιβώτια ανά ημέρα.`,
+        distractors: [`${avg + 5} κιβώτια`, `${avg - 5} κιβώτια`, `${avg + 10} κιβώτια`]
       };
     }
   },
   {
     id: 'data_hard_2',
+    title: 'Υπολογισμός Ποσοστού από Ραβδόγραμμα',
+    unit: '%',
     generate: () => {
-      const soccer = 48; // 40%
-      const basket = 36; // 30%
-      const track = 36; // 30%
+      const soccer = 48;
+      const basket = 36;
+      const track = 36;
       return {
-        text: `Στο ραβδόγραμμα προτιμήσεων 120 συνολικά μαθητών, πόσο είναι το ποσοστό (%) των μαθητών που επέλεξαν τον στίβο;`,
+        prompt: `Στο ραβδόγραμμα προτιμήσεων 120 συνολικά μαθητών, πόσο είναι το ποσοστό (%) των μαθητών που επέλεξαν τον στίβο;`,
         barChart: {
           maxVal: 60,
           yStep: 20,
@@ -396,22 +330,30 @@ const HARD_PROBLEMS_POOL = [
             { label: 'Στίβος', value: track, color: '#6366f1' }
           ]
         },
-        correctVal: 30,
-        correctStr: '30',
         unit: '%',
-        explanation: `Από το ραβδόγραμμα, ο στίβος έχει 36 μαθητές. Σε σύνολο 120 μαθητών: (36 : 120) · 100 ＝ 30 %.`
+        correctVal: '30',
+        correctText: '30 %',
+        tableData: [
+          { item: 'Μαθητές που επέλεξαν στίβο', formula: `${track} μαθητές`, val: `${track}` },
+          { item: 'Σύνολο μαθητών', formula: '120 μαθητές', val: '120' },
+          { item: 'Ποσοστό (%)', formula: `(${track} : 120) · 100`, val: '30 %' }
+        ],
+        explain: `Από το ραβδόγραμμα, ο στίβος έχει 36 μαθητές. Σε σύνολο 120 μαθητών: (36 : 120) · 100 ＝ 30 %.`,
+        distractors: ['25 %', '35 %', '40 %']
       };
     }
   },
   {
     id: 'data_hard_3',
+    title: 'Σύγκριση Ψήφων σε Ραβδόγραμμα',
+    unit: 'ψήφοι',
     generate: () => {
       const catA = 90;
       const catB = 70;
       const catC = 40;
-      const diff = catA - catC; // 50
+      const diff = catA - catC;
       return {
-        text: `Παρατηρήστε το ραβδόγραμμα ψήφων σχολικού συμβουλίου. Πόσες περισσότερες ψήφους έλαβε η πρόταση Α από την πρόταση Γ;`,
+        prompt: `Παρατηρήστε το ραβδόγραμμα ψήφων σχολικού συμβουλίου. Πόσες περισσότερες ψήφους έλαβε η πρόταση Α από την πρόταση Γ;`,
         barChart: {
           maxVal: 100,
           yStep: 20,
@@ -421,22 +363,30 @@ const HARD_PROBLEMS_POOL = [
             { label: 'Πρόταση Γ', value: catC, color: '#f43f5e' }
           ]
         },
-        correctVal: diff,
-        correctStr: String(diff),
         unit: 'ψήφοι',
-        explanation: `Διαβάζουμε από το ραβδόγραμμα: Πρόταση Α ＝ ${catA} ψήφοι και Πρόταση Γ ＝ ${catC} ψήφοι. Διαφορά: ${catA} － ${catC} ＝ ${diff} ψήφοι.`
+        correctVal: String(diff),
+        correctText: `${diff} ψήφοι`,
+        tableData: [
+          { item: 'Ψήφοι Πρότασης Α', formula: `${catA}`, val: `${catA}` },
+          { item: 'Ψήφοι Πρότασης Γ', formula: `${catC}`, val: `${catC}` },
+          { item: 'Διαφορά ψήφων', formula: `${catA} － ${catC}`, val: `${diff} ψήφοι` }
+        ],
+        explain: `Διαβάζουμε από το ραβδόγραμμα: Πρόταση Α ＝ ${catA} ψήφοι και Πρόταση Γ ＝ ${catC} ψήφοι. Διαφορά: ${catA} － ${catC} ＝ ${diff} ψήφοι.`,
+        distractors: [`${diff + 10} ψήφοι`, `${diff - 10} ψήφοι`, `${diff + 20} ψήφοι`]
       };
     }
   },
   {
     id: 'data_hard_4',
+    title: 'Σύγκριση Ομάδων σε Εικονόγραμμα Αναδάσωσης',
+    unit: 'δέντρα',
     generate: () => {
-      const scale = 25; // 1 σύμβολο = 25 δέντρα
+      const scale = 25;
       const symA = 6;
       const symB = 8;
-      const diffTrees = (symB - symA) * scale; // 50 δέντρα
+      const diffTrees = (symB - symA) * scale;
       return {
-        text: `Στο παρακάτω εικονόγραμμα αναδάσωσης, πόσα περισσότερα δέντρα φύτεψε η Ομάδα Β σε σχέση με την Ομάδα Α;`,
+        prompt: `Στο παρακάτω εικονόγραμμα αναδάσωσης, πόσα περισσότερα δέντρα φύτεψε η Ομάδα Β σε σχέση με την Ομάδα Α;`,
         pictogram: {
           legend: '🌲 ＝ 25 δέντρα',
           items: [
@@ -444,683 +394,547 @@ const HARD_PROBLEMS_POOL = [
             { label: 'Ομάδα Β', icon: '🌲', symbols: symB, value: `${symB * scale}` }
           ]
         },
-        correctVal: diffTrees,
-        correctStr: String(diffTrees),
         unit: 'δέντρα',
-        explanation: `Η διαφορά στο εικονόγραμμα είναι 8 － 6 ＝ 2 σύμβολα. Επειδή 🌲 ＝ 25 δέντρα: 2 · 25 ＝ ${diffTrees} δέντρα.`
-      };
-    }
-  },
-  {
-    id: 'data_hard_5',
-    generate: () => {
-      return {
-        text: `Στον κατακόρυφο άξονα ενός ραβδογράμματος, το μέγιστο ύψος είναι 180 και ο άξονας χωρίζεται σε 6 ίσα διαστήματα (υποδιαιρέσεις). Πόσες μονάδες αντιπροσωπεύει κάθε διάστημα της κλίμακας;`,
-        correctVal: 30,
-        correctStr: '30',
-        unit: 'μονάδες',
-        explanation: `Διαιρούμε το μέγιστο ύψος με τον αριθμό των ίσων διαστημάτων: 180 : 6 ＝ 30 μονάδες ανά διάστημα.`
-      };
-    }
-  },
-  {
-    id: 'data_hard_6',
-    generate: () => {
-      return {
-        text: `Στο παρακάτω ραβδόγραμμα αναγνωστών 100 συνολικά ατόμων, ποιο είναι το ποσοστό (%) των αναγνωστών της εφημερίδας Β;`,
-        barChart: {
-          maxVal: 50,
-          yStep: 10,
-          data: [
-            { label: 'Εφημερίδα Α', value: 35, color: '#64748b' },
-            { label: 'Εφημερίδα Β', value: 45, color: '#3b82f6' },
-            { label: 'Εφημερίδα Γ', value: 20, color: '#10b981' }
-          ]
-        },
-        correctVal: 45,
-        correctStr: '45',
-        unit: '%',
-        explanation: `Από το ραβδόγραμμα, η εφημερίδα Β έχει 45 αναγνώστες σε σύνολο 100 ατόμων, άρα το ποσοστό είναι απευθείας 45 %.`
-      };
-    }
-  },
-  {
-    id: 'data_hard_7',
-    generate: () => {
-      return {
-        text: `Σε ένα ραβδόγραμμα, μια ράβδος ύψους 15 cm αντιστοιχεί σε 60 πωλήσεις προϊόντων. Πόσα εκατοστά (cm) ύψος πρέπει να έχει μια άλλη ράβδος στο ίδιο γράφημα για να αναπαραστήσει 100 πωλήσεις;`,
-        correctVal: 25,
-        correctStr: '25',
-        unit: 'cm',
-        explanation: `Τα ύψη των ράβδων είναι ανάλογα των συχνοτήτων: χ ＝ (15 · 100) : 60 ＝ 1.500 : 60 ＝ 25 cm.`
-      };
-    }
-  },
-  {
-    id: 'data_hard_8',
-    generate: () => {
-      return {
-        text: `Για να αναπαραστήσουμε 150 μονάδες σε εικονόγραμμα, αν αλλάξουμε το υπόμνημα από 1 σύμβολο ＝ 5 μονάδες σε 1 σύμβολο ＝ 15 μονάδες, πόσα λιγότερα σύμβολα θα χρειαστεί να σχεδιάσουμε;`,
-        correctVal: 20,
-        correctStr: '20',
-        unit: 'σύμβολα',
-        explanation: `Με κλίμακα 5: 150 : 5 ＝ 30 σύμβολα. Με κλίμακα 15: 150 : 15 ＝ 10 σύμβολα. Διαφορά: 30 － 10 ＝ 20 λιγότερα σύμβολα.`
-      };
-    }
-  },
-  {
-    id: 'data_hard_9',
-    generate: () => {
-      return {
-        text: `Στο ραβδόγραμμα κατανομής δύο τμημάτων της ΣΤ' τάξης, πόσα περισσότερα είναι τα αγόρια από τα κορίτσια;`,
-        barChart: {
-          maxVal: 40,
-          yStep: 10,
-          data: [
-            { label: 'Κορίτσια', value: 28, color: '#ec4899' },
-            { label: 'Αγόρια', value: 32, color: '#3b82f6' }
-          ]
-        },
-        correctVal: 4,
-        correctStr: '4',
-        unit: 'αγόρια',
-        explanation: `Διαβάζουμε από το ραβδόγραμμα: Αγόρια ＝ 32, Κορίτσια ＝ 28. Διαφορά: 32 － 28 ＝ 4 αγόρια.`
-      };
-    }
-  },
-  {
-    id: 'data_hard_10',
-    generate: () => {
-      return {
-        text: `Στο παρακάτω τριμηνιαίο ραβδόγραμμα καταγράφηκαν οι πωλήσεις μιας επιχείρησης. Ποιες ήταν οι συνολικές πωλήσεις ολόκληρου του έτους;`,
-        barChart: {
-          maxVal: 240,
-          yStep: 60,
-          data: [
-            { label: "Α' Τρίμηνο", value: 120, color: '#38bdf8' },
-            { label: "Β' Τρίμηνο", value: 180, color: '#3b82f6' },
-            { label: "Γ' Τρίμηνο", value: 150, color: '#2563eb' },
-            { label: "Δ' Τρίμηνο", value: 210, color: '#1d4ed8' }
-          ]
-        },
-        correctVal: 660,
-        correctStr: '660',
-        unit: 'πωλήσεις',
-        explanation: `Διαβάζουμε τα ύψη των 4 τριμήνων και αθροίζουμε: 120 ＋ 180 ＋ 150 ＋ 210 ＝ 660 πωλήσεις.`
+        correctVal: String(diffTrees),
+        correctText: `${diffTrees} δέντρα`,
+        tableData: [
+          { item: 'Διαφορά συμβόλων', formula: `${symB} － ${symA}`, val: '2 σύμβολα' },
+          { item: 'Αξία ανά σύμβολο', formula: '25 δέντρα', val: '25' },
+          { item: 'Διαφορά σε δέντρα', formula: `2 · 25`, val: `${diffTrees} δέντρα` }
+        ],
+        explain: `Η διαφορά στο εικονόγραμμα είναι 8 － 6 ＝ 2 σύμβολα. Επειδή 🌲 ＝ 25 δέντρα: 2 · 25 ＝ ${diffTrees} δέντρα.`,
+        distractors: [`${diffTrees + 25} δέντρα`, `${diffTrees - 15} δέντρα`, `${diffTrees + 50} δέντρα`]
       };
     }
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
 function generateQuestions() {
-  const qList = [];
+  // Q1: Input - Ανάγνωση εικονογράμματος
+  const q1Scale = pickRandom([4, 5, 8, 10]);
+  const q1Symbols = randInt(3, 6);
+  const q1Total = q1Symbols * q1Scale;
 
-  // Q1 (Input - Decimal)
-  {
-    const scale = pickRandom([4, 5, 8, 10]);
-    const symbols = randInt(3, 6);
-    const total = symbols * scale;
+  // Q2: MCQ - Κανόνες κατασκευής ραβδογράμματος
+  const q2Correct = 'Όλες οι ράβδοι πρέπει να έχουν αυστηρά το ίδιο πλάτος και ίσα κενά μεταξύ τους';
+  const q2Options = shuffle([
+    q2Correct,
+    'Οι ράβδοι πρέπει να έχουν διαφορετικό πλάτος ανάλογα με την προτίμηση',
+    'Δεν χρειάζεται να αναγράφεται κλίμακα στον κατακόρυφο άξονα',
+    'Τα κενά ανάμεσα στις ράβδους πρέπει να μεγαλώνουν συνεχώς'
+  ]);
 
-    qList.push({
-      id: 1,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 1 • ΑΝΑΓΝΩΣΗ ΕΙΚΟΝΟΓΡΑΜΜΑΤΟΣ',
-      instruction: 'Παρατηρήστε το εικονόγραμμα και υπολογίστε το συνολικό μέγεθος:',
+  // Q3: Input - Σχεδίαση συμβόλων
+  const q3TotalItems = pickRandom([40, 50, 60, 80, 100]);
+  const q3Scale = pickRandom([5, 10, 20]);
+  const q3ReqSyms = q3TotalItems / q3Scale;
+
+  // Q4: MCQ - Η έννοια της συχνότητας
+  const q4Correct = 'Ο αριθμός που δείχνει πόσες φορές εμφανίζεται μια συγκεκριμένη τιμή ή επιλογή';
+  const q4Options = shuffle([
+    q4Correct,
+    'Το συνολικό άθροισμα όλων των αριθμών ενός προβλήματος',
+    'Η διαφορά ανάμεσα στη μέγιστη και την ελάχιστη τιμή',
+    'Το πλάτος της στήλης σε ένα ραβδόγραμμα'
+  ]);
+
+  // Q5: Input - Σύγκριση υψών ράβδων
+  const q5ValHigh = randInt(25, 40);
+  const q5ValLow = randInt(10, 20);
+  const q5Diff = q5ValHigh - q5ValLow;
+
+  // Q6: MCQ - Η σημασία του υπομνήματος
+  const q6Correct = 'Επειδή χωρίς υπόμνημα δεν γνωρίζουμε πόσες μονάδες αντιπροσωπεύει κάθε εικόνα';
+  const q6Options = shuffle([
+    q6Correct,
+    'Για να ομορφύνει το χρώμα του γραφήματος',
+    'Για να μην χρειάζεται να κάνουμε πολλαπλασιασμό',
+    'Επειδή είναι υποχρεωτικό μόνο στα ραβδογράμματα'
+  ]);
+
+  // Q7: Standard Problem (Input)
+  const spIndex1 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q7Data = STANDARD_PROBLEMS_POOL[spIndex1].generate();
+
+  // Q8: Standard Problem (MCQ)
+  let spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  while (spIndex2 === spIndex1) spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q8Data = STANDARD_PROBLEMS_POOL[spIndex2].generate();
+  const q8Options = shuffle([
+    ...new Set([
+      q8Data.correctText,
+      ...q8Data.distractors
+    ])
+  ]);
+
+  // Q9: Hard Problem (Input)
+  const hpIndex1 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q9Data = HARD_PROBLEMS_POOL[hpIndex1].generate();
+
+  // Q10: Hard Problem (MCQ)
+  let hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  while (hpIndex2 === hpIndex1) hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q10Data = HARD_PROBLEMS_POOL[hpIndex2].generate();
+  const q10Options = shuffle([
+    ...new Set([
+      q10Data.correctText,
+      ...q10Data.distractors
+    ])
+  ]);
+
+  return [
+    {
+      id: 'q1',
+      type: 'input',
+      inputType: 'number',
+      title: 'Ανάγνωση Εικονογράμματος',
       prompt: `Βάσει του παρακάτω εικονογράμματος, πόσα βιβλία διάβασε συνολικά ο μαθητής;`,
       pictogram: {
-        legend: `📚 ＝ ${scale} βιβλία`,
+        legend: `📚 ＝ ${q1Scale} βιβλία`,
         items: [
-          { label: 'Ανάγνωση', icon: '📚', symbols, value: '?' }
+          { label: 'Ανάγνωση', icon: '📚', symbols: q1Symbols, value: '?' }
         ]
       },
-      correctVal: total,
-      correctStr: String(total),
-      explanation: `Στο εικονόγραμμα υπάρχουν ${symbols} σύμβολα. Αφού 📚 ＝ ${scale} βιβλία: ${symbols} · ${scale} ＝ ${total} βιβλία.`
-    });
-  }
-
-  // Q2 (MCQ)
-  {
-    const correctRule = 'Όλες οι ράβδοι πρέπει να έχουν αυστηρά το ίδιο πλάτος και ίσα κενά μεταξύ τους';
-    const options = [
-      { text: correctRule, isCorrect: true },
-      { text: 'Οι ράβδοι πρέπει να έχουν διαφορετικό πλάτος ανάλογα με την προτίμηση', isCorrect: false },
-      { text: 'Δεν χρειάζεται να αναγράφεται κλίμακα στον κατακόρυφο άξονα', isCorrect: false },
-      { text: 'Τα κενά ανάμεσα στις ράβδους πρέπει να μεγαλώνουν συνεχώς', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 2,
+      correct: String(q1Total),
+      explain: `Στο εικονόγραμμα υπάρχουν ${q1Symbols} σύμβολα. Αφού 📚 ＝ ${q1Scale} βιβλία: ${q1Symbols} · ${q1Scale} ＝ ${q1Total} βιβλία.`
+    },
+    {
+      id: 'q2',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 2 • ΚΑΝΟΝΕΣ ΚΑΤΑΣΚΕΥΗΣ ΡΑΒΔΟΓΡΑΜΜΑΤΟΣ',
-      instruction: 'Επιλέξτε τον σωστό κανόνα:',
-      prompt: `Ποιος από τους παρακάτω κανόνες είναι υποχρεωτικός κατά τη σχεδίαση ενός ραβδογράμματος;`,
-      options,
-      correctText: correctRule,
-      explanation: `Στο ραβδόγραμμα μόνο το ύψος των ράβδων αλλάζει (ανάλογα με τη συχνότητα). Το πλάτος τους και οι αποστάσεις ανάμεσά τους παραμένουν αυστηρά ίσα.`
-    });
-  }
-
-  // Q3 (Input - Decimal)
-  {
-    const totalItems = pickRandom([40, 50, 60, 80, 100]);
-    const scale = pickRandom([5, 10, 20]);
-    const reqSyms = totalItems / scale;
-
-    qList.push({
-      id: 3,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 3 • ΣΧΕΔΙΑΣΗ ΣΥΜΒΟΛΩΝ',
-      instruction: 'Βρείτε πόσα σύμβολα απαιτούνται:',
-      prompt: `Θέλουμε να απεικονίσουμε ${totalItems} δέντρα σε εικονόγραμμα με υπόμνημα 🌲 ＝ ${scale} δέντρα. Πόσα σύμβολα 🌲 πρέπει να σχεδιάσουμε;`,
-      correctVal: reqSyms,
-      correctStr: String(reqSyms),
-      explanation: `Διαιρούμε το συνολικό μέγεθος με την κλίμακα του υπομνήματος: ${totalItems} : ${scale} ＝ ${reqSyms} σύμβολα.`
-    });
-  }
-
-  // Q4 (MCQ)
-  {
-    const correctConcept = 'Ο αριθμός που δείχνει πόσες φορές εμφανίζεται μια συγκεκριμένη τιμή ή επιλογή';
-    const options = [
-      { text: correctConcept, isCorrect: true },
-      { text: 'Το συνολικό άθροισμα όλων των αριθμών ενός προβλήματος', isCorrect: false },
-      { text: 'Η διαφορά ανάμεσα στη μέγιστη και την ελάχιστη τιμή', isCorrect: false },
-      { text: 'Το πλάτος της στήλης σε ένα ραβδόγραμμα', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 4,
+      title: 'Κανόνες Κατασκευής Ραβδογράμματος',
+      prompt: 'Ποιος από τους παρακάτω κανόνες είναι υποχρεωτικός κατά τη σχεδίαση ενός ραβδογράμματος;',
+      options: q2Options,
+      correct: q2Correct,
+      explain: 'Στο ραβδόγραμμα μόνο το ύψος των ράβδων αλλάζει (ανάλογα με τη συχνότητα). Το πλάτος τους και οι αποστάσεις ανάμεσά τους παραμένουν αυστηρά ίσα.'
+    },
+    {
+      id: 'q3',
+      type: 'input',
+      inputType: 'number',
+      title: 'Σχεδίαση Συμβόλων σε Εικονόγραμμα',
+      prompt: `Θέλουμε να απεικονίσουμε ${q3TotalItems} δέντρα σε εικονόγραμμα με υπόμνημα 🌲 ＝ ${q3Scale} δέντρα. Πόσα σύμβολα 🌲 πρέπει να σχεδιάσουμε;`,
+      correct: String(q3ReqSyms),
+      explain: `Διαιρούμε το συνολικό μέγεθος με την κλίμακα του υπομνήματος: ${q3TotalItems} : ${q3Scale} ＝ ${q3ReqSyms} σύμβολα.`
+    },
+    {
+      id: 'q4',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 4 • Η ΕΝΝΟΙΑ ΤΗΣ ΣΥΧΝΟΤΗΤΑΣ',
-      instruction: 'Επιλέξτε τον σωστό ορισμό:',
-      prompt: `Τι ονομάζουμε «συχνότητα» ενός δεδομένου στη Στατιστική;`,
-      options,
-      correctText: correctConcept,
-      explanation: `Συχνότητα είναι το πλήθος των φορών που παρατηρείται ή επαναλαμβάνεται μια συγκεκριμένη τιμή ή κατηγορία.`
-    });
-  }
-
-  // Q5 (Input - Decimal)
-  {
-    const valHigh = randInt(25, 40);
-    const valLow = randInt(10, 20);
-    const diff = valHigh - valLow;
-
-    qList.push({
-      id: 5,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 5 • ΣΥΓΚΡΙΣΗ ΥΨΩΝ ΡΑΒΔΩΝ',
-      instruction: 'Παρατηρήστε το ραβδόγραμμα και υπολογίστε τη διαφορά:',
-      prompt: `Πόσο μεγαλύτερη είναι η συχνότητα της Κατηγορίας Α σε σχέση με την Κατηγορία Β;`,
+      title: 'Η Έννοια της Συχνότητας',
+      prompt: 'Τι ονομάζουμε «συχνότητα» ενός δεδομένου στη Στατιστική;',
+      options: q4Options,
+      correct: q4Correct,
+      explain: 'Συχνότητα είναι το πλήθος των φορών που παρατηρείται ή επαναλαμβάνεται μια συγκεκριμένη τιμή ή κατηγορία.'
+    },
+    {
+      id: 'q5',
+      type: 'input',
+      inputType: 'number',
+      title: 'Σύγκριση Υψών Ράβδων',
+      prompt: 'Πόσο μεγαλύτερη είναι η συχνότητα της Κατηγορίας Α σε σχέση με την Κατηγορία Β;',
       barChart: {
         maxVal: 45,
         yStep: 15,
         data: [
-          { label: 'Κατηγορία Α', value: valHigh, color: '#3b82f6' },
-          { label: 'Κατηγορία Β', value: valLow, color: '#f43f5e' }
+          { label: 'Κατηγορία Α', value: q5ValHigh, color: '#3b82f6' },
+          { label: 'Κατηγορία Β', value: q5ValLow, color: '#f43f5e' }
         ]
       },
-      correctVal: diff,
-      correctStr: String(diff),
-      explanation: `Διαβάζουμε τα ύψη: Κατηγορία Α ＝ ${valHigh} και Κατηγορία Β ＝ ${valLow}. Διαφορά: ${valHigh} － ${valLow} ＝ ${diff}.`
-    });
-  }
-
-  // Q6 (MCQ)
-  {
-    const correctReason = 'Επειδή χωρίς υπόμνημα δεν γνωρίζουμε πόσες μονάδες αντιπροσωπεύει κάθε εικόνα';
-    const options = [
-      { text: correctReason, isCorrect: true },
-      { text: 'Για να ομορφύνει το χρώμα του γραφήματος', isCorrect: false },
-      { text: 'Για να μην χρειάζεται να κάνουμε πολλαπλασιασμό', isCorrect: false },
-      { text: 'Επειδή είναι υποχρεωτικό μόνο στα ραβδογράμματα', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 6,
+      correct: String(q5Diff),
+      explain: `Διαβάζουμε τα ύψη: Κατηγορία Α ＝ ${q5ValHigh} και Κατηγορία Β ＝ ${q5ValLow}. Διαφορά: ${q5ValHigh} － ${q5ValLow} ＝ ${q5Diff}.`
+    },
+    {
+      id: 'q6',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 6 • Η ΣΗΜΑΣΙΑ ΤΟΥ ΥΠΟΜΝΗΜΑΤΟΣ',
-      instruction: 'Επιλέξτε τη σωστή εξήγηση:',
-      prompt: `Για ποιο λόγο είναι απολύτως απαραίτητο το υπόμνημα σε ένα εικονόγραμμα;`,
-      options,
-      correctText: correctReason,
-      explanation: `Το υπόμνημα καθορίζει την αναλογία/κλίμακα του συμβόλου (π.χ. 1 σύμβολο ＝ 5 μονάδες). Χωρίς αυτό, το εικονόγραμμα δεν μπορεί να διαβαστεί ποσοτικά.`
-    });
-  }
-
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή
-  {
-    const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const stdProb1 = shuffledStd[0].generate();
-    const stdProb2 = shuffledStd[1].generate();
-
-    // Q7 (Input - Decimal)
-    qList.push({
-      id: 7,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΓΡΑΦΗΜΑΤΟΣ',
-      instruction: 'Παρατηρήστε το σχήμα και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: stdProb1.text,
-      barChart: stdProb1.barChart,
-      pictogram: stdProb1.pictogram,
-      correctVal: stdProb1.correctVal,
-      correctStr: stdProb1.correctStr,
-      explanation: stdProb1.explanation
-    });
-
-    // Q8 (MCQ)
-    const val8 = stdProb2.correctVal;
-    const unit8 = stdProb2.unit === '%' ? ' %' : (stdProb2.unit ? ` ${stdProb2.unit}` : '');
-    const fake8A = typeof val8 === 'number' ? formatNum(val8 + randInt(5, 12)) : '0';
-    const fake8B = typeof val8 === 'number' ? formatNum(Math.max(1, val8 - randInt(4, 10))) : '0';
-    const fake8C = typeof val8 === 'number' ? formatNum(val8 * 1.4) : '0';
-
-    const optionsQ8 = [
-      { text: `${stdProb2.correctStr}${unit8}`, isCorrect: true },
-      { text: `${fake8A}${unit8}`, isCorrect: false },
-      { text: `${fake8B}${unit8}`, isCorrect: false },
-      { text: `${fake8C}${unit8}`, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 8,
+      title: 'Η Σημασία του Υπομνήματος',
+      prompt: 'Για ποιο λόγο είναι απολύτως απαραίτητο το υπόμνημα σε ένα εικονόγραμμα;',
+      options: q6Options,
+      correct: q6Correct,
+      explain: 'Το υπόμνημα καθορίζει την αναλογία/κλίμακα του συμβόλου (π.χ. 1 σύμβολο ＝ 5 μονάδες). Χωρίς αυτό, το εικονόγραμμα δεν μπορεί να διαβαστεί ποσοτικά.'
+    },
+    {
+      id: 'q7',
+      type: 'input',
+      inputType: 'number',
+      title: `Πρόβλημα: ${q7Data.title}`,
+      prompt: q7Data.prompt,
+      barChart: q7Data.barChart,
+      pictogram: q7Data.pictogram,
+      correct: q7Data.correctVal,
+      tableData: q7Data.tableData,
+      explain: q7Data.explain
+    },
+    {
+      id: 'q8',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΕΡΜΗΝΕΙΑΣ ΔΕΔΟΜΕΝΩΝ',
-      instruction: 'Παρατηρήστε το σχήμα και επιλέξτε τη σωστή τιμή:',
-      prompt: stdProb2.text,
-      barChart: stdProb2.barChart,
-      pictogram: stdProb2.pictogram,
-      options: optionsQ8,
-      correctText: `${stdProb2.correctStr}${unit8}`,
-      explanation: stdProb2.explanation
-    });
-  }
-
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας με Σχήματα
-  {
-    const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const hardProb1 = shuffledHard[0].generate();
-    const hardProb2 = shuffledHard[1].generate();
-
-    // Q9 (Input - Decimal)
-    qList.push({
-      id: 9,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
-      instruction: 'Παρατηρήστε προσεκτικά το σχήμα και υπολογίστε το αποτέλεσμα:',
-      prompt: hardProb1.text,
-      barChart: hardProb1.barChart,
-      pictogram: hardProb1.pictogram,
-      correctVal: hardProb1.correctVal,
-      correctStr: hardProb1.correctStr,
-      explanation: hardProb1.explanation
-    });
-
-    // Q10 (MCQ Αυξημένης Δυσκολίας - Σύμβολο '%' ΜΟΝΟ όταν είναι ποσοστό)
-    const val10 = hardProb2.correctVal;
-    const isPercentageQuestion = hardProb2.unit === '%';
-    const unitSuffix = isPercentageQuestion ? ' %' : (hardProb2.unit ? ` ${hardProb2.unit}` : '');
-
-    const fake10A = typeof val10 === 'number' ? formatNum(val10 + randInt(5, 10)) : '0';
-    const fake10B = typeof val10 === 'number' ? formatNum(Math.max(2, val10 - randInt(3, 7))) : '0';
-    const fake10C = typeof val10 === 'number' ? formatNum(val10 * 1.3) : '0';
-
-    const optionsQ10 = [
-      { text: `${hardProb2.correctStr}${unitSuffix}`, isCorrect: true },
-      { text: `${fake10A}${unitSuffix}`, isCorrect: false },
-      { text: `${fake10B}${unitSuffix}`, isCorrect: false },
-      { text: `${fake10C}${unitSuffix}`, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 10,
+      title: `Πρόβλημα: ${q8Data.title}`,
+      prompt: q8Data.prompt,
+      barChart: q8Data.barChart,
+      pictogram: q8Data.pictogram,
+      options: q8Options,
+      correct: q8Data.correctText,
+      tableData: q8Data.tableData,
+      explain: q8Data.explain
+    },
+    {
+      id: 'q9',
+      type: 'input',
+      inputType: 'decimal',
+      title: `Σύνθετο Πρόβλημα: ${q9Data.title}`,
+      prompt: q9Data.prompt,
+      barChart: q9Data.barChart,
+      pictogram: q9Data.pictogram,
+      correct: q9Data.correctVal,
+      tableData: q9Data.tableData,
+      explain: q9Data.explain
+    },
+    {
+      id: 'q10',
       type: 'mcq',
-      title: isPercentageQuestion
-        ? 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΣΤΑΤΙΣΤΙΚΗΣ & ΠΟΣΟΣΤΩΝ'
-        : 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΣΤΑΤΙΣΤΙΚΗΣ ΑΠΕΙΚΟΝΙΣΗΣ',
-      instruction: 'Παρατηρήστε το σχήμα και επιλέξτε τη σωστή απάντηση:',
-      prompt: hardProb2.text,
-      barChart: hardProb2.barChart,
-      pictogram: hardProb2.pictogram,
-      options: optionsQ10,
-      correctText: `${hardProb2.correctStr}${unitSuffix}`,
-      explanation: hardProb2.explanation
-    });
-  }
-
-  return qList;
+      title: `Σύνθετο Πρόβλημα: ${q10Data.title}`,
+      prompt: q10Data.prompt,
+      barChart: q10Data.barChart,
+      pictogram: q10Data.pictogram,
+      options: q10Options,
+      correct: q10Data.correctText,
+      tableData: q10Data.tableData,
+      explain: q10Data.explain
+    }
+  ];
 }
+
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
 
 export default function ApeikonisiDataExercisesPage() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
   const loadNewSet = useCallback(() => {
-    const q = generateQuestions();
-    setQuestions(q);
-    setAnswers({});
-    setIsSubmitted(false);
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = '';
+    });
+    setAnswers(initialAnswers);
+    setSubmitted(false);
     setScore(0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (fieldKey, rawValue) => {
-    if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
-    if (sanitized.length > 10) {
-      sanitized = sanitized.slice(0, 10);
-    }
-    setAnswers((prev) => ({
-      ...prev,
-      [fieldKey]: sanitized
-    }));
-  };
-
-  const handleSelectMCQ = (qId, optionText) => {
-    if (isSubmitted) return;
-    setAnswers((prev) => ({
-      ...prev,
-      [`q_${qId}`]: optionText
-    }));
-  };
-
-  const handleCheckAnswers = () => {
-    let currentScore = 0;
-
-    questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq
+  const handleAnswerChange = (id, rawValue, type) => {
+    if (submitted) return;
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
       }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
+  };
+
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
+    if (q.type === 'input') {
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/[%€]/g, '').trim().toLowerCase();
+      const cleanTarget = String(q.correct).replace(/\./g, ',').replace(/\s+/g, '').replace(/[%€]/g, '').trim().toLowerCase();
+
+      if (cleanUser === cleanTarget) return true;
+
+      if (q.inputType === 'decimal') {
+        const numUser = parseFloat(cleanUser.replace(',', '.'));
+        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
+      }
+      return false;
+    }
+    if (q.type === 'mcq') {
+      return userVal === q.correct;
+    }
+    return false;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (submitted || questions.length === 0) return;
+
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(currentScore);
-    setIsSubmitted(true);
+    setScore(total);
+    setSubmitted(true);
   };
+
+  const getCardStyle = (q) => {
+    if (!submitted) return 'bg-white border-slate-200 shadow-sm';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
+  };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
       title="Ασκήσεις: Απεικόνιση Δεδομένων (Ραβδόγραμμα & Εικονόγραμμα) - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="10 απαιτητικές ασκήσεις και προβλήματα στα ραβδογράμματα, τα εικονογράμματα, την ερμηνεία υπομνήματος και τον υπολογισμό συχνοτήτων για τη ΣΤ' Δημοτικού."
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στα ραβδογράμματα, τα εικονογράμματα και την ερμηνεία δεδομένων για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
+      showAds={false}
       hideFooter={true}
       actionButton={
         <Link
           href="/st-dimotikou/55-apeikonisi-data"
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
-        {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 55 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
+                Διαδραστικές Ασκήσεις: Ραβδόγραμμα &amp; Εικονόγραμμα
+              </h1>
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα με οπτικά διαγράμματα, υπολογισμό συχνοτήτων, ερμηνεία υπομνήματος και ανάλυση στατιστικών δεδομένων!
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-              Ασκήσεις: Ραβδόγραμμα &amp; Εικονόγραμμα
-            </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με οπτικά γραφήματα και 4 ρεαλιστικά προβλήματα. Διαβάστε κλίμακες αξόνων, ερμηνεύστε υπομνήματα εικονογραμμάτων και υπολογίστε συχνότητες, διαφορές και ποσοστά.
-            </p>
-          </div>
 
-          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους και οπτικά σχήματα.
-            </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6">
-          {questions.map((q, idx) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
-
-            return (
-              <article
-                key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
-                  isSubmitted
-                    ? isCorrect
-                      ? 'border-emerald-400 bg-emerald-50/20'
-                      : 'border-rose-400 bg-rose-50/20'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
-                  <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
-                    {toCleanUppercase(q.title)}
-                  </span>
-                  {isSubmitted && (
-                    <span
-                      className={`text-xs font-bold px-3 py-1 rounded-full ${
-                        isCorrect
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
-                    </span>
-                  )}
-                </div>
-
-                {/* Εκφωνηση */}
-                <div className="space-y-2 mb-2">
-                  {q.instruction && (
-                    <p className="text-xs sm:text-sm font-semibold text-slate-500">
-                      {q.instruction}
-                    </p>
-                  )}
-                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
-                    {q.prompt}
-                  </p>
-                </div>
-
-                {/* ΟΠΤΙΚΟ ΣΧΗΜΑ (ΑΝ ΥΠΑΡΧΕΙ ΡΑΒΔΟΓΡΑΜΜΑ Η ΕΙΚΟΝΟΓΡΑΜΜΑ) */}
-                {q.barChart && (
-                  <MiniBarChart
-                    data={q.barChart.data}
-                    maxVal={q.barChart.maxVal}
-                    yStep={q.barChart.yStep}
-                  />
-                )}
-
-                {q.pictogram && (
-                  <MiniPictogram
-                    legend={q.pictogram.legend}
-                    items={q.pictogram.items}
-                  />
-                )}
-
-                {/* Περιοχη Απαντησης */}
-                <div className="py-2 pt-2.5">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        maxLength={10}
-                        disabled={isSubmitted}
-                        placeholder="Απάντηση..."
-                        value={answers[`q_${q.id}`] || ''}
-                        onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
-                      />
-                      <span className="text-xs text-slate-500">
-                        (Ακέραιος η δεκαδικός με κόμμα)
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                >
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
                       </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
-                  {q.type === 'mcq' && (
-                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
-                      {q.options.map((opt, oIdx) => {
-                        const isSelected = answers[`q_${q.id}`] === opt.text;
-                        return (
-                          <button
-                            key={`opt-${q.id}-${oIdx}`}
-                            type="button"
-                            disabled={isSubmitted}
-                            onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3 rounded-2xl border text-left font-semibold text-xs sm:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                                : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                            } disabled:cursor-not-allowed`}
-                          >
-                            <span className="break-words whitespace-normal leading-snug flex-1">
-                              {opt.text}
-                            </span>
-                            <span
-                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-3">
+                      {q.prompt}
+                    </p>
+
+                    {/* ΟΠΤΙΚΑ ΣΧΗΜΑΤΑ ΔΕΔΟΜΕΝΩΝ */}
+                    {q.barChart && (
+                      <MiniBarChart
+                        data={q.barChart.data}
+                        maxVal={q.barChart.maxVal}
+                        yStep={q.barChart.yStep}
+                      />
+                    )}
+
+                    {q.pictogram && (
+                      <MiniPictogram
+                        legend={q.pictogram.legend}
+                        items={q.pictogram.items}
+                      />
+                    )}
+
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
-                                  ? 'border-white bg-white text-blue-600 font-bold'
-                                  : 'border-slate-400 bg-transparent'
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                               }`}
                             >
-                              {isSelected ? '●' : ''}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
 
-                </div>
-
-                {/* Feedback μετα την υποβολη */}
-                {isSubmitted && (
-                  <div
-                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
-                      isCorrect
-                        ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
-                        : 'bg-rose-100/60 border-rose-300 text-rose-950'
-                    }`}
-                  >
-                    <div className="font-bold flex items-center gap-1.5">
-                      <span>{isCorrect ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Επεξήγηση:'}</span>
-                    </div>
-                    <div>{q.explanation}</div>
-                    {!isCorrect && (
-                      <div className="font-semibold pt-1 text-slate-800">
-                        Σωστή απάντηση:{' '}
-                        <span className="font-mono font-bold text-blue-900">
-                          {q.correctStr || q.correctText}
-                        </span>
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          key={`input-${q.id}`}
+                          autoComplete="off"
+                          spellCheck="false"
+                          type="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.inputType === 'decimal' ? 'π.χ. 12,5' : 'Απάντηση...'}
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
                       </div>
                     )}
                   </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
 
-      </div>
-
-      {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
-          
-          <div className="flex items-center gap-4 sm:gap-8">
-            <div>
-              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
-              </span>
-              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
-              </span>
-            </div>
-
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          <div className="flex items-center gap-3">
-            {!isSubmitted ? (
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-4">
               <button
-                type="button"
-                onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                type="submit"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                <span className="text-xl">🎯</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
-            ) : (
+            </div>
+          )}
+        </form>
+      </div>
+
+      {/* FIXED BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
+          
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+            </div>
+            {submitted && (
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* GUIDANCE OR RESTART */}
+          <div className="flex items-center gap-3">
+            {submitted ? (
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
+            ) : (
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
+              </p>
             )}
           </div>
 
         </div>
-      </footer>
+      </div>
     </Layout>
   );
 }
