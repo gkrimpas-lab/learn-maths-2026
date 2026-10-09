@@ -2,79 +2,81 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import { LAYOUT } from '../../shared/layout-config';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
+
+function randInt(min, max) {
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
+}
+
+function shuffle(array) {
+  if (!Array.isArray(array)) return [];
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαιος ακεραιος στο [min, max]
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Τυχαια επιλογη απο πινακα
-function pickRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-// Μορφοποιηση αριθμου (ακεραιος ή δεκαδικος με κομμα)
+// Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός με κόμμα)
 function formatNum(val, decimals = 2) {
-  if (Number.isInteger(val)) return String(val);
-  const rounded = Number(val.toFixed(decimals));
+  if (val === null || val === undefined || isNaN(Number(val))) return '0';
+  if (Number.isInteger(Number(val))) return String(val);
+  const rounded = Number(Number(val).toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
-// Βοηθητικο component πινακα καταταξης μεθοδου των τριων - ΠΛΗΡΩΣ RESPONSIVE ΧΩΡΙΣ SCROLL
-function MethodosTrionTable({ data }) {
-  if (!data) return null;
-  return (
-    <div className="w-full max-w-xs sm:max-w-sm bg-slate-50 border-2 border-slate-200 rounded-2xl p-2.5 my-2.5 shadow-inner font-mono text-xs">
-      <div className="grid grid-cols-2 gap-2 font-bold border-b border-slate-200 pb-1 text-slate-600 text-center">
-        <span className="bg-blue-100/60 px-1.5 py-0.5 rounded text-blue-900 truncate">{data.col1}</span>
-        <span className="bg-emerald-100/60 px-1.5 py-0.5 rounded text-emerald-900 truncate">{data.col2}</span>
-      </div>
-      <div className="grid grid-cols-2 gap-2 pt-1.5 text-center font-bold text-slate-800">
-        <span className="truncate">{data.r1[0]}</span>
-        <span className="text-indigo-700 truncate">{data.r1[1]}</span>
-        <span className="truncate">{data.r2[0]}</span>
-        <span className={`truncate ${data.r2[1] === 'χ' ? 'text-amber-600 font-black text-sm' : 'text-indigo-700'}`}>
-          {data.r2[1]}
-        </span>
-      </div>
-    </div>
-  );
-}
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q7, Q8, Q9, Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
 
-// Δεξαμενη Κανονικων Προβληματων Μεθοδου των Τριων (10 διαφορετικα προβληματα)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'm3_std_1',
+    title: 'Αγορά Τυριού (Ανάλογα Ποσά)',
+    unit: '€',
     generate: () => {
-      const isAnaloga = true;
       const kg1 = randInt(3, 5);
       const unitCost = randInt(4, 8);
       const cost1 = kg1 * unitCost;
       const kg2 = kg1 + randInt(3, 6);
       const cost2 = kg2 * unitCost;
       return {
-        isAnaloga,
-        text: `Για ${kg1} kg τυρί πληρώσαμε ${cost1} €. Πόσα € θα πληρώσουμε για ${kg2} kg από το ίδιο τυρί;`,
-        tableData: { col1: 'Βάρος (kg)', col2: 'Κόστος (€)', r1: [kg1, cost1], r2: [kg2, 'χ'] },
-        correctVal: cost2,
-        correctStr: String(cost2),
-        explanation: `Τα ποσά είναι ανάλογα (περισσότερα κιλά ➔ περισσότερα χρήματα). Κατάταξη: ${kg1} kg ➔ ${cost1} € και ${kg2} kg ➔ χ €. Εφαρμόζουμε χιαστί πολλαπλασιασμό: χ ＝ (${cost1} · ${kg2}) : ${kg1} ＝ ${cost2} €.`
+        prompt: `Για ${kg1} kg τυρί πληρώσαμε ${cost1} €. Πόσα € θα πληρώσουμε για ${kg2} kg από το ίδιο τυρί;`,
+        unit: '€',
+        correctVal: String(cost2),
+        correctText: `${cost2} €`,
+        tableData: [
+          { item: 'Πρώτη ποσότητα', formula: `${kg1} kg ➔ ${cost1} €`, val: `${cost1} €` },
+          { item: 'Δεύτερη ποσότητα', formula: `${kg2} kg ➔ x €`, val: 'x €' },
+          { item: 'Σταυρωτό γινόμενο (χιαστί)', formula: `(${cost1} · ${kg2}) : ${kg1}`, val: `${cost2} €` }
+        ],
+        explain: `Τα ποσά είναι ανάλογα (περισσότερα κιλά ➔ περισσότερα χρήματα). Κατάταξη: ${kg1} kg ➔ ${cost1} € και ${kg2} kg ➔ x €. Εφαρμόζουμε χιαστί πολλαπλασιασμό: x ＝ (${cost1} · ${kg2}) : ${kg1} ＝ ${cost2} €.`,
+        distractors: [`${cost2 + unitCost} €`, `${cost2 - unitCost} €`, `${cost2 + 2 * unitCost} €`]
       };
     }
   },
   {
     id: 'm3_std_2',
+    title: 'Επισκευή Μηχανήματος (Αντιστρόφως Ανάλογα)',
+    unit: 'ημέρες',
     generate: () => {
-      const isAnaloga = false;
       const w1 = randInt(2, 4);
       const d1 = randInt(6, 12);
       const totalWork = w1 * d1;
@@ -82,38 +84,50 @@ const STANDARD_PROBLEMS_POOL = [
       const d2 = totalWork / w2;
       const cleanD2 = Number.isInteger(d2) ? d2 : Number(d2.toFixed(1));
       return {
-        isAnaloga,
-        text: `Σε ένα συνεργείο ${w1} μηχανικοί επισκευάζουν ένα μηχάνημα σε ${d1} ημέρες. Σε πόσες ημέρες θα το επισκεύαζαν ${w2} μηχανικοί με τον ίδιο ρυθμό εργασίας;`,
-        tableData: { col1: 'Μηχανικοί', col2: 'Ημέρες', r1: [w1, d1], r2: [w2, 'χ'] },
-        correctVal: cleanD2,
-        correctStr: formatNum(cleanD2),
-        explanation: `Τα ποσά είναι αντιστρόφως ανάλογα (περισσότεροι μηχανικοί ➔ λιγότερες ημέρες). Κατάταξη: ${w1} ➔ ${d1} και ${w2} ➔ χ. Εφαρμόζουμε οριζόντιο πολλαπλασιασμό: χ ＝ (${w1} · ${d1}) : ${w2} ＝ ${formatNum(cleanD2)} ημέρες.`
+        prompt: `Σε ένα συνεργείο ${w1} μηχανικοί επισκευάζουν ένα μηχάνημα σε ${d1} ημέρες. Σε πόσες ημέρες θα το επισκεύαζαν ${w2} μηχανικοί με τον ίδιο ρυθμό εργασίας;`,
+        unit: 'ημέρες',
+        correctVal: formatNum(cleanD2),
+        correctText: `${formatNum(cleanD2)} ημέρες`,
+        tableData: [
+          { item: 'Αρχικοί μηχανικοί', formula: `${w1} μηχανικοί ➔ ${d1} ημέρες`, val: `${totalWork} μεροκάματα` },
+          { item: 'Νέοι μηχανικοί', formula: `${w2} μηχανικοί ➔ x ημέρες`, val: 'x ημέρες' },
+          { item: 'Οριζόντιο γινόμενο', formula: `(${w1} · ${d1}) : ${w2}`, val: `${formatNum(cleanD2)} ημέρες` }
+        ],
+        explain: `Τα ποσά είναι αντιστρόφως ανάλογα (περισσότεροι μηχανικοί ➔ λιγότερες ημέρες). Κατάταξη: ${w1} ➔ ${d1} και ${w2} ➔ x. Εφαρμόζουμε οριζόντιο πολλαπλασιασμό: x ＝ (${w1} · ${d1}) : ${w2} ＝ ${formatNum(cleanD2)} ημέρες.`,
+        distractors: [`${formatNum(cleanD2 + 2)} ημέρες`, `${formatNum(Math.max(1, cleanD2 - 2))} ημέρες`, `${formatNum(cleanD2 + 4)} ημέρες`]
       };
     }
   },
   {
     id: 'm3_std_3',
+    title: 'Κίνηση Οχήματος (Ανάλογα Ποσά)',
+    unit: 'km',
     generate: () => {
-      const isAnaloga = true;
       const hours1 = randInt(2, 4);
       const speed = randInt(70, 95);
       const dist1 = hours1 * speed;
       const hours2 = hours1 + randInt(2, 3);
       const dist2 = hours2 * speed;
       return {
-        isAnaloga,
-        text: `Ένα όχημα διανύει ${dist1} km σε ${hours1} ώρες με σταθερή ταχύτητα. Πόσα km θα διανύσει σε ${hours2} ώρες;`,
-        tableData: { col1: 'Χρόνος (h)', col2: 'Απόσταση (km)', r1: [hours1, dist1], r2: [hours2, 'χ'] },
-        correctVal: dist2,
-        correctStr: String(dist2),
-        explanation: `Τα ποσά είναι ανάλογα. Κατάταξη: ${hours1} h ➔ ${dist1} km και ${hours2} h ➔ χ km. Με χιαστί: χ ＝ (${dist1} · ${hours2}) : ${hours1} ＝ ${dist2} km.`
+        prompt: `Ένα όχημα διανύει ${dist1} km σε ${hours1} ώρες με σταθερή ταχύτητα. Πόσα km θα διανύσει σε ${hours2} ώρες;`,
+        unit: 'km',
+        correctVal: String(dist2),
+        correctText: `${dist2} km`,
+        tableData: [
+          { item: 'Χρόνος 1', formula: `${hours1} h ➔ ${dist1} km`, val: `${dist1} km` },
+          { item: 'Χρόνος 2', formula: `${hours2} h ➔ x km`, val: 'x km' },
+          { item: 'Χιαστί υπολογισμός', formula: `(${dist1} · ${hours2}) : ${hours1}`, val: `${dist2} km` }
+        ],
+        explain: `Τα ποσά είναι ανάλογα. Κατάταξη: ${hours1} h ➔ ${dist1} km και ${hours2} h ➔ x km. Με χιαστί: x ＝ (${dist1} · ${hours2}) : ${hours1} ＝ ${dist2} km.`,
+        distractors: [`${dist2 + 25} km`, `${dist2 - 30} km`, `${dist2 + 50} km`]
       };
     }
   },
   {
     id: 'm3_std_4',
+    title: 'Ταχύτητα και Χρόνος Τρένου (Αντιστρόφως Ανάλογα)',
+    unit: 'ώρες',
     generate: () => {
-      const isAnaloga = false;
       const speed1 = 60;
       const time1 = randInt(3, 5);
       const dist = speed1 * time1;
@@ -121,847 +135,619 @@ const STANDARD_PROBLEMS_POOL = [
       const time2 = dist / speed2;
       const cleanTime2 = Number.isInteger(time2) ? time2 : Number(time2.toFixed(1));
       return {
-        isAnaloga,
-        text: `Ένα τρένο καλύπτει μια διαδρομή σε ${time1} ώρες με ταχύτητα ${speed1} km/h. Πόσες ώρες θα χρειαστεί αν αυξήσει την ταχύτητά του στα ${speed2} km/h;`,
-        tableData: { col1: 'Ταχύτητα (km/h)', col2: 'Χρόνος (h)', r1: [speed1, time1], r2: [speed2, 'χ'] },
-        correctVal: cleanTime2,
-        correctStr: formatNum(cleanTime2),
-        explanation: `Ταχύτητα και χρόνος είναι αντιστρόφως ανάλογα ποσά (μεγαλύτερη ταχύτητα ➔ λιγότερος χρόνος). Οριζόντιος πολλαπλασιασμός: χ ＝ (${speed1} · ${time1}) : ${speed2} ＝ ${formatNum(cleanTime2)} ώρες.`
-      };
-    }
-  },
-  {
-    id: 'm3_std_5',
-    generate: () => {
-      const isAnaloga = true;
-      const count1 = randInt(3, 6);
-      const priceUnit = randInt(8, 14);
-      const total1 = count1 * priceUnit;
-      const count2 = count1 + randInt(2, 5);
-      const total2 = count2 * priceUnit;
-      return {
-        isAnaloga,
-        text: `Για ${count1} εισιτήρια συναυλίας πληρώσαμε ${total1} €. Πόσα € θα κοστίσουν ${count2} τέτοια εισιτήρια;`,
-        tableData: { col1: 'Εισιτήρια', col2: 'Κόστος (€)', r1: [count1, total1], r2: [count2, 'χ'] },
-        correctVal: total2,
-        correctStr: String(total2),
-        explanation: `Ποσά ανάλογα. Χιαστί πολλαπλασιασμός: χ ＝ (${total1} · ${count2}) : ${count1} ＝ ${total2} €.`
-      };
-    }
-  },
-  {
-    id: 'm3_std_6',
-    generate: () => {
-      const isAnaloga = false;
-      const taps1 = randInt(2, 3);
-      const hours1 = randInt(4, 6);
-      const capacity = taps1 * hours1;
-      const taps2 = taps1 + randInt(2, 3);
-      const hours2 = capacity / taps2;
-      const cleanH2 = Number.isInteger(hours2) ? hours2 : Number(hours2.toFixed(1));
-      return {
-        isAnaloga,
-        text: `${taps1} ίδιες βρύσες γεμίζουν μια δεξαμενή σε ${hours1} ώρες. Σε πόσες ώρες θα γεμίσουν την ίδια δεξαμενή ${taps2} ίδιες βρύσες αν ανοίξουν ταυτόχρονα;`,
-        tableData: { col1: 'Βρύσες', col2: 'Χρόνος (h)', r1: [taps1, hours1], r2: [taps2, 'χ'] },
-        correctVal: cleanH2,
-        correctStr: formatNum(cleanH2),
-        explanation: `Ποσά αντιστρόφως ανάλογα (περισσότερες βρύσες ➔ λιγότερος χρόνος). Οριζόντια γινόμενα: χ ＝ (${taps1} · ${hours1}) : ${taps2} ＝ ${formatNum(cleanH2)} ώρες.`
-      };
-    }
-  },
-  {
-    id: 'm3_std_7',
-    generate: () => {
-      const isAnaloga = true;
-      const meters1 = randInt(4, 8);
-      const costPerMeter = randInt(12, 18);
-      const cost1 = meters1 * costPerMeter;
-      const meters2 = meters1 + randInt(3, 6);
-      const cost2 = meters2 * costPerMeter;
-      return {
-        isAnaloga,
-        text: `Ένα ύφασμα μήκους ${meters1} m κοστίζει ${cost1} €. Πόσο κοστίζουν ${meters2} m από το ίδιο ακριβώς ύφασμα;`,
-        tableData: { col1: 'Μήκος (m)', col2: 'Κόστος (€)', r1: [meters1, cost1], r2: [meters2, 'χ'] },
-        correctVal: cost2,
-        correctStr: String(cost2),
-        explanation: `Ποσά ανάλογα. Με χιαστί βρίσκουμε: χ ＝ (${cost1} · ${meters2}) : ${meters1} ＝ ${cost2} €.`
-      };
-    }
-  },
-  {
-    id: 'm3_std_8',
-    generate: () => {
-      const isAnaloga = false;
-      const capGrams1 = 200;
-      const packs1 = randInt(12, 20);
-      const totalWeight = capGrams1 * packs1;
-      const capGrams2 = 250;
-      const packs2 = totalWeight / capGrams2;
-      const cleanPacks2 = Number.isInteger(packs2) ? packs2 : Number(packs2.toFixed(1));
-      return {
-        isAnaloga,
-        text: `Μια ποσότητα καφέ συσκευάστηκε σε ${packs1} πακέτα των ${capGrams1} g. Πόσα πακέτα των ${capGrams2} g θα απαιτούνταν για την ίδια ακριβώς ποσότητα;`,
-        tableData: { col1: 'Βάρος πακέτου (g)', col2: 'Πλήθος πακέτων', r1: [capGrams1, packs1], r2: [capGrams2, 'χ'] },
-        correctVal: cleanPacks2,
-        correctStr: formatNum(cleanPacks2),
-        explanation: `Ποσά αντιστρόφως ανάλογα (μεγαλύτερα πακέτα ➔ λιγότερο πλήθος). Οριζόντιος υπολογισμός: χ ＝ (${capGrams1} · ${packs1}) : ${capGrams2} ＝ ${formatNum(cleanPacks2)} πακέτα.`
-      };
-    }
-  },
-  {
-    id: 'm3_std_9',
-    generate: () => {
-      const isAnaloga = true;
-      const days1 = randInt(3, 6);
-      const earnDay = randInt(40, 60);
-      const total1 = days1 * earnDay;
-      const days2 = days1 + randInt(3, 5);
-      const total2 = days2 * earnDay;
-      return {
-        isAnaloga,
-        text: `Ένας εργαζόμενος έλαβε αμοιβή ${total1} € για εργασία ${days1} ημερών. Πόσα € θα λάβει αν εργαστεί για ${days2} ημέρες με το ίδιο ημερομίσθιο;`,
-        tableData: { col1: 'Ημέρες', col2: 'Αμοιβή (€)', r1: [days1, total1], r2: [days2, 'χ'] },
-        correctVal: total2,
-        correctStr: String(total2),
-        explanation: `Ποσά ανάλογα. Εφαρμόζουμε χιαστί: χ ＝ (${total1} · ${days2}) : ${days1} ＝ ${total2} €.`
-      };
-    }
-  },
-  {
-    id: 'm3_std_10',
-    generate: () => {
-      const isAnaloga = false;
-      const tract1 = randInt(2, 4);
-      const days1 = randInt(6, 10);
-      const totalPlow = tract1 * days1;
-      const tract2 = tract1 + 2;
-      const days2 = totalPlow / tract2;
-      const cleanDays2 = Number.isInteger(days2) ? days2 : Number(days2.toFixed(1));
-      return {
-        isAnaloga,
-        text: `${tract1} τρακτέρ οργώνουν ένα χωράφι σε ${days1} ημέρες. Σε πόσες ημέρες θα το όργωναν ${tract2} όμοια τρακτέρ;`,
-        tableData: { col1: 'Τρακτέρ', col2: 'Ημέρες', r1: [tract1, days1], r2: [tract2, 'χ'] },
-        correctVal: cleanDays2,
-        correctStr: formatNum(cleanDays2),
-        explanation: `Ποσά αντιστρόφως ανάλογα (περισσότερα τρακτέρ ➔ λιγότερες ημέρες). Οριζόντια γινόμενα: χ ＝ (${tract1} · ${days1}) : ${tract2} ＝ ${formatNum(cleanDays2)} ημέρες.`
+        prompt: `Ένα τρένο καλύπτει μια διαδρομή σε ${time1} ώρες με ταχύτητα ${speed1} km/h. Πόσες ώρες θα χρειαστεί αν αυξήσει την ταχύτητά του στα ${speed2} km/h;`,
+        unit: 'ώρες',
+        correctVal: formatNum(cleanTime2),
+        correctText: `${formatNum(cleanTime2)} ώρες`,
+        tableData: [
+          { item: 'Ταχύτητα 1 ➔ Χρόνος 1', formula: `${speed1} km/h ➔ ${time1} h`, val: `${dist} km` },
+          { item: 'Ταχύτητα 2 ➔ Χρόνος 2', formula: `${speed2} km/h ➔ x h`, val: 'x h' },
+          { item: 'Οριζόντιο γινόμενο', formula: `(${speed1} · ${time1}) : ${speed2}`, val: `${formatNum(cleanTime2)} h` }
+        ],
+        explain: `Ταχύτητα και χρόνος είναι αντιστρόφως ανάλογα ποσά (μεγαλύτερη ταχύτητα ➔ λιγότερος χρόνος). Οριζόντιος πολλαπλασιασμός: x ＝ (${speed1} · ${time1}) : ${speed2} ＝ ${formatNum(cleanTime2)} ώρες.`,
+        distractors: [`${formatNum(cleanTime2 + 1)} ώρες`, `${formatNum(Math.max(1, cleanTime2 - 1))} ώρες`, `${formatNum(cleanTime2 + 2)} ώρες`]
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (10 διαφορετικα προβληματα)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'm3_hard_1',
+    title: 'Ταχύτητα και Μετατροπή Χρόνου σε Λεπτά',
+    unit: 'km/h',
     generate: () => {
       const speed1 = 80;
-      const minutes1 = 150; // 2 h 30 min
-      const dist = (speed1 * minutes1) / 60; // 200 km
-      const targetMin = 100; // 1 h 40 min
-      const reqSpeed = (dist / targetMin) * 60; // 120 km/h
+      const minutes1 = 150;
+      const dist = (speed1 * minutes1) / 60;
+      const targetMin = 100;
+      const reqSpeed = (dist / targetMin) * 60;
       return {
-        text: `Ένα αυτοκίνητο καλύπτει μια διαδρομή σε 2 ώρες και 30 λεπτά με σταθερή ταχύτητα ${speed1} km/h. Με ποια ταχύτητα σε km/h πρέπει να κινηθεί για να καλύψει την ίδια διαδρομή σε 1 ώρα και 40 λεπτά;`,
-        tableData: { col1: 'Ταχύτητα (km/h)', col2: 'Χρόνος (min)', r1: [speed1, minutes1], r2: ['χ', targetMin] },
-        correctVal: reqSpeed,
-        correctStr: String(reqSpeed),
-        explanation: `Μετατρέπουμε τον χρόνο σε λεπτά: 2 h 30 min ＝ 150 min και 1 h 40 min ＝ 100 min. Ταχύτητα και χρόνος είναι αντιστρόφως ανάλογα ποσά (σταθερή απόσταση). Οριζόντιος υπολογισμός: χ ＝ (${speed1} · 150) : 100 ＝ 12.000 : 100 ＝ ${reqSpeed} km/h.`
+        prompt: `Ένα αυτοκίνητο καλύπτει μια διαδρομή σε 2 ώρες και 30 λεπτά με σταθερή ταχύτητα ${speed1} km/h. Με ποια ταχύτητα σε km/h πρέπει να κινηθεί για να καλύψει την ίδια διαδρομή σε 1 ώρα και 40 λεπτά;`,
+        unit: 'km/h',
+        correctVal: String(reqSpeed),
+        correctText: `${reqSpeed} km/h`,
+        tableData: [
+          { item: 'Μετατροπή χρόνων σε min', formula: '150 min και 100 min', val: 'Σταθερή απόσταση' },
+          { item: 'Οριζόντιος υπολογισμός', formula: `(${speed1} · 150) : 100`, val: `${reqSpeed} km/h` }
+        ],
+        explain: `Μετατρέπουμε τον χρόνο σε λεπτά: 2 h 30 min ＝ 150 min και 1 h 40 min ＝ 100 min. Ταχύτητα και χρόνος είναι αντιστρόφως ανάλογα ποσά (σταθερή απόσταση). Οριζόντιος υπολογισμός: x ＝ (${speed1} · 150) : 100 ＝ 12.000 : 100 ＝ ${reqSpeed} km/h.`,
+        distractors: [`${reqSpeed + 15} km/h`, `${reqSpeed - 20} km/h`, `${reqSpeed + 25} km/h`]
       };
     }
   },
   {
     id: 'm3_hard_2',
+    title: 'Παραγωγή Ψωμιού με Μετατροπή Μονάδων',
+    unit: 'kg',
     generate: () => {
       const flourGrams = 800;
       const breadKg = 1.2;
       const targetFlourKg = 3;
       const targetFlourGrams = 3000;
-      const resBread = (breadKg * targetFlourGrams) / flourGrams; // 4.5 kg
+      const resBread = (breadKg * targetFlourGrams) / flourGrams;
       return {
-        text: `Από ${flourGrams} g αλεύρι παρασκευάζονται ${formatNum(breadKg)} kg ψωμί. Πόσα kg ψωμί θα παρασκευαστούν χρησιμοποιώντας ${targetFlourKg} kg από το ίδιο αλεύρι;`,
-        tableData: { col1: 'Αλεύρι (g)', col2: 'Ψωμί (kg)', r1: [flourGrams, formatNum(breadKg)], r2: [targetFlourGrams, 'χ'] },
-        correctVal: resBread,
-        correctStr: formatNum(resBread),
-        explanation: `Μετατρέπουμε τα ${targetFlourKg} kg σε γραμμάρια: 3.000 g. Τα ποσά είναι ανάλογα. Εφαρμόζουμε χιαστί: χ ＝ (${formatNum(breadKg)} · 3.000) : ${flourGrams} ＝ 3.600 : 800 ＝ ${formatNum(resBread)} kg.`
+        prompt: `Από ${flourGrams} g αλεύρι παρασκευάζονται ${formatNum(breadKg)} kg ψωμί. Πόσα kg ψωμί θα παρασκευαστούν χρησιμοποιώντας ${targetFlourKg} kg από το ίδιο αλεύρι;`,
+        unit: 'kg',
+        correctVal: formatNum(resBread),
+        correctText: `${formatNum(resBread)} kg`,
+        tableData: [
+          { item: 'Μετατροπή kg σε γραμμάρια', formula: `${targetFlourKg} kg · 1.000`, val: `${targetFlourGrams} g` },
+          { item: 'Σταυρωτό γινόμενο (χιαστί)', formula: `(${formatNum(breadKg)} · 3.000) : ${flourGrams}`, val: `${formatNum(resBread)} kg` }
+        ],
+        explain: `Μετατρέπουμε τα ${targetFlourKg} kg σε γραμμάρια: 3.000 g. Τα ποσά είναι ανάλογα. Εφαρμόζουμε χιαστί: x ＝ (${formatNum(breadKg)} · 3.000) : ${flourGrams} ＝ 3.600 : 800 ＝ ${formatNum(resBread)} kg.`,
+        distractors: [`${formatNum(resBread + 1)} kg`, `${formatNum(Math.max(1, resBread - 1))} kg`, `${formatNum(resBread * 1.5)} kg`]
       };
     }
   },
   {
     id: 'm3_hard_3',
+    title: 'Υπόλοιπο Έργου με Προσθήκη Εργατών',
+    unit: 'ημέρες',
     generate: () => {
       const initWorkers = 6;
       const initDays = 18;
       const doneDays = 3;
-      const remDays = initDays - doneDays; // 15
-      const remWork = initWorkers * remDays; // 90
+      const remDays = initDays - doneDays;
+      const remWork = initWorkers * remDays;
       const addedWorkers = 3;
-      const totalWorkers = initWorkers + addedWorkers; // 9
-      const finalDays = remWork / totalWorkers; // 10
+      const totalWorkers = initWorkers + addedWorkers;
+      const finalDays = remWork / totalWorkers;
       return {
-        text: `Μια ομάδα ${initWorkers} εργατών είχε προγραμματίσει να τελειώσει ένα έργο σε ${initDays} ημέρες. Αφού εργάστηκαν μόνοι τους για ${doneDays} ημέρες, προστέθηκαν στην ομάδα άλλοι ${addedWorkers} εργάτες. Σε πόσες ημέρες θα παραδοθεί το υπόλοιπο του έργου;`,
-        tableData: { col1: 'Εργάτες', col2: 'Ημέρες υπολοίπου', r1: [initWorkers, remDays], r2: [totalWorkers, 'χ'] },
-        correctVal: finalDays,
-        correctStr: String(finalDays),
-        explanation: `Το έργο που απομένει αντιστοιχεί σε ${initWorkers} εργάτες για ${remDays} ημέρες. Τώρα οι εργάτες έγιναν ${totalWorkers}. Ποσά αντιστρόφως ανάλογα: χ ＝ (${initWorkers} · ${remDays}) : ${totalWorkers} ＝ 90 : 9 ＝ ${finalDays} ημέρες.`
+        prompt: `Μια ομάδα ${initWorkers} εργατών είχε προγραμματίσει να τελειώσει ένα έργο σε ${initDays} ημέρες. Αφού εργάστηκαν μόνοι τους για ${doneDays} ημέρες, προστέθηκαν στην ομάδα άλλοι ${addedWorkers} εργάτες. Σε πόσες ημέρες θα παραδοθεί το υπόλοιπο του έργου;`,
+        unit: 'ημέρες',
+        correctVal: String(finalDays),
+        correctText: `${finalDays} ημέρες`,
+        tableData: [
+          { item: 'Έργο που απομένει', formula: `${initWorkers} · (${initDays} － ${doneDays})`, val: `${remWork} μεροκάματα` },
+          { item: 'Νέος αριθμός εργατών', formula: `${initWorkers} ＋ ${addedWorkers}`, val: `${totalWorkers} εργάτες` },
+          { item: 'Οριζόντιο γινόμενο', formula: `(${initWorkers} · ${remDays}) : ${totalWorkers}`, val: `${finalDays} ημέρες` }
+        ],
+        explain: `Το έργο που απομένει αντιστοιχεί σε ${initWorkers} εργάτες για ${remDays} ημέρες. Τώρα οι εργάτες έγιναν ${totalWorkers}. Ποσά αντιστρόφως ανάλογα: x ＝ (${initWorkers} · ${remDays}) : ${totalWorkers} ＝ 90 : 9 ＝ ${finalDays} ημέρες.`,
+        distractors: [`${finalDays + 2} ημέρες`, `${finalDays - 2} ημέρες`, `${finalDays + 4} ημέρες`]
       };
     }
   },
   {
     id: 'm3_hard_4',
+    title: 'Υπολογισμός Ελαιολάδου με Μετατροπή ml',
+    unit: 'kg',
     generate: () => {
       const olivesKg = 30;
       const oilLiters = 5;
       const targetMlLiters = 9000;
       const targetLiters = 9;
-      const olivesNeeded = targetLiters * (olivesKg / oilLiters); // 54 kg
+      const olivesNeeded = targetLiters * (olivesKg / oilLiters);
       return {
-        text: `Από ${olivesKg} kg ελιές παράγονται ${oilLiters} l λάδι. Πόσα kg ελιές απαιτούνται για να παραχθούν ${targetMlLiters} ml ελαιόλαδο ίδιας ποιότητας;`,
-        tableData: { col1: 'Λάδι (l)', col2: 'Ελιές (kg)', r1: [oilLiters, olivesKg], r2: [targetLiters, 'χ'] },
-        correctVal: olivesNeeded,
-        correctStr: String(olivesNeeded),
-        explanation: `Μετατρέπουμε τα ${targetMlLiters} ml σε λίτρα: 9 l. Τα ποσά είναι ανάλογα. Με χιαστί: χ ＝ (${olivesKg} · 9) : ${oilLiters} ＝ 270 : 5 ＝ ${olivesNeeded} kg ελιές.`
-      };
-    }
-  },
-  {
-    id: 'm3_hard_5',
-    generate: () => {
-      const soldiers = 100;
-      const days = 30;
-      const totalRations = soldiers * days; // 3000
-      const addedSoldiers = 20;
-      const totalSoldiers = soldiers + addedSoldiers; // 120
-      const newDays = totalRations / totalSoldiers; // 25
-      const diffDays = days - newDays; // 5
-      return {
-        text: `Σε ένα καταφύγιο υπάρχουν τρόφιμα για ${soldiers} άτομα για ${days} ημέρες. Αν προστεθούν άλλα ${addedSoldiers} άτομα, πόσες ημέρες λιγότερο θα διαρκέσουν τα τρόφιμα;`,
-        tableData: { col1: 'Άτομα', col2: 'Ημέρες', r1: [soldiers, days], r2: [totalSoldiers, 'χ'] },
-        correctVal: diffDays,
-        correctStr: String(diffDays),
-        explanation: `Ποσά αντιστρόφως ανάλογα (σταθερές μερίδες). Με ${totalSoldiers} άτομα οι ημέρες είναι: χ ＝ (${soldiers} · ${days}) : ${totalSoldiers} ＝ 3.000 : 120 ＝ 25 ημέρες. Άρα θα διαρκέσουν ${days} － 25 ＝ ${diffDays} ημέρες λιγότερο.`
-      };
-    }
-  },
-  {
-    id: 'm3_hard_6',
-    generate: () => {
-      const scale = 250000;
-      const mapCm = 4.8;
-      const realKm = (mapCm * scale) / 100000; // 12 km
-      return {
-        text: `Σε έναν οδικό χάρτη με κλίμακα 1 : 250.000, δύο τοποθεσίες απέχουν μεταξύ τους ${formatNum(mapCm)} cm. Πόσα km είναι η πραγματική τους απόσταση;`,
-        tableData: { col1: 'Χάρτης (cm)', col2: 'Πραγματικότητα (km)', r1: [1, 2.5], r2: [formatNum(mapCm), 'χ'] },
-        correctVal: realKm,
-        correctStr: formatNum(realKm),
-        explanation: `Η κλίμακα είναι αναλογία: 1 cm στον χάρτη αντιστοιχεί σε 250.000 cm ＝ 2,5 km. Για ${formatNum(mapCm)} cm η απόσταση είναι: ${formatNum(mapCm)} · 2,5 ＝ ${formatNum(realKm)} km.`
-      };
-    }
-  },
-  {
-    id: 'm3_hard_7',
-    generate: () => {
-      const origCost = 160;
-      const vatPct = 24;
-      const grossCost = origCost * (1 + vatPct / 100); // 198.4
-      return {
-        text: `Ένα προϊόν έχει καθαρή αξία ${origCost} € και επιβαρύνεται με συντελεστή Φ.Π.Α. ${vatPct} %. Ποια είναι η τελική τιμή του προϊόντος μαζί με τον φόρο σε €;`,
-        tableData: { col1: 'Καθαρή (€)', col2: 'Τελική (€)', r1: [100, 100 + vatPct], r2: [origCost, 'χ'] },
-        correctVal: grossCost,
-        correctStr: formatNum(grossCost),
-        explanation: `Στα 100 € καθαρής αξίας αντιστοιχούν 124 € τελικής τιμής. Τα ποσά είναι ανάλογα. Με χιαστί: χ ＝ (124 · ${origCost}) : 100 ＝ ${formatNum(grossCost)} €.`
-      };
-    }
-  },
-  {
-    id: 'm3_hard_8',
-    generate: () => {
-      const hoursPerDay1 = 8;
-      const days1 = 15;
-      const totalHours = hoursPerDay1 * days1; // 120
-      const days2 = 10;
-      const reqHoursDay = totalHours / days2; // 12
-      return {
-        text: `Μια ομάδα εργατών ολοκληρώνει ένα έργο σε ${days1} ημέρες δουλεύοντας ${hoursPerDay1} ώρες την ημέρα. Πόσες ώρες την ημέρα πρέπει να δουλεύουν για να τελειώσουν το έργο σε ${days2} ημέρες;`,
-        tableData: { col1: 'Ημέρες', col2: 'Ώρες ανά ημέρα', r1: [days1, hoursPerDay1], r2: [days2, 'χ'] },
-        correctVal: reqHoursDay,
-        correctStr: String(reqHoursDay),
-        explanation: `Ημέρες και ημερήσιες ώρες είναι αντιστρόφως ανάλογα ποσά (σταθερός συνολικός χρόνος 120 h). Οριζόντιος υπολογισμός: χ ＝ (${hoursPerDay1} · ${days1}) : ${days2} ＝ 120 : 10 ＝ ${reqHoursDay} ώρες την ημέρα.`
-      };
-    }
-  },
-  {
-    id: 'm3_hard_9',
-    generate: () => {
-      const length1 = 18;
-      const width1 = 10;
-      const area = length1 * width1; // 180 m2
-      const length2 = 15;
-      const width2 = area / length2; // 12 m
-      return {
-        text: `Ένα ορθογώνιο αγροτεμάχιο έχει μήκος ${length1} m και πλάτος ${width1} m. Ποιο πρέπει να είναι το πλάτος του σε m αν θέλουμε να αποκτήσει μήκος ${length2} m διατηρώντας το ίδιο ακριβώς εμβαδόν;`,
-        tableData: { col1: 'Μήκος (m)', col2: 'Πλάτος (m)', r1: [length1, width1], r2: [length2, 'χ'] },
-        correctVal: width2,
-        correctStr: String(width2),
-        explanation: `Σε σταθερό εμβαδόν, το μήκος και το πλάτος είναι αντιστρόφως ανάλογα ποσά. Οριζόντια γινόμενα: χ ＝ (${length1} · ${width1}) : ${length2} ＝ 180 : 15 ＝ ${width2} m.`
-      };
-    }
-  },
-  {
-    id: 'm3_hard_10',
-    generate: () => {
-      const wireCm = 120;
-      const wireGrams = 360;
-      const targetMeters = 3.5;
-      const targetCm = 350;
-      const targetGrams = (wireGrams * targetCm) / wireCm; // 1050 g
-      return {
-        text: `Ένα κομμάτι σύρμα μήκους ${wireCm} cm ζυγίζει ${wireGrams} g. Πόσα g ζυγίζει ένα κομμάτι από το ίδιο σύρμα με μήκος ${formatNum(targetMeters)} m;`,
-        tableData: { col1: 'Μήκος (cm)', col2: 'Βάρος (g)', r1: [wireCm, wireGrams], r2: [targetCm, 'χ'] },
-        correctVal: targetGrams,
-        correctStr: String(targetGrams),
-        explanation: `Μετατρέπουμε τα ${formatNum(targetMeters)} m σε cm: 350 cm. Μήκος και βάρος είναι ανάλογα ποσά. Με χιαστί: χ ＝ (${wireGrams} · 350) : ${wireCm} ＝ 126.000 : 120 ＝ ${targetGrams} g.`
+        prompt: `Από ${olivesKg} kg ελιές παράγονται ${oilLiters} l λάδι. Πόσα kg ελιές απαιτούνται για να παραχθούν ${targetMlLiters} ml ελαιόλαδο ίδιας ποιότητας;`,
+        unit: 'kg',
+        correctVal: String(olivesNeeded),
+        correctText: `${olivesNeeded} kg`,
+        tableData: [
+          { item: 'Μετατροπή ml σε λίτρα', formula: `${targetMlLiters} ml : 1.000`, val: `${targetLiters} l` },
+          { item: 'Αναλογία (χιαστί)', formula: `(${olivesKg} · ${targetLiters}) : ${oilLiters}`, val: `${olivesNeeded} kg` }
+        ],
+        explain: `Μετατρέπουμε τα ${targetMlLiters} ml σε λίτρα: 9 l. Τα ποσά είναι ανάλογα. Με χιαστί: x ＝ (${olivesKg} · 9) : ${oilLiters} ＝ 270 : 5 ＝ ${olivesNeeded} kg ελιές.`,
+        distractors: [`${olivesNeeded + 6} kg`, `${olivesNeeded - 6} kg`, `${olivesNeeded + 10} kg`]
       };
     }
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
 function generateQuestions() {
-  const qList = [];
+  // Q1: Input - Υπολογισμός x σε Ανάλογα Ποσά (Χιαστί)
+  const q1A = randInt(3, 6);
+  const q1B = randInt(12, 24);
+  const q1C = q1A * randInt(2, 4);
+  const q1D = (q1B * q1C) / q1A;
 
-  // Q1 (Input - Decimal): Υπολογισμός χ σε Ανάλογα Ποσά (Χιαστί)
-  {
-    const a = randInt(3, 6);
-    const b = randInt(12, 24);
-    const c = a * randInt(2, 4);
-    const d = (b * c) / a;
+  // Q2: MCQ - Βήματα μεθόδου των τριών
+  const q2CorrectSeq = '1. Κατάταξη δεδομένων σε ομώνυμες στήλες, 2. Έλεγχος είδους ποσών (ανάλογα ή αντίστροφα), 3. Επιλογή σωστού τύπου επίλυσης';
+  const q2Options = shuffle([
+    q2CorrectSeq,
+    '1. Πολλαπλασιασμός όλων των αριθμών, 2. Διαίρεση με το 100, 3. Αφαίρεση του μικρότερου',
+    '1. Χιαστί πολλαπλασιασμός χωρίς έλεγχο, 2. Πρόσθεση των στηλών, 3. Αντιστροφή όρων',
+    '1. Μετατροπή των αριθμών σε δεκαδικούς, 2. Σχεδίαση γραφικής παράστασης, 3. Μέτρηση με χάρακα'
+  ]);
 
-    qList.push({
-      id: 1,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 1 • ΕΠΙΛΥΣΗ ΑΝΑΛΟΓΩΝ ΠΟΣΩΝ',
-      instruction: 'Υπολογίστε τον άγνωστο όρο χ (ανάλογα ποσά):',
-      prompt: `Στην κατάταξη ανάλογων ποσών: ${a} kg κοστίζουν ${b} € και ${c} kg κοστίζουν χ €. Πόσα € είναι το χ;`,
-      tableData: { col1: 'Ποσό 1 (kg)', col2: 'Ποσό 2 (€)', r1: [a, b], r2: [c, 'χ'] },
-      correctVal: d,
-      correctStr: String(d),
-      explanation: `Στα ανάλογα ποσά εφαρμόζουμε χιαστί πολλαπλασιασμό: χ ＝ (${b} · ${c}) : ${a} ＝ ${b * c} : ${a} ＝ ${d} €.`
-    });
-  }
+  // Q3: Input - Υπολογισμός x σε Αντιστρόφως Ανάλογα (Οριζόντια)
+  const q3W1 = randInt(2, 5);
+  const q3D1 = randInt(8, 16);
+  const q3Total = q3W1 * q3D1;
+  const q3W2 = randInt(6, 10);
+  const q3D2 = q3Total / q3W2;
+  const q3CleanD2 = Number.isInteger(q3D2) ? q3D2 : Number(q3D2.toFixed(1));
 
-  // Q2 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ
-  {
-    const correctSeq = '1. Κατάταξη δεδομένων σε ομώνυμες στήλες, 2. Έλεγχος είδους ποσών (ανάλογα ή αντίστροφα), 3. Επιλογή σωστού τύπου επίλυσης';
-    const options = [
-      { text: correctSeq, isCorrect: true },
-      { text: '1. Πολλαπλασιασμός όλων των αριθμών, 2. Διαίρεση με το 100, 3. Αφαίρεση του μικρότερου', isCorrect: false },
-      { text: '1. Χιαστί πολλαπλασιασμός χωρίς έλεγχο, 2. Πρόσθεση των στηλών, 3. Αντιστροφή όρων', isCorrect: false },
-      { text: '1. Μετατροπή των αριθμών σε δεκαδικούς, 2. Σχεδίαση γραφικής παράστασης, 3. Μέτρηση με χάρακα', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
+  // Q4: MCQ - Ονομασία μεθόδου
+  const q4CorrectReason = 'Επειδή γνωρίζουμε 3 όρους και αναζητούμε τον 4ο άγνωστο όρο';
+  const q4Options = shuffle([
+    q4CorrectReason,
+    'Επειδή περιλαμβάνει υποχρεωτικά 3 διαφορετικά ποσά',
+    'Επειδή λύνεται πάντοτε σε 3 λεπτά',
+    'Επειδή χρησιμοποιεί 3 διαδοχικούς πίνακες'
+  ]);
 
-    qList.push({
-      id: 2,
+  // Q5: Input - Πρόβλημα Αναγωγής στη Μονάδα
+  const q5Items = randInt(4, 7);
+  const q5UnitPrice = randInt(3, 6);
+  const q5InitialCost = q5Items * q5UnitPrice;
+  const q5TargetItems = q5Items + randInt(3, 5);
+  const q5ExpectedCost = q5TargetItems * q5UnitPrice;
+
+  // Q6: MCQ - Χιαστί ή Οριζόντια
+  const q6CorrectDiff = 'Στα ανάλογα πολλαπλασιάζουμε διαγώνια (χιαστί), ενώ στα αντιστρόφως ανάλογα πολλαπλασιάζουμε οριζόντια';
+  const q6Options = shuffle([
+    q6CorrectDiff,
+    'Στα ανάλογα πολλαπλασιάζουμε οριζόντια και στα αντίστροφα διαγώνια',
+    'Και στα δύο είδη ποσών κάνουμε ακριβώς τον ίδιο χιαστί πολλαπλασιασμό',
+    'Στα ανάλογα κάνουμε πρόσθεση και στα αντίστροφα αφαίρεση'
+  ]);
+
+  // Q7: Standard Problem (Input)
+  const spIndex1 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q7Data = STANDARD_PROBLEMS_POOL[spIndex1].generate();
+
+  // Q8: Standard Problem (MCQ)
+  let spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  while (spIndex2 === spIndex1) spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q8Data = STANDARD_PROBLEMS_POOL[spIndex2].generate();
+  const q8Options = shuffle([
+    ...new Set([
+      q8Data.correctText,
+      ...q8Data.distractors
+    ])
+  ]);
+
+  // Q9: Hard Problem (Input)
+  const hpIndex1 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q9Data = HARD_PROBLEMS_POOL[hpIndex1].generate();
+
+  // Q10: Hard Problem (MCQ)
+  let hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  while (hpIndex2 === hpIndex1) hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q10Data = HARD_PROBLEMS_POOL[hpIndex2].generate();
+  const q10Options = shuffle([
+    ...new Set([
+      q10Data.correctText,
+      ...q10Data.distractors
+    ])
+  ]);
+
+  return [
+    {
+      id: 'q1',
+      type: 'input',
+      inputType: 'number',
+      title: 'Επίλυση Ανάλογων Ποσών',
+      prompt: `Στην κατάταξη ανάλογων ποσών: ${q1A} kg κοστίζουν ${q1B} € και ${q1C} kg κοστίζουν x €. Πόσα € είναι το x;`,
+      correct: String(q1D),
+      explain: `Στα ανάλογα ποσά εφαρμόζουμε χιαστί πολλαπλασιασμό: x ＝ (${q1B} · ${q1C}) : ${q1A} ＝ ${q1B * q1C} : ${q1A} ＝ ${q1D} €.`
+    },
+    {
+      id: 'q2',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 2 • ΤΑ ΒΗΜΑΤΑ ΤΗΣ ΜΕΘΟΔΟΥ',
-      instruction: 'Επιλέξτε τη σωστή σειρά των βημάτων της μεθόδου των τριών:',
-      prompt: `Ποια είναι τα βασικά βήματα που ακολουθούμε για τη λύση ενός προβλήματος με τη μέθοδο των τριών;`,
-      options,
-      correctText: correctSeq,
-      explanation: `Πρώτα κατατάσσουμε τα ομοειδή ποσά το ένα κάτω από το άλλο, μετά ελέγχουμε αν είναι ανάλογα ή αντιστρόφως ανάλογα, και τέλος επιλέγουμε τον αντίστοιχο τύπο (χιαστί ή οριζόντιο).`
-    });
-  }
-
-  // Q3 (Input - Decimal): Υπολογισμός χ σε Αντιστρόφως Ανάλογα (Οριζόντια)
-  {
-    const w1 = randInt(2, 5);
-    const d1 = randInt(8, 16);
-    const total = w1 * d1;
-    const w2 = randInt(6, 10);
-    const d2 = total / w2;
-    const cleanD2 = Number.isInteger(d2) ? d2 : Number(d2.toFixed(1));
-
-    qList.push({
-      id: 3,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 3 • ΕΠΙΛΥΣΗ ΑΝΤΙΣΤΡΟΦΩΣ ΑΝΑΛΟΓΩΝ ΠΟΣΩΝ',
-      instruction: 'Υπολογίστε τον άγνωστο όρο χ (αντιστρόφως ανάλογα ποσά):',
-      prompt: `Στην κατάταξη αντιστρόφως ανάλογων ποσών: ${w1} εργάτες θέλουν ${d1} ημέρες και ${w2} εργάτες θέλουν χ ημέρες. Πόσες ημέρες είναι το χ;`,
-      tableData: { col1: 'Εργάτες', col2: 'Ημέρες', r1: [w1, d1], r2: [w2, 'χ'] },
-      correctVal: cleanD2,
-      correctStr: formatNum(cleanD2),
-      explanation: `Στα αντιστρόφως ανάλογα ποσά εφαρμόζουμε οριζόντιο πολλαπλασιασμό: χ ＝ (${w1} · ${d1}) : ${w2} ＝ ${total} : ${w2} ＝ ${formatNum(cleanD2)} ημέρες.`
-    });
-  }
-
-  // Q4 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
-  {
-    const correctReason = 'Επειδή γνωρίζουμε 3 όρους και αναζητούμε τον 4ο άγνωστο όρο';
-    const options = [
-      { text: correctReason, isCorrect: true },
-      { text: 'Επειδή περιλαμβάνει υποχρεωτικά 3 διαφορετικά ποσά', isCorrect: false },
-      { text: 'Επειδή λύνεται πάντοτε σε 3 λεπτά', isCorrect: false },
-      { text: 'Επειδή χρησιμοποιεί 3 διαδοχικούς πίνακες', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 4,
+      title: 'Τα Βήματα της Μεθόδου',
+      prompt: 'Ποια είναι τα βασικά βήματα που ακολουθούμε για τη λύση ενός προβλήματος με τη μέθοδο των τριών;',
+      options: q2Options,
+      correct: q2CorrectSeq,
+      explain: 'Πρώτα κατατάσσουμε τα ομοειδή ποσά το ένα κάτω από το άλλο, μετά ελέγχουμε αν είναι ανάλογα ή αντιστρόφως ανάλογα, και τέλος επιλέγουμε τον αντίστοιχο τύπο (χιαστί ή οριζόντιο).'
+    },
+    {
+      id: 'q3',
+      type: 'input',
+      inputType: 'decimal',
+      title: 'Επίλυση Αντιστρόφως Ανάλογων Ποσών',
+      prompt: `Στην κατάταξη αντιστρόφως ανάλογων ποσών: ${q3W1} εργάτες θέλουν ${q3D1} ημέρες και ${q3W2} εργάτες θέλουν x ημέρες. Πόσες ημέρες είναι το x;`,
+      correct: formatNum(q3CleanD2),
+      explain: `Στα αντιστρόφως ανάλογα ποσά εφαρμόζουμε οριζόντιο πολλαπλασιασμό: x ＝ (${q3W1} · ${q3D1}) : ${q3W2} ＝ ${q3Total} : ${q3W2} ＝ ${formatNum(q3CleanD2)} ημέρες.`
+    },
+    {
+      id: 'q4',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 4 • ΟΝΟΜΑΣΙΑ ΤΗΣ ΜΕΘΟΔΟΥ',
-      instruction: 'Επιλέξτε τη σωστή εξήγηση:',
-      prompt: `Για ποιο λόγο η μέθοδος ονομάζεται «Απλή Μέθοδος των Τριών»;`,
-      options,
-      correctText: correctReason,
-      explanation: `Ονομάζεται έτσι επειδή δίνονται τρεις γνωστές τιμές ανάμεσα σε δύο ποσά και ζητείται ο υπολογισμός της τέταρτης άγνωστης τιμής.`
-    });
-  }
-
-  // Q5 (Input - Decimal): Πρόβλημα Αναγωγής στη Μονάδα
-  {
-    const items = randInt(4, 7);
-    const unitPrice = randInt(3, 6);
-    const initialCost = items * unitPrice;
-    const targetItems = items + randInt(3, 5);
-    const expectedCost = targetItems * unitPrice;
-
-    qList.push({
-      id: 5,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 5 • ΑΝΑΓΩΓΗ ΣΤΗ ΜΟΝΑΔΑ',
-      instruction: 'Υπολογίστε το συνολικό κόστος σε €:',
-      prompt: `Αν ${items} τεμάχια ενός είδους κοστίζουν ${initialCost} €, πόσα € κοστίζουν ${targetItems} ίδια τεμάχια;`,
-      correctVal: expectedCost,
-      correctStr: String(expectedCost),
-      explanation: `Το 1 τεμάχιο κοστίζει ${initialCost} : ${items} ＝ ${unitPrice} €. Τα ${targetItems} τεμάχια κοστίζουν: ${targetItems} · ${unitPrice} ＝ ${expectedCost} €.`
-    });
-  }
-
-  // Q6 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
-  {
-    const correctDiff = 'Στα ανάλογα πολλαπλασιάζουμε διαγώνια (χιαστί), ενώ στα αντιστρόφως ανάλογα πολλαπλασιάζουμε οριζόντια';
-    const options = [
-      { text: correctDiff, isCorrect: true },
-      { text: 'Στα ανάλογα πολλαπλασιάζουμε οριζόντια και στα αντίστροφα διαγώνια', isCorrect: false },
-      { text: 'Και στα δύο είδη ποσών κάνουμε ακριβώς τον ίδιο χιαστί πολλαπλασιασμό', isCorrect: false },
-      { text: 'Στα ανάλογα κάνουμε πρόσθεση και στα αντίστροφα αφαίρεση', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 6,
+      title: 'Ονομασία της Μεθόδου',
+      prompt: 'Για ποιο λόγο η μέθοδος ονομάζεται «Απλή Μέθοδος των Τριών»;',
+      options: q4Options,
+      correct: q4CorrectReason,
+      explain: 'Ονομάζεται έτσι επειδή δίνονται τρεις γνωστές τιμές ανάμεσα σε δύο ποσά και ζητείται ο υπολογισμός της τέταρτης άγνωστης τιμής.'
+    },
+    {
+      id: 'q5',
+      type: 'input',
+      inputType: 'number',
+      title: 'Αναγωγή στη Μονάδα',
+      prompt: `Αν ${q5Items} τεμάχια ενός είδους κοστίζουν ${q5InitialCost} €, πόσα € κοστίζουν ${q5TargetItems} ίδια τεμάχια;`,
+      correct: String(q5ExpectedCost),
+      explain: `Το 1 τεμάχιο κοστίζει ${q5InitialCost} : ${q5Items} ＝ ${q5UnitPrice} €. Τα ${q5TargetItems} τεμάχια κοστίζουν: ${q5TargetItems} · ${q5UnitPrice} ＝ ${q5ExpectedCost} €.`
+    },
+    {
+      id: 'q6',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 6 • ΧΙΑΣΤΙ Η ΟΡΙΖΟΝΤΙΑ;',
-      instruction: 'Επιλέξτε τη θεμελιώδη διαφορά των τύπων:',
-      prompt: `Πώς διαφέρει ο υπολογισμός του αγνώστου χ στα ανάλογα σε σχέση με τα αντιστρόφως ανάλογα ποσά;`,
-      options,
-      correctText: correctDiff,
-      explanation: `Στα ανάλογα ποσά ισχύει η ισότητα των σταυρωτών γινομένων (χιαστί), ενώ στα αντιστρόφως ανάλογα ποσά ισχύει η ισότητα των οριζόντιων γινομένων (σταθερό γινόμενο).`
-    });
-  }
-
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
-  {
-    const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const stdProb1 = shuffledStd[0].generate();
-    const stdProb2 = shuffledStd[1].generate();
-
-    // Q7 (Input - Decimal)
-    qList.push({
-      id: 7,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕΘΟΔΟΥ ΤΩΝ ΤΡΙΩΝ',
-      instruction: 'Λύστε το πρόβλημα εφαρμόζοντας τη μέθοδο των τριών:',
-      prompt: stdProb1.text,
-      tableData: stdProb1.tableData,
-      correctVal: stdProb1.correctVal,
-      correctStr: stdProb1.correctStr,
-      explanation: stdProb1.explanation
-    });
-
-    // Q8 (MCQ)
-    const val8 = stdProb2.correctVal;
-    const fake8A = typeof val8 === 'number' ? formatNum(val8 + randInt(2, 5)) : '0';
-    const fake8B = typeof val8 === 'number' ? formatNum(Math.max(1, val8 - randInt(1, 3))) : '0';
-    const fake8C = typeof val8 === 'number' ? formatNum(val8 * 1.4) : '0';
-
-    const optionsQ8 = [
-      { text: stdProb2.correctStr, isCorrect: true },
-      { text: String(fake8A), isCorrect: false },
-      { text: String(fake8B), isCorrect: false },
-      { text: String(fake8C), isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 8,
+      title: 'Χιαστί ή Οριζόντια;',
+      prompt: 'Πώς διαφέρει ο υπολογισμός του αγνώστου x στα ανάλογα σε σχέση με τα αντιστρόφως ανάλογα ποσά;',
+      options: q6Options,
+      correct: q6CorrectDiff,
+      explain: 'Στα ανάλογα ποσά ισχύει η ισότητα των σταυρωτών γινομένων (χιαστί), ενώ στα αντιστρόφως ανάλογα ποσά ισχύει η ισότητα των οριζόντιων γινομένων (σταθερό γινόμενο).'
+    },
+    {
+      id: 'q7',
+      type: 'input',
+      inputType: 'number',
+      title: `Πρόβλημα: ${q7Data.title}`,
+      prompt: q7Data.prompt,
+      correct: q7Data.correctVal,
+      tableData: q7Data.tableData,
+      explain: q7Data.explain
+    },
+    {
+      id: 'q8',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΤΑΤΑΞΗΣ ΚΑΙ ΕΠΙΛΥΣΗΣ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
-      prompt: stdProb2.text,
-      tableData: stdProb2.tableData,
-      options: optionsQ8,
-      correctText: stdProb2.correctStr,
-      explanation: stdProb2.explanation
-    });
-  }
-
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
-  {
-    const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const hardProb1 = shuffledHard[0].generate();
-    const hardProb2 = shuffledHard[1].generate();
-
-    // Q9 (Input - Decimal)
-    qList.push({
-      id: 9,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
-      instruction: 'Προσέξτε τις μονάδες μέτρησης και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: hardProb1.text,
-      tableData: hardProb1.tableData,
-      correctVal: hardProb1.correctVal,
-      correctStr: hardProb1.correctStr,
-      explanation: hardProb1.explanation
-    });
-
-    // Q10 (MCQ Αυξημένης Δυσκολίας)
-    const val10 = hardProb2.correctVal;
-    const fake10A = typeof val10 === 'number' ? formatNum(val10 + randInt(3, 8)) : '0';
-    const fake10B = typeof val10 === 'number' ? formatNum(Math.max(1, val10 - randInt(2, 6))) : '0';
-    const fake10C = typeof val10 === 'number' ? formatNum(val10 * 1.25) : '0';
-
-    const optionsQ10 = [
-      { text: hardProb2.correctStr, isCorrect: true },
-      { text: String(fake10A), isCorrect: false },
-      { text: String(fake10B), isCorrect: false },
-      { text: String(fake10C), isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 10,
+      title: `Πρόβλημα: ${q8Data.title}`,
+      prompt: q8Data.prompt,
+      options: q8Options,
+      correct: q8Data.correctText,
+      tableData: q8Data.tableData,
+      explain: q8Data.explain
+    },
+    {
+      id: 'q9',
+      type: 'input',
+      inputType: 'decimal',
+      title: `Σύνθετο Πρόβλημα: ${q9Data.title}`,
+      prompt: q9Data.prompt,
+      correct: q9Data.correctVal,
+      tableData: q9Data.tableData,
+      explain: q9Data.explain
+    },
+    {
+      id: 'q10',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕΤΑΤΡΟΠΩΝ & ΜΕΘΟΔΟΥ ΤΩΝ ΤΡΙΩΝ',
-      instruction: 'Επιλέξτε τη σωστή απάντηση:',
-      prompt: hardProb2.text,
-      tableData: hardProb2.tableData,
-      options: optionsQ10,
-      correctText: hardProb2.correctStr,
-      explanation: hardProb2.explanation
-    });
-  }
-
-  return qList;
+      title: `Σύνθετο Πρόβλημα: ${q10Data.title}`,
+      prompt: q10Data.prompt,
+      options: q10Options,
+      correct: q10Data.correctText,
+      tableData: q10Data.tableData,
+      explain: q10Data.explain
+    }
+  ];
 }
+
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
 
 export default function MethodosTrionExercisesPage() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
   const loadNewSet = useCallback(() => {
-    const q = generateQuestions();
-    setQuestions(q);
-    setAnswers({});
-    setIsSubmitted(false);
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = '';
+    });
+    setAnswers(initialAnswers);
+    setSubmitted(false);
     setScore(0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (fieldKey, rawValue) => {
-    if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
-    if (sanitized.length > 10) {
-      sanitized = sanitized.slice(0, 10);
-    }
-    setAnswers((prev) => ({
-      ...prev,
-      [fieldKey]: sanitized
-    }));
-  };
-
-  const handleSelectMCQ = (qId, optionText) => {
-    if (isSubmitted) return;
-    setAnswers((prev) => ({
-      ...prev,
-      [`q_${qId}`]: optionText
-    }));
-  };
-
-  const handleCheckAnswers = () => {
-    let currentScore = 0;
-
-    questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq
+  const handleAnswerChange = (id, rawValue, type) => {
+    if (submitted) return;
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
       }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
+  };
+
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
+    if (q.type === 'input') {
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/^[xyψχ][=＝]/i, '').trim().toLowerCase();
+      const cleanTarget = String(q.correct).replace(/\./g, ',').replace(/\s+/g, '').replace(/^[xyψχ][=＝]/i, '').trim().toLowerCase();
+
+      if (cleanUser === cleanTarget) return true;
+
+      if (q.inputType === 'decimal') {
+        const numUser = parseFloat(cleanUser.replace(',', '.'));
+        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
+      }
+      return false;
+    }
+    if (q.type === 'mcq') {
+      return userVal === q.correct;
+    }
+    return false;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (submitted || questions.length === 0) return;
+
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(currentScore);
-    setIsSubmitted(true);
+    setScore(total);
+    setSubmitted(true);
   };
+
+  const getCardStyle = (q) => {
+    if (!submitted) return 'bg-white border-slate-200 shadow-sm';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
+  };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
       title="Ασκήσεις: Η Απλή Μέθοδος των Τριών - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="10 απαιτητικές ασκήσεις και προβλήματα στη μέθοδο των τριών, κατάταξη σε στήλες, διάκριση ανάλογων και αντιστρόφων ποσών για τη ΣΤ' Δημοτικού."
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στην απλή μέθοδο των τριών, στα ανάλογα και αντιστρόφως ανάλογα ποσά για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
+      showAds={false}
       hideFooter={true}
       actionButton={
         <Link
           href="/st-dimotikou/48-methodos-trion"
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
-        {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 48 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
+                Διαδραστικές Ασκήσεις: Η Απλή Μέθοδος των Τριών
+              </h1>
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στην κατάταξη ποσών, στη διάκριση ανάλογων και αντιστρόφως ανάλογων ποσών και στον υπολογισμό του αγνώστου!
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-              Ασκήσεις: Η Απλή Μέθοδος των Τριών
-            </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Κατατάξτε τα ποσά σε ομώνυμες στήλες, ελέγξτε αν είναι ανάλογα ή αντίστροφα και υπολογίστε το ζητούμενο.
-            </p>
-          </div>
 
-          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
-            </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6">
-          {questions.map((q, idx) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
-
-            return (
-              <article
-                key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
-                  isSubmitted
-                    ? isCorrect
-                      ? 'border-emerald-400 bg-emerald-50/20'
-                      : 'border-rose-400 bg-rose-50/20'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
-                  <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
-                    {toCleanUppercase(q.title)}
-                  </span>
-                  {isSubmitted && (
-                    <span
-                      className={`text-xs font-bold px-3 py-1 rounded-full ${
-                        isCorrect
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
-                    </span>
-                  )}
-                </div>
-
-                {/* Εκφωνηση */}
-                <div className="space-y-2 mb-2">
-                  <p className="text-xs sm:text-sm font-semibold text-slate-500">
-                    {q.instruction}
-                  </p>
-                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
-                    {q.prompt}
-                  </p>
-
-                  {/* Πινακας Τιμων (Responsive Χωρις Scroll) */}
-                  {q.tableData && <MethodosTrionTable data={q.tableData} />}
-                </div>
-
-                {/* Περιοχη Απαντησης */}
-                <div className="py-2 pt-2.5">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        maxLength={10}
-                        disabled={isSubmitted}
-                        placeholder="Απάντηση..."
-                        value={answers[`q_${q.id}`] || ''}
-                        onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
-                      />
-                      <span className="text-xs text-slate-500">
-                        (Ακέραιος ή δεκαδικός με κόμμα)
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                >
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
                       </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
-                  {q.type === 'mcq' && (
-                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
-                      {q.options.map((opt, oIdx) => {
-                        const isSelected = answers[`q_${q.id}`] === opt.text;
-                        return (
-                          <button
-                            key={`opt-${q.id}-${oIdx}`}
-                            type="button"
-                            disabled={isSubmitted}
-                            onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 sm:p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm md:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                                : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                            } disabled:cursor-not-allowed`}
-                          >
-                            <span className="break-words whitespace-normal leading-snug flex-1">
-                              {opt.text}
-                            </span>
-                            <span
-                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-4">
+                      {q.prompt}
+                    </p>
+
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
-                                  ? 'border-white bg-white text-blue-600 font-bold'
-                                  : 'border-slate-400 bg-transparent'
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                               }`}
                             >
-                              {isSelected ? '●' : ''}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
 
-                </div>
-
-                {/* Feedback μετα την υποβολη */}
-                {isSubmitted && (
-                  <div
-                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
-                      isCorrect
-                        ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
-                        : 'bg-rose-100/60 border-rose-300 text-rose-950'
-                    }`}
-                  >
-                    <div className="font-bold flex items-center gap-1.5">
-                      <span>{isCorrect ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Επεξήγηση:'}</span>
-                    </div>
-                    <div>{q.explanation}</div>
-                    {!isCorrect && (
-                      <div className="font-semibold pt-1 text-slate-800">
-                        Σωστή απάντηση:{' '}
-                        <span className="font-mono font-bold text-blue-900">
-                          {q.correctStr || q.correctText}
-                        </span>
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          key={`input-${q.id}`}
+                          autoComplete="off"
+                          spellCheck="false"
+                          type="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.inputType === 'decimal' ? 'π.χ. 4,5' : 'Απάντηση...'}
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
                       </div>
                     )}
                   </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
 
-      </div>
-
-      {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
-          
-          <div className="flex items-center gap-4 sm:gap-8">
-            <div>
-              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
-              </span>
-              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
-              </span>
-            </div>
-
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          <div className="flex items-center gap-3">
-            {!isSubmitted ? (
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-4">
               <button
-                type="button"
-                onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                type="submit"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                <span className="text-xl">🎯</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
-            ) : (
+            </div>
+          )}
+        </form>
+      </div>
+
+      {/* FIXED BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
+          
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+            </div>
+            {submitted && (
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* GUIDANCE OR RESTART */}
+          <div className="flex items-center gap-3">
+            {submitted ? (
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
+            ) : (
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
+              </p>
             )}
           </div>
 
         </div>
-      </footer>
+      </div>
     </Layout>
   );
 }
