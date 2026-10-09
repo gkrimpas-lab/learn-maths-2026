@@ -2,840 +2,722 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import { LAYOUT } from '../../shared/layout-config';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
-function toCleanUppercase(str) {
-  if (!str) return '';
-  return str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-}
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
 
-// Τυχαιος ακεραιος στο [min, max]
 function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
 }
 
-// Τυχαια επιλογη απο πινακα
+function shuffle(array) {
+  if (!Array.isArray(array)) return [];
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Μορφοποιηση αριθμου
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός με κόμμα)
 function formatNum(val, decimals = 2) {
-  if (Number.isInteger(val)) return String(val);
-  const rounded = Number(val.toFixed(decimals));
+  if (val === null || val === undefined || isNaN(Number(val))) return '0';
+  if (Number.isInteger(Number(val))) return String(val);
+  const rounded = Number(Number(val).toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων με Ποσοστα
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q7, Q8, Q9, Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
+
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'pos_std_1',
+    title: 'Υπολογισμός Έκπτωσης σε Παντελόνι',
+    unit: '€',
     generate: () => {
       const origPrice = pickRandom([50, 60, 80, 100, 120, 150]);
       const discPct = pickRandom([10, 15, 20, 25, 30]);
       const discount = (origPrice * discPct) / 100;
       const finalPrice = origPrice - discount;
       return {
-        text: `Ένα παντελόνι κοστίζει ${origPrice} € και προσφέρεται στις εκπτώσεις με μείωση ${discPct} %. Πόσα ευρώ (€) θα πληρώσει τελικά ο αγοραστής;`,
-        tableData: { col1: 'Αρχική (€)', col2: 'Έκπτωση (€)', r1: [100, discPct], r2: [origPrice, 'χ'] },
-        correctVal: finalPrice,
-        correctStr: String(finalPrice),
-        explanation: `Έκπτωση: (${origPrice} · ${discPct}) : 100 ＝ ${discount} €. Τελική τιμή: ${origPrice} － ${discount} ＝ ${finalPrice} €.`
+        prompt: `Ένα παντελόνι κοστίζει ${origPrice} € και προσφέρεται στις εκπτώσεις με μείωση ${discPct} %. Πόσα ευρώ (€) θα πληρώσει τελικά ο αγοραστής;`,
+        unit: '€',
+        correctVal: String(finalPrice),
+        correctText: `${finalPrice} €`,
+        tableData: [
+          { item: 'Αρχική τιμή', formula: `${origPrice} €`, val: `${origPrice} €` },
+          { item: 'Ποσό έκπτωσης', formula: `(${origPrice} · ${discPct}) : 100`, val: `${discount} €` },
+          { item: 'Τελική τιμή πληρωμής', formula: `${origPrice} － ${discount}`, val: `${finalPrice} €` }
+        ],
+        explain: `Έκπτωση: (${origPrice} · ${discPct}) : 100 ＝ ${discount} €. Τελική τιμή: ${origPrice} － ${discount} ＝ ${finalPrice} €.`,
+        distractors: [`${finalPrice + 10} €`, `${finalPrice - 10} €`, `${finalPrice + 15} €`]
       };
     }
   },
   {
     id: 'pos_std_2',
+    title: 'Υπολογισμός Τελικής Τιμής με Φ.Π.Α.',
+    unit: '€',
     generate: () => {
       const origPrice = pickRandom([100, 200, 300, 400, 500]);
       const vatPct = 24;
       const vatAmount = (origPrice * vatPct) / 100;
       const finalPrice = origPrice + vatAmount;
       return {
-        text: `Ένα ηλεκτρικό ποδήλατο έχει καθαρή αξία ${origPrice} € και επιβαρύνεται με Φ.Π.Α. ${vatPct} %. Ποια είναι η τελική τιμή πώλησής του σε €;`,
-        tableData: { col1: 'Καθαρή (€)', col2: 'Φ.Π.Α. (€)', r1: [100, vatPct], r2: [origPrice, 'χ'] },
-        correctVal: finalPrice,
-        correctStr: String(finalPrice),
-        explanation: `Φόρος Φ.Π.Α.: (${origPrice} · 24) : 100 ＝ ${vatAmount} €. Τελική τιμή: ${origPrice} ＋ ${vatAmount} ＝ ${finalPrice} €.`
+        prompt: `Ένα ηλεκτρικό ποδήλατο έχει καθαρή αξία ${origPrice} € και επιβαρύνεται με Φ.Π.Α. ${vatPct} %. Ποια είναι η τελική τιμή πώλησής του σε €;`,
+        unit: '€',
+        correctVal: String(finalPrice),
+        correctText: `${finalPrice} €`,
+        tableData: [
+          { item: 'Καθαρή αξία', formula: `${origPrice} €`, val: `${origPrice} €` },
+          { item: 'Φόρος Φ.Π.Α. (24%)', formula: `(${origPrice} · 24) : 100`, val: `${vatAmount} €` },
+          { item: 'Τελική τιμή με φόρο', formula: `${origPrice} ＋ ${vatAmount}`, val: `${finalPrice} €` }
+        ],
+        explain: `Φόρος Φ.Π.Α.: (${origPrice} · 24) : 100 ＝ ${vatAmount} €. Τελική τιμή: ${origPrice} ＋ ${vatAmount} ＝ ${finalPrice} €.`,
+        distractors: [`${finalPrice + 24} €`, `${finalPrice - 24} €`, `${finalPrice + 48} €`]
       };
     }
   },
   {
     id: 'pos_std_3',
+    title: 'Πώληση Προϊόντος με Κέρδος',
+    unit: '€',
     generate: () => {
       const costPrice = pickRandom([40, 50, 60, 80]);
       const profitPct = 20;
       const profit = (costPrice * profitPct) / 100;
       const sellingPrice = costPrice + profit;
       return {
-        text: `Ένας έμπορος αγόρασε ένα προϊόν προς ${costPrice} € και το πουλάει με κέρδος ${profitPct} %. Σε ποια τιμή (€) θα το πουλήσει;`,
-        tableData: { col1: 'Αγορά (€)', col2: 'Κέρδος (€)', r1: [100, profitPct], r2: [costPrice, 'χ'] },
-        correctVal: sellingPrice,
-        correctStr: String(sellingPrice),
-        explanation: `Κέρδος: (${costPrice} · 20) : 100 ＝ ${profit} €. Τιμή πώλησης: ${costPrice} ＋ ${profit} ＝ ${sellingPrice} €.`
+        prompt: `Ένας έμπορος αγόρασε ένα προϊόν προς ${costPrice} € και το πουλάει με κέρδος ${profitPct} %. Σε ποια τιμή (€) θα το πουλήσει;`,
+        unit: '€',
+        correctVal: String(sellingPrice),
+        correctText: `${sellingPrice} €`,
+        tableData: [
+          { item: 'Τιμή αγοράς', formula: `${costPrice} €`, val: `${costPrice} €` },
+          { item: 'Ποσό κέρδους (20%)', formula: `(${costPrice} · 20) : 100`, val: `${profit} €` },
+          { item: 'Τιμή πώλησης', formula: `${costPrice} ＋ ${profit}`, val: `${sellingPrice} €` }
+        ],
+        explain: `Κέρδος: (${costPrice} · 20) : 100 ＝ ${profit} €. Τιμή πώλησης: ${costPrice} ＋ ${profit} ＝ ${sellingPrice} €.`,
+        distractors: [`${sellingPrice + 10} €`, `${sellingPrice - 10} €`, `${sellingPrice + 15} €`]
       };
     }
   },
   {
     id: 'pos_std_4',
+    title: 'Ποσοστό Απουσιών σε Σχολείο',
+    unit: 'μαθητές',
     generate: () => {
       const origStudents = pickRandom([200, 250, 400, 500]);
       const absPct = 12;
       const absStudents = (origStudents * absPct) / 100;
       return {
-        text: `Σε ένα σχολείο φοιτούν ${origStudents} μαθητές. Σήμερα απουσιάζει το ${absPct} % των μαθητών. Πόσοι μαθητές απουσιάζουν σήμερα;`,
-        correctVal: absStudents,
-        correctStr: String(absStudents),
-        explanation: `Απόντες: (${origStudents} · 12) : 100 ＝ ${absStudents} μαθητές.`
-      };
-    }
-  },
-  {
-    id: 'pos_std_5',
-    generate: () => {
-      const capacity = pickRandom([400, 500, 600, 800]);
-      const usedPct = 35;
-      const usedWater = (capacity * usedPct) / 100;
-      return {
-        text: `Μια δεξαμενή έχει χωρητικότητα ${capacity} l νερό. Έχει καταναλωθεί το ${usedPct} % του νερού. Πόσα λίτρα (l) νερό έχουν καταναλωθεί;`,
-        correctVal: usedWater,
-        correctStr: String(usedWater),
-        explanation: `Νερό που καταναλώθηκε: (${capacity} · 35) : 100 ＝ ${usedWater} l.`
-      };
-    }
-  },
-  {
-    id: 'pos_std_6',
-    generate: () => {
-      const origRent = pickRandom([300, 400, 500]);
-      const incPct = 10;
-      const incAmount = (origRent * incPct) / 100;
-      const newRent = origRent + incAmount;
-      return {
-        text: `Το ενοίκιο ενός διαμερίσματος ήταν ${origRent} € και αυξήθηκε κατά ${incPct} %. Ποιο είναι το νέο μηνιαίο ενοίκιο σε €;`,
-        correctVal: newRent,
-        correctStr: String(newRent),
-        explanation: `Αύξηση: (${origRent} · 10) : 100 ＝ ${incAmount} €. Νέο ενοίκιο: ${origRent} ＋ ${incAmount} ＝ ${newRent} €.`
-      };
-    }
-  },
-  {
-    id: 'pos_std_7',
-    generate: () => {
-      const origPrice = pickRandom([60, 80, 100, 120]);
-      const discPct = 25;
-      const discount = (origPrice * discPct) / 100;
-      const finalPrice = origPrice - discount;
-      return {
-        text: `Ένα σακίδιο κοστίζει ${origPrice} € και έχει έκπτωση 25 %. Πόσα ευρώ (€) θα πληρώσει ο πελάτης μετά την έκπτωση;`,
-        correctVal: finalPrice,
-        correctStr: String(finalPrice),
-        explanation: `Έκπτωση: (${origPrice} · 25) : 100 ＝ ${discount} €. Τελική τιμή: ${origPrice} － ${discount} ＝ ${finalPrice} €.`
-      };
-    }
-  },
-  {
-    id: 'pos_std_8',
-    generate: () => {
-      const totalPages = pickRandom([150, 200, 250, 300]);
-      const readPct = 40;
-      const readPages = (totalPages * readPct) / 100;
-      return {
-        text: `Ένα βιβλίο έχει ${totalPages} σελίδες και ο μαθητής διάβασε το ${readPct} % των σελίδων. Πόσες σελίδες διάβασε;`,
-        correctVal: readPages,
-        correctStr: String(readPages),
-        explanation: `Σελίδες που διαβάστηκαν: (${totalPages} · 40) : 100 ＝ ${readPages} σελίδες.`
-      };
-    }
-  },
-  {
-    id: 'pos_std_9',
-    generate: () => {
-      const totalWeight = pickRandom([200, 300, 400, 500]);
-      const fatPct = 15;
-      const fatGrams = (totalWeight * fatPct) / 100;
-      return {
-        text: `Ένα τρόφιμο βάρους ${totalWeight} g περιέχει ${fatPct} % λιπαρά. Πόσα γραμμάρια (g) λιπαρά περιέχει;`,
-        correctVal: fatGrams,
-        correctStr: String(fatGrams),
-        explanation: `Λιπαρά: (${totalWeight} · 15) : 100 ＝ ${fatGrams} g.`
-      };
-    }
-  },
-  {
-    id: 'pos_std_10',
-    generate: () => {
-      const bill = pickRandom([50, 60, 80, 100]);
-      const tipPct = 10;
-      const tipAmount = (bill * tipPct) / 100;
-      const totalPaid = bill + tipAmount;
-      return {
-        text: `Ο λογαριασμός σε ένα εστιατόριο ήταν ${bill} € και οι πελάτες πρόσθεσαν φιλοδώρημα ${tipPct} %. Πόσα ευρώ (€) πλήρωσαν συνολικά;`,
-        correctVal: totalPaid,
-        correctStr: String(totalPaid),
-        explanation: `Φιλοδώρημα: (${bill} · 10) : 100 ＝ ${tipAmount} €. Συνολικό ποσό: ${bill} ＋ ${tipAmount} ＝ ${totalPaid} €.`
+        prompt: `Σε ένα σχολείο φοιτούν ${origStudents} μαθητές. Σήμερα απουσιάζει το ${absPct} % των μαθητών. Πόσοι μαθητές απουσιάζουν σήμερα;`,
+        unit: 'μαθητές',
+        correctVal: String(absStudents),
+        correctText: `${absStudents} μαθητές`,
+        tableData: [
+          { item: 'Σύνολο μαθητών', formula: `${origStudents}`, val: `${origStudents}` },
+          { item: 'Ποσοστό απουσιών', formula: `${absPct} %`, val: `${absPct} %` },
+          { item: 'Απόντες μαθητές', formula: `(${origStudents} · 12) : 100`, val: `${absStudents}` }
+        ],
+        explain: `Απόντες: (${origStudents} · 12) : 100 ＝ ${absStudents} μαθητές.`,
+        distractors: [`${absStudents + 6} μαθητές`, `${absStudents - 6} μαθητές`, `${absStudents + 12} μαθητές`]
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας
 const HARD_PROBLEMS_POOL = [
   {
     id: 'pos_hard_1',
+    title: 'Διαδοχικές Εκπτώσεις',
+    unit: '€',
     generate: () => {
       return {
-        text: `Ένα προϊόν αρχικής αξίας 200 € έχει διαδοχικές εκπτώσεις: αρχικά 20 % και στη συνέχεια επιπλέον έκπτωση 10 % επί της νέας μειωμένης τιμής. Ποια είναι η τελική τιμή πώλησης σε €;`,
-        correctVal: 144,
-        correctStr: '144',
-        explanation: `1η Έκπτωση 20%: 200 － 40 ＝ 160 €. 2η Έκπτωση 10% στα 160 €: 160 · 0,10 ＝ 16 €. Τελική τιμή: 160 － 16 ＝ 144 €.`
+        prompt: 'Ένα προϊόν αρχικής αξίας 200 € έχει διαδοχικές εκπτώσεις: αρχικά 20 % και στη συνέχεια επιπλέον έκπτωση 10 % επί της νέας μειωμένης τιμής. Ποια είναι η τελική τιμή πώλησης σε €;',
+        unit: '€',
+        correctVal: '144',
+        correctText: '144 €',
+        tableData: [
+          { item: '1η Έκπτωση (20% στα 200 €)', formula: '200 － (200 · 0,20)', val: '160 €' },
+          { item: '2η Έκπτωση (10% στα 160 €)', formula: '160 · 0,10', val: '16 €' },
+          { item: 'Τελική τιμή', formula: '160 － 16', val: '144 €' }
+        ],
+        explain: '1η Έκπτωση 20%: 200 － 40 ＝ 160 €. 2η Έκπτωση 10% στα 160 €: 160 · 0,10 ＝ 16 €. Τελική τιμή: 160 － 16 ＝ 144 €.',
+        distractors: ['140 €', '150 €', '148 €']
       };
     }
   },
   {
     id: 'pos_hard_2',
+    title: 'Κέρδος και Ζημία επί Νέου Κεφαλαίου',
+    unit: '€',
     generate: () => {
       return {
-        text: `Ένας επενδυτής είχε κεφάλαιο 1.000 €. Τον πρώτο χρόνο κέρδισε 10 % και τον δεύτερο χρόνο έχασε 10 % επί του νέου κεφαλαίου. Πόσα ευρώ (€) έχει στο τέλος;`,
-        correctVal: 990,
-        correctStr: '990',
-        explanation: `1ος χρόνος (+10%): 1.000 ＋ 100 ＝ 1.100 €. 2ος χρόνος (-10% στα 1.100 €): 1.100 － 110 ＝ 990 €.`
+        prompt: 'Ένας επενδυτής είχε κεφάλαιο 1.000 €. Τον πρώτο χρόνο κέρδισε 10 % και τον δεύτερο χρόνο έχασε 10 % επί του νέου κεφαλαίου. Πόσα ευρώ (€) έχει στο τέλος;',
+        unit: '€',
+        correctVal: '990',
+        correctText: '990 €',
+        tableData: [
+          { item: '1ος χρόνος (+10%)', formula: '1.000 ＋ (1.000 · 0,10)', val: '1.100 €' },
+          { item: '2ος χρόνος (-10% στα 1.100 €)', formula: '1.100 · 0,10', val: '110 € ζημία' },
+          { item: 'Τελικό κεφάλαιο', formula: '1.100 － 110', val: '990 €' }
+        ],
+        explain: '1ος χρόνος (+10%): 1.000 ＋ 100 ＝ 1.100 €. 2ος χρόνος (-10% στα 1.100 €): 1.100 － 110 ＝ 990 €.',
+        distractors: ['1.000 €', '980 €', '995 €']
       };
     }
   },
   {
     id: 'pos_hard_3',
+    title: 'Κέρδος και Φ.Π.Α. Διαδοχικά',
+    unit: '€',
     generate: () => {
       return {
-        text: `Ένα κατάστημα αγοράζει ένα είδος προς 80 € και το πουλάει με κέρδος 25 %. Αν ο πελάτης πληρώσει επιπλέον Φ.Π.Α. 24 % επί της τιμής πώλησης, ποια είναι η τελική τιμή σε €;`,
-        correctVal: 124,
-        correctStr: '124',
-        explanation: `Τιμή πώλησης με κέρδος 25%: 80 ＋ (80 · 0,25) ＝ 100 €. Τελική τιμή με Φ.Π.Α. 24%: 100 ＋ 24 ＝ 124 €.`
+        prompt: 'Ένα κατάστημα αγοράζει ένα είδος προς 80 € και το πουλάει με κέρδος 25 %. Αν ο πελάτης πληρώσει επιπλέον Φ.Π.Α. 24 % επί της τιμής πώλησης, ποια είναι η τελική τιμή σε €;',
+        unit: '€',
+        correctVal: '124',
+        correctText: '124 €',
+        tableData: [
+          { item: 'Τιμή πώλησης με κέρδος 25%', formula: '80 ＋ (80 · 0,25)', val: '100 €' },
+          { item: 'Φ.Π.Α. 24% επί των 100 €', formula: '100 · 0,24', val: '24 €' },
+          { item: 'Τελική τιμή με φόρο', formula: '100 ＋ 24', val: '124 €' }
+        ],
+        explain: 'Τιμή πώλησης με κέρδος 25%: 80 ＋ (80 · 0,25) ＝ 100 €. Τελική τιμή με Φ.Π.Α. 24%: 100 ＋ 24 ＝ 124 €.',
+        distractors: ['120 €', '128 €', '118 €']
       };
     }
   },
   {
     id: 'pos_hard_4',
+    title: 'Καθαρός Μισθός μετά από Κρατήσεις',
+    unit: '€',
     generate: () => {
       return {
-        text: `Σε ένα σχολείο 400 μαθητών, το 60 % είναι κορίτσια. Αν το 25 % των κοριτσιών ασχολείται με τον αθλητισμό, πόσα κορίτσια αθλούνται;`,
-        correctVal: 60,
-        correctStr: '60',
-        explanation: `Κορίτσια: 400 · 0,60 ＝ 240. Κορίτσια που αθλούνται: 240 · 0,25 ＝ 60.`
-      };
-    }
-  },
-  {
-    id: 'pos_hard_5',
-    generate: () => {
-      return {
-        text: `Ένα κατάστημα προσφέρει προσφορά: «Αγοράστε 2 ίδια είδη αξίας 50 € το καθένα και πάρτε το δεύτερο με έκπτωση 50 %». Πόσα ευρώ (€) θα πληρώσει ο πελάτης και για τα δύο είδη μαζί;`,
-        correctVal: 75,
-        correctStr: '75',
-        explanation: `1ο είδος: 50 €. 2ο είδος με έκπτωση 50%: 25 €. Σύνολο: 50 ＋ 25 ＝ 75 €.`
-      };
-    }
-  },
-  {
-    id: 'pos_hard_6',
-    generate: () => {
-      return {
-        text: `Από μια δεξαμενή 1.000 l νερού αφαιρέθηκε το 20 % και στη συνέχεια προστέθηκε στη δεξαμενή νερό ίσο με το 20 % του νερού που είχε απομείνει. Πόσα λίτρα (l) νερού περιέχει τώρα η δεξαμενή;`,
-        correctVal: 960,
-        correctStr: '960',
-        explanation: `Μετά την αφαίρεση 20%: 800 l. Προσθήκη 20% των 800 l: 800 · 0,20 ＝ 160 l. Τελικό νερό: 800 ＋ 160 ＝ 960 l.`
-      };
-    }
-  },
-  {
-    id: 'pos_hard_7',
-    generate: () => {
-      return {
-        text: `Ένας εργαζόμενος έχει μηνιαίο μισθό 1.200 €. Του γίνεται κράτηση 15 % για ασφαλιστικές εισφορές. Πόσα ευρώ (€) είναι ο καθαρός μισθός που λαμβάνει;`,
-        correctVal: 1020,
-        correctStr: '1020',
-        explanation: `Κράτηση: (1.200 · 15) : 100 ＝ 180 €. Καθαρός μισθός: 1.200 － 180 ＝ 1.020 €.`
-      };
-    }
-  },
-  {
-    id: 'pos_hard_8',
-    generate: () => {
-      return {
-        text: `Μια τηλεόραση αξίας 500 € πωλείται με έκπτωση 15 % αν πληρωθεί με μετρητά. Πόσα ευρώ (€) κερδίζει ο αγοραστής από την έκπτωση;`,
-        correctVal: 75,
-        correctStr: '75',
-        explanation: `Κέρδος έκπτωσης: (500 · 15) : 100 ＝ 75 €.`
-      };
-    }
-  },
-  {
-    id: 'pos_hard_9',
-    generate: () => {
-      return {
-        text: `Σε ένα κατάστημα ρούχων, ένα παντελόνι αξίας 80 € πωλείται με έκπτωση 20 % και μια μπλούζα αξίας 40 € πωλείται με έκπτωση 10 %. Πόσα ευρώ (€) θα πληρώσει συνολικά ο πελάτης και για τα δύο ρούχα;`,
-        correctVal: 100,
-        correctStr: '100',
-        explanation: `Παντελόνι: 80 － 16 ＝ 64 €. Μπλούζα: 40 － 4 ＝ 36 €. Σύνολο: 64 ＋ 36 ＝ 100 €.`
-      };
-    }
-  },
-  {
-    id: 'pos_hard_10',
-    generate: () => {
-      return {
-        text: `Ένα χωράφι 50 στρεμμάτων καλλιεργήθηκε ως εξής: 40 % με σιτάρι, 30 % με καλαμπόκι και το υπόλοιπο με βαμβάκι. Πόσα στρέμματα καλλιεργήθηκαν με βαμβάκι;`,
-        correctVal: 15,
-        correctStr: '15',
-        explanation: `Ποσοστό βαμβακιού: 100 % － (40 % ＋ 30 %) ＝ 30 %. Στρέμματα: (50 · 30) : 100 ＝ 15 στρέμματα.`
+        prompt: 'Ένας εργαζόμενος έχει μηνιαίο μισθό 1.200 €. Του γίνεται κράτηση 15 % για ασφαλιστικές εισφορές. Πόσα ευρώ (€) είναι ο καθαρός μισθός που λαμβάνει;',
+        unit: '€',
+        correctVal: '1020',
+        correctText: '1.020 €',
+        tableData: [
+          { item: 'Αρχικός μισθός', formula: '1.200 €', val: '1.200 €' },
+          { item: 'Κράτηση 15%', formula: '(1.200 · 15) : 100', val: '180 €' },
+          { item: 'Καθαρός μισθός', formula: '1.200 － 180', val: '1.020 €' }
+        ],
+        explain: 'Κράτηση: (1.200 · 15) : 100 ＝ 180 €. Καθαρός μισθός: 1.200 － 180 ＝ 1.020 €.',
+        distractors: ['1.050 €', '980 €', '1.040 €']
       };
     }
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
 function generateQuestions() {
-  const qList = [];
+  // Q1: Input - Υπολογισμός ποσού έκπτωσης
+  const q1Orig = pickRandom([60, 80, 100, 120]);
+  const q1Pct = 20;
+  const q1DiscAmount = (q1Orig * q1Pct) / 100;
 
-  // Q1 (Input - Decimal): Υπολογισμός ποσού έκπτωσης
-  {
-    const orig = pickRandom([60, 80, 100, 120]);
-    const pct = 20;
-    const discAmount = (orig * pct) / 100;
+  // Q2: MCQ - Εύρεση τελικής τιμής σε έκπτωση
+  const q2CorrectStatement = 'Αφαιρούμε το ποσό της έκπτωσης από την αρχική τιμή';
+  const q2Options = shuffle([
+    q2CorrectStatement,
+    'Προσθέτουμε το ποσό της έκπτωσης στην αρχική τιμή',
+    'Διαιρούμε την αρχική τιμή με το ποσό της έκπτωσης',
+    'Η τελική τιμή είναι πάντοτε ίση με το ποσό της έκπτωσης'
+  ]);
 
-    qList.push({
-      id: 1,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 1 • ΥΠΟΛΟΓΙΣΜΟΣ ΠΟΣΟΥ ΕΚΠΤΩΣΗΣ',
-      instruction: 'Υπολογίστε μόνο το ποσό της έκπτωσης σε €:',
-      prompt: `Σε ένα προϊόν αξίας ${orig} € γίνεται έκπτωση 20 %. Πόσα ευρώ (€) είναι η έκπτωση;`,
-      correctVal: discAmount,
-      correctStr: String(discAmount),
-      explanation: `Έκπτωση: (${orig} · 20) : 100 ＝ ${discAmount} €.`
-    });
-  }
+  // Q3: Input - Υπολογισμός τελικής τιμής με έκπτωση
+  const q3Orig = pickRandom([50, 70, 90, 110]);
+  const q3Pct = 10;
+  const q3FinalP = q3Orig * 0.9;
 
-  // Q2 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
-  {
-    const correctStatement = 'Αφαιρούμε το ποσό της έκπτωσης από την αρχική τιμή';
-    const options = [
-      { text: correctStatement, isCorrect: true },
-      { text: 'Προσθέτουμε το ποσό της έκπτωσης στην αρχική τιμή', isCorrect: false },
-      { text: 'Διαιρούμε την αρχική τιμή με το ποσό της έκπτωσης', isCorrect: false },
-      { text: 'Η τελική τιμή είναι πάντοτε ίση με το ποσό της έκπτωσης', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
+  // Q4: MCQ - Επιβάρυνση φόρου Φ.Π.Α.
+  const q4CorrectStatement = 'Προσθέτουμε τον φόρο Φ.Π.Α. στην καθαρή αρχική αξία του προϊόντος';
+  const q4Options = shuffle([
+    q4CorrectStatement,
+    'Αφαιρούμε τον φόρο Φ.Π.Α. από την καθαρή αρχική αξία',
+    'Ο φόρος Φ.Π.Α. δεν αλλάζει καθόλου την τελική τιμή',
+    'Διαιρούμε την αρχική τιμή με το 24'
+  ]);
 
-    qList.push({
-      id: 2,
+  // Q5: Input - Υπολογισμός τελικής τιμής με Φ.Π.Α. 24%
+  const q5Clean = pickRandom([50, 100, 150, 200]);
+  const q5FinalVal = q5Clean * 1.24;
+
+  // Q6: MCQ - Απευθείας υπολογισμός τελικής τιμής
+  const q6CorrectConcept = 'Πολλαπλασιάζουμε την αρχική τιμή με 0,75 (καθώς 100% － 25% ＝ 75%)';
+  const q6Options = shuffle([
+    q6CorrectConcept,
+    'Πολλαπλασιάζουμε την αρχική τιμή με 0,25 και αυτό είναι η τελική τιμή',
+    'Διαιρούμε την αρχική τιμή με το 75',
+    'Προσθέτουμε 25 € στην αρχική τιμή'
+  ]);
+
+  // Q7: Standard Problem (Input)
+  const spIndex1 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q7Data = STANDARD_PROBLEMS_POOL[spIndex1].generate();
+
+  // Q8: Standard Problem (MCQ)
+  let spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  while (spIndex2 === spIndex1) spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q8Data = STANDARD_PROBLEMS_POOL[spIndex2].generate();
+  const q8Options = shuffle([
+    ...new Set([
+      q8Data.correctText,
+      ...q8Data.distractors
+    ])
+  ]);
+
+  // Q9: Hard Problem (Input)
+  const hpIndex1 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q9Data = HARD_PROBLEMS_POOL[hpIndex1].generate();
+
+  // Q10: Hard Problem (MCQ)
+  let hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  while (hpIndex2 === hpIndex1) hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q10Data = HARD_PROBLEMS_POOL[hpIndex2].generate();
+  const q10Options = shuffle([
+    ...new Set([
+      q10Data.correctText,
+      ...q10Data.distractors
+    ])
+  ]);
+
+  return [
+    {
+      id: 'q1',
+      type: 'input',
+      inputType: 'number',
+      title: 'Υπολογισμός Ποσού Έκπτωσης',
+      prompt: `Σε ένα προϊόν αξίας ${q1Orig} € γίνεται έκπτωση 20 %. Πόσα ευρώ (€) είναι η έκπτωση;`,
+      correct: String(q1DiscAmount),
+      explain: `Έκπτωση: (${q1Orig} · 20) : 100 ＝ ${q1DiscAmount} €.`
+    },
+    {
+      id: 'q2',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 2 • ΕΥΡΕΣΗ ΤΕΛΙΚΗΣ ΤΙΜΗΣ ΣΕ ΕΚΠΤΩΣΗ',
-      instruction: 'Επιλέξτε τη σωστή πράξη:',
-      prompt: `Πώς υπολογίζουμε την τελική τιμή πληρωμής ενός προϊόντος όταν γνωρίζουμε την αρχική τιμή και το ποσό της έκπτωσης;`,
-      options,
-      correctText: correctStatement,
-      explanation: `Στις εκπτώσεις η τιμή μειώνεται, επομένως αφαιρούμε την έκπτωση από την αρχική τιμή: Τελική Τιμή ＝ Αρχική Τιμή － Έκπτωση.`
-    });
-  }
-
-  // Q3 (Input - Decimal): Υπολογισμός τελικής τιμής με έκπτωση
-  {
-    const orig = pickRandom([50, 70, 90, 110]);
-    const pct = 10;
-    const finalP = orig * 0.9;
-
-    qList.push({
-      id: 3,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 3 • ΤΕΛΙΚΗ ΤΙΜΗ ΜΕΤΑ ΑΠΟ ΕΚΠΤΩΣΗ',
-      instruction: 'Υπολογίστε την τελική τιμή πληρωμής σε €:',
-      prompt: `Ένα ρούχο κοστίζει ${orig} € και έχει έκπτωση 10 %. Πόσα ευρώ (€) θα πληρώσει ο πελάτης;`,
-      correctVal: finalP,
-      correctStr: formatNum(finalP),
-      explanation: `Έκπτωση: (${orig} · 10) : 100 ＝ ${formatNum(orig * 0.1)} €. Τελική τιμή: ${orig} － ${formatNum(orig * 0.1)} ＝ ${formatNum(finalP)} €.`
-    });
-  }
-
-  // Q4 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
-  {
-    const correctStatement = 'Προσθέτουμε τον φόρο Φ.Π.Α. στην καθαρή αρχική αξία του προϊόντος';
-    const options = [
-      { text: correctStatement, isCorrect: true },
-      { text: 'Αφαιρούμε τον φόρο Φ.Π.Α. από την καθαρή αρχική αξία', isCorrect: false },
-      { text: 'Ο φόρος Φ.Π.Α. δεν αλλάζει καθόλου την τελική τιμή', isCorrect: false },
-      { text: 'Διαιρούμε την αρχική τιμή με το 24', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 4,
+      title: 'Εύρεση Τελικής Τιμής σε Έκπτωση',
+      prompt: 'Πώς υπολογίζουμε την τελική τιμή πληρωμής ενός προϊόντος όταν γνωρίζουμε την αρχική τιμή και το ποσό της έκπτωσης;',
+      options: q2Options,
+      correct: q2CorrectStatement,
+      explain: 'Στις εκπτώσεις η τιμή μειώνεται, επομένως αφαιρούμε την έκπτωση από την αρχική τιμή: Τελική Τιμή ＝ Αρχική Τιμή － Έκπτωση.'
+    },
+    {
+      id: 'q3',
+      type: 'input',
+      inputType: 'decimal',
+      title: 'Τελική Τιμή μετά από Έκπτωση',
+      prompt: `Ένα ρούχο κοστίζει ${q3Orig} € και έχει έκπτωση 10 %. Πόσα ευρώ (€) θα πληρώσει ο πελάτης;`,
+      correct: formatNum(q3FinalP),
+      explain: `Έκπτωση: (${q3Orig} · 10) : 100 ＝ ${formatNum(q3Orig * 0.1)} €. Τελική τιμή: ${q3Orig} － ${formatNum(q3Orig * 0.1)} ＝ ${formatNum(q3FinalP)} €.`
+    },
+    {
+      id: 'q4',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 4 • ΕΠΙΒΑΡΥΝΣΗ ΦΟΡΟΥ Φ.Π.Α.',
-      instruction: 'Επιλέξτε τον σωστό κανόνα:',
-      prompt: `Πώς επηρεάζει ο φόρος προστιθέμενης αξίας (Φ.Π.Α.) την τελική τιμή που πληρώνει ο καταναλωτής;`,
-      options,
-      correctText: correctStatement,
-      explanation: `Ο φόρος Φ.Π.Α. αποτελεί επιβάρυνση, επομένως προστίθεται στην καθαρή αξία του προϊόντος.`
-    });
-  }
-
-  // Q5 (Input - Decimal): Υπολογισμός τελικής τιμής με Φ.Π.Α. 24%
-  {
-    const clean = pickRandom([50, 100, 150, 200]);
-    const finalVal = clean * 1.24;
-
-    qList.push({
-      id: 5,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 5 • ΤΕΛΙΚΗ ΤΙΜΗ ΜΕ Φ.Π.Α.',
-      instruction: 'Υπολογίστε την τελική τιμή με Φ.Π.Α. 24 % σε €:',
-      prompt: `Ένα προϊόν έχει καθαρή αξία ${clean} € και επιβαρύνεται με Φ.Π.Α. 24 %. Ποια είναι η τελική τιμή σε €;`,
-      correctVal: finalVal,
-      correctStr: formatNum(finalVal),
-      explanation: `Φόρος: (${clean} · 24) : 100 ＝ ${formatNum(clean * 0.24)} €. Τελική τιμή: ${clean} ＋ ${formatNum(clean * 0.24)} ＝ ${formatNum(finalVal)} €.`
-    });
-  }
-
-  // Q6 (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE
-  {
-    const correctConcept = 'Πολλαπλασιάζουμε την αρχική τιμή με 0,75 (καθώς 100% － 25% ＝ 75%)';
-    const options = [
-      { text: correctConcept, isCorrect: true },
-      { text: 'Πολλαπλασιάζουμε την αρχική τιμή με 0,25 και αυτό είναι η τελική τιμή', isCorrect: false },
-      { text: 'Διαιρούμε την αρχική τιμή με το 75', isCorrect: false },
-      { text: 'Προσθέτουμε 25 € στην αρχική τιμή', isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 6,
+      title: 'Επιβάρυνση Φόρου Φ.Π.Α.',
+      prompt: 'Πώς επηρεάζει ο φόρος προστιθέμενης αξίας (Φ.Π.Α.) την τελική τιμή που πληρώνει ο καταναλωτής;',
+      options: q4Options,
+      correct: q4CorrectStatement,
+      explain: 'Ο φόρος Φ.Π.Α. αποτελεί επιβάρυνση, επομένως προστίθεται στην καθαρή αξία του προϊόντος.'
+    },
+    {
+      id: 'q5',
+      type: 'input',
+      inputType: 'decimal',
+      title: 'Τελική Τιμή με Φ.Π.Α.',
+      prompt: `Ένα προϊόν έχει καθαρή αξία ${q5Clean} € και επιβαρύνεται με Φ.Π.Α. 24 %. Ποια είναι η τελική τιμή σε €;`,
+      correct: formatNum(q5FinalVal),
+      explain: `Φόρος: (${q5Clean} · 24) : 100 ＝ ${formatNum(q5Clean * 0.24)} €. Τελική τιμή: ${q5Clean} ＋ ${formatNum(q5Clean * 0.24)} ＝ ${formatNum(q5FinalVal)} €.`
+    },
+    {
+      id: 'q6',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 6 • ΑΠΕΥΘΕΙΑΣ ΥΠΟΛΟΓΙΣΜΟΣ ΤΕΛΙΚΗΣ ΤΙΜΗΣ',
-      instruction: 'Επιλέξτε τη συντομότερη μαθηματική μέθοδο:',
-      prompt: `Πώς μπορούμε να βρούμε απευθείας την τελική τιμή ενός προϊόντος μετά από έκπτωση 25 % σε ένα μόνο βήμα;`,
-      options,
-      correctText: correctConcept,
-      explanation: `Εφόσον αφαιρείται το 25%, πληρώνουμε το υπόλοιπο 75% της αξίας, δηλαδή πολλαπλασιάζουμε απευθείας με 0,75.`
-    });
-  }
-
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή
-  {
-    const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const stdProb1 = shuffledStd[0].generate();
-    const stdProb2 = shuffledStd[1].generate();
-
-    // Q7 (Input - Decimal)
-    qList.push({
-      id: 7,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΑΓΟΡΑΣ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα σε €:',
-      prompt: stdProb1.text,
-      tableData: stdProb1.tableData,
-      correctVal: stdProb1.correctVal,
-      correctStr: stdProb1.correctStr,
-      explanation: stdProb1.explanation
-    });
-
-    // Q8 (MCQ)
-    const val8 = stdProb2.correctVal;
-    const fake8A = formatNum(val8 + randInt(10, 30));
-    const fake8B = formatNum(Math.max(5, val8 - randInt(10, 25)));
-    const fake8C = formatNum(val8 * 1.2);
-
-    const optionsQ8 = [
-      { text: `${stdProb2.correctStr} €`, isCorrect: true },
-      { text: `${fake8A} €`, isCorrect: false },
-      { text: `${fake8B} €`, isCorrect: false },
-      { text: `${fake8C} €`, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 8,
+      title: 'Απευθείας Υπολογισμός Τελικής Τιμής',
+      prompt: 'Πώς μπορούμε να βρούμε απευθείας την τελική τιμή ενός προϊόντος μετά από έκπτωση 25 % σε ένα μόνο βήμα;',
+      options: q6Options,
+      correct: q6CorrectConcept,
+      explain: 'Εφόσον αφαιρείται το 25%, πληρώνουμε το υπόλοιπο 75% της αξίας, δηλαδή πολλαπλασιάζουμε απευθείας με 0,75.'
+    },
+    {
+      id: 'q7',
+      type: 'input',
+      inputType: 'number',
+      title: `Πρόβλημα: ${q7Data.title}`,
+      prompt: q7Data.prompt,
+      correct: q7Data.correctVal,
+      tableData: q7Data.tableData,
+      explain: q7Data.explain
+    },
+    {
+      id: 'q8',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΗΣ ΕΦΑΡΜΟΓΗΣ',
-      instruction: 'Επιλέξτε τη σωστή τελική τιμή:',
-      prompt: stdProb2.text,
-      tableData: stdProb2.tableData,
-      options: optionsQ8,
-      correctText: `${stdProb2.correctStr} €`,
-      explanation: stdProb2.explanation
-    });
-  }
-
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας
-  {
-    const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const hardProb1 = shuffledHard[0].generate();
-    const hardProb2 = shuffledHard[1].generate();
-
-    // Q9 (Input - Decimal)
-    qList.push({
-      id: 9,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
-      instruction: 'Υπολογίστε με ακρίβεια και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: hardProb1.text,
-      correctVal: hardProb1.correctVal,
-      correctStr: hardProb1.correctStr,
-      explanation: hardProb1.explanation
-    });
-
-    // Q10 (MCQ Αυξημένης Δυσκολίας)
-    const val10 = hardProb2.correctVal;
-    const fake10A = formatNum(val10 + randInt(20, 50));
-    const fake10B = formatNum(Math.max(10, val10 - randInt(15, 40)));
-    const fake10C = formatNum(val10 * 1.1);
-
-    const optionsQ10 = [
-      { text: `${hardProb2.correctStr} €`, isCorrect: true },
-      { text: `${fake10A} €`, isCorrect: false },
-      { text: `${fake10B} €`, isCorrect: false },
-      { text: `${fake10C} €`, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 10,
+      title: `Πρόβλημα: ${q8Data.title}`,
+      prompt: q8Data.prompt,
+      options: q8Options,
+      correct: q8Data.correctText,
+      tableData: q8Data.tableData,
+      explain: q8Data.explain
+    },
+    {
+      id: 'q9',
+      type: 'input',
+      inputType: 'decimal',
+      title: `Σύνθετο Πρόβλημα: ${q9Data.title}`,
+      prompt: q9Data.prompt,
+      correct: q9Data.correctVal,
+      tableData: q9Data.tableData,
+      explain: q9Data.explain
+    },
+    {
+      id: 'q10',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΔΙΑΔΟΧΙΚΩΝ ΜΕΤΑΒΟΛΩΝ',
-      instruction: 'Επιλέξτε τη σωστή απάντηση:',
-      prompt: hardProb2.text,
-      options: optionsQ10,
-      correctText: `${hardProb2.correctStr} €`,
-      explanation: hardProb2.explanation
-    });
-  }
-
-  return qList;
+      title: `Σύνθετο Πρόβλημα: ${q10Data.title}`,
+      prompt: q10Data.prompt,
+      options: q10Options,
+      correct: q10Data.correctText,
+      tableData: q10Data.tableData,
+      explain: q10Data.explain
+    }
+  ];
 }
+
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
 
 export default function ProblimataMePosostaExercisesPage() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
   const loadNewSet = useCallback(() => {
-    const q = generateQuestions();
-    setQuestions(q);
-    setAnswers({});
-    setIsSubmitted(false);
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = '';
+    });
+    setAnswers(initialAnswers);
+    setSubmitted(false);
     setScore(0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (fieldKey, rawValue) => {
-    if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
-    if (sanitized.length > 10) {
-      sanitized = sanitized.slice(0, 10);
-    }
-    setAnswers((prev) => ({
-      ...prev,
-      [fieldKey]: sanitized
-    }));
-  };
-
-  const handleSelectMCQ = (qId, optionText) => {
-    if (isSubmitted) return;
-    setAnswers((prev) => ({
-      ...prev,
-      [`q_${qId}`]: optionText
-    }));
-  };
-
-  const handleCheckAnswers = () => {
-    let currentScore = 0;
-
-    questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq
+  const handleAnswerChange = (id, rawValue, type) => {
+    if (submitted) return;
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
       }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
+  };
+
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
+    if (q.type === 'input') {
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/€/g, '').trim().toLowerCase();
+      const cleanTarget = String(q.correct).replace(/\./g, ',').replace(/\s+/g, '').replace(/€/g, '').trim().toLowerCase();
+
+      if (cleanUser === cleanTarget) return true;
+
+      if (q.inputType === 'decimal') {
+        const numUser = parseFloat(cleanUser.replace(',', '.'));
+        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
+      }
+      return false;
+    }
+    if (q.type === 'mcq') {
+      return userVal === q.correct;
+    }
+    return false;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (submitted || questions.length === 0) return;
+
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(currentScore);
-    setIsSubmitted(true);
+    setScore(total);
+    setSubmitted(true);
   };
+
+  const getCardStyle = (q) => {
+    if (!submitted) return 'bg-white border-slate-200 shadow-sm';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
+  };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
       title="Ασκήσεις: Προβλήματα με Ποσοστά - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="10 απαιτητικές ασκήσεις και προβλήματα στον υπολογισμό ποσού έκπτωσης, αύξησης, φόρου Φ.Π.Α. και τελικής τιμής για τη ΣΤ' Δημοτικού."
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στα προβλήματα με εκπτώσεις, αυξήσεις, Φ.Π.Α. και τελικές τιμές για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
+      showAds={false}
       hideFooter={true}
       actionButton={
         <Link
           href="/st-dimotikou/51-problimata-me-pososta"
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8 pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
-        {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-14 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 51 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
+                Διαδραστικές Ασκήσεις: Προβλήματα με Ποσοστά
+              </h1>
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στον υπολογισμό εκπτώσεων, αυξήσεων, φόρου Φ.Π.Α. και τελικής τιμής πληρωμής σε ρεαλιστικά σενάρια!
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-              Ασκήσεις: Προβλήματα με Ποσοστά
-            </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Υπολογίστε ποσά εκπτώσεων, αυξήσεις, φόρους Φ.Π.Α. και τελικές τιμές πληρωμής.
-            </p>
-          </div>
 
-          <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
-            </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 sm:px-4 py-2 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm"
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6">
-          {questions.map((q, idx) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
-
-            return (
-              <article
-                key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-4 sm:p-7 shadow-sm transition-all ${
-                  isSubmitted
-                    ? isCorrect
-                      ? 'border-emerald-400 bg-emerald-50/20'
-                      : 'border-rose-400 bg-rose-50/20'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {/* Επικεφαλιδα Ερωτησης */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2 sm:mb-3">
-                  <span className="text-xs font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
-                    {toCleanUppercase(q.title)}
-                  </span>
-                  {isSubmitted && (
-                    <span
-                      className={`text-xs font-bold px-3 py-1 rounded-full ${
-                        isCorrect
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
-                    </span>
-                  )}
-                </div>
-
-                {/* Εκφωνηση */}
-                <div className="space-y-2 mb-2">
-                  <p className="text-xs sm:text-sm font-semibold text-slate-500">
-                    {q.instruction}
-                  </p>
-                  <p className="text-sm sm:text-lg font-bold text-slate-900 leading-relaxed">
-                    {q.prompt}
-                  </p>
-
-                  {/* Πινακας Τιμων (Responsive Χωρις Scroll) */}
-                  {q.tableData && (
-                    <div className="w-full max-w-xs sm:max-w-sm bg-slate-50 border-2 border-slate-200 rounded-2xl p-2.5 my-2 shadow-inner font-mono text-xs">
-                      <div className="grid grid-cols-2 gap-2 font-bold border-b border-slate-200 pb-1 text-slate-600 text-center">
-                        <span className="bg-blue-100/60 px-1.5 py-0.5 rounded text-blue-900 truncate">{q.tableData.col1}</span>
-                        <span className="bg-amber-100/60 px-1.5 py-0.5 rounded text-amber-900 truncate">{q.tableData.col2}</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 pt-1.5 text-center font-bold text-slate-800">
-                        <span>{q.tableData.r1[0]}</span>
-                        <span className="text-indigo-700">{q.tableData.r1[1]}</span>
-                        <span>{q.tableData.r2[0]}</span>
-                        <span className="text-amber-600 font-black text-sm">{q.tableData.r2[1]}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Περιοχη Απαντησης */}
-                <div className="py-2 pt-2.5">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        maxLength={10}
-                        disabled={isSubmitted}
-                        placeholder="Απάντηση..."
-                        value={answers[`q_${q.id}`] || ''}
-                        onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-32 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
-                      />
-                      <span className="text-xs text-slate-500">
-                        (Ακέραιος η δεκαδικός με κόμμα)
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                >
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
                       </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  {/* Multiple Choice (MCQ) - ΠΛΗΡΕΣ ΚΕΙΜΕΝΟ ΧΩΡΙΣ TRUNCATE / ΑΠΟΣΙΩΠΗΤΙΚΑ */}
-                  {q.type === 'mcq' && (
-                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-3xl">
-                      {q.options.map((opt, oIdx) => {
-                        const isSelected = answers[`q_${q.id}`] === opt.text;
-                        return (
-                          <button
-                            key={`opt-${q.id}-${oIdx}`}
-                            type="button"
-                            disabled={isSubmitted}
-                            onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 sm:p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm md:text-base transition active:scale-98 touch-manipulation flex items-start justify-between gap-3 ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                                : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                            } disabled:cursor-not-allowed`}
-                          >
-                            <span className="break-words whitespace-normal leading-snug flex-1">
-                              {opt.text}
-                            </span>
-                            <span
-                              className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center text-[10px] sm:text-xs shrink-0 mt-0.5 ${
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-4">
+                      {q.prompt}
+                    </p>
+
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
-                                  ? 'border-white bg-white text-blue-600 font-bold'
-                                  : 'border-slate-400 bg-transparent'
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                               }`}
                             >
-                              {isSelected ? '●' : ''}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
 
-                </div>
-
-                {/* Feedback μετα την υποβολη */}
-                {isSubmitted && (
-                  <div
-                    className={`mt-3.5 p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed space-y-1.5 ${
-                      isCorrect
-                        ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
-                        : 'bg-rose-100/60 border-rose-300 text-rose-950'
-                    }`}
-                  >
-                    <div className="font-bold flex items-center gap-1.5">
-                      <span>{isCorrect ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Επεξήγηση:'}</span>
-                    </div>
-                    <div>{q.explanation}</div>
-                    {!isCorrect && (
-                      <div className="font-semibold pt-1 text-slate-800">
-                        Σωστή απάντηση:{' '}
-                        <span className="font-mono font-bold text-blue-900">
-                          {q.correctStr || q.correctText}
-                        </span>
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          key={`input-${q.id}`}
+                          autoComplete="off"
+                          spellCheck="false"
+                          type="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.inputType === 'decimal' ? 'π.χ. 45,5' : 'Απάντηση...'}
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
                       </div>
                     )}
                   </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
 
-      </div>
-
-      {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 sm:py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-4">
-          
-          <div className="flex items-center gap-4 sm:gap-8">
-            <div>
-              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
-              </span>
-              <span className="font-mono font-black text-base sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-sm sm:text-base">/ 10</span>
-              </span>
-            </div>
-
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-[11px] sm:text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-base sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          <div className="flex items-center gap-3">
-            {!isSubmitted ? (
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-4">
               <button
-                type="button"
-                onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                type="submit"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                <span className="text-xl">🎯</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
-            ) : (
+            </div>
+          )}
+        </form>
+      </div>
+
+      {/* FIXED BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
+          
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+            </div>
+            {submitted && (
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* GUIDANCE OR RESTART */}
+          <div className="flex items-center gap-3">
+            {submitted ? (
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
+            ) : (
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
+              </p>
             )}
           </div>
 
         </div>
-      </footer>
+      </div>
     </Layout>
   );
 }
