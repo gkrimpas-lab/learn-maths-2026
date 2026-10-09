@@ -24,7 +24,7 @@ function shuffle(array) {
   return arr;
 }
 
-// Αφαιρεση τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -34,7 +34,7 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale
+// Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
   return Number(num).toLocaleString('el-GR');
@@ -62,7 +62,7 @@ const STANDARD_PROBLEMS_POOL = [
           { item: 'Κλάσμα κατανάλωσης', formula: `${eaten}/${parts}`, val: `${eaten}/${parts}` },
           { item: 'Πράξη διαίρεσης', formula: `${eaten} : ${parts}`, val: `${dec}` }
         ],
-        explain: `Για να βρούμε τον δεκαδικό αριθμό, εκτελούμε τη διαίρεση: ${eaten} : ${parts} ＝ ${dec}.`,
+        explain: `Για να βρούμε τον δεκαδικό αριθμό, εκτελούμε τη διαίρεση του αριθμητή με τον παρονομαστή: ${eaten} : ${parts} ＝ ${dec}.`,
         distractors: ['0,5', '0,25', '0,8']
       };
     }
@@ -164,7 +164,7 @@ const STANDARD_PROBLEMS_POOL = [
       const drank = 1;
       const dec = '0,25';
       return {
-        prompt: `Ένα μπουκάλι χυμού περιείχε 1 λίτρο και ήπιαμε το ${drank}/${parts} (ένα τέταρτο) του λίτρου. Ποιος δεκαδικός αριθμός αντιστοιχεί στο τέταρτο;`,
+        prompt: `Ένα μπουκάλι χυμού περιείχε 1 λίτρο και ήπιαμε το ${drank}/${parts} (ένα τέταρτο) του λίτρου. Ποιος δεκαδικός αριθμός αντιστοιχεί στο ένα τέταρτο;`,
         unit: '',
         correctVal: dec,
         correctText: `${dec}`,
@@ -185,7 +185,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Καταχρηστικό Κλάσμα σε Πίτσες',
     unit: 'πίτσες',
     generate: () => {
-      // 5/2 = 2,5
       const num = 5;
       const den = 2;
       const dec = '2,5';
@@ -208,7 +207,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Υφάσματα για Κουρτίνες',
     unit: 'μέτρα',
     generate: () => {
-      // 7/4 = 1,75
       const num = 7;
       const den = 4;
       const dec = '1,75';
@@ -231,7 +229,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Βάρος Φρούτων σε Κιλά',
     unit: 'κιλά',
     generate: () => {
-      // 6/5 = 1,2
       const num = 6;
       const den = 5;
       const dec = '1,2';
@@ -267,7 +264,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Είδος δεκαδικού', formula: 'Άπειρα ψηφία 3', val: 'Περιοδικός' }
         ],
         explain: `Η διαίρεση 1 : 3 δεν τελειώνει ποτέ και δίνει ${dec}, ο οποίος είναι περιοδικός δεκαδικός αριθμός.`,
-        distractors: ['0,3 (Μη περιοδικός)', '0,35 (Περιοδικός)', '0,25 (Μη περιοδικός)']
+        distractors: ['0,3 (Μη περιοδικός)', '0,33 (Μη περιοδικός)', '0,25 (Μη περιοδικός)']
       };
     }
   },
@@ -276,7 +273,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Χρηματικό Ποσό σε Ευρώ',
     unit: '€',
     generate: () => {
-      // 9/4 = 2,25
       const num = 9;
       const den = 4;
       const dec = '2,25';
@@ -299,7 +295,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Απόσταση Αγώνα Δρόμου',
     unit: 'χλμ.',
     generate: () => {
-      // 8/5 = 1,6
       const num = 8;
       const den = 5;
       const dec = '1,6';
@@ -313,7 +308,7 @@ const HARD_PROBLEMS_POOL = [
           { item: 'Διαίρεση', formula: `${num} : ${den}`, val: `${dec} χλμ.` }
         ],
         explain: `Υπολογίζουμε: ${num} : ${den} ＝ ${dec} χλμ. (1 χιλιόμετρο και 600 μέτρα).`,
-        distractors: ['1,8 χλμ.', '1,4 χλμ.', '1,5 χλμ']
+        distractors: ['1,8 χλμ.', '1,4 χλμ.', '1,5 χλμ.']
       };
     }
   }
@@ -324,7 +319,7 @@ const HARD_PROBLEMS_POOL = [
 // ---------------------------------------------------------
 
 function generateQuestions() {
-  // Q1: Input - Μετατροπή απλού κλάσματος σε δεκαδικό (π.χ. 1/2, 1/4, 3/4, 2/5, 4/5)
+  // Q1: Input - Μετατροπή απλού κλάσματος σε δεκαδικό
   const q1List = [
     { num: 1, den: 2, dec: '0,5' },
     { num: 1, den: 4, dec: '0,25' },
@@ -447,10 +442,10 @@ function generateQuestions() {
       id: 'q3',
       type: 'mcq',
       title: 'Περιοδικός Δεκαδικός',
-      prompt: `Ποιο από τα παρακάτω κλάσματα δίνει περιοδικό δεκαδικό αριθμό όταν κάνουμε τη διαίρεση;`,
+      prompt: 'Ποιο από τα παρακάτω κλάσματα δίνει περιοδικό δεκαδικό αριθμό όταν κάνουμε τη διαίρεση;',
       options: q3Options,
       correct: q3Chosen.frac,
-      explain: `Το κλάσμα ${q3Chosen.frac} ισούται με ${q3Chosen.frac.split('/')[0]} : ${q3Chosen.frac.split('/')[1]} ＝ ${q3Chosen.dec}, η διαίρεση δεν τελειώνει και άρα είναι περιοδικός αριθμός.`
+      explain: `Το κλάσμα ${q3Chosen.frac} ισούται με ${q3Chosen.frac.split('/')[0]} : ${q3Chosen.frac.split('/')[1]} ＝ ${q3Chosen.dec}. Η διαίρεση δεν τελειώνει ποτέ και το δεκαδικό ψηφίο επαναλαμβάνεται επ' άπειρον, άρα είναι περιοδικός δεκαδικός αριθμός.`
     },
     {
       id: 'q4',
@@ -549,9 +544,22 @@ export default function KlasmaSeDekadikoExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για δεκαδικά inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      let sanitized = String(rawValue).replace(/\./g, ',').replace(/[^0-9,]/g, '');
+      const parts = sanitized.split(',');
+      if (parts.length > 2) {
+        sanitized = parts[0] + ',' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -559,8 +567,11 @@ export default function KlasmaSeDekadikoExercisesPage() {
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
       const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      return cleanUser === cleanTarget;
+      const cleanTarget = String(q.correct).replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
+      if (cleanUser === cleanTarget) return true;
+      const numUser = parseFloat(cleanUser.replace(',', '.'));
+      const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+      return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
     }
     if (q.type === 'mcq') {
       return userVal === q.correct;
@@ -591,6 +602,8 @@ export default function KlasmaSeDekadikoExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Κλάσμα σε Δεκαδικό - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -609,7 +622,7 @@ export default function KlasmaSeDekadikoExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -619,7 +632,7 @@ export default function KlasmaSeDekadikoExercisesPage() {
                 <span>ΚΕΦΑΛΑΙΟ 24 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
-                Διαδραστικές Ασκήσεις: Κλασματική Μονάδα & Δεκαδικοί
+                Διαδραστικές Ασκήσεις: Κλασματική Μονάδα &amp; Δεκαδικοί
               </h1>
               <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
                 Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στις κλασματικές μονάδες, στη μετατροπή κλασμάτων σε δεκαδικούς και στους περιοδικούς αριθμούς!
@@ -675,7 +688,7 @@ export default function KlasmaSeDekadikoExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -694,9 +707,12 @@ export default function KlasmaSeDekadikoExercisesPage() {
                         <input
                           type="text"
                           inputMode="decimal"
+                          autoComplete="off"
+                          spellCheck="false"
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
                           placeholder="π.χ. 0,5"
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
@@ -708,7 +724,7 @@ export default function KlasmaSeDekadikoExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -720,7 +736,7 @@ export default function KlasmaSeDekadikoExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -801,7 +817,7 @@ export default function KlasmaSeDekadikoExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
               <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
             </div>
             {submitted && (
