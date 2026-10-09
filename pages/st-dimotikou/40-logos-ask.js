@@ -2,34 +2,31 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import { LAYOUT } from '../../shared/layout-config';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
-function toCleanUppercase(str) {
-  if (!str) return '';
-  return str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
+
+function randInt(min, max) {
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
 }
 
-// Βοηθητικο component εμφανισης κλασματος (καθαρο JSX, οχι LaTeX)
-function Fraction({ num, den, className = '' }) {
-  return (
-    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
-      <span className="border-b-2 border-current px-1.5 pb-0.5 text-center leading-none">
-        {num}
-      </span>
-      <span className="px-1.5 pt-0.5 text-center leading-none">
-        {den}
-      </span>
-    </span>
-  );
+function shuffle(array) {
+  if (!Array.isArray(array)) return [];
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
-// Βοηθητικη συναρτηση ΜΚΔ
 function getGCD(a, b) {
-  let x = Math.abs(Math.round(a));
-  let y = Math.abs(Math.round(b));
+  let x = Math.abs(Math.round(a || 0));
+  let y = Math.abs(Math.round(b || 0));
   while (y) {
     const t = y;
     y = x % y;
@@ -38,179 +35,137 @@ function getGCD(a, b) {
   return x || 1;
 }
 
-// Τυχαιος ακεραιος στο [min, max]
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαια επιλογη απο πινακα
-function pickRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-// Μορφοποιηση δεκαδικου με κομμα
+// Μορφοποίηση δεκαδικού με κόμμα
 function formatDecimal(val, decimals = 2) {
   const rounded = Number(val.toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων (10 διαφορετικα προβληματα)
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q9 & Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
+
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_std_1',
+    title: 'Αναλογία Μαθητών στην Τάξη',
     generate: () => {
-      const g = randInt(2, 5);
+      const g = randInt(2, 4);
       const boysRatio = randInt(3, 5);
       let girlsRatio = randInt(3, 5);
       while (girlsRatio === boysRatio) girlsRatio = randInt(2, 6);
       const boys = boysRatio * g;
       const girls = girlsRatio * g;
       const total = boys + girls;
-      const gcd = getGCD(girls, total);
+      const gcdVal = getGCD(girls, total);
+      const ansNum = girls / gcdVal;
+      const ansDen = total / gcdVal;
       return {
-        text: `Σε μια τάξη της ΣΤ' Δημοτικού φοιτούν ${boys} αγόρια και ${girls} κορίτσια. Ποιος είναι ο απλοποιημένος λόγος των κοριτσιών προς το σύνολο των μαθητών της τάξης;`,
-        ansNum: girls / gcd,
-        ansDen: total / gcd,
-        explanation: `Το σύνολο των μαθητών είναι ${boys} ＋ ${girls} ＝ ${total}. Ο λόγος των κοριτσιών προς το σύνολο είναι ${girls} : ${total}. Διαιρούμε με τον ΜΚΔ(${girls}, ${total}) ＝ ${gcd}, άρα ο απλοποιημένος λόγος είναι ${girls / gcd} : ${total / gcd}.`
+        prompt: `Σε μια τάξη της ΣΤ' Δημοτικού φοιτούν ${boys} αγόρια και ${girls} κορίτσια. Ποιος είναι ο απλοποιημένος λόγος των κοριτσιών προς το σύνολο των μαθητών της τάξης;`,
+        correctVal: `${ansNum}/${ansDen}`,
+        altVal: `${ansNum}:${ansDen}`,
+        correctText: `${ansNum} : ${ansDen}`,
+        tableData: [
+          { item: 'Κορίτσια', formula: `${girls}`, val: `${girls}` },
+          { item: 'Σύνολο μαθητών', formula: `${boys} ＋ ${girls}`, val: `${total}` },
+          { item: 'Απλοποιημένος λόγος', formula: `(${girls} : ${gcdVal}) / (${total} : ${gcdVal})`, val: `${ansNum} : ${ansDen}` }
+        ],
+        explain: `Το σύνολο των μαθητών είναι ${boys} ＋ ${girls} ＝ ${total}. Ο λόγος των κοριτσιών προς το σύνολο είναι ${girls} : ${total}. Διαιρούμε με τον Μ.Κ.Δ.(${girls}, ${total}) ＝ ${gcdVal}, άρα ο απλοποιημένος λόγος είναι ${ansNum} : ${ansDen} (ή ${ansNum}/${ansDen}).`,
+        distractors: [`${ansDen} : ${ansNum}`, `${ansNum + 1} : ${ansDen}`, `${ansNum} : ${ansDen + 2}`]
       };
     }
   },
   {
     id: 'p_std_2',
+    title: 'Διαστάσεις Ορθογώνιου Πανό',
     generate: () => {
-      const width = randInt(4, 9) * 10;
+      const width = randInt(4, 8) * 10;
       const lengthMeters = randInt(1, 3);
       const lengthCm = lengthMeters * 100;
-      const gcd = getGCD(width, lengthCm);
+      const gcdVal = getGCD(width, lengthCm);
+      const ansNum = width / gcdVal;
+      const ansDen = lengthCm / gcdVal;
       return {
-        text: `Ένα ορθογώνιο πανό έχει πλάτος ${width} cm και μήκος ${lengthMeters} m. Ποιος είναι ο απλοποιημένος λόγος του πλάτους προς το μήκος του;`,
-        ansNum: width / gcd,
-        ansDen: lengthCm / gcd,
-        explanation: `Μετατρέπουμε το μήκος σε ίδια μονάδα: ${lengthMeters} m ＝ ${lengthCm} cm. Ο λόγος είναι ${width} : ${lengthCm}. Διαιρούμε με τον ΜΚΔ(${width}, ${lengthCm}) ＝ ${gcd} και προκύπτει ${width / gcd} : ${lengthCm / gcd}.`
+        prompt: `Ένα ορθογώνιο πανό έχει πλάτος ${width} cm και μήκος ${lengthMeters} m. Ποιος είναι ο απλοποιημένος λόγος του πλάτους προς το μήκος του;`,
+        correctVal: `${ansNum}/${ansDen}`,
+        altVal: `${ansNum}:${ansDen}`,
+        correctText: `${ansNum} : ${ansDen}`,
+        tableData: [
+          { item: 'Πλάτος', formula: `${width} cm`, val: `${width} cm` },
+          { item: 'Μήκος (σε cm)', formula: `${lengthMeters} m · 100`, val: `${lengthCm} cm` },
+          { item: 'Απλοποίηση λόγου', formula: `(${width} : ${gcdVal}) / (${lengthCm} : ${gcdVal})`, val: `${ansNum} : ${ansDen}` }
+        ],
+        explain: `Μετατρέπουμε το μήκος στην ίδια μονάδα: ${lengthMeters} m ＝ ${lengthCm} cm. Ο λόγος είναι ${width} : ${lengthCm}. Διαιρούμε με τον Μ.Κ.Δ.(${width}, ${lengthCm}) ＝ ${gcdVal} και προκύπτει ${ansNum} : ${ansDen}.`,
+        distractors: [`${ansDen} : ${ansNum}`, `${ansNum + 1} : ${ansDen}`, `${ansNum} : ${ansDen + 1}`]
       };
     }
   },
   {
     id: 'p_std_3',
+    title: 'Συνταγή Ζαχαροπλαστικής',
     generate: () => {
-      const sugar = randInt(2, 6) * 50;
-      const flour = randInt(2, 4) * 500;
-      const gcd = getGCD(sugar, flour);
+      const sugar = randInt(2, 5) * 50;
+      const flourKg = randInt(1, 2);
+      const flourG = flourKg * 1000;
+      const gcdVal = getGCD(sugar, flourG);
+      const ansNum = sugar / gcdVal;
+      const ansDen = flourG / gcdVal;
       return {
-        text: `Σε μια συνταγή ζαχαροπλαστικής χρησιμοποιούνται ${sugar} g ζάχαρης και ${flour / 1000} kg αλευριού. Βρείτε τον απλοποιημένο λόγο της ποσότητας της ζάχαρης προς την ποσότητα του αλευριού.`,
-        ansNum: sugar / gcd,
-        ansDen: flour / gcd,
-        explanation: `Μετατρέπουμε το αλεύρι σε γραμμάρια: ${flour / 1000} kg ＝ ${flour} g. Ο λόγος είναι ${sugar} : ${flour}. Απλοποιώντας με τον ΜΚΔ(${sugar}, ${flour}) ＝ ${gcd}, έχουμε ${sugar / gcd} : ${flour / gcd}.`
+        prompt: `Σε μια συνταγή χρησιμοποιούνται ${sugar} g ζάχαρης και ${flourKg} kg αλευριού. Ποιος είναι ο απλοποιημένος λόγος της ζάχαρης προς το αλεύρι;`,
+        correctVal: `${ansNum}/${ansDen}`,
+        altVal: `${ansNum}:${ansDen}`,
+        correctText: `${ansNum} : ${ansDen}`,
+        tableData: [
+          { item: 'Ζάχαρη', formula: `${sugar} g`, val: `${sugar} g` },
+          { item: 'Αλεύρι (σε g)', formula: `${flourKg} kg · 1.000`, val: `${flourG} g` },
+          { item: 'Απλοποίηση', formula: `(${sugar} : ${gcdVal}) / (${flourG} : ${gcdVal})`, val: `${ansNum} : ${ansDen}` }
+        ],
+        explain: `Μετατρέπουμε το αλεύρι σε γραμμάρια: ${flourKg} kg ＝ ${flourG} g. Ο λόγος είναι ${sugar} : ${flourG}. Απλοποιώντας με τον Μ.Κ.Δ. ＝ ${gcdVal}, έχουμε ${ansNum} : ${ansDen}.`,
+        distractors: [`${ansDen} : ${ansNum}`, `${ansNum} : ${ansDen + 2}`, `${ansNum + 1} : ${ansDen}`]
       };
     }
   },
   {
     id: 'p_std_4',
+    title: 'Νίκες και Ήττες Ομάδας',
     generate: () => {
-      const base = randInt(3, 8);
-      const mult = randInt(2, 4);
-      const wins = base * mult;
+      const base = randInt(3, 6);
+      const wins = base * randInt(2, 4);
       const losses = base * 2;
-      const gcd = getGCD(wins, losses);
+      const gcdVal = getGCD(wins, losses);
+      const ansNum = wins / gcdVal;
+      const ansDen = losses / gcdVal;
       return {
-        text: `Μια ομάδα μπάσκετ σε ένα τουρνουά πέτυχε ${wins} νίκες και είχε ${losses} ήττες. Ποιος είναι ο λόγος των νικών προς τις ήττες σε ανάγωγη μορφή;`,
-        ansNum: wins / gcd,
-        ansDen: losses / gcd,
-        explanation: `Ο λόγος των νικών προς τις ήττες είναι ${wins} : ${losses}. Διαιρώντας αριθμητή και παρονομαστή με τον ΜΚΔ(${wins}, ${losses}) ＝ ${gcd}, βρίσκουμε ${wins / gcd} : ${losses / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_std_5',
-    generate: () => {
-      const timeMinutes = randInt(2, 5) * 15;
-      const hours = 2;
-      const hoursInMinutes = hours * 60;
-      const gcd = getGCD(timeMinutes, hoursInMinutes);
-      return {
-        text: `Ένας ποδηλάτης προπονήθηκε για ${timeMinutes} λεπτά το πρωί και ${hours} ώρες το απόγευμα. Ποιος είναι ο ανάγωγος λόγος του πρωινού χρόνου προς τον απογευματινό χρόνο προπόνησης;`,
-        ansNum: timeMinutes / gcd,
-        ansDen: hoursInMinutes / gcd,
-        explanation: `Μετατρέπουμε τις ${hours} ώρες σε λεπτά: ${hours} · 60 ＝ ${hoursInMinutes} λεπτά. Ο λόγος είναι ${timeMinutes} : ${hoursInMinutes}. Μετά από απλοποίηση με το ${gcd}, έχουμε ${timeMinutes / gcd} : ${hoursInMinutes / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_std_6',
-    generate: () => {
-      const red = randInt(4, 9) * 3;
-      const white = randInt(4, 9) * 2;
-      const gcd = getGCD(red, white);
-      return {
-        text: `Σε ένα κατάστημα ανθοπωλείου υπάρχουν ${red} κόκκινα τριαντάφυλλα και ${white} λευκά τριαντάφυλλα. Ποιος είναι ο απλοποιημένος λόγος των κόκκινων προς τα λευκά τριαντάφυλλα;`,
-        ansNum: red / gcd,
-        ansDen: white / gcd,
-        explanation: `Ο λόγος είναι ${red} : ${white}. Διαιρούμε και τους δύο όρους με το ${gcd} και έχουμε ${red / gcd} : ${white / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_std_7',
-    generate: () => {
-      const perimeter = randInt(20, 36) * 2;
-      const side = randInt(4, 8);
-      const gcd = getGCD(side, perimeter);
-      return {
-        text: `Ένα ισόπλευρο τρίγωνο έχει πλευρά μήκους ${side} cm και ένα ορθογώνιο έχει περίμετρο ${perimeter} cm. Ποιος είναι ο απλοποιημένος λόγος της πλευράς του τριγώνου προς την περίμετρο του ορθογωνίου;`,
-        ansNum: side / gcd,
-        ansDen: perimeter / gcd,
-        explanation: `Ο λόγος είναι ${side} : ${perimeter}. Διαιρώντας με τον ΜΚΔ(${side}, ${perimeter}) ＝ ${gcd}, βρίσκουμε ${side / gcd} : ${perimeter / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_std_8',
-    generate: () => {
-      const saved = randInt(3, 7) * 20;
-      const cost = saved + randInt(2, 5) * 20;
-      const gcd = getGCD(saved, cost);
-      return {
-        text: `Ο Νίκος αποταμίευσε ${saved} € για να αγοράσει ένα ποδήλατο αξίας ${cost} €. Ποιος είναι ο ανάγωγος λόγος των χρημάτων που συγκέντρωσε προς τη συνολική αξία του ποδηλάτου;`,
-        ansNum: saved / gcd,
-        ansDen: cost / gcd,
-        explanation: `Ο λόγος των αποταμιεύσεων προς τη συνολική τιμή είναι ${saved} : ${cost}. Με απλοποίηση με το ${gcd}, προκύπτει ${saved / gcd} : ${cost / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_std_9',
-    generate: () => {
-      const juice = randInt(3, 6) * 150;
-      const water = randInt(2, 4) * 500;
-      const gcd = getGCD(juice, water);
-      return {
-        text: `Σε μια κανάτα αναμειγνύουμε ${juice} ml συμπυκνωμένου χυμού με ${water / 1000} l νερό. Ποιος είναι ο απλοποιημένος λόγος του χυμού προς το νερό;`,
-        ansNum: juice / gcd,
-        ansDen: water / gcd,
-        explanation: `Μετατρέπουμε σε ml: ${water / 1000} l ＝ ${water} ml. Ο λόγος είναι ${juice} : ${water}. Διαιρούμε με τον ΜΚΔ(${juice}, ${water}) ＝ ${gcd} και λαμβάνουμε ${juice / gcd} : ${water / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_std_10',
-    generate: () => {
-      const pagesRead = randInt(4, 9) * 25;
-      const totalPages = pagesRead + randInt(2, 5) * 50;
-      const gcd = getGCD(pagesRead, totalPages);
-      return {
-        text: `Η Ελένη διάβασε ${pagesRead} σελίδες από ένα βιβλίο που έχει συνολικά ${totalPages} σελίδες. Ποιος είναι ο απλοποιημένος λόγος των σελίδων που διάβασε προς το σύνολο των σελίδων;`,
-        ansNum: pagesRead / gcd,
-        ansDen: totalPages / gcd,
-        explanation: `Ο λόγος είναι ${pagesRead} : ${totalPages}. Διαιρούμε με τον ΜΚΔ(${pagesRead}, ${totalPages}) ＝ ${gcd}, άρα έχουμε ${pagesRead / gcd} : ${totalPages / gcd}.`
+        prompt: `Μια ομάδα μπάσκετ πέτυχε ${wins} νίκες και ${losses} ήττες. Ποιος είναι ο λόγος των νικών προς τις ήττες σε ανάγωγη μορφή;`,
+        correctVal: `${ansNum}/${ansDen}`,
+        altVal: `${ansNum}:${ansDen}`,
+        correctText: `${ansNum} : ${ansDen}`,
+        tableData: [
+          { item: 'Νίκες', formula: `${wins}`, val: `${wins}` },
+          { item: 'Ήττες', formula: `${losses}`, val: `${losses}` },
+          { item: 'Ανάγωγος λόγος', formula: `(${wins} : ${gcdVal}) / (${losses} : ${gcdVal})`, val: `${ansNum} : ${ansDen}` }
+        ],
+        explain: `Ο λόγος είναι ${wins} : ${losses}. Διαιρούμε με τον Μ.Κ.Δ.(${wins}, ${losses}) ＝ ${gcdVal} και βρίσκουμε ${ansNum} : ${ansDen}.`,
+        distractors: [`${ansDen} : ${ansNum}`, `${ansNum + 1} : ${ansDen}`, `${ansNum} : ${ansDen + 1}`]
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (10 διαφορετικα προβληματα)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_hard_1',
+    title: 'Κατανομή Εμβαδού Χωραφιών',
     generate: () => {
       const rA = randInt(3, 5);
       const rB = randInt(6, 8);
@@ -218,788 +173,638 @@ const HARD_PROBLEMS_POOL = [
       const sum = (rA + rB) * unit;
       const valB = rB * unit;
       return {
-        text: `Δύο χωράφια έχουν συνολικό εμβαδόν ${sum} m². Ο λόγος του εμβαδού του πρώτου χωραφιού προς το εμβαδόν του δεύτερου είναι ${rA} : ${rB}. Πόσα m² είναι το εμβαδόν του μεγαλύτερου χωραφιού;`,
-        correctVal: valB,
-        correctStr: String(valB),
-        explanation: `Το σύνολο των ίσων μερών είναι ${rA} ＋ ${rB} ＝ ${rA + rB}. Κάθε μέρος αντιστοιχεί σε ${sum} : ${rA + rB} ＝ ${unit} m². Το μεγαλύτερο χωράφι έχει ${rB} μέρη, άρα ${rB} · ${unit} ＝ ${valB} m².`
+        prompt: `Δύο χωράφια έχουν συνολικό εμβαδόν ${sum} m². Ο λόγος του εμβαδού του πρώτου προς το δεύτερο είναι ${rA} : ${rB}. Πόσα m² είναι το εμβαδόν του μεγαλύτερου χωραφιού;`,
+        correctVal: String(valB),
+        correctText: `${valB} m²`,
+        tableData: [
+          { item: 'Σύνολο μερών', formula: `${rA} ＋ ${rB}`, val: `${rA + rB}` },
+          { item: 'Τιμή 1 μέρους', formula: `${sum} : ${rA + rB}`, val: `${unit} m²` },
+          { item: 'Μεγαλύτερο χωράφι', formula: `${rB} · ${unit}`, val: `${valB} m²` }
+        ],
+        explain: `Τα μέρη είναι ${rA} ＋ ${rB} ＝ ${rA + rB}. Το 1 μέρος αντιστοιχεί σε ${sum} : ${rA + rB} ＝ ${unit} m². Το μεγαλύτερο χωράφι έχει ${rB} μέρη: ${rB} · ${unit} ＝ ${valB} m².`,
+        distractors: [`${valB - unit} m²`, `${valB + unit} m²`, `${rA * unit} m²`]
       };
     }
   },
   {
     id: 'p_hard_2',
+    title: 'Λόγος Ηλικιών Πατέρα και Παιδιού',
     generate: () => {
       const rX = randInt(2, 4);
       const rY = randInt(5, 7);
-      const diffMultiplier = randInt(8, 20);
+      const diffMultiplier = randInt(8, 16);
       const diff = (rY - rX) * diffMultiplier;
       const y = rY * diffMultiplier;
       return {
-        text: `Ο λόγος των ηλικιών ενός παιδιού και του πατέρα του είναι ${rX} : ${rY}. Αν ο πατέρας είναι κατά ${diff} έτη μεγαλύτερος από το παιδί, πόσα έτη είναι η ηλικία του πατέρα;`,
-        correctVal: y,
-        correctStr: String(y),
-        explanation: `Η διαφορά των μερών είναι ${rY} － ${rX} ＝ ${rY - rX} μέρη, τα οποία αντιστοιχούν σε ${diff} έτη. Άρα το 1 μέρος είναι ${diff} : ${rY - rX} ＝ ${diffMultiplier} έτη. Η ηλικία του πατέρα είναι ${rY} · ${diffMultiplier} ＝ ${y} έτη.`
+        prompt: `Ο λόγος των ηλικιών ενός παιδιού και του πατέρα του είναι ${rX} : ${rY}. Αν ο πατέρας είναι κατά ${diff} έτη μεγαλύτερος από το παιδί, πόσα έτη είναι η ηλικία του πατέρα;`,
+        correctVal: String(y),
+        correctText: `${y} έτη`,
+        tableData: [
+          { item: 'Διαφορά μερών', formula: `${rY} － ${rX}`, val: `${rY - rX} μέρη` },
+          { item: 'Τιμή 1 μέρους', formula: `${diff} : ${rY - rX}`, val: `${diffMultiplier} έτη` },
+          { item: 'Ηλικία πατέρα', formula: `${rY} · ${diffMultiplier}`, val: `${y} έτη` }
+        ],
+        explain: `Η διαφορά των μερών είναι ${rY} － ${rX} ＝ ${rY - rX} μέρη (${diff} έτη). Άρα το 1 μέρος είναι ${diff} : ${rY - rX} ＝ ${diffMultiplier} έτη. Η ηλικία του πατέρα είναι ${rY} · ${diffMultiplier} ＝ ${y} έτη.`,
+        distractors: [`${y - 4} έτη`, `${y + 4} έτη`, `${rX * diffMultiplier} έτη`]
       };
     }
   },
   {
     id: 'p_hard_3',
+    title: 'Εμβαδόν Οικοπέδου με Λόγο Διαστάσεων',
     generate: () => {
       const rL = randInt(4, 6);
       const rW = randInt(2, 3);
-      const k = randInt(5, 12);
+      const k = randInt(5, 10);
       const length = rL * k;
       const width = rW * k;
       const semi = length + width;
       const perimeter = 2 * semi;
       const area = length * width;
       return {
-        text: `Σε ένα ορθογώνιο οικόπεδο ο λόγος του μήκους προς το πλάτος είναι ${rL} : ${rW} και η περίμετρός του είναι ${perimeter} m. Πόσα m² είναι το εμβαδόν του οικοπέδου;`,
-        correctVal: area,
-        correctStr: String(area),
-        explanation: `Το ημιπερίμετρος (μήκος ＋ πλάτος) είναι ${perimeter} : 2 ＝ ${semi} m. Τα μέρη είναι ${rL} ＋ ${rW} ＝ ${rL + rW}. Το 1 μέρος ισούται με ${semi} : ${rL + rW} ＝ ${k} m. Άρα μήκος ＝ ${length} m και πλάτος ＝ ${width} m. Το εμβαδόν είναι ${length} · ${width} ＝ ${area} m².`
+        prompt: `Σε ένα ορθογώνιο οικόπεδο ο λόγος του μήκους προς το πλάτος είναι ${rL} : ${rW} και η περίμετρός του είναι ${perimeter} m. Πόσα m² είναι το εμβαδόν του;`,
+        correctVal: String(area),
+        correctText: `${area} m²`,
+        tableData: [
+          { item: 'Ημιπερίμετρος (μήκος ＋ πλάτος)', formula: `${perimeter} : 2`, val: `${semi} m` },
+          { item: 'Τιμή 1 μέρους', formula: `${semi} : (${rL} ＋ ${rW})`, val: `${k} m` },
+          { item: 'Διαστάσεις', formula: `${length} m επί ${width} m`, val: `${area} m²` }
+        ],
+        explain: `Η ημιπερίμετρος είναι ${perimeter} : 2 ＝ ${semi} m. Τα μέρη είναι ${rL} ＋ ${rW} ＝ ${rL + rW}, άρα 1 μέρος ＝ ${k} m. Μήκος ＝ ${length} m, πλάτος ＝ ${width} m. Εμβαδόν ＝ ${length} · ${width} ＝ ${area} m².`,
+        distractors: [`${area - 20} m²`, `${area + 40} m²`, `${semi * k} m²`]
       };
     }
   },
   {
     id: 'p_hard_4',
-    generate: () => {
-      const priceA = randInt(12, 20) * 10;
-      const increase = 20;
-      const priceB = Math.round(priceA * (1 + increase / 100));
-      const gcd = getGCD(priceA, priceB);
-      return {
-        text: `Ένα προϊόν κόστιζε ${priceA} € και μετά από ανατίμηση κοστίζει ${priceB} €. Ποιος είναι ο απλοποιημένος λόγος της αρχικής τιμής προς τη νέα αυξημένη τιμή;`,
-        ansNum: priceA / gcd,
-        ansDen: priceB / gcd,
-        explanation: `Ο λόγος αρχικής προς νέα τιμή είναι ${priceA} : ${priceB}. Διαιρούμε με τον ΜΚΔ(${priceA}, ${priceB}) ＝ ${gcd} και βρίσκουμε ${priceA / gcd} : ${priceB / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_hard_5',
-    generate: () => {
-      const part1 = randInt(2, 4);
-      const part2 = randInt(3, 5);
-      const part3 = randInt(5, 7);
-      const sumParts = part1 + part2 + part3;
-      const unit = randInt(15, 30);
-      const totalAmount = sumParts * unit;
-      const maxPartVal = Math.max(part1, part2, part3) * unit;
-      return {
-        text: `Τρεις φίλοι μοιράστηκαν το ποσό των ${totalAmount} € σε λόγο ${part1} : ${part2} : ${part3}. Πόσα € πήρε αυτός που έλαβε το μεγαλύτερο μερίδιο;`,
-        correctVal: maxPartVal,
-        correctStr: String(maxPartVal),
-        explanation: `Τα συνολικά μέρη είναι ${part1} ＋ ${part2} ＋ ${part3} ＝ ${sumParts}. Το 1 μέρος αντιστοιχεί σε ${totalAmount} : ${sumParts} ＝ ${unit} €. Το μεγαλύτερο μερίδιο είναι ${Math.max(part1, part2, part3)} · ${unit} ＝ ${maxPartVal} €.`
-      };
-    }
-  },
-  {
-    id: 'p_hard_6',
-    generate: () => {
-      const speed1 = randInt(6, 10) * 10;
-      const speed2 = randInt(11, 14) * 10;
-      const gcd = getGCD(speed1, speed2);
-      return {
-        text: `Δύο αυτοκίνητα κινούνται με σταθερή ταχύτητα ${speed1} km/h και ${speed2} km/h αντίστοιχα. Ποιος είναι ο απλοποιημένος λόγος του χρόνου που χρειάζεται το πρώτο προς το δεύτερο για να διανύσουν την ίδια απόσταση;`,
-        ansNum: speed2 / gcd,
-        ansDen: speed1 / gcd,
-        explanation: `Όταν η απόσταση είναι σταθερή, ο χρόνος είναι αντιστρόφως ανάλογος της ταχύτητας. Άρα ο λόγος των χρόνων t1 : t2 ισούται με τον αντίστροφο λόγο των ταχυτήτων v2 : v1 ＝ ${speed2} : ${speed1}. Απλοποιώντας με τον ΜΚΔ(${speed2}, ${speed1}) ＝ ${gcd}, έχουμε ${speed2 / gcd} : ${speed1 / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_hard_7',
+    title: 'Σύνθεση Μεταλλικού Κράματος',
     generate: () => {
       const k = randInt(4, 9);
       const copper = 7 * k;
       const zinc = 3 * k;
       const totalAlloy = copper + zinc;
       return {
-        text: `Ένα μεταλλικό κράμα βάρους ${totalAlloy} kg αποτελείται από χαλκό και ψευδάργυρο με λόγο 7 : 3. Πόσα kg χαλκού περιέχονται στο κράμα;`,
-        correctVal: copper,
-        correctStr: String(copper),
-        explanation: `Τα μέρη είναι 7 ＋ 3 ＝ 10. Το κάθε μέρος ζυγίζει ${totalAlloy} : 10 ＝ ${k} kg. Ο χαλκός αποτελείται από 7 μέρη, άρα περιέχει 7 · ${k} ＝ ${copper} kg.`
-      };
-    }
-  },
-  {
-    id: 'p_hard_8',
-    generate: () => {
-      const a = randInt(2, 5);
-      const b = randInt(3, 7);
-      const c = randInt(4, 8);
-      const gcd = getGCD(a, c);
-      return {
-        text: `Αν ο λόγος x : y είναι ίσος με ${a} : ${b} και ο λόγος y : z είναι ίσος με ${b} : ${c}, ποιος είναι ο απλοποιημένος λόγος x : z;`,
-        ansNum: a / gcd,
-        ansDen: c / gcd,
-        explanation: `Επειδή x/y ＝ ${a}/${b} και y/z ＝ ${b}/${c}, πολλαπλασιάζουμε τους λόγους: (x/y) · (y/z) ＝ (${a}/${b}) · (${b}/${c}) ＝ ${a}/${c}. Απλοποιώντας με τον ΜΚΔ(${a}, ${c}) ＝ ${gcd}, βρίσκουμε ${a / gcd} : ${c / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_hard_9',
-    generate: () => {
-      const salt = randInt(2, 5) * 10;
-      const water = randInt(6, 12) * 50;
-      const totalSolution = salt + water;
-      const gcd = getGCD(salt, totalSolution);
-      return {
-        text: `Διαλύουμε ${salt} g αλατιού σε ${water} g νερού. Ποιος είναι ο απλοποιημένος λόγος της μάζας του αλατιού προς τη συνολική μάζα του διαλύματος;`,
-        ansNum: salt / gcd,
-        ansDen: totalSolution / gcd,
-        explanation: `Η συνολική μάζα του διαλύματος είναι ${salt} ＋ ${water} ＝ ${totalSolution} g. Ο λόγος αλατιού προς διάλυμα είναι ${salt} : ${totalSolution}. Διαιρώντας με τον ΜΚΔ(${salt}, ${totalSolution}) ＝ ${gcd}, έχουμε ${salt / gcd} : ${totalSolution / gcd}.`
-      };
-    }
-  },
-  {
-    id: 'p_hard_10',
-    generate: () => {
-      const girlsRatio = randInt(4, 6);
-      const boysRatio = randInt(2, 3);
-      const diffMultiplier = randInt(3, 7);
-      const diffParts = Math.abs(girlsRatio - boysRatio) || 1;
-      const actualDiff = diffParts * diffMultiplier * 2;
-      const k = actualDiff / diffParts;
-      const totalParts = girlsRatio + boysRatio;
-      const total = totalParts * k;
-      return {
-        text: `Σε μια κατασκήνωση ο λόγος των κοριτσιών προς τα αγόρια είναι ${girlsRatio} : ${boysRatio}. Αν τα κορίτσια είναι κατά ${actualDiff} περισσότερα από τα αγόρια, ποιο είναι το συνολικό πλήθος των παιδιών;`,
-        correctVal: total,
-        correctStr: String(total),
-        explanation: `Η διαφορά των μερών είναι ${diffParts}. Αντιστοιχεί σε ${actualDiff} παιδιά, άρα 1 μέρος ＝ ${actualDiff} : ${diffParts} ＝ ${k} παιδιά. Το σύνολο των μερών είναι ${girlsRatio} ＋ ${boysRatio} ＝ ${totalParts}. Άρα συνολικά παιδιά: ${totalParts} · ${k} ＝ ${total}.`
+        prompt: `Ένα μεταλλικό κράμα βάρους ${totalAlloy} kg αποτελείται από χαλκό και ψευδάργυρο με λόγο 7 : 3. Πόσα kg χαλκού περιέχονται στο κράμα;`,
+        correctVal: String(copper),
+        correctText: `${copper} kg`,
+        tableData: [
+          { item: 'Σύνολο μερών', formula: '7 ＋ 3', val: '10' },
+          { item: 'Βάρος 1 μέρους', formula: `${totalAlloy} : 10`, val: `${k} kg` },
+          { item: 'Χαλκός (7 μέρη)', formula: `7 · ${k}`, val: `${copper} kg` }
+        ],
+        explain: `Τα μέρη είναι 7 ＋ 3 ＝ 10. Το κάθε μέρος ζυγίζει ${totalAlloy} : 10 ＝ ${k} kg. Ο χαλκός έχει 7 μέρη, άρα περιέχει 7 · ${k} ＝ ${copper} kg.`,
+        distractors: [`${zinc} kg`, `${copper + 4} kg`, `${copper - 4} kg`]
       };
     }
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
 function generateQuestions() {
-  const qList = [];
+  // Q1: Input - Απλοποίηση λόγου
+  const q1M = randInt(3, 8);
+  const q1N1 = randInt(2, 6);
+  let q1N2 = randInt(2, 6);
+  while (q1N1 === q1N2) q1N2 = randInt(2, 7);
+  const q1Num = q1N1 * q1M;
+  const q1Den = q1N2 * q1M;
+  const q1Gcd = getGCD(q1Num, q1Den);
+  const q1AnsNum = q1Num / q1Gcd;
+  const q1AnsDen = q1Den / q1Gcd;
 
-  // Q1 (Input - Fraction)
-  {
-    const m = randInt(3, 9);
-    let n1 = randInt(2, 7);
-    let n2 = randInt(2, 7);
-    while (n1 === n2) n2 = randInt(2, 8);
-    const num = n1 * m;
-    const den = n2 * m;
-    const gcd = getGCD(num, den);
-    qList.push({
-      id: 1,
-      type: 'fraction_input',
-      title: 'ΕΡΩΤΗΣΗ 1 • ΑΠΛΟΠΟΙΗΣΗ ΛΟΓΟΥ',
-      instruction: 'Γράψτε τον λόγο στην απλούστερη ανάγωγη μορφή του (αριθμητής / παρονομαστής):',
-      prompt: `Να απλοποιηθεί πλήρως ο λόγος ${num} : ${den}:`,
-      ansNum: num / gcd,
-      ansDen: den / gcd,
-      explanation: `Διαιρούμε και τους δύο όρους με τον Μέγιστο Κοινό Διαιρέτη ΜΚΔ(${num}, ${den}) ＝ ${gcd}: (${num} : ${gcd}) / (${den} : ${gcd}) ＝ ${num / gcd} : ${den / gcd}.`
-    });
-  }
+  // Q2: MCQ - Δεκαδική τιμή λόγου
+  const q2Num = randInt(3, 9);
+  const q2Den = [2, 4, 5, 8, 10][randInt(0, 4)];
+  const q2Val = q2Num / q2Den;
+  const q2ValStr = formatDecimal(q2Val, 3);
+  const q2Options = shuffle([
+    ...new Set([
+      q2ValStr,
+      formatDecimal(q2Den / q2Num, 3),
+      formatDecimal(q2Val + 0.5, 3),
+      formatDecimal(Math.max(0.1, q2Val - 0.25), 3)
+    ])
+  ]);
 
-  // Q2 (MCQ)
-  {
-    const num = randInt(3, 9);
-    const den = pickRandom([2, 4, 5, 8, 10]);
-    const val = num / den;
-    const valStr = formatDecimal(val, 3);
-    const fake1 = formatDecimal(den / num, 3);
-    const fake2 = formatDecimal(val + 0.5, 3);
-    const fake3 = formatDecimal(Math.max(0.1, val - 0.25), 3);
+  // Q3: Input - Σύγκριση ομοειδών μεγεθών (cm προς m)
+  const q3Cm = randInt(15, 45) * 2;
+  const q3M = randInt(2, 4);
+  const q3MCm = q3M * 100;
+  const q3Gcd = getGCD(q3Cm, q3MCm);
+  const q3AnsNum = q3Cm / q3Gcd;
+  const q3AnsDen = q3MCm / q3Gcd;
 
-    const options = [
-      { text: valStr, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
+  // Q4: MCQ - Αντίστροφος λόγος
+  const q4A = randInt(3, 8);
+  const q4B = randInt(4, 9);
+  const q4Correct = `${q4B} : ${q4A}`;
+  const q4Options = shuffle([
+    ...new Set([
+      q4Correct,
+      `${q4A} : ${q4A + q4B}`,
+      `${q4A * 2} : ${q4B * 2}`,
+      `1 : ${q4B}`
+    ])
+  ]);
 
-    qList.push({
-      id: 2,
-      type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 2 • ΤΙΜΗ ΤΟΥ ΛΟΓΟΥ',
-      instruction: 'Επιλέξτε τη σωστή δεκαδική τιμή του λόγου:',
-      prompt: `Ποια είναι η ακριβής τιμή του λόγου ${num} : ${den};`,
-      options,
-      correctText: valStr,
-      explanation: `Η τιμή του λόγου βρίσκεται εκτελώντας τη διαίρεση του προηγούμενου όρου με τον επόμενο: ${num} : ${den} ＝ ${valStr}.`
-    });
-  }
+  // Q5: Input - Ετεροειδή μεγέθη (Ταχύτητα σε km/h)
+  const q5Hours = randInt(2, 4);
+  const q5Speed = randInt(65, 95);
+  const q5Km = q5Speed * q5Hours;
 
-  // Q3 (Input - Fraction)
-  {
-    const cm = randInt(15, 45) * 2;
-    const m = randInt(2, 4);
-    const mInCm = m * 100;
-    const gcd = getGCD(cm, mInCm);
-    qList.push({
-      id: 3,
-      type: 'fraction_input',
-      title: 'ΕΡΩΤΗΣΗ 3 • ΣΥΓΚΡΙΣΗ ΟΜΟΕΙΔΩΝ ΜΕΓΕΘΩΝ',
-      instruction: 'Υπολογίστε τον ανάγωγο λόγο (αριθμητής / παρονομαστής):',
-      prompt: `Ποιος είναι ο απλοποιημένος λόγος του μήκους ${cm} cm προς το μήκος ${m} m;`,
-      ansNum: cm / gcd,
-      ansDen: mInCm / gcd,
-      explanation: `Μετατρέπουμε τα ${m} m σε cm: ${m} · 100 ＝ ${mInCm} cm. Ο λόγος είναι ${cm} : ${mInCm}. Διαιρούμε με τον ΜΚΔ(${cm}, ${mInCm}) ＝ ${gcd} και προκύπτει ${cm / gcd} : ${mInCm / gcd}.`
-    });
-  }
+  // Q6: MCQ - Ισοδύναμοι λόγοι
+  const q6A = randInt(2, 5);
+  const q6B = randInt(3, 7);
+  const q6Mult = randInt(3, 6);
+  const q6EqA = q6A * q6Mult;
+  const q6EqB = q6B * q6Mult;
+  const q6Correct = `${q6EqA} : ${q6EqB}`;
+  const q6Options = shuffle([
+    ...new Set([
+      q6Correct,
+      `${q6EqA + 1} : ${q6EqB}`,
+      `${q6EqA} : ${q6EqB + 2}`,
+      `${q6A * 2} : ${q6B * 3}`
+    ])
+  ]);
 
-  // Q4 (MCQ)
-  {
-    const a = randInt(3, 8);
-    const b = randInt(4, 9);
-    const options = [
-      { text: `Ο λόγος ${b} : ${a}`, isCorrect: true },
-      { text: `Ο λόγος ${a} : ${a + b}`, isCorrect: false },
-      { text: `Ο λόγος ${a * 2} : ${b * 2}`, isCorrect: false },
-      { text: `Ο λόγος 1 : ${b}`, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
+  // Q7: Standard Problem (Input)
+  const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q7Data = STANDARD_PROBLEMS_POOL[spIndex].generate();
 
-    qList.push({
-      id: 4,
-      type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 4 • ΑΝΤΙΣΤΡΟΦΟΣ ΛΟΓΟΣ',
-      instruction: 'Επιλέξτε τη σωστή μαθηματική πρόταση:',
-      prompt: `Ποιος είναι ο αντίστροφος λόγος του λόγου ${a} : ${b};`,
-      options,
-      correctText: `Ο λόγος ${b} : ${a}`,
-      explanation: `Αντίστροφος ενός λόγου α : β ονομάζεται ο λόγος β : α. Το γινόμενό τους είναι ίσο με 1: (${a}/${b}) · (${b}/${a}) ＝ 1.`
-    });
-  }
-
-  // Q5 (Input - Decimal)
-  {
-    const hours = randInt(2, 4);
-    const speed = randInt(65, 95);
-    const km = speed * hours;
-    qList.push({
-      id: 5,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 5 • ΛΟΓΟΣ ΕΤΕΡΟΕΙΔΩΝ ΜΕΓΕΘΩΝ',
-      instruction: 'Εισαγάγετε τον αριθμό (ακέραιος ή δεκαδικός):',
-      prompt: `Ένα τρένο διανύει ${km} km σε ${hours} ώρες. Ποια είναι η τιμή του λόγου της απόστασης προς τον χρόνο (δηλαδή η μέση ταχύτητα σε km/h);`,
-      correctVal: speed,
-      correctStr: String(speed),
-      explanation: `Ο λόγος της απόστασης προς τον χρόνο είναι ${km} : ${hours} ＝ ${speed} km/h.`
-    });
-  }
-
-  // Q6 (MCQ)
-  {
-    const baseA = randInt(2, 5);
-    const baseB = randInt(3, 7);
-    const mult = randInt(3, 6);
-    const eqA = baseA * mult;
-    const eqB = baseB * mult;
-
-    const correct = `${eqA} : ${eqB}`;
-    const wrong1 = `${eqA + 1} : ${eqB}`;
-    const wrong2 = `${eqA} : ${eqB + 2}`;
-    const wrong3 = `${baseA * 2} : ${baseB * 3}`;
-
-    const options = [
-      { text: correct, isCorrect: true },
-      { text: wrong1, isCorrect: false },
-      { text: wrong2, isCorrect: false },
-      { text: wrong3, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 6,
-      type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 6 • ΙΣΟΔΥΝΑΜΟΙ ΛΟΓΟΙ',
-      instruction: 'Επιλέξτε τον λόγο που είναι ίσος με τον δοσμένο:',
-      prompt: `Ποιος από τους παρακάτω λόγους είναι ίσος με τον λόγο ${baseA} : ${baseB};`,
-      options,
-      correctText: correct,
-      explanation: `Πολλαπλασιάζοντας και τους δύο όρους του ${baseA} : ${baseB} με το ${mult}, έχουμε (${baseA} · ${mult}) : (${baseB} · ${mult}) ＝ ${eqA} : ${eqB}.`
-    });
-  }
-
-  // Q7 & Q8: Κανονικά Προβλήματα (1 Input Fraction, 1 MCQ)
-  {
-    const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const stdProb1 = shuffledStd[0].generate();
-    const stdProb2 = shuffledStd[1].generate();
-
-    // Q7 (Input - Fraction)
-    qList.push({
-      id: 7,
-      type: 'fraction_input',
-      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΗΣ ΕΦΑΡΜΟΓΗΣ',
-      instruction: 'Λύστε το πρόβλημα και γράψτε τον απλοποιημένο λόγο (αριθμητής / παρονομαστής):',
-      prompt: stdProb1.text,
-      ansNum: stdProb1.ansNum,
-      ansDen: stdProb1.ansDen,
-      explanation: stdProb1.explanation
-    });
-
-    // Q8 (MCQ)
-    const correctFrac = `${stdProb2.ansNum} : ${stdProb2.ansDen}`;
-    const fakeA = `${stdProb2.ansDen} : ${stdProb2.ansNum}`;
-    const fakeB = `${stdProb2.ansNum + 1} : ${stdProb2.ansDen}`;
-    const fakeC = `${stdProb2.ansNum} : ${stdProb2.ansDen + 2}`;
-
-    const optionsQ8 = [
-      { text: correctFrac, isCorrect: true },
-      { text: fakeA, isCorrect: false },
-      { text: fakeB, isCorrect: false },
-      { text: fakeC, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 8,
-      type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΑΝΑΛΟΓΙΑΣ',
-      instruction: 'Επιλέξτε τη σωστή απάντηση για το πρόβλημα:',
-      prompt: stdProb2.text,
-      options: optionsQ8,
-      correctText: correctFrac,
-      explanation: stdProb2.explanation
-    });
-  }
-
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
-  {
-    const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const hardProb1 = shuffledHard[0].generate();
-    const hardProb2 = shuffledHard[1].generate();
-
-    // Q9 (Input)
-    if (hardProb1.ansNum !== undefined) {
-      qList.push({
-        id: 9,
-        type: 'fraction_input',
-        title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
-        instruction: 'Υπολογίστε τον ανάγωγο λόγο (αριθμητής / παρονομαστής):',
-        prompt: hardProb1.text,
-        ansNum: hardProb1.ansNum,
-        ansDen: hardProb1.ansDen,
-        explanation: hardProb1.explanation
-      });
-    } else {
-      qList.push({
-        id: 9,
-        type: 'decimal_input',
-        title: 'ΕΡΩΤΗΣΗ 9 • ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
-        instruction: 'Υπολογίστε και εισαγάγετε το τελικό αποτέλεσμα:',
-        prompt: hardProb1.text,
-        correctVal: hardProb1.correctVal,
-        correctStr: String(hardProb1.correctVal),
-        explanation: hardProb1.explanation
-      });
+  // Q8: MCQ - Ιδιότητα λόγου
+  const q8Pool = [
+    {
+      prompt: 'Πότε δύο λόγοι ονομάζονται ίσοι (ισοδύναμοι);',
+      correct: 'Όταν έχουν την ίδια αριθμητική τιμή',
+      wrongs: ['Όταν έχουν τους ίδιους όρους', 'Όταν έχουν άθροισμα ίσο με 1', 'Όταν οι όροι τους είναι περιττοί αριθμοί'],
+      explain: 'Δύο λόγοι είναι ίσοι όταν, εκτελώντας τη διαίρεση των όρων τους, έχουν ακριβώς το ίδιο πηλίκο (τιμή λόγου).'
+    },
+    {
+      prompt: 'Ποιο είναι το γινόμενο ενός λόγου με τον αντίστροφό του;',
+      correct: 'Πάντοτε 1',
+      wrongs: ['Πάντοτε 0', 'Εξαρτάται από τους όρους', 'Πάντοτε 2'],
+      explain: 'Για κάθε λόγο α : β, ισχύει (α/β) · (β/α) ＝ 1.'
     }
+  ];
+  const q8Data = q8Pool[randInt(0, q8Pool.length - 1)];
+  const q8Options = shuffle([...new Set([q8Data.correct, ...q8Data.wrongs])]);
 
-    // Q10 (MCQ)
-    let correctText10 = '';
-    let fake10A = '';
-    let fake10B = '';
-    let fake10C = '';
+  // Q9: Hard Problem (Pool)
+  const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q9Data = HARD_PROBLEMS_POOL[hpIndex].generate();
 
-    if (hardProb2.ansNum !== undefined) {
-      correctText10 = `${hardProb2.ansNum} : ${hardProb2.ansDen}`;
-      fake10A = `${hardProb2.ansDen} : ${hardProb2.ansNum}`;
-      fake10B = `${hardProb2.ansNum + 1} : ${hardProb2.ansDen}`;
-      fake10C = `${hardProb2.ansNum} : ${hardProb2.ansDen + 1}`;
-    } else {
-      correctText10 = `${hardProb2.correctVal}`;
-      fake10A = `${hardProb2.correctVal + randInt(5, 15)}`;
-      fake10B = `${Math.max(1, hardProb2.correctVal - randInt(4, 12))}`;
-      fake10C = `${Math.round(hardProb2.correctVal * 1.5)}`;
-    }
+  // Q10: True/False - Θεωρία λόγου
+  const q10IsTrue = Math.random() > 0.5;
+  const q10Text = q10IsTrue
+    ? 'Για να συγκρίνουμε δύο ομοειδή μεγέθη με λόγο, πρέπει να τα εκφράσουμε στην ίδια μονάδα μέτρησης.'
+    : 'Στον λόγο δύο μεγεθών δεν έχει καμία σημασία η σειρά με την οποία γράφονται οι όροι.';
 
-    const optionsQ10 = [
-      { text: correctText10, isCorrect: true },
-      { text: fake10A, isCorrect: false },
-      { text: fake10B, isCorrect: false },
-      { text: fake10C, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 10,
+  return [
+    {
+      id: 'q1',
+      type: 'input',
+      inputType: 'fraction',
+      title: 'Απλοποίηση Λόγου',
+      prompt: `Να απλοποιηθεί πλήρως ο λόγος ${q1Num} : ${q1Den} (γράψε ως ${q1AnsNum}/${q1AnsDen} ή ${q1AnsNum}:${q1AnsDen}):`,
+      correct: `${q1AnsNum}/${q1AnsDen}`,
+      altCorrect: `${q1AnsNum}:${q1AnsDen}`,
+      explain: `Διαιρούμε και τους δύο όρους με τον Μ.Κ.Δ.(${q1Num}, ${q1Den}) ＝ ${q1Gcd}: (${q1Num} : ${q1Gcd}) / (${q1Den} : ${q1Gcd}) ＝ ${q1AnsNum} : ${q1AnsDen}.`
+    },
+    {
+      id: 'q2',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΑΥΞΗΜΕΝΗΣ ΔΥΣΚΟΛΙΑΣ',
-      instruction: 'Επιλέξτε τη σωστή επιλογή:',
-      prompt: hardProb2.text,
-      options: optionsQ10,
-      correctText: correctText10,
-      explanation: hardProb2.explanation
-    });
-  }
-
-  return qList;
+      title: 'Τιμή του Λόγου',
+      prompt: `Ποια είναι η ακριβής δεκαδική τιμή του λόγου ${q2Num} : ${q2Den};`,
+      options: q2Options,
+      correct: q2ValStr,
+      explain: `Η τιμή του λόγου βρίσκεται διαιρώντας τον πρώτο όρο με τον δεύτερο: ${q2Num} : ${q2Den} ＝ ${q2ValStr}.`
+    },
+    {
+      id: 'q3',
+      type: 'input',
+      inputType: 'fraction',
+      title: 'Σύγκριση Ομοειδών Μεγεθών',
+      prompt: `Ποιος είναι ο απλοποιημένος λόγος του μήκους ${q3Cm} cm προς το μήκος ${q3M} m (π.χ. ${q3AnsNum}/${q3AnsDen}):`,
+      correct: `${q3AnsNum}/${q3AnsDen}`,
+      altCorrect: `${q3AnsNum}:${q3AnsDen}`,
+      explain: `Μετατρέπουμε τα ${q3M} m σε cm: ${q3M} · 100 ＝ ${q3MCm} cm. Ο λόγος είναι ${q3Cm} : ${q3MCm}. Διαιρούμε με τον Μ.Κ.Δ. ＝ ${q3Gcd} και προκύπτει ${q3AnsNum} : ${q3AnsDen}.`
+    },
+    {
+      id: 'q4',
+      type: 'mcq',
+      title: 'Αντίστροφος Λόγος',
+      prompt: `Ποιος είναι ο αντίστροφος λόγος του λόγου ${q4A} : ${q4B};`,
+      options: q4Options,
+      correct: q4Correct,
+      explain: `Αντίστροφος του λόγου α : β είναι ο λόγος β : α. Επομένως, ο αντίστροφος του ${q4A} : ${q4B} είναι ο ${q4Correct}.`
+    },
+    {
+      id: 'q5',
+      type: 'input',
+      inputType: 'number',
+      title: 'Λόγος Ετεροειδών Μεγεθών',
+      prompt: `Ένα τρένο διανύει ${q5Km} km σε ${q5Hours} ώρες. Ποια είναι η τιμή του λόγου της απόστασης προς τον χρόνο (μέση ταχύτητα σε km/h);`,
+      correct: String(q5Speed),
+      explain: `Ο λόγος απόστασης προς χρόνο εκφράζει την ταχύτητα: ${q5Km} : ${q5Hours} ＝ ${q5Speed} km/h.`
+    },
+    {
+      id: 'q6',
+      type: 'mcq',
+      title: 'Ισοδύναμοι Λόγοι',
+      prompt: `Ποιος από τους παρακάτω λόγους είναι ίσος με τον λόγο ${q6A} : ${q6B};`,
+      options: q6Options,
+      correct: q6Correct,
+      explain: `Πολλαπλασιάζοντας και τους δύο όρους του ${q6A} : ${q6B} με το ${q6Mult}, έχουμε (${q6A} · ${q6Mult}) : (${q6B} · ${q6Mult}) ＝ ${q6Correct}.`
+    },
+    {
+      id: 'q7',
+      type: 'input',
+      inputType: 'fraction',
+      title: `Πρόβλημα: ${q7Data.title}`,
+      prompt: q7Data.prompt,
+      correct: q7Data.correctVal,
+      altCorrect: q7Data.altVal,
+      tableData: q7Data.tableData,
+      explain: q7Data.explain
+    },
+    {
+      id: 'q8',
+      type: 'mcq',
+      title: 'Ιδιότητες Λόγων',
+      prompt: q8Data.prompt,
+      options: q8Options,
+      correct: q8Data.correct,
+      explain: q8Data.explain
+    },
+    {
+      id: 'q9',
+      type: 'input',
+      inputType: 'number',
+      title: `Σύνθετο Πρόβλημα: ${q9Data.title}`,
+      prompt: q9Data.prompt,
+      correct: q9Data.correctVal,
+      tableData: q9Data.tableData,
+      explain: q9Data.explain
+    },
+    {
+      id: 'q10',
+      type: 'tf',
+      title: 'Ορισμός & Σειρά Όρων',
+      text: q10Text,
+      correct: q10IsTrue,
+      explain: q10IsTrue
+        ? 'Σωστά! Για να έχει νόημα η σύγκριση ομοειδών μεγεθών, πρέπει απαραίτητα να εκφράζονται στην ίδια μονάδα μέτρησης.'
+        : 'Λάθος! Η σειρά των όρων είναι καθοριστική: ο λόγος α : β είναι εντελώς διαφορετικός από τον λόγο β : α.'
+    }
+  ];
 }
+
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
 
 export default function LogosExercisesPage() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
   const loadNewSet = useCallback(() => {
-    const q = generateQuestions();
-    setQuestions(q);
-    setAnswers({});
-    setIsSubmitted(false);
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = q.type === 'tf' ? null : '';
+    });
+    setAnswers(initialAnswers);
+    setSubmitted(false);
     setScore(0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (0-9 και κομμα, μεγιστο 10 χαρακτηρες)
-  const handleInputChange = (fieldKey, rawValue) => {
-    if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
-    if (sanitized.length > 10) {
-      sanitized = sanitized.slice(0, 10);
-    }
-    setAnswers((prev) => ({
-      ...prev,
-      [fieldKey]: sanitized
-    }));
-  };
-
-  // Χειρισμος MCQ
-  const handleSelectMCQ = (qId, optionText) => {
-    if (isSubmitted) return;
-    setAnswers((prev) => ({
-      ...prev,
-      [`q_${qId}`]: optionText
-    }));
-  };
-
-  // Ελεγχος Απαντησεων
-  const handleCheckAnswers = () => {
-    let currentScore = 0;
-
-    questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'fraction_input') {
-        const userNum = parseInt(answers[`q_${q.id}_num`] || '0', 10);
-        const userDen = parseInt(answers[`q_${q.id}_den`] || '0', 10);
-        if (userNum === q.ansNum && userDen === q.ansDen) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
+    if (submitted) return;
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'fraction') {
+        sanitized = sanitized.replace(/[^0-9/:]/g, '');
+        // Επιτρέπουμε μόνο μία κάθετο ή άνω-κάτω τελεία
+        const parts = sanitized.split(/[/:]/);
+        if (parts.length > 2) {
+          sanitized = parts[0] + '/' + parts.slice(1).join('');
         }
       }
+      if (sanitized.length > 12) {
+        sanitized = sanitized.slice(0, 12);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
+  };
+
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
+    if (q.type === 'input') {
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\s+/g, '').replace(':', '/').trim().toLowerCase();
+      const cleanTarget = q.correct.replace(/\s+/g, '').replace(':', '/').trim().toLowerCase();
+      const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\s+/g, '').replace(':', '/').trim().toLowerCase() : null;
+
+      return cleanUser === cleanTarget || (cleanAlt && cleanUser === cleanAlt);
+    }
+    if (q.type === 'mcq') {
+      return userVal === q.correct;
+    }
+    if (q.type === 'tf') {
+      return userVal === q.correct;
+    }
+    return false;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (submitted || questions.length === 0) return;
+
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(currentScore);
-    setIsSubmitted(true);
+    setScore(total);
+    setSubmitted(true);
   };
+
+  const getCardStyle = (q) => {
+    if (!submitted) return 'bg-white border-slate-200 shadow-sm';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
+  };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
       title="Ασκήσεις: Η Έννοια του Λόγου - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="10 απαιτητικές ασκήσεις και προβλήματα αυξημένης δυσκολίας στην έννοια του λόγου, απλοποίηση, σύγκριση μεγεθών και αναλογίες για τη ΣΤ' Δημοτικού."
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στην έννοια του λόγου, απλοποίηση, σύγκριση μεγεθών και αναλογίες για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
+      showAds={false}
       hideFooter={true}
       actionButton={
         <Link
           href="/st-dimotikou/40-logos"
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
-        {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 40 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
+                Διαδραστικές Ασκήσεις: Η Έννοια του Λόγου
+              </h1>
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στην απλοποίηση λόγων, στον υπολογισμό τιμής λόγου, στους αντίστροφους λόγους και στην επίλυση σύνθετων προβλημάτων!
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Ασκήσεις &amp; Προβλήματα: Η Έννοια του Λόγου
-            </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες που περιλαμβάνουν 4 ρεαλιστικά προβλήματα (2 βασικά &amp; 2 αυξημένης δυσκολίας). Συμπληρώστε τις απαντήσεις σας σε ανάγωγη μορφή και ελέγξτε την επίδοσή σας.
-            </p>
-          </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
-            <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
-            </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6 sm:space-y-8">
-          {questions.map((q, idx) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'fraction_input') {
-                const un = parseInt(answers[`q_${q.id}_num`] || '0', 10);
-                const ud = parseInt(answers[`q_${q.id}_den`] || '0', 10);
-                isCorrect = un === q.ansNum && ud === q.ansDen;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
-
-            return (
-              <article
-                key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-5 sm:p-8 2xl:p-10 shadow-sm transition-all ${
-                  isSubmitted
-                    ? isCorrect
-                      ? 'border-emerald-400 bg-emerald-50/20'
-                      : 'border-rose-400 bg-rose-50/20'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
-                    {toCleanUppercase(q.title)}
-                  </span>
-                  {isSubmitted && (
-                    <span
-                      className={`text-xs 2xl:text-sm font-bold px-3 py-1 rounded-full ${
-                        isCorrect
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
-                    </span>
-                  )}
-                </div>
-
-                {/* Εκφωνηση */}
-                <div className="space-y-2 mb-5">
-                  <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
-                    {q.instruction}
-                  </p>
-                  <p className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed">
-                    {q.prompt}
-                  </p>
-                </div>
-
-                {/* Περιοχη Απαντησης */}
-                <div className="py-2">
-                  
-                  {/* 1. Fraction Input */}
-                  {q.type === 'fraction_input' && (
-                    <div className="flex flex-wrap items-center gap-3">
-                      <div className="inline-flex items-center bg-slate-50 p-2.5 rounded-2xl border border-slate-300 shadow-inner gap-2">
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={10}
-                          disabled={isSubmitted}
-                          placeholder="αριθμητής"
-                          value={answers[`q_${q.id}_num`] || ''}
-                          onChange={(e) => handleInputChange(`q_${q.id}_num`, e.target.value)}
-                          className="w-24 sm:w-28 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-xl py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed"
-                        />
-                        <span className="text-xl sm:text-2xl font-black text-slate-500 px-1 select-none">
-                          /
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                >
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
+                      </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
                         </span>
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={10}
-                          disabled={isSubmitted}
-                          placeholder="παρονομαστής"
-                          value={answers[`q_${q.id}_den`] || ''}
-                          onChange={(e) => handleInputChange(`q_${q.id}_den`, e.target.value)}
-                          className="w-24 sm:w-28 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-xl py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed"
-                        />
-                      </div>
-                      <span className="text-xs 2xl:text-sm text-slate-500">
-                        (Μορφή λόγου: αριθμητής / παρονομαστής)
-                      </span>
+                      )}
                     </div>
-                  )}
 
-                  {/* 2. Decimal / Single Input */}
-                  {q.type === 'decimal_input' && (
-                    <div className="flex flex-wrap items-center gap-3">
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        maxLength={10}
-                        disabled={isSubmitted}
-                        placeholder="Απάντηση..."
-                        value={answers[`q_${q.id}`] || ''}
-                        onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
-                      />
-                      <span className="text-xs 2xl:text-sm text-slate-500">
-                        (Ακέραιος ή δεκαδικός με κόμμα)
-                      </span>
-                    </div>
-                  )}
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-4">
+                      {q.type === 'tf' ? `«${q.text}»` : q.prompt}
+                    </p>
 
-                  {/* 3. Multiple Choice (MCQ) - Χωρις truncate, break-words */}
-                  {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
-                      {q.options.map((opt, oIdx) => {
-                        const isSelected = answers[`q_${q.id}`] === opt.text;
-                        return (
-                          <button
-                            key={`opt-${q.id}-${oIdx}`}
-                            type="button"
-                            disabled={isSubmitted}
-                            onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                                : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                            } disabled:cursor-not-allowed`}
-                          >
-                            <span className="break-words whitespace-normal leading-snug flex-1">
-                              {opt.text}
-                            </span>
-                            <span
-                              className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center text-xs ${
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
-                                  ? 'border-white bg-white text-blue-600 font-bold'
-                                  : 'border-slate-400 bg-transparent'
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                               }`}
                             >
-                              {isSelected ? '●' : ''}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
 
-                </div>
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          key={`input-${q.id}`}
+                          autoComplete="off"
+                          spellCheck="false"
+                          type="text"
+                          inputMode={q.inputType === 'fraction' ? 'text' : 'numeric'}
+                          maxLength={12}
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.inputType === 'fraction' ? 'π.χ. 3/4 ή 3:4' : 'Απάντηση...'}
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
+                      </div>
+                    )}
 
-                {/* Feedback μετα την υποβολη */}
-                {isSubmitted && (
-                  <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-1.5 ${
-                      isCorrect
-                        ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
-                        : 'bg-rose-100/60 border-rose-300 text-rose-950'
-                    }`}
-                  >
-                    <div className="font-bold flex items-center gap-1.5">
-                      <span>{isCorrect ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Επεξήγηση:'}</span>
-                    </div>
-                    <div>{q.explanation}</div>
-                    {!isCorrect && (
-                      <div className="font-semibold pt-1 text-slate-800">
-                        Σωστή απάντηση:{' '}
-                        {q.type === 'fraction_input' ? (
-                          <span className="font-mono font-bold text-blue-900">
-                            {q.ansNum} / {q.ansDen}
-                          </span>
-                        ) : q.type === 'decimal_input' ? (
-                          <span className="font-mono font-bold text-blue-900">
-                            {q.correctStr}
-                          </span>
-                        ) : (
-                          <span className="font-mono font-bold text-blue-900">
-                            {q.correctText}
-                          </span>
-                        )}
+                    {q.type === 'tf' && (
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <button
+                          type="button"
+                          disabled={submitted}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                            answers[q.id] === true
+                              ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
+                              : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
+                          }`}
+                        >
+                          👍 {toCleanUppercase('Σωστό')}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={submitted}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                            answers[q.id] === false
+                              ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
+                              : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
+                          }`}
+                        >
+                          👎 {toCleanUppercase('Λάθος')}
+                        </button>
                       </div>
                     )}
                   </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && q.tableData.length > 0 && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
 
-      </div>
-
-      {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
-          
-          <div className="flex items-center gap-4 sm:gap-8">
-            <div>
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
-              </span>
-            </div>
-
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          <div className="flex items-center gap-3">
-            {!isSubmitted ? (
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-4">
               <button
-                type="button"
-                onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
+                type="submit"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                <span className="text-xl">🎯</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
-            ) : (
+            </div>
+          )}
+        </form>
+      </div>
+
+      {/* FIXED BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
+          
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+            </div>
+            {submitted && (
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* GUIDANCE OR RESTART */}
+          <div className="flex items-center gap-3">
+            {submitted ? (
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
+            ) : (
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
+              </p>
             )}
           </div>
 
         </div>
-      </footer>
+      </div>
     </Layout>
   );
 }
