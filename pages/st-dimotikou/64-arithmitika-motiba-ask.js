@@ -34,10 +34,11 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποίηση αριθμών με ελληνικό locale
+// Μορφοποίηση αριθμών
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+  if (Number.isInteger(Number(num))) return String(num);
+  return String(num).replace('.', ',');
 }
 
 // ---------------------------------------------------------
@@ -50,17 +51,16 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Αποταμίευση στον Κουμπαρά',
     unit: '€',
     generate: () => {
-      // Αρχικό 15€, κάθε εβδομάδα +4€ -> 25η εβδομάδα = 15 + 25*4 = 115€
       const initAmount = 15;
       const step = 4;
       const weeks = randInt(18, 25);
       const totalAmount = initAmount + weeks * step;
       const correctText = `${totalAmount} €`;
       return {
-        prompt: `Ο Νίκος ξεκίνησε να αποταμιεύει έχοντας στον κουμπαρά του ${initAmount}€. Κάθε εβδομάδα προσθέτει σταθερά ${step}€. Πόσα χρήματα θα έχει συγκεντρώσει στο τέλος της ${weeks}ης εβδομάδας;`,
+        prompt: `Ο Νίκος ξεκίνησε να αποταμιεύει έχοντας στον κουμπαρά του ${initAmount} €. Κάθε εβδομάδα προσθέτει σταθερά ${step} €. Πόσα χρήματα θα έχει συγκεντρώσει στο τέλος της ${weeks}ης εβδομάδας;`,
         correctText,
         tableData: [
-          { item: 'Αρχικό ποσό', formula: `${initAmount} €`, val: `${initAmount}` },
+          { item: 'Αρχικό ποσό', formula: `${initAmount} €`, val: `${initAmount} €` },
           { item: 'Εβδομαδιαίες προσθήκες', formula: `${weeks} · ${step} €`, val: `${weeks * step} €` },
           { item: 'Συνολικό ποσό', formula: `${initAmount} ＋ ${weeks * step} €`, val: `${totalAmount} €` }
         ],
@@ -78,7 +78,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Καθίσματα σε Σειρές Θεάτρου',
     unit: 'καθίσματα',
     generate: () => {
-      // 1η σειρά 18 καθίσματα, κάθε επόμενη +3 -> n-οστή σειρά: 18 + 3*(n - 1)
       const a1 = 18;
       const diff = 3;
       const rowN = randInt(10, 16);
@@ -106,7 +105,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Κατασκευή Φράχτη με Παλούκια',
     unit: 'παλούκια',
     generate: () => {
-      // 1 τμήμα = 2 παλούκια, κάθε επόμενο +1 -> n τμήματα = n + 1 παλούκια
       const sections = randInt(15, 35);
       const posts = sections + 1;
       const correctText = `${posts} παλούκια`;
@@ -132,7 +130,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Δέντρα σε Δενδροστοιχία',
     unit: 'μέτρα',
     generate: () => {
-      // n δέντρα με απόσταση d μέτρων -> (n - 1) διαστήματα * d
       const trees = randInt(8, 14);
       const dist = randInt(4, 6);
       const totalDist = (trees - 1) * dist;
@@ -159,7 +156,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Σελίδες Βιβλίου ανά Ημέρα',
     unit: 'σελίδες',
     generate: () => {
-      // 1η μέρα 12 σελίδες, κάθε μέρα +5 -> ημέρα d: 12 + 5*(d - 1)
       const d = randInt(6, 10);
       const startP = 12;
       const stepP = 5;
@@ -187,7 +183,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Βαθμίδες Σκάλας με Τούβλα',
     unit: 'τούβλα',
     generate: () => {
-      // 1ο σκαλί 3 τούβλα, κάθε επόμενο +3 -> σκαλί n: 3*n τούβλα
       const n = randInt(7, 14);
       const bricks = 3 * n;
       const correctText = `${bricks} τούβλα`;
@@ -215,7 +210,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Εύρεση Αριθμού Θέσης (Ποιο ν δίνει το αποτέλεσμα;)',
     unit: '',
     generate: () => {
-      // an = 4n + 3 -> ποιο n δίνει τιμή target;
       const n = randInt(15, 25);
       const targetVal = 4 * n + 3;
       const correctText = `Στη θέση ν ＝ ${n}`;
@@ -241,7 +235,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Μοτίβο Διπλασιασμού σε Βακτήρια',
     unit: 'βακτήρια',
     generate: () => {
-      // Αρχικά 5 βακτήρια, διπλασιάζονται κάθε ώρα -> σε h ώρες = 5 * 2^h. Για h = 4 -> 80
       const h = 4;
       const initB = 5;
       const finalB = initB * Math.pow(2, h);
@@ -265,10 +258,9 @@ const HARD_PROBLEMS_POOL = [
   },
   {
     id: 'hp3',
-    title: 'Σύνθετος Κανόνας (2n ＋ 5)',
+    title: 'Σύνθετος Κανόνας (2ν ＋ 5)',
     unit: '',
     generate: () => {
-      // Βρες τον 50ό όρο του μοτίβου: 7, 9, 11, 13, ... (κανόνας 2n + 5)
       const n = 50;
       const term50 = 2 * n + 5;
       const correctText = String(term50);
@@ -294,17 +286,16 @@ const HARD_PROBLEMS_POOL = [
     title: 'Εύρεση του Κρυμμένου Κανόνα από Πίνακα',
     unit: '',
     generate: () => {
-      // (1 -> 5), (2 -> 8), (3 -> 11), (4 -> 14) -> Κανόνας 3ν + 2
       const correctText = '3 · ν ＋ 2';
       return {
-        prompt: `Παρατήρησε τις τιμές: για θέση ν ＝ 1 η τιμή είναι 5, για ν ＝ 2 είναι 8, για ν ＝ 3 είναι 11, για ν ＝ 4 είναι 14. Ποιος είναι ο μαθηματικός κανόνας που συνδέει τη θέση ν με την τιμή;`,
+        prompt: 'Παρατήρησε τις τιμές: για θέση ν ＝ 1 η τιμή είναι 5, για ν ＝ 2 είναι 8, για ν ＝ 3 είναι 11, για ν ＝ 4 είναι 14. Ποιος είναι ο μαθηματικός κανόνας που συνδέει τη θέση ν με την τιμή;',
         correctText,
         tableData: [
           { item: 'Διαφορά διαδοχικών όρων', formula: '8 － 5 ＝ 3, 11 － 8 ＝ 3', val: 'Το βήμα είναι 3 (3 · ν)' },
           { item: 'Έλεγχος για ν ＝ 1', formula: '3 · 1 ＋ ? ＝ 5', val: '? ＝ 2' },
           { item: 'Γενικός τύπος', formula: '3 · ν ＋ 2', val: 'Ισχύει για όλα τα ν' }
         ],
-        explain: `Επειδή οι τιμές αυξάνονται κατά 3 σε κάθε βήμα, ο τύπος περιέχει το 3 · ν. Για ν ＝ 1: 3 · 1 ＋ 2 ＝ 5. Άρα ο κανόνας είναι 3 · ν ＋ 2.`,
+        explain: 'Επειδή οι τιμές αυξάνονται κατά 3 σε κάθε βήμα, ο τύπος περιέχει το 3 · ν. Για ν ＝ 1: 3 · 1 ＋ 2 ＝ 5. Άρα ο κανόνας είναι 3 · ν ＋ 2.',
         distractors: [
           '3 · ν ＋ 1',
           '2 · ν ＋ 3',
@@ -318,7 +309,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Φθίνουσα Αριθμητική Ακολουθία',
     unit: '',
     generate: () => {
-      // 100, 93, 86, 79, ... (βήμα -7). Ποιος είναι ο 11ος όρος; -> 100 - 10*7 = 30
       const a1 = 100;
       const step = 7;
       const n = 11;
@@ -330,7 +320,7 @@ const HARD_PROBLEMS_POOL = [
         tableData: [
           { item: '1ος όρος (α₁)', formula: '100', val: '100' },
           { item: 'Βήμα αφαίρεσης', formula: '93 － 100', val: '－ 7' },
-          { item: 'Υπολογισμός 11ου όρου', formula: `100 － (10 · 7)`, val: `${termN}` }
+          { item: 'Υπολογισμός 11ου όρου', formula: '100 － (10 · 7)', val: `${termN}` }
         ],
         explain: `Σε κάθε βήμα αφαιρούμε 7. Μέχρι τον 11ο όρο θα αφαιρέσουμε 10 φορές το 7: 10 · 7 ＝ 70. Άρα: 100 － 70 ＝ ${termN}.`,
         distractors: [
@@ -346,7 +336,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Άθροισμα των Πρώτων ν Περιττών Αριθμών (ν²)',
     unit: '',
     generate: () => {
-      // 1 = 1^2, 1+3 = 4 = 2^2, 1+3+5 = 9 = 3^2 ... για n = 12 -> 144
       const n = randInt(10, 15);
       const sumOdd = n * n;
       const correctText = String(sumOdd);
@@ -374,7 +363,7 @@ const HARD_PROBLEMS_POOL = [
 // ---------------------------------------------------------
 
 function generateQuestions() {
-  // Q1: Input - Αύξουσα ακολουθία με σταθερό βήμα (π.χ. 4, 9, 14, 19, ... +5 -> επόμενος)
+  // Q1: Input - Αύξουσα ακολουθία με σταθερό βήμα
   const q1Start = randInt(2, 7);
   const q1Step = randInt(3, 6);
   const q1A = q1Start;
@@ -383,7 +372,7 @@ function generateQuestions() {
   const q1D = q1C + q1Step;
   const q1Next = q1D + q1Step;
 
-  // Q2: Input - Φθίνουσα ακολουθία με σταθερό βήμα (π.χ. 50, 44, 38, 32, ... -6 -> επόμενος)
+  // Q2: Input - Φθίνουσα ακολουθία με σταθερό βήμα
   const q2Start = randInt(60, 90);
   const q2Step = randInt(4, 7);
   const q2A = q2Start;
@@ -392,53 +381,53 @@ function generateQuestions() {
   const q2D = q2C - q2Step;
   const q2Next = q2D - q2Step;
 
-  // Q3: Input - Υπολογισμός όρου από τύπο 5n - 2 για συγκεκριμένο n (π.χ. n = 8 -> 38)
+  // Q3: Input - Υπολογισμός όρου από τύπο 5ν - 2
   const q3N = randInt(6, 12);
   const q3Res = 5 * q3N - 2;
 
-  // Q4: MCQ - Διπλασιασμός (γεωμετρική ακολουθία) 3, 6, 12, 24, ...
+  // Q4: MCQ - Διπλασιασμός (γεωμετρική ακολουθία)
   const q4Start = randInt(2, 4);
   const q4Terms = [q4Start, q4Start * 2, q4Start * 4, q4Start * 8];
   const q4Next = q4Start * 16;
-  const q4Options = shuffle([...new Set([
+  const q4Options = shuffle([
     String(q4Next),
     String(q4Terms[3] + q4Terms[2]),
     String(q4Next + 4),
     String(q4Terms[3] * 3)
-  ])]);
+  ]);
 
-  // Q5: True/False - Ορισμός του όρου μιας ακολουθίας
+  // Q5: True/False - Έννοια όρου ακολουθίας
   const q5IsTrue = Math.random() > 0.5;
   const q5Text = q5IsTrue
     ? 'Σε μια αριθμητική ακολουθία, κάθε αριθμός ονομάζεται όρος της ακολουθίας και η θέση του συμβολίζεται συνήθως με ν.'
     : 'Σε μια αριθμητική ακολουθία, όρος ονομάζεται μόνο το άθροισμα όλων των αριθμών μαζί.';
 
-  // Q6: True/False - Σταθερό βήμα και εύρεση με αφαίρεση
+  // Q6: True/False - Εύρεση σταθερού βήματος
   const q6IsTrue = Math.random() > 0.5;
   const q6Text = q6IsTrue
     ? 'Για να βρούμε το σταθερό βήμα σε μια αριθμητική ακολουθία, αρκεί να αφαιρέσουμε δύο διαδοχικούς όρους: (2ος όρος) － (1ος όρος).'
     : 'Σε μια αριθμητική ακολουθία, το σταθερό βήμα υπολογίζεται πάντα πολλαπλασιάζοντας τον 1ο με τον 2ο όρο.';
 
-  // Q7: Input - Υπολογισμός 20ού όρου σε ακολουθία πολλαπλασίων (π.χ. 4, 8, 12, 16 ... 4n. Για n = 20 -> 80)
+  // Q7: Input - Υπολογισμός 20ού όρου σε ακολουθία πολλαπλασίων
   const q7Mult = randInt(3, 7);
   const q7Res = q7Mult * 20;
 
-  // Q8: MCQ - Ακολουθία Fibonacci (ορισμός)
-  const q8Options = shuffle([...new Set([
+  // Q8: MCQ - Ακολουθία Fibonacci
+  const q8Options = shuffle([
     'Κάθε όρος προκύπτει από το άθροισμα των δύο αμέσως προηγούμενων όρων',
     'Σε κάθε βήμα προσθέτουμε σταθερά τον αριθμό 10',
     'Κάθε όρος διπλασιάζεται σε σχέση με τον προηγούμενο',
     'Όλοι οι όροι της ακολουθίας είναι πάντα ίσοι μεταξύ τους'
-  ])]);
+  ]);
 
-  // Q9: Standard Problem (Pool of 6)
+  // Q9: Standard Problem
   const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
   const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate();
   const q9Options = shuffle([
     ...new Set([q9Raw.correctText, ...q9Raw.distractors])
   ]);
 
-  // Q10: Hard Problem (Pool of 6)
+  // Q10: Hard Problem
   const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
   const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate();
   const q10Options = shuffle([
@@ -449,6 +438,7 @@ function generateQuestions() {
     {
       id: 'q1',
       type: 'input',
+      inputType: 'number',
       title: 'Επόμενος Όρος Αύξουσας Ακολουθίας',
       prompt: `Βρες τον επόμενο όρο της ακολουθίας: ${q1A}, ${q1B}, ${q1C}, ${q1D}, ...`,
       correct: String(q1Next),
@@ -457,6 +447,7 @@ function generateQuestions() {
     {
       id: 'q2',
       type: 'input',
+      inputType: 'number',
       title: 'Επόμενος Όρος Φθίνουσας Ακολουθίας',
       prompt: `Βρες τον επόμενο όρο της ακολουθίας: ${q2A}, ${q2B}, ${q2C}, ${q2D}, ...`,
       correct: String(q2Next),
@@ -465,6 +456,7 @@ function generateQuestions() {
     {
       id: 'q3',
       type: 'input',
+      inputType: 'number',
       title: 'Υπολογισμός Όρου από Γενικό Τύπο',
       prompt: `Ένα αριθμητικό μοτίβο έχει γενικό τύπο: Τιμή ＝ 5 · ν － 2. Ποιος είναι ο ${q3N}ος όρος (για ν ＝ ${q3N});`,
       correct: String(q3Res),
@@ -502,6 +494,7 @@ function generateQuestions() {
     {
       id: 'q7',
       type: 'input',
+      inputType: 'number',
       title: 'Υπολογισμός 20ού Όρου',
       prompt: `Στην ακολουθία των πολλαπλασίων του ${q7Mult}: ${q7Mult}, ${q7Mult * 2}, ${q7Mult * 3}, ${q7Mult * 4}, ... ποιος είναι ο 20ός όρος (ν ＝ 20);`,
       correct: String(q7Res),
@@ -568,18 +561,35 @@ export default function ArithmitikaMotibaExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
     const userVal = answers[q.id];
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
-      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase() : null;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/€/g, '').trim().toLowerCase();
+      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').replace(/€/g, '').trim().toLowerCase();
+      const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').replace(/€/g, '').trim().toLowerCase() : null;
       return cleanUser === cleanTarget || (cleanAlt && cleanUser === cleanAlt);
     }
     if (q.type === 'mcq') {
@@ -611,6 +621,8 @@ export default function ArithmitikaMotibaExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Αριθμητικά Μοτίβα - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -629,7 +641,7 @@ export default function ArithmitikaMotibaExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -695,7 +707,7 @@ export default function ArithmitikaMotibaExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -716,10 +728,11 @@ export default function ArithmitikaMotibaExercisesPage() {
                           autoComplete="off"
                           spellCheck="false"
                           type="text"
-                          inputMode="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
                           placeholder="Γράψε την απάντηση..."
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
@@ -731,7 +744,7 @@ export default function ArithmitikaMotibaExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -743,7 +756,7 @@ export default function ArithmitikaMotibaExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -824,8 +837,10 @@ export default function ArithmitikaMotibaExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
