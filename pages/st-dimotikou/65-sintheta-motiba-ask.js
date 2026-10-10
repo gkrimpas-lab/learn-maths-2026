@@ -149,7 +149,7 @@ const STANDARD_PROBLEMS_POOL = [
         distractors: [
           `${total + perMonth} €`,
           `${months * perMonth} €`,
-          `${total - reg} €`
+          `${total - 15} €`
         ]
       };
     }
@@ -203,7 +203,7 @@ const STANDARD_PROBLEMS_POOL = [
         distractors: [
           `${months * perM} €`,
           `${total + perM} €`,
-          `${total - initP} €`
+          `${total - 10} €`
         ]
       };
     }
@@ -420,19 +420,30 @@ function generateQuestions() {
     '2 · ν ＋ 3'
   ]);
 
-  // Q9: Standard Problem
+  // Q9: Standard Problem (Εξασφάλιση 4 μοναδικών επιλογών)
   const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
   const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate();
-  const q9Options = shuffle([
-    ...new Set([q9Raw.correctText, ...q9Raw.distractors])
-  ]);
+  const q9UniqueOptions = [...new Set([q9Raw.correctText, ...q9Raw.distractors])];
+  while (q9UniqueOptions.length < 4) {
+    const fallbackNum = randInt(15, 60);
+    const candidate = `${fallbackNum} €`;
+    if (!q9UniqueOptions.includes(candidate)) {
+      q9UniqueOptions.push(candidate);
+    }
+  }
+  const q9Options = shuffle(q9UniqueOptions);
 
-  // Q10: Hard Problem
+  // Q10: Hard Problem (Εξασφάλιση 4 μοναδικών επιλογών)
   const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
   const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate();
-  const q10Options = shuffle([
-    ...new Set([q10Raw.correctText, ...q10Raw.distractors])
-  ]);
+  const q10UniqueOptions = [...new Set([q10Raw.correctText, ...q10Raw.distractors])];
+  while (q10UniqueOptions.length < 4) {
+    const fallbackVal = String(randInt(20, 80));
+    if (!q10UniqueOptions.includes(fallbackVal)) {
+      q10UniqueOptions.push(fallbackVal);
+    }
+  }
+  const q10Options = shuffle(q10UniqueOptions);
 
   return [
     {
