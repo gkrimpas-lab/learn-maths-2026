@@ -2,32 +2,55 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import { LAYOUT } from '../../shared/layout-config';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
+
+function randInt(min, max) {
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
+}
+
+function shuffle(array) {
+  if (!Array.isArray(array)) return [];
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαιος ακεραιος στο [min, max]
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
+// Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός με κόμμα)
 function formatNum(val, decimals = 2) {
-  if (Number.isInteger(val)) return String(val);
-  const rounded = Number(val.toFixed(decimals));
+  if (val === null || val === undefined || isNaN(Number(val))) return '0';
+  if (Number.isInteger(Number(val))) return String(val);
+  const rounded = Number(Number(val).toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων Μεσου Ορου (10 διαφορετικα προβληματα)
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q7, Q8, Q9, Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
+
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_avg_std_1',
+    title: 'Μέσος Όρος Βαθμολογίας Μαθημάτων',
+    unit: 'βαθμοί',
     generate: () => {
       const g1 = randInt(14, 18);
       const g2 = randInt(15, 19);
@@ -37,35 +60,50 @@ const STANDARD_PROBLEMS_POOL = [
       const avg = sum / 4;
       const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
       return {
-        text: `Ένας μαθητής της ΣΤ' Δημοτικού έγραψε στα τέσσερα μαθήματα βαθμούς: ${g1}, ${g2}, ${g3} και ${g4}. Ποιος είναι ο μέσος όρος της βαθμολογίας του;`,
-        tableData: { col1: 'Μάθημα', col2: 'Βαθμός', r1: ['1ο & 2ο', `${g1} και ${g2}`], r2: ['3ο & 4ο', `${g3} και ${g4}`] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Αθροίζουμε όλους τους βαθμούς: ${g1} ＋ ${g2} ＋ ${g3} ＋ ${g4} ＝ ${sum}. Διαιρούμε με το πλήθος των μαθημάτων (4): ${sum} : 4 ＝ ${formatNum(cleanAvg)}.`
+        prompt: `Ένας μαθητής της ΣΤ' Δημοτικού έγραψε στα τέσσερα μαθήματα βαθμούς: ${g1}, ${g2}, ${g3} και ${g4}. Ποιος είναι ο μέσος όρος της βαθμολογίας του;`,
+        unit: 'βαθμοί',
+        correctVal: formatNum(cleanAvg),
+        correctText: `${formatNum(cleanAvg)}`,
+        tableData: [
+          { item: 'Βαθμολογίες 4 μαθημάτων', formula: `${g1} ＋ ${g2} ＋ ${g3} ＋ ${g4}`, val: `${sum} βαθμοί` },
+          { item: 'Πλήθος μαθημάτων', formula: '4 μαθήματα', val: '4' },
+          { item: 'Μέσος όρος', formula: `${sum} : 4`, val: `${formatNum(cleanAvg)}` }
+        ],
+        explain: `Αθροίζουμε όλους τους βαθμούς: ${g1} ＋ ${g2} ＋ ${g3} ＋ ${g4} ＝ ${sum}. Διαιρούμε με το πλήθος των μαθημάτων (4): ${sum} : 4 ＝ ${formatNum(cleanAvg)}.`
       };
     }
   },
   {
     id: 'p_avg_std_2',
+    title: 'Μέσος Όρος Πόντων με Μηδενική Τιμή',
+    unit: 'πόντοι',
     generate: () => {
       const p1 = randInt(10, 16);
       const p2 = randInt(12, 18);
-      const p3 = 0; // Αγωνας με 0 ποντους (παγιδα)
+      const p3 = 0;
       const p4 = randInt(14, 22);
       const sum = p1 + p2 + p3 + p4;
       const avg = sum / 4;
       const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
       return {
-        text: `Μια αθλήτρια μπάσκετ σε 4 αγώνες σημείωσε: ${p1}, ${p2}, ${p3} και ${p4} πόντους. Ποιος είναι ο μέσος όρος πόντων της ανά αγώνα;`,
-        tableData: { col1: 'Αγώνες 1-2', col2: 'Αγώνες 3-4', r1: [`${p1} π.`, `${p3} π.`], r2: [`${p2} π.`, `${p4} π.`] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Προσέχουμε ότι ο αγώνας με τους 0 πόντους μετράει κανονικά στο πλήθος των αγώνων! Συνολικοί πόντοι: ${p1} ＋ ${p2} ＋ ${p3} ＋ ${p4} ＝ ${sum}. Διαιρούμε με το 4: ${sum} : 4 ＝ ${formatNum(cleanAvg)} πόντοι ανά αγώνα.`
+        prompt: `Μια αθλήτρια μπάσκετ σε 4 αγώνες σημείωσε: ${p1}, ${p2}, ${p3} και ${p4} πόντους. Ποιος είναι ο μέσος όρος πόντων της ανά αγώνα;`,
+        unit: 'πόντοι',
+        correctVal: formatNum(cleanAvg),
+        correctText: `${formatNum(cleanAvg)} πόντοι`,
+        tableData: [
+          { item: 'Συνολικοί πόντοι (συμπεριλαμβανομένου του 0)', formula: `${p1} ＋ ${p2} ＋ ${p3} ＋ ${p4}`, val: `${sum} πόντοι` },
+          { item: 'Σύνολο αγώνων', formula: '4 αγώνες', val: '4' },
+          { item: 'Μέσος όρος ανά αγώνα', formula: `${sum} : 4`, val: `${formatNum(cleanAvg)}` }
+        ],
+        explain: `Προσέχουμε ότι ο αγώνας με τους 0 πόντους μετράει κανονικά στο πλήθος των αγώνων! Συνολικοί πόντοι: ${p1} ＋ ${p2} ＋ ${p3} ＋ ${p4} ＝ ${sum}. Διαιρούμε με το 4: ${sum} : 4 ＝ ${formatNum(cleanAvg)} πόντοι ανά αγώνα.`,
+        distractors: [`${formatNum(cleanAvg + 2)}`, `${formatNum(Math.max(1, cleanAvg - 2))}`, `${formatNum(cleanAvg + 4)}`]
       };
     }
   },
   {
     id: 'p_avg_std_3',
+    title: 'Μέσος Όρος Πελατών Σούπερ Μάρκετ',
+    unit: 'πελάτες',
     generate: () => {
       const c1 = randInt(6, 8) * 10;
       const c2 = randInt(5, 7) * 10;
@@ -74,16 +112,24 @@ const STANDARD_PROBLEMS_POOL = [
       const avg = sum / 3;
       const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
       return {
-        text: `Ένα σούπερ μάρκετ είχε τις τρεις πρώτες ημέρες της εβδομάδας ${c1}, ${c2} και ${c3} πελάτες αντίστοιχα. Ποιος ήταν ο μέσος όρος πελατών ανά ημέρα;`,
-        tableData: { col1: 'Ημέρες 1-2', col2: 'Ημέρα 3', r1: [`${c1} πελ.`, `${c3} πελ.`], r2: [`${c2} πελ.`, '—'] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Συνολικοί πελάτες: ${c1} ＋ ${c2} ＋ ${c3} ＝ ${sum}. Διαιρούμε με τις 3 ημέρες: ${sum} : 3 ＝ ${formatNum(cleanAvg)} πελάτες.`
+        prompt: `Ένα σούπερ μάρκετ είχε τις τρεις πρώτες ημέρες της εβδομάδας ${c1}, ${c2} και ${c3} πελάτες αντίστοιχα. Ποιος ήταν ο μέσος όρος πελατών ανά ημέρα;`,
+        unit: 'πελάτες',
+        correctVal: formatNum(cleanAvg),
+        correctText: `${formatNum(cleanAvg)} πελάτες`,
+        tableData: [
+          { item: 'Σύνολο πελατών', formula: `${c1} ＋ ${c2} ＋ ${c3}`, val: `${sum} πελάτες` },
+          { item: 'Πλήθος ημερών', formula: '3 ημέρες', val: '3' },
+          { item: 'Μέσος όρος ανά ημέρα', formula: `${sum} : 3`, val: `${formatNum(cleanAvg)}` }
+        ],
+        explain: `Συνολικοί πελάτες: ${c1} ＋ ${c2} ＋ ${c3} ＝ ${sum}. Διαιρούμε με τις 3 ημέρες: ${sum} : 3 ＝ ${formatNum(cleanAvg)} πελάτες.`,
+        distractors: [`${formatNum(cleanAvg + 10)}`, `${formatNum(cleanAvg - 10)}`, `${formatNum(cleanAvg + 15)}`]
       };
     }
   },
   {
     id: 'p_avg_std_4',
+    title: 'Μέση Θερμοκρασία Πενθημέρου',
+    unit: '°C',
     generate: () => {
       const t1 = randInt(14, 18);
       const t2 = randInt(19, 23);
@@ -94,131 +140,27 @@ const STANDARD_PROBLEMS_POOL = [
       const avg = sum / 5;
       const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
       return {
-        text: `Σε έναν μετεωρολογικό σταθμό καταγράφηκαν οι μεσημεριανές θερμοκρασίες για 5 συνεχόμενες ημέρες: ${t1}°C, ${t2}°C, ${t3}°C, ${t4}°C και ${t5}°C. Ποια ήταν η μέση θερμοκρασία (°C);`,
-        tableData: { col1: 'Ημέρες 1-3', col2: 'Ημέρες 4-5', r1: [`${t1}°, ${t2}°`, `${t4}°C`], r2: [`${t3}°C`, `${t5}°C`] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Άθροισμα θερμοκρασιών: ${t1} ＋ ${t2} ＋ ${t3} ＋ ${t4} ＋ ${t5} ＝ ${sum}°C. Διαιρούμε με τις 5 ημέρες: ${sum} : 5 ＝ ${formatNum(cleanAvg)}°C.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_std_5',
-    generate: () => {
-      const b1 = randInt(25, 45);
-      const b2 = randInt(30, 50);
-      const b3 = randInt(20, 40);
-      const sum = b1 + b2 + b3;
-      const avg = sum / 3;
-      const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
-      return {
-        text: `Τρεις φίλοι διάβασαν στις διακοπές τους: ο πρώτος ${b1} σελίδες, ο δεύτερος ${b2} σελίδες και ο τρίτος ${b3} σελίδες. Πόσες σελίδες διάβασε κατά μέσο όρο το κάθε παιδί;`,
-        tableData: { col1: 'Παιδί 1 & 2', col2: 'Παιδί 3', r1: [`${b1} σελ.`, `${b3} σελ.`], r2: [`${b2} σελ.`, '—'] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Σύνολο σελίδων: ${b1} ＋ ${b2} ＋ ${b3} ＝ ${sum}. Μέσος όρος: ${sum} : 3 ＝ ${formatNum(cleanAvg)} σελίδες ανά παιδί.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_std_6',
-    generate: () => {
-      const w1 = randInt(35, 42);
-      const w2 = randInt(38, 45);
-      const w3 = randInt(40, 48);
-      const w4 = randInt(36, 44);
-      const sum = w1 + w2 + w3 + w4;
-      const avg = sum / 4;
-      const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
-      return {
-        text: `Το βάρος τεσσάρων μαθητών είναι ${w1} kg, ${w2} kg, ${w3} kg και ${w4} kg. Ποιο είναι το μέσο βάρος (σε kg) των μαθητών;`,
-        tableData: { col1: 'Μαθητές 1-2', col2: 'Μαθητές 3-4', r1: [`${w1} kg`, `${w3} kg`], r2: [`${w2} kg`, `${w4} kg`] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Συνολικό βάρος: ${w1} ＋ ${w2} ＋ ${w3} ＋ ${w4} ＝ ${sum} kg. Διαιρούμε με το 4: ${sum} : 4 ＝ ${formatNum(cleanAvg)} kg.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_std_7',
-    generate: () => {
-      const d1 = randInt(45, 60);
-      const d2 = randInt(40, 55);
-      const d3 = randInt(50, 70);
-      const d4 = randInt(35, 50);
-      const sum = d1 + d2 + d3 + d4;
-      const avg = sum / 4;
-      const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
-      return {
-        text: `Ένας δρομέας έτρεξε σε 4 προπονήσεις: ${d1} min, ${d2} min, ${d3} min και ${d4} min. Ποια ήταν η μέση διάρκεια της προπόνησής του σε λεπτά;`,
-        tableData: { col1: 'Προπονήσεις 1-2', col2: 'Προπονήσεις 3-4', r1: [`${d1} min`, `${d3} min`], r2: [`${d2} min`, `${d4} min`] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Συνολικός χρόνος: ${d1} ＋ ${d2} ＋ ${d3} ＋ ${d4} ＝ ${sum} λεπτά. Μέση διάρκεια: ${sum} : 4 ＝ ${formatNum(cleanAvg)} λεπτά.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_std_8',
-    generate: () => {
-      const e1 = randInt(15, 25);
-      const e2 = randInt(10, 20);
-      const e3 = randInt(20, 35);
-      const sum = e1 + e2 + e3;
-      const avg = sum / 3;
-      const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
-      return {
-        text: `Μια οικογένεια ξόδεψε για ηλεκτρικό ρεύμα σε τρεις διαδοχικούς λογαριασμούς: ${e1} €, ${e2} € και ${e3} €. Ποιο ήταν το μέσο έξοδο ανά λογαριασμό σε €;`,
-        tableData: { col1: 'Λογαριασμοί 1-2', col2: 'Λογαριασμός 3', r1: [`${e1} €`, `${e3} €`], r2: [`${e2} €`, '—'] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Συνολικά έξοδα: ${e1} ＋ ${e2} ＋ ${e3} ＝ ${sum} €. Διαιρούμε με το 3: ${sum} : 3 ＝ ${formatNum(cleanAvg)} €.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_std_9',
-    generate: () => {
-      const m1 = randInt(3, 7);
-      const m2 = randInt(4, 8);
-      const m3 = randInt(2, 6);
-      const m4 = randInt(5, 9);
-      const sum = m1 + m2 + m3 + m4;
-      const avg = sum / 4;
-      const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
-      return {
-        text: `Ένα κατάστημα πούλησε σε 4 ημέρες: ${m1}, ${m2}, ${m3} και ${m4} ποδήλατα. Πόσα ποδήλατα πουλούσε κατά μέσο όρο την ημέρα;`,
-        tableData: { col1: 'Ημέρες 1-2', col2: 'Ημέρες 3-4', r1: [`${m1} ποδ.`, `${m3} ποδ.`], r2: [`${m2} ποδ.`, `${m4} ποδ.`] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Συνολικά ποδήλατα: ${m1} ＋ ${m2} ＋ ${m3} ＋ ${m4} ＝ ${sum}. Μέσος όρος: ${sum} : 4 ＝ ${formatNum(cleanAvg)} ποδήλατα ανά ημέρα.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_std_10',
-    generate: () => {
-      const g1 = randInt(1, 3);
-      const g2 = randInt(0, 2);
-      const g3 = randInt(2, 4);
-      const sum = g1 + g2 + g3;
-      const avg = sum / 3;
-      const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
-      return {
-        text: `Μια ποδοσφαιρική ομάδα σε 3 αγώνες πέτυχε ${g1}, ${g2} και ${g3} γκολ. Ποιος είναι ο μέσος όρος των γκολ ανά αγώνα;`,
-        tableData: { col1: 'Αγώνες 1-2', col2: 'Αγώνας 3', r1: [`${g1} γκολ`, `${g3} γκολ`], r2: [`${g2} γκολ`, '—'] },
-        correctVal: cleanAvg,
-        correctStr: formatNum(cleanAvg),
-        explanation: `Συνολικά γκολ: ${g1} ＋ ${g2} ＋ ${g3} ＝ ${sum}. Διαιρούμε με τους 3 αγώνες: ${sum} : 3 ＝ ${formatNum(cleanAvg)} γκολ ανά αγώνα.`
+        prompt: `Σε έναν μετεωρολογικό σταθμό καταγράφηκαν οι μεσημεριανές θερμοκρασίες για 5 συνεχόμενες ημέρες: ${t1}°C, ${t2}°C, ${t3}°C, ${t4}°C και ${t5}°C. Ποια ήταν η μέση θερμοκρασία (°C);`,
+        unit: '°C',
+        correctVal: formatNum(cleanAvg),
+        correctText: `${formatNum(cleanAvg)} °C`,
+        tableData: [
+          { item: 'Άθροισμα θερμοκρασιών', formula: `${t1} ＋ ${t2} ＋ ${t3} ＋ ${t4} ＋ ${t5}`, val: `${sum} °C` },
+          { item: 'Πλήθος ημερών', formula: '5 ημέρες', val: '5' },
+          { item: 'Μέση θερμοκρασία', formula: `${sum} : 5`, val: `${formatNum(cleanAvg)} °C` }
+        ],
+        explain: `Άθροισμα θερμοκρασιών: ${t1} ＋ ${t2} ＋ ${t3} ＋ ${t4} ＋ ${t5} ＝ ${sum}°C. Διαιρούμε με τις 5 ημέρες: ${sum} : 5 ＝ ${formatNum(cleanAvg)}°C.`,
+        distractors: [`${formatNum(cleanAvg + 1.5)} °C`, `${formatNum(cleanAvg - 1.5)} °C`, `${formatNum(cleanAvg + 2)} °C`]
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (Αντιστροφοι Υπολογισμοι & Στοχοι)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_avg_hard_1',
+    title: 'Υπολογισμός Βαθμού για Επίτευξη Στόχου',
+    unit: 'βαθμοί',
     generate: () => {
       const targetAvg = randInt(16, 18);
       const g1 = targetAvg - randInt(1, 3);
@@ -228,16 +170,24 @@ const HARD_PROBLEMS_POOL = [
       const requiredSum = targetAvg * 4;
       const g4 = requiredSum - currentSum;
       return {
-        text: `Ένας μαθητής έγραψε στα τρία πρώτα τεστ βαθμούς ${g1}, ${g2} και ${g3}. Τι βαθμό πρέπει να γράψει στο 4ο τεστ για να έχει τελικό μέσο όρο ακριβώς ${targetAvg};`,
-        tableData: { col1: 'Τεστ 1, 2, 3', col2: 'Στόχος Μ.Ο.', r1: [`${g1}, ${g2}, ${g3}`, `${targetAvg}`], r2: ['Άθροισμα: ' + currentSum, '4 τεστ'] },
-        correctVal: g4,
-        correctStr: String(g4),
-        explanation: `Για να έχει μέσο όρο ${targetAvg} σε 4 τεστ, το συνολικό άθροισμα των βαθμών του πρέπει να είναι: 4 · ${targetAvg} ＝ ${requiredSum}. Στα τρία πρώτα τεστ έχει συγκεντρώσει: ${g1} ＋ ${g2} ＋ ${g3} ＝ ${currentSum}. Άρα στο 4ο τεστ χρειάζεται: ${requiredSum} － ${currentSum} ＝ ${g4}.`
+        prompt: `Ένας μαθητής έγραψε στα τρία πρώτα τεστ βαθμούς ${g1}, ${g2} και ${g3}. Τι βαθμό πρέπει να γράψει στο 4ο τεστ για να έχει τελικό μέσο όρο ακριβώς ${targetAvg};`,
+        unit: 'βαθμοί',
+        correctVal: String(g4),
+        correctText: `${g4}`,
+        tableData: [
+          { item: 'Απαιτούμενο συνολικό άθροισμα', formula: `4 · ${targetAvg}`, val: `${requiredSum} βαθμοί` },
+          { item: 'Άθροισμα πρώτων 3 τεστ', formula: `${g1} ＋ ${g2} ＋ ${g3}`, val: `${currentSum} βαθμοί` },
+          { item: 'Απαιτούμενος βαθμός 4ου τεστ', formula: `${requiredSum} － ${currentSum}`, val: `${g4}` }
+        ],
+        explain: `Για να έχει μέσο όρο ${targetAvg} σε 4 τεστ, το συνολικό άθροισμα των βαθμών του πρέπει να είναι: 4 · ${targetAvg} ＝ ${requiredSum}. Στα τρία πρώτα τεστ έχει συγκεντρώσει: ${g1} ＋ ${g2} ＋ ${g3} ＝ ${currentSum}. Άρα στο 4ο τεστ χρειάζεται: ${requiredSum} － ${currentSum} ＝ ${g4}.`,
+        distractors: [`${g4 + 1}`, `${g4 - 1}`, `${g4 + 2}`]
       };
     }
   },
   {
     id: 'p_avg_hard_2',
+    title: 'Νέος Μέσος Όρος μετά από Προσθήκη Μέλους',
+    unit: 'έτη',
     generate: () => {
       const count = 5;
       const avgAge = randInt(11, 14);
@@ -248,16 +198,24 @@ const HARD_PROBLEMS_POOL = [
       const newAvg = newTotal / newCount;
       const cleanNewAvg = Number.isInteger(newAvg) ? newAvg : Number(newAvg.toFixed(2));
       return {
-        text: `Μια ομάδα 5 παιδιών έχει μέσο όρο ηλικίας ${avgAge} έτη. Στην ομάδα προστίθεται ένα νέο παιδί ηλικίας ${newChildAge} ετών. Ποιος είναι ο νέος μέσος όρος ηλικίας της ομάδας (6 παιδιά);`,
-        tableData: { col1: 'Αρχική Ομάδα', col2: 'Νέο Παιδί', r1: [`5 παιδιά (Μ.Ο. ${avgAge})`, `${newChildAge} ετών`], r2: [`Σύνολο: ${totalAge} έτη`, 'Νέο πλήθος: 6'] },
-        correctVal: cleanNewAvg,
-        correctStr: formatNum(cleanNewAvg),
-        explanation: `Το αρχικό άθροισμα ηλικιών των 5 παιδιών είναι: 5 · ${avgAge} ＝ ${totalAge} έτη. Με το νέο παιδί, το νέο άθροισμα γίνεται: ${totalAge} ＋ ${newChildAge} ＝ ${newTotal} έτη. Διαιρούμε με το νέο πλήθος των παιδιών (6): ${newTotal} : 6 ＝ ${formatNum(cleanNewAvg)} έτη.`
+        prompt: `Μια ομάδα 5 παιδιών έχει μέσο όρο ηλικίας ${avgAge} έτη. Στην ομάδα προστίθεται ένα νέο παιδί ηλικίας ${newChildAge} ετών. Ποιος είναι ο νέος μέσος όρος ηλικίας της ομάδας (6 παιδιά);`,
+        unit: 'έτη',
+        correctVal: formatNum(cleanNewAvg),
+        correctText: `${formatNum(cleanNewAvg)} έτη`,
+        tableData: [
+          { item: 'Αρχικό άθροισμα ηλικιών (5 παιδιά)', formula: `5 · ${avgAge}`, val: `${totalAge} έτη` },
+          { item: 'Νέο συνολικό άθροισμα (6 παιδιά)', formula: `${totalAge} ＋ ${newChildAge}`, val: `${newTotal} έτη` },
+          { item: 'Νέος μέσος όρος', formula: `${newTotal} : 6`, val: `${formatNum(cleanNewAvg)} έτη` }
+        ],
+        explain: `Το αρχικό άθροισμα ηλικιών των 5 παιδιών είναι: 5 · ${avgAge} ＝ ${totalAge} έτη. Με το νέο παιδί, το νέο άθροισμα γίνεται: ${totalAge} ＋ ${newChildAge} ＝ ${newTotal} έτη. Διαιρούμε με το νέο πλήθος των παιδιών (6): ${newTotal} : 6 ＝ ${formatNum(cleanNewAvg)} έτη.`,
+        distractors: [`${formatNum(cleanNewAvg + 0.5)} έτη`, `${formatNum(Math.max(1, cleanNewAvg - 0.5))} έτη`, `${formatNum(cleanNewAvg + 1)} έτη`]
       };
     }
   },
   {
     id: 'p_avg_hard_3',
+    title: 'Εύρεση Τιμής Τελευταίας Ημέρας Εβδομάδας',
+    unit: '°C',
     generate: () => {
       const days = 7;
       const targetWeeklyAvg = randInt(15, 20);
@@ -265,712 +223,546 @@ const HARD_PROBLEMS_POOL = [
       const first6Sum = totalSum - randInt(12, 22);
       const lastDayTemp = totalSum - first6Sum;
       return {
-        text: `Σε μια πόλη η μέση θερμοκρασία μιας εβδομάδας (7 ημέρες) ήταν ${targetWeeklyAvg}°C. Το άθροισμα των θερμοκρασιών των πρώτων 6 ημερών ήταν ${first6Sum}°C. Ποια ήταν η θερμοκρασία (°C) την 7η ημέρα;`,
-        tableData: { col1: 'Εβδομάδα (7 ημ.)', col2: 'Πρώτες 6 ημέρες', r1: [`Μ.Ο. ＝ ${targetWeeklyAvg}°C`, `Σύνολο ＝ ${first6Sum}°C`], r2: [`Σύνολο: ${totalSum}°C`, '7η ημέρα: χ'] },
-        correctVal: lastDayTemp,
-        correctStr: String(lastDayTemp),
-        explanation: `Το συνολικό άθροισμα των 7 ημερών είναι: 7 · ${targetWeeklyAvg} ＝ ${totalSum}°C. Αφαιρούμε το άθροισμα των πρώτων 6 ημερών: ${totalSum} － ${first6Sum} ＝ ${lastDayTemp}°C.`
+        prompt: `Σε μια πόλη η μέση θερμοκρασία μιας εβδομάδας (7 ημέρες) ήταν ${targetWeeklyAvg}°C. Το άθροισμα των θερμοκρασιών των πρώτων 6 ημερών ήταν ${first6Sum}°C. Ποια ήταν η θερμοκρασία (°C) την 7η ημέρα;`,
+        unit: '°C',
+        correctVal: String(lastDayTemp),
+        correctText: `${lastDayTemp} °C`,
+        tableData: [
+          { item: 'Συνολικό άθροισμα 7 ημερών', formula: `7 · ${targetWeeklyAvg}`, val: `${totalSum} °C` },
+          { item: 'Άθροισμα πρώτων 6 ημερών', formula: `${first6Sum} °C`, val: `${first6Sum} °C` },
+          { item: 'Θερμοκρασία 7ης ημέρας', formula: `${totalSum} － ${first6Sum}`, val: `${lastDayTemp} °C` }
+        ],
+        explain: `Το συνολικό άθροισμα των 7 ημερών είναι: 7 · ${targetWeeklyAvg} ＝ ${totalSum}°C. Αφαιρούμε το άθροισμα των πρώτων 6 ημερών: ${totalSum} － ${first6Sum} ＝ ${lastDayTemp}°C.`,
+        distractors: [`${lastDayTemp + 2} °C`, `${lastDayTemp - 2} °C`, `${lastDayTemp + 3} °C`]
       };
     }
   },
   {
     id: 'p_avg_hard_4',
+    title: 'Εύρεση Μισθού Τέταρτου Εργαζομένου',
+    unit: '€',
     generate: () => {
       const workers = 4;
-      const avgSalary = randInt(85, 110) * 10; // π.χ. 950 €
+      const avgSalary = randInt(85, 110) * 10;
       const totalSalaries = workers * avgSalary;
       const s1 = avgSalary - 100;
       const s2 = avgSalary + 150;
       const s3 = avgSalary - 50;
       const s4 = totalSalaries - (s1 + s2 + s3);
       return {
-        text: `Τέσσερις εργαζόμενοι έχουν μέσο μηνιαίο μισθό ${avgSalary} €. Αν οι τρεις πρώτοι αμείβονται με ${s1} €, ${s2} € και ${s3} €, ποιος είναι ο μισθός του τέταρτου εργαζομένου σε €;`,
-        tableData: { col1: 'Εργαζόμενοι 1, 2, 3', col2: 'Μέσος Μισθός (4)', r1: [`${s1} €, ${s2} €, ${s3} €`, `${avgSalary} €`], r2: [`Σύνολο 3: ${s1 + s2 + s3} €`, 'Σύνολο 4: ' + totalSalaries + ' €'] },
-        correctVal: s4,
-        correctStr: String(s4),
-        explanation: `Το σύνολο των μισθών των 4 εργαζομένων είναι: 4 · ${avgSalary} ＝ ${totalSalaries} €. Το άθροισμα των τριών πρώτων είναι: ${s1} ＋ ${s2} ＋ ${s3} ＝ ${s1 + s2 + s3} €. Άρα ο 4ος παίρνει: ${totalSalaries} － ${s1 + s2 + s3} ＝ ${s4} €.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_hard_5',
-    generate: () => {
-      const matches = 6;
-      const avgGoals = 2.5;
-      const totalGoals = matches * avgGoals; // 15
-      const first5 = 12;
-      const lastMatchGoals = totalGoals - first5; // 3
-      return {
-        text: `Σε ένα πρωτάθλημα 6 αγώνων, μια ομάδα είχε μέσο όρο επίθεσης ${formatNum(avgGoals)} γκολ ανά αγώνα. Αν στους πρώτους 5 αγώνες σημείωσε συνολικά ${first5} γκολ, πόσα γκολ πέτυχε στον 6ο αγώνα;`,
-        tableData: { col1: '6 Αγώνες', col2: 'Πρώτοι 5 αγώνες', r1: [`Μ.Ο. ＝ ${formatNum(avgGoals)} γκολ`, `${first5} γκολ συνολικά`], r2: [`Σύνολο: ${totalGoals} γκολ`, '6ος αγώνας: χ'] },
-        correctVal: lastMatchGoals,
-        correctStr: String(lastMatchGoals),
-        explanation: `Τα συνολικά γκολ στους 6 αγώνες είναι: 6 · ${formatNum(avgGoals)} ＝ ${totalGoals} γκολ. Αφαιρούμε τα γκολ των 5 πρώτων αγώνων: ${totalGoals} － ${first5} ＝ ${lastMatchGoals} γκολ.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_hard_6',
-    generate: () => {
-      const n1 = randInt(12, 16);
-      const n2 = randInt(18, 22);
-      const n3 = randInt(24, 30);
-      const sum = n1 + n2 + n3;
-      const avg = sum / 3;
-      const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
-      return {
-        text: `Τρεις αριθμοί έχουν μέσο όρο ${formatNum(cleanAvg)}. Αν οι δύο πρώτοι αριθμοί είναι το ${n1} και το ${n2}, ποιος είναι ο τρίτος αριθμός;`,
-        tableData: { col1: 'Αριθμοί 1 & 2', col2: 'Μέσος Όρος (3)', r1: [`${n1} και ${n2}`, `${formatNum(cleanAvg)}`], r2: [`Άθροισμα: ${n1 + n2}`, '3 αριθμοί'] },
-        correctVal: n3,
-        correctStr: String(n3),
-        explanation: `Το άθροισμα και των τριών αριθμών είναι: 3 · ${formatNum(cleanAvg)} ＝ ${sum}. Αφαιρούμε τους δύο γνωστούς αριθμούς: ${sum} － (${n1} ＋ ${n2}) ＝ ${sum} － ${n1 + n2} ＝ ${n3}.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_hard_7',
-    generate: () => {
-      const items = 5;
-      const avgWeight = 2.4; // kg
-      const totalWeight = items * avgWeight; // 12 kg
-      const fourWeight = 9.8;
-      const fifthWeight = Number((totalWeight - fourWeight).toFixed(2));
-      return {
-        text: `Το μέσο βάρος 5 δεμάτων είναι ${formatNum(avgWeight)} kg. Αν τα 4 από αυτά ζυγίζουν συνολικά ${formatNum(fourWeight)} kg, πόσα kg ζυγίζει το πέμπτο δέμα;`,
-        tableData: { col1: '5 Δέματα', col2: '4 Δέματα', r1: [`Μ.Ο. ＝ ${formatNum(avgWeight)} kg`, `Σύνολο ＝ ${formatNum(fourWeight)} kg`], r2: [`Σύνολο 5: ${formatNum(totalWeight)} kg`, '5ο δέμα: χ'] },
-        correctVal: fifthWeight,
-        correctStr: formatNum(fifthWeight),
-        explanation: `Το συνολικό βάρος των 5 δεμάτων είναι: 5 · ${formatNum(avgWeight)} ＝ ${formatNum(totalWeight)} kg. Αφαιρούμε το βάρος των υπόλοιπων 4: ${formatNum(totalWeight)} － ${formatNum(fourWeight)} ＝ ${formatNum(fifthWeight)} kg.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_hard_8',
-    generate: () => {
-      const students = 10;
-      const avgBooks = 4;
-      const initialTotal = students * avgBooks; // 40
-      const extraBooks = 10;
-      const newTotal = initialTotal + extraBooks; // 50
-      const newAvg = newTotal / students; // 5
-      return {
-        text: `Σε ένα τμήμα 10 μαθητών κάθε παιδί διάβασε κατά μέσο όρο ${avgBooks} βιβλία. Αν η βιβλιοθήκη δωρίσει άλλα ${extraBooks} βιβλία που διαβάστηκαν όλα από τους μαθητές, ποιος θα είναι ο νέος μέσος όρος βιβλίων ανά μαθητή;`,
-        tableData: { col1: 'Αρχικά Βιβλία', col2: 'Επιπλέον Βιβλία', r1: [`10 μαθ. (Μ.Ο. ${avgBooks})`, `${extraBooks} νέα βιβλία`], r2: [`Σύνολο: ${initialTotal}`, `Νέο σύνολο: ${newTotal}`] },
-        correctVal: newAvg,
-        correctStr: String(newAvg),
-        explanation: `Αρχικά διαβάστηκαν συνολικά: 10 · ${avgBooks} ＝ ${initialTotal} βιβλία. Μαζί με τα νέα βιβλία έχουμε: ${initialTotal} ＋ ${extraBooks} ＝ ${newTotal} βιβλία. Νέος μέσος όρος: ${newTotal} : 10 ＝ ${newAvg} βιβλία ανά μαθητή.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_hard_9',
-    generate: () => {
-      const targetDailyAvg = 30; // km
-      const totalKm = 7 * targetDailyAvg; // 210 km
-      const first6Km = 175;
-      const lastDayKm = totalKm - first6Km; // 35 km
-      return {
-        text: `Ένας ποδηλάτης θέλει να καλύψει σε μια εβδομάδα (7 ημέρες) κατά μέσο όρο ${targetDailyAvg} km την ημέρα. Τις πρώτες 6 ημέρες διένυσε συνολικά ${first6Km} km. Πόσα km πρέπει να διανύσει την 7η ημέρα;`,
-        tableData: { col1: 'Στόχος Εβδομάδας', col2: 'Πρώτες 6 ημέρες', r1: [`Μ.Ο. ＝ ${targetDailyAvg} km/ημ.`, `${first6Km} km συνολικά`], r2: [`Σύνολο: ${totalKm} km`, '7η ημέρα: χ'] },
-        correctVal: lastDayKm,
-        correctStr: String(lastDayKm),
-        explanation: `Συνολικά χιλιόμετρα που απαιτούνται στις 7 ημέρες: 7 · ${targetDailyAvg} ＝ ${totalKm} km. Την 7η ημέρα πρέπει να καλύψει: ${totalKm} － ${first6Km} ＝ ${lastDayKm} km.`
-      };
-    }
-  },
-  {
-    id: 'p_avg_hard_10',
-    generate: () => {
-      const count = 4;
-      const avg = 25;
-      const total = count * avg; // 100
-      const a = 20;
-      const b = 30;
-      const c = 15;
-      const d = total - (a + b + c); // 35
-      return {
-        text: `Ο μέσος όρος τεσσάρων αριθμών είναι ${avg}. Αν οι τρεις αριθμοί είναι ${a}, ${b} και ${c}, ποιος είναι ο τέταρτος αριθμός;`,
-        tableData: { col1: 'Τρεις Αριθμοί', col2: 'Μέσος Όρος (4)', r1: [`${a}, ${b}, ${c}`, `${avg}`], r2: [`Άθροισμα: ${a + b + c}`, '4 αριθμοί'] },
-        correctVal: d,
-        correctStr: String(d),
-        explanation: `Το άθροισμα και των τεσσάρων αριθμών είναι: 4 · ${avg} ＝ ${total}. Το άθροισμα των τριών γνωστών είναι: ${a} ＋ ${b} ＋ ${c} ＝ ${a + b + c}. Ο τέταρτος αριθμός είναι: ${total} － ${a + b + c} ＝ ${d}.`
+        prompt: `Τέσσερις εργαζόμενοι έχουν μέσο μηνιαίο μισθό ${avgSalary} €. Αν οι τρεις πρώτοι αμείβονται με ${s1} €, ${s2} € και ${s3} €, ποιος είναι ο μισθός του τέταρτου εργαζομένου σε €;`,
+        unit: '€',
+        correctVal: String(s4),
+        correctText: `${s4} €`,
+        tableData: [
+          { item: 'Συνολικό ποσό 4 μισθών', formula: `4 · ${avgSalary}`, val: `${totalSalaries} €` },
+          { item: 'Άθροισμα 3 γνωστών μισθών', formula: `${s1} ＋ ${s2} ＋ ${s3}`, val: `${s1 + s2 + s3} €` },
+          { item: 'Μισθός 4ου εργαζομένου', formula: `${totalSalaries} － ${s1 + s2 + s3}`, val: `${s4} €` }
+        ],
+        explain: `Το σύνολο των μισθών των 4 εργαζομένων είναι: 4 · ${avgSalary} ＝ ${totalSalaries} €. Το άθροισμα των τριών πρώτων είναι: ${s1} ＋ ${s2} ＋ ${s3} ＝ ${s1 + s2 + s3} €. Άρα ο 4ος παίρνει: ${totalSalaries} － ${s1 + s2 + s3} ＝ ${s4} €.`,
+        distractors: [`${s4 + 100} €`, `${s4 - 100} €`, `${s4 + 50} €`]
       };
     }
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
 function generateQuestions() {
-  const qList = [];
+  // Q1: Input - Βασικός υπολογισμός μέσου όρου 3 ακέραιων τιμών
+  const q1A = randInt(10, 18);
+  const q1B = randInt(12, 22);
+  const q1C = randInt(14, 24);
+  const q1Sum = q1A + q1B + q1C;
+  const q1Avg = q1Sum / 3;
+  const q1CleanAvg = Number.isInteger(q1Avg) ? q1Avg : Number(q1Avg.toFixed(2));
 
-  // Q1 (Input - Decimal): Απλός υπολογισμός μέσου όρου 3 ακέραιων τιμών
-  {
-    const a = randInt(10, 18);
-    const b = randInt(12, 22);
-    const c = randInt(14, 24);
-    const sum = a + b + c;
-    const avg = sum / 3;
-    const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
+  // Q2: MCQ - Μαθηματικός τύπος και ορισμός μέσου όρου
+  const q2Correct = 'Διαιρούμε το άθροισμα όλων των τιμών με το πλήθος των τιμών';
+  const q2Options = shuffle([
+    q2Correct,
+    'Πολλαπλασιάζουμε τη μικρότερη τιμή με τη μεγαλύτερη',
+    'Αφαιρούμε τη μικρότερη τιμή από το άθροισμα των υπόλοιπων',
+    'Διαιρούμε πάντα με το 100 όπως στα ποσοστά'
+  ]);
 
-    qList.push({
-      id: 1,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 1 • ΒΑΣΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΜΕΣΟΥ ΟΡΟΥ',
-      instruction: 'Υπολογίστε τον μέσο όρο των παρακάτω αριθμών:',
-      prompt: `Ποιος είναι ο μέσος όρος των αριθμών ${a}, ${b} και ${c};`,
-      correctVal: cleanAvg,
-      correctStr: formatNum(cleanAvg),
-      explanation: `Προσθέτουμε όλους τους αριθμούς: ${a} ＋ ${b} ＋ ${c} ＝ ${sum}. Διαιρούμε με το πλήθος τους (3): ${sum} : 3 ＝ ${formatNum(cleanAvg)}.`
-    });
-  }
+  // Q3: Input - Μέσος όρος με την παρουσία μηδενικής τιμής
+  const q3A = randInt(12, 18);
+  const q3B = 0;
+  const q3C = randInt(16, 24);
+  const q3D = randInt(14, 22);
+  const q3Sum = q3A + q3B + q3C + q3D;
+  const q3Avg = q3Sum / 4;
+  const q3CleanAvg = Number.isInteger(q3Avg) ? q3Avg : Number(q3Avg.toFixed(2));
 
-  // Q2 (MCQ): Μαθηματικός τύπος και ορισμός μέσου όρου
-  {
-    const correctDef = 'Διαιρούμε το άθροισμα όλων των τιμών με το πλήθος των τιμών';
-    const fake1 = 'Πολλαπλασιάζουμε τη μικρότερη τιμή με τη μεγαλύτερη';
-    const fake2 = 'Αφαιρούμε τη μικρότερη τιμή από το άθροισμα των υπόλοιπων';
-    const fake3 = 'Διαιρούμε πάντα με το 100 όπως στα ποσοστά';
+  // Q4: MCQ - Ιδιότητα μέσου όρου (εύρος τιμών)
+  const q4Min = 12;
+  const q4Max = 28;
+  const q4Correct = `Βρίσκεται πάντοτε ανάμεσα στο ${q4Min} και στο ${q4Max}`;
+  const q4Options = shuffle([
+    q4Correct,
+    `Είναι πάντοτε μεγαλύτερος από το ${q4Max}`,
+    'Είναι πάντοτε ίσος με το μηδέν',
+    `Είναι πάντοτε μικρότερος από το ${q4Min}`
+  ]);
 
-    const options = [
-      { text: correctDef, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
+  // Q5: Input - Αντίστροφος υπολογισμός συνολικού αθροίσματος
+  const q5Count = randInt(4, 8);
+  const q5Avg = randInt(12, 25);
+  const q5Total = q5Count * q5Avg;
 
-    qList.push({
-      id: 2,
+  // Q6: MCQ - Μέσος όρος ίσων τιμών
+  const q6Val = randInt(14, 28);
+  const q6Options = shuffle([
+    `${q6Val}`,
+    `${q6Val * 2}`,
+    `${q6Val / 2}`,
+    `${q6Val + 2}`
+  ]);
+
+  // Q7: Standard Problem (Input)
+  const spIndex1 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q7Data = STANDARD_PROBLEMS_POOL[spIndex1].generate();
+
+  // Q8: Standard Problem (MCQ)
+  let spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  while (spIndex2 === spIndex1) spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q8Data = STANDARD_PROBLEMS_POOL[spIndex2].generate();
+  const q8Options = shuffle([
+    ...new Set([
+      q8Data.correctText,
+      ...q8Data.distractors
+    ])
+  ]);
+
+  // Q9: Hard Problem (Input)
+  const hpIndex1 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q9Data = HARD_PROBLEMS_POOL[hpIndex1].generate();
+
+  // Q10: Hard Problem (MCQ)
+  let hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  while (hpIndex2 === hpIndex1) hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q10Data = HARD_PROBLEMS_POOL[hpIndex2].generate();
+  const q10Options = shuffle([
+    ...new Set([
+      q10Data.correctText,
+      ...q10Data.distractors
+    ])
+  ]);
+
+  return [
+    {
+      id: 'q1',
+      type: 'input',
+      inputType: 'decimal',
+      title: 'Βασικός Υπολογισμός Μέσου Όρου',
+      prompt: `Ποιος είναι ο μέσος όρος των αριθμών ${q1A}, ${q1B} και ${q1C};`,
+      correct: formatNum(q1CleanAvg),
+      explain: `Προσθέτουμε όλους τους αριθμούς: ${q1A} ＋ ${q1B} ＋ ${q1C} ＝ ${q1Sum}. Διαιρούμε με το πλήθος τους (3): ${q1Sum} : 3 ＝ ${formatNum(q1CleanAvg)}.`
+    },
+    {
+      id: 'q2',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 2 • ΜΑΘΗΜΑΤΙΚΟΣ ΟΡΙΣΜΟΣ ΜΕΣΗΣ ΤΙΜΗΣ',
-      instruction: 'Επιλέξτε τον σωστό κανόνα υπολογισμού:',
+      title: 'Μαθηματικός Ορισμός Μέσης Τιμής',
       prompt: 'Πώς υπολογίζουμε τον μέσο όρο (μέση τιμή) μιας ομάδας δεδομένων;',
-      options,
-      correctText: correctDef,
-      explanation: 'Ο μέσος όρος ισούται πάντοτε με το άθροισμα όλων των τιμών διαιρεμένο με το πλήθος των τιμών.'
-    });
-  }
-
-  // Q3 (Input - Decimal): Μέσος όρος με την παρουσία μηδενικής τιμής (παγίδα)
-  {
-    const a = randInt(12, 18);
-    const b = 0;
-    const c = randInt(16, 24);
-    const d = randInt(14, 22);
-    const sum = a + b + c + d;
-    const avg = sum / 4;
-    const cleanAvg = Number.isInteger(avg) ? avg : Number(avg.toFixed(2));
-
-    qList.push({
-      id: 3,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 3 • ΜΕΣΟΣ ΟΡΟΣ ΜΕ ΜΗΔΕΝΙΚΗ ΤΙΜΗ',
-      instruction: 'Προσέξτε το πλήθος των τιμών και υπολογίστε τον μέσο όρο:',
-      prompt: `Βρείτε τον μέσο όρο των τεσσάρων αριθμών: ${a}, ${b}, ${c} και ${d}:`,
-      correctVal: cleanAvg,
-      correctStr: formatNum(cleanAvg),
-      explanation: `Το μηδέν (0) συμμετέχει κανονικά στο πλήθος των τιμών! Άθροισμα: ${a} ＋ ${b} ＋ ${c} ＋ ${d} ＝ ${sum}. Διαιρούμε με το 4: ${sum} : 4 ＝ ${formatNum(cleanAvg)}.`
-    });
-  }
-
-  // Q4 (MCQ): Ιδιότητα μέσου όρου (εύρος τιμών)
-  {
-    const minVal = 12;
-    const maxVal = 28;
-    const correctAns = `Βρίσκεται πάντοτε ανάμεσα στο ${minVal} και στο ${maxVal}`;
-    const fake1 = `Είναι πάντοτε μεγαλύτερος από το ${maxVal}`;
-    const fake2 = `Είναι πάντοτε ίσος με το μηδέν`;
-    const fake3 = `Είναι πάντοτε μικρότερος από το ${minVal}`;
-
-    const options = [
-      { text: correctAns, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 4,
+      options: q2Options,
+      correct: q2Correct,
+      explain: 'Ο μέσος όρος ισούται πάντοτε με το άθροισμα όλων των τιμών διαιρεμένο με το πλήθος των τιμών.'
+    },
+    {
+      id: 'q3',
+      type: 'input',
+      inputType: 'decimal',
+      title: 'Μέσος Όρος με Μηδενική Τιμή',
+      prompt: `Βρείτε τον μέσο όρο των τεσσάρων αριθμών: ${q3A}, ${q3B}, ${q3C} και ${q3D}:`,
+      correct: formatNum(q3CleanAvg),
+      explain: `Το μηδέν (0) συμμετέχει κανονικά στο πλήθος των τιμών! Άθροισμα: ${q3A} ＋ ${q3B} ＋ ${q3C} ＋ ${q3D} ＝ ${q3Sum}. Διαιρούμε με το 4: ${q3Sum} : 4 ＝ ${formatNum(q3CleanAvg)}.`
+    },
+    {
+      id: 'q4',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 4 • ΙΔΙΟΤΗΤΑ ΤΟΥ ΜΕΣΟΥ ΟΡΟΥ',
-      instruction: 'Επιλέξτε τη σωστή μαθηματική πρόταση:',
-      prompt: `Αν σε μια ομάδα αριθμών η μικρότερη τιμή είναι το ${minVal} και η μεγαλύτερη το ${maxVal}, τι ισχύει υποχρεωτικά για τον μέσο όρο;`,
-      options,
-      correctText: correctAns,
-      explanation: `Ο μέσος όρος εκφράζει την εξισορρόπηση των τιμών, επομένως βρίσκεται πάντοτε αυστηρά ανάμεσα στη μικρότερη και τη μεγαλύτερη τιμή των δεδομένων.`
-    });
-  }
-
-  // Q5 (Input - Decimal): Αντίστροφος υπολογισμός συνολικού αθροίσματος
-  {
-    const count = randInt(4, 8);
-    const avg = randInt(12, 25);
-    const total = count * avg;
-
-    qList.push({
-      id: 5,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 5 • ΑΝΤΙΣΤΡΟΦΗ ΕΥΡΕΣΗ ΑΘΡΟΙΣΜΑΤΟΣ',
-      instruction: 'Υπολογίστε το συνολικό άθροισμα όλων των τιμών:',
-      prompt: `Ο μέσος όρος ${count} αριθμών είναι ${avg}. Ποιο είναι το άθροισμα αυτών των ${count} αριθμών;`,
-      correctVal: total,
-      correctStr: String(total),
-      explanation: `Εφόσον Μέσος Όρος ＝ Άθροισμα : Πλήθος, ισχύει αντίστροφα: Άθροισμα ＝ Μέσος Όρος · Πλήθος ＝ ${avg} · ${count} ＝ ${total}.`
-    });
-  }
-
-  // Q6 (MCQ): Υπολογισμός μέσου όρου δύο ίσων τιμών
-  {
-    const sameVal = randInt(14, 28);
-    const correctValStr = `${sameVal}`;
-    const fake1 = `${sameVal * 2}`;
-    const fake2 = `${sameVal / 2}`;
-    const fake3 = `${sameVal + 2}`;
-
-    const options = [
-      { text: correctValStr, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 6,
+      title: 'Ιδιότητα του Μέσου Όρου',
+      prompt: `Αν σε μια ομάδα αριθμών η μικρότερη τιμή είναι το ${q4Min} και η μεγαλύτερη το ${q4Max}, τι ισχύει υποχρεωτικά για τον μέσο όρο;`,
+      options: q4Options,
+      correct: q4Correct,
+      explain: 'Ο μέσος όρος εκφράζει την εξισορρόπηση των τιμών, επομένως βρίσκεται πάντοτε αυστηρά ανάμεσα στη μικρότερη και τη μεγαλύτερη τιμή των δεδομένων.'
+    },
+    {
+      id: 'q5',
+      type: 'input',
+      inputType: 'number',
+      title: 'Αντίστροφη Εύρεση Αθροίσματος',
+      prompt: `Ο μέσος όρος ${q5Count} αριθμών είναι ${q5Avg}. Ποιο είναι το άθροισμα αυτών των ${q5Count} αριθμών;`,
+      correct: String(q5Total),
+      explain: `Εφόσον Μέσος Όρος ＝ Άθροισμα : Πλήθος, ισχύει αντίστροφα: Άθροισμα ＝ Μέσος Όρος · Πλήθος ＝ ${q5Avg} · ${q5Count} ＝ ${q5Total}.`
+    },
+    {
+      id: 'q6',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 6 • ΜΕΣΟΣ ΟΡΟΣ ΙΣΩΝ ΤΙΜΩΝ',
-      instruction: 'Επιλέξτε τη σωστή τιμή:',
-      prompt: `Αν όλες οι τιμές μιας ομάδας είναι ίσες με ${sameVal}, ποιος είναι ο μέσος όρος τους;`,
-      options,
-      correctText: correctValStr,
-      explanation: `Όταν όλες οι τιμές είναι ίσες μεταξύ τους (π.χ. (${sameVal} ＋ ${sameVal}) : 2 ＝ ${sameVal}), ο μέσος όρος ισούται πάντοτε με την ίδια την τιμή: ${sameVal}.`
-    });
-  }
-
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
-  {
-    const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const stdProb1 = shuffledStd[0].generate();
-    const stdProb2 = shuffledStd[1].generate();
-
-    // Q7 (Input - Decimal)
-    qList.push({
-      id: 7,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕΣΟΥ ΟΡΟΥ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: stdProb1.text,
-      tableData: stdProb1.tableData,
-      correctVal: stdProb1.correctVal,
-      correctStr: stdProb1.correctStr,
-      explanation: stdProb1.explanation
-    });
-
-    // Q8 (MCQ)
-    const val8 = stdProb2.correctVal;
-    const fake8A = typeof val8 === 'number' ? formatNum(val8 + randInt(2, 5)) : '0';
-    const fake8B = typeof val8 === 'number' ? formatNum(Math.max(1, val8 - randInt(1, 4))) : '0';
-    const fake8C = typeof val8 === 'number' ? formatNum(val8 * 1.5) : '0';
-
-    const optionsQ8 = [
-      { text: stdProb2.correctStr, isCorrect: true },
-      { text: String(fake8A), isCorrect: false },
-      { text: String(fake8B), isCorrect: false },
-      { text: String(fake8C), isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 8,
+      title: 'Μέσος Όρος Ίσων Τιμών',
+      prompt: `Αν όλες οι τιμές μιας ομάδας είναι ίσες με ${q6Val}, ποιος είναι ο μέσος όρος τους;`,
+      options: q6Options,
+      correct: `${q6Val}`,
+      explain: `Όταν όλες οι τιμές είναι ίσες μεταξύ τους (π.χ. (${q6Val} ＋ ${q6Val}) : 2 ＝ ${q6Val}), ο μέσος όρος ισούται πάντοτε με την ίδια την τιμή: ${q6Val}.`
+    },
+    {
+      id: 'q7',
+      type: 'input',
+      inputType: 'decimal',
+      title: `Πρόβλημα: ${q7Data.title}`,
+      prompt: q7Data.prompt,
+      correct: q7Data.correctVal,
+      tableData: q7Data.tableData,
+      explain: q7Data.explain
+    },
+    {
+      id: 'q8',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΗΣ ΖΩΗΣ',
-      instruction: 'Επιλέξτε τον σωστό μέσο όρο για το πρόβλημα:',
-      prompt: stdProb2.text,
-      tableData: stdProb2.tableData,
-      options: optionsQ8,
-      correctText: stdProb2.correctStr,
-      explanation: stdProb2.explanation
-    });
-  }
-
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
-  {
-    const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const hardProb1 = shuffledHard[0].generate();
-    const hardProb2 = shuffledHard[1].generate();
-
-    // Q9 (Input - Decimal)
-    qList.push({
-      id: 9,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΣΤΟΧΟΥ ΜΕΣΟΥ ΟΡΟΥ',
-      instruction: 'Υπολογίστε την άγνωστη τιμή που απαιτείται:',
-      prompt: hardProb1.text,
-      tableData: hardProb1.tableData,
-      correctVal: hardProb1.correctVal,
-      correctStr: hardProb1.correctStr,
-      explanation: hardProb1.explanation
-    });
-
-    // Q10 (MCQ Αυξημένης Δυσκολίας)
-    const val10 = hardProb2.correctVal;
-    const fake10A = typeof val10 === 'number' ? formatNum(val10 + randInt(3, 7)) : '0';
-    const fake10B = typeof val10 === 'number' ? formatNum(Math.max(1, val10 - randInt(2, 5))) : '0';
-    const fake10C = typeof val10 === 'number' ? formatNum(val10 * 1.25) : '0';
-
-    const optionsQ10 = [
-      { text: hardProb2.correctStr, isCorrect: true },
-      { text: String(fake10A), isCorrect: false },
-      { text: String(fake10B), isCorrect: false },
-      { text: String(fake10C), isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 10,
+      title: `Πρόβλημα: ${q8Data.title}`,
+      prompt: q8Data.prompt,
+      options: q8Options,
+      correct: q8Data.correctText,
+      tableData: q8Data.tableData,
+      explain: q8Data.explain
+    },
+    {
+      id: 'q9',
+      type: 'input',
+      inputType: 'decimal',
+      title: `Σύνθετο Πρόβλημα: ${q9Data.title}`,
+      prompt: q9Data.prompt,
+      correct: q9Data.correctVal,
+      tableData: q9Data.tableData,
+      explain: q9Data.explain
+    },
+    {
+      id: 'q10',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕΤΑΒΟΛΗΣ ΜΕΣΟΥ ΟΡΟΥ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το σύνθετο πρόβλημα:',
-      prompt: hardProb2.text,
-      tableData: hardProb2.tableData,
-      options: optionsQ10,
-      correctText: hardProb2.correctStr,
-      explanation: hardProb2.explanation
-    });
-  }
-
-  return qList;
+      title: `Σύνθετο Πρόβλημα: ${q10Data.title}`,
+      prompt: q10Data.prompt,
+      options: q10Options,
+      correct: q10Data.correctText,
+      tableData: q10Data.tableData,
+      explain: q10Data.explain
+    }
+  ];
 }
+
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
 
 export default function MesosOrosExercisesPage() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
   const loadNewSet = useCallback(() => {
-    const q = generateQuestions();
-    setQuestions(q);
-    setAnswers({});
-    setIsSubmitted(false);
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = '';
+    });
+    setAnswers(initialAnswers);
+    setSubmitted(false);
     setScore(0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
-  const handleInputChange = (fieldKey, rawValue) => {
-    if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
-    if (sanitized.length > 10) {
-      sanitized = sanitized.slice(0, 10);
-    }
-    setAnswers((prev) => ({
-      ...prev,
-      [fieldKey]: sanitized
-    }));
-  };
-
-  // Χειρισμος MCQ
-  const handleSelectMCQ = (qId, optionText) => {
-    if (isSubmitted) return;
-    setAnswers((prev) => ({
-      ...prev,
-      [`q_${qId}`]: optionText
-    }));
-  };
-
-  // Ελεγχος Απαντησεων
-  const handleCheckAnswers = () => {
-    let currentScore = 0;
-
-    questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq
+  const handleAnswerChange = (id, rawValue, type) => {
+    if (submitted) return;
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
       }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
+  };
+
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
+    if (q.type === 'input') {
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/[%°€]/g, '').trim().toLowerCase();
+      const cleanTarget = String(q.correct).replace(/\./g, ',').replace(/\s+/g, '').replace(/[%°€]/g, '').trim().toLowerCase();
+
+      if (cleanUser === cleanTarget) return true;
+
+      if (q.inputType === 'decimal') {
+        const numUser = parseFloat(cleanUser.replace(',', '.'));
+        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
+      }
+      return false;
+    }
+    if (q.type === 'mcq') {
+      return userVal === q.correct;
+    }
+    return false;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (submitted || questions.length === 0) return;
+
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(currentScore);
-    setIsSubmitted(true);
+    setScore(total);
+    setSubmitted(true);
   };
+
+  const getCardStyle = (q) => {
+    if (!submitted) return 'bg-white border-slate-200 shadow-sm';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
+  };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
       title="Ασκήσεις: Μέσος Όρος (Μέση Τιμή) - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="10 απαιτητικές ασκήσεις και προβλήματα στον μέσο όρο, τη μέση τιμή, αντίστροφους υπολογισμούς στόχου και επεξεργασία δεδομένων για τη ΣΤ' Δημοτικού."
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στον μέσο όρο και σε αντίστροφους υπολογισμούς στόχου για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
+      showAds={false}
       hideFooter={true}
       actionButton={
         <Link
           href="/st-dimotikou/58-mesos-oros"
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
-        {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 58 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
+                Διαδραστικές Ασκήσεις: Ο Μέσος Όρος (Μέση Τιμή)
+              </h1>
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στον υπολογισμό του μέσου όρου, στη διαχείριση μηδενικών τιμών και σε απαιτητικούς αντίστροφους υπολογισμούς στόχου!
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Ασκήσεις &amp; Προβλήματα: Ο Μέσος Όρος
-            </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες που περιλαμβάνουν 4 ρεαλιστικά προβλήματα (2 βασικά και 2 αυξημένης δυσκολίας με στόχο μέσης τιμής). Υπολογίστε τον μέσο όρο και ελέγξτε τις απαντήσεις σας.
-            </p>
-          </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
-            <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
-            </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6 sm:space-y-8">
-          {questions.map((q, idx) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
-
-            return (
-              <article
-                key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-5 sm:p-8 2xl:p-10 shadow-sm transition-all ${
-                  isSubmitted
-                    ? isCorrect
-                      ? 'border-emerald-400 bg-emerald-50/20'
-                      : 'border-rose-400 bg-rose-50/20'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
-                    {toCleanUppercase(q.title)}
-                  </span>
-                  {isSubmitted && (
-                    <span
-                      className={`text-xs 2xl:text-sm font-bold px-3 py-1 rounded-full ${
-                        isCorrect
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
-                    </span>
-                  )}
-                </div>
-
-                {/* Εκφωνηση */}
-                <div className="space-y-3 mb-5">
-                  {q.instruction && (
-                    <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
-                      {q.instruction}
-                    </p>
-                  )}
-                  <p className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed">
-                    {q.prompt}
-                  </p>
-
-                  {/* Πινακας Δεδομενων (αν υπαρχει) */}
-                  {q.tableData && (
-                    <div className="inline-block max-w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 shadow-inner my-2 font-mono text-xs sm:text-sm 2xl:text-base">
-                      <div className="grid grid-cols-2 gap-3 sm:gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
-                        <span className="bg-blue-100/60 px-2 py-0.5 rounded-lg text-blue-900 break-words">{q.tableData.col1}</span>
-                        <span className="bg-emerald-100/60 px-2 py-0.5 rounded-lg text-emerald-900 break-words">{q.tableData.col2}</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-2 text-center font-bold text-slate-800">
-                        <span>{q.tableData.r1[0]}</span>
-                        <span className="text-indigo-700 font-bold">{q.tableData.r1[1]}</span>
-                        <span>{q.tableData.r2[0]}</span>
-                        <span className="text-amber-600 font-black">{q.tableData.r2[1]}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Περιοχη Απαντησης */}
-                <div className="py-2">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
-                    <div className="flex flex-wrap items-center gap-3">
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        maxLength={10}
-                        disabled={isSubmitted}
-                        placeholder="Απάντηση..."
-                        value={answers[`q_${q.id}`] || ''}
-                        onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
-                      />
-                      <span className="text-xs 2xl:text-sm text-slate-500">
-                        (Ακέραιος η δεκαδικός με κόμμα)
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                >
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
                       </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
-                  {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
-                      {q.options.map((opt, oIdx) => {
-                        const isSelected = answers[`q_${q.id}`] === opt.text;
-                        return (
-                          <button
-                            key={`opt-${q.id}-${oIdx}`}
-                            type="button"
-                            disabled={isSubmitted}
-                            onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                                : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                            } disabled:cursor-not-allowed`}
-                          >
-                            <span className="break-words whitespace-normal leading-snug flex-1">
-                              {opt.text}
-                            </span>
-                            <span
-                              className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center text-xs ${
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-3">
+                      {q.prompt}
+                    </p>
+
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
-                                  ? 'border-white bg-white text-blue-600 font-bold'
-                                  : 'border-slate-400 bg-transparent'
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                               }`}
                             >
-                              {isSelected ? '●' : ''}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
 
-                </div>
-
-                {/* Feedback μετα την υποβολη */}
-                {isSubmitted && (
-                  <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-1.5 ${
-                      isCorrect
-                        ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
-                        : 'bg-rose-100/60 border-rose-300 text-rose-950'
-                    }`}
-                  >
-                    <div className="font-bold flex items-center gap-1.5">
-                      <span>{isCorrect ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Επεξήγηση:'}</span>
-                    </div>
-                    <div>{q.explanation}</div>
-                    {!isCorrect && (
-                      <div className="font-semibold pt-1 text-slate-800">
-                        Σωστή απάντηση:{' '}
-                        <span className="font-mono font-bold text-blue-900">
-                          {q.correctStr || q.correctText}
-                        </span>
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          key={`input-${q.id}`}
+                          autoComplete="off"
+                          spellCheck="false"
+                          type="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.inputType === 'decimal' ? 'π.χ. 16,5' : 'Απάντηση...'}
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
                       </div>
                     )}
                   </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
 
-      </div>
-
-      {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
-          
-          <div className="flex items-center gap-4 sm:gap-8">
-            <div>
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
-              </span>
-            </div>
-
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          <div className="flex items-center gap-3">
-            {!isSubmitted ? (
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-4">
               <button
-                type="button"
-                onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
+                type="submit"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                <span className="text-xl">🎯</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
-            ) : (
+            </div>
+          )}
+        </form>
+      </div>
+
+      {/* FIXED BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
+          
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+            </div>
+            {submitted && (
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* GUIDANCE OR RESTART */}
+          <div className="flex items-center gap-3">
+            {submitted ? (
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
+            ) : (
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
+              </p>
             )}
           </div>
 
         </div>
-      </footer>
+      </div>
     </Layout>
   );
 }
