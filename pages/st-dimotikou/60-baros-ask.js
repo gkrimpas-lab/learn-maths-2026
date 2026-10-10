@@ -2,934 +2,745 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import { LAYOUT } from '../../shared/layout-config';
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
-function toCleanUppercase(str) {
-  if (!str) return '';
-  return str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-}
+// ---------------------------------------------------------
+// ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
+// ---------------------------------------------------------
 
-// Τυχαιος ακεραιος στο [min, max]
 function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  const low = Math.ceil(min);
+  const high = Math.floor(max);
+  return Math.floor(Math.random() * (high - low + 1)) + low;
 }
 
-// Τυχαια επιλογη απο πινακα
+function shuffle(array) {
+  if (!Array.isArray(array)) return [];
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
+// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const cleaned = str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+}
+
+// Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός με κόμμα)
 function formatNum(val, decimals = 3) {
-  if (Number.isInteger(val)) return String(val);
-  const rounded = Number(val.toFixed(decimals));
+  if (val === null || val === undefined || isNaN(Number(val))) return '0';
+  if (Number.isInteger(Number(val))) return String(val);
+  const rounded = Number(Number(val).toFixed(decimals));
   return String(rounded).replace('.', ',');
 }
 
-// Δεξαμενη Κανονικων Προβληματων Βαρους (10 διαφορετικα προβληματα)
+// ---------------------------------------------------------
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q7, Q8, Q9, Q10) - "NO-GIVEAWAY" PEDAGOGY
+// ---------------------------------------------------------
+
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_wt_std_1',
+    title: 'Αγορά Αλευριού και Μετατροπή σε Γραμμάρια',
+    unit: 'g',
     generate: () => {
       const bags = randInt(4, 8);
       const bagKg = 2.5;
       const totalKg = bags * bagKg;
       const totalG = totalKg * 1000;
       return {
-        text: `Μια οικογένεια αγόρασε ${bags} σακούλες αλεύρι, βάρους ${formatNum(bagKg)} kg η καθεμία. Πόσα γραμμάρια (g) αλεύρι αγόρασε συνολικά;`,
-        tableData: { col1: 'Σακούλες', col2: 'Βάρος ανά σακούλα', r1: [`${bags} σακούλες`, `${formatNum(bagKg)} kg ＝ ${bagKg * 1000} g`], r2: ['Πολλαπλασιασμός', 'Συνολικό βάρος σε g'] },
-        correctVal: totalG,
-        correctStr: String(totalG),
-        explanation: `Συνολικό βάρος σε κιλά: ${bags} · ${formatNum(bagKg)} ＝ ${formatNum(totalKg)} kg. Μετατρέπουμε σε γραμμάρια πολλαπλασιάζοντας με το 1.000: ${formatNum(totalKg)} · 1.000 ＝ ${totalG} g.`
+        prompt: `Μια οικογένεια αγόρασε ${bags} σακούλες αλεύρι, βάρους ${formatNum(bagKg)} kg η καθεμία. Πόσα γραμμάρια (g) αλεύρι αγόρασε συνολικά;`,
+        unit: 'g',
+        correctVal: String(totalG),
+        correctText: `${totalG} g`,
+        tableData: [
+          { item: 'Βάρος σε κιλά', formula: `${bags} · ${formatNum(bagKg)} kg`, val: `${formatNum(totalKg)} kg` },
+          { item: 'Σχέση μονάδων', formula: '1 kg ＝ 1.000 g', val: '1.000' },
+          { item: 'Συνολικό βάρος σε g', formula: `${formatNum(totalKg)} · 1.000`, val: `${totalG} g` }
+        ],
+        explain: `Συνολικό βάρος σε κιλά: ${bags} · ${formatNum(bagKg)} ＝ ${formatNum(totalKg)} kg. Μετατρέπουμε σε γραμμάρια πολλαπλασιάζοντας με το 1.000: ${formatNum(totalKg)} · 1.000 ＝ ${totalG} g.`,
+        distractors: [`${totalG + 500} g`, `${totalG - 500} g`, `${totalG + 1000} g`]
       };
     }
   },
   {
     id: 'p_wt_std_2',
+    title: 'Υπολογισμός Καθαρού Βάρους Πορτοκαλιών',
+    unit: 'kg',
     generate: () => {
       const grossKg = randInt(18, 25);
-      const tareG = randInt(12, 18) * 100; // π.χ. 1.500 g
+      const tareG = randInt(12, 18) * 100;
       const tareKg = tareG / 1000;
       const netKg = Number((grossKg - tareKg).toFixed(2));
       return {
-        text: `Ένα καφάσι γεμάτο πορτοκάλια έχει μικτό βάρος ${grossKg} kg. Το άδειο καφάσι (απόβαρο) ζυγίζει ${tareG} g. Ποιο είναι το καθαρό βάρος των πορτοκαλιών σε κιλά (kg);`,
-        tableData: { col1: 'Μικτό Βάρος', col2: 'Απόβαρο', r1: [`${grossKg} kg`, `${tareG} g`], r2: ['Αναγωγή σε kg', `${formatNum(tareKg)} kg`] },
-        correctVal: netKg,
-        correctStr: formatNum(netKg),
-        explanation: `Μετατρέπουμε το απόβαρο σε κιλά: ${tareG} : 1.000 ＝ ${formatNum(tareKg)} kg. Καθαρό βάρος: Μικτό － Απόβαρο ＝ ${grossKg} － ${formatNum(tareKg)} ＝ ${formatNum(netKg)} kg.`
+        prompt: `Ένα καφάσι γεμάτο πορτοκάλια έχει μικτό βάρος ${grossKg} kg. Το άδειο καφάσι (απόβαρο) ζυγίζει ${tareG} g. Ποιο είναι το καθαρό βάρος των πορτοκαλιών σε κιλά (kg);`,
+        unit: 'kg',
+        correctVal: formatNum(netKg),
+        correctText: `${formatNum(netKg)} kg`,
+        tableData: [
+          { item: 'Μικτό βάρος', formula: `${grossKg} kg`, val: `${grossKg} kg` },
+          { item: 'Απόβαρο σε κιλά', formula: `${tareG} : 1.000`, val: `${formatNum(tareKg)} kg` },
+          { item: 'Καθαρό βάρος', formula: `${grossKg} － ${formatNum(tareKg)}`, val: `${formatNum(netKg)} kg` }
+        ],
+        explain: `Μετατρέπουμε το απόβαρο σε κιλά: ${tareG} : 1.000 ＝ ${formatNum(tareKg)} kg. Καθαρό βάρος: Μικτό － Απόβαρο ＝ ${grossKg} － ${formatNum(tareKg)} ＝ ${formatNum(netKg)} kg.`,
+        distractors: [`${formatNum(netKg + 1)} kg`, `${formatNum(netKg - 1)} kg`, `${formatNum(netKg + 0.5)} kg`]
       };
     }
   },
   {
     id: 'p_wt_std_3',
+    title: 'Αγορά Φέτας και Υπολογισμός Κόστους',
+    unit: '€',
     generate: () => {
-      const cheeseG = randInt(3, 7) * 250; // π.χ. 750 g, 1.250 g
+      const cheeseG = randInt(3, 7) * 250;
       const pricePerKg = randInt(10, 16);
       const cheeseKg = cheeseG / 1000;
       const cost = Number((cheeseKg * pricePerKg).toFixed(2));
       return {
-        text: `Αγοράσαμε ${cheeseG} g φέτα προς ${pricePerKg} € το κιλό. Πόσα ευρώ (€) πληρώσαμε;`,
-        tableData: { col1: 'Βάρος Φέτας', col2: 'Τιμή ανά kg', r1: [`${cheeseG} g ＝ ${formatNum(cheeseKg)} kg`, `${pricePerKg} €/kg`], r2: ['Αναγωγή σε kg', 'Υπολογισμός κόστους'] },
-        correctVal: cost,
-        correctStr: formatNum(cost),
-        explanation: `Μετατρέπουμε τα γραμμάρια σε κιλά: ${cheeseG} : 1.000 ＝ ${formatNum(cheeseKg)} kg. Κόστος: ${formatNum(cheeseKg)} · ${pricePerKg} ＝ ${formatNum(cost)} €.`
+        prompt: `Αγοράσαμε ${cheeseG} g φέτα προς ${pricePerKg} € το κιλό. Πόσα ευρώ (€) πληρώσαμε;`,
+        unit: '€',
+        correctVal: formatNum(cost),
+        correctText: `${formatNum(cost)} €`,
+        tableData: [
+          { item: 'Βάρος σε κιλά', formula: `${cheeseG} : 1.000`, val: `${formatNum(cheeseKg)} kg` },
+          { item: 'Τιμή μονάδας', formula: `${pricePerKg} €/kg`, val: `${pricePerKg} €` },
+          { item: 'Συνολικό κόστος', formula: `${formatNum(cheeseKg)} · ${pricePerKg}`, val: `${formatNum(cost)} €` }
+        ],
+        explain: `Μετατρέπουμε τα γραμμάρια σε κιλά: ${cheeseG} : 1.000 ＝ ${formatNum(cheeseKg)} kg. Κόστος: ${formatNum(cheeseKg)} · ${pricePerKg} ＝ ${formatNum(cost)} €.`,
+        distractors: [`${formatNum(cost + 2)} €`, `${formatNum(Math.max(1, cost - 2))} €`, `${formatNum(cost + 3.5)} €`]
       };
     }
   },
   {
     id: 'p_wt_std_4',
+    title: 'Συνολικό Βάρος Φαρμάκου σε Γραμμάρια',
+    unit: 'g',
     generate: () => {
       const pills = randInt(20, 50);
       const pillMg = 250;
       const totalMg = pills * pillMg;
       const totalG = totalMg / 1000;
       return {
-        text: `Ένα κουτί περιέχει ${pills} χάπια των ${pillMg} mg το καθένα. Πόσα γραμμάρια (g) φαρμάκου περιέχονται συνολικά στο κουτί;`,
-        tableData: { col1: 'Χάπια', col2: 'Βάρος ανά χάπι', r1: [`${pills} χάπια`, `${pillMg} mg`], r2: [`Σύνολο: ${totalMg} mg`, 'Μετατροπή σε g'] },
-        correctVal: totalG,
-        correctStr: formatNum(totalG),
-        explanation: `Συνολικό βάρος σε χιλιοστόγραμμα: ${pills} · ${pillMg} ＝ ${totalMg} mg. Μετατρέπουμε σε γραμμάρια διαιρώντας με το 1.000: ${totalMg} : 1.000 ＝ ${formatNum(totalG)} g.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_std_5',
-    generate: () => {
-      const trucks = randInt(3, 6);
-      const loadT = randInt(4, 8);
-      const totalT = trucks * loadT;
-      const totalKg = totalT * 1000;
-      return {
-        text: `Ένας στόλος από ${trucks} ίδια φορτηγά μετέφερε ${loadT} t άμμο το καθένα. Πόσα κιλά (kg) άμμου μεταφέρθηκαν συνολικά;`,
-        tableData: { col1: 'Φορτηγά', col2: 'Φορτίο ανά φορτηγό', r1: [`${trucks} φορτηγά`, `${loadT} t ＝ ${loadT * 1000} kg`], r2: ['Πολλαπλασιασμός', 'Σύνολο σε kg'] },
-        correctVal: totalKg,
-        correctStr: String(totalKg),
-        explanation: `Συνολικό φορτίο σε τόνους: ${trucks} · ${loadT} ＝ ${totalT} t. Μετατρέπουμε σε κιλά πολλαπλασιάζοντας με το 1.000: ${totalT} · 1.000 ＝ ${totalKg} kg.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_std_6',
-    generate: () => {
-      const breadG = randInt(6, 12) * 50; // π.χ. 400 g
-      const totalKg = 4;
-      const totalG = totalKg * 1000;
-      const loaves = totalG / breadG;
-      const cleanLoaves = Number.isInteger(loaves) ? loaves : Number(loaves.toFixed(1));
-      return {
-        text: `Από μια ζύμη βάρους ${totalKg} kg ένας φούρναρης έπλασε καρβέλια ψωμιού βάρους ${breadG} g το καθένα. Πόσα τέτοια καρβέλια έπλασε;`,
-        tableData: { col1: 'Συνολική Ζύμη', col2: 'Καρβέλι', r1: [`${totalKg} kg ＝ ${totalG} g`, `${breadG} g`], r2: ['Διαίρεση', 'Πλήθος καρβελιών'] },
-        correctVal: cleanLoaves,
-        correctStr: formatNum(cleanLoaves),
-        explanation: `Μετατρέπουμε τη ζύμη σε γραμμάρια: ${totalKg} · 1.000 ＝ ${totalG} g. Διαιρούμε με το βάρος κάθε καρβελιού: ${totalG} : ${breadG} ＝ ${formatNum(cleanLoaves)} καρβέλια.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_std_7',
-    generate: () => {
-      const netKg = randInt(12, 18);
-      const tareG = randInt(8, 15) * 100;
-      const tareKg = tareG / 1000;
-      const grossKg = Number((netKg + tareKg).toFixed(2));
-      return {
-        text: `Ένα δοχείο περιέχει καθαρό ελαιόλαδο βάρους ${netKg} kg. Το άδειο δοχείο (απόβαρο) ζυγίζει ${tareG} g. Ποιο είναι το μικτό βάρος του δοχείου μαζί με το λάδι σε κιλά (kg);`,
-        tableData: { col1: 'Καθαρό Βάρος', col2: 'Απόβαρο', r1: [`${netKg} kg`, `${tareG} g ＝ ${formatNum(tareKg)} kg`], r2: ['Πρόσθεση', 'Μικτό Βάρος σε kg'] },
-        correctVal: grossKg,
-        correctStr: formatNum(grossKg),
-        explanation: `Μετατρέπουμε το απόβαρο σε κιλά: ${tareG} : 1.000 ＝ ${formatNum(tareKg)} kg. Μικτό βάρος ＝ Καθαρό ＋ Απόβαρο ＝ ${netKg} ＋ ${formatNum(tareKg)} ＝ ${formatNum(grossKg)} kg.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_std_8',
-    generate: () => {
-      const portionG = 125;
-      const portions = randInt(12, 24);
-      const totalG = portionG * portions;
-      const totalKg = totalG / 1000;
-      return {
-        text: `Σε ένα εστιατόριο σερβίρονται ${portions} ατομικές μερίδες παγωτού των ${portionG} g η καθεμία. Πόσα κιλά (kg) παγωτού καταναλώθηκαν συνολικά;`,
-        tableData: { col1: 'Μερίδες', col2: 'Βάρος μερίδας', r1: [`${portions} μερίδες`, `${portionG} g`], r2: [`Σύνολο: ${totalG} g`, 'Μετατροπή σε kg'] },
-        correctVal: totalKg,
-        correctStr: formatNum(totalKg),
-        explanation: `Συνολικά γραμμάρια: ${portions} · ${portionG} ＝ ${totalG} g. Μετατρέπουμε σε κιλά διαιρώντας με το 1.000: ${totalG} : 1.000 ＝ ${formatNum(totalKg)} kg.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_std_9',
-    generate: () => {
-      const packG = randInt(2, 5) * 100; // π.χ. 400 g
-      const boxes = randInt(15, 30);
-      const totalG = packG * boxes;
-      const totalKg = totalG / 1000;
-      return {
-        text: `Ένα κιβώτιο περιέχει ${boxes} συσκευασίες μπισκότων των ${packG} g η καθεμία. Πόσα κιλά (kg) ζυγίζουν όλες οι συσκευασίες μαζί;`,
-        tableData: { col1: 'Συσκευασίες', col2: 'Βάρος συσκευασίας', r1: [`${boxes} κουτιά`, `${packG} g`], r2: [`Σύνολο: ${totalG} g`, 'Αναγωγή σε kg'] },
-        correctVal: totalKg,
-        correctStr: formatNum(totalKg),
-        explanation: `Συνολικό βάρος σε γραμμάρια: ${boxes} · ${packG} ＝ ${totalG} g. Μετατρέπουμε σε κιλά: ${totalG} : 1.000 ＝ ${formatNum(totalKg)} kg.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_std_10',
-    generate: () => {
-      const totalKg = randInt(12, 24);
-      const perBagG = 500;
-      const totalG = totalKg * 1000;
-      const bags = totalG / perBagG;
-      return {
-        text: `Ένας παραγωγός συσκευάζει ${totalKg} kg ρίγανη σε σακουλάκια των ${perBagG} g. Πόσα σακουλάκια θα γεμίσει;`,
-        tableData: { col1: 'Συνολική Ρίγανη', col2: 'Σακουλάκι', r1: [`${totalKg} kg ＝ ${totalG} g`, `${perBagG} g`], r2: ['Διαίρεση', 'Πλήθος σακουλιών'] },
-        correctVal: bags,
-        correctStr: String(bags),
-        explanation: `Μετατρέπουμε τα κιλά σε γραμμάρια: ${totalKg} · 1.000 ＝ ${totalG} g. Διαιρούμε με το βάρος κάθε σακούλας: ${totalG} : ${perBagG} ＝ ${bags} σακουλάκια.`
+        prompt: `Ένα κουτί περιέχει ${pills} χάπια των ${pillMg} mg το καθένα. Πόσα γραμμάρια (g) φαρμάκου περιέχονται συνολικά στο κουτί;`,
+        unit: 'g',
+        correctVal: formatNum(totalG),
+        correctText: `${formatNum(totalG)} g`,
+        tableData: [
+          { item: 'Συνολικά χιλιοστόγραμμα', formula: `${pills} · ${pillMg} mg`, val: `${totalMg} mg` },
+          { item: 'Σχέση μονάδων', formula: '1 g ＝ 1.000 mg', val: '1.000' },
+          { item: 'Μετατροπή σε γραμμάρια', formula: `${totalMg} : 1.000`, val: `${formatNum(totalG)} g` }
+        ],
+        explain: `Συνολικό βάρος σε χιλιοστόγραμμα: ${pills} · ${pillMg} ＝ ${totalMg} mg. Μετατρέπουμε σε γραμμάρια διαιρώντας με το 1.000: ${totalMg} : 1.000 ＝ ${formatNum(totalG)} g.`,
+        distractors: [`${formatNum(totalG + 2.5)} g`, `${formatNum(Math.max(1, totalG - 2.5))} g`, `${formatNum(totalG + 5)} g`]
       };
     }
   }
 ];
 
-// Δεξαμενη Προβληματων Αυξημενης Δυσκολιας (Σύνθετες Συσκευασίες, Τόνοι, Απόβαρο & Κέρδος)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_wt_hard_1',
+    title: 'Συνολικό Καθαρό Βάρος Τελάρων με Ροδάκινα',
+    unit: 'kg',
     generate: () => {
       const crates = randInt(15, 30);
       const grossPerCrateKg = 22.5;
-      const tarePerCrateG = 1500; // 1.5 kg
+      const tarePerCrateG = 1500;
       const tarePerCrateKg = tarePerCrateG / 1000;
-      const netPerCrateKg = grossPerCrateKg - tarePerCrateKg; // 21 kg
+      const netPerCrateKg = grossPerCrateKg - tarePerCrateKg;
       const totalNetKg = crates * netPerCrateKg;
       return {
-        text: `Ένας έμπορος παρέλαβε ${crates} τελάρα με ροδάκινα. Το μικτό βάρος κάθε τελάρου ήταν ${formatNum(grossPerCrateKg)} kg και το απόβαρο κάθε άδειου τελάρου ${tarePerCrateG} g. Ποιο είναι το συνολικό καθαρό βάρος των ροδάκινων σε κιλά (kg);`,
-        tableData: { col1: 'Στοιχεία ανά τελάρο', col2: 'Σύνολο Τελάρων', r1: [`Μικτό: ${formatNum(grossPerCrateKg)} kg`, `${crates} τελάρα`], r2: [`Απόβαρο: ${tarePerCrateG} g ＝ ${formatNum(tarePerCrateKg)} kg`, `Καθαρό: ${netPerCrateKg} kg / τελάρο`] },
-        correctVal: totalNetKg,
-        correctStr: String(totalNetKg),
-        explanation: `Μετατρέπουμε το απόβαρο σε κιλά: ${tarePerCrateG} : 1.000 ＝ ${formatNum(tarePerCrateKg)} kg. Καθαρό βάρος ανά τελάρο: ${formatNum(grossPerCrateKg)} － ${formatNum(tarePerCrateKg)} ＝ ${netPerCrateKg} kg. Συνολικό καθαρό βάρος για τα ${crates} τελάρα: ${crates} · ${netPerCrateKg} ＝ ${totalNetKg} kg.`
+        prompt: `Ένας έμπορος παρέλαβε ${crates} τελάρα με ροδάκινα. Το μικτό βάρος κάθε τελάρου ήταν ${formatNum(grossPerCrateKg)} kg και το απόβαρο κάθε άδειου τελάρου ${tarePerCrateG} g. Ποιο είναι το συνολικό καθαρό βάρος των ροδάκινων σε κιλά (kg);`,
+        unit: 'kg',
+        correctVal: String(totalNetKg),
+        correctText: `${totalNetKg} kg`,
+        tableData: [
+          { item: 'Απόβαρο ανά τελάρο σε κιλά', formula: `${tarePerCrateG} : 1.000`, val: `${formatNum(tarePerCrateKg)} kg` },
+          { item: 'Καθαρό βάρος ανά τελάρο', formula: `${formatNum(grossPerCrateKg)} － ${formatNum(tarePerCrateKg)}`, val: `${netPerCrateKg} kg` },
+          { item: 'Συνολικό καθαρό βάρος', formula: `${crates} · ${netPerCrateKg}`, val: `${totalNetKg} kg` }
+        ],
+        explain: `Μετατρέπουμε το απόβαρο σε κιλά: ${tarePerCrateG} : 1.000 ＝ ${formatNum(tarePerCrateKg)} kg. Καθαρό βάρος ανά τελάρο: ${formatNum(grossPerCrateKg)} － ${formatNum(tarePerCrateKg)} ＝ ${netPerCrateKg} kg. Συνολικό καθαρό βάρος για τα ${crates} τελάρα: ${crates} · ${netPerCrateKg} ＝ ${totalNetKg} kg.`,
+        distractors: [`${totalNetKg + 30} kg`, `${totalNetKg - 25} kg`, `${totalNetKg + 50} kg`]
       };
     }
   },
   {
     id: 'p_wt_hard_2',
+    title: 'Υπολειπόμενο Επιτρεπόμενο Φορτίο Φορτηγού',
+    unit: 't',
     generate: () => {
       const truckLimitT = 4.2;
-      const truckLimitKg = truckLimitT * 1000; // 4200 kg
+      const truckLimitKg = truckLimitT * 1000;
       const bagsCount = 90;
       const bagKg = 40;
-      const currentLoadKg = bagsCount * bagKg; // 3600 kg
-      const remainKg = truckLimitKg - currentLoadKg; // 600 kg
-      const remainT = remainKg / 1000; // 0.6 t
+      const currentLoadKg = bagsCount * bagKg;
+      const remainKg = truckLimitKg - currentLoadKg;
+      const remainT = remainKg / 1000;
       return {
-        text: `Ένα φορτηγό έχει μέγιστο επιτρεπόμενο όριο φορτίου ${formatNum(truckLimitT)} t. Φορτώθηκαν σε αυτό ${bagsCount} τσουβάλια τσιμέντο των ${bagKg} kg το καθένα. Πόσους τόνους (t) επιπλέον φορτίου μπορεί να μεταφέρει το φορτηγό χωρίς να ξεπεράσει το όριο;`,
-        tableData: { col1: 'Όριο Φορτίου', col2: 'Τρέχον Φορτίο', r1: [`${formatNum(truckLimitT)} t ＝ ${truckLimitKg} kg`, `${bagsCount} · ${bagKg} ＝ ${currentLoadKg} kg`], r2: [`Υπόλοιπο σε kg: ${remainKg} kg`, 'Μετατροπή σε t'] },
-        correctVal: remainT,
-        correctStr: formatNum(remainT),
-        explanation: `Όριο σε κιλά: ${formatNum(truckLimitT)} · 1.000 ＝ ${truckLimitKg} kg. Τρέχον φορτίο: ${bagsCount} · ${bagKg} ＝ ${currentLoadKg} kg. Υπόλοιπο σε κιλά: ${truckLimitKg} － ${currentLoadKg} ＝ ${remainKg} kg. Μετατρέπουμε σε τόνους: ${remainKg} : 1.000 ＝ ${formatNum(remainT)} t.`
+        prompt: `Ένα φορτηγό έχει μέγιστο επιτρεπόμενο όριο φορτίου ${formatNum(truckLimitT)} t. Φορτώθηκαν σε αυτό ${bagsCount} τσουβάλια τσιμέντο των ${bagKg} kg το καθένα. Πόσους τόνους (t) επιπλέον φορτίου μπορεί να μεταφέρει το φορτηγό χωρίς να ξεπεράσει το όριο;`,
+        unit: 't',
+        correctVal: formatNum(remainT),
+        correctText: `${formatNum(remainT)} t`,
+        tableData: [
+          { item: 'Όριο σε κιλά', formula: `${formatNum(truckLimitT)} · 1.000`, val: `${truckLimitKg} kg` },
+          { item: 'Τρέχον φορτίο σε κιλά', formula: `${bagsCount} · ${bagKg}`, val: `${currentLoadKg} kg` },
+          { item: 'Υπόλοιπο σε τόνους', formula: `(${truckLimitKg} － ${currentLoadKg}) : 1.000`, val: `${formatNum(remainT)} t` }
+        ],
+        explain: `Όριο σε κιλά: ${formatNum(truckLimitT)} · 1.000 ＝ ${truckLimitKg} kg. Τρέχον φορτίο: ${bagsCount} · ${bagKg} ＝ ${currentLoadKg} kg. Υπόλοιπο σε κιλά: ${truckLimitKg} － ${currentLoadKg} ＝ ${remainKg} kg. Μετατρέπουμε σε τόνους: ${remainKg} : 1.000 ＝ ${formatNum(remainT)} t.`,
+        distractors: [`${formatNum(remainT + 0.4)} t`, `${formatNum(Math.max(0.1, remainT - 0.2))} t`, `${formatNum(remainT + 0.8)} t`]
       };
     }
   },
   {
     id: 'p_wt_hard_3',
+    title: 'Είσπραξη από Πώληση Καθαρού Βάρους Μελιού',
+    unit: '€',
     generate: () => {
       const netKg = 120;
       const pricePerKg = 4.5;
-      const totalRevenue = netKg * pricePerKg; // 540 €
+      const totalRevenue = netKg * pricePerKg;
       const tareWeightKg = 12;
-      const grossKg = netKg + tareWeightKg; // 132 kg
+      const grossKg = netKg + tareWeightKg;
       return {
-        text: `Ένας παραγωγός πούλησε μέλι προς ${formatNum(pricePerKg)} € το κιλό καθαρού βάρους. Αν το μικτό βάρος των δοχείων ήταν ${grossKg} kg και το συνολικό απόβαρο των κενών δοχείων ${tareWeightKg} kg, πόσα ευρώ (€) εισέπραξε;`,
-        tableData: { col1: 'Μικτό & Απόβαρο', col2: 'Τιμή Καθαρού', r1: [`Μικτό: ${grossKg} kg`, `${formatNum(pricePerKg)} € / kg`], r2: [`Απόβαρο: ${tareWeightKg} kg`, `Καθαρό: ${netKg} kg`] },
-        correctVal: totalRevenue,
-        correctStr: formatNum(totalRevenue),
-        explanation: `Πληρώνεται αποκλειστικά το καθαρό βάρος! Καθαρό βάρος μελιού: ${grossKg} － ${tareWeightKg} ＝ ${netKg} kg. Συνολική είσπραξη: ${netKg} · ${formatNum(pricePerKg)} ＝ ${formatNum(totalRevenue)} €.`
+        prompt: `Ένας παραγωγός πούλησε μέλι προς ${formatNum(pricePerKg)} € το κιλό καθαρού βάρους. Αν το μικτό βάρος των δοχείων ήταν ${grossKg} kg και το συνολικό απόβαρο των κενών δοχείων ${tareWeightKg} kg, πόσα ευρώ (€) εισέπραξε;`,
+        unit: '€',
+        correctVal: formatNum(totalRevenue),
+        correctText: `${formatNum(totalRevenue)} €`,
+        tableData: [
+          { item: 'Καθαρό βάρος', formula: `${grossKg} － ${tareWeightKg}`, val: `${netKg} kg` },
+          { item: 'Τιμή ανά κιλό καθαρού', formula: `${formatNum(pricePerKg)} €/kg`, val: `${formatNum(pricePerKg)} €` },
+          { item: 'Συνολική είσπραξη', formula: `${netKg} · ${formatNum(pricePerKg)}`, val: `${formatNum(totalRevenue)} €` }
+        ],
+        explain: `Πληρώνεται αποκλειστικά το καθαρό βάρος! Καθαρό βάρος μελιού: ${grossKg} － ${tareWeightKg} ＝ ${netKg} kg. Συνολική είσπραξη: ${netKg} · ${formatNum(pricePerKg)} ＝ ${formatNum(totalRevenue)} €.`,
+        distractors: [`${formatNum(totalRevenue + 54)} €`, `${formatNum(totalRevenue - 45)} €`, `${formatNum(totalRevenue + 90)} €`]
       };
     }
   },
   {
     id: 'p_wt_hard_4',
+    title: 'Συνολικό Βάρος Φορτίων σε Τόνους',
+    unit: 't',
     generate: () => {
       const part1T = 1.8;
       const part2Kg = 750;
       const part3Kg = 450;
-      const sumKg = (part1T * 1000) + part2Kg + part3Kg; // 1800 + 750 + 450 = 3000 kg
-      const sumT = sumKg / 1000; // 3 t
+      const sumKg = (part1T * 1000) + part2Kg + part3Kg;
+      const sumT = sumKg / 1000;
       return {
-        text: `Σε μια αποθήκη παραδόθηκαν τρία φορτία σιταριού: το 1ο ζύγιζε ${formatNum(part1T)} t, το 2ο ${part2Kg} kg και το 3ο ${part3Kg} kg. Πόσους τόνους (t) σιταριού παρέλαβε συνολικά η αποθήκη;`,
-        tableData: { col1: 'Τρία Φορτία', col2: 'Αναγωγή σε Τόνους', r1: [`1ο: ${formatNum(part1T)} t`, `2ο: ${part2Kg} kg ＝ ${formatNum(part2Kg / 1000)} t`], r2: [`3ο: ${part3Kg} kg ＝ ${formatNum(part3Kg / 1000)} t`, 'Άθροισμα'] },
-        correctVal: sumT,
-        correctStr: formatNum(sumT),
-        explanation: `Μετατρέπουμε όλα τα φορτία σε τόνους: 1ο: ${formatNum(part1T)} t, 2ο: ${part2Kg} : 1.000 ＝ ${formatNum(part2Kg / 1000)} t, 3ο: ${part3Kg} : 1.000 ＝ ${formatNum(part3Kg / 1000)} t. Άθροισμα: ${formatNum(part1T)} ＋ ${formatNum(part2Kg / 1000)} ＋ ${formatNum(part3Kg / 1000)} ＝ ${formatNum(sumT)} t.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_hard_5',
-    generate: () => {
-      const goldG = 36;
-      const coinWeightG = 4.5;
-      const coins = goldG / coinWeightG; // 8 νομίσματα
-      const pricePerCoin = randInt(18, 25) * 10;
-      const totalVal = coins * pricePerCoin;
-      return {
-        text: `Από μια πλάκα χρυσού βάρους ${goldG} g κατασκευάστηκαν χρυσά νομίσματα βάρους ${formatNum(coinWeightG)} g το καθένα. Αν κάθε νόμισμα πωλείται προς ${pricePerCoin} €, πόσα ευρώ (€) θα εισπραχθούν από την πώληση όλων των νομισμάτων;`,
-        tableData: { col1: 'Χρυσός', col2: 'Νόμισμα', r1: [`Σύνολο: ${goldG} g`, `Βάρος: ${formatNum(coinWeightG)} g`], r2: [`Νομίσματα: ${coins}`, `Τιμή: ${pricePerCoin} €/τεμ.`] },
-        correctVal: totalVal,
-        correctStr: String(totalVal),
-        explanation: `Βρίσκουμε το πλήθος των νομισμάτων: ${goldG} : ${formatNum(coinWeightG)} ＝ ${coins} νομίσματα. Συνολική είσπραξη: ${coins} · ${pricePerCoin} ＝ ${totalVal} €.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_hard_6',
-    generate: () => {
-      const emptyCanG = 450;
-      const oilKg = 5;
-      const oilG = oilKg * 1000;
-      const grossG = emptyCanG + oilG; // 5450 g
-      const grossKg = grossG / 1000; // 5.45 kg
-      return {
-        text: `Ένας άδειος τενεκές ζυγίζει ${emptyCanG} g. Γεμίζουμε τον τενεκέ με ${oilKg} kg λάδι. Ποιο είναι το μικτό βάρος του γεμάτου τενεκέ σε κιλά (kg);`,
-        tableData: { col1: 'Απόβαρο (τενεκές)', col2: 'Καθαρό (λάδι)', r1: [`${emptyCanG} g ＝ ${formatNum(emptyCanG / 1000)} kg`, `${oilKg} kg`], r2: ['Πρόσθεση', 'Μικτό βάρος σε kg'] },
-        correctVal: grossKg,
-        correctStr: formatNum(grossKg),
-        explanation: `Μετατρέπουμε το απόβαρο σε κιλά: ${emptyCanG} : 1.000 ＝ ${formatNum(emptyCanG / 1000)} kg. Μικτό βάρος: ${oilKg} ＋ ${formatNum(emptyCanG / 1000)} ＝ ${formatNum(grossKg)} kg.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_hard_7',
-    generate: () => {
-      const totalFishKg = 48;
-      const boxGrossKg = 6.4;
-      const boxTareG = 400; // 0.4 kg
-      const boxTareKg = boxTareG / 1000;
-      const boxNetKg = boxGrossKg - boxTareKg; // 6 kg
-      const boxesNeeded = totalFishKg / boxNetKg; // 8
-      return {
-        text: `Ένας ψαράς θέλει να συσκευάσει ${totalFishKg} kg ψάρια. Κάθε φελιζόλ έχει απόβαρο ${boxTareG} g και γεμάτο έχει μικτό βάρος ${formatNum(boxGrossKg)} kg. Πόσα κιβώτια φελιζόλ θα χρειαστεί συνολικά;`,
-        tableData: { col1: 'Συνολικά Ψάρια', col2: 'Κιβώτιο Φελιζόλ', r1: [`${totalFishKg} kg`, `Μικτό: ${formatNum(boxGrossKg)} kg`], r2: [`Απόβαρο: ${formatNum(boxTareKg)} kg`, `Καθαρό: ${boxNetKg} kg / κιβώτιο`] },
-        correctVal: boxesNeeded,
-        correctStr: String(boxesNeeded),
-        explanation: `Καθαρό βάρος ψαριών ανά κιβώτιο: ${formatNum(boxGrossKg)} － ${formatNum(boxTareKg)} ＝ ${boxNetKg} kg. Κιβώτια που απαιτούνται: ${totalFishKg} : ${boxNetKg} ＝ ${boxesNeeded} κιβώτια.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_hard_8',
-    generate: () => {
-      const truckTareT = 2.4; // βάρος άδειου φορτηγού
-      const cargoKg = 3600;
-      const cargoT = cargoKg / 1000; // 3.6 t
-      const totalGrossT = truckTareT + cargoT; // 6 t
-      return {
-        text: `Ένα φορτηγό ζυγίζει άδειο (απόβαρο) ${formatNum(truckTareT)} t. Φορτώνεται με εμπορεύματα βάρους ${cargoKg} kg. Όταν ανέβει στην επαγγελματική πλάστιγγα (ζυγαριά), ποιο θα είναι το συνολικό μικτό βάρος σε τόνους (t);`,
-        tableData: { col1: 'Άδειο Φορτηγό', col2: 'Φορτίο', r1: [`${formatNum(truckTareT)} t`, `${cargoKg} kg ＝ ${formatNum(cargoT)} t`], r2: ['Πρόσθεση', 'Μικτό βάρος πλάστιγγας'] },
-        correctVal: totalGrossT,
-        correctStr: formatNum(totalGrossT),
-        explanation: `Μετατρέπουμε το φορτίο σε τόνους: ${cargoKg} : 1.000 ＝ ${formatNum(cargoT)} t. Μικτό βάρος πλάστιγγας: ${formatNum(truckTareT)} ＋ ${formatNum(cargoT)} ＝ ${formatNum(totalGrossT)} t.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_hard_9',
-    generate: () => {
-      const oliveKg = 850;
-      const oilYieldPct = 20; // 20% απόδοση
-      const oilKg = (oliveKg * oilYieldPct) / 100; // 170 kg
-      const bottleCapacityG = 500;
-      const bottles = (oilKg * 1000) / bottleCapacityG; // 340
-      return {
-        text: `Από ${oliveKg} kg ελιές παρήχθη ελαιόλαδο ίσο με το 20% του βάρους τους. Το λάδι συσκευάστηκε σε γυάλινα μπουκάλια των ${bottleCapacityG} g. Πόσα μπουκάλια γέμισαν;`,
-        tableData: { col1: 'Ελιές', col2: 'Λάδι & Μπουκάλι', r1: [`${oliveKg} kg (απόδοση 20%)`, `Λάδι: ${oilKg} kg ＝ ${oilKg * 1000} g`], r2: ['Μπουκάλι: 500 g', 'Πλήθος μπουκαλιών'] },
-        correctVal: bottles,
-        correctStr: String(bottles),
-        explanation: `Βάρος παραχθέντος λαδιού: (${oliveKg} · 20) : 100 ＝ ${oilKg} kg. Μετατρέπουμε σε γραμμάρια: ${oilKg} · 1.000 ＝ ${oilKg * 1000} g. Μπουκάλια: ${oilKg * 1000} : 500 ＝ ${bottles} μπουκάλια.`
-      };
-    }
-  },
-  {
-    id: 'p_wt_hard_10',
-    generate: () => {
-      const bulkSugarKg = 15;
-      const usedKg = 4.2;
-      const remainKg = bulkSugarKg - usedKg; // 10.8 kg
-      const bagG = 900;
-      const bags = (remainKg * 1000) / bagG; // 12
-      return {
-        text: `Σε ένα ζαχαροπλαστείο υπήρχε ένας σάκος με ${bulkSugarKg} kg ζάχαρη. Χρησιμοποιήθηκαν ${formatNum(usedKg)} kg για γλυκά και η υπόλοιπη ζάχαρη μοιράστηκε σε σακούλες των ${bagG} g. Πόσες σακούλες γέμισαν;`,
-        tableData: { col1: 'Αρχική Ζάχαρη', col2: 'Υπόλοιπο & Σακούλες', r1: [`${bulkSugarKg} kg － ${formatNum(usedKg)} kg`, `Υπόλοιπο: ${formatNum(remainKg)} kg`], r2: [`${formatNum(remainKg * 1000)} g`, `Σακούλα: ${bagG} g`] },
-        correctVal: bags,
-        correctStr: String(bags),
-        explanation: `Υπόλοιπο ζάχαρης σε κιλά: ${bulkSugarKg} － ${formatNum(usedKg)} ＝ ${formatNum(remainKg)} kg. Μετατρέπουμε σε γραμμάρια: ${formatNum(remainKg)} · 1.000 ＝ ${remainKg * 1000} g. Σακούλες: ${remainKg * 1000} : ${bagG} ＝ ${bags} σακούλες.`
+        prompt: `Σε μια αποθήκη παραδόθηκαν τρία φορτία σιταριού: το 1ο ζύγιζε ${formatNum(part1T)} t, το 2ο ${part2Kg} kg και το 3ο ${part3Kg} kg. Πόσους τόνους (t) σιταριού παρέλαβε συνολικά η αποθήκη;`,
+        unit: 't',
+        correctVal: formatNum(sumT),
+        correctText: `${formatNum(sumT)} t`,
+        tableData: [
+          { item: '1ο Φορτίο', formula: `${formatNum(part1T)} t`, val: `${formatNum(part1T)} t` },
+          { item: '2ο Φορτίο σε τόνους', formula: `${part2Kg} : 1.000`, val: `${formatNum(part2Kg / 1000)} t` },
+          { item: '3ο Φορτίο σε τόνους', formula: `${part3Kg} : 1.000`, val: `${formatNum(part3Kg / 1000)} t` },
+          { item: 'Συνολικό βάρος', formula: `${formatNum(part1T)} ＋ ${formatNum(part2Kg / 1000)} ＋ ${formatNum(part3Kg / 1000)}`, val: `${formatNum(sumT)} t` }
+        ],
+        explain: `Μετατρέπουμε όλα τα φορτία σε τόνους: 1ο: ${formatNum(part1T)} t, 2ο: ${part2Kg} : 1.000 ＝ ${formatNum(part2Kg / 1000)} t, 3ο: ${part3Kg} : 1.000 ＝ ${formatNum(part3Kg / 1000)} t. Άθροισμα: ${formatNum(part1T)} ＋ ${formatNum(part2Kg / 1000)} ＋ ${formatNum(part3Kg / 1000)} ＝ ${formatNum(sumT)} t.`,
+        distractors: [`${formatNum(sumT + 0.5)} t`, `${formatNum(sumT - 0.5)} t`, `${formatNum(sumT + 1)} t`]
       };
     }
   }
 ];
 
-// Δημιουργια των 10 δυναμικων ερωτησεων
+// ---------------------------------------------------------
+// ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
+// ---------------------------------------------------------
+
 function generateQuestions() {
-  const qList = [];
+  // Q1: Input - Μετατροπή kg σε g
+  const q1Kg = Number((randInt(2, 7) + pickRandom([0.2, 0.4, 0.5, 0.75])).toFixed(2));
+  const q1G = Number((q1Kg * 1000).toFixed(0));
 
-  // Q1 (Input - Decimal): Μετατροπή kg σε g (πολλαπλασιασμός x1000)
-  {
-    const kg = Number((randInt(2, 7) + pickRandom([0.2, 0.4, 0.5, 0.75])).toFixed(2));
-    const g = Number((kg * 1000).toFixed(0));
+  // Q2: MCQ - Βασική μονάδα μέτρησης μάζας
+  const q2Correct = 'Το χιλιόγραμμο ή κιλό (kg)';
+  const q2Options = shuffle([
+    q2Correct,
+    'Ο τόνος (t)',
+    'Το γραμμάριο (g)',
+    'Το χιλιοστόγραμμο (mg)'
+  ]);
 
-    qList.push({
-      id: 1,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 1 • ΜΕΤΑΤΡΟΠΗ ΑΠΟ ΚΙΛΑ ΣΕ ΓΡΑΜΜΑΡΙΑ',
-      instruction: 'Μετατρέψτε το βάρος σε γραμμάρια (g):',
-      prompt: `Πόσα γραμμάρια (g) είναι τα ${formatNum(kg)} kg;`,
-      correctVal: g,
-      correctStr: String(g),
-      explanation: `Επειδή 1 kg ＝ 1.000 g, για να μετατρέψουμε κιλά σε γραμμάρια πολλαπλασιάζουμε με το 1.000: ${formatNum(kg)} · 1.000 ＝ ${g} g.`
-    });
-  }
+  // Q3: Input - Μετατροπή g σε kg
+  const q3G = randInt(15, 85) * 100 + pickRandom([0, 50]);
+  const q3Kg = Number((q3G / 1000).toFixed(3));
 
-  // Q2 (MCQ): Βασική μονάδα μέτρησης μάζας
-  {
-    const correctOpt = 'Το χιλιόγραμμο ή κιλό (kg)';
-    const fake1 = 'Ο τόνος (t)';
-    const fake2 = 'Το γραμμάριο (g)';
-    const fake3 = 'Το χιλιοστόγραμμο (mg)';
+  // Q4: MCQ - Σχέση Μικτού, Καθαρού και Αποβάρου
+  const q4Correct = 'Καθαρό Βάρος ＝ Μικτό Βάρος － Απόβαρο';
+  const q4Options = shuffle([
+    q4Correct,
+    'Καθαρό Βάρος ＝ Μικτό Βάρος ＋ Απόβαρο',
+    'Απόβαρο ＝ Μικτό Βάρος ＋ Καθαρό Βάρος',
+    'Μικτό Βάρος ＝ Καθαρό Βάρος － Απόβαρο'
+  ]);
 
-    const options = [
-      { text: correctOpt, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
+  // Q5: Input - Μετατροπή kg σε t
+  const q5Kg = randInt(12, 75) * 100;
+  const q5T = Number((q5Kg / 1000).toFixed(3));
 
-    qList.push({
-      id: 2,
+  // Q6: MCQ - Ισοδυναμία υποδιαιρέσεων και πολλαπλασίων
+  const q6Correct = '1 t ＝ 1.000 kg και 1 kg ＝ 1.000 g';
+  const q6Options = shuffle([
+    q6Correct,
+    '1 t ＝ 100 kg και 1 kg ＝ 100 g',
+    '1 t ＝ 1.000 g και 1 kg ＝ 1.000 mg',
+    '1 kg ＝ 100 g και 1 g ＝ 1.000 mg'
+  ]);
+
+  // Q7: Standard Problem (Input)
+  const spIndex1 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q7Data = STANDARD_PROBLEMS_POOL[spIndex1].generate();
+
+  // Q8: Standard Problem (MCQ)
+  let spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  while (spIndex2 === spIndex1) spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
+  const q8Data = STANDARD_PROBLEMS_POOL[spIndex2].generate();
+  const q8Options = shuffle([
+    ...new Set([
+      q8Data.correctText,
+      ...q8Data.distractors
+    ])
+  ]);
+
+  // Q9: Hard Problem (Input)
+  const hpIndex1 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q9Data = HARD_PROBLEMS_POOL[hpIndex1].generate();
+
+  // Q10: Hard Problem (MCQ)
+  let hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  while (hpIndex2 === hpIndex1) hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
+  const q10Data = HARD_PROBLEMS_POOL[hpIndex2].generate();
+  const q10Options = shuffle([
+    ...new Set([
+      q10Data.correctText,
+      ...q10Data.distractors
+    ])
+  ]);
+
+  return [
+    {
+      id: 'q1',
+      type: 'input',
+      inputType: 'number',
+      title: 'Μετατροπή από Κιλά σε Γραμμάρια',
+      prompt: `Πόσα γραμμάρια (g) είναι τα ${formatNum(q1Kg)} kg;`,
+      correct: String(q1G),
+      explain: `Επειδή 1 kg ＝ 1.000 g, για να μετατρέψουμε κιλά σε γραμμάρια πολλαπλασιάζουμε με το 1.000: ${formatNum(q1Kg)} · 1.000 ＝ ${q1G} g.`
+    },
+    {
+      id: 'q2',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 2 • ΒΑΣΙΚΗ ΜΟΝΑΔΑ ΒΑΡΟΥΣ',
-      instruction: 'Επιλέξτε τη θεμελιώδη μονάδα:',
+      title: 'Βασική Μονάδα Βάρους',
       prompt: 'Ποια είναι η βασική μονάδα μέτρησης του βάρους (μάζας) στην καθημερινή ζωή;',
-      options,
-      correctText: correctOpt,
-      explanation: 'Βασική μονάδα μέτρησης του βάρους είναι το χιλιόγραμμο (kg), το οποίο συνήθως αποκαλούμε απλά κιλό.'
-    });
-  }
-
-  // Q3 (Input - Decimal): Μετατροπή g σε kg (διαίρεση με 1000)
-  {
-    const g = randInt(15, 85) * 100 + pickRandom([0, 50]);
-    const kg = Number((g / 1000).toFixed(3));
-
-    qList.push({
-      id: 3,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 3 • ΜΕΤΑΤΡΟΠΗ ΑΠΟ ΓΡΑΜΜΑΡΙΑ ΣΕ ΚΙΛΑ',
-      instruction: 'Υπολογίστε το βάρος σε κιλά (kg):',
-      prompt: `Πόσα κιλά (kg) είναι τα ${formatNum(g)} g;`,
-      correctVal: kg,
-      correctStr: formatNum(kg),
-      explanation: `Για να μετατρέψουμε γραμμάρια σε κιλά διαιρούμε με το 1.000: ${formatNum(g)} : 1.000 ＝ ${formatNum(kg)} kg.`
-    });
-  }
-
-  // Q4 (MCQ): Σχέση Μικτού, Καθαρού και Αποβάρου
-  {
-    const correctRule = 'Καθαρό Βάρος ＝ Μικτό Βάρος － Απόβαρο';
-    const fake1 = 'Καθαρό Βάρος ＝ Μικτό Βάρος ＋ Απόβαρο';
-    const fake2 = 'Απόβαρο ＝ Μικτό Βάρος ＋ Καθαρό Βάρος';
-    const fake3 = 'Μικτό Βάρος ＝ Καθαρό Βάρος － Απόβαρο';
-
-    const options = [
-      { text: correctRule, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 4,
+      options: q2Options,
+      correct: q2Correct,
+      explain: 'Βασική μονάδα μέτρησης του βάρους είναι το χιλιόγραμμο (kg), το οποίο συνήθως αποκαλούμε απλά κιλό.'
+    },
+    {
+      id: 'q3',
+      type: 'input',
+      inputType: 'decimal',
+      title: 'Μετατροπή από Γραμμάρια σε Κιλά',
+      prompt: `Πόσα κιλά (kg) είναι τα ${formatNum(q3G, 0)} g;`,
+      correct: formatNum(q3Kg),
+      explain: `Για να μετατρέψουμε γραμμάρια σε κιλά διαιρούμε με το 1.000: ${formatNum(q3G, 0)} : 1.000 ＝ ${formatNum(q3Kg)} kg.`
+    },
+    {
+      id: 'q4',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 4 • ΣΧΕΣΗ ΚΑΘΑΡΟΥ & ΜΙΚΤΟΥ ΒΑΡΟΥΣ',
-      instruction: 'Επιλέξτε τη σωστή μαθηματική σχέση:',
+      title: 'Σχέση Καθαρού & Μικτού Βάρους',
       prompt: 'Ποιος είναι ο σωστός τύπος για τον υπολογισμό του καθαρού βάρους ενός προϊόντος;',
-      options,
-      correctText: correctRule,
-      explanation: 'Το καθαρό βάρος προκύπτει αφαιρώντας το βάρος της συσκευασίας (απόβαρο) από το συνολικό βάρος (μικτό): Καθαρό ＝ Μικτό － Απόβαρο.'
-    });
-  }
-
-  // Q5 (Input - Decimal): Μετατροπή kg σε t (διαίρεση με 1.000)
-  {
-    const kg = randInt(12, 75) * 100;
-    const t = Number((kg / 1000).toFixed(3));
-
-    qList.push({
-      id: 5,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 5 • ΜΕΤΑΤΡΟΠΗ ΑΠΟ ΚΙΛΑ ΣΕ ΤΟΝΟΥΣ',
-      instruction: 'Υπολογίστε το βάρος σε τόνους (t):',
-      prompt: `Πόσοι τόνοι (t) είναι τα ${formatNum(kg)} kg;`,
-      correctVal: t,
-      correctStr: formatNum(t),
-      explanation: `Επειδή 1 t ＝ 1.000 kg, για να μετατρέψουμε κιλά σε τόνους διαιρούμε με το 1.000: ${formatNum(kg)} : 1.000 ＝ ${formatNum(t)} t.`
-    });
-  }
-
-  // Q6 (MCQ): Ισοδυναμία υποδιαιρέσεων και πολλαπλασίων
-  {
-    const correctEquiv = '1 t ＝ 1.000 kg και 1 kg ＝ 1.000 g';
-    const fake1 = '1 t ＝ 100 kg και 1 kg ＝ 100 g';
-    const fake2 = '1 t ＝ 1.000 g και 1 kg ＝ 1.000 mg';
-    const fake3 = '1 kg ＝ 100 g και 1 g ＝ 1.000 mg';
-
-    const options = [
-      { text: correctEquiv, isCorrect: true },
-      { text: fake1, isCorrect: false },
-      { text: fake2, isCorrect: false },
-      { text: fake3, isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 6,
+      options: q4Options,
+      correct: q4Correct,
+      explain: 'Το καθαρό βάρος προκύπτει αφαιρώντας το βάρος της συσκευασίας (απόβαρο) από το συνολικό βάρος (μικτό): Καθαρό ＝ Μικτό － Απόβαρο.'
+    },
+    {
+      id: 'q5',
+      type: 'input',
+      inputType: 'decimal',
+      title: 'Μετατροπή από Κιλά σε Τόνους',
+      prompt: `Πόσοι τόνοι (t) είναι τα ${formatNum(q5Kg, 0)} kg;`,
+      correct: formatNum(q5T),
+      explain: `Επειδή 1 t ＝ 1.000 kg, για να μετατρέψουμε κιλά σε τόνους διαιρούμε με το 1.000: ${formatNum(q5Kg, 0)} : 1.000 ＝ ${formatNum(q5T)} t.`
+    },
+    {
+      id: 'q6',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 6 • ΙΣΟΔΥΝΑΜΙΑ ΜΟΝΑΔΩΝ ΒΑΡΟΥΣ',
-      instruction: 'Επιλέξτε τη σωστή ισοδυναμία:',
+      title: 'Ισοδυναμία Μονάδων Βάρους',
       prompt: 'Ποια από τις παρακάτω σχέσεις ισοδυναμίας των μονάδων βάρους είναι σωστή;',
-      options,
-      correctText: correctEquiv,
-      explanation: 'Ένας τόνος έχει ακριβώς 1.000 κιλά (1 t ＝ 1.000 kg) και ένα κιλό έχει ακριβώς 1.000 γραμμάρια (1 kg ＝ 1.000 g).'
-    });
-  }
-
-  // Q7 & Q8: Κανονικά Προβλήματα από τη δεξαμενή (1 Input, 1 MCQ)
-  {
-    const shuffledStd = [...STANDARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const stdProb1 = shuffledStd[0].generate();
-    const stdProb2 = shuffledStd[1].generate();
-
-    // Q7 (Input - Decimal)
-    qList.push({
-      id: 7,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 7 • ΠΡΑΚΤΙΚΟ ΠΡΟΒΛΗΜΑ ΒΑΡΟΥΣ',
-      instruction: 'Λύστε το πρόβλημα και εισαγάγετε το τελικό αποτέλεσμα:',
-      prompt: stdProb1.text,
-      tableData: stdProb1.tableData,
-      correctVal: stdProb1.correctVal,
-      correctStr: stdProb1.correctStr,
-      explanation: stdProb1.explanation
-    });
-
-    // Q8 (MCQ)
-    const val8 = stdProb2.correctVal;
-    const fake8A = typeof val8 === 'number' ? formatNum(val8 + randInt(2, 5)) : '0';
-    const fake8B = typeof val8 === 'number' ? formatNum(Math.max(0.5, val8 - randInt(1, 4))) : '0';
-    const fake8C = typeof val8 === 'number' ? formatNum(val8 * 1.5) : '0';
-
-    const optionsQ8 = [
-      { text: stdProb2.correctStr, isCorrect: true },
-      { text: String(fake8A), isCorrect: false },
-      { text: String(fake8B), isCorrect: false },
-      { text: String(fake8C), isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 8,
+      options: q6Options,
+      correct: q6Correct,
+      explain: 'Ένας τόνος έχει ακριβώς 1.000 κιλά (1 t ＝ 1.000 kg) και ένα κιλό έχει ακριβώς 1.000 γραμμάρια (1 kg ＝ 1.000 g).'
+    },
+    {
+      id: 'q7',
+      type: 'input',
+      inputType: 'number',
+      title: `Πρόβλημα: ${q7Data.title}`,
+      prompt: q7Data.prompt,
+      correct: q7Data.correctVal,
+      tableData: q7Data.tableData,
+      explain: q7Data.explain
+    },
+    {
+      id: 'q8',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΗΣ ΖΩΗΣ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το πρόβλημα:',
-      prompt: stdProb2.text,
-      tableData: stdProb2.tableData,
-      options: optionsQ8,
-      correctText: stdProb2.correctStr,
-      explanation: stdProb2.explanation
-    });
-  }
-
-  // Q9 & Q10: Προβλήματα Αυξημένης Δυσκολίας (1 Input, 1 MCQ)
-  {
-    const shuffledHard = [...HARD_PROBLEMS_POOL].sort(() => Math.random() - 0.5);
-    const hardProb1 = shuffledHard[0].generate();
-    const hardProb2 = shuffledHard[1].generate();
-
-    // Q9 (Input - Decimal)
-    qList.push({
-      id: 9,
-      type: 'decimal_input',
-      title: 'ΕΡΩΤΗΣΗ 9 • ΣΥΝΘΕΤΟ ΠΡΟΒΛΗΜΑ ΚΑΘΑΡΟΥ ΒΑΡΟΥΣ',
-      instruction: 'Προσέξτε τις διαφορετικές μονάδες και υπολογίστε το αποτέλεσμα:',
-      prompt: hardProb1.text,
-      tableData: hardProb1.tableData,
-      correctVal: hardProb1.correctVal,
-      correctStr: hardProb1.correctStr,
-      explanation: hardProb1.explanation
-    });
-
-    // Q10 (MCQ Αυξημένης Δυσκολίας)
-    const val10 = hardProb2.correctVal;
-    const fake10A = typeof val10 === 'number' ? formatNum(val10 + randInt(2, 5) * 0.2) : '0';
-    const fake10B = typeof val10 === 'number' ? formatNum(Math.max(0.1, val10 - randInt(1, 3) * 0.2)) : '0';
-    const fake10C = typeof val10 === 'number' ? formatNum(val10 * 1.5) : '0';
-
-    const optionsQ10 = [
-      { text: hardProb2.correctStr, isCorrect: true },
-      { text: String(fake10A), isCorrect: false },
-      { text: String(fake10B), isCorrect: false },
-      { text: String(fake10C), isCorrect: false }
-    ].sort(() => Math.random() - 0.5);
-
-    qList.push({
-      id: 10,
+      title: `Πρόβλημα: ${q8Data.title}`,
+      prompt: q8Data.prompt,
+      options: q8Options,
+      correct: q8Data.correctText,
+      tableData: q8Data.tableData,
+      explain: q8Data.explain
+    },
+    {
+      id: 'q9',
+      type: 'input',
+      inputType: 'number',
+      title: `Σύνθετο Πρόβλημα: ${q9Data.title}`,
+      prompt: q9Data.prompt,
+      correct: q9Data.correctVal,
+      tableData: q9Data.tableData,
+      explain: q9Data.explain
+    },
+    {
+      id: 'q10',
       type: 'mcq',
-      title: 'ΕΡΩΤΗΣΗ 10 • ΑΠΑΙΤΗΤΙΚΟ ΠΡΟΒΛΗΜΑ ΜΕ ΤΟΝΟΥΣ & ΦΟΡΤΙΟ',
-      instruction: 'Επιλέξτε τη σωστή τιμή για το σύνθετο πρόβλημα:',
-      prompt: hardProb2.text,
-      tableData: hardProb2.tableData,
-      options: optionsQ10,
-      correctText: hardProb2.correctStr,
-      explanation: hardProb2.explanation
-    });
-  }
-
-  return qList;
+      title: `Σύνθετο Πρόβλημα: ${q10Data.title}`,
+      prompt: q10Data.prompt,
+      options: q10Options,
+      correct: q10Data.correctText,
+      tableData: q10Data.tableData,
+      explain: q10Data.explain
+    }
+  ];
 }
+
+// ---------------------------------------------------------
+// ΚΥΡΙΟ COMPONENT ΣΕΛΙΔΑΣ
+// ---------------------------------------------------------
 
 export default function BarosExercisesPage() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Δημιουργια νεων ασκησεων
   const loadNewSet = useCallback(() => {
-    const q = generateQuestions();
-    setQuestions(q);
-    setAnswers({});
-    setIsSubmitted(false);
+    const qList = generateQuestions();
+    setQuestions(qList);
+    const initialAnswers = {};
+    qList.forEach(q => {
+      initialAnswers[q.id] = '';
+    });
+    setAnswers(initialAnswers);
+    setSubmitted(false);
     setScore(0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμος Input με καθαρισμο χαρακτηρων (μονο 0-9 και ενα κομμα, οριο 10 χαρακτηρων)
-  const handleInputChange = (fieldKey, rawValue) => {
-    if (isSubmitted) return;
-    let sanitized = rawValue.replace(/\./g, ',');
-    sanitized = sanitized.replace(/[^0-9,]/g, '');
-    const parts = sanitized.split(',');
-    if (parts.length > 2) {
-      sanitized = parts[0] + ',' + parts.slice(1).join('');
-    }
-    if (sanitized.length > 10) {
-      sanitized = sanitized.slice(0, 10);
-    }
-    setAnswers((prev) => ({
-      ...prev,
-      [fieldKey]: sanitized
-    }));
-  };
-
-  // Χειρισμος MCQ
-  const handleSelectMCQ = (qId, optionText) => {
-    if (isSubmitted) return;
-    setAnswers((prev) => ({
-      ...prev,
-      [`q_${qId}`]: optionText
-    }));
-  };
-
-  // Ελεγχος Απαντησεων
-  const handleCheckAnswers = () => {
-    let currentScore = 0;
-
-    questions.forEach((q) => {
-      if (q.type === 'mcq') {
-        const userChoice = answers[`q_${q.id}`];
-        if (userChoice === q.correctText) {
-          currentScore += 1;
-        }
-      } else if (q.type === 'decimal_input') {
-        const userValStr = (answers[`q_${q.id}`] || '').trim().replace(',', '.');
-        const userVal = parseFloat(userValStr);
-        if (!isNaN(userVal) && Math.abs(userVal - q.correctVal) < 0.05) {
-          currentScore += 1;
-        }
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq
+  const handleAnswerChange = (id, rawValue, type) => {
+    if (submitted) return;
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
       }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
+  };
+
+  const isQuestionCorrect = (q) => {
+    const userVal = answers[q.id];
+    if (q.type === 'input') {
+      if (typeof userVal !== 'string') return false;
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/(kg|g|t|mg|€)/gi, '').trim().toLowerCase();
+      const cleanTarget = String(q.correct).replace(/\./g, ',').replace(/\s+/g, '').replace(/(kg|g|t|mg|€)/gi, '').trim().toLowerCase();
+
+      if (cleanUser === cleanTarget) return true;
+
+      if (q.inputType === 'decimal') {
+        const numUser = parseFloat(cleanUser.replace(',', '.'));
+        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
+      }
+      return false;
+    }
+    if (q.type === 'mcq') {
+      return userVal === q.correct;
+    }
+    return false;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (submitted || questions.length === 0) return;
+
+    let total = 0;
+    questions.forEach(q => {
+      if (isQuestionCorrect(q)) total += 1;
     });
 
-    setScore(currentScore);
-    setIsSubmitted(true);
+    setScore(total);
+    setSubmitted(true);
   };
+
+  const getCardStyle = (q) => {
+    if (!submitted) return 'bg-white border-slate-200 shadow-sm';
+    return isQuestionCorrect(q)
+      ? 'bg-emerald-50/70 border-emerald-400 shadow-md ring-1 ring-emerald-400'
+      : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
+  };
+
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
 
   return (
     <Layout
       title="Ασκήσεις: Μονάδες Βάρους & Μετατροπές - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="10 απαιτητικές ασκήσεις και προβλήματα στις μονάδες μέτρησης βάρους (t, kg, g, mg), μικτό, καθαρό βάρος και απόβαρο για τη ΣΤ' Δημοτικού."
+      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στις μονάδες μέτρησης βάρους (t, kg, g, mg), στο μικτό και καθαρό βάρος για τη ΣΤ' Δημοτικού."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
+      showAds={false}
       hideFooter={true}
       actionButton={
         <Link
           href="/st-dimotikou/60-baros"
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>📖</span>
+          <span>{toCleanUppercase('Θεωρία')}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
-        {/* Banner Header */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
-          <div className="relative z-10 max-w-5xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
+                <span>ΚΕΦΑΛΑΙΟ 60 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
+                Διαδραστικές Ασκήσεις: Μονάδες Βάρους
+              </h1>
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
+                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στη σκάλα μετατροπών των μονάδων βάρους (t, kg, g, mg), στη διάκριση μικτού, καθαρού βάρους και αποβάρου και σε ρεαλιστικά προβλήματα!
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Ασκήσεις &amp; Προβλήματα: Μονάδες Βάρους
-            </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              10 απαιτητικές δραστηριότητες με μετατροπές μονάδων μέτρησης (t, kg, g, mg) και 4 ρεαλιστικά προβλήματα καθαρού βάρους, αποβάρου και φορτίων. Συμπληρώστε τις απαντήσεις σας και ελέγξτε την επίδοσή σας.
-            </p>
-          </div>
 
-          <div className="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
-            <span className="text-xs sm:text-sm 2xl:text-base text-sky-200">
-              ⚡ Κάθε σετ δημιουργείται δυναμικά με τυχαίες παραμέτρους.
-            </span>
             <button
               type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base touch-manipulation"
+              className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
-              <span>🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ</span>
+              <span>🔄</span>
+              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
             </button>
           </div>
         </section>
 
-        {/* Λιστα 10 Ασκησεων */}
-        <div className="space-y-6 sm:space-y-8">
-          {questions.map((q, idx) => {
-            let isCorrect = false;
-            if (isSubmitted) {
-              if (q.type === 'mcq') {
-                isCorrect = answers[`q_${q.id}`] === q.correctText;
-              } else if (q.type === 'decimal_input') {
-                const uv = parseFloat((answers[`q_${q.id}`] || '').replace(',', '.'));
-                isCorrect = !isNaN(uv) && Math.abs(uv - q.correctVal) < 0.05;
-              }
-            }
-
-            return (
-              <article
-                key={`q-${q.id}-${idx}`}
-                className={`bg-white rounded-3xl border p-5 sm:p-8 2xl:p-10 shadow-sm transition-all ${
-                  isSubmitted
-                    ? isCorrect
-                      ? 'border-emerald-400 bg-emerald-50/20'
-                      : 'border-rose-400 bg-rose-50/20'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {/* Επικεφαλιδα Ερωτησης (Καθαρα ατονα κεφαλαια εκτος ΣΤ') */}
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <span className="text-xs 2xl:text-sm font-black tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg">
-                    {toCleanUppercase(q.title)}
-                  </span>
-                  {isSubmitted && (
-                    <span
-                      className={`text-xs 2xl:text-sm font-bold px-3 py-1 rounded-full ${
-                        isCorrect
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {isCorrect ? '✓ ΣΩΣΤΟ' : '✗ ΛΑΘΟΣ'}
-                    </span>
-                  )}
-                </div>
-
-                {/* Εκφωνηση */}
-                <div className="space-y-3 mb-5">
-                  {q.instruction && (
-                    <p className="text-xs sm:text-sm 2xl:text-base font-semibold text-slate-500">
-                      {q.instruction}
-                    </p>
-                  )}
-                  <p className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-relaxed">
-                    {q.prompt}
-                  </p>
-
-                  {/* Πινακας Δεδομενων (αν υπαρχει) */}
-                  {q.tableData && (
-                    <div className="inline-block max-w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 shadow-inner my-2 font-mono text-xs sm:text-sm 2xl:text-base">
-                      <div className="grid grid-cols-2 gap-3 sm:gap-4 font-bold border-b pb-1.5 text-slate-600 text-center">
-                        <span className="bg-blue-100/60 px-2 py-0.5 rounded-lg text-blue-900 break-words">{q.tableData.col1}</span>
-                        <span className="bg-emerald-100/60 px-2 py-0.5 rounded-lg text-emerald-900 break-words">{q.tableData.col2}</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-2 text-center font-bold text-slate-800">
-                        <span>{q.tableData.r1[0]}</span>
-                        <span className="text-indigo-700 font-bold">{q.tableData.r1[1]}</span>
-                        <span>{q.tableData.r2[0]}</span>
-                        <span className="text-amber-600 font-black">{q.tableData.r2[1]}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Περιοχη Απαντησης */}
-                <div className="py-2">
-                  
-                  {/* Decimal / Number Input */}
-                  {q.type === 'decimal_input' && (
-                    <div className="flex flex-wrap items-center gap-3">
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        maxLength={10}
-                        disabled={isSubmitted}
-                        placeholder="Απάντηση..."
-                        value={answers[`q_${q.id}`] || ''}
-                        onChange={(e) => handleInputChange(`q_${q.id}`, e.target.value)}
-                        className="w-36 sm:w-44 text-center font-mono font-bold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-2xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-inner"
-                      />
-                      <span className="text-xs 2xl:text-sm text-slate-500">
-                        (Ακέραιος η δεκαδικός με κόμμα)
+        {/* ΦΟΡΜΑ ΜΕ ΤΙΣ 10 ΕΡΩΤΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 2xl:gap-8">
+            {questions.map((q, idx) => {
+              const qNum = idx + 1;
+              return (
+                <div
+                  key={q.id}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                >
+                  <div>
+                    {/* CARD HEADER */}
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
+                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
                       </span>
+                      {submitted && (
+                        <span className="text-xl">
+                          {isQuestionCorrect(q) ? '✅' : '❌'}
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  {/* Multiple Choice (MCQ) - Χωρις truncate, πληρες κειμενο break-words */}
-                  {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl">
-                      {q.options.map((opt, oIdx) => {
-                        const isSelected = answers[`q_${q.id}`] === opt.text;
-                        return (
-                          <button
-                            key={`opt-${q.id}-${oIdx}`}
-                            type="button"
-                            disabled={isSubmitted}
-                            onClick={() => handleSelectMCQ(q.id, opt.text)}
-                            className={`p-3.5 rounded-2xl border text-left font-semibold text-xs sm:text-sm 2xl:text-base transition active:scale-95 touch-manipulation flex items-center justify-between gap-3 ${
-                              isSelected
-                                ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
-                                : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                            } disabled:cursor-not-allowed`}
-                          >
-                            <span className="break-words whitespace-normal leading-snug flex-1">
-                              {opt.text}
-                            </span>
-                            <span
-                              className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center text-xs ${
+                    {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
+                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-3">
+                      {q.prompt}
+                    </p>
+
+                    {/* INPUTS / OPTIONS */}
+                    {q.type === 'mcq' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        {q.options.map((opt, oIdx) => {
+                          const isSelected = answers[q.id] === opt;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={submitted}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
-                                  ? 'border-white bg-white text-blue-600 font-bold'
-                                  : 'border-slate-400 bg-transparent'
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                               }`}
                             >
-                              {isSelected ? '●' : ''}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
 
-                </div>
-
-                {/* Feedback μετα την υποβολη */}
-                {isSubmitted && (
-                  <div
-                    className={`mt-4 p-4 rounded-2xl border text-xs sm:text-sm 2xl:text-base leading-relaxed space-y-1.5 ${
-                      isCorrect
-                        ? 'bg-emerald-100/60 border-emerald-300 text-emerald-950'
-                        : 'bg-rose-100/60 border-rose-300 text-rose-950'
-                    }`}
-                  >
-                    <div className="font-bold flex items-center gap-1.5">
-                      <span>{isCorrect ? '🎉 Εξαιρετικά!' : '💡 Μαθηματική Επεξήγηση:'}</span>
-                    </div>
-                    <div>{q.explanation}</div>
-                    {!isCorrect && (
-                      <div className="font-semibold pt-1 text-slate-800">
-                        Σωστή απάντηση:{' '}
-                        <span className="font-mono font-bold text-blue-900">
-                          {q.correctStr || q.correctText}
-                        </span>
+                    {q.type === 'input' && (
+                      <div className="space-y-2 mb-3">
+                        <input
+                          key={`input-${q.id}`}
+                          autoComplete="off"
+                          spellCheck="false"
+                          type="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
+                          disabled={submitted}
+                          value={answers[q.id] || ''}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.inputType === 'decimal' ? 'π.χ. 2,45' : 'Απάντηση...'}
+                          className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
+                        />
                       </div>
                     )}
                   </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
 
-        {/* Κουμπι Ελεγχου στο τελος της φορμας */}
-        <div className="flex justify-center pt-4">
-          <button
-            type="button"
-            onClick={handleCheckAnswers}
-            disabled={isSubmitted}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-base sm:text-lg 2xl:text-xl px-8 py-4 rounded-2xl shadow-xl transition active:scale-95 touch-manipulation"
-          >
-            <span>🎯 Έλεγχος Απαντήσεων</span>
-          </button>
-        </div>
+                  {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
+                  {submitted && (
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                      {q.tableData && (
+                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                          <table className="w-full text-xs text-left text-slate-700">
+                            <thead>
+                              <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
+                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Μετατροπή')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 font-mono">
+                              {q.tableData.map((row, rIdx) => (
+                                <tr key={rIdx}>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
 
-      </div>
-
-      {/* Fixed Bottom Score Bar */}
-      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-8 shadow-2xl">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
-          
-          <div className="flex items-center gap-4 sm:gap-8">
-            <div>
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΣΚΟΡ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-amber-300">
-                {score} <span className="text-slate-500 text-base">/ 10</span>
-              </span>
-            </div>
-
-            <div className="hidden xs:block border-l border-slate-700 pl-4 sm:pl-8">
-              <span className="text-xs text-slate-400 font-semibold block">
-                ΠΟΣΟΣΤΟ
-              </span>
-              <span className="font-mono font-black text-lg sm:text-2xl text-emerald-400">
-                {Math.round((score / 10) * 100)} %
-              </span>
-            </div>
+                      <div
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                          isQuestionCorrect(q)
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
+                            : 'bg-rose-100 text-rose-950 border border-rose-200'
+                        }`}
+                      >
+                        <p className="font-bold mb-1">
+                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                        </p>
+                        <p>{q.explain}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          <div className="flex items-center gap-3">
-            {!isSubmitted ? (
+          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
+          {!submitted && (
+            <div className="flex justify-center pt-4">
               <button
-                type="button"
-                onClick={handleCheckAnswers}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
+                type="submit"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
-                ΕΛΕΓΧΟΣ
+                <span className="text-xl">🎯</span>
+                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
               </button>
-            ) : (
+            </div>
+          )}
+        </form>
+      </div>
+
+      {/* FIXED BOTTOM SCORE FOOTER */}
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
+          
+          {/* SCORE & PERCENTAGE */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
+              <span>🏆</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+            </div>
+            {submitted && (
+              <span className="text-xs sm:text-sm font-bold text-slate-300">
+                {toCleanUppercase('Ποσοστό')}:{' '}
+                <span className="text-emerald-400 font-black text-sm sm:text-base">
+                  {Math.round((score / 10) * 100)}%
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* GUIDANCE OR RESTART */}
+          <div className="flex items-center gap-3">
+            {submitted ? (
               <button
                 type="button"
                 onClick={loadNewSet}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base shadow-md transition active:scale-95 touch-manipulation"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
-                🔄 ΝΕΕΣ ΑΣΚΗΣΕΙΣ
+                <span>🔄</span>
+                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
               </button>
+            ) : (
+              <p className="text-xs text-slate-400 hidden sm:block">
+                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
+              </p>
             )}
           </div>
 
         </div>
-      </footer>
+      </div>
     </Layout>
   );
 }
