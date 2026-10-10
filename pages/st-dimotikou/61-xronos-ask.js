@@ -34,10 +34,11 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποίηση αριθμών με ελληνικό locale
+// Μορφοποίηση αριθμών
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+  if (Number.isInteger(Number(num))) return String(num);
+  return String(num).replace('.', ',');
 }
 
 // ---------------------------------------------------------
@@ -48,14 +49,11 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'sp1',
     title: 'Διάρκεια Ταξιδιού με Πλοίο',
-    unit: '',
     generate: () => {
-      // 08:45 αναχώρηση, 14:20 άφιξη -> 5 h 35 min
       const depH = 8;
       const depM = 45;
       const arrH = 14;
       const arrM = 20;
-      // Δανεισμός 60 λεπτών: 13h 80min - 8h 45min = 5h 35min
       const totalM = (arrH * 60 + arrM) - (depH * 60 + depM);
       const resH = Math.floor(totalM / 60);
       const resM = totalM % 60;
@@ -80,9 +78,7 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'sp2',
     title: 'Διάρκεια Κινηματογραφικής Ταινίας',
-    unit: '',
     generate: () => {
-      // Έναρξη 18:30, διάρκεια 135 λεπτά (2 h 15 min) -> Λήξη 20:45
       const startH = 18;
       const startM = 30;
       const durM = 135;
@@ -112,9 +108,7 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'sp3',
     title: 'Χρόνος Μελέτης Μαθητή',
-    unit: '',
     generate: () => {
-      // 3 μαθήματα: 45 min, 40 min, 35 min -> σύνολο 120 min = 2 ώρες
       const m1 = 45;
       const m2 = 40;
       const m3 = 35;
@@ -136,9 +130,7 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'sp4',
     title: 'Αθλητικός Αγώνας Δρόμου',
-    unit: '',
     generate: () => {
-      // Εκκίνηση 09:15, τερματισμός 11:05 -> 1 h 50 min
       const startH = 9;
       const startM = 15;
       const endH = 11;
@@ -167,9 +159,7 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'sp5',
     title: 'Δρομολόγιο Αμαξοστοιχίας',
-    unit: '',
     generate: () => {
-      // 15:50 αναχώρηση, διάρκεια 3 h 25 min -> άφιξη 19:15
       const depH = 15;
       const depM = 50;
       const durH = 3;
@@ -198,9 +188,7 @@ const STANDARD_PROBLEMS_POOL = [
   {
     id: 'sp6',
     title: 'Χρονόμετρο Αγώνα Κολύμβησης',
-    unit: '',
     generate: () => {
-      // 195 δευτερόλεπτα σε λεπτά και δευτερόλεπτα -> 3 min 15 s
       const totalS = 195;
       const m = Math.floor(totalS / 60);
       const s = totalS % 60;
@@ -228,9 +216,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp1',
     title: 'Υπολογισμός Αιώνα και Χιλιετίας',
-    unit: '',
     generate: () => {
-      // Έτος 1453 (Άλωση Κων/πολης) -> 15ος αιώνας, 2η χιλιετία
       const year = 1453;
       const cent = 15;
       const mill = 2;
@@ -255,13 +241,11 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp2',
     title: 'Υπολογισμός Ώρας Πτήσης με Ζώνες UTC',
-    unit: '',
     generate: () => {
-      // Απογείωση Αθήνα (UTC+2) 10:00, διάρκεια πτήσης 4 ώρες, άφιξη Λονδίνο (UTC 0) -> 12:00
       const depAthens = 10;
       const flightDur = 4;
-      const depGmt = depAthens - 2; // 8:00
-      const arrGmt = depGmt + flightDur; // 12:00
+      const depGmt = depAthens - 2;
+      const arrGmt = depGmt + flightDur;
       const correctText = '12:00 (τοπική ώρα Λονδίνου)';
       return {
         prompt: `Ένα αεροπλάνο αναχωρεί από την Αθήνα (UTC+2) στις 10:00 το πρωί με προορισμό το Λονδίνο (UTC 0). Αν η διάρκεια της πτήσης είναι 4 ώρες, τι ώρα θα προσγειωθεί στο Λονδίνο σε τοπική ώρα;`,
@@ -283,16 +267,14 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp3',
     title: 'Κλασματική Ώρα & Δευτερόλεπτα',
-    unit: '',
     generate: () => {
-      // 3/4 της ώρας σε δευτερόλεπτα: 3/4 * 3600 = 2700 s
       const num = 3;
       const den = 4;
-      const minVal = (num * 60) / den; // 45 min
-      const secVal = minVal * 60; // 2700 s
+      const minVal = (num * 60) / den;
+      const secVal = minVal * 60;
       const correctText = `${secVal} δευτερόλεπτα`;
       return {
-        prompt: `Πόσα δευτερόλεπτα είναι τα 3/4 μίας ώρας;`,
+        prompt: 'Πόσα δευτερόλεπτα είναι τα 3/4 μίας ώρας;',
         correctText,
         tableData: [
           { item: '1 ώρα σε δευτερόλεπτα', formula: '60 · 60', val: '3.600 s' },
@@ -311,9 +293,7 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp4',
     title: 'Διαφορά Χρόνου σε Διεθνή Τηλεδιάσκεψη',
-    unit: '',
     generate: () => {
-      // Αθήνα (UTC+2) 16:00, Νέα Υόρκη (UTC-5) -> διαφορά 7 ώρες πίσω -> 09:00
       const athensH = 16;
       const diff = 7;
       const nyH = athensH - diff;
@@ -338,18 +318,16 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp5',
     title: 'Αιώνας Έτους που Λήγει σε 00',
-    unit: '',
     generate: () => {
-      // Έτος 1900 -> 19ος αιώνας (τελευταίο έτος του 19ου)
       const correctText = '19ος αιώνας';
       return {
-        prompt: `Σε ποιον αιώνα ανήκει το έτος 1900;`,
+        prompt: 'Σε ποιον αιώνα ανήκει το έτος 1900;',
         correctText,
         tableData: [
           { item: 'Έτος', formula: '1900', val: 'Λήγει σε 00' },
           { item: 'Κανόνας', formula: 'Δεν προσθέτουμε 1', val: '19ος αιώνας (έτη 1801 έως 1900)' }
         ],
-        explain: `Τα έτη που λήγουν σε 00 αποτελούν το τελευταίο έτος του αντίστοιχου αιώνα. Άρα το 1900 ήταν το τελευταίο έτος του 19ου αιώνα (ο 20ός ξεκίνησε το 1901).`,
+        explain: 'Τα έτη που λήγουν σε 00 αποτελούν το τελευταίο έτος του αντίστοιχου αιώνα. Άρα το 1900 ήταν το τελευταίο έτος του 19ου αιώνα (ο 20ός ξεκίνησε το 1901).',
         distractors: [
           '20ός αιώνας',
           '18ος αιώνας',
@@ -361,17 +339,15 @@ const HARD_PROBLEMS_POOL = [
   {
     id: 'hp6',
     title: 'Σύνθετη Πρόσθεση Χρονικών Διαστημάτων',
-    unit: '',
     generate: () => {
-      // 2h 45min + 3h 35min = 5h 80min = 6h 20min
       const h1 = 2;
       const m1 = 45;
       const h2 = 3;
       const m2 = 35;
-      const sumH = h1 + h2; // 5
-      const sumM = m1 + m2; // 80
-      const finalH = sumH + Math.floor(sumM / 60); // 6
-      const finalM = sumM % 60; // 20
+      const sumH = h1 + h2;
+      const sumM = m1 + m2;
+      const finalH = sumH + Math.floor(sumM / 60);
+      const finalM = sumM % 60;
       const correctText = `${finalH} ώρες και ${finalM} λεπτά`;
       return {
         prompt: `Υπολόγισε το άθροισμα των χρονικών διαστημάτων: (${h1} h ${m1} min) ＋ (${h2} h ${m2} min):`,
@@ -383,9 +359,9 @@ const HARD_PROBLEMS_POOL = [
         ],
         explain: `Προσθέτουμε: ${h1} ＋ ${h2} ＝ ${sumH} ώρες και ${m1} ＋ ${m2} ＝ ${sumM} λεπτά. Επειδή 80 min ＝ 1 ώρα και 20 λεπτά, το τελικό αποτέλεσμα είναι ${finalH} ώρες και ${finalM} λεπτά.`,
         distractors: [
-          `5 ώρες και 80 λεπτά`,
-          `5 ώρες και 20 λεπτά`,
-          `7 ώρες και 10 λεπτά`
+          '5 ώρες και 80 λεπτά',
+          '5 ώρες και 20 λεπτά',
+          '7 ώρες και 10 λεπτά'
         ]
       };
     }
@@ -397,36 +373,36 @@ const HARD_PROBLEMS_POOL = [
 // ---------------------------------------------------------
 
 function generateQuestions() {
-  // Q1: Input - Ώρες και λεπτά σε συνολικά λεπτά (π.χ. 3 h 25 min -> 205 min)
+  // Q1: Input - Ώρες και λεπτά σε συνολικά λεπτά
   const q1H = randInt(2, 5);
   const q1M = randInt(10, 50);
   const q1Res = q1H * 60 + q1M;
 
-  // Q2: Input - Λεπτά σε δευτερόλεπτα (π.χ. 15 min -> 900 s)
+  // Q2: Input - Λεπτά σε δευτερόλεπτα
   const q2M = randInt(8, 25);
   const q2Res = q2M * 60;
 
-  // Q3: Input - Συνολικά λεπτά σε ώρες (ακέραιο πηλίκο) (π.χ. 190 min -> 3 ώρες και 10 λεπτά, ζητάμε τις ώρες ή λεπτά)
+  // Q3: Input - Συνολικά λεπτά σε ολόκληρες ώρες
   const q3TotalM = randInt(130, 290);
   const q3H = Math.floor(q3TotalM / 60);
   const q3RemM = q3TotalM % 60;
 
-  // Q4: MCQ - Πόσα δευτερόλεπτα έχει 1 ώρα (3.600 s)
-  const q4Options = shuffle([...new Set(['3.600 δευτερόλεπτα', '600 δευτερόλεπτα', '6.000 δευτερόλεπτα', '60 δευτερόλεπτα'])]);
+  // Q4: MCQ - Δευτερόλεπτα μίας ώρας
+  const q4Options = shuffle(['3.600 δευτερόλεπτα', '600 δευτερόλεπτα', '6.000 δευτερόλεπτα', '60 δευτερόλεπτα']);
 
-  // Q5: True/False - Δεκαδική ώρα (2,5 h = 2 h 30 min και όχι 2 h 50 min)
+  // Q5: True/False - Δεκαδική ώρα
   const q5IsTrue = Math.random() > 0.5;
   const q5Text = q5IsTrue
     ? 'Ο χρόνος 2,5 ώρες ισοδυναμεί με 2 ώρες και 30 λεπτά (μισή ώρα).'
     : 'Ο χρόνος 2,5 ώρες ισοδυναμεί με 2 ώρες και 50 λεπτά.';
 
-  // Q6: True/False - Δίσεκτο έτος (366 ημέρες)
+  // Q6: True/False - Δίσεκτο έτος
   const q6IsTrue = Math.random() > 0.5;
   const q6Text = q6IsTrue
     ? 'Το δίσεκτο έτος έχει 366 ημέρες και συμβαίνει κάθε 4 χρόνια.'
     : 'Το δίσεκτο έτος έχει 365 ημέρες και ο Φεβρουάριος έχει 28 ημέρες.';
 
-  // Q7: Input - Εύρεση αιώνα για ένα έτος (π.χ. 1821 -> 19)
+  // Q7: Input - Εύρεση αιώνα για ένα έτος
   const q7YearPool = [
     { y: 1821, cent: 19 },
     { y: 1453, cent: 15 },
@@ -440,21 +416,21 @@ function generateQuestions() {
   // Q8: MCQ - Ώρα Greenwich / UTC Ελλάδας
   const q8GmtHour = randInt(9, 15);
   const q8AthensHour = (q8GmtHour + 2) % 24;
-  const q8Options = shuffle([...new Set([
+  const q8Options = shuffle([
     `${q8AthensHour}:00`,
     `${q8GmtHour}:00`,
     `${(q8GmtHour - 2 + 24) % 24}:00`,
     `${(q8AthensHour + 2) % 24}:00`
-  ])]);
+  ]);
 
-  // Q9: Standard Problem (Pool of 6)
+  // Q9: Standard Problem
   const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
   const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate();
   const q9Options = shuffle([
     ...new Set([q9Raw.correctText, ...q9Raw.distractors])
   ]);
 
-  // Q10: Hard Problem (Pool of 6)
+  // Q10: Hard Problem
   const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
   const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate();
   const q10Options = shuffle([
@@ -465,6 +441,7 @@ function generateQuestions() {
     {
       id: 'q1',
       type: 'input',
+      inputType: 'number',
       title: 'Ώρες & Λεπτά σε Συνολικά Λεπτά',
       prompt: `Μετάτρεψε το χρονικό διάστημα ${q1H} ώρες και ${q1M} λεπτά σε συνολικά λεπτά:`,
       correct: String(q1Res),
@@ -473,6 +450,7 @@ function generateQuestions() {
     {
       id: 'q2',
       type: 'input',
+      inputType: 'number',
       title: 'Λεπτά σε Δευτερόλεπτα',
       prompt: `Πόσα δευτερόλεπτα είναι τα ${q2M} λεπτά;`,
       correct: String(q2Res),
@@ -481,6 +459,7 @@ function generateQuestions() {
     {
       id: 'q3',
       type: 'input',
+      inputType: 'number',
       title: 'Ανάλυση Λεπτών σε Ώρες',
       prompt: `Πόσες ολόκληρες ώρες περιέχονται στα ${q3TotalM} λεπτά; (Γράψε μόνο τον ακέραιο αριθμό των ωρών):`,
       correct: String(q3H),
@@ -518,6 +497,7 @@ function generateQuestions() {
     {
       id: 'q7',
       type: 'input',
+      inputType: 'number',
       title: 'Υπολογισμός Αιώνα',
       prompt: `Σε ποιον αιώνα ανήκει το έτος ${q7Choice.y}; (Γράψε μόνο τον αριθμό του αιώνα, π.χ. ${q7Choice.cent}):`,
       correct: String(q7Choice.cent),
@@ -584,9 +564,26 @@ export default function XronosExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -595,8 +592,7 @@ export default function XronosExercisesPage() {
       if (typeof userVal !== 'string') return false;
       const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
       const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase() : null;
-      return cleanUser === cleanTarget || (cleanAlt && cleanUser === cleanAlt);
+      return cleanUser === cleanTarget;
     }
     if (q.type === 'mcq') {
       return userVal === q.correct;
@@ -627,6 +623,8 @@ export default function XronosExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Μονάδες Μέτρησης Χρόνου - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -645,7 +643,7 @@ export default function XronosExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -711,7 +709,7 @@ export default function XronosExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -732,11 +730,12 @@ export default function XronosExercisesPage() {
                           autoComplete="off"
                           spellCheck="false"
                           type="text"
-                          inputMode="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
-                          placeholder="Γράψε την απάντηση..."
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder="Απάντηση..."
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -747,7 +746,7 @@ export default function XronosExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -759,7 +758,7 @@ export default function XronosExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -781,7 +780,7 @@ export default function XronosExercisesPage() {
                             <thead>
                               <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
                                 <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
-                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
+                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Μετατροπή')}</th>
                                 <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
                               </tr>
                             </thead>
@@ -840,8 +839,10 @@ export default function XronosExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
