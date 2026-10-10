@@ -37,7 +37,8 @@ function toCleanUppercase(str) {
 // Μορφοποίηση αριθμών με ελληνικό locale
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+  if (Number.isInteger(Number(num))) return String(num);
+  return String(num).replace('.', ',');
 }
 
 // ---------------------------------------------------------
@@ -50,7 +51,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Αγορές στο Βιβλιοπωλείο',
     unit: '€',
     generate: () => {
-      // 3 τετράδια προς 1,80€ + 2 στυλό προς 0,85€ = 5,40 + 1,70 = 7,10€. Πληρωμή με 10€ -> Ρέστα 2,90€
       const itemsA = 3;
       const priceA = 1.8;
       const itemsB = 2;
@@ -61,7 +61,7 @@ const STANDARD_PROBLEMS_POOL = [
       const changeStr = change.toFixed(2).replace('.', ',');
       const correctText = `${changeStr} €`;
       return {
-        prompt: `Η Ελένη αγόρασε ${itemsA} τετράδια προς 1,80€ το καθένα και ${itemsB} στυλό προς 0,85€ το καθένα. Πλήρωσε με χαρτονόμισμα των ${paid}€. Πόσα ρέστα θα πάρει;`,
+        prompt: `Η Ελένη αγόρασε ${itemsA} τετράδια προς 1,80 € το καθένα και ${itemsB} στυλό προς 0,85 € το καθένα. Πλήρωσε με χαρτονόμισμα των ${paid} €. Πόσα ρέστα θα πάρει;`,
         correctText,
         tableData: [
           { item: 'Κόστος τετραδίων', formula: `${itemsA} · 1,80 €`, val: `${(itemsA * priceA).toFixed(2).replace('.', ',')} €` },
@@ -83,7 +83,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Αγορά Φρούτων στο Μανάβικο',
     unit: '€',
     generate: () => {
-      // 2,5 κιλά μήλα προς 1,40€/κιλό και 1,5 κιλό πορτοκάλια προς 1,20€/κιλό = 3,50 + 1,80 = 5,30€. Πληρωμή με 10€ -> 4,70€
       const kgA = 2.5;
       const priceA = 1.4;
       const kgB = 1.5;
@@ -94,7 +93,7 @@ const STANDARD_PROBLEMS_POOL = [
       const changeStr = change.toFixed(2).replace('.', ',');
       const correctText = `${changeStr} €`;
       return {
-        prompt: `Ένας πελάτης αγόρασε 2,5 κιλά μήλα προς 1,40€ το κιλό και 1,5 κιλό πορτοκάλια προς 1,20€ το κιλό. Πλήρωσε με χαρτονόμισμα των ${paid}€. Πόσα ρέστα πήρε;`,
+        prompt: `Ένας πελάτης αγόρασε 2,5 κιλά μήλα προς 1,40 € το κιλό και 1,5 κιλό πορτοκάλια προς 1,20 € το κιλό. Πλήρωσε με χαρτονόμισμα των ${paid} €. Πόσα ρέστα πήρε;`,
         correctText,
         tableData: [
           { item: 'Μήλα', formula: '2,5 · 1,40 €', val: '3,50 €' },
@@ -116,7 +115,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Κέρασμα στο Κυλικείο',
     unit: '€',
     generate: () => {
-      // 4 τοστ προς 1,75€ και 4 χυμοί προς 0,90€ = 7,00 + 3,60 = 10,60€. Πληρωμή με 20€ -> 9,40€
       const count = 4;
       const priceToast = 1.75;
       const priceJuice = 0.9;
@@ -126,7 +124,7 @@ const STANDARD_PROBLEMS_POOL = [
       const changeStr = change.toFixed(2).replace('.', ',');
       const correctText = `${changeStr} €`;
       return {
-        prompt: `Ο Κώστας αγόρασε από το κυλικείο ${count} τοστ προς 1,75€ το καθένα και ${count} χυμούς προς 0,90€ τον καθένα. Πλήρωσε με χαρτονόμισμα των ${paid}€. Πόσα ρέστα έλαβε;`,
+        prompt: `Ο Κώστας αγόρασε από το κυλικείο ${count} τοστ προς 1,75 € το καθένα και ${count} χυμούς προς 0,90 € τον καθένα. Πλήρωσε με χαρτονόμισμα των ${paid} €. Πόσα ρέστα έλαβε;`,
         correctText,
         tableData: [
           { item: 'Τοστ', formula: `${count} · 1,75 €`, val: '7,00 €' },
@@ -148,7 +146,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Αγορά Αθλητικού Εξοπλισμού',
     unit: '€',
     generate: () => {
-      // Μπάλα 14,50€, κάλτσες 3,80€, καπελάκι 6,20€ = 24,50€. Πληρωμή με 50€ -> 25,50€
       const p1 = 14.5;
       const p2 = 3.8;
       const p3 = 6.2;
@@ -158,7 +155,7 @@ const STANDARD_PROBLEMS_POOL = [
       const changeStr = change.toFixed(2).replace('.', ',');
       const correctText = `${changeStr} €`;
       return {
-        prompt: `Ένας μαθητής αγόρασε μια μπάλα προς 14,50€, ένα ζευγάρι κάλτσες προς 3,80€ και ένα καπελάκι προς 6,20€. Πλήρωσε με χαρτονόμισμα των ${paid}€. Πόσα ρέστα πήρε;`,
+        prompt: `Ένας μαθητής αγόρασε μια μπάλα προς 14,50 €, ένα ζευγάρι κάλτσες προς 3,80 € και ένα καπελάκι προς 6,20 €. Πλήρωσε με χαρτονόμισμα των ${paid} €. Πόσα ρέστα πήρε;`,
         correctText,
         tableData: [
           { item: 'Αθλητικά είδη', formula: '14,50 ＋ 3,80 ＋ 6,20 €', val: '24,50 €' },
@@ -179,7 +176,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Αγορά Εισιτηρίων Θεάτρου',
     unit: '€',
     generate: () => {
-      // 2 εισιτήρια ενηλίκων προς 12,50€ και 2 παιδικά προς 7,50€ = 25 + 15 = 40€. Πληρωμή με 50€ -> 10€
       const adult = 2;
       const pAdult = 12.5;
       const child = 2;
@@ -190,7 +186,7 @@ const STANDARD_PROBLEMS_POOL = [
       const changeStr = change.toFixed(2).replace('.', ',');
       const correctText = `${changeStr} €`;
       return {
-        prompt: `Μια οικογένεια αγόρασε 2 εισιτήρια ενηλίκων προς 12,50€ το ένα και 2 παιδικά εισιτήρια προς 7,50€ το ένα. Πλήρωσαν με χαρτονόμισμα των ${paid}€. Πόσα ρέστα πήραν;`,
+        prompt: `Μια οικογένεια αγόρασε 2 εισιτήρια ενηλίκων προς 12,50 € το ένα και 2 παιδικά εισιτήρια προς 7,50 € το ένα. Πλήρωσαν με χαρτονόμισμα των ${paid} €. Πόσα ρέστα πήραν;`,
         correctText,
         tableData: [
           { item: 'Εισιτήρια ενηλίκων', formula: '2 · 12,50 €', val: '25,00 €' },
@@ -208,7 +204,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Αγορά Σχολικών Βοηθημάτων',
     unit: '€',
     generate: () => {
-      // Λεξικό 8,40€ και 3 μαρκαδόροι προς 1,20€ = 8,40 + 3,60 = 12,00€. Πληρωμή με 20€ -> 8,00€
       const book = 8.4;
       const markers = 3;
       const pMarker = 1.2;
@@ -218,7 +213,7 @@ const STANDARD_PROBLEMS_POOL = [
       const changeStr = change.toFixed(2).replace('.', ',');
       const correctText = `${changeStr} €`;
       return {
-        prompt: `Η Μαρία αγόρασε ένα λεξικό προς 8,40€ και 3 μαρκαδόρους υπογράμμισης προς 1,20€ τον καθένα. Πλήρωσε με χαρτονόμισμα των ${paid}€. Πόσα ρέστα πήρε;`,
+        prompt: `Η Μαρία αγόρασε ένα λεξικό προς 8,40 € και 3 μαρκαδόρους υπογράμμισης προς 1,20 € τον καθένα. Πλήρωσε με χαρτονόμισμα των ${paid} €. Πόσα ρέστα πήρε;`,
         correctText,
         tableData: [
           { item: 'Λεξικό', formula: '8,40 €', val: '8,40 €' },
@@ -239,7 +234,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Υπολογισμός Τόκου & Τελικού Κεφαλαίου για 3 Έτη',
     unit: '€',
     generate: () => {
-      // Κ = 2.400€, Ε = 2,5%, χ = 3 έτη -> Τ = 180€, Τελικό = 2.580€
       const cap = 2400;
       const r = 2.5;
       const y = 3;
@@ -247,7 +241,7 @@ const HARD_PROBLEMS_POOL = [
       const totalAmount = cap + interest;
       const correctText = `${totalAmount} € (τόκος: ${interest} €)`;
       return {
-        prompt: `Ο κύριος Ανδρέας κατέθεσε στην τράπεζα κεφάλαιο ${cap}€ με ετήσιο επιτόκιο ${r.toString().replace('.', ',')}% για ${y} έτη. Ποιο είναι το συνολικό ποσό που θα έχει στον λογαριασμό του στο τέλος της τριετίας;`,
+        prompt: `Ο κύριος Ανδρέας κατέθεσε στην τράπεζα κεφάλαιο ${cap} € με ετήσιο επιτόκιο ${r.toString().replace('.', ',')} % για ${y} έτη. Ποιο είναι το συνολικό ποσό που θα έχει στον λογαριασμό του στο τέλος της τριετίας;`,
         correctText,
         tableData: [
           { item: 'Αρχικό Κεφάλαιο (Κ)', formula: `${cap} €`, val: `${cap} €` },
@@ -268,7 +262,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Υπολογισμός Τόκου για 2 Έτη',
     unit: '€',
     generate: () => {
-      // Κ = 3.000€, Ε = 3%, χ = 2 έτη -> Τ = 180€, Τελικό = 3.180€
       const cap = 3000;
       const r = 3;
       const y = 2;
@@ -276,7 +269,7 @@ const HARD_PROBLEMS_POOL = [
       const totalAmount = cap + interest;
       const correctText = `${totalAmount} €`;
       return {
-        prompt: `Μια αποταμιεύτρια κατέθεσε ${cap}€ για ${y} χρόνια με ετήσιο επιτόκιο ${r}%. Πόσα χρήματα θα έχει συνολικά (κεφάλαιο ＋ τόκος) μετά από ${y} χρόνια;`,
+        prompt: `Μια αποταμιεύτρια κατέθεσε ${cap} € για ${y} χρόνια με ετήσιο επιτόκιο ${r} %. Πόσα χρήματα θα έχει συνολικά (κεφάλαιο ＋ τόκος) μετά από ${y} χρόνια;`,
         correctText,
         tableData: [
           { item: 'Κεφάλαιο (Κ)', formula: `${cap} €`, val: `${cap} €` },
@@ -297,21 +290,20 @@ const HARD_PROBLEMS_POOL = [
     title: 'Εύρεση Ετήσιου Επιτοκίου',
     unit: '%',
     generate: () => {
-      // Κ = 2.000€, Τ = 80€ σε 1 έτος -> Ε = 4%
       const cap = 2000;
       const interest = 80;
-      const rateVal = (interest * 100) / cap; // 4%
-      const correctText = `${rateVal}%`;
+      const rateVal = (interest * 100) / cap;
+      const correctText = `${rateVal} %`;
       return {
-        prompt: `Ένα κεφάλαιο ${cap}€ απέδωσε σε 1 έτος τόκο ${interest}€. Ποιο ήταν το ετήσιο επιτόκιο της τράπεζας;`,
+        prompt: `Ένα κεφάλαιο ${cap} € απέδωσε σε 1 έτος τόκο ${interest} €. Ποιο ήταν το ετήσιο επιτόκιο της τράπεζας;`,
         correctText,
         tableData: [
           { item: 'Κεφάλαιο (Κ)', formula: `${cap} €`, val: `${cap} €` },
           { item: 'Τόκος 1 έτους', formula: `${interest} €`, val: `${interest} €` },
-          { item: 'Επιτόκιο (Ε%)', formula: `(${interest} · 100) : ${cap}`, val: `${rateVal}%` }
+          { item: 'Επιτόκιο (Ε%)', formula: `(${interest} · 100) : ${cap}`, val: `${rateVal} %` }
         ],
-        explain: `Επιτόκιο είναι ο τόκος για κάθε 100€: (${interest} : ${cap}) · 100 ＝ 0,04 · 100 ＝ ${rateVal}%.`,
-        distractors: ['3%', '5%', '2,5%']
+        explain: `Επιτόκιο είναι ο τόκος για κάθε 100 €: (${interest} : ${cap}) · 100 ＝ 0,04 · 100 ＝ ${rateVal} %.`,
+        distractors: ['3 %', '5 %', '2,5 %']
       };
     }
   },
@@ -320,7 +312,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Αγορά με Δόσεις και Επιβάρυνση',
     unit: '€',
     generate: () => {
-      // Τηλεόραση αξίας 400€. Αγορά με 10 δόσεις των 44€ -> Σύνολο 440€, Επιβάρυνση 40€
       const cash = 400;
       const installments = 10;
       const perInstallment = 44;
@@ -328,7 +319,7 @@ const HARD_PROBLEMS_POOL = [
       const diff = totalCredit - cash;
       const correctText = `${diff} € επιπλέον`;
       return {
-        prompt: `Μια ηλεκτρική συσκευή κοστίζει ${cash}€ μετρητοίς. Μπορεί να αποκτηθεί και με ${installments} μηνιαίες δόσεις των ${perInstallment}€ η καθεμία. Πόσα ευρώ επιπλέον πληρώνει όποιος επιλέξει τις δόσεις;`,
+        prompt: `Μια ηλεκτρική συσκευή κοστίζει ${cash} € μετρητοίς. Μπορεί να αποκτηθεί και με ${installments} μηνιαίες δόσεις των ${perInstallment} € η καθεμία. Πόσα ευρώ επιπλέον πληρώνει όποιος επιλέξει τις δόσεις;`,
         correctText,
         tableData: [
           { item: 'Τιμή μετρητοίς', formula: `${cash} €`, val: `${cash} €` },
@@ -345,20 +336,19 @@ const HARD_PROBLEMS_POOL = [
     title: 'Εύρεση Αρχικού Κεφαλαίου',
     unit: '€',
     generate: () => {
-      // Επιτόκιο 4%, χρόνος 1 έτος, Τόκος 120€ -> Κ = 120 * 100 / 4 = 3.000€
       const r = 4;
       const interest = 120;
-      const cap = (interest * 100) / r; // 3000
+      const cap = (interest * 100) / r;
       const correctText = `${cap} €`;
       return {
-        prompt: `Ένας καταθέτης εισέπραξε σε 1 έτος τόκο ${interest}€ με ετήσιο επιτόκιο ${r}%. Ποιο ήταν το αρχικό κεφάλαιο που είχε καταθέσει;`,
+        prompt: `Ένας καταθέτης εισέπραξε σε 1 έτος τόκο ${interest} € με ετήσιο επιτόκιο ${r} %. Ποιο ήταν το αρχικό κεφάλαιο που είχε καταθέσει;`,
         correctText,
         tableData: [
           { item: 'Τόκος (Τ)', formula: `${interest} €`, val: `${interest} €` },
-          { item: 'Επιτόκιο (Ε%)', formula: `${r}%`, val: '4€ τόκος ανά 100€' },
+          { item: 'Επιτόκιο (Ε%)', formula: `${r} %`, val: '4 € τόκος ανά 100 €' },
           { item: 'Αρχικό Κεφάλαιο (Κ)', formula: `(${interest} · 100) : ${r}`, val: `${cap} €` }
         ],
-        explain: `Αν τα 100€ δίνουν 4€ τόκο, τότε το κεφάλαιο είναι: (${interest} · 100) : ${r} ＝ 12.000 : 4 ＝ ${cap} €.`,
+        explain: `Αν τα 100 € δίνουν 4 € τόκο, τότε το κεφάλαιο είναι: (${interest} · 100) : ${r} ＝ 12.000 : 4 ＝ ${cap} €.`,
         distractors: ['2.500 €', '3.500 €', '4.000 €']
       };
     }
@@ -368,14 +358,13 @@ const HARD_PROBLEMS_POOL = [
     title: 'Σύνθετη Κατανομή Χρημάτων',
     unit: '€',
     generate: () => {
-      // 3 φίλοι μοιράζονται έξοδα 84,60€ ισόποσα -> 28,20€ ο καθένας
       const friends = 3;
       const total = 84.6;
       const perFriend = Number((total / friends).toFixed(2));
       const perFriendStr = perFriend.toFixed(2).replace('.', ',');
       const correctText = `${perFriendStr} €`;
       return {
-        prompt: `Τρεις φίλοι πλήρωσαν συνολικά σε ένα εστιατόριο ${total.toFixed(2).replace('.', ',')}€ και μοιράστηκαν τον λογαριασμό εξίσου. Πόσα ευρώ πλήρωσε ο καθένας;`,
+        prompt: `Τρεις φίλοι πλήρωσαν συνολικά σε ένα εστιατόριο ${total.toFixed(2).replace('.', ',')} € και μοιράστηκαν τον λογαριασμό εξίσου. Πόσα ευρώ πλήρωσε ο καθένας;`,
         correctText,
         tableData: [
           { item: 'Συνολικός λογαριασμός', formula: `${total.toFixed(2).replace('.', ',')} €`, val: `${total.toFixed(2).replace('.', ',')} €` },
@@ -398,18 +387,18 @@ const HARD_PROBLEMS_POOL = [
 // ---------------------------------------------------------
 
 function generateQuestions() {
-  // Q1: Input - Ευρώ σε λεπτά (π.χ. 4,75 € -> 475)
+  // Q1: Input - Ευρώ σε λεπτά
   const q1E = randInt(2, 8);
   const q1C = [25, 50, 75, 80, 5, 90][randInt(0, 5)];
   const q1EuroStr = `${q1E},${q1C < 10 ? '0' + q1C : q1C}`;
   const q1Res = q1E * 100 + q1C;
 
-  // Q2: Input - Λεπτά σε δεκαδικά ευρώ (π.χ. 620 λεπτά -> 6,20 ή 6,2)
+  // Q2: Input - Λεπτά σε δεκαδικά ευρώ
   const q2Cents = randInt(250, 850);
   const q2Euro = (q2Cents / 100).toFixed(2).replace('.', ',');
   const q2Alt = (q2Cents / 100).toFixed(2).replace(/0$/, '').replace('.', ',');
 
-  // Q3: Input - Υπολογισμός ρέστων (π.χ. Πληρωμή 10€, κόστος 6,40€ -> Ρέστα 3,60€)
+  // Q3: Input - Υπολογισμός ρέστων
   const q3Paid = 10;
   const q3CostE = randInt(4, 7);
   const q3CostC = [20, 30, 40, 50, 60, 70, 80][randInt(0, 6)];
@@ -418,14 +407,14 @@ function generateQuestions() {
   const q3ChangeStr = q3Change.toFixed(2).replace('.', ',');
 
   // Q4: MCQ - Τύπος του τόκου
-  const q4Options = shuffle([...new Set([
+  const q4Options = shuffle([
     'Τ ＝ (Κ · Ε · χ) : 100',
     'Τ ＝ (Κ ＋ Ε ＋ χ) : 100',
     'Τ ＝ (Κ · Ε) : χ',
     'Τ ＝ (Κ · 100) : Ε'
-  ])]);
+  ]);
 
-  // Q5: True/False - Δεκαδική έκφραση ευρώ και λεπτών (π.χ. 2,05 € = 2 € και 5 λεπτά)
+  // Q5: True/False - Δεκαδική έκφραση ευρώ και λεπτών
   const q5IsTrue = Math.random() > 0.5;
   const q5Text = q5IsTrue
     ? 'Το ποσό 2,05 € σημαίνει 2 ευρώ και 5 λεπτά (και όχι 50 λεπτά).'
@@ -437,31 +426,31 @@ function generateQuestions() {
     ? 'Επιτόκιο είναι ο τόκος που δίνουν 100 € για χρονικό διάστημα 1 έτους.'
     : 'Επιτόκιο είναι το συνολικό ποσό που καταθέτουμε στην τράπεζα.';
 
-  // Q7: Input - Υπολογισμός τόκου για 1 έτος (π.χ. Κ = 1.000€, Ε = 3% -> 30)
+  // Q7: Input - Υπολογισμός τόκου για 1 έτος
   const q7Cap = [500, 1000, 1500, 2000, 3000][randInt(0, 4)];
   const q7Rate = randInt(2, 5);
   const q7Interest = (q7Cap * q7Rate) / 100;
 
-  // Q8: MCQ - Τελικό ποσό κατάθεσης (Κεφάλαιο + Τόκος)
+  // Q8: MCQ - Τελικό ποσό κατάθεσης
   const q8Cap = 1000;
   const q8Rate = 4;
-  const q8Int = (q8Cap * q8Rate) / 100; // 40€
-  const q8Total = q8Cap + q8Int; // 1040€
-  const q8Options = shuffle([...new Set([
+  const q8Int = (q8Cap * q8Rate) / 100;
+  const q8Total = q8Cap + q8Int;
+  const q8Options = shuffle([
     `${q8Total} €`,
     `${q8Cap - q8Int} €`,
     `${q8Total + 40} €`,
     `${q8Cap + 4} €`
-  ])]);
+  ]);
 
-  // Q9: Standard Problem (Pool of 6)
+  // Q9: Standard Problem
   const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
   const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate();
   const q9Options = shuffle([
     ...new Set([q9Raw.correctText, ...q9Raw.distractors])
   ]);
 
-  // Q10: Hard Problem (Pool of 6)
+  // Q10: Hard Problem
   const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
   const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate();
   const q10Options = shuffle([
@@ -472,6 +461,7 @@ function generateQuestions() {
     {
       id: 'q1',
       type: 'input',
+      inputType: 'number',
       title: 'Ευρώ σε Λεπτά',
       prompt: `Πόσα λεπτά είναι το χρηματικό ποσό των ${q1EuroStr} €;`,
       correct: String(q1Res),
@@ -480,6 +470,7 @@ function generateQuestions() {
     {
       id: 'q2',
       type: 'input',
+      inputType: 'decimal',
       title: 'Λεπτά σε Δεκαδικά Ευρώ',
       prompt: `Γράψε το ποσό των ${q2Cents} λεπτών σε δεκαδική μορφή ευρώ (€):`,
       correct: q2Euro,
@@ -489,8 +480,9 @@ function generateQuestions() {
     {
       id: 'q3',
       type: 'input',
+      inputType: 'decimal',
       title: 'Υπολογισμός Ρέστων',
-      prompt: `Αγοράσαμε εμπορεύματα αξίας ${q3Cost.toFixed(2).replace('.', ',')} € και πληρώσαμε με χαρτονόμισμα των ${q3Paid} €. Πόσα ρέστα θα πάρουμε (σε δεκαδική μορφή ευρώ);`,
+      prompt: `Αγοράσαμε εμπορεύματα αξίας ${q3Cost.toFixed(2).replace('.', ',')} € και πληρώσαμε με χαρτονόμισμα των ${q3Paid} €. Πόσα ρέστα θα πάρουμε σε δεκαδική μορφή ευρώ (€);`,
       correct: q3ChangeStr,
       explain: `Αφαιρούμε την αξία από την πληρωμή: ${q3Paid},00 － ${q3Cost.toFixed(2).replace('.', ',')} ＝ ${q3ChangeStr} €.`
     },
@@ -526,8 +518,9 @@ function generateQuestions() {
     {
       id: 'q7',
       type: 'input',
+      inputType: 'number',
       title: 'Υπολογισμός Ετήσιου Τόκου',
-      prompt: `Ένα κεφάλαιο ${q7Cap} € κατατίθεται στην τράπεζα με ετήσιο επιτόκιο ${q7Rate}%. Πόσο τόκο (σε €) θα αποδώσει σε 1 έτος;`,
+      prompt: `Ένα κεφάλαιο ${q7Cap} € κατατίθεται στην τράπεζα με ετήσιο επιτόκιο ${q7Rate} %. Πόσο τόκο (σε €) θα αποδώσει σε 1 έτος;`,
       correct: String(q7Interest),
       explain: `Τ ＝ (${q7Cap} · ${q7Rate} · 1) : 100 ＝ ${q7Cap * q7Rate} : 100 ＝ ${q7Interest} €.`
     },
@@ -535,7 +528,7 @@ function generateQuestions() {
       id: 'q8',
       type: 'mcq',
       title: 'Τελικό Ποσό Κατάθεσης',
-      prompt: `Καταθέτουμε ${q8Cap} € με επιτόκιο ${q8Rate}% για 1 έτος (τόκος ${q8Int} €). Πόσα χρήματα θα έχουμε συνολικά στο τέλος του έτους;`,
+      prompt: `Καταθέτουμε ${q8Cap} € με επιτόκιο ${q8Rate} % για 1 έτος (τόκος ${q8Int} €). Πόσα χρήματα θα έχουμε συνολικά στο τέλος του έτους;`,
       options: q8Options,
       correct: `${q8Total} €`,
       explain: `Τελικό Ποσό ＝ Κεφάλαιο ＋ Τόκος ＝ ${q8Cap} ＋ ${q8Int} ＝ ${q8Total} €.`
@@ -592,19 +585,44 @@ export default function XrimataExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
     const userVal = answers[q.id];
     if (q.type === 'input') {
       if (typeof userVal !== 'string') return false;
-      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase();
-      const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').trim().toLowerCase() : null;
-      return cleanUser === cleanTarget || (cleanAlt && cleanUser === cleanAlt);
+      const cleanUser = userVal.replace(/\./g, ',').replace(/\s+/g, '').replace(/€/g, '').trim().toLowerCase();
+      const cleanTarget = q.correct.replace(/\./g, ',').replace(/\s+/g, '').replace(/€/g, '').trim().toLowerCase();
+      const cleanAlt = q.altCorrect ? q.altCorrect.replace(/\./g, ',').replace(/\s+/g, '').replace(/€/g, '').trim().toLowerCase() : null;
+
+      if (cleanUser === cleanTarget || (cleanAlt && cleanUser === cleanAlt)) return true;
+
+      if (q.inputType === 'decimal') {
+        const numUser = parseFloat(cleanUser.replace(',', '.'));
+        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
+      }
+      return false;
     }
     if (q.type === 'mcq') {
       return userVal === q.correct;
@@ -635,6 +653,8 @@ export default function XrimataExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Το Ευρώ, Μετατροπές & Τόκος - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -653,7 +673,7 @@ export default function XrimataExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -719,7 +739,7 @@ export default function XrimataExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -740,11 +760,12 @@ export default function XrimataExercisesPage() {
                           autoComplete="off"
                           spellCheck="false"
                           type="text"
-                          inputMode="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
-                          placeholder="Γράψε την απάντηση..."
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
+                          placeholder={q.inputType === 'decimal' ? 'π.χ. 3,60' : 'Απάντηση...'}
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -755,7 +776,7 @@ export default function XrimataExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -767,7 +788,7 @@ export default function XrimataExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -848,8 +869,10 @@ export default function XrimataExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
