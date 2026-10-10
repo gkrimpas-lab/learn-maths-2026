@@ -34,10 +34,11 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Μορφοποίηση αριθμών με ελληνικό locale
+// Μορφοποίηση αριθμών
 function formatNum(num) {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+  if (Number.isInteger(Number(num))) return String(num);
+  return String(num).replace('.', ',');
 }
 
 // ---------------------------------------------------------
@@ -50,7 +51,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Κατασκευή Τετραγώνων με Σπίρτα',
     unit: 'σπίρτα',
     generate: () => {
-      // Κανόνας: 1ο τετράγωνο 4 σπίρτα, κάθε επόμενο +3 -> 1 + 3n (ή 4 + 3(n-1))
       const n = randInt(10, 20);
       const totalMatches = 1 + 3 * n;
       const correctText = `${totalMatches} σπίρτα`;
@@ -76,7 +76,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Κατασκευή Τριγώνων με Σπίρτα',
     unit: 'σπίρτα',
     generate: () => {
-      // Κανόνας: 1ο τρίγωνο 3 σπίρτα, κάθε επόμενο +2 -> 1 + 2n
       const n = randInt(12, 25);
       const totalMatches = 1 + 2 * n;
       const correctText = `${totalMatches} σπίρτα`;
@@ -102,7 +101,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Πλακόστρωση με Τετράγωνα Πλακάκια',
     unit: 'πλακάκια',
     generate: () => {
-      // Τετράγωνο δάπεδο πλευράς n πλακιδίων -> n * n πλακάκια
       const side = randInt(8, 15);
       const totalTiles = side * side;
       const correctText = `${totalTiles} πλακάκια`;
@@ -128,7 +126,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Κυκλικό Μοτίβο 4 Σχημάτων',
     unit: '',
     generate: () => {
-      // Πυρήνας 4: [Τρίγωνο, Κύκλος, Τετράγωνο, Ρόμβος]
       const shapes = ['Τρίγωνο (🔺)', 'Κύκλος (🟢)', 'Τετράγωνο (🟦)', 'Ρόμβος (🔶)'];
       const targetPos = randInt(41, 69);
       const rem = targetPos % 4;
@@ -152,7 +149,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Κυκλικό Μοτίβο 5 Χρωμάτων',
     unit: '',
     generate: () => {
-      // Πυρήνας 5: [Κόκκινο, Μπλε, Κίτρινο, Πράσινο, Πορτοκαλί]
       const colors = ['Κόκκινη', 'Μπλε', 'Κίτρινη', 'Πράσινη', 'Πορτοκαλί'];
       const targetPos = randInt(51, 89);
       const rem = targetPos % 5;
@@ -176,7 +172,6 @@ const STANDARD_PROBLEMS_POOL = [
     title: 'Μοτίβο Περιμέτρου με Τραπέζια',
     unit: 'καρέκλες',
     generate: () => {
-      // Τραπέζια ενωμένα: 1 τραπέζι = 4 καρέκλες, n τραπέζια = 2n + 2 καρέκλες
       const tables = randInt(6, 15);
       const chairs = 2 * tables + 2;
       const correctText = `${chairs} καρέκλες`;
@@ -205,7 +200,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Τριγωνικοί Αριθμοί (Πλήθος Τελειών)',
     unit: 'τελείες',
     generate: () => {
-      // Τριγωνικός αριθμός n: n*(n+1)/2. Για n = 10 -> 55 τελείες
       const n = randInt(8, 12);
       const totalDots = (n * (n + 1)) / 2;
       const correctText = `${totalDots} τελείες`;
@@ -231,17 +225,16 @@ const HARD_PROBLEMS_POOL = [
     title: 'Πλακόστρωση και Γωνίες Κορυφής (360°)',
     unit: '',
     generate: () => {
-      // 3 εξάγωνα: 3 * 120 = 360°
       const correctText = '3 εξάγωνα (120° · 3 ＝ 360°)';
       return {
-        prompt: `Σε μια κανονική εξαγωνική πλακόστρωση (όπως στην κηρήθρα των μελισσών), πόσα κανονικά εξάγωνα ενώνονται σε κάθε κοινή κορυφή ώστε να καλύπτουν πλήρως τις 360° χωρίς κενά;`,
+        prompt: 'Σε μια κανονική εξαγωνική πλακόστρωση (όπως στην κηρήθρα των μελισσών), πόσα κανονικά εξάγωνα ενώνονται σε κάθε κοινή κορυφή ώστε να καλύπτουν πλήρως τις 360° χωρίς κενά;',
         correctText,
         tableData: [
           { item: 'Εσωτερική γωνία κανονικού εξαγώνου', formula: '180° · (6 － 2) : 6', val: '120°' },
           { item: 'Πλήρης γωνία κορυφής', formula: '360°', val: '360°' },
           { item: 'Πλήθος εξαγώνων ανά κορυφή', formula: '360° : 120°', val: '3 εξάγωνα' }
         ],
-        explain: `Κάθε γωνία ενός κανονικού εξαγώνου είναι 120°. Για να καλυφθούν πλήρως οι 360° γύρω από μια κορυφή, ενώνονται ακριβώς 360° : 120° ＝ 3 εξάγωνα.`,
+        explain: 'Κάθε γωνία ενός κανονικού εξαγώνου είναι 120°. Για να καλυφθούν πλήρως οι 360° γύρω από μια κορυφή, ενώνονται ακριβώς 360° : 120° ＝ 3 εξάγωνα.',
         distractors: [
           '4 εξάγωνα (90° · 4 ＝ 360°)',
           '6 εξάγωνα (60° · 6 ＝ 360°)',
@@ -255,7 +248,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Αυξανόμενο Μοτίβο με Περιθώριο (Border Tiles)',
     unit: 'πλακάκια',
     generate: () => {
-      // Τετράγωνο n x n με γκρίζο περίγραμμα: σύνολο n^2 - (n-2)^2 = 4n - 4
       const n = randInt(6, 10);
       const borderTiles = 4 * n - 4;
       const correctText = `${borderTiles} πλακάκια`;
@@ -281,12 +273,10 @@ const HARD_PROBLEMS_POOL = [
     title: 'Ακολουθία Fibonacci στη Φύση',
     unit: '',
     generate: () => {
-      // 1, 1, 2, 3, 5, 8, 13, 21, 34 -> επόμενος όρος
-      const seq = [1, 1, 2, 3, 5, 8, 13, 21];
-      const nextVal = 13 + 21; // 34
+      const nextVal = 13 + 21;
       const correctText = String(nextVal);
       return {
-        prompt: `Στη φύση (σπείρες ηλιοτροπίων, κουκουνάρια) συναντάμε την περίφημη ακολουθία Fibonacci: 1, 1, 2, 3, 5, 8, 13, 21, ... Ποιος είναι ο αμέσως επόμενος αριθμός του μοτίβου;`,
+        prompt: 'Στη φύση (σπείρες ηλιοτροπίων, κουκουνάρια) συναντάμε την περίφημη ακολουθία Fibonacci: 1, 1, 2, 3, 5, 8, 13, 21, ... Ποιος είναι ο αμέσως επόμενος αριθμός του μοτίβου;',
         correctText,
         tableData: [
           { item: 'Κανόνας Fibonacci', formula: 'Άθροισμα των 2 προηγούμενων', val: 'α(n) ＝ α(n-1) ＋ α(n-2)' },
@@ -307,7 +297,6 @@ const HARD_PROBLEMS_POOL = [
     title: 'Μοτίβο Διακοσμητικού Ψηφιδωτού',
     unit: 'ψηφίδες',
     generate: () => {
-      // Σταυροειδές μοτίβο: 1 κεντρική + 4 μπράτσα των n -> 1 + 4n. Για n = 15 -> 61
       const n = randInt(8, 16);
       const totalCross = 1 + 4 * n;
       const correctText = `${totalCross} ψηφίδες`;
@@ -333,17 +322,16 @@ const HARD_PROBLEMS_POOL = [
     title: 'Σύνθετη Πλακόστρωση (Οκτάγωνα & Τετράγωνα)',
     unit: '',
     generate: () => {
-      // 2 οκτάγωνα (135° * 2 = 270°) + 1 τετράγωνο (90°) = 360°
       const correctText = '2 κανονικά οκτάγωνα και 1 τετράγωνο (135° ＋ 135° ＋ 90° ＝ 360°)';
       return {
-        prompt: `Σε ένα παραδοσιακό δάπεδο συνδυάζονται κανονικά οκτάγωνα (γωνία 135°) και τετράγωνα (γωνία 90°). Ποιος συνδυασμός σχημάτων συναντιέται σε κάθε κορυφή ώστε να συμπληρώνονται ακριβώς οι 360°;`,
+        prompt: 'Σε ένα παραδοσιακό δάπεδο συνδυάζονται κανονικά οκτάγωνα (γωνία 135°) και τετράγωνα (γωνία 90°). Ποιος συνδυασμός σχημάτων συναντιέται σε κάθε κορυφή ώστε να συμπληρώνονται ακριβώς οι 360°;',
         correctText,
         tableData: [
           { item: 'Γωνία οκταγώνου', formula: '135°', val: '135°' },
           { item: 'Γωνία τετραγώνου', formula: '90°', val: '90°' },
           { item: 'Άθροισμα κορυφής', formula: '135° · 2 ＋ 90° ＝ 270° ＋ 90°', val: '360°' }
         ],
-        explain: `Σε κάθε κοινή κορυφή ενώνονται 2 γωνίες οκταγώνου (135° · 2 ＝ 270°) και 1 γωνία τετραγώνου (90°): 270° ＋ 90° ＝ 360°.`,
+        explain: 'Σε κάθε κοινή κορυφή ενώνονται 2 γωνίες οκταγώνου (135° · 2 ＝ 270°) και 1 γωνία τετραγώνου (90°): 270° ＋ 90° ＝ 360°.',
         distractors: [
           '3 κανονικά οκτάγωνα (135° · 3 ＝ 405°)',
           '1 οκτάγωνο και 2 τετράγωνα (135° ＋ 180° ＝ 315°)',
@@ -359,11 +347,11 @@ const HARD_PROBLEMS_POOL = [
 // ---------------------------------------------------------
 
 function generateQuestions() {
-  // Q1: Input - Τετραγωνικό μοτίβο τελειών (n · n). Π.χ. n = 7 -> 49
+  // Q1: Input - Τετραγωνικό μοτίβο τελειών
   const q1N = randInt(5, 12);
   const q1Res = q1N * q1N;
 
-  // Q2: Input - Ακολουθία με σταθερό βήμα (π.χ. 4, 7, 10, 13, ... +3 -> επόμενος)
+  // Q2: Input - Ακολουθία με σταθερό βήμα
   const q2Start = randInt(2, 6);
   const q2Step = randInt(3, 5);
   const q2A = q2Start;
@@ -372,50 +360,50 @@ function generateQuestions() {
   const q2D = q2C + q2Step;
   const q2Next = q2D + q2Step;
 
-  // Q3: Input - Αυξανόμενο μοτίβο 2n + 1 (π.χ. n = 8 -> 17)
+  // Q3: Input - Αυξανόμενο μοτίβο 2n + 1
   const q3N = randInt(6, 14);
   const q3Res = 2 * q3N + 1;
 
-  // Q4: MCQ - Ποια κανονικά πολύγωνα πλακοστρώνουν μόνα τους το επίπεδο (τρίγωνα, τετράγωνα, εξάγωνα)
-  const q4Options = shuffle([...new Set([
+  // Q4: MCQ - Ποια κανονικά πολύγωνα πλακοστρώνουν μόνα τους το επίπεδο
+  const q4Options = shuffle([
     'Ισόπλευρα τρίγωνα, τετράγωνα και κανονικά εξάγωνα',
     'Μόνο τετράγωνα και κύκλοι',
     'Κανονικά πεντάγωνα και οκτάγωνα',
     'Όλα τα κανονικά πολύγωνα χωρίς εξαίρεση'
-  ])]);
+  ]);
 
-  // Q5: True/False - Γεωμετρική αρχή πλακόστρωσης (άθροισμα γωνιών κορυφής = 360°)
+  // Q5: True/False - Γεωμετρική αρχή πλακόστρωσης
   const q5IsTrue = Math.random() > 0.5;
   const q5Text = q5IsTrue
     ? 'Σε μια πλακόστρωση χωρίς κενά, το άθροισμα των γωνιών γύρω από κάθε κοινή κορυφή ισούται πάντα με 360°.'
     : 'Σε μια πλακόστρωση χωρίς κενά, το άθροισμα των γωνιών γύρω από κάθε κοινή κορυφή ισούται πάντα με 180°.';
 
-  // Q6: True/False - Μοτίβα στη φύση (η κηρήθρα μελισσών έχει κανονικά εξάγωνα)
+  // Q6: True/False - Μοτίβα στη φύση
   const q6IsTrue = Math.random() > 0.5;
   const q6Text = q6IsTrue
     ? 'Οι μέλισσες κατασκευάζουν τις κηρήθρες τους με κανονικά εξάγωνα επειδή εξασφαλίζουν τη μέγιστη χωρητικότητα με το λιγότερο κερί.'
     : 'Οι μέλισσες κατασκευάζουν τις κηρήθρες τους με κανονικά πεντάγωνα που δεν αφήνουν κενά μεταξύ τους.';
 
-  // Q7: Input - Εύρεση του n-οστού όρου σε μοτίβο σπίρτων 3n + 1 (π.χ. n = 9 -> 28)
+  // Q7: Input - Εύρεση του n-οστού όρου σε μοτίβο σπίρτων 3n + 1
   const q7N = randInt(6, 12);
   const q7Res = 3 * q7N + 1;
 
   // Q8: MCQ - Αρχαιοελληνικός Μαίανδρος
-  const q8Options = shuffle([...new Set([
+  const q8Options = shuffle([
     'Συνεχής γραμμή που διπλώνει σε ορθές γωνίες (σύμβολο αιωνιότητας)',
     'Σειρά από ομόκεντρους κύκλους',
     'Τυχαία τοποθέτηση τριγώνων χωρίς κανόνα',
     'Μοτίβο από παράλληλες ευθείες χωρίς στροφές'
-  ])]);
+  ]);
 
-  // Q9: Standard Problem (Pool of 6)
+  // Q9: Standard Problem
   const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
   const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate();
   const q9Options = shuffle([
     ...new Set([q9Raw.correctText, ...q9Raw.distractors])
   ]);
 
-  // Q10: Hard Problem (Pool of 6)
+  // Q10: Hard Problem
   const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
   const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate();
   const q10Options = shuffle([
@@ -426,6 +414,7 @@ function generateQuestions() {
     {
       id: 'q1',
       type: 'input',
+      inputType: 'number',
       title: 'Τετραγωνικό Μοτίβο Τελειών',
       prompt: `Σε ένα τετραγωνικό μοτίβο τελειών διαστάσεων ${q1N} επί ${q1N}, πόσες τελείες υπάρχουν συνολικά;`,
       correct: String(q1Res),
@@ -434,6 +423,7 @@ function generateQuestions() {
     {
       id: 'q2',
       type: 'input',
+      inputType: 'number',
       title: 'Επόμενος Όρος Αριθμητικού Μοτίβου',
       prompt: `Βρες τον επόμενο αριθμό του μοτίβου: ${q2A}, ${q2B}, ${q2C}, ${q2D}, ...`,
       correct: String(q2Next),
@@ -442,6 +432,7 @@ function generateQuestions() {
     {
       id: 'q3',
       type: 'input',
+      inputType: 'number',
       title: 'Αυξανόμενο Μοτίβο (2n ＋ 1)',
       prompt: `Ένα γεωμετρικό μοτίβο αυξάνεται με τον κανόνα: Πλήθος ＝ 2 · n ＋ 1. Πόσα στοιχεία έχει στο βήμα n ＝ ${q3N};`,
       correct: String(q3Res),
@@ -479,6 +470,7 @@ function generateQuestions() {
     {
       id: 'q7',
       type: 'input',
+      inputType: 'number',
       title: 'Κανόνας Ακολουθίας με Σπίρτα',
       prompt: `Σε μια σειρά ενωμένων τετραγώνων με σπίρτα, ο αριθμός των σπίρτων δίνεται από τον τύπο 3 · n ＋ 1. Πόσα σπίρτα χρειάζονται για n ＝ ${q7N} τετράγωνα;`,
       correct: String(q7Res),
@@ -545,9 +537,26 @@ export default function GeometrikaMotibaExercisesPage() {
     loadNewSet();
   }, [loadNewSet]);
 
-  const handleInputChange = (id, val) => {
+  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
+  const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [id]: val }));
+    if (type === 'input') {
+      const q = questions.find(item => item.id === id);
+      let sanitized = String(rawValue);
+      if (q?.inputType === 'number') {
+        sanitized = sanitized.replace(/[^0-9]/g, '');
+      } else if (q?.inputType === 'decimal') {
+        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+        const parts = sanitized.split(',');
+        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
+      }
+      if (sanitized.length > 10) {
+        sanitized = sanitized.slice(0, 10);
+      }
+      setAnswers(prev => ({ ...prev, [id]: sanitized }));
+    } else {
+      setAnswers(prev => ({ ...prev, [id]: rawValue }));
+    }
   };
 
   const isQuestionCorrect = (q) => {
@@ -588,6 +597,8 @@ export default function GeometrikaMotibaExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
+  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+
   return (
     <Layout
       title="Ασκήσεις: Γεωμετρικά Μοτίβα - ΣΤ' Δημοτικού | LearnMaths.gr"
@@ -606,7 +617,7 @@ export default function GeometrikaMotibaExercisesPage() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-32 overflow-x-hidden space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
@@ -672,7 +683,7 @@ export default function GeometrikaMotibaExercisesPage() {
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleInputChange(q.id, opt)}
+                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
                               className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
@@ -693,10 +704,11 @@ export default function GeometrikaMotibaExercisesPage() {
                           autoComplete="off"
                           spellCheck="false"
                           type="text"
-                          inputMode="text"
+                          inputMode={q.inputType === 'decimal' ? 'decimal' : 'numeric'}
+                          maxLength={10}
                           disabled={submitted}
                           value={answers[q.id] || ''}
-                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
                           placeholder="Γράψε την απάντηση..."
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
@@ -708,7 +720,7 @@ export default function GeometrikaMotibaExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, true)}
+                          onClick={() => handleAnswerChange(q.id, true, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
@@ -720,7 +732,7 @@ export default function GeometrikaMotibaExercisesPage() {
                         <button
                           type="button"
                           disabled={submitted}
-                          onClick={() => handleInputChange(q.id, false)}
+                          onClick={() => handleAnswerChange(q.id, false, 'tf')}
                           className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
@@ -801,8 +813,10 @@ export default function GeometrikaMotibaExercisesPage() {
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{toCleanUppercase('Σκορ')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
