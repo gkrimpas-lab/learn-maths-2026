@@ -56,343 +56,467 @@ function ensureFourUniqueOptions(correctText, distractorsGen) {
 }
 
 // -------------------------------------------------------------
-// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (POOLS) ΓΙΑ Q9 & Q10
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (POOLS) ΓΙΑ Q9, Q10, Q11, Q12
 // -------------------------------------------------------------
 
-const STANDARD_PROBLEMS_POOL = [
-  // 1. Συμπληρωματικές γωνίες σε ορθή γωνία
+// POOL ΓΙΑ Q9: Συμπληρωματικές Γωνίες (Άθροισμα 90°)
+const PROBLEM_POOL_Q9 = [
+  // 1. Ορθή γωνία σε 2 μέρη
   () => {
-    const angleA = randInt(20, 65);
-    const angleB = 90 - angleA;
-    const unit = '°';
-    const correct = `${angleB}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${angleB + 10}${unit}`,
-      `${angleB - 10}${unit}`,
-      `${180 - angleA}${unit}`,
-      `${90 + angleA}${unit}`
-    ]);
+    const a = randInt(18, 72);
+    const b = 90 - a;
+    const correct = `${b}°`;
     return {
       title: 'ΣΥΜΠΛΗΡΩΜΑΤΙΚΗ ΓΩΝΙΑ',
-      prompt: `Μια ορθή γωνία 90° χωρίζεται σε δύο επιμέρους γωνίες. Αν η μία γωνία έχει μέτρο ${angleA}°, ποιο είναι το μέτρο της άλλης γωνίας;`,
-      options,
+      prompt: `Μια ορθή γωνία (90°) χωρίζεται από μία εσωτερική ημιευθεία σε δύο γωνίες. Αν η μία γωνία μετράει ${a}°, πόσες μοίρες είναι η άλλη;`,
+      options: ensureFourUniqueOptions(correct, () => [`${b + 10}°`, `${b - 10}°`, `${180 - a}°`, `${90 + a}°`]),
       correctAnswer: correct,
-      unit,
       tableData: [
         { label: 'Συνολική γωνία', value: '90° (Ορθή)' },
-        { label: 'Γνωστή γωνία', value: `${angleA}°` },
-        { label: 'Πράξη', value: `90° － ${angleA}°` },
-        { label: 'Ζητούμενη γωνία', value: `${angleB}°` }
+        { label: 'Γνωστή γωνία', value: `${a}°` },
+        { label: 'Πράξη', value: `90° － ${a}°` },
+        { label: 'Ζητούμενη γωνία', value: `${b}°` }
       ],
-      explanation: `Οι δύο γωνίες είναι συμπληρωματικές, άρα το άθροισμά τους είναι 90°. Αφαιρούμε: 90° － ${angleA}° ＝ ${angleB}°.`
+      explanation: `Οι δύο γωνίες είναι συμπληρωματικές (άθροισμα 90°). Αφαιρούμε: 90° － ${a}° ＝ ${b}°.`
     };
   },
-  // 2. Παραπληρωματικές γωνίες σε ευθεία γωνία
+  // 2. Ράμπα skateboard
   () => {
-    const angleA = randInt(40, 140);
-    const angleB = 180 - angleA;
-    const unit = '°';
-    const correct = `${angleB}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${angleB + 15}${unit}`,
-      `${angleB - 15}${unit}`,
-      `${90 - Math.min(angleA, 80)}${unit}`,
-      `${180 - angleB + 5}${unit}`
-    ]);
+    const slope = randInt(15, 38);
+    const comp = 90 - slope;
+    const correct = `${comp}°`;
     return {
-      title: 'ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΗ ΓΩΝΙΑ',
-      prompt: `Δύο γωνίες βρίσκονται πάνω στην ίδια ευθεία γραμμή και σχηματίζουν ευθεία γωνία (180°). Αν η μία γωνία είναι ${angleA}°, πόσες μοίρες είναι η άλλη;`,
-      options,
+      title: 'ΚΛΙΣΗ ΡΑΜΠΑΣ ΚΑΙ ΚΑΘΕΤΟΣ',
+      prompt: `Μια ράμπα σχηματίζει με το έδαφος οξεία γωνία ${slope}°. Πόσες μοίρες είναι η συμπληρωματική της γωνία ως προς την κατακόρυφη κολόνα 90°;`,
+      options: ensureFourUniqueOptions(correct, () => [`${comp + 12}°`, `${comp - 8}°`, `${180 - slope}°`, `${slope + 45}°`]),
       correctAnswer: correct,
-      unit,
       tableData: [
-        { label: 'Συνολική γωνία', value: '180° (Ευθεία)' },
-        { label: 'Γνωστή γωνία', value: `${angleA}°` },
-        { label: 'Πράξη', value: `180° － ${angleA}°` },
-        { label: 'Ζητούμενη γωνία', value: `${angleB}°` }
+        { label: 'Κατακόρυφη γωνία', value: '90°' },
+        { label: 'Κλίση ράμπας', value: `${slope}°` },
+        { label: 'Πράξη', value: `90° － ${slope}°` },
+        { label: 'Συμπλήρωμα', value: `${comp}°` }
       ],
-      explanation: `Δύο γωνίες που σχηματίζουν ευθεία γραμμή είναι παραπληρωματικές (άθροισμα 180°). Επομένως: 180° － ${angleA}° ＝ ${angleB}°.`
+      explanation: `Η κατακόρυφος σχηματίζει 90° με το έδαφος. Υπολογίζουμε: 90° － ${slope}° ＝ ${comp}°.`
     };
   },
-  // 3. Γωνία δεικτών ρολογιού σε ακέραιες ώρες
-  () => {
-    const hours = randInt(1, 5); // π.χ. 1:00, 2:00, 4:00, 5:00
-    const angle = hours * 30;
-    const unit = '°';
-    const correct = `${angle}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${angle + 30}${unit}`,
-      `${angle - 30}${unit}`,
-      `${hours * 45}${unit}`,
-      `${angle + 15}${unit}`
-    ]);
-    return {
-      title: 'ΓΩΝΙΑ ΔΕΙΚΤΩΝ ΡΟΛΟΓΙΟΥ',
-      prompt: `Ένα αναλογικό ρολόι δείχνει ακριβώς ${hours}:00. Πόσες μοίρες είναι η γωνία που σχηματίζει ο ωροδείκτης με τον λεπτοδείκτη;`,
-      options,
-      correctAnswer: correct,
-      unit,
-      tableData: [
-        { label: 'Πλήρης κύκλος', value: '360° : 12 ＝ 30° ανά ώρα' },
-        { label: 'Απόσταση δεικτών', value: `${hours} ώρες` },
-        { label: 'Πράξη', value: `${hours} · 30°` },
-        { label: 'Γωνία', value: `${angle}°` }
-      ],
-      explanation: `Κάθε ώρα στο καντράν του ρολογιού αντιστοιχεί σε 360° : 12 ＝ 30°. Στις ${hours}:00 οι δείκτες απέχουν ${hours} θέσεις: ${hours} · 30° ＝ ${angle}°.`
-    };
-  },
-  // 4. Διχοτόμηση ορθής γωνίας
+  // 3. Διχοτόμηση ορθής γωνίας
   () => {
     const half = 45;
-    const unit = '°';
-    const correct = `${half}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `30${unit}`,
-      `60${unit}`,
-      `90${unit}`,
-      `50${unit}`
-    ]);
+    const correct = `${half}°`;
     return {
-      title: 'ΧΩΡΙΣΜΟΣ ΟΡΘΗΣ ΓΩΝΙΑΣ ΣΕ 2 ΙΣΑ ΜΕΡΗ',
+      title: 'ΧΩΡΙΣΜΟΣ ΟΡΘΗΣ ΓΩΝΙΑΣ ΣΤΗ ΜΕΣΗ',
       prompt: `Μια ορθή γωνία (90°) χωρίζεται ακριβώς στη μέση σε δύο ίσες γωνίες. Πόσες μοίρες είναι καθεμία από τις δύο νέες γωνίες;`,
-      options,
+      options: ensureFourUniqueOptions(correct, () => ['30°', '60°', '50°', '40°']),
       correctAnswer: correct,
-      unit,
       tableData: [
-        { label: 'Αρχική γωνία', value: '90° (Ορθή)' },
+        { label: 'Αρχική γωνία', value: '90°' },
         { label: 'Διαίρεση', value: 'Σε 2 ίσα μέρη' },
         { label: 'Πράξη', value: '90° : 2' },
         { label: 'Κάθε γωνία', value: `${half}°` }
       ],
-      explanation: `Διαιρούμε την ορθή γωνία με το 2: 90° : 2 ＝ 45°. Καθεμία από τις δύο νέες γωνίες είναι οξεία και μετρά 45°.`
+      explanation: `Διαιρούμε την ορθή γωνία με το 2: 90° : 2 ＝ 45°.`
     };
   },
-  // 5. Τριχοτόμηση ευθείας γωνίας
+  // 4. Ορθή γωνία σε 3 ίσα μέρη
   () => {
-    const third = 60;
-    const unit = '°';
-    const correct = `${third}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `45${unit}`,
-      `90${unit}`,
-      `30${unit}`,
-      `50${unit}`
-    ]);
+    const third = 30;
+    const correct = `${third}°`;
     return {
-      title: 'ΧΩΡΙΣΜΟΣ ΕΥΘΕΙΑΣ ΓΩΝΙΑΣ ΣΕ 3 ΙΣΑ ΜΕΡΗ',
-      prompt: `Μια ευθεία γωνία (180°) χωρίζεται σε 3 ίσες γωνίες. Πόσες μοίρες είναι καθεμία από αυτές;`,
-      options,
+      title: 'ΤΡΙΧΟΤΟΜΗΣΗ ΟΡΘΗΣ ΓΩΝΙΑΣ',
+      prompt: `Αν χωρίσουμε μια ορθή γωνία 90° σε 3 ίσα μέρη, πόσες μοίρες θα έχει το καθένα από αυτά;`,
+      options: ensureFourUniqueOptions(correct, () => ['20°', '45°', '25°', '60°']),
       correctAnswer: correct,
-      unit,
       tableData: [
-        { label: 'Αρχική γωνία', value: '180° (Ευθεία)' },
+        { label: 'Αρχική γωνία', value: '90°' },
         { label: 'Διαίρεση', value: 'Σε 3 ίσα μέρη' },
-        { label: 'Πράξη', value: '180° : 3' },
-        { label: 'Κάθε γωνία', value: `${third}°` }
+        { label: 'Πράξη', value: '90° : 3' },
+        { label: 'Κάθε μέρος', value: `${third}°` }
       ],
-      explanation: `Διαιρούμε την ευθεία γωνία με το 3: 180° : 3 ＝ 60°. Καθεμία από τις 3 ίσες γωνίες μετρά 60°.`
+      explanation: `Διαιρούμε: 90° : 3 ＝ 30°. Κάθε γωνία είναι 30°.`
     };
   },
-  // 6. Διαφορά γωνιών
+  // 5. Φωτοβολταϊκό πάνελ
   () => {
-    const angleA = randInt(110, 150);
-    const angleB = randInt(30, 70);
-    const diff = angleA - angleB;
-    const unit = '°';
-    const correct = `${diff}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${diff + 10}${unit}`,
-      `${diff - 10}${unit}`,
-      `${diff + 20}${unit}`,
-      `${angleA - angleB + 5}${unit}`
-    ]);
+    const tilt = randInt(22, 48);
+    const comp = 90 - tilt;
+    const correct = `${comp}°`;
     return {
-      title: 'ΔΙΑΦΟΡΑ ΑΜΒΛΕΙΑΣ ΚΑΙ ΟΞΕΙΑΣ ΓΩΝΙΑΣ',
-      prompt: `Μια αμβλεία γωνία είναι ${angleA}° και μια οξεία γωνία είναι ${angleB}°. Κατά πόσες μοίρες είναι μεγαλύτερη η αμβλεία γωνία από την οξεία;`,
-      options,
+      title: 'ΚΛΙΣΗ ΦΩΤΟΒΟΛΤΑΙΚΟΥ ΠΑΝΕΛ',
+      prompt: `Ένα φωτοβολταϊκό πλαίσιο τοποθετείται σε στέγη με κλίση ${tilt}° ως προς το οριζόντιο επίπεδο. Πόση είναι η συμπληρωματική γωνία της κλίσης του (μέχρι τις 90°);`,
+      options: ensureFourUniqueOptions(correct, () => [`${comp + 15}°`, `${comp - 15}°`, `${180 - tilt}°`, `${tilt + 30}°`]),
       correctAnswer: correct,
-      unit,
       tableData: [
-        { label: 'Αμβλεία γωνία', value: `${angleA}°` },
-        { label: 'Οξεία γωνία', value: `${angleB}°` },
-        { label: 'Πράξη', value: `${angleA}° － ${angleB}°` },
-        { label: 'Διαφορά', value: `${diff}°` }
+        { label: 'Ορθή γωνία αναφοράς', value: '90°' },
+        { label: 'Κλίση πλαισίου', value: `${tilt}°` },
+        { label: 'Πράξη', value: `90° － ${tilt}°` },
+        { label: 'Συμπληρωματική', value: `${comp}°` }
       ],
-      explanation: `Αφαιρούμε το μέτρο της οξείας γωνίας από το μέτρο της αμβλείας: ${angleA}° － ${angleB}° ＝ ${diff}°.`
+      explanation: `Αφαιρούμε την κλίση από τις 90°: 90° － ${tilt}° ＝ ${comp}°.`
+    };
+  },
+  // 6. Δύο ίσες συμπληρωματικές
+  () => {
+    const val = 45;
+    const correct = `${val}°`;
+    return {
+      title: 'ΙΣΕΣ ΣΥΜΠΛΗΡΩΜΑΤΙΚΕΣ ΓΩΝΙΕΣ',
+      prompt: `Δύο γωνίες είναι συμπληρωματικές (άθροισμα 90°) και επιπλέον είναι ίσες μεταξύ τους. Πόσες μοίρες είναι καθεμία;`,
+      options: ensureFourUniqueOptions(correct, () => ['90°', '30°', '60°', '50°']),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Άθροισμα', value: '90°' },
+        { label: 'Σχέση', value: 'Ίσες (2 μέρη)' },
+        { label: 'Πράξη', value: '90° : 2' },
+        { label: 'Αποτέλεσμα', value: `${val}°` }
+      ],
+      explanation: `Αφού είναι ίσες και έχουν άθροισμα 90°: 90° : 2 ＝ 45°.`
     };
   }
 ];
 
-const HARD_PROBLEMS_POOL = [
+// POOL ΓΙΑ Q10: Παραπληρωματικές Γωνίες (Άθροισμα 180°)
+const PROBLEM_POOL_Q10 = [
+  // 1. Ευθεία γραμμή σε 2 γωνίες
+  () => {
+    const a = randInt(45, 135);
+    const b = 180 - a;
+    const correct = `${b}°`;
+    return {
+      title: 'ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΗ ΓΩΝΙΑ',
+      prompt: `Δύο γωνίες σχηματίζουν μαζί μια ευθεία γραμμή (180°). Αν η μία γωνία είναι ${a}°, πόσες μοίρες είναι η άλλη;`,
+      options: ensureFourUniqueOptions(correct, () => [`${b + 10}°`, `${b - 10}°`, `${90 - Math.min(a, 80)}°`, `${180 - b + 8}°`]),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Συνολική γωνία', value: '180° (Ευθεία)' },
+        { label: 'Γνωστή γωνία', value: `${a}°` },
+        { label: 'Πράξη', value: `180° － ${a}°` },
+        { label: 'Ζητούμενη γωνία', value: `${b}°` }
+      ],
+      explanation: `Δύο εφεξής γωνίες σε ευθεία γραμμή είναι παραπληρωματικές (άθροισμα 180°): 180° － ${a}° ＝ ${b}°.`
+    };
+  },
+  // 2. Ευθεία γωνία σε 3 ίσα μέρη
+  () => {
+    const part = 60;
+    const correct = `${part}°`;
+    return {
+      title: 'ΧΩΡΙΣΜΟΣ ΕΥΘΕΙΑΣ ΓΩΝΙΑΣ ΣΕ 3 ΜΕΡΗ',
+      prompt: `Μια ευθεία γωνία 180° χωρίζεται σε 3 απολύτως ίσα μέρη. Πόσες μοίρες μετράει το καθένα;`,
+      options: ensureFourUniqueOptions(correct, () => ['45°', '90°', '30°', '50°']),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Συνολική γωνία', value: '180°' },
+        { label: 'Ίσα μέρη', value: '3' },
+        { label: 'Πράξη', value: '180° : 3' },
+        { label: 'Κάθε μέρος', value: `${part}°` }
+      ],
+      explanation: `Διαιρούμε την ευθεία γωνία με το 3: 180° : 3 ＝ 60°.`
+    };
+  },
+  // 3. Ευθεία γωνία σε 4 ίσα μέρη
+  () => {
+    const part = 45;
+    const correct = `${part}°`;
+    return {
+      title: 'ΧΩΡΙΣΜΟΣ ΕΥΘΕΙΑΣ ΓΩΝΙΑΣ ΣΕ 4 ΜΕΡΗ',
+      prompt: `Χωρίζουμε μια ευθεία γωνία (180°) σε 4 ίσες γωνίες. Πόσες μοίρες είναι καθεμία από τις 4 γωνίες;`,
+      options: ensureFourUniqueOptions(correct, () => ['40°', '50°', '35°', '60°']),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Συνολική γωνία', value: '180°' },
+        { label: 'Ίσα μέρη', value: '4' },
+        { label: 'Πράξη', value: '180° : 4' },
+        { label: 'Κάθε μέρος', value: `${part}°` }
+      ],
+      explanation: `Διαιρούμε: 180° : 4 ＝ 45°.`
+    };
+  },
+  // 4. Στροφή πλοίου σε ευθεία πορεία
+  () => {
+    const turn = randInt(35, 85);
+    const rem = 180 - turn;
+    const correct = `${rem}°`;
+    return {
+      title: 'ΣΤΡΟΦΗ ΠΛΟΙΟΥ ΑΠΟ ΕΥΘΕΙΑ ΠΟΡΕΙΑ',
+      prompt: `Ένα πλοίο που κινούνταν σε ευθεία γραμμή έστριψε κατά ${turn}°. Πόσες μοίρες υπολείπονται για να ολοκληρώσει πλήρη αναστροφή πορείας 180°;`,
+      options: ensureFourUniqueOptions(correct, () => [`${rem + 15}°`, `${rem - 15}°`, `${90 - turn}°`, `${turn + 60}°`]),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Πλήρης αναστροφή', value: '180°' },
+        { label: 'Πραγματοποιηθείσα στροφή', value: `${turn}°` },
+        { label: 'Πράξη', value: `180° － ${turn}°` },
+        { label: 'Υπόλοιπο στροφής', value: `${rem}°` }
+      ],
+      explanation: `Η αναστροφή αντιστοιχεί σε ευθεία γωνία (180°). Υπολογίζουμε: 180° － ${turn}° ＝ ${rem}°.`
+    };
+  },
+  // 5. Διαφορά αμβλείας από ευθεία
+  () => {
+    const a = randInt(115, 165);
+    const diff = 180 - a;
+    const correct = `${diff}°`;
+    return {
+      title: 'ΔΙΑΦΟΡΑ ΑΜΒΛΕΙΑΣ ΑΠΟ ΕΥΘΕΙΑ',
+      prompt: `Μια αμβλεία γωνία έχει μέτρο ${a}°. Κατά πόσες μοίρες υπολείπεται από το να γίνει ευθεία γωνία (180°);`,
+      options: ensureFourUniqueOptions(correct, () => [`${diff + 10}°`, `${diff - 10}°`, `${a - 90}°`, `${diff + 20}°`]),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Στόχος', value: '180° (Ευθεία)' },
+        { label: 'Αμβλεία γωνία', value: `${a}°` },
+        { label: 'Πράξη', value: `180° － ${a}°` },
+        { label: 'Διαφορά', value: `${diff}°` }
+      ],
+      explanation: `Αφαιρούμε από το 180°: 180° － ${a}° ＝ ${diff}°.`
+    };
+  },
+  // 6. Δύο ίσες παραπληρωματικές
+  () => {
+    const val = 90;
+    const correct = `${val}°`;
+    return {
+      title: 'ΙΣΕΣ ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΕΣ ΓΩΝΙΕΣ',
+      prompt: `Δύο γωνίες είναι παραπληρωματικές (άθροισμα 180°) και είναι ίσες μεταξύ τους. Τι είδους γωνία είναι καθεμία και πόσες μοίρες μετράει;`,
+      options: ensureFourUniqueOptions('Ορθές γωνίες (90°)', () => [
+        'Οξείες γωνίες (45°)',
+        'Αμβλείες γωνίες (120°)',
+        'Ευθείες γωνίες (180°)'
+      ]),
+      correctAnswer: 'Ορθές γωνίες (90°)',
+      tableData: [
+        { label: 'Άθροισμα', value: '180°' },
+        { label: 'Πράξη', value: '180° : 2 ＝ 90°' },
+        { label: 'Είδος', value: 'Ορθές γωνίες (κάθετες)' }
+      ],
+      explanation: `180° : 2 ＝ 90°. Όταν δύο παραπληρωματικές γωνίες είναι ίσες, είναι και οι δύο ορθές (90°).`
+    };
+  }
+];
+
+// POOL ΓΙΑ Q11: Δείκτες Ρολογιού & Κίνηση
+const PROBLEM_POOL_Q11 = [
+  // 1. Ρολόι σε ακέραιες ώρες
+  () => {
+    const h = randInt(1, 5);
+    const deg = h * 30;
+    const correct = `${deg}°`;
+    return {
+      title: 'ΓΩΝΙΑ ΔΕΙΚΤΩΝ ΡΟΛΟΓΙΟΥ',
+      prompt: `Ένα αναλογικό ρολόι δείχνει ακριβώς ${h}:00. Πόσες μοίρες είναι η κυρτή γωνία που σχηματίζουν οι δείκτες του;`,
+      options: ensureFourUniqueOptions(correct, () => [`${deg + 30}°`, `${deg - 30}°`, `${h * 45}°`, `${deg + 15}°`]),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Καντράν', value: '360° : 12 ＝ 30° ανά ώρα' },
+        { label: 'Απόσταση δεικτών', value: `${h} ώρες` },
+        { label: 'Πράξη', value: `${h} · 30°` },
+        { label: 'Γωνία', value: `${deg}°` }
+      ],
+      explanation: `Κάθε ώρα στο ρολόι αντιστοιχεί σε 30°. Στις ${h}:00 οι δείκτες απέχουν ${h} ώρες: ${h} · 30° ＝ ${deg}°.`
+    };
+  },
+  // 2. Ρολόι στις 3:30
+  () => {
+    const correct = '75°';
+    return {
+      title: 'ΓΩΝΙΑ ΔΕΙΚΤΩΝ ΣΤΙΣ 3:30',
+      prompt: `Ένα ρολόι δείχνει ακριβώς 3:30. Πόσες μοίρες είναι η γωνία ανάμεσα στον ωροδείκτη και τον λεπτοδείκτη;`,
+      options: ensureFourUniqueOptions(correct, () => ['90°', '80°', '60°', '105°']),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Λεπτοδείκτης', value: 'Στο 6' },
+        { label: 'Ωροδείκτης', value: 'Στο 3,5 (μέσο του 3 και 4)' },
+        { label: 'Διαφορά ωρών', value: '6 － 3,5 ＝ 2,5 ώρες' },
+        { label: 'Πράξη', value: '2,5 · 30° ＝ 75°' }
+      ],
+      explanation: `Στις 3:30 ο λεπτοδείκτης είναι στο 6 και ο ωροδείκτης στο 3,5. Η απόσταση είναι 2,5 ώρες: 2,5 · 30° ＝ 75°.`
+    };
+  },
+  // 3. Ρολόι στις 6:00
+  () => {
+    const correct = '180°';
+    return {
+      title: 'ΓΩΝΙΑ ΔΕΙΚΤΩΝ ΣΤΙΣ 6:00',
+      prompt: `Πόσες μοίρες είναι η γωνία που σχηματίζουν οι δείκτες ενός ρολογιού όταν η ώρα είναι ακριβώς 6:00;`,
+      options: ensureFourUniqueOptions(correct, () => ['90°', '360°', '120°', '150°']),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Θέσεις δεικτών', value: '12 (πάνω) και 6 (κάτω)' },
+        { label: 'Απόσταση', value: '6 ώρες (μισός κύκλος)' },
+        { label: 'Πράξη', value: '6 · 30° ＝ 180°' },
+        { label: 'Είδος', value: 'Ευθεία γωνία' }
+      ],
+      explanation: `Στις 6:00 οι δείκτες βρίσκονται σε ευθεία γραμμή (αντικείμενες κατευθύνσεις), άρα σχηματίζουν ευθεία γωνία 180°.`
+    };
+  },
+  // 4. Περιστροφή λεπτοδείκτη σε 15 λεπτά
+  () => {
+    const correct = '90°';
+    return {
+      title: 'ΚΙΝΗΣΗ ΛΕΠΤΟΔΕΙΚΤΗ (15 ΛΕΠΤΑ)',
+      prompt: `Όταν περνούν 15 λεπτά της ώρας, κατά πόσες μοίρες περιστρέφεται ο λεπτοδείκτης του ρολογιού;`,
+      options: ensureFourUniqueOptions(correct, () => ['60°', '45°', '180°', '30°']),
+      correctAnswer: correct,
+      tableData: [
+        { label: '1 ώρα (60 λεπτά)', value: '360° (πλήρης κύκλος)' },
+        { label: '15 λεπτά', value: 'Το 1/4 της ώρας (60 : 15 ＝ 4)' },
+        { label: 'Πράξη', value: '360° : 4 ＝ 90°' },
+        { label: 'Είδος γωνίας', value: 'Ορθή γωνία' }
+      ],
+      explanation: `Σε 15 λεπτά ο λεπτοδείκτης διανύει το 1/4 του κύκλου: 360° : 4 ＝ 90° (ορθή γωνία).`
+    };
+  },
+  // 5. Περιστροφή λεπτοδείκτη σε 20 λεπτά
+  () => {
+    const correct = '120°';
+    return {
+      title: 'ΚΙΝΗΣΗ ΛΕΠΤΟΔΕΙΚΤΗ (20 ΛΕΠΤΑ)',
+      prompt: `Πόσες μοίρες περιστρέφεται ο λεπτοδείκτης σε χρονικό διάστημα 20 λεπτών;`,
+      options: ensureFourUniqueOptions(correct, () => ['90°', '100°', '150°', '60°']),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Ρυθμός ανά λεπτό', value: '360° : 60 ＝ 6°/λεπτό' },
+        { label: 'Χρόνος', value: '20 λεπτά' },
+        { label: 'Πράξη', value: '20 · 6° ＝ 120°' },
+        { label: 'Είδος γωνίας', value: 'Αμβλεία γωνία' }
+      ],
+      explanation: `Κάθε λεπτό ο λεπτοδείκτης στρίβει 360° : 60 ＝ 6°. Σε 20 λεπτά: 20 · 6° ＝ 120°.`
+    };
+  },
+  // 6. Ρολόι στις 9:00
+  () => {
+    const correct = '90°';
+    return {
+      title: 'ΓΩΝΙΑ ΔΕΙΚΤΩΝ ΣΤΙΣ 9:00',
+      prompt: `Στις 9:00 ακριβώς, ποια είναι η μικρότερη (κυρτή) γωνία ανάμεσα στους δείκτες του ρολογιού;`,
+      options: ensureFourUniqueOptions(correct, () => ['270°', '120°', '180°', '60°']),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Απόσταση δεικτών', value: '3 ώρες (από 9 έως 12)' },
+        { label: 'Πράξη', value: '3 · 30° ＝ 90°' },
+        { label: 'Είδος', value: 'Ορθή γωνία' }
+      ],
+      explanation: `Από το 9 έως το 12 η απόσταση είναι 3 ώρες. Υπολογίζουμε: 3 · 30° ＝ 90° (ορθή γωνία).`
+    };
+  }
+];
+
+// POOL ΓΙΑ Q12: Σύνθετα Προβλήματα Γωνιών
+const PROBLEM_POOL_Q12 = [
   // 1. Τρεις διαδοχικές γωνίες σε ευθεία γραμμή
   () => {
-    const a1 = randInt(35, 60);
-    const a2 = randInt(40, 70);
+    const a1 = randInt(35, 55);
+    const a2 = randInt(45, 65);
     const a3 = 180 - (a1 + a2);
-    const unit = '°';
-    const correct = `${a3}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${a3 + 10}${unit}`,
-      `${a3 - 10}${unit}`,
-      `${90 - a1}${unit}`,
-      `${180 - a1}${unit}`
-    ]);
+    const correct = `${a3}°`;
     return {
       title: 'ΤΡΕΙΣ ΓΩΝΙΕΣ ΣΕ ΕΥΘΕΙΑ ΓΡΑΜΜΗ',
-      prompt: `Πάνω σε μια ευθεία γραμμή σχηματίζονται τρεις διαδοχικές γωνίες που έχουν κοινή κορυφή. Αν οι δύο πρώτες είναι ${a1}° και ${a2}°, πόσες μοίρες είναι η τρίτη γωνία;`,
-      options,
+      prompt: `Πάνω σε μια ευθεία γραμμή σχηματίζονται τρεις διαδοχικές γωνίες με κοινή κορυφή. Αν οι δύο πρώτες είναι ${a1}° και ${a2}°, πόσες μοίρες είναι η τρίτη;`,
+      options: ensureFourUniqueOptions(correct, () => [`${a3 + 12}°`, `${a3 - 10}°`, `${180 - a1}°`, `${90 - a2}°`]),
       correctAnswer: correct,
-      unit,
       tableData: [
         { label: 'Συνολικό άθροισμα', value: '180° (Ευθεία γωνία)' },
         { label: 'Άθροισμα 2 πρώτων', value: `${a1}° ＋ ${a2}° ＝ ${a1 + a2}°` },
         { label: 'Πράξη', value: `180° － ${a1 + a2}°` },
         { label: 'Τρίτη γωνία', value: `${a3}°` }
       ],
-      explanation: `Οι τρεις γωνίες σχηματίζουν μαζί ευθεία γωνία (180°). Προσθέτουμε τις δύο γνωστές: ${a1}° ＋ ${a2}° ＝ ${a1 + a2}°. Αφαιρούμε από το 180°: 180° － ${a1 + a2}° ＝ ${a3}°.`
+      explanation: `Το άθροισμα και των τριών είναι 180°. Προσθέτουμε: ${a1}° ＋ ${a2}° ＝ ${a1 + a2}°. Αφαιρούμε: 180° － ${a1 + a2}° ＝ ${a3}°.`
     };
   },
-  // 2. Διπλάσια παραπληρωματική γωνία
+  // 2. Διπλάσια παραπληρωματική
   () => {
-    // α + 2α = 180 => 3α = 180 => α = 60, άρα 2α = 120
-    const unit = '°';
-    const correct = `120${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `60${unit}`,
-      `90${unit}`,
-      `135${unit}`,
-      `100${unit}`
-    ]);
+    const correct = '120°';
     return {
       title: 'ΣΧΕΣΗ ΔΙΠΛΑΣΙΑΣ ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΗΣ',
       prompt: `Δύο γωνίες είναι παραπληρωματικές (άθροισμα 180°) και η μία είναι διπλάσια από την άλλη. Πόσες μοίρες είναι η μεγαλύτερη γωνία;`,
-      options,
+      options: ensureFourUniqueOptions(correct, () => ['60°', '90°', '135°', '100°']),
       correctAnswer: correct,
-      unit,
       tableData: [
-        { label: 'Σχέση', value: 'Μικρή: 1 μέρος | Μεγάλη: 2 μέρη' },
-        { label: 'Συνολικά μέρη', value: '1 ＋ 2 ＝ 3 ίσα μέρη' },
-        { label: 'Υπολογισμός 1 μέρους', value: '180° : 3 ＝ 60° (μικρή γωνία)' },
+        { label: 'Σχέση μερών', value: '1 μέρος (μικρή) ＋ 2 μέρη (μεγάλη) ＝ 3 μέρη' },
+        { label: 'Υπολογισμός 1 μέρους', value: '180° : 3 ＝ 60° (μικρή)' },
         { label: 'Μεγαλύτερη γωνία', value: '2 · 60° ＝ 120°' }
       ],
-      explanation: `Χωρίζουμε τις 180° σε 1 ＋ 2 ＝ 3 ίσα μέρη. Το ένα μέρος είναι 180° : 3 ＝ 60° (η μικρή γωνία). Η μεγαλύτερη είναι διπλάσια: 2 · 60° ＝ 120°.`
+      explanation: `Χωρίζουμε τις 180° σε 3 ίσα μέρη: 180° : 3 ＝ 60°. Η μεγαλύτερη είναι διπλάσια: 2 · 60° ＝ 120°.`
     };
   },
-  // 3. Γωνία δεικτών στις 3:30
-  () => {
-    // Στις 3:30: ο λεπτοδείκτης στο 6, ο ωροδείκτης στα μισά ανάμεσα στο 3 και το 4 (3.5).
-    // Απόσταση = 2.5 ώρες. 2.5 * 30° = 75°
-    const unit = '°';
-    const correct = `75${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `90${unit}`,
-      `80${unit}`,
-      `60${unit}`,
-      `105${unit}`
-    ]);
-    return {
-      title: 'ΓΩΝΙΑ ΔΕΙΚΤΩΝ ΣΤΙΣ 3:30',
-      prompt: `Ένα αναλογικό ρολόι δείχνει ακριβώς 3:30. Πόσες μοίρες είναι η γωνία που σχηματίζουν οι δείκτες του ρολογιού;`,
-      options,
-      correctAnswer: correct,
-      unit,
-      tableData: [
-        { label: 'Θέση λεπτοδείκτη', value: 'Ακριβώς στο 6' },
-        { label: 'Θέση ωροδείκτη', value: 'Ακριβώς στη μέση μεταξύ 3 και 4 (3,5)' },
-        { label: 'Διαφορά θέσεων', value: '6 － 3,5 ＝ 2,5 ώρες' },
-        { label: 'Υπολογισμός μοιρών', value: `2,5 · 30° ＝ 75°` }
-      ],
-      explanation: `Στις 3:30 ο λεπτοδείκτης είναι στο 6, ενώ ο ωροδείκτης έχει προχωρήσει ακριβώς στο μέσο ανάμεσα στο 3 και το 4. Η απόστασή τους είναι 2,5 ώρες: 2,5 · 30° ＝ 75°.`
-    };
-  },
-  // 4. Άθροισμα 4 γωνιών γύρω από κοινό σημείο
+  // 3. Γωνίες γύρω από σημείο (360°)
   () => {
     const a1 = 110;
     const a2 = 85;
     const a3 = 70;
-    const a4 = 360 - (a1 + a2 + a3); // 360 - 265 = 95
-    const unit = '°';
-    const correct = `${a4}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `85${unit}`,
-      `105${unit}`,
-      `90${unit}`,
-      `100${unit}`
-    ]);
+    const a4 = 360 - (a1 + a2 + a3); // 95
+    const correct = `${a4}°`;
     return {
       title: 'ΓΩΝΙΕΣ ΓΥΡΩ ΑΠΟ ΕΝΑ ΣΗΜΕΙΟ',
-      prompt: `Τέσσερις γωνίες έχουν κοινή κορυφή και καλύπτουν ολόκληρο τον κύκλο (πλήρης γωνία 360°). Αν οι τρεις γωνίες είναι 110°, 85° και 70°, πόσο είναι το μέτρο της τέταρτης γωνίας;`,
-      options,
+      prompt: `Τέσσερις γωνίες έχουν κοινή κορυφή και καλύπτουν ολόκληρο τον κύκλο (πλήρης γωνία 360°). Αν οι τρεις είναι 110°, 85° και 70°, πόσο μετράει η τέταρτη;`,
+      options: ensureFourUniqueOptions(correct, () => ['85°', '105°', '90°', '100°']),
       correctAnswer: correct,
-      unit,
       tableData: [
         { label: 'Πλήρης κύκλος', value: '360°' },
         { label: 'Άθροισμα 3 γωνιών', value: `110° ＋ 85° ＋ 70° ＝ 265°` },
         { label: 'Πράξη', value: `360° － 265°` },
         { label: 'Τέταρτη γωνία', value: `${a4}°` }
       ],
-      explanation: `Όλες οι γωνίες γύρω από ένα σημείο έχουν άθροισμα 360°. Προσθέτουμε τις τρεις: 110° ＋ 85° ＋ 70° ＝ 265°. Αφαιρούμε: 360° － 265° ＝ 95°.`
+      explanation: `Όλες οι γωνίες γύρω από σημείο έχουν άθροισμα 360°: 360° － 265° ＝ 95°.`
     };
   },
-  // 5. Συμπληρωματικές με δοσμένη διαφορά
+  // 4. Συμπληρωματικές με δοσμένη διαφορά
   () => {
-    // α + β = 90, α - β = 20 => 2α = 110 => α = 55, β = 35
     const diff = 20;
     const larger = (90 + diff) / 2; // 55
-    const unit = '°';
-    const correct = `${larger}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `35${unit}`,
-      `45${unit}`,
-      `65${unit}`,
-      `50${unit}`
-    ]);
+    const correct = `${larger}°`;
     return {
       title: 'ΣΥΜΠΛΗΡΩΜΑΤΙΚΕΣ ΜΕ ΔΙΑΦΟΡΑ',
       prompt: `Δύο γωνίες είναι συμπληρωματικές (άθροισμα 90°) και η μία είναι κατά ${diff}° μεγαλύτερη από την άλλη. Πόσες μοίρες είναι η μεγαλύτερη γωνία;`,
-      options,
+      options: ensureFourUniqueOptions(correct, () => ['35°', '45°', '65°', '50°']),
       correctAnswer: correct,
-      unit,
       tableData: [
         { label: 'Άθροισμα γωνιών', value: '90°' },
         { label: 'Διαφορά γωνιών', value: `${diff}°` },
         { label: 'Τύπος μεγαλύτερης', value: `(90° ＋ ${diff}°) : 2 ＝ 110° : 2` },
         { label: 'Μεγαλύτερη γωνία', value: `${larger}°` }
       ],
-      explanation: `Όταν γνωρίζουμε το άθροισμα (90°) και τη διαφορά (20°), η μεγαλύτερη γωνία ισούται με: (Άθροισμα ＋ Διαφορά) : 2 ＝ (90° ＋ 20°) : 2 ＝ 110° : 2 ＝ 55°. (Η μικρή είναι 55° － 20° ＝ 35°).`
+      explanation: `Όταν γνωρίζουμε άθροισμα και διαφορά: (90° ＋ 20°) : 2 ＝ 110° : 2 ＝ 55°. (Η μικρή είναι 35°).`
     };
   },
-  // 6. Περιστροφή ρομπότ σε ορθές γωνίες
+  // 5. Διαδοχικές στροφές ρομπότ
   () => {
     const turns = randInt(3, 5);
-    const totalDeg = turns * 90;
-    const unit = '°';
-    const correct = `${totalDeg}${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${totalDeg + 90}${unit}`,
-      `${totalDeg - 90}${unit}`,
-      `${turns * 45}${unit}`,
-      `${totalDeg + 45}${unit}`
-    ]);
+    const total = turns * 90;
+    const correct = `${total}°`;
     return {
-      title: 'ΣΥΝΟΛΙΚΗ ΣΤΡΟΦΗ ΡΟΜΠΟΤ',
-      prompt: `Ένα ρομπότ προγραμματίζεται να στρίψει δεξιά κατά μία ορθή γωνία (90°) ακριβώς ${turns} διαδοχικές φορές. Πόσες μοίρες είναι η συνολική γωνία περιστροφής του ρομπότ;`,
-      options,
+      title: 'ΣΥΝΟΛΙΚΗ ΠΕΡΙΣΤΡΟΦΗ ΡΟΜΠΟΤ',
+      prompt: `Ένα ρομπότ προγραμματίζεται να στρίψει δεξιά κατά μία ορθή γωνία (90°) ακριβώς ${turns} διαδοχικές φορές. Πόσες μοίρες είναι η συνολική στροφή του;`,
+      options: ensureFourUniqueOptions(correct, () => [`${total + 90}°`, `${total - 90}°`, `${turns * 45}°`, `${total + 45}°`]),
       correctAnswer: correct,
-      unit,
       tableData: [
-        { label: 'Στροφή ανά φορά', value: '90° (Ορθή γωνία)' },
-        { label: 'Πλήθος στροφών', value: `${turns}` },
+        { label: 'Στροφή ανά φορά', value: '90°' },
+        { label: 'Φορές', value: `${turns}` },
         { label: 'Πράξη', value: `${turns} · 90°` },
-        { label: 'Συνολική περιστροφή', value: `${totalDeg}°` }
+        { label: 'Συνολική περιστροφή', value: `${total}°` }
       ],
-      explanation: `Κάθε ορθή γωνία ισούται με 90°. Για ${turns} στροφές πολλαπλασιάζουμε: ${turns} · 90° ＝ ${totalDeg}°.`
+      explanation: `Κάθε ορθή γωνία είναι 90°. Για ${turns} στροφές: ${turns} · 90° ＝ ${total}°.`
+    };
+  },
+  // 6. Τριπλάσια παραπληρωματική
+  () => {
+    // a + 3a = 180 => 4a = 180 => a = 45, 3a = 135
+    const correct = '135°';
+    return {
+      title: 'ΤΡΙΠΛΑΣΙΑ ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΗ',
+      prompt: `Δύο γωνίες είναι παραπληρωματικές (άθροισμα 180°) και η μία είναι τριπλάσια από την άλλη. Πόσες μοίρες είναι η μεγαλύτερη γωνία;`,
+      options: ensureFourUniqueOptions(correct, () => ['45°', '90°', '120°', '150°']),
+      correctAnswer: correct,
+      tableData: [
+        { label: 'Σχέση μερών', value: '1 μέρος ＋ 3 μέρη ＝ 4 μέρη' },
+        { label: 'Υπολογισμός 1 μέρους', value: '180° : 4 ＝ 45° (μικρή)' },
+        { label: 'Μεγαλύτερη γωνία', value: '3 · 45° ＝ 135°' }
+      ],
+      explanation: `Χωρίζουμε τις 180° σε 4 ίσα μέρη: 180° : 4 ＝ 45°. Η μεγαλύτερη είναι τριπλάσια: 3 · 45° ＝ 135°.`
     };
   }
 ];
 
 // -------------------------------------------------------------
-// ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ 10 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
+// ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ 12 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
 // -------------------------------------------------------------
 
 function generateQuestionsSet() {
@@ -552,23 +676,21 @@ function generateQuestionsSet() {
     explanation: 'Στις 6:00 ο ωροδείκτης δείχνει προς τα κάτω (στο 6) και ο λεπτοδείκτης προς τα πάνω (στο 12). Σχηματίζουν ευθεία γραμμή, δηλαδή ευθεία γωνία 180°.'
   });
 
-  // Q9: Πρόβλημα από STANDARD_PROBLEMS_POOL
-  const stdIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
-  const q9Data = STANDARD_PROBLEMS_POOL[stdIndex]();
-  qs.push({
-    id: 9,
-    type: 'mcq',
-    ...q9Data
-  });
+  // Q9: Πρόβλημα από PROBLEM_POOL_Q9
+  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)]();
+  qs.push({ id: 9, type: 'mcq', ...p9 });
 
-  // Q10: Πρόβλημα από HARD_PROBLEMS_POOL
-  const hardIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
-  const q10Data = HARD_PROBLEMS_POOL[hardIndex]();
-  qs.push({
-    id: 10,
-    type: 'mcq',
-    ...q10Data
-  });
+  // Q10: Πρόβλημα από PROBLEM_POOL_Q10
+  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)]();
+  qs.push({ id: 10, type: 'mcq', ...p10 });
+
+  // Q11: Πρόβλημα από PROBLEM_POOL_Q11
+  const p11 = PROBLEM_POOL_Q11[randInt(0, PROBLEM_POOL_Q11.length - 1)]();
+  qs.push({ id: 11, type: 'mcq', ...p11 });
+
+  // Q12: Πρόβλημα από PROBLEM_POOL_Q12
+  const p12 = PROBLEM_POOL_Q12[randInt(0, PROBLEM_POOL_Q12.length - 1)]();
+  qs.push({ id: 12, type: 'mcq', ...p12 });
 
   return qs;
 }
@@ -638,7 +760,7 @@ export default function GoniesAskiseisPage() {
   ).length;
 
   const score = questions.reduce((acc, q) => (isQuestionCorrect(q) ? acc + 1 : acc), 0);
-  const totalCount = questions.length || 10;
+  const totalCount = questions.length || 12;
   const percentage = Math.round((score / totalCount) * 100);
 
   return (
@@ -669,14 +791,14 @@ export default function GoniesAskiseisPage() {
               {toCleanUppercase('Ασκησεις: Μετρηση και Συγκριση Γωνιων')}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Εξασκηθείτε στα είδη των γωνιών, τη χρήση του μοιρογνωμονίου, τις συμπληρωματικές και τις παραπληρωματικές γωνίες μέσα από 10 δυναμικές ερωτήσεις.
+              Εξασκηθείτε στα είδη των γωνιών, τη χρήση του μοιρογνωμονίου, τις συμπληρωματικές και τις παραπληρωματικές γωνίες μέσα από 12 δυναμικές ερωτήσεις.
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>10 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση &amp; Αναλυτική Επεξήγηση</span>
+              <span>12 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση &amp; Αναλυτική Επεξήγηση</span>
             </div>
             <button
               onClick={loadNewSet}
@@ -687,7 +809,7 @@ export default function GoniesAskiseisPage() {
           </div>
         </section>
 
-        {/* ΛΙΣΤΑ ΕΡΩΤΗΣΕΩΝ */}
+        {/* ΛΙΣΤΑ ΕΡΩΤΗΣΕΩΝ (12 ΕΡΩΤΗΣΕΙΣ) */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q, index) => {
             const isCorrect = isQuestionCorrect(q);
@@ -873,7 +995,7 @@ export default function GoniesAskiseisPage() {
           })}
         </div>
 
-        {/* STICKY BOTTOM SCORE FOOTER */}
+        {/* STICKY BOTTOM SCORE FOOTER (12 ΕΡΩΤΗΣΕΙΣ) */}
         <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
           <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 sm:gap-8">
