@@ -71,6 +71,7 @@ export default function STDimotikouMenu() {
     { id: '64-arithmitika-motiba', label: '🥧 64. Αριθμητικά Μοτίβα', href: '/st-dimotikou/64-arithmitika-motiba' },
     { id: '65-sintheta-motiba', label: '🥧 65. Σύνθετα Μοτίβα', href: '/st-dimotikou/65-sintheta-motiba' },
     { id: '66-epanalipsi-4', label: '🏆 66. Επανάληψη: Κεφάλαια 55 – 65', href: '/st-dimotikou/66-epanalipsi-4' },
+    { id: '67-sximata', label: '🥧 67. Γεωμετρικά Σχήματα - Πολύγωνα', href: '/st-dimotikou/67-sximata' }
 ];
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
