@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+// pages/st-dimotikou/67-sximata-ask.js
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
 // -------------------------------------------------------------
 // DEFENSIVE UTILITY FUNCTIONS
@@ -9,12 +9,11 @@ import { LAYOUT } from '../../shared/layout-config';
 
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
-    .replace(/ΣΤ'/g, '__ST_PRIME__')
+  const cleaned = str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase()
-    .replace(/__ST_PRIME__/g, "ΣΤ'");
+    .toUpperCase();
+  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
 function randInt(min, max) {
@@ -31,8 +30,8 @@ function shuffle(array) {
 }
 
 function formatNum(val) {
-  if (val === null || val === undefined || isNaN(val)) return '0';
-  return String(val).replace('.', ',');
+  if (val === null || val === undefined || isNaN(Number(val))) return '0';
+  return Number(val).toLocaleString('el-GR');
 }
 
 // Διασφάλιση ακριβώς 4 μοναδικών επιλογών για ερωτήσεις MCQ
@@ -47,7 +46,6 @@ function ensureFourUniqueOptions(correctText, distractorsGen) {
     }
   }
 
-  // Ασφαλιστική δικλείδα συμπλήρωσης αν δεν έφτασαν τα 4
   let counter = 1;
   while (optionsSet.size < 4) {
     optionsSet.add(`${correctText} (${counter})`);
@@ -370,7 +368,6 @@ const HARD_PROBLEMS_POOL = [
   // 6. Περίμετρος σύνθετου σχήματος από κανονικά πολύγωνα
   () => {
     const side = randInt(4, 9);
-    // Δύο κανονικά πεντάγωνα ενωμένα σε μία κοινή πλευρά. Ελεύθερες πλευρές: 5 + 5 - 2 = 8
     const totalPerim = 8 * side;
     const unit = 'cm';
     const correct = `${totalPerim} ${unit}`;
@@ -496,7 +493,7 @@ function generateQuestionsSet() {
     explanation: 'Κάθε τετράπλευρο έχει ακριβώς 2 διαγωνίους, οι οποίες ενώνουν τα δύο ζεύγη απέναντι (μη διαδοχικών) κορυφών.'
   });
 
-  // Q5: Διαγώνιοι από μία κορυφή σε πεντάγωνο (Input αριθμού)
+  // Q5: Διαγώνιοι από μία κορυφή (Input αριθμού)
   const sidesQ5 = randInt(5, 8);
   const diagFromOne = sidesQ5 - 3;
   qs.push({
@@ -514,7 +511,7 @@ function generateQuestionsSet() {
   });
 
   // Q6: Περίμετρος κανονικού πενταγώνου (Input με δεκαδικό)
-  const sideQ6 = randInt(3, 9) + 0.5; // π.χ. 3.5, 4.5 κ.λπ.
+  const sideQ6 = randInt(3, 9) + 0.5;
   const perimQ6 = 5 * sideQ6;
   qs.push({
     id: 6,
@@ -595,12 +592,11 @@ function generateQuestionsSet() {
 // ΚΥΡΙΟ COMPONENT ΑΣΚΗΣΕΩΝ
 // -------------------------------------------------------------
 
-export default function SximataAskiseis() {
+export default function SximataAskiseisPage() {
   const [questions, setQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  // Hydration safety: Αρχικοποίηση στο useEffect
   useEffect(() => {
     loadNewSet();
   }, []);
@@ -623,7 +619,6 @@ export default function SximataAskiseis() {
     }));
   }
 
-  // Έλεγχος ορθότητας με καθαρισμό και αριθμητική ανοχή
   function isQuestionCorrect(q) {
     const userAns = userAnswers[q.id];
     if (userAns === undefined || userAns === null) return false;
@@ -640,10 +635,8 @@ export default function SximataAskiseis() {
       const cleanUser = String(userAns).trim().replace(/\./g, ',');
       const cleanCorrect = String(q.correctAnswer).trim().replace(/\./g, ',');
 
-      // Ακριβής ταύτιση κειμένου
       if (cleanUser === cleanCorrect) return true;
 
-      // Έλεγχος με ανοχή ±0.05 για δεκαδικούς
       const numUser = parseFloat(cleanUser.replace(',', '.'));
       const numCorrect = parseFloat(cleanCorrect.replace(',', '.'));
       if (!isNaN(numUser) && !isNaN(numCorrect)) {
@@ -655,7 +648,6 @@ export default function SximataAskiseis() {
     return false;
   }
 
-  // Υπολογισμοί κατάστασης
   const answeredCount = Object.keys(userAnswers).filter(
     (k) => userAnswers[k] !== undefined && userAnswers[k] !== ''
   ).length;
@@ -666,42 +658,47 @@ export default function SximataAskiseis() {
 
   return (
     <Layout
-      title="Γεωμετρικά Σχήματα και Πολύγωνα | Ασκήσεις ΣΤ' Δημοτικού"
-      description="Διαδραστικές ασκήσεις στα γεωμετρικά σχήματα, τα πολύγωνα και τις διαγωνίους με αυτόματη βαθμολόγηση και αναλυτικές λύσεις."
+      title="Ασκήσεις: Γεωμετρικά Σχήματα &amp; Πολύγωνα - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Διαδραστικές ασκήσεις στα γεωμετρικά σχήματα, τα πολύγωνα και τις διαγωνίους με αυτόματη βαθμολόγηση για τη ΣΤ' Δημοτικού."
+      backUrl="/st-dimotikou/67-sximata"
+      backText="Θεωρία Κεφ. 67"
+      showAds={true}
+      actionButton={
+        <Link
+          href="/st-dimotikou/67-sximata"
+          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+        >
+          <span>📖 Θεωρία</span>
+        </Link>
+      }
     >
       <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden">
-        {/* HERO BANNER */}
-        <section className="bg-gradient-to-br from-indigo-900 via-slate-900 to-sky-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-indigo-800/40 mb-8 sm:mb-12 relative overflow-hidden">
-          <div className="absolute -right-12 -bottom-12 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-3 max-w-4xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs sm:text-sm font-semibold tracking-wider">
-                <span>{toCleanUppercase("ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΓΕΩΜΕΤΡΙΑ • ΑΣΚΗΣΕΙΣ")}</span>
-              </div>
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-                {toCleanUppercase('Ασκησεις: Πολυγωνα και Διαγωνιοι')}
-              </h1>
-              <p className="text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed">
-                Εξασκηθείτε στις ιδιότητες των πολυγώνων, τον υπολογισμό των διαγωνίων και την περίμετρο κανονικών σχημάτων μέσα από 10 δυναμικές ερωτήσεις.
-              </p>
-            </div>
 
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <Link
-                href="/st-dimotikou/67-sximata"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-2xl border border-slate-700 transition-all text-xs sm:text-sm"
-              >
-                <span>📖</span>
-                <span>{toCleanUppercase('ΘΕΩΡΙΑ')}</span>
-              </Link>
-              <button
-                onClick={loadNewSet}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold rounded-2xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm"
-              >
-                <span>🔄</span>
-                <span>{toCleanUppercase('ΝΕΕΣ ΑΣΚΗΣΕΙΣ')}</span>
-              </button>
+        {/* HERO BANNER */}
+        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden mb-8 sm:mb-12">
+          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
+              <span>ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 67 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
+              {toCleanUppercase('Ασκησεις: Πολυγωνα και Διαγωνιοι')}
+            </h1>
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
+              Εξασκηθείτε στις ιδιότητες των πολυγώνων, τον υπολογισμό των διαγωνίων και την περίμετρο κανονικών σχημάτων μέσα από 10 δυναμικές ερωτήσεις.
+            </p>
+          </div>
+
+          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>10 Δυναμικές Ασκήσεις με Άμεση Αξιολόγηση &amp; Αναλυτικές Λύσεις</span>
+            </div>
+            <button
+              onClick={loadNewSet}
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+            >
+              <span>🔄 {toCleanUppercase('Νεες Ασκησεις')}</span>
+            </button>
           </div>
         </section>
 
@@ -710,7 +707,6 @@ export default function SximataAskiseis() {
           {questions.map((q, index) => {
             const isCorrect = isQuestionCorrect(q);
             const userAns = userAnswers[q.id];
-            const hasAnswered = userAns !== undefined && userAns !== '';
 
             return (
               <div
@@ -720,7 +716,7 @@ export default function SximataAskiseis() {
                     ? isCorrect
                       ? 'border-emerald-300 ring-1 ring-emerald-200'
                       : 'border-rose-300 ring-1 ring-rose-200'
-                    : 'border-slate-200/80 hover:border-slate-300'
+                    : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
                 {/* ΚΕΦΑΛΙΔΑ ΕΡΩΤΗΣΗΣ */}
@@ -757,7 +753,7 @@ export default function SximataAskiseis() {
 
                 {/* ΔΙΑΔΡΑΣΤΙΚΑ ΧΕΙΡΙΣΤΗΡΙΑ ΑΠΑΝΤΗΣΗΣ */}
                 <div className="mb-4">
-                  {/* ΤΥΠΟΣ 1: BOOLEAN (ΣΩΣΤΟ / ΛΑΘΟΣ) */}
+                  {/* ΤΥΠΟΣ 1: BOOLEAN */}
                   {q.type === 'boolean' && (
                     <div className="grid grid-cols-2 gap-3 max-w-md">
                       {[true, false].map((val) => {
@@ -819,24 +815,21 @@ export default function SximataAskiseis() {
                   {/* ΤΥΠΟΣ 3: INPUT */}
                   {q.type === 'input' && (
                     <div className="max-w-xs">
-                      <div className="relative">
-                        <input
-                          type="text"
-                          inputMode="decimal"
-                          maxLength={10}
-                          disabled={submitted}
-                          placeholder="Απάντηση..."
-                          value={userAns || ''}
-                          onChange={(e) => {
-                            // Sanitization: μόνο αριθμοί και κόμμα/τελεία
-                            const cleaned = e.target.value
-                              .replace(/[^0-9.,]/g, '')
-                              .replace(/\./g, ',');
-                            handleAnswerChange(q.id, cleaned);
-                          }}
-                          className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all disabled:opacity-80"
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        maxLength={10}
+                        disabled={submitted}
+                        placeholder="Απάντηση..."
+                        value={userAns || ''}
+                        onChange={(e) => {
+                          const cleaned = e.target.value
+                            .replace(/[^0-9.,]/g, '')
+                            .replace(/\./g, ',');
+                          handleAnswerChange(q.id, cleaned);
+                        }}
+                        className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all disabled:opacity-80"
+                      />
                     </div>
                   )}
                 </div>
@@ -898,7 +891,6 @@ export default function SximataAskiseis() {
         {/* STICKY BOTTOM SCORE FOOTER */}
         <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
           <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
-            {/* ΠΛΗΡΟΦΟΡΙΕΣ ΠΡΟΟΔΟΥ / ΣΚΟΡ */}
             <div className="flex items-center gap-4 sm:gap-8">
               {!submitted ? (
                 <div className="text-xs sm:text-sm font-semibold text-slate-300">
@@ -925,7 +917,6 @@ export default function SximataAskiseis() {
               )}
             </div>
 
-            {/* ΚΟΥΜΠΙΑ ΕΝΕΡΓΕΙΩΝ */}
             <div className="flex items-center gap-3">
               {!submitted ? (
                 <button
@@ -953,6 +944,7 @@ export default function SximataAskiseis() {
             </div>
           </div>
         </footer>
+
       </div>
     </Layout>
   );
