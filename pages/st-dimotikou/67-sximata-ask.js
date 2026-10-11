@@ -56,346 +56,582 @@ function ensureFourUniqueOptions(correctText, distractorsGen) {
 }
 
 // -------------------------------------------------------------
-// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (POOLS) ΓΙΑ Q9 & Q10
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (POOLS) ΓΙΑ Q9, Q10, Q11, Q12
 // -------------------------------------------------------------
 
-const STANDARD_PROBLEMS_POOL = [
+// POOL ΓΙΑ Q9: Περίμετρος Κανονικών Πολυγώνων
+const PROBLEM_POOL_Q9 = [
   // 1. Περίμετρος κανονικού οκταγώνου
   () => {
     const side = randInt(4, 15);
     const ansVal = 8 * side;
-    const unit = 'cm';
-    const correct = `${ansVal} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${ansVal + 8} ${unit}`,
-      `${ansVal - 8} ${unit}`,
-      `${6 * side} ${unit}`,
-      `${7 * side} ${unit}`,
-      `${ansVal + 16} ${unit}`
-    ]);
+    const correct = `${ansVal} cm`;
     return {
       title: 'ΠΕΡΙΜΕΤΡΟΣ ΚΑΝΟΝΙΚΟΥ ΟΚΤΑΓΩΝΟΥ',
-      prompt: `Μια διακοσμητική πινακίδα έχει σχήμα κανονικού οκταγώνου με μήκος κάθε πλευράς ${side} ${unit}. Πόση είναι η συνολική περίμετρος της πινακίδας;`,
-      options,
+      prompt: `Μια διακοσμητική πινακίδα έχει σχήμα κανονικού οκταγώνου με μήκος κάθε πλευράς ${side} cm. Πόση είναι η συνολική περίμετρος της πινακίδας;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${ansVal + 8} cm`,
+        `${ansVal - 8} cm`,
+        `${6 * side} cm`,
+        `${ansVal + 16} cm`
+      ]),
       correctAnswer: correct,
-      unit,
+      unit: 'cm',
       tableData: [
         { label: 'Σχήμα', value: 'Κανονικό οκτάγωνο (8 ίσες πλευρές)' },
-        { label: 'Μήκος πλευράς', value: `${side} ${unit}` },
-        { label: 'Πράξη', value: `8 · ${side} ${unit}` },
-        { label: 'Περίμετρος', value: `${ansVal} ${unit}` }
+        { label: 'Μήκος πλευράς', value: `${side} cm` },
+        { label: 'Πράξη', value: `8 · ${side} cm` },
+        { label: 'Περίμετρος', value: `${ansVal} cm` }
       ],
-      explanation: `Σε κάθε κανονικό οκτάγωνο όλες οι 8 πλευρές είναι ίσες μεταξύ τους. Υπολογίζουμε την περίμετρο πολλαπλασιάζοντας: 8 · ${side} ＝ ${ansVal} ${unit}.`
+      explanation: `Σε κάθε κανονικό οκτάγωνο όλες οι 8 πλευρές είναι ίσες μεταξύ τους. Υπολογίζουμε την περίμετρο: 8 · ${side} ＝ ${ansVal} cm.`
     };
   },
-  // 2. Πλευρά κανονικού πενταγώνου από περίμετρο
+  // 2. Περίμετρος ισόπλευρου τριγώνου
+  () => {
+    const side = randInt(7, 25);
+    const perim = 3 * side;
+    const correct = `${perim} cm`;
+    return {
+      title: 'ΠΕΡΙΜΕΤΡΟΣ ΙΣΟΠΛΕΥΡΟΥ ΤΡΙΓΩΝΟΥ',
+      prompt: `Ένα ισόπλευρο τρίγωνο έχει μήκος πλευράς ${side} cm. Πόση είναι η περίμετρός του;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${perim + 3} cm`,
+        `${perim - 3} cm`,
+        `${4 * side} cm`,
+        `${2 * side} cm`
+      ]),
+      correctAnswer: correct,
+      unit: 'cm',
+      tableData: [
+        { label: 'Σχήμα', value: 'Ισόπλευρο τρίγωνο (3 ίσες πλευρές)' },
+        { label: 'Μήκος πλευράς', value: `${side} cm` },
+        { label: 'Πράξη', value: `3 · ${side}` },
+        { label: 'Περίμετρος', value: `${perim} cm` }
+      ],
+      explanation: `Το ισόπλευρο τρίγωνο έχει 3 ίσες πλευρές. Περίμετρος ＝ 3 · ${side} cm ＝ ${perim} cm.`
+    };
+  },
+  // 3. Περίμετρος κανονικού εξαγώνου
+  () => {
+    const side = randInt(5, 14);
+    const perim = 6 * side;
+    const correct = `${perim} m`;
+    return {
+      title: 'ΠΕΡΙΜΕΤΡΟΣ ΚΑΝΟΝΙΚΟΥ ΕΞΑΓΩΝΟΥ',
+      prompt: `Ένας κήπος έχει σχήμα κανονικού εξαγώνου με πλευρά ${side} m. Πόσα μέτρα περίφραξης χρειάζονται για να περιφραχτεί πλήρως;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${perim + 6} m`,
+        `${perim - 6} m`,
+        `${5 * side} m`,
+        `${perim + 12} m`
+      ]),
+      correctAnswer: correct,
+      unit: 'm',
+      tableData: [
+        { label: 'Σχήμα', value: 'Κανονικό εξάγωνο (6 ίσες πλευρές)' },
+        { label: 'Μήκος πλευράς', value: `${side} m` },
+        { label: 'Πράξη', value: `6 · ${side} m` },
+        { label: 'Περίμετρος', value: `${perim} m` }
+      ],
+      explanation: `Το κανονικό εξάγωνο έχει 6 ίσες πλευρές: 6 · ${side} m ＝ ${perim} m.`
+    };
+  },
+  // 4. Περίμετρος κανονικού δεκαγώνου
+  () => {
+    const side = randInt(3, 11);
+    const perim = 10 * side;
+    const correct = `${perim} m`;
+    return {
+      title: 'ΠΕΡΙΜΕΤΡΟΣ ΚΑΝΟΝΙΚΟΥ ΔΕΚΑΓΩΝΟΥ',
+      prompt: `Ένας στίβος έχει σχήμα κανονικού δεκαγώνου με πλευρά ${side} m. Πόση είναι η συνολική περίμετρος του στίβου;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${perim + 10} m`,
+        `${perim - 10} m`,
+        `${8 * side} m`,
+        `${perim + 20} m`
+      ]),
+      correctAnswer: correct,
+      unit: 'm',
+      tableData: [
+        { label: 'Σχήμα', value: 'Κανονικό δεκάγωνο (10 ίσες πλευρές)' },
+        { label: 'Μήκος πλευράς', value: `${side} m` },
+        { label: 'Πράξη', value: `10 · ${side} m` },
+        { label: 'Περίμετρος', value: `${perim} m` }
+      ],
+      explanation: `Πολλαπλασιάζουμε τις 10 πλευρές επί το μήκος της μίας: 10 · ${side} m ＝ ${perim} m.`
+    };
+  },
+  // 5. Περίμετρος κανονικού επταγώνου
+  () => {
+    const side = randInt(4, 12);
+    const perim = 7 * side;
+    const correct = `${perim} cm`;
+    return {
+      title: 'ΠΕΡΙΜΕΤΡΟΣ ΚΑΝΟΝΙΚΟΥ ΕΠΤΑΓΩΝΟΥ',
+      prompt: `Μια ξύλινη κατασκευή έχει σχήμα κανονικού επταγώνου με πλευρά ${side} cm. Πόση είναι η περίμετρός της;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${perim + 7} cm`,
+        `${perim - 7} cm`,
+        `${6 * side} cm`,
+        `${perim + 14} cm`
+      ]),
+      correctAnswer: correct,
+      unit: 'cm',
+      tableData: [
+        { label: 'Σχήμα', value: 'Κανονικό επτάγωνο (7 ίσες πλευρές)' },
+        { label: 'Μήκος πλευράς', value: `${side} cm` },
+        { label: 'Πράξη', value: `7 · ${side} cm` },
+        { label: 'Περίμετρος', value: `${perim} cm` }
+      ],
+      explanation: `Το κανονικό επτάγωνο έχει 7 ίσες πλευρές: 7 · ${side} cm ＝ ${perim} cm.`
+    };
+  },
+  // 6. Περίμετρος κανονικού δωδεκαγώνου
+  () => {
+    const side = randInt(2, 8);
+    const perim = 12 * side;
+    const correct = `${perim} m`;
+    return {
+      title: 'ΠΕΡΙΜΕΤΡΟΣ ΚΑΝΟΝΙΚΟΥ ΔΩΔΕΚΑΓΩΝΟΥ',
+      prompt: `Ένα διακοσμητικό σιντριβάνι έχει σχήμα κανονικού δωδεκαγώνου με πλευρά ${side} m. Πόση είναι η περίμετρός του;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${perim + 12} m`,
+        `${perim - 12} m`,
+        `${10 * side} m`,
+        `${perim + 24} m`
+      ]),
+      correctAnswer: correct,
+      unit: 'm',
+      tableData: [
+        { label: 'Σχήμα', value: 'Κανονικό δωδεκάγωνο (12 ίσες πλευρές)' },
+        { label: 'Μήκος πλευράς', value: `${side} m` },
+        { label: 'Πράξη', value: `12 · ${side} m` },
+        { label: 'Περίμετρος', value: `${perim} m` }
+      ],
+      explanation: `Το κανονικό δωδεκάγωνο έχει 12 ίσες πλευρές: 12 · ${side} m ＝ ${perim} m.`
+    };
+  }
+];
+
+// POOL ΓΙΑ Q10: Εύρεση Πλευράς ή Κόστους από Περίμετρο
+const PROBLEM_POOL_Q10 = [
+  // 1. Πλευρά κανονικού πενταγώνου από περίμετρο
   () => {
     const side = randInt(6, 20);
     const perimeter = 5 * side;
-    const unit = 'm';
-    const correct = `${side} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${side + 2} ${unit}`,
-      `${side - 2} ${unit}`,
-      `${side + 5} ${unit}`,
-      `${Math.round(perimeter / 4)} ${unit}`,
-      `${side + 10} ${unit}`
-    ]);
+    const correct = `${side} m`;
     return {
       title: 'ΠΛΕΥΡΑ ΚΑΝΟΝΙΚΟΥ ΠΕΝΤΑΓΩΝΟΥ',
-      prompt: `Ένα παρτέρι σε σχήμα κανονικού πενταγώνου έχει περίμετρο ${perimeter} ${unit}. Ποιο είναι το μήκος κάθε πλευράς του παρτεριού;`,
-      options,
+      prompt: `Ένα παρτέρι σε σχήμα κανονικού πενταγώνου έχει περίμετρο ${perimeter} m. Ποιο είναι το μήκος κάθε πλευράς του παρτεριού;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${side + 2} m`,
+        `${side - 2} m`,
+        `${side + 4} m`,
+        `${Math.round(perimeter / 4)} m`
+      ]),
       correctAnswer: correct,
-      unit,
+      unit: 'm',
       tableData: [
         { label: 'Σχήμα', value: 'Κανονικό πεντάγωνο (5 ίσες πλευρές)' },
-        { label: 'Περίμετρος', value: `${perimeter} ${unit}` },
+        { label: 'Περίμετρος', value: `${perimeter} m` },
         { label: 'Πράξη', value: `${perimeter} : 5` },
-        { label: 'Μήκος πλευράς', value: `${side} ${unit}` }
+        { label: 'Μήκος πλευράς', value: `${side} m` }
       ],
-      explanation: `Επειδή το πεντάγωνο είναι κανονικό, έχει 5 ίσες πλευρές. Διαιρούμε την περίμετρο με το 5: ${perimeter} : 5 ＝ ${side} ${unit}.`
+      explanation: `Επειδή το πεντάγωνο είναι κανονικό, έχει 5 ίσες πλευρές. Διαιρούμε την περίμετρο με το 5: ${perimeter} : 5 ＝ ${side} m.`
     };
   },
-  // 3. Περίφραξη κανονικού εξαγώνου με κόστος
+  // 2. Πλευρά κανονικού οκταγώνου από περίμετρο
+  () => {
+    const side = randInt(5, 15);
+    const perimeter = 8 * side;
+    const correct = `${side} cm`;
+    return {
+      title: 'ΠΛΕΥΡΑ ΚΑΝΟΝΙΚΟΥ ΟΚΤΑΓΩΝΟΥ',
+      prompt: `Μια οκταγωνική κορνίζα (κανονικό οκτάγωνο) έχει συνολική περίμετρο ${perimeter} cm. Πόσο είναι το μήκος καθεμιάς από τις 8 πλευρές της;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${side + 2} cm`,
+        `${side - 2} cm`,
+        `${side + 4} cm`,
+        `${Math.round(perimeter / 6)} cm`
+      ]),
+      correctAnswer: correct,
+      unit: 'cm',
+      tableData: [
+        { label: 'Περίμετρος', value: `${perimeter} cm` },
+        { label: 'Πλήθος ίσων πλευρών', value: '8' },
+        { label: 'Πράξη', value: `${perimeter} : 8` },
+        { label: 'Μήκος πλευράς', value: `${side} cm` }
+      ],
+      explanation: `Διαιρούμε την περίμετρο με το 8: ${perimeter} : 8 ＝ ${side} cm.`
+    };
+  },
+  // 3. Περίφραξη εξαγώνου με κόστος ανά μέτρο
   () => {
     const side = randInt(5, 12);
     const perim = 6 * side;
     const costPerM = randInt(8, 15);
     const totalCost = perim * costPerM;
-    const unit = '€';
-    const correct = `${totalCost} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${totalCost + costPerM * 2} ${unit}`,
-      `${totalCost - costPerM * 2} ${unit}`,
-      `${perim * (costPerM + 2)} ${unit}`,
-      `${5 * side * costPerM} ${unit}`
-    ]);
+    const correct = `${totalCost} €`;
     return {
       title: 'ΚΟΣΤΟΣ ΠΕΡΙΦΡΑΞΗΣ ΕΞΑΓΩΝΟΥ',
-      prompt: `Ένα οικόπεδο έχει σχήμα κανονικού εξαγώνου με πλευρά ${side} m. Θέλουμε να το περιφράξουμε με συρματόπλεγμα που κοστίζει ${costPerM} € το μέτρο. Πόσο θα κοστίσει η περίφραξη;`,
-      options,
+      prompt: `Ένα οικόπεδο έχει σχήμα κανονικού εξαγώνου με πλευρά ${side} m. Θέλουμε να το περιφράξουμε με πλέγμα που κοστίζει ${costPerM} € το μέτρο. Πόσο θα κοστίσει η περίφραξη;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${totalCost + costPerM * 2} €`,
+        `${totalCost - costPerM * 2} €`,
+        `${perim * (costPerM + 2)} €`,
+        `${5 * side * costPerM} €`
+      ]),
       correctAnswer: correct,
-      unit,
+      unit: '€',
       tableData: [
         { label: 'Μήκος πλευράς', value: `${side} m` },
-        { label: 'Περίμετρος εξαγώνου', value: `6 · ${side} ＝ ${perim} m` },
+        { label: 'Περίμετρος', value: `6 · ${side} ＝ ${perim} m` },
         { label: 'Κόστος ανά μέτρο', value: `${costPerM} €/m` },
         { label: 'Συνολικό κόστος', value: `${perim} · ${costPerM} ＝ ${totalCost} €` }
       ],
-      explanation: `Πρώτα υπολογίζουμε την περίμετρο: 6 · ${side} m ＝ ${perim} m. Στη συνέχεια πολλαπλασιάζουμε με το κόστος ανά μέτρο: ${perim} · ${costPerM} € ＝ ${totalCost} €.`
+      explanation: `Περίμετρος: 6 · ${side} m ＝ ${perim} m. Κόστος: ${perim} · ${costPerM} € ＝ ${totalCost} €.`
     };
   },
-  // 4. Διαγώνιοι από μία κορυφή επταγώνου
+  // 4. Πλευρά ισόπλευρου τριγώνου από περίμετρο
   () => {
-    const n = 7;
-    const diagOne = n - 3;
-    const unit = 'διαγώνιοι';
-    const correct = `${diagOne} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `3 ${unit}`,
-      `5 ${unit}`,
-      `7 ${unit}`,
-      `2 ${unit}`
-    ]);
-    return {
-      title: 'ΔΙΑΓΩΝΙΟΙ ΑΠΟ ΜΙΑ ΚΟΡΥΦΗ',
-      prompt: `Πόσες διαγώνιοι μπορούν να χαραχτούν ξεκινώντας από μία μόνο κορυφή ενός επταγώνου;`,
-      options,
-      correctAnswer: correct,
-      unit,
-      tableData: [
-        { label: 'Πολύγωνο', value: 'Επτάγωνο (ν ＝ 7)' },
-        { label: 'Μη επιτρεπόμενες κορυφές', value: '3 (η ίδια και οι 2 γειτονικές)' },
-        { label: 'Τύπος', value: 'ν － 3' },
-        { label: 'Αποτέλεσμα', value: `7 － 3 ＝ ${diagOne} ${unit}` }
-      ],
-      explanation: `Από μία κορυφή δεν μπορούμε να φέρουμε διαγώνιο προς την ίδια την κορυφή ούτε προς τις 2 γειτονικές της (καθώς σχηματίζουν πλευρές). Επομένως: ν － 3 ＝ 7 － 3 ＝ 4 διαγώνιοι.`
-    };
-  },
-  // 5. Συνολικές διαγώνιοι εξαγώνου
-  () => {
-    const n = 6;
-    const total = (n * (n - 3)) / 2;
-    const unit = 'διαγώνιοι';
-    const correct = `${total} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `6 ${unit}`,
-      `12 ${unit}`,
-      `18 ${unit}`,
-      `8 ${unit}`
-    ]);
-    return {
-      title: 'ΣΥΝΟΛΙΚΕΣ ΔΙΑΓΩΝΙΟΙ ΕΞΑΓΩΝΟΥ',
-      prompt: `Πόσες διαγωνίους έχει συνολικά ένα εξάγωνο;`,
-      options,
-      correctAnswer: correct,
-      unit,
-      tableData: [
-        { label: 'Κορυφές (ν)', value: '6' },
-        { label: 'Διαγώνιοι από 1 κορυφή', value: '6 － 3 ＝ 3' },
-        { label: 'Μαθηματικός τύπος', value: '[ν · (ν － 3)] : 2' },
-        { label: 'Υπολογισμός', value: `(6 · 3) : 2 ＝ 18 : 2 ＝ ${total} ${unit}` }
-      ],
-      explanation: `Εφαρμόζουμε τον τύπο υπολογισμού όλων των διαγωνίων: [ν · (ν － 3)] : 2 ＝ [6 · (6 － 3)] : 2 ＝ (6 · 3) : 2 ＝ 18 : 2 ＝ 9 διαγώνιοι.`
-    };
-  },
-  // 6. Περίμετρος ισόπλευρου τριγώνου
-  () => {
-    const side = randInt(7, 25);
+    const side = randInt(8, 24);
     const perim = 3 * side;
-    const unit = 'cm';
-    const correct = `${perim} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${perim + 3} ${unit}`,
-      `${perim - 3} ${unit}`,
-      `${4 * side} ${unit}`,
-      `${2 * side} ${unit}`
-    ]);
+    const correct = `${side} m`;
     return {
-      title: 'ΠΕΡΙΜΕΤΡΟΣ ΙΣΟΠΛΕΥΡΟΥ ΤΡΙΓΩΝΟΥ',
-      prompt: `Ένα ισόπλευρο τρίγωνο έχει μήκος πλευράς ${side} ${unit}. Πόση είναι η περίμετρός του;`,
-      options,
+      title: 'ΠΛΕΥΡΑ ΙΣΟΠΛΕΥΡΟΥ ΤΡΙΓΩΝΟΥ',
+      prompt: `Ένα τριγωνικό οικόπεδο με ίσες πλευρές (ισόπλευρο τρίγωνο) έχει περίμετρο ${perim} m. Ποιο είναι το μήκος της κάθε πλευράς του;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${side + 3} m`,
+        `${side - 3} m`,
+        `${side + 6} m`,
+        `${Math.round(perim / 4)} m`
+      ]),
       correctAnswer: correct,
-      unit,
+      unit: 'm',
       tableData: [
-        { label: 'Σχήμα', value: 'Ισόπλευρο τρίγωνο (3 ίσες πλευρές)' },
-        { label: 'Μήκος πλευράς', value: `${side} ${unit}` },
-        { label: 'Πράξη', value: `3 · ${side}` },
-        { label: 'Περίμετρος', value: `${perim} ${unit}` }
+        { label: 'Σχήμα', value: 'Ισόπλευρο τρίγωνο' },
+        { label: 'Περίμετρος', value: `${perim} m` },
+        { label: 'Πράξη', value: `${perim} : 3` },
+        { label: 'Μήκος πλευράς', value: `${side} m` }
       ],
-      explanation: `Το ισόπλευρο τρίγωνο είναι κανονικό πολύγωνο με 3 ίσες πλευρές. Άρα: Περίμετρος ＝ 3 · ${side} ${unit} ＝ ${perim} ${unit}.`
+      explanation: `Διαιρούμε την περίμετρο με το 3: ${perim} : 3 ＝ ${side} m.`
+    };
+  },
+  // 5. Πλευρά κανονικού εξαγώνου από περίμετρο
+  () => {
+    const side = randInt(7, 18);
+    const perim = 6 * side;
+    const correct = `${side} cm`;
+    return {
+      title: 'ΠΛΕΥΡΑ ΚΑΝΟΝΙΚΟΥ ΕΞΑΓΩΝΟΥ',
+      prompt: `Ένα εξάγωνο πλακάκι (κανονικό εξάγωνο) έχει περίμετρο ${perim} cm. Πόσο είναι το μήκος κάθε πλευράς του πλακιδίου;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${side + 2} cm`,
+        `${side - 2} cm`,
+        `${side + 4} cm`,
+        `${Math.round(perim / 5)} cm`
+      ]),
+      correctAnswer: correct,
+      unit: 'cm',
+      tableData: [
+        { label: 'Περίμετρος', value: `${perim} cm` },
+        { label: 'Πλευρές', value: '6 ίσες πλευρές' },
+        { label: 'Πράξη', value: `${perim} : 6` },
+        { label: 'Μήκος πλευράς', value: `${side} cm` }
+      ],
+      explanation: `Διαιρούμε: ${perim} : 6 ＝ ${side} cm.`
+    };
+  },
+  // 6. Κόστος περίφραξης τετραγώνου
+  () => {
+    const side = randInt(10, 25);
+    const perim = 4 * side;
+    const costPerM = randInt(5, 12);
+    const totalCost = perim * costPerM;
+    const correct = `${totalCost} €`;
+    return {
+      title: 'ΚΟΣΤΟΣ ΠΕΡΙΦΡΑΞΗΣ ΤΕΤΡΑΓΩΝΟΥ',
+      prompt: `Μια τετράγωνη αυλή έχει πλευρά ${side} m. Αν το κόστος περίφραξης είναι ${costPerM} € ανά μέτρο, ποιο είναι το συνολικό κόστος;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${totalCost + costPerM * 4} €`,
+        `${totalCost - costPerM * 4} €`,
+        `${perim * (costPerM + 1)} €`,
+        `${side * costPerM} €`
+      ]),
+      correctAnswer: correct,
+      unit: '€',
+      tableData: [
+        { label: 'Πλευρά τετραγώνου', value: `${side} m` },
+        { label: 'Περίμετρος', value: `4 · ${side} ＝ ${perim} m` },
+        { label: 'Κόστος ανά μέτρο', value: `${costPerM} €/m` },
+        { label: 'Συνολικό κόστος', value: `${perim} · ${costPerM} ＝ ${totalCost} €` }
+      ],
+      explanation: `Περίμετρος: 4 · ${side} m ＝ ${perim} m. Κόστος: ${perim} · ${costPerM} € ＝ ${totalCost} €.`
     };
   }
 ];
 
-const HARD_PROBLEMS_POOL = [
+// POOL ΓΙΑ Q11: Διαγώνιοι από Μία Κορυφή & Συνολικές Διαγώνιοι
+const PROBLEM_POOL_Q11 = [
+  // 1. Διαγώνιοι από μία κορυφή επταγώνου
+  () => {
+    const n = 7;
+    const d = n - 3;
+    const correct = `${d} διαγώνιοι`;
+    return {
+      title: 'ΔΙΑΓΩΝΙΟΙ ΑΠΟ ΜΙΑ ΚΟΡΥΦΗ (ΕΠΤΑΓΩΝΟ)',
+      prompt: `Πόσες διαγώνιοι μπορούν να χαραχτούν ξεκινώντας από μία μόνο κορυφή ενός επταγώνου (7 κορυφές);`,
+      options: ensureFourUniqueOptions(correct, () => ['3 διαγώνιοι', '5 διαγώνιοι', '7 διαγώνιοι', '2 διαγώνιοι']),
+      correctAnswer: correct,
+      unit: 'διαγώνιοι',
+      tableData: [
+        { label: 'Κορυφές (ν)', value: '7' },
+        { label: 'Τύπος από 1 κορυφή', value: 'ν － 3' },
+        { label: 'Πράξη', value: `7 － 3 ＝ ${d}` },
+        { label: 'Αποτέλεσμα', value: `${d} διαγώνιοι` }
+      ],
+      explanation: `Από μία κορυφή δεν φέρνουμε διαγώνιο προς την ίδια ούτε προς τις 2 γειτονικές της: 7 － 3 ＝ 4 διαγώνιοι.`
+    };
+  },
+  // 2. Συνολικές διαγώνιοι εξαγώνου
+  () => {
+    const n = 6;
+    const total = (n * (n - 3)) / 2;
+    const correct = `${total} διαγώνιοι`;
+    return {
+      title: 'ΣΥΝΟΛΙΚΕΣ ΔΙΑΓΩΝΙΟΙ ΕΞΑΓΩΝΟΥ',
+      prompt: `Πόσες διαγωνίους έχει συνολικά ένα εξάγωνο;`,
+      options: ensureFourUniqueOptions(correct, () => ['6 διαγώνιοι', '12 διαγώνιοι', '18 διαγώνιοι', '8 διαγώνιοι']),
+      correctAnswer: correct,
+      unit: 'διαγώνιοι',
+      tableData: [
+        { label: 'Κορυφές (ν)', value: '6' },
+        { label: 'Από μία κορυφή', value: '6 － 3 ＝ 3' },
+        { label: 'Τύπος συνόλου', value: '[ν · (ν － 3)] : 2' },
+        { label: 'Υπολογισμός', value: `(6 · 3) : 2 ＝ 18 : 2 ＝ ${total}` }
+      ],
+      explanation: `Εφαρμόζουμε τον τύπο: [6 · (6 － 3)] : 2 ＝ (6 · 3) : 2 ＝ 18 : 2 ＝ 9 διαγώνιοι.`
+    };
+  },
+  // 3. Διαγώνιοι από μία κορυφή οκταγώνου
+  () => {
+    const n = 8;
+    const d = n - 3;
+    const correct = `${d} διαγώνιοι`;
+    return {
+      title: 'ΔΙΑΓΩΝΙΟΙ ΑΠΟ 1 ΚΟΡΥΦΗ (ΟΚΤΑΓΩΝΟ)',
+      prompt: `Πόσες διαγώνιοι ξεκινούν από μία συγκεκριμένη κορυφή ενός οκταγώνου;`,
+      options: ensureFourUniqueOptions(correct, () => ['4 διαγώνιοι', '6 διαγώνιοι', '8 διαγώνιοι', '3 διαγώνιοι']),
+      correctAnswer: correct,
+      unit: 'διαγώνιοι',
+      tableData: [
+        { label: 'Κορυφές (ν)', value: '8' },
+        { label: 'Τύπος', value: 'ν － 3' },
+        { label: 'Πράξη', value: `8 － 3 ＝ ${d}` }
+      ],
+      explanation: `Από μία κορυφή: ν － 3 ＝ 8 － 3 ＝ 5 διαγώνιοι.`
+    };
+  },
+  // 4. Συνολικές διαγώνιοι οκταγώνου
+  () => {
+    const n = 8;
+    const total = (n * (n - 3)) / 2;
+    const correct = `${total} διαγώνιοι`;
+    return {
+      title: 'ΣΥΝΟΛΙΚΕΣ ΔΙΑΓΩΝΙΟΙ ΟΚΤΑΓΩΝΟΥ',
+      prompt: `Πόσες διαγωνίους έχει συνολικά ένα οκτάγωνο (8 πλευρές);`,
+      options: ensureFourUniqueOptions(correct, () => ['16 διαγώνιοι', '24 διαγώνιοι', '40 διαγώνιοι', '10 διαγώνιοι']),
+      correctAnswer: correct,
+      unit: 'διαγώνιοι',
+      tableData: [
+        { label: 'Κορυφές (ν)', value: '8' },
+        { label: 'Τύπος', value: '[ν · (ν － 3)] : 2' },
+        { label: 'Υπολογισμός', value: `[8 · 5] : 2 ＝ 40 : 2 ＝ ${total}` }
+      ],
+      explanation: `[8 · (8 － 3)] : 2 ＝ (8 · 5) : 2 ＝ 40 : 2 ＝ 20 διαγώνιοι.`
+    };
+  },
+  // 5. Διαγώνιοι από μία κορυφή δεκαγώνου
+  () => {
+    const n = 10;
+    const d = n - 3;
+    const correct = `${d} διαγώνιοι`;
+    return {
+      title: 'ΔΙΑΓΩΝΙΟΙ ΑΠΟ 1 ΚΟΡΥΦΗ (ΔΕΚΑΓΩΝΟ)',
+      prompt: `Σε ένα δεκάγωνο, πόσες διαγώνιοι μπορούν να χαραχτούν από μία μόνο κορυφή;`,
+      options: ensureFourUniqueOptions(correct, () => ['8 διαγώνιοι', '6 διαγώνιοι', '10 διαγώνιοι', '5 διαγώνιοι']),
+      correctAnswer: correct,
+      unit: 'διαγώνιοι',
+      tableData: [
+        { label: 'Κορυφές (ν)', value: '10' },
+        { label: 'Τύπος', value: 'ν － 3' },
+        { label: 'Πράξη', value: `10 － 3 ＝ ${d}` }
+      ],
+      explanation: `10 － 3 ＝ 7 διαγώνιοι.`
+    };
+  },
+  // 6. Συνολικές διαγώνιοι επταγώνου
+  () => {
+    const n = 7;
+    const total = (n * (n - 3)) / 2;
+    const correct = `${total} διαγώνιοι`;
+    return {
+      title: 'ΣΥΝΟΛΙΚΕΣ ΔΙΑΓΩΝΙΟΙ ΕΠΤΑΓΩΝΟΥ',
+      prompt: `Πόσες διαγωνίους έχει συνολικά ένα επτάγωνο (7 πλευρές);`,
+      options: ensureFourUniqueOptions(correct, () => ['7 διαγώνιοι', '21 διαγώνιοι', '28 διαγώνιοι', '10 διαγώνιοι']),
+      correctAnswer: correct,
+      unit: 'διαγώνιοι',
+      tableData: [
+        { label: 'Κορυφές (ν)', value: '7' },
+        { label: 'Τύπος', value: '[ν · (ν － 3)] : 2' },
+        { label: 'Υπολογισμός', value: `(7 · 4) : 2 ＝ 28 : 2 ＝ ${total}` }
+      ],
+      explanation: `[7 · (7 － 3)] : 2 ＝ (7 · 4) : 2 ＝ 28 : 2 ＝ 14 διαγώνιοι.`
+    };
+  }
+];
+
+// POOL ΓΙΑ Q12: Σύνθετα Προβλήματα Πολυγώνων & Διαγωνίων
+const PROBLEM_POOL_Q12 = [
   // 1. Συνολικές διαγώνιοι δεκαγώνου
   () => {
     const n = 10;
     const total = (n * (n - 3)) / 2;
-    const unit = 'διαγώνιοι';
-    const correct = `${total} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `70 ${unit}`,
-      `30 ${unit}`,
-      `25 ${unit}`,
-      `40 ${unit}`
-    ]);
+    const correct = `${total} διαγώνιοι`;
     return {
       title: 'ΔΙΑΓΩΝΙΟΙ ΔΕΚΑΓΩΝΟΥ',
-      prompt: `Σε μια άσκηση γεωμετρίας μελετάμε ένα δεκάγωνο (10 πλευρές και 10 κορυφές). Πόσες διαγωνίους έχει συνολικά το σχήμα αυτό;`,
-      options,
+      prompt: `Σε μια άσκηση γεωμετρίας μελετάμε ένα δεκάγωνο (10 κορυφές). Πόσες διαγωνίους έχει συνολικά το σχήμα αυτό;`,
+      options: ensureFourUniqueOptions(correct, () => ['70 διαγώνιοι', '30 διαγώνιοι', '25 διαγώνιοι', '40 διαγώνιοι']),
       correctAnswer: correct,
-      unit,
+      unit: 'διαγώνιοι',
       tableData: [
-        { label: 'Κορυφές πολυγώνου (ν)', value: '10' },
-        { label: 'Διαγώνιοι ανά κορυφή', value: '10 － 3 ＝ 7' },
-        { label: 'Τύπος συνόλου διαγωνίων', value: '[ν · (ν － 3)] : 2' },
-        { label: 'Υπολογισμός', value: `(10 · 7) : 2 ＝ 70 : 2 ＝ ${total} ${unit}` }
+        { label: 'Κορυφές (ν)', value: '10' },
+        { label: 'Από 1 κορυφή', value: '10 － 3 ＝ 7' },
+        { label: 'Τύπος', value: '[ν · (ν － 3)] : 2' },
+        { label: 'Υπολογισμός', value: `(10 · 7) : 2 ＝ 70 : 2 ＝ ${total}` }
       ],
-      explanation: `Εφαρμόζουμε τον τύπο: [ν · (ν － 3)] : 2. Για ν ＝ 10 έχουμε: [10 · (10 － 3)] : 2 ＝ (10 · 7) : 2 ＝ 70 : 2 ＝ 35 διαγώνιοι.`
+      explanation: `[10 · (10 － 3)] : 2 ＝ (10 · 7) : 2 ＝ 70 : 2 ＝ 35 διαγώνιοι.`
     };
   },
-  // 2. Σύγκριση περιμέτρων κανονικού τετραπλεύρου και κανονικού οκταγώνου
+  // 2. Σύγκριση περιμέτρων τετραγώνου και κανονικού οκταγώνου
   () => {
-    const sideSquare = randInt(10, 16);
-    const perimSquare = 4 * sideSquare;
+    const sideSq = randInt(10, 16);
+    const perimSq = 4 * sideSq;
     const sideOct = randInt(4, 7);
     const perimOct = 8 * sideOct;
-    const diff = Math.abs(perimSquare - perimOct);
-    const unit = 'cm';
-    const correct = `${diff} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${diff + 4} ${unit}`,
-      `${diff + 8} ${unit}`,
-      `${diff + 2} ${unit}`,
-      `${perimSquare} ${unit}`
-    ]);
+    const diff = Math.abs(perimSq - perimOct);
+    const correct = `${diff} cm`;
     return {
       title: 'ΣΥΓΚΡΙΣΗ ΠΕΡΙΜΕΤΡΩΝ ΠΟΛΥΓΩΝΩΝ',
-      prompt: `Ένα τετράγωνο έχει πλευρά ${sideSquare} ${unit} και ένα κανονικό οκτάγωνο έχει πλευρά ${sideOct} ${unit}. Πόσο διαφέρουν οι περίμετροι των δύο σχημάτων;`,
-      options,
+      prompt: `Ένα τετράγωνο έχει πλευρά ${sideSq} cm και ένα κανονικό οκτάγωνο έχει πλευρά ${sideOct} cm. Πόσο διαφέρουν οι περίμετροι των δύο σχημάτων;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${diff + 4} cm`,
+        `${diff + 8} cm`,
+        `${diff + 2} cm`,
+        `${perimSq} cm`
+      ]),
       correctAnswer: correct,
-      unit,
+      unit: 'cm',
       tableData: [
-        { label: 'Περίμετρος τετραγώνου', value: `4 · ${sideSquare} ＝ ${perimSquare} ${unit}` },
-        { label: 'Περίμετρος οκταγώνου', value: `8 · ${sideOct} ＝ ${perimOct} ${unit}` },
-        { label: 'Διαφορά περιμέτρων', value: `${Math.max(perimSquare, perimOct)} － ${Math.min(perimSquare, perimOct)} ＝ ${diff} ${unit}` }
+        { label: 'Περίμετρος τετραγώνου', value: `4 · ${sideSq} ＝ ${perimSq} cm` },
+        { label: 'Περίμετρος οκταγώνου', value: `8 · ${sideOct} ＝ ${perimOct} cm` },
+        { label: 'Διαφορά', value: `${Math.max(perimSq, perimOct)} － ${Math.min(perimSq, perimOct)} ＝ ${diff} cm` }
       ],
-      explanation: `Υπολογίζουμε την περίμετρο του τετραγώνου: 4 · ${sideSquare} ＝ ${perimSquare} ${unit}. Υπολογίζουμε την περίμετρο του οκταγώνου: 8 · ${sideOct} ＝ ${perimOct} ${unit}. Αφαιρούμε: ${Math.max(perimSquare, perimOct)} － ${Math.min(perimSquare, perimOct)} ＝ ${diff} ${unit}.`
+      explanation: `Τετράγωνο: 4 · ${sideSq} ＝ ${perimSq} cm. Οκτάγωνο: 8 · ${sideOct} ＝ ${perimOct} cm. Διαφορά: ${Math.max(perimSq, perimOct)} － ${Math.min(perimSq, perimOct)} ＝ ${diff} cm.`
     };
   },
   // 3. Εύρεση πολυγώνου από το σύνολο διαγωνίων
   () => {
-    const unit = 'πλευρές';
-    const correct = `8 ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `6 ${unit}`,
-      `7 ${unit}`,
-      `10 ${unit}`,
-      `12 ${unit}`
-    ]);
+    const correct = '8 πλευρές';
     return {
       title: 'ΕΥΡΕΣΗ ΠΟΛΥΓΩΝΟΥ ΑΠΟ ΤΙΣ ΔΙΑΓΩΝΙΟΥΣ',
       prompt: `Ένα πολύγωνο έχει συνολικά 20 διαγωνίους. Πόσες πλευρές έχει αυτό το πολύγωνο;`,
-      options,
+      options: ensureFourUniqueOptions(correct, () => ['6 πλευρές', '7 πλευρές', '10 πλευρές', '12 πλευρές']),
       correctAnswer: correct,
-      unit,
+      unit: 'πλευρές',
       tableData: [
-        { label: 'Δεδομένο', value: 'Συνολικές διαγώνιοι ＝ 20' },
-        { label: 'Τύπος', value: '[ν · (ν － 3)] : 2 ＝ 20, άρα ν · (ν － 3) ＝ 40' },
+        { label: 'Δεδομένο', value: 'Σύνολο διαγωνίων ＝ 20' },
+        { label: 'Σχέση', value: '[ν · (ν － 3)] : 2 ＝ 20, άρα ν · (ν － 3) ＝ 40' },
         { label: 'Δοκιμή για ν ＝ 8', value: '8 · (8 － 3) ＝ 8 · 5 ＝ 40' },
-        { label: 'Αποτέλεσμα', value: 'ν ＝ 8 πλευρές (Οκτάγωνο)' }
+        { label: 'Αποτέλεσμα', value: 'ν ＝ 8 (Οκτάγωνο)' }
       ],
-      explanation: `Ψάχνουμε έναν αριθμό ν τέτοιο ώστε [ν · (ν － 3)] : 2 ＝ 20, δηλαδή ν · (ν － 3) ＝ 40. Δοκιμάζοντας ν ＝ 8 βρίσκουμε 8 · 5 ＝ 40. Άρα το σχήμα έχει 8 πλευρές (οκτάγωνο).`
+      explanation: `Ψάχνουμε ν ώστε ν · (ν － 3) ＝ 40. Για ν ＝ 8: 8 · 5 ＝ 40. Άρα το σχήμα έχει 8 πλευρές.`
     };
   },
-  // 4. Σύνθετο πρόβλημα κόστους φωτισμού κορυφών
+  // 4. Κόστος φωτισμού κορυφών εξαγώνου
   () => {
-    const sides = 6;
     const costPerCorner = randInt(25, 45);
-    const totalCost = sides * costPerCorner;
-    const unit = '€';
-    const correct = `${totalCost} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${totalCost + costPerCorner} ${unit}`,
-      `${totalCost - costPerCorner} ${unit}`,
-      `${totalCost + 50} ${unit}`,
-      `${sides * (costPerCorner - 5)} ${unit}`
-    ]);
+    const totalCost = 6 * costPerCorner;
+    const correct = `${totalCost} €`;
     return {
       title: 'ΚΟΣΤΟΣ ΦΩΤΙΣΜΟΥ ΣΕ ΚΟΡΥΦΕΣ',
-      prompt: `Σε μια πλατεία σχήματος κανονικού εξαγώνου, ο δήμος αποφάσισε να τοποθετήσει έναν διακοσμητικό προβολέα σε κάθε κορυφή της. Αν κάθε προβολέας κοστίζει ${costPerCorner} €, ποιο είναι το συνολικό κόστος;`,
-      options,
+      prompt: `Σε μια πλατεία σχήματος κανονικού εξαγώνου τοποθετείται διακοσμητικός προβολέας σε κάθε κορυφή της. Αν κάθε προβολέας κοστίζει ${costPerCorner} €, ποιο είναι το συνολικό κόστος;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${totalCost + costPerCorner} €`,
+        `${totalCost - costPerCorner} €`,
+        `${totalCost + 50} €`,
+        `${6 * (costPerCorner - 5)} €`
+      ]),
       correctAnswer: correct,
-      unit,
+      unit: '€',
       tableData: [
         { label: 'Σχήμα', value: 'Κανονικό εξάγωνο' },
         { label: 'Κορυφές', value: '6 κορυφές' },
-        { label: 'Κόστος ανά προβολέα', value: `${costPerCorner} €` },
+        { label: 'Κόστος ανά κορυφή', value: `${costPerCorner} €` },
         { label: 'Συνολικό κόστος', value: `6 · ${costPerCorner} ＝ ${totalCost} €` }
       ],
-      explanation: `Το κανονικό εξάγωνο έχει 6 κορυφές. Για 6 προβολείς των ${costPerCorner} € έκαστος, το κόστος είναι 6 · ${costPerCorner} ＝ ${totalCost} €.`
+      explanation: `Το κανονικό εξάγωνο έχει 6 κορυφές: 6 · ${costPerCorner} € ＝ ${totalCost} €.`
     };
   },
-  // 5. Διαγώνιοι δωδεκαγώνου
+  // 5. Συνολικές διαγώνιοι δωδεκαγώνου
   () => {
     const n = 12;
     const total = (n * (n - 3)) / 2;
-    const unit = 'διαγώνιοι';
-    const correct = `${total} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `108 ${unit}`,
-      `45 ${unit}`,
-      `60 ${unit}`,
-      `50 ${unit}`
-    ]);
+    const correct = `${total} διαγώνιοι`;
     return {
       title: 'ΔΙΑΓΩΝΙΟΙ ΔΩΔΕΚΑΓΩΝΟΥ',
-      prompt: `Πόσες συνολικά διαγωνίους έχει ένα δωδεκάγωνο (πολύγωνο με 12 πλευρές και 12 κορυφές);`,
-      options,
+      prompt: `Πόσες συνολικά διαγωνίους έχει ένα δωδεκάγωνο (12 πλευρές και 12 κορυφές);`,
+      options: ensureFourUniqueOptions(correct, () => ['108 διαγώνιοι', '45 διαγώνιοι', '60 διαγώνιοι', '50 διαγώνιοι']),
       correctAnswer: correct,
-      unit,
+      unit: 'διαγώνιοι',
       tableData: [
         { label: 'Κορυφές (ν)', value: '12' },
-        { label: 'Διαγώνιοι ανά κορυφή', value: '12 － 3 ＝ 9' },
+        { label: 'Από 1 κορυφή', value: '12 － 3 ＝ 9' },
         { label: 'Τύπος', value: '[ν · (ν － 3)] : 2' },
-        { label: 'Υπολογισμός', value: `(12 · 9) : 2 ＝ 108 : 2 ＝ ${total} ${unit}` }
+        { label: 'Υπολογισμός', value: `(12 · 9) : 2 ＝ 108 : 2 ＝ ${total}` }
       ],
-      explanation: `Χρησιμοποιούμε τον τύπο: [ν · (ν － 3)] : 2. Για ν ＝ 12: [12 · (12 － 3)] : 2 ＝ (12 · 9) : 2 ＝ 108 : 2 ＝ 54 διαγώνιοι.`
+      explanation: `[12 · (12 － 3)] : 2 ＝ (12 · 9) : 2 ＝ 108 : 2 ＝ 54 διαγώνιοι.`
     };
   },
-  // 6. Περίμετρος σύνθετου σχήματος από κανονικά πολύγωνα
+  // 6. Περίμετρος σύνθετου σχήματος από δύο πεντάγωνα
   () => {
     const side = randInt(4, 9);
     const totalPerim = 8 * side;
-    const unit = 'cm';
-    const correct = `${totalPerim} ${unit}`;
-    const options = ensureFourUniqueOptions(correct, () => [
-      `${10 * side} ${unit}`,
-      `${9 * side} ${unit}`,
-      `${7 * side} ${unit}`,
-      `${totalPerim + 4} ${unit}`
-    ]);
+    const correct = `${totalPerim} cm`;
     return {
       title: 'ΠΕΡΙΜΕΤΡΟΣ ΣΥΝΘΕΤΟΥ ΣΧΗΜΑΤΟΣ',
-      prompt: `Ενώνουμε δύο ίσα κανονικά πεντάγωνα κατά μήκος μίας κοινής πλευράς τους. Αν η πλευρά κάθε πενταγώνου είναι ${side} ${unit}, πόση είναι η περίμετρος του νέου σχήματος που προκύπτει;`,
-      options,
+      prompt: `Ενώνουμε δύο ίσα κανονικά πεντάγωνα κατά μήκος μίας κοινής πλευράς τους. Αν η πλευρά κάθε πενταγώνου είναι ${side} cm, πόση είναι η περίμετρος του νέου σχήματος που προκύπτει;`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${10 * side} cm`,
+        `${9 * side} cm`,
+        `${7 * side} cm`,
+        `${totalPerim + 4} cm`
+      ]),
       correctAnswer: correct,
-      unit,
+      unit: 'cm',
       tableData: [
         { label: 'Αρχικές πλευρές', value: '2 πεντάγωνα · 5 ＝ 10 πλευρές' },
         { label: 'Κοινή εσωτερική πλευρά', value: '2 πλευρές ενώνονται εσωτερικά' },
-        { label: 'Εξωτερικές πλευρές περιμέτρου', value: '10 － 2 ＝ 8 πλευρές' },
-        { label: 'Υπολογισμός περιμέτρου', value: `8 · ${side} ${unit} ＝ ${totalPerim} ${unit}` }
+        { label: 'Εξωτερικές πλευρές', value: '10 － 2 ＝ 8 πλευρές' },
+        { label: 'Περίμετρος', value: `8 · ${side} cm ＝ ${totalPerim} cm` }
       ],
-      explanation: `Όταν ενώνουμε τα δύο πεντάγωνα σε μία κοινή πλευρά, η πλευρά αυτή παύει να είναι εξωτερική. Το νέο σχήμα έχει 8 εξωτερικές πλευρές: 8 · ${side} ${unit} ＝ ${totalPerim} ${unit}.`
+      explanation: `Όταν ενώνονται σε μία πλευρά, η περίμετρος αποτελείται από 8 εξωτερικές πλευρές: 8 · ${side} cm ＝ ${totalPerim} cm.`
     };
   }
 ];
 
 // -------------------------------------------------------------
-// ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ 10 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
+// ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ 12 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
 // -------------------------------------------------------------
 
 function generateQuestionsSet() {
@@ -493,7 +729,7 @@ function generateQuestionsSet() {
     explanation: 'Κάθε τετράπλευρο έχει ακριβώς 2 διαγωνίους, οι οποίες ενώνουν τα δύο ζεύγη απέναντι (μη διαδοχικών) κορυφών.'
   });
 
-  // Q5: Διαγώνιοι από μία κορυφή (Input αριθμού)
+  // Q5: Διαγώνιοι από μία κορυφή σε πεντάγωνο (Input αριθμού)
   const sidesQ5 = randInt(5, 8);
   const diagFromOne = sidesQ5 - 3;
   qs.push({
@@ -567,23 +803,21 @@ function generateQuestionsSet() {
     explanation: 'Το πεντάγωνο έχει συνολικά 5 διαγωνίους. Είναι το μοναδικό πολύγωνο στο οποίο το πλήθος των πλευρών ισούται με το πλήθος των διαγωνίων του!'
   });
 
-  // Q9: Πρόβλημα από STANDARD_PROBLEMS_POOL
-  const stdIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
-  const q9Data = STANDARD_PROBLEMS_POOL[stdIndex]();
-  qs.push({
-    id: 9,
-    type: 'mcq',
-    ...q9Data
-  });
+  // Q9: Πρόβλημα από PROBLEM_POOL_Q9
+  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)]();
+  qs.push({ id: 9, type: 'mcq', ...p9 });
 
-  // Q10: Πρόβλημα από HARD_PROBLEMS_POOL
-  const hardIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
-  const q10Data = HARD_PROBLEMS_POOL[hardIndex]();
-  qs.push({
-    id: 10,
-    type: 'mcq',
-    ...q10Data
-  });
+  // Q10: Πρόβλημα από PROBLEM_POOL_Q10
+  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)]();
+  qs.push({ id: 10, type: 'mcq', ...p10 });
+
+  // Q11: Πρόβλημα από PROBLEM_POOL_Q11
+  const p11 = PROBLEM_POOL_Q11[randInt(0, PROBLEM_POOL_Q11.length - 1)]();
+  qs.push({ id: 11, type: 'mcq', ...p11 });
+
+  // Q12: Πρόβλημα από PROBLEM_POOL_Q12
+  const p12 = PROBLEM_POOL_Q12[randInt(0, PROBLEM_POOL_Q12.length - 1)]();
+  qs.push({ id: 12, type: 'mcq', ...p12 });
 
   return qs;
 }
@@ -653,7 +887,7 @@ export default function SximataAskiseisPage() {
   ).length;
 
   const score = questions.reduce((acc, q) => (isQuestionCorrect(q) ? acc + 1 : acc), 0);
-  const totalCount = questions.length || 10;
+  const totalCount = questions.length || 12;
   const percentage = Math.round((score / totalCount) * 100);
 
   return (
@@ -684,14 +918,14 @@ export default function SximataAskiseisPage() {
               {toCleanUppercase('Ασκησεις: Πολυγωνα και Διαγωνιοι')}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Εξασκηθείτε στις ιδιότητες των πολυγώνων, τον υπολογισμό των διαγωνίων και την περίμετρο κανονικών σχημάτων μέσα από 10 δυναμικές ερωτήσεις.
+              Εξασκηθείτε στις ιδιότητες των πολυγώνων, τον υπολογισμό των διαγωνίων και την περίμετρο κανονικών σχημάτων μέσα από 12 δυναμικές ερωτήσεις.
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>10 Δυναμικές Ασκήσεις με Άμεση Αξιολόγηση &amp; Αναλυτικές Λύσεις</span>
+              <span>12 Δυναμικές Ασκήσεις με Άμεση Αξιολόγηση &amp; Αναλυτικές Λύσεις</span>
             </div>
             <button
               onClick={loadNewSet}
@@ -702,7 +936,7 @@ export default function SximataAskiseisPage() {
           </div>
         </section>
 
-        {/* ΛΙΣΤΑ ΕΡΩΤΗΣΕΩΝ */}
+        {/* ΛΙΣΤΑ ΕΡΩΤΗΣΕΩΝ (12 ΕΡΩΤΗΣΕΙΣ) */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q, index) => {
             const isCorrect = isQuestionCorrect(q);
@@ -888,7 +1122,7 @@ export default function SximataAskiseisPage() {
           })}
         </div>
 
-        {/* STICKY BOTTOM SCORE FOOTER */}
+        {/* STICKY BOTTOM SCORE FOOTER (12 ΕΡΩΤΗΣΕΙΣ) */}
         <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
           <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 sm:gap-8">
