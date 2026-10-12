@@ -36,11 +36,25 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
   const baseArea = useMemo(() => baseW * baseH, [baseW, baseH]);
   const scaledArea = useMemo(() => scaledW * scaledH, [scaledW, scaledH]);
 
+  // Ενιαία κλίμακα pixels ανά cm για απόλυτη γεωμετρική ακρίβεια
+  const pxPerCm = 18;
+  const initialSvgW = baseW * pxPerCm; // 72px
+  const initialSvgH = baseH * pxPerCm; // 45px
+  const scaledSvgW = scaledW * pxPerCm;
+  const scaledSvgH = scaledH * pxPerCm;
+
+  // Τοποθέτηση στο SVG (viewBox 0 0 460 300)
+  // Κάθετο κέντρο στο cy = 150
+  const initialX = 45; // Πιο αριστερά
+  const initialY = 150 - initialSvgH / 2;
+
+  const scaledX = 230; // Στο δεξί μισό του πλαισίου
+  const scaledY = 150 - scaledSvgH / 2; // Πάντα στοιχισμένο στη μέση πάνω-κάτω
+
   // Εργαστήριο 2: Υπολογιστής Κλίμακας Χάρτη (1 : Κ)
   const [mapDistanceCm, setMapDistanceCm] = useState(4);
   const [mapScaleDenominator, setMapScaleDenominator] = useState(50000); // 1 : 50.000
 
-  // Υπολογισμός πραγματικής απόστασης σε μέτρα και χιλιόμετρα
   const { realMeters, realKm } = useMemo(() => {
     const totalCm = mapDistanceCm * mapScaleDenominator;
     const m = totalCm / 100;
@@ -323,66 +337,76 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
               </div>
             </div>
 
-            {/* SVG Visualizer Σχημάτων (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-900 min-h-[380px] p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+            {/* SVG Visualizer Σχημάτων (7 στήλες) - Σωστή αναλογία & κάθετη στοίχιση στο κέντρο */}
+            <div className="lg:col-span-7 bg-slate-900 min-h-[380px] p-4 sm:p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 400 300"
-                className="w-full max-w-[400px] h-auto select-none overflow-visible"
+                viewBox="0 0 460 300"
+                className="w-full max-w-[460px] h-auto select-none overflow-visible"
               >
-                {/* Αρχικό Σχήμα (Αριστερά) */}
-                <g transform="translate(40, 90)">
+                {/* ΑΡΧΙΚΟ ΣΧΗΜΑ (Αριστερά - Κάθετα κεντραρισμένο στο cy = 150) */}
+                <g transform={`translate(${initialX}, ${initialY})`}>
                   <rect
                     x="0"
                     y="0"
-                    width={baseW * 24}
-                    height={baseH * 24}
-                    fill="rgba(56, 189, 248, 0.2)"
+                    width={initialSvgW}
+                    height={initialSvgH}
+                    fill="rgba(56, 189, 248, 0.15)"
                     stroke="#38bdf8"
                     strokeWidth="2.5"
                     strokeDasharray="4 3"
+                    rx="4"
                   />
-                  <text x={baseW * 12} y="-10" fill="#94a3b8" fontSize="11" fontWeight="bold" textAnchor="middle">
+                  {/* Ετικέτα πλάτους (επάνω) */}
+                  <text x={initialSvgW / 2} y="-10" fill="#94a3b8" fontSize="11" fontWeight="bold" textAnchor="middle">
                     {formatNum(baseW)} cm
                   </text>
-                  <text x="-10" y={baseH * 12 + 4} fill="#94a3b8" fontSize="11" fontWeight="bold" textAnchor="end">
+                  {/* Ετικέτα ύψους (αριστερά) */}
+                  <text x="-8" y={initialSvgH / 2 + 4} fill="#94a3b8" fontSize="11" fontWeight="bold" textAnchor="end">
                     {formatNum(baseH)} cm
                   </text>
-                  <text x={baseW * 12} y={baseH * 12 + 4} fill="#e2e8f0" fontSize="12" fontWeight="bold" textAnchor="middle">
+                  {/* Κείμενο μέσα στο σχήμα */}
+                  <text x={initialSvgW / 2} y={initialSvgH / 2 + 4} fill="#e2e8f0" fontSize="12" fontWeight="bold" textAnchor="middle">
                     Αρχικό
                   </text>
-                  <text x={baseW * 12} y={baseH * 24 + 20} fill="#64748b" fontSize="10" textAnchor="middle">
+                  {/* Εμβαδόν (κάτω) */}
+                  <text x={initialSvgW / 2} y={initialSvgH + 18} fill="#64748b" fontSize="10" fontWeight="bold" textAnchor="middle">
                     Ε ＝ {formatNum(baseArea)} cm²
                   </text>
                 </g>
 
-                {/* Νέο Σχήμα (Δεξιά) */}
-                <g transform="translate(180, 50)">
+                {/* ΝΕΟ ΣΧΗΜΑ (Δεξιά - Πάντα κεντραρισμένο κάθετα στο cy = 150) */}
+                <g transform={`translate(${scaledX}, ${scaledY})`}>
                   <rect
                     x="0"
                     y="0"
-                    width={Math.min(scaledW * 24, 180)}
-                    height={Math.min(scaledH * 24, 180)}
+                    width={scaledSvgW}
+                    height={scaledSvgH}
                     fill="rgba(129, 140, 248, 0.25)"
                     stroke="#818cf8"
                     strokeWidth="3"
+                    rx="6"
                   />
-                  <text x={Math.min(scaledW * 12, 90)} y="-10" fill="#818cf8" fontSize="12" fontWeight="bold" textAnchor="middle">
+                  {/* Ετικέτα πλάτους (επάνω) */}
+                  <text x={scaledSvgW / 2} y="-12" fill="#818cf8" fontSize="13" fontWeight="bold" textAnchor="middle">
                     {formatNum(scaledW)} cm
                   </text>
-                  <text x="-10" y={Math.min(scaledH * 12, 90) + 4} fill="#818cf8" fontSize="12" fontWeight="bold" textAnchor="end">
+                  {/* Ετικέτα ύψους (αριστερά του νέου σχήματος) */}
+                  <text x="-10" y={scaledSvgH / 2 + 4} fill="#818cf8" fontSize="13" fontWeight="bold" textAnchor="end">
                     {formatNum(scaledH)} cm
                   </text>
-                  <text x={Math.min(scaledW * 12, 90)} y={Math.min(scaledH * 12, 90) + 4} fill="#ffffff" fontSize="13" fontWeight="black" textAnchor="middle">
+                  {/* Κείμενο μέσα στο σχήμα */}
+                  <text x={scaledSvgW / 2} y={scaledSvgH / 2 + 5} fill="#ffffff" fontSize="14" fontWeight="black" textAnchor="middle">
                     Νέο ({formatNum(scaleFactor)}×)
                   </text>
-                  <text x={Math.min(scaledW * 12, 90)} y={Math.min(scaledH * 24, 180) + 22} fill="#34d399" fontSize="12" fontWeight="black" textAnchor="middle">
+                  {/* Εμβαδόν (κάτω) */}
+                  <text x={scaledSvgW / 2} y={scaledSvgH + 24} fill="#34d399" fontSize="13" fontWeight="black" textAnchor="middle">
                     Ε ＝ {formatNum(scaledArea)} cm²
                   </text>
                 </g>
               </svg>
 
               <div className="mt-2 text-center text-xs text-slate-400">
-                Οι γωνίες παραμένουν πάντοτε ορθές (90°). Η μορφή του σχήματος δεν αλλοιώνεται.
+                Ο λόγος των πλευρών μένει σταθερά 4 : 2,5 (1,6). Η γεωμετρική μορφή παραμένει απόλυτα ακριβής.
               </div>
             </div>
 
