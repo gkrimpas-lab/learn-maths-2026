@@ -21,8 +21,8 @@ function formatNum(val) {
 
 export default function AthroismaGonionTheoriaPage() {
   // Εργαστήριο 1: Διαδραστικό Τρίγωνο (Άθροισμα 180°)
-  const [angleA, setAngleA] = useState(65);
-  const [angleB, setAngleB] = useState(55);
+  const [angleA, setAngleA] = useState(42);
+  const [angleB, setAngleB] = useState(59);
 
   // Η 3η γωνία υπολογίζεται δυναμικά ώστε το άθροισμα να είναι πάντα 180°
   const angleC = useMemo(() => {
@@ -37,27 +37,59 @@ export default function AthroismaGonionTheoriaPage() {
     return { name: 'Οξυγώνιο Τρίγωνο', badge: 'bg-sky-100 text-sky-800' };
   }, [angleA, angleB, angleC]);
 
-  // Υπολογισμός συντεταγμένων κορυφών SVG για το διαδραστικό τρίγωνο
-  const { polyPoints, topX, topY } = useMemo(() => {
-    const bx = 50;
-    const by = 200;
-    const cx = 270;
-    const cy = 200;
-    const baseLen = cx - bx;
-
-    // Νόμος ημιτόνων για προσδιορισμό θέσης κορυφής Α
+  // Υπολογισμός συντεταγμένων κορυφών SVG με auto-scaling ώστε να μην κόβεται ποτέ καμία κορυφή
+  const { polyPoints, topX, topY, bX, bY, cX, cY } = useMemo(() => {
+    const baseLen = 100;
     const radB = (angleB * Math.PI) / 180;
     const radC = (angleC * Math.PI) / 180;
     const radA = (angleA * Math.PI) / 180;
 
+    // Νόμος ημιτόνων για προσδιορισμό σχετικών συντεταγμένων
     const sideC = (baseLen * Math.sin(radC)) / Math.sin(radA);
-    const x = bx + sideC * Math.cos(radB);
-    const y = by - sideC * Math.sin(radB);
+    const rawAx = sideC * Math.cos(radB);
+    const rawAy = -sideC * Math.sin(radB);
+    const rawBx = 0;
+    const rawBy = 0;
+    const rawCx = baseLen;
+    const rawCy = 0;
+
+    const minX = Math.min(rawAx, rawBx, rawCx);
+    const maxX = Math.max(rawAx, rawBx, rawCx);
+    const minY = Math.min(rawAy, rawBy, rawCy);
+    const maxY = Math.max(rawAy, rawBy, rawCy);
+
+    const rawW = Math.max(1, maxX - minX);
+    const rawH = Math.max(1, maxY - minY);
+
+    // Διαθέσιμος χώρος με ασφαλή περιθώρια μέσα στο viewBox 380x320
+    const targetW = 270;
+    const targetH = 175;
+    const scale = Math.min(targetW / rawW, targetH / rawH);
+
+    const svgCenterX = 190;
+    const svgCenterY = 165;
+
+    const midRawX = (minX + maxX) / 2;
+    const midRawY = (minY + maxY) / 2;
+
+    const toSvgX = (x) => svgCenterX + (x - midRawX) * scale;
+    const toSvgY = (y) => svgCenterY + (y - midRawY) * scale;
+
+    const ax = toSvgX(rawAx);
+    const ay = toSvgY(rawAy);
+    const bx = toSvgX(rawBx);
+    const by = toSvgY(rawBy);
+    const cx = toSvgX(rawCx);
+    const cy = toSvgY(rawCy);
 
     return {
-      polyPoints: `${x.toFixed(1)},${y.toFixed(1)} ${bx},${by} ${cx},${cy}`,
-      topX: x,
-      topY: y
+      polyPoints: `${ax.toFixed(1)},${ay.toFixed(1)} ${bx.toFixed(1)},${by.toFixed(1)} ${cx.toFixed(1)},${cy.toFixed(1)}`,
+      topX: ax,
+      topY: ay,
+      bX: bx,
+      bY: by,
+      cX: cx,
+      cY: cy
     };
   }, [angleA, angleB, angleC]);
 
@@ -261,7 +293,7 @@ export default function AthroismaGonionTheoriaPage() {
           </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: SVG ΤΡΙΓΩΝΟ & ΑΘΡΟΙΣΜΑ 180° */}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: SVG ΤΡΙΓΩΝΟ & ΑΘΡΟΙΣΜΑ 180° (ΜΕΓΑΛΥΤΕΡΟ ΠΛΑΙΣΙΟ & AUTO-SCALE) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
@@ -343,42 +375,41 @@ export default function AthroismaGonionTheoriaPage() {
               </div>
             </div>
 
-            {/* SVG Visualizer Τριγώνου (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-900 p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+            {/* SVG Visualizer Τριγώνου (7 στήλες) - Μεγαλύτερο πλαίσιο & auto-fit */}
+            <div className="lg:col-span-7 bg-slate-900 min-h-[380px] p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 320 240"
-                className="w-full max-w-[320px] sm:max-w-[380px] h-auto select-none"
+                viewBox="0 0 380 320"
+                className="w-full max-w-[380px] sm:max-w-[440px] h-auto select-none overflow-visible"
               >
                 {/* Τρίγωνο */}
                 <polygon
                   points={polyPoints}
                   fill="rgba(99, 102, 241, 0.2)"
                   stroke="#818cf8"
-                  strokeWidth="3"
+                  strokeWidth="3.5"
                   strokeLinejoin="round"
                 />
 
-                {/* Κορυφές & Ετικέτες */}
                 {/* Κορυφή A (Πάνω) */}
-                <circle cx={topX} cy={topY} r="5" fill="#f43f5e" />
-                <text x={topX} y={topY - 10} fill="#f1f5f9" fontSize="12" fontWeight="bold" textAnchor="middle">
+                <circle cx={topX} cy={topY} r="5.5" fill="#f43f5e" stroke="#ffffff" strokeWidth="1.5" />
+                <text x={topX} y={topY - 14} fill="#f1f5f9" fontSize="13" fontWeight="bold" textAnchor="middle">
                   Â ＝ {angleA}°
                 </text>
 
                 {/* Κορυφή B (Κάτω Αριστερά) */}
-                <circle cx="50" cy="200" r="5" fill="#38bdf8" />
-                <text x="50" y="222" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">
+                <circle cx={bX} cy={bY} r="5.5" fill="#38bdf8" stroke="#ffffff" strokeWidth="1.5" />
+                <text x={bX} y={bY + 24} fill="#38bdf8" fontSize="13" fontWeight="bold" textAnchor="middle">
                   B̂ ＝ {angleB}°
                 </text>
 
                 {/* Κορυφή C (Κάτω Δεξιά) */}
-                <circle cx="270" cy="200" r="5" fill="#34d399" />
-                <text x="270" y="222" fill="#34d399" fontSize="12" fontWeight="bold" textAnchor="middle">
+                <circle cx={cX} cy={cY} r="5.5" fill="#34d399" stroke="#ffffff" strokeWidth="1.5" />
+                <text x={cX} y={cY + 24} fill="#34d399" fontSize="13" fontWeight="bold" textAnchor="middle">
                   Γ̂ ＝ {angleC}°
                 </text>
 
                 {/* Ένδειξη Αθροίσματος στο κέντρο */}
-                <text x="160" y="150" fill="#f59e0b" fontSize="14" fontWeight="900" textAnchor="middle">
+                <text x="190" y="275" fill="#f59e0b" fontSize="14" fontWeight="900" textAnchor="middle">
                   {angleA}° ＋ {angleB}° ＋ {angleC}° ＝ 180°
                 </text>
               </svg>
