@@ -72,7 +72,8 @@ export default function STDimotikouMenu() {
     { id: '65-sintheta-motiba', label: '🥧 65. Σύνθετα Μοτίβα', href: '/st-dimotikou/65-sintheta-motiba' },
     { id: '66-epanalipsi-4', label: '🏆 66. Επανάληψη: Κεφάλαια 55 – 65', href: '/st-dimotikou/66-epanalipsi-4' },
     { id: '67-sximata', label: '🥧 67. Γεωμετρικά Σχήματα - Πολύγωνα', href: '/st-dimotikou/67-sximata' },
-    { id: '68-gonies', label: '🥧 68. Γωνίες', href: '/st-dimotikou/68-gonies' }
+    { id: '68-gonies', label: '🥧 68. Γωνίες', href: '/st-dimotikou/68-gonies' },
+    { id: '69-athroisma-gonion', label: '🥧 69. Άθροισμα Γωνιών Τριγώνου - Τετραπλεύρου', href: '/st-dimotikou/69-athroisma-gonion' }
 ];
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
