@@ -14,12 +14,23 @@ function toCleanUppercase(str) {
   return str.split('').map(char => map[char] || char.toUpperCase()).join('');
 }
 
-// Κομψή απεικόνιση τετραγωνικής ρίζας με ευθεία γραμμή (vinculum) πάνω από την υπόριζη ποσότητα
-function Radical({ children }) {
+// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum)
+function Radical({ children, className = "" }) {
   return (
-    <span className="inline-flex items-baseline font-mono">
-      <span className="text-base leading-none select-none">√</span>
-      <span className="border-t-2 border-current px-0.5 ml-[-1px] leading-tight">
+    <span className={`inline-flex items-center align-middle font-mono ${className}`}>
+      <svg
+        viewBox="0 0 12 24"
+        className="w-[0.55em] h-[1.15em] shrink-0 text-current overflow-visible"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M1 13 L3.5 13 L6.5 21 L12 2" />
+      </svg>
+      <span className="border-t-[1.8px] border-current pl-0.5 pr-1 py-0 leading-none text-[0.95em]">
         {children}
       </span>
     </span>
@@ -91,7 +102,7 @@ export default function MononimaPolionimaTheory() {
           <div className="absolute -right-10 -bottom-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         </section>
 
-        {/* STEP-BY-STEP THEORY CARDS */}
+        {/* MODULAR CARDS ΘΕΩΡΙΑΣ */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-12">
           
           {/* ΒΗΜΑ 1 */}
@@ -332,7 +343,7 @@ export default function MononimaPolionimaTheory() {
               </div>
             </div>
 
-            {/* Dynamic Visualization & Output */}
+            {/* Dynamic Visualization */}
             <div className="lg:col-span-7 flex flex-col gap-6">
               
               {/* Formula Card */}
@@ -363,7 +374,7 @@ export default function MononimaPolionimaTheory() {
                 </div>
               </div>
 
-              {/* Graphical Term Breakdown (SVG) */}
+              {/* Term Breakdown SVG */}
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <span className="text-xs font-bold text-slate-600 block mb-2 uppercase">
                   {toCleanUppercase(`ΑΝΑΛΥΣΗ ΟΡΩΝ ΓΙΑ x ＝ ${valX}`)}:
