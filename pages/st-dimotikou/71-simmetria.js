@@ -20,11 +20,10 @@ function formatNum(val) {
 }
 
 export default function SimmetriaTheoriaPage() {
-  // Εργαστήριο 1: Διαδραστικός Καθρεφτισμός Σημείου ως προς Κατακόρυφο Άξονα
-  const [pointX, setPointX] = useState(60); // Απόσταση από το αριστερό άκρο
+  // Εργαστήριο 1: Διαδραστικός Καθρεφτισμός Σημείου
+  const [pointX, setPointX] = useState(60);
   const [pointY, setPointY] = useState(80);
 
-  // Ο κατακόρυφος άξονας βρίσκεται στο x = 160 (κέντρο του αριστερού SVG πλέγματος)
   const axisX = 160;
   const mirroredX = useMemo(() => {
     const dist = axisX - pointX;
@@ -33,54 +32,207 @@ export default function SimmetriaTheoriaPage() {
 
   const distanceFromAxis = Math.abs(axisX - pointX);
 
-  // Εργαστήριο 2: Άξονες Συμμετρίας σε Γεωμετρικά Σχήματα
-  const [selectedShape, setSelectedShape] = useState('square');
+  // -------------------------------------------------------------------------
+  // Εργαστήριο 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ ΑΝΑΔΙΠΛΩΣΗΣ (FOLDING LAB)
+  // -------------------------------------------------------------------------
+  const [foldingShape, setFoldingShape] = useState('rectangle'); // 'rectangle', 'square', 'triangle', 'rhombus'
+  const [selectedAxisKey, setSelectedAxisKey] = useState('vertical');
+  const [foldProgress, setFoldProgress] = useState(0); // 0 (ανοιχτό) έως 100 (πλήρες δίπλωμα)
 
-  const shapeData = {
-    triangle: {
-      name: 'Ισόπλευρο Τρίγωνο',
-      axesCount: 3,
-      desc: 'Έχει 3 άξονες συμμετρίας, καθένας από τους οποίους διέρχεται από μία κορυφή και το μέσο της απέναντι πλευράς.',
-      color: '#38bdf8'
-    },
+  // Δεδομένα σχημάτων, αξόνων και πολυγώνων (σταθερό και αναδιπλούμενο μέρος)
+  // Κέντρο του καμβά στο (170, 140)
+  const foldingConfigs = {
     rectangle: {
       name: 'Ορθογώνιο Παραλληλόγραμμο',
-      axesCount: 2,
-      desc: 'Έχει ακριβώς 2 άξονες συμμετρίας (τις μεσοκάθετες των απέναντι πλευρών). Προσοχή: Οι διαγώνιοί του ΔΕΝ είναι άξονες συμμετρίας!',
-      color: '#818cf8'
+      axes: [
+        {
+          key: 'vertical',
+          label: 'Κατακόρυφος Άξονας (Μεσοκάθετος)',
+          isSymmetric: true,
+          axisLine: { x1: 170, y1: 40, x2: 170, y2: 240 },
+          fixedPoly: '170,70 250,70 250,210 170,210',
+          baseFoldPoly: [
+            { x: 170, y: 70 },
+            { x: 90, y: 70 },
+            { x: 90, y: 210 },
+            { x: 170, y: 210 }
+          ],
+          // Αναδίπλωση οριζόντια ως προς x = 170
+          foldTransform: (p, t) => {
+            const dx = 170 - p.x;
+            const newX = 170 - dx * Math.cos(t * Math.PI);
+            return { x: newX, y: p.y };
+          },
+          explanation: '✓ ΣΩΣΤΟ: Τα δύο μισά ταυτίζονται απόλυτα. Ο κατακόρυφος άξονας είναι άξονας συμμετρίας!'
+        },
+        {
+          key: 'horizontal',
+          label: 'Οριζόντιος Άξονας (Μεσοκάθετος)',
+          isSymmetric: true,
+          axisLine: { x1: 70, y1: 140, x2: 270, y2: 140 },
+          fixedPoly: '90,140 250,140 250,210 90,210',
+          baseFoldPoly: [
+            { x: 90, y: 140 },
+            { x: 250, y: 140 },
+            { x: 250, y: 70 },
+            { x: 90, y: 70 }
+          ],
+          // Αναδίπλωση κατακόρυφα ως προς y = 140
+          foldTransform: (p, t) => {
+            const dy = 140 - p.y;
+            const newY = 140 - dy * Math.cos(t * Math.PI);
+            return { x: p.x, y: newY };
+          },
+          explanation: '✓ ΣΩΣΤΟ: Τα δύο μισά ταυτίζονται απόλυτα. Ο οριζόντιος άξονας είναι άξονας συμμετρίας!'
+        },
+        {
+          key: 'diagonal',
+          label: 'Διαγώνιος (Σύνηθες Λάθος!)',
+          isSymmetric: false,
+          axisLine: { x1: 80, y1: 60, x2: 260, y2: 220 },
+          fixedPoly: '90,70 250,210 90,210',
+          baseFoldPoly: [
+            { x: 90, y: 70 },
+            { x: 250, y: 70 },
+            { x: 250, y: 210 }
+          ],
+          // Αναδίπλωση ως προς τη διαγώνιο (90,70) -> (250,210)
+          foldTransform: (p, t) => {
+            // Ανάκλαση σημείου (x, y) ως προς ευθεία διαγωνίου:
+            // x0 = 90, y0 = 70, dx = 160, dy = 140
+            const x0 = 90;
+            const y0 = 70;
+            const dx = 160;
+            const dy = 140;
+            const L2 = dx * dx + dy * dy;
+            const u = ((p.x - x0) * dx + (p.y - y0) * dy) / L2;
+            const projX = x0 + u * dx;
+            const projY = y0 + u * dy;
+            const rx = 2 * projX - p.x;
+            const ry = 2 * projY - p.y;
+
+            // Γραμμική παρεμβολή αναδίπλωσης με κορώνα cos
+            const factor = (1 - Math.cos(t * Math.PI)) / 2;
+            return {
+              x: p.x + (rx - p.x) * factor,
+              y: p.y + (ry - p.y) * factor
+            };
+          },
+          explanation: '✗ ΠΡΟΣΟΧΗ: Τα δύο τρίγωνα ΔΕΝ ταυτίζονται όταν διπλώσουμε στη διαγώνιο! Η διαγώνιος του ορθογωνίου ΔΕΝ είναι άξονας συμμετρίας.'
+        }
+      ]
     },
     square: {
-      name: 'Τετράγωνο (Κανονικό Τετράπλευρο)',
-      axesCount: 4,
-      desc: 'Έχει 4 άξονες συμμετρίας: 2 μεσοκάθετες των πλευρών και 2 διαγώνιους.',
-      color: '#34d399'
+      name: 'Τετράγωνο (4 Άξονες)',
+      axes: [
+        {
+          key: 'vertical',
+          label: 'Κατακόρυφος Άξονας',
+          isSymmetric: true,
+          axisLine: { x1: 170, y1: 40, x2: 170, y2: 240 },
+          fixedPoly: '170,70 240,70 240,210 170,210',
+          baseFoldPoly: [
+            { x: 170, y: 70 },
+            { x: 100, y: 70 },
+            { x: 100, y: 210 },
+            { x: 170, y: 210 }
+          ],
+          foldTransform: (p, t) => {
+            const dx = 170 - p.x;
+            return { x: 170 - dx * Math.cos(t * Math.PI), y: p.y };
+          },
+          explanation: '✓ ΣΩΣΤΟ: Απόλυτη ταύτιση!'
+        },
+        {
+          key: 'diagonal',
+          label: 'Διαγώνιος Τετραγώνου',
+          isSymmetric: true,
+          axisLine: { x1: 85, y1: 55, x2: 255, y2: 225 },
+          fixedPoly: '100,70 240,210 100,210',
+          baseFoldPoly: [
+            { x: 100, y: 70 },
+            { x: 240, y: 70 },
+            { x: 240, y: 210 }
+          ],
+          foldTransform: (p, t) => {
+            // Στο τετράγωνο η διαγώνιος έχει κλίση 45 μοίρες: ανάκλαση x' = y - 70 + 100 = y + 30, y' = x - 30
+            const rx = p.y + 30;
+            const ry = p.x - 30;
+            const factor = (1 - Math.cos(t * Math.PI)) / 2;
+            return {
+              x: p.x + (rx - p.x) * factor,
+              y: p.y + (ry - p.y) * factor
+            };
+          },
+          explanation: '✓ ΣΩΣΤΟ: Στο τετράγωνο η διαγώνιος ΕΙΝΑΙ άξονας συμμετρίας και τα τρίγωνα εφαρμόζουν τέλεια!'
+        }
+      ]
+    },
+    triangle: {
+      name: 'Ισόπλευρο Τρίγωνο (3 Άξονες)',
+      axes: [
+        {
+          key: 'vertical',
+          label: 'Κατακόρυφη Μεσοκάθετος',
+          isSymmetric: true,
+          axisLine: { x1: 170, y1: 40, x2: 170, y2: 230 },
+          fixedPoly: '170,65 245,195 170,195',
+          baseFoldPoly: [
+            { x: 170, y: 65 },
+            { x: 95, y: 195 },
+            { x: 170, y: 195 }
+          ],
+          foldTransform: (p, t) => {
+            const dx = 170 - p.x;
+            return { x: 170 - dx * Math.cos(t * Math.PI), y: p.y };
+          },
+          explanation: '✓ ΣΩΣΤΟ: Η κατακόρυφη μεσοκάθετος διπλώνει το ισόπλευρο τρίγωνο σε δύο απολύτως ίσα μισά.'
+        }
+      ]
     },
     rhombus: {
-      name: 'Ρόμβος',
-      axesCount: 2,
-      desc: 'Έχει 2 άξονες συμμετρίας, οι οποίοι συμπίπτουν ακριβώς με τις δύο διαγωνίους του.',
-      color: '#f59e0b'
-    },
-    hexagon: {
-      name: 'Κανονικό Εξάγωνο',
-      axesCount: 6,
-      desc: 'Έχει 6 άξονες συμμετρίας: 3 που ενώνουν απέναντι κορυφές και 3 μεσοκάθετες απέναντι πλευρών.',
-      color: '#f43f5e'
-    },
-    circle: {
-      name: 'Κύκλος',
-      axesCount: 'Άπειροι',
-      desc: 'Κάθε ευθεία που διέρχεται από το κέντρο του κύκλου (κάθε διάμετρος) είναι άξονας συμμετρίας!',
-      color: '#a855f7'
+      name: 'Ρόμβος (2 Άξονες)',
+      axes: [
+        {
+          key: 'vertical',
+          label: 'Κατακόρυφη Διαγώνιος',
+          isSymmetric: true,
+          axisLine: { x1: 170, y1: 40, x2: 170, y2: 240 },
+          fixedPoly: '170,60 250,140 170,220',
+          baseFoldPoly: [
+            { x: 170, y: 60 },
+            { x: 90, y: 140 },
+            { x: 170, y: 220 }
+          ],
+          foldTransform: (p, t) => {
+            const dx = 170 - p.x;
+            return { x: 170 - dx * Math.cos(t * Math.PI), y: p.y };
+          },
+          explanation: '✓ ΣΩΣΤΟ: Στον ρόμβο οι δύο διαγώνιοι είναι οι μοναδικοί άξονες συμμετρίας του.'
+        }
+      ]
     }
   };
 
-  const activeShape = shapeData[selectedShape];
+  const currentConfig = foldingConfigs[foldingShape] || foldingConfigs.rectangle;
+  const currentAxis =
+    currentConfig.axes.find((a) => a.key === selectedAxisKey) || currentConfig.axes[0];
+
+  // Υπολογισμός σημείων του αναδιπλούμενου πολυγώνου με βάση το progress (0..100)
+  const movingPolyPoints = useMemo(() => {
+    const t = foldProgress / 100;
+    return currentAxis.baseFoldPoly
+      .map((p) => {
+        const transformed = currentAxis.foldTransform(p, t);
+        return `${transformed.x.toFixed(1)},${transformed.y.toFixed(1)}`;
+      })
+      .join(' ');
+  }, [currentAxis, foldProgress]);
 
   return (
     <Layout
       title="Αξονική Συμμετρία &amp; Άξονας Συμμετρίας - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Μαθαίνουμε τι είναι η αξονική συμμετρία, πώς βρίσκουμε συμμετρικά σημεία και πόσους άξονες συμμετρίας έχουν τα γεωμετρικά σχήματα με διαδραστικά εργαστήρια SVG."
+      description="Μαθαίνουμε τι είναι η αξονική συμμετρία, πώς βρίσκουμε συμμετρικά σημεία και πόσους άξονες συμμετρίας έχουν τα γεωμετρικά σχήματα με διαδραστικά εργαστήρια αναδίπλωσης SVG."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
       showAds={true}
@@ -107,14 +259,14 @@ export default function SimmetriaTheoriaPage() {
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               Ανακαλύπτουμε τη μαγεία της αρμονίας και της ισορροπίας στη φύση και τη γεωμετρία! 
               Μαθαίνουμε πότε δύο σχήματα είναι <strong>συμμετρικά ως προς άξονα</strong>, πώς λειτουργεί η 
-              <strong> κάθετη απόσταση</strong> από τον καθρέφτη της γεωμετρίας και πόσους άξονες συμμετρίας κρύβει κάθε κανονικό πολύγωνο.
+              <strong> κάθετη απόσταση</strong> από τον καθρέφτη της γεωμετρίας και βλέπουμε ζωντανά πώς <strong>διπλώνει</strong> κάθε σχήμα πάνω στον άξονά του.
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Συμμετρικά Σημεία, Άξονες Πολυγώνων &amp; Διαδραστικά Εργαστήρια</span>
+              <span>Θεωρία, Συμμετρικά Σημεία, Εργαστήριο Αναδίπλωσης (Folding) &amp; SVG</span>
             </div>
             <Link
               href="/st-dimotikou/71-simmetria-ask"
@@ -406,70 +558,194 @@ export default function SimmetriaTheoriaPage() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ ΣΤΑ ΣΧΗΜΑΤΑ */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΑΝΑΔΙΠΛΩΣΗ ΣΧΗΜΑΤΟΣ (FOLDING LAB) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
-              <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΑΞΟΝΕΣ ΣΧΗΜΑΤΩΝ</span>
+              <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΑΝΑΔΙΠΛΩΣΗ (FOLDING)</span>
             </div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πόσους Άξονες Συμμετρίας Έχει Κάθε Σχήμα;
+              Δίπλωσε το Σχήμα στον Άξονα και Δες αν Ταυτίζεται!
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Επίλεξε γεωμετρικό σχήμα για να δεις πόσους άξονες συμμετρίας διαθέτει και ποιες είναι οι ιδιότητές τους:
+              Επίλεξε σχήμα και υποψήφιο άξονα. Σύρε την μπάρα αναδίπλωσης για να διπλώσεις το χαρτί και παρατήρησε αν τα δύο μέρη εφαρμόζουν απόλυτα:
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
-            {/* Επιλογές Σχημάτων (5 στήλες) */}
-            <div className="lg:col-span-5 space-y-3">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                ΕΠΙΛΟΓΗ ΓΕΩΜΕΤΡΙΚΟΥ ΣΧΗΜΑΤΟΣ:
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {Object.keys(shapeData).map((key) => {
-                  const s = shapeData[key];
-                  const isSelected = selectedShape === key;
-                  return (
+            {/* Χειριστήρια Επιλογής & Slider Αναδίπλωσης (5 στήλες) */}
+            <div className="lg:col-span-5 space-y-4">
+              {/* Επιλογή Σχήματος */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                  1. ΕΠΙΛΟΓΗ ΣΧΗΜΑΤΟΣ:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: 'rectangle', label: 'Ορθογώνιο' },
+                    { id: 'square', label: 'Τετράγωνο' },
+                    { id: 'triangle', label: 'Ισόπλευρο Τρίγωνο' },
+                    { id: 'rhombus', label: 'Ρόμβος' }
+                  ].map((s) => (
                     <button
-                      key={key}
+                      key={s.id}
                       type="button"
-                      onClick={() => setSelectedShape(key)}
-                      className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-left flex justify-between items-center ${
-                        isSelected
+                      onClick={() => {
+                        setFoldingShape(s.id);
+                        setSelectedAxisKey(foldingConfigs[s.id].axes[0].key);
+                        setFoldProgress(0);
+                      }}
+                      className={`py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-center ${
+                        foldingShape === s.id
                           ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-300'
                           : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
                       }`}
                     >
-                      <span>{s.name.split(' ')[0]}</span>
-                      <span className={`text-[11px] px-1.5 py-0.5 rounded-md ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800'}`}>
-                        {s.axesCount}
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Επιλογή Άξονα για το επιλεγμένο σχήμα */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                  2. ΕΠΙΛΟΓΗ ΑΞΟΝΑ ΑΝΑΔΙΠΛΩΣΗΣ:
+                </label>
+                <div className="space-y-1.5">
+                  {currentConfig.axes.map((ax) => (
+                    <button
+                      key={ax.key}
+                      type="button"
+                      onClick={() => {
+                        setSelectedAxisKey(ax.key);
+                        setFoldProgress(0);
+                      }}
+                      className={`w-full py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-left flex justify-between items-center ${
+                        selectedAxisKey === ax.key
+                          ? 'bg-sky-600 text-white shadow-md ring-2 ring-sky-300'
+                          : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
+                      }`}
+                    >
+                      <span>{ax.label}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/20">
+                        {ax.isSymmetric ? 'Άξονας' : 'Όχι Άξονας'}
                       </span>
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
+              </div>
+
+              {/* Slider Αναδίπλωσης (0% έως 100%) */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
+                  <span>ΑΝΑΔΙΠΛΩΣΗ (ΔΙΠΛΩΜΑ):</span>
+                  <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
+                    {foldProgress}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={foldProgress}
+                  onChange={(e) => setFoldProgress(Number(e.target.value))}
+                  className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
+                />
+                <div className="flex justify-between text-[11px] font-mono text-slate-400">
+                  <span>0% (Ανοιχτό)</span>
+                  <span>50% (Δίπλωμα)</span>
+                  <span>100% (Πλήρες Δίπλωμα)</span>
+                </div>
+              </div>
+
+              {/* Επεξήγηση & Feedback */}
+              <div
+                className={`p-4 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed border transition-all ${
+                  foldProgress === 100
+                    ? currentAxis.isSymmetric
+                      ? 'bg-emerald-50 text-emerald-950 border-emerald-300 ring-1 ring-emerald-200'
+                      : 'bg-amber-50 text-amber-950 border-amber-300 ring-1 ring-amber-200'
+                    : 'bg-slate-50 text-slate-700 border-slate-200'
+                }`}
+              >
+                {foldProgress < 100 ? (
+                  <span>
+                    👉 Σύρε την μπάρα στο <strong>100%</strong> για να ολοκληρωθεί το δίπλωμα και να ελέγξεις αν εφαρμόζουν τα δύο μέρη!
+                  </span>
+                ) : (
+                  <span>{currentAxis.explanation}</span>
+                )}
               </div>
             </div>
 
-            {/* Κάρτα Πληροφοριών Σχήματος (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-50 p-5 sm:p-7 rounded-3xl border border-slate-200 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm sm:text-base font-black text-slate-900">
-                  {activeShape.name}
-                </span>
-                <span className="px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-800">
-                  {activeShape.axesCount === 'Άπειροι' ? 'Άπειροι Άξονες' : `${activeShape.axesCount} Άξονες`}
-                </span>
-              </div>
+            {/* SVG Visualizer Αναδίπλωσης (7 στήλες) */}
+            <div className="lg:col-span-7 bg-slate-900 min-h-[360px] p-4 sm:p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+              <svg
+                viewBox="0 0 340 280"
+                className="w-full max-w-[340px] sm:max-w-[400px] h-auto select-none overflow-visible"
+              >
+                {/* 1. Σταθερό μέρος του σχήματος (μπλε/γαλάζιο) */}
+                <polygon
+                  points={currentConfig.fixedPoly || currentAxis.fixedPoly}
+                  fill="rgba(56, 189, 248, 0.25)"
+                  stroke="#38bdf8"
+                  strokeWidth="2.5"
+                />
 
-              <div className="text-3xl sm:text-4xl font-black font-mono text-indigo-700 text-center py-2">
-                {activeShape.axesCount} {activeShape.axesCount === 1 ? 'Άξονας' : 'Άξονες'}
-              </div>
+                {/* 2. Αναδιπλούμενο μέρος του σχήματος (μωβ/indigo με διαφάνεια) */}
+                <polygon
+                  points={movingPolyPoints}
+                  fill={
+                    foldProgress === 100 && !currentAxis.isSymmetric
+                      ? 'rgba(245, 158, 11, 0.4)' // Πορτοκαλί αν εξέχει λάθος
+                      : 'rgba(168, 85, 247, 0.35)'
+                  }
+                  stroke={
+                    foldProgress === 100 && !currentAxis.isSymmetric ? '#f59e0b' : '#c084fc'
+                  }
+                  strokeWidth="2.5"
+                />
 
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed bg-white p-4 rounded-2xl border border-slate-200/80">
-                {activeShape.desc}
-              </p>
+                {/* 3. Άξονας αναδίπλωσης (κίτρινος διακεκομμένος) */}
+                <line
+                  x1={currentAxis.axisLine.x1}
+                  y1={currentAxis.axisLine.y1}
+                  x2={currentAxis.axisLine.x2}
+                  y2={currentAxis.axisLine.y2}
+                  stroke="#fbbf24"
+                  strokeWidth="3"
+                  strokeDasharray="6 4"
+                />
+
+                {/* Ετικέτες κατάστασης */}
+                {foldProgress === 0 && (
+                  <text x="170" y="260" fill="#94a3b8" fontSize="12" fontWeight="bold" textAnchor="middle">
+                    Αρχικό Ανοιχτό Σχήμα (0%)
+                  </text>
+                )}
+                {foldProgress > 0 && foldProgress < 100 && (
+                  <text x="170" y="260" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">
+                    Αναδίπλωση σε εξέλιξη ({foldProgress}%)...
+                  </text>
+                )}
+                {foldProgress === 100 && currentAxis.isSymmetric && (
+                  <text x="170" y="260" fill="#34d399" fontSize="13" fontWeight="black" textAnchor="middle">
+                    ✓ Τέλεια Εφαρμογή! Άξονας Συμμετρίας.
+                  </text>
+                )}
+                {foldProgress === 100 && !currentAxis.isSymmetric && (
+                  <text x="170" y="260" fill="#f59e0b" fontSize="13" fontWeight="black" textAnchor="middle">
+                    ✗ Δεν εφαρμόζουν! Περισσεύουν γωνίες.
+                  </text>
+                )}
+              </svg>
+
+              <div className="mt-2 text-center text-xs text-slate-400">
+                Το γαλάζιο μισό μένει σταθερό και το μωβ διπλώνει κατά μήκος του κίτρινου άξονα.
+              </div>
             </div>
 
           </div>
@@ -578,7 +854,7 @@ export default function SimmetriaTheoriaPage() {
                 </div>
               </div>
 
-              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 font-medium">
+              <div className="p-3 bg-amber-50 rounded-xl border border-blue-200 text-xs text-blue-950 font-medium">
                 ⚡ Δύο συμμετρικά σχήματα είναι απολύτως ίσα μεταξύ τους σε όλα τα μεγέθη (μήκη, γωνίες, περίμετρο και εμβαδόν)!
               </div>
             </article>
@@ -596,13 +872,13 @@ export default function SimmetriaTheoriaPage() {
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed list-disc list-inside">
                 <li>
-                  <strong>Οι διαγώνιοι του ορθογωνίου ΔΕΝ είναι άξονες συμμετρίας:</strong> Αν διπλώσουμε ένα ορθογώνιο κατά μήκος της διαγωνίου του, τα δύο τρίγωνα δεν ταυτίζονται! Οι μοναδικοί 2 άξονες συμμετρίας του ορθογωνίου είναι οι μεσοκάθετες των πλευρών του.
+                  <strong>Οι διαγώνιοι του ορθογωνίου ΔΕΝ είναι άξονες συμμετρίας:</strong> Όπως είδατε και στο Εργαστήριο Αναδίπλωσης, αν διπλώσουμε το ορθογώνιο στη διαγώνιό του, τα δύο τρίγωνα εξέχουν και δεν ταυτίζονται! Οι μοναδικοί 2 άξονες συμμετρίας του ορθογωνίου είναι οι μεσοκάθετες των πλευρών του.
                 </li>
                 <li>
-                  <strong>Το παραλληλόγραμμο δεν έχει κανέναν άξονα συμμετρίας:</strong> Ένα γενικό πλάγιο παραλληλόγραμμο έχει κεντρική συμμετρία, αλλά κανέναν άξονα αξονικής συμμετρίας.
+                  <strong>Το πλάγιο παραλληλόγραμμο δεν έχει κανέναν άξονα συμμετρίας:</strong> Έχει κεντρική συμμετρία, αλλά κανέναν άξονα αναδίπλωσης.
                 </li>
                 <li>
-                  <strong>Η απόσταση πρέπει να είναι πάντα κάθετη:</strong> Για να βρούμε το συμμετρικό σημείο, δεν μετράμε πλάγια αλλά αυστηρά σε γωνία <strong>90°</strong> ως προς τον άξονα.
+                  <strong>Η απόσταση μετριέται πάντα κάθετα:</strong> Το συμμετρικό σημείο βρίσκεται πάνω στην ευθεία που σχηματίζει αυστηρά γωνία <strong>90°</strong> με τον άξονα.
                 </li>
               </ul>
             </div>
