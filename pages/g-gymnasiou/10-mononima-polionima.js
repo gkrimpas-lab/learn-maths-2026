@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Βοηθητική συνάρτηση για κεφαλαία χωρίς τόνους (διατηρώντας το Γ')
+// Βοηθητική συνάρτηση για άτονα κεφαλαία (διατηρεί μόνο το Γ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const map = {
@@ -14,25 +14,35 @@ function toCleanUppercase(str) {
   return str.split('').map(char => map[char] || char.toUpperCase()).join('');
 }
 
+// Κομψή απεικόνιση τετραγωνικής ρίζας με ευθεία γραμμή (vinculum) πάνω από την υπόριζη ποσότητα
+function Radical({ children }) {
+  return (
+    <span className="inline-flex items-baseline font-mono">
+      <span className="text-base leading-none select-none">√</span>
+      <span className="border-t-2 border-current px-0.5 ml-[-1px] leading-tight">
+        {children}
+      </span>
+    </span>
+  );
+}
+
 export default function MononimaPolionimaTheory() {
-  // State για το Interactive Lab (Πολυώνυμο P(x) = a*x^2 + b*x + c)
   const [coefA, setCoefA] = useState(2);
   const [coefB, setCoefB] = useState(-3);
   const [coefC, setCoefC] = useState(5);
   const [valX, setValX] = useState(2);
 
-  // Υπολογισμοί εργαστηρίου
   const nonZeroTerms = [coefA !== 0, coefB !== 0, coefC !== 0].filter(Boolean).length;
   
-  let polyType = 'Μηδενικό Πολυώνυμο';
-  if (nonZeroTerms === 1) polyType = 'Μονώνυμο';
-  else if (nonZeroTerms === 2) polyType = 'Διώνυμο';
-  else if (nonZeroTerms === 3) polyType = 'Τριώνυμο';
+  let polyType = 'ΜΗΔΕΝΙΚΟ ΠΟΛΥΩΝΥΜΟ';
+  if (nonZeroTerms === 1) polyType = 'ΜΟΝΩΝΥΜΟ';
+  else if (nonZeroTerms === 2) polyType = 'ΔΙΩΝΥΜΟ';
+  else if (nonZeroTerms === 3) polyType = 'ΤΡΙΩΝΥΜΟ';
 
-  let polyDegree = 'Χωρίς βαθμό (0)';
-  if (coefA !== 0) polyDegree = '2ος βαθμός';
-  else if (coefB !== 0) polyDegree = '1ος βαθμός';
-  else if (coefC !== 0) polyDegree = '0ός βαθμός (σταθερό)';
+  let polyDegree = 'ΧΩΡΙΣ ΒΑΘΜΟ (0)';
+  if (coefA !== 0) polyDegree = '2ος ΒΑΘΜΟΣ';
+  else if (coefB !== 0) polyDegree = '1ος ΒΑΘΜΟΣ';
+  else if (coefC !== 0) polyDegree = '0ος ΒΑΘΜΟΣ (ΣΤΑΘΕΡΟ)';
 
   const termAVal = coefA * Math.pow(valX, 2);
   const termBVal = coefB * valX;
@@ -51,7 +61,7 @@ export default function MononimaPolionimaTheory() {
           href="/g-gymnasiou/10-mononima-polionima-ask"
           className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>🎯 {toCleanUppercase("ΑΣΚΗΣΕΙΣ")}</span>
         </Link>
       }
     >
@@ -61,7 +71,7 @@ export default function MononimaPolionimaTheory() {
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white p-6 sm:p-10 lg:p-12 mb-10 shadow-2xl">
           <div className="relative z-10 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-indigo-200 text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 border border-white/20">
-              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 1 • Γ' ΓΥΜΝΑΣΙΟΥ")}
+              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 10 •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-4 text-white">
               Μονώνυμα & Πολυώνυμα
@@ -74,7 +84,7 @@ export default function MononimaPolionimaTheory() {
                 href="/g-gymnasiou/10-mononima-polionima-ask"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl shadow-lg transition-transform hover:-translate-y-0.5 active:translate-y-0"
               >
-                <span>🎯 Μετάβαση στις Ασκήσεις</span>
+                <span>🎯 {toCleanUppercase("ΜΕΤΑΒΑΣΗ ΣΤΙΣ ΑΣΚΗΣΕΙΣ")}</span>
               </Link>
             </div>
           </div>
@@ -101,7 +111,7 @@ export default function MononimaPolionimaTheory() {
               
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4">
                 <h3 className="font-bold text-indigo-900 mb-2 text-sm uppercase tracking-wider">
-                  Ανατομία Μονωνύμου: －5 · x² · y³
+                  {toCleanUppercase("ΑΝΑΤΟΜΙΑ ΜΟΝΩΝΥΜΟΥ")}: －5 · x² · y³
                 </h3>
                 <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start gap-2">
@@ -117,12 +127,20 @@ export default function MononimaPolionimaTheory() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                  <span className="font-bold text-emerald-800 block mb-1">✓ ΕΙΝΑΙ ΜΟΝΩΝΥΜΑ:</span>
+                  <span className="font-bold text-emerald-800 block mb-1">✓ {toCleanUppercase("ΕΙΝΑΙ ΜΟΝΩΝΥΜΑ")}:</span>
                   <span className="text-slate-700 font-mono">7, &nbsp; －3 · x, &nbsp; ½ · x² · y, &nbsp; x³</span>
                 </div>
                 <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl">
-                  <span className="font-bold text-rose-800 block mb-1">✗ ΔΕΝ ΕΙΝΑΙ ΜΟΝΩΝΥΜΑ:</span>
-                  <span className="text-slate-700 font-mono">3 : x, &nbsp; x ＋ y, &nbsp; 4 · x⁻², &nbsp; √x</span>
+                  <span className="font-bold text-rose-800 block mb-1">✗ {toCleanUppercase("ΔΕΝ ΕΙΝΑΙ ΜΟΝΩΝΥΜΑ")}:</span>
+                  <span className="text-slate-700 font-mono flex flex-wrap items-center gap-1.5">
+                    <span>3 : x,</span>
+                    <span>x ＋ y,</span>
+                    <span>4 · x⁻²,</span>
+                    <span className="inline-flex items-center">
+                      <span>4 · </span>
+                      <Radical>x</Radical>
+                    </span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -234,7 +252,7 @@ export default function MononimaPolionimaTheory() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-2">
-                🔬 ΕΡΓΑΣΤΗΡΙΟ ΑΛΓΕΒΡΑΣ
+                🔬 {toCleanUppercase("ΕΡΓΑΣΤΗΡΙΟ ΑΛΓΕΒΡΑΣ")}
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
                 Εξερεύνηση Πολυωνύμου P(x) ＝ a · x² ＋ b · x ＋ c
@@ -319,7 +337,9 @@ export default function MononimaPolionimaTheory() {
               
               {/* Formula Card */}
               <div className="p-6 bg-indigo-900 text-white rounded-2xl shadow-inner text-center">
-                <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold block mb-2">Μορφή Πολυωνύμου</span>
+                <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold block mb-2">
+                  {toCleanUppercase("ΜΟΡΦΗ ΠΟΛΥΩΝΥΜΟΥ")}
+                </span>
                 <div className="text-2xl sm:text-3xl font-mono font-black tracking-wide">
                   P(x) ＝ {coefA !== 0 ? `${coefA} · x²` : ''} 
                   {coefB > 0 ? (coefA !== 0 ? ` ＋ ${coefB} · x` : `${coefB} · x`) : coefB < 0 ? ` － ${Math.abs(coefB)} · x` : ''} 
@@ -345,7 +365,9 @@ export default function MononimaPolionimaTheory() {
 
               {/* Graphical Term Breakdown (SVG) */}
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <span className="text-xs font-bold text-slate-600 block mb-2 uppercase">Ανάλυση Όρων για x ＝ {valX}:</span>
+                <span className="text-xs font-bold text-slate-600 block mb-2 uppercase">
+                  {toCleanUppercase(`ΑΝΑΛΥΣΗ ΟΡΩΝ ΓΙΑ x ＝ ${valX}`)}:
+                </span>
                 <svg viewBox="0 0 500 70" className="w-full h-auto text-xs font-mono">
                   {/* Term 1 */}
                   <rect x="10" y="10" width="145" height="50" rx="8" fill="#e0e7ff" stroke="#818cf8" strokeWidth="1.5" />
@@ -389,7 +411,7 @@ export default function MononimaPolionimaTheory() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-3 py-1 bg-indigo-50 text-indigo-700 font-bold text-xs rounded-full uppercase">
-                    Πρόβλημα 1: Αναγωγή & Βαθμός
+                    {toCleanUppercase("ΠΡΟΒΛΗΜΑ 1: ΑΝΑΓΩΓΗ & ΒΑΘΜΟΣ")}
                   </span>
                 </div>
                 <h3 className="font-bold text-lg text-slate-900 mb-2">
@@ -451,7 +473,7 @@ export default function MononimaPolionimaTheory() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-3 py-1 bg-indigo-50 text-indigo-700 font-bold text-xs rounded-full uppercase">
-                    Πρόβλημα 2: Γεωμετρική Εφαρμογή
+                    {toCleanUppercase("ΠΡΟΒΛΗΜΑ 2: ΓΕΩΜΕΤΡΙΚΗ ΕΦΑΡΜΟΓΗ")}
                   </span>
                 </div>
                 <h3 className="font-bold text-lg text-slate-900 mb-2">
@@ -510,7 +532,7 @@ export default function MononimaPolionimaTheory() {
               <ul className="space-y-2 text-sm text-amber-900 leading-relaxed">
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
-                  <span><strong>Αρνητικοί εκθέτες & ρίζες:</strong> Εκφράσεις όπως <em>3 · x⁻¹</em> ή <em>2 · √x</em> <strong>ΔΕΝ</strong> είναι μονώνυμα. Στα μονώνυμα οι εκθέτες είναι αποκλειστικά μη αρνητικοί ακέραιοι (φυσικοί αριθμοί).</span>
+                  <span><strong>Αρνητικοί εκθέτες & ρίζες:</strong> Εκφράσεις όπως <em>3 · x⁻¹</em> ή <em>2 · <Radical>x</Radical></em> <strong>ΔΕΝ</strong> είναι μονώνυμα. Στα μονώνυμα οι εκθέτες είναι αποκλειστικά μη αρνητικοί ακέραιοι (φυσικοί αριθμοί).</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
@@ -541,7 +563,7 @@ export default function MononimaPolionimaTheory() {
             href="/g-gymnasiou/10-mononima-polionima-ask"
             className="inline-flex items-center gap-2 px-8 py-4 bg-white text-emerald-800 font-black rounded-2xl shadow-lg hover:bg-emerald-50 transition-all hover:scale-105 active:scale-100 text-base"
           >
-            <span>🎯 Ξεκινήστε τις Ασκήσεις</span>
+            <span>🎯 {toCleanUppercase("ΞΕΚΙΝΗΣΤΕ ΤΙΣ ΑΣΚΗΣΕΙΣ")}</span>
           </Link>
         </section>
 
