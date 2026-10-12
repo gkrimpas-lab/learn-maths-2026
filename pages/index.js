@@ -200,11 +200,12 @@ export default function Home() {
               <div className="bg-purple-500 py-3 text-center text-white font-black text-base sm:text-lg">Γ' Γυμνασίου</div>
               <div className="p-5 text-center flex-1 flex flex-col justify-between">
                 <div>
+                  <p className="text-gray-800 font-bold mb-1.5 text-sm sm:text-base">Διαδραστικές Ενότητες</p>
                   <p className="text-gray-600 mb-5 text-xs">Αλγεβρικές Παραστάσεις, Μονώνυμα, Ταυτότητες & Ομοιότητα.</p>
                 </div>
-                <button className="w-full bg-purple-400 text-white py-2 rounded-xl font-bold opacity-60 cursor-not-allowed text-xs">
-                  Σύντομα Διαθέσιμο
-                </button>
+                <Link href="/g-gymnasiou" className="block w-full text-center bg-indigo-600 text-white py-2 rounded-xl font-black hover:bg-indigo-700 transition shadow-sm text-xs sm:text-sm">
+                  🚀 Είσοδος στην Τάξη
+                </Link>
               </div>
             </div>
           </div>
