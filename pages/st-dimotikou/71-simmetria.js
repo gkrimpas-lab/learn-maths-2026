@@ -35,85 +35,49 @@ export default function SimmetriaTheoriaPage() {
   // -------------------------------------------------------------------------
   // Εργαστήριο 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ ΑΝΑΔΙΠΛΩΣΗΣ (FOLDING LAB)
   // -------------------------------------------------------------------------
-  const [foldingShape, setFoldingShape] = useState('rectangle'); // 'rectangle', 'square', 'triangle', 'rhombus', 'circle'
-  const [selectedAxisKey, setSelectedAxisKey] = useState('diagonal');
+  const [foldingShape, setFoldingShape] = useState('triangle');
+  const [selectedAxisKey, setSelectedAxisKey] = useState('axis1');
   const [foldProgress, setFoldProgress] = useState(0); // 0 (ανοιχτό) έως 100 (πλήρες δίπλωμα)
 
-  // Βοηθητική συνάρτηση ανάκλασης σημείου p ως προς ευθεία που διέρχεται από (x1, y1) και (x2, y2)
-  const reflectPoint = (p, x1, y1, x2, y2) => {
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const L2 = dx * dx + dy * dy;
-    const u = ((p.x - x1) * dx + (p.y - y1) * dy) / L2;
-    const projX = x1 + u * dx;
-    const projY = y1 + u * dy;
-    return {
-      x: 2 * projX - p.x,
-      y: 2 * projY - p.y
-    };
-  };
-
-  // Βοηθητική συνάρτηση αναδίπλωσης με κορώνα προόδου t (0..1)
-  const interpolateFold = (p, rx, ry, t) => {
-    const factor = (1 - Math.cos(t * Math.PI)) / 2;
-    return {
-      x: p.x + (rx - p.x) * factor,
-      y: p.y + (ry - p.y) * factor
-    };
-  };
-
-  // Παραγωγή τόξου ημικυκλίου για τον κύκλο
-  const generateSemiCirclePoints = (cx, cy, r, startAngle, endAngle, steps = 18) => {
-    const pts = [{ x: cx, y: cy }];
+  // Βοηθητική συνάρτηση παραγωγής ημικυκλίου
+  const generateSemiCirclePath = (cx, cy, r, startAngle, endAngle, steps = 24) => {
+    let d = `M ${cx} ${cy}`;
     for (let i = 0; i <= steps; i++) {
       const angle = startAngle + (i / steps) * (endAngle - startAngle);
-      pts.push({
-        x: cx + r * Math.cos(angle),
-        y: cy + r * Math.sin(angle)
-      });
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle);
+      d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
     }
-    return pts;
+    d += ' Z';
+    return d;
   };
 
-  // Δεδομένα σχημάτων, αξόνων και αναδιπλώσεων
+  // Δεδομένα σχημάτων και αξόνων με αυστηρό διαχωρισμό (κέντρο 170, 140)
   const foldingConfigs = {
     rectangle: {
       name: 'Επίμηκες Ορθογώνιο Παραλληλόγραμμο',
-      // Διαστάσεις 190 x 80 px (x: 75 -> 265, y: 100 -> 180). Έντονη διαφορά μήκους/πλάτους!
+      // Ορθογώνιο: (75, 100) έως (265, 180) - 190 x 80 px
       axes: [
         {
           key: 'diagonal',
           label: 'Διαγώνιος (Δεν Συμπίπτει!)',
           isSymmetric: false,
-          axisLine: { x1: 60, y1: 93, x2: 280, y2: 187 },
-          fixedPoly: '75,100 265,180 75,180',
-          baseFoldPoly: [
-            { x: 75, y: 100 },
-            { x: 265, y: 100 },
-            { x: 265, y: 180 }
-          ],
-          foldTransform: (p, t) => {
-            const ref = reflectPoint(p, 75, 100, 265, 180);
-            return interpolateFold(p, ref.x, ref.y, t);
-          },
-          explanation: '✗ ΠΡΟΣΟΧΗ: Τα δύο τρίγωνα ΔΕΝ εφαρμόζουν! Οι γωνίες εξέχουν εμφανώς. Η διαγώνιος του ορθογωνίου ΔΕΝ είναι άξονας συμμετρίας.'
+          axisLine: { x1: 56, y1: 92, x2: 284, y2: 188 },
+          origin: { x: 75, y: 100 },
+          angleDeg: 22.83, // Math.atan2(80, 190) * 180 / Math.PI
+          fixedPath: 'M 75 100 L 265 180 L 75 180 Z',
+          movingPath: 'M 75 100 L 265 100 L 265 180 Z',
+          explanation: '✗ ΠΡΟΣΟΧΗ: Τα δύο τρίγωνα ΔΕΝ εφαρμόζουν! Οι γωνίες εξέχουν καθαρά. Η διαγώνιος του ορθογωνίου ΔΕΝ είναι άξονας συμμετρίας.'
         },
         {
           key: 'vertical',
           label: 'Κατακόρυφη Μεσοκάθετος',
           isSymmetric: true,
           axisLine: { x1: 170, y1: 70, x2: 170, y2: 210 },
-          fixedPoly: '170,100 265,100 265,180 170,180',
-          baseFoldPoly: [
-            { x: 170, y: 100 },
-            { x: 75, y: 100 },
-            { x: 75, y: 180 },
-            { x: 170, y: 180 }
-          ],
-          foldTransform: (p, t) => {
-            const dx = 170 - p.x;
-            return { x: 170 - dx * Math.cos(t * Math.PI), y: p.y };
-          },
+          origin: { x: 170, y: 140 },
+          angleDeg: 90,
+          fixedPath: 'M 170 100 L 265 100 L 265 180 L 170 180 Z',
+          movingPath: 'M 170 100 L 75 100 L 75 180 L 170 180 Z',
           explanation: '✓ ΣΩΣΤΟ: Τα δύο μέρη εφαρμόζουν απόλυτα! Η κατακόρυφη μεσοκάθετος είναι άξονας συμμετρίας.'
         },
         {
@@ -121,171 +85,116 @@ export default function SimmetriaTheoriaPage() {
           label: 'Οριζόντια Μεσοκάθετος',
           isSymmetric: true,
           axisLine: { x1: 55, y1: 140, x2: 285, y2: 140 },
-          fixedPoly: '75,140 265,140 265,180 75,180',
-          baseFoldPoly: [
-            { x: 75, y: 140 },
-            { x: 265, y: 140 },
-            { x: 265, y: 100 },
-            { x: 75, y: 100 }
-          ],
-          foldTransform: (p, t) => {
-            const dy = 140 - p.y;
-            return { x: p.x, y: 140 - dy * Math.cos(t * Math.PI) };
-          },
+          origin: { x: 170, y: 140 },
+          angleDeg: 0,
+          fixedPath: 'M 75 140 L 265 140 L 265 180 L 75 180 Z',
+          movingPath: 'M 75 140 L 265 140 L 265 100 L 75 100 Z',
           explanation: '✓ ΣΩΣΤΟ: Τα δύο μέρη εφαρμόζουν απόλυτα! Η οριζόντια μεσοκάθετος είναι άξονας συμμετρίας.'
         }
       ]
     },
     triangle: {
       name: 'Ισόπλευρο Τρίγωνο (3 Άξονες)',
-      // Κορυφές: A(170, 60), B(90, 200), C(250, 200)
+      // A(170, 60), B(90, 200), C(250, 200)
       axes: [
         {
           key: 'axis1',
           label: '1η Μεσοκάθετος (από κορυφή Α)',
           isSymmetric: true,
           axisLine: { x1: 170, y1: 40, x2: 170, y2: 220 },
-          fixedPoly: '170,60 250,200 170,200',
-          baseFoldPoly: [
-            { x: 170, y: 60 },
-            { x: 90, y: 200 },
-            { x: 170, y: 200 }
-          ],
-          foldTransform: (p, t) => {
-            const dx = 170 - p.x;
-            return { x: 170 - dx * Math.cos(t * Math.PI), y: p.y };
-          },
-          explanation: '✓ ΣΩΣΤΟ: Η μεσοκάθετος από την κορυφή Α διπλώνει το τρίγωνο σε 2 απόλυτα ίσα μέρη.'
+          origin: { x: 170, y: 60 },
+          angleDeg: 90,
+          fixedPath: 'M 170 60 L 250 200 L 170 200 Z',
+          movingPath: 'M 170 60 L 90 200 L 170 200 Z',
+          explanation: '✓ ΣΩΣΤΟ: Η μεσοκάθετος από την κορυφή Α διπλώνει το τρίγωνο σε δύο απόλυτα ίσα μισά.'
         },
         {
           key: 'axis2',
           label: '2η Μεσοκάθετος (από κορυφή Β)',
           isSymmetric: true,
-          axisLine: { x1: 70, y1: 215, x2: 230, y2: 115 },
-          fixedPoly: '90,200 250,200 210,130',
-          baseFoldPoly: [
-            { x: 90, y: 200 },
-            { x: 170, y: 60 },
-            { x: 210, y: 130 }
-          ],
-          foldTransform: (p, t) => {
-            const ref = reflectPoint(p, 90, 200, 210, 130);
-            return interpolateFold(p, ref.x, ref.y, t);
-          },
-          explanation: '✓ ΣΩΣΤΟ: Η μεσοκάθετος από την κορυφή Β είναι επίσης άξονας συμμετρίας και εφαρμόζει τέλεια!'
+          axisLine: { x1: 66, y1: 221, x2: 234, y2: 109 },
+          origin: { x: 90, y: 200 },
+          angleDeg: -33.69,
+          fixedPath: 'M 90 200 L 250 200 L 210 130 Z',
+          movingPath: 'M 90 200 L 170 60 L 210 130 Z',
+          explanation: '✓ ΣΩΣΤΟ: Η μεσοκάθετος από την κορυφή Β είναι επίσης άξονας συμμετρίας.'
         },
         {
           key: 'axis3',
           label: '3η Μεσοκάθετος (από κορυφή C)',
           isSymmetric: true,
-          axisLine: { x1: 270, y1: 215, x2: 110, y2: 115 },
-          fixedPoly: '250,200 90,200 130,130',
-          baseFoldPoly: [
-            { x: 250, y: 200 },
-            { x: 170, y: 60 },
-            { x: 130, y: 130 }
-          ],
-          foldTransform: (p, t) => {
-            const ref = reflectPoint(p, 250, 200, 130, 130);
-            return interpolateFold(p, ref.x, ref.y, t);
-          },
+          axisLine: { x1: 274, y1: 221, x2: 106, y2: 109 },
+          origin: { x: 250, y: 200 },
+          angleDeg: -146.31,
+          fixedPath: 'M 250 200 L 90 200 L 130 130 Z',
+          movingPath: 'M 250 200 L 170 60 L 130 130 Z',
           explanation: '✓ ΣΩΣΤΟ: Η μεσοκάθετος από την κορυφή C είναι ο 3ος άξονας συμμετρίας.'
         },
         {
           key: 'wrong_line',
           label: 'Τυχαία Πλάγια Γραμμή (Μη-άξονας)',
           isSymmetric: false,
-          axisLine: { x1: 120, y1: 50, x2: 210, y2: 220 },
-          fixedPoly: '170,60 250,200 195,200',
-          baseFoldPoly: [
-            { x: 170, y: 60 },
-            { x: 90, y: 200 },
-            { x: 195, y: 200 }
-          ],
-          foldTransform: (p, t) => {
-            const ref = reflectPoint(p, 140, 90, 195, 200);
-            return interpolateFold(p, ref.x, ref.y, t);
-          },
-          explanation: '✗ ΠΡΟΣΟΧΗ: Αν διπλώσουμε σε γραμμή που δεν είναι μεσοκάθετος, τα δύο μέρη δεν ταυτίζονται!'
+          axisLine: { x1: 130, y1: 45, x2: 190, y2: 215 },
+          origin: { x: 150, y: 100 },
+          angleDeg: 70.56,
+          fixedPath: 'M 170 60 L 250 200 L 185 200 Z',
+          movingPath: 'M 170 60 L 90 200 L 185 200 Z',
+          explanation: '✗ ΠΡΟΣΟΧΗ: Αν διπλώσουμε σε τυχαία πλάγια γραμμή, τα δύο μέρη ΔΕΝ ταυτίζονται!'
         }
       ]
     },
     rhombus: {
       name: 'Ρόμβος (2 Διαγώνιοι)',
-      // Κορυφές: A(170, 60), B(255, 140), C(170, 220), D(85, 140)
+      // A(170, 60), B(255, 140), C(170, 220), D(85, 140)
       axes: [
         {
           key: 'vertical',
           label: 'Κατακόρυφη Διαγώνιος (Άξονας)',
           isSymmetric: true,
           axisLine: { x1: 170, y1: 40, x2: 170, y2: 240 },
-          fixedPoly: '170,60 255,140 170,220',
-          baseFoldPoly: [
-            { x: 170, y: 60 },
-            { x: 85, y: 140 },
-            { x: 170, y: 220 }
-          ],
-          foldTransform: (p, t) => {
-            const dx = 170 - p.x;
-            return { x: 170 - dx * Math.cos(t * Math.PI), y: p.y };
-          },
-          explanation: '✓ ΣΩΣΤΟ: Η κατακόρυφη διαγώνιος διπλώνει τον ρόμβο σε 2 απολύτως ίσα τρίγωνα.'
+          origin: { x: 170, y: 140 },
+          angleDeg: 90,
+          fixedPath: 'M 170 60 L 255 140 L 170 220 Z',
+          movingPath: 'M 170 60 L 85 140 L 170 220 Z',
+          explanation: '✓ ΣΩΣΤΟ: Η κατακόρυφη διαγώνιος διπλώνει τον ρόμβο σε 2 ίσα τρίγωνα.'
         },
         {
           key: 'horizontal',
           label: 'Οριζόντια Διαγώνιος (Άξονας)',
           isSymmetric: true,
           axisLine: { x1: 65, y1: 140, x2: 275, y2: 140 },
-          fixedPoly: '85,140 255,140 170,220',
-          baseFoldPoly: [
-            { x: 85, y: 140 },
-            { x: 255, y: 140 },
-            { x: 170, y: 60 }
-          ],
-          foldTransform: (p, t) => {
-            const dy = 140 - p.y;
-            return { x: p.x, y: 140 - dy * Math.cos(t * Math.PI) };
-          },
-          explanation: '✓ ΣΩΣΤΟ: Η οριζόντια διαγώνιος είναι ο 2ος άξονας συμμετρίας του ρόμβου!'
+          origin: { x: 170, y: 140 },
+          angleDeg: 0,
+          fixedPath: 'M 85 140 L 255 140 L 170 220 Z',
+          movingPath: 'M 85 140 L 255 140 L 170 60 Z',
+          explanation: '✓ ΣΩΣΤΟ: Η οριζόντια διαγώνιος είναι επίσης άξονας συμμετρίας του ρόμβου!'
         },
         {
           key: 'side_mid',
           label: 'Μεσοκάθετος Πλευρών (Μη-άξονας)',
           isSymmetric: false,
-          axisLine: { x1: 110, y1: 60, x2: 230, y2: 220 },
-          fixedPoly: '170,60 255,140 170,220',
-          baseFoldPoly: [
-            { x: 170, y: 60 },
-            { x: 85, y: 140 },
-            { x: 170, y: 220 }
-          ],
-          foldTransform: (p, t) => {
-            const ref = reflectPoint(p, 110, 60, 230, 220);
-            return interpolateFold(p, ref.x, ref.y, t);
-          },
+          axisLine: { x1: 120, y1: 50, x2: 220, y2: 230 },
+          origin: { x: 170, y: 140 },
+          angleDeg: 60.9,
+          fixedPath: 'M 170 60 L 255 140 L 170 220 Z',
+          movingPath: 'M 170 60 L 85 140 L 170 220 Z',
           explanation: '✗ ΠΡΟΣΟΧΗ: Οι μεσοκάθετες των πλευρών στον ρόμβο ΔΕΝ είναι άξονες συμμετρίας (μόνο οι διαγώνιοι είναι)!'
         }
       ]
     },
     square: {
       name: 'Τετράγωνο (4 Άξονες)',
+      // (100, 70) έως (240, 210) - 140 x 140 px
       axes: [
         {
           key: 'diagonal',
           label: 'Διαγώνιος (Εφαρμόζει Απόλυτα!)',
           isSymmetric: true,
           axisLine: { x1: 85, y1: 55, x2: 255, y2: 225 },
-          fixedPoly: '100,70 240,210 100,210',
-          baseFoldPoly: [
-            { x: 100, y: 70 },
-            { x: 240, y: 70 },
-            { x: 240, y: 210 }
-          ],
-          foldTransform: (p, t) => {
-            const rx = p.y + 30;
-            const ry = p.x - 30;
-            return interpolateFold(p, rx, ry, t);
-          },
+          origin: { x: 100, y: 70 },
+          angleDeg: 45,
+          fixedPath: 'M 100 70 L 240 210 L 100 210 Z',
+          movingPath: 'M 100 70 L 240 70 L 240 210 Z',
           explanation: '✓ ΣΩΣΤΟ: Σε αντίθεση με το ορθογώνιο, στο τετράγωνο η διαγώνιος ΕΙΝΑΙ άξονας συμμετρίας!'
         },
         {
@@ -293,83 +202,60 @@ export default function SimmetriaTheoriaPage() {
           label: 'Κατακόρυφη Μεσοκάθετος',
           isSymmetric: true,
           axisLine: { x1: 170, y1: 45, x2: 170, y2: 235 },
-          fixedPoly: '170,70 240,70 240,210 170,210',
-          baseFoldPoly: [
-            { x: 170, y: 70 },
-            { x: 100, y: 70 },
-            { x: 100, y: 210 },
-            { x: 170, y: 210 }
-          ],
-          foldTransform: (p, t) => {
-            const dx = 170 - p.x;
-            return { x: 170 - dx * Math.cos(t * Math.PI), y: p.y };
-          },
-          explanation: '✓ ΣΩΣΤΟ: Η κατακόρυφη μεσοκάθετος διπλώνει το τετράγωνο σε δύο ίσα ορθογώνια.'
+          origin: { x: 170, y: 140 },
+          angleDeg: 90,
+          fixedPath: 'M 170 70 L 240 70 L 240 210 L 170 210 Z',
+          movingPath: 'M 170 70 L 100 70 L 100 210 L 170 210 Z',
+          explanation: '✓ ΣΩΣΤΟ: Η κατακόρυφη μεσοκάθετος διπλώνει το τετράγωνο σε δύο ίσα μέρη.'
         }
       ]
     },
     circle: {
       name: 'Κύκλος (Άπειροι Άξονες)',
-      // Κέντρο (170, 140), ακτίνα R = 75
+      // Κέντρο (170, 140), R = 75
       axes: [
         {
           key: 'vertical',
           label: 'Κατακόρυφη Διάμετρος',
           isSymmetric: true,
-          axisLine: { x1: 170, y1: 50, x2: 170, y2: 230 },
-          fixedPoly: generateSemiCirclePoints(170, 140, 75, -Math.PI / 2, Math.PI / 2)
-            .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
-            .join(' '),
-          baseFoldPoly: generateSemiCirclePoints(170, 140, 75, Math.PI / 2, (3 * Math.PI) / 2),
-          foldTransform: (p, t) => {
-            const dx = 170 - p.x;
-            return { x: 170 - dx * Math.cos(t * Math.PI), y: p.y };
-          },
-          explanation: '✓ ΣΩΣΤΟ: Κάθε διάμετρος διπλώνει τον κύκλο σε δύο απόλυτα ίσα ημικύκλια.'
+          axisLine: { x1: 170, y1: 45, x2: 170, y2: 235 },
+          origin: { x: 170, y: 140 },
+          angleDeg: 90,
+          fixedPath: generateSemiCirclePath(170, 140, 75, -Math.PI / 2, Math.PI / 2),
+          movingPath: generateSemiCirclePath(170, 140, 75, Math.PI / 2, (3 * Math.PI) / 2),
+          explanation: '✓ ΣΩΣΤΟ: Η κατακόρυφη διάμετρος διπλώνει τον κύκλο σε δύο απόλυτα ίσα ημικύκλια.'
         },
         {
           key: 'horizontal',
           label: 'Οριζόντια Διάμετρος',
           isSymmetric: true,
-          axisLine: { x1: 80, y1: 140, x2: 260, y2: 140 },
-          fixedPoly: generateSemiCirclePoints(170, 140, 75, 0, Math.PI)
-            .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
-            .join(' '),
-          baseFoldPoly: generateSemiCirclePoints(170, 140, 75, Math.PI, 2 * Math.PI),
-          foldTransform: (p, t) => {
-            const dy = 140 - p.y;
-            return { x: p.x, y: 140 - dy * Math.cos(t * Math.PI) };
-          },
+          axisLine: { x1: 75, y1: 140, x2: 265, y2: 140 },
+          origin: { x: 170, y: 140 },
+          angleDeg: 0,
+          fixedPath: generateSemiCirclePath(170, 140, 75, 0, Math.PI),
+          movingPath: generateSemiCirclePath(170, 140, 75, Math.PI, 2 * Math.PI),
           explanation: '✓ ΣΩΣΤΟ: Η οριζόντια διάμετρος είναι επίσης τέλειος άξονας συμμετρίας.'
         },
         {
           key: 'diag45',
-          label: 'Διαγώνιος 45°',
+          label: 'Πλάγια Διάμετρος 45°',
           isSymmetric: true,
-          axisLine: { x1: 105, y1: 75, x2: 235, y2: 205 },
-          fixedPoly: generateSemiCirclePoints(170, 140, 75, -Math.PI / 4, (3 * Math.PI) / 4)
-            .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
-            .join(' '),
-          baseFoldPoly: generateSemiCirclePoints(170, 140, 75, (3 * Math.PI) / 4, (7 * Math.PI) / 4),
-          foldTransform: (p, t) => {
-            const ref = reflectPoint(p, 105, 75, 235, 205);
-            return interpolateFold(p, ref.x, ref.y, t);
-          },
+          axisLine: { x1: 117, y1: 193, x2: 223, y2: 87 },
+          origin: { x: 170, y: 140 },
+          angleDeg: -45,
+          fixedPath: generateSemiCirclePath(170, 140, 75, -Math.PI / 4, (3 * Math.PI) / 4),
+          movingPath: generateSemiCirclePath(170, 140, 75, (3 * Math.PI) / 4, (7 * Math.PI) / 4),
           explanation: '✓ ΣΩΣΤΟ: Κάθε πλάγια διάμετρος είναι άξονας συμμετρίας.'
         },
         {
           key: 'diag135',
-          label: 'Διαγώνιος 135°',
+          label: 'Πλάγια Διάμετρος 135°',
           isSymmetric: true,
-          axisLine: { x1: 235, y1: 75, x2: 105, y2: 205 },
-          fixedPoly: generateSemiCirclePoints(170, 140, 75, Math.PI / 4, (5 * Math.PI) / 4)
-            .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
-            .join(' '),
-          baseFoldPoly: generateSemiCirclePoints(170, 140, 75, (5 * Math.PI) / 4, (9 * Math.PI) / 4),
-          foldTransform: (p, t) => {
-            const ref = reflectPoint(p, 235, 75, 105, 205);
-            return interpolateFold(p, ref.x, ref.y, t);
-          },
+          axisLine: { x1: 117, y1: 87, x2: 223, y2: 193 },
+          origin: { x: 170, y: 140 },
+          angleDeg: 45,
+          fixedPath: generateSemiCirclePath(170, 140, 75, Math.PI / 4, (5 * Math.PI) / 4),
+          movingPath: generateSemiCirclePath(170, 140, 75, (5 * Math.PI) / 4, (9 * Math.PI) / 4),
           explanation: '✓ ΣΩΣΤΟ: Ο κύκλος έχει άπειρους άξονες συμμετρίας (κάθε ευθεία που περνά από το κέντρο του)!'
         }
       ]
@@ -380,16 +266,8 @@ export default function SimmetriaTheoriaPage() {
   const currentAxis =
     currentConfig.axes.find((a) => a.key === selectedAxisKey) || currentConfig.axes[0];
 
-  // Υπολογισμός σημείων του αναδιπλούμενου πολυγώνου με βάση το progress (0..100)
-  const movingPolyPoints = useMemo(() => {
-    const t = foldProgress / 100;
-    return currentAxis.baseFoldPoly
-      .map((p) => {
-        const transformed = currentAxis.foldTransform(p, t);
-        return `${transformed.x.toFixed(1)},${transformed.y.toFixed(1)}`;
-      })
-      .join(' ');
-  }, [currentAxis, foldProgress]);
+  // Υπολογισμός γωνίας αναδίπλωσης: 0° έως 180°
+  const foldAngleDeg = (foldProgress / 100) * 180;
 
   return (
     <Layout
@@ -663,7 +541,6 @@ export default function SimmetriaTheoriaPage() {
                 viewBox="0 0 320 200"
                 className="w-full max-w-[340px] sm:max-w-[400px] h-auto select-none overflow-visible"
               >
-                {/* Πλέγμα φόντου */}
                 <defs>
                   <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
                     <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" />
@@ -720,7 +597,7 @@ export default function SimmetriaTheoriaPage() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΑΝΑΔΙΠΛΩΣΗ ΣΧΗΜΑΤΟΣ (FOLDING LAB) */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΑΝΑΔΙΠΛΩΣΗ ΣΧΗΜΑΤΟΣ (FOLDING LAB ME 3D ROTATION) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
@@ -730,7 +607,7 @@ export default function SimmetriaTheoriaPage() {
               Δίπλωσε το Σχήμα στον Άξονα και Δες αν Ταυτίζεται!
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Επίλεξε γεωμετρικό σχήμα και άξονα αναδίπλωσης. Σύρε την μπάρα αναδίπλωσης για να διπλώσεις το χαρτί και δες αν τα δύο μέρη εφαρμόζουν απόλυτα:
+              Επίλεξε γεωμετρικό σχήμα και άξονα αναδίπλωσης. Σύρε την μπάρα αναδίπλωσης για να διπλώσεις το χαρτί κατά μήκος του άξονα:
             </p>
           </div>
 
@@ -844,33 +721,47 @@ export default function SimmetriaTheoriaPage() {
               </div>
             </div>
 
-            {/* SVG Visualizer Αναδίπλωσης (7 στήλες) */}
+            {/* SVG Visualizer Αναδίπλωσης (7 στήλες) με καθαρή περιστροφή γύρω από τον άξονα */}
             <div className="lg:col-span-7 bg-slate-900 min-h-[380px] p-4 sm:p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
                 viewBox="0 0 340 280"
                 className="w-full max-w-[340px] sm:max-w-[420px] h-auto select-none overflow-visible"
               >
-                {/* 1. Σταθερό μέρος του σχήματος (μπλε/γαλάζιο) */}
-                <polygon
-                  points={currentAxis.fixedPoly}
+                {/* 1. Σταθερό μέρος του σχήματος (γαλάζιο) */}
+                <path
+                  d={currentAxis.fixedPath}
                   fill="rgba(56, 189, 248, 0.25)"
                   stroke="#38bdf8"
                   strokeWidth="2.5"
                 />
 
-                {/* 2. Αναδιπλούμενο μέρος του σχήματος (μωβ/indigo με διαφάνεια) */}
-                <polygon
-                  points={movingPolyPoints}
-                  fill={
-                    foldProgress === 100 && !currentAxis.isSymmetric
-                      ? 'rgba(245, 158, 11, 0.45)' // Πορτοκαλί αν εξέχει λάθος
-                      : 'rgba(168, 85, 247, 0.35)'
-                  }
-                  stroke={
-                    foldProgress === 100 && !currentAxis.isSymmetric ? '#f59e0b' : '#c084fc'
-                  }
-                  strokeWidth="2.5"
-                />
+                {/* 2. Αναδιπλούμενο μέρος του σχήματος (μωβ):
+                    Περιστρέφεται ακριβώς γύρω από τη γραμμή τσάκισης (άξονας) */}
+                <g
+                  style={{
+                    transformOrigin: `${currentAxis.origin.x}px ${currentAxis.origin.y}px`,
+                    transform: `
+                      rotate(${currentAxis.angleDeg}deg)
+                      rotateY(${foldAngleDeg}deg)
+                      rotate(-${currentAxis.angleDeg}deg)
+                    `,
+                    transformStyle: 'preserve-3d',
+                    transition: 'transform 0.05s ease-out'
+                  }}
+                >
+                  <path
+                    d={currentAxis.movingPath}
+                    fill={
+                      foldProgress === 100 && !currentAxis.isSymmetric
+                        ? 'rgba(245, 158, 11, 0.45)'
+                        : 'rgba(168, 85, 247, 0.35)'
+                    }
+                    stroke={
+                      foldProgress === 100 && !currentAxis.isSymmetric ? '#f59e0b' : '#c084fc'
+                    }
+                    strokeWidth="2.5"
+                  />
+                </g>
 
                 {/* 3. Άξονας αναδίπλωσης (κίτρινος διακεκομμένος) */}
                 <line
