@@ -65,7 +65,7 @@ const PROBLEM_POOL_Q9 = [
   () => {
     const cm = randInt(3, 8);
     const scale = 200000;
-    const km = (cm * scale) / 100000; // 1 km = 100.000 cm
+    const km = (cm * scale) / 100000;
     const correct = `${formatNum(km)} km`;
     return {
       title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΧΑΡΤΗ 1 : 200.000',
@@ -116,7 +116,7 @@ const PROBLEM_POOL_Q9 = [
   // 3. Κλίμακα 1 : 1.000.000
   () => {
     const cm = randInt(3, 9);
-    const km = cm * 10; // 1.000.000 cm = 10 km ανά 1 cm
+    const km = cm * 10;
     const correct = `${km} km`;
     return {
       title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΓΕΩΓΡΑΦΙΚΟ ΧΑΡΤΗ 1 : 1.000.000',
@@ -141,7 +141,7 @@ const PROBLEM_POOL_Q9 = [
   // 4. Κλίμακα 1 : 100.000
   () => {
     const cm = randInt(5, 15);
-    const km = cm; // 100.000 cm = 1 km ανά 1 cm
+    const km = cm;
     const correct = `${km} km`;
     return {
       title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΧΑΡΤΗ 1 : 100.000',
@@ -160,14 +160,14 @@ const PROBLEM_POOL_Q9 = [
         { label: 'Πράξη', value: `${cm} · 1 km` },
         { label: 'Πραγματική απόσταση', value: `${km} km` }
       ],
-      explanation: `Επειδή 100.000 cm ＝ 1 km, κάθε 1 cm στον χάρτη ισοδυναμεί ακριβώς με 1 km: ${cm} km.`
+      explanation: `Επειδή 100.000 cm ＝ 1 km, κάθε 1 cm στον χάρτη ισοδυναμεί ακριβώς με 1 km: ${km} km.`
     };
   },
   // 5. Κλίμακα 1 : 400.000
   () => {
     const cm = randInt(2, 6);
     const scale = 400000;
-    const km = (cm * scale) / 100000; // 4 km ανά cm
+    const km = (cm * scale) / 100000;
     const correct = `${km} km`;
     return {
       title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΧΑΡΤΗ 1 : 400.000',
@@ -247,7 +247,7 @@ const PROBLEM_POOL_Q10 = [
   // 2. Κάτοψη 1 : 100
   () => {
     const wCm = randInt(5, 14);
-    const realM = wCm; // 1 : 100 σημαίνει 1 cm = 100 cm = 1 m
+    const realM = wCm;
     const correct = `${realM} m`;
     return {
       title: 'ΔΙΑΣΤΑΣΗ ΣΕ ΚΑΤΟΨΗ 1 : 100',
@@ -273,9 +273,9 @@ const PROBLEM_POOL_Q10 = [
   () => {
     const lCm = 8;
     const wCm = 6;
-    const realL = (lCm * 50) / 100; // 4 m
-    const realW = (wCm * 50) / 100; // 3 m
-    const area = realL * realW; // 12 m²
+    const realL = (lCm * 50) / 100;
+    const realW = (wCm * 50) / 100;
+    const area = realL * realW;
     const correct = `${area} m²`;
     return {
       title: 'ΕΜΒΑΔΟΝ ΔΩΜΑΤΙΟΥ ΑΠΟ ΚΑΤΟΨΗ 1 : 50',
@@ -344,7 +344,7 @@ const PROBLEM_POOL_Q10 = [
   // 6. Πισίνα σε σχέδιο 1 : 50
   () => {
     const cm = 16;
-    const realM = (cm * 50) / 100; // 8 m
+    const realM = (cm * 50) / 100;
     const correct = `${realM} m`;
     return {
       title: 'ΜΗΚΟΣ ΠΙΣΙΝΑΣ ΣΕ ΣΧΕΔΙΟ 1 : 50',
@@ -372,7 +372,7 @@ const PROBLEM_POOL_Q11 = [
     const correct = `${p2} cm`;
     return {
       title: 'ΤΡΙΠΛΑΣΙΑΣΜΟΣ ΠΕΡΙΜΕΤΡΟΥ ΤΕΤΡΑΓΩΝΟΥ',
-      prompt: `Ένα τετράγωνο έχει πλευρά ${s} cm. Αν τριπλασιάσουμε το μήκος της πλευράς του (μεγέθυνση $\\lambda ＝ 3$), πόση θα γίνει η νέα περίμετρος;`,
+      prompt: `Ένα τετράγωνο έχει πλευρά ${s} cm. Αν τριπλασιάσουμε το μήκος της πλευράς του (μεγέθυνση με συντελεστή 3), πόση θα γίνει η νέα περίμετρος;`,
       options: ensureFourUniqueOptions(correct, () => [
         `${p1} cm`,
         `${p2 + 12} cm`,
@@ -417,7 +417,7 @@ const PROBLEM_POOL_Q11 = [
   },
   // 3. Σμίκρυνση στο 1/2
   () => {
-    const s = randInt(10, 20) * 2; // ζυγός αριθμός
+    const s = randInt(10, 20) * 2;
     const newS = s / 2;
     const correct = `${newS} cm`;
     return {
@@ -509,11 +509,11 @@ const PROBLEM_POOL_Q12 = [
   // 1. Διπλασιασμός πλευράς (τετραπλασιασμός εμβαδού)
   () => {
     const a1 = randInt(12, 35);
-    const a2 = a1 * 4; // 2^2 = 4
+    const a2 = a1 * 4;
     const correct = `${a2} cm²`;
     return {
       title: 'ΔΙΠΛΑΣΙΑΣΜΟΣ ΠΛΕΥΡΩΝ ΚΑΙ ΕΜΒΑΔΟΝ',
-      prompt: `Ένα γεωμετρικό σχήμα έχει εμβαδόν ${a1} cm². Αν διπλασιάσουμε όλες τις διαστάσεις του ($\lambda ＝ 2$), πόσο θα γίνει το εμβαδόν του νέου σχήματος;`,
+      prompt: `Ένα γεωμετρικό σχήμα έχει εμβαδόν ${a1} cm². Αν διπλασιάσουμε όλες τις διαστάσεις του (συντελεστής λ ＝ 2), πόσο θα γίνει το εμβαδόν του νέου σχήματος;`,
       options: ensureFourUniqueOptions(correct, () => [
         `${a1 * 2} cm²`,
         `${a2 + 8} cm²`,
@@ -524,21 +524,21 @@ const PROBLEM_POOL_Q12 = [
       unit: 'cm²',
       tableData: [
         { label: 'Αρχικό εμβαδόν', value: `${a1} cm²` },
-        { label: 'Συντελεστής διαστάσεων ($\lambda$)', value: '2' },
-        { label: 'Συντελεστής εμβαδού ($\lambda^2$)', value: '2 · 2 ＝ 4' },
+        { label: 'Συντελεστής διαστάσεων (λ)', value: '2' },
+        { label: 'Συντελεστής εμβαδού (λ²)', value: '2 · 2 ＝ 4' },
         { label: 'Νέο εμβαδόν', value: `4 · ${a1} ＝ ${a2} cm²` }
       ],
-      explanation: `Όταν οι διαστάσεις διπλασιάζονται, το εμβαδόν τετραπλασιάζεται ($2 \cdot 2 ＝ 4$): 4 · ${a1} ＝ ${a2} cm².`
+      explanation: `Όταν οι διαστάσεις διπλασιάζονται, το εμβαδόν τετραπλασιάζεται (2 · 2 ＝ 4): 4 · ${a1} ＝ ${a2} cm².`
     };
   },
   // 2. Τριπλασιασμός πλευράς (εννεαπλασιασμός εμβαδού)
   () => {
     const a1 = randInt(6, 15);
-    const a2 = a1 * 9; // 3^2 = 9
+    const a2 = a1 * 9;
     const correct = `${a2} cm²`;
     return {
       title: 'ΤΡΙΠΛΑΣΙΑΣΜΟΣ ΠΛΕΥΡΩΝ ΚΑΙ ΕΜΒΑΔΟΝ',
-      prompt: `Ένα ορθογώνιο έχει εμβαδόν ${a1} cm². Αν τριπλασιάσουμε και το μήκος και το πλάτος του ($\lambda ＝ 3$), ποιο θα είναι το εμβαδόν του νέου ορθογωνίου;`,
+      prompt: `Ένα ορθογώνιο έχει εμβαδόν ${a1} cm². Αν τριπλασιάσουμε και το μήκος και το πλάτος του (συντελεστής λ ＝ 3), ποιο θα είναι το εμβαδόν του νέου ορθογωνίου;`,
       options: ensureFourUniqueOptions(correct, () => [
         `${a1 * 3} cm²`,
         `${a1 * 6} cm²`,
@@ -549,21 +549,21 @@ const PROBLEM_POOL_Q12 = [
       unit: 'cm²',
       tableData: [
         { label: 'Αρχικό εμβαδόν', value: `${a1} cm²` },
-        { label: 'Συντελεστής διαστάσεων ($\lambda$)', value: '3' },
-        { label: 'Συντελεστής εμβαδού ($\lambda^2$)', value: '3 · 3 ＝ 9' },
+        { label: 'Συντελεστής διαστάσεων (λ)', value: '3' },
+        { label: 'Συντελεστής εμβαδού (λ²)', value: '3 · 3 ＝ 9' },
         { label: 'Νέο εμβαδόν', value: `9 · ${a1} ＝ ${a2} cm²` }
       ],
-      explanation: `Όταν οι διαστάσεις τριπλασιάζονται, το εμβαδόν γίνεται $3 \cdot 3 ＝ 9$ φορές μεγαλύτερο: 9 · ${a1} ＝ ${a2} cm².`
+      explanation: `Όταν οι διαστάσεις τριπλασιάζονται, το εμβαδόν γίνεται 3 · 3 ＝ 9 φορές μεγαλύτερο: 9 · ${a1} ＝ ${a2} cm².`
     };
   },
   // 3. Σμίκρυνση στο 1/2 (εμβαδόν στο 1/4)
   () => {
-    const a1 = randInt(10, 25) * 4; // πολλαπλάσιο του 4
+    const a1 = randInt(10, 25) * 4;
     const a2 = a1 / 4;
     const correct = `${a2} cm²`;
     return {
       title: 'ΣΜΙΚΡΥΝΣΗ ΣΤΟ ΜΙΣΟ ΚΑΙ ΕΜΒΑΔΟΝ',
-      prompt: `Ένα τετράγωνο έχει εμβαδόν ${a1} cm². Αν υποδιπλασιάσουμε την πλευρά του (σμίκρυνση στο 0,5), πόσο θα γίνει το εμβαδόν του νέου τετραγώνου;`,
+      prompt: `Ένα τετράγωνο έχει εμβαδόν ${a1} cm². Αν υποδιπλασιάσουμε την πλευρά του (σμίκρυνση στο μισό, συντελεστής 0,5), πόσο θα γίνει το εμβαδόν του νέου τετραγώνου;`,
       options: ensureFourUniqueOptions(correct, () => [
         `${a1 / 2} cm²`,
         `${a2 + 6} cm²`,
@@ -578,61 +578,61 @@ const PROBLEM_POOL_Q12 = [
         { label: 'Μεταβολή εμβαδού', value: 'Στο ένα τέταρτο (: 4)' },
         { label: 'Νέο εμβαδόν', value: `${a1} : 4 ＝ ${a2} cm²` }
       ],
-      explanation: `Όταν η πλευρά υποδιπλασιάζεται, το εμβαδόν διαιρείται με το $2 \cdot 2 ＝ 4$: ${a1} : 4 ＝ ${a2} cm².`
+      explanation: `Όταν η πλευρά υποδιπλασιάζεται, το εμβαδόν διαιρείται με το 2 · 2 ＝ 4: ${a1} : 4 ＝ ${a2} cm².`
     };
   },
   // 4. Τετραπλασιασμός πλευράς (εμβαδόν επί 16)
   () => {
     const a1 = 5;
-    const a2 = a1 * 16; // 80
+    const a2 = a1 * 16;
     const correct = `${a2} cm²`;
     return {
       title: 'ΤΕΤΡΑΠΛΑΣΙΑΣΜΟΣ ΠΛΕΥΡΩΝ ΚΑΙ ΕΜΒΑΔΟΝ',
-      prompt: `Ένα μικρό παραλληλόγραμμο έχει εμβαδόν 5 cm². Αν τετραπλασιάσουμε όλες τις διαστάσεις του ($\lambda ＝ 4$), πόσο θα είναι το εμβαδόν του νέου σχήματος;`,
+      prompt: `Ένα μικρό παραλληλόγραμμο έχει εμβαδόν 5 cm². Αν τετραπλασιάσουμε όλες τις διαστάσεις του (συντελεστής λ ＝ 4), πόσο θα είναι το εμβαδόν του νέου σχήματος;`,
       options: ensureFourUniqueOptions(correct, () => ['20 cm²', '40 cm²', '100 cm²', '64 cm²']),
       correctAnswer: correct,
       unit: 'cm²',
       tableData: [
         { label: 'Αρχικό εμβαδόν', value: '5 cm²' },
-        { label: 'Συντελεστής διαστάσεων', value: '4' },
-        { label: 'Συντελεστής εμβαδού', value: '4 · 4 ＝ 16' },
+        { label: 'Συντελεστής διαστάσεων (λ)', value: '4' },
+        { label: 'Συντελεστής εμβαδού (λ²)', value: '4 · 4 ＝ 16' },
         { label: 'Νέο εμβαδόν', value: '5 · 16 ＝ 80 cm²' }
       ],
-      explanation: `Το εμβαδόν πολλαπλασιάζεται επί $4 \cdot 4 ＝ 16$: 5 · 16 ＝ 80 cm².`
+      explanation: `Το εμβαδόν πολλαπλασιάζεται επί 4 · 4 ＝ 16: 5 · 16 ＝ 80 cm².`
     };
   },
   // 5. Φωτοτυπία μεγέθυνσης 200%
   () => {
     const a1 = 50;
-    const a2 = a1 * 4; // 200% σημαίνει διπλασιασμός πλευρών => x4 εμβαδόν
+    const a2 = a1 * 4;
     const correct = `${a2} cm²`;
     return {
       title: 'ΜΕΓΕΘΥΝΣΗ ΦΩΤΟΤΥΠΙΑΣ 200%',
-      prompt: `Μια φωτογραφία με εμβαδόν 50 cm² μεγεθύνεται σε φωτοτυπικό μηχάνημα σε ποσοστό 200% (διπλασιασμός μήκους και πλάτους). Ποιο θα είναι το εμβαδόν της μεγεθυμένης φωτογραφίας;`,
+      prompt: `Μια φωτογραφία με εμβαδόν 50 cm² μεγεθύνεται σε φωτοτυπικό μηχάνημα σε ποσοστό 200% (διπλασιασμός μήκους και πλάτους, συντελεστής λ ＝ 2). Ποιο θα είναι το εμβαδόν της νέας φωτογραφίας;`,
       options: ensureFourUniqueOptions(correct, () => ['100 cm²', '150 cm²', '250 cm²', '400 cm²']),
       correctAnswer: correct,
       unit: 'cm²',
       tableData: [
         { label: 'Αρχικό εμβαδόν', value: '50 cm²' },
-        { label: 'Ποσοστό μεγέθυνσης 200%', value: 'Διπλασιασμός διαστάσεων ($\lambda ＝ 2$)' },
+        { label: 'Ποσοστό μεγέθυνσης 200%', value: 'Διπλασιασμός διαστάσεων (λ ＝ 2)' },
         { label: 'Μεταβολή εμβαδού', value: '2 · 2 ＝ 4 φορές μεγαλύτερο' },
         { label: 'Νέο εμβαδόν', value: '50 · 4 ＝ 200 cm²' }
       ],
       explanation: `Ο διπλασιασμός των διαστάσεων τετραπλασιάζει το εμβαδόν: 50 · 4 ＝ 200 cm².`
     };
   },
-  // 6. Πόσες φορές μεγαλώνει το εμβαδόν αν $\lambda ＝ 5$
+  // 6. Πόσες φορές μεγαλώνει το εμβαδόν αν λ ＝ 5
   () => {
     const correct = '25 φορές';
     return {
       title: 'ΣΥΝΤΕΛΕΣΤΗΣ ΜΕΤΑΒΟΛΗΣ ΕΜΒΑΔΟΥ',
-      prompt: `Αν πενταπλασιάσουμε όλες τις πλευρές ενός γεωμετρικού σχήματος ($\lambda ＝ 5$), πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;`,
+      prompt: `Αν πενταπλασιάσουμε όλες τις πλευρές ενός γεωμετρικού σχήματος (συντελεστής λ ＝ 5), πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;`,
       options: ensureFourUniqueOptions(correct, () => ['5 φορές', '10 φορές', '20 φορές', '50 φορές']),
       correctAnswer: correct,
       unit: 'φορές',
       tableData: [
-        { label: 'Συντελεστής πλευρών', value: '5' },
-        { label: 'Κανόνας μεταβολής εμβαδού', value: '$\lambda \cdot \lambda ＝ \lambda^2$' },
+        { label: 'Συντελεστής πλευρών (λ)', value: '5' },
+        { label: 'Κανόνας μεταβολής εμβαδού', value: 'λ · λ ＝ λ²' },
         { label: 'Υπολογισμός', value: '5 · 5 ＝ 25 φορές' }
       ],
       explanation: `Το εμβαδόν μεταβάλλεται κατά το τετράγωνο του συντελεστή: 5 · 5 ＝ 25 φορές μεγαλύτερο.`
@@ -658,7 +658,7 @@ function generateQuestionsSet() {
       : 'Όταν διπλασιάζουμε τις πλευρές ενός τριγώνου, διπλασιάζονται και οι μοίρες των γωνιών του.',
     correctAnswer: isQ1True,
     tableData: [
-      { label: 'Μήκος πλευρών', value: 'Μεταβάλλεται αναλογικά ($\cdot \lambda$)' },
+      { label: 'Μήκος πλευρών', value: 'Μεταβάλλεται αναλογικά (· λ)' },
       { label: 'Μέτρο γωνιών', value: 'Παραμένει απολύτως σταθερό' },
       { label: 'Μορφή σχήματος', value: 'Διατηρείται απαράλλαχτη (όμοια σχήματα)' }
     ],
@@ -776,422 +776,4 @@ function generateQuestionsSet() {
     explanation: `Επειδή 100.000 cm ＝ 1 km, κάθε 1 cm στον χάρτη αντιστοιχεί σε 1 km. Άρα η απόσταση είναι ${kmQ6} km.`
   });
 
-  // Q7: Μεταβολή περιμέτρου όταν διπλασιάζονται οι πλευρές (MCQ)
-  qs.push({
-    id: 7,
-    type: 'mcq',
-    title: 'ΜΕΤΑΒΟΛΗ ΠΕΡΙΜΕΤΡΟΥ ΣΕ ΜΕΓΕΘΥΝΣΗ',
-    prompt: 'Αν διπλασιάσουμε όλες τις πλευρές ενός πολυγώνου, πόσες φορές μεγαλύτερη θα γίνει η περίμετρός του;',
-    options: ensureFourUniqueOptions('2 φορές (διπλασιάζεται)', () => [
-      '4 φορές (τετραπλασιάζεται)',
-      '8 φορές',
-      'Παραμένει η ίδια'
-    ]),
-    correctAnswer: '2 φορές (διπλασιάζεται)',
-    tableData: [
-      { label: 'Συντελεστής πλευρών', value: '2' },
-      { label: 'Κανόνας περιμέτρου', value: 'Η περίμετρος είναι άθροισμα μηκών, άρα πολλαπλασιάζεται επίσης επί 2' }
-    ],
-    explanation: 'Η περίμετρος είναι γραμμικό μέγεθος και μεταβάλλεται ακριβώς όπως και οι πλευρές: διπλασιάζεται (2 φορές μεγαλύτερη).'
-  });
-
-  // Q8: Μεταβολή εμβαδού όταν διπλασιάζονται οι πλευρές (MCQ)
-  qs.push({
-    id: 8,
-    type: 'mcq',
-    title: 'ΜΕΤΑΒΟΛΗ ΕΜΒΑΔΟΥ ΣΕ ΜΕΓΕΘΥΝΣΗ',
-    prompt: 'Αν διπλασιάσουμε όλες τις πλευρές ενός τετραγώνου, πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;',
-    options: ensureFourUniqueOptions('4 φορές (τετραπλασιάζεται)', () => [
-      '2 φορές (διπλασιάζεται)',
-      '8 φορές',
-      '16 φορές'
-    ]),
-    correctAnswer: '4 φορές (τετραπλασιάζεται)',
-    tableData: [
-      { label: 'Συντελεστής πλευρών ($\lambda$)', value: '2' },
-      { label: 'Κανόνας εμβαδού', value: '$\lambda \cdot \lambda ＝ 2 \cdot 2 ＝ 4$' },
-      { label: 'Αποτέλεσμα', value: 'Τετραπλασιάζεται' }
-    ],
-    explanation: 'Το εμβαδόν εξαρτάται από το γινόμενο δύο διαστάσεων. Αν διπλασιαστούν και οι δύο: 2 · 2 ＝ 4 φορές μεγαλύτερο.'
-  });
-
-  // Q9: Πρόβλημα από PROBLEM_POOL_Q9
-  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)]();
-  qs.push({ id: 9, type: 'mcq', ...p9 });
-
-  // Q10: Πρόβλημα από PROBLEM_POOL_Q10
-  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)]();
-  qs.push({ id: 10, type: 'mcq', ...p10 });
-
-  // Q11: Πρόβλημα από PROBLEM_POOL_Q11
-  const p11 = PROBLEM_POOL_Q11[randInt(0, PROBLEM_POOL_Q11.length - 1)]();
-  qs.push({ id: 11, type: 'mcq', ...p11 });
-
-  // Q12: Πρόβλημα από PROBLEM_POOL_Q12
-  const p12 = PROBLEM_POOL_Q12[randInt(0, PROBLEM_POOL_Q12.length - 1)]();
-  qs.push({ id: 12, type: 'mcq', ...p12 });
-
-  return qs;
-}
-
-// -------------------------------------------------------------
-// ΚΥΡΙΟ COMPONENT ΑΣΚΗΣΕΩΝ
-// -------------------------------------------------------------
-
-export default function MegethinsiSmikrinsiAskiseisPage() {
-  const [questions, setQuestions] = useState([]);
-  const [userAnswers, setUserAnswers] = useState({});
-  const [submitted, setSubmitted] = useState(false);
-
-  useEffect(() => {
-    loadNewSet();
-  }, []);
-
-  function loadNewSet() {
-    const newQs = generateQuestionsSet();
-    setQuestions(newQs);
-    setUserAnswers({});
-    setSubmitted(false);
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }
-
-  function handleAnswerChange(id, rawValue) {
-    if (submitted) return;
-    setUserAnswers((prev) => ({
-      ...prev,
-      [id]: rawValue
-    }));
-  }
-
-  function isQuestionCorrect(q) {
-    const userAns = userAnswers[q.id];
-    if (userAns === undefined || userAns === null) return false;
-
-    if (q.type === 'boolean') {
-      return userAns === q.correctAnswer;
-    }
-
-    if (q.type === 'mcq') {
-      return String(userAns).trim() === String(q.correctAnswer).trim();
-    }
-
-    if (q.type === 'input') {
-      const cleanUser = String(userAns).trim().replace(/\./g, ',');
-      const cleanCorrect = String(q.correctAnswer).trim().replace(/\./g, ',');
-
-      if (cleanUser === cleanCorrect) return true;
-
-      const numUser = parseFloat(cleanUser.replace(',', '.'));
-      const numCorrect = parseFloat(cleanCorrect.replace(',', '.'));
-      if (!isNaN(numUser) && !isNaN(numCorrect)) {
-        return Math.abs(numUser - numCorrect) <= 0.05;
-      }
-      return false;
-    }
-
-    return false;
-  }
-
-  const answeredCount = Object.keys(userAnswers).filter(
-    (k) => userAnswers[k] !== undefined && userAnswers[k] !== ''
-  ).length;
-
-  const score = questions.reduce((acc, q) => (isQuestionCorrect(q) ? acc + 1 : acc), 0);
-  const totalCount = questions.length || 12;
-  const percentage = Math.round((score / totalCount) * 100);
-
-  return (
-    <Layout
-      title="Ασκήσεις: Μεγέθυνση, Σμίκρυνση &amp; Κλίμακα - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις στην κλίμακα, τους χάρτες, τη μεγέθυνση και τη σμίκρυνση σχημάτων για τη ΣΤ' Δημοτικού."
-      backUrl="/st-dimotikou/70-megethinsi-smikrinsi"
-      backText="Θεωρία Κεφ. 70"
-      showAds={true}
-      actionButton={
-        <Link
-          href="/st-dimotikou/70-megethinsi-smikrinsi"
-          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
-        >
-          <span>📖 Θεωρία</span>
-        </Link>
-      }
-    >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden">
-
-        {/* HERO BANNER */}
-        <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden mb-8 sm:mb-12">
-          <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 70 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
-            </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              {toCleanUppercase('Ασκησεις: Μεγεθυνση, Σμικρυνση και Κλιμακα')}
-            </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Εξασκηθείτε στους υπολογισμούς κλίμακας σε χάρτες και κατόψεις, καθώς και στη μεταβολή περιμέτρου και εμβαδού μέσα από 12 δυναμικές ερωτήσεις.
-            </p>
-          </div>
-
-          <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>12 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση &amp; Αναλυτική Επεξήγηση</span>
-            </div>
-            <button
-              onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
-            >
-              <span>🔄 {toCleanUppercase('Νεες Ασκησεις')}</span>
-            </button>
-          </div>
-        </section>
-
-        {/* ΛΙΣΤΑ ΕΡΩΤΗΣΕΩΝ (12 ΕΡΩΤΗΣΕΙΣ) */}
-        <div className="space-y-6 sm:space-y-8">
-          {questions.map((q, index) => {
-            const isCorrect = isQuestionCorrect(q);
-            const userAns = userAnswers[q.id];
-
-            return (
-              <div
-                key={q.id}
-                className={`bg-white rounded-3xl p-5 sm:p-8 shadow-sm border transition-all ${
-                  submitted
-                    ? isCorrect
-                      ? 'border-emerald-300 ring-1 ring-emerald-200'
-                      : 'border-rose-300 ring-1 ring-rose-200'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {/* ΚΕΦΑΛΙΔΑ ΕΡΩΤΗΣΗΣ */}
-                <div className="flex items-center justify-between gap-4 mb-4 pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm sm:text-base border border-indigo-150">
-                      {index + 1}
-                    </span>
-                    <h2 className="text-xs sm:text-sm font-black text-slate-800 tracking-wider">
-                      {toCleanUppercase(q.title || `ΕΡΩΤΗΣΗ ${index + 1}`)}
-                    </h2>
-                  </div>
-
-                  {submitted && (
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-black tracking-wider ${
-                        isCorrect
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {isCorrect ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
-                    </span>
-                  )}
-                </div>
-
-                {/* ΕΚΦΩΝΗΣΗ & SVG (NO-GIVEAWAY: ΟΥΔΕΙΣ ΠΙΝΑΚΑΣ ΕΔΩ) */}
-                <div className="mb-6 space-y-3">
-                  <p className="text-slate-800 text-sm sm:text-base font-semibold leading-relaxed">
-                    {q.prompt}
-                  </p>
-                  {q.svg && <div className="py-2">{q.svg}</div>}
-                </div>
-
-                {/* ΔΙΑΔΡΑΣΤΙΚΑ ΧΕΙΡΙΣΤΗΡΙΑ ΑΠΑΝΤΗΣΗΣ */}
-                <div className="mb-4">
-                  {/* ΤΥΠΟΣ 1: BOOLEAN */}
-                  {q.type === 'boolean' && (
-                    <div className="grid grid-cols-2 gap-3 max-w-md">
-                      {[true, false].map((val) => {
-                        const isSelected = userAns === val;
-                        return (
-                          <button
-                            key={String(val)}
-                            type="button"
-                            disabled={submitted}
-                            onClick={() => handleAnswerChange(q.id, val)}
-                            className={`py-3 px-4 rounded-2xl font-bold text-xs sm:text-sm transition-all border ${
-                              isSelected
-                                ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/30'
-                                : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                            }`}
-                          >
-                            {val ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* ΤΥΠΟΣ 2: MCQ (4 ΜΟΝΑΔΙΚΑ ΚΟΥΜΠΙΑ) */}
-                  {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {q.options.map((opt, optIdx) => {
-                        const isSelected = userAns === opt;
-                        return (
-                          <button
-                            key={optIdx}
-                            type="button"
-                            disabled={submitted}
-                            onClick={() => handleAnswerChange(q.id, opt)}
-                            className={`text-left p-3.5 sm:p-4 rounded-2xl border font-semibold text-xs sm:text-sm transition-all flex items-start gap-3 ${
-                              isSelected
-                                ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/30'
-                                : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                            }`}
-                          >
-                            <span
-                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                                isSelected
-                                  ? 'bg-white text-indigo-700'
-                                  : 'bg-white text-slate-500 border border-slate-200'
-                              }`}
-                            >
-                              {String.fromCharCode(65 + optIdx)}
-                            </span>
-                            <span className="break-words whitespace-normal leading-snug flex-1">
-                              {opt}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* ΤΥΠΟΣ 3: INPUT */}
-                  {q.type === 'input' && (
-                    <div className="max-w-xs">
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        maxLength={10}
-                        disabled={submitted}
-                        placeholder="Απάντηση..."
-                        value={userAns || ''}
-                        onChange={(e) => {
-                          const cleaned = e.target.value
-                            .replace(/[^0-9.,]/g, '')
-                            .replace(/\./g, ',');
-                          handleAnswerChange(q.id, cleaned);
-                        }}
-                        className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all disabled:opacity-80"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* FEEDBACK & EXPLANATION (ΑΠΟΚΛΕΙΣΤΙΚΑ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ) */}
-                {submitted && (
-                  <div className="mt-6 pt-5 border-t border-slate-150 space-y-4">
-                    {/* ΠΙΝΑΚΑΣ ΔΕΔΟΜΕΝΩΝ (TABLEDATA) ΜΟΝΟ ΕΔΩ */}
-                    {q.tableData && q.tableData.length > 0 && (
-                      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-1">
-                        <table className="w-full text-left text-xs sm:text-sm">
-                          <tbody>
-                            {q.tableData.map((row, rIdx) => (
-                              <tr
-                                key={rIdx}
-                                className={rIdx !== q.tableData.length - 1 ? 'border-b border-slate-200/60' : ''}
-                              >
-                                <td className="py-2.5 px-3 font-bold text-slate-600 bg-slate-100/70 w-1/3">
-                                  {row.label}
-                                </td>
-                                <td className="py-2.5 px-3 font-semibold text-slate-800">
-                                  {row.value}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-
-                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
-                    <div
-                      className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
-                        isCorrect
-                          ? 'bg-emerald-50 text-emerald-950 border border-emerald-200'
-                          : 'bg-rose-50 text-rose-950 border border-rose-200'
-                      }`}
-                    >
-                      <p className="font-bold mb-1">
-                        {isCorrect
-                          ? '✓ Μπράβο! Σωστή απάντηση.'
-                          : `✗ Λάθος. Η σωστή απάντηση είναι: ${
-                              q.type === 'boolean'
-                                ? q.correctAnswer
-                                  ? 'Σωστό'
-                                  : 'Λάθος'
-                                : q.correctAnswer
-                            }`}
-                      </p>
-                      <p className="text-slate-700">{q.explanation}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* STICKY BOTTOM SCORE FOOTER (12 ΕΡΩΤΗΣΕΙΣ) */}
-        <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
-          <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4 sm:gap-8">
-              {!submitted ? (
-                <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                  <span>{toCleanUppercase('ΑΠΑΝΤΗΘΗΚΑΝ:')} </span>
-                  <span className="font-black text-indigo-400 text-sm sm:text-base">
-                    {answeredCount} / {totalCount}
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-4 sm:gap-6">
-                  <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΣΚΟΡ:')} </span>
-                    <span className="font-black text-emerald-400 text-sm sm:text-base">
-                      {score} / {totalCount}
-                    </span>
-                  </div>
-                  <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΠΟΣΟΣΤΟ:')} </span>
-                    <span className="font-black text-amber-400 text-sm sm:text-base">
-                      {percentage}%
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3">
-              {!submitted ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSubmitted(true);
-                    if (typeof window !== 'undefined') {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                  }}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition-all text-xs sm:text-sm"
-                >
-                  {toCleanUppercase('ΕΛΕΓΧΟΣ ΑΠΑΝΤΗΣΕΩΝ')}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={loadNewSet}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm flex items-center gap-2"
-                >
-                  <span>🔄</span>
-                  <span>{toCleanUppercase('ΝΕΕΣ ΑΣΚΗΣΕΙΣ')}</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </footer>
-
-      </div>
-    </Layout>
-  );
-}
+  // Q7: Μεταβολή περιμέτρου όταν διπλασιάζονται οι πλευ
