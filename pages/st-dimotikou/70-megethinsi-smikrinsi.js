@@ -21,7 +21,7 @@ function formatNum(val) {
 
 export default function MegethinsiSmikrinsiTheoriaPage() {
   // Εργαστήριο 1: Διαδραστική Μεγέθυνση / Σμίκρυνση Ορθογωνίου
-  const [scaleFactor, setScaleFactor] = useState(2); // π.χ. 0.5, 1, 1.5, 2, 2.5, 3
+  const [scaleFactor, setScaleFactor] = useState(2); // 0.5, 1, 1.5, 2, 2.5, 3
 
   // Αρχικές διαστάσεις (cm)
   const baseW = 4;
@@ -128,7 +128,7 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
                   <div>
-                    • <strong>Μεγέθυνση:</strong> Πολλαπλασιάζουμε <em>όλες</em> τις διαστάσεις του σχήματος με τον ίδιο αριθμό $\lambda ＞ 1$.
+                    • <strong>Μεγέθυνση:</strong> Πολλαπλασιάζουμε <em>όλες</em> τις διαστάσεις του σχήματος με τον ίδιο αριθμό (μεγαλύτερο του 1).
                   </div>
                   <div>
                     • <strong>Σμίκρυνση:</strong> Διαιρούμε <em>όλες</em> τις διαστάσεις του σχήματος με τον ίδιο αριθμό (ή πολλαπλασιάζουμε με κλάσμα μικρότερο του 1).
@@ -165,8 +165,8 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
                     Κλίμακα ＝ Μήκος στο σχέδιο : Πραγματικό μήκος
                   </div>
                   <div className="text-slate-700 text-xs font-sans text-left pt-1">
-                    • <strong>Κλίμακα $1 : 100$:</strong> $1\text{ cm}$ στο σχέδιο αντιστοιχεί σε $100\text{ cm}$ ($1\text{ m}$) στην πραγματικότητα (σμίκρυνση).<br />
-                    • <strong>Κλίμακα $2 : 1$:</strong> $2\text{ cm}$ στο σχέδιο αντιστοιχούν σε $1\text{ cm}$ στην πραγματικότητα (μεγέθυνση μικρών αντικειμένων).
+                    • <strong>Κλίμακα 1 : 100:</strong> 1 cm στο σχέδιο αντιστοιχεί σε 100 cm (1 m) στην πραγματικότητα (σμίκρυνση).<br />
+                    • <strong>Κλίμακα 2 : 1:</strong> 2 cm στο σχέδιο αντιστοιχούν σε 1 cm στην πραγματικότητα (μεγέθυνση μικρών αντικειμένων).
                   </div>
                 </div>
               </div>
@@ -193,18 +193,18 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 font-mono">
-                  <div className="font-bold text-indigo-950">• Παράδειγμα: Κλίμακα $1 : 200.000$</div>
+                  <div className="font-bold text-indigo-950">• Παράδειγμα: Κλίμακα 1 : 200.000</div>
                   <div className="text-slate-700 text-xs font-sans">
-                    Αν μετρήσουμε με τον χάρακα $3\text{ cm}$ στον χάρτη:<br />
-                    $3\text{ cm} \cdot 200.000 ＝ 600.000\text{ cm}$.<br />
-                    Μετατρέπουμε σε μέτρα: $600.000 : 100 ＝ 6.000\text{ m}$.<br />
-                    Μετατρέπουμε σε χιλιόμετρα: $6.000 : 1.000 ＝ \mathbf{6\text{ km}}$!
+                    Αν μετρήσουμε με τον χάρακα 3 cm στον χάρτη:<br />
+                    3 cm · 200.000 ＝ 600.000 cm.<br />
+                    Μετατρέπουμε σε μέτρα: 600.000 : 100 ＝ 6.000 m.<br />
+                    Μετατρέπουμε σε χιλιόμετρα: 6.000 : 1.000 ＝ <strong>6 km</strong>!
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                🎯 Χρήσιμος κανόνας: $1\text{ km} ＝ 1.000\text{ m} ＝ 100.000\text{ cm}$.
+                🎯 Χρήσιμος κανόνας: 1 km ＝ 1.000 m ＝ 100.000 cm.
               </div>
             </article>
 
@@ -221,18 +221,18 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
                   Πώς Αλλάζει το Εμβαδόν;
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αν πολλαπλασιάσουμε όλες τις πλευρές ενός σχήματος επί $\lambda$:
+                  Αν πολλαπλασιάσουμε όλες τις πλευρές ενός σχήματος επί έναν αριθμό λ:
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
                   <div>
-                    • <strong>Η περίμετρος</strong> πολλαπλασιάζεται επί $\lambda$. (Αν διπλασιαστούν οι πλευρές, διπλασιάζεται η περίμετρος).
+                    • <strong>Η περίμετρος</strong> πολλαπλασιάζεται επί λ. (Αν διπλασιαστούν οι πλευρές, διπλασιάζεται η περίμετρος).
                   </div>
                   <div>
-                    • <strong>Το εμβαδόν</strong> πολλαπλασιάζεται επί $\mathbf{\lambda \cdot \lambda}$ ($\lambda^2$)!
+                    • <strong>Το εμβαδόν</strong> πολλαπλασιάζεται επί <strong>λ · λ (λ²)</strong>!
                   </div>
                   <div className="text-emerald-900 font-bold text-xs pt-1 border-t border-slate-200">
-                    Αν διπλασιάσουμε τις πλευρές ($\lambda ＝ 2$), το εμβαδόν <strong>τετραπλασιάζεται</strong> ($2 \cdot 2 ＝ 4$)!
+                    Αν διπλασιάσουμε τις πλευρές (λ ＝ 2), το εμβαδόν <strong>τετραπλασιάζεται</strong> (2 · 2 ＝ 4)!
                   </div>
                 </div>
               </div>
@@ -255,7 +255,7 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
               Διαδραστική Μεγέθυνση &amp; Σμίκρυνση Ορθογωνίου (SVG)
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Επίλεξε συντελεστή μεγέθυνσης $\lambda$ και δες πώς αλλάζουν οι πλευρές, η περίμετρος και το εμβαδόν σε σύγκριση με το αρχικό σχήμα:
+              Επίλεξε συντελεστή μεταβολής και δες πώς αλλάζουν οι πλευρές, η περίμετρος και το εμβαδόν σε σύγκριση με το αρχικό σχήμα:
             </p>
           </div>
 
@@ -265,9 +265,9 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΣΥΝΤΕΛΕΣΤΗΣ ΜΕΤΑΒΟΛΗΣ ($\lambda$):</span>
+                  <span>ΣΥΝΤΕΛΕΣΤΗΣ ΜΕΤΑΒΟΛΗΣ (λ):</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
-                    {formatNum(scaleFactor)} $\times$
+                    {formatNum(scaleFactor)} ×
                   </span>
                 </div>
                 <input
@@ -280,10 +280,10 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
                   className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
-                  <span>0,5$\times$ (Σμίκρυνση)</span>
-                  <span>1$\times$ (Ίσο)</span>
-                  <span>2$\times$</span>
-                  <span>3$\times$ (Μεγέθυνση)</span>
+                  <span>0,5× (Σμίκρυνση)</span>
+                  <span>1× (Ίσο)</span>
+                  <span>2×</span>
+                  <span>3× (Μεγέθυνση)</span>
                 </div>
               </div>
 
@@ -293,32 +293,32 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
                   <thead>
                     <tr className="border-b border-slate-200 text-slate-500 font-bold">
                       <th className="py-2 px-3">Μέγεθος</th>
-                      <th className="py-2 px-3">Αρχικό ($1\times$)</th>
-                      <th className="py-2 px-3 text-indigo-700 font-black">Νέο ({formatNum(scaleFactor)}$\times$)</th>
+                      <th className="py-2 px-3">Αρχικό (1×)</th>
+                      <th className="py-2 px-3 text-indigo-700 font-black">Νέο ({formatNum(scaleFactor)}×)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/60 font-mono">
                     <tr>
                       <td className="py-2 px-3 font-sans font-semibold text-slate-700">Διαστάσεις</td>
-                      <td className="py-2 px-3 text-slate-600">{formatNum(baseW)} $\times$ {formatNum(baseH)} cm</td>
-                      <td className="py-2 px-3 font-bold text-indigo-700">{formatNum(scaledW)} $\times$ {formatNum(scaledH)} cm</td>
+                      <td className="py-2 px-3 text-slate-600">{formatNum(baseW)} × {formatNum(baseH)} cm</td>
+                      <td className="py-2 px-3 font-bold text-indigo-700">{formatNum(scaledW)} × {formatNum(scaledH)} cm</td>
                     </tr>
                     <tr>
                       <td className="py-2 px-3 font-sans font-semibold text-slate-700">Περίμετρος</td>
                       <td className="py-2 px-3 text-slate-600">{formatNum(basePerim)} cm</td>
-                      <td className="py-2 px-3 font-bold text-sky-700">{formatNum(scaledPerim)} cm ($\cdot {formatNum(scaleFactor)}$)</td>
+                      <td className="py-2 px-3 font-bold text-sky-700">{formatNum(scaledPerim)} cm (· {formatNum(scaleFactor)})</td>
                     </tr>
                     <tr>
                       <td className="py-2 px-3 font-sans font-semibold text-slate-700">Εμβαδόν</td>
                       <td className="py-2 px-3 text-slate-600">{formatNum(baseArea)} cm²</td>
-                      <td className="py-2 px-3 font-black text-emerald-700">{formatNum(scaledArea)} cm² ($\cdot {formatNum(scaleFactor * scaleFactor)}$)</td>
+                      <td className="py-2 px-3 font-black text-emerald-700">{formatNum(scaledArea)} cm² (· {formatNum(scaleFactor * scaleFactor)})</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs text-indigo-950 font-medium">
-                💡 Παρατήρησε: Για $\lambda ＝ {formatNum(scaleFactor)}$, η περίμετρος έγινε {formatNum(scaleFactor)} φορές μεγαλύτερη, 
+                💡 Παρατήρησε: Για λ ＝ {formatNum(scaleFactor)}, η περίμετρος έγινε {formatNum(scaleFactor)} φορές μεγαλύτερη, 
                 αλλά το εμβαδόν έγινε {formatNum(scaleFactor * scaleFactor)} φορές μεγαλύτερο!
               </div>
             </div>
@@ -373,7 +373,7 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
                     {formatNum(scaledH)} cm
                   </text>
                   <text x={Math.min(scaledW * 12, 90)} y={Math.min(scaledH * 12, 90) + 4} fill="#ffffff" fontSize="13" fontWeight="black" textAnchor="middle">
-                    Νέο ({formatNum(scaleFactor)}$\times$)
+                    Νέο ({formatNum(scaleFactor)}×)
                   </text>
                   <text x={Math.min(scaledW * 12, 90)} y={Math.min(scaledH * 24, 180) + 22} fill="#34d399" fontSize="12" fontWeight="black" textAnchor="middle">
                     Ε ＝ {formatNum(scaledArea)} cm²
@@ -457,7 +457,7 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
                 {formatNum(realKm)} km
               </div>
               <div className="space-y-1 text-xs text-slate-700 font-mono text-left bg-white p-3.5 rounded-2xl border border-emerald-200/60">
-                <div>• <strong>Σε εκατοστά:</strong> {formatNum(mapDistanceCm)} cm $\cdot$ {formatNum(mapScaleDenominator)} ＝ {formatNum(mapDistanceCm * mapScaleDenominator)} cm</div>
+                <div>• <strong>Σε εκατοστά:</strong> {formatNum(mapDistanceCm)} cm · {formatNum(mapScaleDenominator)} ＝ {formatNum(mapDistanceCm * mapScaleDenominator)} cm</div>
                 <div>• <strong>Σε μέτρα:</strong> {formatNum(mapDistanceCm * mapScaleDenominator)} : 100 ＝ {formatNum(realMeters)} m</div>
                 <div>• <strong>Σε χιλιόμετρα:</strong> {formatNum(realMeters)} : 1.000 ＝ <strong>{formatNum(realKm)} km</strong></div>
               </div>
@@ -515,14 +515,14 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                   <span className="text-slate-500 font-sans block text-xs font-bold">Βήματα Επίλυσης:</span>
-                  <div>• <strong>Πραγματικό μήκος:</strong> 8 cm $\cdot$ 50 ＝ 400 cm ＝ <strong>4 m</strong>.</div>
-                  <div>• <strong>Πραγματικό πλάτος:</strong> 6 cm $\cdot$ 50 ＝ 300 cm ＝ <strong>3 m</strong>.</div>
-                  <div>• <strong>Πραγματικό εμβαδόν:</strong> 4 m $\cdot$ 3 m ＝ <strong className="text-blue-700">12 m²</strong>.</div>
+                  <div>• <strong>Πραγματικό μήκος:</strong> 8 cm · 50 ＝ 400 cm ＝ <strong>4 m</strong>.</div>
+                  <div>• <strong>Πραγματικό πλάτος:</strong> 6 cm · 50 ＝ 300 cm ＝ <strong>3 m</strong>.</div>
+                  <div>• <strong>Πραγματικό εμβαδόν:</strong> 4 m · 3 m ＝ <strong className="text-blue-700">12 m²</strong>.</div>
                 </div>
               </div>
 
               <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-950 font-medium">
-                💡 Στο σχέδιο το εμβαδόν ήταν 8 $\cdot$ 6 ＝ 48 cm². Στην πραγματικότητα είναι 12 m² (δηλαδή 120.000 cm²)!
+                💡 Στο σχέδιο το εμβαδόν ήταν 8 · 6 ＝ 48 cm². Στην πραγματικότητα είναι 12 m² (δηλαδή 120.000 cm²)!
               </div>
             </article>
 
@@ -562,7 +562,7 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                   <span className="text-slate-500 font-sans block text-xs font-bold">Βήματα Επίλυσης:</span>
-                  <div>• <strong>Πραγματική απόσταση σε cm:</strong> 6,5 $\cdot$ 1.000.000 ＝ 6.500.000 cm.</div>
+                  <div>• <strong>Πραγματική απόσταση σε cm:</strong> 6,5 · 1.000.000 ＝ 6.500.000 cm.</div>
                   <div>• <strong>Μετατροπή σε m:</strong> 6.500.000 : 100 ＝ 65.000 m.</div>
                   <div>• <strong>Μετατροπή σε km:</strong> 65.000 : 1.000 ＝ <strong className="text-amber-700">65 km</strong>.</div>
                 </div>
@@ -589,7 +589,7 @@ export default function MegethinsiSmikrinsiTheoriaPage() {
                   <strong>Οι γωνίες δεν αλλάζουν ποτέ:</strong> Όταν ένα σχήμα μεγεθύνεται ή σμικρύνεται, οι γωνίες του παραμένουν <em>ακριβώς ίδιες</em>. Αν έχουμε ένα τρίγωνο με γωνίες 30°, 60°, 90°, η μεγέθυνσή του θα έχει πάλι γωνίες 30°, 60°, 90°!
                 </li>
                 <li>
-                  <strong>Μην μπερδεύετε τη μεταβολή πλευράς με τη μεταβολή εμβαδού:</strong> Αν τριπλασιάσουμε τις πλευρές ενός τετραγώνου ($\lambda ＝ 3$), η περίμετρος τριπλασιάζεται, αλλά το εμβαδόν γίνεται $3 \cdot 3 ＝ \mathbf{9}$ φορές μεγαλύτερο!
+                  <strong>Μην μπερδεύετε τη μεταβολή πλευράς με τη μεταβολή εμβαδού:</strong> Αν τριπλασιάσουμε τις πλευρές ενός τετραγώνου (λ ＝ 3), η περίμετρος τριπλασιάζεται, αλλά το εμβαδόν γίνεται 3 · 3 ＝ <strong>9</strong> φορές μεγαλύτερο!
                 </li>
                 <li>
                   <strong>Ίδιες μονάδες μέτρησης στην κλίμακα:</strong> Πριν υπολογίσετε την κλίμακα ως λόγο, πρέπει να μετατρέψετε και τα δύο μήκη στην ίδια μονάδα (συνήθως σε εκατοστά cm).
