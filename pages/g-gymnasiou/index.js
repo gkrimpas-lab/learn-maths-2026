@@ -4,11 +4,11 @@ import Layout from '../../components/Layout';
 
 const CHAPTERS = [
   {
-    id: '01',
-    slug: '01-dinami-riton-ekth-akeraio',
-    title: 'Δυνάμεις ρητών με εκθέτη ακέραιο',
-    desc: 'Δυνάμεις ρητών με εκθέτη ακέραιο, Ιδιότητες δυνάμεων, ρητοί αριθμοί, δύναμη.',
-    badge: 'ΚΕΦΑΛΑΙΟ 1',
+    id: '10',
+    slug: '10-mononima-polionima',
+    title: 'Μονώνυμα - Πολυώνυμα',
+    desc: 'Μονώνυμα, πρόσθεση, αφαίρεση, πολλαπλασιασμός διαίρεση μονωνύμων.',
+    badge: 'ΚΕΦΑΛΑΙΟ 10',
     active: true,
   },
   
