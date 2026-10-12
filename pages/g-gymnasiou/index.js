@@ -11,6 +11,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 10',
     active: true,
   },
+  {
+    id: '11',
+    slug: '11-prosthesi-afairesi-polionimon',
+    title: 'Πρόσθεση Αφαίρεση Πολυώνυμων',
+    desc: 'Πρόσθεση - αφαίρεση πολυωνύμων.',
+    badge: 'ΚΕΦΑΛΑΙΟ 11',
+    active: true,
+  },
   
 ];
 
