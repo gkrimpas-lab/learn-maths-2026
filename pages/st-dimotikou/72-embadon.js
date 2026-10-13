@@ -34,15 +34,6 @@ export default function EmbadonTheoriaPage() {
     mm2: 0.000001
   };
 
-  const unitLabels = {
-    km2: 'τετραγωνικά χιλιόμετρα (km²)',
-    stremma: 'στρέμματα',
-    m2: 'τετραγωνικά μέτρα (m²)',
-    dm2: 'τετραγωνικά δεκατόμετρα (dm²)',
-    cm2: 'τετραγωνικά εκατοστόμετρα (cm²)',
-    mm2: 'τετραγωνικά χιλιοστόμετρα (mm²)'
-  };
-
   const convertedValues = useMemo(() => {
     const val = Number(inputValue) || 0;
     const valInM2 = val * unitFactorsToM2[fromUnit];
@@ -169,18 +160,18 @@ export default function EmbadonTheoriaPage() {
                   Γιατί Αλλάζουν ανά 100;
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Στο μήκος έχουμε: $1\text{ m} ＝ 10\text{ dm}$. Στην επιφάνεια όμως έχουμε δύο διαστάσεις (μήκος $\cdot$ πλάτος):
+                  Στο μήκος έχουμε: 1 m ＝ 10 dm. Στην επιφάνεια όμως έχουμε δύο διαστάσεις (μήκος · πλάτος):
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 font-mono">
                   <div className="text-amber-950 font-bold text-center">
-                    $1\text{ m}^2 ＝ 10\text{ dm} \cdot 10\text{ dm} ＝ \mathbf{100\text{ dm}^2}$!
+                    1 m² ＝ 10 dm · 10 dm ＝ <strong>100 dm²</strong>!
                   </div>
                   <div className="text-amber-950 font-bold text-center">
-                    $1\text{ dm}^2 ＝ 10\text{ cm} \cdot 10\text{ cm} ＝ \mathbf{100\text{ cm}^2}$!
+                    1 dm² ＝ 10 cm · 10 cm ＝ <strong>100 cm²</strong>!
                   </div>
                   <div className="text-amber-950 font-bold text-center">
-                    $1\text{ cm}^2 ＝ 10\text{ mm} \cdot 10\text{ mm} ＝ \mathbf{100\text{ mm}^2}$!
+                    1 cm² ＝ 10 mm · 10 mm ＝ <strong>100 mm²</strong>!
                   </div>
                   <p className="text-[11px] text-slate-600 font-sans pt-1">
                     Κάθε σκαλοπάτι στην επιφάνεια δεν έχει σχέση 10, αλλά <strong>10 · 10 ＝ 100</strong>!
@@ -217,13 +208,13 @@ export default function EmbadonTheoriaPage() {
                     • 1 km² ＝ 1.000.000 m² ＝ 1.000 Στρέμματα
                   </div>
                   <p className="text-[11px] text-slate-600 font-sans">
-                    Ένα χωράφι $5.000\text{ m}^2$ είναι ακριβώς $5.000 : 1.000 ＝ 5\text{ στρέμματα}$.
+                    Ένα χωράφι 5.000 m² είναι ακριβώς 5.000 : 1.000 ＝ 5 στρέμματα.
                   </p>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                🎯 Θυμήσου: $1\text{ km} ＝ 1.000\text{ m}$, άρα $1\text{ km}^2 ＝ 1.000 \cdot 1.000 ＝ 1.000.000\text{ m}^2$!
+                🎯 Θυμήσου: 1 km ＝ 1.000 m, άρα 1 km² ＝ 1.000 · 1.000 ＝ 1.000.000 m²!
               </div>
             </article>
 
@@ -245,19 +236,19 @@ export default function EmbadonTheoriaPage() {
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
                   <div>
-                    • <strong>Από μεγαλύτερη σε μικρότερη (κατεβαίνω):</strong> Πολλαπλασιάζω $\cdot 100$ για κάθε σκαλοπάτι.
+                    • <strong>Από μεγαλύτερη σε μικρότερη (κατεβαίνω):</strong> Πολλαπλασιάζω · 100 για κάθε σκαλοπάτι.
                   </div>
                   <div>
-                    • <strong>Από μικρότερη σε μεγαλύτερη (ανεβαίνω):</strong> Διαιρώ $: 100$ για κάθε σκαλοπάτι.
+                    • <strong>Από μικρότερη σε μεγαλύτερη (ανεβαίνω):</strong> Διαιρώ : 100 για κάθε σκαλοπάτι.
                   </div>
                   <div className="text-emerald-950 font-mono text-[11px] pt-1 border-t border-slate-200">
-                    Παράδειγμα: $3\text{ m}^2 ＝ 3 \cdot 100 ＝ 300\text{ dm}^2 ＝ 30.000\text{ cm}^2$.
+                    Παράδειγμα: 3 m² ＝ 3 · 100 ＝ 300 dm² ＝ 30.000 cm².
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🚀 Για 2 σκαλοπάτια (π.χ. από $\text{m}^2$ σε $\text{cm}^2$) πολλαπλασιάζουμε με το $100 \cdot 100 ＝ 10.000$!
+                🚀 Για 2 σκαλοπάτια (π.χ. από m² σε cm²) πολλαπλασιάζουμε με το 100 · 100 ＝ 10.000!
               </div>
             </article>
 
@@ -326,7 +317,7 @@ export default function EmbadonTheoriaPage() {
               </div>
 
               <div className="p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-xs text-sky-950 font-medium">
-                💡 Παρατήρησε: Όταν μετακινούμαστε από τα $\text{m}^2$ προς τα $\text{dm}^2$ και $\text{cm}^2$, ο αριθμός μεγαλώνει κατά 100 φορές για κάθε βήμα!
+                💡 Παρατήρησε: Όταν μετακινούμαστε από τα m² προς τα dm² και cm², ο αριθμός μεγαλώνει κατά 100 φορές για κάθε βήμα!
               </div>
             </div>
 
@@ -375,7 +366,7 @@ export default function EmbadonTheoriaPage() {
               Γιατί 1 m² ＝ 100 dm²; (Οπτική Απόδειξη)
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Φαντάσου το μεγάλο τετράγωνο ως $1\text{ m}^2$ (πλευρά $1\text{ m} ＝ 10\text{ dm}$). Χωρίζεται σε $10 \times 10 ＝ 100$ μικρά τετραγωνάκια των $1\text{ dm}^2$:
+              Φαντάσου το μεγάλο τετράγωνο ως 1 m² (πλευρά 1 m ＝ 10 dm). Χωρίζεται σε 10 · 10 ＝ 100 μικρά τετραγωνάκια των 1 dm²:
             </p>
           </div>
 
@@ -414,7 +405,7 @@ export default function EmbadonTheoriaPage() {
                   {highlightedBlocks} dm² ＝ {formatNum(highlightedBlocks / 100)} m²
                 </div>
                 <p className="text-slate-600 text-[11px] pt-1 border-t border-emerald-200">
-                  Κάθε τετραγωνάκι είναι το $1/100$ του μεγάλου τετραγώνου ($0,01\text{ m}^2$).
+                  Κάθε τετραγωνάκι είναι το 1/100 του μεγάλου τετραγώνου (0,01 m²).
                 </p>
               </div>
             </div>
@@ -556,7 +547,7 @@ export default function EmbadonTheoriaPage() {
               </div>
 
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 font-medium">
-                ⚡ Για να μετατρέψουμε από $\text{m}^2$ σε στρέμματα, διαιρούμε πάντοτε με το 1.000.
+                ⚡ Για να μετατρέψουμε από m² σε στρέμματα, διαιρούμε πάντοτε με το 1.000.
               </div>
             </article>
 
@@ -573,16 +564,16 @@ export default function EmbadonTheoriaPage() {
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed list-disc list-inside">
                 <li>
-                  <strong>Μην μπερδεύετε το 10 με το 100:</strong> Στο μήκος $1\text{ m} ＝ 10\text{ dm}$, αλλά στην επιφάνεια $1\text{ m}^2 ＝ 100\text{ dm}^2$! Για κάθε σκαλοπάτι που ανεβαίνουμε ή κατεβαίνουμε στην επιφάνεια, πολλαπλασιάζουμε ή διαιρούμε με το <strong>100</strong>.
+                  <strong>Μην μπερδεύετε το 10 με το 100:</strong> Στο μήκος 1 m ＝ 10 dm, αλλά στην επιφάνεια 1 m² ＝ 100 dm²! Για κάθε σκαλοπάτι που ανεβαίνουμε ή κατεβαίνουμε στην επιφάνεια, πολλαπλασιάζουμε ή διαιρούμε με το <strong>100</strong>.
                 </li>
                 <li>
-                  <strong>Δύο σκαλοπάτια σημαίνουν $\cdot 10.000$ και όχι $\cdot 200$:</strong> Από $\text{m}^2$ σε $\text{cm}^2$ κατεβαίνουμε 2 σκαλοπάτια ($\cdot 100 \cdot 100 ＝ \cdot 10.000$).
+                  <strong>Δύο σκαλοπάτια σημαίνουν · 10.000 και όχι · 200:</strong> Από m² σε cm² κατεβαίνουμε 2 σκαλοπάτια (· 100 · 100 ＝ · 10.000).
                 </li>
                 <li>
                   <strong>Μην μπερδεύετε την περίμετρο με το εμβαδόν:</strong> Η περίμετρος μετριέται σε απλά μέτρα (m) και είναι το μήκος του φράχτη. Το εμβαδόν μετριέται σε τετραγωνικά μέτρα (m²) και είναι η επιφάνεια του οικοπέδου.
                 </li>
                 <li>
-                  <strong>Το στρέμμα δεν είναι $100\text{ m}^2$:</strong> Το 1 στρέμμα ισούται με ακριβώς <strong>1.000 m²</strong>.
+                  <strong>Το στρέμμα δεν είναι 100 m²:</strong> Το 1 στρέμμα ισούται με ακριβώς <strong>1.000 m²</strong>.
                 </li>
               </ul>
             </div>
