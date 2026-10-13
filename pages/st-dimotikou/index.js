@@ -75,7 +75,8 @@ export default function STDimotikouMenu() {
     { id: '68-gonies', label: '🥧 68. Γωνίες', href: '/st-dimotikou/68-gonies' },
     { id: '69-athroisma-gonion', label: '🥧 69. Άθροισμα Γωνιών Τριγώνου - Τετραπλεύρου', href: '/st-dimotikou/69-athroisma-gonion' },
     { id: '70-megethinsi-smikrinsi', label: '🥧 70. Κλίμακα - Μεγέθυνση - Σμίκρυνση σχημάτων', href: '/st-dimotikou/70-megethinsi-smikrinsi' },
-    { id: '71-simmetria', label: '🥧 71. Αξονική Συμμετρία', href: '/st-dimotikou/71-simmetria' }
+    { id: '71-simmetria', label: '🥧 71. Αξονική Συμμετρία', href: '/st-dimotikou/71-simmetria' },
+    { id: '72-embadon', label: '🥧 72. Μέτρηση Επιφανειών - Εμβαδόν', href: '/st-dimotikou/72-embadon' }
 ];
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
