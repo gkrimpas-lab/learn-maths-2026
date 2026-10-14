@@ -20,21 +20,23 @@ function formatNum(val) {
 }
 
 export default function EmbadonParallilogrammouTheoriaPage() {
-  // Εργαστήριο 1: Οπτικός Μετασχηματισμός Παραλληλογράμμου σε Ορθογώνιο
-  // slider 0 (παραλληλόγραμμο) έως 100 (πλήρες ορθογώνιο)
-  const [cutProgress, setCutProgress] = useState(0);
+  // Εργαστήριο 1: Διαδραστική Μετακίνηση Τριγώνου & Ρύθμιση Κλίσης
+  const [cutProgress, setCutProgress] = useState(0); // 0% (πλάγιο) έως 100% (ορθογώνιο)
+  const [slantWidth, setSlantWidth] = useState(55); // Κλίση σε pixels (20px έως 90px)
 
   // Σταθερές διαστάσεις εργαστηρίου 1 (SVG)
-  const baseLen = 140; // Βάση β = 140px
-  const heightLen = 80; // Ύψος υ = 80px
-  const slantOffset = 45; // Πλάγια κλίση = 45px
-  const originX = 60;
-  const originY = 50;
+  const baseW = 160; // Βάση β = 160px
+  const heightH = 90; // Κάθετο ύψος υ = 90px
+  const originX = 65;
+  const originY = 55;
 
-  // Υπολογισμός μετατόπισης του αποκομμένου τριγώνου:
-  // Στο 0% βρίσκεται στη θέση του (dx = 0).
-  // Στο 100% έχει μετακινηθεί κατά baseLen στα δεξιά (dx = baseLen).
-  const triangleShiftX = (cutProgress / 100) * baseLen;
+  // Μήκος πλάγιας πλευράς (Πυθαγόρειο)
+  const slantSideLen = useMemo(() => {
+    return Math.sqrt(slantWidth * slantWidth + heightH * heightH);
+  }, [slantWidth, heightH]);
+
+  // Ολίσθηση του αποκομμένου τριγώνου κατά μήκος της βάσης baseW
+  const shiftX = (cutProgress / 100) * baseW;
 
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδού & Μετατροπέας Μονάδων
   const [calcBase, setCalcBase] = useState(8); // σε cm
@@ -74,7 +76,7 @@ export default function EmbadonParallilogrammouTheoriaPage() {
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               Ανακαλύπτουμε πώς υπολογίζεται το εμβαδόν οποιουδήποτε παραλληλογράμμου με τον τύπο <strong>Ε ＝ β · υ</strong>, 
-              βλέπουμε ζωντανά γιατί ένα παραλληλόγραμμο ισοδυναμεί ακριβώς με ένα <strong>ορθογώνιο</strong>, 
+              βλέπουμε ζωντανά γιατί ένα πλάγιο παραλληλόγραμμο ισοδυναμεί ακριβώς με ένα <strong>ορθογώνιο</strong>, 
               και εξασκούμαστε στις μετατροπές ανάμεσα στις μονάδες μέτρησης επιφάνειας (<strong>m², dm², cm², mm²</strong>).
             </p>
           </div>
@@ -155,18 +157,18 @@ export default function EmbadonParallilogrammouTheoriaPage() {
                   Γιατί Ισχύει ο Τύπος Ε ＝ β · υ;
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αν φέρουμε το ύψος από την αριστερή κορυφή, σχηματίζεται ένα ορθογώνιο τρίγωνο:
+                  Αν φέρουμε το ύψος από την πάνω αριστερή κορυφή, σχηματίζεται ένα ορθογώνιο τρίγωνο:
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
                   <div>
-                    1. «Κόβουμε» νοερά αυτό το τρίγωνο από την αριστερή πλευρά.
+                    1. «Κόβουμε» νοερά αυτό το τρίγωνο που εξέχει στα αριστερά.
                   </div>
                   <div>
-                    2. Το μετακινούμε και το «κολλάμε» στη δεξιά πλευρά.
+                    2. Το μετακινούμε και το «κολλάμε» στο κενό της δεξιάς πλευράς.
                   </div>
                   <div className="text-amber-950 font-bold pt-1 border-t border-slate-200">
-                    Το αρχικό παραλληλόγραμμο μετατράπηκε ακριβώς σε ένα <strong>ορθογώνιο</strong> με μήκος ίσο με τη βάση (β) και πλάτος ίσο με το ύψος (υ)!
+                    Το πλάγιο παραλληλόγραμμο μετατρέπεται ακριβώς σε ένα <strong>ορθογώνιο</strong> με μήκος ίσο με τη βάση (β) και πλάτος ίσο με το ύψος (υ)!
                   </div>
                 </div>
               </div>
@@ -245,27 +247,28 @@ export default function EmbadonParallilogrammouTheoriaPage() {
           </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΟΠΤΙΚΗ ΜΕΤΑΤΡΟΠΗ ΣΕ ΟΡΘΟΓΩΝΙΟ (SVG) */}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΠΡΑΓΜΑΤΙΚΟ ΠΛΑΓΙΟ ΠΑΡΑΛΛΗΛΟΓΡΑΜΜΟ & ΚΛΙΣΗ (SVG) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
               <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πώς το Παραλληλόγραμμο Γίνεται Ορθογώνιο; (SVG)
+              Πώς το Πλάγιο Παραλληλόγραμμο Μετατρέπεται σε Ορθογώνιο;
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρε την μπάρα για να «κόψεις» το αριστερό τρίγωνο και να το μετακινήσεις στα δεξιά. Παρατήρησε πώς το παραλληλόγραμμο γίνεται ένα τέλειο ορθογώνιο:
+              Άλλαξε την κλίση του παραλληλογράμμου και σύρε την μπάρα αναδίπλωσης για να δεις πώς το αριστερό ορθογώνιο τρίγωνο κουμπώνει τέλεια στα δεξιά:
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
 
-            {/* Χειριστήρια & Επεξήγηση (5 στήλες) */}
+            {/* Sliders: Μετακίνηση & Κλίση (5 στήλες) */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+              {/* Slider 1: Μετακίνηση Τριγώνου */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΜΕΤΑΚΙΝΗΣΗ ΤΡΙΓΩΝΟΥ:</span>
+                  <span>1. ΜΕΤΑΚΙΝΗΣΗ ΤΡΙΓΩΝΟΥ:</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
                     {cutProgress}%
                   </span>
@@ -280,114 +283,161 @@ export default function EmbadonParallilogrammouTheoriaPage() {
                   className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
-                  <span>0% (Παραλληλόγραμμο)</span>
-                  <span>50% (Μετακίνηση)</span>
+                  <span>0% (Πλάγιο)</span>
+                  <span>50% (Ολίσθηση)</span>
                   <span>100% (Ορθογώνιο)</span>
+                </div>
+              </div>
+
+              {/* Slider 2: Κλίση Παραλληλογράμμου */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
+                  <span>2. ΚΛΙΣΗ ΠΑΡΑΛΛΗΛΟΓΡΑΜΜΟΥ:</span>
+                  <span className="font-mono text-base font-black text-sky-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
+                    {slantWidth} px
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={20}
+                  max={85}
+                  step={1}
+                  value={slantWidth}
+                  onChange={(e) => setSlantWidth(Number(e.target.value))}
+                  className="w-full accent-sky-600 cursor-pointer touch-manipulation"
+                />
+                <div className="flex justify-between text-[11px] font-mono text-slate-400">
+                  <span>Μικρή κλίση</span>
+                  <span>Μεσαία</span>
+                  <span>Έντονη κλίση</span>
                 </div>
               </div>
 
               {/* Κάρτα Επεξήγησης */}
               <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs sm:text-sm">
                 <div className="font-bold text-sky-950">
-                  {cutProgress === 0 && '🔷 Αρχικό Σχήμα: Παραλληλόγραμμο με βάση β και ύψος υ.'}
-                  {cutProgress > 0 && cutProgress < 100 && '🔄 Το τρίγωνο αποκόπτεται και ολισθαίνει προς τα δεξιά...'}
-                  {cutProgress === 100 && '🟩 Τελικό Σχήμα: Τέλειο ορθογώνιο με μήκος β και πλάτος υ!'}
+                  {cutProgress === 0 && '🔷 Πλάγιο Παραλληλόγραμμο: Βάση (β) και κάθετο ύψος (υ).'}
+                  {cutProgress > 0 && cutProgress < 100 && '🔄 Το αριστερό τρίγωνο αποκόπτεται και ολισθαίνει κατά μήκος της βάσης...'}
+                  {cutProgress === 100 && '🟩 Τέλειο Ορθογώνιο: Μήκος ίσο με τη βάση (β) και πλάτος ίσο με το ύψος (υ)!'}
                 </div>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
-                  Η επιφάνεια δεν άλλαξε καθόλου κατά τη μετακίνηση. Επομένως, το εμβαδόν του παραλληλογράμμου ισούται ακριβώς με το εμβαδόν του ορθογωνίου: <strong>Ε ＝ β · υ</strong>!
-                </p>
+                <div className="text-slate-600 text-[11px] space-y-1 font-mono pt-1 border-t border-sky-200/60">
+                  <div>• <strong>Κάθετο Ύψος (υ):</strong> Σταθερό {heightH} px (ορθή γωνία 90°)</div>
+                  <div>• <strong>Πλάγια Πλευρά:</strong> {Math.round(slantSideLen)} px (μεγαλύτερη από το ύψος!)</div>
+                </div>
               </div>
             </div>
 
             {/* SVG Visualizer (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-900 min-h-[300px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+            <div className="lg:col-span-7 bg-slate-900 min-h-[340px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 320 180"
-                className="w-full max-w-[320px] sm:max-w-[400px] h-auto select-none overflow-visible"
+                viewBox="0 0 380 220"
+                className="w-full max-w-[380px] sm:max-w-[440px] h-auto select-none overflow-visible"
               >
-                {/* 1. Σταθερό κεντρικό τραπέζιο του παραλληλογράμμου */}
+                {/* 1. Σταθερό τμήμα του παραλληλογράμμου (γαλάζιο τραπέζιο) */}
                 <polygon
                   points={`
-                    ${originX + slantOffset},${originY} 
-                    ${originX + baseLen},${originY} 
-                    ${originX + baseLen},${originY + heightLen} 
-                    ${originX + slantOffset},${originY + heightLen}
+                    ${originX + slantWidth},${originY} 
+                    ${originX + slantWidth + baseW},${originY} 
+                    ${originX + baseW},${originY + heightH} 
+                    ${originX + slantWidth},${originY + heightH}
                   `}
                   fill="rgba(56, 189, 248, 0.25)"
                   stroke="#38bdf8"
                   strokeWidth="2.5"
                 />
 
-                {/* 2. Κινούμενο αριστερό τρίγωνο */}
+                {/* 2. Κινούμενο ορθογώνιο τρίγωνο (μωβ):
+                    Αρχική θέση: από originX έως originX + slantWidth
+                    Τελική θέση: από originX + baseW έως originX + slantWidth + baseW */}
                 <polygon
                   points={`
-                    ${originX + triangleShiftX},${originY + heightLen} 
-                    ${originX + slantOffset + triangleShiftX},${originY + heightLen} 
-                    ${originX + slantOffset + triangleShiftX},${originY}
+                    ${originX + shiftX},${originY + heightH} 
+                    ${originX + slantWidth + shiftX},${originY + heightH} 
+                    ${originX + slantWidth + shiftX},${originY}
                   `}
-                  fill={cutProgress === 100 ? 'rgba(52, 211, 153, 0.35)' : 'rgba(168, 85, 247, 0.35)'}
+                  fill={cutProgress === 100 ? 'rgba(52, 211, 153, 0.4)' : 'rgba(168, 85, 247, 0.35)'}
                   stroke={cutProgress === 100 ? '#34d399' : '#c084fc'}
                   strokeWidth="2.5"
                   strokeDasharray={cutProgress > 0 && cutProgress < 100 ? '4 3' : 'none'}
                 />
 
-                {/* 3. Κατακόρυφη διακεκομμένη γραμμή ύψους (υ) */}
+                {/* 3. Κατακόρυφο Ύψος (υ) - Κίτρινη διακεκομμένη γραμμή */}
                 <line
-                  x1={originX + slantOffset}
+                  x1={originX + slantWidth}
                   y1={originY}
-                  x2={originX + slantOffset}
-                  y2={originY + heightLen}
+                  x2={originX + slantWidth}
+                  y2={originY + heightH}
                   stroke="#f59e0b"
                   strokeWidth="2"
                   strokeDasharray="4 3"
                 />
 
-                {/* Σύμβολο ορθής γωνίας για το ύψος */}
+                {/* Σύμβολο ορθής γωνίας (90°) */}
                 <rect
-                  x={originX + slantOffset}
-                  y={originY + heightLen - 10}
-                  width="10"
-                  height="10"
+                  x={originX + slantWidth}
+                  y={originY + heightH - 12}
+                  width="12"
+                  height="12"
                   fill="none"
                   stroke="#f59e0b"
                   strokeWidth="1.5"
                 />
+                <circle
+                  cx={originX + slantWidth + 6}
+                  cy={originY + heightH - 6}
+                  r="1.5"
+                  fill="#f59e0b"
+                />
 
                 {/* Ετικέτα Ύψους (υ) */}
                 <text
-                  x={originX + slantOffset - 12}
-                  y={originY + heightLen / 2 + 4}
+                  x={originX + slantWidth - 8}
+                  y={originY + heightH / 2 + 4}
                   fill="#f59e0b"
-                  fontSize="12"
-                  fontWeight="bold"
+                  fontSize="13"
+                  fontWeight="black"
                   textAnchor="end"
                 >
                   υ
                 </text>
 
-                {/* Ετικέτα Βάσης (β) */}
+                {/* Ετικέτα Πλάγιας Πλευράς */}
+                {cutProgress === 0 && (
+                  <text
+                    x={originX + slantWidth / 2 - 14}
+                    y={originY + heightH / 2}
+                    fill="#a855f7"
+                    fontSize="11"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                  >
+                    πλάγια πλευρά
+                  </text>
+                )}
+
+                {/* Ετικέτα Βάσης (β) στο κάτω μέρος */}
                 <line
-                  x1={originX}
-                  y1={originY + heightLen + 18}
-                  x2={originX + baseLen}
-                  y2={originY + heightLen + 18}
-                  stroke="#94a3b8"
+                  x1={originX + (cutProgress === 100 ? slantWidth : 0)}
+                  y1={originY + heightH + 20}
+                  x2={originX + baseW + (cutProgress === 100 ? slantWidth : 0)}
+                  y2={originY + heightH + 20}
+                  stroke="#e2e8f0"
                   strokeWidth="1.5"
                 />
                 <text
-                  x={originX + baseLen / 2}
-                  y={originY + heightLen + 32}
-                  fill="#e2e8f0"
-                  fontSize="12"
-                  fontWeight="bold"
+                  x={originX + baseW / 2 + (cutProgress === 100 ? slantWidth : 0)}
+                  y={originY + heightH + 36}
+                  fill="#ffffff"
+                  fontSize="13"
+                  fontWeight="black"
                   textAnchor="middle"
                 >
-                  Βάση (β)
+                  Βάση (β) ＝ {baseW} px
                 </text>
               </svg>
 
-              <div className="mt-2 text-center text-xs text-slate-400">
-                Το μωβ τρίγωνο αποκόπτεται από αριστερά και συμπληρώνει ακριβώς το ορθογώνιο στα δεξιά.
+              <div className="mt-3 text-center text-xs text-slate-400">
+                Το τρίγωνο που περισσεύει αριστερά μεταφέρεται ακριβώς δεξιά και μετατρέπει το παραλληλόγραμμο σε ορθογώνιο με εμβαδόν <strong>β · υ</strong>.
               </div>
             </div>
 
