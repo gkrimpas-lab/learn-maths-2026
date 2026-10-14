@@ -26,13 +26,13 @@ export default function EmbadonKiklouTheoriaPage() {
   // Slider προόδου: 0% (κλειστός κύκλος) έως 100% (ορθογώνιο παραλληλόγραμμο)
   const [unfoldProgress, setUnfoldProgress] = useState(0);
 
-  const radiusR = 60; // Ακτίνα α = 60px
+  const radiusR = 60; // Ακτίνα ρ = 60px
   const sectorW = (Math.PI * radiusR) / 4; // Πλάτος βάσης κάθε τομέα
 
   // -------------------------------------------------------------------------
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδού & Περιφέρειας
   // -------------------------------------------------------------------------
-  const [radiusInput, setRadiusInput] = useState(5); // Ακτίνα σε cm
+  const [radiusInput, setRadiusInput] = useState(5); // Ακτίνα ρ σε cm
   const piVal = 3.14;
 
   const diameter = useMemo(() => radiusInput * 2, [radiusInput]);
@@ -45,7 +45,7 @@ export default function EmbadonKiklouTheoriaPage() {
   return (
     <Layout
       title="Εμβαδόν Κύκλου &amp; Μονάδες Μέτρησης - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Μαθαίνουμε πώς υπολογίζουμε το εμβαδόν κύκλου Ε ＝ π · α², την απόδειξη με αναδιάταξη τομέων σε ορθογώνιο και τις μετατροπές μονάδων επιφάνειας."
+      description="Μαθαίνουμε πώς υπολογίζουμε το εμβαδόν κύκλου Ε ＝ π · ρ², την απόδειξη με αναδιάταξη τομέων σε ορθογώνιο και τις μετατροπές μονάδων επιφάνειας."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
       showAds={true}
@@ -67,10 +67,10 @@ export default function EmbadonKiklouTheoriaPage() {
               <span>ΚΕΦΑΛΑΙΟ 76 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Εμβαδόν Κύκλου • Ακτίνα, ο Αριθμός π &amp; Μονάδες Επιφάνειας
+              Εμβαδόν Κύκλου • Ακτίνα ρ, ο Αριθμός π &amp; Μονάδες Επιφάνειας
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Ανακαλύπτουμε πώς υπολογίζεται η επιφάνεια του κύκλου με τον τύπο <strong>Ε ＝ π · α²</strong>, 
+              Ανακαλύπτουμε πώς υπολογίζεται η επιφάνεια του κύκλου με τον τύπο <strong>Ε ＝ π · ρ²</strong>, 
               βλέπουμε ζωντανά τη διάσημη απόδειξη όπου οι κυκλικοί τομείς αναδιατάσσονται σχηματίζοντας <strong>ορθογώνιο</strong>, 
               και εξετάζουμε τη σχέση ανάμεσα στην <strong>περίμετρο</strong> και το <strong>εμβαδόν</strong>!
             </p>
@@ -117,25 +117,25 @@ export default function EmbadonKiklouTheoriaPage() {
                   Πώς Υπολογίζουμε το Εμβαδόν;
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Το εμβαδόν του κυκλικού δίσκου εξαρτάται αποκλειστικά από την <strong>ακτίνα (α)</strong> του κύκλου:
+                  Το εμβαδόν του κυκλικού δίσκου εξαρτάται αποκλειστικά από την <strong>ακτίνα (ρ)</strong> του κύκλου:
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 text-center font-mono">
                   <div className="text-indigo-900 font-black text-base sm:text-lg">
-                    Εμβαδόν ＝ π · α²
+                    Εμβαδόν ＝ π · ρ²
                   </div>
                   <div className="text-slate-700 font-bold">
-                    Ε ＝ 3,14 · α · α
+                    Ε ＝ 3,14 · ρ · ρ
                   </div>
                   <p className="text-[11px] text-slate-600 font-sans text-left pt-1">
                     • <strong>π:</strong> Ο μαθηματικός αριθμός <strong>π ≈ 3,14</strong>.<br />
-                    • <strong>α²:</strong> Το τετράγωνο της ακτίνας (<strong>α · α</strong>, δηλαδή η ακτίνα πολλαπλασιασμένη με τον εαυτό της, όχι επί 2!).
+                    • <strong>ρ²:</strong> Το τετράγωνο της ακτίνας (<strong>ρ · ρ</strong>, δηλαδή η ακτίνα πολλαπλασιασμένη με τον εαυτό της, όχι επί 2!).
                   </p>
                 </div>
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Προσοχή: α² σημαίνει <strong>α · α</strong>. Για παράδειγμα, αν α ＝ 4 cm, τότε α² ＝ 4 · 4 ＝ 16 cm² (και όχι 8 cm²)!
+                💡 Προσοχή: ρ² σημαίνει <strong>ρ · ρ</strong>. Για παράδειγμα, αν ρ ＝ 4 cm, τότε ρ² ＝ 4 · 4 ＝ 16 cm² (και όχι 8 cm²)!
               </div>
             </article>
 
@@ -149,7 +149,7 @@ export default function EmbadonKiklouTheoriaPage() {
                   <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Γεωμετρική Απόδειξη</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Γιατί Ισχύει ο Τύπος Ε ＝ π · α²;
+                  Γιατί Ισχύει ο Τύπος Ε ＝ π · ρ²;
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
                   Αν κόψουμε έναν κύκλο σε πολλούς μικρούς τομείς και τους τοποθετήσουμε εναλλάξ:
@@ -160,19 +160,19 @@ export default function EmbadonKiklouTheoriaPage() {
                     1. <strong>Σχήμα:</strong> Οι τομείς σχηματίζουν ένα ορθογώνιο παραλληλόγραμμο.
                   </div>
                   <div>
-                    2. <strong>Ύψος:</strong> Το ύψος του ορθογωνίου είναι η ακτίνα <strong>α</strong>.
+                    2. <strong>Ύψος:</strong> Το ύψος του ορθογωνίου είναι η ακτίνα <strong>ρ</strong>.
                   </div>
                   <div>
-                    3. <strong>Βάση:</strong> Η βάση του είναι το μισό της περιφέρειας του κύκλου, δηλαδή <strong>π · α</strong>.
+                    3. <strong>Βάση:</strong> Η βάση του είναι το μισό της περιφέρειας του κύκλου, δηλαδή <strong>π · ρ</strong>.
                   </div>
                   <div className="text-amber-950 font-bold pt-1 border-t border-slate-200 font-mono text-center">
-                    Εμβαδόν ＝ Βάση · Ύψος ＝ (π · α) · α ＝ <strong>π · α²</strong>!
+                    Εμβαδόν ＝ Βάση · Ύψος ＝ (π · ρ) · ρ ＝ <strong>π · ρ²</strong>!
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                ⚡ Όσο περισσότερους τομείς κόβουμε, τόσο πιο τέλειο γίνεται το ορθογώνιο με εμβαδόν π · α²!
+                ⚡ Όσο περισσότερους τομείς κόβουμε, τόσο πιο τέλειο γίνεται το ορθογώνιο με εμβαδόν π · ρ²!
               </div>
             </article>
 
@@ -194,19 +194,19 @@ export default function EmbadonKiklouTheoriaPage() {
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 font-mono">
                   <div className="text-indigo-950 font-bold">
-                    1. Βρίσκουμε πρώτα την ακτίνα: α ＝ δ : 2
+                    1. Βρίσκουμε πρώτα την ακτίνα: ρ ＝ δ : 2
                   </div>
                   <div className="text-indigo-950 font-bold">
-                    2. Εφαρμόζουμε τον τύπο: Ε ＝ 3,14 · α · α
+                    2. Εφαρμόζουμε τον τύπο: Ε ＝ 3,14 · ρ · ρ
                   </div>
                   <p className="text-[11px] text-slate-600 font-sans pt-1">
-                    Παράδειγμα: Αν η διάμετρος είναι 10 cm, τότε η ακτίνα είναι α ＝ 5 cm και Ε ＝ 3,14 · 5 · 5 ＝ <strong>78,5 cm²</strong>.
+                    Παράδειγμα: Αν η διάμετρος είναι 10 cm, τότε η ακτίνα είναι ρ ＝ 5 cm και Ε ＝ 3,14 · 5 · 5 ＝ <strong>78,5 cm²</strong>.
                   </p>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                🎯 Ποτέ μην βάζετε τη διάμετρο στον τύπο του εμβαδού! Πρώτα τη διαιρούμε διά 2.
+                🎯 Ποτέ μην βάζετε τη διάμετρο στον τύπο του εμβαδού! Πρώτα τη διαιρούμε διά 2 για να βρούμε την ακτίνα ρ.
               </div>
             </article>
 
@@ -228,7 +228,7 @@ export default function EmbadonKiklouTheoriaPage() {
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 font-mono">
                   <div>
-                    • <strong>Ημικύκλιο:</strong> Είναι ακριβώς το μισό του κύκλου: <strong>Εημικ ＝ (π · α²) : 2</strong>.
+                    • <strong>Ημικύκλιο:</strong> Είναι ακριβώς το μισό του κύκλου: <strong>Εημικ ＝ (π · ρ²) : 2</strong>.
                   </div>
                   <div>
                     • <strong>Κυκλικός δακτύλιος (ροδέλα):</strong> Αφαιρούμε το εμβαδόν του μικρού εσωτερικού κύκλου από τον μεγάλο: <strong>Εδακτ ＝ Εμεγ － Εμικ</strong>.
@@ -254,7 +254,7 @@ export default function EmbadonKiklouTheoriaPage() {
               Πώς ο Κύκλος Γίνεται Ορθογώνιο; (SVG)
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρε την μπάρα προόδου: Παρατήρησε πώς οι κυκλικοί τομείς ανοίγουν και «κουμπώνουν» εναλλάξ σχηματίζοντας ορθογώνιο με βάση (π · α) και ύψος (α):
+              Σύρε την μπάρα προόδου: Παρατήρησε πώς οι κυκλικοί τομείς ανοίγουν και «κουμπώνουν» εναλλάξ σχηματίζοντας ορθογώνιο με βάση (π · ρ) και ύψος (ρ):
             </p>
           </div>
 
@@ -293,9 +293,9 @@ export default function EmbadonKiklouTheoriaPage() {
                   {unfoldProgress === 100 && '🟩 Ολοκληρώθηκε: Οι τομείς σχημάτισαν ένα ορθογώνιο παραλληλόγραμμο!'}
                 </div>
                 <div className="text-slate-600 text-[11px] space-y-1 font-mono pt-1 border-t border-sky-200/60">
-                  <div>• <strong>Βάση Ορθογωνίου:</strong> Μισή Περιφέρεια ＝ π · α</div>
-                  <div>• <strong>Ύψος Ορθογωνίου:</strong> Ακτίνα ＝ α</div>
-                  <div className="text-indigo-900 font-bold">• <strong>Εμβαδόν:</strong> (π · α) · α ＝ <strong>π · α²</strong></div>
+                  <div>• <strong>Βάση Ορθογωνίου:</strong> Μισή Περιφέρεια ＝ π · ρ</div>
+                  <div>• <strong>Ύψος Ορθογωνίου:</strong> Ακτίνα ＝ ρ</div>
+                  <div className="text-indigo-900 font-bold">• <strong>Εμβαδόν:</strong> (π · ρ) · ρ ＝ <strong>π · ρ²</strong></div>
                 </div>
               </div>
             </div>
@@ -310,11 +310,11 @@ export default function EmbadonKiklouTheoriaPage() {
                 {unfoldProgress < 100 && (
                   <g opacity={1 - unfoldProgress / 100}>
                     <circle cx="100" cy="100" r={radiusR} fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" strokeWidth="2" />
-                    {/* Ακτίνα */}
+                    {/* Ακτίνα ρ */}
                     <line x1="100" y1="100" x2="160" y2="100" stroke="#f59e0b" strokeWidth="2.5" />
                     <circle cx="100" cy="100" r="3" fill="#ffffff" />
                     <text x="130" y="92" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="middle">
-                      α
+                      ρ
                     </text>
                     {/* Διαχωριστικές ακτίνες τομέων */}
                     {Array.from({ length: 8 }).map((_, i) => {
@@ -369,16 +369,16 @@ export default function EmbadonKiklouTheoriaPage() {
                   {/* Ετικέτες Ορθογωνίου όταν πλησιάζει το 100% */}
                   {unfoldProgress > 70 && (
                     <>
-                      {/* Ύψος = α */}
+                      {/* Ύψος = ρ */}
                       <line x1="-10" y1="0" x2="-10" y2={radiusR} stroke="#f59e0b" strokeWidth="2" />
                       <text x="-20" y={radiusR / 2 + 4} fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="end">
-                        α
+                        ρ
                       </text>
 
-                      {/* Βάση = π · α */}
+                      {/* Βάση = π · ρ */}
                       <line x1="0" y1={radiusR + 15} x2={4.5 * sectorW} y2={radiusR + 15} stroke="#e2e8f0" strokeWidth="2" />
                       <text x={(4.5 * sectorW) / 2} y={radiusR + 32} fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle">
-                        Βάση ＝ π · α
+                        Βάση ＝ π · ρ
                       </text>
                     </>
                   )}
@@ -386,7 +386,7 @@ export default function EmbadonKiklouTheoriaPage() {
               </svg>
 
               <div className="mt-3 text-center text-xs text-slate-400">
-                Το ορθογώνιο έχει μήκος (π · α) και πλάτος (α). Το εμβαδόν του είναι: (π · α) · α ＝ <strong>π · α²</strong>.
+                Το ορθογώνιο έχει μήκος (π · ρ) και πλάτος (ρ). Το εμβαδόν του είναι: (π · ρ) · ρ ＝ <strong>π · ρ²</strong>.
               </div>
             </div>
 
@@ -403,17 +403,17 @@ export default function EmbadonKiklouTheoriaPage() {
               Υπολογιστής Εμβαδού Κύκλου &amp; Αυτόματη Μετατροπή
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Άλλαξε την ακτίνα (α) σε cm για να υπολογίσεις ταυτόχρονα το εμβαδόν (π · α²) και την περίμετρο (2 · π · α):
+              Άλλαξε την ακτίνα (ρ) σε cm για να υπολογίσεις ταυτόχρονα το εμβαδόν (π · ρ²) και την περίμετρο (2 · π · ρ):
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
-            {/* Slider Ακτίνας (5 στήλες) */}
+            {/* Slider Ακτίνας ρ (5 στήλες) */}
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΑΚΤΙΝΑ ΚΥΚΛΟΥ (α):</span>
+                  <span>ΑΚΤΙΝΑ ΚΥΚΛΟΥ (ρ):</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
                     {radiusInput} cm
                   </span>
@@ -435,10 +435,10 @@ export default function EmbadonKiklouTheoriaPage() {
               </div>
 
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 font-mono space-y-1.5">
-                <div>• Διάμετρος: δ ＝ 2 · α ＝ 2 · {radiusInput} ＝ <strong>{diameter} cm</strong></div>
-                <div>• Περίμετρος (Μήκος): 2 · π · α ＝ 2 · 3,14 · {radiusInput} ＝ <strong>{formatNum(perimeterCm)} cm</strong></div>
+                <div>• Διάμετρος: δ ＝ 2 · ρ ＝ 2 · {radiusInput} ＝ <strong>{diameter} cm</strong></div>
+                <div>• Περίμετρος (Μήκος): 2 · π · ρ ＝ 2 · 3,14 · {radiusInput} ＝ <strong>{formatNum(perimeterCm)} cm</strong></div>
                 <div className="text-emerald-800 font-black text-sm pt-1 border-t border-slate-200">
-                  • Εμβαδόν: π · α² ＝ 3,14 · {radiusInput} · {radiusInput} ＝ <strong>{formatNum(areaCm2)} cm²</strong>
+                  • Εμβαδόν: π · ρ² ＝ 3,14 · {radiusInput} · {radiusInput} ＝ <strong>{formatNum(areaCm2)} cm²</strong>
                 </div>
               </div>
             </div>
@@ -483,7 +483,7 @@ export default function EmbadonKiklouTheoriaPage() {
               Λυμένα Προβλήματα με Εμβαδόν Κύκλου
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Εφαρμογές του τύπου Ε ＝ π · α² σε κυκλικά τραπέζια και πισίνες.
+              Εφαρμογές του τύπου Ε ＝ π · ρ² σε κυκλικά τραπέζια και πισίνες.
             </p>
           </div>
 
@@ -515,10 +515,10 @@ export default function EmbadonKiklouTheoriaPage() {
                     <span className="text-slate-400 text-[10px] block font-sans">Διάμετρος (δ)</span> 1,6 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Ακτίνα (α)</span> 1,6 : 2 ＝ 0,8 m
+                    <span className="text-slate-400 text-[10px] block font-sans">Ακτίνα (ρ)</span> 1,6 : 2 ＝ 0,8 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Τύπος</span> π · α²
+                    <span className="text-slate-400 text-[10px] block font-sans">Τύπος</span> π · ρ²
                   </div>
                 </div>
               </div>
@@ -526,14 +526,14 @@ export default function EmbadonKiklouTheoriaPage() {
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                   <span className="text-slate-500 font-sans block text-xs font-bold">Βήματα Επίλυσης:</span>
-                  <div>• <strong>Βρίσκουμε την ακτίνα:</strong> α ＝ δ : 2 ＝ 1,6 : 2 ＝ <strong>0,8 m</strong>.</div>
+                  <div>• <strong>Βρίσκουμε την ακτίνα ρ:</strong> ρ ＝ δ : 2 ＝ 1,6 : 2 ＝ <strong>0,8 m</strong>.</div>
                   <div>• <strong>Υπολογίζουμε το τετράγωνο της ακτίνας:</strong> 0,8 · 0,8 ＝ <strong>0,64 m²</strong>.</div>
                   <div>• <strong>Εμβαδόν:</strong> 3,14 · 0,64 ＝ <strong className="text-blue-700">2,0096 m² ≈ 2,01 m²</strong>.</div>
                 </div>
               </div>
 
               <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-950 font-medium">
-                💡 Θυμήσου: Ποτέ δεν πολλαπλασιάζουμε απευθείας με τη διάμετρο! Πρώτα βρίσκουμε την ακτίνα (0,8 m).
+                💡 Θυμήσου: Ποτέ δεν πολλαπλασιάζουμε απευθείας με τη διάμετρο! Πρώτα βρίσκουμε την ακτίνα ρ (0,8 m).
               </div>
             </article>
 
@@ -560,10 +560,10 @@ export default function EmbadonKiklouTheoriaPage() {
                 </span>
                 <div className="grid grid-cols-3 gap-2 text-center font-mono font-bold text-[11px]">
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Μικρή ακτίνα</span> 4 m
+                    <span className="text-slate-400 text-[10px] block font-sans">Μικρή ακτίνα (ρ₁)</span> 4 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Μεγάλη ακτίνα</span> 4 ＋ 1 ＝ 5 m
+                    <span className="text-slate-400 text-[10px] block font-sans">Μεγάλη ακτίνα (ρ₂)</span> 4 ＋ 1 ＝ 5 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
                     <span className="text-slate-400 text-[10px] block font-sans">Εμβαδόν διαδρόμου</span> Εμεγ － Εμικ
@@ -598,16 +598,16 @@ export default function EmbadonKiklouTheoriaPage() {
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed list-disc list-inside">
                 <li>
-                  <strong>Μην μπερδεύετε το α² με το 2 · α:</strong> Το α² είναι <strong>α · α</strong> (η ακτίνα πολλαπλασιασμένη με τον εαυτό της). Αν η ακτίνα είναι 6 cm, τότε το τετράγωνό της είναι 36 cm² (και όχι 12 cm).
+                  <strong>Μην μπερδεύετε το ρ² με το 2 · ρ:</strong> Το ρ² είναι <strong>ρ · ρ</strong> (η ακτίνα πολλαπλασιασμένη με τον εαυτό της). Αν η ακτίνα είναι 6 cm, τότε το τετράγωνό της είναι 36 cm² (και όχι 12 cm).
                 </li>
                 <li>
-                  <strong>Μην μπερδεύετε την περίμετρο με το εμβαδόν:</strong> Η περίμετρος (το μήκος της γραμμής) είναι <strong>2 · π · α</strong>. Το εμβαδόν (η επιφάνεια) είναι <strong>π · α²</strong>.
+                  <strong>Μην μπερδεύετε την περίμετρο με το εμβαδόν:</strong> Η περίμετρος (το μήκος της γραμμής) είναι <strong>2 · π · ρ</strong>. Το εμβαδόν (η επιφάνεια) είναι <strong>π · ρ²</strong>.
                 </li>
                 <li>
-                  <strong>Αν γνωρίζετε τη διάμετρο:</strong> Μην ξεχνάτε να τη διαιρέσετε πρώτα διά 2 για να βρείτε την ακτίνα πριν υπολογίσετε το εμβαδόν.
+                  <strong>Αν γνωρίζετε τη διάμετρο:</strong> Μην ξεχνάτε να τη διαιρέσετε πρώτα διά 2 για να βρείτε την ακτίνα ρ πριν υπολογίσετε το εμβαδόν.
                 </li>
                 <li>
-                  <strong>Στο ημικύκλιο διαιρούμε με το 2:</strong> Το εμβαδόν του ημικυκλίου είναι ακριβώς το μισό του κύκλου: <strong>(π · α²) : 2</strong>.
+                  <strong>Στο ημικύκλιο διαιρούμε με το 2:</strong> Το εμβαδόν του ημικυκλίου είναι ακριβώς το μισό του κύκλου: <strong>(π · ρ²) : 2</strong>.
                 </li>
               </ul>
             </div>
@@ -621,7 +621,7 @@ export default function EmbadonKiklouTheoriaPage() {
               Ώρα για Εξάσκηση στο Εμβαδόν Κύκλου!
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Δοκίμασε τις δυνάμεις σου σε 12 διαδραστικές ασκήσεις με υπολογισμούς ακτίνας, διαμέτρου, εμβαδού κύκλου και ημικυκλίου για τη ΣΤ' Δημοτικού.
+              Δοκίμασε τις δυνάμεις σου σε 12 διαδραστικές ασκήσεις με υπολογισμούς ακτίνας ρ, διαμέτρου, εμβαδού κύκλου και ημικυκλίου για τη ΣΤ' Δημοτικού.
             </p>
           </div>
 
