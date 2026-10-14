@@ -65,7 +65,7 @@ const PROBLEM_POOL_Q9 = [
   () => {
     const b = randInt(15, 30);
     const h = randInt(8, 16);
-    const slant = h + randInt(3, 7); // Πλάγια πλευρά (παγίδα)
+    const slant = h + randInt(3, 7);
     const area = b * h;
     const correct = `${formatNum(area)} m²`;
     return {
@@ -264,7 +264,7 @@ const PROBLEM_POOL_Q10 = [
   () => {
     const area = 480;
     const b = 24;
-    const h = area / b; // 20
+    const h = area / b;
     const correct = '20 m';
     return {
       title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΚΑΘΕΤΟΥ ΥΨΟΥΣ',
@@ -284,7 +284,7 @@ const PROBLEM_POOL_Q10 = [
   () => {
     const area = 350;
     const h = 14;
-    const b = area / h; // 25
+    const b = area / h;
     const correct = '25 cm';
     return {
       title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΜΗΚΟΥΣ ΒΑΣΗΣ',
@@ -303,9 +303,9 @@ const PROBLEM_POOL_Q10 = [
   // 5. Αγροτεμάχιο με στρέμματα
   () => {
     const stremmata = 3;
-    const areaM2 = stremmata * 1000; // 3.000 m²
+    const areaM2 = stremmata * 1000;
     const b = 60;
-    const h = areaM2 / b; // 50 m
+    const h = areaM2 / b;
     const correct = '50 m';
     return {
       title: 'ΥΨΟΣ ΑΓΡΟΤΕΜΑΧΙΟΥ ΣΕ ΣΤΡΕΜΜΑΤΑ',
@@ -349,8 +349,8 @@ const PROBLEM_POOL_Q11 = [
   () => {
     const bM = 3;
     const hCm = 40;
-    const bCm = bM * 100; // 300 cm
-    const areaCm2 = bCm * hCm; // 12.000 cm²
+    const bCm = bM * 100;
+    const areaCm2 = bCm * hCm;
     const correct = `${formatNum(areaCm2)} cm²`;
     return {
       title: 'ΔΙΑΦΟΡΕΤΙΚΕΣ ΜΟΝΑΔΕΣ (M ΚΑΙ CM)',
@@ -401,8 +401,8 @@ const PROBLEM_POOL_Q11 = [
   () => {
     const bDm = 5;
     const hCm = 20;
-    const bCm = bDm * 10; // 50 cm
-    const area = bCm * hCm; // 1.000 cm²
+    const bCm = bDm * 10;
+    const area = bCm * hCm;
     const correct = '1.000 cm²';
     return {
       title: 'ΜΕΤΑΤΡΟΠΗ DM ΣΕ CM',
@@ -421,7 +421,7 @@ const PROBLEM_POOL_Q11 = [
   // 4. Εμβαδόν σε cm² και ζητείται σε dm²
   () => {
     const areaCm2 = 2500;
-    const areaDm2 = areaCm2 / 100; // 25 dm²
+    const areaDm2 = areaCm2 / 100;
     const correct = '25 dm²';
     return {
       title: 'ΑΠΟ CM² ΣΕ DM²',
@@ -438,9 +438,9 @@ const PROBLEM_POOL_Q11 = [
   },
   // 5. Βάση σε m και αποτέλεσμα σε dm²
   () => {
-    const bM = 2; // 20 dm
+    const bM = 2;
     const hDm = 15;
-    const areaDm2 = 20 * hDm; // 300 dm²
+    const areaDm2 = 20 * hDm;
     const correct = '300 dm²';
     return {
       title: 'ΕΜΒΑΔΟΝ ΣΕ DM²',
@@ -460,8 +460,8 @@ const PROBLEM_POOL_Q11 = [
   () => {
     const b = 80;
     const h = 50;
-    const areaM2 = b * h; // 4.000 m²
-    const stremmata = areaM2 / 1000; // 4 στρέμματα
+    const areaM2 = b * h;
+    const stremmata = areaM2 / 1000;
     const correct = '4 στρέμματα';
     return {
       title: 'ΠΑΡΑΛΛΗΛΟΓΡΑΜΜΟΣ ΑΓΡΟΣ ΣΕ ΣΤΡΕΜΜΑΤΑ',
@@ -483,9 +483,9 @@ const PROBLEM_POOL_Q12 = [
   // 1. Εύρεση του 2ου ύψους
   () => {
     const b1 = 20;
-    const h1 = 12; // Ε = 240
+    const h1 = 12;
     const b2 = 15;
-    const h2 = (b1 * h1) / b2; // 16
+    const h2 = (b1 * h1) / b2;
     const correct = `${h2} cm`;
     return {
       title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΔΕΥΤΕΡΟΥ ΥΨΟΥΣ',
@@ -509,9 +509,9 @@ const PROBLEM_POOL_Q12 = [
   // 2. Εύρεση 2ου ύψους με διαστάσεις 30 και 20
   () => {
     const b1 = 30;
-    const h1 = 10; // Ε = 300
+    const h1 = 10;
     const b2 = 20;
-    const h2 = (b1 * h1) / b2; // 15
+    const h2 = (b1 * h1) / b2;
     const correct = '15 cm';
     return {
       title: 'ΣΧΕΣΗ ΔΥΟ ΥΨΩΝ',
@@ -530,9 +530,9 @@ const PROBLEM_POOL_Q12 = [
   () => {
     const l = 16;
     const w = 9;
-    const area = l * w; // 144
+    const area = l * w;
     const b = 18;
-    const h = area / b; // 8
+    const h = area / b;
     const correct = '8 cm';
     return {
       title: 'ΙΣΟΔΥΝΑΜΑ ΣΧΗΜΑΤΑ',
@@ -551,9 +551,9 @@ const PROBLEM_POOL_Q12 = [
   // 4. Ισοδύναμο τετράγωνο και παραλληλόγραμμο
   () => {
     const side = 12;
-    const area = side * side; // 144
+    const area = side * side;
     const b = 24;
-    const h = area / b; // 6
+    const h = area / b;
     const correct = '6 cm';
     return {
       title: 'ΙΣΟΔΥΝΑΜΟ ΜΕ ΤΕΤΡΑΓΩΝΟ',
@@ -633,8 +633,8 @@ function generateQuestionsSet() {
       { label: 'Πλάγια πλευρά', value: 'Δεν πολλαπλασιάζεται με τη βάση γιατί είναι κεκλιμένη' }
     ],
     explanation: isQ1True
-      ? 'ΣΩΣΤΟ: Το εμβαδόν κάθε παραλληλογράμμου δίνεται από τον τύπο Ε ＝ β · υ, όπου υ είναι το κάθετο ύψος στη βάση β.'
-      : 'ΛΑΘΟΣ: Στο πλάγιο παραλληλόγραμμο δεν πολλαπλασιάζουμε τις δύο πλευρές, αλλά τη βάση με το κάθετο ύψος (Ε ＝ β · υ).'
+      ? 'Το εμβαδόν κάθε παραλληλογράμμου δίνεται από τον τύπο Ε ＝ β · υ, όπου υ είναι το κάθετο ύψος στη βάση β.'
+      : 'Στο πλάγιο παραλληλόγραμμο δεν πολλαπλασιάζουμε τις δύο πλευρές, αλλά τη βάση με το κάθετο ύψος (Ε ＝ β · υ).'
   });
 
   // Q2: Επιλογή ύψους (MCQ)
@@ -733,7 +733,7 @@ function generateQuestionsSet() {
   // Q6: Εύρεση ύψους (Input αριθμού)
   const area6 = 96;
   const b6 = 12;
-  const h6 = area6 / b6; // 8
+  const h6 = area6 / b6;
   qs.push({
     id: 6,
     type: 'input',
@@ -1074,7 +1074,7 @@ export default function EmbadonParallilogrammouAskiseisPage() {
                       </div>
                     )}
 
-                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
+                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ (ΚΑΘΑΡΟΣ ΤΙΤΛΟΣ ΧΩΡΙΣ ΠΕΡΙΤΤΑ ΛΑΘΟΣ/ΣΩΣΤΟ) */}
                     <div
                       className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                         isCorrect
@@ -1084,8 +1084,8 @@ export default function EmbadonParallilogrammouAskiseisPage() {
                     >
                       <p className="font-bold mb-1">
                         {isCorrect
-                          ? '✓ Μπράβο! Σωστή απάντηση.'
-                          : `✗ Λάθος. Η σωστή απάντηση είναι: ${
+                          ? 'Σωστή απάντηση!'
+                          : `Η σωστή απάντηση είναι: ${
                               q.type === 'boolean'
                                 ? q.correctAnswer
                                   ? 'Σωστό'
