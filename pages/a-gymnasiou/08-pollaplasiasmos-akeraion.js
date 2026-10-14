@@ -52,7 +52,7 @@ export default function PollaplasiasmosAkeraionTheoria() {
     });
   };
 
-  // Αυξομείωση απόλυτης τιμής ενός παράγοντα
+  // ΔΙΟΡΘΩΣΗ: Πραγματική αλγεβρική αυξομείωση (το '-' πηγαίνει προς τα αριστερά: -2 -> -3, το '+' προς τα δεξιά: -2 -> -1)
   const stepFactorValue = (idx, delta, e) => {
     if (e) {
       e.preventDefault();
@@ -60,10 +60,17 @@ export default function PollaplasiasmosAkeraionTheoria() {
     }
     setMultiFactors((prev) => {
       const next = [...prev];
-      const sign = next[idx] < 0 ? -1 : 1;
-      const currentAbs = Math.abs(next[idx]);
-      const newAbs = Math.max(1, Math.min(9, currentAbs + delta));
-      next[idx] = sign * newAbs;
+      let current = next[idx];
+      let updated = current + delta;
+
+      // Αν περνάμε από το 0, το παρακάμπτουμε για να μην μηδενίζεται άσκοπα το γινόμενο
+      if (updated === 0) {
+        updated = delta > 0 ? 1 : -1;
+      }
+
+      // Περιορισμός στο διάστημα [-9, 9]
+      updated = Math.max(-9, Math.min(9, updated));
+      next[idx] = updated;
       return next;
     });
   };
@@ -463,7 +470,7 @@ export default function PollaplasiasmosAkeraionTheoria() {
                       {idx + 1}ΟΣ ΟΡΟΣ
                     </div>
 
-                    {/* Stepper τιμής */}
+                    {/* Stepper τιμής - Διορθωμένο: το '-' μειώνει την αλγεβρική τιμή (-2 -> -3), το '+' αυξάνει (-2 -> -1) */}
                     <div className="grid grid-cols-[28px_1fr_28px] items-center h-8 w-full gap-1">
                       <button
                         type="button"
