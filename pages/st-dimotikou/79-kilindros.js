@@ -23,17 +23,16 @@ export default function KilindrosTheoriaPage() {
   // -------------------------------------------------------------------------
   // Εργαστήριο 1: Διαδραστικό Ξετύλιγμα Κυλίνδρου προς τα Δεξιά (SVG)
   // -------------------------------------------------------------------------
-  // Slider προόδου: 0% (κλειστός κύλινδρος αριστερά) έως 100% (πλήρες ανάπτυγμα)
   const [unrollProgress, setUnrollProgress] = useState(0);
 
-  const radiusR = 36; // Ακτίνα ρ = 36px
-  const heightH = 80; // Ύψος υ = 80px
-  const maxRectWidth = 2 * Math.PI * radiusR; // 2 * 3.1415 * 36 ≈ 226px
+  const radiusR = 35; // Ακτίνα ρ = 35px
+  const heightH = 85; // Ύψος υ = 85px
+  const maxRectWidth = 2 * Math.PI * radiusR; // 2 · 3.1415 · 35 ≈ 220px
 
-  // Δυναμικές παράμετροι αναδίπλωσης
   const progressRatio = unrollProgress / 100;
   const currentRectW = progressRatio * maxRectWidth;
-  const cylinderX = 75 + currentRectW; // Ο κύλινδρος κυλάει προς τα δεξιά
+  const startX = 55;
+  const cylinderX = startX + currentRectW; // Ο κύλινδρος κυλάει προς τα δεξιά
 
   // -------------------------------------------------------------------------
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδών Κυλίνδρου
@@ -322,7 +321,7 @@ export default function KilindrosTheoriaPage() {
               </div>
             </div>
 
-            {/* SVG Visualizer με Άπλωμα προς τα Δεξιά & Καθαρή Στοίχιση (7 στήλες) */}
+            {/* SVG Visualizer (7 στήλες) */}
             <div className="lg:col-span-7 bg-slate-900 min-h-[380px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
                 viewBox="0 0 460 300"
@@ -332,8 +331,8 @@ export default function KilindrosTheoriaPage() {
                 {unrollProgress > 0 && (
                   <g>
                     <rect
-                      x="75"
-                      y={110}
+                      x={startX}
+                      y={105}
                       width={currentRectW}
                       height={heightH}
                       fill="rgba(56, 189, 248, 0.35)"
@@ -342,11 +341,11 @@ export default function KilindrosTheoriaPage() {
                       rx="3"
                     />
 
-                    {/* Ετικέτα μέσα στο ορθογώνιο (εμφανίζεται όταν υπάρχει αρκετός χώρος) */}
-                    {unrollProgress > 30 && (
+                    {/* Ετικέτα μέσα στο ορθογώνιο */}
+                    {unrollProgress > 35 && (
                       <text
-                        x={75 + currentRectW / 2}
-                        y={110 + heightH / 2 + 5}
+                        x={startX + currentRectW / 2}
+                        y={105 + heightH / 2 + 5}
                         fill="#ffffff"
                         fontSize={unrollProgress === 100 ? 12 : 10}
                         fontWeight="bold"
@@ -361,15 +360,15 @@ export default function KilindrosTheoriaPage() {
                     {/* Ετικέτες Διαστάσεων στο 100% */}
                     {unrollProgress === 100 && (
                       <>
-                        {/* Ένδειξη Μήκους Ορθογωνίου (επάνω με ασφαλές περιθώριο) */}
-                        <line x1="75" y1="92" x2={75 + maxRectWidth} y2="92" stroke="#38bdf8" strokeWidth="1.5" />
-                        <text x={75 + maxRectWidth / 2} y="84" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">
+                        {/* Ένδειξη Μήκους Ορθογωνίου (κάτω από το ορθογώνιο, μακριά από τις βάσεις) */}
+                        <line x1={startX} y1={105 + heightH + 18} x2={startX + maxRectWidth} y2={105 + heightH + 18} stroke="#38bdf8" strokeWidth="1.5" />
+                        <text x={startX + maxRectWidth / 2} y={105 + heightH + 34} fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">
                           Μήκος ＝ 2 · π · ρ
                         </text>
 
                         {/* Ένδειξη Ύψους υ (δεξιά) */}
-                        <line x1={75 + maxRectWidth + 15} y1={110} x2={75 + maxRectWidth + 15} y2={110 + heightH} stroke="#f59e0b" strokeWidth="2" />
-                        <text x={75 + maxRectWidth + 26} y={110 + heightH / 2 + 4} fill="#f59e0b" fontSize="13" fontWeight="black" textAnchor="start">
+                        <line x1={startX + maxRectWidth + 14} y1={105} x2={startX + maxRectWidth + 14} y2={105 + heightH} stroke="#f59e0b" strokeWidth="2" />
+                        <text x={startX + maxRectWidth + 24} y={105 + heightH / 2 + 4} fill="#f59e0b" fontSize="13" fontWeight="black" textAnchor="start">
                           υ
                         </text>
                       </>
@@ -379,7 +378,7 @@ export default function KilindrosTheoriaPage() {
 
                 {/* 2. Πάνω Κυκλική Βάση (Πράσινη - ανοίγει προς τα πάνω) */}
                 {unrollProgress > 0 && (
-                  <g transform={`translate(${75 + currentRectW / 2}, ${110 - (progressRatio * (radiusR + 25))})`}>
+                  <g transform={`translate(${startX + currentRectW / 2}, ${105 - (progressRatio * (radiusR + 15))})`}>
                     <circle
                       cx="0"
                       cy="0"
@@ -394,15 +393,15 @@ export default function KilindrosTheoriaPage() {
                     <text x={radiusR / 2} y="-6" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="middle">
                       ρ
                     </text>
-                    <text x="0" y="16" fill="#ffffff" fontSize="11" fontWeight="bold" textAnchor="middle">
-                      Βάση (π · ρ²)
+                    <text x="0" y="14" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
+                      Βάση
                     </text>
                   </g>
                 )}
 
                 {/* 3. Κάτω Κυκλική Βάση (Μωβ - ανοίγει προς τα κάτω) */}
                 {unrollProgress > 0 && (
-                  <g transform={`translate(${75 + currentRectW / 2}, ${110 + heightH + (progressRatio * (radiusR + 25))})`}>
+                  <g transform={`translate(${startX + currentRectW / 2}, ${105 + heightH + 35 + (progressRatio * (radiusR + 15))})`}>
                     <circle
                       cx="0"
                       cy="0"
@@ -411,32 +410,32 @@ export default function KilindrosTheoriaPage() {
                       stroke="#c084fc"
                       strokeWidth="2"
                     />
-                    <text x="0" y="4" fill="#ffffff" fontSize="11" fontWeight="bold" textAnchor="middle">
-                      Βάση (π · ρ²)
+                    <text x="0" y="4" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
+                      Βάση
                     </text>
                   </g>
                 )}
 
-                {/* 4. Ο Κύλινδρος που κυλάει προς τα δεξιά (όσο unrollProgress < 100) */}
+                {/* 4. Ο Κύλινδρος σε ΠΛΗΡΕΣ ΜΕΓΕΘΟΣ που κυλάει προς τα δεξιά (όσο unrollProgress < 100) */}
                 {unrollProgress < 100 && (
-                  <g transform={`translate(${cylinderX}, 110)`}>
-                    {/* Σώμα κυλίνδρου */}
+                  <g transform={`translate(${cylinderX + radiusR}, 105)`}>
+                    {/* Σώμα κυλίνδρου σε πλήρες πλάτος (2 * radiusR) */}
                     <rect
-                      x={-radiusR * 0.4}
+                      x={-radiusR}
                       y="0"
-                      width={radiusR * 0.8}
+                      width={radiusR * 2}
                       height={heightH}
-                      fill="rgba(56, 189, 248, 0.6)"
+                      fill="rgba(56, 189, 248, 0.5)"
                       stroke="#38bdf8"
                       strokeWidth="2"
                     />
-                    {/* Κάτω καπάκι σε προοπτική */}
+                    {/* Κάτω καπάκι σε προοπτική (έλλειψη) */}
                     <ellipse
                       cx="0"
                       cy={heightH}
-                      rx={radiusR * 0.4}
-                      ry={10}
-                      fill="rgba(168, 85, 247, 0.7)"
+                      rx={radiusR}
+                      ry={14}
+                      fill="rgba(168, 85, 247, 0.65)"
                       stroke="#c084fc"
                       strokeWidth="2"
                     />
@@ -444,21 +443,27 @@ export default function KilindrosTheoriaPage() {
                     <ellipse
                       cx="0"
                       cy="0"
-                      rx={radiusR * 0.4}
-                      ry={10}
-                      fill="rgba(52, 211, 153, 0.8)"
+                      rx={radiusR}
+                      ry={14}
+                      fill="rgba(52, 211, 153, 0.75)"
                       stroke="#34d399"
                       strokeWidth="2"
                     />
+                    {/* Ένδειξη ακτίνας ρ στο πάνω καπάκι */}
+                    <line x1="0" y1="0" x2={radiusR} y2="0" stroke="#f59e0b" strokeWidth="2" />
+                    <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
+                    <text x={radiusR / 2} y="-6" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="middle">
+                      ρ
+                    </text>
                     {/* Κείμενο ένδειξης κυλίνδρου */}
                     {unrollProgress === 0 && (
                       <>
-                        <text x="0" y={heightH / 2 + 4} fill="#ffffff" fontSize="11" fontWeight="bold" textAnchor="middle">
+                        <text x="0" y={heightH / 2 + 4} fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle">
                           Κύλινδρος
                         </text>
                         {/* Ύψος υ στα δεξιά του αρχικού κυλίνδρου */}
-                        <line x1={radiusR * 0.4 + 12} y1="0" x2={radiusR * 0.4 + 12} y2={heightH} stroke="#f59e0b" strokeWidth="2" />
-                        <text x={radiusR * 0.4 + 22} y={heightH / 2 + 4} fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="start">
+                        <line x1={radiusR + 14} y1="0" x2={radiusR + 14} y2={heightH} stroke="#f59e0b" strokeWidth="2" />
+                        <text x={radiusR + 24} y={heightH / 2 + 4} fill="#f59e0b" fontSize="13" fontWeight="bold" textAnchor="start">
                           υ
                         </text>
                       </>
