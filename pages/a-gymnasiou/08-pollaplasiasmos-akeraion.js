@@ -52,7 +52,7 @@ export default function PollaplasiasmosAkeraionTheoria() {
     });
   };
 
-  // ΔΙΟΡΘΩΣΗ: Πραγματική αλγεβρική αυξομείωση (το '-' πηγαίνει προς τα αριστερά: -2 -> -3, το '+' προς τα δεξιά: -2 -> -1)
+  // Κανονική αλγεβρική αυξομείωση χωρίς παράκαμψη του 0
   const stepFactorValue = (idx, delta, e) => {
     if (e) {
       e.preventDefault();
@@ -60,16 +60,7 @@ export default function PollaplasiasmosAkeraionTheoria() {
     }
     setMultiFactors((prev) => {
       const next = [...prev];
-      let current = next[idx];
-      let updated = current + delta;
-
-      // Αν περνάμε από το 0, το παρακάμπτουμε για να μην μηδενίζεται άσκοπα το γινόμενο
-      if (updated === 0) {
-        updated = delta > 0 ? 1 : -1;
-      }
-
-      // Περιορισμός στο διάστημα [-9, 9]
-      updated = Math.max(-9, Math.min(9, updated));
+      const updated = Math.max(-9, Math.min(9, next[idx] + delta));
       next[idx] = updated;
       return next;
     });
@@ -365,7 +356,7 @@ export default function PollaplasiasmosAkeraionTheoria() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 text-slate-700 text-sm sm:text-base leading-relaxed">
             <div className="space-y-4">
               <p>
-                Σε ένα γινόμενο πολλών μη μηδενικών παραγόντων, το τελικό πρόσημο καθορίζεται <strong>αποκλειστικά από το πλήθος των αρνητικών παραγόντων</strong>:
+                Σε ένα γινόμενο πολλών παραγόντων, αν έστω και ένας παράγοντας είναι μηδέν, το γινόμενο είναι μηδέν. Αν όλοι οι παράγοντες είναι διάφοροι του μηδενός, το τελικό πρόσημο καθορίζεται <strong>αποκλειστικά από το πλήθος των αρνητικών παραγόντων</strong>:
               </p>
               <div className="space-y-3">
                 <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 space-y-1">
@@ -457,11 +448,14 @@ export default function PollaplasiasmosAkeraionTheoria() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {multiFactors.map((val, idx) => {
                 const isNeg = val < 0;
+                const isZero = val === 0;
                 return (
                   <div
                     key={idx}
                     className={`p-3.5 rounded-2xl border flex flex-col items-center justify-between space-y-2.5 transition-all ${
-                      isNeg
+                      isZero
+                        ? 'bg-slate-100 border-slate-300'
+                        : isNeg
                         ? 'bg-rose-50/70 border-rose-200'
                         : 'bg-sky-50/70 border-sky-200'
                     }`}
@@ -470,7 +464,7 @@ export default function PollaplasiasmosAkeraionTheoria() {
                       {idx + 1}ΟΣ ΟΡΟΣ
                     </div>
 
-                    {/* Stepper τιμής - Διορθωμένο: το '-' μειώνει την αλγεβρική τιμή (-2 -> -3), το '+' αυξάνει (-2 -> -1) */}
+                    {/* Stepper τιμής: Κανονική αλγεβρική αυξομείωση κατά 1 συμπεριλαμβανομένου του 0 */}
                     <div className="grid grid-cols-[28px_1fr_28px] items-center h-8 w-full gap-1">
                       <button
                         type="button"
@@ -495,13 +489,16 @@ export default function PollaplasiasmosAkeraionTheoria() {
                     <button
                       type="button"
                       onClick={() => toggleFactorSign(idx)}
-                      className={`w-full py-1.5 rounded-lg text-[10px] font-bold transition active:scale-95 ${
-                        isNeg
+                      disabled={isZero}
+                      className={`w-full py-1.5 rounded-lg text-[10px] font-bold transition active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed ${
+                        isZero
+                          ? 'bg-slate-300 text-slate-700'
+                          : isNeg
                           ? 'bg-rose-600 text-white hover:bg-rose-700'
                           : 'bg-sky-600 text-white hover:bg-sky-700'
                       }`}
                     >
-                      {isNeg ? 'ΠΛΗΝ (－)' : 'ΣΥΝ (＋)'}
+                      {isZero ? 'ΜΗΔΕΝ (0)' : isNeg ? 'ΠΛΗΝ (－)' : 'ΣΥΝ (＋)'}
                     </button>
                   </div>
                 );
@@ -516,7 +513,11 @@ export default function PollaplasiasmosAkeraionTheoria() {
                     ΚΑΤΑΜΕΤΡΗΣΗ ΑΡΝΗΤΙΚΩΝ ΠΑΡΑΓΟΝΤΩΝ
                   </div>
                   <div className="text-sm sm:text-base font-bold text-amber-300">
-                    Πλήθος Αρνητικών: {negativeCount} ({negativeCount % 2 === 0 ? 'Άρτιο πλήθος → Θετικό' : 'Περιττό πλήθος → Αρνητικό'})
+                    {hasZero ? (
+                      'Περιέχει μηδενικό παράγοντα (0)'
+                    ) : (
+                      `Πλήθος Αρνητικών: ${negativeCount} (${negativeCount % 2 === 0 ? 'Άρτιο πλήθος → Θετικό' : 'Περιττό πλήθος → Αρνητικό'})`
+                    )}
                   </div>
                 </div>
 
@@ -538,7 +539,7 @@ export default function PollaplasiasmosAkeraionTheoria() {
                 </div>
                 <div className="text-3xl sm:text-5xl font-black font-mono">
                   ＝{' '}
-                  <span className={multiProduct > 0 ? 'text-emerald-400' : multiProduct < 0 ? 'text-rose-400' : 'text-slate-300'}>
+                  <span className={hasZero ? 'text-slate-300' : multiProduct > 0 ? 'text-emerald-400' : 'text-rose-400'}>
                     {multiProduct > 0 ? `＋${multiProduct.toLocaleString('el-GR')}` : multiProduct.toLocaleString('el-GR')}
                   </span>
                 </div>
