@@ -77,7 +77,8 @@ export default function STDimotikouMenu() {
     { id: '70-megethinsi-smikrinsi', label: '🥧 70. Κλίμακα - Μεγέθυνση - Σμίκρυνση σχημάτων', href: '/st-dimotikou/70-megethinsi-smikrinsi' },
     { id: '71-simmetria', label: '🥧 71. Αξονική Συμμετρία', href: '/st-dimotikou/71-simmetria' },
     { id: '72-embadon', label: '🥧 72. Μέτρηση Επιφανειών - Εμβαδόν', href: '/st-dimotikou/72-embadon' },
-    { id: '73-embadon-parallilogrammou', label: '🥧 73. Εμβαδό Παραλληλογράμμου', href: '/st-dimotikou/73-embadon-parallilogrammou' }
+    { id: '73-embadon-parallilogrammou', label: '🥧 73. Εμβαδόν Παραλληλογράμμου', href: '/st-dimotikou/73-embadon-parallilogrammou' },
+    { id: '74-embadon-trigonou', label: '🥧 74. Εμβαδόν Τριγώνου', href: '/st-dimotikou/74-embadon-trigonou' }
 ];
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
