@@ -1,4 +1,4 @@
-// pages/st-dimotikou/75-embadon-kiklou.js
+// pages/st-dimotikou/76-embadon-kiklou.js
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
@@ -23,6 +23,7 @@ export default function EmbadonKiklouTheoriaPage() {
   // -------------------------------------------------------------------------
   // Εργαστήριο 1: Οπτική Απόδειξη Αναδιάταξης Τομέων (SVG)
   // -------------------------------------------------------------------------
+  // Slider προόδου: 0% (κλειστός κύκλος) έως 100% (ορθογώνιο παραλληλόγραμμο)
   const [unfoldProgress, setUnfoldProgress] = useState(0);
 
   const radiusR = 60; // Ακτίνα α = 60px
@@ -50,7 +51,7 @@ export default function EmbadonKiklouTheoriaPage() {
       showAds={true}
       actionButton={
         <Link
-          href="/st-dimotikou/75-embadon-kiklou-ask"
+          href="/st-dimotikou/76-embadon-kiklou-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
           <span>🎯 Ασκήσεις</span>
@@ -63,7 +64,7 @@ export default function EmbadonKiklouTheoriaPage() {
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 75 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>ΚΕΦΑΛΑΙΟ 76 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
               Εμβαδόν Κύκλου • Ακτίνα, ο Αριθμός π &amp; Μονάδες Επιφάνειας
@@ -81,7 +82,7 @@ export default function EmbadonKiklouTheoriaPage() {
               <span>Θεωρία, Οπτική Απόδειξη Αναδιάταξης Τομέων σε Ορθογώνιο &amp; SVG</span>
             </div>
             <Link
-              href="/st-dimotikou/75-embadon-kiklou-ask"
+              href="/st-dimotikou/76-embadon-kiklou-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
               <span>Δοκίμασε τις Ασκήσεις</span>
@@ -597,7 +598,7 @@ export default function EmbadonKiklouTheoriaPage() {
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed list-disc list-inside">
                 <li>
-                  <strong>Μην μπερδεύετε το α² με το 2 · α:</strong> Το α² είναι <strong>α · α</strong> (η ακτίνα πολλαπλασιασμένη με τον εαυτό της). Αν η ακτίνα είναι 6 cm, τότε α² ＝ 6 · 6 ＝ 36 cm² (και όχι 6 · 2 ＝ 12).
+                  <strong>Μην μπερδεύετε το α² με το 2 · α:</strong> Το α² είναι <strong>α · α</strong> (η ακτίνα πολλαπλασιασμένη με τον εαυτό της). Αν η ακτίνα είναι 6 cm, τότε το τετράγωνό της είναι 36 cm² (και όχι 12 cm).
                 </li>
                 <li>
                   <strong>Μην μπερδεύετε την περίμετρο με το εμβαδόν:</strong> Η περίμετρος (το μήκος της γραμμής) είναι <strong>2 · π · α</strong>. Το εμβαδόν (η επιφάνεια) είναι <strong>π · α²</strong>.
@@ -625,7 +626,7 @@ export default function EmbadonKiklouTheoriaPage() {
           </div>
 
           <Link
-            href="/st-dimotikou/75-embadon-kiklou-ask"
+            href="/st-dimotikou/76-embadon-kiklou-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
             <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
