@@ -21,10 +21,106 @@ function formatNum(val) {
 
 export default function AnaptigmaTheoriaPage() {
   // -------------------------------------------------------------------------
-  // Εργαστήριο 1: Διαδραστικό Δίπλωμα Αναπτύγματος (Folding 0% -> 100%)
+  // Εργαστήριο 1: Ισομετρική Αναδίπλωση Αναπτύγματος (3D Projection)
   // -------------------------------------------------------------------------
   const [selectedShape, setSelectedShape] = useState('cube'); // 'cube' ή 'cuboid'
-  const [foldProgress, setFoldProgress] = useState(0); // 0 (επίπεδο ανάπτυγμα) έως 100 (κλειστό 3D στερεό)
+  const [foldProgress, setFoldProgress] = useState(0); // 0 (επίπεδο) έως 100 (κλειστό 3D)
+
+  // Διαστάσεις 3D για το animation
+  const shapeDims = useMemo(() => {
+    if (selectedShape === 'cube') {
+      return { L: 60, W: 60, H: 60 };
+    }
+    return { L: 75, W: 50, H: 60 };
+  }, [selectedShape]);
+
+  // Μετατροπή 3D συντεταγμένων σε 2D ισομετρική προβολή SVG
+  const project3Dto2D = (x, y, z) => {
+    const originX = 180;
+    const originY = 145;
+    const cos30 = 0.866;
+    const sin30 = 0.5;
+
+    const screenX = originX + (x - y) * cos30;
+    const screenY = originY + (x + y) * sin30 - z;
+    return `${screenX.toFixed(1)},${screenY.toFixed(1)}`;
+  };
+
+  // Γωνία διπλώματος: 0 rad (0°) έως π/2 rad (90°)
+  const angle = (foldProgress / 100) * (Math.PI / 2);
+  const cosA = Math.cos(angle);
+  const sinA = Math.sin(angle);
+
+  // Δημιουργία των 6 εδρών σε 3D συντεταγμένες και προβολή τους
+  const faces = useMemo(() => {
+    const { L, W, H } = shapeDims;
+
+    // 1. ΒΑΣΗ (Παραμένει σταθερή στο Z = 0)
+    // [ (0,0,0), (L,0,0), (L,W,0), (0,W,0) ]
+    const basePts = [
+      project3Dto2D(0, 0, 0),
+      project3Dto2D(L, 0, 0),
+      project3Dto2D(L, W, 0),
+      project3Dto2D(0, W, 0)
+    ].join(' ');
+
+    // 2. ΕΜΠΡΟΣΘΙΑ ΕΔΡΑ (συνδεδεμένη στην ακμή y = W)
+    // Στο t=0 εκτείνεται στο y: [W -> W + H] στο Z = 0.
+    // Καθώς διπλώνει κατά angle, το dy = H*cosA και το dz = H*sinA.
+    const frontPts = [
+      project3Dto2D(0, W, 0),
+      project3Dto2D(L, W, 0),
+      project3Dto2D(L, W + H * cosA, H * sinA),
+      project3Dto2D(0, W + H * cosA, H * sinA)
+    ].join(' ');
+
+    // 3. ΟΠΙΣΘΙΑ ΕΔΡΑ (συνδεδεμένη στην ακμή y = 0)
+    // Στο t=0 εκτείνεται στο y: [0 -> -H].
+    // Καθώς διπλώνει, dy = -H*cosA και dz = H*sinA.
+    const backPts = [
+      project3Dto2D(0, 0, 0),
+      project3Dto2D(L, 0, 0),
+      project3Dto2D(L, -H * cosA, H * sinA),
+      project3Dto2D(0, -H * cosA, H * sinA)
+    ].join(' ');
+
+    // 4. ΔΕΞΙΑ ΕΔΡΑ (συνδεδεμένη στην ακμή x = L)
+    // Στο t=0 εκτείνεται στο x: [L -> L + H].
+    // Καθώς διπλώνει, dx = H*cosA και dz = H*sinA.
+    const rightPts = [
+      project3Dto2D(L, 0, 0),
+      project3Dto2D(L + H * cosA, 0, H * sinA),
+      project3Dto2D(L + H * cosA, W, H * sinA),
+      project3Dto2D(L, W, 0)
+    ].join(' ');
+
+    // 5. ΑΡΙΣΤΕΡΗ ΕΔΡΑ (συνδεδεμένη στην ακμή x = 0)
+    // Στο t=0 εκτείνεται στο x: [0 -> -H].
+    // Καθώς διπλώνει, dx = -H*cosA και dz = H*sinA.
+    const leftPts = [
+      project3Dto2D(0, 0, 0),
+      project3Dto2D(-H * cosA, 0, H * sinA),
+      project3Dto2D(-H * cosA, W, H * sinA),
+      project3Dto2D(0, W, 0)
+    ].join(' ');
+
+    // 6. ΚΑΠΑΚΙ (Συνδεδεμένο στην άκρη της εμπρόσθιας έδρας)
+    // Διπλώνει ταυτόχρονα με την εμπρόσθια έδρα και κάνει επιπλέον δίπλωμα για να κλείσει από πάνω
+    // Στο t=0 είναι στο y = W + H -> W + H + W.
+    // Στο t=1 (angle = 90°), βρίσκεται ακριβώς από πάνω: z = H, y από W έως 0.
+    const lidAngle = angle * 2; // Διπλώνει διπλάσια ώστε να κλείσει οριζόντια
+    const lidDy = H * cosA - W * Math.sin(lidAngle);
+    const lidDz = H * sinA + W * Math.cos(lidAngle);
+
+    const lidPts = [
+      project3Dto2D(0, W + H * cosA, H * sinA),
+      project3Dto2D(L, W + H * cosA, H * sinA),
+      project3Dto2D(L, W + lidDy, lidDz),
+      project3Dto2D(0, W + lidDy, lidDz)
+    ].join(' ');
+
+    return { basePts, frontPts, backPts, rightPts, leftPts, lidPts };
+  }, [shapeDims, angle, cosA, sinA]);
 
   // -------------------------------------------------------------------------
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Ολικής Επιφάνειας Αναπτύγματος
@@ -33,12 +129,10 @@ export default function AnaptigmaTheoriaPage() {
   const [dimB, setDimB] = useState(4); // Πλάτος (cm)
   const [dimC, setDimC] = useState(5); // Ύψος (cm)
 
-  // Εμβαδά 3 ζευγών εδρών
-  const faceArea1 = useMemo(() => dimA * dimB, [dimA, dimB]); // Βάση & Καπάκι
-  const faceArea2 = useMemo(() => dimB * dimC, [dimB, dimC]); // Πλαϊνές έδρες
-  const faceArea3 = useMemo(() => dimA * dimC, [dimA, dimC]); // Εμπρός & Πίσω έδρες
+  const faceArea1 = useMemo(() => dimA * dimB, [dimA, dimB]);
+  const faceArea2 = useMemo(() => dimB * dimC, [dimB, dimC]);
+  const faceArea3 = useMemo(() => dimA * dimC, [dimA, dimC]);
 
-  // Ολικό εμβαδόν αναπτύγματος
   const totalSurfaceAreaCm2 = useMemo(() => {
     return 2 * (faceArea1 + faceArea2 + faceArea3);
   }, [faceArea1, faceArea2, faceArea3]);
@@ -249,7 +343,7 @@ export default function AnaptigmaTheoriaPage() {
           </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΔΙΠΛΩΜΑ ΑΝΑΠΤΥΓΜΑΤΟΣ ΣΕ 3D ΣΤΕΡΕΟ (SVG) */}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΙΣΟΜΕΤΡΙΚΟ ΔΙΠΛΩΜΑ ΑΝΑΠΤΥΓΜΑΤΟΣ ΣΕ 3D ΣΤΕΡΕΟ (SVG) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
@@ -320,17 +414,17 @@ export default function AnaptigmaTheoriaPage() {
                   className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
-                  <span>0% (Επίπεδο Χαρτόνι)</span>
+                  <span>0% (Επίπεδο Ανάπτυγμα)</span>
                   <span>50% (Δίπλωμα)</span>
-                  <span>100% (Κλειστό Κουτί)</span>
+                  <span>100% (Κλειστό 3D Στερεό)</span>
                 </div>
               </div>
 
               <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs sm:text-sm">
                 <div className="font-bold text-sky-950">
-                  {foldProgress === 0 && '🔷 Στάδιο 0: Επίπεδο ανάπτυγμα σε σχήμα σταυρού με 6 συνδεδεμένες έδρες.'}
-                  {foldProgress > 0 && foldProgress < 100 && '🔄 Οι πλαϊνές έδρες σηκώνονται κάθετα γύρω από την κεντρική βάση...'}
-                  {foldProgress === 100 && '🟩 Στάδιο 100%: Όλες οι ακμές συναντήθηκαν! Το τρισδιάστατο κουτί έκλεισε τέλεια.'}
+                  {foldProgress === 0 && '🔷 Στάδιο 0: Επίπεδο ανάπτυγμα σταυρού με 6 συνδεδεμένες έδρες.'}
+                  {foldProgress > 0 && foldProgress < 100 && '🔄 Οι 4 πλαϊνές έδρες σηκώνονται κάθετα γύρω από τη βάση και το καπάκι διπλώνει...'}
+                  {foldProgress === 100 && '🟩 Στάδιο 100%: Όλες οι ακμές συναντήθηκαν απόλυτα! Το 3D κουτί έκλεισε.'}
                 </div>
                 <div className="text-slate-600 text-[11px] font-mono pt-1 border-t border-sky-200/60">
                   6 Έδρες • 12 Ακμές • 8 Κορυφές
@@ -338,225 +432,65 @@ export default function AnaptigmaTheoriaPage() {
               </div>
             </div>
 
-            {/* SVG Visualizer Αναδίπλωσης (7 στήλες) */}
+            {/* SVG Visualizer Ισομετρικής Προβολής (7 στήλες) */}
             <div className="lg:col-span-7 bg-slate-900 min-h-[350px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 380 260"
-                className="w-full max-w-[380px] sm:max-w-[440px] h-auto select-none overflow-visible"
+                viewBox="0 0 360 270"
+                className="w-full max-w-[360px] sm:max-w-[420px] h-auto select-none overflow-visible"
               >
-                {selectedShape === 'cube' ? (
-                  // ΑΝΑΔΙΠΛΩΣΗ ΚΥΒΟΥ
-                  // Στο 0% φαίνεται το κλασικό ανάπτυγμα σταυρού (κεντρική έδρα στο 150, 100, μέγεθος 50x50)
-                  // Στο 100% μετατρέπεται σε ισομετρική προβολή κύβου
-                  <g transform="translate(40, 20)">
-                    {/* Κεντρική βάση (σταθερή) */}
-                    <rect
-                      x={110}
-                      y={80 + (foldProgress / 100) * 30}
-                      width={50}
-                      height={50 - (foldProgress / 100) * 15}
-                      fill="rgba(56, 189, 248, 0.4)"
-                      stroke="#38bdf8"
-                      strokeWidth="2"
-                    />
-                    <text x={135} y={105 + (foldProgress / 100) * 25} fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
-                      Βάση
-                    </text>
+                {/* 1. ΒΑΣΗ (Μπλε) */}
+                <polygon
+                  points={faces.basePts}
+                  fill="rgba(56, 189, 248, 0.45)"
+                  stroke="#38bdf8"
+                  strokeWidth="2.5"
+                />
 
-                    {/* Αριστερή έδρα (διπλώνει προς τα πάνω/μέσα) */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '60,80 110,80 110,130 60,130'
-                          : `
-                              ${110 - 50 * Math.cos((foldProgress / 100) * (Math.PI / 2))},${80 + (foldProgress / 100) * 30 - 30 * (foldProgress / 100)} 
-                              110,${80 + (foldProgress / 100) * 30} 
-                              110,${130 + (foldProgress / 100) * 15} 
-                              ${110 - 50 * Math.cos((foldProgress / 100) * (Math.PI / 2))},${130 + (foldProgress / 100) * 15 - 30 * (foldProgress / 100)}
-                            `
-                      }
-                      fill="rgba(129, 140, 248, 0.35)"
-                      stroke="#818cf8"
-                      strokeWidth="2"
-                    />
+                {/* 2. ΠΙΣΩ ΕΔΡΑ (Πράσινη) */}
+                <polygon
+                  points={faces.backPts}
+                  fill="rgba(52, 211, 153, 0.4)"
+                  stroke="#34d399"
+                  strokeWidth="2"
+                />
 
-                    {/* Δεξιά έδρα */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '160,80 210,80 210,130 160,130'
-                          : `
-                              160,${80 + (foldProgress / 100) * 30} 
-                              ${160 + 50 * Math.cos((foldProgress / 100) * (Math.PI / 2))},${80 + (foldProgress / 100) * 30 - 25 * (foldProgress / 100)} 
-                              ${160 + 50 * Math.cos((foldProgress / 100) * (Math.PI / 2))},${130 + (foldProgress / 100) * 15 - 25 * (foldProgress / 100)} 
-                              160,${130 + (foldProgress / 100) * 15}
-                            `
-                      }
-                      fill="rgba(168, 85, 247, 0.35)"
-                      stroke="#c084fc"
-                      strokeWidth="2"
-                    />
+                {/* 3. ΑΡΙΣΤΕΡΗ ΕΔΡΑ (Indigo) */}
+                <polygon
+                  points={faces.leftPts}
+                  fill="rgba(129, 140, 248, 0.4)"
+                  stroke="#818cf8"
+                  strokeWidth="2"
+                />
 
-                    {/* Πάνω έδρα */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '110,30 160,30 160,80 110,80'
-                          : `
-                              ${110 + 25 * (foldProgress / 100)},${30 + 40 * (foldProgress / 100)} 
-                              ${160 + 25 * (foldProgress / 100)},${30 + 40 * (foldProgress / 100)} 
-                              160,${80 + (foldProgress / 100) * 30} 
-                              110,${80 + (foldProgress / 100) * 30}
-                            `
-                      }
-                      fill="rgba(52, 211, 153, 0.35)"
-                      stroke="#34d399"
-                      strokeWidth="2"
-                    />
+                {/* 4. ΔΕΞΙΑ ΕΔΡΑ (Μωβ) */}
+                <polygon
+                  points={faces.rightPts}
+                  fill="rgba(168, 85, 247, 0.4)"
+                  stroke="#c084fc"
+                  strokeWidth="2"
+                />
 
-                    {/* Κάτω έδρα (Εμπρός) */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '110,130 160,130 160,180 110,180'
-                          : `
-                              110,${130 + (foldProgress / 100) * 15} 
-                              160,${130 + (foldProgress / 100) * 15} 
-                              160,${180 - (foldProgress / 100) * 10} 
-                              110,${180 - (foldProgress / 100) * 10}
-                            `
-                      }
-                      fill="rgba(245, 158, 11, 0.35)"
-                      stroke="#f59e0b"
-                      strokeWidth="2"
-                    />
+                {/* 5. ΕΜΠΡΟΣΘΙΑ ΕΔΡΑ (Πορτοκαλί) */}
+                <polygon
+                  points={faces.frontPts}
+                  fill="rgba(245, 158, 11, 0.45)"
+                  stroke="#f59e0b"
+                  strokeWidth="2"
+                />
 
-                    {/* Καπάκι (6η έδρα στο κάτω άκρο) */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '110,180 160,180 160,230 110,230'
-                          : `
-                              ${110 + 25 * (foldProgress / 100)},${180 - 100 * (foldProgress / 100)} 
-                              ${160 + 25 * (foldProgress / 100)},${180 - 100 * (foldProgress / 100)} 
-                              ${160},${180 - 100 * (foldProgress / 100) + 20} 
-                              ${110},${180 - 100 * (foldProgress / 100) + 20}
-                            `
-                      }
-                      fill="rgba(244, 63, 94, 0.35)"
-                      stroke="#f43f5e"
-                      strokeWidth="2"
-                    />
-                  </g>
-                ) : (
-                  // ΑΝΑΔΙΠΛΩΣΗ ΟΡΘΟΓΩΝΙΟΥ ΠΑΡΑΛΛΗΛΕΠΙΠΕΔΟΥ
-                  <g transform="translate(30, 20)">
-                    {/* Κεντρική βάση (ορθογώνιο 70x45) */}
-                    <rect
-                      x={100}
-                      y={85 + (foldProgress / 100) * 20}
-                      width={70}
-                      height={45 - (foldProgress / 100) * 10}
-                      fill="rgba(56, 189, 248, 0.4)"
-                      stroke="#38bdf8"
-                      strokeWidth="2"
-                    />
-                    <text x={135} y={110 + (foldProgress / 100) * 15} fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
-                      Βάση (α · β)
-                    </text>
-
-                    {/* Αριστερή έδρα (πλάτος x ύψος) */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '55,85 100,85 100,130 55,130'
-                          : `
-                              ${100 - 45 * Math.cos((foldProgress / 100) * (Math.PI / 2))},${85 + (foldProgress / 100) * 20 - 25 * (foldProgress / 100)} 
-                              100,${85 + (foldProgress / 100) * 20} 
-                              100,${130 + (foldProgress / 100) * 10} 
-                              ${100 - 45 * Math.cos((foldProgress / 100) * (Math.PI / 2))},${130 + (foldProgress / 100) * 10 - 25 * (foldProgress / 100)}
-                            `
-                      }
-                      fill="rgba(129, 140, 248, 0.35)"
-                      stroke="#818cf8"
-                      strokeWidth="2"
-                    />
-
-                    {/* Δεξιά έδρα */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '170,85 215,85 215,130 170,130'
-                          : `
-                              170,${85 + (foldProgress / 100) * 20} 
-                              ${170 + 45 * Math.cos((foldProgress / 100) * (Math.PI / 2))},${85 + (foldProgress / 100) * 20 - 20 * (foldProgress / 100)} 
-                              ${170 + 45 * Math.cos((foldProgress / 100) * (Math.PI / 2))},${130 + (foldProgress / 100) * 10 - 20 * (foldProgress / 100)} 
-                              170,${130 + (foldProgress / 100) * 10}
-                            `
-                      }
-                      fill="rgba(168, 85, 247, 0.35)"
-                      stroke="#c084fc"
-                      strokeWidth="2"
-                    />
-
-                    {/* Πάνω έδρα */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '100,45 170,45 170,85 100,85'
-                          : `
-                              ${100 + 30 * (foldProgress / 100)},${45 + 35 * (foldProgress / 100)} 
-                              ${170 + 30 * (foldProgress / 100)},${45 + 35 * (foldProgress / 100)} 
-                              170,${85 + (foldProgress / 100) * 20} 
-                              100,${85 + (foldProgress / 100) * 20}
-                            `
-                      }
-                      fill="rgba(52, 211, 153, 0.35)"
-                      stroke="#34d399"
-                      strokeWidth="2"
-                    />
-
-                    {/* Κάτω έδρα */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '100,130 170,130 170,170 100,170'
-                          : `
-                              100,${130 + (foldProgress / 100) * 10} 
-                              170,${130 + (foldProgress / 100) * 10} 
-                              170,${170 - (foldProgress / 100) * 10} 
-                              100,${170 - (foldProgress / 100) * 10}
-                            `
-                      }
-                      fill="rgba(245, 158, 11, 0.35)"
-                      stroke="#f59e0b"
-                      strokeWidth="2"
-                    />
-
-                    {/* Καπάκι */}
-                    <polygon
-                      points={
-                        foldProgress === 0
-                          ? '100,170 170,170 170,215 100,215'
-                          : `
-                              ${100 + 30 * (foldProgress / 100)},${170 - 90 * (foldProgress / 100)} 
-                              ${170 + 30 * (foldProgress / 100)},${170 - 90 * (foldProgress / 100)} 
-                              170,${170 - 90 * (foldProgress / 100) + 20} 
-                              100,${170 - 90 * (foldProgress / 100) + 20}
-                            `
-                      }
-                      fill="rgba(244, 63, 94, 0.35)"
-                      stroke="#f43f5e"
-                      strokeWidth="2"
-                    />
-                  </g>
-                )}
+                {/* 6. ΚΑΠΑΚΙ (Ροζ/Κόκκινο) */}
+                <polygon
+                  points={faces.lidPts}
+                  fill="rgba(244, 63, 94, 0.45)"
+                  stroke="#f43f5e"
+                  strokeWidth="2"
+                />
               </svg>
 
               <div className="mt-3 text-center text-xs text-slate-400">
                 {foldProgress === 100
-                  ? '✓ Το τρισδιάστατο κουτί σχηματίστηκε με 6 έδρες, 12 ακμές και 8 κορυφές!'
-                  : 'Σύρε την μπάρα στο 100% για να δεις το πλήρες κλείσιμο του στερεού.'}
+                  ? '✓ Το τρισδιάστατο κουτί έκλεισε με 6 έδρες, 12 ακμές και 8 κορυφές!'
+                  : 'Οι έδρες παραμένουν απόλυτα συνδεδεμένες στις ακμές κατά το δίπλωμα.'}
               </div>
             </div>
 
