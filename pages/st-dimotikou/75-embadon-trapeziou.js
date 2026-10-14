@@ -1,4 +1,4 @@
-// pages/st-dimotikou/75-embadon-kiklou.js
+// pages/st-dimotikou/75-embadon-trapeziou.js
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
@@ -19,38 +19,55 @@ function formatNum(val) {
   return Number(val).toLocaleString('el-GR');
 }
 
-export default function EmbadonKiklouTheoriaPage() {
+export default function EmbadonTrapeziouTheoriaPage() {
   // -------------------------------------------------------------------------
-  // Εργαστήριο 1: Οπτική Απόδειξη Αναδιάταξης Τομέων (SVG)
+  // Εργαστήριο 1: Διαδραστική Γεωμετρική Απόδειξη σε 2 Στάδια (SVG)
+  // Στάδιο 1 (0% -> 50%): Το 2ο ανάποδο τραπέζιο κουμπώνει και φτιάχνει Παραλληλόγραμμο
+  // Στάδιο 2 (50% -> 100%): Το τρίγωνο αποκόπτεται και φτιάχνει Ορθογώνιο
   // -------------------------------------------------------------------------
-  const [unfoldProgress, setUnfoldProgress] = useState(0);
+  const [animProgress, setAnimProgress] = useState(0); // 0 έως 100
 
-  const radiusR = 60; // Ακτίνα α = 60px
-  const sectorW = (Math.PI * radiusR) / 4; // Πλάτος βάσης κάθε τομέα
+  // Γεωμετρικές διαστάσεις εργαστηρίου 1 (SVG)
+  const bigBaseB = 140; // Μεγάλη βάση B = 140px
+  const smallBaseB = 70; // Μικρή βάση b = 70px
+  const heightH = 80; // Ύψος υ = 80px
+  const slantLeft = 35; // Κλίση αριστερής πλευράς
+  const originX = 50;
+  const originY = 55;
+
+  // Υπολογισμός κίνησης 1 (Προσέγγιση του 2ου τραπεζίου: 0% -> 50%)
+  const phase1T = Math.min(1, animProgress / 50);
+  const secondTrapezoidOffset = (1 - phase1T) * 90;
+
+  // Υπολογισμός κίνησης 2 (Ολίσθηση του τριγώνου: 50% -> 100%)
+  const phase2T = Math.max(0, (animProgress - 50) / 50);
+  const totalParallelogramBase = bigBaseB + smallBaseB; // 210px
+  const triangleShiftX = phase2T * totalParallelogramBase;
 
   // -------------------------------------------------------------------------
-  // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδού & Περιφέρειας
+  // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδού Τραπεζίου & Μονάδων
   // -------------------------------------------------------------------------
-  const [radiusInput, setRadiusInput] = useState(5); // Ακτίνα σε cm
-  const piVal = 3.14;
+  const [calcBigB, setCalcBigB] = useState(12); // Μεγάλη βάση (cm)
+  const [calcSmallB, setCalcSmallB] = useState(8); // Μικρή βάση (cm)
+  const [calcHeight, setCalcHeight] = useState(6); // Ύψος (cm)
 
-  const diameter = useMemo(() => radiusInput * 2, [radiusInput]);
-  const perimeterCm = useMemo(() => 2 * piVal * radiusInput, [radiusInput]);
-  const areaCm2 = useMemo(() => piVal * radiusInput * radiusInput, [radiusInput]);
+  const sumBases = useMemo(() => calcBigB + calcSmallB, [calcBigB, calcSmallB]);
+  const areaCm2 = useMemo(() => (sumBases * calcHeight) / 2, [sumBases, calcHeight]);
+  const parallAreaCm2 = useMemo(() => sumBases * calcHeight, [sumBases, calcHeight]);
   const areaMm2 = useMemo(() => areaCm2 * 100, [areaCm2]);
   const areaDm2 = useMemo(() => areaCm2 / 100, [areaCm2]);
   const areaM2 = useMemo(() => areaCm2 / 10000, [areaCm2]);
 
   return (
     <Layout
-      title="Εμβαδόν Κύκλου &amp; Μονάδες Μέτρησης - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Μαθαίνουμε πώς υπολογίζουμε το εμβαδόν κύκλου Ε ＝ π · α², την απόδειξη με αναδιάταξη τομέων σε ορθογώνιο και τις μετατροπές μονάδων επιφάνειας."
+      title="Εμβαδόν Τραπεζίου &amp; Μονάδες Μέτρησης - ΣΤ' Δημοτικού | LearnMaths.gr"
+      description="Μαθαίνουμε πώς υπολογίζουμε το εμβαδόν τραπεζίου Ε ＝ [(Β ＋ b) · υ] : 2, τη γεωμετρική μετατροπή σε παραλληλόγραμμο και ορθογώνιο και τις μετατροπές μονάδων."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
       showAds={true}
       actionButton={
         <Link
-          href="/st-dimotikou/75-embadon-kiklou-ask"
+          href="/st-dimotikou/75-embadon-trapeziou-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
           <span>🎯 Ασκήσεις</span>
@@ -66,22 +83,22 @@ export default function EmbadonKiklouTheoriaPage() {
               <span>ΚΕΦΑΛΑΙΟ 75 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Εμβαδόν Κύκλου • Ακτίνα, ο Αριθμός π &amp; Μονάδες Επιφάνειας
+              Εμβαδόν Τραπεζίου • Μεγάλη Βάση, Μικρή Βάση &amp; Ύψος
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Ανακαλύπτουμε πώς υπολογίζεται η επιφάνεια του κύκλου με τον τύπο <strong>Ε ＝ π · α²</strong>, 
-              βλέπουμε ζωντανά τη διάσημη απόδειξη όπου οι κυκλικοί τομείς αναδιατάσσονται σχηματίζοντας <strong>ορθογώνιο</strong>, 
-              και εξετάζουμε τη σχέση ανάμεσα στην <strong>περίμετρο</strong> και το <strong>εμβαδόν</strong>!
+              Ανακαλύπτουμε τον θεμελιώδη τύπο <strong>Ε ＝ [(Β ＋ b) · υ] : 2</strong>, 
+              βλέπουμε ζωντανά πώς δύο ίδια τραπέζια ενώνονται σε ένα <strong>πλάγιο παραλληλόγραμμο</strong> και έπειτα 
+              μετατρέπονται σε <strong>ορθογώνιο</strong>, και εξασκούμαστε στις μετατροπές μονάδων μέτρησης επιφάνειας!
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Οπτική Απόδειξη Αναδιάταξης Τομέων σε Ορθογώνιο &amp; SVG</span>
+              <span>Θεωρία, Απόδειξη 2 Σταδίων (Τραπέζιο ➔ Παραλληλόγραμμο ➔ Ορθογώνιο) &amp; SVG</span>
             </div>
             <Link
-              href="/st-dimotikou/75-embadon-kiklou-ask"
+              href="/st-dimotikou/75-embadon-trapeziou-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
               <span>Δοκίμασε τις Ασκήσεις</span>
@@ -94,10 +111,10 @@ export default function EmbadonKiklouTheoriaPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Το Εμβαδόν Κύκλου σε 4 Βήματα
+              Το Εμβαδόν Τραπεζίου σε 4 Βήματα
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Από τον βασικό τύπο μέχρι τη γεωμετρική απόδειξη και τα σύνθετα κυκλικά σχήματα.
+              Από την έννοια των δύο βάσεων μέχρι τη γεωμετρική απόδειξη και τους υπολογισμούς.
             </p>
           </div>
 
@@ -113,28 +130,26 @@ export default function EmbadonKiklouTheoriaPage() {
                   <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Ο Τύπος</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Πώς Υπολογίζουμε το Εμβαδόν;
+                  Πώς Βρίσκουμε το Εμβαδόν;
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Το εμβαδόν του κυκλικού δίσκου εξαρτάται αποκλειστικά από την <strong>ακτίνα (α)</strong> του κύκλου:
+                  Το τραπέζιο έχει δύο παράλληλες πλευρές (τη <strong>Μεγάλη Βάση Β</strong> και τη <strong>Μικρή Βάση b</strong>) και ένα <strong>Ύψος υ</strong>:
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 text-center font-mono">
                   <div className="text-indigo-900 font-black text-base sm:text-lg">
-                    Εμβαδόν ＝ π · α²
-                  </div>
-                  <div className="text-slate-700 font-bold">
-                    Ε ＝ 3,14 · α · α
+                    Εμβαδόν ＝ [(Β ＋ b) · υ] : 2
                   </div>
                   <p className="text-[11px] text-slate-600 font-sans text-left pt-1">
-                    • <strong>π:</strong> Ο μαθηματικός αριθμός <strong>π ≈ 3,14</strong>.<br />
-                    • <strong>α²:</strong> Το τετράγωνο της ακτίνας (<strong>α · α</strong>, δηλαδή η ακτίνα πολλαπλασιασμένη με τον εαυτό της, όχι επί 2!).
+                    1. Προσθέτουμε τις δύο βάσεις: <strong>(Β ＋ b)</strong>.<br />
+                    2. Πολλαπλασιάζουμε το άθροισμα επί το ύψος: <strong>· υ</strong>.<br />
+                    3. Διαιρούμε το αποτέλεσμα με το 2: <strong>: 2</strong>.
                   </p>
                 </div>
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Προσοχή: α² σημαίνει <strong>α · α</strong>. Για παράδειγμα, αν α ＝ 4 cm, τότε α² ＝ 4 · 4 ＝ 16 cm² (και όχι 8 cm²)!
+                💡 Το ύψος είναι πάντοτε η <strong>κάθετη απόσταση (90°)</strong> ανάμεσα στις δύο βάσεις, όχι οι πλάγιες πλευρές!
               </div>
             </article>
 
@@ -148,30 +163,27 @@ export default function EmbadonKiklouTheoriaPage() {
                   <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Γεωμετρική Απόδειξη</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Γιατί Ισχύει ο Τύπος Ε ＝ π · α²;
+                  Γιατί Ισχύει ο Τύπος;
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αν κόψουμε έναν κύκλο σε πολλούς μικρούς τομείς και τους τοποθετήσουμε εναλλάξ:
+                  Η απόδειξη στηρίζεται σε δύο απλά βήματα αναδιάταξης:
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
                   <div>
-                    1. <strong>Σχήμα:</strong> Οι τομείς σχηματίζουν ένα ορθογώνιο παραλληλόγραμμο.
+                    1. <strong>Διπλασιασμός:</strong> Ενώνουμε ένα δεύτερο ανάποδο τραπέζιο. Σχηματίζεται πλάγιο παραλληλόγραμμο με βάση <strong>(Β ＋ b)</strong> και ύψος <strong>υ</strong>.
                   </div>
                   <div>
-                    2. <strong>Ύψος:</strong> Το ύψος του ορθογωνίου είναι η ακτίνα <strong>α</strong>.
+                    2. <strong>Ορθογώνιο:</strong> Μεταφέροντας το ακριανό τρίγωνο, το παραλληλόγραμμο γίνεται ορθογώνιο με εμβαδόν <strong>(Β ＋ b) · υ</strong>.
                   </div>
-                  <div>
-                    3. <strong>Βάση:</strong> Η βάση του είναι το μισό της περιφέρειας του κύκλου, δηλαδή <strong>π · α</strong>.
-                  </div>
-                  <div className="text-amber-950 font-bold pt-1 border-t border-slate-200 font-mono text-center">
-                    Εμβαδόν ＝ Βάση · Ύψος ＝ (π · α) · α ＝ <strong>π · α²</strong>!
+                  <div className="text-amber-950 font-bold pt-1 border-t border-slate-200">
+                    Επειδή χρησιμοποιήσαμε 2 τραπέζια, το ένα έχει εμβαδόν <strong>[(Β ＋ b) · υ] : 2</strong>!
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                ⚡ Όσο περισσότερους τομείς κόβουμε, τόσο πιο τέλειο γίνεται το ορθογώνιο με εμβαδόν π · α²!
+                ⚡ Κάθε τραπέζιο είναι ακριβώς το μισό ενός παραλληλογράμμου με βάση ίση με το άθροισμα των βάσεων (Β ＋ b)!
               </div>
             </article>
 
@@ -182,30 +194,30 @@ export default function EmbadonKiklouTheoriaPage() {
                   <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 3
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Ακτίνα vs Διάμετρος</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Είδη Τραπεζίων</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Τι Γίνεται όταν Ξέρουμε τη Διάμετρο;
+                  Ορθογώνιο &amp; Ισοσκελές Τραπέζιο
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Στα προβλήματα συχνά δίνεται η <strong>διάμετρος (δ)</strong> αντί για την ακτίνα:
+                  Ο τύπος του εμβαδού ισχύει ακριβώς ο ίδιος για όλα τα είδη τραπεζίων:
                 </p>
 
-                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 font-mono">
-                  <div className="text-indigo-950 font-bold">
-                    1. Βρίσκουμε πρώτα την ακτίνα: α ＝ δ : 2
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 font-mono">
+                  <div>
+                    • <strong>Ορθογώνιο τραπέζιο:</strong> Έχει 2 ορθές γωνίες. Η κάθετη πλευρά του είναι ταυτόχρονα και το <strong>ύψος (υ)</strong> του!
                   </div>
-                  <div className="text-indigo-950 font-bold">
-                    2. Εφαρμόζουμε τον τύπο: Ε ＝ 3,14 · α · α
+                  <div>
+                    • <strong>Ισοσκελές τραπέζιο:</strong> Οι δύο μη παράλληλες πλευρές του είναι ίσες.
                   </div>
-                  <p className="text-[11px] text-slate-600 font-sans pt-1">
-                    Παράδειγμα: Αν η διάμετρος είναι 10 cm, τότε η ακτίνα είναι α ＝ 5 cm και Ε ＝ 3,14 · 5 · 5 ＝ <strong>78,5 cm²</strong>.
-                  </p>
+                  <div>
+                    • <strong>Σκαληνό τραπέζιο:</strong> Όλες οι πλευρές του έχουν διαφορετικά μήκη.
+                  </div>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                🎯 Ποτέ μην βάζετε τη διάμετρο στον τύπο του εμβαδού! Πρώτα τη διαιρούμε διά 2.
+                🎯 Στο ορθογώνιο τραπέζιο δεν χρειάζεται να σχεδιάσουμε ύψος: είναι έτοιμο στην κάθετη πλευρά!
               </div>
             </article>
 
@@ -216,44 +228,47 @@ export default function EmbadonKiklouTheoriaPage() {
                   <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
                     ΒΗΜΑ 4
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Ημικύκλιο &amp; Δακτύλιος</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Αντίστροφο Πρόβλημα</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Σύνθετα Κυκλικά Σχήματα
+                  Εύρεση Ύψους ή Αθροίσματος Βάσεων
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Ειδικές κυκλικές επιφάνειες που συναντάμε συχνά:
+                  Όταν γνωρίζουμε το εμβαδόν και ψάχνουμε άγνωστη διάσταση, <strong>διπλασιάζουμε πρώτα το εμβαδόν (2 · Ε)</strong>:
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 font-mono">
-                  <div>
-                    • <strong>Ημικύκλιο:</strong> Είναι ακριβώς το μισό του κύκλου: <strong>Εημικ ＝ (π · α²) : 2</strong>.
+                  <div className="text-emerald-950 font-bold">
+                    • Ύψος: υ ＝ (2 · Ε) : (Β ＋ b)
                   </div>
-                  <div>
-                    • <strong>Κυκλικός δακτύλιος (ροδέλα):</strong> Αφαιρούμε το εμβαδόν του μικρού εσωτερικού κύκλου από τον μεγάλο: <strong>Εδακτ ＝ Εμεγ － Εμικ</strong>.
+                  <div className="text-emerald-950 font-bold">
+                    • Άθροισμα Βάσεων: (Β ＋ b) ＝ (2 · Ε) : υ
                   </div>
+                  <p className="text-[11px] text-slate-600 font-sans pt-1">
+                    Παράδειγμα: Αν Ε ＝ 50 cm² και (Β ＋ b) ＝ 20 cm, τότε υ ＝ (2 · 50) : 20 ＝ 100 : 20 ＝ <strong>5 cm</strong>.
+                  </p>
                 </div>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🚀 Μονάδες: 1 m² ＝ 100 dm² ＝ 10.000 cm². Όπως σε κάθε επιφάνεια, οι μετατροπές γίνονται ανά 100!
+                🚀 Όπως και στο τρίγωνο, διπλασιάζουμε πρώτα το εμβαδόν και μετά διαιρούμε!
               </div>
             </article>
 
           </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΑΝΑΔΙΑΤΑΞΗ ΤΟΜΕΩΝ ΣΕ ΟΡΘΟΓΩΝΙΟ (SVG) */}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΑΠΟΔΕΙΞΗ 2 ΣΤΑΔΙΩΝ (SVG) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
               <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πώς ο Κύκλος Γίνεται Ορθογώνιο; (SVG)
+              Πώς το Τραπέζιο Γίνεται Παραλληλόγραμμο και Ορθογώνιο; (SVG)
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρε την μπάρα προόδου: Παρατήρησε πώς οι κυκλικοί τομείς ανοίγουν και «κουμπώνουν» εναλλάξ σχηματίζοντας ορθογώνιο με βάση (π · α) και ύψος (α):
+              Σύρε την μπάρα προόδου: Στο 50% το 2ο ανάποδο τραπέζιο κουμπώνει σχηματίζοντας παραλληλόγραμμο, και στο 100% το ακριανό τρίγωνο ολισθαίνει στα δεξιά σχηματίζοντας τέλειο ορθογώνιο!
             </p>
           </div>
 
@@ -263,9 +278,9 @@ export default function EmbadonKiklouTheoriaPage() {
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΑΝΑΔΙΑΤΑΞΗ ΤΟΜΕΩΝ:</span>
+                  <span>ΣΤΑΔΙΟ ΑΝΑΔΙΑΤΑΞΗΣ:</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
-                    {unfoldProgress}%
+                    {animProgress}%
                   </span>
                 </div>
                 <input
@@ -273,13 +288,13 @@ export default function EmbadonKiklouTheoriaPage() {
                   min={0}
                   max={100}
                   step={1}
-                  value={unfoldProgress}
-                  onChange={(e) => setUnfoldProgress(Number(e.target.value))}
+                  value={animProgress}
+                  onChange={(e) => setAnimProgress(Number(e.target.value))}
                   className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
-                  <span>0% (Κύκλος)</span>
-                  <span>50% (Άνοιγμα)</span>
+                  <span>0% (1 Τραπέζιο)</span>
+                  <span>50% (Παραλληλόγραμμο)</span>
                   <span>100% (Ορθογώνιο)</span>
                 </div>
               </div>
@@ -287,157 +302,209 @@ export default function EmbadonKiklouTheoriaPage() {
               {/* Κάρτα Επεξήγησης */}
               <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs sm:text-sm">
                 <div className="font-bold text-sky-950">
-                  {unfoldProgress === 0 && '🔷 Αρχικό Σχήμα: Ολόκληρος κύκλος χωρισμένος σε τομείς.'}
-                  {unfoldProgress > 0 && unfoldProgress < 100 && '🔄 Οι τομείς ξεδιπλώνονται και τοποθετούνται εναλλάξ...'}
-                  {unfoldProgress === 100 && '🟩 Ολοκληρώθηκε: Οι τομείς σχημάτισαν ένα ορθογώνιο παραλληλόγραμμο!'}
+                  {animProgress === 0 && '🔷 Στάδιο 0: Αρχικό τραπέζιο με μεγάλη βάση Β ＝ 140 και μικρή βάση b ＝ 70.'}
+                  {animProgress > 0 && animProgress < 50 && '🔄 Στάδιο 1: Ένα δεύτερο ανάποδο τραπέζιο πλησιάζει...'}
+                  {animProgress >= 50 && animProgress < 100 && '🟪 Στάδιο 2: Σχηματίστηκε παραλληλόγραμμο! Τώρα το αριστερό τρίγωνο αποκόπτεται και ολισθαίνει...'}
+                  {animProgress === 100 && '🟩 Στάδιο 3: Τέλειο ορθογώνιο με μήκος (Β ＋ b) και πλάτος υ!'}
                 </div>
                 <div className="text-slate-600 text-[11px] space-y-1 font-mono pt-1 border-t border-sky-200/60">
-                  <div>• <strong>Βάση Ορθογωνίου:</strong> Μισή Περιφέρεια ＝ π · α</div>
-                  <div>• <strong>Ύψος Ορθογωνίου:</strong> Ακτίνα ＝ α</div>
-                  <div className="text-indigo-900 font-bold">• <strong>Εμβαδόν:</strong> (π · α) · α ＝ <strong>π · α²</strong></div>
+                  <div>• Συνολική Βάση: Β ＋ b ＝ 140 ＋ 70 ＝ <strong>210 px</strong></div>
+                  <div>• Εμβαδόν 2 Τραπεζίων: (Β ＋ b) · υ</div>
+                  <div className="text-indigo-900 font-bold">• Εμβαδόν 1 Τραπεζίου: <strong>[(Β ＋ b) · υ] : 2</strong></div>
                 </div>
               </div>
             </div>
 
             {/* SVG Visualizer (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-900 min-h-[320px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+            <div className="lg:col-span-7 bg-slate-900 min-h-[340px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 380 200"
-                className="w-full max-w-[380px] sm:max-w-[440px] h-auto select-none overflow-visible"
+                viewBox="0 0 400 220"
+                className="w-full max-w-[400px] sm:max-w-[460px] h-auto select-none overflow-visible"
               >
-                {/* Κατάσταση 0%: Κύκλος στο κέντρο */}
-                {unfoldProgress < 100 && (
-                  <g opacity={1 - unfoldProgress / 100}>
-                    <circle cx="100" cy="100" r={radiusR} fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" strokeWidth="2" />
-                    {/* Ακτίνα */}
-                    <line x1="100" y1="100" x2="160" y2="100" stroke="#f59e0b" strokeWidth="2.5" />
-                    <circle cx="100" cy="100" r="3" fill="#ffffff" />
-                    <text x="130" y="92" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="middle">
-                      α
+                {/* 1. Σταθερό σώμα του 1ου τραπεζίου (χωρίς το κινούμενο αριστερό τρίγωνο) */}
+                <polygon
+                  points={`
+                    ${originX + slantLeft},${originY} 
+                    ${originX + slantLeft + smallBaseB},${originY} 
+                    ${originX + bigBaseB},${originY + heightH} 
+                    ${originX + slantLeft},${originY + heightH}
+                  `}
+                  fill="rgba(56, 189, 248, 0.3)"
+                  stroke="#38bdf8"
+                  strokeWidth="2.5"
+                />
+
+                {/* 2. Κινούμενο αριστερό ορθογώνιο τρίγωνο του 1ου τραπεζίου */}
+                <polygon
+                  points={`
+                    ${originX + triangleShiftX},${originY + heightH} 
+                    ${originX + slantLeft + triangleShiftX},${originY + heightH} 
+                    ${originX + slantLeft + triangleShiftX},${originY}
+                  `}
+                  fill={animProgress === 100 ? 'rgba(52, 211, 153, 0.4)' : 'rgba(56, 189, 248, 0.35)'}
+                  stroke={animProgress === 100 ? '#34d399' : '#38bdf8'}
+                  strokeWidth="2.5"
+                  strokeDasharray={animProgress > 50 && animProgress < 100 ? '4 3' : 'none'}
+                />
+
+                {/* 3. Δεύτερο ανάποδο τραπέζιο (μωβ): πλησιάζει από τα δεξιά (0 -> 50) */}
+                <polygon
+                  points={`
+                    ${originX + slantLeft + smallBaseB + secondTrapezoidOffset},${originY} 
+                    ${originX + totalParallelogramBase + slantLeft + secondTrapezoidOffset},${originY} 
+                    ${originX + totalParallelogramBase + secondTrapezoidOffset},${originY + heightH} 
+                    ${originX + bigBaseB + secondTrapezoidOffset},${originY + heightH}
+                  `}
+                  fill="rgba(168, 85, 247, 0.3)"
+                  stroke="#c084fc"
+                  strokeWidth="2.5"
+                  strokeDasharray={animProgress < 50 ? '4 3' : 'none'}
+                />
+
+                {/* 4. Κάθετο Ύψος (υ) - Κίτρινη διακεκομμένη γραμμή */}
+                <line
+                  x1={originX + slantLeft}
+                  y1={originY}
+                  x2={originX + slantLeft}
+                  y2={originY + heightH}
+                  stroke="#f59e0b"
+                  strokeWidth="2"
+                  strokeDasharray="4 3"
+                />
+                <rect
+                  x={originX + slantLeft}
+                  y={originY + heightH - 10}
+                  width="10"
+                  height="10"
+                  fill="none"
+                  stroke="#f59e0b"
+                  strokeWidth="1.5"
+                />
+                <circle cx={originX + slantLeft + 5} cy={originY + heightH - 5} r="1.5" fill="#f59e0b" />
+                <text x={originX + slantLeft - 8} y={originY + heightH / 2 + 4} fill="#f59e0b" fontSize="12" fontWeight="black" textAnchor="end">
+                  υ
+                </text>
+
+                {/* Ετικέτες Βάσεων */}
+                {/* Μικρή βάση b επάνω */}
+                <line x1={originX + slantLeft} y1={originY - 12} x2={originX + slantLeft + smallBaseB} y2={originY - 12} stroke="#38bdf8" strokeWidth="1.5" />
+                <text x={originX + slantLeft + smallBaseB / 2} y={originY - 18} fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">
+                  b (μικρή)
+                </text>
+
+                {/* Μεγάλη βάση B κάτω */}
+                <line x1={originX + (animProgress === 100 ? slantLeft : 0)} y1={originY + heightH + 18} x2={originX + bigBaseB + (animProgress === 100 ? slantLeft : 0)} y2={originY + heightH + 18} stroke="#38bdf8" strokeWidth="1.5" />
+                <text x={originX + bigBaseB / 2 + (animProgress === 100 ? slantLeft : 0)} y={originY + heightH + 34} fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">
+                  Β (μεγάλη)
+                </text>
+
+                {/* Ετικέτα 2ης βάσης όταν εμφανιστεί το 2ο τραπέζιο */}
+                {animProgress >= 50 && (
+                  <>
+                    {/* Πάνω βάση Β του 2ου τραπεζίου */}
+                    <line x1={originX + slantLeft + smallBaseB} y1={originY - 12} x2={originX + slantLeft + totalParallelogramBase} y2={originY - 12} stroke="#c084fc" strokeWidth="1.5" />
+                    <text x={originX + slantLeft + smallBaseB + bigBaseB / 2} y={originY - 18} fill="#c084fc" fontSize="11" fontWeight="bold" textAnchor="middle">
+                      Β (του 2ου)
                     </text>
-                    {/* Διαχωριστικές ακτίνες τομέων */}
-                    {Array.from({ length: 8 }).map((_, i) => {
-                      const ang = (i * Math.PI) / 4;
-                      return (
-                        <line
-                          key={i}
-                          x1="100"
-                          y1="100"
-                          x2={100 + radiusR * Math.cos(ang)}
-                          y2={100 + radiusR * Math.sin(ang)}
-                          stroke="rgba(255, 255, 255, 0.3)"
-                          strokeWidth="1"
-                        />
-                      );
-                    })}
-                  </g>
+
+                    {/* Κάτω βάση b του 2ου τραπεζίου */}
+                    <line x1={originX + bigBaseB + (animProgress === 100 ? slantLeft : 0)} y1={originY + heightH + 18} x2={originX + totalParallelogramBase + (animProgress === 100 ? slantLeft : 0)} y2={originY + heightH + 18} stroke="#c084fc" strokeWidth="1.5" />
+                    <text x={originX + bigBaseB + smallBaseB / 2 + (animProgress === 100 ? slantLeft : 0)} y={originY + heightH + 34} fill="#c084fc" fontSize="11" fontWeight="bold" textAnchor="middle">
+                      b (του 2ου)
+                    </text>
+                  </>
                 )}
-
-                {/* Κατάσταση Αναδιάταξης (Ξεδίπλωμα προς Ορθογώνιο) */}
-                <g opacity={unfoldProgress / 100} transform={`translate(${140 - (unfoldProgress / 100) * 80}, 50)`}>
-                  {/* 4 τομείς που κοιτούν προς τα πάνω (γαλάζιοι) */}
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <polygon
-                      key={`top-${i}`}
-                      points={`
-                        ${i * sectorW},${radiusR} 
-                        ${(i + 0.5) * sectorW},0 
-                        ${(i + 1) * sectorW},${radiusR}
-                      `}
-                      fill="rgba(56, 189, 248, 0.4)"
-                      stroke="#38bdf8"
-                      strokeWidth="1.5"
-                    />
-                  ))}
-
-                  {/* 4 τομείς που κοιτούν προς τα κάτω εναλλάξ (μωβ) */}
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <polygon
-                      key={`bot-${i}`}
-                      points={`
-                        ${(i + 0.5) * sectorW},0 
-                        ${(i + 1) * sectorW},${radiusR} 
-                        ${(i + 1.5) * sectorW},0
-                      `}
-                      fill="rgba(168, 85, 247, 0.4)"
-                      stroke="#c084fc"
-                      strokeWidth="1.5"
-                    />
-                  ))}
-
-                  {/* Ετικέτες Ορθογωνίου όταν πλησιάζει το 100% */}
-                  {unfoldProgress > 70 && (
-                    <>
-                      {/* Ύψος = α */}
-                      <line x1="-10" y1="0" x2="-10" y2={radiusR} stroke="#f59e0b" strokeWidth="2" />
-                      <text x="-20" y={radiusR / 2 + 4} fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="end">
-                        α
-                      </text>
-
-                      {/* Βάση = π · α */}
-                      <line x1="0" y1={radiusR + 15} x2={4.5 * sectorW} y2={radiusR + 15} stroke="#e2e8f0" strokeWidth="2" />
-                      <text x={(4.5 * sectorW) / 2} y={radiusR + 32} fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle">
-                        Βάση ＝ π · α
-                      </text>
-                    </>
-                  )}
-                </g>
               </svg>
 
               <div className="mt-3 text-center text-xs text-slate-400">
-                Το ορθογώνιο έχει μήκος (π · α) και πλάτος (α). Το εμβαδόν του είναι: (π · α) · α ＝ <strong>π · α²</strong>.
+                Τα δύο τραπέζια φτιάχνουν ορθογώνιο με μήκος (Β ＋ b) και πλάτος υ. Άρα το ένα τραπέζιο ισούται με [(Β ＋ b) · υ] : 2.
               </div>
             </div>
 
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΕΜΒΑΔΟΥ & ΣΥΓΚΡΙΣΗ ΜΕ ΠΕΡΙΜΕΤΡΟ */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΕΜΒΑΔΟΥ & ΜΕΤΑΤΡΟΠΕΑΣ ΜΟΝΑΔΩΝ */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
               <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ &amp; ΜΟΝΑΔΕΣ</span>
             </div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Υπολογιστής Εμβαδού Κύκλου &amp; Αυτόματη Μετατροπή
+              Υπολογιστής Εμβαδού Τραπεζίου &amp; Αυτόματη Μετατροπή
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Άλλαξε την ακτίνα (α) σε cm για να υπολογίσεις ταυτόχρονα το εμβαδόν (π · α²) και την περίμετρο (2 · π · α):
+              Άλλαξε τις δύο βάσεις (Β και b) και το ύψος σε cm για να υπολογίσεις το εμβαδόν του τραπεζίου και να δεις τις αυτόματες μετατροπές μονάδων:
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
-            {/* Slider Ακτίνας (5 στήλες) */}
-            <div className="lg:col-span-5 space-y-4">
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+            {/* Sliders Βάσεων και Ύψους (5 στήλες) */}
+            <div className="lg:col-span-5 space-y-3.5">
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΑΚΤΙΝΑ ΚΥΚΛΟΥ (α):</span>
+                  <span>ΜΕΓΑΛΗ ΒΑΣΗ (Β):</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
-                    {radiusInput} cm
+                    {calcBigB} cm
                   </span>
                 </div>
                 <input
                   type="range"
-                  min={1}
+                  min={6}
                   max={25}
                   step={1}
-                  value={radiusInput}
-                  onChange={(e) => setRadiusInput(Number(e.target.value))}
+                  value={calcBigB}
+                  onChange={(e) => {
+                    const newBig = Number(e.target.value);
+                    setCalcBigB(newBig);
+                    if (calcSmallB >= newBig) setCalcSmallB(newBig - 1);
+                  }}
                   className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
                 />
-                <div className="flex justify-between text-[11px] font-mono text-slate-400">
-                  <span>1 cm</span>
-                  <span>Διάμετρος: {diameter} cm</span>
-                  <span>25 cm</span>
-                </div>
               </div>
 
-              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 font-mono space-y-1.5">
-                <div>• Διάμετρος: δ ＝ 2 · α ＝ 2 · {radiusInput} ＝ <strong>{diameter} cm</strong></div>
-                <div>• Περίμετρος (Μήκος): 2 · π · α ＝ 2 · 3,14 · {radiusInput} ＝ <strong>{formatNum(perimeterCm)} cm</strong></div>
-                <div className="text-emerald-800 font-black text-sm pt-1 border-t border-slate-200">
-                  • Εμβαδόν: π · α² ＝ 3,14 · {radiusInput} · {radiusInput} ＝ <strong>{formatNum(areaCm2)} cm²</strong>
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+                <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
+                  <span>ΜΙΚΡΗ ΒΑΣΗ (b):</span>
+                  <span className="font-mono text-base font-black text-sky-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
+                    {calcSmallB} cm
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={2}
+                  max={calcBigB - 1}
+                  step={1}
+                  value={calcSmallB}
+                  onChange={(e) => setCalcSmallB(Number(e.target.value))}
+                  className="w-full accent-sky-600 cursor-pointer touch-manipulation"
+                />
+              </div>
+
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+                <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
+                  <span>ΥΨΟΣ (υ):</span>
+                  <span className="font-mono text-base font-black text-amber-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
+                    {calcHeight} cm
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={2}
+                  max={20}
+                  step={1}
+                  value={calcHeight}
+                  onChange={(e) => setCalcHeight(Number(e.target.value))}
+                  className="w-full accent-amber-600 cursor-pointer touch-manipulation"
+                />
+              </div>
+
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 font-mono space-y-1">
+                <div>• Άθροισμα βάσεων: Β ＋ b ＝ {calcBigB} ＋ {calcSmallB} ＝ {sumBases} cm</div>
+                <div>• Γινόμενο: (Β ＋ b) · υ ＝ {sumBases} · {calcHeight} ＝ {parallAreaCm2} cm²</div>
+                <div className="text-emerald-800 font-black text-sm">
+                  • Εμβαδόν Τραπεζίου: [{sumBases} · {calcHeight}] : 2 ＝ <strong>{formatNum(areaCm2)} cm²</strong>
                 </div>
               </div>
             </div>
@@ -468,7 +535,7 @@ export default function EmbadonKiklouTheoriaPage() {
               </div>
 
               <div className="text-[11px] text-slate-400 text-center pt-1 font-sans">
-                💡 Μην μπερδεύετε την περίμετρο ({formatNum(perimeterCm)} cm - μήκος) με το εμβαδόν ({formatNum(areaCm2)} cm² - επιφάνεια)!
+                💡 Το εμβαδόν του τραπεζίου είναι ακριβώς το μισό του αντίστοιχου παραλληλογράμμου ({formatNum(parallAreaCm2)} cm²).
               </div>
             </div>
 
@@ -479,10 +546,10 @@ export default function EmbadonKiklouTheoriaPage() {
         <section className="space-y-6">
           <div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900 tracking-tight">
-              Λυμένα Προβλήματα με Εμβαδόν Κύκλου
+              Λυμένα Προβλήματα με Εμβαδόν Τραπεζίου
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Εφαρμογές του τύπου Ε ＝ π · α² σε κυκλικά τραπέζια και πισίνες.
+              Εφαρμογές του τύπου Ε ＝ [(Β ＋ b) · υ] : 2 σε οικόπεδα και αγροτεμάχια.
             </p>
           </div>
 
@@ -492,16 +559,17 @@ export default function EmbadonKiklouTheoriaPage() {
             <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-black rounded-lg uppercase">
-                  ΠΡΟΒΛΗΜΑ 1: ΚΥΚΛΙΚΟ ΤΡΑΠΕΖΙ
+                  ΠΡΟΒΛΗΜΑ 1: ΤΡΑΠΕΖΙΟ ΟΙΚΟΠΕΔΟ
                 </span>
-                <span className="text-xs font-bold text-slate-400">Δίνεται η Διάμετρος</span>
+                <span className="text-xs font-bold text-slate-400">Ε ＝ [(Β ＋ b) · υ] : 2</span>
               </div>
               <h4 className="text-lg font-black text-slate-900">
-                Υπολογισμός Εμβαδού από τη Διάμετρο
+                Υπολογισμός Εμβαδού Οικοπέδου σε Σχήμα Τραπεζίου
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Ένα στρογγυλό τραπέζι έχει διάμετρο <strong>1,6 m</strong>. 
-                Θέλουμε να φτιάξουμε ένα γυάλινο κάλυμμα για την επιφάνειά του. Πόσα τετραγωνικά μέτρα (m²) γυαλιού θα χρειαστούν; (Χρησιμοποιήστε π ＝ 3,14)
+                Ένα οικόπεδο έχει σχήμα τραπεζίου. Η μεγάλη του βάση είναι <strong>40 m</strong>, 
+                η μικρή του βάση είναι <strong>25 m</strong> και η κάθετη απόσταση ανάμεσα στις δύο βάσεις (το ύψος) είναι <strong>16 m</strong>. 
+                Οι πλάγιες πλευρές του είναι 18 m και 20 m. Ποιο είναι το εμβαδόν του οικοπέδου σε m²;
               </p>
 
               {/* Πίνακας Δεδομένων */}
@@ -511,13 +579,13 @@ export default function EmbadonKiklouTheoriaPage() {
                 </span>
                 <div className="grid grid-cols-3 gap-2 text-center font-mono font-bold">
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Διάμετρος (δ)</span> 1,6 m
+                    <span className="text-slate-400 text-[10px] block font-sans">Μεγάλη βάση (Β)</span> 40 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Ακτίνα (α)</span> 1,6 : 2 ＝ 0,8 m
+                    <span className="text-slate-400 text-[10px] block font-sans">Μικρή βάση (b)</span> 25 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Τύπος</span> π · α²
+                    <span className="text-slate-400 text-[10px] block font-sans">Ύψος (υ)</span> 16 m
                   </div>
                 </div>
               </div>
@@ -525,14 +593,14 @@ export default function EmbadonKiklouTheoriaPage() {
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                   <span className="text-slate-500 font-sans block text-xs font-bold">Βήματα Επίλυσης:</span>
-                  <div>• <strong>Βρίσκουμε την ακτίνα:</strong> α ＝ δ : 2 ＝ 1,6 : 2 ＝ <strong>0,8 m</strong>.</div>
-                  <div>• <strong>Υπολογίζουμε το τετράγωνο της ακτίνας:</strong> 0,8 · 0,8 ＝ <strong>0,64 m²</strong>.</div>
-                  <div>• <strong>Εμβαδόν:</strong> 3,14 · 0,64 ＝ <strong className="text-blue-700">2,0096 m² ≈ 2,01 m²</strong>.</div>
+                  <div>• <strong>Άθροισμα βάσεων:</strong> Β ＋ b ＝ 40 ＋ 25 ＝ <strong>65 m</strong>.</div>
+                  <div>• <strong>Πολλαπλασιασμός με το ύψος:</strong> 65 · 16 ＝ <strong>1.040 m²</strong>.</div>
+                  <div>• <strong>Διαίρεση με το 2:</strong> 1.040 : 2 ＝ <strong className="text-blue-700">520 m²</strong>.</div>
                 </div>
               </div>
 
               <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-950 font-medium">
-                💡 Θυμήσου: Ποτέ δεν πολλαπλασιάζουμε απευθείας με τη διάμετρο! Πρώτα βρίσκουμε την ακτίνα (0,8 m).
+                💡 Οι πλάγιες πλευρές (18 m και 20 m) δεν χρησιμοποιούνται στον υπολογισμό του εμβαδού!
               </div>
             </article>
 
@@ -540,16 +608,17 @@ export default function EmbadonKiklouTheoriaPage() {
             <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs font-black rounded-lg uppercase">
-                  ΠΡΟΒΛΗΜΑ 2: ΚΥΚΛΙΚΗ ΠΙΣΙΝΑ &amp; ΔΙΑΔΡΟΜΟΣ
+                  ΠΡΟΒΛΗΜΑ 2: ΕΥΡΕΣΗ ΥΨΟΥΣ &amp; ΣΤΡΕΜΜΑΤΑ
                 </span>
-                <span className="text-xs font-bold text-slate-400">Κυκλικός Δακτύλιος</span>
+                <span className="text-xs font-bold text-slate-400">υ ＝ (2 · Ε) : (Β ＋ b)</span>
               </div>
               <h4 className="text-lg font-black text-slate-900">
-                Υπολογισμός Εμβαδού Κυκλικού Δακτυλίου
+                Εύρεση του Ύψους σε Αγροτεμάχιο
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Μια κυκλική πισίνα έχει ακτίνα <strong>4 m</strong>. Γύρω από την πισίνα κατασκευάζεται διάδρομος πλάτους <strong>1 m</strong>. 
-                Ποιο είναι το εμβαδόν μόνο του διαδρόμου; (Χρησιμοποιήστε π ＝ 3,14)
+                Ένα αγρόκτημα σε σχήμα τραπεζίου έχει έκταση <strong>1,8 στρέμματα (1.800 m²)</strong>. 
+                Οι δύο παράλληλοι φράχτες του (οι βάσεις) έχουν μήκος <strong>70 m</strong> και <strong>50 m</strong>. 
+                Πόσο είναι το ύψος (η απόσταση ανάμεσα στους δύο φράχτες);
               </p>
 
               {/* Πίνακας Δεδομένων */}
@@ -559,13 +628,13 @@ export default function EmbadonKiklouTheoriaPage() {
                 </span>
                 <div className="grid grid-cols-3 gap-2 text-center font-mono font-bold text-[11px]">
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Μικρή ακτίνα</span> 4 m
+                    <span className="text-slate-400 text-[10px] block font-sans">Εμβαδόν (Ε)</span> 1.800 m²
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Μεγάλη ακτίνα</span> 4 ＋ 1 ＝ 5 m
+                    <span className="text-slate-400 text-[10px] block font-sans">Βάσεις (Β, b)</span> 70 m, 50 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Εμβαδόν διαδρόμου</span> Εμεγ － Εμικ
+                    <span className="text-slate-400 text-[10px] block font-sans">Τύπος ύψους</span> υ ＝ (2 · Ε) : (Β ＋ b)
                   </div>
                 </div>
               </div>
@@ -573,14 +642,14 @@ export default function EmbadonKiklouTheoriaPage() {
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
                   <span className="text-slate-500 font-sans block text-xs font-bold">Βήματα Επίλυσης:</span>
-                  <div>• <strong>Εμβαδόν μεγάλου κύκλου:</strong> 3,14 · 5 · 5 ＝ 3,14 · 25 ＝ <strong>78,5 m²</strong>.</div>
-                  <div>• <strong>Εμβαδόν πισίνας (μικρού κύκλου):</strong> 3,14 · 4 · 4 ＝ 3,14 · 16 ＝ <strong>50,24 m²</strong>.</div>
-                  <div>• <strong>Εμβαδόν διαδρόμου:</strong> 78,5 － 50,24 ＝ <strong className="text-amber-700">28,26 m²</strong>.</div>
+                  <div>• <strong>Διπλασιάζουμε το εμβαδόν:</strong> 2 · 1.800 ＝ <strong>3.600 m²</strong>.</div>
+                  <div>• <strong>Άθροισμα βάσεων:</strong> 70 ＋ 50 ＝ <strong>120 m</strong>.</div>
+                  <div>• <strong>Υπολογισμός ύψους:</strong> 3.600 : 120 ＝ <strong className="text-amber-700">30 m</strong>.</div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 font-medium">
-                ⚡ Για να βρούμε το εμβαδόν του διαδρόμου (δακτυλίου), αφαιρούμε τον μικρό κύκλο από τον μεγάλο κύκλο!
+                ⚡ Επαλήθευση: [(70 ＋ 50) · 30] : 2 ＝ (120 · 30) : 2 ＝ 3.600 : 2 ＝ 1.800 m²!
               </div>
             </article>
 
@@ -597,16 +666,16 @@ export default function EmbadonKiklouTheoriaPage() {
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed list-disc list-inside">
                 <li>
-                  <strong>Μην μπερδεύετε το α² με το 2 · α:</strong> Το α² είναι <strong>α · α</strong> (η ακτίνα πολλαπλασιασμένη με τον εαυτό της). Αν η ακτίνα είναι 6 cm, τότε α² ＝ 6 · 6 ＝ 36 cm² (και όχι 6 · 2 ＝ 12).
+                  <strong>Μην ξεχνάτε τις παρενθέσεις στις βάσεις:</strong> Πρώτα <em>προσθέτουμε</em> τις δύο βάσεις (Β ＋ b) και μετά πολλαπλασιάζουμε με το ύψος. Αν πολλαπλασιάσετε μόνο τη μία βάση με το ύψος, το αποτέλεσμα θα είναι λάθος.
                 </li>
                 <li>
-                  <strong>Μην μπερδεύετε την περίμετρο με το εμβαδόν:</strong> Η περίμετρος (το μήκος της γραμμής) είναι <strong>2 · π · α</strong>. Το εμβαδόν (η επιφάνεια) είναι <strong>π · α²</strong>.
+                  <strong>Μην ξεχνάτε τη διαίρεση με το 2:</strong> Ο τύπος (Β ＋ b) · υ υπολογίζει το εμβαδόν δύο ενωμένων τραπεζίων (παραλληλόγραμμο). Το ένα τραπέζιο απαιτεί πάντα <strong>διαίρεση με το 2</strong>.
                 </li>
                 <li>
-                  <strong>Αν γνωρίζετε τη διάμετρο:</strong> Μην ξεχνάτε να τη διαιρέσετε πρώτα διά 2 για να βρείτε την ακτίνα πριν υπολογίσετε το εμβαδόν.
+                  <strong>Οι πλάγιες πλευρές δεν είναι ύψος:</strong> Εκτός αν το τραπέζιο είναι ορθογώνιο, οι πλάγιες κεκλιμένες πλευρές είναι πάντοτε μεγαλύτερες από το κάθετο ύψος.
                 </li>
                 <li>
-                  <strong>Στο ημικύκλιο διαιρούμε με το 2:</strong> Το εμβαδόν του ημικυκλίου είναι ακριβώς το μισό του κύκλου: <strong>(π · α²) : 2</strong>.
+                  <strong>Ίδιες μονάδες μέτρησης:</strong> Βεβαιωθείτε ότι και οι δύο βάσεις και το ύψος εκφράζονται στην ίδια μονάδα (π.χ. όλα σε m ή όλα σε cm) πριν κάνετε τις πράξεις.
                 </li>
               </ul>
             </div>
@@ -617,15 +686,15 @@ export default function EmbadonKiklouTheoriaPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στο Εμβαδόν Κύκλου!
+              Ώρα για Εξάσκηση στο Εμβαδόν Τραπεζίου!
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Δοκίμασε τις δυνάμεις σου σε 12 διαδραστικές ασκήσεις με υπολογισμούς ακτίνας, διαμέτρου, εμβαδού κύκλου και ημικυκλίου για τη ΣΤ' Δημοτικού.
+              Δοκίμασε τις δυνάμεις σου σε 12 διαδραστικές ασκήσεις με υπολογισμούς βάσεων, ύψους, εμβαδού και μετατροπές μονάδων επιφάνειας για τη ΣΤ' Δημοτικού.
             </p>
           </div>
 
           <Link
-            href="/st-dimotikou/75-embadon-kiklou-ask"
+            href="/st-dimotikou/75-embadon-trapeziou-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
             <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
