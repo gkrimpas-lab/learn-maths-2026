@@ -21,13 +21,18 @@ function formatNum(val) {
 
 export default function EmbadonKiklouTheoriaPage() {
   // -------------------------------------------------------------------------
-  // Εργαστήριο 1: Οπτική Απόδειξη Αναδιάταξης Τομέων (SVG)
+  // Εργαστήριο 1: Βιωματική Αναδιάταξη 16 Τομέων (Φέτες Πίτσας) σε Ορθογώνιο
   // -------------------------------------------------------------------------
-  // Slider προόδου: 0% (κλειστός κύκλος) έως 100% (ορθογώνιο παραλληλόγραμμο)
-  const [unfoldProgress, setUnfoldProgress] = useState(0);
+  const [unfoldProgress, setUnfoldProgress] = useState(0); // 0% (κλειστός κύκλος) έως 100% (κουμπωμένο ορθογώνιο)
 
   const radiusR = 60; // Ακτίνα ρ = 60px
-  const sectorW = (Math.PI * radiusR) / 4; // Πλάτος βάσης κάθε τομέα
+  const N = 16; // 16 πραγματικοί κυκλικοί τομείς
+  const halfN = 8; // 8 πάνω (μπλε), 8 κάτω (μωβ)
+  const dTheta = (2 * Math.PI) / N; // Γωνία κάθε φέτας (22.5°)
+  const arcLength = (2 * Math.PI * radiusR) / N; // Μήκος τόξου κάθε φέτας (~23.5px)
+
+  // Υπολογισμός θέσεων και περιστροφής για κάθε τομέα ανάλογα με την πρόοδο (t: 0 -> 1)
+  const t = unfoldProgress / 100;
 
   // -------------------------------------------------------------------------
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδού & Περιφέρειας
@@ -71,7 +76,7 @@ export default function EmbadonKiklouTheoriaPage() {
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               Ανακαλύπτουμε πώς υπολογίζεται η επιφάνεια του κύκλου με τον τύπο <strong>Ε ＝ π · ρ²</strong>, 
-              βλέπουμε ζωντανά τη διάσημη απόδειξη όπου οι κυκλικοί τομείς αναδιατάσσονται σχηματίζοντας <strong>ορθογώνιο</strong>, 
+              βλέπουμε ζωντανά πώς οι «φέτες» του κύκλου ανοίγουν και κουμπώνουν σε ένα <strong>ορθογώνιο</strong> με διαστάσεις <strong>(π · ρ)</strong> και <strong>ρ</strong>, 
               και εξετάζουμε τη σχέση ανάμεσα στην <strong>περίμετρο</strong> και το <strong>εμβαδόν</strong>!
             </p>
           </div>
@@ -79,7 +84,7 @@ export default function EmbadonKiklouTheoriaPage() {
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Οπτική Απόδειξη Αναδιάταξης Τομέων σε Ορθογώνιο &amp; SVG</span>
+              <span>Θεωρία, Οπτική Απόδειξη με Φέτες Κύκλου, Σύμπλεξη σε Ορθογώνιο &amp; SVG</span>
             </div>
             <Link
               href="/st-dimotikou/76-embadon-kiklou-ask"
@@ -152,18 +157,18 @@ export default function EmbadonKiklouTheoriaPage() {
                   Γιατί Ισχύει ο Τύπος Ε ＝ π · ρ²;
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αν κόψουμε έναν κύκλο σε πολλούς μικρούς τομείς και τους τοποθετήσουμε εναλλάξ:
+                  Αν κόψουμε έναν κύκλο σε 16 φέτες και τις τοποθετήσουμε εναλλάξ:
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
                   <div>
-                    1. <strong>Σχήμα:</strong> Οι τομείς σχηματίζουν ένα ορθογώνιο παραλληλόγραμμο.
+                    1. <strong>Άπλωμα:</strong> Οι 8 πάνω φέτες (μπλε) και οι 8 κάτω φέτες (μωβ) κουμπώνουν σαν δόντια πριονιού.
                   </div>
                   <div>
-                    2. <strong>Ύψος:</strong> Το ύψος του ορθογωνίου είναι η ακτίνα <strong>ρ</strong>.
+                    2. <strong>Ύψος:</strong> Το ύψος του σχήματος είναι η ακτίνα <strong>ρ</strong>.
                   </div>
                   <div>
-                    3. <strong>Βάση:</strong> Η βάση του είναι το μισό της περιφέρειας του κύκλου, δηλαδή <strong>π · ρ</strong>.
+                    3. <strong>Βάση:</strong> Η καμπύλη βάση είναι η μισή περιφέρεια του κύκλου, δηλαδή <strong>π · ρ</strong>.
                   </div>
                   <div className="text-amber-950 font-bold pt-1 border-t border-slate-200 font-mono text-center">
                     Εμβαδόν ＝ Βάση · Ύψος ＝ (π · ρ) · ρ ＝ <strong>π · ρ²</strong>!
@@ -172,7 +177,7 @@ export default function EmbadonKiklouTheoriaPage() {
               </div>
 
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                ⚡ Όσο περισσότερους τομείς κόβουμε, τόσο πιο τέλειο γίνεται το ορθογώνιο με εμβαδόν π · ρ²!
+                ⚡ Όσο περισσότερες φέτες κόβουμε, τόσο οι καμπύλες ισιώνουν και το σχήμα γίνεται ένα τέλειο ορθογώνιο!
               </div>
             </article>
 
@@ -244,17 +249,17 @@ export default function EmbadonKiklouTheoriaPage() {
           </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΑΝΑΔΙΑΤΑΞΗ ΤΟΜΕΩΝ ΣΕ ΟΡΘΟΓΩΝΙΟ (SVG) */}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΒΙΩΜΑΤΙΚΗ ΑΠΟΔΕΙΞΗ ΜΕ ΠΡΑΓΜΑΤΙΚΟΥΣ ΤΟΜΕΙΣ (SVG) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
               <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πώς ο Κύκλος Γίνεται Ορθογώνιο; (SVG)
+              Πώς οι Φέτες του Κύκλου Σχηματίζουν Ορθογώνιο; (SVG)
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρε την μπάρα προόδου: Παρατήρησε πώς οι κυκλικοί τομείς ανοίγουν και «κουμπώνουν» εναλλάξ σχηματίζοντας ορθογώνιο με βάση (π · ρ) και ύψος (ρ):
+              Σύρε την μπάρα: Παρατήρησε πώς οι 8 πάνω μπλε φέτες και οι 8 κάτω μωβ φέτες ανοίγουν και κουμπώνουν μεταξύ τους σαν παζλ, σχηματίζοντας ένα ορθογώνιο με μήκος (π · ρ) και πλάτος (ρ)!
             </p>
           </div>
 
@@ -264,7 +269,7 @@ export default function EmbadonKiklouTheoriaPage() {
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΑΝΑΔΙΑΤΑΞΗ ΤΟΜΕΩΝ:</span>
+                  <span>ΑΝΑΔΙΑΤΑΞΗ ΦΕΤΩΝ:</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
                     {unfoldProgress}%
                   </span>
@@ -280,105 +285,134 @@ export default function EmbadonKiklouTheoriaPage() {
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
                   <span>0% (Κύκλος)</span>
-                  <span>50% (Άνοιγμα)</span>
-                  <span>100% (Ορθογώνιο)</span>
+                  <span>50% (Άπλωμα)</span>
+                  <span>100% (Κούμπωμα)</span>
                 </div>
               </div>
 
               {/* Κάρτα Επεξήγησης */}
               <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs sm:text-sm">
                 <div className="font-bold text-sky-950">
-                  {unfoldProgress === 0 && '🔷 Αρχικό Σχήμα: Ολόκληρος κύκλος χωρισμένος σε τομείς.'}
-                  {unfoldProgress > 0 && unfoldProgress < 100 && '🔄 Οι τομείς ξεδιπλώνονται και τοποθετούνται εναλλάξ...'}
-                  {unfoldProgress === 100 && '🟩 Ολοκληρώθηκε: Οι τομείς σχημάτισαν ένα ορθογώνιο παραλληλόγραμμο!'}
+                  {unfoldProgress === 0 && '🔷 Αρχικός Κύκλος: 16 φέτες (8 μπλε στο πάνω ημικύκλιο και 8 μωβ στο κάτω).'}
+                  {unfoldProgress > 0 && unfoldProgress < 100 && '🔄 Οι φέτες απλώνονται και η καμπύλη περιφέρεια ισιώνει...'}
+                  {unfoldProgress === 100 && '🟩 Ολοκληρώθηκε: Οι 16 φέτες κούμπωσαν σχηματίζοντας ορθογώνιο!'}
                 </div>
                 <div className="text-slate-600 text-[11px] space-y-1 font-mono pt-1 border-t border-sky-200/60">
-                  <div>• <strong>Βάση Ορθογωνίου:</strong> Μισή Περιφέρεια ＝ π · ρ</div>
-                  <div>• <strong>Ύψος Ορθογωνίου:</strong> Ακτίνα ＝ ρ</div>
+                  <div>• <strong>Μήκος βάσης (8 φέτες):</strong> Μισή Περιφέρεια ＝ π · ρ</div>
+                  <div>• <strong>Πλάτος (ύψος φέτας):</strong> Ακτίνα ＝ ρ</div>
                   <div className="text-indigo-900 font-bold">• <strong>Εμβαδόν:</strong> (π · ρ) · ρ ＝ <strong>π · ρ²</strong></div>
                 </div>
               </div>
             </div>
 
-            {/* SVG Visualizer (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-900 min-h-[320px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+            {/* SVG Visualizer με ΠΡΑΓΜΑΤΙΚΕΣ ΚΑΜΠΥΛΕΣ ΦΕΤΕΣ (7 στήλες) */}
+            <div className="lg:col-span-7 bg-slate-900 min-h-[340px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 380 200"
-                className="w-full max-w-[380px] sm:max-w-[440px] h-auto select-none overflow-visible"
+                viewBox="0 0 380 220"
+                className="w-full max-w-[380px] sm:max-w-[460px] h-auto select-none overflow-visible"
               >
-                {/* Κατάσταση 0%: Κύκλος στο κέντρο */}
+                {/* 1. Κατάσταση 0%: Ολοκληρωμένος κύκλος με ακτίνα και διαχωρισμούς */}
                 {unfoldProgress < 100 && (
-                  <g opacity={1 - unfoldProgress / 100}>
-                    <circle cx="100" cy="100" r={radiusR} fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" strokeWidth="2" />
+                  <g opacity={1 - t}>
+                    {/* Κύκλος φόντου */}
+                    <circle cx="100" cy="110" r={radiusR} fill="rgba(56, 189, 248, 0.15)" stroke="#38bdf8" strokeWidth="2" />
+                    
                     {/* Ακτίνα ρ */}
-                    <line x1="100" y1="100" x2="160" y2="100" stroke="#f59e0b" strokeWidth="2.5" />
-                    <circle cx="100" cy="100" r="3" fill="#ffffff" />
-                    <text x="130" y="92" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="middle">
+                    <line x1="100" y1="110" x2="160" y2="110" stroke="#f59e0b" strokeWidth="2.5" />
+                    <circle cx="100" cy="110" r="3" fill="#ffffff" />
+                    <text x="130" y="102" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="middle">
                       ρ
                     </text>
-                    {/* Διαχωριστικές ακτίνες τομέων */}
-                    {Array.from({ length: 8 }).map((_, i) => {
-                      const ang = (i * Math.PI) / 4;
+
+                    {/* Διαχωριστικές γραμμές 16 φετών */}
+                    {Array.from({ length: N }).map((_, i) => {
+                      const ang = i * dTheta;
                       return (
                         <line
                           key={i}
                           x1="100"
-                          y1="100"
+                          y1="110"
                           x2={100 + radiusR * Math.cos(ang)}
-                          y2={100 + radiusR * Math.sin(ang)}
-                          stroke="rgba(255, 255, 255, 0.3)"
+                          y2={110 + radiusR * Math.sin(ang)}
+                          stroke="rgba(255, 255, 255, 0.25)"
                           strokeWidth="1"
                         />
                       );
                     })}
+
+                    {/* Επισήμανση 2 ημικυκλίων (πάνω μπλε τόξο, κάτω μωβ τόξο) */}
+                    <path
+                      d={`M ${100 - radiusR} 110 A ${radiusR} ${radiusR} 0 0 1 ${100 + radiusR} 110`}
+                      fill="none"
+                      stroke="#38bdf8"
+                      strokeWidth="3.5"
+                    />
+                    <path
+                      d={`M ${100 + radiusR} 110 A ${radiusR} ${radiusR} 0 0 1 ${100 - radiusR} 110`}
+                      fill="none"
+                      stroke="#c084fc"
+                      strokeWidth="3.5"
+                    />
                   </g>
                 )}
 
-                {/* Κατάσταση Αναδιάταξης (Ξεδίπλωμα προς Ορθογώνιο) */}
-                <g opacity={unfoldProgress / 100} transform={`translate(${140 - (unfoldProgress / 100) * 80}, 50)`}>
-                  {/* 4 τομείς που κοιτούν προς τα πάνω (γαλάζιοι) */}
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <polygon
-                      key={`top-${i}`}
-                      points={`
-                        ${i * sectorW},${radiusR} 
-                        ${(i + 0.5) * sectorW},0 
-                        ${(i + 1) * sectorW},${radiusR}
-                      `}
-                      fill="rgba(56, 189, 248, 0.4)"
-                      stroke="#38bdf8"
-                      strokeWidth="1.5"
-                    />
-                  ))}
+                {/* 2. Κίνηση Αναδιάταξης Φετών προς Ορθογώνιο (t: 0 -> 1) */}
+                <g opacity={t} transform={`translate(${135 - t * 65}, 65)`}>
+                  {/* Οι 8 μπλε φέτες (πάνω μέρος, κορυφή προς τα κάτω) */}
+                  {Array.from({ length: halfN }).map((_, i) => {
+                    const startX = i * arcLength;
+                    const endX = (i + 1) * arcLength;
+                    const apexX = (i + 0.5) * arcLength;
+                    return (
+                      <path
+                        key={`top-sector-${i}`}
+                        d={`
+                          M ${apexX} ${radiusR} 
+                          L ${startX} 0 
+                          A ${radiusR} ${radiusR} 0 0 1 ${endX} 0 
+                          Z
+                        `}
+                        fill="rgba(56, 189, 248, 0.4)"
+                        stroke="#38bdf8"
+                        strokeWidth="1.5"
+                      />
+                    );
+                  })}
 
-                  {/* 4 τομείς που κοιτούν προς τα κάτω εναλλάξ (μωβ) */}
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <polygon
-                      key={`bot-${i}`}
-                      points={`
-                        ${(i + 0.5) * sectorW},0 
-                        ${(i + 1) * sectorW},${radiusR} 
-                        ${(i + 1.5) * sectorW},0
-                      `}
-                      fill="rgba(168, 85, 247, 0.4)"
-                      stroke="#c084fc"
-                      strokeWidth="1.5"
-                    />
-                  ))}
+                  {/* Οι 8 μωβ φέτες (κάτω μέρος, κορυφή προς τα πάνω, κουμπώνουν εναλλάξ) */}
+                  {Array.from({ length: halfN }).map((_, i) => {
+                    const apexX = (i + 0.5) * arcLength;
+                    const startX = (i + 0.5) * arcLength;
+                    const endX = (i + 1.5) * arcLength;
+                    return (
+                      <path
+                        key={`bot-sector-${i}`}
+                        d={`
+                          M ${apexX} 0 
+                          L ${startX} ${radiusR} 
+                          A ${radiusR} ${radiusR} 0 0 1 ${endX} ${radiusR} 
+                          Z
+                        `}
+                        fill="rgba(168, 85, 247, 0.4)"
+                        stroke="#c084fc"
+                        strokeWidth="1.5"
+                      />
+                    );
+                  })}
 
-                  {/* Ετικέτες Ορθογωνίου όταν πλησιάζει το 100% */}
-                  {unfoldProgress > 70 && (
+                  {/* Ετικέτες Ορθογωνίου στο 100% */}
+                  {unfoldProgress > 65 && (
                     <>
-                      {/* Ύψος = ρ */}
-                      <line x1="-10" y1="0" x2="-10" y2={radiusR} stroke="#f59e0b" strokeWidth="2" />
-                      <text x="-20" y={radiusR / 2 + 4} fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="end">
+                      {/* Κάθετο Ύψος = ρ */}
+                      <line x1="-12" y1="0" x2="-12" y2={radiusR} stroke="#f59e0b" strokeWidth="2.5" />
+                      <text x="-22" y={radiusR / 2 + 5} fill="#f59e0b" fontSize="13" fontWeight="black" textAnchor="end">
                         ρ
                       </text>
 
-                      {/* Βάση = π · ρ */}
-                      <line x1="0" y1={radiusR + 15} x2={4.5 * sectorW} y2={radiusR + 15} stroke="#e2e8f0" strokeWidth="2" />
-                      <text x={(4.5 * sectorW) / 2} y={radiusR + 32} fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle">
-                        Βάση ＝ π · ρ
+                      {/* Οριζόντια Βάση = π · ρ */}
+                      <line x1="0" y1={radiusR + 18} x2={halfN * arcLength} y2={radiusR + 18} stroke="#e2e8f0" strokeWidth="2" />
+                      <text x={(halfN * arcLength) / 2} y={radiusR + 36} fill="#ffffff" fontSize="13" fontWeight="black" textAnchor="middle">
+                        Βάση (μισή περιφέρεια) ＝ π · ρ
                       </text>
                     </>
                   )}
@@ -386,7 +420,7 @@ export default function EmbadonKiklouTheoriaPage() {
               </svg>
 
               <div className="mt-3 text-center text-xs text-slate-400">
-                Το ορθογώνιο έχει μήκος (π · ρ) και πλάτος (ρ). Το εμβαδόν του είναι: (π · ρ) · ρ ＝ <strong>π · ρ²</strong>.
+                Οι καμπύλες φέτες ενώνονται σε ορθογώνιο με μήκος <strong>(π · ρ)</strong> και πλάτος <strong>ρ</strong>. Εμβαδόν: <strong>π · ρ²</strong>.
               </div>
             </div>
 
