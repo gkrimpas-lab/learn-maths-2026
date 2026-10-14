@@ -21,7 +21,7 @@ function formatNum(val) {
 
 export default function AnaptigmaTheoriaPage() {
   // -------------------------------------------------------------------------
-  // Εργαστήριο 1: Ισομετρική Αναδίπλωση Αναπτύγματος (3D Projection)
+  // Εργαστήριο 1: Ισομετρική Αναδίπλωση Αναπτύγματος (3D Forward Kinematics)
   // -------------------------------------------------------------------------
   const [selectedShape, setSelectedShape] = useState('cube'); // 'cube' ή 'cuboid'
   const [foldProgress, setFoldProgress] = useState(0); // 0 (επίπεδο) έως 100 (κλειστό 3D)
@@ -29,15 +29,15 @@ export default function AnaptigmaTheoriaPage() {
   // Διαστάσεις 3D για το animation
   const shapeDims = useMemo(() => {
     if (selectedShape === 'cube') {
-      return { L: 60, W: 60, H: 60 };
+      return { L: 55, W: 55, H: 55 };
     }
-    return { L: 75, W: 50, H: 60 };
+    return { L: 70, W: 45, H: 55 };
   }, [selectedShape]);
 
   // Μετατροπή 3D συντεταγμένων σε 2D ισομετρική προβολή SVG
   const project3Dto2D = (x, y, z) => {
     const originX = 180;
-    const originY = 145;
+    const originY = 135;
     const cos30 = 0.866;
     const sin30 = 0.5;
 
@@ -46,17 +46,16 @@ export default function AnaptigmaTheoriaPage() {
     return `${screenX.toFixed(1)},${screenY.toFixed(1)}`;
   };
 
-  // Γωνία διπλώματος: 0 rad (0°) έως π/2 rad (90°)
-  const angle = (foldProgress / 100) * (Math.PI / 2);
-  const cosA = Math.cos(angle);
-  const sinA = Math.sin(angle);
+  // Γωνία διπλώματος θ: από 0 rad (0°) έως π/2 rad (90°)
+  const theta = (foldProgress / 100) * (Math.PI / 2);
+  const cosT = Math.cos(theta);
+  const sinT = Math.sin(theta);
 
-  // Δημιουργία των 6 εδρών σε 3D συντεταγμένες και προβολή τους
+  // Δημιουργία των 6 εδρών με απόλυτη γεωμετρική ακρίβεια
   const faces = useMemo(() => {
     const { L, W, H } = shapeDims;
 
-    // 1. ΒΑΣΗ (Παραμένει σταθερή στο Z = 0)
-    // [ (0,0,0), (L,0,0), (L,W,0), (0,W,0) ]
+    // 1. ΒΑΣΗ (Μπλε - σταθερή στο Z = 0, x από 0 έως L, y από 0 έως W)
     const basePts = [
       project3Dto2D(0, 0, 0),
       project3Dto2D(L, 0, 0),
@@ -64,63 +63,74 @@ export default function AnaptigmaTheoriaPage() {
       project3Dto2D(0, W, 0)
     ].join(' ');
 
-    // 2. ΕΜΠΡΟΣΘΙΑ ΕΔΡΑ (συνδεδεμένη στην ακμή y = W)
-    // Στο t=0 εκτείνεται στο y: [W -> W + H] στο Z = 0.
-    // Καθώς διπλώνει κατά angle, το dy = H*cosA και το dz = H*sinA.
+    // 2. ΕΜΠΡΟΣΘΙΑ ΕΔΡΑ (Πορτοκαλί - συνδεδεμένη στην ακμή y = W)
+    // Στο θ = 0: y από W έως W + H, z = 0.
+    // Καθώς σηκώνεται: y = W + H*cosT, z = H*sinT.
+    const frontEdgeP1 = { x: 0, y: W + H * cosT, z: H * sinT };
+    const frontEdgeP2 = { x: L, y: W + H * cosT, z: H * sinT };
+
     const frontPts = [
       project3Dto2D(0, W, 0),
       project3Dto2D(L, W, 0),
-      project3Dto2D(L, W + H * cosA, H * sinA),
-      project3Dto2D(0, W + H * cosA, H * sinA)
+      project3Dto2D(frontEdgeP2.x, frontEdgeP2.y, frontEdgeP2.z),
+      project3Dto2D(frontEdgeP1.x, frontEdgeP1.y, frontEdgeP1.z)
     ].join(' ');
 
-    // 3. ΟΠΙΣΘΙΑ ΕΔΡΑ (συνδεδεμένη στην ακμή y = 0)
-    // Στο t=0 εκτείνεται στο y: [0 -> -H].
-    // Καθώς διπλώνει, dy = -H*cosA και dz = H*sinA.
+    // 3. ΟΠΙΣΘΙΑ ΕΔΡΑ (Πράσινη - συνδεδεμένη στην ακμή y = 0)
+    // Στο θ = 0: y από 0 έως -H, z = 0.
+    // Καθώς σηκώνεται: y = -H*cosT, z = H*sinT.
     const backPts = [
       project3Dto2D(0, 0, 0),
       project3Dto2D(L, 0, 0),
-      project3Dto2D(L, -H * cosA, H * sinA),
-      project3Dto2D(0, -H * cosA, H * sinA)
+      project3Dto2D(L, -H * cosT, H * sinT),
+      project3Dto2D(0, -H * cosT, H * sinT)
     ].join(' ');
 
-    // 4. ΔΕΞΙΑ ΕΔΡΑ (συνδεδεμένη στην ακμή x = L)
-    // Στο t=0 εκτείνεται στο x: [L -> L + H].
-    // Καθώς διπλώνει, dx = H*cosA και dz = H*sinA.
+    // 4. ΔΕΞΙΑ ΕΔΡΑ (Μωβ - συνδεδεμένη στην ακμή x = L)
+    // Στο θ = 0: x από L έως L + H, z = 0.
+    // Καθώς σηκώνεται: x = L + H*cosT, z = H*sinT.
     const rightPts = [
       project3Dto2D(L, 0, 0),
-      project3Dto2D(L + H * cosA, 0, H * sinA),
-      project3Dto2D(L + H * cosA, W, H * sinA),
+      project3Dto2D(L + H * cosT, 0, H * sinT),
+      project3Dto2D(L + H * cosT, W, H * sinT),
       project3Dto2D(L, W, 0)
     ].join(' ');
 
-    // 5. ΑΡΙΣΤΕΡΗ ΕΔΡΑ (συνδεδεμένη στην ακμή x = 0)
-    // Στο t=0 εκτείνεται στο x: [0 -> -H].
-    // Καθώς διπλώνει, dx = -H*cosA και dz = H*sinA.
+    // 5. ΑΡΙΣΤΕΡΗ ΕΔΡΑ (Indigo - συνδεδεμένη στην ακμή x = 0)
+    // Στο θ = 0: x από 0 έως -H, z = 0.
+    // Καθώς σηκώνεται: x = -H*cosT, z = H*sinT.
     const leftPts = [
       project3Dto2D(0, 0, 0),
-      project3Dto2D(-H * cosA, 0, H * sinA),
-      project3Dto2D(-H * cosA, W, H * sinA),
+      project3Dto2D(-H * cosT, 0, H * sinT),
+      project3Dto2D(-H * cosT, W, H * sinT),
       project3Dto2D(0, W, 0)
     ].join(' ');
 
-    // 6. ΚΑΠΑΚΙ (Συνδεδεμένο στην άκρη της εμπρόσθιας έδρας)
-    // Διπλώνει ταυτόχρονα με την εμπρόσθια έδρα και κάνει επιπλέον δίπλωμα για να κλείσει από πάνω
-    // Στο t=0 είναι στο y = W + H -> W + H + W.
-    // Στο t=1 (angle = 90°), βρίσκεται ακριβώς από πάνω: z = H, y από W έως 0.
-    const lidAngle = angle * 2; // Διπλώνει διπλάσια ώστε να κλείσει οριζόντια
-    const lidDy = H * cosA - W * Math.sin(lidAngle);
-    const lidDz = H * sinA + W * Math.cos(lidAngle);
+    // 6. ΚΑΠΑΚΙ (Κόκκινο - συνδεδεμένο στην άκρη της εμπρόσθιας έδρας)
+    // Πλάτος καπακιού = W.
+    // Συνολική γωνία ως προς το οριζόντιο επίπεδο = 2*θ (περιστρέφεται κατά θ ως προς την πορτοκαλί έδρα).
+    // Στο θ = 0 (0%): cos(0) = 1, sin(0) = 0 => y = W + H + W, z = 0 (ΠΛΗΡΩΣ ΕΠΙΠΕΔΟ ΑΝΑΠΤΥΓΜΑ!)
+    // Στο θ = π/2 (100%): cos(π) = -1, sin(π) = 0 => y = W - W = 0, z = H + 0 = H (ΚΛΕΙΝΕΙ ΤΕΛΕΙΑ ΑΠΟ ΠΑΝΩ!)
+    const lidEndP1 = {
+      x: 0,
+      y: W + H * cosT + W * Math.cos(2 * theta),
+      z: H * sinT + W * Math.sin(2 * theta)
+    };
+    const lidEndP2 = {
+      x: L,
+      y: W + H * cosT + W * Math.cos(2 * theta),
+      z: H * sinT + W * Math.sin(2 * theta)
+    };
 
     const lidPts = [
-      project3Dto2D(0, W + H * cosA, H * sinA),
-      project3Dto2D(L, W + H * cosA, H * sinA),
-      project3Dto2D(L, W + lidDy, lidDz),
-      project3Dto2D(0, W + lidDy, lidDz)
+      project3Dto2D(frontEdgeP1.x, frontEdgeP1.y, frontEdgeP1.z),
+      project3Dto2D(frontEdgeP2.x, frontEdgeP2.y, frontEdgeP2.z),
+      project3Dto2D(lidEndP2.x, lidEndP2.y, lidEndP2.z),
+      project3Dto2D(lidEndP1.x, lidEndP1.y, lidEndP1.z)
     ].join(' ');
 
     return { basePts, frontPts, backPts, rightPts, leftPts, lidPts };
-  }, [shapeDims, angle, cosA, sinA]);
+  }, [shapeDims, theta, cosT, sinT]);
 
   // -------------------------------------------------------------------------
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Ολικής Επιφάνειας Αναπτύγματος
@@ -422,7 +432,7 @@ export default function AnaptigmaTheoriaPage() {
 
               <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs sm:text-sm">
                 <div className="font-bold text-sky-950">
-                  {foldProgress === 0 && '🔷 Στάδιο 0: Επίπεδο ανάπτυγμα σταυρού με 6 συνδεδεμένες έδρες.'}
+                  {foldProgress === 0 && '🔷 Στάδιο 0: Επίπεδο ανάπτυγμα σταυρού με και τις 6 έδρες εντελώς απλωμένες.'}
                   {foldProgress > 0 && foldProgress < 100 && '🔄 Οι 4 πλαϊνές έδρες σηκώνονται κάθετα γύρω από τη βάση και το καπάκι διπλώνει...'}
                   {foldProgress === 100 && '🟩 Στάδιο 100%: Όλες οι ακμές συναντήθηκαν απόλυτα! Το 3D κουτί έκλεισε.'}
                 </div>
@@ -435,10 +445,10 @@ export default function AnaptigmaTheoriaPage() {
             {/* SVG Visualizer Ισομετρικής Προβολής (7 στήλες) */}
             <div className="lg:col-span-7 bg-slate-900 min-h-[350px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 360 270"
-                className="w-full max-w-[360px] sm:max-w-[420px] h-auto select-none overflow-visible"
+                viewBox="0 0 380 270"
+                className="w-full max-w-[380px] sm:max-w-[440px] h-auto select-none overflow-visible"
               >
-                {/* 1. ΒΑΣΗ (Μπλε) */}
+                {/* 1. ΒΑΣΗ (Μπλε - σταθερή) */}
                 <polygon
                   points={faces.basePts}
                   fill="rgba(56, 189, 248, 0.45)"
@@ -478,7 +488,7 @@ export default function AnaptigmaTheoriaPage() {
                   strokeWidth="2"
                 />
 
-                {/* 6. ΚΑΠΑΚΙ (Ροζ/Κόκκινο) */}
+                {/* 6. ΚΑΠΑΚΙ (Κόκκινο - απλώνει επίπεδα στο 0% και κλείνει οριζόντια στο 100%) */}
                 <polygon
                   points={faces.lidPts}
                   fill="rgba(244, 63, 94, 0.45)"
@@ -490,7 +500,7 @@ export default function AnaptigmaTheoriaPage() {
               <div className="mt-3 text-center text-xs text-slate-400">
                 {foldProgress === 100
                   ? '✓ Το τρισδιάστατο κουτί έκλεισε με 6 έδρες, 12 ακμές και 8 κορυφές!'
-                  : 'Οι έδρες παραμένουν απόλυτα συνδεδεμένες στις ακμές κατά το δίπλωμα.'}
+                  : 'Όλες οι έδρες παραμένουν απόλυτα ενωμένες κατά το δίπλωμα.'}
               </div>
             </div>
 
