@@ -21,14 +21,19 @@ function formatNum(val) {
 
 export default function KilindrosTheoriaPage() {
   // -------------------------------------------------------------------------
-  // Εργαστήριο 1: Διαδραστικό Ξετύλιγμα Κυλίνδρου σε Ανάπτυγμα (SVG)
+  // Εργαστήριο 1: Διαδραστικό Ξετύλιγμα Κυλίνδρου προς τα Δεξιά (SVG)
   // -------------------------------------------------------------------------
-  // Slider προόδου: 0% (κλειστός 3D κύλινδρος) έως 100% (πλήρες επίπεδο ανάπτυγμα)
+  // Slider προόδου: 0% (κλειστός κύλινδρος αριστερά) έως 100% (πλήρες ανάπτυγμα)
   const [unrollProgress, setUnrollProgress] = useState(0);
 
-  const radiusR = 40; // Ακτίνα ρ = 40px
-  const heightH = 90; // Ύψος υ = 90px
-  const rectWidth = 2 * Math.PI * radiusR; // 2 * 3.1415 * 40 ≈ 251.3px
+  const radiusR = 36; // Ακτίνα ρ = 36px
+  const heightH = 80; // Ύψος υ = 80px
+  const maxRectWidth = 2 * Math.PI * radiusR; // 2 * 3.1415 * 36 ≈ 226px
+
+  // Δυναμικές παράμετροι αναδίπλωσης
+  const progressRatio = unrollProgress / 100;
+  const currentRectW = progressRatio * maxRectWidth;
+  const cylinderX = 75 + currentRectW; // Ο κύλινδρος κυλάει προς τα δεξιά
 
   // -------------------------------------------------------------------------
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδών Κυλίνδρου
@@ -260,17 +265,17 @@ export default function KilindrosTheoriaPage() {
           </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΞΕΤΥΛΙΓΜΑ ΚΥΛΙΝΔΡΟΥ ΣΕ ΑΝΑΠΤΥΓΜΑ (SVG) */}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΚΥΛΙΣΜΑ & ΞΕΤΥΛΙΓΜΑ ΚΥΛΙΝΔΡΟΥ (SVG) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
               <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πώς Ξετυλίγεται ο Κύλινδρος στο Ανάπτυγμά του; (SVG)
+              Πώς Ξετυλίγεται ο Κύλινδρος προς τα Δεξιά; (SVG)
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρε την μπάρα: Παρατήρησε πώς η καμπύλη επιφάνεια ανοίγει σε ορθογώνιο διαστάσεων (2 · π · ρ) επί υ, ενώ οι δύο κυκλικές βάσεις απλώνονται πάνω και κάτω:
+              Σύρε την μπάρα: Παρατήρησε πώς ο κύλινδρος κυλάει προς τα δεξιά, αφήνοντας πίσω του την παράπλευρη επιφάνεια να ξετυλίγεται σε ορθογώνιο, ενώ οι δύο βάσεις ανοίγουν πάνω και κάτω:
             </p>
           </div>
 
@@ -280,7 +285,7 @@ export default function KilindrosTheoriaPage() {
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΞΕΤΥΛΙΓΜΑ ΚΥΛΙΝΔΡΟΥ:</span>
+                  <span>ΞΕΤΥΛΙΓΜΑ ΠΡΟΣ ΤΑ ΔΕΞΙΑ:</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
                     {unrollProgress}%
                   </span>
@@ -295,130 +300,177 @@ export default function KilindrosTheoriaPage() {
                   className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
-                  <span>0% (Κλειστός Κύλινδρος)</span>
-                  <span>50% (Άνοιγμα)</span>
-                  <span>100% (Επίπεδο Ανάπτυγμα)</span>
+                  <span>0% (Κύλινδρος)</span>
+                  <span>50% (Ξετύλιγμα)</span>
+                  <span>100% (Πλήρες Ανάπτυγμα)</span>
                 </div>
               </div>
 
               {/* Κάρτα Επεξήγησης */}
               <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs sm:text-sm">
                 <div className="font-bold text-sky-950">
-                  {unrollProgress === 0 && '🔷 Αρχικό Στερεό: Κλειστός κύλινδρος με 2 κυκλικές βάσεις (ακτίνας ρ) και ύψος υ.'}
-                  {unrollProgress > 0 && unrollProgress < 100 && '🔄 Η καμπύλη παράπλευρη επιφάνεια ξετυλίγεται και οι βάσεις ανοίγουν...'}
-                  {unrollProgress === 100 && '🟩 Ολοκληρώθηκε: Ένα ορθογώνιο (παράπλευρη) και 2 κύκλοι (βάσεις)!'}
+                  {unrollProgress === 0 && '🔷 Αρχικός Κύλινδρος: 2 κυκλικές βάσεις και καμπύλη επιφάνεια.'}
+                  {unrollProgress > 0 && unrollProgress < 100 && '🔄 Ο κύλινδρος κυλάει προς τα δεξιά και απλώνει την επιφάνειά του...'}
+                  {unrollProgress === 100 && '🟩 Ολοκληρώθηκε: 1 ορθογώνιο μήκους (2 · π · ρ) και 2 κύκλοι βάσεων!'}
                 </div>
                 <div className="text-slate-600 text-[11px] space-y-1 font-mono pt-1 border-t border-sky-200/60">
-                  <div>• <strong>Μήκος Ορθογωνίου:</strong> 2 · π · ρ ＝ 2 · 3,14 · {radiusR} ≈ <strong>{Math.round(rectWidth)} px</strong></div>
-                  <div>• <strong>Πλάτος Ορθογωνίου:</strong> Ύψος υ ＝ <strong>{heightH} px</strong></div>
+                  <div>• <strong>Μήκος Ορθογωνίου:</strong> 2 · π · ρ ＝ 2 · 3,14 · {radiusR} ≈ <strong>{Math.round(maxRectWidth)} px</strong></div>
+                  <div>• <strong>Ύψος Ορθογωνίου:</strong> Ύψος υ ＝ <strong>{heightH} px</strong></div>
                   <div>• <strong>Εμβαδόν Παράπλευρης:</strong> Επ ＝ (2 · π · ρ) · υ</div>
                   <div className="text-indigo-900 font-bold">• <strong>Ολικό Εμβαδόν:</strong> Εολ ＝ Επ ＋ 2 · (π · ρ²)</div>
                 </div>
               </div>
             </div>
 
-            {/* SVG Visualizer (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-900 min-h-[360px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+            {/* SVG Visualizer με Άπλωμα προς τα Δεξιά & Καθαρή Στοίχιση (7 στήλες) */}
+            <div className="lg:col-span-7 bg-slate-900 min-h-[380px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 380 260"
-                className="w-full max-w-[380px] sm:max-w-[440px] h-auto select-none overflow-visible"
+                viewBox="0 0 460 300"
+                className="w-full max-w-[460px] h-auto select-none overflow-visible"
               >
-                {unrollProgress < 100 ? (
-                  // 1. Κατάσταση Κυλίνδρου (0% -> 99%)
-                  <g opacity={1 - unrollProgress / 100} transform="translate(140, 45)">
-                    {/* Παράπλευρη επιφάνεια κυλίνδρου */}
-                    <rect x={-radiusR} y={15} width={radiusR * 2} height={heightH} fill="rgba(56, 189, 248, 0.3)" stroke="#38bdf8" strokeWidth="2" />
-                    
-                    {/* Κάτω βάση (έλλειψη σε προοπτική) */}
-                    <ellipse cx="0" cy={15 + heightH} rx={radiusR} ry={15} fill="rgba(168, 85, 247, 0.4)" stroke="#c084fc" strokeWidth="2" />
-                    
-                    {/* Πάνω βάση */}
-                    <ellipse cx="0" cy={15} rx={radiusR} ry={15} fill="rgba(52, 211, 153, 0.5)" stroke="#34d399" strokeWidth="2" />
-                    
-                    {/* Ένδειξη ακτίνας ρ στην πάνω βάση */}
-                    <line x1="0" y1="15" x2={radiusR} y2="15" stroke="#f59e0b" strokeWidth="2" />
-                    <circle cx="0" cy="15" r="2.5" fill="#ffffff" />
-                    <text x={radiusR / 2} y="11" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="middle">
+                {/* 1. Ξετυλιγμένο Ορθογώνιο Παράπλευρης Επιφάνειας (Μπλε - μεγαλώνει προς τα δεξιά) */}
+                {unrollProgress > 0 && (
+                  <g>
+                    <rect
+                      x="75"
+                      y={110}
+                      width={currentRectW}
+                      height={heightH}
+                      fill="rgba(56, 189, 248, 0.35)"
+                      stroke="#38bdf8"
+                      strokeWidth="2"
+                      rx="3"
+                    />
+
+                    {/* Ετικέτα μέσα στο ορθογώνιο (εμφανίζεται όταν υπάρχει αρκετός χώρος) */}
+                    {unrollProgress > 30 && (
+                      <text
+                        x={75 + currentRectW / 2}
+                        y={110 + heightH / 2 + 5}
+                        fill="#ffffff"
+                        fontSize={unrollProgress === 100 ? 12 : 10}
+                        fontWeight="bold"
+                        textAnchor="middle"
+                      >
+                        {unrollProgress === 100
+                          ? 'Παράπλευρη Επιφάνεια: Επ ＝ (2 · π · ρ) · υ'
+                          : 'Ξετύλιγμα...'}
+                      </text>
+                    )}
+
+                    {/* Ετικέτες Διαστάσεων στο 100% */}
+                    {unrollProgress === 100 && (
+                      <>
+                        {/* Ένδειξη Μήκους Ορθογωνίου (επάνω με ασφαλές περιθώριο) */}
+                        <line x1="75" y1="92" x2={75 + maxRectWidth} y2="92" stroke="#38bdf8" strokeWidth="1.5" />
+                        <text x={75 + maxRectWidth / 2} y="84" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">
+                          Μήκος ＝ 2 · π · ρ
+                        </text>
+
+                        {/* Ένδειξη Ύψους υ (δεξιά) */}
+                        <line x1={75 + maxRectWidth + 15} y1={110} x2={75 + maxRectWidth + 15} y2={110 + heightH} stroke="#f59e0b" strokeWidth="2" />
+                        <text x={75 + maxRectWidth + 26} y={110 + heightH / 2 + 4} fill="#f59e0b" fontSize="13" fontWeight="black" textAnchor="start">
+                          υ
+                        </text>
+                      </>
+                    )}
+                  </g>
+                )}
+
+                {/* 2. Πάνω Κυκλική Βάση (Πράσινη - ανοίγει προς τα πάνω) */}
+                {unrollProgress > 0 && (
+                  <g transform={`translate(${75 + currentRectW / 2}, ${110 - (progressRatio * (radiusR + 25))})`}>
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r={radiusR}
+                      fill="rgba(52, 211, 153, 0.45)"
+                      stroke="#34d399"
+                      strokeWidth="2"
+                    />
+                    {/* Ένδειξη ακτίνας ρ */}
+                    <line x1="0" y1="0" x2={radiusR} y2="0" stroke="#f59e0b" strokeWidth="2" />
+                    <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
+                    <text x={radiusR / 2} y="-6" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="middle">
                       ρ
                     </text>
-
-                    {/* Ένδειξη ύψους υ */}
-                    <line x1={radiusR + 15} y1={15} x2={radiusR + 15} y2={15 + heightH} stroke="#ffffff" strokeWidth="1.5" />
-                    <text x={radiusR + 25} y={15 + heightH / 2 + 4} fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="start">
-                      υ
+                    <text x="0" y="16" fill="#ffffff" fontSize="11" fontWeight="bold" textAnchor="middle">
+                      Βάση (π · ρ²)
                     </text>
                   </g>
-                ) : null}
+                )}
 
-                {/* 2. Κατάσταση Επιπέδου Αναπτύγματος (εμφανίζεται προοδευτικά) */}
-                <g opacity={unrollProgress / 100} transform={`translate(${65 - (unrollProgress / 100) * 10}, 25)`}>
-                  {/* Πάνω κυκλική βάση (Πράσινη) */}
-                  <circle
-                    cx={rectWidth / 2}
-                    cy={radiusR}
-                    r={radiusR}
-                    fill="rgba(52, 211, 153, 0.4)"
-                    stroke="#34d399"
-                    strokeWidth="2"
-                  />
-                  <line x1={rectWidth / 2} y1={radiusR} x2={rectWidth / 2 + radiusR} y2={radiusR} stroke="#f59e0b" strokeWidth="2" />
-                  <circle cx={rectWidth / 2} cy={radiusR} r="2.5" fill="#ffffff" />
-                  <text x={rectWidth / 2 + radiusR / 2} y={radiusR - 6} fill="#f59e0b" fontSize="10" fontWeight="bold" textAnchor="middle">
-                    ρ
-                  </text>
-                  <text x={rectWidth / 2} y={radiusR + 4} fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
-                    Βάση (π · ρ²)
-                  </text>
+                {/* 3. Κάτω Κυκλική Βάση (Μωβ - ανοίγει προς τα κάτω) */}
+                {unrollProgress > 0 && (
+                  <g transform={`translate(${75 + currentRectW / 2}, ${110 + heightH + (progressRatio * (radiusR + 25))})`}>
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r={radiusR}
+                      fill="rgba(168, 85, 247, 0.45)"
+                      stroke="#c084fc"
+                      strokeWidth="2"
+                    />
+                    <text x="0" y="4" fill="#ffffff" fontSize="11" fontWeight="bold" textAnchor="middle">
+                      Βάση (π · ρ²)
+                    </text>
+                  </g>
+                )}
 
-                  {/* Ορθογώνιο Παράπλευρης Επιφάνειας (Μπλε) */}
-                  <rect
-                    x="0"
-                    y={radiusR * 2 + 5}
-                    width={rectWidth}
-                    height={heightH}
-                    fill="rgba(56, 189, 248, 0.35)"
-                    stroke="#38bdf8"
-                    strokeWidth="2"
-                    rx="3"
-                  />
-                  <text x={rectWidth / 2} y={radiusR * 2 + 5 + heightH / 2 + 4} fill="#ffffff" fontSize="12" fontWeight="black" textAnchor="middle">
-                    Παράπλευρη Επιφάνεια: Επ ＝ (2 · π · ρ) · υ
-                  </text>
-
-                  {/* Κάτω κυκλική βάση (Μωβ) */}
-                  <circle
-                    cx={rectWidth / 2}
-                    cy={radiusR * 2 + 10 + heightH + radiusR}
-                    r={radiusR}
-                    fill="rgba(168, 85, 247, 0.4)"
-                    stroke="#c084fc"
-                    strokeWidth="2"
-                  />
-                  <text x={rectWidth / 2} y={radiusR * 2 + 10 + heightH + radiusR + 4} fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
-                    Βάση (π · ρ²)
-                  </text>
-
-                  {/* Διαστάσεις Ορθογωνίου στο 100% */}
-                  {unrollProgress > 70 && (
-                    <>
-                      {/* Μήκος = 2 · π · ρ (επάνω) */}
-                      <line x1="0" y1={radiusR * 2 - 2} x2={rectWidth} y2={radiusR * 2 - 2} stroke="#38bdf8" strokeWidth="1.5" />
-                      <text x={rectWidth / 2} y={radiusR * 2 - 8} fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">
-                        Μήκος ＝ 2 · π · ρ
-                      </text>
-
-                      {/* Ύψος υ (δεξιά) */}
-                      <line x1={rectWidth + 12} y1={radiusR * 2 + 5} x2={rectWidth + 12} y2={radiusR * 2 + 5 + heightH} stroke="#f59e0b" strokeWidth="1.5" />
-                      <text x={rectWidth + 22} y={radiusR * 2 + 5 + heightH / 2 + 4} fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="start">
-                        υ
-                      </text>
-                    </>
-                  )}
-                </g>
+                {/* 4. Ο Κύλινδρος που κυλάει προς τα δεξιά (όσο unrollProgress < 100) */}
+                {unrollProgress < 100 && (
+                  <g transform={`translate(${cylinderX}, 110)`}>
+                    {/* Σώμα κυλίνδρου */}
+                    <rect
+                      x={-radiusR * 0.4}
+                      y="0"
+                      width={radiusR * 0.8}
+                      height={heightH}
+                      fill="rgba(56, 189, 248, 0.6)"
+                      stroke="#38bdf8"
+                      strokeWidth="2"
+                    />
+                    {/* Κάτω καπάκι σε προοπτική */}
+                    <ellipse
+                      cx="0"
+                      cy={heightH}
+                      rx={radiusR * 0.4}
+                      ry={10}
+                      fill="rgba(168, 85, 247, 0.7)"
+                      stroke="#c084fc"
+                      strokeWidth="2"
+                    />
+                    {/* Πάνω καπάκι */}
+                    <ellipse
+                      cx="0"
+                      cy="0"
+                      rx={radiusR * 0.4}
+                      ry={10}
+                      fill="rgba(52, 211, 153, 0.8)"
+                      stroke="#34d399"
+                      strokeWidth="2"
+                    />
+                    {/* Κείμενο ένδειξης κυλίνδρου */}
+                    {unrollProgress === 0 && (
+                      <>
+                        <text x="0" y={heightH / 2 + 4} fill="#ffffff" fontSize="11" fontWeight="bold" textAnchor="middle">
+                          Κύλινδρος
+                        </text>
+                        {/* Ύψος υ στα δεξιά του αρχικού κυλίνδρου */}
+                        <line x1={radiusR * 0.4 + 12} y1="0" x2={radiusR * 0.4 + 12} y2={heightH} stroke="#f59e0b" strokeWidth="2" />
+                        <text x={radiusR * 0.4 + 22} y={heightH / 2 + 4} fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="start">
+                          υ
+                        </text>
+                      </>
+                    )}
+                  </g>
+                )}
               </svg>
 
               <div className="mt-3 text-center text-xs text-slate-400">
-                Το ανάπτυγμα αποτελείται από 1 ορθογώνιο διαστάσεων (2 · π · ρ) επί υ και 2 κυκλικές βάσεις εμβαδού π · ρ².
+                {unrollProgress === 100
+                  ? '✓ Το ανάπτυγμα απλώθηκε πλήρως: 1 ορθογώνιο (2 · π · ρ) · υ και 2 κυκλικές βάσεις π · ρ².'
+                  : 'Ο κύλινδρος κυλάει προς τα δεξιά απλώνοντας την παράπλευρη επιφάνεια σε ορθογώνιο.'}
               </div>
             </div>
 
