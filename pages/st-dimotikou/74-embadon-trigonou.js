@@ -20,21 +20,31 @@ function formatNum(val) {
 }
 
 export default function EmbadonTrigonouTheoriaPage() {
-  // Εργαστήριο 1: Οπτική Απόδειξη (Το 2ο τρίγωνο κουμπώνει και φτιάχνει Παραλληλόγραμμο)
-  const [mergeProgress, setMergeProgress] = useState(0); // 0% (μόνο του) έως 100% (πλήρες παραλληλόγραμμο)
+  // -------------------------------------------------------------------------
+  // Εργαστήριο 1: Διαδραστική Απόδειξη σε 2 Στάδια (SVG)
+  // Στάδιο 1 (0% -> 50%): Το 2ο τρίγωνο κουμπώνει και φτιάχνει Παραλληλόγραμμο
+  // Στάδιο 2 (50% -> 100%): Το ακριανό τρίγωνο αποκόπτεται και φτιάχνει Ορθογώνιο
+  // -------------------------------------------------------------------------
+  const [animProgress, setAnimProgress] = useState(0); // 0 έως 100
 
-  // Σταθερές διαστάσεις εργαστηρίου 1 (SVG)
-  const baseW = 150;
-  const heightH = 85;
-  const slantX = 50; // Θέση κορυφής Α ως προς το x
+  // Γεωμετρικές διαστάσεις εργαστηρίου 1 (SVG)
+  const baseW = 150; // Βάση β = 150px
+  const heightH = 85; // Ύψος υ = 85px
+  const slantX = 45; // Οριζόντια κλίση (ύψος στο x = originX + slantX)
   const originX = 65;
   const originY = 55;
 
-  // Το 2ο τρίγωνο είναι αντεστραμμένο (περιστροφή 180° γύρω από το μέσο της πλάγιας πλευράς)
-  // Στο 0% βρίσκεται σε απόσταση (απομακρυσμένο) και στο 100% ενώνεται τέλεια
-  const distanceOffset = (1 - mergeProgress / 100) * 80;
+  // Στάδιο 1: Προσέγγιση του 2ου αντεστραμμένου τριγώνου (0% -> 50%)
+  const phase1T = Math.min(1, animProgress / 50);
+  const secondTriangleOffset = (1 - phase1T) * 80;
 
+  // Στάδιο 2: Ολίσθηση του αριστερού τριγώνου κατά μήκος της βάσης baseW (50% -> 100%)
+  const phase2T = Math.max(0, (animProgress - 50) / 50);
+  const triangleShiftX = phase2T * baseW;
+
+  // -------------------------------------------------------------------------
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδού & Μετατροπές Μονάδων
+  // -------------------------------------------------------------------------
   const [calcBase, setCalcBase] = useState(10); // σε cm
   const [calcHeight, setCalcHeight] = useState(6); // σε cm
 
@@ -69,19 +79,19 @@ export default function EmbadonTrigonouTheoriaPage() {
               <span>ΚΕΦΑΛΑΙΟ 74 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Εμβαδόν Τριγώνου • Βάση, Ύψος &amp; η Σχέση με το Παραλληλόγραμμο
+              Εμβαδόν Τριγώνου • Βάση, Ύψος &amp; η Σχέση με το Ορθογώνιο
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               Ανακαλύπτουμε πώς υπολογίζεται το εμβαδόν κάθε τριγώνου με τον τύπο <strong>Ε ＝ (β · υ) : 2</strong>, 
-              βλέπουμε ζωντανά γιατί κάθε τρίγωνο είναι ακριβώς το <strong>μισό ενός παραλληλογράμμου</strong>, 
-              και εξετάζουμε πώς υπολογίζουμε το εμβαδόν σε ορθογώνια, οξυγώνια και αμβλυγώνια τρίγωνα!
+              βλέπουμε ζωντανά πώς δύο ίδια τρίγωνα σχηματίζουν ένα <strong>παραλληλόγραμμο</strong> και έπειτα 
+              μετατρέπονται σε <strong>ορθογώνιο</strong>, αποδεικνύοντας γιατί το τρίγωνο είναι ακριβώς το μισό του!
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Γεωμετρική Απόδειξη Διπλασιασμού, Ειδικά Τρίγωνα &amp; Διαδραστικά Εργαστήρια</span>
+              <span>Θεωρία, Απόδειξη 2 Σταδίων (Τρίγωνο ➔ Παραλληλόγραμμο ➔ Ορθογώνιο) &amp; SVG</span>
             </div>
             <Link
               href="/st-dimotikou/74-embadon-trigonou-ask"
@@ -154,18 +164,18 @@ export default function EmbadonTrigonouTheoriaPage() {
                   Γιατί Διαιρούμε με το 2;
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αν πάρουμε ένα δεύτερο ολόιδιο τρίγωνο, το αναποδογυρίσουμε και το κολλήσουμε δίπλα στο πρώτο:
+                  Αν πάρουμε δύο ολόιδια τρίγωνα και τα συνθέσουμε κατάλληλα:
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
                   <div>
-                    1. Τα δύο ίσα τρίγωνα μαζί σχηματίζουν ένα <strong>παραλληλόγραμμο</strong>.
+                    1. <strong>Παραλληλόγραμμο:</strong> Το 2ο αντεστραμμένο τρίγωνο κουμπώνει και σχηματίζει παραλληλόγραμμο με εμβαδόν <strong>β · υ</strong>.
                   </div>
                   <div>
-                    2. Το παραλληλόγραμμο έχει εμβαδόν <strong>β · υ</strong>.
+                    2. <strong>Ορθογώνιο:</strong> Μεταφέροντας το ακριανό τρίγωνο, το παραλληλόγραμμο γίνεται ορθογώνιο με διαστάσεις <strong>β</strong> και <strong>υ</strong>.
                   </div>
                   <div className="text-amber-950 font-bold pt-1 border-t border-slate-200">
-                    Επομένως, το αρχικό μας τρίγωνο είναι ακριβώς το <strong>μισό</strong> αυτού του παραλληλογράμμου: <strong>(β · υ) : 2</strong>!
+                    Επομένως, το αρχικό μας τρίγωνο είναι ακριβώς το <strong>μισό</strong> αυτού του ορθογωνίου: <strong>(β · υ) : 2</strong>!
                   </div>
                 </div>
               </div>
@@ -239,36 +249,36 @@ export default function EmbadonTrigonouTheoriaPage() {
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🚀 Θυμήσου: Πρώτα διπλασιάζουμε το εμβαδόν ($2 \cdot Ε$) και μετά διαιρούμε με τη γνωστή διάσταση!
+                🚀 Θυμήσου: Πρώτα διπλασιάζουμε το εμβαδόν (2 · Ε) και μετά διαιρούμε με τη γνωστή διάσταση!
               </div>
             </article>
 
           </div>
         </section>
 
-        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΟΠΤΙΚΗ ΑΠΟΔΕΙΞΗ ΜΕ ΔΥΟ ΤΡΙΓΩΝΑ (SVG) */}
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΑΠΟΔΕΙΞΗ 2 ΣΤΑΔΙΩΝ (SVG) */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
               <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Γιατί το Τρίγωνο είναι το Μισό Παραλληλόγραμμο; (SVG)
+              Πώς το Τρίγωνο Γίνεται Παραλληλόγραμμο και Ορθογώνιο; (SVG)
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρε την μπάρα για να ενώσεις ένα δεύτερο πανομοιότυπο τρίγωνο και δες πώς μαζί σχηματίζουν ένα πλήρες παραλληλόγραμμο:
+              Σύρε την μπάρα προόδου: Στο 50% ένα δεύτερο ανάποδο τρίγωνο κουμπώνει σχηματίζοντας παραλληλόγραμμο, και στο 100% το ακριανό τρίγωνο ολισθαίνει στα δεξιά σχηματίζοντας τέλειο ορθογώνιο!
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
 
-            {/* Χειριστήρια & Επεξήγηση (5 στήλες) */}
+            {/* Slider & Επεξήγηση (5 στήλες) */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΕΝΩΣΗ ΔΕΥΤΕΡΟΥ ΤΡΙΓΩΝΟΥ:</span>
+                  <span>ΣΤΑΔΙΟ ΑΝΑΔΙΑΤΑΞΗΣ:</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
-                    {mergeProgress}%
+                    {animProgress}%
                   </span>
                 </div>
                 <input
@@ -276,63 +286,78 @@ export default function EmbadonTrigonouTheoriaPage() {
                   min={0}
                   max={100}
                   step={1}
-                  value={mergeProgress}
-                  onChange={(e) => setMergeProgress(Number(e.target.value))}
+                  value={animProgress}
+                  onChange={(e) => setAnimProgress(Number(e.target.value))}
                   className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
                   <span>0% (1 Τρίγωνο)</span>
-                  <span>50% (Προσέγγιση)</span>
-                  <span>100% (Παραλληλόγραμμο)</span>
+                  <span>50% (Παραλληλόγραμμο)</span>
+                  <span>100% (Ορθογώνιο)</span>
                 </div>
               </div>
 
               {/* Κάρτα Επεξήγησης */}
               <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs sm:text-sm">
                 <div className="font-bold text-sky-950">
-                  {mergeProgress === 0 && '🔷 Αρχικό Σχήμα: Ένα μόνο τρίγωνο με βάση β και ύψος υ.'}
-                  {mergeProgress > 0 && mergeProgress < 100 && '🔄 Το δεύτερο τρίγωνο πλησιάζει αντεστραμμένο...'}
-                  {mergeProgress === 100 && '🟩 Ολοκληρώθηκε: Τα δύο τρίγωνα σχημάτισαν ένα παραλληλόγραμμο!'}
+                  {animProgress === 0 && '🔷 Στάδιο 0: Ένα μόνο τρίγωνο με βάση β και ύψος υ.'}
+                  {animProgress > 0 && animProgress < 50 && '🔄 Στάδιο 1: Ένα δεύτερο πανομοιότυπο αντεστραμμένο τρίγωνο πλησιάζει...'}
+                  {animProgress >= 50 && animProgress < 100 && '🟪 Στάδιο 2: Σχηματίστηκε παραλληλόγραμμο! Τώρα το αριστερό ορθογώνιο τρίγωνο αποκόπτεται και ολισθαίνει...'}
+                  {animProgress === 100 && '🟩 Στάδιο 3: Τέλειο ορθογώνιο με μήκος β και πλάτος υ!'}
                 </div>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
-                  Το παραλληλόγραμμο έχει εμβαδόν <strong>β · υ</strong>. Επειδή αποτελείται από 2 ολόιδια τρίγωνα, 
-                  το καθένα έχει ακριβώς το μισό εμβαδόν: <strong>Ε ＝ (β · υ) : 2</strong>!
-                </p>
+                <div className="text-slate-600 text-[11px] space-y-1 font-mono pt-1 border-t border-sky-200/60">
+                  <div>• Εμβαδόν Ορθογωνίου (2 Τρίγωνα): β · υ ＝ {baseW} · {heightH}</div>
+                  <div className="text-indigo-900 font-bold">• Εμβαδόν 1 Τριγώνου: <strong>(β · υ) : 2</strong></div>
+                </div>
               </div>
             </div>
 
             {/* SVG Visualizer (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-900 min-h-[300px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+            <div className="lg:col-span-7 bg-slate-900 min-h-[320px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 340 200"
-                className="w-full max-w-[340px] sm:max-w-[420px] h-auto select-none overflow-visible"
+                viewBox="0 0 380 210"
+                className="w-full max-w-[380px] sm:max-w-[440px] h-auto select-none overflow-visible"
               >
-                {/* 1. Αρχικό τρίγωνο (γαλάζιο): κορυφές (originX, originY+heightH), (originX+baseW, originY+heightH), (originX+slantX, originY) */}
+                {/* 1. Σταθερό σώμα του 1ου τριγώνου (δεξί τμήμα από το ύψος και μετά) */}
                 <polygon
                   points={`
-                    ${originX},${originY + heightH} 
+                    ${originX + slantX},${originY} 
                     ${originX + baseW},${originY + heightH} 
-                    ${originX + slantX},${originY}
+                    ${originX + slantX},${originY + heightH}
                   `}
                   fill="rgba(56, 189, 248, 0.3)"
                   stroke="#38bdf8"
                   strokeWidth="2.5"
                 />
 
-                {/* 2. Δεύτερο αντεστραμμένο τρίγωνο (μωβ): ολισθαίνει προς τα αριστερά μέχρι να κουμπώσει */}
+                {/* 2. Κινούμενο αριστερό ορθογώνιο τρίγωνο:
+                    Στο 50% βρίσκεται στη θέση του, στο 100% ολισθαίνει στα δεξιά (κατά baseW) */}
                 <polygon
                   points={`
-                    ${originX + slantX + distanceOffset},${originY} 
-                    ${originX + slantX + baseW + distanceOffset},${originY} 
-                    ${originX + baseW + distanceOffset},${originY + heightH}
+                    ${originX + triangleShiftX},${originY + heightH} 
+                    ${originX + slantX + triangleShiftX},${originY + heightH} 
+                    ${originX + slantX + triangleShiftX},${originY}
                   `}
-                  fill={mergeProgress === 100 ? 'rgba(52, 211, 153, 0.35)' : 'rgba(168, 85, 247, 0.35)'}
-                  stroke={mergeProgress === 100 ? '#34d399' : '#c084fc'}
+                  fill={animProgress === 100 ? 'rgba(52, 211, 153, 0.4)' : 'rgba(56, 189, 248, 0.35)'}
+                  stroke={animProgress === 100 ? '#34d399' : '#38bdf8'}
                   strokeWidth="2.5"
-                  strokeDasharray={mergeProgress > 0 && mergeProgress < 100 ? '4 3' : 'none'}
+                  strokeDasharray={animProgress > 50 && animProgress < 100 ? '4 3' : 'none'}
                 />
 
-                {/* 3. Κατακόρυφο Ύψος (υ) - Κίτρινη διακεκομμένη γραμμή */}
+                {/* 3. Δεύτερο αντεστραμμένο τρίγωνο (μωβ): πλησιάζει από τα δεξιά (0 -> 50) */}
+                <polygon
+                  points={`
+                    ${originX + slantX + secondTriangleOffset},${originY} 
+                    ${originX + slantX + baseW + secondTriangleOffset},${originY} 
+                    ${originX + baseW + secondTriangleOffset},${originY + heightH}
+                  `}
+                  fill="rgba(168, 85, 247, 0.3)"
+                  stroke="#c084fc"
+                  strokeWidth="2.5"
+                  strokeDasharray={animProgress < 50 ? '4 3' : 'none'}
+                />
+
+                {/* 4. Κατακόρυφο Ύψος (υ) - Κίτρινη διακεκομμένη γραμμή */}
                 <line
                   x1={originX + slantX}
                   y1={originY}
@@ -342,8 +367,6 @@ export default function EmbadonTrigonouTheoriaPage() {
                   strokeWidth="2"
                   strokeDasharray="4 3"
                 />
-
-                {/* Σύμβολο ορθής γωνίας (90°) */}
                 <rect
                   x={originX + slantX}
                   y={originY + heightH - 10}
@@ -354,8 +377,6 @@ export default function EmbadonTrigonouTheoriaPage() {
                   strokeWidth="1.5"
                 />
                 <circle cx={originX + slantX + 5} cy={originY + heightH - 5} r="1.5" fill="#f59e0b" />
-
-                {/* Ετικέτα Ύψους (υ) */}
                 <text
                   x={originX + slantX - 8}
                   y={originY + heightH / 2 + 4}
@@ -369,15 +390,15 @@ export default function EmbadonTrigonouTheoriaPage() {
 
                 {/* Ετικέτα Βάσης (β) */}
                 <line
-                  x1={originX}
+                  x1={originX + (animProgress === 100 ? slantX : 0)}
                   y1={originY + heightH + 18}
-                  x2={originX + baseW}
+                  x2={originX + baseW + (animProgress === 100 ? slantX : 0)}
                   y2={originY + heightH + 18}
                   stroke="#e2e8f0"
                   strokeWidth="1.5"
                 />
                 <text
-                  x={originX + baseW / 2}
+                  x={originX + baseW / 2 + (animProgress === 100 ? slantX : 0)}
                   y={originY + heightH + 34}
                   fill="#ffffff"
                   fontSize="13"
@@ -389,7 +410,7 @@ export default function EmbadonTrigonouTheoriaPage() {
               </svg>
 
               <div className="mt-3 text-center text-xs text-slate-400">
-                Δύο πανομοιότυπα τρίγωνα φτιάχνουν 1 παραλληλόγραμμο (β · υ). Άρα, 1 τρίγωνο ＝ (β · υ) : 2.
+                Δύο τρίγωνα ενώνονται σε παραλληλόγραμμο και μετατρέπονται σε ορθογώνιο (β · υ). Άρα 1 τρίγωνο ＝ (β · υ) : 2.
               </div>
             </div>
 
@@ -613,7 +634,7 @@ export default function EmbadonTrigonouTheoriaPage() {
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed list-disc list-inside">
                 <li>
-                  <strong>Μην ξεχνάτε τη διαίρεση με το 2:</strong> Το πιο συχνό λάθος των μαθητών είναι να υπολογίζουν απλώς $β \cdot υ$. Θυμηθείτε: το $β \cdot υ$ είναι το παραλληλόγραμμο. Το τρίγωνο είναι πάντα το μισό του: <strong>(β · υ) : 2</strong>.
+                  <strong>Μην ξεχνάτε τη διαίρεση με το 2:</strong> Το πιο συχνό λάθος των μαθητών είναι να υπολογίζουν απλώς β · υ. Θυμηθείτε: το β · υ είναι το παραλληλόγραμμο. Το τρίγωνο είναι πάντα το μισό του: <strong>(β · υ) : 2</strong>.
                 </li>
                 <li>
                   <strong>Το ύψος δεν είναι η πλάγια πλευρά:</strong> Σε ένα σκαληνό ή ισοσκελές τρίγωνο, το ύψος είναι αυστηρά το <em>κάθετο</em> ευθύγραμμο τμήμα (90°) από την κορυφή προς τη βάση, όχι η πλάγια κεκλιμένη πλευρά.
