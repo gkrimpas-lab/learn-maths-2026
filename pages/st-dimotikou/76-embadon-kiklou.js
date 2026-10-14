@@ -23,11 +23,9 @@ export default function EmbadonKiklouTheoriaPage() {
   // -------------------------------------------------------------------------
   // Εργαστήριο 1: Οπτική Απόδειξη Αναδιάταξης Τομέων (SVG)
   // -------------------------------------------------------------------------
-  // Slider προόδου: 0% (κλειστός κύκλος) έως 100% (ορθογώνιο παραλληλόγραμμο)
   const [unfoldProgress, setUnfoldProgress] = useState(0);
 
   const radiusR = 60; // Ακτίνα α = 60px
-  const numSectors = 8; // 8 τομείς (4 πάνω, 4 κάτω)
   const sectorW = (Math.PI * radiusR) / 4; // Πλάτος βάσης κάθε τομέα
 
   // -------------------------------------------------------------------------
@@ -599,7 +597,7 @@ export default function EmbadonKiklouTheoriaPage() {
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed list-disc list-inside">
                 <li>
-                  <strong>Μην μπερδεύετε το α² με το 2 · α:</strong> Το $α^2$ είναι <strong>α · α</strong> (η ακτίνα πολλαπλασιασμένη με τον εαυτό της). Αν η ακτίνα είναι 6 cm, τότε $α^2 ＝ 6 \cdot 6 ＝ 36\text{ cm}^2$ (και όχι $6 \cdot 2 ＝ 12$).
+                  <strong>Μην μπερδεύετε το α² με το 2 · α:</strong> Το α² είναι <strong>α · α</strong> (η ακτίνα πολλαπλασιασμένη με τον εαυτό της). Αν η ακτίνα είναι 6 cm, τότε α² ＝ 6 · 6 ＝ 36 cm² (και όχι 6 · 2 ＝ 12).
                 </li>
                 <li>
                   <strong>Μην μπερδεύετε την περίμετρο με το εμβαδόν:</strong> Η περίμετρος (το μήκος της γραμμής) είναι <strong>2 · π · α</strong>. Το εμβαδόν (η επιφάνεια) είναι <strong>π · α²</strong>.
