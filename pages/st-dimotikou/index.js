@@ -81,7 +81,7 @@ export default function STDimotikouMenu() {
     { id: '74-embadon-trigonou', label: '🥧 74. Εμβαδόν Τριγώνου', href: '/st-dimotikou/74-embadon-trigonou' },
     { id: '75-embadon-trapeziou', label: '🥧 75. Εμβαδόν Τραπεζίου', href: '/st-dimotikou/75-embadon-trapeziou' },
     { id: '76-embadon-kiklou', label: '🥧 76. Εμβαδόν Κύκλου', href: '/st-dimotikou/76-embadon-kiklou' },
-    { id: '77-anaptigma', label: '🥧 77. Ανάπτυγμα Κύβου και Ορθογωνίου Παραλληλεπιπέδου', href: '/st-dimotikou/77-anaptigma' }
+    { id: '77-anaptigma', label: '🥧 77. Ανάπτυγμα Κύβου και Ορθογωνίου Παραλληλεπιπέδου', href: '/st-dimotikou/77-anaptigma' },
     { id: '78-akmes-korifes', label: '🥧 78. Ακμές - Κορυφές Κύβου και Ορθογωνίου Παραλληλεπιπέδου', href: '/st-dimotikou/78-akmes-korifes' }
 ];
   return (
