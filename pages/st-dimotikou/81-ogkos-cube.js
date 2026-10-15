@@ -76,7 +76,7 @@ export default function OgkosCubeTheoriaPage() {
               <span>ΚΕΦΑΛΑΙΟ 81 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Υπολογισμός Όγκου • Κύβος; Ορθογώνιο Παραλληλεπίπεδο
+              Υπολογισμός Όγκου • Κύβος • Ορθογώνιο Παραλληλεπίπεδο
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               Μαθαίνουμε πώς υπολογίζεται ο χώρος που καταλαμβάνει ένα στερεό! 
@@ -105,7 +105,7 @@ export default function OgkosCubeTheoriaPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Ο Όγκος Κύβου &amp; Παραλληλεπιπέδου σε 4 Βήματα
+              Ο Όγκος Κύβου και Παραλληλεπιπέδου σε 4 Βήματα
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
               Από την οπτική καταμέτρηση κυβικών εκατοστομέτρων μέχρι την άλγεβρα και το αντίστροφο πρόβλημα.
@@ -261,7 +261,7 @@ export default function OgkosCubeTheoriaPage() {
               <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Κατασκευάζουμε τον Όγκο με Κυβάκια του 1 cm³ (SVG)
+              Κατασκευάζουμε τον Όγκο με Κυβάκια του 1 cm³
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
               Άλλαξε το μήκος, το πλάτος και τις στρώσεις ύψους για να δεις πώς τα κυβάκια 1 cm³ χτίζουν βήμα-βήμα το στερεό και επαληθεύουν τον τύπο V ＝ α · β · γ:
@@ -424,14 +424,14 @@ export default function OgkosCubeTheoriaPage() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΟΓΚΟΥ & ΜΕΤΑΤΡΟΠΕΑΣ ΣΕ ΛΙΤΡΑ */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΟΓΚΟΥ και ΜΕΤΑΤΡΟΠΕΑΣ ΣΕ ΛΙΤΡΑ */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
-              <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΟΓΚΟΥ &amp; ΛΙΤΡΩΝ</span>
+              <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΟΓΚΟΥ ΚΑΙ ΛΙΤΡΩΝ</span>
             </div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Υπολογιστής Όγκου (V ＝ α³ ή V ＝ α · β · γ) &amp; Λίτρα
+              Υπολογιστής Όγκου (V ＝ α³ ή V ＝ α · β · γ) και Λίτρα
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
               Επίλεξε σχήμα (Κύβος ή Ορθογώνιο) και ρύθμισε τις διαστάσεις σε cm για να υπολογίσεις άμεσα τον όγκο και τη χωρητικότητα σε λίτρα:
@@ -545,7 +545,7 @@ export default function OgkosCubeTheoriaPage() {
             {/* Αποτελέσματα Όγκου & Χωρητικότητας (7 στήλες) */}
             <div className="lg:col-span-7 bg-slate-900 p-5 sm:p-7 rounded-3xl border border-slate-800 text-white space-y-4">
               <span className="text-xs text-slate-400 block font-bold uppercase tracking-wider text-center">
-                ΥΠΟΛΟΓΙΣΜΕΝΟΣ ΟΓΚΟΣ &amp; ΧΩΡΗΤΙΚΟΤΗΤΑ
+                ΥΠΟΛΟΓΙΣΜΕΝΟΣ ΟΓΚΟΣ ΚΑΙ ΧΩΡΗΤΙΚΟΤΗΤΑ
               </span>
 
               <div className="text-center py-2">
@@ -591,7 +591,7 @@ export default function OgkosCubeTheoriaPage() {
         <section className="space-y-6">
           <div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900 tracking-tight">
-              Λυμένα Προβλήματα με Όγκο Κύβου &amp; Παραλληλεπιπέδου
+              Λυμένα Προβλήματα με Όγκο Κύβου και Παραλληλεπιπέδου
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
               Εφαρμογές των τύπων V ＝ α³ και V ＝ α · β · γ σε ενυδρεία και δεξαμενές.
@@ -728,7 +728,7 @@ export default function OgkosCubeTheoriaPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στον Όγκο Κύβου &amp; Παραλληλεπιπέδου!
+              Ώρα για Εξάσκηση στον Όγκο Κύβου και Παραλληλεπιπέδου!
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
               Δοκίμασε τις δυνάμεις σου σε 12 διαδραστικές ασκήσεις με υπολογισμούς όγκου (α³ και α · β · γ), εύρεση άγνωστων διαστάσεων και μετατροπές σε λίτρα για τη ΣΤ' Δημοτικού.
