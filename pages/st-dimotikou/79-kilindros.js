@@ -27,28 +27,28 @@ export default function KilindrosTheoriaPage() {
   // -------------------------------------------------------------------------
   const [animProgress, setAnimProgress] = useState(0);
 
-  const radiusR = 35; // Ακτίνα ρ = 35px
-  const heightH = 85; // Ύψος υ = 85px
-  const rectW = 2 * Math.PI * radiusR; // 2 · 3,1415 · 35 ≈ 220px
-  const centerX = 200; // Κέντρο του καμβά στο SVG
+  const radiusR = 34; // Ακτίνα ρ = 34px
+  const heightH = 80; // Ύψος υ = 80px
+  const rectW = 2 * Math.PI * radiusR; // 2 · 3,1415 · 34 ≈ 214px
+  const centerX = 210; // Κέντρο του καμβά στο SVG
   const topY = 110;
 
   // Υπολογισμοί σταδίων κίνησης
   // Στάδιο 1: 0% έως 40% (Άνοιγμα καπακιών)
   const capStage = Math.min(1, animProgress / 40);
-  const capTopOffset = capStage * (radiusR + 10);
-  const capBottomOffset = capStage * (radiusR + 10);
+  const capTopOffset = capStage * (radiusR + 12);
+  // Μεγαλύτερο περιθώριο προς τα κάτω για να μην πέφτει η κάτω βάση πάνω στη γραμμή διαστάσεων
+  const capBottomOffset = capStage * (radiusR + 42);
 
   // Στάδιο 2: 40% έως 100% (Ξετύλιγμα παράπλευρης επιφάνειας)
   const unrollStage = Math.max(0, (animProgress - 40) / 60);
 
-  // Πλάτος ξετυλίγματος: από το αρχικό πλάτος κυλίνδρου (2*ρ = 70px) έως το πλήρες ορθογώνιο (220px)
+  // Πλάτος ξετυλίγματος: από το αρχικό πλάτος κυλίνδρου (2*ρ = 68px) έως το πλήρες ορθογώνιο (214px)
   const startW = radiusR * 2;
   const currentW = startW + unrollStage * (rectW - startW);
 
   // Καμπυλότητα κυλινδρικής επιφάνειας: εξαφανίζεται όσο πλησιάζουμε στο 100%
   const cylinderOpacity = Math.max(0, 1 - unrollStage * 1.5);
-  const rectOpacity = Math.min(1, unrollStage * 1.5);
 
   // -------------------------------------------------------------------------
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδών Κυλίνδρου
@@ -338,11 +338,11 @@ export default function KilindrosTheoriaPage() {
               </div>
             </div>
 
-            {/* SVG Visualizer με Καθαρό Άνοιγμα Καπακιών & Ξετύλιγμα (7 στήλες) */}
-            <div className="lg:col-span-7 bg-slate-900 min-h-[380px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
+            {/* SVG Visualizer με Αυξημένο Κάθετο Χώρο (7 στήλες) */}
+            <div className="lg:col-span-7 bg-slate-900 min-h-[400px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
-                viewBox="0 0 420 300"
-                className="w-full max-w-[420px] h-auto select-none overflow-visible"
+                viewBox="0 0 440 330"
+                className="w-full max-w-[440px] h-auto select-none overflow-visible"
               >
                 {/* 1. Ξετυλιγμένη Παράπλευρη Επιφάνεια (Ορθογώνιο) */}
                 <rect
@@ -364,25 +364,36 @@ export default function KilindrosTheoriaPage() {
                   </g>
                 )}
 
-                {/* Ετικέτα Παράπλευρης Επιφάνειας μέσα στο ορθογώνιο */}
+                {/* Ετικέτα Παράπλευρης Επιφάνειας σε 2 καθαρές γραμμές ώστε να μην εξέχει */}
                 {animProgress > 45 && (
-                  <text
-                    x={centerX}
-                    y={topY + heightH / 2 + 5}
-                    fill="#ffffff"
-                    fontSize={animProgress === 100 ? 12 : 10}
-                    fontWeight="bold"
-                    textAnchor="middle"
-                  >
-                    {animProgress === 100
-                      ? 'Παράπλευρη Επιφάνεια: Επ ＝ (2 · π · ρ) · υ'
-                      : 'Ξετύλιγμα σε ορθογώνιο...'}
-                  </text>
+                  <g>
+                    <text
+                      x={centerX}
+                      y={topY + heightH / 2 - 3}
+                      fill="#ffffff"
+                      fontSize={animProgress === 100 ? 11 : 9.5}
+                      fontWeight="bold"
+                      textAnchor="middle"
+                    >
+                      {animProgress === 100 ? 'Παράπλευρη Επιφάνεια' : 'Ξετύλιγμα...'}
+                    </text>
+                    {animProgress === 100 && (
+                      <text
+                        x={centerX}
+                        y={topY + heightH / 2 + 13}
+                        fill="#38bdf8"
+                        fontSize="11"
+                        fontWeight="black"
+                        textAnchor="middle"
+                      >
+                        Επ ＝ (2 · π · ρ) · υ
+                      </text>
+                    )}
+                  </g>
                 )}
 
                 {/* 2. Πάνω Κυκλική Βάση (Πράσινη) */}
                 <g transform={`translate(${centerX}, ${topY - capTopOffset})`}>
-                  {/* Στο 0% φαίνεται ως έλλειψη σε προοπτική, στο 40%+ γίνεται πλήρης κύκλος */}
                   <ellipse
                     cx="0"
                     cy="0"
@@ -392,7 +403,6 @@ export default function KilindrosTheoriaPage() {
                     stroke="#34d399"
                     strokeWidth="2"
                   />
-                  {/* Ένδειξη ακτίνας ρ όταν ανοίξει */}
                   {animProgress > 20 && (
                     <>
                       <line x1="0" y1="0" x2={radiusR} y2="0" stroke="#f59e0b" strokeWidth="2" />
@@ -407,7 +417,7 @@ export default function KilindrosTheoriaPage() {
                   )}
                 </g>
 
-                {/* 3. Κάτω Κυκλική Βάση (Μωβ) */}
+                {/* 3. Κάτω Κυκλική Βάση (Μωβ - με αρκετό κενό ώστε να μην τέμνει το κείμενο) */}
                 <g transform={`translate(${centerX}, ${topY + heightH + capBottomOffset})`}>
                   <ellipse
                     cx="0"
@@ -425,12 +435,12 @@ export default function KilindrosTheoriaPage() {
                   )}
                 </g>
 
-                {/* 4. Ετικέτες & Διαστάσεις Αναπτύγματος στο 100% (τοποθετημένες καθαρά έξω από τα σχήματα) */}
+                {/* 4. Ετικέτες & Διαστάσεις Αναπτύγματος στο 100% */}
                 {animProgress === 100 && (
                   <g>
-                    {/* Ένδειξη Μήκους Ορθογωνίου (κάτω από το ορθογώνιο, αλλά πάνω από την κάτω βάση) */}
-                    <line x1={centerX - rectW / 2} y1={topY + heightH + 14} x2={centerX + rectW / 2} y2={topY + heightH + 14} stroke="#38bdf8" strokeWidth="1.5" />
-                    <text x={centerX} y={topY + heightH + 28} fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">
+                    {/* Ένδειξη Μήκους Ορθογωνίου (με ασφαλή απόσταση πριν την κάτω βάση) */}
+                    <line x1={centerX - rectW / 2} y1={topY + heightH + 12} x2={centerX + rectW / 2} y2={topY + heightH + 12} stroke="#38bdf8" strokeWidth="1.5" />
+                    <text x={centerX} y={topY + heightH + 26} fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">
                       Μήκος ＝ 2 · π · ρ
                     </text>
 
