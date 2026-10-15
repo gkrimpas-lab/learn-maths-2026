@@ -84,7 +84,8 @@ export default function STDimotikouMenu() {
     { id: '77-anaptigma', label: '🥧 77. Ανάπτυγμα Κύβου και Ορθογωνίου Παραλληλεπιπέδου', href: '/st-dimotikou/77-anaptigma' },
     { id: '78-akmes-korifes', label: '🥧 78. Ακμές - Κορυφές Κύβου και Ορθογωνίου Παραλληλεπιπέδου', href: '/st-dimotikou/78-akmes-korifes' },
     { id: '79-kilindros', label: '🥧 79. Κύλινδρος', href: '/st-dimotikou/79-kilindros' },
-    { id: '80-ogkos', label: '🥧 80. Όγκος', href: '/st-dimotikou/80-ogkos' }
+    { id: '80-ogkos', label: '🥧 80. Όγκος', href: '/st-dimotikou/80-ogkos' },
+    { id: '81-ogkos-cube', label: '🥧 80. Όγκος κύβου και παραλληλεπιπέδου', href: '/st-dimotikou/81-ogkos-cube' }
 ];
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
