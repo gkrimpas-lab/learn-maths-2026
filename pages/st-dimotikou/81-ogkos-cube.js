@@ -31,7 +31,7 @@ export default function OgkosCubeTheoriaPage() {
   const totalCubesCount = useMemo(() => baseCubesCount * cubesH, [baseCubesCount, cubesH]);
 
   // -------------------------------------------------------------------------
-  // Εργαστήριο 2: Δυναμικός Υπολογιστής Όγκου Κύβου & Παραλληλεπιπέδου
+  // Εργαστήριο 2: Δυναμικός Υπολογιστής Όγκου Κύβου και Παραλληλεπιπέδου
   // -------------------------------------------------------------------------
   const [shapeMode, setShapeMode] = useState('cuboid'); // 'cube' ή 'cuboid'
   const [dimA, setDimA] = useState(8); // Μήκος (cm)
@@ -53,7 +53,7 @@ export default function OgkosCubeTheoriaPage() {
 
   return (
     <Layout
-      title="Όγκος Κύβου &amp; Ορθογωνίου Παραλληλεπιπέδου - ΣΤ' Δημοτικού | LearnMaths.gr"
+      title="Όγκος Κύβου και; Ορθογωνίου Παραλληλεπιπέδου - ΣΤ' Δημοτικού | LearnMaths.gr"
       description="Μαθαίνουμε πώς υπολογίζουμε τον όγκο κύβου (V ＝ α³) και ορθογωνίου παραλληλεπιπέδου (V ＝ α · β · γ), τη δόμηση με κυβάκια 1 cm³ και τις εφαρμογές σε προβλήματα."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
@@ -76,7 +76,7 @@ export default function OgkosCubeTheoriaPage() {
               <span>ΚΕΦΑΛΑΙΟ 81 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Υπολογισμός Όγκου • Κύβος &amp; Ορθογώνιο Παραλληλεπίπεδο
+              Υπολογισμός Όγκου • Κύβος; Ορθογώνιο Παραλληλεπίπεδο
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               Μαθαίνουμε πώς υπολογίζεται ο χώρος που καταλαμβάνει ένα στερεό! 
@@ -89,7 +89,7 @@ export default function OgkosCubeTheoriaPage() {
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Δόμηση με Κυβάκια 1 cm³, Τύποι V ＝ α³ &amp; V ＝ α · β · γ &amp; SVG</span>
+              <span>Θεωρία, Δόμηση με Κυβάκια 1 cm³, Τύποι V ＝ α³ και V ＝ α · β · γ</span>
             </div>
             <Link
               href="/st-dimotikou/81-ogkos-cube-ask"
