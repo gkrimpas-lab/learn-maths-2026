@@ -30,7 +30,7 @@ export default function OgkosKilindrouTheoriaPage() {
   const labVolume = useMemo(() => labBaseArea * layersCount, [labBaseArea, layersCount]);
 
   // -------------------------------------------------------------------------
-  // Εργαστήριο 2: Δυναμικός Υπολογιστής Όγκου & Χωρητικότητας Κυλίνδρου
+  // Εργαστήριο 2: Δυναμικός Υπολογιστής Όγκου και Χωρητικότητας Κυλίνδρου
   // -------------------------------------------------------------------------
   const [calcRadius, setCalcRadius] = useState(6); // Ακτίνα ρ σε cm
   const [calcHeight, setCalcHeight] = useState(15); // Ύψος υ σε cm
@@ -45,7 +45,7 @@ export default function OgkosKilindrouTheoriaPage() {
 
   return (
     <Layout
-      title="Όγκος Κυλίνδρου &amp; Χωρητικότητα σε Λίτρα - ΣΤ' Δημοτικού | LearnMaths.gr"
+      title="Όγκος Κυλίνδρου και Χωρητικότητα σε Λίτρα - ΣΤ' Δημοτικού | LearnMaths.gr"
       description="Μαθαίνουμε πώς υπολογίζουμε τον όγκο κυλίνδρου με τον τύπο V ＝ π · ρ² · υ, την οπτική απόδειξη με κυκλικές στρώσεις και τις εφαρμογές σε λίτρα."
       backUrl="/st-dimotikou"
       backText="ΣΤ' Δημοτικού"
@@ -68,7 +68,7 @@ export default function OgkosKilindrouTheoriaPage() {
               <span>ΚΕΦΑΛΑΙΟ 82 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Όγκος Κυλίνδρου • Εμβαδόν Βάσης, Ύψος &amp; Χωρητικότητα σε Λίτρα
+              Όγκος Κυλίνδρου • Εμβαδόν Βάσης, Ύψος και Χωρητικότητα σε Λίτρα
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
               Ανακαλύπτουμε πώς υπολογίζεται ο όγκος κάθε κυλινδρικού δοχείου με τον τύπο <strong>V ＝ π · ρ² · υ</strong>, 
@@ -80,7 +80,7 @@ export default function OgkosKilindrouTheoriaPage() {
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Τύπος V ＝ π · ρ² · υ, Στοίβαξη Δίσκων, Χωρητικότητα σε Λίτρα &amp; SVG</span>
+              <span>Θεωρία, Τύπος V ＝ π · ρ² · υ, Στοίβαξη Δίσκων και Χωρητικότητα σε Λίτρα</span>
             </div>
             <Link
               href="/st-dimotikou/82-ogkos-kilindrou-ask"
@@ -250,7 +250,7 @@ export default function OgkosKilindrouTheoriaPage() {
               <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πώς οι Κυκλικοί Δίσκοι Χτίζουν τον Όγκο του Κυλίνδρου; (SVG)
+              Πώς οι Κυκλικοί Δίσκοι Χτίζουν τον Όγκο του Κυλίνδρου;
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
               Άλλαξε την ακτίνα (ρ) και το πλήθος των στρώσεων (ύψος υ) για να δεις πώς οι δίσκοι στοιβάζονται και επαληθεύουν τον τύπο V ＝ (π · ρ²) · υ:
@@ -259,7 +259,7 @@ export default function OgkosKilindrouTheoriaPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
 
-            {/* Sliders Ακτίνας & Στρώσεων (5 στήλες) */}
+            {/* Sliders Ακτίνας και Στρώσεων (5 στήλες) */}
             <div className="lg:col-span-5 space-y-3.5">
               <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
@@ -385,7 +385,7 @@ export default function OgkosKilindrouTheoriaPage() {
           </div>
         </section>
 
-        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΟΓΚΟΥ ΚΥΛΙΝΔΡΟΥ & ΧΩΡΗΤΙΚΟΤΗΤΑΣ */}
+        {/* 4. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΟΓΚΟΥ ΚΥΛΙΝΔΡΟΥ ΚΑΙ ΧΩΡΗΤΙΚΟΤΗΤΑΣ */}
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
@@ -401,7 +401,7 @@ export default function OgkosKilindrouTheoriaPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
-            {/* Sliders Ακτίνας ρ & Ύψους υ (5 στήλες) */}
+            {/* Sliders Ακτίνας ρ και Ύψους υ (5 στήλες) */}
             <div className="lg:col-span-5 space-y-3.5">
               <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
@@ -450,7 +450,7 @@ export default function OgkosKilindrouTheoriaPage() {
               </div>
             </div>
 
-            {/* Αποτελέσματα Όγκου & Χωρητικότητας (7 στήλες) */}
+            {/* Αποτελέσματα Όγκου και Χωρητικότητας (7 στήλες) */}
             <div className="lg:col-span-7 bg-slate-900 p-5 sm:p-7 rounded-3xl border border-slate-800 text-white space-y-4">
               <span className="text-xs text-slate-400 block font-bold uppercase tracking-wider text-center">
                 ΧΩΡΗΤΙΚΟΤΗΤΑ ΚΥΛΙΝΔΡΙΚΟΥ ΔΟΧΕΙΟΥ ΣΕ ΛΙΤΡΑ
