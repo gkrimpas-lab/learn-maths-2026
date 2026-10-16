@@ -23,6 +23,20 @@ function Overline({ children }) {
   );
 }
 
+// Επαναχρησιμοποιήσιμο Component Κλάσματος με οριζόντια γραμμή (Fraction)
+function Frac({ num, den, className = "" }) {
+  return (
+    <span className={`inline-flex flex-col items-center align-middle font-mono px-0.5 leading-tight ${className}`}>
+      <span className="border-b-[1.5px] border-current px-1 text-center text-[0.9em] w-full block">
+        {num}
+      </span>
+      <span className="px-1 text-center text-[0.9em] w-full block">
+        {den}
+      </span>
+    </span>
+  );
+}
+
 // Προσομοίωση διαίρεσης κλάσματος a/b για εύρεση δεκαδικής μορφής και περιόδου
 function getDecimalExpansion(num, den) {
   if (!den || den === 0) return { integerPart: 0, nonPeriodic: '', period: '', isTerminating: true };
@@ -126,8 +140,7 @@ export default function DekadikiMorfiRitonTheory() {
               
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4 text-center">
                 <div className="font-mono text-2xl font-black text-indigo-700 inline-block">
-                  <span className="border-b-2 border-indigo-700 pb-0.5 px-2 block">μ</span>
-                  <span className="pt-0.5 px-2 block">ν</span>
+                  <Frac num="μ" den="ν" className="text-2xl" />
                 </div>
                 <p className="text-xs text-slate-500 mt-2 font-medium">
                   όπου <strong>μ</strong> ακέραιος αριθμός και <strong>ν</strong> φυσικός αριθμός με <strong>ν ≠ 0</strong>.
@@ -135,11 +148,17 @@ export default function DekadikiMorfiRitonTheory() {
               </div>
 
               <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-                <div className="p-3 bg-indigo-50/60 rounded-xl border border-indigo-100">
-                  <strong>Ακέραιοι ως Ρητοί:</strong> Κάθε ακέραιος είναι ρητός με παρονομαστή το 1 (π.χ. 5 ＝ 5 : 1, －4 ＝ －4 : 1).
+                <div className="p-3 bg-indigo-50/60 rounded-xl border border-indigo-100 flex items-center gap-2">
+                  <span><strong>Ακέραιοι ως Ρητοί:</strong> Κάθε ακέραιος είναι ρητός με παρονομαστή το 1:</span>
+                  <span className="font-mono font-bold text-indigo-800 inline-flex items-center gap-1.5">
+                    5 ＝ <Frac num="5" den="1" />, －4 ＝ <Frac num="－4" den="1" />
+                  </span>
                 </div>
-                <div className="p-3 bg-indigo-50/60 rounded-xl border border-indigo-100">
-                  <strong>Δεκαδικοί ως Ρητοί:</strong> Κάθε δεκαδικός αριθμός με πεπερασμένα ψηφία είναι ρητός (π.χ. 0,75 ＝ 75 : 100 ＝ 3 : 4).
+                <div className="p-3 bg-indigo-50/60 rounded-xl border border-indigo-100 flex items-center gap-2">
+                  <span><strong>Δεκαδικοί ως Ρητοί:</strong> Κάθε δεκαδικός αριθμός με πεπερασμένα ψηφία είναι ρητός:</span>
+                  <span className="font-mono font-bold text-indigo-800 inline-flex items-center gap-1.5">
+                    0,75 ＝ <Frac num="75" den="100" /> ＝ <Frac num="3" den="4" />
+                  </span>
                 </div>
               </div>
             </div>
@@ -165,7 +184,9 @@ export default function DekadikiMorfiRitonTheory() {
                   <span className="font-bold text-indigo-900 block mb-1">Απλός Περιοδικός:</span>
                   Η περίοδος ξεκινά αμέσως μετά την υποδιαστολή.
                   <div className="font-mono font-bold text-slate-800 mt-1 flex items-center gap-2">
-                    <span>1 : 3 ＝ 0,333... ＝ 0,<Overline>3</Overline></span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Frac num="1" den="3" /> ＝ 0,333... ＝ 0,<Overline>3</Overline>
+                    </span>
                     <span className="text-xs font-normal text-slate-500">(Περίοδος το 3)</span>
                   </div>
                 </div>
@@ -174,7 +195,9 @@ export default function DekadikiMorfiRitonTheory() {
                   <span className="font-bold text-indigo-900 block mb-1">Μικτός Περιοδικός:</span>
                   Ανάμεσα στην υποδιαστολή και την περίοδο μεσολαβούν ένα ή περισσότερα ψηφία (μη περιοδικό μέρος).
                   <div className="font-mono font-bold text-slate-800 mt-1 flex items-center gap-2">
-                    <span>5 : 6 ＝ 0,8333... ＝ 0,8<Overline>3</Overline></span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Frac num="5" den="6" /> ＝ 0,8333... ＝ 0,8<Overline>3</Overline>
+                    </span>
                     <span className="text-xs font-normal text-slate-500">(Μη περιοδικό το 8, περίοδος το 3)</span>
                   </div>
                 </div>
@@ -205,16 +228,18 @@ export default function DekadikiMorfiRitonTheory() {
                 <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-950">
                   <div className="font-bold mb-1">✓ Πεπερασμένος (Τερματιζόμενος) Δεκαδικός:</div>
                   Αν η ανάλυση του παρονομαστή περιέχει <strong>μόνο τους παράγοντες 2 ή/και 5</strong>.
-                  <div className="font-mono text-xs mt-1 text-slate-700">
-                    Π.χ. 7 : 20 ＝ 7 : (2² · 5) ＝ <strong>0,35</strong> (τελειώνει).
+                  <div className="font-mono text-xs mt-1 text-slate-700 flex items-center gap-1.5">
+                    <span>Π.χ.</span>
+                    <Frac num="7" den="20" /> ＝ <Frac num="7" den="2² · 5" /> ＝ <strong>0,35</strong> (τελειώνει).
                   </div>
                 </div>
 
                 <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-2xl text-amber-950">
                   <div className="font-bold mb-1">⚡ Περιοδικός Δεκαδικός:</div>
                   Αν ο παρονομαστής περιέχει <strong>οποιονδήποτε άλλον πρώτο παράγοντα</strong> (όπως 3, 7, 11, 13...).
-                  <div className="font-mono text-xs mt-1 text-slate-700">
-                    Π.χ. 4 : 15 ＝ 4 : (3 · 5) ＝ <strong>0,2<Overline>6</Overline></strong> (υπάρχει το 3).
+                  <div className="font-mono text-xs mt-1 text-slate-700 flex items-center gap-1.5">
+                    <span>Π.χ.</span>
+                    <Frac num="4" den="15" /> ＝ <Frac num="4" den="3 · 5" /> ＝ <strong>0,2<Overline>6</Overline></strong> (υπάρχει το 3).
                   </div>
                 </div>
               </div>
@@ -241,7 +266,11 @@ export default function DekadikiMorfiRitonTheory() {
                   <strong>Για Απλό Περιοδικό (π.χ. 0,<Overline>7</Overline>):</strong>
                   <div className="mt-1">
                     Γράφουμε στον αριθμητή την περίοδο και στον παρονομαστή τόσα <strong>9άρια</strong> όσα τα ψηφία της περιόδου:
-                    <div className="font-mono font-bold text-indigo-700 mt-1">0,<Overline>7</Overline> ＝ 7 : 9 &nbsp;|&nbsp; 0,<Overline>23</Overline> ＝ 23 : 99</div>
+                    <div className="font-mono font-bold text-indigo-700 mt-1 flex items-center gap-3">
+                      <span className="inline-flex items-center gap-1">0,<Overline>7</Overline> ＝ <Frac num="7" den="9" /></span>
+                      <span>|</span>
+                      <span className="inline-flex items-center gap-1">0,<Overline>23</Overline> ＝ <Frac num="23" den="99" /></span>
+                    </div>
                   </div>
                 </div>
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
@@ -312,11 +341,11 @@ export default function DekadikiMorfiRitonTheory() {
               <div className="pt-3 border-t border-slate-200">
                 <span className="text-xs font-bold text-slate-500 block mb-2 uppercase">Δοκιμαστε κλασικα κλασματα:</span>
                 <div className="flex flex-wrap gap-2 text-xs">
-                  <button onClick={() => { setNum(1); setDen(3); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono">1/3</button>
-                  <button onClick={() => { setNum(5); setDen(6); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono">5/6</button>
-                  <button onClick={() => { setNum(3); setDen(8); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono">3/8</button>
-                  <button onClick={() => { setNum(4); setDen(7); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono">4/7</button>
-                  <button onClick={() => { setNum(7); setDen(11); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono">7/11</button>
+                  <button onClick={() => { setNum(1); setDen(3); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono"><Frac num="1" den="3" /></button>
+                  <button onClick={() => { setNum(5); setDen(6); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono"><Frac num="5" den="6" /></button>
+                  <button onClick={() => { setNum(3); setDen(8); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono"><Frac num="3" den="8" /></button>
+                  <button onClick={() => { setNum(4); setDen(7); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono"><Frac num="4" den="7" /></button>
+                  <button onClick={() => { setNum(7); setDen(11); }} className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg hover:border-indigo-500 font-mono"><Frac num="7" den="11" /></button>
                 </div>
               </div>
             </div>
@@ -330,7 +359,10 @@ export default function DekadikiMorfiRitonTheory() {
                   {toCleanUppercase("ΚΛΑΣΜΑ & ΔΕΚΑΔΙΚΗ ΜΟΡΦΗ")}
                 </span>
                 <div className="text-2xl sm:text-4xl font-mono font-black flex items-center justify-center gap-3">
-                  <span>{num} : {den} ＝</span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Frac num={num} den={den} className="text-2xl sm:text-3xl" />
+                    <span>＝</span>
+                  </span>
                   <span className="text-emerald-400">
                     {expansion.integerPart},
                     {expansion.isTerminating ? (
@@ -369,7 +401,7 @@ export default function DekadikiMorfiRitonTheory() {
 
               {/* Ανάλυση διεργασίας */}
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
-                <strong>Ερμηνεία Διαίρεσης:</strong> Εκτελώντας τη διαίρεση {num} : {den}, 
+                <strong>Ερμηνεία Διαίρεσης:</strong> Εκτελώντας τη διαίρεση του κλάσματος <Frac num={num} den={den} />, 
                 {expansion.isTerminating ? (
                   <> το υπόλοιπο μηδενίζεται, άρα ο αριθμός έχει πεπερασμένο πλήθος δεκαδικών ψηφίων ({num / den}).</>
                 ) : (
@@ -444,9 +476,15 @@ export default function DekadikiMorfiRitonTheory() {
                 </div>
 
                 <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs sm:text-sm text-slate-800 space-y-1.5">
-                  <div><strong>Επίλυση:</strong> x ＝ 42 : 90.</div>
-                  <div><strong>Αναγωγή:</strong> Διαιρούμε αριθμητή και παρονομαστή με το 6: 42 : 6 ＝ 7 και 90 : 6 ＝ 15.</div>
-                  <div><strong>Τελικό Ανάγωγο Κλάσμα:</strong> <span className="font-mono font-bold text-emerald-900">7 : 15</span>.</div>
+                  <div className="flex items-center gap-1.5">
+                    <strong>Επίλυση:</strong> x ＝ <Frac num="42" den="90" />.
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <strong>Αναγωγή:</strong> Διαιρούμε αριθμητή και παρονομαστή με το 6: 42 : 6 ＝ 7 και 90 : 6 ＝ 15.
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <strong>Τελικό Ανάγωγο Κλάσμα:</strong> <span className="font-mono font-bold text-emerald-900"><Frac num="7" den="15" /></span>.
+                  </div>
                 </div>
               </div>
             </div>
@@ -481,12 +519,12 @@ export default function DekadikiMorfiRitonTheory() {
                     <tbody className="divide-y divide-slate-200">
                       <tr>
                         <td className="p-2 font-semibold">Κλασματικό μερίδιο</td>
-                        <td className="p-2 font-mono">100 : 3</td>
-                        <td className="p-2 font-mono font-bold text-indigo-700">100 / 3 €</td>
+                        <td className="p-2 font-mono"><Frac num="100" den="3" /></td>
+                        <td className="p-2 font-mono font-bold text-indigo-700"><Frac num="100" den="3" /> €</td>
                       </tr>
                       <tr>
                         <td className="p-2 font-semibold">Δεκαδική ακριβής μορφή</td>
-                        <td className="p-2 font-mono">100 : 3</td>
+                        <td className="p-2 font-mono"><Frac num="100" den="3" /></td>
                         <td className="p-2 font-mono font-bold text-indigo-700">33,<Overline>3</Overline> € (περίοδος 3)</td>
                       </tr>
                       <tr>
@@ -523,7 +561,7 @@ export default function DekadikiMorfiRitonTheory() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
-                  <span><strong>Απλοποίηση πριν τον έλεγχο του παρονομαστή:</strong> Για να ελέγξουμε αν ένα κλάσμα είναι πεπερασμένο ή περιοδικό, πρέπει πρώτα να είναι <strong>ανάγωγο</strong>! Π.χ. στο 9 : 30, ο παρονομαστής 30 περιέχει το 3 (30 ＝ 2 · 3 · 5), αλλά απλοποιείται σε 3 : 10 ＝ 0,3 (πεπερασμένος δεκαδικός).</span>
+                  <span><strong>Απλοποίηση πριν τον έλεγχο του παρονομαστή:</strong> Για να ελέγξουμε αν ένα κλάσμα είναι πεπερασμένο ή περιοδικό, πρέπει πρώτα να είναι <strong>ανάγωγο</strong>! Π.χ. στο <Frac num="9" den="30" />, ο παρονομαστής 30 περιέχει το 3 (30 ＝ 2 · 3 · 5), αλλά απλοποιείται σε <Frac num="3" den="10" /> ＝ 0,3 (πεπερασμένος δεκαδικός).</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
@@ -531,7 +569,7 @@ export default function DekadikiMorfiRitonTheory() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
-                  <span><strong>Διαφορά 0,999... και 1:</strong> Ο περιοδικός δεκαδικός αριθμός 0,<Overline>9</Overline> ισούται <em>ακριβώς με το 1</em> (αφού 9 : 9 ＝ 1).</span>
+                  <span><strong>Διαφορά 0,999... και 1:</strong> Ο περιοδικός δεκαδικός αριθμός 0,<Overline>9</Overline> ισούται <em>ακριβώς με το 1</em> (αφού <Frac num="9" den="9" /> ＝ 1).</span>
                 </li>
               </ul>
             </div>
