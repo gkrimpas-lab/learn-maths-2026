@@ -14,16 +14,30 @@ function toCleanUppercase(str) {
   return str.split('').map(char => map[char] || char.toUpperCase()).join('');
 }
 
-// Κομψή απόδοση της γραμμής περιόδου πάνω από τα ψηφία (Vinculum)
-function Overline({ children }) {
+// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum) - Responsive
+function Radical({ children, className = "" }) {
   return (
-    <span className="relative inline-block border-t-2 border-current px-0.5 leading-none">
-      {children}
+    <span className={`inline-flex items-center align-middle font-mono shrink-0 ${className}`}>
+      <svg
+        viewBox="0 0 12 24"
+        className="w-[0.52em] h-[1.12em] shrink-0 text-current overflow-visible"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M1 13 L3.5 13 L6.5 21 L12 2" />
+      </svg>
+      <span className="border-t-[1.8px] border-current pl-0.5 pr-1 py-0 leading-none text-[0.95em]">
+        {children}
+      </span>
     </span>
   );
 }
 
-// Επαναχρησιμοποιήσιμο Component Κλάσματος (Fraction) - Mobile Optimized
+// Επαναχρησιμοποιήσιμο Component Κλάσματος (Fraction) - Responsive
 function Frac({ num, den, className = "" }) {
   return (
     <span className={`inline-flex flex-col items-center align-middle font-mono px-0.5 shrink-0 leading-none ${className}`}>
@@ -33,6 +47,15 @@ function Frac({ num, den, className = "" }) {
       <span className="px-0.5 pt-0.5 text-center text-[0.88em] w-full block">
         {den}
       </span>
+    </span>
+  );
+}
+
+// Κομψή απόδοση της γραμμής περιόδου πάνω από τα ψηφία (Vinculum)
+function Overline({ children }) {
+  return (
+    <span className="relative inline-block border-t-2 border-current px-0.5 leading-none">
+      {children}
     </span>
   );
 }
@@ -94,9 +117,9 @@ export default function DekadikiMorfiRitonTheory() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-4 sm:py-6 pb-28 sm:pb-32 overflow-x-hidden text-slate-800">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 py-4 sm:py-6 pb-28 sm:pb-32 overflow-x-hidden text-slate-800">
         
-        {/* HERO BANNER - MOBILE SAFE */}
+        {/* HERO BANNER - RESPONSIVE 320px έως 8K */}
         <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white p-5 sm:p-8 lg:p-12 mb-6 sm:mb-10 shadow-xl">
           <div className="relative z-10 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-indigo-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 border border-white/20">
@@ -120,7 +143,7 @@ export default function DekadikiMorfiRitonTheory() {
           <div className="absolute -right-10 -bottom-10 w-72 sm:w-96 h-72 sm:h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         </section>
 
-        {/* 4 MODULAR CARDS ΘΕΩΡΙΑΣ - RESPONSIVE 1/2 COLS */}
+        {/* MODULAR CARDS ΘΕΩΡΙΑΣ (4 ΒΗΜΑΤΑ) */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           
           {/* ΒΗΜΑ 1 */}
@@ -546,7 +569,7 @@ export default function DekadikiMorfiRitonTheory() {
           </div>
         </section>
 
-        {/* YELLOW ALERT BOX - MOBILE PADDING ADJUSTED */}
+        {/* YELLOW ALERT BOX - MOBILE PADDING ADJUSTED ΜΕ ΚΑΝΟΝΙΚΟ ΣΥΜΒΟΛΟ ΡΙΖΑΣ */}
         <section className="bg-amber-50 border-2 border-amber-300 rounded-2xl sm:rounded-3xl p-4 sm:p-7 mb-8 sm:mb-12 shadow-sm">
           <div className="flex items-start gap-3 sm:gap-4">
             <span className="text-2xl sm:text-3xl shrink-0">⚠️</span>
@@ -557,7 +580,7 @@ export default function DekadikiMorfiRitonTheory() {
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed">
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
-                  <span><strong>Άπειρα δεκαδικά ψηφία ΧΩΡΙΣ περίοδο:</strong> Αριθμοί όπως ο <em>π ＝ 3,14159...</em> ή η ρίζα <em>√2 ＝ 1,41421...</em> έχουν άπειρα ψηφία αλλά <strong>ΔΕΝ έχουν περίοδο</strong>. Αυτοί οι αριθμοί λέγονται <strong>άρρητοι</strong> και <strong>ΔΕΝ</strong> είναι ρητοί!</span>
+                  <span><strong>Άπειρα δεκαδικά ψηφία ΧΩΡΙΣ περίοδο:</strong> Αριθμοί όπως ο <em>π ＝ 3,14159...</em> ή η ρίζα <em><Radical>2</Radical> ＝ 1,41421...</em> έχουν άπειρα ψηφία αλλά <strong>ΔΕΝ έχουν περίοδο</strong>. Αυτοί οι αριθμοί λέγονται <strong>άρρητοι</strong> και <strong>ΔΕΝ</strong> είναι ρητοί!</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
