@@ -4,6 +4,14 @@ import Layout from '../../components/Layout';
 
 const CHAPTERS = [
   {
+    id: '01',
+    slug: '01-dekadiki-morfi-riton',
+    title: 'Δεκαδική Μορφή Ρητών Αριθμών',
+    desc: 'Ρητός, Περιοδικός δεκαδικός αριθμός, Περίοδος.',
+    badge: 'ΚΕΦΑΛΑΙΟ 01',
+    active: true,
+  },
+  {
     id: '10',
     slug: '10-mononima-polionima',
     title: 'Μονώνυμα - Πολυώνυμα',
