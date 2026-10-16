@@ -12,6 +12,14 @@ const CHAPTERS = [
     active: true,
   },
   {
+    id: '02',
+    slug: '02-dekadiki-morfi-arriton',
+    title: 'Δεκαδική Μορφή των Άρρητων Αριθμών',
+    desc: 'Άρρητοι, Ρητές προσεγγίσεις.',
+    badge: 'ΚΕΦΑΛΑΙΟ 02',
+    active: true,
+  },
+  {
     id: '10',
     slug: '10-mononima-polionima',
     title: 'Μονώνυμα - Πολυώνυμα',
