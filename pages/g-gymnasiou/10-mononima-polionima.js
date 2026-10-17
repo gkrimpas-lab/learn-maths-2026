@@ -96,7 +96,7 @@ export default function MononimaPolionimaTheory() {
         <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white p-5 sm:p-8 lg:p-12 mb-6 sm:mb-10 shadow-xl">
           <div className="relative z-10 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-indigo-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 border border-white/20">
-              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 10 •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
+              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 7 •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3 text-white leading-tight">
               Μονώνυμα & Πολυώνυμα
