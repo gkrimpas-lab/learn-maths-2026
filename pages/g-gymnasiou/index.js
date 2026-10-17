@@ -65,7 +65,7 @@ const CHAPTERS = [
     slug: '10-mononima-polionima',
     title: 'Μονώνυμα - Πολυώνυμα',
     desc: 'Μονώνυμα, πρόσθεση, αφαίρεση, πολλαπλασιασμός διαίρεση μονωνύμων.',
-    badge: 'ΚΕΦΑΛΑΙΟ 10',
+    badge: 'ΚΕΦΑΛΑΙΟ 07',
     active: true,
   },
   {
@@ -73,7 +73,7 @@ const CHAPTERS = [
     slug: '11-prosthesi-afairesi-polionimon',
     title: 'Πρόσθεση Αφαίρεση Πολυώνυμων',
     desc: 'Πρόσθεση - αφαίρεση πολυωνύμων.',
-    badge: 'ΚΕΦΑΛΑΙΟ 11',
+    badge: 'ΚΕΦΑΛΑΙΟ 08',
     active: true,
   },
 ];
