@@ -44,6 +44,14 @@ const CHAPTERS = [
     active: true,
   },
   {
+    id: '06',
+    slug: '06-idiotites-rizon',
+    title: 'Ιδιότητες Τετραγωνικών Ριζών',
+    desc: 'Τετραγωνικές Ρίζες Ιδιότητες γινομένου και πηλίκου τετραγωνικών ριζών.',
+    badge: 'ΚΕΦΑΛΑΙΟ 06',
+    active: true,
+  },
+  {
     id: '10',
     slug: '10-mononima-polionima',
     title: 'Μονώνυμα - Πολυώνυμα',
