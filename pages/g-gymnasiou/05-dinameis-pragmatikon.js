@@ -52,16 +52,16 @@ function Frac({ num, den, className = "" }) {
 }
 
 export default function DinameisPragmatikonTheory() {
-  // State για το διαδραστικό εργαστήριο
   const [mode, setMode] = useState('custom'); // 'presets' ή 'custom'
   const [customBaseInput, setCustomBaseInput] = useState('2,5');
-  const [baseType, setBaseType] = useState('integer'); // για presets
+  const [baseType, setBaseType] = useState('integer'); // 'integer', 'negative', 'frac', 'radical'
   const [exponent, setExponent] = useState(3); // από -5 έως 10
 
-  // Καθαρισμός και υπολογισμός βάσης για το custom input
+  // Υπολογισμός παραμέτρων βάσης
   let parsedBase = 0;
   let isValidBase = true;
-  let customDisplayStr = customBaseInput;
+  let baseJSX = null;
+  let baseText = '';
 
   if (mode === 'custom') {
     const sanitized = customBaseInput.replace(',', '.').trim();
@@ -70,24 +70,30 @@ export default function DinameisPragmatikonTheory() {
       isValidBase = false;
       parsedBase = 0;
     }
+    baseText = parsedBase < 0 ? `(${customBaseInput})` : customBaseInput;
+    baseJSX = <span>{baseText}</span>;
   } else {
     if (baseType === 'negative') {
       parsedBase = -2;
-      customDisplayStr = '(－2)';
+      baseText = '(－2)';
+      baseJSX = <span>(－2)</span>;
     } else if (baseType === 'frac') {
       parsedBase = 0.5;
-      customDisplayStr = '(1/2)';
+      baseText = '(1/2)';
+      baseJSX = <span className="inline-flex items-center">(<Frac num="1" den="2" />)</span>;
     } else if (baseType === 'radical') {
       parsedBase = Math.sqrt(3);
-      customDisplayStr = '(√3)';
+      baseText = '(√3)';
+      baseJSX = <span className="inline-flex items-center">(<Radical>3</Radical>)</span>;
     } else {
       parsedBase = 2;
-      customDisplayStr = '2';
+      baseText = '2';
+      baseJSX = <span>2</span>;
     }
   }
 
-  // Ασφαλής υπολογισμός δύναμης
-  let resultOutput = '';
+  // Ασφαλής υπολογισμός δύναμης χωρίς RangeError
+  let resultOutput = null;
   let scientificForm = '';
   let ruleNote = '';
 
@@ -102,52 +108,95 @@ export default function DinameisPragmatikonTheory() {
     ruleNote = 'Κάθε πραγματικός αριθμός α ≠ 0 υψωμένος στο μηδέν ισούται με 1 (α⁰ ＝ 1).';
   } else {
     const rawVal = Math.pow(parsedBase, exponent);
-    
-    // Έλεγχος υπερχείλισης
-    if (!isFinite(rawVal)) {
-      resultOutput = 'Πολύ μεγάλος αριθμός (Υπερχείλιση)';
-    } else {
-      // Μορφοποίηση δεκαδικού
-      if (Math.abs(rawVal) >= 1e7 || (Math.abs(rawVal) < 1e-4 && rawVal !== 0)) {
-        scientificForm = rawVal.toExponential(4).replace('e+', ' · 10⁺').replace('e-', ' · 10⁻');
-        resultOutput = rawVal.toLocaleString('el-GR', { maximumFractionDigits: 6 });
-      } else {
-        resultOutput = rawVal.toLocaleString('el-GR', { maximumFractionDigits: 6 });
-      }
 
-      // Κανόνες επεξήγησης
-      if (parsedBase < 0) {
+    if (!isFinite(rawVal)) {
+      resultOutput = 'Υπερχείλιση (Πολύ μεγάλος αριθμός)';
+    } else {
+      // Ειδικές περιπτώσεις εμφάνισης για presets
+      if (mode === 'presets' && baseType === 'radical') {
+        if (exponent === 2) {
+          resultOutput = '3';
+          ruleNote = 'Η τετραγωνική ρίζα υψωμένη στο τετράγωνο εξουδετερώνεται: (√3)² ＝ 3.';
+        } else if (exponent === 4) {
+          resultOutput = '9';
+          ruleNote = '((√3)²)² ＝ 3² ＝ 9.';
+        } else if (exponent === -2) {
+          resultOutput = <Frac num="1" den="3" />;
+          ruleNote = '(√3)⁻² ＝ 1 / (√3)² ＝ 1/3.';
+        } else {
+          resultOutput = rawVal.toLocaleString('el-GR', { maximumFractionDigits: 6 });
+          ruleNote = `Υπολογισμός δύναμης με βάση √3 και εκθέτη ${exponent}.`;
+        }
+      } else if (mode === 'presets' && baseType === 'frac') {
+        if (exponent > 0) {
+          const p = Math.pow(2, exponent);
+          resultOutput = <Frac num="1" den={p} />;
+          ruleNote = `(1/2)ⁿ ＝ 1ⁿ / 2ⁿ ＝ 1 / ${p}.`;
+        } else {
+          const p = Math.pow(2, Math.abs(exponent));
+          resultOutput = `${p}`;
+          ruleNote = `(1/2)⁻ⁿ ＝ (2/1)ⁿ ＝ 2ⁿ ＝ ${p}. (Αντιστροφή κλάσματος).`;
+        }
+      } else if (mode === 'presets' && baseType === 'negative') {
         const isEven = Math.abs(exponent) % 2 === 0;
-        ruleNote = isEven 
-          ? `Αρνητική βάση με άρτιο εκθέτη (${exponent}): Το αποτέλεσμα είναι πάντα θετικό (＋).`
-          : `Αρνητική βάση με περιττό εκθέτη (${exponent}): Το αποτέλεσμα παραμένει αρνητικό (－).`;
-      } else if (exponent < 0) {
-        ruleNote = `Αρνητικός εκθέτης (${exponent}): Αντιστρέφει τη βάση (α⁻ⁿ ＝ 1 / αⁿ).`;
+        const p = Math.pow(2, Math.abs(exponent));
+        if (exponent > 0) {
+          resultOutput = isEven ? `${p}` : `－${p}`;
+          ruleNote = isEven 
+            ? `Αρνητική βάση με άρτιο εκθέτη (${exponent}): Το αποτέλεσμα είναι πάντοτε θετικό (＋).`
+            : `Αρνητική βάση με περιττό εκθέτη (${exponent}): Το αποτέλεσμα παραμένει αρνητικό (－).`;
+        } else {
+          resultOutput = isEven ? <Frac num="1" den={p} /> : <Frac num="－1" den={p} />;
+          ruleNote = `(－2)⁻ⁿ ＝ 1 / (－2)ⁿ. Το πρόσημο εξαρτάται από το αν ο εκθέτης είναι άρτιος ή περιττός.`;
+        }
+      } else if (mode === 'presets' && baseType === 'integer') {
+        if (exponent > 0) {
+          resultOutput = `${Math.pow(2, exponent)}`;
+          // Ασφαλής επανάληψη με Math.min για αποφυγή μεγάλων strings
+          const count = Math.min(exponent, 5);
+          const dots = exponent > 5 ? ' · ...' : '';
+          ruleNote = `2ⁿ ＝ ${Array(count).fill(2).join(' · ')}${dots} ＝ ${Math.pow(2, exponent)}.`;
+        } else {
+          const p = Math.pow(2, Math.abs(exponent));
+          resultOutput = <Frac num="1" den={p} />;
+          ruleNote = `2⁻ⁿ ＝ 1 / 2ⁿ ＝ 1 / ${p}.`;
+        }
       } else {
-        ruleNote = `Κανονικός πολλαπλασιασμός της βάσης ${customDisplayStr} με τον εαυτό της ${exponent} φορές.`;
+        // Custom Mode
+        if (Math.abs(rawVal) >= 1e7 || (Math.abs(rawVal) < 1e-4 && rawVal !== 0)) {
+          scientificForm = rawVal.toExponential(4).replace('e+', ' · 10⁺').replace('e-', ' · 10⁻');
+        }
+        resultOutput = rawVal.toLocaleString('el-GR', { maximumFractionDigits: 6 });
+
+        if (parsedBase < 0) {
+          const isEven = Math.abs(exponent) % 2 === 0;
+          ruleNote = isEven 
+            ? `Αρνητική βάση με άρτιο εκθέτη (${exponent}): Το αποτέλεσμα είναι πάντα θετικό (＋).`
+            : `Αρνητική βάση με περιττό εκθέτη (${exponent}): Το αποτέλεσμα παραμένει αρνητικό (－).`;
+        } else if (exponent < 0) {
+          ruleNote = `Αρνητικός εκθέτης (${exponent}): Αντιστρέφει τη βάση (α⁻ⁿ ＝ 1 / αⁿ).`;
+        } else {
+          ruleNote = `Υπολογισμός της βάσης ${baseText} υψωμένης στον εκθέτη ${exponent}.`;
+        }
       }
     }
   }
 
   // Sanitizer για input: Επιτρέπει προαιρετικό πρόσημο '-', έως 3 ακέραια και έως 3 δεκαδικά
   const handleCustomInputChange = (val) => {
-    // Επιτρέπει μόνο αριθμούς, κόμμα, τελεία και μείον στην αρχή
     let clean = val.replace(/[^0-9.,-]/g, '');
     
-    // Μόνο ένα μείον στην αρχή
     if (clean.indexOf('-') > 0) {
       clean = clean.replace(/-/g, '');
     }
     const hasMinus = clean.startsWith('-');
     if (hasMinus) clean = '-' + clean.substring(1).replace(/-/g, '');
 
-    // Μόνο μία υποδιαστολή
     const parts = clean.split(/[,.]/);
     if (parts.length > 2) {
       clean = parts[0] + ',' + parts.slice(1).join('');
     }
 
-    // Περιορισμός: έως 3 ψηφία ακέραιο μέρος, έως 3 ψηφία δεκαδικό μέρος
     let intPart = parts[0].replace('-', '');
     if (intPart.length > 3) intPart = intPart.substring(0, 3);
     const signPrefix = hasMinus ? '-' : '';
@@ -523,11 +572,7 @@ export default function DinameisPragmatikonTheory() {
                 </span>
                 <div className="text-xl sm:text-3xl lg:text-4xl font-mono font-black flex flex-wrap items-center justify-center gap-2 py-1">
                   <span className="inline-flex items-center">
-                    {mode === 'custom' ? (
-                      parsedBase < 0 ? `(${customBaseInput})` : customBaseInput
-                    ) : (
-                      baseDisplay
-                    )}
+                    {baseJSX}
                     <sup className="text-xs sm:text-base text-amber-300 ml-0.5">{exponent}</sup>
                   </span>
                   <span className="text-indigo-400">＝</span>
