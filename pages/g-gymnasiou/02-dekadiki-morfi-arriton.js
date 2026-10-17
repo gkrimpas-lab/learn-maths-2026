@@ -14,7 +14,7 @@ function toCleanUppercase(str) {
   return str.split('').map(char => map[char] || char.toUpperCase()).join('');
 }
 
-// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum) - Mobile Optimized
+// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum) - Responsive
 function Radical({ children, className = "" }) {
   return (
     <span className={`inline-flex items-center align-middle font-mono shrink-0 ${className}`}>
@@ -37,7 +37,7 @@ function Radical({ children, className = "" }) {
   );
 }
 
-// Επαναχρησιμοποιήσιμο Component Κλάσματος (Fraction) - Mobile Optimized
+// Επαναχρησιμοποιήσιμο Component Κλάσματος (Fraction) - Responsive
 function Frac({ num, den, className = "" }) {
   return (
     <span className={`inline-flex flex-col items-center align-middle font-mono px-0.5 shrink-0 leading-none ${className}`}>
@@ -79,9 +79,9 @@ export default function DekadikiMorfiArritonTheory() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-4 sm:py-6 pb-28 sm:pb-32 overflow-x-hidden text-slate-800">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 py-4 sm:py-6 pb-28 sm:pb-32 overflow-x-hidden text-slate-800">
         
-        {/* HERO BANNER - MOBILE SAFE */}
+        {/* HERO BANNER - RESPONSIVE 320px έως 8K */}
         <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white p-5 sm:p-8 lg:p-12 mb-6 sm:mb-10 shadow-xl">
           <div className="relative z-10 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-indigo-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 border border-white/20">
@@ -135,7 +135,9 @@ export default function DekadikiMorfiArritonTheory() {
               <div className="space-y-2 text-xs sm:text-sm text-slate-700">
                 <div className="p-2.5 sm:p-3 bg-indigo-50/60 rounded-xl border border-indigo-100 flex flex-wrap items-center justify-between gap-1">
                   <span><strong>Η ρίζα του 2:</strong></span>
-                  <span className="font-mono font-bold text-indigo-900 break-all"><Radical>2</Radical> ＝ 1,41421356...</span>
+                  <span className="font-mono font-bold text-indigo-900 break-all inline-flex items-center gap-1">
+                    <Radical>2</Radical> ＝ 1,41421356...
+                  </span>
                 </div>
                 <div className="p-2.5 sm:p-3 bg-indigo-50/60 rounded-xl border border-indigo-100 flex flex-wrap items-center justify-between gap-1">
                   <span><strong>Ο αριθμός π:</strong></span>
@@ -143,7 +145,9 @@ export default function DekadikiMorfiArritonTheory() {
                 </div>
                 <div className="p-2.5 sm:p-3 bg-indigo-50/60 rounded-xl border border-indigo-100 flex flex-wrap items-center justify-between gap-1">
                   <span><strong>Η ρίζα του 3:</strong></span>
-                  <span className="font-mono font-bold text-indigo-900 break-all"><Radical>3</Radical> ＝ 1,73205080...</span>
+                  <span className="font-mono font-bold text-indigo-900 break-all inline-flex items-center gap-1">
+                    <Radical>3</Radical> ＝ 1,73205080...
+                  </span>
                 </div>
               </div>
             </div>
@@ -169,8 +173,9 @@ export default function DekadikiMorfiArritonTheory() {
                 <p>
                   Σε ορθογώνιο τρίγωνο με κάθετες πλευρές 1 μονάδα, η υποτείνουσα d ικανοποιεί:
                 </p>
-                <div className="p-2 bg-white rounded-lg border border-slate-200 font-mono font-bold text-center text-indigo-700 text-xs sm:text-sm">
-                  d² ＝ 1² ＋ 1² ＝ 2 &nbsp;⇒&nbsp; d ＝ <Radical>2</Radical>
+                <div className="p-2 bg-white rounded-lg border border-slate-200 font-mono font-bold text-center text-indigo-700 text-xs sm:text-sm inline-flex items-center justify-center w-full gap-1.5">
+                  <span>d² ＝ 1² ＋ 1² ＝ 2 &nbsp;⇒&nbsp; d ＝</span>
+                  <Radical>2</Radical>
                 </div>
               </div>
 
@@ -200,14 +205,20 @@ export default function DekadikiMorfiArritonTheory() {
                   <span className="font-bold text-indigo-900 block mb-1">Προσέγγιση με έλλειψη και υπέρβαση:</span>
                   Κάθε άρρητος εγκλωβίζεται ανάμεσα σε δύο ρητούς που απέχουν όσο επιθυμούμε:
                   <div className="font-mono text-[11px] sm:text-xs mt-2 space-y-1.5 text-slate-700">
-                    <div className="p-1.5 bg-white rounded border border-slate-200">
-                      • Μονάδα: 1 ＜ <Radical>2</Radical> ＜ 2 (1² ＝ 1 ＜ 2 ＜ 4 ＝ 2²)
+                    <div className="p-1.5 bg-white rounded border border-slate-200 flex flex-wrap items-center gap-1">
+                      <span>• Μονάδα: 1 ＜</span>
+                      <Radical>2</Radical>
+                      <span>＜ 2 (1² ＝ 1 ＜ 2 ＜ 4 ＝ 2²)</span>
                     </div>
-                    <div className="p-1.5 bg-white rounded border border-slate-200">
-                      • Δέκατο: 1,4 ＜ <Radical>2</Radical> ＜ 1,5 (1,4² ＝ 1,96 ＜ 2 ＜ 2,25 ＝ 1,5²)
+                    <div className="p-1.5 bg-white rounded border border-slate-200 flex flex-wrap items-center gap-1">
+                      <span>• Δέκατο: 1,4 ＜</span>
+                      <Radical>2</Radical>
+                      <span>＜ 1,5 (1,4² ＝ 1,96 ＜ 2 ＜ 2,25 ＝ 1,5²)</span>
                     </div>
-                    <div className="p-1.5 bg-white rounded border border-slate-200">
-                      • Εκατοστό: 1,41 ＜ <Radical>2</Radical> ＜ 1,42 (1,41² ＝ 1,9881 ＜ 2 ＜ 2,0164)
+                    <div className="p-1.5 bg-white rounded border border-slate-200 flex flex-wrap items-center gap-1">
+                      <span>• Εκατοστό: 1,41 ＜</span>
+                      <Radical>2</Radical>
+                      <span>＜ 1,42 (1,41² ＝ 1,9881 ＜ 2 ＜ 2,0164)</span>
                     </div>
                   </div>
                 </div>
@@ -319,7 +330,7 @@ export default function DekadikiMorfiArritonTheory() {
 
               <div className="p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl text-xs text-indigo-900 break-words">
                 <strong>Υπολογιστική Τιμή:</strong> <br />
-                <span className="font-mono text-xs sm:text-sm font-bold break-all">
+                <span className="font-mono text-xs sm:text-sm font-bold break-all inline-flex items-center gap-1 mt-0.5">
                   <Radical>{radicand}</Radical> ＝ {exactRoot.toFixed(6)}...
                 </span>
               </div>
@@ -399,7 +410,7 @@ export default function DekadikiMorfiArritonTheory() {
                     {toCleanUppercase("ΠΡΟΒΛΗΜΑ 1: ΔΙΑΔΟΧΙΚΟΣ ΕΓΚΛΩΒΙΣΜΟΣ")}
                   </span>
                 </div>
-                <h3 className="font-bold text-base sm:text-lg text-slate-900 mb-2 leading-snug">
+                <h3 className="font-bold text-base sm:text-lg text-slate-900 mb-2 leading-snug flex items-center gap-1.5">
                   Εγκλωβισμός του <Radical>5</Radical> με ακρίβεια δεκάτου
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4">
@@ -420,12 +431,16 @@ export default function DekadikiMorfiArritonTheory() {
                       <tr>
                         <td className="p-2 sm:p-2.5 font-sans font-semibold">Μονάδα</td>
                         <td className="p-2 sm:p-2.5">2² ＝ 4 ＜ 5 ＜ 9 ＝ 3²</td>
-                        <td className="p-2 sm:p-2.5 font-bold text-indigo-700">2 ＜ <Radical>5</Radical> ＜ 3</td>
+                        <td className="p-2 sm:p-2.5 font-bold text-indigo-700">
+                          <span className="inline-flex items-center gap-1">2 ＜ <Radical>5</Radical> ＜ 3</span>
+                        </td>
                       </tr>
                       <tr>
                         <td className="p-2 sm:p-2.5 font-sans font-semibold">Δέκατο</td>
                         <td className="p-2 sm:p-2.5">2,2² ＝ 4,84 ＜ 5 ＜ 5,29 ＝ 2,3²</td>
-                        <td className="p-2 sm:p-2.5 font-bold text-indigo-700">2,2 ＜ <Radical>5</Radical> ＜ 2,3</td>
+                        <td className="p-2 sm:p-2.5 font-bold text-indigo-700">
+                          <span className="inline-flex items-center gap-1">2,2 ＜ <Radical>5</Radical> ＜ 2,3</span>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -494,7 +509,7 @@ export default function DekadikiMorfiArritonTheory() {
           </div>
         </section>
 
-        {/* YELLOW ALERT BOX - MOBILE PADDING ADJUSTED */}
+        {/* YELLOW ALERT BOX - MOBILE PADDING ADJUSTED ΜΕ ΚΑΝΟΝΙΚΟ ΣΥΜΒΟΛΟ ΡΙΖΑΣ */}
         <section className="bg-amber-50 border-2 border-amber-300 rounded-2xl sm:rounded-3xl p-4 sm:p-7 mb-8 sm:mb-12 shadow-sm">
           <div className="flex items-start gap-3 sm:gap-4">
             <span className="text-2xl sm:text-3xl shrink-0">⚠️</span>
@@ -509,11 +524,19 @@ export default function DekadikiMorfiArritonTheory() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
-                  <span><strong>Δεν είναι όλες οι ρίζες άρρητοι:</strong> Οι ρίζες των τέλειων τετραγώνων είναι <strong>ρητοί</strong> (ακέραιοι) αριθμοί (π.χ. <Radical>4</Radical> ＝ 2, <Radical>9</Radical> ＝ 3, <Radical>0,25</Radical> ＝ 0,5). Άρρητες είναι μόνο οι ρίζες μη τέλειων τετραγώνων.</span>
+                  <span className="inline-flex flex-wrap items-center gap-1">
+                    <strong>Δεν είναι όλες οι ρίζες άρρητοι:</strong> Οι ρίζες των τέλειων τετραγώνων είναι <strong>ρητοί</strong> (ακέραιοι) αριθμοί (π.χ. <Radical>4</Radical> ＝ 2, <Radical>9</Radical> ＝ 3, <Radical>0,25</Radical> ＝ 0,5). Άρρητες είναι μόνο οι ρίζες μη τέλειων τετραγώνων.
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
                   <span><strong>Άπειρα ψηφία δεν σημαίνει πάντα άρρητος:</strong> Ο αριθμός 0,333... έχει άπειρα ψηφία αλλά είναι <strong>ρητός</strong> διότι έχει περίοδο (ισούται με <Frac num="1" den="3" />). Άρρητος είναι μόνο αυτός που έχει άπειρα ψηφία <em>χωρίς περίοδο</em>.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold">•</span>
+                  <span className="inline-flex flex-wrap items-center gap-1">
+                    <strong>Πράξεις με άρρητους:</strong> Το άθροισμα ενός ρητού και ενός άρρητου (π.χ. 3 ＋ <Radical>2</Radical>) είναι πάντοτε <strong>άρρητος</strong> αριθμός.
+                  </span>
                 </li>
               </ul>
             </div>
