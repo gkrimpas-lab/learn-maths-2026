@@ -51,7 +51,7 @@ function Frac({ num, den, className = "" }) {
   );
 }
 
-// Βοηθητική απλοποίησης ρίζας: √n = a√b
+// Βοηθητική συνάρτηση απλοποίησης ρίζας: √n = a√b
 function simplifySquareRoot(n) {
   if (n <= 0) return { factor: 0, remainder: 0 };
   let factor = 1;
@@ -66,12 +66,10 @@ function simplifySquareRoot(n) {
 }
 
 export default function IdiotitesRizonTheory() {
-  // State για το διαδραστικό εργαστήριο
-  const [operation, setOperation] = useState('mult'); // 'mult' ή 'div'
+  const [operation, setOperation] = useState('mult');
   const [valA, setValA] = useState(12);
   const [valB, setValB] = useState(3);
 
-  // Υπολογισμοί εργαστηρίου
   let calcResult = null;
   let stepText = '';
 
@@ -89,7 +87,6 @@ export default function IdiotitesRizonTheory() {
       stepText = `√${valA} · √${valB} ＝ √(${valA} · ${valB}) ＝ √${prod} ＝ √(${factor * factor} · ${remainder}) ＝ ${factor} · √${remainder}.`;
     }
   } else {
-    // Διαίρεση √a / √b
     if (valA % valB === 0) {
       const q = valA / valB;
       const { factor, remainder } = simplifySquareRoot(q);
@@ -104,7 +101,6 @@ export default function IdiotitesRizonTheory() {
         stepText = `√${valA} / √${valB} ＝ √(${valA} / ${valB}) ＝ √${q} ＝ ${factor} · √${remainder}.`;
       }
     } else {
-      // Ρητοποίηση: (√a · √b) / b
       const prod = valA * valB;
       const { factor, remainder } = simplifySquareRoot(prod);
       calcResult = (
@@ -196,7 +192,7 @@ export default function IdiotitesRizonTheory() {
                     <Radical>α²</Radical> ＝ |α|
                   </span>
                   <div className="text-[11px] text-amber-800 w-full mt-1">
-                    Π.χ. <Radical>(－5)²</Radical> ＝ |－5| ＝ 5 και <strong>ΟΧΙ</strong> －5 (αφού η ρίζα είναι πάντοτε ≥ 0).
+                    Π.χ. <Radical>(－6)²</Radical> ＝ |－6| ＝ 6 και <strong>ΟΧΙ</strong> －6 (η τιμή της ρίζας είναι πάντα ≥ 0).
                   </div>
                 </div>
               </div>
@@ -235,9 +231,10 @@ export default function IdiotitesRizonTheory() {
               </div>
 
               <div className="p-2.5 sm:p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-950 leading-relaxed">
-                <strong>Προσοχή (Αντιπαράδειγμα):</strong> <br />
-                Στην πρόσθεση <strong>ΔΕΝ</strong> ισχύει: <Radical>16 ＋ 9</Radical> ＝ <Radical>25</Radical> ＝ 5, ενώ <Radical>16</Radical> ＋ <Radical>9</Radical> ＝ 4 ＋ 3 ＝ 7 ≠ 5. <br />
-                Άρα γενικά: <strong><Radical>α ＋ β</Radical> ≠ <Radical>α</Radical> ＋ <Radical>β</Radical></strong>.
+                <strong>Προσοχή:</strong> Η ρίζα δεν επιμερίζεται σε άθροισμα: <br />
+                <span className="font-mono font-bold mt-1 inline-flex items-center gap-1">
+                  <Radical>64 ＋ 36</Radical> ＝ <Radical>100</Radical> ＝ 10 ≠ <Radical>64</Radical> ＋ <Radical>36</Radical> ＝ 8 ＋ 6 ＝ 14.
+                </span>
               </div>
             </div>
           </div>
@@ -263,16 +260,16 @@ export default function IdiotitesRizonTheory() {
 
               <div className="space-y-2 text-xs sm:text-sm text-slate-700">
                 <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center gap-1.5 font-mono">
-                  <span>• <Radical>12</Radical> ＝ <Radical>4 · 3</Radical> ＝ <Radical>2² · 3</Radical> ＝ </span>
-                  <strong className="text-indigo-900">2 · <Radical>3</Radical></strong>
+                  <span>• <Radical>28</Radical> ＝ <Radical>4 · 7</Radical> ＝ <Radical>2² · 7</Radical> ＝ </span>
+                  <strong className="text-indigo-900">2 · <Radical>7</Radical></strong>
                 </div>
                 <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center gap-1.5 font-mono">
-                  <span>• <Radical>50</Radical> ＝ <Radical>25 · 2</Radical> ＝ <Radical>5² · 2</Radical> ＝ </span>
-                  <strong className="text-indigo-900">5 · <Radical>2</Radical></strong>
+                  <span>• <Radical>45</Radical> ＝ <Radical>9 · 5</Radical> ＝ <Radical>3² · 5</Radical> ＝ </span>
+                  <strong className="text-indigo-900">3 · <Radical>5</Radical></strong>
                 </div>
                 <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center gap-1.5 font-mono">
-                  <span>• <Radical>72</Radical> ＝ <Radical>36 · 2</Radical> ＝ </span>
-                  <strong className="text-indigo-900">6 · <Radical>2</Radical></strong>
+                  <span>• <Radical>98</Radical> ＝ <Radical>49 · 2</Radical> ＝ </span>
+                  <strong className="text-indigo-900">7 · <Radical>2</Radical></strong>
                 </div>
               </div>
             </div>
@@ -290,7 +287,7 @@ export default function IdiotitesRizonTheory() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                Στα κλάσματα μας διευκολύνει να μην έχουμε άρρητους στον παρονομαστή. Πολλαπλασιάζουμε αριθμητή και παρονομαστή με την κατάλληλη ρίζα:
+                Όταν ο παρονομαστής περιέχει άρρητη ρίζα, πολλαπλασιάζουμε αριθμητή και παρονομαστή με την ίδια ρίζα ώστε να προκύψει ακέραιος παρονομαστής:
               </p>
 
               <div className="bg-slate-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-3 border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 flex flex-wrap items-center justify-center gap-2 text-center">
@@ -304,19 +301,19 @@ export default function IdiotitesRizonTheory() {
               <div className="space-y-2 text-xs sm:text-sm text-slate-700">
                 <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-wrap items-center gap-1.5 font-mono text-emerald-950">
                   <span>•</span>
-                  <Frac num="1" den={<Radical>3</Radical>} />
+                  <Frac num="1" den={<Radical>5</Radical>} />
                   <span>＝</span>
-                  <Frac num={<Radical>3</Radical>} den="(<Radical>3</Radical>)²" />
+                  <Frac num={<Radical>5</Radical>} den="(<Radical>5</Radical>)²" />
                   <span>＝</span>
-                  <strong><Frac num={<Radical>3</Radical>} den="3" /></strong>
+                  <strong><Frac num={<Radical>5</Radical>} den="5" /></strong>
                 </div>
                 <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-wrap items-center gap-1.5 font-mono text-emerald-950">
                   <span>•</span>
-                  <Frac num="6" den={<Radical>2</Radical>} />
+                  <Frac num="15" den={<Radical>3</Radical>} />
                   <span>＝</span>
-                  <Frac num={<span>6 · <Radical>2</Radical></span>} den="2" />
+                  <Frac num={<span>15 · <Radical>3</Radical></span>} den="3" />
                   <span>＝</span>
-                  <strong>3 · <Radical>2</Radical></strong>
+                  <strong>5 · <Radical>3</Radical></strong>
                 </div>
               </div>
             </div>
@@ -324,7 +321,7 @@ export default function IdiotitesRizonTheory() {
 
         </div>
 
-        {/* INTERACTIVE LAB - 100% RESPONSIVE XΩΡΙΣ SCROLL */}
+        {/* INTERACTIVE LAB */}
         <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 border border-slate-200 shadow-md mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100">
             <div>
@@ -335,7 +332,6 @@ export default function IdiotitesRizonTheory() {
                 Δυναμικός Υπολογιστής Γινομένου & Πηλίκου Ριζών
               </h2>
             </div>
-            {/* Επιλογέας πράξης */}
             <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold shrink-0">
               <button
                 onClick={() => setOperation('mult')}
@@ -358,7 +354,6 @@ export default function IdiotitesRizonTheory() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             
-            {/* Sliders επιλογής τιμών */}
             <div className="lg:col-span-5 space-y-4 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 w-full">
               <div>
                 <div className="flex justify-between items-center mb-1">
@@ -396,21 +391,18 @@ export default function IdiotitesRizonTheory() {
                 />
               </div>
 
-              {/* Γρήγορα κουμπιά δοκιμών */}
               <div className="pt-2 border-t border-slate-200">
                 <span className="text-[11px] font-bold text-slate-500 block mb-2 uppercase">Δοκιμαστε κλασικα ζευγη:</span>
                 <div className="flex flex-wrap gap-1.5 text-xs">
-                  <button onClick={() => { setValA(3); setValB(12); }} className="px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono hover:border-indigo-400">√3 · √12</button>
-                  <button onClick={() => { setValA(2); setValB(32); }} className="px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono hover:border-indigo-400">√2 · √32</button>
-                  <button onClick={() => { setValA(48); setValB(3); }} className="px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono hover:border-indigo-400">√48 / √3</button>
-                  <button onClick={() => { setValA(18); setValB(2); }} className="px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono hover:border-indigo-400">√18 / √2</button>
+                  <button onClick={() => { setValA(8); setValB(18); }} className="px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono hover:border-indigo-400">√8 · √18</button>
+                  <button onClick={() => { setValA(5); setValB(20); }} className="px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono hover:border-indigo-400">√5 · √20</button>
+                  <button onClick={() => { setValA(72); setValB(2); }} className="px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono hover:border-indigo-400">√72 / √2</button>
+                  <button onClick={() => { setValA(75); setValB(3); }} className="px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono hover:border-indigo-400">√75 / √3</button>
                 </div>
               </div>
             </div>
 
-            {/* Dynamic Output Card */}
             <div className="lg:col-span-7 flex flex-col gap-4 w-full">
-              
               <div className="p-4 sm:p-6 bg-indigo-950 text-white rounded-2xl shadow-inner text-center w-full">
                 <span className="text-[10px] sm:text-xs uppercase tracking-wider text-indigo-300 font-bold block mb-2">
                   {toCleanUppercase("ΥΠΟΛΟΓΙΣΜΟΣ ΠΑΡΑΣΤΑΣΗΣ")}
@@ -432,7 +424,6 @@ export default function IdiotitesRizonTheory() {
                 </div>
               </div>
 
-              {/* Επεξήγηση βήματος */}
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs sm:text-sm text-slate-700 space-y-2">
                 <span className="text-xs font-bold text-slate-900 block uppercase">
                   {toCleanUppercase("ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ & ΑΠΛΟΠΟΙΗΣΗΣ")}:
@@ -441,13 +432,12 @@ export default function IdiotitesRizonTheory() {
                   {stepText}
                 </p>
               </div>
-
             </div>
 
           </div>
         </section>
 
-        {/* ΛΥΜΕΝΑ ΠΡΟΒΛΗΜΑΤΑ ΑΠΟ ΤΟ ΝΕΟ ΣΧΟΛΙΚΟ ΒΙΒΛΙΟ */}
+        {/* ΠΡΩΤΟΤΥΠΑ ΛΥΜΕΝΑ ΠΡΟΒΛΗΜΑΤΑ (ΜΗ ΑΝΤΙΓΡΑΦΕΣ) */}
         <section className="mb-8 sm:mb-12">
           <div className="flex items-center gap-3 mb-5">
             <span className="w-2.5 sm:w-3 h-6 sm:h-8 bg-indigo-600 rounded-full" />
@@ -458,23 +448,23 @@ export default function IdiotitesRizonTheory() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             
-            {/* ΠΡΟΒΛΗΜΑ 1 (Άσκηση 28 σελ. 37 σχολικού) */}
+            {/* ΠΡΟΒΛΗΜΑ 1: Πρωτότυπο Γεωμετρικό Τρίγωνο */}
             <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 font-bold text-[11px] sm:text-xs rounded-full uppercase">
-                    {toCleanUppercase("ΠΡΟΒΛΗΜΑ 1: ΓΕΩΜΕΤΡΙΑ & ΡΙΖΕΣ")}
+                    {toCleanUppercase("ΠΡΟΒΛΗΜΑ 1: ΔΙΑΣΤΑΣΕΙΣ & ΕΜΒΑΔΟΝ ΟΡΘΟΓΩΝΙΟΥ")}
                   </span>
                 </div>
                 <h3 className="font-bold text-base sm:text-lg text-slate-900 mb-2 leading-snug">
-                  Υπολογισμός ύψους ορθογωνίου τριγώνου με ρίζες
+                  Υπολογισμός διαγωνίου και εμβαδού με εξαγωγή παράγοντα
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4">
-                  Σε ορθογώνιο τρίγωνο ΑΒΓ (ορθή η γωνία Α), οι κάθετες πλευρές είναι <strong>ΑΒ ＝ 4 · <Radical>2</Radical> cm</strong> και <strong>ΑΓ ＝ 3 · <Radical>2</Radical> cm</strong>. <br />
-                  Να υπολογιστεί η υποτείνουσα ΒΓ και το ύψος ΑΔ προς την υποτείνουσα σε μορφή <Frac num={<span>α · <Radical>2</Radical></span>} den="β" />.
+                  Ένα ορθογώνιο παραλληλόγραμμο έχει διαστάσεις <strong>L ＝ <Radical>48</Radical> cm</strong> και <strong>W ＝ <Radical>12</Radical> cm</strong>. <br />
+                  α) Να υπολογιστεί το εμβαδόν του Ε σε cm². <br />
+                  β) Να βρεθεί το μήκος της διαγωνίου του d σε απλοποιημένη ριζική μορφή.
                 </p>
 
-                {/* Πίνακας με ασφαλές scroll */}
                 <div className="overflow-x-auto -mx-1 sm:mx-0 mb-4 rounded-xl border border-slate-200">
                   <table className="w-full text-xs text-left min-w-[280px]">
                     <thead className="bg-slate-100 text-slate-700 font-bold">
@@ -486,75 +476,75 @@ export default function IdiotitesRizonTheory() {
                     </thead>
                     <tbody className="divide-y divide-slate-200 text-[11px] sm:text-xs font-mono">
                       <tr>
-                        <td className="p-2 sm:p-2.5 font-sans font-semibold">1. Υποτείνουσα ΒΓ</td>
-                        <td className="p-2 sm:p-2.5">ΒΓ² ＝ ΑΒ² ＋ ΑΓ²</td>
-                        <td className="p-2 sm:p-2.5">(4√2)² ＋ (3√2)² ＝ 32 ＋ 18 ＝ 50 ⇒ ΒΓ ＝ √50 ＝ 5√2 cm</td>
+                        <td className="p-2 sm:p-2.5 font-sans font-semibold">1. Εμβαδόν Ε</td>
+                        <td className="p-2 sm:p-2.5">Ε ＝ L · W</td>
+                        <td className="p-2 sm:p-2.5">√48 · √12 ＝ √(48 · 12) ＝ √576 ＝ 24 cm²</td>
                       </tr>
                       <tr>
-                        <td className="p-2 sm:p-2.5 font-sans font-semibold">2. Εμβαδόν (Ε)</td>
-                        <td className="p-2 sm:p-2.5">Ε ＝ (ΑΒ · ΑΓ) / 2</td>
-                        <td className="p-2 sm:p-2.5">(4√2 · 3√2) / 2 ＝ 24 / 2 ＝ 12 cm²</td>
+                        <td className="p-2 sm:p-2.5 font-sans font-semibold">2. Διαγώνιος d²</td>
+                        <td className="p-2 sm:p-2.5">d² ＝ L² ＋ W²</td>
+                        <td className="p-2 sm:p-2.5">(√48)² ＋ (√12)² ＝ 48 ＋ 12 ＝ 60</td>
                       </tr>
                       <tr>
-                        <td className="p-2 sm:p-2.5 font-sans font-semibold">3. Ύψος ΑΔ</td>
-                        <td className="p-2 sm:p-2.5">ΑΔ ＝ (2 · Ε) / ΒΓ</td>
-                        <td className="p-2 sm:p-2.5 font-bold text-indigo-700">24 / (5√2) ＝ (24√2) / 10 ＝ 12√2 / 5 cm</td>
+                        <td className="p-2 sm:p-2.5 font-sans font-semibold">3. Διαγώνιος d</td>
+                        <td className="p-2 sm:p-2.5">d ＝ √60</td>
+                        <td className="p-2 sm:p-2.5 font-bold text-indigo-700">√(4 · 15) ＝ 2 · √15 cm</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
 
                 <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs sm:text-sm text-slate-800 space-y-1">
+                  <div><strong>Εμβαδόν:</strong> 24 cm² (ακέραιος ρητός αριθμός).</div>
                   <div className="flex flex-wrap items-center gap-1">
-                    <strong>Τελικό Ύψος ΑΔ:</strong> <span className="font-mono font-bold text-emerald-900 inline-flex items-center gap-1"><Frac num={<span>12 · <Radical>2</Radical></span>} den="5" /> cm</span>.
+                    <strong>Μήκος διαγωνίου:</strong> <span className="font-mono font-bold text-emerald-900 inline-flex items-center gap-1">d ＝ 2 · <Radical>15</Radical> cm</span>.
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* ΠΡΟΒΛΗΜΑ 2 (Άσκηση 17γ σελ. 37 σχολικού) */}
+            {/* ΠΡΟΒΛΗΜΑ 2: Πρωτότυπο Πρόβλημα Ρητοποίησης & Αναγωγής */}
             <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 font-bold text-[11px] sm:text-xs rounded-full uppercase">
-                    {toCleanUppercase("ΠΡΟΒΛΗΜΑ 2: ΡΗΤΟΠΟΙΗΣΗ & ΑΦΑΙΡΕΣΗ")}
+                    {toCleanUppercase("ΠΡΟΒΛΗΜΑ 2: ΑΛΓΕΒΡΙΚΗ ΑΠΛΟΠΟΙΗΣΗ & ΡΗΤΟΠΟΙΗΣΗ")}
                   </span>
                 </div>
                 <h3 className="font-bold text-base sm:text-lg text-slate-900 mb-2 leading-snug">
-                  Απλοποίηση διαφοράς κλασμάτων με ρίζες
+                  Υπολογισμός σύνθετης παράστασης με ρητοποίηση
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4">
-                  Να υπολογιστεί η διαφορά των κλασμάτων με ρητοποίηση παρονομαστών: <br />
+                  Να υπολογιστεί η αριθμητική τιμή της παράστασης με ρητοποίηση και αναγωγή ομοίων ριζών: <br />
                   <span className="font-mono font-bold text-slate-900 inline-flex flex-wrap items-center gap-1 mt-1">
-                    Α ＝ <Frac num={<span>2 · <Radical>5</Radical></span>} den={<Radical>2</Radical>} /> － <Frac num={<span>3 · <Radical>2</Radical></span>} den={<Radical>5</Radical>} />
+                    Κ ＝ <Radical>72</Radical> － <Frac num="18" den={<Radical>2</Radical>} /> ＋ <Radical>50</Radical>
                   </span>
                 </p>
 
-                {/* Πίνακας με ασφαλές scroll */}
                 <div className="overflow-x-auto -mx-1 sm:mx-0 mb-4 rounded-xl border border-slate-200">
                   <table className="w-full text-xs text-left min-w-[290px]">
                     <thead className="bg-slate-100 text-slate-700 font-bold">
                       <tr>
                         <th className="p-2 sm:p-2.5 border-b">Όρος</th>
-                        <th className="p-2 sm:p-2.5 border-b">Ρητοποίηση</th>
-                        <th className="p-2 sm:p-2.5 border-b">Αποτέλεσμα</th>
+                        <th className="p-2 sm:p-2.5 border-b">Διαδικασία Μετατροπής</th>
+                        <th className="p-2 sm:p-2.5 border-b">Απλοποιημένη Μορφή</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200 text-[11px] sm:text-xs font-mono">
                       <tr>
-                        <td className="p-2 sm:p-2.5 font-sans font-semibold">1ο Κλάσμα</td>
-                        <td className="p-2 sm:p-2.5">(2√5 · √2) / (√2 · √2)</td>
-                        <td className="p-2 sm:p-2.5">(2√10) / 2 ＝ √10</td>
+                        <td className="p-2 sm:p-2.5 font-sans font-semibold">1ος Όρος (√72)</td>
+                        <td className="p-2 sm:p-2.5">√(36 · 2) ＝ 6 · √2</td>
+                        <td className="p-2 sm:p-2.5">6 · √2</td>
                       </tr>
                       <tr>
-                        <td className="p-2 sm:p-2.5 font-sans font-semibold">2ο Κλάσμα</td>
-                        <td className="p-2 sm:p-2.5">(3√2 · √5) / (√5 · √5)</td>
-                        <td className="p-2 sm:p-2.5">(3√10) / 5</td>
+                        <td className="p-2 sm:p-2.5 font-sans font-semibold">2ος Όρος (18 / √2)</td>
+                        <td className="p-2 sm:p-2.5">(18 · √2) / 2 ＝ 9 · √2</td>
+                        <td className="p-2 sm:p-2.5">－9 · √2</td>
                       </tr>
                       <tr>
-                        <td className="p-2 sm:p-2.5 font-sans font-semibold">Διαφορά</td>
-                        <td className="p-2 sm:p-2.5">√10 － (3√10) / 5</td>
-                        <td className="p-2 sm:p-2.5 font-bold text-indigo-700">(5√10 － 3√10) / 5 ＝ 2√10 / 5</td>
+                        <td className="p-2 sm:p-2.5 font-sans font-semibold">3ος Όρος (√50)</td>
+                        <td className="p-2 sm:p-2.5">√(25 · 2) ＝ 5 · √2</td>
+                        <td className="p-2 sm:p-2.5">＋5 · √2</td>
                       </tr>
                     </tbody>
                   </table>
@@ -562,8 +552,9 @@ export default function IdiotitesRizonTheory() {
 
                 <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs sm:text-sm text-slate-800 space-y-1">
                   <div className="flex flex-wrap items-center gap-1">
-                    <strong>Τελική Τιμή:</strong> <span className="font-mono font-bold text-emerald-900 inline-flex items-center gap-1"><Frac num={<span>2 · <Radical>10</Radical></span>} den="5" /></span>.
+                    <strong>Αναγωγή Ομοίων Ριζών:</strong> (6 － 9 ＋ 5) · √2 ＝ <strong>2 · <Radical>2</Radical></strong>.
                   </div>
+                  <div><strong>Συμπέρασμα:</strong> Η αρχική σύνθετη παράσταση απλοποιείται στον άρρητο αριθμό 2 · <Radical>2</Radical>.</div>
                 </div>
               </div>
             </div>
