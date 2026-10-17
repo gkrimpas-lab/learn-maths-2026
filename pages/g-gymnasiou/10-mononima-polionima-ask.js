@@ -765,7 +765,7 @@ export default function MononimaPolionimaExercises() {
       title="Ασκήσεις: Μονώνυμα & Πολυώνυμα | Γ' Γυμνασίου"
       description="Διαδραστικές ασκήσεις και προβλήματα στα μονώνυμα, πολυώνυμα, βαθμό και πράξεις για τη Γ' Γυμνασίου με αναλυτική βαθμολόγηση."
       backUrl="/g-gymnasiou/10-mononima-polionima"
-      backText="Θεωρία Κεφ. 10"
+      backText="Θεωρία Κεφ. 07"
       showAds={true}
       actionButton={
         <Link
