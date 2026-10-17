@@ -28,6 +28,14 @@ const CHAPTERS = [
     active: true,
   },
   {
+    id: '04',
+    slug: '04-prakseis-pragmatikon',
+    title: 'Πράξεις Πραγματικών Αριθμοί',
+    desc: 'Πρόσθεση, Αφαίρεση, Πολλαπλασιασμός, Διαίρεση, Ιδιότητες Πράξεων.',
+    badge: 'ΚΕΦΑΛΑΙΟ 04',
+    active: true,
+  },
+  {
     id: '10',
     slug: '10-mononima-polionima',
     title: 'Μονώνυμα - Πολυώνυμα',
