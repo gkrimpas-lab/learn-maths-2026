@@ -14,16 +14,30 @@ function toCleanUppercase(str) {
   return str.split('').map(char => map[char] || char.toUpperCase()).join('');
 }
 
-// Κομψή απόδοση της γραμμής περιόδου πάνω από τα ψηφία (Vinculum)
-function Overline({ children }) {
+// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum) - Responsive
+function Radical({ children, className = "" }) {
   return (
-    <span className="relative inline-block border-t-2 border-current px-0.5 leading-none">
-      {children}
+    <span className={`inline-flex items-center align-middle font-mono shrink-0 ${className}`}>
+      <svg
+        viewBox="0 0 12 24"
+        className="w-[0.52em] h-[1.12em] shrink-0 text-current overflow-visible"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M1 13 L3.5 13 L6.5 21 L12 2" />
+      </svg>
+      <span className="border-t-[1.8px] border-current pl-0.5 pr-1 py-0 leading-none text-[0.95em]">
+        {children}
+      </span>
     </span>
   );
 }
 
-// Επαναχρησιμοποιήσιμο Component Κλάσματος (Fraction) - Mobile Optimized
+// Επαναχρησιμοποιήσιμο Component Κλάσματος (Fraction) - Responsive
 function Frac({ num, den, className = "" }) {
   return (
     <span className={`inline-flex flex-col items-center align-middle font-mono px-0.5 shrink-0 leading-none ${className}`}>
@@ -33,6 +47,15 @@ function Frac({ num, den, className = "" }) {
       <span className="px-0.5 pt-0.5 text-center text-[0.88em] w-full block">
         {den}
       </span>
+    </span>
+  );
+}
+
+// Κομψή απόδοση της γραμμής περιόδου πάνω από τα ψηφία (Vinculum)
+function Overline({ children }) {
+  return (
+    <span className="relative inline-block border-t-2 border-current px-0.5 leading-none">
+      {children}
     </span>
   );
 }
@@ -186,7 +209,11 @@ const PROBLEM_POOL_Q10 = [
     const pickedDen = dens[randInt(0, dens.length - 1)];
     return {
       title: 'Έλεγχος Πεπερασμένου Δεκαδικού',
-      prompt: `Το ανάγωγο κλάσμα 7/${pickedDen} μετατρέπεται σε:`,
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Το ανάγωγο κλάσμα <Frac num="7" den={pickedDen} /> μετατρέπεται σε:
+        </span>
+      ),
       correct: 'Πεπερασμένο (τερματιζόμενο) δεκαδικό',
       type: 'mcq',
       distractors: () => [
@@ -207,7 +234,11 @@ const PROBLEM_POOL_Q10 = [
     const pickedDen = dens[randInt(0, dens.length - 1)];
     return {
       title: 'Έλεγχος Περιοδικού Δεκαδικού',
-      prompt: `Το ανάγωγο κλάσμα 5/${pickedDen} παράγει:`,
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Το ανάγωγο κλάσμα <Frac num="5" den={pickedDen} /> παράγει:
+        </span>
+      ),
       correct: 'Περιοδικό δεκαδικό αριθμό',
       type: 'mcq',
       distractors: () => [
@@ -226,7 +257,11 @@ const PROBLEM_POOL_Q10 = [
   () => {
     return {
       title: 'Απλοποίηση πριν την Ταξινόμηση',
-      prompt: 'Το κλάσμα 21/30 μετατρέπεται σε πεπερασμένο ή περιοδικό δεκαδικό αριθμό;',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Το κλάσμα <Frac num="21" den="30" /> μετατρέπεται σε πεπερασμένο ή περιοδικό δεκαδικό αριθμό;
+        </span>
+      ),
       correct: 'Πεπερασμένο δεκαδικό (0,7)',
       type: 'mcq',
       distractors: () => [
@@ -245,7 +280,11 @@ const PROBLEM_POOL_Q10 = [
   () => {
     return {
       title: 'Μικτός Περιοδικός με Παρονομαστή 6',
-      prompt: 'Το κλάσμα 1/6 ισούται με 0,1666... Ποιο είναι το μη περιοδικό του μέρος;',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Το κλάσμα <Frac num="1" den="6" /> ισούται με 0,1666... Ποιο είναι το μη περιοδικό του μέρος;
+        </span>
+      ),
       correct: 1,
       type: 'input',
       tableData: [
@@ -274,7 +313,11 @@ const PROBLEM_POOL_Q10 = [
   () => {
     return {
       title: 'Κλάσμα με Παρονομαστή 7',
-      prompt: 'Πόσα ψηφία έχει η περίοδος του κλάσματος 1/7 (0,142857142857...);',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Πόσα ψηφία έχει η περίοδος του κλάσματος <Frac num="1" den="7" /> (0,142857142857...);
+        </span>
+      ),
       correct: 6,
       type: 'input',
       tableData: [
@@ -413,7 +456,11 @@ const PROBLEM_POOL_Q12 = [
   () => {
     return {
       title: 'Ισομερής Διανομή Πίτσας σε 3 Παιδιά',
-      prompt: '2 πίτσες μοιράζονται ισόποσα σε 3 παιδιά. Ποιος περιοδικός δεκαδικός αριθμός αντιστοιχεί στο μερίδιο κάθε παιδιού (2/3);',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          2 πίτσες μοιράζονται ισόποσα σε 3 παιδιά. Ποιος περιοδικός δεκαδικός αριθμός αντιστοιχεί στο μερίδιο κάθε παιδιού (<Frac num="2" den="3" />);
+        </span>
+      ),
       correct: '0,666...',
       type: 'mcq',
       distractors: () => ['0,222...', '0,333...', '0,5'][randInt(0, 2)],
@@ -426,8 +473,12 @@ const PROBLEM_POOL_Q12 = [
   },
   () => {
     return {
-      title: 'Εκπτωτικό Μερίδιο Ενός Τρίτου (1/3)',
-      prompt: 'Σε ένα κατάστημα προσφέρεται έκπτωση ίση με το 1/3 της αρχικής τιμής. Ποιο είναι το ποσοστό έκπτωσης εκφρασμένο σε περιοδικό δεκαδικό επί τοις εκατό (%);',
+      title: 'Εκπτωτικό Μερίδιο Ενός Τρίτου',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Σε ένα κατάστημα προσφέρεται έκπτωση ίση με το <Frac num="1" den="3" /> της αρχικής τιμής. Ποιο είναι το ποσοστό έκπτωσης εκφρασμένο σε περιοδικό δεκαδικό επί τοις εκατό (%);
+        </span>
+      ),
       correct: '33,333... %',
       type: 'mcq',
       distractors: () => ['30 %', '33 %', '33,5 %'][randInt(0, 2)],
@@ -441,7 +492,11 @@ const PROBLEM_POOL_Q12 = [
   () => {
     return {
       title: 'Χρόνος Ολοκλήρωσης Εργασίας',
-      prompt: 'Ένας εργάτης χρειάζεται 20 λεπτά της ώρας για μια εργασία. Ποιο είναι το δεκαδικό μέρος των ωρών που εργάστηκε (20/60 ＝ 1/3);',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Ένας εργάτης χρειάζεται 20 λεπτά της ώρας για μια εργασία. Ποιο είναι το δεκαδικό μέρος των ωρών που εργάστηκε (<Frac num="20" den="60" /> ＝ <Frac num="1" den="3" />);
+        </span>
+      ),
       correct: '0,333... ώρες',
       type: 'mcq',
       distractors: () => ['0,2 ώρες', '0,25 ώρες', '0,5 ώρες'][randInt(0, 2)],
@@ -455,7 +510,11 @@ const PROBLEM_POOL_Q12 = [
   () => {
     return {
       title: 'Τεμαχισμός Σχοινιού σε 9 Ίσα Μέρη',
-      prompt: 'Ένα σχοινί μήκους 7 μέτρων κόβεται σε 9 ίσα κομμάτια (7/9 m). Ποιο είναι το δεκαδικό μήκος κάθε κομματιού;',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Ένα σχοινί μήκους 7 μέτρων κόβεται σε 9 ίσα κομμάτια (<Frac num="7" den="9" /> m). Ποιο είναι το δεκαδικό μήκος κάθε κομματιού;
+        </span>
+      ),
       correct: '0,777... m',
       type: 'mcq',
       distractors: () => ['0,7 m', '0,79 m', '0,8 m'][randInt(0, 2)],
@@ -516,6 +575,11 @@ export default function DekadikiMorfiRitonExercises() {
       type: 'mcq',
       correct: '0,333...',
       options: ensureFourUniqueOptions('0,333...', () => q2Options[randInt(1, 3)]),
+      renderOption: (opt) => {
+        if (opt === '√2') return <Radical>2</Radical>;
+        if (opt === '√3') return <Radical>3</Radical>;
+        return opt;
+      },
       explanation: 'Ο 0,333... είναι περιοδικός δεκαδικός αριθμός (ισούται με 1/3) και είναι ρητός. Οι αριθμοί π, √2 και √3 έχουν άπειρα μη περιοδικά ψηφία και είναι άρρητοι.'
     });
 
@@ -569,7 +633,11 @@ export default function DekadikiMorfiRitonExercises() {
     qList.push({
       id: 6,
       title: 'Δεκαδική Μορφή του 1/4',
-      prompt: 'Ποια είναι η δεκαδική μορφή του κλάσματος 1/4;',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Ποια είναι η δεκαδική μορφή του κλάσματος <Frac num="1" den="4" />;
+        </span>
+      ),
       type: 'input',
       correct: 0.25,
       explanation: 'Το κλάσμα 1/4 ισούται ακριβώς με 0,25.'
@@ -698,7 +766,7 @@ export default function DekadikiMorfiRitonExercises() {
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800">
         
         {/* Header Banner - Responsive */}
         <section className="bg-gradient-to-r from-indigo-900 to-blue-900 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 mb-6 sm:mb-8 shadow-xl">
