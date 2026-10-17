@@ -14,7 +14,7 @@ function toCleanUppercase(str) {
   return str.split('').map(char => map[char] || char.toUpperCase()).join('');
 }
 
-// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum) - Responsive
+// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum) - Regular
 function Radical({ children, className = "" }) {
   return (
     <span className={`inline-flex items-center align-middle font-mono shrink-0 ${className}`}>
@@ -31,6 +31,29 @@ function Radical({ children, className = "" }) {
         <path d="M1 13 L3.5 13 L6.5 21 L12 2" />
       </svg>
       <span className="border-t-[1.8px] border-current pl-0.5 pr-1 py-0 leading-none text-[0.95em]">
+        {children}
+      </span>
+    </span>
+  );
+}
+
+// Ειδικό Component για Ρίζα που περιέχει Κλάσμα (Ψηλό Ριζικό που αγκαλιάζει όλο το κλάσμα)
+function TallRadical({ children, className = "" }) {
+  return (
+    <span className={`inline-flex items-center align-middle font-mono shrink-0 ${className}`}>
+      <svg
+        viewBox="0 0 14 38"
+        className="w-[0.65em] h-[2.1em] shrink-0 text-current overflow-visible"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M1 21 L3.5 21 L7 35 L14 2" />
+      </svg>
+      <span className="border-t-[1.8px] border-current pl-1 pr-1.5 py-0.5 leading-none">
         {children}
       </span>
     </span>
@@ -106,21 +129,21 @@ export default function IdiotitesRizonTheory() {
         calcResult = `${factor}`;
         stepContent = (
           <span className="inline-flex flex-wrap items-center gap-1">
-            <Frac num={<Radical>{valA}</Radical>} den={<Radical>{valB}</Radical>} /> ＝ <Radical><Frac num={valA} den={valB} /></Radical> ＝ <Radical>{q}</Radical> ＝ {factor}.
+            <Frac num={<Radical>{valA}</Radical>} den={<Radical>{valB}</Radical>} /> ＝ <TallRadical><Frac num={valA} den={valB} /></TallRadical> ＝ <Radical>{q}</Radical> ＝ {factor}.
           </span>
         );
       } else if (factor === 1) {
         calcResult = <Radical>{q}</Radical>;
         stepContent = (
           <span className="inline-flex flex-wrap items-center gap-1">
-            <Frac num={<Radical>{valA}</Radical>} den={<Radical>{valB}</Radical>} /> ＝ <Radical><Frac num={valA} den={valB} /></Radical> ＝ <Radical>{q}</Radical>.
+            <Frac num={<Radical>{valA}</Radical>} den={<Radical>{valB}</Radical>} /> ＝ <TallRadical><Frac num={valA} den={valB} /></TallRadical> ＝ <Radical>{q}</Radical>.
           </span>
         );
       } else {
         calcResult = <span className="inline-flex items-center gap-1">{factor} · <Radical>{remainder}</Radical></span>;
         stepContent = (
           <span className="inline-flex flex-wrap items-center gap-1">
-            <Frac num={<Radical>{valA}</Radical>} den={<Radical>{valB}</Radical>} /> ＝ <Radical><Frac num={valA} den={valB} /></Radical> ＝ <Radical>{q}</Radical> ＝ {factor} · <Radical>{remainder}</Radical>.
+            <Frac num={<Radical>{valA}</Radical>} den={<Radical>{valB}</Radical>} /> ＝ <TallRadical><Frac num={valA} den={valB} /></TallRadical> ＝ <Radical>{q}</Radical> ＝ {factor} · <Radical>{remainder}</Radical>.
           </span>
         );
       }
@@ -255,7 +278,7 @@ export default function IdiotitesRizonTheory() {
                 <div className="p-2.5 sm:p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-1">
                   <span className="font-sans font-semibold">Πηλίκο Ριζών (α ≥ 0, β ＞ 0):</span>
                   <strong className="text-indigo-900 inline-flex items-center gap-1">
-                    <Frac num={<Radical>α</Radical>} den={<Radical>β</Radical>} /> ＝ <Radical><Frac num="α" den="β" /></Radical>
+                    <Frac num={<Radical>α</Radical>} den={<Radical>β</Radical>} /> ＝ <TallRadical><Frac num="α" den="β" /></TallRadical>
                   </strong>
                 </div>
               </div>
@@ -611,9 +634,7 @@ export default function IdiotitesRizonTheory() {
                   <div className="flex flex-wrap items-center gap-1">
                     <strong>Αναγωγή Ομοίων Ριζών:</strong> (6 － 9 ＋ 5) · <Radical>2</Radical> ＝ <strong>2 · <Radical>2</Radical></strong>.
                   </div>
-                  <div className="flex flex-wrap items-center gap-1">
-                    <strong>Συμπέρασμα:</strong> Η αρχική σύνθετη παράσταση απλοποιείται στον άρρητο αριθμό 2 · <Radical>2</Radical>.
-                  </div>
+                  <div><strong>Συμπέρασμα:</strong> Η αρχική σύνθετη παράσταση απλοποιείται στον άρρητο αριθμό 2 · <Radical>2</Radical>.</div>
                 </div>
               </div>
             </div>
