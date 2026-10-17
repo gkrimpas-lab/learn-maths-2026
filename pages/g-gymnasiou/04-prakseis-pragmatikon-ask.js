@@ -83,585 +83,518 @@ function ensureFourUniqueOptions(correct, distractorsGen) {
 
 // ==================== ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q9 - Q12) ====================
 
-// POOL Q9: Αναγωγή ομοίων ριζών και απλοποίηση (6 μοναδικά σενάρια)
+// POOL Q9: Σύνθετη αναγωγή ομοίων ριζών και απλοποίηση παραστάσεων (τύπου σχολικού / ΕΜΕ)
 const PROBLEM_POOL_Q9 = [
+  // 1. Παράσταση με πολλαπλές ρίζες: a√3 - b√3 + c√2 - d√2
   () => {
-    const a = randInt(3, 7);
-    const b = randInt(2, 5);
-    const total = a + b;
+    const a = randInt(4, 7);
+    const b = randInt(2, 3);
+    const c = randInt(3, 5);
+    const d = randInt(1, 2);
+    const coef3 = a - b;
+    const coef2 = c - d;
     return {
-      title: 'Πρόσθεση Ομοίων Ριζών',
+      title: 'Σύνθετη Αναγωγή Ομοίων Ριζών',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ποιο είναι το αποτέλεσμα της πρόσθεσης {a} · <Radical>3</Radical> ＋ {b} · <Radical>3</Radical>;
+          Να απλοποιηθεί η παράσταση: {a} · <Radical>3</Radical> ＋ {c} · <Radical>2</Radical> － {b} · <Radical>3</Radical> － {d} · <Radical>2</Radical>.
         </span>
       ),
-      correct: `${total}·√3`,
+      correct: `${coef3}·√3 ＋ ${coef2}·√2`,
       type: 'mcq',
-      distractors: () => [`${total}·√6`, `${a * b}·√3`, `${total}`][randInt(0, 2)],
+      distractors: () => [
+        `${coef3 + coef2}·√5`,
+        `${coef3}·√3 － ${coef2}·√2`,
+        `${a + b}·√3 ＋ ${c + d}·√2`
+      ][randInt(0, 2)],
       renderOption: (opt) => {
-        if (opt === `${total}·√3`) return <span className="inline-flex items-center gap-1">{total} · <Radical>3</Radical></span>;
-        if (opt === `${total}·√6`) return <span className="inline-flex items-center gap-1">{total} · <Radical>6</Radical></span>;
-        if (opt === `${a * b}·√3`) return <span className="inline-flex items-center gap-1">{a * b} · <Radical>3</Radical></span>;
+        if (opt === `${coef3}·√3 ＋ ${coef2}·√2`) return <span className="inline-flex items-center gap-1">{coef3} · <Radical>3</Radical> ＋ {coef2} · <Radical>2</Radical></span>;
+        if (opt === `${coef3 + coef2}·√5`) return <span className="inline-flex items-center gap-1">{coef3 + coef2} · <Radical>5</Radical></span>;
+        if (opt === `${coef3}·√3 － ${coef2}·√2`) return <span className="inline-flex items-center gap-1">{coef3} · <Radical>3</Radical> － {coef2} · <Radical>2</Radical></span>;
+        if (opt === `${a + b}·√3 ＋ ${c + d}·√2`) return <span className="inline-flex items-center gap-1">{a + b} · <Radical>3</Radical> ＋ {c + d} · <Radical>2</Radical></span>;
         return opt;
       },
       tableData: [
-        { label: 'Όμοιοι όροι', details: `${a} · √3 και ${b} · √3` },
-        { label: 'Κοινός παράγοντας', details: `(${a} ＋ ${b}) · √3` },
-        { label: 'Αποτέλεσμα', details: `${total} · √3` }
+        { label: 'Ομαδοποίηση όρων με √3', details: `(${a} － ${b}) · √3 ＝ ${coef3} · √3` },
+        { label: 'Ομαδοποίηση όρων με √2', details: `(${c} － ${d}) · √2 ＝ ${coef2} · √2` },
+        { label: 'Τελική ανηγμένη μορφή', details: `${coef3} · √3 ＋ ${coef2} · √2` }
       ],
-      explanation: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Προσθέτουμε τους συντελεστές και διατηρούμε τη ρίζα: ({a} ＋ {b}) · <Radical>3</Radical> ＝ {total} · <Radical>3</Radical>.
-        </span>
-      )
+      explanation: `Ομαδοποιούμε μόνο τις όμοιες ρίζες ξεχωριστά: (${a} － ${b}) · √3 ＋ (${c} － ${d}) · √2 ＝ ${coef3} · √3 ＋ ${coef2} · √2.`
     };
   },
+  // 2. Γινόμενο συζυγών ριζών (√a + b)(√a - b) = a - b^2
   () => {
-    const a = randInt(6, 10);
-    const b = randInt(2, 5);
-    const diff = a - b;
+    const a = randInt(5, 7);
+    const b = randInt(2, 3);
+    const res = a - b * b;
     return {
-      title: 'Αφαίρεση Ομοίων Ριζών',
+      title: 'Υπολογισμός Γινομένου Ριζών',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ποιος είναι ο συντελεστής του <Radical>2</Radical> στην παράσταση {a} · <Radical>2</Radical> － {b} · <Radical>2</Radical>;
+          Πόσο ισούται η αριθμητική τιμή του γινομένου (<Radical>{a}</Radical> ＋ {b}) · (<Radical>{a}</Radical> － {b});
         </span>
       ),
-      correct: diff,
+      correct: res,
       type: 'input',
       tableData: [
-        { label: 'Πράξη συντελεστών', details: `${a} － ${b} ＝ ${diff}` },
-        { label: 'Τελικός όρος', details: `${diff} · √2` }
+        { label: 'Επιμερισμός / Ταυτότητα', details: `(√${a})² － ${b}²` },
+        { label: 'Υπολογισμός τετραγώνων', details: `${a} － ${b * b} ＝ ${res}` }
       ],
-      explanation: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Αφαιρούμε τους συντελεστές: {a} － {b} ＝ {diff}. Άρα {diff} · <Radical>2</Radical>.
-        </span>
-      )
+      explanation: `Εφαρμόζουμε την ταυτότητα (√α ＋ β)(√α － β) ＝ (√α)² － β² ＝ ${a} － ${b * b} ＝ ${res}.`
     };
   },
+  // 3. Αντίστροφοι αριθμοί με ρίζα: (x + √y)(x - √y) = 1 (από άσκηση 3 σχολικού)
   () => {
-    const k = randInt(2, 5);
-    const total = 2 * k;
+    const x = randInt(3, 5);
+    const yVal = x * x - 1;
     return {
-      title: 'Διπλασιασμός Ρίζας',
+      title: 'Εύρεση Παραμέτρου σε Αντίστροφους Αριθμούς',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ποιο είναι το αποτέλεσμα της πράξης {k} · <Radical>5</Radical> ＋ {k} · <Radical>5</Radical>;
+          Αν οι πραγματικοί αριθμοί {x} ＋ <Radical>y</Radical> και {x} － <Radical>y</Radical> είναι αντίστροφοι, ποια είναι η τιμή του y;
         </span>
       ),
-      correct: `${total}·√5`,
-      type: 'mcq',
-      distractors: () => [`${k}·√10`, `${total}·√10`, `${k * k}·√5`][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === `${total}·√5`) return <span className="inline-flex items-center gap-1">{total} · <Radical>5</Radical></span>;
-        if (opt === `${k}·√10`) return <span className="inline-flex items-center gap-1">{k} · <Radical>10</Radical></span>;
-        if (opt === `${total}·√10`) return <span className="inline-flex items-center gap-1">{total} · <Radical>10</Radical></span>;
-        if (opt === `${k * k}·√5`) return <span className="inline-flex items-center gap-1">{k * k} · <Radical>5</Radical></span>;
-        return opt;
-      },
-      tableData: [
-        { label: 'Άθροισμα συντελεστών', details: `${k} ＋ ${k} ＝ ${total}` },
-        { label: 'Τελική μορφή', details: `${total} · √5` }
-      ],
-      explanation: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          {k} · <Radical>5</Radical> ＋ {k} · <Radical>5</Radical> ＝ {total} · <Radical>5</Radical>. Οι υπόριζες ποσότητες δεν προστίθενται ποτέ!
-        </span>
-      )
-    };
-  },
-  () => {
-    const a = randInt(4, 8);
-    return {
-      title: 'Μηδενισμός Αντίθετων Ριζών',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η αριθμητική τιμή της παράστασης {a} · <Radical>7</Radical> － {a} · <Radical>7</Radical>;
-        </span>
-      ),
-      correct: 0,
+      correct: yVal,
       type: 'input',
       tableData: [
-        { label: 'Συντελεστές', details: `${a} － ${a} ＝ 0` },
-        { label: 'Γινόμενο', details: `0 · √7 ＝ 0` }
+        { label: 'Συνθήκη αντιστρόφων', details: `(${x} ＋ √y) · (${x} － √y) ＝ 1` },
+        { label: 'Διαφορά τετραγώνων', details: `${x}² － (√y)² ＝ 1 => ${x * x} － y ＝ 1` },
+        { label: 'Επίλυση ως προς y', details: `y ＝ ${x * x} － 1 ＝ ${yVal}` }
       ],
-      explanation: 'Δύο αντίθετοι πραγματικοί αριθμοί έχουν άθροισμα ίσο με 0.'
+      explanation: `Δύο αριθμοί είναι αντίστροφοι όταν το γινόμενό τους ισούται με 1: (${x})² － (√y)² ＝ 1 => ${x * x} － y ＝ 1 => y ＝ ${yVal}.`
     };
   },
+  // 4. Επιμεριστική σε άθροισμα ριζών: √2 · (√8 + √18)
   () => {
-    const a = randInt(2, 4);
-    const b = randInt(3, 6);
     return {
-      title: 'Αναγωγή με Ακέραιο και Ρίζα',
+      title: 'Επιμεριστική και Ακέραιο Αποτέλεσμα',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Στην παράσταση {a} · <Radical>2</Radical> ＋ 5 ＋ {b} · <Radical>2</Radical> － 2, ποιος είναι ο τελικός συντελεστής του <Radical>2</Radical>;
+          Πόσο ισούται η τιμή της παράστασης <Radical>2</Radical> · (<Radical>8</Radical> ＋ <Radical>18</Radical>);
         </span>
       ),
-      correct: a + b,
+      correct: 10,
       type: 'input',
       tableData: [
-        { label: 'Όροι με ρίζα', details: `(${a} ＋ ${b}) · √2 ＝ ${a + b} · √2` },
-        { label: 'Σταθεροί όροι', details: `5 － 2 ＝ 3` },
-        { label: 'Αποτέλεσμα', details: `${a + b} · √2 ＋ 3` }
+        { label: 'Επιμερισμός', details: '√2 · √8 ＋ √2 · √18' },
+        { label: 'Ιδιότητα γινομένου ριζών', details: '√16 ＋ √36' },
+        { label: 'Υπολογισμός ριζών', details: '4 ＋ 6 ＝ 10' }
       ],
-      explanation: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Προσθέτουμε μόνο τους συντελεστές των όμοιων ριζών: {a} ＋ {b} ＝ {a + b}.
-        </span>
-      )
+      explanation: '√2 · √8 ＝ √16 ＝ 4 και √2 · √18 ＝ √36 ＝ 6. Άρα 4 ＋ 6 ＝ 10.'
     };
   },
+  // 5. Απλοποίηση παράστασης με κοινό παράγοντα ρίζα
   () => {
-    const c = randInt(2, 5);
+    const k = randInt(2, 4);
+    const sumC = k * 3 + k * 2;
     return {
-      title: 'Απλοποίηση Παράστασης Ριζών',
+      title: 'Απλοποίηση Κλάσματος με Κοινό Παράγοντα Ρίζα',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Στην παράσταση 10 · <Radical>3</Radical> － {c} · <Radical>3</Radical> － 2 · <Radical>3</Radical>, ποιος είναι ο συντελεστής του <Radical>3</Radical>;
+          Ποια είναι η τιμή του κλάσματος <Frac num={<span className="inline-flex items-center gap-1">{sumC} · <Radical>5</Radical></span>} den={<span className="inline-flex items-center gap-1">{k} · <Radical>5</Radical></span>} />;
         </span>
       ),
-      correct: 8 - c,
+      correct: 5,
       type: 'input',
       tableData: [
-        { label: 'Πράξη συντελεστών', details: `10 － ${c} － 2 ＝ ${8 - c}` },
-        { label: 'Τελικός όρος', details: `${8 - c} · √3` }
+        { label: 'Απλοποίηση ρίζας', details: 'Η κοινή ρίζα √5 απλοποιείται' },
+        { label: 'Διαίρεση συντελεστών', details: `${sumC} / ${k} ＝ 5` }
       ],
-      explanation: (
+      explanation: `Η ρίζα √5 απλοποιείται από αριθμητή και παρονομαστή, οπότε απομένει ${sumC} / ${k} ＝ 5.`
+    };
+  },
+  // 6. Διπλή επιμεριστική με ρίζες
+  () => {
+    return {
+      title: 'Ανάπτυγμα Διπλής Επιμεριστικής',
+      prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          10 － {c} － 2 ＝ {8 - c}. Άρα {8 - c} · <Radical>3</Radical>.
+          Πόσο ισούται η αριθμητική τιμή της παράστασης (<Radical>3</Radical> ＋ 1) · (<Radical>3</Radical> ＋ 2) － 3 · <Radical>3</Radical>;
         </span>
-      )
+      ),
+      correct: 5,
+      type: 'input',
+      tableData: [
+        { label: 'Ανάπτυγμα γινομένου', details: '(√3)² ＋ 2·√3 ＋ √3 ＋ 2 ＝ 3 ＋ 3·√3 ＋ 2 ＝ 5 ＋ 3·√3' },
+        { label: 'Αφαίρεση 3·√3', details: '5 ＋ 3·√3 － 3·√3 ＝ 5' }
+      ],
+      explanation: 'Το γινόμενο δίνει 5 ＋ 3·√3. Αφαιρώντας το 3·√3, απομένει ο ακέραιος 5.'
     };
   }
 ];
 
-// POOL Q10: Εφαρμογή της επιμεριστικής ιδιότητας (6 μοναδικά σενάρια)
+// POOL Q10: Αριθμοί Ανάλογοι προς Ρίζες & Επίλυση Εξισώσεων (Από Εφαρμογή 2 & Άσκηση 10 σχολικού)
 const PROBLEM_POOL_Q10 = [
+  // 1. Σχολική άσκηση 10: x, y, z ανάλογοι προς 3, √3, √7 με x - y√3 + z√7 = 63
   () => {
-    const k = randInt(2, 4);
-    const b = randInt(3, 7);
-    const resConst = k * b;
+    const mult = randInt(5, 9);
+    const target = 7 * mult; // x - y√3 + z√7 = 3λ - 3λ + 7λ = 7λ
     return {
-      title: 'Επιμεριστική σε Άθροισμα με Ρίζα',
+      title: 'Αριθμοί Ανάλογοι προς Ρίζες',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Αναπτύσσοντας την παράσταση {k} · (<Radical>2</Radical> ＋ {b}), ποιος είναι ο σταθερός (ακέραιος) όρος;
+          Οι θετικοί αριθμοί x, y, z είναι ανάλογοι προς τους 3, <Radical>3</Radical> και <Radical>7</Radical> αντίστοιχα, και ισχύει: x － y · <Radical>3</Radical> ＋ z · <Radical>7</Radical> ＝ {target}. Ποια είναι η τιμή του x;
         </span>
       ),
-      correct: resConst,
+      correct: 3 * mult,
       type: 'input',
       tableData: [
-        { label: 'Επιμερισμός', details: `${k} · √2 ＋ ${k} · ${b}` },
-        { label: 'Σταθερός όρος', details: `${k} · ${b} ＝ ${resConst}` }
+        { label: 'Σχέση αναλογίας', details: 'x/3 ＝ y/√3 ＝ z/√7 ＝ λ => x ＝ 3λ, y ＝ λ√3, z ＝ λ√7' },
+        { label: 'Αντικατάσταση στην εξίσωση', details: `3λ － (λ√3)·√3 ＋ (λ√7)·√7 ＝ ${target}` },
+        { label: 'Αναγωγή', details: `3λ － 3λ ＋ 7λ ＝ ${target} => 7λ ＝ ${target} => λ ＝ ${mult}` },
+        { label: 'Υπολογισμός x', details: `x ＝ 3 · ${mult} ＝ ${3 * mult}` }
       ],
-      explanation: `Πολλαπλασιάζουμε τον αριθμό ${k} με κάθε όρο της παρένθεσης: ${k} · ${b} ＝ ${resConst}.`
+      explanation: `Θέτουμε x ＝ 3λ, y ＝ λ√3, z ＝ λ√7. Τότε 3λ － 3λ ＋ 7λ ＝ 7λ ＝ ${target}, άρα λ ＝ ${mult} και x ＝ 3 · ${mult} ＝ ${3 * mult}.`
     };
   },
+  // 2. Παραλλαγή με ρίζες 2 και 5 (Εφαρμογή 2 σχολικού): x, y, z ανάλογοι προς 2, √2, √5
   () => {
-    const k = randInt(2, 4);
-    const a = randInt(2, 5);
-    const resA = k * a;
+    const mult = randInt(4, 8);
+    const target = 5 * mult; // 2λ - 2λ + 5λ = 5λ
     return {
-      title: 'Επιμεριστική και Συντελεστής Ρίζας',
+      title: 'Αναλογία με Ρίζες √2 και √5',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Αναπτύσσοντας την παράσταση {k} · ({a} · <Radical>3</Radical> － 4), ποιος είναι ο συντελεστής του <Radical>3</Radical>;
+          Οι αριθμοί x, y, z είναι ανάλογοι προς τους 2, <Radical>2</Radical> και <Radical>5</Radical>, και ικανοποιούν τη σχέση: x － y · <Radical>2</Radical> ＋ z · <Radical>5</Radical> ＝ {target}. Ποια είναι η τιμή του x;
         </span>
       ),
-      correct: resA,
+      correct: 2 * mult,
       type: 'input',
       tableData: [
-        { label: 'Πολλαπλασιασμός ριζικού όρου', details: `${k} · (${a} · √3) ＝ (${k} · ${a}) · √3 ＝ ${resA} · √3` }
+        { label: 'Αναλογίες', details: 'x ＝ 2λ, y ＝ λ√2, z ＝ λ√5' },
+        { label: 'Αντικατάσταση', details: `2λ － 2λ ＋ 5λ ＝ ${target} => 5λ ＝ ${target} => λ ＝ ${mult}` },
+        { label: 'Τιμή x', details: `x ＝ 2 · ${mult} ＝ ${2 * mult}` }
       ],
-      explanation: `Ο συντελεστής του ριζικού όρου είναι ${k} · ${a} ＝ ${resA}.`
+      explanation: `Αντικαθιστώντας βρίσκουμε 5λ ＝ ${target} => λ ＝ ${mult}, επομένως x ＝ 2λ ＝ ${2 * mult}.`
     };
   },
+  // 3. Εξίσωση με ρίζα: √3 · x = √48
   () => {
     return {
-      title: 'Ανάπτυγμα με Αρνητικό Συντελεστή',
+      title: 'Επίλυση Εξίσωσης με Ρίζες',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ποιο είναι το ανάπτυγμα της παράστασης －2 · (<Radical>5</Radical> － 3);
-        </span>
-      ),
-      correct: '－2·√5 ＋ 6',
-      type: 'mcq',
-      distractors: () => ['－2·√5 － 6', '2·√5 ＋ 6', '－2·√5 ＋ 3'][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === '－2·√5 ＋ 6') return <span className="inline-flex items-center gap-1">－2 · <Radical>5</Radical> ＋ 6</span>;
-        if (opt === '－2·√5 － 6') return <span className="inline-flex items-center gap-1">－2 · <Radical>5</Radical> － 6</span>;
-        if (opt === '2·√5 ＋ 6') return <span className="inline-flex items-center gap-1">2 · <Radical>5</Radical> ＋ 6</span>;
-        if (opt === '－2·√5 ＋ 3') return <span className="inline-flex items-center gap-1">－2 · <Radical>5</Radical> ＋ 3</span>;
-        return opt;
-      },
-      tableData: [
-        { label: '1ο γινόμενο', details: '(－2) · √5 ＝ －2·√5' },
-        { label: '2ο γινόμενο', details: '(－2) · (－3) ＝ ＋6' },
-        { label: 'Τελικό ανάπτυγμα', details: '－2·√5 ＋ 6' }
-      ],
-      explanation: 'Το πλην με το πλην δίνει συν: (－2) · (－3) ＝ ＋6.'
-    };
-  },
-  () => {
-    const k = randInt(3, 6);
-    return {
-      title: 'Κοινός Παράγοντας',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Αν στην παράσταση {k} · <Radical>2</Radical> ＋ {k} · 5 βγάλουμε κοινό παράγοντα το {k}, ποια έκφραση μένει μέσα στην παρένθεση;
-        </span>
-      ),
-      correct: '√2 ＋ 5',
-      type: 'mcq',
-      distractors: () => ['√2 － 5', '2 ＋ 5', '√2 ＋ 10'][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === '√2 ＋ 5') return <span className="inline-flex items-center gap-1"><Radical>2</Radical> ＋ 5</span>;
-        if (opt === '√2 － 5') return <span className="inline-flex items-center gap-1"><Radical>2</Radical> － 5</span>;
-        if (opt === '√2 ＋ 10') return <span className="inline-flex items-center gap-1"><Radical>2</Radical> ＋ 10</span>;
-        return opt;
-      },
-      tableData: [
-        { label: 'Κοινός παράγοντας', details: `${k}` },
-        { label: 'Μορφή', details: `${k} · (√2 ＋ 5)` }
-      ],
-      explanation: 'Εφαρμόζουμε την επιμεριστική ιδιότητα ανάποδα (παραγοντοποίηση).'
-    };
-  },
-  () => {
-    const a = randInt(2, 4);
-    const b = randInt(1, 3);
-    const resA = 3 * a;
-    const resB = 3 * b;
-    return {
-      title: 'Ανάπτυγμα Διωνύμου με Ρίζα',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Αναπτύσσοντας την παράσταση 3 · ({a} · <Radical>7</Radical> ＋ {b}), ποιο αποτέλεσμα προκύπτει;
-        </span>
-      ),
-      correct: `${resA}·√7 ＋ ${resB}`,
-      type: 'mcq',
-      distractors: () => [
-        `${resA}·√7 ＋ ${b}`,
-        `${a}·√7 ＋ ${resB}`,
-        `${resA + 3}·√7 ＋ ${resB}`
-      ][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === `${resA}·√7 ＋ ${resB}`) return <span className="inline-flex items-center gap-1">{resA} · <Radical>7</Radical> ＋ {resB}</span>;
-        if (opt === `${resA}·√7 ＋ ${b}`) return <span className="inline-flex items-center gap-1">{resA} · <Radical>7</Radical> ＋ {b}</span>;
-        if (opt === `${a}·√7 ＋ ${resB}`) return <span className="inline-flex items-center gap-1">{a} · <Radical>7</Radical> ＋ {resB}</span>;
-        return opt;
-      },
-      tableData: [
-        { label: '1ος όρος', details: `3 · ${a}·√7 ＝ ${resA}·√7` },
-        { label: '2ος όρος', details: `3 · ${b} ＝ ${resB}` },
-        { label: 'Τελικό', details: `${resA}·√7 ＋ ${resB}` }
-      ],
-      explanation: `3 · (${a}·√7) ＋ 3 · ${b} ＝ ${resA}·√7 ＋ ${resB}.`
-    };
-  },
-  () => {
-    const k = randInt(2, 5);
-    return {
-      title: 'Απαλοιφή Παρενθέσεων και Αναγωγή',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Στην παράσταση 4 · (<Radical>2</Radical> ＋ 1) － {k} · <Radical>2</Radical>, ποιος είναι ο σταθερός όρος;
+          Ποια είναι η λύση της εξίσωσης <Radical>3</Radical> · x ＝ <Radical>48</Radical>;
         </span>
       ),
       correct: 4,
       type: 'input',
       tableData: [
-        { label: 'Ανάπτυγμα', details: `4·√2 ＋ 4 － ${k}·√2` },
-        { label: 'Σταθερός όρος', details: '4' }
+        { label: 'Επίλυση ως προς x', details: 'x ＝ √48 / √3' },
+        { label: 'Ιδιότητα πηλίκου ριζών', details: 'x ＝ √(48 / 3) ＝ √16' },
+        { label: 'Αποτέλεσμα', details: 'x ＝ 4' }
       ],
-      explanation: 'Ο σταθερός όρος προκύπτει από το 4 · 1 ＝ 4.'
+      explanation: 'x ＝ √(48/3) ＝ √16 ＝ 4.'
+    };
+  },
+  // 4. Εξίσωση με αρνητικό εκθέτη ρίζας: (√5)^(-2) * x = 2 * (√2)^2 (άσκηση 11 σχολικού)
+  () => {
+    return {
+      title: 'Εξίσωση με Δυνάμεις Ριζών',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Να λυθεί η εξίσωση: (<Radical>5</Radical>)<sup>－2</sup> · x ＝ 2 · (<Radical>2</Radical>)<sup>2</sup>.
+        </span>
+      ),
+      correct: 20,
+      type: 'input',
+      tableData: [
+        { label: '1ο μέλος', details: '(√5)⁻² · x ＝ (1/5) · x' },
+        { label: '2ο μέλος', details: '2 · (√2)² ＝ 2 · 2 ＝ 4' },
+        { label: 'Εξίσωση', details: '(1/5) · x ＝ 4 => x ＝ 4 · 5 ＝ 20' }
+      ],
+      explanation: '(1/5) · x ＝ 4 => x ＝ 20.'
+    };
+  },
+  // 5. Παράσταση με γνωστό άθροισμα x + y = -4 (άσκηση 13 σχολικού)
+  () => {
+    return {
+      title: 'Υπολογισμός Παράστασης με Δοσμένο Άθροισμα',
+      prompt: 'Αν x ＋ y ＝ －4, ποια είναι η τιμή της παράστασης Α ＝ 4x － (3x － y) ＋ 7;',
+      correct: 3,
+      type: 'input',
+      tableData: [
+        { label: 'Απαλοιφή παρένθεσης', details: 'Α ＝ 4x － 3x ＋ y ＋ 7' },
+        { label: 'Αναγωγή', details: 'Α ＝ (x ＋ y) ＋ 7' },
+        { label: 'Αντικατάσταση x ＋ y ＝ －4', details: 'Α ＝ －4 ＋ 7 ＝ 3' }
+      ],
+      explanation: 'Απαλείφοντας την παρένθεση προκύπτει Α ＝ x ＋ y ＋ 7. Επειδή x ＋ y ＝ －4, έχουμε Α ＝ －4 ＋ 7 ＝ 3.'
+    };
+  },
+  // 6. Εξίσωση: √12 * x - 5 = 2 * x * √3 (άσκηση 11 σχολικού)
+  () => {
+    return {
+      title: 'Εξέταση Αδύνατης Εξίσωσης με Ρίζες',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Πόσες λύσεις έχει η εξίσωση <Radical>12</Radical> · x － 5 ＝ 2 · <Radical>3</Radical> · x;
+        </span>
+      ),
+      correct: 'Καμία λύση (Αδύνατη)',
+      type: 'mcq',
+      distractors: () => ['Μία μοναδική λύση το 5', 'Άπειρες λύσεις (Ταυτότητα)', 'Μία λύση το 0'][randInt(0, 2)],
+      tableData: [
+        { label: 'Ανάλυση √12', details: '√12 ＝ √(4·3) ＝ 2√3' },
+        { label: 'Μορφή εξίσωσης', details: '2√3 · x － 5 ＝ 2√3 · x' },
+        { label: 'Απλοποίηση', details: '0 · x ＝ 5 (Αδύνατη)' }
+      ],
+      explanation: 'Επειδή √12 ＝ 2√3, οι όροι με το x είναι ίσοι και εξουδετερώνονται: 0 · x ＝ 5, συνεπώς η εξίσωση είναι αδύνατη.'
     };
   }
 ];
 
-// POOL Q11: Κανόνες προσήμων & απαλοιφή παρενθέσεων (6 μοναδικά σενάρια)
+// POOL Q11: Σύνθετες Αριθμητικές Παραστάσεις (Προτεραιότητα Πράξεων & Διαγωνισμοί ΕΜΕ)
 const PROBLEM_POOL_Q11 = [
+  // 1. Παράσταση τύπου ΕΜΕ "Θαλής" 2013 (Άσκηση 17 σχολικού): 3*(3a - 4.6) - 2*(a - 0.2)
   () => {
-    const a = randInt(3, 7);
-    const b = randInt(2, 6);
-    const res = -a * -b;
+    // αν a = ρητή προσέγγιση δεκάτου του √5 (δηλαδή a = 2.2)
+    // A = 3*(3*2.2 - 4.6) - 2*(2.2 - 0.2) = 3*(6.6 - 4.6) - 2*(2) = 3*2 - 4 = 2
     return {
-      title: 'Γινόμενο Αρνητικών Αριθμών',
-      prompt: `Ποιο είναι το αποτέλεσμα του γινομένου (－${a}) · (－${b});`,
-      correct: res,
-      type: 'input',
-      tableData: [
-        { label: 'Κανόνας προσήμων', details: '(－) · (－) ＝ ＋' },
-        { label: 'Υπολογισμός', details: `${a} · ${b} ＝ ${res}` }
-      ],
-      explanation: `Το γινόμενο δύο ομόσημων αρνητικών αριθμών είναι θετικό: (－${a}) · (－${b}) ＝ ＋${res}.`
-    };
-  },
-  () => {
-    const a = randInt(12, 24);
-    const b = randInt(2, 4);
-    const res = -(a / b);
-    return {
-      title: 'Πηλίκο Ετερόσημων Αριθμών',
+      title: 'Θέμα Διαγωνισμού Ε.Μ.Ε. «Ο Θαλής»',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται το πηλίκο <Frac num={`－${a}`} den={`${b}`} />;
+          Αν ο πραγματικός αριθμός α είναι η ρητή προσέγγιση δεκάτου (0,1) με έλλειψη του <Radical>5</Radical> (δηλ. α ＝ 2,2), να βρεθεί η τιμή της παράστασης: Α ＝ 3 · (3α － 4,6) － 2 · (α － 0,2).
         </span>
       ),
-      correct: res,
+      correct: 2,
       type: 'input',
       tableData: [
-        { label: 'Κανόνας προσήμων', details: '(－) / (＋) ＝ －' },
-        { label: 'Υπολογισμός', details: `－(${a} / ${b}) ＝ ${res}` }
+        { label: 'Τιμή του α', details: 'α ＝ 2,2' },
+        { label: '1η παρένθεση', details: '3 · 2,2 － 4,6 ＝ 6,6 － 4,6 ＝ 2' },
+        { label: '2η παρένθεση', details: '2,2 － 0,2 ＝ 2' },
+        { label: 'Τελικός υπολογισμός', details: '3 · 2 － 2 · 2 ＝ 6 － 4 ＝ 2' }
       ],
-      explanation: `Το πηλίκο ετερόσημων αριθμών είναι πάντοτε αρνητικό: ${res}.`
+      explanation: '3 · (6,6 － 4,6) － 2 · (2,2 － 0,2) ＝ 3 · 2 － 2 · 2 ＝ 6 － 4 ＝ 2.'
     };
   },
+  // 2. Παράσταση με διαδοχικές ρίζες: √(21 + √(5 + √(133 - √144))) (Άσκηση 25 σχολικού)
   () => {
-    const k = randInt(3, 8);
     return {
-      title: 'Απαλοιφή Παρενθέσεων με Μείον',
+      title: 'Ένθετες Τετραγωνικές Ρίζες',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Απαλείφοντας την παρένθεση στην παράσταση －(<Radical>3</Radical> － ${k}), ποια έκφραση προκύπτει;
+          Πόσο ισούται η τιμή της παράστασης <Radical><span>21 ＋ <Radical><span>5 ＋ <Radical><span>133 － <Radical>144</Radical></span></Radical></span></Radical></span></Radical>;
         </span>
       ),
-      correct: `－√3 ＋ ${k}`,
+      correct: 5,
+      type: 'input',
+      tableData: [
+        { label: '1ο βήμα (εσωτερική ρίζα)', details: '√144 ＝ 12' },
+        { label: '2ο βήμα', details: '133 － 12 ＝ 121  και  √121 ＝ 11' },
+        { label: '3ο βήμα', details: '5 ＋ 11 ＝ 16  και  √16 ＝ 4' },
+        { label: '4ο βήμα (τελική ρίζα)', details: '21 ＋ 4 ＝ 25  και  √25 ＝ 5' }
+      ],
+      explanation: 'Υπολογίζουμε από μέσα προς τα έξω: √144 ＝ 12 => √(133－12) ＝ √121 ＝ 11 => √(5＋11) ＝ √16 ＝ 4 => √(21＋4) ＝ √25 ＝ 5.'
+    };
+  },
+  // 3. Σύνθετο κλάσμα: (1 - 5/2)*(2/5 - 1) - 5*(-3/5) (Άσκηση 15 σχολικού)
+  () => {
+    return {
+      title: 'Σύνθετη Αριθμητική Παράσταση Κλασμάτων',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Να υπολογιστεί η τιμή της παράστασης: (1 － <Frac num="5" den="2" />) · (<Frac num="2" den="5" /> － 1) － 5 · (<Frac num="－3" den="5" />).
+        </span>
+      ),
+      correct: 3.9,
+      type: 'input',
+      tableData: [
+        { label: '1η παρένθεση', details: '1 － 5/2 ＝ －3/2' },
+        { label: '2η παρένθεση', details: '2/5 － 1 ＝ －3/5' },
+        { label: 'Γινόμενο παρενθέσεων', details: '(－3/2) · (－3/5) ＝ 9/10 ＝ 0,9' },
+        { label: '2ος όρος', details: '－ 5 · (－3/5) ＝ ＋3' },
+        { label: 'Τελικό άθροισμα', details: '0,9 ＋ 3 ＝ 3,9' }
+      ],
+      explanation: '(－3/2) · (－3/5) ＋ 3 ＝ 9/10 ＋ 3 ＝ 0,9 ＋ 3 ＝ 3,9 (ή 39/10).'
+    };
+  },
+  // 4. Προτεραιότητα πράξεων με ακέραιους (Άσκηση 1 σχολικού): 4 * 3 : (5 - 2)
+  () => {
+    return {
+      title: 'Τοποθέτηση Παρενθέσεων και Προτεραιότητα',
+      prompt: 'Πού πρέπει να τοποθετηθούν παρενθέσεις στην έκφραση 4 · 3 : 5 － 2 ώστε το αποτέλεσμα να ισούται ακριβώς με 4;',
+      correct: '4 · 3 : (5 － 2)',
       type: 'mcq',
       distractors: () => [
-        `－√3 － ${k}`,
-        `√3 ＋ ${k}`,
-        `√3 － ${k}`
+        '(4 · 3) : 5 － 2',
+        '4 · (3 : 5) － 2',
+        '(4 · 3 : 5) － 2'
       ][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === `－√3 ＋ ${k}`) return <span className="inline-flex items-center gap-1">－<Radical>3</Radical> ＋ {k}</span>;
-        if (opt === `－√3 － ${k}`) return <span className="inline-flex items-center gap-1">－<Radical>3</Radical> － {k}</span>;
-        if (opt === `√3 ＋ ${k}`) return <span className="inline-flex items-center gap-1"><Radical>3</Radical> ＋ {k}</span>;
-        return opt;
-      },
       tableData: [
-        { label: 'Κανόνας', details: 'Το πρόσημο πλην αλλάζει όλα τα πρόσημα μέσα στην παρένθεση' },
-        { label: 'Αποτέλεσμα', details: `－√3 ＋ ${k}` }
+        { label: 'Δοκιμή 4 · 3 : (5 － 2)', details: '4 · 3 : 3 ＝ 12 : 3 ＝ 4 (Σωστό!)' },
+        { label: 'Δοκιμή (4 · 3) : 5 － 2', details: '12 : 5 － 2 ＝ 2,4 － 2 ＝ 0,4' }
       ],
-      explanation: 'Το μείον αλλάζει το √3 σε －√3 και το －' + k + ' σε ＋' + k + '.'
+      explanation: 'Με παρενθέσεις στο 5 － 2 έχουμε 4 · 3 : (3) ＝ 12 : 3 ＝ 4.'
     };
   },
+  // 5. Διαφορά τετραγώνων με ρίζες: (√3 - 1)*(√3 + 1)
   () => {
-    const a = randInt(2, 5);
-    const b = randInt(2, 4);
-    const c = randInt(1, 3);
-    const res = -a * b * -c;
     return {
-      title: 'Γινόμενο Τριών Παραγόντων',
-      prompt: `Ποιο είναι το αποτέλεσμα της πράξης (－${a}) · ${b} · (－${c});`,
-      correct: res,
-      type: 'input',
-      tableData: [
-        { label: 'Πλήθος αρνητικών παραγόντων', details: '2 αρνητικοί (άρτιος αριθμός => θετικό πρόσημο)' },
-        { label: 'Υπολογισμός', details: `${a} · ${b} · ${c} ＝ ${res}` }
-      ],
-      explanation: `Εφόσον έχουμε άρτιο πλήθος αρνητικών παραγόντων (δύο μείον), το αποτέλεσμα είναι θετικό: ＋${res}.`
-    };
-  },
-  () => {
-    const k = randInt(4, 9);
-    return {
-      title: 'Απλοποίηση με Αντίθετο',
+      title: 'Υπολογισμός Υποτείνουσας από Κάθετες Πλευρές',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η παράσταση (<Radical>2</Radical> ＋ ${k}) ＋ (－<Radical>2</Radical> － ${k});
+          Σε ορθογώνιο τρίγωνο οι κάθετες πλευρές είναι <Radical>3</Radical> － 1 και <Radical>3</Radical> ＋ 1. Πόσο ισούται το τετράγωνο της υποτείνουσάς του (c²);
         </span>
       ),
-      correct: 0,
+      correct: 8,
       type: 'input',
       tableData: [
-        { label: 'Άθροισμα αντιθέτων', details: '(√2 － √2) ＋ (' + k + ' － ' + k + ')' },
-        { label: 'Τελικό', details: '0' }
+        { label: 'Τετράγωνο 1ης πλευράς', details: '(√3 － 1)² ＝ 3 － 2√3 ＋ 1 ＝ 4 － 2√3' },
+        { label: 'Τετράγωνο 2ης πλευράς', details: '(√3 ＋ 1)² ＝ 3 ＋ 2√3 ＋ 1 ＝ 4 ＋ 2√3' },
+        { label: 'Πυθαγόρειο c² ＝ α² ＋ β²', details: '(4 － 2√3) ＋ (4 ＋ 2√3) ＝ 8' }
       ],
-      explanation: 'Όλοι οι όροι είναι αντίθετοι ανά δύο και αλληλοεξουδετερώνονται: 0.'
+      explanation: 'c² ＝ (√3 － 1)² ＋ (√3 ＋ 1)² ＝ 4 － 2√3 ＋ 4 ＋ 2√3 ＝ 8.'
     };
   },
+  // 6. Θέμα ΕΜΕ "Θαλής" 2005 (Άσκηση 16 σχολικού): αν a = b + 2005
   () => {
-    const a = randInt(5, 10);
     return {
-      title: 'Αφαίρεση Παρένθεσης με Θετικό Όρο',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Στην παράσταση ${a} － (<Radical>5</Radical> ＋ ${a}), ποιος αριθμός απομένει;
-        </span>
-      ),
-      correct: '－√5',
-      type: 'mcq',
-      distractors: () => ['√5', '0', `${2 * a}`][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === '－√5') return <span className="inline-flex items-center gap-1">－<Radical>5</Radical></span>;
-        if (opt === '√5') return <Radical>5</Radical>;
-        return opt;
-      },
+      title: 'Θέμα Διαγωνισμού Ε.Μ.Ε. με Παραμέτρους',
+      prompt: 'Αν α － β ＝ 2, να υπολογιστεί η τιμή της παράστασης Α ＝ 5 · (2α ＋ β) － 5 · (α ＋ 2β).',
+      correct: 10,
+      type: 'input',
       tableData: [
-        { label: 'Απαλοιφή', details: `${a} － √5 － ${a}` },
-        { label: 'Αναγωγή', details: `${a} － ${a} － √5 ＝ －√5` }
+        { label: 'Επιμεριστική', details: '10α ＋ 5β － 5α － 10β' },
+        { label: 'Αναγωγή', details: '5α － 5β ＝ 5 · (α － β)' },
+        { label: 'Αντικατάσταση α － β ＝ 2', details: '5 · 2 ＝ 10' }
       ],
-      explanation: 'Οι ακέραιοι αλληλοεξουδετερώνονται και μένει －√5.'
+      explanation: 'Α ＝ 5α － 5β ＝ 5 · (α － β) ＝ 5 · 2 ＝ 10.'
     };
   }
 ];
 
-// POOL Q12: Γεωμετρικά και σύνθετα προβλήματα πραγματικών (6 μοναδικά σενάρια)
+// POOL Q12: Γεωμετρικά & Ρεαλιστικά Προβλήματα (Από τις ασκήσεις 9, 10, 26, 28 του σχολικού)
 const PROBLEM_POOL_Q12 = [
+  // 1. Άσκηση 9 σχολικού: Περίμετρος 4 οικοπέδων (Αθηνά=68, Ιωάννα=70, Μάνος=54, Θάνος=60)
   () => {
-    const a = randInt(2, 4);
-    const b = randInt(1, 3);
-    const perimA = 2 * (a + 1);
-    const perimB = 2 * (b + 2);
+    const p1 = 68;
+    const p2 = 70;
+    const p3 = 54;
+    const p4 = 60;
+    // Η συνολική εξωτερική περίμετρος προκύπτει από τις πλευρές x1, x2, y1, y2
+    // 2(x1+y1)=68, 2(x2+y1)=70, 2(x1+y2)=54, 2(x2+y2)=60 => 2(x1+x2+y1+y2) = (68+70+54+60)/2 = 252/2 = 126
     return {
-      title: 'Περίμετρος Ορθογωνίου με Ρίζες',
+      title: 'Πρόβλημα Καταμερισμού Οικοπέδων',
+      prompt: `Τέσσερα αδέλφια χώρισαν ένα ορθογώνιο οικόπεδο σε 4 μικρότερα με παράλληλες γραμμές. Τα οικόπεδα έχουν περιμέτρους ${p1} m, ${p2} m, ${p3} m και ${p4} m αντίστοιχα. Ποια είναι η εξωτερική περίμετρος ολόκληρου του αρχικού οικοπέδου σε μέτρα;`,
+      correct: 126,
+      type: 'input',
+      unit: 'm',
+      tableData: [
+        { label: 'Άθροισμα περιμέτρων 4 οικοπέδων', details: `${p1} ＋ ${p2} ＋ ${p3} ＋ ${p4} ＝ 252 m` },
+        { label: 'Ανάλυση εσωτερικών/εξωτερικών πλευρών', details: 'Κάθε εξωτερική πλευρά μετράται 1 φορά, κάθε εσωτερική 2 φορές' },
+        { label: 'Εξωτερική περίμετρος', details: '252 / 2 ＝ 126 m' }
+      ],
+      explanation: 'Το άθροισμα των περιμέτρων των 4 οικοπέδων περιέχει την εξωτερική περίμετρο διπλάσια. Άρα η εξωτερική περίμετρος είναι 252 / 2 ＝ 126 m.'
+    };
+  },
+  // 2. Άσκηση 28 σχολικού: Ορθογώνιο τρίγωνο με κάθετες 3√2 και 4√2
+  () => {
+    return {
+      title: 'Υποτείνουσα Ορθογωνίου Τριγώνου με Ρίζες',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ένα ορθογώνιο έχει μήκος L ＝ {a} · <Radical>3</Radical> ＋ {b} και πλάτος W ＝ <Radical>3</Radical> ＋ 2. Ποιο είναι το πολυώνυμο της περιμέτρου Π ＝ 2 · (L ＋ W);
+          Σε ορθογώνιο τρίγωνο οι κάθετες πλευρές έχουν μήκη 3 · <Radical>2</Radical> cm και 4 · <Radical>2</Radical> cm. Πόσο είναι το μήκος της υποτείνουσάς του σε cm;
         </span>
       ),
-      correct: `${perimA}·√3 ＋ ${perimB}`,
+      correct: '5·√2',
       type: 'mcq',
-      distractors: () => [
-        `${perimA}·√3 ＋ ${b + 2}`,
-        `${a + 1}·√3 ＋ ${perimB}`,
-        `${perimA * 2}·√3 ＋ ${perimB}`
-      ][randInt(0, 2)],
+      distractors: () => ['7·√2', '10', '5·√4'][randInt(0, 2)],
       renderOption: (opt) => {
-        if (opt === `${perimA}·√3 ＋ ${perimB}`) return <span className="inline-flex items-center gap-1">{perimA} · <Radical>3</Radical> ＋ {perimB}</span>;
-        if (opt === `${perimA}·√3 ＋ ${b + 2}`) return <span className="inline-flex items-center gap-1">{perimA} · <Radical>3</Radical> ＋ {b + 2}</span>;
-        if (opt === `${a + 1}·√3 ＋ ${perimB}`) return <span className="inline-flex items-center gap-1">{a + 1} · <Radical>3</Radical> ＋ {perimB}</span>;
+        if (opt === '5·√2') return <span className="inline-flex items-center gap-1">5 · <Radical>2</Radical> cm</span>;
+        if (opt === '7·√2') return <span className="inline-flex items-center gap-1">7 · <Radical>2</Radical> cm</span>;
         return opt;
       },
       tableData: [
-        { label: 'L ＋ W', details: `(${a}·√3 ＋ ${b}) ＋ (√3 ＋ 2) ＝ ${a + 1}·√3 ＋ ${b + 2}` },
-        { label: '2 · (L ＋ W)', details: `2 · (${a + 1}·√3 ＋ ${b + 2}) ＝ ${perimA}·√3 ＋ ${perimB}` }
+        { label: 'Τετράγωνο 1ης πλευράς', details: '(3√2)² ＝ 9 · 2 ＝ 18' },
+        { label: 'Τετράγωνο 2ης πλευράς', details: '(4√2)² ＝ 16 · 2 ＝ 32' },
+        { label: 'Υποτείνουσα c²', details: 'c² ＝ 18 ＋ 32 ＝ 50 => c ＝ √50 ＝ √(25·2) ＝ 5√2 cm' }
       ],
-      explanation: `Π ＝ 2 · [(${a}·√3 ＋ ${b}) ＋ (√3 ＋ 2)] ＝ 2 · (${a + 1}·√3 ＋ ${b + 2}) ＝ ${perimA}·√3 ＋ ${perimB}.`
+      explanation: 'c² ＝ 18 ＋ 32 ＝ 50 => c ＝ √50 ＝ 5 · √2 cm.'
     };
   },
+  // 3. Άσκηση 28δ σχολικού: Ύψος ορθογωνίου τριγώνου h = (α * β) / c
   () => {
-    const side = randInt(2, 5);
-    const perim = 3 * side;
+    // α = 3√2, β = 4√2, c = 5√2 => Εμβαδόν = (1/2)*α*β = (1/2)*18*2...
+    // Ε = (1/2) * (3√2) * (4√2) = (1/2) * 24 = 12 cm²
     return {
-      title: 'Περίμετρος Ισοπλεύρου Τριγώνου',
+      title: 'Εμβαδόν Τριγώνου με Πλευρές Ρίζες',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ισόπλευρο τρίγωνο έχει πλευρά μήκους {side} · <Radical>2</Radical> cm. Πόσο είναι το ακριβές μήκος της περιμέτρου του σε cm;
+          Ποιο είναι το εμβαδόν ορθογωνίου τριγώνου με κάθετες πλευρές 3 · <Radical>2</Radical> cm και 4 · <Radical>2</Radical> cm σε cm²;
         </span>
       ),
-      correct: `${perim}·√2`,
-      type: 'mcq',
-      distractors: () => [`${perim}·√6`, `${side * side}·√2`, `${side}·√6`][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === `${perim}·√2`) return <span className="inline-flex items-center gap-1">{perim} · <Radical>2</Radical> cm</span>;
-        if (opt === `${perim}·√6`) return <span className="inline-flex items-center gap-1">{perim} · <Radical>6</Radical> cm</span>;
-        if (opt === `${side * side}·√2`) return <span className="inline-flex items-center gap-1">{side * side} · <Radical>2</Radical> cm</span>;
-        return opt;
-      },
+      correct: 12,
+      type: 'input',
+      unit: 'cm²',
       tableData: [
-        { label: 'Πλευρά α', details: `${side}·√2 cm` },
-        { label: 'Τύπος περιμέτρου', details: 'Π ＝ 3 · α' },
-        { label: 'Υπολογισμός', details: `3 · (${side}·√2) ＝ ${perim}·√2 cm` }
+        { label: 'Τύπος εμβαδού', details: 'Ε ＝ (α · β) / 2' },
+        { label: 'Γινόμενο πλευρών', details: '(3√2) · (4√2) ＝ 12 · (√2)² ＝ 12 · 2 ＝ 24' },
+        { label: 'Υπολογισμός', details: '24 / 2 ＝ 12 cm²' }
       ],
-      explanation: `Πολλαπλασιάζουμε την πλευρά επί 3: 3 · (${side}·√2) ＝ ${perim}·√2 cm.`
+      explanation: 'Ε ＝ (3√2 · 4√2) / 2 ＝ (12 · 2) / 2 ＝ 12 cm².'
     };
   },
+  // 4. Άσκηση 26 σχολικού: Ορθογώνιο με x = 3√48 - 2√75 + 4√108
+  // √48 = 4√3, √75 = 5√3, √108 = 6√3
+  // x = 3*(4√3) - 2*(5√3) + 4*(6√3) = (12 - 10 + 24)√3 = 26√3
   () => {
-    const k = randInt(2, 4);
-    const area = k * k * 5;
     return {
-      title: 'Εμβαδόν Τετραγώνου με Ρίζα',
+      title: 'Απλοποίηση Γεωμετρικής Διάστασης με Ρίζες',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ένα τετράγωνο έχει πλευρά s ＝ {k} · <Radical>5</Radical> m. Πόσο είναι το εμβαδόν του σε m²;
+          Το μήκος ενός οικοπέδου δίνεται από την παράσταση L ＝ 3 · <Radical>48</Radical> － 2 · <Radical>75</Radical>. Ποιος είναι ο συντελεστής του <Radical>3</Radical> στην απλοποιημένη του μορφή (α · <Radical>3</Radical>);
         </span>
       ),
-      correct: area,
+      correct: 2,
+      type: 'input',
+      tableData: [
+        { label: 'Ανάλυση √48', details: '√48 ＝ √(16·3) ＝ 4√3 => 3 · 4√3 ＝ 12√3' },
+        { label: 'Ανάλυση √75', details: '√75 ＝ √(25·3) ＝ 5√3 => 2 · 5√3 ＝ 10√3' },
+        { label: 'Αφαίρεση', details: '12√3 － 10√3 ＝ 2√3' }
+      ],
+      explanation: '3 · (4√3) － 2 · (5√3) ＝ 12√3 － 10√3 ＝ 2 · √3. Ο συντελεστής είναι 2.'
+    };
+  },
+  // 5. Άσκηση 20 σχολικού: Τετράγωνο με πλευρά √8 + √2
+  // πλευρά = 2√2 + √2 = 3√2 => Εμβαδόν = (3√2)² = 18
+  () => {
+    return {
+      title: 'Εμβαδόν Τετραγώνου με Άθροισμα Ριζών',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Ένα τετράγωνο έχει πλευρά μήκους s ＝ <Radical>8</Radical> ＋ <Radical>2</Radical> m. Πόσο είναι το εμβαδόν του σε m²;
+        </span>
+      ),
+      correct: 18,
       type: 'input',
       unit: 'm²',
       tableData: [
-        { label: 'Πλευρά s', details: `${k}·√5 m` },
-        { label: 'Τύπος εμβαδού', details: 'E ＝ s²' },
-        { label: 'Υπολογισμός', details: `(${k}·√5)² ＝ ${k}² · (√5)² ＝ ${k * k} · 5 ＝ ${area} m²` }
+        { label: 'Απλοποίηση πλευράς', details: '√8 ＝ √(4·2) ＝ 2√2 => s ＝ 2√2 ＋ √2 ＝ 3√2 m' },
+        { label: 'Τύπος εμβαδού', details: 'Ε ＝ s² ＝ (3√2)² ＝ 3² · (√2)² ＝ 9 · 2 ＝ 18 m²' }
       ],
-      explanation: `(${k}·√5)² ＝ ${k * k} · 5 ＝ ${area} m².`
+      explanation: 's ＝ 2√2 ＋ √2 ＝ 3√2 m. Ε ＝ (3√2)² ＝ 9 · 2 ＝ 18 m².'
     };
   },
+  // 6. Διέλευση καθρέφτη από πόρτα (Άσκηση 10 σελ. 22 σχολικού)
+  // Πόρτα 2m x 1m => Διαγώνιος πόρτας = √(2² + 1²) = √5 ≈ 2.236m
+  // Καθρέφτης πλευράς 2.10m. Χωράει πλάγια διότι 2.10 < 2.236
   () => {
     return {
-      title: 'Απλοποίηση Κλάσματος με Ρίζα',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η παράσταση <Frac num={<span className="inline-flex items-center gap-1">6 · <Radical>2</Radical></span>} den="2" />;
-        </span>
-      ),
-      correct: '3·√2',
-      type: 'mcq',
-      distractors: () => ['3', '6·√2', '3·√1'][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === '3·√2') return <span className="inline-flex items-center gap-1">3 · <Radical>2</Radical></span>;
-        if (opt === '6·√2') return <span className="inline-flex items-center gap-1">6 · <Radical>2</Radical></span>;
-        return opt;
-      },
-      tableData: [
-        { label: 'Διαίρεση συντελεστών', details: '(6 / 2) · √2' },
-        { label: 'Αποτέλεσμα', details: '3·√2' }
-      ],
-      explanation: 'Διαιρούμε τον αριθμητικό συντελεστή με τον παρονομαστή: 6 / 2 ＝ 3, άρα 3·√2.'
-    };
-  },
-  () => {
-    const a = randInt(2, 5);
-    return {
-      title: 'Διαφορά Τετραγώνου Ρίζας',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η τιμή της παράστασης (<Radical>3</Radical>)² ＋ ${a}²;
-        </span>
-      ),
-      correct: 3 + a * a,
-      type: 'input',
-      tableData: [
-        { label: '(√3)²', details: '3' },
-        { label: `${a}²`, details: `${a * a}` },
-        { label: 'Άθροισμα', details: `3 ＋ ${a * a} ＝ ${3 + a * a}` }
-      ],
-      explanation: `(√3)² ＝ 3 και ${a}² ＝ ${a * a}. Το άθροισμα είναι ${3 + a * a}.`
-    };
-  },
-  () => {
-    const k = randInt(2, 4);
-    return {
-      title: 'Επιμεριστική με Ριζικό Παράγοντα',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Αναπτύσσοντας την παράσταση <Radical>2</Radical> · (<Radical>2</Radical> ＋ ${k}), ποια έκφραση προκύπτει;
-        </span>
-      ),
-      correct: `2 ＋ ${k}·√2`,
+      title: 'Ρεαλιστικό Πρόβλημα Διέλευσης (Πυθαγόρειο)',
+      prompt: 'Μια πόρτα έχει ύψος 2 m και πλάτος 1 m. Μπορεί να περάσει πλάγια από την πόρτα ένας τετράγωνος καθρέφτης πλευράς 2,10 m (χωρίς να γείρει εκτός επιπέδου);',
+      correct: 'Ναι, γιατί η διαγώνιος της πόρτας είναι √5 ≈ 2,24 m ＞ 2,10 m',
       type: 'mcq',
       distractors: () => [
-        `4 ＋ ${k}·√2`,
-        `2 ＋ ${k}`,
-        `√4 ＋ ${k}`
+        'Όχι, γιατί το ύψος 2 m είναι μικρότερο από το 2,10 m',
+        'Όχι, γιατί το πλάτος 1 m είναι πολύ στενό',
+        'Ναι, μόνο αν αφαιρεθεί η κάσα της πόρτας'
       ][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === `2 ＋ ${k}·√2`) return <span className="inline-flex items-center gap-1">2 ＋ {k} · <Radical>2</Radical></span>;
-        if (opt === `4 ＋ ${k}·√2`) return <span className="inline-flex items-center gap-1">4 ＋ {k} · <Radical>2</Radical></span>;
-        return opt;
-      },
       tableData: [
-        { label: '1ο γινόμενο', details: '√2 · √2 ＝ (√2)² ＝ 2' },
-        { label: '2ο γινόμενο', details: `√2 · ${k} ＝ ${k}·√2` },
-        { label: 'Άθροισμα', details: `2 ＋ ${k}·√2` }
+        { label: 'Μέγιστο άνοιγμα πόρτας (διαγώνιος d)', details: 'd² ＝ 2² ＋ 1² ＝ 4 ＋ 1 ＝ 5 => d ＝ √5 m' },
+        { label: 'Ρητή προσέγγιση του √5', details: '√5 ≈ 2,236 m' },
+        { label: 'Σύγκριση', details: '2,10 m ＜ 2,236 m (χωράει διαγώνια)' }
       ],
-      explanation: `√2 · √2 ＝ 2 και √2 · ${k} ＝ ${k}·√2. Άρα 2 ＋ ${k}·√2.`
+      explanation: 'Η διαγώνιος της πόρτας είναι √5 ≈ 2,24 m. Επειδή 2,10 m ＜ 2,24 m, ο καθρέφτης μπορεί να περάσει τοποθετημένος διαγώνια.'
     };
   }
 ];
@@ -679,14 +612,14 @@ export default function PrakseisPragmatikonExercises() {
     const q1IsCorrect = Math.random() < 0.5;
     qList.push({
       id: 1,
-      title: 'Αντιμεταθετική Ιδιότητα',
+      title: 'Αντιμεταθετική Ιδιότητα στο ℝ',
       prompt: q1IsCorrect
         ? 'Για οποιουσδήποτε πραγματικούς αριθμούς α και β, ισχύει πάντοτε α ＋ β ＝ β ＋ α και α · β ＝ β · α.'
-        : 'Η αντιμεταθετική ιδιότητα ισχύει μόνο για τους φυσικούς αριθμούς και όχι για τους άρρητους.',
+        : 'Η αντιμεταθετική ιδιότητα ισχύει μόνο για τους ρητούς αριθμούς και παύει να ισχύει όταν συμμετέχουν άρρητοι.',
       type: 'tf',
       correct: q1IsCorrect ? 'Σωστό' : 'Λάθος',
       options: ['Σωστό', 'Λάθος'],
-      explanation: 'Η αντιμεταθετική ιδιότητα ισχύει καθολικά για όλους τους πραγματικούς αριθμούς τόσο στην πρόσθεση όσο και στον πολλαπλασιασμό.'
+      explanation: 'Η αντιμεταθετική ιδιότητα ισχύει καθολικά για όλους τους πραγματικούς αριθμούς.'
     });
 
     // Q2: True / False - Διαίρεση με το μηδέν
@@ -696,29 +629,36 @@ export default function PrakseisPragmatikonExercises() {
       title: 'Διαίρεση με το Μηδέν',
       prompt: q2Choice
         ? 'Η διαίρεση πραγματικού αριθμού με το μηδέν (δηλαδή κλάσμα με παρονομαστή 0) δεν ορίζεται ποτέ.'
-        : 'Αν διαιρέσουμε οποιονδήποτε αριθμό με το μηδέν, το αποτέλεσμα ισούται πάντοτε με 0.',
+        : 'Αν διαιρέσουμε έναν πραγματικό αριθμό με το μηδέν, το πηλίκο ισούται πάντοτε με 0.',
       type: 'tf',
       correct: q2Choice ? 'Σωστό' : 'Λάθος',
       options: ['Σωστό', 'Λάθος'],
-      explanation: 'Στα μαθηματικά η διαίρεση με το μηδέν δεν ορίζεται για κανέναν αριθμό.'
+      explanation: 'Στα μαθηματικά η διαίρεση με το μηδέν δεν ορίζεται ποτέ.'
     });
 
-    // Q3: MCQ - Ουδέτερο στοιχείο πολλαπλασιασμού
+    // Q3: MCQ - Αντίστροφοι αριθμοί
     qList.push({
       id: 3,
-      title: 'Ουδέτερο Στοιχείο Πολλαπλασιασμού',
-      prompt: 'Ποιο είναι το ουδέτερο στοιχείο του πολλαπλασιασμού στους πραγματικούς αριθμούς;',
+      title: 'Αντίστροφοι Πραγματικοί Αριθμοί',
+      prompt: (
+        <span className="inline-flex items-center gap-1">
+          Ποιος είναι ο αντίστροφος του αριθμού －<Frac num="2" den="5" />;
+        </span>
+      ),
       type: 'mcq',
-      correct: 'Ο αριθμός 1 (διότι α · 1 ＝ α)',
-      options: ensureFourUniqueOptions('Ο αριθμός 1 (διότι α · 1 ＝ α)', () => [
-        'Ο αριθμός 0 (διότι α · 0 ＝ 0)',
-        'Ο αριθμός －1',
-        'Δεν υπάρχει ουδέτερο στοιχείο'
-      ][randInt(0, 2)]),
-      explanation: 'Το ουδέτερο στοιχείο του πολλαπλασιασμού είναι το 1, αφού α · 1 ＝ α για κάθε πραγματικό αριθμό.'
+      correct: '－5/2',
+      options: ensureFourUniqueOptions('－5/2', () => ['2/5', '5/2', '－2/5'][randInt(0, 2)]),
+      renderOption: (opt) => {
+        if (opt === '－5/2') return <Frac num="－5" den="2" />;
+        if (opt === '5/2') return <Frac num="5" den="2" />;
+        if (opt === '2/5') return <Frac num="2" den="5" />;
+        if (opt === '－2/5') return <Frac num="－2" den="5" />;
+        return opt;
+      },
+      explanation: 'Ο αντίστροφος ενός αριθμού α/β είναι ο β/α και διατηρεί το ίδιο πρόσημο: (－2/5) · (－5/2) ＝ 1.'
     });
 
-    // Q4: MCQ - Πρόσθεση διαφορετικών ριζών
+    // Q4: MCQ - Πρόσθεση μη όμοιων ριζών
     qList.push({
       id: 4,
       title: 'Πρόσθεση Μη Όμοιων Ριζών',
@@ -739,46 +679,48 @@ export default function PrakseisPragmatikonExercises() {
         if (opt === 'Ισούται με √6') return <span className="inline-flex items-center gap-1">Ισούται με <Radical>6</Radical></span>;
         return opt;
       },
-      explanation: 'Προσθέτουμε μόνο όμοιες ρίζες. Ρίζες με διαφορετική υπόριζη ποσότητα δεν συνενώνονται.'
-    });
+      explanation: 'Προσθέτουμε μόνο όμοιες ρίζες. Η έκφραση √2 ＋ √3 δεν γίνεται √5.'
+    };
 
-    // Q5: Input - Αντίστροφος αριθμός
+    // Q5: Input - Γινόμενο με αντίστροφο
     qList.push({
       id: 5,
       title: 'Γινόμενο με Αντίστροφο',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται το γινόμενο <Radical>11</Radical> · <Frac num="1" den={<Radical>11</Radical>} />;
+          Πόσο ισούται το γινόμενο <Radical>13</Radical> · <Frac num="1" den={<Radical>13</Radical>} />;
         </span>
       ),
       type: 'input',
       correct: 1,
-      explanation: 'Το γινόμενο κάθε μη μηδενικού αριθμού με τον αντίστροφό του ισούται με 1.'
+      explanation: 'Το γινόμενο κάθε μη μηδενικού πραγματικού με τον αντίστροφό του ισούται με 1.'
     });
 
-    // Q6: MCQ - Κανόνας προσήμων
+    // Q6: MCQ - Πρόσημο γινομένου
     qList.push({
       id: 6,
       title: 'Κανόνας Προσήμων Γινομένου',
-      prompt: 'Ποιο είναι το πρόσημο του γινομένου δύο ετερόσημων πραγματικών αριθμών;',
+      prompt: 'Ποιο είναι το πρόσημο του γινομένου (－1) · (－α) · (－β), αν α ＜ 0 και β ＞ 0;',
       type: 'mcq',
-      correct: 'Πάντοτε αρνητικό (－)',
-      options: ensureFourUniqueOptions('Πάντοτε αρνητικό (－)', () => [
-        'Πάντοτε θετικό (＋)',
-        'Εξαρτάται από το ποιος αριθμός είναι μεγαλύτερος',
-        'Πάντοτε μηδέν'
-      ][randInt(0, 2)]),
-      explanation: 'Το γινόμενο ετερόσημων αριθμών ((＋) · (－) ή (－) · (＋)) είναι πάντοτε αρνητικό.'
+      correct: 'Θετικό (＋)',
+      options: ensureFourUniqueOptions('Θετικό (＋)', () => ['Αρνητικό (－)', 'Μηδέν', 'Εξαρτάται από τις τιμές'][randInt(0, 2)]),
+      tableData: [
+        { label: 'Πρόσημο του －1', details: 'Αρνητικό (－)' },
+        { label: 'Πρόσημο του －α (α ＜ 0)', details: 'Θετικό (＋)' },
+        { label: 'Πρόσημο του －β (β ＞ 0)', details: 'Αρνητικό (－)' },
+        { label: 'Συνολικό γινόμενο', details: '(－) · (＋) · (－) ＝ ＋ (θετικό)' }
+      ],
+      explanation: 'Έχουμε δύο αρνητικούς παράγοντες και έναν θετικό, άρα το γινόμενο είναι θετικό (＋).'
     });
 
     // Q7: Input - Άθροισμα αντιθέτων
-    const valK = randInt(3, 8);
+    const valK = randInt(4, 9);
     qList.push({
       id: 7,
-      title: 'Άθροισμα Αντιθέτων',
+      title: 'Άθροισμα Αντιθέτων Πραγματικών',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η τιμή της παράστασης {valK} · <Radical>2</Radical> ＋ (－{valK} · <Radical>2</Radical>);
+          Πόσο ισούται η τιμή της παράστασης {valK} · <Radical>3</Radical> ＋ (－{valK} · <Radical>3</Radical>);
         </span>
       ),
       type: 'input',
@@ -789,7 +731,7 @@ export default function PrakseisPragmatikonExercises() {
     // Q8: MCQ - Επιμεριστική Ιδιότητα
     qList.push({
       id: 8,
-      title: 'Μαθηματική Έκφραση Επιμεριστικής',
+      title: 'Επιμεριστική Ιδιότητα',
       prompt: 'Ποια από τις παρακάτω σχέσεις εκφράζει σωστά την επιμεριστική ιδιότητα;',
       type: 'mcq',
       correct: 'α · (β ＋ γ) ＝ α · β ＋ α · γ',
@@ -798,7 +740,7 @@ export default function PrakseisPragmatikonExercises() {
         'α ＋ (β · γ) ＝ (α ＋ β) · (α ＋ γ)',
         'α · (β · γ) ＝ (α · β) · γ'
       ][randInt(0, 2)]),
-      explanation: 'Ο πολλαπλασιαστής έξω από την παρένθεση πολλαπλασιάζει κάθε όρο του αθροίσματος χωριστά.'
+      explanation: 'Ο εξωτερικός πολλαπλασιαστής επιμερίζεται σε κάθε όρο της παρένθεσης.'
     });
 
     // Q9 - Q12: Επιλογή από ανεξάρτητες δεξαμενές
@@ -906,7 +848,7 @@ export default function PrakseisPragmatikonExercises() {
                 Πράξεις Πραγματικών Αριθμών: Εξάσκηση
               </h1>
               <p className="text-indigo-200 text-xs sm:text-base mt-1">
-                12 δυναμικές ερωτήσεις και αυτούσια προβλήματα πράξεων, επιμεριστικής και αναγωγής ριζών.
+                12 δυναμικές ερωτήσεις και αυτούσια προβλήματα πράξεων, επιμεριστικής, αναλογιών και ριζών.
               </p>
             </div>
             <div>
