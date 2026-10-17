@@ -36,6 +36,14 @@ const CHAPTERS = [
     active: true,
   },
   {
+    id: '05',
+    slug: '05-dinameis-pragmatikon',
+    title: 'Δυνάμεις Πραγματικών Αριθμοί',
+    desc: 'Δυνάμεις Ρητών, Ιδιότητες, τυποποιημένη μορφή.',
+    badge: 'ΚΕΦΑΛΑΙΟ 05',
+    active: true,
+  },
+  {
     id: '10',
     slug: '10-mononima-polionima',
     title: 'Μονώνυμα - Πολυώνυμα',
