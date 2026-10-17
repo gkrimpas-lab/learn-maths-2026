@@ -51,15 +51,57 @@ function Frac({ num, den, className = "" }) {
   );
 }
 
+// Αυτόνομο Slider Component με ακριβή οπτική ένδειξη προόδου (Active Progress Fill)
+function RangeSlider({ id, label, min, max, value, onChange, color = "#4f46e5" }) {
+  // Υπολογισμός ποσοστού θέσης από 0% έως 100%
+  const percentage = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
+
+  return (
+    <div className="space-y-1.5 select-none">
+      <div className="flex justify-between items-center text-xs font-semibold text-slate-700">
+        <label htmlFor={id} className="cursor-pointer">{label}</label>
+        <span
+          className="font-mono font-bold px-2 py-0.5 rounded border text-xs sm:text-sm shadow-xs bg-white"
+          style={{ color }}
+        >
+          {value > 0 ? `＋${value}` : value}
+        </span>
+      </div>
+      <input
+        id={id}
+        name={id}
+        type="range"
+        min={min}
+        max={max}
+        step="1"
+        value={value}
+        onChange={(e) => {
+          e.stopPropagation();
+          onChange(Number(e.target.value));
+        }}
+        style={{
+          background: `linear-gradient(to right, ${color} 0%, ${color} ${percentage}%, #cbd5e1 ${percentage}%, #cbd5e1 100%)`
+        }}
+        className="w-full h-2 rounded-lg appearance-none cursor-pointer focus:outline-none"
+      />
+      <div className="flex justify-between text-[10px] text-slate-400 font-mono px-0.5">
+        <span>{min}</span>
+        <span>0</span>
+        <span>＋{max}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function ProsthesiAfairesiPolionimonTheory() {
-  // State για το Interactive Lab
-  // P(x) = a1*x^2 + b1*x + c1
-  // Q(x) = a2*x^2 + b2*x + c2
   const [op, setOp] = useState('add'); // 'add' ή 'sub'
+  
+  // State συντελεστών P(x)
   const [a1, setA1] = useState(3);
   const [b1, setB1] = useState(-2);
   const [c1, setC1] = useState(5);
 
+  // State συντελεστών Q(x)
   const [a2, setA2] = useState(1);
   const [b2, setB2] = useState(4);
   const [c2, setC2] = useState(-3);
@@ -70,7 +112,6 @@ export default function ProsthesiAfairesiPolionimonTheory() {
   const resB = b1 + signFactor * b2;
   const resC = c1 + signFactor * c2;
 
-  // Βαθμός αποτελέσματος
   let resDegree = '0ός βαθμός (σταθερό)';
   if (resA !== 0) resDegree = '2ος βαθμός';
   else if (resB !== 0) resDegree = '1ος βαθμός';
@@ -112,7 +153,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
               Πρόσθεση & Αφαίρεση Πολυωνύμων
             </h1>
             <p className="text-xs sm:text-base lg:text-lg text-indigo-100 font-medium leading-relaxed mb-5 max-w-3xl">
-              Πώς συνδυάζουμε πολυώνυμα για να δημιουργήσουμε νέα; Κατακτήστε την οριζόντια και την κάθετη μέθοδο πρόσθεσης και αφαίρεσης, τη διαχείριση των αντιθέτων πολυωνύμων και τους ακριβείς κανόνες απαλοιφής παρενθέσεων.
+              Πώς συνδυάζουμε πολυώνυμα για να δημιουργήσουμε νέα; Κατακτήστε την οριζόντια και την κάθετη μέθοδο πρόσθεσης και αφαίρεσης, τη διαχείριση των αντιθέτων πολυωνύμων και τους ακριβείς κανόνες απαλοιφής παρενθέσεων[cite: 52].
             </p>
             <div>
               <Link
@@ -141,13 +182,13 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                Το <strong>άθροισμα</strong> και η <strong>διαφορά</strong> δύο πολυωνύμων P(x) και Q(x) είναι ένα νέο πολυώνυμο, το οποίο προκύπτει αν γράψουμε διαδοχικά τους όρους τους και εκτελέσουμε αναγωγή των όμοιων όρων.
+                Το <strong>άθροισμα</strong> και η <strong>διαφορά</strong> δύο πολυωνύμων P(x) και Q(x) είναι ένα νέο πολυώνυμο, το οποίο προκύπτει αν γράψουμε διαδοχικά τους όρους τους και εκτελέσουμε αναγωγή των όμοιων όρων[cite: 52].
               </p>
               
               <div className="space-y-2.5 mb-3 text-xs sm:text-sm text-slate-700">
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
                   <span className="font-bold text-indigo-900 block mb-1">Πρόσθεση Πολυωνύμων:</span>
-                  Συνδέουμε τα πολυώνυμα με πρόσημο « ＋ ». Διαγράφουμε τις παρενθέσεις διατηρώντας όλα τα πρόσημα των όρων αναλλοίωτα:
+                  Συνδέουμε τα πολυώνυμα με πρόσημο « ＋ »[cite: 52]. Διαγράφουμε τις παρενθέσεις διατηρώντας όλα τα πρόσημα των όρων αναλλοίωτα:
                   <div className="font-mono text-xs font-bold text-indigo-800 mt-1.5 p-2 bg-white rounded border border-slate-200">
                     P(x) ＋ Q(x) ＝ (2 · x² ＋ 3 · x) ＋ (x² － 5 · x ＋ 4) ＝ 3 · x² － 2 · x ＋ 4
                   </div>
@@ -191,7 +232,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
 
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs sm:text-sm text-amber-950">
                 <strong>Ο Κανόνας της Αφαίρεσης:</strong> <br />
-                Όταν αφαιρούμε ένα πολυώνυμο, διαγράφουμε το πλην και την παρένθεση και <strong>αντιστρέφουμε τα πρόσημα όλων των όρων</strong> μέσα σε αυτήν:
+                Όταν αφαιρούμε ένα πολυώνυμο, διαγράφουμε το πλην και την παρένθεση και <strong>αντιστρέφουμε τα πρόσημα όλων των όρων</strong> μέσα σε αυτήν[cite: 52]:
                 <div className="font-mono text-xs font-bold text-amber-900 mt-1">
                   － (3 · x² － 2 · x ＋ 5) ＝ －3 · x² ＋ 2 · x － 5
                 </div>
@@ -211,14 +252,14 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                Μπορούμε να εκτελέσουμε την πρόσθεση ή αφαίρεση πολυωνύμων με δύο ισοδύναμους τρόπους:
+                Μπορούμε να εκτελέσουμε την πρόσθεση ή αφαίρεση πολυωνύμων με δύο ισοδύναμους τρόπους[cite: 52]:
               </p>
 
               <div className="space-y-2.5 mb-3 text-xs sm:text-sm">
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
                   <div className="font-bold text-slate-900 mb-1">1. Οριζόντια Διάταξη (Κλασική):</div>
                   <p className="text-xs text-slate-600 mb-1.5">
-                    Γράφουμε τα πολυώνυμα σε παρενθέσεις στη σειρά, απαλείφουμε τις παρενθέσεις και κάνουμε αναγωγή ομοίων όρων.
+                    Γράφουμε τα πολυώνυμα σε παρενθέσεις στη σειρά, απαλείφουμε τις παρενθέσεις και κάνουμε αναγωγή ομοίων όρων[cite: 52].
                   </p>
                   <div className="font-mono text-xs text-slate-800 bg-white p-2 rounded border border-slate-200">
                     (4 · x² ＋ 3) － (x² － 2) ＝ 4 · x² ＋ 3 － x² ＋ 2 ＝ 3 · x² ＋ 5
@@ -228,7 +269,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
                   <div className="font-bold text-slate-900 mb-1">2. Κάθετη Διάταξη (Σε Στήλες):</div>
                   <p className="text-xs text-slate-600 mb-1.5">
-                    Τοποθετούμε τα πολυώνυμα σε κανονική μορφή το ένα κάτω από το άλλο, στοιχίζοντας τους όμοιους όρους στην ίδια κατακόρυφη στήλη:
+                    Τοποθετούμε τα πολυώνυμα σε κανονική μορφή το ένα κάτω από το άλλο, στοιχίζοντας τους όμοιους όρους στην ίδια κατακόρυφη στήλη[cite: 52]:
                   </p>
                   <div className="font-mono text-xs text-indigo-900 bg-white p-2 rounded border border-slate-200 leading-relaxed">
                     &nbsp;&nbsp; 4 · x² ＋ 5 · x － 2 <br />
@@ -262,8 +303,8 @@ export default function ProsthesiAfairesiPolionimonTheory() {
 
               <div className="space-y-2 text-xs sm:text-sm text-slate-700">
                 <div className="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                  <strong>Διαφορετικοί Βαθμοί:</strong> Ο βαθμός του αποτελέσματος ισούται πάντοτε με τον μεγαλύτερο βαθμό. <br />
-                  <span className="font-mono text-indigo-900 font-bold">Π.χ. (3ου βαθμού) ± (2ου βαθμού) ＝ 3ου βαθμού.</span>
+                  <strong>Διαφορετικοί Βαθμοί:</strong> Ο βαθμός του αποτελέσματος ισούται πάντοτε με τον μεγαλύτερο βαθμό[cite: 52]. <br />
+                  <span className="font-mono text-indigo-900 font-bold">Π.χ. (3ου βαθμού) ± (2ου βαθμού) ＝ 3ου βαθμού[cite: 52].</span>
                 </div>
                 <div className="p-2.5 sm:p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-950">
                   <strong>Ίδιοι Βαθμοί (Πιθανή Ελάττωση):</strong> Αν οι μεγιστοβάθμιοι όροι είναι αντίθετοι, αλληλοεξουδετερώνονται και ο βαθμός <strong>μικραίνει</strong>: <br />
@@ -277,7 +318,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
 
         </div>
 
-        {/* INTERACTIVE LAB - ΠΛΗΡΩΣ ΔΙΟΡΘΩΜΕΝΑ SLIDERS */}
+        {/* INTERACTIVE LAB - ΑΠΟΛΥΤΩΣ ΔΙΟΡΘΩΜΕΝΑ SLIDERS ΜΕ ΕΓΓΥΗΜΕΝΟ TRACK FILL */}
         <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 border border-slate-200 shadow-md mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100">
             <div>
@@ -318,125 +359,73 @@ export default function ProsthesiAfairesiPolionimonTheory() {
               
               {/* Πολυώνυμο P(x) */}
               <div>
-                <h3 className="text-xs font-black text-indigo-900 uppercase tracking-wider mb-2.5">
+                <h3 className="text-xs font-black text-indigo-900 uppercase tracking-wider mb-3">
                   {toCleanUppercase("ΣΥΝΤΕΛΕΣΤΕΣ ΠΟΛΥΩΝΥΜΟΥ P(x)")}
                 </h3>
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <label htmlFor="slider-p-a1">Όρος x² (a₁):</label>
-                      <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{a1}</span>
-                    </div>
-                    <input
-                      id="slider-p-a1"
-                      name="p-a1"
-                      type="range"
-                      min="-4"
-                      max="4"
-                      step="1"
-                      value={a1}
-                      onChange={(e) => setA1(Number(e.target.value) || 0)}
-                      className="w-full accent-indigo-600 cursor-pointer"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <label htmlFor="slider-p-b1">Όρος x (b₁):</label>
-                      <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{b1}</span>
-                    </div>
-                    <input
-                      id="slider-p-b1"
-                      name="p-b1"
-                      type="range"
-                      min="-4"
-                      max="4"
-                      step="1"
-                      value={b1}
-                      onChange={(e) => setB1(Number(e.target.value) || 0)}
-                      className="w-full accent-indigo-600 cursor-pointer"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <label htmlFor="slider-p-c1">Σταθερός c₁:</label>
-                      <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{c1}</span>
-                    </div>
-                    <input
-                      id="slider-p-c1"
-                      name="p-c1"
-                      type="range"
-                      min="-5"
-                      max="5"
-                      step="1"
-                      value={c1}
-                      onChange={(e) => setC1(Number(e.target.value) || 0)}
-                      className="w-full accent-indigo-600 cursor-pointer"
-                    />
-                  </div>
+                <div className="space-y-3.5">
+                  <RangeSlider
+                    id="slider-p-a1"
+                    label="Όρος x² (a₁):"
+                    min={-4}
+                    max={4}
+                    value={a1}
+                    onChange={setA1}
+                    color="#4f46e5"
+                  />
+                  <RangeSlider
+                    id="slider-p-b1"
+                    label="Όρος x (b₁):"
+                    min={-4}
+                    max={4}
+                    value={b1}
+                    onChange={setB1}
+                    color="#4f46e5"
+                  />
+                  <RangeSlider
+                    id="slider-p-c1"
+                    label="Σταθερός c₁:"
+                    min={-5}
+                    max={5}
+                    value={c1}
+                    onChange={setC1}
+                    color="#4f46e5"
+                  />
                 </div>
               </div>
 
               {/* Πολυώνυμο Q(x) */}
-              <div className="pt-3 border-t border-slate-200">
-                <h3 className="text-xs font-black text-indigo-900 uppercase tracking-wider mb-2.5">
+              <div className="pt-4 border-t border-slate-200">
+                <h3 className="text-xs font-black text-blue-900 uppercase tracking-wider mb-3">
                   {toCleanUppercase("ΣΥΝΤΕΛΕΣΤΕΣ ΠΟΛΥΩΝΥΜΟΥ Q(x)")}
                 </h3>
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <label htmlFor="slider-q-a2">Όρος x² (a₂):</label>
-                      <span className="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{a2}</span>
-                    </div>
-                    <input
-                      id="slider-q-a2"
-                      name="q-a2"
-                      type="range"
-                      min="-4"
-                      max="4"
-                      step="1"
-                      value={a2}
-                      onChange={(e) => setA2(Number(e.target.value) || 0)}
-                      className="w-full accent-blue-600 cursor-pointer"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <label htmlFor="slider-q-b2">Όρος x (b₂):</label>
-                      <span className="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{b2}</span>
-                    </div>
-                    <input
-                      id="slider-q-b2"
-                      name="q-b2"
-                      type="range"
-                      min="-4"
-                      max="4"
-                      step="1"
-                      value={b2}
-                      onChange={(e) => setB2(Number(e.target.value) || 0)}
-                      className="w-full accent-blue-600 cursor-pointer"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <label htmlFor="slider-q-c2">Σταθερός c₂:</label>
-                      <span className="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{c2}</span>
-                    </div>
-                    <input
-                      id="slider-q-c2"
-                      name="q-c2"
-                      type="range"
-                      min="-5"
-                      max="5"
-                      step="1"
-                      value={c2}
-                      onChange={(e) => setC2(Number(e.target.value) || 0)}
-                      className="w-full accent-blue-600 cursor-pointer"
-                    />
-                  </div>
+                <div className="space-y-3.5">
+                  <RangeSlider
+                    id="slider-q-a2"
+                    label="Όρος x² (a₂):"
+                    min={-4}
+                    max={4}
+                    value={a2}
+                    onChange={setA2}
+                    color="#2563eb"
+                  />
+                  <RangeSlider
+                    id="slider-q-b2"
+                    label="Όρος x (b₂):"
+                    min={-4}
+                    max={4}
+                    value={b2}
+                    onChange={setB2}
+                    color="#2563eb"
+                  />
+                  <RangeSlider
+                    id="slider-q-c2"
+                    label="Σταθερός c₂:"
+                    min={-5}
+                    max={5}
+                    value={c2}
+                    onChange={setC2}
+                    color="#2563eb"
+                  />
                 </div>
               </div>
             </div>
