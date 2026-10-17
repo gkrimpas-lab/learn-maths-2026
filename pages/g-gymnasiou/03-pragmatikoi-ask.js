@@ -87,7 +87,7 @@ function ensureFourUniqueOptions(correct, distractorsGen) {
 const PROBLEM_POOL_Q9 = [
   () => {
     return {
-      title: 'Σύγκριση √7 και 2,6',
+      title: 'Σύγκριση Ρίζας με Ρητό',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Ποια είναι η σωστή σχέση διάταξης ανάμεσα στον άρρητο <Radical>7</Radical> και τον ρητό αριθμό 2,6;
@@ -103,16 +103,20 @@ const PROBLEM_POOL_Q9 = [
         return opt;
       },
       tableData: [
-        { label: 'Τετράγωνο του √7', details: '(√7)² ＝ 7' },
+        { label: 'Τετράγωνο της ρίζας', details: '7' },
         { label: 'Τετράγωνο του 2,6', details: '2,6² ＝ 6,76' },
-        { label: 'Σύγκριση', details: '7 ＞ 6,76 => √7 ＞ 2,6' }
+        { label: 'Σύγκριση', details: '7 ＞ 6,76' }
       ],
-      explanation: 'Υψώνουμε στο τετράγωνο: (√7)² ＝ 7 και 2,6² ＝ 6,76. Επειδή 7 ＞ 6,76, ισχύει √7 ＞ 2,6.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Υψώνουμε στο τετράγωνο: (<Radical>7</Radical>)² ＝ 7 και 2,6² ＝ 6,76. Επειδή 7 ＞ 6,76, ισχύει <Radical>7</Radical> ＞ 2,6.
+        </span>
+      )
     };
   },
   () => {
     return {
-      title: 'Σύγκριση √10 και 3,2',
+      title: 'Σύγκριση Ρίζας με Ρητό',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Ποια είναι η σωστή σχέση διάταξης ανάμεσα στον άρρητο <Radical>10</Radical> και τον ρητό αριθμό 3,2;
@@ -128,16 +132,20 @@ const PROBLEM_POOL_Q9 = [
         return opt;
       },
       tableData: [
-        { label: 'Τετράγωνο του √10', details: '(√10)² ＝ 10' },
+        { label: 'Τετράγωνο της ρίζας', details: '10' },
         { label: 'Τετράγωνο του 3,2', details: '3,2² ＝ 10,24' },
-        { label: 'Σύγκριση', details: '10 ＜ 10,24 => √10 ＜ 3,2' }
+        { label: 'Σύγκριση', details: '10 ＜ 10,24' }
       ],
-      explanation: '(√10)² ＝ 10 και 3,2² ＝ 10,24. Επειδή 10 ＜ 10,24, ισχύει √10 ＜ 3,2.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          (<Radical>10</Radical>)² ＝ 10 και 3,2² ＝ 10,24. Επειδή 10 ＜ 10,24, ισχύει <Radical>10</Radical> ＜ 3,2.
+        </span>
+      )
     };
   },
   () => {
     return {
-      title: 'Σύγκριση √3 και 1,7',
+      title: 'Σύγκριση Ρίζας με Ρητό',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Ποια είναι η σωστή σχέση διάταξης ανάμεσα στον άρρητο <Radical>3</Radical> και τον ρητό αριθμό 1,7;
@@ -153,16 +161,20 @@ const PROBLEM_POOL_Q9 = [
         return opt;
       },
       tableData: [
-        { label: 'Τετράγωνο του √3', details: '(√3)² ＝ 3' },
+        { label: 'Τετράγωνο της ρίζας', details: '3' },
         { label: 'Τετράγωνο του 1,7', details: '1,7² ＝ 2,89' },
-        { label: 'Σύγκριση', details: '3 ＞ 2,89 => √3 ＞ 1,7' }
+        { label: 'Σύγκριση', details: '3 ＞ 2,89' }
       ],
-      explanation: '(√3)² ＝ 3 και 1,7² ＝ 2,89. Επειδή 3 ＞ 2,89, ισχύει √3 ＞ 1,7.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          (<Radical>3</Radical>)² ＝ 3 και 1,7² ＝ 2,89. Επειδή 3 ＞ 2,89, ισχύει <Radical>3</Radical> ＞ 1,7.
+        </span>
+      )
     };
   },
   () => {
     return {
-      title: 'Σύγκριση √5 και 2,3',
+      title: 'Σύγκριση Ρίζας με Ρητό',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Ποια είναι η σωστή σχέση διάταξης ανάμεσα στον άρρητο <Radical>5</Radical> και τον ρητό αριθμό 2,3;
@@ -178,11 +190,15 @@ const PROBLEM_POOL_Q9 = [
         return opt;
       },
       tableData: [
-        { label: 'Τετράγωνο του √5', details: '(√5)² ＝ 5' },
+        { label: 'Τετράγωνο της ρίζας', details: '5' },
         { label: 'Τετράγωνο του 2,3', details: '2,3² ＝ 5,29' },
-        { label: 'Σύγκριση', details: '5 ＜ 5,29 => √5 ＜ 2,3' }
+        { label: 'Σύγκριση', details: '5 ＜ 5,29' }
       ],
-      explanation: '(√5)² ＝ 5 και 2,3² ＝ 5,29. Επειδή 5 ＜ 5,29, ισχύει √5 ＜ 2,3.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          (<Radical>5</Radical>)² ＝ 5 και 2,3² ＝ 5,29. Επειδή 5 ＜ 5,29, ισχύει <Radical>5</Radical> ＜ 2,3.
+        </span>
+      )
     };
   },
   () => {
@@ -207,7 +223,11 @@ const PROBLEM_POOL_Q9 = [
         { label: 'Κανόνας αρνητικών', details: 'Αν α ＜ β τότε －α ＞ －β' },
         { label: 'Σύγκριση', details: '－√2 ＞ －1,5' }
       ],
-      explanation: 'Επειδή √2 ≈ 1,414 ＜ 1,5, αλλάζοντας πρόσημο η φορά της ανισότητας αντιστρέφεται: －√2 ＞ －1,5.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Επειδή <Radical>2</Radical> ≈ 1,414 ＜ 1,5, αλλάζοντας πρόσημο η φορά της ανισότητας αντιστρέφεται: －<Radical>2</Radical> ＞ －1,5.
+        </span>
+      )
     };
   },
   () => {
@@ -230,9 +250,13 @@ const PROBLEM_POOL_Q9 = [
       tableData: [
         { label: 'Αριθμός π', details: 'π ≈ 3,14159...' },
         { label: 'Κλάσμα 22/7', details: '22/7 ≈ 3,14285...' },
-        { label: 'Σύγκριση', details: '3,14159... ＜ 3,14285... => π ＜ 22/7' }
+        { label: 'Σύγκριση', details: '3,14159... ＜ 3,14285...' }
       ],
-      explanation: 'Ο αριθμός π ισούται με 3,14159... ενώ το κλάσμα 22/7 ισούται με 3,14285... Επομένως π ＜ 22/7.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Ο αριθμός π ισούται με 3,14159... ενώ το κλάσμα <Frac num="22" den="7" /> ισούται με 3,14285... Επομένως π ＜ <Frac num="22" den="7" />.
+        </span>
+      )
     };
   }
 ];
@@ -241,7 +265,7 @@ const PROBLEM_POOL_Q9 = [
 const PROBLEM_POOL_Q10 = [
   () => {
     return {
-      title: 'Σύνολο του √36',
+      title: 'Σύνολο Αριθμού',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Σε ποιο από τα παρακάτω σύνολα ανήκει ο αριθμός <Radical>36</Radical>;
@@ -251,15 +275,19 @@ const PROBLEM_POOL_Q10 = [
       type: 'mcq',
       distractors: () => ['Μόνο στους Άρρητους', 'Μόνο στους Αρνητικούς', 'Σε κανένα σύνολο'][randInt(0, 2)],
       tableData: [
-        { label: 'Υπολογισμός', details: '√36 ＝ 6' },
-        { label: 'Σύνολο', details: 'Το 6 είναι φυσικός αριθμός (6 ∈ ℕ)' }
+        { label: 'Υπολογισμός', details: '6' },
+        { label: 'Σύνολο', details: 'Το 6 ανήκει στο ℕ' }
       ],
-      explanation: 'Επειδή 6² ＝ 36, ισχύει √36 ＝ 6, που είναι φυσικός αριθμός.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Επειδή 6² ＝ 36, ισχύει <Radical>36</Radical> ＝ 6, που είναι φυσικός αριθμός.
+        </span>
+      )
     };
   },
   () => {
     return {
-      title: 'Σύνολο του －10/2',
+      title: 'Σύνολο Κλάσματος',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Ποιο είναι το μικρότερο αριθμητικό σύνολο στο οποίο ανήκει ο αριθμός <Frac num="－10" den="2" />;
@@ -269,29 +297,33 @@ const PROBLEM_POOL_Q10 = [
       type: 'mcq',
       distractors: () => ['ℕ (Φυσικοί αριθμοί)', 'Άρρητοι αριθμοί', 'Μόνο στο ℝ'][randInt(0, 2)],
       tableData: [
-        { label: 'Υπολογισμός', details: '－10 / 2 ＝ －5' },
-        { label: 'Σύνολο', details: 'Το －5 είναι αρνητικός ακέραιος (－5 ∈ ℤ)' }
+        { label: 'Υπολογισμός', details: '－5' },
+        { label: 'Σύνολο', details: 'Το －5 ανήκει στο ℤ' }
       ],
-      explanation: 'Το κλάσμα απλοποιείται σε －10 / 2 ＝ －5, που είναι ακέραιος αριθμός.'
+      explanation: 'Το κλάσμα απλοποιείται σε －5, που είναι ακέραιος αριθμός.'
     };
   },
   () => {
     return {
-      title: 'Σύνολο του 0,777...',
+      title: 'Σύνολο Περιοδικού',
       prompt: 'Σε ποιο σύνολο ανήκει ο περιοδικός δεκαδικός αριθμός 0,777...;',
       correct: 'ℚ (Ρητοί αριθμοί)',
       type: 'mcq',
       distractors: () => ['Άρρητοι αριθμοί', 'ℤ (Ακέραιοι αριθμοί)', 'ℕ (Φυσικοί αριθμοί)'][randInt(0, 2)],
       tableData: [
-        { label: 'Κλασματική μορφή', details: '0,777... ＝ 7/9' },
-        { label: 'Σύνολο', details: '7/9 ∈ ℚ (Ρητός)' }
+        { label: 'Κλασματική μορφή', details: '7/9' },
+        { label: 'Σύνολο', details: 'Ανήκει στο ℚ' }
       ],
-      explanation: 'Κάθε περιοδικός δεκαδικός γράφεται ως κλάσμα (0,777... ＝ 7/9), άρα είναι ρητός αριθμός.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Κάθε περιοδικός δεκαδικός γράφεται ως κλάσμα (0,777... ＝ <Frac num="7" den="9" />), άρα είναι ρητός αριθμός.
+        </span>
+      )
     };
   },
   () => {
     return {
-      title: 'Σύνολο του √8',
+      title: 'Σύνολο Ρίζας',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Ο αριθμός <Radical>8</Radical> ανήκει στο σύνολο:
@@ -302,9 +334,13 @@ const PROBLEM_POOL_Q10 = [
       distractors: () => ['ℚ (Ρητοί αριθμοί)', 'ℤ (Ακέραιοι αριθμοί)', 'ℕ (Φυσικοί αριθμοί)'][randInt(0, 2)],
       tableData: [
         { label: 'Έλεγχος τετραγώνου', details: 'Το 8 δεν είναι τέλειο τετράγωνο' },
-        { label: 'Σύνολο', details: '√8 ∈ Άρρητοι (και συνεπώς √8 ∈ ℝ)' }
+        { label: 'Σύνολο', details: 'Άρρητος αριθμός' }
       ],
-      explanation: 'Το 8 δεν είναι τέλειο τετράγωνο φυσικού αριθμού, άρα η τετραγωνική του ρίζα είναι άρρητος αριθμός.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Το 8 δεν είναι τέλειο τετράγωνο φυσικού αριθμού, άρα η τετραγωνική του ρίζα <Radical>8</Radical> είναι άρρητος αριθμός.
+        </span>
+      )
     };
   },
   () => {
@@ -316,7 +352,7 @@ const PROBLEM_POOL_Q10 = [
       distractors: () => ['Μόνο στους Ακέραιους', 'Μόνο στους Ρητούς', 'Στους Άρρητους'][randInt(0, 2)],
       tableData: [
         { label: 'Σύνολο ℕ', details: 'ℕ ＝ {0, 1, 2, 3, ...}' },
-        { label: 'Συμπέρασμα', details: 'Το 0 ανήκει στους φυσικούς αριθμούς' }
+        { label: 'Συμπέρασμα', details: 'Το 0 ανήκει στους φυσικούς' }
       ],
       explanation: 'Σύμφωνα με το σχολικό βιβλίο, το 0 είναι φυσικός αριθμός (0 ∈ ℕ).'
     };
@@ -329,8 +365,8 @@ const PROBLEM_POOL_Q10 = [
       type: 'mcq',
       distractors: () => ['ℚ (Ρητοί αριθμοί)', 'ℤ (Ακέραιοι αριθμοί)', 'ℕ (Φυσικοί αριθμοί)'][randInt(0, 2)],
       tableData: [
-        { label: 'Δεκαδική μορφή', details: '3,14159... (άπειρα ψηφία χωρίς περίοδο)' },
-        { label: 'Σύνολο', details: 'π ∈ Άρρητοι' }
+        { label: 'Δεκαδική μορφή', details: '3,14159... (χωρίς περίοδο)' },
+        { label: 'Σύνολο', details: 'Άρρητος' }
       ],
       explanation: 'Ο αριθμός π έχει αποδειχθεί ότι είναι άρρητος αριθμός.'
     };
@@ -361,7 +397,11 @@ const PROBLEM_POOL_Q11 = [
         { label: '|1,5|', details: '1,5' },
         { label: '|－2|', details: '2' }
       ],
-      explanation: 'Η απόσταση από το μηδέν ισούται με την απόλυτη τιμή. Η μικρότερη απόλυτη τιμή είναι του 1/2 (0,5).'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Η απόσταση από το μηδέν ισούται με την απόλυτη τιμή. Η μικρότερη απόλυτη τιμή είναι του <Frac num="1" den="2" /> (0,5).
+        </span>
+      )
     };
   },
   () => {
@@ -393,7 +433,7 @@ const PROBLEM_POOL_Q11 = [
   },
   () => {
     return {
-      title: 'Ακέραιοι ανάμεσα σε －√5 και √5',
+      title: 'Ακέραιοι ανάμεσα σε Ρίζες',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Πόσοι ΑΚΕΡΑΙΟΙ αριθμοί βρίσκονται ανάμεσα στο －<Radical>5</Radical> και στο <Radical>5</Radical>;
@@ -402,16 +442,20 @@ const PROBLEM_POOL_Q11 = [
       correct: 5,
       type: 'input',
       tableData: [
-        { label: 'Τιμή του √5', details: '√5 ≈ 2,236' },
+        { label: 'Τιμή της ρίζας', details: '≈ 2,236' },
         { label: 'Διάστημα', details: '－2,236 ＜ x ＜ 2,236' },
         { label: 'Ακέραιοι', details: '－2, －1, 0, 1, 2 (συνολικά 5)' }
       ],
-      explanation: 'Οι ακέραιοι που ικανοποιούν －2,236 ＜ x ＜ 2,236 είναι οι: －2, －1, 0, 1, 2 (δηλαδή 5 ακέραιοι).'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Επειδή <Radical>5</Radical> ≈ 2,236, οι ακέραιοι που βρίσκονται ανάμεσα είναι οι －2, －1, 0, 1, 2 (συνολικά 5).
+        </span>
+      )
     };
   },
   () => {
     return {
-      title: 'Ακέραιοι ανάμεσα σε 0 και √17',
+      title: 'Φυσικοί Αριθμοί και Ρίζα',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Πόσοι ΦΥΣΙΚΟΙ αριθμοί είναι αυστηρά μικρότεροι από το <Radical>17</Radical>;
@@ -420,10 +464,14 @@ const PROBLEM_POOL_Q11 = [
       correct: 5,
       type: 'input',
       tableData: [
-        { label: 'Τιμή του √17', details: '4² ＝ 16 ＜ 17 ＜ 25 ＝ 5² => √17 ≈ 4,12' },
-        { label: 'Φυσικοί αριθμοί', details: '0, 1, 2, 3, 4 (συνολικά 5 φυσικοί)' }
+        { label: 'Τιμή της ρίζας', details: '4² ＝ 16 ＜ 17 ＜ 25 ＝ 5²' },
+        { label: 'Φυσικοί αριθμοί', details: '0, 1, 2, 3, 4 (συνολικά 5)' }
       ],
-      explanation: 'Οι φυσικοί αριθμοί μικρότεροι από το √17 (≈ 4,12) είναι οι 0, 1, 2, 3, 4 (συνολικά 5).'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Οι φυσικοί αριθμοί μικρότεροι από το <Radical>17</Radical> (≈ 4,12) είναι οι 0, 1, 2, 3, 4 (συνολικά 5).
+        </span>
+      )
     };
   },
   () => {
@@ -478,10 +526,14 @@ const PROBLEM_POOL_Q12 = [
         return opt;
       },
       tableData: [
-        { label: 'Εμβαδόν 1ου', details: 'E₁ ＝ α² ＝ 8 => α ＝ √8 m' },
-        { label: 'Εμβαδόν 2ου', details: 'E₂ ＝ β² ＝ 9 => β ＝ 3 m' }
+        { label: 'Εμβαδόν 1ου', details: 'E₁ ＝ α² ＝ 8' },
+        { label: 'Πλευρά 1ου', details: 'α ＝ √8 m' }
       ],
-      explanation: 'Η πλευρά τετραγώνου με εμβαδόν 8 είναι √8 m (άρρητος αριθμός).'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Η πλευρά τετραγώνου με εμβαδόν 8 είναι <Radical>8</Radical> m (άρρητος αριθμός).
+        </span>
+      )
     };
   },
   () => {
@@ -504,9 +556,13 @@ const PROBLEM_POOL_Q12 = [
       },
       tableData: [
         { label: 'Αρχικός αριθμός', details: '3 － √2' },
-        { label: 'Αντίθετος', details: '－(3 － √2) ＝ －3 ＋ √2 ＝ √2 － 3' }
+        { label: 'Αντίθετος', details: '－(3 － √2) ＝ √2 － 3' }
       ],
-      explanation: 'Ο αντίθετος προκύπτει αλλάζοντας τα πρόσημα όλων των όρων: －(3 － √2) ＝ √2 － 3.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Ο αντίθετος προκύπτει αλλάζοντας τα πρόσημα όλων των όρων: －(3 － <Radical>2</Radical>) ＝ <Radical>2</Radical> － 3.
+        </span>
+      )
     };
   },
   () => {
@@ -521,8 +577,7 @@ const PROBLEM_POOL_Q12 = [
       type: 'input',
       tableData: [
         { label: 'Αριθμός', details: '√5' },
-        { label: 'Αντίστροφος', details: '1 / √5' },
-        { label: 'Γινόμενο', details: '√5 · (1 / √5) ＝ 1' }
+        { label: 'Γινόμενο με αντίστροφο', details: '1' }
       ],
       explanation: 'Το γινόμενο κάθε μη μηδενικού πραγματικού αριθμού με τον αντίστροφό του ισούται πάντοτε με 1.'
     };
@@ -545,16 +600,19 @@ const PROBLEM_POOL_Q12 = [
         return opt;
       },
       tableData: [
-        { label: 'Πρόσημο υπό απόλυτο', details: '√2 ≈ 1,414 ＜ 2 => √2 － 2 ＜ 0 (αρνητικό)' },
-        { label: 'Ορισμός απολύτου', details: '|x| ＝ －x όταν x ＜ 0' },
-        { label: 'Αποτέλεσμα', details: '－(√2 － 2) ＝ 2 － √2' }
+        { label: 'Πρόσημο υπό απόλυτο', details: '√2 ＜ 2 => √2 － 2 ＜ 0' },
+        { label: 'Ορισμός απολύτου', details: '|x| ＝ －x όταν x ＜ 0' }
       ],
-      explanation: 'Επειδή √2 ＜ 2, η διαφορά √2 － 2 είναι αρνητική. Άρα |√2 － 2| ＝ 2 － √2.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Επειδή <Radical>2</Radical> ＜ 2, η διαφορά <Radical>2</Radical> － 2 είναι αρνητική. Άρα |<Radical>2</Radical> － 2| ＝ 2 － <Radical>2</Radical>.
+        </span>
+      )
     };
   },
   () => {
     return {
-      title: 'Σύγκριση Κλασμάτων με Άρρητο',
+      title: 'Σύγκριση Κλασμάτων με Ρίζα',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
           Ποια είναι η σωστή σχέση ανάμεσα στον αριθμό <Frac num="1" den="2" /> και τον αριθμό <Frac num="1" den={<Radical>2</Radical>} />;
@@ -571,10 +629,13 @@ const PROBLEM_POOL_Q12 = [
       },
       tableData: [
         { label: 'Παρονομαστές', details: '2 ＞ √2 (αφού 4 ＞ 2)' },
-        { label: 'Κανόνας κλασμάτων', details: 'Με ίδιο αριθμητή, μεγαλύτερο είναι το κλάσμα με τον μικρότερο παρονομαστή' },
-        { label: 'Σύγκριση', details: '1/2 ＜ 1/√2' }
+        { label: 'Κανόνας κλασμάτων', details: 'Με ίδιο αριθμητή, μεγαλύτερο είναι το κλάσμα με τον μικρότερο παρονομαστή' }
       ],
-      explanation: 'Επειδή 2 ＞ √2, το κλάσμα με τον μικρότερο παρονομαστή είναι μεγαλύτερο: 1/2 ＜ 1/√2.'
+      explanation: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Επειδή 2 ＞ <Radical>2</Radical>, το κλάσμα με τον μικρότερο παρονομαστή είναι μεγαλύτερο: <Frac num="1" den="2" /> ＜ <Frac num="1" den={<Radical>2</Radical>} />.
+        </span>
+      )
     };
   }
 ];
@@ -628,7 +689,7 @@ export default function PragmatikoiExercises() {
         'Ο αριθμός μηδέν {0}',
         'Όλοι οι δεκαδικοί αριθμοί'
       ][randInt(0, 2)]),
-      explanation: 'Ένας αριθμός είναι είτε ρητός (έχει περίοδο ή τερματίζεται) είτε άρρητος (άπειρα ψηφία χωρίς περίοδο). Δεν μπορεί να είναι και τα δύο ταυτόχρονα.'
+      explanation: 'Ένας αριθμός είναι είτε ρητός είτε άρρητος. Δεν μπορεί να είναι και τα δύο ταυτόχρονα.'
     });
 
     // Q4: MCQ - Τετραγωνική ρίζα αρνητικού
@@ -647,7 +708,7 @@ export default function PragmatikoiExercises() {
         'Ισούται με 3',
         'Είναι άρρητος αριθμός'
       ][randInt(0, 2)]),
-      explanation: 'Στο σύνολο των πραγματικών αριθμών δεν ορίζεται τετραγωνική ρίζα αρνητικού αριθμού, καθώς κανενός πραγματικού το τετράγωνο δεν είναι αρνητικό.'
+      explanation: 'Στο σύνολο των πραγματικών αριθμών δεν ορίζεται τετραγωνική ρίζα αρνητικού αριθμού.'
     });
 
     // Q5: Input - Υπολογισμός ρίζας
@@ -661,7 +722,11 @@ export default function PragmatikoiExercises() {
       ),
       type: 'input',
       correct: 7,
-      explanation: 'Για κάθε μη αρνητικό αριθμό α, ισχύει (√α)² ＝ α. Άρα (√7)² ＝ 7.'
+      explanation: (
+        <span className="inline-flex items-center gap-1">
+          Για κάθε μη αρνητικό αριθμό α, ισχύει (<Radical>α</Radical>)² ＝ α. Άρα (<Radical>7</Radical>)² ＝ 7.
+        </span>
+      )
     });
 
     // Q6: MCQ - Αναγνώριση Άρρητου
@@ -709,7 +774,7 @@ export default function PragmatikoiExercises() {
         'Μόνο οι ρητοί αριθμοί μπορούν να τοποθετηθούν στον άξονα',
         'Κάθε σημείο της ευθείας παριστάνει τουλάχιστον δύο διαφορετικούς αριθμούς'
       ][randInt(0, 2)]),
-      explanation: 'Η αντιστοιχία ανάμεσα στα σημεία της ευθείας και τους πραγματικούς αριθμούς είναι αμφιμονοσήμαντη (1-προς-1), καλύπτοντας πλήρως τον άξονα.'
+      explanation: 'Η αντιστοιχία ανάμεσα στα σημεία της ευθείας και τους πραγματικούς αριθμούς είναι αμφιμονοσήμαντη (1-προς-1).'
     });
 
     // Q9 - Q12: Επιλογή από ανεξάρτητες δεξαμενές
@@ -1012,7 +1077,7 @@ export default function PragmatikoiExercises() {
                           {q.renderOption ? q.renderOption(q.correct) : q.correct} {q.unit || ''}
                         </span>
                       </div>
-                      <p>{q.explanation}</p>
+                      <div className="mt-1">{q.explanation}</div>
                     </div>
 
                   </div>
