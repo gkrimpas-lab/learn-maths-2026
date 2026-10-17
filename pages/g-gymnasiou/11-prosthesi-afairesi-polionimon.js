@@ -87,7 +87,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
   return (
     <Layout
       title="Πρόσθεση & Αφαίρεση Πολυωνύμων | Θεωρία Γ' Γυμνασίου"
-      description="Αναλυτική θεωρία για την πρόσθεση και αφαίρεση μονωνύμων και πολυωνύμων, αναγωγή ομοίων όρων, απαλοιφή παρενθέσεων και διαδραστικό εργαστήριο."
+      description="Αναλυτική θεωρία για την πρόσθεση και αφαίρεση πολυωνύμων, οριζόντια και κάθετη μέθοδος, αντίθετα πολυώνυμα, απαλοιφή παρενθέσεων και διαδραστικό εργαστήριο."
       backUrl="/g-gymnasiou"
       backText="Γ' Γυμνασίου"
       showAds={true}
@@ -112,7 +112,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
               Πρόσθεση & Αφαίρεση Πολυωνύμων
             </h1>
             <p className="text-xs sm:text-base lg:text-lg text-indigo-100 font-medium leading-relaxed mb-5 max-w-3xl">
-              Μάθετε πώς εκτελούμε προσθέσεις και αφαιρέσεις μεταξύ μονωνύμων και πολυωνύμων. Κατακτήστε την απαλοιφή παρενθέσεων, τον κανόνα των προσήμων και την αναγωγή ομοίων όρων.
+              Πώς συνδυάζουμε πολυώνυμα για να δημιουργήσουμε νέα; Κατακτήστε την οριζόντια και την κάθετη μέθοδο πρόσθεσης και αφαίρεσης, τη διαχείριση των αντιθέτων πολυωνύμων και τους ακριβείς κανόνες απαλοιφής παρενθέσεων.
             </p>
             <div>
               <Link
@@ -126,10 +126,10 @@ export default function ProsthesiAfairesiPolionimonTheory() {
           <div className="absolute -right-10 -bottom-10 w-72 sm:w-96 h-72 sm:h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         </section>
 
-        {/* 4 MODULAR CARDS ΘΕΩΡΙΑΣ */}
+        {/* 4 MODULAR CARDS ΘΕΩΡΙΑΣ - ΕΠΙΚΕΝΤΡΩΜΕΝΕΣ ΣΤΑ ΠΟΛΥΩΝΥΜΑ */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           
-          {/* ΒΗΜΑ 1 */}
+          {/* ΒΗΜΑ 1: Η ΕΝΝΟΙΑ ΤΗΣ ΠΡΟΣΘΕΣΗΣ ΚΑΙ ΑΦΑΙΡΕΣΗΣ ΠΟΛΥΩΝΥΜΩΝ */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -137,40 +137,34 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                   1
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Πρόσθεση & Αφαίρεση Μονωνύμων
+                  Πρόσθεση & Αφαίρεση Πολυωνύμων
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                Για να προσθέσουμε ή να αφαιρέσουμε μονώνυμα, αυτά πρέπει υποχρεωτικά να είναι <strong>όμοια</strong> (να έχουν δηλαδή ακριβώς το ίδιο κύριο μέρος).
+                Το <strong>άθροισμα</strong> και η <strong>διαφορά</strong> δύο πολυωνύμων $P(x)$ και $Q(x)$ είναι ένα νέο πολυώνυμο, το οποίο προκύπτει αν γράψουμε διαδοχικά τους όρους τους και εκτελέσουμε αναγωγή των όμοιων όρων.
               </p>
               
-              <div className="bg-slate-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-200 mb-3 text-xs sm:text-sm">
-                <h3 className="font-bold text-indigo-900 mb-1.5 uppercase tracking-wider">
-                  {toCleanUppercase("ΚΑΝΟΝΑΣ ΟΜΟΙΩΝ ΜΟΝΩΝΥΜΩΝ")}
-                </h3>
-                <p className="text-slate-700 leading-relaxed">
-                  Προσθέτουμε ή αφαιρούμε τους <strong>συντελεστές</strong> τους και κρατάμε το <strong>ίδιο κύριο μέρος</strong>:
-                </p>
-                <div className="p-2.5 bg-white rounded-xl border border-slate-200 font-mono font-bold text-indigo-700 mt-2 text-center text-sm sm:text-base">
-                  α · xⁿ ＋ β · xⁿ ＝ (α ＋ β) · xⁿ
+              <div className="space-y-2.5 mb-3 text-xs sm:text-sm text-slate-700">
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <span className="font-bold text-indigo-900 block mb-1">Πρόσθεση Πολυωνύμων:</span>
+                  Συνδέουμε τα πολυώνυμα με πρόσημο « ＋ ». Διαγράφουμε τις παρενθέσεις διατηρώντας όλα τα πρόσημα των όρων αναλλοίωτα:
+                  <div className="font-mono text-xs font-bold text-indigo-800 mt-1.5 p-2 bg-white rounded border border-slate-200">
+                    P(x) ＋ Q(x) ＝ (2 · x² ＋ 3 · x) ＋ (x² － 5 · x ＋ 4) ＝ 3 · x² － 2 · x ＋ 4
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-                <div className="p-2.5 sm:p-3 bg-indigo-50/60 rounded-xl border border-indigo-100">
-                  <strong>Παράδειγμα 1:</strong> 5 · x² ＋ 3 · x² ＝ (5 ＋ 3) · x² ＝ <strong>8 · x²</strong>
-                </div>
-                <div className="p-2.5 sm:p-3 bg-indigo-50/60 rounded-xl border border-indigo-100">
-                  <strong>Παράδειγμα 2:</strong> 4 · x · y － 9 · x · y ＝ (4 － 9) · x · y ＝ <strong>－5 · x · y</strong>
-                </div>
-                <div className="p-2.5 sm:p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-900">
-                  <strong>Προσοχή:</strong> 3 · x² ＋ 2 · x <strong>ΔΕΝ</strong> προστίθενται σε ένα ενιαίο μονώνυμο! Παραμένουν ως διώνυμο.
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <span className="font-bold text-indigo-900 block mb-1">Αφαίρεση Πολυωνύμων:</span>
+                  Η αφαίρεση $P(x) － Q(x)$ ισοδυναμεί με την πρόσθεση του $P(x)$ με το <strong>αντίθετο πολυώνυμο</strong> του $Q(x)$:
+                  <div className="font-mono text-xs font-bold text-indigo-800 mt-1.5 p-2 bg-white rounded border border-slate-200">
+                    P(x) － Q(x) ＝ P(x) ＋ [－Q(x)]
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* ΒΗΜΑ 2 */}
+          {/* ΒΗΜΑ 2: ΑΝΤΙΘΕΤΑ ΠΟΛΥΩΝΥΜΑ & ΑΠΑΛΟΙΦΗ ΠΑΡΕΝΘΕΣΕΩΝ */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -178,7 +172,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                   2
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Αντίθετα Πολυώνυμα
+                  Αντίθετο Πολυώνυμο & Κανόνας Προσήμων
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
@@ -187,22 +181,25 @@ export default function ProsthesiAfairesiPolionimonTheory() {
               
               <div className="bg-slate-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-200 mb-3 text-xs sm:text-sm">
                 <p className="text-slate-700 leading-relaxed">
-                  Το αντίθετο ενός πολυωνύμου <strong>P(x)</strong> συμβολίζεται ως <strong>－P(x)</strong> και προκύπτει αλλάζοντας τα πρόσημα <em>όλων των όρων του</em>.
+                  Το αντίθετο του πολυωνύμου <strong>Q(x)</strong> συμβολίζεται ως <strong>－Q(x)</strong> και σχηματίζεται <strong>αλλάζοντας τα πρόσημα όλων ανεξαιρέτως των όρων του</strong>:
                 </p>
-                <div className="mt-2.5 p-2.5 bg-white rounded-xl border border-slate-200 text-xs sm:text-sm font-mono">
-                  Αν P(x) ＝ 3 · x² － 5 · x ＋ 2, <br />
-                  τότε <strong>－P(x) ＝ －3 · x² ＋ 5 · x － 2</strong>
+                <div className="mt-2.5 p-2.5 bg-white rounded-xl border border-slate-200 text-xs sm:text-sm font-mono text-indigo-900">
+                  Αν Q(x) ＝ 2 · x² － 4 · x ＋ 7, <br />
+                  τότε <strong>－Q(x) ＝ －2 · x² ＋ 4 · x － 7</strong>
                 </div>
               </div>
 
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs sm:text-sm text-emerald-950">
-                <strong>Βασική Ιδιότητα:</strong> P(x) ＋ [－P(x)] ＝ <strong>0</strong>. <br />
-                Κάθε όρος του P(x) αλληλοεξουδετερώνεται με τον αντίστοιχο αντίθετο όρο του －P(x).
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs sm:text-sm text-amber-950">
+                <strong>Ο Κανόνας της Αφαίρεσης:</strong> <br />
+                Όταν αφαιρούμε ένα πολυώνυμο, διαγράφουμε το πλην και την παρένθεση και <strong>αντιστρέφουμε τα πρόσημα όλων των όρων</strong> μέσα σε αυτήν:
+                <div className="font-mono text-xs font-bold text-amber-900 mt-1">
+                  － (3 · x² － 2 · x ＋ 5) ＝ －3 · x² ＋ 2 · x － 5
+                </div>
               </div>
             </div>
           </div>
 
-          {/* ΒΗΜΑ 3 */}
+          {/* ΒΗΜΑ 3: ΜΕΘΟΔΟΙ ΥΠΟΛΟΓΙΣΜΟΥ (ΟΡΙΖΟΝΤΙΑ & ΚΑΘΕΤΗ) */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -210,38 +207,41 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                   3
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Κανόνες Απαλοιφής Παρενθέσεων
+                  Οριζόντια & Κάθετη Μέθοδος
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                Για να προσθέσουμε ή να αφαιρέσουμε δύο πολυώνυμα, τα τοποθετούμε σε παρενθέσεις και εφαρμόζουμε τους θεμελιώδεις κανόνες:
+                Σύμφωνα με το σχολικό βιβλίο, μπορούμε να εκτελέσουμε την πρόσθεση ή αφαίρεση πολυωνύμων με δύο ισοδύναμους τρόπους:
               </p>
 
               <div className="space-y-2.5 mb-3 text-xs sm:text-sm">
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl">
-                  <div className="font-bold text-slate-900 mb-1">1. Πρόσημο « ＋ » μπροστά από παρένθεση:</div>
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <div className="font-bold text-slate-900 mb-1">1. Οριζόντια Διάταξη (Κλασική):</div>
                   <p className="text-xs text-slate-600 mb-1.5">
-                    Διαγράφουμε την παρένθεση και το « ＋ » και διατηρούμε τα πρόσημα όλων των όρων όπως είναι.
+                    Γράφουμε τα πολυώνυμα σε παρενθέσεις στη σειρά, απαλείφουμε τις παρενθέσεις και κάνουμε αναγωγή ομοίων όρων.
                   </p>
-                  <div className="font-mono text-xs font-bold text-indigo-700 bg-white p-2 rounded border border-slate-200">
-                    ＋ (2 · x² － 3 · x ＋ 4) ＝ 2 · x² － 3 · x ＋ 4
+                  <div className="font-mono text-xs text-slate-800 bg-white p-2 rounded border border-slate-200">
+                    (4 · x² ＋ 3) － (x² － 2) ＝ 4 · x² ＋ 3 － x² ＋ 2 ＝ 3 · x² ＋ 5
                   </div>
                 </div>
 
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl sm:rounded-2xl">
-                  <div className="font-bold text-amber-950 mb-1">2. Πρόσημο « － » μπροστά από παρένθεση:</div>
-                  <p className="text-xs text-amber-800 mb-1.5">
-                    Διαγράφουμε την παρένθεση και το « － » και <strong>αντιστρέφουμε τα πρόσημα όλων των όρων</strong> μέσα σε αυτήν!
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <div className="font-bold text-slate-900 mb-1">2. Κάθετη Διάταξη (Σε Στήλες):</div>
+                  <p className="text-xs text-slate-600 mb-1.5">
+                    Τοποθετούμε τα πολυώνυμα σε κανονική μορφή το ένα κάτω από το άλλο, στοιχίζοντας τους όμοιους όρους στην ίδια κατακόρυφη στήλη:
                   </p>
-                  <div className="font-mono text-xs font-bold text-amber-900 bg-white p-2 rounded border border-amber-200">
-                    － (2 · x² － 3 · x ＋ 4) ＝ －2 · x² ＋ 3 · x － 4
+                  <div className="font-mono text-xs text-indigo-900 bg-white p-2 rounded border border-slate-200 leading-relaxed">
+                    &nbsp;&nbsp; 4 · x² ＋ 5 · x － 2 <br />
+                    ＋ (&nbsp; x² － 3 · x ＋ 6 ) <br />
+                    ────────────────────────── <br />
+                    &nbsp;&nbsp; 5 · x² ＋ 2 · x ＋ 4
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* ΒΗΜΑ 4 */}
+          {/* ΒΗΜΑ 4: ΒΑΘΜΟΣ ΑΘΡΟΙΣΜΑΤΟΣ ΚΑΙ ΔΙΑΦΟΡΑΣ */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -249,31 +249,27 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                   4
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Μεθοδολογία Επίλυσης σε 3 Βήματα
+                  Βαθμός Αθροίσματος & Διαφοράς
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                Η ολοκληρωμένη διαδικασία πρόσθεσης ή αφαίρεσης πολυωνύμων ακολουθεί πάντοτε τη σειρά:
+                Ο βαθμός του πολυωνύμου που προκύπτει από πρόσθεση ή αφαίρεση υπακούει σε έναν αυστηρό μαθηματικό κανόνα:
               </p>
 
+              <div className="bg-indigo-900 text-white rounded-xl sm:rounded-2xl p-4 mb-3 text-center shadow-inner font-mono text-xs sm:text-sm font-bold">
+                Βαθμός [ P(x) ± Q(x) ] ≤ max {`{`} Βαθμός P(x), Βαθμός Q(x) {`}`}
+              </div>
+
               <div className="space-y-2 text-xs sm:text-sm text-slate-700">
-                <div className="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2.5">
-                  <span className="font-black text-indigo-600">Α.</span>
-                  <div>
-                    <strong>Τοποθέτηση σε παρενθέσεις:</strong> Γράφουμε την παράσταση <em>P(x) ＋ Q(x)</em> ή <em>P(x) － Q(x)</em> προστατεύοντας κάθε πολυώνυμο.
-                  </div>
+                <div className="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <strong>Διαφορετικοί Βαθμοί:</strong> Ο βαθμός του αποτελέσματος ισούται πάντοτε με τον μεγαλύτερο βαθμό. <br />
+                  <span className="font-mono text-indigo-900 font-bold">Π.χ. (3ου βαθμού) ± (2ου βαθμού) ＝ 3ου βαθμού.</span>
                 </div>
-                <div className="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2.5">
-                  <span className="font-black text-indigo-600">Β.</span>
-                  <div>
-                    <strong>Απαλοιφή παρενθέσεων:</strong> Εφαρμόζουμε προσεκτικά τον κανόνα προσήμων (ειδικά για το μείον).
-                  </div>
-                </div>
-                <div className="p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2.5">
-                  <span className="font-black text-indigo-600">Γ.</span>
-                  <div>
-                    <strong>Αναγωγή ομοίων όρων & διάταξη:</strong> Ομαδοποιούμε τους όρους ανά δύναμη και γράφουμε σε φθίνουσα κανονική μορφή.
-                  </div>
+                <div className="p-2.5 sm:p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-950">
+                  <strong>Ίδιοι Βαθμοί (Πιθανή Ελάττωση):</strong> Αν οι μεγιστοβάθμιοι όροι είναι αντίθετοι, αλληλοεξουδετερώνονται και ο βαθμός <strong>μικραίνει</strong>: <br />
+                  <span className="font-mono font-bold text-amber-900">
+                    (2 · x² ＋ x) ＋ (－2 · x² ＋ 5) ＝ x ＋ 5 &nbsp;(1ου βαθμού!).
+                  </span>
                 </div>
               </div>
             </div>
