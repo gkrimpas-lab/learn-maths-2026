@@ -126,10 +126,10 @@ export default function ProsthesiAfairesiPolionimonTheory() {
           <div className="absolute -right-10 -bottom-10 w-72 sm:w-96 h-72 sm:h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         </section>
 
-        {/* 4 MODULAR CARDS ΘΕΩΡΙΑΣ - ΕΠΙΚΕΝΤΡΩΜΕΝΕΣ ΣΤΑ ΠΟΛΥΩΝΥΜΑ */}
+        {/* 4 MODULAR CARDS ΘΕΩΡΙΑΣ */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           
-          {/* ΒΗΜΑ 1: Η ΕΝΝΟΙΑ ΤΗΣ ΠΡΟΣΘΕΣΗΣ ΚΑΙ ΑΦΑΙΡΕΣΗΣ ΠΟΛΥΩΝΥΜΩΝ */}
+          {/* ΒΗΜΑ 1 */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -141,7 +141,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                Το <strong>άθροισμα</strong> και η <strong>διαφορά</strong> δύο πολυωνύμων $P(x)$ και $Q(x)$ είναι ένα νέο πολυώνυμο, το οποίο προκύπτει αν γράψουμε διαδοχικά τους όρους τους και εκτελέσουμε αναγωγή των όμοιων όρων.
+                Το <strong>άθροισμα</strong> και η <strong>διαφορά</strong> δύο πολυωνύμων P(x) και Q(x) είναι ένα νέο πολυώνυμο, το οποίο προκύπτει αν γράψουμε διαδοχικά τους όρους τους και εκτελέσουμε αναγωγή των όμοιων όρων.
               </p>
               
               <div className="space-y-2.5 mb-3 text-xs sm:text-sm text-slate-700">
@@ -155,7 +155,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
 
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
                   <span className="font-bold text-indigo-900 block mb-1">Αφαίρεση Πολυωνύμων:</span>
-                  Η αφαίρεση $P(x) － Q(x)$ ισοδυναμεί με την πρόσθεση του $P(x)$ με το <strong>αντίθετο πολυώνυμο</strong> του $Q(x)$:
+                  Η αφαίρεση P(x) － Q(x) ισοδυναμεί με την πρόσθεση του P(x) με το <strong>αντίθετο πολυώνυμο</strong> του Q(x):
                   <div className="font-mono text-xs font-bold text-indigo-800 mt-1.5 p-2 bg-white rounded border border-slate-200">
                     P(x) － Q(x) ＝ P(x) ＋ [－Q(x)]
                   </div>
@@ -164,7 +164,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
             </div>
           </div>
 
-          {/* ΒΗΜΑ 2: ΑΝΤΙΘΕΤΑ ΠΟΛΥΩΝΥΜΑ & ΑΠΑΛΟΙΦΗ ΠΑΡΕΝΘΕΣΕΩΝ */}
+          {/* ΒΗΜΑ 2 */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -199,7 +199,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
             </div>
           </div>
 
-          {/* ΒΗΜΑ 3: ΜΕΘΟΔΟΙ ΥΠΟΛΟΓΙΣΜΟΥ (ΟΡΙΖΟΝΤΙΑ & ΚΑΘΕΤΗ) */}
+          {/* ΒΗΜΑ 3 */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -211,7 +211,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                Σύμφωνα με το σχολικό βιβλίο, μπορούμε να εκτελέσουμε την πρόσθεση ή αφαίρεση πολυωνύμων με δύο ισοδύναμους τρόπους:
+                Μπορούμε να εκτελέσουμε την πρόσθεση ή αφαίρεση πολυωνύμων με δύο ισοδύναμους τρόπους:
               </p>
 
               <div className="space-y-2.5 mb-3 text-xs sm:text-sm">
@@ -241,7 +241,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
             </div>
           </div>
 
-          {/* ΒΗΜΑ 4: ΒΑΘΜΟΣ ΑΘΡΟΙΣΜΑΤΟΣ ΚΑΙ ΔΙΑΦΟΡΑΣ */}
+          {/* ΒΗΜΑ 4 */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -253,7 +253,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                Ο βαθμός του πολυωνύμου που προκύπτει από πρόσθεση ή αφαίρεση υπακούει σε έναν αυστηρό μαθηματικό κανόνα:
+                Ο βαθμός του πολυωνύμου που προκύπτει από πρόσθεση ή αφαίρεση υπακούει σε έναν αυστηρό κανόνα:
               </p>
 
               <div className="bg-indigo-900 text-white rounded-xl sm:rounded-2xl p-4 mb-3 text-center shadow-inner font-mono text-xs sm:text-sm font-bold">
@@ -277,7 +277,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
 
         </div>
 
-        {/* INTERACTIVE LAB - 100% RESPONSIVE NO-SCROLL */}
+        {/* INTERACTIVE LAB - ΠΛΗΡΩΣ ΔΙΟΡΘΩΜΕΝΑ SLIDERS */}
         <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 border border-slate-200 shadow-md mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100">
             <div>
@@ -291,6 +291,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
             {/* Operation Toggle Buttons */}
             <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold shrink-0">
               <button
+                type="button"
                 onClick={() => setOp('add')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   op === 'add' ? 'bg-indigo-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'
@@ -299,6 +300,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                 {toCleanUppercase("ΠΡΟΣΘΕΣΗ (＋)")}
               </button>
               <button
+                type="button"
                 onClick={() => setOp('sub')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   op === 'sub' ? 'bg-indigo-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'
@@ -313,6 +315,8 @@ export default function ProsthesiAfairesiPolionimonTheory() {
             
             {/* Sliders & Controls */}
             <div className="lg:col-span-5 space-y-5 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 w-full">
+              
+              {/* Πολυώνυμο P(x) */}
               <div>
                 <h3 className="text-xs font-black text-indigo-900 uppercase tracking-wider mb-2.5">
                   {toCleanUppercase("ΣΥΝΤΕΛΕΣΤΕΣ ΠΟΛΥΩΝΥΜΟΥ P(x)")}
@@ -320,28 +324,61 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <span>Όρος x² (a₁):</span>
+                      <label htmlFor="slider-p-a1">Όρος x² (a₁):</label>
                       <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{a1}</span>
                     </div>
-                    <input type="range" min="-4" max="4" step="1" value={a1} onChange={(e) => setA1(parseInt(e.target.value))} className="w-full accent-indigo-600 cursor-pointer" />
+                    <input
+                      id="slider-p-a1"
+                      name="p-a1"
+                      type="range"
+                      min="-4"
+                      max="4"
+                      step="1"
+                      value={a1}
+                      onChange={(e) => setA1(Number(e.target.value) || 0)}
+                      className="w-full accent-indigo-600 cursor-pointer"
+                    />
                   </div>
+
                   <div>
                     <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <span>Όρος x (b₁):</span>
+                      <label htmlFor="slider-p-b1">Όρος x (b₁):</label>
                       <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{b1}</span>
                     </div>
-                    <input type="range" min="-4" max="4" step="1" value={b1} onChange={(e) => setB1(parseInt(e.target.value))} className="w-full accent-indigo-600 cursor-pointer" />
+                    <input
+                      id="slider-p-b1"
+                      name="p-b1"
+                      type="range"
+                      min="-4"
+                      max="4"
+                      step="1"
+                      value={b1}
+                      onChange={(e) => setB1(Number(e.target.value) || 0)}
+                      className="w-full accent-indigo-600 cursor-pointer"
+                    />
                   </div>
+
                   <div>
                     <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <span>Σταθερός c₁:</span>
+                      <label htmlFor="slider-p-c1">Σταθερός c₁:</label>
                       <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{c1}</span>
                     </div>
-                    <input type="range" min="-5" max="5" step="1" value={c1} onChange={(e) => setC1(parseInt(e.target.value))} className="w-full accent-indigo-600 cursor-pointer" />
+                    <input
+                      id="slider-p-c1"
+                      name="p-c1"
+                      type="range"
+                      min="-5"
+                      max="5"
+                      step="1"
+                      value={c1}
+                      onChange={(e) => setC1(Number(e.target.value) || 0)}
+                      className="w-full accent-indigo-600 cursor-pointer"
+                    />
                   </div>
                 </div>
               </div>
 
+              {/* Πολυώνυμο Q(x) */}
               <div className="pt-3 border-t border-slate-200">
                 <h3 className="text-xs font-black text-indigo-900 uppercase tracking-wider mb-2.5">
                   {toCleanUppercase("ΣΥΝΤΕΛΕΣΤΕΣ ΠΟΛΥΩΝΥΜΟΥ Q(x)")}
@@ -349,24 +386,56 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <span>Όρος x² (a₂):</span>
+                      <label htmlFor="slider-q-a2">Όρος x² (a₂):</label>
                       <span className="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{a2}</span>
                     </div>
-                    <input type="range" min="-4" max="4" step="1" value={a2} onChange={(e) => setA2(parseInt(e.target.value))} className="w-full accent-blue-600 cursor-pointer" />
+                    <input
+                      id="slider-q-a2"
+                      name="q-a2"
+                      type="range"
+                      min="-4"
+                      max="4"
+                      step="1"
+                      value={a2}
+                      onChange={(e) => setA2(Number(e.target.value) || 0)}
+                      className="w-full accent-blue-600 cursor-pointer"
+                    />
                   </div>
+
                   <div>
                     <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <span>Όρος x (b₂):</span>
+                      <label htmlFor="slider-q-b2">Όρος x (b₂):</label>
                       <span className="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{b2}</span>
                     </div>
-                    <input type="range" min="-4" max="4" step="1" value={b2} onChange={(e) => setB2(parseInt(e.target.value))} className="w-full accent-blue-600 cursor-pointer" />
+                    <input
+                      id="slider-q-b2"
+                      name="q-b2"
+                      type="range"
+                      min="-4"
+                      max="4"
+                      step="1"
+                      value={b2}
+                      onChange={(e) => setB2(Number(e.target.value) || 0)}
+                      className="w-full accent-blue-600 cursor-pointer"
+                    />
                   </div>
+
                   <div>
                     <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                      <span>Σταθερός c₂:</span>
+                      <label htmlFor="slider-q-c2">Σταθερός c₂:</label>
                       <span className="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded border text-xs sm:text-sm">{c2}</span>
                     </div>
-                    <input type="range" min="-5" max="5" step="1" value={c2} onChange={(e) => setC2(parseInt(e.target.value))} className="w-full accent-blue-600 cursor-pointer" />
+                    <input
+                      id="slider-q-c2"
+                      name="q-c2"
+                      type="range"
+                      min="-5"
+                      max="5"
+                      step="1"
+                      value={c2}
+                      onChange={(e) => setC2(Number(e.target.value) || 0)}
+                      className="w-full accent-blue-600 cursor-pointer"
+                    />
                   </div>
                 </div>
               </div>
@@ -512,7 +581,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                         <td className="p-2 sm:p-2.5 font-bold text-indigo-700">10 · x</td>
                       </tr>
                       <tr>
-                        <td className="p-2 sm:p-2.5 font-sans font-semibold">x⁰</td>
+                        <td className="p-2 sm:p-2.5 font-semibold">x⁰</td>
                         <td className="p-2 sm:p-2.5">－7 － (＋1) ＝ －7 － 1</td>
                         <td className="p-2 sm:p-2.5 font-bold text-indigo-700">－8</td>
                       </tr>
