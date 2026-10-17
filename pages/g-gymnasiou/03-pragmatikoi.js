@@ -54,7 +54,7 @@ function Frac({ num, den, className = "" }) {
 // Δεδομένα για το διαδραστικό εργαστήριο
 const LAB_NUMBERS = [
   { id: 'sqrt2', label: '√2', value: 1.4142, display: <Radical>2</Radical>, approx: '≈ 1,414', minSet: 'Άρρητος', sets: ['Άρρητοι', 'ℝ'] },
-  { id: 'frac', label: '-3/2', value: -1.5, display: <><Frac num="－3" den="2" /></>, approx: '＝ －1,5', minSet: 'ℚ (Ρητός)', sets: ['ℚ', 'ℝ'] },
+  { id: 'frac', label: '-3/2', value: -1.5, display: <Frac num="－3" den="2" />, approx: '＝ －1,5', minSet: 'ℚ (Ρητός)', sets: ['ℚ', 'ℝ'] },
   { id: 'pi', label: 'π', value: 3.1415, display: 'π', approx: '≈ 3,1415', minSet: 'Άρρητος', sets: ['Άρρητοι', 'ℝ'] },
   { id: 'sqrt5', label: '√5', value: 2.236, display: <Radical>5</Radical>, approx: '≈ 2,236', minSet: 'Άρρητος', sets: ['Άρρητοι', 'ℝ'] },
   { id: 'int_neg', label: '-3', value: -3, display: '－3', approx: '＝ －3', minSet: 'ℤ (Ακέραιος)', sets: ['ℤ', 'ℚ', 'ℝ'] },
@@ -67,11 +67,12 @@ export default function PragmatikoiTheory() {
 
   const activeNum = LAB_NUMBERS.find(n => n.id === selectedNumId) || LAB_NUMBERS[0];
 
-  // Υπολογισμός θέσης x στον άξονα (κλίμακα από -4 έως +5, πλάτος SVG 0-600)
-  // Άξονας: κέντρο x=0 στο x=270, κλίμακα 60px ανά μονάδα
-  const originX = 270;
-  const unitPx = 60;
-  const pinX = originX + activeNum.value * unitPx;
+  // Παράμετροι άξονα στο SVG (viewBox: 0 0 500 110)
+  // Εύρος από -3,5 έως +4,5 ώστε το 0 να είναι στο κέντρο (x = 230)
+  // 1 μονάδα = 55px (χωράει απόλυτα χωρίς κανένα scroll σε οθόνες κινητών)
+  const originX = 230;
+  const unitPx = 55;
+  const pinX = Math.max(35, Math.min(465, originX + activeNum.value * unitPx));
 
   return (
     <Layout
@@ -262,7 +263,7 @@ export default function PragmatikoiTheory() {
 
         </div>
 
-        {/* INTERACTIVE LAB - ΑΞΟΝΑΣ ΠΡΑΓΜΑΤΙΚΩΝ ΑΡΙΘΜΩΝ */}
+        {/* INTERACTIVE LAB - ΑΞΟΝΑΣ ΧΩΡΙΣ SCROLL ΣΕ ΚΙΝΗΤΑ */}
         <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 border border-slate-200 shadow-md mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100">
             <div>
@@ -320,18 +321,18 @@ export default function PragmatikoiTheory() {
               </div>
             </div>
 
-            {/* Dynamic Interactive SVG Axis */}
+            {/* Dynamic Interactive SVG Axis - 100% Responsive ΧΩΡΙΣ SCROLL */}
             <div className="lg:col-span-7 flex flex-col gap-4 w-full">
               
-              <div className="p-4 sm:p-6 bg-slate-900 text-white rounded-2xl shadow-inner w-full overflow-x-auto">
-                <span className="text-[10px] sm:text-xs uppercase tracking-wider text-indigo-300 font-bold block mb-4">
+              <div className="p-4 sm:p-6 bg-slate-900 text-white rounded-2xl shadow-inner w-full">
+                <span className="text-[10px] sm:text-xs uppercase tracking-wider text-indigo-300 font-bold block mb-3">
                   {toCleanUppercase("ΟΠΤΙΚΟΣ ΑΞΟΝΑΣ ΠΡΑΓΜΑΤΙΚΩΝ ΑΡΙΘΜΩΝ x'Ox")}
                 </span>
 
-                <div className="min-w-[540px] py-6 relative">
-                  <svg viewBox="0 0 540 100" className="w-full h-auto overflow-visible select-none">
+                <div className="w-full py-2">
+                  <svg viewBox="0 0 500 110" className="w-full h-auto overflow-visible select-none">
                     {/* Main Axis Line */}
-                    <line x1="20" y1="50" x2="520" y2="50" stroke="#94a3b8" strokeWidth="2.5" markerEnd="url(#arrow)" />
+                    <line x1="15" y1="65" x2="485" y2="65" stroke="#94a3b8" strokeWidth="2.5" markerEnd="url(#arrow)" />
                     
                     {/* Arrow Marker */}
                     <defs>
@@ -340,14 +341,14 @@ export default function PragmatikoiTheory() {
                       </marker>
                     </defs>
 
-                    {/* Axis Ticks & Labels from -4 to +4 */}
-                    {[-4, -3, -2, -1, 0, 1, 2, 3, 4].map((tick) => {
+                    {/* Axis Ticks & Labels from -3 to +4 (πλήρως ορατά σε κάθε πλάτος οθόνης) */}
+                    {[-3, -2, -1, 0, 1, 2, 3, 4].map((tick) => {
                       const tx = originX + tick * unitPx;
                       const isZero = tick === 0;
                       return (
                         <g key={tick}>
-                          <line x1={tx} y1="42" x2={tx} y2="58" stroke={isZero ? "#38bdf8" : "#64748b"} strokeWidth={isZero ? "2.5" : "1.5"} />
-                          <text x={tx} y="75" textAnchor="middle" fill={isZero ? "#38bdf8" : "#94a3b8"} fontSize="12" fontFamily="monospace" fontWeight={isZero ? "bold" : "normal"}>
+                          <line x1={tx} y1="57" x2={tx} y2="73" stroke={isZero ? "#38bdf8" : "#64748b"} strokeWidth={isZero ? "2.5" : "1.5"} />
+                          <text x={tx} y="90" textAnchor="middle" fill={isZero ? "#38bdf8" : "#94a3b8"} fontSize="12" fontFamily="monospace" fontWeight={isZero ? "bold" : "normal"}>
                             {tick}
                           </text>
                         </g>
@@ -355,24 +356,24 @@ export default function PragmatikoiTheory() {
                     })}
 
                     {/* Active Selected Number Pin */}
-                    <g transform={`translate(${pinX}, 50)`} className="transition-all duration-300 ease-out">
+                    <g transform={`translate(${pinX}, 65)`} className="transition-all duration-300 ease-out">
                       {/* Pulse Circle */}
-                      <circle cx="0" cy="0" r="7" fill="#10b981" />
-                      <circle cx="0" cy="0" r="12" fill="#10b981" opacity="0.3" className="animate-ping" />
+                      <circle cx="0" cy="0" r="6" fill="#10b981" />
+                      <circle cx="0" cy="0" r="11" fill="#10b981" opacity="0.3" className="animate-ping" />
                       
                       {/* Vertical Pointer Line */}
                       <line x1="0" y1="0" x2="0" y2="-28" stroke="#10b981" strokeWidth="2" strokeDasharray="2 2" />
                       
                       {/* Floating Badge */}
-                      <rect x="-30" y="-46" width="60" height="22" rx="6" fill="#10b981" />
-                      <text x="0" y="-31" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="bold" fontFamily="monospace">
+                      <rect x="-28" y="-48" width="56" height="22" rx="6" fill="#10b981" />
+                      <text x="0" y="-33" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="bold" fontFamily="monospace">
                         {activeNum.label}
                       </text>
                     </g>
                   </svg>
                 </div>
 
-                <div className="text-[11px] sm:text-xs text-slate-400 mt-2 text-center">
+                <div className="text-[11px] sm:text-xs text-slate-400 mt-1 text-center">
                   Ο αριθμός <strong>{activeNum.label}</strong> {activeNum.value >= 0 ? 'βρίσκεται δεξιά' : 'βρίσκεται αριστερά'} από το μηδέν (O), με τετμημένη x ≈ {activeNum.value}.
                 </div>
               </div>
