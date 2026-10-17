@@ -14,13 +14,13 @@ function toCleanUppercase(str) {
   return str.split('').map(char => map[char] || char.toUpperCase()).join('');
 }
 
-// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum)
+// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum) - Responsive
 function Radical({ children, className = "" }) {
   return (
-    <span className={`inline-flex items-center align-middle font-mono ${className}`}>
+    <span className={`inline-flex items-center align-middle font-mono shrink-0 ${className}`}>
       <svg
         viewBox="0 0 12 24"
-        className="w-[0.55em] h-[1.15em] shrink-0 text-current overflow-visible"
+        className="w-[0.52em] h-[1.12em] shrink-0 text-current overflow-visible"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
@@ -32,6 +32,20 @@ function Radical({ children, className = "" }) {
       </svg>
       <span className="border-t-[1.8px] border-current pl-0.5 pr-1 py-0 leading-none text-[0.95em]">
         {children}
+      </span>
+    </span>
+  );
+}
+
+// Επαναχρησιμοποιήσιμο Component Κλάσματος (Fraction) - Responsive
+function Frac({ num, den, className = "" }) {
+  return (
+    <span className={`inline-flex flex-col items-center align-middle font-mono px-0.5 shrink-0 leading-none ${className}`}>
+      <span className="border-b-[1.5px] border-current px-0.5 pb-0.5 text-center text-[0.88em] w-full block">
+        {num}
+      </span>
+      <span className="px-0.5 pt-0.5 text-center text-[0.88em] w-full block">
+        {den}
       </span>
     </span>
   );
@@ -562,9 +576,9 @@ export default function MononimaPolionimaExercises() {
       explanation: 'Σύμφωνα με τον ορισμό, στα μονώνυμα οι εκθέτες των μεταβλητών είναι αποκλειστικά μη αρνητικοί ακέραιοι (φυσικοί αριθμοί: 0, 1, 2, ...).'
     });
 
-    // Q2: MCQ - Αναγνώριση Μονωνύμου
-    const validTerms = ['－5 · x² · y', '¾ · a · b³', '7 · x⁴'];
-    const invalidTerms = ['3 : x', 'x ＋ y', '2 · x⁻³'];
+    // Q2: MCQ - Αναγνώριση Μονωνύμου (Fixed: χρήση Frac αντί για 3:x)
+    const validTerms = ['－5·x²·y', '3/4·a·b³', '7·x⁴'];
+    const invalidTerms = ['3/x', 'x＋y', '2·x⁻³', '4·√x'];
     const q2Correct = validTerms[randInt(0, validTerms.length - 1)];
     qList.push({
       id: 2,
@@ -573,7 +587,17 @@ export default function MononimaPolionimaExercises() {
       type: 'mcq',
       correct: q2Correct,
       options: ensureFourUniqueOptions(q2Correct, () => invalidTerms[randInt(0, invalidTerms.length - 1)]),
-      explanation: `Μόνο η παράσταση «${q2Correct}» είναι μονώνυμο διότι περιλαμβάνει μόνο πολλαπλασιασμό μεταξύ αριθμών και μεταβλητών με φυσικούς εκθέτες.`
+      renderOption: (opt) => {
+        if (opt === '－5·x²·y') return <span>－5 · x² · y</span>;
+        if (opt === '3/4·a·b³') return <span className="inline-flex items-center gap-1"><Frac num="3" den="4" /> · a · b³</span>;
+        if (opt === '7·x⁴') return <span>7 · x⁴</span>;
+        if (opt === '3/x') return <Frac num="3" den="x" />;
+        if (opt === 'x＋y') return <span>x ＋ y</span>;
+        if (opt === '2·x⁻³') return <span>2 · x⁻³</span>;
+        if (opt === '4·√x') return <span className="inline-flex items-center gap-0.5">4 · <Radical>x</Radical></span>;
+        return opt;
+      },
+      explanation: 'Μονώνυμο είναι μόνο η ακέραια αλγεβρική παράσταση στην οποία μεταξύ των μεταβλητών σημειώνεται μόνο πολλαπλασιασμός με φυσικούς εκθέτες.'
     });
 
     // Q3: Input - Συντελεστής μονωνύμου
@@ -617,7 +641,7 @@ export default function MononimaPolionimaExercises() {
 
     // Q6: MCQ - Όμοια Μονώνυμα
     const baseVar = 'x² · y';
-    const similarTerms = [`4 · ${baseVar}`, `－7 · ${baseVar}`, `½ · ${baseVar}`];
+    const similarTerms = [`4 · ${baseVar}`, `－7 · ${baseVar}`, `1/2 · ${baseVar}`];
     const nonSimilar = [`4 · x · y²`, `3 · x²`, `5 · x³ · y`, `－2 · x · y`];
     const q6Correct = similarTerms[randInt(0, similarTerms.length - 1)];
     qList.push({
@@ -627,6 +651,12 @@ export default function MononimaPolionimaExercises() {
       type: 'mcq',
       correct: q6Correct,
       options: ensureFourUniqueOptions(q6Correct, () => nonSimilar[randInt(0, nonSimilar.length - 1)]),
+      renderOption: (opt) => {
+        if (opt.includes('1/2')) {
+          return <span className="inline-flex items-center gap-1"><Frac num="1" den="2" /> · x² · y</span>;
+        }
+        return opt;
+      },
       explanation: 'Όμοια λέγονται τα μονώνυμα που έχουν ακριβώς το ίδιο κύριο μέρος (τις ίδιες μεταβλητές με τους ίδιους εκθέτες).'
     });
 
@@ -740,32 +770,32 @@ export default function MononimaPolionimaExercises() {
       actionButton={
         <Link
           href="/g-gymnasiou/10-mononima-polionima"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition-all duration-200"
         >
           <span>📖 {toCleanUppercase("ΘΕΩΡΙΑ")}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800">
         
-        {/* Header Banner */}
-        <section className="bg-gradient-to-r from-indigo-900 to-blue-900 text-white rounded-3xl p-6 sm:p-10 mb-8 shadow-xl">
+        {/* Header Banner - Responsive */}
+        <section className="bg-gradient-to-r from-indigo-900 to-blue-900 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 mb-6 sm:mb-8 shadow-xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="px-3 py-1 bg-white/10 rounded-full text-indigo-200 text-xs font-bold uppercase tracking-wider border border-white/10">
+              <span className="px-2.5 py-1 bg-white/10 rounded-full text-indigo-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-white/10">
                 {toCleanUppercase("ΑΣΚΗΣΕΙΣ •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
               </span>
-              <h1 className="text-2xl sm:text-4xl font-black mt-2">
+              <h1 className="text-xl sm:text-3xl lg:text-4xl font-black mt-2 leading-tight">
                 Μονώνυμα & Πολυώνυμα: Εξάσκηση
               </h1>
-              <p className="text-indigo-200 text-sm sm:text-base mt-1">
+              <p className="text-indigo-200 text-xs sm:text-base mt-1">
                 12 δυναμικές ερωτήσεις και αυτούσια προβλήματα. Απαντήστε και πατήστε «Έλεγχος Απαντήσεων».
               </p>
             </div>
             <div>
               <button
                 onClick={loadNewSet}
-                className="px-5 py-2.5 bg-white text-indigo-900 hover:bg-indigo-50 font-bold rounded-xl shadow transition-all duration-150 text-sm whitespace-nowrap"
+                className="w-full sm:w-auto px-4 py-2.5 bg-white text-indigo-900 hover:bg-indigo-50 font-bold rounded-xl shadow transition-all duration-150 text-xs sm:text-sm whitespace-nowrap"
               >
                 🔄 {toCleanUppercase("ΝΕΕΣ ΑΣΚΗΣΕΙΣ")}
               </button>
@@ -775,11 +805,11 @@ export default function MononimaPolionimaExercises() {
 
         {/* Results Banner */}
         {submitted && (
-          <section className="p-6 sm:p-8 bg-white border-2 border-indigo-200 rounded-3xl shadow-lg mb-8 text-center animate-fade-in">
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mb-2">
+          <section className="p-5 sm:p-8 bg-white border-2 border-indigo-200 rounded-2xl sm:rounded-3xl shadow-lg mb-6 sm:mb-8 text-center animate-fade-in">
+            <h2 className="text-xl sm:text-3xl font-black text-slate-900 mb-2">
               Αποτέλεσμα: {score} / 12 ({Math.round((score / 12) * 100)}%)
             </h2>
-            <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto mb-4">
+            <p className="text-slate-600 text-xs sm:text-base max-w-xl mx-auto mb-4">
               {score >= 10
                 ? 'Εξαιρετική επίδοση! Κατανοείτε σε βάθος τα μονώνυμα και τις αλγεβρικές πράξεις.'
                 : score >= 6
@@ -788,7 +818,7 @@ export default function MononimaPolionimaExercises() {
             </p>
             <button
               onClick={loadNewSet}
-              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow transition"
+              className="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl sm:rounded-2xl shadow transition text-xs sm:text-sm"
             >
               🔄 {toCleanUppercase("ΔΟΚΙΜΑΣΤΕ ΝΕΟ ΣΕΤ")}
             </button>
@@ -796,7 +826,7 @@ export default function MononimaPolionimaExercises() {
         )}
 
         {/* Λίστα Ερωτήσεων */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {questions.map((q, idx) => {
             let isCorrect = false;
             if (submitted) {
@@ -812,7 +842,7 @@ export default function MononimaPolionimaExercises() {
             return (
               <div
                 key={q.id}
-                className={`bg-white rounded-3xl p-6 sm:p-8 border transition-all ${
+                className={`bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border transition-all ${
                   submitted
                     ? isCorrect
                       ? 'border-emerald-300 bg-emerald-50/20'
@@ -821,18 +851,18 @@ export default function MononimaPolionimaExercises() {
                 }`}
               >
                 {/* Header Ερώτησης */}
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm">
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-xs sm:text-sm shrink-0">
                       {idx + 1}
                     </span>
-                    <h3 className="font-bold text-base sm:text-lg text-slate-900">
+                    <h3 className="font-bold text-sm sm:text-lg text-slate-900 leading-snug">
                       {q.title}
                     </h3>
                   </div>
                   {submitted && (
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      className={`px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold shrink-0 ${
                         isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
                       }`}
                     >
@@ -842,14 +872,14 @@ export default function MononimaPolionimaExercises() {
                 </div>
 
                 {/* Εκφώνηση - No Giveaway */}
-                <p className="text-slate-800 text-sm sm:text-base leading-relaxed mb-6 font-medium">
+                <p className="text-slate-800 text-xs sm:text-base leading-relaxed mb-4 sm:mb-6 font-medium">
                   {q.prompt}
                 </p>
 
                 {/* Πεδία Απάντησης */}
-                <div className="mb-4">
+                <div className="mb-2">
                   {q.type === 'tf' && (
-                    <div className="grid grid-cols-2 gap-3 max-w-md">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3 max-w-xs sm:max-w-md">
                       {q.options.map(opt => {
                         const isSelected = userAnswers[q.id] === opt;
                         return (
@@ -857,7 +887,7 @@ export default function MononimaPolionimaExercises() {
                             key={opt}
                             disabled={submitted}
                             onClick={() => handleAnswerChange(q.id, opt)}
-                            className={`p-3 rounded-2xl font-bold text-sm border transition-all ${
+                            className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm border transition-all ${
                               isSelected
                                 ? 'bg-indigo-600 text-white border-indigo-600 shadow'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
@@ -871,7 +901,7 @@ export default function MononimaPolionimaExercises() {
                   )}
 
                   {q.type === 'mcq' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                       {q.options.map(opt => {
                         const isSelected = userAnswers[q.id] === opt;
                         return (
@@ -879,7 +909,7 @@ export default function MononimaPolionimaExercises() {
                             key={opt}
                             disabled={submitted}
                             onClick={() => handleAnswerChange(q.id, opt)}
-                            className={`p-4 rounded-2xl text-left border flex items-center gap-3 transition-all ${
+                            className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl text-left border flex items-center gap-2.5 transition-all min-h-[48px] sm:min-h-[56px] ${
                               isSelected
                                 ? 'bg-indigo-600 text-white border-indigo-600 shadow'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
@@ -892,8 +922,8 @@ export default function MononimaPolionimaExercises() {
                             >
                               {isSelected && <span className="w-2 h-2 rounded-full bg-indigo-600" />}
                             </span>
-                            <span className="break-words whitespace-normal leading-snug flex-1 font-semibold text-sm">
-                              {opt}
+                            <span className="break-words whitespace-normal leading-snug flex-1 font-semibold text-xs sm:text-sm">
+                              {q.renderOption ? q.renderOption(opt) : opt}
                             </span>
                           </button>
                         );
@@ -902,7 +932,7 @@ export default function MononimaPolionimaExercises() {
                   )}
 
                   {q.type === 'input' && (
-                    <div className="flex items-center gap-3 max-w-xs">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:max-w-xs">
                       <input
                         type="text"
                         disabled={submitted}
@@ -912,10 +942,10 @@ export default function MononimaPolionimaExercises() {
                           handleAnswerChange(q.id, sanitized);
                         }}
                         placeholder="Απάντηση..."
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono font-bold text-slate-900"
+                        className="w-full px-3.5 py-2 sm:px-4 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono font-bold text-slate-900 text-xs sm:text-sm"
                       />
                       {q.unit && (
-                        <span className="text-sm font-bold text-slate-500 whitespace-nowrap">
+                        <span className="text-xs sm:text-sm font-bold text-slate-500 whitespace-nowrap">
                           {q.unit}
                         </span>
                       )}
@@ -923,23 +953,23 @@ export default function MononimaPolionimaExercises() {
                   )}
                 </div>
 
-                {/* FEEDBACK SECTION */}
+                {/* FEEDBACK SECTION - SAFE SCROLL TABLES */}
                 {submitted && (
-                  <div className="mt-6 pt-6 border-t border-slate-200 space-y-4 animate-fade-in">
+                  <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-slate-200 space-y-3 animate-fade-in">
                     {q.tableData && q.tableData.length > 0 && (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-xs text-left border border-slate-200 rounded-xl overflow-hidden bg-white">
+                      <div className="overflow-x-auto -mx-1 sm:mx-0 rounded-xl border border-slate-200 bg-white">
+                        <table className="w-full text-xs text-left min-w-[280px]">
                           <thead className="bg-slate-100 text-slate-700 font-bold">
                             <tr>
                               <th className="p-2 border-b">Στοιχείο / Βήμα</th>
                               <th className="p-2 border-b">Ανάλυση Δεδομένων</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-100">
+                          <tbody className="divide-y divide-slate-100 text-[11px] sm:text-xs">
                             {q.tableData.map((row, rIdx) => (
                               <tr key={rIdx}>
                                 <td className="p-2 font-semibold text-slate-800">{row.label}</td>
-                                <td className="p-2 font-mono text-indigo-900">{row.details}</td>
+                                <td className="p-2 font-mono text-indigo-900 break-words">{row.details}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -947,9 +977,12 @@ export default function MononimaPolionimaExercises() {
                       </div>
                     )}
 
-                    <div className="p-4 bg-slate-100/70 rounded-2xl text-xs sm:text-sm text-slate-800 leading-relaxed">
-                      <div className="font-bold text-slate-900 mb-1">
-                        Σωστή Απάντηση: <span className="font-mono text-emerald-700">{q.correct} {q.unit || ''}</span>
+                    <div className="p-3 sm:p-4 bg-slate-100/70 rounded-xl sm:rounded-2xl text-xs sm:text-sm text-slate-800 leading-relaxed">
+                      <div className="font-bold text-slate-900 mb-1 flex flex-wrap items-center gap-1.5">
+                        <span>Σωστή Απάντηση:</span>
+                        <span className="font-mono text-emerald-700 font-bold inline-flex items-center gap-1">
+                          {q.renderOption ? q.renderOption(q.correct) : q.correct} {q.unit || ''}
+                        </span>
                       </div>
                       <p>{q.explanation}</p>
                     </div>
@@ -962,40 +995,40 @@ export default function MononimaPolionimaExercises() {
           })}
         </div>
 
-        {/* STICKY BOTTOM FOOTER */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 sm:py-4 shadow-2xl">
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-            <div>
+        {/* STICKY BOTTOM FOOTER - MOBILE OPTIMIZED */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 sm:px-4 py-2.5 sm:py-4 shadow-2xl">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+            <div className="min-w-0">
               {!submitted ? (
-                <div className="text-xs sm:text-sm font-bold text-slate-700">
+                <div className="text-[11px] sm:text-sm font-bold text-slate-700 truncate">
                   {toCleanUppercase("ΑΠΑΝΤΗΘΗΚΑΝ")}: <span className="text-indigo-600 font-black">{answeredCount}</span> / 12
                 </div>
               ) : (
-                <div className="flex items-center gap-3 text-xs sm:text-sm font-black">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 text-[11px] sm:text-sm font-black">
                   <span className="text-emerald-700">{toCleanUppercase("ΣΚΟΡ")}: {score} / 12</span>
-                  <span className="text-slate-400">|</span>
-                  <span className="text-indigo-700">{toCleanUppercase("ΠΟΣΟΣΤΟ")}: {Math.round((score / 12) * 100)}%</span>
+                  <span className="hidden xs:inline text-slate-400">|</span>
+                  <span className="text-indigo-700">{Math.round((score / 12) * 100)}%</span>
                 </div>
               )}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="shrink-0 flex items-center gap-2">
               {!submitted ? (
                 <button
                   onClick={handleSubmit}
                   disabled={answeredCount === 0}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                  className={`px-3.5 py-2 sm:px-6 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all whitespace-nowrap ${
                     answeredCount > 0
                       ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md'
                       : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                   }`}
                 >
-                  {toCleanUppercase("ΕΛΕΓΧΟΣ ΑΠΑΝΤΗΣΕΩΝ")}
+                  {toCleanUppercase("ΕΛΕΓΧΟΣ")}
                 </button>
               ) : (
                 <button
                   onClick={loadNewSet}
-                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-md transition"
+                  className="px-3.5 py-2 sm:px-6 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition whitespace-nowrap"
                 >
                   {toCleanUppercase("ΝΕΕΣ ΑΣΚΗΣΕΙΣ")}
                 </button>
