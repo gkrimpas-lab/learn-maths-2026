@@ -52,87 +52,114 @@ function Frac({ num, den, className = "" }) {
 }
 
 export default function DinameisPragmatikonTheory() {
-  // State για το διαδραστικό εργαστήριο υπολογισμού δύναμης a^n
-  const [baseType, setBaseType] = useState('integer'); // 'integer', 'negative', 'frac', 'radical'
-  const [exponent, setExponent] = useState(2); // -3 έως 4
+  // State για το διαδραστικό εργαστήριο
+  const [mode, setMode] = useState('custom'); // 'presets' ή 'custom'
+  const [customBaseInput, setCustomBaseInput] = useState('2,5');
+  const [baseType, setBaseType] = useState('integer'); // για presets
+  const [exponent, setExponent] = useState(3); // από -5 έως 10
 
-  // Ρύθμιση δεδομένων βάσης
-  let baseLabel = '2';
-  let baseVal = 2;
-  let baseDisplay = '2';
+  // Καθαρισμός και υπολογισμός βάσης για το custom input
+  let parsedBase = 0;
+  let isValidBase = true;
+  let customDisplayStr = customBaseInput;
 
-  if (baseType === 'negative') {
-    baseLabel = '(－2)';
-    baseVal = -2;
-    baseDisplay = '(－2)';
-  } else if (baseType === 'frac') {
-    baseLabel = '(1/2)';
-    baseVal = 0.5;
-    baseDisplay = <span className="inline-flex items-center">(<Frac num="1" den="2" />)</span>;
-  } else if (baseType === 'radical') {
-    baseLabel = '(√3)';
-    baseVal = Math.sqrt(3);
-    baseDisplay = <span className="inline-flex items-center">(<Radical>3</Radical>)</span>;
-  }
-
-  // Υπολογισμός αποτελέσματος
-  let resultDisplay = '';
-  let ruleNote = '';
-
-  if (exponent === 0) {
-    resultDisplay = '1';
-    ruleNote = 'Κάθε πραγματικός αριθμός α ≠ 0 υψωμένος στο μηδέν ισούται με 1: α⁰ ＝ 1.';
-  } else if (baseType === 'radical') {
-    if (exponent === 2) {
-      resultDisplay = '3';
-      ruleNote = 'Η τετραγωνική ρίζα υψωμένη στο τετράγωνο εξουδετερώνεται: (√3)² ＝ 3.';
-    } else if (exponent === 4) {
-      resultDisplay = '9';
-      ruleNote = '((√3)²)² ＝ 3² ＝ 9.';
-    } else if (exponent === -2) {
-      resultDisplay = <Frac num="1" den="3" />;
-      ruleNote = '(√3)⁻² ＝ 1 / (√3)² ＝ 1/3.';
-    } else {
-      const calc = Math.pow(baseVal, exponent);
-      resultDisplay = `≈ ${calc.toFixed(3)}`;
-      ruleNote = `Υπολογισμός ρίζας με εκθέτη ${exponent}.`;
-    }
-  } else if (baseType === 'frac') {
-    if (exponent > 0) {
-      const p = Math.pow(2, exponent);
-      resultDisplay = <Frac num="1" den={p} />;
-      ruleNote = `(1/2)ⁿ ＝ 1ⁿ / 2ⁿ ＝ 1 / ${p}.`;
-    } else {
-      const posExp = Math.abs(exponent);
-      const p = Math.pow(2, posExp);
-      resultDisplay = `${p}`;
-      ruleNote = `(1/2)⁻ⁿ ＝ (2/1)ⁿ ＝ 2ⁿ ＝ ${p}. (Αντιστροφή κλάσματος).`;
-    }
-  } else if (baseType === 'negative') {
-    const isEven = exponent % 2 === 0;
-    if (exponent > 0) {
-      const p = Math.pow(2, exponent);
-      resultDisplay = isEven ? `${p}` : `－${p}`;
-      ruleNote = isEven 
-        ? 'Άρτιος εκθέτης: Το αποτέλεσμα είναι πάντοτε θετικό (＋).'
-        : 'Περιττός εκθέτης: Το αποτέλεσμα διατηρεί το αρνητικό πρόσημο (－).';
-    } else {
-      const posExp = Math.abs(exponent);
-      const p = Math.pow(2, posExp);
-      resultDisplay = isEven ? <Frac num="1" den={p} /> : <Frac num="－1" den={p} />;
-      ruleNote = `(－2)⁻ⁿ ＝ 1 / (－2)ⁿ. Το πρόσημο εξαρτάται από το αν ο εκθέτης είναι άρτιος ή περιττός.`;
+  if (mode === 'custom') {
+    const sanitized = customBaseInput.replace(',', '.').trim();
+    parsedBase = parseFloat(sanitized);
+    if (isNaN(parsedBase)) {
+      isValidBase = false;
+      parsedBase = 0;
     }
   } else {
-    // Θετικός ακέραιος 2
-    if (exponent > 0) {
-      resultDisplay = `${Math.pow(2, exponent)}`;
-      ruleNote = `2ⁿ ＝ ${Array(exponent).fill(2).join(' · ')} ＝ ${Math.pow(2, exponent)}.`;
+    if (baseType === 'negative') {
+      parsedBase = -2;
+      customDisplayStr = '(－2)';
+    } else if (baseType === 'frac') {
+      parsedBase = 0.5;
+      customDisplayStr = '(1/2)';
+    } else if (baseType === 'radical') {
+      parsedBase = Math.sqrt(3);
+      customDisplayStr = '(√3)';
     } else {
-      const p = Math.pow(2, Math.abs(exponent));
-      resultDisplay = <Frac num="1" den={p} />;
-      ruleNote = `2⁻ⁿ ＝ 1 / 2ⁿ ＝ 1 / ${p}.`;
+      parsedBase = 2;
+      customDisplayStr = '2';
     }
   }
+
+  // Ασφαλής υπολογισμός δύναμης
+  let resultOutput = '';
+  let scientificForm = '';
+  let ruleNote = '';
+
+  if (!isValidBase) {
+    resultOutput = 'Μη έγκυρος αριθμός';
+    ruleNote = 'Παρακαλούμε εισάγετε έναν πραγματικό αριθμό (π.χ. -12,345 ή 2,5).';
+  } else if (parsedBase === 0 && exponent <= 0) {
+    resultOutput = 'Δεν ορίζεται';
+    ruleNote = 'Η δύναμη 0⁰ καθώς και η διαίρεση με το μηδέν (0⁻ⁿ) δεν ορίζονται στα μαθηματικά.';
+  } else if (exponent === 0) {
+    resultOutput = '1';
+    ruleNote = 'Κάθε πραγματικός αριθμός α ≠ 0 υψωμένος στο μηδέν ισούται με 1 (α⁰ ＝ 1).';
+  } else {
+    const rawVal = Math.pow(parsedBase, exponent);
+    
+    // Έλεγχος υπερχείλισης
+    if (!isFinite(rawVal)) {
+      resultOutput = 'Πολύ μεγάλος αριθμός (Υπερχείλιση)';
+    } else {
+      // Μορφοποίηση δεκαδικού
+      if (Math.abs(rawVal) >= 1e7 || (Math.abs(rawVal) < 1e-4 && rawVal !== 0)) {
+        scientificForm = rawVal.toExponential(4).replace('e+', ' · 10⁺').replace('e-', ' · 10⁻');
+        resultOutput = rawVal.toLocaleString('el-GR', { maximumFractionDigits: 6 });
+      } else {
+        resultOutput = rawVal.toLocaleString('el-GR', { maximumFractionDigits: 6 });
+      }
+
+      // Κανόνες επεξήγησης
+      if (parsedBase < 0) {
+        const isEven = Math.abs(exponent) % 2 === 0;
+        ruleNote = isEven 
+          ? `Αρνητική βάση με άρτιο εκθέτη (${exponent}): Το αποτέλεσμα είναι πάντα θετικό (＋).`
+          : `Αρνητική βάση με περιττό εκθέτη (${exponent}): Το αποτέλεσμα παραμένει αρνητικό (－).`;
+      } else if (exponent < 0) {
+        ruleNote = `Αρνητικός εκθέτης (${exponent}): Αντιστρέφει τη βάση (α⁻ⁿ ＝ 1 / αⁿ).`;
+      } else {
+        ruleNote = `Κανονικός πολλαπλασιασμός της βάσης ${customDisplayStr} με τον εαυτό της ${exponent} φορές.`;
+      }
+    }
+  }
+
+  // Sanitizer για input: Επιτρέπει προαιρετικό πρόσημο '-', έως 3 ακέραια και έως 3 δεκαδικά
+  const handleCustomInputChange = (val) => {
+    // Επιτρέπει μόνο αριθμούς, κόμμα, τελεία και μείον στην αρχή
+    let clean = val.replace(/[^0-9.,-]/g, '');
+    
+    // Μόνο ένα μείον στην αρχή
+    if (clean.indexOf('-') > 0) {
+      clean = clean.replace(/-/g, '');
+    }
+    const hasMinus = clean.startsWith('-');
+    if (hasMinus) clean = '-' + clean.substring(1).replace(/-/g, '');
+
+    // Μόνο μία υποδιαστολή
+    const parts = clean.split(/[,.]/);
+    if (parts.length > 2) {
+      clean = parts[0] + ',' + parts.slice(1).join('');
+    }
+
+    // Περιορισμός: έως 3 ψηφία ακέραιο μέρος, έως 3 ψηφία δεκαδικό μέρος
+    let intPart = parts[0].replace('-', '');
+    if (intPart.length > 3) intPart = intPart.substring(0, 3);
+    const signPrefix = hasMinus ? '-' : '';
+
+    if (parts.length === 2) {
+      let decPart = parts[1];
+      if (decPart.length > 3) decPart = decPart.substring(0, 3);
+      setCustomBaseInput(`${signPrefix}${intPart},${decPart}`);
+    } else {
+      setCustomBaseInput(`${signPrefix}${intPart}`);
+    }
+  };
 
   return (
     <Layout
@@ -342,7 +369,7 @@ export default function DinameisPragmatikonTheory() {
 
         </div>
 
-        {/* INTERACTIVE LAB - 100% RESPONSIVE XΩΡΙΣ SCROLL */}
+        {/* INTERACTIVE LAB - ΑΝΑΒΑΘΜΙΣΜΕΝΟ ΜΕ ΕΚΘΕΤΗ ΕΩΣ 10 ΚΑΙ CUSTOM INPUT 3+3 ΨΗΦΙΩΝ */}
         <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 border border-slate-200 shadow-md mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100">
             <div>
@@ -350,89 +377,139 @@ export default function DinameisPragmatikonTheory() {
                 🔬 {toCleanUppercase("ΕΡΓΑΣΤΗΡΙΟ ΔΥΝΑΜΕΩΝ")}
               </div>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900">
-                Εξερεύνηση της Δύναμης αⁿ
+                Δυναμικός Υπολογιστής Δύναμης αⁿ
               </h2>
             </div>
-            <div className="text-xs text-slate-500 max-w-xs">
-              Επιλέξτε τη βάση και ρυθμίστε τον ακέραιο εκθέτη για να δείτε ζωντανά την εφαρμογή των κανόνων.
+            {/* Mode Selector */}
+            <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold shrink-0">
+              <button
+                onClick={() => setMode('custom')}
+                className={`px-3 py-1.5 rounded-lg transition-all ${
+                  mode === 'custom' ? 'bg-indigo-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Δική σας Βάση (±999,999)
+              </button>
+              <button
+                onClick={() => setMode('presets')}
+                className={`px-3 py-1.5 rounded-lg transition-all ${
+                  mode === 'presets' ? 'bg-indigo-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Κλασικές Βάσεις
+              </button>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             
             {/* Controls */}
-            <div className="lg:col-span-5 space-y-4 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 w-full">
-              <div>
-                <label className="text-xs sm:text-sm font-bold text-slate-700 block mb-2">
-                  Επιλέξτε Βάση (α):
-                </label>
-                <div className="grid grid-cols-2 gap-2 text-xs font-bold">
-                  <button
-                    onClick={() => setBaseType('integer')}
-                    className={`p-2.5 rounded-xl border transition-all flex items-center justify-center min-h-[44px] ${
-                      baseType === 'integer'
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow'
-                        : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
-                    }`}
-                  >
-                    Θετικός: 2
-                  </button>
-
-                  <button
-                    onClick={() => setBaseType('negative')}
-                    className={`p-2.5 rounded-xl border transition-all flex items-center justify-center min-h-[44px] ${
-                      baseType === 'negative'
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow'
-                        : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
-                    }`}
-                  >
-                    Αρνητικός: (－2)
-                  </button>
-
-                  <button
-                    onClick={() => setBaseType('frac')}
-                    className={`p-2.5 rounded-xl border transition-all flex items-center justify-center min-h-[44px] ${
-                      baseType === 'frac'
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow'
-                        : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
-                    }`}
-                  >
-                    Κλάσμα: <Frac num="1" den="2" className="ml-1" />
-                  </button>
-
-                  <button
-                    onClick={() => setBaseType('radical')}
-                    className={`p-2.5 rounded-xl border transition-all flex items-center justify-center min-h-[44px] ${
-                      baseType === 'radical'
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow'
-                        : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
-                    }`}
-                  >
-                    Ρίζα: <Radical className="ml-1">3</Radical>
-                  </button>
+            <div className="lg:col-span-5 space-y-5 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 w-full">
+              
+              {mode === 'custom' ? (
+                <div>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="text-xs sm:text-sm font-bold text-slate-700">
+                      Εισαγωγή Βάσης (α):
+                    </label>
+                    <span className="text-[11px] text-slate-400 font-mono">έως 3 ακέραια, 3 δεκαδικά</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={customBaseInput}
+                    onChange={(e) => handleCustomInputChange(e.target.value)}
+                    placeholder="π.χ. -12,345 ή 2,5"
+                    className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl font-mono font-bold text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                  />
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {['-2', '0,5', '1,2', '10', '-0,4'].map(pre => (
+                      <button
+                        key={pre}
+                        onClick={() => setCustomBaseInput(pre)}
+                        className="px-2 py-0.5 bg-white border border-slate-200 rounded-lg text-xs font-mono font-semibold text-slate-600 hover:border-indigo-400"
+                      >
+                        {pre}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div>
+                  <label className="text-xs sm:text-sm font-bold text-slate-700 block mb-2">
+                    Επιλέξτε Κλασική Βάση:
+                  </label>
+                  <div className="grid grid-cols-2 gap-2 text-xs font-bold">
+                    <button
+                      onClick={() => setBaseType('integer')}
+                      className={`p-2.5 rounded-xl border transition-all flex items-center justify-center min-h-[44px] ${
+                        baseType === 'integer'
+                          ? 'bg-indigo-600 text-white border-indigo-600 shadow'
+                          : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      Θετικός: 2
+                    </button>
 
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs sm:text-sm font-bold text-slate-700">Εκθέτης (n):</label>
-                  <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border border-slate-200 text-xs sm:text-sm">
-                    {exponent}
+                    <button
+                      onClick={() => setBaseType('negative')}
+                      className={`p-2.5 rounded-xl border transition-all flex items-center justify-center min-h-[44px] ${
+                        baseType === 'negative'
+                          ? 'bg-indigo-600 text-white border-indigo-600 shadow'
+                          : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      Αρνητικός: (－2)
+                    </button>
+
+                    <button
+                      onClick={() => setBaseType('frac')}
+                      className={`p-2.5 rounded-xl border transition-all flex items-center justify-center min-h-[44px] ${
+                        baseType === 'frac'
+                          ? 'bg-indigo-600 text-white border-indigo-600 shadow'
+                          : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      Κλάσμα: <Frac num="1" den="2" className="ml-1" />
+                    </button>
+
+                    <button
+                      onClick={() => setBaseType('radical')}
+                      className={`p-2.5 rounded-xl border transition-all flex items-center justify-center min-h-[44px] ${
+                        baseType === 'radical'
+                          ? 'bg-indigo-600 text-white border-indigo-600 shadow'
+                          : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      Ρίζα: <Radical className="ml-1">3</Radical>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Slider Εκθέτη από -5 έως 10 */}
+              <div className="pt-2 border-t border-slate-200">
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="text-xs sm:text-sm font-bold text-slate-700">
+                    Εκθέτης (n):
+                  </label>
+                  <span className="font-mono font-bold text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 text-xs sm:text-sm shadow-sm">
+                    {exponent > 0 ? `＋${exponent}` : exponent}
                   </span>
                 </div>
                 <input
                   type="range"
-                  min="-3"
-                  max="4"
+                  min="-5"
+                  max="10"
                   step="1"
                   value={exponent}
                   onChange={(e) => setExponent(parseInt(e.target.value))}
                   className="w-full accent-indigo-600 cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-0.5">
-                  <span>－3</span>
+                <div className="flex justify-between text-[11px] text-slate-400 font-mono mt-1">
+                  <span>－5</span>
                   <span>0</span>
-                  <span>＋4</span>
+                  <span>＋5</span>
+                  <span>＋10</span>
                 </div>
               </div>
             </div>
@@ -446,13 +523,25 @@ export default function DinameisPragmatikonTheory() {
                 </span>
                 <div className="text-xl sm:text-3xl lg:text-4xl font-mono font-black flex flex-wrap items-center justify-center gap-2 py-1">
                   <span className="inline-flex items-center">
-                    {baseDisplay}<sup className="text-xs sm:text-base text-amber-300 ml-0.5">{exponent}</sup>
+                    {mode === 'custom' ? (
+                      parsedBase < 0 ? `(${customBaseInput})` : customBaseInput
+                    ) : (
+                      baseDisplay
+                    )}
+                    <sup className="text-xs sm:text-base text-amber-300 ml-0.5">{exponent}</sup>
                   </span>
                   <span className="text-indigo-400">＝</span>
-                  <span className="text-emerald-400 inline-flex items-center">
-                    {resultDisplay}
+                  <span className="text-emerald-400 inline-flex items-center break-all">
+                    {resultOutput}
                   </span>
                 </div>
+
+                {scientificForm && (
+                  <div className="mt-3 pt-3 border-t border-indigo-800 text-xs sm:text-sm font-mono text-indigo-200">
+                    <span className="text-slate-400 block text-[10px] uppercase">Τυποποιημένη μορφή:</span>
+                    <span className="font-bold text-amber-300 text-sm sm:text-base">{scientificForm}</span>
+                  </div>
+                )}
               </div>
 
               {/* Επεξήγηση κανόνα */}
