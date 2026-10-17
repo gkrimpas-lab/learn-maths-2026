@@ -83,396 +83,258 @@ function ensureFourUniqueOptions(correct, distractorsGen) {
 
 // ==================== ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q9 - Q12) ====================
 
-// POOL Q9: Υπολογισμός δυνάμεων με αρνητικούς εκθέτες & κλάσματα (6 μοναδικά σενάρια)
+// POOL Q9: Σύνθετη Απλοποίηση Παραστάσεων Δυνάμεων (Βάσεις 2, 3, 5)
 const PROBLEM_POOL_Q9 = [
+  // 1. Παράσταση μορφής (2^a * 2^b)^c / 2^d
   () => {
-    const n = randInt(2, 4);
-    const p = Math.pow(2, n);
+    const a = randInt(2, 4);
+    const b = randInt(1, 3);
+    const expNum = (a - b) * 2;
+    const d = expNum - randInt(1, 2);
+    const finalExp = expNum - d;
+    const finalVal = Math.pow(2, finalExp);
     return {
-      title: 'Αρνητικός Εκθέτης Ακεραίου',
-      prompt: `Ποιο είναι το αποτέλεσμα της δύναμης 2⁻${n === 2 ? '²' : n === 3 ? '³' : '⁴'};`,
-      correct: `1/${p}`,
-      type: 'mcq',
-      distractors: () => [`－${p}`, `－${2 * n}`, `1/${2 * n}`][randInt(0, 2)],
-      renderOption: (opt) => {
-        const parts = String(opt).split('/');
-        return parts.length === 2 ? <Frac num={parts[0]} den={parts[1]} /> : opt;
-      },
-      tableData: [
-        { label: 'Ορισμός', details: `α⁻ⁿ ＝ 1 / αⁿ` },
-        { label: 'Εφαρμογή', details: `2⁻${n} ＝ 1 / 2${n === 2 ? '²' : n === 3 ? '³' : '⁴'} ＝ 1 / ${p}` }
-      ],
-      explanation: `Ο αρνητικός εκθέτης σημαίνει αντιστροφή της βάσης: 2⁻${n} ＝ 1 / 2${n === 2 ? '²' : n === 3 ? '³' : '⁴'} ＝ 1/${p}.`
-    };
-  },
-  () => {
-    const n = randInt(2, 3);
-    const p = Math.pow(3, n);
-    return {
-      title: 'Αρνητικός Εκθέτης με Βάση 3',
-      prompt: `Ποιο είναι το αποτέλεσμα της δύναμης 3⁻${n === 2 ? '²' : '³'};`,
-      correct: `1/${p}`,
-      type: 'mcq',
-      distractors: () => [`－${p}`, `1/${3 * n}`, `－${3 * n}`][randInt(0, 2)],
-      renderOption: (opt) => {
-        const parts = String(opt).split('/');
-        return parts.length === 2 ? <Frac num={parts[0]} den={parts[1]} /> : opt;
-      },
-      tableData: [
-        { label: 'Κανόνας', details: '3⁻ⁿ ＝ 1 / 3ⁿ' },
-        { label: 'Υπολογισμός', details: `1 / 3${n === 2 ? '²' : '³'} ＝ 1 / ${p}` }
-      ],
-      explanation: `3⁻${n} ＝ 1 / 3${n === 2 ? '²' : '³'} ＝ 1/${p}.`
-    };
-  },
-  () => {
-    const p = randInt(2, 4);
-    const res = Math.pow(p, 2);
-    return {
-      title: 'Κλάσμα σε Αρνητικό Εκθέτη',
+      title: 'Σύνθετη Απλοποίηση Δυνάμεων Βάσης 2',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η δύναμη (<Frac num="1" den={`${p}`} />)⁻²;
+          Να υπολογιστεί η αριθμητική τιμή της παράστασης <Frac num={<span>(2<sup>{a}</sup> · 2<sup>－{b}</sup>)<sup>2</sup></span>} den={<span>2<sup>{d}</sup></span>} />.
         </span>
       ),
-      correct: res,
+      correct: finalVal,
       type: 'input',
       tableData: [
-        { label: 'Αντιστροφή κλάσματος', details: `(1 / ${p})⁻² ＝ (${p} / 1)² ＝ ${p}²` },
-        { label: 'Υπολογισμός', details: `${p}² ＝ ${res}` }
+        { label: '1. Γινόμενο στην παρένθεση', details: `2^(${a}－${b}) ＝ 2^${a - b}` },
+        { label: '2. Δύναμη δύναμης', details: `(2^${a - b})² ＝ 2^${expNum}` },
+        { label: '3. Πηλίκο δυνάμεων', details: `2^${expNum} / 2^${d} ＝ 2^(${expNum}－${d}) ＝ 2^${finalExp} ＝ ${finalVal}` }
       ],
-      explanation: `Αντιστρέφουμε το κλάσμα και ο εκθέτης γίνεται θετικός: (1/${p})⁻² ＝ ${p}² ＝ ${res}.`
+      explanation: `Εφαρμόζουμε κατά σειρά τις ιδιότητες: αᵐ · αⁿ ＝ αᵐ⁺ⁿ, (αᵐ)ⁿ ＝ αᵐ˙ⁿ και αᵐ / αⁿ ＝ αᵐ⁻ⁿ. Το αποτέλεσμα είναι 2^${finalExp} ＝ ${finalVal}.`
     };
   },
+  // 2. Μετατροπή βάσης 9 και 27 σε δύναμη του 3
   () => {
+    const k = randInt(1, 2);
+    const res = Math.pow(3, k);
     return {
-      title: 'Αρνητικός Εκθέτης με Αρνητική Βάση',
-      prompt: 'Ποιο είναι το αποτέλεσμα της δύναμης (－2)⁻³;',
-      correct: '－1/8',
-      type: 'mcq',
-      distractors: () => ['1/8', '－8', '8'][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === '－1/8') return <Frac num="－1" den="8" />;
-        if (opt === '1/8') return <Frac num="1" den="8" />;
-        return opt;
-      },
-      tableData: [
-        { label: 'Αντιστροφή', details: '1 / (－2)³' },
-        { label: 'Υπολογισμός δύναμης', details: '(－2)³ ＝ －8 (περιττός εκθέτης)' },
-        { label: 'Τελικό αποτέλεσμα', details: '1 / (－8) ＝ －1/8' }
-      ],
-      explanation: '(－2)⁻³ ＝ 1 / (－2)³ ＝ 1 / (－8) ＝ －1/8.'
-    };
-  },
-  () => {
-    const k = randInt(2, 5);
-    return {
-      title: 'Κλάσμα 2/3 σε Αρνητικό Εκθέτη',
+      title: 'Αναγωγή Δυνάμεων σε Κοινή Βάση 3',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ποιο είναι το αποτέλεσμα της παράστασης (<Frac num="2" den="3" />)⁻¹;
+          Πόσο ισούται η τιμή της παράστασης <Frac num={<span>9<sup>3</sup> · 3<sup>－2</sup></span>} den={<span>27<sup>{k === 1 ? '1' : '1'}</sup> · 3</span>} />;
         </span>
       ),
-      correct: '3/2',
-      type: 'mcq',
-      distractors: () => ['－2/3', '－3/2', '2/3'][randInt(0, 2)],
-      renderOption: (opt) => {
-        const parts = String(opt).split('/');
-        return parts.length === 2 ? <Frac num={parts[0]} den={parts[1]} /> : opt;
-      },
-      tableData: [
-        { label: 'Ιδιότητα', details: '(α / β)⁻¹ ＝ β / α' },
-        { label: 'Αποτέλεσμα', details: '3/2' }
-      ],
-      explanation: 'Ο εκθέτης －1 απλώς αντιστρέφει το κλάσμα: (2/3)⁻¹ ＝ 3/2.'
-    };
-  },
-  () => {
-    return {
-      title: 'Δύναμη με Βάση 10',
-      prompt: 'Ποια είναι η δεκαδική τιμή της δύναμης 10⁻³;',
-      correct: 0.001,
+      correct: res === 3 ? 9 : 3,
       type: 'input',
       tableData: [
-        { label: 'Κλασματική μορφή', details: '1 / 10³ ＝ 1 / 1000' },
-        { label: 'Δεκαδική μορφή', details: '0,001' }
+        { label: 'Αναγωγή στη βάση 3', details: '9³ ＝ (3²)³ ＝ 3⁶  και  27¹ ＝ 3³' },
+        { label: 'Αριθμητής', details: '3⁶ · 3⁻² ＝ 3⁴' },
+        { label: 'Παρονομαστής', details: '3³ · 3¹ ＝ 3⁴ (ή 3³)' },
+        { label: 'Αποτέλεσμα', details: 'Εκτέλεση πηλίκου δυνάμεων' }
       ],
-      explanation: '10⁻³ ＝ 1 / 1000 ＝ 0,001.'
+      explanation: 'Γράφουμε όλες τις βάσεις ως δυνάμεις του 3: 9 ＝ 3² και 27 ＝ 3³. Μετά την αναγωγή των εκθετών προκύπτει το τελικό αποτέλεσμα.'
     };
-  }
-];
-
-// POOL Q10: Ιδιότητες δυνάμεων & απλοποίηση (6 μοναδικά σενάρια)
-const PROBLEM_POOL_Q10 = [
+  },
+  // 3. Δυνάμεις κλασμάτων με αρνητικό εκθέτη
   () => {
-    const m = randInt(2, 5);
-    const n = randInt(2, 4);
-    const sum = m + n;
+    const a = randInt(2, 3);
+    const b = randInt(4, 5);
+    const val = Math.pow(b, 2) - Math.pow(a, 2);
     return {
-      title: 'Γινόμενο Δυνάμεων με Ίδια Βάση',
+      title: 'Διαφορά Δυνάμεων με Αρνητικούς Εκθέτες',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ποιος είναι ο τελικός εκθέτης του 3 στο γινόμενο 3{m === 2 ? '²' : m === 3 ? '³' : m === 4 ? '⁴' : '⁵'} · 3{n === 2 ? '²' : n === 3 ? '³' : '⁴'};
+          Πόσο ισούται η τιμή της παράστασης (<Frac num="1" den={`${b}`} />)<sup>－2</sup> － (<Frac num="1" den={`${a}`} />)<sup>－2</sup>;
         </span>
       ),
-      correct: sum,
+      correct: val,
       type: 'input',
       tableData: [
-        { label: 'Ιδιότητα', details: 'αᵐ · αⁿ ＝ αᵐ⁺ⁿ' },
-        { label: 'Υπολογισμός εκθέτη', details: `${m} ＋ ${n} ＝ ${sum}` }
+        { label: '1ος όρος', details: `(1/${b})⁻² ＝ ${b}² ＝ ${b * b}` },
+        { label: '2ος όρος', details: `(1/${a})⁻² ＝ ${a}² ＝ ${a * a}` },
+        { label: 'Διαφορά', details: `${b * b} － ${a * a} ＝ ${val}` }
       ],
-      explanation: `Στο γινόμενο δυνάμεων με την ίδια βάση προσθέτουμε τους εκθέτες: ${m} ＋ ${n} ＝ ${sum}.`
+      explanation: `Ο αρνητικός εκθέτης αντιστρέφει το κλάσμα: (1/β)⁻² ＝ β². Επομένως ${b * b} － ${a * a} ＝ ${val}.`
     };
   },
+  // 4. Άθροισμα δυνάμεων του (-1)
   () => {
-    const m = randInt(5, 8);
-    const n = randInt(2, 4);
-    const diff = m - n;
+    const n = randInt(10, 50) * 2; // Άρτιος
     return {
-      title: 'Πηλίκο Δυνάμεων με Ίδια Βάση',
+      title: 'Διαδοχικές Δυνάμεις του (－1)',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Ποιος είναι ο εκθέτης του 5 στην απλοποίηση του κλάσματος <Frac num={`5${m === 5 ? '⁵' : m === 6 ? '⁶' : m === 7 ? '⁷' : '⁸'}`} den={`5${n === 2 ? '²' : n === 3 ? '³' : '⁴'}`} />;
-        </span>
-      ),
-      correct: diff,
-      type: 'input',
-      tableData: [
-        { label: 'Ιδιότητα', details: 'αᵐ / αⁿ ＝ αᵐ⁻ⁿ' },
-        { label: 'Υπολογισμός εκθέτη', details: `${m} － ${n} ＝ ${diff}` }
-      ],
-      explanation: `Στο πηλίκο δυνάμεων με την ίδια βάση αφαιρούμε τους εκθέτες: ${m} － ${n} ＝ ${diff}.`
-    };
-  },
-  () => {
-    const m = randInt(2, 3);
-    const n = randInt(2, 4);
-    const prod = m * n;
-    return {
-      title: 'Δύναμη Δύναμης',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Ποιος είναι ο εκθέτης του 2 στην παράσταση (2{m === 2 ? '²' : '³'}){n === 2 ? '²' : n === 3 ? '³' : '⁴'};
-        </span>
-      ),
-      correct: prod,
-      type: 'input',
-      tableData: [
-        { label: 'Ιδιότητα', details: '(αᵐ)ⁿ ＝ αᵐ˙ⁿ' },
-        { label: 'Υπολογισμός εκθέτη', details: `${m} · ${n} ＝ ${prod}` }
-      ],
-      explanation: `Στη δύναμη δύναμης πολλαπλασιάζουμε τους εκθέτες: ${m} · ${n} ＝ ${prod}.`
-    };
-  },
-  () => {
-    return {
-      title: 'Απλοποίηση με Αρνητικούς Εκθέτες',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η παράσταση 4³ · 4⁻³;
+          Πόσο ισούται η τιμή της παράστασης (－1)<sup>{n}</sup> ＋ (－1)<sup>{n + 1}</sup> ＋ (－1)<sup>{n + 2}</sup>;
         </span>
       ),
       correct: 1,
       type: 'input',
       tableData: [
-        { label: 'Άθροισμα εκθετών', details: '3 ＋ (－3) ＝ 0' },
-        { label: 'Τελική δύναμη', details: '4⁰ ＝ 1' }
+        { label: `(－1)^${n} (άρτιος)`, details: '＋1' },
+        { label: `(－1)^${n + 1} (περιττός)`, details: '－1' },
+        { label: `(－1)^${n + 2} (άρτιος)`, details: '＋1' },
+        { label: 'Άθροισμα', details: '1 ＋ (－1) ＋ 1 ＝ 1' }
       ],
-      explanation: '4³ · 4⁻³ ＝ 4³⁻³ ＝ 4⁰ ＝ 1.'
+      explanation: 'Το －1 σε άρτιο εκθέτη δίνει ＋1, ενώ σε περιττό δίνει －1. Έτσι: 1 － 1 ＋ 1 ＝ 1.'
     };
   },
+  // 5. Συνδυασμός δύναμης και ρίζας (π.χ. (√2)^6 / 2^2)
   () => {
     return {
-      title: 'Γινόμενο με Διαφορετικές Βάσεις και Ίδιο Εκθέτη',
-      prompt: 'Ποιο είναι το αποτέλεσμα της παράστασης 2⁴ · 5⁴;',
-      correct: 10000,
-      type: 'input',
-      tableData: [
-        { label: 'Ιδιότητα', details: 'αⁿ · βⁿ ＝ (α · β)ⁿ' },
-        { label: 'Εφαρμογή', details: '(2 · 5)⁴ ＝ 10⁴ ＝ 10.000' }
-      ],
-      explanation: '2⁴ · 5⁴ ＝ (2 · 5)⁴ ＝ 10⁴ ＝ 10.000.'
-    };
-  },
-  () => {
-    return {
-      title: 'Πηλίκο με Ίδιο Εκθέτη',
+      title: 'Συνδυασμός Δύναμης και Τετραγωνικής Ρίζας',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η παράσταση <Frac num="12³" den="4³" />;
+          Πόσο ισούται η τιμή της παράστασης <Frac num={<span>(<Radical>2</Radical>)<sup>6</sup></span>} den={<span>2<sup>2</sup></span>} />;
         </span>
       ),
-      correct: 27,
+      correct: 2,
       type: 'input',
       tableData: [
-        { label: 'Ιδιότητα', details: 'αⁿ / βⁿ ＝ (α / β)ⁿ' },
-        { label: 'Εφαρμογή', details: '(12 / 4)³ ＝ 3³ ＝ 27' }
+        { label: 'Υπολογισμός αριθμητή', details: '(√2)⁶ ＝ ((√2)²)³ ＝ 2³ ＝ 8' },
+        { label: 'Υπολογισμός παρονομαστή', details: '2² ＝ 4' },
+        { label: 'Πηλίκο', details: '8 / 4 ＝ 2 (ή 2³⁻² ＝ 2¹ ＝ 2)' }
       ],
-      explanation: '12³ / 4³ ＝ (12 / 4)³ ＝ 3³ ＝ 27.'
+      explanation: 'Επειδή (√2)² ＝ 2, έχουμε (√2)⁶ ＝ 2³ ＝ 8. Άρα 8 / 4 ＝ 2.'
+    };
+  },
+  // 6. Γινόμενο δυνάμεων με αντίθετους εκθέτες
+  () => {
+    const a = randInt(2, 4);
+    return {
+      title: 'Παράσταση με Μηδενικό Τελικό Εκθέτη',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Πόσο ισούται η τιμή της παράστασης 5<sup>{a}</sup> · (5<sup>－1</sup>)<sup>{a}</sup> ＋ 7<sup>0</sup>;
+        </span>
+      ),
+      correct: 2,
+      type: 'input',
+      tableData: [
+        { label: '1ο γινόμενο', details: `5^${a} · 5^(－${a}) ＝ 5^0 ＝ 1` },
+        { label: '2ος όρος', details: '7⁰ ＝ 1' },
+        { label: 'Άθροισμα', details: '1 ＋ 1 ＝ 2' }
+      ],
+      explanation: `5^${a} · 5^(－${a}) ＝ 5⁰ ＝ 1 και 7⁰ ＝ 1. Το άθροισμα ισούται με 2.`
     };
   }
 ];
 
-// POOL Q11: Δυνάμεις ριζικών & πρόσημα (6 μοναδικά σενάρια)
-const PROBLEM_POOL_Q11 = [
+// POOL Q10: Παραστάσεις με Μεταβλητές & Εκθέτες (Απλοποίηση τύπου ΕΜΕ / Σχολικού)
+const PROBLEM_POOL_Q10 = [
   () => {
-    const k = randInt(2, 7);
     return {
-      title: 'Τετράγωνο Τετραγωνικής Ρίζας',
+      title: 'Απλοποίηση Μονωνύμων με Εκθέτες',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η τιμή της δύναμης (<Radical>{k}</Radical>)²;
+          Απλοποιώντας την παράσταση <Frac num={<span>(2 · x<sup>2</sup> · y)<sup>3</sup></span>} den={<span>4 · x<sup>4</sup> · y<sup>3</sup></span>} /> για x, y ≠ 0, ποιο μονώνυμο προκύπτει;
+        </span>
+      ),
+      correct: '2·x²',
+      type: 'mcq',
+      distractors: () => ['4·x²', '2·x', 'x²'][randInt(0, 2)],
+      renderOption: (opt) => opt === '2·x²' ? '2 · x²' : opt === '4·x²' ? '4 · x²' : opt,
+      tableData: [
+        { label: 'Αριθμητής', details: '2³ · (x²)³ · y³ ＝ 8 · x⁶ · y³' },
+        { label: 'Παρονομαστής', details: '4 · x⁴ · y³' },
+        { label: 'Διαίρεση', details: '(8/4) · x^(6－4) · y^(3－3) ＝ 2 · x² · 1 ＝ 2·x²' }
+      ],
+      explanation: 'Υψώνουμε κάθε παράγοντα του αριθμητή στην 3η δύναμη και κατόπιν διαιρούμε τους συντελεστές και τις μεταβλητές.'
+    };
+  },
+  () => {
+    const k = randInt(2, 4);
+    return {
+      title: 'Απλοποίηση Αλγεβρικού Κλάσματος Δυνάμεων',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Ποιος είναι ο συντελεστής του x στην απλοποιημένη μορφή του κλάσματος <Frac num={<span>{k * 3} · x<sup>5</sup></span>} den={<span>3 · x<sup>4</sup></span>} /> (x ≠ 0);
         </span>
       ),
       correct: k,
       type: 'input',
       tableData: [
-        { label: 'Ιδιότητα', details: '(√α)² ＝ α για κάθε α ≥ 0' },
-        { label: 'Αποτέλεσμα', details: `${k}` }
+        { label: 'Συντελεστές', details: `${k * 3} / 3 ＝ ${k}` },
+        { label: 'Μεταβλητή', details: 'x⁵ / x⁴ ＝ x^(5－4) ＝ x' },
+        { label: 'Αποτέλεσμα', details: `${k} · x` }
       ],
-      explanation: `Η τετραγωνική ρίζα υψωμένη στο τετράγωνο εξουδετερώνεται: (√${k})² ＝ ${k}.`
+      explanation: `Διαιρούμε αριθμητή και παρονομαστή: (${k * 3}/3) · x^(5－4) ＝ ${k} · x.`
     };
   },
   () => {
     return {
-      title: 'Τέταρτη Δύναμη Ρίζας',
+      title: 'Απλοποίηση με Αρνητικό Εκθέτη σε Μεταβλητή',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η δύναμη (<Radical>2</Radical>)⁴;
+          Ποιος είναι ο εκθέτης του x στην παράσταση x<sup>－3</sup> · (x<sup>2</sup>)<sup>4</sup> (x ≠ 0);
         </span>
       ),
-      correct: 4,
+      correct: 5,
       type: 'input',
       tableData: [
-        { label: 'Ανάλυση', details: '((√2)²)² ＝ 2²' },
-        { label: 'Υπολογισμός', details: '2² ＝ 4' }
+        { label: 'Δύναμη δύναμης', details: '(x²)⁴ ＝ x⁸' },
+        { label: 'Γινόμενο', details: 'x⁻³ · x⁸ ＝ x^(－3＋8) ＝ x⁵' }
       ],
-      explanation: '(√2)⁴ ＝ ((√2)²)² ＝ 2² ＝ 4.'
+      explanation: 'Πρώτα εκτελούμε τη δύναμη δύναμης (x²)⁴ ＝ x⁸ και μετά προσθέτουμε τους εκθέτες: －3 ＋ 8 ＝ 5.'
     };
   },
   () => {
     return {
-      title: 'Δύναμη με και χωρίς Παρένθεση',
-      prompt: 'Ποιο είναι το αποτέλεσμα της παράστασης －5²;',
-      correct: -25,
-      type: 'input',
-      tableData: [
-        { label: 'Προτεραιότητα', details: 'Ο εκθέτης 2 επηρεάζει μόνο το 5 και όχι το μείον' },
-        { label: 'Υπολογισμός', details: '－(5 · 5) ＝ －25' }
-      ],
-      explanation: 'Χωρίς παρένθεση, το μείον μένει έξω: －5² ＝ －(5²) ＝ －25. Αν ήταν (－5)², θα ισούταν με ＋25.'
-    };
-  },
-  () => {
-    return {
-      title: 'Άρτιος Εκθέτης σε Αρνητική Βάση',
-      prompt: 'Ποιο είναι το αποτέλεσμα της δύναμης (－3)⁴;',
-      correct: 81,
-      type: 'input',
-      tableData: [
-        { label: 'Εκθέτης', details: '4 (άρτιος αριθμός => θετικό αποτέλεσμα)' },
-        { label: 'Υπολογισμός', details: '3⁴ ＝ 81' }
-      ],
-      explanation: 'Ο εκθέτης 4 είναι άρτιος, άρα το αποτέλεσμα είναι θετικό: (－3)⁴ ＝ ＋81.'
-    };
-  },
-  () => {
-    return {
-      title: 'Δύναμη του －1',
-      prompt: 'Πόσο ισούται η παράσταση (－1)²⁰²⁶;',
-      correct: 1,
-      type: 'input',
-      tableData: [
-        { label: 'Εκθέτης', details: '2026 (άρτιος ακέραιος)' },
-        { label: 'Αποτέλεσμα', details: '(－1)²⁰²⁶ ＝ 1' }
-      ],
-      explanation: 'Το －1 υψωμένο σε οποιονδήποτε άρτιο ακέραιο εκθέτη ισούται πάντοτε με 1.'
-    };
-  },
-  () => {
-    return {
-      title: 'Αρνητικός Εκθέτης σε Ρίζα',
-      prompt: (
-        <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται η δύναμη (<Radical>5</Radical>)⁻²;
-        </span>
-      ),
-      correct: '1/5',
+      title: 'Πρόσημο Αλγεβρικής Δύναμης',
+      prompt: 'Αν x πραγματικός αριθμός με x ≠ 0, ποια από τις παρακάτω παραστάσεις είναι ΠΑΝΤΟΤΕ θετική;',
+      correct: 'x⁴',
       type: 'mcq',
-      distractors: () => ['－5', '－1/5', '5'][randInt(0, 2)],
-      renderOption: (opt) => {
-        if (opt === '1/5') return <Frac num="1" den="5" />;
-        if (opt === '－1/5') return <Frac num="－1" den="5" />;
-        return opt;
-      },
+      distractors: () => ['x³', '－x²', 'x⁵'][randInt(0, 2)],
       tableData: [
-        { label: 'Αντιστροφή', details: '1 / (√5)²' },
-        { label: 'Αποτέλεσμα', details: '1 / 5' }
+        { label: 'x⁴ (άρτιος εκθέτης)', details: 'Πάντοτε x⁴ ＞ 0 για κάθε x ≠ 0' },
+        { label: 'x³, x⁵ (περιττός εκθέτης)', details: 'Αρνητικό αν x ＜ 0' },
+        { label: '－x²', details: 'Πάντοτε αρνητικό (－x² ＜ 0)' }
       ],
-      explanation: '(√5)⁻² ＝ 1 / (√5)² ＝ 1/5.'
+      explanation: 'Κάθε μη μηδενικός αριθμός υψωμένος σε άρτιο εκθέτη (όπως το 4) είναι πάντοτε θετικός.'
+    };
+  },
+  () => {
+    return {
+      title: 'Ισότητα Δυνάμεων με Μεταβλητή στον Εκθέτη',
+      prompt: 'Αν 2ˣ ＝ 32, ποια είναι η τιμή του πραγματικού αριθμού x;',
+      correct: 5,
+      type: 'input',
+      tableData: [
+        { label: 'Ανάλυση του 32', details: '32 ＝ 2 · 2 · 2 · 2 · 2 ＝ 2⁵' },
+        { label: 'Εξίσωση', details: '2ˣ ＝ 2⁵ => x ＝ 5' }
+      ],
+      explanation: 'Επειδή 2⁵ ＝ 32 και οι βάσεις είναι ίσες, έπεται ότι x ＝ 5.'
+    };
+  },
+  () => {
+    return {
+      title: 'Εξίσωση με Αρνητικό Εκθέτη',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Αν 3<sup>x</sup> ＝ <Frac num="1" den="27" />, ποια είναι η τιμή του x;
+        </span>
+      ),
+      correct: -3,
+      type: 'input',
+      tableData: [
+        { label: 'Ανάλυση κλάσματος', details: '1 / 27 ＝ 1 / 3³ ＝ 3⁻³' },
+        { label: 'Εξίσωση', details: '3ˣ ＝ 3⁻³ => x ＝ －3' }
+      ],
+      explanation: 'Το 1/27 γράφεται ως 3⁻³, άρα x ＝ －3.'
     };
   }
 ];
 
-// POOL Q12: Τυποποιημένη μορφή & επιστημονικά προβλήματα (6 μοναδικά σενάρια)
-const PROBLEM_POOL_Q12 = [
-  () => {
-    return {
-      title: 'Τυποποιημένη Μορφή Μεγάλου Αριθμού',
-      prompt: 'Ποια είναι η σωστή τυποποιημένη (επιστημονική) μορφή του αριθμού 45.000.000;',
-      correct: '4,5 · 10⁷',
-      type: 'mcq',
-      distractors: () => ['45 · 10⁶', '0,45 · 10⁸', '4,5 · 10⁶'][randInt(0, 2)],
-      tableData: [
-        { label: 'Αρχικός αριθμός', details: '45.000.000' },
-        { label: 'Συντελεστής α (1 ≤ α ＜ 10)', details: '4,5' },
-        { label: 'Μετατόπιση υποδιαστολής', details: '7 θέσεις αριστερά => 10⁷' }
-      ],
-      explanation: 'Στην τυποποιημένη μορφή α · 10ᵏ πρέπει 1 ≤ α ＜ 10. Άρα 4,5 · 10⁷.'
-    };
-  },
-  () => {
-    return {
-      title: 'Τυποποιημένη Μορφή Μικρού Αριθμού',
-      prompt: 'Ποια είναι η τυποποιημένη μορφή του δεκαδικού αριθμού 0,00038;',
-      correct: '3,8 · 10⁻⁴',
-      type: 'mcq',
-      distractors: () => ['38 · 10⁻⁵', '3,8 · 10⁻³', '0,38 · 10⁻³'][randInt(0, 2)],
-      tableData: [
-        { label: 'Αρχικός αριθμός', details: '0,00038' },
-        { label: 'Συντελεστής α', details: '3,8' },
-        { label: 'Μετατόπιση υποδιαστολής', details: '4 θέσεις δεξιά => 10⁻⁴' }
-      ],
-      explanation: 'Μετακινούμε την υποδιαστολή 4 θέσεις δεξιά: 3,8 · 10⁻⁴.'
-    };
-  },
-  () => {
-    return {
-      title: 'Εκθέτης στην Τυποποιημένη Μορφή',
-      prompt: 'Αν γράψουμε τον αριθμό 7.200.000 στη μορφή 7,2 · 10ᵏ, ποιος είναι ο ακέραιος εκθέτης k;',
-      correct: 6,
-      type: 'input',
-      tableData: [
-        { label: 'Αριθμός', details: '7.200.000' },
-        { label: 'Μορφή', details: '7,2 · 10⁶' },
-        { label: 'Εκθέτης k', details: '6' }
-      ],
-      explanation: '7.200.000 ＝ 7,2 · 10⁶, άρα k ＝ 6.'
-    };
-  },
+// POOL Q11: Τυποποιημένη Μορφή & Πράξεις (Επιστημονική Σημειογραφία)
+const PROBLEM_POOL_Q11 = [
   () => {
     return {
       title: 'Γινόμενο σε Τυποποιημένη Μορφή',
-      prompt: 'Πόσο ισούται το γινόμενο (2 · 10⁴) · (3 · 10⁵) σε τυποποιημένη μορφή;',
-      correct: '6 · 10⁹',
+      prompt: 'Πόσο ισούται το γινόμενο (3 · 10⁵) · (4 · 10⁴) εκφρασμένο σε τυποποιημένη μορφή;',
+      correct: '1,2 · 10¹⁰',
       type: 'mcq',
-      distractors: () => ['6 · 10²⁰', '5 · 10⁹', '6 · 10⁸'][randInt(0, 2)],
+      distractors: () => ['12 · 10⁹', '1,2 · 10⁹', '12 · 10²⁰'][randInt(0, 2)],
       tableData: [
-        { label: 'Πολλαπλασιασμός συντελεστών', details: '2 · 3 ＝ 6' },
-        { label: 'Πολλαπλασιασμός δυνάμεων', details: '10⁴ · 10⁵ ＝ 10⁴⁺⁵ ＝ 10⁹' },
-        { label: 'Τελικό', details: '6 · 10⁹' }
+        { label: 'Πολλαπλασιασμός', details: '(3 · 4) · (10⁵ · 10⁴) ＝ 12 · 10⁹' },
+        { label: 'Τυποποίηση (1 ≤ α ＜ 10)', details: '12 ＝ 1,2 · 10¹ => (1,2 · 10¹) · 10⁹ ＝ 1,2 · 10¹⁰' }
       ],
-      explanation: '(2 · 10⁴) · (3 · 10⁵) ＝ (2 · 3) · (10⁴ · 10⁵) ＝ 6 · 10⁹.'
+      explanation: '12 · 10⁹ ＝ (1,2 · 10¹) · 10⁹ ＝ 1,2 · 10¹⁰.'
     };
   },
   () => {
@@ -480,31 +342,180 @@ const PROBLEM_POOL_Q12 = [
       title: 'Διαίρεση σε Τυποποιημένη Μορφή',
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-1">
-          Πόσο ισούται το πηλίκο <Frac num="8 · 10⁷" den="2 · 10³" /> σε τυποποιημένη μορφή;
+          Πόσο ισούται το πηλίκο <Frac num="2 · 10⁴" den="8 · 10⁷" /> σε τυποποιημένη μορφή;
         </span>
       ),
-      correct: '4 · 10⁴',
+      correct: '2,5 · 10⁻⁴',
       type: 'mcq',
-      distractors: () => ['4 · 10¹⁰', '4 · 10⁴', '6 · 10⁴', '4 · 10²'][randInt(0, 2)],
+      distractors: () => ['0,25 · 10⁻³', '2,5 · 10⁻³', '4 · 10⁻⁴'][randInt(0, 2)],
       tableData: [
-        { label: 'Διαίρεση συντελεστών', details: '8 / 2 ＝ 4' },
-        { label: 'Διαίρεση δυνάμεων', details: '10⁷ / 10³ ＝ 10⁷⁻³ ＝ 10⁴' },
-        { label: 'Αποτέλεσμα', details: '4 · 10⁴' }
+        { label: 'Διαίρεση συντελεστών', details: '2 / 8 ＝ 0,25' },
+        { label: 'Διαίρεση δυνάμεων', details: '10⁴ / 10⁷ ＝ 10^(4－7) ＝ 10⁻³' },
+        { label: 'Τυποποίηση', details: '0,25 · 10⁻³ ＝ (2,5 · 10⁻¹) · 10⁻³ ＝ 2,5 · 10⁻⁴' }
       ],
-      explanation: '(8 · 10⁷) / (2 · 10³) ＝ (8 / 2) · (10⁷ / 10³) ＝ 4 · 10⁴.'
+      explanation: '0,25 · 10⁻³ ＝ 2,5 · 10⁻⁴.'
+    };
+  },
+  () => {
+    const zeros = randInt(4, 6);
+    return {
+      title: 'Εκθέτης Μικρού Αριθμού',
+      prompt: `Αν γράψουμε τον δεκαδικό αριθμό 0,${'0'.repeat(zeros)}5 σε τυποποιημένη μορφή 5 · 10ᵏ, ποιος είναι ο ακέραιος εκθέτης k;`,
+      correct: -(zeros + 1),
+      type: 'input',
+      tableData: [
+        { label: 'Πλήθος δεκαδικών θέσεων', details: `${zeros + 1} θέσεις δεξιά` },
+        { label: 'Τυποποιημένη μορφή', details: `5 · 10^(－${zeros + 1})` }
+      ],
+      explanation: `Η υποδιαστολή μετακινείται ${zeros + 1} θέσεις προς τα δεξιά, άρα k ＝ －${zeros + 1}.`
     };
   },
   () => {
     return {
-      title: 'Μετατροπή από Τυποποιημένη σε Δεκαδικό',
-      prompt: 'Ποιος ακέραιος αριθμός ισούται με την έκφραση 1,2 · 10⁴;',
-      correct: 12000,
+      title: 'Πρόσθεση Αριθμών σε Τυποποιημένη Μορφή',
+      prompt: 'Πόσο ισούται το άθροισμα 3 · 10⁴ ＋ 5 · 10³;',
+      correct: 35000,
       type: 'input',
       tableData: [
-        { label: 'Υπολογισμός δύναμης', details: '10⁴ ＝ 10.000' },
-        { label: 'Πολλαπλασιασμός', details: '1,2 · 10.000 ＝ 12.000' }
+        { label: '3 · 10⁴', details: '30.000' },
+        { label: '5 · 10³', details: '5.000' },
+        { label: 'Άθροισμα', details: '30.000 ＋ 5.000 ＝ 35.000' }
       ],
-      explanation: '1,2 · 10⁴ ＝ 1,2 · 10.000 ＝ 12.000.'
+      explanation: '30.000 ＋ 5.000 ＝ 35.000 (ή 3,5 · 10⁴).'
+    };
+  },
+  () => {
+    return {
+      title: 'Τάξη Μεγέθους / Σύγκριση',
+      prompt: 'Πόσες φορές μεγαλύτερος είναι ο αριθμός 6 · 10⁸ από τον αριθμό 2 · 10⁵;',
+      correct: 3000,
+      type: 'input',
+      unit: 'φορές',
+      tableData: [
+        { label: 'Πηλίκο', details: '(6 · 10⁸) / (2 · 10⁵)' },
+        { label: 'Υπολογισμός', details: '(6/2) · 10^(8－5) ＝ 3 · 10³ ＝ 3.000' }
+      ],
+      explanation: '(6 · 10⁸) / (2 · 10⁵) ＝ 3 · 10³ ＝ 3.000 φορές.'
+    };
+  },
+  () => {
+    return {
+      title: 'Τετράγωνο Αριθμού σε Τυποποιημένη Μορφή',
+      prompt: 'Πόσο ισούται η δύναμη (2 · 10³)² σε τυποποιημένη μορφή;',
+      correct: '4 · 10⁶',
+      type: 'mcq',
+      distractors: () => ['4 · 10⁵', '2 · 10⁶', '4 · 10⁹'][randInt(0, 2)],
+      tableData: [
+        { label: 'Ανάπτυγμα', details: '2² · (10³)²' },
+        { label: 'Υπολογισμός', details: '4 · 10^(3·2) ＝ 4 · 10⁶' }
+      ],
+      explanation: '(2 · 10³)² ＝ 2² · (10³)² ＝ 4 · 10⁶.'
+    };
+  }
+];
+
+// POOL Q12: Εφαρμοσμένα Προβλήματα Φυσικής & Γεωμετρίας (Από το νέο βιβλίο)
+const PROBLEM_POOL_Q12 = [
+  // 1. Ταχύτητα φωτός & απόσταση (άσκηση σχολικού)
+  () => {
+    return {
+      title: 'Χρόνος Διάδοσης Φωτός από τον Ήλιο',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Η απόσταση Γης - Ήλιου είναι περίπου 1,5 · 10⁸ km και το φως κινείται με ταχύτητα 3 · 10⁵ km/s. Πόσα δευτερόλεπτα χρειάζεται το φως για να φτάσει στη Γη;
+        </span>
+      ),
+      correct: 500,
+      type: 'input',
+      unit: 's',
+      tableData: [
+        { label: 'Τύπος χρόνου', details: 't ＝ s / v' },
+        { label: 'Διαίρεση', details: '(1,5 · 10⁸) / (3 · 10⁵) ＝ (1,5 / 3) · 10³ ＝ 0,5 · 1000 ＝ 500 s' }
+      ],
+      explanation: 't ＝ (1,5 · 10⁸) / (3 · 10⁵) ＝ 0,5 · 10³ ＝ 500 δευτερόλεπτα (περίπου 8 λεπτά και 20 δευτερόλεπτα).'
+    };
+  },
+  // 2. Όγκος Κύβου (άσκηση σχολικού για διπλασιασμό ακμής)
+  () => {
+    return {
+      title: 'Μεταβολή Όγκου Κύβου',
+      prompt: 'Αν διπλασιάσουμε το μήκος της ακμής ενός κύβου (από α σε 2α), πόσες φορές αυξάνεται ο όγκος του;',
+      correct: 8,
+      type: 'input',
+      unit: 'φορές',
+      tableData: [
+        { label: 'Αρχικός όγκος V₁', details: 'α³' },
+        { label: 'Νέος όγκος V₂', details: '(2α)³ ＝ 2³ · α³ ＝ 8 · α³' },
+        { label: 'Λόγος όγκων', details: 'V₂ / V₁ ＝ 8' }
+      ],
+      explanation: 'Ο όγκος εξαρτάται από την 3η δύναμη της ακμής: (2α)³ ＝ 8 · α³, άρα ο όγκος οκταπλασιάζεται (8 φορές).'
+    };
+  },
+  // 3. Εμβαδόν επιφάνειας κύβου
+  () => {
+    return {
+      title: 'Μεταβολή Εμβαδού Επιφάνειας Κύβου',
+      prompt: 'Αν τριπλασιάσουμε την ακμή ενός κύβου (από α σε 3α), πόσες φορές αυξάνεται το εμβαδόν της ολικής του επιφάνειας;',
+      correct: 9,
+      type: 'input',
+      unit: 'φορές',
+      tableData: [
+        { label: 'Αρχικό εμβαδόν Ε₁', details: '6 · α²' },
+        { label: 'Νέο εμβαδόν Ε₂', details: '6 · (3α)² ＝ 6 · 9 · α² ＝ 9 · Ε₁' },
+        { label: 'Λόγος εμβαδών', details: 'Ε₂ / Ε₁ ＝ 9' }
+      ],
+      explanation: 'Το εμβαδόν εξαρτάται από το τετράγωνο της ακμής: (3α)² ＝ 9 · α², άρα εννεαπλασιάζεται (9 φορές).'
+    };
+  },
+  // 4. Αριθμός κυττάρων / διπλασιασμός (εκθετική αύξηση)
+  () => {
+    const hours = randInt(3, 5);
+    const cells = Math.pow(2, hours);
+    return {
+      title: 'Εκθετικός Πολλαπλασιασμός Βακτηρίων',
+      prompt: `Ένας πληθυσμός βακτηρίων διπλασιάζεται κάθε ώρα (2ⁿ). Αν ξεκινήσουμε με 1 βακτήριο, πόσα βακτήρια θα υπάρχουν μετά από ${hours} ώρες;`,
+      correct: cells,
+      type: 'input',
+      unit: 'βακτήρια',
+      tableData: [
+        { label: 'Τύπος πληθυσμού', details: `2^t όπου t οι ώρες` },
+        { label: 'Υπολογισμός', details: `2^${hours} ＝ ${cells}` }
+      ],
+      explanation: `Κάθε ώρα ο πληθυσμός διπλασιάζεται: 2^${hours} ＝ ${cells} βακτήρια.`
+    };
+  },
+  // 5. Υπολογισμός μάζας ατόμων (από το σχολικό βιβλίο)
+  () => {
+    return {
+      title: 'Μάζα Ατόμων σε Τυποποιημένη Μορφή',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          Αν ένα άτομο υδρογόνου έχει μάζα 1,7 · 10<sup>－27</sup> kg, ποια είναι η μάζα 2 · 10²³ ατόμων υδρογόνου σε kg;
+        </span>
+      ),
+      correct: '3,4 · 10⁻⁴ kg',
+      type: 'mcq',
+      distractors: () => ['3,4 · 10⁻⁵⁰ kg', '3,4 · 10⁴ kg', '1,7 · 10⁻⁴ kg'][randInt(0, 2)],
+      tableData: [
+        { label: 'Γινόμενο μαζών', details: '(1,7 · 10⁻²⁷) · (2 · 10²³)' },
+        { label: 'Υπολογισμός', details: '(1,7 · 2) · 10^(－27＋23) ＝ 3,4 · 10⁻⁴ kg' }
+      ],
+      explanation: '(1,7 · 2) · 10^(－27＋23) ＝ 3,4 · 10⁻⁴ kg.'
+    };
+  },
+  // 6. Διάμετρος οπτικής ίνας (από το σχολικό βιβλίο)
+  () => {
+    return {
+      title: 'Διάμετρος Οπτικής Ίνας σε Μέτρα',
+      prompt: 'Η διάμετρος μιας οπτικής ίνας είναι 130 μικρόμετρα (1 μm ＝ 10⁻⁶ m). Ποια είναι η διάμετρός της σε μέτρα σε τυποποιημένη μορφή;',
+      correct: '1,3 · 10⁻⁴ m',
+      type: 'mcq',
+      distractors: () => ['13 · 10⁻⁵ m', '1,3 · 10⁻⁶ m', '1,3 · 10⁻⁸ m'][randInt(0, 2)],
+      tableData: [
+        { label: 'Μετατροπή', details: '130 · 10⁻⁶ m' },
+        { label: 'Τυποποίηση', details: '(1,3 · 10²) · 10⁻⁶ ＝ 1,3 · 10⁻⁴ m' }
+      ],
+      explanation: '130 · 10⁻⁶ ＝ (1,3 · 10²) · 10⁻⁶ ＝ 1,3 · 10⁻⁴ m.'
     };
   }
 ];
@@ -529,7 +540,7 @@ export default function DinameisPragmatikonExercises() {
       type: 'tf',
       correct: q1IsCorrect ? 'Σωστό' : 'Λάθος',
       options: ['Σωστό', 'Λάθος'],
-      explanation: 'Εξ ορισμού, κάθε μη μηδενικός πραγματικός αριθμός υψωμένος στο μηδέν ισούται με 1 (α⁰ ＝ 1).'
+      explanation: 'Εξ ορισμού, κάθε μη μηδενικός πραγματικός αριθμός υψωμένος στο μηδέν ισούται με 1 (α⁰ ＝ 1). Το 0⁰ δεν ορίζεται.'
     });
 
     // Q2: True / False - Αρνητικός εκθέτης
@@ -543,7 +554,7 @@ export default function DinameisPragmatikonExercises() {
       type: 'tf',
       correct: q2Choice ? 'Σωστό' : 'Λάθος',
       options: ['Σωστό', 'Λάθος'],
-      explanation: 'Ο αρνητικός εκθέτης δηλώνει τον αντίστροφο της δύναμης και δεν καθορίζει το πρόσημο του αποτελέσματος.'
+      explanation: 'Ο αρνητικός εκθέτης δηλώνει τον αντίστροφο της δύναμης και δεν καθορίζει το πρόσημο του αποτελέσματος (π.χ. 2⁻³ ＝ 1/8 ＞ 0).'
     });
 
     // Q3: MCQ - Πρόσημο δύναμης
@@ -593,7 +604,7 @@ export default function DinameisPragmatikonExercises() {
     // Q6: MCQ - Ιδιότητα γινομένου δυνάμεων
     qList.push({
       id: 6,
-      title: 'Γινόμενο Δυνάμεων',
+      title: 'Γινόμενο Δυνάμεων με Ίδια Βάση',
       prompt: 'Ποιος είναι ο σωστός τύπος για το γινόμενο δυνάμεων με την ίδια βάση αᵐ · αⁿ;',
       type: 'mcq',
       correct: 'αᵐ⁺ⁿ',
