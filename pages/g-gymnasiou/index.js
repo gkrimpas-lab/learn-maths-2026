@@ -19,6 +19,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 02',
     active: true,
   },
+   {
+    id: '03',
+    slug: '03-pragmatikoi',
+    title: 'Πραγματικοί Αριθμοί',
+    desc: 'Σύνολο πραγματικών, διάταξη πραγματικών.',
+    badge: 'ΚΕΦΑΛΑΙΟ 03',
+    active: true,
+  },
   {
     id: '10',
     slug: '10-mononima-polionima',
