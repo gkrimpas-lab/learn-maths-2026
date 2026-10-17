@@ -51,6 +51,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 06',
     active: true,
   },
+    {
+    id: '07',
+    slug: '07-epanalipsi-1',
+    title: 'Επανάληψη Ενοτήτων 1 έως 6',
+    desc: 'Δεκαδική Μορφή Ρητών και Άρρητων, Πραγματικοί Αριθμοί, Πράξεις Πραγματικών, Δυνάμεις, Ρίζες.',
+    badge: 'ΕΠΑΝΑΛΗΨΗ 1',
+    active: false,
+  },
   {
     id: '10',
     slug: '10-mononima-polionima',
