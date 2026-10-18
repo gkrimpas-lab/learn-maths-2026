@@ -222,6 +222,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 24',
     active: true,
   },
+  {
+    id: '28',
+    slug: '28-parastaseis',
+    title: 'Αριθμητικές και Αλγεβρικές Παραστάσεις',
+    desc: 'Αριθμητική παράσταση, Αλγερική παράσταση, Προβλήματα',
+    badge: 'ΚΕΦΑΛΑΙΟ 25',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
