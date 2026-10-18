@@ -400,7 +400,7 @@ export default function MetablitiTheoria() {
                 <div className="p-3 bg-white/5 rounded-xl border border-white/10 text-xs sm:text-sm font-sans space-y-1">
                   <div className="text-slate-300 font-bold">1. Ομαδοποίηση ομοίων όρων και σταθερών:</div>
                   <div className="font-mono text-indigo-200 text-sm sm:text-base">
-                    ＝ ({termA} ＋ {termB})·x ＋ ({constC} ＋ {constD})
+                    ＝ ({termA} ＋ {termB < 0 ? `(${termB})` : termB})·x ＋ ({constC} ＋ {constD < 0 ? `(${constD})` : constD})
                   </div>
                 </div>
 
