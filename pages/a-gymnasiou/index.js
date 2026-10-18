@@ -238,6 +238,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 26',
     active: true,
   },
+  {
+    id: '30',
+    slug: '30-epanalipsi-4',
+    title: 'Επανάληψη Ενοτήτων 22 έως 26',
+    desc: 'Ακολουθία, Αναπαράσταση ακολουθίας, Αλγεβρικές παραστάσεις, Αριθμητική τιμή, Απλοποίηση παραστάσεων.',
+    badge: 'ΕΠΑΝΑΛΗΨΗ 4',
+    active: false,
+  },
 ];
 
 export default function AGymnasiouIndex() {
