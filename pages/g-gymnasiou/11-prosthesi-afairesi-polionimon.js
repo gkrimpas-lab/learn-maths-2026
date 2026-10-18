@@ -192,7 +192,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
 
   return (
     <Layout
-      title="Πρόσθεση & Αφαίρεση Πολυωνύμων | Θεωρία Γ' Γυμνασίου"
+      title="Πρόσθεση και Αφαίρεση Πολυωνύμων | Θεωρία Γ' Γυμνασίου"
       description="Αναλυτική θεωρία για την πρόσθεση και αφαίρεση πολυωνύμων, οριζόντια και κάθετη μέθοδος, αντίθετα πολυώνυμα, απαλοιφή παρενθέσεων και διαδραστικό εργαστήριο."
       backUrl="/g-gymnasiou"
       backText="Γ' Γυμνασίου"
@@ -212,10 +212,10 @@ export default function ProsthesiAfairesiPolionimonTheory() {
         <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white p-5 sm:p-8 lg:p-12 mb-6 sm:mb-10 shadow-xl">
           <div className="relative z-10 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-indigo-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 border border-white/20">
-              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 11 •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
+              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 08 •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3 text-white leading-tight">
-              Πρόσθεση & Αφαίρεση Πολυωνύμων
+              Πρόσθεση και Αφαίρεση Πολυωνύμων
             </h1>
             <p className="text-xs sm:text-base lg:text-lg text-indigo-100 font-medium leading-relaxed mb-5 max-w-3xl">
               Πώς συνδυάζουμε πολυώνυμα για να δημιουργήσουμε νέα; Κατακτήστε την οριζόντια και την κάθετη μέθοδο πρόσθεσης και αφαίρεσης, τη διαχείριση των αντιθέτων πολυωνύμων και τους ακριβείς κανόνες απαλοιφής παρενθέσεων[cite: 52].
@@ -243,7 +243,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                   1
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Πρόσθεση & Αφαίρεση Πολυωνύμων
+                  Πρόσθεση και Αφαίρεση Πολυωνύμων
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
@@ -278,7 +278,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                   2
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Αντίθετο Πολυώνυμο & Κανόνας Προσήμων
+                  Αντίθετο Πολυώνυμο και Κανόνας Προσήμων
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
@@ -313,7 +313,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                   3
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Οριζόντια & Κάθετη Μέθοδος
+                  Οριζόντια και Κάθετη Μέθοδος
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
@@ -355,7 +355,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                   4
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Βαθμός Αθροίσματος & Διαφοράς
+                  Βαθμός Αθροίσματος και Διαφοράς
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
@@ -684,7 +684,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                         <td className="p-2 sm:p-2.5">(7 · x ＋ 12) － (5 · x ＋ 9)</td>
                       </tr>
                       <tr>
-                        <td className="p-2 sm:p-2.5 font-sans font-semibold">3. Απαλοιφή & Αναγωγή</td>
+                        <td className="p-2 sm:p-2.5 font-sans font-semibold">3. Απαλοιφή και Αναγωγή</td>
                         <td className="p-2 sm:p-2.5">7 · x ＋ 12 － 5 · x － 9</td>
                         <td className="p-2 sm:p-2.5 font-bold text-indigo-700">2 · x ＋ 3</td>
                       </tr>
@@ -737,7 +737,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
         {/* BOTTOM CALLOUT BANNER */}
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-white text-center shadow-xl flex flex-col items-center justify-center">
           <h2 className="text-xl sm:text-3xl font-black mb-2 sm:mb-3 leading-snug">
-            Εμπεδώστε την Πρόσθεση & Αφαίρεση στην Πράξη!
+            Εμπεδώστε την Πρόσθεση και την Αφαίρεση στην Πράξη!
           </h2>
           <p className="text-emerald-100 max-w-2xl text-xs sm:text-base mb-5 sm:mb-6">
             Δοκιμάστε τις ικανότητές σας σε 12 διαδραστικές ερωτήσεις και αυτούσια προβλήματα με άμεση ανατροφοδότηση και πλήρη βήματα επίλυσης.
