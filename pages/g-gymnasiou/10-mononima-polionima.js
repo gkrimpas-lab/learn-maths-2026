@@ -177,7 +177,7 @@ export default function MononimaPolionimaTheory() {
 
   return (
     <Layout
-      title="Μονώνυμα & Πολυώνυμα | Θεωρία Γ' Γυμνασίου"
+      title="Μονώνυμα και Πολυώνυμα | Θεωρία Γ' Γυμνασίου"
       description="Αναλυτική θεωρία για αριθμητικές και αλγεβρικές παραστάσεις, μονώνυμα, πολυώνυμα, βαθμό, διώνυμα και τριώνυμα με διαδραστικό εργαστήριο."
       backUrl="/g-gymnasiou"
       backText="Γ' Γυμνασίου"
@@ -197,10 +197,10 @@ export default function MononimaPolionimaTheory() {
         <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white p-5 sm:p-8 lg:p-12 mb-6 sm:mb-10 shadow-xl">
           <div className="relative z-10 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-indigo-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 border border-white/20">
-              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 10 •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
+              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 07 •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3 text-white leading-tight">
-              Μονώνυμα & Πολυώνυμα
+              Μονώνυμα και Πολυώνυμα
             </h1>
             <p className="text-xs sm:text-base lg:text-lg text-indigo-100 font-medium leading-relaxed mb-5 max-w-3xl">
               Από τις αριθμητικές παραστάσεις στο αλγεβρικό λεξιλόγιο: ανακαλύψτε πώς οι αριθμοί ενώνονται με μεταβλητές για να σχηματίσουν μονώνυμα, διώνυμα και πολυώνυμα, πώς υπολογίζεται ο βαθμός τους και πώς βρίσκουμε την αριθμητική τους τιμή.
@@ -228,7 +228,7 @@ export default function MononimaPolionimaTheory() {
                   1
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Παραστάσεις & Η Έννοια του Μονωνύμου
+                  Παραστάσεις και Η Έννοια του Μονωνύμου
                 </h2>
               </div>
 
@@ -298,7 +298,7 @@ export default function MononimaPolionimaTheory() {
                   2
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Βαθμός Μονωνύμου & Σχέσεις
+                  Βαθμός Μονωνύμου και Σχέσεις
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
@@ -333,7 +333,7 @@ export default function MononimaPolionimaTheory() {
                   3
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Πολυώνυμα, Διώνυμα & Τριώνυμα
+                  Πολυώνυμα, Διώνυμα και Τριώνυμα
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
@@ -367,7 +367,7 @@ export default function MononimaPolionimaTheory() {
                   4
                 </span>
                 <h2 className="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">
-                  Βαθμός Πολυωνύμου & Κανονική Μορφή
+                  Βαθμός Πολυωνύμου και Κανονική Μορφή
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
@@ -530,7 +530,7 @@ export default function MononimaPolionimaTheory() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 font-bold text-[11px] sm:text-xs rounded-full uppercase">
-                    {toCleanUppercase("ΠΡΟΒΛΗΜΑ 1: ΑΝΑΓΩΓΗ & ΒΑΘΜΟΣ")}
+                    {toCleanUppercase("ΠΡΟΒΛΗΜΑ 1: ΑΝΑΓΩΓΗ ΚΑΙ ΒΑΘΜΟΣ")}
                   </span>
                 </div>
                 <h3 className="font-bold text-base sm:text-lg text-slate-900 mb-2 leading-snug">
@@ -649,7 +649,7 @@ export default function MononimaPolionimaTheory() {
                 <li className="flex items-start gap-2">
                   <span className="font-bold">•</span>
                   <span className="inline-flex flex-wrap items-center gap-1">
-                    <strong>Αρνητικοί εκθέτες & ρίζες:</strong> Παραστάσεις όπως 3 · x⁻¹ ή 2 · <Radical>x</Radical> <strong>ΔΕΝ</strong> είναι μονώνυμα. Στα μονώνυμα οι εκθέτες των μεταβλητών είναι αποκλειστικά φυσικοί αριθμοί.
+                    <strong>Αρνητικοί εκθέτες και ρίζες:</strong> Παραστάσεις όπως 3 · x⁻¹ ή 2 · <Radical>x</Radical> <strong>ΔΕΝ</strong> είναι μονώνυμα. Στα μονώνυμα οι εκθέτες των μεταβλητών είναι αποκλειστικά φυσικοί αριθμοί.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
