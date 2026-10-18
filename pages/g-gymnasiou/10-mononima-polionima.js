@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
@@ -51,6 +51,107 @@ function Frac({ num, den, className = "" }) {
   );
 }
 
+// 100% Αξιόπιστο Custom Interactive Slider (Εξαλείφει πλήρως το refresh bug των native inputs)
+function CustomSlider({ label, min, max, value, onChange, color = "#4f46e5" }) {
+  const trackRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const percentage = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
+
+  const updateFromPosition = useCallback((clientX) => {
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const clickX = Math.max(0, Math.min(rect.width, clientX - rect.left));
+    const ratio = clickX / rect.width;
+    const rawVal = min + ratio * (max - min);
+    const steppedVal = Math.round(rawVal);
+    onChange(Math.max(min, Math.min(max, steppedVal)));
+  }, [min, max, onChange]);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+    updateFromPosition(e.clientX);
+
+    const onMouseMove = (moveEvent) => {
+      updateFromPosition(moveEvent.clientX);
+    };
+
+    const onMouseUp = () => {
+      setIsDragging(false);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    if (e.touches[0]) updateFromPosition(e.touches[0].clientX);
+
+    const onTouchMove = (moveEvent) => {
+      if (moveEvent.touches[0]) updateFromPosition(moveEvent.touches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+      setIsDragging(false);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+    };
+
+    window.addEventListener('touchmove', onTouchMove);
+    window.addEventListener('touchend', onTouchEnd);
+  };
+
+  return (
+    <div className="space-y-2 select-none">
+      <div className="flex justify-between items-center text-xs font-semibold text-slate-700">
+        <span>{label}</span>
+        <span
+          className="font-mono font-bold px-2 py-0.5 rounded border text-xs sm:text-sm bg-white shadow-xs"
+          style={{ color }}
+        >
+          {value > 0 ? `＋${value}` : value}
+        </span>
+      </div>
+
+      <div
+        ref={trackRef}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        className="relative h-6 flex items-center cursor-pointer group"
+      >
+        <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden relative">
+          <div
+            className="h-full transition-all duration-75"
+            style={{ width: `${percentage}%`, backgroundColor: color }}
+          />
+        </div>
+
+        <div
+          className={`absolute w-5 h-5 bg-white border-2 rounded-full shadow-md transition-transform duration-75 -translate-x-1/2 flex items-center justify-center ${
+            isDragging ? 'scale-125 ring-2 ring-indigo-300' : 'group-hover:scale-110'
+          }`}
+          style={{
+            left: `${percentage}%`,
+            borderColor: color
+          }}
+        >
+          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
+        </div>
+      </div>
+
+      <div className="flex justify-between text-[10px] text-slate-400 font-mono px-0.5">
+        <span>{min}</span>
+        <span>0</span>
+        <span>＋{max}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function MononimaPolionimaTheory() {
   const [coefA, setCoefA] = useState(2);
   const [coefB, setCoefB] = useState(-3);
@@ -96,7 +197,7 @@ export default function MononimaPolionimaTheory() {
         <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white p-5 sm:p-8 lg:p-12 mb-6 sm:mb-10 shadow-xl">
           <div className="relative z-10 max-w-4xl">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-indigo-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 border border-white/20">
-              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 7 •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
+              {toCleanUppercase("ΚΕΦΑΛΑΙΟ 10 •")} Γ' {toCleanUppercase("ΓΥΜΝΑΣΙΟΥ")}
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-3 text-white leading-tight">
               Μονώνυμα & Πολυώνυμα
@@ -119,7 +220,7 @@ export default function MononimaPolionimaTheory() {
         {/* 4 MODULAR CARDS ΘΕΩΡΙΑΣ */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           
-          {/* ΒΗΜΑ 1: ΑΡΙΘΜΗΤΙΚΕΣ / ΑΛΓΕΒΡΙΚΕΣ ΠΑΡΑΣΤΑΣΕΙΣ & ΜΟΝΩΝΥΜΑ */}
+          {/* ΒΗΜΑ 1 */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -131,7 +232,6 @@ export default function MononimaPolionimaTheory() {
                 </h2>
               </div>
 
-              {/* Εισαγωγικές Έννοιες */}
               <div className="space-y-2 mb-4 text-xs sm:text-sm text-slate-700">
                 <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
                   <strong>Αριθμητική παράσταση:</strong> Μία έκφραση που περιέχει πράξεις αποκλειστικά μεταξύ αριθμών (π.χ. 3 · 4² － 5).
@@ -190,7 +290,7 @@ export default function MononimaPolionimaTheory() {
             </div>
           </div>
 
-          {/* ΒΗΜΑ 2: ΒΑΘΜΟΣ ΚΑΙ ΣΧΕΣΕΙΣ ΜΟΝΩΝΥΜΩΝ */}
+          {/* ΒΗΜΑ 2 */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -225,7 +325,7 @@ export default function MononimaPolionimaTheory() {
             </div>
           </div>
 
-          {/* ΒΗΜΑ 3: ΠΟΛΥΩΝΥΜΑ, ΔΙΩΝΥΜΑ & ΤΡΙΩΝΥΜΑ */}
+          {/* ΒΗΜΑ 3 */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -259,7 +359,7 @@ export default function MononimaPolionimaTheory() {
             </div>
           </div>
 
-          {/* ΒΗΜΑ 4: ΒΑΘΜΟΣ ΠΟΛΥΩΝΥΜΟΥ & ΔΙΑΤΑΞΗ */}
+          {/* ΒΗΜΑ 4 */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-indigo-300 transition-colors">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -292,7 +392,7 @@ export default function MononimaPolionimaTheory() {
 
         </div>
 
-        {/* INTERACTIVE LAB */}
+        {/* INTERACTIVE LAB - ΑΞΙΟΠΙΣΤΑ CUSTOM SLIDERS */}
         <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 border border-slate-200 shadow-md mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100">
             <div>
@@ -310,69 +410,43 @@ export default function MononimaPolionimaTheory() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             
-            {/* Sliders & Controls */}
+            {/* Controls */}
             <div className="lg:col-span-5 space-y-4 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 w-full">
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs sm:text-sm font-bold text-slate-700">Συντελεστής δευτεροβάθμιου (a):</label>
-                  <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border border-slate-200 text-xs sm:text-sm">{coefA}</span>
-                </div>
-                <input
-                  type="range"
-                  min="-5"
-                  max="5"
-                  step="1"
-                  value={coefA}
-                  onChange={(e) => setCoefA(parseInt(e.target.value))}
-                  className="w-full accent-indigo-600 cursor-pointer"
-                />
-              </div>
+              <CustomSlider
+                label="Συντελεστής δευτεροβάθμιου (a):"
+                min={-5}
+                max={5}
+                value={coefA}
+                onChange={setCoefA}
+                color="#4f46e5"
+              />
 
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs sm:text-sm font-bold text-slate-700">Συντελεστής πρωτοβάθμιου (b):</label>
-                  <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border border-slate-200 text-xs sm:text-sm">{coefB}</span>
-                </div>
-                <input
-                  type="range"
-                  min="-5"
-                  max="5"
-                  step="1"
-                  value={coefB}
-                  onChange={(e) => setCoefB(parseInt(e.target.value))}
-                  className="w-full accent-indigo-600 cursor-pointer"
-                />
-              </div>
+              <CustomSlider
+                label="Συντελεστής πρωτοβάθμιου (b):"
+                min={-5}
+                max={5}
+                value={coefB}
+                onChange={setCoefB}
+                color="#4f46e5"
+              />
 
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs sm:text-sm font-bold text-slate-700">Σταθερός όρος (c):</label>
-                  <span className="font-mono font-bold text-indigo-600 bg-white px-2 py-0.5 rounded border border-slate-200 text-xs sm:text-sm">{coefC}</span>
-                </div>
-                <input
-                  type="range"
-                  min="-5"
-                  max="5"
-                  step="1"
-                  value={coefC}
-                  onChange={(e) => setCoefC(parseInt(e.target.value))}
-                  className="w-full accent-indigo-600 cursor-pointer"
-                />
-              </div>
+              <CustomSlider
+                label="Σταθερός όρος (c):"
+                min={-5}
+                max={5}
+                value={coefC}
+                onChange={setCoefC}
+                color="#4f46e5"
+              />
 
               <div className="pt-2 border-t border-slate-200">
-                <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs sm:text-sm font-bold text-emerald-700">Τιμή μεταβλητής (x):</label>
-                  <span className="font-mono font-bold text-emerald-700 bg-white px-2 py-0.5 rounded border border-slate-200 text-xs sm:text-sm">{valX}</span>
-                </div>
-                <input
-                  type="range"
-                  min="-3"
-                  max="3"
-                  step="1"
+                <CustomSlider
+                  label="Τιμή μεταβλητής (x):"
+                  min={-3}
+                  max={3}
                   value={valX}
-                  onChange={(e) => setValX(parseInt(e.target.value))}
-                  className="w-full accent-emerald-600 cursor-pointer"
+                  onChange={setValX}
+                  color="#059669"
                 />
               </div>
             </div>
@@ -470,7 +544,6 @@ export default function MononimaPolionimaTheory() {
                   Να γραφεί στην ανηγμένη του μορφή, να διαταχθεί κατά τις φθίνουσες δυνάμεις του x και να βρεθεί ο βαθμός και ο σταθερός του όρος.
                 </p>
 
-                {/* Πίνακας με ασφαλές scroll */}
                 <div className="overflow-x-auto -mx-1 sm:mx-0 mb-4 rounded-xl border border-slate-200">
                   <table className="w-full text-xs text-left min-w-[280px]">
                     <thead className="bg-slate-100 text-slate-700 font-bold">
@@ -497,7 +570,7 @@ export default function MononimaPolionimaTheory() {
                         <td className="p-2 sm:p-2.5 font-bold text-indigo-700">5 · x</td>
                       </tr>
                       <tr>
-                        <td className="p-2 sm:p-2.5 font-sans font-semibold">x⁰</td>
+                        <td className="p-2 sm:p-2.5 font-semibold">x⁰</td>
                         <td className="p-2 sm:p-2.5">－8</td>
                         <td className="p-2 sm:p-2.5 font-bold text-indigo-700">－8</td>
                       </tr>
