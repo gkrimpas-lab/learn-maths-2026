@@ -775,7 +775,7 @@ export default function ProsthesiAfairesiPolionimonExercises() {
       title="Ασκήσεις: Πρόσθεση & Αφαίρεση Πολυωνύμων | Γ' Γυμνασίου"
       description="Διαδραστικές ασκήσεις στην πρόσθεση και αφαίρεση μονωνύμων και πολυωνύμων με αναλυτικά βήματα και βαθμολόγηση για τη Γ' Γυμνασίου."
       backUrl="/g-gymnasiou/11-prosthesi-afairesi-polionimon"
-      backText="Θεωρία Κεφ. 11"
+      backText="Θεωρία Κεφ. 08"
       showAds={true}
       actionButton={
         <Link
