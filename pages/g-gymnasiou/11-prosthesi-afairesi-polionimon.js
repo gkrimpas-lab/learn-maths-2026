@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
@@ -51,39 +51,104 @@ function Frac({ num, den, className = "" }) {
   );
 }
 
-// Αυτόνομο Slider Component με ακριβή οπτική ένδειξη προόδου (Active Progress Fill)
-function RangeSlider({ id, label, min, max, value, onChange, color = "#4f46e5" }) {
-  // Υπολογισμός ποσοστού θέσης από 0% έως 100%
+// 100% Αξιόπιστο Custom Interactive Slider (Εξαλείφει πλήρως το refresh bug των native inputs)
+function CustomSlider({ label, min, max, value, onChange, color = "#4f46e5" }) {
+  const trackRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Ακριβής υπολογισμός ποσοστού θέσης (0% έως 100%)
   const percentage = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
 
+  const updateFromPosition = useCallback((clientX) => {
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const clickX = Math.max(0, Math.min(rect.width, clientX - rect.left));
+    const ratio = clickX / rect.width;
+    const rawVal = min + ratio * (max - min);
+    const steppedVal = Math.round(rawVal);
+    onChange(Math.max(min, Math.min(max, steppedVal)));
+  }, [min, max, onChange]);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+    updateFromPosition(e.clientX);
+
+    const onMouseMove = (moveEvent) => {
+      updateFromPosition(moveEvent.clientX);
+    };
+
+    const onMouseUp = () => {
+      setIsDragging(false);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    if (e.touches[0]) updateFromPosition(e.touches[0].clientX);
+
+    const onTouchMove = (moveEvent) => {
+      if (moveEvent.touches[0]) updateFromPosition(moveEvent.touches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+      setIsDragging(false);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+    };
+
+    window.addEventListener('touchmove', onTouchMove);
+    window.addEventListener('touchend', onTouchEnd);
+  };
+
   return (
-    <div className="space-y-1.5 select-none">
+    <div className="space-y-2 select-none">
       <div className="flex justify-between items-center text-xs font-semibold text-slate-700">
-        <label htmlFor={id} className="cursor-pointer">{label}</label>
+        <span>{label}</span>
         <span
-          className="font-mono font-bold px-2 py-0.5 rounded border text-xs sm:text-sm shadow-xs bg-white"
+          className="font-mono font-bold px-2 py-0.5 rounded border text-xs sm:text-sm bg-white shadow-xs"
           style={{ color }}
         >
           {value > 0 ? `＋${value}` : value}
         </span>
       </div>
-      <input
-        id={id}
-        name={id}
-        type="range"
-        min={min}
-        max={max}
-        step="1"
-        value={value}
-        onChange={(e) => {
-          e.stopPropagation();
-          onChange(Number(e.target.value));
-        }}
-        style={{
-          background: `linear-gradient(to right, ${color} 0%, ${color} ${percentage}%, #cbd5e1 ${percentage}%, #cbd5e1 100%)`
-        }}
-        className="w-full h-2 rounded-lg appearance-none cursor-pointer focus:outline-none"
-      />
+
+      {/* Διαδραστική Μπάρα */}
+      <div
+        ref={trackRef}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        className="relative h-6 flex items-center cursor-pointer group"
+      >
+        {/* Υπόβαθρο καναλιού (Track) */}
+        <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden relative">
+          {/* Χρωματισμένο τμήμα προόδου */}
+          <div
+            className="h-full transition-all duration-75"
+            style={{ width: `${percentage}%`, backgroundColor: color }}
+          />
+        </div>
+
+        {/* Κυκλική Λαβή (Thumb) - Τοποθετημένη ΑΚΡΙΒΩΣ στη θέση της τιμής */}
+        <div
+          className={`absolute w-5 h-5 bg-white border-2 rounded-full shadow-md transition-transform duration-75 -translate-x-1/2 flex items-center justify-center ${
+            isDragging ? 'scale-125 ring-2 ring-indigo-300' : 'group-hover:scale-110'
+          }`}
+          style={{
+            left: `${percentage}%`,
+            borderColor: color
+          }}
+        >
+          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
+        </div>
+      </div>
+
+      {/* Ενδείξεις Ορίων */}
       <div className="flex justify-between text-[10px] text-slate-400 font-mono px-0.5">
         <span>{min}</span>
         <span>0</span>
@@ -318,7 +383,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
 
         </div>
 
-        {/* INTERACTIVE LAB - ΑΠΟΛΥΤΩΣ ΔΙΟΡΘΩΜΕΝΑ SLIDERS ΜΕ ΕΓΓΥΗΜΕΝΟ TRACK FILL */}
+        {/* INTERACTIVE LAB - 100% ΑΞΙΟΠΙΣΤΑ CUSTOM SLIDERS */}
         <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 border border-slate-200 shadow-md mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100">
             <div>
@@ -359,12 +424,11 @@ export default function ProsthesiAfairesiPolionimonTheory() {
               
               {/* Πολυώνυμο P(x) */}
               <div>
-                <h3 className="text-xs font-black text-indigo-900 uppercase tracking-wider mb-3">
+                <h3 className="text-xs font-black text-indigo-900 uppercase tracking-wider mb-2.5">
                   {toCleanUppercase("ΣΥΝΤΕΛΕΣΤΕΣ ΠΟΛΥΩΝΥΜΟΥ P(x)")}
                 </h3>
                 <div className="space-y-3.5">
-                  <RangeSlider
-                    id="slider-p-a1"
+                  <CustomSlider
                     label="Όρος x² (a₁):"
                     min={-4}
                     max={4}
@@ -372,8 +436,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                     onChange={setA1}
                     color="#4f46e5"
                   />
-                  <RangeSlider
-                    id="slider-p-b1"
+                  <CustomSlider
                     label="Όρος x (b₁):"
                     min={-4}
                     max={4}
@@ -381,8 +444,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                     onChange={setB1}
                     color="#4f46e5"
                   />
-                  <RangeSlider
-                    id="slider-p-c1"
+                  <CustomSlider
                     label="Σταθερός c₁:"
                     min={-5}
                     max={5}
@@ -394,13 +456,12 @@ export default function ProsthesiAfairesiPolionimonTheory() {
               </div>
 
               {/* Πολυώνυμο Q(x) */}
-              <div className="pt-4 border-t border-slate-200">
-                <h3 className="text-xs font-black text-blue-900 uppercase tracking-wider mb-3">
+              <div className="pt-3 border-t border-slate-200">
+                <h3 className="text-xs font-black text-blue-900 uppercase tracking-wider mb-2.5">
                   {toCleanUppercase("ΣΥΝΤΕΛΕΣΤΕΣ ΠΟΛΥΩΝΥΜΟΥ Q(x)")}
                 </h3>
                 <div className="space-y-3.5">
-                  <RangeSlider
-                    id="slider-q-a2"
+                  <CustomSlider
                     label="Όρος x² (a₂):"
                     min={-4}
                     max={4}
@@ -408,8 +469,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                     onChange={setA2}
                     color="#2563eb"
                   />
-                  <RangeSlider
-                    id="slider-q-b2"
+                  <CustomSlider
                     label="Όρος x (b₂):"
                     min={-4}
                     max={4}
@@ -417,8 +477,7 @@ export default function ProsthesiAfairesiPolionimonTheory() {
                     onChange={setB2}
                     color="#2563eb"
                   />
-                  <RangeSlider
-                    id="slider-q-c2"
+                  <CustomSlider
                     label="Σταθερός c₂:"
                     min={-5}
                     max={5}
