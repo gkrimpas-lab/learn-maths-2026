@@ -230,6 +230,14 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 25',
     active: true,
   },
+  {
+    id: '29',
+    slug: '29-aplopoiisi',
+    title: 'Αριθμητική τιμή και Απλοποίηση Αλγεβρικών Παραστάσεων',
+    desc: 'Αριθμητική τιμή, Πίνακας τιμών, Απλοποίηση, Επιμεριστική ιδιότητα',
+    badge: 'ΚΕΦΑΛΑΙΟ 26',
+    active: true,
+  },
 ];
 
 export default function AGymnasiouIndex() {
