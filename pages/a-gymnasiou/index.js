@@ -246,6 +246,14 @@ const CHAPTERS = [
     badge: 'ΕΠΑΝΑΛΗΨΗ 4',
     active: false,
   },
+  {
+    id: '31',
+    slug: '31-algebrikes-sxeseis',
+    title: 'αλγεβρικές Σχέσεις',
+    desc: 'Μεταβλητή, Εξισώσεις, Λύση εξίσωσης.',
+    badge: 'ΕΠΑΝΑΛΗΨΗ 4',
+    active: false,
+  },
 ];
 
 export default function AGymnasiouIndex() {
