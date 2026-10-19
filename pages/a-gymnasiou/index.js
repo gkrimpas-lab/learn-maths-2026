@@ -252,7 +252,7 @@ const CHAPTERS = [
     title: 'αλγεβρικές Σχέσεις',
     desc: 'Μεταβλητή, Εξισώσεις, Λύση εξίσωσης.',
     badge: 'ΕΠΑΝΑΛΗΨΗ 4',
-    active: false,
+    active: true,
   },
 ];
 
