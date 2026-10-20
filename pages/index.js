@@ -159,15 +159,20 @@ export default function Home() {
       </section>
 
       {/* ΓΥΜΝΑΣΙΟ SECTION */}
-      <section id="gymnasio" className="py-10 md:py-14 bg-gray-100">
-        <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6`}>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-center mb-1 text-indigo-600">
-            📐 Μαθηματικά Γυμνασίου
-          </h2>
-          <p className="text-center text-gray-500 mb-8 text-xs sm:text-sm">Εμβαθύνουμε στην άλγεβρα και τη γεωμετρία</p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-            {/* Α' ΓΥΜΝΑΣΙΟΥ */}
+<section id="gymnasio" className="py-10 md:py-14 bg-gray-100">
+  <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6`}>
+    <div className="flex flex-col items-center mb-6">
+      <span className="bg-indigo-100 text-indigo-800 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 tracking-wide border border-indigo-200">
+        ✨ ΝΕΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ 2026–2027
+      </span>
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-center mb-1 text-indigo-600">
+        📐 Μαθηματικά Γυμνασίου
+      </h2>
+      <p className="text-center text-gray-600 max-w-xl text-xs sm:text-sm">
+        Πλήρως εναρμονισμένα με τη σειρά και τις ενότητες των <strong>νέων σχολικών βιβλίων</strong> του ΙΕΠ (2026–2027).
+      </p>
+    </div>
+          {/* Α' ΓΥΜΝΑΣΙΟΥ */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 flex flex-col justify-between">
               <div className="bg-indigo-500 py-3 text-center text-white font-black text-base sm:text-lg">Α' Γυμνασίου ⭐</div>
               <div className="p-5 text-center flex-1 flex flex-col justify-between">
