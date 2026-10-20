@@ -160,12 +160,14 @@ export default function Layout({
       {!hideFooter && (
         <footer className="bg-gray-800 text-gray-400 py-6 text-center text-xs sm:text-sm border-t border-gray-700 w-full mt-12">
           <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-4`}>
-            <p>© {new Date().getFullYear()} LearnMaths.gr. Με ❤️ για τους μαθητές μας.</p>
+            <p>© {new Date().getFullYear()} LearnMaths.gr — Επιμέλεια: Δημήτρης Γκρίμπας</p>
             <div className="flex items-center gap-4 text-xs font-semibold">
+              <Link href="/epikoinonia" className="hover:text-white transition">👨‍🏫 Σχετικά με τον Δημιουργό</Link>
               <Link href="/epikoinonia" className="hover:text-white transition">✉️ Επικοινωνία</Link>
             </div>
           </div>
         </footer>
+      )}
       )}
     </div>
   );
