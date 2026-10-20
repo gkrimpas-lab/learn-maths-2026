@@ -163,13 +163,13 @@ export default function Home() {
         <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6`}>
           <div className="flex flex-col items-center mb-6">
             <span className="bg-indigo-100 text-indigo-800 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 tracking-wide border border-indigo-200">
-              ✨ ΝΕΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ 2026–2027
+              ✨ ΝΕΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ 2027–2028
             </span>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-center mb-1 text-indigo-600">
               📐 Μαθηματικά Γυμνασίου
             </h2>
             <p className="text-center text-gray-600 max-w-xl text-xs sm:text-sm">
-              Πλήρως εναρμονισμένα με τη σειρά και τις ενότητες των <strong>νέων σχολικών βιβλίων</strong> του ΙΕΠ (2026–2027).
+              Πλήρως εναρμονισμένα με τη σειρά και τις ενότητες των <strong>νέων σχολικών βιβλίων</strong> του ΙΕΠ (2027–2028).
             </p>
           </div>
 
