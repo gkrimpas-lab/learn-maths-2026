@@ -193,7 +193,7 @@ export default function Epikoinonia() {
 
                     <div>
                       <label htmlFor="name" className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                        Ονοματεπώνυμο
+                        Ονοματεπωνυμο
                       </label>
                       <input
                         type="text"
@@ -209,7 +209,7 @@ export default function Epikoinonia() {
 
                     <div>
                       <label htmlFor="email" className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                        Email Επικοινωνίας
+                        Email Επικοινωνιας
                       </label>
                       <input
                         type="email"
@@ -225,7 +225,7 @@ export default function Epikoinonia() {
 
                     <div>
                       <label htmlFor="subject" className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                        Θέμα
+                        Θεμα
                       </label>
                       <input
                         type="text"
@@ -241,7 +241,7 @@ export default function Epikoinonia() {
 
                     <div>
                       <label htmlFor="message" className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                        Το μήνυμά σας
+                        Το μηνυμα σας
                       </label>
                       <textarea
                         id="message"
