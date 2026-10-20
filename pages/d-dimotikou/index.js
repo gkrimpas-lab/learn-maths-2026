@@ -1,95 +1,124 @@
-// pages/d-dimotikou/index.js
-import Head from 'next/head';
+import React from 'react';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import Layout from '../../components/Layout';
+import { D_DIMOTIKOU_MODULES, D_DIMOTIKOU_SECTIONS } from '../../data/d-dimotikou';
 
-export default function DDimotikouMenu() {
-  const modules = [
-  { id: '1-arithmoi-eos-20-xiliades', label: '🔢 1. Αριθμοί έως το 20.000', href: '/d-dimotikou/1-arithmoi-eos-20-xiliades' },
-  { id: '2-poligona', label: '🔺 2. Γνωρίζω τα πολύγωνα', href: '/d-dimotikou/2-poligona' },
-  { id: '3-prosthesi-afairesi', label: '➕ 3. Πρόσθεση και αφαίρεση (Αντίστροφες πράξεις)', href: '/d-dimotikou/3-prosthesi-afairesi' },
-  { id: '4-pollaplasiasmos', label: '✖️ 4. Πολλαπλασιασμός με διψήφιο αριθμό', href: '/d-dimotikou/4-pollaplasiasmos' },
-  { id: '5-diairesi', label: '➗ 5. Διαίρεση με μονοψήφιο διαιρέτη', href: '/d-dimotikou/5-diairesi' },
-  { id: '6-dekadikoi', label: '🍰 6. Δεκαδικά κλάσματα', href: '/d-dimotikou/6-dekadikoi' },
-  { id: '7-dekadikoi-sinexeia', label: '🪙 7. Δεκαδικά κλάσματα και δεκαδικοί αριθμοί', href: '/d-dimotikou/7-dekadikoi-sinexeia' },
-  { id: '8-mikos', label: '📏 8. Μονάδες μέτρησης μήκους', href: '/d-dimotikou/8-mikos' },
-  { id: '9-baros', label: '⚖️ 9. Μονάδες μέτρησης μάζας (βάρους)', href: '/d-dimotikou/9-baros' },
-  { id: '10-epanalipsi-1', label: '🏆 10. Επανάληψη: Κεφάλαια 1 – 9', href: '/d-dimotikou/10-epanalipsi-1' },
-  { id: '11-dekadikoi-3-psifia', label: '🏷️ 11. Δεκαδικοί αριθμοί με τρία δεκαδικά ψηφία', href: '/d-dimotikou/11-dekadikoi-3-psifia' },
-  { id: '12-diairesi-deka-ekato-xilia', label: '⚡ 12. Πολλαπλασιασμός και διαίρεση με 10, 100, 1.000', href: '/d-dimotikou/12-diairesi-deka-ekato-xilia' },
-  { id: '13-paralliles', label: '⏸️ 13. Παράλληλες και τεμνόμενες ευθείες', href: '/d-dimotikou/13-paralliles' },
-  { id: '14-apostasi-simeiou-eutheia', label: '📐 14. Απόσταση σημείου από ευθεία', href: '/d-dimotikou/14-apostasi-simeiou-eutheia' },
-  { id: '15-embadon', label: '🟩 15. Έννοια και μέτρηση εμβαδού', href: '/d-dimotikou/15-embadon' },
-  { id: '16-tetrapleura', label: '🔷 16. Είδη τετραπλεύρων και ιδιότητες', href: '/d-dimotikou/16-tetrapleura' },
-  { id: '17-perimetros', label: '🔲 17. Υπολογισμός περιμέτρου', href: '/d-dimotikou/17-perimetros' },
-  { id: '18-simmetria', label: '🦋 18. Αξονική συμμετρία', href: '/d-dimotikou/18-simmetria' },
-  { id: '19-epanalipsi-2', label: '🏆 19. Επανάληψη: Κεφάλαια 13 – 18', href: '/d-dimotikou/19-epanalipsi-2' },
-  { id: '20-megaloi-arithmoi', label: '🪐 20. Αριθμοί ως το 100.000 (Μεγάλοι αριθμοί)', href: '/d-dimotikou/20-megaloi-arithmoi' },
-  { id: '21-pollaplasiasmos-3-psifia', label: '🧮 21. Πολλαπλασιασμός με τριψήφιο αριθμό', href: '/d-dimotikou/21-pollaplasiasmos-3-psifia' },
-  { id: '22-diairesi-2-psifia', label: '🧩 22. Διαίρεση με διψήφιο διαιρέτη', href: '/d-dimotikou/22-diairesi-2-psifia' },
-  { id: '23-anagogi-monada', label: '🛒 23. Προβλήματα με αναγωγή στη μονάδα', href: '/d-dimotikou/23-anagogi-monada' },
-  { id: '24-epanalipsi-3', label: '🏆 24. Επανάληψη: Κεφάλαια 20 – 23', href: '/d-dimotikou/24-epanalipsi-3' },
-  { id: '25-ora', label: '⏰ 25. Μέτρηση χρόνου: Η ώρα και το ρολόι', href: '/d-dimotikou/25-ora' },
-  { id: '26-aionas', label: '📅 26. Μονάδες χρόνου: Ημέρες, μήνες, έτη, αιώνες', href: '/d-dimotikou/26-aionas' },
-  { id: '27-sterea', label: '🧊 27. Γεωμετρικά στερεά σώματα', href: '/d-dimotikou/27-sterea' },
-  { id: '28-sterea-anoigma', label: '📦 28. Αναπτύγματα γεωμετρικών στερεών', href: '/d-dimotikou/28-sterea-anoigma' },
-  { id: '29-posotita-igrou', label: '🥛 29. Μέτρηση χωρητικότητας (Υγρά)', href: '/d-dimotikou/29-posotita-igrou' }
-];
+export default function DDimotikouIndex() {
+  const pageSchema = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Μαθηματικά Δ' Δημοτικού", "item": "https://learnmaths.gr/d-dimotikou" }
+      ]
+    },
+    {
+      "@type": "Course",
+      "name": "Μαθηματικά Δ' Δημοτικού",
+      "description": "Διαδραστικά μαθήματα, θεωρία, παραδείγματα και ασκήσεις για τα Μαθηματικά Δ' Δημοτικού σύμφωνα με το σχολικό βιβλίο του ΙΕΠ.",
+      "provider": { "@type": "Organization", "name": "LearnMaths.gr" }
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
-      <Head>
-        <title>Δ' Δημοτικού: Μαθηματικά - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
-
-      <div>
-        {/* NAVBAR - Fluid */}
-        <nav className="bg-white shadow-md w-full">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <Link href="/" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
-              🏠 Αρχική
-            </Link>
-          </div>
-        </nav>
-
-        {/* HEADER */}
-        <header className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-16 text-center shadow-inner w-full">
-          <div className="w-[90%] mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl 2xl:text-6xl font-black mb-3 drop-shadow-sm">
-              🎒 Μαθηματικά Δ' Δημοτικού
+    <Layout
+      title="Μαθηματικά Δ' Δημοτικού: Θεωρία & Διαδραστικές Ασκήσεις | LearnMaths.gr"
+      description="Δωρεάν διαδραστικές ασκήσεις και θεωρία για τα Μαθηματικά Δ' Δημοτικού (Μεγάλοι Αριθμοί, Κλάσματα, Δεκαδικοί, Διαίρεση, Γεωμετρία, Περίμετρος & Εμβαδόν)."
+      schemaData={pageSchema}
+      backUrl="/"
+      backText="Αρχική"
+      showAds={true}
+    >
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
+        
+        {/* Banner Header - Teal Theme της Δ' Δημοτικού */}
+        <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-950 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-teal-700/40 text-center md:text-left">
+          <div className="max-w-4xl space-y-3">
+            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-teal-500/30 text-teal-200 border border-teal-400/30">
+              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΠΙΣΗΜΟ ΣΧΟΛΙΚΟ ΠΡΟΓΡΑΜΜΑ
+            </span>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
+              Μαθηματικά Δ' Δημοτικού
             </h1>
-            <p className="text-cyan-100 opacity-95 text-base md:text-lg 2xl:text-xl font-medium tracking-wide">
-              Επιλέξτε μια διαδραστική ενότητα για να ξεκινήσετε
+            <p className="text-sm sm:text-base lg:text-lg text-teal-100/90 leading-relaxed">
+              Εξερεύνησε τους μεγάλους αριθμούς, τα δεκαδικά κλάσματα, τις κάθετες πράξεις και τα γεωμετρικά σχήματα μέσα από διαδραστικά εργαλεία και παραδείγματα!
             </p>
           </div>
         </header>
 
-        {/* GRID ΕΝΟΤΗΤΩΝ - 4 στήλες στα μεγάλα monitor, 5 στήλες στα 2K/4K */}
-        <main className={`${LAYOUT.CONTAINER} py-12`}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-            {modules.map((mod) => (
-              <Link key={mod.id} href={mod.href} passHref legacyBehavior>
-                <a className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group cursor-pointer min-h-[90px] 2xl:p-8">
-                  <span className="font-bold text-gray-700 group-hover:text-cyan-600 text-base md:text-lg 2xl:text-xl transition-colors">
-                    {mod.label}
-                  </span>
-                  <span className="text-xl 2xl:text-2xl transform group-hover:translate-x-1 transition-transform opacity-70 group-hover:opacity-100">
-                    🚀
-                  </span>
-                </a>
-              </Link>
-            ))}
-          </div>
-        </main>
-      </div>
+        {/* Ενότητες Κεφαλαίων */}
+        <div className="space-y-10">
+          {D_DIMOTIKOU_SECTIONS.map((sec) => {
+            const sectionModules = D_DIMOTIKOU_MODULES.filter((m) => m.section === sec.id);
 
-      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm w-full border-t border-gray-700">
-        <p>© 2026 LearnMaths.gr. Με ❤️ για τους μαθητές της Δ' Δημοτικού.</p>
-      </footer>
-    </div>
+            return (
+              <section key={sec.id} className="space-y-4">
+                <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-800">
+                    {sec.title}
+                  </h2>
+                  <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+                    {sectionModules.length} μαθήματα
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5">
+                  {sectionModules.map((mod) => (
+                    <Link
+                      key={mod.id}
+                      href={mod.href}
+                      className={`p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between group cursor-pointer min-h-[80px] ${
+                        mod.isReview
+                          ? 'bg-amber-50/80 border-amber-300 hover:border-amber-400 hover:shadow-md hover:-translate-y-0.5'
+                          : 'bg-white border-slate-200 hover:border-teal-500 hover:shadow-md hover:-translate-y-0.5'
+                      }`}
+                    >
+                      <span className={`font-bold text-xs sm:text-sm leading-snug transition-colors ${
+                        mod.isReview
+                          ? 'text-amber-950 group-hover:text-amber-700'
+                          : 'text-slate-800 group-hover:text-teal-700'
+                      }`}>
+                        {mod.label}
+                      </span>
+                      <span className="text-sm font-bold text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform ml-2 shrink-0">
+                        ➔
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+
+        {/* SEO Overview Section */}
+        <section className="bg-white rounded-3xl p-6 sm:p-10 border border-teal-100 shadow-sm space-y-6 mt-8">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 border-b border-slate-100 pb-3">
+            🎒 Ύλη Μαθηματικών Δ' Δημοτικού: Βασικοί Άξονες Μάθησης
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-slate-600 text-xs sm:text-sm leading-relaxed">
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-base">Αριθμοί &amp; Πράξεις</h3>
+              <p>
+                Οι μαθητές εξοικειώνονται με αριθμούς έως το <strong>100.000</strong>, τον πολλαπλασιασμό με διψήφιο και τριψήφιο αριθμό, τη <strong>διαίρεση με διψήφιο διαιρέτη</strong> και την αναγωγή στη μονάδα.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-base">Δεκαδικοί &amp; Κλάσματα</h3>
+              <p>
+                Εισαγωγή στα <strong>δεκαδικά κλάσματα</strong> και τη σχέση τους με τους <strong>δεκαδικούς αριθμούς</strong> (έως τρία δεκαδικά ψηφία), καθώς και πράξεις πολλαπλασιασμού και διαίρεσης με το 10, 100, 1.000.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-base">Γεωμετρία &amp; Μετρήσεις</h3>
+              <p>
+                Μελέτη παραλλήλων και τεμνόμενων ευθειών, ειδών τετραπλεύρων, αξονικής συμμετρίας, μέτρησης <strong>μήκους, μάζας, χρόνου και χωρητικότητας</strong>, καθώς και εισαγωγή στην περίμετρο και το <strong>εμβαδόν</strong>.
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </Layout>
   );
 }
