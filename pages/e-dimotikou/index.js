@@ -1,96 +1,124 @@
-// pages/e-dimotikou/index.js
-import Head from 'next/head';
+import React from 'react';
 import Link from 'next/link';
-import { LAYOUT } from '../../shared/layout-config';
+import Layout from '../../components/Layout';
+import { E_DIMOTIKOU_MODULES, E_DIMOTIKOU_SECTIONS } from '../../data/e-dimotikou';
 
-export default function EDimotikouMenu() {
-  const modules = [
-  { id: '01-klasma', label: '🍕 1. Η έννοια του κλάσματος', href: '/e-dimotikou/01-klasma' },
-  { id: '02-isodinama', label: '🔄 2. Ισοδύναμα κλάσματα', href: '/e-dimotikou/02-isodinama' },
-  { id: '03-aplopoiisi', label: '✂️ 3. Απλοποίηση κλασμάτων', href: '/e-dimotikou/03-aplopoiisi' },
-  { id: '04-anagogi', label: '🔍 4. Αναγωγή στην κλασματική μονάδα', href: '/e-dimotikou/04-anagogi' },
-  { id: '05-pollaplasia', label: '🔢 5. Πολλαπλάσια φυσικών αριθμών', href: '/e-dimotikou/05-pollaplasia' },
-  { id: '06-ekp', label: '🎯 6. Ελάχιστο Κοινό Πολλαπλάσιο (Ε.Κ.Π.)', href: '/e-dimotikou/06-ekp' },
-  { id: '07-diairetes', label: '🛡️ 7. Διαιρέτες φυσικών αριθμών', href: '/e-dimotikou/07-diairetes' },
-  { id: '08-mkd', label: '🏆 8. Μέγιστος Κοινός Διαιρέτης (Μ.Κ.Δ.)', href: '/e-dimotikou/08-mkd' },
-  { id: '09-krit-diaret', label: '🔍 9. Κριτήρια διαιρετότητας', href: '/e-dimotikou/09-krit-diaret' },
-  { id: '10-epanalipsi-1', label: '🏆 10. Επανάληψη: Κεφάλαια 1 – 9', href: '/e-dimotikou/10-epanalipsi-1' },
-  { id: '11-mesitimi', label: '📊 11. Υπολογισμός μέσης τιμής', href: '/e-dimotikou/11-mesitimi' },
-  { id: '12-pososta', label: '🏷️ 12. Εισαγωγή στα ποσοστά', href: '/e-dimotikou/12-pososta' },
-  { id: '13-gonies', label: '📐 13. Είδη γωνιών και μέτρηση', href: '/e-dimotikou/13-gonies' },
-  { id: '14-trigona', label: '🔺 14. Είδη τριγώνων ως προς τις γωνίες', href: '/e-dimotikou/14-trigona' },
-  { id: '15-trigona-pleures', label: '📐 15. Είδη τριγώνων ως προς τις πλευρές', href: '/e-dimotikou/15-trigona-pleures' },
-  { id: '16-kathetes-eutheies', label: '⟂ 16. Κάθετες ευθείες', href: '/e-dimotikou/16-kathetes-eutheies' },
-  { id: '17-apostasi-simeiou-eutheias', label: '📏 17. Απόσταση σημείου από ευθεία', href: '/e-dimotikou/17-apostasi-simeiou-eutheia' },
-  { id: '18-ipsos-trigonou', label: '📐 18. Σχεδίαση και μέτρηση ύψους τριγώνου', href: '/e-dimotikou/18-ipsos-trigonou' },
-  { id: '19-aksonas-simmetrias', label: '🪞 19. Άξονας συμμετρίας σε γεωμετρικά σχήματα', href: '/e-dimotikou/19-aksonas-simmetrias' },
-  { id: '20-mikos-kiklou', label: '⭕ 20. Υπολογισμός μήκους κύκλου', href: '/e-dimotikou/20-mikos-kiklou' },
-  { id: '21-monades-mikous', label: '📏 21. Μονάδες μέτρησης μήκους και μετατροπές', href: '/e-dimotikou/21-monades-mikous' },
-  { id: '22-poligona', label: '⬡ 22. Γνωριμία με τα πολύγωνα', href: '/e-dimotikou/22-poligona' },
-  { id: '23-kanonika-poligona', label: '🛑 23. Κανονικά πολύγωνα', href: '/e-dimotikou/23-kanonika-poligona' },
-  { id: '24-perimetros', label: '🔲 24. Περίμετρος γεωμετρικών σχημάτων', href: '/e-dimotikou/24-perimetros' },
-  { id: '25-embado', label: '🟩 25. Η έννοια του εμβαδού', href: '/e-dimotikou/25-embado' },
-  { id: '26-embado-sximaton', label: '📐 26. Εμβαδόν επιπέδων σχημάτων', href: '/e-dimotikou/26-embado-sximaton' },
-  { id: '27-monades-epifaneias', label: '🗺️ 27. Μονάδες μέτρησης επιφάνειας', href: '/e-dimotikou/27-monades-epifaneias' },
-  { id: '28-ennoia-ogkou', label: '📦 28. Η έννοια του όγκου', href: '/e-dimotikou/28-ennoia-ogkou' },
-  { id: '29-ogkoi-sximaton', label: '🧊 29. Υπολογισμός όγκου στερεών σωμάτων', href: '/e-dimotikou/29-ogkoi-sximaton' },
-  { id: '30-epanalipsi-2', label: '🏆 30. Επανάληψη: Κεφάλαια 13 – 29', href: '/e-dimotikou/30-epanalipsi-2' }
-];
+export default function EDimotikouIndex() {
+  const pageSchema = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Μαθηματικά Ε' Δημοτικού", "item": "https://learnmaths.gr/e-dimotikou" }
+      ]
+    },
+    {
+      "@type": "Course",
+      "name": "Μαθηματικά Ε' Δημοτικού",
+      "description": "Διαδραστικά μαθήματα, θεωρία, παραδείγματα και ασκήσεις για τα Μαθηματικά Ε' Δημοτικού σύμφωνα με το σχολικό βιβλίο του ΙΕΠ.",
+      "provider": { "@type": "Organization", "name": "LearnMaths.gr" }
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
-      <Head>
-        <title>Ε' Δημοτικού: Μαθηματικά - LearnMaths.gr</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-      </Head>
-
-      <div>
-        {/* NAVBAR */}
-        <nav className="bg-white shadow-md w-full">
-          <div className={`${LAYOUT.CONTAINER} py-4 flex justify-between items-center`}>
-            <Link href="/" className="text-2xl font-black text-blue-600 tracking-tight">
-              LearnMaths<span className="text-indigo-600">.gr</span>
-            </Link>
-            <Link href="/" className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm">
-              🏠 Αρχική
-            </Link>
-          </div>
-        </nav>
-
-        {/* HEADER */}
-        <header className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-16 text-center shadow-inner w-full">
-          <div className="w-[90%] mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl 2xl:text-6xl font-black mb-3 drop-shadow-sm">
-              🎒 Μαθηματικά Ε' Δημοτικού
+    <Layout
+      title="Μαθηματικά Ε' Δημοτικού: Θεωρία & Διαδραστικές Ασκήσεις | LearnMaths.gr"
+      description="Δωρεάν διαδραστικές ασκήσεις και θεωρία για τα Μαθηματικά Ε' Δημοτικού (Κλάσματα, ΕΚΠ, ΜΚΔ, Ποσοστά, Γεωμετρία, Εμβαδόν & Όγκος)."
+      schemaData={pageSchema}
+      backUrl="/"
+      backText="Αρχική"
+      showAds={true}
+    >
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
+        
+        {/* Banner Header - Cyan/Teal Theme της Ε' Δημοτικού */}
+        <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-900 via-teal-900 to-blue-950 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-cyan-700/40 text-center md:text-left">
+          <div className="max-w-4xl space-y-3">
+            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-cyan-500/30 text-cyan-200 border border-cyan-400/30">
+              Ε' ΔΗΜΟΤΙΚΟΥ • ΕΠΙΣΗΜΟ ΣΧΟΛΙΚΟ ΠΡΟΓΡΑΜΜΑ
+            </span>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
+              Μαθηματικά Ε' Δημοτικού
             </h1>
-            <p className="text-cyan-100 opacity-95 text-base md:text-lg 2xl:text-xl font-medium tracking-wide">
-              Επιλέξτε μια διαδραστική ενότητα για να ξεκινήσετε
+            <p className="text-sm sm:text-base lg:text-lg text-cyan-100/90 leading-relaxed">
+              Κατανόησε τα κλάσματα, το ΕΚΠ, τον ΜΚΔ και τις γεωμετρικές έννοιες μέσα από διαδραστικούς προσομοιωτές και πρακτικές ασκήσεις με άμεσο feedback!
             </p>
           </div>
         </header>
 
-        {/* GRID ΕΝΟΤΗΤΩΝ */}
-        <main className={`${LAYOUT.CONTAINER} py-12`}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-            {modules.map((mod) => (
-              <Link key={mod.id} href={mod.href} passHref legacyBehavior>
-                <a className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:border-cyan-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between group cursor-pointer min-h-[90px] 2xl:p-8">
-                  <span className="font-bold text-gray-700 group-hover:text-cyan-600 text-base md:text-lg 2xl:text-xl transition-colors">
-                    {mod.label}
-                  </span>
-                  <span className="text-xl 2xl:text-2xl transform group-hover:translate-x-1 transition-transform opacity-70 group-hover:opacity-100">
-                    🚀
-                  </span>
-                </a>
-              </Link>
-            ))}
-          </div>
-        </main>
-      </div>
+        {/* Ενότητες Κεφαλαίων */}
+        <div className="space-y-10">
+          {E_DIMOTIKOU_SECTIONS.map((sec) => {
+            const sectionModules = E_DIMOTIKOU_MODULES.filter((m) => m.section === sec.id);
 
-      <footer className="bg-gray-800 text-gray-400 py-8 text-center text-sm w-full border-t border-gray-700">
-        <p>© 2026 LearnMaths.gr. Με ❤️ για τους μαθητές της Ε' Δημοτικού.</p>
-      </footer>
-    </div>
+            return (
+              <section key={sec.id} className="space-y-4">
+                <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-800">
+                    {sec.title}
+                  </h2>
+                  <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+                    {sectionModules.length} μαθήματα
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5">
+                  {sectionModules.map((mod) => (
+                    <Link
+                      key={mod.id}
+                      href={mod.href}
+                      className={`p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between group cursor-pointer min-h-[80px] ${
+                        mod.isReview
+                          ? 'bg-amber-50/80 border-amber-300 hover:border-amber-400 hover:shadow-md hover:-translate-y-0.5'
+                          : 'bg-white border-slate-200 hover:border-teal-500 hover:shadow-md hover:-translate-y-0.5'
+                      }`}
+                    >
+                      <span className={`font-bold text-xs sm:text-sm leading-snug transition-colors ${
+                        mod.isReview
+                          ? 'text-amber-950 group-hover:text-amber-700'
+                          : 'text-slate-800 group-hover:text-teal-700'
+                      }`}>
+                        {mod.label}
+                      </span>
+                      <span className="text-sm font-bold text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform ml-2 shrink-0">
+                        ➔
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+
+        {/* SEO Overview Section */}
+        <section className="bg-white rounded-3xl p-6 sm:p-10 border border-teal-100 shadow-sm space-y-6 mt-8">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 border-b border-slate-100 pb-3">
+            🎒 Ύλη Μαθηματικών Ε' Δημοτικού: Βασικοί Άξονες Μάθησης
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-slate-600 text-xs sm:text-sm leading-relaxed">
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-base">Κλάσματα &amp; Διαιρετότητα</h3>
+              <p>
+                Η Ε' Δημοτικού εμβαθύνει στα <strong>ισοδύναμα κλάσματα</strong>, την <strong>απλοποίηση</strong>, την αναγωγή στην κλασματική μονάδα, καθώς και στον υπολογισμό του <strong>ΕΚΠ</strong> και του <strong>ΜΚΔ</strong> με κριτήρια διαιρετότητας.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-base">Μέση Τιμή &amp; Ποσοστά</h3>
+              <p>
+                Εισαγωγή στην επεξεργασία δεδομένων με την έννοια της <strong>μέσης τιμής</strong> και στα πρώτα πρακτικά προβλήματα με <strong>ποσοστά (%)</strong> στην καθημερινή ζωή.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-bold text-slate-800 text-base">Γεωμετρία &amp; Μετρήσεις</h3>
+              <p>
+                Μελέτη των <strong>ειδών τριγώνων</strong> (ως προς πλευρές και γωνίες), κανονικών πολυγώνων, αξονικής συμμετρίας και υπολογισμός <strong>περιμέτρου, εμβαδού και όγκου</strong> στερεών σωμάτων.
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </Layout>
   );
 }
