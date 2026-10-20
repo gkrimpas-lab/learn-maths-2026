@@ -12,7 +12,7 @@ export default function Layout({
   children,
   title = "LearnMaths.gr - Τα Μαθηματικά Αλλιώς",
   description = "Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο και τα Πρότυπα Σχολεία.",
-  schemaData = null, // Προαιρετικό εξειδικευμένο schema (π.χ. Course, BreadcrumbList)
+  schemaData = null,
   backUrl = null,
   backText = "Πίσω",
   actionButton = null,
@@ -23,8 +23,6 @@ export default function Layout({
   fullWidth = false,
 }) {
   const router = useRouter();
-  
-  // Αυτόματος υπολογισμός του ακριβούς URL της σελίδας
   const currentPath = router.asPath.split('?')[0];
   const canonicalUrl = `${SITE_URL}${currentPath === '/' ? '' : currentPath}`;
 
@@ -35,10 +33,10 @@ export default function Layout({
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
         
-        {/* Tailwind Runtime CDN */}
+        {/* Tailwind Runtime Script */}
         <script src="https://cdn.tailwindcss.com"></script>
 
-        {/* Δυναμικό Canonical & Robots */}
+        {/* Dynamic Canonical & Robots */}
         <link rel="canonical" href={canonicalUrl} />
         <meta name="robots" content="index, follow" />
 
@@ -60,7 +58,7 @@ export default function Layout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="alternate icon" href="/favicon.ico" />
 
-        {/* Βασικό Schema Organization & WebSite */}
+        {/* Structured Data (Schema.org) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -83,11 +81,10 @@ export default function Layout({
                   "founder": {
                     "@type": "Person",
                     "name": "Δημήτρης Γκρίμπας",
-                    "jobTitle": "Μηχανικός Η/Υ και Πληροφορικής - Μαθηματικός - Εκπαιδευτικός ",
+                    "jobTitle": "Εκπαιδευτικός - Μαθηματικός & Μηχανικός Η/Υ",
                     "alumniOf": "Πανεπιστήμιο Πατρών"
                   }
                 },
-                // Αν η επιμέρους σελίδα στείλει δικό της schema (π.χ. Course ή Breadcrumbs), ενσωματώνεται εδώ αυτόματα
                 ...(schemaData ? (Array.isArray(schemaData) ? schemaData : [schemaData]) : [])
               ]
             })
