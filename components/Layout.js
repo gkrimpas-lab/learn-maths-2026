@@ -24,11 +24,14 @@ export default function Layout({
 }) {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between scroll-smooth antialiased">
-      <Head>
+     <Head>
   <title>{title}</title>
   <meta name="description" content={description} />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   
+  {/* Tailwind CDN - Απαραίτητο για το styling της σελίδας */}
+  <script src="https://cdn.tailwindcss.com"></script>
+
   {/* Canonical & Robots */}
   <link rel="canonical" href="https://learnmaths.gr/" />
   <meta name="robots" content="index, follow" />
