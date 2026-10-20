@@ -92,7 +92,7 @@ const CHAPTERS = [
     active: true,
   },
   {
-    id: 'epanalipsi-2',
+    id: '12-epanalipsi-2',
     tag: 'ΕΠΑΝΑΛΗΨΗ 2',
     badge: 'ΕΠΑΝΑΛΗΨΗ 2',
     title: 'Επανάληψη Ενοτήτων 5 έως 10',
@@ -251,7 +251,7 @@ const CHAPTERS = [
     slug: '31-algebrikes-sxeseis',
     title: 'αλγεβρικές Σχέσεις',
     desc: 'Μεταβλητή, Εξισώσεις, Λύση εξίσωσης.',
-    badge: 'ΕΠΑΝΑΛΗΨΗ 4',
+    badge: 'ΚΕΦΑΛΑΙΟ 27',
     active: true,
   },
 ];
