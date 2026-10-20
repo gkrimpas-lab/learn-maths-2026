@@ -28,10 +28,10 @@ function Frac({ num, den, isNeg = false, className = '' }) {
 
 export default function AlgebrikesSxeseisTheoria() {
   // State για Εργαστήριο 1: Διαδραστική Ζυγαριά (a*x + b = c)
-  const [scaleCoeffA, setScaleCoeffA] = useState(2); // Συντελεστής του x
-  const [scaleConstB, setScaleConstB] = useState(3); // Σταθερός όρος αριστερού δίσκου
-  const [scaleTargetC, setScaleTargetC] = useState(11); // Βάρος δεξιού δίσκου
-  const [scaleTestX, setScaleTestX] = useState(4); // Δοκιμαστική τιμή του x
+  const [scaleCoeffA, setScaleCoeffA] = useState(2); // Συντελεστής του x (πλήθος κουτιών)
+  const [scaleConstB, setScaleConstB] = useState(3); // Σταθερός όρος (έξτρα μπάλες αριστερά)
+  const [scaleTargetC, setScaleTargetC] = useState(11); // Βάρος δεξιού δίσκου (μπάλες δεξιά)
+  const [scaleTestX, setScaleTestX] = useState(4); // Δοκιμαστική τιμή x (μπάλες ΜΕΣΑ σε κάθε κουτί)
 
   // State για Εργαστήριο 2: Επαλήθευση Ρίζας Εξίσωσης
   const [eqA, setEqA] = useState(3);
@@ -55,7 +55,7 @@ export default function AlgebrikesSxeseisTheoria() {
     if (leftWeight === rightWeight) return 0;
     // Περιορισμός κλίσης ζυγαριάς έως +/- 12 μοίρες
     const diff = leftWeight - rightWeight;
-    return Math.max(-12, Math.min(12, diff * 2));
+    return Math.max(-12, Math.min(12, diff * 1.5));
   }, [leftWeight, rightWeight]);
 
   // Υπολογισμοί Εργαστηρίου 2 (Επαλήθευση)
@@ -170,7 +170,7 @@ export default function AlgebrikesSxeseisTheoria() {
                   <div className="grid grid-cols-[30px_1fr_30px] items-center h-9 w-full gap-1">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setScaleCoeffA, -1, 1, 4, e)}
+                      onClick={(e) => handleStep(setScaleCoeffA, -1, 1, 5, e)}
                       className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
                     >
                       －
@@ -180,7 +180,7 @@ export default function AlgebrikesSxeseisTheoria() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setScaleCoeffA, 1, 1, 4, e)}
+                      onClick={(e) => handleStep(setScaleCoeffA, 1, 1, 5, e)}
                       className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
                     >
                       ＋
@@ -195,7 +195,7 @@ export default function AlgebrikesSxeseisTheoria() {
                   <div className="grid grid-cols-[30px_1fr_30px] items-center h-9 w-full gap-1">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setScaleConstB, -1, 0, 8, e)}
+                      onClick={(e) => handleStep(setScaleConstB, -1, 0, 10, e)}
                       className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
                     >
                       －
@@ -205,7 +205,7 @@ export default function AlgebrikesSxeseisTheoria() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setScaleConstB, 1, 0, 8, e)}
+                      onClick={(e) => handleStep(setScaleConstB, 1, 0, 10, e)}
                       className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
                     >
                       ＋
@@ -220,7 +220,7 @@ export default function AlgebrikesSxeseisTheoria() {
                   <div className="grid grid-cols-[30px_1fr_30px] items-center h-9 w-full gap-1">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setScaleTargetC, -1, 1, 20, e)}
+                      onClick={(e) => handleStep(setScaleTargetC, -1, 1, 25, e)}
                       className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
                     >
                       －
@@ -230,7 +230,7 @@ export default function AlgebrikesSxeseisTheoria() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setScaleTargetC, 1, 1, 20, e)}
+                      onClick={(e) => handleStep(setScaleTargetC, 1, 1, 25, e)}
                       className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
                     >
                       ＋
@@ -245,7 +245,7 @@ export default function AlgebrikesSxeseisTheoria() {
                   <div className="grid grid-cols-[30px_1fr_30px] items-center h-9 w-full gap-1">
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setScaleTestX, -1, 0, 8, e)}
+                      onClick={(e) => handleStep(setScaleTestX, -1, 0, 15, e)}
                       className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
                     >
                       －
@@ -255,7 +255,7 @@ export default function AlgebrikesSxeseisTheoria() {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => handleStep(setScaleTestX, 1, 0, 8, e)}
+                      onClick={(e) => handleStep(setScaleTestX, 1, 0, 15, e)}
                       className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
                     >
                       ＋
@@ -278,7 +278,7 @@ export default function AlgebrikesSxeseisTheoria() {
               </div>
 
               {/* Οπτική Ζυγαριά σε SVG (7 cols) */}
-              <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
+              <div className="lg:col-span-7 p-4 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
                     ΚΑΤΑΣΤΑΣΗ ΖΥΓΑΡΙΑΣ
@@ -294,122 +294,117 @@ export default function AlgebrikesSxeseisTheoria() {
                   </span>
                 </div>
 
-                {/* SVG Ζυγαριά - Μεγάλη, ευρύχωρη και responsive */}
-                <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 sm:p-4 flex justify-center">
+                {/* SVG Ζυγαριά - Πολύ ευρύχωρη (740x400), Responsive και Χωρίς Scroll */}
+                <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 flex justify-center">
                   <svg
-                    viewBox="0 0 540 320"
-                    className="w-full max-w-[520px] h-auto"
+                    viewBox="0 0 740 400"
+                    className="w-full max-w-[680px] h-auto"
                     preserveAspectRatio="xMidYMid meet"
                   >
                     {/* Βάση & Κολόνα */}
-                    <rect x="230" y="295" width="80" height="15" rx="4" fill="#334155" />
-                    <polygon points="270,140 252,295 288,295" fill="#475569" stroke="#1e293b" strokeWidth="1" />
-                    <circle cx="270" cy="140" r="9" fill="#f59e0b" />
+                    <rect x="310" y="360" width="120" height="20" rx="6" fill="#334155" />
+                    <polygon points="370,160 340,360 400,360" fill="#475569" stroke="#1e293b" strokeWidth="2" />
+                    <circle cx="370" cy="160" r="12" fill="#f59e0b" />
 
                     {/* Κινούμενο σύστημα ζυγού */}
-                    <g transform={`rotate(${tiltAngle} 270 140)`} className="transition-transform duration-300">
+                    <g transform={`rotate(${tiltAngle} 370 160)`} className="transition-transform duration-300">
                       {/* Κεντρικός βραχίονας */}
-                      <line x1="80" y1="140" x2="460" y2="140" stroke="#94a3b8" strokeWidth="5" strokeLinecap="round" />
+                      <line x1="140" y1="160" x2="600" y2="160" stroke="#94a3b8" strokeWidth="6" strokeLinecap="round" />
 
                       {/* --- ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ --- */}
-                      <g transform="translate(130, 140)">
+                      <g transform="translate(140, 160)">
                         {/* Νήματα ανάρτησης */}
-                        <line x1="0" y1="0" x2="-65" y2="70" stroke="#64748b" strokeWidth="2" />
-                        <line x1="0" y1="0" x2="65" y2="70" stroke="#64748b" strokeWidth="2" />
+                        <line x1="0" y1="0" x2="-120" y2="140" stroke="#64748b" strokeWidth="2.5" />
+                        <line x1="0" y1="0" x2="120" y2="140" stroke="#64748b" strokeWidth="2.5" />
 
                         {/* Επιφάνεια Δίσκου */}
-                        <ellipse cx="0" cy="70" rx="72" ry="14" fill="#1e293b" stroke="#38bdf8" strokeWidth="2.5" />
+                        <ellipse cx="0" cy="140" rx="130" ry="22" fill="#1e293b" stroke="#38bdf8" strokeWidth="3" />
 
                         {/* ΚΟΥΤΙΑ x (Συντελεστής α) */}
-                        <g transform="translate(-62, 22)">
+                        <g transform="translate(-115, 80)">
                           {Array.from({ length: scaleCoeffA }).map((_, boxIdx) => {
-                            const bX = boxIdx * 32;
+                            const bX = boxIdx * 38; // 34 width + 4 spacing
                             return (
                               <g key={`box-${boxIdx}`}>
                                 <rect
                                   x={bX}
                                   y="0"
-                                  width="28"
-                                  height="38"
+                                  width="34"
+                                  height="55"
                                   rx="4"
                                   fill="#0c4a6e"
                                   stroke="#38bdf8"
                                   strokeWidth="1.5"
                                 />
-                                <text x={bX + 14} y="11" fill="#38bdf8" fontSize="8" fontWeight="bold" textAnchor="middle">
+                                <text x={bX + 17} y="13" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">
                                   x
                                 </text>
-                                {/* Μπάλες μέσα στο κουτί */}
-                                {Array.from({ length: Math.min(scaleTestX, 6) }).map((_, bIdx) => (
+                                {/* Μπάλες μέσα στο κουτί (έως 15) */}
+                                {Array.from({ length: Math.min(scaleTestX, 15) }).map((_, bIdx) => (
                                   <circle
                                     key={`bb-${boxIdx}-${bIdx}`}
-                                    cx={bX + 8 + (bIdx % 2) * 12}
-                                    cy={18 + Math.floor(bIdx / 2) * 8}
-                                    r="3"
+                                    cx={bX + 7 + (bIdx % 3) * 10}
+                                    cy={48 - Math.floor(bIdx / 3) * 8}
+                                    r="3.5"
                                     fill="#7dd3fc"
                                   />
                                 ))}
-                                {scaleTestX > 6 && (
-                                  <text x={bX + 14} y="32" fill="#7dd3fc" fontSize="8" fontWeight="bold" textAnchor="middle">
-                                    +{scaleTestX - 6}
-                                  </text>
-                                )}
                               </g>
                             );
                           })}
                         </g>
 
-                        {/* ΜΠΑΛΕΣ β (Σταθερός όρος) */}
-                        <g transform={`translate(${Math.max(-50, scaleCoeffA * 32 - 58)}, 32)`}>
+                        {/* ΜΠΑΛΕΣ β (Σταθερός όρος, τοποθέτηση δίπλα στα κουτιά) */}
+                        <g transform={`translate(${-115 + scaleCoeffA * 38 + 10}, 132)`}>
                           {Array.from({ length: scaleConstB }).map((_, bIdx) => (
                             <circle
                               key={`const-b-${bIdx}`}
-                              cx={(bIdx % 4) * 11}
-                              cy={20 - Math.floor(bIdx / 4) * 10}
-                              r="4.5"
+                              cx={(bIdx % 3) * 14}
+                              cy={-6 - Math.floor(bIdx / 3) * 14}
+                              r="6"
                               fill="#818cf8"
                               stroke="#c7d2fe"
-                              strokeWidth="0.8"
+                              strokeWidth="1"
                             />
                           ))}
                         </g>
 
                         {/* Καθαρή ετικέτα βάρους κάτω από τον δίσκο */}
-                        <text x="0" y="100" fill="#38bdf8" fontSize="13" fontWeight="bold" textAnchor="middle">
+                        <text x="0" y="185" fill="#38bdf8" fontSize="14" fontWeight="bold" textAnchor="middle">
                           {leftWeight} μπάλες ({scaleCoeffA}x ＋ {scaleConstB})
                         </text>
                       </g>
 
                       {/* --- ΔΕΞΙΟΣ ΔΙΣΚΟΣ --- */}
-                      <g transform="translate(410, 140)">
+                      <g transform="translate(600, 160)">
                         {/* Νήματα ανάρτησης */}
-                        <line x1="0" y1="0" x2="-65" y2="70" stroke="#64748b" strokeWidth="2" />
-                        <line x1="0" y1="0" x2="65" y2="70" stroke="#64748b" strokeWidth="2" />
+                        <line x1="0" y1="0" x2="-120" y2="140" stroke="#64748b" strokeWidth="2.5" />
+                        <line x1="0" y1="0" x2="120" y2="140" stroke="#64748b" strokeWidth="2.5" />
 
                         {/* Επιφάνεια Δίσκου */}
-                        <ellipse cx="0" cy="70" rx="72" ry="14" fill="#1e293b" stroke="#f59e0b" strokeWidth="2.5" />
+                        <ellipse cx="0" cy="140" rx="130" ry="22" fill="#1e293b" stroke="#f59e0b" strokeWidth="3" />
 
-                        {/* ΜΠΑΛΕΣ γ (Δεξιός δίσκος σε σειρές των 5) */}
-                        <g transform="translate(-25, 52)">
-                          {Array.from({ length: Math.min(scaleTargetC, 20) }).map((_, bIdx) => {
-                            const col = bIdx % 5;
-                            const row = Math.floor(bIdx / 5);
+                        {/* ΜΠΑΛΕΣ γ (Δεξιός δίσκος, σε σειρές των 7) */}
+                        <g transform="translate(-42, 132)">
+                          {Array.from({ length: Math.min(scaleTargetC, 25) }).map((_, bIdx) => {
+                            const col = bIdx % 7;
+                            const row = Math.floor(bIdx / 7);
                             return (
                               <circle
                                 key={`target-c-${bIdx}`}
-                                cx={col * 12}
-                                cy={-row * 10}
-                                r="4.5"
+                                cx={col * 14}
+                                cy={-6 - row * 14}
+                                r="6"
                                 fill="#f59e0b"
                                 stroke="#fde68a"
-                                strokeWidth="0.8"
+                                strokeWidth="1"
                               />
                             );
                           })}
                         </g>
 
                         {/* Καθαρή ετικέτα βάρους κάτω από τον δίσκο */}
-                        <text x="0" y="100" fill="#f59e0b" fontSize="13" fontWeight="bold" textAnchor="middle">
+                        <text x="0" y="185" fill="#f59e0b" fontSize="14" fontWeight="bold" textAnchor="middle">
                           {rightWeight} μπάλες (γ)
                         </text>
                       </g>
@@ -431,14 +426,15 @@ export default function AlgebrikesSxeseisTheoria() {
                   </div>
                   <div className={isBalanced ? 'text-emerald-400 font-bold pt-1' : 'text-rose-400 font-bold pt-1'}>
                     {isBalanced
-                      ? `✅ Η ζυγαριά ισορροπεί! Ο αριθμός x ＝ ${scaleTestX} είναι η λύση (ρίζα) της εξίσωσης.`
-                      : `❌ Η ζυγαριά γέρνει (${leftWeight > rightWeight ? 'βαρύτερος ο αριστερός δίσκος' : 'βαρύτερος ο δεξιός δίσκος'}). Ο αριθμός x ＝ ${scaleTestX} δεν είναι λύση.`}
+                      ? `✅ Η ζυγαριά ισορροπεί τέλεια! Ο αριθμός x ＝ ${scaleTestX} είναι η λύση της εξίσωσης.`
+                      : `❌ Η ζυγαριά γέρνει (${leftWeight > rightWeight ? 'βαρύτερος ο αριστερός δίσκος' : 'βαρύτερος ο δεξιός δίσκος'}). Το ${scaleTestX} δεν είναι λύση.`}
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
+
         {/* 3. ΔΟΚΙΜΑΣΤΗΡΙΟ ΕΠΑΛΗΘΕΥΣΗΣ ΕΞΙΣΩΣΗΣ & ΕΡΓΑΣΤΗΡΙΟ 2 */}
         <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
           <div className="border-b border-slate-100 pb-4">
