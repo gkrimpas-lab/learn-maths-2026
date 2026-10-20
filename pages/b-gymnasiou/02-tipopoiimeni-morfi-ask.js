@@ -25,6 +25,35 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
+// Component Power: κανονική μαθηματική μορφή, μαύρο χρώμα, παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη
+const Power = ({ base, exp, className = "" }) => {
+  const expNum = typeof exp === 'number' ? exp : parseInt(String(exp).replace(/[()]/g, ''), 10);
+  const isNeg = !isNaN(expNum) ? expNum < 0 : String(exp).startsWith('-');
+  const formattedExp = isNeg ? `(${exp})` : `${exp}`;
+
+  return (
+    <span className={`inline-flex items-baseline font-mono ${className}`}>
+      <span>{base}</span>
+      <sup className="text-slate-900 font-bold ml-0.5 text-xs sm:text-sm">{formattedExp}</sup>
+    </span>
+  );
+};
+
+// Βοηθητική μέθοδος για κομψή προβολή συμβολοσειρών με δυνάμεις (π.χ. "3,4 · 10^5" ή "7,5 · 10^-6")
+const renderMathText = (text) => {
+  if (typeof text !== 'string') return text;
+
+  // Εντοπισμός μοτίβου base^exp
+  const parts = text.split(/(\b\d+\^[-]?\d+\b)/g);
+  return parts.map((part, idx) => {
+    if (part.includes('^')) {
+      const [b, e] = part.split('^');
+      return <Power key={idx} base={b} exp={e} />;
+    }
+    return part;
+  });
+};
+
 // Εξασφάλιση μοναδικών επιλογών στα MCQs
 const makeUniqueOptions = (correctVal, rawDistractors) => {
   const options = [correctVal];
@@ -63,7 +92,11 @@ const POOL_THEORY = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['34 · 10^4', '0,34 · 10^6', '340 · 10^3', '0,034 · 10^7']),
-      hint: 'Στην τυποποιημένη μορφή α · 10^κ πρέπει να ισχύει αυστηρά 1 ≤ |α| < 10.'
+      hint: (
+        <span>
+          Στην τυποποιημένη μορφή α · 10<sup>κ</sup> πρέπει να ισχύει αυστηρά 1 ≤ |α| &lt; 10.
+        </span>
+      )
     };
   },
   // 2. Μετατροπή μεγάλου ακεραίου (π.χ. 450.000)
@@ -129,7 +162,11 @@ const POOL_THEORY = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['7,8 · 10^-4', '-78 · 10^3', '-0,78 · 10^5', '7,8 · 10^4']),
-      hint: 'Το πρόσημο μείον παραμένει μπροστά στον συντελεστή: -7,8 · 10⁴.'
+      hint: (
+        <span>
+          Το πρόσημο μείον παραμένει μπροστά στον συντελεστή: -7,8 · <Power base={10} exp={4} />.
+        </span>
+      )
     };
   },
   // 5. Μετατροπή από τυποποιημένη σε φυσικό αριθμό (Input)
@@ -139,7 +176,7 @@ const POOL_THEORY = [
       badge: 'ΑΝΑΠΤΥΓΜΑ',
       question: (
         <span>
-          Γράψε ως έναν συνηθισμένο ακέραιο αριθμό την παράσταση <strong className="font-mono text-indigo-700">3,5 · 10<sup>4</sup></strong>:
+          Γράψε ως έναν συνηθισμένο ακέραιο αριθμό την παράσταση <strong className="font-mono text-indigo-700 text-base sm:text-lg">3,5 · <Power base={10} exp={4} /></strong>:
         </span>
       ),
       correct: '35000',
@@ -153,11 +190,11 @@ const POOL_THEORY = [
       badge: 'ΑΝΑΠΤΥΓΜΑ',
       question: (
         <span>
-          Γράψε ως δεκαδικό αριθμό (με κόμμα) την παράσταση <strong className="font-mono text-indigo-700">4 · 10<sup>-3</sup></strong>:
+          Γράψε ως δεκαδικό αριθμό (με κόμμα) την παράσταση <strong className="font-mono text-indigo-700 text-base sm:text-lg">4 · <Power base={10} exp={-3} /></strong>:
         </span>
       ),
       correct: '0,004',
-      hint: '4 · 10⁻³ = 4 / 1.000 = 0,004 (μετακινούμε την υποδιαστολή 3 θέσεις αριστερά).'
+      hint: '4 · 10^(-3) = 4 / 1.000 = 0,004 (μετακινούμε την υποδιαστολή 3 θέσεις αριστερά).'
     };
   },
   // 7. Διόρθωση συντελεστή που υπερβαίνει το 10 (45 · 10^3)
@@ -168,12 +205,16 @@ const POOL_THEORY = [
       badge: 'ΑΠΛΟΠΟΙΗΣΗ',
       question: (
         <span>
-          Ποια είναι η σωστή τυποποιημένη μορφή της έκφρασης <strong className="font-mono text-indigo-700">45 · 10<sup>3</sup></strong>;
+          Ποια είναι η σωστή τυποποιημένη μορφή της έκφρασης <strong className="font-mono text-indigo-700 text-base sm:text-lg">45 · <Power base={10} exp={3} /></strong>;
         </span>
       ),
       correct,
       options: makeUniqueOptions(correct, ['4,5 · 10^2', '45 · 10^3', '0,45 · 10^5', '4,5 · 10^5']),
-      hint: '45 = 4,5 · 10¹. Άρα 4,5 · 10¹ · 10³ = 4,5 · 10⁴.'
+      hint: (
+        <span>
+          45 = 4,5 · <Power base={10} exp={1} />. Άρα 4,5 · <Power base={10} exp={1} /> · <Power base={10} exp={3} /> = 4,5 · <Power base={10} exp={4} />.
+        </span>
+      )
     };
   },
   // 8. Διόρθωση συντελεστή μικρότερου του 1 (0,06 · 10^5)
@@ -184,12 +225,16 @@ const POOL_THEORY = [
       badge: 'ΑΠΛΟΠΟΙΗΣΗ',
       question: (
         <span>
-          Ποια είναι η σωστή τυποποιημένη μορφή της έκφρασης <strong className="font-mono text-indigo-700">0,06 · 10<sup>5</sup></strong>;
+          Ποια είναι η σωστή τυποποιημένη μορφή της έκφρασης <strong className="font-mono text-indigo-700 text-base sm:text-lg">0,06 · <Power base={10} exp={5} /></strong>;
         </span>
       ),
       correct,
       options: makeUniqueOptions(correct, ['6 · 10^7', '6 · 10^4', '0,6 · 10^4', '60 · 10^2']),
-      hint: '0,06 = 6 · 10⁻². Άρα 6 · 10⁻² · 10⁵ = 6 · 10³.'
+      hint: (
+        <span>
+          0,06 = 6 · <Power base={10} exp={-2} />. Άρα 6 · <Power base={10} exp={-2} /> · <Power base={10} exp={5} /> = 6 · <Power base={10} exp={3} />.
+        </span>
+      )
     };
   },
   // 9. Γινόμενο τυποποιημένων αριθμών
@@ -199,13 +244,20 @@ const POOL_THEORY = [
       type: 'mcq',
       badge: 'ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ',
       question: (
-        <span>
-          Υπολόγισε το γινόμενο: <strong className="font-mono text-indigo-700">(2 · 10<sup>3</sup>) · (3 · 10<sup>4</sup>)</strong>
+        <span className="inline-flex items-center flex-wrap">
+          <span>Υπολόγισε το γινόμενο: </span>
+          <strong className="font-mono text-indigo-700 mx-1 text-base sm:text-lg">
+            (2 · <Power base={10} exp={3} />) · (3 · <Power base={10} exp={4} />)
+          </strong>
         </span>
       ),
       correct,
       options: makeUniqueOptions(correct, ['6 · 10^12', '5 · 10^7', '6 · 10^1', '5 · 10^12']),
-      hint: '(2 · 3) · 10³⁺⁴ = 6 · 10⁷.'
+      hint: (
+        <span>
+          (2 · 3) · <Power base={10} exp="3+4" /> = 6 · <Power base={10} exp={7} />.
+        </span>
+      )
     };
   },
   // 10. Πηλίκο τυποποιημένων αριθμών
@@ -215,13 +267,20 @@ const POOL_THEORY = [
       type: 'mcq',
       badge: 'ΔΙΑΙΡΕΣΗ',
       question: (
-        <span>
-          Υπολόγισε το πηλίκο: <strong className="font-mono text-indigo-700">(8 · 10<sup>7</sup>) : (2 · 10<sup>4</sup>)</strong>
+        <span className="inline-flex items-center flex-wrap">
+          <span>Υπολόγισε το πηλίκο: </span>
+          <strong className="font-mono text-indigo-700 mx-1 text-base sm:text-lg">
+            (8 · <Power base={10} exp={7} />) : (2 · <Power base={10} exp={4} />)
+          </strong>
         </span>
       ),
       correct,
       options: makeUniqueOptions(correct, ['4 · 10^11', '4 · 10^-3', '6 · 10^3', '16 · 10^3']),
-      hint: '(8 : 2) · 10⁷⁻⁴ = 4 · 10³.'
+      hint: (
+        <span>
+          (8 : 2) · <Power base={10} exp="7-4" /> = 4 · <Power base={10} exp={3} />.
+        </span>
+      )
     };
   },
   // 11. Γινόμενο όπου το γινόμενο των συντελεστών ξεπερνά το 10
@@ -231,13 +290,20 @@ const POOL_THEORY = [
       type: 'mcq',
       badge: 'ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ',
       question: (
-        <span>
-          Υπολόγισε σε τυποποιημένη μορφή το γινόμενο: <strong className="font-mono text-indigo-700">(5 · 10<sup>2</sup>) · (3 · 10<sup>4</sup>)</strong>
+        <span className="inline-flex items-center flex-wrap">
+          <span>Υπολόγισε σε τυποποιημένη μορφή το γινόμενο: </span>
+          <strong className="font-mono text-indigo-700 mx-1 text-base sm:text-lg">
+            (5 · <Power base={10} exp={2} />) · (3 · <Power base={10} exp={4} />)
+          </strong>
         </span>
       ),
       correct,
       options: makeUniqueOptions(correct, ['15 · 10^6', '1,5 · 10^6', '1,5 · 10^8', '8 · 10^6']),
-      hint: '5 · 3 = 15. Άρα 15 · 10⁶ = 1,5 · 10⁷.'
+      hint: (
+        <span>
+          5 · 3 = 15. Άρα 15 · <Power base={10} exp={6} /> = 1,5 · <Power base={10} exp={7} />.
+        </span>
+      )
     };
   },
   // 12. Πηλίκο όπου ο συντελεστής είναι μικρότερος του 1
@@ -247,13 +313,20 @@ const POOL_THEORY = [
       type: 'mcq',
       badge: 'ΔΙΑΙΡΕΣΗ',
       question: (
-        <span>
-          Υπολόγισε σε τυποποιημένη μορφή το πηλίκο: <strong className="font-mono text-indigo-700">(2 · 10<sup>6</sup>) : (4 · 10<sup>2</sup>)</strong>
+        <span className="inline-flex items-center flex-wrap">
+          <span>Υπολόγισε σε τυποποιημένη μορφή το πηλίκο: </span>
+          <strong className="font-mono text-indigo-700 mx-1 text-base sm:text-lg">
+            (2 · <Power base={10} exp={6} />) : (4 · <Power base={10} exp={2} />)
+          </strong>
         </span>
       ),
       correct,
       options: makeUniqueOptions(correct, ['0,5 · 10^4', '5 · 10^4', '5 · 10^2', '2 · 10^4']),
-      hint: '2 : 4 = 0,5. Άρα 0,5 · 10⁴ = 5 · 10³.'
+      hint: (
+        <span>
+          2 : 4 = 0,5. Άρα 0,5 · <Power base={10} exp={4} /> = 5 · <Power base={10} exp={3} />.
+        </span>
+      )
     };
   },
   // 13. Σύγκριση δύο αριθμών σε τυποποιημένη μορφή (διαφορετικός εκθέτης)
@@ -263,8 +336,11 @@ const POOL_THEORY = [
       type: 'mcq',
       badge: 'ΣΥΓΚΡΙΣΗ',
       question: (
-        <span>
-          Ποια σχέση ισχύει ανάμεσα στους αριθμούς <span className="font-mono font-bold">Α = 9,1 · 10<sup>5</sup></span> και <span className="font-mono font-bold">Β = 1,2 · 10<sup>6</sup></span>;
+        <span className="inline-flex items-center flex-wrap">
+          <span>Ποια σχέση ισχύει ανάμεσα στους αριθμούς </span>
+          <span className="font-mono font-bold mx-1">Α = 9,1 · <Power base={10} exp={5} /></span>
+          <span> και </span>
+          <span className="font-mono font-bold mx-1">Β = 1,2 · <Power base={10} exp={6} /></span>;
         </span>
       ),
       correct,
@@ -284,8 +360,11 @@ const POOL_THEORY = [
       type: 'mcq',
       badge: 'ΣΥΓΚΡΙΣΗ',
       question: (
-        <span>
-          Ποια σχέση ισχύει ανάμεσα στους αριθμούς <span className="font-mono font-bold">7,2 · 10<sup>-4</sup></span> και <span className="font-mono font-bold">4,9 · 10<sup>-4</sup></span>;
+        <span className="inline-flex items-center flex-wrap">
+          <span>Ποια σχέση ισχύει ανάμεσα στους αριθμούς </span>
+          <span className="font-mono font-bold mx-1">7,2 · <Power base={10} exp={-4} /></span>
+          <span> και </span>
+          <span className="font-mono font-bold mx-1">4,9 · <Power base={10} exp={-4} /></span>;
         </span>
       ),
       correct,
@@ -306,12 +385,16 @@ const POOL_THEORY = [
       badge: 'ΙΔΙΟΤΗΤΕΣ',
       question: (
         <span>
-          Υπολόγισε την τιμή της δύναμης: <strong className="font-mono text-indigo-700">(2 · 10<sup>3</sup>)<sup>2</sup></strong>
+          Υπολόγισε την τιμή της δύναμης: <strong className="font-mono text-indigo-700 text-base sm:text-lg">(2 · <Power base={10} exp={3} />)<sup className="text-slate-900 font-bold ml-0.5">2</sup></strong>
         </span>
       ),
       correct,
       options: makeUniqueOptions(correct, ['4 · 10^5', '2 · 10^6', '4 · 10^9', '8 · 10^6']),
-      hint: '2² · (10³)² = 4 · 10⁶.'
+      hint: (
+        <span>
+          2² · (<Power base={10} exp={3} />)² = 4 · <Power base={10} exp={6} />.
+        </span>
+      )
     };
   },
   // 16. Τυποποιημένη μορφή του 1.000.000 (Input)
@@ -321,7 +404,7 @@ const POOL_THEORY = [
       badge: 'ΜΕΤΑΤΡΟΠΗ',
       question: (
         <span>
-          Αν ο αριθμός 1.000.000 γραφτεί στη μορφή <strong className="font-mono text-indigo-700">10<sup>κ</sup></strong>, ποιος είναι ο ακέραιος <span className="font-mono font-bold">κ</span>;
+          Αν ο αριθμός 1.000.000 γραφτεί στη μορφή <strong className="font-mono text-indigo-700 text-base sm:text-lg"><Power base={10} exp="κ" /></strong>, ποιος είναι ο ακέραιος <span className="font-mono font-bold">κ</span>;
         </span>
       ),
       correct: '6',
@@ -335,7 +418,7 @@ const POOL_THEORY = [
       badge: 'ΜΕΤΑΤΡΟΠΗ',
       question: (
         <span>
-          Αν ο δεκαδικός 0,00001 γραφτεί στη μορφή <strong className="font-mono text-indigo-700">10<sup>κ</sup></strong>, ποιος είναι ο ακέραιος <span className="font-mono font-bold">κ</span>;
+          Αν ο δεκαδικός 0,00001 γραφτεί στη μορφή <strong className="font-mono text-indigo-700 text-base sm:text-lg"><Power base={10} exp="κ" /></strong>, ποιος είναι ο ακέραιος <span className="font-mono font-bold">κ</span>;
         </span>
       ),
       correct: '-5',
@@ -355,7 +438,11 @@ const POOL_THEORY = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['9,4 · 10^5', '94 · 10^6', '0,94 · 10^7', '9,4 · 10^9']),
-      hint: '1 εκατομμύριο = 10⁶. Επομένως 9,4 εκατομμύρια = 9,4 · 10⁶.'
+      hint: (
+        <span>
+          1 εκατομμύριο = <Power base={10} exp={6} />. Επομένως 9,4 εκατομμύρια = 9,4 · <Power base={10} exp={6} />.
+        </span>
+      )
     };
   },
   // 19. Μετατροπή 3 δισεκατομμυρίων
@@ -371,7 +458,11 @@ const POOL_THEORY = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['3 · 10^6', '3 · 10^12', '30 · 10^8', '0,3 · 10^10']),
-      hint: '1 δισεκατομμύριο = 10⁹. Άρα 3 δισεκατομμύρια = 3 · 10⁹.'
+      hint: (
+        <span>
+          1 δισεκατομμύριο = <Power base={10} exp={9} />. Άρα 3 δισεκατομμύρια = 3 · <Power base={10} exp={9} />.
+        </span>
+      )
     };
   },
   // 20. Ακέραιο μέρος ίσο με 1
@@ -387,7 +478,11 @@ const POOL_THEORY = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['10,5 · 10^1', '1,05 · 10^3', '0,105 · 10^3', '1,5 · 10^2']),
-      hint: '105 = 1,05 · 10² (μετακίνηση 2 θέσεις αριστερά).'
+      hint: (
+        <span>
+          105 = 1,05 · <Power base={10} exp={2} /> (μετακίνηση 2 θέσεις αριστερά).
+        </span>
+      )
     };
   }
 ];
@@ -409,7 +504,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['3,84 · 10^6', '38,4 · 10^7', '0,384 · 10^9', '3,84 · 10^-8']),
-      hint: '384.000.000 m = 3,84 · 10⁸ m (μετακίνηση υποδιαστολής 8 θέσεις αριστερά).'
+      hint: (
+        <span>
+          384.000.000 m = 3,84 · <Power base={10} exp={8} /> m (μετακίνηση υποδιαστολής 8 θέσεις αριστερά).
+        </span>
+      )
     };
   },
   // 2. Φυσική: Ταχύτητα του φωτός
@@ -425,7 +524,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['3 · 10^7', '30 · 10^7', '3 · 10^6', '0,3 · 10^9']),
-      hint: '300.000.000 = 3 · 10⁸ m/s.'
+      hint: (
+        <span>
+          300.000.000 = 3 · <Power base={10} exp={8} /> m/s.
+        </span>
+      )
     };
   },
   // 3. Βιολογία: Ερυθρό αιμοσφαίριο
@@ -441,7 +544,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['7,5 · 10^-5', '75 · 10^-7', '0,75 · 10^-5', '7,5 · 10^6']),
-      hint: 'Μετακινούμε την υποδιαστολή 6 θέσεις δεξιά: 7,5 · 10⁻⁶ m.'
+      hint: (
+        <span>
+          Μετακινούμε την υποδιαστολή 6 θέσεις δεξιά: 7,5 · <Power base={10} exp={-6} /> m.
+        </span>
+      )
     };
   },
   // 4. Νανοτεχνολογία: Πάχος νανοσωλήνα άνθρακα
@@ -457,7 +564,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['1,4 · 10^-8', '14 · 10^-10', '1,4 · 10^-10', '0,14 · 10^-8']),
-      hint: 'Μετακινούμε την υποδιαστολή 9 θέσεις δεξιά: 1,4 · 10⁻⁹ m.'
+      hint: (
+        <span>
+          Μετακινούμε την υποδιαστολή 9 θέσεις δεξιά: 1,4 · <Power base={10} exp={-9} /> m.
+        </span>
+      )
     };
   },
   // 5. Χημεία: Μάζα μορίου οξυγόνου
@@ -468,12 +579,16 @@ const POOL_PROBLEMS = [
       badge: 'ΠΡΟΒΛΗΜΑ',
       question: (
         <span>
-          Η μάζα ενός μορίου οξυγόνου δίνεται ως <strong className="font-mono text-amber-700">53 · 10<sup>-24</sup> γραμμάρια</strong>. Ποια είναι η ορθή τυποποιημένη μορφή;
+          Η μάζα ενός μορίου οξυγόνου δίνεται ως <strong className="font-mono text-amber-700 text-base sm:text-lg">53 · <Power base={10} exp={-24} /> γραμμάρια</strong>. Ποια είναι η ορθή τυποποιημένη μορφή;
         </span>
       ),
       correct,
       options: makeUniqueOptions(correct, ['5,3 · 10^-25', '5,3 · 10^-23', '0,53 · 10^-22', '5,3 · 10^23']),
-      hint: '53 = 5,3 · 10¹. Άρα 5,3 · 10¹ · 10⁻²⁴ = 5,3 · 10⁻²³ g.'
+      hint: (
+        <span>
+          53 = 5,3 · <Power base={10} exp={1} />. Άρα 5,3 · <Power base={10} exp={1} /> · <Power base={10} exp={-24} /> = 5,3 · <Power base={10} exp={-23} /> g.
+        </span>
+      )
     };
   },
   // 6. Πληθυσμιακή Στατιστική: Πληθυσμός της Γης
@@ -489,7 +604,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['8 · 10^8', '80 · 10^8', '8 · 10^10', '0,8 · 10^10']),
-      hint: '8.000.000.000 = 8 · 10⁹.'
+      hint: (
+        <span>
+          8.000.000.000 = 8 · <Power base={10} exp={9} />.
+        </span>
+      )
     };
   },
   // 7. Πληροφορική: Χωρητικότητα σκληρού δίσκου
@@ -505,7 +624,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['2 · 10^9', '20 · 10^11', '2 · 10^12', '2 · 10^15']),
-      hint: 'Το 2 ακολουθείται από 12 μηδενικά: 2 · 10¹² bytes.'
+      hint: (
+        <span>
+          Το 2 ακολουθείται από 12 μηδενικά: 2 · <Power base={10} exp={12} /> bytes.
+        </span>
+      )
     };
   },
   // 8. Αστρονομία: Χρόνος ταξιδιού φωτός (Input)
@@ -514,12 +637,20 @@ const POOL_PROBLEMS = [
       type: 'input',
       badge: 'ΠΡΟΒΛΗΜΑ',
       question: (
-        <span>
-          Η απόσταση Γης - Ήλιου είναι <span className="font-mono">1,5 · 10<sup>11</sup> m</span> και η ταχύτητα του φωτός <span className="font-mono">3 · 10<sup>8</sup> m/s</span>. Υπολόγισε το πηλίκο <strong className="font-mono text-amber-700">(1,5 · 10<sup>11</sup>) : (3 · 10<sup>8</sup>)</strong> σε δευτερόλεπτα:
+        <span className="inline-flex items-center flex-wrap">
+          <span>Η απόσταση Γης - Ήλιου είναι </span>
+          <span className="font-mono mx-1">1,5 · <Power base={10} exp={11} /> m</span>
+          <span> και η ταχύτητα του φωτός </span>
+          <span className="font-mono mx-1">3 · <Power base={10} exp={8} /> m/s</span>.
+          <span> Υπολόγισε το πηλίκο σε δευτερόλεπτα:</span>
         </span>
       ),
       correct: '500',
-      hint: '(1,5 : 3) · 10¹¹⁻⁸ = 0,5 · 10³ = 500 δευτερόλεπτα.'
+      hint: (
+        <span>
+          (1,5 : 3) · <Power base={10} exp="11-8" /> = 0,5 · <Power base={10} exp={3} /> = 500 δευτερόλεπτα.
+        </span>
+      )
     };
   },
   // 9. Οικολογία: Σταγόνες νερού σε πισίνα
@@ -535,7 +666,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['1,2 · 10^8', '12 · 10^8', '1,2 · 10^9', '0,12 · 10^10']),
-      hint: '1.200.000.000 = 1,2 · 10⁹.'
+      hint: (
+        <span>
+          1.200.000.000 = 1,2 · <Power base={10} exp={9} />.
+        </span>
+      )
     };
   },
   // 10. Μικροβιολογία: Πληθυσμός βακτηρίων μετά από πολλαπλασιασμό
@@ -545,13 +680,21 @@ const POOL_PROBLEMS = [
       type: 'mcq',
       badge: 'ΠΡΟΒΛΗΜΑ',
       question: (
-        <span>
-          Μία καλλιέργεια έχει <span className="font-mono">2 · 10<sup>5</sup></span> βακτήρια ανά ml σε δοχείο <span className="font-mono">2 · 10<sup>3</sup> ml</span>. Πόσα είναι συνολικά τα βακτήρια;
+        <span className="inline-flex items-center flex-wrap">
+          <span>Μία καλλιέργεια έχει </span>
+          <span className="font-mono mx-1">2 · <Power base={10} exp={5} /></span>
+          <span> βακτήρια ανά ml σε δοχείο </span>
+          <span className="font-mono mx-1">2 · <Power base={10} exp={3} /> ml</span>.
+          <span> Πόσα είναι συνολικά τα βακτήρια;</span>
         </span>
       ),
       correct,
       options: makeUniqueOptions(correct, ['4 · 10^15', '4 · 10^8', '2 · 10^8', '4 · 10^2']),
-      hint: '(2 · 10⁵) · (2 · 10³) = (2 · 2) · 10⁵⁺³ = 4 · 10⁸.'
+      hint: (
+        <span>
+          (2 · <Power base={10} exp={5} />) · (2 · <Power base={10} exp={3} />) = (2 · 2) · <Power base={10} exp="5+3" /> = 4 · <Power base={10} exp={8} />.
+        </span>
+      )
     };
   },
   // 11. Φυσική: Μάζα της Γης
@@ -567,7 +710,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['6 · 10^21', '6 · 10^23', '6 · 10^24', '60 · 10^23']),
-      hint: '6 ακολουθούμενο από 24 μηδενικά = 6 · 10²⁴ kg.'
+      hint: (
+        <span>
+          6 ακολουθούμενο από 24 μηδενικά = 6 · <Power base={10} exp={24} /> kg.
+        </span>
+      )
     };
   },
   // 12. Χημεία: Διάμετρος ατόμου
@@ -583,7 +730,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['1 · 10^-9', '1 · 10^-11', '1 · 10^-10', '0,1 · 10^-9']),
-      hint: 'Μετακίνηση 10 θέσεις δεξιά: 1 · 10⁻¹⁰ m (1 Angstrom).'
+      hint: (
+        <span>
+          Μετακίνηση 10 θέσεις δεξιά: 1 · <Power base={10} exp={-10} /> m (1 Angstrom).
+        </span>
+      )
     };
   },
   // 13. Οικονομία: Εθνικό χρέος
@@ -599,7 +750,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['3,5 · 10^9', '35 · 10^10', '3,5 · 10^11', '3,5 · 10^12']),
-      hint: '350 δις = 350 · 10⁹ = 3,5 · 10¹¹ €.'
+      hint: (
+        <span>
+          350 δις = 350 · <Power base={10} exp={9} /> = 3,5 · <Power base={10} exp={11} /> €.
+        </span>
+      )
     };
   },
   // 14. Αστρονομία: Έτος φωτός
@@ -615,7 +770,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['9,46 · 10^9', '9,46 · 10^11', '9,46 · 10^12', '94,6 · 10^11']),
-      hint: '9.460.000.000.000 = 9,46 · 10¹² km.'
+      hint: (
+        <span>
+          9.460.000.000.000 = 9,46 · <Power base={10} exp={12} /> km.
+        </span>
+      )
     };
   },
   // 15. Μικροηλεκτρονική: Μέγεθος transistor
@@ -631,7 +790,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['3 · 10^-8', '3 · 10^-9', '3 · 10^-10', '0,3 · 10^-8']),
-      hint: '0,000000003 m = 3 · 10⁻⁹ m.'
+      hint: (
+        <span>
+          0,000000003 m = 3 · <Power base={10} exp={-9} /> m.
+        </span>
+      )
     };
   },
   // 16. Ιατρική: Αριθμός κυττάρων στο ανθρώπινο σώμα
@@ -647,7 +810,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['3,7 · 10^12', '3,7 · 10^13', '37 · 10^12', '0,37 · 10^14']),
-      hint: '37 τρισεκατομμύρια = 37 · 10¹² = 3,7 · 10¹³.'
+      hint: (
+        <span>
+          37 τρισεκατομμύρια = 37 · <Power base={10} exp={12} /> = 3,7 · <Power base={10} exp={13} />.
+        </span>
+      )
     };
   },
   // 17. Ενέργεια: Παραγωγή ηλιακής ενέργειας (Input)
@@ -656,12 +823,22 @@ const POOL_PROBLEMS = [
       type: 'input',
       badge: 'ΠΡΟΒΛΗΜΑ',
       question: (
-        <span>
-          Ένα ηλιακό πάρκο παράγει <span className="font-mono">4 · 10<sup>6</sup> Watts</span> την ημέρα. Σε 200 ημέρες (<span className="font-mono">2 · 10<sup>2</sup></span>), αν η συνολική ενέργεια είναι <strong className="font-mono text-amber-700">8 · 10<sup>κ</sup> Watts</strong>, ποιος είναι ο εκθέτης <span className="font-mono font-bold">κ</span>;
+        <span className="inline-flex items-center flex-wrap">
+          <span>Ένα ηλιακό πάρκο παράγει </span>
+          <span className="font-mono mx-1">4 · <Power base={10} exp={6} /> Watts</span>
+          <span> την ημέρα. Σε 200 ημέρες (</span>
+          <span className="font-mono mx-1">2 · <Power base={10} exp={2} /></span>
+          <span>), αν η συνολική ενέργεια είναι </span>
+          <strong className="font-mono text-amber-700 mx-1 text-base sm:text-lg">8 · <Power base={10} exp="κ" /> Watts</strong>,
+          <span> ποιος είναι ο εκθέτης <span className="font-mono font-bold">κ</span>;</span>
         </span>
       ),
       correct: '8',
-      hint: '(4 · 10⁶) · (2 · 10²) = 8 · 10⁶⁺² = 8 · 10⁸. Άρα κ = 8.'
+      hint: (
+        <span>
+          (4 · <Power base={10} exp={6} />) · (2 · <Power base={10} exp={2} />) = 8 · <Power base={10} exp="6+2" /> = 8 · <Power base={10} exp={8} />. Άρα κ = 8.
+        </span>
+      )
     };
   },
   // 18. Ωκεανογραφία: Όγκος νερού ωκεανών
@@ -677,7 +854,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['1,3 · 10^8', '13 · 10^8', '1,3 · 10^9', '1,3 · 10^10']),
-      hint: '1.300.000.000 = 1,3 · 10⁹ km³.'
+      hint: (
+        <span>
+          1.300.000.000 = 1,3 · <Power base={10} exp={9} /> km³.
+        </span>
+      )
     };
   },
   // 19. Γεωλογία: Ηλικία της Γης
@@ -693,7 +874,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['4,5 · 10^6', '45 · 10^8', '4,5 · 10^9', '4,5 · 10^12']),
-      hint: '4,5 δις = 4,5 · 10⁹ έτη.'
+      hint: (
+        <span>
+          4,5 δις = 4,5 · <Power base={10} exp={9} /> έτη.
+        </span>
+      )
     };
   },
   // 20. Ατμοσφαιρική πίεση: Μόρια σε έναν όγκο αέρα
@@ -709,7 +894,11 @@ const POOL_PROBLEMS = [
       ),
       correct,
       options: makeUniqueOptions(correct, ['2,5 · 10^18', '25 · 10^18', '2,5 · 10^19', '2,5 · 10^20']),
-      hint: '25 · 10¹⁸ = 2,5 · 10¹⁹ μόρια.'
+      hint: (
+        <span>
+          25 · <Power base={10} exp={18} /> = 2,5 · <Power base={10} exp={19} /> μόρια.
+        </span>
+      )
     };
   }
 ];
@@ -837,7 +1026,7 @@ export default function TipopoiimeniMorfiAsk() {
 
                 <div className="pt-2">
                   {ex.type === 'mcq' ? (
-                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                       {ex.options.map((opt, optIdx) => {
                         const isSelected = userVal === opt;
                         return (
@@ -852,7 +1041,7 @@ export default function TipopoiimeniMorfiAsk() {
                                 : 'bg-slate-50 text-slate-800 border-slate-200 hover:bg-slate-100'
                             }`}
                           >
-                            {opt}
+                            {renderMathText(opt)}
                           </button>
                         );
                       })}
@@ -887,7 +1076,7 @@ export default function TipopoiimeniMorfiAsk() {
                             <span>ΛΑΘΟΣ</span>
                           </div>
                           <div className="text-slate-700">
-                            ΣΩΣΤΗ ΑΠΑΝΤΗΣΗ: <strong className="font-mono text-indigo-700">{ex.correct}</strong>
+                            ΣΩΣΤΗ ΑΠΑΝΤΗΣΗ: <strong className="font-mono text-indigo-700">{renderMathText(ex.correct)}</strong>
                           </div>
                         </div>
                       )}
