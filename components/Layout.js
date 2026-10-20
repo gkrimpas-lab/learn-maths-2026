@@ -11,7 +11,7 @@ const SITE_URL = 'https://learnmaths.gr';
 export default function Layout({
   children,
   title = "LearnMaths.gr - Τα Μαθηματικά Αλλιώς",
-  description = "Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο και τα Πρότυπα Σχολεία.",
+  description = "Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο (Νέα Ύλη 2027-2028) και τα Πρότυπα Σχολεία.",
   schemaData = null,
   backUrl = null,
   backText = "Πίσω",
