@@ -12,7 +12,7 @@ function Frac({ num, den, isNeg = false, className = '' }) {
   const displayDen = denStr.replace(/^-/, '');
 
   return (
-    <span className={`inline-flex items-center gap-1 align-middle mx-1 font-mono ${className}`}>
+    <span className={`inline-flex items-center gap-0.5 align-middle mx-1 font-mono ${className}`}>
       {hasMinus && <span className="font-bold">－</span>}
       <span className="inline-flex flex-col items-center justify-center leading-none text-center">
         <span className="pb-0.5 px-1 border-b-2 w-full text-center" style={{ borderColor: 'currentColor' }}>
@@ -169,7 +169,7 @@ export default function IsodinamesEksisoseisTheoria() {
               </div>
             </div>
 
-            {/* Ιδιότητα Πολλαπλασιασμού / Διαίρεσης */}
+            {/* Ιδιότητα Πολλαπλασιασμού / Διαίρεσης (Μορφή Κλάσματος) */}
             <div className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-3 flex flex-col justify-between">
               <div className="space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-100 px-2 py-0.5 rounded inline-block">
@@ -181,13 +181,19 @@ export default function IsodinamesEksisoseisTheoria() {
                 <p className="text-slate-600 leading-relaxed">
                   Αν πολλαπλασιάσουμε ή διαιρέσουμε και τα δύο μέλη μιας εξίσωσης με τον ίδιο αριθμό (διάφορο του μηδενός), προκύπτει μια <strong>ισοδύναμη εξίσωση</strong>:
                 </p>
-                <div className="p-3 bg-white rounded-xl border border-amber-200 font-mono text-center font-bold text-amber-900 text-xs sm:text-sm space-y-1">
+                <div className="p-3 bg-white rounded-xl border border-amber-200 font-mono text-center font-bold text-amber-900 text-xs sm:text-sm space-y-2">
                   <div>Αν α ＝ β και γ ≠ 0, τότε:</div>
-                  <div>α · γ ＝ β · γ &nbsp;και&nbsp; α ： γ ＝ β ： γ</div>
+                  <div className="flex items-center justify-center gap-3">
+                    <span>α · γ ＝ β · γ</span>
+                    <span>και</span>
+                    <span className="flex items-center">
+                      <Frac num="α" den="γ" /> ＝ <Frac num="β" den="γ" />
+                    </span>
+                  </div>
                 </div>
               </div>
               <div className="p-2.5 bg-white/80 rounded-xl border border-amber-100 font-sans text-xs text-amber-950 font-medium">
-                💡 <strong>Απομόνωση του x:</strong> Στο τέλος διαιρούμε και τα δύο μέλη με τον συντελεστή του αγνώστου για να μείνει μόνο του το x!
+                💡 <strong>Απομόνωση του x:</strong> Στο τέλος διαιρούμε και τα δύο μέλη με τον συντελεστή του αγνώστου (σε μορφή κλάσματος) για να μείνει μόνο του το x!
               </div>
             </div>
           </div>
@@ -309,13 +315,14 @@ export default function IsodinamesEksisoseisTheoria() {
                 </div>
               </div>
 
-              {/* Βήμα 3: Διαίρεση με τον συντελεστή */}
+              {/* Βήμα 3: Διαίρεση σε μορφή κλάσματος */}
               <div className="p-3 bg-white/5 rounded-xl border border-white/10 text-xs sm:text-sm font-sans space-y-1">
                 <div className="text-slate-300 font-bold">
                   Βήμα 2: Διαίρεση και των δύο μελών με τον συντελεστή του x ({initA}):
                 </div>
-                <div className="font-mono text-sm sm:text-base text-indigo-200">
-                  x ＝ {diffRight} ： {initA}
+                <div className="font-mono text-sm sm:text-base text-indigo-200 flex items-center">
+                  <span>x ＝ </span>
+                  <Frac num={diffRight} den={initA} />
                 </div>
               </div>
 
