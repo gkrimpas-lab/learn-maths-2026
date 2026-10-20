@@ -22,8 +22,8 @@ export default function AGymnasiouIndex() {
 
   return (
     <Layout
-      title="Μαθηματικά Α' Γυμνασίου: Θεωρία, Ασκήσεις & Τεστ | LearnMaths.gr"
-      description="Δωρεάν διαδραστικά μαθήματα, θεωρία, παραδείγματα και ασκήσεις για τα Μαθηματικά Α' Γυμνασίου σύμφωνα με το σχολικό βιβλίο (Άλγεβρα και Γεωμετρία)."
+      title="Μαθηματικά Α' Γυμνασίου (Νέα Ύλη 2027-2028): Θεωρία & Ασκήσεις | LearnMaths.gr"
+      description="Διαδραστικά μαθήματα, θεωρία και ασκήσεις για τα Μαθηματικά Α' Γυμνασίου με βάση τα νέα σχολικά βιβλία 2027-2028 (Φυσικοί, Ακέραιοι, Ρητοί, Εξισώσεις, Γεωμετρία)."
       schemaData={pageSchema}
       backUrl="/"
       backText="Αρχική"
@@ -34,16 +34,16 @@ export default function AGymnasiouIndex() {
         {/* Banner Header */}
         <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-3">
-            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-              Α' ΓΥΜΝΑΣΙΟΥ • ΔΙΑΔΡΑΣΤΙΚΑ ΜΑΘΗΜΑΤΑ
-            </span>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-              Μαθηματικά Α' Γυμνασίου: Θεωρία &amp; Ασκήσεις
-            </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Εξερεύνησε τη θεωρία με δυναμικά εργαστήρια και εξασκήσου με διαδραστικές ασκήσεις και άμεσο feedback σύμφωνα με τη σχολική ύλη!
-            </p>
-          </div>
+        <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+          Α' ΓΥΜΝΑΣΙΟΥ • ΝΕΑ ΥΛΗ &amp; ΒΙΒΛΙΑ 2027–2028
+        </span>
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
+          Μαθηματικά Α' Γυμνασίου
+        </h1>
+          <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
+              Ολοκληρωμένη θεωρία και δυναμικές διαδραστικές ασκήσεις προσαρμοσμένες στη νέα σειρά διδασκαλίας του σχολικού βιβλίου 2027–2028.
+          </p>    
+        </div>
         </header>
 
         {/* Sections (Άλγεβρα, Γεωμετρία κ.λπ.) */}
