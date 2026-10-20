@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <Layout
       title="LearnMaths.gr - Τα Μαθηματικά Αλλιώς"
-      description="Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο και τα Πρότυπα Σχολεία."
+      description="Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο (Νέα Ύλη 2026-2027) και τα Πρότυπα Σχολεία."
       customNavContent={navLinks}
       fullWidth={true}
       showAds={true}
@@ -159,20 +159,22 @@ export default function Home() {
       </section>
 
       {/* ΓΥΜΝΑΣΙΟ SECTION */}
-<section id="gymnasio" className="py-10 md:py-14 bg-gray-100">
-  <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6`}>
-    <div className="flex flex-col items-center mb-6">
-      <span className="bg-indigo-100 text-indigo-800 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 tracking-wide border border-indigo-200">
-        ✨ ΝΕΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ 2026–2027
-      </span>
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-center mb-1 text-indigo-600">
-        📐 Μαθηματικά Γυμνασίου
-      </h2>
-      <p className="text-center text-gray-600 max-w-xl text-xs sm:text-sm">
-        Πλήρως εναρμονισμένα με τη σειρά και τις ενότητες των <strong>νέων σχολικών βιβλίων</strong> του ΙΕΠ (2026–2027).
-      </p>
-    </div>
-          {/* Α' ΓΥΜΝΑΣΙΟΥ */}
+      <section id="gymnasio" className="py-10 md:py-14 bg-gray-100">
+        <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6`}>
+          <div className="flex flex-col items-center mb-6">
+            <span className="bg-indigo-100 text-indigo-800 text-[11px] font-black uppercase px-3 py-1 rounded-full mb-2 tracking-wide border border-indigo-200">
+              ✨ ΝΕΟ ΠΡΟΓΡΑΜΜΑ ΣΠΟΥΔΩΝ 2026–2027
+            </span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-center mb-1 text-indigo-600">
+              📐 Μαθηματικά Γυμνασίου
+            </h2>
+            <p className="text-center text-gray-600 max-w-xl text-xs sm:text-sm">
+              Πλήρως εναρμονισμένα με τη σειρά και τις ενότητες των <strong>νέων σχολικών βιβλίων</strong> του ΙΕΠ (2026–2027).
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+            {/* Α' ΓΥΜΝΑΣΙΟΥ */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200 flex flex-col justify-between">
               <div className="bg-indigo-500 py-3 text-center text-white font-black text-base sm:text-lg">Α' Γυμνασίου ⭐</div>
               <div className="p-5 text-center flex-1 flex flex-col justify-between">
@@ -216,47 +218,48 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* SEO CONTENT SECTION: ΠΛΕΟΝΕΚΤΗΜΑΤΑ & ΜΕΘΟΔΟΛΟΓΙΑ */}
-<section className="py-12 bg-white border-t border-gray-200">
-  <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6`}>
-    <div className="max-w-4xl mx-auto text-center space-y-4 mb-10">
-      <h2 className="text-2xl sm:text-3xl font-black text-gray-900">
-        Διαδραστικά Μαθηματικά σύμφωνα με το Σχολικό Πρόγραμμα
-      </h2>
-      <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-        Το <strong>LearnMaths.gr</strong> δημιουργήθηκε για να βοηθήσει μαθητές Δημοτικού και Γυμνασίου να κατανοήσουν σε βάθος τις μαθηματικές έννοιες μέσα από <strong>διαδραστικά εργαλεία</strong>, <strong>οπτικοποιημένα παραδείγματα</strong> και <strong>στοχευμένες ασκήσεις</strong>. Κάθε κεφάλαιο ακολουθεί τη δομή του επίσημου σχολικού βιβλίου (ΙΕΠ), κάνοντας τη μελέτη στο σπίτι απλή και ευχάριστη.
-      </p>
-    </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-        <div className="text-2xl mb-2">🎯</div>
-        <h3 className="font-bold text-gray-900 mb-1">Προετοιμασία για Πρότυπα</h3>
-        <p className="text-xs sm:text-sm text-gray-600">
-          Ολοκληρωμένη συλλογή με επίσημα παλαιότερα θέματα εξετάσεων για εισαγωγή στα Πρότυπα Γυμνάσια, αναλυτικές απαντήσεις και δωρεάν PDF.
-        </p>
-      </div>
+      {/* SEO CONTENT SECTION */}
+      <section className="py-12 bg-white border-t border-gray-200">
+        <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6`}>
+          <div className="max-w-4xl mx-auto text-center space-y-4 mb-10">
+            <h2 className="text-2xl sm:text-3xl font-black text-gray-900">
+              Διαδραστικά Μαθηματικά σύμφωνα με το Σχολικό Πρόγραμμα
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+              Το <strong>LearnMaths.gr</strong> δημιουργήθηκε για να βοηθήσει μαθητές Δημοτικού και Γυμνασίου να κατανοήσουν σε βάθος τις μαθηματικές έννοιες μέσα από <strong>διαδραστικά εργαλεία</strong>, <strong>οπτικοποιημένα παραδείγματα</strong> και <strong>στοχευμένες ασκήσεις</strong>. Κάθε κεφάλαιο ακολουθεί τη δομή του επίσημου σχολικού βιβλίου (ΙΕΠ), κάνοντας τη μελέτη στο σπίτι απλή και ευχάριστη.
+            </p>
+          </div>
 
-      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-        <div className="text-2xl mb-2">🧮</div>
-        <h3 className="font-bold text-gray-900 mb-1">Διαδραστικοί Προσομοιωτές</h3>
-        <p className="text-xs sm:text-sm text-gray-600">
-          Από τα κλάσματα, το ΕΚΠ και τον ΜΚΔ μέχρι τις γραφικές παραστάσεις συναρτήσεων και τις αλγεβρικές εξισώσεις, οι μαθητές πειραματίζονται ενεργά.
-        </p>
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+              <div className="text-2xl mb-2">🎯</div>
+              <h3 className="font-bold text-gray-900 mb-1">Προετοιμασία για Πρότυπα</h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Ολοκληρωμένη συλλογή με επίσημα παλαιότερα θέματα εξετάσεων για εισαγωγή στα Πρότυπα Γυμνάσια, αναλυτικές απαντήσεις και δωρεάν PDF.
+              </p>
+            </div>
 
-      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-        <div className="text-2xl mb-2">📱</div>
-        <h3 className="font-bold text-gray-900 mb-1">Μελέτη από Παντού</h3>
-        <p className="text-xs sm:text-sm text-gray-600">
-          Πλήρης συμβατότητα με υπολογιστές, τάμπλετ και κινητά, καθώς και διαθέσιμη δωρεάν εφαρμογή στο Google Play Store.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>  
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+              <div className="text-2xl mb-2">🧮</div>
+              <h3 className="font-bold text-gray-900 mb-1">Διαδραστικοί Προσομοιωτές</h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Από τα κλάσματα, το ΕΚΠ και τον ΜΚΔ μέχρι τις γραφικές παραστάσεις συναρτήσεων και τις αλγεβρικές εξισώσεις, οι μαθητές πειραματίζονται ενεργά.
+              </p>
+            </div>
 
-  {/* FAQ SECTION */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+              <div className="text-2xl mb-2">📱</div>
+              <h3 className="font-bold text-gray-900 mb-1">Μελέτη από Παντού</h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Πλήρης συμβατότητα με υπολογιστές, τάμπλετ και κινητά, καθώς και διαθέσιμη δωρεάν εφαρμογή στο Google Play Store.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ SECTION */}
       <section className="py-12 bg-gray-50 border-t border-gray-200">
         <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6 max-w-4xl mx-auto`}>
           <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 mb-8">
@@ -278,6 +281,15 @@ export default function Home() {
               </h3>
               <p className="text-xs sm:text-sm text-gray-600">
                 Καλύπτει τις τάξεις του Δημοτικού (Δ΄, Ε΄, ΣΤ΄ Δημοτικού), όλες τις τάξεις του Γυμνασίου (Α΄, Β΄, Γ΄ Γυμνασίου) και περιλαμβάνει ειδική κατηγορία προετοιμασίας εξετάσεων για τα Πρότυπα Σχολεία.
+              </p>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="font-bold text-base text-gray-900 mb-1">
+                Ακολουθεί η πλατφόρμα τα Νέα Βιβλία και Προγράμματα Σπουδών 2026-2027;
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Ναι! Όλη η ύλη και τα διαδραστικά κεφάλαια του Γυμνασίου έχουν αναδιαρθρωθεί σύμφωνα με τα <strong>Νέα Βιβλία Μαθηματικών (2026–2027)</strong>. Τα μαθήματα του Δημοτικού ακολουθούν πιστά το ισχύον πρόγραμμα των τάξεων Δ΄, Ε΄ και ΣΤ΄.
               </p>
             </div>
 
