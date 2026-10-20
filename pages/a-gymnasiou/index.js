@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Head from 'next/head';
 import Layout from '../../components/Layout';
 
 const CHAPTERS = [
@@ -106,7 +107,7 @@ const CHAPTERS = [
     id: '13',
     slug: '13-ritoi',
     title: 'Ρητοί Αριθμοί',
-    desc: 'Ρητοί Αριθμοί,Μετατροπή Κλάσματος σε Δεκαδικό, Μετατροπή Δεκαδικού σε Κλασματική Μορφή.',
+    desc: 'Ρητοί Αριθμοί, Μετατροπή Κλάσματος σε Δεκαδικό, Μετατροπή Δεκαδικού σε Κλασματική Μορφή.',
     badge: 'ΚΕΦΑΛΑΙΟ 11',
     active: true,
   },
@@ -126,7 +127,7 @@ const CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 13',
     active: true,
   },
-   {
+  {
     id: '16',
     slug: '16-prosthesi-klasmata',
     title: 'Πρόσθεση ρητών',
@@ -170,7 +171,7 @@ const CHAPTERS = [
     id: '21',
     slug: '21-proteraiotita-prakseon-riton',
     title: 'Προτεραιότητα Πράξεων',
-    desc: 'Προτεραιότητα Πράξεων.',
+    desc: 'Προτεραιότητα Πράξεων σε ρητούς αριθμούς και παρενθέσεις.',
     badge: 'ΚΕΦΑΛΑΙΟ 19',
     active: true,
   },
@@ -186,7 +187,7 @@ const CHAPTERS = [
     id: '23',
     slug: '23-ritoi-problimata',
     title: 'Προβλήματα με Ρητούς',
-    desc: 'Προβλήματα με Ρητούς Αριθμούς',
+    desc: 'Προβλήματα και εφαρμογές με Ρητούς Αριθμούς.',
     badge: 'ΚΕΦΑΛΑΙΟ 21',
     active: true,
   },
@@ -202,7 +203,7 @@ const CHAPTERS = [
     id: '25',
     slug: '25-akolouthia',
     title: 'Ακολουθία - Κανονικότητα',
-    desc: 'Αριθμητικές - Γεωμετρικές Ακολουθίες - Κανονικότητες',
+    desc: 'Αριθμητικές - Γεωμετρικές Ακολουθίες - Κανονικότητες.',
     badge: 'ΚΕΦΑΛΑΙΟ 22',
     active: true,
   },
@@ -210,7 +211,7 @@ const CHAPTERS = [
     id: '26',
     slug: '26-akolouthia-view',
     title: 'Αναπαράσταση μιας Ακολουθίας - Κανονικότητας',
-    desc: 'Εικόνες - Γεωμετρικά Σχήματα - Πίνακες Τιμών',
+    desc: 'Εικόνες - Γεωμετρικά Σχήματα - Πίνακες Τιμών.',
     badge: 'ΚΕΦΑΛΑΙΟ 23',
     active: true,
   },
@@ -218,7 +219,7 @@ const CHAPTERS = [
     id: '27',
     slug: '27-metabliti',
     title: 'Αλγεβρικές Παραστάσεις και τα στοιχεία τους',
-    desc: 'Μεταβλητή , Αλγερική παράσταση',
+    desc: 'Μεταβλητή, Αλγεβρική παράσταση, όροι.',
     badge: 'ΚΕΦΑΛΑΙΟ 24',
     active: true,
   },
@@ -226,7 +227,7 @@ const CHAPTERS = [
     id: '28',
     slug: '28-parastaseis',
     title: 'Αριθμητικές και Αλγεβρικές Παραστάσεις',
-    desc: 'Αριθμητική παράσταση, Αλγερική παράσταση, Προβλήματα',
+    desc: 'Αριθμητική παράσταση, Αλγεβρική παράσταση, Προβλήματα.',
     badge: 'ΚΕΦΑΛΑΙΟ 25',
     active: true,
   },
@@ -234,7 +235,7 @@ const CHAPTERS = [
     id: '29',
     slug: '29-aplopoiisi',
     title: 'Αριθμητική τιμή και Απλοποίηση Αλγεβρικών Παραστάσεων',
-    desc: 'Αριθμητική τιμή, Πίνακας τιμών, Απλοποίηση, Επιμεριστική ιδιότητα',
+    desc: 'Αριθμητική τιμή, Πίνακας τιμών, Απλοποίηση, Επιμεριστική ιδιότητα.',
     badge: 'ΚΕΦΑΛΑΙΟ 26',
     active: true,
   },
@@ -258,7 +259,7 @@ const CHAPTERS = [
     id: '32',
     slug: '32-isodinames-eksisoseis',
     title: 'Ισοδύναμες Εξισώσεις',
-    desc: 'Ισοδύναμες Εξισώσεις, Ιδιότητες.',
+    desc: 'Ισοδύναμες Εξισώσεις, Ιδιότητες ισοτήτων.',
     badge: 'ΚΕΦΑΛΑΙΟ 28',
     active: true,
   },
@@ -267,36 +268,78 @@ const CHAPTERS = [
 export default function AGymnasiouIndex() {
   return (
     <Layout
-      title="Μαθηματικά Α' Γυμνασίου | LearnMaths.gr"
-      description="Διαδραστικά μαθήματα, θεωρία και ασκήσεις για τα Μαθηματικά της Α' Γυμνασίου."
+      title="Μαθηματικά Α' Γυμνασίου: Θεωρία, Διαδραστικές Ασκήσεις & Τεστ | LearnMaths.gr"
+      description="Δωρεάν διαδραστικά μαθήματα, θεωρία, παραδείγματα και ασκήσεις για τα Μαθηματικά Α' Γυμνασίου σύμφωνα με το σχολικό βιβλίο (Φυσικοί, Ακέραιοι, Ρητοί, Εξισώσεις)."
+      canonicalUrl="https://learnmaths.gr/a-gymnasiou"
       backUrl="/"
       backText="Αρχική"
       showAds={true}
     >
+      {/* Schema.org Breadcrumb & Course Markup */}
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "BreadcrumbList",
+                  "itemListElement": [
+                    {
+                      "@type": "ListItem",
+                      "position": 1,
+                      "name": "Αρχική",
+                      "item": "https://learnmaths.gr/"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 2,
+                      "name": "Μαθηματικά Α' Γυμνασίου",
+                      "item": "https://learnmaths.gr/a-gymnasiou"
+                    }
+                  ]
+                },
+                {
+                  "@type": "Course",
+                  "name": "Μαθηματικά Α' Γυμνασίου",
+                  "description": "Ολοκληρωμένο πρόγραμμα μαθημάτων και διαδραστικών ασκήσεων για την ύλη των Μαθηματικών της Α' Γυμνασίου.",
+                  "provider": {
+                    "@type": "Organization",
+                    "name": "LearnMaths.gr",
+                    "sameAs": "https://learnmaths.gr"
+                  }
+                }
+              ]
+            })
+          }}
+        />
+      </Head>
+
       <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-8 sm:space-y-12">
-        {/* Banner Header - Ενιαίο Indigo Theme της Α' Γυμνασίου */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-indigo-700/50">
+        {/* Banner Header */}
+        <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-3">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
               Α' ΓΥΜΝΑΣΙΟΥ • ΔΙΑΔΡΑΣΤΙΚΑ ΜΑΘΗΜΑΤΑ
             </span>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-              Μαθηματικά Α' Γυμνασίου
+              Μαθηματικά Α' Γυμνασίου: Θεωρία &amp; Ασκήσεις
             </h1>
             <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Εξερεύνησε τη θεωρία με δυναμικά εργαστήρια και εξασκήσου με διαδραστικές ασκήσεις και άμεσο feedback!
+              Εξερεύνησε τη θεωρία με δυναμικά εργαστήρια και εξασκήσου με διαδραστικές ασκήσεις και άμεσο feedback σύμφωνα με τη σχολική ύλη!
             </p>
           </div>
-        </section>
+        </header>
 
         {/* Grid Ενοτήτων */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <main className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {CHAPTERS.map((ch) => {
             const isItemActive = ch.active || ch.status === 'ΕΝΕΡΓΟ';
             const badgeLabel = ch.badge || ch.tag;
 
             return (
-              <div
+              <article
                 key={ch.id}
                 className={`rounded-2xl border flex flex-col justify-between overflow-hidden transition-all duration-200 ${
                   isItemActive
@@ -304,7 +347,6 @@ export default function AGymnasiouIndex() {
                     : 'bg-slate-50 border-slate-200 opacity-70'
                 }`}
               >
-                {/* Header Κάρτας με το χαρακτηριστικό Indigo-500 της Α' Γυμνασίου */}
                 <div className="bg-indigo-500 py-3 px-5 flex items-center justify-between text-white font-black text-sm sm:text-base">
                   <span>{badgeLabel}</span>
                   {isItemActive && (
@@ -326,7 +368,6 @@ export default function AGymnasiouIndex() {
 
                   {isItemActive ? (
                     ch.isReview ? (
-                      /* ΕΝΙΑΙΟ ΠΛΑΙΣΙΟ ΓΙΑ ΕΠΑΝΑΛΗΨΗ (FULL WIDTH) */
                       <div className="pt-2">
                         <Link
                           href={ch.url}
@@ -337,7 +378,6 @@ export default function AGymnasiouIndex() {
                         </Link>
                       </div>
                     ) : (
-                      /* ΚΑΝΟΝΙΚΕΣ ΕΝΟΤΗΤΕΣ ΜΕ 2 ΚΟΥΜΠΙΑ */
                       <div className="grid grid-cols-2 gap-3 pt-2">
                         <Link
                           href={`/a-gymnasiou/${ch.slug}`}
@@ -364,10 +404,37 @@ export default function AGymnasiouIndex() {
                     </button>
                   )}
                 </div>
-              </div>
+              </article>
             );
           })}
-        </div>
+        </main>
+
+        {/* SEO OVERVIEW SECTION: ΥΛΗ ΚΑΙ ΣΤΟΧΟΙ Α' ΓΥΜΝΑΣΙΟΥ */}
+        <section className="bg-white rounded-3xl p-6 sm:p-10 border border-indigo-100 shadow-sm space-y-6">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 border-b border-slate-100 pb-3">
+            📚 Ύλη Μαθηματικών Α' Γυμνασίου: Τι θα μάθεις στο LearnMaths
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-600 text-xs sm:text-sm leading-relaxed">
+            <div className="space-y-3">
+              <h3 className="font-bold text-slate-800 text-base">Αριθμητική &amp; Άλγεβρα</h3>
+              <p>
+                Η μετάβαση από το Δημοτικό στο Γυμνάσιο σηματοδοτείται από την εισαγωγή των <strong>αρνητικών αριθμών</strong> και των <strong>ακεραίων</strong>, τις πράξεις με <strong>ρητούς αριθμούς</strong> (κλάσματα και δεκαδικοί) και την κατανόηση της <strong>προτεραιότητας πράξεων</strong>.
+              </p>
+              <p>
+                Μέσα από διαδραστικούς προσομοιωτές, οι μαθητές εξασκούνται στον κανόνα των προσήμων, στις δυνάμεις και στη μετατροπή σύνθετων κλασμάτων.
+              </p>
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-bold text-slate-800 text-base">Εξισώσεις &amp; Αλγεβρικές Παραστάσεις</h3>
+              <p>
+                Εδώ τίθενται οι βάσεις της άλγεβρας: η έννοια της <strong>μεταβλητής</strong>, οι αριθμητικές και αλγεβρικές παραστάσεις, η αναγωγή ομοίων όρων και η επίλυση <strong>εξισώσεων πρώτου βαθμού</strong>.
+              </p>
+              <p>
+                Κάθε ενότητα περιλαμβάνει πλήρη θεωρία με παραδείγματα και ασκήσεις διαβαθμισμένης δυσκολίας με αυτόματο έλεγχο αποτελέσματος.
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
     </Layout>
   );
