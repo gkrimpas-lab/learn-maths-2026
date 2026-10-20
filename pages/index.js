@@ -211,6 +211,45 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* SEO CONTENT SECTION: ΠΛΕΟΝΕΚΤΗΜΑΤΑ & ΜΕΘΟΔΟΛΟΓΙΑ */}
+<section className="py-12 bg-white border-t border-gray-200">
+  <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6`}>
+    <div className="max-w-4xl mx-auto text-center space-y-4 mb-10">
+      <h2 className="text-2xl sm:text-3xl font-black text-gray-900">
+        Διαδραστικά Μαθηματικά σύμφωνα με το Σχολικό Πρόγραμμα
+      </h2>
+      <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+        Το <strong>LearnMaths.gr</strong> δημιουργήθηκε για να βοηθήσει μαθητές Δημοτικού και Γυμνασίου να κατανοήσουν σε βάθος τις μαθηματικές έννοιες μέσα από <strong>διαδραστικά εργαλεία</strong>, <strong>οπτικοποιημένα παραδείγματα</strong> και <strong>στοχευμένες ασκήσεις</strong>. Κάθε κεφάλαιο ακολουθεί τη δομή του επίσημου σχολικού βιβλίου (ΙΕΠ), κάνοντας τη μελέτη στο σπίτι απλή και ευχάριστη.
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+        <div className="text-2xl mb-2">🎯</div>
+        <h3 className="font-bold text-gray-900 mb-1">Προετοιμασία για Πρότυπα</h3>
+        <p className="text-xs sm:text-sm text-gray-600">
+          Ολοκληρωμένη συλλογή με επίσημα παλαιότερα θέματα εξετάσεων για εισαγωγή στα Πρότυπα Γυμνάσια, αναλυτικές απαντήσεις και δωρεάν PDF.
+        </p>
+      </div>
+
+      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+        <div className="text-2xl mb-2">🧮</div>
+        <h3 className="font-bold text-gray-900 mb-1">Διαδραστικοί Προσομοιωτές</h3>
+        <p className="text-xs sm:text-sm text-gray-600">
+          Από τα κλάσματα, το ΕΚΠ και τον ΜΚΔ μέχρι τις γραφικές παραστάσεις συναρτήσεων και τις αλγεβρικές εξισώσεις, οι μαθητές πειραματίζονται ενεργά.
+        </p>
+      </div>
+
+      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+        <div className="text-2xl mb-2">📱</div>
+        <h3 className="font-bold text-gray-900 mb-1">Μελέτη από Παντού</h3>
+        <p className="text-xs sm:text-sm text-gray-600">
+          Πλήρης συμβατότητα με υπολογιστές, τάμπλετ και κινητά, καθώς και διαθέσιμη δωρεάν εφαρμογή στο Google Play Store.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>        
     </Layout>
   );
 }
