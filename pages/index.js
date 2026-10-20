@@ -249,7 +249,44 @@ export default function Home() {
       </div>
     </div>
   </div>
-</section>        
+</section>  
+
+  {/* FAQ SECTION */}
+      <section className="py-12 bg-gray-50 border-t border-gray-200">
+        <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6 max-w-4xl mx-auto`}>
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 mb-8">
+            Συχνές Ερωτήσεις (FAQ)
+          </h2>
+          <div className="space-y-4">
+            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="font-bold text-base text-gray-900 mb-1">
+                Είναι το περιεχόμενο του LearnMaths.gr δωρεάν;
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Ναι, όλο το εκπαιδευτικό υλικό, η θεωρία, τα διαδραστικά εργαλεία και τα θέματα για τα Πρότυπα Σχολεία διατίθενται εντελώς δωρεάν για όλους τους μαθητές και εκπαιδευτικούς.
+              </p>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="font-bold text-base text-gray-900 mb-1">
+                Ποιες τάξεις καλύπτει η πλατφόρμα;
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Καλύπτει τις τάξεις του Δημοτικού (Δ΄, Ε΄, ΣΤ΄ Δημοτικού), όλες τις τάξεις του Γυμνασίου (Α΄, Β΄, Γ΄ Γυμνασίου) και περιλαμβάνει ειδική κατηγορία προετοιμασίας εξετάσεων για τα Πρότυπα Σχολεία.
+              </p>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="font-bold text-base text-gray-900 mb-1">
+                Πώς βοηθούν οι διαδραστικές ασκήσεις στην κατανόηση;
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Αντί για απλή αποστήθιση, οι μαθητές αλληλεπιδρούν με οπτικά μοντέλα (όπως κλασματικές ράβδους, ζυγαριές εξισώσεων και διαδραστικούς άξονες), κατανοώντας βαθύτερα τη λογική πίσω από κάθε μαθηματική έννοια.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </Layout>
   );
 }
