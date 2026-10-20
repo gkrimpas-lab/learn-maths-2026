@@ -25,7 +25,7 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
-// Component Power: εμφανίζει τη δύναμη στην κανονική της μορφή (παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη)
+// Component Power: εμφανίζει τη δύναμη με μαύρο/σκούρο χρώμα (παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη)
 const Power = ({ base, exp, className = "" }) => {
   const expNum = typeof exp === 'number' ? exp : parseInt(String(exp).replace(/[()]/g, ''), 10);
   const isNeg = !isNaN(expNum) ? expNum < 0 : String(exp).startsWith('-');
@@ -34,7 +34,7 @@ const Power = ({ base, exp, className = "" }) => {
   return (
     <span className={`inline-flex items-baseline font-mono ${className}`}>
       <span>{base}</span>
-      <sup className="text-amber-400 font-bold ml-0.5 text-xs sm:text-sm">{formattedExp}</sup>
+      <sup className="text-slate-900 font-bold ml-0.5 text-xs sm:text-sm">{formattedExp}</sup>
     </span>
   );
 };
@@ -142,7 +142,7 @@ const POOL_THEORY = [
         <span className="inline-flex items-center flex-wrap">
           <span>Το κλάσμα </span>
           <strong className="font-mono text-indigo-700 mx-1 text-base sm:text-lg">
-            (<Frac num={a} den={b} />)<sup className="text-amber-400 font-bold ml-0.5">(-1)</sup>
+            (<Frac num={a} den={b} />)<sup className="text-slate-900 font-bold ml-0.5">(-1)</sup>
           </strong>
           <span> ισούται με:</span>
         </span>
@@ -164,7 +164,7 @@ const POOL_THEORY = [
         <span className="inline-flex items-center flex-wrap">
           <span>Υπολόγισε την τιμή του κλάσματος </span>
           <strong className="font-mono text-indigo-700 mx-1 text-base sm:text-lg">
-            (<Frac num={a} den={b} />)<sup className="text-amber-400 font-bold ml-0.5">(-2)</sup>
+            (<Frac num={a} den={b} />)<sup className="text-slate-900 font-bold ml-0.5">(-2)</sup>
           </strong>:
         </span>
       ),
@@ -271,7 +271,7 @@ const POOL_THEORY = [
         <span className="inline-flex items-center flex-wrap">
           <span>Γράψε ως μία δύναμη την παράσταση </span>
           <strong className="font-mono text-indigo-700 mx-1 text-base sm:text-lg">
-            (<Power base={a} exp={m} />)<sup className="text-amber-400 font-bold ml-0.5">{n}</sup>
+            (<Power base={a} exp={m} />)<sup className="text-slate-900 font-bold ml-0.5">{n}</sup>
           </strong>:
         </span>
       ),
@@ -380,7 +380,7 @@ const POOL_THEORY = [
         <span className="inline-flex items-center flex-wrap">
           <span>Αν </span>
           <strong className="font-mono text-indigo-700 mx-1 text-base sm:text-lg">
-            (<Frac num={1} den={3} />)<sup className="text-amber-400 font-bold ml-0.5">(-2)</sup>
+            (<Frac num={1} den={3} />)<sup className="text-slate-900 font-bold ml-0.5">(-2)</sup>
           </strong>
           <span> ισούται με έναν φυσικό αριθμό, ποιος είναι αυτός;</span>
         </span>
@@ -710,7 +710,7 @@ const POOL_PROBLEMS = [
         <span className="inline-flex items-center flex-wrap">
           <span>Ένα νανορομπότ διανύει απόσταση </span>
           <strong className="font-mono text-amber-700 mx-1 text-base sm:text-lg">
-            (<Power base={10} exp={-2} />)<sup className="text-amber-400 font-bold ml-0.5">2</sup>
+            (<Power base={10} exp={-2} />)<sup className="text-slate-900 font-bold ml-0.5">2</sup>
           </strong>
           <span> μέτρων. Ποια είναι η απόσταση σε μία ενιαία δύναμη του 10;</span>
         </span>
