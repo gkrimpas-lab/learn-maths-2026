@@ -84,7 +84,7 @@ export default function AlgebrikesSxeseisTheoria() {
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-4">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-              Α' ΓΥΜΝΑΣΙΟΥ • ΚΕΦΑΛΑΙΟ 29 • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ
+              Α' ΓΥΜΝΑΣΙΟΥ • ΚΕΦΑΛΑΙΟ 28 • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ
             </span>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
               Αλγεβρικές Σχέσεις & Η Έννοια της Εξίσωσης
