@@ -249,9 +249,17 @@ const CHAPTERS = [
   {
     id: '31',
     slug: '31-algebrikes-sxeseis',
-    title: 'αλγεβρικές Σχέσεις',
+    title: 'Αλγεβρικές Σχέσεις',
     desc: 'Μεταβλητή, Εξισώσεις, Λύση εξίσωσης.',
     badge: 'ΚΕΦΑΛΑΙΟ 27',
+    active: true,
+  },
+  {
+    id: '32',
+    slug: '32-isodinames-eksisoseis',
+    title: 'Ισοδύναμες Εξισώσεις',
+    desc: 'Ισοδύναμες Εξισώσεις, Ιδιότητες.',
+    badge: 'ΚΕΦΑΛΑΙΟ 28',
     active: true,
   },
 ];
