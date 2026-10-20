@@ -168,7 +168,6 @@ export default function Layout({
           </div>
         </footer>
       )}
-      )}
     </div>
   );
 }
