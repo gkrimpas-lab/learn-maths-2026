@@ -49,11 +49,19 @@ const lcm = (a, b) => {
 
 const lcmArray = (arr) => arr.reduce((acc, val) => lcm(acc, val), 1);
 
+const formatCleanNum = (str) => {
+  return str
+    .replace(/\+/g, ' ＋ ')
+    .replace(/-/g, ' － ')
+    .replace(/\*/g, '·')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/^－ /, '－')
+    .replace(/^＋ /, '');
+};
+
 /**
- * Αναλύει και επιλύει βήμα-βήμα γραμμικές εξισώσεις 1ου βαθμού με:
- * - Πολλαπλά x και στα δύο μέλη
- * - Παρενθέσεις π.χ. 2(x+3) ή -3(2x-1)
- * - Κλάσματα π.χ. x/2 + (2x-1)/3 = 5
+ * Αναλύει και επιλύει με ΠΛΗΡΗ ΠΑΙΔΑΓΩΓΙΚΑ ΒΗΜΑΤΑ γραμμικές εξισώσεις 1ου βαθμού
  */
 function solveLinearEquationStepByStep(rawInput) {
   if (!rawInput || !rawInput.trim()) {
@@ -127,6 +135,7 @@ function solveLinearEquationStepByStep(rawInput) {
     if (current) tokens.push(current);
 
     let denominators = [];
+    let rawTopTerms = []; // Δομή για αναλυτική οπτικοποίηση του Ε.Κ.Π. και των απλοποιήσεων
     let expandedTerms = [];
 
     for (let tok of tokens) {
@@ -170,6 +179,7 @@ function solveLinearEquationStepByStep(rawInput) {
 
       let mult = 1;
       let inner = numPart;
+      let isCompound = false;
 
       const parenMatch = numPart.match(/^([0-9.]*)\*?\(([^()]+)\)$/);
       const bareParenMatch = numPart.match(/^\(([^()]+)\)$/);
@@ -177,12 +187,29 @@ function solveLinearEquationStepByStep(rawInput) {
       if (parenMatch) {
         mult = parenMatch[1] === '' ? 1 : Number(parenMatch[1]);
         inner = parenMatch[2];
+        isCompound = true;
       } else if (bareParenMatch) {
         mult = 1;
         inner = bareParenMatch[1];
+        isCompound = true;
       }
 
       if (!Number.isFinite(mult)) return { error: 'Μη έγκυρος συντελεστής μπροστά από παρένθεση.' };
+
+      // Αποθήκευση του αρχικού όρου για τα ενδιάμεσα παιδαγωγικά βήματα
+      const displayNumStr =
+        mult !== 1
+          ? `${mult}·(${formatCleanNum(inner)})`
+          : formatCleanNum(inner);
+
+      rawTopTerms.push({
+        sign,
+        den: denVal,
+        mult,
+        innerClean: formatCleanNum(inner),
+        displayNumStr,
+        isCompound: isCompound || inner.includes('+') || inner.slice(1).includes('-'),
+      });
 
       let innerNorm = inner.replace(/^\+/, '');
       const subTokens = [];
@@ -232,7 +259,7 @@ function solveLinearEquationStepByStep(rawInput) {
       }
     }
 
-    return { expandedTerms, denominators, hasParens };
+    return { expandedTerms, rawTopTerms, denominators, hasParens };
   };
 
   const leftParsed = parseSide(eqParts[0]);
@@ -274,34 +301,81 @@ function solveLinearEquationStepByStep(rawInput) {
       .join('');
   };
 
+  // Μορφοποίηση του ενδιάμεσου βήματος μετά την απλοποίηση των παρονομαστών (π.χ. -4·(2x) - 3·(4 - 5x) + 2·5 = 12·15)
+  const formatCancelledSide = (rawTerms, lcmVal) => {
+    return rawTerms
+      .map((rt, idx) => {
+        const q = lcmVal / rt.den;
+        const totalMult = Math.round(q * rt.mult * 1000) / 1000;
+        const signStr = rt.sign < 0 ? (idx === 0 ? '－' : ' － ') : idx === 0 ? '' : ' ＋ ';
+
+        // Αν ο όρος είχε κλάσμα ή πολλαπλασιάστηκε με το ΕΚΠ, δείχνουμε καθαρά το γινόμενο
+        if (rt.isCompound) {
+          return totalMult === 1
+            ? `${signStr}(${rt.innerClean})`
+            : `${signStr}${totalMult} · (${rt.innerClean})`;
+        } else {
+          // Απλός όρος π.χ. 2x ή 5 ή 15
+          const needsParen = rt.innerClean.includes('x') && rt.innerClean !== 'x';
+          const termDisplay = needsParen ? `(${rt.innerClean})` : rt.innerClean;
+          if (totalMult === 1) {
+            return `${signStr}${rt.innerClean}`;
+          }
+          return `${signStr}${totalMult} · ${termDisplay}`;
+        }
+      })
+      .join('');
+  };
+
   const steps = [];
 
   // ΒΗΜΑ 1: Αρχική Εξίσωση
   steps.push({
     title: 'ΑΡΧΙΚΗ ΕΞΙΣΩΣΗ',
-    desc: 'Καταγράφουμε την εξίσωση που θέλουμε να επιλύσουμε:',
-    rawMath: `${eqParts[0]} ＝ ${eqParts[1]}`,
-    renderCustomInitial: true,
-    leftRaw: eqParts[0],
-    rightRaw: eqParts[1],
+    desc: 'Καταγράφουμε την αρχική εξίσωση με κανονική κλασματική μορφή:',
+    renderType: 'initial',
+    leftTerms: leftParsed.rawTopTerms,
+    rightTerms: rightParsed.rawTopTerms,
   });
 
-  // ΒΗΜΑ 2: Απαλοιφή Παρονομαστών ή Παρενθέσεων
+  // ΑΝ ΥΠΑΡΧΟΥΝ ΚΛΑΣΜΑΤΑ: Δείχνουμε 3 αναλυτικά υπο-βήματα!
   if (hasFractions) {
+    // ΒΗΜΑ 2: Εμφάνιση του Ε.Κ.Π. να πολλαπλασιάζει ΚΑΘΕ όρο ξεχωριστά
     steps.push({
-      title: `ΑΠΑΛΟΙΦΗ ΠΑΡΟΝΟΜΑΣΤΩΝ (Ε.Κ.Π. ＝ ${commonLCM})`,
-      desc: `Πολλαπλασιάζουμε όλους τους όρους και των δύο μελών με το Ε.Κ.Π. των παρονομαστών (${commonLCM}) και εκτελούμε τις επιμεριστικές πράξεις:`,
+      title: `ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ ΚΑΘΕ ΟΡΟΥ ΜΕ ΤΟ Ε.Κ.Π. (${commonLCM})`,
+      desc: `Βρίσκουμε το Ε.Κ.Π. των παρονομαστών που είναι το ${commonLCM} και πολλαπλασιάζουμε ΚΑΘΕ όρο και των δύο μελών με το ${commonLCM}:`,
+      renderType: 'lcm_multiply',
+      lcmVal: commonLCM,
+      leftTerms: leftParsed.rawTopTerms,
+      rightTerms: rightParsed.rawTopTerms,
+    });
+
+    // ΒΗΜΑ 3: Απλοποίηση του Ε.Κ.Π. με κάθε παρονομαστή (π.χ. 12:3=4, 12:4=3, 12:6=2)
+    steps.push({
+      title: 'ΑΠΛΟΠΟΙΗΣΗ ΤΩΝ ΠΑΡΟΝΟΜΑΣΤΩΝ',
+      desc: `Διαιρούμε το ${commonLCM} με τον παρονομαστή κάθε κλάσματος και πολλαπλασιάζουμε το πηλίκο με τον αντίστοιχο αριθμητή (βάζοντας παρένθεση όπου χρειάζεται):`,
+      math: `${formatCancelledSide(leftParsed.rawTopTerms, commonLCM)} ＝ ${formatCancelledSide(
+        rightParsed.rawTopTerms,
+        commonLCM
+      )}`,
+    });
+
+    // ΒΗΜΑ 4: Εκτέλεση των πολλαπλασιασμών και απαλοιφή παρενθέσεων
+    steps.push({
+      title: 'ΕΚΤΕΛΕΣΗ ΠΟΛΛΑΠΛΑΣΙΑΣΜΩΝ & ΑΠΑΛΟΙΦΗ ΠΑΡΕΝΘΕΣΕΩΝ',
+      desc: 'Εκτελούμε τους πολλαπλασιασμούς και την επιμεριστική ιδιότητα (προσοχή στα πρόσημα όταν υπάρχει μείον μπροστά από παρένθεση):',
       math: `${formatTermsList(leftScaled)} ＝ ${formatTermsList(rightScaled)}`,
     });
   } else if (hasParensOverall) {
+    // Αν δεν έχει κλάσματα αλλά έχει παρενθέσεις
     steps.push({
       title: 'ΑΠΑΛΟΙΦΗ ΠΑΡΕΝΘΕΣΕΩΝ (ΕΠΙΜΕΡΙΣΤΙΚΗ ΙΔΙΟΤΗΤΑ)',
-      desc: 'Εφαρμόζουμε την επιμεριστική ιδιότητα για να ανοίξουμε τις παρενθέσεις:',
+      desc: 'Εφαρμόζουμε την επιμεριστική ιδιότητα πολλαπλασιάζοντας τον εξωτερικό αριθμό με κάθε όρο μέσα στην παρένθεση:',
       math: `${formatTermsList(leftScaled)} ＝ ${formatTermsList(rightScaled)}`,
     });
   }
 
-  // ΒΗΜΑ 3: Χωρισμός Γνωστών από Αγνώστους
+  // ΒΗΜΑ: Χωρισμός Γνωστών από Αγνώστους
   const xTermsOnLeft = [
     ...leftScaled.filter((t) => t.isX),
     ...rightScaled.filter((t) => t.isX).map((t) => ({ isX: true, val: -t.val })),
@@ -314,23 +388,23 @@ function solveLinearEquationStepByStep(rawInput) {
 
   steps.push({
     title: 'ΧΩΡΙΣΜΟΣ ΓΝΩΣΤΩΝ ΑΠΟ ΑΓΝΩΣΤΟΥΣ',
-    desc: 'Μεταφέρουμε τους όρους με τον άγνωστο x στο 1ο μέλος και τους σταθερούς αριθμούς στο 2ο μέλος (αλλάζοντας το πρόσημο όσων όρων μετακινούνται):',
+    desc: 'Κρατάμε ή μεταφέρουμε τους όρους με τον άγνωστο x στο 1ο μέλος και τους σταθερούς αριθμούς στο 2ο μέλος (αλλάζοντας το πρόσημο όσων όρων αλλάζουν μέλος):',
     math: `${formatTermsList(xTermsOnLeft.length ? xTermsOnLeft : [{ isX: true, val: 0 }])} ＝ ${formatTermsList(
       constTermsOnRight.length ? constTermsOnRight : [{ isX: false, val: 0 }]
     )}`,
   });
 
-  // ΒΗΜΑ 4: Αναγωγή Ομοίων Όρων
+  // ΒΗΜΑ: Αναγωγή Ομοίων Όρων
   const totalX = Math.round(xTermsOnLeft.reduce((acc, t) => acc + t.val, 0) * 1000) / 1000;
   const totalConst = Math.round(constTermsOnRight.reduce((acc, t) => acc + t.val, 0) * 1000) / 1000;
 
   steps.push({
     title: 'ΑΝΑΓΩΓΗ ΟΜΟΙΩΝ ΟΡΩΝ',
-    desc: 'Προσθέτουμε τους ομοίους όρους με x στο 1ο μέλος και τους αριθμούς στο 2ο μέλος:',
+    desc: 'Εκτελούμε τις πράξεις μεταξύ των ομοίων όρων με x στο 1ο μέλος και μεταξύ των αριθμών στο 2ο μέλος:',
     math: `${totalX === 1 ? 'x' : totalX === -1 ? '－x' : `${totalX} · x`} ＝ ${totalConst}`,
   });
 
-  // ΒΗΜΑ 5: Διερεύνηση / Διαίρεση με τον συντελεστή σε ΜΟΡΦΗ ΚΛΑΣΜΑΤΟΣ
+  // ΤΕΛΙΚΟ ΒΗΜΑ: Διαίρεση με τον συντελεστή σε ΜΟΡΦΗ ΚΛΑΣΜΑΤΟΣ
   if (totalX === 0) {
     if (totalConst === 0) {
       steps.push({
@@ -384,56 +458,24 @@ function solveLinearEquationStepByStep(rawInput) {
   return { steps };
 }
 
-// Βοηθητική σχεδίαση κλασματικών εκφράσεων για την αρχική εξίσωση
-function FormattedRawSide({ str }) {
-  if (!str.includes('/')) {
-    return <span>{str}</span>;
-  }
-
-  const parts = [];
-  let cur = '';
-  let depth = 0;
-  for (let i = 0; i < str.length; i++) {
-    const c = str[i];
-    if (c === '(') depth++;
-    if (c === ')') depth--;
-    if ((c === '+' || c === '-') && depth === 0 && i > 0) {
-      parts.push(cur);
-      cur = c;
-    } else {
-      cur += c;
-    }
-  }
-  if (cur) parts.push(cur);
-
+// Component που σχεδιάζει ένα μέλος της εξίσωσης είτε στην αρχική του μορφή είτε πολλαπλασιασμένο με το Ε.Κ.Π.
+function RenderSideWithFractions({ terms, lcmMultiplier = null }) {
   return (
-    <span className="inline-flex items-center flex-wrap gap-1">
-      {parts.map((p, idx) => {
-        let clean = p;
-        let prefix = '';
-        if (clean.startsWith('+')) {
-          prefix = '＋ ';
-          clean = clean.slice(1);
-        } else if (clean.startsWith('-')) {
-          prefix = '－ ';
-          clean = clean.slice(1);
-        }
+    <span className="inline-flex items-center flex-wrap gap-1.5">
+      {terms.map((t, idx) => {
+        const signPrefix = t.sign < 0 ? (idx === 0 ? '－' : '－ ') : idx === 0 ? '' : '＋ ';
 
-        if (clean.includes('/')) {
-          const [n, d] = clean.split('/');
-          const displayN = n.replace(/^\((.*)\)$/, '$1');
-          const displayD = d.replace(/^\((.*)\)$/, '$1');
-          return (
-            <span key={idx} className="inline-flex items-center">
-              {prefix && <span>{prefix}</span>}
-              <Frac num={displayN} den={displayD} />
-            </span>
-          );
-        }
         return (
-          <span key={idx}>
-            {prefix}
-            {clean}
+          <span key={idx} className="inline-flex items-center">
+            {signPrefix && <span className="mr-1">{signPrefix}</span>}
+            {lcmMultiplier !== null && (
+              <span className="text-amber-300 font-extrabold mr-0.5">{lcmMultiplier} · </span>
+            )}
+            {t.den > 1 ? (
+              <Frac num={t.displayNumStr} den={t.den} />
+            ) : (
+              <span>{t.displayNumStr}</span>
+            )}
           </span>
         );
       })}
@@ -442,8 +484,8 @@ function FormattedRawSide({ str }) {
 }
 
 export default function LiseisEksisoseonTheoria() {
-  // State για Εργαστήριο 1: Custom Αναλυτής Εξισώσεων
-  const [equationInput, setEquationInput] = useState('2(x + 3) + x = 21');
+  // State για Εργαστήριο 1: Custom Αναλυτής Εξισώσεων (Προεπιλογή: η εξίσωση της εικόνας για άμεσο έλεγχο!)
+  const [equationInput, setEquationInput] = useState('-2x/3 - (4 - 5x)/4 + 5/6 = 15');
   const [visibleStepsCount, setVisibleStepsCount] = useState(99);
 
   // State για Εργαστήριο 2: Προσομοιωτής αx + β = γ
@@ -465,8 +507,8 @@ export default function LiseisEksisoseonTheoria() {
     { label: 'ΑΠΛΗ (αx＋β＝γ)', eq: '3x - 4 = 11' },
     { label: 'ΠΟΛΛΑ x', eq: '5x - 3 + 2x = 4x + 9' },
     { label: 'ΜΕ ΠΑΡΕΝΘΕΣΕΙΣ', eq: '2(x + 3) - 4 = 10' },
-    { label: 'ΜΕ ΚΛΑΣΜΑΤΑ', eq: 'x/2 + x/3 = 5' },
-    { label: 'ΣΥΝΘΕΤΟ ΚΛΑΣΜΑ', eq: '(2x + 1)/3 - x/2 = 1' },
+    { label: 'ΑΠΛΑ ΚΛΑΣΜΑΤΑ', eq: 'x/2 + x/3 = 5' },
+    { label: 'ΠΛΗΡΗΣ ΜΕ ΚΛΑΣΜΑΤΑ', eq: '-2x/3 - (4 - 5x)/4 + 5/6 = 15' },
     { label: 'ΑΔΥΝΑΤΗ', eq: '2(x + 1) = 2x + 5' },
   ];
 
@@ -513,7 +555,7 @@ export default function LiseisEksisoseonTheoria() {
               Επίλυση Εξισώσεων της Μορφής α·x ＋ β ＝ γ
             </h1>
             <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Μαθαίνουμε τη γενική μέθοδο επίλυσης εξισώσεων 1ου βαθμού, πώς απαλείφουμε παρενθέσεις και κλάσματα, και πώς χρησιμοποιούμε εξισώσεις για να λύσουμε ρεαλιστικά προβλήματα.
+              Μαθαίνουμε τη γενική μέθοδο επίλυσης εξισώσεων 1ου βαθμού, πώς απαλείφουμε παρενθέσεις και κλάσματα βήμα προς βήμα, και πώς χρησιμοποιούμε εξισώσεις για να λύσουμε ρεαλιστικά προβλήματα.
             </p>
           </div>
         </section>
@@ -590,16 +632,19 @@ export default function LiseisEksisoseonTheoria() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100 text-xs sm:text-sm">
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
               <div className="font-bold text-slate-900 text-base">
-                Τι κάνουμε αν υπάρχουν Παρενθέσεις ή Κλάσματα;
+                Τι κάνουμε αν υπάρχουν Κλάσματα και Παρενθέσεις;
               </div>
-              <ul className="list-disc list-inside space-y-1.5 text-slate-600">
+              <ol className="list-decimal list-inside space-y-1.5 text-slate-600">
                 <li>
-                  <strong>Παρενθέσεις:</strong> Εφαρμόζουμε πρώτα την επιμεριστική ιδιότητα α·(β ＋ γ) ＝ α·β ＋ α·γ.
+                  Βρίσκουμε το <strong>Ε.Κ.Π.</strong> όλων των παρονομαστών και πολλαπλασιάζουμε <strong>κάθε όρο</strong> της εξίσωσης με αυτό.
                 </li>
                 <li>
-                  <strong>Κλάσματα:</strong> Βρίσκουμε το <strong>Ε.Κ.Π.</strong> όλων των παρονομαστών και πολλαπλασιάζουμε <em>όλους</em> τους όρους της εξίσωσης με αυτό, ώστε να φύγουν οι παρονομαστές.
+                  Απλοποιούμε το Ε.Κ.Π. με κάθε παρονομαστή και βάζουμε σε παρένθεση τους σύνθετους αριθμητές.
                 </li>
-              </ul>
+                <li>
+                  Εκτελούμε τους πολλαπλασιασμούς (επιμεριστική ιδιότητα) για να φύγουν οι παρενθέσεις.
+                </li>
+              </ol>
             </div>
 
             <div className="p-5 rounded-2xl bg-rose-50/50 border border-rose-200 space-y-2">
@@ -625,18 +670,18 @@ export default function LiseisEksisoseonTheoria() {
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
                 2
               </span>
-              🛠️ Εργαστήριο 1: Αυτόματος Επιλυτής Εξισώσεων Βήμα-Βήμα
+              🛠️ Εργαστήριο 1: Αναλυτικός Επιλυτής Εξισώσεων Βήμα-Βήμα
             </h2>
             <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200 self-start sm:self-auto">
-              ΥΠΟΣΤΗΡΙΞΗ ΚΛΑΣΜΑΤΩΝ & ΠΑΡΕΝΘΕΣΕΩΝ
+              ΠΛΗΡΗΣ ΑΝΑΛΥΣΗ ΚΑΘΕ ΠΡΑΞΗΣ
             </span>
           </div>
 
           <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-            Γράψε οποιαδήποτε εξίσωση 1ου βαθμού στο παρακάτω πλαίσιο (για κλάσματα χρησιμοποίησε το σύμβολο <strong>/</strong>, π.χ. <code>x/2 + x/3 = 5</code> ή <code>2(x + 3) = 14</code>) ή επίλεξε ένα από τα έτοιμα παραδείγματα. Όλα τα βήματα εμφανίζονται με κανονική μορφή κλάσματος!
+            Πληκτρολόγησε οποιαδήποτε εξίσωση 1ου βαθμού στο πλαίσιο (για την εισαγωγή κλασμάτων χρησιμοποίησε το σύμβολο <strong>/</strong>, π.χ. <code>-2x/3 - (4-5x)/4 + 5/6 = 15</code>). Ο επιλυτής θα σου δείξει αναλυτικά ένα-ένα όλα τα ενδιάμεσα βήματα!
           </p>
 
-          {/* Έτοιμα Κουμπιά Παραδειγμάτων (Με κανονική κλασματική ένδειξη στα badges) */}
+          {/* Έτοιμα Κουμπιά Παραδειγμάτων */}
           <div className="space-y-2">
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ ΠΡΟΣ ΔΟΚΙΜΗ:
@@ -653,26 +698,13 @@ export default function LiseisEksisoseonTheoria() {
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
-                  <span>{p.label}:</span>
-                  <span className="font-mono">
-                    {p.eq === 'x/2 + x/3 = 5' ? (
-                      <span className="inline-flex items-center">
-                        <Frac num="x" den="2" /> ＋ <Frac num="x" den="3" /> ＝ 5
-                      </span>
-                    ) : p.eq === '(2x + 1)/3 - x/2 = 1' ? (
-                      <span className="inline-flex items-center">
-                        <Frac num="2x＋1" den="3" /> － <Frac num="x" den="2" /> ＝ 1
-                      </span>
-                    ) : (
-                      p.eq
-                    )}
-                  </span>
+                  <span>{p.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Πεδίο Εισαγωγής Εξίσωσης (Μόνο εδώ διατηρείται το / ως πλήκτρο εισαγωγής) */}
+          {/* Πεδίο Εισαγωγής Εξίσωσης */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
             <div className="lg:col-span-7 space-y-1">
               <label className="text-[11px] font-bold text-indigo-900 uppercase block">
@@ -685,7 +717,7 @@ export default function LiseisEksisoseonTheoria() {
                   setEquationInput(e.target.value);
                   setVisibleStepsCount(99);
                 }}
-                placeholder="π.χ. 2(x + 3) + x = 21 ή x/2 + x/3 = 5"
+                placeholder="π.χ. -2x/3 - (4-5x)/4 + 5/6 = 15"
                 className="w-full h-12 px-4 rounded-xl bg-white border-2 border-indigo-200 focus:border-indigo-600 outline-none font-mono font-bold text-base sm:text-lg text-slate-900 shadow-sm"
               />
             </div>
@@ -728,7 +760,7 @@ export default function LiseisEksisoseonTheoria() {
             </div>
           </div>
 
-          {/* Προβολή Βημάτων */}
+          {/* Προβολή Αναλυτικών Βημάτων */}
           {solverResult.error ? (
             <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-semibold flex items-center gap-3">
               <span className="text-lg">⚠️</span>
@@ -766,15 +798,22 @@ export default function LiseisEksisoseonTheoria() {
 
                     <p className="text-xs text-slate-300 mb-2">{st.desc}</p>
 
-                    {/* Ειδική απόδοση για το Βήμα 1 με κανονικά κλάσματα */}
-                    {st.renderCustomInitial ? (
+                    {/* Βήμα 1: Αρχική Εξίσωση με Κλάσματα */}
+                    {st.renderType === 'initial' ? (
                       <div className="font-mono text-base sm:text-xl font-black text-white flex items-center flex-wrap gap-2">
-                        <FormattedRawSide str={st.leftRaw} />
+                        <RenderSideWithFractions terms={st.leftTerms} />
                         <span>＝</span>
-                        <FormattedRawSide str={st.rightRaw} />
+                        <RenderSideWithFractions terms={st.rightTerms} />
+                      </div>
+                    ) : st.renderType === 'lcm_multiply' ? (
+                      /* Βήμα 2: Εμφάνιση του Ε.Κ.Π. μπροστά από κάθε όρο */
+                      <div className="font-mono text-base sm:text-xl font-black text-white flex items-center flex-wrap gap-2">
+                        <RenderSideWithFractions terms={st.leftTerms} lcmMultiplier={st.lcmVal} />
+                        <span>＝</span>
+                        <RenderSideWithFractions terms={st.rightTerms} lcmMultiplier={st.lcmVal} />
                       </div>
                     ) : st.fractionData ? (
-                      /* Τελική απάντηση με το component Frac */
+                      /* Τελικό Βήμα: Λύση με το Frac component */
                       <div className="font-mono text-base sm:text-xl font-black text-emerald-400 flex items-center flex-wrap gap-2 pt-1">
                         <span>x ＝</span>
                         <Frac
