@@ -296,6 +296,15 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 28',
     active: true,
   },
+  {
+    id: '33',
+    section: 'algebra',
+    slug: '33-liseis-eksisoseon',
+    title: 'Λύση Εξισώσεων',
+    desc: 'Εξισώση χωρίς κλάσματα, Εξίσωση με κλάσματα.',
+    badge: 'ΚΕΦΑΛΑΙΟ 29',
+    active: true,
+  },
 
   // --- ΜΕΛΛΟΝΤΙΚΗ ΓΕΩΜΕΤΡΙΑ (Προετοιμασμένα κεφάλαια) ---
   {
