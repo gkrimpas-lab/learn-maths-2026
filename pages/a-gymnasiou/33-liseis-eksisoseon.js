@@ -106,15 +106,10 @@ function solveLinearEquationStepByStep(rawInput) {
     return { error: 'Δεν επιτρέπεται η διαίρεση με το μηδέν (παρονομαστής 0).' };
   }
 
-  // Βοηθητικός Parser ενός μέλους σε λίστα όρων: { coeffX, constVal, den, raw }
-  // Υποστηρίζει όρους της μορφής: a*x, c, (ax+b)/d, k*(ax+b), k*(ax+b)/d
   const parseSide = (sideStr) => {
     let s = sideStr.replace(/^\+/, '');
     let hasParens = s.includes('(');
 
-    // Επέκταση απλών παρενθέσεων k*(ax+b) ή (ax+b)*k ή -(ax+b)
-    // Για ασφαλή αλγεβρική ανάλυση, μετατρέπουμε κάθε μέλος σε άθροισμα κλασματικών ή ακεραίων όρων
-    // Χωρίζουμε σε top-level + και - (εκτός παρενθέσεων)
     const tokens = [];
     let current = '';
     let depth = 0;
@@ -132,7 +127,7 @@ function solveLinearEquationStepByStep(rawInput) {
     if (current) tokens.push(current);
 
     let denominators = [];
-    let expandedTerms = []; // Κάθε στοιχείο: { xNum, cNum, den }
+    let expandedTerms = [];
 
     for (let tok of tokens) {
       let sign = 1;
@@ -143,7 +138,6 @@ function solveLinearEquationStepByStep(rawInput) {
       }
       if (!tok) return { error: 'Ελλιπής όρος στην εξίσωση.' };
 
-      // Έλεγχος αν υπάρχει παρονομαστής στο top-level του όρου
       let slashIdx = -1;
       let d = 0;
       for (let i = 0; i < tok.length; i++) {
@@ -174,7 +168,6 @@ function solveLinearEquationStepByStep(rawInput) {
       }
       denominators.push(denVal);
 
-      // Ανάλυση του αριθμητή numPart (μπορεί να είναι: ax, c, (ax+b), k(ax+b), k*(ax+b))
       let mult = 1;
       let inner = numPart;
 
@@ -191,7 +184,6 @@ function solveLinearEquationStepByStep(rawInput) {
 
       if (!Number.isFinite(mult)) return { error: 'Μη έγκυρος συντελεστής μπροστά από παρένθεση.' };
 
-      // Τώρα το inner είναι γραμμικό άθροισμα χωρίς παρενθέσεις π.χ. 2x-3
       let innerNorm = inner.replace(/^\+/, '');
       const subTokens = [];
       let curSub = '';
@@ -254,7 +246,6 @@ function solveLinearEquationStepByStep(rawInput) {
   const commonLCM = hasFractions ? lcmArray(allDenominators) : 1;
   const hasParensOverall = leftParsed.hasParens || rightParsed.hasParens;
 
-  // Πολλαπλασιασμός όλων των όρων με το Ε.Κ.Π. (commonLCM) ώστε να έχουμε ακέραιους/καθαρούς όρους
   const scaleTerm = (t) => {
     const factor = commonLCM / t.den;
     return {
@@ -266,7 +257,6 @@ function solveLinearEquationStepByStep(rawInput) {
   const leftScaled = leftParsed.expandedTerms.map(scaleTerm);
   const rightScaled = rightParsed.expandedTerms.map(scaleTerm);
 
-  // Βοηθητική μορφοποίηση λίστας όρων σε string
   const formatTermsList = (terms) => {
     if (terms.length === 0) return '0';
     return terms
@@ -290,10 +280,13 @@ function solveLinearEquationStepByStep(rawInput) {
   steps.push({
     title: 'ΑΡΧΙΚΗ ΕΞΙΣΩΣΗ',
     desc: 'Καταγράφουμε την εξίσωση που θέλουμε να επιλύσουμε:',
-    math: `${eqParts[0]} ＝ ${eqParts[1]}`,
+    rawMath: `${eqParts[0]} ＝ ${eqParts[1]}`,
+    renderCustomInitial: true,
+    leftRaw: eqParts[0],
+    rightRaw: eqParts[1],
   });
 
-  // ΒΗΜΑ 2 (Προαιρετικό): Απαλοιφή Παρονομαστών ή Παρενθέσεων
+  // ΒΗΜΑ 2: Απαλοιφή Παρονομαστών ή Παρενθέσεων
   if (hasFractions) {
     steps.push({
       title: `ΑΠΑΛΟΙΦΗ ΠΑΡΟΝΟΜΑΣΤΩΝ (Ε.Κ.Π. ＝ ${commonLCM})`,
@@ -309,7 +302,6 @@ function solveLinearEquationStepByStep(rawInput) {
   }
 
   // ΒΗΜΑ 3: Χωρισμός Γνωστών από Αγνώστους
-  // Όλοι οι όροι με x πηγαίνουν στο 1ο μέλος, όλοι οι σταθεροί στο 2ο μέλος
   const xTermsOnLeft = [
     ...leftScaled.filter((t) => t.isX),
     ...rightScaled.filter((t) => t.isX).map((t) => ({ isX: true, val: -t.val })),
@@ -342,7 +334,7 @@ function solveLinearEquationStepByStep(rawInput) {
   if (totalX === 0) {
     if (totalConst === 0) {
       steps.push({
-        title: ' ΤΑΥΤΟΤΗΤΑ (ΑΟΡΙΣΤΗ ΕΞΙΣΩΣΗ)',
+        title: 'ΤΑΥΤΟΤΗΤΑ (ΑΟΡΙΣΤΗ ΕΞΙΣΩΣΗ)',
         desc: 'Ο συντελεστής του x είναι 0 και το 2ο μέλος είναι 0. Η ισότητα 0 · x ＝ 0 αληθεύει για κάθε αριθμό x!',
         math: 'Άπειρες Λύσεις (Ταυτότητα)',
         isSpecial: true,
@@ -358,12 +350,10 @@ function solveLinearEquationStepByStep(rawInput) {
       });
     }
   } else {
-    // Κανονική λύση x = totalConst / totalX
     const isNegativeResult = (totalConst < 0 && totalX > 0) || (totalConst > 0 && totalX < 0);
     const absNum = Math.abs(totalConst);
     const absDen = Math.abs(totalX);
 
-    // Έλεγχος αν είναι ακέραιοι για απλοποίηση κλάσματος
     let simplifiedNum = absNum;
     let simplifiedDen = absDen;
     if (Number.isInteger(absNum) && Number.isInteger(absDen)) {
@@ -377,7 +367,7 @@ function solveLinearEquationStepByStep(rawInput) {
 
     steps.push({
       title: 'ΔΙΑΙΡΕΣΗ ΜΕ ΤΟΝ ΣΥΝΤΕΛΕΣΤΗ ΤΟΥ ΑΓΝΩΣΤΟΥ',
-      desc: `Διαιρούμε και τα δύο μέλη με τον συντελεστή του αγνώστου (${totalX}) γράφοντας το πηλίκο σε μορφή κλάσματος:`,
+      desc: `Διαιρούμε και τα δύο μέλη με τον συντελεστή του αγνώστου (${totalX}) γράφοντας το πηλίκο σε κανονική μορφή κλάσματος:`,
       fractionData: {
         rawNum: totalConst,
         rawDen: totalX,
@@ -394,10 +384,67 @@ function solveLinearEquationStepByStep(rawInput) {
   return { steps };
 }
 
+// Βοηθητική σχεδίαση κλασματικών εκφράσεων για την αρχική εξίσωση
+function FormattedRawSide({ str }) {
+  if (!str.includes('/')) {
+    return <span>{str}</span>;
+  }
+
+  const parts = [];
+  let cur = '';
+  let depth = 0;
+  for (let i = 0; i < str.length; i++) {
+    const c = str[i];
+    if (c === '(') depth++;
+    if (c === ')') depth--;
+    if ((c === '+' || c === '-') && depth === 0 && i > 0) {
+      parts.push(cur);
+      cur = c;
+    } else {
+      cur += c;
+    }
+  }
+  if (cur) parts.push(cur);
+
+  return (
+    <span className="inline-flex items-center flex-wrap gap-1">
+      {parts.map((p, idx) => {
+        let clean = p;
+        let prefix = '';
+        if (clean.startsWith('+')) {
+          prefix = '＋ ';
+          clean = clean.slice(1);
+        } else if (clean.startsWith('-')) {
+          prefix = '－ ';
+          clean = clean.slice(1);
+        }
+
+        if (clean.includes('/')) {
+          const [n, d] = clean.split('/');
+          const displayN = n.replace(/^\((.*)\)$/, '$1');
+          const displayD = d.replace(/^\((.*)\)$/, '$1');
+          return (
+            <span key={idx} className="inline-flex items-center">
+              {prefix && <span>{prefix}</span>}
+              <Frac num={displayN} den={displayD} />
+            </span>
+          );
+        }
+        return (
+          <span key={idx}>
+            {prefix}
+            {clean}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
 export default function LiseisEksisoseonTheoria() {
   // State για Εργαστήριο 1: Custom Αναλυτής Εξισώσεων
   const [equationInput, setEquationInput] = useState('2(x + 3) + x = 21');
-  const [visibleStepsCount, setVisibleStepsCount] = useState(99); // Προεπιλογή: εμφάνιση όλων ή βήμα-βήμα
+  const [visibleStepsCount, setVisibleStepsCount] = useState(99);
 
   // State για Εργαστήριο 2: Προσομοιωτής αx + β = γ
   const [simA, setSimA] = useState(4);
@@ -412,10 +459,8 @@ export default function LiseisEksisoseonTheoria() {
     setter((prev) => Math.max(min, Math.min(max, prev + val)));
   };
 
-  // Αποτέλεσμα επίλυσης Εργαστηρίου 1
   const solverResult = useMemo(() => solveLinearEquationStepByStep(equationInput), [equationInput]);
 
-  // Προεπιλεγμένα παραδείγματα για γρήγορη δοκιμή
   const presetEquations = [
     { label: 'ΑΠΛΗ (αx＋β＝γ)', eq: '3x - 4 = 11' },
     { label: 'ΠΟΛΛΑ x', eq: '5x - 3 + 2x = 4x + 9' },
@@ -427,7 +472,7 @@ export default function LiseisEksisoseonTheoria() {
 
   const loadPreset = (eqStr) => {
     setEquationInput(eqStr);
-    setVisibleStepsCount(1); // Ξεκινά από το 1ο βήμα για διαδραστική αποκάλυψη!
+    setVisibleStepsCount(1);
   };
 
   // Υπολογισμοί Εργαστηρίου 2
@@ -531,7 +576,7 @@ export default function LiseisEksisoseonTheoria() {
                   Διαίρεση σε Μορφή Κλάσματος
                 </h3>
                 <p className="text-slate-600">
-                  Αν ο συντελεστής Α ≠ 0, διαιρούμε και τα δύο μέλη με το Α. Γράφουμε τη λύση <strong>πάντα σε μορφή κλάσματος</strong> και απλοποιούμε:
+                  Αν ο συντελεστής Α ≠ 0, διαιρούμε και τα δύο μέλη με το Α. Γράφουμε τη λύση <strong>πάντα σε κανονική μορφή κλάσματος</strong> και απλοποιούμε:
                 </p>
               </div>
               <div className="p-2.5 bg-white rounded-xl border border-amber-100 font-mono text-center font-bold text-amber-950 text-sm flex items-center justify-center">
@@ -588,10 +633,10 @@ export default function LiseisEksisoseonTheoria() {
           </div>
 
           <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-            Γράψε οποιαδήποτε εξίσωση 1ου βαθμού στο παρακάτω πλαίσιο (π.χ. <code>3x - 5 = x + 7</code>, <code>2(x + 3) = 14</code>, ή με κλάσματα <code>x/2 + x/3 = 5</code>) ή επίλεξε ένα από τα έτοιμα παραδείγματα. Μπορείς να βλέπεις τα βήματα ένα-ένα!
+            Γράψε οποιαδήποτε εξίσωση 1ου βαθμού στο παρακάτω πλαίσιο (για κλάσματα χρησιμοποίησε το σύμβολο <strong>/</strong>, π.χ. <code>x/2 + x/3 = 5</code> ή <code>2(x + 3) = 14</code>) ή επίλεξε ένα από τα έτοιμα παραδείγματα. Όλα τα βήματα εμφανίζονται με κανονική μορφή κλάσματος!
           </p>
 
-          {/* Έτοιμα Κουμπιά Παραδειγμάτων */}
+          {/* Έτοιμα Κουμπιά Παραδειγμάτων (Με κανονική κλασματική ένδειξη στα badges) */}
           <div className="space-y-2">
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ ΠΡΟΣ ΔΟΚΙΜΗ:
@@ -602,23 +647,36 @@ export default function LiseisEksisoseonTheoria() {
                   key={idx}
                   type="button"
                   onClick={() => loadPreset(p.eq)}
-                  className={`px-3 py-1.5 rounded-xl font-bold text-xs transition active:scale-95 border ${
+                  className={`px-3 py-1.5 rounded-xl font-bold text-xs transition active:scale-95 border flex items-center gap-1 ${
                     equationInput === p.eq
                       ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
-                  {p.label}: <span className="font-mono ml-1">{p.eq}</span>
+                  <span>{p.label}:</span>
+                  <span className="font-mono">
+                    {p.eq === 'x/2 + x/3 = 5' ? (
+                      <span className="inline-flex items-center">
+                        <Frac num="x" den="2" /> ＋ <Frac num="x" den="3" /> ＝ 5
+                      </span>
+                    ) : p.eq === '(2x + 1)/3 - x/2 = 1' ? (
+                      <span className="inline-flex items-center">
+                        <Frac num="2x＋1" den="3" /> － <Frac num="x" den="2" /> ＝ 1
+                      </span>
+                    ) : (
+                      p.eq
+                    )}
+                  </span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Πεδίο Εισαγωγής Εξίσωσης & Κουμπιά Ελέγχου Βημάτων */}
+          {/* Πεδίο Εισαγωγής Εξίσωσης (Μόνο εδώ διατηρείται το / ως πλήκτρο εισαγωγής) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
             <div className="lg:col-span-7 space-y-1">
               <label className="text-[11px] font-bold text-indigo-900 uppercase block">
-                ΠΛΗΚΤΡΟΛΟΓΗΣΕ ΤΗΝ ΕΞΙΣΩΣΗ ΣΟΥ:
+                ΠΛΗΚΤΡΟΛΟΓΗΣΕ ΤΗΝ ΕΞΙΣΩΣΗ ΣΟΥ (ΜΕ ΤΟ ΣΥΜΒΟΛΟ / ΓΙΑ ΤΑ ΚΛΑΣΜΑΤΑ):
               </label>
               <input
                 type="text"
@@ -670,7 +728,7 @@ export default function LiseisEksisoseonTheoria() {
             </div>
           </div>
 
-          {/* Προβολή Βημάτων ή Μηνύματος Ελέγχου */}
+          {/* Προβολή Βημάτων */}
           {solverResult.error ? (
             <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-semibold flex items-center gap-3">
               <span className="text-lg">⚠️</span>
@@ -708,8 +766,15 @@ export default function LiseisEksisoseonTheoria() {
 
                     <p className="text-xs text-slate-300 mb-2">{st.desc}</p>
 
-                    {/* Αν είναι το τελικό βήμα με κλάσμα, χρησιμοποιούμε το Frac component */}
-                    {st.fractionData ? (
+                    {/* Ειδική απόδοση για το Βήμα 1 με κανονικά κλάσματα */}
+                    {st.renderCustomInitial ? (
+                      <div className="font-mono text-base sm:text-xl font-black text-white flex items-center flex-wrap gap-2">
+                        <FormattedRawSide str={st.leftRaw} />
+                        <span>＝</span>
+                        <FormattedRawSide str={st.rightRaw} />
+                      </div>
+                    ) : st.fractionData ? (
+                      /* Τελική απάντηση με το component Frac */
                       <div className="font-mono text-base sm:text-xl font-black text-emerald-400 flex items-center flex-wrap gap-2 pt-1">
                         <span>x ＝</span>
                         <Frac
@@ -717,7 +782,6 @@ export default function LiseisEksisoseonTheoria() {
                           den={Math.abs(st.fractionData.rawDen)}
                           isNeg={st.fractionData.isNeg}
                         />
-                        {/* Αν απλοποιείται το κλάσμα αλλά παραμένει κλάσμα */}
                         {!st.fractionData.isExactInteger &&
                           (st.fractionData.simplifiedNum !== Math.abs(st.fractionData.rawNum) ||
                             st.fractionData.simplifiedDen !== Math.abs(st.fractionData.rawDen)) && (
@@ -730,7 +794,6 @@ export default function LiseisEksisoseonTheoria() {
                               />
                             </>
                           )}
-                        {/* Αν διαιρείται ακριβώς σε ακέραιο */}
                         {st.fractionData.isExactInteger && (
                           <span>＝ {st.fractionData.finalIntValue}</span>
                         )}
@@ -808,7 +871,7 @@ export default function LiseisEksisoseonTheoria() {
             </div>
           </div>
 
-          {/* ΕΡΓΑΣΤΗΡΙΟ 2: ΓΡΗΓΟΡΟΣ ΠΡΟΣΟΜΟΙΩΤΗΣ αx + β = γ */}
+          {/* ΕΡΓΑΣΤΗΡΙΟ 2: ΠΡΟΣΟΜΟΙΩΤΗΣ αx + β = γ */}
           <div className="pt-4 border-t border-slate-100 space-y-5">
             <h3 className="text-base sm:text-lg font-bold text-slate-900">
               🛠️ Εργαστήριο 2: Διαδραστικός Προσομοιωτής α·x ＋ β ＝ γ με Κλασματική Λύση
