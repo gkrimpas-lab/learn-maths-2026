@@ -15,16 +15,29 @@ function Frac({ num, den, isNeg = false, className = '' }) {
     <span className={`inline-flex items-center gap-0.5 align-middle mx-1 font-mono ${className}`}>
       {hasMinus && <span className="font-bold">－</span>}
       <span className="inline-flex flex-col items-center justify-center leading-none text-center">
-        <span className="pb-0.5 px-1 border-b-2 w-full text-center" style={{ borderColor: 'currentColor' }}>
+        <span className="pb-0.5 px-1.5 border-b-2 w-full text-center" style={{ borderColor: 'currentColor' }}>
           {displayNum}
         </span>
-        <span className="pt-0.5 px-1 w-full text-center">
+        <span className="pt-0.5 px-1.5 w-full text-center">
           {displayDen}
         </span>
       </span>
     </span>
   );
 }
+
+// Βοηθητική συνάρτηση για παραγωγή HTML κανονικού κλάσματος μέσα στα solution strings
+const fracHtml = (num, den, isNeg = false) => {
+  const numStr = String(num);
+  const denStr = String(den);
+  const hasMinus = numStr.startsWith('-') || denStr.startsWith('-') || isNeg;
+  const displayNum = numStr.replace(/^-/, '');
+  const displayDen = denStr.replace(/^-/, '');
+
+  return `<span class="inline-flex items-center gap-0.5 align-middle mx-1 font-mono">${
+    hasMinus ? '<span class="font-bold">－</span>' : ''
+  }<span class="inline-flex flex-col items-center justify-center leading-none text-center"><span class="pb-0.5 px-1.5 border-b-2 border-current w-full text-center">${displayNum}</span><span class="pt-0.5 px-1.5 w-full text-center">${displayDen}</span></span></span>`;
+};
 
 const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -54,85 +67,153 @@ const makeUniqueOptions = (correct, wrongCandidates) => {
 const CALCULATION_GENERATORS = [
   // 1. Βασική επίλυση ax + b = c (Input)
   () => {
-    // 3x + 5 = 26 -> 3x = 21 -> x = 7
     return {
       type: 'input',
       topic: 'ΕΠΙΛΥΣΗ αx ＋ β ＝ γ',
       question: `Λύσε την εξίσωση: <strong>3 · x ＋ 5 ＝ 26</strong>`,
       correctAnswer: '7',
-      solution: `1. Μεταφορά όρου: 3 · x ＝ 26 － 5 ➔ 3 · x ＝ 21.<br/>2. Διαίρεση με το 3 σε μορφή κλάσματος: x ＝ <span class="font-mono text-indigo-700 font-bold">²¹⁄₃</span> ＝ 7.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 3 · x ＋ 5 ＝ 26
+          </div>
+          <div>1. Μεταφορά όρου στο 2ο μέλος: 3 · x ＝ 26 － 5 ➔ 3 · x ＝ 21.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 3 σε μορφή κλάσματος: x ＝ ${fracHtml(21, 3)} ＝ 7.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 2. Εξίσωση με αφαίρεση ax - b = c (Input)
   () => {
-    // 4x - 7 = 17 -> 4x = 24 -> x = 6
     return {
       type: 'input',
       topic: 'ΕΠΙΛΥΣΗ αx － β ＝ γ',
       question: `Λύσε την εξίσωση: <strong>4 · x － 7 ＝ 17</strong>`,
       correctAnswer: '6',
-      solution: `1. Μεταφορά όρου: 4 · x ＝ 17 ＋ 7 ➔ 4 · x ＝ 24.<br/>2. Διαίρεση με το 4: x ＝ <span class="font-mono text-indigo-700 font-bold">²⁴⁄₄</span> ＝ 6.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 4 · x － 7 ＝ 17
+          </div>
+          <div>1. Μεταφορά όρου στο 2ο μέλος: 4 · x ＝ 17 ＋ 7 ➔ 4 · x ＝ 24.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 4 σε μορφή κλάσματος: x ＝ ${fracHtml(24, 4)} ＝ 6.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 3. Εξίσωση με αρνητικό συντελεστή -ax + b = c (Input)
   () => {
-    // -2x + 9 = 1 -> -2x = -8 -> x = 4
     return {
       type: 'input',
       topic: 'ΑΡΝΗΤΙΚΟΣ ΣΥΝΤΕΛΕΣΤΗΣ',
       question: `Λύσε την εξίσωση: <strong>－2 · x ＋ 9 ＝ 1</strong>`,
       correctAnswer: '4',
-      solution: `1. Μεταφορά όρου: －2 · x ＝ 1 － 9 ➔ －2 · x ＝ －8.<br/>2. Διαίρεση με το －2: x ＝ <span class="font-mono text-indigo-700 font-bold">⁻⁸⁄₋₂</span> ＝ 4.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: －2 · x ＋ 9 ＝ 1
+          </div>
+          <div>1. Μεταφορά όρου στο 2ο μέλος: －2 · x ＝ 1 － 9 ➔ －2 · x ＝ －8.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το －2 σε μορφή κλάσματος: x ＝ ${fracHtml(8, 2)} ＝ 4.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 4. Εξίσωση με παρένθεση (Input)
   () => {
-    // 2*(x + 4) = 18 -> 2x + 8 = 18 -> 2x = 10 -> x = 5
     return {
       type: 'input',
       topic: 'ΠΑΡΕΝΘΕΣΗ & ΕΠΙΜΕΡΙΣΤΙΚΗ',
       question: `Λύσε την εξίσωση: <strong>2 · (x ＋ 4) ＝ 18</strong>`,
       correctAnswer: '5',
-      solution: `1. Επιμεριστική: 2 · x ＋ 8 ＝ 18.<br/>2. Μεταφορά όρου: 2 · x ＝ 18 － 8 ➔ 2 · x ＝ 10.<br/>3. Διαίρεση με το 2: x ＝ <span class="font-mono text-indigo-700 font-bold">¹⁰⁄₂</span> ＝ 5.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 2 · (x ＋ 4) ＝ 18
+          </div>
+          <div>1. Απαλοιφή παρένθεσης με επιμεριστική: 2 · x ＋ 8 ＝ 18.</div>
+          <div>2. Μεταφορά όρου: 2 · x ＝ 18 － 8 ➔ 2 · x ＝ 10.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            3. Διαίρεση με το 2 σε μορφή κλάσματος: x ＝ ${fracHtml(10, 2)} ＝ 5.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 5. Εξίσωση με απλό κλάσμα (Input)
   () => {
-    // x/3 + 2 = 6 -> x/3 = 4 -> x = 12
     return {
       type: 'input',
       topic: 'ΕΞΙΣΩΣΗ ΜΕ ΚΛΑΣΜΑ',
-      question: `Λύσε την εξίσωση: <span class="inline-flex items-center font-mono"><strong>x⁄3 ＋ 2 ＝ 6</strong></span>`,
+      question: `Λύσε την εξίσωση: <span class="inline-flex items-center">${fracHtml('x', 3)} <strong>＋ 2 ＝ 6</strong></span>`,
       correctAnswer: '12',
-      solution: `1. Μεταφορά σταθερού όρου: <span class="font-mono">x⁄3</span> ＝ 6 － 2 ➔ <span class="font-mono">x⁄3</span> ＝ 4.<br/>2. Πολλαπλασιάζουμε με το 3: x ＝ 4 · 3 ＝ 12.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono flex items-center flex-wrap">
+            <span>Αρχική εξίσωση:&nbsp;</span>${fracHtml('x', 3)}<span>&nbsp;＋ 2 ＝ 6</span>
+          </div>
+          <div class="flex items-center flex-wrap">
+            1. Μεταφορά σταθερού όρου: ${fracHtml('x', 3)} ＝ 6 － 2 ➔ ${fracHtml('x', 3)} ＝ 4.
+          </div>
+          <div>2. Πολλαπλασιάζουμε με τον παρονομαστή 3: x ＝ 4 · 3 ＝ 12.</div>
+        </div>
+      `,
     };
   },
 
   // 6. Εξίσωση με x και στα δύο μέλη (Input)
   () => {
-    // 5x - 3 = 2x + 9 -> 3x = 12 -> x = 4
     return {
       type: 'input',
       topic: 'ΧΩΡΙΣΜΟΣ ΟΡΩΝ',
       question: `Λύσε την εξίσωση: <strong>5 · x － 3 ＝ 2 · x ＋ 9</strong>`,
       correctAnswer: '4',
-      solution: `1. Χωρίζουμε γνωστούς από αγνώστους: 5 · x － 2 · x ＝ 9 ＋ 3.<br/>2. Αναγωγή ομοίων όρων: 3 · x ＝ 12.<br/>3. Διαίρεση με το 3: x ＝ <span class="font-mono text-indigo-700 font-bold">¹²⁄₃</span> ＝ 4.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 5 · x － 3 ＝ 2 · x ＋ 9
+          </div>
+          <div>1. Χωρίζουμε γνωστούς από αγνώστους: 5 · x － 2 · x ＝ 9 ＋ 3.</div>
+          <div>2. Αναγωγή ομοίων όρων: 3 · x ＝ 12.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            3. Διαίρεση με το 3 σε μορφή κλάσματος: x ＝ ${fracHtml(12, 3)} ＝ 4.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 7. Εξίσωση με άθροισμα κλασμάτων (Input)
   () => {
-    // x/2 + x/4 = 6 -> 2x + x = 24 -> 3x = 24 -> x = 8
     return {
       type: 'input',
       topic: 'Ε.Κ.Π. ΠΑΡΟΝΟΜΑΣΤΩΝ',
-      question: `Λύσε την εξίσωση: <span class="inline-flex items-center font-mono"><strong>x⁄2 ＋ x⁄4 ＝ 6</strong></span>`,
+      question: `Λύσε την εξίσωση: <span class="inline-flex items-center">${fracHtml('x', 2)} ＋ ${fracHtml('x', 4)} ＝ 6</span>`,
       correctAnswer: '8',
-      solution: `1. Το Ε.Κ.Π.(2, 4) είναι το 4. Πολλαπλασιάζουμε κάθε όρο με το 4: 4 · (<span class="font-mono">x⁄2</span>) ＋ 4 · (<span class="font-mono">x⁄4</span>) ＝ 4 · 6.<br/>2. Απλοποίηση: 2 · x ＋ x ＝ 24 ➔ 3 · x ＝ 24.<br/>3. Διαίρεση με το 3: x ＝ <span class="font-mono text-indigo-700 font-bold">²⁴⁄₃</span> ＝ 8.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono flex items-center flex-wrap">
+            <span>Αρχική εξίσωση:&nbsp;</span>${fracHtml('x', 2)}<span>&nbsp;＋&nbsp;</span>${fracHtml('x', 4)}<span>&nbsp;＝ 6</span>
+          </div>
+          <div class="flex items-center flex-wrap">
+            1. Το Ε.Κ.Π.(2, 4) είναι το 4. Πολλαπλασιάζουμε κάθε όρο με το 4: 4 · (${fracHtml('x', 2)}) ＋ 4 · (${fracHtml('x', 4)}) ＝ 4 · 6.
+          </div>
+          <div>2. Απλοποίηση των παρονομαστών: 2 · x ＋ x ＝ 24 ➔ 3 · x ＝ 24.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            3. Διαίρεση με το 3 σε μορφή κλάσματος: x ＝ ${fracHtml(24, 3)} ＝ 8.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -151,7 +232,16 @@ const CALCULATION_GENERATORS = [
         ]
       ),
       correctAnswer: 'Είναι αδύνατη (δεν έχει καμία λύση)',
-      solution: `Ανοίγουμε την παρένθεση: 3x ＋ 3 ＝ 3x ＋ 7 ➔ 3x － 3x ＝ 7 － 3 ➔ 0 · x ＝ 4. Δεν υπάρχει αριθμός x που πολλαπλασιαζόμενος με το 0 να δώσει 4, άρα η εξίσωση είναι <strong>αδύνατη</strong>.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 3 · (x ＋ 1) ＝ 3 · x ＋ 7
+          </div>
+          <div>1. Ανοίγουμε την παρένθεση: 3 · x ＋ 3 ＝ 3 · x ＋ 7.</div>
+          <div>2. Χωρίζουμε γνωστούς από αγνώστους: 3 · x － 3 · x ＝ 7 － 3 ➔ 0 · x ＝ 4.</div>
+          <div>3. Συμπέρασμα: Κανένας αριθμός x πολλαπλασιαζόμενος με το 0 δεν δίνει 4. Η εξίσωση είναι <strong>αδύνατη</strong>.</div>
+        </div>
+      `,
     };
   },
 
@@ -170,55 +260,99 @@ const CALCULATION_GENERATORS = [
         ]
       ),
       correctAnswer: 'Είναι ταυτότητα (επαληθεύεται για κάθε αριθμό x)',
-      solution: `Ανοίγουμε την παρένθεση: 2x ＋ 6 ＝ 2x ＋ 6 ➔ 2x － 2x ＝ 6 － 6 ➔ 0 · x ＝ 0. Η ισότητα ισχύει για οποιονδήποτε αριθμό x, άρα είναι <strong>ταυτότητα (αόριστη)</strong>.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 2 · (x ＋ 3) ＝ 2 · x ＋ 6
+          </div>
+          <div>1. Ανοίγουμε την παρένθεση: 2 · x ＋ 6 ＝ 2 · x ＋ 6.</div>
+          <div>2. Χωρίζουμε γνωστούς από αγνώστους: 2 · x － 2 · x ＝ 6 － 6 ➔ 0 · x ＝ 0.</div>
+          <div>3. Συμπέρασμα: Η ισότητα 0 · x ＝ 0 ισχύει για οποιονδήποτε αριθμό x. Η εξίσωση είναι <strong>ταυτότητα (αόριστη)</strong>.</div>
+        </div>
+      `,
     };
   },
 
   // 10. Εξίσωση με αρνητικό αποτέλεσμα (Input)
   () => {
-    // 6x + 25 = 7 -> 6x = -18 -> x = -3
     return {
       type: 'input',
       topic: 'ΑΡΝΗΤΙΚΗ ΡΙΖΑ',
       question: `Λύσε την εξίσωση: <strong>6 · x ＋ 25 ＝ 7</strong>`,
       correctAnswer: '-3',
-      solution: `1. Μεταφορά όρου: 6 · x ＝ 7 － 25 ➔ 6 · x ＝ －18.<br/>2. Διαίρεση με το 6: x ＝ <span class="font-mono text-indigo-700 font-bold">－¹⁸⁄₆</span> ＝ －3.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 6 · x ＋ 25 ＝ 7
+          </div>
+          <div>1. Μεταφορά όρου στο 2ο μέλος: 6 · x ＝ 7 － 25 ➔ 6 · x ＝ －18.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 6 σε μορφή κλάσματος: x ＝ ${fracHtml(18, 6, true)} ＝ －3.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 11. Εξίσωση με μείον μπροστά από παρένθεση (Input)
   () => {
-    // 5x - (2x - 3) = 15 -> 5x - 2x + 3 = 15 -> 3x = 12 -> x = 4
     return {
       type: 'input',
       topic: 'ΠΑΡΕΝΘΕΣΗ ΜΕ ΜΕΙΟΝ',
       question: `Λύσε την εξίσωση: <strong>5 · x － (2 · x － 3) ＝ 15</strong>`,
       correctAnswer: '4',
-      solution: `1. Αλλάζουμε τα πρόσημα μέσα στην παρένθεση: 5x － 2x ＋ 3 ＝ 15.<br/>2. Αναγωγή και μεταφορά: 3x ＝ 15 － 3 ➔ 3x ＝ 12.<br/>3. Διαίρεση με το 3: x ＝ <span class="font-mono text-indigo-700 font-bold">¹²⁄₃</span> ＝ 4.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 5 · x － (2 · x － 3) ＝ 15
+          </div>
+          <div>1. Απαλοιφή παρένθεσης αλλάζοντας τα πρόσημα: 5 · x － 2 · x ＋ 3 ＝ 15.</div>
+          <div>2. Αναγωγή ομοίων και μεταφορά: 3 · x ＝ 15 － 3 ➔ 3 · x ＝ 12.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            3. Διαίρεση με το 3 σε μορφή κλάσματος: x ＝ ${fracHtml(12, 3)} ＝ 4.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 12. Εξίσωση με μηδενικό δεύτερο μέλος (Input)
   () => {
-    // 8x - 24 = 0 -> 8x = 24 -> x = 3
     return {
       type: 'input',
       topic: 'ΜΗΔΕΝΙΚΟ 2Ο ΜΕΛΟΣ',
       question: `Λύσε την εξίσωση: <strong>8 · x － 24 ＝ 0</strong>`,
       correctAnswer: '3',
-      solution: `1. Μεταφορά όρου: 8 · x ＝ 24.<br/>2. Διαίρεση με το 8: x ＝ <span class="font-mono text-indigo-700 font-bold">²⁴⁄₈</span> ＝ 3.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 8 · x － 24 ＝ 0
+          </div>
+          <div>1. Μεταφορά σταθερού όρου στο 2ο μέλος: 8 · x ＝ 24.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 8 σε μορφή κλάσματος: x ＝ ${fracHtml(24, 8)} ＝ 3.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 13. Εξίσωση με κλάσμα που έχει σύνθετο αριθμητή (Input)
   () => {
-    // (x + 1)/2 = 4 -> x + 1 = 8 -> x = 7
     return {
       type: 'input',
       topic: 'ΚΛΑΣΜΑ ΜΕ ΣΥΝΘΕΤΟ ΑΡΙΘΜΗΤΗ',
-      question: `Λύσε την εξίσωση: <span class="inline-flex items-center font-mono"><strong>(x ＋ 1)⁄2 ＝ 4</strong></span>`,
+      question: `Λύσε την εξίσωση: <span class="inline-flex items-center">${fracHtml('x ＋ 1', 2)} ＝ 4</span>`,
       correctAnswer: '7',
-      solution: `1. Πολλαπλασιάζουμε με το 2: x ＋ 1 ＝ 4 · 2 ➔ x ＋ 1 ＝ 8.<br/>2. Μεταφορά όρου: x ＝ 8 － 1 ＝ 7.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono flex items-center flex-wrap">
+            <span>Αρχική εξίσωση:&nbsp;</span>${fracHtml('x ＋ 1', 2)}<span>&nbsp;＝ 4</span>
+          </div>
+          <div>1. Πολλαπλασιάζουμε με τον παρονομαστή 2: x ＋ 1 ＝ 4 · 2 ➔ x ＋ 1 ＝ 8.</div>
+          <div>2. Μεταφορά σταθερού όρου: x ＝ 8 － 1 ＝ 7.</div>
+        </div>
+      `,
     };
   },
 
@@ -229,79 +363,140 @@ const CALCULATION_GENERATORS = [
       topic: 'ΜΗΔΕΝΙΚΗ ΡΙΖΑ',
       question: `Ποια είναι η λύση της εξίσωσης <strong>7 · x ＝ 0</strong>;`,
       correctAnswer: '0',
-      solution: `Διαιρούμε με το 7: x ＝ <span class="font-mono text-indigo-700 font-bold">⁰⁄₇</span> ＝ 0.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 7 · x ＝ 0
+          </div>
+          <div class="flex items-center flex-wrap">
+            Διαιρούμε με το 7 σε μορφή κλάσματος: x ＝ ${fracHtml(0, 7)} ＝ 0.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 15. Δύο παρενθέσεις (Input)
   () => {
-    // 3*(x - 1) + 2*(x + 2) = 16 -> 3x - 3 + 2x + 4 = 16 -> 5x + 1 = 16 -> 5x = 15 -> x = 3
     return {
       type: 'input',
       topic: 'ΣΥΝΘΕΤΕΣ ΠΑΡΕΝΘΕΣΕΙΣ',
       question: `Λύσε την εξίσωση: <strong>3 · (x － 1) ＋ 2 · (x ＋ 2) ＝ 16</strong>`,
       correctAnswer: '3',
-      solution: `1. Επιμεριστικές: 3x － 3 ＋ 2x ＋ 4 ＝ 16.<br/>2. Αναγωγή: 5x ＋ 1 ＝ 16 ➔ 5x ＝ 15.<br/>3. Διαίρεση με το 5: x ＝ <span class="font-mono text-indigo-700 font-bold">¹⁵⁄₅</span> ＝ 3.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 3 · (x － 1) ＋ 2 · (x ＋ 2) ＝ 16
+          </div>
+          <div>1. Επιμεριστικές ιδιότητες: 3 · x － 3 ＋ 2 · x ＋ 4 ＝ 16.</div>
+          <div>2. Αναγωγή ομοίων και μεταφορά: 5 · x ＋ 1 ＝ 16 ➔ 5 · x ＝ 15.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            3. Διαίρεση με το 5 σε μορφή κλάσματος: x ＝ ${fracHtml(15, 5)} ＝ 3.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 16. Εξίσωση με δεκαδικό συντελεστή (Input)
   () => {
-    // 0.5x + 3 = 7 -> 0.5x = 4 -> x = 8
     return {
       type: 'input',
       topic: 'ΔΕΚΑΔΙΚΟΣ ΣΥΝΤΕΛΕΣΤΗΣ',
       question: `Λύσε την εξίσωση: <strong>0,5 · x ＋ 3 ＝ 7</strong>`,
       correctAnswer: '8',
-      solution: `1. Μεταφορά όρου: 0,5 · x ＝ 7 － 3 ➔ 0,5 · x ＝ 4.<br/>2. Διαίρεση: x ＝ 4 ： 0,5 ＝ 8 (αφού 0,5 ＝ 1/2).`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 0,5 · x ＋ 3 ＝ 7
+          </div>
+          <div>1. Μεταφορά όρου στο 2ο μέλος: 0,5 · x ＝ 7 － 3 ➔ 0,5 · x ＝ 4.</div>
+          <div>2. Διαίρεση: x ＝ 4 ： 0,5 ＝ 8 (αφού 0,5 ＝ 1/2).</div>
+        </div>
+      `,
     };
   },
 
   // 17. Εξίσωση με αρνητικό x μόνο του (Input)
   () => {
-    // -x + 6 = 1 -> -x = -5 -> x = 5
     return {
       type: 'input',
       topic: 'ΑΠΛΟ ΑΡΝΗΤΙΚΟ x',
       question: `Λύσε την εξίσωση: <strong>－x ＋ 6 ＝ 1</strong>`,
       correctAnswer: '5',
-      solution: `1. Μεταφορά όρου: －x ＝ 1 － 6 ➔ －x ＝ －5.<br/>2. Διαιρούμε με το －1: x ＝ <span class="font-mono text-indigo-700 font-bold">⁻⁵⁄₋₁</span> ＝ 5.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: －x ＋ 6 ＝ 1
+          </div>
+          <div>1. Μεταφορά όρου: －x ＝ 1 － 6 ➔ －x ＝ －5.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαιρούμε με το －1: x ＝ ${fracHtml(5, 1)} ＝ 5.
+          </div>
+        </div>
+      `,
     };
   },
 
   // 18. Εξίσωση: 2x - 5 = x + 3 (Input)
   () => {
-    // 2x - x = 3 + 5 -> x = 8
     return {
       type: 'input',
       topic: 'ΧΩΡΙΣΜΟΣ ΟΡΩΝ',
       question: `Λύσε την εξίσωση: <strong>2 · x － 5 ＝ x ＋ 3</strong>`,
       correctAnswer: '8',
-      solution: `1. Χωρίζουμε γνωστούς από αγνώστους: 2x － x ＝ 3 ＋ 5.<br/>2. Αναγωγή: x ＝ 8.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 2 · x － 5 ＝ x ＋ 3
+          </div>
+          <div>1. Χωρίζουμε γνωστούς από αγνώστους: 2 · x － x ＝ 3 ＋ 5.</div>
+          <div>2. Αναγωγή ομοίων όρων: x ＝ 8.</div>
+        </div>
+      `,
     };
   },
 
   // 19. Εξίσωση με κλάσματα και στα δύο μέλη (Input)
   () => {
-    // x/2 = x/3 + 2 -> 3x = 2x + 12 -> x = 12
     return {
       type: 'input',
       topic: 'Ε.Κ.Π. ΣΤΑ ΔΥΟ ΜΕΛΗ',
-      question: `Λύσε την εξίσωση: <span class="inline-flex items-center font-mono"><strong>x⁄2 ＝ x⁄3 ＋ 2</strong></span>`,
+      question: `Λύσε την εξίσωση: <span class="inline-flex items-center">${fracHtml('x', 2)} ＝ ${fracHtml('x', 3)} ＋ 2</span>`,
       correctAnswer: '12',
-      solution: `1. Το Ε.Κ.Π.(2, 3) ＝ 6. Πολλαπλασιάζουμε κάθε όρο με το 6: 6 · (<span class="font-mono">x⁄2</span>) ＝ 6 · (<span class="font-mono">x⁄3</span>) ＋ 6 · 2.<br/>2. Απλοποίηση: 3x ＝ 2x ＋ 12 ➔ 3x － 2x ＝ 12 ➔ x ＝ 12.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono flex items-center flex-wrap">
+            <span>Αρχική εξίσωση:&nbsp;</span>${fracHtml('x', 2)}<span>&nbsp;＝&nbsp;</span>${fracHtml('x', 3)}<span>&nbsp;＋ 2</span>
+          </div>
+          <div class="flex items-center flex-wrap">
+            1. Το Ε.Κ.Π.(2, 3) ＝ 6. Πολλαπλασιάζουμε κάθε όρο με το 6: 6 · (${fracHtml('x', 2)}) ＝ 6 · (${fracHtml('x', 3)}) ＋ 6 · 2.
+          </div>
+          <div>2. Απλοποίηση: 3 · x ＝ 2 · x ＋ 12 ➔ 3 · x － 2 · x ＝ 12 ➔ x ＝ 12.</div>
+        </div>
+      `,
     };
   },
 
   // 20. Εξίσωση: 9x - 12 = 3x + 24 (Input)
   () => {
-    // 6x = 36 -> x = 6
     return {
       type: 'input',
       topic: 'ΠΛΗΡΗΣ ΕΠΙΛΥΣΗ',
       question: `Λύσε την εξίσωση: <strong>9 · x － 12 ＝ 3 · x ＋ 24</strong>`,
       correctAnswer: '6',
-      solution: `1. Χωρίζουμε γνωστούς από αγνώστους: 9x － 3x ＝ 24 ＋ 12.<br/>2. Αναγωγή: 6x ＝ 36.<br/>3. Διαίρεση με το 6: x ＝ <span class="font-mono text-indigo-700 font-bold">³⁶⁄₆</span> ＝ 6.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 9 · x － 12 ＝ 3 · x ＋ 24
+          </div>
+          <div>1. Χωρίζουμε γνωστούς από αγνώστους: 9 · x － 3 · x ＝ 24 ＋ 12.</div>
+          <div>2. Αναγωγή ομοίων όρων: 6 · x ＝ 36.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            3. Διαίρεση με το 6 σε μορφή κλάσματος: x ＝ ${fracHtml(36, 6)} ＝ 6.
+          </div>
+        </div>
+      `,
     };
   },
 ];
@@ -317,7 +512,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΑΘΛΗΤΙΣΜΟΣ',
       question: `Η ενοικίαση γηπέδου τένις κοστίζει 12 € πάγια χρέωση συντήρησης και 8 € για κάθε ώρα παιχνιδιού. Ένας αθλητής πλήρωσε συνολικά 36 €. Πόσες ώρες έπαιξε;`,
       correctAnswer: '3',
-      solution: `Έστω x οι ώρες. Εξίσωση: 8x ＋ 12 ＝ 36 ➔ 8x ＝ 24. Διαίρεση με το 8 σε μορφή κλάσματος: x ＝ <span class="font-mono text-indigo-700 font-bold">²⁴⁄₈</span> ＝ 3 ώρες.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 8 · x ＋ 12 ＝ 36 (όπου x οι ώρες)
+          </div>
+          <div>1. Μεταφορά όρου: 8 · x ＝ 36 － 12 ➔ 8 · x ＝ 24.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 8 σε μορφή κλάσματος: x ＝ ${fracHtml(24, 8)} ＝ 3 ώρες.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -328,7 +533,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΗΛΙΚΙΕΣ',
       question: `Μια μητέρα είναι 24 χρόνια μεγαλύτερη από την κόρη της. Αν το άθροισμα των ηλικιών τους είναι 38 χρόνια, πόσων ετών είναι η κόρη;`,
       correctAnswer: '7',
-      solution: `Έστω x η ηλικία της κόρης. Η μητέρα είναι x ＋ 24. Εξίσωση: x ＋ (x ＋ 24) ＝ 38 ➔ 2x ＋ 24 ＝ 38 ➔ 2x ＝ 14. Διαίρεση με το 2: x ＝ <span class="font-mono text-indigo-700 font-bold">¹⁴⁄₂</span> ＝ 7 ετών.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: x ＋ (x ＋ 24) ＝ 38 (όπου x η ηλικία της κόρης)
+          </div>
+          <div>1. Αναγωγή και μεταφορά: 2 · x ＋ 24 ＝ 38 ➔ 2 · x ＝ 14.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 2 σε μορφή κλάσματος: x ＝ ${fracHtml(14, 2)} ＝ 7 ετών.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -339,7 +554,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΓΕΩΜΕΤΡΙΑ',
       question: `Ένας ορθογώνιος κήπος έχει μήκος κατά 6 μέτρα μεγαλύτερο από το πλάτος του. Αν η περίμετρος του κήπου είναι 44 μέτρα, ποιο είναι το πλάτος του σε μέτρα;`,
       correctAnswer: '8',
-      solution: `Έστω x το πλάτος. Το μήκος είναι x ＋ 6. Περίμετρος: 2 · x ＋ 2 · (x ＋ 6) ＝ 44 ➔ 2x ＋ 2x ＋ 12 ＝ 44 ➔ 4x ＝ 32. Διαίρεση με το 4: x ＝ <span class="font-mono text-indigo-700 font-bold">³²⁄₄</span> ＝ 8 m.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 2 · x ＋ 2 · (x ＋ 6) ＝ 44 (όπου x το πλάτος)
+          </div>
+          <div>1. Επιμεριστική και αναγωγή: 2 · x ＋ 2 · x ＋ 12 ＝ 44 ➔ 4 · x ＝ 32.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 4 σε μορφή κλάσματος: x ＝ ${fracHtml(32, 4)} ＝ 8 μέτρα.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -350,7 +575,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΑΓΟΡΕΣ',
       question: `Ο Αλέξης αγόρασε 3 ίδια flash drives και μια θήκη που κόστιζε 5 €. Πλήρωσε συνολικά 32 €. Πόσα ευρώ κόστισε το κάθε flash drive;`,
       correctAnswer: '9',
-      solution: `Έστω x η τιμή για κάθε flash drive. Εξίσωση: 3x ＋ 5 ＝ 32 ➔ 3x ＝ 27. Διαίρεση με το 3: x ＝ <span class="font-mono text-indigo-700 font-bold">²⁷⁄₃</span> ＝ 9 €.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 3 · x ＋ 5 ＝ 32 (όπου x η τιμή του flash drive)
+          </div>
+          <div>1. Μεταφορά όρου: 3 · x ＝ 32 － 5 ➔ 3 · x ＝ 27.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 3 σε μορφή κλάσματος: x ＝ ${fracHtml(27, 3)} ＝ 9 €.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -361,7 +596,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΟΙΚΟΝΟΜΙΚΑ',
       question: `Η Σοφία έχει 45 € και αποταμιεύει 15 € κάθε εβδομάδα. Σε πόσες εβδομάδες θα έχει συγκεντρώσει 120 €;`,
       correctAnswer: '5',
-      solution: `Έστω x οι εβδομάδες. Εξίσωση: 15x ＋ 45 ＝ 120 ➔ 15x ＝ 75. Διαίρεση με το 15: x ＝ <span class="font-mono text-indigo-700 font-bold">⁷⁵⁄₁₅</span> ＝ 5 εβδομάδες.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 15 · x ＋ 45 ＝ 120 (όπου x οι εβδομάδες)
+          </div>
+          <div>1. Μεταφορά όρου: 15 · x ＝ 120 － 45 ➔ 15 · x ＝ 75.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 15 σε μορφή κλάσματος: x ＝ ${fracHtml(75, 15)} ＝ 5 εβδομάδες.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -372,7 +617,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΚΑΤΑΜΕΡΙΣΜΟΣ',
       question: `Ένας βιβλιοπώλης παρέλαβε 65 βιβλία. Κράτησε 5 στη βιτρίνα και τα υπόλοιπα τα μοίρασε ισόποσα σε 4 ράφια. Πόσα βιβλία έβαλε σε κάθε ράφι;`,
       correctAnswer: '15',
-      solution: `Έστω x τα βιβλία ανά ράφι. Εξίσωση: 4x ＋ 5 ＝ 65 ➔ 4x ＝ 60. Διαίρεση με το 4: x ＝ <span class="font-mono text-indigo-700 font-bold">⁶⁰⁄₄</span> ＝ 15 βιβλία.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 4 · x ＋ 5 ＝ 65 (όπου x τα βιβλία ανά ράφι)
+          </div>
+          <div>1. Μεταφορά όρου: 4 · x ＝ 65 － 5 ➔ 4 · x ＝ 60.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 4 σε μορφή κλάσματος: x ＝ ${fracHtml(60, 4)} ＝ 15 βιβλία.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -383,7 +638,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΑΡΙΘΜΟΙ',
       question: `Το άθροισμα τριών διαδοχικών ακεραίων αριθμών είναι 42. Ποιος είναι ο μικρότερος από τους τρεις αριθμούς;`,
       correctAnswer: '13',
-      solution: `Έστω x ο μικρότερος, x ＋ 1 ο μεσαίος και x ＋ 2 ο μεγαλύτερος. Εξίσωση: x ＋ (x ＋ 1) ＋ (x ＋ 2) ＝ 42 ➔ 3x ＋ 3 ＝ 42 ➔ 3x ＝ 39. Διαίρεση με το 3: x ＝ <span class="font-mono text-indigo-700 font-bold">³⁹⁄₃</span> ＝ 13.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: x ＋ (x ＋ 1) ＋ (x ＋ 2) ＝ 42 (όπου x ο μικρότερος)
+          </div>
+          <div>1. Αναγωγή ομοίων όρων: 3 · x ＋ 3 ＝ 42 ➔ 3 · x ＝ 39.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 3 σε μορφή κλάσματος: x ＝ ${fracHtml(39, 3)} ＝ 13.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -394,7 +659,15 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΜΕΤΑΦΟΡΕΣ',
       question: `Ένα ταξί χρεώνει 4 € πάγια εκκίνηση και 2,50 € για κάθε χιλιόμετρο. Ένας επιβάτης πλήρωσε 29 €. Πόσα χιλιόμετρα ήταν η διαδρομή;`,
       correctAnswer: '10',
-      solution: `Έστω x τα χιλιόμετρα. Εξίσωση: 2,5x ＋ 4 ＝ 29 ➔ 2,5x ＝ 25. Διαίρεση: x ＝ 25 ： 2,5 ＝ 10 km.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 2,5 · x ＋ 4 ＝ 29 (όπου x τα χιλιόμετρα)
+          </div>
+          <div>1. Μεταφορά όρου: 2,5 · x ＝ 29 － 4 ➔ 2,5 · x ＝ 25.</div>
+          <div>2. Διαίρεση: x ＝ 25 ： 2,5 ＝ 10 km.</div>
+        </div>
+      `,
     };
   },
 
@@ -405,7 +678,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΓΕΩΜΕΤΡΙΑ',
       question: `Ένα ισοσκελές τρίγωνο έχει βάση 14 cm και περίμετρο 40 cm. Πόσα εκατοστά είναι καθεμία από τις δύο ίσες πλευρές του;`,
       correctAnswer: '13',
-      solution: `Έστω x η καθεμία από τις ίσες πλευρές. Εξίσωση: 2x ＋ 14 ＝ 40 ➔ 2x ＝ 26. Διαίρεση με το 2: x ＝ <span class="font-mono text-indigo-700 font-bold">²⁶⁄₂</span> ＝ 13 cm.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 2 · x ＋ 14 ＝ 40 (όπου x η κάθε ίση πλευρά)
+          </div>
+          <div>1. Μεταφορά όρου: 2 · x ＝ 40 － 14 ➔ 2 · x ＝ 26.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 2 σε μορφή κλάσματος: x ＝ ${fracHtml(26, 2)} ＝ 13 cm.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -416,7 +699,15 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΤΗΛΕΦΩΝΙΑ',
       question: `Ένα συμβόλαιο κινητού έχει πάγιο 15 € το μήνα και χρεώνει 0,20 € για κάθε επιπλέον μήνυμα SMS. Αν ο λογαριασμός ήταν 25 €, πόσα επιπλέον μηνύματα στάλθηκαν;`,
       correctAnswer: '50',
-      solution: `Έστω x τα μηνύματα. Εξίσωση: 0,20x ＋ 15 ＝ 25 ➔ 0,20x ＝ 10. Διαίρεση: x ＝ 10 ： 0,20 ＝ 50 μηνύματα.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 0,20 · x ＋ 15 ＝ 25 (όπου x τα επιπλέον μηνύματα)
+          </div>
+          <div>1. Μεταφορά όρου: 0,20 · x ＝ 25 － 15 ➔ 0,20 · x ＝ 10.</div>
+          <div>2. Διαίρεση: x ＝ 10 ： 0,20 ＝ 50 μηνύματα.</div>
+        </div>
+      `,
     };
   },
 
@@ -427,7 +718,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΚΑΥΣΙΜΑ',
       question: `Μια δεξαμενή πετρελαίου περιέχει 150 λίτρα και ο καυστήρας καταναλώνει 6 λίτρα για κάθε ώρα λειτουργίας. Μετά από πόσες ώρες θα απομένουν 42 λίτρα;`,
       correctAnswer: '18',
-      solution: `Έστω x οι ώρες. Εξίσωση: 150 － 6x ＝ 42 ➔ －6x ＝ 42 － 150 ➔ －6x ＝ －108. Διαίρεση με το －6: x ＝ <span class="font-mono text-indigo-700 font-bold">⁻¹⁰⁸⁄₋₆</span> ＝ 18 ώρες.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 150 － 6 · x ＝ 42 (όπου x οι ώρες λειτουργίας)
+          </div>
+          <div>1. Μεταφορά όρων: －6 · x ＝ 42 － 150 ➔ －6 · x ＝ －108.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το －6 σε μορφή κλάσματος: x ＝ ${fracHtml(108, 6)} ＝ 18 ώρες.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -438,7 +739,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΕΡΓΑΣΙΑ',
       question: `Μια παιδαγωγός λαμβάνει 10 € πάγια έξοδα μετακίνησης συν 7 € για κάθε ώρα απασχόλησης. Αν πληρώθηκε συνολικά 45 €, πόσες ώρες εργάστηκε;`,
       correctAnswer: '5',
-      solution: `Έστω x οι ώρες. Εξίσωση: 7x ＋ 10 ＝ 45 ➔ 7x ＝ 35. Διαίρεση με το 7: x ＝ <span class="font-mono text-indigo-700 font-bold">³⁵⁄₇</span> ＝ 5 ώρες.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 7 · x ＋ 10 ＝ 45 (όπου x οι ώρες απασχόλησης)
+          </div>
+          <div>1. Μεταφορά όρου: 7 · x ＝ 45 － 10 ➔ 7 · x ＝ 35.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 7 σε μορφή κλάσματος: x ＝ ${fracHtml(35, 7)} ＝ 5 ώρες.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -449,7 +760,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΨΥΧΑΓΩΓΙΑ',
       question: `Σε ένα λούνα παρκ η είσοδος κοστίζει 5 € και κάθε παιχνίδι κοστίζει 3 €. Ο Κωστής ξόδεψε συνολικά 26 €. Σε πόσα παιχνίδια έπαιξε;`,
       correctAnswer: '7',
-      solution: `Έστω x τα παιχνίδια. Εξίσωση: 3x ＋ 5 ＝ 26 ➔ 3x ＝ 21. Διαίρεση με το 3: x ＝ <span class="font-mono text-indigo-700 font-bold">²¹⁄₃</span> ＝ 7 παιχνίδια.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 3 · x ＋ 5 ＝ 26 (όπου x τα παιχνίδια)
+          </div>
+          <div>1. Μεταφορά όρου: 3 · x ＝ 26 － 5 ➔ 3 · x ＝ 21.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 3 σε μορφή κλάσματος: x ＝ ${fracHtml(21, 3)} ＝ 7 παιχνίδια.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -460,7 +781,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΑΓΡΟΤΙΚΑ',
       question: `Μαζεύτηκαν 92 κιλά πορτοκάλια. Κρατήθηκαν 8 κιλά και τα υπόλοιπα συσκευάστηκαν σε διχτάκια των 4 κιλών. Πόσα διχτάκια πορτοκάλια φτιάχτηκαν;`,
       correctAnswer: '21',
-      solution: `Έστω x τα διχτάκια. Εξίσωση: 4x ＋ 8 ＝ 92 ➔ 4x ＝ 84. Διαίρεση με το 4: x ＝ <span class="font-mono text-indigo-700 font-bold">⁸⁴⁄₄</span> ＝ 21 διχτάκια.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 4 · x ＋ 8 ＝ 92 (όπου x τα διχτάκια)
+          </div>
+          <div>1. Μεταφορά όρου: 4 · x ＝ 92 － 8 ➔ 4 · x ＝ 84.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 4 σε μορφή κλάσματος: x ＝ ${fracHtml(84, 4)} ＝ 21 διχτάκια.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -471,7 +802,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΤΕΧΝΟΛΟΓΙΑ',
       question: `Η μπαταρία ενός drone βρίσκεται στο 20% και φορτίζει με ρυθμό 5% ανά λεπτό. Σε πόσα λεπτά θα φορτιστεί πλήρως (100%);`,
       correctAnswer: '16',
-      solution: `Έστω x τα λεπτά. Εξίσωση: 5x ＋ 20 ＝ 100 ➔ 5x ＝ 80. Διαίρεση με το 5: x ＝ <span class="font-mono text-indigo-700 font-bold">⁸⁰⁄₅</span> ＝ 16 λεπτά.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 5 · x ＋ 20 ＝ 100 (όπου x τα λεπτά)
+          </div>
+          <div>1. Μεταφορά όρου: 5 · x ＝ 100 － 20 ➔ 5 · x ＝ 80.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 5 σε μορφή κλάσματος: x ＝ ${fracHtml(80, 5)} ＝ 16 λεπτά.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -482,7 +823,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΣΧΟΛΙΚΑ',
       question: `Ο Δημήτρης αγόρασε 4 ίδια τετράδια και ένα μαρκαδόρο των 2 €. Έδωσε χαρτονόμισμα των 20 € και πήρε ρέστα 6 €. Πόσο κόστιζε το κάθε τετράδιο;`,
       correctAnswer: '3',
-      solution: `Το συνολικό κόστος ήταν 20 － 6 ＝ 14 €. Έστω x η τιμή του τετραδίου. Εξίσωση: 4x ＋ 2 ＝ 14 ➔ 4x ＝ 12. Διαίρεση με το 4: x ＝ <span class="font-mono text-indigo-700 font-bold">¹²⁄₄</span> ＝ 3 €.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 4 · x ＋ 2 ＝ 14 (όπου x η τιμή του τετραδίου)
+          </div>
+          <div>1. Μεταφορά όρου: 4 · x ＝ 14 － 2 ➔ 4 · x ＝ 12.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 4 σε μορφή κλάσματος: x ＝ ${fracHtml(12, 4)} ＝ 3 €.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -493,7 +844,16 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΓΕΩΜΕΤΡΙΑ',
       question: `Ένα ορθογώνιο έχει πλάτος 6 μέτρα και εμβαδόν 48 τ.μ. Πόσα μέτρα είναι το μήκος του;`,
       correctAnswer: '8',
-      solution: `Έστω x το μήκος. Εμβαδόν: 6 · x ＝ 48. Διαίρεση με το 6 σε μορφή κλάσματος: x ＝ <span class="font-mono text-indigo-700 font-bold">⁴⁸⁄₆</span> ＝ 8 m.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 6 · x ＝ 48 (όπου x το μήκος σε μέτρα)
+          </div>
+          <div class="flex items-center flex-wrap">
+            Διαίρεση με το 6 σε μορφή κλάσματος: x ＝ ${fracHtml(48, 6)} ＝ 8 μέτρα.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -504,7 +864,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΣΧΟΛΕΙΟ',
       question: `Για μια εκδρομή το λεωφορείο κοστίζει πάγια 120 € και το εισιτήριο εισόδου 5 € ανά μαθητή. Αν το συνολικό κόστος ήταν 245 €, πόσοι μαθητές πήγαν;`,
       correctAnswer: '25',
-      solution: `Έστω x οι μαθητές. Εξίσωση: 5x ＋ 120 ＝ 245 ➔ 5x ＝ 125. Διαίρεση με το 5: x ＝ <span class="font-mono text-indigo-700 font-bold">¹²⁵⁄₅</span> ＝ 25 μαθητές.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 5 · x ＋ 120 ＝ 245 (όπου x οι μαθητές)
+          </div>
+          <div>1. Μεταφορά όρου: 5 · x ＝ 245 － 120 ➔ 5 · x ＝ 125.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 5 σε μορφή κλάσματος: x ＝ ${fracHtml(125, 5)} ＝ 25 μαθητές.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -515,7 +885,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΑΡΙΘΜΟΙ',
       question: `Αν από το τετραπλάσιο ενός αριθμού αφαιρέσουμε 15, βρίσκουμε 25. Ποιος είναι αυτός ο αριθμός;`,
       correctAnswer: '10',
-      solution: `Έστω x ο αριθμός. Εξίσωση: 4x － 15 ＝ 25 ➔ 4x ＝ 40. Διαίρεση με το 4: x ＝ <span class="font-mono text-indigo-700 font-bold">⁴⁰⁄₄</span> ＝ 10.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 4 · x － 15 ＝ 25 (όπου x ο αριθμός)
+          </div>
+          <div>1. Μεταφορά όρου: 4 · x ＝ 25 ＋ 15 ➔ 4 · x ＝ 40.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 4 σε μορφή κλάσματος: x ＝ ${fracHtml(40, 4)} ＝ 10.
+          </div>
+        </div>
+      `,
     };
   },
 
@@ -526,7 +906,17 @@ const WORD_PROBLEM_GENERATORS = [
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΕΣΤΙΑΣΗ',
       question: `Μια παρέα παρήγγειλε 4 ίδιες πίτσες και πλήρωσε επιπλέον 3 € για τη διανομή. Αν ο συνολικός λογαριασμός ήταν 39 €, πόσα ευρώ κόστισε η κάθε πίτσα;`,
       correctAnswer: '9',
-      solution: `Έστω x η τιμή της πίτσας. Εξίσωση: 4x ＋ 3 ＝ 39 ➔ 4x ＝ 36. Διαίρεση με το 4: x ＝ <span class="font-mono text-indigo-700 font-bold">³⁶⁄₄</span> ＝ 9 €.`,
+      solution: `
+        <div class="space-y-2 leading-loose">
+          <div class="font-bold text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-100 font-mono">
+            Αρχική εξίσωση: 4 · x ＋ 3 ＝ 39 (όπου x η τιμή της πίτσας)
+          </div>
+          <div>1. Μεταφορά όρου: 4 · x ＝ 39 － 3 ➔ 4 · x ＝ 36.</div>
+          <div class="flex items-center flex-wrap pt-1">
+            2. Διαίρεση με το 4 σε μορφή κλάσματος: x ＝ ${fracHtml(36, 4)} ＝ 9 €.
+          </div>
+        </div>
+      `,
     };
   },
 ];
@@ -537,7 +927,6 @@ export default function LiseisEksisoseonAsk() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Παραγωγή: 10 ασκήσεις υπολογισμών/θεωρίας + 2 ρεαλιστικά προβλήματα = 12 συνολικά
   const generateQuestions = () => {
     const shuffledCalcs = shuffleArray(CALCULATION_GENERATORS);
     const shuffledProblems = shuffleArray(WORD_PROBLEM_GENERATORS);
@@ -638,7 +1027,7 @@ export default function LiseisEksisoseonAsk() {
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-3">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-              Α' ΓΥΜΝΑΣΙΟΥ • ΚΕΦΑΛΑΙΟ 31 • ΕΞΑΣΚΗΣΗ
+              Α' ΓΥΜΝΑΣΙΟΥ • ΚΕΦΑΛΑΙΟ 29 • ΕΞΑΣΚΗΣΗ
             </span>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
               Επίλυση Εξισώσεων α·x ＋ β ＝ γ
@@ -759,7 +1148,7 @@ export default function LiseisEksisoseonAsk() {
                     {/* Feedback & Λύση */}
                     {isSubmitted && (
                       <div
-                        className={`p-4 rounded-xl text-xs sm:text-sm space-y-2.5 mt-3 border ${
+                        className={`p-4 rounded-xl text-xs sm:text-sm space-y-3 mt-3 border ${
                           isCorrect
                             ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950'
                             : 'bg-rose-50/80 border-rose-200 text-rose-950'
@@ -776,14 +1165,15 @@ export default function LiseisEksisoseonAsk() {
                               <span>❌</span>
                               <span>ΛΑΘΟΣ</span>
                             </div>
-                            <div className="text-xs sm:text-sm font-bold text-slate-800 bg-white/80 py-1.5 px-3 rounded-lg border border-rose-200 inline-block font-mono">
-                              ΣΩΣΤΗ ΑΠΑΝΤΗΣΗ: <span className="text-emerald-700 font-black ml-1" dangerouslySetInnerHTML={{ __html: q.correctAnswer }} />
+                            {/* Κενό μετά την άνω κάτω τελεία (&nbsp;&nbsp;) */}
+                            <div className="text-xs sm:text-sm font-bold text-slate-800 bg-white/90 py-1.5 px-3 rounded-lg border border-rose-200 inline-block font-mono">
+                              ΣΩΣΤΗ ΑΠΑΝΤΗΣΗ:&nbsp;&nbsp;<span className="text-emerald-700 font-black" dangerouslySetInnerHTML={{ __html: q.correctAnswer }} />
                             </div>
                           </div>
                         )}
 
                         <div
-                          className="text-slate-700 leading-relaxed font-normal pt-1.5 border-t border-slate-200/60"
+                          className="text-slate-700 leading-loose font-normal pt-2 border-t border-slate-200/60"
                           dangerouslySetInnerHTML={{ __html: q.solution }}
                         />
                       </div>
