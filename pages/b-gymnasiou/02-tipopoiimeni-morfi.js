@@ -7,9 +7,15 @@ import Layout from '../../components/Layout';
 // ==========================================
 export const LAB_CONFIG = {
   lab1: {
-    mantissaInt: { min: -99, max: 99, default: 4 },
-    mantissaDec: { min: 0, max: 9, default: 5 },
-    exp: { min: -12, max: 12, default: 6 },
+    samples: [
+      { label: '4.500.000 (Μεγάλος)', val: '4500000' },
+      { label: '0,00045 (Μικρός)', val: '0,00045' },
+      { label: '380.000.000', val: '380000000' },
+      { label: '0,0000072', val: '0,0000072' },
+      { label: '-78.000 (Αρνητικός)', val: '-78000' },
+      { label: '105', val: '105' },
+      { label: '6', val: '6' }
+    ]
   },
   lab2: {
     presets: [
@@ -23,87 +29,81 @@ export const LAB_CONFIG = {
   }
 };
 
-// Component Frac με απόλυτα ασφαλή ανίχνευση προσήμου και τοποθέτηση του μείον μπροστά
-const Frac = ({ num, den, className = "" }) => {
-  const numStr = String(num).trim();
-  const denStr = String(den).trim();
-
-  const isNumNeg = numStr.startsWith('-');
-  const isDenNeg = denStr.startsWith('-');
-  const isNegative = (isNumNeg && !isDenNeg) || (!isNumNeg && isDenNeg);
-
-  const cleanNum = numStr.replace('-', '');
-  const cleanDen = denStr.replace('-', '');
+// Component Power: σκούρο χρώμα, παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη
+const Power = ({ base, exp, className = "" }) => {
+  const expNum = typeof exp === 'number' ? exp : parseInt(String(exp).replace(/[()]/g, ''), 10);
+  const isNeg = !isNaN(expNum) ? expNum < 0 : String(exp).startsWith('-');
+  const formattedExp = isNeg ? `(${exp})` : `${exp}`;
 
   return (
-    <span className={`inline-flex items-center align-middle mx-1 font-mono font-semibold ${className}`}>
-      {isNegative && <span className="mr-0.5 text-base sm:text-lg font-bold">-</span>}
-      <span className="inline-flex flex-col items-center text-center leading-none text-xs sm:text-sm">
-        <span className="border-b border-current px-1 pb-0.5">{cleanNum}</span>
-        <span className="pt-0.5 px-1">{cleanDen}</span>
-      </span>
+    <span className={`inline-flex items-baseline font-mono ${className}`}>
+      <span>{base}</span>
+      <sup className="text-slate-900 font-bold ml-0.5 text-xs sm:text-sm">{formattedExp}</sup>
+    </span>
+  );
+};
+
+// Component Power για σκούρο φόντο (λευκό/κίτρινο κείμενο)
+const DarkPower = ({ base, exp, className = "" }) => {
+  const expNum = typeof exp === 'number' ? exp : parseInt(String(exp).replace(/[()]/g, ''), 10);
+  const isNeg = !isNaN(expNum) ? expNum < 0 : String(exp).startsWith('-');
+  const formattedExp = isNeg ? `(${exp})` : `${exp}`;
+
+  return (
+    <span className={`inline-flex items-baseline font-mono ${className}`}>
+      <span>{base}</span>
+      <sup className="text-amber-400 font-bold ml-0.5 text-xs sm:text-sm">{formattedExp}</sup>
     </span>
   );
 };
 
 export default function TipopoiimeniMorfiTheoria() {
-  // State Εργαστηρίου 1: Δυναμικός Μετατροπέας
-  const [mInt, setMInt] = useState(LAB_CONFIG.lab1.mantissaInt.default);
-  const [mDec, setMDec] = useState(LAB_CONFIG.lab1.mantissaDec.default);
-  const [exp, setExp] = useState(LAB_CONFIG.lab1.exp.default);
+  // State Εργαστηρίου 1: Ελεύθερη εισαγωγή κανονικού αριθμού
+  const [inputVal, setInputVal] = useState('4500000');
 
   // State Εργαστηρίου 2: Κλίμακα του Κόσμου
   const [selectedPreset, setSelectedPreset] = useState(0);
 
-  // Stepper handler με touch-manipulation και αποτροπή event propagation
-  const handleStep = (setter, val, min, max, e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    setter((prev) => Math.max(min, Math.min(max, prev + val)));
-  };
+  // Ανάλυση Μετατροπής σε Τυποποιημένη Μορφή (α · 10^κ)
+  const analysis = useMemo(() => {
+    const rawClean = inputVal.trim().replace(/\./g, '').replace(',', '.');
+    if (!rawClean) return { error: 'Πληκτρολόγησε έναν αριθμό.' };
 
-  // Υπολογισμοί Εργαστηρίου 1
-  const mantissaValue = useMemo(() => {
-    const sign = mInt < 0 ? -1 : 1;
-    const absInt = Math.abs(mInt);
-    const val = sign * (absInt + mDec / 10);
-    return Number(val.toFixed(2));
-  }, [mInt, mDec]);
+    const num = parseFloat(rawClean);
+    if (isNaN(num)) return { error: 'Μη έγκυρος αριθμός.' };
+    if (num === 0) return { isZero: true };
 
-  // Μετατροπή σε κανονική τυποποιημένη μορφή (όπου 1 <= |a| < 10)
-  const standardized = useMemo(() => {
-    if (mantissaValue === 0) {
-      return { a: 0, k: 0, steps: 0, direction: 'none', rawValue: 0 };
-    }
-    const absVal = Math.abs(mantissaValue);
-    let shift = 0;
-    let tempA = absVal;
+    const isNeg = num < 0;
+    const absNum = Math.abs(num);
 
-    if (tempA >= 10) {
-      while (tempA >= 10) {
-        tempA /= 10;
-        shift += 1;
-      }
-    } else if (tempA < 1) {
-      while (tempA < 1) {
-        tempA *= 10;
-        shift -= 1;
-      }
+    let k = Math.floor(Math.log10(absNum));
+    let a = absNum / Math.pow(10, k);
+
+    // Διόρθωση στρογγυλοποίησης ακριβείας JavaScript
+    a = Number(a.toFixed(6));
+    if (a >= 10) {
+      a = 1;
+      k += 1;
     }
 
-    const finalA = (mantissaValue < 0 ? -1 : 1) * Number(tempA.toFixed(4));
-    const finalK = exp + shift;
-    const rawVal = mantissaValue * Math.pow(10, exp);
+    const signedA = (isNeg ? -a : a).toString().replace('.', ',');
+
+    let shiftType = 'none';
+    let shiftCount = Math.abs(k);
+    if (k > 0) shiftType = 'left';
+    else if (k < 0) shiftType = 'right';
 
     return {
-      a: finalA,
-      k: finalK,
-      shift,
-      rawVal
+      originalFormatted: inputVal,
+      num,
+      a: signedA,
+      rawA: isNeg ? -a : a,
+      k,
+      shiftType,
+      shiftCount,
+      isNeg
     };
-  }, [mantissaValue, exp]);
+  }, [inputVal]);
 
   const preset = LAB_CONFIG.lab2.presets[selectedPreset];
 
@@ -126,7 +126,7 @@ export default function TipopoiimeniMorfiTheoria() {
     >
       <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
         
-        {/* Banner Header - Ενιαίο Indigo Theme */}
+        {/* Banner Header */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-4">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
@@ -165,7 +165,7 @@ export default function TipopoiimeniMorfiTheoria() {
                 Για να διαβάζονται εύκολα και να αποφεύγονται λάθη στα μηδενικά, γράφουμε τους αριθμούς στην <strong>τυποποιημένη (ή επιστημονική) μορφή</strong>:
               </p>
               <div className="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 text-indigo-950 font-bold text-center text-lg sm:text-2xl font-mono shadow-inner">
-                α · 10<sup>κ</sup>
+                α · <Power base={10} exp="κ" className="text-indigo-950" />
               </div>
             </div>
 
@@ -207,7 +207,6 @@ export default function TipopoiimeniMorfiTheoria() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Μεγάλοι αριθμοί */}
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
               <div className="text-xs uppercase font-bold tracking-wider text-amber-700">ΠΕΡΙΠΤΩΣΗ Α</div>
               <h3 className="font-bold text-slate-900 text-lg sm:text-xl">Μεγάλοι Αριθμοί (Αριστερή Μετακίνηση)</h3>
@@ -216,12 +215,11 @@ export default function TipopoiimeniMorfiTheoria() {
               </p>
               <div className="p-4 bg-white rounded-xl border border-slate-200 font-mono text-center space-y-1">
                 <div className="text-slate-500 text-xs font-sans">Παράδειγμα: 5.400.000</div>
-                <div className="text-base sm:text-lg font-bold text-slate-900">5.400.000 ＝ 5,4 · 10<sup>6</sup></div>
+                <div className="text-base sm:text-lg font-bold text-slate-900">5.400.000 ＝ 5,4 · <Power base={10} exp={6} /></div>
                 <div className="text-xs text-indigo-600 font-sans">Μετακίνηση 6 θέσεις αριστερά → κ = +6</div>
               </div>
             </div>
 
-            {/* Μικροί αριθμοί */}
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
               <div className="text-xs uppercase font-bold tracking-wider text-indigo-700">ΠΕΡΙΠΤΩΣΗ Β</div>
               <h3 className="font-bold text-slate-900 text-lg sm:text-xl">Μικροί Δεκαδικοί (Δεξιά Μετακίνηση)</h3>
@@ -230,150 +228,139 @@ export default function TipopoiimeniMorfiTheoria() {
               </p>
               <div className="p-4 bg-white rounded-xl border border-slate-200 font-mono text-center space-y-1">
                 <div className="text-slate-500 text-xs font-sans">Παράδειγμα: 0,00038</div>
-                <div className="text-base sm:text-lg font-bold text-slate-900">0,00038 ＝ 3,8 · 10<sup>-4</sup></div>
+                <div className="text-base sm:text-lg font-bold text-slate-900">0,00038 ＝ 3,8 · <Power base={10} exp={-4} /></div>
                 <div className="text-xs text-indigo-600 font-sans">Μετακίνηση 4 θέσεις δεξιά → κ = -4</div>
               </div>
             </div>
           </div>
 
-          {/* Διαδραστικό Εργαστήριο 1: Δυναμικός Μετατροπέας */}
+          {/* ========================================================================= */}
+          {/* ΑΝΑΝΕΩΜΕΝΟ ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΜΕΤΑΤΡΟΠΕΑΣ ΣΥΝΗΘΙΣΜΕΝΟΥ ΑΡΙΘΜΟΥ */}
+          {/* ========================================================================= */}
           <div className="mt-8 pt-6 border-t border-slate-100 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-                🛠️ Διαδραστικό Εργαστήριο 1: Πειραματικός Μετατροπέας Αριθμών
+                🛠️ Εργαστήριο 1: Μετατροπέας Συνηθισμένου Αριθμού σε Τυποποιημένη Μορφή
               </h3>
               <span className="text-xs font-mono text-slate-500">
-                Ρύθμισε τον συντελεστή και τον εκθέτη του 10
+                Πληκτρολόγησε οποιονδήποτε αριθμό ή διάλεξε ένα έτοιμο παράδειγμα
               </span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-              {/* Χειριστήρια Steppers */}
-              <div className="space-y-4 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200">
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
-                    ΑΚΕΡΑΙΟ ΜΕΡΟΣ ΣΥΝΤΕΛΕΣΤΗ (±1)
-                  </label>
-                  <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => handleStep(setMInt, -1, LAB_CONFIG.lab1.mantissaInt.min, LAB_CONFIG.lab1.mantissaInt.max, e)}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
-                    >
-                      －
-                    </button>
-                    <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-slate-900 font-bold text-base sm:text-lg whitespace-nowrap px-2 font-mono">
-                      {mInt}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={(e) => handleStep(setMInt, 1, LAB_CONFIG.lab1.mantissaInt.min, LAB_CONFIG.lab1.mantissaInt.max, e)}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
-                    >
-                      ＋
-                    </button>
-                  </div>
-                </div>
+            {/* Έτοιμα Παραδείγματα */}
+            <div className="flex flex-wrap gap-2">
+              <span className="text-xs font-bold text-slate-500 uppercase self-center mr-1">ΔΟΚΙΜΑΣΕ:</span>
+              {LAB_CONFIG.lab1.samples.map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setInputVal(item.val)}
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-300 transition-all touch-manipulation font-mono"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
-                    ΔΕΚΑΔΙΚΟ ΜΕΡΟΣ ΣΥΝΤΕΛΕΣΤΗ (±0,1)
-                  </label>
-                  <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => handleStep(setMDec, -1, LAB_CONFIG.lab1.mantissaDec.min, LAB_CONFIG.lab1.mantissaDec.max, e)}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
-                    >
-                      －
-                    </button>
-                    <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-slate-900 font-bold text-base sm:text-lg whitespace-nowrap px-2 font-mono">
-                      ,{mDec}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={(e) => handleStep(setMDec, 1, LAB_CONFIG.lab1.mantissaDec.min, LAB_CONFIG.lab1.mantissaDec.max, e)}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
-                    >
-                      ＋
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
-                    ΕΚΘΕΤΗΣ ΤΟΥ 10 (κ)
-                  </label>
-                  <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => handleStep(setExp, -1, LAB_CONFIG.lab1.exp.min, LAB_CONFIG.lab1.exp.max, e)}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
-                    >
-                      －
-                    </button>
-                    <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-slate-900 font-bold text-base sm:text-lg whitespace-nowrap px-2 font-mono">
-                      {exp}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={(e) => handleStep(setExp, 1, LAB_CONFIG.lab1.exp.min, LAB_CONFIG.lab1.exp.max, e)}
-                      className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition-all shadow-sm"
-                    >
-                      ＋
-                    </button>
-                  </div>
-                </div>
+            {/* Πεδίο Εισαγωγής Αριθμού */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
+                ΑΡΧΙΚΟΣ ΑΡΙΘΜΟΣ (ΚΑΝΟΝΙΚΗ ΓΡΑΦΗ):
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={inputVal}
+                  onChange={(e) => setInputVal(e.target.value)}
+                  placeholder="π.χ. 4500000 ή 0,00045 ή -78000"
+                  className="w-full h-14 px-4 sm:px-5 rounded-2xl border-2 border-indigo-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 font-mono text-base sm:text-xl font-bold text-slate-900 transition-all outline-none"
+                />
+                {inputVal && (
+                  <button
+                    type="button"
+                    onClick={() => setInputVal('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs font-bold transition-all"
+                  >
+                    ΚΑΘΑΡΙΣΜΟΣ
+                  </button>
+                )}
               </div>
+            </div>
 
-              {/* Παρουσίαση Αποτελέσματος & Ανάλυσης */}
-              <div className="lg:col-span-2 bg-gradient-to-br from-indigo-950 via-indigo-900 to-slate-900 p-6 rounded-2xl text-white space-y-4 shadow-md font-mono">
-                <div className="text-center space-y-2">
-                  <div className="text-xs uppercase tracking-widest text-indigo-300 font-semibold font-sans">
-                    ΑΡΧΙΚΗ ΜΟΡΦΗ ΕΝΑΝΤΙ ΤΥΠΟΠΟΙΗΜΕΝΗΣ
-                  </div>
-                  <div className="text-xl sm:text-3xl font-black text-amber-300 flex flex-wrap items-center justify-center gap-2">
-                    <span>{String(mantissaValue).replace('.', ',')} · 10<sup>{exp}</sup></span>
-                    <span>＝</span>
-                    <span className="text-emerald-400">
-                      {String(standardized.a).replace('.', ',')} · 10<sup>{standardized.k}</sup>
-                    </span>
-                  </div>
+            {/* Οθόνη Ανάλυσης & Αποτελέσματος */}
+            <div className="bg-gradient-to-br from-indigo-950 via-indigo-900 to-slate-900 p-6 sm:p-8 rounded-3xl text-white space-y-6 shadow-inner font-mono">
+              {analysis.error ? (
+                <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-sm font-sans font-semibold">
+                  ⚠️ {analysis.error}
                 </div>
+              ) : analysis.isZero ? (
+                <div className="p-4 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-sm font-sans font-semibold">
+                  ℹ️ Το 0 δεν έχει τυποποιημένη μορφή (απαιτείται συντελεστής |α| ≥ 1).
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 gap-3">
+                    <div>
+                      <span className="text-xs uppercase tracking-widest text-indigo-300 font-semibold font-sans block mb-1">
+                        ΑΡΧΙΚΟΣ ΑΡΙΘΜΟΣ
+                      </span>
+                      <div className="text-xl sm:text-2xl font-bold text-white break-all">
+                        {analysis.originalFormatted}
+                      </div>
+                    </div>
+                    <div className="text-left sm:text-right">
+                      <span className="text-xs uppercase tracking-widest text-emerald-400 font-semibold font-sans block mb-1">
+                        ΤΥΠΟΠΟΙΗΜΕΝΗ ΜΟΡΦΗ
+                      </span>
+                      <div className="text-2xl sm:text-4xl font-black text-amber-300 flex items-center sm:justify-end gap-1.5 flex-wrap">
+                        <span>＝</span>
+                        <span>{analysis.a} · </span>
+                        <DarkPower base={10} exp={analysis.k} />
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="p-4 bg-white/10 rounded-xl backdrop-blur-sm border border-white/10 space-y-2 text-xs sm:text-sm text-slate-200 font-sans">
-                  <div className="text-xs text-indigo-200 uppercase font-bold">ΑΝΑΛΥΣΗ ΜΕΤΑΤΡΟΠΗΣ:</div>
-                  {standardized.shift === 0 ? (
-                    <div className="text-emerald-300">
-                      ✓ Ο αριθμός είναι ήδη σε ορθή τυποποιημένη μορφή, καθώς ισχύει 1 ≤ |{Math.abs(mantissaValue)}| &lt; 10.
-                    </div>
-                  ) : standardized.shift > 0 ? (
-                    <div className="space-y-1">
-                      <div>
-                        1. Ο συντελεστής |{Math.abs(mantissaValue)}| είναι ≥ 10.
+                  {/* Επεξήγηση Μετακίνησης Υποδιαστολής */}
+                  <div className="p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10 space-y-2 text-xs sm:text-sm text-slate-200 font-sans">
+                    <div className="text-xs text-indigo-200 uppercase font-bold">ΒΗΜΑΤΑ ΜΕΤΑΤΡΟΠΗΣ:</div>
+                    {analysis.shiftType === 'none' ? (
+                      <div className="text-emerald-300 font-semibold">
+                        ✓ Ο αριθμός είναι ήδη μεταξύ 1 και 10, οπότε ο εκθέτης είναι 0: {analysis.a} · <DarkPower base={10} exp={0} />.
                       </div>
-                      <div>
-                        2. Μετακινούμε την υποδιαστολή <strong>{standardized.shift} θέση αριστερά</strong> για να γίνει {String(standardized.a).replace('.', ',')}.
+                    ) : analysis.shiftType === 'left' ? (
+                      <div className="space-y-1">
+                        <div>
+                          1. Ο αριθμός είναι μεγάλος (≥ 10).
+                        </div>
+                        <div>
+                          2. Μετακινούμε την υποδιαστολή <strong>{analysis.shiftCount} θέσεις προς τα αριστερά</strong> για να σχηματιστεί ο συντελεστής <span className="font-mono font-bold text-amber-300">{analysis.a}</span> (1 ≤ |α| &lt; 10).
+                        </div>
+                        <div>
+                          3. Επειδή πήγαμε αριστερά, ο εκθέτης του 10 είναι <strong>θετικός (+{analysis.shiftCount})</strong>.
+                        </div>
+                        <div className="pt-1 text-emerald-300 font-mono font-bold">
+                          ➔ {analysis.originalFormatted} ＝ {analysis.a} · <DarkPower base={10} exp={analysis.k} />
+                        </div>
                       </div>
-                      <div>
-                        3. Αυξάνουμε τον εκθέτη κατά {standardized.shift}: κ = {exp} + ({standardized.shift}) = <strong>{standardized.k}</strong>.
+                    ) : (
+                      <div className="space-y-1">
+                        <div>
+                          1. Ο αριθμός είναι μικρός δεκαδικός (&lt; 1).
+                        </div>
+                        <div>
+                          2. Μετακινούμε την υποδιαστολή <strong>{analysis.shiftCount} θέσεις προς τα δεξιά</strong> μέχρι το πρώτο μη μηδενικό ψηφίο για να πάρουμε <span className="font-mono font-bold text-amber-300">{analysis.a}</span>.
+                        </div>
+                        <div>
+                          3. Επειδή πήγαμε δεξιά, ο εκθέτης του 10 είναι <strong>αρνητικός (-{analysis.shiftCount})</strong>.
+                        </div>
+                        <div className="pt-1 text-emerald-300 font-mono font-bold">
+                          ➔ {analysis.originalFormatted} ＝ {analysis.a} · <DarkPower base={10} exp={analysis.k} />
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      <div>
-                        1. Ο συντελεστής |{Math.abs(mantissaValue)}| είναι &lt; 1.
-                      </div>
-                      <div>
-                        2. Μετακινούμε την υποδιαστολή <strong>{Math.abs(standardized.shift)} θέση δεξιά</strong> για να γίνει {String(standardized.a).replace('.', ',')}.
-                      </div>
-                      <div>
-                        3. Μειώνουμε τον εκθέτη κατά {Math.abs(standardized.shift)}: κ = {exp} - ({Math.abs(standardized.shift)}) = <strong>{standardized.k}</strong>.
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>
@@ -393,7 +380,6 @@ export default function TipopoiimeniMorfiTheoria() {
             Επίλεξε ένα από τα παρακάτω φυσικά μεγέθη για να δεις πώς η τυποποιημένη μορφή απλοποιεί τη γραφή και επιτρέπει την άμεση σύγκριση τεράστιων και μικροσκοπικών διαστάσεων.
           </p>
 
-          {/* Επιλογή Preset Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
             {LAB_CONFIG.lab2.presets.map((item, idx) => {
               const isSelected = idx === selectedPreset;
@@ -415,14 +401,13 @@ export default function TipopoiimeniMorfiTheoria() {
                     {item.name}
                   </span>
                   <span className={`text-[10px] font-mono font-semibold ${isSelected ? 'text-amber-300' : 'text-indigo-600'}`}>
-                    10<sup>{item.exp}</sup>
+                    <Power base={10} exp={item.exp} className={isSelected ? 'text-white' : ''} />
                   </span>
                 </button>
               );
             })}
           </div>
 
-          {/* Προβολή Επιλεγμένου Μεγέθους */}
           <div className="bg-slate-900 rounded-2xl p-6 text-white space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
               <div>
@@ -450,7 +435,7 @@ export default function TipopoiimeniMorfiTheoria() {
               <div className="p-4 rounded-xl bg-indigo-600/20 border border-indigo-500/40 space-y-1">
                 <span className="text-xs text-indigo-300">Τυποποιημένη (Επιστημονική) Μορφή:</span>
                 <div className="font-mono text-xl sm:text-2xl font-black text-amber-400">
-                  {String(preset.a).replace('.', ',')} · 10<sup>{preset.exp}</sup> {preset.unit}
+                  {String(preset.a).replace('.', ',')} · <DarkPower base={10} exp={preset.exp} /> {preset.unit}
                 </div>
               </div>
             </div>
@@ -480,8 +465,8 @@ export default function TipopoiimeniMorfiTheoria() {
                 Πολλαπλασιάζουμε τους συντελεστές και προσθέτουμε τους εκθέτες του 10:
               </p>
               <div className="p-3 rounded-xl bg-white border border-slate-200 font-mono text-sm sm:text-base font-bold text-emerald-900 space-y-1">
-                <div>(2 · 10<sup>4</sup>) · (3 · 10<sup>5</sup>) ＝ (2 · 3) · 10<sup>4+5</sup></div>
-                <div className="text-emerald-600">＝ 6 · 10<sup>9</sup></div>
+                <div>(2 · <Power base={10} exp={4} />) · (3 · <Power base={10} exp={5} />) ＝ (2 · 3) · <Power base={10} exp="4+5" /></div>
+                <div className="text-emerald-600">＝ 6 · <Power base={10} exp={9} /></div>
               </div>
             </div>
 
@@ -492,8 +477,8 @@ export default function TipopoiimeniMorfiTheoria() {
                 Διαιρούμε τους συντελεστές και αφαιρούμε τους εκθέτες του 10:
               </p>
               <div className="p-3 rounded-xl bg-white border border-slate-200 font-mono text-sm sm:text-base font-bold text-emerald-900 space-y-1">
-                <div>(8 · 10<sup>7</sup>) : (4 · 10<sup>3</sup>) ＝ (8 : 4) · 10<sup>7-3</sup></div>
-                <div className="text-emerald-600">＝ 2 · 10<sup>4</sup></div>
+                <div>(8 · <Power base={10} exp={7} />) : (4 · <Power base={10} exp={3} />) ＝ (8 : 4) · <Power base={10} exp="7-3" /></div>
+                <div className="text-emerald-600">＝ 2 · <Power base={10} exp={4} /></div>
               </div>
             </div>
           </div>
