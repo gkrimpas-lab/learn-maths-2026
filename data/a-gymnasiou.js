@@ -305,6 +305,15 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 29',
     active: true,
   },
+  {
+    id: '34',
+    section: 'algebra',
+    slug: '34-problimata-eksisoseon',
+    title: 'Προβλήματα Εξισώσεων',
+    desc: 'Προβλήματα καθημερινής ζωής.',
+    badge: 'ΚΕΦΑΛΑΙΟ 30',
+    active: true,
+  },
 
   // --- ΜΕΛΛΟΝΤΙΚΗ ΓΕΩΜΕΤΡΙΑ (Προετοιμασμένα κεφάλαια) ---
   {
