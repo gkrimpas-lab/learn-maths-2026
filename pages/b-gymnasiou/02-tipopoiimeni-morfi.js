@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
@@ -7,6 +7,7 @@ import Layout from '../../components/Layout';
 // ==========================================
 export const LAB_CONFIG = {
   lab1: {
+    defaultVal: '4500000',
     samples: [
       { label: '4.500.000 (Μεγάλος)', val: '4500000' },
       { label: '0,00045 (Μικρός)', val: '0,00045' },
@@ -62,8 +63,17 @@ const DarkPower = ({ base, exp, className = "" }) => {
 };
 
 export default function TipopoiimeniMorfiTheoria() {
-  const [inputVal, setInputVal] = useState('4500000');
+  const [inputVal, setInputVal] = useState(LAB_CONFIG.lab1.defaultVal);
   const [selectedPreset, setSelectedPreset] = useState(0);
+  const inputRef = useRef(null);
+
+  // Εξασφάλιση ότι μετά από reload/refresh το input συγχρονίζεται πάντα με την αρχική τιμή
+  useEffect(() => {
+    setInputVal(LAB_CONFIG.lab1.defaultVal);
+    if (inputRef.current) {
+      inputRef.current.value = LAB_CONFIG.lab1.defaultVal;
+    }
+  }, []);
 
   // Αυστηρό φιλτράρισμα: μόνο αριθμοί, μία υποδιαστολή, και ένα μείον μόνο στην αρχή
   const handleNumericInput = (rawVal) => {
@@ -289,15 +299,18 @@ export default function TipopoiimeniMorfiTheoria() {
               ))}
             </div>
 
-            {/* Πεδίο Εισαγωγής Αριθμού (ΜΟΝΟ ΝΟΥΜΕΡΑ) */}
+            {/* Πεδίο Εισαγωγής Αριθμού (ΜΟΝΟ ΝΟΥΜΕΡΑ, ΑΠΟΤΡΟΠΗ AUTOCACHE ΣΤΟ REFRESH) */}
             <div className="space-y-2">
               <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
                 ΑΡΧΙΚΟΣ ΑΡΙΘΜΟΣ (ΚΑΝΟΝΙΚΗ ΓΡΑΦΗ):
               </label>
               <div className="relative">
                 <input
+                  ref={inputRef}
+                  key="scientific-converter-input"
                   type="text"
                   inputMode="decimal"
+                  autoComplete="off"
                   value={inputVal}
                   onChange={(e) => handleNumericInput(e.target.value)}
                   placeholder="π.χ. 4500000 ή 0,00045 ή -78000"
