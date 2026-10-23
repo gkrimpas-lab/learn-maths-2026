@@ -142,8 +142,6 @@ const POOL_1_TRANSPORT = [
     };
   },
   () => {
-    const unlock = 1;
-    const minRate = 2; // 2 ευρώ ανά 10 λεπτά = 0.2 ανά λεπτό, ας το κάνουμε ακέραιο: 2 ευρώ ανά ώρα
     const rate = randInt(2, 5);
     const h = randInt(3, 8);
     const total = rate * h + 5;
@@ -388,7 +386,7 @@ const POOL_4_SHOPPING = Array.from({ length: 10 }, (_, i) => {
 const POOL_5_CONSECUTIVE = Array.from({ length: 10 }, (_, i) => {
   return () => {
     const startNum = 11 + i * 3;
-    const sum = 3 * startNum + 3; // x + x+1 + x+2 = 3x + 3
+    const sum = 3 * startNum + 3;
     return {
       type: 'input',
       topic: 'ΠΡΟΒΛΗΜΑΤΑ: ΑΡΙΘΜΟΙ',
@@ -486,8 +484,8 @@ const POOL_8_TECHNICIAN = Array.from({ length: 10 }, (_, i) => {
         </div>
       `,
     };
-  },
-);
+  };
+});
 
 // Θέση 9: Προβλήματα Κατανάλωσης (Δεξαμενή / Μείωση)
 const POOL_9_CONSUMPTION = Array.from({ length: 10 }, (_, i) => {
@@ -633,7 +631,6 @@ export default function ProblimataEksisoseonAsk() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Παραγωγή 12 προβλημάτων (ένα τυχαίο από κάθε μία από τις 12 θεματικές δεξαμενές)
   const generateQuestions = () => {
     const selected = POOLS.map((pool, idx) => {
       const randomGen = pool[Math.floor(Math.random() * pool.length)];
