@@ -317,21 +317,21 @@ export const A_GYMNASIOU_CHAPTERS = [
 
   // --- ΜΕΛΛΟΝΤΙΚΗ ΓΕΩΜΕΤΡΙΑ (Προετοιμασμένα κεφάλαια) ---
   {
-    id: 'g01',
+    id: 'g01-vasikes-ennoies',
     section: 'geometry',
     slug: 'g01-vasikes-ennoies',
     title: 'Βασικές Γεωμετρικές Έννοιες',
     desc: 'Σημείο, ευθύγραμμο τμήμα, ημιευθεία, ευθεία, επίπεδο.',
-    badge: 'ΓΕΩΜΕΤΡΙΑ 1',
-    active: false,
+    badge: 'ΓΕΩΜΕΤΡΙΑ 01',
+    active: true,
   },
   {
-    id: 'g02',
+    id: 'g02-gonies',
     section: 'geometry',
     slug: 'g02-gonies',
     title: 'Γωνίες & Μέτρηση Γωνιών',
     desc: 'Είδη γωνιών, ορθή, οξεία, αμβλεία γωνία και διχοτόμος.',
-    badge: 'ΓΕΩΜΕΤΡΙΑ 2',
+    badge: 'ΓΕΩΜΕΤΡΙΑ 02',
     active: false,
   },
 ];
