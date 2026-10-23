@@ -38,7 +38,7 @@ const Power = ({ base, exp, className = "" }) => {
   return (
     <span className={`inline-flex items-baseline font-mono ${className}`}>
       <span>{base}</span>
-      <sup className="relative -top-[0.6em] text-slate-900 font-bold ml-0.5 text-[0.65em] leading-none">
+      <sup className="relative -top-[0.6em] text-slate-900 font-bold ml-0.5 text-xs sm:text-sm">
         {formattedExp}
       </sup>
     </span>
@@ -65,10 +65,39 @@ export default function TipopoiimeniMorfiTheoria() {
   const [inputVal, setInputVal] = useState('4500000');
   const [selectedPreset, setSelectedPreset] = useState(0);
 
+  // Αυστηρό φιλτράρισμα: μόνο αριθμοί, μία υποδιαστολή, και ένα μείον μόνο στην αρχή
+  const handleNumericInput = (rawVal) => {
+    let clean = rawVal.replace(/[^0-9,\.\-]/g, '');
+
+    // Μόνο ένα '-' και μόνο στην αρχή
+    if (clean.includes('-')) {
+      const hasMinusAtStart = clean.startsWith('-');
+      clean = clean.replace(/-/g, '');
+      if (hasMinusAtStart) clean = '-' + clean;
+    }
+
+    // Μόνο μία υποδιαστολή (είτε ',' είτε '.')
+    let sepCount = 0;
+    let formatted = '';
+    for (let i = 0; i < clean.length; i++) {
+      const ch = clean[i];
+      if (ch === ',' || ch === '.') {
+        if (sepCount === 0) {
+          formatted += ',';
+          sepCount++;
+        }
+      } else {
+        formatted += ch;
+      }
+    }
+
+    setInputVal(formatted);
+  };
+
   // Ανάλυση Μετατροπής σε Τυποποιημένη Μορφή (α · 10^κ)
   const analysis = useMemo(() => {
     const rawClean = inputVal.trim().replace(/\./g, '').replace(',', '.');
-    if (!rawClean) return { error: 'Πληκτρολόγησε έναν αριθμό.' };
+    if (!rawClean || rawClean === '-') return { error: 'Πληκτρολόγησε έναν έγκυρο αριθμό.' };
 
     const num = parseFloat(rawClean);
     if (isNaN(num)) return { error: 'Μη έγκυρος αριθμός.' };
@@ -260,7 +289,7 @@ export default function TipopoiimeniMorfiTheoria() {
               ))}
             </div>
 
-            {/* Πεδίο Εισαγωγής Αριθμού */}
+            {/* Πεδίο Εισαγωγής Αριθμού (ΜΟΝΟ ΝΟΥΜΕΡΑ) */}
             <div className="space-y-2">
               <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
                 ΑΡΧΙΚΟΣ ΑΡΙΘΜΟΣ (ΚΑΝΟΝΙΚΗ ΓΡΑΦΗ):
@@ -268,8 +297,9 @@ export default function TipopoiimeniMorfiTheoria() {
               <div className="relative">
                 <input
                   type="text"
+                  inputMode="decimal"
                   value={inputVal}
-                  onChange={(e) => setInputVal(e.target.value)}
+                  onChange={(e) => handleNumericInput(e.target.value)}
                   placeholder="π.χ. 4500000 ή 0,00045 ή -78000"
                   className="w-full h-14 px-4 sm:px-5 rounded-2xl border-2 border-indigo-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 font-mono text-base sm:text-xl font-bold text-slate-900 transition-all outline-none"
                 />
@@ -282,6 +312,9 @@ export default function TipopoiimeniMorfiTheoria() {
                     ΚΑΘΑΡΙΣΜΟΣ
                   </button>
                 )}
+              </div>
+              <div className="text-[11px] text-slate-400 font-sans">
+                * Επιτρέπονται μόνο αριθμοί, υποδιαστολή (κόμμα) και πρόσημο μείον (-) στην αρχή.
               </div>
             </div>
 
