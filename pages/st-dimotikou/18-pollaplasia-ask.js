@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
+// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
   const cleaned = str
@@ -13,12 +13,12 @@ function toCleanUppercase(str) {
   return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
 }
 
-// Τυχαίος ακέραιος στο [min, max]
+// Τυχαιος ακεραιος στο [min, max]
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Ανακάτεμα πίνακα
+// Ανακατεμα πινακα
 function shuffle(array) {
   if (!Array.isArray(array)) return [];
   const arr = [...array];
@@ -29,13 +29,13 @@ function shuffle(array) {
   return arr;
 }
 
-// Μορφοποίηση αριθμού με τελείες χιλιάδων
+// Μορφοποιηση αριθμου με τελειες χιλιαδων
 function formatNumber(num) {
   if (num === '' || isNaN(num)) return '0';
   return Number(num).toLocaleString('el-GR');
 }
 
-// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 9 (MCQ)
+// Διευρυμενη δεξαμενη κανονικων προβληματων για την Ερωτηση 9 (MCQ)
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'p_mult_std_1',
@@ -47,7 +47,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΣΥΣΚΕΥΑΣΙΑ ΚΑΡΑΜΕΛΩΝ ΣΕ ΠΑΚΕΤΑ',
         instruction: 'Επιλέξτε τη σωστή απάντηση:',
-        text: `Ένας ζαχαροπλάστης φτιάχνει πακέτα που περιέχουν ${perPacket} καραμέλες το καθένα. Αν έχει συνολικά ${totalCandies} καραμέλες, μπορεί να τις συσκευάσει όλες ακριβώς χωρίς να του περισσέψει καμία;`,
+        text: `Ένας ζαχαροπλάστης συσκευάζει καραμέλες σε πακέτα των ${perPacket} τεμαχίων. Αν έχει συνολικά ${totalCandies} καραμέλες, μπορεί να τις μοιράσει ακριβώς χωρίς να του περισσέψει καμία;`,
         tableData: { col1: 'Σύνολο Καραμελών', col2: 'Ανά Πακέτο', r1: [`${totalCandies} καραμέλες`, `${perPacket} ανά πακέτο`], r2: ['Έλεγχος Πολλαπλασίου', `${totalCandies} : ${perPacket} ＝ ${packets} πακέτα ✅`] },
         optionsRaw: [
           correctStr,
@@ -70,7 +70,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΑΠΟΣΤΑΣΗΣ ΔΡΟΜΕΑ',
         instruction: 'Επιλέξτε τη συνολική απόσταση:',
-        text: `Ένας δρομέας τρέχει με σταθερό ρυθμό ${step} km την ώρα. Πόσα χιλιόμετρα (km) θα διανύσει συνολικά σε ${hours} ώρες συνεχούς τρεξίματος;`,
+        text: `Ένας δρομέας προπονείται με σταθερή ταχύτητα ${step} km την ώρα. Πόσα χιλιόμετρα (km) θα διανύσει συνολικά σε ${hours} ώρες συνεχούς τρεξίματος;`,
         tableData: { col1: 'Ταχύτητα', col2: 'Χρόνος', r1: [`${step} km/h`, `${hours} ώρες`], r2: ['Υπολογισμός', `${step} · ${hours} ＝ ${totalKm} km`] },
         optionsRaw: [
           correctStr,
@@ -93,7 +93,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΤΟΠΟΘΕΤΗΣΗ ΚΑΘΙΣΜΑΤΩΝ ΣΕ ΣΕΙΡΕΣ',
         instruction: 'Επιλέξτε το συνολικό πλήθος των καθισμάτων:',
-        text: `Σε μια αίθουσα εκδηλώσεων τοποθετούνται καρέκλες σε σειρές των ${perRow}. Αν τοποθετηθούν ${rows} τέτοιες σειρές, πόσες καρέκλες θα χρησιμοποιηθούν συνολικά;`,
+        text: `Σε μια αίθουσα εκδηλώσεων τοποθετούνται καρέκλες σε ${rows} ίσες σειρές των ${perRow} καθισμάτων. Πόσες καρέκλες θα χρησιμοποιηθούν συνολικά;`,
         tableData: { col1: 'Καρέκλες ανά Σειρά', col2: 'Σειρές', r1: [`${perRow} καρέκλες`, `${rows} σειρές`], r2: ['Πολλαπλάσιο', `${perRow} · ${rows} ＝ ${totalChairs}`] },
         optionsRaw: [
           correctStr,
@@ -116,7 +116,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΚΙΒΩΤΙΑ ΜΕ ΧΥΜΟΥΣ',
         instruction: 'Επιλέξτε το συνολικό πλήθος των χυμών:',
-        text: `Ένα παντοπωλείο παρέλαβε ${boxes} κιβώτια που περιέχουν ${perBox} χυμούς το καθένα. Πόσους χυμούς παρέλαβε συνολικά;`,
+        text: `Ένα παντοπωλείο παρέλαβε ${boxes} κιβώτια με χυμούς. Αν κάθε κιβώτιο περιέχει ${perBox} χυμούς, πόσους χυμούς παρέλαβε συνολικά;`,
         tableData: { col1: 'Κιβώτια', col2: 'Χυμοί ανά Κιβώτιο', r1: [`${boxes} κιβώτια`, `${perBox} χυμοί`], r2: ['Γινόμενο', `${boxes} · ${perBox} ＝ ${totalJuices}`] },
         optionsRaw: [
           correctStr,
@@ -139,7 +139,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΟΜΑΔΕΣ ΧΑΝΤΜΠΟΛ',
         instruction: 'Επιλέξτε το συνολικό πλήθος παικτών:',
-        text: `Σε ένα τουρνουά συμμετέχουν ${teams} ομάδες των ${perTeam} παικτών. Πόσοι παίκτες συμμετέχουν συνολικά στο τουρνουά;`,
+        text: `Σε ένα σχολικό τουρνουά συμμετέχουν ${teams} ομάδες χάντμπολ με ${perTeam} παίκτες η καθεμία. Πόσοι παίκτες αγωνίζονται συνολικά;`,
         tableData: { col1: 'Ομάδες', col2: 'Παίκτες ανά Ομάδα', r1: [`${teams} ομάδες`, `${perTeam} παίκτες`], r2: ['Πολλαπλάσιο', `${teams} · ${perTeam} ＝ ${totalPlayers}`] },
         optionsRaw: [
           correctStr,
@@ -162,7 +162,7 @@ const STANDARD_PROBLEMS_POOL = [
       return {
         title: 'ΤΟΠΟΘΕΤΗΣΗ ΒΙΒΛΙΩΝ ΣΕ ΡΑΦΙΑ',
         instruction: 'Επιλέξτε τον συνολικό αριθμό βιβλίων:',
-        text: `Μια βιβλιοθήκη έχει ${shelves} ράφια και σε κάθε ράφι χωρούν ακριβώς ${perShelf} βιβλία. Πόσα βιβλία χωρούν συνολικά σε όλα τα ράφια;`,
+        text: `Σε μια σχολική βιβλιοθήκη υπάρχουν ${shelves} ράφια. Αν σε κάθε ράφι τοποθετηθούν ακριβώς ${perShelf} βιβλία, πόσα βιβλία χωρούν συνολικά;`,
         tableData: { col1: 'Ράφια', col2: 'Βιβλία ανά Ράφι', r1: [`${shelves} ράφια`, `${perShelf} βιβλία`], r2: ['Πολλαπλάσιο', `${shelves} · ${perShelf} ＝ ${totalBooks}`] },
         optionsRaw: [
           correctStr,
@@ -177,7 +177,7 @@ const STANDARD_PROBLEMS_POOL = [
   }
 ];
 
-// Διευρυμένη δεξαμενή προβλημάτων για την Ερώτηση 10 (MCQ)
+// Διευρυμενη δεξαμενη προβληματων για την Ερωτηση 10 (MCQ)
 const HARD_PROBLEMS_POOL = [
   {
     id: 'p_mult_hard_1',
@@ -189,7 +189,7 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΣΥΝΘΕΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΠΛΑΚΙΔΙΩΝ',
         instruction: 'Επιλέξτε το συνολικό πλήθος πλακιδίων:',
-        text: `Ένας τεχνίτης τοποθετεί πλακάκια σε ${rows} σειρές με ${perRow} πλακάκια η καθεμία. Πόσα πλακάκια τοποθέτησε συνολικά;`,
+        text: `Ένας πλακοστρωτής τοποθέτησε πλακάκια σε ${rows} σειρές με ${perRow} πλακάκια σε κάθε σειρά. Πόσα πλακάκια χρησιμοποίησε συνολικά;`,
         tableData: { col1: 'Σειρές', col2: 'Πλακάκια ανά Σειρά', r1: [`${rows} σειρές`, `${perRow} πλακάκια`], r2: ['Γινόμενο', `${rows} · ${perRow} ＝ ${totalTiles}`] },
         optionsRaw: [
           correctStr,
@@ -212,7 +212,7 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΡΥΘΜΟΣ ΑΝΑΓΝΩΣΗΣ ΒΙΒΛΙΟΥ',
         instruction: 'Επιλέξτε τον συνολικό αριθμό σελίδων:',
-        text: `Ένας μαθητής διαβάζει ${perDay} σελίδες την ημέρα. Πόσες σελίδες θα διαβάσει συνολικά σε ${days} ημέρες;`,
+        text: `Μια μαθήτρια διαβάζει καθημερινά ${perDay} σελίδες από ένα βιβλίο. Πόσες σελίδες θα έχει διαβάσει συνολικά μετά από ${days} ημέρες;`,
         tableData: { col1: 'Σελίδες/Ημέρα', col2: 'Ημέρες', r1: [`${perDay} σελίδες`, `${days} ημέρες`], r2: ['Πολλαπλάσιο', `${days} · ${perDay} ＝ ${totalPages}`] },
         optionsRaw: [
           correctStr,
@@ -235,7 +235,7 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΦΩΤΟΒΟΛΤΑΪΚΟ ΠΑΡΚΟ',
         instruction: 'Επιλέξτε το συνολικό πλήθος ηλιακών πάνελ:',
-        text: `Σε ένα πάρκο τοποθετήθηκαν φωτοβολταϊκά πάνελ σε ${rows} σειρές των ${panelsPerRow} πάνελ. Πόσα πάνελ υπάρχουν συνολικά;`,
+        text: `Σε ένα ενεργειακό πάρκο εγκαταστάθηκαν φωτοβολταϊκά πάνελ τοποθετημένα σε ${rows} σειρές των ${panelsPerRow} πάνελ. Πόσα πάνελ εγκαταστάθηκαν συνολικά;`,
         tableData: { col1: 'Σειρές', col2: 'Πάνελ ανά Σειρά', r1: [`${rows} σειρές`, `${panelsPerRow} πάνελ`], r2: ['Γινόμενο', `${rows} · ${panelsPerRow} ＝ ${totalPanels}`] },
         optionsRaw: [
           correctStr,
@@ -258,8 +258,8 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΠΡΟΠΟΝΗΣΗ ΣΤΟ ΚΟΛΥΜΒΗΤΗΡΙΟ',
         instruction: 'Επιλέξτε το συνολικό πλήθος γύρων:',
-        text: `Μια αθλήτρια κολυμπάει ${lapsPerDay} γύρους την ημέρα. Πόσους γύρους θα κάνει συνολικά σε ${days} ημέρες προπόνησης;`,
-        tableData: { col1: 'Γύροι/Ημέρα', col2: 'Ημέρες', r1: [`${lapsPerDay} γύροι`, `${days} ημέρες`], r2: ['Πολλαπλάσιο', `${days} · ${lapsPerDay} ＝ ${totalLaps}`] },
+        text: `Μια κολυμβήτρια καλύπτει ${lapsPerDay} γύρους της πισίνας σε κάθε της προπόνηση. Πόσους γύρους θα διανύσει συνολικά σε ${days} προπονήσεις;`,
+        tableData: { col1: 'Γύροι/Προπόνηση', col2: 'Προπονήσεις', r1: [`${lapsPerDay} γύροι`, `${days} προπονήσεις`], r2: ['Πολλαπλάσιο', `${days} · ${lapsPerDay} ＝ ${totalLaps}`] },
         optionsRaw: [
           correctStr,
           `${totalLaps + 30} γύροι`,
@@ -281,7 +281,7 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΔΕΝΔΡΟΦΥΤΕΥΣΗ ΣΤΟ ΑΛΣΟΣ',
         instruction: 'Επιλέξτε το συνολικό πλήθος δέντρων:',
-        text: `Σε ένα άλσος φυτεύτηκαν ${rows} σειρές με ${treesPerRow} δέντρα σε κάθε σειρά. Πόσα δέντρα φυτεύτηκαν συνολικά;`,
+        text: `Μια περιβαλλοντική ομάδα φύτεψε ${rows} σειρές με ${treesPerRow} δενδρύλλια σε κάθε σειρά. Πόσα δενδρύλλια φυτεύτηκαν συνολικά;`,
         tableData: { col1: 'Σειρές', col2: 'Δέντρα ανά Σειρά', r1: [`${rows} σειρές`, `${treesPerRow} δέντρα`], r2: ['Γινόμενο', `${rows} · ${treesPerRow} ＝ ${totalTrees}`] },
         optionsRaw: [
           correctStr,
@@ -304,8 +304,8 @@ const HARD_PROBLEMS_POOL = [
       return {
         title: 'ΠΑΚΕΤΑΡΙΣΜΑ ΜΑΡΚΑΔΟΡΩΝ',
         instruction: 'Επιλέξτε το συνολικό πλήθος μαρκαδόρων:',
-        text: `Ένα εργοστάσιο συσκεύασε ${boxes} κουτιά με ${perBox} μαρκαδόρους το καθένα. Πόσοι μαρκαδόροι συσκευάστηκαν συνολικά;`,
-        tableData: { col1: 'Κουτιά', col2: 'Μαρκαδόροι ανά Κουτί', r1: [`${boxes} κουτιά`, `${perBox} μαρκαδόροι`], r2: ['Πολλαπλάσιο', `${boxes} · ${perBox} ＝ ${totalMarkers}`] },
+        text: `Μια βιοτεχνία ειδών γραφής συσκεύασε ${boxes} κασετίνες με ${perBox} μαρκαδόρους η καθεμία. Πόσοι μαρκαδόροι συσκευάστηκαν συνολικά;`,
+        tableData: { col1: 'Κασετίνες', col2: 'Μαρκαδόροι ανά Κασετίνα', r1: [`${boxes} κασετίνες`, `${perBox} μαρκαδόροι`], r2: ['Πολλαπλάσιο', `${boxes} · ${perBox} ＝ ${totalMarkers}`] },
         optionsRaw: [
           correctStr,
           `${totalMarkers + 16} μαρκαδόροι`,
@@ -319,7 +319,7 @@ const HARD_PROBLEMS_POOL = [
   }
 ];
 
-// Δημιουργία των 10 δυναμικών ερωτήσεων
+// Δημιουργια των 10 δυναμικων ερωτησεων
 function generateQuestions() {
   const qList = [];
 
@@ -427,7 +427,7 @@ function generateQuestions() {
       prompt: `Ποιος από τους παρακάτω αριθμούς είναι κοινό πολλαπλάσιο του ${q4Pair.a} και του ${q4Pair.b};`,
       options,
       correctText: String(q4Pair.correct),
-      explanation: `Το ${q4Pair.correct} διαιρείται ακριβώς και με το ${q4Pair.a} (${q4Pair.correct} : ${q4Pair.a} ＝ ${q4Pair.correct / q4Pair.a}) και με το ${q4Pair.b} (${q4Pair.correct} : ${q4Pair.b} ＝ ${q4Pair.correct / q4Pair.a}).`
+      explanation: `Το ${q4Pair.correct} διαιρείται ακριβώς και με το ${q4Pair.a} (${q4Pair.correct} : ${q4Pair.a} ＝ ${q4Pair.correct / q4Pair.a}) και με το ${q4Pair.b} (${q4Pair.correct} : ${q4Pair.b} ＝ ${q4Pair.correct / q4Pair.b}).`
     });
   }
 
@@ -503,13 +503,49 @@ function generateQuestions() {
     });
   }
 
-  // Q8 (MCQ): Πρόβλημα Καθημερινότητας
+  // Q8 (MCQ): Πρόβλημα Καθημερινότητας (Ρεαλιστικά καταστήματα & σωστή γραμματική συμφωνία)
   {
     const q8Items = [
-      { name: 'τετράδια', box: 6, count: 48, correct: 'Ναι (ακριβώς 8 κουτιά)', wrong: ['Όχι, περισσεύουν 2', 'Όχι, λείπουν 3', 'Ναι (ακριβώς 9 κουτιά)'] },
-      { name: 'στυλό', box: 8, count: 56, correct: 'Ναι (ακριβώς 7 κουτιά)', wrong: ['Όχι, περισσεύει 1', 'Όχι, λείπουν 2', 'Ναι (ακριβώς 8 κουτιά)'] },
-      { name: 'μαρκαδόρους', box: 12, count: 72, correct: 'Ναι (ακριβώς 6 κουτιά)', wrong: ['Όχι, περισσεύουν 4', 'Όχι, λείπουν 2', 'Ναι (ακριβώς 7 κουτιά)'] },
-      { name: 'σοκολάτες', box: 15, count: 90, correct: 'Ναι (ακριβώς 6 κουτιά)', wrong: ['Όχι, περισσεύουν 5', 'Όχι, λείπουν 5', 'Ναι (ακριβώς 7 κουτιά)'] }
+      { 
+        shop: 'Ένα βιβλιοπωλείο', 
+        name: 'τετράδια', 
+        pronounTo: 'τα', 
+        pronounNone: 'κανένα', 
+        box: 6, 
+        count: 48, 
+        correct: 'Ναι (ακριβώς 8 πακέτα)', 
+        wrong: ['Όχι, περισσεύουν 2', 'Όχι, λείπουν 3', 'Ναι (ακριβώς 9 πακέτα)'] 
+      },
+      { 
+        shop: 'Ένα κατάστημα γραφικής ύλης', 
+        name: 'στυλό', 
+        pronounTo: 'τα', 
+        pronounNone: 'κανένα', 
+        box: 8, 
+        count: 56, 
+        correct: 'Ναι (ακριβώς 7 θήκες)', 
+        wrong: ['Όχι, περισσεύει 1', 'Όχι, λείπουν 2', 'Ναι (ακριβώς 8 θήκες)'] 
+      },
+      { 
+        shop: 'Ένα χαρτοπωλείο', 
+        name: 'σελιδοδείκτες', 
+        pronounTo: 'τους', 
+        pronounNone: 'κανέναν', 
+        box: 12, 
+        count: 72, 
+        correct: 'Ναι (ακριβώς 6 σετ)', 
+        wrong: ['Όχι, περισσεύουν 4', 'Όχι, λείπουν 2', 'Ναι (ακριβώς 7 σετ)'] 
+      },
+      { 
+        shop: 'Ένα ζαχαροπλαστείο', 
+        name: 'σοκολάτες', 
+        pronounTo: 'τις', 
+        pronounNone: 'καμία', 
+        box: 15, 
+        count: 90, 
+        correct: 'Ναι (ακριβώς 6 κουτιά)', 
+        wrong: ['Όχι, περισσεύουν 5', 'Όχι, λείπουν 5', 'Ναι (ακριβώς 7 κουτιά)'] 
+      }
     ];
     const q8Chosen = q8Items[randInt(0, q8Items.length - 1)];
     const rawOptions = [q8Chosen.correct, ...q8Chosen.wrong];
@@ -523,10 +559,10 @@ function generateQuestions() {
       type: 'mcq',
       title: 'ΕΡΩΤΗΣΗ 8 • ΠΡΟΒΛΗΜΑ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑΣ',
       instruction: 'Επιλέξτε τη σωστή απάντηση για τη συσκευασία:',
-      prompt: `Ένα βιβλιοπωλείο έχει ${q8Chosen.count} ${q8Chosen.name} και θέλει να τα βάλει σε κουτιά χωρητικότητας ${q8Chosen.box} τεμαχίων το καθένα. Μπορούν να συσκευαστούν πλήρως χωρίς να περισσέψει κανένα;`,
+      prompt: `${q8Chosen.shop} έχει ${q8Chosen.count} ${q8Chosen.name} και θέλει να ${q8Chosen.pronounTo} τοποθετήσει σε συσκευασίες των ${q8Chosen.box} τεμαχίων. Μπορούν να συσκευαστούν πλήρως χωρίς να περισσέψει ${q8Chosen.pronounNone};`,
       options,
       correctText: q8Chosen.correct,
-      explanation: `Επειδή ${q8Chosen.count} : ${q8Chosen.box} ＝ ${q8Chosen.count / q8Chosen.box}, χωρούν σε ακριβώς ${q8Chosen.count / q8Chosen.box} κουτιά.`
+      explanation: `Επειδή ${q8Chosen.count} : ${q8Chosen.box} ＝ ${q8Chosen.count / q8Chosen.box}, χωρούν ακριβώς σε ${q8Chosen.count / q8Chosen.box} συσκευασίες χωρίς περίσσευμα.`
     });
   }
 
