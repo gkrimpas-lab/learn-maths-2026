@@ -29,7 +29,7 @@ export const LAB_CONFIG = {
   }
 };
 
-// Component Power: σκούρο χρώμα, παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη
+// Component Power: σκούρο χρώμα, παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη, τοποθετημένο ψηλά
 const Power = ({ base, exp, className = "" }) => {
   const expNum = typeof exp === 'number' ? exp : parseInt(String(exp).replace(/[()]/g, ''), 10);
   const isNeg = !isNaN(expNum) ? expNum < 0 : String(exp).startsWith('-');
@@ -38,12 +38,14 @@ const Power = ({ base, exp, className = "" }) => {
   return (
     <span className={`inline-flex items-baseline font-mono ${className}`}>
       <span>{base}</span>
-      <sup className="text-slate-900 font-bold ml-0.5 text-xs sm:text-sm">{formattedExp}</sup>
+      <sup className="relative -top-[0.6em] text-slate-900 font-bold ml-0.5 text-[0.65em] leading-none">
+        {formattedExp}
+      </sup>
     </span>
   );
 };
 
-// Component Power για σκούρο φόντο (λευκό/κίτρινο κείμενο)
+// Component Power για σκούρο φόντο: τοποθετημένο καθαρά πιο ψηλά
 const DarkPower = ({ base, exp, className = "" }) => {
   const expNum = typeof exp === 'number' ? exp : parseInt(String(exp).replace(/[()]/g, ''), 10);
   const isNeg = !isNaN(expNum) ? expNum < 0 : String(exp).startsWith('-');
@@ -52,16 +54,15 @@ const DarkPower = ({ base, exp, className = "" }) => {
   return (
     <span className={`inline-flex items-baseline font-mono ${className}`}>
       <span>{base}</span>
-      <sup className="text-amber-400 font-bold ml-0.5 text-xs sm:text-sm">{formattedExp}</sup>
+      <sup className="relative -top-[0.65em] text-amber-400 font-bold ml-0.5 text-[0.65em] leading-none">
+        {formattedExp}
+      </sup>
     </span>
   );
 };
 
 export default function TipopoiimeniMorfiTheoria() {
-  // State Εργαστηρίου 1: Ελεύθερη εισαγωγή κανονικού αριθμού
   const [inputVal, setInputVal] = useState('4500000');
-
-  // State Εργαστηρίου 2: Κλίμακα του Κόσμου
   const [selectedPreset, setSelectedPreset] = useState(0);
 
   // Ανάλυση Μετατροπής σε Τυποποιημένη Μορφή (α · 10^κ)
@@ -79,7 +80,6 @@ export default function TipopoiimeniMorfiTheoria() {
     let k = Math.floor(Math.log10(absNum));
     let a = absNum / Math.pow(10, k);
 
-    // Διόρθωση στρογγυλοποίησης ακριβείας JavaScript
     a = Number(a.toFixed(6));
     if (a >= 10) {
       a = 1;
@@ -234,9 +234,7 @@ export default function TipopoiimeniMorfiTheoria() {
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* ΑΝΑΝΕΩΜΕΝΟ ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1: ΜΕΤΑΤΡΟΠΕΑΣ ΣΥΝΗΘΙΣΜΕΝΟΥ ΑΡΙΘΜΟΥ */}
-          {/* ========================================================================= */}
+          {/* ΕΡΓΑΣΤΗΡΙΟ 1 */}
           <div className="mt-8 pt-6 border-t border-slate-100 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <h3 className="text-lg sm:text-xl font-bold text-slate-900">
@@ -338,8 +336,9 @@ export default function TipopoiimeniMorfiTheoria() {
                         <div>
                           3. Επειδή πήγαμε αριστερά, ο εκθέτης του 10 είναι <strong>θετικός (+{analysis.shiftCount})</strong>.
                         </div>
-                        <div className="pt-1 text-emerald-300 font-mono font-bold">
-                          ➔ {analysis.originalFormatted} ＝ {analysis.a} · <DarkPower base={10} exp={analysis.k} />
+                        <div className="pt-1 text-emerald-300 font-mono font-bold flex items-center flex-wrap gap-1">
+                          <span>➔ {analysis.originalFormatted} ＝ {analysis.a} · </span>
+                          <DarkPower base={10} exp={analysis.k} />
                         </div>
                       </div>
                     ) : (
@@ -353,8 +352,9 @@ export default function TipopoiimeniMorfiTheoria() {
                         <div>
                           3. Επειδή πήγαμε δεξιά, ο εκθέτης του 10 είναι <strong>αρνητικός (-{analysis.shiftCount})</strong>.
                         </div>
-                        <div className="pt-1 text-emerald-300 font-mono font-bold">
-                          ➔ {analysis.originalFormatted} ＝ {analysis.a} · <DarkPower base={10} exp={analysis.k} />
+                        <div className="pt-1 text-emerald-300 font-mono font-bold flex items-center flex-wrap gap-1">
+                          <span>➔ {analysis.originalFormatted} ＝ {analysis.a} · </span>
+                          <DarkPower base={10} exp={analysis.k} />
                         </div>
                       </div>
                     )}
@@ -401,7 +401,7 @@ export default function TipopoiimeniMorfiTheoria() {
                     {item.name}
                   </span>
                   <span className={`text-[10px] font-mono font-semibold ${isSelected ? 'text-amber-300' : 'text-indigo-600'}`}>
-                    <Power base={10} exp={item.exp} className={isSelected ? 'text-white' : ''} />
+                    <Power base={10} exp={item.exp} className={isSelected ? 'text-amber-300' : 'text-indigo-600'} />
                   </span>
                 </button>
               );
@@ -434,8 +434,10 @@ export default function TipopoiimeniMorfiTheoria() {
               </div>
               <div className="p-4 rounded-xl bg-indigo-600/20 border border-indigo-500/40 space-y-1">
                 <span className="text-xs text-indigo-300">Τυποποιημένη (Επιστημονική) Μορφή:</span>
-                <div className="font-mono text-xl sm:text-2xl font-black text-amber-400">
-                  {String(preset.a).replace('.', ',')} · <DarkPower base={10} exp={preset.exp} /> {preset.unit}
+                <div className="font-mono text-xl sm:text-2xl font-black text-amber-400 flex items-center flex-wrap gap-1">
+                  <span>{String(preset.a).replace('.', ',')} · </span>
+                  <DarkPower base={10} exp={preset.exp} />
+                  <span className="ml-1 text-white text-base sm:text-lg">{preset.unit}</span>
                 </div>
               </div>
             </div>
@@ -465,8 +467,14 @@ export default function TipopoiimeniMorfiTheoria() {
                 Πολλαπλασιάζουμε τους συντελεστές και προσθέτουμε τους εκθέτες του 10:
               </p>
               <div className="p-3 rounded-xl bg-white border border-slate-200 font-mono text-sm sm:text-base font-bold text-emerald-900 space-y-1">
-                <div>(2 · <Power base={10} exp={4} />) · (3 · <Power base={10} exp={5} />) ＝ (2 · 3) · <Power base={10} exp="4+5" /></div>
-                <div className="text-emerald-600">＝ 6 · <Power base={10} exp={9} /></div>
+                <div className="flex items-center flex-wrap gap-1">
+                  <span>(2 · <Power base={10} exp={4} />) · (3 · <Power base={10} exp={5} />) ＝ (2 · 3) · </span>
+                  <Power base={10} exp="4+5" />
+                </div>
+                <div className="text-emerald-600 flex items-center gap-1">
+                  <span>＝ 6 · </span>
+                  <Power base={10} exp={9} />
+                </div>
               </div>
             </div>
 
@@ -477,8 +485,14 @@ export default function TipopoiimeniMorfiTheoria() {
                 Διαιρούμε τους συντελεστές και αφαιρούμε τους εκθέτες του 10:
               </p>
               <div className="p-3 rounded-xl bg-white border border-slate-200 font-mono text-sm sm:text-base font-bold text-emerald-900 space-y-1">
-                <div>(8 · <Power base={10} exp={7} />) : (4 · <Power base={10} exp={3} />) ＝ (8 : 4) · <Power base={10} exp="7-3" /></div>
-                <div className="text-emerald-600">＝ 2 · <Power base={10} exp={4} /></div>
+                <div className="flex items-center flex-wrap gap-1">
+                  <span>(8 · <Power base={10} exp={7} />) : (4 · <Power base={10} exp={3} />) ＝ (8 : 4) · </span>
+                  <Power base={10} exp="7-3" />
+                </div>
+                <div className="text-emerald-600 flex items-center gap-1">
+                  <span>＝ 2 · </span>
+                  <Power base={10} exp={4} />
+                </div>
               </div>
             </div>
           </div>
