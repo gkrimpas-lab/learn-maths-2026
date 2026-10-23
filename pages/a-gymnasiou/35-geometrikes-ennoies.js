@@ -32,15 +32,14 @@ export default function GeometrikesEnnoiesTheoria() {
   // --------------------------------------------------------------------------
   // STATE ΕΡΓΑΣΤΗΡΙΟΥ 1: Σημείο, Ευθεία, Ημιευθεία, Ευθύγραμμο Τμήμα, Επίπεδο
   // --------------------------------------------------------------------------
-  // modes: 'point' | 'line' | 'rayRight' | 'rayLeft' | 'segment' | 'plane'
   const [geoMode, setGeoMode] = useState('segment');
 
   // --------------------------------------------------------------------------
   // STATE ΕΡΓΑΣΤΗΡΙΟΥ 2: Απόσταση, Μέσο M & Σύγκριση Ευθυγράμμων Τμημάτων
   // --------------------------------------------------------------------------
-  const [posA, setPosA] = useState(2); // Θέση Α στον χάρακα (0 έως 6 cm)
-  const [posB, setPosB] = useState(10); // Θέση Β στον χάρακα (7 έως 14 cm)
-  const [lenCD, setLenCD] = useState(8); // Μήκος τμήματος ΓΔ προς σύγκριση (2 έως 14 cm)
+  const [posA, setPosA] = useState(2);
+  const [posB, setPosB] = useState(10);
+  const [lenCD, setLenCD] = useState(8);
 
   // --------------------------------------------------------------------------
   // STATE ΕΡΓΑΣΤΗΡΙΟΥ 3: Διαδοχικά Τμήματα & Τεθλασμένες Γραμμές
@@ -64,8 +63,130 @@ export default function GeometrikesEnnoiesTheoria() {
   const posM = useMemo(() => (posA + posB) / 2, [posA, posB]);
   const halfLen = useMemo(() => lenAB / 2, [lenAB]);
 
-  // Υπολογισμοί Εργαστηρίου 3
+  // Υπολογισμοί Εργαστηρίου 3 (Δυναμική Γεωμετρία SVG)
   const totalPolyLen = useMemo(() => seg1 + seg2 + seg3, [seg1, seg2, seg3]);
+
+  const polyGeometry = useMemo(() => {
+    // 1. Ανοιχτή Τεθλασμένη & Συντομότερη Οδός
+    // Σταθερές γωνίες κλίσης για καθαρή απεικόνιση: ΑΒ (-38°), ΒΓ (+28°), ΓΔ (-18°)
+    const degToRad = (deg) => (deg * Math.PI) / 180;
+    const rawA = { x: 0, y: 0 };
+    const rawB = {
+      x: rawA.x + seg1 * Math.cos(degToRad(-38)),
+      y: rawA.y + seg1 * Math.sin(degToRad(-38)),
+    };
+    const rawC = {
+      x: rawB.x + seg2 * Math.cos(degToRad(28)),
+      y: rawB.y + seg2 * Math.sin(degToRad(28)),
+    };
+    const rawD = {
+      x: rawC.x + seg3 * Math.cos(degToRad(-18)),
+      y: rawC.y + seg3 * Math.sin(degToRad(-18)),
+    };
+
+    // Πραγματική ευθύγραμμη απόσταση ΑΔ (σε μέτρα)
+    const directAD = Number(
+      Math.hypot(rawD.x - rawA.x, rawD.y - rawA.y).toFixed(1)
+    );
+
+    // Κλιμάκωση και κεντράρισμα στον καμβά 520x200
+    const xs = [rawA.x, rawB.x, rawC.x, rawD.x];
+    const ys = [rawA.y, rawB.y, rawC.y, rawD.y];
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    const spanX = Math.max(maxX - minX, 1);
+    const spanY = Math.max(maxY - minY, 1);
+    // Σταθερή κλίμακα ~18px ανά μέτρο (με αυτόματη προσαρμογή αν μεγαλώσει πολύ)
+    const scaleOpen = Math.min(380 / spanX, 115 / spanY, 21);
+
+    const offsetX = 260 - ((minX + maxX) / 2) * scaleOpen;
+    const offsetY = 98 - ((minY + maxY) / 2) * scaleOpen;
+
+    const toSvgOpen = (pt) => ({
+      x: Math.round(pt.x * scaleOpen + offsetX),
+      y: Math.round(pt.y * scaleOpen + offsetY),
+    });
+
+    const openPts = {
+      A: toSvgOpen(rawA),
+      B: toSvgOpen(rawB),
+      C: toSvgOpen(rawC),
+      D: toSvgOpen(rawD),
+    };
+
+    // 2. Συνευθειακά Τμήματα (Πάνω στην ίδια ευθεία)
+    // Κλίμακα: 14px ανά μέτρο, κεντραρισμένο στο x = 260
+    const colScale = Math.min(400 / totalPolyLen, 18);
+    const totalPx = totalPolyLen * colScale;
+    const startColX = Math.round(260 - totalPx / 2);
+    const colPts = {
+      xA: startColX,
+      xB: Math.round(startColX + seg1 * colScale),
+      xC: Math.round(startColX + (seg1 + seg2) * colScale),
+      xD: Math.round(startColX + totalPx),
+    };
+
+    // 3. Κλειστή Τεθλασμένη (Τρίγωνο με πλευρές seg1, seg2, seg3)
+    // Έλεγχος τριγωνικής ανισότητας
+    const canClose =
+      seg1 + seg2 > seg3 && seg1 + seg3 > seg2 && seg2 + seg3 > seg1;
+
+    let closedPts = null;
+    if (canClose) {
+      // Βάζουμε τη βάση ΓΑ = seg3 οριζόντια, και βρίσκουμε την κορυφή Β με τον νόμο των συνημιτόνων
+      const cBase = seg3;
+      const aSide = seg1; // ΑΒ
+      const bSide = seg2; // ΒΓ
+      const cosA = (aSide * aSide + cBase * cBase - bSide * bSide) / (2 * aSide * cBase);
+      const clampedCos = Math.max(-1, Math.min(1, cosA));
+      const sinA = Math.sqrt(Math.max(0, 1 - clampedCos * clampedCos));
+
+      const triA = { x: 0, y: 0 };
+      const triC = { x: cBase, y: 0 };
+      const triB = { x: aSide * clampedCos, y: -aSide * sinA };
+
+      const tXs = [triA.x, triB.x, triC.x];
+      const tYs = [triA.y, triB.y, triC.y];
+      const tMinX = Math.min(...tXs);
+      const tMaxX = Math.max(...tXs);
+      const tMinY = Math.min(...tYs);
+      const tMaxY = Math.max(...tYs);
+
+      const scaleTri = Math.min(
+        340 / Math.max(tMaxX - tMinX, 1),
+        125 / Math.max(tMaxY - tMinY, 1),
+        22
+      );
+      const offTriX = 260 - ((tMinX + tMaxX) / 2) * scaleTri;
+      const offTriY = 105 - ((tMinY + tMaxY) / 2) * scaleTri;
+
+      closedPts = {
+        A: {
+          x: Math.round(triA.x * scaleTri + offTriX),
+          y: Math.round(triA.y * scaleTri + offTriY),
+        },
+        B: {
+          x: Math.round(triB.x * scaleTri + offTriX),
+          y: Math.round(triB.y * scaleTri + offTriY),
+        },
+        C: {
+          x: Math.round(triC.x * scaleTri + offTriX),
+          y: Math.round(triC.y * scaleTri + offTriY),
+        },
+      };
+    }
+
+    return {
+      openPts,
+      directAD,
+      colPts,
+      canClose,
+      closedPts,
+    };
+  }, [seg1, seg2, seg3, totalPolyLen]);
 
   return (
     <Layout
@@ -173,7 +294,6 @@ export default function GeometrikesEnnoiesTheoria() {
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              {/* Κουμπιά Επιλογής Έννοιας (5 cols) */}
               <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 {[
                   { id: 'point', label: '1. ΣΗΜΕΙΑ (Α, Ο, Β)', desc: 'Συνευθειακά σημεία' },
@@ -205,7 +325,6 @@ export default function GeometrikesEnnoiesTheoria() {
                 ))}
               </div>
 
-              {/* Responsive SVG Επίπεδο & Γεωμετρικό Σχήμα (7 cols) */}
               <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
@@ -221,10 +340,8 @@ export default function GeometrikesEnnoiesTheoria() {
                   </span>
                 </div>
 
-                {/* SVG χωρίς οριζόντιο scroll */}
                 <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 flex justify-center">
                   <svg viewBox="0 0 540 210" className="w-full max-w-[520px] h-auto">
-                    {/* Παραλληλόγραμμο Επιπέδου π */}
                     <polygon
                       points="50,25 510,25 480,185 20,185"
                       fill={geoMode === 'plane' ? '#312e81' : '#0f172a'}
@@ -236,7 +353,6 @@ export default function GeometrikesEnnoiesTheoria() {
                       π
                     </text>
 
-                    {/* Αχνή γραμμή-οδηγός της ευθείας ε */}
                     <line
                       x1="45"
                       y1="105"
@@ -253,11 +369,9 @@ export default function GeometrikesEnnoiesTheoria() {
                       x
                     </text>
 
-                    {/* Ενεργή Ευθεία ε (όταν geoMode === 'line') */}
                     {geoMode === 'line' && (
                       <g>
                         <line x1="45" y1="105" x2="495" y2="105" stroke="#38bdf8" strokeWidth="4" />
-                        {/* Βέλη στα δύο άκρα */}
                         <polygon points="40,105 55,98 55,112" fill="#38bdf8" />
                         <polygon points="500,105 485,98 485,112" fill="#38bdf8" />
                         <text x="270" y="75" fill="#38bdf8" fontSize="14" fontWeight="bold" textAnchor="middle">
@@ -266,7 +380,6 @@ export default function GeometrikesEnnoiesTheoria() {
                       </g>
                     )}
 
-                    {/* Ενεργή Ημιευθεία Οx (δεξιά) */}
                     {geoMode === 'rayRight' && (
                       <g>
                         <line x1="270" y1="105" x2="495" y2="105" stroke="#f59e0b" strokeWidth="4.5" />
@@ -277,7 +390,6 @@ export default function GeometrikesEnnoiesTheoria() {
                       </g>
                     )}
 
-                    {/* Ενεργή Ημιευθεία Οy (αριστερά) */}
                     {geoMode === 'rayLeft' && (
                       <g>
                         <line x1="270" y1="105" x2="45" y2="105" stroke="#f43f5e" strokeWidth="4.5" />
@@ -288,7 +400,6 @@ export default function GeometrikesEnnoiesTheoria() {
                       </g>
                     )}
 
-                    {/* Ενεργό Ευθύγραμμο Τμήμα ΑΒ */}
                     {geoMode === 'segment' && (
                       <g>
                         <line x1="140" y1="105" x2="400" y2="105" stroke="#10b981" strokeWidth="5" />
@@ -298,7 +409,6 @@ export default function GeometrikesEnnoiesTheoria() {
                       </g>
                     )}
 
-                    {/* Σημείο Α */}
                     <circle
                       cx="140"
                       cy="105"
@@ -311,7 +421,6 @@ export default function GeometrikesEnnoiesTheoria() {
                       Α
                     </text>
 
-                    {/* Σημείο Ο */}
                     <circle
                       cx="270"
                       cy="105"
@@ -324,7 +433,6 @@ export default function GeometrikesEnnoiesTheoria() {
                       Ο
                     </text>
 
-                    {/* Σημείο Β */}
                     <circle
                       cx="400"
                       cy="105"
@@ -339,7 +447,6 @@ export default function GeometrikesEnnoiesTheoria() {
                   </svg>
                 </div>
 
-                {/* Δυναμική Επεξήγηση Επιλεγμένης Έννοιας */}
                 <div className="p-3.5 bg-white/10 rounded-xl border border-white/10 text-xs sm:text-sm font-sans text-slate-200 leading-relaxed">
                   {geoMode === 'point' && (
                     <div>
@@ -433,7 +540,6 @@ export default function GeometrikesEnnoiesTheoria() {
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Steppers (5 cols) */}
               <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-indigo-900 uppercase block">ΘΕΣΗ Α (cm)</label>
@@ -504,7 +610,6 @@ export default function GeometrikesEnnoiesTheoria() {
                   </div>
                 </div>
 
-                {/* Πληροφορίες Μέσου Μ */}
                 <div className="sm:col-span-3 p-3.5 bg-white rounded-xl border border-slate-200 text-xs font-mono space-y-1.5 text-slate-700">
                   <div>
                     • <strong>Απόσταση ΑΒ:</strong> {posB} － {posA} ＝ <strong>{lenAB} cm</strong>
@@ -517,7 +622,6 @@ export default function GeometrikesEnnoiesTheoria() {
                 </div>
               </div>
 
-              {/* SVG Χάρακας & Σύγκριση Τμημάτων (7 cols) */}
               <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
@@ -540,7 +644,6 @@ export default function GeometrikesEnnoiesTheoria() {
 
                 <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 flex justify-center">
                   <svg viewBox="0 0 560 210" className="w-full max-w-[540px] h-auto">
-                    {/* Σώμα Χάρακα (0 έως 14 cm, κάθε 1 cm = 34px, xStart = 42) */}
                     <rect x="25" y="135" width="510" height="50" rx="6" fill="#1e293b" stroke="#475569" strokeWidth="2" />
                     {Array.from({ length: 15 }).map((_, cm) => {
                       const xPos = 42 + cm * 34;
@@ -554,7 +657,6 @@ export default function GeometrikesEnnoiesTheoria() {
                       );
                     })}
 
-                    {/* Ευθύγραμμο Τμήμα ΑΒ με το Μέσο Μ */}
                     <g>
                       <line
                         x1={42 + posA * 34}
@@ -564,18 +666,15 @@ export default function GeometrikesEnnoiesTheoria() {
                         stroke="#38bdf8"
                         strokeWidth="5"
                       />
-                      {/* Άκρο Α */}
                       <circle cx={42 + posA * 34} cy="95" r="6" fill="#38bdf8" stroke="#ffffff" strokeWidth="1.5" />
                       <text x={42 + posA * 34} y="78" fill="#38bdf8" fontSize="13" fontWeight="bold" textAnchor="middle">
                         Α
                       </text>
 
-                      {/* Μέσο Μ */}
                       <circle cx={42 + posM * 34} cy="95" r="6" fill="#10b981" stroke="#ffffff" strokeWidth="1.5" />
                       <text x={42 + posM * 34} y="78" fill="#6ee7b7" fontSize="12" fontWeight="bold" textAnchor="middle">
                         Μ (Μέσο)
                       </text>
-                      {/* Υποδιαίρεση ΑΜ και ΜΒ */}
                       <text
                         x={42 + ((posA + posM) / 2) * 34}
                         y="115"
@@ -595,14 +694,12 @@ export default function GeometrikesEnnoiesTheoria() {
                         {halfLen.toString().replace('.', ',')} cm
                       </text>
 
-                      {/* Άκρο Β */}
                       <circle cx={42 + posB * 34} cy="95" r="6" fill="#38bdf8" stroke="#ffffff" strokeWidth="1.5" />
                       <text x={42 + posB * 34} y="78" fill="#38bdf8" fontSize="13" fontWeight="bold" textAnchor="middle">
                         Β
                       </text>
                     </g>
 
-                    {/* Ευθύγραμμο Τμήμα ΓΔ (ευθυγραμμισμένο στην αρχή Α για άμεση σύγκριση!) */}
                     <g>
                       <line
                         x1={42 + posA * 34}
@@ -701,7 +798,7 @@ export default function GeometrikesEnnoiesTheoria() {
             </div>
           </div>
 
-          {/* ΕΡΓΑΣΤΗΡΙΟ 3: ΔΙΑΔΟΧΙΚΑ ΤΜΗΜΑΤΑ & ΤΕΘΛΑΣΜΕΝΕΣ */}
+          {/* ΕΡΓΑΣΤΗΡΙΟ 3: ΔΥΝΑΜΙΚΟ SVG ΜΕ ΑΝΑΛΟΓΙΚΑ ΜΗΚΗ ΤΜΗΜΑΤΩΝ */}
           <div className="pt-2 space-y-5">
             <h3 className="text-base sm:text-lg font-bold text-slate-900">
               🛠️ Εργαστήριο 3: Πειραματίσου με Διαδοχικά Τμήματα & Τεθλασμένες Γραμμές
@@ -740,17 +837,17 @@ export default function GeometrikesEnnoiesTheoria() {
                       <button
                         type="button"
                         onClick={(e) => handleStep(setSeg1, -1, 2, 10, e)}
-                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs"
+                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs active:scale-95"
                       >
                         －
                       </button>
-                      <div className="h-full flex items-center justify-center bg-white rounded border border-slate-200 font-bold text-xs font-mono">
+                      <div className="h-full flex items-center justify-center bg-sky-50 rounded border border-sky-200 font-bold text-xs font-mono text-sky-950">
                         {seg1}
                       </div>
                       <button
                         type="button"
                         onClick={(e) => handleStep(setSeg1, 1, 2, 10, e)}
-                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs"
+                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs active:scale-95"
                       >
                         ＋
                       </button>
@@ -763,17 +860,17 @@ export default function GeometrikesEnnoiesTheoria() {
                       <button
                         type="button"
                         onClick={(e) => handleStep(setSeg2, -1, 2, 10, e)}
-                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs"
+                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs active:scale-95"
                       >
                         －
                       </button>
-                      <div className="h-full flex items-center justify-center bg-white rounded border border-slate-200 font-bold text-xs font-mono">
+                      <div className="h-full flex items-center justify-center bg-amber-50 rounded border border-amber-200 font-bold text-xs font-mono text-amber-950">
                         {seg2}
                       </div>
                       <button
                         type="button"
                         onClick={(e) => handleStep(setSeg2, 1, 2, 10, e)}
-                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs"
+                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs active:scale-95"
                       >
                         ＋
                       </button>
@@ -786,17 +883,17 @@ export default function GeometrikesEnnoiesTheoria() {
                       <button
                         type="button"
                         onClick={(e) => handleStep(setSeg3, -1, 2, 10, e)}
-                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs"
+                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs active:scale-95"
                       >
                         －
                       </button>
-                      <div className="h-full flex items-center justify-center bg-white rounded border border-slate-200 font-bold text-xs font-mono">
+                      <div className="h-full flex items-center justify-center bg-emerald-50 rounded border border-emerald-200 font-bold text-xs font-mono text-emerald-950">
                         {seg3}
                       </div>
                       <button
                         type="button"
                         onClick={(e) => handleStep(setSeg3, 1, 2, 10, e)}
-                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs"
+                        className="w-full h-full flex items-center justify-center rounded bg-white border border-slate-300 font-bold text-xs active:scale-95"
                       >
                         ＋
                       </button>
@@ -812,11 +909,11 @@ export default function GeometrikesEnnoiesTheoria() {
                 </div>
               </div>
 
-              {/* SVG Απεικόνιση Τεθλασμένης (7 cols) */}
+              {/* Δυναμικό SVG Απεικόνισης Τεθλασμένης (7 cols) */}
               <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
-                    ΜΟΡΦΗ ΓΡΑΜΜΗΣ
+                    ΜΟΡΦΗ ΓΡΑΜΜΗΣ (ΔΥΝΑΜΙΚΗ ΚΛΙΜΑΚΑ)
                   </span>
                   <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-200 border border-indigo-400/30 font-sans">
                     ΜΗΚΟΣ: {totalPolyLen} M
@@ -824,90 +921,327 @@ export default function GeometrikesEnnoiesTheoria() {
                 </div>
 
                 <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 flex justify-center">
-                  <svg viewBox="0 0 520 200" className="w-full max-w-[500px] h-auto">
+                  <svg viewBox="0 0 520 205" className="w-full max-w-[500px] h-auto">
                     {polyMode === 'collinear' ? (
-                      /* Διαδοχικά Συνευθειακά Τμήματα πάνω στην ίδια ευθεία */
+                      /* Διαδοχικά Συνευθειακά Τμήματα με δυναμικά μήκη */
                       <g>
-                        <line x1="60" y1="100" x2="200" y2="100" stroke="#38bdf8" strokeWidth="5" />
-                        <line x1="200" y1="100" x2="320" y2="100" stroke="#f59e0b" strokeWidth="5" />
-                        <line x1="320" y1="100" x2="460" y2="100" stroke="#10b981" strokeWidth="5" />
+                        <line
+                          x1={polyGeometry.colPts.xA}
+                          y1="100"
+                          x2={polyGeometry.colPts.xB}
+                          y2="100"
+                          stroke="#38bdf8"
+                          strokeWidth="5"
+                        />
+                        <line
+                          x1={polyGeometry.colPts.xB}
+                          y1="100"
+                          x2={polyGeometry.colPts.xC}
+                          y2="100"
+                          stroke="#f59e0b"
+                          strokeWidth="5"
+                        />
+                        <line
+                          x1={polyGeometry.colPts.xC}
+                          y1="100"
+                          x2={polyGeometry.colPts.xD}
+                          y2="100"
+                          stroke="#10b981"
+                          strokeWidth="5"
+                        />
 
-                        <circle cx="60" cy="100" r="6" fill="#ffffff" />
-                        <text x="60" y="130" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle">Α</text>
+                        <circle cx={polyGeometry.colPts.xA} cy="100" r="6" fill="#ffffff" />
+                        <text x={polyGeometry.colPts.xA} y="130" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle">
+                          Α
+                        </text>
 
-                        <circle cx="200" cy="100" r="6" fill="#ffffff" />
-                        <text x="200" y="130" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle">Β</text>
+                        <circle cx={polyGeometry.colPts.xB} cy="100" r="6" fill="#ffffff" />
+                        <text x={polyGeometry.colPts.xB} y="130" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle">
+                          Β
+                        </text>
 
-                        <circle cx="320" cy="100" r="6" fill="#ffffff" />
-                        <text x="320" y="130" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle">Γ</text>
+                        <circle cx={polyGeometry.colPts.xC} cy="100" r="6" fill="#ffffff" />
+                        <text x={polyGeometry.colPts.xC} y="130" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle">
+                          Γ
+                        </text>
 
-                        <circle cx="460" cy="100" r="6" fill="#ffffff" />
-                        <text x="460" y="130" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle">Δ</text>
+                        <circle cx={polyGeometry.colPts.xD} cy="100" r="6" fill="#ffffff" />
+                        <text x={polyGeometry.colPts.xD} y="130" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle">
+                          Δ
+                        </text>
 
-                        <text x="130" y="80" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">{seg1} m</text>
-                        <text x="260" y="80" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="middle">{seg2} m</text>
-                        <text x="390" y="80" fill="#10b981" fontSize="12" fontWeight="bold" textAnchor="middle">{seg3} m</text>
+                        <text
+                          x={(polyGeometry.colPts.xA + polyGeometry.colPts.xB) / 2}
+                          y="78"
+                          fill="#38bdf8"
+                          fontSize="12"
+                          fontWeight="bold"
+                          textAnchor="middle"
+                        >
+                          {seg1} m
+                        </text>
+                        <text
+                          x={(polyGeometry.colPts.xB + polyGeometry.colPts.xC) / 2}
+                          y="78"
+                          fill="#f59e0b"
+                          fontSize="12"
+                          fontWeight="bold"
+                          textAnchor="middle"
+                        >
+                          {seg2} m
+                        </text>
+                        <text
+                          x={(polyGeometry.colPts.xC + polyGeometry.colPts.xD) / 2}
+                          y="78"
+                          fill="#10b981"
+                          fontSize="12"
+                          fontWeight="bold"
+                          textAnchor="middle"
+                        >
+                          {seg3} m
+                        </text>
                       </g>
                     ) : polyMode === 'closedPoly' ? (
-                      /* Κλειστή Τεθλασμένη (Τρίγωνο ΑΒΓ) */
-                      <g>
-                        <polygon points="120,155 260,35 400,155" fill="#1e1b4b" fillOpacity="0.6" />
-                        <line x1="120" y1="155" x2="260" y2="35" stroke="#38bdf8" strokeWidth="4.5" />
-                        <line x1="260" y1="35" x2="400" y2="155" stroke="#f59e0b" strokeWidth="4.5" />
-                        <line x1="400" y1="155" x2="120" y2="155" stroke="#10b981" strokeWidth="4.5" />
+                      /* Κλειστή Τεθλασμένη (Τρίγωνο με δυναμικές πλευρές) */
+                      polyGeometry.canClose && polyGeometry.closedPts ? (
+                        <g>
+                          <polygon
+                            points={`${polyGeometry.closedPts.A.x},${polyGeometry.closedPts.A.y} ${polyGeometry.closedPts.B.x},${polyGeometry.closedPts.B.y} ${polyGeometry.closedPts.C.x},${polyGeometry.closedPts.C.y}`}
+                            fill="#1e1b4b"
+                            fillOpacity="0.6"
+                          />
+                          <line
+                            x1={polyGeometry.closedPts.A.x}
+                            y1={polyGeometry.closedPts.A.y}
+                            x2={polyGeometry.closedPts.B.x}
+                            y2={polyGeometry.closedPts.B.y}
+                            stroke="#38bdf8"
+                            strokeWidth="4.5"
+                          />
+                          <line
+                            x1={polyGeometry.closedPts.B.x}
+                            y1={polyGeometry.closedPts.B.y}
+                            x2={polyGeometry.closedPts.C.x}
+                            y2={polyGeometry.closedPts.C.y}
+                            stroke="#f59e0b"
+                            strokeWidth="4.5"
+                          />
+                          <line
+                            x1={polyGeometry.closedPts.C.x}
+                            y1={polyGeometry.closedPts.C.y}
+                            x2={polyGeometry.closedPts.A.x}
+                            y2={polyGeometry.closedPts.A.y}
+                            stroke="#10b981"
+                            strokeWidth="4.5"
+                          />
 
-                        <circle cx="120" cy="155" r="6" fill="#ffffff" />
-                        <text x="100" y="165" fill="#ffffff" fontSize="14" fontWeight="bold">Α (＝Δ)</text>
+                          <circle cx={polyGeometry.closedPts.A.x} cy={polyGeometry.closedPts.A.y} r="6" fill="#ffffff" />
+                          <text
+                            x={polyGeometry.closedPts.A.x - 10}
+                            y={polyGeometry.closedPts.A.y + 18}
+                            fill="#ffffff"
+                            fontSize="13"
+                            fontWeight="bold"
+                            textAnchor="end"
+                          >
+                            Α (＝Δ)
+                          </text>
 
-                        <circle cx="260" cy="35" r="6" fill="#ffffff" />
-                        <text x="260" y="22" fill="#ffffff" fontSize="14" fontWeight="bold" textAnchor="middle">Β</text>
+                          <circle cx={polyGeometry.closedPts.B.x} cy={polyGeometry.closedPts.B.y} r="6" fill="#ffffff" />
+                          <text
+                            x={polyGeometry.closedPts.B.x}
+                            y={polyGeometry.closedPts.B.y - 12}
+                            fill="#ffffff"
+                            fontSize="13"
+                            fontWeight="bold"
+                            textAnchor="middle"
+                          >
+                            Β
+                          </text>
 
-                        <circle cx="400" cy="155" r="6" fill="#ffffff" />
-                        <text x="418" y="165" fill="#ffffff" fontSize="14" fontWeight="bold">Γ</text>
+                          <circle cx={polyGeometry.closedPts.C.x} cy={polyGeometry.closedPts.C.y} r="6" fill="#ffffff" />
+                          <text
+                            x={polyGeometry.closedPts.C.x + 12}
+                            y={polyGeometry.closedPts.C.y + 18}
+                            fill="#ffffff"
+                            fontSize="13"
+                            fontWeight="bold"
+                          >
+                            Γ
+                          </text>
 
-                        <text x="175" y="85" fill="#38bdf8" fontSize="12" fontWeight="bold">{seg1} m</text>
-                        <text x="345" y="85" fill="#f59e0b" fontSize="12" fontWeight="bold">{seg2} m</text>
-                        <text x="260" y="175" fill="#10b981" fontSize="12" fontWeight="bold" textAnchor="middle">{seg3} m</text>
-                      </g>
+                          {/* Ετικέτες πλευρών στο μέσο κάθε πλευράς */}
+                          <text
+                            x={(polyGeometry.closedPts.A.x + polyGeometry.closedPts.B.x) / 2 - 14}
+                            y={(polyGeometry.closedPts.A.y + polyGeometry.closedPts.B.y) / 2 - 6}
+                            fill="#38bdf8"
+                            fontSize="12"
+                            fontWeight="bold"
+                            textAnchor="end"
+                          >
+                            {seg1} m
+                          </text>
+                          <text
+                            x={(polyGeometry.closedPts.B.x + polyGeometry.closedPts.C.x) / 2 + 14}
+                            y={(polyGeometry.closedPts.B.y + polyGeometry.closedPts.C.y) / 2 - 6}
+                            fill="#f59e0b"
+                            fontSize="12"
+                            fontWeight="bold"
+                          >
+                            {seg2} m
+                          </text>
+                          <text
+                            x={(polyGeometry.closedPts.A.x + polyGeometry.closedPts.C.x) / 2}
+                            y={polyGeometry.closedPts.A.y + 22}
+                            fill="#10b981"
+                            fontSize="12"
+                            fontWeight="bold"
+                            textAnchor="middle"
+                          >
+                            {seg3} m
+                          </text>
+                        </g>
+                      ) : (
+                        /* Όταν τα μήκη δεν μπορούν να κλείσουν σε τρίγωνο */
+                        <g>
+                          <text x="260" y="90" fill="#fda4af" fontSize="14" fontWeight="bold" textAnchor="middle">
+                            ⚠️ Τα τμήματα ({seg1} m, {seg2} m, {seg3} m) δεν μπορούν να κλείσουν!
+                          </text>
+                          <text x="260" y="118" fill="#cbd5e1" fontSize="12" textAnchor="middle">
+                            Το μεγαλύτερο τμήμα πρέπει να είναι μικρότερο από το άθροισμα των δύο άλλων.
+                          </text>
+                        </g>
+                      )
                     ) : (
-                      /* Ανοιχτή Τεθλασμένη ΑΒΓΔ (+ Συντομότερη Διαδρομή ΑΔ) */
+                      /* Ανοιχτή Τεθλασμένη ΑΒΓΔ (+ Συντομότερη Διαδρομή ΑΔ) με δυναμικές συντεταγμένες */
                       <g>
                         {polyMode === 'shortestPath' && (
                           <g>
                             <line
-                              x1="60"
-                              y1="145"
-                              x2="460"
-                              y2="145"
+                              x1={polyGeometry.openPts.A.x}
+                              y1={polyGeometry.openPts.A.y}
+                              x2={polyGeometry.openPts.D.x}
+                              y2={polyGeometry.openPts.D.y}
                               stroke="#f43f5e"
-                              strokeWidth="4"
-                              strokeDasharray="8 5"
+                              strokeWidth="3.5"
+                              strokeDasharray="7 5"
                             />
-                            <text x="260" y="172" fill="#fda4af" fontSize="12" fontWeight="bold" textAnchor="middle">
-                              Ευθύγραμμο Τμήμα ΑΔ (Συντομότερη Διαδρομή ＜ {totalPolyLen} m)
+                            <text
+                              x={(polyGeometry.openPts.A.x + polyGeometry.openPts.D.x) / 2}
+                              y={Math.max(polyGeometry.openPts.A.y, polyGeometry.openPts.D.y) + 28}
+                              fill="#fda4af"
+                              fontSize="12"
+                              fontWeight="bold"
+                              textAnchor="middle"
+                            >
+                              ΑΔ ≈ {polyGeometry.directAD.toString().replace('.', ',')} m (＜ {totalPolyLen} m)
                             </text>
                           </g>
                         )}
 
-                        <line x1="60" y1="145" x2="180" y2="45" stroke="#38bdf8" strokeWidth="4.5" />
-                        <line x1="180" y1="45" x2="330" y2="115" stroke="#f59e0b" strokeWidth="4.5" />
-                        <line x1="330" y1="115" x2="460" y2="145" stroke="#10b981" strokeWidth="4.5" />
+                        <line
+                          x1={polyGeometry.openPts.A.x}
+                          y1={polyGeometry.openPts.A.y}
+                          x2={polyGeometry.openPts.B.x}
+                          y2={polyGeometry.openPts.B.y}
+                          stroke="#38bdf8"
+                          strokeWidth="4.5"
+                        />
+                        <line
+                          x1={polyGeometry.openPts.B.x}
+                          y1={polyGeometry.openPts.B.y}
+                          x2={polyGeometry.openPts.C.x}
+                          y2={polyGeometry.openPts.C.y}
+                          stroke="#f59e0b"
+                          strokeWidth="4.5"
+                        />
+                        <line
+                          x1={polyGeometry.openPts.C.x}
+                          y1={polyGeometry.openPts.C.y}
+                          x2={polyGeometry.openPts.D.x}
+                          y2={polyGeometry.openPts.D.y}
+                          stroke="#10b981"
+                          strokeWidth="4.5"
+                        />
 
-                        <circle cx="60" cy="145" r="6" fill="#ffffff" />
-                        <text x="45" y="150" fill="#ffffff" fontSize="14" fontWeight="bold">Α</text>
+                        {/* Κορυφές Α, Β, Γ, Δ */}
+                        <circle cx={polyGeometry.openPts.A.x} cy={polyGeometry.openPts.A.y} r="6" fill="#ffffff" />
+                        <text
+                          x={polyGeometry.openPts.A.x - 14}
+                          y={polyGeometry.openPts.A.y + 5}
+                          fill="#ffffff"
+                          fontSize="13"
+                          fontWeight="bold"
+                          textAnchor="end"
+                        >
+                          Α
+                        </text>
 
-                        <circle cx="180" cy="45" r="6" fill="#ffffff" />
-                        <text x="180" y="30" fill="#ffffff" fontSize="14" fontWeight="bold" textAnchor="middle">Β</text>
+                        <circle cx={polyGeometry.openPts.B.x} cy={polyGeometry.openPts.B.y} r="6" fill="#ffffff" />
+                        <text
+                          x={polyGeometry.openPts.B.x}
+                          y={polyGeometry.openPts.B.y - 12}
+                          fill="#ffffff"
+                          fontSize="13"
+                          fontWeight="bold"
+                          textAnchor="middle"
+                        >
+                          Β
+                        </text>
 
-                        <circle cx="330" cy="115" r="6" fill="#ffffff" />
-                        <text x="330" y="100" fill="#ffffff" fontSize="14" fontWeight="bold" textAnchor="middle">Γ</text>
+                        <circle cx={polyGeometry.openPts.C.x} cy={polyGeometry.openPts.C.y} r="6" fill="#ffffff" />
+                        <text
+                          x={polyGeometry.openPts.C.x}
+                          y={polyGeometry.openPts.C.y + 20}
+                          fill="#ffffff"
+                          fontSize="13"
+                          fontWeight="bold"
+                          textAnchor="middle"
+                        >
+                          Γ
+                        </text>
 
-                        <circle cx="460" cy="145" r="6" fill="#ffffff" />
-                        <text x="475" y="150" fill="#ffffff" fontSize="14" fontWeight="bold">Δ</text>
+                        <circle cx={polyGeometry.openPts.D.x} cy={polyGeometry.openPts.D.y} r="6" fill="#ffffff" />
+                        <text
+                          x={polyGeometry.openPts.D.x + 14}
+                          y={polyGeometry.openPts.D.y + 5}
+                          fill="#ffffff"
+                          fontSize="13"
+                          fontWeight="bold"
+                        >
+                          Δ
+                        </text>
 
-                        <text x="105" y="85" fill="#38bdf8" fontSize="12" fontWeight="bold">{seg1} m</text>
-                        <text x="265" y="70" fill="#f59e0b" fontSize="12" fontWeight="bold">{seg2} m</text>
-                        <text x="400" y="120" fill="#10b981" fontSize="12" fontWeight="bold">{seg3} m</text>
+                        {/* Δυναμικές ετικέτες μηκών στο κέντρο κάθε πλευράς */}
+                        <text
+                          x={(polyGeometry.openPts.A.x + polyGeometry.openPts.B.x) / 2 - 10}
+                          y={(polyGeometry.openPts.A.y + polyGeometry.openPts.B.y) / 2 - 8}
+                          fill="#38bdf8"
+                          fontSize="12"
+                          fontWeight="bold"
+                          textAnchor="end"
+                        >
+                          {seg1} m
+                        </text>
+                        <text
+                          x={(polyGeometry.openPts.B.x + polyGeometry.openPts.C.x) / 2 + 8}
+                          y={(polyGeometry.openPts.B.y + polyGeometry.openPts.C.y) / 2 - 8}
+                          fill="#f59e0b"
+                          fontSize="12"
+                          fontWeight="bold"
+                        >
+                          {seg2} m
+                        </text>
+                        <text
+                          x={(polyGeometry.openPts.C.x + polyGeometry.openPts.D.x) / 2}
+                          y={(polyGeometry.openPts.C.y + polyGeometry.openPts.D.y) / 2 - 10}
+                          fill="#10b981"
+                          fontSize="12"
+                          fontWeight="bold"
+                          textAnchor="middle"
+                        >
+                          {seg3} m
+                        </text>
                       </g>
                     )}
                   </svg>
@@ -916,22 +1250,25 @@ export default function GeometrikesEnnoiesTheoria() {
                 <div className="p-3.5 bg-white/10 rounded-xl border border-white/10 text-xs sm:text-sm font-sans text-slate-200 leading-relaxed">
                   {polyMode === 'openPoly' && (
                     <div>
-                      <strong>Ανοιχτή Τεθλασμένη Γραμμή ΑΒΓΔ:</strong> Τα τμήματα ΑΒ, ΒΓ, ΓΔ είναι διαδοχικά και μη συνευθειακά. Τα σημεία Α, Β, Γ, Δ λέγονται <strong>κορυφές</strong> και τα ΑΒ, ΒΓ, ΓΔ <strong>πλευρές</strong> της τεθλασμένης.
+                      <strong>Ανοιχτή Τεθλασμένη Γραμμή ΑΒΓΔ:</strong> Τα τμήματα ΑΒ ({seg1} m), ΒΓ ({seg2} m) και ΓΔ ({seg3} m) μεταβάλλονται ζωντανά στο σχήμα! Τα σημεία Α, Β, Γ, Δ λέγονται <strong>κορυφές</strong> και τα ΑΒ, ΒΓ, ΓΔ <strong>πλευρές</strong> της τεθλασμένης.
                     </div>
                   )}
                   {polyMode === 'closedPoly' && (
                     <div>
-                      <strong>Κλειστή Τεθλασμένη Γραμμή (Πολύγωνο):</strong> Το τέλος του τελευταίου τμήματος συμπίπτει με την αρχή Α του πρώτου τμήματος, σχηματίζοντας ένα κλειστό επίπεδο σχήμα.
+                      <strong>Κλειστή Τεθλασμένη Γραμμή (Πολύγωνο):</strong>{' '}
+                      {polyGeometry.canClose
+                        ? 'Το τέλος του τρίτου τμήματος συμπίπτει με την αρχή Α του πρώτου τμήματος, σχηματίζοντας ένα τρίγωνο!'
+                        : 'Δοκίμασε να αυξήσεις τα μικρά τμήματα ή να μειώσεις το μεγάλο ώστε να μπορέσει να κλείσει η τεθλασμένη γραμμή!'}
                     </div>
                   )}
                   {polyMode === 'collinear' && (
                     <div>
-                      <strong>Διαδοχικά Συνευθειακά Τμήματα:</strong> Όταν τα διαδοχικά τμήματα βρίσκονται πάνω στην ίδια ευθεία, <strong>ΔΕΝ σχηματίζουν τεθλασμένη γραμμή</strong>, αλλά ένα μεγαλύτερο ευθύγραμμο τμήμα ΑΔ μήκους <strong>{totalPolyLen} m</strong>!
+                      <strong>Διαδοχικά Συνευθειακά Τμήματα:</strong> Όταν τα διαδοχικά τμήματα βρίσκονται πάνω στην ίδια ευθεία, <strong>ΔΕΝ σχηματίζουν τεθλασμένη γραμμή</strong>, αλλά ένα ενιαίο ευθύγραμμο τμήμα ΑΔ μήκους <strong>{totalPolyLen} m</strong>!
                     </div>
                   )}
                   {polyMode === 'shortestPath' && (
                     <div>
-                      <strong>Συντομότερη Διαδρομή:</strong> Για να πάμε από το Α στο Δ, η απευθείας ευθύγραμμη διαδρομή <strong>ΑΔ</strong> είναι πάντα μικρότερη από την τεθλασμένη διαδρομή <strong>ΑΒ ＋ ΒΓ ＋ ΓΔ ({totalPolyLen} m)</strong>.
+                      <strong>Συντομότερη Διαδρομή:</strong> Το ευθύγραμμο τμήμα <strong>ΑΔ (≈ {polyGeometry.directAD.toString().replace('.', ',')} m)</strong> που ενώνει απευθείας το Α με το Δ είναι μικρότερο από το μήκος της τεθλασμένης <strong>ΑΒ ＋ ΒΓ ＋ ΓΔ ({totalPolyLen} m)</strong>.
                     </div>
                   )}
                 </div>
