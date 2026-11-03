@@ -1,7 +1,33 @@
-import React, { useState } from 'react';
-import Head from 'next/head';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Layout from '../../components/Layout';
+
+// ============================================================================
+// ΕΠΑΝΑΧΡΗΣΙΜΟΠΟΙΗΣΙΜΟ COMPONENT ΚΛΑΣΜΑΤΟΣ (Πρόσημο πάντα μπροστά από τη γραμμή)
+// ============================================================================
+function Frac({ num, den, isNeg = false, className = '' }) {
+  const numStr = String(num);
+  const denStr = String(den);
+  const hasMinus = numStr.startsWith('-') || denStr.startsWith('-') || isNeg;
+
+  const displayNum = numStr.replace(/^-/, '');
+  const displayDen = denStr.replace(/^-/, '');
+
+  return (
+    <span className={`inline-flex items-center gap-0.5 align-middle mx-1 font-mono ${className}`}>
+      {hasMinus && <span className="font-bold">－</span>}
+      <span className="inline-flex flex-col items-center justify-center leading-none text-center">
+        <span className="pb-0.5 px-1.5 border-b-2 w-full text-center" style={{ borderColor: 'currentColor' }}>
+          {displayNum}
+        </span>
+        <span className="pt-0.5 px-1.5 w-full text-center">
+          {displayDen}
+        </span>
+      </span>
+    </span>
+  );
+}
 
 // Καθαρισμός τόνων για ελληνικά κεφαλαία (διατηρεί μόνο το Α')
 function toCleanUppercase(str) {
@@ -15,24 +41,28 @@ function toCleanUppercase(str) {
     .join('');
 }
 
-// Βοηθητική συνάρτηση κατακόρυφης κλασματικής μορφής (Mobile safe)
-const renderFraction = (num, den) =>
-  `<span class="inline-flex flex-col text-center align-middle mx-0.5 sm:mx-1 font-mono text-[0.85em] sm:text-[0.9em] leading-none shrink-0 max-w-full">` +
-  `<span class="border-b border-current px-0.5 sm:px-1 pb-0.5 break-all">${num}</span>` +
-  `<span class="pt-0.5 break-all">${den}</span>` +
-  `</span>`;
-
 export default function GoneiesTheoria() {
   const router = useRouter();
   const locale = router?.locale || 'el';
 
-  // State για το διαδραστικό εργαστήριο γωνιών
+  // --------------------------------------------------------------------------
+  // STATE ΕΡΓΑΣΤΗΡΙΟΥ 1: Μοιρογνώμονας & Είδη Γωνιών (0° - 360°)
+  // --------------------------------------------------------------------------
   const [angleDeg, setAngleDeg] = useState(55);
-  // State για το εργαστήριο σχέσεων γωνιών (συμπληρωματικές / παραπληρωματικές / εφεξής)
-  const [relationMode, setRelationMode] = useState('supplementary'); // 'free', 'complementary', 'supplementary'
-  const [angle1, setAngle1] = useState(60);
 
-  // Stepper με πλήρη αποτροπή propagation
+  // --------------------------------------------------------------------------
+  // STATE ΕΡΓΑΣΤΗΡΙΟΥ 2: Εφεξής, Συμπληρωματικές, Παραπληρωματικές & Κατακορυφήν
+  // modes: 'adjacent' | 'complementary' | 'supplementary' | 'vertical'
+  // --------------------------------------------------------------------------
+  const [relationMode, setRelationMode] = useState('complementary');
+  const [angleA, setAngleA] = useState(35);
+
+  // --------------------------------------------------------------------------
+  // STATE ΕΡΓΑΣΤΗΡΙΟΥ 3: Διχοτόμος Γωνίας
+  // --------------------------------------------------------------------------
+  const [bisectMainAngle, setBisectMainAngle] = useState(70);
+
+  // Stepper με πλήρη αποτροπή event propagation
   const handleStep = (setter, val, min, max, e) => {
     if (e) {
       e.preventDefault();
@@ -41,34 +71,28 @@ export default function GoneiesTheoria() {
     setter((prev) => Math.max(min, Math.min(max, prev + val)));
   };
 
-  // Συγκεντρωτικό Λεξικό i18n
+  // --------------------------------------------------------------------------
+  // ΣΥΓΚΕΝΤΡΩΤΙΚΟ ΛΕΞΙΚΟ i18n
+  // --------------------------------------------------------------------------
   const t = {
     el: {
-      badge: "Α' ΓΥΜΝΑΣΙΟΥ - ΓΕΩΜΕΤΡΙΑ",
-      title: "Γωνίες: Είδη, Σύγκριση & Σχέσεις Γωνιών",
-      subtitle: "Ανακάλυψε διαδραστικά πώς σχηματίζονται οι γωνίες, πώς ταξινομούνται και πώς συνδέονται μεταξύ τους.",
-      btnExercises: "ΜΕΤΑΒΑΣΗ ΣΤΙΣ ΑΣΚΗΣΕΙΣ",
-      sections: {
-        intro: "1. Τι είναι Γωνία;",
-        types: "2. Είδη & Κατηγορίες Γωνιών",
-        relations: "3. Σχέσεις Γωνιών: Εφεξής & Διαδοχικές",
-        specialPairs: "4. Συμπληρωματικές, Παραπληρωματικές & Κατακορυφήν",
-        bisector: "5. Διχοτόμος Γωνίας",
-        problems: "6. Λυμένα Παραδείγματα & Προβλήματα"
-      },
-      interactiveLab1Title: "Διαδραστικός Μοιρογνώμονας (Εξερεύνησε τα είδη)",
-      angleValue: "Μέτρο Γωνίας:",
-      typeLabel: "Είδος Γωνίας:",
-      interactiveLab2Title: "Εργαστήριο Σχέσεων & Ζευγών Γωνιών",
-      angle1Label: "Γωνία α:",
-      angle2Label: "Γωνία β:",
-      sumLabel: "Άθροισμα (α ＋ β):",
-      modes: {
-        free: "Ελεύθερη Εφεξής",
-        complementary: "Συμπληρωματικές (90°)",
-        supplementary: "Παραπληρωματικές (180°)"
-      },
-      angleTypes: {
+      pageTitle: "Γωνίες: Είδη, Σύγκριση & Σχέσεις Γωνιών | Α' Γυμνασίου",
+      pageDesc: "Έννοια γωνίας, είδη γωνιών, σύγκριση, εφεξής, διαδοχικές, συμπληρωματικές, παραπληρωματικές, κατακορυφήν γωνίες και διχοτόμος με διαδραστικά εργαστήρια.",
+      backText: "Α' Γυμνασίου",
+      btnExercises: "ΑΣΚΗΣΕΙΣ",
+      bannerBadge: "Α' ΓΥΜΝΑΣΙΟΥ • ΚΕΦΑΛΑΙΟ ΓΕΩΜΕΤΡΙΑΣ • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ",
+      bannerTitle: "Γωνίες: Είδη, Σύγκριση & Σχέσεις Γωνιών",
+      bannerSubtitle: "Εξερευνούμε διαδραστικά πώς σχηματίζονται οι γωνίες, τα είδη τους (οξεία, ορθή, αμβλεία, ευθεία κ.ά.), τις εφεξής και διαδοχικές γωνίες, τα ειδικά ζεύγη και τη διχοτόμο.",
+      sec1Title: "Έννοια της Γωνίας, Κορυφή, Πλευρές & Είδη Γωνιών",
+      sec2Title: "Σχέσεις Γωνιών: Εφεξής, Συμπληρωματικές, Παραπληρωματικές & Κατακορυφήν",
+      sec3Title: "Διχοτόμος Γωνίας",
+      sec4Title: "Παραδείγματα με Προβλήματα",
+      lab1Header: "Εργαστήριο 1: Διαδραστικός Μοιρογνώμονας — Περίστρεψε την πλευρά Oy και δες το είδος της γωνίας",
+      lab2Header: "Εργαστήριο 2: Πειραματίσου με τα Ζεύγη Γωνιών (Εφεξής, Συμπληρωματικές, Παραπληρωματικές, Κατακορυφήν)",
+      lab3Header: "Εργαστήριο 3: Διχοτόμος Γωνίας — Ζωντανός Χωρισμός σε 2 Ίσα Μέρη",
+      angleMeasure: "ΜΕΤΡΟ ΓΩΝΙΑΣ",
+      angleType: "ΕΙΔΟΣ ΓΩΝΙΑΣ",
+      types: {
         zero: "Μηδενική Γωνία (0°)",
         acute: "Οξεία Γωνία (0° ＜ x ＜ 90°)",
         right: "Ορθή Γωνία (90°)",
@@ -77,44 +101,31 @@ export default function GoneiesTheoria() {
         reflex: "Μη Κυρτή / Ανακλώμενη (180° ＜ x ＜ 360°)",
         full: "Πλήρης Γωνία (360°)"
       },
-      introText1: "Γωνία ονομάζεται το γεωμετρικό σχήμα που αποτελείται από δύο ημιευθείες με κοινή αρχή, μαζί με το μέρος του επιπέδου που περικλείεται μεταξύ τους.",
-      introVertex: "Κορυφή της γωνίας:",
-      introSides: "Πλευρές της γωνίας:",
-      adjacentDesc: "Δύο γωνίες λέγονται **εφεξής** όταν έχουν την ίδια κορυφή, μία κοινή πλευρά και κανένα άλλο κοινό σημείο (δεν επικαλύπτονται).",
-      consecutiveDesc: "Τρεις ή περισσότερες γωνίες λέγονται **διαδοχικές** όταν ανά δύο είναι εφεξής.",
-      compDesc: "Δύο γωνίες ονομάζονται **συμπληρωματικές** όταν το άθροισμά τους ισούται ακριβώς με 90° (ορθή γωνία).",
-      suppDesc: "Δύο γωνίες ονομάζονται **παραπληρωματικές** όταν το άθροισμά τους ισούται ακριβώς με 180° (ευθεία γωνία).",
-      vertDesc: "Δύο γωνίες λέγονται **κατακορυφήν** όταν οι πλευρές της μίας είναι αντικείμενες ημιευθείες των πλευρών της άλλης. Οι κατακορυφήν γωνίες είναι πάντα ίσες.",
-      bisectorDesc: "Διχοτόμος μιας γωνίας ονομάζεται η ημιευθεία που ξεκινά από την κορυφή της και τη χωρίζει σε δύο ίσες γωνίες.",
-      solveTitle: "Λύση:",
-      checkBack: "ΕΠΙΣΤΡΟΦΗ ΣΤΗΝ ΑΡΧΗ"
+      relModes: {
+        adjacent: "ΕΦΕΞΗΣ ΓΩΝΙΕΣ",
+        complementary: "ΣΥΜΠΛΗΡΩΜΑΤΙΚΕΣ (90°)",
+        supplementary: "ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΕΣ (180°)",
+        vertical: "ΚΑΤΑΚΟΡΥΦΗΝ (ΙΣΕΣ)"
+      }
     },
     en: {
-      badge: "GRADE 7 (A' GYMNASIUM) - GEOMETRY",
-      title: "Angles: Types, Comparison & Angle Relations",
-      subtitle: "Interactively explore how angles are formed, classified, and related to one another.",
-      btnExercises: "GO TO EXERCISES",
-      sections: {
-        intro: "1. What is an Angle?",
-        types: "2. Types & Classification of Angles",
-        relations: "3. Angle Relations: Adjacent & Consecutive",
-        specialPairs: "4. Complementary, Supplementary & Vertically Opposite",
-        bisector: "5. Angle Bisector",
-        problems: "6. Worked Examples & Problems"
-      },
-      interactiveLab1Title: "Interactive Protractor (Explore the types)",
-      angleValue: "Angle Measure:",
-      typeLabel: "Angle Type:",
-      interactiveLab2Title: "Angle Pairs & Relations Lab",
-      angle1Label: "Angle α:",
-      angle2Label: "Angle β:",
-      sumLabel: "Sum (α ＋ β):",
-      modes: {
-        free: "Free Adjacent",
-        complementary: "Complementary (90°)",
-        supplementary: "Supplementary (180°)"
-      },
-      angleTypes: {
+      pageTitle: "Angles: Types, Comparison & Relations | Grade 7",
+      pageDesc: "Concept of angle, types, comparison, adjacent, consecutive, complementary, supplementary, vertically opposite angles and bisector with interactive labs.",
+      backText: "Grade 7",
+      btnExercises: "EXERCISES",
+      bannerBadge: "GRADE 7 (A' GYMNASIUM) • GEOMETRY • THEORY & LAB",
+      bannerTitle: "Angles: Types, Comparison & Angle Relations",
+      bannerSubtitle: "Interactively explore how angles are formed, their types (acute, right, obtuse, straight, etc.), adjacent and consecutive angles, special pairs, and angle bisectors.",
+      sec1Title: "Concept of Angle, Vertex, Sides & Angle Types",
+      sec2Title: "Angle Relations: Adjacent, Complementary, Supplementary & Vertically Opposite",
+      sec3Title: "Angle Bisector",
+      sec4Title: "Worked Examples & Problems",
+      lab1Header: "Lab 1: Interactive Protractor — Rotate ray Oy to see the resulting angle classification",
+      lab2Header: "Lab 2: Experiment with Angle Pairs (Adjacent, Complementary, Supplementary, Vertically Opposite)",
+      lab3Header: "Lab 3: Angle Bisector — Live Equal Division into 2 Halves",
+      angleMeasure: "ANGLE MEASURE",
+      angleType: "ANGLE TYPE",
+      types: {
         zero: "Zero Angle (0°)",
         acute: "Acute Angle (0° ＜ x ＜ 90°)",
         right: "Right Angle (90°)",
@@ -123,580 +134,711 @@ export default function GoneiesTheoria() {
         reflex: "Reflex Angle (180° ＜ x ＜ 360°)",
         full: "Full Angle (360°)"
       },
-      introText1: "An angle is the geometric figure formed by two rays sharing a common endpoint, along with the portion of the plane enclosed between them.",
-      introVertex: "Vertex of the angle:",
-      introSides: "Sides of the angle:",
-      adjacentDesc: "Two angles are called **adjacent** when they share a common vertex and one common side, but have no other common interior points.",
-      consecutiveDesc: "Three or more angles are called **consecutive** when each pair of successive angles is adjacent.",
-      compDesc: "Two angles are called **complementary** when their sum is equal to 90° (a right angle).",
-      suppDesc: "Two angles are called **supplementary** when their sum is equal to 180° (a straight angle).",
-      vertDesc: "Two angles are called **vertically opposite** when the sides of one are opposite rays to the sides of the other. Vertically opposite angles are always equal.",
-      bisectorDesc: "The bisector of an angle is the ray starting from its vertex that divides the angle into two equal angles.",
-      solveTitle: "Solution:",
-      checkBack: "BACK TO TOP"
+      relModes: {
+        adjacent: "ADJACENT ANGLES",
+        complementary: "COMPLEMENTARY (90°)",
+        supplementary: "SUPPLEMENTARY (180°)",
+        vertical: "VERTICALLY OPPOSITE"
+      }
     }
   };
 
-  const currT = t[locale] || t.el;
+  const curr = t[locale] || t.el;
 
-  // Υπολογισμός τύπου γωνίας για το Εργαστήριο 1
-  const getAngleTypeName = (deg) => {
-    if (deg === 0) return currT.angleTypes.zero;
-    if (deg > 0 && deg < 90) return currT.angleTypes.acute;
-    if (deg === 90) return currT.angleTypes.right;
-    if (deg > 90 && deg < 180) return currT.angleTypes.obtuse;
-    if (deg === 180) return currT.angleTypes.straight;
-    if (deg > 180 && deg < 360) return currT.angleTypes.reflex;
-    return currT.angleTypes.full;
+  // Βοηθητική συνάρτηση ταξινόμησης γωνίας για το Εργαστήριο 1
+  const getAngleTypeInfo = (deg) => {
+    if (deg === 0) return { name: curr.types.zero, color: 'text-slate-300' };
+    if (deg > 0 && deg < 90) return { name: curr.types.acute, color: 'text-amber-400' };
+    if (deg === 90) return { name: curr.types.right, color: 'text-emerald-400' };
+    if (deg > 90 && deg < 180) return { name: curr.types.obtuse, color: 'text-sky-400' };
+    if (deg === 180) return { name: curr.types.straight, color: 'text-indigo-400' };
+    if (deg > 180 && deg < 360) return { name: curr.types.reflex, color: 'text-purple-400' };
+    return { name: curr.types.full, color: 'text-rose-400' };
   };
 
-  // Υπολογισμός γωνίας 2 για το Εργαστήριο 2 ανάλογα με το mode
-  const effectiveAngle2 =
-    relationMode === 'complementary'
-      ? Math.max(0, 90 - angle1)
-      : relationMode === 'supplementary'
-      ? Math.max(0, 180 - angle1)
-      : 40;
+  const angleTypeInfo = useMemo(() => getAngleTypeInfo(angleDeg), [angleDeg, locale]);
 
-  // SVG Helper: Μετατροπή μοιρών σε συντεταγμένες τόξου
-  const getRayCoordinates = (originX, originY, length, deg) => {
+  // Υπολογισμοί Εργαστηρίου 2: Γωνία Β ανάλογα με τη λειτουργία
+  const angleB = useMemo(() => {
+    if (relationMode === 'complementary') return Math.max(0, 90 - angleA);
+    if (relationMode === 'supplementary') return Math.max(0, 180 - angleA);
+    if (relationMode === 'vertical') return angleA;
+    return 45; // 'adjacent' σταθερή ενδεικτική δεύτερη γωνία
+  }, [relationMode, angleA]);
+
+  const pairSum = useMemo(() => {
+    if (relationMode === 'vertical') return null;
+    return angleA + angleB;
+  }, [relationMode, angleA, angleB]);
+
+  // Helper για συντεταγμένες ακτίνας (κέντρο cx, cy, ακτίνα r, μοίρες deg)
+  const getRayPoint = (cx, cy, r, deg) => {
     const rad = ((360 - deg) * Math.PI) / 180;
     return {
-      x: originX + length * Math.cos(rad),
-      y: originY + length * Math.sin(rad)
+      x: cx + r * Math.cos(rad),
+      y: cy + r * Math.sin(rad)
     };
   };
 
-  const lab1Ray = getRayCoordinates(140, 140, 100, angleDeg);
-  const lab2RayA = getRayCoordinates(140, 140, 95, angle1);
-  const lab2RayB = getRayCoordinates(140, 140, 95, angle1 + effectiveAngle2);
+  const rayLab1 = useMemo(() => getRayPoint(240, 150, 110, angleDeg), [angleDeg]);
+  const rayLab2_A = useMemo(() => getRayPoint(240, 150, 105, angleA), [angleA]);
+  const rayLab2_B = useMemo(
+    () => getRayPoint(240, 150, 105, relationMode === 'vertical' ? 180 : angleA + angleB),
+    [angleA, angleB, relationMode]
+  );
+  const rayLab2_OppA = useMemo(() => getRayPoint(240, 150, 105, (angleA + 180) % 360), [angleA]);
+
+  // Υπολογισμοί Εργαστηρίου 3 (Διχοτόμος)
+  const bisectHalf = useMemo(() => bisectMainAngle / 2, [bisectMainAngle]);
+  const rayBisectMain = useMemo(() => getRayPoint(240, 150, 110, bisectMainAngle), [bisectMainAngle]);
+  const rayBisectMid = useMemo(() => getRayPoint(240, 150, 110, bisectHalf), [bisectHalf]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased font-sans selection:bg-amber-500 selection:text-slate-950">
-      <Head>
-        <title>{currT.title} | LearnMaths.gr</title>
-        <meta name="description" content={currT.subtitle} />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-      </Head>
-
-      {/* Main Container Ultra-Wide & Mobile Safe */}
-      <main className="w-full min-w-0 max-w-full overflow-x-hidden">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 box-border">
-
-          {/* Header Banner */}
-          <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 border border-indigo-700/50 shadow-2xl p-6 sm:p-10 mb-8 sm:mb-12">
-            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div className="max-w-4xl">
-                <span className="inline-block px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-amber-300 font-mono text-xs sm:text-sm uppercase tracking-wider mb-3">
-                  {toCleanUppercase(currT.badge)}
-                </span>
-                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white break-words [overflow-wrap:anywhere]">
-                  {currT.title}
-                </h1>
-                <p className="mt-3 text-sm sm:text-base lg:text-lg text-indigo-200 leading-relaxed max-w-3xl break-words">
-                  {currT.subtitle}
-                </p>
-              </div>
-
-              <Link
-                href="/36-goneies-ask"
-                className="w-full md:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base transition-all duration-200 shadow-lg hover:shadow-amber-500/25 active:scale-95 shrink-0"
-              >
-                {toCleanUppercase(currT.btnExercises)}
-                <span className="ml-2 font-mono">→</span>
-              </Link>
-            </div>
-          </header>
-
-          {/* Section 1: Τι είναι Γωνία */}
-          <section className="mb-10 sm:mb-14 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-8 backdrop-blur-sm">
-            <h2 className="text-xl sm:text-2xl font-bold text-amber-400 mb-4 break-words">
-              {toCleanUppercase(currT.sections.intro)}
-            </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              <div className="lg:col-span-7 space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed break-words">
-                <p>{currT.introText1}</p>
-                <div className="bg-slate-950/70 border border-slate-800/80 p-4 rounded-xl space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
-                    <span><strong>{currT.introVertex}</strong> Το κοινό σημείο εκκίνησης <span className="font-mono text-amber-300">Ο</span>.</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 shrink-0"></span>
-                    <span><strong>{currT.introSides}</strong> Οι δύο ημιευθείες <span className="font-mono text-indigo-300">Οχ</span> και <span className="font-mono text-indigo-300">Οψ</span>.</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
-                    <span><strong>Συμβολισμός:</strong> <span className="font-mono text-emerald-300 font-bold">xÔy</span> ή απλά <span className="font-mono text-emerald-300 font-bold">Ô</span>.</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Στατικό SVG Εισαγωγής */}
-              <div className="lg:col-span-5 flex justify-center">
-                <div className="w-full max-w-[280px] sm:max-w-[320px] bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col items-center">
-                  <svg viewBox="0 0 200 160" className="w-full h-auto max-w-full">
-                    <defs>
-                      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#818cf8" />
-                      </marker>
-                    </defs>
-                    {/* Τόξο γωνίας */}
-                    <path d="M 120 120 A 40 40 0 0 0 108 92" fill="none" stroke="#f59e0b" strokeWidth="3" />
-                    <text x="118" y="102" fill="#f59e0b" fontSize="12" fontWeight="bold">Ô</text>
-                    {/* Πλευρές */}
-                    <line x1="80" y1="120" x2="180" y2="120" stroke="#818cf8" strokeWidth="3" markerEnd="url(#arrow)" />
-                    <line x1="80" y1="120" x2="140" y2="35" stroke="#818cf8" strokeWidth="3" markerEnd="url(#arrow)" />
-                    {/* Κορυφή και ονόματα */}
-                    <circle cx="80" cy="120" r="4" fill="#fbbf24" />
-                    <text x="65" y="130" fill="#f8fafc" fontSize="13" fontWeight="bold">Ο</text>
-                    <text x="180" y="138" fill="#c7d2fe" fontSize="13" fontWeight="bold">x</text>
-                    <text x="145" y="32" fill="#c7d2fe" fontSize="13" fontWeight="bold">y</text>
-                  </svg>
-                  <span className="text-xs text-slate-400 mt-2 font-mono">xÔy (Κορυφή Ο, Πλευρές Ox, Oy)</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Section 2: Είδη & Κατηγορίες Γωνιών + Interactive Lab 1 */}
-          <section className="mb-10 sm:mb-14 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-8 backdrop-blur-sm">
-            <h2 className="text-xl sm:text-2xl font-bold text-amber-400 mb-3 break-words">
-              {toCleanUppercase(currT.sections.types)}
-            </h2>
-            <p className="text-sm sm:text-base text-slate-300 mb-6 leading-relaxed">
-              Οι γωνίες ταξινομούνται με βάση το μέγεθός τους (άνοιγμα των πλευρών τους) σε μοίρες (°):
+    <Layout
+      title={curr.pageTitle}
+      description={curr.pageDesc}
+      backUrl="/a-gymnasiou"
+      backText={curr.backText}
+      showAds={true}
+      actionButton={
+        <Link
+          href="/a-gymnasiou/36-goneies-ask"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-sm sm:text-base transition-all shadow-md"
+        >
+          <span>🎯</span>
+          <span>{toCleanUppercase(curr.btnExercises)}</span>
+        </Link>
+      }
+    >
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
+        {/* Banner Header */}
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
+          <div className="max-w-4xl space-y-4">
+            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+              {toCleanUppercase(curr.bannerBadge)}
+            </span>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white break-words [overflow-wrap:anywhere]">
+              {curr.bannerTitle}
+            </h1>
+            <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed break-words">
+              {curr.bannerSubtitle}
             </p>
+          </div>
+        </section>
 
-            {/* Διαδραστικό Εργαστήριο 1: Μοιρογνώμονας */}
-            <div className="bg-slate-950 border border-indigo-900/60 rounded-2xl p-5 sm:p-7 mb-8 shadow-inner">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-6">
-                <h3 className="font-bold text-base sm:text-lg text-indigo-300">
-                  🕹️ {currT.interactiveLab1Title}
-                </h3>
-                <span className="text-xs font-mono px-2.5 py-1 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
-                  Interactive Lab
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                {/* SVG Οπτικοποίηση */}
-                <div className="lg:col-span-6 flex flex-col items-center justify-center">
-                  <div className="w-full max-w-[320px] sm:max-w-[360px] aspect-square bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex flex-col items-center justify-center relative shadow-lg">
-                    <svg viewBox="0 0 280 280" className="w-full h-full max-w-full">
-                      {/* Κύκλος μοιρογνωμόνoυ / οδηγός */}
-                      <circle cx="140" cy="140" r="100" fill="none" stroke="#334155" strokeWidth="1" strokeDasharray="3 3" />
-                      {/* Σταθερή πλευρά Ox (0 μοίρες, δεξιά) */}
-                      <line x1="140" y1="140" x2="245" y2="140" stroke="#94a3b8" strokeWidth="3" />
-                      <circle cx="245" cy="140" r="3" fill="#94a3b8" />
-                      <text x="252" y="144" fill="#94a3b8" fontSize="12" fontWeight="bold">x</text>
-
-                      {/* Κινούμενη πλευρά Oy */}
-                      <line x1="140" y1="140" x2={lab1Ray.x} y2={lab1Ray.y} stroke="#f59e0b" strokeWidth="3.5" />
-                      <circle cx={lab1Ray.x} cy={lab1Ray.y} r="4" fill="#f59e0b" />
-                      <text x={lab1Ray.x + 8} y={lab1Ray.y} fill="#fbbf24" fontSize="12" fontWeight="bold">y</text>
-
-                      {/* Τόξο γωνίας */}
-                      {angleDeg > 0 && angleDeg < 360 && (
-                        <path
-                          d={`M 175 140 A 35 35 0 ${angleDeg > 180 ? 1 : 0} 0 ${
-                            140 + 35 * Math.cos(((360 - angleDeg) * Math.PI) / 180)
-                          } ${140 + 35 * Math.sin(((360 - angleDeg) * Math.PI) / 180)}`}
-                          fill="rgba(245, 158, 11, 0.15)"
-                          stroke="#f59e0b"
-                          strokeWidth="2"
-                        />
-                      )}
-
-                      {/* Κορυφή Ο */}
-                      <circle cx="140" cy="140" r="5" fill="#38bdf8" />
-                      <text x="122" y="156" fill="#38bdf8" fontSize="14" fontWeight="bold">Ο</text>
-                    </svg>
-
-                    <div className="mt-2 text-center">
-                      <span className="text-xl sm:text-2xl font-black text-amber-400 font-mono">
-                        {angleDeg}°
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Χειριστήρια & Κατηγορία */}
-                <div className="lg:col-span-6 flex flex-col space-y-5">
-                  <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-                    <span className="text-xs uppercase text-slate-400 font-bold tracking-wider block mb-1">
-                      {currT.typeLabel}
-                    </span>
-                    <span className="text-lg sm:text-xl font-black text-emerald-400 break-words">
-                      {getAngleTypeName(angleDeg)}
-                    </span>
-                  </div>
-
-                  {/* Slider & Steppers */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs sm:text-sm text-slate-300">
-                      <span>{currT.angleValue}</span>
-                      <span className="font-mono font-bold text-amber-400 text-base">{angleDeg}°</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="360"
-                      step="1"
-                      value={angleDeg}
-                      onChange={(e) => setAngleDeg(Number(e.target.value))}
-                      className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                    />
-
-                    {/* Steppers */}
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {[-10, -1, 1, 10].map((step) => (
-                        <button
-                          key={step}
-                          type="button"
-                          onClick={(e) => handleStep(setAngleDeg, step, 0, 360, e)}
-                          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono font-bold border border-slate-700 active:scale-95 transition-all"
-                        >
-                          {step > 0 ? `＋${step}°` : `－${Math.abs(step)}°`}
-                        </button>
-                      ))}
-                      {/* Κουμπιά γρήγορης επιλογής */}
-                      <button
-                        type="button"
-                        onClick={() => setAngleDeg(90)}
-                        className="px-3 py-1.5 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 rounded-lg text-xs font-mono font-bold border border-indigo-700 active:scale-95 transition-all"
-                      >
-                        90° (Ορθή)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAngleDeg(180)}
-                        className="px-3 py-1.5 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 rounded-lg text-xs font-mono font-bold border border-indigo-700 active:scale-95 transition-all"
-                      >
-                        180° (Ευθεία)
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Πίνακας Ταξινόμησης Γωνιών */}
-            <div className="w-full overflow-x-auto block border border-slate-800 rounded-xl">
-              <table className="w-full text-left text-xs sm:text-sm text-slate-300">
-                <thead className="bg-slate-950 text-indigo-300 font-mono text-xs uppercase border-b border-slate-800">
-                  <tr>
-                    <th className="p-3 sm:p-4">Είδος Γωνίας</th>
-                    <th className="p-3 sm:p-4">Μέτρο (Μοίρες)</th>
-                    <th className="p-3 sm:p-4">Χαρακτηριστικό</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60 bg-slate-900/40 font-sans">
-                  <tr>
-                    <td className="p-3 sm:p-4 font-bold text-slate-200">Μηδενική</td>
-                    <td className="p-3 sm:p-4 font-mono text-amber-300">0°</td>
-                    <td className="p-3 sm:p-4">Οι δύο πλευρές συμπίπτουν πλήρως.</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 sm:p-4 font-bold text-slate-200">Οξεία</td>
-                    <td className="p-3 sm:p-4 font-mono text-amber-300">0° ＜ x ＜ 90°</td>
-                    <td className="p-3 sm:p-4">Μικρότερη από μία ορθή γωνία.</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 sm:p-4 font-bold text-slate-200">Ορθή</td>
-                    <td className="p-3 sm:p-4 font-mono text-amber-300">90°</td>
-                    <td className="p-3 sm:p-4">Οι πλευρές είναι κάθετες μεταξύ τους.</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 sm:p-4 font-bold text-slate-200">Αμβλεία</td>
-                    <td className="p-3 sm:p-4 font-mono text-amber-300">90° ＜ x ＜ 180°</td>
-                    <td className="p-3 sm:p-4">Μεγαλύτερη από ορθή και μικρότερη από ευθεία.</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 sm:p-4 font-bold text-slate-200">Ευθεία</td>
-                    <td className="p-3 sm:p-4 font-mono text-amber-300">180°</td>
-                    <td className="p-3 sm:p-4">Οι δύο πλευρές είναι αντικείμενες ημιευθείες.</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 sm:p-4 font-bold text-slate-200">Μη Κυρτή (Ανακλώμενη)</td>
-                    <td className="p-3 sm:p-4 font-mono text-amber-300">180° ＜ x ＜ 360°</td>
-                    <td className="p-3 sm:p-4">Μεγαλύτερη από ευθεία γωνία.</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3 sm:p-4 font-bold text-slate-200">Πλήρης</td>
-                    <td className="p-3 sm:p-4 font-mono text-amber-300">360°</td>
-                    <td className="p-3 sm:p-4">Πλήρης περιστροφή της κινούμενης πλευράς.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          {/* Section 3 & 4: Σχέσεις Γωνιών & Εργαστήριο Ζευγών */}
-          <section className="mb-10 sm:mb-14 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-8 backdrop-blur-sm">
-            <h2 className="text-xl sm:text-2xl font-bold text-amber-400 mb-3 break-words">
-              {toCleanUppercase(currT.sections.relations)}
+        {/* ====================================================================
+            1. ΕΝΝΟΙΑ ΓΩΝΙΑΣ, ΚΟΡΥΦΗ, ΠΛΕΥΡΕΣ & ΕΙΔΗ ΓΩΝΙΩΝ + ΕΡΓΑΣΤΗΡΙΟ 1
+           ==================================================================== */}
+        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+          <div className="border-b border-slate-100 pb-4">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+                1
+              </span>
+              {curr.sec1Title}
             </h2>
-
-            {/* Θεωρητικές κάρτες */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              <div className="bg-slate-950/80 border border-slate-800 p-4 sm:p-5 rounded-xl">
-                <h4 className="font-bold text-indigo-300 mb-2 text-base">📐 Εφεξής Γωνίες</h4>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  Δύο γωνίες λέγονται <strong>εφεξής</strong> όταν έχουν:
-                </p>
-                <ul className="list-disc list-inside text-xs sm:text-sm text-slate-400 mt-2 space-y-1">
-                  <li>Την ίδια κορυφή</li>
-                  <li>Μία κοινή πλευρά</li>
-                  <li>Κανένα άλλο κοινό σημείο (δεν «πατάει» η μία μέσα στην άλλη)</li>
-                </ul>
-              </div>
-
-              <div className="bg-slate-950/80 border border-slate-800 p-4 sm:p-5 rounded-xl">
-                <h4 className="font-bold text-indigo-300 mb-2 text-base">📐 Διαδοχικές Γωνίες</h4>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  Τρεις ή περισσότερες γωνίες που βρίσκονται στο ίδιο επίπεδο λέγονται <strong>διαδοχικές</strong> όταν ανά δύο είναι εφεξής, τοποθετημένες στη σειρά γύρω από την ίδια κορυφή.
-                </p>
-              </div>
-            </div>
-
-            {/* Section 4: Συμπληρωματικές - Παραπληρωματικές - Κατακορυφήν */}
-            <h3 className="text-lg sm:text-xl font-bold text-slate-200 mb-4 break-words">
-              {currT.sections.specialPairs}
-            </h3>
-
-            {/* Διαδραστικό Εργαστήριο 2: Ζεύγη Γωνιών */}
-            <div className="bg-slate-950 border border-indigo-900/60 rounded-2xl p-5 sm:p-7 mb-8 shadow-inner">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3 mb-6">
-                <h4 className="font-bold text-base sm:text-lg text-indigo-300">
-                  🕹️ {currT.interactiveLab2Title}
-                </h4>
-                {/* Mode Selectors */}
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => { setRelationMode('complementary'); setAngle1(40); }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                      relationMode === 'complementary'
-                        ? 'bg-amber-500 text-slate-950'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    {currT.modes.complementary}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setRelationMode('supplementary'); setAngle1(70); }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                      relationMode === 'supplementary'
-                        ? 'bg-amber-500 text-slate-950'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    {currT.modes.supplementary}
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                {/* SVG Απεικόνιση Ζεύγους */}
-                <div className="lg:col-span-6 flex flex-col items-center justify-center">
-                  <div className="w-full max-w-[320px] sm:max-w-[360px] aspect-square bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex flex-col items-center justify-center relative shadow-lg">
-                    <svg viewBox="0 0 280 280" className="w-full h-full max-w-full">
-                      {/* Αρχική πλευρά Οx (οριζόντια) */}
-                      <line x1="140" y1="140" x2="235" y2="140" stroke="#94a3b8" strokeWidth="3" />
-                      <text x="240" y="144" fill="#94a3b8" fontSize="12" fontWeight="bold">x</text>
-
-                      {/* Ενδιάμεση κοινή πλευρά Oy */}
-                      <line x1="140" y1="140" x2={lab2RayA.x} y2={lab2RayA.y} stroke="#f59e0b" strokeWidth="3.5" />
-                      <text x={lab2RayA.x + 6} y={lab2RayA.y} fill="#fbbf24" fontSize="12" fontWeight="bold">y</text>
-
-                      {/* Τελική πλευρά Oz */}
-                      <line x1="140" y1="140" x2={lab2RayB.x} y2={lab2RayB.y} stroke="#818cf8" strokeWidth="3.5" />
-                      <text x={lab2RayB.x + 6} y={lab2RayB.y} fill="#818cf8" fontSize="12" fontWeight="bold">z</text>
-
-                      {/* Κορυφή Ο */}
-                      <circle cx="140" cy="140" r="5" fill="#38bdf8" />
-                      <text x="124" y="156" fill="#38bdf8" fontSize="14" fontWeight="bold">Ο</text>
-                    </svg>
-
-                    <div className="mt-2 flex items-center justify-center gap-4 text-xs sm:text-sm font-mono">
-                      <span className="text-amber-400 font-bold">α ＝ {angle1}°</span>
-                      <span className="text-indigo-400 font-bold">β ＝ {effectiveAngle2}°</span>
-                      <span className="text-emerald-400 font-bold">Άθροισμα ＝ {angle1 + effectiveAngle2}°</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Χειριστήρια & Επεξήγηση Ζεύγους */}
-                <div className="lg:col-span-6 flex flex-col space-y-4">
-                  <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
-                    <span className="text-xs uppercase text-slate-400 font-bold tracking-wider block">
-                      {relationMode === 'complementary' ? 'Συμπληρωματικές Γωνίες' : 'Παραπληρωματικές Γωνίες'}
-                    </span>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      {relationMode === 'complementary' ? currT.compDesc : currT.suppDesc}
-                    </p>
-                  </div>
-
-                  {/* Slider ρύθμισης της γωνίας 1 */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs sm:text-sm text-slate-300">
-                      <span>Ρύθμιση Γωνίας α:</span>
-                      <span className="font-mono font-bold text-amber-400">{angle1}°</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="5"
-                      max={relationMode === 'complementary' ? 85 : 175}
-                      step="1"
-                      value={angle1}
-                      onChange={(e) => setAngle1(Number(e.target.value))}
-                      className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                    />
-                  </div>
-
-                  {/* Υπολογισμοί βήμα-βήμα */}
-                  <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-xs sm:text-sm space-y-1 font-mono text-slate-300">
-                    <div>α ＝ {angle1}°</div>
-                    <div>
-                      β ＝ {relationMode === 'complementary' ? '90°' : '180°'} － {angle1}° ＝ <span className="text-indigo-300 font-bold">{effectiveAngle2}°</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Κάρτα Κατακορυφήν Γωνιών */}
-            <div className="bg-slate-950/80 border border-slate-800 p-5 rounded-2xl">
-              <h4 className="font-bold text-indigo-300 mb-2 text-base">✖️ Κατακορυφήν Γωνίες</h4>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-3">
-                {currT.vertDesc}
-              </p>
-              <div className="bg-indigo-950/40 border border-indigo-900/60 p-3 rounded-xl text-xs sm:text-sm text-indigo-200">
-                <strong>Βασική Ιδιότητα:</strong> Αν δύο ευθείες τέμνονται, σχηματίζουν δύο ζεύγη κατακορυφήν γωνιών και τέσσερα ζεύγη παραπληρωματικών γωνιών.
-              </div>
-            </div>
-          </section>
-
-          {/* Section 5: Διχοτόμος Γωνίας */}
-          <section className="mb-10 sm:mb-14 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-8 backdrop-blur-sm">
-            <h2 className="text-xl sm:text-2xl font-bold text-amber-400 mb-4 break-words">
-              {toCleanUppercase(currT.sections.bisector)}
-            </h2>
-            <div className="space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed">
-              <p>{currT.bisectorDesc}</p>
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-wrap items-center gap-2">
-                <span>Αν η ημιευθεία <span className="font-mono text-amber-300">Οδ</span> είναι διχοτόμος της γωνίας <span className="font-mono text-amber-300">xÔy</span>, τότε:</span>
-                <span className="inline-flex items-center font-mono text-emerald-400 font-bold">
-                  xÔδ ＝ δÔy ＝
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: renderFraction('xÔy', '2')
-                    }}
-                  />
-                </span>
-              </div>
-            </div>
-          </section>
-
-          {/* Section 6: Λυμένα Παραδείγματα & Προβλήματα */}
-          <section className="mb-10 sm:mb-14 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-8 backdrop-blur-sm">
-            <h2 className="text-xl sm:text-2xl font-bold text-amber-400 mb-6 break-words">
-              {toCleanUppercase(currT.sections.problems)}
-            </h2>
-
-            <div className="space-y-6">
-              {/* Πρόβλημα 1: Συμπληρωματικές */}
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-xs font-mono font-bold">
-                    ΠΑΡΑΔΕΙΓΜΑ 1
-                  </span>
-                  <span className="text-xs text-slate-400">Υπολογισμός Συμπληρωματικής</span>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-200 font-medium mb-3">
-                  Μία γωνία <span className="font-mono text-amber-300">ω</span> έχει μέτρο 34°. Να υπολογίσετε το μέτρο της συμπληρωματικής της γωνίας.
-                </p>
-                <div className="bg-slate-900/90 border-l-4 border-amber-500 p-3.5 rounded-r-xl text-xs sm:text-sm space-y-2 text-slate-300">
-                  <span className="font-bold text-amber-400 block">{currT.solveTitle}</span>
-                  <p>
-                    Γνωρίζουμε ότι δύο γωνίες είναι συμπληρωματικές αν το άθροισμά τους είναι 90°.
-                  </p>
-                  <div className="inline-flex flex-wrap items-center font-mono text-slate-200">
-                    <span>συμπλήρωμα ＝ 90° － 34° ＝&nbsp;</span>
-                    <strong className="text-emerald-400 font-bold">56°</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Πρόβλημα 2: Παραπληρωματικές με λόγο / κλάσμα */}
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-xs font-mono font-bold">
-                    ΠΑΡΑΔΕΙΓΜΑ 2
-                  </span>
-                  <span className="text-xs text-slate-400">Παραπληρωματικές & Κλάσματα</span>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-200 font-medium mb-3 flex flex-wrap items-center">
-                  <span>Δύο γωνίες <span className="font-mono text-amber-300">α</span> και <span className="font-mono text-indigo-300">β</span> είναι εφεξής και παραπληρωματικές. Αν η γωνία <span className="font-mono text-amber-300">α</span> είναι ίση με το&nbsp;</span>
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: renderFraction('1', '3')
-                    }}
-                  />
-                  <span>&nbsp;της γωνίας <span className="font-mono text-indigo-300">β</span>, να βρεθούν τα μέτρα των δύο γωνιών.</span>
-                </p>
-                <div className="bg-slate-900/90 border-l-4 border-indigo-500 p-3.5 rounded-r-xl text-xs sm:text-sm space-y-2 text-slate-300">
-                  <span className="font-bold text-indigo-400 block">{currT.solveTitle}</span>
-                  <p>
-                    Επειδή οι γωνίες είναι παραπληρωματικές ισχύει: <span className="font-mono">α ＋ β ＝ 180°</span>.
-                  </p>
-                  <p className="flex flex-wrap items-center">
-                    <span>Αν χωρίσουμε τη γωνία <span className="font-mono">β</span> σε 3 ίσα μέρη, τότε η γωνία <span className="font-mono">α</span> είναι 1 τέτοιο μέρος.</span>
-                  </p>
-                  <p className="flex flex-wrap items-center">
-                    <span>Συνολικά έχουμε 1 ＋ 3 ＝ 4 ίσα μέρη που ισούνται με 180°:</span>
-                  </p>
-                  <div className="flex flex-wrap items-center gap-2 font-mono">
-                    <span>1 μέρος ＝&nbsp;</span>
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: renderFraction('180°', '4')
-                      }}
-                    />
-                    <span>＝ 45°</span>
-                  </div>
-                  <div className="pt-1 text-slate-200 font-mono">
-                    <div>Άρα: <span className="text-amber-300 font-bold">α ＝ 45°</span></div>
-                    <div>και: <span className="text-indigo-300 font-bold">β ＝ 3 · 45° ＝ 135°</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Bottom Navigation Call-To-Action */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800">
-            <div>
-              <h4 className="text-base sm:text-lg font-bold text-white">
-                Έμαθες τη θεωρία για τις γωνίες;
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                Δοκίμασε τις γνώσεις σου με 10 δυναμικές ασκήσεις και άμεση αξιολόγηση.
-              </p>
-            </div>
-            <Link
-              href="/36-goneies-ask"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition-all shadow-lg hover:shadow-amber-500/25 active:scale-95 shrink-0"
-            >
-              {toCleanUppercase(currT.btnExercises)}
-              <span className="ml-2 font-mono">→</span>
-            </Link>
           </div>
 
-        </div>
-      </main>
-    </div>
+          {/* Κάρτες Θεωρίας Ενότητας 1 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs sm:text-sm leading-relaxed text-slate-700">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded inline-block">
+                1. ΟΡΙΣΜΟΣ ΓΩΝΙΑΣ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base">Κορυφή & Πλευρές</h3>
+              <p className="text-slate-600">
+                Γωνία ονομάζεται το γεωμετρικό σχήμα που αποτελείται από δύο ημιευθείες <strong>Ox</strong> και <strong>Oy</strong> με κοινή αρχή το <strong>O (κορυφή)</strong>, μαζί με το μέρος του επιπέδου που ορίζουν. Συμβολίζεται: <strong>xÔy</strong> ή απλά <strong>Ô</strong>.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded inline-block">
+                2. ΟΡΘΗ & ΕΥΘΕΙΑ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base">Γωνίες Αναφοράς</h3>
+              <p className="text-slate-600">
+                <strong>Ορθή</strong> είναι η γωνία ίση με <strong>90°</strong> (κάθετες πλευρές). <strong>Ευθεία</strong> είναι η γωνία ίση με <strong>180°</strong>, της οποίας οι πλευρές είναι αντικείμενες ημιευθείες πάνω στην ίδια ευθεία.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded inline-block">
+                3. ΟΞΕΙΑ & ΑΜΒΛΕΙΑ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base">Σύγκριση με την Ορθή</h3>
+              <p className="text-slate-600">
+                <strong>Οξεία</strong> είναι κάθε γωνία μικρότερη από ορθή (<strong>0° ＜ x ＜ 90°</strong>). <strong>Αμβλεία</strong> είναι κάθε γωνία μεγαλύτερη από ορθή και μικρότερη από ευθεία (<strong>90° ＜ x ＜ 180°</strong>).
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-purple-800 bg-purple-100 px-2 py-0.5 rounded inline-block">
+                4. ΜΗ ΚΥΡΤΗ & ΠΛΗΡΗΣ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base">Μεγαλύτερες των 180°</h3>
+              <p className="text-slate-600">
+                <strong>Μη κυρτή (ανακλώμενη)</strong> ονομάζεται η γωνία με <strong>180° ＜ x ＜ 360°</strong>. <strong>Πλήρης</strong> ονομάζεται η γωνία <strong>360°</strong> (πλήρης περιστροφή της κινούμενης πλευράς).
+              </p>
+            </div>
+          </div>
+
+          {/* ΕΡΓΑΣΤΗΡΙΟ 1: ΔΙΑΔΡΑΣΤΙΚΟΣ ΜΟΙΡΟΓΝΩΜΟΝΑΣ */}
+          <div className="pt-2 space-y-5">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900">
+              🛠️ {curr.lab1Header}
+            </h3>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              {/* Χειριστήρια & Κατηγοριοποίηση (5 cols) */}
+              <div className="lg:col-span-5 space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-xs font-bold text-slate-700 uppercase">
+                    <span>{curr.angleMeasure}</span>
+                    <span className="text-base font-mono font-black text-indigo-700">{angleDeg}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="360"
+                    step="1"
+                    value={angleDeg}
+                    onChange={(e) => setAngleDeg(Number(e.target.value))}
+                    className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                  />
+                </div>
+
+                {/* Steppers & Presets */}
+                <div className="space-y-2">
+                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    ΜΙΚΡΟΡΥΘΜΙΣΗ & ΣΥΝΗΘΗ ΜΕΤΡΑ
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[-10, -1, 1, 10].map((step) => (
+                      <button
+                        key={step}
+                        type="button"
+                        onClick={(e) => handleStep(setAngleDeg, step, 0, 360, e)}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-slate-300 font-bold text-xs font-mono hover:bg-slate-100 active:scale-95"
+                      >
+                        {step > 0 ? `＋${step}°` : `－${Math.abs(step)}°`}
+                      </button>
+                    ))}
+                    {[0, 45, 90, 135, 180, 270, 360].map((pVal) => (
+                      <button
+                        key={pVal}
+                        type="button"
+                        onClick={() => setAngleDeg(pVal)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold border transition-all active:scale-95 ${
+                          angleDeg === pVal
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        {pVal}°
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-3.5 bg-white rounded-xl border border-slate-200 space-y-1">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                    {curr.angleType}
+                  </span>
+                  <div className="font-bold text-sm sm:text-base text-slate-900">
+                    {angleTypeInfo.name}
+                  </div>
+                </div>
+              </div>
+
+              {/* Dynamic SVG Visualizer (7 cols) */}
+              <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
+                    ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΟΙΡΟΓΝΩΜΟΝΑ (0° - 360°)
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-400/30 font-sans">
+                    xÔy ＝ {angleDeg}°
+                  </span>
+                </div>
+
+                <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 flex justify-center">
+                  <svg viewBox="0 0 480 270" className="w-full max-w-[460px] h-auto">
+                    {/* Κυκλικός οδηγός μοιρογνωμόνα */}
+                    <circle cx="240" cy="150" r="110" fill="none" stroke="#1e293b" strokeWidth="2" strokeDasharray="4 4" />
+
+                    {/* Βαθμονομημένες γραμμές κάθε 30° */}
+                    {Array.from({ length: 12 }).map((_, idx) => {
+                      const ang = idx * 30;
+                      const ptInner = getRayPoint(240, 150, 103, ang);
+                      const ptOuter = getRayPoint(240, 150, 110, ang);
+                      return (
+                        <line
+                          key={ang}
+                          x1={ptInner.x}
+                          y1={ptInner.y}
+                          x2={ptOuter.x}
+                          y2={ptOuter.y}
+                          stroke="#475569"
+                          strokeWidth="1.5"
+                        />
+                      );
+                    })}
+
+                    {/* Σταθερή ημιευθεία Ox (δεξιά, 0°) */}
+                    <line x1="240" y1="150" x2="365" y2="150" stroke="#94a3b8" strokeWidth="3.5" />
+                    <circle cx="365" cy="150" r="4" fill="#94a3b8" />
+                    <text x="378" y="154" fill="#94a3b8" fontSize="13" fontWeight="bold">x</text>
+
+                    {/* Κινούμενη ημιευθεία Oy */}
+                    <line x1="240" y1="150" x2={rayLab1.x} y2={rayLab1.y} stroke="#f59e0b" strokeWidth="4" />
+                    <circle cx={rayLab1.x} cy={rayLab1.y} r="5" fill="#f59e0b" />
+                    <text x={rayLab1.x + 8} y={rayLab1.y + 4} fill="#fde68a" fontSize="13" fontWeight="bold">y</text>
+
+                    {/* Τόξο γωνίας */}
+                    {angleDeg > 0 && angleDeg < 360 && (
+                      <path
+                        d={`M 275 150 A 35 35 0 ${angleDeg > 180 ? 1 : 0} 0 ${
+                          240 + 35 * Math.cos(((360 - angleDeg) * Math.PI) / 180)
+                        } ${150 + 35 * Math.sin(((360 - angleDeg) * Math.PI) / 180)}`}
+                        fill="rgba(245, 158, 11, 0.2)"
+                        stroke="#f59e0b"
+                        strokeWidth="2.5"
+                      />
+                    )}
+
+                    {/* Κορυφή O */}
+                    <circle cx="240" cy="150" r="6" fill="#38bdf8" stroke="#ffffff" strokeWidth="1.5" />
+                    <text x="240" y="174" fill="#38bdf8" fontSize="14" fontWeight="bold" textAnchor="middle">O</text>
+                  </svg>
+                </div>
+
+                <div className="p-3.5 bg-white/10 rounded-xl border border-white/10 text-xs sm:text-sm font-sans text-slate-200 leading-relaxed">
+                  Η γωνία <strong>xÔy ({angleDeg}°)</strong> ταξινομείται ως <strong className={angleTypeInfo.color}>{angleTypeInfo.name}</strong>.
+                  {angleDeg === 90 && ' Οι ημιευθείες Ox και Oy είναι κάθετες μεταξύ τους (Ox ⊥ Oy).'}
+                  {angleDeg === 180 && ' Οι ημιευθείες Ox και Oy είναι αντικείμενες και σχηματίζουν μία ενιαία ευθεία xy.'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ====================================================================
+            2. ΣΧΕΣΕΙΣ ΓΩΝΙΩΝ & ΕΡΓΑΣΤΗΡΙΟ 2 (ΕΦΕΞΗΣ, ΣΥΜΠΛΗΡΩΜΑΤΙΚΕΣ, ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΕΣ, ΚΑΤΑΚΟΡΥΦΗΝ)
+           ==================================================================== */}
+        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+          <div className="border-b border-slate-100 pb-4">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+                2
+              </span>
+              {curr.sec2Title}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs sm:text-sm leading-relaxed text-slate-700">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded inline-block">
+                ΕΦΕΞΗΣ & ΔΙΑΔΟΧΙΚΕΣ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base">Κοινή Πλευρά & Κορυφή</h3>
+              <p className="text-slate-600">
+                Δύο γωνίες λέγονται <strong>εφεξής</strong> όταν έχουν κοινή κορυφή, μία κοινή πλευρά και κανένα άλλο κοινό σημείο. Τρεις ή περισσότερες γωνίες λέγονται <strong>διαδοχικές</strong> όταν ανά δύο είναι εφεξής.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded inline-block">
+                ΣΥΜΠΛΗΡΩΜΑΤΙΚΕΣ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base">Άθροισμα ＝ 90°</h3>
+              <p className="text-slate-600">
+                Δύο γωνίες ονομάζονται <strong>συμπληρωματικές</strong> όταν το άθροισμα των μέτρων τους ισούται με <strong>90°</strong> (μία ορθή γωνία). Κάθε μία λέγεται <strong>συμπλήρωμα</strong> της άλλης.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded inline-block">
+                ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΕΣ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base">Άθροισμα ＝ 180°</h3>
+              <p className="text-slate-600">
+                Δύο γωνίες ονομάζονται <strong>παραπληρωματικές</strong> όταν το άθροισμα των μέτρων τους ισούται με <strong>180°</strong> (μία ευθεία γωνία). Κάθε μία λέγεται <strong>παραπλήρωμα</strong> της άλλης.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-purple-800 bg-purple-100 px-2 py-0.5 rounded inline-block">
+                ΚΑΤΑΚΟΡΥΦΗΝ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base">Αντικείμενες Πλευρές</h3>
+              <p className="text-slate-600">
+                Δύο γωνίες λέγονται <strong>κατακορυφήν</strong> όταν οι πλευρές της μίας είναι αντικείμενες ημιευθείες των πλευρών της άλλης. <strong>Οι κατακορυφήν γωνίες είναι πάντα ίσες μεταξύ τους</strong>.
+              </p>
+            </div>
+          </div>
+
+          {/* ΕΡΓΑΣΤΗΡΙΟ 2: ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ ΖΕΥΓΩΝ */}
+          <div className="pt-2 space-y-5">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900">
+              🛠️ {curr.lab2Header}
+            </h3>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Χειριστήρια & Επιλογή Mode (5 cols) */}
+              <div className="lg:col-span-5 space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {[
+                    { id: 'complementary', label: curr.relModes.complementary },
+                    { id: 'supplementary', label: curr.relModes.supplementary },
+                    { id: 'adjacent', label: curr.relModes.adjacent },
+                    { id: 'vertical', label: curr.relModes.vertical }
+                  ].map((m) => (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => {
+                        setRelationMode(m.id);
+                        if (m.id === 'complementary' && angleA >= 90) setAngleA(40);
+                      }}
+                      className={`p-2.5 rounded-xl font-black text-xs border transition-all active:scale-95 text-center ${
+                        relationMode === m.id
+                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                          : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Ρύθμιση Γωνίας Α */}
+                <div className="space-y-2 pt-2 border-t border-slate-200">
+                  <div className="flex justify-between items-center text-xs font-bold text-slate-700 uppercase">
+                    <span>ΡΥΘΜΙΣΗ ΓΩΝΙΑΣ α</span>
+                    <span className="font-mono font-black text-amber-700 text-sm">{angleA}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="5"
+                    max={relationMode === 'complementary' ? 85 : relationMode === 'supplementary' ? 175 : 160}
+                    step="1"
+                    value={angleA}
+                    onChange={(e) => setAngleA(Number(e.target.value))}
+                    className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+                  />
+                  <div className="flex gap-1.5 pt-1">
+                    {[-5, -1, 1, 5].map((step) => (
+                      <button
+                        key={step}
+                        type="button"
+                        onClick={(e) =>
+                          handleStep(
+                            setAngleA,
+                            step,
+                            5,
+                            relationMode === 'complementary' ? 85 : relationMode === 'supplementary' ? 175 : 160,
+                            e
+                          )
+                        }
+                        className="px-2.5 py-1 rounded bg-white border border-slate-300 font-bold text-xs font-mono active:scale-95"
+                      >
+                        {step > 0 ? `＋${step}°` : `－${Math.abs(step)}°`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-xs font-mono space-y-1.5 text-slate-700">
+                  <div>• <strong>Γωνία α:</strong> {angleA}°</div>
+                  <div>• <strong>Γωνία β:</strong> {angleB}°</div>
+                  {pairSum !== null && (
+                    <div className="font-bold text-indigo-700 pt-0.5 border-t border-slate-100">
+                      • Άθροισμα (α ＋ β): {angleA} ＋ {angleB} ＝ {pairSum}°
+                    </div>
+                  )}
+                  {relationMode === 'vertical' && (
+                    <div className="font-bold text-emerald-700 pt-0.5 border-t border-slate-100">
+                      • Κατακορυφήν: α ＝ β ＝ {angleA}° (ΠΑΝΤΑ ΙΣΕΣ)
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Dynamic SVG Ζεύγους (7 cols) */}
+              <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
+                    ΑΠΕΙΚΟΝΙΣΗ ΣΧΕΣΗΣ
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-sans">
+                    {relationMode === 'complementary' && 'ΣΥΜΠΛΗΡΩΜΑΤΙΚΕΣ (90°)'}
+                    {relationMode === 'supplementary' && 'ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΕΣ (180°)'}
+                    {relationMode === 'adjacent' && 'ΕΦΕΞΗΣ ΓΩΝΙΕΣ'}
+                    {relationMode === 'vertical' && 'ΚΑΤΑΚΟΡΥΦΗΝ (ΙΣΕΣ)'}
+                  </span>
+                </div>
+
+                <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 flex justify-center">
+                  <svg viewBox="0 0 480 270" className="w-full max-w-[460px] h-auto">
+                    {/* Αρχική πλευρά Ox (οριζόντια, 0°) */}
+                    <line x1="240" y1="150" x2="355" y2="150" stroke="#94a3b8" strokeWidth="3" />
+                    <circle cx="355" cy="150" r="4" fill="#94a3b8" />
+                    <text x="368" y="154" fill="#94a3b8" fontSize="13" fontWeight="bold">x</text>
+
+                    {/* Ενδιάμεση κοινή πλευρά Oy */}
+                    <line x1="240" y1="150" x2={rayLab2_A.x} y2={rayLab2_A.y} stroke="#f59e0b" strokeWidth="3.5" />
+                    <circle cx={rayLab2_A.x} cy={rayLab2_A.y} r="4.5" fill="#f59e0b" />
+                    <text x={rayLab2_A.x + 8} y={rayLab2_A.y} fill="#fde68a" fontSize="13" fontWeight="bold">y</text>
+
+                    {/* Τρίτη πλευρά Oz (ή αντίθετη Ox για κατακορυφήν) */}
+                    <line x1="240" y1="150" x2={rayLab2_B.x} y2={rayLab2_B.y} stroke="#38bdf8" strokeWidth="3.5" />
+                    <circle cx={rayLab2_B.x} cy={rayLab2_B.y} r="4.5" fill="#38bdf8" />
+                    <text x={rayLab2_B.x - 12} y={rayLab2_B.y} fill="#38bdf8" fontSize="13" fontWeight="bold">z</text>
+
+                    {/* Αντικείμενη ακτίνα για κατακορυφήν */}
+                    {relationMode === 'vertical' && (
+                      <g>
+                        <line x1="240" y1="150" x2={rayLab2_OppA.x} y2={rayLab2_OppA.y} stroke="#f59e0b" strokeWidth="2.5" strokeDasharray="4 3" />
+                        <text x={rayLab2_OppA.x - 12} y={rayLab2_OppA.y + 12} fill="#fde68a" fontSize="12">y'</text>
+                        <line x1="240" y1="150" x2="125" y2="150" stroke="#94a3b8" strokeWidth="2.5" strokeDasharray="4 3" />
+                        <text x="110" y="154" fill="#94a3b8" fontSize="12">x'</text>
+                      </g>
+                    )}
+
+                    {/* Κορυφή O */}
+                    <circle cx="240" cy="150" r="6" fill="#ffffff" />
+                    <text x="240" y="174" fill="#ffffff" fontSize="14" fontWeight="bold" textAnchor="middle">O</text>
+                  </svg>
+                </div>
+
+                <div className="p-3.5 bg-white/10 rounded-xl border border-white/10 text-xs sm:text-sm font-sans text-slate-200 leading-relaxed">
+                  {relationMode === 'complementary' && (
+                    <div>
+                      Οι γωνίες <strong>α ({angleA}°)</strong> και <strong>β ({angleB}°)</strong> είναι <strong>συμπληρωματικές</strong>: σχηματίζουν μαζί μία ορθή γωνία xÔz ＝ 90°.
+                    </div>
+                  )}
+                  {relationMode === 'supplementary' && (
+                    <div>
+                      Οι γωνίες <strong>α ({angleA}°)</strong> και <strong>β ({angleB}°)</strong> είναι <strong>παραπληρωματικές</strong>: σχηματίζουν μία ευθεία γωνία xÔz ＝ 180°.
+                    </div>
+                  )}
+                  {relationMode === 'adjacent' && (
+                    <div>
+                      Οι γωνίες <strong>xÔy ({angleA}°)</strong> και <strong>yÔz ({angleB}°)</strong> είναι <strong>εφεξής</strong>: έχουν κοινή κορυφή το O, κοινή πλευρά την Oy και δεν επικαλύπτονται.
+                    </div>
+                  )}
+                  {relationMode === 'vertical' && (
+                    <div>
+                      Οι γωνίες <strong>xÔy</strong> και <strong>x'Ôy'</strong> είναι <strong>κατακορυφήν</strong>: έχουν αντικείμενες πλευρές και μέτρο ακριβώς <strong>{angleA}°</strong>.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ====================================================================
+            3. ΔΙΧΟΤΟΜΟΣ ΓΩΝΙΑΣ & ΕΡΓΑΣΤΗΡΙΟ 3
+           ==================================================================== */}
+        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+          <div className="border-b border-slate-100 pb-4">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+                3
+              </span>
+              {curr.sec3Title}
+            </h2>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-3 text-xs sm:text-sm leading-relaxed text-slate-700">
+            <span className="text-[10px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded inline-block">
+              ΟΡΙΣΜΟΣ ΔΙΧΟΤΟΜΟΥ
+            </span>
+            <h3 className="font-bold text-slate-900 text-base">Χωρισμός Γωνίας σε 2 Ίσα Μέρη</h3>
+            <p className="text-slate-600">
+              <strong>Διχοτόμος</strong> μιας γωνίας xÔy ονομάζεται η εσωτερική ημιευθεία <strong>Οδ</strong> που ξεκινά από την κορυφή Ο και χωρίζει τη γωνία σε <strong>δύο ίσες γωνίες</strong>:
+            </p>
+            <div className="p-2 bg-white rounded-xl border border-indigo-200 font-mono text-center font-bold text-indigo-950 flex items-center justify-center max-w-md mx-auto">
+              <span>xÔδ ＝ δÔy ＝ </span>
+              <Frac num="xÔy" den="2" />
+            </div>
+          </div>
+
+          {/* ΕΡΓΑΣΤΗΡΙΟ 3: ΔΙΑΔΡΑΣΤΙΚΗ ΔΙΧΟΤΟΜΟΣ */}
+          <div className="pt-2 space-y-5">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900">
+              🛠️ {curr.lab3Header}
+            </h3>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              {/* Χειριστήρια (5 cols) */}
+              <div className="lg:col-span-5 space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-xs font-bold text-slate-700 uppercase">
+                    <span>ΚΥΡΙΑ ΓΩΝΙΑ xÔy</span>
+                    <span className="text-base font-mono font-black text-indigo-700">{bisectMainAngle}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="180"
+                    step="2"
+                    value={bisectMainAngle}
+                    onChange={(e) => setBisectMainAngle(Number(e.target.value))}
+                    className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                  />
+                </div>
+
+                <div className="flex gap-1.5">
+                  {[-10, -2, 2, 10].map((step) => (
+                    <button
+                      key={step}
+                      type="button"
+                      onClick={(e) => handleStep(setBisectMainAngle, step, 10, 180, e)}
+                      className="px-2.5 py-1 rounded bg-white border border-slate-300 font-bold text-xs font-mono active:scale-95"
+                    >
+                      {step > 0 ? `＋${step}°` : `－${Math.abs(step)}°`}
+                    </button>
+                  ))}
+                  {[60, 90, 120].map((pVal) => (
+                    <button
+                      key={pVal}
+                      type="button"
+                      onClick={() => setBisectMainAngle(pVal)}
+                      className="px-2.5 py-1 rounded bg-slate-200 hover:bg-slate-300 font-bold text-xs font-mono active:scale-95"
+                    >
+                      {pVal}°
+                    </button>
+                  ))}
+                </div>
+
+                <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-xs font-mono space-y-1.5 text-slate-700">
+                  <div>• <strong>Αρχική Γωνία xÔy:</strong> {bisectMainAngle}°</div>
+                  <div className="flex items-center flex-wrap">
+                    <span>• <strong>Κάθε ίσο τμήμα:</strong> </span>
+                    <Frac num={bisectMainAngle} den={2} />
+                    <span> ＝ <strong>{bisectHalf.toString().replace('.', ',')}°</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dynamic SVG Visualizer (7 cols) */}
+              <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
+                    ΗΜΙΕΥΘΕΙΑ ΔΙΧΟΤΟΜΟΥ Οδ
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-sans">
+                    xÔδ ＝ δÔy ＝ {bisectHalf}°
+                  </span>
+                </div>
+
+                <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 flex justify-center">
+                  <svg viewBox="0 0 480 270" className="w-full max-w-[460px] h-auto">
+                    {/* Πλευρά Ox */}
+                    <line x1="240" y1="150" x2="365" y2="150" stroke="#94a3b8" strokeWidth="3" />
+                    <text x="375" y="154" fill="#94a3b8" fontSize="13" fontWeight="bold">x</text>
+
+                    {/* Πλευρά Oy */}
+                    <line x1="240" y1="150" x2={rayBisectMain.x} y2={rayBisectMain.y} stroke="#38bdf8" strokeWidth="3" />
+                    <text x={rayBisectMain.x + 8} y={rayBisectMain.y} fill="#38bdf8" fontSize="13" fontWeight="bold">y</text>
+
+                    {/* Διχοτόμος Οδ (διακεκομμένη πράσινη) */}
+                    <line
+                      x1="240"
+                      y1="150"
+                      x2={rayBisectMid.x}
+                      y2={rayBisectMid.y}
+                      stroke="#10b981"
+                      strokeWidth="3.5"
+                      strokeDasharray="5 4"
+                    />
+                    <circle cx={rayBisectMid.x} cy={rayBisectMid.y} r="5" fill="#10b981" />
+                    <text x={rayBisectMid.x + 8} y={rayBisectMid.y} fill="#6ee7b7" fontSize="13" fontWeight="bold">δ</text>
+
+                    {/* Κορυφή O */}
+                    <circle cx="240" cy="150" r="6" fill="#ffffff" />
+                    <text x="240" y="174" fill="#ffffff" fontSize="14" fontWeight="bold" textAnchor="middle">O</text>
+                  </svg>
+                </div>
+
+                <div className="p-3.5 bg-white/10 rounded-xl border border-white/10 text-xs sm:text-sm font-sans text-slate-200">
+                  Η ημιευθεία <strong>Οδ</strong> είναι η διχοτόμος: χωρίζει τη γωνία <strong>xÔy ({bisectMainAngle}°)</strong> σε δύο ακριβώς ίσες γωνίες <strong>{bisectHalf}°</strong>.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ====================================================================
+            4. ΠΑΡΑΔΕΙΓΜΑΤΑ ΜΕ ΠΡΟΒΛΗΜΑΤΑ
+           ==================================================================== */}
+        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
+          <div className="border-b border-slate-100 pb-4">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+                4
+              </span>
+              {curr.sec4Title}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-700 text-xs sm:text-sm leading-relaxed">
+            {/* Πρόβλημα 1 */}
+            <div className="p-6 rounded-2xl bg-indigo-50/60 border border-indigo-200 space-y-3">
+              <span className="text-[10px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded inline-block">
+                ΠΡΟΒΛΗΜΑ 1: ΣΥΜΠΛΗΡΩΜΑΤΙΚΕΣ & ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΕΣ ΓΩΝΙΕΣ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg">
+                Κλίση Στέγης σε Βιοκλιματική Κατοικία
+              </h3>
+              <p className="text-slate-600">
+                Η κλίση μιας ηλιακής στέγης σχηματίζει με τον κατακόρυφο τοίχο μία οξεία γωνία <strong>ω ＝ 28°</strong>. 
+                1) Να βρεθεί η <strong>συμπληρωματική</strong> της γωνία (η κλίση ως προς το οριζόντιο έδαφος). 
+                2) Να βρεθεί η <strong>παραπληρωματική</strong> της γωνία.
+              </p>
+              <div className="p-3.5 bg-white rounded-xl border border-indigo-100 font-mono text-xs sm:text-sm space-y-2 text-slate-800">
+                <div className="font-sans font-bold text-indigo-950">Αναλυτική Λύση:</div>
+                <div>1. Συμπλήρωμα: 90° － 28° ＝ <strong>62°</strong> (κλίση προς το έδαφος).</div>
+                <div className="text-emerald-700 font-bold">
+                  2. Παραπλήρωμα: 180° － 28° ＝ 152°.
+                </div>
+              </div>
+            </div>
+
+            {/* Πρόβλημα 2 */}
+            <div className="p-6 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded inline-block">
+                ΠΡΟΒΛΗΜΑ 2: ΕΦΕΞΗΣ ΠΑΡΑΠΛΗΡΩΜΑΤΙΚΕΣ & ΔΙΧΟΤΟΜΟΣ
+              </span>
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg">
+                Διαχωρισμός Ακτίνας Laser σε Οπτικό Εργαστήριο
+              </h3>
+              <p className="text-slate-600">
+                Δύο εφεξής γωνίες <strong>α</strong> και <strong>β</strong> είναι παραπληρωματικές (α ＋ β ＝ 180°). Αν η γωνία α είναι διπλάσια της β (<strong>α ＝ 2 · β</strong>) και χαράξουμε τη διχοτόμο <strong>δ</strong> της γωνίας α, ποιο είναι το μέτρο της γωνίας που σχηματίζει η διχοτόμος με την πλευρά της γωνίας β;
+              </p>
+              <div className="p-3.5 bg-white rounded-xl border border-amber-100 font-mono text-xs sm:text-sm space-y-2 text-slate-800">
+                <div className="font-sans font-bold text-amber-950">Αναλυτική Λύση:</div>
+                <div>1. α ＋ β ＝ 180° ⇒ 2 · β ＋ β ＝ 3 · β ＝ 180°.</div>
+                <div className="flex items-center flex-wrap">
+                  <span>2. Άρα β ＝ </span>
+                  <Frac num="180°" den="3" />
+                  <span> ＝ <strong>60°</strong> και α ＝ 2 · 60° ＝ <strong>120°</strong>.</span>
+                </div>
+                <div className="flex items-center flex-wrap">
+                  <span>3. Η διχοτόμος χωρίζει την α σε δύο γωνίες: </span>
+                  <Frac num="120°" den="2" />
+                  <span> ＝ 60°.</span>
+                </div>
+                <div className="text-emerald-700 font-bold">
+                  4. Ζητούμενη γωνία: 60° (μισό της α) ＋ 60° (γωνία β) ＝ 120°.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </Layout>
   );
 }
