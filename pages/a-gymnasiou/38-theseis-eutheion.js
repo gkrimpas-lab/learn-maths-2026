@@ -47,22 +47,20 @@ export default function TheseisEutheionTheoria() {
 
   // --------------------------------------------------------------------------
   // STATE ΕΡΓΑΣΤΗΡΙΟΥ 1: Σχετική Θέση Δύο Ευθειών
-  // modes: 'intersecting' | 'perpendicular' | 'parallel' | 'coincident'
   // --------------------------------------------------------------------------
   const [relPositionMode, setRelPositionMode] = useState('intersecting');
   const [interAngle, setInterAngle] = useState(55);
 
   // --------------------------------------------------------------------------
   // STATE ΕΡΓΑΣΤΗΡΙΟΥ 2: Παράλληλες που Τέμνονται από Τρίτη
-  // pairModes: 'alternateInterior' | 'corresponding' | 'consecutiveInterior'
   // --------------------------------------------------------------------------
-  const [angleTrans, setAngleTrans] = useState(65); // οξεία γωνία τέμνουσας (30° - 150°)
+  const [angleTrans, setAngleTrans] = useState(65); // οξεία γωνία τέμνουσας (35° - 80°)
   const [anglePairHighlight, setAnglePairHighlight] = useState('alternateInterior');
 
   // --------------------------------------------------------------------------
   // STATE ΕΡΓΑΣΤΗΡΙΟΥ 3: Απόσταση Παράλληλων Ευθειών
   // --------------------------------------------------------------------------
-  const [parallelDist, setParallelDist] = useState(70); // σε px
+  const [parallelDist, setParallelDist] = useState(70);
 
   // Stepper με πλήρη αποτροπή event propagation
   const handleStep = (setter, val, min, max, e) => {
@@ -137,21 +135,58 @@ export default function TheseisEutheionTheoria() {
 
   const curr = t[locale] || t.el;
 
-  // --------------------------------------------------------------------------
-  // ΥΠΟΛΟΓΙΣΜΟΙ ΕΡΓΑΣΤΗΡΙΟΥ 2: Οι 8 Γωνίες Παραλλήλων
-  // --------------------------------------------------------------------------
-  // angleTrans είναι η οξεία γωνία (π.χ. 65°)
   const obtuseAngle = useMemo(() => 180 - angleTrans, [angleTrans]);
 
-  // Υπολογισμός συντεταγμένων τέμνουσας γραμμής (κεντραρισμένη στις 2 παράλληλες y1=100, y2=170)
-  const transversalSvg = useMemo(() => {
+  // --------------------------------------------------------------------------
+  // ΑΚΡΙΒΕΙΣ ΔΥΝΑΜΙΚΟΙ ΥΠΟΛΟΓΙΣΜΟΙ ΓΙΑ ΤΗΝ ΤΕΜΝΟΥΣΑ ΚΑΙ ΤΑ ΤΟΞΑ ΓΩΝΙΩΝ
+  // --------------------------------------------------------------------------
+  const geom = useMemo(() => {
     const rad = (angleTrans * Math.PI) / 180;
-    const dx = 130 / Math.tan(rad);
+    const cot = 1 / Math.tan(rad);
+    const cosVal = Math.cos(rad);
+    const sinVal = Math.sin(rad);
+
+    // Παράλληλες στα y = 100 (K) και y = 170 (Λ). Μέσο στα y = 135, x = 240
+    const kX = 240 - 35 * cot;
+    const lX = 240 + 35 * cot;
+
+    // Άκρα τέμνουσας (μήκος πάνω και κάτω από το μέσο)
+    const tX1 = 240 - 100 * cot;
+    const tY1 = 135 - 100;
+    const tX2 = 240 + 100 * cot;
+    const tY2 = 135 + 100;
+
+    const R = 28; // ακτίνα τόξων
+
+    // Τόξο 1: Στο Κ, κάτω-δεξιά (Εσωτερική δεξιά οξεία γωνία = angleTrans)
+    const arcK_InteriorRight = `M ${kX + R} 100 A ${R} ${R} 0 0 1 ${kX + R * cosVal} ${100 + R * sinVal}`;
+
+    // Τόξο 2: Στο Λ, πάνω-αριστερά (Εσωτερική αριστερή οξεία γωνία = angleTrans)
+    const arcL_InteriorLeft = `M ${lX - R} 170 A ${R} ${R} 0 0 1 ${lX - R * cosVal} ${170 - R * sinVal}`;
+
+    // Τόξο 3: Στο Κ, πάνω-δεξιά (Εξωτερική δεξιά αμβλεία γωνία = obtuseAngle)
+    const arcK_ExteriorRight = `M ${kX + R} 100 A ${R} ${R} 0 0 0 ${kX - R * cosVal} ${100 - R * sinVal}`;
+
+    // Τόξο 4: Στο Λ, πάνω-δεξιά (Εσωτερική δεξιά αμβλεία γωνία = obtuseAngle)
+    const arcL_InteriorRight = `M ${lX + R} 170 A ${R} ${R} 0 0 0 ${lX - R * cosVal} ${170 - R * sinVal}`;
+
+    // Τόξο 5: Στο Λ, κάτω-δεξιά (Εξωτερική δεξιά οξεία γωνία = angleTrans)
+    const arcL_ExteriorRight = `M ${lX + R} 170 A ${R} ${R} 0 0 1 ${lX + R * cosVal} ${170 + R * sinVal}`;
+
     return {
-      x1: 240 - dx,
-      y1: 45,
-      x2: 240 + dx,
-      y2: 225
+      kX,
+      lX,
+      tX1,
+      tY1,
+      tX2,
+      tY2,
+      cosVal,
+      sinVal,
+      arcK_InteriorRight,
+      arcL_InteriorLeft,
+      arcK_ExteriorRight,
+      arcL_InteriorRight,
+      arcL_ExteriorRight
     };
   }, [angleTrans]);
 
@@ -250,7 +285,6 @@ export default function TheseisEutheionTheoria() {
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              {/* Χειριστήρια (5 cols) */}
               <div className="lg:col-span-5 space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
@@ -315,7 +349,7 @@ export default function TheseisEutheionTheoria() {
                 </div>
               </div>
 
-              {/* Dynamic SVG Visualizer (7 cols) */}
+              {/* Dynamic SVG Visualizer */}
               <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
@@ -331,16 +365,13 @@ export default function TheseisEutheionTheoria() {
 
                 <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 flex justify-center">
                   <svg viewBox="0 0 480 230" className="w-full max-w-[460px] h-auto">
-                    {/* Σταθερή οριζόντια ευθεία ε1 */}
                     <line x1="40" y1="120" x2="440" y2="120" stroke="#38bdf8" strokeWidth="3" />
                     <text x="445" y="124" fill="#38bdf8" fontSize="13" fontWeight="bold">ε₁</text>
 
-                    {/* Δεύτερη ευθεία ε2 ανάλογα με το mode */}
                     {relPositionMode === 'parallel' && (
                       <g>
                         <line x1="40" y1="60" x2="440" y2="60" stroke="#f59e0b" strokeWidth="3" />
                         <text x="445" y="64" fill="#f59e0b" fontSize="13" fontWeight="bold">ε₂</text>
-                        {/* Ένδειξη παραλληλίας */}
                         <line x1="240" y1="60" x2="240" y2="120" stroke="#10b981" strokeWidth="2" strokeDasharray="4 3" />
                         <rect x="240" y="108" width="12" height="12" fill="none" stroke="#10b981" strokeWidth="1.5" />
                         <text x="248" y="95" fill="#6ee7b7" fontSize="11" fontStyle="italic">d</text>
@@ -376,7 +407,6 @@ export default function TheseisEutheionTheoria() {
                               <text x={240 + dx + 6} y={120 - dy} fill="#f59e0b" fontSize="13" fontWeight="bold">ε₂</text>
                               <circle cx="240" cy="120" r="5" fill="#ffffff" />
                               <text x="238" y="142" fill="#ffffff" fontSize="12" fontWeight="bold">Α</text>
-                              {/* Τόξο γωνίας */}
                               <path
                                 d={`M 270 120 A 30 30 0 0 0 ${240 + 30 * Math.cos(rad)} ${120 - 30 * Math.sin(rad)}`}
                                 fill="none"
@@ -519,15 +549,12 @@ export default function TheseisEutheionTheoria() {
 
                 <div className="w-full max-w-full overflow-hidden bg-slate-950 rounded-xl border border-slate-800 p-3 flex justify-center">
                   <svg viewBox="0 0 480 230" className="w-full max-w-[460px] h-auto">
-                    {/* Ευθεία ε2 (κάτω) */}
                     <line x1="40" y1="180" x2="440" y2="180" stroke="#38bdf8" strokeWidth="3" />
                     <text x="445" y="184" fill="#38bdf8" fontSize="13" fontWeight="bold">ε₂</text>
 
-                    {/* Ευθεία ε1 (πάνω, σε απόσταση parallelDist) */}
                     <line x1="40" y1={180 - parallelDist} x2="440" y2={180 - parallelDist} stroke="#f59e0b" strokeWidth="3" />
                     <text x="445" y={184 - parallelDist} fill="#f59e0b" fontSize="13" fontWeight="bold">ε₁</text>
 
-                    {/* Τρία κάθετα τμήματα ένδειξης σταθερότητας (x=120, x=240, x=360) */}
                     {[120, 240, 360].map((xPos, idx) => (
                       <g key={idx}>
                         <line
@@ -620,7 +647,7 @@ export default function TheseisEutheionTheoria() {
             </div>
           </div>
 
-          {/* ΕΡΓΑΣΤΗΡΙΟ 2: ΔΙΑΔΡΑΣΤΙΚΕΣ ΓΩΝΙΕΣ ΠΑΡΑΛΛΗΛΩΝ */}
+          {/* ΕΡΓΑΣΤΗΡΙΟ 2: ΔΙΑΔΡΑΣΤΙΚΕΣ ΓΩΝΙΕΣ ΠΑΡΑΛΛΗΛΩΝ (ΔΙΟΡΘΩΜΕΝΑ ΤΟΞΑ) */}
           <div className="pt-2 space-y-5">
             <h3 className="text-base sm:text-lg font-bold text-slate-900">
               🛠️ {curr.lab2Header}
@@ -724,7 +751,7 @@ export default function TheseisEutheionTheoria() {
                 </div>
               </div>
 
-              {/* Dynamic SVG Visualizer (7 cols) */}
+              {/* Dynamic SVG Visualizer με απόλυτη εφαρμογή τόξων και σημείων */}
               <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
@@ -749,87 +776,100 @@ export default function TheseisEutheionTheoria() {
 
                     {/* Τέμνουσα ευθεία ε3 */}
                     <line
-                      x1={transversalSvg.x1}
-                      y1={transversalSvg.y1}
-                      x2={transversalSvg.x2}
-                      y2={transversalSvg.y2}
+                      x1={geom.tX1}
+                      y1={geom.tY1}
+                      x2={geom.tX2}
+                      y2={geom.tY2}
                       stroke="#f59e0b"
                       strokeWidth="3.5"
                     />
-                    <text x={transversalSvg.x2 + 8} y={transversalSvg.y2} fill="#f59e0b" fontSize="13" fontWeight="bold">ε₃</text>
+                    <text x={geom.tX2 + 8} y={geom.tY2} fill="#f59e0b" fontSize="13" fontWeight="bold">ε₃</text>
 
-                    {/* Σημεία τομής Κ (πάνω) και Λ (κάτω) */}
-                    <circle cx="240" cy="100" r="5" fill="#ffffff" />
-                    <text x="218" y="92" fill="#ffffff" fontSize="12" fontWeight="bold">Κ</text>
-                    <circle cx="240" cy="170" r="5" fill="#ffffff" />
-                    <text x="218" y="192" fill="#ffffff" fontSize="12" fontWeight="bold">Λ</text>
-
-                    {/* Highlights ανάλογα με το επιλεγμένο ζεύγος */}
+                    {/* Δυναμικά Τόξα με απόλυτη εφαρμογή στις πλευρές */}
                     {anglePairHighlight === 'alternateInterior' && (
                       <g>
-                        {/* Γωνία 1: Κάτω δεξιά από το Κ (εντός δεξιά) */}
+                        {/* Γωνία 1: Στο Κ, κάτω δεξιά (εντός εναλλάξ) */}
                         <path
-                          d="M 270 100 A 30 30 0 0 1 254 126"
-                          fill="rgba(168, 85, 247, 0.3)"
+                          d={geom.arcK_InteriorRight}
+                          fill="rgba(192, 132, 252, 0.25)"
                           stroke="#c084fc"
-                          strokeWidth="3"
+                          strokeWidth="2.5"
                         />
-                        <text x="262" y="120" fill="#c084fc" fontSize="11" fontWeight="bold">α ＝ {angleTrans}°</text>
+                        <text x={geom.kX + 18} y="126" fill="#c084fc" fontSize="11" fontWeight="bold">
+                          {angleTrans}°
+                        </text>
 
-                        {/* Γωνία 2: Πάνω αριστερά από το Λ (εντός αριστερά) */}
+                        {/* Γωνία 2: Στο Λ, πάνω αριστερά (εντός εναλλάξ) */}
                         <path
-                          d="M 210 170 A 30 30 0 0 1 226 144"
-                          fill="rgba(168, 85, 247, 0.3)"
+                          d={geom.arcL_InteriorLeft}
+                          fill="rgba(192, 132, 252, 0.25)"
                           stroke="#c084fc"
-                          strokeWidth="3"
+                          strokeWidth="2.5"
                         />
-                        <text x="175" y="160" fill="#c084fc" fontSize="11" fontWeight="bold">β ＝ {angleTrans}°</text>
+                        <text x={geom.lX - 44} y="152" fill="#c084fc" fontSize="11" fontWeight="bold">
+                          {angleTrans}°
+                        </text>
                       </g>
                     )}
 
                     {anglePairHighlight === 'corresponding' && (
                       <g>
-                        {/* Γωνία 1: Πάνω δεξιά από το Κ (εκτός δεξιά) */}
+                        {/* Γωνία 1: Στο Κ, κάτω δεξιά (εντός δεξιά) */}
                         <path
-                          d="M 270 100 A 30 30 0 0 0 254 74"
-                          fill="rgba(16, 185, 129, 0.3)"
+                          d={geom.arcK_InteriorRight}
+                          fill="rgba(16, 185, 129, 0.25)"
                           stroke="#10b981"
-                          strokeWidth="3"
+                          strokeWidth="2.5"
                         />
-                        <text x="265" y="88" fill="#6ee7b7" fontSize="11" fontWeight="bold">α ＝ {angleTrans}°</text>
+                        <text x={geom.kX + 18} y="126" fill="#6ee7b7" fontSize="11" fontWeight="bold">
+                          {angleTrans}°
+                        </text>
 
-                        {/* Γωνία 2: Πάνω δεξιά από το Λ (εντός δεξιά) */}
+                        {/* Γωνία 2: Στο Λ, κάτω δεξιά (εκτός δεξιά) */}
                         <path
-                          d="M 270 170 A 30 30 0 0 0 254 144"
-                          fill="rgba(16, 185, 129, 0.3)"
+                          d={geom.arcL_ExteriorRight}
+                          fill="rgba(16, 185, 129, 0.25)"
                           stroke="#10b981"
-                          strokeWidth="3"
+                          strokeWidth="2.5"
                         />
-                        <text x="265" y="158" fill="#6ee7b7" fontSize="11" fontWeight="bold">β ＝ {angleTrans}°</text>
+                        <text x={geom.lX + 18} y="196" fill="#6ee7b7" fontSize="11" fontWeight="bold">
+                          {angleTrans}°
+                        </text>
                       </g>
                     )}
 
                     {anglePairHighlight === 'consecutiveInterior' && (
                       <g>
-                        {/* Γωνία 1: Κάτω δεξιά από το Κ (οξεία εντός) */}
+                        {/* Γωνία 1: Στο Κ, κάτω δεξιά (οξεία = angleTrans) */}
                         <path
-                          d="M 270 100 A 30 30 0 0 1 254 126"
-                          fill="rgba(245, 158, 11, 0.3)"
+                          d={geom.arcK_InteriorRight}
+                          fill="rgba(245, 158, 11, 0.25)"
                           stroke="#f59e0b"
-                          strokeWidth="3"
+                          strokeWidth="2.5"
                         />
-                        <text x="262" y="120" fill="#fde68a" fontSize="11" fontWeight="bold">{angleTrans}°</text>
+                        <text x={geom.kX + 18} y="126" fill="#fde68a" fontSize="11" fontWeight="bold">
+                          {angleTrans}°
+                        </text>
 
-                        {/* Γωνία 2: Πάνω δεξιά από το Λ (αμβλεία εντός) */}
+                        {/* Γωνία 2: Στο Λ, πάνω δεξιά (αμβλεία = obtuseAngle) */}
                         <path
-                          d="M 270 170 A 30 30 0 0 1 226 144"
-                          fill="rgba(56, 189, 248, 0.3)"
+                          d={geom.arcL_InteriorRight}
+                          fill="rgba(56, 189, 248, 0.25)"
                           stroke="#38bdf8"
-                          strokeWidth="3"
+                          strokeWidth="2.5"
                         />
-                        <text x="240" y="158" fill="#7dd3fc" fontSize="11" fontWeight="bold">{obtuseAngle}°</text>
+                        <text x={geom.lX + 12} y="152" fill="#7dd3fc" fontSize="11" fontWeight="bold">
+                          {obtuseAngle}°
+                        </text>
                       </g>
                     )}
+
+                    {/* Σημεία τομής Κ (πάνω) και Λ (κάτω) πάνω στην τέμνουσα */}
+                    <circle cx={geom.kX} cy="100" r="5" fill="#ffffff" />
+                    <text x={geom.kX - 16} y="94" fill="#ffffff" fontSize="12" fontWeight="bold">Κ</text>
+
+                    <circle cx={geom.lX} cy="170" r="5" fill="#ffffff" />
+                    <text x={geom.lX - 16} y="188" fill="#ffffff" fontSize="12" fontWeight="bold">Λ</text>
                   </svg>
                 </div>
 
