@@ -326,12 +326,12 @@ export const A_GYMNASIOU_CHAPTERS = [
     active: true,
   },
   {
-    id: 'g02-gonies',
+    id: '36-goneies',
     section: 'geometry',
-    slug: 'g02-gonies',
+    slug: '36-goneies',
     title: 'Γωνίες & Μέτρηση Γωνιών',
     desc: 'Είδη γωνιών, ορθή, οξεία, αμβλεία γωνία και διχοτόμος.',
     badge: 'ΚΕΦΑΛΑΙΟ 02',
-    active: false,
+    active: true,
   },
 ];
