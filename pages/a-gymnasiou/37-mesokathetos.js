@@ -48,19 +48,19 @@ export default function MesokathetosTheoria() {
   // --------------------------------------------------------------------------
   // STATE ΕΡΓΑΣΤΗΡΙΟΥ 1: Μεσοκάθετος (Κινούμενο σημείο M κατά ύψος Y)
   // --------------------------------------------------------------------------
-  const [pointMY, setPointMY] = useState(60); // απόσταση από το μέσο O(0,0)
+  const [pointMY, setPointMY] = useState(60);
 
   // --------------------------------------------------------------------------
   // STATE ΕΡΓΑΣΤΗΡΙΟΥ 2: Απόσταση Σημείου & Παράλληλες Ευθείες
   // --------------------------------------------------------------------------
   const [distMode, setDistMode] = useState('pointToLine'); // 'pointToLine' | 'parallels'
   const [pointHeight, setPointHeight] = useState(70);
-  const [obliqueShift, setObliqueShift] = useState(50); // μετατόπιση πλάγιου τμήματος
+  const [obliqueShift, setObliqueShift] = useState(50);
 
   // --------------------------------------------------------------------------
   // STATE ΕΡΓΑΣΤΗΡΙΟΥ 3: Διχοτόμος & Ισαπόσταση
   // --------------------------------------------------------------------------
-  const [bisectPos, setBisectPos] = useState(80); // απόσταση σημείου πάνω στη διχοτόμο
+  const [bisectPos, setBisectPos] = useState(80);
   const [angleTotal, setAngleTotal] = useState(60);
 
   // --------------------------------------------------------------------------
@@ -140,9 +140,8 @@ export default function MesokathetosTheoria() {
 
   // --------------------------------------------------------------------------
   // ΥΠΟΛΟΓΙΣΜΟΙ ΕΡΓΑΣΤΗΡΙΟΥ 1 (Μεσοκάθετος)
-  // Σταθερό ΑΒ = 160px (άρα Α = -80, Β = +80 από το κέντρο 240, 150)
   // --------------------------------------------------------------------------
-  const segHalf = 80; // 8 cm σε κλίμακα 10px = 1cm
+  const segHalf = 80;
   const distMA = useMemo(() => {
     const val = Math.hypot(segHalf, pointMY) / 10;
     return val.toFixed(1).replace('.', ',');
@@ -168,7 +167,7 @@ export default function MesokathetosTheoria() {
   }, [bisectPos, halfAngle]);
 
   // --------------------------------------------------------------------------
-  // ΥΠΟΛΟΓΙΣΜΟΙ ΕΡΓΑΣΤΗΡΙΟΥ 4 (Ισοσκελές & Ισόπλευρο)
+  // ΥΠΟΛΟΓΙΣΜΟΙ ΕΡΓΑΣΤΗΡΙΟΥ 4 (Ισοσκελές & Ισόπλευρο - Απρόσκοπτη μεταβολή)
   // --------------------------------------------------------------------------
   const baseAngleIsosceles = useMemo(() => {
     if (triangleType === 'equilateral') return 60;
@@ -176,6 +175,20 @@ export default function MesokathetosTheoria() {
   }, [triangleType, vertexAngle]);
 
   const effectiveVertex = triangleType === 'equilateral' ? 60 : vertexAngle;
+
+  // Ομαλός γεωμετρικός υπολογισμός θέσης κορυφής Α χωρίς clamping/πάγωμα
+  const apexY = useMemo(() => {
+    const halfVertexRad = ((effectiveVertex / 2) * Math.PI) / 180;
+    // h = (baseHalf) / tan(A/2). Για A=20° -> h ~ 453, για A=120° -> h ~ 46
+    const rawH = 80 / Math.tan(halfVertexRad);
+    // Γραμμική αντιστοίχιση εύρους στο διαθέσιμο ύψος [35, 175] του SVG
+    // rawH κυμαίνεται μεταξύ ~46 (A=120°) και ~453 (A=20°)
+    const minRaw = 46.18;
+    const maxRaw = 453.68;
+    const norm = Math.max(0, Math.min(1, (rawH - minRaw) / (maxRaw - minRaw)));
+    // Όταν norm=1 (A=20°), το apexY πάει στο 35 (ψηλά). Όταν norm=0 (A=120°), πάει στο 175 (χαμηλά)
+    return Math.round(175 - norm * 140);
+  }, [effectiveVertex]);
 
   return (
     <Layout
@@ -711,7 +724,7 @@ export default function MesokathetosTheoria() {
         </section>
 
         {/* ====================================================================
-            4. ΙΣΟΣΚΕΛΕΣ & ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ + ΕΡΓΑΣΤΗΡΙΟ 4
+            4. ΙΣΟΣΚΕΛΕΣ & ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ + ΕΡΓΑΣΤΗΡΙΟ 4 (ΔΙΟΡΘΩΜΕΝΗ ΚΙΝΗΣΗ)
            ==================================================================== */}
         <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
           <div className="border-b border-slate-100 pb-4">
@@ -805,6 +818,28 @@ export default function MesokathetosTheoria() {
                       onChange={(e) => setVertexAngle(Number(e.target.value))}
                       className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
                     />
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {[-10, -2, 2, 10].map((step) => (
+                        <button
+                          key={step}
+                          type="button"
+                          onClick={(e) => handleStep(setVertexAngle, step, 20, 120, e)}
+                          className="px-2.5 py-1 rounded bg-white border border-slate-300 font-bold text-xs font-mono active:scale-95"
+                        >
+                          {step > 0 ? `＋${step}°` : `－${Math.abs(step)}°`}
+                        </button>
+                      ))}
+                      {[30, 45, 90].map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => setVertexAngle(preset)}
+                          className="px-2.5 py-1 rounded bg-slate-200 hover:bg-slate-300 font-bold text-xs font-mono active:scale-95"
+                        >
+                          {preset}°
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -819,7 +854,7 @@ export default function MesokathetosTheoria() {
                 </div>
               </div>
 
-              {/* Dynamic SVG Visualizer */}
+              {/* Dynamic SVG Visualizer με ομαλή κίνηση */}
               <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md font-mono">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs uppercase tracking-wider text-indigo-300 font-bold font-sans">
@@ -839,32 +874,21 @@ export default function MesokathetosTheoria() {
                     <circle cx="320" cy="190" r="5" fill="#38bdf8" />
                     <text x="328" y="205" fill="#38bdf8" fontSize="13" fontWeight="bold">Γ</text>
 
+                    {/* Πλευρές ΑΒ και ΑΓ με ομαλή μετατόπιση του apexY */}
+                    <line x1="160" y1="190" x2="240" y2={apexY} stroke="#f59e0b" strokeWidth="3.5" />
+                    <line x1="320" y1="190" x2="240" y2={apexY} stroke="#f59e0b" strokeWidth="3.5" />
+
+                    {/* Άξονας συμμετρίας (μεσοκάθετος/ύψος/διχοτόμος) */}
+                    <line x1="240" y1={Math.max(15, apexY - 20)} x2="240" y2="215" stroke="#a855f7" strokeWidth="2" strokeDasharray="4 3" />
+                    <rect x="240" y="178" width="12" height="12" fill="none" stroke="#a855f7" strokeWidth="1.5" />
+
                     {/* Κορυφή Α */}
-                    {(() => {
-                      const baseHalf = 80;
-                      const rad = (baseAngleIsosceles * Math.PI) / 180;
-                      const height = Math.min(150, Math.max(40, baseHalf * Math.tan(rad)));
-                      const apexY = 190 - height;
-                      return (
-                        <g>
-                          {/* Πλευρές ΑΒ και ΑΓ */}
-                          <line x1="160" y1="190" x2="240" y2={apexY} stroke="#f59e0b" strokeWidth="3.5" />
-                          <line x1="320" y1="190" x2="240" y2={apexY} stroke="#f59e0b" strokeWidth="3.5" />
+                    <circle cx="240" cy={apexY} r="5.5" fill="#f59e0b" />
+                    <text x="240" y={apexY - 10} fill="#fde68a" fontSize="13" fontWeight="bold" textAnchor="middle">Α</text>
 
-                          {/* Άξονας συμμετρίας (μεσοκάθετος/ύψος/διχοτόμος) */}
-                          <line x1="240" y1={apexY - 15} x2="240" y2="215" stroke="#a855f7" strokeWidth="2" strokeDasharray="4 3" />
-                          <rect x="240" y="178" width="12" height="12" fill="none" stroke="#a855f7" strokeWidth="1.5" />
-
-                          {/* Κορυφή Α */}
-                          <circle cx="240" cy={apexY} r="5.5" fill="#f59e0b" />
-                          <text x="240" y={apexY - 10} fill="#fde68a" fontSize="13" fontWeight="bold" textAnchor="middle">Α</text>
-
-                          {/* Ενδείξεις γωνιών βάσης */}
-                          <text x="180" y="182" fill="#38bdf8" fontSize="11" fontWeight="bold">{baseAngleIsosceles}°</text>
-                          <text x="286" y="182" fill="#38bdf8" fontSize="11" fontWeight="bold">{baseAngleIsosceles}°</text>
-                        </g>
-                      );
-                    })()}
+                    {/* Ενδείξεις γωνιών βάσης */}
+                    <text x="175" y="184" fill="#38bdf8" fontSize="11" fontWeight="bold">{baseAngleIsosceles}°</text>
+                    <text x="290" y="184" fill="#38bdf8" fontSize="11" fontWeight="bold">{baseAngleIsosceles}°</text>
                   </svg>
                 </div>
 
