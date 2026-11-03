@@ -343,4 +343,22 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 03',
     active: true,
   },
+  {
+    id: '38-theseis-eutheion',
+    section: 'geometry',
+    slug: '38-theseis-eutheion',
+    title: 'Σχετικές θέσεις ευθειών, Γωνίες παράλληλες με τέμνουσα',
+    desc: 'Θέσεις ευθειών στο επίπεδο, εντός, εναλλάξ, εντός εναλλάξ, εντός εκτός και επί τα αυτά.',
+    badge: 'ΚΕΦΑΛΑΙΟ 04',
+    active: true,
+  },
+  {
+    id: '39',
+    section: 'geometry',
+    slug: '39-epanalipsi-1',
+    title: 'Επανάληψη Ενοτήτων 01 έως 04',
+    desc: 'Σημείο, ευθύγραμμο τμήμα, ημιευθεία, ευθεία, επίπεδο, Είδη γωνιών, Θέσεις ευθειών στο επίπεδο.',
+    badge: 'ΕΠΑΝΑΛΗΨΗ 1',
+    active: false,
+  },
 ];
