@@ -334,4 +334,13 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 02',
     active: true,
   },
+  {
+    id: '37-mesokathetos',
+    section: 'geometry',
+    slug: '37-mesokathetos',
+    title: 'Μεσοκάθετος Ευθύγραμμου τμήματος, Διχοτόμος γωνίας',
+    desc: 'Μεσοκάθετος, Διχοτόμος, Ισοσκελές, Ισόπλευρο τρίγωνο.',
+    badge: 'ΚΕΦΑΛΑΙΟ 03',
+    active: true,
+  },
 ];
