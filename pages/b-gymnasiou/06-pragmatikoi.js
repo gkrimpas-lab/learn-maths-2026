@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Component Frac: υποστηρίζει πλήρως strings, αριθμούς ΚΑΙ React components (π.χ. <Power />)
+// Component Frac: υποστηρίζει strings, αριθμούς και React nodes
 const Frac = ({ num, den, className = "" }) => {
   const isNumString = typeof num === 'string' || typeof num === 'number';
   const isDenString = typeof den === 'string' || typeof den === 'number';
@@ -54,7 +54,7 @@ const Sqrt = ({ children, className = "" }) => {
   );
 };
 
-// Component Power: σκούρο χρώμα, παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη, προστασία από σπάσιμο
+// Component Power: σκούρο χρώμα, παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη
 const Power = ({ base, exp, className = "" }) => {
   const expNum = typeof exp === 'number' ? exp : parseInt(String(exp).replace(/[()]/g, ''), 10);
   const isNeg = !isNaN(expNum) ? expNum < 0 : String(exp).startsWith('-');
@@ -70,23 +70,7 @@ const Power = ({ base, exp, className = "" }) => {
   );
 };
 
-// Component Power για σκούρο φόντο
-const DarkPower = ({ base, exp, className = "" }) => {
-  const expNum = typeof exp === 'number' ? exp : parseInt(String(exp).replace(/[()]/g, ''), 10);
-  const isNeg = !isNaN(expNum) ? expNum < 0 : String(exp).startsWith('-');
-  const formattedExp = isNeg ? `(${exp})` : `${exp}`;
-
-  return (
-    <span className={`inline-flex items-baseline font-mono whitespace-nowrap ${className}`}>
-      <span>{base}</span>
-      <sup className="relative -top-[0.65em] text-amber-400 font-bold ml-0.5 text-[0.65em] leading-none">
-        {formattedExp}
-      </sup>
-    </span>
-  );
-};
-
-// Προκαθορισμένα σημεία για την Ευθεία Πραγματικών (Εργαστήριο 1) με κανονική προβολή ριζών στα κουμπιά
+// Προκαθορισμένα σημεία για την Ευθεία Πραγματικών (Εργαστήριο 1)
 const NUMBER_LINE_POINTS = [
   { 
     id: 'sqrt2', 
@@ -142,31 +126,33 @@ export default function PragmatikoiTheoria() {
 
   const selectedPoint = NUMBER_LINE_POINTS[selectedPointIdx];
 
+  // Υπολογισμός και απόδοση μαθηματικού αποτελέσματος στο Εργαστήριο 2
   const calcPower = () => {
     if (baseType === 'sqrt2') {
-      if (labExp === 2) return { str: '2', expl: '(√2)² = 2' };
-      if (labExp === 4) return { str: '4', expl: '(√2)⁴ = ((√2)²)² = 2² = 4' };
-      if (labExp === 0) return { str: '1', expl: '(√2)⁰ = 1' };
-      if (labExp === -2) return { str: '1/2', expl: '(√2)⁻² = 1 / (√2)² = 1/2' };
-      return { str: `(√2)^${labExp}`, expl: 'Υπολογίζεται με βάση τον πραγματικό √2' };
+      if (labExp === -2) return { node: <Frac num="1" den="2" />, expl: <span>(√2)⁻² ＝ 1 / (√2)² ＝ <Frac num="1" den="2" /></span> };
+      if (labExp === -1) return { node: <Frac num="1" den={<Sqrt>2</Sqrt>} />, expl: <span>(√2)⁻¹ ＝ 1 / √2 ＝ <Frac num="1" den={<Sqrt>2</Sqrt>} /></span> };
+      if (labExp === 0) return { node: '1', expl: '(√2)⁰ ＝ 1' };
+      if (labExp === 2) return { node: '2', expl: '(√2)² ＝ 2' };
+      if (labExp === 3) return { node: <span className="inline-flex items-center gap-0.5">2<Sqrt>2</Sqrt></span>, expl: '(√2)³ ＝ (√2)² · √2 ＝ 2√2' };
+      if (labExp === 4) return { node: '4', expl: '(√2)⁴ ＝ ((√2)²)² ＝ 2² ＝ 4' };
     }
     if (baseType === 'half') {
-      if (labExp === 2) return { str: '1/4', expl: '(1/2)² = 1/4' };
-      if (labExp === 3) return { str: '1/8', expl: '(1/2)³ = 1/8' };
-      if (labExp === 0) return { str: '1', expl: '(1/2)⁰ = 1' };
-      if (labExp === -1) return { str: '2', expl: '(1/2)⁻¹ = 2/1 = 2' };
-      if (labExp === -2) return { str: '4', expl: '(1/2)⁻² = 2² = 4' };
-      return { str: `(1/2)^${labExp}`, expl: 'Ιδιότητα κλάσματος με ακέραιο εκθέτη' };
+      if (labExp === -2) return { node: '4', expl: '(1/2)⁻² ＝ (2/1)² ＝ 4' };
+      if (labExp === -1) return { node: '2', expl: '(1/2)⁻¹ ＝ 2/1 ＝ 2' };
+      if (labExp === 0) return { node: '1', expl: '(1/2)⁰ ＝ 1' };
+      if (labExp === 2) return { node: <Frac num="1" den="4" />, expl: '(1/2)² ＝ 1/4' };
+      if (labExp === 3) return { node: <Frac num="1" den="8" />, expl: '(1/2)³ ＝ 1/8' };
+      if (labExp === 4) return { node: <Frac num="1" den="16" />, expl: '(1/2)⁴ ＝ 1/16' };
     }
     if (baseType === 'minus3') {
-      if (labExp === 2) return { str: '9', expl: '(-3)² = +9' };
-      if (labExp === 3) return { str: '-27', expl: '(-3)³ = -27' };
-      if (labExp === 0) return { str: '1', expl: '(-3)⁰ = 1' };
-      if (labExp === -1) return { str: '-1/3', expl: '(-3)⁻¹ = -1/3' };
-      if (labExp === -2) return { str: '1/9', expl: '(-3)⁻² = 1 / (-3)² = 1/9' };
-      return { str: `(-3)^${labExp}`, expl: 'Αρνητική βάση με ακέραιο εκθέτη' };
+      if (labExp === -2) return { node: <Frac num="1" den="9" />, expl: '(-3)⁻² ＝ 1 / (-3)² ＝ 1/9' };
+      if (labExp === -1) return { node: <Frac num="-1" den="3" />, expl: '(-3)⁻¹ ＝ 1 / (-3) ＝ -1/3' };
+      if (labExp === 0) return { node: '1', expl: '(-3)⁰ ＝ 1' };
+      if (labExp === 2) return { node: '9', expl: '(-3)² ＝ +9' };
+      if (labExp === 3) return { node: '-27', expl: '(-3)³ ＝ -27' };
+      if (labExp === 4) return { node: '81', expl: '(-3)⁴ ＝ +81' };
     }
-    return { str: '', expl: '' };
+    return { node: '', expl: '' };
   };
 
   const powerResult = calcPower();
@@ -290,7 +276,7 @@ export default function PragmatikoiTheoria() {
             Κάθε πραγματικός αριθμός αντιστοιχεί σε <strong>ένα ακριβώς σημείο</strong> της ευθείας και αντίστροφα. Επίλεξε έναν αριθμό για να δεις τη γεωμετρική κατασκευή του με ορθογώνιο τρίγωνο και διαβήτη:
           </p>
 
-          {/* Κουμπιά Επιλογής Σημείου με κανονική προβολή ριζών */}
+          {/* Κουμπιά Επιλογής Σημείου */}
           <div className="flex flex-wrap gap-2">
             <span className="text-xs font-bold text-slate-500 uppercase self-center mr-1">ΕΠΙΛΟΓΗ ΣΗΜΕΙΟΥ:</span>
             {NUMBER_LINE_POINTS.map((pt, idx) => (
@@ -494,12 +480,15 @@ export default function PragmatikoiTheoria() {
 
               <div className="flex flex-col justify-center p-4 bg-white/5 rounded-2xl border border-white/10 space-y-2">
                 <span className="text-xs text-slate-400 uppercase font-sans">ΑΠΟΤΕΛΕΣΜΑ:</span>
-                <div className="text-2xl sm:text-3xl font-black font-mono text-amber-300 flex items-center flex-wrap gap-1 whitespace-nowrap">
-                  <span>{baseType === 'sqrt2' ? '(√2)' : baseType === 'half' ? '(1/2)' : '(-3)'}</span>
+                <div className="text-2xl sm:text-3xl font-black font-mono text-amber-300 flex items-center flex-wrap gap-1.5 whitespace-nowrap">
+                  <span>(</span>
+                  {baseType === 'sqrt2' ? <Sqrt>2</Sqrt> : baseType === 'half' ? <Frac num="1" den="2" /> : '-3'}
+                  <span>)</span>
                   <sup className="relative -top-[0.65em] text-amber-400 font-bold ml-0.5 text-base sm:text-lg">
                     {labExp < 0 ? `(${labExp})` : labExp}
                   </sup>
-                  <span> ＝ {powerResult.str}</span>
+                  <span> ＝ </span>
+                  <span className="text-amber-300">{powerResult.node}</span>
                 </div>
                 <div className="text-xs sm:text-sm text-slate-300 font-sans pt-1">
                   💡 <strong>Αιτιολόγηση:</strong> {powerResult.expl}
