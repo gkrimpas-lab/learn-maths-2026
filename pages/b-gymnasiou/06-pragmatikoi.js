@@ -15,7 +15,7 @@ const Frac = ({ num, den, className = "" }) => {
   const cleanDen = denStr.replace('-', '');
 
   return (
-    <span className={`inline-flex items-center align-middle mx-1 font-mono font-semibold ${className}`}>
+    <span className={`inline-flex items-center align-middle mx-1 font-mono font-semibold whitespace-nowrap ${className}`}>
       {isNegative && <span className="mr-0.5 text-base sm:text-lg font-bold">-</span>}
       <span className="inline-flex flex-col items-center text-center leading-none text-xs sm:text-sm">
         <span className="border-b border-current px-1 pb-0.5">{cleanNum}</span>
@@ -28,7 +28,7 @@ const Frac = ({ num, den, className = "" }) => {
 // Ενιαίο SVG σύμβολο ρίζας: μονοκόμματο σχήμα με οριζόντια γραμμή (vinculum)
 const Sqrt = ({ children, className = "" }) => {
   return (
-    <span className={`inline-flex items-center align-middle mx-1 relative font-mono font-semibold ${className}`}>
+    <span className={`inline-flex items-center align-middle mx-1 relative font-mono font-semibold whitespace-nowrap ${className}`}>
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none text-current overflow-visible"
         viewBox="0 0 100 100"
@@ -51,14 +51,14 @@ const Sqrt = ({ children, className = "" }) => {
   );
 };
 
-// Component Power: σκούρο χρώμα, παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη
+// Component Power: σκούρο χρώμα, παρένθεση ΜΟΝΟ σε αρνητικό εκθέτη, προστασία από σπάσιμο
 const Power = ({ base, exp, className = "" }) => {
   const expNum = typeof exp === 'number' ? exp : parseInt(String(exp).replace(/[()]/g, ''), 10);
   const isNeg = !isNaN(expNum) ? expNum < 0 : String(exp).startsWith('-');
   const formattedExp = isNeg ? `(${exp})` : `${exp}`;
 
   return (
-    <span className={`inline-flex items-baseline font-mono ${className}`}>
+    <span className={`inline-flex items-baseline font-mono whitespace-nowrap ${className}`}>
       <span>{base}</span>
       <sup className="relative -top-[0.6em] text-slate-900 font-bold ml-0.5 text-xs sm:text-sm">
         {formattedExp}
@@ -74,7 +74,7 @@ const DarkPower = ({ base, exp, className = "" }) => {
   const formattedExp = isNeg ? `(${exp})` : `${exp}`;
 
   return (
-    <span className={`inline-flex items-baseline font-mono ${className}`}>
+    <span className={`inline-flex items-baseline font-mono whitespace-nowrap ${className}`}>
       <span>{base}</span>
       <sup className="relative -top-[0.65em] text-amber-400 font-bold ml-0.5 text-[0.65em] leading-none">
         {formattedExp}
@@ -85,24 +85,20 @@ const DarkPower = ({ base, exp, className = "" }) => {
 
 // Προκαθορισμένα σημεία για την Ευθεία Πραγματικών (Εργαστήριο 1)
 const NUMBER_LINE_POINTS = [
-  { label: '√2', value: 1.414, exact: '√2', approx: '≈ 1,414', cat: 'ΑΡΡΗΤΟΣ', construction: 'Υποτείνουσα ορθογωνίου τριγώνου 1 × 1: c² = 1² + 1² = 2' },
-  { label: '√5', value: 2.236, exact: '√5', approx: '≈ 2,236', cat: 'ΑΡΡΗΤΟΣ', construction: 'Υποτείνουσα ορθογωνίου τριγώνου 2 × 1: c² = 2² + 1² = 5' },
+  { label: '√2', value: 1.414, exact: <Sqrt>2</Sqrt>, approx: '≈ 1,414', cat: 'ΑΡΡΗΤΟΣ', construction: 'Υποτείνουσα ορθογωνίου τριγώνου 1 × 1: c² = 1² + 1² = 2' },
+  { label: '√5', value: 2.236, exact: <Sqrt>5</Sqrt>, approx: '≈ 2,236', cat: 'ΑΡΡΗΤΟΣ', construction: 'Υποτείνουσα ορθογωνίου τριγώνου 2 × 1: c² = 2² + 1² = 5' },
   { label: 'π', value: 3.1415, exact: 'π', approx: '≈ 3,141', cat: 'ΑΡΡΗΤΟΣ', construction: 'Μήκος κύκλου διαμέτρου 1 (κύλιση τροχού)' },
-  { label: '3/2', value: 1.5, exact: '3/2', approx: '= 1,5', cat: 'ΡΗΤΟΣ', construction: 'Μέσο του διαστήματος [1, 2]' },
-  { label: '-√2', value: -1.414, exact: '-√2', approx: '≈ -1,414', cat: 'ΑΡΡΗΤΟΣ', construction: 'Συμμετρικό του √2 ως προς το 0' },
+  { label: '3/2', value: 1.5, exact: <Frac num="3" den="2" />, approx: '= 1,5', cat: 'ΡΗΤΟΣ', construction: 'Μέσο του διαστήματος [1, 2]' },
+  { label: '-√2', value: -1.414, exact: <span>-<Sqrt>2</Sqrt></span>, approx: '≈ -1,414', cat: 'ΑΡΡΗΤΟΣ', construction: 'Συμμετρικό του √2 ως προς το 0' },
 ];
 
 export default function PragmatikoiTheoria() {
-  // State Εργαστηρίου 1: Επιλεγμένο σημείο στην ευθεία
   const [selectedPointIdx, setSelectedPointIdx] = useState(0);
-
-  // State Εργαστηρίου 2: Βάση και εκθέτης
-  const [baseType, setBaseType] = useState('sqrt2'); // 'sqrt2', 'half', 'minus3'
+  const [baseType, setBaseType] = useState('sqrt2');
   const [labExp, setLabExp] = useState(2);
 
   const selectedPoint = NUMBER_LINE_POINTS[selectedPointIdx];
 
-  // Υπολογισμός Εργαστηρίου 2
   const calcPower = () => {
     if (baseType === 'sqrt2') {
       if (labExp === 2) return { str: '2', expl: '(√2)² = 2' };
@@ -182,20 +178,23 @@ export default function PragmatikoiTheoria() {
               <p>
                 Οι <strong>Πραγματικοί Αριθμοί</strong> (συμβολίζονται με <strong className="font-serif text-indigo-700 text-xl">ℝ</strong>) αποτελούνται από την ένωση όλων των <strong>Ρητών</strong> και όλων των <strong>Άρρητων</strong> αριθμών:
               </p>
-              <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 font-mono text-center font-bold text-indigo-950 text-base sm:text-xl shadow-xs">
+              <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 font-mono text-center font-bold text-indigo-950 text-base sm:text-xl shadow-xs whitespace-nowrap">
                 ℝ ＝ ℚ ∪ Άρρητοι
               </div>
 
               <div className="space-y-2 text-sm sm:text-base">
                 <strong className="text-slate-900 block">Ιεραρχία Εγκλεισμού των Συνόλων:</strong>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 font-mono text-center font-bold text-slate-800 text-sm sm:text-base">
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 font-mono text-center font-bold text-slate-800 text-sm sm:text-base whitespace-nowrap">
                   ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ
                 </div>
                 <ul className="list-disc pl-5 space-y-1 text-xs sm:text-sm text-slate-600">
                   <li><strong>Φυσικοί (ℕ):</strong> 0, 1, 2, 3, ...</li>
                   <li><strong>Ακέραιοι (ℤ):</strong> ..., -3, -2, -1, 0, 1, 2, 3, ...</li>
                   <li><strong>Ρητοί (ℚ):</strong> Κλάσματα α/β με α ακέραιο, β ≠ 0 (πεπερασμένοι ή περιοδικοί δεκαδικοί).</li>
-                  <li><strong>Άρρητοι:</strong> Αριθμοί με άπειρα μη περιοδικά ψηφία (π.χ. √2, √3, √5, π).</li>
+                  <li className="flex items-center flex-wrap gap-1">
+                    <span><strong>Άρρητοι:</strong> Αριθμοί με άπειρα μη περιοδικά ψηφία (π.χ. </span>
+                    <Sqrt>2</Sqrt><span>, </span><Sqrt>3</Sqrt><span>, </span><Sqrt>5</Sqrt><span>, π).</span>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -206,7 +205,7 @@ export default function PragmatikoiTheoria() {
                 ΤΕΤΡΑΓΩΝΟΙ ΑΡΙΘΜΟΙ & ΣΥΝΔΕΣΗ ΜΕ ΤΗ ΓΕΩΜΕΤΡΙΑ
               </h3>
               <p className="text-xs sm:text-sm text-slate-600">
-                <strong>Τετράγωνος αριθμός</strong> ονομάζεται κάθε φυσικός αριθμός που ισούται με το τετράγωνο κάποιου φυσικού αριθμού (δηλαδή <span className="font-mono font-bold">α = ν²</span>).
+                <strong>Τετράγωνος αριθμός</strong> ονομάζεται κάθε φυσικός αριθμός που ισούται με το τετράγωνο κάποιου φυσικού αριθμού (δηλαδή <span className="font-mono font-bold whitespace-nowrap">α ＝ ν²</span>).
               </p>
               <div className="grid grid-cols-4 gap-2 text-center font-mono text-xs sm:text-sm">
                 <div className="p-2 bg-white rounded-xl border border-slate-200">
@@ -256,7 +255,7 @@ export default function PragmatikoiTheoria() {
                 key={idx}
                 type="button"
                 onClick={() => setSelectedPointIdx(idx)}
-                className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-mono font-bold transition-all touch-manipulation ${
+                className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-mono font-bold transition-all touch-manipulation whitespace-nowrap ${
                   selectedPointIdx === idx
                     ? 'bg-indigo-600 text-white border-indigo-700 shadow-md'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
@@ -276,7 +275,7 @@ export default function PragmatikoiTheoria() {
                 <polygon points="220,-4 230,0 220,4" fill="#94a3b8" />
                 <polygon points="-220,-4 -230,0 -220,4" fill="#94a3b8" />
 
-                {/* Διαβαθμίσεις ακεραίων (κλίμακα: 1 μονάδα = 55px) */}
+                {/* Διαβαθμίσεις ακεραίων */}
                 {[-3, -2, -1, 0, 1, 2, 3].map((val) => {
                   const x = val * 55;
                   return (
@@ -289,20 +288,17 @@ export default function PragmatikoiTheoria() {
                   );
                 })}
 
-                {/* Γεωμετρική κατασκευή του √2 (τρίγωνο 1 x 1 και τόξο διαβήτη) */}
+                {/* Γεωμετρική κατασκευή του √2 */}
                 {selectedPoint.label === '√2' && (
                   <g>
-                    {/* Κάθετη πλευρά ύψους 1 (55px) στο x = 1 */}
                     <line x1="55" y1="0" x2="55" y2="-55" stroke="#38bdf8" strokeWidth="2.5" strokeDasharray="3,3" />
-                    {/* Υποτείνουσα από (0,0) στο (55, -55) μήκους √2 */}
                     <line x1="0" y1="0" x2="55" y2="-55" stroke="#f59e0b" strokeWidth="3" />
-                    {/* Τόξο διαβήτη με κέντρο το 0 και ακτίνα √2 */}
                     <path d="M 55 -55 A 77.78 77.78 0 0 1 77.78 0" fill="none" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4,4" />
                     <text x="32" y="-32" fill="#f59e0b" fontSize="12" fontWeight="bold" fontFamily="monospace">c = √2</text>
                   </g>
                 )}
 
-                {/* Γεωμετρική κατασκευή του √5 (τρίγωνο 2 x 1) */}
+                {/* Γεωμετρική κατασκευή του √5 */}
                 {selectedPoint.label === '√5' && (
                   <g>
                     <line x1="110" y1="0" x2="110" y2="-55" stroke="#38bdf8" strokeWidth="2.5" strokeDasharray="3,3" />
@@ -331,8 +327,10 @@ export default function PragmatikoiTheoria() {
             {/* Επεξήγηση Κατασκευής */}
             <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-2 text-xs sm:text-sm font-sans">
               <div className="flex items-center justify-between flex-wrap gap-2 border-b border-white/10 pb-2">
-                <span className="font-bold text-amber-300">
-                  Σημείο: {selectedPoint.exact} ({selectedPoint.approx})
+                <span className="font-bold text-amber-300 inline-flex items-center gap-1.5 flex-nowrap">
+                  <span>Σημείο:</span>
+                  <span>{selectedPoint.exact}</span>
+                  <span className="text-slate-300 font-normal">({selectedPoint.approx})</span>
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
                   {selectedPoint.cat}
@@ -359,13 +357,21 @@ export default function PragmatikoiTheoria() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 text-slate-700 text-sm sm:text-base lg:text-lg leading-relaxed">
             <div className="space-y-4">
               <p>
-                Οι κανόνες και οι ιδιότητες των δυνάμεων ισχύουν <strong>για οποιαδήποτε πραγματική βάση</strong> <span className="font-mono font-bold">α ∈ ℝ</span>:
+                Οι κανόνες και οι ιδιότητες των δυνάμεων ισχύουν <strong>για οποιαδήποτε πραγματική βάση</strong> <span className="font-mono font-bold whitespace-nowrap">α ∈ ℝ</span>:
               </p>
               <ul className="space-y-2 list-disc pl-5 text-slate-600 text-xs sm:text-sm font-mono">
-                <li>α⁰ ＝ 1 (για κάθε α ≠ 0)</li>
-                <li>α¹ ＝ α</li>
-                <li>α⁻ⁿ ＝ 1 / αⁿ (για κάθε α ≠ 0 και ν φυσικό)</li>
-                <li>(α/β)⁻ⁿ ＝ (β/α)ⁿ (για α, β ≠ 0)</li>
+                <li className="whitespace-nowrap"><Power base="α" exp={0} /> ＝ 1 (για κάθε α ≠ 0)</li>
+                <li className="whitespace-nowrap"><Power base="α" exp={1} /> ＝ α</li>
+                <li className="flex items-center flex-wrap gap-1">
+                  <span><Power base="α" exp="-ν" /> ＝ </span>
+                  <Frac num="1" den={<Power base="α" exp="ν" />} />
+                  <span className="text-slate-500 font-sans text-xs">(για α ≠ 0 και ν φυσικό)</span>
+                </li>
+                <li className="flex items-center flex-wrap gap-1">
+                  <span>(<Frac num="α" den="β" />)<sup className="relative -top-[0.6em] text-slate-900 font-bold ml-0.5 text-xs">(-ν)</sup> ＝ </span>
+                  <span>(<Frac num="β" den="α" />)<sup className="relative -top-[0.6em] text-slate-900 font-bold ml-0.5 text-xs">ν</sup></span>
+                  <span className="text-slate-500 font-sans text-xs">(για α, β ≠ 0)</span>
+                </li>
               </ul>
             </div>
 
@@ -375,20 +381,20 @@ export default function PragmatikoiTheoria() {
                 ΟΙ 5 ΒΑΣΙΚΕΣ ΙΔΙΟΤΗΤΕΣ ΣΤΟ ℝ
               </h3>
               <div className="space-y-1.5 text-slate-800">
-                <div className="p-2 bg-white rounded-xl border border-slate-200">
-                  1. αᵐ · αⁿ ＝ αᵐ⁺ⁿ
+                <div className="p-2 bg-white rounded-xl border border-slate-200 whitespace-nowrap">
+                  1. <Power base="α" exp="μ" /> · <Power base="α" exp="ν" /> ＝ <Power base="α" exp="μ+ν" />
                 </div>
-                <div className="p-2 bg-white rounded-xl border border-slate-200">
-                  2. αᵐ : αⁿ ＝ αᵐ⁻ⁿ
+                <div className="p-2 bg-white rounded-xl border border-slate-200 whitespace-nowrap">
+                  2. <Power base="α" exp="μ" /> : <Power base="α" exp="ν" /> ＝ <Power base="α" exp="μ-ν" />
                 </div>
-                <div className="p-2 bg-white rounded-xl border border-slate-200">
-                  3. (α · β)ⁿ ＝ αⁿ · βⁿ
+                <div className="p-2 bg-white rounded-xl border border-slate-200 whitespace-nowrap">
+                  3. (<Power base="α · β" exp="ν" />) ＝ <Power base="α" exp="ν" /> · <Power base="β" exp="ν" />
                 </div>
-                <div className="p-2 bg-white rounded-xl border border-slate-200">
-                  4. (α : β)ⁿ ＝ αⁿ : βⁿ
+                <div className="p-2 bg-white rounded-xl border border-slate-200 whitespace-nowrap">
+                  4. (<Power base="α : β" exp="ν" />) ＝ <Power base="α" exp="ν" /> : <Power base="β" exp="ν" />
                 </div>
-                <div className="p-2 bg-white rounded-xl border border-slate-200">
-                  5. (αᵐ)ⁿ ＝ αᵐ·ⁿ
+                <div className="p-2 bg-white rounded-xl border border-slate-200 whitespace-nowrap">
+                  5. (<Power base="α" exp="μ" />)<sup className="relative -top-[0.6em] text-slate-900 font-bold ml-0.5 text-xs">ν</sup> ＝ <Power base="α" exp="μ·ν" />
                 </div>
               </div>
             </div>
@@ -415,7 +421,7 @@ export default function PragmatikoiTheoria() {
                       key={b.id}
                       type="button"
                       onClick={() => setBaseType(b.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all whitespace-nowrap ${
                         baseType === b.id ? 'bg-amber-400 text-slate-950 shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                       }`}
                     >
@@ -433,7 +439,7 @@ export default function PragmatikoiTheoria() {
                       key={eVal}
                       type="button"
                       onClick={() => setLabExp(eVal)}
-                      className={`w-10 h-10 rounded-xl text-sm font-mono font-bold transition-all flex items-center justify-center ${
+                      className={`w-10 h-10 rounded-xl text-sm font-mono font-bold transition-all flex items-center justify-center whitespace-nowrap ${
                         labExp === eVal ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                       }`}
                     >
@@ -445,9 +451,9 @@ export default function PragmatikoiTheoria() {
 
               <div className="flex flex-col justify-center p-4 bg-white/5 rounded-2xl border border-white/10 space-y-2">
                 <span className="text-xs text-slate-400 uppercase font-sans">ΑΠΟΤΕΛΕΣΜΑ:</span>
-                <div className="text-2xl sm:text-3xl font-black font-mono text-amber-300 flex items-center flex-wrap gap-1">
+                <div className="text-2xl sm:text-3xl font-black font-mono text-amber-300 flex items-center flex-wrap gap-1 whitespace-nowrap">
                   <span>{baseType === 'sqrt2' ? '(√2)' : baseType === 'half' ? '(1/2)' : '(-3)'}</span>
-                  <sup className="text-amber-400 font-bold ml-0.5 text-base sm:text-lg">
+                  <sup className="relative -top-[0.65em] text-amber-400 font-bold ml-0.5 text-base sm:text-lg">
                     {labExp < 0 ? `(${labExp})` : labExp}
                   </sup>
                   <span> ＝ {powerResult.str}</span>
@@ -478,18 +484,18 @@ export default function PragmatikoiTheoria() {
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700">
                 ΠΑΡΑΔΕΙΓΜΑ 1: ΥΠΟΛΟΓΙΣΜΟΣ ΔΥΝΑΜΗΣ ΜΕ ΡΙΖΑ
               </span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap">
-                <span>Υπολόγισε την τιμή της παράστασης: Α ＝ (</span>
-                <Sqrt>3</Sqrt><span>)⁴ · (</span><Sqrt>3</Sqrt><span>)⁻²</span>
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap gap-1">
+                <span>Υπολόγισε την τιμή: Α ＝ </span>
+                <span className="inline-flex items-center flex-nowrap whitespace-nowrap">
+                  <span>(<Sqrt>3</Sqrt>)⁴ · (<Sqrt>3</Sqrt>)<sup className="relative -top-[0.6em] text-slate-900 font-bold ml-0.5 text-xs">(-2)</sup></span>
+                </span>
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
                 <div>1. Εφαρμόζουμε την ιδιότητα γινομένου: αᵐ · αⁿ = αᵐ⁺ⁿ</div>
-                <div className="pl-3 text-slate-500">
+                <div className="pl-3 text-slate-500 whitespace-nowrap">
                   (√3)⁴ · (√3)⁻² ＝ (√3)⁴⁺⁽⁻²⁾ ＝ (√3)²
                 </div>
-                <div className="flex items-center flex-wrap">
-                  <span>2. Επειδή (√3)² = 3:</span>
-                </div>
+                <div>2. Επειδή (√3)² = 3:</div>
                 <div className="pl-3 font-bold text-indigo-700">➔ Α ＝ 3</div>
               </div>
             </div>
@@ -506,7 +512,11 @@ export default function PragmatikoiTheoria() {
                 <div>1. Από το Πυθαγόρειο Θεώρημα: d² = 1² + 1² = 2</div>
                 <div>2. Άρα το μήκος της διαγωνίου είναι d = √2 m ≈ 1,414 m.</div>
                 <div>3. Είναι άρρητος αριθμός και βρίσκεται ανάμεσα στο 1 και το 2 (1 &lt; √2 &lt; 2).</div>
-                <div className="pl-3 font-bold text-indigo-700">➔ d ＝ √2 m</div>
+                <div className="pl-3 font-bold text-indigo-700 flex items-center flex-nowrap gap-1">
+                  <span>➔ d ＝ </span>
+                  <Sqrt>2</Sqrt>
+                  <span> m</span>
+                </div>
               </div>
             </div>
 
@@ -515,12 +525,17 @@ export default function PragmatikoiTheoria() {
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700">
                 ΠΑΡΑΔΕΙΓΜΑ 3: ΣΥΝΔΥΑΣΤΙΚΗ ΙΔΙΟΤΗΤΑ
               </span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono">
-                Απλοποίησε την παράσταση: Β ＝ (2 · √5)² : 4
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap gap-1">
+                <span>Απλοποίησε την παράσταση: Β ＝ </span>
+                <span className="inline-flex items-center flex-nowrap whitespace-nowrap">
+                  <span>(2 · <Sqrt>5</Sqrt>)² : 4</span>
+                </span>
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
                 <div>1. Εφαρμόζουμε (α · β)² = α² · β²:</div>
-                <div className="pl-3 text-slate-500">(2 · √5)² = 2² · (√5)² = 4 · 5 = 20</div>
+                <div className="pl-3 text-slate-500 whitespace-nowrap">
+                  (2 · √5)² = 2² · (√5)² = 4 · 5 = 20
+                </div>
                 <div>2. Διαιρούμε με το 4: 20 : 4 = 5</div>
                 <div className="pl-3 font-bold text-indigo-700">➔ Β ＝ 5</div>
               </div>
@@ -535,10 +550,18 @@ export default function PragmatikoiTheoria() {
                 Ένα τετράγωνο οικόπεδο έχει εμβαδόν 18 m². Είναι η πλευρά του ρητός ή άρρητος αριθμός;
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200">
-                <div>1. Η πλευρά είναι α = √18 m.</div>
+                <div className="flex items-center flex-nowrap gap-1">
+                  <span>1. Η πλευρά είναι α = </span>
+                  <Sqrt>18</Sqrt>
+                  <span> m.</span>
+                </div>
                 <div>2. Το 18 δεν είναι τετράγωνος αριθμός (4² = 16, 5² = 25).</div>
                 <div>3. Άρα η πλευρά είναι άρρητος αριθμός (α ≈ 4,24 m).</div>
-                <div className="pl-3 font-bold text-indigo-700">➔ α ＝ √18 m (Άρρητος)</div>
+                <div className="pl-3 font-bold text-indigo-700 flex items-center flex-nowrap gap-1">
+                  <span>➔ α ＝ </span>
+                  <Sqrt>18</Sqrt>
+                  <span> m (Άρρητος)</span>
+                </div>
               </div>
             </div>
 
