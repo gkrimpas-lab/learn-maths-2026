@@ -2,24 +2,27 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Component Frac με ασφαλή ανίχνευση προσήμου
+// Component Frac: υποστηρίζει πλήρως strings, αριθμούς ΚΑΙ React components (π.χ. <Power />)
 const Frac = ({ num, den, className = "" }) => {
-  const numStr = String(num).trim();
-  const denStr = String(den).trim();
+  const isNumString = typeof num === 'string' || typeof num === 'number';
+  const isDenString = typeof den === 'string' || typeof den === 'number';
+
+  const numStr = isNumString ? String(num).trim() : '';
+  const denStr = isDenString ? String(den).trim() : '';
 
   const isNumNeg = numStr.startsWith('-');
   const isDenNeg = denStr.startsWith('-');
   const isNegative = (isNumNeg && !isDenNeg) || (!isNumNeg && isDenNeg);
 
-  const cleanNum = numStr.replace('-', '');
-  const cleanDen = denStr.replace('-', '');
+  const cleanNum = isNumString ? numStr.replace('-', '') : num;
+  const cleanDen = isDenString ? denStr.replace('-', '') : den;
 
   return (
     <span className={`inline-flex items-center align-middle mx-1 font-mono font-semibold whitespace-nowrap ${className}`}>
       {isNegative && <span className="mr-0.5 text-base sm:text-lg font-bold">-</span>}
       <span className="inline-flex flex-col items-center text-center leading-none text-xs sm:text-sm">
-        <span className="border-b border-current px-1 pb-0.5">{cleanNum}</span>
-        <span className="pt-0.5 px-1">{cleanDen}</span>
+        <span className="border-b border-current px-1 pb-0.5 inline-flex items-center justify-center">{cleanNum}</span>
+        <span className="pt-0.5 px-1 inline-flex items-center justify-center">{cleanDen}</span>
       </span>
     </span>
   );
@@ -83,13 +86,53 @@ const DarkPower = ({ base, exp, className = "" }) => {
   );
 };
 
-// Προκαθορισμένα σημεία για την Ευθεία Πραγματικών (Εργαστήριο 1)
+// Προκαθορισμένα σημεία για την Ευθεία Πραγματικών (Εργαστήριο 1) με κανονική προβολή ριζών στα κουμπιά
 const NUMBER_LINE_POINTS = [
-  { label: '√2', value: 1.414, exact: <Sqrt>2</Sqrt>, approx: '≈ 1,414', cat: 'ΑΡΡΗΤΟΣ', construction: 'Υποτείνουσα ορθογωνίου τριγώνου 1 × 1: c² = 1² + 1² = 2' },
-  { label: '√5', value: 2.236, exact: <Sqrt>5</Sqrt>, approx: '≈ 2,236', cat: 'ΑΡΡΗΤΟΣ', construction: 'Υποτείνουσα ορθογωνίου τριγώνου 2 × 1: c² = 2² + 1² = 5' },
-  { label: 'π', value: 3.1415, exact: 'π', approx: '≈ 3,141', cat: 'ΑΡΡΗΤΟΣ', construction: 'Μήκος κύκλου διαμέτρου 1 (κύλιση τροχού)' },
-  { label: '3/2', value: 1.5, exact: <Frac num="3" den="2" />, approx: '= 1,5', cat: 'ΡΗΤΟΣ', construction: 'Μέσο του διαστήματος [1, 2]' },
-  { label: '-√2', value: -1.414, exact: <span>-<Sqrt>2</Sqrt></span>, approx: '≈ -1,414', cat: 'ΑΡΡΗΤΟΣ', construction: 'Συμμετρικό του √2 ως προς το 0' },
+  { 
+    id: 'sqrt2', 
+    btnLabel: <Sqrt>2</Sqrt>, 
+    value: 1.414, 
+    exact: <Sqrt>2</Sqrt>, 
+    approx: '≈ 1,414', 
+    cat: 'ΑΡΡΗΤΟΣ', 
+    construction: 'Υποτείνουσα ορθογωνίου τριγώνου 1 × 1: c² = 1² + 1² = 2' 
+  },
+  { 
+    id: 'sqrt5', 
+    btnLabel: <Sqrt>5</Sqrt>, 
+    value: 2.236, 
+    exact: <Sqrt>5</Sqrt>, 
+    approx: '≈ 2,236', 
+    cat: 'ΑΡΡΗΤΟΣ', 
+    construction: 'Υποτείνουσα ορθογωνίου τριγώνου 2 × 1: c² = 2² + 1² = 5' 
+  },
+  { 
+    id: 'pi', 
+    btnLabel: <span>π</span>, 
+    value: 3.1415, 
+    exact: 'π', 
+    approx: '≈ 3,141', 
+    cat: 'ΑΡΡΗΤΟΣ', 
+    construction: 'Μήκος κύκλου διαμέτρου 1 (κύλιση τροχού)' 
+  },
+  { 
+    id: '3/2', 
+    btnLabel: <Frac num="3" den="2" />, 
+    value: 1.5, 
+    exact: <Frac num="3" den="2" />, 
+    approx: '= 1,5', 
+    cat: 'ΡΗΤΟΣ', 
+    construction: 'Μέσο του διαστήματος [1, 2]' 
+  },
+  { 
+    id: 'minus_sqrt2', 
+    btnLabel: <span>-<Sqrt>2</Sqrt></span>, 
+    value: -1.414, 
+    exact: <span>-<Sqrt>2</Sqrt></span>, 
+    approx: '≈ -1,414', 
+    cat: 'ΑΡΡΗΤΟΣ', 
+    construction: 'Συμμετρικό του √2 ως προς το 0' 
+  },
 ];
 
 export default function PragmatikoiTheoria() {
@@ -247,7 +290,7 @@ export default function PragmatikoiTheoria() {
             Κάθε πραγματικός αριθμός αντιστοιχεί σε <strong>ένα ακριβώς σημείο</strong> της ευθείας και αντίστροφα. Επίλεξε έναν αριθμό για να δεις τη γεωμετρική κατασκευή του με ορθογώνιο τρίγωνο και διαβήτη:
           </p>
 
-          {/* Κουμπιά Επιλογής Σημείου */}
+          {/* Κουμπιά Επιλογής Σημείου με κανονική προβολή ριζών */}
           <div className="flex flex-wrap gap-2">
             <span className="text-xs font-bold text-slate-500 uppercase self-center mr-1">ΕΠΙΛΟΓΗ ΣΗΜΕΙΟΥ:</span>
             {NUMBER_LINE_POINTS.map((pt, idx) => (
@@ -255,13 +298,13 @@ export default function PragmatikoiTheoria() {
                 key={idx}
                 type="button"
                 onClick={() => setSelectedPointIdx(idx)}
-                className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-mono font-bold transition-all touch-manipulation whitespace-nowrap ${
+                className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-mono font-bold transition-all touch-manipulation whitespace-nowrap flex items-center justify-center ${
                   selectedPointIdx === idx
                     ? 'bg-indigo-600 text-white border-indigo-700 shadow-md'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                 }`}
               >
-                {pt.label}
+                {pt.btnLabel}
               </button>
             ))}
           </div>
@@ -289,7 +332,7 @@ export default function PragmatikoiTheoria() {
                 })}
 
                 {/* Γεωμετρική κατασκευή του √2 */}
-                {selectedPoint.label === '√2' && (
+                {selectedPoint.id === 'sqrt2' && (
                   <g>
                     <line x1="55" y1="0" x2="55" y2="-55" stroke="#38bdf8" strokeWidth="2.5" strokeDasharray="3,3" />
                     <line x1="0" y1="0" x2="55" y2="-55" stroke="#f59e0b" strokeWidth="3" />
@@ -299,7 +342,7 @@ export default function PragmatikoiTheoria() {
                 )}
 
                 {/* Γεωμετρική κατασκευή του √5 */}
-                {selectedPoint.label === '√5' && (
+                {selectedPoint.id === 'sqrt5' && (
                   <g>
                     <line x1="110" y1="0" x2="110" y2="-55" stroke="#38bdf8" strokeWidth="2.5" strokeDasharray="3,3" />
                     <line x1="0" y1="0" x2="110" y2="-55" stroke="#f59e0b" strokeWidth="3" />
@@ -316,7 +359,7 @@ export default function PragmatikoiTheoria() {
                       <circle cx={targetX} cy="0" r="6" fill="#ec4899" stroke="#ffffff" strokeWidth="2" />
                       <line x1={targetX} y1="0" x2={targetX} y2="-18" stroke="#ec4899" strokeWidth="2" />
                       <text x={targetX} y="-24" fill="#ec4899" fontSize="14" fontWeight="black" textAnchor="middle" fontFamily="monospace">
-                        {selectedPoint.label}
+                        {selectedPoint.id === 'sqrt2' ? '√2' : selectedPoint.id === 'sqrt5' ? '√5' : selectedPoint.id === 'minus_sqrt2' ? '-√2' : selectedPoint.id === '3/2' ? '3/2' : 'π'}
                       </text>
                     </g>
                   );
@@ -359,8 +402,8 @@ export default function PragmatikoiTheoria() {
               <p>
                 Οι κανόνες και οι ιδιότητες των δυνάμεων ισχύουν <strong>για οποιαδήποτε πραγματική βάση</strong> <span className="font-mono font-bold whitespace-nowrap">α ∈ ℝ</span>:
               </p>
-              <ul className="space-y-2 list-disc pl-5 text-slate-600 text-xs sm:text-sm font-mono">
-                <li className="whitespace-nowrap"><Power base="α" exp={0} /> ＝ 1 (για κάθε α ≠ 0)</li>
+              <ul className="space-y-3 list-disc pl-5 text-slate-700 text-xs sm:text-sm font-mono">
+                <li className="whitespace-nowrap"><Power base="α" exp={0} /> ＝ 1 <span className="text-slate-500 font-sans text-xs">(για κάθε α ≠ 0)</span></li>
                 <li className="whitespace-nowrap"><Power base="α" exp={1} /> ＝ α</li>
                 <li className="flex items-center flex-wrap gap-1">
                   <span><Power base="α" exp="-ν" /> ＝ </span>
@@ -413,15 +456,15 @@ export default function PragmatikoiTheoria() {
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { id: 'sqrt2', label: '√2 (Άρρητος)' },
-                    { id: 'half', label: '1/2 (Ρητός)' },
-                    { id: 'minus3', label: '-3 (Ακέραιος)' }
+                    { id: 'sqrt2', label: <span className="inline-flex items-center gap-1"><Sqrt>2</Sqrt> (Άρρητος)</span> },
+                    { id: 'half', label: <span className="inline-flex items-center gap-1"><Frac num="1" den="2" /> (Ρητός)</span> },
+                    { id: 'minus3', label: <span>-3 (Ακέραιος)</span> }
                   ].map((b) => (
                     <button
                       key={b.id}
                       type="button"
                       onClick={() => setBaseType(b.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all whitespace-nowrap ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all whitespace-nowrap flex items-center justify-center ${
                         baseType === b.id ? 'bg-amber-400 text-slate-950 shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                       }`}
                     >
