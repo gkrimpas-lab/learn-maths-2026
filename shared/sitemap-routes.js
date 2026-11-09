@@ -3,11 +3,11 @@ export const SITEMAP_ROUTES = [
   { path: '/epikoinonia', changefreq: 'weekly', priority: '0.9' },
 
   // --- Πρότυπα Σχολεία ---
-  { path: '/protipa/protipa', changefreq: 'monthly', priority: '0.7' },
+  { path: '/protipa/protipa', changefreq: 'weekly', priority: '0.9' },
   { path: '/protipa/01-proto-test', changefreq: 'monthly', priority: '0.7' },
   { path: '/protipa/02-deytero-test', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/pragmatika-themata', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/test-prosomoiosis', changefreq: 'monthly', priority: '0.7' },
+  { path: '/protipa/pragmatika-themata', changefreq: 'weekly', priority: '0.8' },
+  { path: '/protipa/test-prosomoiosis', changefreq: 'weekly', priority: '0.8' },
   { path: '/protipa/themata-2020', changefreq: 'monthly', priority: '0.7' },
   { path: '/protipa/themata-2021', changefreq: 'monthly', priority: '0.7' },
   { path: '/protipa/themata-2022', changefreq: 'monthly', priority: '0.7' },
@@ -364,6 +364,12 @@ export const SITEMAP_ROUTES = [
   { path: '/a-gymnasiou/34-problimata-eksisoseon-ask', changefreq: 'monthly', priority: '0.7' },
   { path: '/a-gymnasiou/35-geometrikes-ennoies', changefreq: 'monthly', priority: '0.7' },
   { path: '/a-gymnasiou/35-geometrikes-ennoies-ask', changefreq: 'monthly', priority: '0.7' },
+  { path: '/a-gymnasiou/36-goneies', changefreq: 'monthly', priority: '0.7' },
+  { path: '/a-gymnasiou/36-goneies-ask', changefreq: 'monthly', priority: '0.7' },
+  { path: '/a-gymnasiou/37-mesokathetos', changefreq: 'monthly', priority: '0.7' },
+  { path: '/a-gymnasiou/37-mesokathetos-ask', changefreq: 'monthly', priority: '0.7' },
+  { path: '/a-gymnasiou/38-theseis-eutheion', changefreq: 'monthly', priority: '0.7' },
+  { path: '/a-gymnasiou/38-theseis-eutheion-ask', changefreq: 'monthly', priority: '0.7' },
 
   // --- Β' Γυμνασίου ---
   { path: '/b-gymnasiou', changefreq: 'weekly', priority: '0.9' },

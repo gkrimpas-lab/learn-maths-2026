@@ -27,6 +27,7 @@ export const G_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 1',
     badgeEn: 'CHAPTER 1',
     active: true,
+    keywords: ['ασκήσεις άλγεβρα', 'ρητοί αριθμοί', 'περιοδικοί δεκαδικοί']
   },
   {
     id: '02',
@@ -40,6 +41,7 @@ export const G_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 2',
     badgeEn: 'CHAPTER 2',
     active: true,
+    keywords: ['άρρητοι αριθμοί', 'ασκήσεις άλγεβρα', 'προσέγγιση αρρήτων']
   },
   {
     id: '03',
@@ -53,6 +55,7 @@ export const G_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 3',
     badgeEn: 'CHAPTER 3',
     active: true,
+    keywords: ['πραγματικοί αριθμοί', 'διάταξη πραγματικών', 'ασκήσεις μαθηματικά']
   },
   {
     id: '04',
@@ -66,6 +69,7 @@ export const G_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 4',
     badgeEn: 'CHAPTER 4',
     active: true,
+    keywords: ['πράξεις πραγματικών αριθμών', 'ασκήσεις άλγεβρα', 'ιδιότητες πράξεων']
   },
   {
     id: '05',
@@ -79,6 +83,7 @@ export const G_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 5',
     badgeEn: 'CHAPTER 5',
     active: true,
+    keywords: ['δυνάμεις πραγματικών', 'ιδιότητες δυνάμεων', 'ασκήσεις άλγεβρα']
   },
   {
     id: '06',
@@ -92,20 +97,22 @@ export const G_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 6',
     badgeEn: 'CHAPTER 6',
     active: true,
+    keywords: ['τετραγωνικές ρίζες', 'ιδιότητες ριζών', 'απλοποίηση ριζικών', 'ασκήσεις άλγεβρα']
   },
   {
     id: '07',
     section: 'algebra',
     slug: '07-epanalipsi-1',
     icon: '🏆',
-    title: 'Επανάληψη Ενοτήτων 1 έως 6',
-    titleEn: 'Review: Units 1 to 6',
+    title: 'Επαναληπτικές Ασκήσεις Άλγεβρας: Ενότητες 1 έως 6',
+    titleEn: 'Review Exercises on Algebra: Units 1 to 6',
     desc: 'Δεκαδική μορφή ρητών/άρρητων, πραγματικοί αριθμοί, πράξεις, δυνάμεις και ρίζες.',
     descEn: 'Decimals, real numbers, operations, exponent rules, and square root properties.',
     badge: 'ΕΠΑΝΑΛΗΨΗ 1',
     badgeEn: 'REVIEW 1',
     isReview: true,
     active: true,
+    keywords: ['ασκήσεις μαθηματικά', 'επαναληπτικές ασκήσεις άλγεβρας']
   },
   {
     id: '10',
@@ -119,6 +126,7 @@ export const G_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 7',
     badgeEn: 'CHAPTER 7',
     active: true,
+    keywords: ['μονώνυμα πολυώνυμα', 'αναγωγή ομοίων όρων', 'ασκήσεις άλγεβρα']
   },
   {
     id: '11',
@@ -132,33 +140,36 @@ export const G_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 8',
     badgeEn: 'CHAPTER 8',
     active: true,
+    keywords: ['πρόσθεση πολυωνύμων', 'αφαίρεση πολυωνύμων', 'ασκήσεις άλγεβρα']
   },
 
-  // --- ΜΕΛΛΟΝΤΙΚΑ ΚΕΦΑΛΑΙΑ ΓΕΩΜΕΤΡΙΑΣ ---
+  // --- ΜΕΡΟΣ Β: ΓΕΩΜΕΤΡΙΑ & ΤΡΙΓΩΝΟΜΕΤΡΙΑ ---
   {
     id: 'g01',
     section: 'geometry',
     slug: 'g01-isotita-trigonon',
     icon: '📐',
-    title: 'Ισότητα Τριγώνων',
-    titleEn: 'Triangle Congruence',
-    desc: 'Κριτήρια ισότητας τριγώνων, ορθογώνια τρίγωνα και αποδείξεις.',
+    title: 'Ισότητα Τριγώνων (Γεωμετρία)',
+    titleEn: 'Triangle Congruence (Geometry)',
+    desc: 'Κριτήρια ισότητας τριγώνων, ισότητα ορθογωνίων τριγώνων και γεωμετρικές αποδείξεις.',
     descEn: 'Congruence criteria for general and right triangles, geometric proofs.',
     badge: 'ΓΕΩΜΕΤΡΙΑ 1',
     badgeEn: 'GEOMETRY 1',
     active: false,
+    keywords: ['ισότητα τριγώνων', 'κριτήρια ισότητας', 'ασκήσεις γεωμετρία']
   },
   {
     id: 'g02',
     section: 'geometry',
     slug: 'g02-omoiotita',
     icon: '📏',
-    title: 'Θεώρημα Θαλή & Ομοιότητα',
-    titleEn: "Thales' Theorem & Similarity",
-    desc: 'Λόγος ευθυγράμμων τμημάτων, θεώρημα του Θαλή, όμοια πολύγωνα και τρίγωνα.',
-    descEn: "Ratio of line segments, Thales' theorem, similar polygons, and triangle similarity.",
+    title: 'Θεώρημα Θαλή & Ομοιότητα Τριγώνων',
+    titleEn: "Thales' Theorem & Triangle Similarity",
+    desc: 'Λόγος ευθυγράμμων τμημάτων, θεώρημα του Θαλή, όμοια πολύγωνα και κριτήρια ομοιότητας τριγώνων.',
+    descEn: "Ratio of line segments, Thales' theorem, similar polygons, and triangle similarity criteria.",
     badge: 'ΓΕΩΜΕΤΡΙΑ 2',
     badgeEn: 'GEOMETRY 2',
     active: false,
+    keywords: ['θεώρημα θαλή', 'ομοιότητα τριγώνων', 'ασκήσεις γεωμετρία']
   },
 ];

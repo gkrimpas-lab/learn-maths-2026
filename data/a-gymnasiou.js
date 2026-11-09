@@ -27,6 +27,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 1',
     badgeEn: 'CHAPTER 1',
     active: true,
+    keywords: ['ασκήσεις μαθηματικά', 'φυσικοί αριθμοί', 'δυνάμεις φυσικών']
   },
   {
     id: '02',
@@ -40,19 +41,21 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 2',
     badgeEn: 'CHAPTER 2',
     active: true,
+    keywords: ['ευκλείδια διαίρεση', 'κριτήρια διαιρετότητας', 'ασκήσεις άλγεβρα']
   },
   {
     id: '03',
     section: 'algebra',
     slug: '03-MKD',
     icon: '👑',
-    title: 'Μέγιστος Κοινός Διαιρέτης',
+    title: 'Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)',
     titleEn: 'Greatest Common Divisor (GCD)',
     desc: 'Μέγιστος Κοινός Διαιρέτης (ΜΚΔ), ανάλυση σε γινόμενο πρώτων παραγόντων.',
     descEn: 'Greatest Common Divisor (GCD) and prime factor decomposition.',
     badge: 'ΚΕΦΑΛΑΙΟ 3',
     badgeEn: 'CHAPTER 3',
     active: true,
+    keywords: ['ασκήσεις μαθηματικών', 'ΜΚΔ', 'μέγιστος κοινός διαιρέτης']
   },
   {
     id: '04',
@@ -66,20 +69,22 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 4',
     badgeEn: 'CHAPTER 4',
     active: true,
+    keywords: ['συστήματα αρίθμησης', 'δυαδικό σύστημα']
   },
   {
     id: '05',
     section: 'algebra',
     slug: '04a-epanalipsi-1',
     icon: '🏆',
-    title: 'Επανάληψη Ενοτήτων 1 έως 4',
-    titleEn: 'Review: Units 1 to 4',
+    title: 'Επαναληπτικές Ασκήσεις: Ενότητες 1 έως 4',
+    titleEn: 'Review Exercises: Units 1 to 4',
     desc: 'Φυσικοί αριθμοί, διαίρεση, ΜΚΔ, συστήματα αρίθμησης.',
     descEn: 'Natural numbers, division, GCD, and numeral systems.',
     badge: 'ΕΠΑΝΑΛΗΨΗ 1',
     badgeEn: 'REVIEW 1',
     isReview: true,
     active: true,
+    keywords: ['ασκήσεις μαθηματικά', 'επαναληπτικές ασκήσεις']
   },
   {
     id: '06',
@@ -88,11 +93,12 @@ export const A_GYMNASIOU_CHAPTERS = [
     icon: '🌡️',
     title: 'Ακέραιοι Αριθμοί',
     titleEn: 'Integers',
-    desc: 'Ακέραιοι Αριθμοί, Θετικοί και Αρνητικοί.',
+    desc: 'Ακέραιοι Αριθμοί, Θετικοί και Αρνητικοί, άξονας αριθμών.',
     descEn: 'Integers, Positive and Negative numbers on the axis.',
     badge: 'ΚΕΦΑΛΑΙΟ 5',
     badgeEn: 'CHAPTER 5',
     active: true,
+    keywords: ['ασκήσεις άλγεβρα', 'ακέραιοι αριθμοί', 'θετικοί αρνητικοί αριθμοί']
   },
   {
     id: '07',
@@ -106,6 +112,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 6',
     badgeEn: 'CHAPTER 6',
     active: true,
+    keywords: ['πρόσθεση ακεραίων', 'ομόσημοι ετερόσημοι', 'ασκήσεις άλγεβρα']
   },
   {
     id: '08',
@@ -119,6 +126,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 7',
     badgeEn: 'CHAPTER 7',
     active: true,
+    keywords: ['αφαίρεση ακεραίων', 'ασκήσεις άλγεβρα']
   },
   {
     id: '09',
@@ -132,6 +140,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 8',
     badgeEn: 'CHAPTER 8',
     active: true,
+    keywords: ['πολλαπλασιασμός ακεραίων', 'κανόνας προσήμων', 'ασκήσεις άλγεβρα']
   },
   {
     id: '10',
@@ -145,6 +154,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 9',
     badgeEn: 'CHAPTER 9',
     active: true,
+    keywords: ['δυνάμεις ακεραίων', 'ασκήσεις άλγεβρα']
   },
   {
     id: '11',
@@ -158,20 +168,22 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 10',
     badgeEn: 'CHAPTER 10',
     active: true,
+    keywords: ['προτεραιότητα πράξεων', 'αριθμητικές παραστάσεις', 'ασκήσεις άλγεβρα']
   },
   {
     id: '12',
     section: 'algebra',
     slug: '12-epanalipsi-2',
     icon: '🏆',
-    title: 'Επανάληψη Ενοτήτων 5 έως 10',
-    titleEn: 'Review: Units 5 to 10',
+    title: 'Επαναληπτικές Ασκήσεις: Ενότητες 5 έως 10',
+    titleEn: 'Review Exercises: Units 5 to 10',
     desc: 'Ακέραιοι, πρόσθεση, αφαίρεση, πολλαπλασιασμός, δυνάμεις και προτεραιότητα πράξεων.',
     descEn: 'Integers, addition, subtraction, multiplication, powers, and order of operations.',
     badge: 'ΕΠΑΝΑΛΗΨΗ 2',
     badgeEn: 'REVIEW 2',
     isReview: true,
     active: true,
+    keywords: ['ασκήσεις μαθηματικά', 'επαναληπτικές ασκήσεις ακεραίων']
   },
   {
     id: '13',
@@ -185,6 +197,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 11',
     badgeEn: 'CHAPTER 11',
     active: true,
+    keywords: ['ρητοί αριθμοί', 'ασκήσεις άλγεβρα', 'κλάσματα']
   },
   {
     id: '14',
@@ -198,6 +211,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 12',
     badgeEn: 'CHAPTER 12',
     active: true,
+    keywords: ['ισοδύναμα κλάσματα', 'απλοποίηση κλασμάτων', 'ανάγωγο κλάσμα']
   },
   {
     id: '15',
@@ -211,6 +225,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 13',
     badgeEn: 'CHAPTER 13',
     active: true,
+    keywords: ['ομώνυμα κλάσματα', 'ετερώνυμα κλάσματα', 'σύγκριση κλασμάτων']
   },
   {
     id: '16',
@@ -224,6 +239,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 14',
     badgeEn: 'CHAPTER 14',
     active: true,
+    keywords: ['πρόσθεση ρητών', 'πρόσθεση κλασμάτων', 'ασκήσεις άλγεβρα']
   },
   {
     id: '17',
@@ -237,6 +253,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 15',
     badgeEn: 'CHAPTER 15',
     active: true,
+    keywords: ['αφαίρεση ρητών', 'αφαίρεση κλασμάτων', 'ασκήσεις άλγεβρα']
   },
   {
     id: '18',
@@ -250,6 +267,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 16',
     badgeEn: 'CHAPTER 16',
     active: true,
+    keywords: ['πολλαπλασιασμός ρητών', 'πολλαπλασιασμός κλασμάτων']
   },
   {
     id: '19',
@@ -263,6 +281,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 17',
     badgeEn: 'CHAPTER 17',
     active: true,
+    keywords: ['δυνάμεις ρητών', 'ιδιότητες δυνάμεων', 'ασκήσεις άλγεβρα']
   },
   {
     id: '20',
@@ -276,6 +295,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 18',
     badgeEn: 'CHAPTER 18',
     active: true,
+    keywords: ['διαίρεση ρητών', 'σύνθετα κλάσματα', 'ασκήσεις άλγεβρα']
   },
   {
     id: '21',
@@ -289,6 +309,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 19',
     badgeEn: 'CHAPTER 19',
     active: true,
+    keywords: ['προτεραιότητα πράξεων ρητών', 'αριθμητικές παραστάσεις']
   },
   {
     id: '22',
@@ -302,6 +323,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 20',
     badgeEn: 'CHAPTER 20',
     active: true,
+    keywords: ['τυποποιημένη μορφή', 'επιστημονική σημειογραφία']
   },
   {
     id: '23',
@@ -315,20 +337,22 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 21',
     badgeEn: 'CHAPTER 21',
     active: true,
+    keywords: ['προβλήματα με ρητούς', 'ασκήσεις μαθηματικά']
   },
   {
     id: '24',
     section: 'algebra',
     slug: '24-epanalipsi-3',
     icon: '🏆',
-    title: 'Επανάληψη Ενοτήτων 11 έως 20',
-    titleEn: 'Review: Units 11 to 20',
+    title: 'Επαναληπτικές Ασκήσεις: Ενότητες 11 έως 20',
+    titleEn: 'Review Exercises: Units 11 to 20',
     desc: 'Ρητοί αριθμοί, Κλάσματα, Πράξεις Κλασμάτων, Δύναμη Ρητών, Προτεραιότητα Πράξεων.',
     descEn: 'Rational numbers, fractions, operations, powers, and order of operations.',
     badge: 'ΕΠΑΝΑΛΗΨΗ 3',
     badgeEn: 'REVIEW 3',
     isReview: true,
     active: false,
+    keywords: ['ασκήσεις μαθηματικά', 'επαναληπτικές ασκήσεις ρητών']
   },
   {
     id: '25',
@@ -342,6 +366,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 22',
     badgeEn: 'CHAPTER 22',
     active: true,
+    keywords: ['ακολουθίες', 'κανονικότητες', 'ασκήσεις άλγεβρα']
   },
   {
     id: '26',
@@ -355,6 +380,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 23',
     badgeEn: 'CHAPTER 23',
     active: true,
+    keywords: ['αναπαράσταση ακολουθίας', 'πίνακας τιμών']
   },
   {
     id: '27',
@@ -368,6 +394,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 24',
     badgeEn: 'CHAPTER 24',
     active: true,
+    keywords: ['αλγεβρικές παραστάσεις', 'μεταβλητή', 'ασκήσεις άλγεβρα']
   },
   {
     id: '28',
@@ -381,6 +408,7 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 25',
     badgeEn: 'CHAPTER 25',
     active: true,
+    keywords: ['αριθμητικές παραστάσεις', 'ασκήσεις άλγεβρα']
   },
   {
     id: '29',
@@ -394,33 +422,36 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 26',
     badgeEn: 'CHAPTER 26',
     active: true,
+    keywords: ['απλοποίηση παραστάσεων', 'επιμεριστική ιδιότητα', 'ασκήσεις άλγεβρα']
   },
   {
     id: '30',
     section: 'algebra',
     slug: '30-epanalipsi-4',
     icon: '🏆',
-    title: 'Επανάληψη Ενοτήτων 22 έως 26',
-    titleEn: 'Review: Units 22 to 26',
+    title: 'Επαναληπτικές Ασκήσεις: Ενότητες 22 έως 26',
+    titleEn: 'Review Exercises: Units 22 to 26',
     desc: 'Ακολουθία, Αναπαράσταση ακολουθίας, Αλγεβρικές παραστάσεις, Αριθμητική τιμή, Απλοποίηση παραστάσεων.',
     descEn: 'Sequences, patterns, algebraic expressions, evaluations, and simplification.',
     badge: 'ΕΠΑΝΑΛΗΨΗ 4',
     badgeEn: 'REVIEW 4',
     isReview: true,
     active: false,
+    keywords: ['ασκήσεις άλγεβρα', 'επαναληπτικές ασκήσεις']
   },
   {
     id: '31',
     section: 'algebra',
     slug: '31-algebrikes-sxeseis',
     icon: '🔗',
-    title: 'Αλγεβρικές Σχέσεις',
+    title: 'Αλγεβρικές Σχέσεις & Εξισώσεις',
     titleEn: 'Algebraic Relations & Equations',
     desc: 'Μεταβλητή, Εξισώσεις, Λύση εξίσωσης.',
     descEn: 'Variables, defining equations, concept of equation solutions.',
     badge: 'ΚΕΦΑΛΑΙΟ 27',
     badgeEn: 'CHAPTER 27',
     active: true,
+    keywords: ['εξισώσεις', 'λύση εξίσωσης', 'ασκήσεις άλγεβρα']
   },
   {
     id: '32',
@@ -434,19 +465,21 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 28',
     badgeEn: 'CHAPTER 28',
     active: true,
+    keywords: ['ισοδύναμες εξισώσεις', 'ιδιότητες ισότητας', 'ασκήσεις άλγεβρα']
   },
   {
     id: '33',
     section: 'algebra',
     slug: '33-liseis-eksisoseon',
     icon: '🗝️',
-    title: 'Λύση Εξισώσεων',
+    title: 'Λύση Εξισώσεων 1ου Βαθμού',
     titleEn: 'Solving Linear Equations',
     desc: 'Εξισώσεις χωρίς κλάσματα, Εξισώσεις με κλάσματα.',
     descEn: 'Solving linear single-variable equations with and without fractions.',
     badge: 'ΚΕΦΑΛΑΙΟ 29',
     badgeEn: 'CHAPTER 29',
     active: true,
+    keywords: ['λύση εξισώσεων', 'εξισώσεις με κλάσματα', 'ασκήσεις άλγεβρα']
   },
   {
     id: '34',
@@ -460,13 +493,15 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 30',
     badgeEn: 'CHAPTER 30',
     active: true,
+    keywords: ['προβλήματα με εξισώσεις', 'ασκήσεις άλγεβρα']
   },
 
- // --- ΓΕΩΜΕΤΡΙΑ ---
+  // --- ΓΕΩΜΕΤΡΙΑ ---
   {
     id: '35-geometrikes-ennoies',
     section: 'geometry',
     slug: '35-geometrikes-ennoies',
+    icon: '📐',
     title: 'Βασικές Γεωμετρικές Έννοιες',
     titleEn: 'Basic Geometric Concepts',
     desc: 'Σημείο, ευθύγραμμο τμήμα, ημιευθεία, ευθεία, επίπεδο.',
@@ -474,11 +509,13 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 01',
     badgeEn: 'CHAPTER 01',
     active: true,
+    keywords: ['ασκήσεις γεωμετρία', 'ευθύγραμμο τμήμα', 'ευθεία επίπεδο']
   },
   {
     id: '36-goneies',
     section: 'geometry',
     slug: '36-goneies',
+    icon: '🧭',
     title: 'Γωνίες & Μέτρηση Γωνιών',
     titleEn: 'Angles & Angle Measurement',
     desc: 'Είδη γωνιών, ορθή, οξεία, αμβλεία γωνία και διχοτόμος.',
@@ -486,42 +523,49 @@ export const A_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 02',
     badgeEn: 'CHAPTER 02',
     active: true,
+    keywords: ['ασκήσεις γεωμετρία', 'γωνίες', 'ορθή γωνία', 'διχοτόμος']
   },
   {
     id: '37-mesokathetos',
     section: 'geometry',
     slug: '37-mesokathetos',
-    title: 'Μεσοκάθετος Ευθύγραμμου τμήματος, Διχοτόμος γωνίας',
+    icon: '⟂',
+    title: 'Μεσοκάθετος Ευθύγραμμου Τμήματος & Διχοτόμος',
     titleEn: 'Perpendicular Bisector of a Segment, Angle Bisector',
     desc: 'Μεσοκάθετος, Διχοτόμος, Ισοσκελές, Ισόπλευρο τρίγωνο.',
     descEn: 'Perpendicular bisector, angle bisector, isosceles, and equilateral triangles.',
     badge: 'ΚΕΦΑΛΑΙΟ 03',
     badgeEn: 'CHAPTER 03',
     active: true,
+    keywords: ['ασκήσεις γεωμετρία', 'μεσοκάθετος', 'διχοτόμος', 'ισοσκελές τρίγωνο']
   },
   {
     id: '38-theseis-eutheion',
     section: 'geometry',
     slug: '38-theseis-eutheion',
-    title: 'Σχετικές θέσεις ευθειών, Γωνίες παράλληλες με τέμνουσα',
-    titleEn: 'Relative Positions of Lines, Angles Formed by Parallel Lines and a Transversal',
+    icon: '⏸️',
+    title: 'Σχετικές Θέσεις Ευθειών & Παράλληλες',
+    titleEn: 'Relative Positions of Lines, Angles Formed by Parallel Lines',
     desc: 'Θέσεις ευθειών στο επίπεδο, εντός, εναλλάξ, εντός εναλλάξ, εντός εκτός και επί τα αυτά.',
     descEn: 'Positions of lines in a plane, interior, alternate interior, and corresponding angles.',
     badge: 'ΚΕΦΑΛΑΙΟ 04',
     badgeEn: 'CHAPTER 04',
     active: true,
+    keywords: ['ασκήσεις γεωμετρία', 'παράλληλες ευθείες', 'εντός εναλλάξ γωνίες']
   },
   {
     id: '39',
     section: 'geometry',
     slug: '39-epanalipsi-1',
-    title: 'Επανάληψη Ενοτήτων 01 έως 04',
-    titleEn: 'Review: Units 01 to 04',
+    icon: '🏆',
+    title: 'Επαναληπτικές Ασκήσεις Γεωμετρίας: Ενότητες 01 έως 04',
+    titleEn: 'Review Exercises on Geometry: Units 01 to 04',
     desc: 'Σημείο, ευθύγραμμο τμήμα, ημιευθεία, ευθεία, επίπεδο, Είδη γωνιών, Θέσεις ευθειών στο επίπεδο.',
     descEn: 'Points, line segments, rays, lines, planes, types of angles, and relative positions of lines in a plane.',
     badge: 'ΕΠΑΝΑΛΗΨΗ 1',
     badgeEn: 'REVIEW 1',
     isReview: true,
     active: false,
+    keywords: ['ασκήσεις γεωμετρία', 'επαναληπτικές ασκήσεις γεωμετρίας']
   },
 ];

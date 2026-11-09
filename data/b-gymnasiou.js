@@ -27,6 +27,7 @@ export const B_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 1',
     badgeEn: 'CHAPTER 1',
     active: true,
+    keywords: ['ασκήσεις άλγεβρα', 'δυνάμεις με ακέραιο εκθέτη', 'ιδιότητες δυνάμεων']
   },
   {
     id: '02',
@@ -40,6 +41,7 @@ export const B_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 2',
     badgeEn: 'CHAPTER 2',
     active: true,
+    keywords: ['τυποποιημένη μορφή', 'επιστημονική σημειογραφία', 'ασκήσεις μαθηματικών']
   },
   {
     id: '03',
@@ -53,6 +55,7 @@ export const B_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 3',
     badgeEn: 'CHAPTER 3',
     active: true,
+    keywords: ['αριθμητικές παραστάσεις', 'προτεραιότητα πράξεων', 'ασκήσεις άλγεβρα']
   },
   {
     id: '04',
@@ -66,6 +69,7 @@ export const B_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 4',
     badgeEn: 'CHAPTER 4',
     active: true,
+    keywords: ['τετραγωνική ρίζα', 'τέλεια τετράγωνα', 'ασκήσεις άλγεβρα']
   },
   {
     id: '05',
@@ -79,21 +83,29 @@ export const B_GYMNASIOU_CHAPTERS = [
     badge: 'ΚΕΦΑΛΑΙΟ 5',
     badgeEn: 'CHAPTER 5',
     active: true,
+    keywords: ['πραγματικοί αριθμοί', 'άρρητοι αριθμοί', 'ασκήσεις μαθηματικά']
   },
 
-  // --- ΜΕΛΛΟΝΤΙΚΑ ΚΕΦΑΛΑΙΑ ΓΕΩΜΕΤΡΙΑΣ ---
+  // --- ΜΕΡΟΣ Β: ΓΕΩΜΕΤΡΙΑ & ΤΡΙΓΩΝΟΜΕΤΡΙΑ ---
   {
     id: 'g01',
     section: 'geometry',
     slug: 'g01-pythagoreio',
     icon: '📐',
-    title: 'Πυθαγόρειο Θεώρημα',
-    titleEn: 'Pythagorean Theorem',
-    desc: 'Ορθογώνια τρίγωνα, εφαρμογές του Πυθαγορείου θεωρήματος και γεωμετρικές κατασκευές.',
-    descEn: 'Right triangles, geometric applications, and proofs of the Pythagorean theorem.',
+    title: 'Πυθαγόρειο Θεώρημα: Θεωρία & Ασκήσεις',
+    titleEn: 'Pythagorean Theorem: Theory & Exercises',
+    desc: 'Ορθογώνια τρίγωνα, υπολογισμός υποτείνουσας και κάθετων πλευρών, αντίστροφο Πυθαγορείου και διαδραστικές ασκήσεις γεωμετρίας.',
+    descEn: 'Right triangles, hypotenuse calculations, converse of Pythagorean theorem, and geometry practice problems.',
     badge: 'ΓΕΩΜΕΤΡΙΑ 1',
     badgeEn: 'GEOMETRY 1',
     active: false,
+    keywords: [
+      'πυθαγόρειο θεώρημα',
+      'ασκήσεις γεωμετρία',
+      'ορθογώνιο τρίγωνο',
+      'υπολογισμός υποτείνουσας',
+      'ασκήσεις μαθηματικών'
+    ]
   },
   {
     id: 'g02',
@@ -102,10 +114,17 @@ export const B_GYMNASIOU_CHAPTERS = [
     icon: '📏',
     title: 'Τριγωνομετρικοί Αριθμοί Οξείας Γωνίας',
     titleEn: 'Trigonometric Ratios of an Acute Angle',
-    desc: 'Ημίτονο, συνημίτονο και εφαπτομένη οξείας γωνίας ορθογωνίου τριγώνου.',
-    descEn: 'Sine, cosine, and tangent in right-angled triangles.',
+    desc: 'Ημίτονο, συνημίτονο και εφαπτομένη οξείας γωνίας ορθογωνίου τριγώνου, βασικοί τριγωνομετρικοί τύποι και εφαρμογές.',
+    descEn: 'Sine, cosine, and tangent in right-angled triangles, trigonometric identities, and applied problems.',
     badge: 'ΓΕΩΜΕΤΡΙΑ 2',
     badgeEn: 'GEOMETRY 2',
     active: false,
+    keywords: [
+      'τριγωνομετρία',
+      'ημίτονο',
+      'συνημίτονο',
+      'εφαπτομένη',
+      'ασκήσεις γεωμετρία'
+    ]
   },
 ];
